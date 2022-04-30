@@ -43,6 +43,9 @@ i, span.ladb-opencutlist-icon:before {
 }
 
 
+.ladb-opencutlist-icon-variable:before {
+  content: "\e98e";
+}
 .ladb-opencutlist-icon-thickness-layers:before {
   content: "\e98a";
 }

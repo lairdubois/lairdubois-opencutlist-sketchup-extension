@@ -252,7 +252,7 @@ module Ladb::OpenCutList
           begin
             value = Dentaku.calculator.evaluate!(formula, vars)
           rescue => e
-            value = "!ERROR"
+            value = "!#{e.message}"
           end
           row.push(value)
         end

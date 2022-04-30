@@ -5,6 +5,7 @@
     </div>
     <div class="form-group col-xs-12">
         <label>{{ 'tab.cutlist.export.formula'|i18next }}</label>
-        <div id="ladb_div_formula" class="form-control ladb-editor-formula" contenteditable="true" placeholder="{{ ('tab.cutlist.export.placeholder.no_formula'~(name ? '_native' : ''))|i18next }}"></div>
+        <textarea id="ladb_div_formula" class="form-control" placeholder="{% if name %}{% set col_name = (('tab.cutlist.export.'~name)|i18next) %}{{ 'tab.cutlist.export.placeholder.no_formula_native'|i18next({ 'col_name':col_name }) }}{% else %}{{ 'tab.cutlist.export.placeholder.no_formula'|i18next }}{% endif %}">{{ formula }}</textarea>
+        <small class="help-block text-right"><strong>Ctrl + Espace</strong> pour la liste des variables</small>
     </div>
 </div>

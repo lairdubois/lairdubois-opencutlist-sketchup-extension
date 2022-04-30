@@ -9,7 +9,7 @@
         this.$element = $(element);
         this.dialog = dialog;
 
-        this.wordDefs = [];
+        this.variableDefs = [];
 
         this.$editingItem = null;
         this.$editingForm = null;
@@ -128,11 +128,12 @@
             // Create the form
             this.$editingForm = $(Twig.twig({ref: "tabs/cutlist/_export-column-form.twig"}).render({
                 name: $item.data('name'),
-                header: $item.data('header')
+                header: $item.data('header'),
+                formula: $item.data('formula')
             }));
 
             var $inputHeader = $('#ladb_input_header', this.$editingForm);
-            var $editorFormula = $('#ladb_div_formula', this.$editingForm);
+            var $textinputFormula = $('#ladb_div_formula', this.$editingForm);
 
             // Bind input
             $inputHeader.on('keyup', function () {
@@ -147,13 +148,12 @@
             });
 
             // Bind editor
-            $editorFormula
-                .ladbEditorFormula({
-                    wordDefs: this.wordDefs
+            $textinputFormula
+                .ladbTextinputFormula({
+                    variableDefs: this.variableDefs
                 })
-                .ladbEditorFormula('setFormula', [$item.data('formula')])
                 .on('change', function () {
-                    $item.data('formula', $(this).ladbEditorFormula('getFormula'));
+                    $item.data('formula', $(this).val());
                 })
             ;
 
@@ -161,7 +161,7 @@
 
             // Focus
             if (focus === 'formula') {
-                $editorFormula.focus();
+                $textinputFormula.focus();
             } else {
                 $inputHeader.focus();
             }
@@ -205,13 +205,12 @@
     LadbEditorExport.prototype.init = function () {
         var that = this;
 
-        // Generate wordDefs for formula editor
-        this.wordDefs = [];
+        // Generate variableDefs for formula editor
+        this.variableDefs = [];
         for (var i = 0; i < this.options.vars.length; i++) {
-            this.wordDefs.push({
-                value: this.options.vars[i],
-                label: i18next.t('tab.cutlist.export.' + this.options.vars[i]),
-                class: 'variable'
+            this.variableDefs.push({
+                text: this.options.vars[i],
+                displayText: i18next.t('tab.cutlist.export.' + this.options.vars[i])
             });
         }
 

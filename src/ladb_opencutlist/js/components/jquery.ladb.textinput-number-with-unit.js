@@ -86,7 +86,7 @@
         }
     };
 
-    LadbTextinputNumberWithUnit.prototype.appendLeftTools = function ($toolContainer) {
+    LadbTextinputNumberWithUnit.prototype.appendLeftTools = function ($toolsContainer) {
         var that = this;
 
         var $span = $('<span />')
@@ -98,7 +98,7 @@
             $.each(unitGroup, function (key, value) {
                 $dropdown.append(
                     $('<li />')
-                        .append ('<a href="#">' + value + '</a></li>')
+                        .append('<a href="#">' + value + '</a></li>')
                         .on('click', function () {
                             $span.html(value);
                             that.unit = key;
@@ -109,7 +109,7 @@
         });
         this.$spanUnit = $span;
 
-        $toolContainer.append($('<div class="ladb-textinput-tool btn-group" />')
+        $toolsContainer.append($('<div class="ladb-textinput-tool btn-group" />')
             .append(
                 $('<button type="button" class="btn btn-infield btn-xs dropdown-toggle" data-toggle="dropdown" />')
                     .append($span)

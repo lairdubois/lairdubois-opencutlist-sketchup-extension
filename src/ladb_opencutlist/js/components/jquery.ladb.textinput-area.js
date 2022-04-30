@@ -87,7 +87,7 @@
         return typeof value !== 'undefined' ? value : elements;
     }
 
-    var old = $.fn.LadbTextarea;
+    var old = $.fn.ladbTextinputArea;
 
     $.fn.ladbTextinputArea             = Plugin;
     $.fn.ladbTextinputArea.Constructor = LadbTextinputArea;

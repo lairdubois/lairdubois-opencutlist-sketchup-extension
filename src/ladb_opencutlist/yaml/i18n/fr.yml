@@ -449,6 +449,8 @@ tab:
       columns: Colonnes
       header: Titre
       formula: Formule
+      variables_list: Liste des variables
+      keywords_list: Liste des fonctions
       info_0: |
         Cette fonctionnalité vous permet d'exporter votre *fiche de débit* sous forme d'une *liste de pièces* dans un fichier au format [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
       options: Options d'export
@@ -492,7 +494,7 @@ tab:
       edge_xmax: Chant Largeur 2
       placeholder:
         no_header: Saisissez un titre
-        no_formula_native: Valeur par défaut
+        no_formula_native: Valeur native de la colonne '{{ col_name }}'
         no_formula: Saisissez une formule
       warning:
         is_group_selection: Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas exportées.
