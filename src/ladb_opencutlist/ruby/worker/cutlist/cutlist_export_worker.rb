@@ -24,7 +24,7 @@ module Ladb::OpenCutList
       @encoding = settings['encoding']
       @col_defs = settings['col_defs']
       @hidden_group_ids = settings['hidden_group_ids']
-      @preview = settings['preview']
+      @target = settings['target']
 
       @cutlist = cutlist
 
@@ -40,9 +40,12 @@ module Ladb::OpenCutList
           :export_path => ''
       }
 
-      if @preview
+      case @target
+      when 'table'
+
         response[:rows] = _compute_rows
-      else
+
+      when 'csv'
 
         # Ask for export file path
         export_path = UI.savepanel(Plugin.instance.get_i18n_string('tab.cutlist.export.title'), @cutlist.dir, File.basename(@cutlist.filename, '.skp') + '.csv')
@@ -213,7 +216,6 @@ module Ladb::OpenCutList
                   no_dimensions ? '' : _sanitize_value_string(part.thickness),
                   no_dimensions ? '' : _sanitize_value_string(part.final_area),
                   group.material_display_name,
-                  part.entity_names.map(&:first).join(','),
                   part.description,
                   part.tags.empty? ? '' : part.tags.join(','),
                   _format_edge_value(part.edge_material_names[:ymin], part.edge_std_dimensions[:ymin]),
@@ -375,7 +377,6 @@ module Ladb::OpenCutList
       bbox_thickness,
       final_area,
       material_name,
-      entity_names,
       description,
       tags,
       edge_ymin,
@@ -396,7 +397,6 @@ module Ladb::OpenCutList
       @bbox_thickness = bbox_thickness
       @final_area = final_area
       @material_name = material_name
-      @entity_names = entity_names
       @description = description
       @tags = tags
       @edge_ymin = edge_ymin

@@ -19,7 +19,7 @@
         variables: []
     };
 
-    LadbEditorExport.prototype.setColdefs = function (colDefs) {
+    LadbEditorExport.prototype.setColdefs = function (coldefs) {
         var that = this;
 
         // Cancel editing
@@ -27,10 +27,10 @@
 
         // Populate rows
         this.$sortable.empty();
-        $.each(colDefs, function (index, colDef) {
+        $.each(coldefs, function (index, coldef) {
 
             // Append column
-            that.appendColumnItem(colDef.name, colDef.header, colDef.formula, colDef.hidden);
+            that.appendColumnItem(coldef.name, coldef.header, coldef.formula, coldef.align, coldef.hidden);
 
         });
 
@@ -40,27 +40,29 @@
     };
 
     LadbEditorExport.prototype.getColdefs = function () {
-        var colDefs = [];
+        var coldefs = [];
         this.$sortable.children('li').each(function () {
-            colDefs.push({
+            coldefs.push({
                 name: $(this).data('name'),
                 header: $(this).data('header'),
                 formula: $(this).data('formula'),
+                align: $(this).data('align'),
                 hidden: typeof $(this).data('hidden') == 'boolean' ? $(this).data('hidden') : false
             });
         });
-        return colDefs;
+        return coldefs;
     };
 
-    LadbEditorExport.prototype.appendColumnItem = function (name, header, formula, hidden) {
+    LadbEditorExport.prototype.appendColumnItem = function (name, header, formula, align, hidden) {
         var that = this;
 
         // Create and append row
         var $item = $(Twig.twig({ref: "tabs/cutlist/_export-column-item.twig"}).render({
-            name: name,
-            header: header,
-            formula: formula,
-            hidden: hidden
+            name: name || '',
+            header: header || '',
+            formula: formula || '',
+            align: align || 'left',
+            hidden: hidden || false
         }));
         this.$sortable.append($item);
 
@@ -73,6 +75,25 @@
         // Bind buttons
         $('a.ladb-cutlist-export-column-item-formula-btn', $item).on('click', function () {
             that.editColumn($item, 'formula');
+            return false;
+        });
+        $('a.ladb-cutlist-export-column-item-align-btn', $item).on('click', function () {
+            var $icon = $('i', $(this));
+            var align = $item.data('align');
+            $icon.removeClass('ladb-opencutlist-icon-align-' + align);
+            switch (align) {
+                case 'left':
+                    align = 'center';
+                    break;
+                case 'center':
+                    align = 'right';
+                    break;
+                case 'right':
+                    align = 'left';
+                    break;
+            }
+            $item.data('align', align);
+            $icon.addClass('ladb-opencutlist-icon-align-' + align);
             return false;
         });
         $('a.ladb-cutlist-export-column-item-visibility-btn', $item).on('click', function () {
@@ -145,7 +166,7 @@
                     $('.ladb-cutlist-export-column-item-header', $item).replaceWith(Twig.twig({ref: "tabs/cutlist/_export-column-item-header.twig"}).render({
                         name: $item.data('name'),
                         header: $item.data('header')
-                    }))
+                    }));
 
                 })
             ;
@@ -155,6 +176,14 @@
                 })
                 .on('change', function () {
                     $item.data('formula', $(this).val());
+
+                    // Update item formula button
+                    if ($(this).val() === '') {
+                        $('.ladb-cutlist-export-column-item-formula-btn', $item).removeClass('ladb-active');
+                    } else {
+                        $('.ladb-cutlist-export-column-item-formula-btn', $item).addClass('ladb-active');
+                    }
+
                 })
             ;
 

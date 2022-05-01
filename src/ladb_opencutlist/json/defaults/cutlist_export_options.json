@@ -3,226 +3,183 @@
     "source": 1,    /* EXPORT_OPTION_SOURCE_CUTLIST */
     "col_sep": 2,   /* EXPORT_OPTION_COL_SEP_SEMICOLON */
     "encoding": 0,  /* EXPORT_OPTION_ENCODING_UTF8 */
-    "coldefs": {
+    "source_coldefs": {
       "0": [ /* EXPORT_OPTION_SOURCE_SUMMARY */
         {
           "name": "material_type",
-          "hidden": false,
-          "formula": ""
+          "align": "left"
         },
         {
           "name": "material_thickness",
-          "hidden": false,
-          "formula": ""
+          "align": "right"
         },
         {
           "name": "part_count",
-          "hidden": false,
-          "formula": ""
+          "align": "center"
         },
         {
           "name": "total_cutting_length",
-          "hidden": false,
-          "formula": ""
+          "align": "right"
         },
         {
           "name": "total_cutting_area",
-          "hidden": false,
-          "formula": ""
+          "align": "right"
         },
         {
           "name": "total_cutting_volume",
-          "hidden": false,
-          "formula": ""
+          "align": "right"
         },
         {
           "name": "total_final_area",
-          "hidden": false,
-          "formula": ""
+          "align": "right"
         }
       ],
       "1": [ /* EXPORT_OPTION_SOURCE_CUTLIST */
         {
           "name": "number",
-          "hidden": false,
-          "formula": ""
+          "align": "center"
         },
         {
           "name": "name",
-          "hidden": false,
-          "formula": ""
+          "align": "left"
         },
         {
           "name": "count",
-          "hidden": false,
-          "formula": ""
+          "align": "center"
         },
         {
           "name": "cutting_length",
-          "hidden": false,
-          "formula": ""
+          "align": "right"
         },
         {
           "name": "cutting_width",
-          "hidden": false,
-          "formula": ""
+          "align": "right"
         },
         {
           "name": "cutting_thickness",
-          "hidden": false,
-          "formula": ""
+          "align": "right"
         },
         {
           "name": "bbox_length",
-          "hidden": false,
-          "formula": ""
+          "align": "right"
         },
         {
           "name": "bbox_width",
-          "hidden": false,
-          "formula": ""
+          "align": "right"
         },
         {
           "name": "bbox_thickness",
-          "hidden": false,
-          "formula": ""
+          "align": "right"
         },
         {
           "name": "final_area",
-          "hidden": false,
-          "formula": ""
+          "align": "right"
         },
         {
           "name": "material_name",
-          "hidden": false,
-          "formula": ""
+          "align": "left"
         },
         {
           "name": "entity_names",
-          "hidden": false,
-          "formula": ""
+          "align": "left"
         },
         {
           "name": "description",
-          "hidden": false,
-          "formula": ""
+          "align": "left"
         },
         {
           "name": "tags",
-          "hidden": false,
-          "formula": ""
+          "align": "left"
         },
         {
           "name": "edge_ymin",
-          "hidden": false,
-          "formula": ""
+          "align": "center"
         },
         {
           "name": "edge_ymax",
-          "hidden": false,
-          "formula": ""
+          "align": "center"
         },
         {
           "name": "edge_xmin",
-          "hidden": false,
-          "formula": ""
+          "align": "center"
         },
         {
           "name": "edge_xmax",
-          "hidden": false,
-          "formula": ""
+          "align": "center"
         }
       ],
       "2": [ /* EXPORT_OPTION_SOURCE_INSTANCES_LIST */
         {
           "name": "number",
-          "hidden": false,
-          "formula": ""
+          "align": "center"
         },
         {
           "name": "path",
-          "hidden": false,
-          "formula": ""
+          "align": "left"
         },
         {
           "name": "instance_name",
-          "hidden": false,
-          "formula": ""
+          "align": "left"
         },
         {
           "name": "definition_name",
-          "hidden": false,
-          "formula": ""
+          "align": "left"
         },
         {
           "name": "cutting_length",
-          "hidden": false,
-          "formula": ""
+          "align": "right"
         },
         {
           "name": "cutting_width",
-          "hidden": false,
-          "formula": ""
+          "align": "right"
         },
         {
           "name": "cutting_thickness",
-          "hidden": false,
-          "formula": ""
+          "align": "right"
         },
         {
           "name": "bbox_length",
-          "hidden": false,
-          "formula": ""
+          "align": "right"
         },
         {
           "name": "bbox_width",
-          "hidden": false,
-          "formula": ""
+          "align": "right"
         },
         {
           "name": "bbox_thickness",
-          "hidden": false,
-          "formula": ""
+          "align": "right"
         },
         {
           "name": "final_area",
-          "hidden": false,
-          "formula": ""
+          "align": "right"
         },
         {
           "name": "material_name",
-          "hidden": false,
-          "formula": ""
+          "align": "left"
         },
         {
           "name": "description",
-          "hidden": false,
-          "formula": ""
+          "align": "left"
         },
         {
           "name": "tags",
-          "hidden": false,
-          "formula": ""
+          "align": "left"
         },
         {
           "name": "edge_ymin",
-          "hidden": false,
-          "formula": ""
+          "align": "center"
         },
         {
           "name": "edge_ymax",
-          "hidden": false,
-          "formula": ""
+          "align": "center"
         },
         {
           "name": "edge_xmin",
-          "hidden": false,
-          "formula": ""
+          "align": "center"
         },
         {
           "name": "edge_xmax",
-          "hidden": false,
-          "formula": ""
+          "align": "center"
         }
       ]
     }

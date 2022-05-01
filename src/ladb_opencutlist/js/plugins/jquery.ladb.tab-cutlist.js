@@ -625,21 +625,21 @@
                 options.col_sep = parseInt($selectColSep.val());
                 options.encoding = parseInt($selectEncoding.val());
 
-                if (options.coldefs == null) {
-                    options.coldefs = [];
+                if (options.source_coldefs == null) {
+                    options.source_coldefs = [];
                 }
-                options.coldefs[0] = $editorSummary.ladbEditorExport('getColdefs');
-                options.coldefs[1] = $editorCutlist.ladbEditorExport('getColdefs');
-                options.coldefs[2] = $editorInstancesList.ladbEditorExport('getColdefs');
+                options.source_coldefs[0] = $editorSummary.ladbEditorExport('getColdefs');
+                options.source_coldefs[1] = $editorCutlist.ladbEditorExport('getColdefs');
+                options.source_coldefs[2] = $editorInstancesList.ladbEditorExport('getColdefs');
 
             }
             var fnFillInputs = function (options) {
                 $selectSource.selectpicker('val', options.source);
                 $selectColSep.selectpicker('val', options.col_sep);
                 $selectEncoding.selectpicker('val', options.encoding);
-                $editorSummary.ladbEditorExport('setColdefs', [ options.coldefs[0] ])
-                $editorCutlist.ladbEditorExport('setColdefs', [ options.coldefs[1] ])
-                $editorInstancesList.ladbEditorExport('setColdefs', [ options.coldefs[2] ])
+                $editorSummary.ladbEditorExport('setColdefs', [ options.source_coldefs[0] ])
+                $editorCutlist.ladbEditorExport('setColdefs', [ options.source_coldefs[1] ])
+                $editorInstancesList.ladbEditorExport('setColdefs', [ options.source_coldefs[2] ])
                 fnComputeSorterVisibility(options.source);
             }
 
@@ -702,7 +702,6 @@
                     'bbox_thickness',
                     'final_area',
                     'material_name',
-                    'entity_names',
                     'description',
                     'tags',
                     'edge_ymin',
@@ -737,13 +736,12 @@
                 // Store options
                 rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_export_options', values: exportOptions });
 
-                rubyCallCommand('cutlist_export', $.extend(exportOptions, { col_defs: exportOptions.coldefs[exportOptions.source], preview: true }, that.generateOptions), function (response) {
+                rubyCallCommand('cutlist_export', $.extend(exportOptions, { col_defs: exportOptions.source_coldefs[exportOptions.source], target: 'table' }, that.generateOptions), function (response) {
 
                     if (response.errors) {
                         that.dialog.notifyErrors(response.errors);
                     }
                     if (response.rows) {
-                        console.log(response.rows);
 
                         var $slide = that.pushNewSlide('ladb_cutlist_slide_export', 'tabs/cutlist/_slide-export.twig', $.extend({
                             errors: response.errors,
@@ -796,7 +794,7 @@
                 // Store options
                 rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_export_options', values: exportOptions });
 
-                rubyCallCommand('cutlist_export', $.extend(exportOptions, { col_defs: exportOptions.coldefs[exportOptions.source] }, that.generateOptions), function (response) {
+                rubyCallCommand('cutlist_export', $.extend(exportOptions, { col_defs: exportOptions.source_coldefs[exportOptions.source], target: 'csv' }, that.generateOptions), function (response) {
 
                     if (response.errors) {
                         that.dialog.notifyErrors(response.errors);
