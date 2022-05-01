@@ -26,14 +26,14 @@
     {{ parent() }}
     <div class="ladb-page">
 
-        {% include 'core/_alert-errors.twig' with { 'errors':report.errors } %} {# TYPE_SHEET_GOOD, TYPE_DIMENSIONAL, TYPE_EDGE, TYPE_HARDWARE #}
+        {% include 'core/_alert-errors.twig' with { 'errors':report.errors } %}
         {% include 'core/_alert-warnings.twig' with { 'warnings':report.warnings } %}
 
         <table class="table table-bordered">
             <thead>
                 <tr class="ladb-cutlist-export-row">
                     {% for col in rows[0] %}
-                        <th class="ladb-cutlist-export-column">{{ col }}</th>
+                        <th class="ladb-cutlist-export-column text-center">{{ col }}</th>
                     {% endfor %}
                 </tr>
             </thead>
