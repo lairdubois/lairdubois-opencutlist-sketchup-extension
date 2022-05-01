@@ -14,10 +14,9 @@
     };
     LadbTextinputNumberWithUnit.prototype = new LadbTextinputAbstract;
 
-    LadbTextinputNumberWithUnit.DEFAULTS = {
-        defaultUnit: '',
+    LadbTextinputNumberWithUnit.DEFAULTS = $.extend(LadbTextinputAbstract.DEFAULTS, {
         units: null
-    };
+    });
 
     LadbTextinputNumberWithUnit.prototype.resetUnit = function () {
 

@@ -6,12 +6,11 @@
 
     var LadbTextinputArea = function(element, options) {
         LadbTextinputAbstract.call(this, element, options);
-        this.$preview = null;
     };
     LadbTextinputArea.prototype = new LadbTextinputAbstract;
 
-    LadbTextinputArea.DEFAULTS = {
-    };
+    LadbTextinputArea.DEFAULTS = $.extend(LadbTextinputAbstract.DEFAULTS, {
+    });
 
     LadbTextinputArea.prototype.getParentOverflows = function(el) {
 

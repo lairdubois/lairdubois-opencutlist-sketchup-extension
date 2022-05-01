@@ -46,11 +46,13 @@
   box-sizing: border-box;
 }
 .CodeMirror-hint-keyword:before {
-  content: "F";
+  content: "\e906";
+  font-family: 'ladb_opencutlist' !important;
   background: #c0c;;
 }
 .CodeMirror-hint-variable:before {
-  content: "@";
+  content: "\e98e";
+  font-family: 'ladb_opencutlist' !important;
   background: #000;
 }
 

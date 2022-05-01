@@ -1,59 +1,28 @@
 +function ($) {
     'use strict';
 
-    var HINT_TYPE_KEYWORD = 1;
-    var HINT_TYPE_VARIABLE = 2;
-
     // CLASS DEFINITION
     // ======================
 
-    var LadbTextinputFormula = function(element, options) {
+    var LadbTextinputCode = function(element, options) {
         LadbTextinputAbstract.call(this, element, options);
     };
-    LadbTextinputFormula.prototype = new LadbTextinputAbstract;
+    LadbTextinputCode.prototype = new LadbTextinputAbstract;
 
-    LadbTextinputFormula.DEFAULTS = {
-        resetValue: '',
-        keywordDefs: [],
+    LadbTextinputCode.DEFAULTS = $.extend(LadbTextinputAbstract.DEFAULTS, {
         variableDefs: []
-    };
+    });
 
-    LadbTextinputFormula.prototype.reset = function () {
+    LadbTextinputCode.prototype.reset = function () {
         LadbTextinputAbstract.prototype.reset.call(this);
         this.cm.setValue(this.$element.val());
         this.cm.refresh();
     };
 
-    LadbTextinputFormula.prototype.init = function() {
+    LadbTextinputCode.prototype.init = function() {
         LadbTextinputAbstract.prototype.init.call(this);
 
         var that = this;
-
-        /////
-
-        var hints = [];
-
-        var variables = [];
-        for (let variableDef of this.options.variableDefs) {
-            variables.push(variableDef.text);
-            hints.push({
-                type: HINT_TYPE_VARIABLE,
-                text: variableDef.text,
-                displayText: variableDef.displayText,
-                className: 'CodeMirror-hint-variable'
-            });
-        }
-
-        var keywords = [];
-        for (let keywordDef of this.options.keywordDefs) {
-            keywords.push(keywordDef.text);
-            hints.push({
-                type: HINT_TYPE_KEYWORD,
-                text: keywordDef.text,
-                displayText: keywordDef.displayText,
-                className: 'CodeMirror-hint-keyword'
-            });
-        }
 
         /////
 
@@ -68,8 +37,8 @@
 
                 // Clear variable marks
                 let marks = cm.findMarks(
-                    { line: lineNumber, ch: 0},
-                    { line: lineNumber + 1, ch: 0}
+                    CodeMirror.Pos(lineNumber, 0),
+                    CodeMirror.Pos(lineNumber + 1, 0)
                 );
                 for (let mark of marks) {
                     if (mark.attributes === 'variable') {
@@ -90,8 +59,8 @@
                         }
                         if (displayText) {
                             cm.markText(
-                                { line: lineNumber, ch: token.start },
-                                { line: lineNumber, ch: token.end },
+                                CodeMirror.Pos(lineNumber, token.start),
+                                CodeMirror.Pos(lineNumber, token.end),
                                 {
                                     atomic: true,
                                     replacedWith: $('<span class="cm-variable">' + displayText + '</span>').get(0),
@@ -104,9 +73,19 @@
                     }
                 }
 
-            }        }
+            }
+        }
 
         /////
+
+        var hints = [];
+        for (let variableDef of this.options.variableDefs) {
+            hints.push({
+                text: variableDef.text,
+                displayText: variableDef.displayText,
+                className: 'CodeMirror-hint-variable'
+            });
+        }
 
         CodeMirror.registerHelper('hint', 'opencutlist', function(cm) {
             var cur = cm.getCursor();
@@ -127,37 +106,8 @@
         });
 
         CodeMirror.commands.autocomplete = function (cm) {
-            CodeMirror.showHint(cm, CodeMirror.hint.opencutlist);
+            CodeMirror.showHint(cm, CodeMirror.hint.ruby);
         };
-
-        // CodeMirror.defineSimpleMode("dentaku", {
-        //     // The start state contains the rules that are initially used
-        //     start: [
-        //         // The regex matches the token, the token property contains the type
-        //         { regex: /"(?:[^\\]|\\.)*?(?:"|$)/, token: "string" },
-        //         // Rules are matched in the order in which they appear, so there is
-        //         // no ambiguity between this one and the one above
-        //         { regex: new RegExp('(?:' + keywords.join('|') + ')\\b', 'i'), token: "keyword" },
-        //         { regex: /true|false/, token: "atom" },
-        //         { regex: /0x[a-f\d]+|[-+]?(?:\.\d+|\d+\.?\d*)(?:e[-+]?\d+)?/i,  token: "number" },
-        //         // A next property will cause the mode to move to a different state
-        //         { regex: /\/\*/, token: "comment", next: "comment"},
-        //         { regex: /[-+\/*=<>!]+/, token: "operator" },
-        //         { regex: new RegExp('(?:' + variables.join('|') + ')\\b', 'i'), token: "variable" },
-        //     ],
-        //     // The multi-line comment state.
-        //     comment: [
-        //         { regex: /.*?\*\//, token: "comment", next: "start" },
-        //         { regex: /.*/, token: "comment"}
-        //     ],
-        //     // The meta property contains global information about the mode. It
-        //     // can contain properties like lineComment, which are supported by
-        //     // all modes, and also directives like dontIndentStates, which are
-        //     // specific to simple modes.
-        //     meta: {
-        //         dontIndentStates: ["comment"]
-        //     }
-        // });
 
         this.cm = CodeMirror.fromTextArea(this.$element.get(0), {
             mode: 'ruby',
@@ -179,6 +129,7 @@
                 CodeMirror.showHint(cm, CodeMirror.hint.opencutlist);
             }
 
+            // Refresh marks
             fnRefreshVariableMarks(cm, change.from, change.to);
 
             // Keep textarea up to date
@@ -186,9 +137,21 @@
                 .val(cm.getValue())
                 .trigger('change')
             ;
+
+        });
+        this.cm.on('focus', function () {
+           that.$helpBlock.show();
+        });
+        this.cm.on('blur', function () {
+            that.$helpBlock.hide();
         });
 
         fnRefreshVariableMarks(this.cm);
+
+        // Append help block
+        this.$helpBlock = $('<div class="ladb-textinput-code-help">' + i18next.t('core.component.textinput_code.help') + '</div>');
+        this.$helpBlock.hide();
+        this.$wrapper.after(this.$helpBlock);
 
     };
 
@@ -200,11 +163,11 @@
         var value;
         var elements = this.each(function () {
             var $this = $(this);
-            var data = $this.data('ladb.textinputFormula');
-            var options = $.extend({}, LadbTextinputFormula.DEFAULTS, $this.data(), typeof option === 'object' && option);
+            var data = $this.data('ladb.textinputCode');
+            var options = $.extend({}, LadbTextinputCode.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
-                $this.data('ladb.textinputFormula', (data = new LadbTextinputFormula(this, options)));
+                $this.data('ladb.textinputCode', (data = new LadbTextinputCode(this, options)));
             }
             if (typeof option === 'string') {
                 value = data[option].apply(data, Array.isArray(params) ? params : [ params ])
@@ -215,17 +178,17 @@
         return typeof value !== 'undefined' ? value : elements;
     }
 
-    var old = $.fn.ladbTextinputFormula;
+    var old = $.fn.ladbTextinputCode;
 
-    $.fn.ladbTextinputFormula             = Plugin;
-    $.fn.ladbTextinputFormula.Constructor = LadbTextinputFormula;
+    $.fn.ladbTextinputCode             = Plugin;
+    $.fn.ladbTextinputCode.Constructor = LadbTextinputCode;
 
 
     // NO CONFLICT
     // =================
 
-    $.fn.ladbTextinputFormula.noConflict = function () {
-        $.fn.ladbTextinputFormula = old;
+    $.fn.ladbTextinputCode.noConflict = function () {
+        $.fn.ladbTextinputCode = old;
         return this;
     }
 

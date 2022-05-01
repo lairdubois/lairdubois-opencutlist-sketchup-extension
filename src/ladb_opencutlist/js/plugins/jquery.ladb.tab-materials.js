@@ -992,6 +992,7 @@
 
         // Bind inputs
         $inputName.on('keyup change', function () { fnCheckInputNameValue(true); });
+        $inputName.ladbTextinputText();
         $inputColor.on('keyup change', function () { fnCheckInputColorValue(true); });
         $inputColor.ladbTextinputColor();
 

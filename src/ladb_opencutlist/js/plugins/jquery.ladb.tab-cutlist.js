@@ -1599,6 +1599,7 @@
                 });
 
                 // Bind input
+                $inputName.ladbTextinputText();
                 $inputInstanceCountByPart.ladbTextinputNumberWithUnit({
                     resetValue: '1',
                     defaultUnit: 'u_p',

@@ -133,23 +133,24 @@
             }));
 
             var $inputHeader = $('#ladb_input_header', this.$editingForm);
-            var $textinputFormula = $('#ladb_div_formula', this.$editingForm);
+            var $inputFormula = $('#ladb_div_formula', this.$editingForm);
 
-            // Bind input
-            $inputHeader.on('keyup', function () {
-                $item.data('header', $(this).val());
+            // Bind inputs
+            $inputHeader
+                .ladbTextinputText()
+                .on('keyup', function () {
+                    $item.data('header', $(this).val());
 
-                // Update item header
-                $('.ladb-cutlist-export-column-item-header', $item).replaceWith(Twig.twig({ref: "tabs/cutlist/_export-column-item-header.twig"}).render({
-                    name: $item.data('name'),
-                    header: $item.data('header')
-                }))
+                    // Update item header
+                    $('.ladb-cutlist-export-column-item-header', $item).replaceWith(Twig.twig({ref: "tabs/cutlist/_export-column-item-header.twig"}).render({
+                        name: $item.data('name'),
+                        header: $item.data('header')
+                    }))
 
-            });
-
-            // Bind editor
-            $textinputFormula
-                .ladbTextinputFormula({
+                })
+            ;
+            $inputFormula
+                .ladbTextinputCode({
                     variableDefs: this.variableDefs
                 })
                 .on('change', function () {
@@ -161,7 +162,7 @@
 
             // Focus
             if (focus === 'formula') {
-                $textinputFormula.focus();
+                $inputFormula.focus();
             } else {
                 $inputHeader.focus();
             }
