@@ -1,0 +1,52 @@
+{% extends 'tabs/base-slide.twig' %}
+
+{% set id = 'ladb_cutlist_slide_export' %}
+{% set out = true %}
+{% set slideClasses = 'ladb-overflow-x-auto' %}
+
+{% block headerInner %}
+    {{ parent() }}
+    <div class="ladb-header-extra">
+        {% include 'tabs/cutlist/_header-extra.twig' with { 'generatedAt':'000' } %}
+    </div>
+{% endblock %}
+
+{% block headerHeadingInner %}
+    {{ 'tab.cutlist.export.title'|i18next}}<small class="ladb-horizontal-left-separator">{{ ('tab.cutlist.export.option_source_'~(source == 0 ? 'summary' : (source == 1 ? 'cutlist' : 'instances_list')))|i18next }}{# EXPORT_OPTION_SOURCE_SUMMARY, EXPORT_OPTION_SOURCE_CUTLIST #}</small>
+{% endblock %}
+
+{% block headerToolsInner %}
+    <button id="ladb_btn_export" class="btn btn-primary"><i class="ladb-opencutlist-icon-refresh"></i> {{ 'default.export'|i18next }}...</button>
+    <button id="ladb_btn_print" class="btn btn-default"><i class="ladb-opencutlist-icon-print"></i> {{ 'default.print'|i18next }}</button>
+    &nbsp;
+    <button id="ladb_btn_close" class="btn btn-default"><i class="ladb-opencutlist-icon-close"></i> {{ 'default.close'|i18next }}</button>
+{% endblock %}
+
+{% block containerInner %}
+    {{ parent() }}
+    <div class="ladb-page">
+
+        {% include 'core/_alert-errors.twig' with { 'errors':report.errors } %} {# TYPE_SHEET_GOOD, TYPE_DIMENSIONAL, TYPE_EDGE, TYPE_HARDWARE #}
+        {% include 'core/_alert-warnings.twig' with { 'warnings':report.warnings } %}
+
+        <table class="table table-bordered">
+            <thead>
+                <tr class="ladb-cutlist-export-row">
+                    {% for col in rows[0] %}
+                        <th class="ladb-cutlist-export-column">{{ col }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows|slice(1) %}
+                    <tr class="ladb-cutlist-export-row">
+                        {% for col in row %}
+                            <td class="ladb-cutlist-export-column{% if col and col.error %} ladb-invalid-value{% endif %}">{{ col and col.error ? col.error : col }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+{% endblock %}

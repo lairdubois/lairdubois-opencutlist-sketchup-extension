@@ -35,6 +35,7 @@
         this.selectionGroupId = null;
         this.selectionPartIds = [];
         this.lastEditPartTab = null;
+        this.lastExportOptionsTab = null;
         this.lastReportOptionsTab = null;
         this.lastCuttingdiagram1dOptionsTab = null;
         this.lastCuttingdiagram2dOptionsTab = null;
@@ -569,7 +570,7 @@
 
     };
 
-    LadbTabCutlist.prototype.exportCutlist = function () {
+    LadbTabCutlist.prototype.exportCutlist = function (forceDefaultTab) {
         var that = this;
 
         var isGroupSelection = this.generateOptions.hidden_group_ids.length > 0 && this.generateOptions.hidden_group_ids.indexOf('summary') === -1
@@ -581,10 +582,12 @@
             var exportOptions = response.preset;
 
             var $modal = that.appendModalInside('ladb_cutlist_modal_export', 'tabs/cutlist/_modal-export.twig', {
-                isGroupSelection: isGroupSelection
+                isGroupSelection: isGroupSelection,
+                tab: forceDefaultTab || that.lastExportOptionsTab == null ? 'general' : that.lastExportOptionsTab
             });
 
             // Fetch UI elements
+            var $tabs = $('a[data-toggle="tab"]', $modal);
             var $widgetPreset = $('.ladb-widget-preset', $modal);
             var $selectSource = $('#ladb_cutlist_export_select_source', $modal);
             var $selectColSep = $('#ladb_cutlist_export_select_col_sep', $modal);
@@ -593,6 +596,7 @@
             var $editorCutlist = $('#ladb_cutlist_export_editor_cutlist', $modal);
             var $editorInstancesList = $('#ladb_cutlist_export_editor_instances_list', $modal);
             var $btnSetupModelUnits = $('#ladb_btn_setup_model_units', $modal);
+            var $btnPreview = $('#ladb_cutlist_export_btn_preview', $modal);
             var $btnExport = $('#ladb_cutlist_export_btn_export', $modal);
 
             // Define useful functions
@@ -710,6 +714,11 @@
 
             fnFillInputs(exportOptions);
 
+            // Bind tabs
+            $tabs.on('shown.bs.tab', function (e) {
+                that.lastExportOptionsTab = $(e.target).attr('href').substring('#tab_export_options_'.length);
+            });
+
             // Bind select
             $selectSource.on('change', function () {
                 fnComputeSorterVisibility($(this).val());
@@ -720,6 +729,65 @@
                 $(this).blur();
                 that.dialog.executeCommandOnTab('settings', 'highlight_panel', { panel:'model' });
             });
+            $btnPreview.on('click', function () {
+
+                // Fetch options
+                fnFetchOptions(exportOptions);
+
+                // Store options
+                rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_export_options', values: exportOptions });
+
+                rubyCallCommand('cutlist_export', $.extend(exportOptions, { col_defs: exportOptions.coldefs[exportOptions.source], preview: true }, that.generateOptions), function (response) {
+
+                    if (response.errors) {
+                        that.dialog.notifyErrors(response.errors);
+                    }
+                    if (response.rows) {
+                        console.log(response.rows);
+
+                        var $slide = that.pushNewSlide('ladb_cutlist_slide_export', 'tabs/cutlist/_slide-export.twig', $.extend({
+                            errors: response.errors,
+                            filename: that.filename,
+                            modelName: that.modelName,
+                            modelDescription: that.modelDescription,
+                            pageName: that.pageName,
+                            pageDescription: that.pageDescription,
+                            isEntitySelection: that.isEntitySelection,
+                            lengthUnit: that.lengthUnit,
+                            generatedAt: new Date().getTime() / 1000,
+                            rows: response.rows
+                        }, exportOptions), function () {
+
+                        });
+
+                        // Fetch UI elements
+                        var $btnExport = $('#ladb_btn_export', $slide);
+                        var $btnPrint = $('#ladb_btn_print', $slide);
+                        var $btnClose = $('#ladb_btn_close', $slide);
+
+                        // Bind buttons
+                        $btnExport.on('click', function () {
+                            that.exportCutlist();
+                        });
+                        $btnPrint.on('click', function () {
+                            that.print();
+                        });
+                        $btnClose.on('click', function () {
+                            that.popSlide();
+                        });
+                        $('.ladb-btn-setup-model-units', $slide).on('click', function () {
+                            $(this).blur();
+                            that.dialog.executeCommandOnTab('settings', 'highlight_panel', { panel:'model' });
+                        });
+
+                    }
+
+                });
+
+                // Hide modal
+                $modal.modal('hide');
+
+            });
             $btnExport.on('click', function () {
 
                 // Fetch options
@@ -729,8 +797,6 @@
                 rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_export_options', values: exportOptions });
 
                 rubyCallCommand('cutlist_export', $.extend(exportOptions, { col_defs: exportOptions.coldefs[exportOptions.source] }, that.generateOptions), function (response) {
-
-                    var i;
 
                     if (response.errors) {
                         that.dialog.notifyErrors(response.errors);
@@ -778,6 +844,7 @@
             });
 
             // Fetch UI elements
+            var $tabs = $('a[data-toggle="tab"]', $modal);
             var $widgetPreset = $('.ladb-widget-preset', $modal);
             var $inputSolidWoodCoefficient = $('#ladb_input_solid_wood_coefficient', $modal);
             var $btnSetupModelUnits = $('#ladb_btn_setup_model_units', $modal);
@@ -801,6 +868,11 @@
             });
 
             fnFillInputs(reportOptions);
+
+            // Bind tabs
+            $tabs.on('shown.bs.tab', function (e) {
+                that.lastReportOptionsTab = $(e.target).attr('href').substring('#tab_report_options_'.length);
+            });
 
             // Bind buttons
             $btnSetupModelUnits.on('click', function () {
@@ -1524,7 +1596,7 @@
                 // Bind tabs
                 $tabs.on('shown.bs.tab', function (e) {
                     that.lastEditPartTab = $(e.target).attr('href').substring('#tab_edit_part_'.length);
-                })
+                });
 
                 // Bind input
                 $inputInstanceCountByPart.ladbTextinputNumberWithUnit({
@@ -2097,7 +2169,7 @@
                 // Bind tabs
                 $tabs.on('shown.bs.tab', function (e) {
                     that.lastCuttingdiagram1dOptionsTab = $(e.target).attr('href').substring('#tab_cuttingdiagram_options_'.length);
-                })
+                });
 
                 // Bind select
                 $inputStdBar.on('changed.bs.select', function () {
@@ -2406,7 +2478,7 @@
                 // Bind tabs
                 $tabs.on('shown.bs.tab', function (e) {
                     that.lastCuttingdiagram2dOptionsTab = $(e.target).attr('href').substring('#tab_cuttingdiagram_options_'.length);
-                })
+                });
 
                 // Bind select
                 $inputStdSheet.on('changed.bs.select', function () {

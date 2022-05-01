@@ -50,7 +50,7 @@
   background: #c0c;;
 }
 .CodeMirror-hint-variable:before {
-  content: "V";
+  content: "@";
   background: #000;
 }
 

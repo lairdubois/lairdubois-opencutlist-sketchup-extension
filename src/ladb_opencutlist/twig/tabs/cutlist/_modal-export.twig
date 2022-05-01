@@ -7,8 +7,8 @@
     {{ parent() }}
     {% include 'components/_widget-preset.twig' %}
     <ul class="nav nav-tabs nav-justified" role="tablist">
-        <li role="presentation" class="active"><a href="#tab_export_general" role="tab" data-toggle="tab">{{ 'tab.cutlist.export.options'|i18next }}</a></li>
-        <li role="presentation"><a href="#tab_export_customize" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-settings"></i> {{ 'tab.cutlist.export.options_customize'|i18next }}</a></li>
+        <li role="presentation"{% if tab == 'general' %} class="active"{% endif %}><a href="#tab_export_options_general" role="tab" data-toggle="tab">{{ 'tab.cutlist.export.options'|i18next }}</a></li>
+        <li role="presentation"{% if tab == 'customize' %} class="active"{% endif %}><a href="#tab_export_options_customize" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-settings"></i> {{ 'tab.cutlist.export.options_customize'|i18next }}</a></li>
     </ul>
 {% endblock %}
 
@@ -17,7 +17,7 @@
         <div class="alert alert-info text-center">{{ 'tab.cutlist.export.warning.is_group_selection'|i18next }}</div>
     {% endif %}
     <div class="tab-content">
-        <div role="tabpanel" class="tab-pane active" id="tab_export_general">
+        <div role="tabpanel" class="tab-pane{% if tab == 'general' %} active{% endif %}" id="tab_export_options_general">
             <div class="row">
                 <div class="col-xs-push-1 col-xs-10">
                     {{ 'tab.cutlist.export.info_0'|i18next }}
@@ -57,7 +57,7 @@
                 </div>
             </div>
         </div>
-        <div role="tabpanel" class="tab-pane" id="tab_export_customize">
+        <div role="tabpanel" class="tab-pane{% if tab == 'customize' %} active{% endif %}" id="tab_export_options_customize">
             <div class="row">
                 <div class="col-xs-10 col-xs-push-1">
                     <div id="ladb_cutlist_export_editor_summary" class="ladb-editor-export" style="display: none;"></div>
@@ -72,5 +72,6 @@
 {% block footerInner %}
     <button type="button" class="btn btn-default pull-left" id="ladb_btn_setup_model_units"><i class="ladb-opencutlist-icon-settings"></i> {{ 'default.setup_model_units'|i18next }}...</button>
     <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
-    <button type="button" class="btn btn-primary" id="ladb_cutlist_export_btn_export">{{ 'default.export'|i18next }}</button>
+    <button type="button" class="btn btn-default" id="ladb_cutlist_export_btn_preview">{{ 'default.preview'|i18next }}</button>
+    <button type="button" class="btn btn-primary" id="ladb_cutlist_export_btn_export">{{ 'default.export'|i18next }}&nbsp;<i class="ladb-opencutlist-icon-arrow-right"></i>&nbsp;CSV</button>
 {% endblock %}

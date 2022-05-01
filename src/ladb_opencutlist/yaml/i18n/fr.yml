@@ -20,6 +20,7 @@ default:
   export: Exporter
   import: Importer
   load: Charger
+  preview: Aperçu
   options: Options
   caution: Attention
   remove: Supprimer
@@ -442,7 +443,7 @@ tab:
       thickness_short: Ép.
       edges: Chants
     export:
-      title: Exporter au format CSV
+      title: Exportation
       add_column: Ajouter une colonne
       add_native_columns: Ajouter une colonne native
       remove_column: Retirer

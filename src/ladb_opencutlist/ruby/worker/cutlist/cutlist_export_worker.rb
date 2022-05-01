@@ -24,6 +24,7 @@ module Ladb::OpenCutList
       @encoding = settings['encoding']
       @col_defs = settings['col_defs']
       @hidden_group_ids = settings['hidden_group_ids']
+      @preview = settings['preview']
 
       @cutlist = cutlist
 
@@ -39,29 +40,33 @@ module Ladb::OpenCutList
           :export_path => ''
       }
 
-      # Ask for export file path
-      export_path = UI.savepanel(Plugin.instance.get_i18n_string('tab.cutlist.export.title'), @cutlist.dir, File.basename(@cutlist.filename, '.skp') + '.csv')
-      if export_path
+      if @preview
+        response[:rows] = _compute_rows
+      else
 
-        # Force "csv" file extension
-        unless export_path.end_with?('.csv')
-          export_path = export_path + '.csv'
-        end
+        # Ask for export file path
+        export_path = UI.savepanel(Plugin.instance.get_i18n_string('tab.cutlist.export.title'), @cutlist.dir, File.basename(@cutlist.filename, '.skp') + '.csv')
+        if export_path
 
-        begin
+          # Force "csv" file extension
+          unless export_path.end_with?('.csv')
+            export_path = export_path + '.csv'
+          end
 
-          # Convert col_sep
-          case @col_sep
+          begin
+
+            # Convert col_sep
+            case @col_sep
             when EXPORT_OPTION_COL_SEP_COMMA
               col_sep = ','
             when EXPORT_OPTION_COL_SEP_SEMICOLON
               col_sep = ';'
             else
               col_sep = "\t"
-          end
+            end
 
-          # Convert col_sep
-          case @encoding
+            # Convert col_sep
+            case @encoding
             when EXPORT_OPTION_ENCODING_UTF16LE
               bom = "\xFF\xFE".force_encoding('utf-16le')
               encoding = 'UTF-16LE'
@@ -71,147 +76,164 @@ module Ladb::OpenCutList
             else
               bom = "\xEF\xBB\xBF"
               encoding = 'UTF-8'
-          end
+            end
 
-          File.open(export_path, "wb+:#{encoding}") do |f|
-            options = { :col_sep => col_sep }
-            csv_file = CSV.generate(**options) do |csv|
+            # Write ro CSV file
+            File.open(export_path, "wb+:#{encoding}") do |f|
+              options = { :col_sep => col_sep }
+              csv_file = CSV.generate(**options) do |csv|
 
-              case @source
-
-                when EXPORT_OPTION_SOURCE_SUMMARY
-
-                  # Header row
-                  csv << _evaluate_header
-
-                  @cutlist.groups.each { |group|
-                    next if @hidden_group_ids.include? group.id
-
-                    vars = {
-                      :material_type => Plugin.instance.get_i18n_string("tab.materials.type_#{group.material_type}"),
-                      :material_thickness => (group.material_name ? group.material_name : Plugin.instance.get_i18n_string('tab.cutlist.material_undefined')) + (group.material_type > 0 ? ' / ' + group.std_dimension : ''),
-                      :part_count => group.part_count,
-                      :total_cutting_length => group.total_cutting_length.nil? ? '' : _sanitize_value_string(group.total_cutting_length),
-                      :total_cutting_area => group.total_cutting_area.nil? ? '' : _sanitize_value_string(group.total_cutting_area),
-                      :total_cutting_volume => group.total_cutting_volume.nil? ? '' : _sanitize_value_string(group.total_cutting_volume),
-                      :total_final_area => (group.total_final_area.nil? || group.invalid_final_area_part_count > 0) ? '' : _sanitize_value_string(group.total_final_area),
-                    }
-
-                    csv << _evaluate_row(vars)
-                  }
-
-                when EXPORT_OPTION_SOURCE_CUTLIST
-
-                  # Header row
-                  csv << _evaluate_header
-
-                  # Content rows
-                  @cutlist.groups.each { |group|
-                    next if @hidden_group_ids.include? group.id
-                    group.parts.each { |part|
-
-                      no_cutting_dimensions = group.material_type == MaterialAttributes::TYPE_UNKNOWN
-                      no_dimensions = group.material_type == MaterialAttributes::TYPE_HARDWARE
-
-                      vars = {
-                        :number => part.number,
-                        :name => part.name,
-                        :count => part.count,
-                        :cutting_length => no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_length),
-                        :cutting_width => no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_width),
-                        :cutting_thickness => no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_thickness),
-                        :bbox_length => no_dimensions ? '' : _sanitize_value_string(part.length),
-                        :bbox_width => no_dimensions ? '' : _sanitize_value_string(part.width),
-                        :bbox_thickness => no_dimensions ? '' : _sanitize_value_string(part.thickness),
-                        :final_area => no_dimensions ? '' : _sanitize_value_string(part.final_area),
-                        :material_name => group.material_display_name,
-                        :entity_names => part.entity_names.map(&:first).join(','),
-                        :description => part.description,
-                        :tags => part.tags.empty? ? '' : part.tags.join(','),
-                        :edge_ymin => _format_edge_value(part.edge_material_names[:ymin], part.edge_std_dimensions[:ymin]),
-                        :edge_ymax => _format_edge_value(part.edge_material_names[:ymax], part.edge_std_dimensions[:ymax]),
-                        :edge_xmin => _format_edge_value(part.edge_material_names[:xmin], part.edge_std_dimensions[:xmin]),
-                        :edge_xmax => _format_edge_value(part.edge_material_names[:xmax], part.edge_std_dimensions[:xmax]),
-                      }
-
-                      csv << _evaluate_row(vars)
-                    }
-                  }
-
-                when EXPORT_OPTION_SOURCE_INSTANCES_LIST
-
-                  # Header row
-                  csv << _evaluate_header
-
-                  # Content rows
-                  @cutlist.groups.each { |group|
-                    next if @hidden_group_ids.include? group.id
-                    next if group.material_type == MaterialAttributes::TYPE_EDGE    # Edges don't have instances
-                    group.parts.each { |part|
-
-                      no_cutting_dimensions = group.material_type == MaterialAttributes::TYPE_UNKNOWN
-                      no_dimensions = group.material_type == MaterialAttributes::TYPE_UNKNOWN || group.material_type == MaterialAttributes::TYPE_HARDWARE
-
-                      parts = part.is_a?(FolderPart) ? part.children : [ part ]
-                      parts.each { |part|
-
-                        # Ungroup parts
-                        part.def.instance_infos.each { |serialized_path, instance_info|
-
-                          vars = {
-                            :number => part.number,
-                            :path => PathUtils.get_named_path(instance_info.path, false, 1, '/'),
-                            :instance_name => instance_info.entity.name.empty? ? "##{instance_info.entity.entityID}" : instance_info.entity.name,
-                            :definition_name => part.name,
-                            :cutting_length => no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_length),
-                            :cutting_width => no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_width),
-                            :cutting_thickness => no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_thickness),
-                            :bbox_length => no_dimensions ? '' : _sanitize_value_string(part.length),
-                            :bbox_width => no_dimensions ? '' : _sanitize_value_string(part.width),
-                            :bbox_thickness => no_dimensions ? '' : _sanitize_value_string(part.thickness),
-                            :final_area => no_dimensions ? '' : _sanitize_value_string(part.final_area),
-                            :material_name => group.material_display_name,
-                            :description => part.description,
-                            :tags => part.tags.empty? ? '' : part.tags.join(','),
-                            :edge_ymin => _format_edge_value(part.edge_material_names[:ymin], part.edge_std_dimensions[:ymin]),
-                            :edge_ymax => _format_edge_value(part.edge_material_names[:ymax], part.edge_std_dimensions[:ymax]),
-                            :edge_xmin => _format_edge_value(part.edge_material_names[:xmin], part.edge_std_dimensions[:xmin]),
-                            :edge_xmax => _format_edge_value(part.edge_material_names[:xmax], part.edge_std_dimensions[:xmax]),
-                          }
-
-                          csv << _evaluate_row(vars)
-                        }
-
-                      }
-
-                    }
-                  }
+                _compute_rows.each { |row|
+                  csv << row
+                }
 
               end
 
+              # Write file
+              f.write(bom)
+              f.write(csv_file)
+
+              # Populate response
+              response[:export_path] = export_path.tr("\\", '/')  # Standardize path by replacing \ by /
+
             end
 
-            # Write file
-            f.write(bom)
-            f.write(csv_file)
-
-            # Populate response
-            response[:export_path] = export_path.tr("\\", '/')  # Standardize path by replacing \ by /
-
+          rescue => e
+            puts e.message
+            puts e.backtrace
+            response[:errors] << [ 'tab.cutlist.error.failed_to_write_export_file', { :error => e.message } ]
           end
 
-        rescue => e
-          puts e.message
-          puts e.backtrace
-          response[:errors] << [ 'tab.cutlist.error.failed_to_write_export_file', { :error => e.message } ]
         end
 
       end
-
       response
     end
 
     # -----
+
+    def _compute_rows
+
+      Dentaku.calculator.add_function(:to_f, :numeric, ->(value) { value.to_f })
+
+      # Generate rows
+      rows = []
+      case @source
+
+      when EXPORT_OPTION_SOURCE_SUMMARY
+
+        # Header row
+        rows << _evaluate_header
+
+        @cutlist.groups.each { |group|
+          next if @hidden_group_ids.include? group.id
+
+          data = SummaryExportRowData.new(
+            Plugin.instance.get_i18n_string("tab.materials.type_#{group.material_type}"),
+            (group.material_name ? group.material_name : Plugin.instance.get_i18n_string('tab.cutlist.material_undefined')) + (group.material_type > 0 ? ' / ' + group.std_dimension : ''),
+            group.part_count,
+            group.total_cutting_length.nil? ? '' : _sanitize_value_string(group.total_cutting_length),
+            group.total_cutting_area.nil? ? '' : _sanitize_value_string(group.total_cutting_area),
+            group.total_cutting_volume.nil? ? '' : _sanitize_value_string(group.total_cutting_volume),
+            (group.total_final_area.nil? || group.invalid_final_area_part_count > 0) ? '' : _sanitize_value_string(group.total_final_area),
+          )
+
+          rows << _evaluate_row(data)
+        }
+
+      when EXPORT_OPTION_SOURCE_CUTLIST
+
+        # Header row
+        rows << _evaluate_header
+
+        # Content rows
+        @cutlist.groups.each { |group|
+          next if @hidden_group_ids.include? group.id
+          group.parts.each { |part|
+
+            no_cutting_dimensions = group.material_type == MaterialAttributes::TYPE_UNKNOWN
+            no_dimensions = group.material_type == MaterialAttributes::TYPE_HARDWARE
+
+            data = CutlistExportRowData.new(
+              part.number,
+              part.name,
+              part.count,
+              no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_length),
+              no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_width),
+              no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_thickness),
+              no_dimensions ? '' : _sanitize_value_string(part.length),
+              no_dimensions ? '' : _sanitize_value_string(part.width),
+              no_dimensions ? '' : _sanitize_value_string(part.thickness),
+              no_dimensions ? '' : _sanitize_value_string(part.final_area),
+              group.material_display_name,
+              part.entity_names.map(&:first).join(','),
+              part.description,
+              part.tags.empty? ? '' : part.tags.join(','),
+              _format_edge_value(part.edge_material_names[:ymin], part.edge_std_dimensions[:ymin]),
+              _format_edge_value(part.edge_material_names[:ymax], part.edge_std_dimensions[:ymax]),
+              _format_edge_value(part.edge_material_names[:xmin], part.edge_std_dimensions[:xmin]),
+              _format_edge_value(part.edge_material_names[:xmax], part.edge_std_dimensions[:xmax]),
+            )
+
+            rows << _evaluate_row(data)
+          }
+        }
+
+      when EXPORT_OPTION_SOURCE_INSTANCES_LIST
+
+        # Header row
+        rows << _evaluate_header
+
+        # Content rows
+        @cutlist.groups.each { |group|
+          next if @hidden_group_ids.include? group.id
+          next if group.material_type == MaterialAttributes::TYPE_EDGE    # Edges don't have instances
+          group.parts.each { |part|
+
+            no_cutting_dimensions = group.material_type == MaterialAttributes::TYPE_UNKNOWN
+            no_dimensions = group.material_type == MaterialAttributes::TYPE_UNKNOWN || group.material_type == MaterialAttributes::TYPE_HARDWARE
+
+            parts = part.is_a?(FolderPart) ? part.children : [ part ]
+            parts.each { |part|
+
+              # Ungroup parts
+              part.def.instance_infos.each { |serialized_path, instance_info|
+
+                data = InstancesListExportRowData.new(
+                  part.number,
+                  PathUtils.get_named_path(instance_info.path, false, 1, '/'),
+                  instance_info.entity.name.empty? ? "##{instance_info.entity.entityID}" : instance_info.entity.name,
+                  part.name,
+                  part.count,
+                  no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_length),
+                  no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_width),
+                  no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_thickness),
+                  no_dimensions ? '' : _sanitize_value_string(part.length),
+                  no_dimensions ? '' : _sanitize_value_string(part.width),
+                  no_dimensions ? '' : _sanitize_value_string(part.thickness),
+                  no_dimensions ? '' : _sanitize_value_string(part.final_area),
+                  group.material_display_name,
+                  part.entity_names.map(&:first).join(','),
+                  part.description,
+                  part.tags.empty? ? '' : part.tags.join(','),
+                  _format_edge_value(part.edge_material_names[:ymin], part.edge_std_dimensions[:ymin]),
+                  _format_edge_value(part.edge_material_names[:ymax], part.edge_std_dimensions[:ymax]),
+                  _format_edge_value(part.edge_material_names[:xmin], part.edge_std_dimensions[:xmin]),
+                  _format_edge_value(part.edge_material_names[:xmax], part.edge_std_dimensions[:xmax]),
+                )
+
+                rows << _evaluate_row(data)
+              }
+
+            }
+
+          }
+        }
+
+      end
+
+      rows
+    end
 
     def _sanitize_value_string(value)
       value.gsub(/^~ /, '') unless value.nil?
@@ -240,24 +262,147 @@ module Ladb::OpenCutList
       header
     end
 
-    def _evaluate_row(vars)
+    def _evaluate_row(data)
       row = []
       @col_defs.each { |col_def|
         unless col_def['hidden']
           if col_def['formula'].nil? || col_def['formula'].empty?
-            formula = col_def['name']
+            formula = '@' + col_def['name']
           else
             formula = col_def['formula']
           end
           begin
-            value = Dentaku.calculator.evaluate!(formula, vars)
-          rescue => e
-            value = "!#{e.message}"
+            # value = Dentaku.calculator.evaluate(formula, vars)
+            value = eval(formula, data.get_binding)
+          rescue Exception => e
+            value = { :error => e.message }
           end
           row.push(value)
         end
       }
       row
+    end
+
+  end
+
+  class ExportRowData
+
+    def get_binding
+      binding
+    end
+
+  end
+
+  class SummaryExportRowData < ExportRowData
+
+    def initialize(
+      material_type,
+      material_thickness,
+      part_count,
+      total_cutting_length,
+      total_cutting_area,
+      total_cutting_volume,
+      total_final_area
+    )
+      @material_type = material_type
+      @material_thickness = material_thickness
+      @part_count = part_count
+      @total_cutting_length = total_cutting_length
+      @total_cutting_area = total_cutting_area
+      @total_cutting_volume = total_cutting_volume
+      @total_final_area = total_final_area
+    end
+
+  end
+
+  class CutlistExportRowData < ExportRowData
+
+    def initialize(
+      number,
+      name,
+      count,
+      cutting_length,
+      cutting_width,
+      cutting_thickness,
+      bbox_length,
+      bbox_width,
+      bbox_thickness,
+      final_area,
+      material_name,
+      entity_names,
+      description,
+      tags,
+      edge_ymin,
+      edge_ymax,
+      edge_xmin,
+      edge_xmax
+    )
+      @number = number
+      @name = name
+      @count = count
+      @cutting_length = cutting_length
+      @cutting_width = cutting_width
+      @cutting_thickness = cutting_thickness
+      @bbox_length = bbox_length
+      @bbox_width = bbox_width
+      @bbox_thickness = bbox_thickness
+      @final_area = final_area
+      @material_name = material_name
+      @entity_names = entity_names
+      @description = description
+      @tags = tags
+      @edge_ymin = edge_ymin
+      @edge_ymax = edge_ymax
+      @edge_xmin = edge_xmin
+      @edge_xmax = edge_xmax
+    end
+
+  end
+
+  class InstancesListExportRowData < ExportRowData
+
+    def initialize(
+      number,
+      path,
+      instance_name,
+      definition_name,
+      count,
+      cutting_length,
+      cutting_width,
+      cutting_thickness,
+      bbox_length,
+      bbox_width,
+      bbox_thickness,
+      final_area,
+      material_name,
+      entity_names,
+      description,
+      tags,
+      edge_ymin,
+      edge_ymax,
+      edge_xmin,
+      edge_xmax
+    )
+      @number = number
+      @path = path
+      @instance_name = instance_name
+      @definition_name = definition_name
+      @count = count
+      @cutting_length = cutting_length
+      @cutting_width = cutting_width
+      @cutting_thickness = cutting_thickness
+      @bbox_length = bbox_length
+      @bbox_width = bbox_width
+      @bbox_thickness = bbox_thickness
+      @final_area = final_area
+      @material_name = material_name
+      @entity_names = entity_names
+      @description = description
+      @tags = tags
+      @edge_ymin = edge_ymin
+      @edge_ymax = edge_ymax
+      @edge_xmin = edge_xmin
+      @edge_xmax = edge_xmax
     end
 
   end

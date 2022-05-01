@@ -14,110 +14,7 @@
 
     LadbTextinputFormula.DEFAULTS = {
         resetValue: '',
-        keywordDefs: [
-
-            // Logic
-            {
-                text: 'IF',
-                displayText: 'IF(a,1,0)',
-            },
-            {
-                text: 'AND',
-                displayText: 'AND(a,b)',
-            },
-            {
-                text: 'OR',
-                displayText: 'OR(a,b)',
-            },
-            {
-                text: 'XOR',
-                displayText: 'XOR(a,b)',
-            },
-            {
-                text: 'NOT',
-                displayText: 'NOT(a)',
-            },
-
-            // Selections
-            {
-                text: 'CASE',
-                displayText: 'CASE ... WHEN .. THEN ... ELSE ... END',
-            },
-            {
-                text: 'WHEN',
-                displayText: 'WHEN ... ',
-            },
-            {
-                text: 'THEN',
-                displayText: 'THEN ... ',
-            },
-            {
-                text: 'ELSE',
-                displayText: 'ELSE ...',
-            },
-            {
-                text: 'END',
-                displayText: 'END',
-            },
-
-            // String
-            {
-                text: 'LEFT',
-                displayText: 'LEFT(s,1)',
-            },
-            {
-                text: 'RIGHT',
-                displayText: 'RIGHT(s,1)',
-            },
-            {
-                text: 'MID',
-                displayText: 'MID()',
-            },
-            {
-                text: 'LEN',
-                displayText: 'LEN(s)',
-            },
-            {
-                text: 'FIND',
-                displayText: 'FIND()',
-            },
-            {
-                text: 'SUBSTITUTE',
-                displayText: 'SUBSTITUTE()',
-            },
-            {
-                text: 'CONCAT',
-                displayText: 'CONCAT()',
-            },
-            {
-                text: 'CONTAINS',
-                displayText: 'CONTAINS()',
-            },
-
-            // Collection
-            {
-                text: 'MAP',
-                displayText: 'MAP()',
-            },
-            {
-                text: 'FILTER',
-                displayText: 'FILTER()',
-            },
-            {
-                text: 'ALL',
-                displayText: 'ALL()',
-            },
-            {
-                text: 'ANY',
-                displayText: 'ANY()',
-            },
-            {
-                text: 'PLUCK',
-                displayText: 'PLUCK()',
-            },
-
-
-        ],
+        keywordDefs: [],
         variableDefs: []
     };
 
@@ -183,19 +80,18 @@
                 // Regenerate line marks
                 let tokens = cm.getLineTokens(lineNumber);
                 for (let token of tokens) {
-                    if (token.type === 'variable') {
-
+                    if (token.type === 'variable-2') {
                         let displayText = null;
                         for (let variableDef of that.options.variableDefs) {
-                            if (token.string === variableDef.text) {
+                            if (token.string === ('@' + variableDef.text)) {
                                 displayText = variableDef.displayText;
                                 break;
                             }
                         }
                         if (displayText) {
                             cm.markText(
-                                {line: lineNumber, ch: token.start},
-                                {line: lineNumber, ch: token.end},
+                                { line: lineNumber, ch: token.start },
+                                { line: lineNumber, ch: token.end },
                                 {
                                     atomic: true,
                                     replacedWith: $('<span class="cm-variable">' + displayText + '</span>').get(0),
@@ -212,7 +108,7 @@
 
         /////
 
-        CodeMirror.registerHelper('hint', 'dentaku', function(cm) {
+        CodeMirror.registerHelper('hint', 'opencutlist', function(cm) {
             var cur = cm.getCursor();
             var curLine = cm.getLine(cur.line);
             var start = cur.ch;
@@ -231,41 +127,42 @@
         });
 
         CodeMirror.commands.autocomplete = function (cm) {
-            CodeMirror.showHint(cm, CodeMirror.hint.dentaku);
+            CodeMirror.showHint(cm, CodeMirror.hint.opencutlist);
         };
 
-        CodeMirror.defineSimpleMode("dentaku", {
-            // The start state contains the rules that are initially used
-            start: [
-                // The regex matches the token, the token property contains the type
-                { regex: /"(?:[^\\]|\\.)*?(?:"|$)/, token: "string" },
-                // Rules are matched in the order in which they appear, so there is
-                // no ambiguity between this one and the one above
-                { regex: new RegExp('(?:' + keywords.join('|') + ')\\b', 'i'), token: "keyword" },
-                { regex: /true|false/, token: "atom" },
-                { regex: /0x[a-f\d]+|[-+]?(?:\.\d+|\d+\.?\d*)(?:e[-+]?\d+)?/i,  token: "number" },
-                // A next property will cause the mode to move to a different state
-                { regex: /\/\*/, token: "comment", next: "comment"},
-                { regex: /[-+\/*=<>!]+/, token: "operator" },
-                { regex: new RegExp('(?:' + variables.join('|') + ')\\b', 'i'), token: "variable" },
-            ],
-            // The multi-line comment state.
-            comment: [
-                { regex: /.*?\*\//, token: "comment", next: "start" },
-                { regex: /.*/, token: "comment"}
-            ],
-            // The meta property contains global information about the mode. It
-            // can contain properties like lineComment, which are supported by
-            // all modes, and also directives like dontIndentStates, which are
-            // specific to simple modes.
-            meta: {
-                dontIndentStates: ["comment"]
-            }
-        });
+        // CodeMirror.defineSimpleMode("dentaku", {
+        //     // The start state contains the rules that are initially used
+        //     start: [
+        //         // The regex matches the token, the token property contains the type
+        //         { regex: /"(?:[^\\]|\\.)*?(?:"|$)/, token: "string" },
+        //         // Rules are matched in the order in which they appear, so there is
+        //         // no ambiguity between this one and the one above
+        //         { regex: new RegExp('(?:' + keywords.join('|') + ')\\b', 'i'), token: "keyword" },
+        //         { regex: /true|false/, token: "atom" },
+        //         { regex: /0x[a-f\d]+|[-+]?(?:\.\d+|\d+\.?\d*)(?:e[-+]?\d+)?/i,  token: "number" },
+        //         // A next property will cause the mode to move to a different state
+        //         { regex: /\/\*/, token: "comment", next: "comment"},
+        //         { regex: /[-+\/*=<>!]+/, token: "operator" },
+        //         { regex: new RegExp('(?:' + variables.join('|') + ')\\b', 'i'), token: "variable" },
+        //     ],
+        //     // The multi-line comment state.
+        //     comment: [
+        //         { regex: /.*?\*\//, token: "comment", next: "start" },
+        //         { regex: /.*/, token: "comment"}
+        //     ],
+        //     // The meta property contains global information about the mode. It
+        //     // can contain properties like lineComment, which are supported by
+        //     // all modes, and also directives like dontIndentStates, which are
+        //     // specific to simple modes.
+        //     meta: {
+        //         dontIndentStates: ["comment"]
+        //     }
+        // });
 
         this.cm = CodeMirror.fromTextArea(this.$element.get(0), {
-            mode: 'dentaku',
+            mode: 'ruby',
             indentUnit: 2,
+            tabSize: 2,
             lineWrapping: true,
             lineNumbers: false,
             autoRefresh: true,
@@ -276,6 +173,11 @@
             },
         });
         this.cm.on('change', function (cm, change) {
+
+            // Try to autocomplete if inserted char is @
+            if (change.text[0] === '@') {
+                CodeMirror.showHint(cm, CodeMirror.hint.opencutlist);
+            }
 
             fnRefreshVariableMarks(cm, change.from, change.to);
 

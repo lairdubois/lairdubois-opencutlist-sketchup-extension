@@ -977,6 +977,9 @@
                 Twig.extendFilter('sanitize_links', function (value, options) {
                     return value.replace(/<a\s+(?:[^>]*?\s+)?href=(["'])(.*?)\1>/g, '<a href="$2" target="_blank">');
                 });
+                Twig.extendFilter('type_of', function (value) {
+                    return typeof value;
+                });
 
                 // Check if JS build number corresponds to Ruby build number
                 if (EXTENSION_BUILD !== that.capabilities.build) {
