@@ -3,7 +3,7 @@
     "source": 1,    /* EXPORT_OPTION_SOURCE_CUTLIST */
     "col_sep": 2,   /* EXPORT_OPTION_COL_SEP_SEMICOLON */
     "encoding": 0,  /* EXPORT_OPTION_ENCODING_UTF8 */
-    "source_coldefs": {
+    "source_col_defs": {
       "0": [ /* EXPORT_OPTION_SOURCE_SUMMARY */
         {
           "name": "material_type",

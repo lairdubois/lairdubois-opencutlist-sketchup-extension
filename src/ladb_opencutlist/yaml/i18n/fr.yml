@@ -743,7 +743,7 @@ tab:
         group_std_dimension: Dimension standard
         filename: Nom du fichier
         model_name: Nom du modèle
-        page_label: Nom de la scène
+        page_name: Nom de la scène  # TODO : Key renamed
         length_unit: Unité
         generated_at: Date et heure
       error:

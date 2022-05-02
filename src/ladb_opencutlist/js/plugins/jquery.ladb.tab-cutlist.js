@@ -625,21 +625,21 @@
                 options.col_sep = parseInt($selectColSep.val());
                 options.encoding = parseInt($selectEncoding.val());
 
-                if (options.source_coldefs == null) {
-                    options.source_coldefs = [];
+                if (options.source_col_defs == null) {
+                    options.source_col_defs = [];
                 }
-                options.source_coldefs[0] = $editorSummary.ladbEditorExport('getColdefs');
-                options.source_coldefs[1] = $editorCutlist.ladbEditorExport('getColdefs');
-                options.source_coldefs[2] = $editorInstancesList.ladbEditorExport('getColdefs');
+                options.source_col_defs[0] = $editorSummary.ladbEditorExport('getColDefs');
+                options.source_col_defs[1] = $editorCutlist.ladbEditorExport('getColDefs');
+                options.source_col_defs[2] = $editorInstancesList.ladbEditorExport('getColDefs');
 
             }
             var fnFillInputs = function (options) {
                 $selectSource.selectpicker('val', options.source);
                 $selectColSep.selectpicker('val', options.col_sep);
                 $selectEncoding.selectpicker('val', options.encoding);
-                $editorSummary.ladbEditorExport('setColdefs', [ options.source_coldefs[0] ])
-                $editorCutlist.ladbEditorExport('setColdefs', [ options.source_coldefs[1] ])
-                $editorInstancesList.ladbEditorExport('setColdefs', [ options.source_coldefs[2] ])
+                $editorSummary.ladbEditorExport('setColDefs', [ options.source_col_defs[0] ])
+                $editorCutlist.ladbEditorExport('setColDefs', [ options.source_col_defs[1] ])
+                $editorInstancesList.ladbEditorExport('setColDefs', [ options.source_col_defs[2] ])
                 fnComputeSorterVisibility(options.source);
             }
 
@@ -736,7 +736,7 @@
                 // Store options
                 rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_export_options', values: exportOptions });
 
-                rubyCallCommand('cutlist_export', $.extend(exportOptions, { col_defs: exportOptions.source_coldefs[exportOptions.source], target: 'table' }, that.generateOptions), function (response) {
+                rubyCallCommand('cutlist_export', $.extend(exportOptions, { col_defs: exportOptions.source_col_defs[exportOptions.source], target: 'table' }, that.generateOptions), function (response) {
 
                     if (response.errors) {
                         that.dialog.notifyErrors(response.errors);
@@ -794,7 +794,7 @@
                 // Store options
                 rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_export_options', values: exportOptions });
 
-                rubyCallCommand('cutlist_export', $.extend(exportOptions, { col_defs: exportOptions.source_coldefs[exportOptions.source], target: 'csv' }, that.generateOptions), function (response) {
+                rubyCallCommand('cutlist_export', $.extend(exportOptions, { col_defs: exportOptions.source_col_defs[exportOptions.source], target: 'csv' }, that.generateOptions), function (response) {
 
                     if (response.errors) {
                         that.dialog.notifyErrors(response.errors);

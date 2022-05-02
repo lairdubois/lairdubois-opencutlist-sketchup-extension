@@ -562,11 +562,8 @@
             this._$modal.modal('hide');
         }
 
-        // Render modal
-        this.$element.append(Twig.twig({ref: twigFile}).render(renderParams));
-
-        // Fetch UI elements
-        this._$modal = $('#' + id, this.$element);
+        // Create modal element
+        this._$modal = $(Twig.twig({ref: twigFile}).render(renderParams));
 
         // Bind modal
         this._$modal.on('hidden.bs.modal', function () {
@@ -575,6 +572,9 @@
                 .remove();
             that._$modal = null;
         });
+
+        // Append modal
+        this.$element.append(this._$modal);
 
         return this._$modal;
     };

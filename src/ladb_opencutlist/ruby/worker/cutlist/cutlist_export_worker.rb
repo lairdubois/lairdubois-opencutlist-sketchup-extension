@@ -23,8 +23,8 @@ module Ladb::OpenCutList
       @col_sep = settings['col_sep']
       @encoding = settings['encoding']
       @col_defs = settings['col_defs']
-      @hidden_group_ids = settings['hidden_group_ids']
       @target = settings['target']
+      @hidden_group_ids = settings['hidden_group_ids']
 
       @cutlist = cutlist
 
@@ -109,6 +109,8 @@ module Ladb::OpenCutList
 
         end
 
+      else
+        response[:error] = 'Unknow target'
       end
       response
     end
@@ -116,8 +118,6 @@ module Ladb::OpenCutList
     # -----
 
     def _compute_rows
-
-      Dentaku.calculator.add_function(:to_f, :numeric, ->(value) { value.to_f })
 
       # Generate rows
       rows = []
@@ -274,7 +274,6 @@ module Ladb::OpenCutList
             formula = col_def['formula']
           end
           begin
-            # value = Dentaku.calculator.evaluate(formula, vars)
             value = eval(formula, data.get_binding)
           rescue Exception => e
             value = { :error => e.message }

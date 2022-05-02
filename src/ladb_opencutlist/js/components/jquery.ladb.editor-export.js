@@ -19,7 +19,7 @@
         variables: []
     };
 
-    LadbEditorExport.prototype.setColdefs = function (coldefs) {
+    LadbEditorExport.prototype.setColDefs = function (colDefs) {
         var that = this;
 
         // Cancel editing
@@ -27,10 +27,10 @@
 
         // Populate rows
         this.$sortable.empty();
-        $.each(coldefs, function (index, coldef) {
+        $.each(colDefs, function (index, colDef) {
 
             // Append column
-            that.appendColumnItem(coldef.name, coldef.header, coldef.formula, coldef.align, coldef.hidden);
+            that.appendColumnItem(false, colDef.name, colDef.header, colDef.formula, colDef.align, colDef.hidden);
 
         });
 
@@ -39,21 +39,21 @@
 
     };
 
-    LadbEditorExport.prototype.getColdefs = function () {
-        var coldefs = [];
+    LadbEditorExport.prototype.getColDefs = function () {
+        var colDefs = [];
         this.$sortable.children('li').each(function () {
-            coldefs.push({
+            colDefs.push({
                 name: $(this).data('name'),
                 header: $(this).data('header'),
                 formula: $(this).data('formula'),
                 align: $(this).data('align'),
-                hidden: typeof $(this).data('hidden') == 'boolean' ? $(this).data('hidden') : false
+                hidden: $(this).data('hidden')
             });
         });
-        return coldefs;
+        return colDefs;
     };
 
-    LadbEditorExport.prototype.appendColumnItem = function (name, header, formula, align, hidden) {
+    LadbEditorExport.prototype.appendColumnItem = function (appendAfterEditingItem, name, header, formula, align, hidden) {
         var that = this;
 
         // Create and append row
@@ -64,7 +64,11 @@
             align: align || 'left',
             hidden: hidden || false
         }));
-        this.$sortable.append($item);
+        if (appendAfterEditingItem && this.$editingItem) {
+            this.$editingItem.after($item);
+        } else {
+            this.$sortable.append($item);
+        }
 
         // Bind row
         $item.on('click', function () {
@@ -203,9 +207,9 @@
     LadbEditorExport.prototype.removeColumn = function ($item) {
 
         // Retrieve sibling item if possible
-        var $siblingItem = $item.prev();
+        var $siblingItem = $item.next();
         if ($siblingItem.length === 0) {
-            $siblingItem = $item.next();
+            $siblingItem = $item.prev();
             if ($siblingItem.length === 0) {
                 $siblingItem = null;
             }
@@ -222,13 +226,13 @@
     LadbEditorExport.prototype.addColumn = function (name) {
 
         // Create and append item
-        var $item = this.appendColumnItem(name);
+        var $item = this.appendColumnItem(true, name);
 
         // Edit column
         this.editColumn($item);
 
         // Scroll sortable to bottom
-        this.$sortable.animate({ scrollTop: this.$sortable.get(0).scrollHeight }, 200);
+        this.$sortable.animate({ scrollTop: this.$sortable.scrollTop() + $item.position().top - this.$sortable.position().top }, 200);
 
     };
 

@@ -239,11 +239,8 @@ LadbAbstractTab.prototype.appendModalInside = function (id, twigFile, renderPara
         this._$modal.modal('hide');
     }
 
-    // Render modal
-    this.$element.append(Twig.twig({ref: twigFile}).render(renderParams));
-
-    // Fetch UI elements
-    this._$modal = $('#' + id, this.$element);
+    // Create modal element
+    this._$modal = $(Twig.twig({ref: twigFile}).render(renderParams));
 
     // Add modal extra classes
     this._$modal.addClass('modal-inside');
@@ -262,6 +259,9 @@ LadbAbstractTab.prototype.appendModalInside = function (id, twigFile, renderPara
             .remove();
         that.$element.removeClass('modal-open');
     });
+
+    // Append modal
+    this.$element.append(this._$modal);
 
     return this._$modal;
 };

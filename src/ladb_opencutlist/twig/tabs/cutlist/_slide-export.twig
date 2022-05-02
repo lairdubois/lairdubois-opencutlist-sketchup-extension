@@ -41,8 +41,8 @@
                 {% for row in rows|slice(1) %}
                     <tr class="ladb-cutlist-export-row">
                         {% for col in row %}
-                            {% set coldef = source_coldefs[source][loop.index0] %}
-                            <td class="ladb-cutlist-export-column{% if col and col.error %} ladb-invalid-value{% endif %}{% if coldef.align == 'center' %} text-center{% elseif coldef.align == 'right' %} text-right{% endif %}">{{ col and col.error ? col.error : col }}</td>
+                            {% set colDef = source_col_defs[source][loop.index0] %}
+                            <td class="ladb-cutlist-export-column{% if col and col.error %} ladb-invalid-value{% endif %}{% if colDef.align == 'center' %} text-center{% elseif colDef.align == 'right' %} text-right{% endif %}">{{ col and col.error ? col.error : col }}</td>
                         {% endfor %}
                     </tr>
                 {% endfor %}
