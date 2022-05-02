@@ -2,6 +2,7 @@ module Ladb::OpenCutList
 
   require 'csv'
   require_relative '../../model/attributes/material_attributes'
+  require_relative '../../model/export/wrappers'
   require_relative '../../lib/dentaku'
 
   class CutlistExportWorker
@@ -132,13 +133,13 @@ module Ladb::OpenCutList
           next if @hidden_group_ids.include? group.id
 
           data = SummaryExportRowData.new(
-            Plugin.instance.get_i18n_string("tab.materials.type_#{group.material_type}"),
-            (group.material_name ? group.material_name : Plugin.instance.get_i18n_string('tab.cutlist.material_undefined')) + (group.material_type > 0 ? ' / ' + group.std_dimension : ''),
-            group.part_count,
-            group.total_cutting_length.nil? ? '' : _sanitize_value_string(group.total_cutting_length),
-            group.total_cutting_area.nil? ? '' : _sanitize_value_string(group.total_cutting_area),
-            group.total_cutting_volume.nil? ? '' : _sanitize_value_string(group.total_cutting_volume),
-            (group.total_final_area.nil? || group.invalid_final_area_part_count > 0) ? '' : _sanitize_value_string(group.total_final_area),
+            StringWrapper.new(Plugin.instance.get_i18n_string("tab.materials.type_#{group.material_type}")),
+            StringWrapper.new((group.material_name ? group.material_name : Plugin.instance.get_i18n_string('tab.cutlist.material_undefined')) + (group.material_type > 0 ? ' / ' + group.std_dimension : '')),
+            IntegerWrapper.new(group.part_count),
+            LengthWrapper.new(group.total_cutting_length),
+            AreaWrapper.new(group.total_cutting_area),
+            VolumeWrapper.new(group.total_cutting_volume),
+            AreaWrapper.new((group.total_final_area.nil? || group.invalid_final_area_part_count > 0) ? 0 : group.total_final_area)
           )
 
           rows << _evaluate_row(data)
@@ -158,24 +159,24 @@ module Ladb::OpenCutList
             no_dimensions = group.material_type == MaterialAttributes::TYPE_HARDWARE
 
             data = CutlistExportRowData.new(
-              part.number,
-              part.name,
-              part.count,
-              no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_length),
-              no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_width),
-              no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_thickness),
-              no_dimensions ? '' : _sanitize_value_string(part.length),
-              no_dimensions ? '' : _sanitize_value_string(part.width),
-              no_dimensions ? '' : _sanitize_value_string(part.thickness),
-              no_dimensions ? '' : _sanitize_value_string(part.final_area),
-              group.material_display_name,
-              part.entity_names.map(&:first).join(','),
-              part.description,
-              part.tags.empty? ? '' : part.tags.join(','),
-              _format_edge_value(part.edge_material_names[:ymin], part.edge_std_dimensions[:ymin]),
-              _format_edge_value(part.edge_material_names[:ymax], part.edge_std_dimensions[:ymax]),
-              _format_edge_value(part.edge_material_names[:xmin], part.edge_std_dimensions[:xmin]),
-              _format_edge_value(part.edge_material_names[:xmax], part.edge_std_dimensions[:xmax]),
+              StringWrapper.new(part.number),
+              StringWrapper.new(part.name),
+              IntegerWrapper.new(part.count),
+              LengthWrapper.new(part.def.cutting_size.length),
+              LengthWrapper.new(part.def.cutting_size.width),
+              LengthWrapper.new(part.def.cutting_size.thickness),
+              LengthWrapper.new(part.def.size.length),
+              LengthWrapper.new(part.def.size.width),
+              LengthWrapper.new(part.def.size.thickness),
+              AreaWrapper.new(part.final_area),
+              StringWrapper.new(group.material_display_name),
+              ArrayWrapper.new(part.entity_names.map(&:first)),
+              StringWrapper.new(part.description),
+              ArrayWrapper.new(part.tags),
+              EdgeWrapper.new(part.edge_material_names[:ymin], part.edge_std_dimensions[:ymin]),
+              EdgeWrapper.new(part.edge_material_names[:ymax], part.edge_std_dimensions[:ymax]),
+              EdgeWrapper.new(part.edge_material_names[:xmin], part.edge_std_dimensions[:xmin]),
+              EdgeWrapper.new(part.edge_material_names[:xmax], part.edge_std_dimensions[:xmax])
             )
 
             rows << _evaluate_row(data)
@@ -203,25 +204,25 @@ module Ladb::OpenCutList
               part.def.instance_infos.each { |serialized_path, instance_info|
 
                 data = InstancesListExportRowData.new(
-                  part.number,
-                  PathUtils.get_named_path(instance_info.path, false, 1, '/'),
-                  instance_info.entity.name.empty? ? "##{instance_info.entity.entityID}" : instance_info.entity.name,
-                  part.name,
-                  part.count,
-                  no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_length),
-                  no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_width),
-                  no_cutting_dimensions ? '' : _sanitize_value_string(part.cutting_thickness),
-                  no_dimensions ? '' : _sanitize_value_string(part.length),
-                  no_dimensions ? '' : _sanitize_value_string(part.width),
-                  no_dimensions ? '' : _sanitize_value_string(part.thickness),
-                  no_dimensions ? '' : _sanitize_value_string(part.final_area),
-                  group.material_display_name,
-                  part.description,
-                  part.tags.empty? ? '' : part.tags.join(','),
-                  _format_edge_value(part.edge_material_names[:ymin], part.edge_std_dimensions[:ymin]),
-                  _format_edge_value(part.edge_material_names[:ymax], part.edge_std_dimensions[:ymax]),
-                  _format_edge_value(part.edge_material_names[:xmin], part.edge_std_dimensions[:xmin]),
-                  _format_edge_value(part.edge_material_names[:xmax], part.edge_std_dimensions[:xmax]),
+                  StringWrapper.new(part.number),
+                  StringWrapper.new(PathUtils.get_named_path(instance_info.path, false, 1, '/')),
+                  StringWrapper.new(instance_info.entity.name.empty? ? "##{instance_info.entity.entityID}" : instance_info.entity.name),
+                  StringWrapper.new(part.name),
+                  IntegerWrapper.new(part.count),
+                  LengthWrapper.new(part.def.cutting_size.length),
+                  LengthWrapper.new(part.def.cutting_size.width),
+                  LengthWrapper.new(part.def.cutting_size.thickness),
+                  LengthWrapper.new(part.def.size.length),
+                  LengthWrapper.new(part.def.size.width),
+                  LengthWrapper.new(part.def.size.thickness),
+                  AreaWrapper.new(part.final_area),
+                  StringWrapper.new(group.material_display_name),
+                  StringWrapper.new(part.description),
+                  ArrayWrapper.new(part.tags),
+                  EdgeWrapper.new(part.edge_material_names[:ymin], part.edge_std_dimensions[:ymin]),
+                  EdgeWrapper.new(part.edge_material_names[:ymax], part.edge_std_dimensions[:ymax]),
+                  EdgeWrapper.new(part.edge_material_names[:xmin], part.edge_std_dimensions[:xmin]),
+                  EdgeWrapper.new(part.edge_material_names[:xmax], part.edge_std_dimensions[:xmax])
                 )
 
                 rows << _evaluate_row(data)
@@ -275,6 +276,7 @@ module Ladb::OpenCutList
           end
           begin
             value = eval(formula, data.get_binding)
+            value = value.export if value.is_a?(Wrapper)
           rescue Exception => e
             value = { :error => e.message }
           end

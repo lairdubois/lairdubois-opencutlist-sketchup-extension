@@ -19,6 +19,10 @@
         this.cm.refresh();
     };
 
+    LadbTextinputCode.prototype.createLeftToolsContainer = function ($toolContainer) {
+        // Do not create left tools container
+    };
+
     LadbTextinputCode.prototype.init = function() {
         LadbTextinputAbstract.prototype.init.call(this);
 
@@ -151,7 +155,7 @@
         // Append help block
         this.$helpBlock = $('<div class="ladb-textinput-code-help">' + i18next.t('core.component.textinput_code.help') + '</div>');
         this.$helpBlock.hide();
-        this.$wrapper.after(this.$helpBlock);
+        this.$wrapper.append(this.$helpBlock);
 
     };
 

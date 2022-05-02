@@ -11,7 +11,7 @@
         },
         {
           "name": "material_thickness",
-          "align": "right"
+          "align": "left"
         },
         {
           "name": "part_count",

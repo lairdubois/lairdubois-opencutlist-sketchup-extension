@@ -35,7 +35,7 @@ module Ladb::OpenCutList
       @mass = ''
       @price = ''
       @thickness_layer_count = 1
-      @tags = ''
+      @tags = []
       @orientation_locked_on_axis = false
       @symmetrical = false
       @ignore_grain_direction = false
