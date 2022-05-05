@@ -48,7 +48,7 @@ module Ladb::OpenCutList
 
     def +(value)
       if value.is_a?(String)
-        self .to_s + value
+        self.to_s + value
       elsif value.respond_to?(:to_f)
         self.class.new(self.to_f + value.to_f)
       end
