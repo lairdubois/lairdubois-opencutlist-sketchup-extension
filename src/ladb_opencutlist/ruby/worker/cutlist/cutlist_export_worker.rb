@@ -3,7 +3,6 @@ module Ladb::OpenCutList
   require 'csv'
   require_relative '../../model/attributes/material_attributes'
   require_relative '../../model/export/wrappers'
-  require_relative '../../lib/dentaku'
 
   class CutlistExportWorker
 
@@ -136,9 +135,9 @@ module Ladb::OpenCutList
             StringWrapper.new(Plugin.instance.get_i18n_string("tab.materials.type_#{group.material_type}")),
             StringWrapper.new((group.material_name ? group.material_name : Plugin.instance.get_i18n_string('tab.cutlist.material_undefined')) + (group.material_type > 0 ? ' / ' + group.std_dimension : '')),
             IntegerWrapper.new(group.part_count),
-            LengthWrapper.new(group.total_cutting_length),
-            AreaWrapper.new(group.total_cutting_area),
-            VolumeWrapper.new(group.total_cutting_volume),
+            LengthWrapper.new(group.def.total_cutting_length),
+            AreaWrapper.new(group.def.total_cutting_area),
+            VolumeWrapper.new(group.def.total_cutting_volume),
             AreaWrapper.new((group.total_final_area.nil? || group.invalid_final_area_part_count > 0) ? 0 : group.total_final_area)
           )
 

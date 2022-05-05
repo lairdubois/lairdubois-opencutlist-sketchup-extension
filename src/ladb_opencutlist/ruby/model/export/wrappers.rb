@@ -24,6 +24,10 @@ module Ladb::OpenCutList
       result.is_a?(@value_class) ? self.class.new(result) : result
     end
 
+    def coerce(something)
+      [self, something]
+    end
+
     def to_s
       @value.to_s
     end
@@ -39,40 +43,30 @@ module Ladb::OpenCutList
   class NumericWrapper < ValueWrapper
 
     def initialize(value)
-      super(value, Numeric.class)
+      super(value, Numeric)
     end
 
     def +(value)
-      if value.is_a?(self.class) || value.is_a?(FloatWrapper) || value.is_a?(IntegerWrapper)
+      if value.respond_to?(:to_f)
         self.class.new(self.to_f + value.to_f)
-      elsif value.is_a?(Float) || value.is_a?(Integer)
-        self.class.new(self.to_f + value)
-      elsif value.is_a?(String)
-        self.to_s + value
       end
     end
 
     def -(value)
-      if value.is_a?(self.class) || value.is_a?(FloatWrapper) || value.is_a?(IntegerWrapper)
+      if value.respond_to?(:to_f)
         self.class.new(self.to_f - value.to_f)
-      elsif value.is_a?(Float) || value.is_a?(Integer)
-        self.class.new(self.to_f - value)
       end
     end
 
     def *(value)
-      if value.is_a?(self.class) || value.is_a?(FloatWrapper) || value.is_a?(IntegerWrapper)
+      if value.respond_to?(:to_f)
         self.class.new(self.to_f * value.to_f)
-      elsif value.is_a?(Float) || value.is_a?(Integer)
-        self.class.new(self.to_f * value)
       end
     end
 
     def /(value)
-      if value.is_a?(self.class) || value.is_a?(FloatWrapper) || value.is_a?(IntegerWrapper)
+      if value.respond_to?(:to_f)
         self.class.new(self.to_f / value.to_f)
-      elsif value.is_a?(Float) || value.is_a?(Integer)
-        self.class.new(self.to_f / value)
       end
     end
 
@@ -82,6 +76,10 @@ module Ladb::OpenCutList
 
     def to_f
       @value.to_f
+    end
+
+    def to_str
+      self.to_s
     end
 
   end
@@ -111,7 +109,11 @@ module Ladb::OpenCutList
   class StringWrapper < ValueWrapper
 
     def initialize(value)
-      super(value.to_s, String.class)
+      super(value.to_s, String)
+    end
+
+    def to_str
+      @value.to_str
     end
 
   end
@@ -121,7 +123,11 @@ module Ladb::OpenCutList
   class ArrayWrapper < ValueWrapper
 
     def initialize(value)
-      super(value, Array.class)
+      super(value, Array)
+    end
+
+    def to_ary
+      @value.to_ary
     end
 
     def to_s
@@ -140,7 +146,7 @@ module Ladb::OpenCutList
 
     def initialize(value)
       if value.is_a?(Length)
-        value = value.to_mm   # TODO : Convert to model unit
+        value = value.to_f
       end
       super(value)
     end
@@ -155,9 +161,13 @@ module Ladb::OpenCutList
       end
     end
 
-    def export
+    def to_s
       return '' if @value == 0
-      @value.to_i # TODO : format according to SketchUp formatter
+      @value.to_l.to_s
+    end
+
+    def export
+      self.to_s
     end
 
   end
@@ -174,9 +184,13 @@ module Ladb::OpenCutList
       end
     end
 
-    def export
+    def to_s
       return '' if @value == 0
-      @value.to_i  # TODO : format according to SketchUp formatter
+      DimensionUtils.instance.format_to_readable_area(@value)
+    end
+
+    def export
+      self.to_s
     end
 
   end
@@ -185,9 +199,13 @@ module Ladb::OpenCutList
 
   class VolumeWrapper < FloatWrapper
 
-    def export
+    def to_s
       return '' if @value == 0
-      @value.to_i  # TODO : format according to SketchUp formatter
+      DimensionUtils.instance.format_to_readable_volume(@value)
+    end
+
+    def export
+      self.to_s
     end
 
   end
@@ -196,7 +214,7 @@ module Ladb::OpenCutList
 
   class EdgeWrapper < Wrapper
 
-    attr_reader :material_name, :thickness, :width
+    attr_reader :material_name, :std_dimensions
 
     def initialize(material_name, std_dimensions)
       @material_name = StringWrapper.new(material_name)

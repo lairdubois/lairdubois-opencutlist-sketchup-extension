@@ -197,7 +197,7 @@
             nu = one + two + five
             #nu = nu.sub(/"/, '\"') # four will not be escaped in this case
           end
-          if !four.nil?
+          unless four.nil?
             nu.sub!(four, @decimal_separator)
           end
         elsif match = i.match(/^~?\s*(((\d*([.,]\d*)?)(\s*\')?)?\s+)?((\d*)\s+)?(\d*\/\d*)?(\s*\")?$/)
@@ -280,15 +280,15 @@
     end
 
     # Splits a string in the form d;d;...
-    # into single d's and applies the function f to each element
+    # into single d's and applies the function fn to each element
     # returns the concatenated string in the same format
     #
-    def d_transform(i, f)
+    def d_transform(i, fn)
       return '' if i.nil?
       a = i.split(LIST_SEPARATOR)
       r = []
       a.each do |e|
-        r << send(f, e)
+        r << send(fn, e)
       end
       r.join(LIST_SEPARATOR)
     end
@@ -302,10 +302,10 @@
     end
 
     # Splits a string in the form dxd;dxd;...
-    # into single d's and applies the function f to each element
+    # into single d's and applies the function fn to each element
     # returns the concatenated string in the same format
     #
-    def dxd_transform(i, f)
+    def dxd_transform(i, fn)
       return '' if i.nil?
       a = i.split(LIST_SEPARATOR)
       r = []
@@ -313,7 +313,7 @@
         ed = e.split(DXD_SEPARATOR)
         ed[0] = '0' if ed[0].nil? || ed[0].empty?
         ed[1] = '0' if ed[1].nil? || ed[1].empty?
-        r << (send(f, ed[0]) + ' ' + DXD_SEPARATOR + ' ' + send(f, ed[1]))
+        r << (send(fn, ed[0]) + ' ' + DXD_SEPARATOR + ' ' + send(fn, ed[1]))
       end
       r.join(LIST_SEPARATOR)
     end
@@ -336,10 +336,10 @@
     end
 
     # Splits a string in the form dxq;dxq;...
-    # into single d's and applies the function f to each element. q stay unchanged.
+    # into single d's and applies the function fn to each element. q stay unchanged.
     # returns the concatenated string in the same format
     #
-    def dxq_transform(i, f)
+    def dxq_transform(i, fn)
       return '' if i.nil?
       a = i.split(LIST_SEPARATOR)
       r = []
@@ -347,7 +347,7 @@
         ed = e.split(DXD_SEPARATOR)
         ed[0] = '0' if ed[0].nil? || ed[0].empty?
         ed[1] = '0' if ed[1].nil? || ed[1].empty? || ed[1].strip.to_i < 1
-        r << (send(f, ed[0]) + (ed[1] == '0' ? '' : ' ' + DXD_SEPARATOR + ed[1].strip))
+        r << (send(fn, ed[0]) + (ed[1] == '0' ? '' : ' ' + DXD_SEPARATOR + ed[1].strip))
       end
       r.join(LIST_SEPARATOR)
     end
@@ -440,7 +440,7 @@
 
     # Take a float containing a length in inch
     # and convert it to a string representation according to the
-    # local unit settings.
+    # model unit settings.
     #
     def format_to_readable_length(f)
       if f.nil?
@@ -460,7 +460,7 @@
 
     # Take a float containing an area in inch²
     # and convert it to a string representation according to the
-    # local unit settings.
+    # model unit settings.
     #
     def format_to_readable_area(f2)
       if f2.nil?
@@ -480,9 +480,9 @@
 
     # Take a float containing a volume in inch³
     # and convert it to a string representation according to the
-    # local unit settings and the material_type (for Board Foot).
+    # model unit settings and the material_type (for Board Foot).
     #
-    def format_to_readable_volume(f3, material_type)
+    def format_to_readable_volume(f3, material_type = nil)
       if f3.nil?
         return nil
       end
@@ -502,6 +502,48 @@
         end
       end
       UnitUtils.format_readable(f3 * multiplier, unit_strippedname, precision, precision)
+    end
+
+    # -----
+
+    # Take a Length object and returns is float representation
+    # in current model unit.
+    def length_to_model_unit_float(length)
+      return nil unless length.is_a?(Length)
+      case @length_unit
+      when INCHES
+        length.to_inch
+      when FEET
+        length.to_feet
+      when YARD
+        length.to_yard
+      when MILLIMETER
+        length.to_mm
+      when CENTIMETER
+        length.to_cm
+      when METER
+        length.to_m
+      end
+    end
+
+    # Take a float value that represent a length in current
+    # model unit and convert it to a Length object.
+    def model_unit_float_to_length(f)
+      return nil unless f.is_a?(Float)
+      case @length_unit
+      when INCHES
+        f.to_l
+      when FEET
+        f.feet.to_l
+      when YARD
+        f.yard.to_l
+      when MILLIMETER
+        f.mm.to_l
+      when CENTIMETER
+        f.cm.to_l
+      when METER
+        f.m.to_l
+      end
     end
 
   end

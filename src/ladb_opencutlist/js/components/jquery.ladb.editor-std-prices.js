@@ -257,7 +257,7 @@
             });
         }
 
-        // Convert stds to inch fload representation
+        // Convert stds to inch float representation
         rubyCallCommand('core_length_to_float', stdsA, function (responseA) {
 
             $.each(responseA, function (k, v) {
