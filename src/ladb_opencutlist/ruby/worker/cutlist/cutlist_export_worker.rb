@@ -172,10 +172,26 @@ module Ladb::OpenCutList
               ArrayWrapper.new(part.entity_names.map(&:first)),
               StringWrapper.new(part.description),
               ArrayWrapper.new(part.tags),
-              EdgeWrapper.new(part.edge_material_names[:ymin], part.edge_std_dimensions[:ymin]),
-              EdgeWrapper.new(part.edge_material_names[:ymax], part.edge_std_dimensions[:ymax]),
-              EdgeWrapper.new(part.edge_material_names[:xmin], part.edge_std_dimensions[:xmin]),
-              EdgeWrapper.new(part.edge_material_names[:xmax], part.edge_std_dimensions[:xmax])
+              EdgeWrapper.new(
+                part.edge_material_names[:ymin],
+                part.def.edge_group_defs[:ymin] ? part.def.edge_group_defs[:ymin].std_thickness : nil,
+                part.def.edge_group_defs[:ymin] ? part.def.edge_group_defs[:ymin].std_width : nil
+              ),
+              EdgeWrapper.new(
+                part.edge_material_names[:ymax],
+                part.def.edge_group_defs[:ymax] ? part.def.edge_group_defs[:ymax].std_thickness : nil,
+                part.def.edge_group_defs[:ymax] ? part.def.edge_group_defs[:ymax].std_width : nil
+              ),
+              EdgeWrapper.new(
+                part.edge_material_names[:xmin],
+                part.def.edge_group_defs[:xmin] ? part.def.edge_group_defs[:xmin].std_thickness : nil,
+                part.def.edge_group_defs[:xmin] ? part.def.edge_group_defs[:xmin].std_width : nil
+              ),
+              EdgeWrapper.new(
+                part.edge_material_names[:xmax],
+                part.def.edge_group_defs[:xmax] ? part.def.edge_group_defs[:xmax].std_thickness : nil,
+                part.def.edge_group_defs[:xmax] ? part.def.edge_group_defs[:xmax].std_width : nil
+              )
             )
 
             rows << _evaluate_row(data)
@@ -218,10 +234,26 @@ module Ladb::OpenCutList
                   StringWrapper.new(group.material_display_name),
                   StringWrapper.new(part.description),
                   ArrayWrapper.new(part.tags),
-                  EdgeWrapper.new(part.edge_material_names[:ymin], part.edge_std_dimensions[:ymin]),
-                  EdgeWrapper.new(part.edge_material_names[:ymax], part.edge_std_dimensions[:ymax]),
-                  EdgeWrapper.new(part.edge_material_names[:xmin], part.edge_std_dimensions[:xmin]),
-                  EdgeWrapper.new(part.edge_material_names[:xmax], part.edge_std_dimensions[:xmax])
+                  EdgeWrapper.new(
+                    part.edge_material_names[:ymin],
+                    part.def.edge_group_defs[:ymin] ? part.def.edge_group_defs[:ymin].std_thickness : nil,
+                    part.def.edge_group_defs[:ymin] ? part.def.edge_group_defs[:ymin].std_width : nil
+                  ),
+                  EdgeWrapper.new(
+                    part.edge_material_names[:ymax],
+                    part.def.edge_group_defs[:ymax] ? part.def.edge_group_defs[:ymax].std_thickness : nil,
+                    part.def.edge_group_defs[:ymax] ? part.def.edge_group_defs[:ymax].std_width : nil
+                  ),
+                  EdgeWrapper.new(
+                    part.edge_material_names[:xmin],
+                    part.def.edge_group_defs[:xmin] ? part.def.edge_group_defs[:xmin].std_thickness : nil,
+                    part.def.edge_group_defs[:xmin] ? part.def.edge_group_defs[:xmin].std_width : nil
+                  ),
+                  EdgeWrapper.new(
+                    part.edge_material_names[:xmax],
+                    part.def.edge_group_defs[:xmax] ? part.def.edge_group_defs[:xmax].std_thickness : nil,
+                    part.def.edge_group_defs[:xmax] ? part.def.edge_group_defs[:xmax].std_width : nil
+                  )
                 )
 
                 rows << _evaluate_row(data)
