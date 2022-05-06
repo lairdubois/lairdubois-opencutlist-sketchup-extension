@@ -301,7 +301,7 @@ module Ladb::OpenCutList
       @col_defs.each { |col_def|
         unless col_def['hidden']
           if col_def['formula'].nil? || col_def['formula'].empty?
-            formula = '@' + col_def['name']
+            formula = col_def['name'].nil? || col_def['name'].empty? ? '' : '@' + col_def['name']
           else
             formula = col_def['formula']
           end

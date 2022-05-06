@@ -36,6 +36,7 @@
         this.selectionPartIds = [];
         this.lastEditPartTab = null;
         this.lastExportOptionsTab = null;
+        this.lastExportOptionsEditingItem = null;
         this.lastReportOptionsTab = null;
         this.lastCuttingdiagram1dOptionsTab = null;
         this.lastCuttingdiagram2dOptionsTab = null;
@@ -620,6 +621,28 @@
                         break;
                 }
             };
+            var fnFetchLastExportOptionsEditingItem = function (source) {
+                var index = null;
+                switch (parseInt(source)) {
+                    case 0: // EXPORT_OPTION_SOURCE_SUMMARY
+                        index = $editorSummary.ladbEditorExport('getEditingItemIndex');
+                        break;
+                    case 1: // EXPORT_OPTION_SOURCE_CUTLIST
+                        index = $editorCutlist.ladbEditorExport('getEditingItemIndex');
+                        break;
+                    case 2: // EXPORT_OPTION_SOURCE_INSTANCES_LIST
+                        index = $editorInstancesList.ladbEditorExport('getEditingItemIndex');
+                        break;
+                }
+                if (index != null) {
+                    that.lastExportOptionsEditingItem = {
+                        source : source,
+                        index : index
+                    }
+                } else {
+                    that.lastExportOptionsEditingItem = null;
+                }
+            };
             var fnFetchOptions = function (options) {
                 options.source = parseInt($selectSource.val());
                 options.col_sep = parseInt($selectColSep.val());
@@ -653,7 +676,6 @@
             $selectColSep.selectpicker(SELECT_PICKER_OPTIONS);
             $selectEncoding.selectpicker(SELECT_PICKER_OPTIONS);
             $editorSummary.ladbEditorExport({
-                dialog: that.dialog,
                 vars: [
                     'material_type',
                     'material_thickness',
@@ -665,7 +687,6 @@
                 ]
             });
             $editorCutlist.ladbEditorExport({
-                dialog: that.dialog,
                 vars: [
                     'number',
                     'name',
@@ -688,7 +709,6 @@
                 ]
             });
             $editorInstancesList.ladbEditorExport({
-                dialog: that.dialog,
                 vars: [
                     'number',
                     'path',
@@ -732,6 +752,9 @@
 
                 // Fetch options
                 fnFetchOptions(exportOptions);
+
+                // Fetch last editing item
+                fnFetchLastExportOptionsEditingItem(exportOptions.source);
 
                 // Store options
                 rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_export_options', values: exportOptions });
@@ -791,6 +814,9 @@
                 // Fetch options
                 fnFetchOptions(exportOptions);
 
+                // Fetch last editing item
+                fnFetchLastExportOptionsEditingItem(exportOptions.source);
+
                 // Store options
                 rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_export_options', values: exportOptions });
 
@@ -820,6 +846,21 @@
 
             // Show modal
             $modal.modal('show');
+
+            // Try to restore selection
+            if (that.lastExportOptionsEditingItem != null) {
+                switch (that.lastExportOptionsEditingItem.source) {
+                    case 0: // EXPORT_OPTION_SOURCE_SUMMARY
+                        $editorSummary.ladbEditorExport('setEditingItemIndex', that.lastExportOptionsEditingItem.index);
+                        break;
+                    case 1: // EXPORT_OPTION_SOURCE_CUTLIST
+                        $editorCutlist.ladbEditorExport('setEditingItemIndex', that.lastExportOptionsEditingItem.index);
+                        break;
+                    case 2: // EXPORT_OPTION_SOURCE_INSTANCES_LIST
+                        $editorInstancesList.ladbEditorExport('setEditingItemIndex', that.lastExportOptionsEditingItem.index);
+                        break;
+                }
+            }
 
         });
 

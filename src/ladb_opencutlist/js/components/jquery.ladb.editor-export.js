@@ -4,10 +4,9 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbEditorExport = function (element, options, dialog) {
+    var LadbEditorExport = function (element, options) {
         this.options = options;
         this.$element = $(element);
-        this.dialog = dialog;
 
         this.variableDefs = [];
 
@@ -16,7 +15,7 @@
     };
 
     LadbEditorExport.DEFAULTS = {
-        variables: []
+        vars: []
     };
 
     LadbEditorExport.prototype.setColDefs = function (colDefs) {
@@ -34,9 +33,6 @@
 
         });
 
-        // Bind sorter
-        this.$sortable.sortable(SORTABLE_OPTIONS);
-
     };
 
     LadbEditorExport.prototype.getColDefs = function () {
@@ -52,6 +48,17 @@
         });
         return colDefs;
     };
+
+    LadbEditorExport.prototype.setEditingItemIndex = function (index) {
+        var $item = $(this.$sortable.children().get(index));
+        if ($item.length) {
+            this.editColumn($item);
+        }
+    }
+
+    LadbEditorExport.prototype.getEditingItemIndex = function () {
+        return this.$editingItem ? this.$editingItem.index() : null;
+    }
 
     LadbEditorExport.prototype.appendColumnItem = function (appendAfterEditingItem, name, header, formula, align, hidden) {
         var that = this;
@@ -121,7 +128,7 @@
         return $item;
     };
 
-    LadbEditorExport.prototype.editColumn = function ($item, focus) {
+    LadbEditorExport.prototype.editColumn = function ($item, focusTo) {
         var that = this;
 
         // Cleanup
@@ -194,10 +201,18 @@
             this.$element.append(this.$editingForm);
 
             // Focus
-            if (focus === 'formula') {
+            if (focusTo === 'formula') {
                 $inputFormula.focus();
             } else {
                 $inputHeader.focus();
+            }
+
+            // Scroll to item
+            console.log($item.position().top);
+            if ($item.position().top < 0) {
+                this.$sortable.animate({ scrollTop: this.$sortable.scrollTop() + $item.position().top }, 200);
+            } else if ($item.position().top + $item.outerHeight() > this.$sortable.outerHeight(true)) {
+                this.$sortable.animate({ scrollTop: this.$sortable.scrollTop() + $item.position().top + $item.outerHeight(true) - this.$sortable.outerHeight() }, 200);
             }
 
         }
@@ -231,9 +246,6 @@
         // Edit column
         this.editColumn($item);
 
-        // Scroll sortable to bottom
-        this.$sortable.animate({ scrollTop: this.$sortable.scrollTop() + $item.position().top - this.$sortable.position().top }, 200);
-
     };
 
     LadbEditorExport.prototype.init = function () {
@@ -252,6 +264,8 @@
 
         var $header = $('<div class="ladb-editor-export-header">').append(i18next.t('tab.cutlist.export.columns'))
         this.$sortable = $('<ul class="ladb-editor-export-sortable ladb-sortable-list" />')
+            .sortable(SORTABLE_OPTIONS)
+        ;
 
         this.$element.append(
             $('<div class="ladb-editor-export-container">')
@@ -311,7 +325,7 @@
             var options = $.extend({}, LadbEditorExport.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
-                $this.data('ladb.editorExport', (data = new LadbEditorExport(this, options, options.dialog)));
+                $this.data('ladb.editorExport', (data = new LadbEditorExport(this, options)));
             }
             if (typeof option === 'string') {
                 value = data[option].apply(data, Array.isArray(params) ? params : [ params ])

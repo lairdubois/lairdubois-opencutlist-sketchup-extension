@@ -29,7 +29,7 @@
         {% include 'core/_alert-errors.twig' with { 'errors':report.errors } %}
         {% include 'core/_alert-warnings.twig' with { 'warnings':report.warnings } %}
 
-        <table class="table table-bordered">
+        <table class="table table-bordered ladb-cutlist-export-table">
             <thead>
                 <tr class="ladb-cutlist-export-row">
                     {% for col in rows[0] %}

@@ -774,28 +774,24 @@ body.no-ie, body.ie-gt11 {
 
 // Export
 
-#ladb_cutlist_slide_export {
+.ladb-cutlist-export-table {
 
-  table {
+  thead {
 
-    thead {
-
-      th {
-        background-color: #efefef;
-      }
-
+    th {
+      background-color: #efefef;
     }
 
-    .ladb-cutlist-export-row {
+  }
 
-      .ladb-cutlist-export-column {
-        white-space: nowrap;
+  .ladb-cutlist-export-row {
 
-        &.ladb-invalid-value {
-          color: @ladb-brand-danger;
-          background-color: lighten(#ff0000, 49%);
-        }
+    .ladb-cutlist-export-column {
+      white-space: nowrap;
 
+      &.ladb-invalid-value {
+        color: @ladb-brand-danger;
+        background-color: lighten(#ff0000, 49%);
       }
 
     }
