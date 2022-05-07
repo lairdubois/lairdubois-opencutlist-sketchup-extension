@@ -150,7 +150,7 @@ core:
       store: Save color
       remove: Remove color
     textinput_code:
-      help: Click on **@** to get a list of variables.
+      help: Type **@** to get a list of variables.
 tab:
   cutlist:
     label: Parts
@@ -454,7 +454,7 @@ tab:
       add_native_columns: Add a native column
       remove_column: Remove
       columns: Columns
-      header: Titel
+      header: Title
       formula: Formula
       variables_list: List of variables
       keywords_list: List of functions
