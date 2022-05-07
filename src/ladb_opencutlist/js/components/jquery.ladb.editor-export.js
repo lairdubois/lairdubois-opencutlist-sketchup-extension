@@ -214,6 +214,16 @@
                 this.$sortable.animate({ scrollTop: this.$sortable.scrollTop() + $item.position().top + $item.outerHeight(true) - this.$sortable.outerHeight() }, 200);
             }
 
+            if (this.$helpBlock) {
+                this.$helpBlock.hide();
+            }
+
+        } else {
+
+            if (this.$helpBlock) {
+                this.$helpBlock.show();
+            }
+
         }
 
     };
@@ -310,6 +320,11 @@
         );
 
         this.$btnContainer = $btnContainer;
+
+        // Help
+
+        this.$helpBlock = $('<div class="col-xs-offset-1 col-xs-10"><p class="help-block text-center"><small>' + i18next.t('tab.cutlist.export.customize_help') + '</small></p></div>');
+        this.$element.append(this.$helpBlock);
 
     };
 

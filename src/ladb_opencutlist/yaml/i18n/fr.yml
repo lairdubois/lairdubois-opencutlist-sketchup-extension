@@ -446,6 +446,10 @@ tab:
       edges: Chants
     export:
       title: Exportation
+      info_0: |
+        Cette fonctionnalité vous permet d'exporter votre *fiche de débit* sous forme d'une *liste de pièces* dans un fichier au format [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
+      customize_help: |
+        Réordonnez, Masquez, Ajoutez, Retirer ou Sélectionnez un colonne dans la liste pour personnaliser son **titre** et la **formule** générant la valeur affichée pour chaque ligne exportée.
       add_column: Ajouter une colonne
       add_native_columns: Ajouter une colonne native
       remove_column: Retirer
@@ -454,8 +458,6 @@ tab:
       formula: Formule
       variables_list: Liste des variables
       keywords_list: Liste des fonctions
-      info_0: |
-        Cette fonctionnalité vous permet d'exporter votre *fiche de débit* sous forme d'une *liste de pièces* dans un fichier au format [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
       options: Options d'export
       options_customize: Personnalisation
       option_source: Source
