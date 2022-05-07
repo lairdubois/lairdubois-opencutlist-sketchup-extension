@@ -208,7 +208,6 @@
             }
 
             // Scroll to item
-            console.log($item.position().top);
             if ($item.position().top < 0) {
                 this.$sortable.animate({ scrollTop: this.$sortable.scrollTop() + $item.position().top }, 200);
             } else if ($item.position().top + $item.outerHeight() > this.$sortable.outerHeight(true)) {

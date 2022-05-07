@@ -4,6 +4,8 @@
 {% set out = true %}
 {% set slideClasses = 'ladb-overflow-x-auto' %}
 
+{% set col_defs = source_col_defs[source] %}
+
 {% block headerInner %}
     {{ parent() }}
     <div class="ladb-header-extra">
@@ -29,20 +31,22 @@
         {% include 'core/_alert-errors.twig' with { 'errors':report.errors } %}
         {% include 'core/_alert-warnings.twig' with { 'warnings':report.warnings } %}
 
-        <table class="table table-bordered ladb-cutlist-export-table">
+        <table class="table table-bordered ladb-table-spreadsheet">
             <thead>
-                <tr class="ladb-cutlist-export-row">
+                <tr>
+                    <th class="no-print ladb-table-spreadsheet-cell ladb-table-spreadsheet-cell-header-col ladb-table-spreadsheet-cell-header-row">&nbsp;</th>
                     {% for col in rows[0] %}
-                        <th class="ladb-cutlist-export-column text-center">{{ col }}</th>
+                        <th class="ladb-table-spreadsheet-cell ladb-table-spreadsheet-cell-header-col">{{ col }}</th>
                     {% endfor %}
                 </tr>
             </thead>
             <tbody>
                 {% for row in rows|slice(1) %}
-                    <tr class="ladb-cutlist-export-row">
+                    <tr>
+                        <th class="no-print ladb-table-spreadsheet-cell ladb-table-spreadsheet-cell-header-row">{{ loop.index }}</th>
                         {% for col in row %}
-                            {% set colDef = source_col_defs[source][loop.index0] %}
-                            <td class="ladb-cutlist-export-column{% if col and col.error %} ladb-invalid-value{% endif %}{% if col.error is not defined %}{% if colDef.align == 'center' %} text-center{% elseif colDef.align == 'right' %} text-right{% endif %}{% endif %}">{{ col and col.error ? col.error : col }}</td>
+                            {% set colDef = col_defs[loop.index0] %}
+                            <td class="ladb-table-spreadsheet-cell{% if col and col.error %} ladb-invalid-value{% endif %}{% if col.error is not defined %}{% if colDef.align == 'center' %} text-center{% elseif colDef.align == 'right' %} text-right{% endif %}{% endif %}">{% if col and col.error %}<i class="ladb-opencutlist-icon-warning"></i>&nbsp;{{ col.error }}{% else %}{{ col }}{% endif %}</td>
                         {% endfor %}
                     </tr>
                 {% endfor %}
