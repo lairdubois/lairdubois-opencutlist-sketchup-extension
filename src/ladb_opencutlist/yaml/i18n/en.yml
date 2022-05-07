@@ -20,6 +20,7 @@ default:
   export: Export
   import: Import
   load: Load
+  preview: Overview
   options: Options
   caution: Caution
   remove: Remove
@@ -58,7 +59,7 @@ core:
   menu:
     submenu: OpenCutList
     item:
-      generate_cutlist: Generate parts list
+      generate_cutlist:  Generate Parts List
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
@@ -148,6 +149,8 @@ core:
     textinput_color:
       store: Save color
       remove: Remove color
+    textinput_code:
+      help: Click on **@** to get a list of variables.
 tab:
   cutlist:
     label: Parts
@@ -162,8 +165,8 @@ tab:
     not_available_std_section: Cross section undefined
     highlight_part: Highlight part in the model
     highlight_parts: Highlight parts in the model
-    edit_part_properties: Edit part properties
-    edit_part_axes_properties: Edit the properties (axes) of the part
+    edit_part_properties: Edit Part Properties
+    edit_part_axes_properties: Edit Axes Properties of Part
     edit_part_size_increase_properties: Edit the properties (oversizes) of the part
     edit_part_edges_properties: Edit the properties (edge bandings) of the part
     tooltip:
@@ -442,9 +445,19 @@ tab:
       thickness_short: T
       edges: Edge Bandings
     export:
-      title: Export to CSV format
+      title: Export
       info_0: |
         With this function the *parts list* can be exported into a [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file.
+      customize_help: |
+        Reorder, Hide, Add, Remove or Select a column from the list to customize its **title** and the **formula** that will generate the values for each exported row. 
+      add_column: Add a column
+      add_native_columns: Add a native column
+      remove_column: Remove
+      columns: Columns
+      header: Titel
+      formula: Formula
+      variables_list: List of variables
+      keywords_list: List of functions
       options: Export Options
       options_customize: Customization
       option_source: Source
@@ -484,6 +497,10 @@ tab:
       edge_ymax: Edge length 2
       edge_xmin: Edge width 1
       edge_xmax: Edge width 2
+      placeholder:
+        no_header: Enter a title
+        no_formula_native: "Native value of column '{{ col_name }}'"
+        no_formula: Enter a formula
       warning:
         is_group_selection: Parts inside **hidden groups** of the parts list will not be exported.
     report:
@@ -728,7 +745,7 @@ tab:
         group_std_dimension: Standard dimensions
         filename: Filename
         model_name: Model name
-        page_label: Scene name
+        page_name: Scene name
         length_unit: Unit
         generated_at: Date and time
       error:
@@ -783,8 +800,8 @@ tab:
       texture_load: Load a new texture
       edit: "Edit the properties of '{{ name }}'"
       set_current: |
-        Select '{{ name }}'
-        *Double-click to use*
+        Paint parts with '{{ name }}'
+        *Double-click to minimize*
     menu:
       import_from_skm: Import material (.skm)
       purge_unused: Purge unused materials
@@ -839,7 +856,7 @@ tab:
       grained_help: Configures the grain direction of the material.
       grained_0: No Grain
       grained_1: Grain Follows Length
-      edge_decremented: Reduce
+      edge_decremented: Reduce Dimensions
       edge_decremented_help: Allows you to indicate whether the dimensions of parts should be reduced by the thickness of the edge banding.
       edge_decremented_0: No Reduction
       edge_decremented_1: Reduce by Edge Banding Thickness
@@ -854,7 +871,7 @@ tab:
       texture_height: Height
       export_to_skm: Export (.skm)
     texture_load:
-      title: Load an image
+      title: Load image
     import_from_skm:
       title: Import .skm file
     export_to_skm:
@@ -1007,7 +1024,7 @@ tab:
     backers_plural: "{{ count }} financial contributors"
     ad: "Do you like OpenCutList?"
     objective: Objective
-    objective_slogan: OpenCutList is all of us
+    objective_slogan: "OpenCutList is all of us"
     objective_title:
       default: Objectives
       cuttingdiagram_export: Funding of cutting diagram exports
@@ -1109,8 +1126,8 @@ tool:
     alt_key_mac: Command
     status_paint_face: Click to paint a face.
     status_paint_part: Click to paint an entire part.
-    status_unpaint_face: Click to clear a face.
-    status_unpaint_part: Click to clear a part.
+    status_unpaint_face: Click to clean a face.
+    status_unpaint_part: Click to click an entire part
     status_pick: Click to sample the material.
     filters: Filters
     filter_0: Without type
@@ -1122,9 +1139,9 @@ tool:
     action: Action
     action_0: Paint Face
     action_1: Paint Part
-    action_2: Clear Face
-    action_3: Clear Part
-    action_4: Pickup
+    action_2: Clean Face
+    action_3: Clean Part
+    action_4: Sample
     warning:
       no_material: Your model does not contain any material!
-      all_filtered: The selected filters hide all materials!
+      all_filtered: The selected filters mask all materials!

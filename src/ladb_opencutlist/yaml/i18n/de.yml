@@ -20,6 +20,7 @@ default:
   export: Exportieren
   import: Importieren
   load: Laden
+  preview: Übersicht
   options: Optionen
   caution: Vorsicht
   remove: Löschen
@@ -58,11 +59,17 @@ core:
   menu:
     submenu: OpenCutList
     item:
-      edit_part_properties: $(tab.cutlist.edit_part_properties)
-      edit_part_axes_properties: $(tab.cutlist.edit_part_axes_properties)
+      generate_cutlist:  Holzliste generieren
+      edit_part_properties: $t(tab.cutlist.edit_part_properties)
+      edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
+      edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
+      edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
+      smart_paint: $t(core.toolbar.command.smart_paint)
   toolbar:
     name: OpenCutList
-    command: OpenCutList
+    command:
+      dialog: OpenCutList
+      smart_paint: Teile einfärben
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
@@ -135,13 +142,15 @@ core:
       save_to: "Voreinstellung '{{ name }}' aktualisieren"
       delete: "Voreinstellung '{{ name }}' löschen"
   progress:
-    please_wait: Bitte warten
+    please_wait: Berechnung einer Welt des Friedens
   component:
     textinput:
       reset: Wert zurücksetzen
     textinput_color:
       store: Farbe speichern
       remove: Farbe vergessen
+    textinput_code:
+      help: "Drücken Sie **@**, um die Liste der Datenvariablen zu öffnen. "
 tab:
   cutlist:
     label: Holzliste
@@ -157,7 +166,7 @@ tab:
     highlight_part: Teil im Modell hervorheben
     highlight_parts: Teile im Modell hervorheben
     edit_part_properties: Eigenschaften des Teils bearbeiten
-    edit_part_axes_properties: Eigenschaften (Achsen) des Teils bearbeiten
+    edit_part_axes_properties: Achsen des Teils bearbeiten
     edit_part_size_increase_properties: Eigenschaften (Übermaße) des Teils bearbeiten
     edit_part_edges_properties: Eigenschaften (Kanten) des Teils bearbeiten
     tooltip:
@@ -401,6 +410,7 @@ tab:
       property_count: Anzahl
       property_edge_pattern: Anzahl Kantenbänder
       property_tags: Tags
+      property_thickness_layer_count: Anzahl der Schichten
       tags: Tags
       tags_help: "Benutzerdefinierte Liste von Tags, welche als Auswahl bei den Eigenschaften von Teilen zu Verfügung steht."
       tags_placeholder: Tag hinzufügen
@@ -435,9 +445,19 @@ tab:
       thickness_short: D
       edges: Kantenbänder
     export:
-      title: Exportieren im CSV-Format
+      title: Export
       info_0: |
         Hiermit kann die *Holzliste* in eine Datei, im [CSV](https://de.wikipedia.org/wiki/CSV_(Dateiformat)) Format, exportiert werden.
+      customize_help: |
+        Umordnen, Ausblenden, Hinzufügen, Entfernen oder Auswählen einer Spalte in der Liste, um ihren **Titel** und die **Formel** anzupassen, die den angezeigten Wert für jede exportierte Zeile erzeugt.
+      add_column: Spalte hinzufügen
+      add_native_columns: Native Spalte hinzufügen
+      remove_column: Entfernen
+      columns: Spalten
+      header: Titel
+      formula: Formel
+      variables_list: Liste der Variablen
+      keywords_list: Liste der Funktionen
       options: Optionen
       options_customize: Spalten einrichten
       option_source: Quelle
@@ -477,6 +497,10 @@ tab:
       edge_ymax: Kantenband Länge 2
       edge_xmin: Kantenband Breite 1
       edge_xmax: Kantenband Breite 2
+      placeholder:
+        no_header: Titel eingeben
+        no_formula_native: "Nativer Wert der Spalte '{{ col_name }}'."
+        no_formula: Formel eingeben
       warning:
         is_group_selection: Die in **ausgeblendeten Gruppen** enthaltenen Teile der Holzliste werden nicht exportiert.
     report:
@@ -505,7 +529,7 @@ tab:
     cuttingdiagram:
       title: Schnittplan
       start_msg: Optimierung läuft
-      end_msg: Optmierung abgeschlossen
+      end_msg: Optimierung abgeschlossen
       options_material: Material
       options_config: Konfiguration
       options_display: Anzeige
@@ -558,7 +582,7 @@ tab:
       option_trimming_help_1d: Breite des Säuberungsschnittes an jedem Ende der Stange oder des Kantenbandes.
       option_trimming_help_2d: Breite des Säuberungsschnittes auf allen vier Seiten der Platte.
       option_optimization: Optimierungsstufe
-      option_optimization_help: Die Optimierungsstufe definiert die Anzahl der berechneten Möglichkeiten und damit auch die Berechnungszeit.
+      option_optimization_help: "Die Optimierungsstufe definiert die Anzahl der berechneten Möglichkeiten und damit auch die Berechnungszeit."
       option_optimization_0: Mittel
       option_optimization_1: Fortgeschritten
       option_stacking: Vorzugsrichtung
@@ -588,7 +612,7 @@ tab:
         Wählen Sie die Standard-Platte welche dupliziert wird, um die bestmögliche Platzierung zu berechnen.
         Diese Liste wird über das Feld **$t(tab.materials.edit_material.std_sizes)** des Materials konfiguriert.
         Bearbeiten Sie das Material '{{ material_name }}' um diese Liste zu vervollständigen.
-      option_std_sheet_add: Länge hinzufügen
+      option_std_sheet_add: Maße hinzufügen
       option_std_sheet_none: Keine
       option_scrap_sheet_sizes: Plattenreste
       option_scrap_sheet_sizes_placeholder: Länge x Breite x Anzahl ; ...
@@ -721,7 +745,7 @@ tab:
         group_std_dimension: Standarddimensionen
         filename: Dateiname
         model_name: Modellname
-        page_label: Szenenname
+        page_name: Szenenname
         length_unit: Einheit
         generated_at: Datum und Uhrzeit
       error:
@@ -773,10 +797,11 @@ tab:
       grain_direction: Faserrichtung
       colorized: Diese Farbton wird beim Rendern im Modell auf die Textur des Material angewendet
       texture_colorized: Farbton mit der Textur kombinieren
+      texture_load: Neue Textur laden
       edit: "Eigenschaften von '{{ name }}' bearbeiten"
       set_current: |
-        Auswählen '{{ name }}'
-        *Doppelklick zum Verwenden*
+        Einfärben von Teilen mit '{{ name }}'
+        *Doppelklick zum Minimieren* 
     menu:
       import_from_skm: Material importieren (.skm)
       purge_unused: Unbenutztes Material löschen
@@ -831,19 +856,22 @@ tab:
       grained_help: Gibt die Ausrichtung der Faser in Bezug auf die Länge der Platte an.
       grained_0: Keine Faserrichtung
       grained_1: Faser in Längsrichtung
-      edge_decremented: Verringern
-      edge_decremented_help: "Gibt an, ob die Maße der Teile der Holzliste um die Materialstärke der Kantenbänder verringert werden sollen."
-      edge_decremented_0: Keine Verringerung
-      edge_decremented_1: Verringerung um Stärke des Kantenbands
+      edge_decremented: Reduzierung der Teile
+      edge_decremented_help: "Gibt an, ob die Maße der Teile der Holzliste um die Materialstärke der Kantenbänder reduziert werden sollen."
+      edge_decremented_0: keine Reduzierung
+      edge_decremented_1: Reduzierung um Stärke des Kantenbands
       volumic_mass: Rohdichte
       volumic_mass_help: Ermöglicht die Massendichte des Materials festzulegen.
       std_prices: Preis
       std_prices_help: Ermöglicht die Definition des Preises für alle Größen sowie für jede einzelne Standardgröße des Materials.
       std_prices_dim_placeholder: Wählen Sie eine Größe
       std_prices_add: Preis hinzufügen
+      texture_load: Laden
       texture_width: Breite
       texture_height: Höhe
       export_to_skm: Exportieren (.skm)
+    texture_load:
+      title: Bild laden
     import_from_skm:
       title: Aus .skm Datei importieren
     export_to_skm:
@@ -866,6 +894,7 @@ tab:
       failed_import_skm_file: "Beim Importieren der .skm-Datei ist ein Fehler aufgetreten. **{{Fehler }}**"
       failed_export_skm_file: "Beim Exportieren der .skm Datei ist ein Fehler aufgetreten. **{{ error }}**"
       failed_removing_material: "Beim Löschen des Materials ist ein Fehler aufgetreten. **{{ error }}**"
+      invalid_image_file: Ungültiges Bild
     success:
       exported_to: "Erfolgreicher Export nach {{ export_path }}."
     obsolete_base: "Um synchron zu bleiben, müssen Sie die Materialliste aktualisieren."
@@ -995,7 +1024,7 @@ tab:
     backers_plural: "{{ count }} finanzielle Sponsoren"
     ad: "Gefällt Ihnen OpenCutList?"
     objective: Ziel
-    objective_slogan: OpenCutList sind wir alle
+    objective_slogan: "OpenCutList sind wir alle"
     objective_title:
       default: Ziele
       cuttingdiagram_export: Finanzierung von Schnittplan-Exporten
@@ -1090,3 +1119,29 @@ tool:
   highlight:
     transparency: Transparenz
     zoom_extents: Alles zeigen
+  smart_paint:
+    copy_key_win: Strg
+    copy_key_mac: Option
+    alt_key_win: Alt
+    alt_key_mac: Command
+    status_paint_face: "Klicken Sie, um eine Fläche einzufärben."
+    status_paint_part: "Klicken Sie, um ein ganzes Teil einzufärben."
+    status_unpaint_face: "Klicken Sie, um eine Fläche zu säubern."
+    status_unpaint_part: Klicken um ein ganzes Teil zu säubern.
+    status_pick: Klicken um eine Probe des Materials zu entnehmen.
+    filters: Filter
+    filter_0: Ohne Typ
+    filter_1: $t(tab.materials.type_1)
+    filter_2: $t(tab.materials.type_2)
+    filter_3: $t(tab.materials.type_3)
+    filter_4: $t(tab.materials.type_4)
+    filter_5: $t(tab.materials.type_5)
+    action: Aktion
+    action_0: Fläche einfärben
+    action_1: Teil einfärben
+    action_2: Fläche säubern
+    action_3: Teil säubern
+    action_4: Entnehmen
+    warning:
+      no_material: Ihr Modell enthält kein Material!
+      all_filtered: Die ausgewählten Filter enthalten kein Material!
