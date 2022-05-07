@@ -13,6 +13,10 @@
         variableDefs: []
     });
 
+    LadbTextinputCode.prototype.focus = function () {
+        this.cm.focus();
+    };
+
     LadbTextinputCode.prototype.reset = function () {
         LadbTextinputAbstract.prototype.reset.call(this);
         this.cm.setValue(this.$element.val());

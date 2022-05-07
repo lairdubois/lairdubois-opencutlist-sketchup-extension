@@ -404,8 +404,8 @@
         ;
 
         // Form
-        this.$element.append(Twig.twig({ref: 'tabs/cutlist/_label-element-form.twig'}).render());
-        this.$editingForm = $('#ladb_cutlist_form_label_element');
+        this.$editingForm = $(Twig.twig({ref: 'components/_editor-label-element-form.twig'}).render());
+        this.$element.append(this.$editingForm);
 
         // UI
         var $selectFormula = $('#ladb_select_formula', this.$editingForm);

@@ -64,7 +64,7 @@
         var that = this;
 
         // Create and append row
-        var $item = $(Twig.twig({ref: "tabs/cutlist/_export-column-item.twig"}).render({
+        var $item = $(Twig.twig({ref: "components/_editor-export-column-item.twig"}).render({
             name: name || '',
             header: header || '',
             formula: formula || '',
@@ -84,11 +84,11 @@
         })
 
         // Bind buttons
-        $('a.ladb-cutlist-export-column-item-formula-btn', $item).on('click', function () {
+        $('a.ladb-editor-export-column-item-formula-btn', $item).on('click', function () {
             that.editColumn($item, 'formula');
             return false;
         });
-        $('a.ladb-cutlist-export-column-item-align-btn', $item).on('click', function () {
+        $('a.ladb-editor-export-column-item-align-btn', $item).on('click', function () {
             var $icon = $('i', $(this));
             var align = $item.data('align');
             $icon.removeClass('ladb-opencutlist-icon-align-' + align);
@@ -107,7 +107,7 @@
             $icon.addClass('ladb-opencutlist-icon-align-' + align);
             return false;
         });
-        $('a.ladb-cutlist-export-column-item-visibility-btn', $item).on('click', function () {
+        $('a.ladb-editor-export-column-item-visibility-btn', $item).on('click', function () {
             var $icon = $('i', $(this));
             var hidden = $item.data('hidden');
             if (hidden === true) {
@@ -158,11 +158,12 @@
             this.$btnContainer.append($btnRemove);
 
             // Create the form
-            this.$editingForm = $(Twig.twig({ref: "tabs/cutlist/_export-column-form.twig"}).render({
+            this.$editingForm = $(Twig.twig({ref: "components/_editor-export-column-form.twig"}).render({
                 name: $item.data('name'),
                 header: $item.data('header'),
                 formula: $item.data('formula')
             }));
+            this.$element.append(this.$editingForm);
 
             var $inputHeader = $('#ladb_input_header', this.$editingForm);
             var $inputFormula = $('#ladb_div_formula', this.$editingForm);
@@ -174,7 +175,7 @@
                     $item.data('header', $(this).val());
 
                     // Update item header
-                    $('.ladb-cutlist-export-column-item-header', $item).replaceWith(Twig.twig({ref: "tabs/cutlist/_export-column-item-header.twig"}).render({
+                    $('.ladb-editor-export-column-item-header', $item).replaceWith(Twig.twig({ref: "components/_editor-export-column-item-header.twig"}).render({
                         name: $item.data('name'),
                         header: $item.data('header')
                     }));
@@ -190,21 +191,19 @@
 
                     // Update item formula button
                     if ($(this).val() === '') {
-                        $('.ladb-cutlist-export-column-item-formula-btn', $item).removeClass('ladb-active');
+                        $('.ladb-editor-export-column-item-formula-btn', $item).removeClass('ladb-active');
                     } else {
-                        $('.ladb-cutlist-export-column-item-formula-btn', $item).addClass('ladb-active');
+                        $('.ladb-editor-export-column-item-formula-btn', $item).addClass('ladb-active');
                     }
 
                 })
             ;
 
-            this.$element.append(this.$editingForm);
-
             // Focus
             if (focusTo === 'formula') {
-                $inputFormula.focus();
+                $inputFormula.ladbTextinputCode('focus');
             } else {
-                $inputHeader.focus();
+                $inputHeader.ladbTextinputText('focus');
             }
 
             // Scroll to item

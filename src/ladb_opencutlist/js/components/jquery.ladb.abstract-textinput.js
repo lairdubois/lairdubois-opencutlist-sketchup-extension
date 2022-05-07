@@ -16,6 +16,10 @@ LadbTextinputAbstract.DEFAULTS = {
     resetValue: ''
 };
 
+LadbTextinputAbstract.prototype.focus = function () {
+    this.$element.focus();
+};
+
 LadbTextinputAbstract.prototype.disable = function () {
     this.$element.prop('disabled', true);
     this.$resetBtn.hide();

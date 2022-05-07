@@ -596,7 +596,6 @@
             var $editorSummary = $('#ladb_cutlist_export_editor_summary', $modal);
             var $editorCutlist = $('#ladb_cutlist_export_editor_cutlist', $modal);
             var $editorInstancesList = $('#ladb_cutlist_export_editor_instances_list', $modal);
-            var $btnSetupModelUnits = $('#ladb_btn_setup_model_units', $modal);
             var $btnPreview = $('#ladb_cutlist_export_btn_preview', $modal);
             var $btnExport = $('#ladb_cutlist_export_btn_export', $modal);
 
@@ -744,10 +743,6 @@
             });
 
             // Bind buttons
-            $btnSetupModelUnits.on('click', function () {
-                $(this).blur();
-                that.dialog.executeCommandOnTab('settings', 'highlight_panel', { panel:'model' });
-            });
             $btnPreview.on('click', function () {
 
                 // Fetch options
