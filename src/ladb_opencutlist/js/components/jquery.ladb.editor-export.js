@@ -4,9 +4,10 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbEditorExport = function (element, options) {
+    var LadbEditorExport = function (element, options, dialog) {
         this.options = options;
         this.$element = $(element);
+        this.dialog = dialog;
 
         this.variableDefs = [];
 
@@ -166,7 +167,7 @@
             this.$element.append(this.$editingForm);
 
             var $inputHeader = $('#ladb_input_header', this.$editingForm);
-            var $inputFormula = $('#ladb_div_formula', this.$editingForm);
+            var $inputFormula = $('#ladb_textarea_formula', this.$editingForm);
 
             // Bind inputs
             $inputHeader
@@ -216,6 +217,8 @@
             if (this.$helpBlock) {
                 this.$helpBlock.hide();
             }
+
+            this.dialog.setupPopovers();
 
         } else {
 
@@ -270,16 +273,20 @@
 
         // Build UI
 
-        var $header = $('<div class="ladb-editor-export-header">').append(i18next.t('tab.cutlist.export.columns'))
-        this.$sortable = $('<ul class="ladb-editor-export-sortable ladb-sortable-list" />')
+        this.$element.addClass('row');
+
+        var $header = $('<div class="ladb-editor-export-columns-header">' + i18next.t('tab.cutlist.export.columns') + '</div>')
+        this.$sortable = $('<ul class="ladb-editor-export-columns-sortable ladb-sortable-list" />')
             .sortable(SORTABLE_OPTIONS)
         ;
 
         this.$element.append(
-            $('<div class="ladb-editor-export-container">')
-                .append($header)
-                .append(this.$sortable)
-        )
+            $('<div class="col-xs-10 col-xs-push-1">').append(
+                $('<div class="ladb-editor-export-columns">')
+                    .append($header)
+                    .append(this.$sortable)
+            )
+        );
 
         // Buttons
 
@@ -312,17 +319,19 @@
         var $btnContainer = $('<div style="display: inline-block" />');
 
         this.$element.append(
-            $('<div class="ladb-editor-export-buttons" style="margin: 10px;"></div>')
-                .append($btnGroup)
-                .append('&nbsp;')
-                .append($btnContainer)
+            $('<div class="col-xs-10 col-xs-push-1">').append(
+                $('<div class="ladb-editor-export-buttons" style="margin: 10px;"></div>')
+                    .append($btnGroup)
+                    .append('&nbsp;')
+                    .append($btnContainer)
+            )
         );
 
         this.$btnContainer = $btnContainer;
 
         // Help
 
-        this.$helpBlock = $('<div class="col-xs-offset-1 col-xs-10"><p class="help-block text-center"><small>' + i18next.t('tab.cutlist.export.customize_help') + '</small></p></div>');
+        this.$helpBlock = $('<div class="col-xs-10 col-xs-push-1"><p class="help-block text-center"><small>' + i18next.t('tab.cutlist.export.customize_help') + '</small></p></div>');
         this.$element.append(this.$helpBlock);
 
     };
@@ -338,7 +347,7 @@
             var options = $.extend({}, LadbEditorExport.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
-                $this.data('ladb.editorExport', (data = new LadbEditorExport(this, options)));
+                $this.data('ladb.editorExport', (data = new LadbEditorExport(this, options, options.dialog)));
             }
             if (typeof option === 'string') {
                 value = data[option].apply(data, Array.isArray(params) ? params : [ params ])

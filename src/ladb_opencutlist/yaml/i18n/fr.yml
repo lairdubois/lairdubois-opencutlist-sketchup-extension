@@ -455,9 +455,11 @@ tab:
       remove_column: Retirer
       columns: Colonnes
       header: Titre
+      header_help: |
+        Le champ **Titre** vous permet de personnaliser le titre de la colonne.
       formula: Formule
-      variables_list: Liste des variables
-      keywords_list: Liste des fonctions
+      formula_help: |
+        Le champ **Formule** vous permet d'écrire du code *Ruby* pour personnaliser la valeur de la colonne.
       options: Options d'export
       options_customize: Personnalisation
       option_source: Source

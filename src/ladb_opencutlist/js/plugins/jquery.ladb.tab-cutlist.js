@@ -675,6 +675,7 @@
             $selectColSep.selectpicker(SELECT_PICKER_OPTIONS);
             $selectEncoding.selectpicker(SELECT_PICKER_OPTIONS);
             $editorSummary.ladbEditorExport({
+                dialog: that.dialog,
                 vars: [
                     'material_type',
                     'material_thickness',
@@ -686,6 +687,7 @@
                 ]
             });
             $editorCutlist.ladbEditorExport({
+                dialog: that.dialog,
                 vars: [
                     'number',
                     'name',
@@ -708,6 +710,7 @@
                 ]
             });
             $editorInstancesList.ladbEditorExport({
+                dialog: that.dialog,
                 vars: [
                     'number',
                     'path',
