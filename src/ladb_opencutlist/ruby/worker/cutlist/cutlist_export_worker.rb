@@ -284,8 +284,8 @@ module Ladb::OpenCutList
       header = []
       @col_defs.each { |col_def|
         unless col_def['hidden']
-          if col_def['header'].is_a?(String) && !col_def['header'].empty?
-            header.push(col_def['header'])
+          if col_def['title'].is_a?(String) && !col_def['title'].empty?
+            header.push(col_def['title'])
           elsif col_def['name'].is_a?(String) && !col_def['name'].empty?
             header.push(Plugin.instance.get_i18n_string("tab.cutlist.export.#{col_def['name']}"))
           else

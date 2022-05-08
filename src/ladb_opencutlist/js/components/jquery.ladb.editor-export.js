@@ -30,7 +30,7 @@
         $.each(colDefs, function (index, colDef) {
 
             // Append column
-            that.appendColumnItem(false, colDef.name, colDef.header, colDef.formula, colDef.align, colDef.hidden);
+            that.appendColumnItem(false, colDef.name, colDef.title, colDef.formula, colDef.align, colDef.hidden);
 
         });
 
@@ -41,7 +41,7 @@
         this.$sortable.children('li').each(function () {
             colDefs.push({
                 name: $(this).data('name'),
-                header: $(this).data('header'),
+                title: $(this).data('title'),
                 formula: $(this).data('formula'),
                 align: $(this).data('align'),
                 hidden: $(this).data('hidden')
@@ -61,13 +61,13 @@
         return this.$editingItem ? this.$editingItem.index() : null;
     }
 
-    LadbEditorExport.prototype.appendColumnItem = function (appendAfterEditingItem, name, header, formula, align, hidden) {
+    LadbEditorExport.prototype.appendColumnItem = function (appendAfterEditingItem, name, title, formula, align, hidden) {
         var that = this;
 
         // Create and append row
         var $item = $(Twig.twig({ref: "components/_editor-export-column-item.twig"}).render({
             name: name || '',
-            header: header || '',
+            title: title || '',
             formula: formula || '',
             align: align || 'left',
             hidden: hidden || false
@@ -161,24 +161,24 @@
             // Create the form
             this.$editingForm = $(Twig.twig({ref: "components/_editor-export-column-form.twig"}).render({
                 name: $item.data('name'),
-                header: $item.data('header'),
+                title: $item.data('title'),
                 formula: $item.data('formula')
             }));
             this.$element.append(this.$editingForm);
 
-            var $inputHeader = $('#ladb_input_header', this.$editingForm);
+            var $inputHeader = $('#ladb_input_title', this.$editingForm);
             var $inputFormula = $('#ladb_textarea_formula', this.$editingForm);
 
             // Bind inputs
             $inputHeader
                 .ladbTextinputText()
                 .on('keyup', function () {
-                    $item.data('header', $(this).val());
+                    $item.data('title', $(this).val());
 
-                    // Update item header
-                    $('.ladb-editor-export-column-item-header', $item).replaceWith(Twig.twig({ref: "components/_editor-export-column-item-header.twig"}).render({
+                    // Update item title
+                    $('.ladb-editor-export-column-item-title', $item).replaceWith(Twig.twig({ref: "components/_editor-export-column-item-title.twig"}).render({
                         name: $item.data('name'),
-                        header: $item.data('header')
+                        title: $item.data('title')
                     }));
 
                 })

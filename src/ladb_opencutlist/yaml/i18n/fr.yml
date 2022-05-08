@@ -454,11 +454,11 @@ tab:
       add_native_columns: Ajouter une colonne native
       remove_column: Retirer
       columns: Colonnes
-      header: Titre
-      header_help: |
+      column_title: Titre
+      column_title_help: |
         Le champ **Titre** vous permet de personnaliser le titre de la colonne.
-      formula: Formule
-      formula_help: |
+      column_formula: Formule
+      column_formula_help: |
         Le champ **Formule** vous permet d'écrire du code *Ruby* pour personnaliser la valeur de la colonne.
       options: Options d'export
       options_customize: Personnalisation
@@ -500,9 +500,9 @@ tab:
       edge_xmin: Chant Largeur 1
       edge_xmax: Chant Largeur 2
       placeholder:
-        no_header: Saisissez un titre
-        no_formula_native: Valeur native de la colonne '{{ col_name }}'
-        no_formula: Saisissez une formule
+        no_column_title: Saisissez un titre
+        no_column_formula_native: Valeur native de la colonne '{{ col_name }}'
+        no_column_formula: Saisissez une formule
       warning:
         is_group_selection: Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas exportées.
     report:

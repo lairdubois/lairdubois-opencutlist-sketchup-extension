@@ -1,6 +1,6 @@
-<li data-name="{{ name|escape }}" data-header="{{ header|escape }}" data-formula="{{ formula|escape }}" data-align="{{ align }}" data-hidden="{{ hidden }}"{% if hidden %} class="ladb-inactive"{% endif %}>
+<li data-name="{{ name|escape }}" data-title="{{ title|escape }}" data-formula="{{ formula|escape }}" data-align="{{ align }}" data-hidden="{{ hidden }}"{% if hidden %} class="ladb-inactive"{% endif %}>
     <span class="ladb-handle"><i class="ladb-opencutlist-icon-reorder"></i></span>
-    {% include 'components/_editor-export-column-item-header.twig' %}
+    {% include 'components/_editor-export-column-item-title.twig' %}
     <div class="ladb-minitools ladb-minitools-right">
         <a href="#" class="ladb-editor-export-column-item-formula-btn {% if formula %} ladb-active{% endif %}"><i class="ladb-opencutlist-icon-formula"></i></a>
         <a href="#" class="ladb-editor-export-column-item-align-btn"><i class="ladb-opencutlist-icon-align-{{ align }}"></i></a>
