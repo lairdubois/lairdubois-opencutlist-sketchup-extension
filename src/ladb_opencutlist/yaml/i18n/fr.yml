@@ -501,7 +501,7 @@ tab:
       edge_xmax: Chant Largeur 2
       placeholder:
         no_column_title: Saisissez un titre
-        no_column_formula_native: Valeur native de la colonne '{{ col_name }}'
+        no_column_formula_native: "Valeur native de la colonne '{{ col_name }}'"
         no_column_formula: Saisissez une formule
       warning:
         is_group_selection: Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas exportées.

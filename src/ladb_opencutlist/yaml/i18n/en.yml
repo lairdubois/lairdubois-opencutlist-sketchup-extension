@@ -454,10 +454,12 @@ tab:
       add_native_columns: Add a native column
       remove_column: Remove
       columns: Columns
-      header: Title
-      formula: Formula
-      variables_list: List of variables
-      keywords_list: List of functions
+      column_title: Title
+      column_title_help: |
+        The **Title** field allows you to customize the title of the column.
+      column_formula: Formula
+      column_formula_help: |
+        The **Formula** field allows you to write *Ruby* code to customize the value of the column.
       options: Export Options
       options_customize: Customization
       option_source: Source
@@ -498,9 +500,9 @@ tab:
       edge_xmin: Edge width 1
       edge_xmax: Edge width 2
       placeholder:
-        no_header: Enter a title
-        no_formula_native: "Native value of column '{{ col_name }}'"
-        no_formula: Enter a formula
+        no_column_title: Enter a title
+        no_column_formula_native: "Native value of column '{{ col_name }}'"
+        no_column_formula: Enter a formula
       warning:
         is_group_selection: Parts inside **hidden groups** of the parts list will not be exported.
     report:
