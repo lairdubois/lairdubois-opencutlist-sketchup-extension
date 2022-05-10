@@ -72,6 +72,38 @@ module Ladb::OpenCutList
       end
     end
 
+    def to_mm
+      @value.to_mm.round(6)    # Returns the float representation of the value converted from inches to milimeters
+    end
+
+    def to_cm
+      @value.to_cm.round(6)    # Returns the float representation of the value converted from inches to centimeters
+    end
+
+    def to_m
+      @value.to_m.round(6)     # Returns the float representation of the value converted from inches to meters
+    end
+
+    def to_km
+      @value.to_km.round(6)    # Returns the float representation of the value converted from inches to kilometers
+    end
+
+    def to_inch
+      @value.to_inch.round(6)  # Returns the float representation of the value converted from inches to inches
+    end
+
+    def to_feet
+      @value.to_feet.round(6)  # Returns the float representation of the value converted from inches to feet
+    end
+
+    def to_mile
+      @value.to_mile.round(6)  # Returns the float representation of the value converted from inches to miles
+    end
+
+    def to_yard
+      @value.to_yard.round(6)  # Returns the float representation of the value converted from inches to yards
+    end
+
     def to_i
       @value.to_i
     end
@@ -163,38 +195,6 @@ module Ladb::OpenCutList
       end
     end
 
-    def to_mm
-      @value.to_mm    # Returns the float representation of the value converted from inches to milimeters
-    end
-
-    def to_cm
-      @value.to_cm    # Returns the float representation of the value converted from inches to centimeters
-    end
-
-    def to_m
-      @value.to_m     # Returns the float representation of the value converted from inches to meters
-    end
-
-    def to_km
-      @value.to_km    # Returns the float representation of the value converted from inches to kilometers
-    end
-
-    def to_inch
-      @value.to_inch  # Returns the float representation of the value converted from inches to inches
-    end
-
-    def to_feet
-      @value.to_inch  # Returns the float representation of the value converted from inches to feet
-    end
-
-    def to_mile
-      @value.to_mile  # Returns the float representation of the value converted from inches to miles
-    end
-
-    def to_yard
-      @value.to_inch  # Returns the float representation of the value converted from inches to yards
-    end
-
     def to_s
       return '' if @value == 0
       @value.to_l.to_s
@@ -218,6 +218,38 @@ module Ladb::OpenCutList
       end
     end
 
+    def to_mm2
+      @value.to_mm.to_mm.round(6)      # Returns the float representation of the value converted from inches to milimeters²
+    end
+
+    def to_cm2
+      @value.to_cm.to_cm.round(6)      # Returns the float representation of the value converted from inches to centimeters²
+    end
+
+    def to_m2
+      @value.to_m.to_m.round(6)        # Returns the float representation of the value converted from inches to meters²
+    end
+
+    def to_km2
+      @value.to_km.to_km.round(6)      # Returns the float representation of the value converted from inches to kilometers²
+    end
+
+    def to_inch2
+      @value.to_inch.to_inch.round(6)  # Returns the float representation of the value converted from inches to inches²
+    end
+
+    def to_feet2
+      @value.to_feet.to_feet.round(6)  # Returns the float representation of the value converted from inches to feet²
+    end
+
+    def to_mile2
+      @value.to_mile.to_mile.round(6)  # Returns the float representation of the value converted from inches to miles²
+    end
+
+    def to_yard2
+      @value.to_inch.to_inch.round(6)  # Returns the float representation of the value converted from inches to yards²
+    end
+
     def to_s
       return '' if @value == 0
       DimensionUtils.instance.format_to_readable_area(@value)
@@ -232,6 +264,38 @@ module Ladb::OpenCutList
   # -----
 
   class VolumeWrapper < FloatWrapper
+
+    def to_mm3
+      @value.to_mm.to_mm.to_mm.round(6)         # Returns the float representation of the value converted from inches to milimeters³
+    end
+
+    def to_cm3
+      @value.to_cm.to_cm.to_cm.round(6)         # Returns the float representation of the value converted from inches to centimeters³
+    end
+
+    def to_m3
+      @value.to_m.to_m.to_m.round(6)            # Returns the float representation of the value converted from inches to meters³
+    end
+
+    def to_km3
+      @value.to_km.to_km.to_km.round(6)         # Returns the float representation of the value converted from inches to kilometers³
+    end
+
+    def to_inch3
+      @value.to_inch.to_inch.to_inch.round(6)   # Returns the float representation of the value converted from inches to inches³
+    end
+
+    def to_feet3
+      @value.to_feet.to_feet.to_feet.round(6)   # Returns the float representation of the value converted from inches to feet³
+    end
+
+    def to_mile3
+      @value.to_mile.to_mile.to_mile.round(6)   # Returns the float representation of the value converted from inches to miles³
+    end
+
+    def to_yard3
+      @value.to_yard.to_yard.to_yard.round(6)   # Returns the float representation of the value converted from inches to yards³
+    end
 
     def to_s
       return '' if @value == 0
