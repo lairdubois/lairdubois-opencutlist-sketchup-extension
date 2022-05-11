@@ -20,6 +20,7 @@ default:
   export: Экспорт
   import: Импорт
   load: Загрузка
+  preview: Обзор
   options: Опции
   caution: Внимание
   remove: Удалить
@@ -58,11 +59,17 @@ core:
   menu:
     submenu: OpenCutList
     item:
-      edit_part_properties: $(tab.cutlist.edit_part_properties)
-      edit_part_axes_properties: $(tab.cutlist.edit_part_axes_properties)
+      generate_cutlist:  Создать карту раскроя
+      edit_part_properties: $t(tab.cutlist.edit_part_properties)
+      edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
+      edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
+      edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
+      smart_paint: $t(core.toolbar.command.smart_paint)
   toolbar:
     name: OpenCutList
-    command: OpenCutList
+    command:
+      dialog: OpenCutList
+      smart_paint: Раскраска деталей
   dialog:
     title: OpenCutList от L'Air du Bois
   leftbar:
@@ -135,13 +142,15 @@ core:
       save_to: "Обновить пресет '{{ name }}'"
       delete: "Удалить пресет '{{ name }}'"
   progress:
-    please_wait: "Пожалуйста, подождите"
+    please_wait: Национальный расчет
   component:
     textinput:
       reset: Сбросить это значение
     textinput_color:
       store: Запомнить этот цвет
       remove: Забыть этот цвет
+    textinput_code:
+      help: "Нажмите **@**, чтобы открыть список переменных данных."
 tab:
   cutlist:
     label: Раскрой
@@ -213,7 +222,7 @@ tab:
       remove_label_filter: "Удалить фильтрацию по '{{ label }}'"
       add_edge_material_name_filter: "Фильтровать '{{ material_name }}'"
       remove_edge_material_name_filter: "Не фильтровать '{{ material_name }}'"
-      not_aligned_on_axes: Внимание! Эта деталь возможно неправильно ориентирована относительно осей компонента
+      not_aligned_on_axes: "Внимание! Эта деталь возможно неправильно ориентирована относительно осей компонента"
       instance_count_by_part: "Эта деталь учитывается комплектом по **{{ count }}** ед."
       unused_instance_count: "Обратите внимание, что **{{ count }}** единица из последнего комплекта не образует комплект."
       unused_instance_count_plural: "Обратите внимание, что **{{ count }}** единицы из последнего комплекта не образуют комплект."
@@ -401,6 +410,7 @@ tab:
       property_count: Количество
       property_edge_pattern: Количество кромок
       property_tags: Теги
+      property_thickness_layer_count: Количество слоев
       tags: Теги
       tags_help: "Настраиваемый список тегов, предлагаемый в окне свойств детали."
       tags_placeholder: Добавить тег
@@ -435,9 +445,21 @@ tab:
       thickness_short: T
       edges: Схема кромок
     export:
-      title: Экспортировать в формате CSV
+      title: Экспорт
       info_0: |
         Эта функция позволяет вам экспортировать ваш *раскрой* в виде *списка деталей* в файл формата [CSV](https://ru.wikipedia.org/wiki/CSV).
+      customize_help: |
+        Измените порядок, скройте, добавьте, удалите или выберите столбец в списке, чтобы настроить его **название** и **формулу**, формирующую отображаемое значение для каждой экспортируемой строки.
+      add_column: Добавить столбец
+      add_native_columns: Добавить собственный столбец
+      remove_column: Удалить
+      columns: Колонок
+      column_title: Название
+      column_title_help: |
+        Поле **Название** позволяет настроить заголовок столбца.
+      column_formula: Формула
+      column_formula_help: |
+        Поле **Формула** позволяет вам написать код *Ruby* для настройки значения столбца.
       options: Параметры экспорта
       options_customize: Настройка
       option_source: Источник
@@ -477,6 +499,10 @@ tab:
       edge_ymax: Кромка по длине 2
       edge_xmin: Кромка по ширине 1
       edge_xmax: Кромка по ширине 2
+      placeholder:
+        no_column_title: Введите название
+        no_column_formula_native: "Собственное значение столбца '{{ col_name }}'"
+        no_column_formula: Введите формулу
       warning:
         is_group_selection: "Детали, содержащиеся в **скрытых группах** вашей карты раскроя, не будут экспортированы."
     report:
@@ -721,7 +747,7 @@ tab:
         group_std_dimension: Измерительный стандарт
         filename: Имя файла
         model_name: Название модели
-        page_label: Имя сцены
+        page_name: Имя сцены
         length_unit: Единицы
         generated_at: Дата и время
       error:
@@ -773,10 +799,11 @@ tab:
       grain_direction: Направление волокон
       colorized: "Этот рисунок фактуры будет применен к текстуре этого материала, когда он будет отображен в модели"
       texture_colorized: Комбинируйте рисунок фактуры для управления направлением изображения текстуры материала
+      texture_load: Загрузить новую текстуру
       edit: "Редактирование свойств '{{ name }}'"
       set_current: |
-        Выделить '{{ name }}'
-        *Двойной щелчок для применения*
+        Раскрашивайте части с помощью '{{ name }}'
+        *Двойной клик, чтобы свернуть*
     menu:
       import_from_skm: Импортировать материал (.skm)
       purge_unused: Очистить неиспользованные материалы
@@ -841,9 +868,12 @@ tab:
       std_prices_help: "Позволяет задать стоимость материала в зависимости от расчета цены за единицу: объема, площади, штуки."
       std_prices_dim_placeholder: Введите размер
       std_prices_add: Добавьте цену
+      texture_load: Загрузка
       texture_width: Ширина
       texture_height: Высота
       export_to_skm: Экспорт (.skm)
+    texture_load:
+      title: Загрузить изображение
     import_from_skm:
       title: Импорт .skm фала
     export_to_skm:
@@ -866,6 +896,7 @@ tab:
       failed_import_skm_file: "Ошибка произошла при импорте из .skm файла. **{{ error }}**"
       failed_export_skm_file: "Ошибка произошла при экспорте в .skm файл. **{{ error }}**"
       failed_removing_material: "При скрытии этого материала произошла ошибка. **{{ error }}**"
+      invalid_image_file: Недопустимое изображение
     success:
       exported_to: "Экспорт {{ export_path }} завершен."
     obsolete_base: "Чтобы поддерживать синхронизацию, необходимо обновить список материалов."
@@ -995,7 +1026,7 @@ tab:
     backers_plural: "{{ count }} финансовые спонсоры"
     ad: "Вам нравится OpenCutList ?"
     objective: Цель
-    objective_slogan: OpenCutList - это все мы
+    objective_slogan: "OpenCutList - это все мы"
     objective_title:
       default: Цель
       cuttingdiagram_export: Финансирование разработки новой функции
@@ -1090,3 +1121,29 @@ tool:
   highlight:
     transparency: Прозрачность
     zoom_extents: Приблизить
+  smart_paint:
+    copy_key_win: Контроль
+    copy_key_mac: Вариант
+    alt_key_win: ""
+    alt_key_mac: Команда
+    status_paint_face: "Кликните, чтобы раскрасить одну сторону."
+    status_paint_part: "Кликните, чтобы раскрасить всё."
+    status_unpaint_face: Кликните для очистки одной стороны.
+    status_unpaint_part: "Кликните, чтобы очистить всё."
+    status_pick: "Кликните, чтобы взять образец материала."
+    filters: Фильтры
+    filter_0: Без типа
+    filter_1: $t(tab.materials.type_1)
+    filter_2: $t(tab.materials.type_2)
+    filter_3: $t(tab.materials.type_3)
+    filter_4: $t(tab.materials.type_4)
+    filter_5: $t(tab.materials.type_5)
+    action: Действие
+    action_0: Цвет стороны
+    action_1: Раскраска детали
+    action_2: Чистая сторона
+    action_3: Чистая деталь
+    action_4: Образец
+    warning:
+      no_material: Ваша модель не содержит материалов !
+      all_filtered: Выбранные фильтры скрывают все материалы !

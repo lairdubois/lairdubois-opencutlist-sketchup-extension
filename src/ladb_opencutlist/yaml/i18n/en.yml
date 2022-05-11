@@ -1129,7 +1129,7 @@ tool:
     status_paint_face: Click to paint a face.
     status_paint_part: Click to paint an entire part.
     status_unpaint_face: Click to clean a face.
-    status_unpaint_part: Click to click an entire part
+    status_unpaint_part: Click to clean an entire part
     status_pick: Click to sample the material.
     filters: Filters
     filter_0: Without type
