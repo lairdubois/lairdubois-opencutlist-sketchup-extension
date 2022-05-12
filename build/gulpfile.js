@@ -16,6 +16,7 @@ var glob = require('glob');
 var yaml = require('js-yaml');
 var path = require('path');
 var cleanCSS = require('gulp-clean-css');
+var uglify = require('gulp-uglify');
 
 var knownOptions = {
     string: 'env',
@@ -38,6 +39,14 @@ gulp.task('css_minify', function () {
         .pipe(cleanCSS())
         .pipe(rename({ suffix: '.min' }))
         .pipe(gulp.dest('../src/ladb_opencutlist/css'));
+});
+
+// Minify .js files
+gulp.task('js_minify', function () {
+    return gulp.src('../src/ladb_opencutlist/js/lib/**/!(*.min).js')
+        .pipe(uglify())
+        .pipe(rename({ suffix: '.min' }))
+        .pipe(gulp.dest('../src/ladb_opencutlist/lib'));
 });
 
 // Convert twig runtime templates to .js precompiled files
@@ -121,6 +130,8 @@ gulp.task('rbz_create', function () {
         '!src/**/less/**',
         '!src/**/twig/**',
     ];
+    // Exclude not minified .js libs
+    blob.push('!src/**/js/lib/!(*.min).js');
     if (isProd) {
         // Exclude zz debug language in prod environment
         blob.push('!src/**/yaml/i18n/zz.yml');
@@ -172,7 +183,7 @@ gulp.task('version', function () {
         .pipe(touch());
 });
 
-gulp.task('compile', gulp.series('less_compile', 'css_minify', 'twig_compile', 'i18n_compile', 'i18n_dialog_compile'));
+gulp.task('compile', gulp.series('less_compile', 'css_minify', 'js_minify', 'twig_compile', 'i18n_compile', 'i18n_dialog_compile'));
 gulp.task('build', gulp.series('compile', 'version', 'rbz_create'));
 
 gulp.task('default', gulp.series('build'));
