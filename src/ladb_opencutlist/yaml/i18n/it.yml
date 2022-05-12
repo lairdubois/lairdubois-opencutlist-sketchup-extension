@@ -20,6 +20,7 @@ default:
   export: Esporta
   import: Importa
   load: Carica
+  preview: Panoramica della funzionalità
   options: Opzioni
   caution: Attenzione
   remove: Rimuovi
@@ -58,11 +59,17 @@ core:
   menu:
     submenu: OpenCutList
     item:
-      edit_part_properties: $(tab.cutlist.edit_part_properties)
-      edit_part_axes_properties: $(tab.cutlist.edit_part_axes_properties)
+      generate_cutlist:  Genera la Lista degli elementi
+      edit_part_properties: $t(tab.cutlist.edit_part_properties)
+      edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
+      edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
+      edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
+      smart_paint: $t(core.toolbar.command.smart_paint)
   toolbar:
     name: OpenCutList
-    command: OpenCutList
+    command:
+      dialog: OpenCutList
+      smart_paint: Assegna -colorando- i materiali
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
@@ -100,7 +107,7 @@ core:
 
       *E' possibile sponsorizzare OpenCutList per contribuire allo sviluppo di nuove funzionalità!*
     downloading: Download in corso
-    changelog: Lista delle nuove funzionalita
+    changelog: "Lista delle nuove funzionalita"
     ignore_update: Ignorare questo aggiornamento
     download_rescue: "Problemi a scaricare?"
     manual_download: Scaricamento manuale
@@ -135,13 +142,15 @@ core:
       save_to: "Impostazioni '{{ name }}' aggiornate"
       delete: "Elimina le impostazioni **\"{{ name }}\"**"
   progress:
-    please_wait: Per favore aspetta
+    please_wait: Calcola la Pace mondiale
   component:
     textinput:
       reset: Azzerare questo valore
     textinput_color:
       store: Memorizzare questo colore
       remove: Rimuovi il colore
+    textinput_code:
+      help: Digitare **@** per oittenere la lista delle variabili
 tab:
   cutlist:
     label: Parti
@@ -401,6 +410,7 @@ tab:
       property_count: Quantità
       property_edge_pattern: Numero delle bordature
       property_tags: Tags
+      property_thickness_layer_count: Numero di layer
       tags: Tags
       tags_help: Elenco personalizzato di tag proposti nella finestra delle proprietà della parte.
       tags_placeholder: Aggiungi un tag
@@ -435,9 +445,21 @@ tab:
       thickness_short: T
       edges: Bordature
     export:
-      title: Esporta in formato CSV
+      title: Esportazione
       info_0: |
         Con questa funzione si può esportare il *resoconto* in un file formato [CSV](https://it.wikipedia.org/wiki/Comma-separated_values).
+      customize_help: |
+        Riordina, Nascondi, Aggiungi, Rimuovi o Seleziona una colonna per personalizzare il **titolo** e la **formula** che verranno utilizzati per generare titolo e valore di ogni colonna esportata.
+      add_column: Aggiungi colonna
+      add_native_columns: Aggiungi una colonna predefinita
+      remove_column: Elimina
+      columns: Colonne
+      column_title: Nome
+      column_title_help: |
+        Il campo **Nome** permette di personalizzare il nome della colonna
+      column_formula: Formula
+      column_formula_help: |
+        Il campo **Formula** permette di scrivere una formula in linguaggio *Ruby* per personalizzare il valore della colonna.
       options: Opzioni di esportazione
       options_customize: Nome del modello
       option_source: Sorgente
@@ -477,6 +499,10 @@ tab:
       edge_ymax: Bordo Lunghezza 2
       edge_xmin: Bordo Larghezza 1
       edge_xmax: Bordo Larghezza 2
+      placeholder:
+        no_column_title: Digitare il nome
+        no_column_formula_native: "Valore predefinito della colonna '{{ col_name }}'"
+        no_column_formula: Digitare una formula
       warning:
         is_group_selection: Le parti contenute nei **gruppi nascosti** del elenco parti non saranno esportate.
     report:
@@ -558,7 +584,7 @@ tab:
       option_trimming_help_1d: La quantita di materiale da scartare ad ogni estremità della tavola o del bordo.
       option_trimming_help_2d: La quantità di materiale da scartare sul perimetro del pannello grezzo.
       option_optimization: Livello di ottimizzazione
-      option_optimization_help: Il livello di ottimizzazione stabilisce il numero di possibilità calcolate e quindi anche il tempo necessario.
+      option_optimization_help: "Il livello di ottimizzazione stabilisce il numero di possibilità calcolate e quindi anche il tempo necessario."
       option_optimization_0: Medio
       option_optimization_1: Avanzato
       option_stacking: Raggruppa parti identiche
@@ -721,7 +747,7 @@ tab:
         group_std_dimension: Dimensioni standard
         filename: Nome del file
         model_name: Personalizzazione
-        page_label: Nome della scena
+        page_name: Nome della scena
         length_unit: Unità
         generated_at: Data e ora
       error:
@@ -773,10 +799,11 @@ tab:
       grain_direction: Direzione della venatura
       colorized: Questa tonalità di colore sarà applicata alla struttura del materiale al momento della resa visiva del modello
       texture_colorized: Aggiungi questa tonalita alla struttura dell'immagine
+      texture_load: Carica una nuova texture
       edit: "Modifica le proprietà di '{{ name }}'"
       set_current: |
-        Seleziona '{{ name }}'
-        *Doppio-click per applicarlo*
+        Assegna il materiale '{{ name}}'
+        *Doppio-click per minimizzare*
     menu:
       import_from_skm: Importa materiale (.skm)
       purge_unused: Elimina materiali inutilizzati
@@ -841,9 +868,12 @@ tab:
       std_prices_help: Permette di definire il prezzo per tutte le taglie così come per ogni misura standard del materiale.
       std_prices_dim_placeholder: Scegli una taglia
       std_prices_add: Aggiungi prezzo
+      texture_load: Carica
       texture_width: Larghezza
       texture_height: Altezza
       export_to_skm: Esporta (.skm)
+    texture_load:
+      title: Carica un'immagine
     import_from_skm:
       title: Importa file .skm
     export_to_skm:
@@ -866,6 +896,7 @@ tab:
       failed_import_skm_file: "Errore di importazione durante la lettura del file .skm. **{{ error }}**"
       failed_export_skm_file: "Errore di esportazione nel file .skm. **{{ error }}**"
       failed_removing_material: "Errore durante l'eliminazione del materiale. **{{ error }}**"
+      invalid_image_file: Immagine non valida
     success:
       exported_to: "Esportazione in {{ export_path }} completata."
     obsolete_base: "Per essere sincronizzato, è necessario aggiornare l'elenco dei materiali."
@@ -946,7 +977,7 @@ tab:
       imported_title: Importazione eseguita
       imported_body: "sono state importate {{ count }} parti!"
       imported_body_plural: "sono state importate {{ count }} parti!"
-    obsolete_base: Ricaricare il file CSV per sincronizzare il modello.
+    obsolete_base: "Ricaricare il file CSV per sincronizzare il modello."
   tutorials:
     label: Tutoriali
     title: Tutoriali
@@ -995,7 +1026,7 @@ tab:
     backers_plural: "{{ count }} sostenitori finanziari"
     ad: "Gradisci OpenCutList?"
     objective: Obiettivo
-    objective_slogan: OpenCutList è tutti noi
+    objective_slogan: "OpenCutList è tutti noi"
     objective_title:
       default: Obiettivo
       cuttingdiagram_export: Finanziamento della funzionalità di esportare lo schema di taglio
@@ -1090,3 +1121,29 @@ tool:
   highlight:
     transparency: Transparenza
     zoom_extents: Zoom dimensioni
+  smart_paint:
+    copy_key_win: Verifica
+    copy_key_mac: Opzione
+    alt_key_win: Alt
+    alt_key_mac: Comando
+    status_paint_face: Click per assegnare il materiale della faccia
+    status_paint_part: Click per assegnare il materiale all' elemento
+    status_unpaint_face: Click per rimuovere il materiale della faccia
+    status_unpaint_part: Click per rimuovere il materiale all' elemento
+    status_pick: Click per prelevare un materiale esistente.
+    filters: Filtri
+    filter_0: Tipo indefinito
+    filter_1: $t(tab.materials.type_1)
+    filter_2: $t(tab.materials.type_2)
+    filter_3: $t(tab.materials.type_3)
+    filter_4: $t(tab.materials.type_4)
+    filter_5: $t(tab.materials.type_5)
+    action: Azione
+    action_0: Assegna il materiale alla faccia
+    action_1: Assegna il materiale all'elemento
+    action_2: Elimina il materiale della faccia
+    action_3: Elimina il materiale dell'elemento
+    action_4: Campiona
+    warning:
+      no_material: Il modello non contiene alcun materiale!
+      all_filtered: Il filtro selezionato esclude tutti i materiali!

@@ -453,7 +453,7 @@ tab:
       add_column: Добавить столбец
       add_native_columns: Добавить собственный столбец
       remove_column: Удалить
-      columns: Колонок
+      columns: Колонка
       column_title: Название
       column_title_help: |
         Поле **Название** позволяет настроить заголовок столбца.
@@ -781,7 +781,7 @@ tab:
     label: Материалы
     title: Материалы
     new: Новый материал
-    type_0: Неопеределён
+    type_0: Не определён
     type_1: Массив дерева
     type_2: Листовой
     type_3: Погонаж
@@ -887,7 +887,7 @@ tab:
       property_name: Имя
     remove:
       message: |
-        Вы собираетесь скрыть материал **{{ material_name }}** для вашей модели.
+        Вы собираетесь удалить материал **{{ material_name }}** из вашей модели.
         Подтвердите для продолжения.
     error:
       no_model: Ни одна модель не открыта. Вам необходимо дать мне больше информации ;)
@@ -1122,9 +1122,9 @@ tool:
     transparency: Прозрачность
     zoom_extents: Приблизить
   smart_paint:
-    copy_key_win: Контроль
+    copy_key_win: Ctrl
     copy_key_mac: Вариант
-    alt_key_win: ""
+    alt_key_win: Alt
     alt_key_mac: Команда
     status_paint_face: "Кликните, чтобы раскрасить одну сторону."
     status_paint_part: "Кликните, чтобы раскрасить всё."
@@ -1132,18 +1132,18 @@ tool:
     status_unpaint_part: "Кликните, чтобы очистить всё."
     status_pick: "Кликните, чтобы взять образец материала."
     filters: Фильтры
-    filter_0: Без типа
+    filter_0: Не определён
     filter_1: $t(tab.materials.type_1)
     filter_2: $t(tab.materials.type_2)
     filter_3: $t(tab.materials.type_3)
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     action: Действие
-    action_0: Цвет стороны
-    action_1: Раскраска детали
-    action_2: Чистая сторона
-    action_3: Чистая деталь
-    action_4: Образец
+    action_0: Раскрасить сторону
+    action_1: Раскрасить деталь
+    action_2: Очистить сторону
+    action_3: Очистить деталь
+    action_4: Взять образец
     warning:
       no_material: Ваша модель не содержит материалов !
       all_filtered: Выбранные фильтры скрывают все материалы !
