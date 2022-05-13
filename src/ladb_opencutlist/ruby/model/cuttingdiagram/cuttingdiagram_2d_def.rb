@@ -6,9 +6,9 @@ module Ladb::OpenCutList
 
     attr_accessor :errors, :warnings, :tips, :unplaced_part_defs, :options_def, :summary_def, :sheet_defs
 
-    def initialize
+    def initialize(errors = [])
 
-      @errors = []
+      @errors = errors
       @warnings = []
       @tips = []
 

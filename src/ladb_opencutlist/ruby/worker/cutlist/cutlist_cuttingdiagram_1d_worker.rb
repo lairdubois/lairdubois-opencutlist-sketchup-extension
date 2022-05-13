@@ -31,16 +31,16 @@ module Ladb::OpenCutList
     # -----
 
     def run(step_by_step = false)
-      return { :errors => [ 'default.error' ] } unless @cutlist
+      return Cuttingdiagram1dDef.new([ 'default.error' ]).create_cuttingdiagram1d unless @cutlist
 
       model = Sketchup.active_model
-      return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
+      return Cuttingdiagram1dDef.new([ 'tab.cutlist.error.no_model' ]).create_cuttingdiagram1d unless model
 
       group = @cutlist.get_group(@group_id)
-      return { :errors => [ 'default.error' ] } unless group
+      return Cuttingdiagram1dDef.new([ 'default.error' ]).create_cuttingdiagram1d unless group
 
       parts = @part_ids.nil? ? group.parts : group.get_parts(@part_ids)
-      return { :errors => [ 'default.error' ] } if parts.empty?
+      return Cuttingdiagram1dDef.new([ 'default.error' ]).create_cuttingdiagram1d if parts.empty?
 
       unless @pack_engine
 
@@ -129,7 +129,7 @@ module Ladb::OpenCutList
       # --------
 
       unless result
-        return { :errors => errors }
+        return Cuttingdiagram1dDef.new(errors).create_cuttingdiagram1d
       end
 
       cuttingdiagram1d_def = Cuttingdiagram1dDef.new
@@ -276,6 +276,12 @@ module Ladb::OpenCutList
     # -----
 
     private
+
+    def _assert(condition, error)
+      unless condition
+        cuttingdiagram1d_def
+      end
+    end
 
     def _compute_bin_type_id(bin, group, used)
       Digest::MD5.hexdigest("#{bin.length.to_l.to_s}x#{group.def.std_width.to_s}_#{bin.type}_#{used ? 1 : 0}")

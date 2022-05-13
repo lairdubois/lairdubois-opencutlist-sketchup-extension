@@ -38,16 +38,16 @@ module Ladb::OpenCutList
     # -----
 
     def run(step_by_step = false)
-      return { :errors => [ 'default.error' ] } unless @cutlist
+      return Cuttingdiagram2dDef.new([ 'default.error' ]).create_cuttingdiagram2d unless @cutlist
 
       model = Sketchup.active_model
-      return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
+      return Cuttingdiagram2dDef.new([ 'tab.cutlist.error.no_model' ]).create_cuttingdiagram2d unless model
 
       group = @cutlist.get_group(@group_id)
-      return { :errors => [ 'default.error' ] } unless group
+      return Cuttingdiagram2dDef.new([ 'default.error' ]).create_cuttingdiagram2d unless group
 
       parts = @part_ids.nil? ? group.parts : group.get_parts(@part_ids)
-      return { :errors => [ 'default.error' ] } if parts.empty?
+      return Cuttingdiagram2dDef.new([ 'default.error' ]).create_cuttingdiagram2d if parts.empty?
 
       unless @pack_engine
 
@@ -147,7 +147,7 @@ module Ladb::OpenCutList
       # --------
 
       unless result
-        return { :errors => errors }
+        return Cuttingdiagram2dDef.new(errors).create_cuttingdiagram2d
       end
 
       cuttingdiagram2d_def = Cuttingdiagram2dDef.new
