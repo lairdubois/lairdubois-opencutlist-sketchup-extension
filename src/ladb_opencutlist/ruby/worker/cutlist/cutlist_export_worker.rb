@@ -133,12 +133,12 @@ module Ladb::OpenCutList
 
           data = SummaryExportRowData.new(
             StringWrapper.new(Plugin.instance.get_i18n_string("tab.materials.type_#{group.material_type}")),
-            StringWrapper.new((group.material_name ? group.material_name : Plugin.instance.get_i18n_string('tab.cutlist.material_undefined')) + (group.material_type > 0 ? ' / ' + group.std_dimension : '')),
+            StringWrapper.new((group.material_name ? group.material_name : Plugin.instance.get_i18n_string('tab.cutlist.material_undefined')) + (group.material_type != MaterialAttributes::TYPE_UNKNOWN && group.material_type != MaterialAttributes::TYPE_HARDWARE ? ' / ' + group.std_dimension : '')),
             IntegerWrapper.new(group.part_count),
-            LengthWrapper.new(group.def.total_cutting_length),
+            LengthWrapper.new(group.def.total_cutting_length, false),
             AreaWrapper.new(group.def.total_cutting_area),
             VolumeWrapper.new(group.def.total_cutting_volume),
-            AreaWrapper.new((group.total_final_area.nil? || group.invalid_final_area_part_count > 0) ? 0 : group.total_final_area)
+            AreaWrapper.new((group.total_final_area.nil? || group.invalid_final_area_part_count > 0) ? 0 : group.def.total_final_area)
           )
 
           rows << _evaluate_row(data)
@@ -167,7 +167,7 @@ module Ladb::OpenCutList
               LengthWrapper.new(part.def.size.length),
               LengthWrapper.new(part.def.size.width),
               LengthWrapper.new(part.def.size.thickness),
-              AreaWrapper.new(part.final_area),
+              AreaWrapper.new(part.def.final_area),
               StringWrapper.new(group.material_display_name),
               ArrayWrapper.new(part.entity_names.map(&:first)),
               StringWrapper.new(part.description),
@@ -230,7 +230,7 @@ module Ladb::OpenCutList
                   LengthWrapper.new(part.def.size.length),
                   LengthWrapper.new(part.def.size.width),
                   LengthWrapper.new(part.def.size.thickness),
-                  AreaWrapper.new(part.final_area),
+                  AreaWrapper.new(part.def.final_area),
                   StringWrapper.new(group.material_display_name),
                   StringWrapper.new(part.description),
                   ArrayWrapper.new(part.tags),
@@ -267,17 +267,6 @@ module Ladb::OpenCutList
       end
 
       rows
-    end
-
-    def _sanitize_value_string(value)
-      value.gsub(/^~ /, '') unless value.nil?
-    end
-
-    def _format_edge_value(material_name, std_dimension)
-      if material_name
-        return "#{material_name} (#{std_dimension})"
-      end
-      ''
     end
 
     def _evaluate_header

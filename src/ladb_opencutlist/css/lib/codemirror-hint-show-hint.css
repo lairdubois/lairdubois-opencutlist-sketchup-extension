@@ -36,8 +36,8 @@
   left: 2px;
   bottom: 2px;
   border-radius: 2px;
+  font-family: sans-serif;
   font-size: 12px;
-  font-weight: bold;
   height: 15px;
   width: 15px;
   line-height: 16px;
@@ -45,15 +45,37 @@
   color: white;
   box-sizing: border-box;
 }
-.CodeMirror-hint-keyword:before {
-  content: "\e906";
-  font-family: 'ladb_opencutlist' !important;
-  background: #c0c;;
+.CodeMirror-hint-integer:before {
+  content: "I";
+  background: #00f;
 }
-.CodeMirror-hint-variable:before {
-  content: "\e98e";
-  font-family: 'ladb_opencutlist' !important;
-  background: #000;
+.CodeMirror-hint-float:before {
+  content: "F";
+  background: #00f;
+}
+.CodeMirror-hint-string:before {
+  content: "S";
+  background: #090;
+}
+.CodeMirror-hint-array:before {
+  content: "A";
+  background: darkmagenta;
+}
+.CodeMirror-hint-length:before {
+  content: "L";
+  background: #aaa;
+}
+.CodeMirror-hint-area:before {
+  content: "A";
+  background: #777;
+}
+.CodeMirror-hint-volume:before {
+  content: "V";
+  background: #444;
+}
+.CodeMirror-hint-edge:before {
+  content: "E";
+  background: #668EEE;
 }
 
 li.CodeMirror-hint-active {

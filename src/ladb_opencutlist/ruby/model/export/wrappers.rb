@@ -178,11 +178,12 @@ module Ladb::OpenCutList
 
   class LengthWrapper < FloatWrapper
 
-    def initialize(value)
+    def initialize(value, output_to_model_unit = true)
       if value.is_a?(Length)
         value = value.to_f
       end
       super(value)
+      @output_to_model_unit = output_to_model_unit
     end
 
     def *(value)
@@ -197,7 +198,8 @@ module Ladb::OpenCutList
 
     def to_s
       return '' if @value == 0
-      @value.to_l.to_s
+      return DimensionUtils.instance.format_to_readable_length(@value) unless @output_to_model_unit
+      @value.to_l.to_s.gsub(/^~ /, '')  # Remove ~ character if it exists
     end
 
     def export

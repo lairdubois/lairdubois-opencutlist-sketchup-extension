@@ -266,8 +266,9 @@
         this.variableDefs = [];
         for (var i = 0; i < this.options.vars.length; i++) {
             this.variableDefs.push({
-                text: this.options.vars[i],
-                displayText: i18next.t('tab.cutlist.export.' + this.options.vars[i])
+                text: this.options.vars[i].name,
+                displayText: i18next.t('tab.cutlist.export.' + this.options.vars[i].name),
+                type: this.options.vars[i].type
             });
         }
 

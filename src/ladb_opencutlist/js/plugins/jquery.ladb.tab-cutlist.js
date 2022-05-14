@@ -677,59 +677,59 @@
             $editorSummary.ladbEditorExport({
                 dialog: that.dialog,
                 vars: [
-                    'material_type',
-                    'material_thickness',
-                    'part_count',
-                    'total_cutting_length',
-                    'total_cutting_area',
-                    'total_cutting_volume',
-                    'total_final_area'
+                    { name: 'material_type', type: 'string' },
+                    { name: 'material_thickness', type: 'length' },
+                    { name: 'part_count', type: 'integer' },
+                    { name: 'total_cutting_length', type: 'length' },
+                    { name: 'total_cutting_area', type: 'area' },
+                    { name: 'total_cutting_volume', type: 'volume' },
+                    { name: 'total_final_area', type: 'area' }
                 ]
             });
             $editorCutlist.ladbEditorExport({
                 dialog: that.dialog,
                 vars: [
-                    'number',
-                    'name',
-                    'count',
-                    'cutting_length',
-                    'cutting_width',
-                    'cutting_thickness',
-                    'bbox_length',
-                    'bbox_width',
-                    'bbox_thickness',
-                    'final_area',
-                    'material_name',
-                    'entity_names',
-                    'description',
-                    'tags',
-                    'edge_ymin',
-                    'edge_ymax',
-                    'edge_xmin',
-                    'edge_xmax'
+                    { name: 'number', type: 'string' },
+                    { name: 'name', type: 'string' },
+                    { name: 'count', type: 'integer' },
+                    { name: 'cutting_length', type: 'length' },
+                    { name: 'cutting_width', type: 'length' },
+                    { name: 'cutting_thickness', type: 'length' },
+                    { name: 'bbox_length', type: 'length' },
+                    { name: 'bbox_width', type: 'length' },
+                    { name: 'bbox_thickness', type: 'length' },
+                    { name: 'final_area', type: 'area' },
+                    { name: 'material_name', type: 'string' },
+                    { name: 'entity_names', type: 'array' },
+                    { name: 'description', type: 'string' },
+                    { name: 'tags', type: 'array' },
+                    { name: 'edge_ymin', type: 'edge' },
+                    { name: 'edge_ymax', type: 'edge' },
+                    { name: 'edge_xmin', type: 'edge' },
+                    { name: 'edge_xmax', type: 'edge' }
                 ]
             });
             $editorInstancesList.ladbEditorExport({
                 dialog: that.dialog,
                 vars: [
-                    'number',
-                    'path',
-                    'instance_name',
-                    'definition_name',
-                    'cutting_length',
-                    'cutting_width',
-                    'cutting_thickness',
-                    'bbox_length',
-                    'bbox_width',
-                    'bbox_thickness',
-                    'final_area',
-                    'material_name',
-                    'description',
-                    'tags',
-                    'edge_ymin',
-                    'edge_ymax',
-                    'edge_xmin',
-                    'edge_xmax'
+                    { name: 'number', type: 'string' },
+                    { name: 'path', type: 'string' },
+                    { name: 'instance_name', type: 'string' },
+                    { name: 'definition_name', type: 'string' },
+                    { name: 'cutting_length', type: 'length' },
+                    { name: 'cutting_width', type: 'length' },
+                    { name: 'cutting_thickness', type: 'length' },
+                    { name: 'bbox_length', type: 'length' },
+                    { name: 'bbox_width', type: 'length' },
+                    { name: 'bbox_thickness', type: 'length' },
+                    { name: 'final_area', type: 'area' },
+                    { name: 'material_name', type: 'string' },
+                    { name: 'description', type: 'string' },
+                    { name: 'tags', type: 'array' },
+                    { name: 'edge_ymin', type: 'edge' },
+                    { name: 'edge_ymax', type: 'edge' },
+                    { name: 'edge_xmin', type: 'edge' },
+                    { name: 'edge_xmax', type: 'edge' }
                 ]
             });
 

@@ -92,7 +92,7 @@
                 text: variableDef.text,
                 displayText: variableDef.displayText,
                 normalizedText: variableDef.displayText.normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
-                className: 'CodeMirror-hint-variable'
+                className: 'CodeMirror-hint-' + variableDef.type
             });
         }
 
