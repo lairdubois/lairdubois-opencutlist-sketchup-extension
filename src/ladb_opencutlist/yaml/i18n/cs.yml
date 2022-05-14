@@ -20,6 +20,7 @@ default:
   export: Export
   import: Import
   load: Nahrát
+  preview: Přehled
   options: Nastavení
   caution: Pozor
   remove: Odstranit
@@ -58,11 +59,17 @@ core:
   menu:
     submenu: OpenCutList
     item:
-      edit_part_properties: $(tab.cutlist.edit_part_properties)
-      edit_part_axes_properties: $(tab.cutlist.edit_part_axes_properties)
+      generate_cutlist:  Generovat kusovník
+      edit_part_properties: $t(tab.cutlist.edit_part_properties)
+      edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
+      edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
+      edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
+      smart_paint: $t(core.toolbar.command.smart_paint)
   toolbar:
     name: OpenCutList
-    command: OpenCutList
+    command:
+      dialog: OpenCutList
+      smart_paint: Barvy dílů
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
@@ -135,13 +142,15 @@ core:
       save_to: "Aktualizovat předvolbu '{{ name }}'"
       delete: "Smazat předvolbu '{{ name }}'"
   progress:
-    please_wait: "Prosím, čekejte"
+    please_wait: Výpočet světové polohy
   component:
     textinput:
       reset: Vynulování hodnoty
     textinput_color:
       store: Uložit barvu
       remove: Smazat barvu
+    textinput_code:
+      help: "Chcete-li získat seznam proměnných, zadejte **@**."
 tab:
   cutlist:
     label: Kusovník
@@ -401,6 +410,7 @@ tab:
       property_count: Počet
       property_edge_pattern: Počet hranování
       property_tags: Štítky
+      property_thickness_layer_count: Počet vrstev
       tags: Štítky
       tags_help: Vlastní seznam tags nabízených v okně vlastností součásti.
       tags_placeholder: Přidejte tag
@@ -435,9 +445,21 @@ tab:
       thickness_short: T
       edges: Hranování
     export:
-      title: Export do CSV
+      title: Exportovat
       info_0: |
         Pomocí této funkce můžete exportovat *seznam dílců* do [CSV](https://cs.wikipedia.org/wiki/CSV) souboru.
+      customize_help: |
+        Změnit pořadí, skrýt, přidat, odebrat nebo vybrat sloupec ze seznamu a přizpůsobit jeho **název** a **vzorec**, který bude generovat hodnoty pro každý exportovaný řádek.
+      add_column: Přidejte sloupec
+      add_native_columns: Přidejte nativní sloupec
+      remove_column: Odstranit
+      columns: Sloupce
+      column_title: Nadpis
+      column_title_help: |
+        Pole **Nadpis** vám umožňuje upravit název sloupce.
+      column_formula: Vzorec
+      column_formula_help: |
+        Pole **Vzorec** vám umožňuje napsat *Ruby* kód pro přizpůsobení hodnoty sloupce.
       options: Možnosti exportu
       options_customize: Přizpůsobení
       option_source: Zdroj
@@ -477,6 +499,10 @@ tab:
       edge_ymax: Hrana podél 2
       edge_xmin: Hrana napříč 1
       edge_xmax: Hrana napříč 2
+      placeholder:
+        no_column_title: Zadejte název sloupce
+        no_column_formula_native: "Nativní hodnota sloupce '{{ col_name }}'"
+        no_column_formula: Zadejte vzorec
       warning:
         is_group_selection: "Díly, které jsou ve **skrytých skupinách** kusovníku, se neexportují."
     report:
@@ -721,7 +747,7 @@ tab:
         group_std_dimension: Standardní rozměry
         filename: Název souboru
         model_name: Jméno modelu
-        page_label: Název scény
+        page_name: Název scény
         length_unit: Jednotka
         generated_at: Datum a čas
       error:
@@ -773,10 +799,11 @@ tab:
       grain_direction: Směr let
       colorized: "Tento barevný odstín bude aplikován na texturu tohoto materiálu, když je vykreslen v modelu"
       texture_colorized: Kombinujte tento odstín v dekoru textury
+      texture_load: Načtěte novou texturu
       edit: "Upravit vlastnosti pro '{{ name }}'"
       set_current: |
-        Výběr '{{ name }}'
-        *Použijte dvou-klik*
+        Malovat části s '{{ name }}'
+        *Dvojitým kliknutím minimalizujete*
     menu:
       import_from_skm: Import materiálu (.skm)
       purge_unused: Smazat nepoužité materiály
@@ -841,9 +868,12 @@ tab:
       std_prices_help: Umožňuje definovat cenu pro všechny velikosti i pro každou standardní velikost materiálu.
       std_prices_dim_placeholder: Vyberte velikost
       std_prices_add: Přidat cenu
+      texture_load: Nahrát
       texture_width: Šířka
       texture_height: Výška
       export_to_skm: Export (.skm)
+    texture_load:
+      title: Načíst obrázek
     import_from_skm:
       title: Importujte soubor .skm
     export_to_skm:
@@ -866,6 +896,7 @@ tab:
       failed_import_skm_file: "Při importu souboru .skm došlo k chybě. **{{ error }}**"
       failed_export_skm_file: "Při exportu souboru .skm došlo k chybě. **{{ error }}**"
       failed_removing_material: "Při úpravě tohoto materiálu došlo k chybě. **{{ error }}**"
+      invalid_image_file: Neplatný obrázek
     success:
       exported_to: "Úspěšný export do {{ export_path }}."
     obsolete_base: "Chcete-li zůstat v synchronizaci, musíte aktualizovat seznam materiálů."
@@ -995,7 +1026,7 @@ tab:
     backers_plural: "Finanční přispěvatelé: {{ count }}"
     ad: "Líbí se vám software OpenCutList?"
     objective: Objektivní
-    objective_slogan: OpenCutList je pro všechny
+    objective_slogan: "OpenCutList je pro všechny"
     objective_title:
       default: Objekty
       cuttingdiagram_export: Financování vývozu řezných diagramů
@@ -1090,3 +1121,29 @@ tool:
   highlight:
     transparency: Průhlednost
     zoom_extents: Rozsahy zvětšení
+  smart_paint:
+    copy_key_win: Ovládání
+    copy_key_mac: Nastavení
+    alt_key_win: Atl
+    alt_key_mac: Příkaz
+    status_paint_face: Kliknutím obarvíme plochu
+    status_paint_part: Kliknutím obarvíme celý díl
+    status_unpaint_face: Kliknutím smažeme barvu plochy
+    status_unpaint_part: Kliknutím zmažeme barvu celého dílu
+    status_pick: Kliknutím zobrazíme vzorek materiálu
+    filters: Filtr
+    filter_0: Bez typu
+    filter_1: $t(tab.materials.type_1)
+    filter_2: $t(tab.materials.type_2)
+    filter_3: $t(tab.materials.type_3)
+    filter_4: $t(tab.materials.type_4)
+    filter_5: $t(tab.materials.type_5)
+    action: Akce
+    action_0: Barva plochy
+    action_1: Barva části
+    action_2: Vyčistit plochu
+    action_3: Vyčistit část
+    action_4: Vzorek
+    warning:
+      no_material: Váš model neobsahuje žádný materiál!
+      all_filtered: Vybrané filtry maskují všechny materiály!

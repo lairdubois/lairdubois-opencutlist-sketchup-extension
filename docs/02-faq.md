@@ -1,5 +1,7 @@
 # Frequently Asked Questions
 
+This FAQ will be removed shortly (as of 2022-05-14), please see the [OpenCutList Documentation] (https://docs.opencutlist.org) for updated information.
+
 ## How can I change the language?
 
 Click the **Preferences** tab on the far bottom right of the maximized OpenCutList window, select the language of your choice. The language of OpenCutList is independent of your SketchUp version, thus in an english SketchUp version you may still select French.
