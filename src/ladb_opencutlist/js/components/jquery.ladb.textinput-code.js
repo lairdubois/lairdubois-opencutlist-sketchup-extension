@@ -91,6 +91,7 @@
             hints.push({
                 text: variableDef.text,
                 displayText: variableDef.displayText,
+                normalizedText: variableDef.displayText.normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
                 className: 'CodeMirror-hint-variable'
             });
         }
@@ -100,13 +101,13 @@
             var curLine = cm.getLine(cur.line);
             var start = cur.ch;
             var end = start;
-            while (end < curLine.length && /[\w$]/.test(curLine.charAt(end))) ++end;
-            while (start && /[\w$]/.test(curLine.charAt(start - 1))) --start;
-            var curWord = start !== end && curLine.slice(start, end);
+            while (end < curLine.length && /[A-Za-zÀ-ÖØ-öø-ÿ]/.test(curLine.charAt(end))) ++end;
+            while (start && /[A-Za-zÀ-ÖØ-öø-ÿ]/.test(curLine.charAt(start - 1))) --start;
+            var curWord = start !== end && curLine.slice(start, end).normalize('NFD').replace(/[\u0300-\u036f]/g, '');
             var regExp = new RegExp(curWord, 'i');
             return {
                 list: (!curWord ? hints : hints.filter(function(hint) {
-                    return hint.displayText.match(regExp);
+                    return hint.normalizedText.match(regExp);
                 })).sort(),
                 from: CodeMirror.Pos(cur.line, start),
                 to: CodeMirror.Pos(cur.line, end)
