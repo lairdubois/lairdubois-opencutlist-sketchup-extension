@@ -2,23 +2,24 @@ CHANGELOG
 =========
 
 This changelog references the relevant changes (bug and security fixes) done
-in 3.x, 2.x, 1.x and 0.x versions.
+in 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 * 4.0.0 (WIP)
 
+  * Added SmartPaint tool
   * Added cutting diagram 1D progress bar
   * Added cutting diagram 2D progress bar
   * Added cutlist export customization
-  * Added generate cutlist menu item (ready to configue a custom keyboard shortcut)
+  * Added generate cutlist menu item (ready to configure a custom keyboard shortcut)
   * Added progress feedback on generate cutlist and list materials
   * Added page description to printed part list
-  * Added re-load material texture 
+  * Added re-load material texture
   * Merged instance names in grouped parts
-  * Improved ruby i18n string getter to support $()
+  * Improved ruby i18n string getter to support `$()`
   * Improved disabled edge cell display in part list
   * Fixed edge std size display
-  * Fixed report crash when sheet good od dimensional material don't have standard size
-  * Remove URI.escape deprecation uses
+  * Fixed report crash when sheet good or dimensional material don't have a standard size
+  * Removed deprecated use of `URI.escape`
   * Now only standard sheet and bar uses dim prices in reports
 
 * 3.0.2 (2022-02-27)
