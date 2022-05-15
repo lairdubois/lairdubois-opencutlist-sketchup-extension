@@ -20,6 +20,7 @@ default:
   export: Exporteren
   import: Importeren
   load: Laden
+  preview: In zicht
   options: Opties
   caution: Let op
   remove: Verwijder
@@ -58,11 +59,17 @@ core:
   menu:
     submenu: OpenCutList
     item:
-      edit_part_properties: $(tab.cutlist.edit_part_properties)
-      edit_part_axes_properties: $(tab.cutlist.edit_part_axes_properties)
+      generate_cutlist:  Genereer materiaallijst
+      edit_part_properties: $t(tab.cutlist.edit_part_properties)
+      edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
+      edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
+      edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
+      smart_paint: $t(core.toolbar.command.smart_paint)
   toolbar:
     name: OpenCutList
-    command: OpenCutList
+    command:
+      dialog: OpenCutList
+      smart_paint: Kleur de onderdelen
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
@@ -104,7 +111,7 @@ core:
     ignore_update: Sla deze update over
     download_rescue: "Lukt het downloaden niet?"
     manual_download: Handmatig downloaden
-    zzz: Er is een update geweest en Sketchup moet opnieuw gestart worden.
+    zzz: "Er is een update geweest en Sketchup moet opnieuw gestart worden."
     success: |
       De update van *OpenCutList* is klaar.
 
@@ -135,13 +142,15 @@ core:
       save_to: "Voorinstelling '{{ name }}' bijwerken"
       delete: "Voorinstelling '{{ name }}' verwijderen"
   progress:
-    please_wait: Even geduld aub
+    please_wait: Berekening van een wereld van vrede
   component:
     textinput:
       reset: Reset waarde
     textinput_color:
       store: Bewaar kleur
       remove: Kleur vergeten
+    textinput_code:
+      help: Druk op **@** om de lijst met gegevensvariabelen te openen.
 tab:
   cutlist:
     label: Onderdelen
@@ -401,6 +410,7 @@ tab:
       property_count: Hoeveelheid
       property_edge_pattern: Aantal kantenbanden
       property_tags: Tags
+      property_thickness_layer_count: Aantal lagen
       tags: Tags
       tags_help: Lijst van eigen tags voorgesteld in het venster van de eigenschappen van onderdelen.
       tags_placeholder: Voeg trefwoord toe
@@ -435,9 +445,21 @@ tab:
       thickness_short: D.
       edges: Randafwerkingen
     export:
-      title: Exporteren naar CSV
+      title: Exporteren
       info_0: |
         Deze functionaliteit laat u toe om uw *stuklijst* te exporteren naar een bestand van het type [CSV](https://nl.wikipedia.org/wiki/Kommagescheiden_bestand).
+      customize_help: |
+        Een kolom in de lijst opnieuw ordenen, verbergen, toevoegen, verwijderen of selecteren om de **titel** en de **formule** aan te passen die de weergegeven waarde voor elke geëxporteerde rij genereert.
+      add_column: Voeg een afmeting toe
+      add_native_columns: Voeg een kolom toe
+      remove_column: Verwijder
+      columns: Kolommen
+      column_title: Titel
+      column_title_help: |
+        In het veld **Titel** kunt u de kolomtitel aanpassen.
+      column_formula: Formule
+      column_formula_help: |
+        In het veld **Formule** kunt u *Ruby*-code schrijven om de kolomwaarde aan te passen.
       options: Exporteer opties
       options_customize: Personalisering
       option_source: Bron
@@ -477,6 +499,10 @@ tab:
       edge_ymax: Kantenband lengte 2
       edge_xmin: Kantenband breedte 1
       edge_xmax: Kantenband breedte 2
+      placeholder:
+        no_column_title: Voer een titel in
+        no_column_formula_native: "Beginwaarde van kolom '{{ col_name }}'"
+        no_column_formula: Voer een formule in
       warning:
         is_group_selection: Onderdelen in de **gemaskeerde groepen** van uw stuklijst worden niet geëxporteerd.
     report:
@@ -643,7 +669,7 @@ tab:
         no_parts: Geen enkel onderdeel.
         no_sheet: Het standaard paneel is niet correct geconfigureerd en geen enkel overschot is gedefinieerd.
         no_placement_possible: "Geen enkel onderdeel kon geplaatst worden (standaard paneel te klein, marge te groot, zaagblad te dik, ...)."
-        bad_error: Fout in het algoritme. Gelieve de ontwikkelaars te contacteren want je bent op een interessante case gestoten.
+        bad_error: "Fout in het algoritme. Gelieve de ontwikkelaars te contacteren want je bent op een interessante case gestoten."
         unplaced_parts: "**1 onderdeel** is te groot om geplaatst te worden."
         unplaced_parts_plural: "**{{ count }} onderdelen** zijn te groot om geplaatst te worden."
       warning:
@@ -721,7 +747,7 @@ tab:
         group_std_dimension: Standaard afmetingen
         filename: Bestandsnaam
         model_name: Naam van het model
-        page_label: Naam van de scène
+        page_name: Naam van de scène
         length_unit: Eenheid
         generated_at: Datum en uur
       error:
@@ -736,7 +762,7 @@ tab:
       failed_to_write_export_file: "Het is niet gelukt om het bestand te exporteren. **{{ error }}**"
       failed_export_skp_file: "Er heeft zich een fout voorgedaan bij het exporteren van het .skp bestand. **{{ error }}**"
       unknow_part: Het geselecteerde onderdeel bestaat niet in de stuklijst.
-      obsolete_cutlist: Onmogelijk. De stuklijst is vervallen. Genereer hem opnieuw.
+      obsolete_cutlist: "Onmogelijk. De stuklijst is vervallen. Genereer hem opnieuw."
     warning:
       is_entity_selection: Deze stuklijst is een gedeeltelijke weergave van uw model omdat hij enkel de geselecteerde elementen bevat.
       no_typed_materials_in_model: "Uw model gebruikt geen enkel materiaal van het type (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** of **$t(tab.materials.type_5)**)."
@@ -750,7 +776,7 @@ tab:
         Wanneer je enkel groepen gebruikt, zet die dan om in componenten.
         Het gebruik van componenten laat toe om identieke onderdelen te repliceren zonder ze te hoeven dupliceren.
       no_typed_materials: "Pas een materiaal toe op de onderdelen die je wil zien in je stuklijst en definieer het type van dat materiaal (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** of **$t(tab.materials.type_5)**) in de tab <i class=\"ladb-opencutlist-icon-materials\"></i> **Materialen**."
-    obsolete_base: Om gesynchroniseerd te blijven moet je de stuklijst opnieuw genereren.
+    obsolete_base: "Om gesynchroniseerd te blijven moet je de stuklijst opnieuw genereren."
   materials:
     label: Materialen
     title: Materialen
@@ -773,10 +799,11 @@ tab:
       grain_direction: Nerf richting
       colorized: Deze tint zal toegepast worden op de textuur van dit materiaal wanneer het in het model toegepast wordt
       texture_colorized: Combineer de tint definitief met de afbeelding van de textuur
+      texture_load: Laad een nieuwe textuur
       edit: "Wijzig de eigenschappen van '{{ name }}'"
       set_current: |
-        Selecteer '{{ name }}'
-        *Dubbel-klik om te gebruiken*
+        Kleur delen met '{{ name }}'
+         *Dubbelklikken om samen te vouwen*
     menu:
       import_from_skm: Importeer een materiaal (.skm)
       purge_unused: Verwijder ongebruikte materialen
@@ -841,9 +868,12 @@ tab:
       std_prices_help: Laat toe om de prijs voor alle afmetingen aan te duiden alsook voor elke standaard afmeting van het materiaal.
       std_prices_dim_placeholder: Kies een afmeting
       std_prices_add: Voeg een prijs toe
+      texture_load: Laden
       texture_width: Breedte
       texture_height: Hoogte
       export_to_skm: Exporteren (.skm)
+    texture_load:
+      title: Upload een afbeelding
     import_from_skm:
       title: Importeer een .skm bestand
     export_to_skm:
@@ -866,9 +896,10 @@ tab:
       failed_import_skm_file: "Er heeft zich een fout voorgedaan bij het importeren van het .skm bestand. **{{ error }}**"
       failed_export_skm_file: "Er heeft zich een fout voorgedaan bij het exporteren van het .skm bestand. **{{ error }}**"
       failed_removing_material: "Er heeft zich een fout voorgedaan bij het verwijderen van het materiaal. **{{ error }}**"
+      invalid_image_file: Ongeldige afbeelding
     success:
       exported_to: "Export geslaagd naar {{ export_path }}."
-    obsolete_base: Om gesynchroniseerd te blijven moet u de materialen lijst verversen.
+    obsolete_base: "Om gesynchroniseerd te blijven moet u de materialen lijst verversen."
   importer:
     label: Importeren
     title: Onderdelen importeren
@@ -995,7 +1026,7 @@ tab:
     backers_plural: "{{ count }} financiele sponsors"
     ad: "Houdt u van OpenCutList?"
     objective: Doel
-    objective_slogan: OpenCutList zijn we allemaal
+    objective_slogan: "OpenCutList zijn we allemaal"
     objective_title:
       default: Doelen
       cuttingdiagram_export: Financiering van de uitvoer van snijschema's
@@ -1090,3 +1121,29 @@ tool:
   highlight:
     transparency: Transparant
     zoom_extents: Alles tonen
+  smart_paint:
+    copy_key_win: Controle
+    copy_key_mac: Optie
+    alt_key_win: Alt
+    alt_key_mac: Opdracht
+    status_paint_face: Klik om een ​​zijde te kleuren.
+    status_paint_part: Klik om het ge​​hele object te kleuren.
+    status_unpaint_face: Klik om het vlak op te schonen.
+    status_unpaint_part: Klik om het gehele vlak op te schonen.
+    status_pick: Kies het materiaal..
+    filters: Filters
+    filter_0: Zonder type
+    filter_1: $t(tab.materials.type_1)
+    filter_2: $t(tab.materials.type_2)
+    filter_3: $t(tab.materials.type_3)
+    filter_4: $t(tab.materials.type_4)
+    filter_5: $t(tab.materials.type_5)
+    action: Voorraad
+    action_0: Kleur het vlak
+    action_1: Kleur het object
+    action_2: Vlak opschonen
+    action_3: Object opschonen
+    action_4: Verzamel
+    warning:
+      no_material: Uw model bevat geen materialen!
+      all_filtered: De geselecteerde filters verbergen alle materialen!
