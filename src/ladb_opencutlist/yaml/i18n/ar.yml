@@ -1122,10 +1122,10 @@ tool:
     transparency: الشفافية
     zoom_extents: نطاقات التكبير و التصغير
   smart_paint:
-    copy_key_win: تحكّم
-    copy_key_mac: ""
-    alt_key_win: ""
-    alt_key_mac: ""
+    copy_key_win: Control
+    copy_key_mac: Option
+    alt_key_win: Alt
+    alt_key_mac: Command
     status_paint_face: انقر لصباغة وجه من الأوجه.
     status_paint_part: انقر لصباغة قطعة بكاملها.
     status_unpaint_face: انقر لتنقية وجه من الأوجه.
