@@ -24,7 +24,6 @@
 .CodeMirror-hint {
   margin: 0;
   padding: 0 4px 0 22px;
-  border-radius: 2px;
   white-space: pre;
   color: black;
   cursor: pointer;
@@ -59,19 +58,19 @@
 }
 .CodeMirror-hint-array:before {
   content: "A";
-  background: darkmagenta;
+  background: #000;
 }
 .CodeMirror-hint-length:before {
   content: "L";
-  background: #aaa;
+  background: #e9c46a;
 }
 .CodeMirror-hint-area:before {
   content: "A";
-  background: #777;
+  background: #f4a261;
 }
 .CodeMirror-hint-volume:before {
   content: "V";
-  background: #444;
+  background: #e76f51;
 }
 .CodeMirror-hint-edge:before {
   content: "E";
@@ -79,6 +78,5 @@
 }
 
 li.CodeMirror-hint-active {
-  background: #08f;
-  color: white;
+  background: #eee;
 }
