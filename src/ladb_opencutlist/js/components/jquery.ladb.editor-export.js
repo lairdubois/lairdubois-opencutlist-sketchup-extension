@@ -306,7 +306,7 @@
                     .append(
                         $('<a href="#">' + i18next.t('tab.cutlist.export.' + v.name) + '</a>')
                             .on('click', function () {
-                                that.addColumn(v);
+                                that.addColumn(v.name);
                             })
                     )
             )
