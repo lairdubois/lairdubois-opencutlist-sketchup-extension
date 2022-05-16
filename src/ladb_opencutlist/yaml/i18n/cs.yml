@@ -238,7 +238,7 @@ tab:
       children_size_increase: "Tento rozměr je zvětšen o nadmíru pro {{ count }} seskupené dílce"
       invalid_final_area: "Pozor, tuto část nelze vypočítat, protože {{ count }} dílec (z {{ total }}) má neplatnou oblast"
       invalid_final_area_plural: "Pozor, tuto část nelze vypočítat, protože {{ count }} dílce (z {{ total }}) mají neplatnou oblast"
-      is_dynamic_attributes_name: Popis této části je extrahován z atributu 'Name' dynamické komponenty
+      is_dynamic_attributes_name: Označení této části se extrahován z atributu 'Name' dynamické
       size_increased: "Rozměr je větší o nadmíru {{ value }}"
       has_edges: "Tento dílec obsahuje {{ count }} hranování"
       has_edges_plural: "Tento dílec obsahuje {{ count }} hranování"
@@ -299,7 +299,7 @@ tab:
 
         *Příklad:* Pokud máte navržený díl o tloušťce *38 mm* a chcete jej vyrobit slepením dvou panelů o tloušťce *19 mm*, zadejte do tohoto pole **2**.
         *OpenCutList pak bude počítat 2 díly o tloušťce 19 mm místo 1 dílu o tloušťce 38 mm.*
-      description: popis
+      description: Popis
       description_help: |
         *Popis* vám umožňuje poskytnout personalizované informace o každé definované části.
       tags: Štítky
@@ -406,7 +406,7 @@ tab:
       property_thickness: Tloušťka
       property_length: Délka
       property_width: Šířka
-      property_name: Popis
+      property_name: Označení
       property_count: Počet
       property_edge_pattern: Počet hranování
       property_tags: Štítky
@@ -430,7 +430,7 @@ tab:
       area_short: Plocha
       volume: Hodnota
       number: Č.
-      name: Popis
+      name: Označení
       count: Množství
       cutting: Zhruba
       bbox: Hotový
@@ -475,7 +475,7 @@ tab:
       path: Cesta
       instance_name: Instance
       definition_name: Definice
-      name: Popis
+      name: Označení
       total_cutting_length: Hrubá délka
       total_cutting_area: Hrubá plocha
       total_cutting_volume: Hrubý objem
@@ -493,7 +493,7 @@ tab:
       material_thickness: Materíál / Tloušťka
       material_name: Materiál
       entity_names: Názvy instancí
-      description: popis
+      description: Popis
       tags: Štítky
       edge_ymin: Hrana podél 1
       edge_ymax: Hrana podél 2
@@ -722,8 +722,8 @@ tab:
       option_color: Barva
       formula:
         part_number: Číslo
-        part_name: Popis
-        part_description: popis
+        part_name: Označení
+        part_description: Popis
         part_entity_named_path: Cesta instance
         part_entity_name: Název instance
         part_cutting_size: Hrubé rozměry
@@ -946,7 +946,7 @@ tab:
       unused: Nepoužitý
       mandatory: Povinná pole
       optional: Nepovinná pole
-      name: Popis
+      name: Označení
       count: Počet
       bbox_length: Délka
       bbox_width: Šířka
@@ -965,7 +965,7 @@ tab:
         *Ověřte, že jste vybrali správný oddělovač polí.*
       empty_file: Soubor se zdá být prázdný nebo jej nelze interpretovat.
       no_importable_part: Nelze importovat žádnou část. Přiřaďte povinná pole k odpovídajícím sloupcům.
-      invalid_name: Neplatný popis
+      invalid_name: Neplatné označení
       invalid_length: Neplatná délka
       invalid_width: Neplatná šířka
       invalid_thickness: Neplatná tloušťka

@@ -20,6 +20,7 @@ default:
   export: Exportar
   import: Importar
   load: Cargar
+  preview: Vista previa
   options: Opciones
   caution: Precaución
   remove: Remover
@@ -58,11 +59,17 @@ core:
   menu:
     submenu: OpenCutList
     item:
-      edit_part_properties: $(tab.cutlist.edit_part_properties)
-      edit_part_axes_properties: $(tab.cutlist.edit_part_axes_properties)
+      generate_cutlist:  Generar la lista de corte
+      edit_part_properties: $t(tab.cutlist.edit_part_properties)
+      edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
+      edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
+      edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
+      smart_paint: $t(core.toolbar.command.smart_paint)
   toolbar:
     name: OpenCutList
-    command: OpenCutList
+    command:
+      dialog: OpenCutList
+      smart_paint: Colorear partes
   dialog:
     title: OpenCutList por L'Air du Bois
   leftbar:
@@ -135,13 +142,15 @@ core:
       save_to: "Actualizar la configuración de '{{ name }}'"
       delete: "Eliminar la configuración '{{ name }}'"
   progress:
-    please_wait: "Por favor, espere"
+    please_wait: Calculando un mundo pacífico
   component:
     textinput:
       reset: Restablecer este valor
     textinput_color:
       store: Memorizar este color
       remove: Olvidar el color
+    textinput_code:
+      help: Escriba **@** para abrir la lista de variables de datos.
 tab:
   cutlist:
     label: Partes
@@ -401,6 +410,7 @@ tab:
       property_count: Cantidad
       property_edge_pattern: Número de tiras de cantos
       property_tags: Etiquetas
+      property_thickness_layer_count: Número de capas
       tags: Etiquetas
       tags_help: Lista personalizada de etiquetas propuestas en la ventana de propiedades de las piezas.
       tags_placeholder: Añadir una etiqueta
@@ -435,9 +445,21 @@ tab:
       thickness_short: E
       edges: Tiras de cantos
     export:
-      title: Exportar en formato CSV
+      title: Exportación
       info_0: |
         Con esta función puede exportar la *lista de piezas* a un archivo [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
+      customize_help: |
+        Reordenar, Ocultar, Añadir, Eliminar o Seleccionar una columna de la lista para personalizar su **título** y la **fórmula** que genera el valor mostrado para cada fila exportada.
+      add_column: Añadir una columna
+      add_native_columns: Añadir una columna nativa
+      remove_column: Eliminar
+      columns: Columnas
+      column_title: Título
+      column_title_help: |
+        El campo **Título** permite personalizar el título de la columna.
+      column_formula: Fórmula
+      column_formula_help: |
+        El campo **Fórmula** permite escribir código *Ruby* para personalizar el valor de la columna.
       options: Opciones de exportación
       options_customize: Personalización
       option_source: Fuente
@@ -477,6 +499,10 @@ tab:
       edge_ymax: Longitud de borde 2
       edge_xmin: Ancho del borde 1
       edge_xmax: Ancho del borde 2
+      placeholder:
+        no_column_title: Introduzca un título
+        no_column_formula_native: "Valor nativo de la columna '{{ col_name }}'"
+        no_column_formula: Introduzca una fórmula
       warning:
         is_group_selection: Las piezas dentro de los **grupos ocultos** de su listado de partes no se exportarán.
     report:
@@ -559,7 +585,7 @@ tab:
       option_trimming_help_2d: La cantidad de material alrededor del panel en bruto que se tratará como residuo.
       option_optimization: Nivel de optimización
       option_optimization_help: "El nivel de optimización define el número de posibilidades calculadas y, por tanto, también el tiempo de cálculo."
-      option_optimization_0: Camino
+      option_optimization_0: Medio
       option_optimization_1: Avanzado
       option_stacking: Apilar piezas idénticas
       option_stacking_help: La forma en que las partes con ancho o largo común se colocan provisionalmente juntas.
@@ -721,7 +747,7 @@ tab:
         group_std_dimension: Dimensiones estándar
         filename: Nombre del archivo
         model_name: Nombre del modelo
-        page_label: Nombre de la escena
+        page_name: Nombre de la escena
         length_unit: Unidad
         generated_at: Fecha y hora
       error:
@@ -773,10 +799,11 @@ tab:
       grain_direction: Dirección de fibra
       colorized: Este tono se aplicará a la textura de este material cuando se renderice en el modelo.
       texture_colorized: Combina definitivamente este tono en la imagen de textura
+      texture_load: Cargar una nueva textura
       edit: "Edita las propiedades de '{{ name }}'"
       set_current: |
-        Seleccione '{{ name }}'
-        *Haga doble clic para usar*
+        Colorear partes con '{{ nombre }}'.
+        *Doble clic para colapsar*
     menu:
       import_from_skm: Importar material (.skm)
       purge_unused: Limpiar los materiales no utilizados
@@ -841,9 +868,12 @@ tab:
       std_prices_help: "Le permite definir el precio para todos los tamaños, así como para cada tamaño estándar del material."
       std_prices_dim_placeholder: Elige una talla
       std_prices_add: Añade un precio
+      texture_load: Cargar
       texture_width: Ancho
       texture_height: Altura
       export_to_skm: Exportar a fichero (.skm)
+    texture_load:
+      title: Cargar una imagen
     import_from_skm:
       title: Importar fichero .skm
     export_to_skm:
@@ -866,6 +896,7 @@ tab:
       failed_import_skm_file: "Se produjo un error al importar desde el archivo .skm. **{{ error }}**"
       failed_export_skm_file: "Ocurrió un error al exportar a un archivo .skm. **{{ error }}**"
       failed_removing_material: "Se produjo un error al eliminar este material. **{{ error }}**"
+      invalid_image_file: Imagen inválida
     success:
       exported_to: "Exportar a {{ export_path }} exitoso."
     obsolete_base: "Para permanecer sincronizado, debe actualizar la lista de materiales."
@@ -995,7 +1026,7 @@ tab:
     backers_plural: "{{ count }} Contribuyentes financieros"
     ad: "¿Te gusta OpenCutList?"
     objective: Objetivo
-    objective_slogan: OpenCutList somos todos
+    objective_slogan: "OpenCutList somos todos"
     objective_title:
       default: Objetivo
       cuttingdiagram_export: Financiación de las exportaciones del diagrama de corte
@@ -1090,3 +1121,29 @@ tool:
   highlight:
     transparency: Transparencia
     zoom_extents: Centrado
+  smart_paint:
+    copy_key_win: Control
+    copy_key_mac: Option
+    alt_key_win: Alt
+    alt_key_mac: Command
+    status_paint_face: Haga clic para colorear un lado.
+    status_paint_part: Haga clic para colorear una parte entera.
+    status_unpaint_face: Haga clic para limpiar un lado.
+    status_unpaint_part: Haga clic para limpiar una parte entera.
+    status_pick: Haga clic para tomar una muestra del material.
+    filters: Filtro
+    filter_0: Sin tipo
+    filter_1: $t(tab.materials.type_1)
+    filter_2: $t(tab.materials.type_2)
+    filter_3: $t(tab.materials.type_3)
+    filter_4: $t(tab.materials.type_4)
+    filter_5: $t(tab.materials.type_5)
+    action: Acción
+    action_0: Colorear la cara
+    action_1: ""
+    action_2: ""
+    action_3: ""
+    action_4: ""
+    warning:
+      no_material: Su modelo no contiene ningún material!
+      all_filtered: ¡Los filtros elegidos ocultan todo el material!

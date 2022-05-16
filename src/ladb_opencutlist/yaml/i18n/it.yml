@@ -69,7 +69,7 @@ core:
     name: OpenCutList
     command:
       dialog: OpenCutList
-      smart_paint: Assegna -colorando- i materiali
+      smart_paint: Colorare parti
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
@@ -150,7 +150,7 @@ core:
       store: Memorizzare questo colore
       remove: Rimuovi il colore
     textinput_code:
-      help: Digitare **@** per oittenere la lista delle variabili
+      help: Digitare **@** per oittenere la lista delle variabili.
 tab:
   cutlist:
     label: Parti
@@ -410,7 +410,7 @@ tab:
       property_count: Quantità
       property_edge_pattern: Numero delle bordature
       property_tags: Tags
-      property_thickness_layer_count: Numero di layer
+      property_thickness_layer_count: Numero di strati
       tags: Tags
       tags_help: Elenco personalizzato di tag proposti nella finestra delle proprietà della parte.
       tags_placeholder: Aggiungi un tag
@@ -456,7 +456,7 @@ tab:
       columns: Colonne
       column_title: Nome
       column_title_help: |
-        Il campo **Nome** permette di personalizzare il nome della colonna
+        Il campo **Nome** permette di personalizzare il nome della colonna.
       column_formula: Formula
       column_formula_help: |
         Il campo **Formula** permette di scrivere una formula in linguaggio *Ruby* per personalizzare il valore della colonna.
@@ -1126,11 +1126,11 @@ tool:
     copy_key_mac: Opzione
     alt_key_win: Alt
     alt_key_mac: Comando
-    status_paint_face: Click per assegnare il materiale della faccia
-    status_paint_part: Click per assegnare il materiale all' elemento
-    status_unpaint_face: Click per rimuovere il materiale della faccia
-    status_unpaint_part: Click per rimuovere il materiale all' elemento
-    status_pick: Click per prelevare un materiale esistente.
+    status_paint_face: Click per assegnare il materiale della faccia.
+    status_paint_part: Click per assegnare il materiale all' elemento.
+    status_unpaint_face: Click per rimuovere il materiale della faccia.
+    status_unpaint_part: Click per rimuovere il materiale all' elemento.
+    status_pick: Click per prendere un campione del materiale.
     filters: Filtri
     filter_0: Tipo indefinito
     filter_1: $t(tab.materials.type_1)
