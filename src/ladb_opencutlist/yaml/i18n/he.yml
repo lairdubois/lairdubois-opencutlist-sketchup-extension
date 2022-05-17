@@ -20,6 +20,7 @@ default:
   export: ייצוא
   import: ייבוא
   load: טעינה
+  preview: סקירה כללית
   options: אפשרויות
   caution: שים לב
   remove: למחוק
@@ -58,11 +59,17 @@ core:
   menu:
     submenu: OpenCutList
     item:
-      edit_part_properties: $(tab.cutlist.edit_part_properties)
-      edit_part_axes_properties: $(tab.cutlist.edit_part_axes_properties)
+      generate_cutlist:  צור רשימת חלקים
+      edit_part_properties: $t(tab.cutlist.edit_part_properties)
+      edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
+      edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
+      edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
+      smart_paint: $t(core.toolbar.command.smart_paint)
   toolbar:
     name: OpenCutList
-    command: OpenCutList
+    command:
+      dialog: OpenCutList
+      smart_paint: צביעת חלקים
   dialog:
     title: OpenCutList מאת L'Air du Bois
   leftbar:
@@ -135,13 +142,15 @@ core:
       save_to: "עדכן הגדרה '{{ name }}'"
       delete: "למחק הגדרה '{{ name }}'"
   progress:
-    please_wait: המתן בבקשה
+    please_wait: חישוב של עולם של שלום
   component:
     textinput:
       reset: אפס את הערך
     textinput_color:
       store: שמור צבע
       remove: תשכח צבע
+    textinput_code:
+      help: "הקש **@**, כדי לפתוח את רשימת המשתנים."
 tab:
   cutlist:
     label: תוכנית חיתוך
@@ -401,6 +410,7 @@ tab:
       property_count: כמות
       property_edge_pattern: כמות קאנטים
       property_tags: תגים
+      property_thickness_layer_count: מספר שכבות
       tags: תגים
       tags_help: רשימה מותאמת אישית של תגים המוצעים בחלון מאפייני החלק.
       tags_placeholder: הוסף תג
@@ -435,9 +445,21 @@ tab:
       thickness_short: "עובי:"
       edges: קאנטים
     export:
-      title: ייצוא בפורמט CSV
+      title: יצוא
       info_0: |
         הפונקציונליות מאפשרת לייצא *תוכנית חיתוך* כ*רשימת חלקים* לקובץ בפורמט [CSV](https://he.wikipedia.org/wiki/CSV).
+      customize_help: |
+        סדר מחדש, הסתר, הוסף, הסר או בחר עמודה מהרשימה כדי להגדיר את **הכותרת** שלה ואת **הנוסחה** שתיצור את הערכים עבור כל שורה מיוצאת.
+      add_column: הוסף עמודה
+      add_native_columns: הוסף עמודה מקורית
+      remove_column: להסיר
+      columns: עמודות
+      column_title: כותרת
+      column_title_help: |
+        השדה **כותרת** מאפשר לשנות את כותרת העמודה.
+      column_formula: נוסחה
+      column_formula_help: |
+        השדה **נוסחה** מאפשר לכתוב קוד *Ruby* כדי לשנות את ערך העמודה.
       options: אפשרויות ייצוא
       options_customize: הגדרות
       option_source: מקור
@@ -477,6 +499,10 @@ tab:
       edge_ymax: קאנט לאורך 2
       edge_xmin: קאנט לרוחב 1
       edge_xmax: קאנט לרוחב 2
+      placeholder:
+        no_column_title: הזן כותרת
+        no_column_formula_native: "ערך מקורי של העמודה '{{ col_name }}'"
+        no_column_formula: הזן נוסחה
       warning:
         is_group_selection: חלקים בתוך **קבוצות נסתרות** של תוכנית חיתוך לא ייוצאו.
     report:
@@ -721,7 +747,7 @@ tab:
         group_std_dimension: מדידת תקן
         filename: שם הקובץ
         model_name: שם מודל
-        page_label: שם הסצנה
+        page_name: שם הסצנה
         length_unit: יחידות
         generated_at: תאריך ושעה
       error:
@@ -773,10 +799,11 @@ tab:
       grain_direction: כיוון סיבים
       colorized: ציור הצללה זה יוחל על המרקם של החומר שיופיע במודל
       texture_colorized: שלבו דפוס מרקם כדי לשלוט בכיוון מרקם החומר
+      texture_load: טען מרקם חדש
       edit: "ערוך מאפיינים של '{{ name }}'"
       set_current: |
-        בחר '{{ name }}'
-        *לחיצה כפולה ליישום*
+        צבע חלקים עם '{{ name }}'
+        *לחץ פעמיים כדי לכווץ*
     menu:
       import_from_skm: ייבוא חומר (skm.)
       purge_unused: נקה חומרים שאינם בשימוש
@@ -841,9 +868,12 @@ tab:
       std_prices_help: מאפשר להגדיר את המחיר לכל הערכים כמו כן לכל ערך החומר הסטנדרטי.
       std_prices_dim_placeholder: בחר מידה
       std_prices_add: הוסף מחיר
+      texture_load: טעינה
       texture_width: רוחב
       texture_height: גובה
       export_to_skm: ייצוא ​​(skm.)
+    texture_load:
+      title: טען תמונה
     import_from_skm:
       title: ייבוא קובץ skm.
     export_to_skm:
@@ -866,6 +896,7 @@ tab:
       failed_import_skm_file: "**{{ error }}** אירעה שגיאה בייבוא ​​קובץ skm."
       failed_export_skm_file: "**{{ error }}** אירעה שגיאה בייצוא קובץ skm."
       failed_removing_material: "אירעה שגיאה בעת מחיקת החומר. **{{ error }}**"
+      invalid_image_file: תמונה לא חוקית
     success:
       exported_to: "הייצוא בוצע אל {{ export_path }}."
     obsolete_base: "כדי לתמוך בסנכרון, עליך לרענן את רשימת החומרים."
@@ -995,7 +1026,7 @@ tab:
     backers_plural: "{{ count }} תורמים כספיים"
     ad: "אוהבים Open CutList ?"
     objective: יעד
-    objective_slogan: OpenCutList - זה כולנו
+    objective_slogan: "OpenCutList - זה כולנו"
     objective_title:
       default: מטרות
       cuttingdiagram_export: עלות תוכנית חיתוך ביצוא
@@ -1090,3 +1121,29 @@ tool:
   highlight:
     transparency: שקיפות
     zoom_extents: זום מורחב
+  smart_paint:
+    copy_key_win: Ctrl
+    copy_key_mac: אופציה
+    alt_key_win: Alt
+    alt_key_mac: פקודה
+    status_paint_face: לחץ כדי לצבוע צד אחד.
+    status_paint_part: לחץ כדי לצבוע הכל.
+    status_unpaint_face: לחץ כדי לנקות צד אחד.
+    status_unpaint_part: לחץ כדי לנקות הכל.
+    status_pick: לחץ כדי לקחת דוגמה מהחומר.
+    filters: סינון
+    filter_0: סוג אינו מוגדר
+    filter_1: $t(tab.materials.type_1)
+    filter_2: $t(tab.materials.type_2)
+    filter_3: $t(tab.materials.type_3)
+    filter_4: $t(tab.materials.type_4)
+    filter_5: $t(tab.materials.type_5)
+    action: פעולה
+    action_0: צבע צד אחד
+    action_1: צבע חלק
+    action_2: נקה צד אחד
+    action_3: נקה חלק
+    action_4: דוגמית
+    warning:
+      no_material: הדגם שלך אינו מכיל חומרים!
+      all_filtered: המסננים שנבחרו מסתירים את כל החומרים!
