@@ -238,7 +238,7 @@ tab:
       children_size_increase: "Tento rozměr je zvětšen o nadmíru pro {{ count }} seskupené dílce"
       invalid_final_area: "Pozor, tuto část nelze vypočítat, protože {{ count }} dílec (z {{ total }}) má neplatnou oblast"
       invalid_final_area_plural: "Pozor, tuto část nelze vypočítat, protože {{ count }} dílce (z {{ total }}) mají neplatnou oblast"
-      is_dynamic_attributes_name: Označení této části se extrahován z atributu 'Name' dynamické
+      is_dynamic_attributes_name: Označení této části se extrahován z atributu 'Name' dynamické komponenty
       size_increased: "Rozměr je větší o nadmíru {{ value }}"
       has_edges: "Tento dílec obsahuje {{ count }} hranování"
       has_edges_plural: "Tento dílec obsahuje {{ count }} hranování"

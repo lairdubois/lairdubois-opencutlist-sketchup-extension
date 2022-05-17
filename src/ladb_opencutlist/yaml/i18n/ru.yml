@@ -150,7 +150,7 @@ core:
       store: Запомнить этот цвет
       remove: Забыть этот цвет
     textinput_code:
-      help: "Нажмите **@**, чтобы открыть список переменных данных."
+      help: "Нажмите **@**, чтобы открыть ввод переменных данных."
 tab:
   cutlist:
     label: Раскрой
@@ -430,7 +430,7 @@ tab:
       area_short: Площадь
       volume: Объем
       number: N°
-      name: Описание
+      name: Наименование
       count: К-во
       cutting: Пильный
       bbox: Габаритный
@@ -449,19 +449,19 @@ tab:
       info_0: |
         Эта функция позволяет вам экспортировать ваш *раскрой* в виде *списка деталей* в файл формата [CSV](https://ru.wikipedia.org/wiki/CSV).
       customize_help: |
-        Измените порядок, скройте, добавьте, удалите или выберите столбец в списке, чтобы настроить его **название** и **формулу**, формирующую отображаемое значение для каждой экспортируемой строки.
+        В этой вкладке можно изменять порядок столбцов, скрывать их, а также добавлять и удалять. Выберите столбец в списке, чтобы настроить его **название** и **формулу**, определяющую значение каждой экспортируемой строки.
       add_column: Добавить столбец
-      add_native_columns: Добавить собственный столбец
+      add_native_columns: Добавить уникальный столбец
       remove_column: Удалить
-      columns: Колонка
-      column_title: Название
+      columns: Столбцы
+      column_title: Заголовок
       column_title_help: |
-        Поле **Название** позволяет настроить заголовок столбца.
+        Поле **Заголовок** позволяет изменить заголовок столбца.
       column_formula: Формула
       column_formula_help: |
-        Поле **Формула** позволяет вам написать код *Ruby* для настройки значения столбца.
+        Поле **Формула** позволяет использовать код *Ruby* для изменения значения столбца.
       options: Параметры экспорта
-      options_customize: Настройка
+      options_customize: Состав экспорта
       option_source: Источник
       option_source_summary: $t(tab.cutlist.list.summary)
       option_source_cutlist: $t(tab.cutlist.title)
@@ -474,8 +474,8 @@ tab:
       number: N°
       path: Путь
       instance_name: Экземпляр
-      definition_name: Определение
-      name: Описание
+      definition_name: Содержание
+      name: Определение
       total_cutting_length: Длина - пильная
       total_cutting_area: Площадь - пильная
       total_cutting_volume: Объем - пильный
@@ -492,7 +492,7 @@ tab:
       material_type: Тип
       material_thickness: Материал / Толщина
       material_name: Материал
-      entity_names: Имена инстанций
+      entity_names: Имена объектов
       description: Описание
       tags: Теги
       edge_ymin: Кромка по длине 1
@@ -501,7 +501,7 @@ tab:
       edge_xmax: Кромка по ширине 2
       placeholder:
         no_column_title: Введите название
-        no_column_formula_native: "Собственное значение столбца '{{ col_name }}'"
+        no_column_formula_native: "Заголовок столбца '{{ col_name }}'"
         no_column_formula: Введите формулу
       warning:
         is_group_selection: "Детали, содержащиеся в **скрытых группах** вашей карты раскроя, не будут экспортированы."
@@ -1146,4 +1146,4 @@ tool:
     action_4: Взять образец
     warning:
       no_material: Ваша модель не содержит материалов !
-      all_filtered: Выбранные фильтры скрывают все материалы !
+      all_filtered: Выбор фильтров не соответствует материалам модели!
