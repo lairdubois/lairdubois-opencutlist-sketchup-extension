@@ -476,17 +476,17 @@ tab:
       instance_name: Instance
       definition_name: Définition
       name: Désignation
-      total_cutting_length: Longueur - cumul débit
-      total_cutting_area: Surface - cumul débit
-      total_cutting_volume: Volume - cumul débit
-      total_final_area: Surface - cumul fini
-      cutting_length: Longueur - débit
-      cutting_width: Largeur - débit
-      cutting_thickness: Épaisseur - débit
-      bbox_length: Longueur - capable
-      bbox_width: Largeur - capable
-      bbox_thickness: Épaisseur - capable
-      final_area: Surface - finie
+      total_cutting_length: Longueur cumul débit
+      total_cutting_area: Surface cumul débit
+      total_cutting_volume: Volume cumul débit
+      total_final_area: Surface cumul fini
+      cutting_length: Longueur débit
+      cutting_width: Largeur débit
+      cutting_thickness: Épaisseur débit
+      bbox_length: Longueur capable
+      bbox_width: Largeur capable
+      bbox_thickness: Épaisseur capable
+      final_area: Surface finie
       count: Quantité
       part_count: Nombre de pièces
       material_type: Type

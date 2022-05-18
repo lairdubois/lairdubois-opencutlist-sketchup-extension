@@ -298,7 +298,7 @@ module Ladb::OpenCutList
             value = eval(formula, data.get_binding)
             value = value.export if value.is_a?(Wrapper)
           rescue Exception => e
-            value = { :error => e.message }
+            value = { :error => e.message.split(/cutlist_export_worker[.]rb:\d+:/).last } # Remove path in exception message
           end
           row.push(value)
         end
