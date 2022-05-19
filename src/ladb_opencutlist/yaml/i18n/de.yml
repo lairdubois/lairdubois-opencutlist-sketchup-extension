@@ -456,7 +456,7 @@ tab:
       columns: Spalten
       column_title: Titel
       column_title_help: |
-        Im Feld **Titel** können Sie den Titel der Spalte anpassen.
+        Im Feld **Titel** können Sie die Überschrift der Spalte anpassen.
       column_formula: Formel
       column_formula_help: |
         Das Feld **Formel** ermöglicht es Ihnen, *Ruby*-Code zu schreiben, um den Wert der Spalte anzupassen.
@@ -500,7 +500,7 @@ tab:
       edge_xmin: Kantenband Breite 1
       edge_xmax: Kantenband Breite 2
       placeholder:
-        no_column_title: Titel eingeben
+        no_column_title: Überschrift eingeben
         no_column_formula_native: "Nativer Wert der Spalte '{{ col_name }}'"
         no_column_formula: Formel eingeben
       warning:

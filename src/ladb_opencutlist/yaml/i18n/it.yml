@@ -855,7 +855,7 @@ tab:
         Formato: **L**x**W**, in cui **L** and **W** rappresentano la *lunghezza* e la *larghezza* del pannello.
         *Dimensioni senza unità si intendono in unità del modello.*
       grained: Direzione venatura
-      grained_help: Configura la direzione della venatura del materiale.
+      grained_help: Configura la direzione della venatura rispetto alla lunghezza del pannello.
       grained_0: Nessuna venatura
       grained_1: Venatura segue la lunghezza
       edge_decremented: Riduci

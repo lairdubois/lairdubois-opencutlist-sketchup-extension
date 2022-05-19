@@ -456,7 +456,7 @@ tab:
       columns: Columns
       column_title: Title
       column_title_help: |
-        The **Title** field allows you to customize the title of the column.
+        The **Title** field allows you to customize the column title.
       column_formula: Formula
       column_formula_help: |
         The **Formula** field allows you to write *Ruby* code to customize the value of the column.

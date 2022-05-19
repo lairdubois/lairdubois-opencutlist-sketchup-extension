@@ -142,7 +142,7 @@ core:
       save_to: "Обновить пресет '{{ name }}'"
       delete: "Удалить пресет '{{ name }}'"
   progress:
-    please_wait: Национальный расчет
+    please_wait: Глобальный расчет
   component:
     textinput:
       reset: Сбросить это значение
@@ -492,7 +492,7 @@ tab:
       material_type: Тип
       material_thickness: Материал / Толщина
       material_name: Материал
-      entity_names: Имена объектов
+      entity_names: Название
       description: Описание
       tags: Теги
       edge_ymin: Кромка по длине 1
@@ -1145,5 +1145,5 @@ tool:
     action_3: Очистить деталь
     action_4: Взять образец
     warning:
-      no_material: Ваша модель не содержит материалов !
+      no_material: Ваша модель не содержит материалов!
       all_filtered: Выбор фильтров не соответствует материалам модели!
