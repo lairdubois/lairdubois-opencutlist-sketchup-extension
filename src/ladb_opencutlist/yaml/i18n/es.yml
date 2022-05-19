@@ -1140,10 +1140,10 @@ tool:
     filter_5: $t(tab.materials.type_5)
     action: Acción
     action_0: Colorear la cara
-    action_1: ""
-    action_2: ""
-    action_3: ""
-    action_4: ""
+    action_1: Colorear parte
+    action_2: Limpiar cara
+    action_3: Limpiar parte
+    action_4: Tomar
     warning:
       no_material: Su modelo no contiene ningún material!
       all_filtered: ¡Los filtros elegidos ocultan todo el material!
