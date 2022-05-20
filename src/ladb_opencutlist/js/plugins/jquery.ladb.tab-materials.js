@@ -1120,7 +1120,7 @@
             this.blur();
         });
         this.$itemResetPrices.on('click', function () {
-            that.dialog.confirm(i18next.t('default.caution'), i18next.t('tab.cutlist.menu.reset_prices_confirm'), function () {
+            that.dialog.confirm(i18next.t('default.caution'), i18next.t('tab.materials.menu.reset_prices_confirm'), function () {
                 rubyCallCommand('materials_reset_prices', null, function (response) {
 
                     if (response.errors) {
