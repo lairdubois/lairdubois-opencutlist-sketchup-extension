@@ -55,6 +55,7 @@
         this.$itemNumbersReset = $('#ladb_item_numbers_reset', this.$header);
         this.$itemExpendAll = $('#ladb_item_expand_all', this.$header);
         this.$itemCollapseAll = $('#ladb_item_collapse_all', this.$header);
+        this.$itemResetPrices = $('#ladb_item_reset_prices', this.$header);
 
         this.$panelHelp = $('.ladb-panel-help', this.$element);
         this.$page = $('.ladb-page', this.$element);
@@ -3465,6 +3466,25 @@
         this.$itemCollapseAll.on('click', function () {
             that.collapseAllFoldingRows();
             $(this).blur();
+        });
+        this.$itemResetPrices.on('click', function () {
+            that.dialog.confirm(i18next.t('default.caution'), i18next.t('tab.cutlist.menu.reset_prices_confirm'), function () {
+                rubyCallCommand('cutlist_reset_prices', null, function (response) {
+
+                    if (response.errors) {
+                        that.dialog.notifyErrors(response.errors);
+                    } else {
+                        that.dialog.alert(null, i18next.t('tab.cutlist.menu.reset_prices_success'), function () {
+                            that.generateCutlist();
+                        }, {
+                            okBtnLabel: i18next.t('default.close')
+                        });
+                    }
+
+                });
+            }, {
+                confirmBtnType: 'danger'
+            });
         });
 
         // Events

@@ -48,6 +48,9 @@ module Ladb::OpenCutList
       Plugin.instance.register_command("materials_purge_unused") do ||
         purge_unused_command
       end
+      Plugin.instance.register_command("materials_reset_prices") do ||
+        reset_prices_command
+      end
 
     end
 
@@ -183,11 +186,21 @@ module Ladb::OpenCutList
       worker.run
     end
 
-    def purge_unused_command()
+    def purge_unused_command
       require_relative '../worker/materials/materials_purge_unused_worker'
 
       # Setup worker
       worker = MaterialsPurgeUnusedWorker.new
+
+      # Run !
+      worker.run
+    end
+
+    def reset_prices_command
+      require_relative '../worker/materials/materials_reset_prices_worker'
+
+      # Setup worker
+      worker = MaterialsResetPricesWorker.new
 
       # Run !
       worker.run

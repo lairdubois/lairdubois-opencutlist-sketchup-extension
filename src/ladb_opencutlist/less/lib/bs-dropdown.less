@@ -4,14 +4,18 @@
 
 .dropdown-menu {
 
-  > li.dropdown-item-danger > a {
-    color: @ladb-brand-danger;
+  > li.dropdown-item-danger:not(.disabled) {
 
-    &:hover,
-    &:focus {
-      text-decoration: none;
-      color: #fff;
-      background-color: @ladb-brand-danger;
+    > a {
+      color: @ladb-brand-danger;
+
+      &:hover,
+      &:focus {
+        text-decoration: none;
+        color: #fff;
+        background-color: @ladb-brand-danger;
+      }
+
     }
 
   }

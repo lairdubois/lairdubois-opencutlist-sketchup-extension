@@ -265,6 +265,12 @@ tab:
       edit_material: "Éditer la matière '{{ material_name }}'"
       expand_all: Déplier toutes les lignes
       collapse_all: Replier toutes les lignes
+      reset_prices: Réinitialiser les prix de toutes les pièces
+      reset_prices_confirm: |
+        Vous êtes sur le point de réinitialiser les prix de toutes les pièces de votre modèle
+        Cette action est définitive. **Tous les prix seront remis à zéro.**
+        Confirmez pour continuer.
+      reset_prices_success: Les prix de toutes les pièces ont été réinitialisés.
     edit_part:
       title: "Propriétés de la pièce '{{ name }}'"
       title_multiple: Propriétés du groupe de pièces
@@ -807,6 +813,12 @@ tab:
     menu:
       import_from_skm: Importer une matière (.skm)
       purge_unused: Purger les matières inutilisées
+      reset_prices: Réinitialiser les prix de toutes les matières
+      reset_prices_confirm: |
+        Vous êtes sur le point de réinitialiser les prix de toutes les matières de votre modèle
+        Cette action est définitive. **Tous les prix seront remis à zéro.**
+        Confirmez pour continuer.
+      reset_prices_success: Les prix de toutes les matières ont été réinitialisés.
     new_material:
       title: Créer une nouvelle matière
       name: Nom

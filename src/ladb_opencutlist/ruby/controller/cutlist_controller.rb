@@ -76,6 +76,10 @@ module Ladb::OpenCutList
         group_cuttingdiagram_2d_advance_command
       end
 
+      Plugin.instance.register_command("cutlist_reset_prices") do |settings|
+        reset_prices_command
+      end
+
     end
 
     def setup_event_callbacks
@@ -233,6 +237,16 @@ module Ladb::OpenCutList
       cuttingdiagram2d = @cuttingdiagram2d_worker.run(true)
 
       cuttingdiagram2d.to_hash
+    end
+
+    def reset_prices_command
+      require_relative '../worker/cutlist/cutlist_reset_prices_worker'
+
+      # Setup worker
+      worker = CutlistResetPricesWorker.new
+
+      # Run !
+      worker.run
     end
 
   end

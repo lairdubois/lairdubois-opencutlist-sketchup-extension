@@ -22,6 +22,7 @@
         this.$btnOptions = $('#ladb_btn_options', this.$header);
         this.$itemImportFromSkm = $('#ladb_item_import_from_skm', this.$header);
         this.$itemPurgeUnused = $('#ladb_item_purge_unused', this.$header);
+        this.$itemResetPrices = $('#ladb_item_reset_prices', this.$header);
 
         this.$page = $('.ladb-page', this.$element);
 
@@ -1117,6 +1118,25 @@
         this.$itemPurgeUnused.on('click', function () {
             that.purgeUnused();
             this.blur();
+        });
+        this.$itemResetPrices.on('click', function () {
+            that.dialog.confirm(i18next.t('default.caution'), i18next.t('tab.cutlist.menu.reset_prices_confirm'), function () {
+                rubyCallCommand('materials_reset_prices', null, function (response) {
+
+                    if (response.errors) {
+                        that.dialog.notifyErrors(response.errors);
+                    } else {
+                        that.dialog.alert(null, i18next.t('tab.cutlist.menu.reset_prices_success'), function () {
+                            that.loadList();
+                        }, {
+                            okBtnLabel: i18next.t('default.close')
+                        });
+                    }
+
+                });
+            }, {
+                confirmBtnType: 'danger'
+            });
         });
 
         // Events
