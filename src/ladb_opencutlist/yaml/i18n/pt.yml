@@ -20,7 +20,7 @@ default:
   export: Exportar
   import: Importar
   load: Carregar
-  preview: ""
+  preview: Visão geral
   options: Opções
   caution: Cuidado
   remove: Remover
@@ -59,7 +59,7 @@ core:
   menu:
     submenu: OpenCutList
     item:
-      generate_cutlist:  ""
+      generate_cutlist:  Gerar a lista de peças
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
@@ -69,7 +69,7 @@ core:
     name: OpenCutList
     command:
       dialog: OpenCutList
-      smart_paint: ""
+      smart_paint: Colorir peças
   dialog:
     title: OpenCutList por L'Air du Bois
   leftbar:
@@ -142,7 +142,7 @@ core:
       save_to: "Atualizar as definições '{{ name }}'"
       delete: "Apagar as definições '{{ name }}'"
   progress:
-    please_wait: ""
+    please_wait: Calculando um mundo de paz
   component:
     textinput:
       reset: Mudar para valores originais
@@ -150,7 +150,7 @@ core:
       store: Memorizar esta cor
       remove: Esquecer esta cor
     textinput_code:
-      help: ""
+      help: Digite **@*** para obter uma lista de variáveis.
 tab:
   cutlist:
     label: Peças
@@ -265,9 +265,12 @@ tab:
       edit_material: "Editar material '{{ material_name }}'"
       expand_all: Expandir todas as linhas
       collapse_all: Recolher todas as linhas
-      reset_prices: ""
+      reset_prices: Redefinir os preços de todas as peças
       reset_prices_confirm: |
-      reset_prices_success: ""
+        Está prestes a redefinir os preços de todas as partes do seu modelo
+        Esta acção é definitiva. **Todos os preços serão reajustados para zero.**
+        Confirmar para continuar.
+      reset_prices_success: Os preços de todas as peças foram reajustados.
     edit_part:
       title: "Propriedades da peça '{{ name }}'"
       title_multiple: Propriedades do grupo de peças
@@ -413,7 +416,7 @@ tab:
       property_count: Quantidade
       property_edge_pattern: Número de fitas de borda
       property_tags: Tags
-      property_thickness_layer_count: ""
+      property_thickness_layer_count: Número de camadas
       tags: Tags
       tags_help: Lista personalizada de tags oferecidas na janela de propriedades da peça.
       tags_placeholder: Adicionar uma tag
@@ -448,18 +451,21 @@ tab:
       thickness_short: E
       edges: Fita de Borda
     export:
-      title: ""
+      title: Exportação
       info_0: |
         Este recurso permite exportar sua *folha de dados* como uma *Planilha de Produção* para um arquivo em formato [CSV](https://pt.wikipedia.org/wiki/Comma-separated_values).
       customize_help: |
-      add_column: ""
-      add_native_columns: ""
+        Reordenar, Esconder, Adicionar, Remover ou Seleccionar uma coluna da lista para personalizar o seu **título** e a **fórmula** gerando o valor apresentado para cada linha exportada.
+      add_column: Acrescentar uma coluna
+      add_native_columns: Acrescentar uma coluna nativa
       remove_column: Remover
       columns: Colunas
-      column_title: ""
+      column_title: Título
       column_title_help: |
-      column_formula: ""
+        O campo **Título*** permite-lhe personalizar o título da coluna.
+      column_formula: Fórmula
       column_formula_help: |
+        O campo **Fórmula** permite-lhe escrever código *Ruby* para personalizar o valor da coluna.
       options: Opções de exportação
       options_customize: Nome do modelo
       option_source: Fonte
@@ -476,17 +482,17 @@ tab:
       instance_name: Instância
       definition_name: Definição
       name: Descrição
-      total_cutting_length: ""
-      total_cutting_area: ""
-      total_cutting_volume: ""
-      total_final_area: ""
-      cutting_length: ""
-      cutting_width: ""
-      cutting_thickness: ""
+      total_cutting_length: Comprimento total - bruto
+      total_cutting_area: Área total - bruta
+      total_cutting_volume: Volume total - bruto
+      total_final_area: Área total - final
+      cutting_length: Comprimento - bruto
+      cutting_width: Largura - bruta
+      cutting_thickness: Espessura - bruta
       bbox_length: Comprimento
       bbox_width: Largura
       bbox_thickness: Espessura
-      final_area: ""
+      final_area: Área - final
       count: Quantidade
       part_count: Quantidade
       material_type: Tipo
@@ -500,9 +506,9 @@ tab:
       edge_xmin: Largura da borda 1
       edge_xmax: Largura da borda 2
       placeholder:
-        no_column_title: ""
-        no_column_formula_native: ""
-        no_column_formula: ""
+        no_column_title: Introduza um título
+        no_column_formula_native: "Valor nativo da coluna '{{ col_name }}'"
+        no_column_formula: Introduza uma fórmula
       warning:
         is_group_selection: As partes contidas nos **grupos ocultos** do sua Planilha de Produção não serão exportadas.
     report:
@@ -799,15 +805,20 @@ tab:
       grain_direction: Direção dos veios
       colorized: Este tom será aplicado à textura deste material quando for renderizado no modelo
       texture_colorized: Combinar definitivamente este tom na imagem da textura
-      texture_load: ""
+      texture_load: Carrega uma nova textura
       edit: "Edite as propriedades de '{{ name }}'"
       set_current: |
+        Pinta peças com '{{ name }}'.
+        *clique duas vezes para minimizar*
     menu:
       import_from_skm: Importar material (.skm)
       purge_unused: Eliminar materiais não utilizados
-      reset_prices: ""
+      reset_prices: Reinicializar os preços de todos os materiais
       reset_prices_confirm: |
-      reset_prices_success: ""
+        Está prestes a redefinir os preços de todos os materiais do seu modelo.
+        Esta acção é definitiva. **Todos os preços serão reajustados para zero.**
+        Confirme para continuar. 
+      reset_prices_success: Os preços de todos os materiais foram reajustados.
     new_material:
       title: Crie um novo material
       name: Nome
@@ -874,7 +885,7 @@ tab:
       texture_height: Altura
       export_to_skm: Exportar (.skm)
     texture_load:
-      title: ""
+      title: Carregue imagem
     import_from_skm:
       title: Importar arquivo .skm
     export_to_skm:
@@ -897,7 +908,7 @@ tab:
       failed_import_skm_file: "Ocorreu um erro ao importar do arquivo .skm. **{{ error }}**"
       failed_export_skm_file: "Ocorreu um erro ao exportar para o arquivo .skm. **{{ error }}**"
       failed_removing_material: "Ocorreu um erro ao suprimir este material. **{{ error }}**"
-      invalid_image_file: ""
+      invalid_image_file: Imagem inválida
     success:
       exported_to: "Exportação para {{ export_path }} com sucesso."
     obsolete_base: "Para permanecer sincronizado, você deve atualizar a lista de materiais."
@@ -1123,28 +1134,28 @@ tool:
     transparency: Transparência
     zoom_extents: Limite do zoom
   smart_paint:
-    copy_key_win: ""
-    copy_key_mac: ""
-    alt_key_win: ""
-    alt_key_mac: ""
-    status_paint_face: ""
-    status_paint_part: ""
-    status_unpaint_face: ""
-    status_unpaint_part: ""
-    status_pick: ""
+    copy_key_win: Control
+    copy_key_mac: Option
+    alt_key_win: Alt
+    alt_key_mac: Command
+    status_paint_face: Clique para pintar uma cara.
+    status_paint_part: Clique para pintar uma parte inteira.
+    status_unpaint_face: Clique para limpar uma cara.
+    status_unpaint_part: Clique para limpar uma parte inteira.
+    status_pick: Clique para recolher uma amostra do material.
     filters: Filtros
-    filter_0: ""
+    filter_0: Sem tipo
     filter_1: $t(tab.materials.type_1)
     filter_2: $t(tab.materials.type_2)
     filter_3: $t(tab.materials.type_3)
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
-    action: ""
-    action_0: ""
-    action_1: ""
-    action_2: ""
-    action_3: ""
-    action_4: ""
+    action: Acção
+    action_0: Pintar a cara
+    action_1: Pintar peça
+    action_2: Limpar cara
+    action_3: Limpar peça
+    action_4: Tomar
     warning:
-      no_material: ""
-      all_filtered: ""
+      no_material: O seu modelo não contém qualquer material!
+      all_filtered: Os filtros seleccionados mascaram todos os materiais!

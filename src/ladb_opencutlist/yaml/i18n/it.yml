@@ -268,7 +268,8 @@ tab:
       reset_prices: Azzeramento dei prezzi di tutte le parti
       reset_prices_confirm: |
         Stai per azzerare i prezzi di tutte le parti del tuo modello.
-        Questa azione è definitiva. **Tutti i prezzi saranno azzerati. Confermare per continuare.
+        Questa azione è definitiva. **Tutti i prezzi saranno azzerati.**
+        Confermare per continuare.
       reset_prices_success: I prezzi di tutti i parti sono stati ripristinati.
     edit_part:
       title: "Elenca proprietà della parte '{{ name }}'"
@@ -815,7 +816,7 @@ tab:
       reset_prices: Azzeramento dei prezzi di tutti i materiali
       reset_prices_confirm: |
         Stai per azzerare i prezzi di tutti i materiali del tuo modello.
-        Questa azione è definitiva. **Tutti i prezzi saranno azzerati.
+        Questa azione è definitiva. **Tutti i prezzi saranno azzerati.**
         Confermare per continuare.
       reset_prices_success: I prezzi di tutti i materiali sono stati ripristinati.
     new_material:

@@ -265,6 +265,12 @@ tab:
       edit_material: "Edit the material '{{ material_name }}'"
       expand_all: Unfold all lines
       collapse_all: Fold all lines
+      reset_prices: Reset the prices of all parts
+      reset_prices_confirm: |
+        You are about to reset the prices of all parts of your model
+        This action is final. **All prices will be reset to zero.**
+        Confirm to continue.
+      reset_prices_success: The prices of all parts have been reset.
     edit_part:
       title: "Properties of Part '{{ name }}'"
       title_multiple: Properties of the Group of Parts
@@ -476,16 +482,16 @@ tab:
       instance_name: Instance
       definition_name: Definition
       name: Designation
-      total_cutting_length: Length - raw
-      total_cutting_area: Area - raw
-      total_cutting_volume: Volume - raw
-      total_final_area: Area - final
+      total_cutting_length: Length total - raw
+      total_cutting_area: Area total - raw
+      total_cutting_volume: Volume total - raw
+      total_final_area: Area total - final
       cutting_length: Length - raw
       cutting_width: Width - raw
       cutting_thickness: Thickness - raw
-      bbox_length: Length - final
-      bbox_width: Width - final
-      bbox_thickness: Thickness - final
+      bbox_length: Length
+      bbox_width: Width
+      bbox_thickness: Thickness
       final_area: Area - final
       count: Quantity
       part_count: Parts quantity
@@ -807,6 +813,12 @@ tab:
     menu:
       import_from_skm: Import material (.skm)
       purge_unused: Purge unused materials
+      reset_prices: Reset the prices of all materials
+      reset_prices_confirm: |
+        You are about to reset the prices of all materials in your model.
+        This action is final. **All prices will be reset to zero.
+        Confirm to continue.
+      reset_prices_success: The prices of all materials have been reset.
     new_material:
       title: Create Material
       name: Name

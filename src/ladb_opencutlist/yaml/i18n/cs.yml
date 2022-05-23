@@ -268,7 +268,8 @@ tab:
       reset_prices: Resetování cen všech dílů
       reset_prices_confirm: |
         Chystáte se resetovat ceny všech částí vašeho modelu.
-        Tato akce je konečná. **Všechny ceny budou vynulovány.** Potvrďte pro pokračování.
+        Tato akce je konečná. **Všechny ceny budou vynulovány.** 
+        Potvrďte pro pokračování.
       reset_prices_success: Ceny všech dílů byly obnoveny.
     edit_part:
       title: "Vlastnosti dílce ‘{{ name }}’"
@@ -815,7 +816,8 @@ tab:
       reset_prices: Resetování cen všech materiálů
       reset_prices_confirm: |
         Chystáte se resetovat ceny všech materiálů ve vašem modelu.
-        Tato akce je konečná. **Všechny ceny budou vynulovány. Potvrďte pro pokračování.
+        Tato akce je konečná. **Všechny ceny budou vynulovány. 
+        Potvrďte pro pokračování.
       reset_prices_success: Ceny všech materiálů byly obnoveny.
     new_material:
       title: Vytvořit nový materiál
