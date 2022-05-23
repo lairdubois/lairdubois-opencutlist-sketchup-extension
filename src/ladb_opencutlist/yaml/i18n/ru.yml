@@ -265,6 +265,9 @@ tab:
       edit_material: "Редактировать материал '{{ material_name }}'"
       expand_all: Развернуть все строки
       collapse_all: Свернуть все строки
+      reset_prices: ""
+      reset_prices_confirm: |
+      reset_prices_success: ""
     edit_part:
       title: "Свойства детали '{{ name }}'"
       title_multiple: Свойства группы деталей
@@ -476,16 +479,16 @@ tab:
       instance_name: Экземпляр
       definition_name: Содержание
       name: Определение
-      total_cutting_length: Длина - пильная
-      total_cutting_area: Площадь - пильная
-      total_cutting_volume: Объем - пильный
-      total_final_area: Площадь - чисто
+      total_cutting_length: ""
+      total_cutting_area: ""
+      total_cutting_volume: ""
+      total_final_area: ""
       cutting_length: Длина - пильная
       cutting_width: Ширина - пильная
       cutting_thickness: Толщина - пильная
-      bbox_length: Длина - чисто
-      bbox_width: Ширина - чисто
-      bbox_thickness: Толщина - чисто
+      bbox_length: Пильная длина
+      bbox_width: Ширина
+      bbox_thickness: Толщина
       final_area: Площадь - чисто
       count: Количество
       part_count: Количество
@@ -807,6 +810,9 @@ tab:
     menu:
       import_from_skm: Импортировать материал (.skm)
       purge_unused: Очистить неиспользованные материалы
+      reset_prices: ""
+      reset_prices_confirm: |
+      reset_prices_success: ""
     new_material:
       title: Создать новый материал
       name: Имя

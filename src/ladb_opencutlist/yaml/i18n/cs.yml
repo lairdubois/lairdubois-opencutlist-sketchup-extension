@@ -265,6 +265,12 @@ tab:
       edit_material: "Upravit materiál ‘{{ material_name }}'"
       expand_all: Rozložení všech řádků
       collapse_all: Přeložte všechny řádky
+      reset_prices: Resetování cen všech dílů
+      reset_prices_confirm: |
+        Chystáte se resetovat ceny všech částí vašeho modelu.
+        Tato akce je konečná. **Všechny ceny budou vynulovány.** 
+        Potvrďte pro pokračování.
+      reset_prices_success: Ceny všech dílů byly obnoveny.
     edit_part:
       title: "Vlastnosti dílce ‘{{ name }}’"
       title_multiple: Vlastnosti skupiny dílců
@@ -476,16 +482,16 @@ tab:
       instance_name: Instance
       definition_name: Definice
       name: Označení
-      total_cutting_length: Hrubá délka
-      total_cutting_area: Hrubá plocha
-      total_cutting_volume: Hrubý objem
-      total_final_area: Finální plocha
+      total_cutting_length: Celková hrubá délka
+      total_cutting_area: Celková hrubá plocha
+      total_cutting_volume: Celkový hrubý objem
+      total_final_area: Celková finální plocha
       cutting_length: Hrubá délka
       cutting_width: Hrubá šířka
       cutting_thickness: Hrubá tloušťka
-      bbox_length: Čistá délka
-      bbox_width: Čistá šířka
-      bbox_thickness: Čistá tloušťka
+      bbox_length: Délka
+      bbox_width: Šířka
+      bbox_thickness: Tloušťka
       final_area: Čistá plocha
       count: Počet
       part_count: Počet kusů
@@ -807,6 +813,12 @@ tab:
     menu:
       import_from_skm: Import materiálu (.skm)
       purge_unused: Smazat nepoužité materiály
+      reset_prices: Resetování cen všech materiálů
+      reset_prices_confirm: |
+        Chystáte se resetovat ceny všech materiálů ve vašem modelu.
+        Tato akce je konečná. **Všechny ceny budou vynulovány. 
+        Potvrďte pro pokračování.
+      reset_prices_success: Ceny všech materiálů byly obnoveny.
     new_material:
       title: Vytvořit nový materiál
       name: Popis

@@ -265,6 +265,9 @@ tab:
       edit_material: "ערוך חומר '{{ material_name }}'"
       expand_all: פתח את כל השורות
       collapse_all: קפל את כל השורות
+      reset_prices: ""
+      reset_prices_confirm: |
+      reset_prices_success: ""
     edit_part:
       title: "מאפייני חלק '{{ name }}'"
       title_multiple: מאפייני קבוצת חלקים
@@ -476,17 +479,17 @@ tab:
       instance_name: עותק
       definition_name: הגדרה
       name: תיאור
-      total_cutting_length: אורך - חיתוך מצטבר
-      total_cutting_area: שטח - חיתוך מצטבר
-      total_cutting_volume: נפח - חיתוך מצטבר
-      total_final_area: שטח - נטו מצטבר
-      cutting_length: אורך - חיתוך
-      cutting_width: רוחב - חיתוך
-      cutting_thickness: עובי - חיתוך
-      bbox_length: אורך - אפשרי
-      bbox_width: רוחב - אפשרי
-      bbox_thickness: עובי - אפשרי
-      final_area: שטח - אפשרי
+      total_cutting_length: ""
+      total_cutting_area: ""
+      total_cutting_volume: ""
+      total_final_area: ""
+      cutting_length: ""
+      cutting_width: ""
+      cutting_thickness: ""
+      bbox_length: אורך סופי
+      bbox_width: רוחב סופי
+      bbox_thickness: עובי סופי
+      final_area: ""
       count: כמות
       part_count: כמות חלקים
       material_type: סוג
@@ -807,6 +810,9 @@ tab:
     menu:
       import_from_skm: ייבוא חומר (skm.)
       purge_unused: נקה חומרים שאינם בשימוש
+      reset_prices: ""
+      reset_prices_confirm: |
+      reset_prices_success: ""
     new_material:
       title: צור חומר חדש
       name: תיאור

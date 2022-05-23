@@ -265,6 +265,12 @@ tab:
       edit_material: "Editar material '{{ material_name }}'"
       expand_all: Dividir todas las líneas
       collapse_all: Doblar todas las líneas
+      reset_prices: Restablecer los precios de todas las piezas
+      reset_prices_confirm: |
+        Está a punto de restablecer los precios de todas las piezas de su modelo.
+        Esta acción es definitiva. **Todos los precios se pondrán a cero.**
+        Confirme para continuar.
+      reset_prices_success: Se han reajustado los precios de todas las piezas.
     edit_part:
       title: "Propiedades de la parte '{{ name }}'"
       title_multiple: Propiedades del grupo de partes
@@ -476,16 +482,16 @@ tab:
       instance_name: Instancia
       definition_name: Definición
       name: Designación
-      total_cutting_length: Longitud - crudo
-      total_cutting_area: Área - cruda
-      total_cutting_volume: Volumen - cruda
-      total_final_area: Area - final
+      total_cutting_length: Longitud total - crudo
+      total_cutting_area: Área total - cruda
+      total_cutting_volume: Volumen total - cruda
+      total_final_area: Área total - final
       cutting_length: Longitud - cruda
       cutting_width: Ancho - crudo
       cutting_thickness: Espesor - crudo
-      bbox_length: Longitud - final
-      bbox_width: Ancho - final
-      bbox_thickness: Espesor - final
+      bbox_length: Longitud
+      bbox_width: Anchura
+      bbox_thickness: Grosor
       final_area: Area - final
       count: Cantidad
       part_count: Cantidad
@@ -807,6 +813,12 @@ tab:
     menu:
       import_from_skm: Importar material (.skm)
       purge_unused: Limpiar los materiales no utilizados
+      reset_prices: Reajustar los precios de todos los materiales
+      reset_prices_confirm: |
+        Está a punto de restablecer los precios de todos los materiales de su modelo.
+        Esta acción es definitiva. **Todos los precios se pondrán a cero.**
+        Confirme para continuar.
+      reset_prices_success: Se han reajustado los precios de todos los materiales.
     new_material:
       title: Crea un nuevo material
       name: Nombre

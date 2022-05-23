@@ -265,6 +265,12 @@ tab:
       edit_material: "Wijzig materiaal '{{ material_name }}'"
       expand_all: Alle lijnen uitklappen
       collapse_all: Alle lijnen inklappen
+      reset_prices: Reset de prijzen van alle onderdelen
+      reset_prices_confirm: |
+        U staat op het punt om de prijzen van alle onderdelen van uw model opnieuw in te stellen.
+        Deze actie is definitief. **Alle prijzen worden op nul gezet.
+        Bevestig om door te gaan.
+      reset_prices_success: De prijzen van alle onderdelen zijn opnieuw vastgesteld.
     edit_part:
       title: "Eigenschappen van onderdeel '{{ name }}'"
       title_multiple: Eigenschappen van groep onderdelen
@@ -476,16 +482,16 @@ tab:
       instance_name: Instantie
       definition_name: Definitie
       name: Beschrijving
-      total_cutting_length: Lengte - bruto
-      total_cutting_area: Oppervlakte - alle onderdelen
-      total_cutting_volume: Volume - alle onderdelen
-      total_final_area: Oppervlakte - afgewerkt
-      cutting_length: Lengte - alle onderdelen
-      cutting_width: Breedte - onderdelen
-      cutting_thickness: Dikte - onderdelen
-      bbox_length: Lengte - afgewerkt
-      bbox_width: Breedte - afgewerkt
-      bbox_thickness: Dikte - afgewerkt
+      total_cutting_length: Lengte totaal - onbewerkt
+      total_cutting_area: Oppervlakte totaal - onbewerkt
+      total_cutting_volume: Volume totaal - onbewerkt
+      total_final_area: Oppervlakte totaal - afgewerkt
+      cutting_length: Lengte - onbewerkt
+      cutting_width: Breedte - onbewerkt
+      cutting_thickness: Dikte - onbewerkt
+      bbox_length: Lengte
+      bbox_width: Breedte
+      bbox_thickness: Dikte
       final_area: Oppervlakte - afgewerkt
       count: Hoeveelheid
       part_count: Aantal onderdelen
@@ -807,6 +813,12 @@ tab:
     menu:
       import_from_skm: Importeer een materiaal (.skm)
       purge_unused: Verwijder ongebruikte materialen
+      reset_prices: Reset de prijzen van alle materialen
+      reset_prices_confirm: |
+        U staat op het punt om de prijzen van alle materialen in uw model opnieuw in te stellen.
+        Deze actie is definitief. **Alle prijzen worden op nul gezet.
+        Bevestig om door te gaan.
+      reset_prices_success: De prijzen van alle materialen zijn opnieuw vastgesteld.
     new_material:
       title: Maak een nieuw materiaal
       name: Beschrijving

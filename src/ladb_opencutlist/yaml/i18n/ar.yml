@@ -265,6 +265,9 @@ tab:
       edit_material: "عدّل الخامة '{{ material_name }}'"
       expand_all: نشر كل الأسطر
       collapse_all: طيّ كل الأسطر
+      reset_prices: ""
+      reset_prices_confirm: |
+      reset_prices_success: ""
     edit_part:
       title: "خصائص القطعة '{{ name }}'"
       title_multiple: خصائص مجموعة القطع
@@ -476,16 +479,16 @@ tab:
       instance_name: مثيل
       definition_name: تعريف
       name: وصف
-      total_cutting_length: الطول - أولي
-      total_cutting_area: المساحة - أولية
-      total_cutting_volume: الحجم - أولي
-      total_final_area: المساحة - نهائية
+      total_cutting_length: ""
+      total_cutting_area: ""
+      total_cutting_volume: ""
+      total_final_area: ""
       cutting_length: الطول - أولي
       cutting_width: العرض - أولي
       cutting_thickness: السُمك - أولي
-      bbox_length: الطول - نهائي
-      bbox_width: " العرض - نهائي"
-      bbox_thickness: السُمك - نهائي
+      bbox_length: الطول
+      bbox_width: العرض
+      bbox_thickness: السمك
       final_area: المساحة - نهائية
       count: العدد
       part_count: عدد القطع
@@ -807,6 +810,9 @@ tab:
     menu:
       import_from_skm: استيراد خامة (skm.)
       purge_unused: التخلص من الخامات غير المستعملة
+      reset_prices: ""
+      reset_prices_confirm: |
+      reset_prices_success: ""
     new_material:
       title: إنشاء خامة جديدة
       name: الإسم

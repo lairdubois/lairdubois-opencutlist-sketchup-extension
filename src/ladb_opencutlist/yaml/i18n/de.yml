@@ -265,6 +265,12 @@ tab:
       edit_material: "Material '{{ material_name }}' bearbeiten"
       expand_all: Alle Zeilen aufklappen
       collapse_all: Alle Zeilen zuklappen
+      reset_prices: Preise für alle Teile zurücksetzen
+      reset_prices_confirm: |
+        Sie sind dabei, die Preise für alle Teile Ihres Modells zurückzusetzen.
+        Diese Operation ist endgültig. **Alle Preise werden auf Null zurückgesetzt.**
+        Bestätigen Sie, um fortzufahren.
+      reset_prices_success: Die Preise für alle Teile wurden zurückgesetzt.
     edit_part:
       title: "Eigenschaften des Teils '{{ name }}'"
       title_multiple: Eigenschaften der Gruppe von Teilen
@@ -477,16 +483,16 @@ tab:
       definition_name: Definition
       name: Bezeichnung
       total_cutting_length: Länge - Summe roh
-      total_cutting_area: Fläche - roh
-      total_cutting_volume: Volumen - roh
-      total_final_area: Fläche - fertig
+      total_cutting_area: Fläche - Summe roh
+      total_cutting_volume: Volumen - Summe roh
+      total_final_area: Fläche - Summe fertig
       cutting_length: Länge - roh
       cutting_width: Breite - roh
       cutting_thickness: Dicke - roh
-      bbox_length: Länge - fertig
-      bbox_width: Breite - fertig
-      bbox_thickness: Dicke - fertig
-      final_area: Flächeninhalt - fertig
+      bbox_length: Länge
+      bbox_width: Breite
+      bbox_thickness: Dicke
+      final_area: Fläche - fertig
       count: Anzahl
       part_count: Anzahl der Teile
       material_type: Typ
@@ -807,6 +813,12 @@ tab:
     menu:
       import_from_skm: Material importieren (.skm)
       purge_unused: Unbenutztes Material löschen
+      reset_prices: Preise für alle Materialien zurücksetzen
+      reset_prices_confirm: |
+        Sie sind dabei, die Preise für alle Materialien Ihres Modells zurückzusetzen.
+        Diese Operation ist endgültig. **Alle Preise werden auf Null zurückgesetzt.**
+        Bestätigen Sie, um fortzufahren.
+      reset_prices_success: Die Preise für alle Materialien wurden zurückgesetzt.
     new_material:
       title: Material erstellen
       name: Name

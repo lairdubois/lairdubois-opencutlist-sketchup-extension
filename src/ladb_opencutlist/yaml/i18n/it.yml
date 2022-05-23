@@ -265,6 +265,12 @@ tab:
       edit_material: "Modifica materiale '{{ material_name }}'"
       expand_all: Espandi tutte le linee
       collapse_all: Comprimi tutte le linee
+      reset_prices: Azzeramento dei prezzi di tutte le parti
+      reset_prices_confirm: |
+        Stai per azzerare i prezzi di tutte le parti del tuo modello.
+        Questa azione è definitiva. **Tutti i prezzi saranno azzerati.**
+        Confermare per continuare.
+      reset_prices_success: I prezzi di tutti i parti sono stati ripristinati.
     edit_part:
       title: "Elenca proprietà della parte '{{ name }}'"
       title_multiple: Elenca proprietà di un gruppo di parti
@@ -476,17 +482,17 @@ tab:
       instance_name: Occorrenza
       definition_name: Definizione
       name: Designazione
-      total_cutting_length: Lunghezza - grezzo
-      total_cutting_area: Area - grezzo
-      total_cutting_volume: Volume - grezzo
-      total_final_area: Area - finito
+      total_cutting_length: Lunghezza totale - grezza
+      total_cutting_area: Area totale - grezzo
+      total_cutting_volume: Volume totale - grezzo
+      total_final_area: Area totale - finale
       cutting_length: Lunghezza - grezzo
       cutting_width: Larghezza - grezzo
       cutting_thickness: Spessore - grezzo
-      bbox_length: Lunghezza - finito
-      bbox_width: Larghezza - finito
-      bbox_thickness: Spessore - finito
-      final_area: Area - finito
+      bbox_length: Lunghezza
+      bbox_width: Larghezza
+      bbox_thickness: Spessore
+      final_area: Area - finale
       count: Quantità
       part_count: Quantità
       material_type: Tipo
@@ -807,6 +813,12 @@ tab:
     menu:
       import_from_skm: Importa materiale (.skm)
       purge_unused: Elimina materiali inutilizzati
+      reset_prices: Azzeramento dei prezzi di tutti i materiali
+      reset_prices_confirm: |
+        Stai per azzerare i prezzi di tutti i materiali del tuo modello.
+        Questa azione è definitiva. **Tutti i prezzi saranno azzerati.**
+        Confermare per continuare.
+      reset_prices_success: I prezzi di tutti i materiali sono stati ripristinati.
     new_material:
       title: Aggiungi un nuovo materiale
       name: Nome
