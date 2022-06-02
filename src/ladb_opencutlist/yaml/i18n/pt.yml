@@ -69,7 +69,7 @@ core:
     name: OpenCutList
     command:
       dialog: OpenCutList
-      smart_paint: Colorir peças
+      smart_paint: Pintar peças
   dialog:
     title: OpenCutList por L'Air du Bois
   leftbar:
@@ -142,7 +142,7 @@ core:
       save_to: "Atualizar as definições '{{ name }}'"
       delete: "Apagar as definições '{{ name }}'"
   progress:
-    please_wait: Calculando um mundo de paz
+    please_wait: Calculando um mundo de Paz
   component:
     textinput:
       reset: Mudar para valores originais
@@ -267,10 +267,10 @@ tab:
       collapse_all: Recolher todas as linhas
       reset_prices: Redefinir os preços de todas as peças
       reset_prices_confirm: |
-        Está prestes a redefinir os preços de todas as partes do seu modelo
-        Esta acção é definitiva. **Todos os preços serão reajustados para zero.**
+        Você está prestes a redefinir os preços de todas as partes do seu modelo
+        Esta ação é definitiva. **Todos os preços serão reajustados para zero.**
         Confirmar para continuar.
-      reset_prices_success: Os preços de todas as peças foram reajustados.
+      reset_prices_success: Os preços de todas as peças foram zerados.
     edit_part:
       title: "Propriedades da peça '{{ name }}'"
       title_multiple: Propriedades do grupo de peças
@@ -451,7 +451,7 @@ tab:
       thickness_short: E
       edges: Fita de Borda
     export:
-      title: Exportação
+      title: Exportar
       info_0: |
         Este recurso permite exportar sua *folha de dados* como uma *Planilha de Produção* para um arquivo em formato [CSV](https://pt.wikipedia.org/wiki/Comma-separated_values).
       customize_help: |
@@ -462,10 +462,10 @@ tab:
       columns: Colunas
       column_title: Título
       column_title_help: |
-        O campo **Título*** permite-lhe personalizar o título da coluna.
+        O campo **Título*** permite personalizar o título da coluna.
       column_formula: Fórmula
       column_formula_help: |
-        O campo **Fórmula** permite-lhe escrever código *Ruby* para personalizar o valor da coluna.
+        O campo **Fórmula** permite usar o código *Ruby* para personalizar o valor da coluna.
       options: Opções de exportação
       options_customize: Nome do modelo
       option_source: Fonte
@@ -813,12 +813,12 @@ tab:
     menu:
       import_from_skm: Importar material (.skm)
       purge_unused: Eliminar materiais não utilizados
-      reset_prices: Reinicializar os preços de todos os materiais
+      reset_prices: Redefinir os preços de todos os materiais
       reset_prices_confirm: |
-        Está prestes a redefinir os preços de todos os materiais do seu modelo.
-        Esta acção é definitiva. **Todos os preços serão reajustados para zero.**
-        Confirme para continuar. 
-      reset_prices_success: Os preços de todos os materiais foram reajustados.
+        Você está prestes a redefinir os preços de todos os materiais do seu modelo.
+        Esta ação é definitiva. **Todos os preços serão reajustados para zero.**
+        Confirme para continuar.
+      reset_prices_success: Os preços de todos os materiais foram zerados.
     new_material:
       title: Crie um novo material
       name: Nome
@@ -885,7 +885,7 @@ tab:
       texture_height: Altura
       export_to_skm: Exportar (.skm)
     texture_load:
-      title: Carregue imagem
+      title: Carregar imagem
     import_from_skm:
       title: Importar arquivo .skm
     export_to_skm:
@@ -1135,12 +1135,12 @@ tool:
     zoom_extents: Limite do zoom
   smart_paint:
     copy_key_win: Control
-    copy_key_mac: Option
+    copy_key_mac: Opções
     alt_key_win: Alt
     alt_key_mac: Command
-    status_paint_face: Clique para pintar uma cara.
+    status_paint_face: Clique para pintar uma face.
     status_paint_part: Clique para pintar uma parte inteira.
-    status_unpaint_face: Clique para limpar uma cara.
+    status_unpaint_face: Clique para limpar uma face.
     status_unpaint_part: Clique para limpar uma parte inteira.
     status_pick: Clique para recolher uma amostra do material.
     filters: Filtros
@@ -1150,12 +1150,12 @@ tool:
     filter_3: $t(tab.materials.type_3)
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
-    action: Acção
-    action_0: Pintar a cara
+    action: Ação
+    action_0: Pintar a face
     action_1: Pintar peça
-    action_2: Limpar cara
+    action_2: Limpar face
     action_3: Limpar peça
-    action_4: Tomar
+    action_4: Amostra
     warning:
-      no_material: O seu modelo não contém qualquer material!
-      all_filtered: Os filtros seleccionados mascaram todos os materiais!
+      no_material: O seu modelo não contém nenhum material!
+      all_filtered: Os filtros selecionados mascaram todos os materiais!
