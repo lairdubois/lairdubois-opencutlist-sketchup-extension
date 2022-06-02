@@ -242,7 +242,7 @@ tab:
       size_increased: "Размер увеличен на величину {{ value }}"
       has_edges: "Эта деталь содержит {{ count }} кромки"
       has_edges_plural: "Эти детали содержат {{ count }} кромки"
-      edge_decremented: "Уменьшена толщина кромки ({{ decrement }})"
+      edge_decremented: "Вычтена толщина кромки ({{ decrement }})"
       edge_ymin: Кромка по длине 1
       edge_ymax: Кромка по длине 2
       edge_xmin: Кромка по ширине 1
@@ -265,9 +265,12 @@ tab:
       edit_material: "Редактировать материал '{{ material_name }}'"
       expand_all: Развернуть все строки
       collapse_all: Свернуть все строки
-      reset_prices: ""
+      reset_prices: Сбросить цену всех деталей
       reset_prices_confirm: |
-      reset_prices_success: ""
+        Вы собираетесь сбросить цены на все детали вашей модели.
+        Это действие необратимо. **Все цены будут сброшены.**
+        Подтвердите, чтобы продолжить.
+      reset_prices_success: Цены на все детали были обнулены.
     edit_part:
       title: "Свойства детали '{{ name }}'"
       title_multiple: Свойства группы деталей
@@ -479,10 +482,10 @@ tab:
       instance_name: Экземпляр
       definition_name: Содержание
       name: Определение
-      total_cutting_length: ""
-      total_cutting_area: ""
-      total_cutting_volume: ""
-      total_final_area: ""
+      total_cutting_length: Суммарная длина раскроя
+      total_cutting_area: Суммарная площадь раскроя
+      total_cutting_volume: Суммарный объем раскроя
+      total_final_area: Суммарная площадь остатка
       cutting_length: Длина - пильная
       cutting_width: Ширина - пильная
       cutting_thickness: Толщина - пильная
@@ -810,9 +813,12 @@ tab:
     menu:
       import_from_skm: Импортировать материал (.skm)
       purge_unused: Очистить неиспользованные материалы
-      reset_prices: ""
+      reset_prices: Сбросить цены на все материалы
       reset_prices_confirm: |
-      reset_prices_success: ""
+        Вы собираетесь сбросить цены на все материалы вашей модели.
+        Это действие является необратимым. **Все цены будут сброшены.**
+        Подтвердите, чтобы продолжить.
+      reset_prices_success: Цены на все материалы были сброшены.
     new_material:
       title: Создать новый материал
       name: Имя
