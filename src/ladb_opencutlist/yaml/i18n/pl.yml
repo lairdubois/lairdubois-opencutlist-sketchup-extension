@@ -59,7 +59,7 @@ core:
   menu:
     submenu: OpenCutList
     item:
-      generate_cutlist:  ""
+      generate_cutlist:  Generowanie listy cięć
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
@@ -69,7 +69,7 @@ core:
     name: OpenCutList
     command:
       dialog: OpenCutList
-      smart_paint: ""
+      smart_paint: Części do kolorowania
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
@@ -142,7 +142,7 @@ core:
       save_to: "Zaktualizuj ustawienia '{{ name }}'"
       delete: "Usuń ustawienia '{{ name }}'"
   progress:
-    please_wait: ""
+    please_wait: Obliczanie świata pokoju
   component:
     textinput:
       reset: Wartość resetowania
@@ -416,7 +416,7 @@ tab:
       property_count: Ilość
       property_edge_pattern: Liczba obrzeży
       property_tags: Oznaczenia
-      property_thickness_layer_count: ""
+      property_thickness_layer_count: Liczba warstw
       tags: Oznaczenia
       tags_help: Własna lista oznaczeń dostępna w oknie właściwości części.
       tags_placeholder: Dodaj oznaczenie
@@ -455,12 +455,14 @@ tab:
       info_0: |
         Dzięki tej funkcji możesz wyeksportować *listę części* do pliku [CSV](https://pl.wikipedia.org/wiki/CSV_(format_pliku)).
       customize_help: |
+        Zmień kolejność, Ukryj, Dodaj, Usuń lub Wybierz kolumnę z listy, aby dostosować jej **tytuł** i **formułę** generującą wyświetlaną wartość dla każdego eksportowanego wiersza.
       add_column: Dodaj kolumnę
-      add_native_columns: ""
+      add_native_columns: Dodaj kolumnę rodzimą
       remove_column: Usuń
       columns: Kolumny
       column_title: Tytuł
       column_title_help: |
+        Pole **Tytuł** umożliwia dostosowanie tytułu kolumny.
       column_formula: Wzór
       column_formula_help: |
         Pole **Formula** umożliwia napisanie kodu *Ruby* w celu dostosowania wartości kolumny.
@@ -505,7 +507,7 @@ tab:
       edge_xmax: Szerokość krawędzi 2
       placeholder:
         no_column_title: Wprowadź tytuł
-        no_column_formula_native: ""
+        no_column_formula_native: "Wartość natywna kolumny '{{ col_name }}'"
         no_column_formula: Wprowadź formułę
       warning:
         is_group_selection: Części w **ukrytych grupach** twojej listy części nie będą wyeksportowane.
@@ -803,9 +805,11 @@ tab:
       grain_direction: Kierunek wzoru
       colorized: Ten odcień zostanie zastosowany do tekstury tego materiału podczas renderowania w modelu
       texture_colorized: Zdecydowanie połącz ten odcień w obrazie tekstury
-      texture_load: ""
+      texture_load: Załaduj nową teksturę
       edit: "Edytuj właściwości '{{ name }}'"
       set_current: |
+        Kolorowanie części za pomocą '{{ name }}'. 
+        *Kliknij dwukrotnie, aby zwinąć*
     menu:
       import_from_skm: Importuj materiał (.skm)
       purge_unused: Usuń nieużywane materiały
@@ -1134,23 +1138,23 @@ tool:
     copy_key_mac: ""
     alt_key_win: ""
     alt_key_mac: ""
-    status_paint_face: ""
-    status_paint_part: ""
-    status_unpaint_face: ""
-    status_unpaint_part: ""
-    status_pick: ""
+    status_paint_face: "Kliknij, aby pokolorować twarz."
+    status_paint_part: "Kliknij, aby pokolorować cały pokój."
+    status_unpaint_face: "Kliknij, aby wyczyścić jedną stronę."
+    status_unpaint_part: "Kliknij, aby wyczyścić całe pomieszczenie."
+    status_pick: "Kliknij, aby obejrzeć próbkę materiału."
     filters: Filtry
-    filter_0: ""
+    filter_0: Bez typu
     filter_1: $t(tab.materials.type_1)
     filter_2: $t(tab.materials.type_2)
     filter_3: $t(tab.materials.type_3)
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     action: ""
-    action_0: ""
-    action_1: ""
-    action_2: ""
-    action_3: ""
+    action_0: Kolorowa twarz
+    action_1: Kolorowanka
+    action_2: Czysta twarz
+    action_3: Czysty pokój
     action_4: ""
     warning:
       no_material: Twój model nie zawiera żadnych materiałów!
