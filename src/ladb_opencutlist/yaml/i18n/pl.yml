@@ -1134,10 +1134,10 @@ tool:
     transparency: Przezroczystość
     zoom_extents: Zakres powiększenia
   smart_paint:
-    copy_key_win: ""
-    copy_key_mac: ""
-    alt_key_win: ""
-    alt_key_mac: ""
+    copy_key_win: Ctrl
+    copy_key_mac: Option
+    alt_key_win: Alt
+    alt_key_mac: Cmd
     status_paint_face: "Kliknij, aby pokolorować twarz."
     status_paint_part: "Kliknij, aby pokolorować cały pokój."
     status_unpaint_face: "Kliknij, aby wyczyścić jedną stronę."
@@ -1150,12 +1150,12 @@ tool:
     filter_3: $t(tab.materials.type_3)
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
-    action: ""
+    action: Działanie
     action_0: Kolorowa twarz
     action_1: Kolorowanka
     action_2: Czysta twarz
     action_3: Czysty pokój
-    action_4: ""
+    action_4: Próbka
     warning:
       no_material: Twój model nie zawiera żadnych materiałów!
       all_filtered: Wybrane filtry maskują wszystkie materiały!

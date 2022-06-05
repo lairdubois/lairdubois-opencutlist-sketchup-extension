@@ -172,9 +172,9 @@ tab:
     tooltip:
       show_hide_block: Gruppe anzeigen / ausblenden
       scroll_to_block: Zur Gruppe blättern
-      not_available_std_width: "Die Breite *{{ std_dimension_real }}* ist nicht in den Standardbreiten des Materials '{{ material_name }}' definiert."
-      not_available_std_thickness: "Die Dicke *{{ std_dimension_real }}* ist nicht in den Standarddicken des Materials '{{ material_name }}' definiert."
-      not_available_std_section: "Der Querschnitt *{{ std_dimension_real }}* ist nicht in den Standardquerschnitten des Materials '{{ material_name }}' definiert."
+      not_available_std_width: "Die Breite *{{ std_dimension_real }}* ist nicht in den Standardbreiten des Materials '{{ material_name }}' definiert"
+      not_available_std_thickness: "Die Dicke *{{ std_dimension_real }}* ist nicht in den Standarddicken des Materials '{{ material_name }}' definiert"
+      not_available_std_section: "Der Querschnitt *{{ std_dimension_real }}* ist nicht in den Standardquerschnitten des Materials '{{ material_name }}' definiert"
       add_std_width_to_material: |
         Breite *{{ std_dimension }}*
         dem Material '{{ material_name }}' hinzufügen
@@ -211,7 +211,7 @@ tab:
       material_origin_3: Das verwendete Material für dieses Teil wird aus einem enthaltenen Teil extrahiert
       orientation_locked_on_axis: Die Orientierung dieses Teils ist an sein Koordinatensystem gebunden
       number_saved: Die Nummer dieses Teils wurde gespeichert
-      number_hidden: "Die auf diesem Teil gespeicherte Nummer '{{ number }}' kann nicht verwendet werden, da sie bereits vergeben ist."
+      number_hidden: "Die auf diesem Teil gespeicherte Nummer '{{ number }}' kann nicht verwendet werden, da sie bereits vergeben ist"
       number_generated: Die Nummer dieses Teils wurde automatisch zugewiesen
       resized: Dieses Teil wurde im Bezug zur ursprünglichen Definition als Komponente in der Dimension redimensioniert
       flipped: Dieses Teil ist im Vergleich zur ursprünglichen Definition gespiegelt
@@ -304,7 +304,7 @@ tab:
         Definieren Sie hier die Anzahl der Schichten, die das gezeichnete Teil in seiner Dicke unterteilen.
 
         *Beispiel:* Wenn Sie ein Stück mit einer Dicke von *38mm* gezeichnet haben und es durch Zusammenkleben von zwei *19mm* Platten herstellen wollen, geben Sie **2** in dieses Feld ein.
-        *OpenCutList zählt dann 2 Stücke von 19 mm Dicke anstelle von 1 Stück von 38 mm Dicke.
+        *OpenCutList zählt dann 2 Stücke von 19 mm Dicke anstelle von 1 Stück von 38 mm Dicke
       description: Beschreibung
       description_help: |
         Die *Beschreibung* ermöglicht es Ihnen, benutzerdefinierte Informationen zu jeder Teildefinition anzugeben.
@@ -345,7 +345,7 @@ tab:
         Als Hinweis gilt, wenn *Automatische Orientierung der Teile* nicht aktiviert ist oder das Teil *An das Koordinatensystem gebunden ist*, dann wird:
          - die **Länge** auf der <strong style='color:red'>roten</strong> Achse,
          - die **Breite** auf der <strong style='color:green'>grünen</strong> Achse und
-         - die **Dicke** auf der <strong style='color:blue'>blauen</strong> Achse gelesen.
+         - die **Dicke** auf der <strong style='color:blue'>blauen</strong> Achse gelesen
       axes_origin_position_none: Koordinatenursprung nicht verändern
       axes_origin_position_min: Ursprung an einer Ecke anlegen
       axes_origin_position_center: Ursprung im Zentrum anlegen
