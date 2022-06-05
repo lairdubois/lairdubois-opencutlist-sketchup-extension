@@ -304,7 +304,7 @@ tab:
         Definire qui il numero di strati che compongono lo spessore totale dell'elemento disegnato.
 
         *Esempio:* Per un elemento disegnato di spessore *38mm* che si desideri realizzare incollando insieme due pannelli da *19mm*, inserire **2** in questo campo.
-        *OpenCutList conterà 2 pezzi da 19 mm di spessore anzichè uno da 38 mm.
+        *OpenCutList conterà 2 pezzi da 19 mm di spessore anzichè uno da 38 mm
       description: Descrizione
       description_help: |
         La *Descrizione* permette di fornire informazioni personalizzate su ogni definizione di parte.
@@ -345,7 +345,7 @@ tab:
         Attenzione che se l'opzione *Orientamento automatico delle parti* non è attiva o la parte è *bloccata sui propri assi* si avrà che:
          - la **lunghezza** si legge sull'asse <strong style='color:red'>rosso</strong>,
          - la **larghezza** si legge sull'asse <strong style='color:green'>verde</strong> e
-         - lo **spessore** si legge sull'asse <strong style='color:blue'>blu</strong>.
+         - lo **spessore** si legge sull'asse <strong style='color:blue'>blu</strong>
       axes_origin_position_none: Non cambiare l'origine
       axes_origin_position_min: Posiziona l'origine allo spigolo
       axes_origin_position_center: Posiziona l'origine al centro

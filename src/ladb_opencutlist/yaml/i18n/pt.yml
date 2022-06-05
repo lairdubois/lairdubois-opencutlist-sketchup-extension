@@ -150,7 +150,7 @@ core:
       store: Memorizar esta cor
       remove: Esquecer esta cor
     textinput_code:
-      help: Digite **@*** para obter uma lista de variáveis.
+      help: Digite **@** para obter uma lista de variáveis.
 tab:
   cutlist:
     label: Peças
@@ -304,7 +304,7 @@ tab:
         Definir aqui o número de camadas que dividem a peça desenhada de acordo com sua espessura.
 
         *Exemplo:* Se você quiser fazer um desenho com *38mm* de espessura colando dois painéis de *19mm*, digite **2** neste campo.
-        *OpenCutList contará então 2 peças de 19mm de espessura ao invés de 1 peça de 38mm de espessura*.
+        *OpenCutList contará então 2 peças de 19mm de espessura ao invés de 1 peça de 38mm de espessura*
       description: Descrição
       description_help: |
         A *Descrição* permite que você forneça informações personalizadas sobre cada definição de peça.
@@ -462,7 +462,7 @@ tab:
       columns: Colunas
       column_title: Título
       column_title_help: |
-        O campo **Título*** permite personalizar o título da coluna.
+        O campo **Título** permite personalizar o título da coluna.
       column_formula: Fórmula
       column_formula_help: |
         O campo **Fórmula** permite usar o código *Ruby* para personalizar o valor da coluna.
@@ -614,7 +614,7 @@ tab:
         Indique aqui a lista das sobras da sua prancha ou fita de borda consideradas prioritárias para o layout.
         Formato esperado : **L**x**Q**. Onde **L** é o *comprimento* da sobra e **Q** a quantidade.
         A quantidade é opcional.
-        *Se não for especificada nenhuma unidade, será utilizada a unidade modelo.
+        *Se não for especificada nenhuma unidade, será utilizada a unidade modelo.*
       option_std_sheet: Chapa Padrão
       option_std_sheet_help: |
         Selecione a chapa padrão que será duplicado para conter todas as partes.
