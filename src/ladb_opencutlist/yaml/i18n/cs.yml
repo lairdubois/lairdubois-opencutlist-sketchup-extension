@@ -248,7 +248,7 @@ tab:
       edge_xmin: Hrana napříč 1
       edge_xmax: Hrana napříč 2
       dblclick_to_copy_all_edges: Dvojklikem zde duplikujete tuto hodnotu na ostatní hrany
-      dblclick_to_sort_axes: Dvojklikem zde automaticky změníte pořadí os podle rozměrů dílu.
+      dblclick_to_sort_axes: Dvojklikem zde automaticky změníte pořadí os podle rozměrů dílu
       part_axes: Vnitřní osy dílu
       select_unselect_all_parts: Výberte/zruště výběr dílců ve skupině
       setup_group_cuttingdiagram: "Nakonfigurujte nářezový plán '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
@@ -345,7 +345,7 @@ tab:
         Všimněte si, že pokud není tato možnost *Automatická orientace dílců* aktivní nebo je součást *zamknutá na svých osách* pak:
         - **Délka** se čte na <strong style='color:red'>červené</strong> ose,
         - **Šířka** se čte na <strong style='color:green'>zelené</strong> ose a
-        - **Tloušťka* se čte na <strong style='color:blue'>modré</strong> ose.
+        - **Tloušťka* se čte na <strong style='color:blue'>modré</strong> ose
       axes_origin_position_none: Neměňte původ
       axes_origin_position_min: Umístěte počátek do rohu
       axes_origin_position_center: Umístěte počátek do středu
@@ -1138,11 +1138,11 @@ tool:
     copy_key_mac: Nastavení
     alt_key_win: Atl
     alt_key_mac: Příkaz
-    status_paint_face: Kliknutím obarvíme plochu
-    status_paint_part: Kliknutím obarvíme celý díl
-    status_unpaint_face: Kliknutím smažeme barvu plochy
-    status_unpaint_part: Kliknutím zmažeme barvu celého dílu
-    status_pick: Kliknutím zobrazíme vzorek materiálu
+    status_paint_face: Kliknutím obarvíme plochu.
+    status_paint_part: Kliknutím obarvíme celý díl.
+    status_unpaint_face: Kliknutím smažeme barvu plochy.
+    status_unpaint_part: Kliknutím zmažeme barvu celého dílu.
+    status_pick: Kliknutím zobrazíme vzorek materiálu.
     filters: Filtr
     filter_0: Bez typu
     filter_1: $t(tab.materials.type_1)

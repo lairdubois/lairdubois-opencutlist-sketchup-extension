@@ -172,7 +172,7 @@ tab:
     tooltip:
       show_hide_block: Show / hide group
       scroll_to_block: Scroll to group
-      not_available_std_width: "The width *{{ std_dimension_real }}* is not defined in the standard widths of the material '{{ material_name }}'."
+      not_available_std_width: "The width *{{ std_dimension_real }}* is not defined in the standard widths of the material '{{ material_name }}'"
       not_available_std_thickness: "The thickness *{{ std_dimension }}* is not defined in the standard thicknesses of the material '{{ material_name }}'"
       not_available_std_section: "The cross section *{{ std_dimension }}* is not defined in the standard cross sections of the material '{{ material_name }}'"
       add_std_width_to_material: |
@@ -345,7 +345,7 @@ tab:
         Note that if the option *Automatic orientation of parts* is not active or the part is *locked on its axes* then:
          - the **length** is read on the <strong style='color:red'>red</strong> axis,
          - the **width** on the <strong style='color:green'>green</strong> axis and
-         - the **thickness** on the <strong style='color:blue'>blue</strong> axis.
+         - the **thickness** on the <strong style='color:blue'>blue</strong> axis
       axes_origin_position_none: Do not change the origin
       axes_origin_position_min: Place the origin at a corner
       axes_origin_position_center: Place the origin at the center
@@ -1134,10 +1134,10 @@ tool:
     transparency: Transparency
     zoom_extents: Zoom Extents
   smart_paint:
-    copy_key_win: Control
+    copy_key_win: Ctrl
     copy_key_mac: Option
     alt_key_win: Alt
-    alt_key_mac: Command
+    alt_key_mac: Cmd
     status_paint_face: Click to paint a face.
     status_paint_part: Click to paint an entire part.
     status_unpaint_face: Click to clean a face.

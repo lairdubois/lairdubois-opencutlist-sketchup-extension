@@ -101,7 +101,7 @@ core:
     unavailable: De laatste versie van *OpenCutList* kan niet gevonden worden.
     available: |
       Er is een nieuwe versie van *OpenCutList* beschikbaar.
-      Update deze voor de nieuwste functies.
+      Update deze voor de nieuwste functies!
     up_to_date: |
       Je hebt al de laatste versie van *OpenCutList*
 
@@ -211,10 +211,10 @@ tab:
       material_origin_3: Het materiaal van dit component wordt overgenomen van een van de onderliggende componenten
       orientation_locked_on_axis: De oriëntatie van dit component is vergrendeld
       number_saved: Het nummer van dit component is bewaard
-      number_hidden: "Het nummer '{{ number }}' kan niet worden gebruikt want het is al in gebruik."
+      number_hidden: "Het nummer '{{ number }}' kan niet worden gebruikt want het is al in gebruik"
       number_generated: Het nummer van dit component is automatisch gegenereerd
       resized: Dit component is aangepast aan de maten van de definitie
-      flipped: Dit component is gespiegeld ten opzichte van het origineel.
+      flipped: Dit component is gespiegeld ten opzichte van het origineel
       symmetrical: Gespiegelde herkenning staat uit voor dit onderdeel
       ignore_grain_direction: De nerfrichting wordt op dit onderdeel genegeerd
       auto_oriented: De oriëntatie van dit component is automatisch aangepast
@@ -304,7 +304,7 @@ tab:
         Definieer hier het aantal lagen dat de dikte van het getekende stuk verdeelt.
 
         *Voorbeeld:* Als u een stuk met een dikte van *38mm* hebt getekend en het wilt maken door twee *19mm* platen aan elkaar te lijmen, vult u **2** in dit veld in.
-        *OpenCutList zal dan 2 stukken van 19mm dikte tellen in plaats van 1 stuk van 38mm dikte.
+        *OpenCutList zal dan 2 stukken van 19mm dikte tellen in plaats van 1 stuk van 38mm dikte
       description: Beschrijving
       description_help: |
         In de *Beschrijving* kunt u persoonlijke informatie invoeren voor elke sub-definitie.
@@ -628,7 +628,7 @@ tab:
         Lijst hier uw paneel resten op die voorrang moeten krijgen in het zaagschema.
         Verwacht formaat: **L**x**B**x**A**. Où **L** et **B** zijn respectievelijk de *lengte* en de *breedte* van de overschot en **A** het aantal.
         Het aantal is facultatief.
-        *Wanneer geen enkele maat gespecifiëerd werd, dan zal de eenheid van het model genomen worden.
+        *Wanneer geen enkele maat gespecifiëerd werd, dan zal de eenheid van het model genomen worden.*
       tooltip:
         scroll_to_block_1d: Scroll naar de eerste plank of kantenband
         scroll_to_block_2d: Scroll naar eerste paneel
@@ -950,7 +950,7 @@ tab:
         Dit model bevat reeds *onderdelen*, *definities* of *materialen*.
         Kies de gewenste importeer opties..
       option_remove_all_?: "Wat nu?"
-      option_remove_all_false: Voeg onderdelen toe aan bestaande..
+      option_remove_all_false: Voeg onderdelen toe aan bestaande
       option_remove_all_true: Alles vrij!
       option_keep_definitions_settings: Bewaar instellingen voor definities
       option_keep_materials_settings: Materiaalparameters behouden
@@ -974,7 +974,7 @@ tab:
       bad_extension: "Het bestand *{{ filename }}* heeft geen **.CSV** of **.TSV** extensie."
       failed_to_load_csv_file: |
         Het CSV-bestand kan niet worden geladen: **{{ error }}**
-        *Controleer of u het juiste gegevensscheidingsteken hebt gekozen.
+        *Controleer of u het juiste gegevensscheidingsteken hebt gekozen.*
       empty_file: Het bestand lijkt leeg te zijn of kon niet correct worden gelezen.
       no_importable_part: Er kunnen geen onderdelen worden ingevoerd. Wijs de gewenste velden toe aan de overeenkomstige kolommen.
       invalid_name: Ongeldige beschrijving
