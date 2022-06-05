@@ -150,7 +150,7 @@ core:
       store: Mémoriser cette couleur
       remove: Oublier cette couleur
     textinput_code:
-      help: Appuyez sur **@** pour ouvrir la liste des variables de donnée.
+      help: Tappez **@** pour ouvrir la liste des variables de donnée.
 tab:
   cutlist:
     label: Débit
