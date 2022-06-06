@@ -278,7 +278,7 @@ tab:
       general: Všeobecné
       extra_help: "Seznam vlastností specifických pro typ materiálu \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Hranování
-      name: Popis
+      name: Název
       material: Materiál
       cumulable: Shrnutí
       cumulable_help: |
@@ -441,7 +441,7 @@ tab:
       cutting: Zhruba
       bbox: Hotový
       final: Aktuální
-      total_cutting: Σ Zhruba
+      total_cutting: Σ Hrubý
       total_final: Σ Aktuální
       length: Délka
       length_short: D
@@ -512,7 +512,7 @@ tab:
       warning:
         is_group_selection: "Díly, které jsou ve **skrytých skupinách** kusovníku, se neexportují."
     report:
-      title: Zpráva
+      title: Výsledky
       info_0: |
         Tato funkce umožňuje generovat zprávu o **hmotnosti** a **nákladech** surovin nezbytných pro výrobu částí *debetního listu*.
       options_general: Všeobecné

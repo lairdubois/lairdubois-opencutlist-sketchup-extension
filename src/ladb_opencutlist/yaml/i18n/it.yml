@@ -916,8 +916,8 @@ tab:
     label: Importa
     title: Importa Parti
     help: |
-      Questa sezione serve per importare **parti** (definite da una selezione rettangolare) da un file [CSV](https://it.wikipedia.org/wiki/Comma-separated_values) all'interno del modello corrente.
-      Successivamente si possono utilizzare le funzionalità di *OpenCutList* per parti che sono state generate da un software diverso da *SketchUp*.
+      Questa sezione serve per per importare **parti** (a forma di parallelepipedo) da un file [CSV](https://it.wikipedia.org/wiki/Comma-separated_values) all'interno del modello corrente.
+      Successivamente si possono utilizzare le funzionalità di *OpenCutList* per elaborare parti create con un software diverso da *SketchUp*.
       Seleziona il pulsante **Apri file CSV** per caricarlo.
     open_csv: Apri file CSV
     import_to_model: Importa nel modello
