@@ -136,7 +136,7 @@ core:
     override_confirm: "¿Confirmas la actualización del preajuste **\"{{ name }}\"** con los parámetros del formulario?"
     new_success: "Preajuste **\"{{ name }}\"** creado"
     override_success: "Preajuste **\"{{ name }}\"** actualizado"
-    restore_success: "El formulario se ha rellenado con el preajuste **\"{{ name }}\"**."
+    restore_success: "El formulario se ha rellenado con el preajuste **\"{{ name }}\"**"
     delete_success: "Preajuste **\"{{ name }}\"** borrado"
     tooltip:
       save_to: "Actualizar la configuración de '{{ name }}'"
@@ -216,7 +216,7 @@ tab:
       resized: Esta parte ha cambiado de tamaño con respecto a la definición de su componente
       flipped: Esta parte se refleja en comparación con la definición de su componente
       symmetrical: La detección de piezas reflejadas está desactivada en esta pieza
-      ignore_grain_direction: La dirección de la fibra se ignora en esta parte.
+      ignore_grain_direction: La dirección de la fibra se ignora en esta parte
       auto_oriented: Esta parte se ha reorientado automáticamente
       add_label_filter: "Filtrar por '{{ label }}'"
       remove_label_filter: "No filtrar por '{{ label }}'"
@@ -322,7 +322,7 @@ tab:
         por lo tanto, en el sistema de coordenadas local:
         - la *longitud* está en el eje <span style='color:red'>rojo</span>
         - el *ancho* está en el eje <span style='color:green'>verde</span>
-        - el *espesor* está en el eje <span style='color:blue'>azul</span>.
+        - el *espesor* está en el eje <span style='color:blue'>azul</span>
       symmetrical: Deshabilitar la detección de espejos en esta parte
       symmetrical_help: |
         Si esta casilla está marcada, la detección de *parte reflejada* no se aplicará a esta parte.
@@ -345,7 +345,7 @@ tab:
         Tenga en cuenta que si la opción *Orientación automática de piezas* no está activa o la pieza está *bloqueada en sus ejes*, entonces:
          - la **longitud** se lee en los ejes <strong style='color:red'>rojos</strong>,
          - el **ancho** se lee en los ejes <strong style='color:green'>verdes</strong> y
-         - el **espesor** se lee en los ejes <strong style='color:blue'>azules</strong>.
+         - el **espesor** se lee en los ejes <strong style='color:blue'>azules</strong>
       axes_origin_position_none: No cambies el origen
       axes_origin_position_min: Coloque el origen en una esquina
       axes_origin_position_center: Coloque el origen en el centro
@@ -365,7 +365,7 @@ tab:
         Si esta opción no se selecciona, los ejes locales de la pieza definen las dimensiones de la siguiente manera
          - *longitud* está en el eje <span style='color:red'>rojo</span>
          - *ancho* está en el eje <span style='color:green'>verde</span>
-         - *espesor* está en el eje <span style='color:blue'>azul</span>.
+         - *espesor* está en el eje <span style='color:blue'>azul</span>
       flipped_detection: Detección de piezas de espejo
       flipped_detection_help: |
         Si se selecciona esta opción, las partes reflejadas serán detectadas y mostradas como una nueva parte.
