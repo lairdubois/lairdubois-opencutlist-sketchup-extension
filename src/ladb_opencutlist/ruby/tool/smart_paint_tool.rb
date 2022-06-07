@@ -504,7 +504,11 @@ module Ladb::OpenCutList
     end
 
     def onMaterialRemove(materials, material)
-      if material == @@current_material
+      begin
+        if material == @@current_material
+          @@current_material = nil
+        end
+      rescue => e # Reference to deleted Entity
         @@current_material = nil
       end
       _populate_material_defs(Sketchup.active_model)
