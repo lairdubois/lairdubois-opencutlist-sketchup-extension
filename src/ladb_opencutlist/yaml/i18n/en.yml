@@ -20,7 +20,7 @@ default:
   export: Export
   import: Import
   load: Load
-  preview: Overview
+  preview: Preview
   options: Options
   caution: Caution
   remove: Remove
