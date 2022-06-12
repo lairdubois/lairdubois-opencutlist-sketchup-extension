@@ -265,9 +265,12 @@ tab:
       edit_material: "عدّل الخامة '{{ material_name }}'"
       expand_all: نشر كل الأسطر
       collapse_all: طيّ كل الأسطر
-      reset_prices: ""
+      reset_prices: إعادة تهيئة أسعار كل القِطع
       reset_prices_confirm: |
-      reset_prices_success: ""
+        أنت مقبل على إعادة تهيئة أسعار كل قِطع نموذجك.
+        هذا الإجراء نهائي.** ستعاد تهيئة كل القطع إلى الصفر.**
+        أكّد للمواصلة.
+      reset_prices_success: لقد أعيدت تهيئة أسعار كل القِطع.
     edit_part:
       title: "خصائص القطعة '{{ name }}'"
       title_multiple: خصائص مجموعة القطع
@@ -479,10 +482,10 @@ tab:
       instance_name: مثيل
       definition_name: تعريف
       name: وصف
-      total_cutting_length: ""
-      total_cutting_area: ""
-      total_cutting_volume: ""
-      total_final_area: ""
+      total_cutting_length: الطول الإجمالي - أولي
+      total_cutting_area: المساحة الإجمالية - أولية
+      total_cutting_volume: الحجم الإجمالي - أولي
+      total_final_area: المساحة الإجمالية - نهائية
       cutting_length: الطول - أولي
       cutting_width: العرض - أولي
       cutting_thickness: السُمك - أولي
@@ -810,9 +813,12 @@ tab:
     menu:
       import_from_skm: استيراد خامة (skm.)
       purge_unused: التخلص من الخامات غير المستعملة
-      reset_prices: ""
+      reset_prices: إعادة تهيئة أسعار كل الخامات
       reset_prices_confirm: |
-      reset_prices_success: ""
+        أنت مقبل على إعادة تهيئة أسعار كل خامات نموذجك.
+        هذا الإجراء نهائي.** ستعاد تهيئة كل القطع إلى الصفر.**
+        أكّد للمواصلة.
+      reset_prices_success: لقد أعيدت تهيئة أسعار كل الخامات.
     new_material:
       title: إنشاء خامة جديدة
       name: الإسم
