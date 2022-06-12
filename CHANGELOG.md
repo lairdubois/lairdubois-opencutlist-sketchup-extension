@@ -15,6 +15,7 @@ in 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added page description to printed part list
   * Added re-load material texture
   * Added reset all model prices (materials and parts) feature
+  * Added news reactions icons
   * Merged instance names in grouped parts
   * Improved ruby i18n string getter to support `$()`
   * Improved disabled edge cell display in part list

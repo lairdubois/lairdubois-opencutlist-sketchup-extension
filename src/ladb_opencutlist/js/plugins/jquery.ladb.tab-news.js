@@ -47,6 +47,7 @@
                                     "publishedAt " +
                                     "isPrivate " +
                                     "html " +
+                                    "reactions " +
                                     "fromAccount { " +
                                         "slug " +
                                         "name " +
