@@ -209,7 +209,7 @@ tab:
       material_origin_1: El material de esta pieza se define en sus instancias
       material_origin_2: El material de esta pieza se hereda de uno de sus elementos principales
       material_origin_3: El material de esta pieza se extrae de uno de sus elementos secundarios
-      orientation_locked_on_axis: La orientación de esta pieza está bloqueada en su sistema de coordenadas.
+      orientation_locked_on_axis: La orientación de esta pieza está bloqueada en su sistema de coordenadas
       number_saved: El número de esta parte se guardó
       number_hidden: "El número guardado '{{ number }}' de esta parte no se puede usar porque ya ha sido asignado"
       number_generated: El número de esta pieza se genera automáticamente
