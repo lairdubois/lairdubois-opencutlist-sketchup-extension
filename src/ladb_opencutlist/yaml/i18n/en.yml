@@ -267,7 +267,7 @@ tab:
       collapse_all: Fold all lines
       reset_prices: Reset the prices of all parts
       reset_prices_confirm: |
-        You are about to reset the prices of all parts of your model
+        You are about to reset the prices of all parts in your model
         This action is final. **All prices will be reset to zero.**
         Confirm to continue.
       reset_prices_success: The prices of all parts have been reset.

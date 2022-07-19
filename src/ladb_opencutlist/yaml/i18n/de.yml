@@ -268,7 +268,7 @@ tab:
       reset_prices: Preise für alle Teile zurücksetzen
       reset_prices_confirm: |
         Sie sind dabei, die Preise für alle Teile Ihres Modells zurückzusetzen.
-        Diese Operation ist endgültig. **Alle Preise werden auf Null zurückgesetzt.**
+        Dieser Vorgang ist endgültig. **Alle Preise werden auf Null zurückgesetzt.**
         Bestätigen Sie, um fortzufahren.
       reset_prices_success: Die Preise für alle Teile wurden zurückgesetzt.
     edit_part:
@@ -815,8 +815,8 @@ tab:
       purge_unused: Unbenutztes Material löschen
       reset_prices: Preise für alle Materialien zurücksetzen
       reset_prices_confirm: |
-        Sie sind dabei, die Preise für alle Materialien Ihres Modells zurückzusetzen.
-        Diese Operation ist endgültig. **Alle Preise werden auf Null zurückgesetzt.**
+        Sie sind dabei, die Preise aller Materialien Ihres Modells zurückzusetzen.
+        Dieser Vorgang ist endgültig. **Alle Preise werden auf Null zurückgesetzt.**
         Bestätigen Sie, um fortzufahren.
       reset_prices_success: Die Preise für alle Materialien wurden zurückgesetzt.
     new_material:
