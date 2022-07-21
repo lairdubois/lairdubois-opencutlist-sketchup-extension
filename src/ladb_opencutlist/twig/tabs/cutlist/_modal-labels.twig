@@ -131,7 +131,7 @@
 {% endblock %}
 
 {% block footerInner %}
-    <a href="https://docs.opencutlist.org/features/parts/parts-list/printing-labels" class="btn btn-default pull-left" target="_blank"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</a>
+    <button type="button" class="btn btn-default pull-left" id="ladb_cutlist_labels_btn_help"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
     <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
-    <button type="button" class="btn btn-primary btn-validate-modal" id="ladb_btn_generate">{{ 'default.generate'|i18next }}</button>
+    <button type="button" class="btn btn-primary btn-validate-modal" id="ladb_cutlist_labels_btn_generate">{{ 'default.generate'|i18next }}</button>
 {% endblock %}

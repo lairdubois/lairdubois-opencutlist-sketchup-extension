@@ -845,8 +845,21 @@
         });
     }
 
-    LadbDialog.prototype.appendOclMetasToUrlQueryParams = function (url) {
-        return url + '?v=' + this.capabilities.version + '&build=' + this.capabilities.build + '-' + (this.capabilities.is_rbz ? 'rbz' : 'src') + '&language=' + this.capabilities.language + '&locale=' + this.capabilities.locale;
+    LadbDialog.prototype.getDocsPageUrl = function (page) {
+        return this.appendOclMetasToUrlQueryParams(
+            this.capabilities.is_dev ? DOCS_DEV_URL : DOCS_URL,
+            (page && (typeof page  === "string")) ? { page: page } : null
+        );
+    }
+
+    LadbDialog.prototype.appendOclMetasToUrlQueryParams = function (url, params) {
+        url = url + '?v=' + this.capabilities.version + '&build=' + this.capabilities.build + '-' + (this.capabilities.is_rbz ? 'rbz' : 'src') + '&language=' + this.capabilities.language + '&locale=' + this.capabilities.locale;
+        if (params && (typeof params  === "object")) {
+            for (const property in params) {
+                url += '&' + property + '=' + params[property];
+            }
+        }
+        return url
     }
 
     // Internals /////
@@ -867,7 +880,7 @@
             that.setSetting(SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN, that.compatibilityAlertHidden);
         });
         $('#ladb_leftbar_btn_docs', this.$leftbar).on('click', function () {
-            $.getJSON(that.appendOclMetasToUrlQueryParams(that.capabilities.is_dev ? DOCS_DEV_URL : DOCS_URL), function (data) {
+            $.getJSON(that.getDocsPageUrl(), function (data) {
                 rubyCallCommand('core_open_url', data);
             });
             return false;
