@@ -39,7 +39,7 @@
 {% endblock %}
 
 {% block footerInner %}
-    <button type="button" class="btn btn-default pull-left" id="ladb_btn_setup_model_units"><i class="ladb-opencutlist-icon-settings"></i> {{ 'default.setup_model_units'|i18next }}...</button>
+    <a href="https://docs.opencutlist.org/features/parts/report" class="btn btn-default pull-left" target="_blank"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</a>
     <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
     <button type="button" class="btn btn-primary btn-validate-modal" id="ladb_btn_generate">{{ 'default.generate'|i18next }}</button>
 {% endblock %}

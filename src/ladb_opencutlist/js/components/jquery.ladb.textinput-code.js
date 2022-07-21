@@ -158,7 +158,7 @@
         fnRefreshVariableMarks(this.cm);
 
         // Append help block
-        this.$helpBlock = $('<div class="ladb-textinput-code-help">' + i18next.t('core.component.textinput_code.help') + '&nbsp;|&nbsp;<a href="https://docs.opencutlist.org/features/parts/export/customization" target="_blank">' + i18next.t('core.component.textinput_code.docs') + '</a></div>');
+        this.$helpBlock = $('<div class="ladb-textinput-code-help">' + i18next.t('core.component.textinput_code.help') + '</div>');
         this.$helpBlock.hide();
         this.$wrapper.append(this.$helpBlock);
 
