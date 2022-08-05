@@ -100,7 +100,7 @@ module Ladb::OpenCutList::BinPacking2D
                         'nr'
                       end
       puts("#{@options.saw_kerf}, #{@options.trimsize}, #{rotatable_str}")
-      puts("#{@options.base_length} #{@options.base_width}")
+      # At least one bin has been made, so we don't need to add it here
       @bins.each do |bin|
         puts("#{bin.length} #{bin.width}")
       end
@@ -368,7 +368,7 @@ module Ladb::OpenCutList::BinPacking2D
           [-packer.gstat[:largest_bottom_parts],
            packer.gstat[:total_length_cuts],
            -packer.gstat[:cuts_together_count]]
-      end
+        end
       end
       print_final_packers(packers)
       packers.first
@@ -398,6 +398,7 @@ module Ladb::OpenCutList::BinPacking2D
 
       stacking_pref = packers[0].options.stacking_pref
       rotatable = packers[0].options.rotatable
+      nb_packed = packers[0].stat[:nb_packed_boxes]
       best_packers = []
 
       # Check if there is at least one Packer with zero unplaced_boxes.
@@ -410,7 +411,13 @@ module Ladb::OpenCutList::BinPacking2D
       # L_measure is a measure that uniquely identifies the shape of
       # a packing if it is not perfectly compact, i.e. = 0. Select unique
       # l_measure Packers, sort best_packers by ascending l_measure.
-      packers_group = packers.group_by { |packer| packer.stat[:l_measure] }
+      # If nb of packed boxes is less than 2, then l_measure is not a good
+      # indicator because it privileges packings with less boxes packed.
+      if nb_packed <= 2
+        packers_group = packers.group_by { |p| p.stat[:used_area] }
+      else
+        packers_group = packers.group_by { |p| p.stat[:l_measure] }
+      end
 
       # In each group of packers, select the best one
       packers_group.keys.sort.each_with_index do |k, i|
@@ -477,7 +484,7 @@ module Ladb::OpenCutList::BinPacking2D
     def make_signatures_medium
       # Signature size will be the product of all possibilities
       # 4 * 4 * 4 = 64 => 64 * 1 or 3, Max 192 possibilities
-      presort = (PRESORT_WIDTH_DECR..PRESORT_AREA_DECR).to_a # 3
+      presort = (PRESORT_WIDTH_DECR..PRESORT_AREA_DECR).to_a # 4
       score = (SCORE_BESTAREA_FIT..SCORE_WORSTAREA_FIT).to_a # 4
       split = (SPLIT_MINIMIZE_AREA..SPLIT_LONGER_AXIS).to_a # 4
       stacking = if @options.stacking_pref <= STACKING_WIDTH
@@ -645,6 +652,7 @@ module Ladb::OpenCutList::BinPacking2D
       stop_timer(@signatures.size, "#{@last_packers[0].packed_bins.size} bin(s)")
 
       # Check validity by checking if we still have all boxes :-)
+      # Invalid boxes have been removed before running the algorithm!
       begin
         opt.no_box_left_behind(@nb_input_boxes)
       rescue Packing2DError => e

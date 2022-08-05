@@ -76,8 +76,8 @@ module Ladb::OpenCutList
     PRESORT_LONGEST_SIDE_DECR = 5
     # Sort by shortest side increasing.
     PRESORT_SHORTEST_SIDE_DECR = 6
-    PRESORT = ['input', 'width', 'length', 'area', 'longest', 'shortest',
-               'perimeter'].freeze
+    PRESORT = ['input', 'width', 'length', 'area', 'perimeter', 'longest',
+               'shortest'].freeze
 
     # Score heuristics for fitting boxes into bins.
     SCORE_BESTAREA_FIT = 0
