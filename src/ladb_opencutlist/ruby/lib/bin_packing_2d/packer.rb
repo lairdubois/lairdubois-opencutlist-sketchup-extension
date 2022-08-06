@@ -501,7 +501,7 @@ module Ladb::OpenCutList::BinPacking2D
     # Checks if all Boxes
     #
     def no_box_left_behind(must_have_nb)
-      have_nb = @gstat[:nb_packed_boxes] + @gstat[:nb_invalid_boxes] + @gstat[:nb_unplaced_boxes]
+      have_nb = @gstat[:nb_packed_boxes] + @gstat[:nb_unplaced_boxes]
       return unless have_nb != must_have_nb
 
       p(to_str)
