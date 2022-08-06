@@ -278,7 +278,7 @@ tab:
       general: Общие
       extra_help: "Список свойств, зависящих от типа материала \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Кромки
-      name: Название
+      name: Определение
       material: Материал
       cumulable: Суммировать
       cumulable_help: |
@@ -481,7 +481,7 @@ tab:
       path: Путь
       instance_name: Экземпляр
       definition_name: Содержание
-      name: Название
+      name: Определение
       total_cutting_length: Суммарная длина раскроя
       total_cutting_area: Суммарная площадь раскроя
       total_cutting_volume: Суммарный объем раскроя
@@ -559,8 +559,8 @@ tab:
       option_hide_part_list_2d_help: Отобразить или скрыть список деталей раскраиваемой панели исходного материала под каждой картой раскроя.
       option_use_names: Идентификация деталей
       option_use_names_0: Использовать код
-      option_use_names_1: Использовать название
-      option_use_names_help: Для удобства идентификации деталей на карте раскроя можно выбрать либо буквенный **код** либо **название**. Название будет соответствовать одноименной графе "Данные объекта" в SkethUP.
+      option_use_names_1: Использовать определение
+      option_use_names_help: Для удобства идентификации деталей на карте раскроя можно выбрать либо буквенный **код** либо **определение**. Название будет соответствовать одноименной графе "Данные объекта" в SkethUP.
       option_origin_corner: Исходный угол
       option_origin_corner_1d_0: Слева
       option_origin_corner_1d_1: Справа
@@ -728,7 +728,7 @@ tab:
       option_color: Цвет
       formula:
         part_number: Номер
-        part_name: Название
+        part_name: Определение
         part_description: Описание
         part_entity_named_path: Путь к объекту
         part_entity_name: Имя экземпляра
