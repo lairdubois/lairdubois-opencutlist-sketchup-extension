@@ -238,15 +238,15 @@ tab:
       children_size_increase: "Этот размер увеличивается на размер {{ count }} комплектующего изделия"
       invalid_final_area: "Осторожно, эта общая площадь не может быть рассчитана, потому что {{ count }} деталь (of {{ total }}) имеет некорректную площадь"
       invalid_final_area_plural: "Внимание, эта общая площадь не может быть вычислена, поскольку {{ count }} составляющие части (of {{ total }}) имеют некорректную площадь"
-      is_dynamic_attributes_name: Название этой детали извлечено из атрибута 'Name' динамического компонента
+      is_dynamic_attributes_name: Описание этой детали извлечено из атрибута 'Name' динамического компонента
       size_increased: "Размер увеличен на величину {{ value }}"
       has_edges: "Эта деталь содержит {{ count }} кромки"
       has_edges_plural: "Эти детали содержат {{ count }} кромки"
       edge_decremented: "Вычтена толщина кромки ({{ decrement }})"
-      edge_ymin: Кромка нижняя
-      edge_ymax: Кромка верхняя
-      edge_xmin: Кромка левая
-      edge_xmax: Кромка правая
+      edge_ymin: Кромка по длине 1
+      edge_ymax: Кромка по длине 2
+      edge_xmin: Кромка по ширине 1
+      edge_xmax: Кромка по ширине 2
       dblclick_to_copy_all_edges: "Дважды щелкните здесь, чтобы скопировать это значение на все остальные кромки"
       dblclick_to_sort_axes: "Дважды щелкните здесь, чтобы автоматически ориентировать оси в соответствии с размерами детали"
       part_axes: Внутренние оси детали
@@ -412,7 +412,7 @@ tab:
       property_thickness: Толщина
       property_length: Длина
       property_width: Ширина
-      property_name: Название
+      property_name: Описание
       property_count: Количество
       property_edge_pattern: Количество кромок
       property_tags: Теги
@@ -501,10 +501,10 @@ tab:
       entity_names: Название
       description: Описание
       tags: Теги
-      edge_ymin: Кромка нижняя
-      edge_ymax: Кромка верхняя
-      edge_xmin: Кромка левая
-      edge_xmax: Кромка правая
+      edge_ymin: Кромка по длине 1
+      edge_ymax: Кромка по длине 2
+      edge_xmin: Кромка по ширине 1
+      edge_xmax: Кромка по ширине 2
       placeholder:
         no_column_title: Введите название
         no_column_formula_native: "Заголовок столбца '{{ col_name }}'"
@@ -560,7 +560,7 @@ tab:
       option_use_names: Идентификация деталей
       option_use_names_0: Использовать код
       option_use_names_1: Использовать определение
-      option_use_names_help: Для удобства идентификации деталей на карте раскроя можно выбрать либо буквенный **код** либо **определение**. Название будет соответствовать одноименной графе "Данные объекта" в SkethUP.
+      option_use_names_help: Для удобства идентификации деталей на карте раскроя можно выбрать либо буквенный **код** либо **определение**. Определение будет соответствовать одноименной графе "Данные объекта" в SketchUp.
       option_origin_corner: Исходный угол
       option_origin_corner_1d_0: Слева
       option_origin_corner_1d_1: Справа
@@ -742,10 +742,10 @@ tab:
         part_thickness: Толщина
         part_tags: Теги
         part_batch: Деталей в раскрое
-        part_edge_ymin: Кромка нижняя
-        part_edge_ymax: Кромка верхняя
-        part_edge_xmin: Кромка левая
-        part_edge_xmax: Кромка правая
+        part_edge_ymin: Кромка по длине 1
+        part_edge_ymax: Кромка по длине 2
+        part_edge_xmin: Кромка по ширине 1
+        part_edge_xmax: Кромка по ширине 2
         thumbnail_proportional: Пропорциональная
         thumbnail_square: Квадратная
         group_material: Материал / Толщина
@@ -958,7 +958,7 @@ tab:
       unused: Неиспользуемый
       mandatory: Обязательные поля
       optional: Дополнительные поля
-      name: Название
+      name: Описание
       count: Количество
       bbox_length: Пильная длина
       bbox_width: Ширина
