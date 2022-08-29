@@ -806,6 +806,7 @@ module Ladb::OpenCutList
 
               return 0
             end
+
           end
 
         elsif entity.is_a?(Sketchup::Face)

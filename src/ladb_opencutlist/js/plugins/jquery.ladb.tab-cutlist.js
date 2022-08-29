@@ -789,15 +789,32 @@
 
                         // Fetch UI elements
                         var $btnExport = $('#ladb_btn_export', $slide);
-                        var $btnPrint = $('#ladb_btn_print', $slide);
+                        var $itemCopyAll = $('#ladb_item_copy_all', $slide);
+                        var $itemCopyValues = $('#ladb_item_copy_values', $slide);
                         var $btnClose = $('#ladb_btn_close', $slide);
+
+                        var fnRowsToTsv = function (startIndex) {
+
+                            // Convert rows to TSV string
+                            var rows = [];
+                            for (var i = startIndex; i < response.rows.length; i++) {
+                                rows.push(response.rows[i].join('\t'));
+                            }
+
+                            return rows.join("\n");
+                        }
 
                         // Bind buttons
                         $btnExport.on('click', function () {
                             that.exportCutlist();
                         });
-                        $btnPrint.on('click', function () {
-                            that.print();
+                        $itemCopyAll.on('click', function () {
+                            that.dialog.copyToClipboard(fnRowsToTsv(0));
+                            that.dialog.notify(i18next.t('tab.cutlist.export.success.copied'), 'success');
+                        });
+                        $itemCopyValues.on('click', function () {
+                            that.dialog.copyToClipboard(fnRowsToTsv(1));
+                            that.dialog.notify(i18next.t('tab.cutlist.export.success.copied'), 'success');
                         });
                         $btnClose.on('click', function () {
                             that.popSlide();

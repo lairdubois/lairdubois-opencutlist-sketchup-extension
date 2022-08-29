@@ -691,9 +691,14 @@ module Ladb::OpenCutList
                   end
                 end
 
+                # Reset status
+                set_status('')
+
                 view.invalidate
                 return
 
+              elsif picked_part_path
+                set_status("⚠️️ #{Plugin.instance.get_i18n_string("tool.smart_paint.warning.not_part")}")
               end
 
               @unpaint_color = nil
@@ -717,7 +722,16 @@ module Ladb::OpenCutList
                   return
                 end
               else
-                UI.beep if event == :l_button_up # Feedback for "no material"
+                if event == :move
+
+                  # Reset status
+                  set_status('')
+
+                elsif event == :l_button_up
+
+                  UI.beep # Feedback for "no material"
+
+                end
               end
 
               @unpaint_color = nil
@@ -737,7 +751,7 @@ module Ladb::OpenCutList
     def _get_part_path_from_path(path)
       part_path = path.to_a
       path.reverse_each { |entity|
-        return part_path if entity.is_a?(Sketchup::ComponentInstance)
+        return part_path if entity.is_a?(Sketchup::ComponentInstance) && !entity.definition.behavior.cuts_opening? && !entity.definition.behavior.always_face_camera?
         part_path.pop
       }
     end

@@ -28,6 +28,7 @@ default:
   ignore: Ignorer
   download: Télécharger
   upgrade: Mettre à jour
+  copy: Copier
   empty_filename: Sans titre.skp
   help: Aide
   error: Zut !
@@ -477,6 +478,8 @@ tab:
       option_col_sep_comma: Virgule
       option_col_sep_semicolon: Point virgule
       option_encoding: Encodage
+      copy_all: Tout
+      copy_values: Valeurs seulement
       number: N°
       path: Chemin
       instance_name: Instance
@@ -511,6 +514,8 @@ tab:
         no_column_formula: Saisissez une formule
       warning:
         is_group_selection: Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas exportées.
+      success:
+        copied: Copié dans le presse papier.
     report:
       title: Rapport
       info_0: |
@@ -1159,3 +1164,4 @@ tool:
     warning:
       no_material: Votre modèle ne contient aucune matière !
       all_filtered: Les filtres choisis masquent toutes les matières !
+      not_part: L'objet ciblé doit être un composant.

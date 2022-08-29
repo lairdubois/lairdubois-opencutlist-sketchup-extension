@@ -19,7 +19,15 @@
 
 {% block headerToolsInner %}
     <button id="ladb_btn_export" class="btn btn-primary"><i class="ladb-opencutlist-icon-refresh"></i> {{ 'default.export'|i18next }}...</button>
-    <button id="ladb_btn_print" class="btn btn-default"><i class="ladb-opencutlist-icon-print"></i> {{ 'default.print'|i18next }}</button>
+    <div class="btn-group">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="ladb-opencutlist-icon-copy"></i> {{ 'default.copy'|i18next }} <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li><a id="ladb_item_copy_all" href="#">{{ 'tab.cutlist.export.copy_all'|i18next }}</a></li>
+            <li><a id="ladb_item_copy_values" href="#">{{ 'tab.cutlist.export.copy_values'|i18next }}</a></li>
+        </ul>
+    </div>
     &nbsp;
     <button id="ladb_btn_close" class="btn btn-default"><i class="ladb-opencutlist-icon-close"></i> {{ 'default.close'|i18next }}</button>
 {% endblock %}
