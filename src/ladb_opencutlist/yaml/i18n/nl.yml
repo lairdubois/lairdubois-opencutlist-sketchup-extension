@@ -28,6 +28,7 @@ default:
   ignore: Negeren
   download: Downloaden
   upgrade: Updaten
+  copy: Gekopieerd
   empty_filename: geen bestandnaam.skp
   help: Help
   error: Oeps!
@@ -477,6 +478,8 @@ tab:
       option_col_sep_comma: Komma
       option_col_sep_semicolon: Punt komma
       option_encoding: Encodering
+      copy_all: Alle
+      copy_values: Alleen waarden
       number: N°
       path: Pad
       instance_name: Instantie
@@ -511,6 +514,8 @@ tab:
         no_column_formula: Voer een formule in
       warning:
         is_group_selection: Onderdelen in de **gemaskeerde groepen** van uw stuklijst worden niet geëxporteerd.
+      success:
+        copied: Gekopieerd naar klembord
     report:
       title: Rapport
       info_0: |
@@ -1159,3 +1164,4 @@ tool:
     warning:
       no_material: Uw model bevat geen materialen!
       all_filtered: De geselecteerde filters verbergen alle materialen!
+      not_part: Het doelobject moet een component zijn.

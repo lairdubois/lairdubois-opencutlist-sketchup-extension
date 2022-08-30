@@ -10,6 +10,7 @@ in 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added cutting diagram 1D progress bar
   * Added cutting diagram 2D progress bar
   * Added cutlist export customization
+  * Added copy to clipboard from Export preview
   * Added generate cutlist menu item (ready to configure a custom keyboard shortcut)
   * Added progress feedback on generate cutlist and list materials
   * Added page description to printed part list
@@ -22,7 +23,7 @@ in 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Fixed edge std size display
   * Fixed report crash when sheet good or dimensional material don't have a standard size
   * Removed deprecated use of `URI.escape`
-  * Now only standard sheet and bar uses dim prices in reports
+  * Now only standard sheet and bar use dim prices in reports
 
 * 3.0.2 (2022-02-27)
 
