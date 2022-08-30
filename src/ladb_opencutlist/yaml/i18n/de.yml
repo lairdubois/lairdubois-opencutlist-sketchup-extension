@@ -28,6 +28,7 @@ default:
   ignore: Ignorieren
   download: Herunterladen
   upgrade: Aktualisieren
+  copy: Kopieren
   empty_filename: Unbenannt.skp
   help: Hilfe
   error: Verflixt!
@@ -477,6 +478,8 @@ tab:
       option_col_sep_comma: Komma
       option_col_sep_semicolon: Strichpunkt
       option_encoding: Kodierung
+      copy_all: Alles
+      copy_values: Nur Inhalt
       number: Nr.
       path: Pfad
       instance_name: Instanz
@@ -511,6 +514,8 @@ tab:
         no_column_formula: Formel eingeben
       warning:
         is_group_selection: Die in **ausgeblendeten Gruppen** enthaltenen Teile der Holzliste werden nicht exportiert.
+      success:
+        copied: In die Zwischenablage kopiert.
     report:
       title: Bericht
       info_0: |
@@ -1159,3 +1164,4 @@ tool:
     warning:
       no_material: Ihr Modell enthält kein Material!
       all_filtered: Die ausgewählten Filter enthalten kein Material!
+      not_part: "Das Zielobjekt muss eine Komponente sein. "

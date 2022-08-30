@@ -28,6 +28,7 @@ default:
   ignore: Ignore
   download: Download
   upgrade: Update
+  copy: Copy
   empty_filename: Untitled.skp
   help: Help
   error: Darn!
@@ -477,6 +478,8 @@ tab:
       option_col_sep_comma: Comma
       option_col_sep_semicolon: Semicolon
       option_encoding: Encoding
+      copy_all: Everything
+      copy_values: Only values
       number: No.
       path: Path
       instance_name: Instance
@@ -511,6 +514,8 @@ tab:
         no_column_formula: Enter a formula
       warning:
         is_group_selection: Parts inside **hidden groups** of the parts list will not be exported.
+      success:
+        copied: Copied to clipboard
     report:
       title: Report
       info_0: |
@@ -1159,3 +1164,4 @@ tool:
     warning:
       no_material: Your model does not contain any material!
       all_filtered: The selected filters mask all materials!
+      not_part: The target object must be a component.
