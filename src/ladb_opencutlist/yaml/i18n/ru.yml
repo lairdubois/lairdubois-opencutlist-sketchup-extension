@@ -28,6 +28,7 @@ default:
   ignore: Пропустить
   download: Скачать
   upgrade: Обновление
+  copy: Копир
   empty_filename: Безымянный.skp
   help: Помощь
   error: Исправить!
@@ -477,6 +478,8 @@ tab:
       option_col_sep_comma: Запятая
       option_col_sep_semicolon: Точка с запятой
       option_encoding: Кодировка
+      copy_all: Любой
+      copy_values: Только значения
       number: N°
       path: Путь
       instance_name: Экземпляр
@@ -511,6 +514,8 @@ tab:
         no_column_formula: Введите формулу
       warning:
         is_group_selection: "Детали, содержащиеся в **скрытых группах** вашей карты раскроя, не будут экспортированы."
+      success:
+        copied: Скопировано в буфер обмена.
     report:
       title: Отчет
       info_0: |
@@ -1159,3 +1164,4 @@ tool:
     warning:
       no_material: Ваша модель не содержит материалов!
       all_filtered: Выбор фильтров не соответствует материалам модели!
+      not_part: Объект должен быть компонентом

@@ -28,6 +28,7 @@ default:
   ignore: Ignoruj
   download: Pobierz
   upgrade: Aktualizuj
+  copy: Kopia
   empty_filename: BezTytulu.skp
   help: Pomoc
   error: Ceruj!
@@ -477,6 +478,8 @@ tab:
       option_col_sep_comma: Przecinek
       option_col_sep_semicolon: Średnik
       option_encoding: Kodowanie
+      copy_all: Wszystko
+      copy_values: Tylko wartości
       number: No.
       path: Ścieżka
       instance_name: Instancja
@@ -511,6 +514,8 @@ tab:
         no_column_formula: Wprowadź formułę
       warning:
         is_group_selection: Części w **ukrytych grupach** twojej listy części nie będą wyeksportowane.
+      success:
+        copied: Skopiowane do schowka
     report:
       title: Raport
       info_0: |
@@ -1159,3 +1164,4 @@ tool:
     warning:
       no_material: Twój model nie zawiera żadnych materiałów!
       all_filtered: Wybrane filtry maskują wszystkie materiały!
+      not_part: Obiekt docelowy musi być komponentem.
