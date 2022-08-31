@@ -7,6 +7,10 @@ module Ladb
 
     unless file_loaded?(__FILE__)
 
+      if Sketchup.version_number < 1700000000
+        UI.messagebox('OpenCutList requires SketchUp 2017 or above to run correctly.', MB_OK)
+      end
+
       # Create extension
       ex = SketchupExtension.new('OpenCutList', 'ladb_opencutlist/ruby/main')
       ex.version     = "4.0.0-dev"  ## /!\ Auto-generated line, do not edit ##
@@ -48,6 +52,7 @@ module Ladb
 
       # Register extension
       Sketchup.register_extension(ex, true)
+
       file_loaded(__FILE__)
 
     end

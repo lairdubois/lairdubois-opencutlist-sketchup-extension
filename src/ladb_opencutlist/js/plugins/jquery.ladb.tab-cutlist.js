@@ -793,12 +793,14 @@
                         var $itemCopyValues = $('#ladb_item_copy_values', $slide);
                         var $btnClose = $('#ladb_btn_close', $slide);
 
+                        // Define useful functions
+
                         var fnRowsToTsv = function (startIndex) {
 
                             // Convert rows to TSV string
                             var rows = [];
                             for (var i = startIndex; i < response.rows.length; i++) {
-                                rows.push(response.rows[i].join('\t'));
+                                rows.push(response.rows[i].join("\t"));
                             }
 
                             return rows.join("\n");
