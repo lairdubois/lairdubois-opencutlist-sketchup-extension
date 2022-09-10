@@ -28,6 +28,7 @@ default:
   ignore: Ignorar
   download: Descargar
   upgrade: Actualizar
+  copy: Copiar
   empty_filename: Sin título.skp
   help: Ayuda
   error: ¡Upss!
@@ -477,6 +478,8 @@ tab:
       option_col_sep_comma: Coma
       option_col_sep_semicolon: Punto y coma
       option_encoding: Codificación
+      copy_all: Todo
+      copy_values: Sólo valores
       number: No.
       path: Camino
       instance_name: Instancia
@@ -511,6 +514,8 @@ tab:
         no_column_formula: Introduzca una fórmula
       warning:
         is_group_selection: Las piezas dentro de los **grupos ocultos** de su listado de partes no se exportarán.
+      success:
+        copied: Copiado en el portapapeles
     report:
       title: Reporte
       info_0: |
@@ -1159,3 +1164,4 @@ tool:
     warning:
       no_material: Su modelo no contiene ningún material!
       all_filtered: ¡Los filtros elegidos ocultan todo el material!
+      not_part: El objeto de destino debe ser un componente.

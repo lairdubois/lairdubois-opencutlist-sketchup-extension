@@ -28,6 +28,7 @@ default:
   ignore: Ignorovat
   download: Stáhnout
   upgrade: Aktualizovat
+  copy: Kopírovat
   empty_filename: Nepojmenovany.skp
   help: Pomoc
   error: Spravit!
@@ -477,6 +478,8 @@ tab:
       option_col_sep_comma: Čárka
       option_col_sep_semicolon: Středník
       option_encoding: Kódování
+      copy_all: Vše
+      copy_values: Pouze hodnoty
       number: Číslo
       path: Cesta
       instance_name: Instance
@@ -511,6 +514,8 @@ tab:
         no_column_formula: Zadejte vzorec
       warning:
         is_group_selection: "Díly, které jsou ve **skrytých skupinách** kusovníku, se neexportují."
+      success:
+        copied: Zkopírováno do schránky
     report:
       title: Výsledky
       info_0: |
@@ -1159,3 +1164,4 @@ tool:
     warning:
       no_material: Váš model neobsahuje žádný materiál!
       all_filtered: Vybrané filtry maskují všechny materiály!
+      not_part: Cílovým objektem musí být komponenta.
