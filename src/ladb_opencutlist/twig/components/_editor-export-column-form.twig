@@ -10,7 +10,7 @@
     </div>
     <div class="form-group col-xs-12">
         <div class="row">
-            <label class="col-xs-11 col-xs-push-1">{{ 'tab.cutlist.export.column_formula'|i18next }}</label>
+            <label class="col-xs-11 col-xs-push-1">{{ 'tab.cutlist.export.column_formula'|i18next }} <small style="font-weight: normal;">(Ruby)</small></label>
             <div class="col-xs-10 col-xs-push-1">
                 <textarea id="ladb_textarea_formula" class="form-control" placeholder="{% if name %}{% set col_name = (('tab.cutlist.export.'~name)|i18next) %}{{ 'tab.cutlist.export.placeholder.no_column_formula_native'|i18next({ 'col_name':col_name }) }}{% else %}{{ 'tab.cutlist.export.placeholder.no_column_formula'|i18next }}{% endif %}">{{ formula }}</textarea>
             </div>
