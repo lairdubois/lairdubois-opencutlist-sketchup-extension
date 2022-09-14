@@ -28,6 +28,7 @@ default:
   ignore: לדלג
   download: להוריד
   upgrade: עדכון
+  copy: להעתיק
   empty_filename: ללא שם.skp
   help: עזרה
   error: לתקן!
@@ -207,13 +208,13 @@ tab:
       edit_material: $t(tab.cutlist.menu.edit_material)
       folding_part: הגדל / מזער
       material_origin_1: החומר של החלק מוגדר על מקריו
-      material_origin_2: החומר של החלק עבר בירושה מאחת האלמנטיים המקוריים.
-      material_origin_3: החומר של החלק עבר בירושה מאחת האלמנטיים הצאצאים.
+      material_origin_2: החומר של החלק עבר בירושה מאחת האלמנטיים המקוריים
+      material_origin_3: החומר של החלק עבר בירושה מאחת האלמנטיים הצאצאים
       orientation_locked_on_axis: אוריינטציה של החלק קשורה לציריו
       number_saved: מספר החלק נשמר
       number_hidden: "לא ניתן להשתמש במספר '{{ number }}' של החלק מכיוון שהוא כבר מוקצה"
       number_generated: מספר החלק נוצר באופן אוטומטי
-      resized: החלק שונה על פי הגדרת מרכיביו.
+      resized: החלק שונה על פי הגדרת מרכיביו
       flipped: החלק משתקף בהתאם להגדרות שלו
       symmetrical: בחלק הזה לא מופעל זיהוי חלק משתקף
       ignore_grain_direction: בחלק הזה מתעלמים מכיוון המרקם
@@ -248,7 +249,7 @@ tab:
       edge_xmin: קאנט לרוחב 1
       edge_xmax: קאנט לרוחב 2
       dblclick_to_copy_all_edges: לחיצה כפולה כאן כדי להעתיק את הערך לכל הקאנטים
-      dblclick_to_sort_axes: לחץ פעמיים כאן כדי לסדר מחדש את הצירים באופן אוטומטי בהתאם למידות החלק.
+      dblclick_to_sort_axes: לחץ פעמיים כאן כדי לסדר מחדש את הצירים באופן אוטומטי בהתאם למידות החלק
       part_axes: צירים פנימיים של החלק
       select_unselect_all_parts: בחר / בטל את כל החלקים בקבוצה
       setup_group_cuttingdiagram: "הגדר את הפריסה של '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
@@ -477,6 +478,8 @@ tab:
       option_col_sep_comma: פסיק
       option_col_sep_semicolon: נקודה פסיק
       option_encoding: קדוד
+      copy_all: הכל
+      copy_values: רק ערכים
       number: מס'
       path: מסלול
       instance_name: עותק
@@ -511,6 +514,8 @@ tab:
         no_column_formula: הזן נוסחה
       warning:
         is_group_selection: חלקים בתוך **קבוצות נסתרות** של תוכנית חיתוך לא ייוצאו.
+      success:
+        copied: הועתק ללוח
     report:
       title: דו"ח
       info_0: |
@@ -1159,3 +1164,4 @@ tool:
     warning:
       no_material: הדגם שלך אינו מכיל חומרים!
       all_filtered: המסננים שנבחרו מסתירים את כל החומרים!
+      not_part: אובייקט היעד חייב להיות רכיב.
