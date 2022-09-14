@@ -515,7 +515,7 @@ tab:
       warning:
         is_group_selection: Części w **ukrytych grupach** twojej listy części nie będą wyeksportowane.
       success:
-        copied: Skopiowane do schowka
+        copied: Skopiowane do schowka.
     report:
       title: Raport
       info_0: |

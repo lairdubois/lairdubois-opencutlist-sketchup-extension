@@ -173,7 +173,7 @@ tab:
     tooltip:
       show_hide_block: Toon / verberg groep
       scroll_to_block: Scroll naar groep
-      not_available_std_width: "De breedte *{{ std_dimension_real }}* is niet gedefinieerd in de standaardbreedtes van het materiaal '{{ material_name }}'."
+      not_available_std_width: "De breedte *{{ std_dimension_real }}* is niet gedefinieerd in de standaardbreedtes van het materiaal '{{ material_name }}'"
       not_available_std_thickness: "De dikte *{{ std_dimension }}* is niet gedefinieerd in de standaarddiktes van het materiaal '{{ material_name }}'"
       not_available_std_section: "De doorsnede *{{ std_dimension }}* is niet gedefinieerd in de standaard doorsneden van het materiaal '{{ material_name }}'"
       add_std_width_to_material: |
@@ -515,7 +515,7 @@ tab:
       warning:
         is_group_selection: Onderdelen in de **gemaskeerde groepen** van uw stuklijst worden niet geëxporteerd.
       success:
-        copied: Gekopieerd naar klembord
+        copied: Gekopieerd naar klembord.
     report:
       title: Rapport
       info_0: |

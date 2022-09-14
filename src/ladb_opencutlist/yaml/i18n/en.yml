@@ -515,7 +515,7 @@ tab:
       warning:
         is_group_selection: Parts inside **hidden groups** of the parts list will not be exported.
       success:
-        copied: Copied to clipboard
+        copied: Copied to clipboard.
     report:
       title: Report
       info_0: |

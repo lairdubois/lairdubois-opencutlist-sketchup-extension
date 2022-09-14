@@ -1164,4 +1164,4 @@ tool:
     warning:
       no_material: Ihr Modell enthält kein Material!
       all_filtered: Die ausgewählten Filter enthalten kein Material!
-      not_part: "Das Zielobjekt muss eine Komponente sein. "
+      not_part: Das Zielobjekt muss eine Komponente sein.
