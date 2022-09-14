@@ -515,7 +515,7 @@ tab:
       warning:
         is_group_selection: Le parti contenute nei **gruppi nascosti** del elenco parti non saranno esportate.
       success:
-        copied: Copiato negli appunti
+        copied: Copiato negli appunti.
     report:
       title: Resoconto
       info_0: |

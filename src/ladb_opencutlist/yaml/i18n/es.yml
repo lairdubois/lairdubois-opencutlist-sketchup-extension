@@ -515,7 +515,7 @@ tab:
       warning:
         is_group_selection: Las piezas dentro de los **grupos ocultos** de su listado de partes no se exportarán.
       success:
-        copied: Copiado en el portapapeles
+        copied: Copiado en el portapapeles.
     report:
       title: Reporte
       info_0: |

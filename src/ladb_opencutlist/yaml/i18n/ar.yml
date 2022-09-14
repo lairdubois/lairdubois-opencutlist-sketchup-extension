@@ -28,6 +28,7 @@ default:
   ignore: تجاهل
   download: تحميل
   upgrade: ترقية
+  copy: نسخ
   empty_filename: skp.غير معنون
   help: مساعدة
   error: أُفّ !
@@ -477,6 +478,8 @@ tab:
       option_col_sep_comma: فاصلة
       option_col_sep_semicolon: فاصة منقوطة
       option_encoding: ترميز
+      copy_all: كل شيء
+      copy_values: القيم فحسب
       number: الرقم
       path: المسار
       instance_name: مثيل
@@ -511,6 +514,8 @@ tab:
         no_column_formula: أدخل صيغة
       warning:
         is_group_selection: لن تصدر القطع المتضمَّنة في **المجموعات المخفية** مع قائمة القطع.
+      success:
+        copied: تم النسخ إلى الحافظة
     report:
       title: تقرير
       info_0: |
@@ -1159,3 +1164,4 @@ tool:
     warning:
       no_material: لا يحتوي نموذجك على أي خامة!
       all_filtered: تغطي المُرشِّحات المحددة كل الخامات!
+      not_part: يجب أن يكون المجسم المستهدف عنصرا.

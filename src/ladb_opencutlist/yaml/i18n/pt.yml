@@ -28,6 +28,7 @@ default:
   ignore: Ignorar
   download: Baixar
   upgrade: Atualizar
+  copy: Copiar
   empty_filename: Sem nome.skp
   help: Ajuda
   error: Droga!
@@ -477,6 +478,8 @@ tab:
       option_col_sep_comma: Vírgula
       option_col_sep_semicolon: Ponto e vírgula
       option_encoding: Codificação
+      copy_all: Todos
+      copy_values: Valores somente
       number: Não.
       path: Caminho
       instance_name: Instância
@@ -511,6 +514,8 @@ tab:
         no_column_formula: Introduza uma fórmula
       warning:
         is_group_selection: As partes contidas nos **grupos ocultos** do sua Planilha de Produção não serão exportadas.
+      success:
+        copied: Copiado para prancheta.
     report:
       title: Relatório
       info_0: |
@@ -1159,3 +1164,4 @@ tool:
     warning:
       no_material: O seu modelo não contém nenhum material!
       all_filtered: Os filtros selecionados mascaram todos os materiais!
+      not_part: O objeto-alvo deve ser um componente.
