@@ -28,7 +28,7 @@ default:
   ignore: Пропустить
   download: Скачать
   upgrade: Обновление
-  copy: Копир
+  copy: Копировать
   empty_filename: Безымянный.skp
   help: Помощь
   error: Исправить!
@@ -478,7 +478,7 @@ tab:
       option_col_sep_comma: Запятая
       option_col_sep_semicolon: Точка с запятой
       option_encoding: Кодировка
-      copy_all: Любой
+      copy_all: Всё
       copy_values: Только значения
       number: N°
       path: Путь
