@@ -43,6 +43,8 @@ module Ladb
         ex.description = 'Planilha de Produção e Gerador de Diagrama de Corte de chapas e pranchas MLC para marceneiros e carpinteiros. Código aberto, crowdfunded e fácil de usar ;)'
       when 'ru'
         ex.description = 'Плагин расчета карт раскроя для деревообработчиков и не только. Открытый исходный код, краундфандинг и простота использования ;)'
+      when 'zz'
+        ex.description = '3 - Cutlist and Cutting Diagram Generator for Woodworkers. Open Source, crowdfunded and easy to use ;)'
       else
         ex.description = 'Cutlist and Cutting Diagram Generator for Woodworkers. Open Source, crowdfunded and easy to use ;)'
       ## DESCRIPTION_END ##
