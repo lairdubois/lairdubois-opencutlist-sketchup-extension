@@ -680,7 +680,7 @@
                 dialog: that.dialog,
                 vars: [
                     { name: 'material_type', type: 'string' },
-                    { name: 'material_thickness', type: 'length' },
+                    { name: 'material_thickness', type: 'string' },
                     { name: 'part_count', type: 'integer' },
                     { name: 'total_cutting_length', type: 'length' },
                     { name: 'total_cutting_area', type: 'area' },
