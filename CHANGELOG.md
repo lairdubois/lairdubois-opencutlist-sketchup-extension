@@ -4,7 +4,7 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
-* 4.0.1 (WIP)
+* 4.0.1 (2022-10-06)
 
   * Fixed wrong exported cutting length and width when edge reduction
 
