@@ -24,11 +24,8 @@ module Ladb::OpenCutList
       # Select Smart Paint Tool
       Sketchup.active_model.select_tool(SmartPaintTool.new(material))
 
-      # Send action
-      success = Sketchup.send_action('selectPaintTool:')
-
       {
-          :success => success,
+          :success => true,
       }
     end
 
