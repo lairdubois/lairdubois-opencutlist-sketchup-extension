@@ -478,7 +478,7 @@ tab:
       option_col_sep_comma: Vírgula
       option_col_sep_semicolon: Ponto e vírgula
       option_encoding: Codificação
-      copy_all: Todos
+      copy_all: Tudo
       copy_values: Valores somente
       number: Não.
       path: Caminho
@@ -515,7 +515,7 @@ tab:
       warning:
         is_group_selection: As partes contidas nos **grupos ocultos** do sua Planilha de Produção não serão exportadas.
       success:
-        copied: Copiado para prancheta.
+        copied: Copiado para área de transferência.
     report:
       title: Relatório
       info_0: |
