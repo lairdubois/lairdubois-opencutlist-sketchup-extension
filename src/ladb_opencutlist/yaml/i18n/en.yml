@@ -722,7 +722,7 @@ tab:
       option_cutting_marks_0: None
       option_cutting_marks_1: Printed
       option_formula: Fieldname
-      option_size: Dimension
+      option_size: Size
       option_anchor: Anchor
       option_anchor_start: Start - Bottom
       option_anchor_middle: Middle - Bottom
