@@ -47,6 +47,7 @@ There are a number of great videos on YouTube about using **OpenCutList** for wo
 - 🇩🇪&nbsp;&nbsp;**Bastelpause** | [PERFEKTE Stückliste und Zuschnittpläne mit OpenCutList in SketchUp](https://www.youtube.com/watch?v=0hnhiksHr7g)
 - 🇩🇪&nbsp;&nbsp;**Tolzi** | [Opencutlist plugin (Sketchup)](https://www.youtube.com/watch?v=drI0vk2F_kI)
 - 🇺🇸&nbsp;&nbsp;**FollowAndrew** | [Generate Cut-list Woodworking 3D SketchUp](https://www.youtube.com/watch?v=yrex6zLv66I)
+- 🇺🇸&nbsp;&nbsp;**MasterSketchUp** | [The Best SketchUp CutList Plugin | OpenCutList](https://www.youtube.com/watch?v=8f_R9Gzs4gU)
 - 🇬🇧&nbsp;&nbsp;**Firebird Interiors** | [Cutlists made easy! (Sketchup For Fitted Furniture Makers Part 6)](https://www.youtube.com/watch?v=wswN3mEtsCI)
 - 🇬🇧&nbsp;&nbsp;**Strawbyte Workshop** | [Use Cutting Lists for Fast Cabinet Making with SketchUp and Open Cutting List (OCL)](https://www.youtube.com/watch?v=1P13BBYvap0)
 - 🇵🇱&nbsp;&nbsp;**Jarek Ostaszewksi** | [SU11. SketchUp: automatyczna lista elementów i formatek do pocięcia (BOM)](https://www.youtube.com/watch?v=VpPKP2xRbB4)
