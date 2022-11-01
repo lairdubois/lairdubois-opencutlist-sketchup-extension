@@ -693,10 +693,14 @@ tab:
       title: Этикетки
       options_layout: Состав
       options_settings: Конфигурация
+      options_part_order_strategy: Сортировка
       options_offset: Смещение
       size: Фактический размер этикетки
       add_element: Добавить элемент
       remove_element: Удалить
+      part_order_strategy_help: |
+        Измените следующие свойства, чтобы задать порядок сортировки этикеток.
+        Каждое свойство может быть отсортировано <i class="ladb-opencutlist-icon-sort-asc"></i> *по возрастанию* или <i class="ladb-opencutlist-icon-sort-desc"></i> *по убыванию*.
       offset_help: |
         *Смещение* позволяет вам задать положение **первой этикетки** на **первой странице**.
         Выделите или снимите выделение с позиций, соответствующих вашему выбору.

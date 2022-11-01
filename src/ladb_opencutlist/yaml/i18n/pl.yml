@@ -693,10 +693,14 @@ tab:
       title: Etykiety
       options_layout: Układ
       options_settings: Konfiguracja
+      options_part_order_strategy: Sortowanie
       options_offset: Przesunięcie
       size: Rzeczywisty rozmiar etykiety
       add_element: Dodaj element
       remove_element: Usuń
+      part_order_strategy_help: |
+        Przeorganizuj następujące właściwości, aby określić kolejność sortowania etykiet.
+        Właściwości można sortować w porządku <i class="ladb-opencutlist-icon-sort-asc"></i> *rosnącym* lub <i class="ladb-opencutlist-icon-sort-desc"></i> *malejącym*.
       offset_help: |
         *Przesunięcie* pozwala zdefiniować pozycję **pierwszej etykiety** na **pierwszej stronie**.
         Wybierz opcję zgodną ze swoim wyboremm.
