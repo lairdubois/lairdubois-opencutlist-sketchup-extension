@@ -693,10 +693,14 @@ tab:
       title: Etichette
       options_layout: Schema
       options_settings: Configurazione
+      options_part_order_strategy: Ordinamento
       options_offset: Spostamento
       size: Dimensioni reali etichetta
       add_element: Aggiungi elemento
       remove_element: Elimina
+      part_order_strategy_help: |
+        Modifica le seguenti proprietà per cambiare i criteri di ordinamenti delle etichette.
+        Le proprietà possono essere ordinate in modo <i class="ladb-opencutlist-icon-sort-asc"></i> *ascendente* o <i class="ladb-opencutlist-icon-sort-desc"></i> *discendente*.
       offset_help: |
         Lo *spostamento* permette di definire la posizione della **prima etichetta** sulla **prima pagina**.
         Seleziona la casella che corrisponde alla tua scelta.

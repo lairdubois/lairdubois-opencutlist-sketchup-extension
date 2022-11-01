@@ -693,10 +693,14 @@ tab:
       title: Labels
       options_layout: Layout
       options_settings: Configuration
+      options_part_order_strategy: Sorting
       options_offset: Offset
       size: Real size of label
       add_element: Add an element
       remove_element: Remove
+      part_order_strategy_help: |
+        Reorganize the tiles to define the sort order of labels.
+        Properties can be sorted in <i class="ladb-opencutlist-icon-sort-asc"></i> *increasing* or <i class="ladb-opencutlist-icon-sort-desc"></i> *decreasing* order.
       offset_help: |
         The *offset* defines the position of the **first label** to be printed on the **first page**.
         Select the box that corresponds to your choice.

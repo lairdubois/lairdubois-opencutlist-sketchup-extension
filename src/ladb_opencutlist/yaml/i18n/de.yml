@@ -693,10 +693,14 @@ tab:
       title: Etiketten
       options_layout: Gestaltung
       options_settings: Konfiguration
+      options_part_order_strategy: Sortierung
       options_offset: Versatz
       size: Tatsächliche Etikettengröße
       add_element: Element hinzufügen
       remove_element: Entfernen
+      part_order_strategy_help: |
+        Die Sortierreihenfolge der Etiketten wird durch die Anordnung der folgenden Kacheln definiert.
+        Eigenschaften können in <i class="ladb-opencutlist-icon-sort-asc"></i> *aufsteigender* oder <i class="ladb-opencutlist-icon-sort-desc"></i> *absteigender* Reihenfolge sortiert werden.
       offset_help: |
         Mit dem *Versatz* können Sie die Position des **ersten Etiketts** auf der **ersten Seite** festlegen.
         Wählen Sie das Kästchen aus, das Ihrer Wahl entspricht.

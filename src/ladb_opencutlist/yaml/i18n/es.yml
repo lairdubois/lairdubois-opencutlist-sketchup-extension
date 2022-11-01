@@ -693,10 +693,14 @@ tab:
       title: Etiquetas
       options_layout: Composición
       options_settings: Configuración
+      options_part_order_strategy: Clasificación
       options_offset: Desplazamiento
       size: Tamaño real de la etiqueta
       add_element: Añadir un elemento
       remove_element: Eliminar
+      part_order_strategy_help: |
+        Reorganice las siguientes propiedades para definir el orden de clasificación de etiquetas.
+        Las propiedades se pueden clasificar en orden <i class="ladb-opencutlist-icon-sort-asc"></i> *ascendente* o <i class="ladb-opencutlist-icon-sort-desc"></i> *desascendente*.
       offset_help: |
         El *desplazamiento* permite definir la posición de la **primera etiqueta** en la **primera página**.
         Seleccione la casilla correspondiente a su elección.
