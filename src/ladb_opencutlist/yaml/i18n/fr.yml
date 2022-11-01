@@ -694,13 +694,13 @@ tab:
       options_layout: Composition
       options_settings: Configuration
       options_part_order_strategy: Tri
-      options_part_order_strategy_help: |
-        Réorganiser les propriétés suivantes pour définir la stratégie de tri des étiquettes.
-        Chaque propriété peut être triée de façon <i class="ladb-opencutlist-icon-sort-asc"></i> *croissante* ou <i class="ladb-opencutlist-icon-sort-desc"></i> *décroissante*.
       options_offset: Décalage
       size: Taille réelle de l'étiquette
       add_element: Ajouter un élément
       remove_element: Retirer
+      part_order_strategy_help: |
+        Réorganiser les propriétés suivantes pour définir la stratégie de tri des étiquettes.
+        Chaque propriété peut être triée de façon <i class="ladb-opencutlist-icon-sort-asc"></i> *croissante* ou <i class="ladb-opencutlist-icon-sort-desc"></i> *décroissante*.
       offset_help: |
         Le *décalage* vous permet de définir la position de la **première étiquette** sur la **première page**.
         Sélectionnez la case qui correspond à votre choix.
