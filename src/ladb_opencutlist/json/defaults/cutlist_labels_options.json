@@ -25,6 +25,7 @@
     "row_count": 4,
     "offset": 0,
     "cutting_marks": false,
+    "part_order_strategy": "number>name>entity_named_path>entity_name",
     "layout": [
       {
         "formula": "part.number",

@@ -2756,19 +2756,6 @@
             }
         });
 
-        // Sort parts on numbers ASC
-        // parts.sort(function (a, b) {
-        //     var numberA = isNaN(a.number) ? a.number.padStart(3, ' ') : a.number;    // Pad part number with ' ' to be sure that 'AA' is greater than 'Z' -> " AA" > "  Z"
-        //     var numberB = isNaN(a.number) ? b.number.padStart(3, ' ') : b.number;
-        //     if (numberA < numberB) {
-        //         return -1;
-        //     }
-        //     if (numberA > numberB) {
-        //         return 1;
-        //     }
-        //     return 0;
-        // });
-
         // Retrieve label options
         rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_labels_options', section: groupId }, function (response) {
 
@@ -2795,6 +2782,7 @@
             var $inputColCount = $('#ladb_input_col_count', $modal);
             var $inputRowCount = $('#ladb_input_row_count', $modal);
             var $selectCuttingMarks = $('#ladb_select_cutting_marks', $modal);
+            var $sortablePartOrderStrategy = $('#ladb_sortable_part_order_strategy', $modal);
             var $editorLabelOffset = $('#ladb_editor_label_offset', $modal);
             var $btnHelp = $('#ladb_cutlist_labels_btn_help', $modal);
             var $btnGenerate = $('#ladb_cutlist_labels_btn_generate', $modal);
@@ -2852,6 +2840,13 @@
                 options.cutting_marks = $selectCuttingMarks.val() === '1';
                 options.layout = $editorLabelLayout.ladbEditorLabelLayout('getElementDefs');
                 options.offset = fnValidOffset($editorLabelOffset.ladbEditorLabelOffset('getOffset'), options.col_count, options.row_count);
+
+                var properties = [];
+                $sortablePartOrderStrategy.children('li').each(function () {
+                    properties.push($(this).data('property'));
+                });
+                options.part_order_strategy = properties.join('>');
+
             }
             var fnFillInputs = function (options) {
                 $selectPageFormat.selectpicker('val', options.page_width.replace(',', '.') + 'x' + options.page_height.replace(',', '.'));
@@ -2873,6 +2868,35 @@
                     $editorLabelOffset.ladbEditorLabelOffset('updateSizeAndOffset', [ response.page_width, response.page_height, response.margin_top, response.margin_right, response.margin_bottom, response.margin_left, response.spacing_h, response.spacing_v, colCount, rowCount, fnValidOffset(options.offset, colCount, rowCount) ]);
                 });
                 fnPageSizeVisibility();
+
+                // Part order sortables
+
+                var properties = options.part_order_strategy.split('>');
+                $sortablePartOrderStrategy.empty();
+                for (var i = 0; i < properties.length; i++) {
+                    var property = properties[i];
+                    $sortablePartOrderStrategy.append(Twig.twig({ref: "tabs/cutlist/_labels-option-part-order-strategy-property.twig"}).render({
+                        order: property.startsWith('-') ? '-' : '',
+                        property: property.startsWith('-') ? property.substr(1) : property
+                    }));
+                }
+                $sortablePartOrderStrategy.find('a').on('click', function () {
+                    var $item = $(this).parent().parent();
+                    var $icon = $('i', $(this));
+                    var property = $item.data('property');
+                    if (property.startsWith('-')) {
+                        property = property.substr(1);
+                        $icon.addClass('ladb-opencutlist-icon-sort-asc');
+                        $icon.removeClass('ladb-opencutlist-icon-sort-desc');
+                    } else {
+                        property = '-' + property;
+                        $icon.removeClass('ladb-opencutlist-icon-sort-asc');
+                        $icon.addClass('ladb-opencutlist-icon-sort-desc');
+                    }
+                    $item.data('property', property);
+                });
+                $sortablePartOrderStrategy.sortable(SORTABLE_OPTIONS);
+
             }
 
             $widgetPreset.ladbWidgetPreset({
@@ -2985,6 +3009,67 @@
 
                     } else {
 
+                        // Compute part infos
+                        var partInfos = [];
+                        $.each(parts, function (index) {
+                            var flatPathsAndNames = [];
+                            var layered = this.thickness_layer_count > 1;
+                            for (var l = 1; l <= this.thickness_layer_count; l++) {
+                                $.each(this.entity_names, function () {
+                                    var count = this[1].length;
+                                    for (var i = 0; i < count; i++) {
+                                        flatPathsAndNames.push({
+                                            path: this[1][i],
+                                            name: this[0] + (layered ? ' // ' + l : ''),
+                                        });
+                                    }
+                                });
+                            }
+                            for (var i = 1; i <= this.count; i++) {
+                                partInfos.push({
+                                    position_in_batch: i,
+                                    entity_named_path: flatPathsAndNames.length > 0 ? flatPathsAndNames[i - 1].path : '',
+                                    entity_name: flatPathsAndNames.length > 0 ? flatPathsAndNames[i - 1].name : '',
+                                    part: this
+                                });
+                            }
+                        });
+
+                        // Sort part infos
+                        var fnFieldSorter = function (properties) {
+                            return function (a, b) {
+                                return properties
+                                    .map(function (property) {
+                                        var dir = 1;
+                                        if (property[0] === '-') {
+                                            dir = -1;
+                                            property = property.substring(1);
+                                        }
+                                        var valA, valB;
+                                        if (property === 'entity_named_path') {
+                                            valA = a.entity_named_path;
+                                            valB = b.entity_named_path;
+                                        } else if (property === 'entity_name') {
+                                            valA = a.entity_name;
+                                            valB = b.entity_name;
+                                        } else if (property === 'number') {
+                                            valA = isNaN(a.part.number) ? a.part.number.padStart(3, ' ') : a.part.number;    // Pad part number with ' ' to be sure that 'AA' is greater than 'Z' -> " AA" > "  Z"
+                                            valB = isNaN(a.part.number) ? b.part.number.padStart(3, ' ') : b.part.number;
+                                        } else {
+                                            valA = a.part[property];
+                                            valB = b.part[property];
+                                        }
+                                        if (valA > valB) return dir;
+                                        if (valA < valB) return -(dir);
+                                        return 0;
+                                    })
+                                    .reduce(function firstNonZeroValue(p, n) {
+                                        return p ? p : n;
+                                    }, 0);
+                            };
+                        };
+                        partInfos.sort(fnFieldSorter(labelsOptions.part_order_strategy.split('>')));
+
                         // Split parts into pages
                         var page;
                         var gIndex = 0;
@@ -3000,51 +3085,16 @@
                             });
                             gIndex++;
                         }
-                        $.each(parts, function (index) {
-                            var flatPathsAndNames = [];
-                            var layered = this.thickness_layer_count > 1;
-                            for (var l = 1; l <= this.thickness_layer_count; l++) {
-                                $.each(this.entity_names, function () {
-                                    var count = this[1].length;
-                                    for (var i = 0; i < count; i++) {
-                                        flatPathsAndNames.push({
-                                            path: this[1][i],
-                                            name: this[0] + (layered ? ' // ' + l : ''),
-                                        });
-                                    }
-                                });
+                        $.each(partInfos, function (index) {
+                            if (gIndex % (labelsOptions.row_count * labelsOptions.col_count) === 0) {
+                                page = {
+                                    part_infos: []
+                                }
+                                pages.push(page);
                             }
-                            flatPathsAndNames.sort(function (a, b) {    // Sort on Path ASC and Name ASC
-                                if (a.path < b.path) {
-                                    return -1;
-                                }
-                                if (a.path > b.path) {
-                                    return 1;
-                                }
-                                if (a.name < b.name) {
-                                    return -1;
-                                }
-                                if (a.name > b.name) {
-                                    return 1;
-                                }
-                                return 0;
-                            });
-                            for (var i = 1; i <= this.count; i++) {
-                                if (gIndex % (labelsOptions.row_count * labelsOptions.col_count) === 0) {
-                                    page = {
-                                        part_infos: []
-                                    }
-                                    pages.push(page);
-                                }
-                                page.part_infos.push({
-                                    position_in_batch: i,
-                                    entity_named_path: flatPathsAndNames.length > 0 ? flatPathsAndNames[i - 1].path : '',
-                                    entity_name: flatPathsAndNames.length > 0 ? flatPathsAndNames[i - 1].name : '',
-                                    part: this
-                                });
-                                gIndex++;
-                            }
-                        });
+                            page.part_infos.push(this);
+                            gIndex++;
+                        })
 
                     }
 

@@ -9,6 +9,7 @@
     <ul class="nav nav-tabs nav-justified" role="tablist">
         <li role="presentation"{% if tab == 'layout' %} class="active"{% endif %}><a href="#tab_labels_options_layout" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-labels"></i> {{ 'tab.cutlist.labels.options_layout'|i18next }}</a></li>
         <li role="presentation"{% if tab == 'settings' %} class="active"{% endif %}><a href="#tab_labels_options_settings" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-settings"></i> {{ 'tab.cutlist.labels.options_settings'|i18next }}</a></li>
+        <li role="presentation"{% if tab == 'part_order_strategy' %} class="active"{% endif %}><a href="#tab_labels_options_part_order_strategy" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-sort-asc"></i> {{ 'tab.cutlist.labels.options_part_order_strategy'|i18next }}</a></li>
         <li role="presentation"{% if tab == 'offset' %} class="active"{% endif %}><a href="#tab_labels_options_offset" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-labels-offset"></i> {{ 'tab.cutlist.labels.options_offset'|i18next }}</a></li>
     </ul>
 {% endblock %}
@@ -120,6 +121,14 @@
                             </div>
                         </div>
                     </section>
+                </div>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane{% if tab == 'part_order_strategy' %} active{% endif %}" id="tab_labels_options_part_order_strategy">
+            <p class="help-block text-center"><small>{{ 'tab.cutlist.labels.options_part_order_strategy_help'|i18next }}</small></p>
+            <div class="row">
+                <div  class="col-xs-offset-2 col-xs-8">
+                    <ul id="ladb_sortable_part_order_strategy" class="ladb-sortable-list"></ul>
                 </div>
             </div>
         </div>
