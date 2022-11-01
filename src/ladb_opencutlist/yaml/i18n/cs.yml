@@ -693,10 +693,14 @@ tab:
       title: Štítky
       options_layout: Rozložení
       options_settings: Konfigurace
+      options_part_order_strategy: Třídění
       options_offset: Offset
       size: Skutečná velikost štítku
       add_element: Přidejte prvek
       remove_element: Odstranit
+      part_order_strategy_help: |
+        Reorganizujte následující vlastnosti a definujte pořadí řazení štítků.
+        Vlastnosti lze řadit ve <i class="ladb-opencutlist-icon-sort-asc"></i> *vzestupném* nebo <i class="ladb-opencutlist-icon-sort-desc"></i> *sestupném* pořadí.
       offset_help: |
         *Offset* umožňuje definovat pozici **prvního štítku** na **první stránce**.
         Zaškrtněte políčko, které odpovídá vašemu výběru.

@@ -693,10 +693,14 @@ tab:
       title: Etiketten
       options_layout: Layout
       options_settings: Configuratie
+      options_part_order_strategy: Sortering
       options_offset: Offset
       size: Ware grootte van het etiket
       add_element: Voeg een element toe
       remove_element: Verwijder
+      part_order_strategy_help: |
+        Rangschik de volgende eigenschappen om de sorteervolgorde van de etiketten te bepalen.
+        Elke eigenschap kan <i class="ladb-opencutlist-icon-sort-asc"></i> *oplopend* of <i class="ladb-opencutlist-icon-sort-desc"></i> *aflopend* gesorteerd worden.
       offset_help: |
         De *marge* laat u toe om de positie van het **eerste etiket** op de **eerste pagina** te bepalen.
         Selecteer de box die overeenkomt met uw keuze.
