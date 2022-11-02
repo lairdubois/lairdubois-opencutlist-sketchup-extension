@@ -2877,7 +2877,7 @@
                     var property = properties[i];
                     $sortablePartOrderStrategy.append(Twig.twig({ref: "tabs/cutlist/_labels-option-part-order-strategy-property.twig"}).render({
                         order: property.startsWith('-') ? '-' : '',
-                        property: property.startsWith('-') ? property.substr(1) : property
+                        property: property.startsWith('-') ? property.substring(1) : property
                     }));
                 }
                 $sortablePartOrderStrategy.find('a').on('click', function () {
@@ -2885,7 +2885,7 @@
                     var $icon = $('i', $(this));
                     var property = $item.data('property');
                     if (property.startsWith('-')) {
-                        property = property.substr(1);
+                        property = property.substring(1);
                         $icon.addClass('ladb-opencutlist-icon-sort-asc');
                         $icon.removeClass('ladb-opencutlist-icon-sort-desc');
                     } else {
@@ -3343,7 +3343,7 @@
                 property = properties[i];
                 $sortablePartOrderStrategy.append(Twig.twig({ref: "tabs/cutlist/_option-part-order-strategy-property.twig"}).render({
                     order: property.startsWith('-') ? '-' : '',
-                    property: property.startsWith('-') ? property.substr(1) : property
+                    property: property.startsWith('-') ? property.substring(1) : property
                 }));
             }
             $sortablePartOrderStrategy.find('a').on('click', function () {
@@ -3351,7 +3351,7 @@
                 var $icon = $('i', $(this));
                 var property = $item.data('property');
                 if (property.startsWith('-')) {
-                    property = property.substr(1);
+                    property = property.substring(1);
                     $icon.addClass('ladb-opencutlist-icon-sort-asc');
                     $icon.removeClass('ladb-opencutlist-icon-sort-desc');
                 } else {

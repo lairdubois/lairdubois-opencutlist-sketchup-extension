@@ -650,7 +650,7 @@
                 property = properties[i];
                 $sortableMaterialOrderStrategy.append(Twig.twig({ref: "tabs/materials/_option-material-order-strategy-property.twig"}).render({
                     order: property.startsWith('-') ? '-' : '',
-                    property: property.startsWith('-') ? property.substr(1) : property
+                    property: property.startsWith('-') ? property.substring(1) : property
                 }));
             }
             $sortableMaterialOrderStrategy.find('a').on('click', function () {
@@ -658,7 +658,7 @@
                 var $icon = $('i', $(this));
                 var property = $item.data('property');
                 if (property.startsWith('-')) {
-                    property = property.substr(1);
+                    property = property.substring(1);
                     $icon.addClass('ladb-opencutlist-icon-sort-asc');
                     $icon.removeClass('ladb-opencutlist-icon-sort-desc');
                 } else {
