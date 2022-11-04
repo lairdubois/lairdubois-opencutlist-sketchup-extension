@@ -515,7 +515,7 @@ tab:
       warning:
         is_group_selection: "Díly, které jsou ve **skrytých skupinách** kusovníku, se neexportují."
       success:
-        copied: Zkopírováno do schránky
+        copied: Zkopírováno do schránky.
     report:
       title: Výsledky
       info_0: |

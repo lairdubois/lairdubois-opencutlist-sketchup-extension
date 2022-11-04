@@ -699,8 +699,8 @@ tab:
       add_element: Adicionar um elemento
       remove_element: Remover
       part_order_strategy_help: |
-        Reorganizar as seguintes propriedades para definir a ordem de classificação das etiquetas.
-        As propriedades podem ser ordenados en orden <i class="ladb-opencutlist-icon-sort-asc"></i> *ascendente* o <i class="ladb-opencutlist-icon-sort-desc"></i> *descendente*.
+        Reorganizar os títulos para definir a ordem de classificação das etiquetas.
+        Os títulos podem ser classificados em ordem <i class="ladb-opencutlist-icon-sort-asc"></i> *crescente* ou <i class="ladb-opencutlist-icon-sort-desc"></i> *decrescente*.
       offset_help: |
         O *deslocamento* permite definir a posição da **primeira etiqueta** na **primeira página**.
         Selecione a caixa que corresponde à sua escolha.
