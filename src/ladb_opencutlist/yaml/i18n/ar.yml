@@ -693,10 +693,14 @@ tab:
       title: الملصقات
       options_layout: النموذج الطباعي
       options_settings: إعداد
+      options_part_order_strategy: ترتيب
       options_offset: إزاحة
       size: الحجم الحقيقي للملصق
       add_element: أضف عنصرا
       remove_element: أزل
+      part_order_strategy_help: |
+        أعد تنظيم الخصائص التالية لتحديد ترتيب الملصقات.
+        يمكن فرز كل خاصية <i class="ladb-opencutlist-icon-sort-asc"></i>*تصاعديا* أو <i class="ladb-opencutlist-icon-sort-desc"></i>*تنازليا*.
       offset_help: |
         تتيح لك *الإزاحة* تعيين موضع **الملصق الأول** في **الصفحة الأولى**.
         حدد المربع الموافق لاختيارك.
