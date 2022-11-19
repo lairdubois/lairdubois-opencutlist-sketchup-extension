@@ -554,6 +554,8 @@ module Ladb::OpenCutList
             cutlist.edge_material_count += material_usage.use_count
           elsif material_usage.type == MaterialAttributes::TYPE_HARDWARE
             cutlist.hardware_material_count += material_usage.use_count
+          elsif material_usage.type == MaterialAttributes::TYPE_VENEER
+            cutlist.veneer_material_count += material_usage.use_count
           end
         }
         if cutlist.instance_count - cutlist.ignored_instance_count > 0 && cutlist.solid_wood_material_count == 0 && cutlist.sheet_good_material_count == 0 && cutlist.dimensional_material_count == 0 && cutlist.hardware_material_count == 0
@@ -994,16 +996,16 @@ module Ladb::OpenCutList
         return nil, MATERIAL_ORIGIN_UNKNOW
       end
       material = entity.material
-      material = nil if _get_material_attributes(material).type == MaterialAttributes::TYPE_EDGE
+      material = nil if _get_material_attributes(material).type == MaterialAttributes::TYPE_EDGE || _get_material_attributes(material).type == MaterialAttributes::TYPE_VENEER
       material_origin = MATERIAL_ORIGIN_OWNED
       unless material || !smart
         material = _get_dominant_child_material(entity)
-        material = nil if _get_material_attributes(material).type == MaterialAttributes::TYPE_EDGE
+        material = nil if _get_material_attributes(material).type == MaterialAttributes::TYPE_EDGE || _get_material_attributes(material).type == MaterialAttributes::TYPE_VENEER
         if material
           material_origin = MATERIAL_ORIGIN_CHILD
         else
           material = _get_inherited_material(path)
-          material = nil if _get_material_attributes(material).type == MaterialAttributes::TYPE_EDGE
+          material = nil if _get_material_attributes(material).type == MaterialAttributes::TYPE_EDGE || _get_material_attributes(material).type == MaterialAttributes::TYPE_VENEER
           if material
             material_origin = MATERIAL_ORIGIN_INHERITED
           end
