@@ -99,5 +99,20 @@
     "edge_decremented": false,
     "volumic_mass": "",
     "std_prices": []
+  },
+  "6": {  /* TYPE_VENEER */
+    "thickness": { "metric": "2mm", "imperial": "0.018\"" },
+    "length_increase": "0",
+    "width_increase": "0",
+    "thickness_increase": "0",
+    "std_lengths": "",
+    "std_widths": { "metric": "1mm;2mm", "imperial": "5/8\";7/8\";3/4\";15/16\";1 5/16\";1 5/8\";1 3/4\"" },
+    "std_thicknesses": "",
+    "std_sections": "",
+    "std_sizes": "",
+    "grained": false,
+    "edge_decremented": true,
+    "volumic_mass": "",
+    "std_prices": []
   }
 }

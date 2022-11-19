@@ -534,7 +534,7 @@ tab:
       total_area: Σ Surfaces
       total_length: Σ Longueurs
       error:
-        no_typed_material_parts: "Aucune pièce ayant une matière avec type défini (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)** ou **$t(tab.materials.type_5)**) n'est fournie pour générer le rapport."
+        no_typed_material_parts: "Aucune pièce ayant une matière avec type défini (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** ou **$t(tab.materials.type_5)**) n'est fournie pour générer le rapport."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erreur**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erreurs**."
       warning:
@@ -802,6 +802,7 @@ tab:
     type_3: Barre
     type_4: Bande de chant
     type_5: Accessoire
+    type_6: Placage
     tooltip:
       type_0: Type de matière '$t(tab.materials.type_0)'
       type_1: Type de matière '$t(tab.materials.type_1)'
@@ -809,6 +810,7 @@ tab:
       type_3: Type de matière '$t(tab.materials.type_3)'
       type_4: Type de matière '$t(tab.materials.type_4)'
       type_5: Type de matière '$t(tab.materials.type_5)'
+      type_6: Type de matière '$t(tab.materials.type_6)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Direction du fil
@@ -1159,6 +1161,7 @@ tool:
     filter_3: $t(tab.materials.type_3)
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
+    filter_6: $t(tab.materials.type_6)
     action: Action
     action_0: Colorier face
     action_1: Colorier pièce

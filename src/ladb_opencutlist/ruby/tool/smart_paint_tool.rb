@@ -36,6 +36,7 @@ module Ladb::OpenCutList
       MaterialAttributes::TYPE_SHEET_GOOD => Sketchup::Color.new(237, 162, 0, 255).freeze,
       MaterialAttributes::TYPE_DIMENSIONAL => Sketchup::Color.new(245, 89, 172, 255).freeze,
       MaterialAttributes::TYPE_EDGE => Sketchup::Color.new(102, 142, 238, 255).freeze,
+      MaterialAttributes::TYPE_VENEER => Sketchup::Color.new(131, 56, 236, 255).freeze,
       MaterialAttributes::TYPE_HARDWARE => Sketchup::Color.new(0, 0, 0, 255).freeze
     }
 
@@ -376,7 +377,7 @@ module Ladb::OpenCutList
 
         # Set action according to material type
         case material_attributes.type
-        when MaterialAttributes::TYPE_EDGE
+        when MaterialAttributes::TYPE_EDGE, MaterialAttributes::TYPE_VENEER
           set_action(ACTION_PAINT_FACE)
         else
           set_action(ACTION_PAINT_PART)

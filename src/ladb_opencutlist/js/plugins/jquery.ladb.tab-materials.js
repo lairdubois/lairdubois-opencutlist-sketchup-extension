@@ -907,6 +907,22 @@
                 case 5:   // TYPE_HARDWARE
                     $inputThickness.closest('section').hide();
                     break;
+                case 6:   // TYPE_VENEER
+                    $inputThickness.closest('section').show();
+                    $inputThickness.closest('.form-group').show();
+                    $inputLengthIncrease.closest('.form-group').show();
+                    $inputWidthIncrease.closest('.form-group').show();
+                    $inputThicknessIncrease.closest('.form-group').hide();
+                    $inputStdLengths.closest('.form-group').hide();
+                    $inputStdWidths.closest('.form-group').hide();
+                    $inputStdThicknesses.closest('.form-group').hide();
+                    $inputStdSections.closest('.form-group').hide();
+                    $inputStdSizes.closest('.form-group').show();
+                    $selectGrained.closest('.form-group').hide();
+                    $selectEdgeDecremented.closest('.form-group').hide();
+                    $inputVolumicMass.closest('.form-group').show();
+                    $editorStdPrices.closest('.form-group').show();
+                    break;
                 default:
                     $inputThickness.closest('section').hide();
             }

@@ -1,6 +1,6 @@
 {
   "name": "lairdubois-opencutlist-sketchup-extension",
-  "version": "4.1.0",
+  "version": "5.0.0",
   "description": "OpenCutList by L'Air du Bois =======================================",
   "main": "index.js",
   "directories": {

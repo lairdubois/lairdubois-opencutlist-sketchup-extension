@@ -15,6 +15,7 @@
     TYPE_DIMENSIONAL = 3
     TYPE_EDGE = 4
     TYPE_HARDWARE = 5
+    TYPE_VENEER = 6
 
     DEFAULTS_DICTIONARY = 'materials_material_attributes'.freeze
 
@@ -58,7 +59,7 @@
     def self.valid_type(type)
       if type
         i_type = type.to_i
-        if i_type < TYPE_UNKNOWN || i_type > TYPE_HARDWARE
+        if i_type < TYPE_UNKNOWN || i_type > TYPE_VENEER
           return TYPE_UNKNOWN
         end
         i_type
@@ -137,7 +138,7 @@
 
     def thickness
       case @type
-      when TYPE_EDGE
+      when TYPE_EDGE, TYPE_VENEER
         @thickness
       else
         Plugin.instance.get_app_defaults(DEFAULTS_DICTIONARY, @type)['thickness']
@@ -150,7 +151,7 @@
 
     def length_increase
       case @type
-        when TYPE_SOLID_WOOD, TYPE_SHEET_GOOD, TYPE_DIMENSIONAL, TYPE_EDGE
+        when TYPE_SOLID_WOOD, TYPE_SHEET_GOOD, TYPE_DIMENSIONAL, TYPE_EDGE, TYPE_VENEER
           @length_increase
         else
           Plugin.instance.get_app_defaults(DEFAULTS_DICTIONARY, @type)['length_increase']
@@ -163,7 +164,7 @@
 
     def width_increase
       case @type
-        when TYPE_SOLID_WOOD, TYPE_SHEET_GOOD
+        when TYPE_SOLID_WOOD, TYPE_SHEET_GOOD, TYPE_VENEER
           @width_increase
         else
           Plugin.instance.get_app_defaults(DEFAULTS_DICTIONARY, @type)['width_increase']
@@ -276,7 +277,7 @@
 
     def std_sizes
       case @type
-        when TYPE_SHEET_GOOD
+        when TYPE_SHEET_GOOD, TYPE_VENEER
           @std_sizes
         else
           Plugin.instance.get_app_defaults(DEFAULTS_DICTIONARY, @type)['std_sizes']
@@ -293,7 +294,7 @@
 
     def volumic_mass
       case @type
-        when TYPE_SOLID_WOOD, TYPE_SHEET_GOOD, TYPE_DIMENSIONAL, TYPE_EDGE
+        when TYPE_SOLID_WOOD, TYPE_SHEET_GOOD, TYPE_DIMENSIONAL, TYPE_EDGE, TYPE_VENEER
           @volumic_mass
         else
           Plugin.instance.get_app_defaults(DEFAULTS_DICTIONARY, @type)['volumic_mass']
@@ -307,7 +308,7 @@
 
     def std_prices
       case @type
-        when TYPE_SOLID_WOOD, TYPE_SHEET_GOOD, TYPE_DIMENSIONAL, TYPE_EDGE
+        when TYPE_SOLID_WOOD, TYPE_SHEET_GOOD, TYPE_DIMENSIONAL, TYPE_EDGE, TYPE_VENEER
           @std_prices
         else
           Plugin.instance.get_app_defaults(DEFAULTS_DICTIONARY, @type)['std_prices']
