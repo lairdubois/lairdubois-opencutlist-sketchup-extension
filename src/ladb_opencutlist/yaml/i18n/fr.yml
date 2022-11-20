@@ -521,6 +521,8 @@ tab:
       edge_ymax: Chant Longueur 2
       edge_xmin: Chant Largeur 1
       edge_xmax: Chant Largeur 2
+      veneer_zmin: Contreparement
+      veneer_zmax: Parement
       placeholder:
         no_column_title: Saisissez un titre
         no_column_formula_native: "Valeur native de la colonne '{{ col_name }}'"

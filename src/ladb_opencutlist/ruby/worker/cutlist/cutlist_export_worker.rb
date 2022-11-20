@@ -191,6 +191,14 @@ module Ladb::OpenCutList
                 part.edge_material_names[:xmax],
                 part.def.edge_group_defs[:xmax] ? part.def.edge_group_defs[:xmax].std_thickness : nil,
                 part.def.edge_group_defs[:xmax] ? part.def.edge_group_defs[:xmax].std_width : nil
+              ),
+              VeneerWrapper.new(
+                part.veneer_material_names[:zmin],
+                part.def.veneer_group_defs[:zmin] ? part.def.veneer_group_defs[:zmin].std_thickness : nil
+              ),
+              VeneerWrapper.new(
+                part.veneer_material_names[:zmax],
+                part.def.veneer_group_defs[:zmax] ? part.def.veneer_group_defs[:zmax].std_thickness : nil
               )
             )
 
@@ -206,7 +214,8 @@ module Ladb::OpenCutList
         # Content rows
         @cutlist.groups.each { |group|
           next if @hidden_group_ids.include? group.id
-          next if group.material_type == MaterialAttributes::TYPE_EDGE    # Edges don't have instances
+          next if group.material_type == MaterialAttributes::TYPE_EDGE      # Edges don't have instances
+          next if group.material_type == MaterialAttributes::TYPE_VENEER    # Veneers don't have instances
           group.parts.each { |part|
 
             no_cutting_dimensions = group.material_type == MaterialAttributes::TYPE_UNKNOWN
@@ -253,6 +262,14 @@ module Ladb::OpenCutList
                     part.edge_material_names[:xmax],
                     part.def.edge_group_defs[:xmax] ? part.def.edge_group_defs[:xmax].std_thickness : nil,
                     part.def.edge_group_defs[:xmax] ? part.def.edge_group_defs[:xmax].std_width : nil
+                  ),
+                  VeneerWrapper.new(
+                    part.veneer_material_names[:zmin],
+                    part.def.veneer_group_defs[:zmin] ? part.def.veneer_group_defs[:zmin].std_thickness : nil
+                  ),
+                  VeneerWrapper.new(
+                    part.veneer_material_names[:zmax],
+                    part.def.veneer_group_defs[:zmax] ? part.def.veneer_group_defs[:zmax].std_thickness : nil
                   )
                 )
 
@@ -358,7 +375,9 @@ module Ladb::OpenCutList
       edge_ymin,
       edge_ymax,
       edge_xmin,
-      edge_xmax
+      edge_xmax,
+      veneer_zmin,
+      veneer_zmax
     )
       @number = number
       @name = name
@@ -378,6 +397,8 @@ module Ladb::OpenCutList
       @edge_ymax = edge_ymax
       @edge_xmin = edge_xmin
       @edge_xmax = edge_xmax
+      @veneer_zmin = veneer_zmin
+      @veneer_zmax = veneer_zmax
     end
 
   end
@@ -403,7 +424,9 @@ module Ladb::OpenCutList
       edge_ymin,
       edge_ymax,
       edge_xmin,
-      edge_xmax
+      edge_xmax,
+      veneer_zmin,
+      veneer_zmax
     )
       @number = number
       @path = path
@@ -424,6 +447,8 @@ module Ladb::OpenCutList
       @edge_ymax = edge_ymax
       @edge_xmin = edge_xmin
       @edge_xmax = edge_xmax
+      @veneer_zmin = veneer_zmin
+      @veneer_zmax = veneer_zmax
     end
 
   end
