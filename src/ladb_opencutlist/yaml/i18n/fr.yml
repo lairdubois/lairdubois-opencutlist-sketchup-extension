@@ -560,10 +560,11 @@ tab:
       option_hide_part_list: Liste des pièces
       option_hide_part_list_1d_dimensional_0: Affichée pour chaque barre
       option_hide_part_list_1d_edge_0: Affichée pour chaque bande
-      option_hide_part_list_2d_0: Affichée pour chaque panneau
+      option_hide_part_list_2d_sheet_0: Affichée pour chaque panneau
+      option_hide_part_list_2d_veneer_0: Affichée pour chaque feuille
       option_hide_part_list_1: Masquée
       option_hide_part_list_1d_help: Affiche ou masque la liste des pièces présentes dans chaque barre ou bande.
-      option_hide_part_list_2d_help: Affiche ou masque la liste des pièces présentes dans chaque panneau.
+      option_hide_part_list_2d_help: Affiche ou masque la liste des pièces présentes dans chaque panneau ou feuille.
       option_use_names: Identification des pièces
       option_use_names_0: Utiliser le numéro
       option_use_names_1: Utiliser la désignation
@@ -622,17 +623,19 @@ tab:
         Format attendu : **L**x**Q**. Où **L** est la *longueur* du reste et **Q** la quantité.
         La quantité est facultative.
         *Si aucune unité n'est spécifiée, l'unité du modèle sera prise en compte.*
-      option_std_sheet: Panneau standard
+      option_std_sheet_sheet: Panneau standard
+      option_std_sheet_veneer: Feuille standard
       option_std_sheet_help: |
-        Sélectionnez ici le panneau standard qui sera dupliqué pour contenir au mieux toutes les pièces.
+        Sélectionnez ici le panneau ou feuille standard qui sera dupliqué pour contenir au mieux toutes les pièces.
         Cette liste est définie par le champ **$t(tab.materials.edit_material.std_sizes)** de la matière.
         Éditez la matière '{{ material_name }}' pour mettre à jour cette liste.
       option_std_sheet_add: Ajouter une taille
       option_std_sheet_none: Aucun
-      option_scrap_sheet_sizes: Restes de panneau
+      option_scrap_sheet_sheet_sizes: Restes de panneau
+      option_scrap_sheet_veneer_sizes: Restes de feuille
       option_scrap_sheet_sizes_placeholder: longueur x largeur x quantité ; ...
       option_scrap_sheet_sizes_help: |
-        Indiquez ici la liste de vos restes de panneau à considérer en priorité pour le calepinage.
+        Indiquez ici la liste de vos restes de panneau ou feuille à considérer en priorité pour le calepinage.
         Format attendu : **L**x**l**x**Q**. Où **L** et **l** sont respectivement la *longueur* et la *largeur* du reste et **Q** la quantité.
         La quantité est facultative.
         *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*
@@ -669,8 +672,10 @@ tab:
         bar_dimensional_type_1: Reste de barre
         bar_edge_type_0: Bande standard
         bar_edge_type_1: Reste de bande
-        sheet_type_0: Panneau standard
-        sheet_type_1: Reste de panneau
+        sheet_sheet_type_0: Panneau standard
+        sheet_sheet_type_1: Reste de panneau
+        sheet_veneer_type_0: Feuille standard
+        sheet_veneer_type_1: Reste de feuille
         unused: Inutilisée
         parts: "{{ count }} pièce"
         parts_plural: "{{ count }} pièces"
