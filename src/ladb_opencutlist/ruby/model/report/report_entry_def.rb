@@ -254,4 +254,53 @@ module Ladb::OpenCutList
 
   end
 
+  # -----
+
+  class VeneerReportEntryDef < AbstractReportEntryDef
+
+    attr_accessor :volumic_mass, :total_count, :total_area
+    attr_reader :sheet_defs
+
+    def initialize(cutlist_group)
+      super(cutlist_group)
+
+      @volumic_mass = nil
+
+      @total_count = 0
+      @total_area = 0
+
+      @sheet_defs = []
+
+    end
+
+    # ---
+
+    def create_entry
+      VeneerReportEntry.new(self)
+    end
+
+  end
+
+  class VeneerReportEntrySheetDef < AbstractReportItemDef
+
+    attr_accessor :std_price
+    attr_reader :cuttingdiagram2d_summary_sheet
+
+    def initialize(cuttingdiagram2d_summary_sheet)
+      super()
+
+      @cuttingdiagram2d_summary_sheet = cuttingdiagram2d_summary_sheet
+
+      @std_price = nil
+
+    end
+
+    # ---
+
+    def create_sheet
+      VeneerReportEntrySheet.new(self)
+    end
+
+  end
+
 end

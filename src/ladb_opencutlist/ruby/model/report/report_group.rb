@@ -101,4 +101,20 @@ module Ladb::OpenCutList
 
   end
 
+  # -----
+
+  class VeneerReportGroup < AbstractReportGroup
+
+    attr_reader :total_count, :total_area
+
+    def initialize(_def)
+      super(_def, MaterialAttributes::TYPE_VENEER)
+
+      @total_count = _def.total_count
+      @total_area = _def.total_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(_def.total_area)
+
+    end
+
+  end
+
 end

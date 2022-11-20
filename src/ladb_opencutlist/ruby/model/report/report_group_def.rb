@@ -131,4 +131,26 @@ module Ladb::OpenCutList
 
   end
 
+  # -----
+
+  class VeneerReportGroupDef < AbstractReportGroupDef
+
+    attr_accessor :total_count, :total_area
+
+    def initialize
+      super
+
+      @total_count = 0
+      @total_area = 0
+
+    end
+
+    # ---
+
+    def create_group
+      VeneerReportGroup.new(self)
+    end
+
+  end
+
 end

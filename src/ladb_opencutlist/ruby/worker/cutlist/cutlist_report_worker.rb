@@ -214,6 +214,52 @@ module Ladb::OpenCutList
           report_group_def.entry_defs << report_entry_def
           report_group_def.total_count += report_entry_def.total_count
 
+        when MaterialAttributes::TYPE_VENEER
+
+          material_attributes = _get_material_attributes(cutlist_group.material_name)
+          volumic_mass = material_attributes.h_volumic_mass
+
+          settings = Plugin.instance.get_model_preset('cutlist_cuttingdiagram2d_options', cutlist_group.id)
+          settings['group_id'] = cutlist_group.id
+          settings['bar_folding'] = false     # Remove unneeded computations
+          settings['hide_part_list'] = true   # Remove unneeded computations
+
+          if settings['std_sheet'] == ''
+            std_sizes = material_attributes.std_sizes.split(';')
+            settings['std_sheet'] = std_sizes[0] unless std_sizes.empty?
+          end
+
+          worker = CutlistCuttingdiagram2dWorker.new(settings, @cutlist)
+          cuttingdiagram2d = worker.run
+
+          report_entry_def = SheetGoodReportEntryDef.new(cutlist_group)
+          report_entry_def.errors += cuttingdiagram2d.errors
+          report_entry_def.volumic_mass = volumic_mass
+          report_entry_def.total_count = cuttingdiagram2d.summary.total_used_count
+          report_entry_def.total_area = cuttingdiagram2d.summary.def.total_used_area
+
+          cuttingdiagram2d.summary.sheets.each do |cuttingdiagram2d_summary_sheet|
+
+            next unless cuttingdiagram2d_summary_sheet.is_used
+
+            # Only standard sheet uses dim prices
+            std_price = _get_std_price(cuttingdiagram2d_summary_sheet.type == BinPacking2D::BIN_TYPE_AUTO_GENERATED ? [ cutlist_group.def.std_thickness, Size2d.new(cuttingdiagram2d_summary_sheet.def.length, cuttingdiagram2d_summary_sheet.width) ] : nil, material_attributes)
+
+            report_entry_sheet_def = SheetGoodReportEntrySheetDef.new(cuttingdiagram2d_summary_sheet)
+            report_entry_sheet_def.std_price = std_price
+            report_entry_sheet_def.total_mass = cuttingdiagram2d_summary_sheet.def.total_area * cutlist_group.def.std_thickness * _uv_to_inch3(volumic_mass[:unit], volumic_mass[:val]) unless volumic_mass[:val] == 0
+            report_entry_sheet_def.total_cost = cuttingdiagram2d_summary_sheet.def.total_area * cutlist_group.def.std_thickness * _uv_to_inch3(std_price[:unit], std_price[:val], cutlist_group.def.std_thickness, cuttingdiagram2d_summary_sheet.def.width, cuttingdiagram2d_summary_sheet.def.length) unless std_price[:val] == 0
+            report_entry_def.sheet_defs << report_entry_sheet_def
+
+            report_entry_def.total_mass += report_entry_sheet_def.total_mass
+            report_entry_def.total_cost += report_entry_sheet_def.total_cost
+
+          end
+
+          report_group_def.entry_defs << report_entry_def
+          report_group_def.total_count = report_group_def.total_count + report_entry_def.total_count
+          report_group_def.total_area += report_entry_def.total_area
+
         end
 
         unless report_entry_def.nil?
