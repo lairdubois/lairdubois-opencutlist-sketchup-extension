@@ -338,8 +338,8 @@ module Ladb::OpenCutList
       @veneer_group_defs.store(PartDef::VENEER_ZMAX, veneer_zmax_group_def) unless veneer_zmax_group_def.nil?
 
       # Store stdDimensions
-      @veneer_std_dimensions.store(PartDef::VENEER_ZMIN, "#{veneer_zmin_group_def.std_thickness} x #{veneer_zmin_group_def.std_dimension}") unless veneer_zmin_group_def.nil?
-      @veneer_std_dimensions.store(PartDef::VENEER_ZMAX, "#{veneer_zmax_group_def.std_thickness} x #{veneer_zmax_group_def.std_dimension}") unless veneer_zmax_group_def.nil?
+      @veneer_std_dimensions.store(PartDef::VENEER_ZMIN, "#{veneer_zmin_group_def.std_dimension}") unless veneer_zmin_group_def.nil?
+      @veneer_std_dimensions.store(PartDef::VENEER_ZMAX, "#{veneer_zmax_group_def.std_dimension}") unless veneer_zmax_group_def.nil?
 
     end
 

@@ -246,7 +246,7 @@ tab:
       has_edges: "Cette pièce contient {{ count }} chant plaqué"
       has_edges_plural: "Cette pièce contient {{ count }} chants plaqués"
       has_veneers: "Cette pièce contient {{ count }} surface plaquée"
-      has_veneeres_plural: "Cette pièce contient {{ count }} surface plaquées"
+      has_veneers_plural: "Cette pièce contient {{ count }} surfaces plaquées"
       edge_decremented: "Réduit de l'épaisseur des chants ({{ decrement }})"
       edge_ymin: Chant Longueur 1
       edge_ymax: Chant Longueur 2

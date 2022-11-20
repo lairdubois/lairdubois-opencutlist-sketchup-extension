@@ -36,6 +36,12 @@
             {% if part.edge_material_names.xmax %}<div><i class='ladb-opencutlist-icon-edge-0100'></i>&nbsp;{{ part.edge_material_names.xmax|escape('html') }}&nbsp;<small>{{ part.edge_std_dimensions.xmax|escape('html') }}</small></div>{% endif %}
         </div>
     {% endif %}
+    {% if part.veneer_count > 0 %}
+        <div class='tt-section'>
+            {% if part.veneer_material_names.zmin %}<div><i class='ladb-opencutlist-icon-veneer-01'></i>&nbsp;{{ part.veneer_material_names.zmin|escape('html') }}&nbsp;<small>{{ part.veneer_std_dimensions.zmin|escape('html') }}</small></div>{% endif %}
+            {% if part.veneer_material_names.zmax %}<div><i class='ladb-opencutlist-icon-veneer-10'></i>&nbsp;{{ part.veneer_material_names.zmax|escape('html') }}&nbsp;<small>{{ part.veneer_std_dimensions.zmax|escape('html') }}</small></div>{% endif %}
+        </div>
+    {% endif %}
 {% endspaceless %}
 {% endmacro %}
 {% macro leftover_tooltip(leftover) %}
@@ -426,6 +432,7 @@
                                         {% if part.thickness_layer_count > 1 %}<a href="#" class="ladb-tool-info" data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.tooltip.thickness_layer_count'|i18next({ 'count':part.thickness_layer_count }) }}"><i class="ladb-opencutlist-icon-thickness-layers"></i></a>{% endif %}
                                         {% if part.flipped %}<a href="#" class="ladb-tool-info" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.flipped'|i18next }}"><i class="ladb-opencutlist-icon-flipped"></i></a>{% endif %}
                                         {% if part.edge_count > 0 %}<a href="#" class="ladb-tool-info" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.has_edges'|i18next({ 'count':part.edge_count }) }}"><i class="ladb-opencutlist-icon-edge-{{ part.edge_pattern }}"></i></a>{% endif %}
+                                        {% if part.veneer_count > 0 %}<a href="#" class="ladb-tool-info" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.has_veneers'|i18next({ 'count':part.veneer_count }) }}"><i class="ladb-opencutlist-icon-veneer-{{ part.veneer_pattern }}"></i></a>{% endif %}
                                         <span class="ladb-separator no-print"></span>
                                         <a href="#" class="ladb-btn-highlight-part ladb-click-tool no-print" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.highlight_part'|i18next }}"><i class="ladb-opencutlist-icon-magnifier"></i></a>
                                     </div>
