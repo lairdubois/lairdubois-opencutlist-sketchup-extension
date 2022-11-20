@@ -8,7 +8,7 @@
 
 {% if usedEdgeMaterialDisplayNames is not empty or usedTags is not empty or ignoredInstanceCount > 0 %}
 
-    {% set groupFiltersHidden = 'filters' in generateOptions.hidden_group_ids or (generateFilters.edge_material_names_filter is empty and generateFilters.tags_filter is empty) %}
+    {% set groupFiltersHidden = 'filters' in generateOptions.hidden_group_ids or (generateFilters.edge_material_names_filter is empty and generateFilters.veneer_material_names_filter is empty and generateFilters.tags_filter is empty) %}
 
     <table id="ladb_group_filters" data-group-id="filters" class="{% if groupFiltersHidden %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-cutlist-group-dark ladb-cutlist-group-filters">
         <thead>
@@ -43,6 +43,32 @@
                         </div>
                         <div class="media-right no-print">
                             <button class="btn btn-default" id="ladb_cutlist_btn_edge_material_names_filter_clear">{{ 'default.clear'|i18next() }}</button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        {% endif %}
+        {% if usedVeneerMaterialDisplayNames is not empty or generateFilters.veneer_material_names_filter is not empty %}
+            <tr>
+                <td>
+                    <div class="media">
+                        <div class="media-left">
+                            <i class="ladb-opencutlist-icon-material-type-6" style="font-size: 150%; line-height: 32px;"></i>
+                        </div>
+                        <div class="media-body">
+                            <div class="no-print">
+                                <input type="text" class="form-control" id="ladb_cutlist_veneer_material_names_filter" value="{{ generateFilters.veneer_material_names_filter|join(';') }}" placeholder="{{ 'tab.cutlist.list.veneer_material_names_filter'|i18next() }}">
+                            </div>
+                            <div class="no-screen">
+                                <ul class="ladb-cutlist-tags-filters-printable">
+                                    {% for material_name in generateFilters.veneer_material_names_filter %}
+                                        <li>{{ material_name }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="media-right no-print">
+                            <button class="btn btn-default" id="ladb_cutlist_btn_veneer_material_names_filter_clear">{{ 'default.clear'|i18next() }}</button>
                         </div>
                     </div>
                 </td>
@@ -128,7 +154,11 @@
                     <div class="ladb-minitools ladb-minitools-right no-print">
                         {% if group.material_type == 4 %}    {# 4 = TYPE_EDGE #}
                             {% set filtered = group.material_display_name in generateFilters.edge_material_names_filter %}
-                            <a href="#ladb_group_{{ group.id }}" class="ladb-btn-material-filter" data-material-display-name="{{ group.material_display_name }}" data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.'~(filtered ? 'remove' : 'add')~'_edge_material_name_filter')|i18next({ 'material_name':group.material_display_name }) }}"><i class="ladb-opencutlist-icon-filter-{% if filtered %}on{% else %}off{% endif %}"></i></a>
+                            <a href="#ladb_group_{{ group.id }}" class="ladb-btn-edge-material-filter" data-material-display-name="{{ group.material_display_name }}" data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.'~(filtered ? 'remove' : 'add')~'_edge_material_name_filter')|i18next({ 'material_name':group.material_display_name }) }}"><i class="ladb-opencutlist-icon-filter-{% if filtered %}on{% else %}off{% endif %}"></i></a>
+                        {% endif %}
+                        {% if group.material_type == 6 %}    {# 6 = TYPE_VENEER #}
+                            {% set filtered = group.material_display_name in generateFilters.veneer_material_names_filter %}
+                            <a href="#ladb_group_{{ group.id }}" class="ladb-btn-veneer-material-filter" data-material-display-name="{{ group.material_display_name }}" data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.'~(filtered ? 'remove' : 'add')~'_veneer_material_name_filter')|i18next({ 'material_name':group.material_display_name }) }}"><i class="ladb-opencutlist-icon-filter-{% if filtered %}on{% else %}off{% endif %}"></i></a>
                         {% endif %}
                         <a href="#ladb_group_{{ group.id }}" class="ladb-btn-scrollto ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.scroll_to_block'|i18next }}"><i class="ladb-opencutlist-icon-arrow-circle-down"></i></a>
                         {% if group.material_id %}
@@ -229,7 +259,7 @@
         </tr>
         <tr class="table-column-heading">
             <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.list.number'|i18next }}</td>
-            <td class="text-center" rowspan="2" style="vertical-align: middle !important;">{{ 'tab.cutlist.list.name'|i18next }}{% if group.material_type != 4 and group.material_type != 6 %}{# 4 = TYPE_EDGE, 6 = TYPE_VENEER #}<span class="ladb-minitools ladb-minitools-right no-print"><a href="#" class="ladb-btn-select-group-parts" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.select_unselect_all_parts'|i18next }}"><i class="ladb-opencutlist-icon-check-box-with-check-sign"></i></a></span>{% endif %}</td>
+            <td class="text-center" rowspan="2" style="vertical-align: middle !important;">{{ 'tab.cutlist.list.name'|i18next }}<span class="ladb-minitools ladb-minitools-right no-print"><a href="#" class="ladb-btn-select-group-parts" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.select_unselect_all_parts'|i18next }}"><i class="ladb-opencutlist-icon-check-box-with-check-sign"></i></a></span></td>
             <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="8%">{{ 'tab.cutlist.list.count'|i18next }}</td>
             {% if showCuttingDimensions %}
                 <td class="text-center" colspan="{{ hideWidth ? '1' : '2' }}">{{ 'tab.cutlist.list.cutting'|i18next }}</td>

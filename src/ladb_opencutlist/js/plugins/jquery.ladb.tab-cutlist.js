@@ -16,7 +16,8 @@
 
         this.generateFilters = {
           tags_filter: [],
-          edge_material_names_filter: []
+          edge_material_names_filter: [],
+          veneer_material_names_filter: []
         };
 
         this.generateAt = null;
@@ -29,6 +30,7 @@
         this.lengthUnit = null;
         this.usedTags = [];
         this.usedEdgeMaterialDisplayNames = [];
+        this.usedVeneerMaterialDisplayNames = [];
         this.materialUsages = [];
         this.groups = [];
         this.ignoreNextMaterialEvents = false;
@@ -73,6 +75,7 @@
         // Destroy previously created tokenfields
         $('#ladb_cutlist_tags_filter', that.$page).tokenfield('destroy');
         $('#ladb_cutlist_edge_material_names_filter', that.$page).tokenfield('destroy');
+        $('#ladb_cutlist_veneer_material_names_filter', that.$page).tokenfield('destroy');
 
         this.groups = [];
         this.$page.empty();
@@ -126,6 +129,7 @@
                 that.massUnitStrippedname = massUnitStrippedname;
                 that.usedTags = usedTags;
                 that.usedEdgeMaterialDisplayNames = [];
+                that.usedVeneerMaterialDisplayNames = [];
                 that.materialUsages = materialUsages;
                 that.groups = groups;
 
@@ -133,6 +137,13 @@
                 for (var i = 0; i < materialUsages.length; i++) {
                     if (materialUsages[i].type === 4 && materialUsages[i].use_count > 0) {     // 4 = TYPE_EDGE
                         that.usedEdgeMaterialDisplayNames.push(materialUsages[i].display_name);
+                    }
+                }
+
+                // Compute usedVeneerMaterialDisplayNames
+                for (var i = 0; i < materialUsages.length; i++) {
+                    if (materialUsages[i].type === 6 && materialUsages[i].use_count > 0) {     // 6 = TYPE_VENEER
+                        that.usedVeneerMaterialDisplayNames.push(materialUsages[i].display_name);
                     }
                 }
 
@@ -178,6 +189,7 @@
                     ignoredInstanceCount: ignoredInstanceCount,
                     usedTags: usedTags,
                     usedEdgeMaterialDisplayNames: that.usedEdgeMaterialDisplayNames,
+                    usedVeneerMaterialDisplayNames: that.usedVeneerMaterialDisplayNames,
                     groups: groups
                 }));
 
@@ -287,6 +299,44 @@
                         });
                     })
                 ;
+                $('#ladb_cutlist_veneer_material_names_filter', that.$page)
+                    .tokenfield($.extend(TOKENFIELD_OPTIONS, {
+                        autocomplete: {
+                            source: that.usedVeneerMaterialDisplayNames,
+                            delay: 100
+                        },
+                        showAutocompleteOnFocus: false
+                    }))
+                    .on('tokenfield:createtoken', function (e) {
+
+                        // Unique token
+                        var existingTokens = $(this).tokenfield('getTokens');
+                        $.each(existingTokens, function (index, token) {
+                            if (token.value === e.attrs.value) {
+                                e.preventDefault();
+                            }
+                        });
+
+                        // Available token only
+                        var available = false;
+                        $.each(that.usedVeneerMaterialDisplayNames, function (index, token) {
+                            if (token === e.attrs.value) {
+                                available = true;
+                                return false;
+                            }
+                        });
+                        if (!available) {
+                            e.preventDefault();
+                        }
+                    })
+                    .on('tokenfield:createdtoken tokenfield:removedtoken', function (e) {
+                        var tokenList = $(this).tokenfield('getTokensList');
+                        that.generateFilters.veneer_material_names_filter = tokenList.length === 0 ? [] : tokenList.split(';');
+                        that.generateCutlist(function () {
+                            $('#ladb_cutlist_veneer_material_names_filter-tokenfield', that.$page).focus();
+                        });
+                    })
+                ;
 
                 // Bind buttons
                 $('.ladb-btn-setup-model-units', that.$header).on('click', function() {
@@ -301,6 +351,11 @@
                 $('#ladb_cutlist_btn_edge_material_names_filter_clear', that.$page).on('click', function () {
                     $(this).blur();
                     that.generateFilters.edge_material_names_filter = [];
+                    that.generateCutlist();
+                });
+                $('#ladb_cutlist_btn_veneer_material_names_filter_clear', that.$page).on('click', function () {
+                    $(this).blur();
+                    that.generateFilters.veneer_material_names_filter = [];
                     that.generateCutlist();
                 });
                 $('.ladb-btn-toggle-no-print', that.$page).on('click', function () {
@@ -321,7 +376,7 @@
                     that.scrollSlideToTarget(null, $target, true, true);
                     return false;
                 });
-                $('a.ladb-btn-material-filter', that.$page).on('click', function () {
+                $('a.ladb-btn-edge-material-filter', that.$page).on('click', function () {
                     $(this).blur();
                     var materialFilter = $(this).data('material-display-name');
                     var indexOf = that.generateFilters.edge_material_names_filter.indexOf(materialFilter);
@@ -329,6 +384,18 @@
                         that.generateFilters.edge_material_names_filter.splice(indexOf, 1);
                     } else {
                         that.generateFilters.edge_material_names_filter.push(materialFilter);
+                    }
+                    that.generateCutlist();
+                    return false;
+                });
+                $('a.ladb-btn-veneer-material-filter', that.$page).on('click', function () {
+                    $(this).blur();
+                    var materialFilter = $(this).data('material-display-name');
+                    var indexOf = that.generateFilters.veneer_material_names_filter.indexOf(materialFilter);
+                    if (indexOf > -1) {
+                        that.generateFilters.veneer_material_names_filter.splice(indexOf, 1);
+                    } else {
+                        that.generateFilters.veneer_material_names_filter.push(materialFilter);
                     }
                     that.generateCutlist();
                     return false;

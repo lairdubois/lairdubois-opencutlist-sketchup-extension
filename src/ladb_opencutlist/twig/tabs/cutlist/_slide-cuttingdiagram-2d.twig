@@ -22,7 +22,7 @@
 {% set showEdges = group.show_edges and not generateOptions.hide_edges %}
 
 {% set fullWidthCompatible = compatible_with('svg.height-auto') %}
-{% set sheetStrippedname = group.material_type == 6 ? 'veneer' : 'sheet' %}  {# 6 = TYPE_VENEER #}
+{% set sheetStrippedname = group.material_type == 6 ? 'veneer' : 'good' %}  {# 6 = TYPE_VENEER #}
 
 {% macro part_tooltip(part) %}
 {% spaceless %}

@@ -41,6 +41,7 @@ module Ladb::OpenCutList
       @hide_final_areas = settings['hide_final_areas']
       @tags_filter = settings['tags_filter']
       @edge_material_names_filter = settings['edge_material_names_filter']
+      @veneer_material_names_filter = settings['veneer_material_names_filter']
 
       # Setup caches
       @instance_infos_cache = {}
@@ -152,7 +153,7 @@ module Ladb::OpenCutList
           end
 
           # Edge materials filter -> exclude all non sheet good parts
-          if !@edge_material_names_filter.empty? && material_attributes.type != MaterialAttributes::TYPE_SHEET_GOOD
+          if (!@edge_material_names_filter.empty? || !@veneer_material_names_filter.empty?) && material_attributes.type != MaterialAttributes::TYPE_SHEET_GOOD
             cutlist.ignored_instance_count += 1
             next
           end
@@ -451,10 +452,10 @@ module Ladb::OpenCutList
               veneer_materials = [ veneer_zmin_material, veneer_zmax_material ].compact.uniq
 
               # Materials filter
-              # if !@edge_material_names_filter.empty? && !(@edge_material_names_filter - edge_materials.map { |m| m.display_name }).empty?
-              #   cutlist.ignored_instance_count += 1
-              #   next
-              # end
+              if !@veneer_material_names_filter.empty? && !(@veneer_material_names_filter - veneer_materials.map { |m| m.display_name }).empty?
+                cutlist.ignored_instance_count += 1
+                next
+              end
 
               # Increment material usage
               veneer_materials.each { |veneer_material|

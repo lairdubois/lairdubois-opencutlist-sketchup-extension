@@ -223,6 +223,8 @@ tab:
       remove_label_filter: "Ne plus filtrer sur '{{ label }}'"
       add_edge_material_name_filter: "Filtrer sur '{{ material_name }}'"
       remove_edge_material_name_filter: "Ne plus filtrer sur '{{ material_name }}'"
+      add_veneer_material_name_filter: "Filtrer sur '{{ material_name }}'"
+      remove_veneer_material_name_filter: "Ne plus filtrer sur '{{ material_name }}'"
       not_aligned_on_axes: "Attention, cette pièce n'est peut-être pas correctement alignée sur ses axes"
       instance_count_by_part: "Cette pièce est comptabilisée par lot de **{{ count }}** unités."
       unused_instance_count: "Attention, **{{ count }}** unité du dernier lot ne sera pas utilisée."
@@ -429,6 +431,7 @@ tab:
       filters_warning: "Ce filtrage n'affiche que **{{ count }}** pièce sur un total de {{ total }}."
       filters_warning_plural: "Ce filtrage n'affiche que **{{ count }}** pièces sur un total de {{ total }}."
       edge_material_names_filter: Matières de chant à filtrer
+      veneer_material_names_filter: Matières de placage à filtrer
       tags_filter: Tags à filtrer
       dimensions_help: Comprendre les dimensions
       summary: Récapitulatif
@@ -623,7 +626,7 @@ tab:
         Format attendu : **L**x**Q**. Où **L** est la *longueur* du reste et **Q** la quantité.
         La quantité est facultative.
         *Si aucune unité n'est spécifiée, l'unité du modèle sera prise en compte.*
-      option_std_sheet_sheet: Panneau standard
+      option_std_sheet_good: Panneau standard
       option_std_sheet_veneer: Feuille standard
       option_std_sheet_help: |
         Sélectionnez ici le panneau ou feuille standard qui sera dupliqué pour contenir au mieux toutes les pièces.
@@ -631,7 +634,7 @@ tab:
         Éditez la matière '{{ material_name }}' pour mettre à jour cette liste.
       option_std_sheet_add: Ajouter une taille
       option_std_sheet_none: Aucun
-      option_scrap_sheet_sheet_sizes: Restes de panneau
+      option_scrap_sheet_good_sizes: Restes de panneau
       option_scrap_sheet_veneer_sizes: Restes de feuille
       option_scrap_sheet_sizes_placeholder: longueur x largeur x quantité ; ...
       option_scrap_sheet_sizes_help: |
@@ -672,8 +675,8 @@ tab:
         bar_dimensional_type_1: Reste de barre
         bar_edge_type_0: Bande standard
         bar_edge_type_1: Reste de bande
-        sheet_sheet_type_0: Panneau standard
-        sheet_sheet_type_1: Reste de panneau
+        sheet_good_type_0: Panneau standard
+        sheet_good_type_1: Reste de panneau
         sheet_veneer_type_0: Feuille standard
         sheet_veneer_type_1: Reste de feuille
         unused: Inutilisée
