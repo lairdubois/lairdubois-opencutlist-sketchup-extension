@@ -27,7 +27,7 @@
             <span class="ladb-separator no-print"></span>
             {% if part.children %}
                 <a href="#" class="ladb-btn-folding-toggle-row ladb-click-tool no-print" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.folding_part'|i18next }}"><i class="ladb-opencutlist-icon-arrow-down"></i></a>
-                {% if group.material_type != 4 %}       {# 4 = TYPE_EDGE #}
+                {% if group.material_type != 4 and group.material_type != 6 %}       {# 4 = TYPE_EDGE, 6 = TYPE_VENEER #}
                     <a href="#" class="ladb-btn-highlight-part no-print" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.highlight_parts'|i18next }}"><i class="ladb-opencutlist-icon-magnifier-multiple"></i></a>
                     <a href="#" class="ladb-btn-edit-part no-print" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edit_parts_properties'|i18next }}..."><i class="ladb-opencutlist-icon-edit-multiple"></i></a>
                 {% endif %}
@@ -35,7 +35,7 @@
                 <a href="#" class="ladb-btn-highlight-part no-print" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.highlight_part'|i18next }}"><i class="ladb-opencutlist-icon-magnifier"></i></a>
                 <a href="#" class="ladb-btn-edit-part ladb-click-tool no-print" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edit_part_properties'|i18next }}..."><i class="ladb-opencutlist-icon-edit"></i></a>
             {% endif %}
-            {% if not isChild and group.material_type != 4 %}       {# 4 = TYPE_EDGE #}
+            {% if not isChild and group.material_type != 4 and group.material_type != 6 %}       {# 4 = TYPE_EDGE, 6 = TYPE_VENEER #}
                 <a href="#" class="ladb-btn-select-part no-print"><i class="ladb-opencutlist-icon-check-box"></i></a>
             {% endif %}
         {% endif %}

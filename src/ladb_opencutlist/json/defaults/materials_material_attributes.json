@@ -110,7 +110,7 @@
     "std_thicknesses": "",
     "std_sections": "",
     "std_sizes": "",
-    "grained": false,
+    "grained": true,
     "edge_decremented": true,
     "volumic_mass": "",
     "std_prices": []

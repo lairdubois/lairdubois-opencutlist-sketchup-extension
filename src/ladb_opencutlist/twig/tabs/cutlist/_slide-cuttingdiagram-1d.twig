@@ -341,7 +341,7 @@
                         <tr class="ladb-cutlist-row ladb-minitools-holder" data-part-id="{{ part.id }}">
                             {% include 'tabs/cutlist/_list-row-col-number.twig' %}
                             <td>
-                                {% if group.material_type == 3 %}   {# 3 = TYPE_DIMENSIONAL #}
+                                {% if group.material_type != 4 %}   {# 4 = TYPE_EDGE #}
                                     <div class="ladb-minitools ladb-minitools-right no-print">
                                         {% if part.flipped %}<a href="#" class="ladb-tool-info" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.flipped'|i18next }}"><i class="ladb-opencutlist-icon-flipped"></i></a>{% endif %}
                                         <span class="ladb-separator"></span>

@@ -918,7 +918,7 @@
                     $inputStdThicknesses.closest('.form-group').hide();
                     $inputStdSections.closest('.form-group').hide();
                     $inputStdSizes.closest('.form-group').show();
-                    $selectGrained.closest('.form-group').hide();
+                    $selectGrained.closest('.form-group').show();
                     $selectEdgeDecremented.closest('.form-group').hide();
                     $inputVolumicMass.closest('.form-group').show();
                     $editorStdPrices.closest('.form-group').show();
