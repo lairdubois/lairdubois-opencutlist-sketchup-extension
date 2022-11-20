@@ -1554,6 +1554,12 @@
                 if (editedPart.edge_material_names.xmax !== editedParts[i].edge_material_names.xmax) {
                     editedPart.edge_material_names.xmax = MULTIPLE_VALUE;
                 }
+                if (editedPart.veneer_material_names.zmin !== editedParts[i].veneer_material_names.zmin) {
+                    editedPart.veneer_material_names.zmin = MULTIPLE_VALUE;
+                }
+                if (editedPart.veneer_material_names.zmax !== editedParts[i].veneer_material_names.zmax) {
+                    editedPart.veneer_material_names.zmax = MULTIPLE_VALUE;
+                }
             }
 
             if (tab === undefined) {
@@ -1563,6 +1569,7 @@
                 || tab === 'extra' && group.material_type === 0 /* 0 = TYPE_UNKNOWN */
                 || tab === 'axes' && multiple
                 || tab === 'edges' && group.material_type !== 2 /* 2 = TYPE_SHEET_GOOD */
+                || tab === 'veneers' && group.material_type !== 2 /* 2 = TYPE_SHEET_GOOD */
                 || tab === 'infos'
                 || tab === 'warnings'
             ) {
@@ -1608,6 +1615,8 @@
                 var $selectEdgeYminMaterialName = $('#ladb_cutlist_part_select_edge_ymin_material_name', $modal);
                 var $selectEdgeXminMaterialName = $('#ladb_cutlist_part_select_edge_xmin_material_name', $modal);
                 var $selectEdgeXmaxMaterialName = $('#ladb_cutlist_part_select_edge_xmax_material_name', $modal);
+                var $selectVeneerZminMaterialName = $('#ladb_cutlist_part_select_veneer_zmin_material_name', $modal);
+                var $selectVeneerZmaxMaterialName = $('#ladb_cutlist_part_select_veneer_zmax_material_name', $modal);
                 var $rectIncreaseLength = $('svg .increase-length', $modal);
                 var $rectIncreaseWidth = $('svg .increase-width', $modal);
                 var $rectEdgeYmax = $('svg .edge-ymax', $modal);
@@ -1618,6 +1627,8 @@
                 var $labelEdgeYmin = $('#ladb_cutlist_part_label_edge_ymin', $modal);
                 var $labelEdgeXmin = $('#ladb_cutlist_part_label_edge_xmin', $modal);
                 var $labelEdgeXmax = $('#ladb_cutlist_part_label_edge_xmax', $modal);
+                var $labelVeneerZmin = $('#ladb_cutlist_part_label_veneer_zmin', $modal);
+                var $labelVeneerZmax = $('#ladb_cutlist_part_label_veneer_zmax', $modal);
                 var $btnHighlight = $('#ladb_cutlist_part_highlight', $modal);
                 var $btnExportToSkp = $('#ladb_cutlist_part_export_to_skp', $modal);
                 var $btnUpdate = $('#ladb_cutlist_part_update', $modal);
@@ -1703,6 +1714,16 @@
                             $selectEdgeXmaxMaterialName.selectpicker('val', materialName);
                         }
                         fnUpdateEdgesPreview();
+                    }
+                };
+                var fnMaterialNameCopyToAllVeneers = function(materialName) {
+                    if (materialName !== MULTIPLE_VALUE) {
+                        if (!$selectVeneerZmaxMaterialName.prop( "disabled")) {
+                            $selectVeneerZmaxMaterialName.selectpicker('val', materialName);
+                        }
+                        if (!$selectVeneerZminMaterialName.prop( "disabled")) {
+                            $selectVeneerZminMaterialName.selectpicker('val', materialName);
+                        }
                     }
                 };
                 var fnOnAxiesOrderChanged = function () {
@@ -1822,6 +1843,22 @@
                             fnUpdateEdgesPreview();
                         }
                     });
+                $selectVeneerZminMaterialName.val(editedPart.veneer_material_names.zmin);
+                $selectVeneerZminMaterialName
+                    .selectpicker(SELECT_PICKER_OPTIONS)
+                    .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                        if (!fnNewCheck($(this), 6 /* TYPE_VENEER */)) {
+                            fnUpdateEdgesPreview();
+                        }
+                    });
+                $selectVeneerZmaxMaterialName.val(editedPart.veneer_material_names.zmax);
+                $selectVeneerZmaxMaterialName
+                    .selectpicker(SELECT_PICKER_OPTIONS)
+                    .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                        if (!fnNewCheck($(this), 6 /* TYPE_VENEER */)) {
+                            fnUpdateEdgesPreview();
+                        }
+                    });
 
                 // Bind increases
                 $rectIncreaseLength.on('click', function() {
@@ -1878,6 +1915,12 @@
                 });
                 $labelEdgeXmax.on('dblclick', function() {
                     fnMaterialNameCopyToAllEdges($selectEdgeXmaxMaterialName.val());
+                });
+                $labelVeneerZmin.on('dblclick', function() {
+                    fnMaterialNameCopyToAllVeneers($selectVeneerZminMaterialName.val());
+                });
+                $labelVeneerZmax.on('dblclick', function() {
+                    fnMaterialNameCopyToAllVeneers($selectVeneerZmaxMaterialName.val());
                 });
 
                 // Bind buttons
@@ -1964,6 +2007,13 @@
                         }
                         if ($selectEdgeXmaxMaterialName.val() !== MULTIPLE_VALUE) {
                             editedParts[i].edge_material_names.xmax = $selectEdgeXmaxMaterialName.val();
+                        }
+
+                        if ($selectVeneerZminMaterialName.val() !== MULTIPLE_VALUE) {
+                            editedParts[i].veneer_material_names.zmin = $selectVeneerZminMaterialName.val();
+                        }
+                        if ($selectVeneerZmaxMaterialName.val() !== MULTIPLE_VALUE) {
+                            editedParts[i].veneer_material_names.zmax = $selectVeneerZmaxMaterialName.val();
                         }
 
                     }

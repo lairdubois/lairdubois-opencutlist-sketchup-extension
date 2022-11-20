@@ -31,6 +31,8 @@ module Ladb::OpenCutList
         :thickness_increase,
         :edge_material_names,
         :edge_entity_ids,
+        :veneer_material_names,
+        :veneer_entity_ids,
         :entity_ids
     )
 
@@ -62,6 +64,8 @@ module Ladb::OpenCutList
             part_data['thickness_increase'],
             part_data['edge_material_names'],
             part_data['edge_entity_ids'],
+            part_data['veneer_material_names'],
+            part_data['veneer_entity_ids'],
             part_data['entity_ids']
         )
       }
@@ -134,6 +138,8 @@ module Ladb::OpenCutList
           _apply_material(part_data.edge_material_names['ymax'], part_data.edge_entity_ids['ymax'], model)
           _apply_material(part_data.edge_material_names['xmin'], part_data.edge_entity_ids['xmin'], model)
           _apply_material(part_data.edge_material_names['xmax'], part_data.edge_entity_ids['xmax'], model)
+          _apply_material(part_data.veneer_material_names['zmin'], part_data.veneer_entity_ids['zmin'], model)
+          _apply_material(part_data.veneer_material_names['zmax'], part_data.veneer_entity_ids['zmax'], model)
 
           # Transform part axes if axes order exist
           if part_data.axes_order.is_a?(Array) && part_data.axes_order.length == 3

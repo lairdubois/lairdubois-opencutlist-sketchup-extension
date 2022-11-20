@@ -255,6 +255,7 @@ tab:
       veneer_zmin: Contreparement
       veneer_zmax: Parement
       dblclick_to_copy_all_edges: Double-cliquez ici pour dupliquer cette valeur aux autres chants
+      dblclick_to_copy_all_veneers: Double-cliquez ici pour dupliquer cette valeur à l'autre surface
       dblclick_to_sort_axes: Double-cliquez ici pour réordonner automatiquement les axes suivant les dimensions de la pièce
       part_axes: Axes internes de la pièce
       select_unselect_all_parts: Sélectionner / Désélectionner toutes les pièces du groupe
@@ -285,6 +286,7 @@ tab:
       general: Générales
       extra_help: "Liste des propriétés spécifiques au type de matière \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Chants
+      veneers: Placages
       name: Nom
       material: Matière
       cumulable: Cumulable
@@ -360,6 +362,7 @@ tab:
       over_length: Sur la longueur
       over_width: Sur la largeur
       edge_disabled_help: Ce chant n'est pas configurable parce qu'aucune face pouvant porter une matière n'a été détectée sur ce bord de la pièce dans le modèle.
+      veneer_disabled_help: Cette surface n'est pas configurable parce qu'aucune face pouvant porter une matière n'a été détectée sur ce bord de la pièce dans le modèle.
       multiple_values: Valeurs multiples
       export_to_skp: Exporter (.skp)
     export_to_skp:

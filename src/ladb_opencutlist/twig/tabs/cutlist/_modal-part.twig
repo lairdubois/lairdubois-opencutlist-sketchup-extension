@@ -8,7 +8,7 @@
 {% block headerInner %}
     {{ parent() }}
     <ul class="nav nav-tabs nav-justified" role="tablist">
-        <li role="presentation"{% if tab == 'general' %} class="active"{% endif %}><a href="#tab_edit_part_general" role="tab" data-toggle="tab">{{ 'tab.cutlist.edit_part.general'|i18next }}</a></li>
+        <li role="presentation"{% if tab == 'general' %} class="active"{% endif %}><a href="#tab_edit_part_general" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-settings"></i>{# {{ 'tab.cutlist.edit_part.general'|i18next }} #}</a></li>
         {% if group.material_type != 0 %} {# 0 = TYPE_UNKNOWN #}
             <li role="presentation"{% if tab == 'extra' %} class="active"{% endif %}><a href="#tab_edit_part_extra" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-material-type-{{ group.material_type }}"></i>&nbsp;{{ ('tab.materials.type_'~group.material_type)|i18next }}</a></li>
         {% endif %}
@@ -20,6 +20,7 @@
         {% endif %}
         {% if group.material_type == 2 %} {# 2 = TYPE_SHEET_GOOD #}
             <li role="presentation"{% if tab == 'edges' %} class="active"{% endif %}><a href="#tab_edit_part_edges" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-edge-{{ part.edge_pattern }}"></i>&nbsp;{{ 'tab.cutlist.edit_part.edges'|i18next }}</a></li>
+            <li role="presentation"{% if tab == 'veneers' %} class="active"{% endif %}><a href="#tab_edit_part_veneers" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-veneer-{{ part.veneer_pattern }}"></i>&nbsp;{{ 'tab.cutlist.edit_part.veneers'|i18next }}</a></li>
         {% endif %}
         {% if not multiple %}
             <li role="presentation"{% if tab == 'infos' %} class="active"{% endif %}><a href="#tab_edit_part_infos" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-info"></i></a></li>
@@ -332,7 +333,7 @@
                             <label id="ladb_cutlist_part_label_edge_ymax" class="control-label col-xs-2" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.dblclick_to_copy_all_edges'|i18next }}"><i class="ladb-opencutlist-icon-edge-1000 ladb-opencutlist-icon-lg"></i></label>
                             <div class="col-xs-{% if part.edge_entity_ids.ymax is empty %}8{% else %}10{% endif %}">
                                 <select class="form-control" id="ladb_cutlist_part_select_edge_ymax_material_name"{% if part.edge_entity_ids.ymax is empty %} disabled{% endif %}>
-                                    {% include 'tabs/cutlist/_material-usages.twig' with { 'value':part.edge_material_names.ymax, 'typeFilters':[4] } %} {# TYPE_SHEET_GOOD #}
+                                    {% include 'tabs/cutlist/_material-usages.twig' with { 'value':part.edge_material_names.ymax, 'typeFilters':[4] } %} {# TYPE_EDGE #}
                                 </select>
                             </div>
                         </div>
@@ -343,7 +344,7 @@
                             <label id="ladb_cutlist_part_label_edge_ymin" class="control-label col-xs-2" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.dblclick_to_copy_all_edges'|i18next }}"><i class="ladb-opencutlist-icon-edge-0010 ladb-opencutlist-icon-lg"></i></label>
                             <div class="col-xs-{% if part.edge_entity_ids.ymin is empty %}8{% else %}10{% endif %}">
                                 <select class="form-control" id="ladb_cutlist_part_select_edge_ymin_material_name"{% if part.edge_entity_ids.ymin is empty %} disabled{% endif %}>
-                                    {% include 'tabs/cutlist/_material-usages.twig' with { 'value':part.edge_material_names.ymin, 'typeFilters':[4] } %} {# TYPE_SHEET_GOOD #}
+                                    {% include 'tabs/cutlist/_material-usages.twig' with { 'value':part.edge_material_names.ymin, 'typeFilters':[4] } %} {# TYPE_EDGE #}
                                 </select>
                             </div>
                         </div>
@@ -357,7 +358,7 @@
                             <label id="ladb_cutlist_part_label_edge_xmin" class="control-label col-xs-2" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.dblclick_to_copy_all_edges'|i18next }}"><i class="ladb-opencutlist-icon-edge-0001 ladb-opencutlist-icon-lg"></i></label>
                             <div class="col-xs-{% if part.edge_entity_ids.xmin is empty %}8{% else %}10{% endif %}">
                                 <select class="form-control" id="ladb_cutlist_part_select_edge_xmin_material_name"{% if part.edge_entity_ids.xmin is empty %} disabled{% endif %}>
-                                    {% include 'tabs/cutlist/_material-usages.twig' with { 'value':part.edge_material_names.xmin, 'typeFilters':[4] } %} {# TYPE_SHEET_GOOD #}
+                                    {% include 'tabs/cutlist/_material-usages.twig' with { 'value':part.edge_material_names.xmin, 'typeFilters':[4] } %} {# TYPE_EDGE #}
                                 </select>
                             </div>
                         </div>
@@ -368,7 +369,39 @@
                             <label id="ladb_cutlist_part_label_edge_xmax" class="control-label col-xs-2" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.dblclick_to_copy_all_edges'|i18next }}"><i class="ladb-opencutlist-icon-edge-0100 ladb-opencutlist-icon-lg"></i></label>
                             <div class="col-xs-{% if part.edge_entity_ids.xmax is empty %}8{% else %}10{% endif %}">
                                 <select class="form-control" id="ladb_cutlist_part_select_edge_xmax_material_name"{% if part.edge_entity_ids.xmax is empty %} disabled{% endif %}>
-                                    {% include 'tabs/cutlist/_material-usages.twig' with { 'value':part.edge_material_names.xmax, 'typeFilters':[4] } %} {# TYPE_SHEET_GOOD #}
+                                    {% include 'tabs/cutlist/_material-usages.twig' with { 'value':part.edge_material_names.xmax, 'typeFilters':[4] } %} {# TYPE_EDGE #}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane{% if tab == 'veneers' %} active{% endif %}" id="tab_edit_part_veneers">
+                <div class="row">
+                    <div class="form form-horizontal col-xs-6">
+                        <h5 class="text-center">{{ 'tab.cutlist.tooltip.veneer_zmax'|i18next }}</h5>
+                        <div class="form-group">
+                            {% if part.veneer_entity_ids.zmax is empty %}
+                                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a class="ladb-tool-warning" tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.veneer_disabled_help'|i18next }}"><i class="ladb-opencutlist-icon-warning"></i></a></div>
+                            {% endif %}
+                            <label id="ladb_cutlist_part_label_veneer_zmax" class="control-label col-xs-2" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.dblclick_to_copy_all_veneers'|i18next }}"><i class="ladb-opencutlist-icon-veneer-10 ladb-opencutlist-icon-lg"></i></label>
+                            <div class="col-xs-{% if part.veneer_entity_ids.zmax is empty %}8{% else %}10{% endif %}">
+                                <select class="form-control" id="ladb_cutlist_part_select_veneer_zmax_material_name"{% if part.veneer_entity_ids.zmax is empty %} disabled{% endif %}>
+                                    {% include 'tabs/cutlist/_material-usages.twig' with { 'value':part.veneer_material_names.zmax, 'typeFilters':[6] } %} {# TYPE_VENEER #}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form form-horizontal col-xs-6">
+                        <h5 class="text-center">{{ 'tab.cutlist.tooltip.veneer_zmin'|i18next }}</h5>
+                        <div class="form-group">
+                            {% if part.veneer_entity_ids.zmin is empty %}
+                                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a class="ladb-tool-warning" tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.veneer_disabled_help'|i18next }}"><i class="ladb-opencutlist-icon-warning"></i></a></div>
+                            {% endif %}
+                            <label id="ladb_cutlist_part_label_veneer_zmin" class="control-label col-xs-2" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.dblclick_to_copy_all_veneers'|i18next }}"><i class="ladb-opencutlist-icon-veneer-01 ladb-opencutlist-icon-lg"></i></label>
+                            <div class="col-xs-{% if part.veneer_entity_ids.zmin is empty %}8{% else %}10{% endif %}">
+                                <select class="form-control" id="ladb_cutlist_part_select_veneer_zmin_material_name"{% if part.veneer_entity_ids.zmin is empty %} disabled{% endif %}>
+                                    {% include 'tabs/cutlist/_material-usages.twig' with { 'value':part.veneer_material_names.zmin, 'typeFilters':[6] } %} {# TYPE_VENEER #}
                                 </select>
                             </div>
                         </div>
