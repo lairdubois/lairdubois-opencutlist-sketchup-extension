@@ -406,6 +406,8 @@ tab:
       hide_final_areas_help: "Si cette option est activée, les **surfaces finies** des pièces de type *Panneau* ne sont pas affichées."
       hide_edges: Masquer les colonnes de chants
       hide_edges_help: "Si cette option est activée, les **colonnes de chants** des pièces de type *Panneau* ne sont pas affichées."
+      hide_veneers: Masquer les colonnes de placages
+      hide_veneers_help: "Si cette option est activée, les **colonnes de placages** des pièces de type *Panneau* ne sont pas affichées."
       minimize_on_highlight: Réduire après *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Si cette option est activée, la fenêtre OpenCutList sera réduite lorsque la fonction *'$t(tab.cutlist.highlight_part)'* est utilisée."
       general: Générales
@@ -458,6 +460,7 @@ tab:
       thickness: Épaisseur
       thickness_short: Ép.
       edges: Chants
+      veneers: Placages
     export:
       title: Exportation
       info_0: |

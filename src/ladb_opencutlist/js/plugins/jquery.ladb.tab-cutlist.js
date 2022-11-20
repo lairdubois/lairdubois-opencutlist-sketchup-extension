@@ -3338,6 +3338,7 @@
         var $inputHideBBoxDimensions = $('#ladb_input_hide_bbox_dimensions', $modal);
         var $inputHideFinalAreas = $('#ladb_input_hide_final_areas', $modal);
         var $inputHideEdges = $('#ladb_input_hide_edges', $modal);
+        var $inputHideVeneers = $('#ladb_input_hide_veneers', $modal);
         var $inputMinimizeOnHighlight = $('#ladb_input_minimize_on_highlight', $modal);
         var $sortablePartOrderStrategy = $('#ladb_sortable_part_order_strategy', $modal);
         var $inputTags = $('#ladb_input_tags', $modal);
@@ -3361,6 +3362,7 @@
             options.hide_bbox_dimensions = $inputHideBBoxDimensions.is(':checked');
             options.hide_final_areas = $inputHideFinalAreas.is(':checked');
             options.hide_edges = $inputHideEdges.is(':checked');
+            options.hide_veneers = $inputHideVeneers.is(':checked');
             options.minimize_on_highlight = $inputMinimizeOnHighlight.is(':checked');
             options.tags = $inputTags.tokenfield('getTokensList').split(';');
 
@@ -3395,6 +3397,7 @@
             $inputHideBBoxDimensions.prop('checked', options.hide_bbox_dimensions);
             $inputHideFinalAreas.prop('checked', options.hide_final_areas);
             $inputHideEdges.prop('checked', options.hide_edges);
+            $inputHideVeneers.prop('checked', options.hide_veneers);
             $inputMinimizeOnHighlight.prop('checked', options.minimize_on_highlight);
             $inputTags.tokenfield('setTokens', options.tags === '' ? ' ' : options.tags);
 

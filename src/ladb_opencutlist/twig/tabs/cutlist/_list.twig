@@ -189,7 +189,8 @@
     {% set hideThickness = group.material_type == 2 or group.material_type == 3 or group.material_type == 4 or group.material_type == 6 %}    {# 2 = TYPE_SHEET_GOOD, 3 = TYPE_DIMENSIONAL, 4 = TYPE_EDGE, 6 = TYPE_VENEER #}
     {% set showFinalAreas = group.material_type == 2 and not generateOptions.hide_final_areas %}    {# 2 = TYPE_SHEET_GOOD #}
     {% set showEdges = group.show_edges and not generateOptions.hide_edges %}
-    {% set colspan = 14 %}
+    {% set showVeneers = group.show_veneers and not generateOptions.hide_veneers %}
+    {% set colspan = 16 %}
     {% if showCuttingDimensions %}
         {% if hideWidth %}
             {% set colspan = colspan - 1 %}
@@ -212,6 +213,9 @@
     {% endif %}
     {% if not showEdges %}
         {% set colspan = colspan - 4 %}
+    {% endif %}
+    {% if not showVeneers %}
+        {% set colspan = colspan - 2 %}
     {% endif %}
 
     <table id="ladb_group_{{ group.id }}" data-group-id="{{ group.id }}" class="{% if groupHidden %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-material-type-{{ group.material_type }}">
@@ -273,6 +277,9 @@
             {% if showEdges %}
                 <td class="text-center" colspan="4">{{ ('tab.cutlist.list.edges')|i18next }}</td>
             {% endif %}
+            {% if showVeneers %}
+                <td class="text-center" colspan="4">{{ ('tab.cutlist.list.veneers')|i18next }}</td>
+            {% endif %}
         </tr>
         <tr class="table-column-heading">
             {% if showCuttingDimensions %}
@@ -293,6 +300,10 @@
                 <td class="text-center" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_ymax'|i18next }}"><i class="ladb-opencutlist-icon-edge-1000"></i></td>
                 <td class="text-center" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_xmin'|i18next }}"><i class="ladb-opencutlist-icon-edge-0001"></i></td>
                 <td class="text-center" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_xmax'|i18next }}"><i class="ladb-opencutlist-icon-edge-0100"></i></td>
+            {% endif %}
+            {% if showVeneers %}
+                <td class="text-center" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.veneer_zmin'|i18next }}"><i class="ladb-opencutlist-icon-veneer-01"></i></td>
+                <td class="text-center" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.veneer_zmax'|i18next }}"><i class="ladb-opencutlist-icon-veneer-10"></i></td>
             {% endif %}
         </tr>
         </thead>
@@ -334,6 +345,10 @@
                     <td class="ladb-cutlist-edge{% if part.edge_material_names.ymax in generateFilters.edge_material_names_filter %} ladb-active{% endif %}{% if not part.children and part.edge_entity_ids.ymax is empty %} ladb-disabled{% endif %}">{% if part.edge_material_names.ymax %}<span class="ladb-cutlist-edge-material-name">{{ part.edge_material_names.ymax }}</span><span class="ladb-cutlist-edge-std-dimension">{{ part.edge_std_dimensions.ymax }}</span>{% endif %}</td>
                     <td class="ladb-cutlist-edge{% if part.edge_material_names.xmin in generateFilters.edge_material_names_filter %} ladb-active{% endif %}{% if not part.children and part.edge_entity_ids.xmin is empty %} ladb-disabled{% endif %}">{% if part.edge_material_names.xmin %}<span class="ladb-cutlist-edge-material-name">{{ part.edge_material_names.xmin }}</span><span class="ladb-cutlist-edge-std-dimension">{{ part.edge_std_dimensions.xmin }}</span>{% endif %}</td>
                     <td class="ladb-cutlist-edge{% if part.edge_material_names.xmax in generateFilters.edge_material_names_filter %} ladb-active{% endif %}{% if not part.children and part.edge_entity_ids.xmax is empty %} ladb-disabled{% endif %}">{% if part.edge_material_names.xmax %}<span class="ladb-cutlist-edge-material-name">{{ part.edge_material_names.xmax }}</span><span class="ladb-cutlist-edge-std-dimension">{{ part.edge_std_dimensions.xmax }}</span>{% endif %}</td>
+                {% endif %}
+                {% if showVeneers %}
+                    <td class="ladb-cutlist-veneer{% if part.veneer_material_names.zmin in generateFilters.veneer_material_names_filter %} ladb-active{% endif %}{% if not part.children and part.veneer_entity_ids.zmin is empty %} ladb-disabled{% endif %}">{% if part.veneer_material_names.zmin %}<span class="ladb-cutlist-veneer-material-name">{{ part.veneer_material_names.zmin }}</span><span class="ladb-cutlist-veneer-std-dimension">{{ part.veneer_std_dimensions.zmin }}</span>{% endif %}</td>
+                    <td class="ladb-cutlist-veneer{% if part.veneer_material_names.zmax in generateFilters.veneer_material_names_filter %} ladb-active{% endif %}{% if not part.children and part.veneer_entity_ids.zmax is empty %} ladb-disabled{% endif %}">{% if part.veneer_material_names.zmax %}<span class="ladb-cutlist-veneer-material-name">{{ part.veneer_material_names.zmax }}</span><span class="ladb-cutlist-veneer-std-dimension">{{ part.veneer_std_dimensions.zmax }}</span>{% endif %}</td>
                 {% endif %}
             </tr>
             {% if part.children %}

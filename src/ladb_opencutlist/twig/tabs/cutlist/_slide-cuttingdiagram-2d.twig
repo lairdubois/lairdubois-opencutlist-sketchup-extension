@@ -20,6 +20,7 @@
 
 {% set showCuttingDimensions = group.show_cutting_dimensions %}
 {% set showEdges = group.show_edges and not generateOptions.hide_edges %}
+{% set showVeneers = group.show_veneers and not generateOptions.hide_veneers %}
 
 {% set fullWidthCompatible = compatible_with('svg.height-auto') %}
 {% set sheetStrippedname = group.material_type == 6 ? 'veneer' : 'good' %}  {# 6 = TYPE_VENEER #}
@@ -243,12 +244,15 @@
         {% if options.hide_part_list %}
             {% set colspan = 1 %}
         {% else %}
-            {% set colspan = 11 %}
+            {% set colspan = 13 %}
             {% if not showCuttingDimensions %}
                 {% set colspan = colspan - 2 %}
             {% endif %}
             {% if not showEdges %}
                 {% set colspan = colspan - 4 %}
+            {% endif %}
+            {% if not showVeneers %}
+                {% set colspan = colspan - 2 %}
             {% endif %}
         {% endif %}
         {% set maxSheetLength = 0 %}
@@ -406,6 +410,9 @@
                         {% if showEdges %}
                             <td class="text-center" colspan="4">{{ ('tab.cutlist.list.edges')|i18next }}</td>
                         {% endif %}
+                        {% if showVeneers %}
+                            <td class="text-center" colspan="4">{{ ('tab.cutlist.list.veneers')|i18next }}</td>
+                        {% endif %}
                     </tr>
                     <tr class="table-column-heading">
                         {% if showCuttingDimensions %}
@@ -421,6 +428,10 @@
                             <td class="text-center" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_ymax'|i18next }}"><i class="ladb-opencutlist-icon-edge-1000"></i></td>
                             <td class="text-center" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_xmin'|i18next }}"><i class="ladb-opencutlist-icon-edge-0001"></i></td>
                             <td class="text-center" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_xmax'|i18next }}"><i class="ladb-opencutlist-icon-edge-0100"></i></td>
+                        {% endif %}
+                        {% if showVeneers %}
+                            <td class="text-center" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.veneer_zmin'|i18next }}"><i class="ladb-opencutlist-icon-veneer-01"></i></td>
+                            <td class="text-center" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.veneer_zmax'|i18next }}"><i class="ladb-opencutlist-icon-veneer-10"></i></td>
                         {% endif %}
                     </tr>
                     {% for part in sheet.grouped_parts %}
@@ -463,6 +474,10 @@
                                 <td class="ladb-cutlist-edge">{% if part.edge_material_names.ymax %}<span class="ladb-cutlist-edge-material-name">{{ part.edge_material_names.ymax }}</span><span class="ladb-cutlist-edge-std-dimension">{{ part.edge_std_dimensions.ymax }}</span>{% endif %}</td>
                                 <td class="ladb-cutlist-edge">{% if part.edge_material_names.xmin %}<span class="ladb-cutlist-edge-material-name">{{ part.edge_material_names.xmin }}</span><span class="ladb-cutlist-edge-std-dimension">{{ part.edge_std_dimensions.xmin }}</span>{% endif %}</td>
                                 <td class="ladb-cutlist-edge">{% if part.edge_material_names.xmax %}<span class="ladb-cutlist-edge-material-name">{{ part.edge_material_names.xmax }}</span><span class="ladb-cutlist-edge-std-dimension">{{ part.edge_std_dimensions.xmax }}</span>{% endif %}</td>
+                            {% endif %}
+                            {% if showVeneers %}
+                                <td class="ladb-cutlist-veneer">{% if part.veneer_material_names.zmin %}<span class="ladb-cutlist-veneer-material-name">{{ part.veneer_material_names.zmin }}</span><span class="ladb-cutlist-veneer-std-dimension">{{ part.veneer_std_dimensions.zmin }}</span>{% endif %}</td>
+                                <td class="ladb-cutlist-veneer">{% if part.veneer_material_names.zmax %}<span class="ladb-cutlist-veneer-material-name">{{ part.veneer_material_names.zmax }}</span><span class="ladb-cutlist-veneer-std-dimension">{{ part.veneer_std_dimensions.zmax }}</span>{% endif %}</td>
                             {% endif %}
                         </tr>
                     {% endfor %}

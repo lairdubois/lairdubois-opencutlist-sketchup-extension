@@ -99,7 +99,7 @@ module Ladb::OpenCutList
 
   class Part < AbstractPart
 
-    attr_reader :definition_id, :is_dynamic_attributes_name, :resized, :flipped, :material_origins, :orientation_locked_on_axis, :symmetrical, :length_increase, :width_increase, :thickness_increase, :entity_ids, :entity_serialized_paths, :length_increased, :width_increased, :thickness_increased, :auto_oriented, :not_aligned_on_axes, :unused_instance_count, :layers, :multiple_layers, :edge_entity_ids, :normals_to_values, :normals_to_dimensions, :dimensions_to_normals
+    attr_reader :definition_id, :is_dynamic_attributes_name, :resized, :flipped, :material_origins, :orientation_locked_on_axis, :symmetrical, :length_increase, :width_increase, :thickness_increase, :entity_ids, :entity_serialized_paths, :length_increased, :width_increased, :thickness_increased, :auto_oriented, :not_aligned_on_axes, :unused_instance_count, :layers, :multiple_layers, :edge_entity_ids, :veneer_entity_ids, :normals_to_values, :normals_to_dimensions, :dimensions_to_normals
 
     def initialize(part_def, group, part_number)
       super(part_def, group)
@@ -126,6 +126,7 @@ module Ladb::OpenCutList
       @layers = part_def.layers.map(&:name)
       @multiple_layers = part_def.multiple_layers
       @edge_entity_ids = part_def.edge_entity_ids
+      @veneer_entity_ids = part_def.veneer_entity_ids
       @normals_to_values = part_def.size.normals_to_values
       @normals_to_dimensions = part_def.size.normals_to_dimensions
       @dimensions_to_normals = part_def.size.dimensions_to_normals
