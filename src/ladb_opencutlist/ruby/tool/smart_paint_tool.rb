@@ -129,16 +129,16 @@ module Ladb::OpenCutList
             filters.append(filters_lbl)
 
             @filter_buttons = []
-            for type in 0..(COLOR_MATERIAL_TYPES.length - 1)
+            COLOR_MATERIAL_TYPES.each do |type, color|
 
               filters_btn = Kuix::Button.new
               filters_btn.layout = Kuix::GridLayout.new
               filters_btn.min_size.set_all(@unit * 10)
               filters_btn.border.set_all(@unit)
               filters_btn.set_style_attribute(:background_color, Sketchup::Color.new('white'))
-              filters_btn.set_style_attribute(:background_color, COLOR_MATERIAL_TYPES[type], :active)
-              filters_btn.set_style_attribute(:background_color, COLOR_MATERIAL_TYPES[type].blend(Sketchup::Color.new('white'), 0.2), :hover)
-              filters_btn.set_style_attribute(:border_color, COLOR_MATERIAL_TYPES[type], :selected)
+              filters_btn.set_style_attribute(:background_color, color, :active)
+              filters_btn.set_style_attribute(:background_color, color.blend(Sketchup::Color.new('white'), 0.2), :hover)
+              filters_btn.set_style_attribute(:border_color, color, :selected)
               filters_btn.selected = @@filters[type]
               filters_btn.data = type
               filters_btn.append_static_label(Plugin.instance.get_i18n_string("tool.smart_paint.filter_#{type}"), @unit * 3)

@@ -245,6 +245,8 @@ tab:
       size_increased: "Dimension majorée par une surcote de {{ value }}"
       has_edges: "Cette pièce contient {{ count }} chant plaqué"
       has_edges_plural: "Cette pièce contient {{ count }} chants plaqués"
+      has_veneers: "Cette pièce contient {{ count }} surface plaquée"
+      has_veneeres_plural: "Cette pièce contient {{ count }} surface plaquées"
       edge_decremented: "Réduit de l'épaisseur des chants ({{ decrement }})"
       edge_ymin: Chant Longueur 1
       edge_ymax: Chant Longueur 2
@@ -812,7 +814,7 @@ tab:
     type_3: Barre
     type_4: Bande de chant
     type_5: Accessoire
-    type_6: Placage
+    type_6: Feuille de placage
     tooltip:
       type_0: Type de matière '$t(tab.materials.type_0)'
       type_1: Type de matière '$t(tab.materials.type_1)'

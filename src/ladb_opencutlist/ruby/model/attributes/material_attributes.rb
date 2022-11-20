@@ -115,6 +115,8 @@
         when TYPE_EDGE
           4
         when TYPE_HARDWARE
+          6
+        when TYPE_VENEER
           5
         else
           99

@@ -358,6 +358,18 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-asterisk:before {
   content: "\e958";
 }
+.ladb-opencutlist-icon-veneer-11:before {
+  content: "\e995";
+}
+.ladb-opencutlist-icon-veneer-01:before {
+  content: "\e996";
+}
+.ladb-opencutlist-icon-veneer-10:before {
+  content: "\e997";
+}
+.ladb-opencutlist-icon-veneer-00:before {
+  content: "\e998";
+}
 .ladb-opencutlist-icon-edge-1111:before {
   content: "\e959";
 }
