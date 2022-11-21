@@ -348,7 +348,7 @@ module Ladb::OpenCutList
             group_def.show_cutting_dimensions = true
           end
 
-          # Compute axes alignment, final area and edges
+          # Compute axes alignment, final area, layers, edges and veneers
           case group_def.material_type
 
             when MaterialAttributes::TYPE_SOLID_WOOD
@@ -492,7 +492,7 @@ module Ladb::OpenCutList
               group_def.show_cutting_dimensions ||= thickness_decrement > 0
               group_def.veneer_decremented ||= thickness_decrement > 0
 
-          when MaterialAttributes::TYPE_DIMENSIONAL
+            when MaterialAttributes::TYPE_DIMENSIONAL
 
               x_face_infos, y_face_infos, z_face_infos, layers = _grab_main_faces_and_layers(definition)
               t_plane_count, t_final_area, t_area_ratio = _compute_oriented_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Z_AXIS)
@@ -506,8 +506,8 @@ module Ladb::OpenCutList
 
           end
 
-          group_def.show_edges = part_def.edge_count > 0 || group_def.show_edges
-          group_def.show_veneers = part_def.veneer_count > 0 || group_def.show_veneers
+          group_def.show_edges ||= part_def.edge_count > 0
+          group_def.show_veneers ||= part_def.veneer_count > 0
           group_def.store_part_def(part_def)
 
           if number
