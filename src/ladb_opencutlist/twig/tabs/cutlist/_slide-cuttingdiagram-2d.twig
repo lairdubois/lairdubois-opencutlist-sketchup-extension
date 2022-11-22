@@ -306,14 +306,14 @@
                                         <line class="leftover-cross" x1="{{ leftover.px_x + leftover.px_length }}" y1="{{ leftover.px_y }}" x2="{{ leftover.px_x }}" y2="{{ leftover.px_y + leftover.px_width }}"></line>
                                         <line class="leftover-cross" x1="{{ leftover.px_x }}" y1="{{ leftover.px_y }}" x2="{{ leftover.px_x + leftover.px_length }}" y2="{{ leftover.px_y + leftover.px_width }}"></line>
                                     {% endif %}
-                                    {% set _hideLength = leftover.px_width < (dimensionFontSize + dimensionOffset * 2) or leftover.px_length < leftover.length|length * dimensionFontSize * textFontWidthFactor %}
+                                    {% set _hideLength = leftover.px_width < (dimensionFontSize + dimensionOffset * 2) or leftover.px_length <= leftover.length|length * dimensionFontSize * textFontWidthFactor %}
                                     {% if not _hideLength %}
                                         {% set _yCenteredValue = dimensionFontSize + (partOutlineWidth + dimensionOffset) * 2 > leftover.px_width %}
                                         {% set _x = leftover.px_x + leftover.px_length / 2 %}
                                         {% set _y = leftover.px_y + (_yCenteredValue ? leftover.px_width / 2 : dimensionOffset + dimensionFontSize) %}
                                         <text class="leftover-dimension" x="{{ _x }}" y="{{ _y }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle"{% if _yCenteredValue %} dominant-baseline="central"{% endif %}>{{ leftover.length }}</text>
                                     {% endif %}
-                                    {% set _hideWidth = leftover.px_length < (dimensionFontSize + dimensionOffset * 2) or leftover.px_width < leftover.width|length * dimensionFontSize * textFontWidthFactor %}
+                                    {% set _hideWidth = leftover.px_length < (dimensionFontSize + dimensionOffset * 2) or leftover.px_width <= leftover.width|length * dimensionFontSize * textFontWidthFactor %}
                                     {% if not _hideWidth %}
                                         {% set _xCenteredValue = dimensionFontSize + (partOutlineWidth + dimensionOffset) * 2 > leftover.px_length %}
                                         {% set _x = leftover.px_x + (_xCenteredValue ? leftover.px_length / 2 : dimensionOffset + dimensionFontSize) %}

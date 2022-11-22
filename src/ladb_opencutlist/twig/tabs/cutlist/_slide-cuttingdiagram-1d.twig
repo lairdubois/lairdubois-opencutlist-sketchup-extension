@@ -275,7 +275,7 @@
                                 {% for slice in bar.leftover.slices %}
                                     {% set yOffset = slice.index * sliceHeight %}
                                     {% set hideCross = options.hide_cross or slice.px_length < dimensionFontSize or bar.px_width < dimensionFontSize %}
-                                    {% set hideDimensions = displayedDimensions or slice.px_length < (dimensionFontSize * bar.leftover.length|length) %}
+                                    {% set hideDimensions = displayedDimensions or slice.px_length <= (bar.leftover.length|length * dimensionFontSize * textFontWidthFactor) %}
                                     <rect class="leftover-inner" x="{{ slice.px_x }}" y="{{ yOffset }}" width="{{ slice.px_length }}" height="{{ bar.px_width }}"></rect>
                                     {% if not hideCross %}
                                         <line class="leftover-cross" x1="{{ slice.px_x + slice.px_length }}" y1="{{ yOffset }}" x2="{{ slice.px_x }}" y2="{{ yOffset + bar.px_width }}"></line>
@@ -300,7 +300,7 @@
                                         {% if not hideNumber %}
                                             <text class="part-number" x="{{ slice.px_x + slice.px_length / 2 }}" y="{{ yOffset + bar.px_width / 2 }}" font-size="{{ max(8, min(numberFontSize, (slice.px_length - partOutlineWidth * 2) / numberTextLength, (bar.px_width - partOutlineWidth * 2))) }}px" text-anchor="middle" dominant-baseline="central">{% if (not loop.first and originCornerIsLeft) or (not loop.last and originCornerIsRight) %}&hellip;{% endif %}{{ numberText|escape }}{% if (not loop.last and originCornerIsLeft) or (not loop.first and originCornerIsRight) %}&hellip;{% endif %}</text>
                                         {% endif %}
-                                        {% set hideDimensions = displayedDimensions or slice.px_length < (dimensionFontSize * part.cutting_length|length * textFontWidthFactor) %}
+                                        {% set hideDimensions = displayedDimensions or slice.px_length <= (part.cutting_length|length * dimensionFontSize * textFontWidthFactor) %}
                                         {% if not hideDimensions %}
                                             <text class="part-dimension" x="{{ slice.px_x + slice.px_length / 2 }}" y="{{ yOffset + bar.px_width + dimensionOffset + dimensionFontSize }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic"{% if showCuttingDimensions %} style="fill: red;"{% endif %}>{{ part.cutting_length }}</text>
                                             {% set displayedDimensions = true %}
