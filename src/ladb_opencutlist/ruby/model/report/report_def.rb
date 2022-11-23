@@ -24,8 +24,8 @@ module Ladb::OpenCutList
           MaterialAttributes::TYPE_SHEET_GOOD => SheetGoodReportGroupDef.new,
           MaterialAttributes::TYPE_DIMENSIONAL => DimensionalReportGroupDef.new,
           MaterialAttributes::TYPE_EDGE => EdgeReportGroupDef.new,
-          MaterialAttributes::TYPE_HARDWARE => HardwareReportGroupDef.new,
           MaterialAttributes::TYPE_VENEER => VeneerReportGroupDef.new,
+          MaterialAttributes::TYPE_HARDWARE => HardwareReportGroupDef.new,
       }
 
     end
