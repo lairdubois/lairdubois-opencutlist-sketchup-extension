@@ -506,11 +506,11 @@ module Ladb::OpenCutList
 
               if edges_def
 
-                # Populate edge GroupDefs
-                edge_ymin_group_def = _populate_edge_group_def(edges_def[:ymin_material], part_def)
-                edge_ymax_group_def = _populate_edge_group_def(edges_def[:ymax_material], part_def)
-                edge_xmin_group_def = _populate_edge_group_def(edges_def[:xmin_material], part_def)
-                edge_xmax_group_def = _populate_edge_group_def(edges_def[:xmax_material], part_def)
+                # Populate edge GroupDefs (use the full instance thickness)
+                edge_ymin_group_def = _populate_edge_group_def(edges_def[:ymin_material], instance_info.size.thickness)
+                edge_ymax_group_def = _populate_edge_group_def(edges_def[:ymax_material], instance_info.size.thickness)
+                edge_xmin_group_def = _populate_edge_group_def(edges_def[:xmin_material], instance_info.size.thickness)
+                edge_xmax_group_def = _populate_edge_group_def(edges_def[:xmax_material], instance_info.size.thickness)
 
                 # Populate PartDef
                 part_def.set_edge_materials(edges_def[:ymin_material], edges_def[:ymax_material], edges_def[:xmin_material], edges_def[:xmax_material])
@@ -530,8 +530,8 @@ module Ladb::OpenCutList
               if veneers_def
 
                 # Populate veneer GroupDefs
-                veneer_zmin_group_def = _populate_veneer_group_def(veneers_def[:zmin_material], part_def)
-                veneer_zmax_group_def = _populate_veneer_group_def(veneers_def[:zmax_material], part_def)
+                veneer_zmin_group_def = _populate_veneer_group_def(veneers_def[:zmin_material])
+                veneer_zmax_group_def = _populate_veneer_group_def(veneers_def[:zmax_material])
 
                 # Populate PartDef
                 part_def.set_veneer_materials(veneers_def[:zmin_material], veneers_def[:zmax_material])
@@ -1207,13 +1207,13 @@ module Ladb::OpenCutList
 
     # -- Edge Utils --
 
-    def _populate_edge_group_def(material, part_def)
+    def _populate_edge_group_def(material, thickness)
       return nil if material.nil?
 
       material_attributes = _get_material_attributes(material)
 
       std_width_info = _find_std_value(
-          part_def.size.thickness * part_def.thickness_layer_count,
+          thickness,
           material_attributes.l_std_widths,
           true
       )
@@ -1277,7 +1277,7 @@ module Ladb::OpenCutList
 
     # -- Veneer Utils --
 
-    def _populate_veneer_group_def(material, part_def)
+    def _populate_veneer_group_def(material)
       return nil if material.nil?
 
       material_attributes = _get_material_attributes(material)
