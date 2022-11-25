@@ -21,17 +21,18 @@ module Ladb::OpenCutList
       return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
 
       # Retrieve parts
+      material_types_filter = [ MaterialAttributes::TYPE_SOLID_WOOD, MaterialAttributes::TYPE_SHEET_GOOD, MaterialAttributes::TYPE_DIMENSIONAL ]
       parts = []
       group = nil
       if @group_id
         group = @cutlist.get_group(@group_id)
-        if group
+        if group && material_types_filter.include?(group.def.material_type)
           parts = group.get_real_parts
         end
       elsif @part_ids
-        parts = @cutlist.get_real_parts(@part_ids)
+        parts = @cutlist.get_real_parts(@part_ids, material_types_filter)
       else
-        parts = @cutlist.get_real_parts
+        parts = @cutlist.get_real_parts(nil, material_types_filter)
       end
 
       # Compute part count
