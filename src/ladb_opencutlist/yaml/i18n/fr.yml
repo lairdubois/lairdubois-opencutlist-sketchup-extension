@@ -65,6 +65,7 @@ core:
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
+      edit_part_veneers_properties: $t(tab.cutlist.edit_part_veneers_properties)
       smart_paint: $t(core.toolbar.command.smart_paint)
   toolbar:
     name: OpenCutList
@@ -170,6 +171,7 @@ tab:
     edit_part_axes_properties: Éditer les propriétés (axes) de la pièce
     edit_part_size_increase_properties: Éditer les propriétés (surcotes) de la pièce
     edit_part_edges_properties: Éditer les propriétés (chants) de la pièce
+    edit_part_veneers_properties: Éditer les propriétés (placages) de la pièce
     tooltip:
       show_hide_block: Afficher / Masquer ce groupe
       scroll_to_block: Défiler vers le groupe

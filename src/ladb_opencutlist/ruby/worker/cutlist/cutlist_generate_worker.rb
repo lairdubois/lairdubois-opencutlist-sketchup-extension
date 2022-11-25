@@ -540,7 +540,6 @@ module Ladb::OpenCutList
                 part_def.veneer_thickness_decrement = veneers_def[:thickness_decrement]
                 part_def.veneer_decremented = veneers_def[:veneer_decremented]
 
-                group_def.show_cutting_dimensions ||= veneers_def[:thickness_decrement] > 0
                 group_def.veneer_decremented ||= veneers_def[:thickness_decrement] > 0
 
               end
