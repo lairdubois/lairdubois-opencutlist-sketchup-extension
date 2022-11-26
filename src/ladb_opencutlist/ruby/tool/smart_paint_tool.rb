@@ -458,72 +458,14 @@ module Ladb::OpenCutList
         set_action(ACTION_PICK)
         view.invalidate
       elsif key == VK_LEFT
-        active_button = _get_active_button
-        left_button = nil
-        left_button_dist = nil
-        if active_button
-          @material_buttons.each do |button|
-            next if button.bounds.center.y != active_button.bounds.center.y
-            x_dist = active_button.bounds.x_min - button.bounds.x_max
-            if x_dist > 0 && (left_button_dist.nil? || x_dist < left_button_dist)
-              left_button_dist = x_dist
-              left_button = button
-            end
-          end
-          if left_button
-            left_button.fire(:click, flags)
-          end
+        button = _get_selected_material_button
+        if button&.previous
+          button.previous.fire(:click, flags)
         end
       elsif key == VK_RIGHT
-        active_button = _get_active_button
-        right_button = nil
-        right_button_dist = nil
-        if active_button
-          @material_buttons.each do |button|
-            next if button.bounds.center.y != active_button.bounds.center.y
-            x_dist = button.bounds.x_min - active_button.bounds.x_max
-            if x_dist > 0 && (right_button_dist.nil? || x_dist < right_button_dist)
-              right_button_dist = x_dist
-              right_button = button
-            end
-          end
-          if right_button
-            right_button.fire(:click, flags)
-          end
-        end
-      elsif key == VK_UP
-        active_button = _get_active_button
-        up_button = nil
-        up_button_dist = nil
-        if active_button
-          @material_buttons.each do |button|
-            next if button.bounds.center.x != active_button.bounds.center.x
-            y_dist = active_button.bounds.y_min - button.bounds.y_max
-            if y_dist > 0 && (up_button_dist.nil? || y_dist < up_button_dist)
-              up_button_dist = y_dist
-              up_button = button
-            end
-          end
-          if up_button
-            up_button.fire(:click, flags)
-          end
-        end
-      elsif key == VK_DOWN
-        active_button = _get_active_button
-        down_button = nil
-        down_button_dist = nil
-        if active_button
-          @material_buttons.each do |button|
-            next if button.bounds.center.x != active_button.bounds.center.x
-            y_dist = button.bounds.y_min - active_button.bounds.y_max
-            if y_dist > 0 && (down_button_dist.nil? || y_dist < down_button_dist)
-              down_button_dist = y_dist
-              down_button = button
-            end
-          end
-          if down_button
-            down_button.fire(:click, flags)
-          end
+        button = _get_selected_material_button
+        if button&.next
+          button.next.fire(:click, flags)
         end
       end
     end
@@ -703,7 +645,7 @@ module Ladb::OpenCutList
 
     end
 
-    def _get_active_button
+    def _get_selected_material_button
       @material_buttons.each { |button|
         return button if button.selected?
       }
