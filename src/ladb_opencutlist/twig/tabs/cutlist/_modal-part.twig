@@ -8,9 +8,9 @@
 {% block headerInner %}
     {{ parent() }}
     <ul class="nav nav-tabs nav-justified" role="tablist">
-        <li role="presentation"{% if tab == 'general' %} class="active"{% endif %}><a href="#tab_edit_part_general" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-settings"></i>{# {{ 'tab.cutlist.edit_part.general'|i18next }} #}</a></li>
+        <li role="presentation"{% if tab == 'general' %} class="active"{% endif %}><a href="#tab_edit_part_general" role="tab" data-toggle="tab">{{ 'tab.cutlist.edit_part.general'|i18next }}</a></li>
         {% if group.material_type != 0 %} {# 0 = TYPE_UNKNOWN #}
-            <li role="presentation"{% if tab == 'extra' %} class="active"{% endif %}><a href="#tab_edit_part_extra" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-material-type-{{ group.material_type }}"></i>&nbsp;{{ ('tab.materials.type_'~group.material_type)|i18next }}</a></li>
+            <li role="presentation"{% if tab == 'extra' %} class="active"{% endif %}><a href="#tab_edit_part_extra" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-material-type-{{ group.material_type }}"></i>{# &nbsp;{{ ('tab.materials.type_'~group.material_type)|i18next }} #}</a></li>
         {% endif %}
         {% if not multiple %}
             <li role="presentation"{% if tab == 'axes' %} class="active"{% endif %}><a href="#tab_edit_part_axes" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-axes"></i>&nbsp;{{ 'tab.cutlist.edit_part.axes'|i18next }}</a></li>
@@ -377,6 +377,46 @@
                 </div>
             </div>
             <div role="tabpanel" class="tab-pane{% if tab == 'veneers' %} active{% endif %}" id="tab_edit_part_veneers">
+                {% if not multiple %}
+                    <div class="text-center">
+                        {% set svgSize = 330 %}
+                        {% set areaSize = 280 %}
+                        {% set axisWidth = 2 %}
+                        {% set axisLength = 20 %}
+                        {% set axisOffset = 10 %}
+                        {% set partOutlineWidth = 2 %}
+                        {% set partLength = (areaSize - 40) * part.l_ratio %}
+                        {% set partWidth = (areaSize - 40) * part.w_ratio %}
+                        <svg viewBox="0 0 {{ svgSize }} {{ svgSize }}" xmlns="http://www.w3.org/2000/svg" version="1.1" style="width: {{ svgSize }}px; height: {{ svgSize }}px;">
+                            <g transform="translate(50,0)">
+                                {% embed 'tabs/cutlist/_svg-part.twig' %}
+                                    {% set noSvgWrapper = true %}
+                                    {% set hideAxes = true %}
+                                    {% set hideWidthDimension = true %}
+                                    {% set hideGrainDirectionArrow = true %}
+                                    {% set hideName = true %}
+                                    {% set arrowDashed = true %}
+                                    {% block extra %}
+                                        <g class="veneer veneer-zmin{% if part.veneer_entity_ids.zmin is empty %} ladb-disabled{% endif %}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.veneer_zmin'|i18next }}">
+                                            <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ partWidth }}" class="veneer veneer-inner" />
+                                        </g>
+                                    {% endblock %}
+                                {% endembed %}
+                            </g>
+                            <g transform="translate(0,50)">
+                                {% embed 'tabs/cutlist/_svg-part.twig' %}
+                                    {% set noSvgWrapper = true %}
+                                    {% set hideLengthDimension = true %}
+                                    {% block extra %}
+                                        <g class="veneer veneer-zmax{% if part.veneer_entity_ids.zmax is empty %} ladb-disabled{% endif %}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.veneer_zmax'|i18next }}">
+                                            <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ partWidth }}" class="veneer veneer-inner" />
+                                        </g>
+                                    {% endblock %}
+                                {% endembed %}
+                            </g>
+                        </svg>
+                    </div>
+                {% endif %}
                 <div class="row">
                     <div class="form form-horizontal col-xs-6">
                         <h5 class="text-center">{{ 'tab.cutlist.tooltip.veneer_zmax'|i18next }}</h5>

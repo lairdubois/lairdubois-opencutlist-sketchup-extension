@@ -650,6 +650,10 @@ body.no-ie, body.ie-gt11 {
 
 #ladb_cutlist_modal_part svg {
 
+  text {
+    pointer-events: none;
+  }
+
   .part {
 
     .part-outer {
@@ -665,6 +669,7 @@ body.no-ie, body.ie-gt11 {
   .arrow {
     fill: #fff;
     stroke: #eee;
+    stroke-width: 2px;
   }
 
   .axis {
@@ -713,6 +718,36 @@ body.no-ie, body.ie-gt11 {
     }
 
     .edge-outer, .edge-inner {
+      fill: rgba(0, 0, 0, 0.01);
+    }
+
+  }
+
+  .veneer {
+    cursor: pointer;
+
+    &:hover {
+      .veneer-inner {
+        fill: @ladb-brand-primary !important;
+        fill-opacity: 0.2;
+      }
+    }
+
+    &.ladb-active {
+      .veneer-inner {
+        fill: @ladb-material-type-6;
+        fill-opacity: 0.2;
+      }
+    }
+
+    &.ladb-disabled {
+      .veneer-inner {
+        fill: #efefef !important;
+        fill-opacity: 0.8;
+      }
+    }
+
+    .veneer-inner {
       fill: rgba(0, 0, 0, 0.01);
     }
 

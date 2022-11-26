@@ -1623,10 +1623,12 @@
                 var $selectVeneerZmaxMaterialName = $('#ladb_cutlist_part_select_veneer_zmax_material_name', $modal);
                 var $rectIncreaseLength = $('svg .increase-length', $modal);
                 var $rectIncreaseWidth = $('svg .increase-width', $modal);
-                var $rectEdgeYmax = $('svg .edge-ymax', $modal);
                 var $rectEdgeYmin = $('svg .edge-ymin', $modal);
+                var $rectEdgeYmax = $('svg .edge-ymax', $modal);
                 var $rectEdgeXmin = $('svg .edge-xmin', $modal);
                 var $rectEdgeXmax = $('svg .edge-xmax', $modal);
+                var $rectVeneerZmin = $('svg .veneer-zmin', $modal);
+                var $rectVeneerZmax = $('svg .veneer-zmax', $modal);
                 var $labelEdgeYmax = $('#ladb_cutlist_part_label_edge_ymax', $modal);
                 var $labelEdgeYmin = $('#ladb_cutlist_part_label_edge_ymin', $modal);
                 var $labelEdgeXmin = $('#ladb_cutlist_part_label_edge_xmin', $modal);
@@ -1683,6 +1685,18 @@
                         $rectEdgeXmax.addClass('ladb-active');
                     }
                 };
+                var fnUpdateVeneersPreview = function() {
+                    if ($selectVeneerZminMaterialName.val() === '') {
+                        $rectVeneerZmin.removeClass('ladb-active');
+                    } else {
+                        $rectVeneerZmin.addClass('ladb-active');
+                    }
+                    if ($selectVeneerZmaxMaterialName.val() === '') {
+                        $rectVeneerZmax.removeClass('ladb-active');
+                    } else {
+                        $rectVeneerZmax.addClass('ladb-active');
+                    }
+                };
                 var fnUpdateIncreasesPreview = function() {
                     if ($inputLengthIncrease.val() == null || $inputLengthIncrease.val().length === 0 || $inputLengthIncrease.val().match(/^0([.,]{0,1}[0]*)(m|cm|mm|yd|'|")*$/g)) {
                         $rectIncreaseLength.removeClass('ladb-active');
@@ -1728,6 +1742,7 @@
                         if (!$selectVeneerZminMaterialName.prop( "disabled")) {
                             $selectVeneerZminMaterialName.selectpicker('val', materialName);
                         }
+                        fnUpdateVeneersPreview();
                     }
                 };
                 var fnOnAxiesOrderChanged = function () {
@@ -1852,7 +1867,7 @@
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                         if (!fnNewCheck($(this), 6 /* TYPE_VENEER */)) {
-                            fnUpdateEdgesPreview();
+                            fnUpdateVeneersPreview();
                         }
                     });
                 $selectVeneerZmaxMaterialName.val(editedPart.veneer_material_names.zmax);
@@ -1860,7 +1875,7 @@
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                         if (!fnNewCheck($(this), 6 /* TYPE_VENEER */)) {
-                            fnUpdateEdgesPreview();
+                            fnUpdateVeneersPreview();
                         }
                     });
 
@@ -1884,6 +1899,14 @@
                 });
                 $rectEdgeXmax.on('click', function() {
                     $selectEdgeXmaxMaterialName.selectpicker('toggle');
+                });
+
+                // Bind veneers
+                $rectVeneerZmin.on('click', function() {
+                    $selectVeneerZminMaterialName.selectpicker('toggle');
+                });
+                $rectVeneerZmax.on('click', function() {
+                    $selectVeneerZmaxMaterialName.selectpicker('toggle');
                 });
 
                 // Bind sorter
@@ -2070,6 +2093,9 @@
 
                 // Init edges preview
                 fnUpdateEdgesPreview();
+
+                // Init veneers preview
+                fnUpdateVeneersPreview();
 
                 // Show modal
                 $modal.modal('show');
