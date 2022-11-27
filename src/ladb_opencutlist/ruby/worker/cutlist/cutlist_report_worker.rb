@@ -9,8 +9,8 @@ module Ladb::OpenCutList
 
     def initialize(settings, cutlist)
 
-      @hidden_group_ids = settings['hidden_group_ids']
-      @solid_wood_coefficient = [ 1.0, "#{settings['solid_wood_coefficient']}".tr(',', '.').to_f ].max
+      @hidden_group_ids = settings.fetch('hidden_group_ids')
+      @solid_wood_coefficient = [ 1.0, "#{settings.fetch('solid_wood_coefficient')}".tr(',', '.').to_f ].max
 
       @cutlist = cutlist
 

@@ -8,6 +8,7 @@ module Ladb::OpenCutList
   require_relative '../helper/layer_visibility_helper'
   require_relative '../helper/face_triangles_helper'
   require_relative '../model/attributes/material_attributes'
+  require_relative '../worker/cutlist/cutlist_generate_worker'
 
   class SmartPaintTool < Kuix::KuixTool
 
@@ -670,7 +671,7 @@ module Ladb::OpenCutList
           if picked_path == @picked_path && event == :move
             return  # Previously detected path, stop process to optimize.
           end
-          if picked_path && picked_path.last && picked_path.last.is_a?(Sketchup::Face)
+          if picked_path&.last && picked_path.last.is_a?(Sketchup::Face)
 
             @picked_path = picked_path
 
@@ -697,6 +698,17 @@ module Ladb::OpenCutList
               picked_part_path = _get_part_path_from_path(picked_path)
               picked_part = picked_path.last
               if picked_part
+
+                worker = CutlistGenerateWorker.new(
+                  {
+                    'auto_orient' => true,
+                  },
+                  picked_part,
+                  picked_part_path
+                )
+                cutlist = worker.run
+
+                puts cutlist.groups.first.parts.first.def.name
 
                 @unpaint_color = MaterialUtils::get_color_from_path(picked_part_path[0...-1]) # [0...-1] returns array without last element
                 @triangles = _compute_children_faces_triangles(view, picked_part.definition.entities, PathUtils::get_transformation(picked_part_path))

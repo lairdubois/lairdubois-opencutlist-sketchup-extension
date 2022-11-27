@@ -79,7 +79,6 @@ module Ladb::OpenCutList
       parts
     end
 
-
   end
 
 end

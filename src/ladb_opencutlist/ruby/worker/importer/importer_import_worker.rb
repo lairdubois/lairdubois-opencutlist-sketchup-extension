@@ -5,9 +5,10 @@ module Ladb::OpenCutList
     MATERIALS_PALETTE = %w(#4F78A7 #EF8E2C #DE545A #79B8B2 #5CA34D #ECCA48 #AE78A2 #FC9CA8 #9B755F #BAB0AC)
 
     def initialize(settings, parts)
-      @remove_all = settings['remove_all']
-      @keep_definitions_settings = settings['keep_definitions_settings']
-      @keep_materials_settings = settings['keep_materials_settings']
+
+      @remove_all = settings.fetch('remove_all')
+      @keep_definitions_settings = settings.fetch('keep_definitions_settings')
+      @keep_materials_settings = settings.fetch('keep_materials_settings')
 
       @parts = parts
 

@@ -26,22 +26,28 @@ module Ladb::OpenCutList
     MATERIAL_ORIGIN_INHERITED = 2
     MATERIAL_ORIGIN_CHILD = 3
 
-    def initialize(settings)
+    def initialize(settings, active_entity = nil, active_path = nil)
 
-      @auto_orient = settings['auto_orient']
-      @flipped_detection = settings['flipped_detection']
-      @smart_material = settings['smart_material']
-      @dynamic_attributes_name = settings['dynamic_attributes_name']
-      @part_number_with_letters = settings['part_number_with_letters']
-      @part_number_sequence_by_group = settings['part_number_sequence_by_group']
-      @part_folding = settings['part_folding']
-      @part_order_strategy = settings['part_order_strategy']
-      @hide_descriptions = settings['hide_descriptions']
-      @hide_tags = settings['hide_tags']
-      @hide_final_areas = settings['hide_final_areas']
-      @tags_filter = settings['tags_filter']
-      @edge_material_names_filter = settings['edge_material_names_filter']
-      @veneer_material_names_filter = settings['veneer_material_names_filter']
+      options = Plugin.instance.get_model_preset('cutlist_options')
+
+      @auto_orient = settings.fetch('auto_orient', options.fetch('auto_orient'))
+      @flipped_detection = settings.fetch('flipped_detection', options.fetch('flipped_detection'))
+      @smart_material = settings.fetch('smart_material', options.fetch('smart_material'))
+      @dynamic_attributes_name = settings.fetch('dynamic_attributes_name', options.fetch('dynamic_attributes_name'))
+      @part_number_with_letters = settings.fetch('part_number_with_letters', options.fetch('part_number_with_letters'))
+      @part_number_sequence_by_group = settings.fetch('part_number_sequence_by_group', options.fetch('part_number_sequence_by_group'))
+      @part_folding = settings.fetch('part_folding', options.fetch('part_folding'))
+      @part_order_strategy = settings.fetch('part_order_strategy', options.fetch('part_order_strategy'))
+      @hide_descriptions = settings.fetch('hide_descriptions', options.fetch('hide_descriptions'))
+      @hide_tags = settings.fetch('hide_tags', options.fetch('hide_tags'))
+      @hide_final_areas = settings.fetch('hide_final_areas', options.fetch('hide_final_areas'))
+      @tags_filter = settings.fetch('tags_filter', [])
+      @edge_material_names_filter = settings.fetch('edge_material_names_filter', [])
+      @veneer_material_names_filter = settings.fetch('veneer_material_names_filter', [])
+
+      # Retrieve active entity (if defined)
+      @active_entity = active_entity
+      @active_path = active_path
 
       # Setup caches
       @instance_infos_cache = {}
@@ -62,25 +68,34 @@ module Ladb::OpenCutList
 
       model = Sketchup.active_model
 
-      # Retrieve selected entities or all if no selection
-      if model
-        if model.selection.empty?
-          entities = model.active_entities
-          is_entity_selection = false
-        else
-          entities = model.selection
-          is_entity_selection = true
-        end
-      else
-        entities = []
-        is_entity_selection = false
-      end
+      if @active_entity && @active_path
 
-      # Fetch component instances in given entities
-      path = model&.active_path ? model.active_path : []
-      entities.each { |entity|
-        _fetch_useful_instance_infos(entity, path, @auto_orient)
-      }
+        # An active entity and its path is defined => use it
+        _fetch_useful_instance_infos(@active_entity, @active_path, @auto_orient)
+
+      else
+
+        # Retrieve selected entities or all if no selection
+        if model
+          if model.selection.empty?
+            entities = model.active_entities
+            is_entity_selection = false
+          else
+            entities = model.selection
+            is_entity_selection = true
+          end
+        else
+          entities = []
+          is_entity_selection = false
+        end
+
+        # Fetch component instances in given entities
+        path = model&.active_path ? model.active_path : []
+        entities.each { |entity|
+          _fetch_useful_instance_infos(entity, path, @auto_orient)
+        }
+
+      end
 
       # Retrieve model infos
       length_unit = DimensionUtils.instance.length_unit

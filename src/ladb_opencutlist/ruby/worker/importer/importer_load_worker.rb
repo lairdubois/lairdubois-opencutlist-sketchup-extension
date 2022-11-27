@@ -46,11 +46,13 @@ module Ladb::OpenCutList
     }
 
     def initialize(settings)
-      @path = settings['path']
-      @filename = settings['filename']
-      @col_sep = settings['col_sep']
-      @first_line_headers = settings['first_line_headers']
-      @column_mapping = settings['column_mapping']   # { :field_name => COLUMN_INDEX, ... }
+
+      @path = settings.fetch('path')
+      @filename = settings.fetch('filename')
+      @col_sep = settings.fetch('col_sep')
+      @first_line_headers = settings.fetch('first_line_headers')
+      @column_mapping = settings.fetch('column_mapping')   # { :field_name => COLUMN_INDEX, ... }
+
     end
 
     # -----

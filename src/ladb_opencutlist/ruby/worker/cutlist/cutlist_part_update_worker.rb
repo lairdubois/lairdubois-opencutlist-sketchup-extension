@@ -37,36 +37,37 @@ module Ladb::OpenCutList
     )
 
     def initialize(settings, cutlist)
+
       @parts_data = []
 
-      parts_data = settings['parts_data']
+      parts_data = settings.fetch('parts_data')
 
       parts_data.each { |part_data|
         @parts_data << PartData.new(
-            part_data['definition_id'],
-            part_data['name'],
-            part_data['is_dynamic_attributes_name'],
-            part_data['material_name'],
-            DefinitionAttributes.valid_cumulable(part_data['cumulable']),
-            part_data['instance_count_by_part'],
-            part_data['mass'],
-            part_data['price'],
-            part_data['thickness_layer_count'],
-            part_data['description'],
-            DefinitionAttributes.valid_tags(part_data['tags']),
-            part_data['orientation_locked_on_axis'],
-            part_data['symmetrical'],
-            part_data['ignore_grain_direction'],
-            part_data['axes_order'],
-            part_data['axes_origin_position'],
-            part_data['length_increase'],
-            part_data['width_increase'],
-            part_data['thickness_increase'],
-            part_data['edge_material_names'],
-            part_data['edge_entity_ids'],
-            part_data['veneer_material_names'],
-            part_data['veneer_entity_ids'],
-            part_data['entity_ids']
+            part_data.fetch('definition_id'),
+            part_data.fetch('name'),
+            part_data.fetch('is_dynamic_attributes_name'),
+            part_data.fetch('material_name'),
+            DefinitionAttributes.valid_cumulable(part_data.fetch('cumulable')),
+            part_data.fetch('instance_count_by_part'),
+            part_data.fetch('mass'),
+            part_data.fetch('price'),
+            part_data.fetch('thickness_layer_count'),
+            part_data.fetch('description'),
+            DefinitionAttributes.valid_tags(part_data.fetch('tags')),
+            part_data.fetch('orientation_locked_on_axis'),
+            part_data.fetch('symmetrical'),
+            part_data.fetch('ignore_grain_direction'),
+            part_data.fetch('axes_order'),
+            part_data.fetch('axes_origin_position'),
+            part_data.fetch('length_increase'),
+            part_data.fetch('width_increase'),
+            part_data.fetch('thickness_increase'),
+            part_data.fetch('edge_material_names'),
+            part_data.fetch('edge_entity_ids'),
+            part_data.fetch('veneer_material_names'),
+            part_data.fetch('veneer_entity_ids'),
+            part_data.fetch('entity_ids')
         )
       }
 

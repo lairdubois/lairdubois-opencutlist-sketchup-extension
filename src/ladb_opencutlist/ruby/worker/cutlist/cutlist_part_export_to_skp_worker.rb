@@ -3,7 +3,9 @@ module Ladb::OpenCutList
   class CutlistPartExportToSkpWorker
 
     def initialize(settings)
-      @definition_id = settings['definition_id']
+
+      @definition_id = settings.fetch('definition_id')
+
     end
 
     # -----

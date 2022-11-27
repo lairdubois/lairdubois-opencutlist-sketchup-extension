@@ -19,12 +19,15 @@ module Ladb::OpenCutList
     EXPORT_OPTION_ENCODING_UTF16BE = 2
 
     def initialize(settings, cutlist)
-      @source = settings['source']
-      @col_sep = settings['col_sep']
-      @encoding = settings['encoding']
-      @col_defs = settings['col_defs']
-      @target = settings['target']
-      @hidden_group_ids = settings['hidden_group_ids']
+
+      options = Plugin.instance.get_model_preset('cutlist_export_options')
+
+      @source = settings.fetch('source', options.fetch('source'))
+      @col_sep = settings.fetch('col_sep', options.fetch('col_sep'))
+      @encoding = settings.fetch('col_sep', options.fetch('encoding'))
+      @col_defs = settings.fetch('col_defs')
+      @target = settings.fetch('target')
+      @hidden_group_ids = settings.fetch('hidden_group_ids')
 
       @cutlist = cutlist
 
