@@ -555,7 +555,7 @@ module Ladb::OpenCutList
       # Select default current material if necessary
       if model.materials.length == 0
         set_current_material(nil, nil)
-      elsif @@current_material && !current_material_exists || @@current_material.nil? && !@material_defs.empty?
+      elsif !@material_defs.empty? && (@@current_material && !current_material_exists || @@current_material.nil?)
         set_current_material(@material_defs.first[:material], @material_defs.first[:material_attributes])
       else
         set_current_material(@@current_material, @@current_material ? MaterialAttributes.new(@@current_material) : nil)  # Reapply current material to setup the paint color

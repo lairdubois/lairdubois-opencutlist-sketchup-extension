@@ -9,6 +9,7 @@ in 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added sort tab in Labels options
   * Fixed smart paint tool selection from materials tab (Windows)
   * Fixed highlight part paint tool to ignore edges parts
+  * Fixed smart paint tool crash when switching model
   * Improved leftovers dimensions display in 1D cuttingdiagrams
 
 * 4.0.1 (2022-10-06)
