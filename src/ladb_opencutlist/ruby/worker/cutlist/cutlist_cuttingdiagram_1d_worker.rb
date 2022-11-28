@@ -12,7 +12,7 @@ module Ladb::OpenCutList
     def initialize(settings, cutlist)
 
       @group_id = settings.fetch('group_id')
-      @part_ids = settings.fetch('part_ids')
+      @part_ids = settings.fetch('part_ids', nil)
       @std_bar_length = DimensionUtils.instance.str_to_ifloat(settings.fetch('std_bar')).to_l.to_f
       @scrap_bar_lengths = DimensionUtils.instance.dxq_to_ifloats(settings.fetch('scrap_bar_lengths'))
       @saw_kerf = DimensionUtils.instance.str_to_ifloat(settings.fetch('saw_kerf')).to_l.to_f

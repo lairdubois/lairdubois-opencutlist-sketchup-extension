@@ -8,7 +8,7 @@ module Ladb::OpenCutList
 
       @minimize_on_highlight = settings.fetch('minimize_on_highlight')
       @group_id = settings.fetch('group_id')
-      @part_ids = settings.fetch('part_ids')
+      @part_ids = settings.fetch('part_ids', nil)
 
       @cutlist = cutlist
 

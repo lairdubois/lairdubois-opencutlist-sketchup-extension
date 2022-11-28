@@ -699,17 +699,6 @@ module Ladb::OpenCutList
               picked_part = picked_path.last
               if picked_part
 
-                worker = CutlistGenerateWorker.new(
-                  {
-                    'auto_orient' => true,
-                  },
-                  picked_part,
-                  picked_part_path
-                )
-                cutlist = worker.run
-
-                puts cutlist.groups.first.parts.first.def.name
-
                 @unpaint_color = MaterialUtils::get_color_from_path(picked_part_path[0...-1]) # [0...-1] returns array without last element
                 @triangles = _compute_children_faces_triangles(view, picked_part.definition.entities, PathUtils::get_transformation(picked_part_path))
 
@@ -720,6 +709,12 @@ module Ladb::OpenCutList
                     picked_part.material = nil
                   end
                 end
+
+                # TODO : paint edges and veneers ?
+                # worker = CutlistGenerateWorker.new({}, picked_part, picked_part_path)
+                # cutlist = worker.run
+                #
+                # puts cutlist.groups.first&.parts.first&.def
 
                 # Reset status
                 set_status('')

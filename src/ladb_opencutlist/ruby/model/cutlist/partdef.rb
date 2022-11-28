@@ -85,10 +85,8 @@ module Ladb::OpenCutList
       # Internal
       @instance_infos = {}
       @edge_materials = {}
-      @edge_faces = {}
       @edge_group_defs = {}
       @veneer_materials = {}
-      @veneer_faces = {}
       @veneer_group_defs = {}
 
     end

@@ -15,7 +15,7 @@ module Ladb::OpenCutList
     def initialize(settings, cutlist)
 
       @group_id = settings.fetch('group_id')
-      @part_ids = settings.fetch('part_ids')
+      @part_ids = settings.fetch('part_ids', nil)
       s_length, s_width = StringUtils.split_dxd(settings.fetch('std_sheet'))
       @std_sheet_length = DimensionUtils.instance.str_to_ifloat(s_length).to_l.to_f
       @std_sheet_width = DimensionUtils.instance.str_to_ifloat(s_width).to_l.to_f
