@@ -7,7 +7,7 @@ module Ladb::OpenCutList
     def initialize(settings, cutlist)
 
       @minimize_on_highlight = settings.fetch('minimize_on_highlight')
-      @group_id = settings.fetch('group_id')
+      @group_id = settings.fetch('group_id', nil)
       @part_ids = settings.fetch('part_ids', nil)
 
       @cutlist = cutlist

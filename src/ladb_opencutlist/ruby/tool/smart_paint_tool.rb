@@ -713,7 +713,6 @@ module Ladb::OpenCutList
                 # TODO : paint edges and veneers ?
                 # worker = CutlistGenerateWorker.new({}, picked_part, picked_part_path)
                 # cutlist = worker.run
-                #
                 # puts cutlist.groups.first&.parts.first&.def
 
                 # Reset status
