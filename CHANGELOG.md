@@ -7,6 +7,7 @@ in 4.x, 3.x, 2.x, 1.x and 0.x versions.
 * 4.1.0 (WIP)
 
   * Added sort tab in Labels options
+  * Fixed wrong exported cutting length and width when edge reduction - on instances list
   * Fixed smart paint tool selection from materials tab (Windows)
   * Fixed highlight part paint tool to ignore edges parts
   * Fixed smart paint tool crash when switching model
