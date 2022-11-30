@@ -693,10 +693,14 @@ tab:
       title: תוויות
       options_layout: הרכב
       options_settings: תצורה
+      options_part_order_strategy: מִיוּן
       options_offset: קיזוז
       size: גודל התווית בפועל
       add_element: הוסף פריט
       remove_element: להסיר
+      part_order_strategy_help: |
+        סדר מחדש את המאפיינים הבאים כדי להגדיר מיון לחלקים בכל קבוצה.
+        ניתן למיין מאפיינים לפי סדר <i class="ladb-opencutlist-icon-sort-asc"></i> *עולה* או <i class="ladb-opencutlist-icon-sort-desc"></i> *יורד*.
       offset_help: |
         *הקיזוז* מאפשר לקבוע את המיקום של התווית הראשונה **בדף הראשון**.
         בחר בתיבה התואמת לבחירתך.

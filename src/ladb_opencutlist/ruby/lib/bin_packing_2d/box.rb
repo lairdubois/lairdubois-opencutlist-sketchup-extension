@@ -105,7 +105,7 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
-    # Returns true if this Box is equal to another Box.
+    # Returns true if this Box is equal to other Box.
     #
     def equal?(other)
       return true if other.nil?
@@ -118,16 +118,29 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
+    # Returns true if this Box is strictly greated than other Box.
+    #
+    def greater?(other)
+      return true if other.nil?
+
+      return true if (@length >= other.length) && (@width >= other.width)
+
+      return true if @rotatable && (@width >= other.length) && (@length >= other.width)
+
+      false
+    end
+
+    #
     # Return true if this Box is "very" different from another Box, e.g. 10% difference in both directions.
     #
-    def different?(box)
-      return true if box.nil?
+    def different?(other)
+      return true if other.nil?
 
-      return true if (@length - box.length).abs > box.length * DIFF_PERCENTAGE_BOX || \
-                     (@width - box.width).abs > box.width * DIFF_PERCENTAGE_BOX
+      return true if (@length - other.length).abs > other.length * DIFF_PERCENTAGE_BOX || \
+                     (@width - other.width).abs > other.width * DIFF_PERCENTAGE_BOX
 
-      return true if @rotatable && ((@length - box.width).abs >= box.length * DIFF_PERCENTAGE_BOX || \
-                                    (@width - box.length).abs >= box.width * DIFF_PERCENTAGE_BOX)
+      return true if @rotatable && ((@length - other.width).abs >= other.length * DIFF_PERCENTAGE_BOX || \
+                                    (@width - other.length).abs >= other.width * DIFF_PERCENTAGE_BOX)
 
       false
     end
