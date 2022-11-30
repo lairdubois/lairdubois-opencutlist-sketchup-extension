@@ -420,14 +420,25 @@ module Ladb::OpenCutList::BinPacking2D
           # No placement possible in current bin.
           if score.nil?
             #
-            # Step 1: if this box is a superbox, reduce it by one. Push
-            #         remaining superbox back onto the stack of boxes.
+            # Step 1: if this box is a superbox, reduce it by one. Check
+            #         reduced box and box after that and push them back
+            #         in area descending order. This way when reducing a
+            #         superbox, the next box after the superbox may take over.
             #
             if box.is_a?(SuperBox)
+              next_box = nil
+              if not @boxes.empty?
+                next_box = @boxes.shift
+              end
               front, sbox = box.reduce
-              # Push the remaining sbox back onto the stack, it was not consumed
-              @boxes.unshift(sbox) unless sbox.nil?
-              @boxes.unshift(front)
+              # Make array of all boxes, remove the ones that are nil
+              bx = [next_box, front, sbox].reject(&:nil?)
+              # Sort the boxes by area increasing
+              bx.sort_by! { |b| b.area() }
+              # Push them back onto the stack of boxes
+              bx.each do |b|
+                @boxes.unshift(b)
+              end
             else
               unused_boxes << box
             end

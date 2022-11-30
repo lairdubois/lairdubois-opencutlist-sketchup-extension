@@ -8,19 +8,19 @@ The required tools and steps for successfully building this plugin are described
 
 Download and install [Node.js](https://nodejs.org/en/download/) - *the asynchronous event driven JavaScript runtime*. This will include [npm](https://www.npmjs.com/) - *the package manager for JavaScript*.
 
-Read this short note about [Installing Node](https://docs.npmjs.com/getting-started/installing-node) and make sure you have the latest version of **npm**:
+Read this short note about [Installing Node](https://docs.npmjs.com/getting-started/installing-node) and make sure you have the latest version of **npm**.
 
 ``` bash
     $ node -v
-    v16.18.0
-    $ npm -v
-    8.18.0
-    $ npm install npm@latest -g
+    v18.12.1
     $ npm -v
     8.19.2
+    $ npm install npm@latest -g
+    $ npm -v
+    9.1.2
 ```
 
-On Windows you *may* also have to install `gulp-cli` to be able to run **gulp** from the command line:
+On Windows you *may* also have to install `gulp-cli` to be able to run **gulp** from the command line.
 
 ``` bash
      $ npm install gulp-cli -g
@@ -28,7 +28,7 @@ On Windows you *may* also have to install `gulp-cli` to be able to run **gulp** 
 
 ## 2. Getting the Source Code
 
-The best way to get project sources is to clone them from the GitHub repository. For that you need to have [Git](https://git-scm.com/) installed on your computer.
+The best way to get the project sources is to clone them from the GitHub repository. We assume that you have [Git](https://git-scm.com/) installed on your computer.
 This is the preferred way, because updates will be easy to fetch and incorporate into your code.
 
 Move to your project parent folder. Adapt it to your needs and environment.
@@ -43,18 +43,19 @@ And clone the project from sources.
      $ git clone git@github.com:lairdubois/lairdubois-opencutlist-sketchup-extension.git
 ```
 
-Change to the project directory:
+Change to the project directory.
 
 ``` bash
      $ cd lairdubois-opencutlist-sketchup-extension
 ```
 
 In the future, if you want to retrieve origin sources updates, just execute the git pull command from your project directory.
-Caution, changing files will generate conflicts that you will need to resolve.
 
 ``` bash
      $ git pull origin master
 ```
+
+**Caution**, changing files will generate conflicts that you will need to resolve.
 
 ## 3. Installing Dependencies
 
@@ -68,21 +69,21 @@ What about warnings? You may get some warnings. `gulp-less` depends on `request`
 
 ## 4. Compiling Templates And Distribution Archive
 
-Templates in the `src/ladb_opencutlist/(less|yaml|twig)` directories are compiled by a **gulp** task. If you change any of these files, you will need to recompile the templates:
+Templates in the `src/ladb_opencutlist/(less|yaml|twig)` directories are compiled by a **gulp** task. If you change any of these files, you will need to recompile the templates.
 
 ``` bash
     $ cd build
     $ gulp compile
 ```
 
-If you wish to build the archive [ladb_opencutlist.rbz](../dist/ladb_opencutlist.rbz), then:
+If you wish to build the archive [ladb_opencutlist.rbz](../dist/ladb_opencutlist.rbz), run these commands.
 
 ``` bash
     $ cd build
     $ gulp build
 ```
 
-If you wish to build the archive [ladb_opencutlist-dev.rbz](../dist/ladb_opencutlist-dev.rbz), then:
+If you wish to build the development archive [ladb_opencutlist-dev.rbz](../dist/ladb_opencutlist-dev.rbz), run these commands.
 
 ``` bash
     $ cd build
