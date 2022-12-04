@@ -12,8 +12,8 @@
             {% if capabilities.sketchup_version_number >= 1700000000 %}
                 <li><a id="ladb_item_import_from_skm" href="#"><i class="ladb-opencutlist-icon-import"></i> {{ 'tab.materials.menu.import_from_skm'|i18next }}</a></li>
             {% endif %}
-            <li class="disabled"><a id="ladb_item_purge_unused" href="#"><i class="ladb-opencutlist-icon-trash"></i> {{ 'tab.materials.menu.purge_unused'|i18next }}</a></li>
             <li role="separator" class="divider"></li>
+            <li class="dropdown-item-danger disabled"><a id="ladb_item_purge_unused" href="#"><i class="ladb-opencutlist-icon-trash"></i> {{ 'tab.materials.menu.purge_unused'|i18next }}</a></li>
             <li class="dropdown-item-danger"><a id="ladb_item_reset_prices" href="#"><i class="ladb-opencutlist-icon-eraser"></i> {{ 'tab.materials.menu.reset_prices'|i18next }}...</a></li>
         </ul>
     </div>
