@@ -99,7 +99,7 @@ module Ladb::OpenCutList
       entity_id = definition_attributes.uuid.nil? ? definition.entityID : definition_attributes.uuid
       if dynamic_attributes_name
         name, is_dynamic_attributes_name = instance_info.read_name(dynamic_attributes_name)
-        entity_id = name if is_dynamic_attributes_name
+        entity_id = "#{entity_id}|#{name}" if is_dynamic_attributes_name
       end
 
       # Include scale into part_id to separate instances with the same definition, but different scale
