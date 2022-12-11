@@ -72,12 +72,17 @@ module Ladb::OpenCutList
     PRESORT_AREA_DECR = 3
     # Sort by perimeter decreasing.
     PRESORT_PERIMETER_DECR = 4
-    # Sort by longest side increasing.
+    # Sort by longest side decreasing.
     PRESORT_LONGEST_SIDE_DECR = 5
-    # Sort by shortest side increasing.
+    # Sort by shortest side decreasing.
     PRESORT_SHORTEST_SIDE_DECR = 6
+    # Sort by largest difference decreasing
+    PRESORT_LARGEST_DIFF = 7
+    # NOT used for now!
+    PRESORT_ALTERNATING_LENGTHS = 8
+    PRESORT_ALTERNATING_WIDTHS = 9
     PRESORT = ['input', 'width', 'length', 'area', 'perimeter', 'longest',
-               'shortest'].freeze
+               'shortest', 'diff', 'altlength', 'altwidth'].freeze
 
     # Score heuristics for fitting boxes into bins.
     SCORE_BESTAREA_FIT = 0

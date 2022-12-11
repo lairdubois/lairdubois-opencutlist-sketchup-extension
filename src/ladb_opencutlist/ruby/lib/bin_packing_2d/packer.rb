@@ -193,11 +193,13 @@ module Ladb::OpenCutList::BinPacking2D
       when PRESORT_AREA_DECR
         @boxes.sort_by! { |box| [-box.width * box.length, -box.length] }
       when PRESORT_LONGEST_SIDE_DECR
-        @boxes.sort_by! { |box| [-[box.length, box.width].max, [box.length, box.width].max] }
+        @boxes.sort_by! { |box| [[box.length, box.width].min, [box.length, box.width].min] }
       when PRESORT_SHORTEST_SIDE_DECR
-        @boxes.sort_by! { |box| [-[box.length, box.width].min, [box.length, box.width].max] }
+        @boxes.sort_by! { |box| [[box.length, box.width].max, [box.length, box.width].max] }
       when PRESORT_PERIMETER_DECR
-        @boxes.sort_by! { |box| [-box.length - box.width, -box.length] }
+        @boxes.sort_by! { |box| [-(box.length + box.width), -box.length] }
+      when PRESORT_LARGEST_DIFF
+        @boxes.sort_by! { |box| [[box.length - box.width].min, [box.length - box.width].max] }
       when PRESORT_ALTERNATING_WIDTHS
         w_max = @boxes.max_by(&:width)
         wl, ws = @boxes.partition { |box| box.width >= (@stacking_maxwidth - w_max.width) }
