@@ -466,8 +466,8 @@ module Ladb::OpenCutList::BinPacking2D
     #
     def make_signatures_large
       # Signature size will be the product of all possibilities
-      # 6 * 6 * 6 = 216 => 216 * 1 or 3, Max 648 possibilities.
-      presort = (PRESORT_WIDTH_DECR..PRESORT_SHORTEST_SIDE_DECR).to_a # 6
+      # 7 * 6 * 6 = 252 => 252 * 1 or 3, Max 756 possibilities.
+      presort = (PRESORT_WIDTH_DECR..PRESORT_LARGEST_DIFF).to_a # 7
       score = (SCORE_BESTAREA_FIT..SCORE_BESTLENGTH_FIT).to_a # 6
       split = (SPLIT_SHORTERLEFTOVER_AXIS..SPLIT_LONGER_AXIS).to_a # 6
       stacking = if @options.stacking_pref <= STACKING_WIDTH
