@@ -25,6 +25,7 @@ default:
   caution: Attention
   remove: Supprimer
   create: Créer
+  duplicate: Dupliquer
   ignore: Ignorer
   download: Télécharger
   upgrade: Mettre à jour
@@ -934,6 +935,8 @@ tab:
       message: |
         Vous êtes sur le point de supprimer la matière **{{ material_name }}** de votre modèle.
         Confirmez pour continuer.
+    duplicate:
+      copy_suffix: Copie
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_materials: Votre modèle ne contient aucune matière.
@@ -941,6 +944,7 @@ tab:
       failed_import_skm_file: "Une erreur s'est produite lors de l'importation du fichier .skm. **{{ error }}**"
       failed_export_skm_file: "Une erreur s'est produite lors de l'exportation du fichier .skm. **{{ error }}**"
       failed_removing_material: "Une erreur s'est produite lors de la suppression de la matière. **{{ error }}**"
+      failed_duplicating_material: "Une erreur s'est produite lors de duplication de la matière. **{{ error }}**"
       invalid_image_file: Image invalide
     success:
       exported_to: "Export réussi vers {{ export_path }}."

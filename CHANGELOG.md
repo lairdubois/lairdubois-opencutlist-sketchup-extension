@@ -4,6 +4,12 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
+* 5.0.0 (WIP)
+
+  * Added new veneer material type
+  * Added duplicate material feature that's copy all attributes
+  * Added left and right arrow shortcut key to change current material in smart paint tool
+
 * 4.1.0 (WIP)
 
   * Tweaks in 2D cutting diagrams

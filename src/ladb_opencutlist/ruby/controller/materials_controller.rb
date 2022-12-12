@@ -21,6 +21,9 @@ module Ladb::OpenCutList
       Plugin.instance.register_command("materials_update") do |material_data|
         update_command(material_data)
       end
+      Plugin.instance.register_command("materials_duplicate") do |material_data|
+        duplicate_command(material_data)
+      end
       Plugin.instance.register_command("materials_remove") do |material_data|
         remove_command(material_data)
       end
@@ -101,6 +104,16 @@ module Ladb::OpenCutList
 
       # Setup worker
       worker = MaterialsUpdateWorker.new(material_data)
+
+      # Run !
+      worker.run
+    end
+
+    def duplicate_command(material_data)
+      require_relative '../worker/materials/materials_duplicate_worker'
+
+      # Setup worker
+      worker = MaterialsDuplicateWorker.new(material_data)
 
       # Run !
       worker.run

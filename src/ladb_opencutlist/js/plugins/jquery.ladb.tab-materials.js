@@ -258,6 +258,7 @@
             var $inputTextureHeight = $('#ladb_materials_input_texture_height', $modal);
             var $btnTextureSizeLock = $('#ladb_material_btn_texture_size_lock', $modal);
             var $btnRemove = $('#ladb_materials_remove', $modal);
+            var $btnDuplicate = $('#ladb_materials_duplicate', $modal);
             var $btnExportToSkm = $('#ladb_materials_export_to_skm', $modal);
             var $btnUpdate = $('#ladb_materials_update', $modal);
 
@@ -416,6 +417,11 @@
                 that.removeMaterial(that.editedMaterial);
                 this.blur();
             });
+            $btnDuplicate.on('click', function () {
+                $modal.modal('hide');   // Hide modal
+                that.duplicateMaterial(that.editedMaterial);
+                this.blur();
+            });
             $btnExportToSkm.on('click', function () {
                 that.exportToSkm(that.editedMaterial, true);
                 this.blur();
@@ -494,6 +500,32 @@
         }
     };
 
+    LadbTabMaterials.prototype.duplicateMaterial = function (material) {
+        var that = this;
+
+        // Flag to ignore next material change event
+        that.ignoreNextMaterialEvents = true;
+
+        rubyCallCommand('materials_duplicate', {
+            name: material.name,
+        }, function (response) {
+
+            // Flag to stop ignoring next material change event
+            that.ignoreNextMaterialEvents = false;
+
+            if (response.errors && response.errors.length > 0) {
+                that.dialog.notifyErrors(response.errors);
+            } else {
+
+                // Reload the list
+                that.loadList();
+
+            }
+
+        });
+
+    };
+
     LadbTabMaterials.prototype.removeMaterial = function (material) {
         var that = this;
 
@@ -504,7 +536,6 @@
 
             rubyCallCommand('materials_remove', {
                 name: material.name,
-                display_name: material.display_name
             }, function (response) {
 
                 // Flag to stop ignoring next material change event
