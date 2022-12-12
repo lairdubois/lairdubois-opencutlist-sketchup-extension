@@ -744,12 +744,14 @@
 
     };
 
-    LadbDialog.prototype.prompt = function (title, text, callback) {
+    LadbDialog.prototype.prompt = function (title, text, value, callback, options) {
 
         // Append modal
         var $modal = this.appendModal('ladb_core_modal_prompt', 'core/_modal-prompt.twig', {
             title: title,
-            text: text
+            text: text,
+            value: value,
+            options: options
         });
 
         // Fetch UI elements
@@ -773,11 +775,15 @@
 
         });
 
+        // State
+        $btnValidate.prop('disabled', $input.val().trim().length === 0);
+
         // Show modal
         $modal.modal('show');
 
         // Bring focus to input
         $input.focus();
+        $input[0].selectionStart = $input[0].selectionEnd = $input.val().trim().length;
 
     };
 

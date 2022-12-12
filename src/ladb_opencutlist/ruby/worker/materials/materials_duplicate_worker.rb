@@ -5,6 +5,7 @@ module Ladb::OpenCutList
     def initialize(material_data)
 
       @name = material_data.fetch('name')
+      @new_name = material_data.fetch('new_name')
 
     end
 
@@ -50,13 +51,8 @@ module Ladb::OpenCutList
       begin
         material = materials.load(path)
 
-        # Set unique copy name with suffix (add the suffix only if it is not already present in the name)
-        suffix = Plugin.instance.get_i18n_string('tab.materials.duplicate.copy_suffix')
-        copy_name = @name
-        copy_name += " #{suffix}" unless Regexp.new("[\s]+#{suffix}[0-9]*$").match(@name)
-        copy_name = Sketchup.version_number >= 1800000000 ? materials.unique_name(copy_name) : copy_name
-
-        material.name = copy_name
+        new_name = Sketchup.version_number >= 1800000000 ? materials.unique_name(@new_name) : @new_name
+        material.name = new_name
 
       rescue => e
         return { :error => [ 'tab.materials.error.failed_duplicating_material', { :error => e.message } ] }

@@ -936,7 +936,8 @@ tab:
         Vous êtes sur le point de supprimer la matière **{{ material_name }}** de votre modèle.
         Confirmez pour continuer.
     duplicate:
-      copy_suffix: Copie
+      message: |
+        Choisissez le nom de la nouvelle matière copie de **{{ material_name }}**.
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_materials: Votre modèle ne contient aucune matière.

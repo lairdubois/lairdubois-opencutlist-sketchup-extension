@@ -503,28 +503,35 @@
     LadbTabMaterials.prototype.duplicateMaterial = function (material) {
         var that = this;
 
-        // Flag to ignore next material change event
-        that.ignoreNextMaterialEvents = true;
+        this.dialog.prompt(i18next.t('default.duplicate'), i18next.t('tab.materials.duplicate.message', { material_name: material.display_name }), material.display_name, function (value) {
 
-        rubyCallCommand('materials_duplicate', {
-            name: material.name,
-        }, function (response) {
+            // Flag to ignore next material change event
+            that.ignoreNextMaterialEvents = true;
 
-            // Flag to stop ignoring next material change event
-            that.ignoreNextMaterialEvents = false;
+            rubyCallCommand('materials_duplicate', {
+                name: material.name,
+                new_name: value
+            }, function (response) {
 
-            if (response.errors && response.errors.length > 0) {
-                that.dialog.notifyErrors(response.errors);
-            } else {
+                // Flag to stop ignoring next material change event
+                that.ignoreNextMaterialEvents = false;
 
-                // Reload the list
-                var materialId = response.id;
-                that.loadList(function() {
-                    that.scrollSlideToTarget(null, $('#ladb_material_' + materialId, that.$page), false, true);
-                });
+                if (response.errors && response.errors.length > 0) {
+                    that.dialog.notifyErrors(response.errors);
+                } else {
 
-            }
+                    // Reload the list
+                    var materialId = response.id;
+                    that.loadList(function() {
+                        that.scrollSlideToTarget(null, $('#ladb_material_' + materialId, that.$page), false, true);
+                    });
 
+                }
+
+            });
+
+        }, {
+            validateBtnLabel: i18next.t('default.duplicate')
         });
 
     };
