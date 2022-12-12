@@ -35,7 +35,7 @@ module Ladb::OpenCutList
       # Rename source material to random unique name (workaround to be sure that load SKM material name doesn't exists)
       src_material.name = uuid
 
-      # Export source material to temp SKM file
+      # Save source material to temp SKM file
       begin
         success = src_material.save_as(path)
         return { :errors => [ 'tab.materials.error.failed_duplicating_material', { :error => '' } ] } unless success
@@ -46,22 +46,24 @@ module Ladb::OpenCutList
         src_material.name = @name
       end
 
-      # Import temp SKM file
+      # Load temp SKM file
       begin
         material = materials.load(path)
 
-        # Restore desired unique copy name
-        copy_name = "#{@name} #{Plugin.instance.get_i18n_string('tab.materials.duplicate.copy_suffix')}"
+        # Set unique copy name with suffix (add the suffix only if it is not already present in the name)
+        suffix = Plugin.instance.get_i18n_string('tab.materials.duplicate.copy_suffix')
+        copy_name = @name
+        copy_name += " #{suffix}" unless Regexp.new("[\s]+#{suffix}[0-9]*$").match(@name)
         copy_name = Sketchup.version_number >= 1800000000 ? materials.unique_name(copy_name) : copy_name
 
         material.name = copy_name
 
       rescue => e
         return { :error => [ 'tab.materials.error.failed_duplicating_material', { :error => e.message } ] }
+      ensure
+        # Remove temp SKM file
+        File.delete(path) if File.exist?(path)
       end
-
-      # Remove temp SKM file
-      File.delete(path) if File.exist?(path)
 
       # Commit model modification operation
       model.commit_operation

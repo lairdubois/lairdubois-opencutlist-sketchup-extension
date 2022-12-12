@@ -518,7 +518,10 @@
             } else {
 
                 // Reload the list
-                that.loadList();
+                var materialId = response.id;
+                that.loadList(function() {
+                    that.scrollSlideToTarget(null, $('#ladb_material_' + materialId, that.$page), false, true);
+                });
 
             }
 
