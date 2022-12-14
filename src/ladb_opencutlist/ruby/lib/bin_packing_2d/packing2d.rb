@@ -77,10 +77,12 @@ module Ladb::OpenCutList
     # Sort by shortest side decreasing.
     PRESORT_SHORTEST_SIDE_DECR = 6
     # Sort by largest difference decreasing
-    PRESORT_LARGEST_DIFF = 7
+    PRESORT_SMALLEST_DIFF_DECR = 7
+    # Sort by largest difference decreasing
+    PRESORT_LARGEST_DIFF_DECR = 8
     # NOT used for now!
-    PRESORT_ALTERNATING_LENGTHS = 8
-    PRESORT_ALTERNATING_WIDTHS = 9
+    PRESORT_ALTERNATING_LENGTHS = 9
+    PRESORT_ALTERNATING_WIDTHS = 10
     PRESORT = ['input', 'width', 'length', 'area', 'perimeter', 'longest',
                'shortest', 'diff', 'altlength', 'altwidth'].freeze
 
