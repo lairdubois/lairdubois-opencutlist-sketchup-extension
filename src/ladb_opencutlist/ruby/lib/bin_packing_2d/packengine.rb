@@ -414,14 +414,17 @@ module Ladb::OpenCutList::BinPacking2D
       # If nb of packed boxes is less than 2, then l_measure is not a good
       # indicator because it privileges packings with less boxes packed.
       if nb_packed <= 2
-        packers_group = packers.group_by { |p| p.stat[:used_area] }
+        packers_group = packers.group_by { |p| -p.stat[:used_area] }
       else
-        packers_group = packers.group_by { |p| p.stat[:l_measure] }
+        packers_group = packers.group_by { |p| -p.stat[:used_area] }
+        # we are missing some better packings when considering the l_measure
+        # reverting to used_area until resolved!
+        # packers_group = packers.group_by { |p| p.stat[:l_measure] }
       end
 
       # In each group of packers, select the best one
       packers_group.keys.sort.each_with_index do |k, i|
-        b = packers_group[k].min_by { |p| [p.stat[:length_cuts], -p.stat[:largest_leftover_area]] }
+        b = packers_group[k].min_by { |p| [p.stat[:l_measure], p.stat[:length_cuts], -p.stat[:largest_leftover_area]] }
         b.stat[:rank] = i + 1
         best_packers << b
       end
@@ -466,8 +469,8 @@ module Ladb::OpenCutList::BinPacking2D
     #
     def make_signatures_large
       # Signature size will be the product of all possibilities
-      # 7 * 6 * 6 = 252 => 252 * 1 or 3, Max 756 possibilities.
-      presort = (PRESORT_WIDTH_DECR..PRESORT_LARGEST_DIFF).to_a # 7
+      # 8 * 6 * 6 = 288 => 288 * 1 or 3, Max 864 possibilities.
+      presort = (PRESORT_WIDTH_DECR..PRESORT_LARGEST_DIFF_DECR).to_a # 8
       score = (SCORE_BESTAREA_FIT..SCORE_BESTLENGTH_FIT).to_a # 6
       split = (SPLIT_SHORTERLEFTOVER_AXIS..SPLIT_LONGER_AXIS).to_a # 6
       stacking = if @options.stacking_pref <= STACKING_WIDTH
