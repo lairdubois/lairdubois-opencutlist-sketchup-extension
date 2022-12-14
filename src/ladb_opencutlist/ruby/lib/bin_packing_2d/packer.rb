@@ -198,7 +198,9 @@ module Ladb::OpenCutList::BinPacking2D
         @boxes.sort_by! { |box| [[box.length, box.width].max, [box.length, box.width].max] }
       when PRESORT_PERIMETER_DECR
         @boxes.sort_by! { |box| [-(box.length + box.width), -box.length] }
-      when PRESORT_LARGEST_DIFF
+      when PRESORT_SMALLEST_DIFF_DECR
+        @boxes.sort_by! { |box| [[box.length - box.width].max, [box.length - box.width].min] }
+      when PRESORT_LARGEST_DIFF_DECR
         @boxes.sort_by! { |box| [[box.length - box.width].min, [box.length - box.width].max] }
       when PRESORT_ALTERNATING_WIDTHS
         w_max = @boxes.max_by(&:width)
