@@ -14,6 +14,7 @@ in 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
   * Tweaks in 2D cutting diagrams
   * Added sort tab in Labels options
+  * Added material type variable to part list and instance list export
   * Fixed wrong exported cutting length and width when edge reduction - on instances list
   * Fixed smart paint tool selection from materials tab (Windows)
   * Fixed highlight part paint tool to ignore edges parts

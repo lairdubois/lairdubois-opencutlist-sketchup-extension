@@ -76,6 +76,10 @@
           "align": "right"
         },
         {
+          "name": "material_type",
+          "align": "left"
+        },
+        {
           "name": "material_name",
           "align": "left"
         },
@@ -160,6 +164,10 @@
         {
           "name": "final_area",
           "align": "right"
+        },
+        {
+          "name": "material_type",
+          "align": "left"
         },
         {
           "name": "material_name",
