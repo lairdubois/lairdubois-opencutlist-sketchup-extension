@@ -168,6 +168,7 @@ module Ladb::OpenCutList
               LengthWrapper.new(part.def.size.width),
               LengthWrapper.new(part.def.size.thickness),
               AreaWrapper.new(part.def.final_area),
+              StringWrapper.new(Plugin.instance.get_i18n_string("tab.materials.type_#{group.material_type}")),
               StringWrapper.new(group.material_display_name),
               ArrayWrapper.new(part.entity_names.map(&:first)),
               StringWrapper.new(part.description),
@@ -231,6 +232,7 @@ module Ladb::OpenCutList
                   LengthWrapper.new(part.def.size.width),
                   LengthWrapper.new(part.def.size.thickness),
                   AreaWrapper.new(part.def.final_area),
+                  StringWrapper.new(Plugin.instance.get_i18n_string("tab.materials.type_#{group.material_type}")),
                   StringWrapper.new(group.material_display_name),
                   StringWrapper.new(part.description),
                   ArrayWrapper.new(part.tags),
@@ -351,6 +353,7 @@ module Ladb::OpenCutList
       bbox_width,
       bbox_thickness,
       final_area,
+      material_type,
       material_name,
       entity_names,
       description,
@@ -370,6 +373,7 @@ module Ladb::OpenCutList
       @bbox_width = bbox_width
       @bbox_thickness = bbox_thickness
       @final_area = final_area
+      @material_type = material_type
       @material_name = material_name
       @entity_names = entity_names
       @description = description
@@ -397,6 +401,7 @@ module Ladb::OpenCutList
       bbox_width,
       bbox_thickness,
       final_area,
+      material_type,
       material_name,
       description,
       tags,
@@ -417,6 +422,7 @@ module Ladb::OpenCutList
       @bbox_width = bbox_width
       @bbox_thickness = bbox_thickness
       @final_area = final_area
+      @material_type = material_type
       @material_name = material_name
       @description = description
       @tags = tags
