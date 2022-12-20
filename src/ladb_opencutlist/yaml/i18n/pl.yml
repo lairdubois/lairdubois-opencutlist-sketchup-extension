@@ -1132,7 +1132,7 @@ tab:
     credits_runtime: Czas działania
     credits_development: Rozwój
     credits_vendors: |
-      Przygoda nie byłaby możliwa bez pracy autorów następujących komponentów Open Source:
+      Przygoda nie byłaby możliwa bez pracy autorów następujących komponentów *Open Source*:
     credits_thanks: |
       Specjalne podziękowania dla:
       - [JetBrains](https://www.jetbrains.com) za ich wsparcie dla tego projektu porzez ich [Darmową Licencję Open Source](https://www.jetbrains.com/buy/opensource/).

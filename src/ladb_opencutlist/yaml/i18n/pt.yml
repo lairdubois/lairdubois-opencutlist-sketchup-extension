@@ -1132,7 +1132,7 @@ tab:
     credits_runtime: Ambiente de execução
     credits_development: Desenvolvimento
     credits_vendors: |
-      A aventura não seria possível sem o trabalho dos autores dos seguintes componentes Open Source:
+      A aventura não seria possível sem o trabalho dos autores dos seguintes componentes *Open Source*:
     credits_thanks: |
       Um agradecimento especial vai para:
       - [JetBrains](https://www.jetbrains.com) por seu apoio a este projeto através de sua [Licença de Código Aberto Grátis](https://www.jetbrains.com/buy/opensource/).
