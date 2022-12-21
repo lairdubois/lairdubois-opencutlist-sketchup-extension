@@ -1132,7 +1132,7 @@ tab:
     credits_runtime: Исполнение
     credits_development: Разработка
     credits_vendors: |
-      Приключение не было бы возможно без работы авторов следующих компонентов Open Source:
+      Приключение не было бы возможно без работы авторов следующих компонентов *Open Source*:
     credits_thanks: |
       Отдельная благодарность:
       - [JetBrains](https://www.jetbrains.com) за их поддержку для этого проекта [Free Open Source License](https://www.jetbrains.com/buy/opensource/).

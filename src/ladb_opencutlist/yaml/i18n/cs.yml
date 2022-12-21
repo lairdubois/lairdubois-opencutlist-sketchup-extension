@@ -1132,7 +1132,7 @@ tab:
     credits_runtime: Spustit
     credits_development: Vývoj
     credits_vendors: |
-      Dobrodružství by nebylo možné bez práce autorů následujících komponent Open Source:
+      Dobrodružství by nebylo možné bez práce autorů následujících komponent *Open Source*:
     credits_thanks: |
       Zvláštní poděkování patří:
       - [JetBrains](https://www.jetbrains.com) za podporu tohoto projektu prostřednictvím jejich [Free Open Source License](https://www.jetbrains.com/buy/opensource/).

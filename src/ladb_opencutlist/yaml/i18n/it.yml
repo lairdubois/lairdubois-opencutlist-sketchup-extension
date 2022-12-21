@@ -128,9 +128,9 @@ core:
     user_defaults: Impostazioni predefinite da me
     new: Nuova impostazione
     new_prompt: |
-      La creazione di una regola personalizzata consente di mantenere le attuali impostazioni del modulo in modo da poterle riutilizzare in altri modelli
+      *La creazione di una regola personalizzata consente di mantenere le attuali impostazioni del modulo in modo da poterle riutilizzare in altri modelli.*
 
-      Salva le impostazioni con nome
+      Salva le impostazioni con nome :
     delete_confirm_title: Elimina
     delete_confirm: "Sei sicuro di voler eliminare l'impostazione **\"{{ name }}\"**"
     override_confirm_title: Aggiorna
@@ -1132,7 +1132,7 @@ tab:
     credits_runtime: Runtime
     credits_development: Sviluppo
     credits_vendors: |
-      Il conseguimento di questo risultato non sarebbe stato possibile senza il lavoro degli autori dei componenti Open Source elencati di seguito:
+      Il conseguimento di questo risultato non sarebbe stato possibile senza il lavoro degli autori dei componenti *Open Source* elencati di seguito:
     credits_thanks: |
       Un ringraziamento speciale va a:
       - [JetBrains](https://www.jetbrains.com) per il loro sostegno a questo progetto attraverso il loro [Free Open Source License](https://www.jetbrains.com/buy/opensource/).

@@ -1132,7 +1132,7 @@ tab:
     credits_runtime: Runtime
     credits_development: Ontwikkelingsomgeving
     credits_vendors: |
-      Dit avontuur zou niet mogelijk zijn geweest zonder het werk van de auteurs van de volgende Open Source componenten:
+      Dit avontuur zou niet mogelijk zijn geweest zonder het werk van de auteurs van de volgende *Open Source* componenten:
     credits_thanks: |
       Speciale dank aan:
       - [JetBrains](https://www.jetbrains.com) voor hun steun aan dit project via een [Free Open Source License](https://www.jetbrains.com/buy/opensource/).
