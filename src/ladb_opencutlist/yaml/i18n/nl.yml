@@ -1126,6 +1126,7 @@ tab:
       - Sergey Isupov (*Hebreeuws*), zondeer interface RTL
       - Soul Issam (*Arabisch*), zondeer interface RTL
       - Dany Dhondt, Eric Lugtigheid (*Nederlands*)
+      - Nguyen Ngoc Tan (*Vietnamees*)
     credits_description: |
       De ontwikkeling van deze uitbreiding maakt deel uit van het project [L'Air du Bois](https://www.lairdubois.fr), een uitwisselingsplatform voor houtbewerkers.
       In die zin is het ook *open source* en voor iedereen beschikbaar onder licentie [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) op [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).

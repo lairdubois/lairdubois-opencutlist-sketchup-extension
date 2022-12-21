@@ -1126,6 +1126,7 @@ tab:
       - Sergey Isupov (*ebraico*), interfaccia RTL non ancora implementata
       - Soul Issam (*arabico*), interfaccia RTL non anchora implementata
       - Dany Dhondt, Eric Lugtigheid (*olandese*)
+      - Nguyen Ngoc Tan (*vietnamita*)
     credits_description: |
       Lo sviluppo di questa estensione è collegata alla piattaforma condivisa del progetto [L'Air du Bois](https://www.lairdubois.fr).
       Questa estensione è *Open Source* e disponibile con licenza [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) su [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).

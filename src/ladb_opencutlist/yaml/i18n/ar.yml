@@ -1126,6 +1126,7 @@ tab:
       - Sergey Isupov (*اللغة العبرية*) واجهة العمل من اليمين إلى اليسار غير مدعومة بعد
       - عصام سول (*العربية*) واجهة العمل من اليمين إلى اليسار غير مدعومة بعد
       - Dany Dhondt, Eric Lugtigheid (*اللغة الهولندية*)
+      - Nguyen Ngoc Tan (*فيتنامي*)
     credits_description: |
       تطوير هذه الإضافة مرتبط بمشروع منصة المشاركة [L'Air du Bois](https://www.lairdubois.fr).
       هذه الإضافة *مفتوحة المصدر* و متوفرة ضمن [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) على [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
