@@ -1,5 +1,5 @@
 # this label must be in your language
-_label: Vietnamese
+_label: Tiếng Việt
 # the reload message will be displayed when a user switches to this language
 _reload_msg: "Để hiển thị tất cả các thay đổi, bạn phải **đóng** và **mở lại** cửa sổ OpenCutList."
 _description: "Danh sách cắt và Trình tạo sơ đồ cắt cho thợ mộc. Mã nguồn mở, được huy động vốn từ cộng đồng và dễ sử dụng;)"
@@ -48,7 +48,7 @@ default:
   unit_mass_0: Kilogram
   unit_mass_1: Pound
   instance_single: mục
-  instance_plural: các mục
+  instance_plural: mục
   part_single: bộ phận
   part_plural: các bộ phận
   thickness_layer_single: lớp
@@ -269,7 +269,7 @@ tab:
       reset_prices: Đặt lại giá của tất cả các bộ phận
       reset_prices_confirm: |
         Bạn đặt lại giá của tất cả các bộ phận trong mô hình của mình
-        Sau khi hành động kết thúc. **Tất cả giá sẽ được đặt lại về 0**
+        Sau khi hành động kết thúc. **Tất cả giá sẽ được đặt lại về 0**.
         Xác nhận để tiếp tục.
       reset_prices_success: Giá của tất cả các bộ phận đã được thiết lập lại.
     edit_part:
@@ -586,7 +586,7 @@ tab:
       option_hide_cross_1: Chỉ kích thước
       option_hide_cross_help: Hiển thị hoặc ẩn dấu chéo biểu thị các bộ phận được xác định là phần cắt trên sơ đồ.
       option_highlight_primary_cuts: Vệt cắt chính
-      option_highlight_primary_cuts_0: Chỉ cầu vượt
+      option_highlight_primary_cuts_0: Chỉ đường kẻ
       option_highlight_primary_cuts_1: Luôn hiển thị
       option_highlight_primary_cuts_help: Cho phép đánh dấu các vệt cắt chính.
       option_saw_kerf: Độ dày của lưỡi cắt
@@ -625,7 +625,7 @@ tab:
         Chọn tấm tiêu chuẩn sẽ được sao chép để tính toán vị trí tốt nhất có thể.
         Danh sách này được xác định trong trường **$t(tab.materials.edit_material.std_sizes)** của vật liệu.
         Chỉnh sửa tài liệu '{{ material_name }}' để hoàn thành danh sách này.
-      option_std_sheet_add: Thêm chiều dài
+      option_std_sheet_add: Thêm kích thước tấm
       option_std_sheet_none: Không có
       option_scrap_sheet_sizes: Cắt thừa
       option_scrap_sheet_sizes_placeholder: dài x rộng x số lượng; ...
@@ -656,11 +656,11 @@ tab:
         overall_efficiency: Hiệu quả tổng thể
         efficiency: Hiệu quả
         leftover: Phần thừa
-        cut: Cắt
+        cut: Đường cắt
         cut_plural: Đường cắt
-        cut_final: Cắt chính (cấp 1)
+        cut_final: Đường cắt chính (cấp 1)
         cut_final_plural: Đường cắt chính (cấp 1)
-        cut_through: Cắt chính (cấp 2)
+        cut_through: Đường cắt chính (cấp 2)
         cut_through_plural: Đường cắt chính (cấp 2)
         cut_none: Không có
         bar_dimensional_type_0: Kích thước tiêu chuẩn
@@ -724,7 +724,7 @@ tab:
       option_row_count: Hàng
       option_cutting_marks: Vết cắt
       option_cutting_marks_0: Không có
-      option_cutting_marks_1: Đã in
+      option_cutting_marks_1: In
       option_formula: Tên trường
       option_size: Kích thước
       option_anchor: Neo
@@ -801,7 +801,7 @@ tab:
     type_2: Hàng dạng tấm
     type_3: Kích thước
     type_4: Dải cạnh
-    type_5: Phần cứng
+    type_5: Phụ kiện
     tooltip:
       type_0: Vật liệu loại '$t(tab.materials.type_0)'
       type_1: Vật liệu loại '$t(tab.materials.type_1)'
@@ -825,7 +825,7 @@ tab:
       reset_prices: Đặt lại giá của tất cả các vật liệu
       reset_prices_confirm: |
         Bạn sắp đặt lại giá của tất cả các vật liệu trong mô hình của mình.
-        Sau khi hành động kết thúc. **Tất cả giá sẽ được đặt lại bằng không.
+        Sau khi hành động kết thúc. **Tất cả giá sẽ được đặt lại về bằng 0**.
         Xác nhận để tiếp tục.
       reset_prices_success: Giá của tất cả các vật liệu đã được thiết lập lại.
     new_material:
@@ -1050,7 +1050,7 @@ tab:
     objective_slogan: "OpenCutList là tất cả của chúng ta"
     objective_title:
       default: Mục tiêu
-      cuttingdiagram_export: Kinh phí xuất sơ đồ cắt
+      cuttingdiagram_export: Kinh phí của sơ đồ cắt được xuất
     objective_details:
       default: |
         Sự cải tiến liên tục của *OpenCutList* rất quan trọng đối với chúng tôi và dự án tiếp tục cần sự trợ giúp của bạn cho bản cập nhật tiếp theo **4.0**!
@@ -1116,19 +1116,20 @@ tab:
       *OpenCutList* được phát triển bởi [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) và [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Liệt kê tất cả [người đóng góp](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: Bản dịch
     credits_translators: |
-      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*English*, *German*)
-      - Vladimir Badulya (*Russian*)
-      - Pierluigi Colombo (*Italian*)
-      - Nayton Sanches Barbosa, corrected and revised by [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*Portuguese*)
-      - [Leonardo Romero Giménez](https://latablamarilla.com/) (*Spanish*)
-      - [Radek Rýznar](https://onlinesketchup.cz) (*Czech*)
-      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*Polish*)
-      - Sergey Isupov (*Hebrew*), RTL interface not yet supported
-      - Soul Issam (*Arabic*), RTL interface not yet supported
-      - Dany Dhondt, Eric Lugtigheid (*Dutch*)
+      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*Tiếng Anh*, *Tiếng Đức*)
+      - Vladimir Badulya (*Tiếng Nga*)
+      - Pierluigi Colombo (*Tiếng Ý*)
+      - Nayton Sanches Barbosa, được hiệu chỉnh và sửa đổi bởi [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*Tiếng Bồ Đào Nha*)
+      - [Leonardo Romero Giménez](https://latablamarilla.com/) (*Tiếng Tây Ban Nha*)
+      - [Radek Rýznar](https://onlinesketchup.cz) (*Tiếng Séc*)
+      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*Tiếng Ba Lan*)
+      - Sergey Isupov (*Tiếng Do Thái*), Giao diện RTL chưa được hỗ trợ
+      - Soul Issam (*Tiếng Ả Rập*), Giao diện RTL chưa được hỗ trợ
+      - Dany Dhondt, Eric Lugtigheid (*Tiếng Hà Lan*)
+      - Nguyễn Ngọc Tân (*Tiếng Việt*)
     credits_description: |
       Việc phát triển phần mở rộng này được liên kết với dự án chia sẻ [L'Air du Bois](https://www.lairdubois.fr).
-      Tiện ích mở rộng này cũng là *Nguồn mở* và có sẵn theo giấy phép [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) license on [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
+      Tiện ích mở rộng này cũng là *Nguồn mở* và có sẵn theo giấy phép [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) giấy phép trên [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
     credits_runtime: Thời gian chạy
     credits_development: Môi trương phát triển
     credits_vendors: |
@@ -1140,8 +1141,8 @@ tab:
       - [GitBook](https://www.gitbook.com)vì đã hỗ trợ các dự án Nguồn mở.
 tool:
   highlight:
-    transparency: Minh bạch
-    zoom_extents: Thu phóng mở rộng
+    transparency: Nhìn trong suốt
+    zoom_extents: Thu phóng vừa khung nhìn
   smart_paint:
     copy_key_win: Ctrl
     copy_key_mac: Tùy chọn
@@ -1164,7 +1165,7 @@ tool:
     action_1: Tô bộ phận
     action_2: Dọn dẹp bề mặt
     action_3: Dọn dẹp bộ phận
-    action_4: Vật mẫu
+    action_4: Mẫu
     warning:
       no_material: Mô hình của bạn không chứa bất kỳ vật liệu nào!
       all_filtered: Các bộ lọc được chọn ẩn giấu tất cả các vật liệu!
