@@ -411,14 +411,14 @@ module Ladb::OpenCutList::BinPacking2D
       # L_measure is a measure that uniquely identifies the shape of
       # a packing if it is not perfectly compact, i.e. = 0. Select unique
       # l_measure Packers, sort best_packers by ascending l_measure.
-      # If nb of packed boxes is less than 2, then l_measure is not a good
+      # If nb of packed boxes is less than 3, then l_measure is not a good
       # indicator because it privileges packings with less boxes packed.
-      if nb_packed <= 2
-        packers_group = packers.group_by { |p| -p.stat[:used_area] }
+      if stacking_pref == STACKING_NONE && nb_packed <= 3
+        packers_group = packers.group_by { |p| p.stat[:l_measure] }
       else
         packers_group = packers.group_by { |p| -p.stat[:used_area] }
         # we are missing some better packings when considering the l_measure
-        # reverting to used_area until resolved!
+        # so reverting to used_area until resolved!
         # packers_group = packers.group_by { |p| p.stat[:l_measure] }
       end
 
