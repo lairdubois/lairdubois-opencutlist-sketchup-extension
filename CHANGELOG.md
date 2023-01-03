@@ -2,7 +2,7 @@ CHANGELOG
 =========
 
 This changelog references the relevant changes (bug and security fixes) done
-in 4.x, 3.x, 2.x, 1.x and 0.x versions.
+in 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 * 5.0.0 (WIP)
 
@@ -10,9 +10,10 @@ in 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added duplicate material feature that's copy all attributes
   * Added left and right arrow shortcut key to change current material in smart paint tool
 
-* 4.1.0 (WIP)
+* 4.1.0 (2023-01-03)
 
-  * Tweaks in 2D cutting diagrams
+  * Added **Vietnamese** language (thanks to Nguyen Ngoc Tan for joining the translators team)
+  * Tweaks in 2D cutting diagram algorithm
   * Added sort tab in Labels options
   * Added material type variable to part list and instance list export
   * Fixed wrong exported cutting length and width when edge reduction - on instances list

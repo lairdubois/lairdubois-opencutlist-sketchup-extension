@@ -17,7 +17,7 @@ Read this short note about [Installing Node](https://docs.npmjs.com/getting-star
     8.19.2
     $ npm install npm@latest -g
     $ npm -v
-    9.1.2
+    9.2
 ```
 
 On Windows you *may* also have to install `gulp-cli` to be able to run **gulp** from the command line.

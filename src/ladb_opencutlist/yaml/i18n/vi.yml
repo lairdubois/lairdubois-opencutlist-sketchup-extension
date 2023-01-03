@@ -1113,7 +1113,7 @@ tab:
     version: Phiên bản
     credits: Thông tin kỹ thuật
     credits_authors: |
-      *OpenCutList* được phát triển bởi [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) và [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Liệt kê tất cả [người đóng góp](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+      *OpenCutList* được phát triển bởi [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) và [Martin Müller](https://www.lairdubois.fr/@mobilarte). Liệt kê tất cả [người đóng góp](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: Bản dịch
     credits_translators: |
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*Tiếng Anh*, *Tiếng Đức*)
@@ -1149,9 +1149,9 @@ tool:
     alt_key_win: Alt
     alt_key_mac: Cmd
     status_paint_face: Bấm để tô một bề mặt.
-    status_paint_part: Bấm để tô toàn bộ một bộ phận
-    status_unpaint_face: Bấm để xóa một bề mặt
-    status_unpaint_part: Bấm để xóa toàn bộ một bộ phận
+    status_paint_part: Bấm để tô toàn bộ một bộ phận.
+    status_unpaint_face: Bấm để xóa một bề mặt.
+    status_unpaint_part: Bấm để xóa toàn bộ một bộ phận.
     status_pick: Nhấn vào đây để lấy mẫu vật liệu.
     filters: Lọc
     filter_0: Không có loại
