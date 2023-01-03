@@ -13,7 +13,7 @@ module Ladb
 
       # Create extension
       ex = SketchupExtension.new('OpenCutList', 'ladb_opencutlist/ruby/main')
-      ex.version     = "4.1.0-dev"  ## /!\ Auto-generated line, do not edit ##
+      ex.version     = "4.1.0"  ## /!\ Auto-generated line, do not edit ##
       ex.copyright   = "2016-#{Date.today.year} - GNU GPLv3"  ## /!\ Auto-generated line, do not edit ##
       ex.creator     = 'L\'Air du Bois - www.lairdubois.fr'
 
@@ -45,8 +45,6 @@ module Ladb
         ex.description = 'Плагин расчета карт раскроя для деревообработчиков и не только. Открытый исходный код, краундфандинг и простота использования ;)'
       when 'vi'
         ex.description = 'Danh sách cắt và Trình tạo sơ đồ cắt cho thợ mộc. Mã nguồn mở, được huy động vốn từ cộng đồng và dễ sử dụng;)'
-      when 'zz'
-        ex.description = '3 - Cutlist and Cutting Diagram Generator for Woodworkers. Open Source, crowdfunded and easy to use ;)'
       else
         ex.description = 'Cutlist and Cutting Diagram Generator for Woodworkers. Open Source, crowdfunded and easy to use ;)'
       ## DESCRIPTION_END ##
