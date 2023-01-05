@@ -4,6 +4,10 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
+* 4.1.1 (20223-01-05)
+
+  * Fixed highlight part tool error when part's material doesn't have type.
+  
 * 4.1.0 (2023-01-03)
 
   * Added **Vietnamese** language (thanks to Nguyen Ngoc Tan for joining the translators team)

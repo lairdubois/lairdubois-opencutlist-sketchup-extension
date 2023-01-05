@@ -21,7 +21,7 @@ module Ladb::OpenCutList
       return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
 
       # Retrieve parts
-      material_types_filter = [ MaterialAttributes::TYPE_SOLID_WOOD, MaterialAttributes::TYPE_SHEET_GOOD, MaterialAttributes::TYPE_DIMENSIONAL ]
+      material_types_filter = [ MaterialAttributes::TYPE_UNKNOWN, MaterialAttributes::TYPE_SOLID_WOOD, MaterialAttributes::TYPE_SHEET_GOOD, MaterialAttributes::TYPE_DIMENSIONAL ]
       parts = []
       group = nil
       if @group_id
