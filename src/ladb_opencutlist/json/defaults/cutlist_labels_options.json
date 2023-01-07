@@ -25,7 +25,7 @@
     "row_count": 4,
     "offset": 0,
     "cutting_marks": false,
-    "part_order_strategy": "number>name>entity_named_path>entity_name",
+    "part_order_strategy": "number>name>entity_named_path>entity_name>fragment",
     "layout": [
       {
         "formula": "part.number",

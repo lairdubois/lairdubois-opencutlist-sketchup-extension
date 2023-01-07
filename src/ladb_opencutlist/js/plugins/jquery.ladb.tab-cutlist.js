@@ -2457,7 +2457,25 @@
 
                                         });
                                         $btnLabels.on('click', function () {
-                                            that.labelsGroup(groupId);
+
+                                            // Compute label fragments (a list of bar index attached to part id)
+                                            var fragmentDefs = {};
+                                            var barIndex = 0;
+                                            $.each(response.bars, function () {
+                                                for (var i = 0 ; i < this.count; i++) {
+                                                    barIndex++;
+                                                    $.each(this.parts, function () {
+                                                        var fragmentDef = fragmentDefs[this.id];
+                                                        if (!fragmentDef) {
+                                                            fragmentDef = [];
+                                                            fragmentDefs[this.id] = fragmentDef;
+                                                        }
+                                                        fragmentDef.push(barIndex);
+                                                    });
+                                                }
+                                            });
+
+                                            that.labelsGroup(groupId, fragmentDefs);
                                         });
                                         $btnClose.on('click', function () {
                                             that.popSlide();
@@ -2766,7 +2784,25 @@
 
                                         });
                                         $btnLabels.on('click', function () {
-                                            that.labelsGroup(groupId);
+
+                                            // Compute label fragments (a list of sheet index attached to part id)
+                                            var fragmentDefs = {};
+                                            var sheetIndex = 0;
+                                            $.each(response.sheets, function () {
+                                                for (var i = 0 ; i < this.count; i++) {
+                                                    sheetIndex++;
+                                                    $.each(this.parts, function () {
+                                                        var fragmentDef = fragmentDefs[this.id];
+                                                        if (!fragmentDef) {
+                                                            fragmentDef = [];
+                                                            fragmentDefs[this.id] = fragmentDef;
+                                                        }
+                                                        fragmentDef.push(sheetIndex);
+                                                    });
+                                                }
+                                            });
+
+                                            that.labelsGroup(groupId, fragmentDefs);
                                         });
                                         $btnClose.on('click', function () {
                                             that.popSlide();
@@ -2878,30 +2914,59 @@
 
     };
 
-    LadbTabCutlist.prototype.labelsGroup = function (groupId, forceDefaultTab) {
+    LadbTabCutlist.prototype.labelsGroup = function (groupId, fragmentDefs, forceDefaultTab) {
         var that = this;
 
         var group = this.findGroupById(groupId);
         var isPartSelection = this.selectionGroupId === groupId && this.selectionPartIds.length > 0;
 
-        // Retrieve parts to use
-        var fnAppendPart = function(parts, part) {
+        // Retrieve parts
+        var tmpfragmentDefs = fragmentDefs ? JSON.parse(JSON.stringify(fragmentDefs)) : null;
+        var partInfos = [];
+        var fnAppendPartInfo = function(part) { // Construct part info
+            var flatPathsAndNames = [];
+            var layered = part.thickness_layer_count > 1;
+            for (var l = 1; l <= part.thickness_layer_count; l++) {
+                $.each(part.entity_names, function () {
+                    var count = this[1].length;
+                    for (var i = 0; i < count; i++) {
+                        flatPathsAndNames.push({
+                            path: this[1][i],
+                            name: this[0] + (layered ? ' // ' + l : ''),
+                        });
+                    }
+                });
+            }
+            for (var i = 1; i <= part.count; i++) {
+                var fragment = null;
+                if (tmpfragmentDefs && tmpfragmentDefs[part.id]) {
+                    fragment = tmpfragmentDefs[part.id].shift();
+                }
+                partInfos.push({
+                    position_in_batch: i,
+                    entity_named_path: flatPathsAndNames.length > 0 ? flatPathsAndNames[i - 1].path : '',
+                    entity_name: flatPathsAndNames.length > 0 ? flatPathsAndNames[i - 1].name : '',
+                    fragment: fragment,
+                    part: part
+                });
+            }
+        }
+        var fnAppendPart = function(part) { // Check children
             if (part.children) {
                 $.each(part.children, function (index) {
-                    parts.push(this);
+                    fnAppendPartInfo(this);
                 });
             } else {
-                parts.push(part);
+                fnAppendPartInfo(part);
             }
         };
-        var parts = [];
-        $.each(group.parts, function (index) {
+        $.each(group.parts, function (index) {  // Iterate on selection
             if (isPartSelection) {
                 if (that.selectionPartIds.includes(this.id)) {
-                    fnAppendPart(parts, this);
+                    fnAppendPart(this);
                 }
             } else {
-                fnAppendPart(parts, this);
+                fnAppendPart(this);
             }
         });
 
@@ -3057,7 +3122,7 @@
             $editorLabelLayout.ladbEditorLabelLayout({
                 dialog: that.dialog,
                 group: group,
-                part: parts[0],
+                partInfo: partInfos[0],
             });
             $selectPageFormat.selectpicker(SELECT_PICKER_OPTIONS);
             $inputPageWidth.ladbTextinputDimension();
@@ -3158,32 +3223,6 @@
 
                     } else {
 
-                        // Compute part infos
-                        var partInfos = [];
-                        $.each(parts, function (index) {
-                            var flatPathsAndNames = [];
-                            var layered = this.thickness_layer_count > 1;
-                            for (var l = 1; l <= this.thickness_layer_count; l++) {
-                                $.each(this.entity_names, function () {
-                                    var count = this[1].length;
-                                    for (var i = 0; i < count; i++) {
-                                        flatPathsAndNames.push({
-                                            path: this[1][i],
-                                            name: this[0] + (layered ? ' // ' + l : ''),
-                                        });
-                                    }
-                                });
-                            }
-                            for (var i = 1; i <= this.count; i++) {
-                                partInfos.push({
-                                    position_in_batch: i,
-                                    entity_named_path: flatPathsAndNames.length > 0 ? flatPathsAndNames[i - 1].path : '',
-                                    entity_name: flatPathsAndNames.length > 0 ? flatPathsAndNames[i - 1].name : '',
-                                    part: this
-                                });
-                            }
-                        });
-
                         // Sort part infos
                         var fnFieldSorter = function (properties) {
                             return function (a, b) {
@@ -3201,6 +3240,9 @@
                                         } else if (property === 'entity_name') {
                                             valA = a.entity_name;
                                             valB = b.entity_name;
+                                        } else if (property === 'fragment') {
+                                            valA = a.fragment;
+                                            valB = b.fragment;
                                         } else if (property === 'number') {
                                             valA = isNaN(a.part.number) ? a.part.number.padStart(3, ' ') : a.part.number;    // Pad part number with ' ' to be sure that 'AA' is greater than 'Z' -> " AA" > "  Z"
                                             valB = isNaN(a.part.number) ? b.part.number.padStart(3, ' ') : b.part.number;
@@ -3219,17 +3261,17 @@
                         };
                         partInfos.sort(fnFieldSorter(labelsOptions.part_order_strategy.split('>')));
 
-                        // Split parts into pages
+                        // Split part infos into pages
                         var page;
                         var gIndex = 0;
                         for (var i = 1; i <= labelsOptions.offset; i++) {
                             if (gIndex % (labelsOptions.row_count * labelsOptions.col_count) === 0) {
                                 page = {
-                                    part_infos: []
+                                    partInfos: []
                                 }
                                 pages.push(page);
                             }
-                            page.part_infos.push({
+                            page.partInfos.push({
                                 part: null
                             });
                             gIndex++;
@@ -3237,11 +3279,11 @@
                         $.each(partInfos, function (index) {
                             if (gIndex % (labelsOptions.row_count * labelsOptions.col_count) === 0) {
                                 page = {
-                                    part_infos: []
+                                    partInfos: []
                                 }
                                 pages.push(page);
                             }
-                            page.part_infos.push(this);
+                            page.partInfos.push(this);
                             gIndex++;
                         })
 
@@ -3269,7 +3311,7 @@
 
                     // Bind buttons
                     $btnLabels.on('click', function () {
-                        that.labelsGroup(groupId);
+                        that.labelsGroup(groupId, fragmentDefs);
                     });
                     $btnPrint.on('click', function () {
                         that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.labels.title'), '0');

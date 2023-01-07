@@ -17,8 +17,8 @@
     <rect class="ladb-label-element" x="{{ transX }}" y="{{ transY }}" width="{{ areaSize }}" height="{{ areaSize }}" fill="{% if noEmptyValue %}rgba(0,0,0,0.03){% else %}none{% endif %}" stroke="none" />
     {% set dashedStrokeWidth = minUnit / 10 %}
     {% set plainStrokeWidth = minUnit / 5 %}
-    {% set rectPartWidth = areaSize * (proportional ? part_info.part.l_ratio : 1) - plainStrokeWidth %}
-    {% set rectPartHeight = areaSize * (proportional ? part_info.part.w_ratio : 1) - plainStrokeWidth %}
+    {% set rectPartWidth = areaSize * (proportional ? partInfo.part.l_ratio : 1) - plainStrokeWidth %}
+    {% set rectPartHeight = areaSize * (proportional ? partInfo.part.w_ratio : 1) - plainStrokeWidth %}
     <g transform="translate({{ transX + (areaSize - rectPartWidth) / 2 }} {{ transY + (areaSize - rectPartHeight) / 2 }})">
         <rect x="0" y="0" width="{{ max(0, rectPartWidth) }}" height="{{ max(0, rectPartHeight) }}" fill="#ffffff" stroke="none" />
         {% if group.material_grained %}
@@ -43,38 +43,40 @@
             </g>
         {% endif %}
         <g>
-            <line x1="0" y1="0" x2="{{ rectPartWidth }}" y2="0" stroke-linecap="square"{% if part_info.part.edge_material_names.ymax %} stroke="{{ elementDef.color }}" stroke-width="{{ plainStrokeWidth }}"{% else %}stroke="#000" stroke-width="{{ dashedStrokeWidth }}" stroke-dasharray="{{ dashedStrokeWidth * 2 }}"{% endif%} />
-            <line x1="{{ rectPartWidth }}" y1="0" x2="{{ rectPartWidth }}" y2="{{ rectPartHeight }}" stroke-linecap="square"{% if part_info.part.edge_material_names.xmax %} stroke="{{ elementDef.color }}" stroke-width="{{ plainStrokeWidth }}"{% else %}stroke="#000"  stroke-width="{{ dashedStrokeWidth }}" stroke-dasharray="{{ dashedStrokeWidth * 2 }}"{% endif%} />
-            <line x1="{{ rectPartWidth }}" y1="{{ rectPartHeight }}" x2="0" y2="{{ rectPartHeight }}" stroke-linecap="square"{% if part_info.part.edge_material_names.ymin %} stroke="{{ elementDef.color }}" stroke-width="{{ plainStrokeWidth }}"{% else %}stroke="#000"  stroke-width="{{ dashedStrokeWidth }}" stroke-dasharray="{{ dashedStrokeWidth * 2 }}"{% endif%} />
-            <line x1="0" y1="{{ rectPartHeight }}" x2="0" y2="0" stroke-linecap="square"{% if part_info.part.edge_material_names.xmin %} stroke="{{ elementDef.color }}" stroke-width="{{ plainStrokeWidth }}"{% else %} stroke-width="{{ dashedStrokeWidth }}"stroke="#000"  stroke-dasharray="{{ dashedStrokeWidth * 2 }}"{% endif%} />
+            <line x1="0" y1="0" x2="{{ rectPartWidth }}" y2="0" stroke-linecap="square"{% if partInfo.part.edge_material_names.ymax %} stroke="{{ elementDef.color }}" stroke-width="{{ plainStrokeWidth }}"{% else %}stroke="#000" stroke-width="{{ dashedStrokeWidth }}" stroke-dasharray="{{ dashedStrokeWidth * 2 }}"{% endif%} />
+            <line x1="{{ rectPartWidth }}" y1="0" x2="{{ rectPartWidth }}" y2="{{ rectPartHeight }}" stroke-linecap="square"{% if partInfo.part.edge_material_names.xmax %} stroke="{{ elementDef.color }}" stroke-width="{{ plainStrokeWidth }}"{% else %}stroke="#000"  stroke-width="{{ dashedStrokeWidth }}" stroke-dasharray="{{ dashedStrokeWidth * 2 }}"{% endif%} />
+            <line x1="{{ rectPartWidth }}" y1="{{ rectPartHeight }}" x2="0" y2="{{ rectPartHeight }}" stroke-linecap="square"{% if partInfo.part.edge_material_names.ymin %} stroke="{{ elementDef.color }}" stroke-width="{{ plainStrokeWidth }}"{% else %}stroke="#000"  stroke-width="{{ dashedStrokeWidth }}" stroke-dasharray="{{ dashedStrokeWidth * 2 }}"{% endif%} />
+            <line x1="0" y1="{{ rectPartHeight }}" x2="0" y2="0" stroke-linecap="square"{% if partInfo.part.edge_material_names.xmin %} stroke="{{ elementDef.color }}" stroke-width="{{ plainStrokeWidth }}"{% else %} stroke-width="{{ dashedStrokeWidth }}"stroke="#000"  stroke-dasharray="{{ dashedStrokeWidth * 2 }}"{% endif%} />
         </g>
     </g>
 {% else %}
     {% if terms[0] == 'part' %}
         {% set key = terms[1] %}
         {% if key == 'description' %}
-            {% set value = part_info.part[key]|split('\n') %}
+            {% set value = partInfo.part[key]|split('\n') %}
         {% elseif key == 'entity_named_path' %}
-            {% set value = part_info.entity_named_path %}
+            {% set value = partInfo.entity_named_path %}
         {% elseif key == 'entity_name' %}
-            {% set value = part_info.entity_name %}
+            {% set value = partInfo.entity_name %}
+        {% elseif key == 'fragment' %}
+            {% set value = partInfo.fragment %}
         {% elseif key == 'cutting_size' %}
-            {% set value = part_info.part.cutting_length~' x '~part_info.part.cutting_width %}
+            {% set value = partInfo.part.cutting_length~' x '~partInfo.part.cutting_width %}
         {% elseif key == 'size' %}
-            {% set value = part_info.part.length~' x '~part_info.part.width %}
+            {% set value = partInfo.part.length~' x '~partInfo.part.width %}
         {% elseif key == 'batch' %}
-            {% set value = part_info.position_in_batch~'/'~part_info.part.count %}
+            {% set value = partInfo.position_in_batch~'/'~partInfo.part.count %}
         {% elseif key == 'tags' %}
-            {% set value = part_info.part.tags %}
+            {% set value = partInfo.part.tags %}
         {% elseif key == 'edge' %}
             {% set edgeKey = terms[2] %}
-            {% if part_info.part.edge_material_names[edgeKey] is not null and part_info.part.edge_std_dimensions[edgeKey] is not null %}
-                {% set value = [part_info.part.edge_material_names[edgeKey], part_info.part.edge_std_dimensions[edgeKey]]|join(' | ') %}
+            {% if partInfo.part.edge_material_names[edgeKey] is not null and partInfo.part.edge_std_dimensions[edgeKey] is not null %}
+                {% set value = [partInfo.part.edge_material_names[edgeKey], partInfo.part.edge_std_dimensions[edgeKey]]|join(' | ') %}
             {% else %}
                 {% set value = '' %}
             {% endif %}
         {% else %}
-            {% set value = part_info.part[key] %}
+            {% set value = partInfo.part[key] %}
         {% endif %}
     {% elseif terms[0] == 'group' %}
         {% set key = terms[1] %}
