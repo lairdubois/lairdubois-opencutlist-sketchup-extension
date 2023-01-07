@@ -569,14 +569,15 @@ tab:
       option_bar_folding_0: Non
       option_bar_folding_1: Oui
       option_bar_folding_help: Permet de regrouper les barres ou bandes contenant les mêmes pièces et les mêmes coupes.
-      option_sheet_folding: Regrouper les panneaux identiques
+      option_sheet_folding_good: Regrouper les panneaux identiques
+      option_sheet_folding_veneer: Regrouper les feuilles identiques
       option_sheet_folding_0: Non
       option_sheet_folding_1: Oui
-      option_sheet_folding_help: Permet de regrouper les panneaux contenant les mêmes pièces et les mêmes coupes.
+      option_sheet_folding_help: Permet de regrouper les panneaux ou les feuilles contenant les mêmes pièces et les mêmes coupes.
       option_hide_part_list: Liste des pièces
       option_hide_part_list_1d_dimensional_0: Affichée pour chaque barre
       option_hide_part_list_1d_edge_0: Affichée pour chaque bande
-      option_hide_part_list_2d_sheet_0: Affichée pour chaque panneau
+      option_hide_part_list_2d_good_0: Affichée pour chaque panneau
       option_hide_part_list_2d_veneer_0: Affichée pour chaque feuille
       option_hide_part_list_1: Masquée
       option_hide_part_list_1d_help: Affiche ou masque la liste des pièces présentes dans chaque barre ou bande.

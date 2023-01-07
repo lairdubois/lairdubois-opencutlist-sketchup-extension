@@ -95,7 +95,7 @@
             <div class="form form-horizontal" style="margin-top: 15px;">
                 <div class="form-group">
                     <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_sheet_folding_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label for="ladb_select_sheet_folding" class="control-label col-xs-5">{{ 'tab.cutlist.cuttingdiagram.option_sheet_'~sheetStrippedname~'_folding'|i18next }}</label>
+                    <label for="ladb_select_sheet_folding" class="control-label col-xs-5">{{ ('tab.cutlist.cuttingdiagram.option_sheet_folding_'~sheetStrippedname)|i18next }}</label>
                     <div class="col-xs-6">
                         <select class="form-control" id="ladb_select_sheet_folding">
                             <option value="1" data-content="{{ 'tab.cutlist.cuttingdiagram.option_sheet_folding_1'|i18next }}"></option>
@@ -108,7 +108,7 @@
                     <label for="ladb_select_hide_part_list" class="control-label col-xs-5">{{ 'tab.cutlist.cuttingdiagram.option_hide_part_list'|i18next }}</label>
                     <div class="col-xs-6">
                         <select class="form-control" id="ladb_select_hide_part_list">
-                            <option value="0" data-content="{{ 'tab.cutlist.cuttingdiagram.option_hide_part_list_2d_'~sheetStrippedname~'_0'|i18next }}"></option>
+                            <option value="0" data-content="{{ ('tab.cutlist.cuttingdiagram.option_hide_part_list_2d_'~sheetStrippedname~'_0')|i18next }}"></option>
                             <option value="1" data-content="{{ 'tab.cutlist.cuttingdiagram.option_hide_part_list_1'|i18next }}"></option>
                         </select>
                     </div>
