@@ -2915,6 +2915,7 @@
 
         var group = this.findGroupById(groupId);
         var isPartSelection = this.selectionGroupId === groupId && this.selectionPartIds.length > 0;
+        var isBinSorterDisabled = !binDefs;
 
         // Retrieve parts
         var tmpBinDefs = binDefs ? JSON.parse(JSON.stringify(binDefs)) : null;
@@ -2974,6 +2975,7 @@
             var $modal = that.appendModalInside('ladb_cutlist_modal_labels', 'tabs/cutlist/_modal-labels.twig', {
                 group: group,
                 isPartSelection: isPartSelection,
+                isBinSorterDisabled: isBinSorterDisabled,
                 tab: forceDefaultTab || that.lastLabelsOptionsTab == null ? 'layout' : that.lastLabelsOptionsTab
             });
 
@@ -3087,7 +3089,8 @@
                     var property = properties[i];
                     $sortablePartOrderStrategy.append(Twig.twig({ref: "tabs/cutlist/_labels-option-part-order-strategy-property.twig"}).render({
                         order: property.startsWith('-') ? '-' : '',
-                        property: property.startsWith('-') ? property.substring(1) : property
+                        property: property.startsWith('-') ? property.substring(1) : property,
+                        enabled: property !== 'bin' || !isBinSorterDisabled
                     }));
                 }
                 $sortablePartOrderStrategy.find('a').on('click', function () {

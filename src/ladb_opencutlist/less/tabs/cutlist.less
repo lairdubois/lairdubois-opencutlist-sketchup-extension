@@ -339,9 +339,10 @@
     }
 
     .ladb-handle {
+      display: inline-block;
       cursor: ns-resize;
       color: lighten(#000, 50%);
-      padding: 10px;
+      padding: 0 10px;
     }
 
     .ladb-info {
@@ -352,12 +353,6 @@
     }
 
     .ladb-minitools > a {
-      color: #000;
-      cursor: pointer;
-
-      &:focus {
-        color: inherit;
-      }
 
       &.ladb-active {
         background-color: #333;
@@ -370,6 +365,11 @@
 
       }
 
+    }
+
+    &.ladb-disabled {
+      opacity: 0.5;
+      text-decoration: line-through;
     }
 
     &.ladb-inactive {

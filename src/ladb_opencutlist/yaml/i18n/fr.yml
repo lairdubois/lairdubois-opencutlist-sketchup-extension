@@ -765,7 +765,7 @@ tab:
         part_description: Description
         part_entity_named_path: Chemin d'instance
         part_entity_name: Nom d'instance
-        part_bin: Contenant (panneau ou barre)
+        part_bin: Conteneur
         part_cutting_size: Taille de débit
         part_cutting_length: Longueur de débit
         part_cutting_width: Largeur de débit

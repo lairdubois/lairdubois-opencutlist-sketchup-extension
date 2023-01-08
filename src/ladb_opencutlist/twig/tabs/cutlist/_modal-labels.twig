@@ -9,7 +9,7 @@
     <ul class="nav nav-tabs nav-justified" role="tablist">
         <li role="presentation"{% if tab == 'layout' %} class="active"{% endif %}><a href="#tab_labels_options_layout" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-labels"></i> {{ 'tab.cutlist.labels.options_layout'|i18next }}</a></li>
         <li role="presentation"{% if tab == 'settings' %} class="active"{% endif %}><a href="#tab_labels_options_settings" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-settings"></i> {{ 'tab.cutlist.labels.options_settings'|i18next }}</a></li>
-        <li role="presentation"{% if tab == 'part_order_strategy' %} class="active"{% endif %}><a href="#tab_labels_options_part_order_strategy" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-sort-asc"></i> {{ 'tab.cutlist.labels.options_part_order_strategy'|i18next }}</a></li>
+        <li role="presentation"{% if tab == 'part_order_strategy' %} class="active"{% endif %}><a href="#tab_labels_options_part_order_strategy" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-sort-asc"></i> {{ 'tab.cutlist.labels.options_part_order_strategy'|i18next }}{% if isBinSorterDisabled %} <i class="ladb-opencutlist-icon-warning ladb-color-warning"></i>{% endif %}</a></li>
         <li role="presentation"{% if tab == 'offset' %} class="active"{% endif %}><a href="#tab_labels_options_offset" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-labels-offset"></i> {{ 'tab.cutlist.labels.options_offset'|i18next }}</a></li>
     </ul>
 {% endblock %}
