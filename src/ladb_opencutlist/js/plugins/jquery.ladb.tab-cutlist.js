@@ -2459,18 +2459,16 @@
                                         $btnLabels.on('click', function () {
 
                                             // Compute label fragments (a list of bar index attached to part id)
-                                            var fragmentDefs = {};
-                                            var barIndex = 0;
+                                            let fragmentDefs = {};
+                                            let barIndex = 0;
                                             $.each(response.bars, function () {
                                                 for (var i = 0 ; i < this.count; i++) {
                                                     barIndex++;
                                                     $.each(this.parts, function () {
-                                                        var fragmentDef = fragmentDefs[this.id];
-                                                        if (!fragmentDef) {
-                                                            fragmentDef = [];
-                                                            fragmentDefs[this.id] = fragmentDef;
+                                                        if (!fragmentDefs[this.id]) {
+                                                            fragmentDefs[this.id] = [];
                                                         }
-                                                        fragmentDef.push(barIndex);
+                                                        fragmentDefs[this.id].push(barIndex);
                                                     });
                                                 }
                                             });
@@ -2786,18 +2784,16 @@
                                         $btnLabels.on('click', function () {
 
                                             // Compute label fragments (a list of sheet index attached to part id)
-                                            var fragmentDefs = {};
-                                            var sheetIndex = 0;
+                                            let fragmentDefs = {};
+                                            let sheetIndex = 0;
                                             $.each(response.sheets, function () {
                                                 for (var i = 0 ; i < this.count; i++) {
                                                     sheetIndex++;
                                                     $.each(this.parts, function () {
-                                                        var fragmentDef = fragmentDefs[this.id];
-                                                        if (!fragmentDef) {
-                                                            fragmentDef = [];
-                                                            fragmentDefs[this.id] = fragmentDef;
+                                                        if (!fragmentDefs[this.id]) {
+                                                            fragmentDefs[this.id] = [];
                                                         }
-                                                        fragmentDef.push(sheetIndex);
+                                                        fragmentDefs[this.id].push(sheetIndex);
                                                     });
                                                 }
                                             });
