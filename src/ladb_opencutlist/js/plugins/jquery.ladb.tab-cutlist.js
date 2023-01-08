@@ -2458,22 +2458,22 @@
                                         });
                                         $btnLabels.on('click', function () {
 
-                                            // Compute label fragments (a list of bar index attached to part id)
-                                            let fragmentDefs = {};
+                                            // Compute label bins (a list of bar index attached to part id)
+                                            let binDefs = {};
                                             let barIndex = 0;
                                             $.each(response.bars, function () {
                                                 for (var i = 0 ; i < this.count; i++) {
                                                     barIndex++;
                                                     $.each(this.parts, function () {
-                                                        if (!fragmentDefs[this.id]) {
-                                                            fragmentDefs[this.id] = [];
+                                                        if (!binDefs[this.id]) {
+                                                            binDefs[this.id] = [];
                                                         }
-                                                        fragmentDefs[this.id].push(barIndex);
+                                                        binDefs[this.id].push(barIndex);
                                                     });
                                                 }
                                             });
 
-                                            that.labelsGroup(groupId, fragmentDefs);
+                                            that.labelsGroup(groupId, binDefs);
                                         });
                                         $btnClose.on('click', function () {
                                             that.popSlide();
@@ -2783,22 +2783,22 @@
                                         });
                                         $btnLabels.on('click', function () {
 
-                                            // Compute label fragments (a list of sheet index attached to part id)
-                                            let fragmentDefs = {};
+                                            // Compute label bins (a list of sheet index attached to part id)
+                                            let binDefs = {};
                                             let sheetIndex = 0;
                                             $.each(response.sheets, function () {
                                                 for (var i = 0 ; i < this.count; i++) {
                                                     sheetIndex++;
                                                     $.each(this.parts, function () {
-                                                        if (!fragmentDefs[this.id]) {
-                                                            fragmentDefs[this.id] = [];
+                                                        if (!binDefs[this.id]) {
+                                                            binDefs[this.id] = [];
                                                         }
-                                                        fragmentDefs[this.id].push(sheetIndex);
+                                                        binDefs[this.id].push(sheetIndex);
                                                     });
                                                 }
                                             });
 
-                                            that.labelsGroup(groupId, fragmentDefs);
+                                            that.labelsGroup(groupId, binDefs);
                                         });
                                         $btnClose.on('click', function () {
                                             that.popSlide();
@@ -2910,14 +2910,14 @@
 
     };
 
-    LadbTabCutlist.prototype.labelsGroup = function (groupId, fragmentDefs, forceDefaultTab) {
+    LadbTabCutlist.prototype.labelsGroup = function (groupId, binDefs, forceDefaultTab) {
         var that = this;
 
         var group = this.findGroupById(groupId);
         var isPartSelection = this.selectionGroupId === groupId && this.selectionPartIds.length > 0;
 
         // Retrieve parts
-        var tmpfragmentDefs = fragmentDefs ? JSON.parse(JSON.stringify(fragmentDefs)) : null;
+        var tmpBinDefs = binDefs ? JSON.parse(JSON.stringify(binDefs)) : null;
         var partInfos = [];
         var fnAppendPartInfo = function(part) { // Construct part info
             var flatPathsAndNames = [];
@@ -2934,15 +2934,15 @@
                 });
             }
             for (var i = 1; i <= part.count; i++) {
-                var fragment = null;
-                if (tmpfragmentDefs && tmpfragmentDefs[part.id]) {
-                    fragment = tmpfragmentDefs[part.id].shift();
+                var bin = null;
+                if (tmpBinDefs && tmpBinDefs[part.id]) {
+                    bin = tmpBinDefs[part.id].shift();
                 }
                 partInfos.push({
                     position_in_batch: i,
                     entity_named_path: flatPathsAndNames.length > 0 ? flatPathsAndNames[i - 1].path : '',
                     entity_name: flatPathsAndNames.length > 0 ? flatPathsAndNames[i - 1].name : '',
-                    fragment: fragment,
+                    bin: bin,
                     part: part
                 });
             }
@@ -3236,9 +3236,9 @@
                                         } else if (property === 'entity_name') {
                                             valA = a.entity_name;
                                             valB = b.entity_name;
-                                        } else if (property === 'fragment') {
-                                            valA = a.fragment;
-                                            valB = b.fragment;
+                                        } else if (property === 'bin') {
+                                            valA = a.bin;
+                                            valB = b.bin;
                                         } else if (property === 'number') {
                                             valA = isNaN(a.part.number) ? a.part.number.padStart(3, ' ') : a.part.number;    // Pad part number with ' ' to be sure that 'AA' is greater than 'Z' -> " AA" > "  Z"
                                             valB = isNaN(a.part.number) ? b.part.number.padStart(3, ' ') : b.part.number;
@@ -3307,7 +3307,7 @@
 
                     // Bind buttons
                     $btnLabels.on('click', function () {
-                        that.labelsGroup(groupId, fragmentDefs);
+                        that.labelsGroup(groupId, binDefs);
                     });
                     $btnPrint.on('click', function () {
                         that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.labels.title'), '0');

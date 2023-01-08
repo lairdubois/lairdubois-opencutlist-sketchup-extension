@@ -58,8 +58,8 @@
             {% set value = partInfo.entity_named_path %}
         {% elseif key == 'entity_name' %}
             {% set value = partInfo.entity_name %}
-        {% elseif key == 'fragment' %}
-            {% set value = partInfo.fragment %}
+        {% elseif key == 'bin' %}
+            {% set value = partInfo.bin %}
         {% elseif key == 'cutting_size' %}
             {% set value = partInfo.part.cutting_length~' x '~partInfo.part.cutting_width %}
         {% elseif key == 'size' %}
