@@ -45,6 +45,9 @@ module Ladb::OpenCutList
     PRESETS_STORAGE_GLOBAL_ONLY = 1              # Value stored in global presets only
     PRESETS_STORAGE_MODEL_ONLY = 2               # Value stored in model presets only
 
+    PRESETS_CLEANER_NONE = 0
+    PRESETS_CLEANER_ORDER_STRATEGY = 1           # Clean order strategy value
+
     SETTINGS_KEY_LANGUAGE = 'settings.language'
     SETTINGS_KEY_DIALOG_MAXIMIZED_WIDTH = 'settings.dialog_maximized_width'
     SETTINGS_KEY_DIALOG_MAXIMIZED_HEIGHT = 'settings.dialog_maximized_height'
@@ -321,13 +324,35 @@ module Ladb::OpenCutList
       processed_values
     end
 
-    def _merge_preset_values_with_defaults(values, default_values)
+    def _merge_preset_values_with_defaults(dictionary, values, default_values)
       merged_values = {}
       contains_default_values = false
       if default_values
         default_values.keys.each do |key|
           if values.has_key?(key)
-            merged_values[key] = values[key]
+
+            cleaners = get_app_defaults(dictionary, '_cleaners', false)
+            case cleaners[key]
+              when PRESETS_CLEANER_ORDER_STRATEGY
+
+                # Remove properties that doesn't exist in default
+                # Add properties that exist in default, but not in model
+                # Use prior model values
+
+                hashed_model_properties = values[key].split('>').to_h { |v| [v.delete('-'), v] } # { 'length' => '-length', ... }
+                merged_values[key] = default_values[key].split('>').map { |default_value|
+                  property = default_value.delete('-')
+                  if hashed_model_properties.has_key?(property)
+                    hashed_model_properties[property]
+                  else
+                    default_value
+                  end
+                }.join('>')
+
+            else
+              merged_values[key] = values[key]
+            end
+
           else
             merged_values[key] = default_values[key]
             contains_default_values = true
@@ -418,7 +443,7 @@ module Ladb::OpenCutList
       if @global_presets_cache.has_key?(dictionary) && @global_presets_cache[dictionary].has_key?(section) && @global_presets_cache[dictionary][section].has_key?(name)
 
         # Preset exists, synchronize returned values with default_values data and structure
-        values, contains_default_values = _merge_preset_values_with_defaults(@global_presets_cache[dictionary][section][name], default_values)
+        values, contains_default_values = _merge_preset_values_with_defaults(dictionary, @global_presets_cache[dictionary][section][name], default_values)
 
       else
 
@@ -546,7 +571,7 @@ module Ladb::OpenCutList
       if @model_presets_cache.has_key?(dictionary) && @model_presets_cache[dictionary].has_key?(section)
 
         # Preset exists, synchronize returned values with default_values data and structure
-        values, contains_default_values = _merge_preset_values_with_defaults(@model_presets_cache[dictionary][section], default_values)
+        values, contains_default_values = _merge_preset_values_with_defaults(dictionary, @model_presets_cache[dictionary][section], default_values)
 
       else
 

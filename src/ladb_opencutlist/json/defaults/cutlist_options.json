@@ -2,6 +2,10 @@
   "_storages": {
     "hidden_group_ids": 2 /* PRESETS_STORAGE_MODEL_ONLY */
   },
+  "_cleaners": {
+    "part_order_strategy": 1, /* PRESETS_CLEANER_ORDER_STRATEGY */
+    "dimension_column_order_strategy": 1 /* PRESETS_CLEANER_ORDER_STRATEGY */
+  },
   "0": {
     "auto_orient": true,
     "flipped_detection": true,

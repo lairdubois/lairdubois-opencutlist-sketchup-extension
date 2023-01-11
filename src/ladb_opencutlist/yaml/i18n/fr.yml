@@ -794,6 +794,7 @@ tab:
         invalid_size: Les paramètres de configuration saisient ne permettent pas de définir une taille de d'étiquette valide.
       warning:
         is_part_selection: Ces étiquettes se limitent aux **pièces sélectionnées**.
+        formula_not_available: Non disponible dans ce context
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_entities: Votre modèle est vide. Il va falloir m'en donner un peu plus ;)

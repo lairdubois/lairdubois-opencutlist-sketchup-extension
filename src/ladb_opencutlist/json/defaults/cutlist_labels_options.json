@@ -12,6 +12,9 @@
     "spacing_h": 1, /* PRESETS_PREPROCESSOR_D */
     "spacing_v": 1 /* PRESETS_PREPROCESSOR_D */
   },
+  "_cleaners": {
+    "part_order_strategy": 1 /* PRESETS_CLEANER_ORDER_STRATEGY */
+  },
   "0": {
     "page_width": { "metric": "210mm", "imperial": "8.5\"" },
     "page_height": { "metric": "297mm", "imperial": "11\"" },
