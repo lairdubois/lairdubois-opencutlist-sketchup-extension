@@ -326,16 +326,16 @@
                                 <g class="part" data-part-id="{{ part.id }}" data-toggle="tooltip" data-html="true" title="{{ fn.part_tooltip(part) }}">
                                     <rect class="part-outer" x="{{ part.px_x }}" y="{{ part.px_y }}" width="{{ part.px_length }}" height="{{ part.px_width }}"></rect>
                                     <rect class="part-inner" x="{{ part.px_x + partOutlineWidth }}" y="{{ part.px_y + partOutlineWidth }}" width="{{ part.px_length - partOutlineWidth * 2 }}" height="{{ part.px_width - partOutlineWidth * 2 }}"></rect>
-                                    {% if part.rotated and part.edge_material_names.xmin or not part.rotated and part.edge_material_names.ymax %}
+                                    {% if part.rotated and part.edge_material_names.xmax or not part.rotated and part.edge_material_names.ymax %}
                                         <rect class="part-edge" x="{{ part.px_x + partOutlineWidth }}" y="{{ part.px_y + partOutlineWidth }}" width="{{ part.px_length - partOutlineWidth * 2 }}" height="{{ edgeWidth }}"></rect>
                                     {% endif %}
-                                    {% if part.rotated and part.edge_material_names.xmax or not part.rotated and part.edge_material_names.ymin %}
+                                    {% if part.rotated and part.edge_material_names.xmin or not part.rotated and part.edge_material_names.ymin %}
                                         <rect class="part-edge" x="{{ part.px_x + partOutlineWidth }}" y="{{ part.px_y + part.px_width - edgeWidth - partOutlineWidth }}" width="{{ part.px_length - partOutlineWidth * 2 }}" height="{{ edgeWidth }}"></rect>
                                     {% endif %}
-                                    {% if part.rotated and part.edge_material_names.ymin or not part.rotated and part.edge_material_names.xmin %}
+                                    {% if part.rotated and part.edge_material_names.ymax or not part.rotated and part.edge_material_names.xmin %}
                                         <rect class="part-edge" x="{{ part.px_x + partOutlineWidth }}" y="{{ part.px_y + partOutlineWidth }}" width="{{ edgeWidth }}" height="{{ part.px_width - partOutlineWidth * 2 }}"></rect>
                                     {% endif %}
-                                    {% if part.rotated and part.edge_material_names.ymax or not part.rotated and part.edge_material_names.xmax %}
+                                    {% if part.rotated and part.edge_material_names.ymin or not part.rotated and part.edge_material_names.xmax %}
                                         <rect class="part-edge" x="{{ part.px_x + part.px_length - edgeWidth - partOutlineWidth }}" y="{{ part.px_y + partOutlineWidth }}" width="{{ edgeWidth }}" height="{{ part.px_width - partOutlineWidth * 2 }}"></rect>
                                     {% endif %}
                                     {% set _numberText = options.use_names ? part.name : part.number %}
