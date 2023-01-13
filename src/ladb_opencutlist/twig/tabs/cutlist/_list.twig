@@ -168,9 +168,9 @@
                     {% include 'tabs/cutlist/_group-label.twig' %}
                 </td>
                 <td class="text-center">{% if group.part_count == 0 %}-{% else %}{{ group.part_count }}{% endif %}</td>
-                <td class="ladb-cutlist-value ladb-cutlist-value-right">{% if group.total_cutting_length is null %}-{% else %}{{ group.total_cutting_length }}{% endif %}</td>
-                <td class="ladb-cutlist-value ladb-cutlist-value-right">{% if group.total_cutting_area is null %}-{% else %}{{ group.total_cutting_area }}{% endif %}</td>
-                <td class="ladb-cutlist-value ladb-cutlist-value-right">{% if group.total_cutting_volume is null %}-{% else %}{{ group.total_cutting_volume }}{% endif %}</td>
+                <td class="ladb-cutlist-value ladb-cutlist-value-right{% if group.total_cutting_length is null %} ladb-disabled{% endif %}">{{ group.total_cutting_length }}</td>
+                <td class="ladb-cutlist-value ladb-cutlist-value-right{% if group.total_cutting_area is null %} ladb-disabled{% endif %}">{{ group.total_cutting_area }}</td>
+                <td class="ladb-cutlist-value ladb-cutlist-value-right{% if group.total_cutting_volume is null %} ladb-disabled{% endif %}">{{ group.total_cutting_volume }}</td>
                 {% if not generateOptions.hide_final_areas %}
                     <td class="ladb-cutlist-value ladb-cutlist-value-right">{% if group.invalid_final_area_part_count > 0 %}<div class="ladb-minitools ladb-minitools-left no-print"><a class="ladb-tool-warning" data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.invalid_final_area')|i18next({ 'count':group.invalid_final_area_part_count, 'total':group.part_count }) }}"><i class="ladb-opencutlist-icon-warning"></i></a></div>{% endif %}{% if group.total_final_area is null or group.invalid_final_area_part_count > 0 %}-{% else %}{{ group.total_final_area }}{% endif %}</td>
                 {% endif %}

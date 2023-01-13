@@ -10,6 +10,7 @@ in 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added duplicate material feature that's copy all attributes
   * Added left and right arrow shortcut key to change current material in smart paint tool
   * Fixed Cutting diagram 2D edge drawing to corresponds to counter-clockwize rotation of part's name
+  * Hatched unavailable cells in parts list summary instead of displaying "-" character
 
 * 4.1.1 (20223-01-05)
 
