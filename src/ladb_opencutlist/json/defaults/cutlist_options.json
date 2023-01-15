@@ -19,7 +19,6 @@
     "hide_tags": false,
     "hide_cutting_dimensions": false,
     "hide_bbox_dimensions": false,
-    "hide_untyped_material_dimensions": false,
     "hide_final_areas": true,
     "hide_edges": true,
     "hide_veneers": true,
