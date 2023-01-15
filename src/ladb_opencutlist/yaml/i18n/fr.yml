@@ -467,6 +467,8 @@ tab:
       thickness_short: Ép.
       edges: Chants
       veneers: Placages
+      cost: Coût
+      mass: Masse
     export:
       title: Exportation
       info_0: |

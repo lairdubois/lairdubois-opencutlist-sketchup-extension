@@ -2,6 +2,8 @@ module Ladb::OpenCutList
 
   require_relative '../../helper/boundingbox_helper'
   require_relative '../../helper/layer_visibility_helper'
+  require_relative '../../helper/material_price_helper'
+  require_relative '../../helper/unit_value_helper'
   require_relative '../../model/attributes/material_attributes'
   require_relative '../../model/attributes/definition_attributes'
   require_relative '../../model/geom/size3d'
@@ -20,6 +22,8 @@ module Ladb::OpenCutList
 
     include BoundingBoxHelper
     include LayerVisibilityHelper
+    include MaterialPriceHelper
+    include UnitValueHelper
 
     MATERIAL_ORIGIN_UNKNOW = 0
     MATERIAL_ORIGIN_OWNED = 1
@@ -624,8 +628,9 @@ module Ladb::OpenCutList
             if part_def.edge_count > 0
               PartDef::EDGES_Y.each { |edge|
                 unless (edge_group_def = part_def.edge_group_defs[edge]).nil? || (edge_material = part_def.edge_materials[edge]).nil?
+                  edge_material_attributes = _get_material_attributes(edge_material)
                   edge_length = part_def.size.length
-                  edge_cutting_length = edge_length + _get_material_attributes(edge_material).l_length_increase
+                  edge_cutting_length = edge_length + edge_material_attributes.l_length_increase
                   edge_group_def.total_cutting_length += edge_cutting_length
                   edge_group_def.total_cutting_area += edge_cutting_length * edge_group_def.std_width
                   edge_group_def.total_cutting_volume += edge_cutting_length * edge_group_def.std_thickness
@@ -634,8 +639,9 @@ module Ladb::OpenCutList
               }
               PartDef::EDGES_X.each { |edge|
                 unless (edge_group_def = part_def.edge_group_defs[edge]).nil? || (edge_material = part_def.edge_materials[edge]).nil?
+                  edge_material_attributes = _get_material_attributes(edge_material)
                   edge_length = part_def.size.width
-                  edge_cutting_length = edge_length + _get_material_attributes(edge_material).l_length_increase
+                  edge_cutting_length = edge_length + edge_material_attributes.l_length_increase
                   edge_group_def.total_cutting_length += edge_cutting_length
                   edge_group_def.total_cutting_area += edge_cutting_length * edge_group_def.std_width
                   edge_group_def.total_cutting_volume += edge_cutting_length * edge_group_def.std_thickness
@@ -646,10 +652,11 @@ module Ladb::OpenCutList
             if part_def.veneer_count > 0
               PartDef::VENEERS_Z.each { |veneer|
                 unless (veneer_group_def = part_def.veneer_group_defs[veneer]).nil? || (veneer_material = part_def.veneer_materials[veneer]).nil?
+                  veneer_material_attributes = _get_material_attributes(veneer_material)
                   veneer_length = part_def.size.length
                   veneer_width = part_def.size.width
-                  veneer_cutting_length = veneer_length + _get_material_attributes(veneer_material).l_length_increase
-                  veneer_cutting_width = veneer_width + _get_material_attributes(veneer_material).l_width_increase
+                  veneer_cutting_length = veneer_length + veneer_material_attributes.l_length_increase
+                  veneer_cutting_width = veneer_width + veneer_material_attributes.l_width_increase
                   veneer_group_def.total_cutting_area += veneer_cutting_length * veneer_cutting_width
                   veneer_group_def.total_cutting_volume += veneer_cutting_length * veneer_group_def.std_thickness
                   _populate_veneer_part_def(part_def, veneer, veneer_group_def, veneer_length, veneer_width, veneer_cutting_length.to_l, veneer_cutting_width.to_l, veneer_group_def.std_thickness)
@@ -676,6 +683,38 @@ module Ladb::OpenCutList
             group_def.part_count -= instance_count - count
           end
         }
+      }
+
+      # Compute instance count by part
+      @group_defs_cache.each { |key, group_def|
+
+        case group_def.material_type
+        when MaterialAttributes::TYPE_HARDWARE
+
+          group_def.part_defs.each { |key, part_def|
+
+            definition_attributes = @definition_attributes_cache[part_def.name]
+
+            h_mass = definition_attributes.h_mass
+            group_def.total_cutting_mass += _uv_mass_to_model_unit(UnitUtils.split_unit(h_mass[:unit]).first, h_mass[:val]) * part_def.count unless h_mass[:val] == 0
+
+            h_price = definition_attributes.h_price
+            group_def.total_cutting_cost += h_price[:val] * part_def.count unless h_price[:val] == 0
+
+          }
+
+        else
+
+          material_attributes = @material_attributes_cache[group_def.material_name]
+
+          volumic_mass = material_attributes.h_volumic_mass
+          group_def.total_cutting_mass += group_def.total_cutting_volume * _uv_to_inch3(volumic_mass[:unit], volumic_mass[:val]) unless volumic_mass[:val] == 0
+
+          std_price = _get_std_price([ group_def.std_thickness ], material_attributes)
+          group_def.total_cutting_cost += group_def.total_cutting_volume * _uv_to_inch3(std_price[:unit], std_price[:val], group_def.std_thickness, group_def.std_width, group_def.total_cutting_length) unless std_price[:val] == 0
+
+        end
+
       }
 
       # Warnings & tips
