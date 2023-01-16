@@ -91,7 +91,7 @@ module Ladb::OpenCutList
             next unless cuttingdiagram2d_summary_sheet.is_used
 
             # Only standard sheet uses dim prices
-            std_price = _get_std_price(cuttingdiagram2d_summary_sheet.type == BinPacking2D::BIN_TYPE_AUTO_GENERATED ? [ cutlist_group.def.std_thickness, Size2d.new(cuttingdiagram2d_summary_sheet.def.length, cuttingdiagram2d_summary_sheet.width) ] : nil, material_attributes)
+            std_price = _get_std_price(cuttingdiagram2d_summary_sheet.type == BinPacking2D::BIN_TYPE_AUTO_GENERATED ? [ cutlist_group.def.std_thickness, Size2d.new(cuttingdiagram2d_summary_sheet.def.length, cuttingdiagram2d_summary_sheet.def.width) ] : nil, material_attributes)
 
             report_entry_sheet_def = SheetGoodReportEntrySheetDef.new(cuttingdiagram2d_summary_sheet)
             report_entry_sheet_def.std_price = std_price
@@ -248,7 +248,7 @@ module Ladb::OpenCutList
             next unless cuttingdiagram2d_summary_sheet.is_used
 
             # Only standard sheet uses dim prices
-            std_price = _get_std_price(cuttingdiagram2d_summary_sheet.type == BinPacking2D::BIN_TYPE_AUTO_GENERATED ? [ cutlist_group.def.std_thickness, Size2d.new(cuttingdiagram2d_summary_sheet.def.length, cuttingdiagram2d_summary_sheet.width) ] : nil, material_attributes)
+            std_price = _get_std_price(cuttingdiagram2d_summary_sheet.type == BinPacking2D::BIN_TYPE_AUTO_GENERATED ? [ Size2d.new(cuttingdiagram2d_summary_sheet.def.length, cuttingdiagram2d_summary_sheet.def.width) ] : nil, material_attributes)
 
             report_entry_sheet_def = SheetGoodReportEntrySheetDef.new(cuttingdiagram2d_summary_sheet)
             report_entry_sheet_def.std_price = std_price
