@@ -706,12 +706,15 @@ module Ladb::OpenCutList
         else
 
           material_attributes = @material_attributes_cache[group_def.material_name]
+          if material_attributes
 
-          volumic_mass = material_attributes.h_volumic_mass
-          group_def.total_cutting_mass += group_def.total_cutting_volume * _uv_to_inch3(volumic_mass[:unit], volumic_mass[:val]) unless volumic_mass[:val] == 0
+            volumic_mass = material_attributes.h_volumic_mass
+            group_def.total_cutting_mass += group_def.total_cutting_volume * _uv_to_inch3(volumic_mass[:unit], volumic_mass[:val]) unless volumic_mass[:val] == 0
 
-          std_price = _get_std_price([ group_def.std_thickness ], material_attributes)
-          group_def.total_cutting_cost += group_def.total_cutting_volume * _uv_to_inch3(std_price[:unit], std_price[:val], group_def.std_thickness, group_def.std_width, group_def.total_cutting_length) unless std_price[:val] == 0
+            std_price = _get_std_price([ group_def.std_thickness ], material_attributes)
+            group_def.total_cutting_cost += group_def.total_cutting_volume * _uv_to_inch3(std_price[:unit], std_price[:val], group_def.std_thickness, group_def.std_width, group_def.total_cutting_length) unless std_price[:val] == 0
+
+          end
 
         end
 
