@@ -1087,7 +1087,7 @@ tab:
       cuttingdiagram_export: Financement des exports de calepinage
     objective_details:
       default: |
-        L'amélioration en continue d'*OpenCutList* nous tient à coeur et le projet continue d'avoir besoin de vous pour sa prochaine mise à jour **4.0** !
+        L'amélioration en continue d'*OpenCutList* nous tient à coeur et le projet continue d'avoir besoin de vous pour sa prochaine mise à jour **5.0** !
       cuttingdiagram_export: |
         Il nous tient à coeur qu'*OpenCutList* puisse s'adapter aux attentes très variées des utilisateurs pour la fonction de *calepinage*.
         Pour élargir encore les possibilités, nous souhaitons permettre d'exporter les diagrammes de calepinage au format **SVG**.

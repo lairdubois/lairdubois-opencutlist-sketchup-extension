@@ -25,6 +25,7 @@ default:
   caution: Caution
   remove: Remove
   create: Create
+  duplicate: Duplicate
   ignore: Ignore
   download: Download
   upgrade: Update
@@ -65,6 +66,7 @@ core:
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
+      edit_part_veneers_properties: $t(tab.cutlist.edit_part_veneers_properties)
       smart_paint: $t(core.toolbar.command.smart_paint)
   toolbar:
     name: OpenCutList
@@ -170,8 +172,9 @@ tab:
     edit_part_axes_properties: Edit Axes Properties of Part
     edit_part_size_increase_properties: Edit the properties (oversizes) of the part
     edit_part_edges_properties: Edit the properties (edge bandings) of the part
+    edit_part_veneers_properties: Edit the properties (veneers) of the part
     tooltip:
-      show_hide_block: Show / hide group
+      show_hide_block: Show / Hide group
       scroll_to_block: Scroll to group
       not_available_std_width: "The width *{{ std_dimension_real }}* is not defined in the standard widths of the material '{{ material_name }}'"
       not_available_std_thickness: "The thickness *{{ std_dimension }}* is not defined in the standard thicknesses of the material '{{ material_name }}'"
@@ -223,6 +226,8 @@ tab:
       remove_label_filter: "Remove filtering on '{{ label }}'"
       add_edge_material_name_filter: "Filter on '{{ material_name }}'"
       remove_edge_material_name_filter: "Remove filtering on '{{ material_name }}'"
+      add_veneer_material_name_filter: "Filter on '{{ material_name }}'"
+      remove_veneer_material_name_filter: "Remove filtering on '{{ material_name }}'"
       not_aligned_on_axes: "Caution, this part may not be oriented correctly with respect to its axes"
       instance_count_by_part: "This part is counted in packages of **{{ count }}** items."
       unused_instance_count: "Note that **{{ count }}** item from the last package will not be used."
@@ -243,15 +248,20 @@ tab:
       size_increased: "Dimension is increased by an oversize of {{ value }}"
       has_edges: "This part contains {{ count }} edge banding"
       has_edges_plural: "This part contains {{ count }} edge bandings"
+      has_veneers: "This part contains {{ count }} veneered surface"
+      has_veneers_plural: "This part contains {{ count }} veneered surfaces"
       edge_decremented: "Reduced by the thickness of the edge banding ({{ decrement }})"
       edge_ymin: Edge length 1
       edge_ymax: Edge length 2
       edge_xmin: Edge width 1
       edge_xmax: Edge width 2
+      veneer_zmin: Backside
+      veneer_zmax: Frontside
       dblclick_to_copy_all_edges: Double-click here to duplicate this value to the other edges
+      dblclick_to_copy_all_veneers: Double-click here to duplicate this value to the other face
       dblclick_to_sort_axes: Double-click here to automatically reorder the axes according to the dimensions of the part
       part_axes: Internal axes of the part
-      select_unselect_all_parts: Select/deselect all parts in this group
+      select_unselect_all_parts: Select / Deselect all parts in this group
       setup_group_cuttingdiagram: "Configure the cutting diagram of '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
     menu:
       show_all_groups: Show all groups
@@ -279,6 +289,7 @@ tab:
       general: General
       extra_help: "List of properties specific to the type of material \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Edge Bandings
+      veneers: Veneers
       name: Name
       material: Material
       cumulable: Summable
@@ -353,7 +364,8 @@ tab:
       axes_origin_position_min_center: Place the origin in the middle of a face
       over_length: Across the length
       over_width: Across the width
-      edge_disabled_help: This edge banding is not configurable because no material-bearing face has been detected on this edge of the part in the model.
+      edge_disabled_help: This edge banding is not configurable because no material-carrying face has been detected on this edge of the part in the model.
+      veneer_disabled_help: This surface is not configurable because no material-carrying face has been detected on this edge of the part in the model.
       multiple_values: Multiple values
       export_to_skp: Export (.skp)
     export_to_skp:
@@ -400,6 +412,8 @@ tab:
       hide_final_areas_help: "If this option is selected, the **actual areas** of parts of type *Sheet Goods* will be hidden."
       hide_edges: Hide the columns of edge bandings
       hide_edges_help: "If this option is selected, the **edge banding columns** of parts of type *Sheet Goods* will be hidden."
+      hide_veneers: Hide the columns of veneers
+      hide_veneers_help: "If this option is selected, the **veneer columns** of parts of type  *Sheet Goods* will be hidden."
       minimize_on_highlight: Minimize after *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "If this option is selected, the OpenCutList window will be minimized when the function *'$t(tab.cutlist.highlight_part)'* is used."
       general: General
@@ -427,6 +441,7 @@ tab:
       filters_warning: "This filter only displays **{{ count }}** part out of a total of {{ total }}."
       filters_warning_plural: "This filter only displays **{{ count }}** parts out of a total of {{ total }}."
       edge_material_names_filter: Filter by edge banding material
+      veneer_material_names_filter: Filter by veneer material
       tags_filter: Filter by Tags
       dimensions_help: Understanding dimensions
       summary: Summary
@@ -451,6 +466,9 @@ tab:
       thickness: Thickness
       thickness_short: T
       edges: Edge Bandings
+      veneers: Veneers
+      cost: Cost
+      mass: Mass
     export:
       title: Export
       info_0: |
@@ -508,6 +526,8 @@ tab:
       edge_ymax: Edge length 2
       edge_xmin: Edge width 1
       edge_xmax: Edge width 2
+      veneer_zmin: Backside
+      veneer_zmax: Frontside
       placeholder:
         no_column_title: Enter a title
         no_column_formula_native: "Native value of column '{{ col_name }}'"
@@ -551,14 +571,16 @@ tab:
       option_bar_folding_0: No
       option_bar_folding_1: Yes
       option_bar_folding_help: Group boards or edge bandings containing the same parts and cuts.
-      option_sheet_folding: Group Similar Panels
+      option_sheet_folding_good: Group Similar Panels
+      option_sheet_folding_veneer: Group Similar Veneer Sheets
       option_sheet_folding_0: No
       option_sheet_folding_1: Yes
-      option_sheet_folding_help: Group panels having the same parts and cuts.
+      option_sheet_folding_help: Group panels or sheets having the same parts and cuts.
       option_hide_part_list: Parts List
       option_hide_part_list_1d_dimensional_0: Displayed for each Board
       option_hide_part_list_1d_edge_0: Displayed for each Edge Banding
-      option_hide_part_list_2d_0: Displayed for Each Panel
+      option_hide_part_list_2d_0: Displayed for each Panel
+      option_hide_part_list_2d_veneer_0: Displayed for each Veneer Sheet
       option_hide_part_list_1: Masked
       option_hide_part_list_1d_help: Display or mask the list of parts for each board or edge banding.
       option_hide_part_list_2d_help: Display or mask the list of parts for each panel.
@@ -620,17 +642,19 @@ tab:
         Expected format: **L**x**Q**, where **L** is the *length* of the offcut and **Q** the quantity.
         Quantity is optional.
         *Sizes without units are considered to be in model units.*
-      option_std_sheet: Standard Panel
+      option_std_sheet_good: Standard Panel
+      option_std_sheet_veneer: Standard Veneer
       option_std_sheet_help: |
         Select the standard panel which will be duplicated to calculate the best possible placement.
         This list is defined in the field **$t(tab.materials.edit_material.std_sizes)** of the material.
         Edit the material '{{ material_name }}' to complete this list.
       option_std_sheet_add: Add a panel size
       option_std_sheet_none: None
-      option_scrap_sheet_sizes: Offcuts
+      option_scrap_sheet_good_sizes: Offcuts
+      option_scrap_sheet_veneer_sizes: Veneer Offcuts
       option_scrap_sheet_sizes_placeholder: length x width x quantity ; ...
       option_scrap_sheet_sizes_help: |
-        List all offcut sheet goods you would like to be considered in priority for the cutting diagram.
+        List all offcut sheet goods or veneers you would like to be considered in priority for the cutting diagram.
         Expected format: **L**x**W**x**Q**, where **L** and **W** represent the *length* and the *width* of the panel and **Q** the quantity.
         Quantity is optional.
         *Sizes without units are considered to be in model units.*
@@ -667,8 +691,10 @@ tab:
         bar_dimensional_type_1: Offcut Board
         bar_edge_type_0: Standard Edge Banding
         bar_edge_type_1: Offcut Edge Banding
-        sheet_type_0: Standard Panel
-        sheet_type_1: Offcut
+        sheet_good_type_0: Standard Panel
+        sheet_good_type_1: Offcut
+        sheet_veneer_type_0: Standard Veneer Sheet
+        sheet_veneer_type_1: Veneer Offcut
         unused: Unused
         parts: "{{ count }} part"
         parts_plural: "{{ count }} parts"
@@ -741,6 +767,7 @@ tab:
         part_description: Description
         part_entity_named_path: Instance path
         part_entity_name: Instance name
+        part_bin: Bin
         part_cutting_size: Rough dimensions
         part_cutting_length: Length - rough
         part_cutting_width: Width - rough
@@ -769,6 +796,7 @@ tab:
         invalid_size: The configuration parameters entered do not allow a valid label size to be set.
       warning:
         is_part_selection: These labels are limited to the **selected parts**.
+        formula_not_available: Formula is not available in this context.
     error:
       no_model: No model is open. You will need to give me more information ;)
       no_entities: Your model is empty. You will need to give me more information ;)
@@ -802,6 +830,7 @@ tab:
     type_3: Dimensional
     type_4: Edge Banding
     type_5: Hardware
+    type_6: Veneer
     tooltip:
       type_0: Material type '$t(tab.materials.type_0)'
       type_1: Material type '$t(tab.materials.type_1)'
@@ -809,6 +838,7 @@ tab:
       type_3: Material type '$t(tab.materials.type_3)'
       type_4: Material type '$t(tab.materials.type_4)'
       type_5: Material type '$t(tab.materials.type_5)'
+      type_6: Material type '$t(tab.materials.type_6)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Grain direction
@@ -910,6 +940,9 @@ tab:
       message: |
         You are about to remove the material **{{ material_name }}** from your model.
         Confirm to continue.
+    duplicate:
+      message: |
+        Select the name of the new material, which will be copied from **{{ material_name }}**.
     error:
       no_model: No model is open. You will need to give me more information ;)
       no_materials: Your model does not contain any material.
@@ -917,6 +950,7 @@ tab:
       failed_import_skm_file: "An error occurred while importing from the .skm file. **{{ error }}**"
       failed_export_skm_file: "An error occurred while exporting to .skm file. **{{ error }}**"
       failed_removing_material: "An error occurred while suppressing this material. **{{ error }}**"
+      failed_duplicating_material: "An error occured while duplicating material. **{{ error }}**"
       invalid_image_file: Invalid image
     success:
       exported_to: "Successful export to {{ export_path }}."
@@ -1053,7 +1087,7 @@ tab:
       cuttingdiagram_export: Funding of cutting diagram exports
     objective_details:
       default: |
-        The ongoing improvement of *OpenCutList* is important to us and the project continues to need your help for its next update **4.0**!
+        The ongoing improvement of *OpenCutList* is important to us and the project continues to need your help for its next update **5.0**!
       cuttingdiagram_export: |
         It is important to us that *OpenCutList* can be adapted to the very different expectations of the users for the *cutting diagram* function.
         To further expand the possibilities, we would like to enable the export of layout diagrams in **SVG** format.
@@ -1160,6 +1194,7 @@ tool:
     filter_3: $t(tab.materials.type_3)
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
+    filter_6: $t(tab.materials.type_6)
     action: Action
     action_0: Paint Face
     action_1: Paint Part
