@@ -2,8 +2,6 @@ module Ladb::OpenCutList
 
   require_relative '../../helper/boundingbox_helper'
   require_relative '../../helper/layer_visibility_helper'
-  require_relative '../../helper/material_price_helper'
-  require_relative '../../helper/unit_value_helper'
   require_relative '../../model/attributes/material_attributes'
   require_relative '../../model/attributes/definition_attributes'
   require_relative '../../model/geom/size3d'
@@ -22,8 +20,6 @@ module Ladb::OpenCutList
 
     include BoundingBoxHelper
     include LayerVisibilityHelper
-    include MaterialPriceHelper
-    include UnitValueHelper
 
     MATERIAL_ORIGIN_UNKNOW = 0
     MATERIAL_ORIGIN_OWNED = 1
@@ -683,41 +679,6 @@ module Ladb::OpenCutList
             group_def.part_count -= instance_count - count
           end
         }
-      }
-
-      # Compute instance count by part
-      @group_defs_cache.each { |key, group_def|
-
-        case group_def.material_type
-        when MaterialAttributes::TYPE_HARDWARE
-
-          group_def.part_defs.each { |key, part_def|
-
-            definition_attributes = @definition_attributes_cache[part_def.name]
-
-            h_mass = definition_attributes.h_mass
-            group_def.total_cutting_mass += _uv_mass_to_model_unit(UnitUtils.split_unit(h_mass[:unit]).first, h_mass[:val]) * part_def.count unless h_mass[:val] == 0
-
-            h_price = definition_attributes.h_price
-            group_def.total_cutting_cost += h_price[:val] * part_def.count unless h_price[:val] == 0
-
-          }
-
-        else
-
-          material_attributes = @material_attributes_cache[group_def.material_name]
-          if material_attributes
-
-            volumic_mass = material_attributes.h_volumic_mass
-            group_def.total_cutting_mass += group_def.total_cutting_volume * _uv_to_inch3(volumic_mass[:unit], volumic_mass[:val]) unless volumic_mass[:val] == 0
-
-            std_price = _get_std_price([ group_def.std_thickness ], material_attributes)
-            group_def.total_cutting_cost += group_def.total_cutting_volume * _uv_to_inch3(std_price[:unit], std_price[:val], group_def.std_thickness, group_def.std_width, group_def.total_cutting_length) unless std_price[:val] == 0
-
-          end
-
-        end
-
       }
 
       # Warnings & tips

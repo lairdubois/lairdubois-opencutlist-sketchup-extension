@@ -11,7 +11,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :id, :material_id, :material_name, :material_display_name, :material_type, :material_color, :material_grained, :part_count, :std_available, :std_dimension_stipped_name, :std_dimension, :std_dimension_real, :std_dimension_rounded, :std_width, :std_thickness, :total_cutting_length, :total_cutting_area, :total_cutting_volume, :total_cutting_mass, :total_cutting_cost, :total_final_area, :invalid_final_area_part_count, :show_cutting_dimensions, :show_edges, :edge_decremented, :show_veneers, :veneer_decremented, :parts
+    attr_reader :id, :material_id, :material_name, :material_display_name, :material_type, :material_color, :material_grained, :part_count, :std_available, :std_dimension_stipped_name, :std_dimension, :std_dimension_real, :std_dimension_rounded, :std_width, :std_thickness, :total_cutting_length, :total_cutting_area, :total_cutting_volume, :total_final_area, :invalid_final_area_part_count, :show_cutting_dimensions, :show_edges, :edge_decremented, :show_veneers, :veneer_decremented, :parts
 
     def initialize(group_def, cutlist)
       @_def = group_def
@@ -35,8 +35,6 @@ module Ladb::OpenCutList
       @total_cutting_length = group_def.total_cutting_length == 0 ? nil : DimensionUtils.instance.format_to_readable_length(group_def.total_cutting_length)
       @total_cutting_area = group_def.total_cutting_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(group_def.total_cutting_area)
       @total_cutting_volume = group_def.total_cutting_volume == 0 ? nil : DimensionUtils.instance.format_to_readable_volume(group_def.total_cutting_volume, group_def.material_type)
-      @total_cutting_mass = group_def.total_cutting_mass == 0 ? nil : MassUtils.instance.format_to_readable_mass(group_def.total_cutting_mass)
-      @total_cutting_cost = group_def.total_cutting_cost == 0 ? nil : PriceUtils.instance.format_to_readable_price(group_def.total_cutting_cost)
       @total_final_area = group_def.total_final_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(group_def.total_final_area)
       @invalid_final_area_part_count = group_def.invalid_final_area_part_count
       @show_cutting_dimensions = group_def.show_cutting_dimensions
