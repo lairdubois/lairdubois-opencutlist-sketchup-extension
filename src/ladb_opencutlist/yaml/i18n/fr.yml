@@ -559,6 +559,11 @@ tab:
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erreurs**."
       warning:
         is_group_selection: Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas comptabilisées.
+      tip:
+        not_enough_data: |
+          Pour que ce rapport puisse se calculer correctement :
+          - Les matières utilisées doivent avoir au moins une masse volumique ou un prix configurés.
+          - Les accessoires utilisés doivent avoir au moins une masse ou un prix.
     cuttingdiagram:
       title: Calepinage
       start_msg: Optimisation en cours

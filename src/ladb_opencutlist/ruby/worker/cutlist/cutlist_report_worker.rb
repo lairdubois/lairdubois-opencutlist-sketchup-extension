@@ -421,8 +421,13 @@ module Ladb::OpenCutList
         end
 
         # Warnings
-        if @hidden_group_ids.length > 0 && @hidden_group_ids.find_index('summary').nil? || @hidden_group_ids.length > 1 && !@hidden_group_ids.find_index('summary').nil?;
+        if @hidden_group_ids.length > 0 && @hidden_group_ids.find_index('summary').nil? || @hidden_group_ids.length > 1 && !@hidden_group_ids.find_index('summary').nil?
           @report_def.warnings << 'tab.cutlist.report.warning.is_group_selection'
+        end
+
+        # Tips
+        if @report_def.total_mass == 0 && @report_def.total_cost == 0
+          @report_def.tips << 'tab.cutlist.report.tip.not_enough_data'
         end
 
         # Create the report
