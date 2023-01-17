@@ -880,6 +880,32 @@ body.no-ie, body.ie-gt11 {
 
 }
 
+// Report
+
+.ladb-cutlist-report-summary-widget {
+  padding: 15px 30px;
+  font-size: 150%;
+
+  & > table {
+
+    & > tbody tr:last-child td {
+      padding-bottom: 5px;
+    }
+
+    & > tfoot {
+      border-top: 1px solid #ddd;
+      font-weight: bold;
+
+      tr:first-child td {
+        padding-top: 5px;
+      }
+
+    }
+
+  }
+
+}
+
 // Print /////
 
 @media print {
@@ -992,6 +1018,12 @@ body.no-ie, body.ie-gt11 {
       box-shadow: none;
     }
 
+  }
+
+  .ladb-cutlist-report-summary-widget {
+    & > table > tfoot {
+      border-top: 1px solid #000;
+    }
   }
 
 }
