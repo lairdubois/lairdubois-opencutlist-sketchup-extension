@@ -67,18 +67,18 @@
                                 <td class="text-right">{{ report.total_used_mass ? report.total_used_mass : '-' }}</td>
                             </tr>
                             <tr>
-                                <td style="font-size: 80%;">{{ 'tab.cutlist.report.total_unused'|i18next }}</td>
+                                <td style="font-size: 80%;">{{ 'tab.cutlist.report.total_unused'|i18next }}{% if report.total_unused_mass_ratio %} <small>({{ (report.total_unused_mass_ratio * 100)|number_format }}%)</small>{% endif %}</td>
                                 <td class="text-right">{{ report.total_unused_mass ? report.total_unused_mass : '-' }}</td>
                             </tr>
                             <tr>
                                 <td style="border-top: 1px solid #ddd; font-weight: bold;">{{ 'tab.cutlist.report.total'|i18next }}</td>
                                 <td class="text-right" colspan="2" style="border-top: 1px solid #ddd; font-weight: bold;">{{ report.total_mass ? report.total_mass : '-' }}</td>
                             </tr>
-                            <tr>
+                            <tr class="no-print">
                                 <td colspan="2">
                                     <div class="progress" style="height: 10px; margin-top: 20px;">
                                         {% for group in report.groups %}
-                                            <div class="progress-bar progress-bar-material-type-{{ group.material_type }}" style="width: {{ group.mass_ratio * 100 }}%;" data-toggle="tooltip" data-html="true" title="<strong>{{ ('tab.materials.type_'~group.material_type)|i18next }}</strong><br>{{ 'tab.cutlist.report.total'|i18next }} = {{ group.total_mass }}<br>{% if group.total_used_mass %} {{ 'tab.cutlist.report.total_used'|i18next }} = {{ group.total_used_mass }}{% endif %}<br>{% if group.total_unused_mass %} {{ 'tab.cutlist.report.total_unused'|i18next }} = {{ group.total_unused_mass }}{% endif %}"></div>
+                                            <div class="progress-bar progress-bar-material-type-{{ group.material_type }}" style="width: {{ group.mass_ratio * 100 }}%;" data-toggle="tooltip" data-html="true" title="<strong>{{ ('tab.materials.type_'~group.material_type)|i18next }}</strong> ({{ (group.mass_ratio * 100)|number_format }}%)<br>{{ 'tab.cutlist.report.total'|i18next }} = {{ group.total_mass }}<br>{% if group.total_used_mass %} {{ 'tab.cutlist.report.total_used'|i18next }} = {{ group.total_used_mass }}{% endif %}<br>{% if group.total_unused_mass %} {{ 'tab.cutlist.report.total_unused'|i18next }} = {{ group.total_unused_mass }}{% endif %}"></div>
                                         {% endfor %}
                                     </div>
                                 </td>
@@ -92,18 +92,18 @@
                                 <td class="text-right">{{ report.total_used_cost ? report.total_used_cost : '-' }}</td>
                             </tr>
                             <tr>
-                                <td style="font-size: 80%;">{{ 'tab.cutlist.report.total_unused'|i18next }}</td>
+                                <td style="font-size: 80%;">{{ 'tab.cutlist.report.total_unused'|i18next }}{% if report.total_unused_cost_ratio %} <small>({{ (report.total_unused_cost_ratio * 100)|number_format }}%)</small>{% endif %}</td>
                                 <td class="text-right">{{ report.total_unused_cost ? report.total_unused_cost : '-' }}</td>
                             </tr>
                             <tr>
                                 <td style="border-top: 1px solid #ddd; font-weight: bold;">{{ 'tab.cutlist.report.total'|i18next }}</td>
                                 <td class="text-right" colspan="2" style="border-top: 1px solid #ddd; font-weight: bold;">{{ report.total_cost ? report.total_cost : '-' }}</td>
                             </tr>
-                            <tr>
+                            <tr class="no-print">
                                 <td colspan="2">
                                     <div class="progress" style="height: 10px; margin-top: 20px;">
                                         {% for group in report.groups %}
-                                            <div class="progress-bar progress-bar-material-type-{{ group.material_type }}" style="width: {{ group.cost_ratio * 100 }}%;" data-toggle="tooltip" data-html="true" title="<strong>{{ ('tab.materials.type_'~group.material_type)|i18next }}</strong><br>{{ 'tab.cutlist.report.total'|i18next }} = {{ group.total_cost }}<br>{% if group.total_used_cost %} {{ 'tab.cutlist.report.total_used'|i18next }} = {{ group.total_used_cost }}{% endif %}<br>{% if group.total_unused_cost %} {{ 'tab.cutlist.report.total_unused'|i18next }} = {{ group.total_unused_cost }}{% endif %}"></div>
+                                            <div class="progress-bar progress-bar-material-type-{{ group.material_type }}" style="width: {{ group.cost_ratio * 100 }}%;" data-toggle="tooltip" data-html="true" title="<strong>{{ ('tab.materials.type_'~group.material_type)|i18next }}</strong> ({{ (group.cost_ratio * 100)|number_format }}%)<br>{{ 'tab.cutlist.report.total'|i18next }} = {{ group.total_cost }}<br>{% if group.total_used_cost %} {{ 'tab.cutlist.report.total_used'|i18next }} = {{ group.total_used_cost }}{% endif %}<br>{% if group.total_unused_cost %} {{ 'tab.cutlist.report.total_unused'|i18next }} = {{ group.total_unused_cost }}{% endif %}"></div>
                                         {% endfor %}
                                     </div>
                                 </td>
