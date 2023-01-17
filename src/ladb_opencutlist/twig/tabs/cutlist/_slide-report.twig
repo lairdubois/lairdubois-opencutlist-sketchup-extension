@@ -23,11 +23,13 @@
             </tr>
             </tfoot>
         </table>
-        <div class="no-print progress" style="height: 10px; margin-top: 20px;">
-            {% for group in report.groups %}
-                <div class="progress-bar progress-bar-material-type-{{ group.material_type }}" style="width: {{ group.mass_ratio * 100 }}%;" data-toggle="tooltip" data-html="true" title="<strong>{{ ('tab.materials.type_'~group.material_type)|i18next }}</strong> ({{ (group[key~'_ratio'] * 100)|number_format }}%)<br>{{ 'tab.cutlist.report.total'|i18next }} = {{ group['total_'~key] }}<br>{% if group['total_used_'~key] %} {{ 'tab.cutlist.report.total_used'|i18next }} = {{ group['total_used_'~key] }}{% endif %}<br>{% if group['total_unused_'~key] %} {{ 'tab.cutlist.report.total_unused'|i18next }} = {{ group['total_unused_'~key] }}{% endif %}"></div>
-            {% endfor %}
-        </div>
+        {% if report['total_'~key] %}
+            <div class="no-print progress" style="height: 10px; margin-top: 20px;">
+                {% for group in report.groups %}
+                    <div class="progress-bar progress-bar-material-type-{{ group.material_type }}" style="width: {{ group.mass_ratio * 100 }}%;" data-toggle="tooltip" data-html="true" title="<strong>{{ ('tab.materials.type_'~group.material_type)|i18next }}</strong> ({{ (group[key~'_ratio'] * 100)|number_format }}%)<br>{{ 'tab.cutlist.report.total'|i18next }} = {{ group['total_'~key] }}<br>{% if group['total_used_'~key] %} {{ 'tab.cutlist.report.total_used'|i18next }} = {{ group['total_used_'~key] }}{% endif %}<br>{% if group['total_unused_'~key] %} {{ 'tab.cutlist.report.total_unused'|i18next }} = {{ group['total_unused_'~key] }}{% endif %}"></div>
+                {% endfor %}
+            </div>
+        {% endif %}
     </div>
 {% endmacro %}
 
