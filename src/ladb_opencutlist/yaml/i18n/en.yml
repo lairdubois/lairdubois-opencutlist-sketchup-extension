@@ -220,7 +220,7 @@ tab:
       resized: This part was resized with respect to its component definition
       flipped: This part is mirrored compared to its component definition
       symmetrical: Mirrored part detection is disabled on this part
-      ignore_grain_direction: Grain direction is ignored on this part
+      ignore_grain_direction: Grain orientation is ignored on this part
       auto_oriented: This part has been reoriented automatically
       add_label_filter: "Filtering on '{{ label }}'"
       remove_label_filter: "Remove filtering on '{{ label }}'"
@@ -338,9 +338,9 @@ tab:
       symmetrical: Disable mirrored part detection on this part
       symmetrical_help: |
         If this box is checked, the detection of a *mirrored part* will have no effect on the part.
-      ignore_grain_direction: Ignore grain direction on this part
+      ignore_grain_direction: Ignore grain orientation on this part
       ignore_grain_direction_help: |
-        If this box is checked, the grain direction of the material will be ignored for this part.
+        If this box is checked, the grain orientation of the material will be ignored for this part.
       size_increase: Oversizes
       size_increase_help: |
         Oversizes increase the dimensions of a single part.
@@ -467,8 +467,6 @@ tab:
       thickness_short: T
       edges: Edge Bandings
       veneers: Veneers
-      cost: Cost
-      mass: Mass
     export:
       title: Export
       info_0: |
@@ -547,6 +545,8 @@ tab:
       raw_materials: Raw materials
       coefficient: Coefficient
       total: Total
+      total_used: Used
+      total_unused: Not Used
       total_mass: Σ Weight
       total_cost: Σ Cost
       total_count: Qty.
@@ -579,7 +579,7 @@ tab:
       option_hide_part_list: Parts List
       option_hide_part_list_1d_dimensional_0: Displayed for each Board
       option_hide_part_list_1d_edge_0: Displayed for each Edge Banding
-      option_hide_part_list_2d_0: Displayed for each Panel
+      option_hide_part_list_2d_good_0: Displayed for each Panel
       option_hide_part_list_2d_veneer_0: Displayed for each Veneer Sheet
       option_hide_part_list_1: Masked
       option_hide_part_list_1d_help: Display or mask the list of parts for each board or edge banding.
@@ -645,7 +645,7 @@ tab:
       option_std_sheet_good: Standard Panel
       option_std_sheet_veneer: Standard Veneer
       option_std_sheet_help: |
-        Select the standard panel which will be duplicated to calculate the best possible placement.
+        Select the standard panel or veneer sheet which will be duplicated to calculate the best possible placement.
         This list is defined in the field **$t(tab.materials.edit_material.std_sizes)** of the material.
         Edit the material '{{ material_name }}' to complete this list.
       option_std_sheet_add: Add a panel size
@@ -841,7 +841,7 @@ tab:
       type_6: Material type '$t(tab.materials.type_6)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
-      grain_direction: Grain direction
+      grain_direction: Grain orientation
       colorized: This tone will be applied to the texture of this material when it is rendered in the model
       texture_colorized: Combine this tone with the texture image
       texture_load: Load a new texture
@@ -905,8 +905,8 @@ tab:
       std_sizes_help: |
         Expected format: **L**x**W**, where **L** and **W** represent the **actual** *length* and *width* of the panel.
         *Sizes without units are considered to be in model units.*
-      grained: Grain Direction
-      grained_help: Configures the grain direction of the material.
+      grained: Grain Orientation
+      grained_help: Configures the grain orientation of the material.
       grained_0: No Grain
       grained_1: Grain Follows Length
       edge_decremented: Reduce Dimensions

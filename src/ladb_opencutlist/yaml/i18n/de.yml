@@ -25,7 +25,7 @@ default:
   caution: Vorsicht
   remove: Löschen
   create: Anlegen
-  duplicated: Duplizieren
+  duplicate: Duplizieren
   ignore: Ignorieren
   download: Herunterladen
   upgrade: Aktualisieren
@@ -467,8 +467,6 @@ tab:
       thickness_short: D
       edges: Kantenbänder
       veneers: Furniere
-      cost: Kosten
-      mass: Maße
     export:
       title: Export
       info_0: |
@@ -547,6 +545,8 @@ tab:
       raw_materials: Rohmaterial
       coefficient: Koeffizient
       total: Total
+      total_used: Gebraucht
+      total_unused: Nicht Gebraucht
       total_mass: Σ Massen
       total_cost: Σ Kosten
       total_count: Anz.
@@ -571,7 +571,7 @@ tab:
       option_bar_folding_0: Nein
       option_bar_folding_1: Ja
       option_bar_folding_help: "Ermöglicht das Zusammenfassen von Stangen oder Kantenbänder, die dieselben Teile und Schnitte enthalten."
-      option_sheet_folding: Gleiche Platten zusammenfassen
+      option_sheet_folding_good: Gleiche Platten zusammenfassen
       option_sheet_folding_veneer: Gleiche Furniere zusammenfassen
       option_sheet_folding_0: Nein
       option_sheet_folding_1: Ja
@@ -579,7 +579,7 @@ tab:
       option_hide_part_list: Liste der Teile
       option_hide_part_list_1d_dimensional_0: Anzeigen für jede Stange
       option_hide_part_list_1d_edge_0: Anzeigen für jedes Kantenband
-      option_hide_part_list_2d_0: Anzeigen für jede Platte
+      option_hide_part_list_2d_good_0: Anzeigen für jede Platte
       option_hide_part_list_2d_veneer_0: Anzeigen für jedes Furnierblatt
       option_hide_part_list_1: Ausblenden
       option_hide_part_list_1d_help: Anzeigen oder Ausblenden der Liste der Teile für jede Stange oder jedes Kantenband.
