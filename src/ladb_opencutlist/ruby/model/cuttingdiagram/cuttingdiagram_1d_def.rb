@@ -144,6 +144,12 @@ module Ladb::OpenCutList
       Cuttingdiagram1dBar.new(self)
     end
 
+    # ---
+
+    def total_length
+      @length * @count
+    end
+
   end
 
   # -----

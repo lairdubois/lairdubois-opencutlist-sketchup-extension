@@ -4,13 +4,16 @@ module Ladb::OpenCutList
 
   class AbstractReportGroupDef
 
-    attr_accessor :total_mass, :total_cost
+    attr_accessor :total_mass, :total_used_mass, :total_cost, :total_used_cost
     attr_reader :entry_defs
 
     def initialize
 
       @total_mass = 0
+      @total_used_mass = 0
+
       @total_cost = 0
+      @total_used_cost = 0
 
       @entry_defs = []
 

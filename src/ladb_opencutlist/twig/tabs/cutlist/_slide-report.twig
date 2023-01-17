@@ -60,8 +60,38 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td class="text-center" style="font-size: 200%;">{{ report.total_mass ? report.total_mass : '-' }}</td>
-                    <td class="text-center" style="font-size: 200%;">{{ report.total_cost ? report.total_cost : '-' }}</td>
+                    <td style="padding: 15px 30px; font-size: 150%">
+                        <table style="width: 100%;">
+                            <tr>
+                                <td style="font-size: 80%;">{{ 'tab.cutlist.report.total_used'|i18next }}</td>
+                                <td class="text-right">{{ report.total_used_mass ? report.total_used_mass : '-' }}</td>
+                            </tr>
+                            <tr>
+                                <td style="font-size: 80%;">{{ 'tab.cutlist.report.total_unused'|i18next }}</td>
+                                <td class="text-right">{{ report.total_unused_mass ? report.total_unused_mass : '-' }}</td>
+                            </tr>
+                            <tr>
+                                <td style="border-top: 1px solid #ddd; font-weight: bold;">{{ 'tab.cutlist.report.total'|i18next }}</td>
+                                <td class="text-right" colspan="2" style="border-top: 1px solid #ddd; font-weight: bold;">{{ report.total_mass ? report.total_mass : '-' }}</td>
+                            </tr>
+                        </table>
+                    </td>
+                   <td style="padding: 15px 30px; font-size: 150%">
+                        <table style="width: 100%;">
+                            <tr>
+                                <td style="font-size: 80%;">{{ 'tab.cutlist.report.total_used'|i18next }}</td>
+                                <td class="text-right">{{ report.total_used_cost ? report.total_used_cost : '-' }}</td>
+                            </tr>
+                            <tr>
+                                <td style="font-size: 80%;">{{ 'tab.cutlist.report.total_unused'|i18next }}</td>
+                                <td class="text-right">{{ report.total_unused_cost ? report.total_unused_cost : '-' }}</td>
+                            </tr>
+                            <tr>
+                                <td style="border-top: 1px solid #ddd; font-weight: bold;">{{ 'tab.cutlist.report.total'|i18next }}</td>
+                                <td class="text-right" colspan="2" style="border-top: 1px solid #ddd; font-weight: bold;">{{ report.total_cost ? report.total_cost : '-' }}</td>
+                            </tr>
+                        </table>
+                    </td>
                 </tr>
                 </tbody>
             </table>

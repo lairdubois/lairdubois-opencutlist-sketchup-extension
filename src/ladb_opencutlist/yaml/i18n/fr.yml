@@ -545,6 +545,8 @@ tab:
       raw_materials: Matières premières brutes
       coefficient: Coefficient
       total: Total
+      total_used: Utilisé
+      total_unused: Non utilisé
       total_mass: Σ Masses
       total_cost: Σ Coûts
       total_count: Qte

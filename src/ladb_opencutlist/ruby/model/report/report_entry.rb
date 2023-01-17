@@ -14,7 +14,9 @@ module Ladb::OpenCutList
       @_def = _def
 
       @total_mass = _def.total_mass == 0 ? nil : MassUtils.instance.format_to_readable_mass(_def.total_mass)
+      @total_used_mass = _def.total_used_mass == 0 ? nil : MassUtils.instance.format_to_readable_mass(_def.total_used_mass)
       @total_cost = _def.total_cost == 0 ? nil : PriceUtils.instance.format_to_readable_price(_def.total_cost)
+      @total_used_cost = _def.total_used_cost == 0 ? nil : PriceUtils.instance.format_to_readable_price(_def.total_used_cost)
 
     end
 
@@ -76,7 +78,7 @@ module Ladb::OpenCutList
       @total_count = _def.total_count
       @total_area = _def.total_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(_def.total_area)
 
-      @sheets = _def.sheet_defs.map { |sheet_def| sheet_def.create_sheet }
+      @sheets = _def.sheet_defs.values.map { |sheet_def| sheet_def.create_sheet }
 
       @std_price = @sheets.map { |sheet| sheet.std_price }.select { |std_price| !std_price.nil? }.uniq.join(', ')
 
@@ -93,11 +95,11 @@ module Ladb::OpenCutList
 
       @std_price = _def.std_price.nil? || _def.std_price[:val] == 0 ? nil : UnitUtils.format_readable(_def.std_price[:val], _def.std_price[:unit], 2, 2)
 
-      @type = _def.cuttingdiagram2d_summary_sheet.type
-      @length = _def.cuttingdiagram2d_summary_sheet.length
-      @width = _def.cuttingdiagram2d_summary_sheet.width
-      @count = _def.cuttingdiagram2d_summary_sheet.count
-      @total_area = _def.cuttingdiagram2d_summary_sheet.total_area
+      @type = _def.type
+      @length = _def.length.to_l.to_s
+      @width = _def.width.to_l.to_s
+      @count = _def.count
+      @total_area = DimensionUtils.instance.format_to_readable_area(_def.total_area)
 
     end
 
@@ -117,7 +119,7 @@ module Ladb::OpenCutList
       @total_count = _def.total_count
       @total_length = _def.total_length == 0 ? nil : DimensionUtils.instance.format_to_readable_length(_def.total_length)
 
-      @bars = _def.bar_defs.map { |bar_def| bar_def.create_bar }
+      @bars = _def.bar_defs.values.map { |bar_def| bar_def.create_bar }
 
       @std_price = @bars.map { |bar| bar.std_price }.select { |std_price| !std_price.nil? }.uniq.join(', ')
 
@@ -134,10 +136,10 @@ module Ladb::OpenCutList
 
       @std_price = _def.std_price.nil? || _def.std_price[:val] == 0 ? nil : UnitUtils.format_readable(_def.std_price[:val], _def.std_price[:unit], 2, 2)
 
-      @type = _def.cuttingdiagram1d_summary_bar.type
-      @length = _def.cuttingdiagram1d_summary_bar.length
-      @count = _def.cuttingdiagram1d_summary_bar.count
-      @total_length = _def.cuttingdiagram1d_summary_bar.total_length
+      @type = _def.type
+      @length = _def.length.to_l.to_s
+      @count = _def.count
+      @total_length = DimensionUtils.instance.format_to_readable_length(_def.total_length)
 
     end
 
@@ -157,7 +159,7 @@ module Ladb::OpenCutList
       @total_count = _def.total_count
       @total_length = _def.total_length == 0 ? nil : DimensionUtils.instance.format_to_readable_length(_def.total_length)
 
-      @bars = _def.bar_defs.map { |bar_def| bar_def.create_bar }
+      @bars = _def.bar_defs.values.map { |bar_def| bar_def.create_bar }
 
       @std_price = @bars.map { |bar| bar.std_price }.select { |std_price| !std_price.nil? }.uniq.join(', ')
 
@@ -174,10 +176,10 @@ module Ladb::OpenCutList
 
       @std_price = _def.std_price.nil? || _def.std_price[:val] == 0 ? nil : UnitUtils.format_readable(_def.std_price[:val], _def.std_price[:unit], 2, 2)
 
-      @type = _def.cuttingdiagram1d_summary_bar.type
-      @length = _def.cuttingdiagram1d_summary_bar.length
-      @count = _def.cuttingdiagram1d_summary_bar.count
-      @total_length = _def.cuttingdiagram1d_summary_bar.total_length
+      @type = _def.type
+      @length = _def.length.to_l.to_s
+      @count = _def.count
+      @total_length = DimensionUtils.instance.format_to_readable_length(_def.total_length)
 
     end
 
@@ -235,7 +237,7 @@ module Ladb::OpenCutList
       @total_count = _def.total_count
       @total_area = _def.total_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(_def.total_area)
 
-      @sheets = _def.sheet_defs.map { |sheet_def| sheet_def.create_sheet }
+      @sheets = _def.sheet_defs.values.map { |sheet_def| sheet_def.create_sheet }
 
       @std_price = @sheets.map { |sheet| sheet.std_price }.select { |std_price| !std_price.nil? }.uniq.join(', ')
 
@@ -252,11 +254,11 @@ module Ladb::OpenCutList
 
       @std_price = _def.std_price.nil? || _def.std_price[:val] == 0 ? nil : UnitUtils.format_readable(_def.std_price[:val], _def.std_price[:unit], 2, 2)
 
-      @type = _def.cuttingdiagram2d_summary_sheet.type
-      @length = _def.cuttingdiagram2d_summary_sheet.length
-      @width = _def.cuttingdiagram2d_summary_sheet.width
-      @count = _def.cuttingdiagram2d_summary_sheet.count
-      @total_area = _def.cuttingdiagram2d_summary_sheet.total_area
+      @type = _def.type
+      @length = _def.length.to_l.to_s
+      @width = _def.width.to_l.to_s
+      @count = _def.count
+      @total_area = DimensionUtils.instance.format_to_readable_area(_def.total_area)
 
     end
 
