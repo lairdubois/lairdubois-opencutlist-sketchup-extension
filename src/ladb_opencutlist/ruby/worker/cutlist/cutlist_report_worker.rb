@@ -537,9 +537,6 @@ module Ladb::OpenCutList
 
       used_ratio = 1.0 - cutlist_part.def.unused_instance_count.to_f / cutlist_part.def.instance_count_by_part
 
-      puts cutlist_part.def.unused_instance_count
-      puts cutlist_part.def.instance_count_by_part
-
       h_mass = definition_attributes.h_mass
       unless h_mass[:val] == 0
 
