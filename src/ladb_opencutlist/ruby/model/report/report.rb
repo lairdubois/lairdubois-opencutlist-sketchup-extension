@@ -27,7 +27,12 @@ module Ladb::OpenCutList
       @total_used_cost = _def.total_used_cost == 0 ? nil : PriceUtils.instance.format_to_readable_price(_def.total_used_cost)
       @total_unused_cost = _def.total_unused_cost == 0 ? nil : PriceUtils.instance.format_to_readable_price(_def.total_unused_cost)
 
-      @groups = _def.group_defs.values.select { |group_def| !group_def.entry_defs.empty? }.map { |group_def| group_def.create_group }
+      @groups = _def.group_defs.values.select { |group_def| !group_def.entry_defs.empty? }.map { |group_def|
+        group = group_def.create_group
+        group.mass_ratio = group_def.total_mass / _def.total_mass
+        group.cost_ratio = group_def.total_cost / _def.total_cost
+        group
+      }
 
     end
 

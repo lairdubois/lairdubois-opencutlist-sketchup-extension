@@ -24,6 +24,16 @@ module Ladb::OpenCutList
     def create_group
     end
 
+    # ---
+
+    def total_unused_mass
+      [@total_mass - @total_used_mass, 0].max
+    end
+
+    def total_unused_cost
+      [@total_cost - @total_used_cost, 0].max
+    end
+
   end
 
   # -----
