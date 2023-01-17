@@ -559,6 +559,11 @@ tab:
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errors**."
       warning:
         is_group_selection: Parts inside **hidden groups** of the parts list will not be accounted for.
+      tip:
+        not_enough_data: |
+          To compute a correct report:
+          - the used materials must have at least a density and a price.
+          - the used accessories must have at least a density and a price.
     cuttingdiagram:
       title: Cutting Diagram
       start_msg: Optimization running
