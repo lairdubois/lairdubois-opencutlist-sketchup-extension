@@ -76,7 +76,7 @@
                             </tr>
                             <tr>
                                 <td colspan="2">
-                                    <div class="progress" style="height: 6px; margin-top: 20px;">
+                                    <div class="progress" style="height: 10px; margin-top: 20px;">
                                         {% for group in report.groups %}
                                             <div class="progress-bar progress-bar-material-type-{{ group.material_type }}" style="width: {{ group.mass_ratio * 100 }}%;" data-toggle="tooltip" data-html="true" title="<strong>{{ ('tab.materials.type_'~group.material_type)|i18next }}</strong><br>{{ 'tab.cutlist.report.total'|i18next }} = {{ group.total_mass }}<br>{% if group.total_used_mass %} {{ 'tab.cutlist.report.total_used'|i18next }} = {{ group.total_used_mass }}{% endif %}<br>{% if group.total_unused_mass %} {{ 'tab.cutlist.report.total_unused'|i18next }} = {{ group.total_unused_mass }}{% endif %}"></div>
                                         {% endfor %}
@@ -101,7 +101,7 @@
                             </tr>
                             <tr>
                                 <td colspan="2">
-                                    <div class="progress" style="height: 6px; margin-top: 20px;">
+                                    <div class="progress" style="height: 10px; margin-top: 20px;">
                                         {% for group in report.groups %}
                                             <div class="progress-bar progress-bar-material-type-{{ group.material_type }}" style="width: {{ group.cost_ratio * 100 }}%;" data-toggle="tooltip" data-html="true" title="<strong>{{ ('tab.materials.type_'~group.material_type)|i18next }}</strong><br>{{ 'tab.cutlist.report.total'|i18next }} = {{ group.total_cost }}<br>{% if group.total_used_cost %} {{ 'tab.cutlist.report.total_used'|i18next }} = {{ group.total_used_cost }}{% endif %}<br>{% if group.total_unused_cost %} {{ 'tab.cutlist.report.total_unused'|i18next }} = {{ group.total_unused_cost }}{% endif %}"></div>
                                         {% endfor %}
