@@ -505,7 +505,7 @@ module Ladb::OpenCutList
       unit_numerator, unit_denominator = s_unit.split('_')
 
       # Process mass if needed
-      _uv_mass_to_model_unit(unit_numerator, f_value)
+      f_value = _uv_mass_to_model_unit(unit_numerator, f_value)
 
       # Process volume / area / length / instance or part
       case unit_denominator
