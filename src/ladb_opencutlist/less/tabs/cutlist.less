@@ -842,6 +842,32 @@ body.no-ie, body.ie-gt11 {
   margin-top: 5px;
   border-top: 1px solid #fff;
   padding-top: 5px;
+
+  .tt-section-flex {
+    display: flex;
+  }
+
+  .tt-section-flex-grow-1 {
+    flex-grow: 1;
+  }
+
+  .tt-section-flex-grow-0 {
+    flex-grow: 0;
+  }
+
+  .tt-section-flex-grow-1, .tt-section-flex-grow-0 {
+    margin: 0 5px;
+
+    &:first-child {
+      margin-left: 0;
+    }
+
+    &:last-child {
+      margin-right: 0;
+    }
+
+  }
+
 }
 
 // Export
