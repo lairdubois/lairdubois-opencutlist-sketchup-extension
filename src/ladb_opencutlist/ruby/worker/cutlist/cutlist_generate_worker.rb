@@ -649,8 +649,8 @@ module Ladb::OpenCutList
               PartDef::VENEERS_Z.each { |veneer|
                 unless (veneer_group_def = part_def.veneer_group_defs[veneer]).nil? || (veneer_material = part_def.veneer_materials[veneer]).nil?
                   veneer_material_attributes = _get_material_attributes(veneer_material)
-                  veneer_length = part_def.size.length
-                  veneer_width = part_def.size.width
+                  veneer_length = part_def.cutting_size.length
+                  veneer_width = part_def.cutting_size.width
                   veneer_cutting_length = veneer_length + veneer_material_attributes.l_length_increase
                   veneer_cutting_width = veneer_width + veneer_material_attributes.l_width_increase
                   veneer_group_def.total_cutting_area += veneer_cutting_length * veneer_cutting_width
@@ -728,7 +728,7 @@ module Ladb::OpenCutList
         # Folding
         if @part_folding
           part_defs = []
-          group_def.part_defs.values.sort_by { |v| [ v.size.thickness, v.size.length, v.size.width, v.tags, v.final_area, v.cumulable ] }.each do |part_def|
+          group_def.part_defs.values.sort_by { |v| [ v.size.thickness, v.size.length, v.size.width, v.tags, v.final_area.nil? ? 0 : v.final_area, v.cumulable ] }.each do |part_def|
             if !(folder_part_def = part_defs.last).nil? &&
                 ((folder_part_def.definition_id == part_def.definition_id && group_def.material_type == MaterialAttributes::TYPE_UNKNOWN) || group_def.material_type > MaterialAttributes::TYPE_UNKNOWN && group_def.material_type != MaterialAttributes::TYPE_HARDWARE) && # Part with TYPE_UNKNOWN materiel are folded only if they have the same definition | Part with TYPE_HARDWARE doesn't fold
                 folder_part_def.size == part_def.size &&
