@@ -343,8 +343,8 @@ module Ladb::OpenCutList
                     # Add properties that exist in default, but not in model
                     # Use prior custom values
 
-                    h_custom_properties = values[key].split('>').to_h { |v| [v.delete('-'), v] } # { 'length' => '-length', ... }
-                    h_default_properties = default_values[key].split('>').to_h { |v| [v.delete('-'), v] } # { 'length' => '-length', ... }
+                    h_custom_properties = values[key].split('>').map { |v| [v.delete('-'), v] }.to_h # { 'length' => '-length', ... }
+                    h_default_properties = default_values[key].split('>').map { |v| [v.delete('-'), v] }.to_h # { 'length' => '-length', ... }
 
                     sorters = []
 
