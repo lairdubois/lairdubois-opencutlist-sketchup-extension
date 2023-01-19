@@ -40,12 +40,13 @@ module Ladb::OpenCutList
 
   class SolidWoodReportGroupDef < AbstractReportGroupDef
 
-    attr_accessor :total_volume
+    attr_accessor :total_volume, :total_used_volume
 
     def initialize
       super
 
       @total_volume = 0
+      @total_used_volume = 0
 
     end
 
@@ -61,13 +62,14 @@ module Ladb::OpenCutList
 
   class SheetGoodReportGroupDef < AbstractReportGroupDef
 
-    attr_accessor :total_count, :total_area
+    attr_accessor :total_count, :total_area, :total_used_area
 
     def initialize
       super
 
       @total_count = 0
       @total_area = 0
+      @total_used_area = 0
 
     end
 
@@ -83,13 +85,14 @@ module Ladb::OpenCutList
 
   class DimensionalReportGroupDef < AbstractReportGroupDef
 
-    attr_accessor :total_count, :total_length
+    attr_accessor :total_count, :total_length, :total_used_length
 
     def initialize
       super
 
       @total_count = 0
       @total_length = 0
+      @total_used_length = 0
 
     end
 
@@ -105,13 +108,14 @@ module Ladb::OpenCutList
 
   class EdgeReportGroupDef < AbstractReportGroupDef
 
-    attr_accessor :total_count, :total_length
+    attr_accessor :total_count, :total_length, :total_used_length
 
     def initialize
       super
 
       @total_count = 0
       @total_length = 0
+      @total_used_length = 0
 
     end
 
@@ -148,13 +152,14 @@ module Ladb::OpenCutList
 
   class VeneerReportGroupDef < AbstractReportGroupDef
 
-    attr_accessor :total_count, :total_area
+    attr_accessor :total_count, :total_area, :total_used_area
 
     def initialize
       super
 
       @total_count = 0
       @total_area = 0
+      @total_used_area = 0
 
     end
 

@@ -23,10 +23,7 @@
             <li role="presentation"{% if tab == 'veneers' %} class="active"{% endif %}><a href="#tab_edit_part_veneers" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-veneer-{{ part.veneer_pattern }}"></i>&nbsp;{{ 'tab.cutlist.edit_part.veneers'|i18next }}</a></li>
         {% endif %}
         {% if not multiple %}
-            <li role="presentation"{% if tab == 'infos' %} class="active"{% endif %}><a href="#tab_edit_part_infos" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-info"></i></a></li>
-        {% endif %}
-        {% if has_warnings and not multiple %}
-            <li role="presentation"{% if tab == 'warnings' %} class="active"{% endif %}><a href="#tab_warnings" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-warning ladb-color-warning"></i></a></li>
+            <li role="presentation"{% if tab == 'infos_warnings' %} class="active"{% endif %}><a href="#tab_edit_part_infos_warnings" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-info"></i>{% if has_warnings %} + <i class="ladb-opencutlist-icon-warning ladb-color-warning"></i>{% endif %}</a></li>
         {% endif %}
     </ul>
 {% endblock %}
@@ -450,7 +447,7 @@
             </div>
         {% endif %}
         {% if not multiple %}
-            <div role="tabpanel" class="tab-pane row{% if tab == 'infos' %} active{% endif %}" id="tab_edit_part_infos">
+            <div role="tabpanel" class="tab-pane row{% if tab == 'infos_warnings' %} active{% endif %}" id="tab_edit_part_infos_warnings">
                 <div class="col-sm-offset-1 col-sm-10">
                     {% include 'tabs/cutlist/_material-origins.twig' with { 'materialOrigins':part.material_origins, 'displayOwned':true, 'flat':true } %}
                     {% if part.instance_count_by_part > 1 %}
@@ -527,96 +524,95 @@
                     {% endif %}
 
                 </div>
-            </div>
-        {% endif %}
-        {% if has_warnings %}
-            <div role="tabpanel" class="tab-pane row{% if tab == 'warnings' %} active{% endif %}" id="tab_warnings">
-                <div class="col-sm-offset-1 col-sm-10">
-                    {% if part.not_aligned_on_axes %}
-                        <div class="media">
-                            <div class="media-left"><i class="ladb-opencutlist-icon-not-aligned-on-axes ladb-opencutlist-icon-lg ladb-color-warning"></i></div>
-                            <div class="media-body">
-                                {{ 'tab.cutlist.tooltip.not_aligned_on_axes'|i18next }}
-                                <svg width="100%" viewBox="0 0 1000 500" style="fill-rule:evenodd;clip-rule:evenodd;stroke-miterlimit:10;">
-                                    <g>
+                {% if has_warnings %}
+                    <div class="col-sm-offset-1 col-sm-10">
+                        <hr>
+                        {% if part.not_aligned_on_axes %}
+                            <div class="media">
+                                <div class="media-left"><i class="ladb-opencutlist-icon-not-aligned-on-axes ladb-opencutlist-icon-lg ladb-color-warning"></i></div>
+                                <div class="media-body">
+                                    {{ 'tab.cutlist.tooltip.not_aligned_on_axes'|i18next }}
+                                    <svg width="100%" viewBox="0 0 1000 500" style="fill-rule:evenodd;clip-rule:evenodd;stroke-miterlimit:10;">
                                         <g>
-                                            <path d="M95.68,280.208l182.108,41.331l0,93.399l-182.108,-41.331l0,-93.399Z" style="fill:#fefefe;fill-rule:nonzero;"/>
-                                            <path d="M277.788,321.539l-182.108,-41.331l137.645,-218.726l182.109,41.331l-137.646,218.726Z" style="fill:#e6e6e6;fill-rule:nonzero;"/>
-                                            <path d="M277.788,321.539l137.646,-218.726l0,93.399l-137.646,218.726l0,-93.399Z" style="fill:#afafaf;fill-rule:nonzero;"/>
-                                            <path d="M95.68,279.208l182.108,41.331" style="fill:none;stroke:#000;stroke-width:1px;"/>
-                                            <path d="M277.788,321.539l137.646,-218.726" style="fill:none;stroke:#000;stroke-width:1px;"/>
-                                            <path d="M233.325,61.482l-137.645,218.726" style="fill:none;stroke:#000;stroke-width:2px;"/>
-                                            <path d="M415.434,102.813l-182.109,-41.331" style="fill:none;stroke:#000;stroke-width:2px;"/>
-                                            <path d="M415.434,102.813l0,93.399" style="fill:none;stroke:#000;stroke-width:2px;"/>
-                                            <path d="M95.68,280.208l0,93.399" style="fill:none;stroke:#000;stroke-width:2px;"/>
-                                            <path d="M277.788,321.539l0,93.399" style="fill:none;stroke:#000;stroke-width:1px;"/>
-                                            <path d="M277.788,414.938l137.646,-218.726" style="fill:none;stroke:#000;stroke-width:2px;"/>
-                                            <path d="M95.68,373.607l0,-93.399" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                            <path d="M415.434,102.813l-182.109,-41.331" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                            <path d="M277.788,321.539l137.646,-218.726" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                            <path d="M95.68,280.208l182.108,41.331" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                            <path d="M233.325,61.482l-137.645,218.726" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                            <path d="M277.788,414.938l0,-93.399" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                            <path d="M277.788,414.938l137.646,-218.726" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                            <path d="M415.434,196.212l0,-93.399" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                            <path d="M277.788,414.938l0,-215.056" style="fill:none;stroke:#0432ff;stroke-width:4px;"/>
-                                            <path d="M277.788,414.938l95.081,-151.088" style="fill:none;stroke:#ff2500;stroke-width:4px;"/>
-                                            <path d="M277.788,414.938l-251.588,-57.099" style="fill:none;stroke:#00f800;stroke-width:4px;"/>
+                                            <g>
+                                                <path d="M95.68,280.208l182.108,41.331l0,93.399l-182.108,-41.331l0,-93.399Z" style="fill:#fefefe;fill-rule:nonzero;"/>
+                                                <path d="M277.788,321.539l-182.108,-41.331l137.645,-218.726l182.109,41.331l-137.646,218.726Z" style="fill:#e6e6e6;fill-rule:nonzero;"/>
+                                                <path d="M277.788,321.539l137.646,-218.726l0,93.399l-137.646,218.726l0,-93.399Z" style="fill:#afafaf;fill-rule:nonzero;"/>
+                                                <path d="M95.68,279.208l182.108,41.331" style="fill:none;stroke:#000;stroke-width:1px;"/>
+                                                <path d="M277.788,321.539l137.646,-218.726" style="fill:none;stroke:#000;stroke-width:1px;"/>
+                                                <path d="M233.325,61.482l-137.645,218.726" style="fill:none;stroke:#000;stroke-width:2px;"/>
+                                                <path d="M415.434,102.813l-182.109,-41.331" style="fill:none;stroke:#000;stroke-width:2px;"/>
+                                                <path d="M415.434,102.813l0,93.399" style="fill:none;stroke:#000;stroke-width:2px;"/>
+                                                <path d="M95.68,280.208l0,93.399" style="fill:none;stroke:#000;stroke-width:2px;"/>
+                                                <path d="M277.788,321.539l0,93.399" style="fill:none;stroke:#000;stroke-width:1px;"/>
+                                                <path d="M277.788,414.938l137.646,-218.726" style="fill:none;stroke:#000;stroke-width:2px;"/>
+                                                <path d="M95.68,373.607l0,-93.399" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                                <path d="M415.434,102.813l-182.109,-41.331" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                                <path d="M277.788,321.539l137.646,-218.726" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                                <path d="M95.68,280.208l182.108,41.331" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                                <path d="M233.325,61.482l-137.645,218.726" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                                <path d="M277.788,414.938l0,-93.399" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                                <path d="M277.788,414.938l137.646,-218.726" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                                <path d="M415.434,196.212l0,-93.399" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                                <path d="M277.788,414.938l0,-215.056" style="fill:none;stroke:#0432ff;stroke-width:4px;"/>
+                                                <path d="M277.788,414.938l95.081,-151.088" style="fill:none;stroke:#ff2500;stroke-width:4px;"/>
+                                                <path d="M277.788,414.938l-251.588,-57.099" style="fill:none;stroke:#00f800;stroke-width:4px;"/>
+                                            </g>
+                                            <text x="236.844px" y="493.992px" style="font-size:40px;text-anchor:middle;">{{ 'default.good'|i18next }}</text>
                                         </g>
-                                        <text x="236.844px" y="493.992px" style="font-size:40px;text-anchor:middle;">{{ 'default.good'|i18next }}</text>
-                                    </g>
-                                    <g>
                                         <g>
-                                            <path d="M583.719,311.144l39.513,-78.11l169.784,94.825l-39.513,78.111l-169.784,-94.826Z" style="fill:#fefefe;fill-rule:nonzero;"/>
-                                            <path d="M760.877,14.308l169.785,94.825l-137.646,218.726l-169.784,-94.825l137.645,-218.726Z" style="fill:#f1f1f1;fill-rule:nonzero;"/>
-                                            <path d="M793.016,327.859l137.646,-218.726l-39.514,78.111l-137.645,218.726l39.513,-78.111Z" style="fill:#828282;fill-rule:nonzero;"/>
-                                            <path d="M583.719,311.144l39.513,-78.11" style="fill:none;stroke:#000;stroke-width:2px;"/>
-                                            <path d="M930.662,109.133l-169.785,-94.825" style="fill:none;stroke:#000;stroke-width:2px;"/>
-                                            <path d="M793.016,327.859l137.646,-218.726" style="fill:none;stroke:#000;stroke-width:1px;"/>
-                                            <path d="M623.232,233.034l169.784,94.825" style="fill:none;stroke:#000;stroke-width:1px;"/>
-                                            <path d="M760.877,14.308l-137.645,218.726" style="fill:none;stroke:#000;stroke-width:2px;"/>
-                                            <path d="M753.503,405.97l39.513,-78.111" style="fill:none;stroke:#000;stroke-width:1px;"/>
-                                            <path d="M753.503,405.97l137.645,-218.726" style="fill:none;stroke:#000;stroke-width:2px;"/>
-                                            <path d="M891.148,187.244l39.514,-78.111" style="fill:none;stroke:#000;stroke-width:2px;"/>
-                                            <path d="M583.719,311.144l169.784,94.826" style="fill:none;stroke:#000;stroke-width:2px;"/>
-                                            <path d="M930.662,52.841l0,143.371" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                            <path d="M891.148,187.244l39.514,8.968" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                            <path d="M583.719,367.437l26.212,-41.653" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                            <path d="M930.662,196.212l-137.646,218.726" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                            <path d="M930.662,52.841l-137.646,218.726" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                            <path d="M793.016,271.567l0,143.371" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                            <path d="M793.016,271.567l-209.297,-47.501" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                            <path d="M583.719,224.066l0,143.371" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                            <path d="M721.364,5.34l0,71.756" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                            <path d="M583.719,224.066l137.645,-218.726" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                            <path d="M721.364,5.34l209.298,47.501" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                            <path d="M793.016,414.938l0,-215.056" style="fill:none;stroke:#0432ff;stroke-width:4px;"/>
-                                            <path d="M793.016,414.938l95.081,-151.088" style="fill:none;stroke:#ff2500;stroke-width:4px;"/>
-                                            <path d="M793.016,414.938l-251.588,-57.099" style="fill:none;stroke:#00f800;stroke-width:4px;"/>
+                                            <g>
+                                                <path d="M583.719,311.144l39.513,-78.11l169.784,94.825l-39.513,78.111l-169.784,-94.826Z" style="fill:#fefefe;fill-rule:nonzero;"/>
+                                                <path d="M760.877,14.308l169.785,94.825l-137.646,218.726l-169.784,-94.825l137.645,-218.726Z" style="fill:#f1f1f1;fill-rule:nonzero;"/>
+                                                <path d="M793.016,327.859l137.646,-218.726l-39.514,78.111l-137.645,218.726l39.513,-78.111Z" style="fill:#828282;fill-rule:nonzero;"/>
+                                                <path d="M583.719,311.144l39.513,-78.11" style="fill:none;stroke:#000;stroke-width:2px;"/>
+                                                <path d="M930.662,109.133l-169.785,-94.825" style="fill:none;stroke:#000;stroke-width:2px;"/>
+                                                <path d="M793.016,327.859l137.646,-218.726" style="fill:none;stroke:#000;stroke-width:1px;"/>
+                                                <path d="M623.232,233.034l169.784,94.825" style="fill:none;stroke:#000;stroke-width:1px;"/>
+                                                <path d="M760.877,14.308l-137.645,218.726" style="fill:none;stroke:#000;stroke-width:2px;"/>
+                                                <path d="M753.503,405.97l39.513,-78.111" style="fill:none;stroke:#000;stroke-width:1px;"/>
+                                                <path d="M753.503,405.97l137.645,-218.726" style="fill:none;stroke:#000;stroke-width:2px;"/>
+                                                <path d="M891.148,187.244l39.514,-78.111" style="fill:none;stroke:#000;stroke-width:2px;"/>
+                                                <path d="M583.719,311.144l169.784,94.826" style="fill:none;stroke:#000;stroke-width:2px;"/>
+                                                <path d="M930.662,52.841l0,143.371" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                                <path d="M891.148,187.244l39.514,8.968" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                                <path d="M583.719,367.437l26.212,-41.653" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                                <path d="M930.662,196.212l-137.646,218.726" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                                <path d="M930.662,52.841l-137.646,218.726" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                                <path d="M793.016,271.567l0,143.371" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                                <path d="M793.016,271.567l-209.297,-47.501" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                                <path d="M583.719,224.066l0,143.371" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                                <path d="M721.364,5.34l0,71.756" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                                <path d="M583.719,224.066l137.645,-218.726" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                                <path d="M721.364,5.34l209.298,47.501" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                                <path d="M793.016,414.938l0,-215.056" style="fill:none;stroke:#0432ff;stroke-width:4px;"/>
+                                                <path d="M793.016,414.938l95.081,-151.088" style="fill:none;stroke:#ff2500;stroke-width:4px;"/>
+                                                <path d="M793.016,414.938l-251.588,-57.099" style="fill:none;stroke:#00f800;stroke-width:4px;"/>
+                                            </g>
+                                            <text x="719.114px" y="493.992px" style="font-size:40px;text-anchor:middle;">{{ 'default.bad'|i18next }}</text>
                                         </g>
-                                        <text x="719.114px" y="493.992px" style="font-size:40px;text-anchor:middle;">{{ 'default.bad'|i18next }}</text>
-                                    </g>
-                                </svg>
+                                    </svg>
+                                </div>
                             </div>
-                        </div>
-                    {% endif %}
-                    {% if part.multiple_layers %}
-                        <div class="media">
-                            <div class="media-left"><i class="ladb-opencutlist-icon-multiple-layers ladb-opencutlist-icon-lg ladb-color-warning"></i></div>
-                            <div class="media-body">
-                                {{ 'tab.cutlist.tooltip.multiple_layers'|i18next({ 'count':(part.layers|length), 'layers':(part.layers|join(', ')) }) }}
+                        {% endif %}
+                        {% if part.multiple_layers %}
+                            <div class="media">
+                                <div class="media-left"><i class="ladb-opencutlist-icon-multiple-layers ladb-opencutlist-icon-lg ladb-color-warning"></i></div>
+                                <div class="media-body">
+                                    {{ 'tab.cutlist.tooltip.multiple_layers'|i18next({ 'count':(part.layers|length), 'layers':(part.layers|join(', ')) }) }}
+                                </div>
                             </div>
-                        </div>
-                    {% endif %}
-                    {% if part.unused_instance_count > 0 %}
-                        <div class="media">
-                            <div class="media-left"><i class="ladb-opencutlist-icon-missing-instance-count ladb-opencutlist-icon-lg ladb-color-warning"></i></div>
-                            <div class="media-body">
-                                {{ 'tab.cutlist.tooltip.unused_instance_count'|i18next({ 'count':part.unused_instance_count }) }}
+                        {% endif %}
+                        {% if part.unused_instance_count > 0 %}
+                            <div class="media">
+                                <div class="media-left"><i class="ladb-opencutlist-icon-missing-instance-count ladb-opencutlist-icon-lg ladb-color-warning"></i></div>
+                                <div class="media-body">
+                                    {{ 'tab.cutlist.tooltip.unused_instance_count'|i18next({ 'count':part.unused_instance_count }) }}
+                                </div>
                             </div>
-                        </div>
-                    {% endif %}
-                </div>
+                        {% endif %}
+                    </div>
+                {% endif %}
             </div>
         {% endif %}
     </div>

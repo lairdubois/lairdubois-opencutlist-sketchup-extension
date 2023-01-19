@@ -337,28 +337,34 @@ module Ladb::OpenCutList
 
                 if values[key] != default_values[key]
 
-                  # Remove properties that doesn't exist in default
-                  # Add properties that exist in default, but not in model
-                  # Use prior model values
+                  if values[key].is_a?(String)  # Values must be a string else use default
 
-                  h_model_properties = values[key].split('>').to_h { |v| [v.delete('-'), v] } # { 'length' => '-length', ... }
-                  h_default_properties = default_values[key].split('>').to_h { |v| [v.delete('-'), v] } # { 'length' => '-length', ... }
+                    # Remove properties that doesn't exist in default
+                    # Add properties that exist in default, but not in model
+                    # Use prior custom values
 
-                  sorters = []
+                    h_custom_properties = values[key].split('>').to_h { |v| [v.delete('-'), v] } # { 'length' => '-length', ... }
+                    h_default_properties = default_values[key].split('>').to_h { |v| [v.delete('-'), v] } # { 'length' => '-length', ... }
 
-                  # Remove old properties
-                  h_model_properties.each { |property, sorter|
-                    next unless h_default_properties.has_key?(property)
-                    sorters.push(sorter)
-                    h_default_properties.delete(property)
-                  }.compact
+                    sorters = []
 
-                  # Append new properties
-                  h_default_properties.each { |property, sorter|
-                    sorters.push(sorter)
-                  }
+                    # Remove old properties
+                    h_custom_properties.each { |property, sorter|
+                      next unless h_default_properties.has_key?(property) && !sorter.nil?
+                      sorters.push(sorter)
+                      h_default_properties.delete(property)
+                    }
 
-                  merged_values[key] = sorters.join('>')
+                    # Append new properties
+                    h_default_properties.each { |property, sorter|
+                      sorters.push(sorter)
+                    }
+
+                    merged_values[key] = sorters.join('>')
+
+                  else
+                    merged_values[key] = default_values[key]
+                  end
 
                 else
                   merged_values[key] = values[key]

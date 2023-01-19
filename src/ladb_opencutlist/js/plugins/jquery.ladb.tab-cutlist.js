@@ -1576,8 +1576,7 @@
                 || tab === 'axes' && multiple
                 || tab === 'edges' && group.material_type !== 2 /* 2 = TYPE_SHEET_GOOD */
                 || tab === 'veneers' && group.material_type !== 2 /* 2 = TYPE_SHEET_GOOD */
-                || tab === 'infos'
-                || tab === 'warnings'
+                || tab === 'infos_warnings' && multiple
             ) {
                 tab = 'general';
             }

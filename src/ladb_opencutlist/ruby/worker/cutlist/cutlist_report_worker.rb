@@ -62,12 +62,14 @@ module Ladb::OpenCutList
 
           # Compute parts mass and cost
           cutlist_group.def.part_defs.each do |id, part_def|
+            report_entry_def.total_used_volume += part_def.size.volume * part_def.count
             report_entry_def.total_used_mass += part_def.size.volume * part_def.count * mass_per_inch3
             report_entry_def.total_used_cost += part_def.size.volume * part_def.count * price_per_inch3
           end
 
           report_group_def.entry_defs << report_entry_def
           report_group_def.total_volume += report_entry_def.total_volume
+          report_group_def.total_used_volume += report_entry_def.total_used_volume
 
         when MaterialAttributes::TYPE_SHEET_GOOD
 
@@ -119,19 +121,23 @@ module Ladb::OpenCutList
             total_mass = total_area * cutlist_group.def.std_thickness * mass_per_inch3
             total_cost = total_area * cutlist_group.def.std_thickness * price_per_inch3
 
+            total_used_area = 0
             total_used_mass = 0
             total_used_cost = 0
             cuttingdiagram2d_sheet.parts.each do |cuttingdiagram2d_part|
               part_def = cuttingdiagram2d_part.def.cutlist_part.def
+              total_used_area += part_def.size.area * cuttingdiagram2d_sheet.def.count
               total_used_mass += part_def.size.volume * mass_per_inch3 * cuttingdiagram2d_sheet.def.count
               total_used_cost += part_def.size.volume * price_per_inch3 * cuttingdiagram2d_sheet.def.count
             end
 
+            report_entry_sheet_def.total_used_area += total_used_area
             report_entry_sheet_def.total_mass += total_mass
             report_entry_sheet_def.total_used_mass += total_used_mass
             report_entry_sheet_def.total_cost += total_cost
             report_entry_sheet_def.total_used_cost += total_used_cost
 
+            report_entry_def.total_used_area += total_used_area
             report_entry_def.total_mass += total_mass
             report_entry_def.total_used_mass += total_used_mass
             report_entry_def.total_cost += total_cost
@@ -142,6 +148,7 @@ module Ladb::OpenCutList
           report_group_def.entry_defs << report_entry_def
           report_group_def.total_count += report_entry_def.total_count
           report_group_def.total_area += report_entry_def.total_area
+          report_group_def.total_used_area += report_entry_def.total_used_area
 
         when MaterialAttributes::TYPE_DIMENSIONAL
 
@@ -193,19 +200,23 @@ module Ladb::OpenCutList
             total_mass = total_length * cutlist_group.def.std_width * cutlist_group.def.std_thickness * mass_per_inch3
             total_cost = total_length * cutlist_group.def.std_width * cutlist_group.def.std_thickness * price_per_inch3
 
+            total_used_length = 0
             total_used_mass = 0
             total_used_cost = 0
             cuttingdiagram1d_bar.parts.each do |cuttingdiagram1d_part|
               part_def = cuttingdiagram1d_part.def.cutlist_part.def
+              total_used_length += part_def.size.length * cuttingdiagram1d_bar.def.count
               total_used_mass += part_def.size.volume * mass_per_inch3 * cuttingdiagram1d_bar.def.count
               total_used_cost += part_def.size.volume * price_per_inch3 * cuttingdiagram1d_bar.def.count
             end
 
+            report_entry_bar_def.total_used_length += total_used_length
             report_entry_bar_def.total_mass += total_mass
             report_entry_bar_def.total_used_mass += total_used_mass
             report_entry_bar_def.total_cost += total_cost
             report_entry_bar_def.total_used_cost += total_used_cost
 
+            report_entry_def.total_used_length += total_used_length
             report_entry_def.total_mass += total_mass
             report_entry_def.total_used_mass += total_used_mass
             report_entry_def.total_cost += total_cost
@@ -216,6 +227,7 @@ module Ladb::OpenCutList
           report_group_def.entry_defs << report_entry_def
           report_group_def.total_count += report_entry_def.total_count
           report_group_def.total_length += report_entry_def.total_length
+          report_group_def.total_used_length += report_entry_def.total_used_length
 
         when MaterialAttributes::TYPE_EDGE
 
@@ -267,19 +279,23 @@ module Ladb::OpenCutList
             total_mass = total_length * cutlist_group.def.std_width * cutlist_group.def.std_thickness * mass_per_inch3
             total_cost = total_length * cutlist_group.def.std_width * cutlist_group.def.std_thickness * price_per_inch3
 
+            total_used_length = 0
             total_used_mass = 0
             total_used_cost = 0
             cuttingdiagram1d_bar.parts.each do |cuttingdiagram1d_part|
               part_def = cuttingdiagram1d_part.def.cutlist_part.def
+              total_used_length += part_def.size.length * cuttingdiagram1d_bar.def.count
               total_used_mass += part_def.size.volume * mass_per_inch3 * cuttingdiagram1d_bar.def.count
               total_used_cost += part_def.size.volume * price_per_inch3 * cuttingdiagram1d_bar.def.count
             end
 
+            report_entry_bar_def.total_used_length += total_used_length
             report_entry_bar_def.total_mass += total_mass
             report_entry_bar_def.total_used_mass += total_used_mass
             report_entry_bar_def.total_cost += total_cost
             report_entry_bar_def.total_used_cost += total_used_cost
 
+            report_entry_def.total_used_length += total_used_length
             report_entry_def.total_mass += total_mass
             report_entry_def.total_used_mass += total_used_mass
             report_entry_def.total_cost += total_cost
@@ -290,6 +306,7 @@ module Ladb::OpenCutList
           report_group_def.entry_defs << report_entry_def
           report_group_def.total_count += report_entry_def.total_count
           report_group_def.total_length += report_entry_def.total_length
+          report_group_def.total_used_length += report_entry_def.total_used_length
 
         when MaterialAttributes::TYPE_HARDWARE
 
@@ -361,19 +378,23 @@ module Ladb::OpenCutList
             total_mass = total_area * cutlist_group.def.std_thickness * mass_per_inch3
             total_cost = total_area * cutlist_group.def.std_thickness * price_per_inch3
 
+            total_used_area = 0
             total_used_mass = 0
             total_used_cost = 0
             cuttingdiagram2d_sheet.parts.each do |cuttingdiagram2d_part|
               part_def = cuttingdiagram2d_part.def.cutlist_part.def
+              total_used_area += part_def.size.area * cuttingdiagram2d_sheet.def.count
               total_used_mass += part_def.size.volume * mass_per_inch3 * cuttingdiagram2d_sheet.def.count
               total_used_cost += part_def.size.volume * price_per_inch3 * cuttingdiagram2d_sheet.def.count
             end
 
+            report_entry_sheet_def.total_used_area += total_used_area
             report_entry_sheet_def.total_mass += total_mass
             report_entry_sheet_def.total_used_mass += total_used_mass
             report_entry_sheet_def.total_cost += total_cost
             report_entry_sheet_def.total_used_cost += total_used_cost
 
+            report_entry_def.total_used_area += total_used_area
             report_entry_def.total_mass += total_mass
             report_entry_def.total_used_mass += total_used_mass
             report_entry_def.total_cost += total_cost
@@ -384,6 +405,7 @@ module Ladb::OpenCutList
           report_group_def.entry_defs << report_entry_def
           report_group_def.total_count += report_entry_def.total_count
           report_group_def.total_area += report_entry_def.total_area
+          report_group_def.total_used_area += report_entry_def.total_used_area
 
         end
 
