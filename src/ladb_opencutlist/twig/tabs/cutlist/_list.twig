@@ -129,20 +129,20 @@
             </td>
         </tr>
         <tr class="table-column-heading">
-            <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.list.material_type'|i18next }}</td>
-            <td class="text-center" rowspan="2" style="vertical-align: middle !important;">{{ 'tab.cutlist.list.material_thickness'|i18next }}</td>
-            <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="10%">{{ 'tab.cutlist.list.part_count'|i18next }}</td>
-            <td class="text-center" colspan="3">{{ 'tab.cutlist.list.total_cutting'|i18next }}</td>
+            <td rowspan="2" width="5%">{{ 'tab.cutlist.list.material_type'|i18next }}</td>
+            <td rowspan="2">{{ 'tab.cutlist.list.material_thickness'|i18next }}</td>
+            <td rowspan="2" width="10%">{{ 'tab.cutlist.list.part_count'|i18next }}</td>
+            <td colspan="3">{{ 'tab.cutlist.list.total_cutting'|i18next }}</td>
             {% if not generateOptions.hide_final_areas %}
-                <td class="text-center">{{ 'tab.cutlist.list.total_final'|i18next }}</td>
+                <td>{{ 'tab.cutlist.list.total_final'|i18next }}</td>
             {% endif %}
         </tr>
         <tr class="table-column-heading">
-            <td class="text-center" width="10%">{{ 'tab.cutlist.list.length'|i18next }}</td>
-            <td class="text-center" width="10%">{{ 'tab.cutlist.list.area'|i18next }}</td>
-            <td class="text-center" width="10%">{{ 'tab.cutlist.list.volume'|i18next }}</td>
+            <td width="10%">{{ 'tab.cutlist.list.length'|i18next }}</td>
+            <td width="10%">{{ 'tab.cutlist.list.area'|i18next }}</td>
+            <td width="10%">{{ 'tab.cutlist.list.volume'|i18next }}</td>
             {% if not generateOptions.hide_final_areas %}
-                <td class="text-center" width="12%">{{ 'tab.cutlist.list.area'|i18next }}</td>
+                <td width="12%">{{ 'tab.cutlist.list.area'|i18next }}</td>
             {% endif %}
         </tr>
         </thead>
@@ -262,48 +262,48 @@
             </td>
         </tr>
         <tr class="table-column-heading">
-            <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.list.number'|i18next }}</td>
-            <td class="text-center" rowspan="2" style="vertical-align: middle !important;">{{ 'tab.cutlist.list.name'|i18next }}<span class="ladb-minitools ladb-minitools-right no-print"><a href="#" class="ladb-btn-select-group-parts" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.select_unselect_all_parts'|i18next }}"><i class="ladb-opencutlist-icon-check-box-with-check-sign"></i></a></span></td>
-            <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="8%">{{ 'tab.cutlist.list.count'|i18next }}</td>
+            <td rowspan="2" width="5%">{{ 'tab.cutlist.list.number'|i18next }}</td>
+            <td rowspan="2">{{ 'tab.cutlist.list.name'|i18next }}<span class="ladb-minitools ladb-minitools-right no-print"><a href="#" class="ladb-btn-select-group-parts" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.select_unselect_all_parts'|i18next }}"><i class="ladb-opencutlist-icon-check-box-with-check-sign"></i></a></span></td>
+            <td rowspan="2" width="8%">{{ 'tab.cutlist.list.count'|i18next }}</td>
             {% if showCuttingDimensions %}
-                <td class="text-center" colspan="{{ hideWidth ? '1' : '2' }}">{{ 'tab.cutlist.list.cutting'|i18next }}</td>
+                <td colspan="{{ hideWidth ? '1' : '2' }}">{{ 'tab.cutlist.list.cutting'|i18next }}</td>
             {% endif %}
             {% if showBoxDimensions %}
-                <td class="text-center" colspan="{{ 3 - (hideWidth ? 1 : 0) - (hideThickness ? 1 : 0) }}">{{ 'tab.cutlist.list.bbox'|i18next }}</td>
+                <td colspan="{{ 3 - (hideWidth ? 1 : 0) - (hideThickness ? 1 : 0) }}">{{ 'tab.cutlist.list.bbox'|i18next }}</td>
             {% endif %}
             {% if showFinalAreas %}
-                <td class="text-center" width="10%">{{ ('tab.cutlist.list.final')|i18next }}</td>
+                <td width="10%">{{ ('tab.cutlist.list.final')|i18next }}</td>
             {% endif %}
             {% if showEdges %}
-                <td class="text-center" colspan="4">{{ ('tab.cutlist.list.edges')|i18next }}</td>
+                <td colspan="4">{{ ('tab.cutlist.list.edges')|i18next }}</td>
             {% endif %}
             {% if showVeneers %}
-                <td class="text-center" colspan="4">{{ ('tab.cutlist.list.veneers')|i18next }}</td>
+                <td colspan="4">{{ ('tab.cutlist.list.veneers')|i18next }}</td>
             {% endif %}
         </tr>
         <tr class="table-column-heading">
             {% if showCuttingDimensions %}
                 {% for property in dimensionColumnOrderStrategy if (not hideWidth or property != 'width') and property != 'thickness' %}
-                    <td class="text-center" width="8%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
+                    <td width="8%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
                 {% endfor %}
             {% endif %}
             {% if showBoxDimensions %}
                 {% for property in dimensionColumnOrderStrategy if (not hideWidth or property != 'width') and (not hideThickness or property != 'thickness') %}
-                    <td class="text-center" width="8%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
+                    <td width="8%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
                 {% endfor %}
             {% endif %}
             {% if showFinalAreas %}
-                <td class="text-center">{{ ('tab.cutlist.list.area_short')|i18next }}</td>
+                <td>{{ ('tab.cutlist.list.area_short')|i18next }}</td>
             {% endif %}
             {% if showEdges %}
-                <td class="text-center" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_ymin'|i18next }}"><i class="ladb-opencutlist-icon-edge-0010"></i></td>
-                <td class="text-center" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_ymax'|i18next }}"><i class="ladb-opencutlist-icon-edge-1000"></i></td>
-                <td class="text-center" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_xmin'|i18next }}"><i class="ladb-opencutlist-icon-edge-0001"></i></td>
-                <td class="text-center" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_xmax'|i18next }}"><i class="ladb-opencutlist-icon-edge-0100"></i></td>
+                <td data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_ymin'|i18next }}"><i class="ladb-opencutlist-icon-edge-0010"></i></td>
+                <td data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_ymax'|i18next }}"><i class="ladb-opencutlist-icon-edge-1000"></i></td>
+                <td data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_xmin'|i18next }}"><i class="ladb-opencutlist-icon-edge-0001"></i></td>
+                <td data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_xmax'|i18next }}"><i class="ladb-opencutlist-icon-edge-0100"></i></td>
             {% endif %}
             {% if showVeneers %}
-                <td class="text-center" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.veneer_zmax'|i18next }}"><i class="ladb-opencutlist-icon-veneer-10"></i></td>
-                <td class="text-center" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.veneer_zmin'|i18next }}"><i class="ladb-opencutlist-icon-veneer-01"></i></td>
+                <td data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.veneer_zmax'|i18next }}"><i class="ladb-opencutlist-icon-veneer-10"></i></td>
+                <td data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.veneer_zmin'|i18next }}"><i class="ladb-opencutlist-icon-veneer-01"></i></td>
             {% endif %}
         </tr>
         </thead>
