@@ -319,9 +319,9 @@ module Ladb::OpenCutList
 
           # Compute Thickness decrements
           thickness_decrement = 0
-          thickness_decrement += veneer_zmin_material_attributes.l_thickness if veneer_zmin_material_attributes.edge_decremented
-          thickness_decrement += veneer_zmax_material_attributes.l_thickness if veneer_zmax_material_attributes.edge_decremented
-          veneer_decremented = veneer_zmin_material_attributes.edge_decremented || veneer_zmax_material_attributes.edge_decremented
+          thickness_decrement += veneer_zmin_material_attributes.l_thickness
+          thickness_decrement += veneer_zmax_material_attributes.l_thickness
+          veneer_decremented = thickness_decrement > 0
 
           # Populate VeneerDef
           veneers_def = {
