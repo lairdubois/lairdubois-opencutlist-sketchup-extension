@@ -234,13 +234,16 @@ module Ladb::OpenCutList
 
   class HardwareReportEntryDef < AbstractReportEntryDef
 
-    attr_accessor :total_count
+    attr_accessor :total_count, :total_instance_count, :total_used_instance_count
     attr_reader :part_defs
 
     def initialize(cutlist_group)
       super(cutlist_group)
 
       @total_count = 0
+
+      @total_instance_count = 0
+      @total_used_instance_count = 0
 
       @part_defs = []
 
@@ -256,7 +259,7 @@ module Ladb::OpenCutList
 
   class HardwareReportEntryPartDef < AbstractReportItemDef
 
-    attr_accessor :mass, :price
+    attr_accessor :mass, :price, :total_instance_count, :total_used_instance_count
     attr_reader :cutlist_part
 
     def initialize(cutlist_part)
@@ -266,6 +269,9 @@ module Ladb::OpenCutList
 
       @mass = nil
       @price = nil
+
+      @total_instance_count = 0
+      @total_used_instance_count = 0
 
     end
 

@@ -145,6 +145,7 @@
                         <td colspan="2">{{ 'tab.cutlist.report.total_length'|i18next }}</td>
                     {% elseif group.material_type == 5 %} {# 5 = TYPE_HARDWARE #}
                         <td width="10%" rowspan="2">{{ 'tab.cutlist.report.total_count'|i18next }}</td>
+                        <td colspan="2">{{ 'tab.cutlist.report.total_instance_count'|i18next }}</td>
                     {% elseif group.material_type == 6 %} {# 2 = TYPE_VENEER #}
                         <td width="10%" rowspan="2">{{ 'tab.cutlist.report.total_count'|i18next }}</td>
                         <td colspan="2">{{ 'tab.cutlist.report.total_area'|i18next }}</td>
@@ -166,6 +167,8 @@
                         <td width="8%">{{ 'tab.cutlist.report.total_used'|i18next }}</td>
                         <td width="8%">{{ 'tab.cutlist.report.total'|i18next }}</td>
                     {% elseif group.material_type == 5 %} {# 5 = TYPE_HARDWARE #}
+                        <td width="8%">{{ 'tab.cutlist.report.total_used'|i18next }}</td>
+                        <td width="8%">{{ 'tab.cutlist.report.total'|i18next }}</td>
                     {% elseif group.material_type == 6 %} {# 2 = TYPE_VENEER #}
                         <td width="8%">{{ 'tab.cutlist.report.total_used'|i18next }}</td>
                         <td width="8%">{{ 'tab.cutlist.report.total'|i18next }}</td>
@@ -217,6 +220,8 @@
                                 <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ entry.total_length|default('-') }}</td>
                             {% elseif group.material_type == 5 %} {# 5 = TYPE_HARDWARE #}
                                 <td class="text-center">{{ entry.total_count }}</td>
+                                <td class="text-center">{{ entry.total_used_instance_count }}</td>
+                                <td class="text-center">{{ entry.total_instance_count }}</td>
                             {% elseif group.material_type == 6 %} {# 6 = TYPE_VENEER #}
                                 <td class="text-center">{{ entry.total_count }}</td>
                                 <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ entry.total_used_area|default('-') }}</td>
@@ -286,6 +291,8 @@
                                         </div>
                                     </td>
                                     <td class="text-center">{{ part.count }}</td>
+                                    <td class="text-center">{{ part.total_used_instance_count }}</td>
+                                    <td class="text-center"data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.tooltip.instance_count_by_part'|i18next({ 'count':part.instance_count_by_part }) }}">{{ part.total_instance_count }}</td>
                                     <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if part.mass %} data-toggle="tooltip" title="{{ part.mass }}"{% endif %}>{{ part.total_used_mass|default('-') }}</td>
                                     <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if part.mass %} data-toggle="tooltip" title="{{ part.mass }}"{% endif %}>{{ part.total_mass|default('-') }}</td>
                                     <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if part.price %} data-toggle="tooltip" title="{{ part.price }}"{% endif %}>{{ part.total_used_cost|default('-') }}</td>
@@ -326,6 +333,8 @@
                             <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ group.total_length }}</td>
                         {% elseif group.material_type == 5 %} {# 5 = TYPE_HARDWARE #}
                             <td class="text-center">{{ group.total_count }}</td>
+                            <td class="text-center">{{ group.total_used_instance_count }}</td>
+                            <td class="text-center">{{ group.total_instance_count }}</td>
                         {% elseif group.material_type == 6 %} {# 6 = TYPE_VENEER #}
                             <td class="text-center">{{ group.total_count }}</td>
                             <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ group.total_used_area }}</td>

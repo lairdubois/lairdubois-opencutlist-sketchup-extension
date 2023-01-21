@@ -327,6 +327,8 @@ module Ladb::OpenCutList
 
           report_group_def.entry_defs << report_entry_def
           report_group_def.total_count += report_entry_def.total_count
+          report_group_def.total_instance_count += report_entry_def.total_instance_count
+          report_group_def.total_used_instance_count += report_entry_def.total_used_instance_count
 
         when MaterialAttributes::TYPE_VENEER
 
@@ -563,6 +565,15 @@ module Ladb::OpenCutList
       report_entry_def.part_defs << report_entry_part_def
 
       definition_attributes = _get_definition_attributes(cutlist_part.def.definition_id)
+
+      total_instance_count = cutlist_part.def.instance_count_by_part * cutlist_part.def.count
+      total_used_instance_count = cutlist_part.def.instance_count_by_part * cutlist_part.def.count - cutlist_part.def.unused_instance_count
+
+      report_entry_part_def.total_instance_count = total_instance_count
+      report_entry_part_def.total_used_instance_count = total_used_instance_count
+
+      report_entry_def.total_instance_count += total_instance_count
+      report_entry_def.total_used_instance_count += total_used_instance_count
 
       used_ratio = 1.0 - cutlist_part.def.unused_instance_count.to_f / cutlist_part.def.instance_count_by_part
 

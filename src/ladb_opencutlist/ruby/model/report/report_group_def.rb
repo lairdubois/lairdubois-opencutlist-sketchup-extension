@@ -131,12 +131,15 @@ module Ladb::OpenCutList
 
   class HardwareReportGroupDef < AbstractReportGroupDef
 
-    attr_accessor :total_count
+    attr_accessor :total_count, :total_instance_count, :total_used_instance_count
 
     def initialize
       super
 
       @total_count = 0
+
+      @total_instance_count = 0
+      @total_used_instance_count = 0
 
     end
 

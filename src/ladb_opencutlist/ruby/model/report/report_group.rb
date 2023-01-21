@@ -104,12 +104,15 @@ module Ladb::OpenCutList
 
   class HardwareReportGroup < AbstractReportGroup
 
-    attr_reader :total_count
+    attr_reader :total_count, :total_instance_count, :total_used_instance_count
 
     def initialize(_def)
       super(_def, MaterialAttributes::TYPE_HARDWARE)
 
       @total_count = _def.total_count
+
+      @total_instance_count = _def.total_instance_count
+      @total_used_instance_count = _def.total_used_instance_count
 
     end
 

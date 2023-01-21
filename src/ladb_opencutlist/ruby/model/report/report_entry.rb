@@ -206,6 +206,9 @@ module Ladb::OpenCutList
 
       @total_count = _def.total_count
 
+      @total_instance_count = _def.total_instance_count
+      @total_used_instance_count = _def.total_used_instance_count
+
       @parts = _def.part_defs.map { |part_def| part_def.create_part }
 
     end
@@ -214,7 +217,7 @@ module Ladb::OpenCutList
 
   class HardwareReportEntryPart < AbstractReportItem
 
-    attr_reader :id, :name, :flipped, :count, :mass, :price
+    attr_reader :id, :name, :flipped, :count, :mass, :price, :total_instance_count, :total_used_instance_count
 
     def initialize(_def)
       super(_def)
@@ -228,6 +231,9 @@ module Ladb::OpenCutList
 
       @mass = _def.mass.nil? || _def.mass[:val] == 0 ? nil : UnitUtils.format_readable(_def.mass[:val], _def.mass[:unit], 3)
       @price = _def.price.nil? || _def.price[:val] == 0 ? nil : UnitUtils.format_readable(_def.price[:val], _def.price[:unit], 2, 2)
+
+      @total_instance_count = _def.total_instance_count
+      @total_used_instance_count = _def.total_used_instance_count
 
     end
 
