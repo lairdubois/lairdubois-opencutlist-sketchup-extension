@@ -75,6 +75,13 @@
             {% else %}
                 {% set value = '' %}
             {% endif %}
+        {% elseif key == 'veneer' %}
+            {% set veneerKey = terms[2] %}
+            {% if partInfo.part.veneer_material_names[veneerKey] is not null and partInfo.part.veneer_std_dimensions[veneerKey] is not null %}
+                {% set value = [partInfo.part.veneer_material_names[veneerKey], partInfo.part.veneer_std_dimensions[veneerKey]]|join(' | ') %}
+            {% else %}
+                {% set value = '' %}
+            {% endif %}
         {% else %}
             {% set value = partInfo.part[key] %}
         {% endif %}
