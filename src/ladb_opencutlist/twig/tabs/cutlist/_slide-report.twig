@@ -234,7 +234,7 @@
                         </tr>
                         {% for error in entry.errors %}
                             <tr class="ladb-cutlist-row ladb-cutlist-row-child ladb-cutlist-row-error" data-folder-id="{{ entry.id }}">
-                                <td colspan="5" style="padding-left: 40px;">{% if error is iterable %}{{ error[0]|i18next(error[1]) }}{% else %}{{ error|i18next }}{% endif %}</td>
+                                <td colspan="8" style="padding-left: 40px;">{% if error is iterable %}{{ error[0]|i18next(error[1]) }}{% else %}{{ error|i18next }}{% endif %}</td>
                             </tr>
                         {% endfor %}
                         {% if group.material_type == 2 %} {# 2 = TYPE_SHEET_GOOD #}
