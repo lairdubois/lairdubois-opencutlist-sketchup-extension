@@ -323,12 +323,18 @@ module Ladb::OpenCutList
           thickness_decrement += veneer_zmax_material_attributes.l_thickness
           veneer_decremented = thickness_decrement > 0
 
+          # Compute texture angles
+          veneer_zmin_texture_angle = zmin_face_infos.empty? ? 0 : zmin_face_infos.first.get_front_texture_angle
+          veneer_zmax_texture_angle = zmax_face_infos.empty? ? 0 : zmax_face_infos.first.get_front_texture_angle
+
           # Populate VeneerDef
           veneers_def = {
             :zmin_material => veneer_zmin_material,
             :zmax_material => veneer_zmax_material,
             :zmin_entity_ids => zmin_face_infos.collect { |face_info| face_info.face.entityID },
             :zmax_entity_ids => zmax_face_infos.collect { |face_info| face_info.face.entityID },
+            :zmin_texture_angle => veneer_zmin_texture_angle,
+            :zmax_texture_angle => veneer_zmax_texture_angle,
             :thickness_decrement => thickness_decrement.to_l,
             :decremented => veneer_decremented
           }
@@ -551,6 +557,7 @@ module Ladb::OpenCutList
                 # Populate PartDef
                 part_def.set_veneer_materials(veneers_def[:zmin_material], veneers_def[:zmax_material])
                 part_def.set_veneer_entity_ids(veneers_def[:zmin_entity_ids], veneers_def[:zmax_entity_ids])
+                part_def.set_veneer_texture_angles(veneers_def[:zmin_texture_angle], veneers_def[:zmax_texture_angle])
                 part_def.set_veneer_group_defs(veneer_zmin_group_def, veneer_zmax_group_def)
                 part_def.veneer_thickness_decrement = veneers_def[:thickness_decrement]
                 part_def.veneer_decremented = veneers_def[:veneer_decremented]
@@ -649,8 +656,22 @@ module Ladb::OpenCutList
               PartDef::VENEERS_Z.each { |veneer|
                 unless (veneer_group_def = part_def.veneer_group_defs[veneer]).nil? || (veneer_material = part_def.veneer_materials[veneer]).nil?
                   veneer_material_attributes = _get_material_attributes(veneer_material)
-                  veneer_length = part_def.cutting_size.length
-                  veneer_width = part_def.cutting_size.width
+                  if part_def.veneer_texture_angles[veneer] != 0
+
+                    t = Geom::Transformation.new(Geom::Point3d.new, Z_AXIS, part_def.veneer_texture_angles[veneer])
+                    veneer_bounds = (Geom::BoundingBox.new).add([
+                                                                Geom::Point3d.new(0                           , 0).transform(t),
+                                                                Geom::Point3d.new(part_def.cutting_size.length, 0).transform(t),
+                                                                Geom::Point3d.new(part_def.cutting_size.length, part_def.cutting_size.width).transform(t),
+                                                                Geom::Point3d.new(0                           , part_def.cutting_size.width).transform(t),
+                                                              ])
+
+                    veneer_length = veneer_bounds.width
+                    veneer_width = veneer_bounds.height
+                  else
+                    veneer_length = part_def.cutting_size.length
+                    veneer_width = part_def.cutting_size.width
+                  end
                   veneer_cutting_length = veneer_length + veneer_material_attributes.l_length_increase
                   veneer_cutting_width = veneer_width + veneer_material_attributes.l_width_increase
                   veneer_group_def.total_cutting_area += veneer_cutting_length * veneer_cutting_width

@@ -428,6 +428,12 @@
                                 </select>
                             </div>
                         </div>
+                        <div id="ladb_cutlist_part_form_group_veneer_zmax_texture_angle" class="form-group">
+                            <label class="control-label col-xs-2"><i class="ladb-opencutlist-icon-rotate-left ladb-opencutlist-icon-lg"></i></label>
+                            <div class="col-xs-{% if part.veneer_entity_ids.zmax is empty %}8{% else %}10{% endif %}">
+                                <input type="text" class="form-control text-right" id="ladb_cutlist_part_input_veneer_zmax_texture_angle"{% if part.veneer_entity_ids.zmax is empty %} disabled{% endif %} {% if part.veneer_texture_angles.zmax == -1 %}data-multiple="true"{% else %}value="{{ part.veneer_texture_angles.zmax }}"{% endif %}>
+                            </div>
+                        </div>
                     </div>
                     <div class="form form-horizontal col-xs-6">
                         <h5 class="text-center">{{ 'tab.cutlist.tooltip.veneer_zmin'|i18next }}</h5>
@@ -440,6 +446,12 @@
                                 <select class="form-control" id="ladb_cutlist_part_select_veneer_zmin_material_name"{% if part.veneer_entity_ids.zmin is empty %} disabled{% endif %}>
                                     {% include 'tabs/cutlist/_material-usages.twig' with { 'value':part.veneer_material_names.zmin, 'typeFilters':[6] } %} {# TYPE_VENEER #}
                                 </select>
+                            </div>
+                        </div>
+                        <div id="ladb_cutlist_part_form_group_veneer_zmin_texture_angle" class="form-group">
+                            <label class="control-label col-xs-2"><i class="ladb-opencutlist-icon-rotate-left ladb-opencutlist-icon-lg"></i></label>
+                            <div class="col-xs-{% if part.veneer_entity_ids.zmin is empty %}8{% else %}10{% endif %}">
+                                <input type="text" class="form-control text-right" id="ladb_cutlist_part_input_veneer_zmin_texture_angle"{% if part.veneer_entity_ids.zmin is empty %} disabled{% endif %} {% if part.veneer_texture_angles.zmin == -1 %}data-multiple="true"{% else %}value="{{ part.veneer_texture_angles.zmin }}"{% endif %}>
                             </div>
                         </div>
                     </div>

@@ -48,6 +48,7 @@ default:
   unit_5: Yard
   unit_mass_0: Kilogramme
   unit_mass_1: Livre
+  unit_angle_0: Degrés
   instance_single: unité
   instance_plural: unités
   part_single: pièce

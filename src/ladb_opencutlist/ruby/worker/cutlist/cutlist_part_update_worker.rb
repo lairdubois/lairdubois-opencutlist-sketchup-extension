@@ -33,6 +33,7 @@ module Ladb::OpenCutList
         :edge_entity_ids,
         :veneer_material_names,
         :veneer_entity_ids,
+        :veneer_texture_angles,
         :entity_ids
     )
 
@@ -67,6 +68,7 @@ module Ladb::OpenCutList
             part_data.fetch('edge_entity_ids'),
             part_data.fetch('veneer_material_names'),
             part_data.fetch('veneer_entity_ids'),
+            part_data.fetch('veneer_texture_angles'),
             part_data.fetch('entity_ids')
         )
       }
@@ -132,15 +134,6 @@ module Ladb::OpenCutList
             definition_attributes.thickness_increase = part_data.thickness_increase
             definition_attributes.write_to_attributes
           end
-
-          # Update materials
-          _apply_material(part_data.material_name, part_data.entity_ids, model)
-          _apply_material(part_data.edge_material_names['ymin'], part_data.edge_entity_ids['ymin'], model)
-          _apply_material(part_data.edge_material_names['ymax'], part_data.edge_entity_ids['ymax'], model)
-          _apply_material(part_data.edge_material_names['xmin'], part_data.edge_entity_ids['xmin'], model)
-          _apply_material(part_data.edge_material_names['xmax'], part_data.edge_entity_ids['xmax'], model)
-          _apply_material(part_data.veneer_material_names['zmin'], part_data.veneer_entity_ids['zmin'], model)
-          _apply_material(part_data.veneer_material_names['zmax'], part_data.veneer_entity_ids['zmax'], model)
 
           # Transform part axes if axes order exist
           if part_data.axes_order.is_a?(Array) && part_data.axes_order.length == 3
@@ -208,6 +201,15 @@ module Ladb::OpenCutList
 
           end
 
+          # Update materials
+          _apply_material(part_data.material_name, part_data.entity_ids, model)
+          _apply_material(part_data.edge_material_names['ymin'], part_data.edge_entity_ids['ymin'], model)
+          _apply_material(part_data.edge_material_names['ymax'], part_data.edge_entity_ids['ymax'], model)
+          _apply_material(part_data.edge_material_names['xmin'], part_data.edge_entity_ids['xmin'], model)
+          _apply_material(part_data.edge_material_names['xmax'], part_data.edge_entity_ids['xmax'], model)
+          _apply_material(part_data.veneer_material_names['zmin'], part_data.veneer_entity_ids['zmin'], model, part_data.veneer_texture_angles['zmin'].to_i.degrees)
+          _apply_material(part_data.veneer_material_names['zmax'], part_data.veneer_entity_ids['zmax'], model, part_data.veneer_texture_angles['zmax'].to_i.degrees)
+
         end
 
       }
@@ -219,7 +221,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _apply_material(material_name, entity_ids, model)
+    def _apply_material(material_name, entity_ids, model, angle = 0)  # angle in radians
       unless entity_ids.nil?
         material = nil
         if material_name.nil? || material_name.empty? || (material = model.materials[material_name])
@@ -229,14 +231,67 @@ module Ladb::OpenCutList
             if entity
               if material_name.nil? || material_name.empty?
                 entity.material = nil
-              elsif entity.material != material
-                entity.material = material
+              else
+
+                if entity.material != material
+                  entity.material = material
+                end
+
+                if entity.is_a?(Sketchup::Face)
+                  entity.clear_texture_position(true)
+
+                  if angle
+
+                    points = [
+                      Geom::Point3d.new(0, 0),
+                      Geom::Point3d.new(1, 0)
+                    ]
+
+                    uv_helper = entity.get_UVHelper(true, false)
+                    t = Geom::Transformation.rotation(points[0], entity.normal, angle)
+
+                    mapping = []
+                    (0..1).each do |i|
+                      point3d = points[i]
+                      point3d_rotated = point3d.transform(t)
+                      mapping << point3d_rotated
+                      uvq = uv_helper.get_front_UVQ(point3d)
+                      mapping << uvq
+                    end
+
+                    entity.position_material(entity.material, mapping, true)
+
+                  end
+
+                end
+
               end
             end
           }
 
         end
       end
+    end
+
+    def _apply_(angle, entity_ids, model)
+      ss.each do |i|
+        tw = Sketchup.create_texture_writer
+        uvh = i.get_UVHelper true, false, tw
+
+        trans = Geom::Transformation.rotation i.outer_loop.vertices[0].position, i.normal, angle * Math::PI / 180	#Define rotation
+
+        pointPairs = []
+        (0..1).each do |j|
+          point3d = i.outer_loop.vertices[j].position
+          point3dRotated = point3d.transform(trans)
+          pointPairs << point3dRotated
+          point2d = uvh.get_front_UVQ(point3d)
+          pointPairs << point2d
+        end
+
+        i.position_material(i.material, pointPairs, true)
+      end
+
     end
 
   end

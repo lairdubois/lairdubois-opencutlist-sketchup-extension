@@ -1566,6 +1566,12 @@
                 if (editedPart.veneer_material_names.zmax !== editedParts[i].veneer_material_names.zmax) {
                     editedPart.veneer_material_names.zmax = MULTIPLE_VALUE;
                 }
+                if (editedPart.veneer_texture_angles.zmin !== editedParts[i].veneer_texture_angles.zmin) {
+                    editedPart.veneer_texture_angles.zmin = MULTIPLE_VALUE;
+                }
+                if (editedPart.veneer_texture_angles.zmax !== editedParts[i].veneer_texture_angles.zmax) {
+                    editedPart.veneer_texture_angles.zmax = MULTIPLE_VALUE;
+                }
             }
 
             if (tab === undefined) {
@@ -1622,6 +1628,10 @@
                 var $selectEdgeXmaxMaterialName = $('#ladb_cutlist_part_select_edge_xmax_material_name', $modal);
                 var $selectVeneerZminMaterialName = $('#ladb_cutlist_part_select_veneer_zmin_material_name', $modal);
                 var $selectVeneerZmaxMaterialName = $('#ladb_cutlist_part_select_veneer_zmax_material_name', $modal);
+                var $formGroupVeneerZminTextureAngle = $('#ladb_cutlist_part_form_group_veneer_zmin_texture_angle', $modal);
+                var $formGroupVeneerZmaxTextureAngle = $('#ladb_cutlist_part_form_group_veneer_zmax_texture_angle', $modal);
+                var $inputVeneerZminTextureAngle = $('#ladb_cutlist_part_input_veneer_zmin_texture_angle', $modal);
+                var $inputVeneerZmaxTextureAngle = $('#ladb_cutlist_part_input_veneer_zmax_texture_angle', $modal);
                 var $rectIncreaseLength = $('svg .increase-length', $modal);
                 var $rectIncreaseWidth = $('svg .increase-width', $modal);
                 var $rectEdgeYmin = $('svg .edge-ymin', $modal);
@@ -1689,13 +1699,17 @@
                 var fnUpdateVeneersPreview = function() {
                     if ($selectVeneerZminMaterialName.val() === '') {
                         $rectVeneerZmin.removeClass('ladb-active');
+                        $formGroupVeneerZminTextureAngle.hide();
                     } else {
                         $rectVeneerZmin.addClass('ladb-active');
+                        $formGroupVeneerZminTextureAngle.show();
                     }
                     if ($selectVeneerZmaxMaterialName.val() === '') {
                         $rectVeneerZmax.removeClass('ladb-active');
+                        $formGroupVeneerZmaxTextureAngle.hide();
                     } else {
                         $rectVeneerZmax.addClass('ladb-active');
+                        $formGroupVeneerZmaxTextureAngle.show();
                     }
                 };
                 var fnUpdateIncreasesPreview = function() {
@@ -1816,6 +1830,20 @@
                 });
                 $inputWidthIncrease.ladbTextinputDimension();
                 $inputThicknessIncrease.ladbTextinputDimension();
+                $inputVeneerZminTextureAngle.ladbTextinputNumberWithUnit({
+                    resetValue: 0,
+                    defaultUnit: 'deg',
+                    units: [
+                        { deg: i18next.t('default.unit_angle_0') }
+                    ]
+                });
+                $inputVeneerZmaxTextureAngle.ladbTextinputNumberWithUnit({
+                    resetValue: 0,
+                    defaultUnit: 'deg',
+                    units: [
+                        { deg: i18next.t('default.unit_angle_0') }
+                    ]
+                });
 
                 // Bind select
                 $selectMaterialName.val(editedPart.material_name);
@@ -2042,6 +2070,13 @@
                         }
                         if ($selectVeneerZmaxMaterialName.val() !== MULTIPLE_VALUE) {
                             editedParts[i].veneer_material_names.zmax = $selectVeneerZmaxMaterialName.val();
+                        }
+
+                        if (!$inputVeneerZminTextureAngle.ladbTextinputDimension('isMultiple')) {
+                            editedParts[i].veneer_texture_angles.zmin = $inputVeneerZminTextureAngle.val();
+                        }
+                        if (!$inputVeneerZmaxTextureAngle.ladbTextinputDimension('isMultiple')) {
+                            editedParts[i].veneer_texture_angles.zmax = $inputVeneerZmaxTextureAngle.val();
                         }
 
                     }

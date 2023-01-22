@@ -17,7 +17,7 @@ module Ladb::OpenCutList
 
     VENEERS_Z = [ PartDef::VENEER_ZMIN, PartDef::VENEER_ZMAX ]
 
-    attr_accessor :id, :definition_id, :number, :saved_number, :name, :is_dynamic_attributes_name, :description, :count, :cutting_size, :size, :scale, :flipped, :material_name, :material_origins, :cumulable, :instance_count_by_part, :mass, :price, :thickness_layer_count, :orientation_locked_on_axis, :tags, :symmetrical, :ignore_grain_direction, :length_increase, :width_increase, :thickness_increase, :edge_count, :edge_pattern, :edge_entity_ids, :edge_length_decrement, :edge_width_decrement, :edge_decremented, :veneer_count, :veneer_pattern, :veneer_entity_ids, :veneer_thickness_decrement, :veneer_decremented, :length_increased, :width_increased, :thickness_increased, :auto_oriented, :not_aligned_on_axes, :unused_instance_count, :layers, :final_area, :children_warning_count, :children_length_increased_count, :children_width_increased_count, :children_thickness_increased_count
+    attr_accessor :id, :definition_id, :number, :saved_number, :name, :is_dynamic_attributes_name, :description, :count, :cutting_size, :size, :scale, :flipped, :material_name, :material_origins, :cumulable, :instance_count_by_part, :mass, :price, :thickness_layer_count, :orientation_locked_on_axis, :tags, :symmetrical, :ignore_grain_direction, :length_increase, :width_increase, :thickness_increase, :edge_count, :edge_pattern, :edge_entity_ids, :edge_length_decrement, :edge_width_decrement, :edge_decremented, :veneer_count, :veneer_pattern, :veneer_entity_ids, :veneer_texture_angles, :veneer_thickness_decrement, :veneer_decremented, :length_increased, :width_increased, :thickness_increased, :auto_oriented, :not_aligned_on_axes, :unused_instance_count, :layers, :final_area, :children_warning_count, :children_length_increased_count, :children_width_increased_count, :children_thickness_increased_count
     attr_reader :id, :edge_material_names, :edge_std_dimensions, :edge_errors, :veneer_material_names, :veneer_std_dimensions, :veneer_errors, :entity_ids, :entity_serialized_paths, :entity_names, :children, :instance_infos, :edge_materials, :edge_group_defs, :veneer_materials, :veneer_group_defs
 
     def initialize(id)
@@ -63,6 +63,7 @@ module Ladb::OpenCutList
       @veneer_thickness_decrement = 0
       @veneer_decremented = false
       @veneer_entity_ids = {}
+      @veneer_texture_angles = {}
       @veneer_errors = []
       @entity_ids = []                    # All unique entity ids (array count could be smaller than @count)
       @entity_serialized_paths = []       # All Serialized paths to each entity (array count should be egals to @count)
@@ -326,6 +327,14 @@ module Ladb::OpenCutList
       # Store materials internaly
       @veneer_entity_ids.store(PartDef::VENEER_ZMIN, veneer_zmin_entity_ids) unless veneer_zmin_entity_ids.nil?
       @veneer_entity_ids.store(PartDef::VENEER_ZMAX, veneer_zmax_entity_ids) unless veneer_zmax_entity_ids.nil?
+
+    end
+
+    def set_veneer_texture_angles(veneer_zmin_texture_angles, veneer_zmax_texture_angles)
+
+      # Store materials internaly
+      @veneer_texture_angles.store(PartDef::VENEER_ZMIN, veneer_zmin_texture_angles) unless veneer_zmin_texture_angles.nil?
+      @veneer_texture_angles.store(PartDef::VENEER_ZMAX, veneer_zmax_texture_angles) unless veneer_zmax_texture_angles.nil?
 
     end
 

@@ -8,7 +8,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :id, :number, :saved_number, :name, :description, :length, :width, :thickness, :count, :cutting_length, :cutting_width, :cutting_thickness, :material_name, :cumulable, :cumulative_cutting_length, :cumulative_cutting_width, :instance_count_by_part, :mass, :price, :thickness_layer_count, :tags, :ignore_grain_direction, :edge_count, :edge_pattern, :edge_material_names, :edge_std_dimensions, :edge_decrements, :veneer_count, :veneer_pattern, :veneer_material_names, :veneer_std_dimensions, :veneer_decrements, :entity_names, :final_area, :l_ratio, :w_ratio
+    attr_reader :id, :number, :saved_number, :name, :description, :length, :width, :thickness, :count, :cutting_length, :cutting_width, :cutting_thickness, :material_name, :cumulable, :cumulative_cutting_length, :cumulative_cutting_width, :instance_count_by_part, :mass, :price, :thickness_layer_count, :tags, :ignore_grain_direction, :edge_count, :edge_pattern, :edge_material_names, :edge_std_dimensions, :edge_decrements, :veneer_count, :veneer_pattern, :veneer_material_names, :veneer_texture_angles, :veneer_std_dimensions, :veneer_decrements, :entity_names, :final_area, :l_ratio, :w_ratio
 
     def initialize(part_def, group)
       @_def = part_def
@@ -44,6 +44,7 @@ module Ladb::OpenCutList
       @veneer_count = part_def.veneer_count
       @veneer_pattern = part_def.veneer_pattern
       @veneer_material_names = part_def.veneer_material_names
+      @veneer_texture_angles = part_def.veneer_texture_angles.transform_values { |v| v.radians.round }
       @veneer_std_dimensions = part_def.veneer_std_dimensions
       @veneer_decrements = { :thickness => part_def.veneer_thickness_decrement > 0 ? part_def.veneer_thickness_decrement.to_s : nil }
       @entity_names = part_def.entity_names.sort_by { |k, v| [ k ] }
