@@ -256,7 +256,7 @@ tab:
       edge_xmin: Kantenband Breite 1
       edge_xmax: Kantenband Breite 2
       veneer_zmin: Rückseite
-      veneer_zmax: Sichtseite
+      veneer_zmax: Vorderseite
       dblclick_to_copy_all_edges: "Doppelklicken Sie hier, um diesen Wert auf die anderen Kanten zu übertragen"
       dblclick_to_copy_all_veneers: Doppelklicken Sie hier, um diesen Wert auf die andere Fläche zu übertragen"
       dblclick_to_sort_axes: "Doppelklicken Sie hier, um die Achsen automatisch entsprechend den Abmessungen des Teils neu anzuordnen"
@@ -525,7 +525,7 @@ tab:
       edge_xmin: Kantenband Breite 1
       edge_xmax: Kantenband Breite 2
       veneer_zmin: Rückseite
-      veneer_zmax: Sichtseite
+      veneer_zmax: Vorderseite
       placeholder:
         no_column_title: Überschrift eingeben
         no_column_formula_native: "Nativer Wert der Spalte '{{ col_name }}'"
@@ -545,11 +545,12 @@ tab:
       raw_materials: Rohmaterial
       coefficient: Koeffizient
       total: Total
-      total_used: Gebraucht
-      total_unused: Nicht Gebraucht
+      total_used: Verwendet
+      total_unused: Nicht verwendet
       total_mass: Σ Massen
       total_cost: Σ Kosten
       total_count: Anz.
+      total_instance_count: Σ Einheiten
       total_volume: Σ Volumen
       total_area: Σ Flächen
       total_length: Σ Längen
@@ -787,6 +788,8 @@ tab:
         part_edge_ymax: Kantenband Länge 2
         part_edge_xmin: Kantenband Breite 1
         part_edge_xmax: Kantenband Breite 2
+        part_veneer_zmin: Furnier Rückseite
+        part_veneer_zmax: Furnier Vorderseite
         thumbnail_proportional: Proportionale Vignette
         thumbnail_square: Quadratische Vignette
         group_material: Material / Dicke

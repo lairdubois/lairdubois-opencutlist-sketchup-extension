@@ -255,8 +255,8 @@ tab:
       edge_ymax: Edge length 2
       edge_xmin: Edge width 1
       edge_xmax: Edge width 2
-      veneer_zmin: Backside
-      veneer_zmax: Frontside
+      veneer_zmin: Veneer backside
+      veneer_zmax: Veneer frontside
       dblclick_to_copy_all_edges: Double-click here to duplicate this value to the other edges
       dblclick_to_copy_all_veneers: Double-click here to duplicate this value to the other face
       dblclick_to_sort_axes: Double-click here to automatically reorder the axes according to the dimensions of the part
@@ -524,8 +524,8 @@ tab:
       edge_ymax: Edge length 2
       edge_xmin: Edge width 1
       edge_xmax: Edge width 2
-      veneer_zmin: Backside
-      veneer_zmax: Frontside
+      veneer_zmin: Veneer backside
+      veneer_zmax: Veneer frontside
       placeholder:
         no_column_title: Enter a title
         no_column_formula_native: "Native value of column '{{ col_name }}'"
@@ -550,6 +550,7 @@ tab:
       total_mass: Σ Weight
       total_cost: Σ Cost
       total_count: Qty.
+      total_instance_count: Σ Units
       total_volume: Σ Volume
       total_area: Σ Area
       total_length: Σ Length
@@ -787,6 +788,8 @@ tab:
         part_edge_ymax: Edge length 2
         part_edge_xmin: Edge width 1
         part_edge_xmax: Edge width 2
+        part_veneer_zmin: Veneer backside
+        part_veneer_zmax: Veneer frontside
         thumbnail_proportional: Proportional thumbnail
         thumbnail_square: Square thumbnail
         group_material: Material / Thickness
