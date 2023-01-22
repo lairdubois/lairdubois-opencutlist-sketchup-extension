@@ -568,14 +568,13 @@ module Ladb::OpenCutList
 
       total_instance_count = cutlist_part.def.instance_count_by_part * cutlist_part.def.count
       total_used_instance_count = cutlist_part.def.instance_count_by_part * cutlist_part.def.count - cutlist_part.def.unused_instance_count
+      used_ratio = total_used_instance_count.to_f / total_instance_count.to_f
 
       report_entry_part_def.total_instance_count = total_instance_count
       report_entry_part_def.total_used_instance_count = total_used_instance_count
 
       report_entry_def.total_instance_count += total_instance_count
       report_entry_def.total_used_instance_count += total_used_instance_count
-
-      used_ratio = 1.0 - cutlist_part.def.unused_instance_count.to_f / cutlist_part.def.instance_count_by_part
 
       h_mass = definition_attributes.h_mass
       unless h_mass[:val] == 0
