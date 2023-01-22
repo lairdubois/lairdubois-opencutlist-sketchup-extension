@@ -62,7 +62,7 @@
                                     "slug " +
                                     "title " +
                                     "createdAt " +
-                                    "fromCollective { " +
+                                    "fromAccount { " +
                                         "slug " +
                                         "name " +
                                         "imageUrl " +

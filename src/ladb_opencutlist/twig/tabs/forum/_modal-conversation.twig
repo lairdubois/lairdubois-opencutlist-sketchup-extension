@@ -6,12 +6,12 @@
     {{ parent() }}
     <div class="ladb-forum-conversation-content">
         <div class="media">
-            <div class="media-left"><img src="{{ conversation.fromCollective.imageUrl }}" alt="{{ conversation.fromCollective.name }}" class="ladb-forum-conversation-author-avatar"></div>
+            <div class="media-left"><img src="{{ conversation.fromAccount.imageUrl }}" alt="{{ conversation.fromAccount.name }}" class="ladb-forum-conversation-author-avatar"></div>
             <div class="media-body">
                 <div class="ladb-forum-conversation-header">
                     <div class="ladb-forum-conversation-title">{{ conversation.title }}</div>
                     <div class="ladb-forum-conversation-subheader">
-                        <div class="ladb-forum-conversation-author"><a href="https://opencollective.com/{{ conversation.fromCollective.slug }}" target="_blank">{{ conversation.fromCollective.name }}</a></div>
+                        <div class="ladb-forum-conversation-author"><a href="https://opencollective.com/{{ conversation.fromAccount.slug }}" target="_blank">{{ conversation.fromAccount.name }}</a></div>
                         <div class="ladb-forum-conversation-age">{{ conversation.createdAt|date(('default.date_format'|i18next())) }}</div>
                     </div>
                 </div>
