@@ -48,6 +48,7 @@ default:
   unit_5: Yard
   unit_mass_0: Kilogramm
   unit_mass_1: Pfund
+  unit_angle_0: Grad
   instance_single: Stk.
   instance_plural: Stücke
   part_single: Teil
@@ -169,7 +170,7 @@ tab:
     highlight_part: Teil im Modell hervorheben
     highlight_parts: Teile im Modell hervorheben
     edit_part_properties: Eigenschaften des Teils bearbeiten
-    edit_part_axes_properties: Achsen des Teils bearbeiten
+    edit_part_axes_properties: Eigenschaften (Achsen) des Teils bearbeiten
     edit_part_size_increase_properties: Eigenschaften (Übermaße) des Teils bearbeiten
     edit_part_edges_properties: Eigenschaften (Kanten) des Teils bearbeiten
     edit_part_veneers_properties: Eigenschaften (Furniere) des Teils bearbeiten
@@ -258,7 +259,7 @@ tab:
       veneer_zmin: Rückseite
       veneer_zmax: Vorderseite
       dblclick_to_copy_all_edges: "Doppelklicken Sie hier, um diesen Wert auf die anderen Kanten zu übertragen"
-      dblclick_to_copy_all_veneers: Doppelklicken Sie hier, um diesen Wert auf die andere Fläche zu übertragen"
+      dblclick_to_copy_all_veneers: "Doppelklicken Sie hier, um diesen Wert auf die andere Fläche zu übertragen"
       dblclick_to_sort_axes: "Doppelklicken Sie hier, um die Achsen automatisch entsprechend den Abmessungen des Teils neu anzuordnen"
       part_axes: Interne Achsen des Teils
       select_unselect_all_parts: Alle Teile dieser Gruppe selektieren / deselektieren
@@ -365,7 +366,7 @@ tab:
       over_length: Der Länge nach
       over_width: Der Breite nach
       edge_disabled_help: "Diese Kante ist nicht konfigurierbar, da an dieser Kante des Teils im Modell keine materialtragende Fläche erkannt wurde."
-      veneer_disabled_help: Diese Fläche ist nicht konfigurierbar, da an dieser Fläche des Teils im Modell keine materialtragende Fläche erkannt wurde."
+      veneer_disabled_help: "Diese Fläche ist nicht konfigurierbar, da an dieser Fläche des Teils im Modell keine materialtragende Fläche erkannt wurde."
       multiple_values: mehrfache Werte
       export_to_skp: Exportieren (.skp)
     export_to_skp:
@@ -555,7 +556,7 @@ tab:
       total_area: Σ Flächen
       total_length: Σ Längen
       error:
-        no_typed_material_parts: "Kein Teil mit einem definierten Materialtyp (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)** oder **$t(tab.materials.type_5)**) wurde ausgewählt um den Bericht zu generieren."
+        no_typed_material_parts: "Kein Teil mit einem definierten Materialtyp (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** oder **$t(tab.materials.type_5)**) wurde ausgewählt um den Bericht zu generieren."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} Fehler**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} Fehler**."
       warning:

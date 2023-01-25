@@ -48,6 +48,7 @@ default:
   unit_5: Yard
   unit_mass_0: Kilogram
   unit_mass_1: Pound
+  unit_angle_0: Degrees
   instance_single: item
   instance_plural: items
   part_single: part
