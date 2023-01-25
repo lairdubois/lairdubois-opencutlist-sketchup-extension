@@ -324,8 +324,8 @@ module Ladb::OpenCutList
           veneer_decremented = thickness_decrement > 0
 
           # Compute texture angles
-          veneer_zmin_texture_angle = zmin_face_infos.empty? ? 0 : zmin_face_infos.first.get_front_texture_angle
-          veneer_zmax_texture_angle = zmax_face_infos.empty? ? 0 : zmax_face_infos.first.get_front_texture_angle
+          veneer_zmin_texture_angle = zmin_face_infos.empty? ? 0 : _get_face_texture_angle(zmin_face_infos.first.face)
+          veneer_zmax_texture_angle = zmax_face_infos.empty? ? 0 : _get_face_texture_angle(zmax_face_infos.first.face)
 
           # Populate VeneerDef
           veneers_def = {
@@ -1105,6 +1105,35 @@ module Ladb::OpenCutList
       }
 
       materials
+    end
+
+    def _get_face_texture_angle(face, front = true)
+
+      return 0 unless face.is_a?(Sketchup::Face)
+      return 0 if face.nil? || face.material.nil? || face.material.texture.nil?
+
+      tw = face.material.texture.width
+      th = face.material.texture.height
+
+      uv_helper = face.get_UVHelper(front, !front)
+
+      p0 = Geom::Point3d.new(0, 0)
+      p1 = Geom::Point3d.new(1, 0)
+
+      uv0 = uv_helper.get_front_UVQ(p0)
+      uv1 = uv_helper.get_front_UVQ(p1)
+
+      uv0.x *= tw
+      uv0.y *= th
+      uv1.x *= tw
+      uv1.y *= th
+
+      v1 = Geom::Vector3d.new((p1 - p0).to_a)
+      v2 = Geom::Vector3d.new((uv1 - uv0).to_a)
+
+      v1.x *= -1 unless face.normal.samedirection?(X_AXIS) || face.normal.samedirection?(Y_AXIS) || face.normal.samedirection?(Z_AXIS)
+
+      v1.angle_between(v2)
     end
 
     # -- Std utils --
