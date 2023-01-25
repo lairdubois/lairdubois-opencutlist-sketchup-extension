@@ -31,7 +31,7 @@
 {% block bodyInner %}
     <div class="tab-content">
         {% if multiple %}
-            <div class="alert alert-info text-center">{{ 'tab.cutlist.edit_part.multiple_alert'|i18next({ 'part_count':part_count }) }}</div>
+            <div class="alert alert-info text-center">{{ 'tab.cutlist.edit_part.multiple_alert'|i18next({ 'part_count':partCount }) }}</div>
         {% endif %}
         <div role="tabpanel" class="tab-pane{% if tab == 'general' %} active{% endif %}" id="tab_edit_part_general">
             {% if thumbnailFile is not empty %}

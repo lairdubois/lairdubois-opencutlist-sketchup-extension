@@ -1593,7 +1593,7 @@
                 var $modal = that.appendModalInside('ladb_cutlist_modal_part', 'tabs/cutlist/_modal-part.twig', {
                     group: group,
                     part: editedPart,
-                    part_count: editedParts.length,
+                    partCount: editedParts.length,
                     multiple: multiple,
                     thumbnailFile: thumbnailFile,
                     materialUsages: that.materialUsages,
@@ -1696,20 +1696,36 @@
                         $rectEdgeXmax.addClass('ladb-active');
                     }
                 };
+                var fnIsMaterialTextured = function(name) {
+                    for (let materialUsage of that.materialUsages) {
+                        if (materialUsage.name === name) {
+                            return materialUsage.textured;
+                        }
+                    }
+                    return false;
+                };
                 var fnUpdateVeneersPreview = function() {
                     if ($selectVeneerZminMaterialName.val() === '') {
                         $rectVeneerZmin.removeClass('ladb-active');
                         $formGroupVeneerZminTextureAngle.hide();
                     } else {
                         $rectVeneerZmin.addClass('ladb-active');
-                        $formGroupVeneerZminTextureAngle.show();
+                        if (fnIsMaterialTextured($selectVeneerZminMaterialName.val())) {
+                            $formGroupVeneerZminTextureAngle.show();
+                        } else {
+                            $formGroupVeneerZminTextureAngle.hide();
+                        }
                     }
                     if ($selectVeneerZmaxMaterialName.val() === '') {
                         $rectVeneerZmax.removeClass('ladb-active');
                         $formGroupVeneerZmaxTextureAngle.hide();
                     } else {
                         $rectVeneerZmax.addClass('ladb-active');
-                        $formGroupVeneerZmaxTextureAngle.show();
+                        if (fnIsMaterialTextured($selectVeneerZmaxMaterialName.val())) {
+                            $formGroupVeneerZmaxTextureAngle.show();
+                        } else {
+                            $formGroupVeneerZmaxTextureAngle.hide();
+                        }
                     }
                 };
                 var fnUpdateIncreasesPreview = function() {
