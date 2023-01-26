@@ -7,16 +7,16 @@ in 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 * 5.0.0 (WIP)
 
   * Added new veneer material type
-  * Added duplicate material feature that's copy all attributes
-  * Added left and right arrow shortcut key to change current material in smart paint tool
-  * Added used and unused proportion display in reports summary
-  * Fixed Cutting diagram 2D edge drawing to corresponds to counter-clockwize rotation of part's name
+  * Added duplicate material feature that will copy all attributes
+  * Added left and right arrow shortcut keys to change current material in smart paint tool
+  * Added used and unused proportion display in report summary
+  * Fixed cutting diagram 2D edge drawing to correspond to counter-clockwise rotation of part's name
   * Hatched unavailable cells in parts list summary instead of displaying "-" character
 
-* 4.1.1 (20223-01-05)
+* 4.1.1 (2023-01-05)
 
   * Fixed highlight part tool error when part's material doesn't have type.
-  
+
 * 4.1.0 (2023-01-03)
 
   * Added **Vietnamese** language (thanks to Nguyen Ngoc Tan for joining the translators team)
