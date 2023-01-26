@@ -1109,6 +1109,8 @@ module Ladb::OpenCutList
 
     def _get_face_texture_angle(face, front = true)
 
+      # Returns the angle in radians beteween (0,0)-(0,1) and its UV representation
+
       return 0 unless face.is_a?(Sketchup::Face)
       return 0 if face.nil? || face.material.nil? || face.material.texture.nil?
 
@@ -1133,7 +1135,9 @@ module Ladb::OpenCutList
 
       v1.x *= -1 unless face.normal.samedirection?(X_AXIS) || face.normal.samedirection?(Y_AXIS) || face.normal.samedirection?(Z_AXIS)
 
-      v1.angle_between(v2)
+      angle = v1.angle_between(v2)
+      angle += Math::PI if v2.y > 0
+      angle % (2 * Math::PI)
     end
 
     # -- Std utils --

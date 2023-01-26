@@ -329,7 +329,7 @@
                             {% endif %}
                             <label id="ladb_cutlist_part_label_edge_ymax" class="control-label col-xs-2" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.dblclick_to_copy_all_edges'|i18next }}"><i class="ladb-opencutlist-icon-edge-1000 ladb-opencutlist-icon-lg"></i></label>
                             <div class="col-xs-{% if part.edge_entity_ids.ymax is empty %}8{% else %}10{% endif %}">
-                                <select class="form-control" id="ladb_cutlist_part_select_edge_ymax_material_name"{% if part.edge_entity_ids.ymax is empty %} disabled{% endif %}>
+                                <select class="form-control" id="ladb_cutlist_part_select_edge_ymax"{% if part.edge_entity_ids.ymax is empty %} disabled{% endif %}>
                                     {% include 'tabs/cutlist/_material-usages.twig' with { 'value':part.edge_material_names.ymax, 'typeFilters':[4] } %} {# TYPE_EDGE #}
                                 </select>
                             </div>
@@ -340,7 +340,7 @@
                             {% endif %}
                             <label id="ladb_cutlist_part_label_edge_ymin" class="control-label col-xs-2" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.dblclick_to_copy_all_edges'|i18next }}"><i class="ladb-opencutlist-icon-edge-0010 ladb-opencutlist-icon-lg"></i></label>
                             <div class="col-xs-{% if part.edge_entity_ids.ymin is empty %}8{% else %}10{% endif %}">
-                                <select class="form-control" id="ladb_cutlist_part_select_edge_ymin_material_name"{% if part.edge_entity_ids.ymin is empty %} disabled{% endif %}>
+                                <select class="form-control" id="ladb_cutlist_part_select_edge_ymin"{% if part.edge_entity_ids.ymin is empty %} disabled{% endif %}>
                                     {% include 'tabs/cutlist/_material-usages.twig' with { 'value':part.edge_material_names.ymin, 'typeFilters':[4] } %} {# TYPE_EDGE #}
                                 </select>
                             </div>
@@ -354,7 +354,7 @@
                             {% endif %}
                             <label id="ladb_cutlist_part_label_edge_xmin" class="control-label col-xs-2" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.dblclick_to_copy_all_edges'|i18next }}"><i class="ladb-opencutlist-icon-edge-0001 ladb-opencutlist-icon-lg"></i></label>
                             <div class="col-xs-{% if part.edge_entity_ids.xmin is empty %}8{% else %}10{% endif %}">
-                                <select class="form-control" id="ladb_cutlist_part_select_edge_xmin_material_name"{% if part.edge_entity_ids.xmin is empty %} disabled{% endif %}>
+                                <select class="form-control" id="ladb_cutlist_part_select_edge_xmin"{% if part.edge_entity_ids.xmin is empty %} disabled{% endif %}>
                                     {% include 'tabs/cutlist/_material-usages.twig' with { 'value':part.edge_material_names.xmin, 'typeFilters':[4] } %} {# TYPE_EDGE #}
                                 </select>
                             </div>
@@ -365,7 +365,7 @@
                             {% endif %}
                             <label id="ladb_cutlist_part_label_edge_xmax" class="control-label col-xs-2" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.dblclick_to_copy_all_edges'|i18next }}"><i class="ladb-opencutlist-icon-edge-0100 ladb-opencutlist-icon-lg"></i></label>
                             <div class="col-xs-{% if part.edge_entity_ids.xmax is empty %}8{% else %}10{% endif %}">
-                                <select class="form-control" id="ladb_cutlist_part_select_edge_xmax_material_name"{% if part.edge_entity_ids.xmax is empty %} disabled{% endif %}>
+                                <select class="form-control" id="ladb_cutlist_part_select_edge_xmax"{% if part.edge_entity_ids.xmax is empty %} disabled{% endif %}>
                                     {% include 'tabs/cutlist/_material-usages.twig' with { 'value':part.edge_material_names.xmax, 'typeFilters':[4] } %} {# TYPE_EDGE #}
                                 </select>
                             </div>
@@ -423,13 +423,13 @@
                             {% endif %}
                             <label id="ladb_cutlist_part_label_veneer_zmax" class="control-label col-xs-2" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.dblclick_to_copy_all_veneers'|i18next }}"><i class="ladb-opencutlist-icon-veneer-10 ladb-opencutlist-icon-lg"></i></label>
                             <div class="col-xs-{% if part.veneer_entity_ids.zmax is empty %}8{% else %}10{% endif %}">
-                                <select class="form-control" id="ladb_cutlist_part_select_veneer_zmax_material_name"{% if part.veneer_entity_ids.zmax is empty %} disabled{% endif %}>
+                                <select class="form-control" id="ladb_cutlist_part_select_veneer_zmax"{% if part.veneer_entity_ids.zmax is empty %} disabled{% endif %}>
                                     {% include 'tabs/cutlist/_material-usages.twig' with { 'value':part.veneer_material_names.zmax, 'typeFilters':[6] } %} {# TYPE_VENEER #}
                                 </select>
                             </div>
                         </div>
                         <div id="ladb_cutlist_part_form_group_veneer_zmax_texture_angle" class="form-group">
-                            <label class="control-label col-xs-2"><i class="ladb-opencutlist-icon-rotate-left ladb-opencutlist-icon-lg"></i></label>
+                            <label id="ladb_cutlist_part_label_veneer_zmax_texture_angle" class="control-label col-xs-2"><i class="ladb-opencutlist-icon-rotate-left ladb-opencutlist-icon-lg"></i></label>
                             <div class="col-xs-{% if part.veneer_entity_ids.zmax is empty %}8{% else %}10{% endif %}">
                                 <input type="text" class="form-control text-right" id="ladb_cutlist_part_input_veneer_zmax_texture_angle"{% if part.veneer_entity_ids.zmax is empty %} disabled{% endif %} {% if part.veneer_texture_angles.zmax == -1 %}data-multiple="true"{% else %}value="{{ part.veneer_texture_angles.zmax }}"{% endif %}>
                             </div>
@@ -443,13 +443,13 @@
                             {% endif %}
                             <label id="ladb_cutlist_part_label_veneer_zmin" class="control-label col-xs-2" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.dblclick_to_copy_all_veneers'|i18next }}"><i class="ladb-opencutlist-icon-veneer-01 ladb-opencutlist-icon-lg"></i></label>
                             <div class="col-xs-{% if part.veneer_entity_ids.zmin is empty %}8{% else %}10{% endif %}">
-                                <select class="form-control" id="ladb_cutlist_part_select_veneer_zmin_material_name"{% if part.veneer_entity_ids.zmin is empty %} disabled{% endif %}>
+                                <select class="form-control" id="ladb_cutlist_part_select_veneer_zmin"{% if part.veneer_entity_ids.zmin is empty %} disabled{% endif %}>
                                     {% include 'tabs/cutlist/_material-usages.twig' with { 'value':part.veneer_material_names.zmin, 'typeFilters':[6] } %} {# TYPE_VENEER #}
                                 </select>
                             </div>
                         </div>
                         <div id="ladb_cutlist_part_form_group_veneer_zmin_texture_angle" class="form-group">
-                            <label class="control-label col-xs-2"><i class="ladb-opencutlist-icon-rotate-left ladb-opencutlist-icon-lg"></i></label>
+                            <label id="ladb_cutlist_part_label_veneer_zmin_texture_angle" class="control-label col-xs-2"><i class="ladb-opencutlist-icon-rotate-left ladb-opencutlist-icon-lg"></i></label>
                             <div class="col-xs-{% if part.veneer_entity_ids.zmin is empty %}8{% else %}10{% endif %}">
                                 <input type="text" class="form-control text-right" id="ladb_cutlist_part_input_veneer_zmin_texture_angle"{% if part.veneer_entity_ids.zmin is empty %} disabled{% endif %} {% if part.veneer_texture_angles.zmin == -1 %}data-multiple="true"{% else %}value="{{ part.veneer_texture_angles.zmin }}"{% endif %}>
                             </div>

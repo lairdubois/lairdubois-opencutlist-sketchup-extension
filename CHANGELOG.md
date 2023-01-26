@@ -9,7 +9,7 @@ in 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added new veneer material type
   * Added duplicate material feature that will copy all attributes
   * Added left and right arrow shortcut keys to change current material in smart paint tool
-  * Added used and unused proportion display in report summary
+  * Added used and unused proportion display in report summary and details
   * Fixed cutting diagram 2D edge drawing to correspond to counter-clockwise rotation of part's name
   * Hatched unavailable cells in parts list summary instead of displaying "-" character
 
