@@ -25,6 +25,7 @@ default:
   caution: Внимание
   remove: Удалить
   create: Создать
+  duplicate: Дубликат
   ignore: Пропустить
   download: Скачать
   upgrade: Обновление
@@ -47,6 +48,7 @@ default:
   unit_5: Ярд
   unit_mass_0: Килограмм
   unit_mass_1: Фунт
+  unit_angle_0: Уровень
   instance_single: единица
   instance_plural: единицы
   part_single: деталь
@@ -65,6 +67,7 @@ core:
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
+      edit_part_veneers_properties: $t(tab.cutlist.edit_part_veneers_properties)
       smart_paint: $t(core.toolbar.command.smart_paint)
   toolbar:
     name: OpenCutList
@@ -170,6 +173,7 @@ tab:
     edit_part_axes_properties: Отредактируйте свойства (осей) детали
     edit_part_size_increase_properties: Отредактируйте свойства (размеры) детали
     edit_part_edges_properties: Отредактируйте свойства (кромки) детали
+    edit_part_veneers_properties: Редактировать свойства детали (сопоставления)
     tooltip:
       show_hide_block: Показать / Скрыть эту группу
       scroll_to_block: Прокрутка в группу
@@ -223,6 +227,8 @@ tab:
       remove_label_filter: "Удалить фильтрацию по '{{ label }}'"
       add_edge_material_name_filter: "Фильтровать '{{ material_name }}'"
       remove_edge_material_name_filter: "Не фильтровать '{{ material_name }}'"
+      add_veneer_material_name_filter: "Фильтровать '{{ material_name }}'"
+      remove_veneer_material_name_filter: "Не фильтровать '{{ material_name }}'"
       not_aligned_on_axes: "Внимание! Эта деталь возможно неправильно ориентирована относительно осей компонента"
       instance_count_by_part: "Эта деталь учитывается комплектом по **{{ count }}** ед."
       unused_instance_count: "Обратите внимание, что **{{ count }}** единица из последнего комплекта не образует комплект."
@@ -243,12 +249,17 @@ tab:
       size_increased: "Размер увеличен на величину {{ value }}"
       has_edges: "Эта деталь содержит {{ count }} кромки"
       has_edges_plural: "Эти детали содержат {{ count }} кромки"
+      has_veneers: "Эта деталь содержит {{ count }} облицованную поверхность"
+      has_veneers_plural: "Эта деталь содержит {{ count }} облицованные поверхности"
       edge_decremented: "Вычтена толщина кромки ({{ decrement }})"
       edge_ymin: Кромка по длине 1
       edge_ymax: Кромка по длине 2
       edge_xmin: Кромка по ширине 1
       edge_xmax: Кромка по ширине 2
+      veneer_zmin: Сопоставление
+      veneer_zmax: Облицовка
       dblclick_to_copy_all_edges: "Дважды щелкните здесь, чтобы скопировать это значение на все остальные кромки"
+      dblclick_to_copy_all_veneers: "Дважды щелкните здесь, чтобы скопировать это значение на другую поверхность."
       dblclick_to_sort_axes: "Дважды щелкните здесь, чтобы автоматически ориентировать оси в соответствии с размерами детали"
       part_axes: Внутренние оси детали
       select_unselect_all_parts: Выделение/отмена выделения всех деталей в группе
@@ -279,6 +290,7 @@ tab:
       general: Общие
       extra_help: "Список свойств, зависящих от типа материала \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Кромки
+      veneers: Шпон
       name: Определение
       material: Материал
       cumulable: Суммировать
@@ -354,6 +366,7 @@ tab:
       over_length: По всей длине
       over_width: По всей ширине
       edge_disabled_help: "Эта кромка не настраивается, так как в модели не было обнаружено ни одной поверхности, которая могла бы нести в себе материал кромочной полосы."
+      veneer_disabled_help: "Эта поверхность не настраивается, поскольку в модели не было обнаружено граней, которые могли бы нести материал."
       multiple_values: Множественные значения
       export_to_skp: Экспорт (.skp)
     export_to_skp:
@@ -400,6 +413,8 @@ tab:
       hide_final_areas_help: "Если эта опция активирована, то **фактическая площадь** деталей с типом *Листовой* будет скрыта."
       hide_edges: Скрыть столбец кромок
       hide_edges_help: "Если эта опция активирована, то **столбцы кромок** деталей с типом *Листовой* будут скрыты."
+      hide_veneers: Скрыть столбцы шпона
+      hide_veneers_help: "Если этот параметр включен, то **Столбцы шпона** в деталях типа *Листовой* не отображаются."
       minimize_on_highlight: Столбцы после *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Если эта опция активна, окно OpenCutList будет свернуто, когда функция *'$t(tab.cutlist.highlight_part)'* применена."
       general: Общие
@@ -427,6 +442,7 @@ tab:
       filters_warning: "Данный фильтр отображает только **{{ count }}** деталь из общего {{ total }}."
       filters_warning_plural: "Данный фильтр отображает только **{{ count }}** детали из общего {{ total }}."
       edge_material_names_filter: Фильтр по материалу кромок
+      veneer_material_names_filter: Фильтр материалов шпона
       tags_filter: Фильтр по Тегам
       dimensions_help: Иллюстрация размеров
       summary: Расчёт
@@ -451,6 +467,7 @@ tab:
       thickness: Толщина
       thickness_short: T
       edges: Схема кромок
+      veneers: Шпон
     export:
       title: Экспорт
       info_0: |
@@ -508,6 +525,8 @@ tab:
       edge_ymax: Кромка по длине 2
       edge_xmin: Кромка по ширине 1
       edge_xmax: Кромка по ширине 2
+      veneer_zmin: Сопоставление
+      veneer_zmax: Облицовка
       placeholder:
         no_column_title: Введите название
         no_column_formula_native: "Заголовок столбца '{{ col_name }}'"
@@ -527,18 +546,26 @@ tab:
       raw_materials: Исходный материал
       coefficient: Коэффициент
       total: Всего
+      total_used: Используемый
+      total_unused: Неиспользуемый
       total_mass: Σ Вес
       total_cost: Σ Цена
       total_count: К-во
+      total_instance_count: Σ Единиц
       total_volume: Σ Объемов
       total_area: Σ Площадей
       total_length: Σ Длин
       error:
-        no_typed_material_parts: "Деталям необходимо задать тип материала (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)** либо **$t(tab.materials.type_5)**) для качественного расчета карты раскроя."
+        no_typed_material_parts: "Нет деталей с материалом определенного типа (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** , **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** или **$t(tab.materials.type_5)**) представлен для создания отчета."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} ошибка**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} ошибки**."
       warning:
         is_group_selection: "Учитываются только детали, содержащиеся в **видимых группах**."
+      tip:
+        not_enough_data: |
+          Чтобы это соотношение рассчитать правильно:
+          - Используемые материалы должны иметь хотя бы одну настроенную плотность и цену.
+          - Используемые аксессуары должны иметь как минимум массу и цену.
     cuttingdiagram:
       title: Карта раскроя
       start_msg: Оптимизация в процессе
@@ -551,17 +578,19 @@ tab:
       option_bar_folding_0: Нет
       option_bar_folding_1: Да
       option_bar_folding_help: "Позволяет группировать доски или кромки, содержащие одинаковые детали и одинаковые разрезы."
-      option_sheet_folding: Групповая идентификация панелей
+      option_sheet_folding_good: Групповая идентификация панелей
+      option_sheet_folding_veneer: Группировать одинаковые листы
       option_sheet_folding_0: Нет
       option_sheet_folding_1: Да
-      option_sheet_folding_help: "Группирование панелей, имеющих одинаковые детали и разрезы."
+      option_sheet_folding_help: "Позволяет группировать панели или листы, содержащие одинаковые детали и разрезы"
       option_hide_part_list: Список деталей
       option_hide_part_list_1d_dimensional_0: Отображать для каждой доски
       option_hide_part_list_1d_edge_0: Отображать для каждой кромки
-      option_hide_part_list_2d_0: Отобразить для каждой панели
+      option_hide_part_list_2d_good_0: Отобразить для каждой панели
+      option_hide_part_list_2d_veneer_0: Отображать для каждого листа
       option_hide_part_list_1: Скрыть
       option_hide_part_list_1d_help: "Показывает или скрывает список деталей, присутствующих в отдельной кромочной ленте или в группе."
-      option_hide_part_list_2d_help: Отобразить или скрыть список деталей раскраиваемой панели исходного материала под каждой картой раскроя.
+      option_hide_part_list_2d_help: "Показывает или скрывает список деталей, присутствующих на каждой панели или листе."
       option_use_names: Идентификация деталей
       option_use_names_0: Использовать код
       option_use_names_1: Использовать определение
@@ -620,20 +649,22 @@ tab:
         Формат ввода: **Д**x**К**. Где **Л** это *длина*, а **К** - количество.
         При этом, количество не обязательный параметр.
         *Если единица измерения не задана, то будет учтена единица измерения модели.*
-      option_std_sheet: Стандартная панель
+      option_std_sheet_good: Панель стандартных размеров
+      option_std_sheet_veneer: Стандартный лист
       option_std_sheet_help: |
-        Выберите стандартную панель, для дублирования содержащихся деталей.
-        Этот список определяется в поле **$t(tab.materials.edit_material.std_sizes)** выбора материала.
-        Отредактируйте материал '{{ material_name }}' и обновите список.
+        Выберите здесь стандартную панель или лист, который будет продублирован, чтобы наилучшим образом распределить все детали.
+        Этот список определяется полем **$t(tab.materials.edit_material.std_sizes)** материала.
+        Отредактируйте материал '{{ material_name }}', чтобы обновить этот список.
       option_std_sheet_add: Добавить размер панели
       option_std_sheet_none: Нет
-      option_scrap_sheet_sizes: Листовые обрезки
+      option_scrap_sheet_good_sizes: Листовые обрезки
+      option_scrap_sheet_veneer_sizes: Остатки листа
       option_scrap_sheet_sizes_placeholder: длина x ширина x количество ; ...
       option_scrap_sheet_sizes_help: |
-        Перечислите все обрезки листового материала, которые вы хотели бы включить в карту раскроя.
-        Формат ввода: **Д**x**Ш**x**K**, где **Д** и **Ш** представляют *длину* и *ширину* обрезка и **К** количество.
-        Параметр *количество* не является обязательным.
-        *Цифры без единиц измерения будут рассчитаны по единицам измерения модели проекта.*
+        Укажите здесь список остатков вашей панели или листа, которые будут рассматриваться в качестве приоритетных для раскроя.
+        Ожидаемый формат: **Д**x**Ш**x**К**. Где **Д** и **Ш** — соответственно *длина* и *ширина* остатка, а **К** — количество.
+        Количество не является обязательным.
+        *Если для размеров не указана единица измерения, будут учитываться единицы заданные параметрами модели.*
       tooltip:
         scroll_to_block_1d: Прокрутка до первой доски или кромочной полосы
         scroll_to_block_2d: Прокрутка до первой панели
@@ -667,8 +698,10 @@ tab:
         bar_dimensional_type_1: Обрезок
         bar_edge_type_0: Стандартный диапазон
         bar_edge_type_1: Остаток кромки
-        sheet_type_0: Панель стандартных размеров
-        sheet_type_1: Обрезок
+        sheet_good_type_0: Панель стандартных размеров
+        sheet_good_type_1: Обрезок
+        sheet_veneer_type_0: Стандартный лист
+        sheet_veneer_type_1: Остаток листа
         unused: Неиспользованный
         parts: "{{ count }} деталь"
         parts_plural: "{{ count }} детали"
@@ -741,6 +774,7 @@ tab:
         part_description: Описание
         part_entity_named_path: Путь к объекту
         part_entity_name: Имя экземпляра
+        part_bin: Контейнер
         part_cutting_size: Размеры элемента
         part_cutting_length: Длина элемента
         part_cutting_width: Ширина элемента
@@ -755,6 +789,8 @@ tab:
         part_edge_ymax: Кромка по длине 2
         part_edge_xmin: Кромка по ширине 1
         part_edge_xmax: Кромка по ширине 2
+        part_veneer_zmin: Тыльный шпон
+        part_veneer_zmax: Лицевой шпон
         thumbnail_proportional: Пропорциональная
         thumbnail_square: Квадратная
         group_material: Материал / Толщина
@@ -769,6 +805,7 @@ tab:
         invalid_size: Введенные параметры конфигурации не позволяют определить действительный размер этикетки.
       warning:
         is_part_selection: Эти этикетки соответствуют **выделенным деталям**.
+        formula_not_available: Недоступно в данном контексте
     error:
       no_model: Модель не открыта. Вы должны предоставить мне дополнительную информацию ;)
       no_entities: Ваша модель пуста. Вам нужно дать мне больше информации ;)
@@ -802,6 +839,7 @@ tab:
     type_3: Погонаж
     type_4: Кромочный
     type_5: Фурнитура
+    type_6: Лист шпона
     tooltip:
       type_0: Тип материала '$t(tab.materials.type_0)'
       type_1: Тип материала '$t(tab.materials.type_1)'
@@ -809,6 +847,7 @@ tab:
       type_3: Тип материала '$t(tab.materials.type_3)'
       type_4: Тип материала '$t(tab.materials.type_4)'
       type_5: Тип материала '$t(tab.materials.type_5)'
+      type_6: Тип материала '$t(tab.materials.type_6)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Направление волокон
@@ -910,6 +949,9 @@ tab:
       message: |
         Вы собираетесь удалить материал **{{ material_name }}** из вашей модели.
         Подтвердите для продолжения.
+    duplicate:
+      message: |
+        Выберите имя новой копии материала **{{ material_name }}**.
     error:
       no_model: Ни одна модель не открыта. Вам необходимо дать мне больше информации ;)
       no_materials: Модель не содержит материалов.
@@ -917,6 +959,7 @@ tab:
       failed_import_skm_file: "Ошибка произошла при импорте из .skm файла. **{{ error }}**"
       failed_export_skm_file: "Ошибка произошла при экспорте в .skm файл. **{{ error }}**"
       failed_removing_material: "При скрытии этого материала произошла ошибка. **{{ error }}**"
+      failed_duplicating_material: "Произошла ошибка при дублировании материала. **{{ error }}**"
       invalid_image_file: Недопустимое изображение
     success:
       exported_to: "Экспорт {{ export_path }} завершен."
@@ -1053,7 +1096,7 @@ tab:
       cuttingdiagram_export: Финансирование разработки новой функции
     objective_details:
       default: |
-        Постоянное совершенствование *OpenCutList* очень важно для нас, и Ваша помощь по-прежнему будет нужна проекту для следующего обновления **4.0** !
+        Постоянное совершенствование OpenCutList очень важно для всех нас и Ваша финансовая помощь,  по-прежнему, станет основой  для следующего обновления **5.0** !
       cuttingdiagram_export: |
         Для нас важно, чтобы *OpenCutList* соответствовал ожиданиям пользователей, использующих расчет *карт раскроя*.
         Для расширения возможностей плагина мы хотели бы сделать возможным экспорт карт раскроя в формате **SVG**.
@@ -1116,17 +1159,17 @@ tab:
       *OpenCutList* разработал [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) и [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Весь список [соавторов](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: Переводы
     credits_translators: |
-      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*Английский*, *Немецкий язык*)
-      - Владимир Бадюля (*Русский*)
-      - Pierluigi Colombo (*Итальянский*)
-      - Nayton Sanches Barbosa, исправлено и отредактировано [Carlos Maciel ELT](https://www.inglesonline.pro.br)(*Португальский*)
-      - [Leonardo Romero Giménez](https://latablamarilla.com/) (*Испанский*)
-      - [Radek Rýznar](https://onlinesketchup.cz) (*Чешский язык*)
-      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*Польский*)
-      - Сергей Исупов (*Иврит*), без интерфейса справа налево
-      - Soul Issam (*Арабский*), без интерфейса справа налево
-      - Dany Dhondt, Eric Lugtigheid (*Нидерландский*)
-      - Nguyen Ngoc Tan (*вьетнамский*)
+      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (Английский, Немецкий язык)
+      - Владимир Бадюля (Русский)
+      - Pierluigi Colombo (Итальянский)
+      - Nayton Sanches Barbosa, исправлено и отредактировано [Carlos Maciel ELT](https://www.inglesonline.pro.br) (Португальский)
+      - [Leonardo Romero Giménez](https://latablamarilla.com/) (Испанский)
+      - [Radek Rýznar](https://onlinesketchup.cz) (Чешский)
+      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (Польский)
+      - Сергей Исупов (Иврит), без интерфейса справа налево
+      - Soul Issam (Арабский), без интерфейса справа налево
+      - Dany Dhondt, Eric Lugtigheid (Нидерландский)
+      - Nguyen Ngoc Tan (Вьетнамский)
     credits_description: |
       Разработка этого расширения связана с проектом совместной платформы [L'Air du Bois](https://www.lairdubois.fr).
       Это расширение является *Open Source*, а также доступно в разделе [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) с лицензией [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
@@ -1160,6 +1203,7 @@ tool:
     filter_3: $t(tab.materials.type_3)
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
+    filter_6: $t(tab.materials.type_6)
     action: Действие
     action_0: Раскрасить сторону
     action_1: Раскрасить деталь
