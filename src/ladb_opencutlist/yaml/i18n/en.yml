@@ -178,8 +178,8 @@ tab:
       show_hide_block: Show / Hide group
       scroll_to_block: Scroll to group
       not_available_std_width: "The width *{{ std_dimension_real }}* is not defined in the standard widths of the material '{{ material_name }}'"
-      not_available_std_thickness: "The thickness *{{ std_dimension }}* is not defined in the standard thicknesses of the material '{{ material_name }}'"
-      not_available_std_section: "The cross section *{{ std_dimension }}* is not defined in the standard cross sections of the material '{{ material_name }}'"
+      not_available_std_thickness: "The thickness *{{ std_dimension_real }}* is not defined in the standard thicknesses of the material '{{ material_name }}'"
+      not_available_std_section: "The cross section *{{ std_dimension_real }}* is not defined in the standard cross sections of the material '{{ material_name }}'"
       add_std_width_to_material: |
         Add width *{{ std_dimension }}*
         to material '{{ material_name }}'
@@ -414,7 +414,7 @@ tab:
       hide_edges: Hide the columns of edge bandings
       hide_edges_help: "If this option is selected, the **edge banding columns** of parts of type *Sheet Goods* will be hidden."
       hide_veneers: Hide the columns of veneers
-      hide_veneers_help: "If this option is selected, the **veneer columns** of parts of type  *Sheet Goods* will be hidden."
+      hide_veneers_help: "If this option is selected, the **veneer columns** of parts of type *Sheet Goods* will be hidden."
       minimize_on_highlight: Minimize after *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "If this option is selected, the OpenCutList window will be minimized when the function *'$t(tab.cutlist.highlight_part)'* is used."
       general: General
@@ -805,7 +805,7 @@ tab:
         invalid_size: The configuration parameters entered do not allow a valid label size to be set.
       warning:
         is_part_selection: These labels are limited to the **selected parts**.
-        formula_not_available: Formula is not available in this context.
+        formula_not_available: Formula is not available in this context
     error:
       no_model: No model is open. You will need to give me more information ;)
       no_entities: Your model is empty. You will need to give me more information ;)

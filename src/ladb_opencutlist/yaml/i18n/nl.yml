@@ -135,7 +135,7 @@ core:
 
       Voer de naam van de preset in:
     delete_confirm_title: verwijdering
-    delete_confirm: "Weet u zeker dat u de preset **\"{{ naam }}\"** wilt verwijderen?"
+    delete_confirm: "Weet u zeker dat u de preset **\"{{ name }}\"** wilt verwijderen?"
     override_confirm_title: Bijwerken
     override_confirm: "Bevestig je dat je de voorinstelling **\"{{ name }}\"** wil bijwerken met de inhoud van het formulier?"
     new_success: "Voorinstelling **\"{{ name }}\"** aangemaakt"
@@ -178,8 +178,8 @@ tab:
       show_hide_block: Toon / verberg groep
       scroll_to_block: Scroll naar groep
       not_available_std_width: "De breedte *{{ std_dimension_real }}* is niet gedefinieerd in de standaardbreedtes van het materiaal '{{ material_name }}'"
-      not_available_std_thickness: "De dikte *{{ std_dimension }}* is niet gedefinieerd in de standaarddiktes van het materiaal '{{ material_name }}'"
-      not_available_std_section: "De doorsnede *{{ std_dimension }}* is niet gedefinieerd in de standaard doorsneden van het materiaal '{{ material_name }}'"
+      not_available_std_thickness: "De dikte *{{ std_dimension_real }}* is niet gedefinieerd in de standaarddiktes van het materiaal '{{ material_name }}'"
+      not_available_std_section: "De doorsnede *{{ std_dimension_real }}* is niet gedefinieerd in de standaard doorsneden van het materiaal '{{ material_name }}'"
       add_std_width_to_material: |
         Breedte toevoegen *{{ std_dimension }}*
         aan materiaal '{{ material_name }}'
@@ -225,7 +225,7 @@ tab:
       auto_oriented: De oriëntatie van dit component is automatisch aangepast
       add_label_filter: "Filter op '{{ label }}'"
       remove_label_filter: "verwijder filter '{{ label }}'"
-      add_edge_material_name_filter: "Filter op '{{ label }}'"
+      add_edge_material_name_filter: "Filter op '{{ material_name }}'"
       remove_edge_material_name_filter: "verwijder filter '{{ material_name }}'"
       add_veneer_material_name_filter: "Filter op '{{ material_name }}'"
       remove_veneer_material_name_filter: "verwijder filter '{{ material_name }}'"
@@ -246,7 +246,7 @@ tab:
       invalid_final_area: "Let op, de oppervlakte kan niet worden berekend omdat {{ count }} deel (van {{ total }}) een ongeldige oppervakte heeft"
       invalid_final_area_plural: "Opgelet, Dit cumulatief oppervlak kan niet berekend worden omdat {{ count }} onderdelen (van {{ total }}) een ongeldig oppervlak hebben"
       is_dynamic_attributes_name: De beschrijving van dit onderdeel wordt overgenomen van het attribuut 'Name' van het dynamisch component
-      size_increased: "Deze afmeting wordt vergroot met een overmaat voor {{ count }} gegroepeerde onderdelen"
+      size_increased: "Deze afmeting wordt vergroot met een overmaat voor {{ value }} gegroepeerde onderdelen"
       has_edges: "Dit onderdeel bevat {{ count }} randafwerking"
       has_edges_plural: "Dit onderdeel bevat {{ count }} randafwerkingen"
       has_veneers: "Dit deel bevat {{ count }} gefineerd oppervlak"
@@ -345,7 +345,7 @@ tab:
       size_increase: Overlengtes
       size_increase_help: |
         Overlengtes laten je toe om de afmetingen van een onderdeel te verhogen.
-        ("Voorbeeld: Overlengte van een plint of een afschrijving die aangepast moet worden tijdens de montage.")
+        (*Voorbeeld: Overlengte van een plint of een afschrijving die aangepast moet worden tijdens de montage.*)
       length_increase: Lengte overmaat
       length_increase_help: Overmaat wordt toegepast op de uiteindelijke lengte om de **brutto lengte** te bepalen.
       width_increase: Breedte overmaat
@@ -805,7 +805,7 @@ tab:
         invalid_size: De ingegeven paramaters laten niet toe om geldige label afmetingen in te stellen.
       warning:
         is_part_selection: Deze labels zijn beperkt tot **geselecteerde onderdelen**.
-        formula_not_available: Formule is in deze context niet beschikbaar.
+        formula_not_available: Formule is in deze context niet beschikbaar
     error:
       no_model: Er is geen enkel model open. U moet me wat meer informatie geven ;)
       no_entities: Uw model is leeg. U moet me iets meer geven ;)

@@ -235,7 +235,7 @@ tab:
       unused_instance_count_plural: "Achtung, **{{ count }}** Stücke der letzten Packung werden nicht verwendet."
       used_instance_count: "**{{ count }}** / {{ total }} Stücken verwendet"
       used_instance_count_plural: "**{{ count }}** / {{ total }} Stücken verwendet"
-      thickness_layer_count: "Das fertige Teil besteht aus **{{ count }}** Lagen in seiner Dicke"
+      thickness_layer_count: "Das fertige Teil besteht aus **{{ count }}** Lagen in der Dicke"
       thickness_layered: "Die hier angegebene Menge entspricht der Anzahl der zu schneidenden Teile, um alle Lagen zu erhalten."
       thickness_layered_equation: "**{{ count }}** *Teil* x **{{ layerCount }}** *Lagen* = **{{ cuttingPartCount }}**"
       thickness_layered_equation_plural: "**{{ count }}** *Teile* x **{{ layerCount }}** *Lagen* = **{{ cuttingPartCount }}**"
@@ -316,8 +316,8 @@ tab:
       thickness_layer_count_help: |
         Definieren Sie hier die Anzahl der Schichten, die das gezeichnete Teil in seiner Dicke unterteilen.
 
-        *Beispiel:* Wenn Sie ein Stück mit einer Dicke von *38mm* gezeichnet haben und es durch Zusammenkleben von zwei *19mm* Platten herstellen wollen, geben Sie **2** in dieses Feld ein.
-        *OpenCutList zählt dann 2 Stücke von 19 mm Dicke anstelle von 1 Stück von 38 mm Dicke
+        *Beispiel:* Wenn Sie ein Teil mit einer Dicke von *38mm* gezeichnet haben und es durch Zusammenkleben von zwei *19mm* Platten herstellen wollen, geben Sie **2** in dieses Feld ein.
+        *OpenCutList zählt dann 2 Teil mit 19mm Dicke anstelle statt 1 Teil mit 38mm Dicke
       description: Beschreibung
       description_help: |
         Die *Beschreibung* ermöglicht es Ihnen, benutzerdefinierte Informationen zu jeder Teildefinition anzugeben.
@@ -805,7 +805,7 @@ tab:
         invalid_size: Mit den eingegebenen Konfigurationsparametern kann keine gültige Etikettengröße festgelegt werden.
       warning:
         is_part_selection: Diese Etiketten beschränken sich auf **ausgewählte Teile**.
-        formula_not_available: Formel steht in diesem Kontext nicht zu Verfügung.
+        formula_not_available: Formel steht in diesem Kontext nicht zu Verfügung
     error:
       no_model: Es sind keine Modelle geöffnet. Sie müssen mir schon etwas mehr geben ;)
       no_entities: Ihr Modell ist leer. Sie müssen mir schon etwas mehr geben ;)
@@ -956,7 +956,7 @@ tab:
       no_model: Es sind keine Modelle geöffnet. Sie müssen mir schon etwas mehr geben ;)
       no_materials: Ihr Modell enthält kein Material.
       material_not_found: Kein Material gefunden.
-      failed_import_skm_file: "Beim Importieren der .skm-Datei ist ein Fehler aufgetreten. **{{Fehler }}**"
+      failed_import_skm_file: "Beim Importieren der .skm-Datei ist ein Fehler aufgetreten. **{{ error }}**"
       failed_export_skm_file: "Beim Exportieren der .skm Datei ist ein Fehler aufgetreten. **{{ error }}**"
       failed_removing_material: "Beim Löschen des Materials ist ein Fehler aufgetreten. **{{ error }}**"
       failed_duplicating_material: "Beim Duplizieren des Materials ist ein Fehler aufgetreten. **{{ error }}**"

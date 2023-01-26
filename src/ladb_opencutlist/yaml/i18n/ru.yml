@@ -173,13 +173,13 @@ tab:
     edit_part_axes_properties: Отредактируйте свойства (осей) детали
     edit_part_size_increase_properties: Отредактируйте свойства (размеры) детали
     edit_part_edges_properties: Отредактируйте свойства (кромки) детали
-    edit_part_veneers_properties: Редактировать свойства детали (сопоставления)
+    edit_part_veneers_properties: Редактировать свойства детали (Шпон)
     tooltip:
       show_hide_block: Показать / Скрыть эту группу
       scroll_to_block: Прокрутка в группу
-      not_available_std_width: "Ширина *{{ std_dimension }}* не определялась на материале {{ material_name }}'"
-      not_available_std_thickness: "Толщина *{{ std_dimension }}* не определялась на материале {{ material_name }}'"
-      not_available_std_section: "Поперечное сечение *{{ std_dimension }}* не определялась на материале {{ material_name }}'"
+      not_available_std_width: "Ширина *{{ std_dimension_real }}* не определялась на материале {{ material_name }}'"
+      not_available_std_thickness: "Толщина *{{ std_dimension_real }}* не определялась на материале {{ material_name }}'"
+      not_available_std_section: "Поперечное сечение *{{ std_dimension_real }}* не определялась на материале {{ material_name }}'"
       add_std_width_to_material: |
         Добавить ширину *{{ std_dimension }}*
         материала '{{ material_name }}'
@@ -582,7 +582,7 @@ tab:
       option_sheet_folding_veneer: Группировать одинаковые листы
       option_sheet_folding_0: Нет
       option_sheet_folding_1: Да
-      option_sheet_folding_help: "Позволяет группировать панели или листы, содержащие одинаковые детали и разрезы"
+      option_sheet_folding_help: "Позволяет группировать панели или листы, содержащие одинаковые детали и разрезы."
       option_hide_part_list: Список деталей
       option_hide_part_list_1d_dimensional_0: Отображать для каждой доски
       option_hide_part_list_1d_edge_0: Отображать для каждой кромки
@@ -1096,7 +1096,7 @@ tab:
       cuttingdiagram_export: Финансирование разработки новой функции
     objective_details:
       default: |
-        Постоянное совершенствование OpenCutList очень важно для всех нас и Ваша финансовая помощь,  по-прежнему, станет основой  для следующего обновления **5.0** !
+        Постоянное совершенствование OpenCutList очень важно для всех нас и Ваша финансовая помощь, по-прежнему, станет основой для следующего обновления **5.0** !
       cuttingdiagram_export: |
         Для нас важно, чтобы *OpenCutList* соответствовал ожиданиям пользователей, использующих расчет *карт раскроя*.
         Для расширения возможностей плагина мы хотели бы сделать возможным экспорт карт раскроя в формате **SVG**.
