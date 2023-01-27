@@ -16,8 +16,7 @@
 
         this.generateFilters = {
           tags_filter: [],
-          edge_material_names_filter: [],
-          veneer_material_names_filter: []
+          edge_material_names_filter: []
         };
 
         this.generateAt = null;
@@ -30,7 +29,6 @@
         this.lengthUnit = null;
         this.usedTags = [];
         this.usedEdgeMaterialDisplayNames = [];
-        this.usedVeneerMaterialDisplayNames = [];
         this.materialUsages = [];
         this.groups = [];
         this.ignoreNextMaterialEvents = false;
@@ -75,7 +73,6 @@
         // Destroy previously created tokenfields
         $('#ladb_cutlist_tags_filter', that.$page).tokenfield('destroy');
         $('#ladb_cutlist_edge_material_names_filter', that.$page).tokenfield('destroy');
-        $('#ladb_cutlist_veneer_material_names_filter', that.$page).tokenfield('destroy');
 
         this.groups = [];
         this.$page.empty();
@@ -129,7 +126,6 @@
                 that.massUnitStrippedname = massUnitStrippedname;
                 that.usedTags = usedTags;
                 that.usedEdgeMaterialDisplayNames = [];
-                that.usedVeneerMaterialDisplayNames = [];
                 that.materialUsages = materialUsages;
                 that.groups = groups;
 
@@ -137,13 +133,6 @@
                 for (var i = 0; i < materialUsages.length; i++) {
                     if (materialUsages[i].type === 4 && materialUsages[i].use_count > 0) {     // 4 = TYPE_EDGE
                         that.usedEdgeMaterialDisplayNames.push(materialUsages[i].display_name);
-                    }
-                }
-
-                // Compute usedVeneerMaterialDisplayNames
-                for (var i = 0; i < materialUsages.length; i++) {
-                    if (materialUsages[i].type === 6 && materialUsages[i].use_count > 0) {     // 6 = TYPE_VENEER
-                        that.usedVeneerMaterialDisplayNames.push(materialUsages[i].display_name);
                     }
                 }
 
@@ -189,7 +178,6 @@
                     ignoredInstanceCount: ignoredInstanceCount,
                     usedTags: usedTags,
                     usedEdgeMaterialDisplayNames: that.usedEdgeMaterialDisplayNames,
-                    usedVeneerMaterialDisplayNames: that.usedVeneerMaterialDisplayNames,
                     groups: groups
                 }));
 
@@ -299,44 +287,6 @@
                         });
                     })
                 ;
-                $('#ladb_cutlist_veneer_material_names_filter', that.$page)
-                    .tokenfield($.extend(TOKENFIELD_OPTIONS, {
-                        autocomplete: {
-                            source: that.usedVeneerMaterialDisplayNames,
-                            delay: 100
-                        },
-                        showAutocompleteOnFocus: false
-                    }))
-                    .on('tokenfield:createtoken', function (e) {
-
-                        // Unique token
-                        var existingTokens = $(this).tokenfield('getTokens');
-                        $.each(existingTokens, function (index, token) {
-                            if (token.value === e.attrs.value) {
-                                e.preventDefault();
-                            }
-                        });
-
-                        // Available token only
-                        var available = false;
-                        $.each(that.usedVeneerMaterialDisplayNames, function (index, token) {
-                            if (token === e.attrs.value) {
-                                available = true;
-                                return false;
-                            }
-                        });
-                        if (!available) {
-                            e.preventDefault();
-                        }
-                    })
-                    .on('tokenfield:createdtoken tokenfield:removedtoken', function (e) {
-                        var tokenList = $(this).tokenfield('getTokensList');
-                        that.generateFilters.veneer_material_names_filter = tokenList.length === 0 ? [] : tokenList.split(';');
-                        that.generateCutlist(function () {
-                            $('#ladb_cutlist_veneer_material_names_filter-tokenfield', that.$page).focus();
-                        });
-                    })
-                ;
 
                 // Bind buttons
                 $('.ladb-btn-setup-model-units', that.$header).on('click', function() {
@@ -351,11 +301,6 @@
                 $('#ladb_cutlist_btn_edge_material_names_filter_clear', that.$page).on('click', function () {
                     $(this).blur();
                     that.generateFilters.edge_material_names_filter = [];
-                    that.generateCutlist();
-                });
-                $('#ladb_cutlist_btn_veneer_material_names_filter_clear', that.$page).on('click', function () {
-                    $(this).blur();
-                    that.generateFilters.veneer_material_names_filter = [];
                     that.generateCutlist();
                 });
                 $('.ladb-btn-toggle-no-print', that.$page).on('click', function () {
@@ -376,7 +321,7 @@
                     that.scrollSlideToTarget(null, $target, true, true);
                     return false;
                 });
-                $('a.ladb-btn-edge-material-filter', that.$page).on('click', function () {
+                $('a.ladb-btn-material-filter', that.$page).on('click', function () {
                     $(this).blur();
                     var materialFilter = $(this).data('material-display-name');
                     var indexOf = that.generateFilters.edge_material_names_filter.indexOf(materialFilter);
@@ -384,18 +329,6 @@
                         that.generateFilters.edge_material_names_filter.splice(indexOf, 1);
                     } else {
                         that.generateFilters.edge_material_names_filter.push(materialFilter);
-                    }
-                    that.generateCutlist();
-                    return false;
-                });
-                $('a.ladb-btn-veneer-material-filter', that.$page).on('click', function () {
-                    $(this).blur();
-                    var materialFilter = $(this).data('material-display-name');
-                    var indexOf = that.generateFilters.veneer_material_names_filter.indexOf(materialFilter);
-                    if (indexOf > -1) {
-                        that.generateFilters.veneer_material_names_filter.splice(indexOf, 1);
-                    } else {
-                        that.generateFilters.veneer_material_names_filter.push(materialFilter);
                     }
                     that.generateCutlist();
                     return false;
@@ -776,9 +709,7 @@
                     { name: 'edge_ymin', type: 'edge' },
                     { name: 'edge_ymax', type: 'edge' },
                     { name: 'edge_xmin', type: 'edge' },
-                    { name: 'edge_xmax', type: 'edge' },
-                    { name: 'veneer_zmax', type: 'veneer' },
-                    { name: 'veneer_zmin', type: 'veneer' }
+                    { name: 'edge_xmax', type: 'edge' }
                 ]
             });
             $editorInstancesList.ladbEditorExport({
@@ -802,9 +733,7 @@
                     { name: 'edge_ymin', type: 'edge' },
                     { name: 'edge_ymax', type: 'edge' },
                     { name: 'edge_xmin', type: 'edge' },
-                    { name: 'edge_xmax', type: 'edge' },
-                    { name: 'veneer_zmax', type: 'veneer' },
-                    { name: 'veneer_zmin', type: 'veneer' }
+                    { name: 'edge_xmax', type: 'edge' }
                 ]
             });
 
@@ -1560,18 +1489,6 @@
                 if (editedPart.edge_material_names.xmax !== editedParts[i].edge_material_names.xmax) {
                     editedPart.edge_material_names.xmax = MULTIPLE_VALUE;
                 }
-                if (editedPart.veneer_material_names.zmin !== editedParts[i].veneer_material_names.zmin) {
-                    editedPart.veneer_material_names.zmin = MULTIPLE_VALUE;
-                }
-                if (editedPart.veneer_material_names.zmax !== editedParts[i].veneer_material_names.zmax) {
-                    editedPart.veneer_material_names.zmax = MULTIPLE_VALUE;
-                }
-                if (editedPart.veneer_texture_angles.zmin !== editedParts[i].veneer_texture_angles.zmin) {
-                    editedPart.veneer_texture_angles.zmin = MULTIPLE_VALUE;
-                }
-                if (editedPart.veneer_texture_angles.zmax !== editedParts[i].veneer_texture_angles.zmax) {
-                    editedPart.veneer_texture_angles.zmax = MULTIPLE_VALUE;
-                }
             }
 
             if (tab === undefined) {
@@ -1581,8 +1498,8 @@
                 || tab === 'extra' && group.material_type === 0 /* 0 = TYPE_UNKNOWN */
                 || tab === 'axes' && multiple
                 || tab === 'edges' && group.material_type !== 2 /* 2 = TYPE_SHEET_GOOD */
-                || tab === 'veneers' && group.material_type !== 2 /* 2 = TYPE_SHEET_GOOD */
-                || tab === 'infos_warnings' && multiple
+                || tab === 'infos'
+                || tab === 'warnings'
             ) {
                 tab = 'general';
             }
@@ -1593,7 +1510,7 @@
                 var $modal = that.appendModalInside('ladb_cutlist_modal_part', 'tabs/cutlist/_modal-part.twig', {
                     group: group,
                     part: editedPart,
-                    partCount: editedParts.length,
+                    part_count: editedParts.length,
                     multiple: multiple,
                     thumbnailFile: thumbnailFile,
                     materialUsages: that.materialUsages,
@@ -1622,32 +1539,20 @@
                 var $inputLengthIncrease = $('#ladb_cutlist_part_input_length_increase', $modal);
                 var $inputWidthIncrease = $('#ladb_cutlist_part_input_width_increase', $modal);
                 var $inputThicknessIncrease = $('#ladb_cutlist_part_input_thickness_increase', $modal);
-                var $selectEdgeYmax = $('#ladb_cutlist_part_select_edge_ymax', $modal);
-                var $selectEdgeYmin = $('#ladb_cutlist_part_select_edge_ymin', $modal);
-                var $selectEdgeXmin = $('#ladb_cutlist_part_select_edge_xmin', $modal);
-                var $selectEdgeXmax = $('#ladb_cutlist_part_select_edge_xmax', $modal);
-                var $selectVeneerZmin = $('#ladb_cutlist_part_select_veneer_zmin', $modal);
-                var $selectVeneerZmax = $('#ladb_cutlist_part_select_veneer_zmax', $modal);
-                var $formGroupVeneerZminTextureAngle = $('#ladb_cutlist_part_form_group_veneer_zmin_texture_angle', $modal);
-                var $formGroupVeneerZmaxTextureAngle = $('#ladb_cutlist_part_form_group_veneer_zmax_texture_angle', $modal);
-                var $inputVeneerZminTextureAngle = $('#ladb_cutlist_part_input_veneer_zmin_texture_angle', $modal);
-                var $inputVeneerZmaxTextureAngle = $('#ladb_cutlist_part_input_veneer_zmax_texture_angle', $modal);
+                var $selectEdgeYmaxMaterialName = $('#ladb_cutlist_part_select_edge_ymax_material_name', $modal);
+                var $selectEdgeYminMaterialName = $('#ladb_cutlist_part_select_edge_ymin_material_name', $modal);
+                var $selectEdgeXminMaterialName = $('#ladb_cutlist_part_select_edge_xmin_material_name', $modal);
+                var $selectEdgeXmaxMaterialName = $('#ladb_cutlist_part_select_edge_xmax_material_name', $modal);
                 var $rectIncreaseLength = $('svg .increase-length', $modal);
                 var $rectIncreaseWidth = $('svg .increase-width', $modal);
-                var $rectEdgeYmin = $('svg .edge-ymin', $modal);
                 var $rectEdgeYmax = $('svg .edge-ymax', $modal);
+                var $rectEdgeYmin = $('svg .edge-ymin', $modal);
                 var $rectEdgeXmin = $('svg .edge-xmin', $modal);
                 var $rectEdgeXmax = $('svg .edge-xmax', $modal);
-                var $rectVeneerZmin = $('svg .veneer-zmin', $modal);
-                var $rectVeneerZmax = $('svg .veneer-zmax', $modal);
                 var $labelEdgeYmax = $('#ladb_cutlist_part_label_edge_ymax', $modal);
                 var $labelEdgeYmin = $('#ladb_cutlist_part_label_edge_ymin', $modal);
                 var $labelEdgeXmin = $('#ladb_cutlist_part_label_edge_xmin', $modal);
                 var $labelEdgeXmax = $('#ladb_cutlist_part_label_edge_xmax', $modal);
-                var $labelVeneerZmin = $('#ladb_cutlist_part_label_veneer_zmin', $modal);
-                var $labelVeneerZmax = $('#ladb_cutlist_part_label_veneer_zmax', $modal);
-                var $labelVeneerZminTextureAngle = $('#ladb_cutlist_part_label_veneer_zmin_texture_angle', $modal);
-                var $labelVeneerZmaxTextureAngle = $('#ladb_cutlist_part_label_veneer_zmax_texture_angle', $modal);
                 var $btnHighlight = $('#ladb_cutlist_part_highlight', $modal);
                 var $btnExportToSkp = $('#ladb_cutlist_part_export_to_skp', $modal);
                 var $btnUpdate = $('#ladb_cutlist_part_update', $modal);
@@ -1677,57 +1582,25 @@
                     }
                 };
                 var fnUpdateEdgesPreview = function() {
-                    if ($selectEdgeYmax.val() === '') {
+                    if ($selectEdgeYmaxMaterialName.val() === '') {
                         $rectEdgeYmax.removeClass('ladb-active');
                     } else {
                         $rectEdgeYmax.addClass('ladb-active');
                     }
-                    if ($selectEdgeYmin.val() === '') {
+                    if ($selectEdgeYminMaterialName.val() === '') {
                         $rectEdgeYmin.removeClass('ladb-active');
                     } else {
                         $rectEdgeYmin.addClass('ladb-active');
                     }
-                    if ($selectEdgeXmin.val() === '') {
+                    if ($selectEdgeXminMaterialName.val() === '') {
                         $rectEdgeXmin.removeClass('ladb-active');
                     } else {
                         $rectEdgeXmin.addClass('ladb-active');
                     }
-                    if ($selectEdgeXmax.val() === '') {
+                    if ($selectEdgeXmaxMaterialName.val() === '') {
                         $rectEdgeXmax.removeClass('ladb-active');
                     } else {
                         $rectEdgeXmax.addClass('ladb-active');
-                    }
-                };
-                var fnIsMaterialTextured = function(name) {
-                    for (let materialUsage of that.materialUsages) {
-                        if (materialUsage.name === name) {
-                            return materialUsage.textured;
-                        }
-                    }
-                    return false;
-                };
-                var fnUpdateVeneersPreview = function() {
-                    if ($selectVeneerZmin.val() === '') {
-                        $rectVeneerZmin.removeClass('ladb-active');
-                        $formGroupVeneerZminTextureAngle.hide();
-                    } else {
-                        $rectVeneerZmin.addClass('ladb-active');
-                        if (fnIsMaterialTextured($selectVeneerZmin.val())) {
-                            $formGroupVeneerZminTextureAngle.show();
-                        } else {
-                            $formGroupVeneerZminTextureAngle.hide();
-                        }
-                    }
-                    if ($selectVeneerZmax.val() === '') {
-                        $rectVeneerZmax.removeClass('ladb-active');
-                        $formGroupVeneerZmaxTextureAngle.hide();
-                    } else {
-                        $rectVeneerZmax.addClass('ladb-active');
-                        if (fnIsMaterialTextured($selectVeneerZmax.val())) {
-                            $formGroupVeneerZmaxTextureAngle.show();
-                        } else {
-                            $formGroupVeneerZmaxTextureAngle.hide();
-                        }
                     }
                 };
                 var fnUpdateIncreasesPreview = function() {
@@ -1752,36 +1625,21 @@
                 };
                 var fnMaterialNameCopyToAllEdges = function(materialName) {
                     if (materialName !== MULTIPLE_VALUE) {
-                        if (!$selectEdgeYmax.prop( "disabled")) {
-                            $selectEdgeYmax.selectpicker('val', materialName);
+                        if (!$selectEdgeYmaxMaterialName.prop( "disabled")) {
+                            $selectEdgeYmaxMaterialName.selectpicker('val', materialName);
                         }
-                        if (!$selectEdgeYmin.prop( "disabled")) {
-                            $selectEdgeYmin.selectpicker('val', materialName);
+                        if (!$selectEdgeYminMaterialName.prop( "disabled")) {
+                            $selectEdgeYminMaterialName.selectpicker('val', materialName);
                         }
-                        if (!$selectEdgeXmin.prop( "disabled")) {
-                            $selectEdgeXmin.selectpicker('val', materialName);
+                        if (!$selectEdgeXminMaterialName.prop( "disabled")) {
+                            $selectEdgeXminMaterialName.selectpicker('val', materialName);
                         }
-                        if (!$selectEdgeXmax.prop( "disabled")) {
-                            $selectEdgeXmax.selectpicker('val', materialName);
+                        if (!$selectEdgeXmaxMaterialName.prop( "disabled")) {
+                            $selectEdgeXmaxMaterialName.selectpicker('val', materialName);
                         }
                         fnUpdateEdgesPreview();
                     }
                 };
-                var fnMaterialNameCopyToAllVeneers = function(materialName) {
-                    if (materialName !== MULTIPLE_VALUE) {
-                        if (!$selectVeneerZmax.prop( "disabled")) {
-                            $selectVeneerZmax.selectpicker('val', materialName);
-                        }
-                        if (!$selectVeneerZmin.prop( "disabled")) {
-                            $selectVeneerZmin.selectpicker('val', materialName);
-                        }
-                        fnUpdateVeneersPreview();
-                    }
-                };
-                var fnIncrementVeneerTextureAngleInputValue = function($input, inc) {
-                    let angle = parseInt($input.val());
-                    $input.val((angle + inc) % 360);
-                }
                 var fnOnAxiesOrderChanged = function () {
                     var axes = fnComputeAxesOrder();
 
@@ -1852,20 +1710,6 @@
                 });
                 $inputWidthIncrease.ladbTextinputDimension();
                 $inputThicknessIncrease.ladbTextinputDimension();
-                $inputVeneerZminTextureAngle.ladbTextinputNumberWithUnit({
-                    resetValue: 0,
-                    defaultUnit: 'deg',
-                    units: [
-                        { deg: i18next.t('default.unit_angle_0') }
-                    ]
-                });
-                $inputVeneerZmaxTextureAngle.ladbTextinputNumberWithUnit({
-                    resetValue: 0,
-                    defaultUnit: 'deg',
-                    units: [
-                        { deg: i18next.t('default.unit_angle_0') }
-                    ]
-                });
 
                 // Bind select
                 $selectMaterialName.val(editedPart.material_name);
@@ -1881,52 +1725,36 @@
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                         fnComputeAxesOrder();
                     });
-                $selectEdgeYmin.val(editedPart.edge_material_names.ymin);
-                $selectEdgeYmin
+                $selectEdgeYminMaterialName.val(editedPart.edge_material_names.ymin);
+                $selectEdgeYminMaterialName
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                         if (!fnNewCheck($(this), 4 /* TYPE_EDGE */)) {
                             fnUpdateEdgesPreview();
                         }
                     });
-                $selectEdgeYmax.val(editedPart.edge_material_names.ymax);
-                $selectEdgeYmax
+                $selectEdgeYmaxMaterialName.val(editedPart.edge_material_names.ymax);
+                $selectEdgeYmaxMaterialName
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                         if (!fnNewCheck($(this), 4 /* TYPE_EDGE */)) {
                             fnUpdateEdgesPreview();
                         }
                     });
-                $selectEdgeXmin.val(editedPart.edge_material_names.xmin);
-                $selectEdgeXmin
+                $selectEdgeXminMaterialName.val(editedPart.edge_material_names.xmin);
+                $selectEdgeXminMaterialName
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                         if (!fnNewCheck($(this), 4 /* TYPE_EDGE */)) {
                             fnUpdateEdgesPreview();
                         }
                     });
-                $selectEdgeXmax.val(editedPart.edge_material_names.xmax);
-                $selectEdgeXmax
+                $selectEdgeXmaxMaterialName.val(editedPart.edge_material_names.xmax);
+                $selectEdgeXmaxMaterialName
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                         if (!fnNewCheck($(this), 4 /* TYPE_EDGE */)) {
                             fnUpdateEdgesPreview();
-                        }
-                    });
-                $selectVeneerZmin.val(editedPart.veneer_material_names.zmin);
-                $selectVeneerZmin
-                    .selectpicker(SELECT_PICKER_OPTIONS)
-                    .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                        if (!fnNewCheck($(this), 6 /* TYPE_VENEER */)) {
-                            fnUpdateVeneersPreview();
-                        }
-                    });
-                $selectVeneerZmax.val(editedPart.veneer_material_names.zmax);
-                $selectVeneerZmax
-                    .selectpicker(SELECT_PICKER_OPTIONS)
-                    .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                        if (!fnNewCheck($(this), 6 /* TYPE_VENEER */)) {
-                            fnUpdateVeneersPreview();
                         }
                     });
 
@@ -1940,24 +1768,16 @@
 
                 // Bind edges
                 $rectEdgeYmin.on('click', function() {
-                    $selectEdgeYmin.selectpicker('toggle');
+                    $selectEdgeYminMaterialName.selectpicker('toggle');
                 });
                 $rectEdgeYmax.on('click', function() {
-                    $selectEdgeYmax.selectpicker('toggle');
+                    $selectEdgeYmaxMaterialName.selectpicker('toggle');
                 });
                 $rectEdgeXmin.on('click', function() {
-                    $selectEdgeXmin.selectpicker('toggle');
+                    $selectEdgeXminMaterialName.selectpicker('toggle');
                 });
                 $rectEdgeXmax.on('click', function() {
-                    $selectEdgeXmax.selectpicker('toggle');
-                });
-
-                // Bind veneers
-                $rectVeneerZmin.on('click', function() {
-                    $selectVeneerZmin.selectpicker('toggle');
-                });
-                $rectVeneerZmax.on('click', function() {
-                    $selectVeneerZmax.selectpicker('toggle');
+                    $selectEdgeXmaxMaterialName.selectpicker('toggle');
                 });
 
                 // Bind sorter
@@ -1983,28 +1803,16 @@
 
                 // Bind labels
                 $labelEdgeYmax.on('dblclick', function() {
-                    fnMaterialNameCopyToAllEdges($selectEdgeYmax.val());
+                    fnMaterialNameCopyToAllEdges($selectEdgeYmaxMaterialName.val());
                 });
                 $labelEdgeYmin.on('dblclick', function() {
-                    fnMaterialNameCopyToAllEdges($selectEdgeYmin.val());
+                    fnMaterialNameCopyToAllEdges($selectEdgeYminMaterialName.val());
                 });
                 $labelEdgeXmin.on('dblclick', function() {
-                    fnMaterialNameCopyToAllEdges($selectEdgeXmin.val());
+                    fnMaterialNameCopyToAllEdges($selectEdgeXminMaterialName.val());
                 });
                 $labelEdgeXmax.on('dblclick', function() {
-                    fnMaterialNameCopyToAllEdges($selectEdgeXmax.val());
-                });
-                $labelVeneerZmin.on('dblclick', function() {
-                    fnMaterialNameCopyToAllVeneers($selectVeneerZmin.val());
-                });
-                $labelVeneerZmax.on('dblclick', function() {
-                    fnMaterialNameCopyToAllVeneers($selectVeneerZmax.val());
-                });
-                $labelVeneerZminTextureAngle.on('click', function() {
-                    fnIncrementVeneerTextureAngleInputValue($inputVeneerZminTextureAngle, 90);
-                });
-                $labelVeneerZmaxTextureAngle.on('click', function() {
-                    fnIncrementVeneerTextureAngleInputValue($inputVeneerZmaxTextureAngle, 90);
+                    fnMaterialNameCopyToAllEdges($selectEdgeXmaxMaterialName.val());
                 });
 
                 // Bind buttons
@@ -2080,31 +1888,17 @@
                             editedParts[i].thickness_increase = $inputThicknessIncrease.val();
                         }
 
-                        if ($selectEdgeYmin.val() !== MULTIPLE_VALUE) {
-                            editedParts[i].edge_material_names.ymin = $selectEdgeYmin.val();
+                        if ($selectEdgeYminMaterialName.val() !== MULTIPLE_VALUE) {
+                            editedParts[i].edge_material_names.ymin = $selectEdgeYminMaterialName.val();
                         }
-                        if ($selectEdgeYmax.val() !== MULTIPLE_VALUE) {
-                            editedParts[i].edge_material_names.ymax = $selectEdgeYmax.val();
+                        if ($selectEdgeYmaxMaterialName.val() !== MULTIPLE_VALUE) {
+                            editedParts[i].edge_material_names.ymax = $selectEdgeYmaxMaterialName.val();
                         }
-                        if ($selectEdgeXmin.val() !== MULTIPLE_VALUE) {
-                            editedParts[i].edge_material_names.xmin = $selectEdgeXmin.val();
+                        if ($selectEdgeXminMaterialName.val() !== MULTIPLE_VALUE) {
+                            editedParts[i].edge_material_names.xmin = $selectEdgeXminMaterialName.val();
                         }
-                        if ($selectEdgeXmax.val() !== MULTIPLE_VALUE) {
-                            editedParts[i].edge_material_names.xmax = $selectEdgeXmax.val();
-                        }
-
-                        if ($selectVeneerZmin.val() !== MULTIPLE_VALUE) {
-                            editedParts[i].veneer_material_names.zmin = $selectVeneerZmin.val();
-                        }
-                        if ($selectVeneerZmax.val() !== MULTIPLE_VALUE) {
-                            editedParts[i].veneer_material_names.zmax = $selectVeneerZmax.val();
-                        }
-
-                        if (!$inputVeneerZminTextureAngle.ladbTextinputDimension('isMultiple')) {
-                            editedParts[i].veneer_texture_angles.zmin = $inputVeneerZminTextureAngle.val();
-                        }
-                        if (!$inputVeneerZmaxTextureAngle.ladbTextinputDimension('isMultiple')) {
-                            editedParts[i].veneer_texture_angles.zmax = $inputVeneerZmaxTextureAngle.val();
+                        if ($selectEdgeXmaxMaterialName.val() !== MULTIPLE_VALUE) {
+                            editedParts[i].edge_material_names.xmax = $selectEdgeXmaxMaterialName.val();
                         }
 
                     }
@@ -2157,9 +1951,6 @@
 
                 // Init edges preview
                 fnUpdateEdgesPreview();
-
-                // Init veneers preview
-                fnUpdateVeneersPreview();
 
                 // Show modal
                 $modal.modal('show');
@@ -2519,23 +2310,7 @@
 
                                         });
                                         $btnLabels.on('click', function () {
-
-                                            // Compute label bins (a list of bar index attached to part id)
-                                            let binDefs = {};
-                                            let barIndex = 0;
-                                            $.each(response.bars, function () {
-                                                for (var i = 0 ; i < this.count; i++) {
-                                                    barIndex++;
-                                                    $.each(this.parts, function () {
-                                                        if (!binDefs[this.id]) {
-                                                            binDefs[this.id] = [];
-                                                        }
-                                                        binDefs[this.id].push(barIndex);
-                                                    });
-                                                }
-                                            });
-
-                                            that.labelsGroup(groupId, binDefs);
+                                            that.labelsGroup(groupId);
                                         });
                                         $btnClose.on('click', function () {
                                             that.popSlide();
@@ -2844,23 +2619,7 @@
 
                                         });
                                         $btnLabels.on('click', function () {
-
-                                            // Compute label bins (a list of sheet index attached to part id)
-                                            let binDefs = {};
-                                            let sheetIndex = 0;
-                                            $.each(response.sheets, function () {
-                                                for (var i = 0 ; i < this.count; i++) {
-                                                    sheetIndex++;
-                                                    $.each(this.parts, function () {
-                                                        if (!binDefs[this.id]) {
-                                                            binDefs[this.id] = [];
-                                                        }
-                                                        binDefs[this.id].push(sheetIndex);
-                                                    });
-                                                }
-                                            });
-
-                                            that.labelsGroup(groupId, binDefs);
+                                            that.labelsGroup(groupId);
                                         });
                                         $btnClose.on('click', function () {
                                             that.popSlide();
@@ -2972,60 +2731,30 @@
 
     };
 
-    LadbTabCutlist.prototype.labelsGroup = function (groupId, binDefs, forceDefaultTab) {
+    LadbTabCutlist.prototype.labelsGroup = function (groupId, forceDefaultTab) {
         var that = this;
 
         var group = this.findGroupById(groupId);
         var isPartSelection = this.selectionGroupId === groupId && this.selectionPartIds.length > 0;
-        var isBinSorterDisabled = !binDefs;
 
-        // Retrieve parts
-        var tmpBinDefs = binDefs ? JSON.parse(JSON.stringify(binDefs)) : null;
-        var partInfos = [];
-        var fnAppendPartInfo = function(part) { // Construct part info
-            var flatPathsAndNames = [];
-            var layered = part.thickness_layer_count > 1;
-            for (var l = 1; l <= part.thickness_layer_count; l++) {
-                $.each(part.entity_names, function () {
-                    var count = this[1].length;
-                    for (var i = 0; i < count; i++) {
-                        flatPathsAndNames.push({
-                            path: this[1][i],
-                            name: this[0] + (layered ? ' // ' + l : ''),
-                        });
-                    }
-                });
-            }
-            for (var i = 1; i <= part.count; i++) {
-                var bin = null;
-                if (tmpBinDefs && tmpBinDefs[part.id]) {
-                    bin = tmpBinDefs[part.id].shift();
-                }
-                partInfos.push({
-                    position_in_batch: i,
-                    entity_named_path: flatPathsAndNames.length > 0 ? flatPathsAndNames[i - 1].path : '',
-                    entity_name: flatPathsAndNames.length > 0 ? flatPathsAndNames[i - 1].name : '',
-                    bin: bin,
-                    part: part
-                });
-            }
-        }
-        var fnAppendPart = function(part) { // Check children
+        // Retrieve parts to use
+        var fnAppendPart = function(parts, part) {
             if (part.children) {
                 $.each(part.children, function (index) {
-                    fnAppendPartInfo(this);
+                    parts.push(this);
                 });
             } else {
-                fnAppendPartInfo(part);
+                parts.push(part);
             }
         };
-        $.each(group.parts, function (index) {  // Iterate on selection
+        var parts = [];
+        $.each(group.parts, function (index) {
             if (isPartSelection) {
                 if (that.selectionPartIds.includes(this.id)) {
-                    fnAppendPart(this);
+                    fnAppendPart(parts, this);
                 }
             } else {
-                fnAppendPart(this);
+                fnAppendPart(parts, this);
             }
         });
 
@@ -3037,7 +2766,6 @@
             var $modal = that.appendModalInside('ladb_cutlist_modal_labels', 'tabs/cutlist/_modal-labels.twig', {
                 group: group,
                 isPartSelection: isPartSelection,
-                isBinSorterDisabled: isBinSorterDisabled,
                 tab: forceDefaultTab || that.lastLabelsOptionsTab == null ? 'layout' : that.lastLabelsOptionsTab
             });
 
@@ -3151,8 +2879,7 @@
                     var property = properties[i];
                     $sortablePartOrderStrategy.append(Twig.twig({ref: "tabs/cutlist/_labels-option-part-order-strategy-property.twig"}).render({
                         order: property.startsWith('-') ? '-' : '',
-                        property: property.startsWith('-') ? property.substring(1) : property,
-                        enabled: property !== 'bin' || !isBinSorterDisabled
+                        property: property.startsWith('-') ? property.substring(1) : property
                     }));
                 }
                 $sortablePartOrderStrategy.find('a').on('click', function () {
@@ -3183,7 +2910,7 @@
             $editorLabelLayout.ladbEditorLabelLayout({
                 dialog: that.dialog,
                 group: group,
-                partInfo: partInfos[0],
+                part: parts[0],
             });
             $selectPageFormat.selectpicker(SELECT_PICKER_OPTIONS);
             $inputPageWidth.ladbTextinputDimension();
@@ -3284,6 +3011,32 @@
 
                     } else {
 
+                        // Compute part infos
+                        var partInfos = [];
+                        $.each(parts, function (index) {
+                            var flatPathsAndNames = [];
+                            var layered = this.thickness_layer_count > 1;
+                            for (var l = 1; l <= this.thickness_layer_count; l++) {
+                                $.each(this.entity_names, function () {
+                                    var count = this[1].length;
+                                    for (var i = 0; i < count; i++) {
+                                        flatPathsAndNames.push({
+                                            path: this[1][i],
+                                            name: this[0] + (layered ? ' // ' + l : ''),
+                                        });
+                                    }
+                                });
+                            }
+                            for (var i = 1; i <= this.count; i++) {
+                                partInfos.push({
+                                    position_in_batch: i,
+                                    entity_named_path: flatPathsAndNames.length > 0 ? flatPathsAndNames[i - 1].path : '',
+                                    entity_name: flatPathsAndNames.length > 0 ? flatPathsAndNames[i - 1].name : '',
+                                    part: this
+                                });
+                            }
+                        });
+
                         // Sort part infos
                         var fnFieldSorter = function (properties) {
                             return function (a, b) {
@@ -3301,9 +3054,6 @@
                                         } else if (property === 'entity_name') {
                                             valA = a.entity_name;
                                             valB = b.entity_name;
-                                        } else if (property === 'bin') {
-                                            valA = a.bin;
-                                            valB = b.bin;
                                         } else if (property === 'number') {
                                             valA = isNaN(a.part.number) ? a.part.number.padStart(3, ' ') : a.part.number;    // Pad part number with ' ' to be sure that 'AA' is greater than 'Z' -> " AA" > "  Z"
                                             valB = isNaN(a.part.number) ? b.part.number.padStart(3, ' ') : b.part.number;
@@ -3322,17 +3072,17 @@
                         };
                         partInfos.sort(fnFieldSorter(labelsOptions.part_order_strategy.split('>')));
 
-                        // Split part infos into pages
+                        // Split parts into pages
                         var page;
                         var gIndex = 0;
                         for (var i = 1; i <= labelsOptions.offset; i++) {
                             if (gIndex % (labelsOptions.row_count * labelsOptions.col_count) === 0) {
                                 page = {
-                                    partInfos: []
+                                    part_infos: []
                                 }
                                 pages.push(page);
                             }
-                            page.partInfos.push({
+                            page.part_infos.push({
                                 part: null
                             });
                             gIndex++;
@@ -3340,11 +3090,11 @@
                         $.each(partInfos, function (index) {
                             if (gIndex % (labelsOptions.row_count * labelsOptions.col_count) === 0) {
                                 page = {
-                                    partInfos: []
+                                    part_infos: []
                                 }
                                 pages.push(page);
                             }
-                            page.partInfos.push(this);
+                            page.part_infos.push(this);
                             gIndex++;
                         })
 
@@ -3372,7 +3122,7 @@
 
                     // Bind buttons
                     $btnLabels.on('click', function () {
-                        that.labelsGroup(groupId, binDefs);
+                        that.labelsGroup(groupId);
                     });
                     $btnPrint.on('click', function () {
                         that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.labels.title'), '0');
@@ -3523,7 +3273,6 @@
         var $inputHideBBoxDimensions = $('#ladb_input_hide_bbox_dimensions', $modal);
         var $inputHideFinalAreas = $('#ladb_input_hide_final_areas', $modal);
         var $inputHideEdges = $('#ladb_input_hide_edges', $modal);
-        var $inputHideVeneers = $('#ladb_input_hide_veneers', $modal);
         var $inputMinimizeOnHighlight = $('#ladb_input_minimize_on_highlight', $modal);
         var $sortablePartOrderStrategy = $('#ladb_sortable_part_order_strategy', $modal);
         var $inputTags = $('#ladb_input_tags', $modal);
@@ -3547,7 +3296,6 @@
             options.hide_bbox_dimensions = $inputHideBBoxDimensions.is(':checked');
             options.hide_final_areas = $inputHideFinalAreas.is(':checked');
             options.hide_edges = $inputHideEdges.is(':checked');
-            options.hide_veneers = $inputHideVeneers.is(':checked');
             options.minimize_on_highlight = $inputMinimizeOnHighlight.is(':checked');
             options.tags = $inputTags.tokenfield('getTokensList').split(';');
 
@@ -3582,7 +3330,6 @@
             $inputHideBBoxDimensions.prop('checked', options.hide_bbox_dimensions);
             $inputHideFinalAreas.prop('checked', options.hide_final_areas);
             $inputHideEdges.prop('checked', options.hide_edges);
-            $inputHideVeneers.prop('checked', options.hide_veneers);
             $inputMinimizeOnHighlight.prop('checked', options.minimize_on_highlight);
             $inputTags.tokenfield('setTokens', options.tags === '' ? ' ' : options.tags);
 

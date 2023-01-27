@@ -2,10 +2,6 @@
   "_storages": {
     "hidden_group_ids": 2 /* PRESETS_STORAGE_MODEL_ONLY */
   },
-  "_cleaners": {
-    "part_order_strategy": 1, /* PRESETS_CLEANER_ORDER_STRATEGY */
-    "dimension_column_order_strategy": 1 /* PRESETS_CLEANER_ORDER_STRATEGY */
-  },
   "0": {
     "auto_orient": true,
     "flipped_detection": true,
@@ -19,9 +15,9 @@
     "hide_tags": false,
     "hide_cutting_dimensions": false,
     "hide_bbox_dimensions": false,
+    "hide_untyped_material_dimensions": false,
     "hide_final_areas": true,
     "hide_edges": true,
-    "hide_veneers": true,
     "minimize_on_highlight": true,
     "part_order_strategy": "-thickness>-length>-width>-count>name>-edge_pattern>tags>thickness_layer_count",
     "dimension_column_order_strategy": "length>width>thickness",

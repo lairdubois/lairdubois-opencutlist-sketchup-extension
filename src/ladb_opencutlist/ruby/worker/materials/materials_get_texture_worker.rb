@@ -3,10 +3,8 @@ module Ladb::OpenCutList
   class MaterialsGetTextureWorker
 
     def initialize(material_data)
-      
-      @name = material_data.fetch('name')
-      @colorized = material_data.fetch('colorized')
-      
+      @name = material_data['name']
+      @colorized = material_data['colorized']
     end
 
     # -----

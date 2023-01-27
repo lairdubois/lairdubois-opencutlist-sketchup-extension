@@ -25,7 +25,6 @@ default:
   caution: Chú ý
   remove: Loại bỏ
   create: Tạo mới
-  duplicate: ""
   ignore: Đồng ý
   download: Tải xuống
   upgrade: Cập nhật
@@ -48,7 +47,6 @@ default:
   unit_5: Yard
   unit_mass_0: Kilogram
   unit_mass_1: Pound
-  unit_angle_0: ""
   instance_single: mục
   instance_plural: mục
   part_single: bộ phận
@@ -67,7 +65,6 @@ core:
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
-      edit_part_veneers_properties: ""
       smart_paint: $t(core.toolbar.command.smart_paint)
   toolbar:
     name: OpenCutList
@@ -173,13 +170,12 @@ tab:
     edit_part_axes_properties: Chỉnh sửa thuộc tính trục của bộ phận
     edit_part_size_increase_properties: Chỉnh sửa các thuộc tính (ngoại cỡ) của bộ phận
     edit_part_edges_properties: Chỉnh sửa các thuộc tính (dải cạnh) của bộ phận
-    edit_part_veneers_properties: ""
     tooltip:
       show_hide_block: Hiện / Ẩn nhóm
       scroll_to_block: Di chuyển đến nhóm
       not_available_std_width: "Chiều rộng *{{ std_dimension_real }}* không được xác định trong chiều rộng tiêu chuẩn của vật liệu '{{ material_name }}'"
-      not_available_std_thickness: "Độ dày *{{ std_dimension_real }}* không được xác định trong độ dày tiêu chuẩn của vật liệu '{{ material_name }}'"
-      not_available_std_section: "Tiết diện mặt cắt *{{ std_dimension_real }}* không được xác định trong tiết diện mặt cắt tiêu chuẩn của vật liệu '{{ material_name }}'"
+      not_available_std_thickness: "Độ dày *{{ std_dimension }}* không được xác định trong độ dày tiêu chuẩn của vật liệu '{{ material_name }}'"
+      not_available_std_section: "Tiết diện mặt cắt *{{ std_dimension }}* không được xác định trong tiết diện mặt cắt tiêu chuẩn của vật liệu '{{ material_name }}'"
       add_std_width_to_material: |
         Thêm chiều rộng *{{ std_dimension }}*
         cho vật liệu '{{ material_name }}'
@@ -227,8 +223,6 @@ tab:
       remove_label_filter: "Xóa bộ lọc trên '{{ label }}'"
       add_edge_material_name_filter: "Lọc trên '{{ material_name }}'"
       remove_edge_material_name_filter: "Xóa bộ lọc trên '{{ material_name }}'"
-      add_veneer_material_name_filter: "Lọc trên '{{ material_name }}'"
-      remove_veneer_material_name_filter: "Xóa bộ lọc trên '{{ material_name }}'"
       not_aligned_on_axes: "Chú ý, bộ phận này có thể không được định hướng chính xác đối với các trục của nó"
       instance_count_by_part: "Bộ phận này được tính trong các gói của **{{ count }}** mục."
       unused_instance_count: "Lưu ý rằng **{{ count }}** mục từ gói cuối cùng sẽ không được sử dụng."
@@ -249,17 +243,12 @@ tab:
       size_increased: "Kích thước được tăng theo kích thước quá khổ của {{ value }}"
       has_edges: "Bộ phận này chứa {{ count }} dải cạnh"
       has_edges_plural: "Bộ phận này chứa {{ count }} dải cạnh"
-      has_veneers: ""
-      has_veneers_plural: ""
       edge_decremented: "Giảm theo độ dày của dải cạnh ({{ decrement }})"
       edge_ymin: Chiều dài cạnh 1
       edge_ymax: Chiều dài cạnh 2
       edge_xmin: Chiều rộng cạnh 1
       edge_xmax: Chiều rộng cạnh 2
-      veneer_zmin: ""
-      veneer_zmax: ""
       dblclick_to_copy_all_edges: Nhấp đúp vào đây để nhân đôi giá trị này sang các cạnh khác
-      dblclick_to_copy_all_veneers: ""
       dblclick_to_sort_axes: Nhấp đúp vào đây để tự động sắp xếp lại các trục theo kích thước của bộ phận
       part_axes: Các trục bên trong của bộ phận
       select_unselect_all_parts: Chọn / bỏ chọn tất cả các bộ phận trong nhóm
@@ -290,7 +279,6 @@ tab:
       general: Chung
       extra_help: "Danh sách các thuộc tính dành riêng cho loại vật liệu \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Dải cạnh
-      veneers: ""
       name: Tên
       material: Vật liệu
       cumulable: Tổng hợp
@@ -366,7 +354,6 @@ tab:
       over_length: Trên suốt chiều dài
       over_width: Trên suốt chiều rộng
       edge_disabled_help: Dải cạnh này không thể định cấu hình được vì không có mặt áp vật liệu nào được phát hiện trên cạnh này của bộ phận trong mô hình.
-      veneer_disabled_help: ""
       multiple_values: Nhiều giá trị
       export_to_skp: Xuất (.skm)
     export_to_skp:
@@ -413,8 +400,6 @@ tab:
       hide_final_areas_help: "Nếu tùy chọn này được chọn, **diện tích thực tế** của các bộ phận thuộc loại *Hàng dạng tấm* sẽ bị ẩn."
       hide_edges: Ẩn các cột của dải cạnh
       hide_edges_help: "Nếu tùy chọn này được chọn, **cột dải cạnh** của các bộ phận thuộc loại *Hàng dạng tấm* sẽ bị ẩn."
-      hide_veneers: ""
-      hide_veneers_help: ""
       minimize_on_highlight: Thu nhỏ sau *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Nếu tùy chọn này được chọn, cửa sổ OpenCutList sẽ được thu nhỏ khi chức năng *'$t(tab.cutlist.highlight_part)'* được sử dụng."
       general: Chung
@@ -442,7 +427,6 @@ tab:
       filters_warning: "Bộ lọc này chỉ hiển thị **{{ count }}** bộ phận trong tổng số của {{ total }}."
       filters_warning_plural: "Bộ lọc này chỉ hiển thị **{{ count }}** bộ phận trong tổng số của {{ total }}."
       edge_material_names_filter: Lọc theo dải cạnh vật liệu
-      veneer_material_names_filter: ""
       tags_filter: Lọc theo thẻ
       dimensions_help: Hiểu về kích thước
       summary: Bảng tóm tắt
@@ -467,7 +451,6 @@ tab:
       thickness: Độ dày
       thickness_short: T
       edges: Dải cạnh
-      veneers: ""
     export:
       title: Xuất
       info_0: |
@@ -525,8 +508,6 @@ tab:
       edge_ymax: Chiều dài cạnh 2
       edge_xmin: Chiều rộng cạnh 1
       edge_xmax: Chiều rộng cạnh 2
-      veneer_zmin: ""
-      veneer_zmax: ""
       placeholder:
         no_column_title: Nhập tiêu đề
         no_column_formula_native: "Giá trị gốc của cột '{{ col_name }}'"
@@ -546,23 +527,18 @@ tab:
       raw_materials: Vật liệu thô
       coefficient: Hệ số
       total: Tổng
-      total_used: ""
-      total_unused: Chưa sử dụng
       total_mass: Σ Khối lượng
       total_cost: Σ Chi phí
       total_count: Số lượng
-      total_instance_count: ""
       total_volume: Σ Thể tích
       total_area: Σ Diện tích
       total_length: Σ Chiều dài
       error:
-        no_typed_material_parts: ""
+        no_typed_material_parts: "Không có bộ phận nào có loại vật liệu (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)** hoặc **$t(tab.materials.type_5)**) đã được cung cấp để tạo báo cáo."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} lỗi**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} lỗi**."
       warning:
         is_group_selection: Các bộ phận bên trong **nhóm ẩn** của danh sách bộ phận sẽ không được tính.
-      tip:
-        not_enough_data: |
     cuttingdiagram:
       title: Sơ đồ cắt
       start_msg: Chạy tối ưu hóa
@@ -575,19 +551,17 @@ tab:
       option_bar_folding_0: Không
       option_bar_folding_1: Đồng ý
       option_bar_folding_help: Nhóm các bảng hoặc dải cạnh có chứa các bộ phận và đường cắt giống nhau.
-      option_sheet_folding_good: Nhóm các tấm tương tự
-      option_sheet_folding_veneer: ""
+      option_sheet_folding: Nhóm các tấm tương tự
       option_sheet_folding_0: Không
       option_sheet_folding_1: Đồng ý
-      option_sheet_folding_help: ""
+      option_sheet_folding_help: Nhóm các tấm có các bộ phận và đường cắt giống nhau.
       option_hide_part_list: Danh sách các bộ phận
       option_hide_part_list_1d_dimensional_0: Hiển thị cho mỗi bảng
       option_hide_part_list_1d_edge_0: Hiển thị cho mỗi dải cạnh
-      option_hide_part_list_2d_good_0: Hiển thị cho mỗi tấm
-      option_hide_part_list_2d_veneer_0: ""
+      option_hide_part_list_2d_0: Hiển thị cho mỗi tấm
       option_hide_part_list_1: Ẩn
       option_hide_part_list_1d_help: Hiển thị hoặc ẩn danh sách các bộ phận cho mỗi bảng hoặc dải cạnh.
-      option_hide_part_list_2d_help: ""
+      option_hide_part_list_2d_help: Hiển thị hoặc ẩn danh sách các bộ phận cho mỗi tấm.
       option_use_names: Nhận dạng bộ phận
       option_use_names_0: Sử dụng số
       option_use_names_1: Sử dụng tên gọi
@@ -646,15 +620,20 @@ tab:
         Định dạng dự kiến: **L**x**Q**, trong đó **L** là *Chiều dài* của phần cắt và **Q** là số lượng.
         Số lượng là tùy chọn.
         *Kích thước không có đơn vị được coi là đơn vị của mô hình.*
-      option_std_sheet_good: Tấm tiêu chuẩn
-      option_std_sheet_veneer: ""
+      option_std_sheet: Tấm tiêu chuẩn
       option_std_sheet_help: |
+        Chọn tấm tiêu chuẩn sẽ được sao chép để tính toán vị trí tốt nhất có thể.
+        Danh sách này được xác định trong trường **$t(tab.materials.edit_material.std_sizes)** của vật liệu.
+        Chỉnh sửa tài liệu '{{ material_name }}' để hoàn thành danh sách này.
       option_std_sheet_add: Thêm kích thước tấm
       option_std_sheet_none: Không có
-      option_scrap_sheet_good_sizes: Cắt thừa
-      option_scrap_sheet_veneer_sizes: ""
+      option_scrap_sheet_sizes: Cắt thừa
       option_scrap_sheet_sizes_placeholder: dài x rộng x số lượng; ...
       option_scrap_sheet_sizes_help: |
+        Liệt kê tất cả các hàng dạng tấm mà bạn muốn được ưu tiên xem xét cho sơ đồ cắt.
+        Định dạng dự kiến: **L**x**W**x**Q**, trong đó **L** và **W** đại diện cho *Chiều dài* và *Chiều rộng* của tấm và **Q** là số lượng.
+        Số lượng là tùy chọn.
+        *Kích thước không có đơn vị được coi là đơn vị của mô hình.*
       tooltip:
         scroll_to_block_1d: Cuộn đến bảng đầu tiên hoặc dải cạnh
         scroll_to_block_2d: Cuộn đến tấm đầu tiên
@@ -688,10 +667,8 @@ tab:
         bar_dimensional_type_1: Bảng cắt thừa
         bar_edge_type_0: Dải cạnh tiêu chuẩn
         bar_edge_type_1: Dải cạnh cắt thừa
-        sheet_good_type_0: Tấm tiêu chuẩn
-        sheet_good_type_1: Cắt thừa
-        sheet_veneer_type_0: ""
-        sheet_veneer_type_1: ""
+        sheet_type_0: Tấm tiêu chuẩn
+        sheet_type_1: Cắt thừa
         unused: Chưa sử dụng
         parts: "{{ count }} bộ phận"
         parts_plural: "{{ count }} bộ phận"
@@ -764,7 +741,6 @@ tab:
         part_description: Mô tả
         part_entity_named_path: Đường dẫn đối tượng
         part_entity_name: Tên đối tượng
-        part_bin: ""
         part_cutting_size: Kích thước thô
         part_cutting_length: Chiều dài - thô
         part_cutting_width: Chiều rộng - thô
@@ -779,8 +755,6 @@ tab:
         part_edge_ymax: Chiều dài cạnh 2
         part_edge_xmin: Chiều rộng cạnh 1
         part_edge_xmax: Chiều rộng cạnh 2
-        part_veneer_zmin: ""
-        part_veneer_zmax: ""
         thumbnail_proportional: Hình thu nhỏ theo tỷ lệ
         thumbnail_square: Hình thu nhỏ theo hình vuông
         group_material: Vật liệu / Độ dày
@@ -795,7 +769,6 @@ tab:
         invalid_size: Các tham số cấu hình đã nhập không cho phép đặt kích thước nhãn hợp lệ.
       warning:
         is_part_selection: Các nhãn này được giới hạn ở **các bộ phận đã chọn**.
-        formula_not_available: ""
     error:
       no_model: Không có mô hình nào được mở. Bạn sẽ cần phải cung cấp cho tôi thêm thông tin;)
       no_entities: Mô hình của bạn rỗng. Bạn sẽ cần phải cung cấp cho tôi thêm thông tin ;)
@@ -829,7 +802,6 @@ tab:
     type_3: Kích thước
     type_4: Dải cạnh
     type_5: Phụ kiện
-    type_6: ""
     tooltip:
       type_0: Vật liệu loại '$t(tab.materials.type_0)'
       type_1: Vật liệu loại '$t(tab.materials.type_1)'
@@ -837,7 +809,6 @@ tab:
       type_3: Vật liệu loại '$t(tab.materials.type_3)'
       type_4: Vật liệu loại '$t(tab.materials.type_4)'
       type_5: Vật liệu loại '$t(tab.materials.type_5)'
-      type_6: ""
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Hướng thớ gỗ
@@ -939,8 +910,6 @@ tab:
       message: |
         Bạn sắp xóa vật liệu **{{ material_name }}** khỏi mô hình.
         Xác nhận để tiếp tục.
-    duplicate:
-      message: |
     error:
       no_model: Không có mô hình nào được mở. Bạn sẽ cần phải cung cấp cho tôi thêm thông tin;)
       no_materials: Mô hình của bạn không chứa bất kỳ vật liệu nào.
@@ -948,7 +917,6 @@ tab:
       failed_import_skm_file: "Đã xảy ra lỗi khi nhập từ tệp .skm. **{{ error }}**"
       failed_export_skm_file: "Đã xảy ra lỗi khi xuất tệp .skm.**{{ error }}**"
       failed_removing_material: "Đã xảy ra lỗi khi chặn vật liệu này. **{{ error }}**"
-      failed_duplicating_material: ""
       invalid_image_file: Hình ảnh không hợp lệ
     success:
       exported_to: "Xuất thành công sang {{ export_path }}."
@@ -1085,6 +1053,7 @@ tab:
       cuttingdiagram_export: Kinh phí của sơ đồ cắt được xuất
     objective_details:
       default: |
+        Sự cải tiến liên tục của *OpenCutList* rất quan trọng đối với chúng tôi và dự án tiếp tục cần sự trợ giúp của bạn cho bản cập nhật tiếp theo **4.0**!
       cuttingdiagram_export: |
         Điều quan trọng đối với chúng tôi là *OpenCutList* có thể được điều chỉnh cho phù hợp với những kỳ vọng rất khác nhau của người dùng đối với chức năng *Sơ đồ cắt*.
         Để tiếp tục mở rộng các khả năng, chúng tôi muốn cho phép xuất sơ đồ bố trí ở định dạng **SVG**.
@@ -1147,6 +1116,17 @@ tab:
       *OpenCutList* được phát triển bởi [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) và [Martin Müller](https://www.lairdubois.fr/@mobilarte). Liệt kê tất cả [người đóng góp](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: Bản dịch
     credits_translators: |
+      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*Tiếng Anh*, *Tiếng Đức*)
+      - Vladimir Badulya (*Tiếng Nga*)
+      - Pierluigi Colombo (*Tiếng Ý*)
+      - Nayton Sanches Barbosa, được hiệu chỉnh và sửa đổi bởi [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*Tiếng Bồ Đào Nha*)
+      - [Leonardo Romero Giménez](https://latablamarilla.com/) (*Tiếng Tây Ban Nha*)
+      - [Radek Rýznar](https://onlinesketchup.cz) (*Tiếng Séc*)
+      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*Tiếng Ba Lan*)
+      - Sergey Isupov (*Tiếng Do Thái*), Giao diện RTL chưa được hỗ trợ
+      - Soul Issam (*Tiếng Ả Rập*), Giao diện RTL chưa được hỗ trợ
+      - Dany Dhondt, Eric Lugtigheid (*Tiếng Hà Lan*)
+      - Nguyễn Ngọc Tân (*Tiếng Việt*)
     credits_description: |
       Việc phát triển phần mở rộng này được liên kết với dự án chia sẻ [L'Air du Bois](https://www.lairdubois.fr).
       Tiện ích mở rộng này cũng là *Nguồn mở* và có sẵn theo giấy phép [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) giấy phép trên [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
@@ -1180,7 +1160,6 @@ tool:
     filter_3: $t(tab.materials.type_3)
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
-    filter_6: ""
     action: Hành động
     action_0: Tô bề mặt
     action_1: Tô bộ phận

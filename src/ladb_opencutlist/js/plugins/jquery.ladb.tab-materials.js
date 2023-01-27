@@ -258,7 +258,6 @@
             var $inputTextureHeight = $('#ladb_materials_input_texture_height', $modal);
             var $btnTextureSizeLock = $('#ladb_material_btn_texture_size_lock', $modal);
             var $btnRemove = $('#ladb_materials_remove', $modal);
-            var $btnDuplicate = $('#ladb_materials_duplicate', $modal);
             var $btnExportToSkm = $('#ladb_materials_export_to_skm', $modal);
             var $btnUpdate = $('#ladb_materials_update', $modal);
 
@@ -417,11 +416,6 @@
                 that.removeMaterial(that.editedMaterial);
                 this.blur();
             });
-            $btnDuplicate.on('click', function () {
-                $modal.modal('hide');   // Hide modal
-                that.duplicateMaterial(that.editedMaterial);
-                this.blur();
-            });
             $btnExportToSkm.on('click', function () {
                 that.exportToSkm(that.editedMaterial, true);
                 this.blur();
@@ -500,42 +494,6 @@
         }
     };
 
-    LadbTabMaterials.prototype.duplicateMaterial = function (material) {
-        var that = this;
-
-        this.dialog.prompt(i18next.t('default.duplicate'), i18next.t('tab.materials.duplicate.message', { material_name: material.display_name }), material.display_name, function (value) {
-
-            // Flag to ignore next material change event
-            that.ignoreNextMaterialEvents = true;
-
-            rubyCallCommand('materials_duplicate', {
-                name: material.name,
-                new_name: value
-            }, function (response) {
-
-                // Flag to stop ignoring next material change event
-                that.ignoreNextMaterialEvents = false;
-
-                if (response.errors && response.errors.length > 0) {
-                    that.dialog.notifyErrors(response.errors);
-                } else {
-
-                    // Reload the list
-                    var materialId = response.id;
-                    that.loadList(function() {
-                        that.scrollSlideToTarget(null, $('#ladb_material_' + materialId, that.$page), false, true);
-                    });
-
-                }
-
-            });
-
-        }, {
-            validateBtnLabel: i18next.t('default.duplicate')
-        });
-
-    };
-
     LadbTabMaterials.prototype.removeMaterial = function (material) {
         var that = this;
 
@@ -546,6 +504,7 @@
 
             rubyCallCommand('materials_remove', {
                 name: material.name,
+                display_name: material.display_name
             }, function (response) {
 
                 // Flag to stop ignoring next material change event
@@ -947,22 +906,6 @@
                     break;
                 case 5:   // TYPE_HARDWARE
                     $inputThickness.closest('section').hide();
-                    break;
-                case 6:   // TYPE_VENEER
-                    $inputThickness.closest('section').show();
-                    $inputThickness.closest('.form-group').show();
-                    $inputLengthIncrease.closest('.form-group').show();
-                    $inputWidthIncrease.closest('.form-group').show();
-                    $inputThicknessIncrease.closest('.form-group').hide();
-                    $inputStdLengths.closest('.form-group').hide();
-                    $inputStdWidths.closest('.form-group').hide();
-                    $inputStdThicknesses.closest('.form-group').hide();
-                    $inputStdSections.closest('.form-group').hide();
-                    $inputStdSizes.closest('.form-group').show();
-                    $selectGrained.closest('.form-group').show();
-                    $selectEdgeDecremented.closest('.form-group').hide();
-                    $inputVolumicMass.closest('.form-group').show();
-                    $editorStdPrices.closest('.form-group').show();
                     break;
                 default:
                     $inputThickness.closest('section').hide();

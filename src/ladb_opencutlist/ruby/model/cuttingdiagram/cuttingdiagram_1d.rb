@@ -109,7 +109,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :type_id, :type, :count, :px_length, :px_width, :length, :width, :efficiency, :total_cut_length, :slices, :parts, :grouped_parts, :cuts, :leftover
+    attr_reader :type_id, :type, :count, :px_length, :px_width, :length, :width, :efficiency, :total_cut_length
 
     def initialize(_def)
       @_def = _def

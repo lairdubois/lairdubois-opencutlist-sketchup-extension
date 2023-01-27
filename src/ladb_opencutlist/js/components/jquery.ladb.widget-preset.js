@@ -137,7 +137,7 @@
 
             });
             $('.ladb-widget-preset-btn-new', that.$dropdown).on('click', function () {
-                that.dialog.prompt(i18next.t('core.preset.new'), i18next.t('core.preset.new_prompt'), '', function (name) {
+                that.dialog.prompt(i18next.t('core.preset.new'), i18next.t('core.preset.new_prompt'), function (name) {
                     that.saveToPreset(name, true);
                 });
             });

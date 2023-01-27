@@ -161,7 +161,7 @@ module Ladb::OpenCutList
       require_relative '../worker/cutlist/cutlist_highlight_parts_worker'
 
       # Setup worker
-      worker = CutlistHighlightPartsWorker.new(settings, @cutlist)
+      worker = CutlistHighlightPartsWorker.new(@cutlist, settings)
 
       # Run !
       worker.run

@@ -25,7 +25,6 @@ default:
   caution: Uwaga
   remove: Usuń
   create: Stwórz
-  duplicate: ""
   ignore: Ignoruj
   download: Pobierz
   upgrade: Aktualizuj
@@ -48,7 +47,6 @@ default:
   unit_5: Jard
   unit_mass_0: Kilogram
   unit_mass_1: Funt
-  unit_angle_0: ""
   instance_single: Pozycja
   instance_plural: Pozycje
   part_single: część
@@ -67,7 +65,6 @@ core:
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
-      edit_part_veneers_properties: ""
       smart_paint: $t(core.toolbar.command.smart_paint)
   toolbar:
     name: OpenCutList
@@ -173,7 +170,6 @@ tab:
     edit_part_axes_properties: Edytuj właściwości (osie) części
     edit_part_size_increase_properties: Edytuj właściwości (nadwymiary) części
     edit_part_edges_properties: Edytuj właściwości (obrzeża) części
-    edit_part_veneers_properties: ""
     tooltip:
       show_hide_block: Pokaż / ukryj grupę
       scroll_to_block: Przewiń do grupy
@@ -227,8 +223,6 @@ tab:
       remove_label_filter: "Usuń filtrowanie '{{ label }}'"
       add_edge_material_name_filter: "Filtruj według '{{ material_name }}'"
       remove_edge_material_name_filter: "Nie filtruj według '{{ material_name }}'"
-      add_veneer_material_name_filter: "Filtruj według '{{ material_name }}'"
-      remove_veneer_material_name_filter: "Nie filtruj według '{{ material_name }}'"
       not_aligned_on_axes: "Uwaga, ta część może nie być prawidłowo zorientowana względem swoich osi"
       instance_count_by_part: "W pakietach znajduje się **{{ count }}** pozycji tej części."
       unused_instance_count: "Uwaga, **{{ count }}** pozycja z ostatniego pakietu nie będzie użyta."
@@ -249,17 +243,12 @@ tab:
       size_increased: "Wymiar zwiększony o {{ value }}"
       has_edges: "Ten kawałek zawiera {{ count }} fornirowaną krawędź"
       has_edges_plural: "Ten kawałek zawiera {{ count }} formirowane krawędzie"
-      has_veneers: ""
-      has_veneers_plural: ""
       edge_decremented: "Zmniejszona o grubość obrzeża ({{ decrement }})"
       edge_ymin: Długość krawędzi 1
       edge_ymax: Długość krawędzi 2
       edge_xmin: Szerokość krawędzi 1
       edge_xmax: Szerokość krawędzi 2
-      veneer_zmin: ""
-      veneer_zmax: ""
       dblclick_to_copy_all_edges: "Kliknij tutaj dwukrotnie, aby powielić tę wartość na innych krawędziach"
-      dblclick_to_copy_all_veneers: ""
       dblclick_to_sort_axes: "Kliknij dwukrotnie tutaj, aby automatycznie zmienić kolejność osi zgodnie z wymiarami części"
       part_axes: Osie wewnętrzne części
       select_unselect_all_parts: Zaznacz / odznacz wszystkie części w grupie
@@ -290,7 +279,6 @@ tab:
       general: Główne
       extra_help: "Lista właściwości charakterystycznych dla danego typu materiału \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Obrzeża
-      veneers: ""
       name: Opis
       material: Materiał
       cumulable: Podsumowanie
@@ -366,7 +354,6 @@ tab:
       over_length: Na całej długości
       over_width: Na całej szerokości
       edge_disabled_help: "To obrzeże krawędzi nie jest konfigurowalne, ponieważ na tej krawędzi części w modelu nie wykryto powierzchni nośnej materiału."
-      veneer_disabled_help: ""
       multiple_values: Wiele wartości
       export_to_skp: Eksportuj (.skp)
     export_to_skp:
@@ -413,8 +400,6 @@ tab:
       hide_final_areas_help: "Jeśli ta opcja jest zaznaczona, **rzeczywiste obszary** części typu *Płyty* zostaną ukryte."
       hide_edges: Ukryj kolumny obrzeży
       hide_edges_help: "Jeśli ta opcja jest zaznaczona, **kolumny obrzeża** części typu *Płyty* będą ukryte."
-      hide_veneers: ""
-      hide_veneers_help: ""
       minimize_on_highlight: Minimalizuj po *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Jeśli ta opcja jest zaznaczona, okno OpenCutList zostanie zminimalizowane, gdy zostanie użyta funkcja *'$t(tab.cutlist.highlight_part)'*."
       general: Główne
@@ -442,7 +427,6 @@ tab:
       filters_warning: "Ten filtr pokazuje tylko **{{ count }}** części z łącznej liczby {{ total }}."
       filters_warning_plural: "Ten filtr wyświetla tylko **{{ count }}** części z łącznej liczby {{ total }}."
       edge_material_names_filter: Filtruj według materiału do oklejania krawędzi
-      veneer_material_names_filter: ""
       tags_filter: Filtruj według oznakowań
       dimensions_help: Zrozumienie wymiarów
       summary: Podsumowanie
@@ -467,7 +451,6 @@ tab:
       thickness: Grubość
       thickness_short: gr.
       edges: Obrzeża
-      veneers: ""
     export:
       title: Eksport
       info_0: |
@@ -525,8 +508,6 @@ tab:
       edge_ymax: Długość krawędzi 2
       edge_xmin: Szerokość krawędzi 1
       edge_xmax: Szerokość krawędzi 2
-      veneer_zmin: ""
-      veneer_zmax: ""
       placeholder:
         no_column_title: Wprowadź tytuł
         no_column_formula_native: "Wartość natywna kolumny '{{ col_name }}'"
@@ -546,23 +527,18 @@ tab:
       raw_materials: Surowce
       coefficient: Współczynnik
       total: Suma
-      total_used: ""
-      total_unused: Nieużywane
       total_mass: Σ Wagi
       total_cost: Σ Kosztów
       total_count: Szt.
-      total_instance_count: ""
       total_volume: Σ Objętości
       total_area: Σ Powierzchni
       total_length: Σ Długości
       error:
-        no_typed_material_parts: ""
+        no_typed_material_parts: "Żadna część ze zdefiniowanym typem materiału (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)** lub **$t(tab.materials.type_5)**) nie została dostarczona do wygenerowania raportu."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} błąd**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} błędy**."
       warning:
         is_group_selection: Części w **ukrytych grupach** twojej listy części nie będą uwzględniane.
-      tip:
-        not_enough_data: |
     cuttingdiagram:
       title: Schemat cięcia
       start_msg: Optymalizacja w toku
@@ -575,19 +551,17 @@ tab:
       option_bar_folding_0: Nie
       option_bar_folding_1: Tak
       option_bar_folding_help: Grupuj płyty lub obrzeża zawierające takie same części i cięcia.
-      option_sheet_folding_good: Grupuj podobne arkusze
-      option_sheet_folding_veneer: ""
+      option_sheet_folding: Grupuj podobne arkusze
       option_sheet_folding_0: Nie
       option_sheet_folding_1: Tak
-      option_sheet_folding_help: ""
+      option_sheet_folding_help: Grupuj arkusze zawierające te same części i cięcia.
       option_hide_part_list: Lista części
       option_hide_part_list_1d_dimensional_0: Wyświetlana dla każdej płyty
       option_hide_part_list_1d_edge_0: Wyświetlane dla każdego obrzeża
-      option_hide_part_list_2d_good_0: Wyświetlane dla każdego arkusza
-      option_hide_part_list_2d_veneer_0: ""
+      option_hide_part_list_2d_0: Wyświetlane dla każdego arkusza
       option_hide_part_list_1: Zamaskowana
       option_hide_part_list_1d_help: Wyświetl lub maskuj listę części dla każdej płyty lub obrzeża.
-      option_hide_part_list_2d_help: ""
+      option_hide_part_list_2d_help: Wyświetl lub zamaskuj listę części dla każdego arkusza.
       option_use_names: Identyfikacja części
       option_use_names_0: Użyj numeru
       option_use_names_1: Stosować oznaczenie
@@ -646,15 +620,20 @@ tab:
         Oczekiwany format: **długość**x**ilość**, gdzie **długość** reprezentuje *długość* odpadu, a **ilość** ilość.
         Ilość jest opcjonalna.
         *Wielkości bez jednostek są traktowane jak w jednostkach modelu.*
-      option_std_sheet_good: Arkusz o standardowych wymiarach
-      option_std_sheet_veneer: ""
+      option_std_sheet: Arkusz standardowy
       option_std_sheet_help: |
+        Wybierz arkusz standardowy, który zostanie powielony w celu obliczenia najlepszego rozłożenia części.
+        Jest to zdefiniowane w polu materiału **$t(tab.materials.edit_material.std_sizes)**.
+        Edytuj materiał '{{ material_name }}' aby uzupełnić tę listę.
       option_std_sheet_add: Dodaj rozmiar arkusza
       option_std_sheet_none: Żaden
-      option_scrap_sheet_good_sizes: Arkusze odpadu
-      option_scrap_sheet_veneer_sizes: ""
+      option_scrap_sheet_sizes: Arkusze odpadu
       option_scrap_sheet_sizes_placeholder: długość x szerokość x ilość ; ...
       option_scrap_sheet_sizes_help: |
+        Pokaż wszystkie arkusze odpadu które chcesz uwzględnić w rozkroju.
+        Oczekiwany format: **długość x szerokość x ilość**, gdzie **długość** i **szerokość** reprezentują *długość* i *szerokość* arkusza, a **ilość** ilość.
+        Ilość jest opcjonalna
+        *Wielkości bez jednostek są traktowane jak w jednostkach modelu.*
       tooltip:
         scroll_to_block_1d: Przewiń do pierwszej deski lub obrzeża
         scroll_to_block_2d: Przewiń do pierwszego arkusza
@@ -688,10 +667,8 @@ tab:
         bar_dimensional_type_1: Odpad
         bar_edge_type_0: Standardowy rozmiar obrzeża
         bar_edge_type_1: Odpady obrzeży
-        sheet_good_type_0: Arkusz o standardowych wymiarach
-        sheet_good_type_1: Odpad
-        sheet_veneer_type_0: ""
-        sheet_veneer_type_1: ""
+        sheet_type_0: Arkusz o standardowych wymiarach
+        sheet_type_1: Odpad
         unused: Nieużywane
         parts: "{{ count }} część"
         parts_plural: "{{ count }} części"
@@ -764,7 +741,6 @@ tab:
         part_description: Opis
         part_entity_named_path: Scieżka instancji
         part_entity_name: Nazwa instancji
-        part_bin: ""
         part_cutting_size: Wymiary wstępne
         part_cutting_length: Długość - wstępna
         part_cutting_width: Szerokość - wstępna
@@ -779,8 +755,6 @@ tab:
         part_edge_ymax: Długość krawędzi 2
         part_edge_xmin: Szerokość krawędzi 1
         part_edge_xmax: Szerokość krawędzi 2
-        part_veneer_zmin: ""
-        part_veneer_zmax: ""
         thumbnail_proportional: Miniaturka prostokątna
         thumbnail_square: Miniaturka kwadratowa
         group_material: Materiał / Grubość
@@ -795,7 +769,6 @@ tab:
         invalid_size: Wprowadzone parametry konfiguracji nie pozwalają na ustawienie prawidłowego rozmiaru etykiety.
       warning:
         is_part_selection: Te etykiety są ograniczone tylko do **wybranych części**.
-        formula_not_available: ""
     error:
       no_model: Żaden model nie jest otwarty. Będziesz musiał podać mi więcej informacji;)
       no_entities: Twój model jest pusty. Będziesz musiał podać mi więcej informacji;)
@@ -829,7 +802,6 @@ tab:
     type_3: Wymiarowy
     type_4: Oklejanie krawędzi
     type_5: Dopasowywanie
-    type_6: ""
     tooltip:
       type_0: Typ materiału '$t(tab.materials.type_0)'
       type_1: Typ materiału '$t(tab.materials.type_1)'
@@ -837,7 +809,6 @@ tab:
       type_3: Typ materiału '$t(tab.materials.type_3)'
       type_4: Typ materiału '$t(tab.materials.type_4)'
       type_5: Typ materiału '$t(tab.materials.type_5)'
-      type_6: ""
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Kierunek wzoru
@@ -939,8 +910,6 @@ tab:
       message: |
         Czy usunąć materiał **{{ material_name }}** z modelu?
         Potwierdź aby kontynuować.
-    duplicate:
-      message: |
     error:
       no_model: Żaden model nie jest otwarty. Będziesz musiał podać mi więcej informacji;)
       no_materials: Twój model nie zawiera żadnych materiałów.
@@ -948,7 +917,6 @@ tab:
       failed_import_skm_file: "Błąd podczas importu z pliku skm **{{ error }}**"
       failed_export_skm_file: "Błąd podczas eksportu do pliku skm **{{ error }}**"
       failed_removing_material: "Błąd podczas usuwania materiału **{{ error }}**"
-      failed_duplicating_material: ""
       invalid_image_file: Nieprawidłowy obraz
     success:
       exported_to: "Pomyślny eksport do {{ export_path }}."
@@ -1085,6 +1053,7 @@ tab:
       cuttingdiagram_export: Finansowanie wywozu schematów cięcia
     objective_details:
       default: |
+        Ciągłe ulepszanie *OpenCutList* jest dla nas ważne, a projekt nadal potrzebuje Twojej pomocy przy następnej aktualizacji **4.0**!
       cuttingdiagram_export: |
         Ważne jest dla nas, aby *OpenCutList* mógł być dostosowany do bardzo różnych oczekiwań użytkowników w stosunku do funkcji *schematu cięcia*.
         Aby jeszcze bardziej rozszerzyć możliwości, chcielibyśmy umożliwić eksport diagramów układu w formacie **SVG**.
@@ -1147,6 +1116,17 @@ tab:
       *OpenCutList* jest rozwijany przez [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) and [Martin Müller](https://www.lairdubois.fr/@mobilarte). *[Wszyscy współautorzy](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: Tłumaczenia
     credits_translators: |
+      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*Angielski*, *Niemiecki*)
+      - Vladimir Badulya (*Rosyjski*)
+      - Pierluigi Colombo (*Włoski*)
+      - Nayton Sanches Barbosa, poprawione i sprawdzone przez [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*Portugalski*)
+      - [Leonardo Romero Giménez](https://latablamarilla.com/) (*Hiszpański*)
+      - [Radek Rýznar](https://onlinesketchup.cz) (*Czeski*)
+      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*Polski*)
+      - Sergey Isupov (*Hebrajski*), interfejs RTL jeszcze nie obsługiwany
+      - Soul Issam (*Arabski*), interfejs RTL jeszcze nie obsługiwany
+      - Dany Dhondt, Eric Lugtigheid (*Holenderski*)
+      - Nguyen Ngoc Tan (*Wietnamski*)
     credits_description: |
       Rozwój tego rozszerzenia jest częścią projektu platformy udostępniania [L'Air du Bois](https://www.lairdubois.fr).
       To rozszerzenie jest *Open Source* i jest dostępne na licencji [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) w swoim repozytorium [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
@@ -1180,7 +1160,6 @@ tool:
     filter_3: $t(tab.materials.type_3)
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
-    filter_6: $t(tab.materials.type_6)
     action: Działanie
     action_0: Kolorowa twarz
     action_1: Kolorowanka

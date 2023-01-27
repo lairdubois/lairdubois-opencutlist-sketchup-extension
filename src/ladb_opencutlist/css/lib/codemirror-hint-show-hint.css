@@ -76,10 +76,6 @@
   content: "E";
   background: #668EEE;
 }
-.CodeMirror-hint-veneer:before {
-  content: "V";
-  background: #8338EC;
-}
 
 li.CodeMirror-hint-active {
   background: #eee;

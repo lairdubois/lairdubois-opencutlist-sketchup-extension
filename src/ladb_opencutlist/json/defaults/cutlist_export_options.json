@@ -110,14 +110,6 @@
         {
           "name": "edge_xmax",
           "align": "center"
-        },
-        {
-          "name": "veneer_zmax",
-          "align": "center"
-        },
-        {
-          "name": "veneer_zmin",
-          "align": "center"
         }
       ],
       "2": [ /* EXPORT_OPTION_SOURCE_INSTANCES_LIST */
@@ -195,14 +187,6 @@
         },
         {
           "name": "edge_xmax",
-          "align": "center"
-        },
-        {
-          "name": "veneer_zmax",
-          "align": "center"
-        },
-        {
-          "name": "veneer_zmin",
           "align": "center"
         }
       ]

@@ -19,15 +19,12 @@ module Ladb::OpenCutList
     EXPORT_OPTION_ENCODING_UTF16BE = 2
 
     def initialize(settings, cutlist)
-
-      options = Plugin.instance.get_model_preset('cutlist_export_options')
-
-      @source = settings.fetch('source', options.fetch('source'))
-      @col_sep = settings.fetch('col_sep', options.fetch('col_sep'))
-      @encoding = settings.fetch('col_sep', options.fetch('encoding'))
-      @col_defs = settings.fetch('col_defs')
-      @target = settings.fetch('target')
-      @hidden_group_ids = settings.fetch('hidden_group_ids')
+      @source = settings['source']
+      @col_sep = settings['col_sep']
+      @encoding = settings['encoding']
+      @col_defs = settings['col_defs']
+      @target = settings['target']
+      @hidden_group_ids = settings['hidden_group_ids']
 
       @cutlist = cutlist
 
@@ -195,14 +192,6 @@ module Ladb::OpenCutList
                 part.edge_material_names[:xmax],
                 part.def.edge_group_defs[:xmax] ? part.def.edge_group_defs[:xmax].std_thickness : nil,
                 part.def.edge_group_defs[:xmax] ? part.def.edge_group_defs[:xmax].std_width : nil
-              ),
-              VeneerWrapper.new(
-                part.veneer_material_names[:zmin],
-                part.def.veneer_group_defs[:zmin] ? part.def.veneer_group_defs[:zmin].std_thickness : nil
-              ),
-              VeneerWrapper.new(
-                part.veneer_material_names[:zmax],
-                part.def.veneer_group_defs[:zmax] ? part.def.veneer_group_defs[:zmax].std_thickness : nil
               )
             )
 
@@ -218,8 +207,7 @@ module Ladb::OpenCutList
         # Content rows
         @cutlist.groups.each { |group|
           next if @hidden_group_ids.include? group.id
-          next if group.material_type == MaterialAttributes::TYPE_EDGE      # Edges don't have instances
-          next if group.material_type == MaterialAttributes::TYPE_VENEER    # Veneers don't have instances
+          next if group.material_type == MaterialAttributes::TYPE_EDGE    # Edges don't have instances
           group.parts.each { |part|
 
             no_cutting_dimensions = group.material_type == MaterialAttributes::TYPE_UNKNOWN
@@ -267,14 +255,6 @@ module Ladb::OpenCutList
                     part.edge_material_names[:xmax],
                     part.def.edge_group_defs[:xmax] ? part.def.edge_group_defs[:xmax].std_thickness : nil,
                     part.def.edge_group_defs[:xmax] ? part.def.edge_group_defs[:xmax].std_width : nil
-                  ),
-                  VeneerWrapper.new(
-                    part.veneer_material_names[:zmin],
-                    part.def.veneer_group_defs[:zmin] ? part.def.veneer_group_defs[:zmin].std_thickness : nil
-                  ),
-                  VeneerWrapper.new(
-                    part.veneer_material_names[:zmax],
-                    part.def.veneer_group_defs[:zmax] ? part.def.veneer_group_defs[:zmax].std_thickness : nil
                   )
                 )
 
@@ -381,9 +361,7 @@ module Ladb::OpenCutList
       edge_ymin,
       edge_ymax,
       edge_xmin,
-      edge_xmax,
-      veneer_zmin,
-      veneer_zmax
+      edge_xmax
     )
       @number = number
       @name = name
@@ -404,8 +382,6 @@ module Ladb::OpenCutList
       @edge_ymax = edge_ymax
       @edge_xmin = edge_xmin
       @edge_xmax = edge_xmax
-      @veneer_zmin = veneer_zmin
-      @veneer_zmax = veneer_zmax
     end
 
   end
@@ -432,9 +408,7 @@ module Ladb::OpenCutList
       edge_ymin,
       edge_ymax,
       edge_xmin,
-      edge_xmax,
-      veneer_zmin,
-      veneer_zmax
+      edge_xmax
     )
       @number = number
       @path = path
@@ -456,8 +430,6 @@ module Ladb::OpenCutList
       @edge_ymax = edge_ymax
       @edge_xmin = edge_xmin
       @edge_xmax = edge_xmax
-      @veneer_zmin = veneer_zmin
-      @veneer_zmax = veneer_zmax
     end
 
   end

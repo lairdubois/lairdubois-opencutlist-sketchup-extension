@@ -3,25 +3,23 @@ module Ladb::OpenCutList
   class MaterialsCreateWorker
 
     def initialize(material_data)
-
-      @name = material_data.fetch('name')
-      @color = Sketchup::Color.new(material_data.fetch('color'))
-      attributes = material_data.fetch('attributes')
-      @type = MaterialAttributes.valid_type(attributes.fetch('type'))
-      @thickness = attributes.fetch('thickness')
-      @length_increase = attributes.fetch('length_increase')
-      @width_increase = attributes.fetch('width_increase')
-      @thickness_increase = attributes.fetch('thickness_increase')
-      @std_lengths = attributes.fetch('std_lengths')
-      @std_widths = attributes.fetch('std_widths')
-      @std_thicknesses = attributes.fetch('std_thicknesses')
-      @std_sections = attributes.fetch('std_sections')
-      @std_sizes = attributes.fetch('std_sizes')
-      @grained = attributes.fetch('grained')
-      @edge_decremented = attributes.fetch('edge_decremented')
-      @volumic_mass = attributes.fetch('volumic_mass')
-      @std_prices = attributes.fetch('std_prices')
-
+      @name = material_data['name']
+      @color = Sketchup::Color.new(material_data['color'])
+      attributes = material_data['attributes']
+      @type = MaterialAttributes.valid_type(attributes['type'])
+      @thickness = attributes['thickness']
+      @length_increase = attributes['length_increase']
+      @width_increase = attributes['width_increase']
+      @thickness_increase = attributes['thickness_increase']
+      @std_lengths = attributes['std_lengths']
+      @std_widths = attributes['std_widths']
+      @std_thicknesses = attributes['std_thicknesses']
+      @std_sections = attributes['std_sections']
+      @std_sizes = attributes['std_sizes']
+      @grained = attributes['grained']
+      @edge_decremented = attributes['edge_decremented']
+      @volumic_mass = attributes['volumic_mass']
+      @std_prices = attributes['std_prices']
     end
 
     # -----

@@ -25,7 +25,6 @@ default:
   caution: Cuidado
   remove: Remover
   create: Criar
-  duplicate: ""
   ignore: Ignorar
   download: Baixar
   upgrade: Atualizar
@@ -48,7 +47,6 @@ default:
   unit_5: Jarda
   unit_mass_0: Quilograma
   unit_mass_1: Libra
-  unit_angle_0: ""
   instance_single: unidade
   instance_plural: unidades
   part_single: peça
@@ -67,7 +65,6 @@ core:
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
-      edit_part_veneers_properties: ""
       smart_paint: $t(core.toolbar.command.smart_paint)
   toolbar:
     name: OpenCutList
@@ -131,7 +128,7 @@ core:
     user_defaults: Minhas definições padrão
     new: Novas definições
     new_prompt: |
-      *A criação de uma predefinição personalizada permite que você mantenha as configurações atuais do formulário de modo global para que você possa reutilizá-las em todos os seus modelos posteriormente.*
+      A criação de uma predefinição personalizada permite que você mantenha as configurações atuais do formulário de modo global para que você possa reutilizá-las em todos os seus modelos posteriormente.
 
       Digite o nome da predefinição
     delete_confirm_title: Remoção
@@ -173,13 +170,12 @@ tab:
     edit_part_axes_properties: Editar as propriedades (eixos) da peça
     edit_part_size_increase_properties: Editar as propriedades (tamanho grande) da peça
     edit_part_edges_properties: Editar as propriedades (bandagens de borda) da peça
-    edit_part_veneers_properties: ""
     tooltip:
       show_hide_block: Mostrar / ocultar este grupo
       scroll_to_block: Role para o grupo
-      not_available_std_width: "A largura *{{ std_dimension_real }}* não foi definida no material '{{ material_name }}'"
-      not_available_std_thickness: "A espessura *{{ std_dimension_real }}* não foi definida no material '{{ material_name }}'"
-      not_available_std_section: "A seção cruzada *{{ std_dimension_real }}* não foi definida no material '{{ material_name }}'"
+      not_available_std_width: "A largura *{{ std_dimension }}* não foi definida no material '{{ material_name }}'"
+      not_available_std_thickness: "A espessura *{{ std_dimension }}* não foi definida no material '{{ material_name }}'"
+      not_available_std_section: "A seção cruzada *{{ std_dimension }}* não foi definida no material '{{ material_name }}'"
       add_std_width_to_material: |
         Acrescentar largura *{{ std_dimension }}*
         ao material '{{ material_name }}'
@@ -227,10 +223,8 @@ tab:
       remove_label_filter: "Remova a filtragem em '{{ label }}'"
       add_edge_material_name_filter: "Filtrar em '{{ material_name }}'"
       remove_edge_material_name_filter: "Não filtre em '{{ material_name }}'"
-      add_veneer_material_name_filter: "Filtrar em '{{ material_name }}'"
-      remove_veneer_material_name_filter: "Não filtre em '{{ material_name }}'"
       not_aligned_on_axes: "Cuidado, esta peça pode não estar orientada corretamente em relação aos seus eixos"
-      instance_count_by_part: "Esta parte é contada em conjuntos de **{{ count }}** unidades."
+      instance_count_by_part: "Esta parte é contada em conjuntos de **{{contagem }}** unidades."
       unused_instance_count: "Note-se que **{{ count }}** unidade do último conjunto não será utilizada."
       unused_instance_count_plural: "Note-se que **{{ count }}** unidades do último conjunto não serão utilizadas."
       used_instance_count: "**{{ count }}** / {{ total }} unidade utilizada"
@@ -239,27 +233,22 @@ tab:
       thickness_layered: "A quantidade aqui representa o número de peças a serem cortadas para obter todas as camadas."
       thickness_layered_equation: "**{{ count }}** *peça* x **{{ layerCount }}** *camada* = **{{ cuttingPartCount }}**"
       thickness_layered_equation_plural: "**{{ count }}** *peças* x **{{ layerCount }}** *camadas* = **{{ cuttingPartCount }}**"
-      multiple_layers: "Cuidado, esta peça é composta de subpeças presentes em {{ count }} camadas diferentes:<br>{{ layers }}"
-      children_warnings: "Atenção, há {{ count }} alerta em partes agrupadas"
+      multiple_layers: "Cuidado, esta peça é composta de subpeças presentes em {{ contagem }} camadas diferentes:<br>{{ camadas }}"
+      children_warnings: "Atenção, há {{ contagem }} alerta em partes agrupadas"
       children_warnings_plural: "Atenção, existem {{ count }} alertas em peças agrupadas"
-      children_size_increase: "Esta dimensão foi aumentada por um superdimensionamento para {{ count }} peça agrupadas"
+      children_size_increase: "Esta dimensão foi aumentada por um superdimensionamento para {{ contagem }} peça agrupadas"
       invalid_final_area: "Cuidado, a somatória desta área não pôde ser calculada porque {{ count }} peça (de {{ total }}) tem uma área inválida"
       invalid_final_area_plural: "Cuidado, a somatória desta área não pôde ser calculada porque {{ count }} peças (de {{ total }}) têm uma área inválida"
       is_dynamic_attributes_name: Descrição extraída do atributo 'Name' do componente dinâmico
       size_increased: "A dimensão foi aumentada pelo superdimensionamento de {{ value }}"
       has_edges: "Esta peça contém {{ count }} fitas de borda"
       has_edges_plural: "Esta peça contém {{ count }} fitas de borda"
-      has_veneers: ""
-      has_veneers_plural: ""
-      edge_decremented: "Reduzido pela espessura das fitas da borda ({{ decrement }})"
+      edge_decremented: "Reduzido pela espessura das fitas da borda ({{ decremento }})"
       edge_ymin: Comprimento da borda 1
       edge_ymax: Comprimento da borda 2
       edge_xmin: Largura da borda 1
       edge_xmax: Largura da borda 2
-      veneer_zmin: ""
-      veneer_zmax: ""
       dblclick_to_copy_all_edges: Clique duas vezes aqui para duplicar este valor para todas as outras arestas
-      dblclick_to_copy_all_veneers: ""
       dblclick_to_sort_axes: Dê duplo clique aqui para reordenar automaticamente os eixos de acordo com as dimensões da peça
       part_axes: Eixos internos da peça
       select_unselect_all_parts: Selecione / desmarque todas as peças do grupo
@@ -290,7 +279,6 @@ tab:
       general: Geral
       extra_help: "Lista de propriedades específicas do tipo de material \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Fita de Borda
-      veneers: ""
       name: Descrição
       material: Material
       cumulable: Pode somar
@@ -366,7 +354,6 @@ tab:
       over_length: Em todo o comprimento
       over_width: Em toda a largura
       edge_disabled_help: Esta borda não é configurável porque não foi detectada nenhuma face com o mesmo material desta fita de borda no modelo.
-      veneer_disabled_help: ""
       multiple_values: Valores múltiplos
       export_to_skp: Exportar (.skp)
     export_to_skp:
@@ -413,8 +400,6 @@ tab:
       hide_final_areas_help: "Se esta opção for selecionada, as **áreas reais** das peças do tipo *Chapa* serão ocultadas."
       hide_edges: Esconda a coluna de Fitas de Borda
       hide_edges_help: "Se esta opção for selecionada, as **colunas de Fita de Borda** de peças do tipo *Chapa* serão ocultadas."
-      hide_veneers: ""
-      hide_veneers_help: ""
       minimize_on_highlight: Mimimize após *'$t(tab.cutlist.highlight_part) ...'*
       minimize_on_highlight_help: "Se esta opção for selecionada, a janela OpenCutList será minimizada quando a função *'$t(tab.cutlist.highlight_part)'* for aplicada."
       general: Geral
@@ -442,7 +427,6 @@ tab:
       filters_warning: "Este filtro exibe apenas **{{ count }}** peça de um total de {{ total }}."
       filters_warning_plural: "Este filtro exibe apenas **{{ count }}** peças de um total de {{ total }}."
       edge_material_names_filter: Filtrar material de Fita de Borda
-      veneer_material_names_filter: ""
       tags_filter: Tags para filtrar
       dimensions_help: Compreendendo as dimensões
       summary: Resumo
@@ -467,7 +451,6 @@ tab:
       thickness: Espessura
       thickness_short: E
       edges: Fita de Borda
-      veneers: ""
     export:
       title: Exportar
       info_0: |
@@ -525,8 +508,6 @@ tab:
       edge_ymax: Comprimento da borda 2
       edge_xmin: Largura da borda 1
       edge_xmax: Largura da borda 2
-      veneer_zmin: ""
-      veneer_zmax: ""
       placeholder:
         no_column_title: Introduza um título
         no_column_formula_native: "Valor nativo da coluna '{{ col_name }}'"
@@ -546,23 +527,18 @@ tab:
       raw_materials: Matéria prima
       coefficient: Fator
       total: Total
-      total_used: ""
-      total_unused: Não utilizado
       total_mass: Σ Massas
       total_cost: Σ Custos
       total_count: Qtd.
-      total_instance_count: ""
       total_volume: Σ Volumes
       total_area: Σ Áreas
       total_length: Σ Comprimentos
       error:
-        no_typed_material_parts: ""
+        no_typed_material_parts: "Sem peças com um tipo de material definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)** ou **$t(tab.materials.type_5)**) para gerar o relatório."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erro**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erros**."
       warning:
         is_group_selection: As partes contidas nos **grupos ocultos** do sua Planilha de Produção não serão contadas.
-      tip:
-        not_enough_data: |
     cuttingdiagram:
       title: Diagrama de Corte
       start_msg: Otimização em progresso
@@ -575,19 +551,17 @@ tab:
       option_bar_folding_0: Não
       option_bar_folding_1: Sim
       option_bar_folding_help: Permite agrupar pranchas ou fitas de borda contendo peças iguais ou os mesmos cortes.
-      option_sheet_folding_good: Painéis idênticos de grupo
-      option_sheet_folding_veneer: ""
+      option_sheet_folding: Painéis idênticos de grupo
       option_sheet_folding_0: Não
       option_sheet_folding_1: Sim
-      option_sheet_folding_help: ""
+      option_sheet_folding_help: Permite agrupar as chapas contendo as mesmas peças e as mesmas seções.
       option_hide_part_list: Lista de peças
       option_hide_part_list_1d_dimensional_0: Exibido para cada prancha
       option_hide_part_list_1d_edge_0: Exibido para cada fita de borda
-      option_hide_part_list_2d_good_0: Exibido para cada chapa
-      option_hide_part_list_2d_veneer_0: ""
+      option_hide_part_list_2d_0: Exibido para cada chapa
       option_hide_part_list_1: Mascarado
       option_hide_part_list_1d_help: Apresenta ou esconde a lista de peças para cada prancha ou fita de borda.
-      option_hide_part_list_2d_help: ""
+      option_hide_part_list_2d_help: Exiba ou oculte a lista de peças de cada chapa.
       option_use_names: Identificação das peças
       option_use_names_0: Use o número
       option_use_names_1: Use a designação
@@ -646,15 +620,20 @@ tab:
         Formato esperado : **L**x**Q**. Onde **L** é o *comprimento* da sobra e **Q** a quantidade.
         A quantidade é opcional.
         *Se não for especificada nenhuma unidade, será utilizada a unidade modelo.*
-      option_std_sheet_good: Chapa de tamanho padrão
-      option_std_sheet_veneer: ""
+      option_std_sheet: Chapa Padrão
       option_std_sheet_help: |
+        Selecione a chapa padrão que será duplicado para conter todas as partes.
+        Esta lista é definida no campo **$t(tab.materials.edit_material.std_sizes)** do material.
+        Edite o material '{{ material_name }}' para atualizar esta lista.
       option_std_sheet_add: Adicionar um tamanho de painel
       option_std_sheet_none: Nenhum
-      option_scrap_sheet_good_sizes: Restos de chapas
-      option_scrap_sheet_veneer_sizes: ""
+      option_scrap_sheet_sizes: Restos de chapas
       option_scrap_sheet_sizes_placeholder: comprimento x largura x quantidade ; ...
       option_scrap_sheet_sizes_help: |
+        Indique aqui a lista de sobras da sua chapa a ser considerada como prioridade para o diagrama de corte.
+        Formato esperado: **C**x**L**x**Q**, onde **L** e **W** representam o *comprimento* e a *largura* da chapa e **Q** a quantidade.
+        A quantidade é opcional.
+        *Se nenhuma unidade for especificada para cada dimensão, a unidade do modelo será levada em conta.*
       tooltip:
         scroll_to_block_1d: Ir até a primeira prancha ou fita de borda
         scroll_to_block_2d: Role para a primeira chapa
@@ -688,10 +667,8 @@ tab:
         bar_dimensional_type_1: Sobra de prancha
         bar_edge_type_0: Fita de borda padrão
         bar_edge_type_1: Sobra de fita de borda
-        sheet_good_type_0: Chapa de tamanho padrão
-        sheet_good_type_1: Sobra de chapa
-        sheet_veneer_type_0: ""
-        sheet_veneer_type_1: ""
+        sheet_type_0: Chapa de tamanho padrão
+        sheet_type_1: Sobra de chapa
         unused: Não utilizado
         parts: "{{ count }} peça"
         parts_plural: "{{ count }} peças"
@@ -764,7 +741,6 @@ tab:
         part_description: Descrição
         part_entity_named_path: Caminho da instância
         part_entity_name: Nome da instância
-        part_bin: ""
         part_cutting_size: Dimensões aproximadas
         part_cutting_length: Comprimento - aproximado
         part_cutting_width: Largura - aproximada
@@ -779,8 +755,6 @@ tab:
         part_edge_ymax: Comprimento da borda 2
         part_edge_xmin: Largura da borda 1
         part_edge_xmax: Largura da borda 2
-        part_veneer_zmin: ""
-        part_veneer_zmax: ""
         thumbnail_proportional: Miniatura proporcional
         thumbnail_square: Miniatura quadrada
         group_material: Espessura do material
@@ -795,7 +769,6 @@ tab:
         invalid_size: Os parâmetros de configuração inseridos não permitem que um tamanho de etiqueta válido seja definido.
       warning:
         is_part_selection: Estes etiquetas são limitados a **partes selecionadas** somente.
-        formula_not_available: ""
     error:
       no_model: Nenhum modelo está aberto. Você precisará me fornecer mais informações;)
       no_entities: Seu modelo está vazio. Você precisará me fornecer mais informações;)
@@ -829,7 +802,6 @@ tab:
     type_3: Dimensional MLC
     type_4: Fita de borda
     type_5: Acessório
-    type_6: ""
     tooltip:
       type_0: Tipo de material '$t(tab.materials.type_0)'
       type_1: Tipo de material '$t(tab.materials.type_1)'
@@ -837,7 +809,6 @@ tab:
       type_3: Tipo de material '$t(tab.materials.type_3)'
       type_4: Tipo de material '$t(tab.materials.type_4)'
       type_5: Tipo de material '$t(tab.materials.type_5)'
-      type_6: ""
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Direção dos veios
@@ -939,8 +910,6 @@ tab:
       message: |
         Você está prestes a suprimir o material **{{ material_name }}** de seu modelo.
         Confirme para continuar.
-    duplicate:
-      message: |
     error:
       no_model: Nenhum modelo está aberto. Você precisará me fornecer mais informações;)
       no_materials: O modelo não contém nenhum material.
@@ -948,7 +917,6 @@ tab:
       failed_import_skm_file: "Ocorreu um erro ao importar do arquivo .skm. **{{ error }}**"
       failed_export_skm_file: "Ocorreu um erro ao exportar para o arquivo .skm. **{{ error }}**"
       failed_removing_material: "Ocorreu um erro ao suprimir este material. **{{ error }}**"
-      failed_duplicating_material: ""
       invalid_image_file: Imagem inválida
     success:
       exported_to: "Exportação para {{ export_path }} com sucesso."
@@ -1085,6 +1053,7 @@ tab:
       cuttingdiagram_export: Financiamento das exportações de diagramas de corte
     objective_details:
       default: |
+        A melhoria contínua da *OpenCutList* é importante para nós e o projeto continua precisando de sua ajuda para sua próxima atualização **4.0**!
       cuttingdiagram_export: |
         É importante para nós que a *OpenCutList* possa ser adaptada às expectativas muito diferentes dos usuários para a função *diagrama de corte*.
         Para expandir ainda mais as possibilidades, gostaríamos de possibilitar a exportação de diagramas de layout no formato **SVG**.
@@ -1147,6 +1116,17 @@ tab:
       *OpenCutList* é desenvolvido por [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) o [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Listar [colaboradores](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: Traduções
     credits_translators: |
+      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*Inglês*, *Alemão*)
+      - Vladimir Badulya (*Russo*)
+      - Pierluigi Colombo (*Italiano*)
+      - Nayton Sanches Barbosa, revisado e ampliado por [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*Português*)
+      - [Leonardo Romero Giménez](https://latablamarilla.com/) (*Espanhol*)
+      - [Radek Rýznar](https://onlinesketchup.cz) (*Tcheco*)
+      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*Polonês*)
+      - Sergey Isupov (*Hebraico*), sem interface RTL
+      - Soul Issam (*Árabe*), sem interface RTL
+      - Dany Dhondt, Eric Lugtigheid (*Holandês*)
+      - Nguyen Ngoc Tan (*Vietnamês*)
     credits_description: |
       O desenvolvimento desta extensão faz parte do projeto da plataforma de compartilhamento [L'Air du Bois](https://www.lairdubois.fr).
       E como tal, é também *Open Source* e está disponível sob licença [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) em seu [repositório GitHub].(https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
@@ -1180,7 +1160,6 @@ tool:
     filter_3: $t(tab.materials.type_3)
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
-    filter_6: ""
     action: Ação
     action_0: Pintar a face
     action_1: Pintar peça

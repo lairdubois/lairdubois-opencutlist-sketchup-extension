@@ -9,8 +9,8 @@ module Ladb::OpenCutList
 
     def initialize(settings, cutlist)
 
-      @hidden_group_ids = settings.fetch('hidden_group_ids')
-      @solid_wood_coefficient = [ 1.0, "#{settings.fetch('solid_wood_coefficient')}".tr(',', '.').to_f ].max
+      @hidden_group_ids = settings['hidden_group_ids']
+      @solid_wood_coefficient = [ 1.0, "#{settings['solid_wood_coefficient']}".tr(',', '.').to_f ].max
 
       @cutlist = cutlist
 
@@ -32,8 +32,6 @@ module Ladb::OpenCutList
 
     def run
       return { :errors => [ 'default.error' ] } unless @cutlist
-      return { :errors => [ 'tab.cutlist.error.obsolete_cutlist' ] } if @cutlist.obsolete?
-      return { :errors => [ 'tab.cutlist.error.no_model' ] } unless Sketchup.active_model
 
       unless @starting || @cutlist_groups.count == 0
 
@@ -46,41 +44,27 @@ module Ladb::OpenCutList
         when MaterialAttributes::TYPE_SOLID_WOOD
 
           material_attributes = _get_material_attributes(cutlist_group.material_name)
-
           volumic_mass = material_attributes.h_volumic_mass
-          mass_per_inch3 = volumic_mass[:val] == 0 ? 0 : _uv_to_inch3(volumic_mass[:unit], volumic_mass[:val])
-
           std_price = _get_std_price([ cutlist_group.def.std_thickness ], material_attributes)
-          price_per_inch3 = std_price[:val] == 0 ? 0 : _uv_to_inch3(std_price[:unit], std_price[:val], cutlist_group.def.std_thickness)
 
           report_entry_def = SolidWoodReportEntryDef.new(cutlist_group)
           report_entry_def.volumic_mass = volumic_mass
           report_entry_def.std_price = std_price
           report_entry_def.total_volume = cutlist_group.def.total_cutting_volume * @solid_wood_coefficient
-          report_entry_def.total_mass = cutlist_group.def.total_cutting_volume * @solid_wood_coefficient * mass_per_inch3
-          report_entry_def.total_cost = cutlist_group.def.total_cutting_volume * @solid_wood_coefficient * price_per_inch3
-
-          # Compute parts mass and cost
-          cutlist_group.def.part_defs.each do |id, part_def|
-            report_entry_def.total_used_volume += part_def.size.volume * part_def.count
-            report_entry_def.total_used_mass += part_def.size.volume * part_def.count * mass_per_inch3
-            report_entry_def.total_used_cost += part_def.size.volume * part_def.count * price_per_inch3
-          end
+          report_entry_def.total_mass = cutlist_group.def.total_cutting_volume * @solid_wood_coefficient * _uv_to_inch3(volumic_mass[:unit], volumic_mass[:val]) unless volumic_mass[:val] == 0
+          report_entry_def.total_cost = cutlist_group.def.total_cutting_volume * @solid_wood_coefficient * _uv_to_inch3(std_price[:unit], std_price[:val], cutlist_group.def.std_thickness) unless std_price[:val] == 0
 
           report_group_def.entry_defs << report_entry_def
           report_group_def.total_volume += report_entry_def.total_volume
-          report_group_def.total_used_volume += report_entry_def.total_used_volume
 
         when MaterialAttributes::TYPE_SHEET_GOOD
 
           material_attributes = _get_material_attributes(cutlist_group.material_name)
-
           volumic_mass = material_attributes.h_volumic_mass
-          mass_per_inch3 = volumic_mass[:val] == 0 ? 0 : _uv_to_inch3(volumic_mass[:unit], volumic_mass[:val])
 
           settings = Plugin.instance.get_model_preset('cutlist_cuttingdiagram2d_options', cutlist_group.id)
           settings['group_id'] = cutlist_group.id
-          settings['sheet_folding'] = false   # Remove unneeded computations
+          settings['bar_folding'] = false     # Remove unneeded computations
           settings['hide_part_list'] = true   # Remove unneeded computations
 
           if settings['std_sheet'] == ''
@@ -97,65 +81,32 @@ module Ladb::OpenCutList
           report_entry_def.total_count = cuttingdiagram2d.summary.total_used_count
           report_entry_def.total_area = cuttingdiagram2d.summary.def.total_used_area
 
-          cuttingdiagram2d.sheets.each do |cuttingdiagram2d_sheet|
+          cuttingdiagram2d.summary.sheets.each do |cuttingdiagram2d_summary_sheet|
+
+            next unless cuttingdiagram2d_summary_sheet.is_used
 
             # Only standard sheet uses dim prices
-            std_price = _get_std_price(cuttingdiagram2d_sheet.type == BinPacking2D::BIN_TYPE_AUTO_GENERATED ? [ cutlist_group.def.std_thickness, Size2d.new(cuttingdiagram2d_sheet.def.length, cuttingdiagram2d_sheet.def.width) ] : nil, material_attributes)
-            price_per_inch3 = std_price[:val] == 0 ? 0 : _uv_to_inch3(std_price[:unit], std_price[:val], cutlist_group.def.std_thickness, cuttingdiagram2d_sheet.def.width, cuttingdiagram2d_sheet.def.length)
+            std_price = _get_std_price(cuttingdiagram2d_summary_sheet.type == BinPacking2D::BIN_TYPE_AUTO_GENERATED ? [ cutlist_group.def.std_thickness, Size2d.new(cuttingdiagram2d_summary_sheet.def.length, cuttingdiagram2d_summary_sheet.width) ] : nil, material_attributes)
 
-            report_entry_sheet_def = report_entry_def.sheet_defs[cuttingdiagram2d_sheet.type_id]
-            if report_entry_sheet_def.nil?
+            report_entry_sheet_def = SheetGoodReportEntrySheetDef.new(cuttingdiagram2d_summary_sheet)
+            report_entry_sheet_def.std_price = std_price
+            report_entry_sheet_def.total_mass = cuttingdiagram2d_summary_sheet.def.total_area * cutlist_group.def.std_thickness * _uv_to_inch3(volumic_mass[:unit], volumic_mass[:val]) unless volumic_mass[:val] == 0
+            report_entry_sheet_def.total_cost = cuttingdiagram2d_summary_sheet.def.total_area * cutlist_group.def.std_thickness * _uv_to_inch3(std_price[:unit], std_price[:val], cutlist_group.def.std_thickness, cuttingdiagram2d_summary_sheet.def.width, cuttingdiagram2d_summary_sheet.def.length) unless std_price[:val] == 0
+            report_entry_def.sheet_defs << report_entry_sheet_def
 
-              report_entry_sheet_def = SheetGoodReportEntrySheetDef.new(cuttingdiagram2d_sheet)
-              report_entry_sheet_def.std_price = std_price
-
-              report_entry_def.sheet_defs[cuttingdiagram2d_sheet.type_id] = report_entry_sheet_def
-
-            end
-
-            total_area = cuttingdiagram2d_sheet.def.length * cuttingdiagram2d_sheet.def.width * cuttingdiagram2d_sheet.def.count
-
-            report_entry_sheet_def.count += cuttingdiagram2d_sheet.def.count
-            report_entry_sheet_def.total_area += total_area
-
-            total_mass = total_area * cutlist_group.def.std_thickness * mass_per_inch3
-            total_cost = total_area * cutlist_group.def.std_thickness * price_per_inch3
-
-            total_used_area = 0
-            total_used_mass = 0
-            total_used_cost = 0
-            cuttingdiagram2d_sheet.parts.each do |cuttingdiagram2d_part|
-              part_def = cuttingdiagram2d_part.def.cutlist_part.def
-              total_used_area += part_def.size.area * cuttingdiagram2d_sheet.def.count
-              total_used_mass += part_def.size.volume * mass_per_inch3 * cuttingdiagram2d_sheet.def.count
-              total_used_cost += part_def.size.volume * price_per_inch3 * cuttingdiagram2d_sheet.def.count
-            end
-
-            report_entry_sheet_def.total_used_area += total_used_area
-            report_entry_sheet_def.total_mass += total_mass
-            report_entry_sheet_def.total_used_mass += total_used_mass
-            report_entry_sheet_def.total_cost += total_cost
-            report_entry_sheet_def.total_used_cost += total_used_cost
-
-            report_entry_def.total_used_area += total_used_area
-            report_entry_def.total_mass += total_mass
-            report_entry_def.total_used_mass += total_used_mass
-            report_entry_def.total_cost += total_cost
-            report_entry_def.total_used_cost += total_used_cost
+            report_entry_def.total_mass += report_entry_sheet_def.total_mass
+            report_entry_def.total_cost += report_entry_sheet_def.total_cost
 
           end
 
           report_group_def.entry_defs << report_entry_def
-          report_group_def.total_count += report_entry_def.total_count
+          report_group_def.total_count = report_group_def.total_count + report_entry_def.total_count
           report_group_def.total_area += report_entry_def.total_area
-          report_group_def.total_used_area += report_entry_def.total_used_area
 
         when MaterialAttributes::TYPE_DIMENSIONAL
 
           material_attributes = _get_material_attributes(cutlist_group.material_name)
-
           volumic_mass = material_attributes.h_volumic_mass
-          mass_per_inch3 = volumic_mass[:val] == 0 ? 0 : _uv_to_inch3(volumic_mass[:unit], volumic_mass[:val])
 
           settings = Plugin.instance.get_model_preset('cutlist_cuttingdiagram1d_options', cutlist_group.id)
           settings['group_id'] = cutlist_group.id
@@ -176,65 +127,32 @@ module Ladb::OpenCutList
           report_entry_def.total_count = cuttingdiagram1d.summary.total_used_count
           report_entry_def.total_length = cuttingdiagram1d.summary.def.total_used_length
 
-          cuttingdiagram1d.bars.each do |cuttingdiagram1d_bar|
+          cuttingdiagram1d.summary.bars.each do |cuttingdiagram1d_summary_bar|
+
+            next unless cuttingdiagram1d_summary_bar.is_used
 
             # Only standard bar uses dim prices
-            std_price = _get_std_price(cuttingdiagram1d_bar.type == BinPacking1D::BIN_TYPE_AUTO_GENERATED ? [ Size2d.new(cutlist_group.def.std_dimension), cuttingdiagram1d_bar.def.length ] : nil, material_attributes)
-            price_per_inch3 = std_price[:val] == 0 ? 0 : _uv_to_inch3(std_price[:unit], std_price[:val], cutlist_group.def.std_thickness, cutlist_group.def.std_width, cuttingdiagram1d_bar.def.length)
+            std_price = _get_std_price(cuttingdiagram1d_summary_bar.type == BinPacking1D::BIN_TYPE_AUTO_GENERATED ? [ Size2d.new(cutlist_group.def.std_dimension), cuttingdiagram1d_summary_bar.def.length ] : nil, material_attributes)
 
-            report_entry_bar_def = report_entry_def.bar_defs[cuttingdiagram1d_bar.type_id]
-            if report_entry_bar_def.nil?
+            report_entry_bar_def = DimensionalReportEntryBarDef.new(cuttingdiagram1d_summary_bar)
+            report_entry_bar_def.std_price = std_price
+            report_entry_bar_def.total_mass = cuttingdiagram1d_summary_bar.def.total_length * cutlist_group.def.std_width * cutlist_group.def.std_thickness * _uv_to_inch3(volumic_mass[:unit], volumic_mass[:val]) unless volumic_mass[:val] == 0
+            report_entry_bar_def.total_cost = cuttingdiagram1d_summary_bar.def.total_length * cutlist_group.def.std_width * cutlist_group.def.std_thickness * _uv_to_inch3(std_price[:unit], std_price[:val], cutlist_group.def.std_thickness, cutlist_group.def.std_width, cuttingdiagram1d_summary_bar.def.length) unless std_price[:val] == 0
+            report_entry_def.bar_defs << report_entry_bar_def
 
-              report_entry_bar_def = DimensionalReportEntryBarDef.new(cuttingdiagram1d_bar)
-              report_entry_bar_def.std_price = std_price
-
-              report_entry_def.bar_defs[cuttingdiagram1d_bar.type_id] = report_entry_bar_def
-
-            end
-
-            total_length = cuttingdiagram1d_bar.def.length * cuttingdiagram1d_bar.def.count
-
-            report_entry_bar_def.count += cuttingdiagram1d_bar.def.count
-            report_entry_bar_def.total_length += total_length
-
-            total_mass = total_length * cutlist_group.def.std_width * cutlist_group.def.std_thickness * mass_per_inch3
-            total_cost = total_length * cutlist_group.def.std_width * cutlist_group.def.std_thickness * price_per_inch3
-
-            total_used_length = 0
-            total_used_mass = 0
-            total_used_cost = 0
-            cuttingdiagram1d_bar.parts.each do |cuttingdiagram1d_part|
-              part_def = cuttingdiagram1d_part.def.cutlist_part.def
-              total_used_length += part_def.size.length * cuttingdiagram1d_bar.def.count
-              total_used_mass += part_def.size.volume * mass_per_inch3 * cuttingdiagram1d_bar.def.count
-              total_used_cost += part_def.size.volume * price_per_inch3 * cuttingdiagram1d_bar.def.count
-            end
-
-            report_entry_bar_def.total_used_length += total_used_length
-            report_entry_bar_def.total_mass += total_mass
-            report_entry_bar_def.total_used_mass += total_used_mass
-            report_entry_bar_def.total_cost += total_cost
-            report_entry_bar_def.total_used_cost += total_used_cost
-
-            report_entry_def.total_used_length += total_used_length
-            report_entry_def.total_mass += total_mass
-            report_entry_def.total_used_mass += total_used_mass
-            report_entry_def.total_cost += total_cost
-            report_entry_def.total_used_cost += total_used_cost
+            report_entry_def.total_mass += report_entry_bar_def.total_mass
+            report_entry_def.total_cost += report_entry_bar_def.total_cost
 
           end
 
           report_group_def.entry_defs << report_entry_def
           report_group_def.total_count += report_entry_def.total_count
           report_group_def.total_length += report_entry_def.total_length
-          report_group_def.total_used_length += report_entry_def.total_used_length
 
         when MaterialAttributes::TYPE_EDGE
 
           material_attributes = _get_material_attributes(cutlist_group.material_name)
-
           volumic_mass = material_attributes.h_volumic_mass
-          mass_per_inch3 = volumic_mass[:val] == 0 ? 0 : _uv_to_inch3(volumic_mass[:unit], volumic_mass[:val])
 
           settings = Plugin.instance.get_model_preset('cutlist_cuttingdiagram1d_options', cutlist_group.id)
           settings['group_id'] = cutlist_group.id
@@ -255,58 +173,26 @@ module Ladb::OpenCutList
           report_entry_def.total_count = cuttingdiagram1d.summary.total_used_count
           report_entry_def.total_length = cuttingdiagram1d.summary.def.total_used_length
 
-          cuttingdiagram1d.bars.each do |cuttingdiagram1d_bar|
+          cuttingdiagram1d.summary.bars.each do |cuttingdiagram1d_summary_bar|
 
-            # Only standard bar uses dim prices
-            std_price = _get_std_price([ cutlist_group.def.std_dimension.to_l, cuttingdiagram1d_bar.def.length ], material_attributes)
-            price_per_inch3 = std_price[:val] == 0 ? 0 : _uv_to_inch3(std_price[:unit], std_price[:val], cutlist_group.def.std_thickness, cutlist_group.def.std_width, cuttingdiagram1d_bar.def.length)
+            next unless cuttingdiagram1d_summary_bar.is_used
 
-            report_entry_bar_def = report_entry_def.bar_defs[cuttingdiagram1d_bar.type_id]
-            if report_entry_bar_def.nil?
+            std_price = _get_std_price([ cutlist_group.def.std_dimension.to_l, cuttingdiagram1d_summary_bar.def.length ], material_attributes)
 
-              report_entry_bar_def = EdgeReportEntryBarDef.new(cuttingdiagram1d_bar)
-              report_entry_bar_def.std_price = std_price
+            report_entry_bar_def = EdgeReportEntryBarDef.new(cuttingdiagram1d_summary_bar)
+            report_entry_bar_def.std_price = std_price
+            report_entry_bar_def.total_mass = cuttingdiagram1d_summary_bar.def.total_length * cutlist_group.def.std_width * cutlist_group.def.std_thickness * _uv_to_inch3(volumic_mass[:unit], volumic_mass[:val]) unless volumic_mass[:val] == 0
+            report_entry_bar_def.total_cost = cuttingdiagram1d_summary_bar.def.total_length * cutlist_group.def.std_width * cutlist_group.def.std_thickness * _uv_to_inch3(std_price[:unit], std_price[:val], cutlist_group.def.std_thickness, cutlist_group.def.std_width, cuttingdiagram1d_summary_bar.def.length) unless std_price[:val] == 0
+            report_entry_def.bar_defs << report_entry_bar_def
 
-              report_entry_def.bar_defs[cuttingdiagram1d_bar.type_id] = report_entry_bar_def
-
-            end
-
-            total_length = cuttingdiagram1d_bar.def.length * cuttingdiagram1d_bar.def.count
-
-            report_entry_bar_def.count += cuttingdiagram1d_bar.def.count
-            report_entry_bar_def.total_length += total_length
-
-            total_mass = total_length * cutlist_group.def.std_width * cutlist_group.def.std_thickness * mass_per_inch3
-            total_cost = total_length * cutlist_group.def.std_width * cutlist_group.def.std_thickness * price_per_inch3
-
-            total_used_length = 0
-            total_used_mass = 0
-            total_used_cost = 0
-            cuttingdiagram1d_bar.parts.each do |cuttingdiagram1d_part|
-              part_def = cuttingdiagram1d_part.def.cutlist_part.def
-              total_used_length += part_def.size.length * cuttingdiagram1d_bar.def.count
-              total_used_mass += part_def.size.volume * mass_per_inch3 * cuttingdiagram1d_bar.def.count
-              total_used_cost += part_def.size.volume * price_per_inch3 * cuttingdiagram1d_bar.def.count
-            end
-
-            report_entry_bar_def.total_used_length += total_used_length
-            report_entry_bar_def.total_mass += total_mass
-            report_entry_bar_def.total_used_mass += total_used_mass
-            report_entry_bar_def.total_cost += total_cost
-            report_entry_bar_def.total_used_cost += total_used_cost
-
-            report_entry_def.total_used_length += total_used_length
-            report_entry_def.total_mass += total_mass
-            report_entry_def.total_used_mass += total_used_mass
-            report_entry_def.total_cost += total_cost
-            report_entry_def.total_used_cost += total_used_cost
+            report_entry_def.total_mass += report_entry_bar_def.total_mass
+            report_entry_def.total_cost += report_entry_bar_def.total_cost
 
           end
 
           report_group_def.entry_defs << report_entry_def
           report_group_def.total_count += report_entry_def.total_count
           report_group_def.total_length += report_entry_def.total_length
-          report_group_def.total_used_length += report_entry_def.total_used_length
 
         when MaterialAttributes::TYPE_HARDWARE
 
@@ -327,87 +213,6 @@ module Ladb::OpenCutList
 
           report_group_def.entry_defs << report_entry_def
           report_group_def.total_count += report_entry_def.total_count
-          report_group_def.total_instance_count += report_entry_def.total_instance_count
-          report_group_def.total_used_instance_count += report_entry_def.total_used_instance_count
-
-        when MaterialAttributes::TYPE_VENEER
-
-          material_attributes = _get_material_attributes(cutlist_group.material_name)
-
-          volumic_mass = material_attributes.h_volumic_mass
-          mass_per_inch3 = volumic_mass[:val] == 0 ? 0 : _uv_to_inch3(volumic_mass[:unit], volumic_mass[:val])
-
-          settings = Plugin.instance.get_model_preset('cutlist_cuttingdiagram2d_options', cutlist_group.id)
-          settings['group_id'] = cutlist_group.id
-          settings['sheet_folding'] = false   # Remove unneeded computations
-          settings['hide_part_list'] = true   # Remove unneeded computations
-
-          if settings['std_sheet'] == ''
-            std_sizes = material_attributes.std_sizes.split(';')
-            settings['std_sheet'] = std_sizes[0] unless std_sizes.empty?
-          end
-
-          worker = CutlistCuttingdiagram2dWorker.new(settings, @cutlist)
-          cuttingdiagram2d = worker.run
-
-          report_entry_def = VeneerReportEntryDef.new(cutlist_group)
-          report_entry_def.errors += cuttingdiagram2d.errors
-          report_entry_def.volumic_mass = volumic_mass
-          report_entry_def.total_count = cuttingdiagram2d.summary.total_used_count
-          report_entry_def.total_area = cuttingdiagram2d.summary.def.total_used_area
-
-          cuttingdiagram2d.sheets.each do |cuttingdiagram2d_sheet|
-
-            # Only standard sheet uses dim prices
-            std_price = _get_std_price(cuttingdiagram2d_sheet.type == BinPacking2D::BIN_TYPE_AUTO_GENERATED ? [ cutlist_group.def.std_thickness, Size2d.new(cuttingdiagram2d_sheet.def.length, cuttingdiagram2d_sheet.def.width) ] : nil, material_attributes)
-            price_per_inch3 = std_price[:val] == 0 ? 0 : _uv_to_inch3(std_price[:unit], std_price[:val], cutlist_group.def.std_thickness, cuttingdiagram2d_sheet.def.width, cuttingdiagram2d_sheet.def.length)
-
-            report_entry_sheet_def = report_entry_def.sheet_defs[cuttingdiagram2d_sheet.type_id]
-            if report_entry_sheet_def.nil?
-
-              report_entry_sheet_def = VeneerReportEntrySheetDef.new(cuttingdiagram2d_sheet)
-              report_entry_sheet_def.std_price = std_price
-
-              report_entry_def.sheet_defs[cuttingdiagram2d_sheet.type_id] = report_entry_sheet_def
-
-            end
-
-            total_area = cuttingdiagram2d_sheet.def.length * cuttingdiagram2d_sheet.def.width * cuttingdiagram2d_sheet.def.count
-
-            report_entry_sheet_def.count += cuttingdiagram2d_sheet.def.count
-            report_entry_sheet_def.total_area += total_area
-
-            total_mass = total_area * cutlist_group.def.std_thickness * mass_per_inch3
-            total_cost = total_area * cutlist_group.def.std_thickness * price_per_inch3
-
-            total_used_area = 0
-            total_used_mass = 0
-            total_used_cost = 0
-            cuttingdiagram2d_sheet.parts.each do |cuttingdiagram2d_part|
-              part_def = cuttingdiagram2d_part.def.cutlist_part.def
-              total_used_area += part_def.size.area * cuttingdiagram2d_sheet.def.count
-              total_used_mass += part_def.size.volume * mass_per_inch3 * cuttingdiagram2d_sheet.def.count
-              total_used_cost += part_def.size.volume * price_per_inch3 * cuttingdiagram2d_sheet.def.count
-            end
-
-            report_entry_sheet_def.total_used_area += total_used_area
-            report_entry_sheet_def.total_mass += total_mass
-            report_entry_sheet_def.total_used_mass += total_used_mass
-            report_entry_sheet_def.total_cost += total_cost
-            report_entry_sheet_def.total_used_cost += total_used_cost
-
-            report_entry_def.total_used_area += total_used_area
-            report_entry_def.total_mass += total_mass
-            report_entry_def.total_used_mass += total_used_mass
-            report_entry_def.total_cost += total_cost
-            report_entry_def.total_used_cost += total_used_cost
-
-          end
-
-          report_group_def.entry_defs << report_entry_def
-          report_group_def.total_count += report_entry_def.total_count
-          report_group_def.total_area += report_entry_def.total_area
-          report_group_def.total_used_area += report_entry_def.total_used_area
 
         end
 
@@ -418,14 +223,10 @@ module Ladb::OpenCutList
           end
 
           report_group_def.total_mass += report_entry_def.total_mass
-          report_group_def.total_used_mass += report_entry_def.total_used_mass
           report_group_def.total_cost += report_entry_def.total_cost
-          report_group_def.total_used_cost += report_entry_def.total_used_cost
 
           @report_def.total_mass += report_entry_def.total_mass
-          @report_def.total_used_mass += report_entry_def.total_used_mass
           @report_def.total_cost += report_entry_def.total_cost
-          @report_def.total_used_cost += report_entry_def.total_used_cost
 
         end
 
@@ -445,13 +246,8 @@ module Ladb::OpenCutList
         end
 
         # Warnings
-        if @hidden_group_ids.length > 0 && @hidden_group_ids.find_index('summary').nil? || @hidden_group_ids.length > 1 && !@hidden_group_ids.find_index('summary').nil?
+        if @hidden_group_ids.length > 0 && @hidden_group_ids.find_index('summary').nil? || @hidden_group_ids.length > 1 && !@hidden_group_ids.find_index('summary').nil?;
           @report_def.warnings << 'tab.cutlist.report.warning.is_group_selection'
-        end
-
-        # Tips
-        if @report_def.total_mass == 0 && @report_def.total_cost == 0
-          @report_def.tips << 'tab.cutlist.report.tip.not_enough_data'
         end
 
         # Create the report
@@ -494,12 +290,35 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _get_std_price(dim, material_attributes)
+    def _compute_hardware_part(cutlist_part, report_entry_def)
+
+      report_entry_part_def = HardwareReportEntryPartDef.new(cutlist_part)
+      report_entry_def.part_defs << report_entry_part_def
+
+      definition_attributes = _get_definition_attributes(cutlist_part.def.definition_id)
+
+      h_mass = definition_attributes.h_mass
+      unless h_mass[:val] == 0
+        report_entry_part_def.mass = h_mass
+        report_entry_part_def.total_mass = _uv_mass_to_model_unit(UnitUtils.split_unit(h_mass[:unit]).first, h_mass[:val]) * cutlist_part.def.count
+        report_entry_def.total_mass = report_entry_def.total_mass + report_entry_part_def.total_mass
+      end
+
+      h_price = definition_attributes.h_price
+      unless h_price[:val] == 0
+        report_entry_part_def.price = h_price
+        report_entry_part_def.total_cost = h_price[:val] * cutlist_part.def.count
+        report_entry_def.total_cost = report_entry_def.total_cost + report_entry_part_def.total_cost
+      end
+
+    end
+
+    def _get_std_price(entry_dim, material_attributes)
 
       h_std_prices = material_attributes.h_std_prices
-      unless  dim.nil?
+      unless  entry_dim.nil?
         h_std_prices.each do |std_price|
-          if std_price[:dim] == dim
+          if std_price[:dim] == entry_dim
             return std_price
           end
         end
@@ -529,7 +348,7 @@ module Ladb::OpenCutList
       unit_numerator, unit_denominator = s_unit.split('_')
 
       # Process mass if needed
-      f_value = _uv_mass_to_model_unit(unit_numerator, f_value)
+      _uv_mass_to_model_unit(unit_numerator, f_value)
 
       # Process volume / area / length / instance or part
       case unit_denominator
@@ -557,57 +376,6 @@ module Ladb::OpenCutList
       end
 
       f_value
-    end
-
-    def _compute_hardware_part(cutlist_part, report_entry_def)
-
-      report_entry_part_def = HardwareReportEntryPartDef.new(cutlist_part)
-      report_entry_def.part_defs << report_entry_part_def
-
-      definition_attributes = _get_definition_attributes(cutlist_part.def.definition_id)
-
-      total_instance_count = cutlist_part.def.instance_count_by_part * cutlist_part.def.count
-      total_used_instance_count = cutlist_part.def.instance_count_by_part * cutlist_part.def.count - cutlist_part.def.unused_instance_count
-      used_ratio = total_used_instance_count.to_f / total_instance_count.to_f
-
-      report_entry_part_def.total_instance_count = total_instance_count
-      report_entry_part_def.total_used_instance_count = total_used_instance_count
-
-      report_entry_def.total_instance_count += total_instance_count
-      report_entry_def.total_used_instance_count += total_used_instance_count
-
-      h_mass = definition_attributes.h_mass
-      unless h_mass[:val] == 0
-
-        report_entry_part_def.mass = h_mass
-
-        total_mass = _uv_mass_to_model_unit(UnitUtils.split_unit(h_mass[:unit]).first, h_mass[:val]) * cutlist_part.def.count
-        total_used_mass = total_mass * used_ratio
-
-        report_entry_part_def.total_mass = total_mass
-        report_entry_part_def.total_used_mass = total_used_mass
-
-        report_entry_def.total_mass += total_mass
-        report_entry_def.total_used_mass += total_used_mass
-
-      end
-
-      h_price = definition_attributes.h_price
-      unless h_price[:val] == 0
-
-        report_entry_part_def.price = h_price
-
-        total_cost = h_price[:val] * cutlist_part.def.count
-        total_used_cost = total_cost * used_ratio
-
-        report_entry_part_def.total_cost = total_cost
-        report_entry_part_def.total_used_cost = total_used_cost
-
-        report_entry_def.total_cost += total_cost
-        report_entry_def.total_used_cost += total_used_cost
-
-      end
-
     end
 
   end

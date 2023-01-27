@@ -3,10 +3,8 @@ module Ladb::OpenCutList
   class MaterialsExportToSkmWorker
 
     def initialize(material_data)
-
-      @name = material_data.fetch('name')
-      @display_name = material_data.fetch('display_name')
-
+      @name = material_data['name']
+      @display_name = material_data['display_name']
     end
 
     # -----

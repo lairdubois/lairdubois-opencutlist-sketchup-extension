@@ -10,7 +10,7 @@
     <ul class="nav nav-tabs nav-justified" role="tablist">
         <li role="presentation"{% if tab == 'general' %} class="active"{% endif %}><a href="#tab_edit_part_general" role="tab" data-toggle="tab">{{ 'tab.cutlist.edit_part.general'|i18next }}</a></li>
         {% if group.material_type != 0 %} {# 0 = TYPE_UNKNOWN #}
-            <li role="presentation"{% if tab == 'extra' %} class="active"{% endif %}><a href="#tab_edit_part_extra" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-material-type-{{ group.material_type }}"></i>{# &nbsp;{{ ('tab.materials.type_'~group.material_type)|i18next }} #}</a></li>
+            <li role="presentation"{% if tab == 'extra' %} class="active"{% endif %}><a href="#tab_edit_part_extra" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-material-type-{{ group.material_type }}"></i>&nbsp;{{ ('tab.materials.type_'~group.material_type)|i18next }}</a></li>
         {% endif %}
         {% if not multiple %}
             <li role="presentation"{% if tab == 'axes' %} class="active"{% endif %}><a href="#tab_edit_part_axes" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-axes"></i>&nbsp;{{ 'tab.cutlist.edit_part.axes'|i18next }}</a></li>
@@ -20,10 +20,12 @@
         {% endif %}
         {% if group.material_type == 2 %} {# 2 = TYPE_SHEET_GOOD #}
             <li role="presentation"{% if tab == 'edges' %} class="active"{% endif %}><a href="#tab_edit_part_edges" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-edge-{{ part.edge_pattern }}"></i>&nbsp;{{ 'tab.cutlist.edit_part.edges'|i18next }}</a></li>
-            <li role="presentation"{% if tab == 'veneers' %} class="active"{% endif %}><a href="#tab_edit_part_veneers" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-veneer-{{ part.veneer_pattern }}"></i>&nbsp;{{ 'tab.cutlist.edit_part.veneers'|i18next }}</a></li>
         {% endif %}
         {% if not multiple %}
-            <li role="presentation"{% if tab == 'infos_warnings' %} class="active"{% endif %}><a href="#tab_edit_part_infos_warnings" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-info"></i>{% if has_warnings %} + <i class="ladb-opencutlist-icon-warning ladb-color-warning"></i>{% endif %}</a></li>
+            <li role="presentation"{% if tab == 'infos' %} class="active"{% endif %}><a href="#tab_edit_part_infos" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-info"></i></a></li>
+        {% endif %}
+        {% if has_warnings and not multiple %}
+            <li role="presentation"{% if tab == 'warnings' %} class="active"{% endif %}><a href="#tab_warnings" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-warning ladb-color-warning"></i></a></li>
         {% endif %}
     </ul>
 {% endblock %}
@@ -31,7 +33,7 @@
 {% block bodyInner %}
     <div class="tab-content">
         {% if multiple %}
-            <div class="alert alert-info text-center">{{ 'tab.cutlist.edit_part.multiple_alert'|i18next({ 'part_count':partCount }) }}</div>
+            <div class="alert alert-info text-center">{{ 'tab.cutlist.edit_part.multiple_alert'|i18next({ 'part_count':part_count }) }}</div>
         {% endif %}
         <div role="tabpanel" class="tab-pane{% if tab == 'general' %} active{% endif %}" id="tab_edit_part_general">
             {% if thumbnailFile is not empty %}
@@ -329,8 +331,8 @@
                             {% endif %}
                             <label id="ladb_cutlist_part_label_edge_ymax" class="control-label col-xs-2" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.dblclick_to_copy_all_edges'|i18next }}"><i class="ladb-opencutlist-icon-edge-1000 ladb-opencutlist-icon-lg"></i></label>
                             <div class="col-xs-{% if part.edge_entity_ids.ymax is empty %}8{% else %}10{% endif %}">
-                                <select class="form-control" id="ladb_cutlist_part_select_edge_ymax"{% if part.edge_entity_ids.ymax is empty %} disabled{% endif %}>
-                                    {% include 'tabs/cutlist/_material-usages.twig' with { 'value':part.edge_material_names.ymax, 'typeFilters':[4] } %} {# TYPE_EDGE #}
+                                <select class="form-control" id="ladb_cutlist_part_select_edge_ymax_material_name"{% if part.edge_entity_ids.ymax is empty %} disabled{% endif %}>
+                                    {% include 'tabs/cutlist/_material-usages.twig' with { 'value':part.edge_material_names.ymax, 'typeFilters':[4] } %} {# TYPE_SHEET_GOOD #}
                                 </select>
                             </div>
                         </div>
@@ -340,8 +342,8 @@
                             {% endif %}
                             <label id="ladb_cutlist_part_label_edge_ymin" class="control-label col-xs-2" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.dblclick_to_copy_all_edges'|i18next }}"><i class="ladb-opencutlist-icon-edge-0010 ladb-opencutlist-icon-lg"></i></label>
                             <div class="col-xs-{% if part.edge_entity_ids.ymin is empty %}8{% else %}10{% endif %}">
-                                <select class="form-control" id="ladb_cutlist_part_select_edge_ymin"{% if part.edge_entity_ids.ymin is empty %} disabled{% endif %}>
-                                    {% include 'tabs/cutlist/_material-usages.twig' with { 'value':part.edge_material_names.ymin, 'typeFilters':[4] } %} {# TYPE_EDGE #}
+                                <select class="form-control" id="ladb_cutlist_part_select_edge_ymin_material_name"{% if part.edge_entity_ids.ymin is empty %} disabled{% endif %}>
+                                    {% include 'tabs/cutlist/_material-usages.twig' with { 'value':part.edge_material_names.ymin, 'typeFilters':[4] } %} {# TYPE_SHEET_GOOD #}
                                 </select>
                             </div>
                         </div>
@@ -354,8 +356,8 @@
                             {% endif %}
                             <label id="ladb_cutlist_part_label_edge_xmin" class="control-label col-xs-2" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.dblclick_to_copy_all_edges'|i18next }}"><i class="ladb-opencutlist-icon-edge-0001 ladb-opencutlist-icon-lg"></i></label>
                             <div class="col-xs-{% if part.edge_entity_ids.xmin is empty %}8{% else %}10{% endif %}">
-                                <select class="form-control" id="ladb_cutlist_part_select_edge_xmin"{% if part.edge_entity_ids.xmin is empty %} disabled{% endif %}>
-                                    {% include 'tabs/cutlist/_material-usages.twig' with { 'value':part.edge_material_names.xmin, 'typeFilters':[4] } %} {# TYPE_EDGE #}
+                                <select class="form-control" id="ladb_cutlist_part_select_edge_xmin_material_name"{% if part.edge_entity_ids.xmin is empty %} disabled{% endif %}>
+                                    {% include 'tabs/cutlist/_material-usages.twig' with { 'value':part.edge_material_names.xmin, 'typeFilters':[4] } %} {# TYPE_SHEET_GOOD #}
                                 </select>
                             </div>
                         </div>
@@ -365,93 +367,9 @@
                             {% endif %}
                             <label id="ladb_cutlist_part_label_edge_xmax" class="control-label col-xs-2" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.dblclick_to_copy_all_edges'|i18next }}"><i class="ladb-opencutlist-icon-edge-0100 ladb-opencutlist-icon-lg"></i></label>
                             <div class="col-xs-{% if part.edge_entity_ids.xmax is empty %}8{% else %}10{% endif %}">
-                                <select class="form-control" id="ladb_cutlist_part_select_edge_xmax"{% if part.edge_entity_ids.xmax is empty %} disabled{% endif %}>
-                                    {% include 'tabs/cutlist/_material-usages.twig' with { 'value':part.edge_material_names.xmax, 'typeFilters':[4] } %} {# TYPE_EDGE #}
+                                <select class="form-control" id="ladb_cutlist_part_select_edge_xmax_material_name"{% if part.edge_entity_ids.xmax is empty %} disabled{% endif %}>
+                                    {% include 'tabs/cutlist/_material-usages.twig' with { 'value':part.edge_material_names.xmax, 'typeFilters':[4] } %} {# TYPE_SHEET_GOOD #}
                                 </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div role="tabpanel" class="tab-pane{% if tab == 'veneers' %} active{% endif %}" id="tab_edit_part_veneers">
-                {% if not multiple %}
-                    <div class="text-center">
-                        {% set svgSize = 330 %}
-                        {% set areaSize = 280 %}
-                        {% set axisWidth = 2 %}
-                        {% set axisLength = 20 %}
-                        {% set axisOffset = 10 %}
-                        {% set partOutlineWidth = 2 %}
-                        {% set partLength = (areaSize - 40) * part.l_ratio %}
-                        {% set partWidth = (areaSize - 40) * part.w_ratio %}
-                        <svg viewBox="0 0 {{ svgSize }} {{ svgSize }}" xmlns="http://www.w3.org/2000/svg" version="1.1" style="width: {{ svgSize }}px; height: {{ svgSize }}px;">
-                            <g transform="translate(50,0)">
-                                {% embed 'tabs/cutlist/_svg-part.twig' %}
-                                    {% set noSvgWrapper = true %}
-                                    {% set hideAxes = true %}
-                                    {% set hideWidthDimension = true %}
-                                    {% set hideGrainDirectionArrow = true %}
-                                    {% set hideName = true %}
-                                    {% set arrowDashed = true %}
-                                    {% block extra %}
-                                        <g class="veneer veneer-zmin{% if part.veneer_entity_ids.zmin is empty %} ladb-disabled{% endif %}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.veneer_zmin'|i18next }}">
-                                            <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ partWidth }}" class="veneer veneer-inner" />
-                                        </g>
-                                    {% endblock %}
-                                {% endembed %}
-                            </g>
-                            <g transform="translate(0,50)">
-                                {% embed 'tabs/cutlist/_svg-part.twig' %}
-                                    {% set noSvgWrapper = true %}
-                                    {% set hideLengthDimension = true %}
-                                    {% block extra %}
-                                        <g class="veneer veneer-zmax{% if part.veneer_entity_ids.zmax is empty %} ladb-disabled{% endif %}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.veneer_zmax'|i18next }}">
-                                            <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ partWidth }}" class="veneer veneer-inner" />
-                                        </g>
-                                    {% endblock %}
-                                {% endembed %}
-                            </g>
-                        </svg>
-                    </div>
-                {% endif %}
-                <div class="row">
-                    <div class="form form-horizontal col-xs-6">
-                        <h5 class="text-center">{{ 'tab.cutlist.tooltip.veneer_zmax'|i18next }}</h5>
-                        <div class="form-group">
-                            {% if part.veneer_entity_ids.zmax is empty %}
-                                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a class="ladb-tool-warning" tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.veneer_disabled_help'|i18next }}"><i class="ladb-opencutlist-icon-warning"></i></a></div>
-                            {% endif %}
-                            <label id="ladb_cutlist_part_label_veneer_zmax" class="control-label col-xs-2" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.dblclick_to_copy_all_veneers'|i18next }}"><i class="ladb-opencutlist-icon-veneer-10 ladb-opencutlist-icon-lg"></i></label>
-                            <div class="col-xs-{% if part.veneer_entity_ids.zmax is empty %}8{% else %}10{% endif %}">
-                                <select class="form-control" id="ladb_cutlist_part_select_veneer_zmax"{% if part.veneer_entity_ids.zmax is empty %} disabled{% endif %}>
-                                    {% include 'tabs/cutlist/_material-usages.twig' with { 'value':part.veneer_material_names.zmax, 'typeFilters':[6] } %} {# TYPE_VENEER #}
-                                </select>
-                            </div>
-                        </div>
-                        <div id="ladb_cutlist_part_form_group_veneer_zmax_texture_angle" class="form-group">
-                            <label id="ladb_cutlist_part_label_veneer_zmax_texture_angle" class="control-label col-xs-2"><i class="ladb-opencutlist-icon-rotate-left ladb-opencutlist-icon-lg"></i></label>
-                            <div class="col-xs-{% if part.veneer_entity_ids.zmax is empty %}8{% else %}10{% endif %}">
-                                <input type="text" class="form-control text-right" id="ladb_cutlist_part_input_veneer_zmax_texture_angle"{% if part.veneer_entity_ids.zmax is empty %} disabled{% endif %} {% if part.veneer_texture_angles.zmax == -1 %}data-multiple="true"{% else %}value="{{ part.veneer_texture_angles.zmax }}"{% endif %}>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form form-horizontal col-xs-6">
-                        <h5 class="text-center">{{ 'tab.cutlist.tooltip.veneer_zmin'|i18next }}</h5>
-                        <div class="form-group">
-                            {% if part.veneer_entity_ids.zmin is empty %}
-                                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a class="ladb-tool-warning" tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.veneer_disabled_help'|i18next }}"><i class="ladb-opencutlist-icon-warning"></i></a></div>
-                            {% endif %}
-                            <label id="ladb_cutlist_part_label_veneer_zmin" class="control-label col-xs-2" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.dblclick_to_copy_all_veneers'|i18next }}"><i class="ladb-opencutlist-icon-veneer-01 ladb-opencutlist-icon-lg"></i></label>
-                            <div class="col-xs-{% if part.veneer_entity_ids.zmin is empty %}8{% else %}10{% endif %}">
-                                <select class="form-control" id="ladb_cutlist_part_select_veneer_zmin"{% if part.veneer_entity_ids.zmin is empty %} disabled{% endif %}>
-                                    {% include 'tabs/cutlist/_material-usages.twig' with { 'value':part.veneer_material_names.zmin, 'typeFilters':[6] } %} {# TYPE_VENEER #}
-                                </select>
-                            </div>
-                        </div>
-                        <div id="ladb_cutlist_part_form_group_veneer_zmin_texture_angle" class="form-group">
-                            <label id="ladb_cutlist_part_label_veneer_zmin_texture_angle" class="control-label col-xs-2"><i class="ladb-opencutlist-icon-rotate-left ladb-opencutlist-icon-lg"></i></label>
-                            <div class="col-xs-{% if part.veneer_entity_ids.zmin is empty %}8{% else %}10{% endif %}">
-                                <input type="text" class="form-control text-right" id="ladb_cutlist_part_input_veneer_zmin_texture_angle"{% if part.veneer_entity_ids.zmin is empty %} disabled{% endif %} {% if part.veneer_texture_angles.zmin == -1 %}data-multiple="true"{% else %}value="{{ part.veneer_texture_angles.zmin }}"{% endif %}>
                             </div>
                         </div>
                     </div>
@@ -459,7 +377,7 @@
             </div>
         {% endif %}
         {% if not multiple %}
-            <div role="tabpanel" class="tab-pane row{% if tab == 'infos_warnings' %} active{% endif %}" id="tab_edit_part_infos_warnings">
+            <div role="tabpanel" class="tab-pane row{% if tab == 'infos' %} active{% endif %}" id="tab_edit_part_infos">
                 <div class="col-sm-offset-1 col-sm-10">
                     {% include 'tabs/cutlist/_material-origins.twig' with { 'materialOrigins':part.material_origins, 'displayOwned':true, 'flat':true } %}
                     {% if part.instance_count_by_part > 1 %}
@@ -536,95 +454,96 @@
                     {% endif %}
 
                 </div>
-                {% if has_warnings %}
-                    <div class="col-sm-offset-1 col-sm-10">
-                        <hr>
-                        {% if part.not_aligned_on_axes %}
-                            <div class="media">
-                                <div class="media-left"><i class="ladb-opencutlist-icon-not-aligned-on-axes ladb-opencutlist-icon-lg ladb-color-warning"></i></div>
-                                <div class="media-body">
-                                    {{ 'tab.cutlist.tooltip.not_aligned_on_axes'|i18next }}
-                                    <svg width="100%" viewBox="0 0 1000 500" style="fill-rule:evenodd;clip-rule:evenodd;stroke-miterlimit:10;">
+            </div>
+        {% endif %}
+        {% if has_warnings %}
+            <div role="tabpanel" class="tab-pane row{% if tab == 'warnings' %} active{% endif %}" id="tab_warnings">
+                <div class="col-sm-offset-1 col-sm-10">
+                    {% if part.not_aligned_on_axes %}
+                        <div class="media">
+                            <div class="media-left"><i class="ladb-opencutlist-icon-not-aligned-on-axes ladb-opencutlist-icon-lg ladb-color-warning"></i></div>
+                            <div class="media-body">
+                                {{ 'tab.cutlist.tooltip.not_aligned_on_axes'|i18next }}
+                                <svg width="100%" viewBox="0 0 1000 500" style="fill-rule:evenodd;clip-rule:evenodd;stroke-miterlimit:10;">
+                                    <g>
                                         <g>
-                                            <g>
-                                                <path d="M95.68,280.208l182.108,41.331l0,93.399l-182.108,-41.331l0,-93.399Z" style="fill:#fefefe;fill-rule:nonzero;"/>
-                                                <path d="M277.788,321.539l-182.108,-41.331l137.645,-218.726l182.109,41.331l-137.646,218.726Z" style="fill:#e6e6e6;fill-rule:nonzero;"/>
-                                                <path d="M277.788,321.539l137.646,-218.726l0,93.399l-137.646,218.726l0,-93.399Z" style="fill:#afafaf;fill-rule:nonzero;"/>
-                                                <path d="M95.68,279.208l182.108,41.331" style="fill:none;stroke:#000;stroke-width:1px;"/>
-                                                <path d="M277.788,321.539l137.646,-218.726" style="fill:none;stroke:#000;stroke-width:1px;"/>
-                                                <path d="M233.325,61.482l-137.645,218.726" style="fill:none;stroke:#000;stroke-width:2px;"/>
-                                                <path d="M415.434,102.813l-182.109,-41.331" style="fill:none;stroke:#000;stroke-width:2px;"/>
-                                                <path d="M415.434,102.813l0,93.399" style="fill:none;stroke:#000;stroke-width:2px;"/>
-                                                <path d="M95.68,280.208l0,93.399" style="fill:none;stroke:#000;stroke-width:2px;"/>
-                                                <path d="M277.788,321.539l0,93.399" style="fill:none;stroke:#000;stroke-width:1px;"/>
-                                                <path d="M277.788,414.938l137.646,-218.726" style="fill:none;stroke:#000;stroke-width:2px;"/>
-                                                <path d="M95.68,373.607l0,-93.399" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                                <path d="M415.434,102.813l-182.109,-41.331" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                                <path d="M277.788,321.539l137.646,-218.726" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                                <path d="M95.68,280.208l182.108,41.331" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                                <path d="M233.325,61.482l-137.645,218.726" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                                <path d="M277.788,414.938l0,-93.399" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                                <path d="M277.788,414.938l137.646,-218.726" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                                <path d="M415.434,196.212l0,-93.399" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                                <path d="M277.788,414.938l0,-215.056" style="fill:none;stroke:#0432ff;stroke-width:4px;"/>
-                                                <path d="M277.788,414.938l95.081,-151.088" style="fill:none;stroke:#ff2500;stroke-width:4px;"/>
-                                                <path d="M277.788,414.938l-251.588,-57.099" style="fill:none;stroke:#00f800;stroke-width:4px;"/>
-                                            </g>
-                                            <text x="236.844px" y="493.992px" style="font-size:40px;text-anchor:middle;">{{ 'default.good'|i18next }}</text>
+                                            <path d="M95.68,280.208l182.108,41.331l0,93.399l-182.108,-41.331l0,-93.399Z" style="fill:#fefefe;fill-rule:nonzero;"/>
+                                            <path d="M277.788,321.539l-182.108,-41.331l137.645,-218.726l182.109,41.331l-137.646,218.726Z" style="fill:#e6e6e6;fill-rule:nonzero;"/>
+                                            <path d="M277.788,321.539l137.646,-218.726l0,93.399l-137.646,218.726l0,-93.399Z" style="fill:#afafaf;fill-rule:nonzero;"/>
+                                            <path d="M95.68,279.208l182.108,41.331" style="fill:none;stroke:#000;stroke-width:1px;"/>
+                                            <path d="M277.788,321.539l137.646,-218.726" style="fill:none;stroke:#000;stroke-width:1px;"/>
+                                            <path d="M233.325,61.482l-137.645,218.726" style="fill:none;stroke:#000;stroke-width:2px;"/>
+                                            <path d="M415.434,102.813l-182.109,-41.331" style="fill:none;stroke:#000;stroke-width:2px;"/>
+                                            <path d="M415.434,102.813l0,93.399" style="fill:none;stroke:#000;stroke-width:2px;"/>
+                                            <path d="M95.68,280.208l0,93.399" style="fill:none;stroke:#000;stroke-width:2px;"/>
+                                            <path d="M277.788,321.539l0,93.399" style="fill:none;stroke:#000;stroke-width:1px;"/>
+                                            <path d="M277.788,414.938l137.646,-218.726" style="fill:none;stroke:#000;stroke-width:2px;"/>
+                                            <path d="M95.68,373.607l0,-93.399" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                            <path d="M415.434,102.813l-182.109,-41.331" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                            <path d="M277.788,321.539l137.646,-218.726" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                            <path d="M95.68,280.208l182.108,41.331" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                            <path d="M233.325,61.482l-137.645,218.726" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                            <path d="M277.788,414.938l0,-93.399" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                            <path d="M277.788,414.938l137.646,-218.726" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                            <path d="M415.434,196.212l0,-93.399" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                            <path d="M277.788,414.938l0,-215.056" style="fill:none;stroke:#0432ff;stroke-width:4px;"/>
+                                            <path d="M277.788,414.938l95.081,-151.088" style="fill:none;stroke:#ff2500;stroke-width:4px;"/>
+                                            <path d="M277.788,414.938l-251.588,-57.099" style="fill:none;stroke:#00f800;stroke-width:4px;"/>
                                         </g>
+                                        <text x="236.844px" y="493.992px" style="font-size:40px;text-anchor:middle;">{{ 'default.good'|i18next }}</text>
+                                    </g>
+                                    <g>
                                         <g>
-                                            <g>
-                                                <path d="M583.719,311.144l39.513,-78.11l169.784,94.825l-39.513,78.111l-169.784,-94.826Z" style="fill:#fefefe;fill-rule:nonzero;"/>
-                                                <path d="M760.877,14.308l169.785,94.825l-137.646,218.726l-169.784,-94.825l137.645,-218.726Z" style="fill:#f1f1f1;fill-rule:nonzero;"/>
-                                                <path d="M793.016,327.859l137.646,-218.726l-39.514,78.111l-137.645,218.726l39.513,-78.111Z" style="fill:#828282;fill-rule:nonzero;"/>
-                                                <path d="M583.719,311.144l39.513,-78.11" style="fill:none;stroke:#000;stroke-width:2px;"/>
-                                                <path d="M930.662,109.133l-169.785,-94.825" style="fill:none;stroke:#000;stroke-width:2px;"/>
-                                                <path d="M793.016,327.859l137.646,-218.726" style="fill:none;stroke:#000;stroke-width:1px;"/>
-                                                <path d="M623.232,233.034l169.784,94.825" style="fill:none;stroke:#000;stroke-width:1px;"/>
-                                                <path d="M760.877,14.308l-137.645,218.726" style="fill:none;stroke:#000;stroke-width:2px;"/>
-                                                <path d="M753.503,405.97l39.513,-78.111" style="fill:none;stroke:#000;stroke-width:1px;"/>
-                                                <path d="M753.503,405.97l137.645,-218.726" style="fill:none;stroke:#000;stroke-width:2px;"/>
-                                                <path d="M891.148,187.244l39.514,-78.111" style="fill:none;stroke:#000;stroke-width:2px;"/>
-                                                <path d="M583.719,311.144l169.784,94.826" style="fill:none;stroke:#000;stroke-width:2px;"/>
-                                                <path d="M930.662,52.841l0,143.371" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                                <path d="M891.148,187.244l39.514,8.968" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                                <path d="M583.719,367.437l26.212,-41.653" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                                <path d="M930.662,196.212l-137.646,218.726" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                                <path d="M930.662,52.841l-137.646,218.726" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                                <path d="M793.016,271.567l0,143.371" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                                <path d="M793.016,271.567l-209.297,-47.501" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                                <path d="M583.719,224.066l0,143.371" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                                <path d="M721.364,5.34l0,71.756" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                                <path d="M583.719,224.066l137.645,-218.726" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                                <path d="M721.364,5.34l209.298,47.501" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
-                                                <path d="M793.016,414.938l0,-215.056" style="fill:none;stroke:#0432ff;stroke-width:4px;"/>
-                                                <path d="M793.016,414.938l95.081,-151.088" style="fill:none;stroke:#ff2500;stroke-width:4px;"/>
-                                                <path d="M793.016,414.938l-251.588,-57.099" style="fill:none;stroke:#00f800;stroke-width:4px;"/>
-                                            </g>
-                                            <text x="719.114px" y="493.992px" style="font-size:40px;text-anchor:middle;">{{ 'default.bad'|i18next }}</text>
+                                            <path d="M583.719,311.144l39.513,-78.11l169.784,94.825l-39.513,78.111l-169.784,-94.826Z" style="fill:#fefefe;fill-rule:nonzero;"/>
+                                            <path d="M760.877,14.308l169.785,94.825l-137.646,218.726l-169.784,-94.825l137.645,-218.726Z" style="fill:#f1f1f1;fill-rule:nonzero;"/>
+                                            <path d="M793.016,327.859l137.646,-218.726l-39.514,78.111l-137.645,218.726l39.513,-78.111Z" style="fill:#828282;fill-rule:nonzero;"/>
+                                            <path d="M583.719,311.144l39.513,-78.11" style="fill:none;stroke:#000;stroke-width:2px;"/>
+                                            <path d="M930.662,109.133l-169.785,-94.825" style="fill:none;stroke:#000;stroke-width:2px;"/>
+                                            <path d="M793.016,327.859l137.646,-218.726" style="fill:none;stroke:#000;stroke-width:1px;"/>
+                                            <path d="M623.232,233.034l169.784,94.825" style="fill:none;stroke:#000;stroke-width:1px;"/>
+                                            <path d="M760.877,14.308l-137.645,218.726" style="fill:none;stroke:#000;stroke-width:2px;"/>
+                                            <path d="M753.503,405.97l39.513,-78.111" style="fill:none;stroke:#000;stroke-width:1px;"/>
+                                            <path d="M753.503,405.97l137.645,-218.726" style="fill:none;stroke:#000;stroke-width:2px;"/>
+                                            <path d="M891.148,187.244l39.514,-78.111" style="fill:none;stroke:#000;stroke-width:2px;"/>
+                                            <path d="M583.719,311.144l169.784,94.826" style="fill:none;stroke:#000;stroke-width:2px;"/>
+                                            <path d="M930.662,52.841l0,143.371" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                            <path d="M891.148,187.244l39.514,8.968" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                            <path d="M583.719,367.437l26.212,-41.653" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                            <path d="M930.662,196.212l-137.646,218.726" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                            <path d="M930.662,52.841l-137.646,218.726" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                            <path d="M793.016,271.567l0,143.371" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                            <path d="M793.016,271.567l-209.297,-47.501" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                            <path d="M583.719,224.066l0,143.371" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                            <path d="M721.364,5.34l0,71.756" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                            <path d="M583.719,224.066l137.645,-218.726" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                            <path d="M721.364,5.34l209.298,47.501" style="fill:none;stroke:#0432ff;stroke-width:2px;"/>
+                                            <path d="M793.016,414.938l0,-215.056" style="fill:none;stroke:#0432ff;stroke-width:4px;"/>
+                                            <path d="M793.016,414.938l95.081,-151.088" style="fill:none;stroke:#ff2500;stroke-width:4px;"/>
+                                            <path d="M793.016,414.938l-251.588,-57.099" style="fill:none;stroke:#00f800;stroke-width:4px;"/>
                                         </g>
-                                    </svg>
-                                </div>
+                                        <text x="719.114px" y="493.992px" style="font-size:40px;text-anchor:middle;">{{ 'default.bad'|i18next }}</text>
+                                    </g>
+                                </svg>
                             </div>
-                        {% endif %}
-                        {% if part.multiple_layers %}
-                            <div class="media">
-                                <div class="media-left"><i class="ladb-opencutlist-icon-multiple-layers ladb-opencutlist-icon-lg ladb-color-warning"></i></div>
-                                <div class="media-body">
-                                    {{ 'tab.cutlist.tooltip.multiple_layers'|i18next({ 'count':(part.layers|length), 'layers':(part.layers|join(', ')) }) }}
-                                </div>
+                        </div>
+                    {% endif %}
+                    {% if part.multiple_layers %}
+                        <div class="media">
+                            <div class="media-left"><i class="ladb-opencutlist-icon-multiple-layers ladb-opencutlist-icon-lg ladb-color-warning"></i></div>
+                            <div class="media-body">
+                                {{ 'tab.cutlist.tooltip.multiple_layers'|i18next({ 'count':(part.layers|length), 'layers':(part.layers|join(', ')) }) }}
                             </div>
-                        {% endif %}
-                        {% if part.unused_instance_count > 0 %}
-                            <div class="media">
-                                <div class="media-left"><i class="ladb-opencutlist-icon-missing-instance-count ladb-opencutlist-icon-lg ladb-color-warning"></i></div>
-                                <div class="media-body">
-                                    {{ 'tab.cutlist.tooltip.unused_instance_count'|i18next({ 'count':part.unused_instance_count }) }}
-                                </div>
+                        </div>
+                    {% endif %}
+                    {% if part.unused_instance_count > 0 %}
+                        <div class="media">
+                            <div class="media-left"><i class="ladb-opencutlist-icon-missing-instance-count ladb-opencutlist-icon-lg ladb-color-warning"></i></div>
+                            <div class="media-body">
+                                {{ 'tab.cutlist.tooltip.unused_instance_count'|i18next({ 'count':part.unused_instance_count }) }}
                             </div>
-                        {% endif %}
-                    </div>
-                {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
             </div>
         {% endif %}
     </div>
@@ -636,7 +555,7 @@
     {% else %}
         <button type="button" class="btn btn-default pull-left" id="ladb_cutlist_part_highlight"><i class="ladb-opencutlist-icon-magnifier"></i> {{ 'tab.cutlist.highlight_part'|i18next }}</button>
     {% endif %}
-    <button type="button" class="btn btn-default pull-left" id="ladb_cutlist_part_export_to_skp"><i class="ladb-opencutlist-icon ladb-opencutlist-icon-export"></i> {{ 'tab.cutlist.edit_part.export_to_skp'|i18next }}...</button>
+    <button type="button" class="btn btn-default pull-left" id="ladb_cutlist_part_export_to_skp"><i class="ladb-opencutlist-icon ladb-opencutlist-icon-export"></i> {{ 'tab.cutlist.edit_part.export_to_skp'|i18next }}</button>
     <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
     <button type="button" class="btn btn-primary btn-validate-modal" id="ladb_cutlist_part_update">{{ 'default.validate'|i18next }}</button>
 {% endblock %}
