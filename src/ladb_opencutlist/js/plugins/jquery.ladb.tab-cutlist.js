@@ -2621,7 +2621,7 @@
                         }
 
                         window.requestAnimationFrame(function () {
-                            rubyCallCommand('cutlist_group_cuttingdiagram_1d_start', $.extend({ group_id: groupId, part_ids: isPartSelection ? that.selectionPartIds : null }, cuttingdiagram1dOptions, that.generateOptions), function (response) {
+                            rubyCallCommand('cutlist_group_cuttingdiagram_1d_start', $.extend({ group_id: groupId, part_ids: isPartSelection ? that.selectionPartIds : null }, cuttingdiagram1dOptions), function (response) {
                                 window.requestAnimationFrame(function () {
                                     that.dialog.startProgress(response.estimated_steps);
                                     fnAdvance();
