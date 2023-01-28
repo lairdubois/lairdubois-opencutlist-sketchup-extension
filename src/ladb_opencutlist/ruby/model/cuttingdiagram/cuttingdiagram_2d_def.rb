@@ -31,7 +31,7 @@ module Ladb::OpenCutList
 
   class Cuttingdiagram2dOptionsDef
 
-    attr_accessor :grained, :px_saw_kerf, :saw_kerf, :trimming, :optimization, :stacking, :sheet_folding, :hide_part_list, :use_names, :full_width_diagram, :hide_cross, :origin_corner, :highlight_primary_cuts
+    attr_accessor :grained, :px_saw_kerf, :saw_kerf, :trimming, :optimization, :stacking, :sheet_folding, :hide_part_list, :use_names, :full_width_diagram, :hide_cross, :origin_corner, :highlight_primary_cuts, :hide_edges_preview
 
     def initialize
 
@@ -48,6 +48,7 @@ module Ladb::OpenCutList
       @hide_cross = false
       @origin_corner = 0
       @highlight_primary_cuts = false
+      @hide_edges_preview = true
 
     end
 

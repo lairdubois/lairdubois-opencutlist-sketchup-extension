@@ -2690,6 +2690,7 @@
                 var $selectHideCross = $('#ladb_select_hide_cross', $modal);
                 var $selectOriginCorner = $('#ladb_select_origin_corner', $modal);
                 var $selectHighlightPrimaryCuts = $('#ladb_select_highlight_primary_cuts', $modal);
+                var $selectHideEdgesPreview = $('#ladb_select_hide_edges_preview', $modal);
                 var $btnEditMaterial = $('#ladb_btn_edit_material', $modal);
                 var $btnGenerate = $('#ladb_btn_generate', $modal);
 
@@ -2707,6 +2708,7 @@
                     options.hide_cross = $selectHideCross.val() === '1';
                     options.origin_corner = parseInt($selectOriginCorner.val());
                     options.highlight_primary_cuts = $selectHighlightPrimaryCuts.val() === '1';
+                    options.hide_edges_preview = $selectHideEdgesPreview.val() === '1';
                 }
                 var fnFillInputs = function (options) {
                     $inputSawKerf.val(options.saw_kerf);
@@ -2720,6 +2722,7 @@
                     $selectHideCross.selectpicker('val', options.hide_cross ? '1' : '0');
                     $selectOriginCorner.selectpicker('val', options.origin_corner);
                     $selectHighlightPrimaryCuts.selectpicker('val', options.highlight_primary_cuts ? '1' : '0');
+                    $selectHideEdgesPreview.selectpicker('val', options.hide_edges_preview ? '1' : '0');
                 }
                 var fnEditMaterial = function (callback) {
 
@@ -2766,6 +2769,7 @@
                 $selectHideCross.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectOriginCorner.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectHighlightPrimaryCuts.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectHideEdgesPreview.selectpicker(SELECT_PICKER_OPTIONS);
 
                 fnFillInputs(cuttingdiagram2dOptions);
 
@@ -2940,7 +2944,7 @@
                         }
 
                         window.requestAnimationFrame(function () {
-                            rubyCallCommand('cutlist_group_cuttingdiagram_2d_start', $.extend({ group_id: groupId, part_ids: isPartSelection ? that.selectionPartIds : null }, cuttingdiagram2dOptions, that.generateOptions), function (response) {
+                            rubyCallCommand('cutlist_group_cuttingdiagram_2d_start', $.extend({ group_id: groupId, part_ids: isPartSelection ? that.selectionPartIds : null }, cuttingdiagram2dOptions), function (response) {
                                 window.requestAnimationFrame(function () {
                                     that.dialog.startProgress(response.estimated_steps);
                                     fnAdvance();

@@ -618,6 +618,10 @@ tab:
       option_highlight_primary_cuts_0: Survol uniquement
       option_highlight_primary_cuts_1: Toujours visibles
       option_highlight_primary_cuts_help: Permet de mettre en surbrillance toujours visible les coupes primaires.
+      option_hide_edges_preview: Indicateurs de chants à plaquer
+      option_hide_edges_preview_0: Affichés sur le diagramme
+      option_hide_edges_preview_1: Masqués sur le diagramme
+      option_hide_edges_preview_help: Permet d'afficher ou masquer l'indication visuel des chants à plaquer pour chaque pièce du diagramme.
       option_saw_kerf: Épaisseur de lame de scie
       option_saw_kerf_help: Largeur de matière perdue par le trait de scie.
       option_trimming: Marge

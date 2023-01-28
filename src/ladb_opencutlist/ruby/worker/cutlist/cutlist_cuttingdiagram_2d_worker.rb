@@ -31,6 +31,7 @@ module Ladb::OpenCutList
       @hide_cross = settings.fetch('hide_cross')
       @origin_corner = settings.fetch('origin_corner')
       @highlight_primary_cuts = settings.fetch('highlight_primary_cuts')
+      @hide_edges_preview = settings.fetch('hide_edges_preview')
 
       @cutlist = cutlist
 
@@ -164,6 +165,7 @@ module Ladb::OpenCutList
       cuttingdiagram2d_def.options_def.hide_cross = @hide_cross
       cuttingdiagram2d_def.options_def.origin_corner = @origin_corner
       cuttingdiagram2d_def.options_def.highlight_primary_cuts = @highlight_primary_cuts
+      cuttingdiagram2d_def.options_def.hide_edges_preview = @hide_edges_preview
 
       cuttingdiagram2d_def.errors += errors
 
