@@ -40,12 +40,12 @@ gulp.task('css_minify', function () {
         .pipe(gulp.dest('../src/ladb_opencutlist/css'));
 });
 
-// Minify .js files
+// Minify lib .js files
 gulp.task('js_minify', function () {
     return gulp.src('../src/ladb_opencutlist/js/lib/**/!(*.min).js')
         .pipe(uglify())
         .pipe(rename({ suffix: '.min' }))
-        .pipe(gulp.dest('../src/ladb_opencutlist/lib'));
+        .pipe(gulp.dest('../src/ladb_opencutlist/js/lib'));
 });
 
 // Convert twig runtime templates to .js precompiled files
