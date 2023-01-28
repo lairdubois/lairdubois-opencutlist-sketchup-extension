@@ -240,6 +240,14 @@
                 enabledUnitKeys = [ '$_m', '$_ft', '$_i' ];
                 break;
 
+            case 6: /* TYPE_VENEER */
+                for (i = 0; i < stds.stdSizes.length; i++) {
+                    stdsA[stds.stdSizes[i]] = stds.stdSizes[i];
+                }
+                this.defaultUnit = '$_' + that.options.lengthUnitStrippedname + '2';
+                enabledUnitKeys = [ '$_m2', '$_m3', '$_ft2', '$_ft3', '$_ft2', '$_i' ];
+                break;
+
         }
 
         this.enabledUnits = [];

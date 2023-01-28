@@ -310,6 +310,16 @@ module Ladb::OpenCutList
             MF_GRAYED
           end
         }
+        item = menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_veneers_properties')) {
+          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{hover_part_id}', tab: 'veneers', dontGenerate: true }")
+        }
+        menu.set_validation_proc(item) {
+          if hover_part_material_type == MaterialAttributes::TYPE_SHEET_GOOD
+            MF_ENABLED
+          else
+            MF_GRAYED
+          end
+        }
       elsif view
         menu.add_item(Plugin.instance.get_i18n_string('default.close')) {
           _quit(view)

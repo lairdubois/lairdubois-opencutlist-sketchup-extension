@@ -3,7 +3,9 @@ module Ladb::OpenCutList
   class CutlistGetThumbnailWorker
 
     def initialize(part_data)
-      @definition_id = part_data['definition_id']
+
+      @definition_id = part_data.fetch('definition_id')
+
     end
 
     # -----

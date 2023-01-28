@@ -73,9 +73,10 @@
 {% endblock %}
 
 {% block footerInner %}
-    <button type="button" class="btn btn-danger pull-left" id="ladb_materials_remove"><i class="ladb-opencutlist-icon ladb-opencutlist-icon-trash"></i> {{ 'default.remove'|i18next }}</button>
+    <button type="button" class="btn btn-danger pull-left" id="ladb_materials_remove"><i class="ladb-opencutlist-icon ladb-opencutlist-icon-trash"></i> {{ 'default.remove'|i18next }}...</button>
+    <button type="button" class="btn btn-default pull-left" id="ladb_materials_duplicate"><i class="ladb-opencutlist-icon ladb-opencutlist-icon-copy"></i> {{ 'default.duplicate'|i18next }}...</button>
     {% if capabilities.sketchup_version_number >= 1700000000 %}
-        <button type="button" class="btn btn-default pull-left" id="ladb_materials_export_to_skm"><i class="ladb-opencutlist-icon ladb-opencutlist-icon-export"></i> {{ 'tab.materials.edit_material.export_to_skm'|i18next }}</button>
+        <button type="button" class="btn btn-default pull-left" id="ladb_materials_export_to_skm"><i class="ladb-opencutlist-icon ladb-opencutlist-icon-export"></i> {{ 'tab.materials.edit_material.export_to_skm'|i18next }}...</button>
     {% endif %}
     <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
     <button type="button" class="btn btn-primary btn-validate-modal" id="ladb_materials_update">{{ 'default.validate'|i18next }}</button>

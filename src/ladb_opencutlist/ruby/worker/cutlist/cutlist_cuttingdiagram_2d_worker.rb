@@ -13,23 +13,24 @@ module Ladb::OpenCutList
     ORIGIN_CORNER_BOTTOM_RIGHT = 3
 
     def initialize(settings, cutlist)
-      @group_id = settings['group_id']
-      @part_ids = settings['part_ids']
-      s_length, s_width = StringUtils.split_dxd(settings['std_sheet'])
+
+      @group_id = settings.fetch('group_id')
+      @part_ids = settings.fetch('part_ids', nil)
+      s_length, s_width = StringUtils.split_dxd(settings.fetch('std_sheet'))
       @std_sheet_length = DimensionUtils.instance.str_to_ifloat(s_length).to_l.to_f
       @std_sheet_width = DimensionUtils.instance.str_to_ifloat(s_width).to_l.to_f
-      @scrap_sheet_sizes = DimensionUtils.instance.dxdxq_to_ifloats(settings['scrap_sheet_sizes'])
-      @saw_kerf = DimensionUtils.instance.str_to_ifloat(settings['saw_kerf']).to_l.to_f
-      @trimming = DimensionUtils.instance.str_to_ifloat(settings['trimming']).to_l.to_f
-      @optimization = settings['optimization']
-      @stacking = settings['stacking']
-      @sheet_folding = settings['sheet_folding']
-      @use_names = settings['use_names']
-      @full_width_diagram = settings['full_width_diagram']
-      @hide_part_list = settings['hide_part_list']
-      @hide_cross = settings['hide_cross']
-      @origin_corner = settings['origin_corner']
-      @highlight_primary_cuts = settings['highlight_primary_cuts']
+      @scrap_sheet_sizes = DimensionUtils.instance.dxdxq_to_ifloats(settings.fetch('scrap_sheet_sizes'))
+      @saw_kerf = DimensionUtils.instance.str_to_ifloat(settings.fetch('saw_kerf')).to_l.to_f
+      @trimming = DimensionUtils.instance.str_to_ifloat(settings.fetch('trimming')).to_l.to_f
+      @optimization = settings.fetch('optimization')
+      @stacking = settings.fetch('stacking')
+      @sheet_folding = settings.fetch('sheet_folding')
+      @use_names = settings.fetch('use_names')
+      @full_width_diagram = settings.fetch('full_width_diagram')
+      @hide_part_list = settings.fetch('hide_part_list')
+      @hide_cross = settings.fetch('hide_cross')
+      @origin_corner = settings.fetch('origin_corner')
+      @highlight_primary_cuts = settings.fetch('highlight_primary_cuts')
 
       @cutlist = cutlist
 

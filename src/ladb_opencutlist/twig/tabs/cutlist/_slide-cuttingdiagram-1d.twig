@@ -87,19 +87,19 @@
                     </td>
                 </tr>
                 <tr class="table-column-heading">
-                    <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.list.number'|i18next }}</td>
-                    <td class="text-center" rowspan="2" style="vertical-align: middle !important;">{{ 'tab.cutlist.list.name'|i18next }}</td>
-                    <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.list.count'|i18next }}</td>
+                    <td rowspan="2" width="5%">{{ 'tab.cutlist.list.number'|i18next }}</td>
+                    <td rowspan="2">{{ 'tab.cutlist.list.name'|i18next }}</td>
+                    <td rowspan="2" width="5%">{{ 'tab.cutlist.list.count'|i18next }}</td>
                     {% if showCuttingDimensions %}
-                        <td class="text-center">{{ 'tab.cutlist.list.cutting'|i18next }}</td>
+                        <td>{{ 'tab.cutlist.list.cutting'|i18next }}</td>
                     {% endif %}
-                    <td class="text-center">{{ 'tab.cutlist.list.bbox'|i18next }}</td>
+                    <td>{{ 'tab.cutlist.list.bbox'|i18next }}</td>
                 </tr>
                 <tr class="table-column-heading">
                     {% if showCuttingDimensions %}
-                        <td class="text-center" width="8%">{{ ('tab.cutlist.list.length_short')|i18next }}</td>
+                        <td width="8%">{{ ('tab.cutlist.list.length_short')|i18next }}</td>
                     {% endif %}
-                    <td class="text-center" width="8%">{{ ('tab.cutlist.list.length_short')|i18next }}</td>
+                    <td width="8%">{{ ('tab.cutlist.list.length_short')|i18next }}</td>
                 </tr>
                 </thead>
                 <tbody>
@@ -323,25 +323,25 @@
                 </tr>
                 {% if not options.hide_part_list %}
                     <tr class="table-column-heading">
-                        <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.list.number'|i18next }}</td>
-                        <td class="text-center" rowspan="2" style="vertical-align: middle !important;">{{ 'tab.cutlist.list.name'|i18next }}</td>
-                        <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="8%">{{ 'tab.cutlist.list.count'|i18next }}</td>
+                        <td rowspan="2" width="5%">{{ 'tab.cutlist.list.number'|i18next }}</td>
+                        <td rowspan="2">{{ 'tab.cutlist.list.name'|i18next }}</td>
+                        <td rowspan="2" width="8%">{{ 'tab.cutlist.list.count'|i18next }}</td>
                         {% if showCuttingDimensions %}
-                            <td class="text-center">{{ 'tab.cutlist.list.cutting'|i18next }}</td>
+                            <td>{{ 'tab.cutlist.list.cutting'|i18next }}</td>
                         {% endif %}
-                        <td class="text-center">{{ 'tab.cutlist.list.bbox'|i18next }}</td>
+                        <td>{{ 'tab.cutlist.list.bbox'|i18next }}</td>
                     </tr>
                     <tr class="table-column-heading">
                         {% if showCuttingDimensions %}
-                            <td class="text-center" width="8%">{{ ('tab.cutlist.list.length_short')|i18next }}</td>
+                            <td width="8%">{{ ('tab.cutlist.list.length_short')|i18next }}</td>
                         {% endif %}
-                        <td class="text-center" width="8%">{{ ('tab.cutlist.list.length_short')|i18next }}</td>
+                        <td width="8%">{{ ('tab.cutlist.list.length_short')|i18next }}</td>
                     </tr>
                     {% for part in bar.grouped_parts %}
                         <tr class="ladb-cutlist-row ladb-minitools-holder" data-part-id="{{ part.id }}">
                             {% include 'tabs/cutlist/_list-row-col-number.twig' %}
                             <td>
-                                {% if group.material_type == 3 %}   {# 3 = TYPE_DIMENSIONAL #}
+                                {% if group.material_type != 4 %}   {# 4 = TYPE_EDGE #}
                                     <div class="ladb-minitools ladb-minitools-right no-print">
                                         {% if part.flipped %}<a href="#" class="ladb-tool-info" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.flipped'|i18next }}"><i class="ladb-opencutlist-icon-flipped"></i></a>{% endif %}
                                         <span class="ladb-separator"></span>

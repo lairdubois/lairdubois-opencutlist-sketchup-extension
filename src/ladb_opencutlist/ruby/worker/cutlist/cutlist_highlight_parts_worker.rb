@@ -4,11 +4,14 @@ module Ladb::OpenCutList
 
   class CutlistHighlightPartsWorker
 
-    def initialize(cutlist, settings)
+    def initialize(settings, cutlist)
+
+      @minimize_on_highlight = settings.fetch('minimize_on_highlight')
+      @group_id = settings.fetch('group_id', nil)
+      @part_ids = settings.fetch('part_ids', nil)
+
       @cutlist = cutlist
-      @minimize_on_highlight = settings['minimize_on_highlight']
-      @group_id = settings['group_id']
-      @part_ids = settings['part_ids']
+
     end
 
     # -----
@@ -21,7 +24,7 @@ module Ladb::OpenCutList
       return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
 
       # Retrieve parts
-      material_types_filter = [ MaterialAttributes::TYPE_UNKNOWN, MaterialAttributes::TYPE_SOLID_WOOD, MaterialAttributes::TYPE_SHEET_GOOD, MaterialAttributes::TYPE_DIMENSIONAL ]
+      material_types_filter = [ MaterialAttributes::TYPE_UNKNOWN, MaterialAttributes::TYPE_SOLID_WOOD, MaterialAttributes::TYPE_SHEET_GOOD, MaterialAttributes::TYPE_DIMENSIONAL, MaterialAttributes::TYPE_HARDWARE ]
       parts = []
       group = nil
       if @group_id

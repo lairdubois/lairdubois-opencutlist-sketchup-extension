@@ -1,4 +1,7 @@
 {
+  "_cleaners": {
+    "material_order_strategy": 1 /* PRESETS_CLEANER_ORDER_STRATEGY */
+  },
   "0": {
     "material_order_strategy": "name>type"
   }

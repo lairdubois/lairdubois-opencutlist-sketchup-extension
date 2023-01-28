@@ -25,6 +25,7 @@ default:
   caution: Let op
   remove: Verwijder
   create: Maak
+  duplicate: Duplizieren
   ignore: Negeren
   download: Downloaden
   upgrade: Updaten
@@ -47,6 +48,7 @@ default:
   unit_5: Yard
   unit_mass_0: Kilogram
   unit_mass_1: Pond
+  unit_angle_0: Graad
   instance_single: eenheid
   instance_plural: eenheden
   part_single: deel
@@ -65,6 +67,7 @@ core:
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
+      edit_part_veneers_properties: $t(tab.cutlist.edit_part_veneers_properties)
       smart_paint: $t(core.toolbar.command.smart_paint)
   toolbar:
     name: OpenCutList
@@ -132,7 +135,7 @@ core:
 
       Voer de naam van de preset in:
     delete_confirm_title: verwijdering
-    delete_confirm: "Weet u zeker dat u de preset **\"{{ naam }}\"** wilt verwijderen?"
+    delete_confirm: "Weet u zeker dat u de preset **\"{{ name }}\"** wilt verwijderen?"
     override_confirm_title: Bijwerken
     override_confirm: "Bevestig je dat je de voorinstelling **\"{{ name }}\"** wil bijwerken met de inhoud van het formulier?"
     new_success: "Voorinstelling **\"{{ name }}\"** aangemaakt"
@@ -168,14 +171,15 @@ tab:
     highlight_parts: Toon onderdelen in het model
     edit_part_properties: Bewerk eigenschappen van dit onderdeel
     edit_part_axes_properties: Bewerk de eigenschappen (assen) van het onderdeel
-    edit_part_size_increase_properties: Bewerk de (maat) van het onderdeel
-    edit_part_edges_properties: Bewerk de eigenschappen (kantenband) van het onderdeel
+    edit_part_size_increase_properties: Bewerk de eigenschappen (overmaat) van het onderdeel
+    edit_part_edges_properties: Bewerk de eigenschappen (randbanden) van het onderdeel
+    edit_part_veneers_properties: Bewerk de eigenschappen (fineren) van het onderdeel
     tooltip:
       show_hide_block: Toon / verberg groep
       scroll_to_block: Scroll naar groep
       not_available_std_width: "De breedte *{{ std_dimension_real }}* is niet gedefinieerd in de standaardbreedtes van het materiaal '{{ material_name }}'"
-      not_available_std_thickness: "De dikte *{{ std_dimension }}* is niet gedefinieerd in de standaarddiktes van het materiaal '{{ material_name }}'"
-      not_available_std_section: "De doorsnede *{{ std_dimension }}* is niet gedefinieerd in de standaard doorsneden van het materiaal '{{ material_name }}'"
+      not_available_std_thickness: "De dikte *{{ std_dimension_real }}* is niet gedefinieerd in de standaarddiktes van het materiaal '{{ material_name }}'"
+      not_available_std_section: "De doorsnede *{{ std_dimension_real }}* is niet gedefinieerd in de standaard doorsneden van het materiaal '{{ material_name }}'"
       add_std_width_to_material: |
         Breedte toevoegen *{{ std_dimension }}*
         aan materiaal '{{ material_name }}'
@@ -221,8 +225,10 @@ tab:
       auto_oriented: De oriëntatie van dit component is automatisch aangepast
       add_label_filter: "Filter op '{{ label }}'"
       remove_label_filter: "verwijder filter '{{ label }}'"
-      add_edge_material_name_filter: "Filter op '{{ label }}'"
+      add_edge_material_name_filter: "Filter op '{{ material_name }}'"
       remove_edge_material_name_filter: "verwijder filter '{{ material_name }}'"
+      add_veneer_material_name_filter: "Filter op '{{ material_name }}'"
+      remove_veneer_material_name_filter: "verwijder filter '{{ material_name }}'"
       not_aligned_on_axes: "Let op: dit component is wellicht niet goed georiënteerd ten opzichte van haar assen"
       instance_count_by_part: "Dit onderdeel wordt geteld als set van **{{ count }}** eenheden."
       unused_instance_count: "Let op, **{{ count }}** eenheid van het laatste pakket wordt niet gebruikt."
@@ -240,15 +246,20 @@ tab:
       invalid_final_area: "Let op, de oppervlakte kan niet worden berekend omdat {{ count }} deel (van {{ total }}) een ongeldige oppervakte heeft"
       invalid_final_area_plural: "Opgelet, Dit cumulatief oppervlak kan niet berekend worden omdat {{ count }} onderdelen (van {{ total }}) een ongeldig oppervlak hebben"
       is_dynamic_attributes_name: De beschrijving van dit onderdeel wordt overgenomen van het attribuut 'Name' van het dynamisch component
-      size_increased: "Deze afmeting wordt vergroot met een overmaat voor {{ count }} gegroepeerde onderdelen"
+      size_increased: "Deze afmeting wordt vergroot met een overmaat voor {{ value }} gegroepeerde onderdelen"
       has_edges: "Dit onderdeel bevat {{ count }} randafwerking"
       has_edges_plural: "Dit onderdeel bevat {{ count }} randafwerkingen"
+      has_veneers: "Dit deel bevat {{ count }} gefineerd oppervlak"
+      has_veneers_plural: "Dit deel bevat {{ count }} gefineerde oppervlakken"
       edge_decremented: "Verminderd met de dikte van de randafwerking ({{ decrement }})"
       edge_ymin: Kantenband lengte 1
       edge_ymax: Kantenband lengte 2
       edge_xmin: Kantenband breedte 1
       edge_xmax: Kantenband breedte 2
+      veneer_zmin: Achterkant
+      veneer_zmax: Voorzijde
       dblclick_to_copy_all_edges: Dubbelklik hier om deze waarde naar de andere randen te dupliceren
+      dblclick_to_copy_all_veneers: Dubbelklik hier om deze waarde over te brengen naar het andere oppervlak
       dblclick_to_sort_axes: Dubbelklik hier om de volgorde van de assen automatisch aan te passen aan de afmetingen van het onderdeel
       part_axes: Interne assen van het onderdeel
       select_unselect_all_parts: Selecteer / De-selecteer alle onderdelen van de groep
@@ -279,6 +290,7 @@ tab:
       general: Algemeen
       extra_help: "Lijst van materiaalsoort-specifieke eigenschappen \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Randafwerkingen
+      veneers: Fineren
       name: Beschrijving
       material: Materiaal
       cumulable: Cumulatief
@@ -333,7 +345,7 @@ tab:
       size_increase: Overlengtes
       size_increase_help: |
         Overlengtes laten je toe om de afmetingen van een onderdeel te verhogen.
-        ("Voorbeeld: Overlengte van een plint of een afschrijving die aangepast moet worden tijdens de montage.")
+        (*Voorbeeld: Overlengte van een plint of een afschrijving die aangepast moet worden tijdens de montage.*)
       length_increase: Lengte overmaat
       length_increase_help: Overmaat wordt toegepast op de uiteindelijke lengte om de **brutto lengte** te bepalen.
       width_increase: Breedte overmaat
@@ -354,6 +366,7 @@ tab:
       over_length: Over de lengte
       over_width: Over de breedte
       edge_disabled_help: Deze randafwerking is niet configureerbaar omdat aan deze rand van het onderdeel in het model geen materiaaldragend oppervlak is gedetecteerd.
+      veneer_disabled_help: Dit oppervlak is niet configureerbaar omdat op dit oppervlak van het onderdeel in het model geen materiaaldragend oppervlak is gedetecteerd.
       multiple_values: Meerdere waarden
       export_to_skp: Exporteren (.skp)
     export_to_skp:
@@ -400,6 +413,8 @@ tab:
       hide_final_areas_help: "Wanneer deze optie ingeschakeld is, dan zullen de **afgewerkte oppervlakten** van het type *Plaatmateriaal* niet getoond worden."
       hide_edges: Verberg de kolommen met kantenbanden
       hide_edges_help: "Wanneer deze optie ingeschakeld is, dan zullen de **kantenbanden kolommen** van het type *Paneel* niet weergegeven worden."
+      hide_veneers: Verberg de kolommen met fineer
+      hide_veneers_help: "Wanneer deze optie ingeschakeld is, dan zullen de **fineer kolommen** van het type *Paneel* niet weergegeven worden."
       minimize_on_highlight: Minimaliseer na *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Wanneer deze optie ingeschakeld is, dan zal het venster OpenCutList geminimaliseerd worden wanneer de functie *'$t(tab.cutlist.highlight_part)'* gebruikt wordt."
       general: Algemeen
@@ -427,6 +442,7 @@ tab:
       filters_warning: "Dit filter geeft slechts **{{ count }}** onderdelen weer op een totaal van {{ total }}."
       filters_warning_plural: "Dit filter geeft slechts **{{ count }}** onderdelen weer op een totaal van {{ total }}."
       edge_material_names_filter: Te filteren lijst van kantenband materiaal
+      veneer_material_names_filter: Te filteren lijst van fineer materiaal
       tags_filter: Te filteren Tags
       dimensions_help: Afmetingen begrijpen
       summary: Overzicht
@@ -451,6 +467,7 @@ tab:
       thickness: Dikte
       thickness_short: D.
       edges: Randafwerkingen
+      veneers: Fineren
     export:
       title: Exporteren
       info_0: |
@@ -508,6 +525,8 @@ tab:
       edge_ymax: Kantenband lengte 2
       edge_xmin: Kantenband breedte 1
       edge_xmax: Kantenband breedte 2
+      veneer_zmin: Achterkant
+      veneer_zmax: Voorzijde
       placeholder:
         no_column_title: Voer een titel in
         no_column_formula_native: "Beginwaarde van kolom '{{ col_name }}'"
@@ -527,18 +546,26 @@ tab:
       raw_materials: Basis materialen
       coefficient: Coëfficiënt
       total: Totaal
+      total_used: Gebruikt
+      total_unused: Niet gebruikt
       total_mass: Σ Massa
       total_cost: Σ Kosten
       total_count: Aant.
+      total_instance_count: Σ Eenheden
       total_volume: Σ Volumes
       total_area: Σ Oppervlaktes
       total_length: Σ Lengtes
       error:
-        no_typed_material_parts: "Geen onderdeel met een gedefinieerde materiaalsoort (**$t(tab.materialen.type_1)**, **$t(tab.materialen.type_2)**, **$t(tab.materialen.type_3)**, **$t(tab.materialen.type_4)** of **$t(tab.materialen.type_5)**) is verstrekt om het rapport te genereren."
+        no_typed_material_parts: "Geen onderdeel met een gedefinieerde materiaalsoort (**$t(tab.materialen.type_1)**, **$t(tab.materialen.type_2)**, **$t(tab.materialen.type_3)**, **$t(tab.materialen.type_4)**, **$t(tab.materials.type_6)** of **$t(tab.materialen.type_5)**) is verstrekt om het rapport te genereren."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} fout**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} fouten**."
       warning:
         is_group_selection: Onderdelen in de **gemaskeerde groepen** van uw stuklijst worden niet meegeteld.
+      tip:
+        not_enough_data: |
+          Om het rapport correct te berekenen,:
+          - de gebruikte materialen hebben ten minste één dichtheid en één prijs.
+          - de gebruikte accessoires hebben ten minste één dichtheid en één prijs.
     cuttingdiagram:
       title: Zaagschema
       start_msg: Optimalisatie aan de gang
@@ -551,17 +578,19 @@ tab:
       option_bar_folding_0: Nee
       option_bar_folding_1: Ja
       option_bar_folding_help: Groepeer panelen of kantenband met gelijke delen en zaagsneden.
-      option_sheet_folding: Groepeer identieke panelen
+      option_sheet_folding_good: Groepeer identieke panelen
+      option_sheet_folding_veneer: Groepeer identieke fineren
       option_sheet_folding_0: Nee
       option_sheet_folding_1: Ja
-      option_sheet_folding_help: Maakt het mogelijk om panelen die dezelfde onderdelen en dezelfde zaagsnedes bevatten te groeperen.
+      option_sheet_folding_help: Hiermee kunt u panelen combineren die dezelfde onderdelen en sneden bevatten.
       option_hide_part_list: Onderdelen lijst
       option_hide_part_list_1d_dimensional_0: Weergegeven voor elke plank
       option_hide_part_list_1d_edge_0: Toon voor alle kantenband
-      option_hide_part_list_2d_0: Weergegeven voor elk paneel
+      option_hide_part_list_2d_good_0: Weergegeven voor elk paneel
+      option_hide_part_list_2d_veneer_0: Displays voor elk fineervel
       option_hide_part_list_1: Verborgen
       option_hide_part_list_1d_help: Toon of verberg de lijst van onderdelen in elke plank of kantenband.
-      option_hide_part_list_2d_help: Toon of verberg de lijst met onderdelen in elk paneel.
+      option_hide_part_list_2d_help: Toon of verberg de lijst van onderdelen voor elke plaat.
       option_use_names: Identificatie van onderdelen
       option_use_names_0: Gebruik nummer
       option_use_names_1: Gebruik de beschrijving
@@ -620,14 +649,16 @@ tab:
         Verwacht formaat : **L**x**A**. waarbij **L** de *lengte* et **A** het aantal is.
         Het aantal is facultatief
         *Wanneer geen eenheid wordt ingegeven, dan zal de eenheid van het model genomen worden.*
-      option_std_sheet: Standaard paneel
+      option_std_sheet_good: Standaard paneel
+      option_std_sheet_veneer: Standaard fineervel
       option_std_sheet_help: |
         Selecteer hier het standaard paneel dat gedupliceerd zal worden om zo goed mogelijke alle onderdelen te bevatten.
         Deze lijst wordt gedefinieerd door het veld **$t(tab.materials.edit_material.std_sizes)** van het materiaal.
         Wijzig het materiaal '{{ material_name }}' om deze lijst aan te passen.
       option_std_sheet_add: Voeg een afmeting toe
       option_std_sheet_none: Geen enkele
-      option_scrap_sheet_sizes: Paneel overschotten
+      option_scrap_sheet_good_sizes: Paneel overschotten
+      option_scrap_sheet_veneer_sizes: Fineerresten
       option_scrap_sheet_sizes_placeholder: lengte x breedte x aantal ; ...
       option_scrap_sheet_sizes_help: |
         Lijst hier uw paneel resten op die voorrang moeten krijgen in het zaagschema.
@@ -667,8 +698,10 @@ tab:
         bar_dimensional_type_1: Plank overschot
         bar_edge_type_0: Standaard kantenband
         bar_edge_type_1: Kantenband overschot
-        sheet_type_0: Standaard paneel
-        sheet_type_1: Paneel overschot
+        sheet_good_type_0: Standaard paneel
+        sheet_good_type_1: Paneel overschot
+        sheet_veneer_type_0: Standaard fineervel
+        sheet_veneer_type_1: Fineerresten
         unused: Ongebruikt
         parts: "{{ count }} onderdeel"
         parts_plural: "{{ count }} onderdelen"
@@ -741,6 +774,7 @@ tab:
         part_description: Beschrijving
         part_entity_named_path: Instantie pad
         part_entity_name: Naam onderdeel
+        part_bin: Container
         part_cutting_size: Ruwe afmetingen
         part_cutting_length: Ruwe lengte
         part_cutting_width: Ruwe breedte
@@ -755,6 +789,8 @@ tab:
         part_edge_ymax: Kantenband lengte 2
         part_edge_xmin: Kantenband breedte 1
         part_edge_xmax: Kantenband breedte 2
+        part_veneer_zmin: Fineer achterkant
+        part_veneer_zmax: Fineer voorzijde
         thumbnail_proportional: Proportionele voorvertoning
         thumbnail_square: Vierkante voorvertoning
         group_material: Materiaal / Afmeting
@@ -769,6 +805,7 @@ tab:
         invalid_size: De ingegeven paramaters laten niet toe om geldige label afmetingen in te stellen.
       warning:
         is_part_selection: Deze labels zijn beperkt tot **geselecteerde onderdelen**.
+        formula_not_available: Formule is in deze context niet beschikbaar
     error:
       no_model: Er is geen enkel model open. U moet me wat meer informatie geven ;)
       no_entities: Uw model is leeg. U moet me iets meer geven ;)
@@ -802,6 +839,7 @@ tab:
     type_3: Plank
     type_4: Kantenband
     type_5: Accessoire
+    type_6: Fineer
     tooltip:
       type_0: Materiaal type '$t(tab.materials.type_0)'
       type_1: Materiaal type '$t(tab.materials.type_1)'
@@ -809,6 +847,7 @@ tab:
       type_3: Materiaal type '$t(tab.materials.type_3)'
       type_4: Materiaal type '$t(tab.materials.type_4)'
       type_5: Materiaal type '$t(tab.materials.type_5)'
+      type_6: Materiaal type '$t(tab.materials.type_6)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Nerf richting
@@ -910,6 +949,9 @@ tab:
       message: |
         U staat op het punt om het materiaal **{{ material_name }}** uit uw model te verwijderen.
         Bevestig om verder te gaan.
+    duplicate:
+      message: |
+        Specificeer de naam van het nieuwe materiaal dat wordt gekopieerd uit **{{ material_name }}**.
     error:
       no_model: Er is geen enkel model open. U moet me wat meer informatie geven ;)
       no_materials: Uw model bevat geen enkel materiaal.
@@ -917,6 +959,7 @@ tab:
       failed_import_skm_file: "Er heeft zich een fout voorgedaan bij het importeren van het .skm bestand. **{{ error }}**"
       failed_export_skm_file: "Er heeft zich een fout voorgedaan bij het exporteren van het .skm bestand. **{{ error }}**"
       failed_removing_material: "Er heeft zich een fout voorgedaan bij het verwijderen van het materiaal. **{{ error }}**"
+      failed_duplicating_material: "Er is een fout opgetreden tijdens het dupliceren van het materiaal. **{{ error }}**"
       invalid_image_file: Ongeldige afbeelding
     success:
       exported_to: "Export geslaagd naar {{ export_path }}."
@@ -1053,7 +1096,7 @@ tab:
       cuttingdiagram_export: Financiering van de uitvoer van snijschema's
     objective_details:
       default: |
-        De voortdurende verbetering van *OpenCutList* is belangrijk voor ons en het project heeft nog steeds uw hulp nodig voor de volgende update **4.0**!
+        De voortdurende verbetering van *OpenCutList* is belangrijk voor ons en het project heeft nog steeds uw hulp nodig voor de volgende update **5.0**!
       cuttingdiagram_export: |
         Het is voor ons belangrijk dat *OpenCutList* kan worden aangepast aan het brede scala van gebruikerseisen voor de *squaring* functie.
         Om de mogelijkheden verder uit te breiden, zouden we graag de export van lay-out diagrammen in **SVG** formaat mogelijk maken.
@@ -1160,6 +1203,7 @@ tool:
     filter_3: $t(tab.materials.type_3)
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
+    filter_6: $t(tab.materials.type_6)
     action: Voorraad
     action_0: Kleur het vlak
     action_1: Kleur het object

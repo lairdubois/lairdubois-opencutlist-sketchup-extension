@@ -82,7 +82,7 @@ module Ladb::OpenCutList
     # local unit settings.
     #
     def format_to_readable_mass(f)
-      UnitUtils.format_readable(f, get_strippedname, 0, 3)
+      UnitUtils.format_readable(f, get_strippedname, 0, 2)
     end
 
   end

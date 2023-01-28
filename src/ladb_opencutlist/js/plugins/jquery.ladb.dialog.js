@@ -12,6 +12,9 @@
     var DOCS_URL = 'https://www.lairdubois.fr/opencutlist/docs';
     var DOCS_DEV_URL = 'https://www.lairdubois.fr/opencutlist/docs-dev';
 
+    var CHANGELOG_URL = 'https://www.lairdubois.fr/opencutlist/changelog';
+    var CHANGELOG_DEV_URL = 'https://www.lairdubois.fr/opencutlist/changelog-dev';
+
     var SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN = 'core.compatibility_alert_hidden';
     var SETTING_KEY_MUTED_UPDATE_BUILD = 'core.muted_update_build';
     var SETTING_KEY_LAST_LISTED_NEWS_TIMESTAMP = 'core.last_listed_news_timestamp';
@@ -595,10 +598,11 @@
         var $btnUpgrade = $('#ladb_btn_upgrade', $modal);
         var $btnDownload = $('.ladb-btn-download', $modal);
         var $btnSponsor = $('#ladb_btn_sponsor', $modal);
+        var $linkChangelog = $('#ladb_link_changelog', $modal);
         var $progressBar = $('div[role=progressbar]', $modal);
 
         // Bind buttons
-        $btnIgnoreUpdate.on('click', function() {
+        $btnIgnoreUpdate.on('click', function () {
 
             that.mutedUpdateBuild = that.capabilities.manifest.build;
             that.setSetting(SETTING_KEY_MUTED_UPDATE_BUILD, that.mutedUpdateBuild);
@@ -620,7 +624,7 @@
             $modal.remove();
 
         });
-        $btnUpgrade.on('click', function() {
+        $btnUpgrade.on('click', function () {
 
             $panelInfos.hide();
             $panelProgress.show();
@@ -658,7 +662,7 @@
 
             return false;
         });
-        $btnDownload.on('click', function() {
+        $btnDownload.on('click', function () {
 
             // Open url
             rubyCallCommand('core_open_url', { url: that.capabilities.manifest && that.capabilities.manifest.url ? that.appendOclMetasToUrlQueryParams(that.capabilities.manifest.url) : EW_URL });
@@ -669,7 +673,7 @@
 
             return false;
         });
-        $btnSponsor.on('click', function() {
+        $btnSponsor.on('click', function () {
 
             // Open sponsor tab
             that.selectTab('sponsor');
@@ -680,6 +684,9 @@
 
             return false;
         });
+        $linkChangelog.on('click', function () {
+            rubyCallCommand('core_open_url', { url: that.getChangelogUrl() });
+        })
 
         // Show modal
         $modal.modal('show');
@@ -744,12 +751,14 @@
 
     };
 
-    LadbDialog.prototype.prompt = function (title, text, callback) {
+    LadbDialog.prototype.prompt = function (title, text, value, callback, options) {
 
         // Append modal
         var $modal = this.appendModal('ladb_core_modal_prompt', 'core/_modal-prompt.twig', {
             title: title,
-            text: text
+            text: text,
+            value: value,
+            options: options
         });
 
         // Fetch UI elements
@@ -773,11 +782,15 @@
 
         });
 
+        // State
+        $btnValidate.prop('disabled', $input.val().trim().length === 0);
+
         // Show modal
         $modal.modal('show');
 
         // Bring focus to input
         $input.focus();
+        $input[0].selectionStart = $input[0].selectionEnd = $input.val().trim().length;
 
     };
 
@@ -849,6 +862,12 @@
         return this.appendOclMetasToUrlQueryParams(
             this.capabilities.is_dev ? DOCS_DEV_URL : DOCS_URL,
             (page && (typeof page  === "string")) ? { page: page } : null
+        );
+    }
+
+    LadbDialog.prototype.getChangelogUrl = function () {
+        return this.appendOclMetasToUrlQueryParams(
+            this.capabilities.is_dev ? CHANGELOG_DEV_URL : CHANGELOG_URL,
         );
     }
 

@@ -25,6 +25,7 @@ default:
   caution: Attention
   remove: Supprimer
   create: Créer
+  duplicate: Dupliquer
   ignore: Ignorer
   download: Télécharger
   upgrade: Mettre à jour
@@ -47,6 +48,7 @@ default:
   unit_5: Yard
   unit_mass_0: Kilogramme
   unit_mass_1: Livre
+  unit_angle_0: Degrés
   instance_single: unité
   instance_plural: unités
   part_single: pièce
@@ -65,6 +67,7 @@ core:
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
+      edit_part_veneers_properties: $t(tab.cutlist.edit_part_veneers_properties)
       smart_paint: $t(core.toolbar.command.smart_paint)
   toolbar:
     name: OpenCutList
@@ -170,6 +173,7 @@ tab:
     edit_part_axes_properties: Éditer les propriétés (axes) de la pièce
     edit_part_size_increase_properties: Éditer les propriétés (surcotes) de la pièce
     edit_part_edges_properties: Éditer les propriétés (chants) de la pièce
+    edit_part_veneers_properties: Éditer les propriétés (placages) de la pièce
     tooltip:
       show_hide_block: Afficher / Masquer ce groupe
       scroll_to_block: Défiler vers le groupe
@@ -223,6 +227,8 @@ tab:
       remove_label_filter: "Ne plus filtrer sur '{{ label }}'"
       add_edge_material_name_filter: "Filtrer sur '{{ material_name }}'"
       remove_edge_material_name_filter: "Ne plus filtrer sur '{{ material_name }}'"
+      add_veneer_material_name_filter: "Filtrer sur '{{ material_name }}'"
+      remove_veneer_material_name_filter: "Ne plus filtrer sur '{{ material_name }}'"
       not_aligned_on_axes: "Attention, cette pièce n'est peut-être pas correctement alignée sur ses axes"
       instance_count_by_part: "Cette pièce est comptabilisée par lot de **{{ count }}** unités."
       unused_instance_count: "Attention, **{{ count }}** unité du dernier lot ne sera pas utilisée."
@@ -243,12 +249,17 @@ tab:
       size_increased: "Dimension majorée par une surcote de {{ value }}"
       has_edges: "Cette pièce contient {{ count }} chant plaqué"
       has_edges_plural: "Cette pièce contient {{ count }} chants plaqués"
+      has_veneers: "Cette pièce contient {{ count }} surface plaquée"
+      has_veneers_plural: "Cette pièce contient {{ count }} surfaces plaquées"
       edge_decremented: "Réduit de l'épaisseur des chants ({{ decrement }})"
       edge_ymin: Chant Longueur 1
       edge_ymax: Chant Longueur 2
       edge_xmin: Chant Largeur 1
       edge_xmax: Chant Largeur 2
+      veneer_zmin: Contreparement
+      veneer_zmax: Parement
       dblclick_to_copy_all_edges: Double-cliquez ici pour dupliquer cette valeur aux autres chants
+      dblclick_to_copy_all_veneers: Double-cliquez ici pour dupliquer cette valeur à l'autre surface
       dblclick_to_sort_axes: Double-cliquez ici pour réordonner automatiquement les axes suivant les dimensions de la pièce
       part_axes: Axes internes de la pièce
       select_unselect_all_parts: Sélectionner / Désélectionner toutes les pièces du groupe
@@ -279,6 +290,7 @@ tab:
       general: Générales
       extra_help: "Liste des propriétés spécifiques au type de matière \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Chants
+      veneers: Placages
       name: Nom
       material: Matière
       cumulable: Cumulable
@@ -354,6 +366,7 @@ tab:
       over_length: Sur la longueur
       over_width: Sur la largeur
       edge_disabled_help: Ce chant n'est pas configurable parce qu'aucune face pouvant porter une matière n'a été détectée sur ce bord de la pièce dans le modèle.
+      veneer_disabled_help: Cette surface n'est pas configurable parce qu'aucune face pouvant porter une matière n'a été détectée sur ce bord de la pièce dans le modèle.
       multiple_values: Valeurs multiples
       export_to_skp: Exporter (.skp)
     export_to_skp:
@@ -400,6 +413,8 @@ tab:
       hide_final_areas_help: "Si cette option est activée, les **surfaces finies** des pièces de type *Panneau* ne sont pas affichées."
       hide_edges: Masquer les colonnes de chants
       hide_edges_help: "Si cette option est activée, les **colonnes de chants** des pièces de type *Panneau* ne sont pas affichées."
+      hide_veneers: Masquer les colonnes de placages
+      hide_veneers_help: "Si cette option est activée, les **colonnes de placages** des pièces de type *Panneau* ne sont pas affichées."
       minimize_on_highlight: Réduire après *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Si cette option est activée, la fenêtre OpenCutList sera réduite lorsque la fonction *'$t(tab.cutlist.highlight_part)'* est utilisée."
       general: Générales
@@ -427,6 +442,7 @@ tab:
       filters_warning: "Ce filtrage n'affiche que **{{ count }}** pièce sur un total de {{ total }}."
       filters_warning_plural: "Ce filtrage n'affiche que **{{ count }}** pièces sur un total de {{ total }}."
       edge_material_names_filter: Matières de chant à filtrer
+      veneer_material_names_filter: Matières de placage à filtrer
       tags_filter: Tags à filtrer
       dimensions_help: Comprendre les dimensions
       summary: Récapitulatif
@@ -451,6 +467,7 @@ tab:
       thickness: Épaisseur
       thickness_short: Ép.
       edges: Chants
+      veneers: Placages
     export:
       title: Exportation
       info_0: |
@@ -508,6 +525,8 @@ tab:
       edge_ymax: Chant Longueur 2
       edge_xmin: Chant Largeur 1
       edge_xmax: Chant Largeur 2
+      veneer_zmin: Contreparement
+      veneer_zmax: Parement
       placeholder:
         no_column_title: Saisissez un titre
         no_column_formula_native: "Valeur native de la colonne '{{ col_name }}'"
@@ -527,18 +546,26 @@ tab:
       raw_materials: Matières premières brutes
       coefficient: Coefficient
       total: Total
+      total_used: Utilisé
+      total_unused: Non utilisé
       total_mass: Σ Masses
       total_cost: Σ Coûts
       total_count: Qte
+      total_instance_count: Σ Unités
       total_volume: Σ Volumes
       total_area: Σ Surfaces
       total_length: Σ Longueurs
       error:
-        no_typed_material_parts: "Aucune pièce ayant une matière avec type défini (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)** ou **$t(tab.materials.type_5)**) n'est fournie pour générer le rapport."
+        no_typed_material_parts: "Aucune pièce ayant une matière avec type défini (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** ou **$t(tab.materials.type_5)**) n'est fournie pour générer le rapport."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erreur**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erreurs**."
       warning:
         is_group_selection: Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas comptabilisées.
+      tip:
+        not_enough_data: |
+          Pour que ce rapport puisse se calculer correctement :
+          - Les matières utilisées doivent avoir au moins une masse volumique et un prix configurés.
+          - Les accessoires utilisés doivent avoir au moins une masse et un prix.
     cuttingdiagram:
       title: Calepinage
       start_msg: Optimisation en cours
@@ -551,17 +578,19 @@ tab:
       option_bar_folding_0: Non
       option_bar_folding_1: Oui
       option_bar_folding_help: Permet de regrouper les barres ou bandes contenant les mêmes pièces et les mêmes coupes.
-      option_sheet_folding: Regrouper les panneaux identiques
+      option_sheet_folding_good: Regrouper les panneaux identiques
+      option_sheet_folding_veneer: Regrouper les feuilles identiques
       option_sheet_folding_0: Non
       option_sheet_folding_1: Oui
-      option_sheet_folding_help: Permet de regrouper les panneaux contenant les mêmes pièces et les mêmes coupes.
+      option_sheet_folding_help: Permet de regrouper les panneaux ou les feuilles contenant les mêmes pièces et les mêmes coupes.
       option_hide_part_list: Liste des pièces
       option_hide_part_list_1d_dimensional_0: Affichée pour chaque barre
       option_hide_part_list_1d_edge_0: Affichée pour chaque bande
-      option_hide_part_list_2d_0: Affichée pour chaque panneau
+      option_hide_part_list_2d_good_0: Affichée pour chaque panneau
+      option_hide_part_list_2d_veneer_0: Affichée pour chaque feuille
       option_hide_part_list_1: Masquée
       option_hide_part_list_1d_help: Affiche ou masque la liste des pièces présentes dans chaque barre ou bande.
-      option_hide_part_list_2d_help: Affiche ou masque la liste des pièces présentes dans chaque panneau.
+      option_hide_part_list_2d_help: Affiche ou masque la liste des pièces présentes dans chaque panneau ou feuille.
       option_use_names: Identification des pièces
       option_use_names_0: Utiliser le numéro
       option_use_names_1: Utiliser la désignation
@@ -620,17 +649,19 @@ tab:
         Format attendu : **L**x**Q**. Où **L** est la *longueur* du reste et **Q** la quantité.
         La quantité est facultative.
         *Si aucune unité n'est spécifiée, l'unité du modèle sera prise en compte.*
-      option_std_sheet: Panneau standard
+      option_std_sheet_good: Panneau standard
+      option_std_sheet_veneer: Feuille standard
       option_std_sheet_help: |
-        Sélectionnez ici le panneau standard qui sera dupliqué pour contenir au mieux toutes les pièces.
+        Sélectionnez ici le panneau ou feuille standard qui sera dupliqué pour contenir au mieux toutes les pièces.
         Cette liste est définie par le champ **$t(tab.materials.edit_material.std_sizes)** de la matière.
         Éditez la matière '{{ material_name }}' pour mettre à jour cette liste.
       option_std_sheet_add: Ajouter une taille
       option_std_sheet_none: Aucun
-      option_scrap_sheet_sizes: Restes de panneau
+      option_scrap_sheet_good_sizes: Restes de panneau
+      option_scrap_sheet_veneer_sizes: Restes de feuille
       option_scrap_sheet_sizes_placeholder: longueur x largeur x quantité ; ...
       option_scrap_sheet_sizes_help: |
-        Indiquez ici la liste de vos restes de panneau à considérer en priorité pour le calepinage.
+        Indiquez ici la liste de vos restes de panneau ou feuille à considérer en priorité pour le calepinage.
         Format attendu : **L**x**l**x**Q**. Où **L** et **l** sont respectivement la *longueur* et la *largeur* du reste et **Q** la quantité.
         La quantité est facultative.
         *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*
@@ -667,8 +698,10 @@ tab:
         bar_dimensional_type_1: Reste de barre
         bar_edge_type_0: Bande standard
         bar_edge_type_1: Reste de bande
-        sheet_type_0: Panneau standard
-        sheet_type_1: Reste de panneau
+        sheet_good_type_0: Panneau standard
+        sheet_good_type_1: Reste de panneau
+        sheet_veneer_type_0: Feuille standard
+        sheet_veneer_type_1: Reste de feuille
         unused: Inutilisée
         parts: "{{ count }} pièce"
         parts_plural: "{{ count }} pièces"
@@ -741,6 +774,7 @@ tab:
         part_description: Description
         part_entity_named_path: Chemin d'instance
         part_entity_name: Nom d'instance
+        part_bin: Conteneur
         part_cutting_size: Taille de débit
         part_cutting_length: Longueur de débit
         part_cutting_width: Largeur de débit
@@ -755,6 +789,8 @@ tab:
         part_edge_ymax: Chant longueur 2
         part_edge_xmin: Chant largeur 1
         part_edge_xmax: Chant largeur 2
+        part_veneer_zmin: Placage contreparement
+        part_veneer_zmax: Placage parement
         thumbnail_proportional: Vignette proportionnelle
         thumbnail_square: Vignette carrée
         group_material: Matière / Dimension
@@ -769,6 +805,7 @@ tab:
         invalid_size: Les paramètres de configuration saisient ne permettent pas de définir une taille de d'étiquette valide.
       warning:
         is_part_selection: Ces étiquettes se limitent aux **pièces sélectionnées**.
+        formula_not_available: Non disponible dans ce context
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_entities: Votre modèle est vide. Il va falloir m'en donner un peu plus ;)
@@ -802,6 +839,7 @@ tab:
     type_3: Barre
     type_4: Bande de chant
     type_5: Accessoire
+    type_6: Feuille de placage
     tooltip:
       type_0: Type de matière '$t(tab.materials.type_0)'
       type_1: Type de matière '$t(tab.materials.type_1)'
@@ -809,6 +847,7 @@ tab:
       type_3: Type de matière '$t(tab.materials.type_3)'
       type_4: Type de matière '$t(tab.materials.type_4)'
       type_5: Type de matière '$t(tab.materials.type_5)'
+      type_6: Type de matière '$t(tab.materials.type_6)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Direction du fil
@@ -910,6 +949,9 @@ tab:
       message: |
         Vous êtes sur le point de supprimer la matière **{{ material_name }}** de votre modèle.
         Confirmez pour continuer.
+    duplicate:
+      message: |
+        Choisissez le nom de la nouvelle matière copie de **{{ material_name }}**.
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_materials: Votre modèle ne contient aucune matière.
@@ -917,6 +959,7 @@ tab:
       failed_import_skm_file: "Une erreur s'est produite lors de l'importation du fichier .skm. **{{ error }}**"
       failed_export_skm_file: "Une erreur s'est produite lors de l'exportation du fichier .skm. **{{ error }}**"
       failed_removing_material: "Une erreur s'est produite lors de la suppression de la matière. **{{ error }}**"
+      failed_duplicating_material: "Une erreur s'est produite lors de duplication de la matière. **{{ error }}**"
       invalid_image_file: Image invalide
     success:
       exported_to: "Export réussi vers {{ export_path }}."
@@ -1053,7 +1096,7 @@ tab:
       cuttingdiagram_export: Financement des exports de calepinage
     objective_details:
       default: |
-        L'amélioration en continue d'*OpenCutList* nous tient à coeur et le projet continue d'avoir besoin de vous pour sa prochaine mise à jour **4.0** !
+        L'amélioration en continue d'*OpenCutList* nous tient à coeur et le projet continue d'avoir besoin de vous pour sa prochaine mise à jour **5.0** !
       cuttingdiagram_export: |
         Il nous tient à coeur qu'*OpenCutList* puisse s'adapter aux attentes très variées des utilisateurs pour la fonction de *calepinage*.
         Pour élargir encore les possibilités, nous souhaitons permettre d'exporter les diagrammes de calepinage au format **SVG**.
@@ -1125,8 +1168,8 @@ tab:
       - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*polonais*)
       - Sergey Isupov (*hébreu*), sans interface de droite à gauche
       - Soul Issam (*arabe*), sans interface de droite à gauche
-      - Dany Dhondt, Eric Lugtigheid (*Dutch*)
-      - Nguyen Ngoc Tan (*Vietnamien*)
+      - Dany Dhondt, Eric Lugtigheid (*néerlandais*)
+      - Nguyen Ngoc Tan (*vietnamien*)
     credits_description: |
       Le développement de cette extension s'inscrit dans le projet de plateforme de partage [L'Air du Bois](https://www.lairdubois.fr).
       Et à ce titre, il est également *Open Source* et disponible sous licence [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) sur son [dépôt GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
@@ -1160,6 +1203,7 @@ tool:
     filter_3: $t(tab.materials.type_3)
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
+    filter_6: $t(tab.materials.type_6)
     action: Action
     action_0: Colorier face
     action_1: Colorier pièce

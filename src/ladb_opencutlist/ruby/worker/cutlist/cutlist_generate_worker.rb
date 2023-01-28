@@ -26,21 +26,28 @@ module Ladb::OpenCutList
     MATERIAL_ORIGIN_INHERITED = 2
     MATERIAL_ORIGIN_CHILD = 3
 
-    def initialize(settings)
+    def initialize(settings, active_entity = nil, active_path = nil)
 
-      @auto_orient = settings['auto_orient']
-      @flipped_detection = settings['flipped_detection']
-      @smart_material = settings['smart_material']
-      @dynamic_attributes_name = settings['dynamic_attributes_name']
-      @part_number_with_letters = settings['part_number_with_letters']
-      @part_number_sequence_by_group = settings['part_number_sequence_by_group']
-      @part_folding = settings['part_folding']
-      @part_order_strategy = settings['part_order_strategy']
-      @hide_descriptions = settings['hide_descriptions']
-      @hide_tags = settings['hide_tags']
-      @hide_final_areas = settings['hide_final_areas']
-      @tags_filter = settings['tags_filter']
-      @edge_material_names_filter = settings['edge_material_names_filter']
+      options = Plugin.instance.get_model_preset('cutlist_options')
+
+      @auto_orient = settings.fetch('auto_orient', options.fetch('auto_orient'))
+      @flipped_detection = settings.fetch('flipped_detection', options.fetch('flipped_detection'))
+      @smart_material = settings.fetch('smart_material', options.fetch('smart_material'))
+      @dynamic_attributes_name = settings.fetch('dynamic_attributes_name', options.fetch('dynamic_attributes_name'))
+      @part_number_with_letters = settings.fetch('part_number_with_letters', options.fetch('part_number_with_letters'))
+      @part_number_sequence_by_group = settings.fetch('part_number_sequence_by_group', options.fetch('part_number_sequence_by_group'))
+      @part_folding = settings.fetch('part_folding', options.fetch('part_folding'))
+      @part_order_strategy = settings.fetch('part_order_strategy', options.fetch('part_order_strategy'))
+      @hide_descriptions = settings.fetch('hide_descriptions', options.fetch('hide_descriptions'))
+      @hide_tags = settings.fetch('hide_tags', options.fetch('hide_tags'))
+      @hide_final_areas = settings.fetch('hide_final_areas', options.fetch('hide_final_areas'))
+      @tags_filter = settings.fetch('tags_filter', [])
+      @edge_material_names_filter = settings.fetch('edge_material_names_filter', [])
+      @veneer_material_names_filter = settings.fetch('veneer_material_names_filter', [])
+
+      # Retrieve active entity (if defined)
+      @active_entity = active_entity
+      @active_path = active_path
 
       # Setup caches
       @instance_infos_cache = {}
@@ -61,25 +68,34 @@ module Ladb::OpenCutList
 
       model = Sketchup.active_model
 
-      # Retrieve selected entities or all if no selection
-      if model
-        if model.selection.empty?
-          entities = model.active_entities
-          is_entity_selection = false
-        else
-          entities = model.selection
-          is_entity_selection = true
-        end
-      else
-        entities = []
-        is_entity_selection = false
-      end
+      if @active_entity && @active_path
 
-      # Fetch component instances in given entities
-      path = model && model.active_path ? model.active_path : []
-      entities.each { |entity|
-        _fetch_useful_instance_infos(entity, path, @auto_orient)
-      }
+        # An active entity and its path is defined => use it
+        _fetch_useful_instance_infos(@active_entity, @active_path, @auto_orient)
+
+      else
+
+        # Retrieve selected entities or all if no selection
+        if model
+          if model.selection.empty?
+            entities = model.active_entities
+            is_entity_selection = false
+          else
+            entities = model.selection
+            is_entity_selection = true
+          end
+        else
+          entities = []
+          is_entity_selection = false
+        end
+
+        # Fetch component instances in given entities
+        path = model&.active_path ? model.active_path : []
+        entities.each { |entity|
+          _fetch_useful_instance_infos(entity, path, @auto_orient)
+        }
+
+      end
 
       # Retrieve model infos
       length_unit = DimensionUtils.instance.length_unit
@@ -88,8 +104,8 @@ module Ladb::OpenCutList
       dir, filename = File.split(model && !model.path.empty? ? model.path : Plugin.instance.get_i18n_string('default.empty_filename'))
       model_name = model ? model.name : ''
       model_description = model ? model.description : ''
-      page_name = model && model.pages && model.pages.selected_page ? model.pages.selected_page.name : ''
-      page_description = model && model.pages && model.pages.selected_page ? model.pages.selected_page.description : ''
+      page_name = model&.pages&.selected_page ? model.pages.selected_page.name : ''
+      page_description = model&.pages&.selected_page ? model.pages.selected_page.description : ''
 
       # Create cut list
       cutlist = Cutlist.new(dir, filename, model_name, model_description, page_name, page_description, is_entity_selection, length_unit, mass_unit_strippedname, currency_symbol, @instance_infos_cache.length)
@@ -116,7 +132,7 @@ module Ladb::OpenCutList
       materials = model ? model.materials : []
       materials.each { |material|
         material_attributes = _get_material_attributes(material)
-        material_usage = MaterialUsage.new(material.name, material.display_name, material_attributes.type, material.color)
+        material_usage = MaterialUsage.new(material.name, material.display_name, material_attributes.type, material.color, !material.texture.nil?)
         _store_material_usage(material_usage)
       }
 
@@ -152,7 +168,7 @@ module Ladb::OpenCutList
           end
 
           # Edge materials filter -> exclude all non sheet good parts
-          if !@edge_material_names_filter.empty? && material_attributes.type != MaterialAttributes::TYPE_SHEET_GOOD
+          if (!@edge_material_names_filter.empty? || !@veneer_material_names_filter.empty?) && material_attributes.type != MaterialAttributes::TYPE_SHEET_GOOD
             cutlist.ignored_instance_count += 1
             next
           end
@@ -168,15 +184,23 @@ module Ladb::OpenCutList
             definition_attributes.width_increase = '0'
             definition_attributes.thickness_increase = '0'
             definition_attributes.thickness_layer_count = 1
-          when MaterialAttributes::TYPE_SOLID_WOOD, MaterialAttributes::TYPE_DIMENSIONAL
+          when MaterialAttributes::TYPE_SOLID_WOOD
             definition_attributes.instance_count_by_part = 1
             definition_attributes.mass = ''
             definition_attributes.price = ''
             definition_attributes.thickness_layer_count = 1
           when MaterialAttributes::TYPE_SHEET_GOOD
             definition_attributes.instance_count_by_part = 1
+            definition_attributes.thickness_increase = '0'
             definition_attributes.mass = ''
             definition_attributes.price = ''
+          when MaterialAttributes::TYPE_DIMENSIONAL
+            definition_attributes.instance_count_by_part = 1
+            definition_attributes.width_increase = '0'
+            definition_attributes.thickness_increase = '0'
+            definition_attributes.mass = ''
+            definition_attributes.price = ''
+            definition_attributes.thickness_layer_count = 1
           when MaterialAttributes::TYPE_HARDWARE
             definition_attributes.cumulable = DefinitionAttributes::CUMULABLE_NONE
             definition_attributes.length_increase = '0'
@@ -185,9 +209,142 @@ module Ladb::OpenCutList
             definition_attributes.thickness_layer_count = 1
         end
 
+        # Compute face infos
+        x_face_infos, y_face_infos, z_face_infos, layers = nil
+        if material_attributes.type == MaterialAttributes::TYPE_SOLID_WOOD ||
+          material_attributes.type == MaterialAttributes::TYPE_SHEET_GOOD ||
+          material_attributes.type == MaterialAttributes::TYPE_DIMENSIONAL
+
+          x_face_infos, y_face_infos, z_face_infos, layers = _grab_main_faces_and_layers(definition)
+
+        end
+
+        # Edges and Veneers
+        edges_def = nil
+        veneers_def = nil
+        if material_attributes.type == MaterialAttributes::TYPE_SHEET_GOOD
+
+          # -- Edges --
+
+          # Grab min/max face infos
+          xmin_face_infos, xmax_face_infos = _grab_oriented_min_max_face_infos(instance_info, x_face_infos, y_face_infos, z_face_infos, X_AXIS, @flipped_detection && instance_info.flipped)
+          ymin_face_infos, ymax_face_infos = _grab_oriented_min_max_face_infos(instance_info, x_face_infos, y_face_infos, z_face_infos, Y_AXIS)
+
+          # Grab edge materials
+          edge_ymin_materials = _grab_face_typed_materials(ymin_face_infos, MaterialAttributes::TYPE_EDGE)
+          edge_ymax_materials = _grab_face_typed_materials(ymax_face_infos, MaterialAttributes::TYPE_EDGE)
+          edge_xmin_materials = _grab_face_typed_materials(xmin_face_infos, MaterialAttributes::TYPE_EDGE)
+          edge_xmax_materials = _grab_face_typed_materials(xmax_face_infos, MaterialAttributes::TYPE_EDGE)
+
+          edge_ymin_material = edge_ymin_materials.empty? ? nil : edge_ymin_materials.first
+          edge_ymax_material = edge_ymax_materials.empty? ? nil : edge_ymax_materials.first
+          edge_xmin_material = edge_xmin_materials.empty? ? nil : edge_xmin_materials.first
+          edge_xmax_material = edge_xmax_materials.empty? ? nil : edge_xmax_materials.first
+          edge_materials = [ edge_ymin_material, edge_ymax_material, edge_xmin_material, edge_xmax_material ].compact.uniq
+
+          # Materials filter
+          if !@edge_material_names_filter.empty? && !(@edge_material_names_filter - edge_materials.map { |m| m.display_name }).empty?
+            cutlist.ignored_instance_count += 1
+            next
+          end
+
+          # Increment material usage
+          edge_materials.each { |edge_material|
+            material_usage = _get_material_usage(edge_material.name)
+            if material_usage
+              material_usage.use_count += 1
+            end
+          }
+
+          # Grab material attributes
+          edge_ymin_material_attributes = _get_material_attributes(edge_ymin_material)
+          edge_ymax_material_attributes = _get_material_attributes(edge_ymax_material)
+          edge_xmin_material_attributes = _get_material_attributes(edge_xmin_material)
+          edge_xmax_material_attributes = _get_material_attributes(edge_xmax_material)
+
+          # Compute Length and Width decrements
+          length_decrement = 0
+          length_decrement += edge_xmin_material_attributes.l_thickness if edge_xmin_material_attributes.edge_decremented
+          length_decrement += edge_xmax_material_attributes.l_thickness if edge_xmax_material_attributes.edge_decremented
+          width_decrement = 0
+          width_decrement += edge_ymin_material_attributes.l_thickness if edge_ymin_material_attributes.edge_decremented
+          width_decrement += edge_ymax_material_attributes.l_thickness if edge_ymax_material_attributes.edge_decremented
+          edge_decremented = edge_xmin_material_attributes.edge_decremented || edge_xmax_material_attributes.edge_decremented || edge_ymin_material_attributes.edge_decremented || edge_ymax_material_attributes.edge_decremented
+
+          # Populate EdgeDef
+          edges_def = {
+            :ymin_material => edge_ymin_material,
+            :ymax_material => edge_ymax_material,
+            :xmin_material => edge_xmin_material,
+            :xmax_material => edge_xmax_material,
+            :ymin_entity_ids => ymin_face_infos.collect { |face_info| face_info.face.entityID },
+            :ymax_entity_ids => ymax_face_infos.collect { |face_info| face_info.face.entityID },
+            :xmin_entity_ids => xmin_face_infos.collect { |face_info| face_info.face.entityID },
+            :xmax_entity_ids => xmax_face_infos.collect { |face_info| face_info.face.entityID },
+            :length_decrement => length_decrement.to_l,
+            :width_decrement => width_decrement.to_l,
+            :decremented => edge_decremented,
+          }
+
+          # -- Veneers --
+
+          # Grab min/max face infos
+          zmin_face_infos, zmax_face_infos = _grab_oriented_min_max_face_infos(instance_info, x_face_infos, y_face_infos, z_face_infos, Z_AXIS)
+
+          # Grab veneer materials
+          veneer_zmin_materials = _grab_face_typed_materials(zmin_face_infos, MaterialAttributes::TYPE_VENEER)
+          veneer_zmax_materials = _grab_face_typed_materials(zmax_face_infos, MaterialAttributes::TYPE_VENEER)
+
+          veneer_zmin_material = veneer_zmin_materials.empty? ? nil : veneer_zmin_materials.first
+          veneer_zmax_material = veneer_zmax_materials.empty? ? nil : veneer_zmax_materials.first
+          veneer_materials = [ veneer_zmin_material, veneer_zmax_material ].compact.uniq
+
+          # Materials filter
+          if !@veneer_material_names_filter.empty? && !(@veneer_material_names_filter - veneer_materials.map { |m| m.display_name }).empty?
+            cutlist.ignored_instance_count += 1
+            next
+          end
+
+          # Increment material usage
+          veneer_materials.each { |veneer_material|
+            material_usage = _get_material_usage(veneer_material.name)
+            if material_usage
+              material_usage.use_count += 1
+            end
+          }
+
+          # Grab material attributes
+          veneer_zmin_material_attributes = _get_material_attributes(veneer_zmin_material)
+          veneer_zmax_material_attributes = _get_material_attributes(veneer_zmax_material)
+
+          # Compute Thickness decrements
+          thickness_decrement = 0
+          thickness_decrement += veneer_zmin_material_attributes.l_thickness
+          thickness_decrement += veneer_zmax_material_attributes.l_thickness
+          veneer_decremented = thickness_decrement > 0
+
+          # Compute texture angles
+          veneer_zmin_texture_angle = zmin_face_infos.empty? ? 0 : _get_face_texture_angle(zmin_face_infos.first.face)
+          veneer_zmax_texture_angle = zmax_face_infos.empty? ? 0 : _get_face_texture_angle(zmax_face_infos.first.face)
+
+          # Populate VeneerDef
+          veneers_def = {
+            :zmin_material => veneer_zmin_material,
+            :zmax_material => veneer_zmax_material,
+            :zmin_entity_ids => zmin_face_infos.collect { |face_info| face_info.face.entityID },
+            :zmax_entity_ids => zmax_face_infos.collect { |face_info| face_info.face.entityID },
+            :zmin_texture_angle => veneer_zmin_texture_angle,
+            :zmax_texture_angle => veneer_zmax_texture_angle,
+            :thickness_decrement => thickness_decrement.to_l,
+            :decremented => veneer_decremented
+          }
+
+        end
+
         # Compute transformation, scale and sizes
 
         size = instance_info.size.clone
+        size.thickness = [size.thickness - veneers_def[:thickness_decrement], 0].max.to_l if veneers_def && veneers_def[:thickness_decrement]
         size.thickness = (size.thickness / definition_attributes.thickness_layer_count).to_l if definition_attributes.thickness_layer_count > 1
         length_increased = false
         width_increased = false
@@ -347,12 +504,11 @@ module Ladb::OpenCutList
             group_def.show_cutting_dimensions = true
           end
 
-          # Compute axes alignment, final area and edges
+          # Compute axes alignment, final area, layers, edges and veneers
           case group_def.material_type
 
             when MaterialAttributes::TYPE_SOLID_WOOD
 
-              x_face_infos, y_face_infos, z_face_infos, layers = _grab_main_faces_and_layers(definition)
               t_plane_count, t_final_area, t_area_ratio = _compute_oriented_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Z_AXIS)
               w_plane_count, w_final_area, w_area_ratio = _compute_oriented_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Y_AXIS)
 
@@ -361,7 +517,6 @@ module Ladb::OpenCutList
 
             when MaterialAttributes::TYPE_SHEET_GOOD
 
-              x_face_infos, y_face_infos, z_face_infos, layers = _grab_main_faces_and_layers(definition)
               t_plane_count, t_final_area, t_area_ratio = _compute_oriented_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Z_AXIS)
 
               part_def.final_area = t_final_area
@@ -370,76 +525,49 @@ module Ladb::OpenCutList
 
               # -- Edges --
 
-              # Grab min/max face infos
-              xmin_face_infos, xmax_face_infos = _grab_oriented_min_max_face_infos(instance_info, x_face_infos, y_face_infos, z_face_infos, X_AXIS, @flipped_detection && instance_info.flipped)
-              ymin_face_infos, ymax_face_infos = _grab_oriented_min_max_face_infos(instance_info, x_face_infos, y_face_infos, z_face_infos, Y_AXIS)
+              if edges_def
 
-              # Grab edge materials
-              edge_ymin_materials = _grab_face_edge_materials(ymin_face_infos)
-              edge_ymax_materials = _grab_face_edge_materials(ymax_face_infos)
-              edge_xmin_materials = _grab_face_edge_materials(xmin_face_infos)
-              edge_xmax_materials = _grab_face_edge_materials(xmax_face_infos)
+                # Populate edge GroupDefs (use the full instance thickness)
+                edge_ymin_group_def = _populate_edge_group_def(edges_def[:ymin_material], instance_info.size.thickness)
+                edge_ymax_group_def = _populate_edge_group_def(edges_def[:ymax_material], instance_info.size.thickness)
+                edge_xmin_group_def = _populate_edge_group_def(edges_def[:xmin_material], instance_info.size.thickness)
+                edge_xmax_group_def = _populate_edge_group_def(edges_def[:xmax_material], instance_info.size.thickness)
 
-              edge_ymin_material = edge_ymin_materials.empty? ? nil : edge_ymin_materials.first
-              edge_ymax_material = edge_ymax_materials.empty? ? nil : edge_ymax_materials.first
-              edge_xmin_material = edge_xmin_materials.empty? ? nil : edge_xmin_materials.first
-              edge_xmax_material = edge_xmax_materials.empty? ? nil : edge_xmax_materials.first
-              edge_materials = [ edge_ymin_material, edge_ymax_material, edge_xmin_material, edge_xmax_material ].compact.uniq
+                # Populate PartDef
+                part_def.set_edge_materials(edges_def[:ymin_material], edges_def[:ymax_material], edges_def[:xmin_material], edges_def[:xmax_material])
+                part_def.set_edge_entity_ids(edges_def[:ymin_entity_ids], edges_def[:ymax_entity_ids], edges_def[:xmin_entity_ids], edges_def[:xmax_entity_ids])
+                part_def.set_edge_group_defs(edge_ymin_group_def, edge_ymax_group_def, edge_xmin_group_def, edge_xmax_group_def)
+                part_def.edge_length_decrement = edges_def[:length_decrement]
+                part_def.edge_width_decrement = edges_def[:width_decrement]
+                part_def.edge_decremented = edges_def[:decremented]
 
-              # Materials filter
-              if !@edge_material_names_filter.empty? && !(@edge_material_names_filter - edge_materials.map { |m| m.display_name }).empty?
-                cutlist.ignored_instance_count += 1
-                next
+                group_def.show_cutting_dimensions ||= edges_def[:length_decrement] > 0 || edges_def[:width_decrement] > 0
+                group_def.edge_decremented ||= edges_def[:length_decrement] > 0 || edges_def[:width_decrement] > 0
+
               end
 
-              # Increment material usage
-              edge_materials.each { |edge_material|
-                material_usage = _get_material_usage(edge_material.name)
-                if material_usage
-                  material_usage.use_count += 1
-                end
-              }
+              # -- Veneers --
 
-              # Grab material attributes
-              edge_ymin_material_attributes = _get_material_attributes(edge_ymin_material)
-              edge_ymax_material_attributes = _get_material_attributes(edge_ymax_material)
-              edge_xmin_material_attributes = _get_material_attributes(edge_xmin_material)
-              edge_xmax_material_attributes = _get_material_attributes(edge_xmax_material)
+              if veneers_def
 
-              # Compute Length and Width decrements
-              length_decrement = 0
-              length_decrement += edge_xmin_material_attributes.l_thickness if edge_xmin_material_attributes.edge_decremented
-              length_decrement += edge_xmax_material_attributes.l_thickness if edge_xmax_material_attributes.edge_decremented
-              width_decrement = 0
-              width_decrement += edge_ymin_material_attributes.l_thickness if edge_ymin_material_attributes.edge_decremented
-              width_decrement += edge_ymax_material_attributes.l_thickness if edge_ymax_material_attributes.edge_decremented
-              edge_decremented = edge_xmin_material_attributes.edge_decremented || edge_xmax_material_attributes.edge_decremented || edge_ymin_material_attributes.edge_decremented || edge_ymax_material_attributes.edge_decremented
+                # Populate veneer GroupDefs
+                veneer_zmin_group_def = _populate_veneer_group_def(veneers_def[:zmin_material])
+                veneer_zmax_group_def = _populate_veneer_group_def(veneers_def[:zmax_material])
 
-              # Populate edge GroupDefs
-              edge_ymin_group_def = _populate_edge_group_def(edge_ymin_material, part_def)
-              edge_ymax_group_def = _populate_edge_group_def(edge_ymax_material, part_def)
-              edge_xmin_group_def = _populate_edge_group_def(edge_xmin_material, part_def)
-              edge_xmax_group_def = _populate_edge_group_def(edge_xmax_material, part_def)
+                # Populate PartDef
+                part_def.set_veneer_materials(veneers_def[:zmin_material], veneers_def[:zmax_material])
+                part_def.set_veneer_entity_ids(veneers_def[:zmin_entity_ids], veneers_def[:zmax_entity_ids])
+                part_def.set_veneer_texture_angles(veneers_def[:zmin_texture_angle], veneers_def[:zmax_texture_angle])
+                part_def.set_veneer_group_defs(veneer_zmin_group_def, veneer_zmax_group_def)
+                part_def.veneer_thickness_decrement = veneers_def[:thickness_decrement]
+                part_def.veneer_decremented = veneers_def[:veneer_decremented]
 
-              # Populate PartDef
-              part_def.set_edge_materials(edge_ymin_material, edge_ymax_material, edge_xmin_material, edge_xmax_material)
-              part_def.set_edge_entity_ids(
-                  ymin_face_infos.collect { |face_info| face_info.face.entityID },
-                  ymax_face_infos.collect { |face_info| face_info.face.entityID },
-                  xmin_face_infos.collect { |face_info| face_info.face.entityID },
-                  xmax_face_infos.collect { |face_info| face_info.face.entityID }
-              )
-              part_def.set_edge_group_defs(edge_ymin_group_def, edge_ymax_group_def, edge_xmin_group_def, edge_xmax_group_def)
-              part_def.edge_length_decrement = length_decrement.to_l
-              part_def.edge_width_decrement = width_decrement.to_l
-              part_def.edge_decremented = edge_decremented
+                group_def.veneer_decremented ||= veneers_def[:thickness_decrement] > 0
 
-              group_def.show_cutting_dimensions ||= length_decrement > 0 || width_decrement > 0
-              group_def.edge_decremented ||= length_decrement > 0 || width_decrement > 0
+              end
 
             when MaterialAttributes::TYPE_DIMENSIONAL
 
-              x_face_infos, y_face_infos, z_face_infos, layers = _grab_main_faces_and_layers(definition)
               t_plane_count, t_final_area, t_area_ratio = _compute_oriented_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Z_AXIS)
               w_plane_count, w_final_area, w_area_ratio = _compute_oriented_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Y_AXIS)
 
@@ -451,7 +579,8 @@ module Ladb::OpenCutList
 
           end
 
-          group_def.show_edges = part_def.edge_count > 0 || group_def.show_edges
+          group_def.show_edges ||= part_def.edge_count > 0
+          group_def.show_veneers ||= part_def.veneer_count > 0
           group_def.store_part_def(part_def)
 
           if number
@@ -502,20 +631,52 @@ module Ladb::OpenCutList
             if part_def.edge_count > 0
               PartDef::EDGES_Y.each { |edge|
                 unless (edge_group_def = part_def.edge_group_defs[edge]).nil? || (edge_material = part_def.edge_materials[edge]).nil?
-                  edge_cutting_length = part_def.size.length + _get_material_attributes(edge_material).l_length_increase
+                  edge_material_attributes = _get_material_attributes(edge_material)
+                  edge_length = part_def.size.length
+                  edge_cutting_length = edge_length + edge_material_attributes.l_length_increase
                   edge_group_def.total_cutting_length += edge_cutting_length
                   edge_group_def.total_cutting_area += edge_cutting_length * edge_group_def.std_width
                   edge_group_def.total_cutting_volume += edge_cutting_length * edge_group_def.std_thickness
-                  _populate_edge_part_def(part_def, edge, edge_group_def, edge_cutting_length.to_l, edge_group_def.std_width, edge_group_def.std_thickness)
+                  _populate_edge_part_def(part_def, edge, edge_group_def, edge_length, edge_cutting_length.to_l, edge_group_def.std_width, edge_group_def.std_thickness)
                 end
               }
               PartDef::EDGES_X.each { |edge|
                 unless (edge_group_def = part_def.edge_group_defs[edge]).nil? || (edge_material = part_def.edge_materials[edge]).nil?
-                  edge_cutting_length = part_def.size.width + _get_material_attributes(edge_material).l_length_increase
+                  edge_material_attributes = _get_material_attributes(edge_material)
+                  edge_length = part_def.size.width
+                  edge_cutting_length = edge_length + edge_material_attributes.l_length_increase
                   edge_group_def.total_cutting_length += edge_cutting_length
                   edge_group_def.total_cutting_area += edge_cutting_length * edge_group_def.std_width
                   edge_group_def.total_cutting_volume += edge_cutting_length * edge_group_def.std_thickness
-                  _populate_edge_part_def(part_def, edge, edge_group_def, edge_cutting_length.to_l, edge_group_def.std_width, edge_group_def.std_thickness)
+                  _populate_edge_part_def(part_def, edge, edge_group_def, edge_length, edge_cutting_length.to_l, edge_group_def.std_width, edge_group_def.std_thickness)
+                end
+              }
+            end
+            if part_def.veneer_count > 0
+              PartDef::VENEERS_Z.each { |veneer|
+                unless (veneer_group_def = part_def.veneer_group_defs[veneer]).nil? || (veneer_material = part_def.veneer_materials[veneer]).nil?
+                  veneer_material_attributes = _get_material_attributes(veneer_material)
+                  if part_def.veneer_texture_angles[veneer] != 0
+
+                    t = Geom::Transformation.new(Geom::Point3d.new, Z_AXIS, part_def.veneer_texture_angles[veneer])
+                    veneer_bounds = (Geom::BoundingBox.new).add([
+                                                                Geom::Point3d.new(0                           , 0).transform(t),
+                                                                Geom::Point3d.new(part_def.cutting_size.length, 0).transform(t),
+                                                                Geom::Point3d.new(part_def.cutting_size.length, part_def.cutting_size.width).transform(t),
+                                                                Geom::Point3d.new(0                           , part_def.cutting_size.width).transform(t),
+                                                              ])
+
+                    veneer_length = veneer_bounds.width
+                    veneer_width = veneer_bounds.height
+                  else
+                    veneer_length = part_def.cutting_size.length
+                    veneer_width = part_def.cutting_size.width
+                  end
+                  veneer_cutting_length = veneer_length + veneer_material_attributes.l_length_increase
+                  veneer_cutting_width = veneer_width + veneer_material_attributes.l_width_increase
+                  veneer_group_def.total_cutting_area += veneer_cutting_length * veneer_cutting_width
+                  veneer_group_def.total_cutting_volume += veneer_cutting_length * veneer_group_def.std_thickness
+                  _populate_veneer_part_def(part_def, veneer, veneer_group_def, veneer_length, veneer_width, veneer_cutting_length.to_l, veneer_cutting_width.to_l, veneer_group_def.std_thickness)
                 end
               }
             end
@@ -554,6 +715,8 @@ module Ladb::OpenCutList
             cutlist.edge_material_count += material_usage.use_count
           elsif material_usage.type == MaterialAttributes::TYPE_HARDWARE
             cutlist.hardware_material_count += material_usage.use_count
+          elsif material_usage.type == MaterialAttributes::TYPE_VENEER
+            cutlist.veneer_material_count += material_usage.use_count
           end
         }
         if cutlist.instance_count - cutlist.ignored_instance_count > 0 && cutlist.solid_wood_material_count == 0 && cutlist.sheet_good_material_count == 0 && cutlist.dimensional_material_count == 0 && cutlist.hardware_material_count == 0
@@ -586,7 +749,7 @@ module Ladb::OpenCutList
         # Folding
         if @part_folding
           part_defs = []
-          group_def.part_defs.values.sort_by { |v| [ v.size.thickness, v.size.length, v.size.width, v.tags, v.final_area, v.cumulable ] }.each do |part_def|
+          group_def.part_defs.values.sort_by { |v| [ v.size.thickness, v.size.length, v.size.width, v.tags, v.final_area.nil? ? 0 : v.final_area, v.cumulable ] }.each do |part_def|
             if !(folder_part_def = part_defs.last).nil? &&
                 ((folder_part_def.definition_id == part_def.definition_id && group_def.material_type == MaterialAttributes::TYPE_UNKNOWN) || group_def.material_type > MaterialAttributes::TYPE_UNKNOWN && group_def.material_type != MaterialAttributes::TYPE_HARDWARE) && # Part with TYPE_UNKNOWN materiel are folded only if they have the same definition | Part with TYPE_HARDWARE doesn't fold
                 folder_part_def.size == part_def.size &&
@@ -595,6 +758,7 @@ module Ladb::OpenCutList
                 (@hide_tags || folder_part_def.tags == part_def.tags) &&
                 (@hide_final_areas || ((folder_part_def.final_area.nil? ? 0 : folder_part_def.final_area) - (part_def.final_area.nil? ? 0 : part_def.final_area)).abs < 0.001) &&      # final_area workaround for rounding error
                 folder_part_def.edge_material_names == part_def.edge_material_names &&
+                folder_part_def.veneer_material_names == part_def.veneer_material_names &&
                 folder_part_def.cumulable == part_def.cumulable &&
                 folder_part_def.ignore_grain_direction == part_def.ignore_grain_direction
               if folder_part_def.children.empty?
@@ -619,6 +783,11 @@ module Ladb::OpenCutList
                 folder_part_def.edge_std_dimensions.merge!(first_child_part_def.edge_std_dimensions)
                 folder_part_def.edge_length_decrement = first_child_part_def.edge_length_decrement
                 folder_part_def.edge_width_decrement = first_child_part_def.edge_width_decrement
+                folder_part_def.veneer_count = first_child_part_def.veneer_count
+                folder_part_def.veneer_pattern = first_child_part_def.veneer_pattern
+                folder_part_def.veneer_material_names.merge!(first_child_part_def.veneer_material_names)
+                folder_part_def.veneer_std_dimensions.merge!(first_child_part_def.veneer_std_dimensions)
+                folder_part_def.veneer_thickness_decrement = first_child_part_def.veneer_thickness_decrement
                 folder_part_def.merge_entity_names(first_child_part_def.entity_names)
                 folder_part_def.final_area = first_child_part_def.final_area
 
@@ -926,16 +1095,50 @@ module Ladb::OpenCutList
       [ min_face_infos, max_face_infos ]
     end
 
-    def _grab_face_edge_materials(face_infos)
+    def _grab_face_typed_materials(face_infos, type)
 
       materials = Set[]
       face_infos.each { |face_info|
-        if face_info.face.material && _get_material_attributes(face_info.face.material).type == MaterialAttributes::TYPE_EDGE
+        if face_info.face.material && _get_material_attributes(face_info.face.material).type == type
           materials.add(face_info.face.material)
         end
       }
 
       materials
+    end
+
+    def _get_face_texture_angle(face, front = true)
+
+      # Returns the angle in radians beteween (0,0)-(0,1) and its UV representation
+
+      return 0 unless face.is_a?(Sketchup::Face)
+      return 0 if face.nil? || face.material.nil? || face.material.texture.nil?
+
+      tw = face.material.texture.width
+      th = face.material.texture.height
+
+      uv_helper = face.get_UVHelper(front, !front)
+
+      p0 = Geom::Point3d.new(0, 0)
+      p1 = Geom::Point3d.new(1, 0)
+
+      uv0 = uv_helper.get_front_UVQ(p0)
+      uv1 = uv_helper.get_front_UVQ(p1)
+
+      uv0.x *= tw
+      uv0.y *= th
+      uv1.x *= tw
+      uv1.y *= th
+
+      v1 = Geom::Vector3d.new((p1 - p0).to_a)
+      v2 = Geom::Vector3d.new((uv1 - uv0).to_a)
+
+      top_face = face.normal.samedirection?(X_AXIS) || face.normal.samedirection?(Y_AXIS) || face.normal.samedirection?(Z_AXIS)
+      v1.x *= -1 unless top_face
+
+      angle = v1.angle_between(v2)
+      angle += Math::PI if v2.y > 0 && top_face
+      angle % (2 * Math::PI)
     end
 
     # -- Std utils --
@@ -994,16 +1197,16 @@ module Ladb::OpenCutList
         return nil, MATERIAL_ORIGIN_UNKNOW
       end
       material = entity.material
-      material = nil if _get_material_attributes(material).type == MaterialAttributes::TYPE_EDGE
+      material = nil if _get_material_attributes(material).type == MaterialAttributes::TYPE_EDGE || _get_material_attributes(material).type == MaterialAttributes::TYPE_VENEER
       material_origin = MATERIAL_ORIGIN_OWNED
       unless material || !smart
         material = _get_dominant_child_material(entity)
-        material = nil if _get_material_attributes(material).type == MaterialAttributes::TYPE_EDGE
+        material = nil if _get_material_attributes(material).type == MaterialAttributes::TYPE_EDGE || _get_material_attributes(material).type == MaterialAttributes::TYPE_VENEER
         if material
           material_origin = MATERIAL_ORIGIN_CHILD
         else
           material = _get_inherited_material(path)
-          material = nil if _get_material_attributes(material).type == MaterialAttributes::TYPE_EDGE
+          material = nil if _get_material_attributes(material).type == MaterialAttributes::TYPE_EDGE || _get_material_attributes(material).type == MaterialAttributes::TYPE_VENEER
           if material
             material_origin = MATERIAL_ORIGIN_INHERITED
           end
@@ -1076,14 +1279,14 @@ module Ladb::OpenCutList
 
     # -- Edge Utils --
 
-    def _populate_edge_group_def(material, part_def)
+    def _populate_edge_group_def(material, thickness)
       return nil if material.nil?
 
       material_attributes = _get_material_attributes(material)
 
       std_width_info = _find_std_value(
-          part_def.size.thickness * part_def.thickness_layer_count,
-          _get_material_attributes(material).l_std_widths,
+          thickness,
+          material_attributes.l_std_widths,
           true
       )
       std_info = {
@@ -1113,6 +1316,7 @@ module Ladb::OpenCutList
         group_def.std_dimension_rounded = std_info[:dimension_rounded]
         group_def.std_width = std_info[:width]
         group_def.std_thickness = std_info[:thickness]
+        group_def.show_cutting_dimensions = material_attributes.l_length_increase > 0
 
         _store_group_def(group_def)
 
@@ -1121,16 +1325,16 @@ module Ladb::OpenCutList
       group_def
     end
 
-    def _populate_edge_part_def(part_def, edge, edge_group_def, cutting_length, cutting_width, cutting_thickness)
+    def _populate_edge_part_def(part_def, edge, edge_group_def, length, cutting_length, width, thickness)
 
-      edge_part_id = PartDef.generate_edge_part_id(part_def.id, edge, cutting_length, cutting_width, cutting_thickness)
+      edge_part_id = PartDef.generate_edge_part_id(part_def.id, edge, length, width, thickness)
       edge_part_def = edge_group_def.get_part_def(edge_part_id)
       unless edge_part_def
 
         edge_part_def = PartDef.new(edge_part_id)
         edge_part_def.name = "#{part_def.name}#{part_def.number ? " ( #{part_def.number} ) " : ''} - #{Plugin.instance.get_i18n_string("tab.cutlist.tooltip.edge_#{edge}")}"
-        edge_part_def.cutting_size = Size3d.new(cutting_length, cutting_width, cutting_thickness)
-        edge_part_def.size = Size3d.new(cutting_length, cutting_width, cutting_thickness)
+        edge_part_def.cutting_size = Size3d.new(cutting_length, width, thickness)
+        edge_part_def.size = Size3d.new(length, width, thickness)
         edge_part_def.material_name = edge_group_def.material_name
 
         edge_group_def.store_part_def(edge_part_def)
@@ -1142,6 +1346,79 @@ module Ladb::OpenCutList
 
       edge_part_def
     end
+
+    # -- Veneer Utils --
+
+    def _populate_veneer_group_def(material)
+      return nil if material.nil?
+
+      material_attributes = _get_material_attributes(material)
+
+      std_thickness_info = _find_std_value(
+          material_attributes.l_thickness,
+          [ material_attributes.l_thickness ],
+          false
+      )
+      std_info = {
+          :available => std_thickness_info[:available],
+          :dimension_stipped_name => 'thickness',
+          :dimension => std_thickness_info[:value].to_s.gsub(/~ /, ''), # Remove ~ if it exists
+          :dimension_real => DimensionUtils.instance.to_ocl_precision_s(std_thickness_info[:value]),
+          :dimension_rounded => DimensionUtils.instance.rounded_by_model_precision?(std_thickness_info[:value]),
+          :width => 0,
+          :thickness => std_thickness_info[:value],
+      }
+
+      group_id = GroupDef.generate_group_id(material, material_attributes, std_info)
+      group_def = _get_group_def(group_id)
+      unless group_def
+
+        group_def = GroupDef.new(group_id)
+        group_def.material_id = material ? material.entityID : ''
+        group_def.material_name = material.name
+        group_def.material_display_name = material.display_name
+        group_def.material_type = MaterialAttributes::TYPE_VENEER
+        group_def.material_color = material.color if material
+        group_def.material_grained = material_attributes.grained
+        group_def.std_available = std_info[:available]
+        group_def.std_dimension_stipped_name = std_info[:dimension_stipped_name]
+        group_def.std_dimension = std_info[:dimension]
+        group_def.std_dimension_real = std_info[:dimension_real]
+        group_def.std_dimension_rounded = std_info[:dimension_rounded]
+        group_def.std_width = std_info[:width]
+        group_def.std_thickness = std_info[:thickness]
+        group_def.show_cutting_dimensions = material_attributes.l_length_increase > 0 || material_attributes.l_width_increase > 0
+
+        _store_group_def(group_def)
+
+      end
+
+      group_def
+    end
+
+    def _populate_veneer_part_def(part_def, veneer, veneer_group_def, length, width, cutting_length, cutting_width, thickness)
+
+      veneer_part_id = PartDef.generate_veneer_part_id(part_def.id, veneer, length, width, thickness)
+      veneer_part_def = veneer_group_def.get_part_def(veneer_part_id)
+      unless veneer_part_def
+
+        veneer_part_def = PartDef.new(veneer_part_id)
+        veneer_part_def.name = "#{part_def.name}#{part_def.number ? " ( #{part_def.number} ) " : ''} - #{Plugin.instance.get_i18n_string("tab.cutlist.tooltip.veneer_#{veneer}")}"
+        veneer_part_def.cutting_size = Size3d.new(cutting_length, cutting_width, thickness)
+        veneer_part_def.size = Size3d.new(length, width, thickness)
+        veneer_part_def.material_name = veneer_group_def.material_name
+
+        veneer_group_def.store_part_def(veneer_part_def)
+
+      end
+
+      veneer_part_def.count += 1
+      veneer_group_def.part_count += 1
+
+      veneer_part_def
+    end
+
+    # -- Utils --
 
     def _comparable_number(number, pad = 4)
       return number.rjust(pad) if number.is_a?(String)  # Add space padding to given number if it is a string ('Z' to '   Z') to be able to compare with an other alphabetical number

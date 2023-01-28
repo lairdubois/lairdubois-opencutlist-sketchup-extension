@@ -5,7 +5,9 @@ module Ladb::OpenCutList
   class MaterialsSmartPaintWorker
 
     def initialize(settings)
-      @name = settings['name']
+
+      @name = settings.fetch('name')
+
     end
 
     # -----

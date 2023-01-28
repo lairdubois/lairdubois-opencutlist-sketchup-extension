@@ -21,7 +21,7 @@
 
     LadbEditorLabelLayout.DEFAULTS = {
         group: null,
-        part: null,
+        partInfo: null,
         labelWidth: 100,
         labelHeight: 100,
     };
@@ -300,10 +300,7 @@
 
         var formula = Twig.twig({ref: 'tabs/cutlist/_label-element.twig'}).render($.extend({
             elementDef: elementDef,
-            part_info: {
-                position_in_batch: 1,
-                part: this.options.part
-            },
+            partInfo: this.options.partInfo,
             noEmptyValue: true
         }, this.options));
 

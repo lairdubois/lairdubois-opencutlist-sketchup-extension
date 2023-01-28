@@ -4,12 +4,15 @@ module Ladb::OpenCutList
 
   class AbstractReportItemDef
 
-    attr_accessor :total_mass, :total_cost
+    attr_accessor :total_mass, :total_used_mass, :total_cost, :total_used_cost
 
     def initialize
 
       @total_mass = 0
+      @total_used_mass = 0
+
       @total_cost = 0
+      @total_used_cost = 0
 
     end
 
@@ -40,7 +43,7 @@ module Ladb::OpenCutList
 
   class SolidWoodReportEntryDef < AbstractReportEntryDef
 
-    attr_accessor :volumic_mass, :std_price, :total_volume
+    attr_accessor :volumic_mass, :std_price, :total_volume, :total_used_volume
 
     def initialize(cutlist_group)
       super(cutlist_group)
@@ -49,6 +52,7 @@ module Ladb::OpenCutList
       @std_price = nil
 
       @total_volume = 0
+      @total_used_volume = 0
 
     end
 
@@ -64,7 +68,7 @@ module Ladb::OpenCutList
 
   class SheetGoodReportEntryDef < AbstractReportEntryDef
 
-    attr_accessor :volumic_mass, :total_count, :total_area
+    attr_accessor :volumic_mass, :total_count, :total_area, :total_used_area
     attr_reader :sheet_defs
 
     def initialize(cutlist_group)
@@ -74,8 +78,9 @@ module Ladb::OpenCutList
 
       @total_count = 0
       @total_area = 0
+      @total_used_area = 0
 
-      @sheet_defs = []
+      @sheet_defs = {}
 
     end
 
@@ -89,15 +94,21 @@ module Ladb::OpenCutList
 
   class SheetGoodReportEntrySheetDef < AbstractReportItemDef
 
-    attr_accessor :std_price
-    attr_reader :cuttingdiagram2d_summary_sheet
+    attr_accessor :std_price, :count, :total_area, :total_used_area
+    attr_reader :type, :length, :width
 
-    def initialize(cuttingdiagram2d_summary_sheet)
+    def initialize(cuttingdiagram2d_sheet)
       super()
 
-      @cuttingdiagram2d_summary_sheet = cuttingdiagram2d_summary_sheet
-
       @std_price = nil
+
+      @type = cuttingdiagram2d_sheet.def.type
+      @length = cuttingdiagram2d_sheet.def.length
+      @width = cuttingdiagram2d_sheet.def.width
+
+      @count = 0
+      @total_area = 0
+      @total_used_area = 0
 
     end
 
@@ -113,7 +124,7 @@ module Ladb::OpenCutList
 
   class DimensionalReportEntryDef < AbstractReportEntryDef
 
-    attr_accessor :volumic_mass, :total_count, :total_length
+    attr_accessor :volumic_mass, :total_count, :total_length, :total_used_length
     attr_reader :bar_defs
 
     def initialize(cutlist_group)
@@ -123,8 +134,9 @@ module Ladb::OpenCutList
 
       @total_count = 0
       @total_length = 0
+      @total_used_length = 0
 
-      @bar_defs = []
+      @bar_defs = {}
 
     end
 
@@ -138,15 +150,20 @@ module Ladb::OpenCutList
 
   class DimensionalReportEntryBarDef < AbstractReportItemDef
 
-    attr_accessor :std_price
-    attr_reader :cuttingdiagram1d_summary_bar
+    attr_accessor :count, :std_price, :total_length, :total_used_length
+    attr_reader :type, :length
 
-    def initialize(cuttingdiagram1d_summary_bar)
+    def initialize(cuttingdiagram1d_bar)
       super()
 
-      @cuttingdiagram1d_summary_bar = cuttingdiagram1d_summary_bar
-
       @std_price = nil
+
+      @type = cuttingdiagram1d_bar.def.type
+      @length = cuttingdiagram1d_bar.def.length
+
+      @count = 0
+      @total_length = 0
+      @total_used_length = 0
 
     end
 
@@ -162,7 +179,7 @@ module Ladb::OpenCutList
 
   class EdgeReportEntryDef < AbstractReportEntryDef
 
-    attr_accessor :volumic_mass, :total_count, :total_length
+    attr_accessor :volumic_mass, :total_count, :total_length, :total_used_length
     attr_reader :bar_defs
 
     def initialize(cutlist_group)
@@ -172,8 +189,9 @@ module Ladb::OpenCutList
 
       @total_count = 0
       @total_length = 0
+      @total_used_length = 0
 
-      @bar_defs = []
+      @bar_defs = {}
 
     end
 
@@ -187,15 +205,20 @@ module Ladb::OpenCutList
 
   class EdgeReportEntryBarDef < AbstractReportItemDef
 
-    attr_accessor :std_price
-    attr_reader :cuttingdiagram1d_summary_bar
+    attr_accessor :count, :std_price, :total_length, :total_used_length
+    attr_reader :type, :length
 
-    def initialize(cuttingdiagram1d_summary_bar)
+    def initialize(cuttingdiagram1d_bar)
       super()
 
-      @cuttingdiagram1d_summary_bar = cuttingdiagram1d_summary_bar
-
       @std_price = nil
+
+      @type = cuttingdiagram1d_bar.def.type
+      @length = cuttingdiagram1d_bar.def.length
+
+      @count = 0
+      @total_length = 0
+      @total_used_length = 0
 
     end
 
@@ -211,13 +234,16 @@ module Ladb::OpenCutList
 
   class HardwareReportEntryDef < AbstractReportEntryDef
 
-    attr_accessor :total_count
+    attr_accessor :total_count, :total_instance_count, :total_used_instance_count
     attr_reader :part_defs
 
     def initialize(cutlist_group)
       super(cutlist_group)
 
       @total_count = 0
+
+      @total_instance_count = 0
+      @total_used_instance_count = 0
 
       @part_defs = []
 
@@ -233,7 +259,7 @@ module Ladb::OpenCutList
 
   class HardwareReportEntryPartDef < AbstractReportItemDef
 
-    attr_accessor :mass, :price
+    attr_accessor :mass, :price, :total_instance_count, :total_used_instance_count
     attr_reader :cutlist_part
 
     def initialize(cutlist_part)
@@ -244,12 +270,71 @@ module Ladb::OpenCutList
       @mass = nil
       @price = nil
 
+      @total_instance_count = 0
+      @total_used_instance_count = 0
+
     end
 
     # ---
 
     def create_part
       HardwareReportEntryPart.new(self)
+    end
+
+  end
+
+  # -----
+
+  class VeneerReportEntryDef < AbstractReportEntryDef
+
+    attr_accessor :volumic_mass, :total_count, :total_area, :total_used_area
+    attr_reader :sheet_defs
+
+    def initialize(cutlist_group)
+      super(cutlist_group)
+
+      @volumic_mass = nil
+
+      @total_count = 0
+      @total_area = 0
+      @total_used_area = 0
+
+      @sheet_defs = {}
+
+    end
+
+    # ---
+
+    def create_entry
+      VeneerReportEntry.new(self)
+    end
+
+  end
+
+  class VeneerReportEntrySheetDef < AbstractReportItemDef
+
+    attr_accessor :std_price, :count, :total_area, :total_used_area
+    attr_reader :type, :length, :width
+
+    def initialize(cuttingdiagram2d_sheet)
+      super()
+
+      @std_price = nil
+
+      @type = cuttingdiagram2d_sheet.def.type
+      @length = cuttingdiagram2d_sheet.def.length
+      @width = cuttingdiagram2d_sheet.def.width
+
+      @count = 0
+      @total_area = 0
+      @total_used_area = 0
+
+    end
+
+    # ---
+
+    def create_sheet
+      VeneerReportEntrySheet.new(self)
     end
 
   end

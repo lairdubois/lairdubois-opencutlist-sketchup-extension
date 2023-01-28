@@ -337,4 +337,30 @@ module Ladb::OpenCutList
 
   end
 
+  # -----
+
+  class VeneerWrapper < Wrapper
+
+    attr_reader :material_name, :std_thickness
+
+    def initialize(material_name, std_thickness)
+      @material_name = StringWrapper.new(material_name)
+      @std_thickness = LengthWrapper.new(std_thickness)
+    end
+
+    def empty?
+      @material_name.empty?
+    end
+
+    def to_s
+      return '' if @material_name.empty?
+      "#{@material_name.to_s} (#{@std_thickness.to_s})"
+    end
+
+    def export
+      self.to_s
+    end
+
+  end
+
 end

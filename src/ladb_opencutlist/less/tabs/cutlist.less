@@ -38,6 +38,10 @@
     border-left: 3px solid @ladb-material-type-5;
   }
 
+  &.ladb-material-type-6 {
+    border-left: 3px solid @ladb-material-type-6;
+  }
+
   &.table-danger {
 
     thead tr.table-heading {
@@ -63,35 +67,44 @@
 
   }
 
-  thead tr td {
-    border-bottom: 0;
+  thead tr {
+
+    &.table-heading {
+      background-color: #eee;
+
+      .ladb-material-type-icon {
+        margin: 2px 8px 2px 0;
+      }
+
+      .ladb-heading {
+        line-height: 30px;
+        font-size: 16px;
+      }
+
+      .ladb-heading-count {
+        line-height: 30px;
+        font-size: 16px;
+        margin-right: 10px;
+        padding: 0 7px 0 7px;
+        border-radius: 5px;
+        background: #555;
+        color: #fff;
+      }
+
+    }
+
+    td {
+      border-bottom: 0;
+    }
+
   }
 
-  thead tr.table-heading {
-    background-color: #eee;
+  tr.table-column-heading {
 
-    .ladb-material-type-icon {
-      margin: 2px 8px 2px 0;
+    td {
+      text-align: center;
+      vertical-align: middle;
     }
-
-    .ladb-heading {
-      line-height: 30px;
-      font-size: 16px;
-    }
-
-    .ladb-heading-count {
-      line-height: 30px;
-      font-size: 16px;
-      margin-right: 10px;
-      padding: 0 7px 0 7px;
-      border-radius: 5px;
-      background: #555;
-      color: #fff;
-    }
-
-  }
-
-  thead tr.table-column-heading {
 
     .ladb-minitools a {
       font-size: 16px;
@@ -166,6 +179,12 @@
       white-space: nowrap;
       text-align: center;
 
+      &.ladb-disabled {
+        background-image: url(../img/bg-hatched.svg);
+        background-repeat: repeat;
+        background-size: 10px;
+      }
+
       &.ladb-cutlist-value-highlighted {
         color: red;
       }
@@ -204,6 +223,33 @@
       }
 
       .ladb-cutlist-edge-std-dimension {
+        display: block;
+        font-size: 55%;
+        text-align: center;
+      }
+
+    }
+
+    td.ladb-cutlist-veneer {
+
+      &.ladb-active {
+        font-weight: bold;
+        background-color: #fafafa;
+      }
+
+      &.ladb-disabled {
+        background-image: url(../img/bg-hatched.svg);
+        background-repeat: repeat;
+        background-size: 10px;
+      }
+
+      .ladb-cutlist-veneer-material-name {
+        display: block;
+        font-size: 70%;
+        text-align: center;
+      }
+
+      .ladb-cutlist-veneer-std-dimension {
         display: block;
         font-size: 55%;
         text-align: center;
@@ -308,9 +354,10 @@
     }
 
     .ladb-handle {
+      display: inline-block;
       cursor: ns-resize;
       color: lighten(#000, 50%);
-      padding: 10px;
+      padding: 0 10px;
     }
 
     .ladb-info {
@@ -321,12 +368,6 @@
     }
 
     .ladb-minitools > a {
-      color: #000;
-      cursor: pointer;
-
-      &:focus {
-        color: inherit;
-      }
 
       &.ladb-active {
         background-color: #333;
@@ -339,6 +380,11 @@
 
       }
 
+    }
+
+    &.ladb-disabled {
+      opacity: 0.5;
+      text-decoration: line-through;
     }
 
     &.ladb-inactive {
@@ -619,6 +665,10 @@ body.no-ie, body.ie-gt11 {
 
 #ladb_cutlist_modal_part svg {
 
+  text {
+    pointer-events: none;
+  }
+
   .part {
 
     .part-outer {
@@ -634,6 +684,7 @@ body.no-ie, body.ie-gt11 {
   .arrow {
     fill: #fff;
     stroke: #eee;
+    stroke-width: 2px;
   }
 
   .axis {
@@ -682,6 +733,36 @@ body.no-ie, body.ie-gt11 {
     }
 
     .edge-outer, .edge-inner {
+      fill: rgba(0, 0, 0, 0.01);
+    }
+
+  }
+
+  .veneer {
+    cursor: pointer;
+
+    &:hover {
+      .veneer-inner {
+        fill: @ladb-brand-primary !important;
+        fill-opacity: 0.2;
+      }
+    }
+
+    &.ladb-active {
+      .veneer-inner {
+        fill: @ladb-material-type-6;
+        fill-opacity: 0.2;
+      }
+    }
+
+    &.ladb-disabled {
+      .veneer-inner {
+        fill: #efefef !important;
+        fill-opacity: 0.8;
+      }
+    }
+
+    .veneer-inner {
       fill: rgba(0, 0, 0, 0.01);
     }
 
@@ -770,6 +851,32 @@ body.no-ie, body.ie-gt11 {
   margin-top: 5px;
   border-top: 1px solid #fff;
   padding-top: 5px;
+
+  .tt-section-flex {
+    display: flex;
+  }
+
+  .tt-section-flex-grow-1 {
+    flex-grow: 1;
+  }
+
+  .tt-section-flex-grow-0 {
+    flex-grow: 0;
+  }
+
+  .tt-section-flex-grow-1, .tt-section-flex-grow-0 {
+    margin: 0 5px;
+
+    &:first-child {
+      margin-left: 0;
+    }
+
+    &:last-child {
+      margin-right: 0;
+    }
+
+  }
+
 }
 
 // Export
@@ -802,6 +909,32 @@ body.no-ie, body.ie-gt11 {
     &.ladb-invalid-value {
       color: @ladb-brand-danger;
       background-color: lighten(#ff0000, 49%);
+    }
+
+  }
+
+}
+
+// Report
+
+.ladb-cutlist-report-summary-widget {
+  padding: 15px 30px;
+  font-size: 150%;
+
+  & > table {
+
+    & > tbody tr:last-child td {
+      padding-bottom: 5px;
+    }
+
+    & > tfoot {
+      border-top: 1px solid #ddd;
+      font-weight: bold;
+
+      tr:first-child td {
+        padding-top: 5px;
+      }
+
     }
 
   }
@@ -920,6 +1053,12 @@ body.no-ie, body.ie-gt11 {
       box-shadow: none;
     }
 
+  }
+
+  .ladb-cutlist-report-summary-widget {
+    & > table > tfoot {
+      border-top: 1px solid #000;
+    }
   }
 
 }

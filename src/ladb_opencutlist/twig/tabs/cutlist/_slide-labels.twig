@@ -52,7 +52,7 @@
                 <tr>
                     <td class="text-center">
 
-                        {% set partCount = page.part_infos|length %}
+                        {% set partCount = page.partInfos|length %}
 
                         <svg viewBox="0 0 {{ page_width }} {{ page_height }}" {% if compatible_with('svg.height-auto') %}width="80%"{% else %}width="{{ page_width * 72 }}" height="{{ page_height * 72 }}"{% endif %}>
 
@@ -64,8 +64,8 @@
                                         {% set labelX = col * (labelWidth + spacing_v) %}
                                         {% set partIndex = row * col_count + col %}
                                         {% if partIndex < partCount %}
-                                            {% set part_info = page.part_infos[partIndex] %}
-                                            {% if part_info.part %}
+                                            {% set partInfo = page.partInfos[partIndex] %}
+                                            {% if partInfo.part %}
                                                 <g transform="translate({{ labelX + labelWidth / 2 }} {{ labelY + labelHeight / 2 }})">
                                                     {% for elementDef in layout %}
                                                         <g transform="translate({{ elementDef.x * labelWidth }} {{ elementDef.y * labelHeight }}){% if elementDef.rotation %} rotate({{ elementDef.rotation }}){% endif %}">

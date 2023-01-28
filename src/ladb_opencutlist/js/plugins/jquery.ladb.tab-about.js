@@ -6,11 +6,27 @@
 
     var LadbTabAbout = function (element, options, opencutlist) {
         LadbAbstractTab.call(this, element, options, opencutlist);
+
+        this.$linkChangelog = $('#ladb_link_changelog', this.$element);
+
     };
     LadbTabAbout.prototype = new LadbAbstractTab;
 
     LadbTabAbout.DEFAULTS = {};
 
+    // Init ///
+
+    LadbTabAbout.prototype.bind = function () {
+        LadbAbstractTab.prototype.bind.call(this);
+
+        var that = this;
+
+        // Bind buttons
+        this.$linkChangelog.on('click', function () {
+            rubyCallCommand('core_open_url', { url: that.dialog.getChangelogUrl() });
+        });
+
+    };
 
     // PLUGIN DEFINITION
     // =======================

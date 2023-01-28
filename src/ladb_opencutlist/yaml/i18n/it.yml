@@ -25,6 +25,7 @@ default:
   caution: Attenzione
   remove: Rimuovi
   create: Crea
+  duplicate: Duplicare
   ignore: Ignora
   download: Scarica
   upgrade: Aggiorna
@@ -47,6 +48,7 @@ default:
   unit_5: Iarda
   unit_mass_0: Chilogrammo
   unit_mass_1: Libbra
+  unit_angle_0: Gradi
   instance_single: unità
   instance_plural: unità
   part_single: pezzo
@@ -65,6 +67,7 @@ core:
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
+      edit_part_veneers_properties: $t(tab.cutlist.edit_part_veneers_properties)
       smart_paint: $t(core.toolbar.command.smart_paint)
   toolbar:
     name: OpenCutList
@@ -170,12 +173,13 @@ tab:
     edit_part_axes_properties: Modifica le proprietà (assi) della parte
     edit_part_size_increase_properties: Modifica le proprietà (sovramateriale) della parte
     edit_part_edges_properties: Modifica le proprietà (finitura bordi) della parte
+    edit_part_veneers_properties: Modifica delle proprietà (impiallacciature) della parte
     tooltip:
       show_hide_block: Mostra / Nascondi
       scroll_to_block: Scorri fino al gruppo
-      not_available_std_width: "La larghezza *{{ std_dimension }}* del materiale '{{ material_name }}' non è stata definita"
-      not_available_std_thickness: "Lo spessore *{{ std_dimension }}* del materiale '{{ material_name }}' non è stato definito"
-      not_available_std_section: "La sezione trasversale *{{ std_dimension }}* del materiale '{{ material_name }}' non è stata definita"
+      not_available_std_width: "La larghezza *{{ std_dimension_real }}* del materiale '{{ material_name }}' non è stata definita"
+      not_available_std_thickness: "Lo spessore *{{ std_dimension_real }}* del materiale '{{ material_name }}' non è stato definito"
+      not_available_std_section: "La sezione trasversale *{{ std_dimension_real }}* del materiale '{{ material_name }}' non è stata definita"
       add_std_width_to_material: |
         Aggiungi la larghezza *{{ std_dimension }}*
         al materiale '{{ material_name }}'
@@ -223,6 +227,8 @@ tab:
       remove_label_filter: "Rimuovi filtro su '{{ label }}'"
       add_edge_material_name_filter: "Filtro su '{{ material_name }}'"
       remove_edge_material_name_filter: "Escludi filtro su '{{ material_name }}'"
+      add_veneer_material_name_filter: "Filtro su '{{ material_name }}'"
+      remove_veneer_material_name_filter: "Escludi filtro su '{{ material_name }}'"
       not_aligned_on_axes: "Attenzione, questa parte puo' non orientarsi correttamente rispetto ai suoi assi"
       instance_count_by_part: "Questa parte è contata in lotti di **{{ count }}** unità."
       unused_instance_count: "Attenzione, l'unità **{{ count }}** dell'ultimo lotto non sarà usata."
@@ -243,12 +249,17 @@ tab:
       size_increased: "Dimensione maggiorata di {{ value }}"
       has_edges: "Questa parte contiene {{ count }} lati bordati"
       has_edges_plural: "Questa parte contiene {{ count }} lati bordati"
+      has_veneers: "Questa parte contiene {{ count }} superficie placcata"
+      has_veneers_plural: "Questa parte contiene {{ count }} superfici placcate"
       edge_decremented: "Dimensione ridotta dello spessore della bordatura ({{ decrement }})"
       edge_ymin: Lunghezza del bordo 1
       edge_ymax: Lunghezza del bordo 2
       edge_xmin: Larghezza del bordo 1
       edge_xmax: Larghezza del bordo 2
+      veneer_zmin: Retrocopertina
+      veneer_zmax: Anteriore
       dblclick_to_copy_all_edges: Fare doppio-click qui per duplicare questo valore su tutti gli altri lati
+      dblclick_to_copy_all_veneers: Fare doppio-click qui per duplicare questo valore sull'altra superficie
       dblclick_to_sort_axes: Fare doppio-click qui per riordinare automaticamente gli assi secondo le dimensioni del pezzo
       part_axes: Assi interni della parte
       select_unselect_all_parts: Seleziona/deseleziona tutte le parti del gruppo
@@ -279,6 +290,7 @@ tab:
       general: Generale
       extra_help: "Elenco delle proprietà specifiche del tipo di materiale \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Finitura bordi
+      veneers: Impiallacciatura
       name: Descrizione
       material: Materiale
       cumulable: Sommabile
@@ -354,6 +366,7 @@ tab:
       over_length: Sulla lunghezza
       over_width: Sulla larghezza
       edge_disabled_help: La bordatura non è configurabile perchè nel modello non è stata trovata alcuna faccia che può ospitare un materiale di tipo *bordatura*.
+      veneer_disabled_help: Questa superficie non è configurabile perché non è stata rilevata alcuna faccia portatrice di materiale su questo bordo della parte nel modello.
       multiple_values: Valori multipli
       export_to_skp: Esporta (.skp)
     export_to_skp:
@@ -400,6 +413,8 @@ tab:
       hide_final_areas_help: "Selezionando questa opzione, verrà nascosta **l'area** delle parti di tipo *Pannelli*."
       hide_edges: Nascondi la colonna "Bordature"
       hide_edges_help: "Selezionando questa opzione, verranno nascosta la colonne **Bordature** delle parti di tipo *Pannelli*."
+      hide_veneers: Nascondere le colonne di impiallacciatura
+      hide_veneers_help: "Selezionando questa opzione, verranno nascosta la colonne **Impiallacciatura** delle parti di tipo *Pannelli*."
       minimize_on_highlight: Minimizza dopo *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Selezionando questa opzione, la finestra di OpenCutList verrà minimizzata dopo aver opzionato *'$t(tab.cutlist.highlight_part)'* ."
       general: Generale
@@ -427,6 +442,7 @@ tab:
       filters_warning: "Questo filtro mostra solo **{{ count }}** parte su un totale di {{ total }}."
       filters_warning_plural: "Questo filtro mostra solo **{{ count }}** parti su un totale di {{ total }}."
       edge_material_names_filter: Filtro su materiale delle bordature
+      veneer_material_names_filter: Filtro sul materiale da impiallacciatura
       tags_filter: Tags da filtrare
       dimensions_help: Schema delle dimensioni
       summary: Sommario
@@ -451,6 +467,7 @@ tab:
       thickness: Spessore
       thickness_short: T
       edges: Bordature
+      veneers: Impiallacciatura
     export:
       title: Esportazione
       info_0: |
@@ -508,6 +525,8 @@ tab:
       edge_ymax: Bordo Lunghezza 2
       edge_xmin: Bordo Larghezza 1
       edge_xmax: Bordo Larghezza 2
+      veneer_zmin: Retrocopertina
+      veneer_zmax: Anteriore
       placeholder:
         no_column_title: Digitare il nome
         no_column_formula_native: "Valore predefinito della colonna '{{ col_name }}'"
@@ -527,18 +546,26 @@ tab:
       raw_materials: Materiali grezzi
       coefficient: Coefficiente
       total: Totale
+      total_used: Usato
+      total_unused: Non utilizzato
       total_mass: Σ Masse
       total_cost: Σ Costi
       total_count: Qtà
+      total_instance_count: Σ Unità
       total_volume: Σ Volumi
       total_area: Σ Aree
       total_length: Σ Lunghezze
       error:
-        no_typed_material_parts: "Nessuna parte con un tipo di materiale definito (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, o **$t(tab.materials.type_5)**) è stato selezionato per generare il rapporto."
+        no_typed_material_parts: "Nessuna parte con un tipo di materiale definito (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** o **$t(tab.materials.type_5)**) è stato selezionato per generare il rapporto."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errore**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errori**."
       warning:
         is_group_selection: Le parti contenute nei **gruppi nascosti** del elenco parti non saranno contate.
+      tip:
+        not_enough_data: |
+          Affinché questo rapporto sia calcolato correttamente:
+           - I materiali utilizzati devono avere almeno una densità e un prezzo configurati.
+           - Gli accessori utilizzati devono avere almeno una massa e un prezzo.
     cuttingdiagram:
       title: Schema di taglio
       start_msg: Ottimizzazione in corso
@@ -551,17 +578,19 @@ tab:
       option_bar_folding_0: No
       option_bar_folding_1: Si
       option_bar_folding_help: Raggruppa tavole o bordi con dimensioni e tagli identici.
-      option_sheet_folding: Raggruppa pannelli identici
+      option_sheet_folding_good: Raggruppa pannelli identici
+      option_sheet_folding_veneer: ""
       option_sheet_folding_0: No
       option_sheet_folding_1: Si
-      option_sheet_folding_help: Raggruppa pannelli con dimensioni e tagli identici.
+      option_sheet_folding_help: ""
       option_hide_part_list: Distinta
       option_hide_part_list_1d_dimensional_0: Visualizza per ogni tavola
       option_hide_part_list_1d_edge_0: Visualizza per ogni bordo
-      option_hide_part_list_2d_0: Visualizza per ogni pannello
+      option_hide_part_list_2d_good_0: Visualizza per ogni pannello
+      option_hide_part_list_2d_veneer_0: ""
       option_hide_part_list_1: Nascosta
       option_hide_part_list_1d_help: Visualizza o nascondi la distinta per ogni tavola o bordo.
-      option_hide_part_list_2d_help: Visualizza o nascondi la distinta per ogni pannello.
+      option_hide_part_list_2d_help: ""
       option_use_names: Identificazione delle parti
       option_use_names_0: Usa il numero
       option_use_names_1: Usa la designazione
@@ -620,20 +649,15 @@ tab:
         Formato: **L**x**Q**, dove **L** è la *lunghezza* del ritaglio e **Q** la quantità.
         La quantità è facoltativa.
         *Dimensioni senza unità si intendono in unità del modello.*
-      option_std_sheet: Pannelli Standard
+      option_std_sheet_good: Dimensioni Standard dei Pannelli
+      option_std_sheet_veneer: ""
       option_std_sheet_help: |
-        Seleziona il pannello predefinito che verrà duplicato per contenere tutte le parti nel miglior modo possibile.
-        Questa lista è definita nel campo **$t(tab.materials.edit_material.std_sizes)** del materiale.
-        Modifica il materiale '{{ material_name }}' per aggiornare questa lista.
       option_std_sheet_add: Aggiungi una misura di pannello
       option_std_sheet_none: Nessuna
-      option_scrap_sheet_sizes: Ritagli di pannelli
+      option_scrap_sheet_good_sizes: Ritagli di pannelli
+      option_scrap_sheet_veneer_sizes: ""
       option_scrap_sheet_sizes_placeholder: lunghezza x larghezza x quantità ; ...
       option_scrap_sheet_sizes_help: |
-        Elenco gli avanzi di pannelli che saranno considerate per prime nello schema di taglio.
-        Formato: **L**x**W**x**Q**, dove **L** è la *lunghezza* del ritaglio, **W** la *larghezza* e **Q** la quantità.
-        La quantità è facoltativa.
-        *Dimensioni senza unità si intendono in unità del modello.*
       tooltip:
         scroll_to_block_1d: Scorri alla prima tavola o bordo
         scroll_to_block_2d: Scorri al primo pannello
@@ -667,8 +691,10 @@ tab:
         bar_dimensional_type_1: Ritagli
         bar_edge_type_0: Bordatura Standard
         bar_edge_type_1: Avanzi di bordatura
-        sheet_type_0: Dimensioni Standard dei Pannelli
-        sheet_type_1: Ritagli
+        sheet_good_type_0: Dimensioni Standard dei Pannelli
+        sheet_good_type_1: Ritagli
+        sheet_veneer_type_0: ""
+        sheet_veneer_type_1: ""
         unused: Inutilizzato
         parts: "{{ count }} parte"
         parts_plural: "{{ count }} parti"
@@ -741,6 +767,7 @@ tab:
         part_description: Descrizione
         part_entity_named_path: Percorso istanza
         part_entity_name: Nome dell'istanza
+        part_bin: ""
         part_cutting_size: Dimensioni grezze
         part_cutting_length: Lunghezza grezza
         part_cutting_width: Larghezza grezza
@@ -755,6 +782,8 @@ tab:
         part_edge_ymax: Bordo Lunghezza 2
         part_edge_xmin: Bordo Larghezza 1
         part_edge_xmax: Bordo Larghezza 2
+        part_veneer_zmin: ""
+        part_veneer_zmax: ""
         thumbnail_proportional: Miniatura proporzionale
         thumbnail_square: Miniatura quadrata
         group_material: Materiale / Spessore
@@ -769,6 +798,7 @@ tab:
         invalid_size: Le impostazioni non consentono di formattare le dimensioni dell'etichetta.
       warning:
         is_part_selection: Queste etichette sono limitate solo alle **parti selezionate**.
+        formula_not_available: ""
     error:
       no_model: Nessun modello caricato. Sono necessarie più informazioni per procedere ;)
       no_entities: Il modello non ha parti. Sono necessarie più informazioni per procedere ;)
@@ -802,6 +832,7 @@ tab:
     type_3: Barre
     type_4: Bordatura
     type_5: Accessori
+    type_6: ""
     tooltip:
       type_0: Tipo di materiale '$t(tab.materials.type_0)'
       type_1: Tipo di materiale '$t(tab.materials.type_1)'
@@ -809,6 +840,7 @@ tab:
       type_3: Tipo di materiale '$t(tab.materials.type_3)'
       type_4: Tipo di materiale '$t(tab.materials.type_4)'
       type_5: Tipo di materiale '$t(tab.materials.type_5)'
+      type_6: Tipo di materiale '$t(tab.materials.type_6)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Direzione della venatura
@@ -817,7 +849,7 @@ tab:
       texture_load: Carica una nuova texture
       edit: "Modifica le proprietà di '{{ name }}'"
       set_current: |
-        Assegna il materiale '{{ name}}'
+        Assegna il materiale '{{ name }}'
         *Doppio-click per minimizzare*
     menu:
       import_from_skm: Importa materiale (.skm)
@@ -910,6 +942,9 @@ tab:
       message: |
         Stai eliminando il materiale **{{ material_name }}** dal modello.
         Confermi?.
+    duplicate:
+      message: |
+        Scegliere il nome del nuovo materiale da copiare da **{{ material_name }}**.
     error:
       no_model: Nessun modello aperto. Sono necessarie più informazioni per procedere ;)
       no_materials: Il modello non contiene alcun materiale.
@@ -917,6 +952,7 @@ tab:
       failed_import_skm_file: "Errore di importazione durante la lettura del file .skm. **{{ error }}**"
       failed_export_skm_file: "Errore di esportazione nel file .skm. **{{ error }}**"
       failed_removing_material: "Errore durante l'eliminazione del materiale. **{{ error }}**"
+      failed_duplicating_material: "Si è verificato un errore durante la duplicazione del materiale. **{{ error }}**"
       invalid_image_file: Immagine non valida
     success:
       exported_to: "Esportazione in {{ export_path }} completata."
@@ -1053,7 +1089,7 @@ tab:
       cuttingdiagram_export: Finanziamento della funzionalità di esportare lo schema di taglio
     objective_details:
       default: |
-        Il continuo miglioramento di *OpenCutList* è importante per noi e il progetto continua ad avere bisogno del vostro aiuto per il suo prossimo aggiornamento **4.0**!
+        Il continuo miglioramento di *OpenCutList* è importante per noi e il progetto continua ad avere bisogno del vostro aiuto per il suo prossimo aggiornamento **5.0**!
       cuttingdiagram_export: |
         Riteniamo importante che l'opzione "schema di taglio" di OpenCutList possa soddisfare le esigenze del maggior numero di utenti e per farlo vorremmo aggiungere la possibilità di esportare lo schema in formato **SVG**.
         Tale formato permette di riutilizzare gli schemi di taglio OCL da parte di altri sofware.
@@ -1160,6 +1196,7 @@ tool:
     filter_3: $t(tab.materials.type_3)
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
+    filter_6: $t(tab.materials.type_6)
     action: Azione
     action_0: Assegna il materiale alla faccia
     action_1: Assegna il materiale all'elemento
