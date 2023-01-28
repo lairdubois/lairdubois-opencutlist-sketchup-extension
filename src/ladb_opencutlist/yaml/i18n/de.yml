@@ -618,6 +618,10 @@ tab:
       option_highlight_primary_cuts_0: Nur bei Übersicht
       option_highlight_primary_cuts_1: Immer sichtbar
       option_highlight_primary_cuts_help: "Ermöglicht es Ihnen, Primärschnitte hervorzuheben."
+      option_hide_edges_preview: Anzeige der Kantenbänder
+      option_hide_edges_preview_0: Im Schnittplan angezeigt
+      option_hide_edges_preview_1: Im Schnittplan ausgeblendet
+      option_hide_edges_preview_help: Ermöglicht das Ein- oder Ausblenden der visuellen Anzeige der Kantenbänder für jedes Teil im Schnittplan.
       option_saw_kerf: Sägeblattdicke
       option_saw_kerf_help: Breite des Materialverlustes durch die Sägeschnittfuge.
       option_trimming: Randabfallbreite

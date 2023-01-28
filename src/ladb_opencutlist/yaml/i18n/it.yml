@@ -579,18 +579,18 @@ tab:
       option_bar_folding_1: Si
       option_bar_folding_help: Raggruppa tavole o bordi con dimensioni e tagli identici.
       option_sheet_folding_good: Raggruppa pannelli identici
-      option_sheet_folding_veneer: ""
+      option_sheet_folding_veneer: Raggruppa fogli identici
       option_sheet_folding_0: No
       option_sheet_folding_1: Si
-      option_sheet_folding_help: ""
+      option_sheet_folding_help: Raggruppa pannelli o foglie con dimensioni e tagli identici.
       option_hide_part_list: Distinta
       option_hide_part_list_1d_dimensional_0: Visualizza per ogni tavola
       option_hide_part_list_1d_edge_0: Visualizza per ogni bordo
       option_hide_part_list_2d_good_0: Visualizza per ogni pannello
-      option_hide_part_list_2d_veneer_0: ""
+      option_hide_part_list_2d_veneer_0: Visualizza per ogni foglio di impiallacciatura
       option_hide_part_list_1: Nascosta
       option_hide_part_list_1d_help: Visualizza o nascondi la distinta per ogni tavola o bordo.
-      option_hide_part_list_2d_help: ""
+      option_hide_part_list_2d_help: Visualizza o nascondi la distinta per ogni pannello.
       option_use_names: Identificazione delle parti
       option_use_names_0: Usa il numero
       option_use_names_1: Usa la designazione
@@ -618,6 +618,10 @@ tab:
       option_highlight_primary_cuts_0: Solo al passaggio del mouse
       option_highlight_primary_cuts_1: Sempre visibile
       option_highlight_primary_cuts_help: Consente di evidenziare i tagli principali.
+      option_hide_edges_preview: Indicatori di bordo per la placcatura
+      option_hide_edges_preview_0: Visualizzato sul schema di taglio
+      option_hide_edges_preview_1: Mascherato sul schema di taglio
+      option_hide_edges_preview_help: Consente di mostrare o nascondere l'indicazione visiva dei bordi da placcare per ogni parte del schema di taglio.
       option_saw_kerf: Spessore della lama
       option_saw_kerf_help: La larghezza del materiale asportato dalla lama di taglio.
       option_trimming: Scarto perimetro
@@ -650,14 +654,21 @@ tab:
         La quantità è facoltativa.
         *Dimensioni senza unità si intendono in unità del modello.*
       option_std_sheet_good: Dimensioni Standard dei Pannelli
-      option_std_sheet_veneer: ""
+      option_std_sheet_veneer: Impiallacciatura standard
       option_std_sheet_help: |
+        Seleziona il pannello o il foglio dell'impiallacciatura predefinito che verrà duplicato per contenere tutte le parti nel miglior modo possibile.
+        Questa lista è definita nel campo **$t(tab.materials.edit_material.std_sizes)** del materiale.
+        Modifica il materiale '{{ material_name }}' per aggiornare questa lista.
       option_std_sheet_add: Aggiungi una misura di pannello
       option_std_sheet_none: Nessuna
       option_scrap_sheet_good_sizes: Ritagli di pannelli
-      option_scrap_sheet_veneer_sizes: ""
+      option_scrap_sheet_veneer_sizes: Avanzi di impiallacciatura
       option_scrap_sheet_sizes_placeholder: lunghezza x larghezza x quantità ; ...
       option_scrap_sheet_sizes_help: |
+        Elenco gli avanzi di pannelli o fogli di impiallacciatura che saranno considerate per prime nello schema di taglio.
+        Formato: **L**x**W**x**Q**, dove **L** è la *lunghezza* del ritaglio, **W** la *larghezza* e **Q** la quantità.
+        La quantità è facoltativa.
+        *Dimensioni senza unità si intendono in unità del modello.*
       tooltip:
         scroll_to_block_1d: Scorri alla prima tavola o bordo
         scroll_to_block_2d: Scorri al primo pannello
@@ -693,8 +704,8 @@ tab:
         bar_edge_type_1: Avanzi di bordatura
         sheet_good_type_0: Dimensioni Standard dei Pannelli
         sheet_good_type_1: Ritagli
-        sheet_veneer_type_0: ""
-        sheet_veneer_type_1: ""
+        sheet_veneer_type_0: Impiallacciatura standard
+        sheet_veneer_type_1: Avanzo di impiallacciatura
         unused: Inutilizzato
         parts: "{{ count }} parte"
         parts_plural: "{{ count }} parti"
@@ -767,7 +778,7 @@ tab:
         part_description: Descrizione
         part_entity_named_path: Percorso istanza
         part_entity_name: Nome dell'istanza
-        part_bin: ""
+        part_bin: Cestino
         part_cutting_size: Dimensioni grezze
         part_cutting_length: Lunghezza grezza
         part_cutting_width: Larghezza grezza
@@ -782,8 +793,8 @@ tab:
         part_edge_ymax: Bordo Lunghezza 2
         part_edge_xmin: Bordo Larghezza 1
         part_edge_xmax: Bordo Larghezza 2
-        part_veneer_zmin: ""
-        part_veneer_zmax: ""
+        part_veneer_zmin: Impiallacciatura sul retro
+        part_veneer_zmax: Impiallacciatura sul lato frontale
         thumbnail_proportional: Miniatura proporzionale
         thumbnail_square: Miniatura quadrata
         group_material: Materiale / Spessore
@@ -798,7 +809,7 @@ tab:
         invalid_size: Le impostazioni non consentono di formattare le dimensioni dell'etichetta.
       warning:
         is_part_selection: Queste etichette sono limitate solo alle **parti selezionate**.
-        formula_not_available: ""
+        formula_not_available: La formula non è disponibile in questo contesto
     error:
       no_model: Nessun modello caricato. Sono necessarie più informazioni per procedere ;)
       no_entities: Il modello non ha parti. Sono necessarie più informazioni per procedere ;)
@@ -832,7 +843,7 @@ tab:
     type_3: Barre
     type_4: Bordatura
     type_5: Accessori
-    type_6: ""
+    type_6: Impiallacciatura
     tooltip:
       type_0: Tipo di materiale '$t(tab.materials.type_0)'
       type_1: Tipo di materiale '$t(tab.materials.type_1)'

@@ -618,6 +618,10 @@ tab:
       option_highlight_primary_cuts_0: Enkel overzicht
       option_highlight_primary_cuts_1: Altijd zichtbaar
       option_highlight_primary_cuts_help: Laat toe om primaire snedes uit te lichten.
+      option_hide_edges_preview: Randband weergave
+      option_hide_edges_preview_0: Weergegeven in het zaagschema
+      option_hide_edges_preview_1: Verborgen in het zaagschema
+      option_hide_edges_preview_help: Hiermee kunt u de visuele weergave van de kantenbanden voor elk onderdeel in het zaagschema tonen of verbergen.
       option_saw_kerf: Dikte van het zaagblad
       option_saw_kerf_help: Breedte van verwijderd materiaal door het zaagblad.
       option_trimming: Marge

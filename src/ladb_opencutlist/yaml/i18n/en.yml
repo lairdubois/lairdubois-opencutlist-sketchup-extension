@@ -618,6 +618,10 @@ tab:
       option_highlight_primary_cuts_0: Flyover only
       option_highlight_primary_cuts_1: Always visible
       option_highlight_primary_cuts_help: Allows you to highlight primary cuts.
+      option_hide_edges_preview: Display of edge bands
+      option_hide_edges_preview_0: Displayed in the cutting diagram
+      option_hide_edges_preview_1: Hidden in the cutting diagram
+      option_hide_edges_preview_help: Allows you to show or hide the visual display of the edge bands for each part in the cutting diagram.
       option_saw_kerf: Blade Thickness
       option_saw_kerf_help: The width of material removed by the sawblade cut.
       option_trimming: Trimming Size
