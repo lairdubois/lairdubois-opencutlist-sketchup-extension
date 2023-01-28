@@ -1,6 +1,6 @@
 {
   "name": "lairdubois-opencutlist-sketchup-extension",
-  "version": "4.1.2",
+  "version": "5.0.0",
   "description": "OpenCutList by L'Air du Bois =======================================",
   "main": "index.js",
   "directories": {
@@ -41,5 +41,7 @@
   "bugs": {
     "url": "https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/issues"
   },
-  "homepage": "https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension#readme"
+  "homepage": "https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension#readme",
+  "dependencies": {
+  }
 }
