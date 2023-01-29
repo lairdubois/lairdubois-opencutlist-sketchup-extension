@@ -101,7 +101,7 @@
     "std_prices": []
   },
   "6": {  /* TYPE_VENEER */
-    "thickness": { "metric": "2mm", "imperial": "0.018\"" },
+    "thickness": { "metric": "1mm", "imperial": "0.018\"" },
     "length_increase": "0",
     "width_increase": "0",
     "thickness_increase": "",

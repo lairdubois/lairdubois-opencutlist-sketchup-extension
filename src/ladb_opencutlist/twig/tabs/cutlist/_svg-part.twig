@@ -5,6 +5,7 @@
 {% set partOutlineWidth = partOutlineWidth|default(2) %}
 {% set partLength = partLength|default((areaSize - 40) * part.l_ratio) %}
 {% set partWidth = partWidth|default((areaSize - 40) * part.w_ratio) %}
+{% set hideArrow = hideArrow|default(false) %}
 {% set hideAxes = hideAxes|default(false) %}
 {% set hideLengthDimension = hideLengthDimension|default(false) %}
 {% set hideWidthDimension = hideWidthDimension|default(false) %}
@@ -19,23 +20,25 @@
         <rect x="{{ (areaSize - partLength) / 2 + partOutlineWidth }}" y="{{ (areaSize - partWidth) / 2 + partOutlineWidth }}" width="{{ partLength - partOutlineWidth * 2 }}" height="{{ partWidth - partOutlineWidth * 2 }}" class="part-inner" />
     </g>
 
-    <g class="arrow">
-        {% set arrowOriginX = part.flipped ? areaSize - (areaSize - partLength) / 2 - partOutlineWidth * 2 : (areaSize - partLength) / 2 + partOutlineWidth * 2 %}
-        {% set arrowOriginY = (areaSize - partWidth) / 2 + partOutlineWidth * 2 %}
-        {% set arrowWidth = partLength - partOutlineWidth * 4 %}
-        {% set arrowLength = partWidth - partOutlineWidth * 4 %}
-        {% set arrowPattern = [
-            [     0 , 1/3.0 ],
-            [ 1/2.0 , 1/3.0 ],
-            [ 1/2.0 ,     0 ],
-            [     1 , 1/2.0 ],
-            [ 1/2.0 ,     1 ],
-            [ 1/2.0 , 2/3.0 ],
-            [     0 , 2/3.0 ],
-            [     0 , 1/3.0 ],
-        ] %}
-        <polyline points="{% for point in arrowPattern %}{{ arrowOriginX + arrowWidth * point[0] * (part.flipped ? -1 : 1) }},{{ arrowOriginY + arrowLength * point[1] }} {% endfor %}"{% if arrowDashed %} stroke-dasharray="4"{% endif %}/>
-    </g>
+    {% if not hideArrow %}
+        <g class="arrow">
+            {% set arrowOriginX = part.flipped ? areaSize - (areaSize - partLength) / 2 - partOutlineWidth * 2 : (areaSize - partLength) / 2 + partOutlineWidth * 2 %}
+            {% set arrowOriginY = (areaSize - partWidth) / 2 + partOutlineWidth * 2 %}
+            {% set arrowWidth = partLength - partOutlineWidth * 4 %}
+            {% set arrowLength = partWidth - partOutlineWidth * 4 %}
+            {% set arrowPattern = [
+                [     0 , 1/3.0 ],
+                [ 1/2.0 , 1/3.0 ],
+                [ 1/2.0 ,     0 ],
+                [     1 , 1/2.0 ],
+                [ 1/2.0 ,     1 ],
+                [ 1/2.0 , 2/3.0 ],
+                [     0 , 2/3.0 ],
+                [     0 , 1/3.0 ],
+            ] %}
+            <polyline points="{% for point in arrowPattern %}{{ arrowOriginX + arrowWidth * point[0] * (part.flipped ? -1 : 1) }},{{ arrowOriginY + arrowLength * point[1] }} {% endfor %}"{% if arrowDashed %} stroke-dasharray="4"{% endif %}/>
+        </g>
+    {% endif %}
 
     {% block extra %}{% endblock %}
 
@@ -61,7 +64,7 @@
         <text text-anchor="middle" x="-{{ areaSize / 2 }}" y="{{ (areaSize - partLength) / 2 - 10 }}" font-family="Verdana" font-size="10" transform="rotate(-90)">{{ 'tab.cutlist.list.width'|i18next }} = {{ part.width }}</text>
     {% endif %}
     {% if not hideName %}
-        <text text-anchor="middle" alignment-baseline="middle" x="{{ areaSize / 2 }}" y="{{ areaSize / 2 }}" font-family="Verdana" font-size="10" fill="#aaa">{{ part.name }}</text>
+        <text text-anchor="middle" alignment-baseline="middle" x="{{ areaSize / 2 }}" y="{{ areaSize / 2 }}" font-family="Verdana" font-size="10" fill="#555">{{ part.name }}</text>
     {% endif %}
 
     {% if not hideGrainDirectionArrow and group.material_grained and not part.ignore_grain_direction %}

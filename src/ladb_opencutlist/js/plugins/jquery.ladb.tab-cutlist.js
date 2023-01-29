@@ -1626,6 +1626,10 @@
                 var $rectEdgeXmax = $('svg .edge-xmax', $modal);
                 var $rectVeneerZmin = $('svg .veneer-zmin', $modal);
                 var $rectVeneerZmax = $('svg .veneer-zmax', $modal);
+                var $rectVeneerZminGrain = $('svg .veneer-zmin .veneer-grain', $modal);
+                var $rectVeneerZmaxGrain = $('svg .veneer-zmax .veneer-grain', $modal);
+                var $patternVeneerZminGrain = $('#pattern_veneer_zmin_grain', $modal);
+                var $patternVeneerZmaxGrain = $('#pattern_veneer_zmax_grain', $modal);
                 var $labelEdgeYmax = $('#ladb_cutlist_part_label_edge_ymax', $modal);
                 var $labelEdgeYmin = $('#ladb_cutlist_part_label_edge_ymin', $modal);
                 var $labelEdgeXmin = $('#ladb_cutlist_part_label_edge_xmin', $modal);
@@ -1684,10 +1688,10 @@
                         $rectEdgeXmax.addClass('ladb-active');
                     }
                 };
-                var fnIsMaterialTextured = function(name) {
+                var fnIsMaterialTexturedAndGrained = function(name) {
                     for (let materialUsage of that.materialUsages) {
                         if (materialUsage.name === name) {
-                            return materialUsage.textured;
+                            return materialUsage.textured && materialUsage.grained;
                         }
                     }
                     return false;
@@ -1695,23 +1699,31 @@
                 var fnUpdateVeneersPreview = function() {
                     if ($selectVeneerZmin.val() === '') {
                         $rectVeneerZmin.removeClass('ladb-active');
+                        $rectVeneerZminGrain.hide();
                         $formGroupVeneerZminTextureAngle.hide();
                     } else {
                         $rectVeneerZmin.addClass('ladb-active');
-                        if (fnIsMaterialTextured($selectVeneerZmin.val())) {
+                        if (fnIsMaterialTexturedAndGrained($selectVeneerZmin.val())) {
+                            $rectVeneerZminGrain.show();
+                            $patternVeneerZminGrain.attr('patternTransform', 'rotate(' + $inputVeneerZminTextureAngle.val() + ' 0 0)');
                             $formGroupVeneerZminTextureAngle.show();
                         } else {
+                            $rectVeneerZminGrain.hide();
                             $formGroupVeneerZminTextureAngle.hide();
                         }
                     }
                     if ($selectVeneerZmax.val() === '') {
                         $rectVeneerZmax.removeClass('ladb-active');
+                        $rectVeneerZmaxGrain.hide();
                         $formGroupVeneerZmaxTextureAngle.hide();
                     } else {
                         $rectVeneerZmax.addClass('ladb-active');
-                        if (fnIsMaterialTextured($selectVeneerZmax.val())) {
+                        if (fnIsMaterialTexturedAndGrained($selectVeneerZmax.val())) {
+                            $rectVeneerZmaxGrain.show();
+                            $patternVeneerZmaxGrain.attr('patternTransform', 'rotate(' + parseInt($inputVeneerZmaxTextureAngle.val()) * -1 + ' 0 0)');
                             $formGroupVeneerZmaxTextureAngle.show();
                         } else {
+                            $rectVeneerZmaxGrain.hide();
                             $formGroupVeneerZmaxTextureAngle.hide();
                         }
                     }
@@ -1767,6 +1779,7 @@
                 var fnIncrementVeneerTextureAngleInputValue = function($input, inc) {
                     let angle = parseInt($input.val());
                     $input.val((angle + inc) % 360);
+                    fnUpdateVeneersPreview();
                 }
                 var fnOnAxiesOrderChanged = function () {
                     var axes = fnComputeAxesOrder();
@@ -1838,20 +1851,28 @@
                 });
                 $inputWidthIncrease.ladbTextinputDimension();
                 $inputThicknessIncrease.ladbTextinputDimension();
-                $inputVeneerZminTextureAngle.ladbTextinputNumberWithUnit({
-                    resetValue: 0,
-                    defaultUnit: 'deg',
-                    units: [
-                        { deg: i18next.t('default.unit_angle_0') }
-                    ]
-                });
-                $inputVeneerZmaxTextureAngle.ladbTextinputNumberWithUnit({
-                    resetValue: 0,
-                    defaultUnit: 'deg',
-                    units: [
-                        { deg: i18next.t('default.unit_angle_0') }
-                    ]
-                });
+                $inputVeneerZminTextureAngle
+                    .ladbTextinputNumberWithUnit({
+                        resetValue: 0,
+                        defaultUnit: 'deg',
+                        units: [
+                            {deg: i18next.t('default.unit_angle_0')}
+                        ]
+                    })
+                    .on('change', function () {
+                        fnUpdateVeneersPreview();
+                    });
+                $inputVeneerZmaxTextureAngle
+                    .ladbTextinputNumberWithUnit({
+                        resetValue: 0,
+                        defaultUnit: 'deg',
+                        units: [
+                            {deg: i18next.t('default.unit_angle_0')}
+                        ]
+                    })
+                    .on('change', function () {
+                        fnUpdateVeneersPreview();
+                    });
 
                 // Bind select
                 $selectMaterialName.val(editedPart.material_name);

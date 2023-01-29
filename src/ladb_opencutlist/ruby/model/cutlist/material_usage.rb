@@ -6,14 +6,15 @@ module Ladb::OpenCutList
 
     include HashableHelper
 
-    attr_accessor :name, :display_name, :type, :color, :textured, :use_count
+    attr_accessor :name, :display_name, :type, :color, :textured, :grained, :use_count
 
-    def initialize(name, display_name, type, color, textured)
+    def initialize(name, display_name, type, color, textured, grained)
       @name = name
       @display_name = display_name
       @type = type
       @color = color
       @textured = textured
+      @grained = grained
       @use_count = 0
     end
 

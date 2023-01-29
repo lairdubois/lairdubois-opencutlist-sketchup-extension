@@ -132,7 +132,7 @@ module Ladb::OpenCutList
       materials = model ? model.materials : []
       materials.each { |material|
         material_attributes = _get_material_attributes(material)
-        material_usage = MaterialUsage.new(material.name, material.display_name, material_attributes.type, material.color, !material.texture.nil?)
+        material_usage = MaterialUsage.new(material.name, material.display_name, material_attributes.type, material.color, material_attributes.grained, !material.texture.nil?)
         _store_material_usage(material_usage)
       }
 
