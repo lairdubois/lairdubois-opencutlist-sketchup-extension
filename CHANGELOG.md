@@ -12,6 +12,7 @@ in 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added used and unused proportion display in report summary and details
   * Added hide edges preview option on 2D cutting diagram (default = true) 
   * Fixed cutting diagram 2D edge drawing to correspond to counter-clockwise rotation of part's name
+  * Fixed missed exported edges std dimensions on folded parts
   * Hatched unavailable cells in parts list summary instead of displaying "-" character
 
 * 4.1.2 (2023-01-27)

@@ -781,12 +781,14 @@ module Ladb::OpenCutList
                 folder_part_def.edge_pattern = first_child_part_def.edge_pattern
                 folder_part_def.edge_material_names.merge!(first_child_part_def.edge_material_names)
                 folder_part_def.edge_std_dimensions.merge!(first_child_part_def.edge_std_dimensions)
+                folder_part_def.edge_group_defs.merge!(first_child_part_def.edge_group_defs)
                 folder_part_def.edge_length_decrement = first_child_part_def.edge_length_decrement
                 folder_part_def.edge_width_decrement = first_child_part_def.edge_width_decrement
                 folder_part_def.veneer_count = first_child_part_def.veneer_count
                 folder_part_def.veneer_pattern = first_child_part_def.veneer_pattern
                 folder_part_def.veneer_material_names.merge!(first_child_part_def.veneer_material_names)
                 folder_part_def.veneer_std_dimensions.merge!(first_child_part_def.veneer_std_dimensions)
+                folder_part_def.veneer_group_defs.merge!(first_child_part_def.veneer_group_defs)
                 folder_part_def.veneer_thickness_decrement = first_child_part_def.veneer_thickness_decrement
                 folder_part_def.merge_entity_names(first_child_part_def.entity_names)
                 folder_part_def.final_area = first_child_part_def.final_area

@@ -57,7 +57,7 @@ module Ladb::OpenCutList
       @edge_entity_ids = {}
       @edge_errors = []
       @veneer_count = 0
-      @veneer_pattern = nil                 # A string from 00 to 11
+      @veneer_pattern = nil               # A string from 00 to 11
       @veneer_material_names = {}
       @veneer_std_dimensions = {}
       @veneer_thickness_decrement = 0
