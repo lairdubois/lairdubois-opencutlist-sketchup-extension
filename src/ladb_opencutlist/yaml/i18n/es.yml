@@ -173,7 +173,7 @@ tab:
     edit_part_axes_properties: Edita las propiedades (ejes) de la pieza
     edit_part_size_increase_properties: Edita las propiedades (sobredimensionados) de la pieza
     edit_part_edges_properties: Edita las propiedades (tiras de los cantos) de la pieza
-    edit_part_veneers_properties: ""
+    edit_part_veneers_properties: Edita las propiedades (chapas de madera) de la pieza
     tooltip:
       show_hide_block: Mostrar / Ocultar
       scroll_to_block: Desplaza al grupo
@@ -249,8 +249,8 @@ tab:
       size_increased: "La dimensión aumenta con un tamaño superior a {{ value }}"
       has_edges: "Esta parte contiene {{ count }} tiras de los cantos"
       has_edges_plural: "Esta parte contiene {{ count }} tiras de los cantos"
-      has_veneers: ""
-      has_veneers_plural: ""
+      has_veneers: "Esta parte contiene {{ count }} superficie chapada"
+      has_veneers_plural: "Esta parte contiene {{ count }} superficies chapadas"
       edge_decremented: "Reducido por el grosor de las tiras de los cantos ({{ decrement }})"
       edge_ymin: Longitud del borde 1
       edge_ymax: Longitud del borde 2
@@ -259,7 +259,7 @@ tab:
       veneer_zmin: Dorso
       veneer_zmax: Frente
       dblclick_to_copy_all_edges: Haga doble clic aquí para duplicar este valor en todos los demás bordes
-      dblclick_to_copy_all_veneers: ""
+      dblclick_to_copy_all_veneers: Haga doble clic aquí para duplicar este valor en la otra superficie
       dblclick_to_sort_axes: Haga doble clic aquí para reordenar automáticamente los ejes según las dimensiones de la pieza
       part_axes: Ejes internos de la pieza
       select_unselect_all_parts: Selecciona/Deselecciona todas las partes del grupo
@@ -365,8 +365,8 @@ tab:
       axes_origin_position_min_center: Coloca el origen en el medio de una cara
       over_length: A lo largo
       over_width: A lo ancho
-      edge_disabled_help: Esta banda de borde no se puede configurar porque no se ha detectado ninguna cara que pueda llevar material de banda de borde en el modelo.
-      veneer_disabled_help: ""
+      edge_disabled_help: Esta banda de borde no es configurable porque no se ha detectado ninguna cara que pueda llevar material de banda de borde en el modelo.
+      veneer_disabled_help: Esta superficie no es configurable porque no se ha detectado ninguna cara portadora de material en esta arista de la pieza en el modelo.
       multiple_values: Varios valores
       export_to_skp: Exportar (.skp)
     export_to_skp:
@@ -442,7 +442,7 @@ tab:
       filters_warning: "Este filtro solo muestra **{{ count }}** parte de un total de {{ total }}."
       filters_warning_plural: "Este filtro solo muestra **{{ count }}** partes de un total de {{ total }}."
       edge_material_names_filter: Material de borde de cantos a filtrar
-      veneer_material_names_filter: ""
+      veneer_material_names_filter: Material de chapa de madera a filtrar
       tags_filter: Filtrar por etiquetas
       dimensions_help: Ilustración de las dimensiones
       summary: Resumen
@@ -556,38 +556,41 @@ tab:
       total_area: Σ Areas
       total_length: Σ Longitudes
       error:
-        no_typed_material_parts: ""
+        no_typed_material_parts: "No hay piezas con un tipo de material definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** o **$t(tab.materials.type_5)**) para generar el informe."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errores**."
       warning:
         is_group_selection: Las piezas dentro de los **grupos ocultos** de su listado de partes no se contabilizarán.
       tip:
         not_enough_data: |
+          Para que esta relación se calcule correctamente:
+          - Los materiales utilizados deben tener al menos una densidad y un precio configurados.
+          - Los accesorios utilizados deben tener al menos una masa y un precio.
     cuttingdiagram:
       title: Diagrama de corte
       start_msg: Optimización en curso
       end_msg: Optimización completada
       options_material: Material
       options_config: Configuración
-      options_display: Mostrar
+      options_display: Visualización
       option_bar_folding_dimensional: Agrupar tableros similares
       option_bar_folding_edge: Agrupar tiros de canto similares
       option_bar_folding_0: No
       option_bar_folding_1: Si
       option_bar_folding_help: Agrupar tableros o tiros de canto que tengan las mismas partes y cortes.
       option_sheet_folding_good: Agrupar paneles similares
-      option_sheet_folding_veneer: ""
+      option_sheet_folding_veneer: Agrupación de hojas idénticas
       option_sheet_folding_0: No
       option_sheet_folding_1: Si
-      option_sheet_folding_help: ""
+      option_sheet_folding_help: Permite agrupar paneles u hojas que contengan las mismas piezas y cortes.
       option_hide_part_list: Lista de partes
       option_hide_part_list_1d_dimensional_0: Mostrado para cada tablero
       option_hide_part_list_1d_edge_0: Mostrado para cada tira de canto
       option_hide_part_list_2d_good_0: Mostrado para cada panel
-      option_hide_part_list_2d_veneer_0: ""
+      option_hide_part_list_2d_veneer_0: Mostrado para cada hoja
       option_hide_part_list_1: Enmascarado
       option_hide_part_list_1d_help: Muestre o enmascare la lista de partes de cada tablero o tira de canto.
-      option_hide_part_list_2d_help: ""
+      option_hide_part_list_2d_help: Muestre o enmascare la lista de partes de cada tablero o hoja.
       option_use_names: Identificación de la parte
       option_use_names_0: Utilice el número
       option_use_names_1: Utilice la designación
@@ -615,6 +618,10 @@ tab:
       option_highlight_primary_cuts_0: Sólo en vista general
       option_highlight_primary_cuts_1: Siempre visible
       option_highlight_primary_cuts_help: Le permite resaltar cortes primarios.
+      option_hide_edges_preview: Indicadores de cantos
+      option_hide_edges_preview_0: Visualizado en el diagrama
+      option_hide_edges_preview_1: Enmascarado en el diagrama
+      option_hide_edges_preview_help: Permite mostrar u ocultar la indicación visual de los cantos para cada parte del diagrama.
       option_saw_kerf: Espesor de la hoja
       option_saw_kerf_help: El ancho del material eliminado por el corte de la hoja de sierra.
       option_trimming: Tamaño de recorte
@@ -647,14 +654,21 @@ tab:
         La cantidad es opcional.
         *Si no se especifica ninguna unidad, se tendrá en cuenta la unidad modelo.*
       option_std_sheet_good: Panel estándar
-      option_std_sheet_veneer: ""
+      option_std_sheet_veneer: Hoja estándar
       option_std_sheet_help: |
+        Seleccione el panel o la hoja estándar que se duplicará para contener todas las partes.
+        Esta lista se define en el campo **$t(tab.materials.edit_material.std_sizes)** del material.
+        Edita el material '{{ material_name }}' para actualizar esta lista.
       option_std_sheet_add: Agregar un tamaño de panel
       option_std_sheet_none: No
       option_scrap_sheet_good_sizes: Productos en piezas cortadas
-      option_scrap_sheet_veneer_sizes: ""
+      option_scrap_sheet_veneer_sizes: Restos de hojas
       option_scrap_sheet_sizes_placeholder: largo x ancho x cantidad; ...
       option_scrap_sheet_sizes_help: |
+        Indique aquí la lista de sus paneles u hojas sobrantes que deben considerarse prioritarios para el diagrama de corte.
+        Formato esperado: **L** x **W** x **Q**, donde **L** y **W** representan el *largo* y el *ancho* del panel y **Q** la cantidad.
+        La cantidad es opcional.
+        *Si no se especifica ninguna unidad, se tendrá en cuenta la unidad modelo.*
       tooltip:
         scroll_to_block_1d: Desplazate al primer tabla o tiro de canto
         scroll_to_block_2d: Desplazate al primer tablero
@@ -690,8 +704,8 @@ tab:
         bar_edge_type_1: Resto de canto
         sheet_good_type_0: Panel estándar
         sheet_good_type_1: Trozo
-        sheet_veneer_type_0: ""
-        sheet_veneer_type_1: ""
+        sheet_veneer_type_0: Hoja estándar
+        sheet_veneer_type_1: Resto de hojas
         unused: No usado
         parts: "{{ count }} parte"
         parts_plural: "{{ count }} partes"
@@ -764,7 +778,7 @@ tab:
         part_description: Descripción
         part_entity_named_path: Ruta de instancia
         part_entity_name: Nombre de instancia
-        part_bin: ""
+        part_bin: Contenedor
         part_cutting_size: Dimensiones aproximadas
         part_cutting_length: Longitud - cruda
         part_cutting_width: Ancho - crudo
@@ -779,8 +793,8 @@ tab:
         part_edge_ymax: Longitud de borde 2
         part_edge_xmin: Ancho de borde 1
         part_edge_xmax: Ancho de borde 2
-        part_veneer_zmin: ""
-        part_veneer_zmax: ""
+        part_veneer_zmin: Chapa de madera dorso
+        part_veneer_zmax: Chapa de madera frente
         thumbnail_proportional: Miniatura proporcional
         thumbnail_square: Miniatura cuadrada
         group_material: Espesor / Material
@@ -795,7 +809,7 @@ tab:
         invalid_size: Los parámetros de configuración ingresados ​​no permiten establecer un tamaño de etiqueta válido.
       warning:
         is_part_selection: Estas etiquetas se limitan a las **piezas seleccionadas**.
-        formula_not_available: ""
+        formula_not_available: No disponible en este contexto
     error:
       no_model: Ningún modelo está abierto. Necesitarás darme más información ;)
       no_entities: Tu modelo está vacío. Necesitarás darme más información. ;)
@@ -829,7 +843,7 @@ tab:
     type_3: Liston
     type_4: Canto
     type_5: Accesorio
-    type_6: ""
+    type_6: Chapa de madera
     tooltip:
       type_0: Tipo de material '$t(tab.materials.type_0)'
       type_1: Tipo de material '$t(tab.materials.type_1)'
