@@ -204,7 +204,7 @@ module Ladb::OpenCutList
                 part.veneer_material_names[:zmax],
                 part.def.veneer_group_defs[:zmax] ? part.def.veneer_group_defs[:zmax].std_thickness : nil
               ),
-              ArrayWrapper.new(part.def.instance_infos.values.map { |instance_info| instance_info.layer.display_name }.uniq.sort),
+              ArrayWrapper.new(part.def.instance_infos.values.map { |instance_info| instance_info.layer.display_name }.uniq),
             )
 
             rows << _evaluate_row(data)

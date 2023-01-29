@@ -513,7 +513,7 @@ module Ladb::OpenCutList
               w_plane_count, w_final_area, w_area_ratio = _compute_oriented_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Y_AXIS)
 
               part_def.not_aligned_on_axes = !(t_area_ratio >= 0.7 || w_area_ratio >= 0.7)
-              part_def.layers = layers
+              part_def.content_layers = layers.to_a
 
             when MaterialAttributes::TYPE_SHEET_GOOD
 
@@ -521,7 +521,7 @@ module Ladb::OpenCutList
 
               part_def.final_area = t_final_area
               part_def.not_aligned_on_axes = !(t_plane_count >= 2 && (_face_infos_by_normal(size.oriented_normal(Y_AXIS), x_face_infos, y_face_infos, z_face_infos).length >= 1 || _face_infos_by_normal(size.oriented_normal(X_AXIS), x_face_infos, y_face_infos, z_face_infos).length >= 1))
-              part_def.layers = layers
+              part_def.content_layers = layers.to_a
 
               # -- Edges --
 
@@ -572,7 +572,7 @@ module Ladb::OpenCutList
               w_plane_count, w_final_area, w_area_ratio = _compute_oriented_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Y_AXIS)
 
               part_def.not_aligned_on_axes = !(t_area_ratio >= 0.7 && w_area_ratio >= 0.7 && (t_plane_count >= 2 && w_plane_count >= 2))
-              part_def.layers = layers
+              part_def.content_layers = layers.to_a
 
             else
               part_def.not_aligned_on_axes = false

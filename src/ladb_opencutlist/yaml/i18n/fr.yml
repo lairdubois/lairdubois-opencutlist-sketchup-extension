@@ -244,7 +244,7 @@ tab:
       thickness_layered: "La quantité représente ici le nombre de pièces à débiter pour obtenir toutes les couches."
       thickness_layered_equation: "**{{ count }}** *pièce* x **{{ layerCount }}** *couches* = **{{ cuttingPartCount }}**"
       thickness_layered_equation_plural: "**{{ count }}** *pièces* x **{{ layerCount }}** *couches* = **{{ cuttingPartCount }}**"
-      multiple_layers: "Attention, cette pièce est composée de sous parties présentes dans {{ count }} calques différents :<br>{{ layers }}"
+      multiple_content_layers: "Attention, cette pièce est composée de sous parties présentes dans {{ count }} calques différents :<br>{{ layers }}"
       children_warnings: "Attention, il y a {{ count }} alerte dans les pièces regroupées"
       children_warnings_plural: "Attention, il y a {{ count }} alertes dans les pièces regroupées"
       children_size_increase: "Cette dimension est majorée par une surcote pour {{ count }} des pièces regroupées"
