@@ -203,7 +203,8 @@ module Ladb::OpenCutList
               VeneerWrapper.new(
                 part.veneer_material_names[:zmax],
                 part.def.veneer_group_defs[:zmax] ? part.def.veneer_group_defs[:zmax].std_thickness : nil
-              )
+              ),
+              ArrayWrapper.new(part.def.instance_infos.values.map { |instance_info| instance_info.layer.display_name }.uniq.sort),
             )
 
             rows << _evaluate_row(data)
@@ -275,7 +276,8 @@ module Ladb::OpenCutList
                   VeneerWrapper.new(
                     part.veneer_material_names[:zmax],
                     part.def.veneer_group_defs[:zmax] ? part.def.veneer_group_defs[:zmax].std_thickness : nil
-                  )
+                  ),
+                  StringWrapper.new(instance_info.layer.display_name),
                 )
 
                 rows << _evaluate_row(data)
@@ -383,7 +385,8 @@ module Ladb::OpenCutList
       edge_xmin,
       edge_xmax,
       veneer_zmin,
-      veneer_zmax
+      veneer_zmax,
+      layers
     )
       @number = number
       @name = name
@@ -406,6 +409,7 @@ module Ladb::OpenCutList
       @edge_xmax = edge_xmax
       @veneer_zmin = veneer_zmin
       @veneer_zmax = veneer_zmax
+      @layers = layers
     end
 
   end
@@ -434,7 +438,8 @@ module Ladb::OpenCutList
       edge_xmin,
       edge_xmax,
       veneer_zmin,
-      veneer_zmax
+      veneer_zmax,
+      layer
     )
       @number = number
       @path = path
@@ -458,6 +463,7 @@ module Ladb::OpenCutList
       @edge_xmax = edge_xmax
       @veneer_zmin = veneer_zmin
       @veneer_zmax = veneer_zmax
+      @layer = layer
     end
 
   end

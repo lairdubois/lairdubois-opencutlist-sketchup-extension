@@ -777,7 +777,8 @@
                     { name: 'edge_xmin', type: 'edge' },
                     { name: 'edge_xmax', type: 'edge' },
                     { name: 'veneer_zmax', type: 'veneer' },
-                    { name: 'veneer_zmin', type: 'veneer' }
+                    { name: 'veneer_zmin', type: 'veneer' },
+                    { name: 'layers', type: 'array' }
                 ]
             });
             $editorInstancesList.ladbEditorExport({
@@ -803,7 +804,8 @@
                     { name: 'edge_xmin', type: 'edge' },
                     { name: 'edge_xmax', type: 'edge' },
                     { name: 'veneer_zmax', type: 'veneer' },
-                    { name: 'veneer_zmin', type: 'veneer' }
+                    { name: 'veneer_zmin', type: 'veneer' },
+                    { name: 'layer', type: 'string' }
                 ]
             });
 
