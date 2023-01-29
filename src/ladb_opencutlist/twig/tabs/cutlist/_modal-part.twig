@@ -396,8 +396,8 @@
                                     {% block extra %}
                                         <g class="veneer veneer-zmin{% if part.veneer_entity_ids.zmin is empty %} ladb-disabled{% endif %}" data-toggle="tooltip" data-placement="right" title="{{ 'tab.cutlist.tooltip.veneer_zmin'|i18next }}">
                                             <defs>
-                                                <pattern id="pattern_veneer_zmin_grain" width="10" height="10" patternUnits="userSpaceOnUse">
-                                                    <line x1="0" y1="5" x2="10" y2="5" style="stroke:#ccc; stroke-width:1" />
+                                                <pattern id="pattern_veneer_zmin_grain" width="40" height="10" patternUnits="userSpaceOnUse">
+                                                    <path d="M0,5C20,2 20,8 40,5" style="fill:none;stroke:#ddd;stroke-width:1px;"/>
                                                 </pattern>
                                             </defs>
                                             <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ partWidth }}" class="veneer veneer-grain" style="fill: url(#pattern_veneer_zmin_grain);" />
@@ -410,11 +410,12 @@
                                 {% embed 'tabs/cutlist/_svg-part.twig' %}
                                     {% set noSvgWrapper = true %}
                                     {% set hideLengthDimension = true %}
+                                    {% set hideGrainDirectionArrow = true %}
                                     {% block extra %}
                                         <g class="veneer veneer-zmax{% if part.veneer_entity_ids.zmax is empty %} ladb-disabled{% endif %}" data-toggle="tooltip" data-placement="right" title="{{ 'tab.cutlist.tooltip.veneer_zmax'|i18next }}">
                                             <defs>
-                                                <pattern id="pattern_veneer_zmax_grain" width="10" height="10" patternUnits="userSpaceOnUse">
-                                                    <line x1="0" y1="5" x2="10" y2="5" style="stroke:#ccc; stroke-width:1" />
+                                                <pattern id="pattern_veneer_zmax_grain" width="40" height="10" patternUnits="userSpaceOnUse">
+                                                    <path d="M0,5C20,2 20,8 40,5" style="fill:none;stroke:#ddd;stroke-width:1px;"/>
                                                 </pattern>
                                             </defs>
                                             <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ partWidth }}" class="veneer veneer-grain" style="fill: url(#pattern_veneer_zmax_grain);" />
