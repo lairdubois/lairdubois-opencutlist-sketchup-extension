@@ -155,6 +155,11 @@ core:
       remove: Olvidar el color
     textinput_code:
       help: Escriba **@** para abrir la lista de variables de datos.
+  docs:
+    error:
+      failed_to_load: |
+        No se puede abrir la documentación.
+        Compruebe que está conectado a Internet.
 tab:
   cutlist:
     label: Partes

@@ -155,6 +155,11 @@ core:
       remove: Farbe vergessen
     textinput_code:
       help: "Drücken Sie **@**, um die Liste der Datenvariablen zu öffnen."
+  docs:
+    error:
+      failed_to_load: |
+        Die Dokumentation kann nicht geöffnet werden.
+        Vergewissern Sie sich, dass Sie mit dem Internet verbunden sind.
 tab:
   cutlist:
     label: Holzliste

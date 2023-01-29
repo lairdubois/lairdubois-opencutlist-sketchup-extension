@@ -67,7 +67,7 @@ core:
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
-      edit_part_veneers_properties: ""
+      edit_part_veneers_properties: $t(tab.cutlist.edit_part_veneers_properties)
       smart_paint: $t(core.toolbar.command.smart_paint)
   toolbar:
     name: OpenCutList
@@ -556,7 +556,7 @@ tab:
       total_area: Σ Áreas
       total_length: Σ Comprimentos
       error:
-        no_typed_material_parts: ""
+        no_typed_material_parts: "Sem peças com um tipo de material definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** ou **$t(tab.materials.type_5)**) para gerar o relatório."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erro**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erros**."
       warning:
@@ -837,7 +837,7 @@ tab:
       type_3: Tipo de material '$t(tab.materials.type_3)'
       type_4: Tipo de material '$t(tab.materials.type_4)'
       type_5: Tipo de material '$t(tab.materials.type_5)'
-      type_6: ""
+      type_6: Tipo de material '$t(tab.materials.type_6)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Direção dos veios
@@ -1085,6 +1085,7 @@ tab:
       cuttingdiagram_export: Financiamento das exportações de diagramas de corte
     objective_details:
       default: |
+        A melhoria contínua da *OpenCutList* é importante para nós e o projeto continua precisando de sua ajuda para sua próxima atualização **5.0**!
       cuttingdiagram_export: |
         É importante para nós que a *OpenCutList* possa ser adaptada às expectativas muito diferentes dos usuários para a função *diagrama de corte*.
         Para expandir ainda mais as possibilidades, gostaríamos de possibilitar a exportação de diagramas de layout no formato **SVG**.
@@ -1147,6 +1148,17 @@ tab:
       *OpenCutList* é desenvolvido por [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) o [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Listar [colaboradores](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: Traduções
     credits_translators: |
+      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*Inglês*, *Alemão*)
+      - Vladimir Badulya (*Russo*)
+      - Pierluigi Colombo (*Italiano*)
+      - Nayton Sanches Barbosa, revisado e ampliado por [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*Português*)
+      - [Leonardo Romero Giménez](https://latablamarilla.com/) (*Espanhol*)
+      - [Radek Rýznar](https://onlinesketchup.cz) (*Tcheco*)
+      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*Polonês*)
+      - Sergey Isupov (*Hebraico*), sem interface RTL
+      - Soul Issam (*Árabe*), sem interface RTL
+      - Dany Dhondt, Eric Lugtigheid (*Holandês*)
+      - Nguyen Ngoc Tan (*Vietnamês*)
     credits_description: |
       O desenvolvimento desta extensão faz parte do projeto da plataforma de compartilhamento [L'Air du Bois](https://www.lairdubois.fr).
       E como tal, é também *Open Source* e está disponível sob licença [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) em seu [repositório GitHub].(https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
@@ -1180,7 +1192,7 @@ tool:
     filter_3: $t(tab.materials.type_3)
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
-    filter_6: ""
+    filter_6: $t(tab.materials.type_6)
     action: Ação
     action_0: Pintar a face
     action_1: Pintar peça
