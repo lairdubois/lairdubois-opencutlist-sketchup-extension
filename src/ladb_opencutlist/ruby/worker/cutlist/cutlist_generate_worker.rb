@@ -1005,11 +1005,11 @@ module Ladb::OpenCutList
             elsif transformed_normal.parallel?(Z_AXIS)
               z_face_infos.push(FaceInfo.new(entity, transformation))
             end
-            layers = layers + Set[ entity.layer ]
+            layers.add(entity.layer)
           elsif entity.is_a?(Sketchup::Group)
-            _grab_main_faces_and_layers(entity, x_face_infos, y_face_infos, z_face_infos, layers + Set[ entity.layer ], transformation ? transformation * entity.transformation : entity.transformation)
+            _grab_main_faces_and_layers(entity, x_face_infos, y_face_infos, z_face_infos, layers.add(entity.layer), transformation ? transformation * entity.transformation : entity.transformation)
           elsif entity.is_a?(Sketchup::ComponentInstance) && entity.definition.behavior.cuts_opening?
-            _grab_main_faces_and_layers(entity.definition, x_face_infos, y_face_infos, z_face_infos, layers + Set[ entity.layer ], transformation ? transformation * entity.transformation : entity.transformation)
+            _grab_main_faces_and_layers(entity.definition, x_face_infos, y_face_infos, z_face_infos, layers.add(entity.layer), transformation ? transformation * entity.transformation : entity.transformation)
           end
         end
       }

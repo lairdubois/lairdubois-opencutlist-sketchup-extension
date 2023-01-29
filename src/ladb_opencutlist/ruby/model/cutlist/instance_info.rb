@@ -28,6 +28,10 @@ module Ladb::OpenCutList
       @path.last
     end
 
+    def layer
+      entity.layer
+    end
+
     def serialized_path
       if @serialized_path
         return @serialized_path

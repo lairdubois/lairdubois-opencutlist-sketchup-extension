@@ -74,7 +74,7 @@ module Ladb::OpenCutList
       @auto_oriented = false
       @not_aligned_on_axes = false
       @unused_instance_count = 0
-      @layers = []
+      @layers = []                        # Drawing layers
       @final_area = 0
 
       @children_warning_count = 0

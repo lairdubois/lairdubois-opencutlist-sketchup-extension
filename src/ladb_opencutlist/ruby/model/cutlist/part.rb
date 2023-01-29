@@ -124,7 +124,7 @@ module Ladb::OpenCutList
       @auto_oriented = part_def.auto_oriented
       @not_aligned_on_axes = part_def.not_aligned_on_axes
       @unused_instance_count = part_def.unused_instance_count
-      @layers = part_def.layers.map(&:name)
+      @layers = part_def.layers.map(&:display_name).sort
       @multiple_layers = part_def.multiple_layers
       @edge_entity_ids = part_def.edge_entity_ids
       @veneer_entity_ids = part_def.veneer_entity_ids
