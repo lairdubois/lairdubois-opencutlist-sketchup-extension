@@ -155,6 +155,11 @@ core:
       remove: Oublier cette couleur
     textinput_code:
       help: Tappez **@** pour ouvrir la liste des variables de donnée.
+  docs:
+    error:
+      failed_to_load: |
+        Impossible d'ouvrir la documentation.
+        Vérifiez que vous êtes bien connecté à Internet.
 tab:
   cutlist:
     label: Débit

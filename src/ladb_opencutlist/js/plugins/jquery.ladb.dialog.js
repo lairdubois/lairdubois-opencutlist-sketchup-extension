@@ -894,7 +894,13 @@
             let page = $(this).data('help-page');
             $.getJSON(that.getDocsPageUrl(page ? page : ''), function (data) {
                 rubyCallCommand('core_open_url', data);
-            });
+            })
+                .fail(function () {
+                    that.notifyErrors([
+                        'core.docs.error.failed_to_load'
+                    ]);
+                })
+            ;
             return false;
         });
     }
