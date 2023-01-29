@@ -393,6 +393,9 @@
             this.setupTooltips();
             this.setupPopovers();
 
+            // Bind help buttons (if exist)
+            this.bindHelpButtonsInParent($tab);
+
             // Cache tab
             this.$tabs[tabName] = $tab;
 
@@ -578,6 +581,9 @@
 
         // Append modal
         this.$element.append(this._$modal);
+
+        // Bind help buttons (if exist)
+        this.bindHelpButtonsInParent(this._$modal);
 
         return this._$modal;
     };
@@ -858,6 +864,16 @@
         });
     }
 
+    LadbDialog.prototype.appendOclMetasToUrlQueryParams = function (url, params) {
+        url = url + '?v=' + this.capabilities.version + '&build=' + this.capabilities.build + '-' + (this.capabilities.is_rbz ? 'rbz' : 'src') + '&language=' + this.capabilities.language + '&locale=' + this.capabilities.locale;
+        if (params && (typeof params  === "object")) {
+            for (const property in params) {
+                url += '&' + property + '=' + params[property];
+            }
+        }
+        return url
+    }
+
     LadbDialog.prototype.getDocsPageUrl = function (page) {
         return this.appendOclMetasToUrlQueryParams(
             this.capabilities.is_dev ? DOCS_DEV_URL : DOCS_URL,
@@ -871,14 +887,16 @@
         );
     }
 
-    LadbDialog.prototype.appendOclMetasToUrlQueryParams = function (url, params) {
-        url = url + '?v=' + this.capabilities.version + '&build=' + this.capabilities.build + '-' + (this.capabilities.is_rbz ? 'rbz' : 'src') + '&language=' + this.capabilities.language + '&locale=' + this.capabilities.locale;
-        if (params && (typeof params  === "object")) {
-            for (const property in params) {
-                url += '&' + property + '=' + params[property];
-            }
-        }
-        return url
+    LadbDialog.prototype.bindHelpButtonsInParent = function ($parent) {
+        var that = this;
+        let $btns = $('[data-help-page]', $parent);
+        $btns.on('click', function () {
+            let page = $(this).data('help-page');
+            $.getJSON(that.getDocsPageUrl(page ? page : ''), function (data) {
+                rubyCallCommand('core_open_url', data);
+            });
+            return false;
+        });
     }
 
     LadbDialog.prototype.copyToClipboard = function (text) {
@@ -915,12 +933,9 @@
             that.compatibilityAlertHidden = true;
             that.setSetting(SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN, that.compatibilityAlertHidden);
         });
-        $('#ladb_leftbar_btn_docs', this.$leftbar).on('click', function () {
-            $.getJSON(that.getDocsPageUrl(), function (data) {
-                rubyCallCommand('core_open_url', data);
-            });
-            return false;
-        });
+
+        // Bind "docs" button
+        this.bindHelpButtonsInParent(this.$leftbar);
 
         // Bind fake tabs
         $('a[data-ladb-tab-name]', this.$element).on('click', function() {

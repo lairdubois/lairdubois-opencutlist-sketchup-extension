@@ -631,6 +631,7 @@
 {% endblock %}
 
 {% block footerInner %}
+    <button type="button" class="btn btn-default pull-left" data-help-page="cutlist.part"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
     {% if multiple %}
         <button type="button" class="btn btn-default pull-left" id="ladb_cutlist_part_highlight"><i class="ladb-opencutlist-icon-magnifier-multiple"></i> {{ 'tab.cutlist.highlight_parts'|i18next }}</button>
     {% else %}

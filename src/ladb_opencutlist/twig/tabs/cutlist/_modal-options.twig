@@ -181,6 +181,7 @@
 {% endblock %}
 
 {% block footerInner %}
+    <button type="button" class="btn btn-default pull-left" data-help-page="cutlist.options"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
     <button type="button" class="btn btn-default pull-left" id="ladb_cutlist_options_setup_model_units"><i class="ladb-opencutlist-icon-settings"></i> {{ 'default.setup_model_units'|i18next }}...</button>
     <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
     <button type="button" class="btn btn-primary btn-validate-modal" id="ladb_cutlist_options_update">{{ 'default.validate'|i18next }}</button>

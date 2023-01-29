@@ -18,7 +18,7 @@
                 <a id="ladb_link_changelog" href="#">{{ 'core.upgrade.changelog'|i18next }}</a>
             </p>
         {% else %}
-            <p>{{ 'core.upgrade.up_to_date'|i18next }}</p>
+            <p style="margin:20px;">{{ 'core.upgrade.up_to_date'|i18next }}</p>
         {% endif %}
     </div>
     <div id="ladb_panel_progress" style="display: none;">
@@ -31,6 +31,7 @@
 {% endblock %}
 
 {% block footerInner %}
+    <button type="button" class="btn btn-default pull-left" data-help-page="core.upgrade"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
     <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.close'|i18next }}</button>
     {% if capabilities.manifest.version is empty %}
         <button id="ladb_btn_download" class="btn btn-primary ladb-btn-download">{{ 'default.download'|i18next }}</button>

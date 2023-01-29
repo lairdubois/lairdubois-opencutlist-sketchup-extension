@@ -664,7 +664,6 @@
             var $editorSummary = $('#ladb_cutlist_export_editor_summary', $modal);
             var $editorCutlist = $('#ladb_cutlist_export_editor_cutlist', $modal);
             var $editorInstancesList = $('#ladb_cutlist_export_editor_instances_list', $modal);
-            var $btnHelp = $('#ladb_cutlist_export_btn_help', $modal);
             var $btnPreview = $('#ladb_cutlist_export_btn_preview', $modal);
             var $btnExport = $('#ladb_cutlist_export_btn_export', $modal);
 
@@ -821,12 +820,6 @@
             });
 
             // Bind buttons
-            $btnHelp.on('click', function () {
-                $.getJSON(that.dialog.getDocsPageUrl('features.parts.export'), function (data) {
-                    rubyCallCommand('core_open_url', data);
-                });
-                return false;
-            });
             $btnPreview.on('click', function () {
 
                 // Fetch options
@@ -984,7 +977,6 @@
             var $tabs = $('a[data-toggle="tab"]', $modal);
             var $widgetPreset = $('.ladb-widget-preset', $modal);
             var $inputSolidWoodCoefficient = $('#ladb_input_solid_wood_coefficient', $modal);
-            var $btnHelp = $('#ladb_cutlist_report_btn_help', $modal);
             var $btnGenerate = $('#ladb_cutlist_report_btn_generate', $modal);
 
             var fnFetchOptions = function (options) {
@@ -1012,12 +1004,6 @@
             });
 
             // Bind buttons
-            $btnHelp.on('click', function () {
-                $.getJSON(that.dialog.getDocsPageUrl('features.parts.report'), function (data) {
-                    rubyCallCommand('core_open_url', data);
-                });
-                return false;
-            });
             $btnGenerate.on('click', function () {
 
                 // Fetch options
@@ -3062,7 +3048,6 @@
             var $selectCuttingMarks = $('#ladb_select_cutting_marks', $modal);
             var $sortablePartOrderStrategy = $('#ladb_sortable_part_order_strategy', $modal);
             var $editorLabelOffset = $('#ladb_editor_label_offset', $modal);
-            var $btnHelp = $('#ladb_cutlist_labels_btn_help', $modal);
             var $btnGenerate = $('#ladb_cutlist_labels_btn_generate', $modal);
 
             var fnValidOffset = function (offset, colCount, rowCount) {
@@ -3245,12 +3230,6 @@
             });
 
             // Bind buttons
-            $btnHelp.on('click', function () {
-                $.getJSON(that.dialog.getDocsPageUrl('features.parts.parts-list.labels'), function (data) {
-                    rubyCallCommand('core_open_url', data);
-                });
-                return false;
-            });
             $btnGenerate.on('click', function () {
 
                 // Fetch options

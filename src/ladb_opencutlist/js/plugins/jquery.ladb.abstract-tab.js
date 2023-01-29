@@ -263,6 +263,9 @@ LadbAbstractTab.prototype.appendModalInside = function (id, twigFile, renderPara
     // Append modal
     this.$element.append(this._$modal);
 
+    // Bind help buttons (if exist)
+    this.dialog.bindHelpButtonsInParent(this._$modal);
+
     return this._$modal;
 };
 
