@@ -235,7 +235,7 @@
                                         <line x1="0" y1="0" x2="0" y2="6" style="stroke:#f77f00; stroke-width:4" />
                                     </pattern>
                                 </defs>
-                                <g class="increase increase-length">
+                                <g class="increase increase-length"{% if part.flipped %} transform="rotate(180 {{ areaSize / 2 }} {{ areaSize / 2 }})"{% endif %}>
                                     <rect x="{{ (areaSize + partLength) / 2 - partOutlineWidth - increaseLWidth }}" y="{{ (areaSize - partWidth) / 2 + partOutlineWidth }}" width="{{ increaseLWidth }}" height="{{ partWidth - 2 * partOutlineWidth }}" class="increase increase-area" />
                                     <rect x="{{ (areaSize + partLength) / 2 - edgeWidth - edgeOutlineWidth }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ edgeWidth + edgeOutlineWidth * 2 }}" height="{{ partWidth }}" class="edge edge-outer" />
                                     <rect x="{{ (areaSize + partLength) / 2 - edgeWidth }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ edgeWidth }}" height="{{ partWidth }}" class="edge edge-inner" />
