@@ -155,6 +155,11 @@ core:
       remove: Kleur vergeten
     textinput_code:
       help: Druk op **@** om de lijst met gegevensvariabelen te openen.
+  docs:
+    error:
+      failed_to_load: |
+        Kan de documentatie niet openen.
+        Controleer of u verbonden bent met het internet.
 tab:
   cutlist:
     label: Onderdelen

@@ -155,6 +155,11 @@ core:
       remove: Rimuovi il colore
     textinput_code:
       help: Digitare **@** per oittenere la lista delle variabili.
+  docs:
+    error:
+      failed_to_load: |
+        Impossibile aprire la documentazione.
+        Verificare la connessione a Internet.
 tab:
   cutlist:
     label: Parti

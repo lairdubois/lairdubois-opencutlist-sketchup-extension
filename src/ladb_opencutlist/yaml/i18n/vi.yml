@@ -67,7 +67,7 @@ core:
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
-      edit_part_veneers_properties: ""
+      edit_part_veneers_properties: $t(tab.cutlist.edit_part_veneers_properties)
       smart_paint: $t(core.toolbar.command.smart_paint)
   toolbar:
     name: OpenCutList
@@ -155,6 +155,9 @@ core:
       remove: Xóa màu
     textinput_code:
       help: Nhập **@** để nhận danh sách các biến.
+  docs:
+    error:
+      failed_to_load: |
 tab:
   cutlist:
     label: Các bộ phận
@@ -556,7 +559,7 @@ tab:
       total_area: Σ Diện tích
       total_length: Σ Chiều dài
       error:
-        no_typed_material_parts: ""
+        no_typed_material_parts: "Không có bộ phận nào có loại vật liệu (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** hoặc **$t(tab.materials.type_5)**) đã được cung cấp để tạo báo cáo."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} lỗi**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} lỗi**."
       warning:
@@ -615,6 +618,10 @@ tab:
       option_highlight_primary_cuts_0: Chỉ đường kẻ
       option_highlight_primary_cuts_1: Luôn hiển thị
       option_highlight_primary_cuts_help: Cho phép đánh dấu các vệt cắt chính.
+      option_hide_edges_preview: ""
+      option_hide_edges_preview_0: ""
+      option_hide_edges_preview_1: ""
+      option_hide_edges_preview_help: ""
       option_saw_kerf: Độ dày của lưỡi cắt
       option_saw_kerf_help: Chiều rộng của vật liệu được loại bỏ bởi lưỡi cưa cắt.
       option_trimming: Kích thước cắt tỉa
@@ -837,7 +844,7 @@ tab:
       type_3: Vật liệu loại '$t(tab.materials.type_3)'
       type_4: Vật liệu loại '$t(tab.materials.type_4)'
       type_5: Vật liệu loại '$t(tab.materials.type_5)'
-      type_6: ""
+      type_6: Vật liệu loại '$t(tab.materials.type_6)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Hướng thớ gỗ
@@ -1085,6 +1092,7 @@ tab:
       cuttingdiagram_export: Kinh phí của sơ đồ cắt được xuất
     objective_details:
       default: |
+        Sự cải tiến liên tục của *OpenCutList* rất quan trọng đối với chúng tôi và dự án tiếp tục cần sự trợ giúp của bạn cho bản cập nhật tiếp theo **5.0**!
       cuttingdiagram_export: |
         Điều quan trọng đối với chúng tôi là *OpenCutList* có thể được điều chỉnh cho phù hợp với những kỳ vọng rất khác nhau của người dùng đối với chức năng *Sơ đồ cắt*.
         Để tiếp tục mở rộng các khả năng, chúng tôi muốn cho phép xuất sơ đồ bố trí ở định dạng **SVG**.
@@ -1147,6 +1155,17 @@ tab:
       *OpenCutList* được phát triển bởi [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) và [Martin Müller](https://www.lairdubois.fr/@mobilarte). Liệt kê tất cả [người đóng góp](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: Bản dịch
     credits_translators: |
+      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*Tiếng Anh*, *Tiếng Đức*)
+      - Vladimir Badulya (*Tiếng Nga*)
+      - Pierluigi Colombo (*Tiếng Ý*)
+      - Nayton Sanches Barbosa, được hiệu chỉnh và sửa đổi bởi [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*Tiếng Bồ Đào Nha*)
+      - [Leonardo Romero Giménez](https://latablamarilla.com/) (*Tiếng Tây Ban Nha*)
+      - [Radek Rýznar](https://onlinesketchup.cz) (*Tiếng Séc*)
+      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*Tiếng Ba Lan*)
+      - Sergey Isupov (*Tiếng Do Thái*), Giao diện RTL chưa được hỗ trợ
+      - Soul Issam (*Tiếng Ả Rập*), Giao diện RTL chưa được hỗ trợ
+      - Dany Dhondt, Eric Lugtigheid (*Tiếng Hà Lan*)
+      - Nguyễn Ngọc Tân (*Tiếng Việt*)
     credits_description: |
       Việc phát triển phần mở rộng này được liên kết với dự án chia sẻ [L'Air du Bois](https://www.lairdubois.fr).
       Tiện ích mở rộng này cũng là *Nguồn mở* và có sẵn theo giấy phép [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) giấy phép trên [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
@@ -1180,7 +1199,7 @@ tool:
     filter_3: $t(tab.materials.type_3)
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
-    filter_6: ""
+    filter_6: $t(tab.materials.type_6)
     action: Hành động
     action_0: Tô bề mặt
     action_1: Tô bộ phận

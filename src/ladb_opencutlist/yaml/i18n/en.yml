@@ -155,6 +155,11 @@ core:
       remove: Remove color
     textinput_code:
       help: Type **@** to get a list of variables.
+  docs:
+    error:
+      failed_to_load: |
+        Unable to open the documentation.
+        Make sure you are connected to the Internet.
 tab:
   cutlist:
     label: Parts
