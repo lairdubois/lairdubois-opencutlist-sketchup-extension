@@ -795,7 +795,7 @@ module Ladb::OpenCutList
 
                 folder_part_def.children.push(first_child_part_def)
                 folder_part_def.children_warning_count += 1 if first_child_part_def.not_aligned_on_axes
-                folder_part_def.children_warning_count += 1 if first_child_part_def.multiple_layers
+                folder_part_def.children_warning_count += 1 if first_child_part_def.multiple_content_layers
                 folder_part_def.children_warning_count += 1 if first_child_part_def.unused_instance_count > 0
                 folder_part_def.children_length_increased_count += first_child_part_def.count if first_child_part_def.length_increased
                 folder_part_def.children_width_increased_count += first_child_part_def.count if first_child_part_def.width_increased
@@ -808,7 +808,7 @@ module Ladb::OpenCutList
               folder_part_def.count += part_def.count
               folder_part_def.merge_entity_names(part_def.entity_names)
               folder_part_def.children_warning_count += 1 if part_def.not_aligned_on_axes
-              folder_part_def.children_warning_count += 1 if part_def.multiple_layers
+              folder_part_def.children_warning_count += 1 if part_def.multiple_content_layers
               folder_part_def.children_warning_count += 1 if part_def.unused_instance_count > 0
               folder_part_def.children_length_increased_count += part_def.count if part_def.length_increased
               folder_part_def.children_width_increased_count += part_def.count if part_def.width_increased

@@ -176,7 +176,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :id, :number, :saved_number, :name, :description, :length, :width, :cutting_length, :cutting_width, :count, :tags, :flipped, :thickness_layer_count, :edge_count, :edge_pattern, :edge_material_names, :edge_std_dimensions, :edge_decrements, :veneer_count, :veneer_pattern, :veneer_material_names, :veneer_std_dimensions, :veneer_decrements
+    attr_reader :id, :number, :saved_number, :name, :description, :length, :width, :cutting_length, :cutting_width, :length_increase, :width_increase, :length_increased, :width_increased, :count, :tags, :flipped, :thickness_layer_count, :edge_count, :edge_pattern, :edge_material_names, :edge_std_dimensions, :edge_decrements, :veneer_count, :veneer_pattern, :veneer_material_names, :veneer_std_dimensions, :veneer_decrements
 
     def initialize(_def)
       @_def = _def
@@ -190,6 +190,10 @@ module Ladb::OpenCutList
       @width = _def.cutlist_part.width
       @cutting_length = _def.cutlist_part.cutting_length
       @cutting_width = _def.cutlist_part.cutting_width
+      @length_increase = _def.cutlist_part.length_increase
+      @width_increase = _def.cutlist_part.width_increase
+      @length_increased = _def.cutlist_part.length_increased
+      @width_increased = _def.cutlist_part.width_increased
       @count = _def.count
       @tags = _def.cutlist_part.tags
       @flipped = _def.cutlist_part.flipped
