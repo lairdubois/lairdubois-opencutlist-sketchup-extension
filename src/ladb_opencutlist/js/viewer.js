@@ -18,9 +18,9 @@ scene.background = new THREE.Color(0xffffff);
 scene.environment = pmremGenerator.fromScene(new THREE.RoomEnvironment()).texture;
 
 let controls = new THREE.OrbitControls(camera, renderer.domElement);
-controls.autoRotateSpeed = 10.0;
 controls.zoomSpeed = 2.0;
-controls.autoRotate = false;
+controls.autoRotateSpeed = 2.0;
+controls.autoRotate = true;
 
 const material = new THREE.MeshBasicMaterial({
     color: 0xeeeeee,
@@ -60,10 +60,10 @@ const fnAdd = function (meshDefs) {
 
     let ratio = window.innerHeight / window.innerWidth
 
-    camera.left = -radius * 1.4;
-    camera.right = radius * 1.4;
-    camera.top = radius * 1.4 * ratio;
-    camera.bottom = -radius * 1.4 * ratio;
+    camera.left = -radius * 2;
+    camera.right = radius * 2;
+    camera.top = radius * 2 * ratio;
+    camera.bottom = -radius * 2 * ratio;
 
     controls.target0.copy(bbox.getCenter(new THREE.Vector3()));
     controls.position0.set(1, 1, 1).multiplyScalar(radius).add(controls.target0);
