@@ -244,7 +244,7 @@ tab:
       thickness_layered: "La quantità qui corrisponde al numero di parte da tagliare per ottenere tutti gli strati."
       thickness_layered_equation: "**{{ count }}** *parte* x **{{ layerCount }}** *strati* = **{{ cuttingPartCount }}**"
       thickness_layered_equation_plural: "**{{ count }}** *parti* x **{{ layerCount }}** *strati* = **{{ cuttingPartCount }}**"
-      multiple_layers: "Attenzione, questa parte è costituita da sotto-insiemi definiti su {{ count }} layer differenti:<br>{{ layers }}"
+      multiple_content_layers: "Attenzione, questa parte è composta da sottoparti situate in {{ count }} diversi tag o strati:<br>{{ layers }}"
       children_warnings: "Attenzione, c'è {{ count }} avvertimento nelle parti raggruppate"
       children_warnings_plural: "Attenzione, ci sono {{ count }} avvertimenti nelle parti raggruppate"
       children_size_increase: "Questa dimensione è stata aumentata con un maggiorazione in {{ count }} parti raggruppate"
@@ -532,6 +532,8 @@ tab:
       edge_xmax: Bordo Larghezza 2
       veneer_zmin: Retrocopertina
       veneer_zmax: Anteriore
+      layer: Tag
+      layers: Tag
       placeholder:
         no_column_title: Digitare il nome
         no_column_formula_native: "Valore predefinito della colonna '{{ col_name }}'"

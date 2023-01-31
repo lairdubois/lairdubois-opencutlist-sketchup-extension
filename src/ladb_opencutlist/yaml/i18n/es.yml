@@ -244,7 +244,7 @@ tab:
       thickness_layered: "La cantidad aquí representa el número de piezas que hay que cortar para obtener todas las capas."
       thickness_layered_equation: "**{{ count }}** *parte* x **{{ layerCount }}** *capas* = **{{ cuttingPartCount }}**"
       thickness_layered_equation_plural: "**{{ count }}** *partes* x **{{ layerCount }}** *capas* = **{{ cuttingPartCount }}**"
-      multiple_layers: "Atención, esta parte se compone de subpartes presentes en {{ count }} capas diferentes:<br>{{ layers }}"
+      multiple_content_layers: "Atención, esta parte se compone de subpartes presentes en {{ count }} capas, etiquetas o tags, diferentes:<br>{{ layers }}"
       children_warnings: "Precaución, hay {{ count }} alerta en partes agrupadas"
       children_warnings_plural: "Precauciones, hay {{ count }} alertas en partes agrupadas"
       children_size_increase: "Esta dimensión se incrementa en un tamaño grande para {{ count }} partes agrupadas"
@@ -532,6 +532,8 @@ tab:
       edge_xmax: Ancho del borde 2
       veneer_zmin: Dorso
       veneer_zmax: Frente
+      layer: Etiqueta
+      layers: Etiquetas
       placeholder:
         no_column_title: Introduzca un título
         no_column_formula_native: "Valor nativo de la columna '{{ col_name }}'"
@@ -1118,7 +1120,7 @@ tab:
   settings:
     label: Preferencias
     title: Preferencias
-    global_settings: Preferencias Globales
+    global_settings: Preferencias globales
     language: Idioma
     language_auto: Automático
     zoom: Tamaño de letra

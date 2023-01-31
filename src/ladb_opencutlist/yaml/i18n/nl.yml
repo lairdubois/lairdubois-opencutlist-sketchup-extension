@@ -244,7 +244,7 @@ tab:
       thickness_layered: "De hier aangegeven hoeveelheid komt overeen met het aantal stukken dat moet worden gesneden om alle lagen te verkrijgen."
       thickness_layered_equation: "**{{ count }}** *deel* x **{{ layerCount }}** *lagen* = **{{ cuttingPartCount }}**"
       thickness_layered_equation_plural: "**{{ count }}** *delen* x **{{ layerCount }}** *lagen* = **{{ cuttingPartCount }}**"
-      multiple_layers: "Let op! dit component is opgebouwd uit onderdelen dit zich bevinden in {{ count }} verschillende lagen: <br>{{ layers }}"
+      multiple_content_layers: "Let op! dit component is opgebouwd uit onderdelen dit zich bevinden in {{ count }} verschillende lagen: <br>{{ layers }}"
       children_warnings: "Let op! Er zitten {{ count }} waarschuwingen in deze groep"
       children_warnings_plural: "Let op! Er zitten {{ count }} waarschuwingen in deze groep"
       children_size_increase: "Deze afmeting wordt vergroot met een overmaat voor {{ count }} gegroepeerde onderdelen"
@@ -532,6 +532,8 @@ tab:
       edge_xmax: Kantenband breedte 2
       veneer_zmin: Achterkant
       veneer_zmax: Voorzijde
+      layer: Tag
+      layers: Tags
       placeholder:
         no_column_title: Voer een titel in
         no_column_formula_native: "Beginwaarde van kolom '{{ col_name }}'"
