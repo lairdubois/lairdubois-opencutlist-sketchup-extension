@@ -158,6 +158,8 @@ core:
   docs:
     error:
       failed_to_load: |
+        Невозможно открыть документацию.
+        Убедитесь, что есть подключение к Интернету.
 tab:
   cutlist:
     label: Раскрой
@@ -242,7 +244,7 @@ tab:
       thickness_layered: "Здесь отражено общее количество частей по заданному числу слоев многослойной детали в раскрое."
       thickness_layered_equation: "**{{ count }}** *часть* x **{{ layerCount }}** *слоя* = **{{ cuttingPartCount }}**"
       thickness_layered_equation_plural: "**{{ count }}** *частей* x **{{ layerCount }}** *слоев* = **{{ cuttingPartCount }}**"
-      multiple_layers: "Внимание, эта деталь состоит из подгрупп, присутствующих в {{ count }} разных слоях:<br>{{ layers }}"
+      multiple_content_layers: "Внимание, эта деталь состоит из подгрупп, присутствующих в {{ count }} разных слоях:<br>{{ layers }}"
       children_warnings: "Осторожно, в сгруппированных деталях {{ count }} есть предупреждение"
       children_warnings_plural: "Осторожно, в сгруппированных деталях {{ count }} есть предупреждения"
       children_size_increase: "Этот размер увеличивается на размер {{ count }} комплектующего изделия"
@@ -530,6 +532,8 @@ tab:
       edge_xmax: Кромка по ширине 2
       veneer_zmin: Сопоставление
       veneer_zmax: Облицовка
+      layer: Маяк
+      layers: Маяки
       placeholder:
         no_column_title: Введите название
         no_column_formula_native: "Заголовок столбца '{{ col_name }}'"

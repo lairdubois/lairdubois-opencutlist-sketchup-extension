@@ -244,7 +244,7 @@ tab:
       thickness_layered: "The quantity here represents the number of pieces to be cut to obtain all the layers."
       thickness_layered_equation: "**{{ count }}** *part* x **{{ layerCount }}** *layers* = **{{ cuttingPartCount }}**"
       thickness_layered_equation_plural: "**{{ count }}** *parts* x **{{ layerCount }}** *layers* = **{{ cuttingPartCount }}**"
-      multiple_layers: "Caution, this part is composed of sub-parts present in {{ count }} different layers:<br>{{ layers }}"
+      multiple_content_layers: "Caution, this part is composed of sub-parts present in {{ count }} different layers or tags:<br>{{ layers }}"
       children_warnings: "Caution, there is {{ count }} alert in grouped parts"
       children_warnings_plural: "Caution, there are {{ count }} alerts in grouped parts"
       children_size_increase: "This dimension is increased by an oversize for {{ count }} grouped parts"
@@ -532,6 +532,8 @@ tab:
       edge_xmax: Edge width 2
       veneer_zmin: Veneer backside
       veneer_zmax: Veneer frontside
+      layer: Tag
+      layers: Tags
       placeholder:
         no_column_title: Enter a title
         no_column_formula_native: "Native value of column '{{ col_name }}'"
