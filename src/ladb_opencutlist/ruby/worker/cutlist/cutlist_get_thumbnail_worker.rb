@@ -22,6 +22,30 @@ module Ladb::OpenCutList
       definition = definitions[@definition_id]
       if definition
 
+        ##
+
+        mesh_defs = []
+        definition.entities.each do |entity|
+          if entity.is_a?(Sketchup::Face)
+            mesh_def =  entity.mesh.polygons.map { |polygon|
+              polygon.map { |index|
+                point = entity.mesh.point_at(index)
+                [ point.x.to_f, point.y.to_f, point.z.to_f ]
+              }.flatten
+            }.flatten
+            mesh_defs.push(mesh_def)
+          end
+        end
+
+        # out = {}
+        # out.store('mesh_defs', mesh_defs)
+        # pp out.to_json
+
+        response[:mesh_defs] = mesh_defs
+
+        ##
+
+
         temp_dir = Plugin.instance.temp_dir
         component_thumbnails_dir = File.join(temp_dir, 'components_thumbnails')
         unless Dir.exist?(component_thumbnails_dir)

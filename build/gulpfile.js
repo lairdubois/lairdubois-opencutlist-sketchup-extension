@@ -113,7 +113,7 @@ gulp.task('i18n_compile', function () {
 gulp.task('i18n_dialog_compile', function () {
 
     // Clean previously generated dialog files
-    del('../src/ladb_opencutlist/html/*', {
+    del('../src/ladb_opencutlist/html/dialog-*', {
         force: true
     });
 

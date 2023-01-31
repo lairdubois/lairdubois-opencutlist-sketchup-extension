@@ -36,7 +36,8 @@
         <div role="tabpanel" class="tab-pane{% if tab == 'general' %} active{% endif %}" id="tab_edit_part_general">
             {% if thumbnailFile is not empty %}
                 <div class="ladb-part-thumbnail">
-                    <img class="ladb-part-thumbnail" src="{{ thumbnailFile }}" width="200" height="200"{% if part.flipped %} style="transform: scaleX(-1);"{% endif %}>
+                    <iframe id="ladb_iframe_part_veiwer" src="viewer.html" style="border: none;" width="100%" height="300"></iframe>
+{#                    <img class="ladb-part-thumbnail" src="{{ thumbnailFile }}" width="200" height="200"{% if part.flipped %} style="transform: scaleX(-1);"{% endif %}>#}
                 </div>
             {% endif %}
             <div class="form form-horizontal">
