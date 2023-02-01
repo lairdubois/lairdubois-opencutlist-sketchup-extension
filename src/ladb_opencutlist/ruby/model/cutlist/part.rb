@@ -44,7 +44,7 @@ module Ladb::OpenCutList
       @veneer_count = part_def.veneer_count
       @veneer_pattern = part_def.veneer_pattern
       @veneer_material_names = part_def.veneer_material_names
-      @veneer_texture_angles = part_def.veneer_texture_angles.transform_values { |v| v.radians.round }
+      @veneer_texture_angles = part_def.veneer_texture_angles.each { |k, v| part_def.veneer_texture_angles[k] = v.radians.round }
       @veneer_std_dimensions = part_def.veneer_std_dimensions
       @veneer_decrements = { :thickness => part_def.veneer_thickness_decrement > 0 ? part_def.veneer_thickness_decrement.to_s : nil }
       @entity_names = part_def.entity_names.sort_by { |k, v| [ k ] }
@@ -124,7 +124,7 @@ module Ladb::OpenCutList
       @auto_oriented = part_def.auto_oriented
       @not_aligned_on_axes = part_def.not_aligned_on_axes
       @unused_instance_count = part_def.unused_instance_count
-      @content_layers = part_def.content_layers.map(&:display_name).sort
+      @content_layers = part_def.content_layers.map { |v| Sketchup.version_number >= 2000000000 ? v.display_name : v.name }.sort
       @multiple_content_layers = part_def.multiple_content_layers
       @edge_entity_ids = part_def.edge_entity_ids
       @veneer_entity_ids = part_def.veneer_entity_ids
