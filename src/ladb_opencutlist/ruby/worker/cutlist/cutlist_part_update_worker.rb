@@ -238,7 +238,11 @@ module Ladb::OpenCutList
                 end
 
                 if entity.is_a?(Sketchup::Face)
-                  entity.clear_texture_position(true)
+
+                  # TODO find a way to achieve this in SU < 2022
+                  if Sketchup.version_number >= 2200000000
+                    entity.clear_texture_position(true)
+                  end
 
                   if angle
 

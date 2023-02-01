@@ -883,7 +883,7 @@
 
     LadbDialog.prototype.getChangelogUrl = function () {
         return this.appendOclMetasToUrlQueryParams(
-            this.capabilities.is_dev ? CHANGELOG_DEV_URL : CHANGELOG_URL,
+            this.capabilities.is_dev ? CHANGELOG_DEV_URL : CHANGELOG_URL
         );
     }
 

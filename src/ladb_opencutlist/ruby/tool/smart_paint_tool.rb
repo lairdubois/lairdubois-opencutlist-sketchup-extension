@@ -460,12 +460,12 @@ module Ladb::OpenCutList
         view.invalidate
       elsif key == VK_LEFT
         button = _get_selected_material_button
-        if button&.previous
+        if button && button.previous
           button.previous.fire(:click, flags)
         end
       elsif key == VK_RIGHT
         button = _get_selected_material_button
-        if button&.next
+        if button && button.next
           button.next.fire(:click, flags)
         end
       end
@@ -671,7 +671,7 @@ module Ladb::OpenCutList
           if picked_path == @picked_path && event == :move
             return  # Previously detected path, stop process to optimize.
           end
-          if picked_path&.last && picked_path.last.is_a?(Sketchup::Face)
+          if picked_path && picked_path.last && picked_path.last.is_a?(Sketchup::Face)
 
             @picked_path = picked_path
 
