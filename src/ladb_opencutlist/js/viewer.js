@@ -1,20 +1,28 @@
 let container = document.createElement('div');
 document.body.appendChild(container);
 
+// Camera
+
 const camera = new THREE.OrthographicCamera( -1, 1, 1, -1, 0.1, 1000 );
 camera.up.set(0, 0, 1);
 
-let renderer = new THREE.WebGLRenderer({antialias: true});
+// Renderers
+
+const renderer = new THREE.WebGLRenderer({antialias: true});
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.outputEncoding = THREE.sRGBEncoding;
 container.appendChild(renderer.domElement);
+
+// Scene
 
 const pmremGenerator = new THREE.PMREMGenerator(renderer);
 
 let scene = new THREE.Scene();
 scene.background = new THREE.Color(0xffffff);
 scene.environment = pmremGenerator.fromScene(new THREE.RoomEnvironment()).texture;
+
+// Controls
 
 let controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.minZoom = 0.8;
@@ -29,7 +37,9 @@ controls.mouseButtons = {
 }
 controls.enablePan = false;
 
-const material = new THREE.MeshBasicMaterial({
+// Materials
+
+const defaultMaterial = new THREE.MeshBasicMaterial({
     color: 0xeeeeee,
     polygonOffset: true,
     polygonOffsetFactor: 1,
@@ -39,27 +49,56 @@ const lineMaterial = new THREE.LineBasicMaterial({
     color: 0x000000,
 });
 
-const fnAdd = function (meshDefs) {
+const fnAddObject = function (objectDef, parent, material) {
 
-    const model = new THREE.Group();
-    scene.add(model);
+    if (objectDef.color) {
+        material = new THREE.MeshBasicMaterial({
+            color: objectDef.color,
+            polygonOffset: true,
+            polygonOffsetFactor: 1,
+            polygonOffsetUnits: 0
+        });
+    }
 
-    for (let meshDef of meshDefs) {
+    switch (objectDef.type) {
 
-        const vertices = new Float32Array(meshDef)
-        const geometry = new THREE.BufferGeometry();
-        geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+        case 1: // TYPE_GROUP
 
-        const mesh = new THREE.Mesh(geometry, material);
-        model.add(mesh);
+            let group = new THREE.Group();
+            if (objectDef.matrix) {
+                let matrix = new THREE.Matrix4();
+                matrix.elements = objectDef.matrix;
+                group.applyMatrix4(matrix);
+            }
+            for (childObjectDef of objectDef.children) {
+                fnAddObject(childObjectDef, group, material);
+            }
+            parent.add(group);
 
-        const edges = new THREE.EdgesGeometry(geometry, 90);
-        const line = new THREE.LineSegments(edges, lineMaterial);
-        model.add(line);
+            break;
+
+        case 2: // TYPE_MESH
+
+            let vertices = new Float32Array(objectDef.vertices)
+            let geometry = new THREE.BufferGeometry();
+            geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+
+            let mesh = new THREE.Mesh(geometry, material);
+            parent.add(mesh);
+
+            let edges = new THREE.EdgesGeometry(geometry, 90);
+            let line = new THREE.LineSegments(edges, lineMaterial);
+            parent.add(line);
+
+            break;
 
     }
 
-    const bbox = new THREE.Box3().setFromObject(model);
+}
+
+const fnSetup = function (model) {
+
+    const bbox = new THREE.Box3().setFromObject(scene);
     const size = bbox.getSize(new THREE.Vector3());
     const radius = Math.max(size.x, Math.max(size.y, size.z));
 
@@ -95,5 +134,6 @@ const fnAnimate = function () {
 }
 
 window.onmessage = function (e) {
-    fnAdd(e.data);
+    fnAddObject(e.data.objectDef, scene, defaultMaterial);
+    fnSetup();
 };

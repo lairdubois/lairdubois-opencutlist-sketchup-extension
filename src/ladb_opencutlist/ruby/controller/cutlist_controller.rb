@@ -171,7 +171,7 @@ module Ladb::OpenCutList
       require_relative '../worker/cutlist/cutlist_get_thumbnail_worker'
 
       # Setup worker
-      worker = CutlistGetThumbnailWorker.new(part_data)
+      worker = CutlistGetThumbnailWorker.new(part_data, @cutlist)
 
       # Run !
       worker.run

@@ -1576,7 +1576,7 @@
             }
             this.lastEditPartTab = tab;
 
-            var fnOpenModal = function(thumbnailFile, meshDefs) {
+            var fnOpenModal = function(thumbnailFile, threeObjectDef) {
 
                 var $modal = that.appendModalInside('ladb_cutlist_modal_part', 'tabs/cutlist/_modal-part.twig', {
                     group: group,
@@ -1811,9 +1811,11 @@
                 });
 
                 // Bind iframe
-                $iframePartViewer.on('load', function () {
-                    this.contentWindow.postMessage(meshDefs, '*')
-                });
+                if (threeObjectDef) {
+                    $iframePartViewer.on('load', function () {
+                        this.contentWindow.postMessage({ objectDef: threeObjectDef }, '*')
+                    });
+                }
 
                 // Bind input
                 $inputName.ladbTextinputText();
@@ -2200,8 +2202,8 @@
                 // Generate and Retrieve part thumbnail file
                 rubyCallCommand('cutlist_part_get_thumbnail', part, function (response) {
                     var thumbnailFile = response['thumbnail_file'];
-                    var meshDefs = response['mesh_defs'];
-                    fnOpenModal(thumbnailFile,meshDefs);
+                    var threeObjectDef = response['three_object_def'];
+                    fnOpenModal(thumbnailFile, threeObjectDef);
                 });
 
             }
