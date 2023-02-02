@@ -1,10 +1,15 @@
+
 let container = document.createElement('div');
 document.body.appendChild(container);
+
+
+// Up
+
+THREE.Object3D.DefaultUp.set(0, 0, 1);
 
 // Camera
 
 const camera = new THREE.OrthographicCamera( -1, 1, 1, -1, 0.1, 1000 );
-camera.up.set(0, 0, 1);
 
 // Renderers
 
@@ -12,6 +17,7 @@ const renderer = new THREE.WebGLRenderer({antialias: true});
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.toneMapping = THREE.NoToneMapping;
 container.appendChild(renderer.domElement);
 
 // Scene
@@ -26,10 +32,10 @@ scene.environment = pmremGenerator.fromScene(new THREE.RoomEnvironment()).textur
 
 let controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.minZoom = 0.8;
-controls.maxZoom = 2.0;
+controls.maxZoom = 4.0;
 controls.zoomSpeed = 2.0;
 controls.autoRotateSpeed = 2.0;
-controls.autoRotate = true;
+// controls.autoRotate = true;
 controls.mouseButtons = {
     LEFT: THREE.MOUSE.ROTATE,
     MIDDLE: THREE.MOUSE.ROTATE,
@@ -40,6 +46,7 @@ controls.enablePan = false;
 // Materials
 
 const defaultMaterial = new THREE.MeshBasicMaterial({
+    side: THREE.DoubleSide,
     color: 0xeeeeee,
     polygonOffset: true,
     polygonOffsetFactor: 1,
@@ -53,6 +60,7 @@ const fnAddObject = function (objectDef, parent, material) {
 
     if (objectDef.color) {
         material = new THREE.MeshBasicMaterial({
+            side: THREE.DoubleSide,
             color: objectDef.color,
             polygonOffset: true,
             polygonOffsetFactor: 1,
@@ -98,28 +106,55 @@ const fnAddObject = function (objectDef, parent, material) {
 
 const fnSetup = function (model) {
 
-    const bbox = new THREE.Box3().setFromObject(scene);
+    const bbox = new THREE.Box3().setFromObject(model);
     const size = bbox.getSize(new THREE.Vector3());
     const radius = Math.max(size.x, Math.max(size.y, size.z));
 
     //
 
     let ratio = window.innerHeight / window.innerWidth
+    let radiusFactor = 0.9;
 
-    camera.left = -radius * 2;
-    camera.right = radius * 2;
-    camera.top = radius * 2 * ratio;
-    camera.bottom = -radius * 2 * ratio;
+    camera.left = -radius * radiusFactor / ratio;
+    camera.right = radius * radiusFactor / ratio;
+    camera.top = radius * radiusFactor;
+    camera.bottom = -radius * radiusFactor;
 
     controls.target0.copy(bbox.getCenter(new THREE.Vector3()));
     controls.position0.set(1, -1, 1).multiplyScalar(radius).add(controls.target0);
     controls.reset();
 
-    const boxHelper = new THREE.BoxHelper(model, 0x0000ff);
-    scene.add(boxHelper);
+    // renderer.domElement.addEventListener("mouseup", function (e) {
+    //     camera.position.set( 0, 0, 1 ).multiplyScalar(radius).add(controls.target0);
+    //     controls.update();
+    // }, false);
 
-    let axesHelper = new THREE.AxesHelper(radius / 2.0);
-    scene.add(axesHelper);
+    // const boxHelper = new THREE.BoxHelper(model, 0x0000ff);
+    // scene.add(boxHelper);
+
+    const lengthArrowHelper = new THREE.ArrowHelper(
+        new THREE.Vector3(1, 0, 0),
+        new THREE.Vector3(0, 0, 0),
+        radius + radius * 0.05,
+        0xff0000,
+    );
+    scene.add(lengthArrowHelper);
+
+    const widthArrowHelper = new THREE.ArrowHelper(
+        new THREE.Vector3(0, 1, 0),
+        new THREE.Vector3(0, 0, 0),
+        radius + radius * 0.05,
+        0x00ff00,
+    );
+    scene.add(widthArrowHelper);
+
+    const thicknessArrowHelper = new THREE.ArrowHelper(
+        new THREE.Vector3(0, 0, 1),
+        new THREE.Vector3(0, 0, 0),
+        radius + radius * 0.05,
+        0x0000ff,
+    );
+    scene.add(thicknessArrowHelper);
 
     fnAnimate();
 
@@ -135,5 +170,5 @@ const fnAnimate = function () {
 
 window.onmessage = function (e) {
     fnAddObject(e.data.objectDef, scene, defaultMaterial);
-    fnSetup();
+    fnSetup(scene);
 };

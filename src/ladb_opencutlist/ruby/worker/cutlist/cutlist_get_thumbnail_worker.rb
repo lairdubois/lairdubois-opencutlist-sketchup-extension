@@ -38,7 +38,7 @@ module Ladb::OpenCutList
 
         _populate_three_object_def(three_object_def, definition)
 
-        three_object_def.matrix = _to_three_matrix(Geom::Transformation.scaling(part.def.scale.x, part.def.scale.y, part.def.scale.z))
+        three_object_def.matrix = _to_three_matrix(Geom::Transformation.scaling(part.def.scale.x * (part.flipped ? -1 : 1), part.def.scale.y, part.def.scale.z))
         three_object_def.color = _to_three_color(model.materials[part.material_name])
 
         response[:three_object_def] = three_object_def.to_hash
