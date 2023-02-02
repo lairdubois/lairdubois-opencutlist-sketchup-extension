@@ -1,11 +1,10 @@
 let container = document.createElement('div');
 document.body.appendChild(container);
 
-// let camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 10000);
 const camera = new THREE.OrthographicCamera( -1, 1, 1, -1, 0.1, 1000 );
+camera.up.set(0, 0, 1);
 
 let renderer = new THREE.WebGLRenderer({antialias: true});
-// let renderer = new THREE.SVGRenderer();
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.outputEncoding = THREE.sRGBEncoding;
@@ -18,9 +17,17 @@ scene.background = new THREE.Color(0xffffff);
 scene.environment = pmremGenerator.fromScene(new THREE.RoomEnvironment()).texture;
 
 let controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.minZoom = 0.8;
+controls.maxZoom = 2.0;
 controls.zoomSpeed = 2.0;
 controls.autoRotateSpeed = 2.0;
 controls.autoRotate = true;
+controls.mouseButtons = {
+    LEFT: THREE.MOUSE.ROTATE,
+    MIDDLE: THREE.MOUSE.ROTATE,
+    RIGHT: null
+}
+controls.enablePan = false;
 
 const material = new THREE.MeshBasicMaterial({
     color: 0xeeeeee,
@@ -66,11 +73,14 @@ const fnAdd = function (meshDefs) {
     camera.bottom = -radius * 2 * ratio;
 
     controls.target0.copy(bbox.getCenter(new THREE.Vector3()));
-    controls.position0.set(1, 1, 1).multiplyScalar(radius).add(controls.target0);
+    controls.position0.set(1, -1, 1).multiplyScalar(radius).add(controls.target0);
     controls.reset();
 
-    // let axesHelper = new THREE.AxesHelper(radius / 2.0);
-    // scene.add(axesHelper);
+    const boxHelper = new THREE.BoxHelper(model, 0x0000ff);
+    scene.add(boxHelper);
+
+    let axesHelper = new THREE.AxesHelper(radius / 2.0);
+    scene.add(axesHelper);
 
     fnAnimate();
 
