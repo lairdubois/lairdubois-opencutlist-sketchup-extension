@@ -135,24 +135,27 @@ const fnSetup = function (model) {
     const lengthArrowHelper = new THREE.ArrowHelper(
         new THREE.Vector3(1, 0, 0),
         new THREE.Vector3(0, 0, 0),
-        radius + radius * 0.05,
+        radius * 10,
         0xff0000,
+        0
     );
     scene.add(lengthArrowHelper);
 
     const widthArrowHelper = new THREE.ArrowHelper(
         new THREE.Vector3(0, 1, 0),
         new THREE.Vector3(0, 0, 0),
-        radius + radius * 0.05,
+        radius * 10,
         0x00ff00,
+        0
     );
     scene.add(widthArrowHelper);
 
     const thicknessArrowHelper = new THREE.ArrowHelper(
         new THREE.Vector3(0, 0, 1),
         new THREE.Vector3(0, 0, 0),
-        radius + radius * 0.05,
+        radius * 10,
         0x0000ff,
+        0
     );
     scene.add(thicknessArrowHelper);
 
