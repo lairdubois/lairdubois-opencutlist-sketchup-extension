@@ -1812,7 +1812,6 @@
                             var $iframe = $('<iframe>')
                                 .attr('src', 'viewer.html')
                                 .on('load', function () {
-                                    console.log('ONLOAD');
                                     this.contentWindow.postMessage({
                                         objectDef: threeObjectDef,
                                     }, '*')

@@ -138,9 +138,6 @@ const fnSetup = function (partWrapper) {
     document.getElementById('btn_disco').addEventListener('click' , function () {
         controls.autoRotate = !controls.autoRotate;
     });
-    document.getElementById('btn_debug').addEventListener('click' , function () {
-        console.log(controls.target);
-    });
 
     fnAnimate();
 
