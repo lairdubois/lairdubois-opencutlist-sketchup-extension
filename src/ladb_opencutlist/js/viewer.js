@@ -1,47 +1,12 @@
+// const THREE = require('three');
+// const MeshLine = require('three.meshline').MeshLine;
+// const MeshLineMaterial = require('three.meshline').MeshLineMaterial;
+// const MeshLineRaycast = require('three.meshline').MeshLineRaycast;
+
+let camera, renderer, scene, controls;
 
 let container = document.createElement('div');
 document.body.appendChild(container);
-
-
-// Up
-
-THREE.Object3D.DefaultUp.set(0, 0, 1);
-
-// Camera
-
-const camera = new THREE.OrthographicCamera( -1, 1, 1, -1, 0.1, 1000 );
-
-// Renderers
-
-const renderer = new THREE.WebGLRenderer({antialias: true});
-renderer.setPixelRatio(window.devicePixelRatio);
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.outputEncoding = THREE.sRGBEncoding;
-renderer.toneMapping = THREE.NoToneMapping;
-container.appendChild(renderer.domElement);
-
-// Scene
-
-const pmremGenerator = new THREE.PMREMGenerator(renderer);
-
-let scene = new THREE.Scene();
-scene.background = new THREE.Color(0xffffff);
-scene.environment = pmremGenerator.fromScene(new THREE.RoomEnvironment()).texture;
-
-// Controls
-
-let controls = new THREE.OrbitControls(camera, renderer.domElement);
-controls.minZoom = 0.8;
-controls.maxZoom = 4.0;
-controls.zoomSpeed = 2.0;
-controls.autoRotateSpeed = 2.0;
-// controls.autoRotate = true;
-controls.mouseButtons = {
-    LEFT: THREE.MOUSE.ROTATE,
-    MIDDLE: THREE.MOUSE.ROTATE,
-    RIGHT: null
-}
-controls.enablePan = false;
 
 // Materials
 
@@ -50,22 +15,17 @@ const defaultMaterial = new THREE.MeshBasicMaterial({
     color: 0xeeeeee,
     polygonOffset: true,
     polygonOffsetFactor: 1,
-    polygonOffsetUnits: 0
+    polygonOffsetUnits: 1
 });
-const lineMaterial = new THREE.LineBasicMaterial({
-    color: 0x000000,
+const lineBasicMaterial = new THREE.LineBasicMaterial({
+    color: 0x000000
 });
 
 const fnAddObject = function (objectDef, parent, material) {
 
     if (objectDef.color) {
-        material = new THREE.MeshBasicMaterial({
-            side: THREE.DoubleSide,
-            color: objectDef.color,
-            polygonOffset: true,
-            polygonOffsetFactor: 1,
-            polygonOffsetUnits: 0
-        });
+        material = defaultMaterial.clone();
+        material.color.set(objectDef.color);
     }
 
     switch (objectDef.type) {
@@ -94,8 +54,8 @@ const fnAddObject = function (objectDef, parent, material) {
             let mesh = new THREE.Mesh(geometry, material);
             parent.add(mesh);
 
-            let edges = new THREE.EdgesGeometry(geometry, 90);
-            let line = new THREE.LineSegments(edges, lineMaterial);
+            let edges = new THREE.EdgesGeometry(geometry, 36);
+            let line = new THREE.LineSegments(edges, lineBasicMaterial);
             parent.add(line);
 
             break;
@@ -104,33 +64,32 @@ const fnAddObject = function (objectDef, parent, material) {
 
 }
 
-const fnSetup = function (model) {
+const fnSetup = function (partWrapper) {
 
-    const bbox = new THREE.Box3().setFromObject(model);
+    let part = partWrapper.children[0];
+
+    const bbox = new THREE.Box3().setFromObject(part);
+    const center = bbox.getCenter(new THREE.Vector3());
     const size = bbox.getSize(new THREE.Vector3());
     const radius = Math.max(size.x, Math.max(size.y, size.z));
 
-    //
+    camera.left = container.offsetWidth / -2;
+    camera.right = container.offsetWidth / 2;
+    camera.top = container.offsetHeight / 2;
+    camera.bottom = container.offsetHeight / -2;
 
-    let ratio = window.innerHeight / window.innerWidth
-    let radiusFactor = 0.9;
-
-    camera.left = -radius * radiusFactor / ratio;
-    camera.right = radius * radiusFactor / ratio;
-    camera.top = radius * radiusFactor;
-    camera.bottom = -radius * radiusFactor;
-
-    controls.target0.copy(bbox.getCenter(new THREE.Vector3()));
+    controls.target0.copy(center);
     controls.position0.set(1, -1, 1).multiplyScalar(radius).add(controls.target0);
+    controls.zoom0 = Math.min(container.offsetWidth / (bbox.max.x - bbox.min.x), container.offsetHeight / (bbox.max.y - bbox.min.y)) * 0.5;
     controls.reset();
 
-    // renderer.domElement.addEventListener("mouseup", function (e) {
-    //     camera.position.set( 0, 0, 1 ).multiplyScalar(radius).add(controls.target0);
-    //     controls.update();
-    // }, false);
+    const boxHelper = new THREE.BoxHelper(part, 0x0000ff);
+    boxHelper.visible = false;
+    partWrapper.add(boxHelper);
 
-    // const boxHelper = new THREE.BoxHelper(model, 0x0000ff);
-    // scene.add(boxHelper);
+    const axes = new THREE.Group();
+    axes.visible = false;
+    partWrapper.add(axes);
 
     const lengthArrowHelper = new THREE.ArrowHelper(
         new THREE.Vector3(1, 0, 0),
@@ -139,7 +98,7 @@ const fnSetup = function (model) {
         0xff0000,
         0
     );
-    scene.add(lengthArrowHelper);
+    axes.add(lengthArrowHelper);
 
     const widthArrowHelper = new THREE.ArrowHelper(
         new THREE.Vector3(0, 1, 0),
@@ -148,7 +107,7 @@ const fnSetup = function (model) {
         0x00ff00,
         0
     );
-    scene.add(widthArrowHelper);
+    axes.add(widthArrowHelper);
 
     const thicknessArrowHelper = new THREE.ArrowHelper(
         new THREE.Vector3(0, 0, 1),
@@ -157,13 +116,35 @@ const fnSetup = function (model) {
         0x0000ff,
         0
     );
-    scene.add(thicknessArrowHelper);
+    axes.add(thicknessArrowHelper);
+
+    document.getElementById('btn_front').addEventListener('click' , function () {
+        camera.position.set( 0, 0, 1 ).multiplyScalar(radius).add(controls.target0);
+        controls.update();
+    });
+    document.getElementById('btn_back').addEventListener('click' , function () {
+        camera.position.set( 0, 0, -1 ).multiplyScalar(radius).add(controls.target0);
+        controls.update();
+    });
+    document.getElementById('btn_iso').addEventListener('click' , function () {
+        controls.reset();
+    });
+    document.getElementById('btn_bbox').addEventListener('click' , function () {
+        boxHelper.visible = !boxHelper.visible;
+    });
+    document.getElementById('btn_axes').addEventListener('click' , function () {
+        axes.visible = !axes.visible;
+    });
+    document.getElementById('btn_disco').addEventListener('click' , function () {
+        controls.autoRotate = !controls.autoRotate;
+    });
+    document.getElementById('btn_debug').addEventListener('click' , function () {
+        console.log(controls.target);
+    });
 
     fnAnimate();
 
 }
-
-//
 
 const fnAnimate = function () {
     requestAnimationFrame(fnAnimate);
@@ -171,7 +152,49 @@ const fnAnimate = function () {
     controls.update();
 }
 
+
+// Up
+
+THREE.Object3D.DefaultUp.set(0, 0, 1);
+
+// Camera
+
+camera = new THREE.OrthographicCamera( -1, 1, 1, -1, -1, 1000 );
+
+// Renderers
+
+renderer = new THREE.WebGLRenderer({antialias: true});
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.toneMapping = THREE.NoToneMapping;
+container.appendChild(renderer.domElement);
+
+// Scene
+
+const pmremGenerator = new THREE.PMREMGenerator(renderer);
+
+scene = new THREE.Scene();
+scene.background = new THREE.Color(0xffffff);
+scene.environment = pmremGenerator.fromScene(new THREE.RoomEnvironment()).texture;
+
+// Controls
+
+controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.zoomSpeed = 2.0;
+controls.autoRotateSpeed = 3.0;
+controls.mouseButtons = {
+    LEFT: THREE.MOUSE.ROTATE,
+    MIDDLE: THREE.MOUSE.ROTATE,
+    RIGHT: null
+}
+controls.enablePan = false;
+
 window.onmessage = function (e) {
-    fnAddObject(e.data.objectDef, scene, defaultMaterial);
-    fnSetup(scene);
+
+    let partWrapper = new THREE.Group();
+    scene.add(partWrapper);
+
+    fnAddObject(e.data.objectDef, partWrapper, defaultMaterial);
+    fnSetup(partWrapper);
 };

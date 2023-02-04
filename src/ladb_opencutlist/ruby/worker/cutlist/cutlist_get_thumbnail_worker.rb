@@ -30,32 +30,38 @@ module Ladb::OpenCutList
       definition = definitions[@definition_id]
       if definition
 
-        ##
+        if Sketchup.version_number > 17000000
 
-        part = @cutlist.get_part(@id)
+          # Export part for ThreeJS
 
-        three_object_def = ThreeGroupDef.new
+          part = @cutlist.get_part(@id)
 
-        _populate_three_object_def(three_object_def, definition)
+          three_object_def = ThreeGroupDef.new
 
-        three_object_def.matrix = _to_three_matrix(Geom::Transformation.scaling(part.def.scale.x * (part.flipped ? -1 : 1), part.def.scale.y, part.def.scale.z))
-        three_object_def.color = _to_three_color(model.materials[part.material_name])
+          _populate_three_object_def(three_object_def, definition)
 
-        response[:three_object_def] = three_object_def.to_hash
+          three_object_def.matrix = _to_three_matrix(Geom::Transformation.scaling(part.def.scale.x * (part.flipped ? -1 : 1), part.def.scale.y, part.def.scale.z))
+          three_object_def.color = _to_three_color(model.materials[part.material_name])
 
-        ##
+          response[:three_object_def] = three_object_def.to_hash
 
+        else
 
-        temp_dir = Plugin.instance.temp_dir
-        component_thumbnails_dir = File.join(temp_dir, 'components_thumbnails')
-        unless Dir.exist?(component_thumbnails_dir)
-          Dir.mkdir(component_thumbnails_dir)
+          # Just generate a PNG thumbnail
+
+          temp_dir = Plugin.instance.temp_dir
+          component_thumbnails_dir = File.join(temp_dir, 'components_thumbnails')
+          unless Dir.exist?(component_thumbnails_dir)
+            Dir.mkdir(component_thumbnails_dir)
+          end
+
+          thumbnail_file = File.join(component_thumbnails_dir, "#{definition.guid}.png")
+          definition.save_thumbnail(thumbnail_file)
+
+          response[:thumbnail_file] = thumbnail_file
+
         end
 
-        thumbnail_file = File.join(component_thumbnails_dir, "#{definition.guid}.png")
-        definition.save_thumbnail(thumbnail_file)
-
-        response[:thumbnail_file] = thumbnail_file
       end
 
       response

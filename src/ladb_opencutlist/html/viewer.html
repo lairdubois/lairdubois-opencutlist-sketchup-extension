@@ -6,17 +6,36 @@
         body {
             margin: 0;
         }
-        .label {
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-            font-size: 8px;
-            display: block;
-            background: #fff;
-            color: #555;
-            padding: 2px 4px;
+        button {
+            border: 1px solid #ccc;
+            background-color: #efefef;
+            width: 30px;
+            height: 30px;
+            margin: 2px;
+            cursor: pointer;
+        }
+        button:hover {
+            border-color: #aaa;
+        }
+        button:active {
+            background: #ccc;
+        }
+        button:focus {
+            outline: none;
         }
     </style>
+    <link rel="stylesheet" href="../css/ladb-opencutlist-icons.min.css">
 </head>
 <body>
+<div style="position: fixed; top: 0; left: 0; bottom: 0; display: flex; flex-direction: column; justify-content: center;">
+    <button id="btn_front"><i class="ladb-opencutlist-icon-veneer-10"></i></button>
+    <button id="btn_back"><i class="ladb-opencutlist-icon-veneer-01"></i></button>
+    <button id="btn_iso"><i class="ladb-opencutlist-icon-material-type-3"></i></button>
+    <button id="btn_bbox"><i class="ladb-opencutlist-icon-origin-min"></i></button>
+    <button id="btn_axes"><i class="ladb-opencutlist-icon-axes"></i></button>
+    <button id="btn_disco"><i class="ladb-opencutlist-icon-refresh"></i></button>
+    <button id="btn_debug"><i class="ladb-opencutlist-icon-bug"></i></button>
+</div>
 <script src="../js/lib/three.min.js"></script>
 <script src="../js/lib/three-orbit-controls.min.js"></script>
 <script src="../js/lib/three-room-environment.min.js"></script>

@@ -1576,637 +1576,667 @@
             }
             this.lastEditPartTab = tab;
 
-            var fnOpenModal = function(thumbnailFile, threeObjectDef) {
+            var $modal = that.appendModalInside('ladb_cutlist_modal_part', 'tabs/cutlist/_modal-part.twig', {
+                group: group,
+                part: editedPart,
+                partCount: editedParts.length,
+                multiple: multiple,
+                materialUsages: that.materialUsages,
+                tab: tab
+            });
 
-                var $modal = that.appendModalInside('ladb_cutlist_modal_part', 'tabs/cutlist/_modal-part.twig', {
-                    group: group,
-                    part: editedPart,
-                    partCount: editedParts.length,
-                    multiple: multiple,
-                    thumbnailFile: thumbnailFile,
-                    materialUsages: that.materialUsages,
-                    tab: tab
+            // Fetch UI elements
+            var $tabs = $('a[data-toggle="tab"]', $modal);
+            var $divPartThumbnail = $('#ladb_cutlist_part_thumbnail', $modal);
+            var $inputName = $('#ladb_cutlist_part_input_name', $modal);
+            var $selectMaterialName = $('#ladb_cutlist_part_select_material_name', $modal);
+            var $selectCumulable = $('#ladb_cutlist_part_select_cumulable', $modal);
+            var $inputInstanceCountByPart = $('#ladb_cutlist_part_input_instance_count_by_part', $modal);
+            var $inputMass = $('#ladb_cutlist_part_input_mass', $modal);
+            var $inputPrice = $('#ladb_cutlist_part_input_price', $modal);
+            var $inputThicknessLayerCount = $('#ladb_cutlist_part_input_thickness_layer_count', $modal);
+            var $inputDescription = $('#ladb_cutlist_part_input_description', $modal);
+            var $inputTags = $('#ladb_cutlist_part_input_tags', $modal);
+            var $inputOrientationLockedOnAxis = $('#ladb_cutlist_part_input_orientation_locked_on_axis', $modal);
+            var $inputSymmetrical = $('#ladb_cutlist_part_input_symmetrical', $modal);
+            var $inputIgnoreGrainDirection = $('#ladb_cutlist_part_input_ignore_grain_direction', $modal);
+            var $inputPartAxes = $('#ladb_cutlist_part_input_axes', $modal);
+            var $sortableAxes = $('#ladb_sortable_axes', $modal);
+            var $sortablePartAxes = $('#ladb_sortable_part_axes', $modal);
+            var $sortablePartAxesExtra = $('#ladb_sortable_part_axes_extra', $modal);
+            var $selectPartAxesOriginPosition = $('#ladb_cutlist_part_select_axes_origin_position', $modal);
+            var $inputLengthIncrease = $('#ladb_cutlist_part_input_length_increase', $modal);
+            var $inputWidthIncrease = $('#ladb_cutlist_part_input_width_increase', $modal);
+            var $inputThicknessIncrease = $('#ladb_cutlist_part_input_thickness_increase', $modal);
+            var $selectEdgeYmax = $('#ladb_cutlist_part_select_edge_ymax', $modal);
+            var $selectEdgeYmin = $('#ladb_cutlist_part_select_edge_ymin', $modal);
+            var $selectEdgeXmin = $('#ladb_cutlist_part_select_edge_xmin', $modal);
+            var $selectEdgeXmax = $('#ladb_cutlist_part_select_edge_xmax', $modal);
+            var $selectVeneerZmin = $('#ladb_cutlist_part_select_veneer_zmin', $modal);
+            var $selectVeneerZmax = $('#ladb_cutlist_part_select_veneer_zmax', $modal);
+            var $formGroupVeneerZminTextureAngle = $('#ladb_cutlist_part_form_group_veneer_zmin_texture_angle', $modal);
+            var $formGroupVeneerZmaxTextureAngle = $('#ladb_cutlist_part_form_group_veneer_zmax_texture_angle', $modal);
+            var $inputVeneerZminTextureAngle = $('#ladb_cutlist_part_input_veneer_zmin_texture_angle', $modal);
+            var $inputVeneerZmaxTextureAngle = $('#ladb_cutlist_part_input_veneer_zmax_texture_angle', $modal);
+            var $rectIncreaseLength = $('svg .increase-length', $modal);
+            var $rectIncreaseWidth = $('svg .increase-width', $modal);
+            var $rectEdgeYmin = $('svg .edge-ymin', $modal);
+            var $rectEdgeYmax = $('svg .edge-ymax', $modal);
+            var $rectEdgeXmin = $('svg .edge-xmin', $modal);
+            var $rectEdgeXmax = $('svg .edge-xmax', $modal);
+            var $rectVeneerZmin = $('svg .veneer-zmin', $modal);
+            var $rectVeneerZmax = $('svg .veneer-zmax', $modal);
+            var $rectVeneerZminGrain = $('svg .veneer-zmin .veneer-grain', $modal);
+            var $rectVeneerZmaxGrain = $('svg .veneer-zmax .veneer-grain', $modal);
+            var $patternVeneerZminGrain = $('#pattern_veneer_zmin_grain', $modal);
+            var $patternVeneerZmaxGrain = $('#pattern_veneer_zmax_grain', $modal);
+            var $labelEdgeYmax = $('#ladb_cutlist_part_label_edge_ymax', $modal);
+            var $labelEdgeYmin = $('#ladb_cutlist_part_label_edge_ymin', $modal);
+            var $labelEdgeXmin = $('#ladb_cutlist_part_label_edge_xmin', $modal);
+            var $labelEdgeXmax = $('#ladb_cutlist_part_label_edge_xmax', $modal);
+            var $labelVeneerZmin = $('#ladb_cutlist_part_label_veneer_zmin', $modal);
+            var $labelVeneerZmax = $('#ladb_cutlist_part_label_veneer_zmax', $modal);
+            var $labelVeneerZminTextureAngle = $('#ladb_cutlist_part_label_veneer_zmin_texture_angle', $modal);
+            var $labelVeneerZmaxTextureAngle = $('#ladb_cutlist_part_label_veneer_zmax_texture_angle', $modal);
+            var $btnHighlight = $('#ladb_cutlist_part_highlight', $modal);
+            var $btnExportToSkp = $('#ladb_cutlist_part_export_to_skp', $modal);
+            var $btnUpdate = $('#ladb_cutlist_part_update', $modal);
+
+            var thumbnailLoaded = false;
+
+            // Utils function
+            var fnComputeAxesOrder = function () {
+                var axes = [];
+                $sortablePartAxes.children('li').each(function () {
+                    axes.push($(this).data('axis'));
                 });
-
-                // Fetch UI elements
-                var $tabs = $('a[data-toggle="tab"]', $modal);
-                var $iframePartViewer = $('#ladb_iframe_part_veiwer', $modal);
-                var $inputName = $('#ladb_cutlist_part_input_name', $modal);
-                var $selectMaterialName = $('#ladb_cutlist_part_select_material_name', $modal);
-                var $selectCumulable = $('#ladb_cutlist_part_select_cumulable', $modal);
-                var $inputInstanceCountByPart = $('#ladb_cutlist_part_input_instance_count_by_part', $modal);
-                var $inputMass = $('#ladb_cutlist_part_input_mass', $modal);
-                var $inputPrice = $('#ladb_cutlist_part_input_price', $modal);
-                var $inputThicknessLayerCount = $('#ladb_cutlist_part_input_thickness_layer_count', $modal);
-                var $inputDescription = $('#ladb_cutlist_part_input_description', $modal);
-                var $inputTags = $('#ladb_cutlist_part_input_tags', $modal);
-                var $inputOrientationLockedOnAxis = $('#ladb_cutlist_part_input_orientation_locked_on_axis', $modal);
-                var $inputSymmetrical = $('#ladb_cutlist_part_input_symmetrical', $modal);
-                var $inputIgnoreGrainDirection = $('#ladb_cutlist_part_input_ignore_grain_direction', $modal);
-                var $inputPartAxes = $('#ladb_cutlist_part_input_axes', $modal);
-                var $sortableAxes = $('#ladb_sortable_axes', $modal);
-                var $sortablePartAxes = $('#ladb_sortable_part_axes', $modal);
-                var $sortablePartAxesExtra = $('#ladb_sortable_part_axes_extra', $modal);
-                var $selectPartAxesOriginPosition = $('#ladb_cutlist_part_select_axes_origin_position', $modal);
-                var $inputLengthIncrease = $('#ladb_cutlist_part_input_length_increase', $modal);
-                var $inputWidthIncrease = $('#ladb_cutlist_part_input_width_increase', $modal);
-                var $inputThicknessIncrease = $('#ladb_cutlist_part_input_thickness_increase', $modal);
-                var $selectEdgeYmax = $('#ladb_cutlist_part_select_edge_ymax', $modal);
-                var $selectEdgeYmin = $('#ladb_cutlist_part_select_edge_ymin', $modal);
-                var $selectEdgeXmin = $('#ladb_cutlist_part_select_edge_xmin', $modal);
-                var $selectEdgeXmax = $('#ladb_cutlist_part_select_edge_xmax', $modal);
-                var $selectVeneerZmin = $('#ladb_cutlist_part_select_veneer_zmin', $modal);
-                var $selectVeneerZmax = $('#ladb_cutlist_part_select_veneer_zmax', $modal);
-                var $formGroupVeneerZminTextureAngle = $('#ladb_cutlist_part_form_group_veneer_zmin_texture_angle', $modal);
-                var $formGroupVeneerZmaxTextureAngle = $('#ladb_cutlist_part_form_group_veneer_zmax_texture_angle', $modal);
-                var $inputVeneerZminTextureAngle = $('#ladb_cutlist_part_input_veneer_zmin_texture_angle', $modal);
-                var $inputVeneerZmaxTextureAngle = $('#ladb_cutlist_part_input_veneer_zmax_texture_angle', $modal);
-                var $rectIncreaseLength = $('svg .increase-length', $modal);
-                var $rectIncreaseWidth = $('svg .increase-width', $modal);
-                var $rectEdgeYmin = $('svg .edge-ymin', $modal);
-                var $rectEdgeYmax = $('svg .edge-ymax', $modal);
-                var $rectEdgeXmin = $('svg .edge-xmin', $modal);
-                var $rectEdgeXmax = $('svg .edge-xmax', $modal);
-                var $rectVeneerZmin = $('svg .veneer-zmin', $modal);
-                var $rectVeneerZmax = $('svg .veneer-zmax', $modal);
-                var $rectVeneerZminGrain = $('svg .veneer-zmin .veneer-grain', $modal);
-                var $rectVeneerZmaxGrain = $('svg .veneer-zmax .veneer-grain', $modal);
-                var $patternVeneerZminGrain = $('#pattern_veneer_zmin_grain', $modal);
-                var $patternVeneerZmaxGrain = $('#pattern_veneer_zmax_grain', $modal);
-                var $labelEdgeYmax = $('#ladb_cutlist_part_label_edge_ymax', $modal);
-                var $labelEdgeYmin = $('#ladb_cutlist_part_label_edge_ymin', $modal);
-                var $labelEdgeXmin = $('#ladb_cutlist_part_label_edge_xmin', $modal);
-                var $labelEdgeXmax = $('#ladb_cutlist_part_label_edge_xmax', $modal);
-                var $labelVeneerZmin = $('#ladb_cutlist_part_label_veneer_zmin', $modal);
-                var $labelVeneerZmax = $('#ladb_cutlist_part_label_veneer_zmax', $modal);
-                var $labelVeneerZminTextureAngle = $('#ladb_cutlist_part_label_veneer_zmin_texture_angle', $modal);
-                var $labelVeneerZmaxTextureAngle = $('#ladb_cutlist_part_label_veneer_zmax_texture_angle', $modal);
-                var $btnHighlight = $('#ladb_cutlist_part_highlight', $modal);
-                var $btnExportToSkp = $('#ladb_cutlist_part_export_to_skp', $modal);
-                var $btnUpdate = $('#ladb_cutlist_part_update', $modal);
-
-                // Utils function
-                var fnComputeAxesOrder = function () {
-                    var axes = [];
-                    $sortablePartAxes.children('li').each(function () {
-                        axes.push($(this).data('axis'));
+                $inputPartAxes.val(axes);
+                return axes;
+            };
+            var fnDisplayAxisDimensions = function () {
+                if (!that.generateOptions.auto_orient || $inputOrientationLockedOnAxis.is(':checked')) {
+                    $sortablePartAxes.closest('div').switchClass('col-xs-12', 'col-xs-10', 0);
+                    $sortablePartAxesExtra.closest('div').show();
+                    $('li .ladb-info', $sortablePartAxes).each(function () {
+                        $(this).hide();
                     });
-                    $inputPartAxes.val(axes);
-                    return axes;
-                };
-                var fnDisplayAxisDimensions = function () {
-                    if (!that.generateOptions.auto_orient || $inputOrientationLockedOnAxis.is(':checked')) {
-                        $sortablePartAxes.closest('div').switchClass('col-xs-12', 'col-xs-10', 0);
-                        $sortablePartAxesExtra.closest('div').show();
-                        $('li .ladb-info', $sortablePartAxes).each(function () {
-                            $(this).hide();
-                        });
+                } else {
+                    $sortablePartAxes.closest('div').switchClass('col-xs-10', 'col-xs-12', 0);
+                    $sortablePartAxesExtra.closest('div').hide();
+                    $('li .ladb-info', $sortablePartAxes).each(function () {
+                        $(this).show();
+                    });
+                }
+            };
+            var fnUpdateEdgesPreview = function() {
+                if ($selectEdgeYmax.val() === '') {
+                    $rectEdgeYmax.removeClass('ladb-active');
+                } else {
+                    $rectEdgeYmax.addClass('ladb-active');
+                }
+                if ($selectEdgeYmin.val() === '') {
+                    $rectEdgeYmin.removeClass('ladb-active');
+                } else {
+                    $rectEdgeYmin.addClass('ladb-active');
+                }
+                if ($selectEdgeXmin.val() === '') {
+                    $rectEdgeXmin.removeClass('ladb-active');
+                } else {
+                    $rectEdgeXmin.addClass('ladb-active');
+                }
+                if ($selectEdgeXmax.val() === '') {
+                    $rectEdgeXmax.removeClass('ladb-active');
+                } else {
+                    $rectEdgeXmax.addClass('ladb-active');
+                }
+            };
+            var fnIsMaterialTexturedAndGrained = function(name) {
+                for (let materialUsage of that.materialUsages) {
+                    if (materialUsage.name === name) {
+                        return materialUsage.textured && materialUsage.grained;
+                    }
+                }
+                return false;
+            };
+            var fnUpdateVeneersPreview = function() {
+                if ($selectVeneerZmin.val() === '') {
+                    $rectVeneerZmin.removeClass('ladb-active');
+                    $rectVeneerZminGrain.hide();
+                    $formGroupVeneerZminTextureAngle.hide();
+                } else {
+                    $rectVeneerZmin.addClass('ladb-active');
+                    if (fnIsMaterialTexturedAndGrained($selectVeneerZmin.val())) {
+                        $rectVeneerZminGrain.show();
+                        $patternVeneerZminGrain.attr('patternTransform', 'rotate(' + $inputVeneerZminTextureAngle.val() + ' 0 0)');
+                        $formGroupVeneerZminTextureAngle.show();
                     } else {
-                        $sortablePartAxes.closest('div').switchClass('col-xs-10', 'col-xs-12', 0);
-                        $sortablePartAxesExtra.closest('div').hide();
-                        $('li .ladb-info', $sortablePartAxes).each(function () {
-                            $(this).show();
-                        });
-                    }
-                };
-                var fnUpdateEdgesPreview = function() {
-                    if ($selectEdgeYmax.val() === '') {
-                        $rectEdgeYmax.removeClass('ladb-active');
-                    } else {
-                        $rectEdgeYmax.addClass('ladb-active');
-                    }
-                    if ($selectEdgeYmin.val() === '') {
-                        $rectEdgeYmin.removeClass('ladb-active');
-                    } else {
-                        $rectEdgeYmin.addClass('ladb-active');
-                    }
-                    if ($selectEdgeXmin.val() === '') {
-                        $rectEdgeXmin.removeClass('ladb-active');
-                    } else {
-                        $rectEdgeXmin.addClass('ladb-active');
-                    }
-                    if ($selectEdgeXmax.val() === '') {
-                        $rectEdgeXmax.removeClass('ladb-active');
-                    } else {
-                        $rectEdgeXmax.addClass('ladb-active');
-                    }
-                };
-                var fnIsMaterialTexturedAndGrained = function(name) {
-                    for (let materialUsage of that.materialUsages) {
-                        if (materialUsage.name === name) {
-                            return materialUsage.textured && materialUsage.grained;
-                        }
-                    }
-                    return false;
-                };
-                var fnUpdateVeneersPreview = function() {
-                    if ($selectVeneerZmin.val() === '') {
-                        $rectVeneerZmin.removeClass('ladb-active');
                         $rectVeneerZminGrain.hide();
                         $formGroupVeneerZminTextureAngle.hide();
-                    } else {
-                        $rectVeneerZmin.addClass('ladb-active');
-                        if (fnIsMaterialTexturedAndGrained($selectVeneerZmin.val())) {
-                            $rectVeneerZminGrain.show();
-                            $patternVeneerZminGrain.attr('patternTransform', 'rotate(' + $inputVeneerZminTextureAngle.val() + ' 0 0)');
-                            $formGroupVeneerZminTextureAngle.show();
-                        } else {
-                            $rectVeneerZminGrain.hide();
-                            $formGroupVeneerZminTextureAngle.hide();
-                        }
                     }
-                    if ($selectVeneerZmax.val() === '') {
-                        $rectVeneerZmax.removeClass('ladb-active');
+                }
+                if ($selectVeneerZmax.val() === '') {
+                    $rectVeneerZmax.removeClass('ladb-active');
+                    $rectVeneerZmaxGrain.hide();
+                    $formGroupVeneerZmaxTextureAngle.hide();
+                } else {
+                    $rectVeneerZmax.addClass('ladb-active');
+                    if (fnIsMaterialTexturedAndGrained($selectVeneerZmax.val())) {
+                        $rectVeneerZmaxGrain.show();
+                        $patternVeneerZmaxGrain.attr('patternTransform', 'rotate(' + parseInt($inputVeneerZmaxTextureAngle.val()) * -1 + ' 0 0)');
+                        $formGroupVeneerZmaxTextureAngle.show();
+                    } else {
                         $rectVeneerZmaxGrain.hide();
                         $formGroupVeneerZmaxTextureAngle.hide();
-                    } else {
-                        $rectVeneerZmax.addClass('ladb-active');
-                        if (fnIsMaterialTexturedAndGrained($selectVeneerZmax.val())) {
-                            $rectVeneerZmaxGrain.show();
-                            $patternVeneerZmaxGrain.attr('patternTransform', 'rotate(' + parseInt($inputVeneerZmaxTextureAngle.val()) * -1 + ' 0 0)');
-                            $formGroupVeneerZmaxTextureAngle.show();
-                        } else {
-                            $rectVeneerZmaxGrain.hide();
-                            $formGroupVeneerZmaxTextureAngle.hide();
-                        }
                     }
-                };
-                var fnUpdateIncreasesPreview = function() {
-                    if ($inputLengthIncrease.val() == null || $inputLengthIncrease.val().length === 0 || $inputLengthIncrease.val().match(/^0([.,]{0,1}[0]*)(m|cm|mm|yd|'|")*$/g)) {
-                        $rectIncreaseLength.removeClass('ladb-active');
-                    } else {
-                        $rectIncreaseLength.addClass('ladb-active');
+                }
+            };
+            var fnUpdateIncreasesPreview = function() {
+                if ($inputLengthIncrease.val() == null || $inputLengthIncrease.val().length === 0 || $inputLengthIncrease.val().match(/^0([.,]{0,1}[0]*)(m|cm|mm|yd|'|")*$/g)) {
+                    $rectIncreaseLength.removeClass('ladb-active');
+                } else {
+                    $rectIncreaseLength.addClass('ladb-active');
+                }
+                if ($inputWidthIncrease.val() == null || $inputWidthIncrease.val().length === 0 || $inputWidthIncrease.val().match(/^0([.,]{0,1}[0]*)(m|cm|mm|yd|'|")*$/g)) {
+                    $rectIncreaseWidth.removeClass('ladb-active');
+                } else {
+                    $rectIncreaseWidth.addClass('ladb-active');
+                }
+            };
+            var fnNewCheck = function($select, type) {
+                if ($select.val() === 'new') {
+                    that.dialog.executeCommandOnTab('materials', 'new_material', { type: type });
+                    $modal.modal('hide');
+                    return true;
+                }
+                return false;
+            };
+            var fnMaterialNameCopyToAllEdges = function(materialName) {
+                if (materialName !== MULTIPLE_VALUE) {
+                    if (!$selectEdgeYmax.prop( "disabled")) {
+                        $selectEdgeYmax.selectpicker('val', materialName);
                     }
-                    if ($inputWidthIncrease.val() == null || $inputWidthIncrease.val().length === 0 || $inputWidthIncrease.val().match(/^0([.,]{0,1}[0]*)(m|cm|mm|yd|'|")*$/g)) {
-                        $rectIncreaseWidth.removeClass('ladb-active');
-                    } else {
-                        $rectIncreaseWidth.addClass('ladb-active');
+                    if (!$selectEdgeYmin.prop( "disabled")) {
+                        $selectEdgeYmin.selectpicker('val', materialName);
                     }
-                };
-                var fnNewCheck = function($select, type) {
-                    if ($select.val() === 'new') {
-                        that.dialog.executeCommandOnTab('materials', 'new_material', { type: type });
-                        $modal.modal('hide');
-                        return true;
+                    if (!$selectEdgeXmin.prop( "disabled")) {
+                        $selectEdgeXmin.selectpicker('val', materialName);
                     }
-                    return false;
-                };
-                var fnMaterialNameCopyToAllEdges = function(materialName) {
-                    if (materialName !== MULTIPLE_VALUE) {
-                        if (!$selectEdgeYmax.prop( "disabled")) {
-                            $selectEdgeYmax.selectpicker('val', materialName);
-                        }
-                        if (!$selectEdgeYmin.prop( "disabled")) {
-                            $selectEdgeYmin.selectpicker('val', materialName);
-                        }
-                        if (!$selectEdgeXmin.prop( "disabled")) {
-                            $selectEdgeXmin.selectpicker('val', materialName);
-                        }
-                        if (!$selectEdgeXmax.prop( "disabled")) {
-                            $selectEdgeXmax.selectpicker('val', materialName);
-                        }
-                        fnUpdateEdgesPreview();
+                    if (!$selectEdgeXmax.prop( "disabled")) {
+                        $selectEdgeXmax.selectpicker('val', materialName);
                     }
-                };
-                var fnMaterialNameCopyToAllVeneers = function(materialName) {
-                    if (materialName !== MULTIPLE_VALUE) {
-                        if (!$selectVeneerZmax.prop( "disabled")) {
-                            $selectVeneerZmax.selectpicker('val', materialName);
-                        }
-                        if (!$selectVeneerZmin.prop( "disabled")) {
-                            $selectVeneerZmin.selectpicker('val', materialName);
-                        }
-                        fnUpdateVeneersPreview();
+                    fnUpdateEdgesPreview();
+                }
+            };
+            var fnMaterialNameCopyToAllVeneers = function(materialName) {
+                if (materialName !== MULTIPLE_VALUE) {
+                    if (!$selectVeneerZmax.prop( "disabled")) {
+                        $selectVeneerZmax.selectpicker('val', materialName);
                     }
-                };
-                var fnIncrementVeneerTextureAngleInputValue = function($input, inc) {
-                    let angle = parseInt($input.val());
-                    $input.val((angle + inc) % 360);
+                    if (!$selectVeneerZmin.prop( "disabled")) {
+                        $selectVeneerZmin.selectpicker('val', materialName);
+                    }
                     fnUpdateVeneersPreview();
                 }
-                var fnOnAxiesOrderChanged = function () {
-                    var axes = fnComputeAxesOrder();
+            };
+            var fnIncrementVeneerTextureAngleInputValue = function($input, inc) {
+                let angle = parseInt($input.val());
+                $input.val((angle + inc) % 360);
+                fnUpdateVeneersPreview();
+            }
+            var fnOnAxiesOrderChanged = function () {
+                var axes = fnComputeAxesOrder();
 
-                    var oriented = editedPart.normals_to_values[axes[0]] >= editedPart.normals_to_values[axes[1]]
-                        &&  editedPart.normals_to_values[axes[1]] >= editedPart.normals_to_values[axes[2]];
+                var oriented = editedPart.normals_to_values[axes[0]] >= editedPart.normals_to_values[axes[1]]
+                    &&  editedPart.normals_to_values[axes[1]] >= editedPart.normals_to_values[axes[2]];
 
-                    // Check Orientation Locked On Axis option if needed
-                    $inputOrientationLockedOnAxis.prop('checked', !oriented);
-                    fnDisplayAxisDimensions();
-
-                    // By default set origin position to 'min'
-                    $selectPartAxesOriginPosition
-                        .selectpicker('val', 'min')
-                        .trigger('change')
-                    ;
-
-                }
-
+                // Check Orientation Locked On Axis option if needed
+                $inputOrientationLockedOnAxis.prop('checked', !oriented);
                 fnDisplayAxisDimensions();
-                fnUpdateIncreasesPreview();
 
-                // Bind tabs
-                $tabs.on('shown.bs.tab', function (e) {
-                    that.lastEditPartTab = $(e.target).attr('href').substring('#tab_edit_part_'.length);
-                });
-
-                // Bind iframe
-                if (threeObjectDef) {
-                    $iframePartViewer.on('load', function () {
-                        this.contentWindow.postMessage({ objectDef: threeObjectDef }, '*')
-                    });
-                }
-
-                // Bind input
-                $inputName.ladbTextinputText();
-                $inputInstanceCountByPart.ladbTextinputNumberWithUnit({
-                    resetValue: '1',
-                    defaultUnit: 'u_p',
-                    units: [
-                        { u_p: i18next.t('default.instance_plural') + ' / ' + i18next.t('default.part_single') },
-                    ]
-                });
-                $inputMass.ladbTextinputNumberWithUnit({
-                    resetValue: ' ',
-                    defaultUnit: that.massUnitStrippedname + '_p',
-                    units: [
-                        { kg_p: 'kg / ' + i18next.t('default.part_single') },
-                        { lb_p: 'lb / ' + i18next.t('default.part_single') }
-                    ]
-                });
-                $inputPrice.ladbTextinputNumberWithUnit({
-                    resetValue: ' ',
-                    defaultUnit: '$_p',
-                    units: [
-                        { $_p: that.currencySymbol + ' / ' + i18next.t('default.part_single') }
-                    ]
-                });
-                $inputThicknessLayerCount.ladbTextinputNumberWithUnit({
-                    resetValue: '1'
-                });
-                $inputDescription.ladbTextinputArea();
-                $inputTags.ladbTextinputTokenfield({
-                    unique: true,
-                    autocomplete: {
-                        source: that.usedTags.concat(that.generateOptions.tags).unique(),
-                        delay: 100
-                    }
-                });
-                $inputLengthIncrease.on('change', function() {
-                    fnUpdateIncreasesPreview();
-                });
-                $inputLengthIncrease.ladbTextinputDimension();
-                $inputWidthIncrease.on('change', function() {
-                    fnUpdateIncreasesPreview();
-                });
-                $inputWidthIncrease.ladbTextinputDimension();
-                $inputThicknessIncrease.ladbTextinputDimension();
-                $inputVeneerZminTextureAngle
-                    .ladbTextinputNumberWithUnit({
-                        resetValue: 0,
-                        defaultUnit: 'deg',
-                        units: [
-                            {deg: i18next.t('default.unit_angle_0')}
-                        ]
-                    })
-                    .on('change', function () {
-                        fnUpdateVeneersPreview();
-                    });
-                $inputVeneerZmaxTextureAngle
-                    .ladbTextinputNumberWithUnit({
-                        resetValue: 0,
-                        defaultUnit: 'deg',
-                        units: [
-                            {deg: i18next.t('default.unit_angle_0')}
-                        ]
-                    })
-                    .on('change', function () {
-                        fnUpdateVeneersPreview();
-                    });
-
-                // Bind select
-                $selectMaterialName.val(editedPart.material_name);
-                $selectMaterialName
-                    .selectpicker(SELECT_PICKER_OPTIONS)
-                    .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                        fnNewCheck($(this));
-                    });
-                $selectCumulable.val(editedPart.cumulable);
-                $selectCumulable.selectpicker(SELECT_PICKER_OPTIONS);
+                // By default set origin position to 'min'
                 $selectPartAxesOriginPosition
-                    .selectpicker(SELECT_PICKER_OPTIONS)
-                    .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                        fnComputeAxesOrder();
-                    });
-                $selectEdgeYmin.val(editedPart.edge_material_names.ymin);
-                $selectEdgeYmin
-                    .selectpicker(SELECT_PICKER_OPTIONS)
-                    .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                        if (!fnNewCheck($(this), 4 /* TYPE_EDGE */)) {
-                            fnUpdateEdgesPreview();
-                        }
-                    });
-                $selectEdgeYmax.val(editedPart.edge_material_names.ymax);
-                $selectEdgeYmax
-                    .selectpicker(SELECT_PICKER_OPTIONS)
-                    .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                        if (!fnNewCheck($(this), 4 /* TYPE_EDGE */)) {
-                            fnUpdateEdgesPreview();
-                        }
-                    });
-                $selectEdgeXmin.val(editedPart.edge_material_names.xmin);
-                $selectEdgeXmin
-                    .selectpicker(SELECT_PICKER_OPTIONS)
-                    .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                        if (!fnNewCheck($(this), 4 /* TYPE_EDGE */)) {
-                            fnUpdateEdgesPreview();
-                        }
-                    });
-                $selectEdgeXmax.val(editedPart.edge_material_names.xmax);
-                $selectEdgeXmax
-                    .selectpicker(SELECT_PICKER_OPTIONS)
-                    .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                        if (!fnNewCheck($(this), 4 /* TYPE_EDGE */)) {
-                            fnUpdateEdgesPreview();
-                        }
-                    });
-                $selectVeneerZmin.val(editedPart.veneer_material_names.zmin);
-                $selectVeneerZmin
-                    .selectpicker(SELECT_PICKER_OPTIONS)
-                    .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                        if (!fnNewCheck($(this), 6 /* TYPE_VENEER */)) {
-                            fnUpdateVeneersPreview();
-                        }
-                    });
-                $selectVeneerZmax.val(editedPart.veneer_material_names.zmax);
-                $selectVeneerZmax
-                    .selectpicker(SELECT_PICKER_OPTIONS)
-                    .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                        if (!fnNewCheck($(this), 6 /* TYPE_VENEER */)) {
-                            fnUpdateVeneersPreview();
-                        }
-                    });
+                    .selectpicker('val', 'min')
+                    .trigger('change')
+                ;
 
-                // Bind increases
-                $rectIncreaseLength.on('click', function() {
-                    $inputLengthIncrease.focus();
-                });
-                $rectIncreaseWidth.on('click', function() {
-                    $inputWidthIncrease.focus();
-                });
+            }
+            var fnLoadThumbnail = function () {
+                if (!thumbnailLoaded && !multiple) {
 
-                // Bind edges
-                $rectEdgeYmin.on('click', function() {
-                    $selectEdgeYmin.selectpicker('toggle');
-                });
-                $rectEdgeYmax.on('click', function() {
-                    $selectEdgeYmax.selectpicker('toggle');
-                });
-                $rectEdgeXmin.on('click', function() {
-                    $selectEdgeXmin.selectpicker('toggle');
-                });
-                $rectEdgeXmax.on('click', function() {
-                    $selectEdgeXmax.selectpicker('toggle');
-                });
+                    // Generate and Retrieve part thumbnail file
+                    rubyCallCommand('cutlist_part_get_thumbnail', part, function (response) {
 
-                // Bind veneers
-                $rectVeneerZmin.on('click', function() {
-                    $selectVeneerZmin.selectpicker('toggle');
-                });
-                $rectVeneerZmax.on('click', function() {
-                    $selectVeneerZmax.selectpicker('toggle');
-                });
+                        var threeObjectDef = response['three_object_def'];
+                        if (threeObjectDef) {
 
-                // Bind sorter
-                $sortableAxes.on('dblclick', function () {
-                   var sortedNormals = Object.keys(editedPart.normals_to_values).sort(function (a, b) {
-                       return editedPart.normals_to_values[b] - editedPart.normals_to_values[a]
-                   });
-                   var $rowX = $('li[data-axis="' + sortedNormals[0] + '"]', $sortablePartAxes);
-                   var $rowY = $('li[data-axis="' + sortedNormals[1] + '"]', $sortablePartAxes);
-                   var $rowZ = $('li[data-axis="' + sortedNormals[2] + '"]', $sortablePartAxes);
-                    $rowY.insertBefore($rowZ);
-                    $rowX.insertBefore($rowY);
-                    fnOnAxiesOrderChanged();
-                });
-                $sortablePartAxes.sortable({
-                    cursor: 'ns-resize',
-                    handle: '.ladb-handle',
-                    stop: fnOnAxiesOrderChanged
-                });
+                            var $iframe = $('<iframe>')
+                                .attr('src', 'viewer.html')
+                                .on('load', function () {
+                                    console.log('ONLOAD');
+                                    this.contentWindow.postMessage({
+                                        objectDef: threeObjectDef,
+                                    }, '*')
+                                });
 
-                // Bind checkbox
-                $inputOrientationLockedOnAxis.on('change', fnDisplayAxisDimensions);
-
-                // Bind labels
-                $labelEdgeYmax.on('dblclick', function() {
-                    fnMaterialNameCopyToAllEdges($selectEdgeYmax.val());
-                });
-                $labelEdgeYmin.on('dblclick', function() {
-                    fnMaterialNameCopyToAllEdges($selectEdgeYmin.val());
-                });
-                $labelEdgeXmin.on('dblclick', function() {
-                    fnMaterialNameCopyToAllEdges($selectEdgeXmin.val());
-                });
-                $labelEdgeXmax.on('dblclick', function() {
-                    fnMaterialNameCopyToAllEdges($selectEdgeXmax.val());
-                });
-                $labelVeneerZmin.on('dblclick', function() {
-                    fnMaterialNameCopyToAllVeneers($selectVeneerZmin.val());
-                });
-                $labelVeneerZmax.on('dblclick', function() {
-                    fnMaterialNameCopyToAllVeneers($selectVeneerZmax.val());
-                });
-                $labelVeneerZminTextureAngle.on('click', function() {
-                    fnIncrementVeneerTextureAngleInputValue($inputVeneerZminTextureAngle, 90);
-                });
-                $labelVeneerZmaxTextureAngle.on('click', function() {
-                    fnIncrementVeneerTextureAngleInputValue($inputVeneerZmaxTextureAngle, 90);
-                });
-
-                // Bind buttons
-                $btnHighlight.on('click', function () {
-                    this.blur();
-                    that.highlightPart(part.id);
-                    return false;
-                });
-                $btnExportToSkp.on('click', function () {
-                    this.blur();
-                    rubyCallCommand('cutlist_part_export_to_skp', {
-                        definition_id: part.definition_id
-                    }, function (response) {
-
-                        if (response.errors) {
-                            that.dialog.notifyErrors(response.errors);
-                        }
-                        if (response.export_path) {
-                            that.dialog.notify(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }), 'success');
-                        }
-
-                    });
-                    return false;
-                });
-                $btnUpdate.on('click', function () {
-
-                    for (var i = 0; i < editedParts.length; i++) {
-
-                        if (!multiple) {
-
-                            editedParts[i].name = $inputName.val().trim();
-
-                            editedParts[i].orientation_locked_on_axis = $inputOrientationLockedOnAxis.is(':checked');
-                            editedParts[i].symmetrical = $inputSymmetrical.is(':checked');
-                            editedParts[i].ignore_grain_direction = $inputIgnoreGrainDirection.is(":checked");
-                            editedParts[i].axes_order = $inputPartAxes.val().length > 0 ? $inputPartAxes.val().split(',') : [];
-                            editedParts[i].axes_origin_position = $selectPartAxesOriginPosition.val();
-
-                        }
-
-                        if ($selectMaterialName.val() !== MULTIPLE_VALUE) {
-                            editedParts[i].material_name = $selectMaterialName.val();
-                        }
-                        if ($selectCumulable.val() !== MULTIPLE_VALUE) {
-                            editedParts[i].cumulable = parseInt($selectCumulable.val());
-                        }
-                        if (!$inputInstanceCountByPart.ladbTextinputNumberWithUnit('isMultiple')) {
-                            editedParts[i].instance_count_by_part = Math.max(1, $inputInstanceCountByPart.val() === '' ? 1 : parseInt($inputInstanceCountByPart.val()));
-                        }
-                        if (!$inputMass.ladbTextinputNumberWithUnit('isMultiple')) {
-                            editedParts[i].mass = $inputMass.ladbTextinputNumberWithUnit('val');
-                        }
-                        if (!$inputPrice.ladbTextinputNumberWithUnit('isMultiple')) {
-                            editedParts[i].price = $inputPrice.val().trim();
-                        }
-                        if (!$inputThicknessLayerCount.ladbTextinputNumberWithUnit('isMultiple')) {
-                            editedParts[i].thickness_layer_count = Math.max(1, $inputThicknessLayerCount.val() === '' ? 1 : parseInt($inputThicknessLayerCount.val()));
-                        }
-                        if (!$inputDescription.ladbTextinputArea('isMultiple')) {
-                            editedParts[i].description = $inputDescription.val().trim();
-                        }
-
-                        var untouchTags = editedParts[i].tags.filter(function (tag) { return !editedPart.tags.includes(tag) });
-                        editedParts[i].tags = untouchTags.concat($inputTags.tokenfield('getTokensList').split(';'));
-
-                        if (!$inputLengthIncrease.ladbTextinputDimension('isMultiple')) {
-                            editedParts[i].length_increase = $inputLengthIncrease.val();
-                        }
-                        if (!$inputWidthIncrease.ladbTextinputDimension('isMultiple')) {
-                            editedParts[i].width_increase = $inputWidthIncrease.val();
-                        }
-                        if (!$inputThicknessIncrease.ladbTextinputDimension('isMultiple')) {
-                            editedParts[i].thickness_increase = $inputThicknessIncrease.val();
-                        }
-
-                        if ($selectEdgeYmin.val() !== MULTIPLE_VALUE) {
-                            editedParts[i].edge_material_names.ymin = $selectEdgeYmin.val();
-                        }
-                        if ($selectEdgeYmax.val() !== MULTIPLE_VALUE) {
-                            editedParts[i].edge_material_names.ymax = $selectEdgeYmax.val();
-                        }
-                        if ($selectEdgeXmin.val() !== MULTIPLE_VALUE) {
-                            editedParts[i].edge_material_names.xmin = $selectEdgeXmin.val();
-                        }
-                        if ($selectEdgeXmax.val() !== MULTIPLE_VALUE) {
-                            editedParts[i].edge_material_names.xmax = $selectEdgeXmax.val();
-                        }
-
-                        if ($selectVeneerZmin.val() !== MULTIPLE_VALUE) {
-                            editedParts[i].veneer_material_names.zmin = $selectVeneerZmin.val();
-                        }
-                        if ($selectVeneerZmax.val() !== MULTIPLE_VALUE) {
-                            editedParts[i].veneer_material_names.zmax = $selectVeneerZmax.val();
-                        }
-
-                        if (!$inputVeneerZminTextureAngle.ladbTextinputDimension('isMultiple')) {
-                            editedParts[i].veneer_texture_angles.zmin = $inputVeneerZminTextureAngle.val();
-                        }
-                        if (!$inputVeneerZmaxTextureAngle.ladbTextinputDimension('isMultiple')) {
-                            editedParts[i].veneer_texture_angles.zmax = $inputVeneerZmaxTextureAngle.val();
-                        }
-
-                    }
-
-                    rubyCallCommand('cutlist_part_update', { parts_data: editedParts }, function (response) {
-
-                        if (response['errors']) {
-
-                            that.dialog.notifyErrors(response['errors']);
+                            $divPartThumbnail.append($iframe);
 
                         } else {
 
-                            if (typeof updatedCallback === 'function') {
-                                updatedCallback()
-                            } else {
+                            var thumbnailFile = response['thumbnail_file'];
+                            if (thumbnailFile) {
 
-                                var partId = editedPart.id;
-                                var wTop = $('#ladb_part_' + partId).offset().top - $(window).scrollTop();
+                                var $img = $('<img>')
+                                    .attr('src', thumbnailFile)
+                                ;
+                                if (part.flipped) {
+                                    $img
+                                        .css('transform', 'scaleX(-1)')
+                                    ;
+                                }
 
-                                // Refresh the list
-                                that.generateCutlist(function () {
-
-                                    // Try to scroll to the edited part's row
-                                    var $part = $('#ladb_part_' + partId, that.$page);
-                                    if ($part.length > 0) {
-                                        if ($part.hasClass('hide')) {
-                                            that.expandFoldingRow($('#ladb_part_' + $part.data('folder-id')));
-                                        }
-                                        $part.effect('highlight', {}, 1500);
-                                        that.$rootSlide.animate({ scrollTop: $part.offset().top - wTop }, 0);
-                                    }
-
-                                });
+                                $divPartThumbnail.append($img);
 
                             }
 
-                            // Hide modal
-                            $modal.modal('hide');
-
                         }
+
+                        thumbnailLoaded = true;
 
                     });
 
-                });
-
-                // Bind modal
-                $modal.on('hide.bs.modal', function () {
-                    $inputTags.ladbTextinputTokenfield('destroy');
-                });
-
-                // Init edges preview
-                fnUpdateEdgesPreview();
-
-                // Init veneers preview
-                fnUpdateVeneersPreview();
-
-                // Show modal
-                $modal.modal('show');
-
-                // Focus
-                $inputName.focus();
-
-                // Setup popovers and tooltips
-                that.dialog.setupPopovers();
-                that.dialog.setupTooltips();
-
-                // Change event
-                $('input, select', $modal).on('change', function () {
-                    $btnExportToSkp.prop('disabled', true);
-                });
-
-            };
-
-            if (multiple) {
-                fnOpenModal();
-            } else {
-
-                // Generate and Retrieve part thumbnail file
-                rubyCallCommand('cutlist_part_get_thumbnail', part, function (response) {
-                    var thumbnailFile = response['thumbnail_file'];
-                    var threeObjectDef = response['three_object_def'];
-                    fnOpenModal(thumbnailFile, threeObjectDef);
-                });
-
+                }
             }
+
+            fnDisplayAxisDimensions();
+            fnUpdateIncreasesPreview();
+
+            if (tab === 'general') {
+                fnLoadThumbnail();
+            }
+
+            // Bind tabs
+            $tabs.on('shown.bs.tab', function (e) {
+                that.lastEditPartTab = $(e.target).attr('href').substring('#tab_edit_part_'.length);
+                if (that.lastEditPartTab === 'general') {
+                    fnLoadThumbnail();
+                }
+            });
+
+            // Bind input
+            $inputName.ladbTextinputText();
+            $inputInstanceCountByPart.ladbTextinputNumberWithUnit({
+                resetValue: '1',
+                defaultUnit: 'u_p',
+                units: [
+                    { u_p: i18next.t('default.instance_plural') + ' / ' + i18next.t('default.part_single') },
+                ]
+            });
+            $inputMass.ladbTextinputNumberWithUnit({
+                resetValue: ' ',
+                defaultUnit: that.massUnitStrippedname + '_p',
+                units: [
+                    { kg_p: 'kg / ' + i18next.t('default.part_single') },
+                    { lb_p: 'lb / ' + i18next.t('default.part_single') }
+                ]
+            });
+            $inputPrice.ladbTextinputNumberWithUnit({
+                resetValue: ' ',
+                defaultUnit: '$_p',
+                units: [
+                    { $_p: that.currencySymbol + ' / ' + i18next.t('default.part_single') }
+                ]
+            });
+            $inputThicknessLayerCount.ladbTextinputNumberWithUnit({
+                resetValue: '1'
+            });
+            $inputDescription.ladbTextinputArea();
+            $inputTags.ladbTextinputTokenfield({
+                unique: true,
+                autocomplete: {
+                    source: that.usedTags.concat(that.generateOptions.tags).unique(),
+                    delay: 100
+                }
+            });
+            $inputLengthIncrease.on('change', function() {
+                fnUpdateIncreasesPreview();
+            });
+            $inputLengthIncrease.ladbTextinputDimension();
+            $inputWidthIncrease.on('change', function() {
+                fnUpdateIncreasesPreview();
+            });
+            $inputWidthIncrease.ladbTextinputDimension();
+            $inputThicknessIncrease.ladbTextinputDimension();
+            $inputVeneerZminTextureAngle
+                .ladbTextinputNumberWithUnit({
+                    resetValue: 0,
+                    defaultUnit: 'deg',
+                    units: [
+                        {deg: i18next.t('default.unit_angle_0')}
+                    ]
+                })
+                .on('change', function () {
+                    fnUpdateVeneersPreview();
+                });
+            $inputVeneerZmaxTextureAngle
+                .ladbTextinputNumberWithUnit({
+                    resetValue: 0,
+                    defaultUnit: 'deg',
+                    units: [
+                        {deg: i18next.t('default.unit_angle_0')}
+                    ]
+                })
+                .on('change', function () {
+                    fnUpdateVeneersPreview();
+                });
+
+            // Bind select
+            $selectMaterialName.val(editedPart.material_name);
+            $selectMaterialName
+                .selectpicker(SELECT_PICKER_OPTIONS)
+                .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                    fnNewCheck($(this));
+                });
+            $selectCumulable.val(editedPart.cumulable);
+            $selectCumulable.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectPartAxesOriginPosition
+                .selectpicker(SELECT_PICKER_OPTIONS)
+                .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                    fnComputeAxesOrder();
+                });
+            $selectEdgeYmin.val(editedPart.edge_material_names.ymin);
+            $selectEdgeYmin
+                .selectpicker(SELECT_PICKER_OPTIONS)
+                .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                    if (!fnNewCheck($(this), 4 /* TYPE_EDGE */)) {
+                        fnUpdateEdgesPreview();
+                    }
+                });
+            $selectEdgeYmax.val(editedPart.edge_material_names.ymax);
+            $selectEdgeYmax
+                .selectpicker(SELECT_PICKER_OPTIONS)
+                .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                    if (!fnNewCheck($(this), 4 /* TYPE_EDGE */)) {
+                        fnUpdateEdgesPreview();
+                    }
+                });
+            $selectEdgeXmin.val(editedPart.edge_material_names.xmin);
+            $selectEdgeXmin
+                .selectpicker(SELECT_PICKER_OPTIONS)
+                .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                    if (!fnNewCheck($(this), 4 /* TYPE_EDGE */)) {
+                        fnUpdateEdgesPreview();
+                    }
+                });
+            $selectEdgeXmax.val(editedPart.edge_material_names.xmax);
+            $selectEdgeXmax
+                .selectpicker(SELECT_PICKER_OPTIONS)
+                .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                    if (!fnNewCheck($(this), 4 /* TYPE_EDGE */)) {
+                        fnUpdateEdgesPreview();
+                    }
+                });
+            $selectVeneerZmin.val(editedPart.veneer_material_names.zmin);
+            $selectVeneerZmin
+                .selectpicker(SELECT_PICKER_OPTIONS)
+                .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                    if (!fnNewCheck($(this), 6 /* TYPE_VENEER */)) {
+                        fnUpdateVeneersPreview();
+                    }
+                });
+            $selectVeneerZmax.val(editedPart.veneer_material_names.zmax);
+            $selectVeneerZmax
+                .selectpicker(SELECT_PICKER_OPTIONS)
+                .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                    if (!fnNewCheck($(this), 6 /* TYPE_VENEER */)) {
+                        fnUpdateVeneersPreview();
+                    }
+                });
+
+            // Bind increases
+            $rectIncreaseLength.on('click', function() {
+                $inputLengthIncrease.focus();
+            });
+            $rectIncreaseWidth.on('click', function() {
+                $inputWidthIncrease.focus();
+            });
+
+            // Bind edges
+            $rectEdgeYmin.on('click', function() {
+                $selectEdgeYmin.selectpicker('toggle');
+            });
+            $rectEdgeYmax.on('click', function() {
+                $selectEdgeYmax.selectpicker('toggle');
+            });
+            $rectEdgeXmin.on('click', function() {
+                $selectEdgeXmin.selectpicker('toggle');
+            });
+            $rectEdgeXmax.on('click', function() {
+                $selectEdgeXmax.selectpicker('toggle');
+            });
+
+            // Bind veneers
+            $rectVeneerZmin.on('click', function() {
+                $selectVeneerZmin.selectpicker('toggle');
+            });
+            $rectVeneerZmax.on('click', function() {
+                $selectVeneerZmax.selectpicker('toggle');
+            });
+
+            // Bind sorter
+            $sortableAxes.on('dblclick', function () {
+               var sortedNormals = Object.keys(editedPart.normals_to_values).sort(function (a, b) {
+                   return editedPart.normals_to_values[b] - editedPart.normals_to_values[a]
+               });
+               var $rowX = $('li[data-axis="' + sortedNormals[0] + '"]', $sortablePartAxes);
+               var $rowY = $('li[data-axis="' + sortedNormals[1] + '"]', $sortablePartAxes);
+               var $rowZ = $('li[data-axis="' + sortedNormals[2] + '"]', $sortablePartAxes);
+                $rowY.insertBefore($rowZ);
+                $rowX.insertBefore($rowY);
+                fnOnAxiesOrderChanged();
+            });
+            $sortablePartAxes.sortable({
+                cursor: 'ns-resize',
+                handle: '.ladb-handle',
+                stop: fnOnAxiesOrderChanged
+            });
+
+            // Bind checkbox
+            $inputOrientationLockedOnAxis.on('change', fnDisplayAxisDimensions);
+
+            // Bind labels
+            $labelEdgeYmax.on('dblclick', function() {
+                fnMaterialNameCopyToAllEdges($selectEdgeYmax.val());
+            });
+            $labelEdgeYmin.on('dblclick', function() {
+                fnMaterialNameCopyToAllEdges($selectEdgeYmin.val());
+            });
+            $labelEdgeXmin.on('dblclick', function() {
+                fnMaterialNameCopyToAllEdges($selectEdgeXmin.val());
+            });
+            $labelEdgeXmax.on('dblclick', function() {
+                fnMaterialNameCopyToAllEdges($selectEdgeXmax.val());
+            });
+            $labelVeneerZmin.on('dblclick', function() {
+                fnMaterialNameCopyToAllVeneers($selectVeneerZmin.val());
+            });
+            $labelVeneerZmax.on('dblclick', function() {
+                fnMaterialNameCopyToAllVeneers($selectVeneerZmax.val());
+            });
+            $labelVeneerZminTextureAngle.on('click', function() {
+                fnIncrementVeneerTextureAngleInputValue($inputVeneerZminTextureAngle, 90);
+            });
+            $labelVeneerZmaxTextureAngle.on('click', function() {
+                fnIncrementVeneerTextureAngleInputValue($inputVeneerZmaxTextureAngle, 90);
+            });
+
+            // Bind buttons
+            $btnHighlight.on('click', function () {
+                this.blur();
+                that.highlightPart(part.id);
+                return false;
+            });
+            $btnExportToSkp.on('click', function () {
+                this.blur();
+                rubyCallCommand('cutlist_part_export_to_skp', {
+                    definition_id: part.definition_id
+                }, function (response) {
+
+                    if (response.errors) {
+                        that.dialog.notifyErrors(response.errors);
+                    }
+                    if (response.export_path) {
+                        that.dialog.notify(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }), 'success');
+                    }
+
+                });
+                return false;
+            });
+            $btnUpdate.on('click', function () {
+
+                for (var i = 0; i < editedParts.length; i++) {
+
+                    if (!multiple) {
+
+                        editedParts[i].name = $inputName.val().trim();
+
+                        editedParts[i].orientation_locked_on_axis = $inputOrientationLockedOnAxis.is(':checked');
+                        editedParts[i].symmetrical = $inputSymmetrical.is(':checked');
+                        editedParts[i].ignore_grain_direction = $inputIgnoreGrainDirection.is(":checked");
+                        editedParts[i].axes_order = $inputPartAxes.val().length > 0 ? $inputPartAxes.val().split(',') : [];
+                        editedParts[i].axes_origin_position = $selectPartAxesOriginPosition.val();
+
+                    }
+
+                    if ($selectMaterialName.val() !== MULTIPLE_VALUE) {
+                        editedParts[i].material_name = $selectMaterialName.val();
+                    }
+                    if ($selectCumulable.val() !== MULTIPLE_VALUE) {
+                        editedParts[i].cumulable = parseInt($selectCumulable.val());
+                    }
+                    if (!$inputInstanceCountByPart.ladbTextinputNumberWithUnit('isMultiple')) {
+                        editedParts[i].instance_count_by_part = Math.max(1, $inputInstanceCountByPart.val() === '' ? 1 : parseInt($inputInstanceCountByPart.val()));
+                    }
+                    if (!$inputMass.ladbTextinputNumberWithUnit('isMultiple')) {
+                        editedParts[i].mass = $inputMass.ladbTextinputNumberWithUnit('val');
+                    }
+                    if (!$inputPrice.ladbTextinputNumberWithUnit('isMultiple')) {
+                        editedParts[i].price = $inputPrice.val().trim();
+                    }
+                    if (!$inputThicknessLayerCount.ladbTextinputNumberWithUnit('isMultiple')) {
+                        editedParts[i].thickness_layer_count = Math.max(1, $inputThicknessLayerCount.val() === '' ? 1 : parseInt($inputThicknessLayerCount.val()));
+                    }
+                    if (!$inputDescription.ladbTextinputArea('isMultiple')) {
+                        editedParts[i].description = $inputDescription.val().trim();
+                    }
+
+                    var untouchTags = editedParts[i].tags.filter(function (tag) { return !editedPart.tags.includes(tag) });
+                    editedParts[i].tags = untouchTags.concat($inputTags.tokenfield('getTokensList').split(';'));
+
+                    if (!$inputLengthIncrease.ladbTextinputDimension('isMultiple')) {
+                        editedParts[i].length_increase = $inputLengthIncrease.val();
+                    }
+                    if (!$inputWidthIncrease.ladbTextinputDimension('isMultiple')) {
+                        editedParts[i].width_increase = $inputWidthIncrease.val();
+                    }
+                    if (!$inputThicknessIncrease.ladbTextinputDimension('isMultiple')) {
+                        editedParts[i].thickness_increase = $inputThicknessIncrease.val();
+                    }
+
+                    if ($selectEdgeYmin.val() !== MULTIPLE_VALUE) {
+                        editedParts[i].edge_material_names.ymin = $selectEdgeYmin.val();
+                    }
+                    if ($selectEdgeYmax.val() !== MULTIPLE_VALUE) {
+                        editedParts[i].edge_material_names.ymax = $selectEdgeYmax.val();
+                    }
+                    if ($selectEdgeXmin.val() !== MULTIPLE_VALUE) {
+                        editedParts[i].edge_material_names.xmin = $selectEdgeXmin.val();
+                    }
+                    if ($selectEdgeXmax.val() !== MULTIPLE_VALUE) {
+                        editedParts[i].edge_material_names.xmax = $selectEdgeXmax.val();
+                    }
+
+                    if ($selectVeneerZmin.val() !== MULTIPLE_VALUE) {
+                        editedParts[i].veneer_material_names.zmin = $selectVeneerZmin.val();
+                    }
+                    if ($selectVeneerZmax.val() !== MULTIPLE_VALUE) {
+                        editedParts[i].veneer_material_names.zmax = $selectVeneerZmax.val();
+                    }
+
+                    if (!$inputVeneerZminTextureAngle.ladbTextinputDimension('isMultiple')) {
+                        editedParts[i].veneer_texture_angles.zmin = $inputVeneerZminTextureAngle.val();
+                    }
+                    if (!$inputVeneerZmaxTextureAngle.ladbTextinputDimension('isMultiple')) {
+                        editedParts[i].veneer_texture_angles.zmax = $inputVeneerZmaxTextureAngle.val();
+                    }
+
+                }
+
+                rubyCallCommand('cutlist_part_update', { parts_data: editedParts }, function (response) {
+
+                    if (response['errors']) {
+
+                        that.dialog.notifyErrors(response['errors']);
+
+                    } else {
+
+                        if (typeof updatedCallback === 'function') {
+                            updatedCallback()
+                        } else {
+
+                            var partId = editedPart.id;
+                            var wTop = $('#ladb_part_' + partId).offset().top - $(window).scrollTop();
+
+                            // Refresh the list
+                            that.generateCutlist(function () {
+
+                                // Try to scroll to the edited part's row
+                                var $part = $('#ladb_part_' + partId, that.$page);
+                                if ($part.length > 0) {
+                                    if ($part.hasClass('hide')) {
+                                        that.expandFoldingRow($('#ladb_part_' + $part.data('folder-id')));
+                                    }
+                                    $part.effect('highlight', {}, 1500);
+                                    that.$rootSlide.animate({ scrollTop: $part.offset().top - wTop }, 0);
+                                }
+
+                            });
+
+                        }
+
+                        // Hide modal
+                        $modal.modal('hide');
+
+                    }
+
+                });
+
+            });
+
+            // Bind modal
+            $modal.on('hide.bs.modal', function () {
+                $inputTags.ladbTextinputTokenfield('destroy');
+            });
+
+            // Init edges preview
+            fnUpdateEdgesPreview();
+
+            // Init veneers preview
+            fnUpdateVeneersPreview();
+
+            // Show modal
+            $modal.modal('show');
+
+            // Focus
+            $inputName.focus();
+
+            // Setup popovers and tooltips
+            that.dialog.setupPopovers();
+            that.dialog.setupTooltips();
+
+            // Change event
+            $('input, select', $modal).on('change', function () {
+                $btnExportToSkp.prop('disabled', true);
+            });
 
         } else {
 
