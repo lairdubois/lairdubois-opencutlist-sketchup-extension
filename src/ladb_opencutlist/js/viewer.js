@@ -32,9 +32,7 @@ const fnInit = function() {
 
     // Create the container
 
-    container = document.createElement('div');
-    container.appendChild(renderer.domElement);
-    document.body.appendChild(container);
+    document.body.appendChild(renderer.domElement);
 
     // Create the scene
 
@@ -76,14 +74,7 @@ const fnInit = function() {
 
     // Create the camera
 
-    camera = new THREE.OrthographicCamera(
-        container.offsetWidth / -2,
-        container.offsetWidth / 2,
-        container.offsetHeight / 2,
-        container.offsetHeight / -2,
-        -0.1,
-        1000
-    );
+    camera = new THREE.OrthographicCamera(-1, 1, 1, -1, -0.1, 1000);
 
     // Create controls
 
@@ -111,32 +102,71 @@ const fnInit = function() {
     });
 
     // Add listeners
+    window.onresize = function () {
+        fnUpdateViewportSize();
+    };
     window.onmessage = function (e) {
-        fnSetupModel(e.data.objectDef);
+
+        let call = e.data;
+        if (call.command) {
+
+            switch (call.command) {
+
+                case 'setup_model':
+                    fnSetupModel(call.params.objectDef);
+                    if (call.params.showBoxHelper) {
+                        fnSetBoxHelperVisible(true);
+                    }
+                    break;
+
+                case 'set_view':
+                    switch (call.params.view) {
+
+                        case 'isometric':
+                            fnSetIsometricView();
+                            break;
+
+                        case 'front':
+                            fnSetFrontView();
+                            break;
+
+                        case 'back':
+                            fnSetBackView();
+                            break;
+
+                    }
+                    break;
+
+                case 'set_box_helper_visible':
+                    fnSetBoxHelperVisible(call.params.visible);
+                    break;
+
+                case 'set_axes_helper_visible':
+                    fnSetAxesHelperVisible(call.params.visible);
+                    break;
+
+                case 'set_auto_rotate_enable':
+                    fnSetAutoRotateEnable(call.params.enable);
+                    break;
+
+            }
+
+        }
+
     };
 
-    // UI
+    fnUpdateViewportSize();
+}
 
-    document.getElementById('btn_front').addEventListener('click' , function () {
-        fnSetFrontView();
-    });
-    document.getElementById('btn_back').addEventListener('click' , function () {
-        fnSetBackView();
-    });
-    document.getElementById('btn_iso').addEventListener('click' , function () {
-        fnSetIsometricView();
-    });
-    document.getElementById('btn_bbox').addEventListener('click' , function () {
-        fnToggleBox();
-    });
-    document.getElementById('btn_axes').addEventListener('click' , function () {
-        fnToggleAxes()
-    });
-    document.getElementById('btn_disco').addEventListener('click' , function () {
-        fnToggleAutoRotate();
-    });
+const fnUpdateViewportSize = function () {
 
+    camera.left = window.innerWidth / -2;
+    camera.right = window.innerWidth / 2;
+    camera.top = window.innerHeight / 2;
+    camera.bottom = window.innerHeight / -2;
+    camera.updateProjectionMatrix();
 
+    renderer.setSize(window.innerWidth, window.innerHeight);
 
 }
 
@@ -197,7 +227,7 @@ const fnSetIsometricView = function() {
         let height2d = (modelSize.x + modelSize.y) * Math.cos(Math.PI / 3) + modelSize.z;
 
         controls.position0.set(1, -1, 1).multiplyScalar(modelRadius).add(controls.target0);
-        controls.zoom0 = Math.min(container.offsetWidth / width2d, container.offsetHeight / height2d);
+        controls.zoom0 = Math.min(window.innerWidth / width2d, window.innerHeight / height2d);
         controls.reset();
 
         controls.enableRotate = true;
@@ -209,7 +239,7 @@ const fnSetFrontView = function () {
     if (model) {
 
         controls.position0.set(0, 0, 1).multiplyScalar(modelRadius).add(controls.target0);
-        controls.zoom0 = Math.min(container.offsetWidth / modelSize.x, container.offsetHeight / modelSize.y) * 0.8;
+        controls.zoom0 = Math.min(window.innerWidth / modelSize.x, window.innerHeight / modelSize.y) * 0.8;
         controls.reset();
 
         controls.enableRotate = false;
@@ -221,7 +251,7 @@ const fnSetBackView = function () {
     if (model) {
 
         controls.position0.set(0, 0, -1).multiplyScalar(modelRadius).add(controls.target0);
-        controls.zoom0 = Math.min(container.offsetWidth / modelSize.x, container.offsetHeight / modelSize.y) * 0.8;
+        controls.zoom0 = Math.min(window.innerWidth / modelSize.x, window.innerHeight / modelSize.y) * 0.8;
         controls.reset();
 
         controls.enableRotate = false;
@@ -229,21 +259,33 @@ const fnSetBackView = function () {
     }
 }
 
-const fnToggleBox = function () {
+const fnSetBoxHelperVisible = function (visible) {
     if (boxHelper) {
-        boxHelper.visible = !boxHelper.visible;
+        if (visible == null) {
+            boxHelper.visible = !boxHelper.visible;
+        } else {
+            boxHelper.visible = visible === true
+        }
     }
 }
 
-const fnToggleAxes = function () {
+const fnSetAxesHelperVisible = function (visible) {
     if (axesHelper) {
-        axesHelper.visible = !axesHelper.visible;
+        if (visible == null) {
+            axesHelper.visible = !axesHelper.visible;
+        } else {
+            axesHelper.visible = visible === true
+        }
     }
 }
 
-const fnToggleAutoRotate = function () {
+const fnSetAutoRotateEnable = function (enable) {
     if (controls) {
-        controls.autoRotate = !controls.autoRotate;
+        if (enable == null) {
+            controls.autoRotate = !controls.autoRotate;
+        } else {
+            controls.autoRotate = enable === true
+        }
     }
 }
 

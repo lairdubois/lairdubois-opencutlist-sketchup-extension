@@ -1809,13 +1809,13 @@
                         var threeObjectDef = response['three_object_def'];
                         if (threeObjectDef) {
 
-                            var $iframe = $('<iframe>')
-                                .attr('src', 'viewer.html')
-                                .on('load', function () {
-                                    this.contentWindow.postMessage({
-                                        objectDef: threeObjectDef,
-                                    }, '*')
-                                });
+                            var $iframe = $(Twig.twig({ref: 'components/_viewer-part.twig'}).render());
+
+                            $iframe.ladbViewerPart({
+                                dialog: that.dialog,
+                                objectDef: threeObjectDef,
+                                showBoxHelper: part.not_aligned_on_axes
+                            });
 
                             $divPartThumbnail.html($iframe);
 

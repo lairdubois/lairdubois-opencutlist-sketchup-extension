@@ -155,6 +155,10 @@ core:
       remove: Oublier cette couleur
     textinput_code:
       help: Tappez **@** pour ouvrir la liste des variables de donnée.
+    viewer_part:
+      isometric_view: Vue isométrique
+      front_view: Vue parement
+      back_view: Vue contreparement
   docs:
     error:
       failed_to_load: |
