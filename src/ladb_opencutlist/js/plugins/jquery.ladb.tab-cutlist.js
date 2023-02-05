@@ -52,6 +52,7 @@
         this.$btnReport = $('#ladb_btn_report', this.$header);
         this.$btnOptions = $('#ladb_btn_options', this.$header);
         this.$itemHighlightAllParts = $('#ladb_item_highlight_all_parts', this.$header);
+        this.$itemLayoutAllParts = $('#ladb_item_layout_all_parts', this.$header);
         this.$itemShowAllGroups = $('#ladb_item_show_all_groups', this.$header);
         this.$itemNumbersSave = $('#ladb_item_numbers_save', this.$header);
         this.$itemNumbersReset = $('#ladb_item_numbers_reset', this.$header);
@@ -168,6 +169,7 @@
                 that.$btnExport.prop('disabled', groups.length === 0);
                 that.$btnReport.prop('disabled', solidWoodMaterialCount + sheetGoodMaterialCount + dimensionalMaterialCount + edgeMaterialCount + hardwareMaterialCount === 0);
                 that.$itemHighlightAllParts.parents('li').toggleClass('disabled', groups.length === 0);
+                that.$itemLayoutAllParts.parents('li').toggleClass('disabled', groups.length === 0);
                 that.$itemShowAllGroups.parents('li').toggleClass('disabled', groups.length === 0);
                 that.$itemNumbersSave.parents('li').toggleClass('disabled', groups.length === 0);
                 that.$itemNumbersReset.parents('li').toggleClass('disabled', groups.length === 0);
@@ -491,6 +493,12 @@
                     var $group = $(this).parents('.ladb-cutlist-group');
                     var groupId = $group.data('group-id');
                     that.highlightGroupParts(groupId);
+                    $(this).blur();
+                });
+                $('a.ladb-item-layout-group-parts', that.$page).on('click', function () {
+                    var $group = $(this).parents('.ladb-cutlist-group');
+                    var groupId = $group.data('group-id');
+                    that.layoutGroupParts(groupId);
                     $(this).blur();
                 });
                 $('a.ladb-item-hide-all-other-groups', that.$page).on('click', function () {
@@ -1214,38 +1222,14 @@
     // Highlight /////
 
     LadbTabCutlist.prototype.highlightAllParts = function () {
-        var that = this;
-
-        rubyCallCommand('cutlist_highlight_parts', { minimize_on_highlight: that.generateOptions.minimize_on_highlight }, function (response) {
-
-            if (response['errors']) {
-                that.dialog.notifyErrors(response['errors']);
-            } else if (that.generateOptions.minimize_on_highlight) {
-                that.dialog.minimize();
-            }
-
-        });
-
+        this.highlightParts(null, null);
     };
 
     LadbTabCutlist.prototype.highlightGroupParts = function (groupId) {
-        var that = this;
-
-        rubyCallCommand('cutlist_highlight_parts', { minimize_on_highlight: that.generateOptions.minimize_on_highlight, group_id: groupId }, function (response) {
-
-            if (response['errors']) {
-                that.dialog.notifyErrors(response['errors']);
-            } else if (that.generateOptions.minimize_on_highlight) {
-                that.dialog.minimize();
-            }
-
-        });
-
+        this.highlightParts(groupId, null);
     };
 
     LadbTabCutlist.prototype.highlightPart = function (partId) {
-        var that = this;
-
         var groupAndPart = this.findGroupAndPartById(partId);
         if (groupAndPart) {
 
@@ -1265,19 +1249,105 @@
                 partIds = [ partId ];
             }
 
-            rubyCallCommand('cutlist_highlight_parts', { minimize_on_highlight: that.generateOptions.minimize_on_highlight, part_ids: partIds }, function (response) {
-
-                if (response['errors']) {
-                    that.dialog.notifyErrors(response['errors']);
-                } else if (that.generateOptions.minimize_on_highlight) {
-                    that.dialog.minimize();
-                }
-
-            });
+            this.highlightParts(null, partIds);
 
         }
-
     };
+
+    LadbTabCutlist.prototype.highlightParts = function (groupId, partIds) { // partIds ignored if groupId is defined
+        var that = this;
+
+        rubyCallCommand('cutlist_highlight_parts', { minimize_on_highlight: this.generateOptions.minimize_on_highlight, group_id: groupId, part_ids: partIds }, function (response) {
+
+            if (response['errors']) {
+                that.dialog.notifyErrors(response['errors']);
+            } else if (that.generateOptions.minimize_on_highlight) {
+                that.dialog.minimize();
+            }
+
+        });
+
+    }
+
+    // Layout /////
+
+    LadbTabCutlist.prototype.layoutAllParts = function () {
+        this.layoutParts(null, null);
+    };
+
+    LadbTabCutlist.prototype.layoutGroupParts = function (groupId) {
+        this.layoutParts(groupId, null);
+    };
+
+    LadbTabCutlist.prototype.layoutPart = function (partId) {
+        var groupAndPart = this.findGroupAndPartById(partId);
+        if (groupAndPart) {
+
+            var group = groupAndPart.group;
+            var part = groupAndPart.part;
+
+            var isFolder = part.children && part.children.length > 0;
+            var isSelected = this.selectionGroupId === group.id && this.selectionPartIds.includes(partId) && this.selectionPartIds.length > 1;
+            var multiple = isFolder || isSelected;
+
+            var partIds;
+            if (isFolder) {
+                partIds = [ partId ];
+            } else if (isSelected) {
+                partIds = this.selectionPartIds;
+            } else {
+                partIds = [ partId ];
+            }
+
+            this.layoutParts(null, partIds);
+
+        }
+    };
+
+    LadbTabCutlist.prototype.layoutParts = function (groupId, partIds) { // partIds ignored if groupId is defined
+        var that = this;
+
+        rubyCallCommand('cutlist_layout_parts', { group_id: groupId, part_ids: partIds }, function (response) {
+
+            var $slide = that.pushNewSlide('ladb_cutlist_slide_layout', 'tabs/cutlist/_slide-layout.twig', $.extend({
+                errors: response.errors,
+                warnings: response.warnings,
+                filename: that.filename,
+                modelName: that.modelName,
+                pageName: that.pageName,
+                isEntitySelection: that.isEntitySelection,
+                lengthUnit: that.lengthUnit,
+                generatedAt: new Date().getTime() / 1000,
+            }), function () {
+                that.dialog.setupTooltips();
+            });
+
+            // Fetch UI elements
+            var $btnPrint = $('#ladb_btn_print', $slide);
+            var $btnClose = $('#ladb_btn_close', $slide);
+            var $viewer = $('.ladb-viewer-part', $slide);
+
+            // Bind buttons
+            $btnPrint.on('click', function () {
+                that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.layout.title'), '0');
+            });
+            $btnClose.on('click', function () {
+                that.popSlide();
+            });
+            $('.ladb-btn-setup-model-units', $slide).on('click', function() {
+                $(this).blur();
+                that.dialog.executeCommandOnTab('settings', 'highlight_panel', { panel:'model' });
+            });
+
+            // Bind viewer
+            $viewer.ladbViewerPart({
+                dialog: that.dialog,
+                modelDef: response.three_model_def
+            })
+
+        });
+
+    }
 
     // Parts /////
 
@@ -1806,23 +1876,22 @@
                     // Generate and Retrieve part thumbnail file
                     rubyCallCommand('cutlist_part_get_thumbnail', part, function (response) {
 
-                        var threeObjectDef = response['three_object_def'];
-                        if (threeObjectDef) {
+                        var threeModelDef = response['three_model_def'];
+                        var thumbnailFile = response['thumbnail_file'];
+
+                        if (threeModelDef) {
 
                             var $iframe = $(Twig.twig({ref: 'components/_viewer-part.twig'}).render());
 
                             $iframe.ladbViewerPart({
                                 dialog: that.dialog,
-                                objectDef: threeObjectDef,
+                                modelDef: threeModelDef,
                                 showBoxHelper: part.not_aligned_on_axes
                             });
 
                             $divPartThumbnail.html($iframe);
 
-                        } else {
-
-                            var thumbnailFile = response['thumbnail_file'];
-                            if (thumbnailFile) {
+                        } else if (thumbnailFile) {
 
                                 var $img = $('<img>')
                                     .attr('src', thumbnailFile)
@@ -1835,8 +1904,8 @@
 
                                 $divPartThumbnail.html($img);
 
-                            }
-
+                        } else {
+                            $divPartThumbnail.hide();
                         }
 
                         thumbnailLoaded = true;
@@ -3822,6 +3891,12 @@
         this.$itemHighlightAllParts.on('click', function () {
             if (!$(this).parents('li').hasClass('disabled')) {
                 that.highlightAllParts();
+            }
+            this.blur();
+        });
+        this.$itemLayoutAllParts.on('click', function () {
+            if (!$(this).parents('li').hasClass('disabled')) {
+                that.layoutAllParts();
             }
             this.blur();
         });

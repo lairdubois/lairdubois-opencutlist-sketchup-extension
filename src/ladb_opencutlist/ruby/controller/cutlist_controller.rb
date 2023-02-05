@@ -44,6 +44,10 @@ module Ladb::OpenCutList
         highlight_parts_command(settings)
       end
 
+      Plugin.instance.register_command("cutlist_layout_parts") do |settings|
+        layout_parts_command(settings)
+      end
+
       Plugin.instance.register_command("cutlist_part_get_thumbnail") do |part_data|
         part_get_thumbnail_command(part_data)
       end
@@ -162,6 +166,16 @@ module Ladb::OpenCutList
 
       # Setup worker
       worker = CutlistHighlightPartsWorker.new(settings, @cutlist)
+
+      # Run !
+      worker.run
+    end
+
+    def layout_parts_command(settings)
+      require_relative '../worker/cutlist/cutlist_layout_parts_worker'
+
+      # Setup worker
+      worker = CutlistLayoutPartsWorker.new(settings, @cutlist)
 
       # Run !
       worker.run

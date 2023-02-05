@@ -181,6 +181,7 @@ tab:
     not_available_std_section: Section non standard
     highlight_part: Voir la pièce dans le modèle
     highlight_parts: Voir les pièces dans le modèle
+    layout_parts: Mettre en page les pièces
     edit_part_properties: Éditer les propriétés de la pièce
     edit_part_axes_properties: Éditer les propriétés (axes) de la pièce
     edit_part_size_increase_properties: Éditer les propriétés (surcotes) de la pièce
@@ -219,6 +220,7 @@ tab:
       rounded_std_footer: Adaptez la précision dans les *Infos sur le modèle* ou vérifiez les dimensions des pièces de ce groupe.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
+      layout_parts: $t(tab.cutlist.layout_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_parts_properties: Éditer les propriétés du groupe de pièces
       edit_material: $t(tab.cutlist.menu.edit_material)
@@ -282,6 +284,7 @@ tab:
       numbers_save: Mémoriser les numéros de pièces
       numbers_reset: Réinitialiser les numéros de pièces
       highlight_parts: $t(tab.cutlist.highlight_parts)
+      layout_parts: $t(tab.cutlist.layout_parts)
       group_numbers_save: Mémoriser les numéros de pièces du groupe
       group_numbers_reset: Réinitialiser les numéros de pièces du groupe
       group_cuttingdiagram: Calepinage
@@ -825,6 +828,8 @@ tab:
       warning:
         is_part_selection: Ces étiquettes se limitent aux **pièces sélectionnées**.
         formula_not_available: Non disponible dans ce context
+    layout:
+      title: Mise en page
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_entities: Votre modèle est vide. Il va falloir m'en donner un peu plus ;)

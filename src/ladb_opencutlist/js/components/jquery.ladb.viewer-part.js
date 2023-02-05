@@ -21,7 +21,7 @@
     };
 
     LadbViewerPart.DEFAULTS = {
-        objectDef: null,
+        modelDef: null,
         showBoxHelper: false
     };
 
@@ -41,7 +41,7 @@
             that.callCommand(
                 'setup_model',
                 {
-                    objectDef: that.options.objectDef,
+                    modelDef: that.options.modelDef,
                     showBoxHelper: that.options.showBoxHelper
                 }
             )

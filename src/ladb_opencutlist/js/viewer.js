@@ -1,6 +1,7 @@
 // Declarations
 
 let renderer,
+    textRenderer,
     container,
     scene,
     controls,
@@ -23,16 +24,17 @@ const fnInit = function() {
 
     THREE.Object3D.DefaultUp.set(0, 0, 1);
 
-    // Create the renderer
+    // Create the renderers
 
     renderer = new THREE.WebGLRenderer();
     renderer.antialias = true;
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(window.innerWidth, window.innerHeight);
-
-    // Create the container
-
     document.body.appendChild(renderer.domElement);
+
+    textRenderer = new THREE.CSS2DRenderer();
+    textRenderer.domElement.style.position = 'absolute';
+    textRenderer.domElement.style.top = '0px';
+    document.body.appendChild(textRenderer.domElement);
 
     // Create the scene
 
@@ -78,21 +80,21 @@ const fnInit = function() {
 
     // Create controls
 
-    controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls = new THREE.OrbitControls(camera, textRenderer.domElement);
     controls.rotateSpeed = 0.5;
     controls.zoomSpeed = 2.0;
     controls.autoRotateSpeed = 3.0;
     controls.mouseButtons = {
         LEFT: THREE.MOUSE.ROTATE,
         MIDDLE: THREE.MOUSE.ROTATE,
-        RIGHT: THREE.MOUSE.PAN
+        RIGHT: null
     }
 
     // Create default materials
 
     defaultMeshMaterial = new THREE.MeshBasicMaterial({
         side: THREE.DoubleSide,
-        color: 0xeeeeee,
+        color: 0xffffff,
         polygonOffset: true,
         polygonOffsetFactor: 1,
         polygonOffsetUnits: 1
@@ -113,7 +115,7 @@ const fnInit = function() {
             switch (call.command) {
 
                 case 'setup_model':
-                    fnSetupModel(call.params.objectDef);
+                    fnSetupModel(call.params.modelDef);
                     if (call.params.showBoxHelper) {
                         fnSetBoxHelperVisible(true);
                     }
@@ -153,12 +155,14 @@ const fnUpdateViewportSize = function () {
     camera.updateProjectionMatrix();
 
     renderer.setSize(window.innerWidth, window.innerHeight);
+    textRenderer.setSize(window.innerWidth, window.innerHeight);
 
 }
 
 const fnAnimate = function () {
     requestAnimationFrame(fnAnimate);
     renderer.render(scene, camera);
+    textRenderer.render(scene, camera);
     controls.update();
 }
 
@@ -171,7 +175,9 @@ const fnAddObjectDef = function (objectDef, parent, material) {
 
     switch (objectDef.type) {
 
-        case 1: // TYPE_GROUP
+        case 1: // TYPE_MODEL
+        case 2: // TYPE_PART
+        case 3: // TYPE_GROUP
 
             let group = new THREE.Group();
             if (objectDef.matrix) {
@@ -182,11 +188,25 @@ const fnAddObjectDef = function (objectDef, parent, material) {
             for (childObjectDef of objectDef.children) {
                 fnAddObjectDef(childObjectDef, group, material);
             }
+            if (objectDef.type === 2 && objectDef.number) {
+
+                const box = (new THREE.Box3()).setFromObject(group);
+
+                const numberDiv = document.createElement( 'div' );
+                numberDiv.className = 'label';
+                numberDiv.textContent = objectDef.number;
+                numberDiv.style.marginTop = '-0.5em';
+
+                const numberLabel = new THREE.CSS2DObject(numberDiv);
+                numberLabel.position.copy(box.getCenter(new THREE.Vector3()));
+                scene.add(numberLabel);
+
+            }
             parent.add(group);
 
             return group;
 
-        case 2: // TYPE_MESH
+        case 4: // TYPE_MESH
 
             let vertices = new Float32Array(objectDef.vertices)
             let geometry = new THREE.BufferGeometry();
@@ -272,9 +292,9 @@ const fnSetAutoRotateEnable = function (enable) {
     }
 }
 
-const fnSetupModel = function(objectDef) {
+const fnSetupModel = function(modelDef) {
 
-    model = fnAddObjectDef(objectDef, scene, defaultMeshMaterial);
+    model = fnAddObjectDef(modelDef, scene, defaultMeshMaterial);
     if (model) {
 
         // Compute model box properties

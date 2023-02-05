@@ -240,6 +240,7 @@
                     <ul class="dropdown-menu">
                         {% if group.material_type != 4 and group.material_type != 6 %}    {# 4 = TYPE_EDGE, 6 = TYPE_VENEER #}
                             <li><a href="#" class="ladb-item-highlight-group-parts"><i class="ladb-opencutlist-icon-magnifier"></i> {{ 'tab.cutlist.menu.highlight_parts'|i18next }}</a></li>
+                            <li><a href="#" class="ladb-item-layout-group-parts"><i class="ladb-opencutlist-icon-layout"></i> {{ 'tab.cutlist.menu.layout_parts'|i18next }}</a></li>
                             <li role="separator" class="divider"></li>
                         {% endif %}
                         <li><a href="#" class="ladb-item-hide-all-other-groups"><i class="ladb-opencutlist-icon-eye-close"></i> {{ 'tab.cutlist.menu.hide_all_other_groups'|i18next }}</a></li>
