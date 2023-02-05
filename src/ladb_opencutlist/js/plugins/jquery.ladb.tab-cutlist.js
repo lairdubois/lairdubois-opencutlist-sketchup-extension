@@ -1329,7 +1329,7 @@
 
             // Bind buttons
             $btnPrint.on('click', function () {
-                that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.layout.title'), '0');
+                that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.layout.title'));
             });
             $btnClose.on('click', function () {
                 that.popSlide();

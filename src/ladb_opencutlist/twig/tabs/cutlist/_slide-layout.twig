@@ -2,7 +2,6 @@
 
 {% set id = 'ladb_cutlist_slide_layout' %}
 {% set out = true %}
-{% set slideClasses = 'print-full-page print-no-header' %}
 
 {% block headerInner %}
     {{ parent() }}
@@ -12,7 +11,7 @@
 {% endblock %}
 
 {% block headerHeadingInner %}
-    {{ 'tab.cutlist.layout.title'|i18next}} <small>
+    {{ 'tab.cutlist.layout.title'|i18next}}
 {% endblock %}
 
 {% block headerToolsInner %}

@@ -106,6 +106,8 @@ const fnInit = function() {
     // Add listeners
     window.onresize = function () {
         fnUpdateViewportSize();
+        fnRender();
+        console.log('onresize', window.innerWidth);
     };
     window.onmessage = function (e) {
 
@@ -159,10 +161,14 @@ const fnUpdateViewportSize = function () {
 
 }
 
-const fnAnimate = function () {
-    requestAnimationFrame(fnAnimate);
+const fnRender = function () {
     renderer.render(scene, camera);
     textRenderer.render(scene, camera);
+}
+
+const fnAnimate = function () {
+    requestAnimationFrame(fnAnimate);
+    fnRender();
     controls.update();
 }
 
