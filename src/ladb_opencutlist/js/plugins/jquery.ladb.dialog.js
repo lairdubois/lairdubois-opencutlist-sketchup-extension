@@ -839,15 +839,15 @@
         }
     };
 
-    LadbDialog.prototype.setupTooltips = function () {
+    LadbDialog.prototype.setupTooltips = function ($element) {
         $('.tooltip').tooltip('hide'); // Assume that previouly created tooltips are closed
-        $('[data-toggle="tooltip"]').tooltip({
+        $('[data-toggle="tooltip"]', $element).tooltip({
             container: 'body'
         });
     };
 
-    LadbDialog.prototype.setupPopovers = function () {
-        $('[data-toggle="popover"]').popover({
+    LadbDialog.prototype.setupPopovers = function ($element) {
+        $('[data-toggle="popover"]', $element).popover({
             html: true
         });
     };

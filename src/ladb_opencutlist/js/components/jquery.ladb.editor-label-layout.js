@@ -444,7 +444,7 @@
             })
         ;
 
-        this.dialog.setupTooltips();
+        this.dialog.setupTooltips(this.$element);
 
     };
 

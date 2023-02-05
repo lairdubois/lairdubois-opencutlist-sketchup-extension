@@ -4,36 +4,28 @@
 
 .ladb-viewer-part {
   position: relative;
+  display: flex;
+  gap: 5px;
 
   > iframe {
     border: none;
-    width: 100%;
+    flex-grow: 1;
     height: 200px;
     overflow: hidden;
   }
 
   > .ladb-viewer-part-ui-left, > .ladb-viewer-part-ui-right {
-    position: absolute;
     display: flex;
+    gap: 5px;
     flex-direction: column;
     justify-content: center;
-    top: 0;
-    bottom: 0;
-    gap: 5px;
+    flex-grow: 0;
 
     > button {
       padding: 5px 5px;
       width: 30px;
     }
 
-  }
-
-  > .ladb-viewer-part-ui-left {
-    left: 0;
-  }
-
-  > .ladb-viewer-part-ui-right {
-    right: 0;
   }
 
 }

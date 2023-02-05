@@ -159,6 +159,9 @@ core:
       isometric_view: Vue isométrique
       front_view: Vue parement
       back_view: Vue contreparement
+      toggle_box_helper: Afficher ou masquer la boîte capable
+      toggle_axes_helper: Afficher ou masquer les axes de la pièce
+      toggle_auto_rotate: Active ou désactive la rotation automatique
   docs:
     error:
       failed_to_load: |

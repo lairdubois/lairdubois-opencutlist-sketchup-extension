@@ -108,7 +108,7 @@
 
     LadbViewerPart.prototype.init = function () {
         this.bind();
-        this.options.dialog.setupTooltips();
+        this.dialog.setupTooltips(this.$element);
     };
 
     // PLUGIN DEFINITION

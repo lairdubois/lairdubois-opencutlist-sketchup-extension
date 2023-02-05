@@ -120,21 +120,7 @@ const fnInit = function() {
                     break;
 
                 case 'set_view':
-                    switch (call.params.view) {
-
-                        case 'isometric':
-                            fnSetIsometricView();
-                            break;
-
-                        case 'front':
-                            fnSetFrontView();
-                            break;
-
-                        case 'back':
-                            fnSetBackView();
-                            break;
-
-                    }
+                    fnSetView(call.params.view);
                     break;
 
                 case 'set_box_helper_visible':
@@ -220,43 +206,40 @@ const fnAddObjectDef = function (objectDef, parent, material) {
     return null;
 }
 
-const fnSetIsometricView = function() {
-    if (model) {
+const fnSetView = function (view) {
 
-        let width2d = (modelSize.x + modelSize.y) * Math.cos(Math.PI / 6);
-        let height2d = (modelSize.x + modelSize.y) * Math.cos(Math.PI / 3) + modelSize.z;
+    switch (view) {
 
-        controls.position0.set(1, -1, 1).multiplyScalar(modelRadius).add(controls.target0);
-        controls.zoom0 = Math.min(window.innerWidth / width2d, window.innerHeight / height2d);
-        controls.reset();
+        case 'isometric':
 
-        controls.enableRotate = true;
+            let width2d = (modelSize.x + modelSize.y) * Math.cos(Math.PI / 6);
+            let height2d = (modelSize.x + modelSize.y) * Math.cos(Math.PI / 3) + modelSize.z;
 
+            controls.position0.set(1, -1, 1).multiplyScalar(modelRadius).add(controls.target0);
+            controls.zoom0 = Math.min(window.innerWidth / width2d, window.innerHeight / height2d);
+
+            break;
+
+        case 'front':
+
+            controls.position0.set(0, 0, 1).multiplyScalar(modelRadius).add(controls.target0);
+            controls.zoom0 = Math.min(window.innerWidth / modelSize.x, window.innerHeight / modelSize.y) * 0.8;
+
+            break
+
+        case 'back':
+
+            controls.position0.set(0, 0, -1).multiplyScalar(modelRadius).add(controls.target0);
+            controls.zoom0 = Math.min(window.innerWidth / modelSize.x, window.innerHeight / modelSize.y) * 0.8;
+
+            break
     }
-}
 
-const fnSetFrontView = function () {
-    if (model) {
+    controls.reset();
 
-        controls.position0.set(0, 0, 1).multiplyScalar(modelRadius).add(controls.target0);
-        controls.zoom0 = Math.min(window.innerWidth / modelSize.x, window.innerHeight / modelSize.y) * 0.8;
-        controls.reset();
+    controls.enableRotate = true;
+    controls.autoRotate = false;
 
-        controls.enableRotate = false;
-
-    }
-}
-
-const fnSetBackView = function () {
-    if (model) {
-
-        controls.position0.set(0, 0, -1).multiplyScalar(modelRadius).add(controls.target0);
-        controls.zoom0 = Math.min(window.innerWidth / modelSize.x, window.innerHeight / modelSize.y) * 0.8;
-        controls.reset();
-
-        controls.enableRotate = false;
-
-    }
 }
 
 const fnSetBoxHelperVisible = function (visible) {
@@ -305,7 +288,7 @@ const fnSetupModel = function(objectDef) {
         controls.target0.copy(modelCenter);
 
         // Start with isometric view
-        fnSetIsometricView();
+        fnSetView('isometric');
 
         // Create box helper
         boxHelper = new THREE.BoxHelper(model, 0x0000ff);
