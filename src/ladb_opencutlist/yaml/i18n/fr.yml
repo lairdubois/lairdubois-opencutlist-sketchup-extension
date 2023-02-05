@@ -374,6 +374,7 @@ tab:
       veneer_disabled_help: Cette surface n'est pas configurable parce qu'aucune face pouvant porter une matière n'a été détectée sur ce bord de la pièce dans le modèle.
       multiple_values: Valeurs multiples
       export_to_skp: Exporter (.skp)
+      loading_preview: Chargement de l'aperçu
     export_to_skp:
       title: Exporter un fichier .skp
     option:

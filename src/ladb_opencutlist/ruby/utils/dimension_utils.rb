@@ -50,7 +50,7 @@
 
     include Singleton
 
-    attr_accessor :decimal_separator, :length_unit
+    attr_accessor :decimal_separator, :length_unit, :length_format, :length_precision
 
     LENGTH_MIN_PRECISION = 3
 
@@ -58,7 +58,7 @@
     LIST_SEPARATOR = ';'.freeze
     DXD_SEPARATOR = 'x'.freeze
 
-    @separator
+    @decimal_separator
     @length_unit
     @length_format
     @length_precision

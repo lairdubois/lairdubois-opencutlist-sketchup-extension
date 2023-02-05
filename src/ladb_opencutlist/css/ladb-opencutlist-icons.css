@@ -43,6 +43,9 @@ i, span.ladb-opencutlist-icon:before {
 }
 
 
+.ladb-opencutlist-icon-isometric:before {
+  content: "\e999";
+}
 .ladb-opencutlist-icon-copy:before {
   content: "\e993";
 }

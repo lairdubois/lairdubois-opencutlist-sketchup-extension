@@ -34,7 +34,9 @@
             <div class="alert alert-info text-center">{{ 'tab.cutlist.edit_part.multiple_alert'|i18next({ 'part_count':partCount }) }}</div>
         {% endif %}
         <div role="tabpanel" class="tab-pane{% if tab == 'general' %} active{% endif %}" id="tab_edit_part_general">
-            <div id="ladb_cutlist_part_thumbnail" class="ladb-part-thumbnail"></div>
+            <div id="ladb_cutlist_part_thumbnail" class="ladb-part-thumbnail">
+                <span class="ladb-part-thumbnail-loading">{{ 'tab.cutlist.edit_part.loading_preview'|i18next }}...</span>
+            </div>
             <div class="form form-horizontal">
                 {% if not multiple %}
                     <div class="form-group">

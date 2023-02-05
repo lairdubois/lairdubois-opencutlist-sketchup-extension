@@ -1,7 +1,3 @@
-// const THREE = require('three');
-// const MeshLine = require('three.meshline').MeshLine;
-// const MeshLineMaterial = require('three.meshline').MeshLineMaterial;
-// const MeshLineRaycast = require('three.meshline').MeshLineRaycast;
 
 let camera, renderer, scene, controls;
 
@@ -64,14 +60,17 @@ const fnAddObject = function (objectDef, parent, material) {
 
 }
 
-const fnSetup = function (partWrapper) {
+const fnSetup = function (object) {
 
-    let part = partWrapper.children[0];
+    let part = object.children[0];
 
     const bbox = new THREE.Box3().setFromObject(part);
     const center = bbox.getCenter(new THREE.Vector3());
     const size = bbox.getSize(new THREE.Vector3());
     const radius = Math.max(size.x, Math.max(size.y, size.z));
+
+    let width2d = (size.x + size.y) * Math.cos(Math.PI / 6);
+    let height2d = (size.x + size.y) * Math.cos(Math.PI / 3) + size.z;
 
     camera.left = container.offsetWidth / -2;
     camera.right = container.offsetWidth / 2;
@@ -80,16 +79,16 @@ const fnSetup = function (partWrapper) {
 
     controls.target0.copy(center);
     controls.position0.set(1, -1, 1).multiplyScalar(radius).add(controls.target0);
-    controls.zoom0 = Math.min(container.offsetWidth / (bbox.max.x - bbox.min.x), container.offsetHeight / (bbox.max.y - bbox.min.y)) * 0.5;
+    controls.zoom0 = Math.min(container.offsetWidth / width2d, container.offsetHeight / height2d);
     controls.reset();
 
     const boxHelper = new THREE.BoxHelper(part, 0x0000ff);
     boxHelper.visible = false;
-    partWrapper.add(boxHelper);
+    object.add(boxHelper);
 
     const axes = new THREE.Group();
     axes.visible = false;
-    partWrapper.add(axes);
+    object.add(axes);
 
     const lengthArrowHelper = new THREE.ArrowHelper(
         new THREE.Vector3(1, 0, 0),
@@ -119,15 +118,22 @@ const fnSetup = function (partWrapper) {
     axes.add(thicknessArrowHelper);
 
     document.getElementById('btn_front').addEventListener('click' , function () {
-        camera.position.set( 0, 0, 1 ).multiplyScalar(radius).add(controls.target0);
-        controls.update();
+        controls.position0.set(0, 0, 1).multiplyScalar(radius).add(controls.target0);
+        controls.zoom0 = Math.min(container.offsetWidth / size.x, container.offsetHeight / size.y) * 0.8;
+        controls.reset();
+        controls.enableRotate = false;
     });
     document.getElementById('btn_back').addEventListener('click' , function () {
-        camera.position.set( 0, 0, -1 ).multiplyScalar(radius).add(controls.target0);
-        controls.update();
+        controls.position0.set(0, 0, -1).multiplyScalar(radius).add(controls.target0);
+        controls.zoom0 = Math.min(container.offsetWidth / size.x, container.offsetHeight / size.y) * 0.8;
+        controls.reset();
+        controls.enableRotate = false;
     });
     document.getElementById('btn_iso').addEventListener('click' , function () {
+        controls.position0.set(1, -1, 1).multiplyScalar(radius).add(controls.target0);
+        controls.zoom0 = Math.min(container.offsetWidth / width2d, container.offsetHeight / height2d);
         controls.reset();
+        controls.enableRotate = true;
     });
     document.getElementById('btn_bbox').addEventListener('click' , function () {
         boxHelper.visible = !boxHelper.visible;
@@ -169,29 +175,22 @@ container.appendChild(renderer.domElement);
 
 // Scene
 
-const pmremGenerator = new THREE.PMREMGenerator(renderer);
-
 scene = new THREE.Scene();
 scene.background = new THREE.Color(0xffffff);
-scene.environment = pmremGenerator.fromScene(new THREE.RoomEnvironment()).texture;
 
 // Controls
 
 controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.rotateSpeed = 0.5;
 controls.zoomSpeed = 2.0;
 controls.autoRotateSpeed = 3.0;
 controls.mouseButtons = {
     LEFT: THREE.MOUSE.ROTATE,
     MIDDLE: THREE.MOUSE.ROTATE,
-    RIGHT: null
+    RIGHT: THREE.MOUSE.PAN
 }
-controls.enablePan = false;
 
 window.onmessage = function (e) {
-
-    let partWrapper = new THREE.Group();
-    scene.add(partWrapper);
-
-    fnAddObject(e.data.objectDef, partWrapper, defaultMaterial);
-    fnSetup(partWrapper);
+    fnAddObject(e.data.objectDef, scene, defaultMaterial);
+    fnSetup(scene);
 };

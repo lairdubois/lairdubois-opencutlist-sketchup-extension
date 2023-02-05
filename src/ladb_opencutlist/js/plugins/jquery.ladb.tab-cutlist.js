@@ -1817,7 +1817,7 @@
                                     }, '*')
                                 });
 
-                            $divPartThumbnail.append($iframe);
+                            $divPartThumbnail.html($iframe);
 
                         } else {
 
@@ -1833,7 +1833,7 @@
                                     ;
                                 }
 
-                                $divPartThumbnail.append($img);
+                                $divPartThumbnail.html($img);
 
                             }
 

@@ -30,7 +30,7 @@ module Ladb::OpenCutList
       definition = definitions[@definition_id]
       if definition
 
-        if Sketchup.version_number > 17000000
+        if Sketchup.version_number >= 18000000
 
           # Export part for ThreeJS
 
@@ -76,11 +76,13 @@ module Ladb::OpenCutList
 
         return unless entity.visible? && _layer_visible?(entity.layer)
 
+        mesh = entity.mesh
+
         three_mesh_def = ThreeMeshDef.new
         three_mesh_def.color = _to_three_color(entity.material)
-        three_mesh_def.vertices = entity.mesh.polygons.map { |polygon|
+        three_mesh_def.vertices = mesh.polygons.map { |polygon|
           polygon.map { |index|
-            point = entity.mesh.point_at(index)
+            point = mesh.point_at(index)
             [ point.x.to_f, point.y.to_f, point.z.to_f ]
           }.flatten
         }.flatten
