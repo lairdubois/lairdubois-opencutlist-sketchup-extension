@@ -107,7 +107,6 @@ const fnInit = function() {
     window.onresize = function () {
         fnUpdateViewportSize();
         fnRender();
-        console.log('onresize', window.innerWidth);
     };
     window.onmessage = function (e) {
 

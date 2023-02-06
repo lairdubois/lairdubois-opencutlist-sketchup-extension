@@ -6,7 +6,7 @@ module Ladb::OpenCutList
 
     def initialize(settings, cutlist, reset)
 
-      @group_id = settings.fetch('group_id')
+      @group_id = settings.fetch('group_id', nil)
 
       @cutlist = cutlist
       @reset = reset

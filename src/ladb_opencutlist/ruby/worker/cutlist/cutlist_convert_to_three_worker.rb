@@ -7,9 +7,9 @@ module Ladb::OpenCutList
 
     include LayerVisibilityHelper
 
-    def initialize(part_defs, all_instances = false, no_material = false)
+    def initialize(parts, all_instances = false, no_material = false)
 
-      @part_defs = part_defs
+      @part = parts
       @all_instances = all_instances
       @no_material = no_material
 
@@ -26,34 +26,34 @@ module Ladb::OpenCutList
 
       three_model_def = ThreeModelDef.new
 
-      @part_defs.each do |part_def|
+      @part.each do |part|
 
         if @all_instances
 
-          part_def.instance_infos.each { |serialized_path, instance_info|
+          part.def.instance_infos.each { |serialized_path, instance_info|
 
             three_part_def = ThreePartDef.new
-            three_part_def.number = part_def.number
+            three_part_def.number = part.number
             three_model_def.add(three_part_def)
 
             _populate_three_object_def(three_part_def, instance_info.entity.definition)
 
             three_part_def.matrix = _to_three_matrix(instance_info.transformation)
-            three_part_def.color = _to_three_color(materials[part_def.material_name]) unless @no_material
+            three_part_def.color = _to_three_color(materials[part.material_name]) unless @no_material
 
           }
 
         else
 
-          instance_info = part_def.instance_infos.values.first
+          instance_info = part.def.instance_infos.values.first
 
           three_part_def = ThreePartDef.new
           three_model_def.add(three_part_def)
 
           _populate_three_object_def(three_part_def, instance_info.entity.definition)
 
-          three_part_def.matrix = _to_three_matrix(Geom::Transformation.scaling(part_def.scale.x * (part_def.flipped ? -1 : 1), part_def.scale.y, part_def.scale.z))
-          three_part_def.color = _to_three_color(materials[part_def.material_name]) unless @no_material
+          three_part_def.matrix = _to_three_matrix(Geom::Transformation.scaling(part.def.scale.x * (part.def.flipped ? -1 : 1), part.def.scale.y, part.def.scale.z))
+          three_part_def.color = _to_three_color(materials[part.def.material_name]) unless @no_material
 
         end
 

@@ -1319,7 +1319,13 @@
                 lengthUnit: that.lengthUnit,
                 generatedAt: new Date().getTime() / 1000,
             }), function () {
-                that.dialog.setupTooltips();
+
+                // Bind viewer
+                $viewer.ladbViewerPart({
+                    dialog: that.dialog,
+                    modelDef: response.three_model_def
+                });
+
             });
 
             // Fetch UI elements
@@ -1338,12 +1344,6 @@
                 $(this).blur();
                 that.dialog.executeCommandOnTab('settings', 'highlight_panel', { panel:'model' });
             });
-
-            // Bind viewer
-            $viewer.ladbViewerPart({
-                dialog: that.dialog,
-                modelDef: response.three_model_def
-            })
 
         });
 

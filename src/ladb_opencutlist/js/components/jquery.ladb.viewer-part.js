@@ -36,17 +36,18 @@
         var that = this;
 
         // Bind iframe
-        this.$iframe.on('load', function () {
+        this.$iframe
+            .on('load', function () {
 
-            that.callCommand(
-                'setup_model',
-                {
-                    modelDef: that.options.modelDef,
-                    showBoxHelper: that.options.showBoxHelper
-                }
-            )
+                that.callCommand(
+                    'setup_model',
+                    {
+                        modelDef: that.options.modelDef,
+                        showBoxHelper: that.options.showBoxHelper
+                    }
+                )
 
-        });
+            }).attr('src', 'viewer.html');
 
         // Bind buttons
         this.$btnIsometricView.on('click', function () {

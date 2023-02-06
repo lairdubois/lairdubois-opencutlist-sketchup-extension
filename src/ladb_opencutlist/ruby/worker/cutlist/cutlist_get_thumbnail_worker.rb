@@ -35,7 +35,7 @@ module Ladb::OpenCutList
           part = @cutlist.get_part(@id)
           return response unless part
 
-          worker = CutlistConvertToThreeWorker.new([ part.def ])
+          worker = CutlistConvertToThreeWorker.new([ part ])
           three_model_def = worker.run
 
           response[:three_model_def] = three_model_def.to_hash
