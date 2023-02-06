@@ -200,7 +200,6 @@ const fnAddObjectDef = function (objectDef, parent, material) {
                 const numberDiv = document.createElement( 'div' );
                 numberDiv.className = 'label';
                 numberDiv.textContent = objectDef.number;
-                numberDiv.style.marginTop = '-0.5em';
 
                 const numberLabel = new THREE.CSS2DObject(numberDiv);
                 numberLabel.position.copy(box.getCenter(new THREE.Vector3()));
