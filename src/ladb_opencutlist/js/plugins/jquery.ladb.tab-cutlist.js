@@ -1323,7 +1323,8 @@
                 // Bind viewer
                 $viewer.ladbViewerPart({
                     dialog: that.dialog,
-                    modelDef: response.three_model_def
+                    modelDef: response.three_model_def,
+                    noMaterial: true
                 });
 
             });

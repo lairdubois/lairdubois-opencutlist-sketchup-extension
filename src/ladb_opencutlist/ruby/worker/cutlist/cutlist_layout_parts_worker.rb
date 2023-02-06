@@ -37,7 +37,7 @@ module Ladb::OpenCutList
         parts = @cutlist.get_real_parts(nil, material_types_filter)
       end
 
-      worker = CutlistConvertToThreeWorker.new(parts, true, true)
+      worker = CutlistConvertToThreeWorker.new(parts, true)
       three_model_def = worker.run
 
       {

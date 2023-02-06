@@ -12,8 +12,12 @@
         this.$iframe = $('iframe', this.$element);
 
         this.$btnIsometricView = $('#ladb_viewer_part_btn_isometric_view', this.$element);
+        this.$btnTopView = $('#ladb_viewer_part_btn_top_view', this.$element);
+        this.$btnBottomView = $('#ladb_viewer_part_btn_bottom_view', this.$element);
         this.$btnFrontView = $('#ladb_viewer_part_btn_front_view', this.$element);
         this.$btnBackView = $('#ladb_viewer_part_btn_back_view', this.$element);
+        this.$btnLeftView = $('#ladb_viewer_part_btn_left_view', this.$element);
+        this.$btnRightView = $('#ladb_viewer_part_btn_right_view', this.$element);
         this.$btnToggleBoxHelper = $('#ladb_viewer_part_btn_toggle_box_helper', this.$element);
         this.$btnToggleAxesHelper = $('#ladb_viewer_part_btn_toggle_axes_helper', this.$element);
         this.$btnToggleAutoRotate = $('#ladb_viewer_part_btn_toggle_auto_rotate', this.$element);
@@ -22,7 +26,8 @@
 
     LadbViewerPart.DEFAULTS = {
         modelDef: null,
-        showBoxHelper: false
+        noMaterial: false,
+        showBoxHelper: false,
     };
 
     LadbViewerPart.prototype.callCommand = function (command, params) {
@@ -43,6 +48,7 @@
                     'setup_model',
                     {
                         modelDef: that.options.modelDef,
+                        noMaterial: that.options.noMaterial,
                         showBoxHelper: that.options.showBoxHelper
                     }
                 )
@@ -59,6 +65,24 @@
             );
             this.blur();
         });
+        this.$btnTopView.on('click', function () {
+           that.callCommand(
+               'set_view',
+               {
+                   view: 'top'
+               }
+           );
+            this.blur();
+        });
+        this.$btnBottomView.on('click', function () {
+           that.callCommand(
+               'set_view',
+               {
+                   view: 'bottom'
+               }
+           );
+            this.blur();
+        });
         this.$btnFrontView.on('click', function () {
            that.callCommand(
                'set_view',
@@ -73,6 +97,24 @@
                'set_view',
                {
                    view: 'back'
+               }
+           );
+            this.blur();
+        });
+        this.$btnLeftView.on('click', function () {
+           that.callCommand(
+               'set_view',
+               {
+                   view: 'left'
+               }
+           );
+            this.blur();
+        });
+        this.$btnRightView.on('click', function () {
+           that.callCommand(
+               'set_view',
+               {
+                   view: 'right'
                }
            );
             this.blur();

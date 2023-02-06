@@ -97,10 +97,15 @@ const fnInit = function() {
         color: 0xffffff,
         polygonOffset: true,
         polygonOffsetFactor: 1,
-        polygonOffsetUnits: 1
+        polygonOffsetUnits: 1,
     });
     defaultLineMaterial = new THREE.LineBasicMaterial({
         color: 0x000000
+    });
+    pinLineMaterial = new THREE.LineBasicMaterial({
+        color: 0x000000,
+        depthTest: false,
+        depthWrite: false
     });
 
     // Add listeners
@@ -116,7 +121,7 @@ const fnInit = function() {
             switch (call.command) {
 
                 case 'setup_model':
-                    fnSetupModel(call.params.modelDef);
+                    fnSetupModel(call.params.modelDef, call.params.noMaterial);
                     if (call.params.showBoxHelper) {
                         fnSetBoxHelperVisible(true);
                     }
@@ -171,7 +176,7 @@ const fnAnimate = function () {
     controls.update();
 }
 
-const fnAddObjectDef = function (objectDef, parent, material) {
+const fnAddObjectDef = function (objectDef, parent, material, noMaterial) {
 
     if (objectDef.color) {
         material = defaultMeshMaterial.clone();
@@ -191,20 +196,13 @@ const fnAddObjectDef = function (objectDef, parent, material) {
                 group.applyMatrix4(matrix);
             }
             for (childObjectDef of objectDef.children) {
-                fnAddObjectDef(childObjectDef, group, material);
+                fnAddObjectDef(childObjectDef, group, material, noMaterial);
             }
             if (objectDef.type === 2 && objectDef.number) {
-
-                const box = (new THREE.Box3()).setFromObject(group);
-
-                const numberDiv = document.createElement( 'div' );
-                numberDiv.className = 'label';
-                numberDiv.textContent = objectDef.number;
-
-                const numberLabel = new THREE.CSS2DObject(numberDiv);
-                numberLabel.position.copy(box.getCenter(new THREE.Vector3()));
-                scene.add(numberLabel);
-
+                group.userData = {
+                    label: objectDef.number,
+                    labelColor: '#' + material.color.getHexString()
+                }
             }
             parent.add(group);
 
@@ -216,7 +214,7 @@ const fnAddObjectDef = function (objectDef, parent, material) {
             let geometry = new THREE.BufferGeometry();
             geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
 
-            let mesh = new THREE.Mesh(geometry, material);
+            let mesh = new THREE.Mesh(geometry, noMaterial ? defaultMeshMaterial : material);
             parent.add(mesh);
 
             let edges = new THREE.EdgesGeometry(geometry, 36);
@@ -228,7 +226,36 @@ const fnAddObjectDef = function (objectDef, parent, material) {
     }
 
     return null;
-}
+};
+
+const fnCreateLabels = function (group, parentCenter) {
+
+    const box = new THREE.Box3().setFromObject(group);
+    var groupCenter = box.getCenter(new THREE.Vector3());
+
+    if (group.userData.label) {
+
+        const labelPoint = groupCenter.clone().sub(parentCenter).setLength(5).add(groupCenter);
+
+        const numberDiv = document.createElement( 'div' );
+        numberDiv.className = 'label';
+        numberDiv.style.borderColor = group.userData.labelColor;
+        numberDiv.textContent = group.userData.label;
+
+        const numberLabel = new THREE.CSS2DObject(numberDiv);
+        numberLabel.position.copy(labelPoint);
+        scene.add(numberLabel);
+
+        const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints([ groupCenter, labelPoint ]), pinLineMaterial);
+        scene.add(line);
+
+    }
+
+    for (let object of group.children) {
+        fnCreateLabels(object, groupCenter);
+    }
+
+};
 
 const fnSetView = function (view) {
 
@@ -244,19 +271,48 @@ const fnSetView = function (view) {
 
             break;
 
-        case 'front':
+        case 'top':
 
             controls.position0.set(0, 0, 1).multiplyScalar(modelRadius).add(controls.target0);
             controls.zoom0 = Math.min(window.innerWidth / modelSize.x, window.innerHeight / modelSize.y) * 0.8;
 
             break
 
-        case 'back':
+        case 'bottom':
 
             controls.position0.set(0, 0, -1).multiplyScalar(modelRadius).add(controls.target0);
             controls.zoom0 = Math.min(window.innerWidth / modelSize.x, window.innerHeight / modelSize.y) * 0.8;
 
             break
+
+        case 'front':
+
+            controls.position0.set(0, -1, 0).multiplyScalar(modelRadius).add(controls.target0);
+            controls.zoom0 = Math.min(window.innerWidth / modelSize.x, window.innerHeight / modelSize.z) * 0.8;
+
+            break
+
+        case 'back':
+
+            controls.position0.set(0, 1, 0).multiplyScalar(modelRadius).add(controls.target0);
+            controls.zoom0 = Math.min(window.innerWidth / modelSize.x, window.innerHeight / modelSize.z) * 0.8;
+
+            break
+
+        case 'left':
+
+            controls.position0.set(-1, 0, 0).multiplyScalar(modelRadius).add(controls.target0);
+            controls.zoom0 = Math.min(window.innerWidth / modelSize.y, window.innerHeight / modelSize.z) * 0.8;
+
+            break
+
+        case 'right':
+
+            controls.position0.set(1, 0, 0).multiplyScalar(modelRadius).add(controls.target0);
+            controls.zoom0 = Math.min(window.innerWidth / modelSize.y, window.innerHeight / modelSize.z) * 0.8;
+
+            break
+
     }
 
     controls.reset();
@@ -296,9 +352,9 @@ const fnSetAutoRotateEnable = function (enable) {
     }
 }
 
-const fnSetupModel = function(modelDef) {
+const fnSetupModel = function(modelDef, noMaterial) {
 
-    model = fnAddObjectDef(modelDef, scene, defaultMeshMaterial);
+    model = fnAddObjectDef(modelDef, scene, defaultMeshMaterial, noMaterial);
     if (model) {
 
         // Compute model box properties
@@ -307,6 +363,9 @@ const fnSetupModel = function(modelDef) {
         modelSize = modelBox.getSize(new THREE.Vector3());
         modelCenter = modelBox.getCenter(new THREE.Vector3());
         modelRadius = modelBox.getBoundingSphere(new THREE.Sphere()).radius;
+
+        // Create labels
+        fnCreateLabels(model, modelCenter);
 
         // Center controle on model
         controls.target0.copy(modelCenter);

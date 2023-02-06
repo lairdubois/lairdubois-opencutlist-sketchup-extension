@@ -7,11 +7,10 @@ module Ladb::OpenCutList
 
     include LayerVisibilityHelper
 
-    def initialize(parts, all_instances = false, no_material = false)
+    def initialize(parts, all_instances = false)
 
       @part = parts
       @all_instances = all_instances
-      @no_material = no_material
 
     end
 
@@ -39,7 +38,7 @@ module Ladb::OpenCutList
             _populate_three_object_def(three_part_def, instance_info.entity.definition)
 
             three_part_def.matrix = _to_three_matrix(instance_info.transformation)
-            three_part_def.color = _to_three_color(materials[part.material_name]) unless @no_material
+            three_part_def.color = _to_three_color(materials[part.material_name])
 
           }
 
@@ -53,7 +52,7 @@ module Ladb::OpenCutList
           _populate_three_object_def(three_part_def, instance_info.entity.definition)
 
           three_part_def.matrix = _to_three_matrix(Geom::Transformation.scaling(part.def.scale.x * (part.def.flipped ? -1 : 1), part.def.scale.y, part.def.scale.z))
-          three_part_def.color = _to_three_color(materials[part.def.material_name]) unless @no_material
+          three_part_def.color = _to_three_color(materials[part.def.material_name])
 
         end
 
@@ -74,7 +73,7 @@ module Ladb::OpenCutList
         mesh = entity.mesh
 
         three_mesh_def = ThreeMeshDef.new
-        three_mesh_def.color = _to_three_color(entity.material) unless @no_material
+        three_mesh_def.color = _to_three_color(entity.material)
         three_mesh_def.vertices = mesh.polygons.map { |polygon|
           polygon.map { |index|
             point = mesh.point_at(index)
@@ -90,7 +89,7 @@ module Ladb::OpenCutList
 
         three_group_def = ThreeGroupDef.new
         three_group_def.matrix = _to_three_matrix(entity.transformation)
-        three_group_def.color = _to_three_color(entity.material) unless @no_material
+        three_group_def.color = _to_three_color(entity.material)
 
         three_object_def.add(three_group_def)
 

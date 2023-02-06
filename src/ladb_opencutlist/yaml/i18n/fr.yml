@@ -157,8 +157,12 @@ core:
       help: Tappez **@** pour ouvrir la liste des variables de donnée.
     viewer_part:
       isometric_view: Vue isométrique
-      front_view: Vue parement
-      back_view: Vue contreparement
+      top_view: Vue dessus
+      bottom_view: Vue dessous
+      front_view: Vue face
+      back_view: Vue arrière
+      left_view: Vue gauche
+      right_view: Vue droite
       toggle_box_helper: Afficher ou masquer la boîte capable
       toggle_axes_helper: Afficher ou masquer les axes de la pièce
       toggle_auto_rotate: Active ou désactive la rotation automatique
