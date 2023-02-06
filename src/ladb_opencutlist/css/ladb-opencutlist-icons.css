@@ -289,6 +289,9 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-layout:before {
   content: "\e99a";
 }
+.ladb-opencutlist-icon-layout-selection:before {
+  content: "\e99b";
+}
 .ladb-opencutlist-icon-edit:before {
   content: "\e943";
 }

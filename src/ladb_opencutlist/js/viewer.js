@@ -105,7 +105,7 @@ const fnInit = function() {
     pinLineMaterial = new THREE.LineBasicMaterial({
         color: 0x000000,
         depthTest: false,
-        depthWrite: false
+        depthWrite: false,
     });
 
     // Add listeners
@@ -121,7 +121,7 @@ const fnInit = function() {
             switch (call.command) {
 
                 case 'setup_model':
-                    fnSetupModel(call.params.modelDef, call.params.noMaterial);
+                    fnSetupModel(call.params.modelDef, call.params.pinsHidden, call.params.pinsColored, call.params.partsColored);
                     if (call.params.showBoxHelper) {
                         fnSetBoxHelperVisible(true);
                     }
@@ -176,7 +176,7 @@ const fnAnimate = function () {
     controls.update();
 }
 
-const fnAddObjectDef = function (objectDef, parent, material, noMaterial) {
+const fnAddObjectDef = function (objectDef, parent, material, partsColored) {
 
     if (objectDef.color) {
         material = defaultMeshMaterial.clone();
@@ -196,12 +196,12 @@ const fnAddObjectDef = function (objectDef, parent, material, noMaterial) {
                 group.applyMatrix4(matrix);
             }
             for (childObjectDef of objectDef.children) {
-                fnAddObjectDef(childObjectDef, group, material, noMaterial);
+                fnAddObjectDef(childObjectDef, group, material, partsColored);
             }
-            if (objectDef.type === 2 && objectDef.number) {
+            if (objectDef.type === 2 && objectDef.pin_text) {
                 group.userData = {
-                    label: objectDef.number,
-                    labelColor: '#' + material.color.getHexString()
+                    pinText: objectDef.pin_text,
+                    pinColor: '#' + material.color.getHexString()
                 }
             }
             parent.add(group);
@@ -214,7 +214,7 @@ const fnAddObjectDef = function (objectDef, parent, material, noMaterial) {
             let geometry = new THREE.BufferGeometry();
             geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
 
-            let mesh = new THREE.Mesh(geometry, noMaterial ? defaultMeshMaterial : material);
+            let mesh = new THREE.Mesh(geometry, partsColored ? material : defaultMeshMaterial);
             parent.add(mesh);
 
             let edges = new THREE.EdgesGeometry(geometry, 36);
@@ -228,31 +228,32 @@ const fnAddObjectDef = function (objectDef, parent, material, noMaterial) {
     return null;
 };
 
-const fnCreateLabels = function (group, parentCenter) {
+const fnCreatePins = function (group, pinsColored) {
 
-    const box = new THREE.Box3().setFromObject(group);
-    var groupCenter = box.getCenter(new THREE.Vector3());
+    if (group.userData.pinText) {
 
-    if (group.userData.label) {
+        const groupBox = new THREE.Box3().setFromObject(group);
+        const groupCenter = groupBox.getCenter(new THREE.Vector3());
+        const pinPoint = groupCenter.clone().sub(modelCenter).setLength(modelRadius / 10).add(groupCenter);
 
-        const labelPoint = groupCenter.clone().sub(parentCenter).setLength(5).add(groupCenter);
+        const pinDiv = document.createElement('div');
+        pinDiv.className = 'pin';
+        pinDiv.textContent = group.userData.pinText;
+        if (pinsColored) {
+            pinDiv.style.borderColor = group.userData.pinColor;
+        }
 
-        const numberDiv = document.createElement( 'div' );
-        numberDiv.className = 'label';
-        numberDiv.style.borderColor = group.userData.labelColor;
-        numberDiv.textContent = group.userData.label;
+        const pin = new THREE.CSS2DObject(pinDiv);
+        pin.position.copy(pinPoint);
+        scene.add(pin);
 
-        const numberLabel = new THREE.CSS2DObject(numberDiv);
-        numberLabel.position.copy(labelPoint);
-        scene.add(numberLabel);
-
-        const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints([ groupCenter, labelPoint ]), pinLineMaterial);
+        const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints([ groupCenter, pinPoint ]), pinLineMaterial);
         scene.add(line);
 
     }
 
     for (let object of group.children) {
-        fnCreateLabels(object, groupCenter);
+        fnCreatePins(object, pinsColored);
     }
 
 };
@@ -352,9 +353,9 @@ const fnSetAutoRotateEnable = function (enable) {
     }
 }
 
-const fnSetupModel = function(modelDef, noMaterial) {
+const fnSetupModel = function(modelDef, pinsHidden, pinsColored, partsColored) {
 
-    model = fnAddObjectDef(modelDef, scene, defaultMeshMaterial, noMaterial);
+    model = fnAddObjectDef(modelDef, scene, defaultMeshMaterial, partsColored);
     if (model) {
 
         // Compute model box properties
@@ -364,8 +365,12 @@ const fnSetupModel = function(modelDef, noMaterial) {
         modelCenter = modelBox.getCenter(new THREE.Vector3());
         modelRadius = modelBox.getBoundingSphere(new THREE.Sphere()).radius;
 
-        // Create labels
-        fnCreateLabels(model, modelCenter);
+        if (!pinsHidden) {
+
+            // Create labels
+            fnCreatePins(model, pinsColored);
+
+        }
 
         // Center controle on model
         controls.target0.copy(modelCenter);

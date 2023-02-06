@@ -43,6 +43,7 @@
         this.lastCuttingdiagram1dOptionsTab = null;
         this.lastCuttingdiagram2dOptionsTab = null;
         this.lastLabelsOptionsTab = null;
+        this.lastLayoutOptionsTab = null;
 
         this.$header = $('.ladb-header', this.$element);
         this.$headerExtra = $('.ladb-header-extra', this.$header);
@@ -495,12 +496,6 @@
                     that.highlightGroupParts(groupId);
                     $(this).blur();
                 });
-                $('a.ladb-item-layout-group-parts', that.$page).on('click', function () {
-                    var $group = $(this).parents('.ladb-cutlist-group');
-                    var groupId = $group.data('group-id');
-                    that.layoutGroupParts(groupId);
-                    $(this).blur();
-                });
                 $('a.ladb-item-hide-all-other-groups', that.$page).on('click', function () {
                     $(this).blur();
                     var $group = $(this).parents('.ladb-cutlist-group');
@@ -547,6 +542,12 @@
                     var $group = $(this).parents('.ladb-cutlist-group');
                     var groupId = $group.data('group-id');
                     that.labelsGroup(groupId);
+                });
+                $('button.ladb-btn-group-layout', that.$page).on('click', function () {
+                    $(this).blur();
+                    var $group = $(this).parents('.ladb-cutlist-group');
+                    var groupId = $group.data('group-id');
+                    that.layoutGroupParts(groupId);
                 });
                 $('button.ladb-btn-group-dimensions-help', that.$page).on('click', function () {
                     $(this).blur();
@@ -1020,7 +1021,7 @@
                 fnFetchOptions(reportOptions);
 
                 // Store options
-                rubyCallCommand('core_set_model_preset', {dictionary: 'cutlist_report_options', values: reportOptions });
+                rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_report_options', values: reportOptions });
 
                 // Generate report
                 that.generateReportCutlist(reportOptions);
@@ -1276,75 +1277,128 @@
     };
 
     LadbTabCutlist.prototype.layoutGroupParts = function (groupId) {
-        this.layoutParts(groupId, null);
-    };
-
-    LadbTabCutlist.prototype.layoutPart = function (partId) {
-        var groupAndPart = this.findGroupAndPartById(partId);
-        if (groupAndPart) {
-
-            var group = groupAndPart.group;
-            var part = groupAndPart.part;
-
-            var isFolder = part.children && part.children.length > 0;
-            var isSelected = this.selectionGroupId === group.id && this.selectionPartIds.includes(partId) && this.selectionPartIds.length > 1;
-            var multiple = isFolder || isSelected;
-
-            var partIds;
-            if (isFolder) {
-                partIds = [ partId ];
-            } else if (isSelected) {
-                partIds = this.selectionPartIds;
-            } else {
-                partIds = [ partId ];
-            }
-
-            this.layoutParts(null, partIds);
-
+        if (this.selectionGroupId === groupId && this.selectionPartIds.length > 0) {
+            this.layoutParts(null, this.selectionPartIds);
+        } else {
+            this.layoutParts(groupId, null);
         }
     };
 
-    LadbTabCutlist.prototype.layoutParts = function (groupId, partIds) { // partIds ignored if groupId is defined
+    LadbTabCutlist.prototype.layoutParts = function (groupId, partIds, forceDefaultTab) { // partIds ignored if groupId is defined
         var that = this;
 
-        rubyCallCommand('cutlist_layout_parts', { group_id: groupId, part_ids: partIds }, function (response) {
+        // Retrieve label options
+        rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_layout_options' }, function (response) {
 
-            var $slide = that.pushNewSlide('ladb_cutlist_slide_layout', 'tabs/cutlist/_slide-layout.twig', $.extend({
-                errors: response.errors,
-                warnings: response.warnings,
-                filename: that.filename,
-                modelName: that.modelName,
-                pageName: that.pageName,
-                isEntitySelection: that.isEntitySelection,
-                lengthUnit: that.lengthUnit,
-                generatedAt: new Date().getTime() / 1000,
-            }), function () {
+            var layoutOptions = response.preset;
 
-                // Bind viewer
-                $viewer.ladbViewerPart({
-                    dialog: that.dialog,
-                    modelDef: response.three_model_def,
-                    noMaterial: true
-                });
-
+            var $modal = that.appendModalInside('ladb_cutlist_modal_layout', 'tabs/cutlist/_modal-layout.twig', {
+                tab: forceDefaultTab || that.lastLayoutOptionsTab == null ? 'general' : that.lastLayoutOptionsTab
             });
 
             // Fetch UI elements
-            var $btnPrint = $('#ladb_btn_print', $slide);
-            var $btnClose = $('#ladb_btn_close', $slide);
-            var $viewer = $('.ladb-viewer-part', $slide);
+            var $tabs = $('a[data-toggle="tab"]', $modal);
+            var $widgetPreset = $('.ladb-widget-preset', $modal);
+            var $selectPinsHidden = $('#ladb_select_pins_hidden', $modal);
+            var $selectPinsColored = $('#ladb_select_pins_colored', $modal);
+            var $selectPartsColored = $('#ladb_select_parts_colored', $modal);
+            var $btnGenerate = $('#ladb_cutlist_layout_btn_generate', $modal);
+
+            var fnFetchOptions = function (options) {
+                options.pins_hidden = $selectPinsHidden.val() === '1';
+                options.pins_colored = $selectPinsColored.val() === '1';
+                options.parts_colored = $selectPartsColored.val() === '1';
+            }
+            var fnFillInputs = function (options) {
+                $selectPinsHidden.selectpicker('val', options.pins_hidden ? '1' : '0');
+                $selectPinsColored.selectpicker('val', options.pins_colored ? '1' : '0');
+                $selectPartsColored.selectpicker('val', options.parts_colored ? '1' : '0');
+            }
+
+            $widgetPreset.ladbWidgetPreset({
+                dialog: that.dialog,
+                dictionary: 'cutlist_layout_options',
+                fnFetchOptions: fnFetchOptions,
+                fnFillInputs: fnFillInputs
+            });
+            $selectPinsHidden.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectPinsColored.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectPartsColored.selectpicker(SELECT_PICKER_OPTIONS);
+
+            fnFillInputs(layoutOptions);
+
+            // Bind tabs
+            $tabs.on('shown.bs.tab', function (e) {
+                that.lastLayoutOptionsTab = $(e.target).attr('href').substring('#tab_layout_options_'.length);
+            });
 
             // Bind buttons
-            $btnPrint.on('click', function () {
-                that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.layout.title'));
+            $btnGenerate.on('click', function () {
+
+                // Fetch options
+                fnFetchOptions(layoutOptions);
+
+                // Store options
+                rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_layout_options', values: layoutOptions });
+
+                // Generate layout
+                rubyCallCommand('cutlist_layout_parts', { group_id: groupId, part_ids: partIds }, function (response) {
+
+                    var $slide = that.pushNewSlide('ladb_cutlist_slide_layout', 'tabs/cutlist/_slide-layout.twig', {
+                        errors: response.errors,
+                        warnings: response.warnings,
+                        filename: that.filename,
+                        modelName: that.modelName,
+                        pageName: that.pageName,
+                        isEntitySelection: that.isEntitySelection,
+                        lengthUnit: that.lengthUnit,
+                        generatedAt: new Date().getTime() / 1000,
+                    }, function () {
+
+                        // Bind viewer
+                        $viewer.ladbViewerPart({
+                            dialog: that.dialog,
+                            modelDef: response.three_model_def,
+                            pinsHidden: layoutOptions.pins_hidden,
+                            pinsColored: layoutOptions.pins_colored,
+                            partsColored: layoutOptions.parts_colored,
+                        });
+
+                    });
+
+                    // Fetch UI elements
+                    var $btnLayout = $('#ladb_btn_layout', $slide);
+                    var $btnPrint = $('#ladb_btn_print', $slide);
+                    var $btnClose = $('#ladb_btn_close', $slide);
+                    var $viewer = $('.ladb-viewer-part', $slide);
+
+                    // Bind buttons
+                    $btnLayout.on('click', function () {
+                        that.layoutParts(groupId, partIds);
+                    });
+                    $btnPrint.on('click', function () {
+                        that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.layout.title'));
+                    });
+                    $btnClose.on('click', function () {
+                        that.popSlide();
+                    });
+                    $('.ladb-btn-setup-model-units', $slide).on('click', function() {
+                        $(this).blur();
+                        that.dialog.executeCommandOnTab('settings', 'highlight_panel', { panel:'model' });
+                    });
+
+                });
+
+                // Hide modal
+                $modal.modal('hide');
+
             });
-            $btnClose.on('click', function () {
-                that.popSlide();
-            });
-            $('.ladb-btn-setup-model-units', $slide).on('click', function() {
-                $(this).blur();
-                that.dialog.executeCommandOnTab('settings', 'highlight_panel', { panel:'model' });
-            });
+
+            // Show modal
+            $modal.modal('show');
+
+            // Setup popovers
+            that.dialog.setupPopovers();
 
         });
 
@@ -1397,7 +1451,7 @@
     LadbTabCutlist.prototype.renderSelectionOnGroup = function (id) {
         var that = this;
         var $group = $('#ladb_group_' + id, this.$page);
-        var defs = [ 'cuttingdiagram1d', 'cuttingdiagram2d', 'labels' ];
+        var defs = [ 'cuttingdiagram1d', 'cuttingdiagram2d', 'labels', 'layout' ];
         $.each(defs, function () {
             var $btn = $('button.ladb-btn-group-' + this, $group);
             var $i = $('i', $btn);
@@ -1887,6 +1941,7 @@
                             $iframe.ladbViewerPart({
                                 dialog: that.dialog,
                                 modelDef: threeModelDef,
+                                partsColored: true,
                                 showBoxHelper: part.not_aligned_on_axes
                             });
 

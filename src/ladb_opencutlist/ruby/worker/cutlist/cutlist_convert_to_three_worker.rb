@@ -29,16 +29,26 @@ module Ladb::OpenCutList
 
         if @all_instances
 
+          group_cache = {}  # key = entityID, value = group
+
           part.def.instance_infos.each { |serialized_path, instance_info|
 
+            # Create the three part def
             three_part_def = ThreePartDef.new
-            three_part_def.number = part.number
-            three_model_def.add(three_part_def)
+            three_part_def.pin_text = part.number
+            three_part_def.matrix = _to_three_matrix(instance_info.entity.transformation)
+            three_part_def.color = _to_three_color(materials[part.material_name])
 
+            # Populate childrens
             _populate_three_object_def(three_part_def, instance_info.entity.definition)
 
-            three_part_def.matrix = _to_three_matrix(instance_info.transformation)
-            three_part_def.color = _to_three_color(materials[part.material_name])
+            # Try to reconstruct parent hierarchy
+            parent_three_group_def = _blop(instance_info.path.slice(0, instance_info.path.length - 1), group_cache, three_model_def)
+            if parent_three_group_def
+              parent_three_group_def.add(three_part_def)
+            else
+              three_model_def.add(three_part_def)
+            end
 
           }
 
@@ -62,6 +72,39 @@ module Ladb::OpenCutList
     end
 
     # -----
+
+    def _blop(path, cache, three_model_def)
+      return nil if path.nil? || path.empty?
+
+      # Pop last path entity
+      entity = path.pop
+
+      # Try to fetch three group def from cache
+      three_group_def = cache[entity.entityID]
+      unless three_group_def
+
+        # Create a new three group def
+        three_group_def = ThreeGroupDef.new
+        three_group_def.matrix = _to_three_matrix(entity.transformation)
+        three_group_def.color = _to_three_color(entity.material)
+
+        # Keep it in the cache
+        cache.store(entity.entityID, three_group_def)
+
+        # Try to retrieve parent
+        parent_three_group_def = _blop(path, cache, three_model_def)
+        if parent_three_group_def
+          # Parent found, add current group as child
+          parent_three_group_def.add(three_group_def)
+        else
+          # No more parent, add current group to model
+          three_model_def.add(three_group_def)
+        end
+
+      end
+
+      three_group_def
+    end
 
     def _populate_three_object_def(three_object_def, entity)
       return if entity.is_a?(Sketchup::Edge)   # Minor Speed imrovement when there's a lot of edges
@@ -195,11 +238,11 @@ module Ladb::OpenCutList
 
   class ThreePartDef < ThreeGroupDef
 
-    attr_accessor :number
+    attr_accessor :pin_text
 
     def initialize
       super(ThreeObjectDef::TYPE_PART)
-      @number = nil
+      @pin_text = nil
     end
 
   end

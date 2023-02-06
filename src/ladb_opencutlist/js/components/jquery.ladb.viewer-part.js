@@ -26,7 +26,9 @@
 
     LadbViewerPart.DEFAULTS = {
         modelDef: null,
-        noMaterial: false,
+        pinsHidden: false,
+        pinsColored: false,
+        partsColored: false,
         showBoxHelper: false,
     };
 
@@ -48,7 +50,9 @@
                     'setup_model',
                     {
                         modelDef: that.options.modelDef,
-                        noMaterial: that.options.noMaterial,
+                        pinsHidden: that.options.pinsHidden,
+                        pinsColored: that.options.pinsColored,
+                        partsColored: that.options.partsColored,
                         showBoxHelper: that.options.showBoxHelper
                     }
                 )

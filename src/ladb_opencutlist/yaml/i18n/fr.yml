@@ -834,6 +834,19 @@ tab:
         formula_not_available: Non disponible dans ce context
     layout:
       title: Mise en page
+      options_general: Générales
+      option_pins_hidden: Epingles
+      option_pins_hidden_0: Avec épingles
+      option_pins_hidden_1: Sans épingle
+      option_pins_hidden_help: Affiche ou masque les épingles
+      option_pins_colored: Couleur des épingles
+      option_pins_colored_0: Noire
+      option_pins_colored_1: Couleur de la pièce
+      option_pins_colored_help: Permet de choisir la couleur des épingles
+      option_parts_colored: Couleur des pièces
+      option_parts_colored_0: Sans couleur
+      option_parts_colored_1: Couleur de leur matière
+      option_parts_colored_help: Permet de choisir l'aspect des pièces
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_entities: Votre modèle est vide. Il va falloir m'en donner un peu plus ;)
