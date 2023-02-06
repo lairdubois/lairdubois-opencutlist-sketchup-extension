@@ -219,6 +219,7 @@ const fnAddObjectDef = function (objectDef, parent, material, partsColored) {
 
             let edges = new THREE.EdgesGeometry(geometry, 36);
             let line = new THREE.LineSegments(edges, defaultLineMaterial);
+            line.computeLineDistances();
             parent.add(line);
 
             return mesh;
@@ -248,6 +249,7 @@ const fnCreatePins = function (group, pinsColored) {
         scene.add(pin);
 
         const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints([ groupCenter, pinPoint ]), pinLineMaterial);
+        line.renderOrder = 1;
         scene.add(line);
 
     }
