@@ -121,7 +121,7 @@ const fnInit = function() {
             switch (call.command) {
 
                 case 'setup_model':
-                    fnSetupModel(call.params.modelDef, call.params.pinsHidden, call.params.pinsColored, call.params.partsColored);
+                    fnSetupModel(call.params.modelDef, call.params.partsColored, call.params.pinsHidden, call.params.pinsColored);
                     if (call.params.showBoxHelper) {
                         fnSetBoxHelperVisible(true);
                     }
@@ -201,7 +201,7 @@ const fnAddObjectDef = function (objectDef, parent, material, partsColored) {
             if (objectDef.type === 2 && objectDef.pin_text) {
                 group.userData = {
                     pinText: objectDef.pin_text,
-                    pinColor: '#' + material.color.getHexString()
+                    pinColor: material.color
                 }
             }
             parent.add(group);
@@ -240,8 +240,10 @@ const fnCreatePins = function (group, pinsColored) {
         const pinDiv = document.createElement('div');
         pinDiv.className = 'pin';
         pinDiv.textContent = group.userData.pinText;
-        if (pinsColored) {
-            pinDiv.style.borderColor = group.userData.pinColor;
+        if (pinsColored && group.userData.pinColor) {
+            pinDiv.style.backgroundColor = '#' + group.userData.pinColor.getHexString();
+            pinDiv.style.borderColor = '#' + group.userData.pinColor.clone().addScalar(-0.5).getHexString();
+            pinDiv.style.color = fnIsDarkColor(group.userData.pinColor) ? 'white' : 'black';
         }
 
         const pin = new THREE.CSS2DObject(pinDiv);
@@ -355,7 +357,7 @@ const fnSetAutoRotateEnable = function (enable) {
     }
 }
 
-const fnSetupModel = function(modelDef, pinsHidden, pinsColored, partsColored) {
+const fnSetupModel = function(modelDef, partsColored, pinsHidden, pinsColored) {
 
     model = fnAddObjectDef(modelDef, scene, defaultMeshMaterial, partsColored);
     if (model) {
@@ -390,6 +392,10 @@ const fnSetupModel = function(modelDef, pinsHidden, pinsColored, partsColored) {
 
     }
 
+}
+
+const fnIsDarkColor = function (color) {
+    return (0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b) <= 0.51
 }
 
 // Startup

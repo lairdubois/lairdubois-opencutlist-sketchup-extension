@@ -8,6 +8,7 @@ module Ladb::OpenCutList
 
       @group_id = settings.fetch('group_id', nil)
       @part_ids = settings.fetch('part_ids', nil)
+      @pins_use_names = settings.fetch('pins_use_names', false)
 
       @cutlist = cutlist
 
@@ -37,7 +38,7 @@ module Ladb::OpenCutList
         parts = @cutlist.get_real_parts(nil, material_types_filter)
       end
 
-      worker = CutlistConvertToThreeWorker.new(parts, true)
+      worker = CutlistConvertToThreeWorker.new(parts, true, @pins_use_names)
       three_model_def = worker.run
 
       {

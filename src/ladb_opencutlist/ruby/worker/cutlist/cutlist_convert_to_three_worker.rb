@@ -7,10 +7,11 @@ module Ladb::OpenCutList
 
     include LayerVisibilityHelper
 
-    def initialize(parts, all_instances = false)
+    def initialize(parts, all_instances = false, pins_use_names = false)
 
       @part = parts
       @all_instances = all_instances
+      @pins_use_names = pins_use_names
 
     end
 
@@ -35,7 +36,7 @@ module Ladb::OpenCutList
 
             # Create the three part def
             three_part_def = ThreePartDef.new
-            three_part_def.pin_text = part.number
+            three_part_def.pin_text = @pins_use_names ? part.name : part.number
             three_part_def.matrix = _to_three_matrix(instance_info.entity.transformation)
             three_part_def.color = _to_three_color(materials[part.material_name])
 

@@ -1,7 +1,8 @@
 {
   "0": {
+    "parts_colored": false,
     "pins_hidden": false,
     "pins_colored": false,
-    "parts_colored": false
+    "pins_use_names": false
   }
 }

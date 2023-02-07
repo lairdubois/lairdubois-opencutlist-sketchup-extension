@@ -1299,20 +1299,32 @@
             // Fetch UI elements
             var $tabs = $('a[data-toggle="tab"]', $modal);
             var $widgetPreset = $('.ladb-widget-preset', $modal);
+            var $selectPartsColored = $('#ladb_select_parts_colored', $modal);
             var $selectPinsHidden = $('#ladb_select_pins_hidden', $modal);
             var $selectPinsColored = $('#ladb_select_pins_colored', $modal);
-            var $selectPartsColored = $('#ladb_select_parts_colored', $modal);
+            var $selectPinsUseNames = $('#ladb_select_pins_use_names', $modal);
+            var $formGroupPins = $('.ladb-cutlist-layout-form-group-pins', $modal);
             var $btnGenerate = $('#ladb_cutlist_layout_btn_generate', $modal);
 
+            var fnUpdateFieldsVisibility = function () {
+                if ($selectPinsHidden.val() === '1') {
+                    $formGroupPins.hide();
+                } else {
+                    $formGroupPins.show();
+                }
+            }
             var fnFetchOptions = function (options) {
+                options.parts_colored = $selectPartsColored.val() === '1';
                 options.pins_hidden = $selectPinsHidden.val() === '1';
                 options.pins_colored = $selectPinsColored.val() === '1';
-                options.parts_colored = $selectPartsColored.val() === '1';
+                options.pins_use_names = $selectPinsUseNames.val() === '1';
             }
             var fnFillInputs = function (options) {
+                $selectPartsColored.selectpicker('val', options.parts_colored ? '1' : '0');
                 $selectPinsHidden.selectpicker('val', options.pins_hidden ? '1' : '0');
                 $selectPinsColored.selectpicker('val', options.pins_colored ? '1' : '0');
-                $selectPartsColored.selectpicker('val', options.parts_colored ? '1' : '0');
+                $selectPinsUseNames.selectpicker('val', options.pins_use_names ? '1' : '0');
+                fnUpdateFieldsVisibility();
             }
 
             $widgetPreset.ladbWidgetPreset({
@@ -1321,15 +1333,22 @@
                 fnFetchOptions: fnFetchOptions,
                 fnFillInputs: fnFillInputs
             });
+            $selectPartsColored.selectpicker(SELECT_PICKER_OPTIONS);
             $selectPinsHidden.selectpicker(SELECT_PICKER_OPTIONS);
             $selectPinsColored.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectPartsColored.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectPinsUseNames.selectpicker(SELECT_PICKER_OPTIONS);
 
             fnFillInputs(layoutOptions);
 
             // Bind tabs
             $tabs.on('shown.bs.tab', function (e) {
                 that.lastLayoutOptionsTab = $(e.target).attr('href').substring('#tab_layout_options_'.length);
+            });
+
+            // Bind select
+            $selectPinsHidden.on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                console.log('glop');
+                fnUpdateFieldsVisibility();
             });
 
             // Bind buttons
@@ -1342,7 +1361,7 @@
                 rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_layout_options', values: layoutOptions });
 
                 // Generate layout
-                rubyCallCommand('cutlist_layout_parts', { group_id: groupId, part_ids: partIds }, function (response) {
+                rubyCallCommand('cutlist_layout_parts', { group_id: groupId, part_ids: partIds, pins_use_names: layoutOptions.pins_use_names }, function (response) {
 
                     var $slide = that.pushNewSlide('ladb_cutlist_slide_layout', 'tabs/cutlist/_slide-layout.twig', {
                         errors: response.errors,
@@ -1359,9 +1378,9 @@
                         $viewer.ladbViewerPart({
                             dialog: that.dialog,
                             modelDef: response.three_model_def,
+                            partsColored: layoutOptions.parts_colored,
                             pinsHidden: layoutOptions.pins_hidden,
                             pinsColored: layoutOptions.pins_colored,
-                            partsColored: layoutOptions.parts_colored,
                         });
 
                     });
