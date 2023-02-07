@@ -1301,10 +1301,12 @@
             var $widgetPreset = $('.ladb-widget-preset', $modal);
             var $selectPartsColored = $('#ladb_select_parts_colored', $modal);
             var $selectPinsHidden = $('#ladb_select_pins_hidden', $modal);
-            var $selectPinsLength = $('#ladb_select_pins_length', $modal);
             var $selectPinsColored = $('#ladb_select_pins_colored', $modal);
             var $selectPinsUseNames = $('#ladb_select_pins_use_names', $modal);
+            var $selectPinsLength = $('#ladb_select_pins_length', $modal);
+            var $selectPinsDirection = $('#ladb_select_pins_direction', $modal);
             var $formGroupPins = $('.ladb-cutlist-layout-form-group-pins', $modal);
+            var $formGroupPinsDirection = $('.ladb-cutlist-layout-form-group-pins-direction', $modal);
             var $btnGenerate = $('#ladb_cutlist_layout_btn_generate', $modal);
 
             var fnUpdateFieldsVisibility = function () {
@@ -1312,21 +1314,28 @@
                     $formGroupPins.hide();
                 } else {
                     $formGroupPins.show();
+                    if ($selectPinsLength.val() === '0') {
+                        $formGroupPinsDirection.hide();
+                    } else {
+                        $formGroupPinsDirection.show();
+                    }
                 }
             }
             var fnFetchOptions = function (options) {
                 options.parts_colored = $selectPartsColored.val() === '1';
                 options.pins_hidden = $selectPinsHidden.val() === '1';
-                options.pins_length = parseInt($selectPinsLength.val());
                 options.pins_colored = $selectPinsColored.val() === '1';
                 options.pins_use_names = $selectPinsUseNames.val() === '1';
+                options.pins_length = parseInt($selectPinsLength.val());
+                options.pins_direction = parseInt($selectPinsDirection.val());
             }
             var fnFillInputs = function (options) {
                 $selectPartsColored.selectpicker('val', options.parts_colored ? '1' : '0');
                 $selectPinsHidden.selectpicker('val', options.pins_hidden ? '1' : '0');
-                $selectPinsLength.selectpicker('val', options.pins_length);
                 $selectPinsColored.selectpicker('val', options.pins_colored ? '1' : '0');
                 $selectPinsUseNames.selectpicker('val', options.pins_use_names ? '1' : '0');
+                $selectPinsLength.selectpicker('val', options.pins_length);
+                $selectPinsDirection.selectpicker('val', options.pins_direction);
                 fnUpdateFieldsVisibility();
             }
 
@@ -1338,9 +1347,10 @@
             });
             $selectPartsColored.selectpicker(SELECT_PICKER_OPTIONS);
             $selectPinsHidden.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectPinsLength.selectpicker(SELECT_PICKER_OPTIONS);
             $selectPinsColored.selectpicker(SELECT_PICKER_OPTIONS);
             $selectPinsUseNames.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectPinsLength.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectPinsDirection.selectpicker(SELECT_PICKER_OPTIONS);
 
             fnFillInputs(layoutOptions);
 
@@ -1351,7 +1361,9 @@
 
             // Bind select
             $selectPinsHidden.on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                console.log('glop');
+                fnUpdateFieldsVisibility();
+            });
+            $selectPinsLength.on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                 fnUpdateFieldsVisibility();
             });
 
@@ -1384,8 +1396,9 @@
                             modelDef: response.three_model_def,
                             partsColored: layoutOptions.parts_colored,
                             pinsHidden: layoutOptions.pins_hidden,
-                            pinsLength: layoutOptions.pins_length,
                             pinsColored: layoutOptions.pins_colored,
+                            pinsLength: layoutOptions.pins_length,
+                            pinsDirection: layoutOptions.pins_direction,
                         });
 
                     });

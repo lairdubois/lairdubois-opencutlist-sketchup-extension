@@ -2,8 +2,9 @@
   "0": {
     "parts_colored": false,
     "pins_hidden": false,
-    "pins_length": 1,
     "pins_colored": false,
-    "pins_use_names": false
+    "pins_use_names": false,
+    "pins_direction": 0, /* PINS_DIRECTION_CENTER */
+    "pins_length": 1 /* PINS_LENGTH_SHORT */
   }
 }

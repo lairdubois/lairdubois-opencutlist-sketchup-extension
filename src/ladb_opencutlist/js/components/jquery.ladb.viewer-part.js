@@ -28,8 +28,9 @@
         modelDef: null,
         partsColored: false,
         pinsHidden: false,
-        pinsLength: 1,
         pinsColored: false,
+        pinsLength: 1,  /* PINS_LENGTH_SHORT */
+        pinsDirection: 0,   /* PINS_DIRECTION_CENTER */
         showBoxHelper: false,
     };
 
@@ -53,8 +54,9 @@
                         modelDef: that.options.modelDef,
                         partsColored: that.options.partsColored,
                         pinsHidden: that.options.pinsHidden,
-                        pinsLength: that.options.pinsLength,
                         pinsColored: that.options.pinsColored,
+                        pinsLength: that.options.pinsLength,
+                        pinsDirection: that.options.pinsDirection,
                         showBoxHelper: that.options.showBoxHelper
                     }
                 )

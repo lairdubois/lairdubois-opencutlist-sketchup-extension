@@ -121,7 +121,14 @@ const fnInit = function() {
             switch (call.command) {
 
                 case 'setup_model':
-                    fnSetupModel(call.params.modelDef, call.params.partsColored, call.params.pinsHidden, call.params.pinsLength, call.params.pinsColored);
+                    fnSetupModel(
+                        call.params.modelDef,
+                        call.params.partsColored,
+                        call.params.pinsHidden,
+                        call.params.pinsLength,
+                        call.params.pinsDirection,
+                        call.params.pinsColored
+                    );
                     if (call.params.showBoxHelper) {
                         fnSetBoxHelperVisible(true);
                     }
@@ -229,29 +236,46 @@ const fnAddObjectDef = function (objectDef, parent, material, partsColored) {
     return null;
 };
 
-const fnCreatePins = function (group, pinsLength, pinsColored) {
+const fnCreatePins = function (group, pinsLength, pinsDirection, pinsColored) {
 
     if (group.userData.pinText) {
 
-        let pinsLengthFactor = 0.1
+        let pinsLengthFactor;
         switch (pinsLength) {
-            case 0:    // NONE
+            case 0:   // PINS_LENGTH_NONE
                 pinsLengthFactor = 0
                 break;
-            case 1:   // SHORT
-                pinsLengthFactor = 0.1
-                break;
-            case 2:   // MEDIUM
+            case 2:   // PINS_LENGTH_MEDIUM
                 pinsLengthFactor = 0.2
                 break;
-            case 3:   // LONG
+            case 3:   // PINS_LENGTH_LONG
                 pinsLengthFactor = 0.4
+                break;
+            case 1:   // PINS_LENGTH_SHORT
+            default:
+                pinsLengthFactor = 0.1
                 break;
         }
 
         const groupBox = new THREE.Box3().setFromObject(group);
         const groupCenter = groupBox.getCenter(new THREE.Vector3());
-        const pinPoint = groupCenter.clone().sub(modelCenter).setLength(modelRadius * pinsLengthFactor).add(groupCenter);
+
+        const pinPoint = groupCenter.clone();
+        switch (pinsDirection) {
+            case 1: // PINS_DIRECTION_X
+                pinPoint.add(new THREE.Vector3(modelRadius * pinsLengthFactor, 0, 0));
+                break;
+            case 2: // PINS_DIRECTION_Y
+                pinPoint.add(new THREE.Vector3(0, modelRadius * pinsLengthFactor, 0));
+                break;
+            case 3: // PINS_DIRECTION_Z
+                pinPoint.add(new THREE.Vector3(0, 0, modelRadius * pinsLengthFactor));
+                break;
+            default:
+            case 0: // PINS_DIRECTION_CENTER
+                pinPoint.sub(modelCenter).setLength(modelRadius * pinsLengthFactor).add(groupCenter);
+                break;
+        }
 
         const pinDiv = document.createElement('div');
         pinDiv.className = 'pin';
@@ -275,7 +299,7 @@ const fnCreatePins = function (group, pinsLength, pinsColored) {
     }
 
     for (let object of group.children) {
-        fnCreatePins(object, pinsLength, pinsColored);
+        fnCreatePins(object, pinsLength, pinsDirection, pinsColored);
     }
 
 };
@@ -375,7 +399,7 @@ const fnSetAutoRotateEnable = function (enable) {
     }
 }
 
-const fnSetupModel = function(modelDef, partsColored, pinsHidden, pinsLength, pinsColored) {
+const fnSetupModel = function(modelDef, partsColored, pinsHidden, pinsLength, pinsDirection, pinsColored) {
 
     model = fnAddObjectDef(modelDef, scene, defaultMeshMaterial, partsColored);
     if (model) {
@@ -390,7 +414,7 @@ const fnSetupModel = function(modelDef, partsColored, pinsHidden, pinsLength, pi
         if (!pinsHidden) {
 
             // Create labels
-            fnCreatePins(model, pinsLength, pinsColored);
+            fnCreatePins(model, pinsLength, pinsDirection, pinsColored);
 
         }
 

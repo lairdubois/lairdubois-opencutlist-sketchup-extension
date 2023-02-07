@@ -843,12 +843,6 @@ tab:
       option_pins_hidden_0: Avec épingles
       option_pins_hidden_1: Sans épingle
       option_pins_hidden_help: Affiche ou masque les épingles indiquants le numéro des pièces
-      option_pins_length: Longueur des épingles
-      option_pins_length_0: Sans flèche
-      option_pins_length_1: Petite
-      option_pins_length_2: Moyenne
-      option_pins_length_3: Grande
-      option_pins_length_help: Permet de choisir la couleur des épingles
       option_pins_colored: Couleur des épingles
       option_pins_colored_0: Sans couleur
       option_pins_colored_1: Couleur de la pièce
@@ -857,6 +851,18 @@ tab:
       option_pins_use_names_0: Numéro de la pièce
       option_pins_use_names_1: Nom de la pièce
       option_pins_use_names_help: Permet de choisir le texte affiché dans les épingles
+      option_pins_length: Longueur des épingles
+      option_pins_length_0: Sans flèche
+      option_pins_length_1: Petite
+      option_pins_length_2: Moyenne
+      option_pins_length_3: Grande
+      option_pins_length_help: Permet de choisir la longueur des épingles
+      option_pins_direction: Direction des épingles
+      option_pins_direction_0: Pointe le centre du modèle
+      option_pins_direction_1: Le long de l'axe X
+      option_pins_direction_2: Le long de l'axe Y
+      option_pins_direction_3: Le long de l'axe Z
+      option_pins_direction_help: Permet de choisir la direction des épingles
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_entities: Votre modèle est vide. Il va falloir m'en donner un peu plus ;)
