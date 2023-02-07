@@ -1,19 +1,19 @@
 <div class="ladb-viewer-part">
     <div class="ladb-viewer-part-ui-left no-print">
-        <button id="ladb_viewer_part_btn_isometric_view" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.viewer_part.isometric_view'|i18next }}"><i class="ladb-opencutlist-icon-isometric"></i></button>
-        <button id="ladb_viewer_part_btn_top_view" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.viewer_part.top_view'|i18next }}">Tp</button>
-        <button id="ladb_viewer_part_btn_bottom_view" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.viewer_part.bottom_view'|i18next }}">Bt</button>
-        <button id="ladb_viewer_part_btn_front_view" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.viewer_part.front_view'|i18next }}">Ft</button>
-        <button id="ladb_viewer_part_btn_back_view" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.viewer_part.back_view'|i18next }}">Bk</button>
-        <button id="ladb_viewer_part_btn_left_view" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.viewer_part.left_view'|i18next }}">Lt</button>
-        <button id="ladb_viewer_part_btn_right_view" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.viewer_part.right_view'|i18next }}">Rt</button>
+        {% block uiLeft %}
+            <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:'isometric' }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.viewer_part.isometric_view'|i18next }}"><i class="ladb-opencutlist-icon-isometric"></i></button>
+            <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:'top' }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.viewer_part.top_view'|i18next }}">T</button>
+            <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:'bottom' }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.viewer_part.bottom_view'|i18next }}">B</button>
+        {% endblock %}
     </div>
     <div class="ladb-viewer-part-viewport">
         <iframe></iframe>
     </div>
     <div class="ladb-viewer-part-ui-right no-print">
-        <button id="ladb_viewer_part_btn_toggle_box_helper" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="left" title="{{ 'core.component.viewer_part.toggle_box_helper'|i18next }}"><i class="ladb-opencutlist-icon-origin-min"></i></button>
-        <button id="ladb_viewer_part_btn_toggle_axes_helper" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="left" title="{{ 'core.component.viewer_part.toggle_axes_helper'|i18next }}"><i class="ladb-opencutlist-icon-axes"></i></button>
-        <button id="ladb_viewer_part_btn_toggle_auto_rotate" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="left" title="{{ 'core.component.viewer_part.toggle_auto_rotate'|i18next }}"><i class="ladb-opencutlist-icon-refresh"></i></button>
+        {% block uiRight %}
+            <button class="btn btn-default btn-sm" data-command="set_box_helper_visible" data-params="{{ { visible:null }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="left" title="{{ 'core.component.viewer_part.toggle_box_helper'|i18next }}"><i class="ladb-opencutlist-icon-origin-min"></i></button>
+            <button class="btn btn-default btn-sm" data-command="set_axes_helper_visible" data-params="{{ { visible:null }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="left" title="{{ 'core.component.viewer_part.toggle_axes_helper'|i18next }}"><i class="ladb-opencutlist-icon-axes"></i></button>
+            <button class="btn btn-default btn-sm" data-command="set_auto_rotate_enable" data-params="{{ { enable:null }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="left" title="{{ 'core.component.viewer_part.toggle_auto_rotate'|i18next }}"><i class="ladb-opencutlist-icon-refresh"></i></button>
+        {% endblock %}
     </div>
 </div>

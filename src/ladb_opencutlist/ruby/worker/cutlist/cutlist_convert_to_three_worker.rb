@@ -44,7 +44,7 @@ module Ladb::OpenCutList
             _populate_three_object_def(three_part_def, instance_info.entity.definition)
 
             # Try to reconstruct parent hierarchy
-            parent_three_group_def = _blop(instance_info.path.slice(0, instance_info.path.length - 1), group_cache, three_model_def)
+            parent_three_group_def = _parent_hierarchy(instance_info.path.slice(0, instance_info.path.length - 1), group_cache, three_model_def)
             if parent_three_group_def
               parent_three_group_def.add(three_part_def)
             else
@@ -74,14 +74,16 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _blop(path, cache, three_model_def)
+    def _parent_hierarchy(path, cache, three_model_def)
       return nil if path.nil? || path.empty?
+
+      serialized_path = PathUtils.serialize_path(path)
 
       # Pop last path entity
       entity = path.pop
 
       # Try to fetch three group def from cache
-      three_group_def = cache[entity.entityID]
+      three_group_def = cache[serialized_path]
       unless three_group_def
 
         # Create a new three group def
@@ -90,10 +92,10 @@ module Ladb::OpenCutList
         three_group_def.color = _to_three_color(entity.material)
 
         # Keep it in the cache
-        cache.store(entity.entityID, three_group_def)
+        cache.store(serialized_path, three_group_def)
 
         # Try to retrieve parent
-        parent_three_group_def = _blop(path, cache, three_model_def)
+        parent_three_group_def = _parent_hierarchy(path, cache, three_model_def)
         if parent_three_group_def
           # Parent found, add current group as child
           parent_three_group_def.add(three_group_def)
@@ -182,6 +184,16 @@ module Ladb::OpenCutList
       (material.color.red << 16) + (material.color.green << 8) + material.color.blue
     end
 
+    def _dump(three_object_def, level = 1)
+      return if three_object_def.is_a?(ThreeMeshDef)
+      puts '+'.rjust(level, '-') + three_object_def.class.to_s + ' ' + three_object_def.name
+      if three_object_def.is_a?(ThreeGroupDef)
+        three_object_def.children.each do |child_three_object_def|
+          _dump(child_three_object_def, level + 1)
+        end
+      end
+    end
+
   end
 
   # -----
@@ -196,11 +208,12 @@ module Ladb::OpenCutList
     TYPE_GROUP = 3
     TYPE_MESH = 4
 
-    attr_accessor :color
+    attr_accessor :color, :name
 
     def initialize(type = TYPE_UNDEFINED)
       @type = type
       @color = nil
+      @name = ''
     end
 
     def type

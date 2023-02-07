@@ -43,6 +43,18 @@ i, span.ladb-opencutlist-icon:before {
 }
 
 
+.ladb-opencutlist-icon-view-left:before {
+  content: "\e99d";
+}
+.ladb-opencutlist-icon-view-right:before {
+  content: "\e99e";
+}
+.ladb-opencutlist-icon-view-back:before {
+  content: "\e99f";
+}
+.ladb-opencutlist-icon-view-front:before {
+  content: "\e99c";
+}
 .ladb-opencutlist-icon-isometric:before {
   content: "\e999";
 }

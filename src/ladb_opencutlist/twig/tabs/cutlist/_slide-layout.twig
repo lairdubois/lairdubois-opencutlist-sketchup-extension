@@ -28,7 +28,19 @@
         {% include 'core/_alert-errors.twig' %}
         {% include 'core/_alert-warnings.twig' %}
 
-        {% include 'components/_viewer-part.twig' %}
+        {% embed 'components/_viewer-part.twig' %}
+            {% block uiLeft %}
+                <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:'isometric' }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.viewer_part.isometric_view'|i18next }}"><i class="ladb-opencutlist-icon-isometric"></i></button>
+                <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:'top' }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.viewer_part.top_view'|i18next }}">T</button>
+                <div class="ladb-flex">
+                    <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:'left' }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="left" title="{{ 'core.component.viewer_part.left_view'|i18next }}"><i class="ladb-opencutlist-icon-view-left"></i></button>
+                    <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:'front' }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="top" title="{{ 'core.component.viewer_part.front_view'|i18next }}"><i class="ladb-opencutlist-icon-view-front"></i></button>
+                    <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:'right' }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.viewer_part.right_view'|i18next }}"><i class="ladb-opencutlist-icon-view-right"></i></button>
+                </div>
+                <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:'bottom' }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.viewer_part.bottom_view'|i18next }}">Bm</button>
+                <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:'back' }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.viewer_part.back_view'|i18next }}"><i class="ladb-opencutlist-icon-view-back"></i></button>
+            {% endblock %}
+        {% endembed %}
 
     </div>
 {% endblock %}

@@ -21,14 +21,20 @@
 
   > .ladb-viewer-part-ui-left, > .ladb-viewer-part-ui-right {
     display: flex;
-    gap: 5px;
     flex-direction: column;
+    gap: 5px;
     justify-content: center;
     flex-grow: 0;
+    align-items: center;
 
-    > button {
+    button {
       padding: 5px 5px;
       width: 30px;
+    }
+
+    div.ladb-flex {
+      display: flex;
+      gap: 5px;
     }
 
   }
@@ -38,12 +44,13 @@
 #ladb_cutlist_slide_layout .ladb-viewer-part > .ladb-viewer-part-viewport > iframe {
   width: 19cm;
   height: 23cm;
-  border: 1px solid #000000;
+  border: 1px dashed #000;
 }
 
 @media print {
   #ladb_cutlist_slide_layout .ladb-viewer-part > .ladb-viewer-part-viewport > iframe {
     transform: none;
+    border: none;
   }
 }
 

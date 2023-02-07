@@ -64,95 +64,11 @@
             }).attr('src', 'viewer.html');
 
         // Bind buttons
-        this.$btnIsometricView.on('click', function () {
-            that.callCommand(
-                'set_view',
-                {
-                    view: 'isometric'
-                }
-            );
+        $('button[data-command]', this.$element).on('click', function () {
             this.blur();
-        });
-        this.$btnTopView.on('click', function () {
-           that.callCommand(
-               'set_view',
-               {
-                   view: 'top'
-               }
-           );
-            this.blur();
-        });
-        this.$btnBottomView.on('click', function () {
-           that.callCommand(
-               'set_view',
-               {
-                   view: 'bottom'
-               }
-           );
-            this.blur();
-        });
-        this.$btnFrontView.on('click', function () {
-           that.callCommand(
-               'set_view',
-               {
-                   view: 'front'
-               }
-           );
-            this.blur();
-        });
-        this.$btnBackView.on('click', function () {
-           that.callCommand(
-               'set_view',
-               {
-                   view: 'back'
-               }
-           );
-            this.blur();
-        });
-        this.$btnLeftView.on('click', function () {
-           that.callCommand(
-               'set_view',
-               {
-                   view: 'left'
-               }
-           );
-            this.blur();
-        });
-        this.$btnRightView.on('click', function () {
-           that.callCommand(
-               'set_view',
-               {
-                   view: 'right'
-               }
-           );
-            this.blur();
-        });
-        this.$btnToggleBoxHelper.on('click', function () {
-           that.callCommand(
-               'set_box_helper_visible',
-               {
-                   visible: null    // null = toggle
-               }
-           );
-            this.blur();
-        });
-        this.$btnToggleAxesHelper.on('click', function () {
-           that.callCommand(
-               'set_axes_helper_visible',
-               {
-                   visible: null    // null = toggle
-               }
-           );
-            this.blur();
-        });
-        this.$btnToggleAutoRotate.on('click', function () {
-           that.callCommand(
-               'set_auto_rotate_enable',
-               {
-                   enable: null    // null = toggle
-               }
-           );
-            this.blur();
+            var command = $(this).data('command');
+            var params = $(this).data('params');
+            that.callCommand(command, params);
         });
 
     };
