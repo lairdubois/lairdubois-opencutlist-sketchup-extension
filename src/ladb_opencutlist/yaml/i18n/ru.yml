@@ -675,7 +675,7 @@ tab:
         Укажите здесь список остатков вашей панели или листа, которые будут рассматриваться в качестве приоритетных для раскроя.
         Ожидаемый формат: **Д**x**Ш**x**К**. Где **Д** и **Ш** — соответственно *длина* и *ширина* остатка, а **К** — количество.
         Количество не является обязательным.
-        *Если для размеров не указана единица измерения, будут учитываться единицы заданные параметрами модели.*
+        *Если размеры не содержат единиц измерения, то будет применена единица измерения, заданная в параметрах модели.*
       tooltip:
         scroll_to_block_1d: Прокрутка до первой доски или кромочной полосы
         scroll_to_block_2d: Прокрутка до первой панели
@@ -1170,17 +1170,17 @@ tab:
       *OpenCutList* разработал [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) и [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Весь список [соавторов](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: Переводы
     credits_translators: |
-      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (Английский, Немецкий язык)
-      - Владимир Бадюля (Русский)
-      - Pierluigi Colombo (Итальянский)
-      - Nayton Sanches Barbosa, исправлено и отредактировано [Carlos Maciel ELT](https://www.inglesonline.pro.br) (Португальский)
-      - [Leonardo Romero Giménez](https://latablamarilla.com/) (Испанский)
-      - [Radek Rýznar](https://onlinesketchup.cz) (Чешский)
-      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (Польский)
-      - Сергей Исупов (Иврит), без интерфейса справа налево
-      - Soul Issam (Арабский), без интерфейса справа налево
-      - Dany Dhondt, Eric Lugtigheid (Нидерландский)
-      - Nguyen Ngoc Tan (Вьетнамский)
+      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*Английский*, *Немецкий язык*)
+      - Владимир Бадюля (*Русский*)
+      - Pierluigi Colombo (*Итальянский*)
+      - Nayton Sanches Barbosa, исправлено и отредактировано [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*Португальский*)
+      - [Leonardo Romero Giménez](https://latablamarilla.com/) (*Испанский*)
+      - [Radek Rýznar](https://onlinesketchup.cz) (*Чешский*)
+      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*Польский*)
+      - Сергей Исупов (*Иврит*), без интерфейса справа налево
+      - Soul Issam (*Арабский*), без интерфейса справа налево
+      - Dany Dhondt, Eric Lugtigheid (*Нидерландский*)
+      - Nguyen Ngoc Tan (*Вьетнамский*)
     credits_description: |
       Разработка этого расширения связана с проектом совместной платформы [L'Air du Bois](https://www.lairdubois.fr).
       Это расширение является *Open Source*, а также доступно в разделе [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) с лицензией [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
