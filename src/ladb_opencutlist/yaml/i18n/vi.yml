@@ -25,7 +25,7 @@ default:
   caution: Chú ý
   remove: Loại bỏ
   create: Tạo mới
-  duplicate: ""
+  duplicate: Nhân đôi
   ignore: Đồng ý
   download: Tải xuống
   upgrade: Cập nhật
@@ -48,7 +48,7 @@ default:
   unit_5: Yard
   unit_mass_0: Kilogram
   unit_mass_1: Pound
-  unit_angle_0: ""
+  unit_angle_0: Độ
   instance_single: mục
   instance_plural: mục
   part_single: bộ phận
@@ -158,6 +158,8 @@ core:
   docs:
     error:
       failed_to_load: |
+        Không thể mở tài liệu.
+        Đảm bảo rằng bạn đã kết nối với Internet.
 tab:
   cutlist:
     label: Các bộ phận
@@ -176,7 +178,7 @@ tab:
     edit_part_axes_properties: Chỉnh sửa thuộc tính trục của bộ phận
     edit_part_size_increase_properties: Chỉnh sửa các thuộc tính (ngoại cỡ) của bộ phận
     edit_part_edges_properties: Chỉnh sửa các thuộc tính (dải cạnh) của bộ phận
-    edit_part_veneers_properties: ""
+    edit_part_veneers_properties: Chỉnh sửa các thuộc tính (Veneer) của bộ phận
     tooltip:
       show_hide_block: Hiện / Ẩn nhóm
       scroll_to_block: Di chuyển đến nhóm
@@ -242,7 +244,7 @@ tab:
       thickness_layered: "Số lượng ở đây đại diện cho số mảnh được cắt để có được tất cả các lớp."
       thickness_layered_equation: "**{{ count }}** *bộ phận* x **{{ layerCount }}** *lớp* = **{{ cuttingPartCount }}**"
       thickness_layered_equation_plural: "**{{ count }}** *bộ phận* x **{{ layerCount }}** *lớp*= **{{ cuttingPartCount }}**"
-      multiple_layers: "Chú ý, bộ phận này bao gồm các bộ phận phụ có trong {{ count }} lớp khác nhau:<br>{{ layers }}"
+      multiple_content_layers: "Chú ý, bộ phận này bao gồm các bộ phận phụ có trong {{ count }} lớp hoặc thẻ khác nhau của:<br>{{ layers }}"
       children_warnings: "Chú ý, có {{ count }} cảnh báo trong các nhóm bộ phận"
       children_warnings_plural: "Chú ý, có {{ count }} cảnh báo trong các nhóm bộ phận"
       children_size_increase: "Kích thước này được tăng thêm bởi kích thước quá khổ cho {{ count }} nhóm bộ phận"
@@ -252,17 +254,17 @@ tab:
       size_increased: "Kích thước được tăng theo kích thước quá khổ của {{ value }}"
       has_edges: "Bộ phận này chứa {{ count }} dải cạnh"
       has_edges_plural: "Bộ phận này chứa {{ count }} dải cạnh"
-      has_veneers: ""
-      has_veneers_plural: ""
+      has_veneers: "Bộ phận này chứa {{ count }} bề mặt veneer"
+      has_veneers_plural: "Bộ phận này chứa {{ count }} bề mặt veneer"
       edge_decremented: "Giảm theo độ dày của dải cạnh ({{ decrement }})"
       edge_ymin: Chiều dài cạnh 1
       edge_ymax: Chiều dài cạnh 2
       edge_xmin: Chiều rộng cạnh 1
       edge_xmax: Chiều rộng cạnh 2
-      veneer_zmin: ""
-      veneer_zmax: ""
+      veneer_zmin: Mặt sau Veneer
+      veneer_zmax: Mặt trước Veneer
       dblclick_to_copy_all_edges: Nhấp đúp vào đây để nhân đôi giá trị này sang các cạnh khác
-      dblclick_to_copy_all_veneers: ""
+      dblclick_to_copy_all_veneers: Nhấp đúp vào đây để nhân đôi giá trị này sang mặt khác
       dblclick_to_sort_axes: Nhấp đúp vào đây để tự động sắp xếp lại các trục theo kích thước của bộ phận
       part_axes: Các trục bên trong của bộ phận
       select_unselect_all_parts: Chọn / bỏ chọn tất cả các bộ phận trong nhóm
@@ -293,7 +295,7 @@ tab:
       general: Chung
       extra_help: "Danh sách các thuộc tính dành riêng cho loại vật liệu \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Dải cạnh
-      veneers: ""
+      veneers: Veneer
       name: Tên
       material: Vật liệu
       cumulable: Tổng hợp
@@ -369,7 +371,7 @@ tab:
       over_length: Trên suốt chiều dài
       over_width: Trên suốt chiều rộng
       edge_disabled_help: Dải cạnh này không thể định cấu hình được vì không có mặt áp vật liệu nào được phát hiện trên cạnh này của bộ phận trong mô hình.
-      veneer_disabled_help: ""
+      veneer_disabled_help: Bề mặt này không thể định cấu hình vì không có bề mặt mang vật liệu nào được phát hiện trên cạnh này của bộ phận trong mô hình.
       multiple_values: Nhiều giá trị
       export_to_skp: Xuất (.skm)
     export_to_skp:
@@ -416,8 +418,8 @@ tab:
       hide_final_areas_help: "Nếu tùy chọn này được chọn, **diện tích thực tế** của các bộ phận thuộc loại *Hàng dạng tấm* sẽ bị ẩn."
       hide_edges: Ẩn các cột của dải cạnh
       hide_edges_help: "Nếu tùy chọn này được chọn, **cột dải cạnh** của các bộ phận thuộc loại *Hàng dạng tấm* sẽ bị ẩn."
-      hide_veneers: ""
-      hide_veneers_help: ""
+      hide_veneers: Ẩn các cột của Veneer
+      hide_veneers_help: "Nếu tùy chọn này được chọn, **Cột veneer** của các bộ phận thuộc loại *Hàng dạng tấm* sẽ bị ẩn."
       minimize_on_highlight: Thu nhỏ sau *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Nếu tùy chọn này được chọn, cửa sổ OpenCutList sẽ được thu nhỏ khi chức năng *'$t(tab.cutlist.highlight_part)'* được sử dụng."
       general: Chung
@@ -445,7 +447,7 @@ tab:
       filters_warning: "Bộ lọc này chỉ hiển thị **{{ count }}** bộ phận trong tổng số của {{ total }}."
       filters_warning_plural: "Bộ lọc này chỉ hiển thị **{{ count }}** bộ phận trong tổng số của {{ total }}."
       edge_material_names_filter: Lọc theo dải cạnh vật liệu
-      veneer_material_names_filter: ""
+      veneer_material_names_filter: Lọc theo vật liệu Veneer
       tags_filter: Lọc theo thẻ
       dimensions_help: Hiểu về kích thước
       summary: Bảng tóm tắt
@@ -470,7 +472,7 @@ tab:
       thickness: Độ dày
       thickness_short: T
       edges: Dải cạnh
-      veneers: ""
+      veneers: Veneer
     export:
       title: Xuất
       info_0: |
@@ -528,8 +530,10 @@ tab:
       edge_ymax: Chiều dài cạnh 2
       edge_xmin: Chiều rộng cạnh 1
       edge_xmax: Chiều rộng cạnh 2
-      veneer_zmin: ""
-      veneer_zmax: ""
+      veneer_zmin: Mặt sau Veneer
+      veneer_zmax: Mặt trước Veneer
+      layer: Thẻ
+      layers: Thẻ
       placeholder:
         no_column_title: Nhập tiêu đề
         no_column_formula_native: "Giá trị gốc của cột '{{ col_name }}'"
@@ -549,23 +553,26 @@ tab:
       raw_materials: Vật liệu thô
       coefficient: Hệ số
       total: Tổng
-      total_used: ""
+      total_used: Đã sử dụng
       total_unused: Chưa sử dụng
       total_mass: Σ Khối lượng
       total_cost: Σ Chi phí
       total_count: Số lượng
-      total_instance_count: ""
+      total_instance_count: Σ Đơn vị
       total_volume: Σ Thể tích
       total_area: Σ Diện tích
       total_length: Σ Chiều dài
       error:
-        no_typed_material_parts: "Không có bộ phận nào có loại vật liệu (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** hoặc **$t(tab.materials.type_5)**) đã được cung cấp để tạo báo cáo."
+        no_typed_material_parts: "Không có bộ phận nào có loại vật liệu xác định (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_5)** hoặc **$t(tab.materials.type_6)**) đã được cung cấp để tạo báo cáo."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} lỗi**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} lỗi**."
       warning:
         is_group_selection: Các bộ phận bên trong **nhóm ẩn** của danh sách bộ phận sẽ không được tính.
       tip:
         not_enough_data: |
+          Để tính toán một báo cáo chính xác:
+          - các vật liệu được sử dụng ít nhất phải có tỉ trọng và giá cả.
+          - các phụ kiện được sử dụng ít nhất phải có tỉ trọng và giá cả.
     cuttingdiagram:
       title: Sơ đồ cắt
       start_msg: Chạy tối ưu hóa
@@ -578,19 +585,19 @@ tab:
       option_bar_folding_0: Không
       option_bar_folding_1: Đồng ý
       option_bar_folding_help: Nhóm các bảng hoặc dải cạnh có chứa các bộ phận và đường cắt giống nhau.
-      option_sheet_folding_good: Nhóm các tấm tương tự
-      option_sheet_folding_veneer: ""
+      option_sheet_folding_good: Nhóm các tấm giống nhau
+      option_sheet_folding_veneer: Nhóm các tấm Veneer giống nhau
       option_sheet_folding_0: Không
       option_sheet_folding_1: Đồng ý
-      option_sheet_folding_help: ""
+      option_sheet_folding_help: Nhóm các tấm hoặc tấm có các bộ phận và vết cắt giống nhau.
       option_hide_part_list: Danh sách các bộ phận
       option_hide_part_list_1d_dimensional_0: Hiển thị cho mỗi bảng
       option_hide_part_list_1d_edge_0: Hiển thị cho mỗi dải cạnh
       option_hide_part_list_2d_good_0: Hiển thị cho mỗi tấm
-      option_hide_part_list_2d_veneer_0: ""
+      option_hide_part_list_2d_veneer_0: Hiển thị cho mỗi tấm Veneer
       option_hide_part_list_1: Ẩn
       option_hide_part_list_1d_help: Hiển thị hoặc ẩn danh sách các bộ phận cho mỗi bảng hoặc dải cạnh.
-      option_hide_part_list_2d_help: ""
+      option_hide_part_list_2d_help: Hiển thị hoặc ẩn danh sách các bộ phận của mỗi tấm.
       option_use_names: Nhận dạng bộ phận
       option_use_names_0: Sử dụng số
       option_use_names_1: Sử dụng tên gọi
@@ -618,10 +625,10 @@ tab:
       option_highlight_primary_cuts_0: Chỉ đường kẻ
       option_highlight_primary_cuts_1: Luôn hiển thị
       option_highlight_primary_cuts_help: Cho phép đánh dấu các vệt cắt chính.
-      option_hide_edges_preview: ""
-      option_hide_edges_preview_0: ""
-      option_hide_edges_preview_1: ""
-      option_hide_edges_preview_help: ""
+      option_hide_edges_preview: Hiển thị các dải cạnh
+      option_hide_edges_preview_0: Hiển thị trong sơ đồ cắt
+      option_hide_edges_preview_1: Ẩn trong sơ đồ cắt
+      option_hide_edges_preview_help: Cho phép bạn hiển thị hoặc ẩn hiển thị trực quan của các dải cạnh cho từng bộ phận trong sơ đồ cắt.
       option_saw_kerf: Độ dày của lưỡi cắt
       option_saw_kerf_help: Chiều rộng của vật liệu được loại bỏ bởi lưỡi cưa cắt.
       option_trimming: Kích thước cắt tỉa
@@ -654,14 +661,21 @@ tab:
         Số lượng là tùy chọn.
         *Kích thước không có đơn vị được coi là đơn vị của mô hình.*
       option_std_sheet_good: Tấm tiêu chuẩn
-      option_std_sheet_veneer: ""
+      option_std_sheet_veneer: Veneer tiêu chuẩn
       option_std_sheet_help: |
+        Chọn tấm tiêu chuẩn hoặc tấm veneer sẽ được sao chép để tính toán vị trí tốt nhất có thể.
+        Danh sách này được định nghĩa trong trường **$t(tab.materials.edit_material.std_sizes)** của vật liệu.
+        Chỉnh sửa vật liệu '{{ material_name }}' để hoàn thành danh sách này.
       option_std_sheet_add: Thêm kích thước tấm
       option_std_sheet_none: Không có
       option_scrap_sheet_good_sizes: Cắt thừa
-      option_scrap_sheet_veneer_sizes: ""
+      option_scrap_sheet_veneer_sizes: Mặt cắt veneer
       option_scrap_sheet_sizes_placeholder: dài x rộng x số lượng; ...
       option_scrap_sheet_sizes_help: |
+        Liệt kê tất cả các mặt hàng dạng tấm hoặc veneer mà bạn muốn được ưu tiên xem xét cho sơ đồ cắt..
+        Định dạng dự kiến: **L**x**W**x**Q**, trong đó **L** và **W** đại diện cho *chiều dài* và *chiều rộng* của bảng điều khiển và **Q** đại diện cho số lượng..
+        Số lượng là tùy chọn.
+        *Kích thước không có đơn vị được coi là đơn vị mô hình.*
       tooltip:
         scroll_to_block_1d: Cuộn đến bảng đầu tiên hoặc dải cạnh
         scroll_to_block_2d: Cuộn đến tấm đầu tiên
@@ -697,8 +711,8 @@ tab:
         bar_edge_type_1: Dải cạnh cắt thừa
         sheet_good_type_0: Tấm tiêu chuẩn
         sheet_good_type_1: Cắt thừa
-        sheet_veneer_type_0: ""
-        sheet_veneer_type_1: ""
+        sheet_veneer_type_0: Tấm Veneer tiêu chuẩn
+        sheet_veneer_type_1: Mặt cắt Veneer
         unused: Chưa sử dụng
         parts: "{{ count }} bộ phận"
         parts_plural: "{{ count }} bộ phận"
@@ -771,7 +785,7 @@ tab:
         part_description: Mô tả
         part_entity_named_path: Đường dẫn đối tượng
         part_entity_name: Tên đối tượng
-        part_bin: ""
+        part_bin: Thùng
         part_cutting_size: Kích thước thô
         part_cutting_length: Chiều dài - thô
         part_cutting_width: Chiều rộng - thô
@@ -786,8 +800,8 @@ tab:
         part_edge_ymax: Chiều dài cạnh 2
         part_edge_xmin: Chiều rộng cạnh 1
         part_edge_xmax: Chiều rộng cạnh 2
-        part_veneer_zmin: ""
-        part_veneer_zmax: ""
+        part_veneer_zmin: Mặt sau Veneer
+        part_veneer_zmax: Mặt trước Veneer
         thumbnail_proportional: Hình thu nhỏ theo tỷ lệ
         thumbnail_square: Hình thu nhỏ theo hình vuông
         group_material: Vật liệu / Độ dày
@@ -802,7 +816,7 @@ tab:
         invalid_size: Các tham số cấu hình đã nhập không cho phép đặt kích thước nhãn hợp lệ.
       warning:
         is_part_selection: Các nhãn này được giới hạn ở **các bộ phận đã chọn**.
-        formula_not_available: ""
+        formula_not_available: Công thức không khả dụng trong ngữ cảnh này
     error:
       no_model: Không có mô hình nào được mở. Bạn sẽ cần phải cung cấp cho tôi thêm thông tin;)
       no_entities: Mô hình của bạn rỗng. Bạn sẽ cần phải cung cấp cho tôi thêm thông tin ;)
@@ -836,7 +850,7 @@ tab:
     type_3: Kích thước
     type_4: Dải cạnh
     type_5: Phụ kiện
-    type_6: ""
+    type_6: Veneer
     tooltip:
       type_0: Vật liệu loại '$t(tab.materials.type_0)'
       type_1: Vật liệu loại '$t(tab.materials.type_1)'
@@ -948,6 +962,7 @@ tab:
         Xác nhận để tiếp tục.
     duplicate:
       message: |
+        Chọn tên của vật liệu mới, sẽ được sao chép từ vật liệu **{{ material_name }}**.
     error:
       no_model: Không có mô hình nào được mở. Bạn sẽ cần phải cung cấp cho tôi thêm thông tin;)
       no_materials: Mô hình của bạn không chứa bất kỳ vật liệu nào.
@@ -955,7 +970,7 @@ tab:
       failed_import_skm_file: "Đã xảy ra lỗi khi nhập từ tệp .skm. **{{ error }}**"
       failed_export_skm_file: "Đã xảy ra lỗi khi xuất tệp .skm.**{{ error }}**"
       failed_removing_material: "Đã xảy ra lỗi khi chặn vật liệu này. **{{ error }}**"
-      failed_duplicating_material: ""
+      failed_duplicating_material: "Đã xảy ra lỗi khi sao chép vật liệu. **{{ error }}**"
       invalid_image_file: Hình ảnh không hợp lệ
     success:
       exported_to: "Xuất thành công sang {{ export_path }}."

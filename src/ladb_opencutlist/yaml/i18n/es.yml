@@ -476,7 +476,7 @@ tab:
     export:
       title: Exportación
       info_0: |
-        Con esta función puede exportar la *lista de piezas* a un archivo [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
+        Con esta función puede exportar la *lista de piezas* a un archivo [CSV](https://es.wikipedia.org/wiki/Valores_separados_por_comas).
       customize_help: |
         Reordenar, Ocultar, Añadir, Eliminar o Seleccionar una columna de la lista para personalizar su **título** y la **fórmula** que genera el valor mostrado para cada fila exportada.
       add_column: Añadir una columna
