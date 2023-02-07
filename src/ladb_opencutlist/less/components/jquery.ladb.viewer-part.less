@@ -3,15 +3,20 @@
 //
 
 .ladb-viewer-part {
-  position: relative;
   display: flex;
   gap: 5px;
 
-  > iframe {
-    border: none;
+  > .ladb-viewer-part-viewport {
     flex-grow: 1;
-    height: 200px;
-    overflow: hidden;
+    justify-content: center;
+    display: flex;
+
+    > iframe {
+      border: none;
+      height: 300px;
+      width: 100%;
+    }
+
   }
 
   > .ladb-viewer-part-ui-left, > .ladb-viewer-part-ui-right {
@@ -30,12 +35,23 @@
 
 }
 
-#ladb_cutlist_slide_layout .ladb-viewer-part > iframe {
-  height: 800px;
+#ladb_cutlist_slide_layout .ladb-viewer-part > .ladb-viewer-part-viewport > iframe {
+  width: 19cm;
+  height: 23cm;
+  border: 1px solid #000000;
 }
 
-@media (min-height: 850px) {
-  .ladb-viewer-part > iframe {
-    height: 300px;
+@media print {
+  #ladb_cutlist_slide_layout .ladb-viewer-part > .ladb-viewer-part-viewport > iframe {
+    transform: none;
+  }
+}
+
+@media screen and (max-height: 850px) {
+  #ladb_cutlist_modal_part .ladb-viewer-part > .ladb-viewer-part-viewport > iframe {
+    height: 200px;
+  }
+  #ladb_cutlist_slide_layout .ladb-viewer-part > .ladb-viewer-part-viewport > iframe {
+    transform: scale(0.8);
   }
 }

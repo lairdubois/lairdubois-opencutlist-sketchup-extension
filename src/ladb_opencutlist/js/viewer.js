@@ -1,7 +1,7 @@
 // Declarations
 
 let renderer,
-    textRenderer,
+    cssRenderer,
     container,
     scene,
     controls,
@@ -31,10 +31,10 @@ const fnInit = function() {
     renderer.setPixelRatio(window.devicePixelRatio);
     document.body.appendChild(renderer.domElement);
 
-    textRenderer = new THREE.CSS2DRenderer();
-    textRenderer.domElement.style.position = 'absolute';
-    textRenderer.domElement.style.top = '0px';
-    document.body.appendChild(textRenderer.domElement);
+    cssRenderer = new THREE.CSS2DRenderer();
+    cssRenderer.domElement.style.position = 'absolute';
+    cssRenderer.domElement.style.top = '0px';
+    document.body.appendChild(cssRenderer.domElement);
 
     // Create the scene
 
@@ -80,7 +80,7 @@ const fnInit = function() {
 
     // Create controls
 
-    controls = new THREE.OrbitControls(camera, textRenderer.domElement);
+    controls = new THREE.OrbitControls(camera, cssRenderer.domElement);
     controls.rotateSpeed = 0.5;
     controls.zoomSpeed = 2.0;
     controls.autoRotateSpeed = 3.0;
@@ -161,6 +161,8 @@ const fnInit = function() {
 
 const fnUpdateViewportSize = function () {
 
+    console.log('IFRAME', window.innerWidth);
+
     camera.left = window.innerWidth / -2;
     camera.right = window.innerWidth / 2;
     camera.top = window.innerHeight / 2;
@@ -168,13 +170,13 @@ const fnUpdateViewportSize = function () {
     camera.updateProjectionMatrix();
 
     renderer.setSize(window.innerWidth, window.innerHeight);
-    textRenderer.setSize(window.innerWidth, window.innerHeight);
+    cssRenderer.setSize(window.innerWidth, window.innerHeight);
 
 }
 
 const fnRender = function () {
     renderer.render(scene, camera);
-    textRenderer.render(scene, camera);
+    cssRenderer.render(scene, camera);
 }
 
 const fnAnimate = function () {
