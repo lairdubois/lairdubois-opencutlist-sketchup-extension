@@ -843,6 +843,12 @@ tab:
       option_pins_hidden_0: Avec épingles
       option_pins_hidden_1: Sans épingle
       option_pins_hidden_help: Affiche ou masque les épingles indiquants le numéro des pièces
+      option_pins_length: Longueur des épingles
+      option_pins_length_0: Sans flèche
+      option_pins_length_1: Petite
+      option_pins_length_2: Moyenne
+      option_pins_length_3: Grande
+      option_pins_length_help: Permet de choisir la couleur des épingles
       option_pins_colored: Couleur des épingles
       option_pins_colored_0: Sans couleur
       option_pins_colored_1: Couleur de la pièce
