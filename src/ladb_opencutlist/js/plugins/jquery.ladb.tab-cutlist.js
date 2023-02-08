@@ -180,6 +180,7 @@
                 // Update page
                 that.$page.empty();
                 that.$page.append(Twig.twig({ ref: "tabs/cutlist/_list.twig" }).render({
+                    capabilities: that.dialog.capabilities,
                     showThicknessSeparators: that.generateOptions.part_order_strategy.startsWith('thickness') || that.generateOptions.part_order_strategy.startsWith('-thickness'),
                     showWidthSeparators: that.generateOptions.part_order_strategy.startsWith('width') || that.generateOptions.part_order_strategy.startsWith('-width'),
                     dimensionColumnOrderStrategy: that.generateOptions.dimension_column_order_strategy.split('>'),
@@ -507,6 +508,12 @@
                     $(this).blur();
                     that.showAllGroups();
                 });
+                $('a.ladb-item-dimensions-help', that.$page).on('click', function () {
+                    $(this).blur();
+                    var $group = $(this).parents('.ladb-cutlist-group');
+                    var groupId = $group.data('group-id');
+                    that.dimensionsHelpGroup(groupId);
+                });
                 $('a.ladb-item-numbers-save', that.$page).on('click', function () {
                     $(this).blur();
                     var $group = $(this).parents('.ladb-cutlist-group');
@@ -548,12 +555,6 @@
                     var $group = $(this).parents('.ladb-cutlist-group');
                     var groupId = $group.data('group-id');
                     that.layoutGroupParts(groupId);
-                });
-                $('button.ladb-btn-group-dimensions-help', that.$page).on('click', function () {
-                    $(this).blur();
-                    var $group = $(this).parents('.ladb-cutlist-group');
-                    var groupId = $group.data('group-id');
-                    that.dimensionsHelpGroup(groupId);
                 });
                 $('.ladb-minitools a[data-tab]', that.$page).on('click', function () {
                     $(this).blur();
@@ -1288,7 +1289,7 @@
         var that = this;
 
         // Retrieve label options
-        rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_layout_options' }, function (response) {
+        rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_layout_options', section: groupId }, function (response) {
 
             var layoutOptions = response.preset;
 
@@ -1374,7 +1375,7 @@
                 fnFetchOptions(layoutOptions);
 
                 // Store options
-                rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_layout_options', values: layoutOptions });
+                rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_layout_options', values: layoutOptions, section: groupId });
 
                 // Generate layout
                 rubyCallCommand('cutlist_layout_parts', { group_id: groupId, part_ids: partIds, pins_use_names: layoutOptions.pins_use_names }, function (response) {
@@ -1384,14 +1385,16 @@
                         warnings: response.warnings,
                         filename: that.filename,
                         modelName: that.modelName,
+                        modelDescription: that.modelDescription,
                         pageName: that.pageName,
+                        pageDescription: that.pageDescription,
                         isEntitySelection: that.isEntitySelection,
                         lengthUnit: that.lengthUnit,
                         generatedAt: new Date().getTime() / 1000,
                     }, function () {
 
                         // Bind viewer
-                        $viewer.ladbViewerPart({
+                        $viewer.ladbThreeViewer({
                             dialog: that.dialog,
                             modelDef: response.three_model_def,
                             partsColored: layoutOptions.parts_colored,
@@ -1407,7 +1410,7 @@
                     var $btnLayout = $('#ladb_btn_layout', $slide);
                     var $btnPrint = $('#ladb_btn_print', $slide);
                     var $btnClose = $('#ladb_btn_close', $slide);
-                    var $viewer = $('.ladb-viewer-part', $slide);
+                    var $viewer = $('.ladb-three-viewer', $slide);
 
                     // Bind buttons
                     $btnLayout.on('click', function () {
@@ -1973,16 +1976,16 @@
 
                         if (threeModelDef) {
 
-                            var $iframe = $(Twig.twig({ref: 'components/_viewer-part.twig'}).render());
+                            var $viewer = $(Twig.twig({ref: 'components/_three-viewer.twig'}).render());
 
-                            $iframe.ladbViewerPart({
+                            $viewer.ladbThreeViewer({
                                 dialog: that.dialog,
                                 modelDef: threeModelDef,
                                 partsColored: true,
                                 showBoxHelper: part.not_aligned_on_axes
                             });
 
-                            $divPartThumbnail.html($iframe);
+                            $divPartThumbnail.html($viewer);
 
                         } else if (thumbnailFile) {
 

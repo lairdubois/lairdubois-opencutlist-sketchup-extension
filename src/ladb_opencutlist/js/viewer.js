@@ -16,6 +16,8 @@ let renderer,
     axesHelper
 ;
 
+let animating, animateRequestId;
+
 // Functions
 
 const fnInit = function() {
@@ -26,8 +28,7 @@ const fnInit = function() {
 
     // Create the renderers
 
-    renderer = new THREE.WebGLRenderer();
-    renderer.antialias = true;
+    renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setPixelRatio(window.devicePixelRatio);
     document.body.appendChild(renderer.domElement);
 
@@ -83,6 +84,7 @@ const fnInit = function() {
     controls = new THREE.OrbitControls(camera, cssRenderer.domElement);
     controls.rotateSpeed = 0.5;
     controls.zoomSpeed = 2.0;
+    controls.enableRotate = true;
     controls.autoRotateSpeed = 3.0;
     controls.mouseButtons = {
         LEFT: THREE.MOUSE.ROTATE,
@@ -108,7 +110,16 @@ const fnInit = function() {
         depthWrite: false,
     });
 
-    // Add listeners
+    fnAddListeners();
+    fnUpdateViewportSize();
+}
+
+const fnAddListeners = function () {
+
+    // Controls listeners
+    controls.addEventListener('change', fnRender);
+
+    // Window listeners
     window.onresize = function () {
         fnUpdateViewportSize();
         fnRender();
@@ -156,12 +167,9 @@ const fnInit = function() {
 
     };
 
-    fnUpdateViewportSize();
 }
 
 const fnUpdateViewportSize = function () {
-
-    console.log('IFRAME', window.innerWidth);
 
     camera.left = window.innerWidth / -2;
     camera.right = window.innerWidth / 2;
@@ -180,9 +188,20 @@ const fnRender = function () {
 }
 
 const fnAnimate = function () {
-    requestAnimationFrame(fnAnimate);
-    fnRender();
+    animateRequestId = requestAnimationFrame(fnAnimate);
     controls.update();
+    fnRender();
+}
+const fnStartAnimate = function () {
+    if (!animating) {
+        fnAnimate();
+        animating = true;
+    }
+}
+
+const fnStopAnimate = function () {
+    cancelAnimationFrame(animateRequestId);
+    animating = false;
 }
 
 const fnAddObjectDef = function (objectDef, parent, material, partsColored) {
@@ -210,6 +229,7 @@ const fnAddObjectDef = function (objectDef, parent, material, partsColored) {
             if (objectDef.type === 2 && objectDef.pin_text) {
                 group.userData = {
                     pinText: objectDef.pin_text,
+                    pinClass: objectDef.pin_class,
                     pinColor: material.color
                 }
             }
@@ -282,7 +302,7 @@ const fnCreatePins = function (group, pinsLength, pinsDirection, pinsColored) {
         }
 
         const pinDiv = document.createElement('div');
-        pinDiv.className = 'pin';
+        pinDiv.className = 'pin' + (group.userData.pinClass ? ' pin-' + group.userData.pinClass : '');
         pinDiv.textContent = group.userData.pinText;
         if (pinsColored && group.userData.pinColor) {
             pinDiv.style.backgroundColor = '#' + group.userData.pinColor.getHexString();
@@ -368,8 +388,7 @@ const fnSetView = function (view) {
 
     controls.reset();
 
-    controls.enableRotate = true;
-    controls.autoRotate = false;
+    fnSetAutoRotateEnable(false)
 
 }
 
@@ -380,6 +399,7 @@ const fnSetBoxHelperVisible = function (visible) {
         } else {
             boxHelper.visible = visible === true
         }
+        fnRender();
     }
 }
 
@@ -390,14 +410,17 @@ const fnSetAxesHelperVisible = function (visible) {
         } else {
             axesHelper.visible = visible === true
         }
+        fnRender();
     }
 }
 
 const fnSetAutoRotateEnable = function (enable) {
     if (controls) {
         if (enable == null) {
+            fnStartAnimate();
             controls.autoRotate = !controls.autoRotate;
         } else {
+            fnStopAnimate();
             controls.autoRotate = enable === true
         }
     }
@@ -432,9 +455,6 @@ const fnSetupModel = function(modelDef, partsColored, pinsHidden, pinsLength, pi
         boxHelper = new THREE.BoxHelper(model, 0x0000ff);
         boxHelper.visible = false;
         scene.add(boxHelper);
-
-        // Ready to animate
-        fnAnimate();
 
     }
 
