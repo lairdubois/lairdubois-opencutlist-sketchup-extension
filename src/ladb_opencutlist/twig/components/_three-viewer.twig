@@ -11,7 +11,7 @@
     </div>
     <div class="ladb-three-viewer-ui-right no-print">
         {% block uiRight %}
-            <button class="btn btn-default btn-sm" data-command="set_box_helper_visible" data-params="{{ { visible:null }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="left" title="{{ 'core.component.three_viewer.toggle_box_helper'|i18next }}"><i class="ladb-opencutlist-icon-plan"></i></button>
+            <button class="btn btn-default btn-sm" data-command="set_box_helper_visible" data-params="{{ { visible:null }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="left" title="{{ 'core.component.three_viewer.toggle_box_helper'|i18next }}"><i class="ladb-opencutlist-icon-plan" style="color: #00f;"></i></button>
             <button class="btn btn-default btn-sm" data-command="set_axes_helper_visible" data-params="{{ { visible:null }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="left" title="{{ 'core.component.three_viewer.toggle_axes_helper'|i18next }}"><i class="ladb-opencutlist-icon-axes"></i></button>
             <button class="btn btn-default btn-sm" data-command="set_auto_rotate_enable" data-params="{{ { enable:null }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="left" title="{{ 'core.component.three_viewer.toggle_auto_rotate'|i18next }}"><i class="ladb-opencutlist-icon-auto-rotate"></i></button>
         {% endblock %}

@@ -20,6 +20,9 @@
         pinsColored: false,
         pinsLength: 1,      // PINS_LENGTH_SHORT
         pinsDirection: 0,   // PINS_DIRECTION_CENTER
+        controlsTarget: null,
+        controlsPosition: null,
+        controlsZoom: null,
         showBoxHelper: false,
     };
 
@@ -46,6 +49,9 @@
                         pinsColored: that.options.pinsColored,
                         pinsLength: that.options.pinsLength,
                         pinsDirection: that.options.pinsDirection,
+                        controlsTarget: that.options.controlsTarget,
+                        controlsPosition: that.options.controlsPosition,
+                        controlsZoom: that.options.controlsZoom,
                     }
                 );
                 if (that.options.showBoxHelper) {
@@ -57,7 +63,12 @@
                     );
                 }
 
-            }).attr('src', 'viewer.html');
+            })
+            .attr('src', 'viewer.html');
+
+        this.$iframe.get(0).addEventListener('controls.changed', function (e) {
+            that.$element.trigger('controls.changed', [ e.data ]);
+        })
 
         // Bind buttons
         $('button[data-command]', this.$element).on('click', function () {

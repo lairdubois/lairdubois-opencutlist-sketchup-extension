@@ -1298,7 +1298,7 @@
             var layoutOptions = response.preset;
 
             var $modal = that.appendModalInside('ladb_cutlist_modal_layout', 'tabs/cutlist/_modal-layout.twig', {
-                group: context && context.groups.length === 1 ? context.groups[0] : null,
+                group: context && context.groups.length === 1 && context.groups[0].material_type !== 0 /* TYPE_UNKNOW */ ? context.groups[0] : null,
                 isGroupSelection: context ? context.isGroupSelection : false,
                 isPartSelection: context ? context.isPartSelection : false,
                 tab: forceDefaultTab || that.lastLayoutOptionsTab == null ? 'general' : that.lastLayoutOptionsTab
@@ -1398,7 +1398,7 @@
                         isEntitySelection: that.isEntitySelection,
                         lengthUnit: that.lengthUnit,
                         generatedAt: new Date().getTime() / 1000,
-                        group: context && context.groups.length === 1 ? context.groups[0] : null,
+                        group: context && context.groups.length === 1 && context.groups[0].material_type !== 0 /* TYPE_UNKNOW */ ? context.groups[0] : null,
                     }, function () {
 
                         // Bind viewer
@@ -1410,6 +1410,18 @@
                             pinsColored: layoutOptions.pins_colored,
                             pinsLength: layoutOptions.pins_length,
                             pinsDirection: layoutOptions.pins_direction,
+                            controlsTarget: layoutOptions.controls_target,
+                            controlsPosition: layoutOptions.controls_position,
+                            controlsZoom: layoutOptions.controls_zoom,
+                        }).on('controls.changed', function (e, data) {
+
+                            layoutOptions.controls_target = data.controlsTarget;
+                            layoutOptions.controls_position = data.controlsPosition;
+                            layoutOptions.controls_zoom = data.controlsZoom;
+
+                            // Store options
+                            rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_layout_options', values: layoutOptions, section: section });
+
                         });
 
                     });

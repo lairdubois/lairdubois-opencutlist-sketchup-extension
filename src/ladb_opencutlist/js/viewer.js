@@ -77,7 +77,7 @@ const fnInit = function() {
 
     // Create the camera
 
-    camera = new THREE.OrthographicCamera(-1, 1, 1, -1, -0.1, 1000);
+    camera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1000, 1000);
 
     // Create controls
 
@@ -117,7 +117,12 @@ const fnInit = function() {
 const fnAddListeners = function () {
 
     // Controls listeners
-    controls.addEventListener('change', fnRender);
+    controls.addEventListener('change', function () {
+        fnRender();
+    });
+    controls.addEventListener('end', function () {
+        fnDispatchControlsChanged();
+    });
 
     // Window listeners
     window.onresize = function () {
@@ -138,7 +143,10 @@ const fnAddListeners = function () {
                         call.params.pinsHidden,
                         call.params.pinsLength,
                         call.params.pinsDirection,
-                        call.params.pinsColored
+                        call.params.pinsColored,
+                        call.params.controlsTarget,
+                        call.params.controlsPosition,
+                        call.params.controlsZoom
                     );
                     if (call.params.showBoxHelper) {
                         fnSetBoxHelperVisible(true);
@@ -169,6 +177,16 @@ const fnAddListeners = function () {
 
 }
 
+const fnDispatchControlsChanged = function () {
+    window.frameElement.dispatchEvent(new MessageEvent('controls.changed', {
+        data: {
+            controlsTarget: controls.target.toArray([]),
+            controlsPosition: camera.position.toArray([]),
+            controlsZoom: camera.zoom
+        }
+    }));
+}
+
 const fnUpdateViewportSize = function () {
 
     camera.left = window.innerWidth / -2;
@@ -192,6 +210,7 @@ const fnAnimate = function () {
     controls.update();
     fnRender();
 }
+
 const fnStartAnimate = function () {
     if (!animating) {
         fnAnimate();
@@ -330,6 +349,8 @@ const fnCreatePins = function (group, pinsLength, pinsDirection, pinsColored) {
 
 const fnSetView = function (view) {
 
+    controls.target0.copy(modelCenter);
+
     switch (view) {
 
         case 'isometric':
@@ -388,7 +409,8 @@ const fnSetView = function (view) {
 
     controls.reset();
 
-    fnSetAutoRotateEnable(false)
+    fnDispatchControlsChanged();
+    fnSetAutoRotateEnable(false);
 
 }
 
@@ -426,7 +448,7 @@ const fnSetAutoRotateEnable = function (enable) {
     }
 }
 
-const fnSetupModel = function(modelDef, partsColored, pinsHidden, pinsLength, pinsDirection, pinsColored) {
+const fnSetupModel = function(modelDef, partsColored, pinsHidden, pinsLength, pinsDirection, pinsColored, controlsTarget, controlsPosition, controlsZoom) {
 
     model = fnAddObjectDef(modelDef, scene, defaultMeshMaterial, partsColored);
     if (model) {
@@ -445,11 +467,23 @@ const fnSetupModel = function(modelDef, partsColored, pinsHidden, pinsLength, pi
 
         }
 
-        // Center controle on model
-        controls.target0.copy(modelCenter);
+        if (controlsTarget && controlsPosition && controlsZoom) {
 
-        // Start with isometric view
-        fnSetView('isometric');
+            // Restore given taget, position and zoom
+            controls.target0 = new THREE.Vector3().fromArray(controlsTarget);
+            controls.position0.fromArray(controlsPosition);
+            controls.zoom0 = controlsZoom;
+            controls.reset();
+
+        } else {
+
+            // Center controls on model
+            controls.target0.copy(modelCenter);
+
+            // Start with isometric view
+            fnSetView('isometric');
+
+        }
 
         // Create box helper
         boxHelper = new THREE.BoxHelper(model, 0x0000ff);
