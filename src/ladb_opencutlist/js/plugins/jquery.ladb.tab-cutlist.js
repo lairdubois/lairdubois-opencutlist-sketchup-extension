@@ -1261,7 +1261,7 @@
     LadbTabCutlist.prototype.highlightParts = function (partIds, context) { // partIds ignored if groupId is defined
         var that = this;
 
-        var groupId = context && context.groups.length === 1 ? context.groups[0].id : null;
+        var groupId = context && context.targetGroup ? context.targetGroup.id : null;
 
         rubyCallCommand('cutlist_highlight_parts', { minimize_on_highlight: this.generateOptions.minimize_on_highlight, group_id: groupId, part_ids: partIds }, function (response) {
 
@@ -1290,7 +1290,7 @@
     LadbTabCutlist.prototype.layoutParts = function (partIds, context, forceDefaultTab) {
         var that = this;
 
-        var section = context && context.groups && context.groups.length === 1 ? context.groups[0].id : null;
+        var section = context && context.targetGroup ? context.targetGroup.id : null;
 
         // Retrieve label options
         rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_layout_options', section: section }, function (response) {
@@ -1298,7 +1298,7 @@
             var layoutOptions = response.preset;
 
             var $modal = that.appendModalInside('ladb_cutlist_modal_layout', 'tabs/cutlist/_modal-layout.twig', {
-                group: context && context.groups.length === 1 && context.groups[0].material_type !== 0 /* TYPE_UNKNOW */ ? context.groups[0] : null,
+                group: context.targetGroup,
                 isGroupSelection: context ? context.isGroupSelection : false,
                 isPartSelection: context ? context.isPartSelection : false,
                 tab: forceDefaultTab || that.lastLayoutOptionsTab == null ? 'general' : that.lastLayoutOptionsTab
@@ -1398,7 +1398,7 @@
                         isEntitySelection: that.isEntitySelection,
                         lengthUnit: that.lengthUnit,
                         generatedAt: new Date().getTime() / 1000,
-                        group: context && context.groups.length === 1 && context.groups[0].material_type !== 0 /* TYPE_UNKNOW */ ? context.groups[0] : null,
+                        group: context.targetGroup,
                     }, function () {
 
                         // Bind viewer
@@ -1470,7 +1470,7 @@
         var that = this;
 
         let partIds = [];
-        let groups = [];
+        let targetGroup = null;
         let isGroupSelection = false;
         let isPartSelection = false;
 
@@ -1491,14 +1491,13 @@
             for (let part of group.parts) {
                 partIds.push(part.id);
             }
-            groups.push(group);
 
         };
 
         if (groupId) {
 
-            let group = this.findGroupById(groupId);
-            if (group && !fnIsGroupExcluded(group)) {
+            targetGroup = this.findGroupById(groupId);
+            if (targetGroup && !fnIsGroupExcluded(targetGroup)) {
 
                 if (this.selectionGroupId === groupId && this.selectionPartIds.length > 0) {
 
@@ -1506,12 +1505,11 @@
 
                     // Take only selected parts
                     partIds = this.selectionPartIds;
-                    groups.push(group);
 
                 } else {
 
                     // Take all part from the group
-                    fnGrabFromGroup(group);
+                    fnGrabFromGroup(targetGroup);
 
                 }
 
@@ -1529,7 +1527,7 @@
         return {
             partIds: partIds,
             context: {
-                groups: groups,
+                targetGroup: targetGroup,
                 isGroupSelection: isGroupSelection,
                 isPartSelection: isPartSelection,
             }

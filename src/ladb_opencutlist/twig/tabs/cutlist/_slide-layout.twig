@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block headerHeadingInner %}
-    {{ 'tab.cutlist.layout.title'|i18next}}{% if group %} <small>| {{ group.material_name|escape('html') }} / <strong>{{ group.std_dimension}}</strong></small>{% endif %}
+    {{ 'tab.cutlist.layout.title'|i18next}}{% if group and group.material_type != 0 %} {# 0 = TYPE_UNKNOW #} <small>| {{ group.material_name|escape('html') }} / <strong>{{ group.std_dimension}}</strong></small>{% endif %}
 {% endblock %}
 
 {% block headerToolsInner %}
