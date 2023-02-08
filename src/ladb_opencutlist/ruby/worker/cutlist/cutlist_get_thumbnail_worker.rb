@@ -28,7 +28,7 @@ module Ladb::OpenCutList
       definition = definitions[@definition_id]
       if definition
 
-        if Sketchup.version_number >= 18000000
+        if Sketchup.version_number >= 1800000000
 
           # Convert part drawing to ThreeJS
 

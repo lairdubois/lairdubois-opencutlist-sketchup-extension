@@ -31,7 +31,6 @@ module Ladb::OpenCutList
 
       {
         :errors => [],
-        :warnings => [],
         :three_model_def => three_model_def.to_hash
       }
     end
