@@ -155,7 +155,7 @@ core:
       remove: Oublier cette couleur
     textinput_code:
       help: Tappez **@** pour ouvrir la liste des variables de donnée.
-    viewer_part:
+    three_viewer:
       isometric_view: Vue isométrique
       top_view: Vue dessus
       bottom_view: Vue dessous
@@ -165,7 +165,7 @@ core:
       right_view: Vue droite
       toggle_box_helper: Afficher ou masquer la boîte capable
       toggle_axes_helper: Afficher ou masquer les axes de la pièce
-      toggle_auto_rotate: Active ou désactive la rotation automatique
+      toggle_auto_rotate: Allons danser !
   docs:
     error:
       failed_to_load: |
@@ -863,6 +863,11 @@ tab:
       option_pins_direction_2: Le long de l'axe Vert
       option_pins_direction_3: Le long de l'axe Bleu
       option_pins_direction_help: Permet de choisir la direction des épingles
+      error:
+        no_part: Il y a aucune pièce à dessiner.
+      warning:
+        is_group_selection: Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas dessinées.
+        is_part_selection: Ce dessin d'ensemble se limite aux **pièces sélectionnées**.
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_entities: Votre modèle est vide. Il va falloir m'en donner un peu plus ;)

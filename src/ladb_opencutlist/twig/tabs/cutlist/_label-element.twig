@@ -101,7 +101,7 @@
     {% elseif terms[0] == 'length_unit' %}
         {% set value = lengthUnit ? ('default.unit_'~lengthUnit)|i18next : '' %}
     {% elseif terms[0] == 'generated_at' %}
-        {% set value = generatedAt|date(('default.date_format'|i18next())) %}
+        {% set value = generatedAt|date(('default.date_format'|i18next)) %}
     {% endif %}
     {% if value|trim is empty and noEmptyValue|default(false) %}
         {% set value = '['~('tab.cutlist.labels.formula.'~(elementDef.formula|replace({ '.':'_' })))|i18next~']' %}

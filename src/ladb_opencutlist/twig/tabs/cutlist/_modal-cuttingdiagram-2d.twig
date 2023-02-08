@@ -1,7 +1,7 @@
 ﻿{% extends 'core/_modal.twig' %}
 
 {% set id = 'ladb_cutlist_modal_cuttingdiagram_2d' %}
-{% set title = ('tab.cutlist.cuttingdiagram.title'|i18next())~'<small class="ladb-horizontal-left-separator">'~group.material_name|escape('html')~' / '~group.std_dimension~'</small>' %}
+{% set title = ('tab.cutlist.cuttingdiagram.title'|i18next)~'<small class="ladb-horizontal-left-separator">'~group.material_name|escape('html')~' / '~group.std_dimension~'</small>' %}
 {% set sheetStrippedname = group.material_type == 6 ? 'veneer' : 'good' %}  {# 6 = TYPE_VENEER #}
 
 {% block headerInner %}

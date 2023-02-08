@@ -1,9 +1,9 @@
-<div class="ladb-three-viewer">
+<div class="ladb-three-viewer{% if viewerClasses is defined %} {{ viewerClasses }}{% endif %}">
     <div class="ladb-three-viewer-ui-left no-print">
         {% block uiLeft %}
-            <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:'isometric' }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.viewer_part.isometric_view'|i18next }}"><i class="ladb-opencutlist-icon-isometric"></i></button>
-            <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:'top' }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.viewer_part.top_view'|i18next }}"><i class="ladb-opencutlist-icon-veneer-10"></i></button>
-            <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:'bottom' }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.viewer_part.bottom_view'|i18next }}"><i class="ladb-opencutlist-icon-veneer-01"></i></button>
+            <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:'isometric' }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.isometric_view'|i18next }}"><i class="ladb-opencutlist-icon-isometric"></i></button>
+            <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:'top' }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.top_view'|i18next }}"><i class="ladb-opencutlist-icon-veneer-10"></i></button>
+            <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:'bottom' }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.bottom_view'|i18next }}"><i class="ladb-opencutlist-icon-veneer-01"></i></button>
         {% endblock %}
     </div>
     <div class="ladb-three-viewer-viewport">
@@ -11,9 +11,9 @@
     </div>
     <div class="ladb-three-viewer-ui-right no-print">
         {% block uiRight %}
-            <button class="btn btn-default btn-sm" data-command="set_box_helper_visible" data-params="{{ { visible:null }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="left" title="{{ 'core.component.viewer_part.toggle_box_helper'|i18next }}"><i class="ladb-opencutlist-icon-plan"></i></button>
-            <button class="btn btn-default btn-sm" data-command="set_axes_helper_visible" data-params="{{ { visible:null }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="left" title="{{ 'core.component.viewer_part.toggle_axes_helper'|i18next }}"><i class="ladb-opencutlist-icon-axes"></i></button>
-            <button class="btn btn-default btn-sm" data-command="set_auto_rotate_enable" data-params="{{ { enable:null }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="left" title="{{ 'core.component.viewer_part.toggle_auto_rotate'|i18next }}"><i class="ladb-opencutlist-icon-auto-rotate"></i></button>
+            <button class="btn btn-default btn-sm" data-command="set_box_helper_visible" data-params="{{ { visible:null }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="left" title="{{ 'core.component.three_viewer.toggle_box_helper'|i18next }}"><i class="ladb-opencutlist-icon-plan"></i></button>
+            <button class="btn btn-default btn-sm" data-command="set_axes_helper_visible" data-params="{{ { visible:null }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="left" title="{{ 'core.component.three_viewer.toggle_axes_helper'|i18next }}"><i class="ladb-opencutlist-icon-axes"></i></button>
+            <button class="btn btn-default btn-sm" data-command="set_auto_rotate_enable" data-params="{{ { enable:null }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="left" title="{{ 'core.component.three_viewer.toggle_auto_rotate'|i18next }}"><i class="ladb-opencutlist-icon-auto-rotate"></i></button>
         {% endblock %}
     </div>
 </div>

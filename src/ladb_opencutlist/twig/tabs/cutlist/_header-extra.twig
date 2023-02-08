@@ -3,7 +3,7 @@
         {% block inner %}{{ parent() }}{% if pageName %} - <em>{{ pageName|escape('html') }}</em>{% endif %}{% if isEntitySelection %} <span style="font-weight: normal; color: #003eff;" data-toggle="tooltip" data-placement="right" title="{{ 'tab.cutlist.warning.is_entity_selection'|i18next }}">({{ 'tab.cutlist.is_selection'|i18next }})</span>{% endif %}{% include 'core/_length-unit-extra.twig' %}{% endblock %}
     {% endembed %}
 </ul>
-<div class="ladb-time-and-unit no-screen">{{ generateAt|date(('default.date_format'|i18next())) }}{% if lengthUnit is not null %}<span class="ladb-horizontal-left-separator">{{ ('default.unit_'~lengthUnit)|i18next }}</span>{% endif %}</div>
+<div class="ladb-time-and-unit no-screen">{{ generateAt|date(('default.date_format'|i18next)) }}{% if lengthUnit is not null %}<span class="ladb-horizontal-left-separator">{{ ('default.unit_'~lengthUnit)|i18next }}</span>{% endif %}</div>
 <div class="ladb-file-infos no-screen">
     <div class="ladb-file-infos-name">{{ modelName ? modelName|escape('html') : (filename ? filename|escape('html') : 'default.empty_filename'|i18next) }}{% if pageName %} - <em>{{ pageName }}</em>{% endif %}</div>
     {% if modelDescription %}

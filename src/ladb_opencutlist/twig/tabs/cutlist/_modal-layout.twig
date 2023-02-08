@@ -1,7 +1,10 @@
 {% extends 'core/_modal.twig' %}
 
 {% set id = 'ladb_cutlist_modal_layout' %}
-{% set title = 'tab.cutlist.layout.title'|i18next %}
+{% set title = ('tab.cutlist.layout.title'|i18next) %}
+{% if group %}
+    {% set title = title~'<small class="ladb-horizontal-left-separator">'~group.material_name|escape('html')~' / '~group.std_dimension~'</small>' %}
+{% endif %}
 {% set noDefaultClose = true %}
 
 {% block headerInner %}
@@ -15,6 +18,12 @@
 {% block bodyInner %}
     <div class="tab-content">
         <div role="tabpanel" class="tab-pane{% if tab == 'general' %} active{% endif %}" id="tab_layout_options_general">
+            {% if isGroupSelection %}
+                <div class="alert alert-info text-center">{{ 'tab.cutlist.layout.warning.is_group_selection'|i18next }}</div>
+            {% endif %}
+            {% if isPartSelection %}
+                <div class="alert alert-info text-center">{{ 'tab.cutlist.layout.warning.is_part_selection'|i18next }}</div>
+            {% endif %}
             <div class="form form-horizontal" style="margin-top: 15px;">
                 <div class="form-group">
                     <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.layout.option_parts_colored_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
