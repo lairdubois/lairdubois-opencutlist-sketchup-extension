@@ -14,7 +14,10 @@
     };
 
     LadbThreeViewer.DEFAULTS = {
+        autoload: true,
         modelDef: null,
+        frameWidth: null,
+        frameHeight: null,
         partsColored: false,
         pinsHidden: false,
         pinsColored: false,
@@ -32,6 +35,11 @@
             params: params
         }, '*');
     };
+
+    LadbThreeViewer.prototype.loadFrame = function () {
+        console.log('loadFrame');
+        this.$iframe.attr('src', 'viewer.html');
+    }
 
     LadbThreeViewer.prototype.bind = function () {
         var that = this;
@@ -63,8 +71,7 @@
                     );
                 }
 
-            })
-            .attr('src', 'viewer.html');
+            });
 
         this.$iframe.get(0).addEventListener('controls.changed', function (e) {
             that.$element.trigger('controls.changed', [ e.data ]);
@@ -81,8 +88,20 @@
     };
 
     LadbThreeViewer.prototype.init = function () {
+
+        // Setup frame size
+        if (this.options.frameWidth && this.options.frameHeight) {
+            this.$iframe.width(this.options.frameWidth);
+            this.$iframe.height(this.options.frameHeight);
+        }
+
         this.bind();
         this.dialog.setupTooltips(this.$element);
+
+        if (this.options.autoload) {
+            this.loadFrame();
+        }
+
     };
 
     // PLUGIN DEFINITION
@@ -99,7 +118,7 @@
                 if (undefined === options.dialog) {
                     throw 'dialog option is mandatory.';
                 }
-                $this.data('ladb.editorExport', (data = new LadbThreeViewer(this, options, options.dialog)));
+                $this.data('ladb.threeviewer', (data = new LadbThreeViewer(this, options, options.dialog)));
             }
             if (typeof option === 'string') {
                 value = data[option].apply(data, Array.isArray(params) ? params : [ params ])

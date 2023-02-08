@@ -4,7 +4,13 @@
     "controls_position": 2, /* PRESETS_STORAGE_MODEL_ONLY */
     "controls_zoom": 2 /* PRESETS_STORAGE_MODEL_ONLY */
   },
+  "_preprocessors": {
+    "page_width": 1, /* PRESETS_PREPROCESSOR_D */
+    "page_height": 1 /* PRESETS_PREPROCESSOR_D */
+  },
   "0": {
+    "page_width": { "metric": "190mm", "imperial": "8.5\"" },
+    "page_height": { "metric": "230mm", "imperial": "11\"" },
     "parts_colored": false,
     "pins_hidden": false,
     "pins_colored": false,

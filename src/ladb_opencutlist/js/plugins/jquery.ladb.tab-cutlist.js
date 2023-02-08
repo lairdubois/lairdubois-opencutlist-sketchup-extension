@@ -1307,6 +1307,8 @@
             // Fetch UI elements
             var $tabs = $('a[data-toggle="tab"]', $modal);
             var $widgetPreset = $('.ladb-widget-preset', $modal);
+            var $inputPageWidth = $('#ladb_input_page_width', $modal);
+            var $inputPageHeight = $('#ladb_input_page_height', $modal);
             var $selectPartsColored = $('#ladb_select_parts_colored', $modal);
             var $selectPinsHidden = $('#ladb_select_pins_hidden', $modal);
             var $selectPinsColored = $('#ladb_select_pins_colored', $modal);
@@ -1329,7 +1331,18 @@
                     }
                 }
             }
+            var fnConvertPageSettings = function(pageWidth, pageHeight, callback) {
+                rubyCallCommand('core_length_to_float', {
+                    page_width: pageWidth,
+                    page_height: pageHeight
+                }, function (response) {
+                    callback(response.page_width, response.page_height);
+                });
+            }
             var fnFetchOptions = function (options) {
+                options.page_width = $inputPageWidth.val();
+                options.page_height = $inputPageHeight.val();
+                options.parts_colored = $selectPartsColored.val() === '1';
                 options.parts_colored = $selectPartsColored.val() === '1';
                 options.pins_hidden = $selectPinsHidden.val() === '1';
                 options.pins_colored = $selectPinsColored.val() === '1';
@@ -1338,6 +1351,8 @@
                 options.pins_direction = parseInt($selectPinsDirection.val());
             }
             var fnFillInputs = function (options) {
+                $inputPageWidth.val(options.page_width);
+                $inputPageHeight.val(options.page_height);
                 $selectPartsColored.selectpicker('val', options.parts_colored ? '1' : '0');
                 $selectPinsHidden.selectpicker('val', options.pins_hidden ? '1' : '0');
                 $selectPinsColored.selectpicker('val', options.pins_colored ? '1' : '0');
@@ -1353,6 +1368,8 @@
                 fnFetchOptions: fnFetchOptions,
                 fnFillInputs: fnFillInputs
             });
+            $inputPageWidth.ladbTextinputDimension();
+            $inputPageHeight.ladbTextinputDimension();
             $selectPartsColored.selectpicker(SELECT_PICKER_OPTIONS);
             $selectPinsHidden.selectpicker(SELECT_PICKER_OPTIONS);
             $selectPinsColored.selectpicker(SELECT_PICKER_OPTIONS);
@@ -1384,27 +1401,63 @@
                 // Store options
                 rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_layout_options', values: layoutOptions, section: section });
 
-                // Generate layout
-                rubyCallCommand('cutlist_layout_parts', { part_ids: partIds, pins_use_names: layoutOptions.pins_use_names }, function (response) {
+                fnConvertPageSettings(layoutOptions.page_width, layoutOptions.page_height, function (pageWidth, pageHeight) {
 
-                    var $slide = that.pushNewSlide('ladb_cutlist_slide_layout', 'tabs/cutlist/_slide-layout.twig', {
-                        errors: response.errors,
-                        warnings: response.warnings,
-                        filename: that.filename,
-                        modelName: that.modelName,
-                        modelDescription: that.modelDescription,
-                        pageName: that.pageName,
-                        pageDescription: that.pageDescription,
-                        isEntitySelection: that.isEntitySelection,
-                        lengthUnit: that.lengthUnit,
-                        generatedAt: new Date().getTime() / 1000,
-                        group: context.targetGroup,
-                    }, function () {
+                    var frameWidth = pageWidth + 'in';
+                    var frameHeight = pageHeight + 'in';
+
+                    // Generate layout
+                    rubyCallCommand('cutlist_layout_parts', {
+                        part_ids: partIds,
+                        pins_use_names: layoutOptions.pins_use_names
+                    }, function (response) {
+
+                        var $slide = that.pushNewSlide('ladb_cutlist_slide_layout', 'tabs/cutlist/_slide-layout.twig', {
+                            errors: response.errors,
+                            filename: that.filename,
+                            modelName: that.modelName,
+                            modelDescription: that.modelDescription,
+                            pageName: that.pageName,
+                            pageDescription: that.pageDescription,
+                            isEntitySelection: that.isEntitySelection,
+                            lengthUnit: that.lengthUnit,
+                            generatedAt: new Date().getTime() / 1000,
+                            group: context.targetGroup,
+                        }, function () {
+
+                            // Load frame when slide animation completed
+                            $viewer.ladbThreeViewer('loadFrame');
+
+                        });
+
+                        // Fetch UI elements
+                        var $btnLayout = $('#ladb_btn_layout', $slide);
+                        var $btnPrint = $('#ladb_btn_print', $slide);
+                        var $btnClose = $('#ladb_btn_close', $slide);
+                        var $viewer = $('.ladb-three-viewer', $slide);
+
+                        // Bind buttons
+                        $btnLayout.on('click', function () {
+                            that.layoutParts(partIds, context);
+                        });
+                        $btnPrint.on('click', function () {
+                            that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.layout.title'));
+                        });
+                        $btnClose.on('click', function () {
+                            that.popSlide();
+                        });
+                        $('.ladb-btn-setup-model-units', $slide).on('click', function () {
+                            $(this).blur();
+                            that.dialog.executeCommandOnTab('settings', 'highlight_panel', {panel: 'model'});
+                        });
 
                         // Bind viewer
                         $viewer.ladbThreeViewer({
+                            autoload: false,
                             dialog: that.dialog,
                             modelDef: response.three_model_def,
+                            frameWidth: frameWidth,
+                            frameHeight: frameHeight,
                             partsColored: layoutOptions.parts_colored,
                             pinsHidden: layoutOptions.pins_hidden,
                             pinsColored: layoutOptions.pins_colored,
@@ -1420,37 +1473,20 @@
                             layoutOptions.controls_zoom = data.controlsZoom;
 
                             // Store options
-                            rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_layout_options', values: layoutOptions, section: section });
+                            rubyCallCommand('core_set_model_preset', {
+                                dictionary: 'cutlist_layout_options',
+                                values: layoutOptions,
+                                section: section
+                            });
 
                         });
 
                     });
 
-                    // Fetch UI elements
-                    var $btnLayout = $('#ladb_btn_layout', $slide);
-                    var $btnPrint = $('#ladb_btn_print', $slide);
-                    var $btnClose = $('#ladb_btn_close', $slide);
-                    var $viewer = $('.ladb-three-viewer', $slide);
-
-                    // Bind buttons
-                    $btnLayout.on('click', function () {
-                        that.layoutParts(partIds, context);
-                    });
-                    $btnPrint.on('click', function () {
-                        that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.layout.title'));
-                    });
-                    $btnClose.on('click', function () {
-                        that.popSlide();
-                    });
-                    $('.ladb-btn-setup-model-units', $slide).on('click', function() {
-                        $(this).blur();
-                        that.dialog.executeCommandOnTab('settings', 'highlight_panel', { panel:'model' });
-                    });
+                    // Hide modal
+                    $modal.modal('hide');
 
                 });
-
-                // Hide modal
-                $modal.modal('hide');
 
             });
 
