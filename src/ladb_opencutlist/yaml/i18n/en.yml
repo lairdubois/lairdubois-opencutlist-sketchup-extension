@@ -155,6 +155,17 @@ core:
       remove: Remove color
     textinput_code:
       help: Type **@** to get a list of variables.
+    three_viewer:
+      isometric_view: Isometric
+      top_view: Top
+      bottom_view: Bottom
+      front_view: Front
+      back_view: Back
+      left_view: Left
+      right_view: Right
+      toggle_box_helper: Bounding Box
+      toggle_axes_helper: Part Axes
+      toggle_auto_rotate: Animate!
   docs:
     error:
       failed_to_load: |
@@ -174,6 +185,7 @@ tab:
     not_available_std_section: Cross section undefined
     highlight_part: Highlight part in the model
     highlight_parts: Highlight parts in the model
+    layout_parts: Overview
     edit_part_properties: Edit Part Properties
     edit_part_axes_properties: Edit Axes Properties of Part
     edit_part_size_increase_properties: Edit the properties (oversizes) of the part
@@ -212,6 +224,7 @@ tab:
       rounded_std_footer: Adjust the precision in the *Model Info* or check the dimensions of the parts in this group.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
+      layout_parts: $t(tab.cutlist.layout_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_parts_properties: Edit properties of a group of parts
       edit_material: $t(tab.cutlist.menu.edit_material)
@@ -275,6 +288,7 @@ tab:
       numbers_save: Save the part numbers
       numbers_reset: Reinitialize the part numbers
       highlight_parts: $t(tab.cutlist.highlight_parts)
+      layout_parts: Print overview drawing
       group_numbers_save: Save the part numbers of this group
       group_numbers_reset: Reinitialize the part numbers of this group
       group_cuttingdiagram: Cutting Diagram
@@ -374,6 +388,7 @@ tab:
       veneer_disabled_help: This surface is not configurable because no material-carrying face has been detected on this edge of the part in the model.
       multiple_values: Multiple values
       export_to_skp: Export (.skp)
+      loading_preview: Loading Preview
     export_to_skp:
       title: Export to .skp file
     option:
@@ -817,6 +832,52 @@ tab:
       warning:
         is_part_selection: These labels are limited to the **selected parts**.
         formula_not_available: Formula is not available in this context
+    layout:
+      title: Overview Drawing
+      options_layout: Composition
+      options_settings: Configuration
+      option_parts: Parts
+      option_parts_colored: Part Color
+      option_parts_colored_0: Without color
+      option_parts_colored_1: Color of the material
+      option_parts_colored_help: Select the appearance of the parts
+      option_pins: Labels
+      option_pins_hidden: Display
+      option_pins_hidden_0: With labels
+      option_pins_hidden_1: Without labels
+      option_pins_hidden_help: Display or hide the part labels
+      option_pins_colored: Label Tail Color
+      option_pins_colored_0: Without color
+      option_pins_colored_1: Color of the part
+      option_pins_colored_help: Select the color of the label tails
+      option_pins_use_names: Label Text
+      option_pins_use_names_0: Number of the part
+      option_pins_use_names_1: Name of the part
+      option_pins_use_names_help: Select the text displayed by the labels
+      option_pins_length: Tail Length
+      option_pins_length_0: None
+      option_pins_length_1: Small
+      option_pins_length_2: Medium
+      option_pins_length_3: Large
+      option_pins_length_help: Select the length of the label tails
+      option_pins_direction: Direction of the labels
+      option_pins_direction_0: Along the Red axis
+      option_pins_direction_1: Along the Green axis
+      option_pins_direction_2: Along the Blue axis
+      option_pins_direction_3: Pointing towards the center of the parent group
+      option_pins_direction_4: Pointing towards the center of the selection
+      option_pins_direction_help: Select the direction of the labels
+      option_page_format: Format
+      option_page_format_portrait: Portrait
+      option_page_format_landscape: Landscape
+      option_page_format_custom: Custom
+      option_page_width: Page Width
+      option_page_height: Page Height
+      error:
+        no_part: There is no part to draw.
+      warning:
+        is_group_selection: The parts inside of **masked groups** of your parts list will not be drawn.
+        is_part_selection: This overview drawing is limited to the **selected parts**.
     error:
       no_model: No model is open. You will need to give me more information ;)
       no_entities: Your model is empty. You will need to give me more information ;)
