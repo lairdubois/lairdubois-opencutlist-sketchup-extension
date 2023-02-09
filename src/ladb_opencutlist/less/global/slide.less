@@ -68,13 +68,18 @@
     padding: 20px 10px;
   }
 
-  &.ladb-slide-full {
+  &.ladb-slide-fullpage {
     display: flex;
     flex-direction: column;
     overflow: hidden;
 
     .ladb-header {
       flex-grow: 0;
+
+      .ladb-header-extra .ladb-file-infos {
+        margin-bottom: 0;
+      }
+
     }
 
     .ladb-container {
@@ -98,6 +103,12 @@
     right: 0;
     height: auto;
     overflow: hidden;
+
+    &.ladb-slide-fullpage {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+    }
 
     .ladb-container {
       padding: 0;

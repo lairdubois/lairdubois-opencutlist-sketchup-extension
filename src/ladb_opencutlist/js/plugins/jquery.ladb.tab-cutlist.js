@@ -1433,7 +1433,7 @@
 
                     // TODO improve the consideration of margins
                     var frameWidth = (pageWidth - 0.25 /* margin left */ - 0.25 /* margin right */) + 'in';
-                    var frameHeight = (pageHeight - 0.25 /* margin top */ - 0.5 /* margin bottom */ - 1.5 /* title height  */) + 'in';
+                    var frameHeight = (pageHeight - 0.25 /* margin top */ - 0.25 /* margin bottom */ - 1.0 /* estimated title height  */) + 'in';
 
                     // Generate layout
                     rubyCallCommand('cutlist_layout_parts', {
@@ -1471,14 +1471,14 @@
                         });
                         $btnPrint.on('click', function () {
                             $(this).blur();
-                            that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.layout.title'));
+                            that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.layout.title'), '0.25in');
                         });
                         $btnClose.on('click', function () {
                             that.popSlide();
                         });
                         $('.ladb-btn-setup-model-units', $slide).on('click', function () {
                             $(this).blur();
-                            that.dialog.executeCommandOnTab('settings', 'highlight_panel', {panel: 'model'});
+                            that.dialog.executeCommandOnTab('settings', 'highlight_panel', { panel:'model' });
                         });
 
                         // Bind viewer

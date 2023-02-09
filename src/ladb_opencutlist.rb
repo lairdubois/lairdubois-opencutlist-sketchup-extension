@@ -43,6 +43,8 @@ module Ladb
         ex.description = 'Planilha de Produção e Gerador de Diagrama de Corte de chapas e pranchas MLC para marceneiros e carpinteiros. Código aberto, crowdfunded e fácil de usar ;)'
       when 'ru'
         ex.description = 'Плагин расчета карт раскроя для деревообработчиков и не только. Открытый исходный код, краундфандинг и простота использования ;)'
+      when 'uk'
+        ex.description = 'Плагін розрахунку карт розкрою листового та погонного матеріалів для деревообробників і не тільки. Відкритий вихідний код, фінансується користувачами і простий у використанні ;)'
       when 'vi'
         ex.description = 'Danh sách cắt và Trình tạo sơ đồ cắt cho thợ mộc. Mã nguồn mở, được huy động vốn từ cộng đồng và dễ sử dụng;)'
       when 'zz'
