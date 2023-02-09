@@ -17,7 +17,7 @@
 
   &.out {
     left: 100%;
-    right: -100%;
+    right: calc(-100% + @ladb-leftbar-width);
   }
 
   &.animated {
@@ -66,6 +66,22 @@
 
   .ladb-container {
     padding: 20px 10px;
+    position: relative;
+  }
+
+  &.ladb-slide-full {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    .ladb-header {
+      flex-grow: 0;
+    }
+
+    .ladb-container {
+      flex-grow: 1;
+    }
+
   }
 
 }

@@ -1,13 +1,11 @@
 <div class="ladb-three-viewer{% if viewerClasses is defined %} {{ viewerClasses }}{% endif %}">
+    <iframe></iframe>
     <div class="ladb-three-viewer-ui-left no-print">
         {% block uiLeft %}
             <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:'isometric' }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.isometric_view'|i18next }}"><i class="ladb-opencutlist-icon-isometric"></i></button>
             <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:'top' }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.top_view'|i18next }}"><i class="ladb-opencutlist-icon-veneer-10"></i></button>
             <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:'bottom' }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.bottom_view'|i18next }}"><i class="ladb-opencutlist-icon-veneer-01"></i></button>
         {% endblock %}
-    </div>
-    <div class="ladb-three-viewer-viewport">
-        <iframe></iframe>
     </div>
     <div class="ladb-three-viewer-ui-right no-print">
         {% block uiRight %}

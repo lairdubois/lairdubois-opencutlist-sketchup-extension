@@ -1083,6 +1083,7 @@
                             that.reportCutlist();
                         });
                         $btnPrint.on('click', function () {
+                            this.blur();
                             that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.report.title'));
                         });
                         $btnClose.on('click', function () {
@@ -1301,12 +1302,13 @@
                 group: context.targetGroup,
                 isGroupSelection: context ? context.isGroupSelection : false,
                 isPartSelection: context ? context.isPartSelection : false,
-                tab: forceDefaultTab || that.lastLayoutOptionsTab == null ? 'general' : that.lastLayoutOptionsTab
+                tab: forceDefaultTab || that.lastLayoutOptionsTab == null ? 'layout' : that.lastLayoutOptionsTab
             });
 
             // Fetch UI elements
             var $tabs = $('a[data-toggle="tab"]', $modal);
             var $widgetPreset = $('.ladb-widget-preset', $modal);
+            var $selectPageFormat = $('#ladb_select_page_format', $modal);
             var $inputPageWidth = $('#ladb_input_page_width', $modal);
             var $inputPageHeight = $('#ladb_input_page_height', $modal);
             var $selectPartsColored = $('#ladb_select_parts_colored', $modal);
@@ -1319,6 +1321,16 @@
             var $formGroupPinsDirection = $('.ladb-cutlist-layout-form-group-pins-direction', $modal);
             var $btnGenerate = $('#ladb_cutlist_layout_btn_generate', $modal);
 
+            var fnUpdatePageSizeFieldsAvailability = function () {
+                if ($selectPageFormat.selectpicker('val') == null) {
+                    $selectPageFormat.selectpicker('val', '0');
+                    $inputPageWidth.ladbTextinputDimension('enable');
+                    $inputPageHeight.ladbTextinputDimension('enable');
+                } else {
+                    $inputPageWidth.ladbTextinputDimension('disable');
+                    $inputPageHeight.ladbTextinputDimension('disable');
+                }
+            }
             var fnUpdateFieldsVisibility = function () {
                 if ($selectPinsHidden.val() === '1') {
                     $formGroupPins.hide();
@@ -1351,6 +1363,7 @@
                 options.pins_direction = parseInt($selectPinsDirection.val());
             }
             var fnFillInputs = function (options) {
+                $selectPageFormat.selectpicker('val', options.page_width.replace(',', '.') + 'x' + options.page_height.replace(',', '.'));
                 $inputPageWidth.val(options.page_width);
                 $inputPageHeight.val(options.page_height);
                 $selectPartsColored.selectpicker('val', options.parts_colored ? '1' : '0');
@@ -1359,6 +1372,7 @@
                 $selectPinsUseNames.selectpicker('val', options.pins_use_names ? '1' : '0');
                 $selectPinsLength.selectpicker('val', options.pins_length);
                 $selectPinsDirection.selectpicker('val', options.pins_direction);
+                fnUpdatePageSizeFieldsAvailability();
                 fnUpdateFieldsVisibility();
             }
 
@@ -1368,6 +1382,7 @@
                 fnFetchOptions: fnFetchOptions,
                 fnFillInputs: fnFillInputs
             });
+            $selectPageFormat.selectpicker(SELECT_PICKER_OPTIONS);
             $inputPageWidth.ladbTextinputDimension();
             $inputPageHeight.ladbTextinputDimension();
             $selectPartsColored.selectpicker(SELECT_PICKER_OPTIONS);
@@ -1385,6 +1400,19 @@
             });
 
             // Bind select
+            $selectPageFormat.on('change', function () {
+                var format = $(this).val();
+                if (format !== '0') {
+                    $inputPageWidth.ladbTextinputDimension('disable');
+                    $inputPageHeight.ladbTextinputDimension('disable');
+                    var dimensions = format.split('x');
+                    $inputPageWidth.val(dimensions[0]);
+                    $inputPageHeight.val(dimensions[1]);
+                } else {
+                    $inputPageWidth.ladbTextinputDimension('enable');
+                    $inputPageHeight.ladbTextinputDimension('enable');
+                }
+            });
             $selectPinsHidden.on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                 fnUpdateFieldsVisibility();
             });
@@ -1403,8 +1431,9 @@
 
                 fnConvertPageSettings(layoutOptions.page_width, layoutOptions.page_height, function (pageWidth, pageHeight) {
 
-                    var frameWidth = pageWidth + 'in';
-                    var frameHeight = pageHeight + 'in';
+                    // TODO improve the consideration of margins
+                    var frameWidth = (pageWidth - 0.25 /* margin left */ - 0.25 /* margin right */) + 'in';
+                    var frameHeight = (pageHeight - 0.25 /* margin top */ - 0.5 /* margin bottom */ - 1.5 /* title height  */) + 'in';
 
                     // Generate layout
                     rubyCallCommand('cutlist_layout_parts', {
@@ -1441,6 +1470,7 @@
                             that.layoutParts(partIds, context);
                         });
                         $btnPrint.on('click', function () {
+                            $(this).blur();
                             that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.layout.title'));
                         });
                         $btnClose.on('click', function () {
@@ -2848,6 +2878,7 @@
                                             that.cuttingdiagram1dGroup(groupId);
                                         });
                                         $btnPrint.on('click', function () {
+                                            $(this).blur();
                                             that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.cuttingdiagram.title'));
                                         });
                                         $btnExport.on('click', function () {
@@ -3177,6 +3208,7 @@
                                             that.cuttingdiagram2dGroup(groupId);
                                         });
                                         $btnPrint.on('click', function () {
+                                            $(this).blur();
                                             that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.cuttingdiagram.title'));
                                         });
                                         $btnExport.on('click', function () {
@@ -3408,7 +3440,7 @@
                 }
                 return offset;
             }
-            var fnPageSizeVisibility = function () {
+            var fnUpdatePageSizeFieldsAvailability = function () {
                 if ($selectPageFormat.selectpicker('val') == null) {
                     $selectPageFormat.selectpicker('val', '0');
                     $inputPageWidth.ladbTextinputDimension('enable');
@@ -3482,7 +3514,7 @@
                 fnConvertPageSettings(options.page_width, options.page_height, options.margin_top, options.margin_right, options.margin_bottom, options.margin_left, options.spacing_h, options.spacing_v, options.col_count, options.row_count, function (response, colCount, rowCount) {
                     $editorLabelOffset.ladbEditorLabelOffset('updateSizeAndOffset', [ response.page_width, response.page_height, response.margin_top, response.margin_right, response.margin_bottom, response.margin_left, response.spacing_h, response.spacing_v, colCount, rowCount, fnValidOffset(options.offset, colCount, rowCount) ]);
                 });
-                fnPageSizeVisibility();
+                fnUpdatePageSizeFieldsAvailability();
 
                 // Part order sortables
 
@@ -3710,6 +3742,7 @@
                         that.labelsGroup(groupId, binDefs);
                     });
                     $btnPrint.on('click', function () {
+                        $(this).blur();
                         that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.labels.title'), '0');
                     });
                     $btnClose.on('click', function () {
@@ -4095,8 +4128,8 @@
             this.blur();
         });
         this.$btnPrint.on('click', function () {
-            that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.title'));
             this.blur();
+            that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.title'));
         });
         this.$btnExport.on('click', function () {
             that.exportCutlist();

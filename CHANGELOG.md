@@ -6,7 +6,8 @@ in 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 * 5.0.0 (WIP)
 
-  * Added new veneer material type
+  * Added new **Layout** module 
+  * Added new **Veneer material type**
   * Added duplicate material feature that will copy all attributes
   * Added left and right arrow shortcut keys to change current material in smart paint tool
   * Added used and unused proportion display in report summary and details
@@ -43,8 +44,8 @@ in 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 * 4.0.0 (2022-09-21)
 
-  * Added SmartPaint tool
-  * Added cutlist export customization
+  * Added **SmartPaint tool**
+  * Added cutlist **export customization**
   * Added copy to clipboard from Export preview
   * Added cutting diagram 1D progress bar
   * Added cutting diagram 2D progress bar

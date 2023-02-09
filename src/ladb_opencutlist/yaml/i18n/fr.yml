@@ -834,12 +834,15 @@ tab:
         formula_not_available: Non disponible dans ce context
     layout:
       title: Dessin d'ensemble
-      options_general: Générales
+      options_layout: Composition
+      options_settings: Configuration
+      option_parts: Pièces
       option_parts_colored: Couleur des pièces
       option_parts_colored_0: Sans couleur
       option_parts_colored_1: Couleur de leur matière
       option_parts_colored_help: Permet de choisir l'aspect des pièces
-      option_pins_hidden: Epingles
+      option_pins: Epingles
+      option_pins_hidden: Affichage
       option_pins_hidden_0: Avec épingles
       option_pins_hidden_1: Sans épingle
       option_pins_hidden_help: Affiche ou masque les épingles indiquants le numéro des pièces
@@ -863,6 +866,12 @@ tab:
       option_pins_direction_2: Le long de l'axe Vert
       option_pins_direction_3: Le long de l'axe Bleu
       option_pins_direction_help: Permet de choisir la direction des épingles
+      option_page_format: Format
+      option_page_format_portrait: Portrait
+      option_page_format_landscape: Paysage
+      option_page_format_custom: Personnalisé
+      option_page_width: Largeur de page
+      option_page_height: Hauteur de page
       error:
         no_part: Il y a aucune pièce à dessiner.
       warning:
