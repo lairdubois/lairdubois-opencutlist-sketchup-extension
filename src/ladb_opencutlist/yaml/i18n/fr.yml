@@ -861,10 +861,11 @@ tab:
       option_pins_length_3: Grande
       option_pins_length_help: Permet de choisir la longueur des épingles
       option_pins_direction: Direction des épingles
-      option_pins_direction_0: Pointe le centre du modèle
-      option_pins_direction_1: Le long de l'axe Rouge
-      option_pins_direction_2: Le long de l'axe Vert
-      option_pins_direction_3: Le long de l'axe Bleu
+      option_pins_direction_0: Le long de l'axe Rouge
+      option_pins_direction_1: Le long de l'axe Vert
+      option_pins_direction_2: Le long de l'axe Bleu
+      option_pins_direction_3: Pointe le centre du groupe parent
+      option_pins_direction_4: Pointe le centre de la sélection
       option_pins_direction_help: Permet de choisir la direction des épingles
       option_page_format: Format
       option_page_format_portrait: Portrait

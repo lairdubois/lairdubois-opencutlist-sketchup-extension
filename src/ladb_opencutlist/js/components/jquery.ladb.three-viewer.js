@@ -22,7 +22,7 @@
         pinsHidden: false,
         pinsColored: false,
         pinsLength: 1,      // PINS_LENGTH_SHORT
-        pinsDirection: 0,   // PINS_DIRECTION_CENTER
+        pinsDirection: 4,   // PINS_DIRECTION_MODEL_CENTER
         controlsTarget: null,
         controlsPosition: null,
         controlsZoom: null,
@@ -99,7 +99,7 @@
             var fnScaleFrame = function (e) {
 
                 // Auto remove listener
-                if (e && !that.$element.is(":visible")) {
+                if (e && !that.$element.get(0).isConnected) {
                     window.removeEventListener('resize', fnScaleFrame);
                     return;
                 }

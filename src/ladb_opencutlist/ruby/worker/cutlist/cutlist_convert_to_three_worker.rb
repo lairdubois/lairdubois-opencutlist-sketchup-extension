@@ -26,11 +26,11 @@ module Ladb::OpenCutList
 
       three_model_def = ThreeModelDef.new
 
+      group_cache = {}  # key = serialized_path, value = group - Only for all instances
+
       @part.each do |part|
 
         if @all_instances
-
-          group_cache = {}  # key = entityID, value = group
 
           part.def.instance_infos.each { |serialized_path, instance_info|
 
@@ -84,11 +84,12 @@ module Ladb::OpenCutList
       entity = path.pop
 
       # Try to fetch three group def from cache
-      three_group_def = cache[serialized_path]
+      three_group_def = cache.fetch(serialized_path, nil)
       unless three_group_def
 
         # Create a new three group def
         three_group_def = ThreeGroupDef.new
+        three_group_def.name = entity.name
         three_group_def.matrix = _to_three_matrix(entity.transformation)
         three_group_def.color = _to_three_color(entity.material)
 
@@ -187,7 +188,7 @@ module Ladb::OpenCutList
 
     def _dump(three_object_def, level = 1)
       return if three_object_def.is_a?(ThreeMeshDef)
-      puts '+'.rjust(level, '-') + three_object_def.class.to_s + ' ' + three_object_def.name
+      puts '+'.rjust(level, '-') + three_object_def.class.to_s + ' ' + three_object_def.name + ' ' + (three_object_def.is_a?(ThreePartDef) ? three_object_def.pin_text.to_s : '')
       if three_object_def.is_a?(ThreeGroupDef)
         three_object_def.children.each do |child_three_object_def|
           _dump(child_three_object_def, level + 1)

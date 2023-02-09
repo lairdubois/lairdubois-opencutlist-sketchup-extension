@@ -277,7 +277,10 @@ const fnAddObjectDef = function (objectDef, parent, material, partsColored) {
     return null;
 };
 
-const fnCreatePins = function (group, pinsLength, pinsDirection, pinsColored) {
+const fnCreatePins = function (group, pinsLength, pinsDirection, pinsColored, parentCenter) {
+
+    const groupBox = new THREE.Box3().setFromObject(group);
+    const groupCenter = groupBox.getCenter(new THREE.Vector3());
 
     if (group.userData.pinText) {
 
@@ -298,24 +301,24 @@ const fnCreatePins = function (group, pinsLength, pinsDirection, pinsColored) {
                 break;
         }
 
-        const groupBox = new THREE.Box3().setFromObject(group);
-        const groupCenter = groupBox.getCenter(new THREE.Vector3());
-
-        const pinPoint = groupCenter.clone();
+        const pinPosition = groupCenter.clone();
         if (pinsLengthFactor > 0) {
             switch (pinsDirection) {
-                case 1: // PINS_DIRECTION_X
-                    pinPoint.add(new THREE.Vector3(modelRadius * pinsLengthFactor, 0, 0));
+                case 0: // PINS_DIRECTION_X
+                    pinPosition.add(new THREE.Vector3(modelRadius * pinsLengthFactor, 0, 0));
                     break;
-                case 2: // PINS_DIRECTION_Y
-                    pinPoint.add(new THREE.Vector3(0, modelRadius * pinsLengthFactor, 0));
+                case 1: // PINS_DIRECTION_Y
+                    pinPosition.add(new THREE.Vector3(0, modelRadius * pinsLengthFactor, 0));
                     break;
-                case 3: // PINS_DIRECTION_Z
-                    pinPoint.add(new THREE.Vector3(0, 0, modelRadius * pinsLengthFactor));
+                case 2: // PINS_DIRECTION_Z
+                    pinPosition.add(new THREE.Vector3(0, 0, modelRadius * pinsLengthFactor));
+                    break;
+                case 3: // PINS_DIRECTION_PARENT_CENTER
+                    pinPosition.sub(parentCenter).setLength(modelRadius * pinsLengthFactor).add(groupCenter);
                     break;
                 default:
-                case 0: // PINS_DIRECTION_CENTER
-                    pinPoint.sub(modelCenter).setLength(modelRadius * pinsLengthFactor).add(groupCenter);
+                case 4: // PINS_DIRECTION_MODEL_CENTER
+                    pinPosition.sub(modelCenter).setLength(modelRadius * pinsLengthFactor).add(groupCenter);
                     break;
             }
         }
@@ -330,11 +333,11 @@ const fnCreatePins = function (group, pinsLength, pinsDirection, pinsColored) {
         }
 
         const pin = new THREE.CSS2DObject(pinDiv);
-        pin.position.copy(pinPoint);
+        pin.position.copy(pinPosition);
         scene.add(pin);
 
         if (pinsLengthFactor > 0) {
-            const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints([ groupCenter, pinPoint ]), pinLineMaterial);
+            const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints([ groupCenter, pinPosition ]), pinLineMaterial);
             line.renderOrder = 1;
             scene.add(line);
         }
@@ -342,7 +345,9 @@ const fnCreatePins = function (group, pinsLength, pinsDirection, pinsColored) {
     }
 
     for (let object of group.children) {
-        fnCreatePins(object, pinsLength, pinsDirection, pinsColored);
+        if (object.isGroup) {
+            fnCreatePins(object, pinsLength, pinsDirection, pinsColored, groupCenter);
+        }
     }
 
 };
@@ -463,7 +468,7 @@ const fnSetupModel = function(modelDef, partsColored, pinsHidden, pinsLength, pi
         if (!pinsHidden) {
 
             // Create labels
-            fnCreatePins(model, pinsLength, pinsDirection, pinsColored);
+            fnCreatePins(model, pinsLength, pinsDirection, pinsColored, modelCenter);
 
         }
 
