@@ -16,8 +16,6 @@
     LadbThreeViewer.DEFAULTS = {
         autoload: true,
         modelDef: null,
-        frameWidth: null,
-        frameHeight: null,
         partsColored: false,
         pinsHidden: false,
         pinsColored: false,
@@ -87,41 +85,6 @@
     };
 
     LadbThreeViewer.prototype.init = function () {
-        var that = this;
-
-        // Setup frame size
-        if (this.options.frameWidth && this.options.frameHeight) {
-
-            this.$iframe.width(this.options.frameWidth);
-            this.$iframe.height(this.options.frameHeight);
-
-            // Scale frame to fit viewer on window resize
-            var fnScaleFrame = function (e) {
-
-                // Auto remove listener
-                if (e && !that.$element.get(0).isConnected) {
-                    window.removeEventListener('resize', fnScaleFrame);
-                    return;
-                }
-
-                var spaceIW = that.$element.innerWidth();
-                var spaceIH = that.$element.innerHeight();
-                var frameOW = that.$iframe.outerWidth();
-                var frameOH = that.$iframe.outerHeight();
-                var scale = Math.min(
-                    spaceIW / frameOW,
-                    spaceIH / frameOH,
-                    1.0
-                );
-
-                that.$iframe.css('transformOrigin', '0 0');
-                that.$iframe.css('transform', `translate(${(spaceIW - frameOW * scale) / 2}px, ${(spaceIH - frameOH * scale) / 2}px) scale(${scale})`);
-
-            };
-            window.addEventListener('resize', fnScaleFrame);
-            fnScaleFrame();
-
-        }
 
         this.bind();
         this.dialog.setupTooltips(this.$element);

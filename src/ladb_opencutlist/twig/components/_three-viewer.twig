@@ -1,5 +1,7 @@
 <div class="ladb-three-viewer{% if viewerClasses is defined %} {{ viewerClasses }}{% endif %}">
-    <iframe></iframe>
+    {% block iframeOutter %}
+        <iframe{% if iframeClasses is defined %} class="{{ iframeClasses }}"{% endif %}></iframe>
+    {% endblock %}
     <div class="ladb-three-viewer-ui-left no-print">
         {% block uiLeft %}
             <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:'isometric' }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.isometric_view'|i18next }}"><i class="ladb-opencutlist-icon-isometric"></i></button>

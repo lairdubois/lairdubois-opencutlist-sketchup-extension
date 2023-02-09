@@ -24,6 +24,27 @@
     z-index: 2;
   }
 
+  &.ladb-slide-fullpage {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    .ladb-header {
+      flex-grow: 0;
+
+      .ladb-header-extra .ladb-file-infos {
+        margin-bottom: 0;
+      }
+
+    }
+
+    .ladb-container {
+      flex-grow: 1;
+      position: relative;
+    }
+
+  }
+
   .ladb-header {
     background-color: #ededed;
     padding: 0 10px;
@@ -66,27 +87,6 @@
 
   .ladb-container {
     padding: 20px 10px;
-  }
-
-  &.ladb-slide-fullpage {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-
-    .ladb-header {
-      flex-grow: 0;
-
-      .ladb-header-extra .ladb-file-infos {
-        margin-bottom: 0;
-      }
-
-    }
-
-    .ladb-container {
-      flex-grow: 1;
-      position: relative;
-    }
-
   }
 
 }

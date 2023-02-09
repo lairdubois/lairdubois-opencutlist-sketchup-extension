@@ -2,14 +2,7 @@
 
 {% set id = 'ladb_cutlist_slide_layout' %}
 {% set out = true %}
-{% set slideClasses = 'ladb-slide-fullpage' %}
-
-{% block headerInner %}
-    {{ parent() }}
-    <div class="ladb-header-extra">
-        {% include 'tabs/cutlist/_header-extra.twig' with { 'generatedAt':'000' } %}
-    </div>
-{% endblock %}
+{% set slideClasses = 'ladb-slide-fullpage print-no-header' %}
 
 {% block headerHeadingInner %}
     {{ 'tab.cutlist.layout.title'|i18next}}{% if group and group.material_type != 0 %} {# 0 = TYPE_UNKNOW #} <small>| {{ group.material_name|escape('html') }} / <strong>{{ group.std_dimension}}</strong></small>{% endif %}
@@ -24,7 +17,31 @@
 
 {% block containerFluidOuter %}
     {% include 'core/_alert-errors.twig' %}
-    {% embed 'components/_three-viewer.twig' with { 'viewerClasses':'ladb-three-viewer-slide-layout' } %}
+    {% embed 'components/_three-viewer.twig' with { 'viewerClasses':'ladb-three-viewer-slide-layout', 'iframeClasses':'ladb-paper-page-body' } %}
+        {% block iframeOutter %}
+            <div class="ladb-paper-page">
+                <div class="ladb-paper-page-header">
+                    <div class="ladb-header">
+                        <div class="container-fluid">
+                            <h1 class="ladb-heading">{{ block('headerHeadingInner') }}</h1>
+                            <div class="ladb-header-extra">
+                                <div class="ladb-time-and-unit">{{ generateAt|date(('default.date_format'|i18next)) }}</div>
+                                <div class="ladb-file-infos">
+                                    <div class="ladb-file-infos-name">{{ modelName ? modelName|escape('html') : (filename ? filename|escape('html') : 'default.empty_filename'|i18next) }}{% if pageName %} - <em>{{ pageName }}</em>{% endif %}</div>
+                                    {% if modelDescription %}
+                                        <div class="ladb-file-infos-description">{{ modelDescription|escape('html') }}</div>
+                                    {% endif %}
+                                    {% if pageDescription %}
+                                        <div class="ladb-file-infos-description">{{ pageDescription|escape('html') }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{ parent() }}
+            </div>
+        {% endblock %}
         {% block uiLeft %}
             <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:'isometric' }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.isometric_view'|i18next }}"><i class="ladb-opencutlist-icon-isometric"></i></button>
             <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:'top' }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.top_view'|i18next }}"><i class="ladb-opencutlist-icon-arrow-down"></i></button>

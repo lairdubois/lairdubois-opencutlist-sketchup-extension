@@ -1431,10 +1431,6 @@
 
                 fnConvertPageSettings(layoutOptions.page_width, layoutOptions.page_height, function (pageWidth, pageHeight) {
 
-                    // TODO improve the consideration of margins
-                    var frameWidth = (pageWidth - 0.25 /* margin left */ - 0.25 /* margin right */) + 'in';
-                    var frameHeight = (pageHeight - 0.25 /* margin top */ - 0.25 /* margin bottom */ - 1.0 /* estimated title height  */) + 'in';
-
                     // Generate layout
                     rubyCallCommand('cutlist_layout_parts', {
                         part_ids: partIds,
@@ -1471,7 +1467,7 @@
                         });
                         $btnPrint.on('click', function () {
                             $(this).blur();
-                            that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.layout.title'), '0.25in');
+                            that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.layout.title'), '0');
                         });
                         $btnClose.on('click', function () {
                             that.popSlide();
@@ -1486,8 +1482,6 @@
                             autoload: false,
                             dialog: that.dialog,
                             modelDef: response.three_model_def,
-                            frameWidth: frameWidth,
-                            frameHeight: frameHeight,
                             partsColored: layoutOptions.parts_colored,
                             pinsHidden: layoutOptions.pins_hidden,
                             pinsColored: layoutOptions.pins_colored,
@@ -1510,6 +1504,41 @@
                             });
 
                         });
+
+                        var $paperPage = $('.ladb-paper-page', $viewer)
+                        if (pageWidth && pageHeight) {
+
+                            $paperPage.outerWidth(pageWidth + 'in');
+                            $paperPage.outerHeight(pageHeight + 'in');
+                            $paperPage.css('padding', '0.25in');
+
+                            // Scale frame to fit viewer on window resize
+                            var fnScaleFrame = function (e) {
+
+                                // Auto remove listener
+                                if (e && !$viewer.get(0).isConnected) {
+                                    window.removeEventListener('resize', fnScaleFrame);
+                                    return;
+                                }
+
+                                var spaceIW = $viewer.innerWidth();
+                                var spaceIH = $viewer.innerHeight();
+                                var frameOW = $paperPage.outerWidth();
+                                var frameOH = $paperPage.outerHeight();
+                                var scale = Math.min(
+                                    spaceIW / frameOW,
+                                    spaceIH / frameOH,
+                                    1.0
+                                );
+
+                                $paperPage.css('transformOrigin', '0 0');
+                                $paperPage.css('transform', `translate(${(spaceIW - frameOW * scale) / 2}px, ${(spaceIH - frameOH * scale) / 2}px) scale(${scale})`);
+
+                            };
+                            window.addEventListener('resize', fnScaleFrame);
+                            fnScaleFrame();
+
+                        }
 
                     });
 
