@@ -166,6 +166,7 @@ core:
       toggle_box_helper: Afficher ou masquer la boîte capable
       toggle_axes_helper: Afficher ou masquer les axes de la pièce
       toggle_auto_rotate: Allons danser !
+      scale: Echelle
   docs:
     error:
       failed_to_load: |

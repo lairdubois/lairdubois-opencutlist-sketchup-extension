@@ -6,7 +6,7 @@
             {% endembed %}
         </ul>
     {% endif %}
-    <div class="ladb-time-and-unit{% if not printPreview|default(false) %} no-screen{% endif %}">{{ generateAt|date(('default.date_format'|i18next)) }}{% if lengthUnit is not empty %}<span class="ladb-horizontal-left-separator">{{ ('default.unit_'~lengthUnit)|i18next }}</span>{% endif %}</div>
+    <div class="ladb-time-and-unit{% if not printPreview|default(false) %} no-screen{% endif %}">{{ generateAt|date(('default.date_format'|i18next)) }}{% if lengthUnit is not empty %}<span class="ladb-horizontal-left-separator">{{ ('default.unit_'~lengthUnit)|i18next }}</span>{% endif %}{% if timeUnitExtra %}{{ timeUnitExtra }}{% endif %}</div>
     <div class="ladb-file-infos{% if not printPreview|default(false) %} no-screen{% endif %}">
         <div class="ladb-file-infos-name">{{ modelName ? modelName|escape('html') : (filename ? filename|escape('html') : 'default.empty_filename'|i18next) }}{% if pageName %} - <em>{{ pageName }}</em>{% endif %}</div>
         {% if modelDescription %}

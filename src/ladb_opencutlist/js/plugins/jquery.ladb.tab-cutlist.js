@@ -1449,6 +1449,7 @@
                             pageName: that.pageName,
                             pageDescription: that.pageDescription,
                             isEntitySelection: that.isEntitySelection,
+                            lengthUnit: that.lengthUnit,
                             generatedAt: new Date().getTime() / 1000,
                             group: context.targetGroup,
                             pageHeader: layoutOptions.page_header
@@ -1464,6 +1465,7 @@
                         var $btnPrint = $('#ladb_btn_print', $slide);
                         var $btnClose = $('#ladb_btn_close', $slide);
                         var $viewer = $('.ladb-three-viewer', $slide);
+                        var $lblScale = $('.ladb-lbl-scale', $slide);
 
                         // Bind buttons
                         $btnLayout.on('click', function () {
@@ -1506,6 +1508,19 @@
                                 values: layoutOptions,
                                 section: section
                             });
+
+                            var scale;
+                            if (data.controlsZoom > 1) {
+                                let fractionDigits = data.controlsZoom - Math.floor(data.controlsZoom) === 0 ? 0 : 3;
+                                scale = data.controlsZoom.toFixed(fractionDigits) + ':1';
+                            } else if (data.controlsZoom < 1) {
+                                let denominator = 1 / data.controlsZoom;
+                                let fractionDigits = denominator - Math.floor(denominator) === 0 ? 0 : 3;
+                                scale = '1:' + denominator.toFixed(fractionDigits);
+                            } else {
+                                scale = '1:1';
+                            }
+                            $lblScale.html(scale);
 
                         });
 

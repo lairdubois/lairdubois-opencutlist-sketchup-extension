@@ -15,6 +15,8 @@
     <button id="ladb_btn_close" class="btn btn-default"><i class="ladb-opencutlist-icon-close"></i> {{ 'default.close'|i18next }}</button>
 {% endblock %}
 
+{% block pageHeaderTimeUnitExtra %}<span class="ladb-horizontal-left-separator ladb-lbl-scale"></span>{% endblock %}
+
 {% block containerFluidOuter %}
     {% include 'core/_alert-errors.twig' %}
     {% embed 'components/_three-viewer.twig' with { 'viewerClasses':'ladb-three-viewer-slide-layout', 'iframeClasses':'ladb-paper-page-body' } %}
@@ -25,7 +27,7 @@
                         <div class="ladb-header">
                             <div class="container-fluid">
                                 <h1 class="ladb-heading">{{ block('headerHeadingInner') }}</h1>
-                                {% include 'tabs/cutlist/_header-extra.twig' with { 'printPreview':true } %}
+                                {% include 'tabs/cutlist/_header-extra.twig' with { 'printPreview':true, 'timeUnitExtra':block('pageHeaderTimeUnitExtra') } %}
                             </div>
                         </div>
                     </div>
@@ -43,6 +45,14 @@
             </div>
             <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:'bottom' }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.bottom_view'|i18next }}"><i class="ladb-opencutlist-icon-arrow-up"></i></button>
             <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:'back' }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.back_view'|i18next }}"><i class="ladb-opencutlist-icon-view-back"></i></button>
+            <span>&nbsp;</span>
+            <button class="btn btn-default btn-sm" data-command="set_zoom" data-params="{{ { zoom:2 }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.scale'|i18next }} 2:1">2:1</button>
+            <button class="btn btn-default btn-sm" data-command="set_zoom" data-params="{{ { zoom:1 }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.scale'|i18next }} 1:1">1:1</button>
+            <button class="btn btn-default btn-sm" data-command="set_zoom" data-params="{{ { zoom:0.5 }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.scale'|i18next }} 1:2">1:2</button>
+            <button class="btn btn-default btn-sm" data-command="set_zoom" data-params="{{ { zoom:0.2 }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.scale'|i18next }} 1:5">1:5</button>
+            <button class="btn btn-default btn-sm" data-command="set_zoom" data-params="{{ { zoom:0.1 }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.scale'|i18next }} 1:10"><span style="font-size: 9px;">1:10</span></button>
+            <button class="btn btn-default btn-sm" data-command="set_zoom" data-params="{{ { zoom:0.05 }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.scale'|i18next }} 1:20"><span style="font-size: 9px;">1:20</span></button>
+            <button class="btn btn-default btn-sm" data-command="set_zoom" data-params="{{ { zoom:0.02 }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.scale'|i18next }} 1:50"><span style="font-size: 9px;">1:50</span></button>
         {% endblock %}
     {% endembed %}
 {% endblock %}

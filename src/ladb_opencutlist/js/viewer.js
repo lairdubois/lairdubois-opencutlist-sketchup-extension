@@ -1,17 +1,25 @@
 // Declarations
 
+const DPI = 96;
+
 let renderer,
     cssRenderer,
     container,
     scene,
     controls,
+
     defaultMeshMaterial,
     defaultLineMaterial,
+
+    viewportWidth,
+    viewportHeight,
+
     model,
     modelBox,
     modelSize,
     modelCenter,
     modelRadius,
+
     boxHelper,
     axesHelper
 ;
@@ -153,6 +161,10 @@ const fnAddListeners = function () {
                     }
                     break;
 
+                case 'set_zoom':
+                    fnSetZoom(call.params.zoom);
+                    break;
+
                 case 'set_view':
                     fnSetView(call.params.view);
                     break;
@@ -189,10 +201,13 @@ const fnDispatchControlsChanged = function () {
 
 const fnUpdateViewportSize = function () {
 
-    camera.left = window.innerWidth / -2;
-    camera.right = window.innerWidth / 2;
-    camera.top = window.innerHeight / 2;
-    camera.bottom = window.innerHeight / -2;
+    viewportWidth = window.innerWidth / DPI;
+    viewportHeight = window.innerHeight / DPI;
+
+    camera.left = viewportWidth / -2.0;
+    camera.right = viewportWidth / 2.0;
+    camera.top = viewportHeight / 2.0;
+    camera.bottom = viewportHeight / -2.0;
     camera.updateProjectionMatrix();
 
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -352,6 +367,14 @@ const fnCreatePins = function (group, pinsLength, pinsDirection, pinsColored, pa
 
 };
 
+const fnSetZoom = function (zoom) {
+    controls.target0.copy(controls.target);
+    controls.position0.copy(camera.position);
+    controls.zoom0 = zoom;
+    controls.reset();
+    fnDispatchControlsChanged();
+}
+
 const fnSetView = function (view) {
 
     controls.target0.copy(modelCenter);
@@ -364,49 +387,49 @@ const fnSetView = function (view) {
             let height2d = (modelSize.x + modelSize.y) * Math.cos(Math.PI / 3) + modelSize.z;
 
             controls.position0.set(1, -1, 1).multiplyScalar(modelRadius).add(controls.target0);
-            controls.zoom0 = Math.min(window.innerWidth / width2d, window.innerHeight / height2d);
+            controls.zoom0 = Math.min(viewportWidth / width2d, viewportHeight / height2d);
 
             break;
 
         case 'top':
 
             controls.position0.set(0, 0, 1).multiplyScalar(modelRadius).add(controls.target0);
-            controls.zoom0 = Math.min(window.innerWidth / modelSize.x, window.innerHeight / modelSize.y) * 0.8;
+            controls.zoom0 = Math.min(viewportWidth / modelSize.x, viewportHeight / modelSize.y) * 0.8;
 
             break
 
         case 'bottom':
 
             controls.position0.set(0, 0, -1).multiplyScalar(modelRadius).add(controls.target0);
-            controls.zoom0 = Math.min(window.innerWidth / modelSize.x, window.innerHeight / modelSize.y) * 0.8;
+            controls.zoom0 = Math.min(viewportWidth / modelSize.x, viewportHeight / modelSize.y) * 0.8;
 
             break
 
         case 'front':
 
             controls.position0.set(0, -1, 0).multiplyScalar(modelRadius).add(controls.target0);
-            controls.zoom0 = Math.min(window.innerWidth / modelSize.x, window.innerHeight / modelSize.z) * 0.8;
+            controls.zoom0 = Math.min(viewportWidth / modelSize.x, viewportHeight / modelSize.z) * 0.8;
 
             break
 
         case 'back':
 
             controls.position0.set(0, 1, 0).multiplyScalar(modelRadius).add(controls.target0);
-            controls.zoom0 = Math.min(window.innerWidth / modelSize.x, window.innerHeight / modelSize.z) * 0.8;
+            controls.zoom0 = Math.min(viewportWidth / modelSize.x, viewportHeight / modelSize.z) * 0.8;
 
             break
 
         case 'left':
 
             controls.position0.set(-1, 0, 0).multiplyScalar(modelRadius).add(controls.target0);
-            controls.zoom0 = Math.min(window.innerWidth / modelSize.y, window.innerHeight / modelSize.z) * 0.8;
+            controls.zoom0 = Math.min(viewportWidth / modelSize.y, viewportHeight / modelSize.z) * 0.8;
 
             break
 
         case 'right':
 
             controls.position0.set(1, 0, 0).multiplyScalar(modelRadius).add(controls.target0);
-            controls.zoom0 = Math.min(window.innerWidth / modelSize.y, window.innerHeight / modelSize.z) * 0.8;
+            controls.zoom0 = Math.min(viewportWidth / modelSize.y, viewportHeight / modelSize.z) * 0.8;
 
             break
 
@@ -479,6 +502,8 @@ const fnSetupModel = function(modelDef, partsColored, pinsHidden, pinsLength, pi
             controls.position0.fromArray(controlsPosition);
             controls.zoom0 = controlsZoom;
             controls.reset();
+
+            fnDispatchControlsChanged();
 
         } else {
 
