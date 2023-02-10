@@ -83,13 +83,13 @@ const fnInit = function() {
 
     controls = new THREE.OrbitControls(camera, cssRenderer.domElement);
     controls.rotateSpeed = 0.5;
-    controls.zoomSpeed = 2.0;
+    controls.zoomSpeed = 1.5;
     controls.enableRotate = true;
     controls.autoRotateSpeed = 3.0;
     controls.mouseButtons = {
         LEFT: THREE.MOUSE.ROTATE,
         MIDDLE: THREE.MOUSE.ROTATE,
-        RIGHT: null
+        RIGHT: THREE.MOUSE.PAN
     }
 
     // Create default materials

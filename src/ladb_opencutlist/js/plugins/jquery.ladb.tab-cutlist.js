@@ -1521,7 +1521,20 @@
 
                                 // Auto remove listener
                                 if (e && !$viewer.get(0).isConnected) {
-                                    window.removeEventListener('resize', fnScaleFrame);
+
+                                    // Unbind window resize event
+                                    $(window).off('resize', fnScaleFrame);
+
+                                    // Unbind dialog maximized and minimized events
+                                    that.dialog.$element.off('maximized.ladb.dialog', fnScaleFrame);
+
+                                    // Unbind tab shown events
+                                    that.$element.off('shown.ladb.tab', fnScaleFrame);
+
+                                    return;
+                                }
+
+                                if (!$viewer.is(':visible')) {
                                     return;
                                 }
 
@@ -1539,7 +1552,16 @@
                                 $paperPage.css('transform', `translate(${(spaceIW - frameOW * scale) / 2}px, ${(spaceIH - frameOH * scale) / 2}px) scale(${scale})`);
 
                             };
-                            window.addEventListener('resize', fnScaleFrame);
+
+                            // Bind window resize event
+                            $(window).on('resize', fnScaleFrame);
+
+                            // Bind dialog maximized and minimized events
+                            that.dialog.$element.on('maximized.ladb.dialog', fnScaleFrame);
+
+                            // Bind tab shown events
+                            that.$element.on('shown.ladb.tab', fnScaleFrame);
+
                             fnScaleFrame();
 
                         }
