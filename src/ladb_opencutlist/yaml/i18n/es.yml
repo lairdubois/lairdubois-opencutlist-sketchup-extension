@@ -1219,8 +1219,8 @@ tool:
     action_0: Colorear la cara
     action_1: Colorear parte
     action_2: Limpiar cara
-    action_3: Limpiar parte
-    action_4: Tomar
+    action_3: Limpiar pieza
+    action_4: Extraer
     warning:
       no_material: Su modelo no contiene ningún material!
       all_filtered: ¡Los filtros elegidos ocultan todo el material!

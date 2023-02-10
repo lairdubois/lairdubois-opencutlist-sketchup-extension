@@ -166,6 +166,7 @@ core:
       toggle_box_helper: Bounding Box
       toggle_axes_helper: Part Axes
       toggle_auto_rotate: Animate!
+      scale: Scale
   docs:
     error:
       failed_to_load: |
@@ -837,42 +838,48 @@ tab:
       options_layout: Composition
       options_settings: Configuration
       option_parts: Parts
-      option_parts_colored: Part Color
+      option_parts_colored: Color
       option_parts_colored_0: Without color
       option_parts_colored_1: Color of the material
-      option_parts_colored_help: Select the appearance of the parts
+      option_parts_colored_help: Select the appearance of the parts.
       option_pins: Labels
       option_pins_hidden: Display
       option_pins_hidden_0: With labels
       option_pins_hidden_1: Without labels
-      option_pins_hidden_help: Display or hide the part labels
-      option_pins_colored: Label Tail Color
+      option_pins_hidden_help: Display or hide the part labels containing number or designation.
+      option_pins_colored: Color
       option_pins_colored_0: Without color
       option_pins_colored_1: Color of the part
-      option_pins_colored_help: Select the color of the label tails
-      option_pins_use_names: Label Text
+      option_pins_colored_help: Select the color of the label tails.
+      option_pins_use_names: Text
       option_pins_use_names_0: Number of the part
-      option_pins_use_names_1: Name of the part
-      option_pins_use_names_help: Select the text displayed by the labels
-      option_pins_length: Tail Length
+      option_pins_use_names_1: Designation of the part
+      option_pins_use_names_help: Select the text displayed by the labels.
+      option_pins_length: Length
       option_pins_length_0: None
       option_pins_length_1: Small
       option_pins_length_2: Medium
       option_pins_length_3: Large
-      option_pins_length_help: Select the length of the label tails
-      option_pins_direction: Direction of the labels
+      option_pins_length_help: Select the length of the label tails.
+      option_pins_direction: Direction
       option_pins_direction_0: Along the Red axis
       option_pins_direction_1: Along the Green axis
       option_pins_direction_2: Along the Blue axis
       option_pins_direction_3: Pointing towards the center of the parent group
       option_pins_direction_4: Pointing towards the center of the selection
-      option_pins_direction_help: Select the direction of the labels
+      option_pins_direction_help: Select the direction of the labels for better readability.
       option_page_format: Format
       option_page_format_portrait: Portrait
       option_page_format_landscape: Landscape
       option_page_format_custom: Custom
       option_page_width: Page Width
       option_page_height: Page Height
+      option_page_header: Header
+      option_page_header_0: None
+      option_page_header_1: With
+      option_page_header_help: |
+        Choose if the page to be printed contains a header with the name of the document, its description and the date.
+        Without a header, the overall design will take the entire page.
       error:
         no_part: There is no part to draw.
       warning:

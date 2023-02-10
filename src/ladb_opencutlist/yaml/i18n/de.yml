@@ -1118,8 +1118,8 @@ tab:
       Vielen Dank für Ihren Beitrag!
     objective_funded_progress: "zu {{ progress }} % finanziert"
   settings:
-    label: Benutzereinstellungen
-    title: Benutzereinstellungen
+    label: Einstellungen
+    title: Einstellungen
     global_settings: Globale Einstellungen
     language: Sprache
     language_auto: Automatisch
@@ -1205,8 +1205,8 @@ tool:
     status_paint_face: "Klicken Sie, um eine Fläche einzufärben."
     status_paint_part: "Klicken Sie, um ein ganzes Teil einzufärben."
     status_unpaint_face: "Klicken Sie, um eine Fläche zu säubern."
-    status_unpaint_part: Klicken um ein ganzes Teil zu säubern.
-    status_pick: Klicken um eine Probe des Materials zu entnehmen.
+    status_unpaint_part: Klicken Sie um ein ganzes Teil zu säubern.
+    status_pick: Klicken Sie um eine Probe des Materials zu entnehmen.
     filters: Filter
     filter_0: Ohne Typ
     filter_1: $t(tab.materials.type_1)
