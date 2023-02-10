@@ -6,12 +6,13 @@ in 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 * 5.0.0 (WIP)
 
-  * Added new **Layout** module 
+  * Added **Ukrainian** language (thanks to Konstantin and Andrew)
+  * Added new **Layout** module
   * Added new **Veneer material type**
   * Added duplicate material feature that will copy all attributes
-  * Added left and right arrow shortcut keys to change current material in smart paint tool
+  * Added left and right arrow shortcut keys to change current material in Smart Paint tool
   * Added used and unused proportion display in report summary and details
-  * Added hide edges preview option on 2D cutting diagram (default = true) 
+  * Added hide edges preview option on 2D cutting diagram (default = true)
   * Added layers (SketchUp tags) column to part and instance list exports
   * Fixed cutting diagram 2D edge drawing to correspond to counter-clockwise rotation of part's name
   * Fixed missed exported edges std dimensions on folded parts
