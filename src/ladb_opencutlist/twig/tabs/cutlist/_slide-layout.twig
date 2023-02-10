@@ -20,14 +20,16 @@
     {% embed 'components/_three-viewer.twig' with { 'viewerClasses':'ladb-three-viewer-slide-layout', 'iframeClasses':'ladb-paper-page-body' } %}
         {% block iframeOutter %}
             <div class="ladb-paper-page">
-                <div class="ladb-paper-page-header">
-                    <div class="ladb-header">
-                        <div class="container-fluid">
-                            <h1 class="ladb-heading">{{ block('headerHeadingInner') }}</h1>
-                            {% include 'tabs/cutlist/_header-extra.twig' with { 'printPreview':true } %}
+                {% if pageHeader %}
+                    <div class="ladb-paper-page-header">
+                        <div class="ladb-header">
+                            <div class="container-fluid">
+                                <h1 class="ladb-heading">{{ block('headerHeadingInner') }}</h1>
+                                {% include 'tabs/cutlist/_header-extra.twig' with { 'printPreview':true } %}
+                            </div>
                         </div>
                     </div>
-                </div>
+                {% endif %}
                 {{ parent() }}
             </div>
         {% endblock %}

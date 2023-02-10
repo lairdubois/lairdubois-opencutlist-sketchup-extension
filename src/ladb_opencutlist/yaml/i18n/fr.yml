@@ -837,42 +837,48 @@ tab:
       options_layout: Composition
       options_settings: Configuration
       option_parts: Pièces
-      option_parts_colored: Couleur des pièces
+      option_parts_colored: Couleur
       option_parts_colored_0: Sans couleur
       option_parts_colored_1: Couleur de leur matière
-      option_parts_colored_help: Permet de choisir l'aspect des pièces
+      option_parts_colored_help: Permet de choisir l'aspect des pièces.
       option_pins: Epingles
       option_pins_hidden: Affichage
       option_pins_hidden_0: Avec épingles
       option_pins_hidden_1: Sans épingle
-      option_pins_hidden_help: Affiche ou masque les épingles indiquants le numéro des pièces
-      option_pins_colored: Couleur des épingles
+      option_pins_hidden_help: Affiche ou masque les épingles pointant les pièces pièces pour indiquer leur numéro ou désignation.
+      option_pins_colored: Couleur
       option_pins_colored_0: Sans couleur
       option_pins_colored_1: Couleur de la pièce
-      option_pins_colored_help: Permet de choisir la couleur des épingles
-      option_pins_use_names: Texte des épingles
+      option_pins_colored_help: Permet de choisir la couleur des pastilles des épingles.
+      option_pins_use_names: Texte
       option_pins_use_names_0: Numéro de la pièce
-      option_pins_use_names_1: Nom de la pièce
-      option_pins_use_names_help: Permet de choisir le texte affiché dans les épingles
-      option_pins_length: Longueur des épingles
+      option_pins_use_names_1: Désignation de la pièce
+      option_pins_use_names_help: Permet de choisir le texte affiché dans les pastilles des épingles.
+      option_pins_length: Longueur
       option_pins_length_0: Sans flèche
       option_pins_length_1: Petite
       option_pins_length_2: Moyenne
       option_pins_length_3: Grande
-      option_pins_length_help: Permet de choisir la longueur des épingles
-      option_pins_direction: Direction des épingles
+      option_pins_length_help: Permet de choisir la longueur de la flèche des épingles.
+      option_pins_direction: Direction
       option_pins_direction_0: Le long de l'axe Rouge
       option_pins_direction_1: Le long de l'axe Vert
       option_pins_direction_2: Le long de l'axe Bleu
       option_pins_direction_3: Pointe le centre du groupe parent
       option_pins_direction_4: Pointe le centre de la sélection
-      option_pins_direction_help: Permet de choisir la direction des épingles
+      option_pins_direction_help: Permet de choisir la direction des épingles afin d'adapter leur lisibilité en fonction du dessin.
       option_page_format: Format
       option_page_format_portrait: Portrait
       option_page_format_landscape: Paysage
       option_page_format_custom: Personnalisé
-      option_page_width: Largeur de page
-      option_page_height: Hauteur de page
+      option_page_width: Largeur
+      option_page_height: Hauteur
+      option_page_header: Entête
+      option_page_header_0: Sans
+      option_page_header_1: Avec
+      option_page_header_help: |
+        Permet de choisir si la page à imprimée contient un titre avec le nom du document, sa description et la date.
+        Sans entête, le dessin d'ensemble prendra toute la page.
       error:
         no_part: Il y a aucune pièce à dessiner.
       warning:

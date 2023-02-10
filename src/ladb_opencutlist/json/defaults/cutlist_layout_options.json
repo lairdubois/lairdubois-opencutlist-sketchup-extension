@@ -11,6 +11,7 @@
   "0": {
     "page_width": { "metric": "210mm", "imperial": "8.5\"" },
     "page_height": { "metric": "297mm", "imperial": "11\"" },
+    "page_header": true,
     "parts_colored": false,
     "pins_hidden": false,
     "pins_colored": false,

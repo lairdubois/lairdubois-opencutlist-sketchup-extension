@@ -1311,6 +1311,7 @@
             var $selectPageFormat = $('#ladb_select_page_format', $modal);
             var $inputPageWidth = $('#ladb_input_page_width', $modal);
             var $inputPageHeight = $('#ladb_input_page_height', $modal);
+            var $selectPageHeader = $('#ladb_select_page_header', $modal);
             var $selectPartsColored = $('#ladb_select_parts_colored', $modal);
             var $selectPinsHidden = $('#ladb_select_pins_hidden', $modal);
             var $selectPinsColored = $('#ladb_select_pins_colored', $modal);
@@ -1354,6 +1355,7 @@
             var fnFetchOptions = function (options) {
                 options.page_width = $inputPageWidth.val();
                 options.page_height = $inputPageHeight.val();
+                options.page_header = $selectPageHeader.val() === '1';
                 options.parts_colored = $selectPartsColored.val() === '1';
                 options.parts_colored = $selectPartsColored.val() === '1';
                 options.pins_hidden = $selectPinsHidden.val() === '1';
@@ -1366,6 +1368,7 @@
                 $selectPageFormat.selectpicker('val', options.page_width.replace(',', '.') + 'x' + options.page_height.replace(',', '.'));
                 $inputPageWidth.val(options.page_width);
                 $inputPageHeight.val(options.page_height);
+                $selectPageHeader.selectpicker('val', options.page_header ? '1' : '0');
                 $selectPartsColored.selectpicker('val', options.parts_colored ? '1' : '0');
                 $selectPinsHidden.selectpicker('val', options.pins_hidden ? '1' : '0');
                 $selectPinsColored.selectpicker('val', options.pins_colored ? '1' : '0');
@@ -1385,6 +1388,7 @@
             $selectPageFormat.selectpicker(SELECT_PICKER_OPTIONS);
             $inputPageWidth.ladbTextinputDimension();
             $inputPageHeight.ladbTextinputDimension();
+            $selectPageHeader.selectpicker(SELECT_PICKER_OPTIONS);
             $selectPartsColored.selectpicker(SELECT_PICKER_OPTIONS);
             $selectPinsHidden.selectpicker(SELECT_PICKER_OPTIONS);
             $selectPinsColored.selectpicker(SELECT_PICKER_OPTIONS);
@@ -1447,6 +1451,7 @@
                             isEntitySelection: that.isEntitySelection,
                             generatedAt: new Date().getTime() / 1000,
                             group: context.targetGroup,
+                            pageHeader: layoutOptions.page_header
                         }, function () {
 
                             // Load frame when slide animation completed
