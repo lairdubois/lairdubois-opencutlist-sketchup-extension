@@ -24,18 +24,7 @@
                     <div class="ladb-header">
                         <div class="container-fluid">
                             <h1 class="ladb-heading">{{ block('headerHeadingInner') }}</h1>
-                            <div class="ladb-header-extra">
-                                <div class="ladb-time-and-unit">{{ generateAt|date(('default.date_format'|i18next)) }}</div>
-                                <div class="ladb-file-infos">
-                                    <div class="ladb-file-infos-name">{{ modelName ? modelName|escape('html') : (filename ? filename|escape('html') : 'default.empty_filename'|i18next) }}{% if pageName %} - <em>{{ pageName }}</em>{% endif %}</div>
-                                    {% if modelDescription %}
-                                        <div class="ladb-file-infos-description">{{ modelDescription|escape('html') }}</div>
-                                    {% endif %}
-                                    {% if pageDescription %}
-                                        <div class="ladb-file-infos-description">{{ pageDescription|escape('html') }}</div>
-                                    {% endif %}
-                                </div>
-                            </div>
+                            {% include 'tabs/cutlist/_header-extra.twig' with { 'printPreview':true } %}
                         </div>
                     </div>
                 </div>

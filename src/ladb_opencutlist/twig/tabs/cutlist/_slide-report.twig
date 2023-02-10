@@ -37,9 +37,7 @@
 
 {% block headerInner %}
     {{ parent() }}
-    <div class="ladb-header-extra">
-        {% include 'tabs/cutlist/_header-extra.twig' with { 'generatedAt':'000' } %}
-    </div>
+    {% include 'tabs/cutlist/_header-extra.twig' %}
 {% endblock %}
 
 {% block headerHeadingInner %}

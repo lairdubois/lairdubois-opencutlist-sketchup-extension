@@ -47,9 +47,7 @@
 
 {% block headerInner %}
     {{ parent() }}
-    <div class="ladb-header-extra">
-        {% include 'tabs/cutlist/_header-extra.twig' with { 'generatedAt':'000' } %}
-    </div>
+    {% include 'tabs/cutlist/_header-extra.twig' %}
 {% endblock %}
 
 {% block headerHeadingInner %}
@@ -220,7 +218,7 @@
             {% set maxBarLength = max(maxBarLength, bar.slices[0].px_length) %}
         {% endfor %}
         {% for bar in bars %}
-            <table id="ladb_cuttingdiagram_group_{{ bar.type_id }}" data-group-id="{{ group.id }}_{{ bar.type_id }}" data-bar-index="{{ loop.index }}" class="table table-bordered ladb-cutlist-group ladb-cuttingdiagram-group">
+            <table id="ladb_cuttingdiagram_group_{{ bar.type_id }}" data-group-id="{{ group.id }}_{{ bar.type_id }}" data-bar-index="{{ loop.index }}" class="table table-bordered ladb-cutlist-group ladb-cutlist-cuttingdiagram-group">
                 <thead>
                 <tr class="table-heading">
                     <td colspan="{{ colspan }}">

@@ -1,0 +1,37 @@
+//
+// Cutlist Export
+//
+
+.ladb-table-spreadsheet {
+
+  .ladb-table-spreadsheet-cell {
+    white-space: nowrap;
+    user-select: none;
+    cursor: pointer;
+  }
+
+  .ladb-table-spreadsheet-cell-header-col, .ladb-table-spreadsheet-cell-header-row {
+    background-color: #efefef;
+  }
+
+  .ladb-table-spreadsheet-cell-header-col {
+    text-align: center;
+  }
+
+  .ladb-table-spreadsheet-cell-header-row {
+    text-align: right;
+    color: #ccc;
+    font-weight: normal;
+    border-right-width: 2px;
+  }
+
+  .ladb-table-spreadsheet-cell {
+
+    &.ladb-invalid-value {
+      color: @ladb-brand-danger;
+      background-color: lighten(#ff0000, 49%);
+    }
+
+  }
+
+}

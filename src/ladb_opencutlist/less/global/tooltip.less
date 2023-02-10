@@ -1,0 +1,61 @@
+//
+// Tooltip
+//
+
+.tt-header {
+  text-align: left;
+  padding: 3px 0;
+
+  .tt-number {
+    font-size: 120%;
+    background-color: #fff;
+    color: #000;
+    margin-right: 5px;
+    border-radius: 3px;
+    padding: 2px 4px;
+  }
+
+  .tt-name {
+    font-size: 110%;
+  }
+
+}
+
+.tt-data {
+  text-align: left;
+  font-size: 16px;
+}
+
+.tt-section {
+  text-align: left;
+  margin-top: 5px;
+  border-top: 1px solid #fff;
+  padding-top: 5px;
+
+  .tt-section-flex {
+    display: flex;
+  }
+
+  .tt-section-flex-grow-1 {
+    flex-grow: 1;
+  }
+
+  .tt-section-flex-grow-0 {
+    flex-grow: 0;
+  }
+
+  .tt-section-flex-grow-1, .tt-section-flex-grow-0 {
+    margin: 0 5px;
+
+    &:first-child {
+      margin-left: 0;
+    }
+
+    &:last-child {
+      margin-right: 0;
+    }
+
+  }
+
+}
+

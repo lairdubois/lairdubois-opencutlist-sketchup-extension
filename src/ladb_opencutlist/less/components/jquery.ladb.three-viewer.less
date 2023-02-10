@@ -1,5 +1,5 @@
 //
-// Viewer part
+// Three Viewer
 //
 
 .ladb-three-viewer {
@@ -41,36 +41,4 @@
     right: 4px;
   }
 
-}
-
-.ladb-three-viewer.ladb-three-viewer-slide-layout {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  margin: 20px;
-}
-
-@media print {
-  .ladb-three-viewer.ladb-three-viewer-slide-layout {
-    position: relative;
-    margin: 0;
-    display: flex;
-    justify-content: center;
-
-    .ladb-paper-page {
-      transform-origin: initial !important;
-      transform: none !important;;
-      border: none;
-      box-shadow: none;
-    }
-
-  }
-}
-
-@media screen and (max-height: 850px) {
-  .ladb-three-viewer.ladb-three-viewer-modal-part iframe {
-    height: 200px;
-  }
 }
