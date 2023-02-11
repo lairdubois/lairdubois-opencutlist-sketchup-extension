@@ -868,7 +868,7 @@ tab:
       option_pins_direction_3: Zum Mittelpunkt des Teils
       option_pins_direction_4: Zum Mittelpunkt der Auswahl
       option_pins_direction_help: Definiert die Platzierung der Beschriftung für eine bessere Lesbarkeit.
-      option_page: Papier
+      option_page: Papierformat
       option_page_format: Format
       option_page_format_portrait: Hochformat
       option_page_format_landscape: Querformat
