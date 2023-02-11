@@ -36,21 +36,17 @@ module Ladb::OpenCutList
 
             # Create the three part def
             three_part_def = ThreePartDef.new
-            three_part_def.pin_text = @pins_use_names ? part.name : part.number
-            three_part_def.pin_class = @pins_use_names ? 'square' : nil
             three_part_def.matrix = _to_three_matrix(instance_info.entity.transformation)
             three_part_def.color = _to_three_color(materials[part.material_name])
+            three_part_def.pin_text = @pins_use_names ? part.name : part.number
+            three_part_def.pin_class = @pins_use_names ? 'square' : nil
 
             # Populate childrens
             _populate_three_object_def(three_part_def, instance_info.entity.definition)
 
-            # Try to reconstruct parent hierarchy
+            # Add to hierarchy
             parent_three_group_def = _parent_hierarchy(instance_info.path.slice(0, instance_info.path.length - 1), group_cache, three_model_def)
-            if parent_three_group_def
-              parent_three_group_def.add(three_part_def)
-            else
-              three_model_def.add(three_part_def)
-            end
+            parent_three_group_def.add(three_part_def)
 
           }
 
@@ -58,17 +54,22 @@ module Ladb::OpenCutList
 
           instance_info = part.def.instance_infos.values.first
 
+          # Create the three part def
           three_part_def = ThreePartDef.new
-          three_model_def.add(three_part_def)
-
-          _populate_three_object_def(three_part_def, instance_info.entity.definition)
-
           three_part_def.matrix = _to_three_matrix(Geom::Transformation.scaling(part.def.scale.x * (part.def.flipped ? -1 : 1), part.def.scale.y, part.def.scale.z))
           three_part_def.color = _to_three_color(materials[part.def.material_name])
+
+          # Populate childrens
+          _populate_three_object_def(three_part_def, instance_info.entity.definition)
+
+          # Add to hierarchy
+          three_model_def.add(three_part_def)
 
         end
 
       end
+
+      # _dump(three_model_def)
 
       three_model_def
     end
@@ -76,7 +77,7 @@ module Ladb::OpenCutList
     # -----
 
     def _parent_hierarchy(path, cache, three_model_def)
-      return nil if path.nil? || path.empty?
+      return three_model_def if path.nil? || path.empty?
 
       serialized_path = PathUtils.serialize_path(path)
 

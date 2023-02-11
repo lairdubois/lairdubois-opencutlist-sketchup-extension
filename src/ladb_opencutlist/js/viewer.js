@@ -287,7 +287,6 @@ const fnAddObjectDef = function (objectDef, parent, material, partsColored) {
 
             let edges = new THREE.EdgesGeometry(geometry, 36);
             let line = new THREE.LineSegments(edges, defaultLineMaterial);
-            line.computeLineDistances();
             parent.add(line);
 
             return mesh;
