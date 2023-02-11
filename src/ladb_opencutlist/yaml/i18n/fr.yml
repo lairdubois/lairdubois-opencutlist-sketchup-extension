@@ -846,7 +846,7 @@ tab:
       option_pins_hidden: Affichage
       option_pins_hidden_0: Avec épingles
       option_pins_hidden_1: Sans épingle
-      option_pins_hidden_help: Affiche ou masque les épingles pointant sur les pièces pour indiquer leur numéro ou désignation.
+      option_pins_hidden_help: Affiche ou masque les épingles pointant les pièces pour indiquer leur numéro ou désignation.
       option_pins_colored: Couleur
       option_pins_colored_0: Sans couleur
       option_pins_colored_1: Couleur de la pièce
@@ -868,6 +868,7 @@ tab:
       option_pins_direction_3: Pointe le centre du groupe parent
       option_pins_direction_4: Pointe le centre de la sélection
       option_pins_direction_help: Permet de choisir la direction des épingles afin d'adapter leur lisibilité en fonction du dessin.
+      option_page: Papier
       option_page_format: Format
       option_page_format_portrait: Portrait
       option_page_format_landscape: Paysage
@@ -878,7 +879,7 @@ tab:
       option_page_header_0: Sans
       option_page_header_1: Avec
       option_page_header_help: |
-        Permet de choisir si la page à imprimer contient un titre avec le nom du document, sa description et la date.
+        Permet de choisir si la page à imprimée contient une entête avec le nom du document, sa description, la date, l'unité et l'échelle.
         Sans entête, le dessin d'ensemble prendra toute la page.
       error:
         no_part: Il y a aucune pièce à dessiner.
