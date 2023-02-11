@@ -155,6 +155,18 @@ core:
       remove: Farbe vergessen
     textinput_code:
       help: "Drücken Sie **@**, um die Liste der Datenvariablen zu öffnen."
+    three_viewer:
+      isometric_view: Isometrisch
+      top_view: Draufsicht
+      bottom_view: Ansicht von Unten
+      front_view: Vorderseite
+      back_view: Rückansicht
+      left_view: Seitelinks
+      right_view: Seiterechts
+      toggle_box_helper: Afficher ou masquer la boîte capable
+      toggle_axes_helper: Anzeige der Achsen des Teils
+      toggle_auto_rotate: Animieren!
+      scale: Skala
   docs:
     error:
       failed_to_load: |
@@ -174,6 +186,7 @@ tab:
     not_available_std_section: Querschnitt nicht verfügbar
     highlight_part: Teil im Modell hervorheben
     highlight_parts: Teile im Modell hervorheben
+    layout_parts: Übersichtszeichnung
     edit_part_properties: Eigenschaften des Teils bearbeiten
     edit_part_axes_properties: Eigenschaften (Achsen) des Teils bearbeiten
     edit_part_size_increase_properties: Eigenschaften (Übermaße) des Teils bearbeiten
@@ -212,6 +225,7 @@ tab:
       rounded_std_footer: Stellen Sie die Genauigkeit in den *Modellinformationen* ein oder überprüfen Sie die Abmessungen der Teile in dieser Gruppe.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
+      layout_parts: $t(tab.cutlist.layout_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_parts_properties: Eigenschaften der Gruppe von Teilen bearbeiten
       edit_material: $t(tab.cutlist.menu.edit_material)
@@ -275,6 +289,7 @@ tab:
       numbers_save: Nummern der Teile speichern
       numbers_reset: Nummern der Teile neu zuweisen
       highlight_parts: $t(tab.cutlist.highlight_parts)
+      layout_parts: Übersichtszeichnung drucken
       group_numbers_save: Nummern der Gruppenteile speichern
       group_numbers_reset: Nummern der Gruppenteile neu zuweisen
       group_cuttingdiagram: Schnittplan
@@ -374,6 +389,7 @@ tab:
       veneer_disabled_help: "Diese Fläche ist nicht konfigurierbar, da an dieser Fläche des Teils im Modell keine materialtragende Fläche erkannt wurde."
       multiple_values: mehrfache Werte
       export_to_skp: Exportieren (.skp)
+      loading_preview: Vorschau laden
     export_to_skp:
       title: In .skp Datei exportieren
     option:
@@ -817,6 +833,59 @@ tab:
       warning:
         is_part_selection: Diese Etiketten beschränken sich auf **ausgewählte Teile**.
         formula_not_available: Formel steht in diesem Kontext nicht zu Verfügung
+    layout:
+      title: Übersichtszeichnung
+      options_layout: Darstellung
+      options_settings: Konfiguration
+      option_parts: Teile
+      option_parts_colored: Farbe
+      option_parts_colored_0: Ohne Farbe
+      option_parts_colored_1: Farbe des Materials
+      option_parts_colored_help: Definiert das Erscheinungsbild der Teile.
+      option_pins: Beschriftung
+      option_pins_hidden: Anzeige
+      option_pins_hidden_0: Mit Beschriftung
+      option_pins_hidden_1: Ohne Beschriftung
+      option_pins_hidden_help: Ein- oder Ausblenden der Beschriftung mit Nummer oder Bezeichnung.
+      option_pins_colored: Farbe
+      option_pins_colored_0: Ohne Farbe
+      option_pins_colored_1: Farbe des Teils
+      option_pins_colored_help: Definiert die Farbe des Beschriftungsfeldes.
+      option_pins_use_names: Text
+      option_pins_use_names_0: Nummer des Teils
+      option_pins_use_names_1: Bezeichnung des Teils
+      option_pins_use_names_help: Definiert den Text des Beschriftungsfeldes.
+      option_pins_length: Länge
+      option_pins_length_0: Ohne Verweislinie
+      option_pins_length_1: Kurz
+      option_pins_length_2: Mittel
+      option_pins_length_3: Lang
+      option_pins_length_help: Definiert die Länge der Verweislinie.
+      option_pins_direction: Ausrichtung
+      option_pins_direction_0: Längs der roten Achse
+      option_pins_direction_1: Längs der grünen Achse
+      option_pins_direction_2: Längs der blauen Achse
+      option_pins_direction_3: Zum Mittelpunkt des Teils
+      option_pins_direction_4: Zum Mittelpunkt der Auswahl
+      option_pins_direction_help: Definiert die Platzierung der Beschriftung für eine bessere Lesbarkeit.
+      option_page: Papier
+      option_page_format: Format
+      option_page_format_portrait: Hochformat
+      option_page_format_landscape: Querformat
+      option_page_format_custom: Benutzerdefiniert
+      option_page_width: Breite
+      option_page_height: Höhe
+      option_page_header: Kopfzeile
+      option_page_header_0: Ohne
+      option_page_header_1: Mit
+      option_page_header_help: |
+        Wählen Sie, ob die zu druckende Seite eine Kopfzeile mit dem Namen des Dokuments, seiner Beschreibung und dem Datum enthält.
+        Ohne Kopfzeile nimmt die Übersichtszeichnung die gesamte Seite ein.
+      error:
+        no_part: Es gibt keine zu zeichnenden Teile.
+      warning:
+        is_group_selection: Die Teile innerhalb der **maskierten Gruppen** Ihrer Teileliste werden nicht gezeichnet.
+        is_part_selection: Diese Übersichtszeichnung ist auf die **ausgewählten Teile** beschränkt.
     error:
       no_model: Es sind keine Modelle geöffnet. Sie müssen mir schon etwas mehr geben ;)
       no_entities: Ihr Modell ist leer. Sie müssen mir schon etwas mehr geben ;)
