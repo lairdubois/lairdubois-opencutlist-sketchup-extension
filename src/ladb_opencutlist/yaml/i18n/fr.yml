@@ -879,7 +879,7 @@ tab:
       option_page_header_0: Sans
       option_page_header_1: Avec
       option_page_header_help: |
-        Permet de choisir si la page à imprimée contient une entête avec le nom du document, sa description, la date, l'unité et l'échelle.
+        Permet de choisir si la page à imprimer contient une entête avec le nom du document, sa description, la date, l'unité et l'échelle.
         Sans entête, le dessin d'ensemble prendra toute la page.
       error:
         no_part: Il y a aucune pièce à dessiner.

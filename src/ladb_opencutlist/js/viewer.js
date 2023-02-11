@@ -153,7 +153,7 @@ const fnAddListeners = function () {
                         call.params.pinsDirection,
                         call.params.pinsColored,
                         call.params.controlsTarget,
-                        call.params.controlsPosition,
+                        call.params.controlsDirection,
                         call.params.controlsZoom
                     );
                     if (call.params.showBoxHelper) {
@@ -190,10 +190,18 @@ const fnAddListeners = function () {
 }
 
 const fnDispatchControlsChanged = function () {
+
+    let controlsDirection = camera.position.clone().sub(controls.target).multiplyScalar(1 / modelRadius);
+    let controlTargetIsModelCentred = controls.target.equals(modelCenter)
+
+    console.log(controlsDirection, controlsDirection.toArray().map(function (v) { return Number.parseFloat(v.toFixed(4)); }));
+    //
+    // console.log(controlTargetIsModelCentred);
+
     window.frameElement.dispatchEvent(new MessageEvent('controls.changed', {
         data: {
-            controlsTarget: controls.target.toArray([]),
-            controlsPosition: camera.position.toArray([]),
+            controlsTarget: controlTargetIsModelCentred ? null : controls.target.toArray([]),
+            controlsDirection: controlsDirection.toArray().map(function (v) { return Number.parseFloat(v.toFixed(4)); }),
             controlsZoom: camera.zoom
         }
     }));
@@ -476,7 +484,7 @@ const fnSetAutoRotateEnable = function (enable) {
     }
 }
 
-const fnSetupModel = function(modelDef, partsColored, pinsHidden, pinsLength, pinsDirection, pinsColored, controlsTarget, controlsPosition, controlsZoom) {
+const fnSetupModel = function(modelDef, partsColored, pinsHidden, pinsLength, pinsDirection, pinsColored, controlsTarget, controlsDirection, controlsZoom) {
 
     model = fnAddObjectDef(modelDef, scene, defaultMeshMaterial, partsColored);
     if (model) {
@@ -495,20 +503,22 @@ const fnSetupModel = function(modelDef, partsColored, pinsHidden, pinsLength, pi
 
         }
 
-        if (controlsTarget && controlsPosition && controlsZoom) {
+        if (controlsDirection && controlsZoom) {
+
+            if (controlsTarget) {
+                controls.target0.fromArray(controlsTarget);
+            } else {
+                controls.target0.copy(modelCenter);
+            }
 
             // Restore given taget, position and zoom
-            controls.target0 = new THREE.Vector3().fromArray(controlsTarget);
-            controls.position0.fromArray(controlsPosition);
+            controls.position0.fromArray(controlsDirection).multiplyScalar(modelRadius).add(controls.target0);
             controls.zoom0 = controlsZoom;
             controls.reset();
 
             fnDispatchControlsChanged();
 
         } else {
-
-            // Center controls on model
-            controls.target0.copy(modelCenter);
 
             // Start with isometric view
             fnSetView('isometric');

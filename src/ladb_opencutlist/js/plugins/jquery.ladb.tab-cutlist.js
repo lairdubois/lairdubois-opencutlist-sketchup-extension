@@ -1318,6 +1318,8 @@
             var $selectPinsUseNames = $('#ladb_select_pins_use_names', $modal);
             var $selectPinsLength = $('#ladb_select_pins_length', $modal);
             var $selectPinsDirection = $('#ladb_select_pins_direction', $modal);
+            var $inputControlsDirection = $('#ladb_input_controls_direction', $modal);
+            var $inputControlsZoom = $('#ladb_input_controls_zoom', $modal);
             var $formGroupPins = $('.ladb-cutlist-layout-form-group-pins', $modal);
             var $formGroupPinsDirection = $('.ladb-cutlist-layout-form-group-pins-direction', $modal);
             var $btnGenerate = $('#ladb_cutlist_layout_btn_generate', $modal);
@@ -1363,6 +1365,8 @@
                 options.pins_use_names = $selectPinsUseNames.val() === '1';
                 options.pins_length = parseInt($selectPinsLength.val());
                 options.pins_direction = parseInt($selectPinsDirection.val());
+                options.controls_direction = JSON.parse($inputControlsDirection.val());
+                options.controls_zoom = JSON.parse($inputControlsZoom.val());
             }
             var fnFillInputs = function (options) {
                 $selectPageFormat.selectpicker('val', options.page_width.replace(',', '.') + 'x' + options.page_height.replace(',', '.'));
@@ -1375,6 +1379,8 @@
                 $selectPinsUseNames.selectpicker('val', options.pins_use_names ? '1' : '0');
                 $selectPinsLength.selectpicker('val', options.pins_length);
                 $selectPinsDirection.selectpicker('val', options.pins_direction);
+                $inputControlsDirection.val(JSON.stringify(options.controls_direction));
+                $inputControlsZoom.val(JSON.stringify(options.controls_zoom));
                 fnUpdatePageSizeFieldsAvailability();
                 fnUpdateFieldsVisibility();
             }
@@ -1494,12 +1500,12 @@
                             pinsLength: layoutOptions.pins_length,
                             pinsDirection: layoutOptions.pins_direction,
                             controlsTarget: layoutOptions.controls_target,
-                            controlsPosition: layoutOptions.controls_position,
+                            controlsDirection: layoutOptions.controls_direction,
                             controlsZoom: layoutOptions.controls_zoom,
                         }).on('controls.changed', function (e, data) {
 
                             layoutOptions.controls_target = data.controlsTarget;
-                            layoutOptions.controls_position = data.controlsPosition;
+                            layoutOptions.controls_direction = data.controlsDirection;
                             layoutOptions.controls_zoom = data.controlsZoom;
 
                             // Store options
@@ -1511,12 +1517,9 @@
 
                             var scale;
                             if (data.controlsZoom > 1) {
-                                let fractionDigits = data.controlsZoom - Math.floor(data.controlsZoom) === 0 ? 0 : 3;
-                                scale = data.controlsZoom.toFixed(fractionDigits) + ':1';
+                                scale = Number.parseFloat(data.controlsZoom.toFixed(3)) + ':1';
                             } else if (data.controlsZoom < 1) {
-                                let denominator = 1 / data.controlsZoom;
-                                let fractionDigits = denominator - Math.floor(denominator) === 0 ? 0 : 3;
-                                scale = '1:' + denominator.toFixed(fractionDigits);
+                                scale = '1:' + Number.parseFloat((1 / data.controlsZoom).toFixed(3));
                             } else {
                                 scale = '1:1';
                             }

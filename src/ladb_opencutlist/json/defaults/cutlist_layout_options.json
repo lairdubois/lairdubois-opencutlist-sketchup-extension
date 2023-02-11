@@ -1,8 +1,6 @@
 {
   "_storages": {
-    "controls_target": 2, /* PRESETS_STORAGE_MODEL_ONLY */
-    "controls_position": 2, /* PRESETS_STORAGE_MODEL_ONLY */
-    "controls_zoom": 2 /* PRESETS_STORAGE_MODEL_ONLY */
+    "controls_target": 2 /* PRESETS_STORAGE_MODEL_ONLY */
   },
   "_preprocessors": {
     "page_width": 1, /* PRESETS_PREPROCESSOR_D */
@@ -19,7 +17,7 @@
     "pins_direction": 4, /* PINS_DIRECTION_MODEL_CENTER */
     "pins_length": 1, /* PINS_LENGTH_SHORT */
     "controls_target": null,
-    "controls_position": null,
+    "controls_direction": null,
     "controls_zoom": null
   }
 }
