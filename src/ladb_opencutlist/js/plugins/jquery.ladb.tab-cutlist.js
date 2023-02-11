@@ -1490,6 +1490,7 @@
                         });
 
                         // Bind viewer
+                        var storeOptionsTimeoutId = null;
                         $viewer.ladbThreeViewer({
                             autoload: false,
                             dialog: that.dialog,
@@ -1508,12 +1509,18 @@
                             layoutOptions.controls_direction = data.controlsDirection;
                             layoutOptions.controls_zoom = data.controlsZoom;
 
-                            // Store options
-                            rubyCallCommand('core_set_model_preset', {
-                                dictionary: 'cutlist_layout_options',
-                                values: layoutOptions,
-                                section: section
-                            });
+                            // Store options (only one time per 500ms)
+                            if (storeOptionsTimeoutId) {
+                                clearTimeout(storeOptionsTimeoutId);
+                            }
+                            storeOptionsTimeoutId = setTimeout(function () {
+                                rubyCallCommand('core_set_model_preset', {
+                                    dictionary: 'cutlist_layout_options',
+                                    values: layoutOptions,
+                                    section: section
+                                });
+                                storeOptionsTimeoutId = null;
+                            }, 500);
 
                             var scale;
                             if (data.controlsZoom > 1) {

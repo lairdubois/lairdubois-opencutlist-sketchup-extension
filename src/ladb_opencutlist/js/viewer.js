@@ -194,10 +194,6 @@ const fnDispatchControlsChanged = function () {
     let controlsDirection = camera.position.clone().sub(controls.target).multiplyScalar(1 / modelRadius);
     let controlTargetIsModelCentred = controls.target.equals(modelCenter)
 
-    console.log(controlsDirection, controlsDirection.toArray().map(function (v) { return Number.parseFloat(v.toFixed(4)); }));
-    //
-    // console.log(controlTargetIsModelCentred);
-
     window.frameElement.dispatchEvent(new MessageEvent('controls.changed', {
         data: {
             controlsTarget: controlTargetIsModelCentred ? null : controls.target.toArray([]),
@@ -205,6 +201,7 @@ const fnDispatchControlsChanged = function () {
             controlsZoom: camera.zoom
         }
     }));
+
 }
 
 const fnUpdateViewportSize = function () {
