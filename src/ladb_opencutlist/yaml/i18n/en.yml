@@ -868,6 +868,7 @@ tab:
       option_pins_direction_3: Pointing towards the center of the parent group
       option_pins_direction_4: Pointing towards the center of the selection
       option_pins_direction_help: Select the direction of the labels for better readability.
+      option_page: Paper
       option_page_format: Format
       option_page_format_portrait: Portrait
       option_page_format_landscape: Landscape
