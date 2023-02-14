@@ -156,17 +156,18 @@ core:
     textinput_code:
       help: "Drücken Sie **@**, um die Liste der Datenvariablen zu öffnen."
     three_viewer:
-      isometric_view: Isometrisch
-      top_view: Draufsicht
-      bottom_view: Ansicht von Unten
-      front_view: Vorderseite
-      back_view: Rückansicht
-      left_view: Seitelinks
-      right_view: Seiterechts
+      view: "{{ view }} Ansicht"
+      view_isometric: Isometrisch
+      view_top: Draufsicht
+      view_bottom: Von Unten
+      view_front: Vorderseite
+      view_back: Rückansicht
+      view_left: Seitelinks
+      view_right: Seiterechts
+      zoom: Skala {{ zoom }}
       toggle_box_helper: Afficher ou masquer la boîte capable
       toggle_axes_helper: Anzeige der Achsen des Teils
       toggle_auto_rotate: Animieren!
-      scale: Skala
   docs:
     error:
       failed_to_load: |
@@ -881,6 +882,15 @@ tab:
       option_page_header_help: |
         Wählen Sie, ob die zu druckende Seite eine Kopfzeile mit dem Namen des Dokuments, seiner Beschreibung und dem Datum enthält.
         Ohne Kopfzeile nimmt die Übersichtszeichnung die gesamte Seite ein.
+      option_camera: Kamera
+      option_camera_view: $t(core.component.three_viewer.view)
+      option_camera_view_custom: Benutzerdefiniert
+      option_camera_zoom: $t(core.component.three_viewer.zoom)
+      option_camera_zoom_auto: Automatisch
+      option_camera_zoom_custom: Benutzerdefiniert
+      option_camera_target: Position
+      option_camera_target_auto: Automatisch
+      option_camera_target_custom: Benutzerdefiniert
       error:
         no_part: Es gibt keine zu zeichnenden Teile.
       warning:
@@ -963,6 +973,9 @@ tab:
       cut_options: Schnittparameter
       attributes: Attribute
       thickness: Dicke
+      thickness_help: |
+        Fertigmaß der Dicke des Materials.
+        *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       length_increase: Längenzumaß
       length_increase_help: Übermaß welches das **Längenrohmaß** vergrössert.
       width_increase: Breitenzumaß
