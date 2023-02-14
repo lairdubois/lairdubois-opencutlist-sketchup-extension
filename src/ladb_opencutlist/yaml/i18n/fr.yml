@@ -881,6 +881,15 @@ tab:
       option_page_header_help: |
         Permet de choisir si la page à imprimer contient une entête avec le nom du document, sa description, la date, l'unité et l'échelle.
         Sans entête, le dessin d'ensemble prendra toute la page.
+      option_controls: Camera
+      option_controls_target: Position
+      option_controls_target_auto: Automatique
+      option_controls_target_custom: Personnalisée
+      option_controls_direction: Vue
+      option_controls_direction_custom: Personnalisée
+      option_controls_zoom: Echelle
+      option_controls_zoom_auto: Automatique
+      option_controls_zoom_custom: Personnalisée
       error:
         no_part: Il y a aucune pièce à dessiner.
       warning:

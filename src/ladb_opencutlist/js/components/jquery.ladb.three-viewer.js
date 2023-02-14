@@ -54,9 +54,9 @@
                         pinsColored: that.options.pinsColored,
                         pinsLength: that.options.pinsLength,
                         pinsDirection: that.options.pinsDirection,
-                        controlsTarget: that.options.controlsTarget,
                         controlsDirection: that.options.controlsDirection,
                         controlsZoom: that.options.controlsZoom,
+                        controlsTarget: that.options.controlsTarget,
                     }
                 );
                 if (that.options.showBoxHelper) {

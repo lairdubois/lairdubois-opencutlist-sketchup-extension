@@ -1,7 +1,4 @@
 {
-  "_storages": {
-    "controls_target": 2 /* PRESETS_STORAGE_MODEL_ONLY */
-  },
   "_preprocessors": {
     "page_width": 1, /* PRESETS_PREPROCESSOR_D */
     "page_height": 1 /* PRESETS_PREPROCESSOR_D */
@@ -16,8 +13,8 @@
     "pins_use_names": false,
     "pins_direction": 4, /* PINS_DIRECTION_MODEL_CENTER */
     "pins_length": 1, /* PINS_LENGTH_SHORT */
-    "controls_target": null,
-    "controls_direction": null,
-    "controls_zoom": null
+    "controls_direction": [ 1, -1, 1 ], /* ISOMETRIC_VIEW */
+    "controls_zoom": null,
+    "controls_target": null
   }
 }

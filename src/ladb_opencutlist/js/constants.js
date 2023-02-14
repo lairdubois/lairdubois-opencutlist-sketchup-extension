@@ -40,3 +40,16 @@ var REAL_MATERIALS_FILTER = [
     5,  // TYPE_HARDWARE
 ]
 
+//
+
+var THREE_CONTROLS_DIRECTIONS = {
+    none: [ 0, 0, 0 ],
+    isometric: [ 1, -1, 1 ],
+    top: [ 0, 0, 1 ],
+    bottom: [ 0, 0, -1 ],
+    front: [ 0, -1, 0 ],
+    back: [ 0, 1, 0 ],
+    left: [ -1, 0, 0 ],
+    right: [ 1, 0, 0 ]
+}
+

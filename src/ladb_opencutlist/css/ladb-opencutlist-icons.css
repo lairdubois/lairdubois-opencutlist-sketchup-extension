@@ -52,7 +52,7 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-view-front:before {
   content: "\e99c";
 }
-.ladb-opencutlist-icon-isometric:before {
+.ladb-opencutlist-icon-view-isometric:before {
   content: "\e999";
 }
 .ladb-opencutlist-icon-copy:before {
