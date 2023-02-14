@@ -973,6 +973,9 @@ tab:
       cut_options: Options de débit
       attributes: Attributs
       thickness: Épaisseur
+      thickness_help: |
+        Epaisseur finie de la matière.
+        *Si aucune unité n'est spécifiée, l'unité du modèle sera prise en compte.*
       length_increase: Surcote de longueur
       length_increase_help: Surcote appliquée sur la longueur capable pour définir la **longueur de débit**.
       width_increase: Surcote de largeur
