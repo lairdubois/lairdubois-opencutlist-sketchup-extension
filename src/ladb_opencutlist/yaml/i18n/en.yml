@@ -156,17 +156,18 @@ core:
     textinput_code:
       help: Type **@** to get a list of variables.
     three_viewer:
-      isometric_view: Isometric
-      top_view: Top
-      bottom_view: Bottom
-      front_view: Front
-      back_view: Back
-      left_view: Left
-      right_view: Right
-      toggle_box_helper: Bounding Box
-      toggle_axes_helper: Part Axes
+      view: "{{ view }} View"
+      view_isometric: Isometric
+      view_top: Top
+      view_bottom: Bottom
+      view_front: Front
+      view_back: Back
+      view_left: Left
+      view_right: Right
+      zoom: Scale {{ zoom }}
+      toggle_box_helper: Show/Hide Bounding Box
+      toggle_axes_helper: Show/Hide Part Axes
       toggle_auto_rotate: Animate!
-      scale: Scale
   docs:
     error:
       failed_to_load: |
@@ -857,9 +858,9 @@ tab:
       option_pins_use_names_help: Select the text displayed by the labels.
       option_pins_length: Length
       option_pins_length_0: None
-      option_pins_length_1: Small
+      option_pins_length_1: Short
       option_pins_length_2: Medium
-      option_pins_length_3: Large
+      option_pins_length_3: Long
       option_pins_length_help: Select the length of the label tails.
       option_pins_direction: Direction
       option_pins_direction_0: Along the Red axis
@@ -879,8 +880,17 @@ tab:
       option_page_header_0: None
       option_page_header_1: With
       option_page_header_help: |
-        Choose if the page to be printed contains a header with the name of the document, its description and the date.
-        Without a header, the overall design will take the entire page.
+        Select whether the page to be printed contains a header with the name of the document, its description and the date.
+        Without a header, the overview drawing takes up the entire page.
+      option_camera: Camera
+      option_camera_view: $t(core.component.three_viewer.view)
+      option_camera_view_custom: Custom
+      option_camera_zoom: $t(core.component.three_viewer.zoom)
+      option_camera_zoom_auto: Automatic
+      option_camera_zoom_custom: Custom
+      option_camera_target: Position
+      option_camera_target_auto: Automatic
+      option_camera_target_custom: Custom
       error:
         no_part: There is no part to draw.
       warning:
@@ -963,6 +973,9 @@ tab:
       cut_options: Cutting Parameters
       attributes: Attributes
       thickness: Thickness
+      thickness_help: |
+        Finished thickness of the material.
+        *Sizes without units are considered to be in model units.*
       length_increase: Length Oversize
       length_increase_help: Oversize applied to the length to define the **raw length**.
       width_increase: Width Oversize
