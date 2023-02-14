@@ -93,7 +93,6 @@ const fnInit = function() {
     controls.rotateSpeed = 0.5;
     controls.zoomSpeed = 1.5;
     controls.enableRotate = true;
-    controls.autoRotateSpeed = 3.0;
     controls.mouseButtons = {
         LEFT: THREE.MOUSE.ROTATE,
         MIDDLE: THREE.MOUSE.ROTATE,
@@ -175,10 +174,6 @@ const fnAddListeners = function () {
 
                 case 'set_axes_helper_visible':
                     fnSetAxesHelperVisible(call.params.visible);
-                    break;
-
-                case 'set_auto_rotate_enable':
-                    fnSetAutoRotateEnable(call.params.enable);
                     break;
 
             }
@@ -433,7 +428,6 @@ const fnSetView = function (view = THREE_CAMERA_VIEWS.isometric) {
     controls.reset();
 
     fnDispatchCameraChanged();
-    fnSetAutoRotateEnable(false);
 
 }
 
@@ -456,18 +450,6 @@ const fnSetAxesHelperVisible = function (visible) {
             axesHelper.visible = visible === true
         }
         fnRender();
-    }
-}
-
-const fnSetAutoRotateEnable = function (enable) {
-    if (controls) {
-        if (enable == null) {
-            fnStartAnimate();
-            controls.autoRotate = !controls.autoRotate;
-        } else {
-            fnStopAnimate();
-            controls.autoRotate = enable === true
-        }
     }
 }
 
