@@ -4,9 +4,9 @@
     {% endblock %}
     <div class="ladb-three-viewer-ui-left no-print">
         {% block uiLeft %}
-            <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:three_controls_direction.isometric }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.isometric_view'|i18next }}"><i class="ladb-opencutlist-icon-view-isometric"></i></button>
-            <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:three_controls_direction.top }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.top_view'|i18next }}"><i class="ladb-opencutlist-icon-veneer-10"></i></button>
-            <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:three_controls_direction.bottom }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.bottom_view'|i18next }}"><i class="ladb-opencutlist-icon-veneer-01"></i></button>
+            <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:three_controls_view.isometric }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.view_isometric'|i18next }}"><i class="ladb-opencutlist-icon-view-isometric"></i></button>
+            <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:three_controls_view.top }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.view_top'|i18next }}"><i class="ladb-opencutlist-icon-veneer-10"></i></button>
+            <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:three_controls_view.bottom }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.view_bottom'|i18next }}"><i class="ladb-opencutlist-icon-veneer-01"></i></button>
         {% endblock %}
     </div>
     <div class="ladb-three-viewer-ui-right no-print">

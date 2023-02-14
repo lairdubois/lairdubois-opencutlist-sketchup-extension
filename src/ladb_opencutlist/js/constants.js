@@ -30,7 +30,7 @@ var SORTABLE_OPTIONS = {
 var GRAPHQL_ENDPOINT = 'https://api.opencollective.com/graphql/v2/';
 var GRAPHQL_SLUG = 'lairdubois-opencutlist-sketchup-extension';
 
-//
+// Materials /////
 
 var REAL_MATERIALS_FILTER = [
     0,  // TYPE_UNKNOWN
@@ -40,9 +40,9 @@ var REAL_MATERIALS_FILTER = [
     5,  // TYPE_HARDWARE
 ]
 
-//
+// Three JS /////
 
-var THREE_CONTROLS_DIRECTIONS = {
+var THREE_CONTROLS_VIEWS = {
     none: [ 0, 0, 0 ],
     isometric: [ 1, -1, 1 ],
     top: [ 0, 0, 1 ],

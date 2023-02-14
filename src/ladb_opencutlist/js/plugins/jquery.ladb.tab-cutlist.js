@@ -1303,7 +1303,7 @@
                 isGroupSelection: context ? context.isGroupSelection : false,
                 isPartSelection: context ? context.isPartSelection : false,
                 tab: forceDefaultTab || that.lastLayoutOptionsTab == null ? 'layout' : that.lastLayoutOptionsTab,
-                three_controls_directions: THREE_CONTROLS_DIRECTIONS
+                three_controls_views: THREE_CONTROLS_VIEWS
             });
 
             // Fetch UI elements
@@ -1319,10 +1319,10 @@
             var $selectPinsUseNames = $('#ladb_select_pins_use_names', $modal);
             var $selectPinsLength = $('#ladb_select_pins_length', $modal);
             var $selectPinsDirection = $('#ladb_select_pins_direction', $modal);
-            var $selectControlsDirection = $('#ladb_select_controls_direction', $modal);
+            var $selectControlsView = $('#ladb_select_controls_view', $modal);
             var $selectControlsZoom = $('#ladb_select_controls_zoom', $modal);
             var $selectControlsTarget = $('#ladb_select_controls_target', $modal);
-            var $inputControlsDirection = $('#ladb_input_controls_direction', $modal);
+            var $inputControlsView = $('#ladb_input_controls_view', $modal);
             var $inputControlsZoom = $('#ladb_input_controls_zoom', $modal);
             var $inputControlsTarget = $('#ladb_input_controls_target', $modal);
             var $formGroupPins = $('.ladb-cutlist-layout-form-group-pins', $modal);
@@ -1370,7 +1370,7 @@
                 options.pins_use_names = $selectPinsUseNames.val() === '1';
                 options.pins_length = parseInt($selectPinsLength.val());
                 options.pins_direction = parseInt($selectPinsDirection.val());
-                options.controls_direction = JSON.parse($inputControlsDirection.val());
+                options.controls_view = JSON.parse($inputControlsView.val());
                 options.controls_zoom = JSON.parse($inputControlsZoom.val());
                 options.controls_target = JSON.parse($inputControlsTarget.val());
             }
@@ -1385,8 +1385,8 @@
                 $selectPinsUseNames.selectpicker('val', options.pins_use_names ? '1' : '0');
                 $selectPinsLength.selectpicker('val', options.pins_length);
                 $selectPinsDirection.selectpicker('val', options.pins_direction);
-                $selectControlsDirection.selectpicker('val', JSON.stringify(options.controls_direction));
-                $inputControlsDirection.val(JSON.stringify(options.controls_direction));
+                $selectControlsView.selectpicker('val', JSON.stringify(options.controls_view));
+                $inputControlsView.val(JSON.stringify(options.controls_view));
                 $selectControlsZoom.selectpicker('val', JSON.stringify(options.controls_zoom));
                 $inputControlsZoom.val(JSON.stringify(options.controls_zoom));
                 $selectControlsTarget.selectpicker('val', JSON.stringify(options.controls_target));
@@ -1413,7 +1413,7 @@
             $selectPinsUseNames.selectpicker(SELECT_PICKER_OPTIONS);
             $selectPinsLength.selectpicker(SELECT_PICKER_OPTIONS);
             $selectPinsDirection.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectControlsDirection.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectControlsView.selectpicker(SELECT_PICKER_OPTIONS);
             $selectControlsZoom.selectpicker(SELECT_PICKER_OPTIONS);
             $selectControlsTarget.selectpicker(SELECT_PICKER_OPTIONS);
 
@@ -1447,8 +1447,8 @@
             $selectControlsTarget.on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                 $inputControlsTarget.val($(this).val());
             });
-            $selectControlsDirection.on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                $inputControlsDirection.val($(this).val());
+            $selectControlsView.on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                $inputControlsView.val($(this).val());
             });
             $selectControlsZoom.on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                 $inputControlsZoom.val($(this).val());
@@ -1483,7 +1483,7 @@
                             generatedAt: new Date().getTime() / 1000,
                             group: context.targetGroup,
                             pageHeader: layoutOptions.page_header,
-                            three_controls_directions: THREE_CONTROLS_DIRECTIONS
+                            three_controls_views: THREE_CONTROLS_VIEWS
                         }, function () {
 
                             // Load frame when slide animation completed
@@ -1525,12 +1525,12 @@
                             pinsColored: layoutOptions.pins_colored,
                             pinsLength: layoutOptions.pins_length,
                             pinsDirection: layoutOptions.pins_direction,
-                            controlsDirection: layoutOptions.controls_direction,
+                            controlsView: layoutOptions.controls_view,
                             controlsZoom: layoutOptions.controls_zoom,
                             controlsTarget: layoutOptions.controls_target
                         }).on('controls.changed', function (e, data) {
 
-                            layoutOptions.controls_direction = data.controlsDirection;
+                            layoutOptions.controls_view = data.controlsView;
                             layoutOptions.controls_zoom = data.controlZoomIsAuto ? null : data.controlsZoom;
                             layoutOptions.controls_target = data.controlTargetIsAuto ? null : data.controlsTarget;
 
@@ -1560,7 +1560,7 @@
                             $('[data-command="set_view"]', $viewer).each(function (index, el) {
                                 var $btn = $(el);
                                 var params = $btn.data('params');
-                                if (JSON.stringify(params.view) === JSON.stringify(data.controlsDirection)) {
+                                if (JSON.stringify(params.view) === JSON.stringify(data.controlsView)) {
                                     $btn.addClass('active');
                                 } else {
                                     $btn.removeClass('active');
@@ -2257,7 +2257,7 @@
 
                             var $viewer = $(Twig.twig({ref: 'components/_three-viewer.twig'}).render({
                                 viewerClasses: 'ladb-three-viewer-modal-part',
-                                three_controls_direction: THREE_CONTROLS_DIRECTIONS
+                                three_controls_view: THREE_CONTROLS_VIEWS
                             }));
 
                             $viewer.ladbThreeViewer({

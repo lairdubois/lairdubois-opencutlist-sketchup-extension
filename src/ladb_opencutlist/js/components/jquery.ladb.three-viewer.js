@@ -22,7 +22,7 @@
         pinsLength: 1,      // PINS_LENGTH_SHORT
         pinsDirection: 4,   // PINS_DIRECTION_MODEL_CENTER
         controlsTarget: null,
-        controlsDirection: null,
+        controlsView: null,
         controlsZoom: null,
         showBoxHelper: false,
     };
@@ -54,7 +54,7 @@
                         pinsColored: that.options.pinsColored,
                         pinsLength: that.options.pinsLength,
                         pinsDirection: that.options.pinsDirection,
-                        controlsDirection: that.options.controlsDirection,
+                        controlsView: that.options.controlsView,
                         controlsZoom: that.options.controlsZoom,
                         controlsTarget: that.options.controlsTarget,
                     }

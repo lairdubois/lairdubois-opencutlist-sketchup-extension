@@ -20,6 +20,16 @@
 {% block containerFluidOuter %}
     {% include 'core/_alert-errors.twig' %}
     {% embed 'components/_three-viewer.twig' with { 'viewerClasses':'ladb-three-viewer-slide-layout', 'iframeClasses':'ladb-paper-page-body' } %}
+
+        {% macro btn_view(viewName, icon, three_controls_views, ttPlacement = 'right') %}
+            <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:three_controls_views[viewName] }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="{{ ttPlacement }}" title="{{ 'core.component.three_viewer.view'|i18next({ 'view':('core.component.three_viewer.view_'~viewName)|i18next }) }}"><i class="ladb-opencutlist-icon-{{ icon }}"></i></button>
+        {% endmacro %}
+        {% macro btn_zoom(zoomValue, ttLabel, btnLabel, btnLabelSize) %}
+            <button class="btn btn-default btn-sm" data-command="set_zoom" data-params="{{ { zoom:zoomValue }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.zoom'|i18next({ 'zoom':ttLabel }) }}">{% if btnLabelSize %}<span style="font-size:{{ btnLabelSize }}px">{% endif %}{{ btnLabel }}{% if btnLabelSize %}</span>{% endif %}</button>
+        {% endmacro %}
+
+        {% import _self as fn %}
+
         {% block iframeOutter %}
             <div class="ladb-paper-page">
                 {% if pageHeader %}
@@ -36,24 +46,24 @@
             </div>
         {% endblock %}
         {% block uiLeft %}
-            <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:three_controls_directions.isometric }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.isometric_view'|i18next }}"><i class="ladb-opencutlist-icon-view-isometric"></i></button>
-            <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:three_controls_directions.top }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.top_view'|i18next }}"><i class="ladb-opencutlist-icon-arrow-down"></i></button>
+            {{ fn.btn_view('isometric', 'view-isometric', three_controls_views) }}
+            {{ fn.btn_view('top', 'arrow-down', three_controls_views) }}
             <div class="ladb-flex">
-                <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:three_controls_directions.left }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="left" title="{{ 'core.component.three_viewer.left_view'|i18next }}"><i class="ladb-opencutlist-icon-arrow-right"></i></button>
-                <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:three_controls_directions.front }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="top" title="{{ 'core.component.three_viewer.front_view'|i18next }}"><i class="ladb-opencutlist-icon-view-front"></i></button>
-                <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:three_controls_directions.right }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.right_view'|i18next }}"><i class="ladb-opencutlist-icon-arrow-left"></i></button>
+                {{ fn.btn_view('left', 'arrow-right', three_controls_views, 'left') }}
+                {{ fn.btn_view('front', 'view-front', three_controls_views, 'top') }}
+                {{ fn.btn_view('right', 'arrow-left', three_controls_views) }}
             </div>
-            <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:three_controls_directions.bottom }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.bottom_view'|i18next }}"><i class="ladb-opencutlist-icon-arrow-up"></i></button>
-            <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:three_controls_directions.back }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.back_view'|i18next }}"><i class="ladb-opencutlist-icon-view-back"></i></button>
+            {{ fn.btn_view('bottom', 'arrow-up', three_controls_views) }}
+            {{ fn.btn_view('back', 'view-back', three_controls_views) }}
             <span>&nbsp;</span>
-            <button class="btn btn-default btn-sm" data-command="set_zoom" data-params="{{ { zoom:null }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.scale'|i18next }} {{ 'tab.cutlist.layout.option_controls_zoom_auto'|i18next }}"><i class="ladb-opencutlist-icon-zoom-auto"></i></button>
-            <button class="btn btn-default btn-sm" data-command="set_zoom" data-params="{{ { zoom:2 }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.scale'|i18next }} 2:1">2:1</button>
-            <button class="btn btn-default btn-sm" data-command="set_zoom" data-params="{{ { zoom:1 }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.scale'|i18next }} 1:1">1:1</button>
-            <button class="btn btn-default btn-sm" data-command="set_zoom" data-params="{{ { zoom:0.5 }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.scale'|i18next }} 1:2">1:2</button>
-            <button class="btn btn-default btn-sm" data-command="set_zoom" data-params="{{ { zoom:0.2 }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.scale'|i18next }} 1:5">1:5</button>
-            <button class="btn btn-default btn-sm" data-command="set_zoom" data-params="{{ { zoom:0.1 }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.scale'|i18next }} 1:10"><span style="font-size: 9px;">1:10</span></button>
-            <button class="btn btn-default btn-sm" data-command="set_zoom" data-params="{{ { zoom:0.05 }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.scale'|i18next }} 1:20"><span style="font-size: 9px;">1:20</span></button>
-            <button class="btn btn-default btn-sm" data-command="set_zoom" data-params="{{ { zoom:0.02 }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.scale'|i18next }} 1:50"><span style="font-size: 9px;">1:50</span></button>
+            {{ fn.btn_zoom(null, 'tab.cutlist.layout.option_controls_zoom_auto'|i18next, '<i class="ladb-opencutlist-icon-zoom-auto"></i>') }}
+            {{ fn.btn_zoom(2, '2:1', '2:1') }}
+            {{ fn.btn_zoom(1, '1:1', '1:1') }}
+            {{ fn.btn_zoom(0.5, '1:2', '1:2') }}
+            {{ fn.btn_zoom(0.2, '1:5', '1:5') }}
+            {{ fn.btn_zoom(0.1, '1:10', '1:10', 8) }}
+            {{ fn.btn_zoom(0.05, '1:20', '1:20', 8) }}
+            {{ fn.btn_zoom(0.02, '1:50', '1:50', 8) }}
         {% endblock %}
     {% endembed %}
 {% endblock %}
