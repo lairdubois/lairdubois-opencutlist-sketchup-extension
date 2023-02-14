@@ -167,7 +167,6 @@ core:
       zoom: Scale {{ zoom }}
       toggle_box_helper: Show/Hide Bounding Box
       toggle_axes_helper: Show/Hide Part Axes
-      toggle_auto_rotate: Animate!
   docs:
     error:
       failed_to_load: |

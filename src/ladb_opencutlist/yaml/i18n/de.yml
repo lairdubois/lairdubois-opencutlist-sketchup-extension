@@ -167,7 +167,6 @@ core:
       zoom: Maßstab {{ zoom }}
       toggle_box_helper: Anzeige des Begrenzungsrahmens
       toggle_axes_helper: Anzeige der Achsen des Teils
-      toggle_auto_rotate: Animieren!
   docs:
     error:
       failed_to_load: |
