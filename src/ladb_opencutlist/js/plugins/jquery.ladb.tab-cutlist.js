@@ -1303,7 +1303,7 @@
                 isGroupSelection: context ? context.isGroupSelection : false,
                 isPartSelection: context ? context.isPartSelection : false,
                 tab: forceDefaultTab || that.lastLayoutOptionsTab == null ? 'layout' : that.lastLayoutOptionsTab,
-                three_controls_views: THREE_CONTROLS_VIEWS
+                THREE_CAMERA_VIEWS: THREE_CAMERA_VIEWS
             });
 
             // Fetch UI elements
@@ -1319,12 +1319,12 @@
             var $selectPinsUseNames = $('#ladb_select_pins_use_names', $modal);
             var $selectPinsLength = $('#ladb_select_pins_length', $modal);
             var $selectPinsDirection = $('#ladb_select_pins_direction', $modal);
-            var $selectControlsView = $('#ladb_select_controls_view', $modal);
-            var $selectControlsZoom = $('#ladb_select_controls_zoom', $modal);
-            var $selectControlsTarget = $('#ladb_select_controls_target', $modal);
-            var $inputControlsView = $('#ladb_input_controls_view', $modal);
-            var $inputControlsZoom = $('#ladb_input_controls_zoom', $modal);
-            var $inputControlsTarget = $('#ladb_input_controls_target', $modal);
+            var $selectCameraView = $('#ladb_select_camera_view', $modal);
+            var $selectCameraZoom = $('#ladb_select_camera_zoom', $modal);
+            var $selectCameraTarget = $('#ladb_select_camera_target', $modal);
+            var $inputCameraView = $('#ladb_input_camera_view', $modal);
+            var $inputCameraZoom = $('#ladb_input_camera_zoom', $modal);
+            var $inputCameraTarget = $('#ladb_input_camera_target', $modal);
             var $formGroupPins = $('.ladb-cutlist-layout-form-group-pins', $modal);
             var $formGroupPinsDirection = $('.ladb-cutlist-layout-form-group-pins-direction', $modal);
             var $btnGenerate = $('#ladb_cutlist_layout_btn_generate', $modal);
@@ -1370,9 +1370,9 @@
                 options.pins_use_names = $selectPinsUseNames.val() === '1';
                 options.pins_length = parseInt($selectPinsLength.val());
                 options.pins_direction = parseInt($selectPinsDirection.val());
-                options.controls_view = JSON.parse($inputControlsView.val());
-                options.controls_zoom = JSON.parse($inputControlsZoom.val());
-                options.controls_target = JSON.parse($inputControlsTarget.val());
+                options.camera_view = JSON.parse($inputCameraView.val());
+                options.camera_zoom = JSON.parse($inputCameraZoom.val());
+                options.camera_target = JSON.parse($inputCameraTarget.val());
             }
             var fnFillInputs = function (options) {
                 $selectPageFormat.selectpicker('val', options.page_width.replace(',', '.') + 'x' + options.page_height.replace(',', '.'));
@@ -1385,16 +1385,14 @@
                 $selectPinsUseNames.selectpicker('val', options.pins_use_names ? '1' : '0');
                 $selectPinsLength.selectpicker('val', options.pins_length);
                 $selectPinsDirection.selectpicker('val', options.pins_direction);
-                $selectControlsView.selectpicker('val', JSON.stringify(options.controls_view));
-                $inputControlsView.val(JSON.stringify(options.controls_view));
-                $selectControlsZoom.selectpicker('val', JSON.stringify(options.controls_zoom));
-                $inputControlsZoom.val(JSON.stringify(options.controls_zoom));
-                $selectControlsTarget.selectpicker('val', JSON.stringify(options.controls_target));
-                $inputControlsTarget.val(JSON.stringify(options.controls_target));
+                $selectCameraView.selectpicker('val', JSON.stringify(options.camera_view));
+                $inputCameraView.val(JSON.stringify(options.camera_view));
+                $selectCameraZoom.selectpicker('val', JSON.stringify(options.camera_zoom));
+                $inputCameraZoom.val(JSON.stringify(options.camera_zoom));
+                $selectCameraTarget.selectpicker('val', JSON.stringify(options.camera_target));
+                $inputCameraTarget.val(JSON.stringify(options.camera_target));
                 fnUpdatePageSizeFieldsAvailability();
                 fnUpdateFieldsVisibility();
-
-
             }
 
             $widgetPreset.ladbWidgetPreset({
@@ -1413,9 +1411,9 @@
             $selectPinsUseNames.selectpicker(SELECT_PICKER_OPTIONS);
             $selectPinsLength.selectpicker(SELECT_PICKER_OPTIONS);
             $selectPinsDirection.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectControlsView.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectControlsZoom.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectControlsTarget.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectCameraView.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectCameraZoom.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectCameraTarget.selectpicker(SELECT_PICKER_OPTIONS);
 
             fnFillInputs(layoutOptions);
 
@@ -1444,14 +1442,14 @@
             $selectPinsLength.on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                 fnUpdateFieldsVisibility();
             });
-            $selectControlsTarget.on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                $inputControlsTarget.val($(this).val());
+            $selectCameraTarget.on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                $inputCameraTarget.val($(this).val());
             });
-            $selectControlsView.on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                $inputControlsView.val($(this).val());
+            $selectCameraView.on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                $inputCameraView.val($(this).val());
             });
-            $selectControlsZoom.on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                $inputControlsZoom.val($(this).val());
+            $selectCameraZoom.on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                $inputCameraZoom.val($(this).val());
             });
 
             // Bind buttons
@@ -1483,7 +1481,7 @@
                             generatedAt: new Date().getTime() / 1000,
                             group: context.targetGroup,
                             pageHeader: layoutOptions.page_header,
-                            three_controls_views: THREE_CONTROLS_VIEWS
+                            THREE_CAMERA_VIEWS: THREE_CAMERA_VIEWS
                         }, function () {
 
                             // Load frame when slide animation completed
@@ -1525,14 +1523,14 @@
                             pinsColored: layoutOptions.pins_colored,
                             pinsLength: layoutOptions.pins_length,
                             pinsDirection: layoutOptions.pins_direction,
-                            controlsView: layoutOptions.controls_view,
-                            controlsZoom: layoutOptions.controls_zoom,
-                            controlsTarget: layoutOptions.controls_target
-                        }).on('controls.changed', function (e, data) {
+                            cameraView: layoutOptions.camera_view,
+                            cameraZoom: layoutOptions.camera_zoom,
+                            cameraTarget: layoutOptions.camera_target
+                        }).on('camera.changed', function (e, data) {
 
-                            layoutOptions.controls_view = data.controlsView;
-                            layoutOptions.controls_zoom = data.controlZoomIsAuto ? null : data.controlsZoom;
-                            layoutOptions.controls_target = data.controlTargetIsAuto ? null : data.controlsTarget;
+                            layoutOptions.camera_view = data.cameraView;
+                            layoutOptions.camera_zoom = data.cameraZoomIsAuto ? null : data.cameraZoom;
+                            layoutOptions.camera_target = data.cameraTargetIsAuto ? null : data.cameraTarget;
 
                             // Store options (only one time per 500ms)
                             if (storeOptionsTimeoutId) {
@@ -1548,10 +1546,10 @@
                             }, 500);
 
                             var scale;
-                            if (data.controlsZoom > 1) {
-                                scale = Number.parseFloat(data.controlsZoom.toFixed(3)) + ':1';
-                            } else if (data.controlsZoom < 1) {
-                                scale = '1:' + Number.parseFloat((1 / data.controlsZoom).toFixed(3));
+                            if (data.cameraZoom > 1) {
+                                scale = Number.parseFloat(data.cameraZoom.toFixed(3)) + ':1';
+                            } else if (data.cameraZoom < 1) {
+                                scale = '1:' + Number.parseFloat((1 / data.cameraZoom).toFixed(3));
                             } else {
                                 scale = '1:1';
                             }
@@ -1560,7 +1558,7 @@
                             $('[data-command="set_view"]', $viewer).each(function (index, el) {
                                 var $btn = $(el);
                                 var params = $btn.data('params');
-                                if (JSON.stringify(params.view) === JSON.stringify(data.controlsView)) {
+                                if (JSON.stringify(params.view) === JSON.stringify(data.cameraView)) {
                                     $btn.addClass('active');
                                 } else {
                                     $btn.removeClass('active');
@@ -1570,7 +1568,7 @@
                             $('[data-command="set_zoom"]', $viewer).each(function (index, el) {
                                 var $btn = $(el);
                                 var params = $btn.data('params');
-                                if (params.zoom === data.controlsZoom || params.zoom == null && data.controlZoomIsAuto) {
+                                if (params.zoom === data.cameraZoom || params.zoom == null && data.cameraZoomIsAuto) {
                                     $btn.addClass('active');
                                 } else {
                                     $btn.removeClass('active');
@@ -2257,7 +2255,7 @@
 
                             var $viewer = $(Twig.twig({ref: 'components/_three-viewer.twig'}).render({
                                 viewerClasses: 'ladb-three-viewer-modal-part',
-                                three_controls_view: THREE_CONTROLS_VIEWS
+                                THREE_CAMERA_VIEWS: THREE_CAMERA_VIEWS
                             }));
 
                             $viewer.ladbThreeViewer({

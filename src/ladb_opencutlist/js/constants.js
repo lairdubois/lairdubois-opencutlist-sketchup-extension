@@ -42,7 +42,7 @@ var REAL_MATERIALS_FILTER = [
 
 // Three JS /////
 
-var THREE_CONTROLS_VIEWS = {
+var THREE_CAMERA_VIEWS = {
     none: [ 0, 0, 0 ],
     isometric: [ 1, -1, 1 ],
     top: [ 0, 0, 1 ],

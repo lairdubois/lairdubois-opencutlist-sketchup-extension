@@ -21,9 +21,9 @@
         pinsColored: false,
         pinsLength: 1,      // PINS_LENGTH_SHORT
         pinsDirection: 4,   // PINS_DIRECTION_MODEL_CENTER
-        controlsTarget: null,
-        controlsView: null,
-        controlsZoom: null,
+        cameraTarget: null,
+        cameraView: null,
+        cameraZoom: null,
         showBoxHelper: false,
     };
 
@@ -54,9 +54,9 @@
                         pinsColored: that.options.pinsColored,
                         pinsLength: that.options.pinsLength,
                         pinsDirection: that.options.pinsDirection,
-                        controlsView: that.options.controlsView,
-                        controlsZoom: that.options.controlsZoom,
-                        controlsTarget: that.options.controlsTarget,
+                        cameraView: that.options.cameraView,
+                        cameraZoom: that.options.cameraZoom,
+                        cameraTarget: that.options.cameraTarget,
                     }
                 );
                 if (that.options.showBoxHelper) {
@@ -70,8 +70,8 @@
 
             });
 
-        this.$iframe.get(0).addEventListener('controls.changed', function (e) {
-            that.$element.trigger('controls.changed', [ e.data ]);
+        this.$iframe.get(0).addEventListener('camera.changed', function (e) {
+            that.$element.trigger('camera.changed', [ e.data ]);
         })
 
         // Bind buttons

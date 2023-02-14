@@ -129,7 +129,7 @@ const fnAddListeners = function () {
         fnRender();
     });
     controls.addEventListener('end', function () {
-        fnDispatchControlsChanged();
+        fnDispatchCameraChanged();
     });
 
     // Window listeners
@@ -152,9 +152,9 @@ const fnAddListeners = function () {
                         call.params.pinsLength,
                         call.params.pinsDirection,
                         call.params.pinsColored,
-                        call.params.controlsView,
-                        call.params.controlsZoom,
-                        call.params.controlsTarget
+                        call.params.cameraView,
+                        call.params.cameraZoom,
+                        call.params.cameraTarget
                     );
                     if (call.params.showBoxHelper) {
                         fnSetBoxHelperVisible(true);
@@ -197,30 +197,30 @@ const fnGetZoomAutoByView = function (view) {
 
     switch (JSON.stringify(view)) {
 
-        case JSON.stringify(THREE_CONTROLS_VIEWS.none):
+        case JSON.stringify(THREE_CAMERA_VIEWS.none):
             return 1;
 
-        case JSON.stringify(THREE_CONTROLS_VIEWS.isometric):
+        case JSON.stringify(THREE_CAMERA_VIEWS.isometric):
             let width2d = (modelSize.x + modelSize.y) * Math.cos(Math.PI / 6);
             let height2d = (modelSize.x + modelSize.y) * Math.cos(Math.PI / 3) + modelSize.z;
             return Math.min(viewportWidth / width2d, viewportHeight / height2d);
 
-        case JSON.stringify(THREE_CONTROLS_VIEWS.top):
+        case JSON.stringify(THREE_CAMERA_VIEWS.top):
             return Math.min(viewportWidth / modelSize.x, viewportHeight / modelSize.y) * 0.8;
 
-        case JSON.stringify(THREE_CONTROLS_VIEWS.bottom):
+        case JSON.stringify(THREE_CAMERA_VIEWS.bottom):
             return Math.min(viewportWidth / modelSize.x, viewportHeight / modelSize.y) * 0.8;
 
-        case JSON.stringify(THREE_CONTROLS_VIEWS.front):
+        case JSON.stringify(THREE_CAMERA_VIEWS.front):
             return Math.min(viewportWidth / modelSize.x, viewportHeight / modelSize.z) * 0.8;
 
-        case JSON.stringify(THREE_CONTROLS_VIEWS.back):
+        case JSON.stringify(THREE_CAMERA_VIEWS.back):
             return Math.min(viewportWidth / modelSize.x, viewportHeight / modelSize.z) * 0.8;
 
-        case JSON.stringify(THREE_CONTROLS_VIEWS.left):
+        case JSON.stringify(THREE_CAMERA_VIEWS.left):
             return Math.min(viewportWidth / modelSize.y, viewportHeight / modelSize.z) * 0.8;
 
-        case JSON.stringify(THREE_CONTROLS_VIEWS.right):
+        case JSON.stringify(THREE_CAMERA_VIEWS.right):
             return Math.min(viewportWidth / modelSize.y, viewportHeight / modelSize.z) * 0.8;
 
         default:
@@ -229,17 +229,17 @@ const fnGetZoomAutoByView = function (view) {
     }
 }
 
-const fnDispatchControlsChanged = function () {
+const fnDispatchCameraChanged = function () {
 
     let view = fnGetCurrentView();
 
-    window.frameElement.dispatchEvent(new MessageEvent('controls.changed', {
+    window.frameElement.dispatchEvent(new MessageEvent('camera.changed', {
         data: {
-            controlsView: view,
-            controlsZoom: camera.zoom,
-            controlsTarget: controls.target.toArray([]),
-            controlZoomIsAuto: camera.zoom === fnGetZoomAutoByView(view),
-            controlTargetIsAuto: controls.target.equals(modelCenter)
+            cameraView: view,
+            cameraZoom: camera.zoom,
+            cameraTarget: controls.target.toArray([]),
+            cameraZoomIsAuto: camera.zoom === fnGetZoomAutoByView(view),
+            cameraTargetIsAuto: controls.target.equals(modelCenter)
         }
     }));
 
@@ -417,22 +417,22 @@ const fnSetZoom = function (zoom) {
     controls.position0.copy(camera.position);
     controls.zoom0 = zoom ? zoom : fnGetZoomAutoByView(fnGetCurrentView());
     controls.reset();
-    fnDispatchControlsChanged();
+    fnDispatchCameraChanged();
 }
 
-const fnSetView = function (controlsView = THREE_CONTROLS_VIEWS.isometric) {
+const fnSetView = function (view = THREE_CAMERA_VIEWS.isometric) {
 
-    let currentControlsView = fnGetCurrentView();
-    let currentZoomAuto = fnGetZoomAutoByView(currentControlsView);
+    let currentView = fnGetCurrentView();
+    let currentZoomAuto = fnGetZoomAutoByView(currentView);
     let currentZoomIsAuto = camera.zoom === currentZoomAuto;
 
     controls.target0.copy(modelCenter);
-    controls.position0.fromArray(controlsView).multiplyScalar(modelRadius).add(controls.target0);
-    controls.zoom0 = currentZoomIsAuto ? fnGetZoomAutoByView(controlsView) : camera.zoom;
+    controls.position0.fromArray(view).multiplyScalar(modelRadius).add(controls.target0);
+    controls.zoom0 = currentZoomIsAuto ? fnGetZoomAutoByView(view) : camera.zoom;
 
     controls.reset();
 
-    fnDispatchControlsChanged();
+    fnDispatchCameraChanged();
     fnSetAutoRotateEnable(false);
 
 }
@@ -471,7 +471,7 @@ const fnSetAutoRotateEnable = function (enable) {
     }
 }
 
-const fnSetupModel = function(modelDef, partsColored, pinsHidden, pinsLength, pinsDirection, pinsColored, controlsView, controlsZoom, controlsTarget) {
+const fnSetupModel = function(modelDef, partsColored, pinsHidden, pinsLength, pinsDirection, pinsColored, cameraView, cameraZoom, cameraTarget) {
 
     model = fnAddObjectDef(modelDef, scene, defaultMeshMaterial, partsColored);
     if (model) {
@@ -490,30 +490,30 @@ const fnSetupModel = function(modelDef, partsColored, pinsHidden, pinsLength, pi
 
         }
 
-        if (controlsView) {
+        if (cameraView) {
 
-            if (controlsTarget) {
-                controls.target0.fromArray(controlsTarget);
+            if (cameraTarget) {
+                controls.target0.fromArray(cameraTarget);
             } else {
                 controls.target0.copy(modelCenter); // Auto target
             }
 
-            controls.position0.fromArray(controlsView).multiplyScalar(modelRadius).add(controls.target0);
+            controls.position0.fromArray(cameraView).multiplyScalar(modelRadius).add(controls.target0);
 
-            if (controlsZoom) {
-                controls.zoom0 = controlsZoom;
+            if (cameraZoom) {
+                controls.zoom0 = cameraZoom;
             } else {
-                controls.zoom0 = fnGetZoomAutoByView(controlsView);   // Auto zoom
+                controls.zoom0 = fnGetZoomAutoByView(cameraView);   // Auto zoom
             }
 
             controls.reset();
 
-            fnDispatchControlsChanged();
+            fnDispatchCameraChanged();
 
         } else {
 
             // Start with isometric view + auto target + auto zoom
-            fnSetView(THREE_CONTROLS_VIEWS.isometric);
+            fnSetView(THREE_CAMERA_VIEWS.isometric);
 
         }
 

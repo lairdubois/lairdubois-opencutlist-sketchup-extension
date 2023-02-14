@@ -13,8 +13,8 @@
     "pins_use_names": false,
     "pins_direction": 4, /* PINS_DIRECTION_MODEL_CENTER */
     "pins_length": 1, /* PINS_LENGTH_SHORT */
-    "controls_view": [ 1, -1, 1 ], /* CONTROLS_VIEW_ISOMETRIC */
-    "controls_zoom": null,
-    "controls_target": null
+    "camera_view": [ 1, -1, 1 ], /* CAMERA_VIEW_ISOMETRIC */
+    "camera_zoom": null,
+    "camera_target": null
   }
 }
