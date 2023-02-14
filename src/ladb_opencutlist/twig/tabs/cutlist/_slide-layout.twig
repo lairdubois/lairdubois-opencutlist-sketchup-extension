@@ -24,8 +24,8 @@
         {% macro btn_view(viewName, icon, THREE_CAMERA_VIEWS, ttPlacement = 'right') %}
             <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:THREE_CAMERA_VIEWS[viewName] }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="{{ ttPlacement }}" title="{{ 'core.component.three_viewer.view'|i18next({ 'view':('core.component.three_viewer.view_'~viewName)|i18next }) }}"><i class="ladb-opencutlist-icon-{{ icon }}"></i></button>
         {% endmacro %}
-        {% macro btn_zoom(zoomValue, ttLabel, btnLabel, btnLabelSize) %}
-            <button class="btn btn-default btn-sm" data-command="set_zoom" data-params="{{ { zoom:zoomValue }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.zoom'|i18next({ 'zoom':ttLabel }) }}">{% if btnLabelSize %}<span style="font-size:{{ btnLabelSize }}px">{% endif %}{{ btnLabel }}{% if btnLabelSize %}</span>{% endif %}</button>
+        {% macro btn_zoom(zoomValue, ttLabel, btnLabel, btnLabelSize, classes) %}
+            <button class="btn btn-default btn-sm{% if classes %} {{ classes }}{% endif %}" data-command="set_zoom" data-params="{{ { zoom:zoomValue }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.zoom'|i18next({ 'zoom':ttLabel }) }}">{% if btnLabelSize %}<span style="font-size:{{ btnLabelSize }}px">{% endif %}{{ btnLabel }}{% if btnLabelSize %}</span>{% endif %}</button>
         {% endmacro %}
 
         {% import _self as fn %}
@@ -57,13 +57,13 @@
             {{ fn.btn_view('back', 'view-back', THREE_CAMERA_VIEWS) }}
             <span>&nbsp;</span>
             {{ fn.btn_zoom(null, 'tab.cutlist.layout.option_camera_zoom_auto'|i18next, '<i class="ladb-opencutlist-icon-zoom-auto"></i>') }}
-            {{ fn.btn_zoom(2, '2:1', '2:1') }}
+            {{ fn.btn_zoom(2, '2:1', '2:1', null, 'hide-lt-600h') }}
             {{ fn.btn_zoom(1, '1:1', '1:1') }}
             {{ fn.btn_zoom(0.5, '1:2', '1:2') }}
             {{ fn.btn_zoom(0.2, '1:5', '1:5') }}
             {{ fn.btn_zoom(0.1, '1:10', '1:10', 8) }}
-            {{ fn.btn_zoom(0.05, '1:20', '1:20', 8) }}
-            {{ fn.btn_zoom(0.02, '1:50', '1:50', 8) }}
+            {{ fn.btn_zoom(0.05, '1:20', '1:20', 8, 'hide-lt-600h') }}
+            {{ fn.btn_zoom(0.02, '1:50', '1:50', 8, 'hide-lt-600h') }}
         {% endblock %}
     {% endembed %}
 {% endblock %}
