@@ -341,12 +341,12 @@ tab:
       description: Description
       description_help: |
         La *Description* permet d'apporter des informations personnalisées sur chaque définition de pièce.
-      tags: Tags
+      tags: Badges
       tags_help: |
-        Les *Tags* vous permettent d'ajouter des mots-clés personnalisés sur chaque définition de pièce.
-        Vous pouvez ajouter autant de tags que vous le souhaitez.
-        Vous pourrez ensuite filtrer les pièces visibles dans votre fiche de débit par rapport à ces tags.
-      tags_multiple_info: Seuls les tags communs sont visibles
+        Les *Badges* vous permettent d'ajouter des mots-clés personnalisés sur chaque définition de pièce.
+        Vous pouvez ajouter autant de bages que vous le souhaitez.
+        Vous pourrez ensuite filtrer les pièces visibles dans votre fiche de débit par rapport à ces badges.
+      tags_multiple_info: Seuls les badges communs sont visibles
       orientation: Orientation
       orientation_locked_on_axis: Verrouiller l'orientation sur les axes de la pièce
       orientation_locked_on_axis_help: |
@@ -417,15 +417,15 @@ tab:
       part_number_sequence_by_group_help: "Si cette option est activée, la numérotation des pièces est réinitialisée à 1 (ou A) à chaque groupe (liste de pièces de même matière et épaisseur brute)."
       part_folding: Regrouper les pièces identiques
       part_folding_help: |
-        Si cette option est activée, les pièces de **matière Bois massif, Panneau ou Barre**, ayant la **même taille capable**, avec les **mêmes tags** et la **même surface finie** *(si l'affichage de cette surface n'est pas masqué)* seront regroupées sur une même ligne dans la *fiche de débit*.
+        Si cette option est activée, les pièces de **matière Bois massif, Panneau ou Barre**, ayant la **même taille capable**, avec les **mêmes badges** et la **même surface finie** *(si l'affichage de cette surface n'est pas masqué)* seront regroupées sur une même ligne dans la *fiche de débit*.
 
         Les pièces resterons considérées différentes pour l'édition d'étiquettes et le calepinage.
       hide_entity_names: Masquer les noms d'instance
       hide_entity_names_help: "Si cette option est activée, les **noms d'instances** des pièces ne sont pas affichés."
       hide_descriptions: Masquer les descriptions
       hide_descriptions_help: "Si cette option est activée, les **descriptions** placées sur les pièces ne sont pas affichées."
-      hide_tags: Masquer les tags
-      hide_tags_help: "Si cette option est activée, les **tags** placés sur les pièces ne sont pas affichés."
+      hide_tags: Masquer les badges
+      hide_tags_help: "Si cette option est activée, les **badges** placés sur les pièces ne sont pas affichés."
       hide_cutting_dimensions: Masquer les dimensions de débit
       hide_cutting_dimensions_help: "Si cette option est activée, les dimensions de **débit** des pièces ne sont pas affichées."
       hide_bbox_dimensions: Masquer les dimensions capables
@@ -452,11 +452,11 @@ tab:
       property_name: Désignation
       property_count: Quantité
       property_edge_pattern: Nombre de chants
-      property_tags: Tags
+      property_tags: Badges
       property_thickness_layer_count: Nombre de couches
-      tags: Tags
-      tags_help: Liste personnalisée des tags proposés dans la fenêtre de propriétés des pièces.
-      tags_placeholder: Ajouter un tag
+      tags: Badges
+      tags_help: Liste personnalisée des badges proposés dans la fenêtre de propriétés des pièces.
+      tags_placeholder: Ajouter un badge
     list:
       filters: Filtres
       filters_warning_0: "Ce filtrage masque toutes les pièces !"
@@ -464,7 +464,7 @@ tab:
       filters_warning_plural: "Ce filtrage n'affiche que **{{ count }}** pièces sur un total de {{ total }}."
       edge_material_names_filter: Matières de chant à filtrer
       veneer_material_names_filter: Matières de placage à filtrer
-      tags_filter: Tags à filtrer
+      tags_filter: Badges à filtrer
       dimensions_help: Comprendre les dimensions
       summary: Récapitulatif
       material_type: Type
@@ -541,7 +541,7 @@ tab:
       material_name: Matière
       entity_names: Noms d'instance
       description: Description
-      tags: Tags
+      tags: Badges
       edge_ymin: Chant Longueur 1
       edge_ymax: Chant Longueur 2
       edge_xmin: Chant Largeur 1
@@ -810,7 +810,7 @@ tab:
         part_length: Longueur capable
         part_width: Largeur capable
         part_thickness: Epaisseur capable
-        part_tags: Tags
+        part_tags: Badges
         part_batch: Lot
         part_edge_ymin: Chant longueur 1
         part_edge_ymax: Chant longueur 2
@@ -1108,7 +1108,7 @@ tab:
       bbox_width: Largeur capable
       bbox_thickness: Épaisseur capable
       material: Matière
-      tags: Tags
+      tags: Badges
     tooltip:
       errors: Cette pièce ne sera pas importée car elle contient les erreurs suivantes
       warnings: Cette pièce sera importée mais elle contient les avertissements suivants
