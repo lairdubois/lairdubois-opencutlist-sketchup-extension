@@ -277,7 +277,7 @@ LadbAbstractTab.prototype.hideModalInside = function () {
 
 // Print /////
 
-LadbAbstractTab.prototype.print = function (title, margin) {
+LadbAbstractTab.prototype.print = function (title, margin, size) {
 
     if (title === undefined) {
         title = 'OpenCutList';
@@ -292,15 +292,21 @@ LadbAbstractTab.prototype.print = function (title, margin) {
         }
     }
 
-    // Retrieve and modifiy Page rule to set margin to desired one
+    if (size === undefined) {
+        size = '';
+    }
+
+    // Retrieve and modifiy Page rule to set margin and size to desired one
     var cssPageRuleStyle = document.styleSheets[0].cssRules[0].style;
     cssPageRuleStyle.margin = margin;
+    cssPageRuleStyle.size = size;
 
     // Print
     window.print();
 
     // Retore margin
     cssPageRuleStyle.margin = '';
+    cssPageRuleStyle.size = '';
 
 };
 

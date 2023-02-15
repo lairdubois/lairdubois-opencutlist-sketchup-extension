@@ -1502,7 +1502,7 @@
                         });
                         $btnPrint.on('click', function () {
                             $(this).blur();
-                            that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.layout.title'), '0');
+                            that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.layout.title'), '0', `${pageWidth}in ${pageHeight}in`);
                         });
                         $btnClose.on('click', function () {
                             that.popSlide();
@@ -3867,7 +3867,7 @@
                     });
                     $btnPrint.on('click', function () {
                         $(this).blur();
-                        that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.labels.title'), '0');
+                        that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.labels.title'), '0', `${response.page_width}in ${response.page_height}in`);
                     });
                     $btnClose.on('click', function () {
                         that.popSlide();
