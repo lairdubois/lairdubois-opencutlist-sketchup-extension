@@ -156,7 +156,7 @@ core:
     textinput_code:
       help: "Drücken Sie **@**, um die Liste der Datenvariablen zu öffnen."
     three_viewer:
-      view: "{{ view }} Ansicht"
+      view: "{{ view }}"
       view_isometric: Isometrisch
       view_top: Draufsicht
       view_bottom: Von Unten
@@ -164,10 +164,9 @@ core:
       view_back: Rückansicht
       view_left: Seitelinks
       view_right: Seiterechts
-      zoom: Skala {{ zoom }}
-      toggle_box_helper: Afficher ou masquer la boîte capable
+      zoom: Maßstab {{ zoom }}
+      toggle_box_helper: Anzeige des Begrenzungsrahmens
       toggle_axes_helper: Anzeige der Achsen des Teils
-      toggle_auto_rotate: Animieren!
   docs:
     error:
       failed_to_load: |
@@ -187,7 +186,7 @@ tab:
     not_available_std_section: Querschnitt nicht verfügbar
     highlight_part: Teil im Modell hervorheben
     highlight_parts: Teile im Modell hervorheben
-    layout_parts: Übersichtszeichnung
+    layout_parts: Übersichtsplan
     edit_part_properties: Eigenschaften des Teils bearbeiten
     edit_part_axes_properties: Eigenschaften (Achsen) des Teils bearbeiten
     edit_part_size_increase_properties: Eigenschaften (Übermaße) des Teils bearbeiten
@@ -290,7 +289,7 @@ tab:
       numbers_save: Nummern der Teile speichern
       numbers_reset: Nummern der Teile neu zuweisen
       highlight_parts: $t(tab.cutlist.highlight_parts)
-      layout_parts: Übersichtszeichnung drucken
+      layout_parts: Übersichtsplan drucken
       group_numbers_save: Nummern der Gruppenteile speichern
       group_numbers_reset: Nummern der Gruppenteile neu zuweisen
       group_cuttingdiagram: Schnittplan
@@ -835,7 +834,7 @@ tab:
         is_part_selection: Diese Etiketten beschränken sich auf **ausgewählte Teile**.
         formula_not_available: Formel steht in diesem Kontext nicht zu Verfügung
     layout:
-      title: Übersichtszeichnung
+      title: Übersichtsplan
       options_layout: Darstellung
       options_settings: Konfiguration
       option_parts: Teile
@@ -881,7 +880,7 @@ tab:
       option_page_header_1: Mit
       option_page_header_help: |
         Wählen Sie, ob die zu druckende Seite eine Kopfzeile mit dem Namen des Dokuments, seiner Beschreibung und dem Datum enthält.
-        Ohne Kopfzeile nimmt die Übersichtszeichnung die gesamte Seite ein.
+        Ohne Kopfzeile nimmt den Übersichtsplan die gesamte Seite ein.
       option_camera: Kamera
       option_camera_view: $t(core.component.three_viewer.view)
       option_camera_view_custom: Benutzerdefiniert
@@ -895,7 +894,7 @@ tab:
         no_part: Es gibt keine zu zeichnenden Teile.
       warning:
         is_group_selection: Die Teile innerhalb der **maskierten Gruppen** Ihrer Teileliste werden nicht gezeichnet.
-        is_part_selection: Diese Übersichtszeichnung ist auf die **ausgewählten Teile** beschränkt.
+        is_part_selection: Dieser Übersichtsplan ist auf die **ausgewählten Teile** beschränkt.
     error:
       no_model: Es sind keine Modelle geöffnet. Sie müssen mir schon etwas mehr geben ;)
       no_entities: Ihr Modell ist leer. Sie müssen mir schon etwas mehr geben ;)
