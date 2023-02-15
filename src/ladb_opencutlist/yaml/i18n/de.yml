@@ -341,12 +341,12 @@ tab:
       description: Beschreibung
       description_help: |
         Die *Beschreibung* ermöglicht es Ihnen, benutzerdefinierte Informationen zu jeder Teildefinition anzugeben.
-      tags: Tags
+      tags: Badges
       tags_help: |
-        Mit *Tags* können Sie jede Teildefinition mit Schlüsselwörtern ergänzen.
-        Sie können beliebig viele Tags hinzufügen.
-        Anschließend können Sie die Auswahl der sichtbaren Teile der Holzliste anhand dieser Tags einschränken.
-      tags_multiple_info: Nur gemeinsame Tags werden angezeigt
+        Mit *Badges* können Sie jede Teildefinition mit Schlüsselwörtern ergänzen.
+        Sie können beliebig viele Badges hinzufügen.
+        Anschließend können Sie die Auswahl der sichtbaren Teile der Holzliste anhand dieser Badges einschränken.
+      tags_multiple_info: Nur gemeinsame Badges werden angezeigt
       orientation: Ausrichtung
       orientation_locked_on_axis: An das Koordinatensystem binden
       orientation_locked_on_axis_help: |
@@ -417,15 +417,15 @@ tab:
       part_number_sequence_by_group_help: "Ist diese Option aktiv, wird die Teilenummerierung bei jeder Gruppe (Liste von Teilen mit gleichem Material und gleicher Bruttodicke) auf 1 (oder A) zurückgesetzt."
       part_folding: Gleiche Teile zusammenfassen
       part_folding_help: |
-        Ist diese Option aktiv, werden Teile mit **gleichen Maßen** und mit **gleichen Tags** auf einer Zeile zusammengefasst (sofern die Anzeige dieser Fläche nicht ausgeblendet ist).
+        Ist diese Option aktiv, werden Teile mit **gleichen Maßen** und mit **gleichen Badges** auf einer Zeile zusammengefasst (sofern die Anzeige dieser Fläche nicht ausgeblendet ist).
 
         Die Teile werden bei Etiketten und Schnittplänen weiterhin als unterschiedlich betrachtet.
       hide_entity_names: Instanzbezeichnungen ausblenden
       hide_entity_names_help: "Ist diese Option aktiv, werden **Instanzbezeichnungen** von Teilen nicht angezeigt."
       hide_descriptions: Beschreibungen ausblenden
       hide_descriptions_help: "Wenn diese Option ausgewählt ist, werden die **Beschreibungen**, die auf den Teilen angebracht sind, nicht angezeigt."
-      hide_tags: Tags ausblenden
-      hide_tags_help: "Ist diese Option aktiv, werden die auf den Teilen platzierten **Tags** nicht angezeigt."
+      hide_tags: Badges ausblenden
+      hide_tags_help: "Ist diese Option aktiv, werden die auf den Teilen platzierten **Badges** nicht angezeigt."
       hide_cutting_dimensions: Rohmaße ausblenden
       hide_cutting_dimensions_help: "Ist diese Option aktiv, werden die **Rohmaße** nicht angezeigt."
       hide_bbox_dimensions: Fertigmaße ausblenden
@@ -452,11 +452,11 @@ tab:
       property_name: Bezeichnung
       property_count: Anzahl
       property_edge_pattern: Anzahl Kantenbänder
-      property_tags: Tags
+      property_tags: Badges
       property_thickness_layer_count: Anzahl der Schichten
-      tags: Tags
-      tags_help: "Benutzerdefinierte Liste von Tags, welche als Auswahl bei den Eigenschaften von Teilen zu Verfügung steht."
-      tags_placeholder: Tag hinzufügen
+      tags: Badges
+      tags_help: "Benutzerdefinierte Liste von Badges, welche als Auswahl bei den Eigenschaften von Teilen zu Verfügung steht."
+      tags_placeholder: Badge hinzufügen
     list:
       filters: Filter
       filters_warning_0: "Dieser Filter verdeckt alle Teile!"
@@ -464,7 +464,7 @@ tab:
       filters_warning_plural: "Dieser Filter zeigt **{{ count }}** Teile von insgesamt {{ total }} Teilen an."
       edge_material_names_filter: Zu filternde Kantenmaterialien
       veneer_material_names_filter: Zu filternde Furniere
-      tags_filter: Filtern nach Tag
+      tags_filter: Filtern nach Badges
       dimensions_help: Erklärung zu den Dimensionen
       summary: Übersicht
       material_type: Typ
@@ -541,7 +541,7 @@ tab:
       material_name: Material
       entity_names: Instanzbezeichnungen
       description: Beschreibung
-      tags: Tags
+      tags: Badges
       edge_ymin: Kantenband Länge 1
       edge_ymax: Kantenband Länge 2
       edge_xmin: Kantenband Breite 1
@@ -810,7 +810,7 @@ tab:
         part_length: Länge
         part_width: Breite
         part_thickness: Dicke
-        part_tags: Tags
+        part_tags: Badges
         part_batch: Los
         part_edge_ymin: Kantenband Länge 1
         part_edge_ymax: Kantenband Länge 2
@@ -1108,7 +1108,7 @@ tab:
       bbox_width: Breite
       bbox_thickness: Dicke
       material: Material
-      tags: Tags
+      tags: Badges
     tooltip:
       errors: "Dieses Teil wird nicht importiert, weil es folgende Fehler enthält"
       warnings: "Dieses Teil wird importiert, aber es enthält folgende Fehler"

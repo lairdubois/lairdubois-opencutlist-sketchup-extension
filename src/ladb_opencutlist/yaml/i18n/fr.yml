@@ -344,7 +344,7 @@ tab:
       tags: Badges
       tags_help: |
         Les *Badges* vous permettent d'ajouter des mots-clés personnalisés sur chaque définition de pièce.
-        Vous pouvez ajouter autant de bages que vous le souhaitez.
+        Vous pouvez ajouter autant de badges que vous le souhaitez.
         Vous pourrez ensuite filtrer les pièces visibles dans votre fiche de débit par rapport à ces badges.
       tags_multiple_info: Seuls les badges communs sont visibles
       orientation: Orientation
