@@ -341,12 +341,12 @@ tab:
       description: Description
       description_help: |
         The *Description* allows you to provide personalized information on each part definition.
-      tags: Tags
+      tags: Badges
       tags_help: |
-        *Tags* are custom keywords that can be added to each part definition.
-        You can add as many tags as you want.
-        The visible parts of your parts list can then be filtered against these tags.
-      tags_multiple_info: Only common tags are displayed
+        *Badges* are custom keywords that can be added to each part definition.
+        You can add as many badges as you want.
+        The visible parts of your parts list can then be filtered against these badges.
+      tags_multiple_info: Only common badges are displayed
       orientation: Orientation
       orientation_locked_on_axis: Lock orientation on axes
       orientation_locked_on_axis_help: |
@@ -417,15 +417,15 @@ tab:
       part_number_sequence_by_group_help: "If this option is selected, the enumeration of parts is reinitialized to 1 (or A) for each group (list of parts with same material type and thickness)."
       part_folding: Group similar parts
       part_folding_help: |
-        If this option is enabled, parts made of **Solid Wood, Sheet Goods or Dimensional**, having the **same rough size**, with the **same tags** and the **same finished surface** *(if the display of this surface is not hidden)* will be grouped on the same line in the *parts list*.
+        If this option is enabled, parts made of **Solid Wood, Sheet Goods or Dimensional**, having the **same rough size**, with the **same badges** and the **same finished surface** *(if the display of this surface is not hidden)* will be grouped on the same line in the *parts list*.
 
         The parts will still be considered different for labeling and cutting diagram purposes.
       hide_entity_names: Hide instance names
       hide_entity_names_help: "If this option is selected, **instance names** of parts will not be displayed."
       hide_descriptions: Hide descriptions
       hide_descriptions_help: "If this option is selected, the **descriptions** placed on the parts will not be displayed."
-      hide_tags: Hide tags
-      hide_tags_help: "If this option is selected, **tags** will not be displayed."
+      hide_tags: Hide badges
+      hide_tags_help: "If this option is selected, **badges** will not be displayed."
       hide_cutting_dimensions: Hide rough dimensions
       hide_cutting_dimensions_help: "If this option is selected, the **rough** dimensions of parts will be hidden."
       hide_bbox_dimensions: Hide finished dimensions
@@ -452,11 +452,11 @@ tab:
       property_name: Designation
       property_count: Quantity
       property_edge_pattern: Number of edge bandings
-      property_tags: Tags
+      property_tags: Badges
       property_thickness_layer_count: Number of layers
-      tags: Tags
-      tags_help: Custom list of tags proposed in the part properties window.
-      tags_placeholder: Add a tag
+      tags: Badges
+      tags_help: Custom list of badges proposed in the part properties window.
+      tags_placeholder: Add a badge
     list:
       filters: Filter
       filters_warning_0: "This filter masks all parts!"
@@ -464,7 +464,7 @@ tab:
       filters_warning_plural: "This filter only displays **{{ count }}** parts out of a total of {{ total }}."
       edge_material_names_filter: Filter by edge banding material
       veneer_material_names_filter: Filter by veneer material
-      tags_filter: Filter by Tags
+      tags_filter: Filter by Badges
       dimensions_help: Understanding dimensions
       summary: Summary
       material_type: Type
@@ -541,7 +541,7 @@ tab:
       material_name: Material
       entity_names: Instance names
       description: Description
-      tags: Tags
+      tags: Badges
       edge_ymin: Edge length 1
       edge_ymax: Edge length 2
       edge_xmin: Edge width 1
@@ -810,7 +810,7 @@ tab:
         part_length: Length
         part_width: Width
         part_thickness: Thickness
-        part_tags: Tags
+        part_tags: Badges
         part_batch: Batch
         part_edge_ymin: Edge length 1
         part_edge_ymax: Edge length 2
@@ -1108,7 +1108,7 @@ tab:
       bbox_width: Width
       bbox_thickness: Thickness
       material: Material
-      tags: Tags
+      tags: Badges
     tooltip:
       errors: This part will not be imported because it produced the following errors
       warnings: This part will be imported but it produced the following warnings
