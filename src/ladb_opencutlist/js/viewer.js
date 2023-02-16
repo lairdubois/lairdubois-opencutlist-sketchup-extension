@@ -50,39 +50,6 @@ const fnInit = function() {
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0xffffff);
 
-    // Create axes helper
-
-    axesHelper = new THREE.Group();
-    axesHelper.visible = false;
-    scene.add(axesHelper);
-
-    const lengthArrowHelper = new THREE.ArrowHelper(
-        new THREE.Vector3(1, 0, 0),
-        new THREE.Vector3(0, 0, 0),
-        100,
-        0xff0000,
-        0
-    );
-    axesHelper.add(lengthArrowHelper);
-
-    const widthArrowHelper = new THREE.ArrowHelper(
-        new THREE.Vector3(0, 1, 0),
-        new THREE.Vector3(0, 0, 0),
-        100,
-        0x00ff00,
-        0
-    );
-    axesHelper.add(widthArrowHelper);
-
-    const thicknessArrowHelper = new THREE.ArrowHelper(
-        new THREE.Vector3(0, 0, 1),
-        new THREE.Vector3(0, 0, 0),
-        100,
-        0x0000ff,
-        0
-    );
-    axesHelper.add(thicknessArrowHelper);
-
     // Create the camera
 
     camera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1000, 1000);
@@ -522,6 +489,33 @@ const fnSetupModel = function(modelDef, partsColored, pinsHidden, pinsLength, pi
         boxHelper = new THREE.BoxHelper(model, 0x0000ff);
         boxHelper.visible = false;
         scene.add(boxHelper);
+
+        // Create axes helper
+        axesHelper = new THREE.Group();
+        axesHelper.visible = false;
+        axesHelper.applyMatrix4(model.matrixWorld.invert());
+        axesHelper.add(new THREE.ArrowHelper(
+            new THREE.Vector3(1, 0, 0),
+            new THREE.Vector3(0, 0, 0),
+            modelRadius * 5,
+            0xff0000,
+            0
+        ));
+        axesHelper.add(new THREE.ArrowHelper(
+            new THREE.Vector3(0, 1, 0),
+            new THREE.Vector3(0, 0, 0),
+            modelRadius * 5,
+            0x00ff00,
+            0
+        ));
+        axesHelper.add(new THREE.ArrowHelper(
+            new THREE.Vector3(0, 0, 1),
+            new THREE.Vector3(0, 0, 0),
+            modelRadius * 5,
+            0x0000ff,
+            0
+        ));
+        scene.add(axesHelper);
 
     }
 

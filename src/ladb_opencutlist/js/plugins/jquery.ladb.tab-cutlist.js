@@ -1558,7 +1558,7 @@
                         });
 
                         var $paperPage = $('.ladb-paper-page', $viewer)
-                        if (pageWidth && pageHeight) {
+                        if ($paperPage.length > 0 && pageWidth && pageHeight) {
 
                             $paperPage.outerWidth(pageWidth + 'in');
                             $paperPage.outerHeight(pageHeight + 'in');
@@ -1568,7 +1568,7 @@
                             var fnScaleFrame = function (e) {
 
                                 // Auto remove listener
-                                if (e && !$viewer.get(0).isConnected) {
+                                if (e && !$paperPage.get(0).isConnected) {
 
                                     // Unbind window resize event
                                     $(window).off('resize', fnScaleFrame);
@@ -1582,7 +1582,7 @@
                                     return;
                                 }
 
-                                if (!$viewer.is(':visible')) {
+                                if (!$paperPage.is(':visible')) {
                                     return;
                                 }
 

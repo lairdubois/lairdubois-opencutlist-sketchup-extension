@@ -9,7 +9,7 @@ module Ladb::OpenCutList
 
     def initialize(parts, all_instances = false, pins_use_names = false)
 
-      @part = parts
+      @parts = parts
       @all_instances = all_instances
       @pins_use_names = pins_use_names
 
@@ -28,7 +28,7 @@ module Ladb::OpenCutList
 
       group_cache = {}  # key = serialized_path, value = group - Only for all instances
 
-      @part.each do |part|
+      @parts.each do |part|
 
         if @all_instances
 
@@ -52,6 +52,17 @@ module Ladb::OpenCutList
 
         else
 
+          # Set transformation matrix to correspond to axes orientation
+          axes_order = part.def.size.normals.clone
+          # if AxisUtils::flipped?(axes_order[0], axes_order[1], axes_order[2])
+          #   axes_order[0] = axes_order[0].reverse
+          #   axes_order[1] = axes_order[1].reverse
+          #   axes_order[2] = axes_order[2].reverse
+          # end
+          transformation = Geom::Transformation.axes(ORIGIN, axes_order[0], axes_order[1], axes_order[2]).inverse
+          three_model_def.matrix = _to_three_matrix(transformation)
+
+          # Extract first instance
           instance_info = part.def.instance_infos.values.first
 
           # Create the three part def

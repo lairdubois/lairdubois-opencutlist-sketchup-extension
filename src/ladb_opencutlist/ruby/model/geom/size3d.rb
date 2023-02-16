@@ -6,7 +6,7 @@ module Ladb::OpenCutList
 
     DEFAULT_NORMALS = [ X_AXIS, Y_AXIS, Z_AXIS ]
 
-    attr_accessor :thickness
+    attr_accessor :thickness, :normals
 
     def initialize(length = 0, width = 0, thickness = 0, normals = DEFAULT_NORMALS)
       if length.is_a?(String)    # String representation of a size "LxLxL"
