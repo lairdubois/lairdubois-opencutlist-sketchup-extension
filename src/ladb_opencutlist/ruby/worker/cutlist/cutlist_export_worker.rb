@@ -132,7 +132,7 @@ module Ladb::OpenCutList
         rows << _evaluate_header
 
         @cutlist.groups.each { |group|
-          next if @hidden_group_ids.include? group.id
+          next if @hidden_group_ids.include?(group.id)
 
           data = SummaryExportRowData.new(
             StringWrapper.new(Plugin.instance.get_i18n_string("tab.materials.type_#{group.material_type}")),
@@ -154,11 +154,8 @@ module Ladb::OpenCutList
 
         # Content rows
         @cutlist.groups.each { |group|
-          next if @hidden_group_ids.include? group.id
+          next if @hidden_group_ids.include?(group.id)
           group.parts.each { |part|
-
-            no_cutting_dimensions = group.material_type == MaterialAttributes::TYPE_UNKNOWN
-            no_dimensions = group.material_type == MaterialAttributes::TYPE_HARDWARE
 
             data = CutlistExportRowData.new(
               StringWrapper.new(part.number),
@@ -218,13 +215,10 @@ module Ladb::OpenCutList
 
         # Content rows
         @cutlist.groups.each { |group|
-          next if @hidden_group_ids.include? group.id
+          next if @hidden_group_ids.include?(group.id)
           next if group.material_type == MaterialAttributes::TYPE_EDGE      # Edges don't have instances
           next if group.material_type == MaterialAttributes::TYPE_VENEER    # Veneers don't have instances
           group.parts.each { |part|
-
-            no_cutting_dimensions = group.material_type == MaterialAttributes::TYPE_UNKNOWN
-            no_dimensions = group.material_type == MaterialAttributes::TYPE_UNKNOWN || group.material_type == MaterialAttributes::TYPE_HARDWARE
 
             parts = part.is_a?(FolderPart) ? part.children : [ part ]
             parts.each { |part|

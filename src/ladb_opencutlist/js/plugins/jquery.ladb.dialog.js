@@ -901,7 +901,7 @@
                     ]);
                 })
             ;
-            return false;
+            $(this).blur();
         });
     }
 

@@ -210,12 +210,12 @@ module Ladb::OpenCutList
         end
 
         # Compute face infos
-        x_face_infos, y_face_infos, z_face_infos, layers = nil
+        x_face_infos, y_face_infos, z_face_infos, content_layers = nil
         if material_attributes.type == MaterialAttributes::TYPE_SOLID_WOOD ||
           material_attributes.type == MaterialAttributes::TYPE_SHEET_GOOD ||
           material_attributes.type == MaterialAttributes::TYPE_DIMENSIONAL
 
-          x_face_infos, y_face_infos, z_face_infos, layers = _grab_main_faces_and_layers(definition)
+          x_face_infos, y_face_infos, z_face_infos, content_layers = _grab_main_faces_and_layers(definition)
 
         end
 
@@ -513,7 +513,7 @@ module Ladb::OpenCutList
               w_plane_count, w_final_area, w_area_ratio = _compute_oriented_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Y_AXIS)
 
               part_def.not_aligned_on_axes = !(t_area_ratio >= 0.7 || w_area_ratio >= 0.7)
-              part_def.content_layers = layers.to_a
+              part_def.content_layers = content_layers.to_a
 
             when MaterialAttributes::TYPE_SHEET_GOOD
 
@@ -521,7 +521,7 @@ module Ladb::OpenCutList
 
               part_def.final_area = t_final_area
               part_def.not_aligned_on_axes = !(t_plane_count >= 2 && (_face_infos_by_normal(size.oriented_normal(Y_AXIS), x_face_infos, y_face_infos, z_face_infos).length >= 1 || _face_infos_by_normal(size.oriented_normal(X_AXIS), x_face_infos, y_face_infos, z_face_infos).length >= 1))
-              part_def.content_layers = layers.to_a
+              part_def.content_layers = content_layers.to_a
 
               # -- Edges --
 
@@ -572,7 +572,7 @@ module Ladb::OpenCutList
               w_plane_count, w_final_area, w_area_ratio = _compute_oriented_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Y_AXIS)
 
               part_def.not_aligned_on_axes = !(t_area_ratio >= 0.7 && w_area_ratio >= 0.7 && (t_plane_count >= 2 && w_plane_count >= 2))
-              part_def.content_layers = layers.to_a
+              part_def.content_layers = content_layers.to_a
 
             else
               part_def.not_aligned_on_axes = false
@@ -992,7 +992,7 @@ module Ladb::OpenCutList
 
     # -- Faces Utils --
 
-    def _grab_main_faces_and_layers(definition_or_group, x_face_infos = [], y_face_infos = [], z_face_infos = [], layers = Set[], transformation = nil)
+    def _grab_main_faces_and_layers(definition_or_group, x_face_infos = [], y_face_infos = [], z_face_infos = [], content_layers = Set[], transformation = nil)
       definition_or_group.entities.each { |entity|
         next if entity.is_a?(Sketchup::Edge)   # Minor Speed imrovement when there's a lot of edges
         if entity.visible? && _layer_visible?(entity.layer)
@@ -1005,15 +1005,15 @@ module Ladb::OpenCutList
             elsif transformed_normal.parallel?(Z_AXIS)
               z_face_infos.push(FaceInfo.new(entity, transformation))
             end
-            layers.add(entity.layer)
+            content_layers.add(entity.layer)
           elsif entity.is_a?(Sketchup::Group)
-            _grab_main_faces_and_layers(entity, x_face_infos, y_face_infos, z_face_infos, layers.add(entity.layer), transformation ? transformation * entity.transformation : entity.transformation)
+            _grab_main_faces_and_layers(entity, x_face_infos, y_face_infos, z_face_infos, content_layers.add(entity.layer), transformation ? transformation * entity.transformation : entity.transformation)
           elsif entity.is_a?(Sketchup::ComponentInstance) && entity.definition.behavior.cuts_opening?
-            _grab_main_faces_and_layers(entity.definition, x_face_infos, y_face_infos, z_face_infos, layers.add(entity.layer), transformation ? transformation * entity.transformation : entity.transformation)
+            _grab_main_faces_and_layers(entity.definition, x_face_infos, y_face_infos, z_face_infos, content_layers.add(entity.layer), transformation ? transformation * entity.transformation : entity.transformation)
           end
         end
       }
-      [ x_face_infos, y_face_infos, z_face_infos, layers ]
+      [ x_face_infos, y_face_infos, z_face_infos, content_layers ]
     end
 
     def _face_infos_by_normal(normal, x_face_infos, y_face_infos, z_face_infos)

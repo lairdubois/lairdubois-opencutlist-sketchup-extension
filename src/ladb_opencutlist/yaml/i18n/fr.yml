@@ -186,7 +186,6 @@ tab:
     not_available_std_section: Section non standard
     highlight_part: Voir la pièce dans le modèle
     highlight_parts: Voir les pièces dans le modèle
-    layout_parts: Dessin d'ensemble
     edit_part_properties: Éditer les propriétés de la pièce
     edit_part_axes_properties: Éditer les propriétés (axes) de la pièce
     edit_part_size_increase_properties: Éditer les propriétés (surcotes) de la pièce
@@ -225,7 +224,6 @@ tab:
       rounded_std_footer: Adaptez la précision dans les *Infos sur le modèle* ou vérifiez les dimensions des pièces de ce groupe.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
-      layout_parts: $t(tab.cutlist.layout_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_parts_properties: Éditer les propriétés du groupe de pièces
       edit_material: $t(tab.cutlist.menu.edit_material)
@@ -290,6 +288,7 @@ tab:
       numbers_reset: Réinitialiser les numéros de pièces
       highlight_parts: $t(tab.cutlist.highlight_parts)
       layout_parts: Imprimer le dessin d'ensemble
+      group_layout_parts: Imprimer le dessin d'ensemble du groupe
       group_numbers_save: Mémoriser les numéros de pièces du groupe
       group_numbers_reset: Réinitialiser les numéros de pièces du groupe
       group_cuttingdiagram: Calepinage
@@ -882,9 +881,9 @@ tab:
         Permet de choisir si la page à imprimer contient une entête avec le nom du document, sa description, la date, l'unité et l'échelle.
         Sans entête, le dessin d'ensemble prendra toute la page.
       option_camera: Camera
-      option_camera_view: $t(core.component.three_viewer.view)
+      option_camera_view: Vue
       option_camera_view_custom: Personnalisée
-      option_camera_zoom: $t(core.component.three_viewer.zoom)
+      option_camera_zoom: Echelle
       option_camera_zoom_auto: Automatique
       option_camera_zoom_custom: Personnalisée
       option_camera_target: Position
