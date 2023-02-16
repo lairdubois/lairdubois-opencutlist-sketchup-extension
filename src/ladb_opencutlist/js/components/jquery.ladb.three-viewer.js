@@ -71,8 +71,57 @@
             });
 
         this.$iframe.get(0).addEventListener('camera.changed', function (e) {
+
+            // Update buttons status
+            $('[data-command="set_view"]', that.$element).each(function (index, el) {
+                var $btn = $(el);
+                var params = $btn.data('params');
+                if (JSON.stringify(params.view) === JSON.stringify(e.data.cameraView)) {
+                    $btn.addClass('active');
+                } else {
+                    $btn.removeClass('active');
+                }
+            });
+            $('[data-command="set_zoom"]', that.$element).each(function (index, el) {
+                var $btn = $(el);
+                var params = $btn.data('params');
+                if (params.zoom === e.data.cameraZoom || params.zoom == null && e.data.cameraZoomIsAuto) {
+                    $btn.addClass('active');
+                } else {
+                    $btn.removeClass('active');
+                }
+            });
+
+            // Forward event
             that.$element.trigger('camera.changed', [ e.data ]);
-        })
+
+        });
+        this.$iframe.get(0).addEventListener('helpers.changed', function (e) {
+
+            // Update buttons status
+            $('[data-command="set_box_helper_visible"]', that.$element).each(function (index, el) {
+                var $btn = $(el);
+                var params = $btn.data('params');
+                if (params.visible == null && e.data.boxHelperVisible) {
+                    $btn.addClass('active');
+                } else {
+                    $btn.removeClass('active');
+                }
+            });
+            $('[data-command="set_axes_helper_visible"]', that.$element).each(function (index, el) {
+                var $btn = $(el);
+                var params = $btn.data('params');
+                if (params.visible == null && e.data.axesHelperVisible) {
+                    $btn.addClass('active');
+                } else {
+                    $btn.removeClass('active');
+                }
+            });
+
+            // Forward event
+            that.$element.trigger('helpers.changed', [ e.data ]);
+
+        });
 
         // Bind buttons
         $('button[data-command]', this.$element).on('click', function () {

@@ -128,7 +128,7 @@ const fnAddListeners = function () {
         fnRender();
     });
     controls.addEventListener('end', function () {
-        fnDispatchCameraChanged();
+        fnDispatchCameraChangedEvent();
     });
 
     // Window listeners
@@ -224,7 +224,7 @@ const fnGetZoomAutoByView = function (view) {
     }
 }
 
-const fnDispatchCameraChanged = function () {
+const fnDispatchCameraChangedEvent = function () {
 
     let view = fnGetCurrentView();
 
@@ -234,7 +234,18 @@ const fnDispatchCameraChanged = function () {
             cameraZoom: camera.zoom,
             cameraTarget: controls.target.toArray([]),
             cameraZoomIsAuto: camera.zoom === fnGetZoomAutoByView(view),
-            cameraTargetIsAuto: controls.target.equals(modelCenter)
+            cameraTargetIsAuto: controls.target.equals(modelCenter),
+        }
+    }));
+
+}
+
+const fnDispatchHelpersChangedEvent = function () {
+
+    window.frameElement.dispatchEvent(new MessageEvent('helpers.changed', {
+        data: {
+            boxHelperVisible: boxHelper ? boxHelper.visible : false,
+            axesHelperVisible: axesHelper ? axesHelper.visible : false
         }
     }));
 
@@ -412,7 +423,7 @@ const fnSetZoom = function (zoom) {
     controls.position0.copy(camera.position);
     controls.zoom0 = zoom ? zoom : fnGetZoomAutoByView(fnGetCurrentView());
     controls.reset();
-    fnDispatchCameraChanged();
+    fnDispatchCameraChangedEvent();
 }
 
 const fnSetView = function (view = THREE_CAMERA_VIEWS.isometric) {
@@ -427,29 +438,37 @@ const fnSetView = function (view = THREE_CAMERA_VIEWS.isometric) {
 
     controls.reset();
 
-    fnDispatchCameraChanged();
+    fnDispatchCameraChangedEvent();
 
 }
 
 const fnSetBoxHelperVisible = function (visible) {
     if (boxHelper) {
+        let oldVisible = boxHelper.visible;
         if (visible == null) {
             boxHelper.visible = !boxHelper.visible;
         } else {
             boxHelper.visible = visible === true
         }
         fnRender();
+        if (oldVisible !== boxHelper.visible) {
+            fnDispatchHelpersChangedEvent();
+        }
     }
 }
 
 const fnSetAxesHelperVisible = function (visible) {
     if (axesHelper) {
+        let oldVisible = axesHelper.visible;
         if (visible == null) {
             axesHelper.visible = !axesHelper.visible;
         } else {
             axesHelper.visible = visible === true
         }
         fnRender();
+        if (oldVisible !== axesHelper.visible) {
+            fnDispatchHelpersChangedEvent();
+        }
     }
 }
 
@@ -490,7 +509,7 @@ const fnSetupModel = function(modelDef, partsColored, pinsHidden, pinsLength, pi
 
             controls.reset();
 
-            fnDispatchCameraChanged();
+            fnDispatchCameraChangedEvent();
 
         } else {
 

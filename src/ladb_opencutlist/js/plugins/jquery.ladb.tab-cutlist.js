@@ -1555,26 +1555,6 @@
                             }
                             $lblScale.html(scale);
 
-                            $('[data-command="set_view"]', $viewer).each(function (index, el) {
-                                var $btn = $(el);
-                                var params = $btn.data('params');
-                                if (JSON.stringify(params.view) === JSON.stringify(data.cameraView)) {
-                                    $btn.addClass('active');
-                                } else {
-                                    $btn.removeClass('active');
-                                }
-                            });
-
-                            $('[data-command="set_zoom"]', $viewer).each(function (index, el) {
-                                var $btn = $(el);
-                                var params = $btn.data('params');
-                                if (params.zoom === data.cameraZoom || params.zoom == null && data.cameraZoomIsAuto) {
-                                    $btn.addClass('active');
-                                } else {
-                                    $btn.removeClass('active');
-                                }
-                            });
-
                         });
 
                         var $paperPage = $('.ladb-paper-page', $viewer)
