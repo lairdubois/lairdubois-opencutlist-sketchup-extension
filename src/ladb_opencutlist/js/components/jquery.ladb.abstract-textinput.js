@@ -139,4 +139,9 @@ LadbTextinputAbstract.prototype.init = function () {
 
     }
 
+    // Disabled ?
+    if (this.$element.prop('disabled')) {
+        this.disable();
+    }
+
 };
