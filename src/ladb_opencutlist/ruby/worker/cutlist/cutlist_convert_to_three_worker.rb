@@ -2,6 +2,7 @@ module Ladb::OpenCutList
 
   require_relative '../../helper/layer_visibility_helper'
   require_relative '../../helper/hashable_helper'
+  require_relative '../../utils/axis_utils'
 
   class CutlistConvertToThreeWorker
 
@@ -54,11 +55,11 @@ module Ladb::OpenCutList
 
           # Set transformation matrix to correspond to axes orientation
           axes_order = part.def.size.normals.clone
-          # if AxisUtils::flipped?(axes_order[0], axes_order[1], axes_order[2])
-          #   axes_order[0] = axes_order[0].reverse
-          #   axes_order[1] = axes_order[1].reverse
-          #   axes_order[2] = axes_order[2].reverse
-          # end
+          if AxisUtils::flipped?(axes_order[0], axes_order[1], axes_order[2])
+            # axes_order[0] = axes_order[0].reverse
+            axes_order[1] = axes_order[1].reverse
+            # axes_order[2] = axes_order[2].reverse
+          end
           transformation = Geom::Transformation.axes(ORIGIN, axes_order[0], axes_order[1], axes_order[2]).inverse
           three_model_def.matrix = _to_three_matrix(transformation)
 
