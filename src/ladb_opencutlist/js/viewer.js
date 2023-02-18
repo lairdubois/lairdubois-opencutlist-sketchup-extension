@@ -21,7 +21,10 @@ let renderer,
     modelRadius,
 
     boxHelper,
-    axesHelper
+    axesHelper,
+
+    pinsGroup,
+    pinsOptions
 ;
 
 let animating, animateRequestId;
@@ -141,6 +144,10 @@ const fnAddListeners = function () {
 
                 case 'set_axes_helper_visible':
                     fnSetAxesHelperVisible(call.params.visible);
+                    break;
+
+                case 'set_explode_pressure':
+                    fnSetExplodePressure(call.params.pressure);
                     break;
 
             }
@@ -275,17 +282,22 @@ const fnAddObjectDef = function (objectDef, parent, material, partsColored) {
                 let matrix = new THREE.Matrix4();
                 matrix.elements = objectDef.matrix;
                 group.applyMatrix4(matrix);
+                group.userData.basePosition = group.position.clone();
+                group.userData.baseQuaternion = group.quaternion.clone();
+                group.userData.baseScale = group.scale.clone();
             }
             for (childObjectDef of objectDef.children) {
                 fnAddObjectDef(childObjectDef, group, material, partsColored);
             }
-            if (objectDef.type === 2 && objectDef.pin_text) {
-                group.userData = {
-                    pinText: objectDef.pin_text,
-                    pinClass: objectDef.pin_class,
-                    pinColor: material.color
+            if (objectDef.type === 2 /* TYPE_PART */) {
+                group.userData.isPart = true;
+                if (objectDef.pin_text) {
+                    group.userData.pinText = objectDef.pin_text;
+                    group.userData.pinClass = objectDef.pin_class;
+                    group.userData.pinColor = material.color;
                 }
             }
+
             parent.add(group);
 
             return group;
@@ -310,7 +322,82 @@ const fnAddObjectDef = function (objectDef, parent, material, partsColored) {
     return null;
 };
 
-const fnCreatePins = function (group, pinsLength, pinsDirection, pinsColored, parentCenter) {
+const fnPrepareExplode = function (group, parentCenter) {
+
+    let groupBox = new THREE.Box3().setFromObject(group);
+    let groupCenter = groupBox.getCenter(new THREE.Vector3());
+
+    // group.userData.groupBox = groupBox;
+    // group.userData.groupCenter = groupCenter;
+
+    const localParentCenter = group.parent.worldToLocal(parentCenter.clone());
+    const localGroupCenter = group.parent.worldToLocal(groupCenter.clone());
+    const explodeDirection = localGroupCenter.clone().sub(localParentCenter);
+
+    group.userData.explodeDirection = explodeDirection;
+
+    for (let object of group.children) {
+        if (object.isGroup) {
+            fnPrepareExplode(object, groupCenter);
+        }
+    }
+
+}
+
+const fnExplodeModel = function (pressure = 0.5) {
+    fnExplodeGroup(model, pressure);
+    fnCreateModelPins();
+}
+
+const fnExplodeGroup = function (group, pressure, depth = 1) {
+
+    // Reset group transfomations
+    if (group.userData.basePosition) {
+        group.position.copy(group.userData.basePosition);
+        group.quaternion.copy(group.userData.baseQuaternion);
+        group.scale.copy(group.userData.baseScale)
+    } else {
+        group.position.set(0, 0, 0);
+        group.quaternion.identity();
+        group.scale.set(1, 1, 1);
+    }
+
+    // Explode children
+    if (!group.userData.isPart) {
+
+        // Increment depth only if group is not empty
+        const childDepth = depth + (group.children.length > 1 ? 1 : 0);
+
+        // Iterate on children
+        for (let object of group.children) {
+            if (object.isGroup) {
+                fnExplodeGroup(object, pressure, childDepth);
+            }
+        }
+
+    }
+
+    const groupTranslation = group.userData.explodeDirection.clone().setLength(modelRadius * pressure / depth);
+
+    // Translate group
+    group.applyMatrix4(new THREE.Matrix4().makeTranslation(groupTranslation.x, groupTranslation.y, groupTranslation.z));
+
+};
+
+const fnCreateModelPins = function () {
+    if (pinsGroup) {
+        pinsGroup.clear();
+    }
+    if (model && pinsOptions && !pinsOptions.pinsHidden) {
+        if (!pinsGroup) {
+            pinsGroup = new THREE.Group();
+            scene.add(pinsGroup);
+        }
+        fnCreateGroupPins(model, pinsOptions.pinsLength, pinsOptions.pinsDirection, pinsOptions.pinsColored, modelCenter);
+    }
+}
+
+const fnCreateGroupPins = function (group, pinsLength, pinsDirection, pinsColored, parentCenter) {
 
     const groupBox = new THREE.Box3().setFromObject(group);
     const groupCenter = groupBox.getCenter(new THREE.Vector3());
@@ -367,20 +454,22 @@ const fnCreatePins = function (group, pinsLength, pinsDirection, pinsColored, pa
 
         const pin = new THREE.CSS2DObject(pinDiv);
         pin.position.copy(pinPosition);
-        scene.add(pin);
+        pinsGroup.add(pin);
 
         if (pinsLengthFactor > 0) {
             const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints([ groupCenter, pinPosition ]), pinLineMaterial);
             line.renderOrder = 1;
-            scene.add(line);
+            pinsGroup.add(line);
         }
 
-    }
+    } else {
 
-    for (let object of group.children) {
-        if (object.isGroup) {
-            fnCreatePins(object, pinsLength, pinsDirection, pinsColored, groupCenter);
+        for (let object of group.children) {
+            if (object.isGroup) {
+                fnCreateGroupPins(object, pinsLength, pinsDirection, pinsColored, groupCenter);
+            }
         }
+
     }
 
 };
@@ -439,6 +528,11 @@ const fnSetAxesHelperVisible = function (visible) {
     }
 }
 
+const fnSetExplodePressure = function (pressure) {
+    fnExplodeModel(pressure);
+    fnRender();
+}
+
 const fnSetupModel = function(modelDef, partsColored, pinsHidden, pinsLength, pinsDirection, pinsColored, cameraView, cameraZoom, cameraTarget) {
 
     model = fnAddObjectDef(modelDef, scene, defaultMeshMaterial, partsColored);
@@ -451,10 +545,21 @@ const fnSetupModel = function(modelDef, partsColored, pinsHidden, pinsLength, pi
         modelCenter = modelBox.getCenter(new THREE.Vector3());
         modelRadius = modelBox.getBoundingSphere(new THREE.Sphere()).radius;
 
+        fnPrepareExplode(model, modelCenter);
+
+        // Pins
+
+        pinsOptions = {
+            pinsHidden: pinsHidden,
+            pinsLength: pinsLength,
+            pinsDirection: pinsDirection,
+            pinsColored: pinsColored
+        };
+
         if (!pinsHidden) {
 
-            // Create labels
-            fnCreatePins(model, pinsLength, pinsDirection, pinsColored, modelCenter);
+            // Create pins
+            fnCreateModelPins();
 
         }
 
