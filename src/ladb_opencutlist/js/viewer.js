@@ -283,8 +283,6 @@ const fnAddObjectDef = function (objectDef, parent, material, partsColored) {
                 matrix.elements = objectDef.matrix;
                 group.applyMatrix4(matrix);
                 group.userData.basePosition = group.position.clone();
-                group.userData.baseQuaternion = group.quaternion.clone();
-                group.userData.baseScale = group.scale.clone();
             }
             for (childObjectDef of objectDef.children) {
                 fnAddObjectDef(childObjectDef, group, material, partsColored);
@@ -297,7 +295,6 @@ const fnAddObjectDef = function (objectDef, parent, material, partsColored) {
                     group.userData.pinColor = material.color;
                 }
             }
-
             parent.add(group);
 
             return group;
@@ -324,17 +321,13 @@ const fnAddObjectDef = function (objectDef, parent, material, partsColored) {
 
 const fnPrepareExplode = function (group, parentCenter) {
 
-    let groupBox = new THREE.Box3().setFromObject(group);
-    let groupCenter = groupBox.getCenter(new THREE.Vector3());
-
-    // group.userData.groupBox = groupBox;
-    // group.userData.groupCenter = groupCenter;
+    const groupBox = new THREE.Box3().setFromObject(group);
+    const groupCenter = groupBox.getCenter(new THREE.Vector3());
 
     const localParentCenter = group.parent.worldToLocal(parentCenter.clone());
     const localGroupCenter = group.parent.worldToLocal(groupCenter.clone());
-    const explodeDirection = localGroupCenter.clone().sub(localParentCenter);
 
-    group.userData.explodeDirection = explodeDirection;
+    group.userData.explodeDirection =  localGroupCenter.clone().sub(localParentCenter);
 
     for (let object of group.children) {
         if (object.isGroup) {
@@ -351,15 +344,11 @@ const fnExplodeModel = function (pressure = 0.5) {
 
 const fnExplodeGroup = function (group, pressure, depth = 1) {
 
-    // Reset group transfomations
+    // Reset previous group explode translation
     if (group.userData.basePosition) {
         group.position.copy(group.userData.basePosition);
-        group.quaternion.copy(group.userData.baseQuaternion);
-        group.scale.copy(group.userData.baseScale)
     } else {
         group.position.set(0, 0, 0);
-        group.quaternion.identity();
-        group.scale.set(1, 1, 1);
     }
 
     // Explode children
