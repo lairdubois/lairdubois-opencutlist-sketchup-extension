@@ -255,6 +255,7 @@ const fnUpdateViewportSize = function () {
 }
 
 const fnRender = function () {
+    console.log('render');
     renderer.render(scene, camera);
     cssRenderer.render(scene, camera);
 }
@@ -296,6 +297,8 @@ const fnAddObjectDef = function (objectDef, parent, material, partsColored) {
                 matrix.elements = objectDef.matrix;
                 group.applyMatrix4(matrix);
                 group.userData.basePosition = group.position.clone();
+                group.userData.baseRotation = group.rotation.clone();
+                group.userData.baseScale = group.scale.clone();
             }
             for (childObjectDef of objectDef.children) {
                 fnAddObjectDef(childObjectDef, group, material, partsColored);
@@ -334,18 +337,18 @@ const fnAddObjectDef = function (objectDef, parent, material, partsColored) {
 
 const fnUpdateExplodeVectors = function (group, parentCenter) {
 
-    const groupBox = new THREE.Box3().setFromObject(group);
-    const groupCenter = groupBox.getCenter(new THREE.Vector3());
+    const worldGroupBox = new THREE.Box3().setFromObject(group);
+    const worldGroupCenter = worldGroupBox.getCenter(new THREE.Vector3());
 
     const localParentCenter = group.parent.worldToLocal(parentCenter.clone());
-    const localGroupCenter = group.parent.worldToLocal(groupCenter.clone());
+    const localGroupCenter = group.parent.worldToLocal(worldGroupCenter.clone());
 
     group.userData.explodeVector =  localGroupCenter.clone().sub(localParentCenter);
 
     if (!group.userData.isPart) {
         for (let object of group.children) {
             if (object.isGroup) {
-                fnUpdateExplodeVectors(object, groupCenter);
+                fnUpdateExplodeVectors(object, worldGroupCenter);
             }
         }
     }
@@ -360,17 +363,27 @@ const fnExplodeModel = function (factor = 0) {
 
 const fnExplodeGroup = function (group, factor, factorDivider = 1) {
 
-    // Reset group position
+    // Reset group transformations
     if (group.userData.basePosition) {
         group.position.copy(group.userData.basePosition);
     } else {
         group.position.set(0, 0, 0);
     }
+    if (group.userData.baseRotation) {
+        group.rotation.copy(group.userData.baseRotation);
+    } else {
+        group.rotation.set(0, 0, 0);
+    }
+    if (group.userData.baseScale) {
+        group.scale.copy(group.userData.baseScale);
+    } else {
+        group.scale.set(1, 1, 1);
+    }
 
     // Explode children
     if (!group.userData.isPart) {
 
-        // Increment depth only if group contains more than 1 child
+        // Increment divider only if group contains more than 1 child
         const childPressureDivider = factorDivider + (group.children.length > 1 ? 1 : 0);
 
         // Iterate on children
@@ -382,10 +395,14 @@ const fnExplodeGroup = function (group, factor, factorDivider = 1) {
 
     }
 
-    const groupTranslation = group.userData.explodeVector.clone().multiplyScalar(factor / factorDivider);
+    if (factor > 0) {
 
-    // Translate group
-    group.applyMatrix4(new THREE.Matrix4().makeTranslation(groupTranslation.x, groupTranslation.y, groupTranslation.z));
+        const groupTranslation = group.userData.explodeVector.clone().multiplyScalar(factor / factorDivider);
+
+        // Translate group
+        group.applyMatrix4(new THREE.Matrix4().makeTranslation(groupTranslation.x, groupTranslation.y, groupTranslation.z));
+
+    }
 
 };
 
@@ -503,6 +520,15 @@ const fnSetView = function (view = THREE_CAMERA_VIEWS.isometric) {
 
 }
 
+const fnSetExplodeFactor = function (factor) {
+    const oldFactor = explodeFactor;
+    fnExplodeModel(factor);
+    fnRender();
+    if (oldFactor !== explodeFactor) {
+        fnDispatchExplodeChangedEvent();
+    }
+}
+
 const fnSetBoxHelperVisible = function (visible) {
     if (boxHelper) {
         let oldVisible = boxHelper.visible;
@@ -531,12 +557,6 @@ const fnSetAxesHelperVisible = function (visible) {
             fnDispatchHelpersChangedEvent();
         }
     }
-}
-
-const fnSetExplodeFactor = function (factor) {
-    fnExplodeModel(factor);
-    fnRender();
-    fnDispatchExplodeChangedEvent();
 }
 
 const fnSetupModel = function(modelDef, partsColored, pinsHidden, pinsLength, pinsDirection, pinsColored, cameraView, cameraZoom, cameraTarget, explodeFactor) {
