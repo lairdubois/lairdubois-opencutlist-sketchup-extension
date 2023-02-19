@@ -28,8 +28,8 @@
             {% macro btn_zoom(zoomValue, ttLabel, btnLabel, btnLabelSize, classes) %}
                 <button class="btn btn-default btn-sm{% if classes %} {{ classes }}{% endif %}" data-command="set_zoom" data-params="{{ { zoom:zoomValue }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="right" title="{{ 'core.component.three_viewer.zoom'|i18next({ 'zoom':ttLabel }) }}">{% if btnLabelSize %}<span style="font-size:{{ btnLabelSize }}px">{% endif %}{{ btnLabel }}{% if btnLabelSize %}</span>{% endif %}</button>
             {% endmacro %}
-            {% macro btn_explode(pressureValue, btnLabel, btnLabelSize) %}
-                <button class="btn btn-default btn-sm" data-command="set_explode_pressure" data-params="{{ { pressure:pressureValue }|json_encode|escape('html') }}">{% if btnLabelSize %}<span style="font-size:{{ btnLabelSize }}px">{% endif %}{{ btnLabel }}{% if btnLabelSize %}</span>{% endif %}</button>
+            {% macro btn_explode(factorValue, btnLabel, btnLabelSize) %}
+                <button class="btn btn-default btn-sm" data-command="set_explode_factor" data-params="{{ { factor:factorValue }|json_encode|escape('html') }}">{% if btnLabelSize %}<span style="font-size:{{ btnLabelSize }}px">{% endif %}{{ btnLabel }}{% if btnLabelSize %}</span>{% endif %}</button>
             {% endmacro %}
 
             {% import _self as fn %}
@@ -73,6 +73,8 @@
                 {{ fn.btn_explode(0.2, 'E.2', 8) }}
                 {{ fn.btn_explode(0.5, 'E.5', 8) }}
                 {{ fn.btn_explode(1.0, 'E1', 8) }}
+                {{ fn.btn_explode(2.0, 'E2', 8) }}
+                {{ fn.btn_explode(3.0, 'E3', 8) }}
             {% endblock %}
         {% endembed %}
     {% endif %}

@@ -146,8 +146,8 @@ const fnAddListeners = function () {
                     fnSetAxesHelperVisible(call.params.visible);
                     break;
 
-                case 'set_explode_pressure':
-                    fnSetExplodePressure(call.params.pressure);
+                case 'set_explode_factor':
+                    fnSetExplodeFactor(call.params.factor);
                     break;
 
             }
@@ -327,11 +327,13 @@ const fnPrepareExplode = function (group, parentCenter) {
     const localParentCenter = group.parent.worldToLocal(parentCenter.clone());
     const localGroupCenter = group.parent.worldToLocal(groupCenter.clone());
 
-    group.userData.explodeDirection =  localGroupCenter.clone().sub(localParentCenter);
+    group.userData.explodeVector =  localGroupCenter.clone().sub(localParentCenter);
 
-    for (let object of group.children) {
-        if (object.isGroup) {
-            fnPrepareExplode(object, groupCenter);
+    if (!group.userData.isPart) {
+        for (let object of group.children) {
+            if (object.isGroup) {
+                fnPrepareExplode(object, groupCenter);
+            }
         }
     }
 
@@ -342,9 +344,9 @@ const fnExplodeModel = function (pressure = 0.5) {
     fnCreateModelPins();
 }
 
-const fnExplodeGroup = function (group, pressure, depth = 1) {
+const fnExplodeGroup = function (group, factor, factorDivider = 1) {
 
-    // Reset previous group explode translation
+    // Reset group position
     if (group.userData.basePosition) {
         group.position.copy(group.userData.basePosition);
     } else {
@@ -354,19 +356,19 @@ const fnExplodeGroup = function (group, pressure, depth = 1) {
     // Explode children
     if (!group.userData.isPart) {
 
-        // Increment depth only if group is not empty
-        const childDepth = depth + (group.children.length > 1 ? 1 : 0);
+        // Increment depth only if group contains more than 1 child
+        const childPressureDivider = factorDivider + (group.children.length > 1 ? 1 : 0);
 
         // Iterate on children
         for (let object of group.children) {
             if (object.isGroup) {
-                fnExplodeGroup(object, pressure, childDepth);
+                fnExplodeGroup(object, factor, childPressureDivider);
             }
         }
 
     }
 
-    const groupTranslation = group.userData.explodeDirection.clone().setLength(modelRadius * pressure / depth);
+    const groupTranslation = group.userData.explodeVector.clone().multiplyScalar(factor / factorDivider);
 
     // Translate group
     group.applyMatrix4(new THREE.Matrix4().makeTranslation(groupTranslation.x, groupTranslation.y, groupTranslation.z));
@@ -517,8 +519,8 @@ const fnSetAxesHelperVisible = function (visible) {
     }
 }
 
-const fnSetExplodePressure = function (pressure) {
-    fnExplodeModel(pressure);
+const fnSetExplodeFactor = function (factor) {
+    fnExplodeModel(factor);
     fnRender();
 }
 
