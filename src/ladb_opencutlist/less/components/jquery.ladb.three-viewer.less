@@ -11,12 +11,9 @@
     width: 100%;
   }
 
-  > .ladb-three-viewer-ui-left, > .ladb-three-viewer-ui-right {
+  > .ladb-three-viewer-ui-left, > .ladb-three-viewer-ui-right, > .ladb-three-viewer-ui-bottom {
     position: absolute;
-    top: 0;
-    bottom: 0;
     display: flex;
-    flex-direction: column;
     gap: 5px;
     justify-content: center;
     align-items: center;
@@ -33,12 +30,25 @@
 
   }
 
+  > .ladb-three-viewer-ui-left, > .ladb-three-viewer-ui-right {
+    top: 0;
+    bottom: 0;
+    flex-direction: column;
+  }
+
   > .ladb-three-viewer-ui-left {
     left: 4px;
   }
 
   > .ladb-three-viewer-ui-right {
     right: 4px;
+  }
+
+  > .ladb-three-viewer-ui-bottom {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    flex-direction: row;
   }
 
 }

@@ -2,9 +2,12 @@
 /src/ladb_opencutlist/css/ladb-opencutlist.css
 /src/ladb_opencutlist/css/ladb-opencutlist.min.css
 /src/ladb_opencutlist/css/ladb-opencutlist-icons.min.css
-/src/ladb_opencutlist/js/lib/three*.js
 /src/ladb_opencutlist/js/templates/
 /src/ladb_opencutlist/js/i18n/
+/src/ladb_opencutlist/js/lib/three-orbit-controls.js
+/src/ladb_opencutlist/js/lib/three-css-2d-renderer.js
+/src/ladb_opencutlist/js/lib/three.js
+/src/ladb_opencutlist/js/lib/bootstrap-slider.js
 /docs/skp/*~.skp
 /build/node_modules/
 /build/package-lock.json

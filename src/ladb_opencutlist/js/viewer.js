@@ -20,6 +20,8 @@ let renderer,
     modelCenter,
     modelRadius,
 
+    explodeFactor,
+
     boxHelper,
     axesHelper,
 
@@ -123,7 +125,8 @@ const fnAddListeners = function () {
                         call.params.pinsColored,
                         call.params.cameraView,
                         call.params.cameraZoom,
-                        call.params.cameraTarget
+                        call.params.cameraTarget,
+                        call.params.explodeFactor
                     );
                     if (call.params.showBoxHelper) {
                         fnSetBoxHelperVisible(true);
@@ -209,6 +212,16 @@ const fnDispatchCameraChangedEvent = function () {
             cameraTarget: controls.target.toArray([]),
             cameraZoomIsAuto: camera.zoom === fnGetZoomAutoByView(view),
             cameraTargetIsAuto: controls.target.equals(modelCenter),
+        }
+    }));
+
+}
+
+const fnDispatchExplodeChangedEvent = function () {
+
+    window.frameElement.dispatchEvent(new MessageEvent('explode.changed', {
+        data: {
+            explodeFactor: explodeFactor,
         }
     }));
 
@@ -319,7 +332,7 @@ const fnAddObjectDef = function (objectDef, parent, material, partsColored) {
     return null;
 };
 
-const fnPrepareExplode = function (group, parentCenter) {
+const fnUpdateExplodeVectors = function (group, parentCenter) {
 
     const groupBox = new THREE.Box3().setFromObject(group);
     const groupCenter = groupBox.getCenter(new THREE.Vector3());
@@ -332,15 +345,16 @@ const fnPrepareExplode = function (group, parentCenter) {
     if (!group.userData.isPart) {
         for (let object of group.children) {
             if (object.isGroup) {
-                fnPrepareExplode(object, groupCenter);
+                fnUpdateExplodeVectors(object, groupCenter);
             }
         }
     }
 
 }
 
-const fnExplodeModel = function (pressure = 0.5) {
-    fnExplodeGroup(model, pressure);
+const fnExplodeModel = function (factor = 0) {
+    explodeFactor = factor;
+    fnExplodeGroup(model, factor);
     fnCreateModelPins();
 }
 
@@ -522,9 +536,10 @@ const fnSetAxesHelperVisible = function (visible) {
 const fnSetExplodeFactor = function (factor) {
     fnExplodeModel(factor);
     fnRender();
+    fnDispatchExplodeChangedEvent();
 }
 
-const fnSetupModel = function(modelDef, partsColored, pinsHidden, pinsLength, pinsDirection, pinsColored, cameraView, cameraZoom, cameraTarget) {
+const fnSetupModel = function(modelDef, partsColored, pinsHidden, pinsLength, pinsDirection, pinsColored, cameraView, cameraZoom, cameraTarget, explodeFactor) {
 
     model = fnAddObjectDef(modelDef, scene, defaultMeshMaterial, partsColored);
     if (model) {
@@ -536,9 +551,7 @@ const fnSetupModel = function(modelDef, partsColored, pinsHidden, pinsLength, pi
         modelCenter = modelBox.getCenter(new THREE.Vector3());
         modelRadius = modelBox.getBoundingSphere(new THREE.Sphere()).radius;
 
-        fnPrepareExplode(model, modelCenter);
-
-        // Pins
+        // Option
 
         pinsOptions = {
             pinsHidden: pinsHidden,
@@ -547,11 +560,15 @@ const fnSetupModel = function(modelDef, partsColored, pinsHidden, pinsLength, pi
             pinsColored: pinsColored
         };
 
-        if (!pinsHidden) {
+        fnUpdateExplodeVectors(model, modelCenter);
 
-            // Create pins
+        if (explodeFactor > 0) {
+            fnExplodeModel(explodeFactor);
+            fnDispatchExplodeChangedEvent();
+        }
+
+        if (explodeFactor === 0 && !pinsHidden) {   // Else explode already create pins
             fnCreateModelPins();
-
         }
 
         if (cameraView) {

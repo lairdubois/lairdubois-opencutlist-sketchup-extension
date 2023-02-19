@@ -69,12 +69,11 @@
                 {{ fn.btn_zoom(0.05, '1:20', '1:20', 8, 'hide-lt-600h') }}
                 {{ fn.btn_zoom(0.02, '1:50', '1:50', 8, 'hide-lt-600h') }}
                 <span>&nbsp;</span>
-                {{ fn.btn_explode(0, 'E0', 8) }}
-                {{ fn.btn_explode(0.2, 'E.2', 8) }}
-                {{ fn.btn_explode(0.5, 'E.5', 8) }}
-                {{ fn.btn_explode(1.0, 'E1', 8) }}
-                {{ fn.btn_explode(2.0, 'E2', 8) }}
-                {{ fn.btn_explode(3.0, 'E3', 8) }}
+            {% endblock %}
+            {% block uiBottom %}
+                <div style="padding: 20px;">
+                    <input data-command="set_explode_factor" data-param-name="factor" data-slider-value="0" data-slider-min="0" data-slider-max="3" data-slider-step="0.1">
+                </div>
             {% endblock %}
         {% endembed %}
     {% endif %}

@@ -21,9 +21,10 @@
         pinsColored: false,
         pinsLength: 1,      // PINS_LENGTH_SHORT
         pinsDirection: 4,   // PINS_DIRECTION_MODEL_CENTER
-        cameraTarget: null,
         cameraView: null,
         cameraZoom: null,
+        cameraTarget: null,
+        explodeFactor: 0,
         showBoxHelper: false,
     };
 
@@ -57,6 +58,7 @@
                         cameraView: that.options.cameraView,
                         cameraZoom: that.options.cameraZoom,
                         cameraTarget: that.options.cameraTarget,
+                        explodeFactor: that.options.explodeFactor,
                     }
                 );
                 if (that.options.showBoxHelper) {
@@ -96,6 +98,18 @@
             that.$element.trigger('camera.changed', [ e.data ]);
 
         });
+        this.$iframe.get(0).addEventListener('explode.changed', function (e) {
+
+            // Update buttons status
+            $('[data-command="set_explode_factor"]', that.$element).each(function (index, el) {
+                var $input = $(el);
+                $input.bootstrapSlider('setValue', e.data.explodeFactor);
+            });
+
+            // Forward event
+            that.$element.trigger('explode.changed', [ e.data ]);
+
+        });
         this.$iframe.get(0).addEventListener('helpers.changed', function (e) {
 
             // Update buttons status
@@ -130,6 +144,14 @@
             var params = $(this).data('params');
             that.callCommand(command, params);
         });
+        $('input[data-command]', this.$element).on('change', function () {
+            this.blur();
+            var command = $(this).data('command');
+            var paramName = $(this).data('param-name');
+            var params = {};
+            params[paramName] = $(this).bootstrapSlider('getValue');
+            that.callCommand(command, params);
+        });
 
     };
 
@@ -141,6 +163,8 @@
         if (this.options.autoload) {
             this.loadFrame();
         }
+
+        $('input[data-command]', this.$element).bootstrapSlider();
 
     };
 

@@ -889,6 +889,7 @@ tab:
       option_camera_target: Position
       option_camera_target_auto: Automatique
       option_camera_target_custom: Personnalisée
+      option_explode: Eclaté
       error:
         no_part: Il y a aucune pièce à dessiner.
       warning:

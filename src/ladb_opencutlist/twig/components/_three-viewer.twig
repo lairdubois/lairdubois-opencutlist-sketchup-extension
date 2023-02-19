@@ -17,4 +17,7 @@
             <button class="btn btn-default btn-sm" data-command="set_axes_helper_visible" data-params="{{ { visible:null }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="left" title="{{ 'core.component.three_viewer.toggle_axes_helper'|i18next }}"><i class="ladb-opencutlist-icon-axes"></i></button>
         {% endblock %}
     </div>
+    <div class="ladb-three-viewer-ui-bottom no-print">
+        {% block uiBottom %}{% endblock %}
+    </div>
 </div>

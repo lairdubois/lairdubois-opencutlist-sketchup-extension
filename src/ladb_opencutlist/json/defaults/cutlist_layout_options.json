@@ -15,6 +15,7 @@
     "pins_length": 1, /* PINS_LENGTH_SHORT */
     "camera_view": [ 1, -1, 1 ], /* CAMERA_VIEW_ISOMETRIC */
     "camera_zoom": null,
-    "camera_target": null
+    "camera_target": null,
+    "explode_factor": 0
   }
 }

@@ -1325,6 +1325,7 @@
             var $inputCameraView = $('#ladb_input_camera_view', $modal);
             var $inputCameraZoom = $('#ladb_input_camera_zoom', $modal);
             var $inputCameraTarget = $('#ladb_input_camera_target', $modal);
+            var $inputExplodeFactor = $('#ladb_input_explode_factor', $modal);
             var $formGroupPins = $('.ladb-cutlist-layout-form-group-pins', $modal);
             var $formGroupPinsDirection = $('.ladb-cutlist-layout-form-group-pins-direction', $modal);
             var $btnGenerate = $('#ladb_cutlist_layout_btn_generate', $modal);
@@ -1373,6 +1374,7 @@
                 options.camera_view = JSON.parse($inputCameraView.val());
                 options.camera_zoom = JSON.parse($inputCameraZoom.val());
                 options.camera_target = JSON.parse($inputCameraTarget.val());
+                options.explode_factor = $inputExplodeFactor.bootstrapSlider('getValue');
             }
             var fnFillInputs = function (options) {
                 $selectPageFormat.selectpicker('val', options.page_width.replace(',', '.') + 'x' + options.page_height.replace(',', '.'));
@@ -1391,6 +1393,7 @@
                 $inputCameraZoom.val(JSON.stringify(options.camera_zoom));
                 $selectCameraTarget.selectpicker('val', JSON.stringify(options.camera_target));
                 $inputCameraTarget.val(JSON.stringify(options.camera_target));
+                $inputExplodeFactor.bootstrapSlider('setValue', options.explode_factor);
                 fnUpdatePageSizeFieldsAvailability();
                 fnUpdateFieldsVisibility();
             }
@@ -1414,6 +1417,7 @@
             $selectCameraView.selectpicker(SELECT_PICKER_OPTIONS);
             $selectCameraZoom.selectpicker(SELECT_PICKER_OPTIONS);
             $selectCameraTarget.selectpicker(SELECT_PICKER_OPTIONS);
+            $inputExplodeFactor.bootstrapSlider();
 
             fnFillInputs(layoutOptions);
 
@@ -1525,7 +1529,8 @@
                             pinsDirection: layoutOptions.pins_direction,
                             cameraView: layoutOptions.camera_view,
                             cameraZoom: layoutOptions.camera_zoom,
-                            cameraTarget: layoutOptions.camera_target
+                            cameraTarget: layoutOptions.camera_target,
+                            explodeFactor: layoutOptions.explode_factor
                         }).on('camera.changed', function (e, data) {
 
                             layoutOptions.camera_view = data.cameraView;
@@ -1554,6 +1559,23 @@
                                 scale = '1:1';
                             }
                             $lblScale.html(scale);
+
+                        }).on('explode.changed', function (e, data) {
+
+                            layoutOptions.explode_factor = data.explodeFactor;
+
+                            // Store options (only one time per 500ms)
+                            if (storeOptionsTimeoutId) {
+                                clearTimeout(storeOptionsTimeoutId);
+                            }
+                            storeOptionsTimeoutId = setTimeout(function () {
+                                rubyCallCommand('core_set_model_preset', {
+                                    dictionary: 'cutlist_layout_options',
+                                    values: layoutOptions,
+                                    section: section
+                                });
+                                storeOptionsTimeoutId = null;
+                            }, 500);
 
                         });
 
