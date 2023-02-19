@@ -79,6 +79,15 @@ const fnInit = function() {
         polygonOffset: true,
         polygonOffsetFactor: 1,
         polygonOffsetUnits: 1,
+        vertexColors: false
+    });
+    vertexColorMeshMaterial = new THREE.MeshBasicMaterial({
+        side: THREE.DoubleSide,
+        color: 0xffffff,
+        polygonOffset: true,
+        polygonOffsetFactor: 1,
+        polygonOffsetUnits: 1,
+        vertexColors: true
     });
     defaultLineMaterial = new THREE.LineBasicMaterial({
         color: 0x000000
@@ -278,61 +287,47 @@ const fnStopAnimate = function () {
     animating = false;
 }
 
-const fnAddObjectDef = function (objectDef, parent, material, partsColored) {
+const fnAddObjectDef = function (objectDef, parent, partsColored) {
 
-    if (objectDef.color) {
-        material = defaultMeshMaterial.clone();
-        material.color.set(objectDef.color);
+    let group = new THREE.Group();
+    if (objectDef.matrix) {
+        let matrix = new THREE.Matrix4();
+        matrix.elements = objectDef.matrix;
+        group.applyMatrix4(matrix);
+        group.userData.basePosition = group.position.clone();
+        group.userData.baseRotation = group.rotation.clone();
+        group.userData.baseScale = group.scale.clone();
     }
+    for (childObjectDef of objectDef.children) {
+        fnAddObjectDef(childObjectDef, group, partsColored);
+    }
+    if (objectDef.type === 2 /* TYPE_PART */) {
 
-    switch (objectDef.type) {
+        group.userData.isPart = true;
 
-        case 1: // TYPE_MODEL
-        case 2: // TYPE_PART
-        case 3: // TYPE_GROUP
+        let geometry = new THREE.BufferGeometry();
+        geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(objectDef.vertices), 3));
+        if (partsColored) {
+            geometry.setAttribute('color', new THREE.BufferAttribute(new Float32Array(objectDef.colors), 3));
+        }
 
-            let group = new THREE.Group();
-            if (objectDef.matrix) {
-                let matrix = new THREE.Matrix4();
-                matrix.elements = objectDef.matrix;
-                group.applyMatrix4(matrix);
-                group.userData.basePosition = group.position.clone();
-                group.userData.baseRotation = group.rotation.clone();
-                group.userData.baseScale = group.scale.clone();
-            }
-            for (childObjectDef of objectDef.children) {
-                fnAddObjectDef(childObjectDef, group, material, partsColored);
-            }
-            if (objectDef.type === 2 /* TYPE_PART */) {
-                group.userData.isPart = true;
-                if (objectDef.pin_text) {
-                    group.userData.pinText = objectDef.pin_text;
-                    group.userData.pinClass = objectDef.pin_class;
-                    group.userData.pinColor = material.color;
-                }
-            }
-            parent.add(group);
+        let mesh = new THREE.Mesh(geometry, partsColored ? vertexColorMeshMaterial : defaultMeshMaterial);
+        group.add(mesh);
 
-            return group;
+        let edges = new THREE.EdgesGeometry(geometry, 5);
+        let line = new THREE.LineSegments(edges, defaultLineMaterial);
+        group.add(line);
 
-        case 4: // TYPE_MESH
-
-            let vertices = new Float32Array(objectDef.vertices)
-            let geometry = new THREE.BufferGeometry();
-            geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-
-            let mesh = new THREE.Mesh(geometry, partsColored ? material : defaultMeshMaterial);
-            parent.add(mesh);
-
-            let edges = new THREE.EdgesGeometry(geometry, 36);
-            let line = new THREE.LineSegments(edges, defaultLineMaterial);
-            parent.add(line);
-
-            return mesh;
+        if (objectDef.pin_text) {
+            group.userData.pinText = objectDef.pin_text;
+            group.userData.pinClass = objectDef.pin_class;
+            group.userData.pinColor = new THREE.Color(objectDef.pin_color);
+        }
 
     }
+    parent.add(group);
 
-    return null;
+    return group;
 };
 
 const fnUpdateExplodeVectors = function (group, parentCenter) {
@@ -561,7 +556,7 @@ const fnSetAxesHelperVisible = function (visible) {
 
 const fnSetupModel = function(modelDef, partsColored, pinsHidden, pinsLength, pinsDirection, pinsColored, cameraView, cameraZoom, cameraTarget, explodeFactor) {
 
-    model = fnAddObjectDef(modelDef, scene, defaultMeshMaterial, partsColored);
+    model = fnAddObjectDef(modelDef, scene, partsColored);
     if (model) {
 
         // Compute model box properties
@@ -661,5 +656,3 @@ const fnIsDarkColor = function (color) {
 // Startup
 
 fnInit();
-
-

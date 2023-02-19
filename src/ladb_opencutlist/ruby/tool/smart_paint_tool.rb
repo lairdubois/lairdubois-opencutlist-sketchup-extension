@@ -700,7 +700,7 @@ module Ladb::OpenCutList
               if picked_part
 
                 @unpaint_color = MaterialUtils::get_color_from_path(picked_part_path[0...-1]) # [0...-1] returns array without last element
-                @triangles = _compute_children_faces_triangles(view, picked_part.definition.entities, PathUtils::get_transformation(picked_part_path))
+                @triangles = _compute_children_faces_triangles(picked_part.definition.entities, PathUtils::get_transformation(picked_part_path))
 
                 if event == :l_button_up
                   if is_action_paint?

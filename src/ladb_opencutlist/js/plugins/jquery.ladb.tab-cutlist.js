@@ -1417,7 +1417,7 @@
             $selectCameraView.selectpicker(SELECT_PICKER_OPTIONS);
             $selectCameraZoom.selectpicker(SELECT_PICKER_OPTIONS);
             $selectCameraTarget.selectpicker(SELECT_PICKER_OPTIONS);
-            $inputExplodeFactor.bootstrapSlider();
+            $inputExplodeFactor.bootstrapSlider(SLIDER_OPTIONS);
 
             fnFillInputs(layoutOptions);
 
@@ -1470,7 +1470,8 @@
                     // Generate layout
                     rubyCallCommand('cutlist_layout_parts', {
                         part_ids: partIds,
-                        pins_use_names: layoutOptions.pins_use_names
+                        pins_use_names: layoutOptions.pins_use_names,
+                        pins_colored: layoutOptions.pins_colored
                     }, function (response) {
 
                         var $slide = that.pushNewSlide('ladb_cutlist_slide_layout', 'tabs/cutlist/_slide-layout.twig', {

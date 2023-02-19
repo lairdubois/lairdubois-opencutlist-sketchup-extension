@@ -164,7 +164,7 @@
             this.loadFrame();
         }
 
-        $('input[data-command]', this.$element).bootstrapSlider();
+        $('input[data-command]', this.$element).bootstrapSlider(SLIDER_OPTIONS);
 
     };
 

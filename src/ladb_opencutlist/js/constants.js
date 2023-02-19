@@ -25,6 +25,10 @@ var SORTABLE_OPTIONS = {
     handle: '.ladb-handle'
 };
 
+var SLIDER_OPTIONS = {
+    tooltip: 'hide'
+};
+
 // GraphQL /////
 
 var GRAPHQL_ENDPOINT = 'https://api.opencollective.com/graphql/v2/';
