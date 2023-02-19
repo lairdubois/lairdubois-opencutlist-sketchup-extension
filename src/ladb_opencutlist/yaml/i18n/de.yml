@@ -164,7 +164,7 @@ core:
       view_back: Rückansicht
       view_left: Seitelinks
       view_right: Seiterechts
-      zoom: Maßstab {{ zoom }}
+      zoom: {{ zoom }} Maßstab
       toggle_box_helper: Anzeige des Begrenzungsrahmens
       toggle_axes_helper: Anzeige der Achsen des Teils
   docs:
@@ -186,7 +186,6 @@ tab:
     not_available_std_section: Querschnitt nicht verfügbar
     highlight_part: Teil im Modell hervorheben
     highlight_parts: Teile im Modell hervorheben
-    layout_parts: Übersichtsplan
     edit_part_properties: Eigenschaften des Teils bearbeiten
     edit_part_axes_properties: Eigenschaften (Achsen) des Teils bearbeiten
     edit_part_size_increase_properties: Eigenschaften (Übermaße) des Teils bearbeiten
@@ -225,7 +224,6 @@ tab:
       rounded_std_footer: Stellen Sie die Genauigkeit in den *Modellinformationen* ein oder überprüfen Sie die Abmessungen der Teile in dieser Gruppe.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
-      layout_parts: $t(tab.cutlist.layout_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_parts_properties: Eigenschaften der Gruppe von Teilen bearbeiten
       edit_material: $t(tab.cutlist.menu.edit_material)
@@ -290,6 +288,7 @@ tab:
       numbers_reset: Nummern der Teile neu zuweisen
       highlight_parts: $t(tab.cutlist.highlight_parts)
       layout_parts: Übersichtsplan drucken
+      group_layout_parts: Gruppenübersichtsplan drucken
       group_numbers_save: Nummern der Gruppenteile speichern
       group_numbers_reset: Nummern der Gruppenteile neu zuweisen
       group_cuttingdiagram: Schnittplan
@@ -890,6 +889,7 @@ tab:
       option_camera_target: Position
       option_camera_target_auto: Automatisch
       option_camera_target_custom: Benutzerdefiniert
+      option_explode: Explosionsdarstellung
       error:
         no_part: Es gibt keine zu zeichnenden Teile.
       warning:
