@@ -264,7 +264,6 @@ const fnUpdateViewportSize = function () {
 }
 
 const fnRender = function () {
-    console.log('render');
     renderer.render(scene, camera);
     cssRenderer.render(scene, camera);
 }
