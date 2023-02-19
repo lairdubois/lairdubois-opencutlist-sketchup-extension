@@ -164,7 +164,7 @@ core:
       view_back: Rückansicht
       view_left: Seitelinks
       view_right: Seiterechts
-      zoom: {{ zoom }} Maßstab
+      zoom: "{{ zoom }} Maßstab"
       toggle_box_helper: Anzeige des Begrenzungsrahmens
       toggle_axes_helper: Anzeige der Achsen des Teils
   docs:
