@@ -1467,175 +1467,185 @@
 
                 fnConvertPageSettings(layoutOptions.page_width, layoutOptions.page_height, function (pageWidth, pageHeight) {
 
-                    // Generate layout
-                    rubyCallCommand('cutlist_layout_parts', {
-                        part_ids: partIds,
-                        pins_use_names: layoutOptions.pins_use_names,
-                        pins_colored: layoutOptions.pins_colored
-                    }, function (response) {
+                    window.requestAnimationFrame(function () {
 
-                        var $slide = that.pushNewSlide('ladb_cutlist_slide_layout', 'tabs/cutlist/_slide-layout.twig', {
-                            errors: response.errors,
-                            filename: that.filename,
-                            modelName: that.modelName,
-                            modelDescription: that.modelDescription,
-                            pageName: that.pageName,
-                            pageDescription: that.pageDescription,
-                            isEntitySelection: that.isEntitySelection,
-                            lengthUnit: that.lengthUnit,
-                            generatedAt: new Date().getTime() / 1000,
-                            group: context.targetGroup,
-                            pageHeader: layoutOptions.page_header,
-                            THREE_CAMERA_VIEWS: THREE_CAMERA_VIEWS
-                        }, function () {
+                        // Start progress feedback
+                        that.dialog.startProgress(1);
 
-                            // Load frame when slide animation completed
-                            $viewer.ladbThreeViewer('loadFrame');
+                        // Generate layout
+                        rubyCallCommand('cutlist_layout_parts', {
+                            part_ids: partIds,
+                            pins_use_names: layoutOptions.pins_use_names,
+                            pins_colored: layoutOptions.pins_colored
+                        }, function (response) {
 
-                        });
+                            var $slide = that.pushNewSlide('ladb_cutlist_slide_layout', 'tabs/cutlist/_slide-layout.twig', {
+                                errors: response.errors,
+                                filename: that.filename,
+                                modelName: that.modelName,
+                                modelDescription: that.modelDescription,
+                                pageName: that.pageName,
+                                pageDescription: that.pageDescription,
+                                isEntitySelection: that.isEntitySelection,
+                                lengthUnit: that.lengthUnit,
+                                generatedAt: new Date().getTime() / 1000,
+                                group: context.targetGroup,
+                                pageHeader: layoutOptions.page_header,
+                                THREE_CAMERA_VIEWS: THREE_CAMERA_VIEWS
+                            }, function () {
 
-                        // Fetch UI elements
-                        var $btnLayout = $('#ladb_btn_layout', $slide);
-                        var $btnPrint = $('#ladb_btn_print', $slide);
-                        var $btnClose = $('#ladb_btn_close', $slide);
-                        var $viewer = $('.ladb-three-viewer', $slide);
-                        var $lblScale = $('.ladb-lbl-scale', $slide);
+                                // Load frame when slide animation completed
+                                $viewer.ladbThreeViewer('loadFrame');
 
-                        // Bind buttons
-                        $btnLayout.on('click', function () {
-                            that.layoutParts(partIds, context);
-                        });
-                        $btnPrint.on('click', function () {
-                            $(this).blur();
-                            that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.layout.title'), '0', `${pageWidth}in ${pageHeight}in`);
-                        });
-                        $btnClose.on('click', function () {
-                            that.popSlide();
-                        });
-                        $('.ladb-btn-setup-model-units', $slide).on('click', function () {
-                            $(this).blur();
-                            that.dialog.executeCommandOnTab('settings', 'highlight_panel', { panel:'model' });
-                        });
+                            });
 
-                        // Bind viewer
-                        var storeOptionsTimeoutId = null;
-                        $viewer.ladbThreeViewer({
-                            autoload: false,
-                            dialog: that.dialog,
-                            modelDef: response.three_model_def,
-                            partsColored: layoutOptions.parts_colored,
-                            pinsHidden: layoutOptions.pins_hidden,
-                            pinsColored: layoutOptions.pins_colored,
-                            pinsLength: layoutOptions.pins_length,
-                            pinsDirection: layoutOptions.pins_direction,
-                            cameraView: layoutOptions.camera_view,
-                            cameraZoom: layoutOptions.camera_zoom,
-                            cameraTarget: layoutOptions.camera_target,
-                            explodeFactor: layoutOptions.explode_factor
-                        }).on('camera.changed', function (e, data) {
+                            // Fetch UI elements
+                            var $btnLayout = $('#ladb_btn_layout', $slide);
+                            var $btnPrint = $('#ladb_btn_print', $slide);
+                            var $btnClose = $('#ladb_btn_close', $slide);
+                            var $viewer = $('.ladb-three-viewer', $slide);
+                            var $lblScale = $('.ladb-lbl-scale', $slide);
 
-                            layoutOptions.camera_view = data.cameraView;
-                            layoutOptions.camera_zoom = data.cameraZoomIsAuto ? null : data.cameraZoom;
-                            layoutOptions.camera_target = data.cameraTargetIsAuto ? null : data.cameraTarget;
+                            // Bind buttons
+                            $btnLayout.on('click', function () {
+                                that.layoutParts(partIds, context);
+                            });
+                            $btnPrint.on('click', function () {
+                                $(this).blur();
+                                that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.layout.title'), '0', `${pageWidth}in ${pageHeight}in`);
+                            });
+                            $btnClose.on('click', function () {
+                                that.popSlide();
+                            });
+                            $('.ladb-btn-setup-model-units', $slide).on('click', function () {
+                                $(this).blur();
+                                that.dialog.executeCommandOnTab('settings', 'highlight_panel', { panel:'model' });
+                            });
 
-                            // Store options (only one time per 500ms)
-                            if (storeOptionsTimeoutId) {
-                                clearTimeout(storeOptionsTimeoutId);
-                            }
-                            storeOptionsTimeoutId = setTimeout(function () {
-                                rubyCallCommand('core_set_model_preset', {
-                                    dictionary: 'cutlist_layout_options',
-                                    values: layoutOptions,
-                                    section: section
-                                });
-                                storeOptionsTimeoutId = null;
-                            }, 500);
+                            // Bind viewer
+                            var storeOptionsTimeoutId = null;
+                            $viewer.ladbThreeViewer({
+                                autoload: false,
+                                dialog: that.dialog,
+                                modelDef: response.three_model_def,
+                                partsColored: layoutOptions.parts_colored,
+                                pinsHidden: layoutOptions.pins_hidden,
+                                pinsColored: layoutOptions.pins_colored,
+                                pinsLength: layoutOptions.pins_length,
+                                pinsDirection: layoutOptions.pins_direction,
+                                cameraView: layoutOptions.camera_view,
+                                cameraZoom: layoutOptions.camera_zoom,
+                                cameraTarget: layoutOptions.camera_target,
+                                explodeFactor: layoutOptions.explode_factor
+                            }).on('camera.changed', function (e, data) {
 
-                            var scale;
-                            if (data.cameraZoom > 1) {
-                                scale = Number.parseFloat(data.cameraZoom.toFixed(3)) + ':1';
-                            } else if (data.cameraZoom < 1) {
-                                scale = '1:' + Number.parseFloat((1 / data.cameraZoom).toFixed(3));
-                            } else {
-                                scale = '1:1';
-                            }
-                            $lblScale.html(scale);
+                                layoutOptions.camera_view = data.cameraView;
+                                layoutOptions.camera_zoom = data.cameraZoomIsAuto ? null : data.cameraZoom;
+                                layoutOptions.camera_target = data.cameraTargetIsAuto ? null : data.cameraTarget;
 
-                        }).on('explode.changed', function (e, data) {
-
-                            layoutOptions.explode_factor = data.explodeFactor;
-
-                            // Store options (only one time per 500ms)
-                            if (storeOptionsTimeoutId) {
-                                clearTimeout(storeOptionsTimeoutId);
-                            }
-                            storeOptionsTimeoutId = setTimeout(function () {
-                                rubyCallCommand('core_set_model_preset', {
-                                    dictionary: 'cutlist_layout_options',
-                                    values: layoutOptions,
-                                    section: section
-                                });
-                                storeOptionsTimeoutId = null;
-                            }, 500);
-
-                        });
-
-                        var $paperPage = $('.ladb-paper-page', $viewer)
-                        if ($paperPage.length > 0 && pageWidth && pageHeight) {
-
-                            $paperPage.outerWidth(pageWidth + 'in');
-                            $paperPage.outerHeight(pageHeight + 'in');
-                            $paperPage.css('padding', '0.25in');
-
-                            // Scale frame to fit viewer on window resize
-                            var fnScaleFrame = function (e) {
-
-                                // Auto remove listener
-                                if (e && !$paperPage.get(0).isConnected) {
-
-                                    // Unbind window resize event
-                                    $(window).off('resize', fnScaleFrame);
-
-                                    // Unbind dialog maximized and minimized events
-                                    that.dialog.$element.off('maximized.ladb.dialog', fnScaleFrame);
-
-                                    // Unbind tab shown events
-                                    that.$element.off('shown.ladb.tab', fnScaleFrame);
-
-                                    return;
+                                // Store options (only one time per 500ms)
+                                if (storeOptionsTimeoutId) {
+                                    clearTimeout(storeOptionsTimeoutId);
                                 }
+                                storeOptionsTimeoutId = setTimeout(function () {
+                                    rubyCallCommand('core_set_model_preset', {
+                                        dictionary: 'cutlist_layout_options',
+                                        values: layoutOptions,
+                                        section: section
+                                    });
+                                    storeOptionsTimeoutId = null;
+                                }, 500);
 
-                                if (!$paperPage.is(':visible')) {
-                                    return;
+                                var scale;
+                                if (data.cameraZoom > 1) {
+                                    scale = Number.parseFloat(data.cameraZoom.toFixed(3)) + ':1';
+                                } else if (data.cameraZoom < 1) {
+                                    scale = '1:' + Number.parseFloat((1 / data.cameraZoom).toFixed(3));
+                                } else {
+                                    scale = '1:1';
                                 }
+                                $lblScale.html(scale);
 
-                                var spaceIW = $viewer.innerWidth();
-                                var spaceIH = $viewer.innerHeight();
-                                var frameOW = $paperPage.outerWidth();
-                                var frameOH = $paperPage.outerHeight();
-                                var scale = Math.min(
-                                    spaceIW / frameOW,
-                                    spaceIH / frameOH,
-                                    1.0
-                                );
+                            }).on('explode.changed', function (e, data) {
 
-                                $paperPage.css('transformOrigin', '0 0');
-                                $paperPage.css('transform', `translate(${(spaceIW - frameOW * scale) / 2}px, ${(spaceIH - frameOH * scale) / 2}px) scale(${scale})`);
+                                layoutOptions.explode_factor = data.explodeFactor;
 
-                            };
+                                // Store options (only one time per 500ms)
+                                if (storeOptionsTimeoutId) {
+                                    clearTimeout(storeOptionsTimeoutId);
+                                }
+                                storeOptionsTimeoutId = setTimeout(function () {
+                                    rubyCallCommand('core_set_model_preset', {
+                                        dictionary: 'cutlist_layout_options',
+                                        values: layoutOptions,
+                                        section: section
+                                    });
+                                    storeOptionsTimeoutId = null;
+                                }, 500);
 
-                            // Bind window resize event
-                            $(window).on('resize', fnScaleFrame);
+                            });
 
-                            // Bind dialog maximized and minimized events
-                            that.dialog.$element.on('maximized.ladb.dialog', fnScaleFrame);
+                            var $paperPage = $('.ladb-paper-page', $viewer)
+                            if ($paperPage.length > 0 && pageWidth && pageHeight) {
 
-                            // Bind tab shown events
-                            that.$element.on('shown.ladb.tab', fnScaleFrame);
+                                $paperPage.outerWidth(pageWidth + 'in');
+                                $paperPage.outerHeight(pageHeight + 'in');
+                                $paperPage.css('padding', '0.25in');
 
-                            fnScaleFrame();
+                                // Scale frame to fit viewer on window resize
+                                var fnScaleFrame = function (e) {
 
-                        }
+                                    // Auto remove listener
+                                    if (e && !$paperPage.get(0).isConnected) {
+
+                                        // Unbind window resize event
+                                        $(window).off('resize', fnScaleFrame);
+
+                                        // Unbind dialog maximized and minimized events
+                                        that.dialog.$element.off('maximized.ladb.dialog', fnScaleFrame);
+
+                                        // Unbind tab shown events
+                                        that.$element.off('shown.ladb.tab', fnScaleFrame);
+
+                                        return;
+                                    }
+
+                                    if (!$paperPage.is(':visible')) {
+                                        return;
+                                    }
+
+                                    var spaceIW = $viewer.innerWidth();
+                                    var spaceIH = $viewer.innerHeight();
+                                    var frameOW = $paperPage.outerWidth();
+                                    var frameOH = $paperPage.outerHeight();
+                                    var scale = Math.min(
+                                        spaceIW / frameOW,
+                                        spaceIH / frameOH,
+                                        1.0
+                                    );
+
+                                    $paperPage.css('transformOrigin', '0 0');
+                                    $paperPage.css('transform', `translate(${(spaceIW - frameOW * scale) / 2}px, ${(spaceIH - frameOH * scale) / 2}px) scale(${scale})`);
+
+                                };
+
+                                // Bind window resize event
+                                $(window).on('resize', fnScaleFrame);
+
+                                // Bind dialog maximized and minimized events
+                                that.dialog.$element.on('maximized.ladb.dialog', fnScaleFrame);
+
+                                // Bind tab shown events
+                                that.$element.on('shown.ladb.tab', fnScaleFrame);
+
+                                fnScaleFrame();
+
+                            }
+
+                            // Finish progress feedback
+                            that.dialog.finishProgress();
+
+                        });
 
                     });
 
