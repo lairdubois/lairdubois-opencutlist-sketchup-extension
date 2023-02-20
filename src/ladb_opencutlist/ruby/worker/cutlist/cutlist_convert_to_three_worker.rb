@@ -40,7 +40,10 @@ module Ladb::OpenCutList
             # Create the three part def
             three_part_def = ThreePartDef.new
             three_part_def.matrix = _to_three_matrix(instance_info.entity.transformation)
-            three_part_def.vertices, three_part_def.colors = _grab_entities_vertices_and_colors(instance_info.entity.definition.entities, materials[part.material_name])
+            three_part_def.face_vertices,
+              three_part_def.face_colors,
+              three_part_def.hard_edge_vertices,
+              three_part_def.soft_edge_vertices = _grab_entities_vertices_and_colors(instance_info.entity.definition.entities, materials[part.material_name])
 
             three_part_def.pin_text = @pins_use_names ? part.name : part.number
             three_part_def.pin_class = @pins_use_names ? 'square' : nil
@@ -74,7 +77,10 @@ module Ladb::OpenCutList
           # Create the three part def
           three_part_def = ThreePartDef.new
           three_part_def.matrix = _to_three_matrix(Geom::Transformation.scaling(part.def.scale.x * (part.def.flipped ? -1 : 1), part.def.scale.y, part.def.scale.z))
-          three_part_def.vertices, three_part_def.colors = _grab_entities_vertices_and_colors(instance_info.entity.definition.entities, materials[part.def.material_name])
+          three_part_def.face_vertices,
+            three_part_def.face_colors,
+            three_part_def.hard_edge_vertices,
+            three_part_def.soft_edge_vertices = _grab_entities_vertices_and_colors(instance_info.entity.definition.entities, materials[part.material_name])
 
           # Add to hierarchy
           three_model_def.add(three_part_def)
@@ -91,34 +97,45 @@ module Ladb::OpenCutList
     # -----
 
     def _grab_entities_vertices_and_colors(entities, material, transformation = nil)
-      vertices = []
-      colors = []
+      face_vertices = []
+      face_colors = []
+      hard_edge_vertices = []
+      soft_edge_vertices = []
       entities.each do |entity|
 
-        next if entity.is_a?(Sketchup::Edge)   # Minor Speed imrovement when there's a lot of edges
         next unless entity.visible? && _layer_visible?(entity.layer)
 
         if entity.is_a?(Sketchup::Face)
-          v, c = _grab_face_vertices_and_colors(entity, material, transformation)
-          vertices.concat(v)
-          colors.concat(c)
+          fv, fc = _grab_face_vertices_and_colors(entity, material, transformation)
+          face_vertices.concat(fv)
+          face_colors.concat(fc)
+        elsif entity.is_a?(Sketchup::Edge)
+          hev, sev = _grab_edge_vertices(entity, transformation)
+          hard_edge_vertices.concat(hev)
+          soft_edge_vertices.concat(sev)
         elsif entity.is_a?(Sketchup::Group)
-          v, c = _grab_entities_vertices_and_colors(entity.entities, entity.material.nil? ? material : entity.material, TransformationUtils::multiply(transformation, entity.transformation))
-          vertices.concat(v)
-          colors.concat(c)
+          fv, fc, hev, sev = _grab_entities_vertices_and_colors(entity.entities, entity.material.nil? ? material : entity.material, TransformationUtils::multiply(transformation, entity.transformation))
+          face_vertices.concat(fv)
+          face_colors.concat(fc)
+          hard_edge_vertices.concat(hev)
+          soft_edge_vertices.concat(sev)
         elsif entity.is_a?(Sketchup::ComponentInstance) && entity.definition.behavior.cuts_opening?
-          v, c = _grab_entities_vertices_and_colors(entity.definition.entities, entity.material.nil? ? material : entity.material, TransformationUtils::multiply(transformation, entity.transformation))
-          vertices.concat(v)
-          colors.concat(c)
+          fv, fc, hev, sev = _grab_entities_vertices_and_colors(entity.definition.entities, entity.material.nil? ? material : entity.material, TransformationUtils::multiply(transformation, entity.transformation))
+          face_vertices.concat(fv)
+          face_colors.concat(fc)
+          hard_edge_vertices.concat(hev)
+          soft_edge_vertices.concat(sev)
         elsif entity.is_a?(Sketchup::ComponentDefinition)
-          v, c = _grab_entities_vertices_and_colors(entity.entities, material, transformation)
-          vertices.concat(v)
-          colors.concat(c)
+          fv, fc, hev, sev = _grab_entities_vertices_and_colors(entity.entities, material, transformation)
+          face_vertices.concat(fv)
+          face_colors.concat(fc)
+          hard_edge_vertices.concat(hev)
+          soft_edge_vertices.concat(sev)
         end
 
       end
 
-      [ vertices, colors ]
+      [ face_vertices, face_colors, hard_edge_vertices, soft_edge_vertices ]
     end
 
     def _grab_face_vertices_and_colors(face, material, transformation = nil)
@@ -148,6 +165,30 @@ module Ladb::OpenCutList
       }
 
       [ vertices, colors ]
+    end
+
+    def _grab_edge_vertices(edge, transformation = nil)
+      hard_vertices = []
+      soft_vertices = []
+
+      edge.vertices.each do |vertex|
+
+        point = vertex.position
+        point.transform!(transformation) unless transformation.nil?
+
+        if edge.soft?
+          soft_vertices << point.x.to_f
+          soft_vertices << point.y.to_f
+          soft_vertices << point.z.to_f
+        else
+          hard_vertices << point.x.to_f
+          hard_vertices << point.y.to_f
+          hard_vertices << point.z.to_f
+        end
+
+      end
+
+      [ hard_vertices, soft_vertices ]
     end
 
     def _parent_hierarchy(path, cache, three_model_def)
@@ -266,12 +307,14 @@ module Ladb::OpenCutList
 
   class ThreePartDef < ThreeGroupDef
 
-    attr_accessor :vertices, :colors, :pin_text, :pin_class, :pin_color
+    attr_accessor :face_vertices, :face_colors, :hard_edge_vertices, :soft_edge_vertices, :pin_text, :pin_class, :pin_color
 
     def initialize
       super(ThreeObjectDef::TYPE_PART)
-      @vertices = []
-      @colors = []
+      @face_vertices = []
+      @face_colors = []
+      @hard_edge_vertices = []
+      @soft_edge_vertices = []
       @pin_text = nil
       @pin_class = nil
       @pin_color = nil
