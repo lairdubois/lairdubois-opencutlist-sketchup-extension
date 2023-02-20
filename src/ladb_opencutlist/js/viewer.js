@@ -237,7 +237,7 @@ const fnInit = function() {
     });
     defaultConditionalLineMaterial = new ConditionalLineMaterial({
         fog: false,
-        color: 0xff0000
+        color: 0x000000
     });
     pinLineMaterial = new THREE.LineBasicMaterial({
         color: 0x000000,
@@ -472,6 +472,9 @@ const fnAddObjectDef = function (objectDef, parent, partsColored) {
 
         let softEdgesGeometry = new THREE.BufferGeometry();
         softEdgesGeometry.setAttribute('position', new THREE.Float32BufferAttribute(objectDef.soft_edge_vertices, 3));
+        softEdgesGeometry.setAttribute('control0', new THREE.Float32BufferAttribute(objectDef.soft_edge_controls0, 3));
+        softEdgesGeometry.setAttribute('control1', new THREE.Float32BufferAttribute(objectDef.soft_edge_controls1, 3));
+        softEdgesGeometry.setAttribute('direction', new THREE.Float32BufferAttribute(objectDef.soft_edge_directions, 3));
 
         let line2 = new ConditionalLineSegments(softEdgesGeometry, defaultConditionalLineMaterial);
         group.add(line2);
