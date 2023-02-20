@@ -155,8 +155,9 @@ LadbAbstractTab.prototype.popSlide = function (noAnimation) {
             $poppedSlide.switchClass('in', 'out', {
                 duration: 300,
                 complete: function () {
-                    $poppedSlide.removeClass('animated');
-                    $poppedSlide.remove();
+                    $poppedSlide
+                        .removeClass('animated')
+                        .remove();
                 }
             });
         }

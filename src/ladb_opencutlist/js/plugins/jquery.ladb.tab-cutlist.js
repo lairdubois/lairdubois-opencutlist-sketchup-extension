@@ -1373,7 +1373,7 @@
                 options.camera_view = JSON.parse($inputCameraView.val());
                 options.camera_zoom = JSON.parse($inputCameraZoom.val());
                 options.camera_target = JSON.parse($inputCameraTarget.val());
-                options.explode_factor = $inputExplodeFactor.bootstrapSlider('getValue');
+                options.explode_factor = $inputExplodeFactor.slider('getValue');
             }
             var fnFillInputs = function (options) {
                 $selectPageFormat.selectpicker('val', options.page_width.replace(',', '.') + 'x' + options.page_height.replace(',', '.'));
@@ -1392,7 +1392,7 @@
                 $inputCameraZoom.val(JSON.stringify(options.camera_zoom));
                 $selectCameraTarget.selectpicker('val', JSON.stringify(options.camera_target));
                 $inputCameraTarget.val(JSON.stringify(options.camera_target));
-                $inputExplodeFactor.bootstrapSlider('setValue', options.explode_factor);
+                $inputExplodeFactor.slider('setValue', options.explode_factor);
                 fnUpdatePageSizeFieldsAvailability();
                 fnUpdateFieldsVisibility();
             }
@@ -1416,7 +1416,7 @@
             $selectCameraView.selectpicker(SELECT_PICKER_OPTIONS);
             $selectCameraZoom.selectpicker(SELECT_PICKER_OPTIONS);
             $selectCameraTarget.selectpicker(SELECT_PICKER_OPTIONS);
-            $inputExplodeFactor.bootstrapSlider(SLIDER_OPTIONS);
+            $inputExplodeFactor.slider(SLIDER_OPTIONS);
 
             fnFillInputs(layoutOptions);
 
@@ -1586,6 +1586,11 @@
 
                             });
 
+                            // Bind slide
+                            $slide.on('remove', function () {
+                                $viewer.ladbThreeViewer('destroy');
+                            });
+
                             var $paperPage = $('.ladb-paper-page', $viewer)
                             if ($paperPage.length > 0 && pageWidth && pageHeight) {
 
@@ -1655,6 +1660,11 @@
 
                 });
 
+            });
+
+            // Bind modal
+            $modal.on('hide.bs.modal', function () {
+                $inputExplodeFactor.slider('destroy');
             });
 
             // Show modal

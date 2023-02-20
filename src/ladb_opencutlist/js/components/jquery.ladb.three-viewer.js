@@ -37,7 +37,11 @@
 
     LadbThreeViewer.prototype.loadFrame = function () {
         this.$iframe.attr('src', 'viewer.html');
-    }
+    };
+
+    LadbThreeViewer.prototype.destroy = function () {
+        $('input[data-command]', this.$element).slider('destroy');
+    };
 
     LadbThreeViewer.prototype.bind = function () {
         var that = this;
@@ -103,7 +107,7 @@
             // Update buttons status
             $('[data-command="set_explode_factor"]', that.$element).each(function (index, el) {
                 var $input = $(el);
-                $input.bootstrapSlider('setValue', e.data.explodeFactor);
+                $input.slider('setValue', e.data.explodeFactor);
             });
 
             // Forward event
@@ -149,7 +153,7 @@
             var command = $(this).data('command');
             var paramName = $(this).data('param-name');
             var params = {};
-            params[paramName] = $(this).bootstrapSlider('getValue');
+            params[paramName] = $(this).slider('getValue');
             that.callCommand(command, params);
         });
 
@@ -164,7 +168,7 @@
             this.loadFrame();
         }
 
-        $('input[data-command]', this.$element).bootstrapSlider(SLIDER_OPTIONS);
+        $('input[data-command]', this.$element).slider(SLIDER_OPTIONS);
 
     };
 
