@@ -1365,7 +1365,6 @@
                 options.page_height = $inputPageHeight.val();
                 options.page_header = $selectPageHeader.val() === '1';
                 options.parts_colored = $selectPartsColored.val() === '1';
-                options.parts_colored = $selectPartsColored.val() === '1';
                 options.pins_hidden = $selectPinsHidden.val() === '1';
                 options.pins_colored = $selectPinsColored.val() === '1';
                 options.pins_use_names = $selectPinsUseNames.val() === '1';
@@ -1475,6 +1474,8 @@
                         // Generate layout
                         rubyCallCommand('cutlist_layout_parts', {
                             part_ids: partIds,
+                            parts_colored: layoutOptions.parts_colored,
+                            pins_hidden: layoutOptions.pins_hidden,
                             pins_use_names: layoutOptions.pins_use_names,
                             pins_colored: layoutOptions.pins_colored
                         }, function (response) {

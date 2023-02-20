@@ -9,10 +9,12 @@ module Ladb::OpenCutList
 
     include LayerVisibilityHelper
 
-    def initialize(parts, all_instances = false, pins_use_names = false, pins_colored = false)
+    def initialize(parts, all_instances = false, parts_colored = true, pins_hidden = true, pins_use_names = false, pins_colored = false)
 
       @parts = parts
       @all_instances = all_instances
+      @parts_colored = parts_colored
+      @pins_hidden = pins_hidden
       @pins_use_names = pins_use_names
       @pins_colored = pins_colored
 
@@ -37,24 +39,16 @@ module Ladb::OpenCutList
 
           part.def.instance_infos.each { |serialized_path, instance_info|
 
-            # Create the three part def
-            three_part_def = ThreePartDef.new
-            three_part_def.matrix = _to_three_matrix(instance_info.entity.transformation)
-            three_part_def.face_vertices,
-              three_part_def.face_colors,
-              three_part_def.hard_edge_vertices,
-              three_part_def.soft_edge_vertices,
-              three_part_def.soft_edge_controls0,
-              three_part_def.soft_edge_controls1,
-              three_part_def.soft_edge_directions = _grab_entities_vertices_and_colors(instance_info.entity.definition.entities, materials[part.material_name])
+            _create_three_part_def(three_model_def, part, instance_info.entity.definition, materials[part.material_name])
 
-            three_part_def.pin_text = @pins_use_names ? part.name : part.number
-            three_part_def.pin_class = @pins_use_names ? 'square' : nil
-            three_part_def.pin_color = @pins_colored ? _to_three_color(materials[part.material_name]) : nil
+            # Create the three part def
+            three_part_instance_def = ThreePartInstanceDef.new
+            three_part_instance_def.matrix = _to_three_matrix(instance_info.entity.transformation)
+            three_part_instance_def.part_id = part.id
 
             # Add to hierarchy
             parent_three_group_def = _parent_hierarchy(instance_info.path.slice(0, instance_info.path.length - 1), group_cache, three_model_def)
-            parent_three_group_def.add(three_part_def)
+            parent_three_group_def.add(three_part_instance_def)
 
           }
 
@@ -77,19 +71,15 @@ module Ladb::OpenCutList
           # Extract first instance
           instance_info = part.def.instance_infos.values.first
 
+          _create_three_part_def(three_model_def, part, instance_info.entity.definition, materials[part.material_name])
+
           # Create the three part def
-          three_part_def = ThreePartDef.new
-          three_part_def.matrix = _to_three_matrix(Geom::Transformation.scaling(part.def.scale.x * (part.def.flipped ? -1 : 1), part.def.scale.y, part.def.scale.z))
-          three_part_def.face_vertices,
-            three_part_def.face_colors,
-            three_part_def.hard_edge_vertices,
-            three_part_def.soft_edge_vertices,
-            three_part_def.soft_edge_controls0,
-            three_part_def.soft_edge_controls1,
-            three_part_def.soft_edge_directions = _grab_entities_vertices_and_colors(instance_info.entity.definition.entities, materials[part.material_name])
+          three_part_instance_def = ThreePartInstanceDef.new
+          three_part_instance_def.matrix = _to_three_matrix(Geom::Transformation.scaling(part.def.scale.x * (part.def.flipped ? -1 : 1), part.def.scale.y, part.def.scale.z))
+          three_part_instance_def.part_id = part.id
 
           # Add to hierarchy
-          three_model_def.add(three_part_def)
+          three_model_def.add(three_part_instance_def)
 
         end
 
@@ -101,6 +91,31 @@ module Ladb::OpenCutList
     end
 
     # -----
+
+    def _create_three_part_def(three_model_def, part, definition, material)
+
+      three_part_def = three_model_def.definitions.fetch(part.id, nil)
+      if three_part_def.nil?
+
+        three_part_def = ThreePartDef.new
+        three_part_def.face_vertices,
+        three_part_def.face_colors,
+        three_part_def.hard_edge_vertices,
+        three_part_def.soft_edge_vertices,
+        three_part_def.soft_edge_controls0,
+        three_part_def.soft_edge_controls1,
+        three_part_def.soft_edge_directions = _grab_entities_vertices_and_colors(definition.entities, material)
+
+        unless @pins_hidden
+          three_part_def.pin_text = @pins_use_names ? part.name : part.number
+          three_part_def.pin_class = @pins_use_names ? 'square' : nil
+          three_part_def.pin_color = @pins_colored ? _to_three_color(material) : nil
+        end
+
+        three_model_def.definitions.store(part.id, three_part_def)
+      end
+
+    end
 
     def _grab_entities_vertices_and_colors(entities, material, transformation = nil)
       face_vertices = []
@@ -143,15 +158,6 @@ module Ladb::OpenCutList
           soft_edge_controls0.concat(sec0)
           soft_edge_controls1.concat(sec1)
           soft_edge_directions.concat(dir)
-        elsif entity.is_a?(Sketchup::ComponentDefinition)
-          fv, fc, hev, sev, sec0, sec1, dir = _grab_entities_vertices_and_colors(entity.entities, material, transformation)
-          face_vertices.concat(fv)
-          face_colors.concat(fc)
-          hard_edge_vertices.concat(hev)
-          soft_edge_vertices.concat(sev)
-          soft_edge_controls0.concat(sec0)
-          soft_edge_controls1.concat(sec1)
-          soft_edge_directions.concat(dir)
         end
 
       end
@@ -178,9 +184,11 @@ module Ladb::OpenCutList
           vertices << point.y.to_f
           vertices << point.z.to_f
 
-          colors << red
-          colors << green
-          colors << blue
+          if @parts_colored
+            colors << red
+            colors << green
+            colors << blue
+          end
 
         }
       }
@@ -318,14 +326,35 @@ module Ladb::OpenCutList
 
   # -----
 
+  class ThreePartDef
+
+    include HashableHelper
+
+    attr_accessor :face_vertices, :face_colors, :hard_edge_vertices, :soft_edge_vertices, :soft_edge_controls0, :soft_edge_controls1, :soft_edge_directions, :pin_text, :pin_class, :pin_color
+
+    def initialize
+      @face_vertices = []
+      @face_colors = []
+      @hard_edge_vertices = []
+      @soft_edge_vertices = []
+      @soft_edge_controls0 = []
+      @soft_edge_controls1 = []
+      @soft_edge_directions = []
+      @pin_text = nil
+      @pin_class = nil
+      @pin_color = nil
+    end
+
+  end
+
   class ThreeObjectDef
 
     include HashableHelper
 
     TYPE_UNDEFINED = 0
     TYPE_MODEL = 1
-    TYPE_PART = 2
-    TYPE_GROUP = 3
+    TYPE_GROUP = 2
+    TYPE_PART_INSTANCE = 3
 
     attr_accessor :name
 
@@ -359,31 +388,23 @@ module Ladb::OpenCutList
 
   class ThreeModelDef < ThreeGroupDef
 
-    attr_accessor :up
+    attr_accessor :up, :definitions
 
     def initialize
       super(ThreeObjectDef::TYPE_MODEL)
       @up = [ 0, 0, 1 ]
+      @definitions = {}
     end
 
   end
 
-  class ThreePartDef < ThreeGroupDef
+  class ThreePartInstanceDef < ThreeGroupDef
 
-    attr_accessor :face_vertices, :face_colors, :hard_edge_vertices, :soft_edge_vertices, :soft_edge_controls0, :soft_edge_controls1, :soft_edge_directions, :pin_text, :pin_class, :pin_color
+    attr_accessor :part_id
 
     def initialize
       super(ThreeObjectDef::TYPE_PART)
-      @face_vertices = []
-      @face_colors = []
-      @hard_edge_vertices = []
-      @soft_edge_vertices = []
-      @soft_edge_controls0 = []
-      @soft_edge_controls1 = []
-      @soft_edge_directions = []
-      @pin_text = nil
-      @pin_class = nil
-      @pin_color = nil
+      @part_id
     end
 
   end

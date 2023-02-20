@@ -12,6 +12,8 @@ module Ladb::OpenCutList
           value = value.to_hash
         elsif value.is_a?(Array)
           value = value.collect{ |v| v.is_a?(HashableHelper) ? v.to_hash : v }
+        elsif value.is_a?(Hash)
+          value = value.map{ |k,v| [ k, v.is_a?(HashableHelper) ? v.to_hash : v ] }.to_h
         end
         hash[key] = value
       end

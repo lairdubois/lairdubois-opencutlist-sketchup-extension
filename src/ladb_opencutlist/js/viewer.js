@@ -1,4 +1,4 @@
-//
+// Classes
 
 class ConditionalLineMaterial extends THREE.ShaderMaterial {
 
@@ -124,17 +124,6 @@ class ConditionalLineMaterial extends THREE.ShaderMaterial {
 
         this.setValues( parameters );
         this.isConditionalLineMaterial = true;
-
-    }
-
-}
-
-class ConditionalLineSegments extends THREE.LineSegments {
-
-    constructor( geometry, material ) {
-
-        super( geometry, material );
-        this.isConditionalLine = true;
 
     }
 
@@ -433,7 +422,7 @@ const fnStopAnimate = function () {
     animating = false;
 }
 
-const fnAddObjectDef = function (objectDef, parent, partsColored) {
+const fnAddObjectDef = function (modelDef, objectDef, parent, partsColored) {
 
     let group = new THREE.Group();
     if (objectDef.matrix) {
@@ -445,44 +434,51 @@ const fnAddObjectDef = function (objectDef, parent, partsColored) {
         group.userData.baseScale = group.scale.clone();
     }
     for (childObjectDef of objectDef.children) {
-        fnAddObjectDef(childObjectDef, group, partsColored);
+        fnAddObjectDef(modelDef, childObjectDef, group, partsColored);
     }
-    if (objectDef.type === 2 /* TYPE_PART */) {
+    if (objectDef.type === 3 /* TYPE_PART_INSTANCE */) {
 
-        group.userData.isPart = true;
+        let partDef = modelDef.definitions[objectDef.part_id];
+        if (partDef) {
 
-        // Mesh
+            group.userData.isPart = true;
 
-        let facesGeometry = new THREE.BufferGeometry();
-        facesGeometry.setAttribute('position', new THREE.Float32BufferAttribute(objectDef.face_vertices, 3));
-        if (partsColored) {
-            facesGeometry.setAttribute('color', new THREE.Float32BufferAttribute(objectDef.face_colors, 3));
-        }
+            // Mesh
 
-        let mesh = new THREE.Mesh(facesGeometry, partsColored ? vertexColorMeshMaterial : defaultMeshMaterial);
-        group.add(mesh);
+            let facesGeometry = new THREE.BufferGeometry();
+            facesGeometry.setAttribute('position', new THREE.Float32BufferAttribute(partDef.face_vertices, 3));
+            if (partsColored) {
+                facesGeometry.setAttribute('color', new THREE.Float32BufferAttribute(partDef.face_colors, 3));
+            }
 
-        // Line
+            let mesh = new THREE.Mesh(facesGeometry, partsColored ? vertexColorMeshMaterial : defaultMeshMaterial);
+            group.add(mesh);
 
-        let hardEdgesGeometry = new THREE.BufferGeometry();
-        hardEdgesGeometry.setAttribute('position', new THREE.Float32BufferAttribute(objectDef.hard_edge_vertices, 3));
+            // Line
 
-        let line = new THREE.LineSegments(hardEdgesGeometry, defaultLineMaterial);
-        group.add(line);
+            let hardEdgesGeometry = new THREE.BufferGeometry();
+            hardEdgesGeometry.setAttribute('position', new THREE.Float32BufferAttribute(partDef.hard_edge_vertices, 3));
 
-        let softEdgesGeometry = new THREE.BufferGeometry();
-        softEdgesGeometry.setAttribute('position', new THREE.Float32BufferAttribute(objectDef.soft_edge_vertices, 3));
-        softEdgesGeometry.setAttribute('control0', new THREE.Float32BufferAttribute(objectDef.soft_edge_controls0, 3));
-        softEdgesGeometry.setAttribute('control1', new THREE.Float32BufferAttribute(objectDef.soft_edge_controls1, 3));
-        softEdgesGeometry.setAttribute('direction', new THREE.Float32BufferAttribute(objectDef.soft_edge_directions, 3));
+            let hardEdgesLine = new THREE.LineSegments(hardEdgesGeometry, defaultLineMaterial);
+            group.add(hardEdgesLine);
 
-        let line2 = new ConditionalLineSegments(softEdgesGeometry, defaultConditionalLineMaterial);
-        group.add(line2);
+            let softEdgesGeometry = new THREE.BufferGeometry();
+            softEdgesGeometry.setAttribute('position', new THREE.Float32BufferAttribute(partDef.soft_edge_vertices, 3));
+            softEdgesGeometry.setAttribute('control0', new THREE.Float32BufferAttribute(partDef.soft_edge_controls0, 3));
+            softEdgesGeometry.setAttribute('control1', new THREE.Float32BufferAttribute(partDef.soft_edge_controls1, 3));
+            softEdgesGeometry.setAttribute('direction', new THREE.Float32BufferAttribute(partDef.soft_edge_directions, 3));
 
-        if (objectDef.pin_text) {
-            group.userData.pinText = objectDef.pin_text;
-            group.userData.pinClass = objectDef.pin_class;
-            group.userData.pinColor = new THREE.Color(objectDef.pin_color);
+            let softEdgesLine = new THREE.LineSegments(softEdgesGeometry, defaultConditionalLineMaterial);
+            group.add(softEdgesLine);
+
+            // Pin
+
+            if (partDef.pin_text) {
+                group.userData.pinText = partDef.pin_text;
+                group.userData.pinClass = partDef.pin_class;
+                group.userData.pinColor = new THREE.Color(partDef.pin_color);
+            }
+
         }
 
     }
@@ -717,7 +713,7 @@ const fnSetAxesHelperVisible = function (visible) {
 
 const fnSetupModel = function(modelDef, partsColored, pinsHidden, pinsLength, pinsDirection, pinsColored, cameraView, cameraZoom, cameraTarget, explodeFactor) {
 
-    model = fnAddObjectDef(modelDef, scene, partsColored);
+    model = fnAddObjectDef(modelDef, modelDef, scene, partsColored);
     if (model) {
 
         // Compute model box properties
