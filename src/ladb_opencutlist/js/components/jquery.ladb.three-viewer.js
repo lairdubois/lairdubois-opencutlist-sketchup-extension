@@ -17,6 +17,7 @@
         autoload: true,
         modelDef: null,
         partsColored: false,
+        partsOpacity: 1.0,
         pinsHidden: false,
         pinsColored: false,
         pinsLength: 1,      // PINS_LENGTH_SHORT
@@ -55,6 +56,7 @@
                     {
                         modelDef: that.options.modelDef,
                         partsColored: that.options.partsColored,
+                        partsOpacity: that.options.partsOpacity,
                         pinsHidden: that.options.pinsHidden,
                         pinsColored: that.options.pinsColored,
                         pinsLength: that.options.pinsLength,

@@ -1314,6 +1314,7 @@
             var $inputPageHeight = $('#ladb_input_page_height', $modal);
             var $selectPageHeader = $('#ladb_select_page_header', $modal);
             var $selectPartsColored = $('#ladb_select_parts_colored', $modal);
+            var $selectPartsOpacity = $('#ladb_select_parts_opacity', $modal);
             var $selectPinsHidden = $('#ladb_select_pins_hidden', $modal);
             var $selectPinsColored = $('#ladb_select_pins_colored', $modal);
             var $selectPinsUseNames = $('#ladb_select_pins_use_names', $modal);
@@ -1365,6 +1366,7 @@
                 options.page_height = $inputPageHeight.val();
                 options.page_header = $selectPageHeader.val() === '1';
                 options.parts_colored = $selectPartsColored.val() === '1';
+                options.parts_opacity = parseFloat($selectPartsOpacity.val());
                 options.pins_hidden = $selectPinsHidden.val() === '1';
                 options.pins_colored = $selectPinsColored.val() === '1';
                 options.pins_use_names = $selectPinsUseNames.val() === '1';
@@ -1381,6 +1383,7 @@
                 $inputPageHeight.val(options.page_height);
                 $selectPageHeader.selectpicker('val', options.page_header ? '1' : '0');
                 $selectPartsColored.selectpicker('val', options.parts_colored ? '1' : '0');
+                $selectPartsOpacity.selectpicker('val', options.parts_opacity);
                 $selectPinsHidden.selectpicker('val', options.pins_hidden ? '1' : '0');
                 $selectPinsColored.selectpicker('val', options.pins_colored ? '1' : '0');
                 $selectPinsUseNames.selectpicker('val', options.pins_use_names ? '1' : '0');
@@ -1408,6 +1411,7 @@
             $inputPageHeight.ladbTextinputDimension();
             $selectPageHeader.selectpicker(SELECT_PICKER_OPTIONS);
             $selectPartsColored.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectPartsOpacity.selectpicker(SELECT_PICKER_OPTIONS);
             $selectPinsHidden.selectpicker(SELECT_PICKER_OPTIONS);
             $selectPinsColored.selectpicker(SELECT_PICKER_OPTIONS);
             $selectPinsUseNames.selectpicker(SELECT_PICKER_OPTIONS);
@@ -1530,6 +1534,7 @@
                                 dialog: that.dialog,
                                 modelDef: response.three_model_def,
                                 partsColored: layoutOptions.parts_colored,
+                                partsOpacity: layoutOptions.parts_opacity,
                                 pinsHidden: layoutOptions.pins_hidden,
                                 pinsColored: layoutOptions.pins_colored,
                                 pinsLength: layoutOptions.pins_length,

@@ -841,6 +841,10 @@ tab:
       option_parts_colored_0: Sans couleur
       option_parts_colored_1: Couleur de leur matière
       option_parts_colored_help: Permet de choisir l'aspect des pièces.
+      option_parts_opacity: Opacité
+      option_parts_opacity_0: Opaque
+      option_parts_opacity_1: Transparente
+      option_parts_opacity_help: Permet de choisir l'opacité des pièces.
       option_pins: Epingles
       option_pins_hidden: Affichage
       option_pins_hidden_0: Avec épingles

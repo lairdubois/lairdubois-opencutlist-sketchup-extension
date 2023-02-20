@@ -8,6 +8,7 @@
     "page_height": { "metric": "297mm", "imperial": "11\"" },
     "page_header": true,
     "parts_colored": false,
+    "parts_opacity": 1,
     "pins_hidden": false,
     "pins_colored": false,
     "pins_use_names": false,

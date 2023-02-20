@@ -403,7 +403,7 @@ module Ladb::OpenCutList
     attr_accessor :part_id
 
     def initialize
-      super(ThreeObjectDef::TYPE_PART)
+      super(ThreeObjectDef::TYPE_PART_INSTANCE)
       @part_id
     end
 

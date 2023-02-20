@@ -141,7 +141,6 @@ let renderer,
 
     defaultMeshMaterial,
     defaultLineMaterial,
-    defaultConditionalLineMaterial,
 
     viewportWidth,
     viewportHeight,
@@ -211,15 +210,6 @@ const fnInit = function() {
         polygonOffset: true,
         polygonOffsetFactor: 1,
         polygonOffsetUnits: 1,
-        vertexColors: false
-    });
-    vertexColorMeshMaterial = new THREE.MeshBasicMaterial({
-        side: THREE.DoubleSide,
-        color: 0xffffff,
-        polygonOffset: true,
-        polygonOffsetFactor: 1,
-        polygonOffsetUnits: 1,
-        vertexColors: true
     });
     defaultLineMaterial = new THREE.LineBasicMaterial({
         color: 0x000000
@@ -264,6 +254,7 @@ const fnAddListeners = function () {
                     fnSetupModel(
                         call.params.modelDef,
                         call.params.partsColored,
+                        call.params.partsOpacity,
                         call.params.pinsHidden,
                         call.params.pinsLength,
                         call.params.pinsDirection,
@@ -451,7 +442,7 @@ const fnAddObjectDef = function (modelDef, objectDef, parent, partsColored) {
                 facesGeometry.setAttribute('color', new THREE.Float32BufferAttribute(partDef.face_colors, 3));
             }
 
-            let mesh = new THREE.Mesh(facesGeometry, partsColored ? vertexColorMeshMaterial : defaultMeshMaterial);
+            let mesh = new THREE.Mesh(facesGeometry, defaultMeshMaterial);
             group.add(mesh);
 
             // Line
@@ -711,7 +702,15 @@ const fnSetAxesHelperVisible = function (visible) {
     }
 }
 
-const fnSetupModel = function(modelDef, partsColored, pinsHidden, pinsLength, pinsDirection, pinsColored, cameraView, cameraZoom, cameraTarget, explodeFactor) {
+const fnSetupModel = function(modelDef, partsColored, partsOpacity, pinsHidden, pinsLength, pinsDirection, pinsColored, cameraView, cameraZoom, cameraTarget, explodeFactor) {
+
+    if (partsColored) {
+        defaultMeshMaterial.vertexColors = true;
+    }
+    if (partsOpacity < 1) {
+        defaultMeshMaterial.opacity = partsOpacity;
+        defaultMeshMaterial.transparent = true;
+    }
 
     model = fnAddObjectDef(modelDef, modelDef, scene, partsColored);
     if (model) {
