@@ -27,7 +27,6 @@
         cameraZoom: null,
         cameraTarget: null,
         explodeFactor: 0,
-        explodeDisabled: 0,
         showBoxHelper: false,
     };
 
