@@ -27,6 +27,7 @@
         cameraZoom: null,
         cameraTarget: null,
         explodeFactor: 0,
+        explodeDisabled: 0,
         showBoxHelper: false,
     };
 
@@ -152,6 +153,8 @@
             var params = $(this).data('params');
             that.callCommand(command, params);
         });
+
+        // Bind sliders
         $('input[data-command]', this.$element).on('change', function () {
             this.blur();
             var command = $(this).data('command');
@@ -160,6 +163,10 @@
             params[paramName] = $(this).slider('getValue');
             that.callCommand(command, params);
         });
+
+        if (this.options.modelDef.part_instance_count <= 1) {
+            $('[data-command="set_explode_factor"]', this.$element).closest('.ladb-three-viewer-explode-factor-slider-wrapper').hide();
+        }
 
     };
 

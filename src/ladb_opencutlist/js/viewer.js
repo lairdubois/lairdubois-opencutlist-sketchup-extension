@@ -431,7 +431,7 @@ const fnAddObjectDef = function (modelDef, objectDef, parent, partsColored) {
     }
     if (objectDef.type === 3 /* TYPE_PART_INSTANCE */) {
 
-        let partDef = modelDef.definitions[objectDef.part_id];
+        let partDef = modelDef.part_defs[objectDef.id];
         if (partDef) {
 
             group.userData.isPart = true;

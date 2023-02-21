@@ -41,11 +41,13 @@ module Ladb::OpenCutList
             # Create the three part def
             three_part_instance_def = ThreePartInstanceDef.new
             three_part_instance_def.matrix = _to_three_matrix(instance_info.entity.transformation)
-            three_part_instance_def.part_id = part.id
+            three_part_instance_def.id = part.id
 
             # Add to hierarchy
             parent_three_group_def = _parent_hierarchy(instance_info.path.slice(0, instance_info.path.length - 1), group_cache, three_model_def)
             parent_three_group_def.add(three_part_instance_def)
+
+            three_model_def.part_instance_count += 1
 
           }
 
@@ -73,10 +75,12 @@ module Ladb::OpenCutList
           # Create the three part def
           three_part_instance_def = ThreePartInstanceDef.new
           three_part_instance_def.matrix = _to_three_matrix(Geom::Transformation.scaling(part.def.scale.x * (part.def.flipped ? -1 : 1), part.def.scale.y, part.def.scale.z))
-          three_part_instance_def.part_id = part.id
+          three_part_instance_def.id = part.id
 
           # Add to hierarchy
           three_model_def.add(three_part_instance_def)
+
+          three_model_def.part_instance_count += 1
 
         end
 
@@ -91,7 +95,7 @@ module Ladb::OpenCutList
 
     def _create_three_part_def(three_model_def, part, definition, material)
 
-      three_part_def = three_model_def.definitions.fetch(part.id, nil)
+      three_part_def = three_model_def.part_defs.fetch(part.id, nil)
       if three_part_def.nil?
 
         three_part_def = ThreePartDef.new
@@ -106,7 +110,7 @@ module Ladb::OpenCutList
         three_part_def.number = part.number
         three_part_def.color = _to_three_color(material)
 
-        three_model_def.definitions.store(part.id, three_part_def)
+        three_model_def.part_defs.store(part.id, three_part_def)
       end
 
     end
@@ -197,60 +201,65 @@ module Ladb::OpenCutList
       soft_controls1 = []
       soft_directions = []
 
-      # Soft controls
-      if edge.soft?
+      unless edge.faces.empty?  # Exclude edges not connected to a face
 
-        edge.faces.each do |face|
+        # Soft controls
+        if edge.soft?
 
-          vertex = face.vertices.find { |v| !edge.used_by?(v) }
-          if vertex.is_a?(Sketchup::Vertex)
+          edge.faces.each do |face|
 
-            point = vertex.position
-            point.transform!(transformation) unless transformation.nil?
+            vertex = face.vertices.find { |v| !edge.used_by?(v) }
+            if vertex.is_a?(Sketchup::Vertex)
 
-            controls = soft_controls0.empty? ? soft_controls0 : soft_controls1
-            2.times do
-              controls << point.x.to_f
-              controls << point.y.to_f
-              controls << point.z.to_f
+              point = vertex.position
+              point.transform!(transformation) unless transformation.nil?
+
+              # Inspired from LDraw specification : https://www.ldraw.org/article/218.html#lt5
+              controls = soft_controls0.empty? ? soft_controls0 : soft_controls1
+              2.times do
+                controls << point.x.to_f
+                controls << point.y.to_f
+                controls << point.z.to_f
+              end
+
+            end
+
+            unless soft_controls0.empty? || soft_controls1.empty?
+              break
             end
 
           end
 
-          unless soft_controls0.empty? || soft_controls1.empty?
-            break
+          # Check if there's enough controls
+          if soft_controls0.empty? || soft_controls1.empty?
+            soft_controls0.clear
+            soft_controls1.clear
           end
 
         end
 
-        # Check if there's enough controls
-        if soft_controls0.empty? || soft_controls1.empty?
-          soft_controls0.clear
-          soft_controls1.clear
+        # Vertices
+        edge.vertices.each do |vertex|
+
+          point = vertex.position
+          point.transform!(transformation) unless transformation.nil?
+
+          vertices = soft_controls0.empty? ? hard_vertices : soft_vertices
+          vertices << point.x.to_f
+          vertices << point.y.to_f
+          vertices << point.z.to_f
+
         end
 
-      end
-
-      # Vertices
-      edge.vertices.each do |vertex|
-
-        point = vertex.position
-        point.transform!(transformation) unless transformation.nil?
-
-        vertices = soft_controls0.empty? ? hard_vertices : soft_vertices
-        vertices << point.x.to_f
-        vertices << point.y.to_f
-        vertices << point.z.to_f
-
-      end
-
-      # Soft directions
-      unless soft_controls0.empty?
-        2.times do
-          soft_directions << soft_vertices[3] - soft_vertices[0]
-          soft_directions << soft_vertices[4] - soft_vertices[1]
-          soft_directions << soft_vertices[5] - soft_vertices[2]
+        # Soft directions
+        unless soft_controls0.empty?
+          2.times do
+            soft_directions << soft_vertices[3] - soft_vertices[0]
+            soft_directions << soft_vertices[4] - soft_vertices[1]
+            soft_directions << soft_vertices[5] - soft_vertices[2]
+          end
         end
+
       end
 
       [ hard_vertices, soft_vertices, soft_controls0, soft_controls1, soft_directions ]
@@ -385,23 +394,24 @@ module Ladb::OpenCutList
 
   class ThreeModelDef < ThreeGroupDef
 
-    attr_accessor :up, :definitions
+    attr_accessor :part_instance_count
+    attr_reader :part_defs
 
     def initialize
       super(ThreeObjectDef::TYPE_MODEL)
-      @up = [ 0, 0, 1 ]
-      @definitions = {}
+      @part_defs = {}
+      @part_instance_count = 0
     end
 
   end
 
   class ThreePartInstanceDef < ThreeGroupDef
 
-    attr_accessor :part_id
+    attr_accessor :id
 
     def initialize
       super(ThreeObjectDef::TYPE_PART_INSTANCE)
-      @part_id
+      @id = nil
     end
 
   end

@@ -1540,7 +1540,7 @@
                                 cameraView: layoutOptions.camera_view,
                                 cameraZoom: layoutOptions.camera_zoom,
                                 cameraTarget: layoutOptions.camera_target,
-                                explodeFactor: layoutOptions.explode_factor
+                                explodeFactor: layoutOptions.explode_factor,
                             }).on('camera.changed', function (e, data) {
 
                                 layoutOptions.camera_view = data.cameraView;
