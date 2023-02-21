@@ -9,14 +9,11 @@ module Ladb::OpenCutList
 
     include LayerVisibilityHelper
 
-    def initialize(parts, all_instances = false, parts_colored = true, pins_hidden = true, pins_use_names = false, pins_colored = false)
+    def initialize(parts, all_instances = false, parts_colored = true)
 
       @parts = parts
       @all_instances = all_instances
       @parts_colored = parts_colored
-      @pins_hidden = pins_hidden
-      @pins_use_names = pins_use_names
-      @pins_colored = pins_colored
 
     end
 
@@ -105,12 +102,9 @@ module Ladb::OpenCutList
         three_part_def.soft_edge_controls0,
         three_part_def.soft_edge_controls1,
         three_part_def.soft_edge_directions = _grab_entities_vertices_and_colors(definition.entities, material)
-
-        unless @pins_hidden
-          three_part_def.pin_text = @pins_use_names ? part.name : part.number
-          three_part_def.pin_class = @pins_use_names ? 'square' : nil
-          three_part_def.pin_color = @pins_colored ? _to_three_color(material) : nil
-        end
+        three_part_def.name = part.name
+        three_part_def.number = part.number
+        three_part_def.color = _to_three_color(material)
 
         three_model_def.definitions.store(part.id, three_part_def)
       end
@@ -330,7 +324,7 @@ module Ladb::OpenCutList
 
     include HashableHelper
 
-    attr_accessor :face_vertices, :face_colors, :hard_edge_vertices, :soft_edge_vertices, :soft_edge_controls0, :soft_edge_controls1, :soft_edge_directions, :pin_text, :pin_class, :pin_color
+    attr_accessor :face_vertices, :face_colors, :hard_edge_vertices, :soft_edge_vertices, :soft_edge_controls0, :soft_edge_controls1, :soft_edge_directions, :name, :number, :color, :pin_text, :pin_class, :pin_color
 
     def initialize
       @face_vertices = []
@@ -340,6 +334,9 @@ module Ladb::OpenCutList
       @soft_edge_controls0 = []
       @soft_edge_controls1 = []
       @soft_edge_directions = []
+      @name = nil
+      @number = nil
+      @color = nil
       @pin_text = nil
       @pin_class = nil
       @pin_color = nil

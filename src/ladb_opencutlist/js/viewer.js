@@ -256,9 +256,10 @@ const fnAddListeners = function () {
                         call.params.partsColored,
                         call.params.partsOpacity,
                         call.params.pinsHidden,
+                        call.params.pinsColored,
+                        call.params.pinsText,
                         call.params.pinsLength,
                         call.params.pinsDirection,
-                        call.params.pinsColored,
                         call.params.cameraView,
                         call.params.cameraZoom,
                         call.params.cameraTarget,
@@ -433,6 +434,9 @@ const fnAddObjectDef = function (modelDef, objectDef, parent, partsColored) {
         if (partDef) {
 
             group.userData.isPart = true;
+            group.userData.name = partDef.name;
+            group.userData.number = partDef.number;
+            group.userData.color = new THREE.Color(partDef.color);
 
             // Mesh
 
@@ -461,14 +465,6 @@ const fnAddObjectDef = function (modelDef, objectDef, parent, partsColored) {
 
             let softEdgesLine = new THREE.LineSegments(softEdgesGeometry, defaultConditionalLineMaterial);
             group.add(softEdgesLine);
-
-            // Pin
-
-            if (partDef.pin_text) {
-                group.userData.pinText = partDef.pin_text;
-                group.userData.pinClass = partDef.pin_class;
-                group.userData.pinColor = new THREE.Color(partDef.pin_color);
-            }
 
         }
 
@@ -558,70 +554,86 @@ const fnCreateModelPins = function () {
             pinsGroup = new THREE.Group();
             scene.add(pinsGroup);
         }
-        fnCreateGroupPins(model, pinsOptions.pinsLength, pinsOptions.pinsDirection, pinsOptions.pinsColored, modelCenter);
+        fnCreateGroupPins(model, pinsOptions.pinsColored, pinsOptions.pinsText, pinsOptions.pinsLength, pinsOptions.pinsDirection, modelCenter);
     }
 }
 
-const fnCreateGroupPins = function (group, pinsLength, pinsDirection, pinsColored, parentCenter) {
+const fnCreateGroupPins = function (group, pinsColored, pinsText, pinsLength, pinsDirection, parentCenter) {
 
     const groupBox = new THREE.Box3().setFromObject(group);
     const groupCenter = groupBox.getCenter(new THREE.Vector3());
 
-    if (group.userData.pinText) {
+    if (group.userData.isPart) {
 
-        let pinsLengthFactor;
+        let pinText, pinClass;
+        switch (pinsText) {
+            case 0: // PINS_TEXT_NUMBER
+                pinText = group.userData.number;
+                pinClass = null;
+                break;
+            case 1: // PINS_TEXT_NAME
+                pinText = group.userData.name;
+                pinClass = 'square';
+                break;
+            case 2: // PINS_TEXT_NUMBER_AND_NAME
+                pinText = group.userData.number + ' - ' + group.userData.name;
+                pinClass = 'square';
+                break;
+        }
+
+        let pinLengthFactor;
         switch (pinsLength) {
             case 0:   // PINS_LENGTH_NONE
-                pinsLengthFactor = 0
+                pinLengthFactor = 0
                 break;
             case 2:   // PINS_LENGTH_MEDIUM
-                pinsLengthFactor = 0.2
+                pinLengthFactor = 0.2
                 break;
             case 3:   // PINS_LENGTH_LONG
-                pinsLengthFactor = 0.4
+                pinLengthFactor = 0.4
                 break;
             case 1:   // PINS_LENGTH_SHORT
             default:
-                pinsLengthFactor = 0.1
+                pinLengthFactor = 0.1
                 break;
         }
 
         const pinPosition = groupCenter.clone();
-        if (pinsLengthFactor > 0) {
+        if (pinLengthFactor > 0) {
             switch (pinsDirection) {
                 case 0: // PINS_DIRECTION_X
-                    pinPosition.add(new THREE.Vector3(modelRadius * pinsLengthFactor, 0, 0));
+                    pinPosition.add(new THREE.Vector3(modelRadius * pinLengthFactor, 0, 0));
                     break;
                 case 1: // PINS_DIRECTION_Y
-                    pinPosition.add(new THREE.Vector3(0, modelRadius * pinsLengthFactor, 0));
+                    pinPosition.add(new THREE.Vector3(0, modelRadius * pinLengthFactor, 0));
                     break;
                 case 2: // PINS_DIRECTION_Z
-                    pinPosition.add(new THREE.Vector3(0, 0, modelRadius * pinsLengthFactor));
+                    pinPosition.add(new THREE.Vector3(0, 0, modelRadius * pinLengthFactor));
                     break;
                 case 3: // PINS_DIRECTION_PARENT_CENTER
-                    pinPosition.sub(parentCenter).setLength(modelRadius * pinsLengthFactor).add(groupCenter);
+                    pinPosition.sub(parentCenter).setLength(modelRadius * pinLengthFactor).add(groupCenter);
                     break;
                 default:
                 case 4: // PINS_DIRECTION_MODEL_CENTER
-                    pinPosition.sub(modelCenter).setLength(modelRadius * pinsLengthFactor).add(groupCenter);
+                    pinPosition.sub(modelCenter).setLength(modelRadius * pinLengthFactor).add(groupCenter);
                     break;
             }
         }
 
         const pinDiv = document.createElement('div');
-        pinDiv.className = 'pin' + (group.userData.pinClass ? ' pin-' + group.userData.pinClass : '');
-        pinDiv.textContent = group.userData.pinText;
-        if (pinsColored && group.userData.pinColor) {
-            pinDiv.style.backgroundColor = '#' + group.userData.pinColor.getHexString();
-            pinDiv.style.borderColor = '#' + group.userData.pinColor.clone().addScalar(-0.5).getHexString();
-            pinDiv.style.color = fnIsDarkColor(group.userData.pinColor) ? 'white' : 'black';
+        pinDiv.className = 'pin' + (pinClass ? ' pin-' + pinClass : '');
+        pinDiv.textContent = pinText;
+        if (pinsColored && group.userData.color) {
+            pinDiv.style.backgroundColor = '#' + group.userData.color.getHexString();
+            pinDiv.style.borderColor = '#' + group.userData.color.clone().addScalar(-0.5).getHexString();
+            pinDiv.style.color = fnIsDarkColor(group.userData.color) ? 'white' : 'black';
         }
 
         const pin = new THREE.CSS2DObject(pinDiv);
         pin.position.copy(pinPosition);
         pinsGroup.add(pin);
 
-        if (pinsLengthFactor > 0) {
+        if (pinLengthFactor > 0) {
             const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints([ groupCenter, pinPosition ]), pinLineMaterial);
             line.renderOrder = 1;
             pinsGroup.add(line);
@@ -631,7 +643,7 @@ const fnCreateGroupPins = function (group, pinsLength, pinsDirection, pinsColore
 
         for (let object of group.children) {
             if (object.isGroup) {
-                fnCreateGroupPins(object, pinsLength, pinsDirection, pinsColored, groupCenter);
+                fnCreateGroupPins(object, pinsColored, pinsText, pinsLength, pinsDirection, groupCenter);
             }
         }
 
@@ -702,7 +714,7 @@ const fnSetAxesHelperVisible = function (visible) {
     }
 }
 
-const fnSetupModel = function(modelDef, partsColored, partsOpacity, pinsHidden, pinsLength, pinsDirection, pinsColored, cameraView, cameraZoom, cameraTarget, explodeFactor) {
+const fnSetupModel = function(modelDef, partsColored, partsOpacity, pinsHidden, pinsColored, pinsText, pinsLength, pinsDirection, cameraView, cameraZoom, cameraTarget, explodeFactor) {
 
     if (partsColored) {
         defaultMeshMaterial.vertexColors = true;
@@ -726,9 +738,10 @@ const fnSetupModel = function(modelDef, partsColored, partsOpacity, pinsHidden, 
 
         pinsOptions = {
             pinsHidden: pinsHidden,
+            pinsColored: pinsColored,
+            pinsText: pinsText,
             pinsLength: pinsLength,
-            pinsDirection: pinsDirection,
-            pinsColored: pinsColored
+            pinsDirection: pinsDirection
         };
 
         fnUpdateExplodeVectors(model, modelCenter);

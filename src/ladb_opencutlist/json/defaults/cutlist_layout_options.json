@@ -11,9 +11,9 @@
     "parts_opacity": 1,
     "pins_hidden": false,
     "pins_colored": false,
-    "pins_use_names": false,
-    "pins_direction": 4, /* PINS_DIRECTION_MODEL_CENTER */
+    "pins_text": 0, /* PINS_TEXT_NUMBER */
     "pins_length": 1, /* PINS_LENGTH_SHORT */
+    "pins_direction": 4, /* PINS_DIRECTION_MODEL_CENTER */
     "camera_view": [ 1, -1, 1 ], /* CAMERA_VIEW_ISOMETRIC */
     "camera_zoom": null,
     "camera_target": null,

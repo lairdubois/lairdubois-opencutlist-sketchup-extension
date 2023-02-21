@@ -850,10 +850,10 @@ tab:
       option_pins_colored_0: Without color
       option_pins_colored_1: Color of the part
       option_pins_colored_help: Select the color of the label tails.
-      option_pins_use_names: Text
-      option_pins_use_names_0: Number of the part
-      option_pins_use_names_1: Designation of the part
-      option_pins_use_names_help: Select the text displayed by the labels.
+      option_pins_text: Text
+      option_pins_text_0: Number of the part
+      option_pins_text_1: Designation of the part
+      option_pins_text_help: Select the text displayed by the labels.
       option_pins_length: Length
       option_pins_length_0: None
       option_pins_length_1: Short

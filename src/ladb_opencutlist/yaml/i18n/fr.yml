@@ -854,10 +854,11 @@ tab:
       option_pins_colored_0: Sans couleur
       option_pins_colored_1: Couleur de la pièce
       option_pins_colored_help: Permet de choisir la couleur des pastilles des épingles.
-      option_pins_use_names: Texte
-      option_pins_use_names_0: Numéro de la pièce
-      option_pins_use_names_1: Désignation de la pièce
-      option_pins_use_names_help: Permet de choisir le texte affiché dans les pastilles des épingles.
+      option_pins_text: Texte
+      option_pins_text_0: Numéro de la pièce
+      option_pins_text_1: Désignation de la pièce
+      option_pins_text_2: Numéro et Désignation de la pièce
+      option_pins_text_help: Permet de choisir le texte affiché dans les pastilles des épingles.
       option_pins_length: Longueur
       option_pins_length_0: Sans flèche
       option_pins_length_1: Petite

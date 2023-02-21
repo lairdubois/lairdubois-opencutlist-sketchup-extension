@@ -20,6 +20,7 @@
         partsOpacity: 1.0,
         pinsHidden: false,
         pinsColored: false,
+        pinsText: 0,        // PINS_TEXT_NUMBER
         pinsLength: 1,      // PINS_LENGTH_SHORT
         pinsDirection: 4,   // PINS_DIRECTION_MODEL_CENTER
         cameraView: null,
@@ -59,6 +60,7 @@
                         partsOpacity: that.options.partsOpacity,
                         pinsHidden: that.options.pinsHidden,
                         pinsColored: that.options.pinsColored,
+                        pinsText: that.options.pinsText,
                         pinsLength: that.options.pinsLength,
                         pinsDirection: that.options.pinsDirection,
                         cameraView: that.options.cameraView,

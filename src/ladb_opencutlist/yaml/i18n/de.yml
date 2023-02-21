@@ -850,10 +850,10 @@ tab:
       option_pins_colored_0: Ohne Farbe
       option_pins_colored_1: Farbe des Teils
       option_pins_colored_help: Definiert die Farbe des Beschriftungsfeldes.
-      option_pins_use_names: Text
-      option_pins_use_names_0: Nummer des Teils
-      option_pins_use_names_1: Bezeichnung des Teils
-      option_pins_use_names_help: Definiert den Text des Beschriftungsfeldes.
+      option_pins_text: Text
+      option_pins_text_0: Nummer des Teils
+      option_pins_text_1: Bezeichnung des Teils
+      option_pins_text_help: Definiert den Text des Beschriftungsfeldes.
       option_pins_length: Länge
       option_pins_length_0: Ohne Verweislinie
       option_pins_length_1: Kurz

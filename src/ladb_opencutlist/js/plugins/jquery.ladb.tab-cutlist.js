@@ -1317,7 +1317,7 @@
             var $selectPartsOpacity = $('#ladb_select_parts_opacity', $modal);
             var $selectPinsHidden = $('#ladb_select_pins_hidden', $modal);
             var $selectPinsColored = $('#ladb_select_pins_colored', $modal);
-            var $selectPinsUseNames = $('#ladb_select_pins_use_names', $modal);
+            var $selectPinsText = $('#ladb_select_pins_text', $modal);
             var $selectPinsLength = $('#ladb_select_pins_length', $modal);
             var $selectPinsDirection = $('#ladb_select_pins_direction', $modal);
             var $selectCameraView = $('#ladb_select_camera_view', $modal);
@@ -1369,7 +1369,7 @@
                 options.parts_opacity = parseFloat($selectPartsOpacity.val());
                 options.pins_hidden = $selectPinsHidden.val() === '1';
                 options.pins_colored = $selectPinsColored.val() === '1';
-                options.pins_use_names = $selectPinsUseNames.val() === '1';
+                options.pins_text = parseInt($selectPinsText.val());
                 options.pins_length = parseInt($selectPinsLength.val());
                 options.pins_direction = parseInt($selectPinsDirection.val());
                 options.camera_view = JSON.parse($inputCameraView.val());
@@ -1386,7 +1386,7 @@
                 $selectPartsOpacity.selectpicker('val', options.parts_opacity);
                 $selectPinsHidden.selectpicker('val', options.pins_hidden ? '1' : '0');
                 $selectPinsColored.selectpicker('val', options.pins_colored ? '1' : '0');
-                $selectPinsUseNames.selectpicker('val', options.pins_use_names ? '1' : '0');
+                $selectPinsText.selectpicker('val', options.pins_text);
                 $selectPinsLength.selectpicker('val', options.pins_length);
                 $selectPinsDirection.selectpicker('val', options.pins_direction);
                 $selectCameraView.selectpicker('val', JSON.stringify(options.camera_view));
@@ -1414,7 +1414,7 @@
             $selectPartsOpacity.selectpicker(SELECT_PICKER_OPTIONS);
             $selectPinsHidden.selectpicker(SELECT_PICKER_OPTIONS);
             $selectPinsColored.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectPinsUseNames.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectPinsText.selectpicker(SELECT_PICKER_OPTIONS);
             $selectPinsLength.selectpicker(SELECT_PICKER_OPTIONS);
             $selectPinsDirection.selectpicker(SELECT_PICKER_OPTIONS);
             $selectCameraView.selectpicker(SELECT_PICKER_OPTIONS);
@@ -1479,9 +1479,6 @@
                         rubyCallCommand('cutlist_layout_parts', {
                             part_ids: partIds,
                             parts_colored: layoutOptions.parts_colored,
-                            pins_hidden: layoutOptions.pins_hidden,
-                            pins_use_names: layoutOptions.pins_use_names,
-                            pins_colored: layoutOptions.pins_colored
                         }, function (response) {
 
                             var $slide = that.pushNewSlide('ladb_cutlist_slide_layout', 'tabs/cutlist/_slide-layout.twig', {
@@ -1537,6 +1534,7 @@
                                 partsOpacity: layoutOptions.parts_opacity,
                                 pinsHidden: layoutOptions.pins_hidden,
                                 pinsColored: layoutOptions.pins_colored,
+                                pinsText: layoutOptions.pins_text,
                                 pinsLength: layoutOptions.pins_length,
                                 pinsDirection: layoutOptions.pins_direction,
                                 cameraView: layoutOptions.camera_view,
@@ -2291,6 +2289,7 @@
                                 dialog: that.dialog,
                                 modelDef: threeModelDef,
                                 partsColored: true,
+                                pinsHidden: true,
                                 showBoxHelper: part.not_aligned_on_axes
                             });
 
