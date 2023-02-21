@@ -841,6 +841,10 @@ tab:
       option_parts_colored_0: Without color
       option_parts_colored_1: Color of the material
       option_parts_colored_help: Select the appearance of the parts.
+      option_parts_opacity: Opacity
+      option_parts_opacity_0: Transparent
+      option_parts_opacity_1: Opaque
+      option_parts_opacity_help: Select the opacity of the parts.
       option_pins: Labels
       option_pins_hidden: Display
       option_pins_hidden_0: With labels
@@ -853,6 +857,7 @@ tab:
       option_pins_text: Text
       option_pins_text_0: Number of the part
       option_pins_text_1: Designation of the part
+      option_pins_text_2: Number and Designation of the part
       option_pins_text_help: Select the text displayed by the labels.
       option_pins_length: Length
       option_pins_length_0: None
