@@ -841,6 +841,10 @@ tab:
       option_parts_colored_0: Ohne Farbe
       option_parts_colored_1: Farbe des Materials
       option_parts_colored_help: Definiert das Erscheinungsbild der Teile.
+      option_parts_opacity: Opazität
+      option_parts_opacity_0: Durchsichtig
+      option_parts_opacity_1: Blickdicht
+      option_parts_opacity_help: Definiert die Deckkraft der Teile.
       option_pins: Beschriftung
       option_pins_hidden: Anzeige
       option_pins_hidden_0: Mit Beschriftung
@@ -853,6 +857,7 @@ tab:
       option_pins_text: Text
       option_pins_text_0: Nummer des Teils
       option_pins_text_1: Bezeichnung des Teils
+      option_pins_text_2: Nummer und Bezeichung des Teils
       option_pins_text_help: Definiert den Text des Beschriftungsfeldes.
       option_pins_length: Länge
       option_pins_length_0: Ohne Verweislinie
