@@ -147,10 +147,12 @@ let renderer,
     viewportHeight,
 
     model,
-    modelBox,
-    modelSize,
-    modelCenter,
-    modelRadius,
+    baseModelSize,
+    baseModelCenter,
+    baseModelRadius,
+    explodedModelSize,
+    explodedModelCenter,
+    explodedModelRadius,
 
     explodeFactor,
 
@@ -236,7 +238,7 @@ const fnAddListeners = function () {
         fnRender();
     });
     controls.addEventListener('end', function () {
-        fnDispatchCameraChangedEvent();
+        fnDispatchControlsChangedEvent();
     });
 
     // Window listeners
@@ -299,66 +301,17 @@ const fnAddListeners = function () {
 
 }
 
-const fnGetCurrentView = function () {
-    return camera.position.clone().sub(controls.target).multiplyScalar(1 / modelRadius).toArray().map(function (v) { return Number.parseFloat(v.toFixed(4)); });
-}
-
-const fnGetZoomAutoByView = function (view) {
-
-    switch (JSON.stringify(view)) {
-
-        case JSON.stringify(THREE_CAMERA_VIEWS.none):
-            return 1;
-
-        case JSON.stringify(THREE_CAMERA_VIEWS.isometric):
-            let width2d = (modelSize.x + modelSize.y) * Math.cos(Math.PI / 6);
-            let height2d = (modelSize.x + modelSize.y) * Math.cos(Math.PI / 3) + modelSize.z;
-            return Math.min(viewportWidth / width2d, viewportHeight / height2d);
-
-        case JSON.stringify(THREE_CAMERA_VIEWS.top):
-            return Math.min(viewportWidth / modelSize.x, viewportHeight / modelSize.y) * 0.8;
-
-        case JSON.stringify(THREE_CAMERA_VIEWS.bottom):
-            return Math.min(viewportWidth / modelSize.x, viewportHeight / modelSize.y) * 0.8;
-
-        case JSON.stringify(THREE_CAMERA_VIEWS.front):
-            return Math.min(viewportWidth / modelSize.x, viewportHeight / modelSize.z) * 0.8;
-
-        case JSON.stringify(THREE_CAMERA_VIEWS.back):
-            return Math.min(viewportWidth / modelSize.x, viewportHeight / modelSize.z) * 0.8;
-
-        case JSON.stringify(THREE_CAMERA_VIEWS.left):
-            return Math.min(viewportWidth / modelSize.y, viewportHeight / modelSize.z) * 0.8;
-
-        case JSON.stringify(THREE_CAMERA_VIEWS.right):
-            return Math.min(viewportWidth / modelSize.y, viewportHeight / modelSize.z) * 0.8;
-
-        default:
-            return Math.min(viewportWidth / modelRadius, viewportHeight / modelRadius) * 0.5;
-
-    }
-}
-
-const fnDispatchCameraChangedEvent = function () {
+const fnDispatchControlsChangedEvent = function () {
 
     let view = fnGetCurrentView();
 
-    window.frameElement.dispatchEvent(new MessageEvent('camera.changed', {
+    window.frameElement.dispatchEvent(new MessageEvent('changed.controls', {
         data: {
             cameraView: view,
             cameraZoom: camera.zoom,
             cameraTarget: controls.target.toArray([]),
             cameraZoomIsAuto: camera.zoom === fnGetZoomAutoByView(view),
-            cameraTargetIsAuto: controls.target.equals(modelCenter),
-        }
-    }));
-
-}
-
-const fnDispatchExplodeChangedEvent = function () {
-
-    window.frameElement.dispatchEvent(new MessageEvent('explode.changed', {
-        data: {
+            cameraTargetIsAuto: controls.target.equals(fnGetTargetAutoByView(view).target),
             explodeFactor: explodeFactor,
         }
     }));
@@ -367,7 +320,7 @@ const fnDispatchExplodeChangedEvent = function () {
 
 const fnDispatchHelpersChangedEvent = function () {
 
-    window.frameElement.dispatchEvent(new MessageEvent('helpers.changed', {
+    window.frameElement.dispatchEvent(new MessageEvent('changed.helpers', {
         data: {
             boxHelperVisible: boxHelper ? boxHelper.visible : false,
             axesHelperVisible: axesHelper ? axesHelper.visible : false
@@ -413,6 +366,335 @@ const fnStartAnimate = function () {
 const fnStopAnimate = function () {
     cancelAnimationFrame(animateRequestId);
     animating = false;
+}
+
+const fnIsDarkColor = function (color) {
+    return (0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b) <= 0.51
+}
+
+const fnUpdateExplodeVectors = function (group, parentCenter) {
+
+    const worldGroupBox = new THREE.Box3().setFromObject(group);
+    const worldGroupCenter = worldGroupBox.getCenter(new THREE.Vector3());
+
+    const localParentCenter = group.parent.worldToLocal(parentCenter.clone());
+    const localGroupCenter = group.parent.worldToLocal(worldGroupCenter.clone());
+
+    group.userData.explodeVector =  localGroupCenter.clone().sub(localParentCenter);
+
+    if (!group.userData.isPart) {
+        for (let object of group.children) {
+            if (object.isGroup) {
+                fnUpdateExplodeVectors(object, worldGroupCenter);
+            }
+        }
+    }
+
+}
+
+const fnExplodeModel = function (factor = 0) {
+
+    explodeFactor = factor;
+
+    fnExplodeGroup(model, factor);
+
+    const modelBox = new THREE.Box3().setFromObject(model);
+    explodedModelSize = modelBox.getSize(new THREE.Vector3());
+    explodedModelCenter = modelBox.getCenter(new THREE.Vector3());
+    explodedModelRadius = modelBox.getBoundingSphere(new THREE.Sphere()).radius;
+
+    fnCreateModelPins();
+
+}
+
+const fnExplodeGroup = function (group, factor, factorDivider = 1) {
+
+    // Reset group transformations
+    if (group.userData.basePosition) {
+        group.position.copy(group.userData.basePosition);
+    } else {
+        group.position.set(0, 0, 0);
+    }
+    if (group.userData.baseRotation) {
+        group.rotation.copy(group.userData.baseRotation);
+    } else {
+        group.rotation.set(0, 0, 0);
+    }
+    if (group.userData.baseScale) {
+        group.scale.copy(group.userData.baseScale);
+    } else {
+        group.scale.set(1, 1, 1);
+    }
+
+    // Explode children
+    if (!group.userData.isPart) {
+
+        // Increment divider only if group contains more than 1 child
+        const childPressureDivider = factorDivider + (group.children.length > 1 ? 1 : 0);
+
+        // Iterate on children
+        for (let object of group.children) {
+            if (object.isGroup) {
+                fnExplodeGroup(object, factor, childPressureDivider);
+            }
+        }
+
+    }
+
+    if (factor > 0) {
+
+        const groupTranslation = group.userData.explodeVector.clone().multiplyScalar(factor / factorDivider);
+
+        // Translate group
+        group.applyMatrix4(new THREE.Matrix4().makeTranslation(groupTranslation.x, groupTranslation.y, groupTranslation.z));
+
+    }
+
+};
+
+const fnCreateModelPins = function () {
+    if (pinsGroup) {
+        pinsGroup.clear();
+    }
+    if (model && pinsOptions && !pinsOptions.pinsHidden) {
+        if (!pinsGroup) {
+            pinsGroup = new THREE.Group();
+            scene.add(pinsGroup);
+        }
+        fnCreateGroupPins(model, pinsOptions.pinsColored, pinsOptions.pinsText, pinsOptions.pinsLength, pinsOptions.pinsDirection, baseModelCenter);
+    }
+}
+
+const fnCreateGroupPins = function (group, pinsColored, pinsText, pinsLength, pinsDirection, parentCenter) {
+
+    const groupBox = new THREE.Box3().setFromObject(group);
+    const groupCenter = groupBox.getCenter(new THREE.Vector3());
+
+    if (group.userData.isPart) {
+
+        let pinLengthFactor;
+        switch (pinsLength) {
+            case 0:   // PINS_LENGTH_NONE
+                pinLengthFactor = 0
+                break;
+            case 2:   // PINS_LENGTH_MEDIUM
+                pinLengthFactor = 0.2
+                break;
+            case 3:   // PINS_LENGTH_LONG
+                pinLengthFactor = 0.4
+                break;
+            case 1:   // PINS_LENGTH_SHORT
+            default:
+                pinLengthFactor = 0.1
+                break;
+        }
+
+        const pinPosition = groupCenter.clone();
+        if (pinLengthFactor > 0) {
+            switch (pinsDirection) {
+                case 0: // PINS_DIRECTION_X
+                    pinPosition.add(new THREE.Vector3(baseModelRadius * pinLengthFactor, 0, 0));
+                    break;
+                case 1: // PINS_DIRECTION_Y
+                    pinPosition.add(new THREE.Vector3(0, baseModelRadius * pinLengthFactor, 0));
+                    break;
+                case 2: // PINS_DIRECTION_Z
+                    pinPosition.add(new THREE.Vector3(0, 0, baseModelRadius * pinLengthFactor));
+                    break;
+                case 3: // PINS_DIRECTION_PARENT_CENTER
+                    pinPosition.sub(parentCenter).setLength(baseModelRadius * pinLengthFactor).add(groupCenter);
+                    break;
+                default:
+                case 4: // PINS_DIRECTION_MODEL_CENTER
+                    pinPosition.sub(baseModelCenter).setLength(baseModelRadius * pinLengthFactor).add(groupCenter);
+                    break;
+            }
+        }
+
+        let pinText, pinClass;
+        switch (pinsText) {
+            case 0: // PINS_TEXT_NUMBER
+                pinText = group.userData.number;
+                pinClass = null;
+                break;
+            case 1: // PINS_TEXT_NAME
+                pinText = group.userData.name;
+                pinClass = 'square';
+                break;
+            case 2: // PINS_TEXT_NUMBER_AND_NAME
+                pinText = group.userData.number + ' - ' + group.userData.name;
+                pinClass = 'square';
+                break;
+        }
+
+        const pinDiv = document.createElement('div');
+        pinDiv.className = 'pin' + (pinClass ? ' pin-' + pinClass : '');
+        pinDiv.textContent = pinText;
+        if (pinsColored && group.userData.color) {
+            pinDiv.style.backgroundColor = '#' + group.userData.color.getHexString();
+            pinDiv.style.borderColor = '#' + group.userData.color.clone().addScalar(-0.5).getHexString();
+            pinDiv.style.color = fnIsDarkColor(group.userData.color) ? 'white' : 'black';
+        }
+
+        const pin = new THREE.CSS2DObject(pinDiv);
+        pin.position.copy(pinPosition);
+        pinsGroup.add(pin);
+
+        if (pinLengthFactor > 0) {
+            const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints([ groupCenter, pinPosition ]), pinLineMaterial);
+            line.renderOrder = 1;
+            pinsGroup.add(line);
+        }
+
+    } else {
+
+        for (let object of group.children) {
+            if (object.isGroup) {
+                fnCreateGroupPins(object, pinsColored, pinsText, pinsLength, pinsDirection, groupCenter);
+            }
+        }
+
+    }
+
+};
+
+const fnGetZoomAutoByView = function (view) {
+
+    switch (JSON.stringify(view)) {
+
+        case JSON.stringify(THREE_CAMERA_VIEWS.none):
+            return 1;
+
+        case JSON.stringify(THREE_CAMERA_VIEWS.isometric):
+            let width2d = (explodedModelSize.x + explodedModelSize.y) * Math.cos(Math.PI / 6);
+            let height2d = (explodedModelSize.x + explodedModelSize.y) * Math.cos(Math.PI / 3) + explodedModelSize.z;
+            return Math.min(viewportWidth / width2d, viewportHeight / height2d);
+
+        case JSON.stringify(THREE_CAMERA_VIEWS.top):
+            return Math.min(viewportWidth / explodedModelSize.x, viewportHeight / explodedModelSize.y) * 0.8;
+
+        case JSON.stringify(THREE_CAMERA_VIEWS.bottom):
+            return Math.min(viewportWidth / explodedModelSize.x, viewportHeight / explodedModelSize.y) * 0.8;
+
+        case JSON.stringify(THREE_CAMERA_VIEWS.front):
+            return Math.min(viewportWidth / explodedModelSize.x, viewportHeight / explodedModelSize.z) * 0.8;
+
+        case JSON.stringify(THREE_CAMERA_VIEWS.back):
+            return Math.min(viewportWidth / explodedModelSize.x, viewportHeight / explodedModelSize.z) * 0.8;
+
+        case JSON.stringify(THREE_CAMERA_VIEWS.left):
+            return Math.min(viewportWidth / explodedModelSize.y, viewportHeight / explodedModelSize.z) * 0.8;
+
+        case JSON.stringify(THREE_CAMERA_VIEWS.right):
+            return Math.min(viewportWidth / explodedModelSize.y, viewportHeight / explodedModelSize.z) * 0.8;
+
+        default:
+            return Math.min(viewportWidth / explodedModelRadius, viewportHeight / explodedModelRadius) * 0.5;
+
+    }
+}
+
+const fnGetTargetAutoByView = function (view) {
+    return {
+        target: explodedModelCenter,
+        position: new THREE.Vector3().fromArray(view).multiplyScalar(explodedModelRadius).add(explodedModelCenter)
+    };
+}
+
+const fnGetCurrentView = function () {
+
+    let cameraVector = camera.position.clone().sub(controls.target);
+
+    // Try to identify common views
+    for (let viewName in THREE_CAMERA_VIEWS) {
+        if (viewName === 'none') {
+            continue;
+        }
+        let viewVector = new THREE.Vector3().fromArray(THREE_CAMERA_VIEWS[viewName]);
+        if (viewVector.angleTo(cameraVector) === 0 && Number.parseFloat(viewVector.cross(cameraVector).length().toFixed(4)) === 0) {
+            return THREE_CAMERA_VIEWS[viewName];
+        }
+    }
+
+    // Extract current view
+    return cameraVector.multiplyScalar(1 / explodedModelRadius).toArray().map(function (v) { return Number.parseFloat(v.toFixed(4)); });
+}
+
+const fnSetZoom = function (zoom) {
+
+    if (zoom) {
+        controls.target0.copy(controls.target);
+        controls.position0.copy(camera.position);
+        controls.zoom0 = zoom;
+    } else {
+        const currentView = fnGetCurrentView();
+        const targetAuto = fnGetTargetAutoByView(currentView);
+        controls.target0.copy(targetAuto.target);
+        controls.position0.copy(targetAuto.position);
+        controls.zoom0 = fnGetZoomAutoByView(currentView);
+    }
+
+    controls.reset();
+
+    fnDispatchControlsChangedEvent();
+
+}
+
+const fnSetView = function (view = THREE_CAMERA_VIEWS.isometric) {
+
+    let currentView = fnGetCurrentView();
+    let currentZoomAuto = fnGetZoomAutoByView(currentView);
+    let currentZoomIsAuto = camera.zoom === currentZoomAuto;
+
+    let targetAuto = fnGetTargetAutoByView(view);
+
+    controls.target0 = targetAuto.target;
+    controls.position0 = targetAuto.position;
+    controls.zoom0 = currentZoomIsAuto ? fnGetZoomAutoByView(view) : camera.zoom;
+
+    controls.reset();
+
+    fnDispatchControlsChangedEvent();
+
+}
+
+const fnSetExplodeFactor = function (factor) {
+    const oldFactor = explodeFactor;
+    fnExplodeModel(factor);
+    fnRender();
+    if (oldFactor !== explodeFactor) {
+        fnDispatchControlsChangedEvent();
+    }
+}
+
+const fnSetBoxHelperVisible = function (visible) {
+    if (boxHelper) {
+        let oldVisible = boxHelper.visible;
+        if (visible == null) {
+            boxHelper.visible = !boxHelper.visible;
+        } else {
+            boxHelper.visible = visible === true
+        }
+        fnRender();
+        if (oldVisible !== boxHelper.visible) {
+            fnDispatchHelpersChangedEvent();
+        }
+    }
+}
+
+const fnSetAxesHelperVisible = function (visible) {
+    if (axesHelper) {
+        let oldVisible = axesHelper.visible;
+        if (visible == null) {
+            axesHelper.visible = !axesHelper.visible;
+        } else {
+            axesHelper.visible = visible === true
+        }
+        fnRender();
+        if (oldVisible !== axesHelper.visible) {
+            fnDispatchHelpersChangedEvent();
+        }
+    }
 }
 
 const fnAddObjectDef = function (modelDef, objectDef, parent, partsColored) {
@@ -475,246 +757,6 @@ const fnAddObjectDef = function (modelDef, objectDef, parent, partsColored) {
     return group;
 };
 
-const fnUpdateExplodeVectors = function (group, parentCenter) {
-
-    const worldGroupBox = new THREE.Box3().setFromObject(group);
-    const worldGroupCenter = worldGroupBox.getCenter(new THREE.Vector3());
-
-    const localParentCenter = group.parent.worldToLocal(parentCenter.clone());
-    const localGroupCenter = group.parent.worldToLocal(worldGroupCenter.clone());
-
-    group.userData.explodeVector =  localGroupCenter.clone().sub(localParentCenter);
-
-    if (!group.userData.isPart) {
-        for (let object of group.children) {
-            if (object.isGroup) {
-                fnUpdateExplodeVectors(object, worldGroupCenter);
-            }
-        }
-    }
-
-}
-
-const fnExplodeModel = function (factor = 0) {
-    explodeFactor = factor;
-    fnExplodeGroup(model, factor);
-    fnCreateModelPins();
-}
-
-const fnExplodeGroup = function (group, factor, factorDivider = 1) {
-
-    // Reset group transformations
-    if (group.userData.basePosition) {
-        group.position.copy(group.userData.basePosition);
-    } else {
-        group.position.set(0, 0, 0);
-    }
-    if (group.userData.baseRotation) {
-        group.rotation.copy(group.userData.baseRotation);
-    } else {
-        group.rotation.set(0, 0, 0);
-    }
-    if (group.userData.baseScale) {
-        group.scale.copy(group.userData.baseScale);
-    } else {
-        group.scale.set(1, 1, 1);
-    }
-
-    // Explode children
-    if (!group.userData.isPart) {
-
-        // Increment divider only if group contains more than 1 child
-        const childPressureDivider = factorDivider + (group.children.length > 1 ? 1 : 0);
-
-        // Iterate on children
-        for (let object of group.children) {
-            if (object.isGroup) {
-                fnExplodeGroup(object, factor, childPressureDivider);
-            }
-        }
-
-    }
-
-    if (factor > 0) {
-
-        const groupTranslation = group.userData.explodeVector.clone().multiplyScalar(factor / factorDivider);
-
-        // Translate group
-        group.applyMatrix4(new THREE.Matrix4().makeTranslation(groupTranslation.x, groupTranslation.y, groupTranslation.z));
-
-    }
-
-};
-
-const fnCreateModelPins = function () {
-    if (pinsGroup) {
-        pinsGroup.clear();
-    }
-    if (model && pinsOptions && !pinsOptions.pinsHidden) {
-        if (!pinsGroup) {
-            pinsGroup = new THREE.Group();
-            scene.add(pinsGroup);
-        }
-        fnCreateGroupPins(model, pinsOptions.pinsColored, pinsOptions.pinsText, pinsOptions.pinsLength, pinsOptions.pinsDirection, modelCenter);
-    }
-}
-
-const fnCreateGroupPins = function (group, pinsColored, pinsText, pinsLength, pinsDirection, parentCenter) {
-
-    const groupBox = new THREE.Box3().setFromObject(group);
-    const groupCenter = groupBox.getCenter(new THREE.Vector3());
-
-    if (group.userData.isPart) {
-
-        let pinLengthFactor;
-        switch (pinsLength) {
-            case 0:   // PINS_LENGTH_NONE
-                pinLengthFactor = 0
-                break;
-            case 2:   // PINS_LENGTH_MEDIUM
-                pinLengthFactor = 0.2
-                break;
-            case 3:   // PINS_LENGTH_LONG
-                pinLengthFactor = 0.4
-                break;
-            case 1:   // PINS_LENGTH_SHORT
-            default:
-                pinLengthFactor = 0.1
-                break;
-        }
-
-        const pinPosition = groupCenter.clone();
-        if (pinLengthFactor > 0) {
-            switch (pinsDirection) {
-                case 0: // PINS_DIRECTION_X
-                    pinPosition.add(new THREE.Vector3(modelRadius * pinLengthFactor, 0, 0));
-                    break;
-                case 1: // PINS_DIRECTION_Y
-                    pinPosition.add(new THREE.Vector3(0, modelRadius * pinLengthFactor, 0));
-                    break;
-                case 2: // PINS_DIRECTION_Z
-                    pinPosition.add(new THREE.Vector3(0, 0, modelRadius * pinLengthFactor));
-                    break;
-                case 3: // PINS_DIRECTION_PARENT_CENTER
-                    pinPosition.sub(parentCenter).setLength(modelRadius * pinLengthFactor).add(groupCenter);
-                    break;
-                default:
-                case 4: // PINS_DIRECTION_MODEL_CENTER
-                    pinPosition.sub(modelCenter).setLength(modelRadius * pinLengthFactor).add(groupCenter);
-                    break;
-            }
-        }
-
-        let pinText, pinClass;
-        switch (pinsText) {
-            case 0: // PINS_TEXT_NUMBER
-                pinText = group.userData.number;
-                pinClass = null;
-                break;
-            case 1: // PINS_TEXT_NAME
-                pinText = group.userData.name;
-                pinClass = 'square';
-                break;
-            case 2: // PINS_TEXT_NUMBER_AND_NAME
-                pinText = group.userData.number + ' - ' + group.userData.name;
-                pinClass = 'square';
-                break;
-        }
-
-        const pinDiv = document.createElement('div');
-        pinDiv.className = 'pin' + (pinClass ? ' pin-' + pinClass : '');
-        pinDiv.textContent = pinText;
-        if (pinsColored && group.userData.color) {
-            pinDiv.style.backgroundColor = '#' + group.userData.color.getHexString();
-            pinDiv.style.borderColor = '#' + group.userData.color.clone().addScalar(-0.5).getHexString();
-            pinDiv.style.color = fnIsDarkColor(group.userData.color) ? 'white' : 'black';
-        }
-
-        const pin = new THREE.CSS2DObject(pinDiv);
-        pin.position.copy(pinPosition);
-        pinsGroup.add(pin);
-
-        if (pinLengthFactor > 0) {
-            const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints([ groupCenter, pinPosition ]), pinLineMaterial);
-            line.renderOrder = 1;
-            pinsGroup.add(line);
-        }
-
-    } else {
-
-        for (let object of group.children) {
-            if (object.isGroup) {
-                fnCreateGroupPins(object, pinsColored, pinsText, pinsLength, pinsDirection, groupCenter);
-            }
-        }
-
-    }
-
-};
-
-const fnSetZoom = function (zoom) {
-    controls.target0.copy(controls.target);
-    controls.position0.copy(camera.position);
-    controls.zoom0 = zoom ? zoom : fnGetZoomAutoByView(fnGetCurrentView());
-    controls.reset();
-    fnDispatchCameraChangedEvent();
-}
-
-const fnSetView = function (view = THREE_CAMERA_VIEWS.isometric) {
-
-    let currentView = fnGetCurrentView();
-    let currentZoomAuto = fnGetZoomAutoByView(currentView);
-    let currentZoomIsAuto = camera.zoom === currentZoomAuto;
-
-    controls.target0.copy(modelCenter);
-    controls.position0.fromArray(view).multiplyScalar(modelRadius).add(controls.target0);
-    controls.zoom0 = currentZoomIsAuto ? fnGetZoomAutoByView(view) : camera.zoom;
-
-    controls.reset();
-
-    fnDispatchCameraChangedEvent();
-
-}
-
-const fnSetExplodeFactor = function (factor) {
-    const oldFactor = explodeFactor;
-    fnExplodeModel(factor);
-    fnRender();
-    if (oldFactor !== explodeFactor) {
-        fnDispatchExplodeChangedEvent();
-    }
-}
-
-const fnSetBoxHelperVisible = function (visible) {
-    if (boxHelper) {
-        let oldVisible = boxHelper.visible;
-        if (visible == null) {
-            boxHelper.visible = !boxHelper.visible;
-        } else {
-            boxHelper.visible = visible === true
-        }
-        fnRender();
-        if (oldVisible !== boxHelper.visible) {
-            fnDispatchHelpersChangedEvent();
-        }
-    }
-}
-
-const fnSetAxesHelperVisible = function (visible) {
-    if (axesHelper) {
-        let oldVisible = axesHelper.visible;
-        if (visible == null) {
-            axesHelper.visible = !axesHelper.visible;
-        } else {
-            axesHelper.visible = visible === true
-        }
-        fnRender();
-        if (oldVisible !== axesHelper.visible) {
-            fnDispatchHelpersChangedEvent();
-        }
-    }
-}
-
 const fnSetupModel = function(modelDef, partsColored, partsOpacity, pinsHidden, pinsColored, pinsText, pinsLength, pinsDirection, cameraView, cameraZoom, cameraTarget, explodeFactor) {
 
     if (partsColored) {
@@ -731,10 +773,10 @@ const fnSetupModel = function(modelDef, partsColored, partsOpacity, pinsHidden, 
 
         // Compute model box properties
 
-        modelBox = new THREE.Box3().setFromObject(model);
-        modelSize = modelBox.getSize(new THREE.Vector3());
-        modelCenter = modelBox.getCenter(new THREE.Vector3());
-        modelRadius = modelBox.getBoundingSphere(new THREE.Sphere()).radius;
+        const modelBox = new THREE.Box3().setFromObject(model);
+        baseModelSize = explodedModelSize = modelBox.getSize(new THREE.Vector3());
+        baseModelCenter = explodedModelCenter = modelBox.getCenter(new THREE.Vector3());
+        baseModelRadius = explodedModelRadius = modelBox.getBoundingSphere(new THREE.Sphere()).radius;
 
         // Option
 
@@ -746,11 +788,10 @@ const fnSetupModel = function(modelDef, partsColored, partsOpacity, pinsHidden, 
             pinsDirection: pinsDirection
         };
 
-        fnUpdateExplodeVectors(model, modelCenter);
+        fnUpdateExplodeVectors(model, baseModelCenter);
 
         if (explodeFactor > 0) {
             fnExplodeModel(explodeFactor);
-            fnDispatchExplodeChangedEvent();
         }
 
         if (explodeFactor === 0 && !pinsHidden) {   // Else explode already create pins
@@ -762,10 +803,10 @@ const fnSetupModel = function(modelDef, partsColored, partsOpacity, pinsHidden, 
             if (cameraTarget) {
                 controls.target0.fromArray(cameraTarget);
             } else {
-                controls.target0.copy(modelCenter); // Auto target
+                controls.target0.copy(explodedModelCenter); // Auto target
             }
 
-            controls.position0.fromArray(cameraView).multiplyScalar(modelRadius).add(controls.target0);
+            controls.position0.fromArray(cameraView).multiplyScalar(explodedModelRadius).add(controls.target0);
 
             if (cameraZoom) {
                 controls.zoom0 = cameraZoom;
@@ -775,7 +816,7 @@ const fnSetupModel = function(modelDef, partsColored, partsOpacity, pinsHidden, 
 
             controls.reset();
 
-            fnDispatchCameraChangedEvent();
+            fnDispatchControlsChangedEvent();
 
         } else {
 
@@ -785,7 +826,7 @@ const fnSetupModel = function(modelDef, partsColored, partsOpacity, pinsHidden, 
         }
 
         // Create box helper
-        boxHelper = new THREE.BoxHelper(model, 0x0000ff);
+        boxHelper = new THREE.Box3Helper(modelBox, 0x0000ff);
         boxHelper.visible = false;
         scene.add(boxHelper);
 
@@ -796,21 +837,21 @@ const fnSetupModel = function(modelDef, partsColored, partsOpacity, pinsHidden, 
         axesHelper.add(new THREE.ArrowHelper(
             new THREE.Vector3(1, 0, 0),
             new THREE.Vector3(0, 0, 0),
-            modelRadius * 5,
+            baseModelRadius * 5,
             0xff0000,
             0
         ));
         axesHelper.add(new THREE.ArrowHelper(
             new THREE.Vector3(0, 1, 0),
             new THREE.Vector3(0, 0, 0),
-            modelRadius * 5,
+            baseModelRadius * 5,
             0x00ff00,
             0
         ));
         axesHelper.add(new THREE.ArrowHelper(
             new THREE.Vector3(0, 0, 1),
             new THREE.Vector3(0, 0, 0),
-            modelRadius * 5,
+            baseModelRadius * 5,
             0x0000ff,
             0
         ));
@@ -818,10 +859,6 @@ const fnSetupModel = function(modelDef, partsColored, partsOpacity, pinsHidden, 
 
     }
 
-}
-
-const fnIsDarkColor = function (color) {
-    return (0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b) <= 0.51
 }
 
 // Startup

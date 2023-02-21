@@ -1541,11 +1541,12 @@
                                 cameraZoom: layoutOptions.camera_zoom,
                                 cameraTarget: layoutOptions.camera_target,
                                 explodeFactor: layoutOptions.explode_factor,
-                            }).on('camera.changed', function (e, data) {
+                            }).on('changed.controls', function (e, data) {
 
                                 layoutOptions.camera_view = data.cameraView;
                                 layoutOptions.camera_zoom = data.cameraZoomIsAuto ? null : data.cameraZoom;
                                 layoutOptions.camera_target = data.cameraTargetIsAuto ? null : data.cameraTarget;
+                                layoutOptions.explode_factor = data.explodeFactor;
 
                                 // Store options (only one time per 500ms)
                                 if (storeOptionsTimeoutId) {
@@ -1569,23 +1570,6 @@
                                     scale = '1:1';
                                 }
                                 $lblScale.html(scale);
-
-                            }).on('explode.changed', function (e, data) {
-
-                                layoutOptions.explode_factor = data.explodeFactor;
-
-                                // Store options (only one time per 500ms)
-                                if (storeOptionsTimeoutId) {
-                                    clearTimeout(storeOptionsTimeoutId);
-                                }
-                                storeOptionsTimeoutId = setTimeout(function () {
-                                    rubyCallCommand('core_set_model_preset', {
-                                        dictionary: 'cutlist_layout_options',
-                                        values: layoutOptions,
-                                        section: section
-                                    });
-                                    storeOptionsTimeoutId = null;
-                                }, 500);
 
                             });
 

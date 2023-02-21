@@ -80,7 +80,7 @@
 
             });
 
-        this.$iframe.get(0).addEventListener('camera.changed', function (e) {
+        this.$iframe.get(0).addEventListener('changed.controls', function (e) {
 
             // Update buttons status
             $('[data-command="set_view"]', that.$element).each(function (index, el) {
@@ -102,23 +102,17 @@
                 }
             });
 
-            // Forward event
-            that.$element.trigger('camera.changed', [ e.data ]);
-
-        });
-        this.$iframe.get(0).addEventListener('explode.changed', function (e) {
-
-            // Update buttons status
+            // Update slider status
             $('[data-command="set_explode_factor"]', that.$element).each(function (index, el) {
                 var $input = $(el);
                 $input.slider('setValue', e.data.explodeFactor);
             });
 
             // Forward event
-            that.$element.trigger('explode.changed', [ e.data ]);
+            that.$element.trigger('changed.controls', [ e.data ]);
 
         });
-        this.$iframe.get(0).addEventListener('helpers.changed', function (e) {
+        this.$iframe.get(0).addEventListener('changed.helpers', function (e) {
 
             // Update buttons status
             $('[data-command="set_box_helper_visible"]', that.$element).each(function (index, el) {
@@ -141,7 +135,7 @@
             });
 
             // Forward event
-            that.$element.trigger('helpers.changed', [ e.data ]);
+            that.$element.trigger('changed.helpers', [ e.data ]);
 
         });
 
