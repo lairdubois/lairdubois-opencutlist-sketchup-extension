@@ -139,8 +139,9 @@ let renderer,
     scene,
     controls,
 
-    defaultMeshMaterial,
-    defaultLineMaterial,
+    meshMaterial,
+    lineMaterial,
+    pinLineMaterial,
 
     viewportWidth,
     viewportHeight,
@@ -204,14 +205,14 @@ const fnInit = function() {
 
     // Create default materials
 
-    defaultMeshMaterial = new THREE.MeshBasicMaterial({
+    meshMaterial = new THREE.MeshBasicMaterial({
         side: THREE.DoubleSide,
         color: 0xffffff,
         polygonOffset: true,
         polygonOffsetFactor: 1,
         polygonOffsetUnits: 1,
     });
-    defaultLineMaterial = new THREE.LineBasicMaterial({
+    lineMaterial = new THREE.LineBasicMaterial({
         color: 0x000000
     });
     defaultConditionalLineMaterial = new ConditionalLineMaterial({
@@ -446,7 +447,7 @@ const fnAddObjectDef = function (modelDef, objectDef, parent, partsColored) {
                 facesGeometry.setAttribute('color', new THREE.Float32BufferAttribute(partDef.face_colors, 3));
             }
 
-            let mesh = new THREE.Mesh(facesGeometry, defaultMeshMaterial);
+            let mesh = new THREE.Mesh(facesGeometry, meshMaterial);
             group.add(mesh);
 
             // Line
@@ -454,7 +455,7 @@ const fnAddObjectDef = function (modelDef, objectDef, parent, partsColored) {
             let hardEdgesGeometry = new THREE.BufferGeometry();
             hardEdgesGeometry.setAttribute('position', new THREE.Float32BufferAttribute(partDef.hard_edge_vertices, 3));
 
-            let hardEdgesLine = new THREE.LineSegments(hardEdgesGeometry, defaultLineMaterial);
+            let hardEdgesLine = new THREE.LineSegments(hardEdgesGeometry, lineMaterial);
             group.add(hardEdgesLine);
 
             let softEdgesGeometry = new THREE.BufferGeometry();
@@ -565,22 +566,6 @@ const fnCreateGroupPins = function (group, pinsColored, pinsText, pinsLength, pi
 
     if (group.userData.isPart) {
 
-        let pinText, pinClass;
-        switch (pinsText) {
-            case 0: // PINS_TEXT_NUMBER
-                pinText = group.userData.number;
-                pinClass = null;
-                break;
-            case 1: // PINS_TEXT_NAME
-                pinText = group.userData.name;
-                pinClass = 'square';
-                break;
-            case 2: // PINS_TEXT_NUMBER_AND_NAME
-                pinText = group.userData.number + ' - ' + group.userData.name;
-                pinClass = 'square';
-                break;
-        }
-
         let pinLengthFactor;
         switch (pinsLength) {
             case 0:   // PINS_LENGTH_NONE
@@ -618,6 +603,22 @@ const fnCreateGroupPins = function (group, pinsColored, pinsText, pinsLength, pi
                     pinPosition.sub(modelCenter).setLength(modelRadius * pinLengthFactor).add(groupCenter);
                     break;
             }
+        }
+
+        let pinText, pinClass;
+        switch (pinsText) {
+            case 0: // PINS_TEXT_NUMBER
+                pinText = group.userData.number;
+                pinClass = null;
+                break;
+            case 1: // PINS_TEXT_NAME
+                pinText = group.userData.name;
+                pinClass = 'square';
+                break;
+            case 2: // PINS_TEXT_NUMBER_AND_NAME
+                pinText = group.userData.number + ' - ' + group.userData.name;
+                pinClass = 'square';
+                break;
         }
 
         const pinDiv = document.createElement('div');
@@ -717,11 +718,12 @@ const fnSetAxesHelperVisible = function (visible) {
 const fnSetupModel = function(modelDef, partsColored, partsOpacity, pinsHidden, pinsColored, pinsText, pinsLength, pinsDirection, cameraView, cameraZoom, cameraTarget, explodeFactor) {
 
     if (partsColored) {
-        defaultMeshMaterial.vertexColors = true;
+        meshMaterial.vertexColors = true;
     }
     if (partsOpacity < 1) {
-        defaultMeshMaterial.opacity = partsOpacity;
-        defaultMeshMaterial.transparent = true;
+        meshMaterial.opacity = partsOpacity;
+        meshMaterial.transparent = true;
+        pinLineMaterial.transparent = true; // To force pin line to be oin the same sort than parts
     }
 
     model = fnAddObjectDef(modelDef, modelDef, scene, partsColored);
