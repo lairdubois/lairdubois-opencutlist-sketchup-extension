@@ -48,7 +48,7 @@ var REAL_MATERIALS_FILTER = [
 
 var THREE_CAMERA_VIEWS = {
     none: [ 0, 0, 0 ],
-    isometric: [ 1, -1, 1 ],
+    isometric: [ 0.5774, -0.5774, 0.5774 ],
     top: [ 0, 0, 1 ],
     bottom: [ 0, 0, -1 ],
     front: [ 0, -1, 0 ],

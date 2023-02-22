@@ -372,15 +372,15 @@ const fnIsDarkColor = function (color) {
     return (0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b) <= 0.51
 }
 
-const fnUpdateExplodeVectors = function (group, parentCenter) {
+const fnUpdateExplodeVectors = function (group, worldParentCenter) {
 
     const worldGroupBox = new THREE.Box3().setFromObject(group);
     const worldGroupCenter = worldGroupBox.getCenter(new THREE.Vector3());
 
-    const localParentCenter = group.parent.worldToLocal(parentCenter.clone());
+    const localParentCenter = group.parent.worldToLocal(worldParentCenter.clone());
     const localGroupCenter = group.parent.worldToLocal(worldGroupCenter.clone());
 
-    group.userData.explodeVector =  localGroupCenter.clone().sub(localParentCenter);
+    group.userData.explodeVector = localGroupCenter.clone().sub(localParentCenter);
 
     if (!group.userData.isPart) {
         for (let object of group.children) {
@@ -392,18 +392,23 @@ const fnUpdateExplodeVectors = function (group, parentCenter) {
 
 }
 
-const fnExplodeModel = function (factor = 0) {
+const fnExplodeModel = function (factor = 0, updatePins = true) {
 
+    // Keep current factor
     explodeFactor = factor;
 
+    // Apply explosion
     fnExplodeGroup(model, factor);
 
+    // Compute the exploded model box
     const modelBox = new THREE.Box3().setFromObject(model);
     explodedModelSize = modelBox.getSize(new THREE.Vector3());
     explodedModelCenter = modelBox.getCenter(new THREE.Vector3());
     explodedModelRadius = modelBox.getBoundingSphere(new THREE.Sphere()).radius;
 
-    fnCreateModelPins();
+    if (updatePins) {
+        fnCreateModelPins();
+    }
 
 }
 
@@ -451,6 +456,139 @@ const fnExplodeGroup = function (group, factor, factorDivider = 1) {
     }
 
 };
+
+const fnGetZoomAutoByView = function (view) {
+
+    switch (JSON.stringify(view)) {
+
+        case JSON.stringify(THREE_CAMERA_VIEWS.none):
+            return 1;
+
+        case JSON.stringify(THREE_CAMERA_VIEWS.isometric):
+            let width2d = (explodedModelSize.x + explodedModelSize.y) * Math.cos(Math.PI / 6);
+            let height2d = (explodedModelSize.x + explodedModelSize.y) * Math.cos(Math.PI / 3) + explodedModelSize.z;
+            return Math.min(viewportWidth / width2d, viewportHeight / height2d);
+
+        case JSON.stringify(THREE_CAMERA_VIEWS.top):
+            return Math.min(viewportWidth / explodedModelSize.x, viewportHeight / explodedModelSize.y) * 0.8;
+
+        case JSON.stringify(THREE_CAMERA_VIEWS.bottom):
+            return Math.min(viewportWidth / explodedModelSize.x, viewportHeight / explodedModelSize.y) * 0.8;
+
+        case JSON.stringify(THREE_CAMERA_VIEWS.front):
+            return Math.min(viewportWidth / explodedModelSize.x, viewportHeight / explodedModelSize.z) * 0.8;
+
+        case JSON.stringify(THREE_CAMERA_VIEWS.back):
+            return Math.min(viewportWidth / explodedModelSize.x, viewportHeight / explodedModelSize.z) * 0.8;
+
+        case JSON.stringify(THREE_CAMERA_VIEWS.left):
+            return Math.min(viewportWidth / explodedModelSize.y, viewportHeight / explodedModelSize.z) * 0.8;
+
+        case JSON.stringify(THREE_CAMERA_VIEWS.right):
+            return Math.min(viewportWidth / explodedModelSize.y, viewportHeight / explodedModelSize.z) * 0.8;
+
+        default:
+            return Math.min(viewportWidth / explodedModelRadius, viewportHeight / explodedModelRadius) * 0.5;
+
+    }
+}
+
+const fnGetTargetAutoByView = function (view) {
+    return {
+        target: explodedModelCenter,
+        position: new THREE.Vector3().fromArray(view).multiplyScalar(explodedModelRadius).add(explodedModelCenter)
+    };
+}
+
+const fnGetCurrentView = function () {
+    return camera.position.clone()
+        .sub(controls.target)
+        .normalize()
+        .toArray().map(function (v) {
+            return Number.parseFloat(v.toFixed(4)); // Round to 4 digits
+        });
+}
+
+const fnSetZoom = function (zoom, dispatchChangedEvent = true) {
+
+    if (zoom) {
+        controls.target0.copy(controls.target);
+        controls.position0.copy(camera.position);
+        controls.zoom0 = zoom;
+    } else {
+        const currentView = fnGetCurrentView();
+        const targetAuto = fnGetTargetAutoByView(currentView);
+        controls.target0.copy(targetAuto.target);
+        controls.position0.copy(targetAuto.position);
+        controls.zoom0 = fnGetZoomAutoByView(currentView);
+    }
+
+    controls.reset();
+
+    if (dispatchChangedEvent) {
+        fnDispatchControlsChangedEvent();
+    }
+
+}
+
+const fnSetView = function (view = THREE_CAMERA_VIEWS.isometric, dispatchChangedEvent = true) {
+
+    let currentView = fnGetCurrentView();
+    let currentZoomAuto = fnGetZoomAutoByView(currentView);
+    let currentZoomIsAuto = camera.zoom === currentZoomAuto;
+
+    let targetAuto = fnGetTargetAutoByView(view);
+
+    controls.target0 = targetAuto.target;
+    controls.position0 = targetAuto.position;
+    controls.zoom0 = currentZoomIsAuto ? fnGetZoomAutoByView(view) : camera.zoom;
+
+    controls.reset();
+
+    if (dispatchChangedEvent) {
+        fnDispatchControlsChangedEvent();
+    }
+
+}
+
+const fnSetExplodeFactor = function (factor, dispatchChangedEvent = true) {
+    const oldFactor = explodeFactor;
+    fnExplodeModel(factor);
+    fnRender();
+    if (dispatchChangedEvent && oldFactor !== explodeFactor) {
+        fnDispatchControlsChangedEvent();
+    }
+}
+
+const fnSetBoxHelperVisible = function (visible) {
+    if (boxHelper) {
+        let oldVisible = boxHelper.visible;
+        if (visible == null) {
+            boxHelper.visible = !boxHelper.visible;
+        } else {
+            boxHelper.visible = visible === true
+        }
+        fnRender();
+        if (oldVisible !== boxHelper.visible) {
+            fnDispatchHelpersChangedEvent();
+        }
+    }
+}
+
+const fnSetAxesHelperVisible = function (visible) {
+    if (axesHelper) {
+        let oldVisible = axesHelper.visible;
+        if (visible == null) {
+            axesHelper.visible = !axesHelper.visible;
+        } else {
+            axesHelper.visible = visible === true
+        }
+        fnRender();
+        if (oldVisible !== axesHelper.visible) {
+            fnDispatchHelpersChangedEvent();
+        }
+    }
+}
 
 const fnCreateModelPins = function () {
     if (pinsGroup) {
@@ -515,20 +653,20 @@ const fnCreateGroupPins = function (group, pinsColored, pinsText, pinsLength, pi
         switch (pinsText) {
             case 0: // PINS_TEXT_NUMBER
                 pinText = group.userData.number;
-                pinClass = null;
+                pinClass = 'rounded';
                 break;
             case 1: // PINS_TEXT_NAME
                 pinText = group.userData.name;
-                pinClass = 'square';
+                pinClass = 'squared';
                 break;
             case 2: // PINS_TEXT_NUMBER_AND_NAME
                 pinText = group.userData.number + ' - ' + group.userData.name;
-                pinClass = 'square';
+                pinClass = 'squared';
                 break;
         }
 
         const pinDiv = document.createElement('div');
-        pinDiv.className = 'pin' + (pinClass ? ' pin-' + pinClass : '');
+        pinDiv.className = 'pin pin-' + pinClass;
         pinDiv.textContent = pinText;
         if (pinsColored && group.userData.color) {
             pinDiv.style.backgroundColor = '#' + group.userData.color.getHexString();
@@ -557,145 +695,6 @@ const fnCreateGroupPins = function (group, pinsColored, pinsText, pinsLength, pi
     }
 
 };
-
-const fnGetZoomAutoByView = function (view) {
-
-    switch (JSON.stringify(view)) {
-
-        case JSON.stringify(THREE_CAMERA_VIEWS.none):
-            return 1;
-
-        case JSON.stringify(THREE_CAMERA_VIEWS.isometric):
-            let width2d = (explodedModelSize.x + explodedModelSize.y) * Math.cos(Math.PI / 6);
-            let height2d = (explodedModelSize.x + explodedModelSize.y) * Math.cos(Math.PI / 3) + explodedModelSize.z;
-            return Math.min(viewportWidth / width2d, viewportHeight / height2d);
-
-        case JSON.stringify(THREE_CAMERA_VIEWS.top):
-            return Math.min(viewportWidth / explodedModelSize.x, viewportHeight / explodedModelSize.y) * 0.8;
-
-        case JSON.stringify(THREE_CAMERA_VIEWS.bottom):
-            return Math.min(viewportWidth / explodedModelSize.x, viewportHeight / explodedModelSize.y) * 0.8;
-
-        case JSON.stringify(THREE_CAMERA_VIEWS.front):
-            return Math.min(viewportWidth / explodedModelSize.x, viewportHeight / explodedModelSize.z) * 0.8;
-
-        case JSON.stringify(THREE_CAMERA_VIEWS.back):
-            return Math.min(viewportWidth / explodedModelSize.x, viewportHeight / explodedModelSize.z) * 0.8;
-
-        case JSON.stringify(THREE_CAMERA_VIEWS.left):
-            return Math.min(viewportWidth / explodedModelSize.y, viewportHeight / explodedModelSize.z) * 0.8;
-
-        case JSON.stringify(THREE_CAMERA_VIEWS.right):
-            return Math.min(viewportWidth / explodedModelSize.y, viewportHeight / explodedModelSize.z) * 0.8;
-
-        default:
-            return Math.min(viewportWidth / explodedModelRadius, viewportHeight / explodedModelRadius) * 0.5;
-
-    }
-}
-
-const fnGetTargetAutoByView = function (view) {
-    return {
-        target: explodedModelCenter,
-        position: new THREE.Vector3().fromArray(view).multiplyScalar(explodedModelRadius).add(explodedModelCenter)
-    };
-}
-
-const fnGetCurrentView = function () {
-
-    let cameraVector = camera.position.clone().sub(controls.target);
-
-    // Try to identify common views
-    for (let viewName in THREE_CAMERA_VIEWS) {
-        if (viewName === 'none') {
-            continue;
-        }
-        let viewVector = new THREE.Vector3().fromArray(THREE_CAMERA_VIEWS[viewName]);
-        if (viewVector.angleTo(cameraVector) === 0 && Number.parseFloat(viewVector.cross(cameraVector).length().toFixed(4)) === 0) {
-            return THREE_CAMERA_VIEWS[viewName];
-        }
-    }
-
-    // Extract current view
-    return cameraVector.multiplyScalar(1 / explodedModelRadius).toArray().map(function (v) { return Number.parseFloat(v.toFixed(4)); });
-}
-
-const fnSetZoom = function (zoom) {
-
-    if (zoom) {
-        controls.target0.copy(controls.target);
-        controls.position0.copy(camera.position);
-        controls.zoom0 = zoom;
-    } else {
-        const currentView = fnGetCurrentView();
-        const targetAuto = fnGetTargetAutoByView(currentView);
-        controls.target0.copy(targetAuto.target);
-        controls.position0.copy(targetAuto.position);
-        controls.zoom0 = fnGetZoomAutoByView(currentView);
-    }
-
-    controls.reset();
-
-    fnDispatchControlsChangedEvent();
-
-}
-
-const fnSetView = function (view = THREE_CAMERA_VIEWS.isometric) {
-
-    let currentView = fnGetCurrentView();
-    let currentZoomAuto = fnGetZoomAutoByView(currentView);
-    let currentZoomIsAuto = camera.zoom === currentZoomAuto;
-
-    let targetAuto = fnGetTargetAutoByView(view);
-
-    controls.target0 = targetAuto.target;
-    controls.position0 = targetAuto.position;
-    controls.zoom0 = currentZoomIsAuto ? fnGetZoomAutoByView(view) : camera.zoom;
-
-    controls.reset();
-
-    fnDispatchControlsChangedEvent();
-
-}
-
-const fnSetExplodeFactor = function (factor) {
-    const oldFactor = explodeFactor;
-    fnExplodeModel(factor);
-    fnRender();
-    if (oldFactor !== explodeFactor) {
-        fnDispatchControlsChangedEvent();
-    }
-}
-
-const fnSetBoxHelperVisible = function (visible) {
-    if (boxHelper) {
-        let oldVisible = boxHelper.visible;
-        if (visible == null) {
-            boxHelper.visible = !boxHelper.visible;
-        } else {
-            boxHelper.visible = visible === true
-        }
-        fnRender();
-        if (oldVisible !== boxHelper.visible) {
-            fnDispatchHelpersChangedEvent();
-        }
-    }
-}
-
-const fnSetAxesHelperVisible = function (visible) {
-    if (axesHelper) {
-        let oldVisible = axesHelper.visible;
-        if (visible == null) {
-            axesHelper.visible = !axesHelper.visible;
-        } else {
-            axesHelper.visible = visible === true
-        }
-        fnRender();
-        if (oldVisible !== axesHelper.visible) {
-            fnDispatchHelpersChangedEvent();
-        }
-    }
-}
 
 const fnAddObjectDef = function (modelDef, objectDef, parent, partsColored) {
 
@@ -791,10 +790,10 @@ const fnSetupModel = function(modelDef, partsColored, partsOpacity, pinsHidden, 
         fnUpdateExplodeVectors(model, baseModelCenter);
 
         if (explodeFactor > 0) {
-            fnExplodeModel(explodeFactor);
+            fnExplodeModel(explodeFactor, false);
         }
 
-        if (explodeFactor === 0 && !pinsHidden) {   // Else explode already create pins
+        if (!pinsHidden) {
             fnCreateModelPins();
         }
 
@@ -816,14 +815,14 @@ const fnSetupModel = function(modelDef, partsColored, partsOpacity, pinsHidden, 
 
             controls.reset();
 
-            fnDispatchControlsChangedEvent();
-
         } else {
 
-            // Start with isometric view + auto target + auto zoom
-            fnSetView(THREE_CAMERA_VIEWS.isometric);
+            // Default, start with isometric view + auto target + auto zoom
+            fnSetView(THREE_CAMERA_VIEWS.isometric, false);
 
         }
+
+        fnDispatchControlsChangedEvent();
 
         // Create box helper
         boxHelper = new THREE.Box3Helper(modelBox, 0x0000ff);
