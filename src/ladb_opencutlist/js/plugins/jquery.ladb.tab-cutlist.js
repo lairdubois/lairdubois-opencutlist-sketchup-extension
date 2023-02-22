@@ -2264,9 +2264,10 @@
 
                         if (threeModelDef) {
 
-                            var $viewer = $(Twig.twig({ref: 'components/_three-viewer.twig'}).render({
-                                viewerClasses: 'ladb-three-viewer-modal-part',
-                                THREE_CAMERA_VIEWS: THREE_CAMERA_VIEWS
+                            var $viewer = $(Twig.twig({ref: 'tabs/cutlist/_three-viewer-modal-part.twig'}).render({
+                                THREE_CAMERA_VIEWS: THREE_CAMERA_VIEWS,
+                                group: group,
+                                part: part
                             }));
 
                             $viewer.ladbThreeViewer({

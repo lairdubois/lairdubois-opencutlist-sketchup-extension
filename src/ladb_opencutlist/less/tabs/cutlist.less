@@ -329,12 +329,18 @@
 }
 
 .ladb-part-thumbnail {
-  text-align: center;
+  align-items: center;
+  justify-content: center;
+  display: flex;
   margin-bottom: @ladb-gutter / 2;
   min-height: 200px;
 
   .ladb-part-thumbnail-loading {
     color: #999;
+  }
+
+  .ladb-three-viewer.ladb-three-viewer-modal-part {
+    flex-grow: 1;
   }
 
   img {

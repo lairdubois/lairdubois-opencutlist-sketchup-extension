@@ -165,6 +165,7 @@ core:
       view_left: Gauche
       view_right: Droite
       zoom: Echelle {{ zoom }}
+      explode_factor: Amplitude de l'éclaté
       toggle_box_helper: Afficher ou masquer la boîte capable
       toggle_axes_helper: Afficher ou masquer les axes
   docs:

@@ -372,7 +372,7 @@ const fnIsDarkColor = function (color) {
     return (0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b) <= 0.51
 }
 
-const fnUpdateExplodeVectors = function (group, worldParentCenter) {
+const fnComputeExplodeVectors = function (group, worldParentCenter) {
 
     const worldGroupBox = new THREE.Box3().setFromObject(group);
     const worldGroupCenter = worldGroupBox.getCenter(new THREE.Vector3());
@@ -385,7 +385,7 @@ const fnUpdateExplodeVectors = function (group, worldParentCenter) {
     if (!group.userData.isPart) {
         for (let object of group.children) {
             if (object.isGroup) {
-                fnUpdateExplodeVectors(object, worldGroupCenter);
+                fnComputeExplodeVectors(object, worldGroupCenter);
             }
         }
     }
@@ -394,13 +394,18 @@ const fnUpdateExplodeVectors = function (group, worldParentCenter) {
 
 const fnExplodeModel = function (factor = 0, updatePins = true) {
 
+    // Compute explode vectors if not already done
+    if (model.userData.explodeVector === undefined) {
+        fnComputeExplodeVectors(model, baseModelCenter)
+    }
+
     // Keep current factor
     explodeFactor = factor;
 
     // Apply explosion
     fnExplodeGroup(model, factor);
 
-    // Compute the exploded model box
+    // Compute the new exploded model box
     const modelBox = new THREE.Box3().setFromObject(model);
     explodedModelSize = modelBox.getSize(new THREE.Vector3());
     explodedModelCenter = modelBox.getCenter(new THREE.Vector3());
@@ -786,8 +791,6 @@ const fnSetupModel = function(modelDef, partsColored, partsOpacity, pinsHidden, 
             pinsLength: pinsLength,
             pinsDirection: pinsDirection
         };
-
-        fnUpdateExplodeVectors(model, baseModelCenter);
 
         if (explodeFactor > 0) {
             fnExplodeModel(explodeFactor, false);

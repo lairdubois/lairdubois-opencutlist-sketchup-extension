@@ -17,7 +17,7 @@ module Ladb::OpenCutList
 
     def run
       response = {
-          :thumbnail_file => '',
+          :thumbnail_file => nil,
           :three_model_def => nil
       }
 
