@@ -833,7 +833,7 @@ tab:
         is_part_selection: These labels are limited to the **selected parts**.
         formula_not_available: Formula is not available in this context
     layout:
-      title: Overview
+      title: Drawing
       options_layout: Composition
       options_settings: Configuration
       option_parts: Parts
