@@ -165,6 +165,7 @@ core:
       view_left: Seitelinks
       view_right: Seiterechts
       zoom: "{{ zoom }} Maßstab"
+      explode_factor: Amplitude der Explosion
       toggle_box_helper: Anzeige des Begrenzungsrahmens
       toggle_axes_helper: Anzeige der Achsen des Teils
   docs:
@@ -287,12 +288,11 @@ tab:
       numbers_save: Nummern der Teile speichern
       numbers_reset: Nummern der Teile neu zuweisen
       highlight_parts: $t(tab.cutlist.highlight_parts)
-      layout_parts: Übersichtsplan drucken
       group_layout_parts: Gruppenübersichtsplan drucken
       group_numbers_save: Nummern der Gruppenteile speichern
       group_numbers_reset: Nummern der Gruppenteile neu zuweisen
       group_cuttingdiagram: Schnittplan
-      group_labels: Etiketten drucken
+      group_labels: Etiketten der Gruppenteile drucken
       edit_material: "Material '{{ material_name }}' bearbeiten"
       expand_all: Alle Zeilen aufklappen
       collapse_all: Alle Zeilen zuklappen
@@ -833,7 +833,7 @@ tab:
         is_part_selection: Diese Etiketten beschränken sich auf **ausgewählte Teile**.
         formula_not_available: Formel steht in diesem Kontext nicht zu Verfügung
     layout:
-      title: Übersichtsplan
+      title: Übersicht
       options_layout: Darstellung
       options_settings: Konfiguration
       option_parts: Teile

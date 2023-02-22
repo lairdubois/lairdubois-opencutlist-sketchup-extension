@@ -165,6 +165,7 @@ core:
       view_left: Left
       view_right: Right
       zoom: "{{ zoom }} Scale"
+      explode_factor: Amplitude of explosion
       toggle_box_helper: Show/Hide Bounding Box
       toggle_axes_helper: Show/Hide Part Axes
   docs:
@@ -287,12 +288,11 @@ tab:
       numbers_save: Save the part numbers
       numbers_reset: Reinitialize the part numbers
       highlight_parts: $t(tab.cutlist.highlight_parts)
-      layout_parts: Print overview drawing
-      group_layout_parts: Print group overview drawing
+      group_layout_parts: Print overview drawing of parts in group
       group_numbers_save: Save the part numbers of this group
       group_numbers_reset: Reinitialize the part numbers of this group
       group_cuttingdiagram: Cutting Diagram
-      group_labels: Print labels
+      group_labels: Print labels of parts in group
       edit_material: "Edit the material '{{ material_name }}'"
       expand_all: Unfold all lines
       collapse_all: Fold all lines
@@ -833,7 +833,7 @@ tab:
         is_part_selection: These labels are limited to the **selected parts**.
         formula_not_available: Formula is not available in this context
     layout:
-      title: Overview Drawing
+      title: Drawing
       options_layout: Composition
       options_settings: Configuration
       option_parts: Parts
