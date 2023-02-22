@@ -15,12 +15,12 @@
     <button id="ladb_btn_close" class="btn btn-default"><i class="ladb-opencutlist-icon-close"></i> {{ 'default.close'|i18next }}</button>
 {% endblock %}
 
-{% block pageHeaderTimeUnitExtra %}<span class="ladb-horizontal-left-separator ladb-lbl-scale"></span>{% endblock %}
-
 {% block containerFluidOuter %}
     {% include 'core/_alert-errors.twig' %}
     {% if not errors or errors|length == 0 %}
-        {% include 'tabs/cutlist/_three-viewer-slide-layout.twig' %}
+        {% embed 'tabs/cutlist/_three-viewer-slide-layout.twig' %}
+            {% block headerHeadingInner %}{{ block('headerHeadingInner') }}{% endblock %}
+        {% endembed %}
     {% endif %}
 {% endblock %}
 

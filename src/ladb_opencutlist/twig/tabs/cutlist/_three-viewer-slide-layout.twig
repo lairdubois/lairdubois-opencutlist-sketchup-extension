@@ -11,8 +11,10 @@
             <div class="ladb-paper-page-header">
                 <div class="ladb-header">
                     <div class="container-fluid">
-                        <h1 class="ladb-heading">{{ block('headerHeadingInner') }}</h1>
-                        {% include 'tabs/cutlist/_header-extra.twig' with { 'printPreview':true, 'timeUnitExtra':block('pageHeaderTimeUnitExtra') } %}
+                        <h1 class="ladb-heading">{% block headerHeadingInner %}{% endblock %}</h1>
+                        {% embed 'tabs/cutlist/_header-extra.twig' with { 'printPreview':true } %}
+                            {% block timeAndUnitInner %}{{ parent() }}<span class="ladb-horizontal-left-separator ladb-lbl-scale"></span>{% endblock %}
+                        {% endembed %}
                     </div>
                 </div>
             </div>
