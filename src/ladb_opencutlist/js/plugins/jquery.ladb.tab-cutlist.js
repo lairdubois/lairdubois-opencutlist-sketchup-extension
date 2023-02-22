@@ -1548,18 +1548,22 @@
                                 layoutOptions.camera_target = data.cameraTargetIsAuto ? null : data.cameraTarget;
                                 layoutOptions.explode_factor = data.explodeFactor;
 
-                                // Store options (only one time per 500ms)
-                                if (storeOptionsTimeoutId) {
-                                    clearTimeout(storeOptionsTimeoutId);
+                                if (data.trigger === 'user') {  // Avoid double storing on viewer init
+
+                                    // Store options (only one time per 500ms)
+                                    if (storeOptionsTimeoutId) {
+                                        clearTimeout(storeOptionsTimeoutId);
+                                    }
+                                    storeOptionsTimeoutId = setTimeout(function () {
+                                        rubyCallCommand('core_set_model_preset', {
+                                            dictionary: 'cutlist_layout_options',
+                                            values: layoutOptions,
+                                            section: section
+                                        });
+                                        storeOptionsTimeoutId = null;
+                                    }, 500);
+
                                 }
-                                storeOptionsTimeoutId = setTimeout(function () {
-                                    rubyCallCommand('core_set_model_preset', {
-                                        dictionary: 'cutlist_layout_options',
-                                        values: layoutOptions,
-                                        section: section
-                                    });
-                                    storeOptionsTimeoutId = null;
-                                }, 500);
 
                                 var scale;
                                 if (data.cameraZoom > 1) {

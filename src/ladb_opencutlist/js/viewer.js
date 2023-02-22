@@ -301,12 +301,13 @@ const fnAddListeners = function () {
 
 }
 
-const fnDispatchControlsChangedEvent = function () {
+const fnDispatchControlsChangedEvent = function (trigger = 'user') {
 
     let view = fnGetCurrentView();
 
     window.frameElement.dispatchEvent(new MessageEvent('changed.controls', {
         data: {
+            trigger: trigger,
             cameraView: view,
             cameraZoom: camera.zoom,
             cameraTarget: controls.target.toArray([]),
@@ -792,13 +793,8 @@ const fnSetupModel = function(modelDef, partsColored, partsOpacity, pinsHidden, 
             pinsDirection: pinsDirection
         };
 
-        if (explodeFactor > 0) {
-            fnExplodeModel(explodeFactor, false);
-        }
-
-        if (!pinsHidden) {
-            fnCreateModelPins();
-        }
+        // This will explode the model AND create pins if necessary
+        fnSetExplodeFactor(explodeFactor, false);
 
         if (cameraView) {
 
@@ -825,7 +821,7 @@ const fnSetupModel = function(modelDef, partsColored, partsOpacity, pinsHidden, 
 
         }
 
-        fnDispatchControlsChangedEvent();
+        fnDispatchControlsChangedEvent('init');
 
         // Create box helper
         boxHelper = new THREE.Box3Helper(modelBox, 0x0000ff);
