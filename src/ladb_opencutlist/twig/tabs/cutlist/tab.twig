@@ -7,15 +7,16 @@
     <button id="ladb_btn_generate" class="btn btn-primary"><i class="ladb-opencutlist-icon-refresh"></i> {{ 'default.generate'|i18next }}</button>
     <button id="ladb_btn_print" class="btn btn-default" disabled><i class="ladb-opencutlist-icon-print"></i> {{ 'default.print'|i18next }}</button>
     <button id="ladb_btn_export" class="btn btn-default" disabled><i class="ladb-opencutlist-icon-export"></i> {{ 'default.export'|i18next }}</button>
-    <button id="ladb_btn_report" class="btn btn-default{# btn-sponsored#}" disabled><i class="ladb-opencutlist-icon-report"></i> {{ 'tab.cutlist.report.title'|i18next }}</button>
-    <button id="ladb_btn_options" class="btn btn-default"><i class="ladb-opencutlist-icon-settings"></i> {{ 'default.options'|i18next }}</a></button>
+    &nbsp;
+    {% if capabilities.sketchup_version_number >= 1800000000 %}
+        <button id="ladb_btn_layout" class="btn btn-default{# btn-sponsored#}" disabled><i class="ladb-opencutlist-icon-layout"></i> {{ 'tab.cutlist.layout.title'|i18next }}</button>
+    {% endif %}
+    <button id="ladb_btn_report" class="btn btn-default" disabled><i class="ladb-opencutlist-icon-report"></i> {{ 'tab.cutlist.report.title'|i18next }}</button>
+    &nbsp;
+    <button id="ladb_btn_options" class="btn btn-default"><i class="ladb-opencutlist-icon-settings"></i> {{ 'default.options'|i18next }}</button>
     <div class="btn-group">
         <button id="ladb_btn_menu" class="no-print btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ladb-opencutlist-icon-submenu"></i> <span class="caret"></span></button>
         <ul class="dropdown-menu dropdown-menu-right">
-            {% if capabilities.sketchup_version_number >= 1800000000 %}
-                <li class="disabled"><a id="ladb_item_layout_all_parts" href="#"><i class="ladb-opencutlist-icon-layout"></i> {{ 'tab.cutlist.menu.layout_parts'|i18next }}</a></li>
-                <li role="separator" class="divider"></li>
-            {% endif %}
             <li class="disabled"><a id="ladb_item_highlight_all_parts" href="#"><i class="ladb-opencutlist-icon-magnifier"></i> {{ 'tab.cutlist.menu.highlight_parts'|i18next }}</a></li>
             <li role="separator" class="divider"></li>
             <li class="disabled"><a id="ladb_item_show_all_groups" href="#"><i class="ladb-opencutlist-icon-eye-open"></i> {{ 'tab.cutlist.menu.show_all_groups'|i18next }}</a></li>

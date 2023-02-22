@@ -50,10 +50,10 @@
         this.$btnGenerate = $('#ladb_btn_generate', this.$header);
         this.$btnPrint = $('#ladb_btn_print', this.$header);
         this.$btnExport = $('#ladb_btn_export', this.$header);
+        this.$btnLayout = $('#ladb_btn_layout', this.$header);
         this.$btnReport = $('#ladb_btn_report', this.$header);
         this.$btnOptions = $('#ladb_btn_options', this.$header);
         this.$itemHighlightAllParts = $('#ladb_item_highlight_all_parts', this.$header);
-        this.$itemLayoutAllParts = $('#ladb_item_layout_all_parts', this.$header);
         this.$itemShowAllGroups = $('#ladb_item_show_all_groups', this.$header);
         this.$itemNumbersSave = $('#ladb_item_numbers_save', this.$header);
         this.$itemNumbersReset = $('#ladb_item_numbers_reset', this.$header);
@@ -168,9 +168,9 @@
                 // Update buttons and items state
                 that.$btnPrint.prop('disabled', groups.length === 0);
                 that.$btnExport.prop('disabled', groups.length === 0);
+                that.$btnLayout.prop('disabled', solidWoodMaterialCount + sheetGoodMaterialCount + dimensionalMaterialCount + edgeMaterialCount + hardwareMaterialCount === 0);
                 that.$btnReport.prop('disabled', solidWoodMaterialCount + sheetGoodMaterialCount + dimensionalMaterialCount + edgeMaterialCount + hardwareMaterialCount === 0);
                 that.$itemHighlightAllParts.parents('li').toggleClass('disabled', groups.length === 0);
-                that.$itemLayoutAllParts.parents('li').toggleClass('disabled', groups.length === 0);
                 that.$itemShowAllGroups.parents('li').toggleClass('disabled', groups.length === 0);
                 that.$itemNumbersSave.parents('li').toggleClass('disabled', groups.length === 0);
                 that.$itemNumbersReset.parents('li').toggleClass('disabled', groups.length === 0);
@@ -4276,6 +4276,10 @@
             that.exportCutlist();
             this.blur();
         });
+        this.$btnLayout.on('click', function () {
+            that.layoutAllParts();
+            this.blur();
+        });
         this.$btnReport.on('click', function () {
             that.reportCutlist();
             this.blur();
@@ -4287,12 +4291,6 @@
         this.$itemHighlightAllParts.on('click', function () {
             if (!$(this).parents('li').hasClass('disabled')) {
                 that.highlightAllParts();
-            }
-            this.blur();
-        });
-        this.$itemLayoutAllParts.on('click', function () {
-            if (!$(this).parents('li').hasClass('disabled')) {
-                that.layoutAllParts();
             }
             this.blur();
         });

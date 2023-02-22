@@ -288,12 +288,11 @@ tab:
       numbers_save: Mémoriser les numéros de pièces
       numbers_reset: Réinitialiser les numéros de pièces
       highlight_parts: $t(tab.cutlist.highlight_parts)
-      layout_parts: Imprimer le dessin d'ensemble
-      group_layout_parts: Imprimer le dessin d'ensemble du groupe
+      group_layout_parts: Imprimer le dessin d'ensemble des pièces du groupe
       group_numbers_save: Mémoriser les numéros de pièces du groupe
       group_numbers_reset: Réinitialiser les numéros de pièces du groupe
       group_cuttingdiagram: Calepinage
-      group_labels: Imprimer des étiquettes
+      group_labels: Imprimer les étiquettes des pièces du groupe
       edit_material: "Éditer la matière '{{ material_name }}'"
       expand_all: Déplier toutes les lignes
       collapse_all: Replier toutes les lignes
@@ -834,7 +833,7 @@ tab:
         is_part_selection: Ces étiquettes se limitent aux **pièces sélectionnées**.
         formula_not_available: Non disponible dans ce context
     layout:
-      title: Dessin d'ensemble
+      title: Dessin
       options_layout: Composition
       options_settings: Configuration
       option_parts: Pièces
