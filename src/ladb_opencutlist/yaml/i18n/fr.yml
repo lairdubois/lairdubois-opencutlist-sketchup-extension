@@ -558,7 +558,7 @@ tab:
       success:
         copied: Copié dans le presse papier.
     report:
-      title: Rapport
+      title: Estimation
       info_0: |
         Cette fonctionnalité vous permet de générer un rapport des **masses** et **coûts** des **matières premières brutes** nécessaires à la réalisation des pièces de la *fiche de débit*.
       options_general: Générales

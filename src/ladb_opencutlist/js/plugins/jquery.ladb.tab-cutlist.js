@@ -112,7 +112,6 @@
                 var usedTags = response.used_tags;
                 var materialUsages = response.material_usages;
                 var groups = response.groups;
-                var unknowMaterialCount = response.unknow_material_count;
                 var solidWoodMaterialCount = response.solid_wood_material_count;
                 var sheetGoodMaterialCount = response.sheet_good_material_count;
                 var dimensionalMaterialCount = response.dimensional_material_count;
@@ -169,7 +168,7 @@
                 // Update buttons and items state
                 that.$btnPrint.prop('disabled', groups.length === 0);
                 that.$btnExport.prop('disabled', groups.length === 0);
-                that.$btnLayout.prop('disabled', unknowMaterialCount + solidWoodMaterialCount + sheetGoodMaterialCount + dimensionalMaterialCount + edgeMaterialCount + hardwareMaterialCount === 0);
+                that.$btnLayout.prop('disabled', groups.length === 0);
                 that.$btnReport.prop('disabled', solidWoodMaterialCount + sheetGoodMaterialCount + dimensionalMaterialCount + edgeMaterialCount + hardwareMaterialCount === 0);
                 that.$itemHighlightAllParts.parents('li').toggleClass('disabled', groups.length === 0);
                 that.$itemShowAllGroups.parents('li').toggleClass('disabled', groups.length === 0);

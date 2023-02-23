@@ -26,7 +26,10 @@ module Ladb::OpenCutList
 
       materials = model.materials
 
+      active_entity = model.active_path.nil? ? nil : model.active_path.last
+
       three_model_def = ThreeModelDef.new
+      three_model_def.edit_matrix = _to_three_matrix(model.edit_transform)
 
       group_cache = {}  # key = serialized_path, value = group - Only for all instances
 
@@ -44,7 +47,7 @@ module Ladb::OpenCutList
             three_part_instance_def.id = part.id
 
             # Add to hierarchy
-            parent_three_group_def = _parent_hierarchy(instance_info.path.slice(0, instance_info.path.length - 1), group_cache, three_model_def)
+            parent_three_group_def = _parent_hierarchy(instance_info.path.slice(0, instance_info.path.length - 1), active_entity, group_cache, three_model_def)
             parent_three_group_def.add(three_part_instance_def)
 
             three_model_def.part_instance_count += 1
@@ -86,7 +89,7 @@ module Ladb::OpenCutList
 
       end
 
-      # _dump(three_model_def)
+      _dump(three_model_def)
 
       three_model_def
     end
@@ -265,8 +268,9 @@ module Ladb::OpenCutList
       [ hard_vertices, soft_vertices, soft_controls0, soft_controls1, soft_directions ]
     end
 
-    def _parent_hierarchy(path, cache, three_model_def)
+    def _parent_hierarchy(path, active_entity, cache, three_model_def)
       return three_model_def if path.nil? || path.empty?
+      return three_model_def if path.last == active_entity
 
       serialized_path = PathUtils.serialize_path(path)
 
@@ -286,7 +290,7 @@ module Ladb::OpenCutList
         cache.store(serialized_path, three_group_def)
 
         # Try to retrieve parent
-        parent_three_group_def = _parent_hierarchy(path, cache, three_model_def)
+        parent_three_group_def = _parent_hierarchy(path, active_entity, cache, three_model_def)
         if parent_three_group_def
           # Parent found, add current group as child
           parent_three_group_def.add(three_group_def)
@@ -302,7 +306,7 @@ module Ladb::OpenCutList
 
     def _to_three_matrix(tranformation)
       return nil unless tranformation.is_a?(Geom::Transformation)
-      return nil if tranformation.identity?
+      # return nil if tranformation.identity?
       tranformation.to_a.flatten
     end
 
@@ -317,12 +321,26 @@ module Ladb::OpenCutList
     end
 
     def _dump(three_object_def, level = 1)
-      puts '+'.rjust(level, '-') + three_object_def.class.to_s + ' ' + three_object_def.name + ' ' + (three_object_def.is_a?(ThreePartDef) ? three_object_def.pin_text.to_s : '')
+      puts "#{'+'.rjust(level, '-')}#{three_object_def.class.to_s} #{three_object_def.name} #{(three_object_def.is_a?(ThreePartInstanceDef) ? three_object_def.id.to_s : '')}"
+      if three_object_def.is_a?(ThreeModelDef)
+        three_object_def.part_defs.each do |id, part_def|
+          puts "@ #{id} - (#{part_def.number}) #{part_def.name}"
+        end
+      end
       if three_object_def.is_a?(ThreeGroupDef)
+        _dump_matrix(three_object_def.matrix, level)
         three_object_def.children.each do |child_three_object_def|
           _dump(child_three_object_def, level + 1)
         end
       end
+    end
+
+    def _dump_matrix(matrix, level)
+      matrix = _to_three_matrix(Geom::Transformation.new) if matrix.nil?
+      puts "#{'+'.rjust(level, ' ')} #{matrix[0].round(1)} #{matrix[4].round(1)} #{matrix[8].round(1)} #{matrix[12].round(1)}"
+      puts "#{'+'.rjust(level, ' ')} #{matrix[1].round(1)} #{matrix[5].round(1)} #{matrix[9].round(1)} #{matrix[13].round(1)}"
+      puts "#{'+'.rjust(level, ' ')} #{matrix[2].round(1)} #{matrix[6].round(1)} #{matrix[10].round(1)} #{matrix[14].round(1)}"
+      puts "#{'+'.rjust(level, ' ')} #{matrix[3].round(1)} #{matrix[7].round(1)} #{matrix[11].round(1)} #{matrix[15].round(1)}"
     end
 
   end
@@ -394,13 +412,14 @@ module Ladb::OpenCutList
 
   class ThreeModelDef < ThreeGroupDef
 
-    attr_accessor :part_instance_count
+    attr_accessor :part_instance_count, :edit_matrix
     attr_reader :part_defs
 
     def initialize
       super(ThreeObjectDef::TYPE_MODEL)
       @part_defs = {}
       @part_instance_count = 0
+      @edit_matrix = nil
     end
 
   end

@@ -705,9 +705,7 @@ module Ladb::OpenCutList
       # Warnings & tips
       if @instance_infos_cache.length > 0
         @material_usages_cache.each { |key, material_usage|
-          if material_usage.type == MaterialAttributes::TYPE_UNKNOWN
-            cutlist.unknow_material_count += material_usage.use_count
-          elsif material_usage.type == MaterialAttributes::TYPE_SOLID_WOOD
+          if material_usage.type == MaterialAttributes::TYPE_SOLID_WOOD
             cutlist.solid_wood_material_count += material_usage.use_count
           elsif material_usage.type == MaterialAttributes::TYPE_SHEET_GOOD
             cutlist.sheet_good_material_count += material_usage.use_count
@@ -963,7 +961,7 @@ module Ladb::OpenCutList
             return face_count
           end
 
-          # Considere component instance if it contains faces
+          # Considere component instance only if it contains faces
           if face_count > 0
 
             bounds = _compute_faces_bounds(entity.definition, nil)

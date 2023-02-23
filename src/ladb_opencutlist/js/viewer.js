@@ -831,7 +831,7 @@ const fnSetupModel = function(modelDef, partsColored, partsOpacity, pinsHidden, 
         // Create axes helper
         axesHelper = new THREE.Group();
         axesHelper.visible = false;
-        axesHelper.applyMatrix4(model.matrixWorld.invert());
+        axesHelper.applyMatrix4(new THREE.Matrix4().fromArray(modelDef.edit_matrix));
         axesHelper.add(new THREE.ArrowHelper(
             new THREE.Vector3(1, 0, 0),
             new THREE.Vector3(0, 0, 0),
