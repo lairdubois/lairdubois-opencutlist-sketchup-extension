@@ -585,7 +585,7 @@ tab:
         is_group_selection: Die in **ausgeblendeten Gruppen** enthaltenen Teile der Holzliste werden nicht berücksichtigt.
       tip:
         not_enough_data: |
-          Um diese Kalkulation richtig berechnen lässt, müssen:
+          Damit sich diese Kalkulation richtig berechnen lässt, müssen:
           - die verwendeten Materialien mindestens eine Dichte und einen Preis haben.
           - die verwendeten Zubehöre mindestens eine Dichte und einen Preis haben.
     cuttingdiagram:
