@@ -91,7 +91,7 @@ core:
       Cette version est disponible uniquement pour être testée.
       Il n'est pas conseillé de l'utiliser en production.
 
-      Pour rapporter un bug : <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
+      Pour signaler un bug : <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     old_su: |
       Vous utilisez une ancienne version de SketchUp ({{ sketchup_version }}). Ce plugin fonctionne, mais révèle certains bugs dus à cette ancienneté.
       Pour profiter pleinement de OpenCutList, il est préconisé d'utiliser au moins la version **SketchUp 2017**.
@@ -328,9 +328,9 @@ tab:
       instance_count_by_part_1: 1 unité par pièce
       instance_count_by_part_2: 2 unités par pièce
       mass: Masse
-      mass_help: La masse de la pièce sera utilisée lors de la génération des **Rapports**.
+      mass_help: La masse de la pièce sera utilisée lors de la génération d'une **Estimation**.
       price: Prix
-      price_help: Le prix de la pièce sera utilisé lors de la génération des **Rapports**.
+      price_help: Le prix de la pièce sera utilisé lors de la génération d'une **Estimation**.
       thickness_layer_count: Nb couches
       thickness_layer_count_help: |
         Définissez ici le nombre de couches qui divisent la pièce dessinée dans son épaisseur.
@@ -560,7 +560,7 @@ tab:
     report:
       title: Estimation
       info_0: |
-        Cette fonctionnalité vous permet de générer un rapport des **masses** et **coûts** des **matières premières brutes** nécessaires à la réalisation des pièces de la *fiche de débit*.
+        Cette fonctionnalité vous permet de générer une estimation des **masses** et **coûts** des **matières premières brutes** nécessaires à la réalisation des pièces de la *fiche de débit*.
       options_general: Générales
       options_solid_wood: $t(tab.materials.type_1)
       option_solid_wood_coefficient: Coefficient pour *$t(tab.materials.type_1)*
@@ -578,14 +578,14 @@ tab:
       total_area: Σ Surfaces
       total_length: Σ Longueurs
       error:
-        no_typed_material_parts: "Aucune pièce ayant une matière avec type défini (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** ou **$t(tab.materials.type_5)**) n'est fournie pour générer le rapport."
+        no_typed_material_parts: "Aucune pièce ayant une matière avec type défini (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** ou **$t(tab.materials.type_5)**) n'est fournie pour générer l'estimation."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erreur**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erreurs**."
       warning:
         is_group_selection: Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas comptabilisées.
       tip:
         not_enough_data: |
-          Pour que ce rapport puisse se calculer correctement :
+          Pour que cette estimation puisse se calculer correctement :
           - Les matières utilisées doivent avoir au moins une masse volumique et un prix configurés.
           - Les accessoires utilisés doivent avoir au moins une masse et un prix.
     cuttingdiagram:
