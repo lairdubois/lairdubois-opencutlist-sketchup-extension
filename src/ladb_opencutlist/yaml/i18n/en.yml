@@ -328,9 +328,9 @@ tab:
       instance_count_by_part_1: 1 unit per part
       instance_count_by_part_2: 2 units per part
       mass: Weight
-      mass_help: The weight of the part will be used when generating **Reports**.
+      mass_help: The weight of the part will be used when generating an **Estimate**.
       price: Price
-      price_help: The price of the part will be used when generating **Reports**.
+      price_help: The price of the part will be used when generating an **Estimate**.
       thickness_layer_count: Nb of Layers
       thickness_layer_count_help: |
         Define here the number of layers that divide the drawn part in its thickness.
@@ -558,9 +558,9 @@ tab:
       success:
         copied: Copied to clipboard.
     report:
-      title: Report
+      title: Estimate
       info_0: |
-        Reports generate a summary of the **weight** and **cost** of the **raw materials** needed to produce the parts of the *parts list*.
+        Generate an estimate of the **weight** and **cost** of the **raw materials** needed to produce the parts of the *parts list*.
       options_general: General
       options_solid_wood: $t(tab.materials.type_1)
       option_solid_wood_coefficient: Waste ratio for *$t(tab.materials.type_1)*
@@ -578,14 +578,14 @@ tab:
       total_area: Σ Area
       total_length: Σ Length
       error:
-        no_typed_material_parts: "No part with a defined material type (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)** or **$t(tab.materials.type_5)**) has been provided to generate the report."
+        no_typed_material_parts: "No part with a defined material type (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)** or **$t(tab.materials.type_5)**) has been provided to generate the estimate."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errors**."
       warning:
         is_group_selection: Parts inside **hidden groups** of the parts list will not be accounted for.
       tip:
         not_enough_data: |
-          To compute a correct report:
+          To compute a correct estimate:
           - the used materials must have at least a density and a price.
           - the used accessories must have at least a density and a price.
     cuttingdiagram:
