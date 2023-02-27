@@ -1052,12 +1052,12 @@ tab:
     objective_slogan: "OpenCutList, c'est nous tous"
     objective_title:
       default: Objectifs
-      layout: Financement d'un module de mise en page
+      layout: Financement d'un module d'impression d'aperçu
     objective_details:
       default: |
         L'amélioration en continue d'*OpenCutList* nous tient à coeur et le projet continue d'avoir besoin de vous pour sa prochaine mise à jour **5.0** !
       layout: |
-        L'objectif de ce module est de vous permettre d'imprimer facilement un aperçu de votre projet en **vue éclatée** avec identification de chaque pièce par son numéro généré dans la fiche de débit.
+        L'objectif de ce module est de vous permettre d'imprimer facilement un aperçu de votre projet en **vue éclatée** avec identification des pièces par leur numéro généré dans la fiche de débit.
     objective_crowdfunding: |
       Le développement des nouveautés se fera grâce au **financement participatif** et pourra débuter lorsque son **Objectif Financier** sera atteint.
     objective_thanks: |
