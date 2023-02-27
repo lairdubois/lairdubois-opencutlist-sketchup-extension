@@ -769,6 +769,8 @@ tab:
         invalid_size: Wprowadzone parametry konfiguracji nie pozwalają na ustawienie prawidłowego rozmiaru etykiety.
       warning:
         is_part_selection: Te etykiety są ograniczone tylko do **wybranych części**.
+    layout:
+      title: Rysunek
     error:
       no_model: Żaden model nie jest otwarty. Będziesz musiał podać mi więcej informacji;)
       no_entities: Twój model jest pusty. Będziesz musiał podać mi więcej informacji;)
@@ -817,7 +819,7 @@ tab:
       texture_load: Załaduj nową teksturę
       edit: "Edytuj właściwości '{{ name }}'"
       set_current: |
-        Kolorowanie części za pomocą '{{ name }}'. 
+        Kolorowanie części za pomocą '{{ name }}'.
         *Kliknij dwukrotnie, aby zwinąć*
     menu:
       import_from_skm: Importuj materiał (.skm)
@@ -1050,14 +1052,12 @@ tab:
     objective_slogan: "OpenCutList to my wszyscy"
     objective_title:
       default: Cele
-      cuttingdiagram_export: Finansowanie wywozu schematów cięcia
+      layout: Finansowanie modułu podglądu rysunku
     objective_details:
       default: |
         Ciągłe ulepszanie *OpenCutList* jest dla nas ważne, a projekt nadal potrzebuje Twojej pomocy przy następnej aktualizacji **4.0**!
-      cuttingdiagram_export: |
-        Ważne jest dla nas, aby *OpenCutList* mógł być dostosowany do bardzo różnych oczekiwań użytkowników w stosunku do funkcji *schematu cięcia*.
-        Aby jeszcze bardziej rozszerzyć możliwości, chcielibyśmy umożliwić eksport diagramów układu w formacie **SVG**.
-        Udostępniając nam środki do pracy nad tym eksportem, dajesz nam szansę, aby pomóc Ci w pełni wykorzystać możliwości *OpenCutList*.
+      layout: |
+        Celem tego modułu jest umożliwienie łatwego wydruku podglądu projektu w widoku **eksplodowanym** z identyfikacją części po ich numerach wygenerowanych w liście części.
     objective_crowdfunding: |
       Nowe funkcje zostaną opracowane przez **Pozyskiwanie funduszy** i rozpoczną się po osiągnięciu **Celu Finansowego**.
     objective_thanks: |

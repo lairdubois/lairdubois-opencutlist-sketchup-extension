@@ -769,6 +769,8 @@ tab:
         invalid_size: Os parâmetros de configuração inseridos não permitem que um tamanho de etiqueta válido seja definido.
       warning:
         is_part_selection: Estes etiquetas são limitados a **partes selecionadas** somente.
+    layout:
+        title: Desenho
     error:
       no_model: Nenhum modelo está aberto. Você precisará me fornecer mais informações;)
       no_entities: Seu modelo está vazio. Você precisará me fornecer mais informações;)
@@ -1050,14 +1052,12 @@ tab:
     objective_slogan: "OpenCutList somos todos nós"
     objective_title:
       default: Objetivo
-      cuttingdiagram_export: Financiamento das exportações de diagramas de corte
+      layout: Financiamento de um módulo de pré-visualização de desenho
     objective_details:
       default: |
         A melhoria contínua da *OpenCutList* é importante para nós e o projeto continua precisando de sua ajuda para sua próxima atualização **4.0**!
-      cuttingdiagram_export: |
-        É importante para nós que a *OpenCutList* possa ser adaptada às expectativas muito diferentes dos usuários para a função *diagrama de corte*.
-        Para expandir ainda mais as possibilidades, gostaríamos de possibilitar a exportação de diagramas de layout no formato **SVG**.
-        Ao nos fornecer os meios para trabalhar nestas exportações, você está nos dando a oportunidade de ajudá-lo a obter o máximo da *OpenCutList*.
+      layout: |
+        O objetivo deste módulo é permitir que você imprima facilmente uma visualização prévia de seu projeto em **visão explodida** com identificação das peças por seu número gerado na lista de peças.
     objective_crowdfunding: |
       O desenvolvimento dos novos produtos será feito graças ao **Financiamento participativo** e poderá começar quando seu **Objetivo financeiro** for alcançado.
     objective_thanks: |

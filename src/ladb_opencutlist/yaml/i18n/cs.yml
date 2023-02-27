@@ -269,7 +269,7 @@ tab:
       reset_prices: Resetování cen všech dílů
       reset_prices_confirm: |
         Chystáte se resetovat ceny všech částí vašeho modelu.
-        Tato akce je konečná. **Všechny ceny budou vynulovány.** 
+        Tato akce je konečná. **Všechny ceny budou vynulovány.**
         Potvrďte pro pokračování.
       reset_prices_success: Ceny všech dílů byly obnoveny.
     edit_part:
@@ -769,6 +769,8 @@ tab:
         invalid_size: Zadané konfigurační parametry neumožňují nastavení platné velikosti štítku.
       warning:
         is_part_selection: Tyto štítky jsou omezeny pouze na **vybrané části**.
+    layout:
+      title: Kreslení
     error:
       no_model: Model nejde otevřít. Potřebujeme více informací ;)
       no_entities: Váš model je prázdný. Potřebujeme více informací ;)
@@ -825,7 +827,7 @@ tab:
       reset_prices: Resetování cen všech materiálů
       reset_prices_confirm: |
         Chystáte se resetovat ceny všech materiálů ve vašem modelu.
-        Tato akce je konečná. **Všechny ceny budou vynulovány. 
+        Tato akce je konečná. **Všechny ceny budou vynulovány.
         Potvrďte pro pokračování.
       reset_prices_success: Ceny všech materiálů byly obnoveny.
     new_material:
@@ -1050,14 +1052,12 @@ tab:
     objective_slogan: "OpenCutList je pro všechny"
     objective_title:
       default: Objekty
-      cuttingdiagram_export: Financování vývozu řezných diagramů
+      layout: Financování modulu náhledu výkresu
     objective_details:
       default: |
         Neustálé zlepšování *OpenCutList* je pro nás důležité, a proto projekt stále potřebuje vaši pomoc pro další aktualizaci **4.0**!
-      cuttingdiagram_export: |
-        Je pro nás důležité, aby *OpenCutList* bylo možné přizpůsobit velmi rozdílným očekáváním uživatelů od funkce *řezový diagram*.
-        Pro další rozšíření možností bychom rádi umožnili export rozvrhových diagramů ve formátu **SVG**.
-        Tím, že nám poskytnete prostředky pro práci na těchto exportech, nám dáte příležitost pomoci vám co nejlépe využít *OpenCutList*.
+      layout: |
+        Cílem tohoto modulu je umožnit snadný tisk náhledu projektu v **rozbaleném zobrazení** s identifikací dílů podle jejich čísel vygenerovaných v seznamu dílů.
     objective_crowdfunding: |
       Vývoj nových funkcí bude probíhat prostřednictvím **Investičního financování** a může být zahájen po dosažení **Finančního cíle**.
     objective_thanks: |

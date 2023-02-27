@@ -769,6 +769,8 @@ tab:
         invalid_size: Các tham số cấu hình đã nhập không cho phép đặt kích thước nhãn hợp lệ.
       warning:
         is_part_selection: Các nhãn này được giới hạn ở **các bộ phận đã chọn**.
+    layout:
+      title: Vẽ
     error:
       no_model: Không có mô hình nào được mở. Bạn sẽ cần phải cung cấp cho tôi thêm thông tin;)
       no_entities: Mô hình của bạn rỗng. Bạn sẽ cần phải cung cấp cho tôi thêm thông tin ;)
@@ -1050,14 +1052,12 @@ tab:
     objective_slogan: "OpenCutList là tất cả của chúng ta"
     objective_title:
       default: Mục tiêu
-      cuttingdiagram_export: Kinh phí của sơ đồ cắt được xuất
+      layout: Cấp vốn cho mô-đun xem trước bản vẽ
     objective_details:
       default: |
         Sự cải tiến liên tục của *OpenCutList* rất quan trọng đối với chúng tôi và dự án tiếp tục cần sự trợ giúp của bạn cho bản cập nhật tiếp theo **4.0**!
-      cuttingdiagram_export: |
-        Điều quan trọng đối với chúng tôi là *OpenCutList* có thể được điều chỉnh cho phù hợp với những kỳ vọng rất khác nhau của người dùng đối với chức năng *Sơ đồ cắt*.
-        Để tiếp tục mở rộng các khả năng, chúng tôi muốn cho phép xuất sơ đồ bố trí ở định dạng **SVG**.
-        Bằng cách cung cấp cho chúng tôi phương tiện để xử lý các bản xuất này, bạn đang cho chúng tôi cơ hội giúp bạn tận dụng tối đa *OpenCutList*.
+      layout: |
+        Mục tiêu của mô-đun này là cho phép bạn dễ dàng in bản xem trước dự án của mình ở **chế độ xem được mở rộng** với việc nhận dạng các bộ phận theo số của chúng được tạo trong danh sách bộ phận.
     objective_crowdfunding: |
       Việc phát triển các tính năng mới sẽ được thực hiện thông qua **Gây quỹ** và sẽ bắt đầu khi đạt được **Mục tiêu tài chính**.
     objective_thanks: |

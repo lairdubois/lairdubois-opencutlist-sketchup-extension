@@ -769,6 +769,8 @@ tab:
         invalid_size: De ingegeven paramaters laten niet toe om geldige label afmetingen in te stellen.
       warning:
         is_part_selection: Deze labels zijn beperkt tot **geselecteerde onderdelen**.
+    layout:
+      title: Tekening
     error:
       no_model: Er is geen enkel model open. U moet me wat meer informatie geven ;)
       no_entities: Uw model is leeg. U moet me iets meer geven ;)
@@ -1050,14 +1052,12 @@ tab:
     objective_slogan: "OpenCutList zijn we allemaal"
     objective_title:
       default: Doelen
-      cuttingdiagram_export: Financiering van de uitvoer van snijschema's
+      layout: Financiering van een voorbeeldmodule voor tekeningen
     objective_details:
       default: |
         De voortdurende verbetering van *OpenCutList* is belangrijk voor ons en het project heeft nog steeds uw hulp nodig voor de volgende update **4.0**!
-      cuttingdiagram_export: |
-        Het is voor ons belangrijk dat *OpenCutList* kan worden aangepast aan het brede scala van gebruikerseisen voor de *squaring* functie.
-        Om de mogelijkheden verder uit te breiden, zouden we graag de export van lay-out diagrammen in **SVG** formaat mogelijk maken.
-        Door ons de middelen te geven om aan deze export te werken, geeft u ons de kans om u te helpen het meeste uit *OpenCutList* te halen.
+      layout: |
+        Met deze module kunt u gemakkelijk een voorbeeld van uw project afdrukken in **explosietekening** met identificatie van de onderdelen door hun nummer gegenereerd in de stuklijst.
     objective_crowdfunding: |
       De ontwikkeling van deze nieuwe functie zal gebeuren via **participatiefinanciering** en kan beginnen zodra het **financiële doel** is bereikt.
     objective_thanks: |
