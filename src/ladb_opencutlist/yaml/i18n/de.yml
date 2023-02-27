@@ -769,6 +769,8 @@ tab:
         invalid_size: Mit den eingegebenen Konfigurationsparametern kann keine gültige Etikettengröße festgelegt werden.
       warning:
         is_part_selection: Diese Etiketten beschränken sich auf **ausgewählte Teile**.
+    layout:
+        title: Übersicht
     error:
       no_model: Es sind keine Modelle geöffnet. Sie müssen mir schon etwas mehr geben ;)
       no_entities: Ihr Modell ist leer. Sie müssen mir schon etwas mehr geben ;)
@@ -1050,14 +1052,12 @@ tab:
     objective_slogan: "OpenCutList sind wir alle"
     objective_title:
       default: Ziele
-      cuttingdiagram_export: Finanzierung von Schnittplan-Exporten
+      layout: Finanzierung eines Übersichtsdruckmoduls
     objective_details:
       default: |
         Die kontinuierliche Verbesserung von *OpenCutList* ist uns wichtig und das Projekt braucht weiterhin Ihre Hilfe für das nächste Update **4.0**!
-      cuttingdiagram_export: |
-        Es ist uns wichtig, dass *OpenCutList* an die vielfältigen Anforderungen der Anwender an die *Schnittplan*-Funktion angepasst werden kann.
-        Um die Möglichkeiten weiter auszubauen, möchten wir den Export von Schnittplänen im **SVG**-Format ermöglichen.
-        Indem Sie uns die Mittel zur Verfügung stellen, um diese Exporte zu bearbeiten, geben Sie uns die Möglichkeit, Ihnen zu helfen, das Beste aus *OpenCutList* herauszuholen.
+      layout: |
+        Zweck dieses Moduls ist es, dass Sie auf einfache Weise eine Übersicht Ihres Projekts als **Explosionszeichung** ausdrucken können, wobei die Teile anhand der in der Holzliste erzeugten Nummer identifiziert werden.
     objective_crowdfunding: |
       Die Entwicklung von neuen Funktionen wird durch **Beteiligungsfinanzierung** erfolgen und kann beginnen, sobald das **Finanzielle Ziel** erreicht ist.
     objective_thanks: |

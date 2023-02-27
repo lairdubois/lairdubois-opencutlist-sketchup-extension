@@ -268,7 +268,7 @@ tab:
       collapse_all: Fold all lines
       reset_prices: Reset the prices of all parts
       reset_prices_confirm: |
-        You are about to reset the prices of all parts in your model
+        You are about to reset the prices of all parts in your model.
         This action is final. **All prices will be reset to zero.**
         Confirm to continue.
       reset_prices_success: The prices of all parts have been reset.
@@ -769,6 +769,8 @@ tab:
         invalid_size: The configuration parameters entered do not allow a valid label size to be set.
       warning:
         is_part_selection: These labels are limited to the **selected parts**.
+    layout:
+      title: Drawing
     error:
       no_model: No model is open. You will need to give me more information ;)
       no_entities: Your model is empty. You will need to give me more information ;)
@@ -1050,14 +1052,12 @@ tab:
     objective_slogan: "OpenCutList is all of us"
     objective_title:
       default: Objectives
-      cuttingdiagram_export: Funding of cutting diagram exports
+      layout: Funding of a drawing preview module
     objective_details:
       default: |
         The ongoing improvement of *OpenCutList* is important to us and the project continues to need your help for its next update **4.0**!
-      cuttingdiagram_export: |
-        It is important to us that *OpenCutList* can be adapted to the very different expectations of the users for the *cutting diagram* function.
-        To further expand the possibilities, we would like to enable the export of layout diagrams in **SVG** format.
-        By providing us with the means to work on these exports, you are giving us the opportunity to help you get the most out of *OpenCutList*.
+      layout: |
+        The objective of this module is to allow you to easily print a preview of your project in **exploded view** with identification of the parts by their number generated in the parts list.
     objective_crowdfunding: |
       The development of new features will be done through **Fundraising** and will start when the **Financial Goal** is reached.
     objective_thanks: |

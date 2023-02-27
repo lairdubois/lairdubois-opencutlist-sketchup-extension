@@ -769,6 +769,8 @@ tab:
         invalid_size: Le impostazioni non consentono di formattare le dimensioni dell'etichetta.
       warning:
         is_part_selection: Queste etichette sono limitate solo alle **parti selezionate**.
+    layout:
+      title: Disegno
     error:
       no_model: Nessun modello caricato. Sono necessarie più informazioni per procedere ;)
       no_entities: Il modello non ha parti. Sono necessarie più informazioni per procedere ;)
@@ -1050,14 +1052,12 @@ tab:
     objective_slogan: "OpenCutList è tutti noi"
     objective_title:
       default: Obiettivo
-      cuttingdiagram_export: Finanziamento della funzionalità di esportare lo schema di taglio
+      layout: Finanziamento di un modulo di anteprima del disegno
     objective_details:
       default: |
         Il continuo miglioramento di *OpenCutList* è importante per noi e il progetto continua ad avere bisogno del vostro aiuto per il suo prossimo aggiornamento **4.0**!
-      cuttingdiagram_export: |
-        Riteniamo importante che l'opzione "schema di taglio" di OpenCutList possa soddisfare le esigenze del maggior numero di utenti e per farlo vorremmo aggiungere la possibilità di esportare lo schema in formato **SVG**.
-        Tale formato permette di riutilizzare gli schemi di taglio OCL da parte di altri sofware.
-        Finanziando la realizzazione di questa interoperabilità si crea un'opportunità per un ulteriore miglioramento di OpenCutList.
+      layout: |
+        L'obiettivo di questo modulo è quello di consentire di stampare facilmente un'anteprima del progetto in **esploso** con l'identificazione dei pezzi in base al loro numero generato nell'elenco dei pezzi.
     objective_crowdfunding: |
       Lo sviluppo di nuove funzionalità grazie al **finanziamento collettivo (crowfunding)** avrà luogo e potrà iniziare non appena il **Finanziamento** sarà raggiunto.
     objective_thanks: |
