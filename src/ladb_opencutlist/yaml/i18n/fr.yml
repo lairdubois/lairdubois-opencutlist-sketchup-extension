@@ -769,6 +769,8 @@ tab:
         invalid_size: Les paramètres de configuration saisient ne permettent pas de définir une taille de d'étiquette valide.
       warning:
         is_part_selection: Ces étiquettes se limitent aux **pièces sélectionnées**.
+    layout:
+      title: Dessin
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_entities: Votre modèle est vide. Il va falloir m'en donner un peu plus ;)
@@ -1050,14 +1052,12 @@ tab:
     objective_slogan: "OpenCutList, c'est nous tous"
     objective_title:
       default: Objectifs
-      cuttingdiagram_export: Financement des exports de calepinage
+      layout: Financement d'un module de mise en page
     objective_details:
       default: |
-        L'amélioration en continue d'*OpenCutList* nous tient à coeur et le projet continue d'avoir besoin de vous pour sa prochaine mise à jour **4.0** !
-      cuttingdiagram_export: |
-        Il nous tient à coeur qu'*OpenCutList* puisse s'adapter aux attentes très variées des utilisateurs pour la fonction de *calepinage*.
-        Pour élargir encore les possibilités, nous souhaitons permettre d'exporter les diagrammes de calepinage au format **SVG**.
-        En nous fournissant les moyens de travailler sur ces exports, vous nous donnez l'occasion de vous permettre de tirer le meilleur d'*OpenCutList*.
+        L'amélioration en continue d'*OpenCutList* nous tient à coeur et le projet continue d'avoir besoin de vous pour sa prochaine mise à jour **5.0** !
+      layout: |
+        L'objectif de ce module est de vous permettre d'imprimer facilement un aperçu de votre projet en **vue éclatée** avec identification de chaque pièce par son numéro généré dans la fiche de débit.
     objective_crowdfunding: |
       Le développement des nouveautés se fera grâce au **financement participatif** et pourra débuter lorsque son **Objectif Financier** sera atteint.
     objective_thanks: |

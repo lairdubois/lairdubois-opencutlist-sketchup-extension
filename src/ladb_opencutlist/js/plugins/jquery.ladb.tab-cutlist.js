@@ -47,6 +47,7 @@
         this.$btnGenerate = $('#ladb_btn_generate', this.$header);
         this.$btnPrint = $('#ladb_btn_print', this.$header);
         this.$btnExport = $('#ladb_btn_export', this.$header);
+        this.$btnLayout = $('#ladb_btn_layout', this.$header);
         this.$btnReport = $('#ladb_btn_report', this.$header);
         this.$btnOptions = $('#ladb_btn_options', this.$header);
         this.$itemHighlightAllParts = $('#ladb_item_highlight_all_parts', this.$header);
@@ -155,6 +156,7 @@
                 // Update buttons and items state
                 that.$btnPrint.prop('disabled', groups.length === 0);
                 that.$btnExport.prop('disabled', groups.length === 0);
+                that.$btnLayout.prop('disabled', groups.length === 0);
                 that.$btnReport.prop('disabled', solidWoodMaterialCount + sheetGoodMaterialCount + dimensionalMaterialCount + edgeMaterialCount + hardwareMaterialCount === 0);
                 that.$itemHighlightAllParts.parents('li').toggleClass('disabled', groups.length === 0);
                 that.$itemShowAllGroups.parents('li').toggleClass('disabled', groups.length === 0);
@@ -3509,6 +3511,12 @@
         this.$btnPrint.on('click', function () {
             that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.title'));
             this.blur();
+        });
+        this.$btnLayout.on('click', function () {
+
+            // Show Objective modal
+            that.dialog.executeCommandOnTab('sponsor', 'show_objective_modal', { objectiveStrippedName: 'layout' }, null, true);
+
         });
         this.$btnExport.on('click', function () {
             that.exportCutlist();
