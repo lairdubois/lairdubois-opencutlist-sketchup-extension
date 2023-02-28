@@ -4,6 +4,10 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
+* 4.1.3 (WIP)
+
+  * Added teaser "Drawing" button.
+
 * 4.1.2 (2023-01-27)
 
   * Fixed forum loading error due to Open Collective API changes.
