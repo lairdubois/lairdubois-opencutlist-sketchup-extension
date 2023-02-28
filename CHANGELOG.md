@@ -4,7 +4,7 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
-* 4.1.3 (WIP)
+* 4.1.3 (2023-02-28)
 
   * Added teaser "Drawing" button.
 
