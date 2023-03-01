@@ -89,7 +89,7 @@ module Ladb::OpenCutList
 
       end
 
-      _dump(three_model_def)
+      # _dump(three_model_def)
 
       three_model_def
     end
