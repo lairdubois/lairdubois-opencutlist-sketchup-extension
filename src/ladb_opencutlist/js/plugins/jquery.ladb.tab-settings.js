@@ -55,6 +55,12 @@
 
         // Menu /////
 
+        $('#ladb_item_export_global_presets', this.$element).on('click', function () {
+            rubyCallCommand('settings_export_global_presets');
+        });
+        $('#ladb_item_import_global_presets', this.$element).on('click', function () {
+            rubyCallCommand('settings_import_global_presets');
+        });
         $('#ladb_item_dump_global_presets', this.$element).on('click', function () {
             rubyCallCommand('settings_dump_global_presets');
         });

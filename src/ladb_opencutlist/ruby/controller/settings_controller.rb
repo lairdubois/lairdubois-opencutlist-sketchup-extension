@@ -38,6 +38,12 @@ module Ladb::OpenCutList
       Plugin.instance.register_command('settings_reset_model_presets') do |params|
         reset_model_presets_command
       end
+      Plugin.instance.register_command('settings_export_global_presets') do |params|
+        export_global_presets_command
+      end
+      Plugin.instance.register_command('settings_import_global_presets') do |params|
+        import_global_presets_command
+      end
 
     end
 
@@ -130,6 +136,14 @@ module Ladb::OpenCutList
 
     def reset_model_presets_command
       Plugin.instance.reset_model_presets
+    end
+
+    def export_global_presets_command
+      Plugin.instance.export_global_presets
+    end
+
+    def import_global_presets_command
+      Plugin.instance.import_global_presets
     end
 
   end

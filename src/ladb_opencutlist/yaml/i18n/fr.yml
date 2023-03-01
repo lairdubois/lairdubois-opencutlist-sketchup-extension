@@ -1229,6 +1229,8 @@ tab:
     mass_unit: Unité de masse
     currency_symbol: Symbole monétaire
     menu:
+      export_global_presets: Exporter les préréglages
+      import_global_presets: Importer des préréglages
       dump_global_presets: Dump des préréglages
       dump_model_presets: Dump des réglages du modèle
       reset_global_presets: Réinitialiser les préréglages
