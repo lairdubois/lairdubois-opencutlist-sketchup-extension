@@ -288,7 +288,7 @@ tab:
       numbers_save: Nummern der Teile speichern
       numbers_reset: Nummern der Teile neu zuweisen
       highlight_parts: $t(tab.cutlist.highlight_parts)
-      group_layout_parts: Gruppenübersichtsplan drucken
+      group_layout_parts: Gruppenübersichtszeichnung drucken
       group_numbers_save: Nummern der Gruppenteile speichern
       group_numbers_reset: Nummern der Gruppenteile neu zuweisen
       group_cuttingdiagram: Schnittplan
@@ -833,7 +833,7 @@ tab:
         is_part_selection: Diese Etiketten beschränken sich auf **ausgewählte Teile**.
         formula_not_available: Formel steht in diesem Kontext nicht zu Verfügung
     layout:
-      title: Übersicht
+      title: Zeichnung
       options_layout: Darstellung
       options_settings: Konfiguration
       option_parts: Teile
@@ -884,7 +884,7 @@ tab:
       option_page_header_1: Mit
       option_page_header_help: |
         Wählen Sie, ob die zu druckende Seite eine Kopfzeile mit dem Namen des Dokuments, seiner Beschreibung und dem Datum enthält.
-        Ohne Kopfzeile nimmt den Übersichtsplan die gesamte Seite ein.
+        Ohne Kopfzeile nimmt die Übersichtszeichnung die gesamte Seite ein.
       option_camera: Kamera
       option_camera_view: $t(core.component.three_viewer.view)
       option_camera_view_custom: Benutzerdefiniert
@@ -899,7 +899,7 @@ tab:
         no_part: Es gibt keine zu zeichnenden Teile.
       warning:
         is_group_selection: Die Teile innerhalb der **maskierten Gruppen** Ihrer Teileliste werden nicht gezeichnet.
-        is_part_selection: Dieser Übersichtsplan ist auf die **ausgewählten Teile** beschränkt.
+        is_part_selection: Diese Übersichtszeichnung ist auf die **ausgewählten Teile** beschränkt.
     error:
       no_model: Es sind keine Modelle geöffnet. Sie müssen mir schon etwas mehr geben ;)
       no_entities: Ihr Modell ist leer. Sie müssen mir schon etwas mehr geben ;)
@@ -1228,7 +1228,13 @@ tab:
     suppress_units_display: Längeneinheiten für jeden Wert anzeigen
     mass_unit: Masseneinheit
     currency_symbol: Währungssymbol
-    menu:
+    presets:
+      export_global_presets: Exportieren
+      export_global_presets_success: Die Voreinstellungen wurden erfolgreich exportiert.
+      import_global_presets: Importieren
+      import_global_presets_success: |
+        Die Voreinstellungen *OpenCutList* wurden erfolgreich importiert.
+        Um die Änderungen zu berücksichtigen, müssen Sie das Fenster von OpenCutList **schließen** und **neu öffnen**.
       dump_global_presets: Dump der Voreinstellungen
       dump_model_presets: Dump der Modell-Einstellungen
       reset_global_presets: Voreinstellungen reinitialisieren
@@ -1247,6 +1253,10 @@ tab:
       reset_model_presets_success: |
         Die Einstellungen von *OpenCutList* für das aktuelle Modell wurden zurückgesetzt.
         Um die Änderungen zu berücksichtigen, müssen Sie das Fenster von OpenCutList **schließen** und **neu öffnen**.
+      error:
+        failed_to_import: "Voreinstellungen konnten nicht importiert werden: **{{ error }}**."
+        failed_to_import_invalid_hexdigest: Diese Datei wurde verändert. Sie kann nicht importiert werden.
+        failed_to_import_bad_file_format: Ungültiges Dateiformat.
   about:
     label: Über
     title: Über
