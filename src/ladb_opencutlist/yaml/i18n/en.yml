@@ -1228,7 +1228,13 @@ tab:
     suppress_units_display: Display length unit for each value
     mass_unit: Unit of weight
     currency_symbol: Currency symbol
-    menu:
+    presets:
+      export_global_presets: Export presets
+      export_global_presets_success: Presets have been successfully exported.
+      import_global_presets: Import presets
+      import_global_presets_success: |
+        *OpenCutList* presets have been successfully imported.
+        In order to reflect the changes, you must **close** and **reopen** the OpenCutList window.
       dump_global_presets: Dump presets
       dump_model_presets: Dump model presets
       reset_global_presets: Reinitialize the presets
@@ -1247,6 +1253,10 @@ tab:
       reset_model_presets_success: |
         The *OpenCutList* presets for the current model have been reset.
         In order to reflect the changes, you must **close** and **reopen** the OpenCutList window.
+      error:
+        failed_to_import: "Impossible to import the presets: **{{ error }}**."
+        failed_to_import_invalid_hexdigest: This file was modified. It cannot be imported.
+        failed_to_import_bad_file_format: Invalid file format.
   about:
     label: About
     title: About
