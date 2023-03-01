@@ -1037,13 +1037,6 @@
                         maximumFractionDigits: 0
                     });
                 });
-                Twig.extendFilter('format_mass', function (value, options) {
-                    return value.toLocaleString(that.capabilities.language, {
-                        style: 'decimal',
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: 0
-                    }) + ' kg';
-                });
                 Twig.extendFilter('sanitize_links', function (value, options) {
                     return value.replace(/<a\s+(?:[^>]*?\s+)?href=(["'])(.*?)\1>/g, '<a href="$2" target="_blank">');
                 });
