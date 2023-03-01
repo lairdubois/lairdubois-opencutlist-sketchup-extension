@@ -139,11 +139,23 @@ module Ladb::OpenCutList
     end
 
     def export_global_presets_command
-      Plugin.instance.export_global_presets
+      require_relative '../worker/settings/export_global_presets_worker'
+
+      # Setup worker
+      worker = ExportGlobalPresetsWorker.new
+
+      # Run !
+      worker.run
     end
 
     def import_global_presets_command
-      Plugin.instance.import_global_presets
+      require_relative '../worker/settings/import_global_presets_worker'
+
+      # Setup worker
+      worker = ImportGlobalPresetsWorker.new
+
+      # Run !
+      worker.run
     end
 
   end

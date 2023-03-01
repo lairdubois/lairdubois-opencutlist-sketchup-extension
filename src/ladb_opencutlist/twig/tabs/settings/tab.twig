@@ -8,14 +8,15 @@
     <div class="btn-group">
         <button id="ladb_btn_menu" class="no-print btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ladb-opencutlist-icon-submenu"></i> <span class="caret"></span></button>
         <ul class="dropdown-menu dropdown-menu-right">
-            <li><a id="ladb_item_export_global_presets" href="#">{{ 'tab.settings.menu.export_global_presets'|i18next }}...</a></li>
-            <li><a id="ladb_item_import_global_presets" href="#">{{ 'tab.settings.menu.import_global_presets'|i18next }}...</a></li>
+            <li class="dropdown-header dropdown-header-top">{{ 'core.preset.label'|i18next }}</li>
+            <li><a id="ladb_item_export_global_presets" href="#">{{ 'tab.settings.presets.export_global_presets'|i18next }}...</a></li>
+            <li><a id="ladb_item_import_global_presets" href="#">{{ 'tab.settings.presets.import_global_presets'|i18next }}...</a></li>
             <li class="divider"></li>
-            <li class="dropdown-item-danger"><a id="ladb_item_reset_global_presets" href="#">{{ 'tab.settings.menu.reset_global_presets'|i18next }}...</a></li>
-            <li class="dropdown-item-danger"><a id="ladb_item_reset_model_presets" href="#">{{ 'tab.settings.menu.reset_model_presets'|i18next }}...</a></li>
+            <li class="dropdown-item-danger"><a id="ladb_item_reset_global_presets" href="#">{{ 'tab.settings.presets.reset_global_presets'|i18next }}...</a></li>
+            <li class="dropdown-item-danger"><a id="ladb_item_reset_model_presets" href="#">{{ 'tab.settings.presets.reset_model_presets'|i18next }}...</a></li>
             <li class="dropdown-header dropdown-header-middle">Debug</li>
-            <li><a id="ladb_item_dump_global_presets" href="#">{{ 'tab.settings.menu.dump_global_presets'|i18next }}</a></li>
-            <li><a id="ladb_item_dump_model_presets" href="#">{{ 'tab.settings.menu.dump_model_presets'|i18next }}</a></li>
+            <li><a id="ladb_item_dump_global_presets" href="#">{{ 'tab.settings.presets.dump_global_presets'|i18next }}</a></li>
+            <li><a id="ladb_item_dump_model_presets" href="#">{{ 'tab.settings.presets.dump_model_presets'|i18next }}</a></li>
         </ul>
     </div>
 {% endblock %}

@@ -56,10 +56,28 @@
         // Menu /////
 
         $('#ladb_item_export_global_presets', this.$element).on('click', function () {
-            rubyCallCommand('settings_export_global_presets');
+            rubyCallCommand('settings_export_global_presets', null, function (response) {
+
+                if (response.success) {
+                    that.dialog.notify(i18next.t('tab.settings.presets.export_global_presets_success'), 'success');
+                }
+
+            });
         });
         $('#ladb_item_import_global_presets', this.$element).on('click', function () {
-            rubyCallCommand('settings_import_global_presets');
+            rubyCallCommand('settings_import_global_presets', null, function (response) {
+
+                if (response.errors) {
+                    that.dialog.notifyErrors(response.errors);
+                } else if (response.success) {
+                    that.dialog.alert(null, i18next.t('tab.settings.presets.import_global_presets_success'), function () {
+                        rubyCallCommand('core_dialog_hide');
+                    }, {
+                        okBtnLabel: i18next.t('default.close')
+                    });
+                }
+
+            });
         });
         $('#ladb_item_dump_global_presets', this.$element).on('click', function () {
             rubyCallCommand('settings_dump_global_presets');
@@ -68,9 +86,9 @@
             rubyCallCommand('settings_dump_model_presets');
         });
         $('#ladb_item_reset_global_presets', this.$element).on('click', function () {
-            that.dialog.confirm(i18next.t('default.caution'), i18next.t('tab.settings.menu.reset_global_presets_confirm'), function () {
+            that.dialog.confirm(i18next.t('default.caution'), i18next.t('tab.settings.presets.reset_global_presets_confirm'), function () {
                 rubyCallCommand('settings_reset_global_presets', null, function () {
-                    that.dialog.alert(null, i18next.t('tab.settings.menu.reset_global_presets_success'), function () {
+                    that.dialog.alert(null, i18next.t('tab.settings.presets.reset_global_presets_success'), function () {
                         rubyCallCommand('core_dialog_hide');
                     }, {
                         okBtnLabel: i18next.t('default.close')
@@ -81,9 +99,9 @@
             })
         });
         $('#ladb_item_reset_model_presets', this.$element).on('click', function () {
-            that.dialog.confirm(i18next.t('default.caution'), i18next.t('tab.settings.menu.reset_model_presets_confirm'), function () {
+            that.dialog.confirm(i18next.t('default.caution'), i18next.t('tab.settings.presets.reset_model_presets_confirm'), function () {
                 rubyCallCommand('settings_reset_model_presets', null, function () {
-                    that.dialog.alert(null, i18next.t('tab.settings.menu.reset_model_presets_success'), function () {
+                    that.dialog.alert(null, i18next.t('tab.settings.presets.reset_model_presets_success'), function () {
                         rubyCallCommand('core_dialog_hide');
                     }, {
                         okBtnLabel: i18next.t('default.close')

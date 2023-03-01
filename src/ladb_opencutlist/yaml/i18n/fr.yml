@@ -1228,9 +1228,13 @@ tab:
     suppress_units_display: Afficher l'unité de longueur à chaque valeur
     mass_unit: Unité de masse
     currency_symbol: Symbole monétaire
-    menu:
+    presets:
       export_global_presets: Exporter les préréglages
+      export_global_presets_success: Les préréglages ont été exportés avec succès.
       import_global_presets: Importer des préréglages
+      import_global_presets_success: |
+        Les préréglages *OpenCutList* ont été importés avec succès.
+        Afin de prendre en compte les changements, vous devez **fermer** et **réouvrir** la fenêtre OpenCutList.
       dump_global_presets: Dump des préréglages
       dump_model_presets: Dump des réglages du modèle
       reset_global_presets: Réinitialiser les préréglages
@@ -1249,6 +1253,10 @@ tab:
       reset_model_presets_success: |
         Les réglages *OpenCutList* du modèle courrant ont été réinitialisés.
         Afin de prendre en compte les changements, vous devez **fermer** et **réouvrir** la fenêtre OpenCutList.
+      error:
+        failed_to_import: "Impossible d'importer les préréglages : **{{ error }}**."
+        failed_to_import_invalid_hexdigest: Ce fichier a été modifié. Il me peut pas être importé.
+        failed_to_import_bad_file_format: Format de fichier invalide.
   about:
     label: A propos
     title: A propos

@@ -399,6 +399,11 @@ module Ladb::OpenCutList
       write_global_presets
     end
 
+    def get_global_presets
+      read_global_presets if @global_presets_cache.nil?
+      @global_presets_cache
+    end
+
     def set_global_preset(dictionary, values, name = nil, section = nil, fire_event = false)
 
       name = PRESETS_DEFAULT_NAME if name.nil?
@@ -500,60 +505,6 @@ module Ladb::OpenCutList
       read_global_presets if @global_presets_cache.nil?
       _debug('GLOBAL PRESETS') do
         pp @global_presets_cache
-      end
-    end
-
-    def export_global_presets
-      read_global_presets if @global_presets_cache.nil?
-
-      # Open save panel
-      path = UI.savepanel(Plugin.instance.get_i18n_string('tab.settings.menu.export_global_presets'), '', 'OpenCutListPresets.json')
-      if path
-
-        # Force "json" file extension
-        unless path.end_with?('.json')
-          path = path + '.json'
-        end
-
-        File.write(path, JSON.dump({
-                                     :hexdigest => Digest::MD5.hexdigest(JSON.dump(@global_presets_cache)),
-                                     :presets => @global_presets_cache
-                                   }))
-
-      end
-    end
-
-    def import_global_presets
-
-      # Open save panel
-      path = UI.openpanel(Plugin.instance.get_i18n_string('tab.settings.menu.import_global_presets'), '', 'OpenCutListPresets.json')
-      if path
-
-        file = File.read(path)
-        data = JSON.parse(file)
-
-        # Check data integrity
-        if data.is_a?(Hash) && data.has_key?('hexdigest') && data.has_key?('presets') && data['hexdigest'] == Digest::MD5.hexdigest(JSON.dump(data['presets']))
-
-          data['presets'].each do |dictionary, dh|
-            if dh.is_a?(Hash)
-              dh.each do |section, sh|
-                if sh.is_a?(Hash)
-                  sh.each do |name, values|
-                    puts "Importing #{dictionary} > #{section} > #{name}"
-                    set_global_preset(dictionary, values, name, section)
-                  end
-                end
-              end
-            end
-          end
-
-        else
-
-          puts 'Invalid file'
-
-        end
-
       end
     end
 
