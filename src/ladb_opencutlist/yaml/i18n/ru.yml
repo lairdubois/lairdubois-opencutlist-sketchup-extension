@@ -155,6 +155,19 @@ core:
       remove: Забыть этот цвет
     textinput_code:
       help: "Нажмите **@**, чтобы открыть ввод переменных данных."
+    three_viewer:
+      view: "Вид {{ view }}"
+      view_isometric: Изометрия
+      view_top: Вверх
+      view_bottom: Вниз
+      view_front: Перед
+      view_back: Зад
+      view_left: Слева
+      view_right: Справа
+      zoom: "Масштаб {{ zoom }}"
+      explode_factor: Амплитуда импульса
+      toggle_box_helper: Показать или скрыть панель инсрументов
+      toggle_axes_helper: Показать или скрыть оси
   docs:
     error:
       failed_to_load: |
@@ -275,10 +288,11 @@ tab:
       numbers_save: Сохранение номеров деталей
       numbers_reset: Обновить нумерацию деталей
       highlight_parts: $t(tab.cutlist.highlight_parts)
+      group_layout_parts: Распечатать сборочный чертеж деталей группы
       group_numbers_save: Сохранить номера деталей этой группы
       group_numbers_reset: Повторная индексация номеров деталей этой группы
       group_cuttingdiagram: Карта раскроя
-      group_labels: Печать этикеток
+      group_labels: Печать этикеток для деталей в группе
       edit_material: "Редактировать материал '{{ material_name }}'"
       expand_all: Развернуть все строки
       collapse_all: Свернуть все строки
@@ -314,9 +328,9 @@ tab:
       instance_count_by_part_1: 1 ед. в комплекте
       instance_count_by_part_2: 2 ед. в комплекте
       mass: Масса
-      mass_help: Масса детали будет учтена при формировании **Отчета**.
+      mass_help: Масса детали будет учитываться при создании отчета **Смета**.
       price: Цена
-      price_help: Цена деталей будет учтена при формировании **Отчета**.
+      price_help: Цена детали будет учтена при создании отчета **Смета**.
       thickness_layer_count: Число слоев
       thickness_layer_count_help: |
         Здесь можно задать количество слоев материала для набора расчетной толщины моделируемой детали .
@@ -326,12 +340,12 @@ tab:
       description: Описание
       description_help: |
         Параметр *Описание* дает возможность задать необходимую уточняющую информацию по детали.
-      tags: Теги
+      tags: Маркеры
       tags_help: |
-        С опцией *Теги* вы можете добавлять ключевые слова-индексы, чтобы лучше идентифицировать детали в спецификации раскроя.
-        Вы можете добавить столько тегов, сколько сочтете нужным
-        Видимые детали Вашего списка раскроя в последующем могут быть отфильтрованы по тегам.
-      tags_multiple_info: Отображаются только обычные Теги
+        *Маркеры* позволяют добавлять пользовательские слова-идентификаторы к каждому определению детали.
+        Вы можете добавить столько маркеров, сколько хотите.
+        Затем вы можете отфильтровать детали, видимые в вашей карте раскроя, по этим маркерам.
+      tags_multiple_info: Видны только общие маркеры
       orientation: Ориентация
       orientation_locked_on_axis: Блокировка ориентации по осям
       orientation_locked_on_axis_help: |
@@ -374,6 +388,7 @@ tab:
       veneer_disabled_help: "Эта поверхность не является настраиваемой, т.к. в модели не обнаружено поверхностей с нанесенным материалом."
       multiple_values: Множественные значения
       export_to_skp: Экспорт (.skp)
+      loading_preview: Загрузка предварительного просмотра
     export_to_skp:
       title: Экспорт в .skp файл
     option:
@@ -401,15 +416,15 @@ tab:
       part_number_sequence_by_group_help: "Если эта опция активна, перечисление деталей в каждой группе одного и того же типа и толщины материала будет заново начинаться с 1 (или A)."
       part_folding: Группировать идентичные детали
       part_folding_help: |
-        Если эта опция активирована, детали из материала **массив дерева, листовой или погонаж**, имеющие в модели **одинаковый размер**, **одинаковые теги** и **одинаковую площадь** *(если их отображение не скрыто)* будут сгруппированы на одной строке в *списке элементов*.
+        Если эта опция включена, детали из **массива древесины, панели или погонажа**, имеющие **одинаковые размеры**, с **одинаковыми маркерами** и **одинаковой готовой поверхностью** *(если отображение этой поверхности не скрыто)* будут сгруппированы на одной линии в *карте раскроя*.
 
-        При этом такие детали при формировании раскроя и в этикетках будут считаться отдельными.
+        Для целей маркировки и компоновки детали все равно будут считаться разными.
       hide_entity_names: Скрыть случайные имена
       hide_entity_names_help: "Если эта опция выбрана, **случайные имена** деталей не будут отображаться."
       hide_descriptions: Скрыть описание
       hide_descriptions_help: "Если этот параметр включен, **описания**, деталей в списке элементов, будут скрыты."
-      hide_tags: Скрыть Теги
-      hide_tags_help: "Если эта опция активирована, **Теги** будут скрыты."
+      hide_tags: Скрыть маркеры
+      hide_tags_help: "Если эта опция активирована, **маркеры**, размещенные на деталях, не отображаются."
       hide_cutting_dimensions: Скрыть пильные размеры
       hide_cutting_dimensions_help: "Если эта опция активирована, то **пильные** размеры деталей будут скрыты."
       hide_bbox_dimensions: Скрыть габаритные размеры
@@ -436,11 +451,11 @@ tab:
       property_name: Описание
       property_count: Количество
       property_edge_pattern: Количество кромок
-      property_tags: Теги
+      property_tags: Маркеры
       property_thickness_layer_count: Количество слоев
-      tags: Теги
-      tags_help: "Настраиваемый список тегов, предлагаемый в окне свойств детали."
-      tags_placeholder: Добавить тег
+      tags: Маркеры
+      tags_help: Настраиваемый список используемых маркеров в окне свойств детали.
+      tags_placeholder: Добавить маркер
     list:
       filters: Фильтры
       filters_warning_0: "Этот фильтр скрывает все детали!"
@@ -448,7 +463,7 @@ tab:
       filters_warning_plural: "Данный фильтр отображает только **{{ count }}** детали из общего {{ total }}."
       edge_material_names_filter: Фильтр по материалу кромок
       veneer_material_names_filter: Фильтр материалов шпона
-      tags_filter: Фильтр по Тегам
+      tags_filter: Сортировка меток
       dimensions_help: Иллюстрация размеров
       summary: Расчёт
       material_type: Тип
@@ -525,7 +540,7 @@ tab:
       material_name: Материал
       entity_names: Название
       description: Описание
-      tags: Теги
+      tags: Маркеры
       edge_ymin: Кромка по длине 1
       edge_ymax: Кромка по длине 2
       edge_xmin: Кромка по ширине 1
@@ -543,9 +558,9 @@ tab:
       success:
         copied: Скопировано в буфер обмена.
     report:
-      title: Отчет
+      title: Смета
       info_0: |
-        Эта функция позволит Вам создать отчет с отражением количества, наименования **материала**, его **массы** и **стоимости** по рассчитанным деталям в *карте раскроя*.
+        Эта функция позволяет вам рассчитать смету с учетом **массы** и **стоимости** **материала**, деталей на *карте раскроя*.
       options_general: Общие
       options_solid_wood: $t(tab.materials.type_1)
       option_solid_wood_coefficient: Коэффициент *$t(tab.materials.type_1)*
@@ -563,16 +578,16 @@ tab:
       total_area: Σ Площадей
       total_length: Σ Длин
       error:
-        no_typed_material_parts: "Нет деталей с материалом определенного типа (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** , **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** или **$t(tab.materials.type_5)**) представлен для создания отчета."
+        no_typed_material_parts: "Для составления сметы детали должны иметь определенный тип материала (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** или **$t(tab.materials.type_5)**)."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} ошибка**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} ошибки**."
       warning:
         is_group_selection: "Учитываются только детали, содержащиеся в **видимых группах**."
       tip:
         not_enough_data: |
-          Чтобы это соотношение рассчитать правильно:
-          - Используемые материалы должны иметь хотя бы одну настроенную плотность и цену.
-          - Используемые аксессуары должны иметь как минимум массу и цену.
+          Для правильного расчета сметы:
+          - Используемые материалы должны иметь в настройках хотя бы одно заданное пользователем значение плотности и цены.
+          - Используемые комплектующие, как минимум должны иметь в настройках заданное пользователем значение массы и цены.
     cuttingdiagram:
       title: Карта раскроя
       start_msg: Оптимизация в процессе
@@ -794,7 +809,7 @@ tab:
         part_length: Пильная длина
         part_width: Ширина
         part_thickness: Толщина
-        part_tags: Теги
+        part_tags: Маркеры
         part_batch: Деталей в раскрое
         part_edge_ymin: Кромка по длине 1
         part_edge_ymax: Кромка по длине 2
@@ -817,6 +832,74 @@ tab:
       warning:
         is_part_selection: Эти этикетки соответствуют **выделенным деталям**.
         formula_not_available: Недоступно в данном контексте
+    layout:
+      title: Чертеж
+      options_layout: Состав
+      options_settings: Конфигурация
+      option_parts: Детали
+      option_parts_colored: Цвет
+      option_parts_colored_0: Без цвета
+      option_parts_colored_1: Цвет материала
+      option_parts_colored_help: Позволяет выбрать внешний вид деталей.
+      option_parts_opacity: Прозрачность
+      option_parts_opacity_0: Прозрачный
+      option_parts_opacity_1: Матовый
+      option_parts_opacity_help: Позволяет выбрать уровень непрозрачности.
+      option_pins: Булавки
+      option_pins_hidden: Просмотр
+      option_pins_hidden_0: С булавками
+      option_pins_hidden_1: Без булавки
+      option_pins_hidden_help: "Отображает или скрывает булавки, прикрепленные на детали, чтобы указать их номер или обозначение."
+      option_pins_colored: Цвет
+      option_pins_colored_0: Без цвета
+      option_pins_colored_1: Цвет детали
+      option_pins_colored_help: Позволяет выбрать цвет булавок.
+      option_pins_text: Текст
+      option_pins_text_0: Номер детали
+      option_pins_text_1: Обозначение детали
+      option_pins_text_2: Номер детали и обозначение
+      option_pins_text_help: "Позволяет выбрать текст, отображаемый на значках булавок."
+      option_pins_length: Длина
+      option_pins_length_0: Без стрелки
+      option_pins_length_1: Малый
+      option_pins_length_2: Среднее
+      option_pins_length_3: Большое
+      option_pins_length_help: Позволяет выбрать длину стрелки булавки.
+      option_pins_direction: Направление
+      option_pins_direction_0: По красной оси
+      option_pins_direction_1: По зеленой оси
+      option_pins_direction_2: По синей оси
+      option_pins_direction_3: Указывает на центр исходной группы
+      option_pins_direction_4: Указывает на центр выделения
+      option_pins_direction_help: "Позволяет выбрать направление булавок, чтобы адаптировать их читаемость на модели."
+      option_page: Бумага
+      option_page_format: Формат
+      option_page_format_portrait: Книжный
+      option_page_format_landscape: Альбомный
+      option_page_format_custom: Пользовательский
+      option_page_width: Ширина
+      option_page_height: Высота
+      option_page_header: Заголовок
+      option_page_header_0: Без
+      option_page_header_1: С
+      option_page_header_help: |
+        Позволяет выбрать, будет ли печатаемая страница содержать заголовок с названием документа, его описанием, датой, единицей измерения и масштабом.
+        Без заголовка проект займет всю страницу.
+      option_camera: Камера
+      option_camera_view: Обзор
+      option_camera_view_custom: Индивидуально
+      option_camera_zoom: Масштаб
+      option_camera_zoom_auto: Автоматический
+      option_camera_zoom_custom: Индивидуально
+      option_camera_target: Положение
+      option_camera_target_auto: Автоматический
+      option_camera_target_custom: Индивидуально
+      option_explode: Разбор
+      error:
+        no_part: Нет деталей для прорисовки.
+      warning:
+        is_group_selection: "Детали, содержащиеся в **скрытых группах** вашей карты раскроя, не будут нарисованы."
+        is_part_selection: Этот сборочный чертеж ограничен **выделенными деталями**.
     error:
       no_model: Модель не открыта. Вы должны предоставить мне дополнительную информацию ;)
       no_entities: Ваша модель пуста. Вам нужно дать мне больше информации ;)
@@ -894,6 +977,9 @@ tab:
       cut_options: Параметры раскроя
       attributes: Атрибуты
       thickness: Толщина
+      thickness_help: |
+        Готовая толщина материала.
+        *Если единицы измерения не указаны, будет использована единица измерения модели проекта.*
       length_increase: Припуск к длине
       length_increase_help: Припуск под подгонку прибавляется к фактической длине для расчета **пильной длины**.
       width_increase: Припуск к ширине
@@ -1027,7 +1113,7 @@ tab:
       bbox_width: Ширина
       bbox_thickness: Толщина
       material: Материал
-      tags: Теги
+      tags: Маркеры
     tooltip:
       errors: "Эта часть не будет импортирована, так как она привела к следующим ошибкам"
       warnings: "Эта часть будет импортирована, но она выдает следующие предупреждения"
@@ -1142,7 +1228,13 @@ tab:
     suppress_units_display: Отображать единицу длины для каждого значения
     mass_unit: Единица массы
     currency_symbol: Символ валюты
-    menu:
+    presets:
+      export_global_presets: Экспорт пресетов
+      export_global_presets_success: Пресеты успешно экспортированы.
+      import_global_presets: Импорт пресетов
+      import_global_presets_success: |
+        Пресеты *OpenCutList* успешно импортированы.
+        Чтобы изменения вступили в силу, вы должны **закрыть** и снова **открыть** окно OpenCutList.
       dump_global_presets: Дамп пресетов
       dump_model_presets: Дамп настроек модели
       reset_global_presets: Сбросить пресеты
@@ -1161,6 +1253,10 @@ tab:
       reset_model_presets_success: |
         Настройки *OpenCutList* текущей модели были сброшены.
         Чтобы применить изменения, вы должны **закрыть** и **снова открыть** окно OpenCutList.
+      error:
+        failed_to_import: "Не удалось импортировать пресеты: **{{ error }}**."
+        failed_to_import_invalid_hexdigest: Этот файл был изменен. Он не может быть импортирован.
+        failed_to_import_bad_file_format: Недопустимый формат файла.
   about:
     label: О программе
     title: О программе
