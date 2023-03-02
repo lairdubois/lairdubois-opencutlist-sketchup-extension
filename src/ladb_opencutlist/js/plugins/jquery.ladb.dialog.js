@@ -15,7 +15,6 @@
     var CHANGELOG_URL = 'https://www.lairdubois.fr/opencutlist/changelog';
     var CHANGELOG_DEV_URL = 'https://www.lairdubois.fr/opencutlist/changelog-dev';
 
-    var SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN = 'core.compatibility_alert_hidden';
     var SETTING_KEY_MUTED_UPDATE_BUILD = 'core.muted_update_build';
     var SETTING_KEY_LAST_LISTED_NEWS_TIMESTAMP = 'core.last_listed_news_timestamp';
 
@@ -42,7 +41,6 @@
             language: options.language,
             available_languages: options.available_languages,
             decimal_separator: options.decimal_separator,
-            html_dialog_compatible: options.html_dialog_compatible,
             manifest: options.manifest,
             update_available: options.update_available,
             update_muted: options.update_muted,
@@ -934,11 +932,6 @@
                 that.selectTab(tabName);
             });
         });
-        $('#ladb_btn_close_compatibility_alert', that.$element).on('click', function () {
-            $('#ladb_compatibility_alert').hide();
-            that.compatibilityAlertHidden = true;
-            that.setSetting(SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN, that.compatibilityAlertHidden);
-        });
 
         // Bind "docs" button
         this.bindHelpButtonsInParent(this.$leftbar);
@@ -995,13 +988,11 @@
         var that = this;
 
         this.pullSettings([
-                SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN,
                 SETTING_KEY_MUTED_UPDATE_BUILD,
                 SETTING_KEY_LAST_LISTED_NEWS_TIMESTAMP
             ],
             function () {
 
-                that.compatibilityAlertHidden = that.getSetting(SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN, false);
                 that.mutedUpdateBuild = that.getSetting(SETTING_KEY_MUTED_UPDATE_BUILD, null);
                 that.lastListedNewsTimestamp = that.getSetting(SETTING_KEY_LAST_LISTED_NEWS_TIMESTAMP, null);
 
@@ -1066,7 +1057,6 @@
                     // Render and append layout template
                     that.$element.append(Twig.twig({ref: 'core/layout.twig'}).render({
                         capabilities: that.capabilities,
-                        compatibilityAlertHidden: that.compatibilityAlertHidden,
                         tabDefs: that.options.tabDefs
                     }));
 

@@ -305,7 +305,7 @@ LadbAbstractTab.prototype.print = function (title, margin, size) {
     // Print
     window.print();
 
-    // Retore margin
+    // Restore margin
     cssPageRuleStyle.margin = '';
     cssPageRuleStyle.size = '';
 

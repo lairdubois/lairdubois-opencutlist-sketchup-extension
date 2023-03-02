@@ -73,7 +73,6 @@ module Ladb::OpenCutList
       @language = nil
       @i18n_strings_cache = nil
       @app_defaults_cache = nil
-      @html_dialog_compatible = nil
       @manifest = nil
       @update_available = nil
       @update_muted = false
@@ -181,18 +180,6 @@ module Ladb::OpenCutList
         path_key
       end
 
-    end
-
-    def html_dialog_compatible
-      if @html_dialog_compatible
-        return @html_dialog_compatible
-      end
-      begin
-        @html_dialog_compatible = Object.const_defined?('UI::HtmlDialog')
-      rescue NameError
-        @html_dialog_compatible = false
-      end
-      @html_dialog_compatible
     end
 
     # -----
@@ -888,48 +875,29 @@ module Ladb::OpenCutList
 
       # Create dialog instance
       dialog_title = get_i18n_string('core.dialog.title') + ' - ' + EXTENSION_VERSION + (IS_DEV ? " ( build: #{EXTENSION_BUILD} )" : '')
-      if html_dialog_compatible
-        @dialog = UI::HtmlDialog.new(
-            {
-                :dialog_title => dialog_title,
-                :preferences_key => DIALOG_PREF_KEY,
-                :scrollable => true,
-                :resizable => true,
-                :width => DIALOG_MINIMIZED_WIDTH,
-                :height => DIALOG_MINIMIZED_HEIGHT,
-                :left => @dialog_left,
-                :top => @dialog_top,
-                :min_width => DIALOG_MINIMIZED_WIDTH,
-                :min_height => DIALOG_MINIMIZED_HEIGHT,
-                :style => UI::HtmlDialog::STYLE_DIALOG
-            })
-        @dialog.set_on_closed {
-          @dialog = nil
-          @dialog_maximized = false
-        }
-        @dialog.set_can_close {
-          dialog_store_current_position
-          dialog_store_current_size
-          true
-        }
-      else
-        @dialog = UI::WebDialog.new(
-            dialog_title,
-            true,
-            DIALOG_PREF_KEY,
-            DIALOG_MINIMIZED_WIDTH,
-            DIALOG_MINIMIZED_HEIGHT,
-            @dialog_left,
-            @dialog_top,
-            true
-        )
-        @dialog.min_width = DIALOG_MINIMIZED_WIDTH
-        @dialog.min_height = DIALOG_MINIMIZED_HEIGHT
-        @dialog.set_on_close {
-          @dialog = nil
-          @dialog_maximized = false
-        }
-      end
+      @dialog = UI::HtmlDialog.new(
+          {
+              :dialog_title => dialog_title,
+              :preferences_key => DIALOG_PREF_KEY,
+              :scrollable => true,
+              :resizable => true,
+              :width => DIALOG_MINIMIZED_WIDTH,
+              :height => DIALOG_MINIMIZED_HEIGHT,
+              :left => @dialog_left,
+              :top => @dialog_top,
+              :min_width => DIALOG_MINIMIZED_WIDTH,
+              :min_height => DIALOG_MINIMIZED_HEIGHT,
+              :style => UI::HtmlDialog::STYLE_DIALOG
+          })
+      @dialog.set_on_closed {
+        @dialog = nil
+        @dialog_maximized = false
+      }
+      @dialog.set_can_close {
+        dialog_store_current_position
+        dialog_store_current_size
+        true
+      }
 
       # Setup dialog page
       @dialog.set_file(File.join(__dir__, '..', 'html', "dialog-#{language}.html"))
@@ -985,15 +953,7 @@ module Ladb::OpenCutList
         @dialog_ready_block = ready_block
 
         # Show dialog
-        if html_dialog_compatible
-          @dialog.show
-        else
-          if platform_is_mac
-            @dialog.show_modal
-          else
-            @dialog.show
-          end
-        end
+        @dialog.show
 
       end
 
@@ -1030,11 +990,7 @@ module Ladb::OpenCutList
 
     def dialog_set_size(width, height)
       if @dialog
-        if platform_is_mac && !html_dialog_compatible
-          @dialog.execute_script("window.resizeTo(#{width},#{height})")
-        else
-          @dialog.set_size(width, height)
-        end
+        @dialog.set_size(width, height)
       end
     end
 
@@ -1061,11 +1017,7 @@ module Ladb::OpenCutList
 
     def dialog_set_position(left, top)
       if @dialog
-        if platform_is_mac && !html_dialog_compatible
-          @dialog.execute_script("window.moveTo(#{left},#{top});")
-        else
-          @dialog.set_position(left, top)
-        end
+        @dialog.set_position(left, top)
       end
     end
 
@@ -1332,7 +1284,6 @@ module Ladb::OpenCutList
           :language => Plugin.instance.language,
           :available_languages => Plugin.instance.get_available_languages,
           :decimal_separator => DimensionUtils.instance.decimal_separator,
-          :html_dialog_compatible => html_dialog_compatible,
           :manifest => @manifest,
           :update_available => @update_available,
           :update_muted => @update_muted,

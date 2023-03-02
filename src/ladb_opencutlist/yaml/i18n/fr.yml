@@ -92,9 +92,6 @@ core:
       Il n'est pas conseillé de l'utiliser en production.
 
       Pour signaler un bug : <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
-    old_su: |
-      Vous utilisez une ancienne version de SketchUp ({{ sketchup_version }}). Ce plugin fonctionne, mais révèle certains bugs dus à cette ancienneté.
-      Pour profiter pleinement de OpenCutList, il est préconisé d'utiliser au moins la version **SketchUp 2017**.
     feature_locked: "*Non désactivable dans cette version de SketchUp*"
   event:
     model_change: Le modèle actif a changé.

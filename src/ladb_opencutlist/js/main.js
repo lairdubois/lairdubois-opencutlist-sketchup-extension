@@ -1,27 +1,4 @@
 
-// Add .ie class on boby tag if running on IE. Used for special workarounds
-if (navigator.appName === 'Microsoft Internet Explorer') {
-    if (navigator.appVersion.indexOf('MSIE 9') >= 0) {
-        $('body').addClass('ie ie-9');
-    } else if (navigator.appVersion.indexOf('MSIE 10') >= 0) {
-        $('body').addClass('ie ie-10 ie-gt9');
-    } else {
-        $('body').addClass('ie');
-    }
-}
-// IE 11, Edge, Chrome and Safari detection
-if (navigator.appName === 'Netscape') {
-    if (navigator.appVersion.indexOf('Trident/7.0') >= 0) {
-        $('body').addClass('ie ie-11 ie-gt10 ie-gt9');
-    } else if (navigator.appVersion.indexOf('Edge') >= 0) {
-        $('body').addClass('edge ie-gt11');
-    } else if (navigator.appVersion.indexOf('Chrome') >= 0) {
-        $('body').addClass('chrome');
-    } else if (navigator.appVersion.indexOf('Safari') >= 0) {
-        $('body').addClass('safari');
-    }
-}
-
 // JS -> Ruby interactions
 
 // -- Commands
@@ -30,7 +7,7 @@ var commandId = 0;
 var commandCallbacks = {};
 var commandCallStack = [];
 var commandRunning = false;
-var maxCommandCallLength = $('body').hasClass('ie') ? 2000 : Number.MAX_SAFE_INTEGER;
+var maxCommandCallLength = Number.MAX_SAFE_INTEGER;
 
 function rubyCallCommand(command, params, callback) {
     var call = {
