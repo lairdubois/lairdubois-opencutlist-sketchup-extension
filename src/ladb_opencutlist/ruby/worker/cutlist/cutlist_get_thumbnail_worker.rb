@@ -1,5 +1,6 @@
 module Ladb::OpenCutList
 
+  require_relative '../../plugin'
   require_relative 'cutlist_convert_to_three_worker'
 
   class CutlistGetThumbnailWorker
@@ -28,7 +29,7 @@ module Ladb::OpenCutList
       definition = definitions[@definition_id]
       if definition
 
-        if Sketchup.version_number >= 1800000000
+        if Sketchup.version_number >= 1800000000 && Plugin.instance.webgl_available
 
           # Convert part drawing to ThreeJS
 

@@ -71,8 +71,11 @@ module Ladb::OpenCutList
 
       @temp_dir = nil
       @language = nil
+      @webgl_available = false
+
       @i18n_strings_cache = nil
       @app_defaults_cache = nil
+
       @manifest = nil
       @update_available = nil
       @update_muted = false
@@ -141,6 +144,10 @@ module Ladb::OpenCutList
         available_languages.push(File.basename(file, File.extname(file)))
       }
       available_languages.sort
+    end
+
+    def webgl_available
+      @webgl_available
     end
 
     def platform_is_win
@@ -818,7 +825,7 @@ module Ladb::OpenCutList
           write_settings_command(params)
         end
         register_command('core_dialog_loaded') do |params|
-          dialog_loaded_command
+          dialog_loaded_command(params)
         end
         register_command('core_dialog_ready') do |params|
           dialog_ready_command
@@ -1260,7 +1267,10 @@ module Ladb::OpenCutList
 
     end
 
-    def dialog_loaded_command
+    def dialog_loaded_command(params)
+
+      @webgl_available = params['webgl_available'] == true
+
       {
           :version => EXTENSION_VERSION,
           :build => EXTENSION_BUILD,
@@ -1276,6 +1286,7 @@ module Ladb::OpenCutList
           :language => Plugin.instance.language,
           :available_languages => Plugin.instance.get_available_languages,
           :decimal_separator => DimensionUtils.instance.decimal_separator,
+          :webgl_available => @webgl_available,
           :manifest => @manifest,
           :update_available => @update_available,
           :update_muted => @update_muted,

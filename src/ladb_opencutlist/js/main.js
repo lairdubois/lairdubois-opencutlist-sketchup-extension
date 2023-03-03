@@ -100,8 +100,19 @@ function triggerEvent(event, encodedParams) {
 // Ready !
 
 $(document).ready(function () {
-    rubyCallCommand('core_dialog_loaded', null, function (response) {
+
+    var webglAvailable;
+    try {
+        var canvas = document.createElement('canvas');
+        var context = canvas.getContext('webgl');
+        webglAvailable = context && context instanceof WebGLRenderingContext;
+    } catch (e) {
+        webglAvailable = false;
+    }
+
+    rubyCallCommand('core_dialog_loaded', { webgl_available: webglAvailable }, function (response) {
         $('body').ladbDialog(response);
         rubyCallCommand('core_dialog_ready');
     });
+
 });

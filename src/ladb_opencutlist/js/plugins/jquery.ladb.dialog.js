@@ -41,6 +41,7 @@
             language: options.language,
             available_languages: options.available_languages,
             decimal_separator: options.decimal_separator,
+            webgl_available: options.webgl_available,
             manifest: options.manifest,
             update_available: options.update_available,
             update_muted: options.update_muted,

@@ -19,6 +19,7 @@ module Ladb::OpenCutList
           path = path + '.json'
         end
 
+        # Retrieve global presets
         global_presets = Plugin.instance.get_global_presets
 
         # Write json file and wrap data with hexdigest for integrity control
@@ -26,7 +27,6 @@ module Ladb::OpenCutList
                                      :hexdigest => Digest::MD5.hexdigest(JSON.dump(global_presets)),
                                      :presets => global_presets
                                    }))
-
 
         return {
           :success => true
