@@ -39,16 +39,7 @@ function shiftCommandCallStack() {
             commandRunning = true;
             var call_json = JSON.stringify(call);
             var encoded_call_json = encodeURIComponent(call_json);
-            if (encoded_call_json.length > maxCommandCallLength) {
-                // Split json string into multiple chunks to avoid IE url parameter max size = 2048
-                // /!\ Caution chunk system doesn't work on Chrome.
-                var chunks = call_json.match(new RegExp('.{1,' + maxCommandCallLength + '}', 'g'));
-                for (var i = 0 ; i < chunks.length; i++) {
-                    window.location.href = "skp:ladb_opencutlist_command@" + i + "/" + (chunks.length - 1) + "/" + chunks[i];
-                }
-            } else {
-                window.location.href = "skp:ladb_opencutlist_command@0/0/" + encoded_call_json;
-            }
+            window.location.href = "skp:ladb_opencutlist_command@" + encoded_call_json;
         }
     }
 }

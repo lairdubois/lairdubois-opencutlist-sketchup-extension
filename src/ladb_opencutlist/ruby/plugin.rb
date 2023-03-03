@@ -907,19 +907,11 @@ module Ladb::OpenCutList
       dialog_set_position(@dialog_left, @dialog_top)
 
       # Setup dialog actions
-      call_json = ''
-      @dialog.add_action_callback('ladb_opencutlist_command') do |action_context, chunk|
-        match = /^([0-9]+)\/([0-9]+)\/(.+)$/.match(chunk)
-        current_chunk_index = match[1]
-        last_chunk_index = match[2]
-        call_json += match[3]
-        if current_chunk_index == last_chunk_index
-          call = JSON.parse(call_json)
-          call_json = ''
-          response = execute_command(call['command'], call['params'])
-          script = "rubyCommandCallback(#{call['id']}, '#{response.is_a?(Hash) ? Base64.strict_encode64(JSON.generate(response)) : ''}');"
-          @dialog.execute_script(script) if @dialog
-        end
+      @dialog.add_action_callback('ladb_opencutlist_command') do |action_context, call_json|
+        call = JSON.parse(call_json)
+        response = execute_command(call['command'], call['params'])
+        script = "rubyCommandCallback(#{call['id']}, '#{response.is_a?(Hash) ? Base64.strict_encode64(JSON.generate(response)) : ''}');"
+        @dialog.execute_script(script) if @dialog
       end
 
     end
