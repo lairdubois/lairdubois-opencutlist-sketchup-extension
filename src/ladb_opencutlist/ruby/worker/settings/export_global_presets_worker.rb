@@ -4,7 +4,10 @@ module Ladb::OpenCutList
 
   class ExportGlobalPresetsWorker
 
-    def initialize
+    def initialize(settings)
+
+      @paths_filter = settings.fetch('paths_filter')
+
     end
 
     # -----
@@ -19,13 +22,25 @@ module Ladb::OpenCutList
           path = path + '.json'
         end
 
-        # Retrieve global presets
+        # Filter global presets
+        filtred_presets = {}
         global_presets = Plugin.instance.get_global_presets
+        global_presets.each do |dictionary, dh|
+          dh.each do |section, sh|
+            sh.each do |name, values|
+              if @paths_filter.include?("#{dictionary}|#{section}|#{name}")
+                filtred_presets[dictionary] = {} unless filtred_presets[dictionary]
+                filtred_presets[dictionary][section] = {} unless filtred_presets[dictionary][section]
+                filtred_presets[dictionary][section][name] = values
+              end
+            end
+          end
+        end
 
         # Write json file and wrap data with hexdigest for integrity control
         File.write(path, JSON.dump({
-                                     :hexdigest => Digest::MD5.hexdigest(JSON.dump(global_presets)),
-                                     :presets => global_presets
+                                     :hexdigest => Digest::MD5.hexdigest(JSON.dump(filtred_presets)),
+                                     :presets => filtred_presets
                                    }))
 
         return {

@@ -27,6 +27,159 @@
         $('.ladb-reaload-msg-' + language, $reloadAlert).show();
     };
 
+    LadbTabSettings.prototype.bindExportImportGlobalPresetModal = function (actionName, presets, btnActionCallback) {
+        var that = this;
+
+        var $modal = that.appendModalInside('ladb_settings_modal_global_presets', 'tabs/settings/_modal-global-presets.twig', {
+            actionName: actionName,
+            presets: presets
+        });
+
+        // Fetch UI elements
+        var $btnSelectAll = $('#ladb_settings_btn_select_all', $modal);
+        var $btnUnselectAll = $('#ladb_settings_btn_unselect_all', $modal);
+        var $btnAction = $('#ladb_settings_btn_action', $modal);
+
+        var fnUpdateRow = function ($row, selected) {
+            if (selected === undefined) {    // Undefined  = toggle
+                $row.toggleClass('selected')
+                selected = $row.hasClass('selected');
+            } else {
+                if (selected) {
+                    $row.addClass('selected');
+                } else {
+                    $row.removeClass('selected');
+                }
+            }
+            var $i = $('i', $row);
+            if (selected) {
+                $i.addClass('ladb-opencutlist-icon-check-box-with-check-sign');
+                $i.removeClass('ladb-opencutlist-icon-check-box');
+            } else {
+                $i.removeClass('ladb-opencutlist-icon-check-box-with-check-sign');
+                $i.addClass('ladb-opencutlist-icon-check-box');
+            }
+        };
+        var fnUpdateActionStatus = function () {
+            $btnAction.prop('disabled', $('.ladb-preset-row.selected').length === 0);
+        }
+
+        // Bind buttons
+        $btnSelectAll.on('click', function () {
+            $('.ladb-preset-row', $modal).each(function () {
+                fnUpdateRow($(this), true);
+            });
+            fnUpdateActionStatus();
+            $(this).blur();
+            return false;
+        });
+        $btnUnselectAll.on('click', function () {
+            $('.ladb-preset-row', $modal).each(function () {
+                fnUpdateRow($(this), false);
+            });
+            fnUpdateActionStatus();
+            $(this).blur();
+            return false;
+        });
+        $btnAction.on('click', function () {
+
+            var pathsFilter = []
+            $('.ladb-preset-row', $modal).each(function () {
+                if ($(this).hasClass('selected')) {
+                    var path = $(this).data('path');
+                    pathsFilter.push(path);
+                }
+            });
+
+            btnActionCallback(pathsFilter);
+
+            // Hide modal
+            $modal.modal('hide');
+
+        });
+        $('.ladb-preset-row', $modal).on('click', function () {
+            fnUpdateRow($(this))
+            fnUpdateActionStatus();
+        });
+
+        fnUpdateActionStatus();
+
+        // Show modal
+        $modal.modal('show');
+
+    };
+
+    LadbTabSettings.prototype.exportGlobalPresets = function () {
+        var that = this;
+
+        rubyCallCommand('settings_get_global_presets', null, function (response) {
+
+            if ($.isEmptyObject(response)) {
+                that.dialog.notifyErrors([ 'tab.settings.presets.error.no_preset_to_export' ]);
+            } else {
+                that.bindExportImportGlobalPresetModal('export', response, function (pathsFilter) {
+
+                    rubyCallCommand('settings_export_global_presets_to_json', { paths_filter: pathsFilter }, function (response) {
+
+                        if (response.success) {
+                            that.dialog.notify(i18next.t('tab.settings.presets.export_global_presets_success'), 'success');
+                        }
+
+                    });
+
+                });
+            }
+
+        });
+
+    };
+
+    LadbTabSettings.prototype.importGlobalPresets = function () {
+        var that = this;
+
+        rubyCallCommand('settings_load_global_presets_from_json', null, function (response) {
+
+            if (!response.cancelled) {
+                if (response.errors) {
+                    that.dialog.notifyErrors(response.errors);
+                } else {
+
+                    if ($.isEmptyObject(response)) {
+                        that.dialog.notifyErrors([ 'tab.settings.presets.error.no_preset_to_import' ]);
+                    } else {
+                        that.bindExportImportGlobalPresetModal('import', response, function (pathsFilter) {
+
+                            for (var dictionary in response) {
+                                for (var section in response[dictionary]) {
+                                    for (var name in response[dictionary][section]) {
+                                        if (pathsFilter.includes(dictionary + '|' + section + '|' + name)) {
+                                            rubyCallCommand('core_set_global_preset', {
+                                                dictionary: dictionary,
+                                                section: section,
+                                                name: name,
+                                                values: response[dictionary][section][name]
+                                            });
+                                        }
+                                    }
+                                }
+                            }
+
+                            that.dialog.alert(null, i18next.t('tab.settings.presets.import_global_presets_success'), function () {
+                                rubyCallCommand('core_dialog_hide');
+                            }, {
+                                okBtnLabel: i18next.t('default.close')
+                            });
+
+                        });
+                    }
+
+                }
+            }
+
+        });
+
+    };
+
     // Init /////
 
     LadbTabSettings.prototype.registerCommands = function () {
@@ -56,28 +209,10 @@
         // Menu /////
 
         $('#ladb_item_export_global_presets', this.$element).on('click', function () {
-            rubyCallCommand('settings_export_global_presets', null, function (response) {
-
-                if (response.success) {
-                    that.dialog.notify(i18next.t('tab.settings.presets.export_global_presets_success'), 'success');
-                }
-
-            });
+            that.exportGlobalPresets();
         });
         $('#ladb_item_import_global_presets', this.$element).on('click', function () {
-            rubyCallCommand('settings_import_global_presets', null, function (response) {
-
-                if (response.errors) {
-                    that.dialog.notifyErrors(response.errors);
-                } else if (response.success) {
-                    that.dialog.alert(null, i18next.t('tab.settings.presets.import_global_presets_success'), function () {
-                        rubyCallCommand('core_dialog_hide');
-                    }, {
-                        okBtnLabel: i18next.t('default.close')
-                    });
-                }
-
-            });
+            that.importGlobalPresets();
         });
         $('#ladb_item_dump_global_presets', this.$element).on('click', function () {
             rubyCallCommand('settings_dump_global_presets');

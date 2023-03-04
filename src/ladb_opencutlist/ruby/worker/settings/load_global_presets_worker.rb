@@ -2,7 +2,7 @@ module Ladb::OpenCutList
 
   require_relative '../../plugin'
 
-  class ImportGlobalPresetsWorker
+  class LoadGlobalPresetsWorker
 
     def initialize
     end
@@ -28,21 +28,9 @@ module Ladb::OpenCutList
 
             if data['hexdigest'] == Digest::MD5.hexdigest(JSON.dump(data['presets']))
 
-              data['presets'].each do |dictionary, dh|
-                if dh.is_a?(Hash)
-                  dh.each do |section, sh|
-                    if sh.is_a?(Hash)
-                      sh.each do |name, values|
-                        Plugin.instance.set_global_preset(dictionary, values, name, section)
-                      end
-                    end
-                  end
-                end
-              end
+              # TODO cleanup obsolete dectionary ?
 
-              return {
-                :success => true
-              }
+              return data['presets']
             else
               return {
                 :errors => [ 'tab.settings.presets.error.failed_to_import_invalid_hexdigest' ]

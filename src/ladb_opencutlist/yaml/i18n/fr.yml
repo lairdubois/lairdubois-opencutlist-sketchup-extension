@@ -30,6 +30,8 @@ default:
   download: Télécharger
   upgrade: Mettre à jour
   copy: Copier
+  select_all: Tout sélectionner
+  unselect_all: Tout désélectionner
   empty_filename: Sans titre.skp
   help: Aide
   error: Zut !
@@ -142,6 +144,20 @@ core:
     tooltip:
       save_to: "Actualiser le préréglage '{{ name }}'"
       delete: "Supprimer le préréglage '{{ name }}'"
+    dictionary:
+      component_textinput_color: Palette de couleurs
+      cutlist_cuttingdiagram1d_options: Débit / Calepinage Barres et Chants
+      cutlist_cuttingdiagram2d_options: Débit / Calepinage Panneaux et Placages
+      cutlist_export_options: Débit / Exporter
+      cutlist_labels_options: Débit / Etiquettes
+      cutlist_layout_options: Débit / Dessin
+      cutlist_options: Débit / Options
+      cutlist_report_options: Débit / Estimation
+      importer_import_options: Importer / Importer
+      importer_load_options: Importer / Ouvrir
+      materials_material_attributes: Matières / Attributs
+      materials_options: Matières / Options
+      settings_model: Paramètres / Modèle
   progress:
     please_wait: Calcul d'un monde de Paix
   component:
@@ -1227,8 +1243,13 @@ tab:
     currency_symbol: Symbole monétaire
     presets:
       export_global_presets: Exporter les préréglages
+      export_global_presets_help: |
+        Sélectionnez les préréglages que vous souhaitez exporter dans le fichier **.json**.
       export_global_presets_success: Les préréglages ont été exportés avec succès.
       import_global_presets: Importer des préréglages
+      import_global_presets_help: |
+        Sélectionnez les préréglages présents dans le fichier **.json** que vous souhaitez importer.
+        Attention, si un préréglage avec un nom identique existe déjà, il sera remplacé par la version importée.
       import_global_presets_success: |
         Les préréglages *OpenCutList* ont été importés avec succès.
         Afin de prendre en compte les changements, vous devez **fermer** et **réouvrir** la fenêtre OpenCutList.
@@ -1251,6 +1272,8 @@ tab:
         Les réglages *OpenCutList* du modèle courrant ont été réinitialisés.
         Afin de prendre en compte les changements, vous devez **fermer** et **réouvrir** la fenêtre OpenCutList.
       error:
+        no_preset_to_export: Aucun préréglage à exporter.
+        no_preset_to_import: Aucun préréglage à importer
         failed_to_import: "Impossible d'importer les préréglages : **{{ error }}**."
         failed_to_import_invalid_hexdigest: Ce fichier a été modifié. Il me peut pas être importé.
         failed_to_import_bad_file_format: Format de fichier invalide.

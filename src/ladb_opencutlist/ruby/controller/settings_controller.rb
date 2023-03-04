@@ -38,11 +38,14 @@ module Ladb::OpenCutList
       Plugin.instance.register_command('settings_reset_model_presets') do |params|
         reset_model_presets_command
       end
-      Plugin.instance.register_command('settings_export_global_presets') do |params|
-        export_global_presets_command
+      Plugin.instance.register_command('settings_get_global_presets') do |params|
+        get_global_presets_command
       end
-      Plugin.instance.register_command('settings_import_global_presets') do |params|
-        import_global_presets_command
+      Plugin.instance.register_command('settings_export_global_presets_to_json') do |settings|
+        export_global_presets_to_json_command(settings)
+      end
+      Plugin.instance.register_command('settings_load_global_presets_from_json') do |params|
+        load_global_presets_from_json_command
       end
 
     end
@@ -138,21 +141,25 @@ module Ladb::OpenCutList
       Plugin.instance.reset_model_presets
     end
 
-    def export_global_presets_command
+    def get_global_presets_command
+      Plugin.instance.get_global_presets
+    end
+
+    def export_global_presets_to_json_command(settings)
       require_relative '../worker/settings/export_global_presets_worker'
 
       # Setup worker
-      worker = ExportGlobalPresetsWorker.new
+      worker = ExportGlobalPresetsWorker.new(settings)
 
       # Run !
       worker.run
     end
 
-    def import_global_presets_command
-      require_relative '../worker/settings/import_global_presets_worker'
+    def load_global_presets_from_json_command
+      require_relative '../worker/settings/load_global_presets_worker'
 
       # Setup worker
-      worker = ImportGlobalPresetsWorker.new
+      worker = LoadGlobalPresetsWorker.new
 
       # Run !
       worker.run
