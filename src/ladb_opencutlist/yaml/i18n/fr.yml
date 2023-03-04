@@ -146,18 +146,18 @@ core:
       delete: "Supprimer le préréglage '{{ name }}'"
     dictionary:
       component_textinput_color: Palette de couleurs
-      cutlist_cuttingdiagram1d_options: Débit / Calepinage Barres et Chants
-      cutlist_cuttingdiagram2d_options: Débit / Calepinage Panneaux et Placages
-      cutlist_export_options: Débit / Exporter
-      cutlist_labels_options: Débit / Etiquettes
-      cutlist_layout_options: Débit / Dessin
-      cutlist_options: Débit / Options
-      cutlist_report_options: Débit / Estimation
-      importer_import_options: Importer / Importer
-      importer_load_options: Importer / Ouvrir
-      materials_material_attributes: Matières / Attributs
-      materials_options: Matières / Options
-      settings_model: Paramètres / Modèle
+      cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
+      cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
+      cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
+      cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
+      cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
+      cutlist_options: $t(tab.cutlist.label) / $t(default.options)
+      cutlist_report_options: $t(tab.cutlist.label) / $t(tab.cutlist.report.title)
+      importer_import_options: $t(tab.importer.label) / $t(default.import)
+      importer_load_options: $t(tab.importer.label) / $t(default.open)
+      materials_material_attributes: $t(tab.materials.label) / Attributs
+      materials_options: $t(tab.materials.label) / $t(default.options)
+      settings_model: $t(tab.settings.label) / Modèle
   progress:
     please_wait: Calcul d'un monde de Paix
   component:
