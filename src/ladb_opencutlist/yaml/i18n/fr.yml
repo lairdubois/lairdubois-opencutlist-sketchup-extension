@@ -1244,7 +1244,8 @@ tab:
     presets:
       export_global_presets: Exporter les préréglages
       export_global_presets_help: |
-        Sélectionnez les préréglages que vous souhaitez exporter dans le fichier **.json**.
+        Cette fonctionnalité vous permet d'exporter vos préréglages vers un fichier **.json**.
+        Sélectionnez les préréglages que vous souhaitez y exporter.
       export_global_presets_success: Les préréglages ont été exportés avec succès.
       import_global_presets: Importer des préréglages
       import_global_presets_help: |

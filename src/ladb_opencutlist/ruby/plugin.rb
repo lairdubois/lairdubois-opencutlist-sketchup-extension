@@ -447,6 +447,7 @@ module Ladb::OpenCutList
 
       name = PRESETS_DEFAULT_NAME if name.nil?
       section = '0' if section.nil?
+      section = section.to_s unless section.is_a?(String)
 
       # Read global presets cache if not previouly cached
       read_global_presets if @global_presets_cache.nil?
@@ -489,6 +490,7 @@ module Ladb::OpenCutList
 
     def list_global_preset_names(dictionary, section = nil)
       section = '0' if section.nil?
+      section = section.to_s unless section.is_a?(String)
       read_global_presets if @global_presets_cache.nil?
       return @global_presets_cache[dictionary][section].keys.select { |k, v| k != PRESETS_DEFAULT_NAME }.sort if @global_presets_cache.has_key?(dictionary) && @global_presets_cache[dictionary].has_key?(section)
       []
@@ -542,6 +544,7 @@ module Ladb::OpenCutList
     def set_model_preset(dictionary, values, section = nil, app_defaults_section = nil, fire_event = false)
 
       section = '0' if section.nil?
+      section = section.to_s unless section.is_a?(String)
       app_defaults_section = '0' if app_defaults_section.nil?
 
       # Read model presets cache if not previouly cached
@@ -583,6 +586,7 @@ module Ladb::OpenCutList
     def get_model_preset_context(dictionary, section = nil, app_defaults_section = nil)
 
       section = '0' if section.nil?
+      section = section.to_s unless section.is_a?(String)
       app_defaults_section = '0' if app_defaults_section.nil?
 
       # Read model presets cache if not previouly cached
