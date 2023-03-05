@@ -198,7 +198,7 @@ module Ladb::OpenCutList
     def get_app_defaults(dictionary, section = nil, raise_not_found = true)
 
       section = '0' if section.nil?
-      section = section.to_s
+      section = section.to_s unless section.is_a?(String)
       cache_key = "#{dictionary}_#{section}"
 
       unless @app_defaults_cache && @app_defaults_cache.has_key?(cache_key)
@@ -402,6 +402,7 @@ module Ladb::OpenCutList
 
       name = PRESETS_DEFAULT_NAME if name.nil?
       section = '0' if section.nil?
+      section = section.to_s unless section.is_a?(String)
 
       # Force name to be string
       name = name.to_s unless name.is_a? String
