@@ -30,6 +30,8 @@ default:
   download: Herunterladen
   upgrade: Aktualisieren
   copy: Kopieren
+  select_all: Alles selektieren
+  unselect_all: Alles deselektieren
   empty_filename: Unbenannt.skp
   help: Hilfe
   error: Verflixt!
@@ -92,9 +94,6 @@ core:
       Es wird nicht empfohlen, diese in der Produktion zu verwenden.
 
       Um einen Fehler zu melden: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
-    old_su: |
-      Sie verwenden eine ältere Version von SketchUp ({{ sketchup_version }}). Dieses Plugin wird funktionnieren, es könnten aber Fehler auftreten.
-      Um OpenCutList besser zu nutzen, empfehlen wir mindestens die Version **SketchUp 2017** zu installieren.
     feature_locked: "*In dieser Version von SketchUp nicht deaktivierbar*"
   event:
     model_change: Das aktive Modell wurde verändert.
@@ -102,12 +101,12 @@ core:
     material_change: Mindestens ein Material wurde verändert.
     selection_change: Die Auswahl im aktiven Modell wurde verändert.
   upgrade:
-    unavailable: Die neuste Version von *OpenCutList* konnte nicht gefunden werden.
+    unavailable: Die neueste Version von *OpenCutList* wurde nicht gefunden.
     available: |
-      Eine neue Version von *OpenCutList* steht zu Verfügung.
-      Aktualisieren Sie um die neuesten Funktionen zu erhalten!
+      Eine neue Version von *OpenCutList* ist verfügbar.
+      Aktualisieren Sie sie, um über die neuesten Funktionen zu verfügen!
     up_to_date: |
-      Sie haben bereits die aktuellste Version von *OpenCutList*.
+      Sie verfügen über die neueste Version von *OpenCutList*.
 
       *Beteiligen Sie sich finanziell am Projekt, damit wir noch mehr Verbesserungen für Sie einbauen können!*
     downloading: Ladevorgang läuft
@@ -145,6 +144,20 @@ core:
     tooltip:
       save_to: "Voreinstellung '{{ name }}' aktualisieren"
       delete: "Voreinstellung '{{ name }}' löschen"
+    dictionary:
+      component_textinput_color: Farbpalette
+      cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
+      cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
+      cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
+      cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
+      cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
+      cutlist_options: $t(tab.cutlist.label) / $t(default.options)
+      cutlist_report_options: $t(tab.cutlist.label) / $t(tab.cutlist.report.title)
+      importer_import_options: $t(tab.importer.label) / $t(default.import)
+      importer_load_options: $t(tab.importer.label) / $t(default.open)
+      materials_material_attributes: $t(tab.materials.label) / Attribute
+      materials_options: $t(tab.materials.label) / $t(default.options)
+      settings_model: $t(tab.settings.label) / Modell
   progress:
     please_wait: Berechnung einer Welt des Friedens
   component:
@@ -1230,8 +1243,14 @@ tab:
     currency_symbol: Währungssymbol
     presets:
       export_global_presets: Exportieren
+      export_global_presets_help: |
+        Diese Funktion ermöglicht es Ihnen, Ihre Voreinstellungen in eine **.json**-Datei zu exportieren.
+        Wählen Sie die Voreinstellungen aus, die Sie in diese Datei exportieren möchten.
       export_global_presets_success: Die Voreinstellungen wurden erfolgreich exportiert.
       import_global_presets: Importieren
+      import_global_presets_help: |
+        Wählen Sie aus der **.json**-Datei die Voreinstellungen, welche Sie importieren möchten.
+        Achtung: Wenn bereits eine Voreinstellung mit einem identischen Namen existiert, wird diese durch die importierte Version ersetzt.
       import_global_presets_success: |
         Die Voreinstellungen *OpenCutList* wurden erfolgreich importiert.
         Um die Änderungen zu berücksichtigen, müssen Sie das Fenster von OpenCutList **schließen** und **neu öffnen**.
@@ -1254,6 +1273,8 @@ tab:
         Die Einstellungen von *OpenCutList* für das aktuelle Modell wurden zurückgesetzt.
         Um die Änderungen zu berücksichtigen, müssen Sie das Fenster von OpenCutList **schließen** und **neu öffnen**.
       error:
+        no_preset_to_export: Keine Voreinstellungen zu exportieren.
+        no_preset_to_import: Keine Voreinstellungen zu importieren.
         failed_to_import: "Voreinstellungen konnten nicht importiert werden: **{{ error }}**."
         failed_to_import_invalid_hexdigest: Diese Datei wurde verändert. Sie kann nicht importiert werden.
         failed_to_import_bad_file_format: Ungültiges Dateiformat.
