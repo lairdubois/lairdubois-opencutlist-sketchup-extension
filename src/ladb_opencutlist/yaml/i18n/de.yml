@@ -899,9 +899,9 @@ tab:
         Wählen Sie, ob die zu druckende Seite eine Kopfzeile mit dem Namen des Dokuments, seiner Beschreibung und dem Datum enthält.
         Ohne Kopfzeile nimmt die Übersichtszeichnung die gesamte Seite ein.
       option_camera: Kamera
-      option_camera_view: $t(core.component.three_viewer.view)
+      option_camera_view: Ansicht
       option_camera_view_custom: Benutzerdefiniert
-      option_camera_zoom: $t(core.component.three_viewer.zoom)
+      option_camera_zoom: Maßstab
       option_camera_zoom_auto: Automatisch
       option_camera_zoom_custom: Benutzerdefiniert
       option_camera_target: Position
