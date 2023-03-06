@@ -30,6 +30,8 @@ default:
   download: Завантажити
   upgrade: Оновлення
   copy: Копіювати
+  select_all: Вибрати все
+  unselect_all: Зняти виділення з усіх
   empty_filename: Безіменний.skp
   help: Допомога
   error: Виправити!
@@ -73,7 +75,7 @@ core:
     name: OpenCutList
     command:
       dialog: OpenCutList
-      smart_paint: Назначення матеріалів на деталі
+      smart_paint: Нанесення матеріалів на деталі
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
@@ -92,9 +94,6 @@ core:
       Не рекомендується використовувати її у виробництві.
 
       Щоб повідомити про помилку: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
-    old_su: |
-      Ви використовуєте старішу версію SketchUp ({{ sketchup_version }}). Цей плагін працює, але відомі деякі помилки.
-      Щоб скористатися всіма перевагами OpenCutList, рекомендується використовувати принаймні версію **SketchUp 2017**.
     feature_locked: "*Не вимикається в цій версії SketchUp*"
   event:
     model_change: Активна модель була змінена.
@@ -145,6 +144,20 @@ core:
     tooltip:
       save_to: "Оновити пресет '{{ name }}'"
       delete: "Видалити пресет '{{ name }}'"
+    dictionary:
+      component_textinput_color: Палітра кольорів
+      cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
+      cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
+      cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
+      cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
+      cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
+      cutlist_options: $t(tab.cutlist.label) / $t(default.options)
+      cutlist_report_options: $t(tab.cutlist.label) / $t(tab.cutlist.report.title)
+      importer_import_options: $t(tab.importer.label) / $t(default.import)
+      importer_load_options: $t(tab.importer.label) / $t(default.open)
+      materials_material_attributes: $t(tab.materials.label) / Атрибути
+      materials_options: $t(tab.materials.label) / $t(default.options)
+      settings_model: $t(tab.settings.label) / Модель
   progress:
     please_wait: Глобальний розрахунок
   component:
@@ -155,6 +168,19 @@ core:
       remove: Забути цей колір
     textinput_code:
       help: "Натисніть **@**, щоб відкрити введення змінних даних."
+    three_viewer:
+      view: "Вид {{ view }}"
+      view_isometric: Ізометрія
+      view_top: Зверху
+      view_bottom: Знизу
+      view_front: Спереду
+      view_back: Ззаду
+      view_left: Ліворуч
+      view_right: Праворуч
+      zoom: "Маштаб {{ zoom }}"
+      explode_factor: Величина рознесення
+      toggle_box_helper: Показати або приховати панель інструментів
+      toggle_axes_helper: Показати або приховати осі
   docs:
     error:
       failed_to_load: |
@@ -247,7 +273,7 @@ tab:
       multiple_content_layers: "Увага, ця деталь складається з підгруп, що присутні в {{ count }} різних шарах:<br>{{ layers }}"
       children_warnings: "Обережно, у згрупованих деталях є {{ count }} попередження"
       children_warnings_plural: "Обережно, у згрупованих деталях є {{ count }} попереджень"
-      children_size_increase: "Цей розмір збільшується на розмір {{ count }} комплектуючого виробу"
+      children_size_increase: "Цей розмір збільшується на розмір {{ count }} згрупованих деталей"
       invalid_final_area: "Увага, цю загальну площу неможливо обчислити, оскільки {{ count }} деталь (із {{ total }}) має некоректну площу"
       invalid_final_area_plural: "Увага, цю загальну площу неможливо обчислити, оскільки {{ count }} деталей (із {{ total }}) мають некоректну площу"
       is_dynamic_attributes_name: Позначення цієї деталі взято з атрибуту 'Name' динамічного компонента
@@ -275,10 +301,11 @@ tab:
       numbers_save: Запам'ятати номери деталей
       numbers_reset: Скинути номери деталей
       highlight_parts: $t(tab.cutlist.highlight_parts)
+      group_layout_parts: Друк загального креслення деталей групи
       group_numbers_save: Зберегти номери деталей цієї групи
       group_numbers_reset: Скинути номери деталей групи
       group_cuttingdiagram: Карта розкрою
-      group_labels: Друк етикеток
+      group_labels: Друк етикеток згрупованих деталей
       edit_material: "Редагувати матеріал '{{ material_name }}'"
       expand_all: Розгорнути всі рядки
       collapse_all: Згорнути всі рядки
@@ -314,9 +341,9 @@ tab:
       instance_count_by_part_1: 1 одиниця в комплекті
       instance_count_by_part_2: 2 одиниці в комплекті
       mass: Маса
-      mass_help: Маса деталі буде використана під час створення **Звітів**.
+      mass_help: Маса деталі буде враховуватися під час створення звіту **Кошторис**.
       price: Ціна
-      price_help: Ціна деталі буде використана під час створення **Звітів**.
+      price_help: Ціна деталі буде врахована під час створення звіту **Кошторис**.
       thickness_layer_count: Число шарів
       thickness_layer_count_help: |
         Встановіть тут кількість шарів, які розділяють намальовану деталь по її товщині.
@@ -326,12 +353,12 @@ tab:
       description: Опис
       description_help: |
         *Опис* використовується для надання персоналізованої інформації щодо визначення кожної деталі.
-      tags: Теги
+      tags: Мітки
       tags_help: |
-        *Теги* дозволяють додавати власні ключові слова до визначення кожної деталі.
-        Ви можете додати скільки завгодно тегів.
-        Потім ви можете відфільтрувати деталі, видимі у вашому списку деталей, за цими тегами.
-      tags_multiple_info: Видимі лише загальні теги
+        *Мітки* дозволяють додавати власні ключові слова до визначення кожної деталі.
+        Ви можете додати скільки завгодно міток.
+        Потім ви можете відфільтрувати деталі, видимі у вашому списку деталей, за цими мітками.
+      tags_multiple_info: Видимі лише загальні мітки
       orientation: Орієнтація
       orientation_locked_on_axis: Блокування орієнтації по осях деталі
       orientation_locked_on_axis_help: |
@@ -374,6 +401,7 @@ tab:
       veneer_disabled_help: "Цю поверхню неможливо налаштувати, оскільки на цьому краю деталі в моделі не було виявлено поверхню, що має матеріал."
       multiple_values: Множинні значення
       export_to_skp: Експорт (.skp)
+      loading_preview: Завантаження попереднього перегляду
     export_to_skp:
       title: Експорт в файл .skp
     option:
@@ -401,15 +429,15 @@ tab:
       part_number_sequence_by_group_help: "Якщо цей параметр активовано, нумерація деталей буде починатись на 1 (або A) у кожній окремій групі (список деталей з однаковим матеріалом і товщиною)."
       part_folding: Згрупувати однакові деталі
       part_folding_help: |
-        Якщо параметр увімкнено, то деталі з **суцільної деревини, листів або дошок**, що мають **однаковий допустимий розмір**, з **однаковими тегами** та **однаковою обробленою поверхнею** *( якщо область відображення не прихована)* буде згруповано в одному рядку в *Списку деталей*.
+        Якщо параметр увімкнено, то деталі з **суцільної деревини, листів або дошок**, що мають **однаковий допустимий розмір**, з **однаковими мітками** та **однаковою обробленою поверхнею** *( якщо область відображення не прихована)* буде згруповано в одному рядку в *Списку деталей*.
 
         Деталі залишатимуться різними для редагування та макету етикетки.
       hide_entity_names: Приховати імена невизначених екземплярів
       hide_entity_names_help: "Якщо цей параметр активовано, **назви невизначених екземплярів** деталей не відображаються."
       hide_descriptions: Сховати описи
       hide_descriptions_help: "Якщо цю опцію активовано, **описи**, розміщені на деталях, не відображаються."
-      hide_tags: Приховати теги
-      hide_tags_help: "Якщо цю опцію активовано, **теги**, розміщені на деталях, не відображаються."
+      hide_tags: Приховати мітки
+      hide_tags_help: "Якщо цю опцію активовано, **мітки**, розміщені на деталях, не відображаються."
       hide_cutting_dimensions: Приховати пильні розміри
       hide_cutting_dimensions_help: "Якщо цю опцію активовано, **пильні** розміри деталей не відображаються."
       hide_bbox_dimensions: Приховати габаритні розміри
@@ -436,11 +464,11 @@ tab:
       property_name: Позначення
       property_count: Кількість
       property_edge_pattern: Кількість крайки
-      property_tags: Теги
+      property_tags: Мітки
       property_thickness_layer_count: Кількість шарів
-      tags: Теги
-      tags_help: "Налаштований список тегів, що пропонується у вікні властивостей деталі."
-      tags_placeholder: Додати тег
+      tags: Мітки
+      tags_help: "Налаштований список міток, що пропонується у вікні властивостей деталі."
+      tags_placeholder: Додати мітку
     list:
       filters: Фільтри
       filters_warning_0: "Цей фільтр приховує усі деталі !"
@@ -448,9 +476,9 @@ tab:
       filters_warning_plural: "Ця фільтрація відображає лише **{{ count }}** деталей із загальної кількості {{ total }}."
       edge_material_names_filter: Фільтр по матеріалу крайок
       veneer_material_names_filter: Фільтр по матеріалу шпона
-      tags_filter: Фільтр по Тегам
+      tags_filter: Фільтр по Міткам
       dimensions_help: Ілюстрація розмірів
-      summary: Специфікація
+      summary: Звіт
       material_type: Тип
       material_thickness: Матеріал / Товщина
       part_count: Кількість
@@ -525,7 +553,7 @@ tab:
       material_name: Матеріал
       entity_names: Назва
       description: Опис
-      tags: Теги
+      tags: Мітки
       edge_ymin: Крайка по довжині 1
       edge_ymax: Крайка по довжині 2
       edge_xmin: Крайка по ширині 1
@@ -543,9 +571,9 @@ tab:
       success:
         copied: Скопійовано в буфер обміну.
     report:
-      title: Звіт
+      title: Кошторис
       info_0: |
-        Ця функція дозволить Вам створити звіт з відображенням кількості, найменування **матеріалу**, його **маси** та **вартості** за розрахованими деталями в *карті розкрою*.
+        Створіть оцінку **ваги** та **вартості** **сировини**, необхідної для виготовлення деталей зі *списку деталей*.
       options_general: Загальні
       options_solid_wood: $t(tab.materials.type_1)
       option_solid_wood_coefficient: Коефіцієнт для *$t(tab.materials.type_1)*
@@ -563,16 +591,16 @@ tab:
       total_area: Σ Площь
       total_length: Σ Довжин
       error:
-        no_typed_material_parts: "Немає деталей з матеріалом певного типу (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** , **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** або **$t(tab.materials.type_5)**) представлений для створення звіту."
+        no_typed_material_parts: "Для складання кошторису деталі повинні мати певний тип матеріалу (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** , **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** або **$t(tab.materials.type_5)**)."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} помилка**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} помилок**."
       warning:
         is_group_selection: "Деталі, які містяться в **прихованих групах**, не будуть зараховані."
       tip:
         not_enough_data: |
-          Щоб цей звіт був правильно розрахований:
-          - Використовувані матеріали повинні мати принаймні одну налаштовану масу і ціну.
-          - Використовувана фурнітура повинна мати як мінімум масу і ціну.
+          Щоб цей звіт можна було правильно розрахувати:
+          - Використовувані матеріали повинні мати хоча б налаштовану щільність і ціну.
+          - Використовувана фурнітура повинна мати хоча б одну масу і одну ціну.
     cuttingdiagram:
       title: Карта розкрою
       start_msg: Триває оптимізація
@@ -681,7 +709,7 @@ tab:
         scroll_to_block_2d: Прокрутка до першої панелі
       list:
         unplaced_parts: Нерозміщені деталі
-        summary: Специфікація
+        summary: Звіт
         count: К-ть
         bar: Погонаж
         sheet: Панель
@@ -794,7 +822,7 @@ tab:
         part_length: Пильна довжина
         part_width: Пильна ширина
         part_thickness: Товщина
-        part_tags: Теги
+        part_tags: Мітки
         part_batch: Пакет
         part_edge_ymin: Крайка по довжині 1
         part_edge_ymax: Крайка по довжині 2
@@ -817,6 +845,74 @@ tab:
       warning:
         is_part_selection: Ці етикетки сформовані на основі **вибраних деталей**.
         formula_not_available: Недоступно в цьому контексті
+    layout:
+      title: Креслення
+      options_layout: Склад
+      options_settings: Конфігурація
+      option_parts: Деталі
+      option_parts_colored: Колір
+      option_parts_colored_0: Безбарвний
+      option_parts_colored_1: Колір матеріалу
+      option_parts_colored_help: Дозволяє вибрати зовнішній вигляд деталей.
+      option_parts_opacity: Непрозорість
+      option_parts_opacity_0: Прозорий
+      option_parts_opacity_1: Матовий
+      option_parts_opacity_help: Дозволяє вибрати прозорість деталей.
+      option_pins: Шпильки
+      option_pins_hidden: Перегляд
+      option_pins_hidden_0: Зі шпильками
+      option_pins_hidden_1: Без шпильки
+      option_pins_hidden_help: "Показує або ховає шпильки, що вказують на частини, щоб вказати їх номер або позначення."
+      option_pins_colored: Колір
+      option_pins_colored_0: Безбарвний
+      option_pins_colored_1: Колір деталі
+      option_pins_colored_help: Дозволяє вибрати колір шпильок.
+      option_pins_text: Текст
+      option_pins_text_0: Номер деталі
+      option_pins_text_1: Позначення деталі
+      option_pins_text_2: Номер деталі та позначення
+      option_pins_text_help: "Дозволяє вибрати текст, який відображатиметься на значках шпильок."
+      option_pins_length: Довжина
+      option_pins_length_0: Без стрілки
+      option_pins_length_1: Малий
+      option_pins_length_2: Середня
+      option_pins_length_3: Велика
+      option_pins_length_help: Дозволяє вибрати довжину стрілки шпильок.
+      option_pins_direction: Напрямок
+      option_pins_direction_0: По Червоній осі
+      option_pins_direction_1: По Зеленій осі
+      option_pins_direction_2: По Синій осі
+      option_pins_direction_3: Вказує на центр батьківської групи
+      option_pins_direction_4: Вказує на центр виділення
+      option_pins_direction_help: "Дозволяє вибрати напрямок шпильок, щоб адаптувати їх читання відповідно до креслення."
+      option_page: Папір
+      option_page_format: Формат
+      option_page_format_portrait: Портрет
+      option_page_format_landscape: Альбом
+      option_page_format_custom: Персоналізований
+      option_page_width: Ширина
+      option_page_height: Висота
+      option_page_header: Заголовок
+      option_page_header_0: Без
+      option_page_header_1: З
+      option_page_header_help: |
+        Дозволяє вибрати, чи міститиме сторінка для друку заголовок із назвою документа, його описом, датою, одиницею та масштабом.
+        Без заголовка загальний малюнок займе всю сторінку.
+      option_camera: Камера
+      option_camera_view: Вид
+      option_camera_view_custom: Персоналізований
+      option_camera_zoom: Маштаб
+      option_camera_zoom_auto: Автоматичний
+      option_camera_zoom_custom: Персоналізований
+      option_camera_target: Положення
+      option_camera_target_auto: Автоматичний
+      option_camera_target_custom: Персоналізований
+      option_explode: Рознесений вид
+      error:
+        no_part: Немає деталей для відображення.
+      warning:
+        is_group_selection: "Деталі, що містяться в **прихованих групах** вашого списку деталей, не будуть виведені."
+        is_part_selection: Це креслення обмежено **вибраними деталями**.
     error:
       no_model: Жодна модель не відкрита. Вам доведеться дати мені трохи більше інформації ;)
       no_entities: Ваша модель порожня. Вам доведеться дати мені трохи більше інформації ;)
@@ -894,6 +990,9 @@ tab:
       cut_options: Параметри розкрою
       attributes: Атрибути
       thickness: Товщина
+      thickness_help: |
+        Готова товщина матеріалу.
+        *Якщо одиниці не вказано, буде враховано одиницю моделі.*
       length_increase: Припуск по довжині
       length_increase_help: Припуск додається до фактичної довжини для розрахунку **пильної довжини**.
       width_increase: Припуск по ширині
@@ -1027,7 +1126,7 @@ tab:
       bbox_width: Пильна ширина
       bbox_thickness: Пильна товщина
       material: Матеріал
-      tags: Теги
+      tags: Мітки
     tooltip:
       errors: "Ця деталь не буде імпортована, оскільки містить помилки"
       warnings: "Ця деталь буде імпортована, але вона містить наступні попередження"
@@ -1142,7 +1241,19 @@ tab:
     suppress_units_display: Показати одиниці вимірювання для кожного значення
     mass_unit: Одиниця маси
     currency_symbol: Символ валюти
-    menu:
+    presets:
+      export_global_presets: Експорт пресетів
+      export_global_presets_help: |
+        Ця функція дозволяє експортувати ваші пресети у файл **.json**.
+        Виберіть пресети, які потрібно експортувати.
+      export_global_presets_success: Попередні налаштування успішно експортовано.
+      import_global_presets: Імпорт пресетів
+      import_global_presets_help: |
+        Виберіть пресети у файлі **.json**, які ви хочете імпортувати.
+        Увага, якщо пресет із такою назвою вже існує, його буде замінено імпортованою версією.
+      import_global_presets_success: |
+        Пресети *OpenCutList* успішно імпортовано.
+        Щоб врахувати зміни, потрібно **закрити** та **знову відкрити** вікно OpenCutList.
       dump_global_presets: Дамп пресетів
       dump_model_presets: Дамп пресетів моделі
       reset_global_presets: Скинути попередні налаштування
@@ -1161,6 +1272,12 @@ tab:
       reset_model_presets_success: |
         Налаштування *OpenCutList* поточної моделі скинуто.
         Щоб застосувати всі зміни, потрібно **закрити** та **знову відкрити** вікно OpenCutList.
+      error:
+        no_preset_to_export: Немає пресету для експорту.
+        no_preset_to_import: Немає пресету для імпорту.
+        failed_to_import: "Не вдалося імпортувати пресет: **{{ error }}**."
+        failed_to_import_invalid_hexdigest: Цей файл було змінено. Його не можна імпортувати.
+        failed_to_import_bad_file_format: Недійсний формат файлу.
   about:
     label: Пропозиції
     title: Пропозиції
@@ -1170,17 +1287,17 @@ tab:
       *OpenCutList* розроблений [Борис Болант](https://www.lairdubois.fr/@borisbeaulant) і [Мартін Мюллер](https://www.lairdubois.fr/@mobilarte). *Список [співавторів](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: Переклади
     credits_translators: |
-      - [Мартін Мюллер](https://www.lairdubois.fr/@mobilarte) (*англійська*, *німецька*)
-      - Володимир Бадуля (*російська*)
-      - П'єрлуїджі Коломбо (*італійська*)
-      - Нейтон Санчес Барбоза, виправлення і рецензування [Карлос Макіель ELT](https://www.inglesonline.pro.br) (*португальська*)
-      - [Леонардо Ромеро Гіменес](https://latablamarilla.com/) (*іспанська*)
+      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*англійська*, *німецька*)
+      - Vladimir Badulya (*російська*)
+      - Pierluigi Colombo (*італійська*)
+      - Nayton Sanches Barbosa, виправлення і рецензування [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*португальська*)
+      - [Leonardo Romero Giménez](https://latablamarilla.com/) (*іспанська*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*чеська*)
-      - [Ярек Осташевський](https://www.domidrewno.pl), Грег Грегоський (*польська*)
-      - Сергій Ісупов (*іврит*), без інтерфейсу справа наліво
-      - Soul Issam (*арабська*), без інтерфейсу справа наліво
-      - Дені Дхондт, Ерік Лугтігейд (*голландська*)
-      - Нгуєн Нгок Тан (*в'єтнамська*)
+      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*польська*)
+      - Sergey Isupov (*іврит*), без інтерфейсу зправа на ліво
+      - Soul Issam (*арабська*), без інтерфейсу зправа на ліво
+      - Dany Dhondt, Eric Lugtigheid (*голландська*)
+      - Nguyen Ngoc Tan (*в’єтнамська*)
     credits_description: |
       Розробка цього розширення є частиною проекту платформи спільного доступу [L'Air du Bois](https://www.lairdubois.fr).
       І як такий, він також є *Open Source* і доступний під [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) на своєму [репозиторій GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).

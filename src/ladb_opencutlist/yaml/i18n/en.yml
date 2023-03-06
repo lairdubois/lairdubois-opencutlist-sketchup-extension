@@ -30,6 +30,8 @@ default:
   download: Download
   upgrade: Update
   copy: Copy
+  select_all: Select all
+  unselect_all: Unselect all
   empty_filename: Untitled.skp
   help: Help
   error: Darn!
@@ -92,9 +94,6 @@ core:
       It is not recommended to use it in production.
 
       To report a bug: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
-    old_su: |
-      You are using an older version of SketchUp ({{ sketchup_version }}). This plugin will work, but may exhibit certain bugs.
-      To take full advantage of OpenCutList, we recommend to upgrade to at least **SketchUp 2017**.
     feature_locked: "*Not deactivable in this version of SketchUp*"
   event:
     model_change: The active model has been changed.
@@ -145,6 +144,20 @@ core:
     tooltip:
       save_to: "Update preset '{{ name }}'"
       delete: "Delete preset '{{ name }}'"
+    dictionary:
+      component_textinput_color: Color Palette
+      cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
+      cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
+      cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
+      cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
+      cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
+      cutlist_options: $t(tab.cutlist.label) / $t(default.options)
+      cutlist_report_options: $t(tab.cutlist.label) / $t(tab.cutlist.report.title)
+      importer_import_options: $t(tab.importer.label) / $t(default.import)
+      importer_load_options: $t(tab.importer.label) / $t(default.open)
+      materials_material_attributes: $t(tab.materials.label) / Attributes
+      materials_options: $t(tab.materials.label) / $t(default.options)
+      settings_model: $t(tab.settings.label) / Model
   progress:
     please_wait: Calculating a world of peace
   component:
@@ -1230,8 +1243,14 @@ tab:
     currency_symbol: Currency symbol
     presets:
       export_global_presets: Export presets
+      export_global_presets_help: |
+        This feature allows you to export your presets to a **.json** file.
+        Select the presets you want to export to it.
       export_global_presets_success: Presets have been successfully exported.
       import_global_presets: Import presets
+      import_global_presets_help: |
+        Select the presets in the **.json** file that you would like to import.
+        Please note that if a preset with an identical name already exists, it will be replaced by the imported version.
       import_global_presets_success: |
         *OpenCutList* presets have been successfully imported.
         In order to reflect the changes, you must **close** and **reopen** the OpenCutList window.
@@ -1254,6 +1273,8 @@ tab:
         The *OpenCutList* presets for the current model have been reset.
         In order to reflect the changes, you must **close** and **reopen** the OpenCutList window.
       error:
+        no_preset_to_export: No presets to export.
+        no_preset_to_import: No presets to import.
         failed_to_import: "Impossible to import the presets: **{{ error }}**."
         failed_to_import_invalid_hexdigest: This file was modified. It cannot be imported.
         failed_to_import_bad_file_format: Invalid file format.

@@ -1274,7 +1274,7 @@ tab:
         Afin de prendre en compte les changements, vous devez **fermer** et **réouvrir** la fenêtre OpenCutList.
       error:
         no_preset_to_export: Aucun préréglage à exporter.
-        no_preset_to_import: Aucun préréglage à importer
+        no_preset_to_import: Aucun préréglage à importer.
         failed_to_import: "Impossible d'importer les préréglages : **{{ error }}**."
         failed_to_import_invalid_hexdigest: Ce fichier a été modifié. Il me peut pas être importé.
         failed_to_import_bad_file_format: Format de fichier invalide.
