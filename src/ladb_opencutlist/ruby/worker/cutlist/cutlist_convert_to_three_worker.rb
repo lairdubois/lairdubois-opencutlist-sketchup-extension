@@ -4,6 +4,7 @@ module Ladb::OpenCutList
   require_relative '../../helper/hashable_helper'
   require_relative '../../utils/axis_utils'
   require_relative '../../model/attributes/material_attributes'
+  require_relative '../../lib/lgeom/transformation_helper'
 
   class CutlistConvertToThreeWorker
 
@@ -29,7 +30,7 @@ module Ladb::OpenCutList
       active_entity = model.active_path.nil? ? nil : model.active_path.last
 
       three_model_def = ThreeModelDef.new
-      three_model_def.edit_matrix = _to_three_matrix(model.edit_transform)
+      three_model_def.edit_matrix = _to_three_matrix(model.edit_transform) if @all_instances
 
       group_cache = {}  # key = serialized_path, value = group - Only for all instances
 
@@ -39,9 +40,10 @@ module Ladb::OpenCutList
 
           part.def.instance_infos.each { |serialized_path, instance_info|
 
+            # Populate part definitions
             _create_three_part_def(three_model_def, part, instance_info.entity.definition, materials[part.material_name])
 
-            # Create the three part def
+            # Create the three part instance def
             three_part_instance_def = ThreePartInstanceDef.new
             three_part_instance_def.matrix = _to_three_matrix(instance_info.entity.transformation)
             three_part_instance_def.id = part.id
@@ -56,28 +58,54 @@ module Ladb::OpenCutList
 
         else
 
+          # Extract first instance
+          instance_info = part.def.instance_infos.values.first
+
+          # Populate part definitions
+          _create_three_part_def(three_model_def, part, instance_info.entity.definition, materials[part.material_name])
+
+          mt = Geom::Transformation.new
           if part.auto_oriented && part.group.material_type != MaterialAttributes::TYPE_HARDWARE
 
             # Set transformation matrix to correspond to axes orientation
             axes_order = part.def.size.normals.clone
             if AxisUtils::flipped?(axes_order[0], axes_order[1], axes_order[2])
-              # axes_order[0] = axes_order[0].reverse
-              axes_order[1] = axes_order[1].reverse
-              # axes_order[2] = axes_order[2].reverse
+              axes_order[0] = axes_order[0].reverse if axes_order[0] == Y_AXIS
+              axes_order[1] = axes_order[1].reverse if axes_order[1] == Y_AXIS
+              axes_order[2] = axes_order[2].reverse if axes_order[2] == Y_AXIS
             end
-            transformation = Geom::Transformation.axes(ORIGIN, axes_order[0], axes_order[1], axes_order[2]).inverse
-            three_model_def.matrix = _to_three_matrix(transformation)
+            mt = Geom::Transformation.axes(ORIGIN, axes_order[0], axes_order[1], axes_order[2]).inverse
+            three_model_def.matrix = _to_three_matrix(mt)
 
+            case axes_order[2]
+            when X_AXIS
+              puts 'Thickness along RED'
+            when Y_AXIS
+              puts 'Thickness along GREEN'
+            when Z_AXIS
+              puts 'Thickness along BLUE'
+            end
+
+          else
+            puts 'Thickness along BLUE'
           end
 
-          # Extract first instance
-          instance_info = part.def.instance_infos.values.first
+          # Extract instance scale transformation
+          it = instance_info.transformation
+          it.extend(LGeom::TransformationHelper)
+          ist = Geom::Transformation.scaling(it.x_scale, it.y_scale, it.z_scale)
 
-          _create_three_part_def(three_model_def, part, instance_info.entity.definition, materials[part.material_name])
+          puts 'FLIPPED along RED' if it.x_scale < 0
+          puts 'FLIPPED along GREEN' if it.y_scale < 0
+          puts 'FLIPPED along BLUE' if it.z_scale < 0
 
-          # Create the three part def
+          # Setup model edit matrix
+          et = TransformationUtils.multiply(mt, ist)
+          three_model_def.edit_matrix = _to_three_matrix(et)
+
+          # Create the three part instance def
           three_part_instance_def = ThreePartInstanceDef.new
-          three_part_instance_def.matrix = _to_three_matrix(Geom::Transformation.scaling(part.def.scale.x * (part.def.flipped ? -1 : 1), part.def.scale.y, part.def.scale.z))
+          three_part_instance_def.matrix = _to_three_matrix(ist)
           three_part_instance_def.id = part.id
 
           # Add to hierarchy

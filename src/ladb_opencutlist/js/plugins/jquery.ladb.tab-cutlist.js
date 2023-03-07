@@ -2278,6 +2278,7 @@
                                 dialog: that.dialog,
                                 modelDef: threeModelDef,
                                 partsColored: true,
+                                partsOpacity: 0.8,
                                 pinsHidden: true,
                                 showBoxHelper: part.not_aligned_on_axes
                             });
