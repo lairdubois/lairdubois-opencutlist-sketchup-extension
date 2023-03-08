@@ -104,7 +104,7 @@ core:
     unavailable: Невозможно найти последнюю версию *OpenCutList*.
     available: |
       Доступна новая версия *OpenCutList*.
-      Скачайте ее, чтобы получить новейшие функции!
+      Для использования усовершенствованных функции, скачайте ее!
     up_to_date: |
       У вас уже есть последняя версия *OpenCutList*.
 
@@ -260,7 +260,7 @@ tab:
       remove_edge_material_name_filter: "Не фильтровать '{{ material_name }}'"
       add_veneer_material_name_filter: "Фильтровать '{{ material_name }}'"
       remove_veneer_material_name_filter: "Не фильтровать '{{ material_name }}'"
-      not_aligned_on_axes: "Внимание! Эта деталь возможно неправильно ориентирована относительно осей компонента"
+      not_aligned_on_axes: "Внимание! Контуры детали возможно неправильно ориентированы относительно осей компонента"
       instance_count_by_part: "Эта деталь учитывается комплектом по **{{ count }}** ед."
       unused_instance_count: "Обратите внимание, что **{{ count }}** единица из последнего комплекта не образует комплект."
       unused_instance_count_plural: "Обратите внимание, что **{{ count }}** единицы из последнего комплекта не образуют комплект."
