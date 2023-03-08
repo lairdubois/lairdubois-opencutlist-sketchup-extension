@@ -89,8 +89,8 @@ core:
     report_a_bug: Fehler melden
   warning:
     dev: |
-      Sie verwenden eine **in Entwicklung befindliche** Version von *OpenCutList*.
-      Diese Version steht nur zum Testen zur Verfügung.
+      Sie verwenden eine **Entwicklerversion** Version von *OpenCutList*.
+      Diese Version ist nur zum Testen verfügbar.
       Es wird nicht empfohlen, diese in der Produktion zu verwenden.
 
       Um einen Fehler zu melden: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
@@ -104,7 +104,7 @@ core:
     unavailable: Die neueste Version von *OpenCutList* wurde nicht gefunden.
     available: |
       Eine neue Version von *OpenCutList* ist verfügbar.
-      Aktualisieren Sie sie, um über die neuesten Funktionen zu verfügen!
+      Aktualisieren Sie, um die neuesten Funktionen zu erhalten!
     up_to_date: |
       Sie verfügen über die neueste Version von *OpenCutList*.
 
@@ -172,8 +172,8 @@ core:
       view: "{{ view }}"
       view_isometric: Isometrisch
       view_top: Draufsicht
-      view_bottom: Von Unten
-      view_front: Vorderseite
+      view_bottom: Untersicht
+      view_front: Vorderansicht
       view_back: Rückansicht
       view_left: Seitelinks
       view_right: Seiterechts
@@ -398,7 +398,7 @@ tab:
       over_length: Der Länge nach
       over_width: Der Breite nach
       edge_disabled_help: "Diese Kante ist nicht konfigurierbar, da an dieser Kante des Teils im Modell keine materialtragende Fläche erkannt wurde."
-      veneer_disabled_help: "Diese Fläche ist nicht konfigurierbar, da an dieser Fläche des Teils im Modell keine materialtragende Fläche erkannt wurde."
+      veneer_disabled_help: "Diese Fläche ist nicht konfigurierbar, da an dieser Seite des Teils im Modell keine materialtragende Fläche erkannt wurde."
       multiple_values: mehrfache Werte
       export_to_skp: Exportieren (.skp)
       loading_preview: Vorschau laden
@@ -429,7 +429,7 @@ tab:
       part_number_sequence_by_group_help: "Ist diese Option aktiv, wird die Teilenummerierung bei jeder Gruppe (Liste von Teilen mit gleichem Material und gleicher Bruttodicke) auf 1 (oder A) zurückgesetzt."
       part_folding: Gleiche Teile zusammenfassen
       part_folding_help: |
-        Ist diese Option aktiv, werden Teile mit **gleichen Maßen** und mit **gleichen Badges** auf einer Zeile zusammengefasst (sofern die Anzeige dieser Fläche nicht ausgeblendet ist).
+        Ist diese Option aktiv, werden Teile aus dem Material **Massivholz, Platte oder Stange** mit **gleichen Rohmaßen** und mit **gleichen Badges** auf einer Zeile zusammengefasst (sofern die Anzeige dieser Fläche nicht ausgeblendet ist).
 
         Die Teile werden bei Etiketten und Schnittplänen weiterhin als unterschiedlich betrachtet.
       hide_entity_names: Instanzbezeichnungen ausblenden
@@ -437,7 +437,7 @@ tab:
       hide_descriptions: Beschreibungen ausblenden
       hide_descriptions_help: "Wenn diese Option ausgewählt ist, werden die **Beschreibungen**, die auf den Teilen angebracht sind, nicht angezeigt."
       hide_tags: Badges ausblenden
-      hide_tags_help: "Ist diese Option aktiv, werden die auf den Teilen platzierten **Badges** nicht angezeigt."
+      hide_tags_help: "Ist diese Option aktiv, werden **Badges** nicht angezeigt."
       hide_cutting_dimensions: Rohmaße ausblenden
       hide_cutting_dimensions_help: "Ist diese Option aktiv, werden die **Rohmaße** nicht angezeigt."
       hide_bbox_dimensions: Fertigmaße ausblenden
@@ -447,7 +447,7 @@ tab:
       hide_edges: Spalten der Kantenbänder ausblenden
       hide_edges_help: "Ist diese Option aktiv, werden die **Spalten der Kantenbänder** der Teile des Typs *Platte* nicht angezeigt."
       hide_veneers: Spalten der Furniere ausblenden
-      hide_veneers_help: "Ist diese Option aktiv, werden die **Spalten der Furniere** der Teile des Typs *Platte* nicht angezeigt."
+      hide_veneers_help: "Ist diese Option aktiv, werden die **Spalten der Furniere** von Teilen des Typs *Platte* nicht angezeigt."
       minimize_on_highlight: Minimieren nach *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Ist diese Option aktiv, wird das OpenCutList Fenster minimiert, wenn die Funktion *'$t(tab.cutlist.highlight_part)'* verwendet wird."
       general: Allgemein
@@ -467,7 +467,7 @@ tab:
       property_tags: Badges
       property_thickness_layer_count: Anzahl der Schichten
       tags: Badges
-      tags_help: "Benutzerdefinierte Liste von Badges, welche als Auswahl bei den Eigenschaften von Teilen zu Verfügung steht."
+      tags_help: "Benutzerdefinierte Liste von Badges, die bei den Eigenschaften von Teilen vorgeschlagen werden."
       tags_placeholder: Badge hinzufügen
     list:
       filters: Filter
@@ -617,7 +617,7 @@ tab:
       option_sheet_folding_veneer: Gleiche Furniere zusammenfassen
       option_sheet_folding_0: Nein
       option_sheet_folding_1: Ja
-      option_sheet_folding_help: "Ermöglicht das Zusammenfassen von Platten, die dieselben Teile und Schnitte enthalten."
+      option_sheet_folding_help: "Ermöglicht das Zusammenfassen von Platten oder Furnierblätter, die dieselben Teile und Schnitte enthalten."
       option_hide_part_list: Liste der Teile
       option_hide_part_list_1d_dimensional_0: Anzeigen für jede Stange
       option_hide_part_list_1d_edge_0: Anzeigen für jedes Kantenband
@@ -691,16 +691,16 @@ tab:
       option_std_sheet_good: Standard-Platte
       option_std_sheet_veneer: Standard-Furnierblatt
       option_std_sheet_help: |
-        Wählen Sie die Standard-Platte welche dupliziert wird, um die bestmögliche Platzierung zu berechnen.
+        Wählen Sie die Standard-Platte oder das Standard-Furnierblatt, das dupliziert werden soll, um die bestmögliche Platzierung zu berechnen.
         Diese Liste wird über das Feld **$t(tab.materials.edit_material.std_sizes)** des Materials konfiguriert.
-        Bearbeiten Sie das Material '{{ material_name }}' um diese Liste zu vervollständigen.
+        Bearbeiten Sie das Material '{{ material_name }}' um diese Liste zu ergänzen.
       option_std_sheet_add: Maße hinzufügen
       option_std_sheet_none: Keine
       option_scrap_sheet_good_sizes: Plattenreste
       option_scrap_sheet_veneer_sizes: Furnierreste
       option_scrap_sheet_sizes_placeholder: Länge x Breite x Anzahl ; ...
       option_scrap_sheet_sizes_help: |
-        Führen Sie hier die Liste der Plattenreste auf, welche Sie verwenden möchten.
+        Führen Sie hier die Liste der Platten- oder Furnierreste auf, die Sie verwenden möchten.
         Erwartetes Format: **L**x**B**x**M**. wobei **L** und **B** die *Länge* und die *Breite* der Platte bezeichnen und **M** die Menge.
         Die Mengenangabe ist optional.
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
@@ -740,7 +740,7 @@ tab:
         sheet_good_type_0: Standard-Platte
         sheet_good_type_1: Plattenrest
         sheet_veneer_type_0: Standard Furnierblatt
-        sheet_veneer_type_1: Furnierreste
+        sheet_veneer_type_1: Furnierrest
         unused: Nicht verwendet
         parts: "{{ count }} Teil"
         parts_plural: "{{ count }} Teile"
@@ -882,22 +882,22 @@ tab:
       option_pins_direction_0: Längs der roten Achse
       option_pins_direction_1: Längs der grünen Achse
       option_pins_direction_2: Längs der blauen Achse
-      option_pins_direction_3: Zum Mittelpunkt des Teils
+      option_pins_direction_3: Zum Mittelpunkt der übergeordneten Gruppe
       option_pins_direction_4: Zum Mittelpunkt der Auswahl
       option_pins_direction_help: Definiert die Platzierung der Beschriftung für eine bessere Lesbarkeit.
-      option_page: Papierformat
+      option_page: Papier
       option_page_format: Format
       option_page_format_portrait: Hochformat
       option_page_format_landscape: Querformat
       option_page_format_custom: Benutzerdefiniert
       option_page_width: Breite
       option_page_height: Höhe
-      option_page_header: Kopfzeile
+      option_page_header: Überschrift
       option_page_header_0: Ohne
       option_page_header_1: Mit
       option_page_header_help: |
-        Wählen Sie, ob die zu druckende Seite eine Kopfzeile mit dem Namen des Dokuments, seiner Beschreibung und dem Datum enthält.
-        Ohne Kopfzeile nimmt die Übersichtszeichnung die gesamte Seite ein.
+        Wählen Sie, ob die zu druckende Seite eine Überschrift mit dem Namen des Dokuments, seiner Beschreibung und dem Datum enthält.
+        Ohne Überschrift nimmt die Übersichtszeichnung die gesamte Seite ein.
       option_camera: Kamera
       option_camera_view: Ansicht
       option_camera_view_custom: Benutzerdefiniert
@@ -909,7 +909,7 @@ tab:
       option_camera_target_custom: Benutzerdefiniert
       option_explode: Explosionsdarstellung
       error:
-        no_part: Es gibt keine zu zeichnenden Teile.
+        no_part: Es gibt keine Teile zu zeichnen.
       warning:
         is_group_selection: Die Teile innerhalb der **maskierten Gruppen** Ihrer Teileliste werden nicht gezeichnet.
         is_part_selection: Diese Übersichtszeichnung ist auf die **ausgewählten Teile** beschränkt.
@@ -1244,13 +1244,13 @@ tab:
     presets:
       export_global_presets: Exportieren
       export_global_presets_help: |
-        Diese Funktion ermöglicht es Ihnen, Ihre Voreinstellungen in eine **.json**-Datei zu exportieren.
+        Mit dieser Funktion können Sie Ihre Voreinstellungen in eine **.json**-Datei exportieren.
         Wählen Sie die Voreinstellungen aus, die Sie in diese Datei exportieren möchten.
       export_global_presets_success: Die Voreinstellungen wurden erfolgreich exportiert.
       import_global_presets: Importieren
       import_global_presets_help: |
-        Wählen Sie aus der **.json**-Datei die Voreinstellungen, welche Sie importieren möchten.
-        Achtung: Wenn bereits eine Voreinstellung mit einem identischen Namen existiert, wird diese durch die importierte Version ersetzt.
+        Wählen Sie die Voreinstellungen in der **.json**-Datei aus, die Sie importieren möchten.
+        Bitte beachten Sie, dass eine bereits vorhandene Voreinstellung mit identischem Namen durch die importierte Version ersetzt wird.
       import_global_presets_success: |
         Die Voreinstellungen *OpenCutList* wurden erfolgreich importiert.
         Um die Änderungen zu berücksichtigen, müssen Sie das Fenster von OpenCutList **schließen** und **neu öffnen**.

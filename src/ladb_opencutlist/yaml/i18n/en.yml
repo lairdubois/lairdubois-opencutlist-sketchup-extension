@@ -293,7 +293,7 @@ tab:
       dblclick_to_copy_all_veneers: Double-click here to duplicate this value to the other face
       dblclick_to_sort_axes: Double-click here to automatically reorder the axes according to the dimensions of the part
       part_axes: Internal axes of the part
-      select_unselect_all_parts: Select / Deselect all parts in this group
+      select_unselect_all_parts: Select / Deselect all parts of the group
       setup_group_cuttingdiagram: "Configure the cutting diagram of '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
     menu:
       show_all_groups: Show all groups
@@ -598,7 +598,7 @@ tab:
         is_group_selection: Parts inside **hidden groups** of the parts list will not be accounted for.
       tip:
         not_enough_data: |
-          To compute a correct estimate:
+          For this estimate to be calculated correctly:
           - the used materials must have at least a density and a price.
           - the used accessories must have at least a density and a price.
     cuttingdiagram:
@@ -625,7 +625,7 @@ tab:
       option_hide_part_list_2d_veneer_0: Displayed for each Veneer Sheet
       option_hide_part_list_1: Masked
       option_hide_part_list_1d_help: Display or mask the list of parts for each board or edge banding.
-      option_hide_part_list_2d_help: Display or mask the list of parts for each panel.
+      option_hide_part_list_2d_help: Display or mask the list of parts for each panel or veneer sheet.
       option_use_names: Part Identification
       option_use_names_0: Use the number
       option_use_names_1: Use the designation
@@ -692,11 +692,11 @@ tab:
       option_std_sheet_veneer: Standard Veneer
       option_std_sheet_help: |
         Select the standard panel or veneer sheet which will be duplicated to calculate the best possible placement.
-        This list is defined in the field **$t(tab.materials.edit_material.std_sizes)** of the material.
+        This list is defined by the **$t(tab.materials.edit_material.std_sizes)** field of the material.
         Edit the material '{{ material_name }}' to complete this list.
       option_std_sheet_add: Add a panel size
       option_std_sheet_none: None
-      option_scrap_sheet_good_sizes: Offcuts
+      option_scrap_sheet_good_sizes: Panel Offcuts
       option_scrap_sheet_veneer_sizes: Veneer Offcuts
       option_scrap_sheet_sizes_placeholder: length x width x quantity ; ...
       option_scrap_sheet_sizes_help: |
@@ -738,7 +738,7 @@ tab:
         bar_edge_type_0: Standard Edge Banding
         bar_edge_type_1: Offcut Edge Banding
         sheet_good_type_0: Standard Panel
-        sheet_good_type_1: Offcut
+        sheet_good_type_1: Panel Offcut
         sheet_veneer_type_0: Standard Veneer Sheet
         sheet_veneer_type_1: Veneer Offcut
         unused: Unused
@@ -862,36 +862,36 @@ tab:
       option_pins_hidden: Display
       option_pins_hidden_0: With labels
       option_pins_hidden_1: Without labels
-      option_pins_hidden_help: Display or hide the part labels containing number or designation.
+      option_pins_hidden_help: Show or hide the part labels with number or designation.
       option_pins_colored: Color
       option_pins_colored_0: Without color
       option_pins_colored_1: Color of the part
-      option_pins_colored_help: Select the color of the label tails.
+      option_pins_colored_help: Select the color of the labels.
       option_pins_text: Text
       option_pins_text_0: Number of the part
       option_pins_text_1: Designation of the part
       option_pins_text_2: Number and Designation of the part
-      option_pins_text_help: Select the text displayed by the labels.
+      option_pins_text_help: Select the text displayed in the labels.
       option_pins_length: Length
-      option_pins_length_0: None
+      option_pins_length_0: Without leader line
       option_pins_length_1: Short
       option_pins_length_2: Medium
       option_pins_length_3: Long
-      option_pins_length_help: Select the length of the label tails.
+      option_pins_length_help: Select the length of the leader line.
       option_pins_direction: Direction
       option_pins_direction_0: Along the Red axis
       option_pins_direction_1: Along the Green axis
       option_pins_direction_2: Along the Blue axis
       option_pins_direction_3: Pointing towards the center of the parent group
       option_pins_direction_4: Pointing towards the center of the selection
-      option_pins_direction_help: Select the direction of the labels for better readability.
+      option_pins_direction_help: Select the direction of the leader lines to labels for better readability.
       option_page: Paper
       option_page_format: Format
       option_page_format_portrait: Portrait
       option_page_format_landscape: Landscape
       option_page_format_custom: Custom
-      option_page_width: Page Width
-      option_page_height: Page Height
+      option_page_width: Width
+      option_page_height: Height
       option_page_header: Header
       option_page_header_0: None
       option_page_header_1: With
@@ -1069,7 +1069,7 @@ tab:
       failed_import_skm_file: "An error occurred while importing from the .skm file. **{{ error }}**"
       failed_export_skm_file: "An error occurred while exporting to .skm file. **{{ error }}**"
       failed_removing_material: "An error occurred while suppressing this material. **{{ error }}**"
-      failed_duplicating_material: "An error occured while duplicating material. **{{ error }}**"
+      failed_duplicating_material: "An error occured while duplicating the material. **{{ error }}**"
       invalid_image_file: Invalid image
     success:
       exported_to: "Successful export to {{ export_path }}."
@@ -1250,7 +1250,7 @@ tab:
       import_global_presets: Import presets
       import_global_presets_help: |
         Select the presets in the **.json** file that you would like to import.
-        Please note that if a preset with an identical name already exists, it will be replaced by the imported version.
+        Please note that a preset with identical name that already exists will be replaced by the imported version.
       import_global_presets_success: |
         *OpenCutList* presets have been successfully imported.
         In order to reflect the changes, you must **close** and **reopen** the OpenCutList window.
@@ -1264,13 +1264,13 @@ tab:
       reset_global_presets_success: |
         *OpenCutList* presets have been reset.
         In order to reflect the changes, you must **close** and **reopen** the OpenCutList window.
-      reset_model_presets: Reinitialize model presets
+      reset_model_presets: Reinitialize model settings
       reset_model_presets_confirm: |
-        You are about to reset all *OpenCutList* presets for the current model.
+        You are about to reset all *OpenCutList* settings for the current model.
         This action is final. **All settings will be restored to their default values.**
         Confirm to continue.
       reset_model_presets_success: |
-        The *OpenCutList* presets for the current model have been reset.
+        The *OpenCutList* settings for the current model have been reset.
         In order to reflect the changes, you must **close** and **reopen** the OpenCutList window.
       error:
         no_preset_to_export: No presets to export.
