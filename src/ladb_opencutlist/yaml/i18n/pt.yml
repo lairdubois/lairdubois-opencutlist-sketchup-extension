@@ -30,6 +30,8 @@ default:
   download: Baixar
   upgrade: Atualizar
   copy: Copiar
+  select_all: Selecione todos
+  unselect_all: Desmarque todos
   empty_filename: Sem nome.skp
   help: Ajuda
   error: Droga!
@@ -92,9 +94,6 @@ core:
       Não é recomendado usá-lo na produção.
 
       Para relatar um bug: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
-    old_su: |
-      Você está usando uma versão antiga do SketchUp ({{ sketchup_version }}). Este plugin vai funcionar, mas pode exibir certos bugs.
-      Para tirar o máximo proveito do OpenCutList, recomendamos a atualização para no mínimo **SketchUp 2017**.
     feature_locked: "*Não é possível desativar nesta versão do SketchUp*"
   event:
     model_change: O modelo ativo foi alterado.
@@ -145,6 +144,20 @@ core:
     tooltip:
       save_to: "Atualizar as definições '{{ name }}'"
       delete: "Apagar as definições '{{ name }}'"
+    dictionary:
+      component_textinput_color: Paleta de cores
+      cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
+      cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
+      cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
+      cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
+      cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
+      cutlist_options: $t(tab.cutlist.label) / $t(default.options)
+      cutlist_report_options: $t(tab.cutlist.label) / $t(tab.cutlist.report.title)
+      importer_import_options: $t(tab.importer.label) / $t(default.import)
+      importer_load_options: $t(tab.importer.label) / $t(default.open)
+      materials_material_attributes: $t(tab.materials.label) / Atributos
+      materials_options: $t(tab.materials.label) / $t(default.options)
+      settings_model: $t(tab.settings.label) / Modelo
   progress:
     please_wait: Calculando um mundo de Paz
   component:
@@ -155,6 +168,19 @@ core:
       remove: Esquecer esta cor
     textinput_code:
       help: Digite **@** para obter uma lista de variáveis.
+    three_viewer:
+      view: "{{ view }} Ver"
+      view_isometric: Isometrica
+      view_top: Superior
+      view_bottom: Inferior
+      view_front: Frontal
+      view_back: Fundo
+      view_left: Esquerda
+      view_right: Direita
+      zoom: "{{ zoom }} Escala"
+      explode_factor: Amplitude de explosão
+      toggle_box_helper: Exibir/Ocultar Caixa Limitadora
+      toggle_axes_helper: Exibir/Ocultar Eixos das Peças
   docs:
     error:
       failed_to_load: |
@@ -261,8 +287,8 @@ tab:
       edge_ymax: Comprimento da borda 2
       edge_xmin: Largura da borda 1
       edge_xmax: Largura da borda 2
-      veneer_zmin: Verso da chapa
-      veneer_zmax: Frente da chapa
+      veneer_zmin: Verso da chapa laminada
+      veneer_zmax: Frente da chapa laminada
       dblclick_to_copy_all_edges: Clique duas vezes aqui para duplicar este valor para todas as outras arestas
       dblclick_to_copy_all_veneers: Clique duas vezes aqui para replicar este valor para a outra face
       dblclick_to_sort_axes: Dê duplo clique aqui para reordenar automaticamente os eixos de acordo com as dimensões da peça
@@ -275,10 +301,11 @@ tab:
       numbers_save: Salve os números das peças
       numbers_reset: Reinicialize os números da peça
       highlight_parts: $t(tab.cutlist.highlight_parts)
+      group_layout_parts: Imprimir visão geral das peças neste grupo
       group_numbers_save: Salve os números de peça deste grupo
       group_numbers_reset: Reinicialize os números de peça deste grupo
       group_cuttingdiagram: Diagrama de Corte
-      group_labels: Imprimir etiquetas
+      group_labels: Imprimir as etiquetas das peças neste grupo
       edit_material: "Editar material '{{ material_name }}'"
       expand_all: Expandir todas as linhas
       collapse_all: Recolher todas as linhas
@@ -295,7 +322,7 @@ tab:
       general: Geral
       extra_help: "Lista de propriedades específicas do tipo de material \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Fita de Borda
-      veneers: Revestimentos
+      veneers: Laminados
       name: Descrição
       material: Material
       cumulable: Pode somar
@@ -314,9 +341,9 @@ tab:
       instance_count_by_part_1: 1 unidade por peça
       instance_count_by_part_2: 2 unidades por peça
       mass: Massa
-      mass_help: A massa da peça será utilizada na geração de **Relatórios**.
+      mass_help: O peso da peça será usado quando um **Orçamento** for gerado.
       price: Preço
-      price_help: O preço da peça será utilizado na geração de **Relatórios**.
+      price_help: O preço da peça será usado quando um **Orçamento** for gerado.
       thickness_layer_count: No. de camadas
       thickness_layer_count_help: |
         Definir aqui o número de camadas que dividem a peça desenhada de acordo com sua espessura.
@@ -326,12 +353,12 @@ tab:
       description: Descrição
       description_help: |
         A *Descrição* permite que você forneça informações personalizadas sobre cada definição de peça.
-      tags: Tags
+      tags: Identificação
       tags_help: |
-        Com *Tags* é possível adicionar palavras-chave para personalizar as definições da peça.
-        Pode adicionar tantas tags quantas achar conveniente.
-        Você poderá então filtrar as peças visíveis em sua Planilha de Produção com essas tags.
-      tags_multiple_info: Apenas tags comuns são mostrados
+        *Identificação* são palavras-chave personalizadas que podem ser adicionadas a cada definição de peça.
+        Você pode adicionar quantas identificações quiser.
+        As partes visíveis de sua lista de peças podem então ser filtradas de acordo com estas identificações.
+      tags_multiple_info: Somente identificações comuns são exibidas
       orientation: Orientação
       orientation_locked_on_axis: Travar orientação nos eixos
       orientation_locked_on_axis_help: |
@@ -374,6 +401,7 @@ tab:
       veneer_disabled_help: Esta superfície não é configurável porque nenhuma face com revestimento foi detectada nesta borda da peça do modelo.
       multiple_values: Valores múltiplos
       export_to_skp: Exportar (.skp)
+      loading_preview: Carregando uma Prévia
     export_to_skp:
       title: Exportar para arquivo .skp
     option:
@@ -401,15 +429,15 @@ tab:
       part_number_sequence_by_group_help: "Se esta opção for selecionada, a enumeração das peças é reinicializada em 1 (ou A) para cada grupo (lista de peças do mesmo material e espessura)."
       part_folding: Grupo de partes idênticas
       part_folding_help: |
-        Se esta opção estiver ativada, peças de **Madeira Sólida, Painel ou Dimensional MLC**, tendo o **mesmo tamanho compatível**, com as **mesmas etiquetas** e a **mesma superfície acabada** *(se a exibição desta superfície não estiver oculta)* serão agrupadas na mesma linha na *lista de peças*.
+        Se esta opção estiver ativada, as peças feitas de **Madeira Sólida, Chapas ou MLC**, tendo o **mesmo tamanho bruto**, com as **mesmas identificações** e a **mesma superfície acabada** *(se a exibição desta superfície não estiver oculta)* serão agrupadas na mesma linha na *lista de peças*.
 
         As peças ainda serão consideradas diferentes para fins de etiquetagem e diagrama de corte.
       hide_entity_names: Ocultar nomes de instâncias
       hide_entity_names_help: "Se esta opção for selecionada, **nomes de instância** de peças não serão exibidos."
       hide_descriptions: Ocultar descrições
       hide_descriptions_help: "Se esta opção for ativada, as **descrições** colocadas sobre as peças não serão exibidas."
-      hide_tags: Esconder tags
-      hide_tags_help: "Se esta opção for selecionada, **tags** serão ocultados."
+      hide_tags: Ocultar identificações
+      hide_tags_help: "Se esta opção for selecionada, **identificação** não será exibida."
       hide_cutting_dimensions: Ocultar dimensões aproximadas
       hide_cutting_dimensions_help: "Se esta opção for selecionada, as dimensões **aproximadas** das peças serão ocultadas."
       hide_bbox_dimensions: Ocultar dimensões acabadas
@@ -436,19 +464,19 @@ tab:
       property_name: Descrição
       property_count: Quantidade
       property_edge_pattern: Número de fitas de borda
-      property_tags: Tags
+      property_tags: Identificação
       property_thickness_layer_count: Número de camadas
-      tags: Tags
-      tags_help: Lista personalizada de tags oferecidas na janela de propriedades da peça.
-      tags_placeholder: Adicionar uma tag
+      tags: Identificação
+      tags_help: Lista personalizada de identificações propostas na janela de propriedades da peça.
+      tags_placeholder: Adicionar uma identificação
     list:
       filters: Filtros
       filters_warning_0: "Este filtro mascara todas as partes!"
       filters_warning: "Este filtro exibe apenas **{{ count }}** peça de um total de {{ total }}."
       filters_warning_plural: "Este filtro exibe apenas **{{ count }}** peças de um total de {{ total }}."
       edge_material_names_filter: Filtrar material de Fita de Borda
-      veneer_material_names_filter: Filtrar por material de revestimento
-      tags_filter: Tags para filtrar
+      veneer_material_names_filter: Filtrar por laminado
+      tags_filter: Filtrar por identificação da peça
       dimensions_help: Compreendendo as dimensões
       summary: Resumo
       material_type: Tipo
@@ -472,7 +500,7 @@ tab:
       thickness: Espessura
       thickness_short: E
       edges: Fita de Borda
-      veneers: Revestimentos
+      veneers: Laminados
     export:
       title: Exportar
       info_0: |
@@ -525,13 +553,13 @@ tab:
       material_name: Material
       entity_names: Nomes de instância
       description: Descrição
-      tags: Tags
+      tags: Identificação
       edge_ymin: Comprimento da borda 1
       edge_ymax: Comprimento da borda 2
       edge_xmin: Largura da borda 1
       edge_xmax: Largura da borda 2
-      veneer_zmin: Verso do revestimento
-      veneer_zmax: Frente do revestimento
+      veneer_zmin: Verso do laminado
+      veneer_zmax: Frente do laminado
       layer: Etiqueta
       layers: Etiquetas
       placeholder:
@@ -543,9 +571,9 @@ tab:
       success:
         copied: Copiado para área de transferência.
     report:
-      title: Relatório
+      title: Orçamento
       info_0: |
-        Esta funcionalidade permite gerar um relatório das **massas** e **custos** das **matérias-primas** necessárias para a produção das peças contidas na *lista de peças*.
+        Gerar uma estimativa do **peso** e do **custo** da **matéria prima** necessária para a produção das peças da *lista de peças*.
       options_general: Geral
       options_solid_wood: $t(tab.materials.type_1)
       option_solid_wood_coefficient: Coeficiente de perda para madeira bruta *$t(tab.materials.type_1)*
@@ -563,16 +591,16 @@ tab:
       total_area: Σ Áreas
       total_length: Σ Comprimentos
       error:
-        no_typed_material_parts: "Sem peças com um tipo de material definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** ou **$t(tab.materials.type_5)**) para gerar o relatório."
+        no_typed_material_parts: "Nenhuma peça com o tipo de material definido \n (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** ou **$t(tab.materials.type_5)**) foi fornecida para gerar a estimativa."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erro**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erros**."
       warning:
         is_group_selection: As partes contidas nos **grupos ocultos** do sua Planilha de Produção não serão contadas.
       tip:
         not_enough_data: |
-          Para calcular um relatório correto:
-          - os materiais usados devem ter pelo menos uma densidade e um preço.
-          - os acessórios usados devem ter pelo menos uma densidade e um preço.
+          Para que esta estimativa seja calculada corretamente:
+          - Os materiais utilizados devem ter pelo menos um peso e preço configurados.
+          - Os acessórios utilizados devem ter pelo menos um peso e um preço.
     cuttingdiagram:
       title: Diagrama de Corte
       start_msg: Otimização em progresso
@@ -661,15 +689,15 @@ tab:
         A quantidade é opcional.
         *Se não for especificada nenhuma unidade, será utilizada a unidade modelo.*
       option_std_sheet_good: Chapa de tamanho padrão
-      option_std_sheet_veneer: Folha padrão
+      option_std_sheet_veneer: Laminado padrão
       option_std_sheet_help: |
-        Selecione a chapa padrão ou folha padrão que será duplicado para conter todas as partes.
+        Selecione a chapa padrão ou laminado padrão que será duplicado para conter todas as partes.
         Esta lista é definida no campo **$t(tab.materials.edit_material.std_sizes)** do material.
         Edite o material '{{ material_name }}' para atualizar esta lista.
       option_std_sheet_add: Adicionar um tamanho de painel
       option_std_sheet_none: Nenhum
       option_scrap_sheet_good_sizes: Restos de chapas
-      option_scrap_sheet_veneer_sizes: Sobras de folha
+      option_scrap_sheet_veneer_sizes: Sobras de laminado
       option_scrap_sheet_sizes_placeholder: comprimento x largura x quantidade ; ...
       option_scrap_sheet_sizes_help: |
         Liste todas as peças fora da planilha de corte ou revestimentos que você gostaria de incluir no diagrama de corte. 
@@ -711,8 +739,8 @@ tab:
         bar_edge_type_1: Sobra de fita de borda
         sheet_good_type_0: Chapa de tamanho padrão
         sheet_good_type_1: Sobra de chapa
-        sheet_veneer_type_0: Folha padrão
-        sheet_veneer_type_1: Sobra de folha
+        sheet_veneer_type_0: Laminado padrão
+        sheet_veneer_type_1: Sobra de laminado
         unused: Não utilizado
         parts: "{{ count }} peça"
         parts_plural: "{{ count }} peças"
@@ -794,14 +822,14 @@ tab:
         part_length: Comprimento
         part_width: Largura
         part_thickness: Espessura
-        part_tags: Tags
+        part_tags: Identificação
         part_batch: Grupo
         part_edge_ymin: Comprimento da borda 1
         part_edge_ymax: Comprimento da borda 2
         part_edge_xmin: Largura da borda 1
         part_edge_xmax: Largura da borda 2
-        part_veneer_zmin: Verso de revestimento
-        part_veneer_zmax: Frente de revestimento
+        part_veneer_zmin: Verso do laminado
+        part_veneer_zmax: Frente do laminado
         thumbnail_proportional: Miniatura proporcional
         thumbnail_square: Miniatura quadrada
         group_material: Espessura do material
@@ -816,7 +844,75 @@ tab:
         invalid_size: Os parâmetros de configuração inseridos não permitem que um tamanho de etiqueta válido seja definido.
       warning:
         is_part_selection: Estes etiquetas são limitados a **partes selecionadas** somente.
-        formula_not_available: Fórmula não está disponível neste contexto
+        formula_not_available: A fórmula não está disponível neste contexto
+    layout:
+      title: Desenho
+      options_layout: Composição
+      options_settings: Configuração
+      option_parts: Peças
+      option_parts_colored: Cor
+      option_parts_colored_0: Sem cor
+      option_parts_colored_1: Cor do material
+      option_parts_colored_help: Selecione a aparência das peças.
+      option_parts_opacity: Opacidade
+      option_parts_opacity_0: Transparente
+      option_parts_opacity_1: Opaca
+      option_parts_opacity_help: Selecione a tranparência das peças.
+      option_pins: Etiquetas
+      option_pins_hidden: Exibição
+      option_pins_hidden_0: Com etiquetas
+      option_pins_hidden_1: Sem etiquetas
+      option_pins_hidden_help: Exibe ou esconde as setas apontando para as peças para indicar seu número ou designação.
+      option_pins_colored: Cor
+      option_pins_colored_0: Sem cor
+      option_pins_colored_1: Cor da peça
+      option_pins_colored_help: Permite que você escolha a cor das setas.
+      option_pins_text: Texto
+      option_pins_text_0: Número da peça
+      option_pins_text_1: Designação da peça
+      option_pins_text_2: Número e designação da peça
+      option_pins_text_help: Permite que você escolha o texto exibido nas setas.
+      option_pins_length: Comprimento
+      option_pins_length_0: Sem seta
+      option_pins_length_1: Pequena
+      option_pins_length_2: Média
+      option_pins_length_3: Longa
+      option_pins_length_help: Selecione o comprimento das setas nas etiquetas.
+      option_pins_direction: Direção
+      option_pins_direction_0: Na direção do eixo Vermelho
+      option_pins_direction_1: Na direção do eixo Verde
+      option_pins_direction_2: A direção do eixo Azul
+      option_pins_direction_3: Apontar na direção do centro do Grupo
+      option_pins_direction_4: Apontar na direção do centro da seleção
+      option_pins_direction_help: Selecione a direção das etiquetas para melhor legibilidade.
+      option_page: Papel
+      option_page_format: Formato
+      option_page_format_portrait: Retrato
+      option_page_format_landscape: Paisagem
+      option_page_format_custom: Personalizado
+      option_page_width: Largura
+      option_page_height: Altura
+      option_page_header: Cabeçalho
+      option_page_header_0: Nenhum
+      option_page_header_1: Com
+      option_page_header_help: |
+        Permite que você escolha se a página a ser impressa contém um cabeçalho com o nome do documento, sua descrição, a data, a unidade e a escala.
+        Sem um cabeçalho, o desenho da visão geral ocupará a página inteira.
+      option_camera: Câmera
+      option_camera_view: Vista
+      option_camera_view_custom: Personalizada
+      option_camera_zoom: Escala
+      option_camera_zoom_auto: Automático
+      option_camera_zoom_custom: Personalizada
+      option_camera_target: Posição
+      option_camera_target_auto: Automático
+      option_camera_target_custom: Personalizada
+      option_explode: Vista Explodida
+      error:
+        no_part: Não tem nenhuma peça para desenhar.
+      warning:
+        is_group_selection: As peças dentro dos **grupos mascarados** da sua lista de peças não serão desenhadas.
+        is_part_selection: Esta visão geral é limitada às **peças selecionadas**.
     error:
       no_model: Nenhum modelo está aberto. Você precisará me fornecer mais informações;)
       no_entities: Seu modelo está vazio. Você precisará me fornecer mais informações;)
@@ -850,7 +946,7 @@ tab:
     type_3: Dimensional MLC
     type_4: Fita de borda
     type_5: Acessório
-    type_6: Folha de madeira
+    type_6: Laminado
     tooltip:
       type_0: Tipo de material '$t(tab.materials.type_0)'
       type_1: Tipo de material '$t(tab.materials.type_1)'
@@ -894,6 +990,9 @@ tab:
       cut_options: Parâmetros de corte
       attributes: Atributos
       thickness: Espessura
+      thickness_help: |
+        Espessura final do material.
+        *Se nenhuma unidade for especificada, a unidade do modelo será levada em conta.*
       length_increase: Superdimensionamento do comprimento
       length_increase_help: Superdimensionamento aplicado ao comprimento para definir o **comprimento aproximado**.
       width_increase: Superdimensionamento da largura
@@ -1027,7 +1126,7 @@ tab:
       bbox_width: Largura
       bbox_thickness: Espessura
       material: Material
-      tags: Tags
+      tags: Identificação
     tooltip:
       errors: Esta parte não será importada porque produziu os seguintes erros
       warnings: "Esta parte será importada, mas produziu os seguintes avisos"
@@ -1142,25 +1241,43 @@ tab:
     suppress_units_display: Exibir a unidade de comprimento em cada valor
     mass_unit: Unidade de massa
     currency_symbol: Símbolo da moeda
-    menu:
-      dump_global_presets: Lixeira de predefinições
-      dump_model_presets: Lixeira de predefinições de modelo
-      reset_global_presets: Reinicializar as predefinições
+    presets:
+      export_global_presets: Exportar predefinições
+      export_global_presets_help: |
+        Esta característica permite exportar suas predefinições para um arquivo **.json**.
+        Selecione as predefinições que você deseja exportar.
+      export_global_presets_success: As predefinições foram exportadas com sucesso.
+      import_global_presets: Importar predefinições
+      import_global_presets_help: |
+        Selecione as predefinições no arquivo **.json** que você deseja importar.
+        Observe que se já existir uma predefinição com um nome idêntico, ela será substituída pela versão importada.
+      import_global_presets_success: |
+        As predefinições da *OpenCutList* foram importadas com sucesso.
+        Para que as mudanças sejam efetivadas, é necessário **fechar** e **reabrir** a janela OpenCutList.
+      dump_global_presets: Eliminar predefinições
+      dump_model_presets: Eliminar predefinições de modelos
+      reset_global_presets: Redefinir predefinições
       reset_global_presets_confirm: |
-        Está prestes a reiniciar todas as suas predefinições *OpenCutList* guardadas.
-        Esta acção é definitiva. **Todos os ajustes predefinidos serão perdidos.**
+        Está prestes a redefinir todas as suas predefinições *OpenCutList* salfvas.
+        Esta ação é definitiva. **Todos os ajustes predefinidos serão perdidos.**
         Confirme para continuar.
       reset_global_presets_success: |
-        *OpenCutList* predefinições foram reajustados.
-        A fim de ter em conta as alterações, é necessário **fechar** e **reabrir** a janela do OpenCutList.
-      reset_model_presets: Reinicializar as predefinições do modelo
+        Aa predefinições do *OpenCutList* foram reajustadas.
+        Para efetivar as alterações, é necessário **fechar** e **reabrir** a janela do OpenCutList.
+      reset_model_presets: Redefinir as predefinições do modelo
       reset_model_presets_confirm: |
-        Está prestes a reiniciar todas as predefinições *OpenCutList* para o modelo actual.
-        Esta acção é definitiva. **Todas as definições serão restauradas aos valores por defeito.**
+        Você está prestes a redefinir todas as predefinições *OpenCutList* para o modelo atual.
+        Esta ação é definitiva. **Todas as definições serão restauradas aos valores originais.**
         Confirmar para continuar.
       reset_model_presets_success: |
-        As predefinições do modelo actual *OpenCutList* foram reajustadas.
-        A fim de ter em conta as alterações, é necessário **fechar** e **reabrir** a janela do OpenCutList.
+        As predefinições do modelo atual *OpenCutList* foram reajustadas.
+        Para efetivar as alterações, é necessário **fechar** e **reabrir** a janela do OpenCutList.
+      error:
+        no_preset_to_export: Não há predefinições para exportar.
+        no_preset_to_import: Não há predefinições para importar.
+        failed_to_import: "Não foi possível importar as predefinições : **{{ error }}**."
+        failed_to_import_invalid_hexdigest: Este arquivo foi modificado. Não pode ser importado.
+        failed_to_import_bad_file_format: Formato de arquivo inválido.
   about:
     label: Sobre
     title: Sobre
