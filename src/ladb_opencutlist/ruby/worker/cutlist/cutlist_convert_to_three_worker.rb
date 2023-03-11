@@ -100,6 +100,13 @@ module Ladb::OpenCutList
 
           three_model_def.part_instance_count += 1
 
+          # Extract bounding box dims
+          unless part.group.material_type == MaterialAttributes::TYPE_HARDWARE
+            three_model_def.x_dim = "#{Plugin.instance.get_i18n_string('tab.cutlist.list.length_short')} = #{part.length}"
+            three_model_def.y_dim = "#{Plugin.instance.get_i18n_string('tab.cutlist.list.width_short')} = #{part.width}"
+            three_model_def.z_dim = "#{Plugin.instance.get_i18n_string('tab.cutlist.list.thickness_short')} = #{part.thickness}"
+          end
+
         end
 
       end
@@ -427,7 +434,7 @@ module Ladb::OpenCutList
 
   class ThreeModelDef < ThreeGroupDef
 
-    attr_accessor :part_instance_count, :axes_matrix
+    attr_accessor :part_instance_count, :axes_matrix, :x_dim, :y_dim, :z_dim
     attr_reader :part_defs
 
     def initialize
@@ -435,6 +442,9 @@ module Ladb::OpenCutList
       @part_defs = {}
       @part_instance_count = 0
       @axes_matrix = nil
+      @x_dim = nil
+      @y_dim = nil
+      @z_dim = nil
     end
 
   end

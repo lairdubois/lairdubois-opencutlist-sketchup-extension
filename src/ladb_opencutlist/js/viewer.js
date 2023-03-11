@@ -157,6 +157,7 @@ let renderer,
     explodeFactor,
 
     boxHelper,
+    boxDimensionsHelper,
     axesHelper,
 
     pinsGroup,
@@ -793,6 +794,95 @@ const fnSetupModel = function(modelDef, partsColored, partsOpacity, pinsHidden, 
             pinsDirection: pinsDirection
         };
 
+        // Create box helper
+        boxHelper = new THREE.Box3Helper(modelBox, 0x0000ff);
+        boxHelper.visible = false;
+        scene.add(boxHelper);
+
+        // Create box dimension helper
+        if (modelDef.x_dim != null &&modelDef.y_dim != null &&modelDef.z_dim != null) {
+
+            boxDimensionsHelper = new THREE.Group();
+            let dimOffset = baseModelRadius / 6;
+
+            const xDimDiv = document.createElement('div');
+            xDimDiv.className = 'dim';
+            xDimDiv.textContent = modelDef.x_dim;
+
+            const xDim = new THREE.CSS2DObject(xDimDiv);
+            xDim.position.copy(new THREE.Vector3(modelBox.min.x + baseModelSize.x / 2, modelBox.min.y - dimOffset, modelBox.min.z));
+            boxDimensionsHelper.add(xDim);
+
+            const yDimDiv = document.createElement('div');
+            yDimDiv.className = 'dim';
+            yDimDiv.textContent = modelDef.y_dim;
+
+            const yDim = new THREE.CSS2DObject(yDimDiv);
+            yDim.position.copy(new THREE.Vector3(modelBox.min.x + baseModelSize.x + dimOffset, modelBox.min.y + baseModelSize.y / 2, modelBox.min.z));
+            boxDimensionsHelper.add(yDim);
+
+            const zDimDiv = document.createElement('div');
+            zDimDiv.className = 'dim';
+            zDimDiv.textContent = modelDef.z_dim;
+
+            const zDim = new THREE.CSS2DObject(zDimDiv);
+            zDim.position.copy(new THREE.Vector3(modelBox.min.x + baseModelSize.x + dimOffset * 0.707, modelBox.min.y + baseModelSize.y + dimOffset * 0.707, modelBox.min.z + baseModelSize.z / 2));
+            boxDimensionsHelper.add(zDim);
+
+            boxDimensionsHelper.add(new THREE.ArrowHelper(
+                new THREE.Vector3(1, 0, 0),
+                new THREE.Vector3(modelBox.min.x, modelBox.min.y - dimOffset, modelBox.min.z),
+                baseModelSize.x,
+                0x000000,
+                0
+            ));
+            boxDimensionsHelper.add(new THREE.ArrowHelper(
+                new THREE.Vector3(0, 1, 0),
+                new THREE.Vector3(modelBox.min.x + baseModelSize.x + dimOffset, modelBox.min.y, modelBox.min.z),
+                baseModelSize.y,
+                0x000000,
+                0
+            ));
+            boxDimensionsHelper.add(new THREE.ArrowHelper(
+                new THREE.Vector3(0, 0, 1),
+                new THREE.Vector3(modelBox.min.x + baseModelSize.x + dimOffset * 0.707, modelBox.min.y +  + baseModelSize.y + dimOffset * 0.707, modelBox.min.z),
+                baseModelSize.z,
+                0x000000,
+                0
+            ));
+            scene.add(boxDimensionsHelper);
+
+        }
+
+        // Create axes helper
+        axesHelper = new THREE.Group();
+        axesHelper.visible = false;
+        if (modelDef.axes_matrix) {
+            axesHelper.applyMatrix4(new THREE.Matrix4().fromArray(modelDef.axes_matrix));
+        }
+        axesHelper.add(new THREE.ArrowHelper(
+            new THREE.Vector3(1, 0, 0),
+            new THREE.Vector3(0, 0, 0),
+            baseModelRadius * 5,
+            0xff0000,
+            0
+        ));
+        axesHelper.add(new THREE.ArrowHelper(
+            new THREE.Vector3(0, 1, 0),
+            new THREE.Vector3(0, 0, 0),
+            baseModelRadius * 5,
+            0x00dd00,
+            0
+        ));
+        axesHelper.add(new THREE.ArrowHelper(
+            new THREE.Vector3(0, 0, 1),
+            new THREE.Vector3(0, 0, 0),
+            baseModelRadius * 5,
+            0x0000ff,
+            0
+        ));
+        scene.add(axesHelper);
+
         // This will explode the model AND create pins if necessary
         fnSetExplodeFactor(explodeFactor, false);
 
@@ -822,40 +912,6 @@ const fnSetupModel = function(modelDef, partsColored, partsOpacity, pinsHidden, 
         }
 
         fnDispatchControlsChangedEvent('init');
-
-        // Create box helper
-        boxHelper = new THREE.Box3Helper(modelBox, 0x0000ff);
-        boxHelper.visible = false;
-        scene.add(boxHelper);
-
-        // Create axes helper
-        axesHelper = new THREE.Group();
-        axesHelper.visible = false;
-        if (modelDef.axes_matrix) {
-            axesHelper.applyMatrix4(new THREE.Matrix4().fromArray(modelDef.axes_matrix));
-        }
-        axesHelper.add(new THREE.ArrowHelper(
-            new THREE.Vector3(1, 0, 0),
-            new THREE.Vector3(0, 0, 0),
-            baseModelRadius * 5,
-            0xff0000,
-            0
-        ));
-        axesHelper.add(new THREE.ArrowHelper(
-            new THREE.Vector3(0, 1, 0),
-            new THREE.Vector3(0, 0, 0),
-            baseModelRadius * 5,
-            0x00ff00,
-            0
-        ));
-        axesHelper.add(new THREE.ArrowHelper(
-            new THREE.Vector3(0, 0, 1),
-            new THREE.Vector3(0, 0, 0),
-            baseModelRadius * 5,
-            0x0000ff,
-            0
-        ));
-        scene.add(axesHelper);
 
     }
 
