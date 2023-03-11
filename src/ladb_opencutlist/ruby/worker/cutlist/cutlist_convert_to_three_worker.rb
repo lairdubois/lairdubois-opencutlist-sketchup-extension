@@ -30,7 +30,6 @@ module Ladb::OpenCutList
       active_entity = model.active_path.nil? ? nil : model.active_path.last
 
       three_model_def = ThreeModelDef.new
-      three_model_def.edit_matrix = _to_three_matrix(model.edit_transform) if @all_instances
 
       group_cache = {}  # key = serialized_path, value = group - Only for all instances
 
@@ -64,30 +63,16 @@ module Ladb::OpenCutList
           # Populate part definitions
           _create_three_part_def(three_model_def, part, instance_info.entity.definition, materials[part.material_name])
 
+          # Retrieve axis order 0 = length axis, 1 = width axis, 2 = thickness axis
+          axes_order = part.def.size.normals
+
           mt = Geom::Transformation.new
           if part.auto_oriented && part.group.material_type != MaterialAttributes::TYPE_HARDWARE
 
-            # Set transformation matrix to correspond to axes orientation
-            axes_order = part.def.size.normals.clone
-            if AxisUtils::flipped?(axes_order[0], axes_order[1], axes_order[2])
-              axes_order[0] = axes_order[0].reverse if axes_order[0] == Y_AXIS
-              axes_order[1] = axes_order[1].reverse if axes_order[1] == Y_AXIS
-              axes_order[2] = axes_order[2].reverse if axes_order[2] == Y_AXIS
-            end
+            # Set model matrix to put length axis along X, width along Y and thickness along Z to display the part always in the same direction even if it is auto oriented
             mt = Geom::Transformation.axes(ORIGIN, axes_order[0], axes_order[1], axes_order[2]).inverse
             three_model_def.matrix = _to_three_matrix(mt)
 
-            case axes_order[2]
-            when X_AXIS
-              puts 'Thickness along RED'
-            when Y_AXIS
-              puts 'Thickness along GREEN'
-            when Z_AXIS
-              puts 'Thickness along BLUE'
-            end
-
-          else
-            puts 'Thickness along BLUE'
           end
 
           # Extract instance scale transformation
@@ -95,17 +80,19 @@ module Ladb::OpenCutList
           it.extend(LGeom::TransformationHelper)
           ist = Geom::Transformation.scaling(it.x_scale, it.y_scale, it.z_scale)
 
-          puts 'FLIPPED along RED' if it.x_scale < 0
-          puts 'FLIPPED along GREEN' if it.y_scale < 0
-          puts 'FLIPPED along BLUE' if it.z_scale < 0
+          # Apply a rotation of 180° along length axis if part is flipped along thickness to force front face to be displayed on top
+          if axes_order[2] == X_AXIS && it.x_scale < 0 || axes_order[2] == Y_AXIS && it.y_scale < 0 || axes_order[2] == Z_AXIS && it.z_scale < 0
+            rt = Geom::Transformation.rotation(ORIGIN, axes_order[0], 180.degrees)
+          else
+            rt = Geom::Transformation.new
+          end
 
-          # Setup model edit matrix
-          et = TransformationUtils.multiply(mt, ist)
-          three_model_def.edit_matrix = _to_three_matrix(et)
+          # Setup model axes matrix
+          three_model_def.axes_matrix = _to_three_matrix(mt * ist * rt)
 
           # Create the three part instance def
           three_part_instance_def = ThreePartInstanceDef.new
-          three_part_instance_def.matrix = _to_three_matrix(ist)
+          three_part_instance_def.matrix = _to_three_matrix(ist * rt)
           three_part_instance_def.id = part.id
 
           # Add to hierarchy
@@ -440,14 +427,14 @@ module Ladb::OpenCutList
 
   class ThreeModelDef < ThreeGroupDef
 
-    attr_accessor :part_instance_count, :edit_matrix
+    attr_accessor :part_instance_count, :axes_matrix
     attr_reader :part_defs
 
     def initialize
       super(ThreeObjectDef::TYPE_MODEL)
       @part_defs = {}
       @part_instance_count = 0
-      @edit_matrix = nil
+      @axes_matrix = nil
     end
 
   end
