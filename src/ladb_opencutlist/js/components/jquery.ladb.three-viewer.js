@@ -124,6 +124,15 @@
                     $btn.removeClass('active');
                 }
             });
+            $('[data-command="set_box_dimensions_helper_visible"]', that.$element).each(function (index, el) {
+                var $btn = $(el);
+                var params = $btn.data('params');
+                if (params.visible == null && e.data.boxDimensionsHelperVisible) {
+                    $btn.addClass('active');
+                } else {
+                    $btn.removeClass('active');
+                }
+            });
             $('[data-command="set_axes_helper_visible"]', that.$element).each(function (index, el) {
                 var $btn = $(el);
                 var params = $btn.data('params');

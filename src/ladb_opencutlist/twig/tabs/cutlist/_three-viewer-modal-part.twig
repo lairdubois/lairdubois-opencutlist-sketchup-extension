@@ -16,6 +16,7 @@
 
 {% block uiRight %}
     {{ fn.btn_command('plan', 'set_box_helper_visible', { visible:null }, 'core.component.three_viewer.toggle_box_helper'|i18next, 'left', 'color: #00f;') }}
+    {{ fn.btn_command('width', 'set_box_dimensions_helper_visible', { visible:null }, 'core.component.three_viewer.toggle_box_dimensions_helper'|i18next, 'left') }}
     {{ fn.btn_command('axes', 'set_axes_helper_visible', { visible:null }, 'core.component.three_viewer.toggle_axes_helper'|i18next, 'left') }}
 {% endblock %}
 

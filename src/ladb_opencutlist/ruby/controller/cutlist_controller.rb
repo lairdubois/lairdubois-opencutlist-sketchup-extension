@@ -48,6 +48,10 @@ module Ladb::OpenCutList
         layout_parts_command(settings)
       end
 
+      Plugin.instance.register_command("cutlist_layout_to_layout") do |settings|
+        layout_to_layout_command(settings)
+      end
+
       Plugin.instance.register_command("cutlist_part_get_thumbnail") do |part_data|
         part_get_thumbnail_command(part_data)
       end
@@ -176,6 +180,16 @@ module Ladb::OpenCutList
 
       # Setup worker
       worker = CutlistLayoutPartsWorker.new(settings, @cutlist)
+
+      # Run !
+      worker.run
+    end
+
+    def layout_to_layout_command(settings)
+      require_relative '../worker/cutlist/cutlist_layout_to_layout_worker'
+
+      # Setup worker
+      worker = CutlistLayoutToLayoutWorker.new(settings, @cutlist)
 
       # Run !
       worker.run

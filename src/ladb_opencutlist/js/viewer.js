@@ -158,6 +158,9 @@ let renderer,
 
     boxHelper,
     boxDimensionsHelper,
+    boxDimensionsHelperXDiv,
+    boxDimensionsHelperYDiv,
+    boxDimensionsHelperZDiv,
     axesHelper,
 
     pinsGroup,
@@ -192,7 +195,7 @@ const fnInit = function() {
 
     // Create the camera
 
-    camera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1000, 1000);
+    camera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1, 1);
 
     // Create controls
 
@@ -286,6 +289,10 @@ const fnAddListeners = function () {
                     fnSetBoxHelperVisible(call.params.visible);
                     break;
 
+                case 'set_box_dimensions_helper_visible':
+                    fnSetBoxDimensionsHelperVisible(call.params.visible);
+                    break;
+
                 case 'set_axes_helper_visible':
                     fnSetAxesHelperVisible(call.params.visible);
                     break;
@@ -325,6 +332,7 @@ const fnDispatchHelpersChangedEvent = function () {
     window.frameElement.dispatchEvent(new MessageEvent('changed.helpers', {
         data: {
             boxHelperVisible: boxHelper ? boxHelper.visible : false,
+            boxDimensionsHelperVisible: boxDimensionsHelper ? boxDimensionsHelper.visible : false,
             axesHelperVisible: axesHelper ? axesHelper.visible : false
         }
     }));
@@ -582,6 +590,30 @@ const fnSetBoxHelperVisible = function (visible) {
     }
 }
 
+const fnSetBoxDimensionsHelperVisible = function (visible) {
+    if (boxDimensionsHelper) {
+        let oldVisible = boxDimensionsHelper.visible;
+        if (visible == null) {
+            boxDimensionsHelper.visible = !boxDimensionsHelper.visible;
+        } else {
+            boxDimensionsHelper.visible = visible === true
+        }
+        if (boxDimensionsHelper.visible) {
+            boxDimensionsHelperXDiv.classList.remove('hide');
+            boxDimensionsHelperYDiv.classList.remove('hide');
+            boxDimensionsHelperZDiv.classList.remove('hide');
+        } else {
+            boxDimensionsHelperXDiv.classList.add('hide');
+            boxDimensionsHelperYDiv.classList.add('hide');
+            boxDimensionsHelperZDiv.classList.add('hide');
+        }
+        fnRender();
+        if (oldVisible !== boxDimensionsHelper.visible) {
+            fnDispatchHelpersChangedEvent();
+        }
+    }
+}
+
 const fnSetAxesHelperVisible = function (visible) {
     if (axesHelper) {
         let oldVisible = axesHelper.visible;
@@ -800,54 +832,104 @@ const fnSetupModel = function(modelDef, partsColored, partsOpacity, pinsHidden, 
         scene.add(boxHelper);
 
         // Create box dimension helper
-        if (modelDef.x_dim != null &&modelDef.y_dim != null &&modelDef.z_dim != null) {
+        if (modelDef.x_dim != null && modelDef.y_dim != null && modelDef.z_dim != null) {
 
             boxDimensionsHelper = new THREE.Group();
-            let dimOffset = baseModelRadius / 6;
+            boxDimensionsHelper.visible = false;
 
-            const xDimDiv = document.createElement('div');
-            xDimDiv.className = 'dim';
-            xDimDiv.textContent = modelDef.x_dim;
+            let dimOffsetA = baseModelRadius / 6;
+            let dimOffsetB = dimOffsetA * 1.3;
+            let dimArrowColor = 0x999999;
 
-            const xDim = new THREE.CSS2DObject(xDimDiv);
-            xDim.position.copy(new THREE.Vector3(modelBox.min.x + baseModelSize.x / 2, modelBox.min.y - dimOffset, modelBox.min.z));
+            boxDimensionsHelperXDiv = document.createElement('div');
+            boxDimensionsHelperXDiv.className = 'dim hide';
+            boxDimensionsHelperXDiv.textContent = modelDef.x_dim;
+
+            const xDim = new THREE.CSS2DObject(boxDimensionsHelperXDiv);
+            xDim.position.copy(new THREE.Vector3(modelBox.min.x + baseModelSize.x / 2, modelBox.min.y - dimOffsetA, modelBox.min.z));
             boxDimensionsHelper.add(xDim);
 
-            const yDimDiv = document.createElement('div');
-            yDimDiv.className = 'dim';
-            yDimDiv.textContent = modelDef.y_dim;
+            boxDimensionsHelperYDiv = document.createElement('div');
+            boxDimensionsHelperYDiv.className = 'dim hide';
+            boxDimensionsHelperYDiv.textContent = modelDef.y_dim;
 
-            const yDim = new THREE.CSS2DObject(yDimDiv);
-            yDim.position.copy(new THREE.Vector3(modelBox.min.x + baseModelSize.x + dimOffset, modelBox.min.y + baseModelSize.y / 2, modelBox.min.z));
+            const yDim = new THREE.CSS2DObject(boxDimensionsHelperYDiv);
+            yDim.position.copy(new THREE.Vector3(modelBox.min.x + baseModelSize.x + dimOffsetA, modelBox.min.y + baseModelSize.y / 2, modelBox.min.z));
             boxDimensionsHelper.add(yDim);
 
-            const zDimDiv = document.createElement('div');
-            zDimDiv.className = 'dim';
-            zDimDiv.textContent = modelDef.z_dim;
+            boxDimensionsHelperZDiv = document.createElement('div');
+            boxDimensionsHelperZDiv.className = 'dim hide';
+            boxDimensionsHelperZDiv.textContent = modelDef.z_dim;
 
-            const zDim = new THREE.CSS2DObject(zDimDiv);
-            zDim.position.copy(new THREE.Vector3(modelBox.min.x + baseModelSize.x + dimOffset * 0.707, modelBox.min.y + baseModelSize.y + dimOffset * 0.707, modelBox.min.z + baseModelSize.z / 2));
+            const zDim = new THREE.CSS2DObject(boxDimensionsHelperZDiv);
+            zDim.position.copy(new THREE.Vector3(modelBox.min.x + baseModelSize.x + dimOffsetA * 0.707, modelBox.min.y + baseModelSize.y + dimOffsetA * 0.707, modelBox.min.z + baseModelSize.z / 2));
             boxDimensionsHelper.add(zDim);
 
             boxDimensionsHelper.add(new THREE.ArrowHelper(
-                new THREE.Vector3(1, 0, 0),
-                new THREE.Vector3(modelBox.min.x, modelBox.min.y - dimOffset, modelBox.min.z),
-                baseModelSize.x,
-                0x000000,
+                new THREE.Vector3(0, 1, 0),
+                new THREE.Vector3(modelBox.min.x, modelBox.min.y - dimOffsetB, modelBox.min.z),
+                dimOffsetA,
+                dimArrowColor,
                 0
             ));
             boxDimensionsHelper.add(new THREE.ArrowHelper(
                 new THREE.Vector3(0, 1, 0),
-                new THREE.Vector3(modelBox.min.x + baseModelSize.x + dimOffset, modelBox.min.y, modelBox.min.z),
+                new THREE.Vector3(modelBox.min.x + baseModelSize.x, modelBox.min.y - dimOffsetB, modelBox.min.z),
+                dimOffsetA,
+                dimArrowColor,
+                0
+            ));
+
+            boxDimensionsHelper.add(new THREE.ArrowHelper(
+                new THREE.Vector3(-1, 0, 0),
+                new THREE.Vector3(modelBox.min.x + baseModelSize.x + dimOffsetB, modelBox.min.y, modelBox.min.z),
+                dimOffsetA,
+                dimArrowColor,
+                0
+            ));
+            boxDimensionsHelper.add(new THREE.ArrowHelper(
+                new THREE.Vector3(-1, 0, 0),
+                new THREE.Vector3(modelBox.min.x + baseModelSize.x + dimOffsetB, modelBox.min.y + baseModelSize.y, modelBox.min.z),
+                dimOffsetA,
+                dimArrowColor,
+                0
+            ));
+
+            boxDimensionsHelper.add(new THREE.ArrowHelper(
+                new THREE.Vector3(-1, -1, 0).normalize(),
+                new THREE.Vector3(modelBox.min.x + baseModelSize.x + dimOffsetB * 0.707, modelBox.min.y + baseModelSize.y + dimOffsetB * 0.707, modelBox.min.z),
+                dimOffsetA,
+                dimArrowColor,
+                0
+            ));
+            boxDimensionsHelper.add(new THREE.ArrowHelper(
+                new THREE.Vector3(-1, -1, 0).normalize(),
+                new THREE.Vector3(modelBox.min.x + baseModelSize.x + dimOffsetB * 0.707, modelBox.min.y + baseModelSize.y + dimOffsetB * 0.707, modelBox.min.z + baseModelSize.z),
+                dimOffsetA,
+                dimArrowColor,
+                0
+            ));
+
+
+            boxDimensionsHelper.add(new THREE.ArrowHelper(
+                new THREE.Vector3(1, 0, 0),
+                new THREE.Vector3(modelBox.min.x, modelBox.min.y - dimOffsetA, modelBox.min.z),
+                baseModelSize.x,
+                dimArrowColor,
+                0
+            ));
+            boxDimensionsHelper.add(new THREE.ArrowHelper(
+                new THREE.Vector3(0, 1, 0),
+                new THREE.Vector3(modelBox.min.x + baseModelSize.x + dimOffsetA, modelBox.min.y, modelBox.min.z),
                 baseModelSize.y,
-                0x000000,
+                dimArrowColor,
                 0
             ));
             boxDimensionsHelper.add(new THREE.ArrowHelper(
                 new THREE.Vector3(0, 0, 1),
-                new THREE.Vector3(modelBox.min.x + baseModelSize.x + dimOffset * 0.707, modelBox.min.y +  + baseModelSize.y + dimOffset * 0.707, modelBox.min.z),
+                new THREE.Vector3(modelBox.min.x + baseModelSize.x + dimOffsetA * 0.707, modelBox.min.y +  + baseModelSize.y + dimOffsetA * 0.707, modelBox.min.z),
                 baseModelSize.z,
-                0x000000,
+                dimArrowColor,
                 0
             ));
             scene.add(boxDimensionsHelper);
@@ -882,6 +964,10 @@ const fnSetupModel = function(modelDef, partsColored, partsOpacity, pinsHidden, 
             0
         ));
         scene.add(axesHelper);
+
+        // Adjust camera near and far
+        camera.near = -baseModelRadius * 2;
+        camera.far = baseModelRadius * 2;
 
         // This will explode the model AND create pins if necessary
         fnSetExplodeFactor(explodeFactor, false);

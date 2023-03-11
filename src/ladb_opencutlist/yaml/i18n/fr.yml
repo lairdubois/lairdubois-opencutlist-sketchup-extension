@@ -180,6 +180,7 @@ core:
       zoom: Echelle {{ zoom }}
       explode_factor: Amplitude de l'éclaté
       toggle_box_helper: Afficher ou masquer la boîte capable
+      toggle_box_dimensions_helper: Afficher ou masquer les dimensions
       toggle_axes_helper: Afficher ou masquer les axes
   docs:
     error:

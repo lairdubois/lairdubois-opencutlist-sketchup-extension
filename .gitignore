@@ -11,3 +11,4 @@
 /docs/skp/*~.skp
 /build/node_modules/
 /build/package-lock.json
+/Gemfile.lock

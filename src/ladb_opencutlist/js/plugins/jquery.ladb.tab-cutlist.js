@@ -1504,6 +1504,7 @@
                             // Fetch UI elements
                             var $btnLayout = $('#ladb_btn_layout', $slide);
                             var $btnPrint = $('#ladb_btn_print', $slide);
+                            var $btnExport = $('#ladb_btn_export', $slide);
                             var $btnClose = $('#ladb_btn_close', $slide);
                             var $viewer = $('.ladb-three-viewer', $slide);
                             var $lblScale = $('.ladb-lbl-scale', $slide);
@@ -1515,6 +1516,10 @@
                             $btnPrint.on('click', function () {
                                 $(this).blur();
                                 that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.layout.title'), '0', `${pageWidth}in ${pageHeight}in`);
+                            });
+                            $btnExport.on('click', function () {
+                                $(this).blur();
+                                rubyCallCommand('cutlist_layout_to_layout', { });
                             });
                             $btnClose.on('click', function () {
                                 that.popSlide();
