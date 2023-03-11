@@ -967,7 +967,7 @@ const fnSetupModel = function(modelDef, partsColored, partsOpacity, pinsHidden, 
 
         // Adjust camera near and far
         camera.near = -baseModelRadius * 2;
-        camera.far = baseModelRadius * 2;
+        camera.far = baseModelRadius * 4;
 
         // This will explode the model AND create pins if necessary
         fnSetExplodeFactor(explodeFactor, false);
