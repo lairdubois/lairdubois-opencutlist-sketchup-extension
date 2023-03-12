@@ -155,7 +155,7 @@ core:
       cutlist_report_options: $t(tab.cutlist.label) / $t(tab.cutlist.report.title)
       importer_import_options: $t(tab.importer.label) / $t(default.import)
       importer_load_options: $t(tab.importer.label) / $t(default.open)
-      materials_material_attributes: $t(tab.materials.label) / Attributi
+      materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       settings_model: $t(tab.settings.label) / Modello
   progress:
@@ -180,6 +180,7 @@ core:
       zoom: "Scalatura {{ zoom }}"
       explode_factor: Ampiezza dell'esploso
       toggle_box_helper: Mostra/Nascondi il riquadro di ingombro
+      toggle_box_dimensions_helper: Mostra/Nascondi le dimensioni
       toggle_axes_helper: Mostra/Nascondi gli assi delle parti
   docs:
     error:
