@@ -37,7 +37,7 @@ module Ladb::OpenCutList
 
         if @all_instances
 
-          part.def.instance_infos.each { |serialized_path, instance_info|
+          part.def.instance_infos.each do |serialized_path, instance_info|
 
             # Populate part definitions
             _create_three_part_def(three_model_def, part, instance_info.entity.definition, materials[part.material_name])
@@ -51,9 +51,10 @@ module Ladb::OpenCutList
             parent_three_group_def = _parent_hierarchy(instance_info.path.slice(0, instance_info.path.length - 1), active_entity, group_cache, three_model_def)
             parent_three_group_def.add(three_part_instance_def)
 
+            # Increment model part instance count
             three_model_def.part_instance_count += 1
 
-          }
+          end
 
         else
 
@@ -75,7 +76,7 @@ module Ladb::OpenCutList
 
           end
 
-          # Extract instance scale transformation
+          # Extract instance transformation
           it = instance_info.transformation
           it.extend(LGeom::TransformationHelper)
 
@@ -100,7 +101,7 @@ module Ladb::OpenCutList
           # Add to hierarchy
           three_model_def.add(three_part_instance_def)
 
-          # Increment part instance count
+          # Increment model part instance count
           three_model_def.part_instance_count += 1
 
           # Extract bounding box dims
@@ -120,6 +121,8 @@ module Ladb::OpenCutList
     end
 
     # -----
+
+    private
 
     def _create_three_part_def(three_model_def, part, definition, material)
 

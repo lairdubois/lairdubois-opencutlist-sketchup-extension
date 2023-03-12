@@ -322,6 +322,7 @@ const fnDispatchControlsChangedEvent = function (trigger = 'user') {
             cameraZoomIsAuto: camera.zoom === fnGetZoomAutoByView(view),
             cameraTargetIsAuto: controls.target.equals(fnGetTargetAutoByView(view).target),
             explodeFactor: explodeFactor,
+            explodedModelRadius: explodedModelRadius
         }
     }));
 

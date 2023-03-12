@@ -1481,6 +1481,12 @@
                             parts_colored: layoutOptions.parts_colored,
                         }, function (response) {
 
+                            var controlsData = {
+                                zoom: layoutOptions.camera_zoom,
+                                target: layoutOptions.camera_target,
+                                exploded_model_radius: 1
+                            }
+
                             var $slide = that.pushNewSlide('ladb_cutlist_slide_layout', 'tabs/cutlist/_slide-layout.twig', {
                                 errors: response.errors,
                                 filename: that.filename,
@@ -1519,7 +1525,24 @@
                             });
                             $btnExport.on('click', function () {
                                 $(this).blur();
-                                rubyCallCommand('cutlist_layout_to_layout', { });
+                                rubyCallCommand('cutlist_layout_to_layout', $.extend({ part_ids: partIds }, layoutOptions, controlsData), function (response) {
+
+                                    if (response.errors) {
+                                        that.dialog.notifyErrors(response.errors);
+                                    }
+                                    if (response.export_path) {
+                                        that.dialog.notify(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }), 'success', [
+                                            Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
+
+                                                rubyCallCommand('core_open_external_file', {
+                                                    path: response.export_path
+                                                });
+
+                                            })
+                                        ]);
+                                    }
+
+                                });
                             });
                             $btnClose.on('click', function () {
                                 that.popSlide();
@@ -1552,6 +1575,10 @@
                                 layoutOptions.camera_zoom = data.cameraZoomIsAuto ? null : data.cameraZoom;
                                 layoutOptions.camera_target = data.cameraTargetIsAuto ? null : data.cameraTarget;
                                 layoutOptions.explode_factor = data.explodeFactor;
+
+                                controlsData.camera_zoom = data.cameraZoom;
+                                controlsData.camera_target = data.cameraTarget;
+                                controlsData.exploded_model_radius = data.explodedModelRadius;
 
                                 if (data.trigger === 'user') {  // Avoid double storing on viewer init
 
