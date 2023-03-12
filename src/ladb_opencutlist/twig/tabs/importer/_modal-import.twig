@@ -49,8 +49,11 @@
     <p>{{ 'tab.importer.import.info_1'|i18next }}</p>
 {% endblock %}
 
-{% block footerInner %}
-    <button type="button" class="btn btn-default pull-left" data-help-page="importer.import"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
+{% block footerLeftInner %}
+    <button type="button" class="btn btn-default" data-help-page="importer.import"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
+{% endblock %}
+
+{% block footerRightInner %}
     <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
     <button type="button" class="btn btn-primary" id="ladb_importer_import">{{ 'default.import'|i18next }}</button>
 {% endblock %}

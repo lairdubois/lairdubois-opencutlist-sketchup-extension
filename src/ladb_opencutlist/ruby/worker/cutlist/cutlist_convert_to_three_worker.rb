@@ -78,26 +78,29 @@ module Ladb::OpenCutList
           # Extract instance scale transformation
           it = instance_info.transformation
           it.extend(LGeom::TransformationHelper)
+
+          # Create a scale only transformation
           ist = Geom::Transformation.scaling(it.x_scale, it.y_scale, it.z_scale)
 
-          # Apply a rotation of 180° along length axis if part is flipped along thickness to force front face to be displayed on top
+          # Apply a rotation of 180° along length axis if part is flipped along thickness to force front face to be rendered on top
           if axes_order[2] == X_AXIS && it.x_scale < 0 || axes_order[2] == Y_AXIS && it.y_scale < 0 || axes_order[2] == Z_AXIS && it.z_scale < 0
-            rt = Geom::Transformation.rotation(ORIGIN, axes_order[0], 180.degrees)
+            irt = Geom::Transformation.rotation(ORIGIN, axes_order[0], 180.degrees)
           else
-            rt = Geom::Transformation.new
+            irt = Geom::Transformation.new
           end
 
           # Setup model axes matrix
-          three_model_def.axes_matrix = _to_three_matrix(mt * ist * rt)
+          three_model_def.axes_matrix = _to_three_matrix(mt * ist * irt)
 
           # Create the three part instance def
           three_part_instance_def = ThreePartInstanceDef.new
-          three_part_instance_def.matrix = _to_three_matrix(ist * rt)
+          three_part_instance_def.matrix = _to_three_matrix(ist * irt)
           three_part_instance_def.id = part.id
 
           # Add to hierarchy
           three_model_def.add(three_part_instance_def)
 
+          # Increment part instance count
           three_model_def.part_instance_count += 1
 
           # Extract bounding box dims

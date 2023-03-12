@@ -140,8 +140,11 @@
     </div>
 {% endblock %}
 
-{% block footerInner %}
-    <button type="button" class="btn btn-default pull-left" data-help-page="cutlist.labels"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
+{% block footerLeftInner %}
+    <button type="button" class="btn btn-default" data-help-page="cutlist.labels"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
+{% endblock %}
+
+{% block footerRightInner %}
     <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
     <button type="button" class="btn btn-primary btn-validate-modal" id="ladb_cutlist_labels_btn_generate">{{ 'default.generate'|i18next }}</button>
 {% endblock %}
