@@ -155,7 +155,7 @@ core:
       cutlist_report_options: $t(tab.cutlist.label) / $t(tab.cutlist.report.title)
       importer_import_options: $t(tab.importer.label) / $t(default.import)
       importer_load_options: $t(tab.importer.label) / $t(default.open)
-      materials_material_attributes: $t(tab.materials.label) / Atributy
+      materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       settings_model: $t(tab.settings.label) / Model
   progress:
@@ -180,6 +180,7 @@ core:
       zoom: "{{ zoom }} Měřítko"
       explode_factor: Amplituda výbuchu
       toggle_box_helper: Zobrazit/skrýt ohraničující rámeček
+      toggle_box_dimensions_helper: Zobrazit/skrýt rozměry
       toggle_axes_helper: Zobrazit/skrýt osy dílů
   docs:
     error:

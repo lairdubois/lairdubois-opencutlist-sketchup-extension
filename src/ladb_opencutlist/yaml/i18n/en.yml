@@ -155,7 +155,7 @@ core:
       cutlist_report_options: $t(tab.cutlist.label) / $t(tab.cutlist.report.title)
       importer_import_options: $t(tab.importer.label) / $t(default.import)
       importer_load_options: $t(tab.importer.label) / $t(default.open)
-      materials_material_attributes: $t(tab.materials.label) / Attributes
+      materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       settings_model: $t(tab.settings.label) / Model
   progress:
@@ -180,6 +180,7 @@ core:
       zoom: "{{ zoom }} Scale"
       explode_factor: Amplitude of explosion
       toggle_box_helper: Show/Hide Bounding Box
+      toggle_box_dimensions_helper: Show/Hide Dimensions
       toggle_axes_helper: Show/Hide Part Axes
   docs:
     error:
@@ -198,8 +199,8 @@ tab:
     not_available_std_width: Width undefined
     not_available_std_thickness: Thickness undefined
     not_available_std_section: Cross section undefined
-    highlight_part: Highlight part in the model
-    highlight_parts: Highlight parts in the model
+    highlight_part: Highlight in the model
+    highlight_parts: Highlight in the model
     edit_part_properties: Edit Part Properties
     edit_part_axes_properties: Edit Axes Properties of Part
     edit_part_size_increase_properties: Edit the properties (oversizes) of the part
@@ -652,7 +653,7 @@ tab:
       option_highlight_primary_cuts: Primary cuts
       option_highlight_primary_cuts_0: Flyover only
       option_highlight_primary_cuts_1: Always visible
-      option_highlight_primary_cuts_help: Allows you to highlight primary cuts.
+      option_highlight_primary_cuts_help: Allows you to always highlight primary cuts.
       option_hide_edges_preview: Display of edge bands
       option_hide_edges_preview_0: Displayed in the cutting diagram
       option_hide_edges_preview_1: Hidden in the cutting diagram
@@ -872,7 +873,7 @@ tab:
       option_pins_text_1: Designation of the part
       option_pins_text_2: Number and Designation of the part
       option_pins_text_help: Select the text displayed in the labels.
-      option_pins_length: Length
+      option_pins_length: Leader Line
       option_pins_length_0: Without leader line
       option_pins_length_1: Short
       option_pins_length_2: Medium

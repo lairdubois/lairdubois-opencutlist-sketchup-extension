@@ -155,7 +155,7 @@ core:
       cutlist_report_options: $t(tab.cutlist.label) / $t(tab.cutlist.report.title)
       importer_import_options: $t(tab.importer.label) / $t(default.import)
       importer_load_options: $t(tab.importer.label) / $t(default.open)
-      materials_material_attributes: $t(tab.materials.label) / Attribute
+      materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       settings_model: $t(tab.settings.label) / Modell
   progress:
@@ -179,8 +179,9 @@ core:
       view_right: Seiterechts
       zoom: "{{ zoom }} Maßstab"
       explode_factor: Amplitude der Explosion
-      toggle_box_helper: Anzeige des Begrenzungsrahmens
-      toggle_axes_helper: Anzeige der Achsen des Teils
+      toggle_box_helper: Äußere Schale ein- oder ausblenden
+      toggle_box_dimensions_helper: Maße ein- oder ausblenden
+      toggle_axes_helper: Achsen ein- oder ausblenden
   docs:
     error:
       failed_to_load: |
@@ -198,8 +199,8 @@ tab:
     not_available_std_width: Breite nicht verfügbar
     not_available_std_thickness: Dicke nicht verfügbar
     not_available_std_section: Querschnitt nicht verfügbar
-    highlight_part: Teil im Modell hervorheben
-    highlight_parts: Teile im Modell hervorheben
+    highlight_part: Im Modell hervorheben
+    highlight_parts: Im Modell hervorheben
     edit_part_properties: Eigenschaften des Teils bearbeiten
     edit_part_axes_properties: Eigenschaften (Achsen) des Teils bearbeiten
     edit_part_size_increase_properties: Eigenschaften (Übermaße) des Teils bearbeiten
@@ -871,8 +872,8 @@ tab:
       option_pins_text_0: Nummer des Teils
       option_pins_text_1: Bezeichnung des Teils
       option_pins_text_2: Nummer und Bezeichung des Teils
-      option_pins_text_help: Definiert den Text des Beschriftungsfeldes.
-      option_pins_length: Länge
+      option_pins_text_help: Definiert den Inhalt des Beschriftungsfeldes.
+      option_pins_length: Verweislinie
       option_pins_length_0: Ohne Verweislinie
       option_pins_length_1: Kurz
       option_pins_length_2: Mittel
