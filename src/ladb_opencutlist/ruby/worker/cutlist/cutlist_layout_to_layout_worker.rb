@@ -16,6 +16,7 @@ module Ladb::OpenCutList
 
       @page_width = settings.fetch('page_width', 0).to_l
       @page_height = settings.fetch('page_height', 0).to_l
+      @page_header = settings.fetch('page_header', false)
       @parts_colored = settings.fetch('parts_colored', false)
       @parts_opacity = settings.fetch('parts_opacity', 1)
       @pins_text = settings.fetch('pins_text', 0)
@@ -153,38 +154,56 @@ module Ladb::OpenCutList
         # Set auto text definitions
         doc.auto_text_definitions.add('OclDate', Layout::AutoTextDefinition::TYPE_DATE_CREATED)
         doc.auto_text_definitions.add('OclLengthUnit', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = Plugin.instance.get_i18n_string("default.unit_#{DimensionUtils.instance.length_unit}")
-        doc.auto_text_definitions.add('OclScale', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = @camera_zoom.to_s
+        doc.auto_text_definitions.add('OclScale', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = _camera_zoom_to_scale(@camera_zoom)
 
         # Add header
-        top_header_group = Layout::Group.new(
-          [
-            Layout::FormattedText.new(Plugin.instance.get_i18n_string('tab.cutlist.layout.title'), Geom::Point2d.new(page_info.left_margin, page_info.top_margin), Layout::FormattedText::ANCHOR_TYPE_TOP_LEFT),
-            Layout::FormattedText.new('<OclDate> | <OclLengthUnit> | <OclScale>', Geom::Point2d.new(page_info.width - page_info.right_margin, page_info.top_margin), Layout::FormattedText::ANCHOR_TYPE_TOP_RIGHT)
-          ])
-        body_header_group = Layout::Group.new(
-          [
-            Layout::FormattedText.new('<PageName>', Geom::Point2d.new(page_info.width / 2, top_header_group.bounds.lower_right.y), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER),
-          ]
-        )
-        header_group = Layout::Group.new(
-          [
-            top_header_group,
-            body_header_group
-          ])
-        doc.add_entity(header_group, layer, page)
+        current_y = page_info.top_margin
+        if @page_header
+
+          gutter = 0.1
+
+          draw_text = _create_formated_text(Plugin.instance.get_i18n_string('tab.cutlist.layout.title'), Geom::Point2d.new(page_info.left_margin, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_LEFT, { :font_family => 'Helvetica', :font_size => 20, :text_alignment => Layout::Style::ALIGN_LEFT })
+          doc.add_entity(draw_text, layer, page)
+
+          current_y = draw_text.bounds.lower_right.y
+
+          date_and_unit_text = _create_formated_text('<OclDate>  |  <OclLengthUnit>  |  <OclScale>', Geom::Point2d.new(page_info.width - page_info.right_margin, current_y), Layout::FormattedText::ANCHOR_TYPE_BOTTOM_RIGHT, { :font_family => 'Helvetica', :font_size => 11, :text_alignment => Layout::Style::ALIGN_RIGHT })
+          doc.add_entity(date_and_unit_text, layer, page)
+
+          name_text = _create_formated_text('<PageName>', Geom::Point2d.new(page_info.width / 2, current_y + gutter * 2), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => 'Helvetica', :font_size => 16, :text_alignment => Layout::Style::ALIGN_CENTER })
+          doc.add_entity(name_text, layer, page)
+          current_y = name_text.bounds.lower_right.y
+
+          unless @cutlist.model_description.empty?
+            model_description_text = _create_formated_text(@cutlist.model_description, Geom::Point2d.new(page_info.width / 2, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => 'Helvetica', :font_size => 9, :text_alignment => Layout::Style::ALIGN_CENTER })
+            doc.add_entity(model_description_text, layer, page)
+            current_y = model_description_text.bounds.lower_right.y
+          end
+
+          unless @cutlist.page_description.empty?
+            page_description_text = _create_formated_text(@cutlist.page_description, Geom::Point2d.new(page_info.width / 2, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => 'Helvetica', :font_size => 9, :text_alignment => Layout::Style::ALIGN_CENTER })
+            doc.add_entity(page_description_text, layer, page)
+            current_y = page_description_text.bounds.lower_right.y
+          end
+
+          rectangle = _create_rectangle(Geom::Point2d.new(page_info.left_margin, draw_text.bounds.lower_right.y + gutter), Geom::Point2d.new(page_info.width - page_info.right_margin, current_y + gutter), { :solid_filled => false })
+          doc.add_entity(rectangle, layer, page)
+          current_y = rectangle.bounds.lower_right.y + gutter
+
+        end
 
         # Add SketchUp model entity
         skp = Layout::SketchUpModel.new(skp_path, Geom::Bounds2d.new(
           page_info.left_margin,
-          page_info.top_margin + header_group.bounds.height,
+          current_y,
           page_info.width - page_info.left_margin - page_info.right_margin,
-          page_info.height - page_info.top_margin - header_group.bounds.height - page_info.bottom_margin
+          page_info.height - current_y - page_info.bottom_margin
         ))
         skp.perspective = false
         skp.render_mode = Layout::SketchUpModel::VECTOR_RENDER
         skp.display_background = false
         skp.scale = @camera_zoom
-        skp.preserve_scale_on_resize = false
+        skp.preserve_scale_on_resize = true
         doc.add_entity(skp, layer, page)
 
         # Save Layout file
@@ -280,8 +299,38 @@ module Ladb::OpenCutList
         .gsub(/꞉/, '꞉')
     end
 
-    def _create_formated_text(text, anchor, anchor_type)
-      Layout::FormattedText.new(text, anchor, anchor_type)
+    def _create_formated_text(text, anchor, anchor_type, style = nil)
+      entity = Layout::FormattedText.new(text, anchor, anchor_type)
+      if style
+        entity_style = entity.style(0)
+        entity_style.font_size = style[:font_size] unless style[:font_size].nil?
+        entity_style.font_family = style[:font_family] unless style[:font_family].nil?
+        entity_style.text_bold = style[:text_bold] unless style[:text_bold].nil?
+        entity_style.text_alignment = style[:text_alignment] unless style[:text_alignment].nil?
+        entity.apply_style(entity_style)
+      end
+      entity
+    end
+
+    def _create_rectangle(upper_left, lower_right, style = nil)
+      entity = Layout::Rectangle.new(Geom::Bounds2d.new(upper_left, lower_right))
+      if style
+        entity_style = entity.style
+        entity_style.solid_filled = style[:solid_filled] unless style[:solid_filled].nil?
+        entity.style = entity_style
+      end
+      entity
+    end
+
+    def _camera_zoom_to_scale(zoom)
+      if zoom > 1
+        scale = "#{zoom.round(3)}:1"
+      elsif zoom < 1
+        scale = "1:#{(1 / zoom).round(3)}"
+      else
+        scale = '1:1'
+      end
+      scale
     end
 
   end
