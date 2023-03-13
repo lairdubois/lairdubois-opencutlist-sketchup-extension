@@ -301,6 +301,14 @@ const fnAddListeners = function () {
                     fnSetExplodeFactor(call.params.factor);
                     break;
 
+                case 'get_exploded_parts_matrices':
+                    window.frameElement.dispatchEvent(new MessageEvent('callback.get_exploded_parts_matrices', {
+                        data: fnGetExplodedPartsMatrices()
+                    }));
+                    break;
+
+                default:
+                    console.log('Unknow command : ', call.command);
             }
 
         }
@@ -471,6 +479,29 @@ const fnExplodeGroup = function (group, factor, factorDivider = 1) {
 
     }
 
+};
+
+const fnGetExplodedPartsMatrices = function () {
+
+    const partsMatrices = [];
+    fnPopulateExplodedPartsMatrices(model, partsMatrices)
+
+    return partsMatrices;
+};
+
+const fnPopulateExplodedPartsMatrices = function (group, parts) {
+    if (group.userData.isPart) {
+        parts.push({
+            id: group.userData.id,
+            matrix: group.matrixWorld.toArray()
+        });
+    } else {
+        for (let object of group.children) {
+            if (object.isGroup) {
+                fnPopulateExplodedPartsMatrices(object, parts);
+            }
+        }
+    }
 };
 
 const fnGetZoomAutoByView = function (view) {
@@ -756,6 +787,7 @@ const fnAddObjectDef = function (modelDef, objectDef, parent, partsColored) {
         if (partDef) {
 
             group.userData.isPart = true;
+            group.userData.id = objectDef.id;
             group.userData.name = partDef.name;
             group.userData.number = partDef.number;
             group.userData.color = new THREE.Color(partDef.color);

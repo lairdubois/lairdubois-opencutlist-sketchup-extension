@@ -30,7 +30,15 @@
         showBoxHelper: false,
     };
 
-    LadbThreeViewer.prototype.callCommand = function (command, params) {
+    LadbThreeViewer.prototype.callCommand = function (command, params, callback) {
+        var that = this;
+        if (callback !== undefined) {
+            var fnCallback = function (e) {
+                callback(e.data);
+                that.$iframe.get(0).removeEventListener('callback.' + command, fnCallback);
+            }
+            this.$iframe.get(0).addEventListener('callback.' + command, fnCallback);
+        }
         this.$iframe.get(0).contentWindow.postMessage({
             command: command,
             params: params
