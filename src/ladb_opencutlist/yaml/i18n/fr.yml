@@ -848,7 +848,7 @@ tab:
         formula_not_available: Non disponible dans ce context
     layout:
       title: Dessin
-      to_layout: Envoyer à Layout
+      to_layout: Exporter vers Layout
       options_layout: Composition
       options_settings: Configuration
       option_parts: Pièces

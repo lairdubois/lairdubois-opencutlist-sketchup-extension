@@ -1527,31 +1527,41 @@
                             $btnExport.on('click', function () {
                                 $(this).blur();
 
-                                $viewer.ladbThreeViewer('callCommand', [ 'get_exploded_parts_matrices', null, function (data) {
+                                window.requestAnimationFrame(function () {
 
-                                    rubyCallCommand('cutlist_layout_to_layout', $.extend({
-                                        parts_matrices: data,
-                                        target_group_id: context && context.targetGroup ? context.targetGroup.id : null
-                                    }, layoutOptions, controlsData), function (response) {
+                                    // Start progress feedback
+                                    that.dialog.startProgress(1);
 
-                                        if (response.errors) {
-                                            that.dialog.notifyErrors(response.errors);
-                                        }
-                                        if (response.export_path) {
-                                            that.dialog.notify(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }), 'success', [
-                                                Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
+                                    $viewer.ladbThreeViewer('callCommand', ['get_exploded_parts_matrices', null, function (data) {
 
-                                                    rubyCallCommand('core_open_external_file', {
-                                                        path: response.export_path
-                                                    });
+                                        rubyCallCommand('cutlist_layout_to_layout', $.extend({
+                                            parts_matrices: data,
+                                            target_group_id: context && context.targetGroup ? context.targetGroup.id : null
+                                        }, layoutOptions, controlsData), function (response) {
 
-                                                })
-                                            ]);
-                                        }
+                                            // Finish progress feedback
+                                            that.dialog.finishProgress();
 
-                                    });
+                                            if (response.errors) {
+                                                that.dialog.notifyErrors(response.errors);
+                                            }
+                                            if (response.export_path) {
+                                                that.dialog.notify(i18next.t('tab.cutlist.success.exported_to', {export_path: response.export_path}), 'success', [
+                                                    Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
 
-                                } ]);
+                                                        rubyCallCommand('core_open_external_file', {
+                                                            path: response.export_path
+                                                        });
+
+                                                    })
+                                                ]);
+                                            }
+
+                                        });
+
+                                    }]);
+
+                                });
 
                             });
                             $btnClose.on('click', function () {

@@ -212,10 +212,10 @@ module Ladb::OpenCutList
           doc.save(layout_path)
         rescue => e
           return { :errors => [ [ 'tab.cutlist.layout.error.failed_to_layout', { :error => e.message } ] ] }
+        ensure
+          # Delete Skp file
+          File.delete(skp_path)
         end
-
-        # Delete Skp file
-        File.delete(skp_path)
 
         return {
           :export_path => layout_path
