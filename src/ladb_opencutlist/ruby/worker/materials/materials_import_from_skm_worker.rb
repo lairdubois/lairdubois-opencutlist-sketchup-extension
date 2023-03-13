@@ -107,7 +107,7 @@ module Ladb::OpenCutList
           material = materials.load(path)
           return { :material_id => material.entityID }
         rescue => e
-          return { :error => [ 'tab.materials.error.failed_import_skm_file', { :error => e.message } ] }
+          return { :errors => [ [ 'tab.materials.error.failed_import_skm_file', { :error => e.message } ] ] }
         end
       end
 

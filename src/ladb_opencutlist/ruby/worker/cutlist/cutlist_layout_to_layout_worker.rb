@@ -10,10 +10,12 @@ module Ladb::OpenCutList
     def initialize(settings, cutlist)
 
       @part_ids = settings.fetch('part_ids', nil)
+      @target_group_id = settings.fetch('target_group_id', nil)
 
       @page_width = settings.fetch('page_width', 0).to_l
       @page_height = settings.fetch('page_height', 0).to_l
       @parts_colored = settings.fetch('parts_colored', false)
+      @pins_text = settings.fetch('pins_text', 0)
       @camera_view = Geom::Point3d.new(settings.fetch('camera_view', nil))
       @camera_zoom = settings.fetch('camera_zoom', 1)
       @camera_target = Geom::Point3d.new(settings.fetch('camera_target', nil))
@@ -36,79 +38,115 @@ module Ladb::OpenCutList
       parts = @cutlist.get_real_parts(@part_ids)
       return { :errors => [ 'tab.cutlist.layout.error.no_part' ] } if parts.empty?
 
-      materials = model.materials
+      # Retrieve target group
+      target_group = @cutlist.get_group(@target_group_id)
 
       ####
 
-      layout_dir = File.join(Plugin.instance.temp_dir, 'layout')
-      unless Dir.exist?(layout_dir)
-        Dir.mkdir(layout_dir)
-      end
+      # Ask for layout file path
+      layout_path = UI.savepanel(Plugin.instance.get_i18n_string('tab.cutlist.export.title'), @cutlist.dir, _sanitize_filename("#{@cutlist.model_name.empty? ? File.basename(@cutlist.filename, '.skp') : @cutlist.model_name}#{@cutlist.page_name.empty? ? '' : " - #{@cutlist.page_name}"}#{target_group && target_group.material_type != MaterialAttributes::TYPE_UNKNOWN ? " - #{target_group.material_name} #{target_group.std_dimension}" : ''}.layout"))
+      if layout_path
 
-      # CREATE SKP FILE
+        dir = File.dirname(layout_path)
 
-      skp_file = File.join(layout_dir, 'ocl.skp')
+        # CREATE SKP FILE
 
-      model = Sketchup.active_model
-      tmp_definition = model.definitions.add('TMP')
+        skp_path = File.join(dir, "#{File.basename(layout_path, '.layout')}-tmp.skp")
 
-      parts.each do |part|
+        materials = model.materials
+        tmp_definition = model.definitions.add('TMP')
 
-        part.def.instance_infos.each do |serialized_path, instance_info|
+        parts.each do |part|
 
-          material = materials[part.material_name]
-          material_color = @parts_colored && material ? material.color : nil
+          part.def.instance_infos.each do |serialized_path, instance_info|
 
-          _draw_part(tmp_definition, part, instance_info.entity.definition, instance_info.transformation, material_color)
+            material = materials[part.material_name]
+            material_color = @parts_colored && material ? material.color : nil
+
+            _draw_part(tmp_definition, part, instance_info.entity.definition, instance_info.transformation, material_color)
+
+          end
 
         end
 
+        view = model.active_view
+        camera = view.camera
+        eye = camera.eye
+        target = camera.target
+        up = camera.up
+
+        camera.set(Geom::Point3d.new(
+          @camera_view.x * @exploded_model_radius + @camera_target.x,
+          @camera_view.y * @exploded_model_radius + @camera_target.y,
+          @camera_view.z * @exploded_model_radius + @camera_target.z
+        ), @camera_target, Z_AXIS)
+        tmp_definition.save_as(skp_path)
+        camera.set(eye, target, up)
+
+        model.definitions.remove(tmp_definition)
+
+        # CREATE LAUOUT FILE
+
+        doc = Layout::Document.new
+
+        # Setup page infos
+        page_info = doc.page_info
+        page_info.width = @page_width
+        page_info.height = @page_height
+        page_info.top_margin = 0.25
+        page_info.right_margin = 0.25
+        page_info.bottom_margin = 0.25
+        page_info.left_margin = 0.25
+
+        # Setup units and precision
+        case DimensionUtils.instance.length_unit
+        when DimensionUtils::INCHES
+          if DimensionUtils.instance.length_format == DimensionUtils::FRACTIONAL
+            doc.units = Layout::Document::FRACTIONAL_INCHES
+          else
+            doc.units = Layout::Document::DECIMAL_INCHES
+          end
+        when DimensionUtils::FEET
+          doc.units = Layout::Document::DECIMAL_FEET
+        when DimensionUtils::MILLIMETER
+          doc.units = Layout::Document::DECIMAL_MILLIMETERS
+        when DimensionUtils::CENTIMETER
+          doc.units = Layout::Document::DECIMAL_CENTIMETERS
+        when DimensionUtils::METER
+          doc.units = Layout::Document::DECIMAL_METERS
+        end
+        doc.precision = DimensionUtils.instance.length_format
+
+        page = doc.pages.first
+        layer = doc.layers.first
+
+        # Add Sketchup model
+        bounds = Geom::Bounds2d.new(
+          page_info.left_margin,
+          page_info.top_margin,
+          page_info.width - page_info.left_margin - page_info.right_margin,
+          page_info.height - page_info.top_margin - page_info.bottom_margin
+        )
+        skp = Layout::SketchUpModel.new(skp_path, bounds)
+        skp.perspective = false
+        skp.render_mode = Layout::SketchUpModel::VECTOR_RENDER
+        skp.display_background = false
+        skp.scale = @camera_zoom
+        doc.add_entity(skp, layer, page)
+
+        begin
+          doc.save(layout_path)
+        rescue => e
+          return { :errors => [ [ 'tab.cutlist.layout.error.failed_to_layout', { :error => e.message } ] ] }
+        end
+
+        return {
+          :export_path => layout_path
+        }
       end
 
-      view = model.active_view
-      camera = view.camera
-      eye = camera.eye
-      target = camera.target
-      up = camera.up
-
-      camera.set(Geom::Point3d.new(
-        @camera_view.x * @exploded_model_radius + @camera_target.x,
-        @camera_view.y * @exploded_model_radius + @camera_target.y,
-        @camera_view.z * @exploded_model_radius + @camera_target.z
-      ), @camera_target, Z_AXIS)
-      tmp_definition.save_as(skp_file)
-      camera.set(eye, target, up)
-
-      model.definitions.remove(tmp_definition)
-
-      # CREATE LAUOUT FILE
-
-      layout_file = File.join(layout_dir, 'ocl.layout')
-
-      doc = Layout::Document.new
-      page_info = doc.page_info
-      page_info.width = @page_width
-      page_info.height = @page_height
-      page = doc.pages.first
-      layer = doc.layers.first
-
-      bounds = Geom::Bounds2d.new(
-        page_info.left_margin,
-        page_info.top_margin,
-        page_info.width - page_info.left_margin - page_info.right_margin,
-        page_info.height - page_info.top_margin - page_info.bottom_margin
-      )
-      skp = Layout::SketchUpModel.new(skp_file, bounds)
-      skp.perspective = false
-      skp.render_mode = Layout::SketchUpModel::VECTOR_RENDER
-      skp.display_background = false
-      skp.scale = @camera_zoom
-      doc.add_entity(skp, layer, page)
-
-      status = doc.save(layout_file)
-
       {
-        :export_path => layout_file
+        :cancelled => true
       }
     end
 
@@ -119,7 +157,14 @@ module Ladb::OpenCutList
     def _draw_part(tmp_definition, part, definition, transformation = nil, color = nil)
       group = tmp_definition.entities.add_group
       group.transformation = transformation
-      group.name = "#{part.number} - #{part.name}"
+      case @pins_text
+      when 1  # PINS_TEXT_NAME
+        group.name = part.name
+      when 2  # PINS_TEXT_NUMBER_AND_NAME
+        group.name = "#{part.number} - #{part.name}"
+      else  # PINS_TEXT_NUMBER
+        group.name = part.number
+      end
       _draw_entities(group, definition.entities, color)
     end
 
@@ -132,6 +177,7 @@ module Ladb::OpenCutList
         if entity.is_a?(Sketchup::Face)
           points = entity.vertices.map { |vertex| vertex.position }
           face = container.entities.add_face(points)
+          face.reverse! if face.normal != entity.normal
           face.material = entity.material.nil? ? color : entity.material.color if @parts_colored
         elsif entity.is_a?(Sketchup::Group)
           group = container.entities.add_group
@@ -141,6 +187,12 @@ module Ladb::OpenCutList
 
       end
 
+    end
+
+    def _sanitize_filename(filename)
+      filename
+        .gsub(/\//, '∕')
+        .gsub(/꞉/, '꞉')
     end
 
   end

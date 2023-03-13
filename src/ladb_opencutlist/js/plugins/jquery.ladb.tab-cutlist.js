@@ -1525,7 +1525,10 @@
                             });
                             $btnExport.on('click', function () {
                                 $(this).blur();
-                                rubyCallCommand('cutlist_layout_to_layout', $.extend({ part_ids: partIds }, layoutOptions, controlsData), function (response) {
+                                rubyCallCommand('cutlist_layout_to_layout', $.extend({
+                                    part_ids: partIds,
+                                    target_group_id: context && context.targetGroup ? context.targetGroup.id : null
+                                }, layoutOptions, controlsData), function (response) {
 
                                     if (response.errors) {
                                         that.dialog.notifyErrors(response.errors);

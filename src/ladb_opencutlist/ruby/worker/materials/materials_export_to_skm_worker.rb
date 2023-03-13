@@ -49,10 +49,10 @@ module Ladb::OpenCutList
 
         begin
           success = material.save_as(path)
-          return { :errors => [ 'tab.materials.error.failed_export_skm_file', { :error => '' } ] } unless success
+          return { :errors => [ [ 'tab.materials.error.failed_export_skm_file', { :error => '' } ] ] } unless success
           return { :export_path => path }
         rescue => e
-          return { :errors => [ 'tab.materials.error.failed_export_skm_file', { :error => e.message } ] }
+          return { :errors => [ [ 'tab.materials.error.failed_export_skm_file', { :error => e.message } ] ] }
         end
       end
 

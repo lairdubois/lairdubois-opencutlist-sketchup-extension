@@ -39,9 +39,9 @@ module Ladb::OpenCutList
       # Save source material to temp SKM file
       begin
         success = src_material.save_as(path)
-        return { :errors => [ 'tab.materials.error.failed_duplicating_material', { :error => '' } ] } unless success
+        return { :errors => [ [ 'tab.materials.error.failed_duplicating_material', { :error => '' } ] ] } unless success
       rescue => e
-        return { :errors => [ 'tab.materials.error.failed_duplicating_material', { :error => e.message } ] }
+        return { :errors => [ [ 'tab.materials.error.failed_duplicating_material', { :error => e.message } ] ] }
       ensure
         # Rename source material to its original name
         src_material.name = @name
@@ -55,7 +55,7 @@ module Ladb::OpenCutList
         material.name = new_name
 
       rescue => e
-        return { :error => [ 'tab.materials.error.failed_duplicating_material', { :error => e.message } ] }
+        return { :errors => [ [ 'tab.materials.error.failed_duplicating_material', { :error => e.message } ] ] }
       ensure
         # Remove temp SKM file
         File.delete(path) if File.exist?(path)
