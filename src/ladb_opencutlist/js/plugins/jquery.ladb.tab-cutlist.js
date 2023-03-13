@@ -1488,6 +1488,7 @@
                             }
 
                             var $slide = that.pushNewSlide('ladb_cutlist_slide_layout', 'tabs/cutlist/_slide-layout.twig', {
+                                capabilities: that.dialog.capabilities,
                                 errors: response.errors,
                                 filename: that.filename,
                                 modelName: that.modelName,

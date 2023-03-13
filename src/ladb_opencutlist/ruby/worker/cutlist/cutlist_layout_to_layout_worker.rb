@@ -1,5 +1,6 @@
 module Ladb::OpenCutList
 
+  require 'benchmark'
   require 'securerandom'
   require_relative '../../plugin'
   require_relative '../../helper/layer_visibility_helper'
@@ -44,116 +45,121 @@ module Ladb::OpenCutList
 
       ####
 
-      # Ask for layout file path
-      layout_path = UI.savepanel(Plugin.instance.get_i18n_string('tab.cutlist.export.title'), @cutlist.dir, _sanitize_filename("#{@cutlist.model_name.empty? ? File.basename(@cutlist.filename, '.skp') : @cutlist.model_name}#{@cutlist.page_name.empty? ? '' : " - #{@cutlist.page_name}"}#{target_group && target_group.material_type != MaterialAttributes::TYPE_UNKNOWN ? " - #{target_group.material_name} #{target_group.std_dimension}" : ''}.layout"))
-      if layout_path
+      Benchmark.bm do |x|
 
-        dir = File.dirname(layout_path)
+        # Ask for layout file path
+        layout_path = UI.savepanel(Plugin.instance.get_i18n_string('tab.cutlist.export.title'), @cutlist.dir, _sanitize_filename("#{@cutlist.model_name.empty? ? File.basename(@cutlist.filename, '.skp') : @cutlist.model_name}#{@cutlist.page_name.empty? ? '' : " - #{@cutlist.page_name}"}#{target_group && target_group.material_type != MaterialAttributes::TYPE_UNKNOWN ? " - #{target_group.material_name} #{target_group.std_dimension}" : ''}.layout"))
+        if layout_path
 
-        # CREATE SKP FILE
+          dir = File.dirname(layout_path)
 
-        uuid = SecureRandom.uuid
+          # CREATE SKP FILE
 
-        skp_path = File.join(dir, "#{File.basename(layout_path, '.layout')}-#{uuid}.skp")
+          uuid = SecureRandom.uuid
 
-        materials = model.materials
-        tmp_definition = model.definitions.add(uuid)
+          skp_path = File.join(dir, "#{File.basename(layout_path, '.layout')}-#{uuid}.skp")
 
-        parts.each do |part|
+          materials = model.materials
+          tmp_definition = model.definitions.add(uuid)
 
-          part.def.instance_infos.each do |serialized_path, instance_info|
+          x.report('DRAW') {
+            parts.each do |part|
 
-            material = materials[part.material_name]
-            material_color = @parts_colored && material ? material.color : 0xffffff
+              part.def.instance_infos.each do |serialized_path, instance_info|
 
-            _draw_part(tmp_definition, part, instance_info.entity.definition, instance_info.transformation, material_color)
+                material = materials[part.material_name]
+                material_color = @parts_colored && material ? material.color : 0xffffff
 
+                _draw_part(tmp_definition, part, instance_info.entity.definition, instance_info.transformation, material_color)
+
+              end
+
+            end
+          }
+
+          view = model.active_view
+          camera = view.camera
+          eye = camera.eye
+          target = camera.target
+          up = camera.up
+
+          # Workaround to set camera in Layout file : briefly change current model's camera
+          camera.set(Geom::Point3d.new(
+            @camera_view.x * @exploded_model_radius + @camera_target.x,
+            @camera_view.y * @exploded_model_radius + @camera_target.y,
+            @camera_view.z * @exploded_model_radius + @camera_target.z
+          ), @camera_target, Z_AXIS)
+
+          # Save tmp definition as in skp file
+          skp_success = tmp_definition.save_as(skp_path)
+
+          # Restore model's camera
+          camera.set(eye, target, up)
+
+          # Remove tmp definition
+          model.definitions.remove(tmp_definition)
+
+          return { :errors => [ 'tab.cutlist.layout.error.failed_to_save_as_skp' ] } unless skp_success
+
+          # CREATE LAYOUT FILE
+
+          doc = Layout::Document.new
+
+          # Set document's page infos
+          page_info = doc.page_info
+          page_info.width = @page_width
+          page_info.height = @page_height
+          page_info.top_margin = 0.25
+          page_info.right_margin = 0.25
+          page_info.bottom_margin = 0.25
+          page_info.left_margin = 0.25
+
+          # Set document's units and precision
+          case DimensionUtils.instance.length_unit
+          when DimensionUtils::INCHES
+            if DimensionUtils.instance.length_format == DimensionUtils::FRACTIONAL
+              doc.units = Layout::Document::FRACTIONAL_INCHES
+            else
+              doc.units = Layout::Document::DECIMAL_INCHES
+            end
+          when DimensionUtils::FEET
+            doc.units = Layout::Document::DECIMAL_FEET
+          when DimensionUtils::MILLIMETER
+            doc.units = Layout::Document::DECIMAL_MILLIMETERS
+          when DimensionUtils::CENTIMETER
+            doc.units = Layout::Document::DECIMAL_CENTIMETERS
+          when DimensionUtils::METER
+            doc.units = Layout::Document::DECIMAL_METERS
+          end
+          doc.precision = 0.000001.ceil(DimensionUtils.instance.length_precision)
+
+          page = doc.pages.first
+          layer = doc.layers.first
+
+          # Add SketchUp model entity
+          skp = Layout::SketchUpModel.new(skp_path, Geom::Bounds2d.new(
+            page_info.left_margin,
+            page_info.top_margin,
+            page_info.width - page_info.left_margin - page_info.right_margin,
+            page_info.height - page_info.top_margin - page_info.bottom_margin
+          ))
+          skp.perspective = false
+          skp.render_mode = Layout::SketchUpModel::VECTOR_RENDER
+          skp.display_background = false
+          skp.scale = @camera_zoom
+          doc.add_entity(skp, layer, page)
+
+          # Save Layout file
+          begin
+            doc.save(layout_path)
+          rescue => e
+            return { :errors => [ [ 'tab.cutlist.layout.error.failed_to_layout', { :error => e.message } ] ] }
           end
 
+          # Delete Skp file
+          File.delete(skp_path)
+
         end
-
-        view = model.active_view
-        camera = view.camera
-        eye = camera.eye
-        target = camera.target
-        up = camera.up
-
-        # Workaround to set camera in Layout file : briefly change current model camera
-        camera.set(Geom::Point3d.new(
-          @camera_view.x * @exploded_model_radius + @camera_target.x,
-          @camera_view.y * @exploded_model_radius + @camera_target.y,
-          @camera_view.z * @exploded_model_radius + @camera_target.z
-        ), @camera_target, Z_AXIS)
-
-        # Save tmp definition as in skp file
-        skp_success = tmp_definition.save_as(skp_path)
-
-        # Restore model camera
-        camera.set(eye, target, up)
-
-        # Remove tmp definition
-        model.definitions.remove(tmp_definition)
-
-        return { :errors => [ 'tab.cutlist.layout.error.failed_to_save_as_skp' ] } unless skp_success
-
-        # CREATE LAYOUT FILE
-
-        doc = Layout::Document.new
-
-        # Setup page infos
-        page_info = doc.page_info
-        page_info.width = @page_width
-        page_info.height = @page_height
-        page_info.top_margin = 0.25
-        page_info.right_margin = 0.25
-        page_info.bottom_margin = 0.25
-        page_info.left_margin = 0.25
-
-        # Setup units and precision
-        case DimensionUtils.instance.length_unit
-        when DimensionUtils::INCHES
-          if DimensionUtils.instance.length_format == DimensionUtils::FRACTIONAL
-            doc.units = Layout::Document::FRACTIONAL_INCHES
-          else
-            doc.units = Layout::Document::DECIMAL_INCHES
-          end
-        when DimensionUtils::FEET
-          doc.units = Layout::Document::DECIMAL_FEET
-        when DimensionUtils::MILLIMETER
-          doc.units = Layout::Document::DECIMAL_MILLIMETERS
-        when DimensionUtils::CENTIMETER
-          doc.units = Layout::Document::DECIMAL_CENTIMETERS
-        when DimensionUtils::METER
-          doc.units = Layout::Document::DECIMAL_METERS
-        end
-        doc.precision = DimensionUtils.instance.length_precision
-
-        page = doc.pages.first
-        layer = doc.layers.first
-
-        # Add SketchUp model entity
-        bounds = Geom::Bounds2d.new(
-          page_info.left_margin,
-          page_info.top_margin,
-          page_info.width - page_info.left_margin - page_info.right_margin,
-          page_info.height - page_info.top_margin - page_info.bottom_margin
-        )
-        skp = Layout::SketchUpModel.new(skp_path, bounds)
-        skp.perspective = false
-        skp.render_mode = Layout::SketchUpModel::VECTOR_RENDER
-        skp.display_background = false
-        skp.scale = @camera_zoom
-        doc.add_entity(skp, layer, page)
-
-        # Save Layout file
-        begin
-          doc.save(layout_path)
-        rescue => e
-          return { :errors => [ [ 'tab.cutlist.layout.error.failed_to_layout', { :error => e.message } ] ] }
-        end
-
-        # Remove Skp file
-        File.delete(skp_path)
 
         return {
           :export_path => layout_path
@@ -177,27 +183,55 @@ module Ladb::OpenCutList
         group.name = part.name
       when 2  # PINS_TEXT_NUMBER_AND_NAME
         group.name = "#{part.number} - #{part.name}"
-      else  # PINS_TEXT_NUMBER
+      else    # PINS_TEXT_NUMBER
         group.name = part.number
       end
-      _draw_entities(group, definition.entities, color)
+      group.entities.build { |builder|
+        _draw_entities(builder, definition.entities, nil, color)
+      }
     end
 
-    def _draw_entities(container, entities, color = nil)
+    def _draw_entities(builder, entities, transformation = nil, color = nil)
 
       entities.each do |entity|
 
         next unless entity.visible? && _layer_visible?(entity.layer)
 
         if entity.is_a?(Sketchup::Face)
-          points = entity.vertices.map { |vertex| vertex.position }
-          face = container.entities.add_face(points)
-          face.reverse! if face.normal != entity.normal
+
+          # Extract loops
+          outer_loop = entity.outer_loop
+          outer_loop_points = []
+          inner_loops_points = []
+          entity.loops.each { |loop|
+            loop_points = loop.vertices.map { |vertex| vertex.position }
+            Point3dUtils.transform_points(loop_points, transformation)
+            if loop == outer_loop
+              outer_loop_points = loop_points
+            else
+              inner_loops_points << loop_points
+            end
+          }
+
+          # Draw face
+          face = builder.add_face(outer_loop_points, holes: inner_loops_points)
           face.material = entity.material.nil? ? color : entity.material.color if @parts_colored
+
+          # Add soft and smooth edges
+          entity.edges.each { |edge|
+            if edge.soft? || edge.smooth?
+              edge_points = edge.vertices.map { |vertex| vertex.position }
+              Point3dUtils.transform_points(edge_points, transformation)
+              e = builder.add_edge(edge_points)
+              e.soft = edge.soft?
+              e.smooth = edge.smooth?
+            end
+          }
+
         elsif entity.is_a?(Sketchup::Group)
-          group = container.entities.add_group
-          group.transformation = entity.transformation
-          _draw_entities(group, entity.entities)
+          _draw_entities(builder, entity.entities, TransformationUtils.multiply(transformation, entity.transformation))
+        elsif entity.is_a?(Sketchup::ComponentInstance) && entity.definition.behavior.cuts_opening?
+          _draw_entities(builder, entity.definition.entities, TransformationUtils.multiply(transformation, entity.transformation))
         end
 
       end
