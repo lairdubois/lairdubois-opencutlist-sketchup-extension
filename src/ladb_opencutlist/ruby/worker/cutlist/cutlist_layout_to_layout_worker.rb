@@ -1,5 +1,6 @@
 module Ladb::OpenCutList
 
+  require 'securerandom'
   require_relative '../../plugin'
   require_relative '../../helper/layer_visibility_helper'
 
@@ -51,17 +52,19 @@ module Ladb::OpenCutList
 
         # CREATE SKP FILE
 
-        skp_path = File.join(dir, "#{File.basename(layout_path, '.layout')}-tmp.skp")
+        uuid = SecureRandom.uuid
+
+        skp_path = File.join(dir, "#{File.basename(layout_path, '.layout')}-#{uuid}.skp")
 
         materials = model.materials
-        tmp_definition = model.definitions.add('TMP')
+        tmp_definition = model.definitions.add(uuid)
 
         parts.each do |part|
 
           part.def.instance_infos.each do |serialized_path, instance_info|
 
             material = materials[part.material_name]
-            material_color = @parts_colored && material ? material.color : nil
+            material_color = @parts_colored && material ? material.color : 0xffffff
 
             _draw_part(tmp_definition, part, instance_info.entity.definition, instance_info.transformation, material_color)
 
@@ -75,17 +78,25 @@ module Ladb::OpenCutList
         target = camera.target
         up = camera.up
 
+        # Workaround to set camera in Layout file : briefly change current model camera
         camera.set(Geom::Point3d.new(
           @camera_view.x * @exploded_model_radius + @camera_target.x,
           @camera_view.y * @exploded_model_radius + @camera_target.y,
           @camera_view.z * @exploded_model_radius + @camera_target.z
         ), @camera_target, Z_AXIS)
-        tmp_definition.save_as(skp_path)
+
+        # Save tmp definition as in skp file
+        skp_success = tmp_definition.save_as(skp_path)
+
+        # Restore model camera
         camera.set(eye, target, up)
 
+        # Remove tmp definition
         model.definitions.remove(tmp_definition)
 
-        # CREATE LAUOUT FILE
+        return { :errors => [ 'tab.cutlist.layout.error.failed_to_save_as_skp' ] } unless skp_success
+
+        # CREATE LAYOUT FILE
 
         doc = Layout::Document.new
 
@@ -115,12 +126,12 @@ module Ladb::OpenCutList
         when DimensionUtils::METER
           doc.units = Layout::Document::DECIMAL_METERS
         end
-        doc.precision = DimensionUtils.instance.length_format
+        doc.precision = DimensionUtils.instance.length_precision
 
         page = doc.pages.first
         layer = doc.layers.first
 
-        # Add Sketchup model
+        # Add SketchUp model entity
         bounds = Geom::Bounds2d.new(
           page_info.left_margin,
           page_info.top_margin,
@@ -134,11 +145,15 @@ module Ladb::OpenCutList
         skp.scale = @camera_zoom
         doc.add_entity(skp, layer, page)
 
+        # Save Layout file
         begin
           doc.save(layout_path)
         rescue => e
           return { :errors => [ [ 'tab.cutlist.layout.error.failed_to_layout', { :error => e.message } ] ] }
         end
+
+        # Remove Skp file
+        File.delete(skp_path)
 
         return {
           :export_path => layout_path
