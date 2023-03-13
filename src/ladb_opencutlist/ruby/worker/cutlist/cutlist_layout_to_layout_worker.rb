@@ -161,27 +161,28 @@ module Ladb::OpenCutList
         if @page_header
 
           gutter = 0.1
+          font_family = 'Verdana'
 
-          draw_text = _create_formated_text(Plugin.instance.get_i18n_string('tab.cutlist.layout.title'), Geom::Point2d.new(page_info.left_margin, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_LEFT, { :font_family => 'Helvetica', :font_size => 20, :text_alignment => Layout::Style::ALIGN_LEFT })
+          draw_text = _create_formated_text(Plugin.instance.get_i18n_string('tab.cutlist.layout.title'), Geom::Point2d.new(page_info.left_margin, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_LEFT, { :font_family => font_family, :font_size => 18, :text_alignment => Layout::Style::ALIGN_LEFT })
           doc.add_entity(draw_text, layer, page)
 
           current_y = draw_text.bounds.lower_right.y
 
-          date_and_unit_text = _create_formated_text('<OclDate>  |  <OclLengthUnit>  |  <OclScale>', Geom::Point2d.new(page_info.width - page_info.right_margin, current_y), Layout::FormattedText::ANCHOR_TYPE_BOTTOM_RIGHT, { :font_family => 'Helvetica', :font_size => 11, :text_alignment => Layout::Style::ALIGN_RIGHT })
+          date_and_unit_text = _create_formated_text('<OclDate>  |  <OclLengthUnit>  |  <OclScale>', Geom::Point2d.new(page_info.width - page_info.right_margin, current_y), Layout::FormattedText::ANCHOR_TYPE_BOTTOM_RIGHT, { :font_family => font_family, :font_size => 10, :text_alignment => Layout::Style::ALIGN_RIGHT })
           doc.add_entity(date_and_unit_text, layer, page)
 
-          name_text = _create_formated_text('<PageName>', Geom::Point2d.new(page_info.width / 2, current_y + gutter * 2), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => 'Helvetica', :font_size => 16, :text_alignment => Layout::Style::ALIGN_CENTER })
+          name_text = _create_formated_text('<PageName>', Geom::Point2d.new(page_info.width / 2, current_y + gutter * 2), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => font_family, :font_size => 15, :text_alignment => Layout::Style::ALIGN_CENTER })
           doc.add_entity(name_text, layer, page)
           current_y = name_text.bounds.lower_right.y
 
           unless @cutlist.model_description.empty?
-            model_description_text = _create_formated_text(@cutlist.model_description, Geom::Point2d.new(page_info.width / 2, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => 'Helvetica', :font_size => 9, :text_alignment => Layout::Style::ALIGN_CENTER })
+            model_description_text = _create_formated_text(@cutlist.model_description, Geom::Point2d.new(page_info.width / 2, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => font_family, :font_size => 9, :text_alignment => Layout::Style::ALIGN_CENTER })
             doc.add_entity(model_description_text, layer, page)
             current_y = model_description_text.bounds.lower_right.y
           end
 
           unless @cutlist.page_description.empty?
-            page_description_text = _create_formated_text(@cutlist.page_description, Geom::Point2d.new(page_info.width / 2, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => 'Helvetica', :font_size => 9, :text_alignment => Layout::Style::ALIGN_CENTER })
+            page_description_text = _create_formated_text(@cutlist.page_description, Geom::Point2d.new(page_info.width / 2, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => font_family, :font_size => 9, :text_alignment => Layout::Style::ALIGN_CENTER })
             doc.add_entity(page_description_text, layer, page)
             current_y = page_description_text.bounds.lower_right.y
           end
