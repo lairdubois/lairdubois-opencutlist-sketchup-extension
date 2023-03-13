@@ -3,7 +3,7 @@
 {% set id = 'ladb_cutlist_modal_layout' %}
 {% set title = ('tab.cutlist.layout.title'|i18next) %}
 {% if group and group.material_type != 0 %} {# 0 = TYPE_UNKNOW #}
-    {% set title = title~'<small class="ladb-horizontal-left-separator">'~group.material_name|escape('html')~' / '~group.std_dimension~'</small>' %}
+    {% set title = title~'<small class="ladb-horizontal-left-separator">'~group.material_name|escape('html')~(group.std_dimension ? ' / '~group.std_dimension : '')~'</small>' %}
 {% endif %}
 {% set noDefaultClose = true %}
 
