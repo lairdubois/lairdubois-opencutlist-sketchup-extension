@@ -1,5 +1,9 @@
 {
   "version": "5.0.0-dev",
   "build": "202303011810",
-  "url": "https://www.lairdubois.fr/opencutlist/download-dev"
+  "url": "https://www.lairdubois.fr/opencutlist/download-dev",
+  "sponsor": {
+    "objectiveGoal": 6000,
+    "objectiveCurrency": "USD"
+  }
 }
