@@ -132,11 +132,15 @@ LadbTextinputAbstract.prototype.init = function () {
         // Remove placeholder and set multiple to false on value edited
         this.$element.on('input change', function () {
             that.$element
-                .attr('placeholder', '')
+                .attr('placeholder', ' ')
                 .data('multiple', false)
             ;
         });
 
+    }
+
+    if (this.$element.attr('placeholder') === undefined) {
+        this.$element.attr('placeholder', ' ');
     }
 
     // Disabled ?
