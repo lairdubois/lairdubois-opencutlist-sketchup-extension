@@ -14,6 +14,8 @@ module Ladb::OpenCutList
       @parts_matrices = settings.fetch('parts_matrices', nil)
       @target_group_id = settings.fetch('target_group_id', nil)
 
+      @generated_at = settings.fetch('generated_at', '')
+
       @page_width = settings.fetch('page_width', 0).to_l
       @page_height = settings.fetch('page_height', 0).to_l
       @page_header = settings.fetch('page_header', false)
@@ -54,13 +56,15 @@ module Ladb::OpenCutList
         # Start model modification operation
         model.start_operation('OpenCutList - Export to Layout', true, false, true)
 
-        dir = File.dirname(layout_path)
-
         # CREATE SKP FILE
 
         uuid = SecureRandom.uuid
 
-        skp_path = File.join(dir, "#{File.basename(layout_path, '.layout')}-#{uuid}.skp")
+        skp_dir = File.join(Plugin.instance.temp_dir, 'skp')
+        unless Dir.exist?(skp_dir)
+          Dir.mkdir(skp_dir)
+        end
+        skp_path = File.join(skp_dir, "#{uuid}.skp")
 
         materials = model.materials
         definitions = model.definitions
@@ -103,7 +107,7 @@ module Ladb::OpenCutList
 
         # Add style
         selected_style = styles.selected_style
-        styles.add_style(File.join(__dir__, '..', '..', '..', 'style', @parts_colored ? 'ocl_layout_colored.style' : 'ocl_layout_no_color.style' ), true)
+        styles.add_style(File.join(__dir__, '..', '..', '..', 'style', "ocl_layout_#{@parts_colored ? 'colored' : 'monochrome'}_#{@parts_opacity == 1 ? 'opaque' : 'translucent'}.style"), true)
 
         # Save tmp definition as in skp file
         skp_success = tmp_definition.save_as(skp_path)
@@ -162,9 +166,9 @@ module Ladb::OpenCutList
         page.name = doc_name
 
         # Set auto text definitions
-        doc.auto_text_definitions.add('OclDate', Layout::AutoTextDefinition::TYPE_DATE_CREATED)
-        doc.auto_text_definitions.add('OclLengthUnit', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = Plugin.instance.get_i18n_string("default.unit_#{DimensionUtils.instance.length_unit}")
-        doc.auto_text_definitions.add('OclScale', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = _camera_zoom_to_scale(@camera_zoom)
+        doc.auto_text_definitions.add('OpenCutListGeneratedAt', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = @generated_at
+        doc.auto_text_definitions.add('OpenCutListLengthUnit', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = Plugin.instance.get_i18n_string("default.unit_#{DimensionUtils.instance.length_unit}")
+        doc.auto_text_definitions.add('OpenCutListScale', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = _camera_zoom_to_scale(@camera_zoom)
 
         # Add header
         current_y = page_info.top_margin
@@ -178,7 +182,7 @@ module Ladb::OpenCutList
 
           current_y = draw_text.bounds.lower_right.y
 
-          date_and_unit_text = _create_formated_text('<OclDate>  |  <OclLengthUnit>  |  <OclScale>', Geom::Point2d.new(page_info.width - page_info.right_margin, current_y), Layout::FormattedText::ANCHOR_TYPE_BOTTOM_RIGHT, { :font_family => font_family, :font_size => 10, :text_alignment => Layout::Style::ALIGN_RIGHT })
+          date_and_unit_text = _create_formated_text('<OpenCutListGeneratedAt>  |  <OpenCutListLengthUnit>  |  <OpenCutListScale>', Geom::Point2d.new(page_info.width - page_info.right_margin, current_y), Layout::FormattedText::ANCHOR_TYPE_BOTTOM_RIGHT, { :font_family => font_family, :font_size => 10, :text_alignment => Layout::Style::ALIGN_RIGHT })
           doc.add_entity(date_and_unit_text, layer, page)
 
           name_text = _create_formated_text('<PageName>', Geom::Point2d.new(page_info.width / 2, current_y + gutter * 2), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => font_family, :font_size => 15, :text_alignment => Layout::Style::ALIGN_CENTER })
@@ -211,7 +215,7 @@ module Ladb::OpenCutList
           page_info.height - current_y - page_info.bottom_margin
         ))
         skp.perspective = false
-        skp.render_mode = Layout::SketchUpModel::VECTOR_RENDER
+        skp.render_mode = @parts_colored ?  Layout::SketchUpModel::HYBRID_RENDER : Layout::SketchUpModel::VECTOR_RENDER
         skp.display_background = false
         skp.scale = @camera_zoom
         skp.preserve_scale_on_resize = true
@@ -282,7 +286,7 @@ module Ladb::OpenCutList
 
           # Draw face
           face = builder.add_face(outer_loop_points, holes: inner_loops_points)
-          face.material = entity.material.nil? ? material : entity.material if @parts_colored
+          face.material = entity.material if @parts_colored && !entity.material.nil?
 
           # Add soft and smooth edges
           entity.edges.each { |edge|

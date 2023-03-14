@@ -1536,7 +1536,8 @@
 
                                         rubyCallCommand('cutlist_layout_to_layout', $.extend({
                                             parts_matrices: data,
-                                            target_group_id: context && context.targetGroup ? context.targetGroup.id : null
+                                            target_group_id: context && context.targetGroup ? context.targetGroup.id : null,
+                                            generated_at: Twig.twig({ data: "{{ generatedAt|date(('default.date_format'|i18next)) }}" }).render({ generatedAt: new Date().getTime() / 1000 })
                                         }, layoutOptions, controlsData), function (response) {
 
                                             // Finish progress feedback
