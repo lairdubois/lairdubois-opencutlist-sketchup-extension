@@ -259,12 +259,19 @@ module Ladb::OpenCutList
       end
       group.material = material if @parts_colored
 
+      # Redraw the entire part through one PolygonMesh
       part_mesh = Geom::PolygonMesh.new
+      painted_faces = {}
       soft_edges_points = []
-      _populate_part_mesh_with_entities(part_mesh, soft_edges_points, definition.entities, nil, material)
+      _populate_part_mesh_with_entities(part_mesh, painted_faces, soft_edges_points, definition.entities, nil, material)
       group.entities.fill_from_mesh(part_mesh, true, Geom::PolygonMesh::NO_SMOOTH_OR_HIDE)
 
-      # Remove coplanar edges created by fill_from_mesh
+      # Add painted meshes
+      painted_faces.each do |mesh, material|
+        group.entities.add_faces_from_mesh(mesh, Geom::PolygonMesh::NO_SMOOTH_OR_HIDE, material)
+      end
+
+      # Remove coplanar edges created by fill_from_mesh and add_faces_from_mesh to reduce exported data
       coplanar_edges = []
       group.entities.grep(Sketchup::Edge).each do |edge|
         edge.faces.each_cons(2) { |pair|
@@ -283,7 +290,7 @@ module Ladb::OpenCutList
 
     end
 
-    def _populate_part_mesh_with_entities(part_mesh, soft_edges_points, entities, transformation = nil, material = nil)
+    def _populate_part_mesh_with_entities(part_mesh, painted_meshes, soft_edges_points, entities, transformation = nil, material = nil)
 
       entities.each do |entity|
 
@@ -293,12 +300,18 @@ module Ladb::OpenCutList
 
           points_indices = []
 
-          mesh = entity.mesh(0 | 4) # POLYGON_MESH_POINTS (0) | POLYGON_MESH_UVQ_FRONT (1) | POLYGON_MESH_UVQ_BACK (3) | POLYGON_MESH_NORMALS (4)
+          mesh = entity.mesh(7) # POLYGON_MESH_POINTS (0) | POLYGON_MESH_UVQ_FRONT (1) | POLYGON_MESH_UVQ_BACK (3) | POLYGON_MESH_NORMALS (4)
           mesh.transform!(transformation) unless transformation.nil?
-          mesh.points.each { |point| points_indices << part_mesh.add_point(point) }
-          mesh.polygons.each { |polygon| part_mesh.add_polygon(polygon.map { |index| points_indices[index.abs - 1] }) }
 
-          # Extract soft edges to re-add them
+          # If face is painted, do not add it to part_mesh
+          if @parts_colored && !entity.material.nil? && entity.material != material
+            painted_meshes.store(mesh, entity.material)
+          else
+            mesh.points.each { |point| points_indices << part_mesh.add_point(point) }
+            mesh.polygons.each { |polygon| part_mesh.add_polygon(polygon.map { |index| points_indices[index.abs - 1] }) }
+          end
+
+          # Extract soft edges to re-add them later
           entity.edges.each { |edge|
             if edge.soft?
               edge_points = edge.vertices.map { |vertex| vertex.position }
@@ -308,9 +321,9 @@ module Ladb::OpenCutList
           }
 
         elsif entity.is_a?(Sketchup::Group)
-          _populate_part_mesh_with_entities(part_mesh, soft_edges_points, entity.entities, TransformationUtils.multiply(transformation, entity.transformation), material)
+          _populate_part_mesh_with_entities(part_mesh, painted_meshes, soft_edges_points, entity.entities, TransformationUtils.multiply(transformation, entity.transformation), material)
         elsif entity.is_a?(Sketchup::ComponentInstance) && entity.definition.behavior.cuts_opening?
-          _populate_part_mesh_with_entities(part_mesh, soft_edges_points, entity.definition.entities, TransformationUtils.multiply(transformation, entity.transformation), material)
+          _populate_part_mesh_with_entities(part_mesh, painted_meshes, soft_edges_points, entity.definition.entities, TransformationUtils.multiply(transformation, entity.transformation), material)
         end
 
       end
