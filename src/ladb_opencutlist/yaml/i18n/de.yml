@@ -910,7 +910,7 @@ tab:
       option_camera_target_custom: Benutzerdefiniert
       option_explode: Explosionsdarstellung
       error:
-        no_part: Es gibt keine Teile zu zeichnen.
+        no_part: Es gibt keine Teile zum Zeichnen.
       warning:
         is_group_selection: Die Teile innerhalb der **maskierten Gruppen** Ihrer Teileliste werden nicht gezeichnet.
         is_part_selection: Diese Übersichtszeichnung ist auf die **ausgewählten Teile** beschränkt.

@@ -30,6 +30,8 @@ default:
   download: تحميل
   upgrade: ترقية
   copy: نسخ
+  select_all: تحديد الكل
+  unselect_all: إزالة تحديد الكل
   empty_filename: skp.غير معنون
   help: مساعدة
   error: أُفّ !
@@ -92,9 +94,6 @@ core:
       لا ينصح باستعمالها في الإنتاج.
 
       للتبليغ عن خطإ برمجي: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
-    old_su: |
-      أنت تستعمل نسخة قديمة من سكاتش آب ({{ sketchup_version }}) ستعمل هذه الإضافة، و لكن قد تظهر بعض الأخطاء البرمجية.
-      لأقصى استفادة من OpenCutList، نقترح أن ترقي البرنامج على الأقل إلى النسخة **SketchUp 2017**.
     feature_locked: "*إمكانية الإيقاف غير موجودة في هذه النسخة من SketchUp*"
   event:
     model_change: لقد غُيّر النموذج النشط.
@@ -145,6 +144,20 @@ core:
     tooltip:
       save_to: "تحديث الإعداد المسبق '{{ name }}'"
       delete: "حذف الإعداد المسبق '{{ name }}'"
+    dictionary:
+      component_textinput_color: لوح الألوان
+      cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
+      cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
+      cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
+      cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
+      cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
+      cutlist_options: $t(tab.cutlist.label) / $t(default.options)
+      cutlist_report_options: $t(tab.cutlist.label) / $t(tab.cutlist.report.title)
+      importer_import_options: $t(tab.importer.label) / $t(default.import)
+      importer_load_options: $t(tab.importer.label) / $t(default.open)
+      materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
+      materials_options: $t(tab.materials.label) / $t(default.options)
+      settings_model: $t(tab.settings.label) / النموذج
   progress:
     please_wait: حساب عالم من السلم
   component:
@@ -155,6 +168,20 @@ core:
       remove: انس أمر اللون
     textinput_code:
       help: اضغط على **@** للحصول على قائمة المتغيرات.
+    three_viewer:
+      view: "المنظر {{ view }}"
+      view_isometric: متقايس
+      view_top: فوق
+      view_bottom: تحت
+      view_front: أمام
+      view_back: خلف
+      view_left: يسار
+      view_right: يمين
+      zoom: "المقياس {{ zoom }}"
+      explode_factor: مدى التفجير
+      toggle_box_helper: أظهر / أخف مكعب الإحاطة
+      toggle_box_dimensions_helper: أظهر / أخف الأبعاد
+      toggle_axes_helper: أظهر / أخف المحاور
   docs:
     error:
       failed_to_load: |
@@ -275,10 +302,11 @@ tab:
       numbers_save: احفظ أرقام القطع
       numbers_reset: أعد تهيئة أرقام القطع
       highlight_parts: $t(tab.cutlist.highlight_parts)
+      group_layout_parts: طباعة معاينة قطع المجموعة
       group_numbers_save: احفظ أرقام القطع في هذه المجموعة
       group_numbers_reset: أعد تهيئة أرقام القطع في هذه المجموعة
       group_cuttingdiagram: رسم التقطيعِ التخطيطيُ
-      group_labels: اطبع الملصقات
+      group_labels: طباعة فقاعات قِطَع المجموعة
       edit_material: "عدّل الخامة '{{ material_name }}'"
       expand_all: نشر كل الأسطر
       collapse_all: طيّ كل الأسطر
@@ -314,9 +342,9 @@ tab:
       instance_count_by_part_1: وحدة لكل قطعة
       instance_count_by_part_2: وحدتان لكل قطعة
       mass: الكتلة
-      mass_help: ستُستعمل كتلة القطعة عند استحداث **التقارير**.
+      mass_help: ستُستعمل كتلة القطعة عند استحداث **التثمين**.
       price: السعر
-      price_help: سيُستعمل سعر القطعة عند استحداث **التقارير**.
+      price_help: سيُستعمل سعر القطعة عند استحداث **التثمين**.
       thickness_layer_count: عدد الطبقات
       thickness_layer_count_help: |
         حدد هنا عدد الطبقات التي تتكون منها القطعة المرسومة من ناحية السمك.
@@ -331,7 +359,7 @@ tab:
         تمكنك *الوسوم* من إضافة كلمات مفتاحية مخصصة لتعريف كل قطعة.
         بوسعك إضافة القدر الذي تشاء من الوسوم.
         يمكن عندها تصفية القطع الظاهرة في قائمة قِطَعِك بالاعتماد على هذه الوسوم.
-      tags_multiple_info: الوسوم المشتركة فقط من تظهر
+      tags_multiple_info: الوسوم المشتركة فقط هي التي تظهر
       orientation: توجيه
       orientation_locked_on_axis: قفل التوجيه على محاور القطعة
       orientation_locked_on_axis_help: |
@@ -374,6 +402,7 @@ tab:
       veneer_disabled_help: هذا السطح غير قابل للتكوين لأنه لم يتم اكتشاف أي وجه بوسعه استقبال خامة في حافة هذه القِطعة من النموذج.
       multiple_values: قيم متعددة
       export_to_skp: تصدير (skp.)
+      loading_preview: تحميل المعاينة
     export_to_skp:
       title: تصدير إلى ملف skp.
     option:
@@ -543,9 +572,9 @@ tab:
       success:
         copied: تم النسخ إلى الحافظة
     report:
-      title: تقرير
+      title: تثمين
       info_0: |
-        تتيح لك هذه الوظيفة إنشاء تقرير **بالكتل** و **التكاليف** و **الخامات** اللازمة لإنتاج القطع المتضمَّنة في قائمة القطع *.
+        تتيح لك هذه الوظيفة إنشاء تثمين **للكتل** و **التكاليف** و **الخامات** اللازمة لإنتاج القطع المتضمَّنة في قائمة القطع *.
       options_general: عام
       options_solid_wood: $t(tab.materials.type_1)
       option_solid_wood_coefficient: "*$t(tab.materials.type_1)* معامل الهدر"
@@ -563,14 +592,14 @@ tab:
       total_area: مجموع المساحات
       total_length: مجموع الأطوال
       error:
-        no_typed_material_parts: "لا تتوفر أي قطعة ذات خامة محددة (**t(tab.materials.type_1)$** أو **t(tab.materials.type_2)$** أو **t(tab.materials.type_3)$** أو **t(tab.materials.type_4)$** أو **t(tab.materials.type_6)$** أو **t(tab.materials.type_5)$**) لإنشاء التقرير"
+        no_typed_material_parts: "لا تتوفر أي قطعة ذات خامة محددة (**t(tab.materials.type_1)$** أو **t(tab.materials.type_2)$** أو **t(tab.materials.type_3)$** أو **t(tab.materials.type_4)$** أو **t(tab.materials.type_5)$** أو **t(tab.materials.type_6)$**) لإنشاء التثمين"
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errors**."
       warning:
         is_group_selection: القطع المتضمَّنة في **المجموعات الظاهرة** فقط من ستؤخذ بعين الاعتبار.
       tip:
         not_enough_data: |
-          لتقرير محسوب جيدا:
+          لتثمين محسوب جيدا:
           -يجب على الأقل أن تتوفر كثافة و سعر الخامات المستعملة.
           -يجب على الأقل أن تتوفر كثافة و سعر الملحقات المستعملة.
     cuttingdiagram:
@@ -817,6 +846,74 @@ tab:
       warning:
         is_part_selection: هذه الملصقات محدودة بـ **القطع المحددة** فحسب
         formula_not_available: المعادلة غير متاحة في هذا السياق
+    layout:
+      title: الرسم
+      options_layout: النموذج الطباعي
+      options_settings: إعداد
+      option_parts: القِطع
+      option_parts_colored: اللون
+      option_parts_colored_0: بلا لون
+      option_parts_colored_1: لون الخامة
+      option_parts_colored_help: حدِّد مظهر القِطع.
+      option_parts_opacity: معدل الشفافية
+      option_parts_opacity_0: شفَّاف
+      option_parts_opacity_1: غير شفَّاف
+      option_parts_opacity_help: حدد معدل شفافية القِطع.
+      option_pins: البطاقات
+      option_pins_hidden: عرض
+      option_pins_hidden_0: بالفقاعات
+      option_pins_hidden_1: بلا فقاعات
+      option_pins_hidden_help: أظهر أو أخف فقاعات القِطَعِ المحتوية على رقمها أو وصفها
+      option_pins_colored: اللون
+      option_pins_colored_0: بلا لون
+      option_pins_colored_1: لون القِطعة
+      option_pins_colored_help: حدد لون الفقاعات
+      option_pins_text: النص
+      option_pins_text_0: رقم القِطعة
+      option_pins_text_1: وصف القِطعَة
+      option_pins_text_2: رقم و وصف القطعة
+      option_pins_text_help: حدد النص المعروض داخل الفقاعات
+      option_pins_length: الطول
+      option_pins_length_0: بلا سهم
+      option_pins_length_1: صغير
+      option_pins_length_2: متوسطة
+      option_pins_length_3: كبيرة
+      option_pins_length_help: حدد طول سهم الفقاعة
+      option_pins_direction: الاتجاه
+      option_pins_direction_0: وفقا للمحور الأحمر
+      option_pins_direction_1: وفقا للمحور الأخضر
+      option_pins_direction_2: وفقا للمحور الأزرق
+      option_pins_direction_3: التوجه نحو مركز المجموعة الأم
+      option_pins_direction_4: التوجه نحو مركز التحديد
+      option_pins_direction_help: حدد اتجاه أسهم الفقاعات لقراءة أفضل
+      option_page: حجم الورق
+      option_page_format: المقاس
+      option_page_format_portrait: اتجاه عمودي
+      option_page_format_landscape: اتجاه أفقي
+      option_page_format_custom: مخصص
+      option_page_width: العرض
+      option_page_height: الارتفاع
+      option_page_header: رأس الصفحة
+      option_page_header_0: غير موجود
+      option_page_header_1: موجود
+      option_page_header_help: |
+        يسمح لك الخيار أن تحتوي الصفحة التي ستُطبع على مساحة بها اسم الملف و وصفه و تاريخه و وحدة الرسم و المقياس
+        بدون رأس للصفحة، يَشغَل الرسم كامل الصفحة
+      option_camera: كاميرا
+      option_camera_view: المنظر
+      option_camera_view_custom: مخصّص
+      option_camera_zoom: المقياس
+      option_camera_zoom_auto: تلقائي
+      option_camera_zoom_custom: مخصّص
+      option_camera_target: الموضع
+      option_camera_target_auto: تلقائي
+      option_camera_target_custom: مخصّص
+      option_explode: منظر مُفجَّر
+      error:
+        no_part: ليست هناك قطعة لتُرسم.
+      warning:
+        is_group_selection: لن تُرسم القِطَعُ المتضمَّنة في **المجموعات المخفية** داخل قائمة القِطَع.
+        is_part_selection: معينة هذا الرسم محدودة بـ **القطع المحددة**
     error:
       no_model: لا يوجد نموذج مفتوح. عليك أن تزودني بمعلومات أكثر ;)
       no_entities: نموذجك فارغ. عليك أن تزودني بمعلومات أكثر ;)
@@ -894,6 +991,9 @@ tab:
       cut_options: خيارات التقطيع
       attributes: السِّمات
       thickness: السُمك
+      thickness_help: |
+        السمك النهائي للخامة.
+        *إن لم تكن هناك أي وحدة محددة فستؤخذ وحدة النموذج بالحسبان*.
       length_increase: تمديد العرض
       length_increase_help: طُبق تمديد على الطول لتحديد **الطول الأولي**.
       width_increase: تمديد العرض
@@ -1142,7 +1242,19 @@ tab:
     suppress_units_display: اعرض وحدة الطول لكل قيمة
     mass_unit: وحدة الكتلة
     currency_symbol: رمز العملة
-    menu:
+    presets:
+      export_global_presets: تصدير الإعدادات المسبقة
+      export_global_presets_help: |
+        تتيح لك هذه الخاصية تصدير إعداداتك المسبقة إلى ملف بصيغة **json.**
+        حدد الإعدادات التي تريد تصديرها إليه
+      export_global_presets_success: نجح تصدير الإعدادات المسبقة.
+      import_global_presets: استيراد إعدادات مسبقة
+      import_global_presets_help: |
+        حدد الإعدادات المسبقة التي تريد استيرادها من ملف الـ **json.**
+        رجاء انتبه إلى أن الإعداد الموجود من قبل سيُستبدَلُ بالنسخة المستوردة إن كانا يحملان الاسم ذاته
+      import_global_presets_success: |
+        لقد استوردت إعدادات *OpenCutList* المسبقة بنجاح.
+        لأخذ التغييرات بالحسبان، عليك **غلق** و **إعادة فتح** نافذة OpenCutList.
       dump_global_presets: مَكَبّ الإعدادات المسبقة
       dump_model_presets: مَكَبّ إعدادات النموذج المسبقة
       reset_global_presets: إعادة تهيئة الإعدادات المسبقة
@@ -1161,13 +1273,19 @@ tab:
       reset_model_presets_success: |
         لقد أُعيد تعيين إعدادات *OpenCutList* للنموذج الحالي.
         لأخذ التغييرات بالحسبان، عليك **غلق** و **إعادة فتح** نافذة OpenCutList.
+      error:
+        no_preset_to_export: لا إعدادات مسبقة للتصدير
+        no_preset_to_import: لا إعدادات مسبقة للاستيراد
+        failed_to_import: "يستحيل استيراد الإعدادات المسبقة : **{{ error }}**"
+        failed_to_import_invalid_hexdigest: لقد عُدِّل على هذا الملف. لا يمكن استيراده.
+        failed_to_import_bad_file_format: صيغة الملف غير صالحة
   about:
     label: حول
     title: حول
     version: النسخة
     credits: الاعتمادات التقنية
     credits_authors: |
-      *OpenCutList* من تطوير [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) و أيضا [Martin Müller](https://www.lairdubois.fr/@mobilarte). * قائمة بجميع [المساهمين](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+      *OpenCutList* من تطوير [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) و أيضا [Martin Müller](https://www.lairdubois.fr/@mobilarte). *قائمة بجميع [المساهمين](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: المترجمون
     credits_translators: |
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*الإنجليزية* و *الألمانية*)
@@ -1187,7 +1305,7 @@ tab:
     credits_runtime: وقت التشغيل
     credits_development: تطوير
     credits_vendors: |
-      لم تكن المغامرة لتكون ممكنة لولا عمل مصممي العناصر مفتوحة المصدر التالية:
+      لم تكن المغامرة لتكون ممكنة لولا عمل مصممي العناصر *مفتوحة المصدر* التالية:
     credits_thanks: |
       شكر خاص لـ:
       - [JetBrains](https://www.jetbrains.com) على دعم هذا المشروع عبر [رخصة حرة مجانية مفتوحة المصدر](https://www.jetbrains.com/buy/opensource).
