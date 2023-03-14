@@ -20,7 +20,7 @@ module Ladb::OpenCutList
       @parts_colored = settings.fetch('parts_colored', false)
       @parts_opacity = settings.fetch('parts_opacity', 1)
       @pins_text = settings.fetch('pins_text', 0)
-      @camera_view = Geom::Point3d.new(settings.fetch('camera_view', nil))
+      @camera_view = Geom::Vector3d.new(settings.fetch('camera_view', nil))
       @camera_zoom = settings.fetch('camera_zoom', 1)
       @camera_target = Geom::Point3d.new(settings.fetch('camera_target', nil))
       @exploded_model_radius =settings.fetch('exploded_model_radius', 1)
@@ -51,6 +51,9 @@ module Ladb::OpenCutList
       layout_path = UI.savepanel(Plugin.instance.get_i18n_string('tab.cutlist.export.title'), @cutlist.dir, _sanitize_filename("#{doc_name}.layout"))
       if layout_path
 
+        # Start model modification operation
+        model.start_operation('OpenCutList - Export to Layout', true, false, true)
+
         dir = File.dirname(layout_path)
 
         # CREATE SKP FILE
@@ -79,7 +82,7 @@ module Ladb::OpenCutList
           definition = definitions[part.definition_id]
 
           # Draw part in tmp definition
-          _draw_part(tmp_definition, part, definition, transformation, @parts_colored && material ? material.color : 0xffffff)
+          _draw_part(tmp_definition, part, definition, transformation, @parts_colored && material ? material : nil)
 
         end
 
@@ -88,13 +91,15 @@ module Ladb::OpenCutList
         eye = camera.eye
         target = camera.target
         up = camera.up
+        perspective = camera.perspective?
 
         # Workaround to set camera in Layout file : briefly change current model's camera
+        camera.perspective = false
         camera.set(Geom::Point3d.new(
           @camera_view.x * @exploded_model_radius + @camera_target.x,
           @camera_view.y * @exploded_model_radius + @camera_target.y,
           @camera_view.z * @exploded_model_radius + @camera_target.z
-        ), @camera_target, Z_AXIS)
+        ), @camera_target, @camera_view.parallel?(Z_AXIS) ? Y_AXIS : Z_AXIS)
 
         # Add style
         selected_style = styles.selected_style
@@ -107,10 +112,14 @@ module Ladb::OpenCutList
         styles.selected_style = selected_style
 
         # Restore model's camera
+        camera.perspective = perspective
         camera.set(eye, target, up)
 
         # Remove tmp definition
         model.definitions.remove(tmp_definition)
+
+        # Commit model modification operation
+        model.commit_operation
 
         return { :errors => [ 'tab.cutlist.layout.error.failed_to_save_as_skp' ] } unless skp_success
 
@@ -215,7 +224,7 @@ module Ladb::OpenCutList
           return { :errors => [ [ 'tab.cutlist.layout.error.failed_to_layout', { :error => e.message } ] ] }
         ensure
           # Delete Skp file
-          File.delete(skp_path)
+          # File.delete(skp_path)
         end
 
         return {
@@ -232,7 +241,7 @@ module Ladb::OpenCutList
 
     private
 
-    def _draw_part(tmp_definition, part, definition, transformation = nil, color = nil)
+    def _draw_part(tmp_definition, part, definition, transformation = nil, material = nil)
       group = tmp_definition.entities.add_group
       group.transformation = transformation
       case @pins_text
@@ -243,12 +252,13 @@ module Ladb::OpenCutList
       else    # PINS_TEXT_NUMBER
         group.name = part.number
       end
+      group.material = material if @parts_colored
       group.entities.build { |builder|
-        _draw_entities(builder, definition.entities, nil, color)
+        _draw_entities(builder, definition.entities, nil, material)
       }
     end
 
-    def _draw_entities(builder, entities, transformation = nil, color = nil)
+    def _draw_entities(builder, entities, transformation = nil, material = nil)
 
       entities.each do |entity|
 
@@ -272,7 +282,7 @@ module Ladb::OpenCutList
 
           # Draw face
           face = builder.add_face(outer_loop_points, holes: inner_loops_points)
-          face.material = entity.material.nil? ? color : entity.material.color.to_i if @parts_colored
+          face.material = entity.material.nil? ? material : entity.material if @parts_colored
 
           # Add soft and smooth edges
           entity.edges.each { |edge|
@@ -286,9 +296,9 @@ module Ladb::OpenCutList
           }
 
         elsif entity.is_a?(Sketchup::Group)
-          _draw_entities(builder, entity.entities, TransformationUtils.multiply(transformation, entity.transformation), color)
+          _draw_entities(builder, entity.entities, TransformationUtils.multiply(transformation, entity.transformation), material)
         elsif entity.is_a?(Sketchup::ComponentInstance) && entity.definition.behavior.cuts_opening?
-          _draw_entities(builder, entity.definition.entities, TransformationUtils.multiply(transformation, entity.transformation), color)
+          _draw_entities(builder, entity.definition.entities, TransformationUtils.multiply(transformation, entity.transformation), material)
         end
 
       end

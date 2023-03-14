@@ -21,6 +21,7 @@ module Ladb::OpenCutList
     # -----
 
     def run
+      return nil if Sketchup.version_number < 1800000000
 
       model = Sketchup.active_model
       return nil unless model
