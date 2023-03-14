@@ -155,7 +155,7 @@ core:
       cutlist_report_options: $t(tab.cutlist.label) / $t(tab.cutlist.report.title)
       importer_import_options: $t(tab.importer.label) / $t(default.import)
       importer_load_options: $t(tab.importer.label) / $t(default.open)
-      materials_material_attributes: $t(tab.materials.label) / Атрибути
+      materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       settings_model: $t(tab.settings.label) / Модель
   progress:
@@ -180,6 +180,7 @@ core:
       zoom: "Маштаб {{ zoom }}"
       explode_factor: Величина рознесення
       toggle_box_helper: Показати або приховати панель інструментів
+      toggle_box_dimensions_helper: Показати або приховати розміри
       toggle_axes_helper: Показати або приховати осі
   docs:
     error:

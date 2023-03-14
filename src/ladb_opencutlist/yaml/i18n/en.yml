@@ -574,7 +574,7 @@ tab:
     report:
       title: Estimate
       info_0: |
-        Generate an estimate of the **weight** and **cost** of the **raw materials** needed to produce the parts of the *parts list*.
+        Generate an estimate of the **weight** and **cost** of the **raw materials** needed to produce the parts on the *parts list*.
       options_general: General
       options_solid_wood: $t(tab.materials.type_1)
       option_solid_wood_coefficient: Waste ratio for *$t(tab.materials.type_1)*

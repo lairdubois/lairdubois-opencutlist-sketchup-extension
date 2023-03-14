@@ -30,6 +30,8 @@ default:
   download: Descargar
   upgrade: Actualizar
   copy: Copiar
+  select_all: Seleccionar todo
+  unselect_all: Deseleccionar todo
   empty_filename: Sin título.skp
   help: Ayuda
   error: ¡Upss!
@@ -92,9 +94,6 @@ core:
       No se recomienda su uso en producción.
 
       Para informar de un error: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
-    old_su: |
-      Estás ejecutando una versión anterior de SketchUp ({{ sketchup_version }}). Este complemento funcionará, pero puede presentar ciertos errores.
-      Para aprovechar al máximo OpenCutList, recomendamos actualizar al menos a **SketchUp 2017**.
     feature_locked: "*No se puede desactivar en esta versión de SketchUp*"
   event:
     model_change: Se ha cambiado el modelo activo.
@@ -145,6 +144,20 @@ core:
     tooltip:
       save_to: "Actualizar la configuración de '{{ name }}'"
       delete: "Eliminar la configuración '{{ name }}'"
+    dictionary:
+      component_textinput_color: Paleta de colores
+      cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
+      cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
+      cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
+      cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
+      cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
+      cutlist_options: $t(tab.cutlist.label) / $t(default.options)
+      cutlist_report_options: $t(tab.cutlist.label) / $t(tab.cutlist.report.title)
+      importer_import_options: $t(tab.importer.label) / $t(default.import)
+      importer_load_options: $t(tab.importer.label) / $t(default.open)
+      materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
+      materials_options: $t(tab.materials.label) / $t(default.options)
+      settings_model: $t(tab.settings.label) / Modelo
   progress:
     please_wait: Calculando un mundo pacífico
   component:
@@ -155,6 +168,20 @@ core:
       remove: Olvidar el color
     textinput_code:
       help: Escriba **@** para abrir la lista de variables de datos.
+    three_viewer:
+      view: "Vista {{ view }}"
+      view_isometric: Isométrica
+      view_top: Planta
+      view_bottom: Abajo
+      view_front: Frontal
+      view_back: Atrás
+      view_left: Izquierda
+      view_right: Derecha
+      zoom: "Escala {{ zoom }}"
+      explode_factor: Amplitud de la explosión
+      toggle_box_helper: Mostrar/ocultar cuadro delimitador
+      toggle_box_dimensions_helper: Mostrar/ocultar dimensiones
+      toggle_axes_helper: Mostrar/ocultar ejes
   docs:
     error:
       failed_to_load: |
@@ -275,10 +302,11 @@ tab:
       numbers_save: Guarde los números de pieza
       numbers_reset: Reinicializar los números de pieza
       highlight_parts: $t(tab.cutlist.highlight_parts)
+      group_layout_parts: Imprimir el dibujo general de las piezas del grupo
       group_numbers_save: Guarde los números de pieza de este grupo
       group_numbers_reset: Reinicializar los números de pieza de este grupo
       group_cuttingdiagram: Diagrama de corte
-      group_labels: Imprimir etiquetas
+      group_labels: Imprimir etiquetas para las piezas del grupo
       edit_material: "Editar material '{{ material_name }}'"
       expand_all: Dividir todas las líneas
       collapse_all: Doblar todas las líneas
@@ -314,9 +342,9 @@ tab:
       instance_count_by_part_1: 1 unidad por pieza
       instance_count_by_part_2: 2 unidades por pieza
       mass: Masa
-      mass_help: La masa de la pieza se utilizará al generar los **Reportes**.
+      mass_help: La masa de la pieza se utilizará al generar un **Estimado**.
       price: Precio
-      price_help: El precio de la pieza se utilizará cuando se generen **Reportes**.
+      price_help: El precio de la pieza se utilizará al generar un **Estimado**.
       thickness_layer_count: Nb de capas
       thickness_layer_count_help: |
         Defina aquí el número de capas que dividen la parte dibujada en su espesor.
@@ -374,6 +402,7 @@ tab:
       veneer_disabled_help: Esta superficie no es configurable porque no se ha detectado ninguna cara portadora de material en esta arista de la pieza en el modelo.
       multiple_values: Varios valores
       export_to_skp: Exportar (.skp)
+      loading_preview: Cargar la previsualización
     export_to_skp:
       title: Exportar a fichero .skp
     option:
@@ -543,9 +572,9 @@ tab:
       success:
         copied: Copiado en el portapapeles.
     report:
-      title: Reporte
+      title: Estimación
       info_0: |
-        Esta función le permite generar un informe de las **masas** y los **costes** de las **materias primas** necesarias para fabricar las piezas del *listado de partes*.
+        Esta función le permite generar una estimaciónde las **masas** y los **costes** de las **materias primas** necesarias para fabricar las piezas del *listado de partes*.
       options_general: General
       options_solid_wood: $t(tab.materials.type_1)
       option_solid_wood_coefficient: Coeficiente para *$t(tab.materials.type_1)*
@@ -563,14 +592,14 @@ tab:
       total_area: Σ Areas
       total_length: Σ Longitudes
       error:
-        no_typed_material_parts: "No hay piezas con un tipo de material definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** o **$t(tab.materials.type_5)**) para generar el informe."
+        no_typed_material_parts: "No hay piezas con un tipo de material definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** o **$t(tab.materials.type_5)**) para generar la estimación."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errores**."
       warning:
         is_group_selection: Las piezas dentro de los **grupos ocultos** de su listado de partes no se contabilizarán.
       tip:
         not_enough_data: |
-          Para que esta relación se calcule correctamente:
+          Para que esta estimación se calcule correctamente:
           - Los materiales utilizados deben tener al menos una densidad y un precio configurados.
           - Los accesorios utilizados deben tener al menos una masa y un precio.
     cuttingdiagram:
@@ -817,6 +846,74 @@ tab:
       warning:
         is_part_selection: Estas etiquetas se limitan a las **piezas seleccionadas**.
         formula_not_available: No disponible en este contexto
+    layout:
+      title: Dibujo
+      options_layout: Composición
+      options_settings: Configuración
+      option_parts: Piezas
+      option_parts_colored: Color
+      option_parts_colored_0: Sin color
+      option_parts_colored_1: Color del material
+      option_parts_colored_help: Permite elegir el aspecto de las piezas.
+      option_parts_opacity: Opacidad
+      option_parts_opacity_0: Transparente
+      option_parts_opacity_1: Opaco
+      option_parts_opacity_help: Permite elegir la opacidad de las partes.
+      option_pins: Etiquetas
+      option_pins_hidden: Visualización
+      option_pins_hidden_0: Con etiquetas
+      option_pins_hidden_1: Sin etiquetas
+      option_pins_hidden_help: Mostrar u ocultar las etiquetas de pieza con número o designación.
+      option_pins_colored: Color
+      option_pins_colored_0: Sin color
+      option_pins_colored_1: Color de la pieza
+      option_pins_colored_help: Seleccione el color de las etiquetas.
+      option_pins_text: Texto
+      option_pins_text_0: Número de la pieza
+      option_pins_text_1: Designación de la pieza
+      option_pins_text_2: Número y designación de la pieza
+      option_pins_text_help: Seleccione el texto que aparece en las etiquetas.
+      option_pins_length: Longitud
+      option_pins_length_0: Sin línea de guía
+      option_pins_length_1: Pequeño
+      option_pins_length_2: Media
+      option_pins_length_3: Grande
+      option_pins_length_help: Seleccione la longitud de la línea guía.
+      option_pins_direction: Dirección
+      option_pins_direction_0: A lo largo del eje rojo
+      option_pins_direction_1: A lo largo del eje verde
+      option_pins_direction_2: A lo largo del eje azul
+      option_pins_direction_3: Apuntando hacia el centro del grupo de padres
+      option_pins_direction_4: Apuntando hacia el centro de la selección
+      option_pins_direction_help: Seleccione la dirección de las líneas guía a las etiquetas para una mejor legibilidad.
+      option_page: Tamaño de papel
+      option_page_format: Formato
+      option_page_format_portrait: Retrato
+      option_page_format_landscape: Paisaje
+      option_page_format_custom: Personalizado
+      option_page_width: Anchura
+      option_page_height: Altura
+      option_page_header: Cabecera
+      option_page_header_0: Ninguna
+      option_page_header_1: Con cabecera
+      option_page_header_help: |
+        Seleccione si la página que desea imprimir contiene una cabecera con el nombre del documento, su descripción y la fecha.
+        Sin cabecera, el dibujo general ocupa toda la página.
+      option_camera: Cámara
+      option_camera_view: Vista
+      option_camera_view_custom: Personalizado
+      option_camera_zoom: Escala
+      option_camera_zoom_auto: Automático
+      option_camera_zoom_custom: Personalizado
+      option_camera_target: Posición
+      option_camera_target_auto: Automático
+      option_camera_target_custom: Personalizado
+      option_explode: Vista desarrollada
+      error:
+        no_part: No hay parte que dibujar.
+      warning:
+        is_group_selection: Las piezas dentro de **grupos enmascarados** de su lista de piezas no se dibujarán.
+        is_part_selection: Este plano de conjunto se limita a las **piezas seleccionadas**.
     error:
       no_model: Ningún modelo está abierto. Necesitarás darme más información ;)
       no_entities: Tu modelo está vacío. Necesitarás darme más información. ;)
@@ -894,6 +991,9 @@ tab:
       cut_options: Parámetros de corte
       attributes: Atributos
       thickness: Espesor
+      thickness_help: |
+        Espesor final del material.
+        *Si no se especifica ninguna unidad, se tendrá en cuenta la unidad modelo.*
       length_increase: Longitud sobremedida
       length_increase_help: Sobredimensionado aplicado a la longitud para definir la **longitud bruta**.
       width_increase: Ancho sobremedida
@@ -913,7 +1013,7 @@ tab:
       std_thicknesses: Espesores estándar
       std_thicknesses_placeholder: grosor ; ...
       std_thicknesses_help: |
-        Adisponibles **espesores rugosos actuales**.
+        Espesores **estándar**.
         *Los tamaños sin unidades se consideran en unidades modelo.*
       std_sections: Secciones transversales estándar
       std_sections_placeholder: ancho x espesor ; ...
@@ -942,7 +1042,7 @@ tab:
       texture_load: Cargar
       texture_width: Ancho
       texture_height: Altura
-      export_to_skm: Exportar a fichero (.skm)
+      export_to_skm: Exportar (.skm)
     texture_load:
       title: Cargar una imagen
     import_from_skm:
@@ -1142,7 +1242,19 @@ tab:
     suppress_units_display: Muestra la unidad de longitud para cada valor
     mass_unit: Unidad de masa
     currency_symbol: Símbolo de moneda
-    menu:
+    presets:
+      export_global_presets: Exportar preajustes
+      export_global_presets_help: |
+        Esta función le permite exportar sus preajustes a un archivo **.json**.
+        Seleccione los preajustes que desea exportar.
+      export_global_presets_success: Los preajustes se han exportado correctamente.
+      import_global_presets: Importar preajustes
+      import_global_presets_help: |
+        Seleccione los preajustes del archivo **.json** que desea importar.
+        Tenga en cuenta que si ya existe un preajuste con un nombre idéntico, será sustituido por la versión importada.
+      import_global_presets_success: |
+        Los preajustes *OpenCutList* se han importado correctamente.
+        Para tener en cuenta los cambios, debe **cerrar** y **reabrir** la ventana OpenCutList.
       dump_global_presets: Volcado de preajustes
       dump_model_presets: Volcado de preajustes de modelos
       reset_global_presets: Reiniciar los preajustes
@@ -1161,6 +1273,12 @@ tab:
       reset_model_presets_success: |
         Los preajustes de *OpenCutList* del modelo actual se han restablecido.
         Para tener en cuenta los cambios, debe **cerrar** y **reabrir** la ventana OpenCutList.
+      error:
+        no_preset_to_export: No hay preajustes para exportar.
+        no_preset_to_import: No hay preajustes para importar.
+        failed_to_import: "No se pueden importar preajustes: **{{ error }}**."
+        failed_to_import_invalid_hexdigest: Este archivo ha sido modificado. No se puede importar.
+        failed_to_import_bad_file_format: Formato de archivo no válido.
   about:
     label: Acerca de
     title: Acerca de
