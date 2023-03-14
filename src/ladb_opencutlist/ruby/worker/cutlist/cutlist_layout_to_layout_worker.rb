@@ -34,7 +34,7 @@ module Ladb::OpenCutList
     # -----
 
     def run
-      return { :errors => [ [ 'core.error.feature_unavailable', { :version => 2022 } ] ] } if Sketchup.version_number < 2200000000
+      return { :errors => [ [ 'core.error.feature_unavailable', { :version => 2018 } ] ] } if Sketchup.version_number < 1800000000
       return { :errors => [ 'default.error' ] } unless @cutlist
       return { :errors => [ 'tab.cutlist.error.obsolete_cutlist' ] } if @cutlist.obsolete?
 
@@ -157,7 +157,7 @@ module Ladb::OpenCutList
         when DimensionUtils::METER
           doc.units = Layout::Document::DECIMAL_METERS
         end
-        doc.precision = 0.000001.ceil(DimensionUtils.instance.length_precision)
+        doc.precision = 1 # TODO make comptible with SU 2018 - 0.000001.ceil(DimensionUtils.instance.length_precision)
 
         page = doc.pages.first
         layer = doc.layers.first
@@ -246,6 +246,7 @@ module Ladb::OpenCutList
     private
 
     def _draw_part(tmp_definition, part, definition, transformation = nil, material = nil)
+
       group = tmp_definition.entities.add_group
       group.transformation = transformation
       case @pins_text
@@ -257,12 +258,32 @@ module Ladb::OpenCutList
         group.name = part.number
       end
       group.material = material if @parts_colored
-      group.entities.build { |builder|
-        _draw_entities(builder, definition.entities, nil, material)
-      }
+
+      part_mesh = Geom::PolygonMesh.new
+      soft_edges_points = []
+      _populate_part_mesh_with_entities(part_mesh, soft_edges_points, definition.entities, nil, material)
+      group.entities.fill_from_mesh(part_mesh, true, Geom::PolygonMesh::NO_SMOOTH_OR_HIDE)
+
+      # Remove coplanar edges created by fill_from_mesh
+      coplanar_edges = []
+      group.entities.grep(Sketchup::Edge).each do |edge|
+        edge.faces.each_cons(2) { |pair|
+          if pair.first.normal.parallel?(pair.last.normal)
+            coplanar_edges << edge
+            break
+          end
+        }
+      end
+      group.entities.erase_entities(coplanar_edges)
+
+      # Add soft edges
+      soft_edges_points.each do |edge_points|
+        group.entities.add_edges(edge_points).each { |edge| edge.soft = true }
+      end
+
     end
 
-    def _draw_entities(builder, entities, transformation = nil, material = nil)
+    def _populate_part_mesh_with_entities(part_mesh, soft_edges_points, entities, transformation = nil, material = nil)
 
       entities.each do |entity|
 
@@ -270,39 +291,26 @@ module Ladb::OpenCutList
 
         if entity.is_a?(Sketchup::Face)
 
-          # Extract loops
-          outer_loop = entity.outer_loop
-          outer_loop_points = []
-          inner_loops_points = []
-          entity.loops.each { |loop|
-            loop_points = loop.vertices.map { |vertex| vertex.position }
-            Point3dUtils.transform_points(loop_points, transformation)
-            if loop == outer_loop
-              outer_loop_points = loop_points
-            else
-              inner_loops_points << loop_points
-            end
-          }
+          points_indices = []
 
-          # Draw face
-          face = builder.add_face(outer_loop_points, holes: inner_loops_points)
-          face.material = entity.material if @parts_colored && !entity.material.nil?
+          mesh = entity.mesh(0 | 4) # POLYGON_MESH_POINTS (0) | POLYGON_MESH_UVQ_FRONT (1) | POLYGON_MESH_UVQ_BACK (3) | POLYGON_MESH_NORMALS (4)
+          mesh.transform!(transformation) unless transformation.nil?
+          mesh.points.each { |point| points_indices << part_mesh.add_point(point) }
+          mesh.polygons.each { |polygon| part_mesh.add_polygon(polygon.map { |index| points_indices[index.abs - 1] }) }
 
-          # Add soft and smooth edges
+          # Extract soft edges to re-add them
           entity.edges.each { |edge|
-            if edge.soft? || edge.smooth?
+            if edge.soft?
               edge_points = edge.vertices.map { |vertex| vertex.position }
               Point3dUtils.transform_points(edge_points, transformation)
-              e = builder.add_edge(edge_points)
-              e.soft = edge.soft?
-              e.smooth = edge.smooth?
+              soft_edges_points << edge_points
             end
           }
 
         elsif entity.is_a?(Sketchup::Group)
-          _draw_entities(builder, entity.entities, TransformationUtils.multiply(transformation, entity.transformation), material)
+          _populate_part_mesh_with_entities(part_mesh, soft_edges_points, entity.entities, TransformationUtils.multiply(transformation, entity.transformation), material)
         elsif entity.is_a?(Sketchup::ComponentInstance) && entity.definition.behavior.cuts_opening?
-          _draw_entities(builder, entity.definition.entities, TransformationUtils.multiply(transformation, entity.transformation), material)
+          _populate_part_mesh_with_entities(part_mesh, soft_edges_points, entity.definition.entities, TransformationUtils.multiply(transformation, entity.transformation), material)
         end
 
       end
