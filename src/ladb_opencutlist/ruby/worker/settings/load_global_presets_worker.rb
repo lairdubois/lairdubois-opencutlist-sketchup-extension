@@ -12,7 +12,7 @@ module Ladb::OpenCutList
     def run
 
       # Open panel
-      path = UI.openpanel(Plugin.instance.get_i18n_string('tab.settings.presets.import_global_presets'))
+      path = UI.openpanel(Plugin.instance.get_i18n_string('tab.settings.presets.import_global_presets'), '', 'OpenCutListPresets.json')
       if path
 
         begin
@@ -32,21 +32,15 @@ module Ladb::OpenCutList
 
               return data['presets']
             else
-              return {
-                :errors => [ 'tab.settings.presets.error.failed_to_import_invalid_hexdigest' ]
-              }
+              return { :errors => [ 'tab.settings.presets.error.failed_to_import_invalid_hexdigest' ] }
             end
 
           else
-            return {
-              :errors => [ 'tab.settings.presets.error.failed_to_import_bad_file_format' ]
-            }
+            return { :errors => [ 'tab.settings.presets.error.failed_to_import_bad_file_format' ] }
           end
 
         rescue => e
-          return {
-            :errors => [ [ 'tab.settings.presets.error.failed_to_import', { :error => e.class } ] ]
-          }
+          return { :errors => [ [ 'tab.settings.presets.error.failed_to_import', { :error => e.class } ] ] }
         end
 
       end

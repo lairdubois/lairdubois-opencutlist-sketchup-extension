@@ -32,6 +32,7 @@ module Ladb::OpenCutList
     # -----
 
     def run
+      return { :errors => [ [ 'core.error.feature_unavailable', { :version => 2022 } ] ] } if Sketchup.version_number < 2200000000
       return { :errors => [ 'default.error' ] } unless @cutlist
       return { :errors => [ 'tab.cutlist.error.obsolete_cutlist' ] } if @cutlist.obsolete?
 

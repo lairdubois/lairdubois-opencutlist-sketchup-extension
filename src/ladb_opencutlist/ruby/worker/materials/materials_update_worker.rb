@@ -14,8 +14,6 @@ module Ladb::OpenCutList
       @texture_loaded = material_data.fetch('texture_loaded', false)
       @texture_width = material_data.fetch('texture_width')
       @texture_height = material_data.fetch('texture_height')
-      @texture_colorizable = material_data.fetch('texture_colorizable')
-      @texture_colorized = material_data.fetch('texture_colorized')
 
       attributes = material_data.fetch('attributes')
       @type = MaterialAttributes.valid_type(attributes.fetch('type'))
@@ -72,13 +70,13 @@ module Ladb::OpenCutList
       # Update texture
       unless @texture_file.nil?
 
-        if @texture_loaded || @texture_rotation > 0 || (@texture_colorized and @texture_colorizable)
+        if @texture_loaded || @texture_rotation > 0
 
           # Rotate texture
           ImageUtils.rotate(@texture_file, @texture_rotation) if @texture_rotation > 0
 
           # Keep previous material color if colorized material
-          if !@texture_colorized and material.materialType == 2 # 2 = Sketchup::Material::MATERIAL_COLORIZED_TEXTURED
+          if material.materialType == 2 # 2 = Sketchup::Material::MATERIAL_COLORIZED_TEXTURED
             color = material.color
           else
             color = nil
