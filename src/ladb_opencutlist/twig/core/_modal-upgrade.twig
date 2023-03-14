@@ -30,8 +30,11 @@
     </div>
 {% endblock %}
 
+{% block footerLeftInner %}
+    <button type="button" class="btn btn-default" data-help-page="core.upgrade"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
+{% endblock %}
+
 {% block footerRightInner %}
-    <button type="button" class="btn btn-default pull-left" data-help-page="core.upgrade"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
     <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.close'|i18next }}</button>
     {% if capabilities.manifest.version is empty %}
         <button id="ladb_btn_download" class="btn btn-primary ladb-btn-download">{{ 'default.download'|i18next }}</button>
