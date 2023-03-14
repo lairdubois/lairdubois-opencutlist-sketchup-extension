@@ -11,7 +11,8 @@ module Ladb::OpenCutList
 
     def initialize(settings, cutlist)
 
-      @parts_matrices = settings.fetch('parts_matrices', nil)
+      @parts_infos = settings.fetch('parts_infos', nil)
+      @pins_infos = settings.fetch('pins_infos', nil)
       @target_group_id = settings.fetch('target_group_id', nil)
 
       @generated_at = settings.fetch('generated_at', '')
@@ -21,6 +22,7 @@ module Ladb::OpenCutList
       @page_header = settings.fetch('page_header', false)
       @parts_colored = settings.fetch('parts_colored', false)
       @parts_opacity = settings.fetch('parts_opacity', 1)
+      @pins_hidden = settings.fetch('pins_hidden', false)
       @pins_text = settings.fetch('pins_text', 0)
       @camera_view = Geom::Vector3d.new(settings.fetch('camera_view', nil))
       @camera_zoom = settings.fetch('camera_zoom', 1)
@@ -41,7 +43,7 @@ module Ladb::OpenCutList
       model = Sketchup.active_model
       return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
 
-      return { :errors => [ 'tab.cutlist.layout.error.no_part' ] } if @parts_matrices.empty?
+      return { :errors => [ 'tab.cutlist.layout.error.no_part' ] } if @parts_infos.empty?
 
       # Retrieve target group
       target_group = @cutlist.get_group(@target_group_id)
@@ -73,13 +75,13 @@ module Ladb::OpenCutList
         tmp_definition = definitions.add(uuid)
 
         # Iterate on parts
-        @parts_matrices.each do |part_matrix|
+        @parts_infos.each do |part_info|
 
           # Retrieve part
-          part = @cutlist.get_real_parts([ part_matrix['id'] ]).first
+          part = @cutlist.get_real_parts([ part_info['id'] ]).first
 
           # Convert three matrix to transformation
-          transformation = Geom::Transformation.new(part_matrix['matrix'])
+          transformation = Geom::Transformation.new(part_info['matrix'])
 
           # Retrieve part's material and definition
           material = materials[part.material_name]
@@ -157,7 +159,7 @@ module Ladb::OpenCutList
         when DimensionUtils::METER
           doc.units = Layout::Document::DECIMAL_METERS
         end
-        doc.precision = 1 # TODO make comptible with SU 2018 - 0.000001.ceil(DimensionUtils.instance.length_precision)
+        doc.precision = _to_layout_length_precision(DimensionUtils.instance.length_precision)
 
         page = doc.pages.first
         layer = doc.layers.first
@@ -220,6 +222,30 @@ module Ladb::OpenCutList
         skp.scale = @camera_zoom
         skp.preserve_scale_on_resize = true
         doc.add_entity(skp, layer, page)
+
+        skp.render
+
+        # Add pins
+        unless @pins_hidden
+
+          leader_type =
+
+          @pins_infos.each do |pin_info|
+            _add_connected_label(doc, layer, page, skp,
+                                 pin_info['text'],
+                                 Geom::Point3d.new(pin_info['target']),
+                                 Geom::Point3d.new(pin_info['anchor']),
+                                 {
+                                   :font_size => 7,
+                                   :solid_filled => true,
+                                   :fill_color => pin_info['background_color'].nil? ? Sketchup::Color.new(0xffffff) : Sketchup::Color.new(pin_info['background_color']),
+                                   :text_color => pin_info['color'].nil? ? nil : Sketchup::Color.new(pin_info['color']),
+                                   :stroke_width => 0.5
+                                 }
+            )
+          end
+
+        end
 
         # Save Layout file
         begin
@@ -357,6 +383,40 @@ module Ladb::OpenCutList
         entity.style = entity_style
       end
       entity
+    end
+
+    def _add_connected_label(doc, layer, page, skp, text, target_3d, anchor_3d, style = nil)
+      entity = Layout::Label.new(
+        text,
+        Layout::Label::LEADER_LINE_TYPE_SINGLE_SEGMENT,
+        Geom::Point2d.new,
+        skp.model_to_paper_point(anchor_3d),
+        Layout::FormattedText::ANCHOR_TYPE_TOP_LEFT
+      )
+      doc.add_entity(entity, layer, page)
+      entity.connect(Layout::ConnectionPoint.new(skp, target_3d))
+      if style
+        entity_style = entity.style
+
+        text_style = entity_style.get_sub_style(Layout::Style::LABEL_TEXT)
+        text_style.font_size = style[:font_size] unless style[:font_size].nil?
+        text_style.solid_filled = style[:solid_filled] unless style[:solid_filled].nil?
+        text_style.fill_color = style[:fill_color] unless style[:fill_color].nil?
+        text_style.text_color = style[:text_color] unless style[:text_color].nil?
+        entity_style.set_sub_style(Layout::Style::LABEL_TEXT, text_style)
+
+        leader_line_style = entity_style.get_sub_style(Layout::Style::LABEL_LEADER_LINE)
+        leader_line_style.stroke_width = style[:stroke_width] unless style[:stroke_width].nil?
+        entity_style.set_sub_style(Layout::Style::LABEL_LEADER_LINE, leader_line_style)
+
+        entity.style = entity_style
+      end
+      entity
+    end
+
+    def _to_layout_length_precision(su_length_precision)
+      return 1 if su_length_precision == 0
+      "0.#{'1'.ljust(su_length_precision - 1, '0')}".to_f
     end
 
     def _camera_zoom_to_scale(zoom)

@@ -483,22 +483,35 @@ const fnExplodeGroup = function (group, factor, factorDivider = 1) {
 
 const fnGetExplodedPartsMatrices = function () {
 
-    const partsMatrices = [];
-    fnPopulateExplodedPartsMatrices(model, partsMatrices)
+    const partsInfos = [];
+    const pinsInfos = [];
+    fnPopulateExplodedPartsMatrices(scene, partsInfos, pinsInfos)
 
-    return partsMatrices;
+    return {
+        parts_infos: partsInfos,
+        pins_infos: pinsInfos,
+    };
 };
 
-const fnPopulateExplodedPartsMatrices = function (group, parts) {
+const fnPopulateExplodedPartsMatrices = function (group, partsInfos, pinsInfos) {
     if (group.userData.isPart) {
-        parts.push({
+        partsInfos.push({
             id: group.userData.id,
             matrix: group.matrixWorld.toArray()
         });
     } else {
         for (let object of group.children) {
             if (object.isGroup) {
-                fnPopulateExplodedPartsMatrices(object, parts);
+                fnPopulateExplodedPartsMatrices(object, partsInfos, pinsInfos);
+            } else if (object.userData.isPin) {
+                pinsInfos.push({
+                    text: object.userData.text,
+                    target: object.userData.target.toArray(),
+                    anchor: object.userData.anchor.toArray(),
+                    background_color: object.userData.backgroundColor,
+                    border_color: object.userData.borderColor,
+                    color: object.userData.color
+                });
             }
         }
     }
@@ -736,16 +749,32 @@ const fnCreateGroupPins = function (group, pinsColored, pinsText, pinsLength, pi
                 break;
         }
 
+        let pinBackgroundColor, pinBorderColor, pinColor;
+        if (pinsColored && group.userData.color) {
+            pinBackgroundColor = '#' + group.userData.color.getHexString();
+            pinBorderColor = '#' + group.userData.color.clone().addScalar(-0.5).getHexString();
+            pinColor = fnIsDarkColor(group.userData.color) ? '#ffffff' : '#000000';
+        }
+
         const pinDiv = document.createElement('div');
         pinDiv.className = 'pin pin-' + pinClass;
         pinDiv.textContent = pinText;
         if (pinsColored && group.userData.color) {
-            pinDiv.style.backgroundColor = '#' + group.userData.color.getHexString();
-            pinDiv.style.borderColor = '#' + group.userData.color.clone().addScalar(-0.5).getHexString();
-            pinDiv.style.color = fnIsDarkColor(group.userData.color) ? 'white' : 'black';
+            pinDiv.style.backgroundColor = pinBackgroundColor;
+            pinDiv.style.borderColor = pinBorderColor;
+            pinDiv.style.color = pinColor;
         }
 
         const pin = new THREE.CSS2DObject(pinDiv);
+        pin.userData.isPin = true;
+        pin.userData.text = pinText;
+        pin.userData.target = groupCenter;
+        pin.userData.anchor = pinPosition;
+        if (pinsColored && group.userData.color) {
+            pin.userData.backgroundColor = pinBackgroundColor;
+            pin.userData.borderColor = pinBorderColor;
+            pin.userData.color = pinColor;
+        }
         pin.position.copy(pinPosition);
         pinsGroup.add(pin);
 

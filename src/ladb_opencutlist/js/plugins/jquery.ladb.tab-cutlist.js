@@ -1535,7 +1535,8 @@
                                     $viewer.ladbThreeViewer('callCommand', ['get_exploded_parts_matrices', null, function (data) {
 
                                         rubyCallCommand('cutlist_layout_to_layout', $.extend({
-                                            parts_matrices: data,
+                                            parts_infos: data.parts_infos,
+                                            pins_infos: data.pins_infos,
                                             target_group_id: context && context.targetGroup ? context.targetGroup.id : null,
                                             generated_at: Twig.twig({ data: "{{ generatedAt|date(('default.date_format'|i18next)) }}" }).render({ generatedAt: new Date().getTime() / 1000 })
                                         }, layoutOptions, controlsData), function (response) {
