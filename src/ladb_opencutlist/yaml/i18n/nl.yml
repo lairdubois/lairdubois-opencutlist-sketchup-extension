@@ -658,10 +658,10 @@ tab:
         leftover: Overschot
         cut: Snede
         cut_plural: Sneden
-        cut_final: Primaire zaagsnedes (niveau 1)
-        cut_final_plural: Primaire snijwonden (niveau 1)
-        cut_through: Primaire zaagsnedes (niveau 2)
-        cut_through_plural: Primaire snijwonden (niveau 2)
+        cut_final: Primaire zaagsnede (niveau 1)
+        cut_final_plural: Primaire zaagsnedes (niveau 1)
+        cut_through: Primaire zaagsnede (niveau 2)
+        cut_through_plural: Primaire zaagsnedes (niveau 2)
         cut_none: Geen
         bar_dimensional_type_0: Standaard plank
         bar_dimensional_type_1: Plank overschot
