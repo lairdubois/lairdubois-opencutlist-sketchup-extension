@@ -3,7 +3,8 @@
         <div class="ladb-sponsor-member-box" data-member-slug="{{ member.account.slug }}">
             <div class="media">
                 <div class="media-left">
-                    <img src="{{ member.account.imageUrl }}" width="128" height="128">
+                    {% set isGuest = member.account.name == 'Guest' %}
+                    <img src="{% if isGuest %}../img/opencollective-icon.svg{% else %}{{ member.account.imageUrl }}{% endif %}" width="128" height="128"{% if isGuest %} style="background-color: #E8F3FE; padding: 20px;"{% endif %}>
                 </div>
                 <div class="media-body">
                     <div class="ladb-sponsor-member-name">{{ member.account.name }}</div>
