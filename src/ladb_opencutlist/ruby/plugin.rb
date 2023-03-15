@@ -944,7 +944,7 @@ module Ladb::OpenCutList
         end
 
         if ready_block
-          # Immediatly invoke the read block
+          # Immediatly invoke the ready block
           ready_block.call
         end
 
@@ -959,7 +959,7 @@ module Ladb::OpenCutList
         # Show dialog
         @dialog.show
 
-        # Set dialog size and position
+        # Set dialog size and position (those functions must be called after `show` call to have a coherent position on Windows)
         dialog_set_size(DIALOG_MINIMIZED_WIDTH, DIALOG_MINIMIZED_HEIGHT)
         dialog_set_position(@dialog_left, @dialog_top)
 
@@ -1030,15 +1030,6 @@ module Ladb::OpenCutList
     def dialog_set_position(left, top)
       if @dialog
         @dialog.set_position(left, top)
-        if @dialog.respond_to?('get_position')
-          current_left, current_top = @dialog.get_position
-          if current_left && current_left != left || current_top && current_top != top
-            fixed_left = left + left - current_left
-            fixed_top = top + top - current_top
-            p 'diff', fixed_left, fixed_top
-            @dialog.set_position(fixed_left, fixed_top)
-          end
-        end
       end
     end
 
