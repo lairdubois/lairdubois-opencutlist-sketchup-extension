@@ -807,7 +807,7 @@
             buttons = [];
         }
         if (undefined === timeout) {
-            timeout = 3000;
+            timeout = 3500;
         }
         var n = new Noty({
             type: type,

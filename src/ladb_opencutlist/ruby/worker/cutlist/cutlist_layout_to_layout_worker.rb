@@ -179,33 +179,26 @@ module Ladb::OpenCutList
           gutter = 0.1
           font_family = 'Verdana'
 
-          draw_text = _create_formated_text(Plugin.instance.get_i18n_string('tab.cutlist.layout.title'), Geom::Point2d.new(page_info.left_margin, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_LEFT, { :font_family => font_family, :font_size => 18, :text_alignment => Layout::Style::ALIGN_LEFT })
-          doc.add_entity(draw_text, layer, page)
+          draw_text = _add_formated_text(doc, layer, page, Plugin.instance.get_i18n_string('tab.cutlist.layout.title'), Geom::Point2d.new(page_info.left_margin, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_LEFT, { :font_family => font_family, :font_size => 18, :text_alignment => Layout::Style::ALIGN_LEFT })
+          current_y = draw_text.drawing_bounds.lower_left.y
 
-          current_y = draw_text.bounds.lower_right.y
+          _add_formated_text(doc, layer, page, '<OpenCutListGeneratedAt>  |  <OpenCutListLengthUnit>  |  <OpenCutListScale>', Geom::Point2d.new(page_info.width - page_info.right_margin, current_y), Layout::FormattedText::ANCHOR_TYPE_BOTTOM_RIGHT, { :font_family => font_family, :font_size => 10, :text_alignment => Layout::Style::ALIGN_RIGHT })
 
-          date_and_unit_text = _create_formated_text('<OpenCutListGeneratedAt>  |  <OpenCutListLengthUnit>  |  <OpenCutListScale>', Geom::Point2d.new(page_info.width - page_info.right_margin, current_y), Layout::FormattedText::ANCHOR_TYPE_BOTTOM_RIGHT, { :font_family => font_family, :font_size => 10, :text_alignment => Layout::Style::ALIGN_RIGHT })
-          doc.add_entity(date_and_unit_text, layer, page)
-
-          name_text = _create_formated_text('<PageName>', Geom::Point2d.new(page_info.width / 2, current_y + gutter * 2), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => font_family, :font_size => 15, :text_alignment => Layout::Style::ALIGN_CENTER })
-          doc.add_entity(name_text, layer, page)
-          current_y = name_text.bounds.lower_right.y
+          name_text = _add_formated_text(doc, layer, page, '<PageName>', Geom::Point2d.new(page_info.width / 2, current_y + gutter * 2), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => font_family, :font_size => 15, :text_alignment => Layout::Style::ALIGN_CENTER })
+          current_y = name_text.drawing_bounds.lower_left.y
 
           unless @cutlist.model_description.empty?
-            model_description_text = _create_formated_text(@cutlist.model_description, Geom::Point2d.new(page_info.width / 2, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => font_family, :font_size => 9, :text_alignment => Layout::Style::ALIGN_CENTER })
-            doc.add_entity(model_description_text, layer, page)
-            current_y = model_description_text.bounds.lower_right.y
+            model_description_text = _add_formated_text(doc, layer, page, @cutlist.model_description, Geom::Point2d.new(page_info.width / 2, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => font_family, :font_size => 9, :text_alignment => Layout::Style::ALIGN_CENTER })
+            current_y = model_description_text.drawing_bounds.lower_left.y
           end
 
           unless @cutlist.page_description.empty?
-            page_description_text = _create_formated_text(@cutlist.page_description, Geom::Point2d.new(page_info.width / 2, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => font_family, :font_size => 9, :text_alignment => Layout::Style::ALIGN_CENTER })
-            doc.add_entity(page_description_text, layer, page)
-            current_y = page_description_text.bounds.lower_right.y
+            page_description_text = _add_formated_text(doc, layer, page, @cutlist.page_description, Geom::Point2d.new(page_info.width / 2, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => font_family, :font_size => 9, :text_alignment => Layout::Style::ALIGN_CENTER })
+            current_y = page_description_text.drawing_bounds.lower_left.y
           end
 
-          rectangle = _create_rectangle(Geom::Point2d.new(page_info.left_margin, draw_text.bounds.lower_right.y + gutter), Geom::Point2d.new(page_info.width - page_info.right_margin, current_y + gutter), { :solid_filled => false })
-          doc.add_entity(rectangle, layer, page)
-          current_y = rectangle.bounds.lower_right.y + gutter
+          rectangle = _add_rectangle(doc, layer, page, Geom::Point2d.new(page_info.left_margin, draw_text.bounds.lower_right.y + gutter), Geom::Point2d.new(page_info.width - page_info.right_margin, current_y + gutter), { :solid_filled => false })
+          current_y = rectangle.drawing_bounds.lower_left.y + gutter
 
         end
 
@@ -234,7 +227,7 @@ module Ladb::OpenCutList
             _add_connected_label(doc, layer, page, skp,
                                  pin_info['text'],
                                  Geom::Point3d.new(pin_info['target']),
-                                 Geom::Point3d.new(pin_info['anchor']),
+                                 Geom::Point3d.new(pin_info['position']),
                                  {
                                    :font_size => 7,
                                    :solid_filled => true,
@@ -270,6 +263,8 @@ module Ladb::OpenCutList
     # -----
 
     private
+
+    # SketchUp stuffs
 
     def _draw_part(tmp_definition, part, definition, transformation = nil, material = nil)
 
@@ -356,14 +351,15 @@ module Ladb::OpenCutList
 
     end
 
-    def _sanitize_filename(filename)
-      filename
-        .gsub(/\//, '∕')
-        .gsub(/꞉/, '꞉')
-    end
+    # Layout stuffs
 
-    def _create_formated_text(text, anchor, anchor_type, style = nil)
-      entity = Layout::FormattedText.new(text, anchor, anchor_type)
+    def _add_formated_text(doc, layer, page, text, anchor, anchor_type, style = nil)
+      entity = Layout::FormattedText.new(
+        text,
+        anchor,
+        anchor_type
+      )
+      doc.add_entity(entity, layer, page)
       if style
         entity_style = entity.style(0)
         entity_style.font_size = style[:font_size] unless style[:font_size].nil?
@@ -375,8 +371,11 @@ module Ladb::OpenCutList
       entity
     end
 
-    def _create_rectangle(upper_left, lower_right, style = nil)
-      entity = Layout::Rectangle.new(Geom::Bounds2d.new(upper_left, lower_right))
+    def _add_rectangle(doc, layer, page, upper_left, lower_right, style = nil)
+      entity = Layout::Rectangle.new(
+        Geom::Bounds2d.new(upper_left, lower_right)
+      )
+      doc.add_entity(entity, layer, page)
       if style
         entity_style = entity.style
         entity_style.solid_filled = style[:solid_filled] unless style[:solid_filled].nil?
@@ -386,15 +385,16 @@ module Ladb::OpenCutList
     end
 
     def _add_connected_label(doc, layer, page, skp, text, target_3d, anchor_3d, style = nil)
+      target_2d = skp.model_to_paper_point(target_3d)
+      anchor_2d = skp.model_to_paper_point(anchor_3d)
       entity = Layout::Label.new(
         text,
         Layout::Label::LEADER_LINE_TYPE_SINGLE_SEGMENT,
-        Geom::Point2d.new,
-        skp.model_to_paper_point(anchor_3d),
+        target_2d,
+        anchor_2d,
         Layout::FormattedText::ANCHOR_TYPE_TOP_LEFT
       )
       doc.add_entity(entity, layer, page)
-      entity.connect(Layout::ConnectionPoint.new(skp, target_3d))
       if style
         entity_style = entity.style
 
@@ -411,6 +411,18 @@ module Ladb::OpenCutList
 
         entity.style = entity_style
       end
+      # Workaround to "Hide" leader line if target_3d == anchor_3d
+      if target_3d == anchor_3d
+        entity_style = entity.style
+        leader_line_style = entity_style.get_sub_style(Layout::Style::LABEL_LEADER_LINE)
+        leader_line_style.stroke_color = Sketchup::Color.new(0, 0, 0, 0)
+        entity_style.set_sub_style(Layout::Style::LABEL_LEADER_LINE, leader_line_style)
+        entity.style = entity_style
+      end
+      # Center text on anchor point
+      entity.transform!(Geom::Transformation2d.translation(Geom::Vector2d.new(anchor_2d.x, anchor_2d.y) - Geom::Vector2d.new(entity.text.bounds.upper_left.x + entity.text.bounds.width / 2, entity.text.bounds.upper_left.y + entity.text.bounds.height / 2)))
+      # Connect target to model
+      entity.connect(Layout::ConnectionPoint.new(skp, target_3d)) unless target_3d == anchor_3d
       entity
     end
 
@@ -428,6 +440,14 @@ module Ladb::OpenCutList
         scale = '1:1'
       end
       scale
+    end
+
+    # File stuffs
+
+    def _sanitize_filename(filename)
+      filename
+        .gsub(/\//, '∕')
+        .gsub(/꞉/, '꞉')
     end
 
   end

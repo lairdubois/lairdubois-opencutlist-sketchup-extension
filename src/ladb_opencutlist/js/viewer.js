@@ -303,7 +303,7 @@ const fnAddListeners = function () {
 
                 case 'get_exploded_parts_matrices':
                     window.frameElement.dispatchEvent(new MessageEvent('callback.get_exploded_parts_matrices', {
-                        data: fnGetExplodedPartsMatrices()
+                        data: fnGetExplodedEntitiesInfos()
                     }));
                     break;
 
@@ -481,11 +481,11 @@ const fnExplodeGroup = function (group, factor, factorDivider = 1) {
 
 };
 
-const fnGetExplodedPartsMatrices = function () {
+const fnGetExplodedEntitiesInfos = function () {
 
     const partsInfos = [];
     const pinsInfos = [];
-    fnPopulateExplodedPartsMatrices(scene, partsInfos, pinsInfos)
+    fnPopulateExplodedEntitiesInfos(scene, partsInfos, pinsInfos)
 
     return {
         parts_infos: partsInfos,
@@ -493,7 +493,7 @@ const fnGetExplodedPartsMatrices = function () {
     };
 };
 
-const fnPopulateExplodedPartsMatrices = function (group, partsInfos, pinsInfos) {
+const fnPopulateExplodedEntitiesInfos = function (group, partsInfos, pinsInfos) {
     if (group.userData.isPart) {
         partsInfos.push({
             id: group.userData.id,
@@ -502,12 +502,12 @@ const fnPopulateExplodedPartsMatrices = function (group, partsInfos, pinsInfos) 
     } else {
         for (let object of group.children) {
             if (object.isGroup) {
-                fnPopulateExplodedPartsMatrices(object, partsInfos, pinsInfos);
+                fnPopulateExplodedEntitiesInfos(object, partsInfos, pinsInfos);
             } else if (object.userData.isPin) {
                 pinsInfos.push({
                     text: object.userData.text,
                     target: object.userData.target.toArray(),
-                    anchor: object.userData.anchor.toArray(),
+                    position: object.userData.position.toArray(),
                     background_color: object.userData.backgroundColor,
                     border_color: object.userData.borderColor,
                     color: object.userData.color
@@ -769,7 +769,7 @@ const fnCreateGroupPins = function (group, pinsColored, pinsText, pinsLength, pi
         pin.userData.isPin = true;
         pin.userData.text = pinText;
         pin.userData.target = groupCenter;
-        pin.userData.anchor = pinPosition;
+        pin.userData.position = pinPosition;
         if (pinsColored && group.userData.color) {
             pin.userData.backgroundColor = pinBackgroundColor;
             pin.userData.borderColor = pinBorderColor;
