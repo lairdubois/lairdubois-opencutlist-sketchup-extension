@@ -229,14 +229,16 @@ module Ladb::OpenCutList
                                  Geom::Point3d.new(pin_info['target']),
                                  Geom::Point3d.new(pin_info['position']),
                                  {
-                                   :font_size => 7,
-                                   :solid_filled => true,
-                                   :fill_color => pin_info['background_color'].nil? ? Sketchup::Color.new(0xffffff) : Sketchup::Color.new(pin_info['background_color']),
-                                   :text_color => pin_info['color'].nil? ? nil : Sketchup::Color.new(pin_info['color']),
-                                   :text_alignment => Layout::Style::ALIGN_CENTER,
-                                   :stroke_width => 0.5,
-                                   :start_arrow_type => Layout::Style::ARROW_FILLED_CIRCLE,
-                                   :start_arrow_size => 0.5
+                                   :text_font_size => 7,
+                                   :text_solid_filled => true,
+                                   :text_fill_color => pin_info['background_color'].nil? ? Sketchup::Color.new(0xffffff) : Sketchup::Color.new(pin_info['background_color']),
+                                   :text_text_color => pin_info['color'].nil? ? nil : Sketchup::Color.new(pin_info['color']),
+                                   :text_text_alignment => Layout::Style::ALIGN_CENTER,
+                                   :text_stroke_width => 0.5,
+                                   :text_stroke_color => pin_info['border_color'].nil? ? nil : Sketchup::Color.new(pin_info['border_color']),
+                                   :leader_line_stroke_width => 0.5,
+                                   :leader_line_start_arrow_type => Layout::Style::ARROW_FILLED_CIRCLE,
+                                   :leader_line_start_arrow_size => 0.5
                                  }
             )
           end
@@ -395,38 +397,44 @@ module Ladb::OpenCutList
         Layout::Label::LEADER_LINE_TYPE_SINGLE_SEGMENT,
         target_2d,
         anchor_2d,
-        Layout::FormattedText::ANCHOR_TYPE_TOP_LEFT
+        Layout::FormattedText::ANCHOR_TYPE_CENTER_LEFT
       )
       doc.add_entity(entity, layer, page)
       if style
         entity_style = entity.style
 
         text_style = entity_style.get_sub_style(Layout::Style::LABEL_TEXT)
-        text_style.font_size = style[:font_size] unless style[:font_size].nil?
-        text_style.solid_filled = style[:solid_filled] unless style[:solid_filled].nil?
-        text_style.fill_color = style[:fill_color] unless style[:fill_color].nil?
-        text_style.text_color = style[:text_color] unless style[:text_color].nil?
-        text_style.text_alignment = style[:text_alignment] unless style[:text_alignment].nil?
+        text_style.font_size = style[:text_font_size] unless style[:text_font_size].nil?
+        text_style.solid_filled = style[:text_solid_filled] unless style[:text_solid_filled].nil?
+        text_style.fill_color = style[:text_fill_color] unless style[:text_fill_color].nil?
+        text_style.text_color = style[:text_text_color] unless style[:text_text_color].nil?
+        text_style.text_alignment = style[:text_text_alignment] unless style[:text_text_alignment].nil?
+        text_style.stroked = !style[:text_stroke_width].nil?
+        text_style.stroke_width = style[:text_stroke_width] unless style[:text_stroke_width].nil?
+        text_style.stroke_color = style[:text_stroke_color] unless style[:text_stroke_color].nil?
         entity_style.set_sub_style(Layout::Style::LABEL_TEXT, text_style)
 
         leader_line_style = entity_style.get_sub_style(Layout::Style::LABEL_LEADER_LINE)
-        leader_line_style.stroke_width = style[:stroke_width] unless style[:stroke_width].nil?
-        leader_line_style.start_arrow_type = style[:start_arrow_type] unless style[:start_arrow_type].nil?
-        leader_line_style.start_arrow_size = style[:start_arrow_size] unless style[:start_arrow_size].nil?
+        leader_line_style.stroke_width = style[:leader_line_stroke_width] unless style[:leader_line_stroke_width].nil?
+        leader_line_style.start_arrow_type = style[:leader_line_start_arrow_type] unless style[:leader_line_start_arrow_type].nil?
+        leader_line_style.start_arrow_size = style[:leader_line_start_arrow_size] unless style[:leader_line_start_arrow_size].nil?
         entity_style.set_sub_style(Layout::Style::LABEL_LEADER_LINE, leader_line_style)
 
         entity.style = entity_style
       end
-      # Workaround to "Hide" leader line if target_3d == anchor_3d
       if target_3d == anchor_3d
+
+        # Workaround to "Hide" leader line if target_3d == anchor_3d
         entity_style = entity.style
         leader_line_style = entity_style.get_sub_style(Layout::Style::LABEL_LEADER_LINE)
         leader_line_style.stroke_color = Sketchup::Color.new(0, 0, 0, 0)
         entity_style.set_sub_style(Layout::Style::LABEL_LEADER_LINE, leader_line_style)
         entity.style = entity_style
+
+        # Center text on anchor point
+        entity.transform!(Geom::Transformation2d.translation(Geom::Vector2d.new(anchor_2d.x, anchor_2d.y) - Geom::Vector2d.new(entity.text.bounds.upper_left.x + entity.text.bounds.width / 2, entity.text.bounds.upper_left.y + entity.text.bounds.height / 2)))
+
       end
-      # Center text on anchor point
-      entity.transform!(Geom::Transformation2d.translation(Geom::Vector2d.new(anchor_2d.x, anchor_2d.y) - Geom::Vector2d.new(entity.text.bounds.upper_left.x + entity.text.bounds.width / 2, entity.text.bounds.upper_left.y + entity.text.bounds.height / 2)))
       # Connect target to model
       entity.connect(Layout::ConnectionPoint.new(skp, target_3d)) unless target_3d == anchor_3d
       entity
