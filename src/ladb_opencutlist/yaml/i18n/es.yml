@@ -94,7 +94,8 @@ core:
       No se recomienda su uso en producción.
 
       Para informar de un error: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
-    feature_locked: "*No se puede desactivar en esta versión de SketchUp*"
+  error:
+    feature_unavailable: "Esta función requiere SketchUp {{ version }} o superior"
   event:
     model_change: Se ha cambiado el modelo activo.
     options_change: Las opciones en el modelo han cambiado.
@@ -534,7 +535,6 @@ tab:
       number: No.
       path: Camino
       instance_name: Instancia
-      definition_name: Definición
       name: Designación
       total_cutting_length: Longitud total - crudo
       total_cutting_area: Área total - cruda
@@ -848,6 +848,7 @@ tab:
         formula_not_available: No disponible en este contexto
     layout:
       title: Dibujo
+      to_layout: Exportar a Layout
       options_layout: Composición
       options_settings: Configuración
       option_parts: Piezas
@@ -868,11 +869,8 @@ tab:
       option_pins_colored_0: Sin color
       option_pins_colored_1: Color de la pieza
       option_pins_colored_help: Seleccione el color de las etiquetas.
-      option_pins_text: Texto
-      option_pins_text_0: Número de la pieza
-      option_pins_text_1: Designación de la pieza
-      option_pins_text_2: Número y designación de la pieza
-      option_pins_text_help: Seleccione el texto que aparece en las etiquetas.
+      option_pins_formula: Fórmula
+      option_pins_formula_help: Permite escribir código *Ruby* para personalizar el texto de las etiquetas.
       option_pins_length: Longitud
       option_pins_length_0: Sin línea de guía
       option_pins_length_1: Pequeño
@@ -911,6 +909,10 @@ tab:
       option_explode: Vista desarrollada
       error:
         no_part: No hay parte que dibujar.
+        failed_to_save_as_skp: ""
+        failed_to_layout: |
+          Error al escribir el archivo de Layout. **{{ error }}**
+          El archivo puede estar abierto en Layout.
       warning:
         is_group_selection: Las piezas dentro de **grupos enmascarados** de su lista de piezas no se dibujarán.
         is_part_selection: Este plano de conjunto se limita a las **piezas seleccionadas**.
