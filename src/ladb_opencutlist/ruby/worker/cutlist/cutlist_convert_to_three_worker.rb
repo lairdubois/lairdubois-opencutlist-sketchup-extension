@@ -1,20 +1,22 @@
 module Ladb::OpenCutList
 
+  require_relative '../../lib/lgeom/transformation_helper'
   require_relative '../../helper/layer_visibility_helper'
   require_relative '../../helper/hashable_helper'
   require_relative '../../utils/axis_utils'
   require_relative '../../model/attributes/material_attributes'
-  require_relative '../../lib/lgeom/transformation_helper'
+  require_relative '../../model/export/wrappers'
 
   class CutlistConvertToThreeWorker
 
     include LayerVisibilityHelper
 
-    def initialize(parts, all_instances = false, parts_colored = true)
+    def initialize(parts, all_instances = false, parts_colored = true, pins_formula = '')
 
       @parts = parts
       @all_instances = all_instances
       @parts_colored = parts_colored
+      @pins_formula = pins_formula
 
     end
 
@@ -47,6 +49,53 @@ module Ladb::OpenCutList
             three_part_instance_def = ThreePartInstanceDef.new
             three_part_instance_def.matrix = _to_three_matrix(instance_info.entity.transformation)
             three_part_instance_def.id = part.id
+            three_part_instance_def.text = _evaluate_text(InstanceData.new(
+              StringWrapper.new(part.number),
+              StringWrapper.new(PathUtils.get_named_path(instance_info.path, true, 1, '.')),
+              StringWrapper.new(instance_info.entity.name),
+              StringWrapper.new(part.name),
+              LengthWrapper.new(part.def.cutting_length),
+              LengthWrapper.new(part.def.cutting_width),
+              LengthWrapper.new(part.def.cutting_size.thickness),
+              LengthWrapper.new(part.def.size.length),
+              LengthWrapper.new(part.def.size.width),
+              LengthWrapper.new(part.def.size.thickness),
+              AreaWrapper.new(part.def.final_area),
+              StringWrapper.new(Plugin.instance.get_i18n_string("tab.materials.type_#{part.group.material_type}")),
+              StringWrapper.new(part.material_name),
+              StringWrapper.new(part.description),
+              ArrayWrapper.new(part.tags),
+              EdgeWrapper.new(
+                part.edge_material_names[:ymin],
+                part.def.edge_group_defs[:ymin] ? part.def.edge_group_defs[:ymin].std_thickness : nil,
+                part.def.edge_group_defs[:ymin] ? part.def.edge_group_defs[:ymin].std_width : nil
+              ),
+              EdgeWrapper.new(
+                part.edge_material_names[:ymax],
+                part.def.edge_group_defs[:ymax] ? part.def.edge_group_defs[:ymax].std_thickness : nil,
+                part.def.edge_group_defs[:ymax] ? part.def.edge_group_defs[:ymax].std_width : nil
+              ),
+              EdgeWrapper.new(
+                part.edge_material_names[:xmin],
+                part.def.edge_group_defs[:xmin] ? part.def.edge_group_defs[:xmin].std_thickness : nil,
+                part.def.edge_group_defs[:xmin] ? part.def.edge_group_defs[:xmin].std_width : nil
+              ),
+              EdgeWrapper.new(
+                part.edge_material_names[:xmax],
+                part.def.edge_group_defs[:xmax] ? part.def.edge_group_defs[:xmax].std_thickness : nil,
+                part.def.edge_group_defs[:xmax] ? part.def.edge_group_defs[:xmax].std_width : nil
+              ),
+              VeneerWrapper.new(
+                part.veneer_material_names[:zmin],
+                part.def.veneer_group_defs[:zmin] ? part.def.veneer_group_defs[:zmin].std_thickness : nil
+              ),
+              VeneerWrapper.new(
+                part.veneer_material_names[:zmax],
+                part.def.veneer_group_defs[:zmax] ? part.def.veneer_group_defs[:zmax].std_thickness : nil
+              ),
+              StringWrapper.new(instance_info.layer.display_name),
+              )
+            )
 
             # Add to hierarchy
             parent_three_group_def = _parent_hierarchy(instance_info.path.slice(0, instance_info.path.length - 1), active_entity, group_cache, three_model_def)
@@ -125,6 +174,17 @@ module Ladb::OpenCutList
 
     private
 
+    def _evaluate_text(data)
+      formula = @pins_formula.is_a?(String) && !@pins_formula.empty? ? @pins_formula : '@number'
+      begin
+        text = eval(formula, data.get_binding)
+        text = text.export if text.is_a?(Wrapper)
+      rescue Exception => e
+        text = { :error => e.message.split(/cutlist_convert_to_three_worker[.]rb:\d+:/).last } # Remove path in exception message
+      end
+      text
+    end
+
     def _create_three_part_def(three_model_def, part, definition, material)
 
       three_part_def = three_model_def.part_defs.fetch(part.id, nil)
@@ -138,8 +198,6 @@ module Ladb::OpenCutList
         three_part_def.soft_edge_controls0,
         three_part_def.soft_edge_controls1,
         three_part_def.soft_edge_directions = _grab_entities_vertices_and_colors(definition.entities, material)
-        three_part_def.name = part.name
-        three_part_def.number = part.number
         three_part_def.color = _to_three_color(material)
 
         three_model_def.part_defs.store(part.id, three_part_def)
@@ -380,7 +438,7 @@ module Ladb::OpenCutList
 
     include HashableHelper
 
-    attr_accessor :face_vertices, :face_colors, :hard_edge_vertices, :soft_edge_vertices, :soft_edge_controls0, :soft_edge_controls1, :soft_edge_directions, :name, :number, :color, :pin_text, :pin_class, :pin_color
+    attr_accessor :face_vertices, :face_colors, :hard_edge_vertices, :soft_edge_vertices, :soft_edge_controls0, :soft_edge_controls1, :soft_edge_directions, :text, :color
 
     def initialize
       @face_vertices = []
@@ -390,12 +448,7 @@ module Ladb::OpenCutList
       @soft_edge_controls0 = []
       @soft_edge_controls1 = []
       @soft_edge_directions = []
-      @name = nil
-      @number = nil
       @color = nil
-      @pin_text = nil
-      @pin_class = nil
-      @pin_color = nil
     end
 
   end
@@ -458,11 +511,70 @@ module Ladb::OpenCutList
 
   class ThreePartInstanceDef < ThreeGroupDef
 
-    attr_accessor :id
+    attr_accessor :id, :text
 
     def initialize
       super(ThreeObjectDef::TYPE_PART_INSTANCE)
       @id = nil
+      @text = nil
+    end
+
+  end
+
+  # -----
+
+  class InstanceData
+
+    def initialize(
+      number,
+      path,
+      instance_name,
+      name,
+      cutting_length,
+      cutting_width,
+      cutting_thickness,
+      bbox_length,
+      bbox_width,
+      bbox_thickness,
+      final_area,
+      material_type,
+      material_name,
+      description,
+      tags,
+      edge_ymin,
+      edge_ymax,
+      edge_xmin,
+      edge_xmax,
+      veneer_zmin,
+      veneer_zmax,
+      layer
+    )
+      @number = number
+      @path = path
+      @instance_name = instance_name
+      @name = name
+      @cutting_length = cutting_length
+      @cutting_width = cutting_width
+      @cutting_thickness = cutting_thickness
+      @bbox_length = bbox_length
+      @bbox_width = bbox_width
+      @bbox_thickness = bbox_thickness
+      @final_area = final_area
+      @material_type = material_type
+      @material_name = material_name
+      @description = description
+      @tags = tags
+      @edge_ymin = edge_ymin
+      @edge_ymax = edge_ymax
+      @edge_xmin = edge_xmin
+      @edge_xmax = edge_xmax
+      @veneer_zmin = veneer_zmin
+      @veneer_zmax = veneer_zmax
+      @layer = layer
+    end
+
+    def get_binding
+      binding
     end
 
   end

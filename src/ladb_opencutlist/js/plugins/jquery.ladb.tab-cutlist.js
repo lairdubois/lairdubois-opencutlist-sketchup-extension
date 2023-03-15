@@ -797,7 +797,7 @@
                     { name: 'number', type: 'string' },
                     { name: 'path', type: 'string' },
                     { name: 'instance_name', type: 'string' },
-                    { name: 'definition_name', type: 'string' },
+                    { name: 'name', type: 'string' },
                     { name: 'cutting_length', type: 'length' },
                     { name: 'cutting_width', type: 'length' },
                     { name: 'cutting_thickness', type: 'length' },
@@ -1317,7 +1317,7 @@
             var $selectPartsOpacity = $('#ladb_select_parts_opacity', $modal);
             var $selectPinsHidden = $('#ladb_select_pins_hidden', $modal);
             var $selectPinsColored = $('#ladb_select_pins_colored', $modal);
-            var $selectPinsText = $('#ladb_select_pins_text', $modal);
+            var $textareaPinsFormula = $('#ladb_textarea_pins_formula', $modal);
             var $selectPinsLength = $('#ladb_select_pins_length', $modal);
             var $selectPinsDirection = $('#ladb_select_pins_direction', $modal);
             var $selectCameraView = $('#ladb_select_camera_view', $modal);
@@ -1361,6 +1361,20 @@
                     callback(response.page_width, response.page_height);
                 });
             }
+            var fnConvertToVariableDefs = function (vars) {
+
+                // Generate variableDefs for formula editor
+                var variableDefs = [];
+                for (var i = 0; i < vars.length; i++) {
+                    variableDefs.push({
+                        text: vars[i].name,
+                        displayText: i18next.t('tab.cutlist.export.' + vars[i].name),
+                        type: vars[i].type
+                    });
+                }
+
+                return variableDefs;
+            }
             var fnFetchOptions = function (options) {
                 options.page_width = $inputPageWidth.val();
                 options.page_height = $inputPageHeight.val();
@@ -1369,7 +1383,7 @@
                 options.parts_opacity = parseFloat($selectPartsOpacity.val());
                 options.pins_hidden = $selectPinsHidden.val() === '1';
                 options.pins_colored = $selectPinsColored.val() === '1';
-                options.pins_text = parseInt($selectPinsText.val());
+                options.pins_formula = $textareaPinsFormula.val();
                 options.pins_length = parseInt($selectPinsLength.val());
                 options.pins_direction = parseInt($selectPinsDirection.val());
                 options.camera_view = JSON.parse($inputCameraView.val());
@@ -1386,7 +1400,7 @@
                 $selectPartsOpacity.selectpicker('val', options.parts_opacity);
                 $selectPinsHidden.selectpicker('val', options.pins_hidden ? '1' : '0');
                 $selectPinsColored.selectpicker('val', options.pins_colored ? '1' : '0');
-                $selectPinsText.selectpicker('val', options.pins_text);
+                $textareaPinsFormula.ladbTextinputCode('val', [ typeof options.pins_formula == 'string' ? options.pins_formula : '' ]);
                 $selectPinsLength.selectpicker('val', options.pins_length);
                 $selectPinsDirection.selectpicker('val', options.pins_direction);
                 $selectCameraView.selectpicker('val', JSON.stringify(options.camera_view));
@@ -1414,7 +1428,32 @@
             $selectPartsOpacity.selectpicker(SELECT_PICKER_OPTIONS);
             $selectPinsHidden.selectpicker(SELECT_PICKER_OPTIONS);
             $selectPinsColored.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectPinsText.selectpicker(SELECT_PICKER_OPTIONS);
+            $textareaPinsFormula.ladbTextinputCode({
+                variableDefs: fnConvertToVariableDefs([
+                    { name: 'number', type: 'string' },
+                    { name: 'path', type: 'string' },
+                    { name: 'instance_name', type: 'string' },
+                    { name: 'name', type: 'string' },
+                    { name: 'cutting_length', type: 'length' },
+                    { name: 'cutting_width', type: 'length' },
+                    { name: 'cutting_thickness', type: 'length' },
+                    { name: 'bbox_length', type: 'length' },
+                    { name: 'bbox_width', type: 'length' },
+                    { name: 'bbox_thickness', type: 'length' },
+                    { name: 'final_area', type: 'area' },
+                    { name: 'material_type', type: 'string' },
+                    { name: 'material_name', type: 'string' },
+                    { name: 'description', type: 'string' },
+                    { name: 'tags', type: 'array' },
+                    { name: 'edge_ymin', type: 'edge' },
+                    { name: 'edge_ymax', type: 'edge' },
+                    { name: 'edge_xmin', type: 'edge' },
+                    { name: 'edge_xmax', type: 'edge' },
+                    { name: 'veneer_zmax', type: 'veneer' },
+                    { name: 'veneer_zmin', type: 'veneer' },
+                    { name: 'layer', type: 'string' }
+                ])
+            })
             $selectPinsLength.selectpicker(SELECT_PICKER_OPTIONS);
             $selectPinsDirection.selectpicker(SELECT_PICKER_OPTIONS);
             $selectCameraView.selectpicker(SELECT_PICKER_OPTIONS);
@@ -1479,6 +1518,7 @@
                         rubyCallCommand('cutlist_layout_parts', {
                             part_ids: partIds,
                             parts_colored: layoutOptions.parts_colored,
+                            pins_formula: layoutOptions.pins_formula
                         }, function (response) {
 
                             var controlsData = {
@@ -1584,7 +1624,7 @@
                                 partsOpacity: layoutOptions.parts_opacity,
                                 pinsHidden: layoutOptions.pins_hidden,
                                 pinsColored: layoutOptions.pins_colored,
-                                pinsText: layoutOptions.pins_text,
+                                pinsRounded: typeof layoutOptions.pins_formula != 'string' || layoutOptions.pins_formula.length === 0,
                                 pinsLength: layoutOptions.pins_length,
                                 pinsDirection: layoutOptions.pins_direction,
                                 cameraView: layoutOptions.camera_view,

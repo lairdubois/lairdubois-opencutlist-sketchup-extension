@@ -23,6 +23,12 @@
         this.cm.refresh();
     };
 
+    LadbTextinputCode.prototype.val = function (value) {
+        this.cm.setValue(value);
+        this.cm.refresh();
+        return LadbTextinputAbstract.prototype.val.call(this, value);
+    };
+
     LadbTextinputCode.prototype.createLeftToolsContainer = function ($toolContainer) {
         // Do not create left tools container
     };

@@ -142,6 +142,10 @@
           "align": "left"
         },
         {
+          "name": "name",
+          "align": "left"
+        },
+        {
           "name": "cutting_length",
           "align": "right"
         },

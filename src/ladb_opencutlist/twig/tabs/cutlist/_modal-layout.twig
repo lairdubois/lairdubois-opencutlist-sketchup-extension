@@ -72,14 +72,10 @@
                         </div>
                     </div>
                     <div class="form-group ladb-cutlist-layout-form-group-pins">
-                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.layout.option_pins_text_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                        <label for="ladb_select_pins_text" class="control-label col-xs-4">{{ 'tab.cutlist.layout.option_pins_text'|i18next }}</label>
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.layout.option_pins_formula_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                        <label for="ladb_textarea_pins_formula" class="control-label col-xs-4">{{ 'tab.cutlist.layout.option_pins_formula'|i18next }} <small style="font-weight: normal;">(Ruby)</small></label>
                         <div class="col-xs-6">
-                            <select class="form-control" id="ladb_select_pins_text">
-                                <option value="0" data-content="{{ 'tab.cutlist.layout.option_pins_text_0'|i18next }}"></option>
-                                <option value="1" data-content="{{ 'tab.cutlist.layout.option_pins_text_1'|i18next }}"></option>
-                                <option value="2" data-content="{{ 'tab.cutlist.layout.option_pins_text_2'|i18next }}"></option>
-                            </select>
+                            <textarea id="ladb_textarea_pins_formula" class="form-control" placeholder="{{ 'tab.cutlist.export.number'|i18next }}"></textarea>
                         </div>
                     </div>
                     <div class="form-group ladb-cutlist-layout-form-group-pins">

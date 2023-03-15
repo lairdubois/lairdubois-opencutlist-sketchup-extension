@@ -264,7 +264,7 @@ const fnAddListeners = function () {
                         call.params.partsOpacity,
                         call.params.pinsHidden,
                         call.params.pinsColored,
-                        call.params.pinsText,
+                        call.params.pinsRounded,
                         call.params.pinsLength,
                         call.params.pinsDirection,
                         call.params.cameraView,
@@ -683,112 +683,108 @@ const fnCreateModelPins = function () {
             pinsGroup = new THREE.Group();
             scene.add(pinsGroup);
         }
-        fnCreateGroupPins(model, pinsOptions.pinsColored, pinsOptions.pinsText, pinsOptions.pinsLength, pinsOptions.pinsDirection, baseModelCenter);
+        fnCreateGroupPins(model, pinsOptions.pinsColored, pinsOptions.pinsRounded, pinsOptions.pinsLength, pinsOptions.pinsDirection, baseModelCenter);
     }
 }
 
-const fnCreateGroupPins = function (group, pinsColored, pinsText, pinsLength, pinsDirection, parentCenter) {
+const fnCreateGroupPins = function (group, pinsColored, pinsRounded, pinsLength, pinsDirection, parentCenter) {
 
     const groupBox = new THREE.Box3().setFromObject(group);
     const groupCenter = groupBox.getCenter(new THREE.Vector3());
 
     if (group.userData.isPart) {
 
-        let pinLengthFactor;
-        switch (pinsLength) {
-            case 0:   // PINS_LENGTH_NONE
-                pinLengthFactor = 0
-                break;
-            case 2:   // PINS_LENGTH_MEDIUM
-                pinLengthFactor = 0.2
-                break;
-            case 3:   // PINS_LENGTH_LONG
-                pinLengthFactor = 0.4
-                break;
-            case 1:   // PINS_LENGTH_SHORT
-            default:
-                pinLengthFactor = 0.1
-                break;
-        }
+        if (group.userData.text) {
 
-        const pinPosition = groupCenter.clone();
-        if (pinLengthFactor > 0) {
-            switch (pinsDirection) {
-                case 0: // PINS_DIRECTION_X
-                    pinPosition.add(new THREE.Vector3(baseModelRadius * pinLengthFactor, 0, 0));
+            let pinLengthFactor;
+            switch (pinsLength) {
+                case 0:   // PINS_LENGTH_NONE
+                    pinLengthFactor = 0
                     break;
-                case 1: // PINS_DIRECTION_Y
-                    pinPosition.add(new THREE.Vector3(0, baseModelRadius * pinLengthFactor, 0));
+                case 2:   // PINS_LENGTH_MEDIUM
+                    pinLengthFactor = 0.2
                     break;
-                case 2: // PINS_DIRECTION_Z
-                    pinPosition.add(new THREE.Vector3(0, 0, baseModelRadius * pinLengthFactor));
+                case 3:   // PINS_LENGTH_LONG
+                    pinLengthFactor = 0.4
                     break;
-                case 3: // PINS_DIRECTION_PARENT_CENTER
-                    pinPosition.sub(parentCenter).setLength(baseModelRadius * pinLengthFactor).add(groupCenter);
-                    break;
+                case 1:   // PINS_LENGTH_SHORT
                 default:
-                case 4: // PINS_DIRECTION_MODEL_CENTER
-                    pinPosition.sub(baseModelCenter).setLength(baseModelRadius * pinLengthFactor).add(groupCenter);
+                    pinLengthFactor = 0.1
                     break;
             }
-        }
 
-        let pinText, pinClass;
-        switch (pinsText) {
-            case 0: // PINS_TEXT_NUMBER
-                pinText = group.userData.number;
-                pinClass = 'rounded';
-                break;
-            case 1: // PINS_TEXT_NAME
-                pinText = group.userData.name;
-                pinClass = 'squared';
-                break;
-            case 2: // PINS_TEXT_NUMBER_AND_NAME
-                pinText = group.userData.number + ' - ' + group.userData.name;
-                pinClass = 'squared';
-                break;
-        }
+            const pinPosition = groupCenter.clone();
+            if (pinLengthFactor > 0) {
+                switch (pinsDirection) {
+                    case 0: // PINS_DIRECTION_X
+                        pinPosition.add(new THREE.Vector3(baseModelRadius * pinLengthFactor, 0, 0));
+                        break;
+                    case 1: // PINS_DIRECTION_Y
+                        pinPosition.add(new THREE.Vector3(0, baseModelRadius * pinLengthFactor, 0));
+                        break;
+                    case 2: // PINS_DIRECTION_Z
+                        pinPosition.add(new THREE.Vector3(0, 0, baseModelRadius * pinLengthFactor));
+                        break;
+                    case 3: // PINS_DIRECTION_PARENT_CENTER
+                        pinPosition.sub(parentCenter).setLength(baseModelRadius * pinLengthFactor).add(groupCenter);
+                        break;
+                    default:
+                    case 4: // PINS_DIRECTION_MODEL_CENTER
+                        pinPosition.sub(baseModelCenter).setLength(baseModelRadius * pinLengthFactor).add(groupCenter);
+                        break;
+                }
+            }
 
-        let pinBackgroundColor, pinBorderColor, pinColor;
-        if (pinsColored && group.userData.color) {
-            pinBackgroundColor = '#' + group.userData.color.getHexString();
-            pinBorderColor = '#' + group.userData.color.clone().addScalar(-0.5).getHexString();
-            pinColor = fnIsDarkColor(group.userData.color) ? '#ffffff' : '#000000';
-        }
+            const pinTextIsError = group.userData.text && group.userData.text.error !== undefined;
+            const pinText = pinTextIsError ? group.userData.text.error : group.userData.text;
+            const pinClass = !pinTextIsError && pinsRounded ? 'rounded' : 'squared';
 
-        const pinDiv = document.createElement('div');
-        pinDiv.className = 'pin pin-' + pinClass;
-        pinDiv.textContent = pinText;
-        if (pinsColored && group.userData.color) {
-            pinDiv.style.backgroundColor = pinBackgroundColor;
-            pinDiv.style.borderColor = pinBorderColor;
-            pinDiv.style.color = pinColor;
-        }
+            let pinBackgroundColor, pinBorderColor, pinColor;
+            if (pinTextIsError) {
+                pinBackgroundColor = '#ffdddd';
+                pinBorderColor = '#d9534f';
+                pinColor = '#d9534f';
+            } else if (pinsColored && group.userData.color) {
+                pinBackgroundColor = '#' + group.userData.color.getHexString();
+                pinBorderColor = '#' + group.userData.color.clone().addScalar(-0.5).getHexString();
+                pinColor = fnIsDarkColor(group.userData.color) ? '#ffffff' : '#000000';
+            }
 
-        const pin = new THREE.CSS2DObject(pinDiv);
-        pin.userData.isPin = true;
-        pin.userData.text = pinText;
-        pin.userData.target = groupCenter;
-        pin.userData.position = pinPosition;
-        if (pinsColored && group.userData.color) {
-            pin.userData.backgroundColor = pinBackgroundColor;
-            pin.userData.borderColor = pinBorderColor;
-            pin.userData.color = pinColor;
-        }
-        pin.position.copy(pinPosition);
-        pinsGroup.add(pin);
+            const pinDiv = document.createElement('div');
+            pinDiv.className = 'pin pin-' + pinClass;
+            pinDiv.textContent = pinText;
+            if (pinBackgroundColor) {
+                pinDiv.style.backgroundColor = pinBackgroundColor;
+                pinDiv.style.borderColor = pinBorderColor;
+                pinDiv.style.color = pinColor;
+            }
 
-        if (pinLengthFactor > 0) {
-            const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints([ groupCenter, pinPosition ]), pinLineMaterial);
-            line.renderOrder = 1;
-            pinsGroup.add(line);
+            const pin = new THREE.CSS2DObject(pinDiv);
+            pin.userData.isPin = true;
+            pin.userData.text = pinText;
+            pin.userData.target = groupCenter;
+            pin.userData.position = pinPosition;
+            if (pinBackgroundColor) {
+                pin.userData.backgroundColor = pinBackgroundColor;
+                pin.userData.borderColor = pinBorderColor;
+                pin.userData.color = pinColor;
+            }
+            pin.position.copy(pinPosition);
+            pinsGroup.add(pin);
+
+            if (pinLengthFactor > 0) {
+                const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints([groupCenter, pinPosition]), pinLineMaterial);
+                line.renderOrder = 1;
+                pinsGroup.add(line);
+            }
+
         }
 
     } else {
 
         for (let object of group.children) {
             if (object.isGroup) {
-                fnCreateGroupPins(object, pinsColored, pinsText, pinsLength, pinsDirection, groupCenter);
+                fnCreateGroupPins(object, pinsColored, pinsRounded, pinsLength, pinsDirection, groupCenter);
             }
         }
 
@@ -817,8 +813,7 @@ const fnAddObjectDef = function (modelDef, objectDef, parent, partsColored) {
 
             group.userData.isPart = true;
             group.userData.id = objectDef.id;
-            group.userData.name = partDef.name;
-            group.userData.number = partDef.number;
+            group.userData.text = objectDef.text;
             group.userData.color = new THREE.Color(partDef.color);
 
             // Mesh
@@ -857,7 +852,7 @@ const fnAddObjectDef = function (modelDef, objectDef, parent, partsColored) {
     return group;
 };
 
-const fnSetupModel = function(modelDef, partsColored, partsOpacity, pinsHidden, pinsColored, pinsText, pinsLength, pinsDirection, cameraView, cameraZoom, cameraTarget, explodeFactor) {
+const fnSetupModel = function(modelDef, partsColored, partsOpacity, pinsHidden, pinsColored, pinsRounded, pinsLength, pinsDirection, cameraView, cameraZoom, cameraTarget, explodeFactor) {
 
     if (partsColored) {
         meshMaterial.vertexColors = true;
@@ -883,7 +878,7 @@ const fnSetupModel = function(modelDef, partsColored, partsOpacity, pinsHidden, 
         pinsOptions = {
             pinsHidden: pinsHidden,
             pinsColored: pinsColored,
-            pinsText: pinsText,
+            pinsRounded: pinsRounded,
             pinsLength: pinsLength,
             pinsDirection: pinsDirection
         };

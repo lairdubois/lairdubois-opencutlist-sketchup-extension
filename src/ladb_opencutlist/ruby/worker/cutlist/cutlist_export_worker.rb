@@ -231,7 +231,6 @@ module Ladb::OpenCutList
                   StringWrapper.new(PathUtils.get_named_path(instance_info.path, false, 1, '/')),
                   StringWrapper.new(instance_info.entity.name.empty? ? "##{instance_info.entity.entityID}" : instance_info.entity.name),
                   StringWrapper.new(part.name),
-                  IntegerWrapper.new(part.count),
                   LengthWrapper.new(part.def.cutting_length),
                   LengthWrapper.new(part.def.cutting_width),
                   LengthWrapper.new(part.def.cutting_size.thickness),
@@ -414,8 +413,7 @@ module Ladb::OpenCutList
       number,
       path,
       instance_name,
-      definition_name,
-      count,
+      name,
       cutting_length,
       cutting_width,
       cutting_thickness,
@@ -438,8 +436,7 @@ module Ladb::OpenCutList
       @number = number
       @path = path
       @instance_name = instance_name
-      @definition_name = definition_name
-      @count = count
+      @name = name
       @cutting_length = cutting_length
       @cutting_width = cutting_width
       @cutting_thickness = cutting_thickness

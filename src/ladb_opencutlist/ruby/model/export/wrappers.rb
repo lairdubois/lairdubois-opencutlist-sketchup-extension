@@ -146,6 +146,10 @@ module Ladb::OpenCutList
       super(value.to_s, String)
     end
 
+    def ==(value)
+      @value == value
+    end
+
     def to_str
       @value.to_str
     end

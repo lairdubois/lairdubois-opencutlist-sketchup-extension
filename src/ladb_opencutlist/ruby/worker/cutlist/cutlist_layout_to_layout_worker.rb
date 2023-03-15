@@ -1,6 +1,5 @@
 module Ladb::OpenCutList
 
-  require 'benchmark'
   require 'securerandom'
   require_relative '../../plugin'
   require_relative '../../helper/layer_visibility_helper'
@@ -23,7 +22,6 @@ module Ladb::OpenCutList
       @parts_colored = settings.fetch('parts_colored', false)
       @parts_opacity = settings.fetch('parts_opacity', 1)
       @pins_hidden = settings.fetch('pins_hidden', false)
-      @pins_text = settings.fetch('pins_text', 0)
       @camera_view = Geom::Vector3d.new(settings.fetch('camera_view', nil))
       @camera_zoom = settings.fetch('camera_zoom', 1)
       @camera_target = Geom::Point3d.new(settings.fetch('camera_target', nil))
@@ -281,14 +279,7 @@ module Ladb::OpenCutList
 
       group = tmp_definition.entities.add_group
       group.transformation = transformation
-      case @pins_text
-      when 1  # PINS_TEXT_NAME
-        group.name = part.name
-      when 2  # PINS_TEXT_NUMBER_AND_NAME
-        group.name = "#{part.number} - #{part.name}"
-      else    # PINS_TEXT_NUMBER
-        group.name = part.number
-      end
+      group.name = part.number
       group.material = material if @parts_colored
 
       # Redraw the entire part through one PolygonMesh

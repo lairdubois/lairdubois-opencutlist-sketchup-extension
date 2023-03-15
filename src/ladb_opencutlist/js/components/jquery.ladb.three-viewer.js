@@ -20,6 +20,7 @@
         partsOpacity: 1.0,
         pinsHidden: false,
         pinsColored: false,
+        pinsRounded: true,
         pinsText: 0,        // PINS_TEXT_NUMBER
         pinsLength: 1,      // PINS_LENGTH_SHORT
         pinsDirection: 4,   // PINS_DIRECTION_MODEL_CENTER
@@ -68,6 +69,7 @@
                         partsOpacity: that.options.partsOpacity,
                         pinsHidden: that.options.pinsHidden,
                         pinsColored: that.options.pinsColored,
+                        pinsRounded: that.options.pinsRounded,
                         pinsText: that.options.pinsText,
                         pinsLength: that.options.pinsLength,
                         pinsDirection: that.options.pinsDirection,
