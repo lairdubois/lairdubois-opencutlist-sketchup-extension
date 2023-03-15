@@ -233,7 +233,10 @@ module Ladb::OpenCutList
                                    :solid_filled => true,
                                    :fill_color => pin_info['background_color'].nil? ? Sketchup::Color.new(0xffffff) : Sketchup::Color.new(pin_info['background_color']),
                                    :text_color => pin_info['color'].nil? ? nil : Sketchup::Color.new(pin_info['color']),
-                                   :stroke_width => 0.5
+                                   :text_alignment => Layout::Style::ALIGN_CENTER,
+                                   :stroke_width => 0.5,
+                                   :start_arrow_type => Layout::Style::ARROW_FILLED_CIRCLE,
+                                   :start_arrow_size => 0.5
                                  }
             )
           end
@@ -403,10 +406,13 @@ module Ladb::OpenCutList
         text_style.solid_filled = style[:solid_filled] unless style[:solid_filled].nil?
         text_style.fill_color = style[:fill_color] unless style[:fill_color].nil?
         text_style.text_color = style[:text_color] unless style[:text_color].nil?
+        text_style.text_alignment = style[:text_alignment] unless style[:text_alignment].nil?
         entity_style.set_sub_style(Layout::Style::LABEL_TEXT, text_style)
 
         leader_line_style = entity_style.get_sub_style(Layout::Style::LABEL_LEADER_LINE)
         leader_line_style.stroke_width = style[:stroke_width] unless style[:stroke_width].nil?
+        leader_line_style.start_arrow_type = style[:start_arrow_type] unless style[:start_arrow_type].nil?
+        leader_line_style.start_arrow_size = style[:start_arrow_size] unless style[:start_arrow_size].nil?
         entity_style.set_sub_style(Layout::Style::LABEL_LEADER_LINE, leader_line_style)
 
         entity.style = entity_style
