@@ -1014,8 +1014,12 @@ module Ladb::OpenCutList
 
     def dialog_store_current_position
       if @dialog && @dialog.respond_to?('get_position')
-        position = @dialog.get_position
-        dialog_store_position(position[0], position[1]) if position && position.length == 2
+        if @dialog.respond_to?('get_size')
+          width, height = @dialog.get_size
+          return if width < DIALOG_MINIMIZED_WIDTH || height < DIALOG_MINIMIZED_HEIGHT  # Do not store the position if dialog size is smaller than minimized size
+        end
+        x, y = @dialog.get_position
+        dialog_store_position(x, y) if x > 0 && y > 0
       end
     end
 
