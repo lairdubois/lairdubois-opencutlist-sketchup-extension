@@ -98,6 +98,7 @@ module Ladb::OpenCutList
         target = camera.target
         up = camera.up
         perspective = camera.perspective?
+        model_transparency = model.rendering_options["ModelTransparency"]
 
         # Workaround to set camera in Layout file : briefly change current model's camera
         camera.perspective = false
@@ -120,6 +121,9 @@ module Ladb::OpenCutList
         # Restore model's camera
         camera.perspective = perspective
         camera.set(eye, target, up)
+
+        # Restore model's transparency
+        model.rendering_options["ModelTransparency"] = model_transparency
 
         # Remove tmp definition
         model.definitions.remove(tmp_definition)
