@@ -915,8 +915,8 @@ module Ladb::OpenCutList
       @dialog.set_file(File.join(__dir__, '..', 'html', "dialog-#{language}.html"))
 
       # Set dialog size and position
-      dialog_set_size(DIALOG_MINIMIZED_WIDTH, DIALOG_MINIMIZED_HEIGHT)
-      dialog_set_position(@dialog_left, @dialog_top)
+      # dialog_set_size(DIALOG_MINIMIZED_WIDTH, DIALOG_MINIMIZED_HEIGHT)
+      # dialog_set_position(@dialog_left, @dialog_top)
 
       # Setup dialog actions
       @dialog.add_action_callback('ladb_opencutlist_command') do |action_context, call_json|
@@ -959,6 +959,10 @@ module Ladb::OpenCutList
         # Show dialog
         @dialog.show
 
+        # Set dialog size and position
+        dialog_set_size(DIALOG_MINIMIZED_WIDTH, DIALOG_MINIMIZED_HEIGHT)
+        dialog_set_position(@dialog_left, @dialog_top)
+
       end
 
     end
@@ -987,8 +991,8 @@ module Ladb::OpenCutList
 
     def dialog_store_current_size
       if @dialog && @dialog.respond_to?('get_size') && @dialog_maximized
-        size = @dialog.get_size
-        dialog_store_size(size[0], size[1]) if size && size.length == 2
+        width, height = @dialog.get_size
+        dialog_store_size(width, height) if width >= DIALOG_MINIMIZED_WIDTH && height >= DIALOG_MINIMIZED_HEIGHT
       end
     end
 
@@ -1018,14 +1022,23 @@ module Ladb::OpenCutList
           width, height = @dialog.get_size
           return if width < DIALOG_MINIMIZED_WIDTH || height < DIALOG_MINIMIZED_HEIGHT  # Do not store the position if dialog size is smaller than minimized size
         end
-        x, y = @dialog.get_position
-        dialog_store_position(x, y) if x > 0 && y > 0
+        left, top = @dialog.get_position
+        dialog_store_position(left, top) if left > 0 && top > 0
       end
     end
 
     def dialog_set_position(left, top)
       if @dialog
         @dialog.set_position(left, top)
+        if @dialog.respond_to?('get_position')
+          current_left, current_top = @dialog.get_position
+          if current_left && current_left != left || current_top && current_top != top
+            fixed_left = left + left - current_left
+            fixed_top = top + top - current_top
+            p 'diff', fixed_left, fixed_top
+            @dialog.set_position(fixed_left, fixed_top)
+          end
+        end
       end
     end
 
