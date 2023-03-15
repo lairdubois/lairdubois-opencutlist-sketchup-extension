@@ -171,6 +171,8 @@ module Ladb::OpenCutList
         doc.auto_text_definitions.add('OpenCutListGeneratedAt', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = @generated_at
         doc.auto_text_definitions.add('OpenCutListLengthUnit', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = Plugin.instance.get_i18n_string("default.unit_#{DimensionUtils.instance.length_unit}")
         doc.auto_text_definitions.add('OpenCutListScale', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = _camera_zoom_to_scale(@camera_zoom)
+        doc.auto_text_definitions.add('OpenCutListModelDescription', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = @cutlist.model_description
+        doc.auto_text_definitions.add('OpenCutListPageDescription', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = @cutlist.page_description
 
         # Add header
         current_y = page_info.top_margin
@@ -188,12 +190,12 @@ module Ladb::OpenCutList
           current_y = name_text.drawing_bounds.lower_left.y
 
           unless @cutlist.model_description.empty?
-            model_description_text = _add_formated_text(doc, layer, page, @cutlist.model_description, Geom::Point2d.new(page_info.width / 2, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => font_family, :font_size => 9, :text_alignment => Layout::Style::ALIGN_CENTER })
+            model_description_text = _add_formated_text(doc, layer, page, '<OpenCutListModelDescription>', Geom::Point2d.new(page_info.width / 2, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => font_family, :font_size => 9, :text_alignment => Layout::Style::ALIGN_CENTER })
             current_y = model_description_text.drawing_bounds.lower_left.y
           end
 
           unless @cutlist.page_description.empty?
-            page_description_text = _add_formated_text(doc, layer, page, @cutlist.page_description, Geom::Point2d.new(page_info.width / 2, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => font_family, :font_size => 9, :text_alignment => Layout::Style::ALIGN_CENTER })
+            page_description_text = _add_formated_text(doc, layer, page, '<OpenCutListPageDescription>', Geom::Point2d.new(page_info.width / 2, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => font_family, :font_size => 9, :text_alignment => Layout::Style::ALIGN_CENTER })
             current_y = page_description_text.drawing_bounds.lower_left.y
           end
 
