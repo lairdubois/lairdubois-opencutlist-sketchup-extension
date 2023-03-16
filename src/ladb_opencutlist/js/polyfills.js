@@ -19,6 +19,20 @@ if (!String.prototype.padStart) {
     });
 }
 
+// Not standard
+
+if (!String.prototype.nl2br) {
+    String.prototype.nl2br = function () {
+        return this.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1<br>');
+    }
+}
+
+if (!String.prototype.striptags) {
+    String.prototype.striptags = function () {
+        return this.replace(/[<]/g, '&lt;').replace(/[>]/g, '&gt;');
+    }
+}
+
 // Add unique function on Arrays
 if (!Array.prototype.unique) {
     Array.prototype.unique = function () {

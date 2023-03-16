@@ -752,7 +752,7 @@ const fnCreateGroupPins = function (group, pinsColored, pinsRounded, pinsLength,
 
             const pinDiv = document.createElement('div');
             pinDiv.className = 'pin pin-' + pinClass;
-            pinDiv.textContent = pinText;
+            pinDiv.innerHTML = pinText.striptags().nl2br();
             if (pinBackgroundColor) {
                 pinDiv.style.backgroundColor = pinBackgroundColor;
                 pinDiv.style.borderColor = pinBorderColor;
