@@ -912,7 +912,7 @@ tab:
         failed_to_save_as_skp: Echec de l'écriture du fichier SKP à envoyer à Layout.
         failed_to_layout: |
           Erreur lors de l'écriture du fichier Layout : *{{ error }}*
-          
+
           **Vérifiez que le fichier n'est pas ouvert dans Layout.**
       warning:
         is_group_selection: Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas dessinées.
@@ -1302,6 +1302,7 @@ tab:
       - Soul Issam (*arabe*), sans interface de droite à gauche
       - Dany Dhondt, Eric Lugtigheid (*néerlandais*)
       - Nguyen Ngoc Tan (*vietnamien*)
+      - Andrii Toporivskyi, Kostiantyn Shcherbey (*ukrainien*)
     credits_description: |
       Le développement de cette extension s'inscrit dans le projet de plateforme de partage [L'Air du Bois](https://www.lairdubois.fr).
       Et à ce titre, il est également *Open Source* et disponible sous licence [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) sur son [dépôt GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).

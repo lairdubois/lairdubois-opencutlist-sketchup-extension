@@ -909,10 +909,11 @@ tab:
       option_explode: Explosionsdarstellung
       error:
         no_part: Es gibt keine Teile zum Zeichnen.
-        failed_to_save_as_skp: ""
+        failed_to_save_as_skp: "Fehler beim Schreiben der SKP Datei, die an Layout gesendet werden soll."
         failed_to_layout: |
-          Fehler beim Schreiben der Layout-Datei. **{{ error }}**
-          Die Datei ist möglicherweise in Layout geöffnet.
+          Fehler beim Schreiben der Layout-Datei: **{{ error }}**
+
+          **Prüfen Sie, dass die Datei nicht in Layout geöffnet ist.**
       warning:
         is_group_selection: Die Teile innerhalb der **maskierten Gruppen** Ihrer Teileliste werden nicht gezeichnet.
         is_part_selection: Diese Übersichtszeichnung ist auf die **ausgewählten Teile** beschränkt.
@@ -1301,6 +1302,7 @@ tab:
       - Soul Issam (*Arabisch*), noch ohne RTL Schnittstelle
       - Dany Dhondt, Eric Lugtigheid (*Niederländisch*)
       - Nguyen Ngoc Tan (*Vietnamesisch*)
+      - Andrii Toporivskyi, Kostiantyn Shcherbey (*Ukrainisch*)
     credits_description: |
       Die Entwicklung dieser Erweiterung ist Teil des Projektes [L'Air du Bois](https://www.lairdubois.fr), eine Austauschplattform für Holzwerker.
       In diesem Sinn ist auch sie *Open Source* und steht unter Lizenz [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) auf [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension) allen zu Verfügung.
