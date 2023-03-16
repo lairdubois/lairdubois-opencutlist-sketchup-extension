@@ -909,10 +909,11 @@ tab:
       option_explode: Eclaté
       error:
         no_part: Il y a aucune pièce à dessiner.
-        failed_to_save_as_skp: ""
+        failed_to_save_as_skp: Echec de l'écriture du fichier SKP à envoyer à Layout.
         failed_to_layout: |
-          Echec de l'écriture du fichier Layout. **{{ error }}**
-          Le fichier est peut-être ouvert dans Layout.
+          Erreur lors de l'écriture du fichier Layout : *{{ error }}*
+          
+          **Vérifiez que le fichier n'est pas ouvert dans Layout.**
       warning:
         is_group_selection: Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas dessinées.
         is_part_selection: Ce dessin d'ensemble se limite aux **pièces sélectionnées**.

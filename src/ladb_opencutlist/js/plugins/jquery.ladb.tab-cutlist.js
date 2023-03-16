@@ -890,11 +890,11 @@
                         });
                         $itemCopyAll.on('click', function () {
                             that.dialog.copyToClipboard(fnRowsToTsv(0));
-                            that.dialog.notify(i18next.t('tab.cutlist.export.success.copied'), 'success');
+                            that.dialog.notifySuccess(i18next.t('tab.cutlist.export.success.copied'));
                         });
                         $itemCopyValues.on('click', function () {
                             that.dialog.copyToClipboard(fnRowsToTsv(1));
-                            that.dialog.notify(i18next.t('tab.cutlist.export.success.copied'), 'success');
+                            that.dialog.notifySuccess(i18next.t('tab.cutlist.export.success.copied'));
                         });
                         $btnClose.on('click', function () {
                             that.popSlide();
@@ -929,7 +929,7 @@
                         that.dialog.notifyErrors(response.errors);
                     }
                     if (response.export_path) {
-                        that.dialog.notify(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }), 'success', [
+                        that.dialog.notifySuccess(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }), [
                             Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
 
                                 rubyCallCommand('core_open_external_file', {
@@ -1588,7 +1588,7 @@
                                                 that.dialog.notifyErrors(response.errors);
                                             }
                                             if (response.export_path) {
-                                                that.dialog.notify(i18next.t('tab.cutlist.success.exported_to', {export_path: response.export_path}), 'success', [
+                                                that.dialog.notifySuccess(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }), [
                                                     Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
 
                                                         rubyCallCommand('core_open_external_file', {
@@ -2641,7 +2641,7 @@
                         that.dialog.notifyErrors(response.errors);
                     }
                     if (response.export_path) {
-                        that.dialog.notify(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }), 'success');
+                        that.dialog.notifySuccess(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }));
                     }
 
                 });

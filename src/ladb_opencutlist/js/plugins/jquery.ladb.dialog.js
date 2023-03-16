@@ -838,6 +838,10 @@
         }
     };
 
+    LadbDialog.prototype.notifySuccess = function (text, buttons) {
+        this.notify('<i class="ladb-opencutlist-icon-check-mark"></i> ' + text, 'success', buttons);
+    };
+
     LadbDialog.prototype.setupTooltips = function ($element) {
         $('.tooltip').tooltip('hide'); // Assume that previouly created tooltips are closed
         $('[data-toggle="tooltip"]', $element).tooltip({
