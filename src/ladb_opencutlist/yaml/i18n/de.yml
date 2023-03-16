@@ -94,7 +94,8 @@ core:
       Es wird nicht empfohlen, diese in der Produktion zu verwenden.
 
       Um einen Fehler zu melden: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
-    feature_locked: "*In dieser Version von SketchUp nicht deaktivierbar*"
+  error:
+    feature_unavailable: "Diese Funktion erfordert SketchUp {{ version }} oder höher"
   event:
     model_change: Das aktive Modell wurde verändert.
     options_change: Die Optionen des Modells wurden verändert.
@@ -534,7 +535,6 @@ tab:
       number: Nr.
       path: Pfad
       instance_name: Instanz
-      definition_name: Definition
       name: Bezeichnung
       total_cutting_length: Länge - Summe roh
       total_cutting_area: Fläche - Summe roh
@@ -848,6 +848,7 @@ tab:
         formula_not_available: Formel steht in diesem Kontext nicht zu Verfügung
     layout:
       title: Zeichnung
+      to_layout: Exportieren nach Layout
       options_layout: Darstellung
       options_settings: Konfiguration
       option_parts: Teile
@@ -868,11 +869,8 @@ tab:
       option_pins_colored_0: Ohne Farbe
       option_pins_colored_1: Farbe des Teils
       option_pins_colored_help: Definiert die Farbe des Beschriftungsfeldes.
-      option_pins_text: Text
-      option_pins_text_0: Nummer des Teils
-      option_pins_text_1: Bezeichnung des Teils
-      option_pins_text_2: Nummer und Bezeichung des Teils
-      option_pins_text_help: Definiert den Inhalt des Beschriftungsfeldes.
+      option_pins_formula: Formel
+      option_pins_formula_help: "Ermöglicht das Schreiben von *Ruby*-Code, um den Text der Beschriftung anzupassen."
       option_pins_length: Verweislinie
       option_pins_length_0: Ohne Verweislinie
       option_pins_length_1: Kurz
@@ -911,6 +909,10 @@ tab:
       option_explode: Explosionsdarstellung
       error:
         no_part: Es gibt keine Teile zum Zeichnen.
+        failed_to_save_as_skp: ""
+        failed_to_layout: |
+          Fehler beim Schreiben der Layout-Datei. **{{ error }}**
+          Die Datei ist möglicherweise in Layout geöffnet.
       warning:
         is_group_selection: Die Teile innerhalb der **maskierten Gruppen** Ihrer Teileliste werden nicht gezeichnet.
         is_part_selection: Diese Übersichtszeichnung ist auf die **ausgewählten Teile** beschränkt.

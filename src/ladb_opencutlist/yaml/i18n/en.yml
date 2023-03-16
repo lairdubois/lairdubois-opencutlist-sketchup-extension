@@ -94,7 +94,8 @@ core:
       It is not recommended to use it in production.
 
       To report a bug: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
-    feature_locked: "*Not deactivable in this version of SketchUp*"
+  error:
+    feature_unavailable: "This function requires SketchUp {{ version }} or higher"
   event:
     model_change: The active model has been changed.
     options_change: Options in the model have been changed.
@@ -534,7 +535,6 @@ tab:
       number: No.
       path: Path
       instance_name: Instance
-      definition_name: Definition
       name: Designation
       total_cutting_length: Length total - raw
       total_cutting_area: Area total - raw
@@ -848,6 +848,7 @@ tab:
         formula_not_available: Formula is not available in this context
     layout:
       title: Drawing
+      to_layout: Export to Layout
       options_layout: Composition
       options_settings: Configuration
       option_parts: Parts
@@ -868,11 +869,8 @@ tab:
       option_pins_colored_0: Without color
       option_pins_colored_1: Color of the part
       option_pins_colored_help: Select the color of the labels.
-      option_pins_text: Text
-      option_pins_text_0: Number of the part
-      option_pins_text_1: Designation of the part
-      option_pins_text_2: Number and Designation of the part
-      option_pins_text_help: Select the text displayed in the labels.
+      option_pins_formula: Formula
+      option_pins_formula_help: Allows you to write *Ruby* code to customize the label text.
       option_pins_length: Leader Line
       option_pins_length_0: Without leader line
       option_pins_length_1: Short
@@ -911,6 +909,10 @@ tab:
       option_explode: Exploded View
       error:
         no_part: There is no part to draw.
+        failed_to_save_as_skp: ""
+        failed_to_layout: |
+          Error writing the Layout file. **{{ error }}**
+          The file may be open in Layout.
       warning:
         is_group_selection: The parts inside of **masked groups** of your parts list will not be drawn.
         is_part_selection: This overview drawing is limited to the **selected parts**.
