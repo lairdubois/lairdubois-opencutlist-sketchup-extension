@@ -909,10 +909,11 @@ tab:
       option_explode: Exploded View
       error:
         no_part: There is no part to draw.
-        failed_to_save_as_skp: ""
+        failed_to_save_as_skp: Failed to write SKP file to send to Layout.
         failed_to_layout: |
-          Error writing the Layout file. **{{ error }}**
-          The file may be open in Layout.
+          Error writing the Layout file: **{{ error }}**
+
+          **Make sure the file is not open in Layout.**
       warning:
         is_group_selection: The parts inside of **masked groups** of your parts list will not be drawn.
         is_part_selection: This overview drawing is limited to the **selected parts**.
@@ -1301,6 +1302,7 @@ tab:
       - Soul Issam (*Arabic*), RTL interface not yet supported
       - Dany Dhondt, Eric Lugtigheid (*Dutch*)
       - Nguyen Ngoc Tan (*Vietnamese*)
+      - Andriy Toporivsky, Kostyantyn Shcherbey (*Ukrainian*)
     credits_description: |
       The developpment of this extension is linked to the sharing plateform project [L'Air du Bois](https://www.lairdubois.fr).
       This extension is *Open Source* as well and available under [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) license on [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).

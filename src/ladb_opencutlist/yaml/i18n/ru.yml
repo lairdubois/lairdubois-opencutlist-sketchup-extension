@@ -94,7 +94,8 @@ core:
       Использовать в производстве НЕ РЕКОМЕНДУЕТСЯ.
 
       Найдена ошибка - сообщите мне:<a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
-    feature_locked: "*Не отключается в этой версии SketchUp*"
+  error:
+    feature_unavailable: "Для работы этой функции требуется SketchUp {{ version }} или выше"
   event:
     model_change: Активная модель была изменена.
     options_change: Опции данной модели измены.
@@ -534,7 +535,6 @@ tab:
       number: N°
       path: Путь
       instance_name: Экземпляр
-      definition_name: Содержание
       name: Определение
       total_cutting_length: Суммарная длина раскроя
       total_cutting_area: Суммарная площадь раскроя
@@ -848,6 +848,7 @@ tab:
         formula_not_available: Недоступно в данном контексте
     layout:
       title: Чертеж
+      to_layout: Экспорт в Layout
       options_layout: Состав
       options_settings: Конфигурация
       option_parts: Детали
@@ -868,11 +869,8 @@ tab:
       option_pins_colored_0: Без цвета
       option_pins_colored_1: Цвет детали
       option_pins_colored_help: Позволяет выбрать цвет булавок.
-      option_pins_text: Текст
-      option_pins_text_0: Номер детали
-      option_pins_text_1: Обозначение детали
-      option_pins_text_2: Номер детали и обозначение
-      option_pins_text_help: "Позволяет выбрать текст, отображаемый на значках булавок."
+      option_pins_formula: Формула
+      option_pins_formula_help: Позволяет вам писать код *Ruby* для настройки текста на булавках.
       option_pins_length: Длина
       option_pins_length_0: Без стрелки
       option_pins_length_1: Малый
@@ -911,6 +909,11 @@ tab:
       option_explode: Разбор
       error:
         no_part: Нет деталей для прорисовки.
+        failed_to_save_as_skp: Не удалось записать файл с расширением SKP для отправки в Layout.
+        failed_to_layout: |
+          Ошибка записи файла Layout: *{{ error }}*
+
+          **Убедитесь, что файл не открыт в Layout.**
       warning:
         is_group_selection: "Детали, содержащиеся в **скрытых группах** вашей карты раскроя, не будут нарисованы."
         is_part_selection: Этот сборочный чертеж ограничен **выделенными деталями**.
@@ -1299,6 +1302,7 @@ tab:
       - Soul Issam (*Арабский*), без интерфейса справа налево
       - Dany Dhondt, Eric Lugtigheid (*Нидерландский*)
       - Nguyen Ngoc Tan (*Вьетнамский*)
+      - Андрей Топоривский, Константин Щербей (*украинский*)
     credits_description: |
       Разработка этого расширения связана с проектом совместной платформы [L'Air du Bois](https://www.lairdubois.fr).
       Это расширение является *Open Source*, а также доступно в разделе [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) с лицензией [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
