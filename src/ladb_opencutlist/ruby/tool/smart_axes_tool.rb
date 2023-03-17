@@ -5,6 +5,8 @@ module Ladb::OpenCutList
   require_relative '../helper/screen_scale_factor_helper'
   require_relative '../helper/face_triangles_helper'
   require_relative '../worker/cutlist/cutlist_generate_worker'
+  require_relative '../utils/axis_utils'
+  require_relative '../utils/transformation_utils'
 
   class SmartAxesTool < Kuix::KuixTool
 
@@ -92,7 +94,7 @@ module Ladb::OpenCutList
 
       actions = Kuix::Panel.new
       actions.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
-      actions.layout = Kuix::GridLayout.new(6,1, @unit, @unit)
+      actions.layout = Kuix::GridLayout.new(4,1, @unit, @unit)
       actions.padding.set_all!(@unit * 2)
       actions.set_style_attribute(:background_color, Sketchup::Color.new('white'))
       panel_south.append(actions)
@@ -223,21 +225,24 @@ module Ladb::OpenCutList
                   if @@action == ACTION_SWAP_LENGTH
                     ti = Geom::Transformation.axes(
                       ORIGIN,
-                      AxisUtils.flipped?(part.def.size.normals[1], part.def.size.normals[0], Z_AXIS) ? part.def.size.normals[1].reverse : part.def.size.normals[1],
+                      AxisUtils.flipped?(part.def.size.normals[1], part.def.size.normals[0], part.def.size.normals[2]) ? part.def.size.normals[1].reverse : part.def.size.normals[1],
                       part.def.size.normals[0],
-                      Z_AXIS
+                      part.def.size.normals[2]
                     )
                   elsif @@action == ACTION_SWAP_FRONT
                     ti = Geom::Transformation.axes(
                       ORIGIN,
                       part.def.size.normals[0],
-                      AxisUtils.flipped?(part.def.size.normals[1], part.def.size.normals[0], Z_AXIS.reverse) ? part.def.size.normals[1].reverse : part.def.size.normals[1],
-                      Z_AXIS.reverse
+                      AxisUtils.flipped?(part.def.size.normals[0], part.def.size.normals[1], part.def.size.normals[2].reverse) ? part.def.size.normals[1].reverse : part.def.size.normals[1],
+                      part.def.size.normals[2].reverse
                     )
                   end
                   unless ti.nil?
 
                     t = ti.inverse
+
+                    # Start model modification operation
+                    view.model.start_operation('OpenCutList - Part Swap', true, false, false)
 
                     # Transform definition's entities
                     entities = definition.entities
@@ -250,6 +255,9 @@ module Ladb::OpenCutList
 
                     definition_attributes.orientation_locked_on_axis = true
                     definition_attributes.write_to_attributes
+
+                    # Commit model modification operation
+                    view.model.commit_operation
 
                     _blop(picked_part, picked_part_path)
 
@@ -310,8 +318,8 @@ module Ladb::OpenCutList
         @space.remove_all
 
         arrow = Kuix::Arrow.new
-        arrow.pattern_transformation = Geom::Transformation.translation(Geom::Vector3d.new(0.05, 0.05, 0)) * Geom::Transformation.scaling(0.9)
-        arrow.pattern_transformation *= instance_info.size.oriented_transformation if part.auto_oriented
+        arrow.pattern_transformation = part.auto_oriented ? instance_info.size.oriented_transformation : Geom::Transformation.new
+        arrow.pattern_transformation *= Geom::Transformation.translation(Geom::Vector3d.new(0.05, 0.05, 0)) * Geom::Transformation.scaling(0.9)
         arrow.transformation = transformation
         arrow.bounds.origin.copy!(instance_info.definition_bounds.min)
         arrow.bounds.size.set!(instance_info.definition_bounds.width, instance_info.definition_bounds.height, instance_info.definition_bounds.depth)
@@ -321,8 +329,8 @@ module Ladb::OpenCutList
         @space.append(arrow)
 
         arrow = Kuix::Arrow.new
-        arrow.pattern_transformation = Geom::Transformation.translation(Z_AXIS) * Geom::Transformation.translation(Geom::Vector3d.new(0.05, 0.05, 0)) * Geom::Transformation.scaling(0.9)
-        arrow.pattern_transformation *= instance_info.size.oriented_transformation if part.auto_oriented
+        arrow.pattern_transformation = part.auto_oriented ? instance_info.size.oriented_transformation : Geom::Transformation.new
+        arrow.pattern_transformation *= Geom::Transformation.translation(Z_AXIS) * Geom::Transformation.translation(Geom::Vector3d.new(0.05, 0.05, 0)) * Geom::Transformation.scaling(0.9)
         arrow.transformation = transformation
         arrow.bounds.origin.copy!(instance_info.definition_bounds.min)
         arrow.bounds.size.set!(instance_info.definition_bounds.width, instance_info.definition_bounds.height, instance_info.definition_bounds.depth)
