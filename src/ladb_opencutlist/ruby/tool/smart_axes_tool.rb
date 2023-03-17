@@ -317,13 +317,15 @@ module Ladb::OpenCutList
 
         @space.remove_all
 
+        arrow_color = part.auto_oriented ? COLOR_DRAWING_AUTO_ORIENTED : COLOR_DRAWING
+
         arrow = Kuix::Arrow.new
         arrow.pattern_transformation = part.auto_oriented ? instance_info.size.oriented_transformation : Geom::Transformation.new
         arrow.pattern_transformation *= Geom::Transformation.translation(Geom::Vector3d.new(0.05, 0.05, 0)) * Geom::Transformation.scaling(0.9)
         arrow.transformation = transformation
         arrow.bounds.origin.copy!(instance_info.definition_bounds.min)
         arrow.bounds.size.set!(instance_info.definition_bounds.width, instance_info.definition_bounds.height, instance_info.definition_bounds.depth)
-        arrow.color = part.auto_oriented ? COLOR_DRAWING_AUTO_ORIENTED : COLOR_DRAWING
+        arrow.color = arrow_color
         arrow.line_width = 3
         arrow.line_stipple = '-'
         @space.append(arrow)
@@ -334,7 +336,7 @@ module Ladb::OpenCutList
         arrow.transformation = transformation
         arrow.bounds.origin.copy!(instance_info.definition_bounds.min)
         arrow.bounds.size.set!(instance_info.definition_bounds.width, instance_info.definition_bounds.height, instance_info.definition_bounds.depth)
-        arrow.color = part.auto_oriented ? COLOR_DRAWING_AUTO_ORIENTED : COLOR_DRAWING
+        arrow.color = arrow_color
         arrow.line_width = 3
         @space.append(arrow)
 
@@ -343,7 +345,8 @@ module Ladb::OpenCutList
         box.bounds.origin.copy!(instance_info.definition_bounds.min)
         box.bounds.size.set!(instance_info.definition_bounds.width, instance_info.definition_bounds.height, instance_info.definition_bounds.depth)
         box.color = Sketchup::Color.new(0, 0, 255)
-        box.line_width = 3
+        box.line_width = 1
+        box.line_stipple = '-'
         @space.append(box)
 
       end
