@@ -15,15 +15,15 @@ module Ladb::OpenCutList::Kuix
     attr_reader :position
 
     def initialize(position = TOP_LEFT)
-      set(position)
+      set!(position)
     end
 
-    def set(position = TOP_LEFT)
+    def set!(position = TOP_LEFT)
       @position = position
     end
 
-    def copy(anchor)
-      set(anchor.position)
+    def copy!(anchor)
+      set!(anchor.position)
     end
 
     # -- Properties --

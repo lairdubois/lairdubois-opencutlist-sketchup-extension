@@ -38,84 +38,84 @@ module Ladb::OpenCutList::Kuix
       available_width = preferred_width - insets.left - insets.right
       available_height = target.bounds.height - insets.top - insets.bottom
 
-      content_bounds = Bounds.new unless layout
+      content_bounds = Bounds2d.new unless layout
 
       # Loop on children
-      widget = target.child
-      until widget.nil?
-        if widget.visible?
+      entity = target.child
+      until entity.nil?
+        if entity.visible?
 
-          preferred_size = widget.get_prefered_size(available_width)
-          widget_bounds = Bounds.new
+          preferred_size = entity.get_prefered_size(available_width)
+          entity_bounds = Bounds2d.new
 
-          if widget.layout_data && widget.layout_data.is_a?(StaticLayoutData)
+          if entity.layout_data && entity.layout_data.is_a?(StaticLayoutData)
 
             # X
-            if widget.layout_data.x.is_a?(Float) && widget.layout_data.x <= 1.0
-              widget_bounds.origin.x = available_width * widget.layout_data.x
+            if entity.layout_data.x.is_a?(Float) && entity.layout_data.x <= 1.0
+              entity_bounds.origin.x = available_width * entity.layout_data.x
             else
-              widget_bounds.origin.x = widget.layout_data.x
+              entity_bounds.origin.x = entity.layout_data.x
             end
 
             # Y
-            if widget.layout_data.y.is_a?(Float) && widget.layout_data.y <= 1.0
-              widget_bounds.origin.y = available_height * widget.layout_data.y
+            if entity.layout_data.y.is_a?(Float) && entity.layout_data.y <= 1.0
+              entity_bounds.origin.y = available_height * entity.layout_data.y
             else
-              widget_bounds.origin.y = widget.layout_data.y
+              entity_bounds.origin.y = entity.layout_data.y
             end
 
             # Width
-            if widget.layout_data.width < 0
-              widget_bounds.size.width = preferred_size.width
-            elsif widget.layout_data.width.is_a?(Float) && widget.layout_data.width <= 1.0
-              widget_bounds.size.width = available_width * widget.layout_data.width
+            if entity.layout_data.width < 0
+              entity_bounds.size.width = preferred_size.width
+            elsif entity.layout_data.width.is_a?(Float) && entity.layout_data.width <= 1.0
+              entity_bounds.size.width = available_width * entity.layout_data.width
             else
-              widget_bounds.size.width = [ widget.layout_data.width, preferred_size.width ].max
+              entity_bounds.size.width = [ entity.layout_data.width, preferred_size.width ].max
             end
 
             # Height
-            if widget.layout_data.height < 0
-              widget_bounds.size.height = preferred_size.height
-            elsif widget.layout_data.height.is_a?(Float) && widget.layout_data.height <= 1.0
-              widget_bounds.size.height = available_height * widget.layout_data.height
+            if entity.layout_data.height < 0
+              entity_bounds.size.height = preferred_size.height
+            elsif entity.layout_data.height.is_a?(Float) && entity.layout_data.height <= 1.0
+              entity_bounds.size.height = available_height * entity.layout_data.height
             else
-              widget_bounds.size.height = [ widget.layout_data.height, preferred_size.height ].max
+              entity_bounds.size.height = [ entity.layout_data.height, preferred_size.height ].max
             end
 
             # Anchor
-            if widget.layout_data.anchor
-              if widget.layout_data.anchor.is_right?
-                widget_bounds.origin.x -= widget_bounds.size.width
-              elsif widget.layout_data.anchor.is_vertical_center?
-                widget_bounds.origin.x -= widget_bounds.size.width / 2
+            if entity.layout_data.anchor
+              if entity.layout_data.anchor.is_right?
+                entity_bounds.origin.x -= entity_bounds.size.width
+              elsif entity.layout_data.anchor.is_vertical_center?
+                entity_bounds.origin.x -= entity_bounds.size.width / 2
               end
-              if widget.layout_data.anchor.is_bottom?
-                widget_bounds.origin.y -= widget_bounds.size.height
-              elsif widget.layout_data.anchor.is_horizontal_center?
-                widget_bounds.origin.y -= widget_bounds.size.height / 2
+              if entity.layout_data.anchor.is_bottom?
+                entity_bounds.origin.y -= entity_bounds.size.height
+              elsif entity.layout_data.anchor.is_horizontal_center?
+                entity_bounds.origin.y -= entity_bounds.size.height / 2
               end
             end
 
           else
-            widget_bounds.origin.x = 0
-            widget_bounds.origin.y = 0
-            widget_bounds.size.width = preferred_size.width
-            widget_bounds.size.height = preferred_size.height
+            entity_bounds.origin.x = 0
+            entity_bounds.origin.y = 0
+            entity_bounds.size.width = preferred_size.width
+            entity_bounds.size.height = preferred_size.height
           end
 
           if layout
-            widget.bounds.copy(widget_bounds)
-            widget.do_layout
+            entity.bounds.copy!(entity_bounds)
+            entity.do_layout
           else
-            content_bounds.union!(widget_bounds)
+            content_bounds.union!(entity_bounds)
           end
 
         end
-        widget = widget.next
+        entity = entity.next
       end
 
       unless layout
-        size.set(
+        size.set!(
           insets.left + [ target.min_size.width, content_bounds.width ].max + insets.right,
           insets.top + [ target.min_size.height, content_bounds.height ].max + insets.bottom
         )

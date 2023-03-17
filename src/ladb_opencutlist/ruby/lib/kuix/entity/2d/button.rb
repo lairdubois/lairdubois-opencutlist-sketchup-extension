@@ -1,6 +1,6 @@
 module Ladb::OpenCutList::Kuix
 
-  class Button < Widget
+  class Button < Entity2d
 
     attr_accessor :selected
 

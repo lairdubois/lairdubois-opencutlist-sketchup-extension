@@ -20,6 +20,7 @@ module Ladb::OpenCutList
   require_relative 'utils/dimension_utils'
   require_relative 'utils/path_utils'
   require_relative 'tool/smart_paint_tool'
+  require_relative 'tool/smart_axes_tool'
 
   class Plugin
     
@@ -725,6 +726,9 @@ module Ladb::OpenCutList
       submenu.add_item(get_i18n_string('core.menu.item.smart_paint')) {
         Sketchup.active_model.select_tool(SmartPaintTool.new)
       }
+      submenu.add_item(get_i18n_string('core.menu.item.smart_axes')) {
+        Sketchup.active_model.select_tool(SmartAxesTool.new)
+      }
 
       # Setup Context Menu
       UI.add_context_menu_handler do |context_menu|
@@ -766,6 +770,16 @@ module Ladb::OpenCutList
       cmd.tooltip = get_i18n_string('core.toolbar.command.smart_paint')
       cmd.status_bar_text = get_i18n_string('core.toolbar.command.smart_paint')
       cmd.menu_text = get_i18n_string('core.toolbar.command.smart_paint')
+      toolbar = toolbar.add_item(cmd)
+
+      cmd = UI::Command.new(get_i18n_string('core.toolbar.command.smart_axes')) {
+        Sketchup.active_model.select_tool(SmartAxesTool.new)
+      }
+      cmd.small_icon = '../img/icon-smart-axes-72x72.png'
+      cmd.large_icon = '../img/icon-smart-axes-114x114.png'
+      cmd.tooltip = get_i18n_string('core.toolbar.command.smart_axes')
+      cmd.status_bar_text = get_i18n_string('core.toolbar.command.smart_axes')
+      cmd.menu_text = get_i18n_string('core.toolbar.command.smart_axes')
       toolbar = toolbar.add_item(cmd)
 
       toolbar.restore

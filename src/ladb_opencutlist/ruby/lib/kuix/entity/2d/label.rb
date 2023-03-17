@@ -1,6 +1,6 @@
 module Ladb::OpenCutList::Kuix
 
-  class Label < Widget
+  class Label < Entity2d
 
     attr_reader :text, :text_options
 
@@ -16,7 +16,7 @@ module Ladb::OpenCutList::Kuix
       if Sketchup.version_number >= 2000000000
         @text_options[:vertical_align] = TextVerticalAlignCenter
       end
-      @text_point = Point.new
+      @text_point = Point2d.new
     end
 
     # -- Properties --
@@ -68,14 +68,14 @@ module Ladb::OpenCutList::Kuix
 
       # Compute text point
       content_size = self.content_size
-      content_bounds = Bounds.new(0, 0, content_size.width, content_size.height)
+      content_bounds = Bounds2d.new(0, 0, content_size.width, content_size.height)
       case @text_options[:align]
       when TextAlignCenter
         @text_point = content_bounds.center
       when TextAlignRight
-        @text_point = content_bounds.corner(Bounds::CENTER_RIGHT)
+        @text_point = content_bounds.corner(Bounds2d::CENTER_RIGHT)
       else
-        @text_point = content_bounds.corner(Bounds::CENTER_LEFT)
+        @text_point = content_bounds.corner(Bounds2d::CENTER_LEFT)
       end
       if Sketchup.version_number < 2000000000
         @text_point.y -= @text_options[:size] # Workaround the "center" text to SU prior 2020 where text anchor is top
@@ -113,13 +113,13 @@ module Ladb::OpenCutList::Kuix
       if @text_options[:size]
         if Sketchup.version_number < 2000000000 || Sketchup.active_model.nil?
           # Estimate text size
-          @min_size.set(
+          @min_size.set!(
             @text.length * @text_options[:size].to_i * 0.7,
             @text_options[:size]
           )
         else
           text_bounds = Sketchup.active_model.active_view.text_bounds(Geom::Point3d.new, @text, @text_options)
-          @min_size.set(
+          @min_size.set!(
             text_bounds.width,
             text_bounds.height
           )
@@ -130,8 +130,8 @@ module Ladb::OpenCutList::Kuix
     # -- Render --
 
     def paint_content(graphics)
-      super
       graphics.draw_text(@text_point.x, @text_point.y, @truncated_text, @text_options)
+      super
     end
 
   end

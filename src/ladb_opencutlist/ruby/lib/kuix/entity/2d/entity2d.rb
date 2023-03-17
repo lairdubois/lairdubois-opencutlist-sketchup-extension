@@ -1,28 +1,24 @@
 module Ladb::OpenCutList::Kuix
 
-  class Widget
+  class Entity2d < Entity
 
-    attr_accessor :id
     attr_reader :bounds
     attr_reader :margin, :border, :padding, :gap
     attr_reader :min_size
     attr_reader :background_color, :border_color, :color
-    attr_accessor :parent, :child, :last_child, :next, :previous
     attr_accessor :layout, :layout_data
-    attr_accessor :data
 
     def initialize(id = nil)
-
-      @id = id
+      super(id)
 
       # Computed bounds of the widget relative to its parent
-      @bounds = Bounds.new
+      @bounds = Bounds2d.new
 
-      @margin = Inset.new
-      @border = Inset.new
-      @padding = Inset.new
+      @margin = Inset2d.new
+      @border = Inset2d.new
+      @padding = Inset2d.new
 
-      @min_size = Size.new
+      @min_size = Size2d.new
 
       @background_color = nil
       @border_color = nil
@@ -33,29 +29,17 @@ module Ladb::OpenCutList::Kuix
       }
       @active_pseudo_classes = []
 
-      @parent = nil
-      @child = nil
-      @last_child = nil
-
-      @next = nil
-      @previous = nil
-
-      @invalidated = true
-
       @layout = nil
       @layout_data = nil
 
-      @visible = true
       @hittable = true
-
-      @data = nil
 
     end
 
     # -- Properties --
 
     def insets
-      Inset.new(
+      Inset2d.new(
         @margin.top + @border.top + @padding.top,
         @margin.right + @border.right + @padding.right,
         @margin.bottom + @border.bottom + @padding.bottom,
@@ -65,19 +49,19 @@ module Ladb::OpenCutList::Kuix
 
     def content_size
       insets = self.insets
-      Size.new(
+      Size2d.new(
         @bounds.size.width - insets.left - insets.right,
         @bounds.size.height - insets.top - insets.bottom,
       )
     end
 
     def get_prefered_size(prefered_width)
-      size = Size.new
+      size = Size2d.new
       if @layout
         @layout.measure_prefered_size(self, prefered_width, size)
       else
         insets = self.insets
-        size.set(
+        size.set!(
           insets.left + @min_size.width + insets.right,
           insets.top + @min_size.height + insets.bottom
         )
@@ -133,80 +117,13 @@ module Ladb::OpenCutList::Kuix
 
     # -- DOM --
 
-    # Append given widget to self and returns self
-    def append(widget)
-      throw 'Widget.append only supports Widget' unless widget.is_a?(Widget)
-      throw 'Widget.append can\'t append itself' if widget == self
-      throw 'Widget.append can\'t append nil' if widget.nil?
-
-      # Remove widget from previous parent
-      if widget.parent
-        widget.remove
-      end
-
-      # Append widget to linked list
-      widget.parent = self
-      @last_child.next = widget if @last_child
-      widget.previous = @last_child
-      @child = widget unless @child
-      @last_child = widget
-
-      # Invalidate self
-      invalidate
-
-      # Returns self
-      self
-    end
-
-    # Remove self widget from its parent and returns parent
-    def remove
-      return unless @parent
-      if @parent.child == self
-        @parent.child = @next
-      end
-      if @parent.last_child == self
-        @parent.last_child = @previous
-      end
-      unless @previous.nil?
-        @previous.next = @next
-      end
-      unless @next.nil?
-        @next.previous = @previous
-        @next = nil
-      end
-      @previous = nil
-      parent = @parent
-      @parent = nil
-      parent.invalidate
-      parent
-    end
-
-    def remove_all
-      if @child
-        widget = @child
-        until widget.nil?
-          next_widget = widget.next
-          widget.next = nil
-          widget.previous = nil
-          widget.parent = nil
-          widget = next_widget
-        end
-        @child = nil
-        @last_child = nil
-        invalidate
-      end
+    # Append given entity to self and returns self
+    def append(entity)
+      throw 'Widget.append only supports Widget' unless entity.is_a?(Entity2d)
+      super
     end
 
     # -- Layout --
-
-    def visible=(value)
-      @visible = value
-      invalidate
-    end
-
-    def visible?
-      @visible
-    end
 
     def hittable=(value)
       @hittable = value
@@ -216,47 +133,15 @@ module Ladb::OpenCutList::Kuix
       @hittable && (@background_color || @border_color)
     end
 
-    def invalidated?
-      @invalidated
-    end
-
-    def invalidate
-      @invalidated = true
-      if @parent && !@parent.invalidated?
-        @parent.invalidate
-      end
-    end
-
     def do_layout
       do_style
       if @layout
         @layout.do_layout(self)
       end
-      @invalidated = false
+      super
     end
 
     # -- Render --
-
-    def paint(graphics)
-
-      if @visible
-
-        graphics.translate(@bounds.x + @margin.left, @bounds.y + @margin.top)
-        paint_border(graphics)
-
-        graphics.translate(@border.left, @border.top)
-        paint_background(graphics)
-
-        graphics.translate(@padding.left, @padding.top)
-        paint_content(graphics)
-
-        graphics.translate(-@bounds.x - @margin.left - @border.left - @padding.left, -@bounds.y - @margin.top - @border.top - @padding.top)
-
-      end
-
-      paint_sibling(graphics)
-
-    end
 
     def paint_border(graphics)
       if @border_color
@@ -282,29 +167,32 @@ module Ladb::OpenCutList::Kuix
       end
     end
 
-    def paint_content(graphics)
-      if @child
-        @child.paint(graphics)
-      end
-    end
+    def paint_itself(graphics)
 
-    def paint_sibling(graphics)
-      if @next
-        @next.paint(graphics)
-      end
+      graphics.translate(@bounds.x + @margin.left, @bounds.y + @margin.top)
+      paint_border(graphics)
+
+      graphics.translate(@border.left, @border.top)
+      paint_background(graphics)
+
+      graphics.translate(@padding.left, @padding.top)
+      super
+
+      graphics.translate(-@bounds.x - @margin.left - @border.left - @padding.left, -@bounds.y - @margin.top - @border.top - @padding.top)
+
     end
 
     # -- Hit --
 
     def hit_widget(x, y)
       widget = nil
-      hit_bounds = Bounds.new(   # Exclude margin from hit test
+      hit_bounds = Bounds2d.new(   # Exclude margin from hit test
         @bounds.origin.x + @margin.left,
         @bounds.origin.y + @margin.top,
         @bounds.size.width - @margin.left - @margin.right,
         @bounds.size.height - @margin.top - @margin.bottom
       )
-      if @visible && hit_bounds.inside?(x, y)
+      if self.visible? && hit_bounds.inside?(x, y)
         if @child
           widget = @child.hit_widget(
             x - hit_bounds.origin.x - @border.left - @padding.left,

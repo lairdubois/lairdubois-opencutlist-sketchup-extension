@@ -71,7 +71,8 @@ module Ladb::OpenCutList
       if @active_entity && @active_path
 
         # An active entity and its path is defined => use it
-        _fetch_useful_instance_infos(@active_entity, @active_path, @auto_orient)
+        # _fetch_useful_instance_infos(@active_entity, @active_path, @auto_orient)
+        _fetch_useful_instance_infos(@active_entity, [], @auto_orient)
 
       else
 

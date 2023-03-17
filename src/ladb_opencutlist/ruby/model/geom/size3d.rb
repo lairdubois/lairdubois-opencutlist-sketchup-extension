@@ -66,6 +66,10 @@ module Ladb::OpenCutList
       end
     end
 
+    def oriented_transformation
+      Geom::Transformation.axes(ORIGIN, @normals[0], @normals[1], @normals[2])
+    end
+
     def normals_to_values
       r = {}
       r[@normals[0] == X_AXIS ? :x : @normals[0] == Y_AXIS ? :y : :z] = @length.to_f

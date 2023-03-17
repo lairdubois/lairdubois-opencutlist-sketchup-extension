@@ -1,6 +1,6 @@
 module Ladb::OpenCutList::Kuix
 
-  class Canvas < Widget
+  class Canvas < Entity2d
 
     attr_reader :view
 

@@ -3,26 +3,41 @@ module Ladb::OpenCutList
   module Kuix
 
     require_relative 'gl/graphics'
+    require_relative 'gl/graphics2d'
+    require_relative 'gl/graphics3d'
 
     require_relative 'layout/border_layout'
     require_relative 'layout/static_layout'
     require_relative 'layout/grid_layout'
     require_relative 'layout/inline_layout'
 
-    require_relative 'model/anchor'
-    require_relative 'model/size'
-    require_relative 'model/point'
-    require_relative 'model/bounds'
-    require_relative 'model/inset'
+    require_relative 'geom/anchor'
+    require_relative 'geom/bounds2d'
+    require_relative 'geom/bounds3d'
+    require_relative 'geom/inset2d'
+    require_relative 'geom/point2d'
+    require_relative 'geom/point3d'
+    require_relative 'geom/size2d'
+    require_relative 'geom/size3d'
 
-    require_relative 'widget/widget'
-    require_relative 'widget/canvas'
-    require_relative 'widget/label'
-    require_relative 'widget/button'
+    require_relative 'entity/entity'
+    require_relative 'entity/2d/entity2d'
+    require_relative 'entity/2d/canvas'
+    require_relative 'entity/2d/panel'
+    require_relative 'entity/2d/label'
+    require_relative 'entity/2d/button'
+    require_relative 'entity/3d/entity3d'
+    require_relative 'entity/3d/space'
+    require_relative 'entity/3d/line'
+    require_relative 'entity/3d/shape'
+    require_relative 'entity/3d/rectangle'
+    require_relative 'entity/3d/arrow'
+    require_relative 'entity/3d/box'
 
     class KuixTool
 
       attr_reader :canvas
+      attr_reader :space
 
       def initialize(quit_on_esc = true, quit_on_undo = false)
 
@@ -104,11 +119,20 @@ module Ladb::OpenCutList
       end
 
       def draw(view)
+
+        # Check if space need to be revalidated
+        if @space.invalidated?
+          @space.do_layout
+        end
+
+        # Paint the space
+        @space.paint(Graphics3d.new(view)) if @space
+
         return unless @canvas
 
         # Check if viewport has changed
         if view.vpwidth != @canvas.bounds.width || view.vpheight != @canvas.bounds.height
-          @canvas.bounds.set(0, 0, view.vpwidth, view.vpheight)
+          @canvas.bounds.set!(0, 0, view.vpwidth, view.vpheight)
           @canvas.do_layout
         end
 
@@ -118,7 +142,7 @@ module Ladb::OpenCutList
         end
 
         # Paint the canvas
-        @canvas.paint(Graphics.new(view))
+        @canvas.paint(Graphics2d.new(view))
 
       end
 
@@ -132,6 +156,9 @@ module Ladb::OpenCutList
 
         # Create the root canvas
         @canvas = Canvas.new(view)
+
+        # Create the root space
+        @space = Space.new(view)
 
         # Setup children widgets
         setup_widgets(view)

@@ -1,6 +1,6 @@
 module Ladb::OpenCutList::Kuix
 
-  class Bounds
+  class Bounds3d
 
     TOP_LEFT = 0
     TOP_CENTER = 1
@@ -13,24 +13,24 @@ module Ladb::OpenCutList::Kuix
 
     attr_reader :origin, :size
 
-    def initialize(x = 0, y = 0, width = 0, height = 0)
-      @origin = Point.new
-      @size = Size.new
-      set(x, y, width, height)
+    def initialize(x = 0, y = 0, z = 0, width = 0, height = 0, thickness = 0)
+      @origin = Point3d.new
+      @size = Size3d.new
+      set!(x, y, z, width, height, thickness)
     end
 
-    def set(x = 0, y = 0, width = 0, height = 0)
-      @origin.set(x, y)
-      @size.set(width, height)
+    def set!(x = 0, y = 0, z = 0, width = 0, height = 0, thickness = 0)
+      @origin.set!(x, y, z)
+      @size.set!(width, height, thickness)
     end
 
-    def set_all(value = 0)
-      set(value, value, value, value)
+    def set_all!(value = 0)
+      set!(value, value, value, value, value, value)
     end
 
-    def copy(bounds)
-      @origin.copy(bounds.origin)
-      @size.copy(bounds.size)
+    def copy!(bounds)
+      @origin.copy!(bounds.origin)
+      @size.copy!(bounds.size)
     end
 
     # -- Properties --
@@ -43,12 +43,20 @@ module Ladb::OpenCutList::Kuix
       @origin.y
     end
 
+    def z
+      @origin.z
+    end
+
     def width
       @size.width
     end
 
     def height
       @size.height
+    end
+
+    def thickness
+      @size.thickness
     end
 
     def x_min
@@ -67,33 +75,42 @@ module Ladb::OpenCutList::Kuix
       @origin.y + @size.height
     end
 
+    def z_min
+      @origin.z
+    end
+
+    def z_max
+      @origin.z + @size.thickness
+    end
+
     def corner(index)
       case index
       when TOP_LEFT
-        Point.new(x_min, y_min)
+        Point2d.new(x_min, y_min)
       when TOP_CENTER
-        Point.new(x_min + (x_max - x_min) / 2, y_min)
+        Point2d.new(x_min + (x_max - x_min) / 2, y_min)
       when TOP_RIGHT
-        Point.new(x_max, y_min)
+        Point2d.new(x_max, y_min)
       when CENTER_RIGHT
-        Point.new(x_max, y_min + (y_max - y_min) / 2)
+        Point2d.new(x_max, y_min + (y_max - y_min) / 2)
       when BOTTOM_RIGHT
-        Point.new(x_max, y_max)
+        Point2d.new(x_max, y_max)
       when BOTTOM_CENTER
-        Point.new(x_min + (x_max - x_min) / 2, y_max)
+        Point2d.new(x_min + (x_max - x_min) / 2, y_max)
       when BOTTOM_LEFT
-        Point.new(x_min, y_max)
+        Point2d.new(x_min, y_max)
       when CENTER_LEFT
-        Point.new(x_min, y_min + (y_max - y_min) / 2)
+        Point2d.new(x_min, y_min + (y_max - y_min) / 2)
       else
         throw "Invalid corner index (index=#{index})"
       end
     end
 
     def center
-      Point.new(
+      Point3d.new(
         x_min + (x_max - x_min) / 2,
-        y_min + (y_max - y_min) / 2
+        y_min + (y_max - y_min) / 2,
+        z_min + (z_max - z_min) / 2
       )
     end
 
@@ -103,34 +120,25 @@ module Ladb::OpenCutList::Kuix
       @size.is_empty?
     end
 
-    def inside?(x, y)
-      x >= x_min && x <= x_max && y >= y_min && y <= y_max
+    def inside?(x, y, z)
+      x >= x_min && x <= x_max && y >= y_min && y <= y_max && z >= z_min && z <= z_max
     end
 
     # -- Manipulations --
 
     def union!(bounds)
       if is_empty?
-        copy(bounds)
+        copy!(bounds)
       else
-        set(
+        set!(
           [ x_min, bounds.x_min ].min,
           [ y_min, bounds.x_min ].min,
+          [ z_min, bounds.z_min ].min,
           [ x_max, bounds.x_max ].max - x_min,
+          [ z_max , bounds.z_max ].max - z_min,
           [ y_max , bounds.y_max ].max - y_min
         )
       end
-    end
-
-    # -- Exports --
-
-    def get_points
-      [
-        Geom::Point3d.new(x_min , y_min  , 0),
-        Geom::Point3d.new(x_max , y_min  , 0),
-        Geom::Point3d.new(x_max , y_max  , 0),
-        Geom::Point3d.new(x_min , y_max  , 0)
-      ]
     end
 
     # --

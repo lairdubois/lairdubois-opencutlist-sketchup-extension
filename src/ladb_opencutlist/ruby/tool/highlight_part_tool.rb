@@ -116,16 +116,16 @@ module Ladb::OpenCutList
 
       unit = [ [ view.vpheight / 150, 10 ].min, 5 ].max
 
-      panel = Kuix::Widget.new
+      panel = Kuix::Entity2d.new
       panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
       panel.layout = Kuix::BorderLayout.new
-      panel.padding.set_all(unit)
+      panel.padding.set_all!(unit)
       panel.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255, 200))
       @canvas.append(panel)
 
         # Labels
 
-        lbls = Kuix::Widget.new
+        lbls = Kuix::Entity2d.new
         lbls.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
         lbls.layout = Kuix::InlineLayout.new(false, unit, Kuix::Anchor.new(Kuix::Anchor::CENTER))
         panel.append(lbls)
@@ -153,15 +153,15 @@ module Ladb::OpenCutList
         btn_border_hover_color = Sketchup::Color.new(128, 128, 128, 255)
         btn_border_selected_color = Sketchup::Color.new(0, 0, 255, 255)
 
-        btns = Kuix::Widget.new
+        btns = Kuix::Entity2d.new
         btns.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
         btns.layout = Kuix::InlineLayout.new(true, unit, Kuix::Anchor.new(Kuix::Anchor::BOTTOM_RIGHT))
         panel.append(btns)
 
           btn_1 = Kuix::Button.new
           btn_1.layout = Kuix::BorderLayout.new
-          btn_1.border.set_all(btn_border)
-          btn_1.min_size.set(btn_min_width, btn_min_height)
+          btn_1.border.set_all!(btn_border)
+          btn_1.min_size.set!(btn_min_width, btn_min_height)
           btn_1.set_style_attribute(:background_color, btn_bg_color)
           btn_1.set_style_attribute(:background_color, btn_bg_active_color, :active)
           btn_1.set_style_attribute(:border_color, btn_border_color)
@@ -182,8 +182,8 @@ module Ladb::OpenCutList
 
           btn_2 = Kuix::Button.new
           btn_2.layout = Kuix::BorderLayout.new
-          btn_2.border.set_all(btn_border)
-          btn_2.min_size.set(btn_min_width, btn_min_height)
+          btn_2.border.set_all!(btn_border)
+          btn_2.min_size.set!(btn_min_width, btn_min_height)
           btn_2.set_style_attribute(:background_color, btn_bg_color)
           btn_2.set_style_attribute(:background_color, btn_bg_active_color, :active)
           btn_2.set_style_attribute(:border_color, btn_border_color)
@@ -262,17 +262,9 @@ module Ladb::OpenCutList
 
     # -- Menu --
 
-    if Sketchup.version.to_i < 15
-      # Compatible with SketchUp 2014 and older:
-      def getMenu(menu)
-        build_menu(menu)
-      end
-    else
-      # Only works with SketchUp 2015 and newer:
-      def getMenu(menu, flags, x, y, view)
-        _pick_hover_part(x, y, view) unless view.nil?
-        build_menu(menu, view)
-      end
+    def getMenu(menu, flags, x, y, view)
+      _pick_hover_part(x, y, view) unless view.nil?
+      build_menu(menu, view)
     end
 
     def build_menu(menu, view = nil)

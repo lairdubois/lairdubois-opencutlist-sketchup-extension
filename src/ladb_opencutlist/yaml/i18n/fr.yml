@@ -71,11 +71,13 @@ core:
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_veneers_properties: $t(tab.cutlist.edit_part_veneers_properties)
       smart_paint: $t(core.toolbar.command.smart_paint)
+      smart_axes: $t(core.toolbar.command.smart_axes)
   toolbar:
     name: OpenCutList
     command:
       dialog: OpenCutList
       smart_paint: Colorier des pièces
+      smart_axes: Orienter des pièces
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
@@ -1347,3 +1349,7 @@ tool:
       no_material: Votre modèle ne contient aucune matière !
       all_filtered: Les filtres choisis masquent toutes les matières !
       not_part: L'objet ciblé doit être un composant.
+  smart_axes:
+    action: Action
+    action_0: Permuter longueur / largeur
+    action_1: Permuter parement / contreparement

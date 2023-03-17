@@ -1,29 +1,29 @@
 module Ladb::OpenCutList::Kuix
 
-  class Point
+  class Point2d
 
     attr_accessor :x, :y
 
     def initialize(x = 0, y = 0)
-      set(x, y)
+      set!(x, y)
     end
 
-    def set(x = 0, y = 0)
+    def set!(x = 0, y = 0)
       @x = x
       @y = y
     end
 
-    def set_all(value = 0)
-      set(value, value)
+    def set_all!(value = 0)
+      set!(value, value)
     end
 
-    def copy(point)
-      set(point.x, point.y)
+    def copy!(point)
+      set!(point.x, point.y)
     end
 
     # -- Manipulations --
 
-    def translate(dx, dy)
+    def translate!(dx, dy)
       @x += dx
       @y += dy
     end

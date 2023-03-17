@@ -24,18 +24,18 @@ module Ladb::OpenCutList::Kuix
       available_width = preferred_width - insets.left - insets.right
       available_height = target.bounds.height - insets.top - insets.bottom
 
-      content_bounds = Bounds.new
+      content_bounds = Bounds2d.new
 
       child_defs = []
 
       # 1st Loop on children
-      widget = target.child
-      until widget.nil?
-        if widget.visible?
+      entity = target.child
+      until entity.nil?
+        if entity.visible?
 
-          preferred_size = widget.get_prefered_size(available_width)
+          preferred_size = entity.get_prefered_size(available_width)
           child_defs.push({
-                            :widget => widget,
+                            :entity => entity,
                             :preferred_size => preferred_size
                           })
 
@@ -48,7 +48,7 @@ module Ladb::OpenCutList::Kuix
           end
 
         end
-        widget = widget.next
+        entity = entity.next
       end
 
       # Gap
@@ -82,16 +82,16 @@ module Ladb::OpenCutList::Kuix
         # Loop on precomputed child defs
         child_defs.each do |child_def|
 
-          widget = child_def[:widget]
+          entity = child_def[:entity]
           preferred_size = child_def[:preferred_size]
 
-          widget.bounds.set(
+          entity.bounds.set!(
             x,
             y,
             @horizontal ? preferred_size.width : content_bounds.size.width,
             @horizontal ? content_bounds.size.height : preferred_size.height
           )
-          widget.do_layout
+          entity.do_layout
 
           if @horizontal
             x += preferred_size.width + @gap
@@ -102,7 +102,7 @@ module Ladb::OpenCutList::Kuix
         end
 
       else
-        size.set(
+        size.set!(
           insets.left + [ target.min_size.width, content_bounds.size.width ].max + insets.right,
           insets.top + [ target.min_size.height, content_bounds.size.height ].max + insets.bottom
         )
