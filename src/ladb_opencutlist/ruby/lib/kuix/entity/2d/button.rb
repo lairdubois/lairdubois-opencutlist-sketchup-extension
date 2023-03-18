@@ -35,7 +35,11 @@ module Ladb::OpenCutList::Kuix
       label.text = text
       label.text_size = text_size
       label.set_style_attribute(:color, text_color) if text_color
-      label.layout_data = StaticLayoutData.new(0, 0, 1.0, 1.0)
+      if self.layout.is_a?(BorderLayout)
+        label.layout_data = BorderLayoutData.new(BorderLayoutData::CENTER)
+      else
+        label.layout_data = StaticLayoutData.new(0, 0, 1.0, 1.0)
+      end
 
       # Append it
       self.layout = StaticLayout.new unless self.layout

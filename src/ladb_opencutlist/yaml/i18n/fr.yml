@@ -1351,5 +1351,11 @@ tool:
       not_part: L'objet ciblé doit être un composant.
   smart_axes:
     action: Action
-    action_0: Permuter longueur / largeur
-    action_1: Permuter parement / contreparement
+    action_0: Permuter Longueur ↔ Largeur
+    action_1: Permuter Longueur ↔ Epaisseur
+    action_2: Permuter Parement ↔ Contreparement
+    action_modifier_0: "⤵"
+    action_modifier_1: "⤴"
+    status_action_0: Cliquez sur une pièce pour permuter sa Longueur avec sa Largeur
+    status_action_1: Cliquez sur une pièce pour permuter sa Longueur avec son Epaisseur
+    status_action_2: Cliquez sur une pièce pour permuter son Parement avec son Contreparement

@@ -156,7 +156,6 @@ module Ladb::OpenCutList
       COLOR_MATERIAL_TYPES.each do |type, color|
 
         filters_btn = Kuix::Button.new
-        filters_btn.layout = Kuix::GridLayout.new
         filters_btn.min_size.set_all!(@unit * 10)
         filters_btn.border.set_all!(@unit)
         filters_btn.set_style_attribute(:background_color, Sketchup::Color.new('white'))
@@ -205,7 +204,6 @@ module Ladb::OpenCutList
       ACTIONS.each { |action|
 
         actions_btn = Kuix::Button.new
-        actions_btn.layout = Kuix::GridLayout.new
         actions_btn.min_size.set_all!(@unit * 10)
         actions_btn.border.set_all!(@unit)
         actions_btn.set_style_attribute(:background_color, Sketchup::Color.new('white'))
