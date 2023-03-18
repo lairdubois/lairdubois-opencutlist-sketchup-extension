@@ -133,7 +133,6 @@ module Ladb::OpenCutList
         actions_btn.set_style_attribute(:background_color, Sketchup::Color.new(200, 200, 200, 255), :active)
         actions_btn.set_style_attribute(:background_color, Sketchup::Color.new(200, 200, 200, 255).blend(Sketchup::Color.new('white'), 0.2), :hover)
         actions_btn.set_style_attribute(:border_color, Sketchup::Color.new(200, 200, 200, 255), :selected)
-        actions_btn.selected = @@action == action
         actions_btn.data = data
         actions_btn.append_static_label(Plugin.instance.get_i18n_string("tool.smart_axes.action_#{action}"), @unit * 3)
         actions_btn.on(:click) { |button|
@@ -157,7 +156,6 @@ module Ladb::OpenCutList
             actions_modifier_btn.set_style_attribute(:background_color, Sketchup::Color.new('white'))
             actions_modifier_btn.set_style_attribute(:background_color, Sketchup::Color.new(200, 200, 200, 255).blend(Sketchup::Color.new('white'), 0.2), :hover)
             actions_modifier_btn.set_style_attribute(:background_color, Sketchup::Color.new(200, 200, 200, 255), :selected)
-            actions_modifier_btn.selected = @@action_modifier == modifier || @@action_modifier.nil? && default_modifier == modifier
             actions_modifier_btn.data = modifier
             actions_modifier_btn.append_static_label(Plugin.instance.get_i18n_string("tool.smart_axes.action_modifier_#{modifier}"), @unit * 3)
             actions_modifier_btn.on(:click) { |button|
@@ -270,7 +268,10 @@ module Ladb::OpenCutList
       # Retrive pick helper
       @pick_helper = view.pick_helper
 
-      set_root_action(@@action.nil? ? ACTIONS.first[:action] : @@action, @@action_modifier.nil? ? ACTIONS.first[:modifiers].is_a?(Array) ? ACTIONS.first[:modifiers].first : nil : @@action_modifier)
+      start_action = @@action.nil? ? ACTIONS.first[:action] : @@action
+      start_action_modifier = start_action == ACTIONS.first[:action] && @@action_modifier.nil? ? ACTIONS.first[:modifiers].is_a?(Array) ? ACTIONS.first[:modifiers].first : nil : @@action_modifier
+      set_root_action(start_action, start_action_modifier)
+
       set_root_cursor(@cursor_axis)
 
     end
