@@ -72,7 +72,6 @@ module Ladb::OpenCutList
       # Help Button
 
       help_btn = Kuix::Button.new
-      help_btn.layout_data = Kuix::StaticLayoutData.new
       help_btn.layout = Kuix::GridLayout.new
       help_btn.border.set_all!(@unit)
       help_btn.padding.set!(@unit, @unit * 4, @unit, @unit * 4)
@@ -90,7 +89,7 @@ module Ladb::OpenCutList
 
       @status = Kuix::Panel.new
       @status.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
-      @status.layout = Kuix::InlineLayout.new(true, @unit, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+      @status.layout = Kuix::InlineLayout.new(false, @unit, Kuix::Anchor.new(Kuix::Anchor::CENTER))
       @status.padding.set_all!(@unit * 2)
       @status.visible = false
       @status.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255, 200))
@@ -99,6 +98,10 @@ module Ladb::OpenCutList
       @status_lbl_1 = Kuix::Label.new
       @status_lbl_1.text_size = @unit * 4
       @status.append(@status_lbl_1)
+
+      @status_lbl_2 = Kuix::Label.new
+      @status_lbl_2.text_size = @unit * 2
+      @status.append(@status_lbl_2)
 
       actions = Kuix::Panel.new
       actions.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
@@ -178,11 +181,13 @@ module Ladb::OpenCutList
 
     # -- Setters --
 
-    def set_status(text)
-      return unless @status && text.is_a?(String)
-      @status_lbl_1.text = text
-      @status_lbl_1.visible = !text.empty?
-      @status.visible = @status_lbl_1.visible?
+    def set_status(text_1, text_2 = '')
+      return unless @status && text_1.is_a?(String) && text_2.is_a?(String)
+      @status_lbl_1.text = text_1
+      @status_lbl_1.visible = !text_1.empty?
+      @status_lbl_2.text = text_2
+      @status_lbl_2.visible = !text_2.empty?
+      @status.visible = @status_lbl_1.visible? || @status_lbl_2.visible?
     end
 
     def set_action(action, modifier = nil)
@@ -386,9 +391,9 @@ module Ladb::OpenCutList
                   elsif @@action == ACTION_SWAP_LENGTH_THICKNESS
                     ti = Geom::Transformation.axes(
                       ORIGIN,
-                      part.def.size.normals[2],
+                      AxisUtils.flipped?(part.def.size.normals[2], part.def.size.normals[1], part.def.size.normals[0]) ? part.def.size.normals[2].reverse : part.def.size.normals[2],
                       AxisUtils.flipped?(part.def.size.normals[2], part.def.size.normals[1], part.def.size.normals[0]) ? part.def.size.normals[1].reverse : part.def.size.normals[1],
-                      part.def.size.normals[0]
+                      AxisUtils.flipped?(part.def.size.normals[2], part.def.size.normals[1], part.def.size.normals[0]) ? part.def.size.normals[0].reverse : part.def.size.normals[0],
                     )
                   elsif @@action == ACTION_SWAP_FRONT_BACK
                     ti = Geom::Transformation.axes(
@@ -468,7 +473,10 @@ module Ladb::OpenCutList
 
       if part
 
-        set_status("#{part.name}#{part.flipped ? ' [Pièce en miroir]' : ''}")
+        set_status(
+          "#{part.name}",
+          "#{part.length} x #{part.width} x #{part.thickness}#{part.flipped ? ' - [Pièce en miroir]' : ''}"
+        )
 
         instance_info = part.def.instance_infos.values.first
 
