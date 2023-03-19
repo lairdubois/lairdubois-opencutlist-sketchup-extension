@@ -13,15 +13,15 @@ module Ladb::OpenCutList::Kuix
 
     attr_reader :origin, :size
 
-    def initialize(x = 0, y = 0, z = 0, width = 0, height = 0, thickness = 0)
+    def initialize(x = 0, y = 0, z = 0, width = 0, height = 0, depth = 0)
       @origin = Point3d.new
       @size = Size3d.new
-      set!(x, y, z, width, height, thickness)
+      set!(x, y, z, width, height, depth)
     end
 
-    def set!(x = 0, y = 0, z = 0, width = 0, height = 0, thickness = 0)
+    def set!(x = 0, y = 0, z = 0, width = 0, height = 0, depth = 0)
       @origin.set!(x, y, z)
-      @size.set!(width, height, thickness)
+      @size.set!(width, height, depth)
     end
 
     def set_all!(value = 0)
@@ -55,8 +55,8 @@ module Ladb::OpenCutList::Kuix
       @size.height
     end
 
-    def thickness
-      @size.thickness
+    def depth
+      @size.depth
     end
 
     def x_min
@@ -80,7 +80,7 @@ module Ladb::OpenCutList::Kuix
     end
 
     def z_max
-      @origin.z + @size.thickness
+      @origin.z + @size.depth
     end
 
     def corner(index)

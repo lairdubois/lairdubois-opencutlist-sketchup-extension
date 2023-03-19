@@ -29,7 +29,7 @@ module Ladb::OpenCutList::Kuix
       @pattern.each do |pattern_point|
         pt = Geom::Point3d.new(pattern_point)
         pt.transform!(@pattern_transformation) unless @pattern_transformation.nil?
-        point = Geom::Point3d.new(@bounds.x + pt.x * @bounds.width, @bounds.y + pt.y * @bounds.height, @bounds.z + pt.z * @bounds.thickness)
+        point = Geom::Point3d.new(@bounds.x + pt.x * @bounds.width, @bounds.y + pt.y * @bounds.height, @bounds.z + pt.z * @bounds.depth)
         point.transform!(@transformation) unless @transformation.nil?
         @points << point
       end

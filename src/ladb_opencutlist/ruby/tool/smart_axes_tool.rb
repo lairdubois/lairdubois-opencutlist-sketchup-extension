@@ -30,8 +30,12 @@ module Ladb::OpenCutList
       { :action => ACTION_SWAP_AUTO }
     ]
 
+    COLOR_STATUS_TEXT_ERROR = Sketchup::Color.new(255, 0, 0).freeze
+    COLOR_STATUS_BACKGROUND = Sketchup::Color.new(255, 255, 255, 200).freeze
+    COLOR_STATUS_BACKGROUND_ERROR = COLOR_STATUS_TEXT_ERROR.blend(Sketchup::Color.new('white'), 0.2).freeze
+
     COLOR_MESH = Sketchup::Color.new(0, 62, 255, 150).freeze
-    COLOR_ARROW = Sketchup::Color.new(255, 255, 255, 255).freeze
+    COLOR_ARROW = Sketchup::Color.new(255, 255, 255).freeze
     COLOR_ARROW_AUTO_ORIENTED = Sketchup::Color.new(123, 213, 239, 255).freeze
     COLOR_BOX = Sketchup::Color.new(0, 0, 255).freeze
 
@@ -45,7 +49,10 @@ module Ladb::OpenCutList
       if model
 
         # Create cursors
-        @cursor_axis = create_cursor('axes', 4, 7)
+        @cursor_swap_length_width = create_cursor('swap-length-width', 4, 7)
+        @cursor_swap_front_back = create_cursor('swap-front-back', 4, 7)
+        @cursor_swap_auto = create_cursor('axes', 4, 7)
+        @cursor_select_error = create_cursor('select-error', 4, 7)
 
       end
 
@@ -96,7 +103,6 @@ module Ladb::OpenCutList
       @status.layout = Kuix::InlineLayout.new(false, @unit, Kuix::Anchor.new(Kuix::Anchor::CENTER))
       @status.padding.set_all!(@unit * 2)
       @status.visible = false
-      @status.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255, 200))
       panel_south.append(@status)
 
       @status_lbl_1 = Kuix::Label.new
@@ -104,7 +110,7 @@ module Ladb::OpenCutList
       @status.append(@status_lbl_1)
 
       @status_lbl_2 = Kuix::Label.new
-      @status_lbl_2.text_size = @unit * 2
+      @status_lbl_2.text_size = @unit * 3
       @status.append(@status_lbl_2)
 
       actions = Kuix::Panel.new
@@ -186,12 +192,15 @@ module Ladb::OpenCutList
 
     # -- Setters --
 
-    def set_status(text_1, text_2 = '')
+    def set_status(text_1, text_2 = '', is_error = false)
       return unless @status && text_1.is_a?(String) && text_2.is_a?(String)
       @status_lbl_1.text = text_1
+      @status_lbl_1.set_style_attribute(:color, is_error ? COLOR_STATUS_TEXT_ERROR : nil)
       @status_lbl_1.visible = !text_1.empty?
       @status_lbl_2.text = text_2
+      @status_lbl_2.set_style_attribute(:color, is_error ? COLOR_STATUS_TEXT_ERROR : nil)
       @status_lbl_2.visible = !text_2.empty?
+      @status.set_style_attribute(:background_color, is_error ? COLOR_STATUS_BACKGROUND_ERROR : COLOR_STATUS_BACKGROUND)
       @status.visible = @status_lbl_1.visible? || @status_lbl_2.visible?
     end
 
@@ -218,19 +227,23 @@ module Ladb::OpenCutList
             ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.status_action_1') +
             ' | ' + Plugin.instance.get_i18n_string("default.constrain_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.status_action_modifier_0_1'),
           SB_PROMPT)
+        set_root_cursor(@cursor_swap_length_width)
       when ACTION_SWAP_FRONT_BACK
         Sketchup.set_status_text(
           Plugin.instance.get_i18n_string('tool.smart_axes.status_action_1') +
             ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.status_action_0'),
           SB_PROMPT)
+        set_root_cursor(@cursor_swap_front_back)
       when ACTION_SWAP_AUTO
         Sketchup.set_status_text(
           Plugin.instance.get_i18n_string('tool.smart_axes.status_action_2') +
             ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.status_action_0') +
             ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.status_action_1'),
           SB_PROMPT)
+        set_root_cursor(@cursor_swap_auto)
       else
         Sketchup.set_status_text('', SB_PROMPT)
+        set_root_cursor(@cursor_select_error)
       end
 
     end
@@ -298,8 +311,6 @@ module Ladb::OpenCutList
       start_action = @@action.nil? ? ACTIONS.first[:action] : @@action
       start_action_modifier = start_action == ACTIONS.first[:action] && @@action_modifier.nil? ? ACTIONS.first[:modifiers].is_a?(Array) ? ACTIONS.first[:modifiers].first : nil : @@action_modifier
       set_root_action(start_action, start_action_modifier)
-
-      set_root_cursor(@cursor_axis)
 
     end
 
@@ -427,7 +438,7 @@ module Ladb::OpenCutList
 
                     ti = Geom::Transformation.axes(
                       ORIGIN,
-                      oriented_size.normals[0],
+                      AxisUtils.flipped?(oriented_size.normals[0], oriented_size.normals[1], oriented_size.normals[2]) ? oriented_size.normals[0].reverse : oriented_size.normals[0],
                       oriented_size.normals[1],
                       oriented_size.normals[2]
                     )
@@ -466,7 +477,8 @@ module Ladb::OpenCutList
               return
 
             elsif picked_entity_path
-              puts 'Not a part'
+              set_status("⚠️ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.not_part')}", '', true)
+              return
             end
 
           end
@@ -504,9 +516,12 @@ module Ladb::OpenCutList
       if part
 
         # Display part infos
+        infos = [ "#{part.length} x #{part.width} x #{part.thickness}" ]
+        infos << part.material_name unless part.material_name.empty?
+        infos << "[Pièce en miroir]" if part.flipped
         set_status(
           "#{part.name}",
-          "#{part.length} x #{part.width} x #{part.thickness}#{part.flipped ? ' - [Pièce en miroir]' : ''}"
+          "#{infos.join(' | ')}"
         )
 
         instance_info = part.def.instance_infos.values.first
@@ -529,7 +544,7 @@ module Ladb::OpenCutList
         arrow.pattern_transformation = instance_info.size.oriented_transformation if part.auto_oriented
         arrow.transformation = instance_info.transformation
         arrow.bounds.origin.copy!(instance_info.definition_bounds.min)
-        arrow.bounds.size.set!(instance_info.definition_bounds.width, instance_info.definition_bounds.height, instance_info.definition_bounds.depth)
+        arrow.bounds.size.copy!(instance_info.definition_bounds)
         arrow.color = arrow_color
         arrow.line_width = 3
         arrow.line_stipple = '-'
@@ -540,7 +555,7 @@ module Ladb::OpenCutList
         arrow.pattern_transformation = part.auto_oriented ? instance_info.size.oriented_transformation * Geom::Transformation.translation(Z_AXIS) : Geom::Transformation.translation(Z_AXIS)
         arrow.transformation = instance_info.transformation
         arrow.bounds.origin.copy!(instance_info.definition_bounds.min)
-        arrow.bounds.size.set!(instance_info.definition_bounds.width, instance_info.definition_bounds.height, instance_info.definition_bounds.depth)
+        arrow.bounds.size.copy!(instance_info.definition_bounds)
         arrow.color = arrow_color
         arrow.line_width = 3
         @space.append(arrow)
@@ -549,11 +564,35 @@ module Ladb::OpenCutList
         box = Kuix::Box.new
         box.transformation = instance_info.transformation
         box.bounds.origin.copy!(instance_info.definition_bounds.min)
-        box.bounds.size.set!(instance_info.definition_bounds.width, instance_info.definition_bounds.height, instance_info.definition_bounds.depth)
+        box.bounds.size.copy!(instance_info.definition_bounds)
         box.color = COLOR_BOX
         box.line_width = 1
         box.line_stipple = '-'
         @space.append(box)
+
+        # X axis
+        line = Kuix::Line.new
+        line.transformation = instance_info.transformation
+        line.bounds.size.set!(1, 0, 0)
+        line.color = Sketchup::Color.new(255, 0, 0)
+        line.line_width = 5
+        @space.append(line)
+
+        # Y axis
+        line = Kuix::Line.new
+        line.transformation = instance_info.transformation
+        line.bounds.size.set!(0, 1, 0)
+        line.color = Sketchup::Color.new(0, 255, 0)
+        line.line_width = 5
+        @space.append(line)
+
+        # Z axis
+        line = Kuix::Line.new
+        line.transformation = instance_info.transformation
+        line.bounds.size.set!(0, 0, 1)
+        line.color = Sketchup::Color.new(0, 0, 255)
+        line.line_width = 5
+        @space.append(line)
 
       end
 
