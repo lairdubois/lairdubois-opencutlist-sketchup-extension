@@ -117,10 +117,6 @@ module Ladb::OpenCutList::Kuix
       end
     end
 
-    def do_layout
-      self.invalidated = false
-    end
-
     # -- Render --
 
     def paint(graphics)

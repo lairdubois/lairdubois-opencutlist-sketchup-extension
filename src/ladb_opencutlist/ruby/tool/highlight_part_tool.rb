@@ -83,7 +83,7 @@ module Ladb::OpenCutList
             draw_def[:face_triangles].concat(_compute_children_faces_triangles(instance_info.entity.definition.entities, instance_info.transformation))
 
             # Compute back and front face arrows
-            if part.group.material_type != MaterialAttributes::TYPE_HARDWARE && part.group.material_type != MaterialAttributes::TYPE_UNKNOWN
+            if part.group.material_type != MaterialAttributes::TYPE_HARDWARE
 
               order = [ 1, 2, 3 ]
               if part.auto_oriented

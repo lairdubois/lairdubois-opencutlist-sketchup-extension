@@ -8,7 +8,7 @@ module Ladb::OpenCutList::Kuix
       super(id)
 
       @background_color = nil
-      @triangles = []
+      @triangles = [] # Array<Point3d>
 
       @points = []
 
@@ -21,8 +21,10 @@ module Ladb::OpenCutList::Kuix
 
     # -- LAYOUT --
 
-    def do_layout
-      @points = @triangles.map { |point| @transformation.nil? ? point : point.transform(@transformation) }
+    def do_layout(transformation)
+      @points = @triangles.map { |point|
+        point.transform(transformation * @transformation)
+      }
       super
     end
 

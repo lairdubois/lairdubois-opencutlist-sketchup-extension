@@ -224,22 +224,22 @@ module Ladb::OpenCutList
       case action
       when ACTION_SWAP_LENGTH_WIDTH
         Sketchup.set_status_text(
-          Plugin.instance.get_i18n_string('tool.smart_axes.status_action_swap_length_width') +
-            ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.status_action_swap_front_back') +
+          Plugin.instance.get_i18n_string('tool.smart_axes.status_swap_length_width') +
+            ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.status_swap_front_back') +
             ' | ' + Plugin.instance.get_i18n_string("default.constrain_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.status_toggle_clockwise'),
           SB_PROMPT)
         set_root_cursor(is_action_modifier_anticlockwise? ? @cursor_swap_length_width_anticlockwise : @cursor_swap_length_width_clockwise)
       when ACTION_SWAP_FRONT_BACK
         Sketchup.set_status_text(
           Plugin.instance.get_i18n_string('tool.smart_axes.status_action_swap_front_back') +
-            ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.status_action_swap_length_width'),
+            ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.status_swap_length_width'),
           SB_PROMPT)
         set_root_cursor(@cursor_swap_front_back)
       when ACTION_SWAP_AUTO
         Sketchup.set_status_text(
-          Plugin.instance.get_i18n_string('tool.smart_axes.status_action_swap_auto') +
-            ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.status_action_swap_length_width') +
-            ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.status_action_swap_front_back'),
+          Plugin.instance.get_i18n_string('tool.smart_axes.status_swap_auto') +
+            ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.status_swap_length_width') +
+            ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.status_swap_front_back'),
           SB_PROMPT)
         set_root_cursor(@cursor_swap_auto)
       else
@@ -372,8 +372,8 @@ module Ladb::OpenCutList
     private
 
     def _reset(view)
+      set_status('')
       if @picked_path
-        set_status('')
         @is_down = false
         @picked_path = nil
         @space.remove_all
@@ -478,6 +478,7 @@ module Ladb::OpenCutList
               return
 
             elsif picked_entity_path
+              _reset(view)
               set_status("⚠️ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.not_part')}", '', true)
               return
             end
@@ -519,7 +520,7 @@ module Ladb::OpenCutList
         # Display part infos
         infos = [ "#{part.length} x #{part.width} x #{part.thickness}" ]
         infos << part.material_name unless part.material_name.empty?
-        infos << "[Pièce en miroir]" if part.flipped
+        infos << ">|<" if part.flipped
         set_status(
           "#{part.name}",
           "#{infos.join(' | ')}"
@@ -532,68 +533,50 @@ module Ladb::OpenCutList
         @space.remove_all
 
         arrow_color = part.auto_oriented ? COLOR_ARROW_AUTO_ORIENTED : COLOR_ARROW
+        arrow_offset = Sketchup.active_model.active_view.pixels_to_model(1, ORIGIN)
 
-        # Mesh
-        mesh = Kuix::Mesh.new
-        mesh.transformation = instance_info.transformation
-        mesh.add_trangles(_compute_children_faces_triangles(instance_info.entity.definition.entities))
-        mesh.background_color = COLOR_MESH
-        @space.append(mesh)
+        part_helper = Kuix::Group.new
+        part_helper.transformation = instance_info.transformation
+        @space.append(part_helper)
 
-        # Back arrow
-        arrow = Kuix::Arrow.new
-        arrow.pattern_transformation = instance_info.size.oriented_transformation if part.auto_oriented
-        arrow.transformation = instance_info.transformation
-        arrow.bounds.origin.copy!(instance_info.definition_bounds.min)
-        arrow.bounds.size.copy!(instance_info.definition_bounds)
-        arrow.color = arrow_color
-        arrow.line_width = 3
-        arrow.line_stipple = '-'
-        @space.append(arrow)
+          # Mesh
+          mesh = Kuix::Mesh.new
+          mesh.add_trangles(_compute_children_faces_triangles(instance_info.entity.definition.entities))
+          mesh.background_color = COLOR_MESH
+          part_helper.append(mesh)
 
-        # Front arrow
-        arrow = Kuix::Arrow.new
-        arrow.pattern_transformation = part.auto_oriented ? instance_info.size.oriented_transformation * Geom::Transformation.translation(Z_AXIS) : Geom::Transformation.translation(Z_AXIS)
-        arrow.transformation = instance_info.transformation
-        arrow.bounds.origin.copy!(instance_info.definition_bounds.min)
-        arrow.bounds.size.copy!(instance_info.definition_bounds)
-        arrow.color = arrow_color
-        arrow.line_width = 3
-        @space.append(arrow)
+          # Back arrow
+          arrow = Kuix::Arrow.new
+          arrow.pattern_transformation = instance_info.size.oriented_transformation if part.auto_oriented
+          arrow.bounds.origin.copy!(instance_info.definition_bounds.min.offset(Geom::Vector3d.new(0, 0, -arrow_offset)))
+          arrow.bounds.size.copy!(instance_info.definition_bounds)
+          arrow.color = arrow_color
+          arrow.line_width = 1
+          arrow.line_stipple = '-'
+          part_helper.append(arrow)
 
-        # Bounding box
-        box = Kuix::Box.new
-        box.transformation = instance_info.transformation
-        box.bounds.origin.copy!(instance_info.definition_bounds.min)
-        box.bounds.size.copy!(instance_info.definition_bounds)
-        box.color = COLOR_BOX
-        box.line_width = 1
-        box.line_stipple = '-'
-        @space.append(box)
+          # Front arrow
+          arrow = Kuix::Arrow.new
+          arrow.pattern_transformation = instance_info.size.oriented_transformation if part.auto_oriented
+          arrow.pattern_transformation *= Geom::Transformation.translation(Z_AXIS)
+          arrow.bounds.origin.copy!(instance_info.definition_bounds.min.offset(Geom::Vector3d.new(0, 0, arrow_offset)))
+          arrow.bounds.size.copy!(instance_info.definition_bounds)
+          arrow.color = arrow_color
+          arrow.line_width = 1
+          part_helper.append(arrow)
 
-        # X axis
-        line = Kuix::Line.new
-        line.transformation = instance_info.transformation
-        line.bounds.size.set!(5, 0, 0)
-        line.color = Sketchup::Color.new(255, 0, 0)
-        line.line_width = 5
-        @space.append(line)
+          # Bounding box helper
+          box_helper = Kuix::BoxHelper.new
+          box_helper.bounds.origin.copy!(instance_info.definition_bounds.min)
+          box_helper.bounds.size.copy!(instance_info.definition_bounds)
+          box_helper.color = COLOR_BOX
+          box_helper.line_width = 1
+          box_helper.line_stipple = '-'
+          part_helper.append(box_helper)
 
-        # Y axis
-        line = Kuix::Line.new
-        line.transformation = instance_info.transformation
-        line.bounds.size.set!(0, 5, 0)
-        line.color = Sketchup::Color.new(0, 255, 0)
-        line.line_width = 5
-        @space.append(line)
-
-        # Z axis
-        line = Kuix::Line.new
-        line.transformation = instance_info.transformation
-        line.bounds.size.set!(0, 0, 5)
-        line.color = Sketchup::Color.new(0, 0, 255)
-        line.line_width = 5
-        @space.append(line)
+          # Axes helper
+          axes_helper = Kuix::AxesHelper.new
+          part_helper.append(axes_helper)
 
       end
 

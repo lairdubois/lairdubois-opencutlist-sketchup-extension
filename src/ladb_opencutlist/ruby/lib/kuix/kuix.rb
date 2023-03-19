@@ -28,11 +28,13 @@ module Ladb::OpenCutList
     require_relative 'entity/2d/button'
     require_relative 'entity/3d/entity3d'
     require_relative 'entity/3d/space'
+    require_relative 'entity/3d/group'
+    require_relative 'entity/3d/axes_helper'
     require_relative 'entity/3d/lines'
     require_relative 'entity/3d/line'
     require_relative 'entity/3d/rectangle'
     require_relative 'entity/3d/arrow'
-    require_relative 'entity/3d/box'
+    require_relative 'entity/3d/box_helper'
     require_relative 'entity/3d/mesh'
 
     class KuixTool
@@ -123,11 +125,11 @@ module Ladb::OpenCutList
 
         # Check if space need to be revalidated
         if @space.invalidated?
-          @space.do_layout
+          @space.do_layout(Geom::Transformation.new)
         end
 
         # Paint the space
-        @space.paint(Graphics3d.new(view)) if @space
+        @space.paint(Graphics3d.new(view))
 
         return unless @canvas
 

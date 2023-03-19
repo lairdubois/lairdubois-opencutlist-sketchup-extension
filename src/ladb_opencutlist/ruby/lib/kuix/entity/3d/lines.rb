@@ -10,7 +10,7 @@ module Ladb::OpenCutList::Kuix
       super(id)
 
       @pattern = pattern
-      @pattern_transformation = nil
+      @pattern_transformation = Geom::Transformation.new
       @is_loop = is_loop
 
       @color = nil
@@ -24,13 +24,13 @@ module Ladb::OpenCutList::Kuix
 
     # -- LAYOUT --
 
-    def do_layout
+    def do_layout(transformation)
       @points.clear
       @pattern.each do |pattern_point|
         pt = Geom::Point3d.new(pattern_point)
-        pt.transform!(@pattern_transformation) unless @pattern_transformation.nil?
+        pt.transform!(@pattern_transformation) unless @pattern_transformation.identity?
         point = Geom::Point3d.new(@bounds.x + pt.x * @bounds.width, @bounds.y + pt.y * @bounds.height, @bounds.z + pt.z * @bounds.depth)
-        point.transform!(@transformation) unless @transformation.nil?
+        point.transform!(transformation * @transformation)
         @points << point
       end
       super

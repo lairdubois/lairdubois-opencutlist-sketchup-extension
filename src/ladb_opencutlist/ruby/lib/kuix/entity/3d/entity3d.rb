@@ -10,7 +10,7 @@ module Ladb::OpenCutList::Kuix
 
       @bounds = Bounds3d.new
 
-      @transformation = nil
+      @transformation = Geom::Transformation.new
 
     end
 
@@ -24,10 +24,10 @@ module Ladb::OpenCutList::Kuix
 
     # -- LAYOUT --
 
-    def do_layout
-      @child.do_layout if @child
-      @next.do_layout if @next
-      super
+    def do_layout(transformation)
+      @child.do_layout(transformation * @transformation) if @child
+      @next.do_layout(transformation) if @next
+      self.invalidated = false
     end
 
   end

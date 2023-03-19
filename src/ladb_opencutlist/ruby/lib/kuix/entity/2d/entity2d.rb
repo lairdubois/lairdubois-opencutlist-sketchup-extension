@@ -138,7 +138,7 @@ module Ladb::OpenCutList::Kuix
       if @layout
         @layout.do_layout(self)
       end
-      super
+      self.invalidated = false
     end
 
     # -- Render --
