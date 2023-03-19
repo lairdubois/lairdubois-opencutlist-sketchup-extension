@@ -30,6 +30,7 @@ module Ladb::OpenCutList
       { :action => ACTION_SWAP_AUTO }
     ]
 
+    COLOR_MESH = Sketchup::Color.new(0, 62, 255, 150).freeze
     COLOR_ARROW = Sketchup::Color.new(255, 255, 255, 255).freeze
     COLOR_ARROW_AUTO_ORIENTED = Sketchup::Color.new(123, 213, 239, 255).freeze
     COLOR_BOX = Sketchup::Color.new(0, 0, 255).freeze
@@ -303,7 +304,7 @@ module Ladb::OpenCutList
     end
 
     def onResume(view)
-      set_root_action(@@action)  # Force SU status text
+      set_root_action(@@action, @@action_modifier)  # Force SU status text
     end
 
     def onKeyDown(key, repeat, flags, view)
@@ -384,13 +385,16 @@ module Ladb::OpenCutList
             picked_entity = picked_path.last
             if picked_entity
 
-              part = _blop(picked_entity, picked_entity_path)
+              entity = picked_entity
+              path = picked_entity_path.slice(0..-2)
+
+              part = _blop(entity, path)
               if part && (event == :l_button_up || event == :l_button_dblclick)
 
-                definition = view.model.definitions[part.def.definition_id]
-                definition_attributes = DefinitionAttributes.new(definition)
+                  definition = view.model.definitions[part.def.definition_id]
+                  definition_attributes = DefinitionAttributes.new(definition)
 
-                unless definition.nil?
+                  unless definition.nil?
 
                   ti = nil
                   if is_action_swap_length_width?
@@ -451,7 +455,7 @@ module Ladb::OpenCutList
                     # Commit model modification operation
                     view.model.commit_operation
 
-                    _blop(picked_entity, picked_entity_path)
+                    _blop(entity, path)
 
                   end
 
@@ -481,15 +485,15 @@ module Ladb::OpenCutList
       }
     end
 
-    def _blop(picked_entity, picked_entity_path)
+    def _blop(entity, path)
 
-      worker = CutlistGenerateWorker.new({}, picked_entity, picked_entity_path)
+      worker = CutlistGenerateWorker.new({}, entity, path)
       cutlist = worker.run
 
       part = nil
       cutlist.groups.each { |group|
         group.parts.each { |p|
-          if p.def.definition_id == picked_entity.definition.name
+          if p.def.definition_id == entity.definition.name
             part = p
             break
           end
@@ -507,20 +511,23 @@ module Ladb::OpenCutList
 
         instance_info = part.def.instance_infos.values.first
 
-        parent_path = picked_entity_path.clone
-        parent_path.pop
-        transformation = TransformationUtils.multiply(PathUtils.get_transformation(parent_path), instance_info.transformation)
-
         # Create drawing helpers
 
         @space.remove_all
 
         arrow_color = part.auto_oriented ? COLOR_ARROW_AUTO_ORIENTED : COLOR_ARROW
 
+        # Mesh
+        mesh = Kuix::Mesh.new
+        mesh.transformation = instance_info.transformation
+        mesh.add_trangles(_compute_children_faces_triangles(instance_info.entity.definition.entities))
+        mesh.background_color = COLOR_MESH
+        @space.append(mesh)
+
         # Back arrow
         arrow = Kuix::Arrow.new
         arrow.pattern_transformation = instance_info.size.oriented_transformation if part.auto_oriented
-        arrow.transformation = transformation
+        arrow.transformation = instance_info.transformation
         arrow.bounds.origin.copy!(instance_info.definition_bounds.min)
         arrow.bounds.size.set!(instance_info.definition_bounds.width, instance_info.definition_bounds.height, instance_info.definition_bounds.depth)
         arrow.color = arrow_color
@@ -531,7 +538,7 @@ module Ladb::OpenCutList
         # Front arrow
         arrow = Kuix::Arrow.new
         arrow.pattern_transformation = part.auto_oriented ? instance_info.size.oriented_transformation * Geom::Transformation.translation(Z_AXIS) : Geom::Transformation.translation(Z_AXIS)
-        arrow.transformation = transformation
+        arrow.transformation = instance_info.transformation
         arrow.bounds.origin.copy!(instance_info.definition_bounds.min)
         arrow.bounds.size.set!(instance_info.definition_bounds.width, instance_info.definition_bounds.height, instance_info.definition_bounds.depth)
         arrow.color = arrow_color
@@ -540,7 +547,7 @@ module Ladb::OpenCutList
 
         # Bounding box
         box = Kuix::Box.new
-        box.transformation = transformation
+        box.transformation = instance_info.transformation
         box.bounds.origin.copy!(instance_info.definition_bounds.min)
         box.bounds.size.set!(instance_info.definition_bounds.width, instance_info.definition_bounds.height, instance_info.definition_bounds.depth)
         box.color = COLOR_BOX
