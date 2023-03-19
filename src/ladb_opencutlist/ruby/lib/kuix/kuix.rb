@@ -64,7 +64,7 @@ module Ladb::OpenCutList
 
       # -- UI stuff --
 
-      def setup_widgets(view)
+      def setup_entities(view)
         # Override and implement startup widgets here
       end
 
@@ -161,7 +161,7 @@ module Ladb::OpenCutList
         @space = Space.new(view)
 
         # Setup children widgets
-        setup_widgets(view)
+        setup_entities(view)
 
         view.invalidate
       end

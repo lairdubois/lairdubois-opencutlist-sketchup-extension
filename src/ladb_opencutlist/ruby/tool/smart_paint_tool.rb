@@ -78,7 +78,7 @@ module Ladb::OpenCutList
 
     end
 
-    def setup_widgets(view)
+    def setup_entities(view)
 
       @canvas.layout = Kuix::BorderLayout.new
 

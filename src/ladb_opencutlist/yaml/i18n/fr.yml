@@ -60,6 +60,11 @@ default:
   setup_model_units: Configurer les unités du modèle
   load_more: Charger la suite
   reset_to_app_defaults: Restaurer aux valeurs d'origine
+  constrain_key: Maj
+  copy_key_win: Control
+  copy_key_mac: Option
+  alt_key_win: Alt
+  alt_key_mac: Command
 core:
   menu:
     submenu: OpenCutList
@@ -1322,10 +1327,6 @@ tool:
     transparency: Transparence
     zoom_extents: Zoom étendu
   smart_paint:
-    copy_key_win: Control
-    copy_key_mac: Option
-    alt_key_win: Alt
-    alt_key_mac: Command
     status_paint_face: Cliquez pour colorier une face.
     status_paint_part: Cliquez pour colorier une pièce entière.
     status_unpaint_face: Cliquez pour nettoyer une face.
@@ -1352,10 +1353,11 @@ tool:
   smart_axes:
     action: Action
     action_0: Permuter Longueur ↔ Largeur
-    action_1: Permuter Longueur ↔ Epaisseur
-    action_2: Permuter Parement ↔ Contreparement
+    action_1: Permuter Parement ↔ Contreparement
+    action_2: Orienter automatiquement
     action_modifier_0: "⤵"
     action_modifier_1: "⤴"
-    status_action_0: Cliquez sur une pièce pour permuter sa Longueur avec sa Largeur
-    status_action_1: Cliquez sur une pièce pour permuter sa Longueur avec son Epaisseur
-    status_action_2: Cliquez sur une pièce pour permuter son Parement avec son Contreparement
+    status_action_0: Cliquez sur une pièce pour permuter sa Longueur avec sa Largeur.
+    status_action_1: Cliquez sur une pièce pour permuter son Parement avec son Contreparement.
+    status_action_2: Cliquez sur une pièce pour définir la Longueur sur la plus grand dimension et l'Epaisseur sur la plus petite.
+    status_action_modifier_0_1: Inverser le sens de rotation.
