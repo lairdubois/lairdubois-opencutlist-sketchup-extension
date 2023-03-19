@@ -1351,15 +1351,15 @@ tool:
       all_filtered: Les filtres choisis masquent toutes les matières !
       not_part: L'objet ciblé doit être un composant.
   smart_axes:
+    status_swap_length_width: Cliquez sur une pièce pour permuter sa Longueur avec sa Largeur.
+    status_swap_front_back: Cliquez sur une pièce pour permuter la lecture de son Parement avec son Contreparement.
+    status_swap_auto: Cliquez sur une pièce pour définir la Longueur sur la plus grand dimension et l'Epaisseur sur la plus petite.
+    status_toggle_clockwise: Inverser le sens de rotation.
     action: Action
     action_0: Permuter Longueur ↔ Largeur
     action_1: Permuter Parement ↔ Contreparement
     action_2: Orienter automatiquement
     action_modifier_0: "⤵"
     action_modifier_1: "⤴"
-    status_action_0: Cliquez sur une pièce pour permuter sa Longueur avec sa Largeur.
-    status_action_1: Cliquez sur une pièce pour permuter la lecture de son Parement avec son Contreparement.
-    status_action_2: Cliquez sur une pièce pour définir la Longueur sur la plus grand dimension et l'Epaisseur sur la plus petite.
-    status_action_modifier_0_1: Inverser le sens de rotation.
     warning:
       not_part: L'objet ciblé doit être un composant.

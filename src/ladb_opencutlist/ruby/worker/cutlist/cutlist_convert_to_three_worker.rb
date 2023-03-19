@@ -93,7 +93,7 @@ module Ladb::OpenCutList
                 part.veneer_material_names[:zmax],
                 part.def.veneer_group_defs[:zmax] ? part.def.veneer_group_defs[:zmax].std_thickness : nil
               ),
-              StringWrapper.new(instance_info.layer.display_name),
+              StringWrapper.new(instance_info.layer.name),
               )
             )
 

@@ -34,7 +34,7 @@ module Ladb::OpenCutList
     COLOR_STATUS_BACKGROUND = Sketchup::Color.new(255, 255, 255, 200).freeze
     COLOR_STATUS_BACKGROUND_ERROR = COLOR_STATUS_TEXT_ERROR.blend(Sketchup::Color.new('white'), 0.2).freeze
 
-    COLOR_MESH = Sketchup::Color.new(0, 62, 255, 150).freeze
+    COLOR_MESH = Sketchup::Color.new(0, 62, 255, 100).freeze
     COLOR_ARROW = Sketchup::Color.new(255, 255, 255).freeze
     COLOR_ARROW_AUTO_ORIENTED = Sketchup::Color.new(123, 213, 239, 255).freeze
     COLOR_BOX = Sketchup::Color.new(0, 0, 255).freeze
@@ -49,9 +49,10 @@ module Ladb::OpenCutList
       if model
 
         # Create cursors
-        @cursor_swap_length_width = create_cursor('swap-length-width', 4, 7)
+        @cursor_swap_length_width_clockwise = create_cursor('swap-length-width-clockwise', 4, 7)
+        @cursor_swap_length_width_anticlockwise = create_cursor('swap-length-width-anticlockwise', 4, 7)
         @cursor_swap_front_back = create_cursor('swap-front-back', 4, 7)
-        @cursor_swap_auto = create_cursor('axes', 4, 7)
+        @cursor_swap_auto = create_cursor('swap-auto', 4, 7)
         @cursor_select_error = create_cursor('select-error', 4, 7)
 
       end
@@ -223,22 +224,22 @@ module Ladb::OpenCutList
       case action
       when ACTION_SWAP_LENGTH_WIDTH
         Sketchup.set_status_text(
-          Plugin.instance.get_i18n_string('tool.smart_axes.status_action_0') +
-            ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.status_action_1') +
-            ' | ' + Plugin.instance.get_i18n_string("default.constrain_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.status_action_modifier_0_1'),
+          Plugin.instance.get_i18n_string('tool.smart_axes.status_action_swap_length_width') +
+            ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.status_action_swap_front_back') +
+            ' | ' + Plugin.instance.get_i18n_string("default.constrain_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.status_toggle_clockwise'),
           SB_PROMPT)
-        set_root_cursor(@cursor_swap_length_width)
+        set_root_cursor(is_action_modifier_anticlockwise? ? @cursor_swap_length_width_anticlockwise : @cursor_swap_length_width_clockwise)
       when ACTION_SWAP_FRONT_BACK
         Sketchup.set_status_text(
-          Plugin.instance.get_i18n_string('tool.smart_axes.status_action_1') +
-            ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.status_action_0'),
+          Plugin.instance.get_i18n_string('tool.smart_axes.status_action_swap_front_back') +
+            ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.status_action_swap_length_width'),
           SB_PROMPT)
         set_root_cursor(@cursor_swap_front_back)
       when ACTION_SWAP_AUTO
         Sketchup.set_status_text(
-          Plugin.instance.get_i18n_string('tool.smart_axes.status_action_2') +
-            ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.status_action_0') +
-            ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.status_action_1'),
+          Plugin.instance.get_i18n_string('tool.smart_axes.status_action_swap_auto') +
+            ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.status_action_swap_length_width') +
+            ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.status_action_swap_front_back'),
           SB_PROMPT)
         set_root_cursor(@cursor_swap_auto)
       else
@@ -409,7 +410,7 @@ module Ladb::OpenCutList
 
                   ti = nil
                   if is_action_swap_length_width?
-                    if is_action_modifier_clockwise?
+                    if is_action_modifier_anticlockwise?
                       ti = Geom::Transformation.axes(
                         ORIGIN,
                         part.def.size.normals[1],
@@ -573,7 +574,7 @@ module Ladb::OpenCutList
         # X axis
         line = Kuix::Line.new
         line.transformation = instance_info.transformation
-        line.bounds.size.set!(1, 0, 0)
+        line.bounds.size.set!(5, 0, 0)
         line.color = Sketchup::Color.new(255, 0, 0)
         line.line_width = 5
         @space.append(line)
@@ -581,7 +582,7 @@ module Ladb::OpenCutList
         # Y axis
         line = Kuix::Line.new
         line.transformation = instance_info.transformation
-        line.bounds.size.set!(0, 1, 0)
+        line.bounds.size.set!(0, 5, 0)
         line.color = Sketchup::Color.new(0, 255, 0)
         line.line_width = 5
         @space.append(line)
@@ -589,7 +590,7 @@ module Ladb::OpenCutList
         # Z axis
         line = Kuix::Line.new
         line.transformation = instance_info.transformation
-        line.bounds.size.set!(0, 0, 1)
+        line.bounds.size.set!(0, 0, 5)
         line.color = Sketchup::Color.new(0, 0, 255)
         line.line_width = 5
         @space.append(line)
