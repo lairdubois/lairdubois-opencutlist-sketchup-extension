@@ -163,7 +163,7 @@ module Ladb::OpenCutList
       Sketchup.platform == :platform_win ? 'win' : 'mac'
     end
 
-    def get_i18n_string(path_key)
+    def get_i18n_string(path_key, vars = nil)
 
       unless @i18n_strings_cache
         file_path = File.join(__dir__, '..', 'yaml', 'i18n', "#{language}.yml")
@@ -172,6 +172,10 @@ module Ladb::OpenCutList
         rescue => e
           raise "Error loading i18n file (file='#{file_path}') : #{e.message}."
         end
+      end
+
+      if vars.is_a?(Hash) && !vars[:count].nil? && vars[:count] > 1 && !path_key.end_with?('_plural')
+        path_key += '_plural'
       end
 
       # Iterate over values
@@ -183,7 +187,13 @@ module Ladb::OpenCutList
       end
 
       if i18n_string && i18n_string.is_a?(String)
-        i18n_string.gsub(/\$t\(([^$()]+)\)/){ get_i18n_string("#{ $1.strip }") }
+        i18n_string = i18n_string.gsub(/\$t\(([^$()]+)\)/){ get_i18n_string("#{ $1.strip }", vars) }
+        if vars.is_a?(Hash)
+          vars.each do |k, v|
+            i18n_string = i18n_string.gsub(Regexp.new("{{\s*#{k}\s*}}")){ v.to_s }
+          end
+        end
+        i18n_string
       else
         path_key
       end

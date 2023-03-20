@@ -1361,5 +1361,8 @@ tool:
     action_2: Orienter automatiquement
     action_modifier_0: "⤵"
     action_modifier_1: "⤴"
-    warning:
+    error:
       not_part: L'objet ciblé doit être un composant.
+    warning:
+      more_entities: "{{ count }} autre pièce partageant la même définition sera également modifiée."
+      more_entities_plural: "{{ count }} autres pièces partageant la même définition seront également modifiées."

@@ -82,7 +82,7 @@ module Ladb::OpenCutList
 
       @canvas.layout = Kuix::BorderLayout.new
 
-      @unit = [ [ view.vpheight / 150, 10 ].min, _screen_scale(4) ].max
+      @unit = view.vpheight < 800 ? 4 : 8
 
       panel_north = Kuix::Panel.new
       panel_north.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
