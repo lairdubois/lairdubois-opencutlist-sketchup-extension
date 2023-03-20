@@ -1362,7 +1362,9 @@ tool:
     action_modifier_0: "⤵"
     action_modifier_1: "⤴"
     error:
-      not_part: L'objet ciblé doit être un composant.
+      not_part: L'objet ciblé n'est pas une pièce.
     warning:
       more_entities: "{{ count }} autre pièce partageant la même définition sera également modifiée."
       more_entities_plural: "{{ count }} autres pièces partageant la même définition seront également modifiées."
+    success:
+      part_oriented: Cette pièce a déjà sa longueur sur la plus grande dimension et son épaisseur sur la plus petite.

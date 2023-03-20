@@ -34,11 +34,11 @@ module Ladb::OpenCutList
     ]
 
     COLOR_STATUS_TEXT_ERROR = Sketchup::Color.new('#d9534f').freeze
-    COLOR_STATUS_TEXT_WARNING = Sketchup::Color.new('#f0ad4e').freeze
+    COLOR_STATUS_TEXT_WARNING = Sketchup::Color.new('#997404').freeze
     COLOR_STATUS_TEXT_SUCCESS = Sketchup::Color.new('#5cb85c').freeze
     COLOR_STATUS_BACKGROUND = Sketchup::Color.new(255, 255, 255, 200).freeze
     COLOR_STATUS_BACKGROUND_ERROR = COLOR_STATUS_TEXT_ERROR.blend(Sketchup::Color.new('white'), 0.2).freeze
-    COLOR_STATUS_BACKGROUND_WARNING = COLOR_STATUS_TEXT_WARNING.blend(Sketchup::Color.new('white'), 0.2).freeze
+    COLOR_STATUS_BACKGROUND_WARNING = Sketchup::Color.new('#ffe69c').freeze
     COLOR_STATUS_BACKGROUND_SUCCESS = COLOR_STATUS_TEXT_SUCCESS.blend(Sketchup::Color.new('white'), 0.2).freeze
 
     COLOR_MESH = Sketchup::Color.new(0, 62, 255, 50).freeze
@@ -92,7 +92,7 @@ module Ladb::OpenCutList
 
       help_btn = Kuix::Button.new
       help_btn.layout = Kuix::GridLayout.new
-      help_btn.border.set_all!(unit)
+      help_btn.border.set_all!(unit / 2)
       help_btn.padding.set!(unit, unit * 4, unit, unit * 4)
       help_btn.set_style_attribute(:background_color, Sketchup::Color.new('white'))
       help_btn.set_style_attribute(:background_color, Sketchup::Color.new(200, 200, 200, 255), :active)
@@ -107,20 +107,20 @@ module Ladb::OpenCutList
       # Status panel
 
       @status = Kuix::Panel.new
-      @status.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
+      @status.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
       @status.layout = Kuix::InlineLayout.new(false, unit, Kuix::Anchor.new(Kuix::Anchor::CENTER))
-      @status.padding.set_all!(unit * 2)
+      @status.padding.set_all!(unit * 3)
       @status.visible = false
       panel_south.append(@status)
 
       @status_lbl = Kuix::Label.new
-      @status_lbl.text_size = unit * 4
+      @status_lbl.text_size = unit * 3
       @status.append(@status_lbl)
 
       # Part panel
 
       @part_panel = Kuix::Panel.new
-      @part_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
+      @part_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
       @part_panel.layout = Kuix::InlineLayout.new(false, unit, Kuix::Anchor.new(Kuix::Anchor::CENTER))
       @part_panel.padding.set_all!(unit * 2)
       @part_panel.visible = false
@@ -173,7 +173,7 @@ module Ladb::OpenCutList
         actions_btn = Kuix::Button.new
         actions_btn.layout = Kuix::BorderLayout.new
         actions_btn.min_size.set_all!(unit * 10)
-        actions_btn.border.set_all!(unit)
+        actions_btn.border.set_all!(unit / 2)
         actions_btn.set_style_attribute(:background_color, Sketchup::Color.new(240, 240, 240))
         actions_btn.set_style_attribute(:background_color, Sketchup::Color.new(220, 220, 220).blend(Sketchup::Color.new('white'), 0.2), :hover)
         actions_btn.set_style_attribute(:border_color, Sketchup::Color.new(220, 220, 220), :hover)
@@ -452,11 +452,16 @@ module Ladb::OpenCutList
               part = _blop(entity, path)
               if part && event ==:move
 
-                set_status('')
+                if is_action_swap_auto? && !part.auto_oriented && part.def.size.length > part.def.size.width && part.def.size.width > part.def.size.thickness
+                  set_status("✔ #{Plugin.instance.get_i18n_string('tool.smart_axes.success.part_oriented')}", STATUS_TYPE_SUCCESS)
+                  return
+                end
 
                 definition = view.model.definitions[part.def.definition_id]
                 if definition && definition.count_instances > 1
-                  set_status(Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count => definition.count_instances - 1 }), STATUS_TYPE_WARNING)
+                  set_status("⚠️ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count => definition.count_instances - 1 })}", STATUS_TYPE_WARNING)
+                else
+                  set_status('')
                 end
 
               end

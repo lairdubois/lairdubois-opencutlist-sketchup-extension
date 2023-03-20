@@ -100,7 +100,7 @@ module Ladb::OpenCutList
       help_btn = Kuix::Button.new
       help_btn.layout_data = Kuix::StaticLayoutData.new
       help_btn.layout = Kuix::GridLayout.new
-      help_btn.border.set_all!(@unit)
+      help_btn.border.set_all!(@unit / 2)
       help_btn.padding.set!(@unit, @unit * 4, @unit, @unit * 4)
       help_btn.set_style_attribute(:background_color, Sketchup::Color.new('white'))
       help_btn.set_style_attribute(:background_color, Sketchup::Color.new(200, 200, 200, 255), :active)
@@ -117,7 +117,7 @@ module Ladb::OpenCutList
       @status = Kuix::Panel.new
       @status.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
       @status.layout = Kuix::InlineLayout.new(true, @unit, Kuix::Anchor.new(Kuix::Anchor::CENTER))
-      @status.padding.set_all!(@unit)
+      @status.padding.set_all!(@unit * 2)
       @status.visible = false
       @status.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255, 128))
       panel_south.append(@status)
@@ -157,7 +157,7 @@ module Ladb::OpenCutList
 
         filters_btn = Kuix::Button.new
         filters_btn.min_size.set_all!(@unit * 10)
-        filters_btn.border.set_all!(@unit)
+        filters_btn.border.set_all!(@unit / 2)
         filters_btn.set_style_attribute(:background_color, Sketchup::Color.new('white'))
         filters_btn.set_style_attribute(:background_color, color, :active)
         filters_btn.set_style_attribute(:background_color, color.blend(Sketchup::Color.new('white'), 0.2), :hover)
@@ -205,7 +205,7 @@ module Ladb::OpenCutList
 
         actions_btn = Kuix::Button.new
         actions_btn.min_size.set_all!(@unit * 10)
-        actions_btn.border.set_all!(@unit)
+        actions_btn.border.set_all!(@unit / 2)
         actions_btn.set_style_attribute(:background_color, Sketchup::Color.new('white'))
         actions_btn.set_style_attribute(:background_color, Sketchup::Color.new(200, 200, 200, 255), :active)
         actions_btn.set_style_attribute(:background_color, Sketchup::Color.new(200, 200, 200, 255).blend(Sketchup::Color.new('white'), 0.2), :hover)
@@ -232,7 +232,7 @@ module Ladb::OpenCutList
       west_btn = Kuix::Button.new
       west_btn.layout = Kuix::GridLayout.new
       west_btn.min_size.set_all!(@unit * 10)
-      west_btn.border.set_all!(@unit)
+      west_btn.border.set_all!(@unit / 2)
       west_btn.set_style_attribute(:background_color, Sketchup::Color.new(200, 200, 200, 255))
       west_btn.set_style_attribute(:background_color, Sketchup::Color.new(220, 220, 220, 255), :active)
       west_btn.set_style_attribute(:border_color, Sketchup::Color.new(128, 128, 128, 255), :hover)
@@ -252,7 +252,7 @@ module Ladb::OpenCutList
       east_btn = Kuix::Button.new
       east_btn.layout = Kuix::GridLayout.new
       east_btn.min_size.set_all!(@unit * 10)
-      east_btn.border.set_all!(@unit)
+      east_btn.border.set_all!(@unit / 2)
       east_btn.set_style_attribute(:background_color, Sketchup::Color.new(200, 200, 200, 255))
       east_btn.set_style_attribute(:background_color, Sketchup::Color.new(220, 220, 220, 255), :active)
       east_btn.set_style_attribute(:border_color, Sketchup::Color.new(128, 128, 128, 255), :hover)
@@ -627,7 +627,7 @@ module Ladb::OpenCutList
         btn = Kuix::Button.new
         btn.layout = Kuix::StaticLayout.new
         btn.min_size.set!(@unit * 20, @unit * 10)
-        btn.border.set_all!(@unit)
+        btn.border.set_all!(@unit / 2)
         btn.set_style_attribute(:background_color, material.color)
         btn.set_style_attribute(:background_color, material.color.blend(Sketchup::Color.new(material_color_is_dark ? 'white' : 'black'), 0.7), :active)
         btn.set_style_attribute(:border_color, material.color.blend(Sketchup::Color.new(material_color_is_dark ? 'white' : 'black'), 0.7), :hover)
