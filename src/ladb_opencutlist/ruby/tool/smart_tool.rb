@@ -20,18 +20,6 @@ module Ladb::OpenCutList
     STATUS_TYPE_SUCCESS = 3
 
     ACTION_NONE = -1
-    ACTION_SWAP_LENGTH_WIDTH = 0
-    ACTION_SWAP_FRONT_BACK = 1
-    ACTION_SWAP_AUTO = 2
-
-    ACTION_MODIFIER_CLOCKWISE = 0
-    ACTION_MODIFIER_ANTICLOCKWIZE = 1
-
-    ACTIONS = [
-      { :action => ACTION_SWAP_LENGTH_WIDTH, :modifiers => [ ACTION_MODIFIER_CLOCKWISE, ACTION_MODIFIER_ANTICLOCKWIZE ] },
-      { :action => ACTION_SWAP_FRONT_BACK },
-      { :action => ACTION_SWAP_AUTO }
-    ]
 
     COLOR_STATUS_TEXT_ERROR = Sketchup::Color.new('#d9534f').freeze
     COLOR_STATUS_TEXT_WARNING = Sketchup::Color.new('#997404').freeze
@@ -41,28 +29,11 @@ module Ladb::OpenCutList
     COLOR_STATUS_BACKGROUND_WARNING = Sketchup::Color.new('#ffe69c').freeze
     COLOR_STATUS_BACKGROUND_SUCCESS = COLOR_STATUS_TEXT_SUCCESS.blend(Sketchup::Color.new('white'), 0.2).freeze
 
-    COLOR_MESH = Sketchup::Color.new(0, 62, 255, 50).freeze
-    COLOR_ARROW = Sketchup::Color.new(255, 255, 255).freeze
-    COLOR_ARROW_AUTO_ORIENTED = Sketchup::Color.new(123, 213, 239, 255).freeze
-    COLOR_BOX = Sketchup::Color.new(0, 0, 255).freeze
-
     @@action = nil
     @@action_modifier = nil
 
     def initialize
       super(true, true)
-
-      model = Sketchup.active_model
-      if model
-
-        # Create cursors
-        @cursor_swap_length_width_clockwise = create_cursor('swap-length-width-clockwise', 4, 4)
-        @cursor_swap_length_width_anticlockwise = create_cursor('swap-length-width-anticlockwise', 4, 4)
-        @cursor_swap_front_back = create_cursor('swap-front-back', 4, 4)
-        @cursor_swap_auto = create_cursor('swap-auto', 4, 4)
-        @cursor_select_error = create_cursor('select-error', 4, 4)
-
-      end
 
       # Setup action stack
       @action_stack = []
@@ -117,24 +88,6 @@ module Ladb::OpenCutList
       @status_lbl.text_size = unit * 3
       @status.append(@status_lbl)
 
-      # Part panel
-
-      @part_panel = Kuix::Panel.new
-      @part_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
-      @part_panel.layout = Kuix::InlineLayout.new(false, unit, Kuix::Anchor.new(Kuix::Anchor::CENTER))
-      @part_panel.padding.set_all!(unit * 2)
-      @part_panel.visible = false
-      @part_panel.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255, 128))
-      panel_south.append(@part_panel)
-
-      @part_panel_lbl_1 = Kuix::Label.new
-      @part_panel_lbl_1.text_size = unit * 4
-      @part_panel.append(@part_panel_lbl_1)
-
-      @part_panel_lbl_2 = Kuix::Label.new
-      @part_panel_lbl_2.text_size = unit * 3
-      @part_panel.append(@part_panel_lbl_2)
-
       # Actions panel
 
       actions = Kuix::Panel.new
@@ -158,7 +111,7 @@ module Ladb::OpenCutList
       actions.append(actions_btns_panel)
 
       @action_buttons = []
-      ACTIONS.each { |action_def|
+      get_action_defs.each { |action_def|
 
         action = action_def[:action]
         modifiers = action_def[:modifiers]
@@ -221,7 +174,7 @@ module Ladb::OpenCutList
 
     end
 
-    # -- Setters --
+    # -- Status --
 
     def set_status(text, type = STATUS_TYPE_DEFAULT)
       return unless @status && text.is_a?(String)
@@ -244,13 +197,10 @@ module Ladb::OpenCutList
       end
     end
 
-    def set_part(text_1, text_2 = '')
-      return unless @part_panel && text_1.is_a?(String) && text_2.is_a?(String)
-      @part_panel_lbl_1.text = text_1
-      @part_panel_lbl_1.visible = !text_1.empty?
-      @part_panel_lbl_2.text = text_2
-      @part_panel_lbl_2.visible = !text_2.empty?
-      @part_panel.visible = @part_panel_lbl_1.visible? || @part_panel_lbl_2.visible?
+    # -- Actions --
+
+    def get_action_defs  # Array<{ :action => THE_ACTION, :modifiers => [ MODIFIER_1, MODIFIER_2, ... ] }>
+      []
     end
 
     def set_action(action, modifier = nil)
@@ -269,31 +219,7 @@ module Ladb::OpenCutList
       end
 
       # Update status text and root cursor
-      case action
-      when ACTION_SWAP_LENGTH_WIDTH
-        Sketchup.set_status_text(
-          Plugin.instance.get_i18n_string('tool.smart_axes.status_swap_length_width') +
-            ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_1') +
-            ' | ' + Plugin.instance.get_i18n_string("default.constrain_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.status_toggle_clockwise'),
-          SB_PROMPT)
-        set_root_cursor(is_action_modifier_anticlockwise? ? @cursor_swap_length_width_anticlockwise : @cursor_swap_length_width_clockwise)
-      when ACTION_SWAP_FRONT_BACK
-        Sketchup.set_status_text(
-          Plugin.instance.get_i18n_string('tool.smart_axes.status_swap_front_back') +
-            ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_0'),
-          SB_PROMPT)
-        set_root_cursor(@cursor_swap_front_back)
-      when ACTION_SWAP_AUTO
-        Sketchup.set_status_text(
-          Plugin.instance.get_i18n_string('tool.smart_axes.status_swap_auto') +
-            ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_0') +
-            ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_1'),
-          SB_PROMPT)
-        set_root_cursor(@cursor_swap_auto)
-      else
-        Sketchup.set_status_text('', SB_PROMPT)
-        set_root_cursor(@cursor_select_error)
-      end
+      # TODO
 
     end
 
@@ -329,26 +255,6 @@ module Ladb::OpenCutList
       @@action == ACTION_NONE
     end
 
-    def is_action_swap_length_width?
-      @@action == ACTION_SWAP_LENGTH_WIDTH
-    end
-
-    def is_action_swap_front_back?
-      @@action == ACTION_SWAP_FRONT_BACK
-    end
-
-    def is_action_swap_auto?
-      @@action == ACTION_SWAP_AUTO
-    end
-
-    def is_action_modifier_clockwise?
-      @@action_modifier == ACTION_MODIFIER_CLOCKWISE
-    end
-
-    def is_action_modifier_anticlockwise?
-      @@action_modifier == ACTION_MODIFIER_ANTICLOCKWIZE
-    end
-
     # -- Events --
 
     def onActivate(view)
@@ -365,30 +271,6 @@ module Ladb::OpenCutList
 
     def onResume(view)
       set_root_action(@@action, @@action_modifier)  # Force SU status text
-    end
-
-    def onKeyDown(key, repeat, flags, view)
-      return if super
-      if key == CONSTRAIN_MODIFIER_KEY && is_action_swap_length_width?
-        push_action_modifier(is_action_modifier_clockwise? ? ACTION_MODIFIER_ANTICLOCKWIZE : ACTION_MODIFIER_CLOCKWISE)
-      elsif key == COPY_MODIFIER_KEY && !is_action_swap_length_width?
-        push_action(ACTION_SWAP_LENGTH_WIDTH, ACTION_MODIFIER_CLOCKWISE)
-      elsif key == ALT_MODIFIER_KEY && !is_action_swap_front_back?
-        push_action(ACTION_SWAP_FRONT_BACK)
-      end
-    end
-
-    def onKeyUp(key, repeat, flags, view)
-      return if super
-      if key == CONSTRAIN_MODIFIER_KEY && is_action_swap_length_width?
-        pop_action_modifier
-      end
-      if key == COPY_MODIFIER_KEY && is_action_swap_length_width?
-        pop_action
-      end
-      if key == ALT_MODIFIER_KEY && is_action_swap_front_back?
-        pop_action
-      end
     end
 
     def onLButtonDown(flags, x, y, view)
@@ -413,15 +295,10 @@ module Ladb::OpenCutList
       _handle_mouse_event(x, y, view, :move)
     end
 
-    def onMouseLeave(view)
-      return if super
-    end
-
     private
 
     def _reset(view)
       set_status('')
-      set_part('')
       if @picked_path
         @is_down = false
         @picked_path = nil
@@ -449,95 +326,7 @@ module Ladb::OpenCutList
               entity = picked_entity
               path = picked_entity_path.slice(0..-2)
 
-              part = _blop(entity, path)
-              if part && event ==:move
-
-                if is_action_swap_auto? && !part.auto_oriented && part.def.size.length > part.def.size.width && part.def.size.width > part.def.size.thickness
-                  set_status("✔ #{Plugin.instance.get_i18n_string('tool.smart_axes.success.part_oriented')}", STATUS_TYPE_SUCCESS)
-                  return
-                end
-
-                definition = view.model.definitions[part.def.definition_id]
-                if definition && definition.count_instances > 1
-                  set_status("⚠️ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count => definition.count_instances - 1 })}", STATUS_TYPE_WARNING)
-                else
-                  set_status('')
-                end
-
-              end
-              if part && (event == :l_button_up || event == :l_button_dblclick)
-
-                definition = view.model.definitions[part.def.definition_id]
-                definition_attributes = DefinitionAttributes.new(definition)
-
-                unless definition.nil?
-
-                  ti = nil
-                  if is_action_swap_length_width?
-                    if is_action_modifier_anticlockwise?
-                      ti = Geom::Transformation.axes(
-                        ORIGIN,
-                        part.def.size.normals[1],
-                        AxisUtils.flipped?(part.def.size.normals[1], part.def.size.normals[0], part.def.size.normals[2]) ? part.def.size.normals[0].reverse : part.def.size.normals[0],
-                        part.def.size.normals[2]
-                      )
-                    else
-                      ti = Geom::Transformation.axes(
-                        ORIGIN,
-                        AxisUtils.flipped?(part.def.size.normals[1], part.def.size.normals[0], part.def.size.normals[2]) ? part.def.size.normals[1].reverse : part.def.size.normals[1],
-                        part.def.size.normals[0],
-                        part.def.size.normals[2]
-                      )
-                    end
-                  elsif is_action_swap_front_back?
-                    ti = Geom::Transformation.axes(
-                      ORIGIN,
-                      part.def.size.normals[0],
-                      AxisUtils.flipped?(part.def.size.normals[0], part.def.size.normals[1], part.def.size.normals[2].reverse) ? part.def.size.normals[1].reverse : part.def.size.normals[1],
-                      part.def.size.normals[2].reverse
-                    )
-                  elsif is_action_swap_auto?
-
-                    instance_info = part.def.instance_infos.values.first
-                    oriented_size = Size3d.create_from_bounds(instance_info.definition_bounds, part.def.scale, true)
-
-                    ti = Geom::Transformation.axes(
-                      ORIGIN,
-                      AxisUtils.flipped?(oriented_size.normals[0], oriented_size.normals[1], oriented_size.normals[2]) ? oriented_size.normals[0].reverse : oriented_size.normals[0],
-                      oriented_size.normals[1],
-                      oriented_size.normals[2]
-                    )
-
-                  end
-                  unless ti.nil?
-
-                    t = ti.inverse
-
-                    # Start undoable model modification operation
-                    view.model.start_operation('OpenCutList - Part Swap', true, false, false)
-
-                    # Transform definition's entities
-                    entities = definition.entities
-                    entities.transform_entities(t, entities.to_a)
-
-                    # Inverse transform definition's instances
-                    definition.instances.each { |instance|
-                      instance.transformation *= ti
-                    }
-
-                    definition_attributes.orientation_locked_on_axis = true
-                    definition_attributes.write_to_attributes
-
-                    # Commit model modification operation
-                    view.model.commit_operation
-
-                    _blop(entity, path)
-
-                  end
-
-                end
-
-              end
+              # TODO
 
               return
 
@@ -561,90 +350,6 @@ module Ladb::OpenCutList
         return part_path if entity.is_a?(Sketchup::ComponentInstance) && !entity.definition.behavior.cuts_opening? && !entity.definition.behavior.always_face_camera?
         part_path.pop
       }
-    end
-
-    def _blop(entity, path)
-
-      worker = CutlistGenerateWorker.new({}, entity, path)
-      cutlist = worker.run
-
-      part = nil
-      cutlist.groups.each { |group|
-        group.parts.each { |p|
-          if p.def.definition_id == entity.definition.name
-            part = p
-            break
-          end
-        }
-        break unless part.nil?
-      }
-
-      if part
-
-        # Display part infos
-        infos = [ "#{part.length} x #{part.width} x #{part.thickness}" ]
-        infos << part.material_name unless part.material_name.empty?
-        infos << ">|<" if part.flipped
-        set_part(
-          "#{part.name}",
-          "#{infos.join(' | ')}"
-        )
-
-        instance_info = part.def.instance_infos.values.first
-
-        # Create drawing helpers
-
-        @space.remove_all
-
-        arrow_color = part.auto_oriented ? COLOR_ARROW_AUTO_ORIENTED : COLOR_ARROW
-        arrow_offset = Sketchup.active_model.active_view.pixels_to_model(1, ORIGIN)
-
-        part_helper = Kuix::Group.new
-        part_helper.transformation = instance_info.transformation
-        @space.append(part_helper)
-
-          # Mesh
-          mesh = Kuix::Mesh.new
-          mesh.add_trangles(_compute_children_faces_triangles(instance_info.entity.definition.entities))
-          mesh.background_color = COLOR_MESH
-          part_helper.append(mesh)
-
-          # Back arrow
-          arrow = Kuix::Arrow.new
-          arrow.pattern_transformation = instance_info.size.oriented_transformation if part.auto_oriented
-          arrow.bounds.origin.copy!(instance_info.definition_bounds.min.offset(Geom::Vector3d.new(0, 0, -arrow_offset)))
-          arrow.bounds.size.copy!(instance_info.definition_bounds)
-          arrow.color = arrow_color
-          arrow.line_width = 2
-          arrow.line_stipple = '-'
-          part_helper.append(arrow)
-
-          # Front arrow
-          arrow = Kuix::Arrow.new
-          arrow.pattern_transformation = instance_info.size.oriented_transformation if part.auto_oriented
-          arrow.pattern_transformation *= Geom::Transformation.translation(Z_AXIS)
-          arrow.bounds.origin.copy!(instance_info.definition_bounds.min.offset(Geom::Vector3d.new(0, 0, arrow_offset)))
-          arrow.bounds.size.copy!(instance_info.definition_bounds)
-          arrow.color = arrow_color
-          arrow.line_width = 2
-          part_helper.append(arrow)
-
-          # Bounding box helper
-          box_helper = Kuix::BoxHelper.new
-          box_helper.bounds.origin.copy!(instance_info.definition_bounds.min)
-          box_helper.bounds.size.copy!(instance_info.definition_bounds)
-          box_helper.color = COLOR_BOX
-          box_helper.line_width = 2
-          box_helper.line_stipple = '-'
-          part_helper.append(box_helper)
-
-          # Axes helper
-          axes_helper = Kuix::AxesHelper.new
-          part_helper.append(axes_helper)
-
-      end
-
-      part
     end
 
   end
