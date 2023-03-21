@@ -60,6 +60,11 @@ default:
   setup_model_units: Setup the model units
   load_more: Load more
   reset_to_app_defaults: Restore to original values
+  constrain_key: Shift
+  copy_key_win: Control
+  copy_key_mac: Option
+  alt_key_win: Alt
+  alt_key_mac: Command
 core:
   menu:
     submenu: OpenCutList
@@ -71,11 +76,13 @@ core:
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_veneers_properties: $t(tab.cutlist.edit_part_veneers_properties)
       smart_paint: $t(core.toolbar.command.smart_paint)
+      smart_axes: $t(core.toolbar.command.smart_axes)
   toolbar:
     name: OpenCutList
     command:
       dialog: OpenCutList
       smart_paint: Paint Parts
+      smart_axes: Orient Axes
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
@@ -1320,10 +1327,6 @@ tool:
     transparency: Transparency
     zoom_extents: Zoom Extents
   smart_paint:
-    copy_key_win: Ctrl
-    copy_key_mac: Option
-    alt_key_win: Alt
-    alt_key_mac: Cmd
     status_paint_face: Click to paint a face.
     status_paint_part: Click to paint an entire part.
     status_unpaint_face: Click to clean a face.
@@ -1347,3 +1350,21 @@ tool:
       no_material: Your model does not contain any material!
       all_filtered: The selected filters mask all materials!
       not_part: The target object must be a component.
+  smart_axes:
+    status_swap_length_width: Click on a part to swap Length and Width.
+    status_swap_front_back: Click on a part to swap Frontface and Backface.
+    status_swap_auto: Click on a part to set the Length to the largest dimension and the Thickness to the smallest.
+    status_toggle_clockwise: Reverse the direction of rotation.
+    action: Action
+    action_0: Switch Length ↔ Width
+    action_1: Switch Frontface ↔ Backface
+    action_2: Orient automatically
+    action_modifier_0: "⤵"
+    action_modifier_1: "⤴"
+    error:
+      not_part: The target object is not a part.
+    warning:
+      more_entities: "{{ count }} other part sharing the same definition will also be modified."
+      more_entities_plural: "{{ count }} other parts sharing the same definition will also be modified."
+    success:
+      part_oriented: This part already has its length on the largest dimension and its thickness on the smallest.
