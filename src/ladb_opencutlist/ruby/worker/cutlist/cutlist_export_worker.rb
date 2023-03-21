@@ -135,7 +135,7 @@ module Ladb::OpenCutList
           next if @hidden_group_ids.include?(group.id)
 
           data = SummaryExportRowData.new(
-            StringWrapper.new(Plugin.instance.get_i18n_string("tab.materials.type_#{group.material_type}")),
+            MaterialTypeWrapper.new(group.material_type),
             StringWrapper.new((group.material_name ? group.material_name : Plugin.instance.get_i18n_string('tab.cutlist.material_undefined')) + (group.material_type != MaterialAttributes::TYPE_UNKNOWN && group.material_type != MaterialAttributes::TYPE_HARDWARE ? ' / ' + group.std_dimension : '')),
             IntegerWrapper.new(group.part_count),
             LengthWrapper.new(group.def.total_cutting_length, false),
@@ -168,7 +168,7 @@ module Ladb::OpenCutList
               LengthWrapper.new(part.def.size.width),
               LengthWrapper.new(part.def.size.thickness),
               AreaWrapper.new(part.def.final_area),
-              StringWrapper.new(Plugin.instance.get_i18n_string("tab.materials.type_#{group.material_type}")),
+              MaterialTypeWrapper.new(group.material_type),
               StringWrapper.new(group.material_display_name),
               ArrayWrapper.new(part.entity_names.map(&:first)),
               StringWrapper.new(part.description),
@@ -238,7 +238,7 @@ module Ladb::OpenCutList
                   LengthWrapper.new(part.def.size.width),
                   LengthWrapper.new(part.def.size.thickness),
                   AreaWrapper.new(part.def.final_area),
-                  StringWrapper.new(Plugin.instance.get_i18n_string("tab.materials.type_#{group.material_type}")),
+                  MaterialTypeWrapper.new(group.material_type),
                   StringWrapper.new(group.material_display_name),
                   StringWrapper.new(part.description),
                   ArrayWrapper.new(part.tags),

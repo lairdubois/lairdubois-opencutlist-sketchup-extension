@@ -74,7 +74,7 @@ LadbTextinputAbstract.prototype.appendRightTools = function ($toolsContainer) {
             .on('click', function() {
                 that.reset();
                 $(this).blur();
-                that.$element.focus();
+                that.focus();
             })
     ;
     $toolsContainer.append($resetBtn);

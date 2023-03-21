@@ -175,6 +175,7 @@ core:
       store: Mémoriser cette couleur
       remove: Oublier cette couleur
     textinput_code:
+      snippets: Exemples de formules
       help: Tappez **@** pour ouvrir la liste des variables de donnée.
     three_viewer:
       view: Vue {{ view }}
@@ -914,6 +915,14 @@ tab:
       option_camera_target_auto: Automatique
       option_camera_target_custom: Personnalisée
       option_explode: Eclaté
+      snippet:
+        number: Numéro
+        name: Désignation
+        number_and_name: Numéro et désignation
+        number_without_hardware: Numéro (sans les accessoires)
+        size: Taille capable
+        area: Surface capable
+        volume: Volume capable
       error:
         no_part: Il y a aucune pièce à dessiner.
         failed_to_save_as_skp: Echec de l'écriture du fichier SKP à envoyer à Layout.

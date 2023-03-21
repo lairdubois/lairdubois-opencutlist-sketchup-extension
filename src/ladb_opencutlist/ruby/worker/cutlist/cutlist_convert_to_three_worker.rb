@@ -61,7 +61,7 @@ module Ladb::OpenCutList
               LengthWrapper.new(part.def.size.width),
               LengthWrapper.new(part.def.size.thickness),
               AreaWrapper.new(part.def.final_area),
-              StringWrapper.new(Plugin.instance.get_i18n_string("tab.materials.type_#{part.group.material_type}")),
+              MaterialTypeWrapper.new(part.group.material_type),
               StringWrapper.new(part.material_name),
               StringWrapper.new(part.description),
               ArrayWrapper.new(part.tags),
@@ -179,6 +179,7 @@ module Ladb::OpenCutList
       begin
         text = eval(formula, data.get_binding)
         text = text.export if text.is_a?(Wrapper)
+        text = text.to_s if !text.is_a?(String) && text.respond_to?(:to_s)
       rescue Exception => e
         text = { :error => e.message.split(/cutlist_convert_to_three_worker[.]rb:\d+:/).last } # Remove path in exception message
       end

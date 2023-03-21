@@ -1,6 +1,7 @@
 module Ladb::OpenCutList
 
   require_relative '../../utils/unit_utils'
+  require_relative '../../model/attributes/material_attributes'
 
   class Wrapper
 
@@ -306,6 +307,48 @@ module Ladb::OpenCutList
     def to_s
       return '' if @value == 0
       DimensionUtils.instance.format_to_readable_volume(@value)
+    end
+
+    def export
+      self.to_s
+    end
+
+  end
+
+  # -----
+
+  class MaterialTypeWrapper < ValueWrapper
+
+    def is_solid_wood?
+      @value == MaterialAttributes::TYPE_SOLID_WOOD
+    end
+
+    def is_sheet_good?
+      @value == MaterialAttributes::TYPE_SHEET_GOOD
+    end
+
+    def is_dimensional?
+      @value == MaterialAttributes::TYPE_DIMENSIONAL
+    end
+
+    def is_hardware?
+      @value == MaterialAttributes::TYPE_HARDWARE
+    end
+
+    def is_edge?
+      @value == MaterialAttributes::TYPE_EDGE
+    end
+
+    def is_veneer?
+      @value == MaterialAttributes::TYPE_VENEER
+    end
+
+    def to_i
+      @value
+    end
+
+    def to_s
+      Plugin.instance.get_i18n_string("tab.materials.type_#{@value}")
     end
 
     def export

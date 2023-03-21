@@ -1441,7 +1441,7 @@
                     { name: 'bbox_width', type: 'length' },
                     { name: 'bbox_thickness', type: 'length' },
                     { name: 'final_area', type: 'area' },
-                    { name: 'material_type', type: 'string' },
+                    { name: 'material_type', type: 'material-type' },
                     { name: 'material_name', type: 'string' },
                     { name: 'description', type: 'string' },
                     { name: 'tags', type: 'array' },
@@ -1452,7 +1452,18 @@
                     { name: 'veneer_zmax', type: 'veneer' },
                     { name: 'veneer_zmin', type: 'veneer' },
                     { name: 'layer', type: 'string' }
-                ])
+                ]),
+                snippetDefs: [
+                    { name: i18next.t('tab.cutlist.layout.snippet.number'), value: '@number' },
+                    { name: i18next.t('tab.cutlist.layout.snippet.name'), value: '@name' },
+                    { name: i18next.t('tab.cutlist.layout.snippet.number_and_name'), value: '@number + " - " + @name' },
+                    { name: '-' },
+                    { name: i18next.t('tab.cutlist.layout.snippet.size'), value: '@bbox_length + " x " + @bbox_width' },
+                    { name: i18next.t('tab.cutlist.layout.snippet.area'), value: '@bbox_length * @bbox_width' },
+                    { name: i18next.t('tab.cutlist.layout.snippet.volume'), value: '@bbox_length * @bbox_width * @bbox_thickness' },
+                    { name: '-' },
+                    { name: i18next.t('tab.cutlist.layout.snippet.number_without_hardware'), value: "@number unless @material_type.is_hardware?" },
+                ]
             })
             $selectPinsLength.selectpicker(SELECT_PICKER_OPTIONS);
             $selectPinsDirection.selectpicker(SELECT_PICKER_OPTIONS);

@@ -382,11 +382,9 @@ module Ladb::OpenCutList
       return if super
       if key == CONSTRAIN_MODIFIER_KEY && is_action_swap_length_width?
         pop_action_modifier
-      end
-      if key == COPY_MODIFIER_KEY && is_action_swap_length_width?
+      elsif key == COPY_MODIFIER_KEY && is_action_swap_length_width?
         pop_action
-      end
-      if key == ALT_MODIFIER_KEY && is_action_swap_front_back?
+      elsif key == ALT_MODIFIER_KEY && is_action_swap_front_back?
         pop_action
       end
     end
