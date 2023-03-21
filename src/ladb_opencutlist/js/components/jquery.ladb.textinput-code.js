@@ -24,8 +24,10 @@
     };
 
     LadbTextinputCode.prototype.val = function (value) {
-        this.cm.setValue(value);
-        this.cm.refresh();
+        if (this.cm) {
+            this.cm.setValue(value);
+            this.cm.refresh();
+        }
         return LadbTextinputAbstract.prototype.val.call(this, value);
     };
 
