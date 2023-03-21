@@ -41,7 +41,7 @@
 
         if (this.options.snippetDefs && this.options.snippetDefs.length > 0) {
 
-            var $snippetDropdownBtn = $('<div data-toggle="dropdown" style="outline: none;">')
+            var $snippetDropdownBtn = $('<div data-toggle="dropdown">')
                 .append('<i class="ladb-opencutlist-icon-snippets">')
             ;
             var $snippetDropdown = $('<ul class="dropdown-menu dropdown-menu-right">');
