@@ -308,15 +308,15 @@ module Ladb::OpenCutList
       when ACTION_PAINT_FACE
         Sketchup.set_status_text(
           Plugin.instance.get_i18n_string('tool.smart_paint.status_paint_face') +
-            ' | ' + Plugin.instance.get_i18n_string("tool.smart_paint.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.status_unpaint_face') +
-            ' | ' + Plugin.instance.get_i18n_string("tool.smart_paint.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.status_pick'),
+            ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.status_unpaint_face') +
+            ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.status_pick'),
           SB_PROMPT)
         set_root_cursor(@cursor_paint_face_id)
       when ACTION_PAINT_PART
         Sketchup.set_status_text(
           Plugin.instance.get_i18n_string('tool.smart_paint.status_paint_part') +
-            ' | ' + Plugin.instance.get_i18n_string("tool.smart_paint.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.status_unpaint_part') +
-            ' | ' + Plugin.instance.get_i18n_string("tool.smart_paint.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.status_pick'),
+            ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.status_unpaint_part') +
+            ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.status_pick'),
           SB_PROMPT)
         set_root_cursor(@cursor_paint_part_id)
       when ACTION_UNPAINT_FACE

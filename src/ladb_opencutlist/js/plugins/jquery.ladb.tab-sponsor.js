@@ -23,8 +23,8 @@
     LadbTabSponsor.prototype.bindObjectiveWidget = function ($widget) {
         var that = this;
 
-        var objectiveGoal = this.dialog.capabilities.manifest.sponsor.objectiveGoal;
-        var objectiveCurrency = this.dialog.capabilities.manifest.sponsor.objectiveCurrency;
+        var objectiveGoal = this.dialog.capabilities.manifest.sponsor && this.dialog.capabilities.manifest.sponsor.objectiveGoal ? this.dialog.capabilities.manifest.sponsor.objectiveGoal : 6000;
+        var objectiveCurrency = this.dialog.capabilities.manifest.sponsor && this.dialog.capabilities.manifest.sponsor.objectiveCurrency ? this.dialog.capabilities.manifest.sponsor.objectiveCurrency : 'USD';
 
         // Fetch UI elements
         var $loading = $('.ladb-loading', $widget);
