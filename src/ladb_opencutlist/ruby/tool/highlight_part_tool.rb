@@ -2,7 +2,6 @@ module Ladb::OpenCutList
 
   require_relative '../lib/kuix/kuix'
   require_relative '../helper/layer_visibility_helper'
-  require_relative '../helper/screen_scale_factor_helper'
   require_relative '../helper/face_triangles_helper'
   require_relative '../utils/point3d_utils'
   require_relative '../model/cutlist/cutlist'
@@ -10,7 +9,6 @@ module Ladb::OpenCutList
   class HighlightPartTool < Kuix::KuixTool
 
     include LayerVisibilityHelper
-    include ScreenScaleFactorHelper
     include FaceTrianglesHelper
     include CutlistObserverHelper
 
@@ -114,7 +112,7 @@ module Ladb::OpenCutList
 
       @canvas.layout = Kuix::BorderLayout.new
 
-      unit = view.vpheight < 800 ? 4 : 8
+      unit = [ [ view.vpheight / 150, 8 ].min, 4 * UI.scale_factor ].max
 
       panel = Kuix::Entity2d.new
       panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)

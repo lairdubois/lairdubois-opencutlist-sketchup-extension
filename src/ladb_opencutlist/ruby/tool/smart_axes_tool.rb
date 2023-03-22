@@ -3,10 +3,11 @@ module Ladb::OpenCutList
   require_relative '../lib/kuix/kuix'
   require_relative '../helper/layer_visibility_helper'
   require_relative '../helper/face_triangles_helper'
+  require_relative '../model/attributes/definition_attributes'
+  require_relative '../model/geom/size3d'
   require_relative '../worker/cutlist/cutlist_generate_worker'
   require_relative '../utils/axis_utils'
   require_relative '../utils/transformation_utils'
-  require_relative '../model/geom/size3d'
 
   class SmartAxesTool < Kuix::KuixTool
 
@@ -75,7 +76,7 @@ module Ladb::OpenCutList
 
       @canvas.layout = Kuix::BorderLayout.new
 
-      unit = view.vpheight < 800 ? 4 : 8
+      unit = [ [ view.vpheight / 150, 8 ].min, 4 * UI.scale_factor ].max
 
       panel_north = Kuix::Panel.new
       panel_north.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
@@ -466,7 +467,6 @@ module Ladb::OpenCutList
               if part && (event == :l_button_up || event == :l_button_dblclick)
 
                 definition = view.model.definitions[part.def.definition_id]
-                definition_attributes = DefinitionAttributes.new(definition)
 
                 unless definition.nil?
 
@@ -523,6 +523,7 @@ module Ladb::OpenCutList
                       instance.transformation *= ti
                     }
 
+                    definition_attributes = DefinitionAttributes.new(definition)
                     definition_attributes.orientation_locked_on_axis = true
                     definition_attributes.write_to_attributes
 

@@ -36,6 +36,10 @@ module Ladb::OpenCutList::Kuix
       "#{self.class.name} (x=#{@x}, y=#{@y}, z=#{@z})"
     end
 
+    def to_p
+      Geom::Point3d.new(@x, @y, @z)
+    end
+
   end
 
 end

@@ -3,7 +3,7 @@ module Ladb::OpenCutList::Kuix
   class Lines < Entity3d
 
     attr_accessor :pattern_transformation
-    attr_accessor :color, :background_color
+    attr_accessor :color
     attr_accessor :line_width, :line_stipple
 
     def initialize(pattern = [], is_loop = true, id = nil)
@@ -14,7 +14,6 @@ module Ladb::OpenCutList::Kuix
       @is_loop = is_loop
 
       @color = nil
-      @background_color = nil
       @line_width = 1
       @line_stipple = ''
 
