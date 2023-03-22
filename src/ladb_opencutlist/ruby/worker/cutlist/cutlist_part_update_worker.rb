@@ -39,6 +39,7 @@ module Ladb::OpenCutList
 
     def initialize(settings, cutlist)
 
+      @auto_orient = settings.fetch('auto_orient', false)
       @parts_data = []
 
       parts_data = settings.fetch('parts_data')
@@ -180,8 +181,18 @@ module Ladb::OpenCutList
               origin = bounds.min
             when 'center'
               origin = bounds.center
-            when 'min-center'
-              origin = Geom::Point3d.new(bounds.min.x , bounds.center.y, bounds.center.z)
+            when 'front-center'
+              size = Size3d::create_from_bounds(bounds, Scale3d.new, @auto_orient && !part_data.orientation_locked_on_axis)
+              case size.oriented_normal(Z_AXIS)
+              when X_AXIS
+                origin = Geom::Point3d.new(bounds.max.x , bounds.center.y, bounds.center.z)
+              when Y_AXIS
+                origin = Geom::Point3d.new(bounds.center.x , bounds.max.y, bounds.center.z)
+              when Z_AXIS
+                origin = Geom::Point3d.new(bounds.center.x , bounds.center.y, bounds.max.z)
+              else
+                origin = ORIGIN # Strange axis
+              end
             else
               origin = ORIGIN
             end

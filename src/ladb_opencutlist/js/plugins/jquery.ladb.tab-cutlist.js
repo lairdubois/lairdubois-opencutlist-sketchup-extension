@@ -2738,7 +2738,7 @@
 
                 }
 
-                rubyCallCommand('cutlist_part_update', { parts_data: editedParts }, function (response) {
+                rubyCallCommand('cutlist_part_update', { auto_orient: that.generateOptions.auto_orient, parts_data: editedParts }, function (response) {
 
                     if (response['errors']) {
 
