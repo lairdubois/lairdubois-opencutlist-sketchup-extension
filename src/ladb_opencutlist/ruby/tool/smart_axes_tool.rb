@@ -42,7 +42,7 @@ module Ladb::OpenCutList
     COLOR_STATUS_BACKGROUND_WARNING = Sketchup::Color.new('#ffe69c').freeze
     COLOR_STATUS_BACKGROUND_SUCCESS = COLOR_STATUS_TEXT_SUCCESS.blend(Sketchup::Color.new('white'), 0.2).freeze
 
-    COLOR_MESH = Sketchup::Color.new(0, 62, 255, 50).freeze
+    COLOR_MESH = Sketchup::Color.new(0, 62, 255, 100).freeze
     COLOR_ARROW = Sketchup::Color.new(255, 255, 255).freeze
     COLOR_ARROW_AUTO_ORIENTED = Sketchup::Color.new(123, 213, 239, 255).freeze
     COLOR_BOX = Sketchup::Color.new(0, 0, 255).freeze
@@ -596,6 +596,7 @@ module Ladb::OpenCutList
         @space.remove_all
 
         arrow_color = part.auto_oriented ? COLOR_ARROW_AUTO_ORIENTED : COLOR_ARROW
+        arrow_line_width = 2
         arrow_offset = Sketchup.active_model.active_view.pixels_to_model(1, ORIGIN)
 
         part_helper = Kuix::Group.new
@@ -614,7 +615,7 @@ module Ladb::OpenCutList
           arrow.bounds.origin.copy!(instance_info.definition_bounds.min.offset(Geom::Vector3d.new(0, 0, -arrow_offset)))
           arrow.bounds.size.copy!(instance_info.definition_bounds)
           arrow.color = arrow_color
-          arrow.line_width = 2
+          arrow.line_width = arrow_line_width
           arrow.line_stipple = '-'
           part_helper.append(arrow)
 
@@ -625,7 +626,7 @@ module Ladb::OpenCutList
           arrow.bounds.origin.copy!(instance_info.definition_bounds.min.offset(Geom::Vector3d.new(0, 0, arrow_offset)))
           arrow.bounds.size.copy!(instance_info.definition_bounds)
           arrow.color = arrow_color
-          arrow.line_width = 2
+          arrow.line_width = arrow_line_width
           part_helper.append(arrow)
 
           # Bounding box helper

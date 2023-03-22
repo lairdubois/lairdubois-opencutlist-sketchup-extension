@@ -151,6 +151,25 @@ module Ladb::OpenCutList
       @webgl_available
     end
 
+    # def self.verify_ui_scale
+    #   dialog = UI::HtmlDialog.new(dialog_title: 'ui_scale', width: 300, height: 300)
+    #
+    #   html = <<-EOT
+    # <!DOCTYPE html>
+    # <html><script> window.onload = function() { sketchup.ready(window.outerWidth, window.devicePixelRatio) }; </script></html>
+    #   EOT
+    #
+    #   dialog.add_action_callback('ready') do |_a, _width, pixel_ratio|
+    #     self.scale_factor = pixel_ratio
+    #     dialog.close
+    #     Sketchup.focus if Sketchup.respond_to?(:focus)
+    #   end
+    #
+    #   dialog.set_html(html)
+    #   dialog.center
+    #   dialog.show
+    # end
+
     def platform_is_win
       Sketchup.platform == :platform_win
     end

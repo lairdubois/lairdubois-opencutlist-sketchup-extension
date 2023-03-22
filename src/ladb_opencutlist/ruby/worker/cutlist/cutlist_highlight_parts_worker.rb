@@ -38,9 +38,12 @@ module Ladb::OpenCutList
       end
 
       # Create and activate highlight part tool
-      highlight_tool = HighlightPartTool.new(@cutlist, group, parts, instance_count, @minimize_on_highlight)
-      model.select_tool(highlight_tool)
+      model.select_tool(HighlightPartTool.new(@cutlist, group, parts, instance_count, @minimize_on_highlight))
 
+      # Focus SketchUp
+      Sketchup.focus if Sketchup.version_number >= 2110000000
+
+      { :success => true }
     end
 
     # -----
