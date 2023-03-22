@@ -7,9 +7,13 @@
 {% endif %}
 {% set noDefaultClose = true %}
 
+{% block headerTools %}
+    {% include 'components/_widget-preset.twig' %}
+    <button type="button" class="btn btn-default btn-xs" data-help-page="cutlist.layout"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
+{% endblock %}
+
 {% block headerInner %}
     {{ parent() }}
-    {% include 'components/_widget-preset.twig' %}
     <ul class="nav nav-tabs nav-justified" role="tablist">
         <li role="presentation"{% if tab == 'layout' %} class="active"{% endif %}><a href="#tab_layout_options_layout" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-layout"></i> {{ 'tab.cutlist.layout.options_layout'|i18next }}</a></li>
         <li role="presentation"{% if tab == 'settings' %} class="active"{% endif %}><a href="#tab_layout_options_settings" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-settings"></i> {{ 'tab.cutlist.layout.options_settings'|i18next }}</a></li>
@@ -211,10 +215,6 @@
             </div>
         </div>
     </div>
-{% endblock %}
-
-{% block footerLeftInner %}
-    <button type="button" class="btn btn-default" data-help-page="cutlist.layout"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
 {% endblock %}
 
 {% block footerRightInner %}

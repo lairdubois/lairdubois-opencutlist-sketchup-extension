@@ -76,7 +76,7 @@ module Ladb::OpenCutList
 
       @canvas.layout = Kuix::BorderLayout.new
 
-      unit = [ [ view.vpheight / 150, 8 ].min, 4 * UI.scale_factor ].max
+      unit = [ [ view.vpheight / 150, 8 ].min, 3 * UI.scale_factor ].max
 
       panel_north = Kuix::Panel.new
       panel_north.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
@@ -101,7 +101,7 @@ module Ladb::OpenCutList
       help_btn.set_style_attribute(:border_color, Sketchup::Color.new(200, 200, 200, 255), :hover)
       help_btn.append_static_label(Plugin.instance.get_i18n_string("default.help"), unit * 3)
       help_btn.on(:click) { |button|
-        UI.openURL('https://docs.opencutlist.org')  # TODO
+        Plugin.instance.open_docs_page('smart-axes-tool')
       }
       panel_north.append(help_btn)
 
@@ -110,7 +110,7 @@ module Ladb::OpenCutList
       @status = Kuix::Panel.new
       @status.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
       @status.layout = Kuix::InlineLayout.new(false, unit, Kuix::Anchor.new(Kuix::Anchor::CENTER))
-      @status.padding.set_all!(unit * 3)
+      @status.padding.set_all!(unit * 2)
       @status.visible = false
       panel_south.append(@status)
 

@@ -41,7 +41,7 @@ module Ladb::OpenCutList
       model.select_tool(HighlightPartTool.new(@cutlist, group, parts, instance_count, @minimize_on_highlight))
 
       # Focus SketchUp
-      Sketchup.focus if Sketchup.version_number >= 2110000000
+      Sketchup.focus if Sketchup.respond_to?(:focus)
 
       { :success => true }
     end

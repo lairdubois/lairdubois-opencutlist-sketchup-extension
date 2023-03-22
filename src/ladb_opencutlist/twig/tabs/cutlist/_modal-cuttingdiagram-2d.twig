@@ -4,9 +4,13 @@
 {% set title = ('tab.cutlist.cuttingdiagram.title'|i18next)~'<small class="ladb-horizontal-left-separator">'~group.material_name|escape('html')~' / '~group.std_dimension~'</small>' %}
 {% set sheetStrippedname = group.material_type == 6 ? 'veneer' : 'good' %}  {# 6 = TYPE_VENEER #}
 
+{% block headerTools %}
+    {% include 'components/_widget-preset.twig' %}
+    <button type="button" class="btn btn-default btn-xs" data-help-page="cutlist.cuttingdiagram2d"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
+{% endblock %}
+
 {% block headerInner %}
     {{ parent() }}
-    {% include 'components/_widget-preset.twig' %}
     <ul class="nav nav-tabs nav-justified" role="tablist">
         <li role="presentation"{% if tab == 'material' %} class="active"{% endif %}><a href="#tab_cuttingdiagram_options_material" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-material-type-2"></i> {{ 'tab.cutlist.cuttingdiagram.options_material'|i18next }}</a></li>
         <li role="presentation"{% if tab == 'config' %} class="active"{% endif %}><a href="#tab_cuttingdiagram_options_config" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-settings"></i> {{ 'tab.cutlist.cuttingdiagram.options_config'|i18next }}</a></li>
@@ -182,7 +186,6 @@
 {% endblock %}
 
 {% block footerLeftInner %}
-    <button type="button" class="btn btn-default" data-help-page="cutlist.cuttingdiagram2d"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
     <button type="button" class="btn btn-default" id="ladb_btn_edit_material" style="max-width: 260px;"><i class="ladb-opencutlist-icon-materials"></i> {{ 'tab.cutlist.menu.edit_material'|i18next({ 'material_name':group.material_display_name }) }}...</button>
 {% endblock %}
 

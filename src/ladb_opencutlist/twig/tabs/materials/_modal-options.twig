@@ -3,9 +3,13 @@
 {% set id = 'ladb_materials_modal_options' %}
 {% set title = 'default.options'|i18next %}
 
+{% block headerTools %}
+    {% include 'components/_widget-preset.twig' %}
+    <button type="button" class="btn btn-default btn-xs" data-help-page="materials.options"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
+{% endblock %}
+
 {% block headerInner %}
     {{ parent() }}
-    {% include 'components/_widget-preset.twig' %}
     <ul class="nav nav-tabs nav-justified" role="tablist">
         <li role="presentation" class="active"><a href="#tab_options_material_order_strategy" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-sort-asc"></i> {{ 'tab.materials.option.material_order_strategy'|i18next }}</a></li>
     </ul>
@@ -24,10 +28,6 @@
             </div>
         </div>
     </div>
-{% endblock %}
-
-{% block footerLeftInner %}
-    <button type="button" class="btn btn-default" data-help-page="materials.options"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
 {% endblock %}
 
 {% block footerRightInner %}

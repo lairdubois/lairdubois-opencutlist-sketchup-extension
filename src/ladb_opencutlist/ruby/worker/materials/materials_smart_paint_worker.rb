@@ -27,7 +27,7 @@ module Ladb::OpenCutList
       model.select_tool(SmartPaintTool.new(material))
 
       # Focus SketchUp
-      Sketchup.focus if Sketchup.version_number >= 2110000000
+      Sketchup.focus if Sketchup.respond_to?(:focus)
 
       { :success => true }
     end

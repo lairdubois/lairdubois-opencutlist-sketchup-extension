@@ -151,25 +151,6 @@ module Ladb::OpenCutList
       @webgl_available
     end
 
-    # def self.verify_ui_scale
-    #   dialog = UI::HtmlDialog.new(dialog_title: 'ui_scale', width: 300, height: 300)
-    #
-    #   html = <<-EOT
-    # <!DOCTYPE html>
-    # <html><script> window.onload = function() { sketchup.ready(window.outerWidth, window.devicePixelRatio) }; </script></html>
-    #   EOT
-    #
-    #   dialog.add_action_callback('ready') do |_a, _width, pixel_ratio|
-    #     self.scale_factor = pixel_ratio
-    #     dialog.close
-    #     Sketchup.focus if Sketchup.respond_to?(:focus)
-    #   end
-    #
-    #   dialog.set_html(html)
-    #   dialog.center
-    #   dialog.show
-    # end
-
     def platform_is_win
       Sketchup.platform == :platform_win
     end
@@ -217,6 +198,14 @@ module Ladb::OpenCutList
         path_key
       end
 
+    end
+
+    def open_docs_page(page)
+      url = 'https://www.lairdubois.fr/opencutlist/docs'
+      url += '-dev' if IS_DEV
+      url += "?v=#{EXTENSION_VERSION}&build=#{EXTENSION_BUILD}-#{(IS_RBZ ? 'rbz' : 'src')}&language=#{language}&locale=#{Sketchup.get_locale}"
+      url += "&page=#{page}"
+      UI.openURL(url.gsub(/ /, '%20'))  # Encode spaces with %20
     end
 
     # -----

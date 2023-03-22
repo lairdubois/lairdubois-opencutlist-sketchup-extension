@@ -9,11 +9,13 @@ in 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added **Ukrainian** language (thanks to Konstantin and Andrew)
   * Added new **Layout** module
   * Added new **Veneer material type**
+  * Added new **Smart Axes** tool
   * Added duplicate material feature that will copy all attributes
   * Added left and right arrow shortcut keys to change current material in Smart Paint tool
   * Added used and unused proportion display in report summary and details
   * Added hide edges preview option on 2D cutting diagram (default = true)
   * Added layers (SketchUp tags) column to part and instance list exports
+  * Added focus SketchUp window after selecting tool on SketchUp 2021.1+
   * Fixed cutting diagram 2D edge drawing to correspond to counter-clockwise rotation of part's name
   * Fixed missed exported edges std dimensions on folded parts
   * Fixed missed oversize asterisk indicator in cutting diagram parts lists

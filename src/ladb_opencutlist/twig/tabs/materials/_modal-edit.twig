@@ -3,6 +3,10 @@
 {% set id = 'ladb_materials_modal_edit' %}
 {% set title = 'tab.materials.edit_material.title'|i18next({ 'name':material.display_name }) %}
 
+{% block headerTools %}
+    <button type="button" class="btn btn-default btn-xs" data-help-page="materials.edit"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
+{% endblock %}
+
 {% block headerInner %}
     {{ parent() }}
     {% if material.textured %}
@@ -73,7 +77,6 @@
 {% endblock %}
 
 {% block footerLeftInner %}
-    <button type="button" class="btn btn-default" data-help-page="materials.edit"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
     <button type="button" class="btn btn-danger" id="ladb_materials_remove"><i class="ladb-opencutlist-icon ladb-opencutlist-icon-trash"></i> {{ 'default.remove'|i18next }}...</button>
     <button type="button" class="btn btn-default" id="ladb_materials_duplicate"><i class="ladb-opencutlist-icon ladb-opencutlist-icon-copy"></i> {{ 'default.duplicate'|i18next }}...</button>
     {% if capabilities.sketchup_version_number >= 1700000000 %}

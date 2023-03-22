@@ -5,6 +5,10 @@
 
 {% set has_warnings = part.not_aligned_on_axes or part.multiple_content_layers or part.unused_instance_count > 0 %}
 
+{% block headerTools %}
+    <button type="button" class="btn btn-default btn-xs" data-help-page="cutlist.part"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
+{% endblock %}
+
 {% block headerInner %}
     {{ parent() }}
     <ul class="nav nav-tabs nav-justified" role="tablist">
@@ -645,7 +649,6 @@
 {% endblock %}
 
 {% block footerLeftInner %}
-    <button type="button" class="btn btn-default" data-help-page="cutlist.part"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
     {% if multiple %}
         <button type="button" class="btn btn-default" id="ladb_cutlist_part_highlight"><i class="ladb-opencutlist-icon-magnifier-multiple"></i> {{ 'tab.cutlist.highlight_parts'|i18next }}</button>
     {% else %}

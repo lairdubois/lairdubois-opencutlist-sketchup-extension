@@ -106,7 +106,7 @@ module Ladb::OpenCutList
       help_btn.set_style_attribute(:border_color, Sketchup::Color.new(200, 200, 200, 255), :hover)
       help_btn.append_static_label(Plugin.instance.get_i18n_string("default.help"), @unit * 3)
       help_btn.on(:click) { |button|
-        UI.openURL('https://docs.opencutlist.org')  # TODO
+        Plugin.instance.open_docs_page('smart-paint-tool')
       }
       panel_north.append(help_btn)
 
