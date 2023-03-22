@@ -10,6 +10,7 @@ in 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added new **Layout** module
   * Added new **Veneer material type**
   * Added new **Smart Axes** tool
+  * Added module to export and import presets in json file
   * Added duplicate material feature that will copy all attributes
   * Added left and right arrow shortcut keys to change current material in Smart Paint tool
   * Added used and unused proportion display in report summary and details
