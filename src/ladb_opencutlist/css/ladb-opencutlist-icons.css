@@ -163,6 +163,9 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-origin-front-center:before {
   content: "\e918";
 }
+.ladb-opencutlist-icon-origin-front-min:before {
+  content: "\e9a1";
+}
 .ladb-opencutlist-icon-origin-center:before {
   content: "\e919";
 }

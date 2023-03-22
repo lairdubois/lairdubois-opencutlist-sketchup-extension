@@ -404,6 +404,7 @@ tab:
       axes_origin_position_none: Ne pas changer l'origine
       axes_origin_position_min: Placer l'origine à l'extrémité
       axes_origin_position_center: Placer l'origine au centre
+      axes_origin_position_front_min: Placer l'origine à l'extrémité du parement
       axes_origin_position_front_center: Placer l'origine au centre du parement
       over_length: Sur la longueur
       over_width: Sur la largeur
