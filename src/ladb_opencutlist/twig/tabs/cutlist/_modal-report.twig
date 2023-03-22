@@ -3,9 +3,9 @@
 {% set id = 'ladb_cutlist_modal_report' %}
 {% set title = ('tab.cutlist.report.title'|i18next)~'<small class="ladb-horizontal-left-separator">'~('tab.cutlist.report.raw_materials'|i18next)~'</small>' %}
 
-{% block headerTools %}
+{% block headerToolsInner %}
     {% include 'components/_widget-preset.twig' %}
-    <button type="button" class="btn btn-default btn-xs" data-help-page="cutlist.report"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
+    <button class="btn btn-default btn-xs" data-help-page="cutlist.report"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
 {% endblock %}
 
 {% block headerInner %}
@@ -43,6 +43,6 @@
 {% endblock %}
 
 {% block footerRightInner %}
-    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
-    <button type="button" class="btn btn-primary btn-validate-modal" id="ladb_cutlist_report_btn_generate">{{ 'default.generate'|i18next }}</button>
+    <button class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
+    <button class="btn btn-primary btn-validate-modal" id="ladb_cutlist_report_btn_generate">{{ 'default.generate'|i18next }}</button>
 {% endblock %}

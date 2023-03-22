@@ -106,6 +106,9 @@ LadbAbstractTab.prototype.pushSlide = function ($slide, callback) {
     // Push in slides stack
     this._$slides.push($slide);
 
+    // Bind help buttons (if exist)
+    this.dialog.bindHelpButtonsInParent($slide);
+
     // Animation
     $slide.addClass('animated');
     $slide.switchClass('out', 'in', {

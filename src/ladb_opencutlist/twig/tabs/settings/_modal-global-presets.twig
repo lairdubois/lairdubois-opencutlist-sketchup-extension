@@ -3,8 +3,8 @@
 {% set id = 'ladb_settings_modal_global_presets' %}
 {% set title = ('tab.settings.presets.'~actionName~'_global_presets')|i18next %}
 
-{% block headerTools %}
-    <button type="button" class="btn btn-default btn-xs" data-help-page="settings.presets"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
+{% block headerToolsInner %}
+    <button class="btn btn-default btn-xs" data-help-page="settings.presets"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
 {% endblock %}
 
 {% block bodyInner %}
@@ -29,11 +29,11 @@
 {% endblock %}
 
 {% block footerLeftInner %}
-    <button type="button" class="btn btn-default" id="ladb_settings_btn_select_all"><i class="ladb-opencutlist-icon-check-box-with-check-sign"></i> {{ 'default.select_all'|i18next }}</button>
-    <button type="button" class="btn btn-default" id="ladb_settings_btn_unselect_all"><i class="ladb-opencutlist-icon-check-box"></i> {{ 'default.unselect_all'|i18next }}</button>
+    <button class="btn btn-default" id="ladb_settings_btn_select_all"><i class="ladb-opencutlist-icon-check-box-with-check-sign"></i> {{ 'default.select_all'|i18next }}</button>
+    <button class="btn btn-default" id="ladb_settings_btn_unselect_all"><i class="ladb-opencutlist-icon-check-box"></i> {{ 'default.unselect_all'|i18next }}</button>
 {% endblock %}
 
 {% block footerRightInner %}
-    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
-    <button type="button" class="btn btn-primary" id="ladb_settings_btn_action">{{ ('default.'~actionName)|i18next }}</button>
+    <button class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
+    <button class="btn btn-primary" id="ladb_settings_btn_action">{{ ('default.'~actionName)|i18next }}</button>
 {% endblock %}

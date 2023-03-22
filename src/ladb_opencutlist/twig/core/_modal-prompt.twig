@@ -9,6 +9,6 @@
 {% endblock %}
 
 {% block footerRightInner %}
-    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
-    <button type="button" id="ladb_prompt_btn_validate" class="btn btn-{{ options.validateBtnType|default('primary') }} btn-validate-modal">{% if options.validateBtnIcon is defined %}<i class="ladb-opencutlist-icon-{{ options.validateBtnIcon }}"></i> {% endif %}{{ options.validateBtnLabel|default('default.validate'|i18next) }}</button>
+    <button class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
+    <button id="ladb_prompt_btn_validate" class="btn btn-{{ options.validateBtnType|default('primary') }} btn-validate-modal">{% if options.validateBtnIcon is defined %}<i class="ladb-opencutlist-icon-{{ options.validateBtnIcon }}"></i> {% endif %}{{ options.validateBtnLabel|default('default.validate'|i18next) }}</button>
 {% endblock %}

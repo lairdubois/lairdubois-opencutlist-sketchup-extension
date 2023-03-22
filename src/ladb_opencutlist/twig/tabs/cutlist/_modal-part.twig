@@ -5,8 +5,8 @@
 
 {% set has_warnings = part.not_aligned_on_axes or part.multiple_content_layers or part.unused_instance_count > 0 %}
 
-{% block headerTools %}
-    <button type="button" class="btn btn-default btn-xs" data-help-page="cutlist.part"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
+{% block headerToolsInner %}
+    <button class="btn btn-default btn-xs" data-help-page="cutlist.part"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
 {% endblock %}
 
 {% block headerInner %}
@@ -650,14 +650,14 @@
 
 {% block footerLeftInner %}
     {% if multiple %}
-        <button type="button" class="btn btn-default" id="ladb_cutlist_part_highlight"><i class="ladb-opencutlist-icon-magnifier-multiple"></i> {{ 'tab.cutlist.highlight_parts'|i18next }}</button>
+        <button class="btn btn-default" id="ladb_cutlist_part_highlight"><i class="ladb-opencutlist-icon-magnifier-multiple"></i> {{ 'tab.cutlist.highlight_parts'|i18next }}</button>
     {% else %}
-        <button type="button" class="btn btn-default" id="ladb_cutlist_part_highlight"><i class="ladb-opencutlist-icon-magnifier"></i> {{ 'tab.cutlist.highlight_part'|i18next }}</button>
+        <button class="btn btn-default" id="ladb_cutlist_part_highlight"><i class="ladb-opencutlist-icon-magnifier"></i> {{ 'tab.cutlist.highlight_part'|i18next }}</button>
     {% endif %}
-    <button type="button" class="btn btn-default" id="ladb_cutlist_part_export_to_skp"><i class="ladb-opencutlist-icon ladb-opencutlist-icon-export"></i> {{ 'tab.cutlist.edit_part.export_to_skp'|i18next }}...</button>
+    <button class="btn btn-default" id="ladb_cutlist_part_export_to_skp"><i class="ladb-opencutlist-icon ladb-opencutlist-icon-export"></i> {{ 'tab.cutlist.edit_part.export_to_skp'|i18next }}...</button>
 {% endblock %}
 
 {% block footerRightInner %}
-    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
-    <button type="button" class="btn btn-primary btn-validate-modal" id="ladb_cutlist_part_update">{{ 'default.validate'|i18next }}</button>
+    <button class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
+    <button class="btn btn-primary btn-validate-modal" id="ladb_cutlist_part_update">{{ 'default.validate'|i18next }}</button>
 {% endblock %}

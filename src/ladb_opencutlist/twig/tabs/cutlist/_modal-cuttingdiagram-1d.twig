@@ -4,9 +4,9 @@
 {% set title = ('tab.cutlist.cuttingdiagram.title'|i18next)~'<small class="ladb-horizontal-left-separator">'~group.material_name|escape('html')~' / '~group.std_dimension~'</small>' %}
 {% set barStrippedname = group.material_type == 4 ? 'edge' : 'dimensional' %}  {# 4 = TYPE_EDGE #}
 
-{% block headerTools %}
+{% block headerToolsInner %}
     {% include 'components/_widget-preset.twig' %}
-    <button type="button" class="btn btn-default btn-xs" data-help-page="cutlist.cuttingdiagram1d"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
+    <button class="btn btn-default btn-xs" data-help-page="cutlist.cuttingdiagram1d"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
 {% endblock %}
 
 {% block headerInner %}
@@ -146,10 +146,10 @@
 {% endblock %}
 
 {% block footerLeftInner %}
-    <button type="button" class="btn btn-default" id="ladb_btn_edit_material" style="max-width: 260px;"><i class="ladb-opencutlist-icon-materials"></i> {{ 'tab.cutlist.menu.edit_material'|i18next({ 'material_name':group.material_display_name }) }}...</button>
+    <button class="btn btn-default" id="ladb_btn_edit_material" style="max-width: 260px;"><i class="ladb-opencutlist-icon-materials"></i> {{ 'tab.cutlist.menu.edit_material'|i18next({ 'material_name':group.material_display_name }) }}...</button>
 {% endblock %}
 
 {% block footerRightInner %}
-    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
-    <button type="button" class="btn btn-primary btn-validate-modal" id="ladb_btn_generate">{{ 'default.generate'|i18next }}</button>
+    <button class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
+    <button class="btn btn-primary btn-validate-modal" id="ladb_btn_generate">{{ 'default.generate'|i18next }}</button>
 {% endblock %}
