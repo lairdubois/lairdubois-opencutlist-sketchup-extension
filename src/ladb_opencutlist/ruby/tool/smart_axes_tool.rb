@@ -101,7 +101,7 @@ module Ladb::OpenCutList
       help_btn.set_style_attribute(:border_color, Sketchup::Color.new(200, 200, 200, 255), :hover)
       help_btn.append_static_label(Plugin.instance.get_i18n_string("default.help"), unit * 3)
       help_btn.on(:click) { |button|
-        Plugin.instance.open_docs_page('smart-axes-tool')
+        Plugin.instance.open_docs_page('tool.smart-axes')
       }
       panel_north.append(help_btn)
 
@@ -501,8 +501,8 @@ module Ladb::OpenCutList
 
                     ti = Geom::Transformation.axes(
                       ORIGIN,
-                      AxisUtils.flipped?(oriented_size.normals[0], oriented_size.normals[1], oriented_size.normals[2]) ? oriented_size.normals[0].reverse : oriented_size.normals[0],
-                      oriented_size.normals[1],
+                      oriented_size.normals[0],
+                      AxisUtils.flipped?(oriented_size.normals[0], oriented_size.normals[1], oriented_size.normals[2]) ? oriented_size.normals[1].reverse : oriented_size.normals[1],
                       oriented_size.normals[2]
                     )
 
@@ -551,7 +551,7 @@ module Ladb::OpenCutList
         }
       end
       _reset(view)
-      UI.beep if event == :l_button_up
+      UI.beep if event == :l_button_up || event == :l_button_dblclick
     end
 
     def _get_part_entity_path_from_path(path)
