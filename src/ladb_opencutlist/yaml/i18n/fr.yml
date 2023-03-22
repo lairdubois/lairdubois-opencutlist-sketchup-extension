@@ -1374,7 +1374,7 @@ tool:
     error:
       not_part: L'objet ciblé n'est pas une pièce.
     warning:
-      more_entities: "{{ count }} autre pièce partageant la même définition sera également modifiée."
-      more_entities_plural: "{{ count }} autres pièces partageant la même définition seront également modifiées."
+      more_entities: "{{ count }} autre instances partageant la même définition sera également modifiée."
+      more_entities_plural: "{{ count }} autres instances partageant la même définition seront également modifiées."
     success:
       part_oriented: Cette pièce a déjà sa longueur sur la plus grande dimension et son épaisseur sur la plus petite.

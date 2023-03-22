@@ -11,9 +11,10 @@ in 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added new **Veneer material type**
   * Added new **Smart Axes** tool
   * Added module to export and import presets in json file
+  * Added new feature to sort labels according to cutting diagrams
+  * Added used and unused proportion display in report summary and details
   * Added duplicate material feature that will copy all attributes
   * Added left and right arrow shortcut keys to change current material in Smart Paint tool
-  * Added used and unused proportion display in report summary and details
   * Added hide edges preview option on 2D cutting diagram (default = true)
   * Added layers (SketchUp tags) column to part and instance list exports
   * Added focus SketchUp window after selecting tool on SketchUp 2021.1+

@@ -457,8 +457,8 @@ module Ladb::OpenCutList
                 end
 
                 definition = view.model.definitions[part.def.definition_id]
-                if definition && definition.count_instances > 1
-                  set_status("⚠️ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count => definition.count_instances - 1 })}", STATUS_TYPE_WARNING)
+                if definition && definition.count_used_instances > 1
+                  set_status("⚠️ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count => definition.count_used_instances - 1 })}", STATUS_TYPE_WARNING)
                 else
                   set_status('')
                 end
