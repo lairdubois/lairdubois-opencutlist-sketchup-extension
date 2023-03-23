@@ -23,16 +23,21 @@
     LadbTabSponsor.prototype.bindObjectiveWidget = function ($widget) {
         var that = this;
 
+        var objectiveName = this.dialog.capabilities.manifest.sponsor && this.dialog.capabilities.manifest.sponsor.objectiveName ? this.dialog.capabilities.manifest.sponsor.objectiveName : 'XXX';
         var objectiveGoal = this.dialog.capabilities.manifest.sponsor && this.dialog.capabilities.manifest.sponsor.objectiveGoal ? this.dialog.capabilities.manifest.sponsor.objectiveGoal : 6000;
         var objectiveCurrency = this.dialog.capabilities.manifest.sponsor && this.dialog.capabilities.manifest.sponsor.objectiveCurrency ? this.dialog.capabilities.manifest.sponsor.objectiveCurrency : 'USD';
 
         // Fetch UI elements
         var $loading = $('.ladb-loading', $widget);
         var $btnInfo = $('.ladb-sponsor-objective-info-btn', $widget);
+        var $labelObjective = $('.ladb-sponsor-objective-label', $widget);
         var $labelObjectiveGoal = $('.ladb-sponsor-objective-goal-label', $widget);
         var $labelObjectiveProgress = $('.ladb-sponsor-objective-progress-label', $widget);
         var $progressObjective = $('.progress', $widget);
         var $progressBarObjective = $('.progress-bar', $widget);
+
+        // Append objective name
+        $labelObjective.append(' ' + objectiveName);
 
         // Append currency formatted objective goal
         $labelObjectiveGoal.append(that.dialog.amountToLocaleString(objectiveGoal, objectiveCurrency));

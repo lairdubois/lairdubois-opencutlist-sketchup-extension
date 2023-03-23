@@ -350,6 +350,65 @@ module Ladb::OpenCutList
       @@action_modifier == ACTION_MODIFIER_ANTICLOCKWIZE
     end
 
+    # -- Menu --
+
+    def getMenu(menu, flags, x, y, view)
+      # _pick_hover_part(x, y, view) unless view.nil?
+      build_menu(menu, view)
+    end
+
+    def build_menu(menu, view = nil)
+      if @active_part
+        hover_part_id = @active_part.id
+        hover_part_material_type = @active_part.group.material_type
+        item = menu.add_item(@active_part.name) {}
+        menu.set_validation_proc(item) { MF_GRAYED }
+        menu.add_separator
+        menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_properties')) {
+          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{hover_part_id}', tab: 'general', dontGenerate: true }")
+        }
+        menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_axes_properties')) {
+          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{hover_part_id}', tab: 'axes', dontGenerate: true }")
+        }
+        item = menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_size_increase_properties')) {
+          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{hover_part_id}', tab: 'size_increase', dontGenerate: true }")
+        }
+        menu.set_validation_proc(item) {
+          if hover_part_material_type == MaterialAttributes::TYPE_SOLID_WOOD ||
+            hover_part_material_type == MaterialAttributes::TYPE_SHEET_GOOD ||
+            hover_part_material_type == MaterialAttributes::TYPE_DIMENSIONAL
+            MF_ENABLED
+          else
+            MF_GRAYED
+          end
+        }
+        item = menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_edges_properties')) {
+          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{hover_part_id}', tab: 'edges', dontGenerate: true }")
+        }
+        menu.set_validation_proc(item) {
+          if hover_part_material_type == MaterialAttributes::TYPE_SHEET_GOOD
+            MF_ENABLED
+          else
+            MF_GRAYED
+          end
+        }
+        item = menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_veneers_properties')) {
+          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{hover_part_id}', tab: 'veneers', dontGenerate: true }")
+        }
+        menu.set_validation_proc(item) {
+          if hover_part_material_type == MaterialAttributes::TYPE_SHEET_GOOD
+            MF_ENABLED
+          else
+            MF_GRAYED
+          end
+        }
+      elsif view
+        menu.add_item(Plugin.instance.get_i18n_string('default.close')) {
+          _quit(view)
+        }
+      end
+    end
+    
     # -- Events --
 
     def onActivate(view)
@@ -392,13 +451,11 @@ module Ladb::OpenCutList
 
     def onLButtonDown(flags, x, y, view)
       return if super
-      @is_down = true
       _handle_mouse_event(x, y, view, :l_button_down)
     end
 
     def onLButtonUp(flags, x, y, view)
       return if super
-      @is_down = false
       _handle_mouse_event(x, y, view, :l_button_up)
     end
 
@@ -422,8 +479,8 @@ module Ladb::OpenCutList
       set_status('')
       set_part('')
       if @picked_path
-        @is_down = false
         @picked_path = nil
+        @active_part = false
         @space.remove_all
         view.invalidate
       end
@@ -449,88 +506,100 @@ module Ladb::OpenCutList
               path = picked_entity_path.slice(0..-2)
 
               part = _blop(entity, path)
-              if part && event ==:move
+              if part
 
-                if is_action_swap_auto? && !part.auto_oriented && part.def.size.length > part.def.size.width && part.def.size.width > part.def.size.thickness
-                  set_status("✔ #{Plugin.instance.get_i18n_string('tool.smart_axes.success.part_oriented')}", STATUS_TYPE_SUCCESS)
-                  return
-                end
+                @active_part = part
 
-                definition = view.model.definitions[part.def.definition_id]
-                if definition && definition.count_used_instances > 1
-                  set_status("⚠️ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count => definition.count_used_instances - 1 })}", STATUS_TYPE_WARNING)
-                else
-                  set_status('')
-                end
+                if event ==:move
 
-              end
-              if part && (event == :l_button_up || event == :l_button_dblclick)
-
-                definition = view.model.definitions[part.def.definition_id]
-
-                unless definition.nil?
-
-                  ti = nil
-                  if is_action_swap_length_width?
-                    if is_action_modifier_anticlockwise?
-                      ti = Geom::Transformation.axes(
-                        ORIGIN,
-                        part.def.size.normals[1],
-                        AxisUtils.flipped?(part.def.size.normals[1], part.def.size.normals[0], part.def.size.normals[2]) ? part.def.size.normals[0].reverse : part.def.size.normals[0],
-                        part.def.size.normals[2]
-                      )
-                    else
-                      ti = Geom::Transformation.axes(
-                        ORIGIN,
-                        AxisUtils.flipped?(part.def.size.normals[1], part.def.size.normals[0], part.def.size.normals[2]) ? part.def.size.normals[1].reverse : part.def.size.normals[1],
-                        part.def.size.normals[0],
-                        part.def.size.normals[2]
-                      )
-                    end
-                  elsif is_action_swap_front_back?
-                    ti = Geom::Transformation.axes(
-                      ORIGIN,
-                      part.def.size.normals[0],
-                      AxisUtils.flipped?(part.def.size.normals[0], part.def.size.normals[1], part.def.size.normals[2].reverse) ? part.def.size.normals[1].reverse : part.def.size.normals[1],
-                      part.def.size.normals[2].reverse
-                    )
-                  elsif is_action_swap_auto?
-
-                    instance_info = part.def.instance_infos.values.first
-                    oriented_size = Size3d.create_from_bounds(instance_info.definition_bounds, part.def.scale, true)
-
-                    ti = Geom::Transformation.axes(
-                      ORIGIN,
-                      oriented_size.normals[0],
-                      AxisUtils.flipped?(oriented_size.normals[0], oriented_size.normals[1], oriented_size.normals[2]) ? oriented_size.normals[1].reverse : oriented_size.normals[1],
-                      oriented_size.normals[2]
-                    )
-
+                  if is_action_swap_auto? && !part.auto_oriented && part.def.size.length > part.def.size.width && part.def.size.width > part.def.size.thickness
+                    set_status("✔ #{Plugin.instance.get_i18n_string('tool.smart_axes.success.part_oriented')}", STATUS_TYPE_SUCCESS)
+                    return
                   end
-                  unless ti.nil?
 
-                    t = ti.inverse
+                  definition = view.model.definitions[part.def.definition_id]
+                  if definition && definition.count_used_instances > 1
+                    set_status("⚠️ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count => definition.count_used_instances - 1 })}", STATUS_TYPE_WARNING)
+                  else
+                    set_status('')
+                  end
 
-                    # Start undoable model modification operation
-                    view.model.start_operation('OpenCutList - Part Swap', true, false, false)
+                end
+                if event == :l_button_up || event == :l_button_dblclick
 
-                    # Transform definition's entities
-                    entities = definition.entities
-                    entities.transform_entities(t, entities.to_a)
+                  definition = view.model.definitions[part.def.definition_id]
 
-                    # Inverse transform definition's instances
-                    definition.instances.each { |instance|
-                      instance.transformation *= ti
-                    }
+                  unless definition.nil?
 
-                    definition_attributes = DefinitionAttributes.new(definition)
-                    definition_attributes.orientation_locked_on_axis = true
-                    definition_attributes.write_to_attributes
+                    size = part.def.size
 
-                    # Commit model modification operation
-                    view.model.commit_operation
+                    ti = nil
+                    if is_action_swap_length_width?
 
-                    _blop(entity, path)
+                      if is_action_modifier_anticlockwise?
+                        ti = Geom::Transformation.axes(
+                          ORIGIN,
+                          size.normals[1],
+                          AxisUtils.flipped?(size.normals[1], size.normals[0], size.normals[2]) ? size.normals[0].reverse : size.normals[0],
+                          size.normals[2]
+                        )
+                      else
+                        ti = Geom::Transformation.axes(
+                          ORIGIN,
+                          AxisUtils.flipped?(size.normals[1], size.normals[0], size.normals[2]) ? size.normals[1].reverse : size.normals[1],
+                          size.normals[0],
+                          size.normals[2]
+                        )
+                      end
+
+                    elsif is_action_swap_front_back?
+
+                      ti = Geom::Transformation.axes(
+                        ORIGIN,
+                        size.normals[0],
+                        AxisUtils.flipped?(size.normals[0], size.normals[1], size.normals[2].reverse) ? size.normals[1].reverse : size.normals[1],
+                        size.normals[2].reverse
+                      )
+
+                    elsif is_action_swap_auto?
+
+                      instance_info = instance_infos.values.first
+                      oriented_size = Size3d.create_from_bounds(instance_info.definition_bounds, scale, true)
+
+                      ti = Geom::Transformation.axes(
+                        ORIGIN,
+                        oriented_size.normals[0],
+                        AxisUtils.flipped?(oriented_size.normals[0], oriented_size.normals[1], oriented_size.normals[2]) ? oriented_size.normals[1].reverse : oriented_size.normals[1],
+                        oriented_size.normals[2]
+                      )
+
+                    end
+                    unless ti.nil?
+
+                      t = ti.inverse
+
+                      # Start undoable model modification operation
+                      view.model.start_operation('OpenCutList - Part Swap', true, false, false)
+
+                      # Transform definition's entities
+                      entities = definition.entities
+                      entities.transform_entities(t, entities.to_a)
+
+                      # Inverse transform definition's instances
+                      definition.instances.each { |instance|
+                        instance.transformation *= ti
+                      }
+
+                      definition_attributes = DefinitionAttributes.new(definition)
+                      definition_attributes.orientation_locked_on_axis = true
+                      definition_attributes.write_to_attributes
+
+                      # Commit model modification operation
+                      view.model.commit_operation
+
+                      _blop(entity, path)
+
+                    end
 
                   end
 

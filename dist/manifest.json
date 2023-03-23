@@ -3,6 +3,7 @@
   "build": "202303212138",
   "url": "https://www.lairdubois.fr/opencutlist/download-dev",
   "sponsor": {
+    "objectiveName": "6.0",
     "objectiveGoal": 6000,
     "objectiveCurrency": "USD"
   }
