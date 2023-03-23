@@ -359,44 +359,44 @@ module Ladb::OpenCutList
 
     def build_menu(menu, view = nil)
       if @active_part
-        hover_part_id = @active_part.id
-        hover_part_material_type = @active_part.group.material_type
+        active_part_id = @active_part.id
+        active_part_material_type = @active_part.group.material_type
         item = menu.add_item(@active_part.name) {}
         menu.set_validation_proc(item) { MF_GRAYED }
         menu.add_separator
         menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_properties')) {
-          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{hover_part_id}', tab: 'general', dontGenerate: true }")
+          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'general', dontGenerate: false }")
         }
         menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_axes_properties')) {
-          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{hover_part_id}', tab: 'axes', dontGenerate: true }")
+          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'axes', dontGenerate: false }")
         }
         item = menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_size_increase_properties')) {
-          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{hover_part_id}', tab: 'size_increase', dontGenerate: true }")
+          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'size_increase', dontGenerate: false }")
         }
         menu.set_validation_proc(item) {
-          if hover_part_material_type == MaterialAttributes::TYPE_SOLID_WOOD ||
-            hover_part_material_type == MaterialAttributes::TYPE_SHEET_GOOD ||
-            hover_part_material_type == MaterialAttributes::TYPE_DIMENSIONAL
+          if active_part_material_type == MaterialAttributes::TYPE_SOLID_WOOD ||
+            active_part_material_type == MaterialAttributes::TYPE_SHEET_GOOD ||
+            active_part_material_type == MaterialAttributes::TYPE_DIMENSIONAL
             MF_ENABLED
           else
             MF_GRAYED
           end
         }
         item = menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_edges_properties')) {
-          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{hover_part_id}', tab: 'edges', dontGenerate: true }")
+          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'edges', dontGenerate: false }")
         }
         menu.set_validation_proc(item) {
-          if hover_part_material_type == MaterialAttributes::TYPE_SHEET_GOOD
+          if active_part_material_type == MaterialAttributes::TYPE_SHEET_GOOD
             MF_ENABLED
           else
             MF_GRAYED
           end
         }
         item = menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_veneers_properties')) {
-          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{hover_part_id}', tab: 'veneers', dontGenerate: true }")
+          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'veneers', dontGenerate: false }")
         }
         menu.set_validation_proc(item) {
-          if hover_part_material_type == MaterialAttributes::TYPE_SHEET_GOOD
+          if active_part_material_type == MaterialAttributes::TYPE_SHEET_GOOD
             MF_ENABLED
           else
             MF_GRAYED
@@ -512,7 +512,7 @@ module Ladb::OpenCutList
 
                 if event ==:move
 
-                  if is_action_swap_auto? && !part.auto_oriented && part.def.size.length > part.def.size.width && part.def.size.width > part.def.size.thickness
+                  if is_action_swap_auto? && !part.auto_oriented && part.def.size.length >= part.def.size.width && part.def.size.width >= part.def.size.thickness
                     set_status("✔ #{Plugin.instance.get_i18n_string('tool.smart_axes.success.part_oriented')}", STATUS_TYPE_SUCCESS)
                     return
                   end
@@ -563,8 +563,8 @@ module Ladb::OpenCutList
 
                     elsif is_action_swap_auto?
 
-                      instance_info = instance_infos.values.first
-                      oriented_size = Size3d.create_from_bounds(instance_info.definition_bounds, scale, true)
+                      instance_info = part.def.instance_infos.values.first
+                      oriented_size = Size3d.create_from_bounds(instance_info.definition_bounds, part.def.scale, true)
 
                       ti = Geom::Transformation.axes(
                         ORIGIN,
