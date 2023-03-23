@@ -132,6 +132,7 @@ core:
       unzip: Erreur lors de la décompression de l'archive.
   preset:
     label: Préréglages
+    manage: Gestion des préréglages
     save_to: Enregistrer vers
     restore_from: Restaurer depuis
     app_defaults: Préréglage d'origine

@@ -160,7 +160,7 @@ module Ladb::OpenCutList
     end
 
     def platform_name
-      Sketchup.platform == :platform_win ? 'win' : 'mac'
+      Sketchup.platform == :platform_osx ? 'mac' : 'mac'
     end
 
     def get_i18n_string(path_key, vars = nil)
