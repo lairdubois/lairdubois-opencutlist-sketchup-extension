@@ -66,6 +66,9 @@ module Ladb::OpenCutList
     DIALOG_DEFAULT_PRINT_MARGIN = 0   # 0 = Normal, 1 = Small
     DIALOG_PREF_KEY = 'fr.lairdubois.opencutlist'
 
+    DOCS_URL = 'https://www.lairdubois.fr/opencutlist/docs'
+    DOCS_DEV_URL = 'https://www.lairdubois.fr/opencutlist/docs-dev'
+
     # -----
 
     def initialize
