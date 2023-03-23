@@ -174,6 +174,7 @@ module Ladb::OpenCutList
         end
       end
 
+      # Process plural if a count var is defined
       if vars.is_a?(Hash) && !vars[:count].nil? && vars[:count] > 1 && !path_key.end_with?('_plural')
         path_key += '_plural'
       end
@@ -203,9 +204,9 @@ module Ladb::OpenCutList
     def open_docs_page(page)
       url = 'https://www.lairdubois.fr/opencutlist/docs'
       url += '-dev' if IS_DEV
-      url += "?v=#{EXTENSION_VERSION}&build=#{EXTENSION_BUILD}-#{(IS_RBZ ? 'rbz' : 'src')}&language=#{language}&locale=#{Sketchup.get_locale}"
+      url += "?v=#{EXTENSION_VERSION}&build=#{EXTENSION_BUILD}-#{(IS_RBZ ? 'rbz' : 'src')}&language=#{language}&locale=#{Sketchup.get_locale}&redirect=1"
       url += "&page=#{page}"
-      UI.openURL(url.gsub(/ /, '%20'))  # Encode spaces with %20
+      UI.openURL(URI::DEFAULT_PARSER.escape(url))
     end
 
     # -----
@@ -1371,14 +1372,14 @@ module Ladb::OpenCutList
     def open_external_file_command(params)    # Expected params = { path: PATH_TO_FILE }
       path = params['path']
       if path && path.is_a?(String)
-        UI.openURL("file:///#{path.gsub(/ /, '%20')}")  # Encode spaces with %20
+        UI.openURL(URI::DEFAULT_PARSER.escape("file:///#{path}"))
       end
     end
 
     def open_url_command(params)    # Expected params = { url: URL }
       url = params['url']
       if url && url.is_a?(String)
-        UI.openURL(url.gsub(/ /, '%20'))  # Encode spaces with %20
+        UI.openURL(URI::DEFAULT_PARSER.escape(url))
       end
     end
 
