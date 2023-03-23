@@ -202,11 +202,28 @@ module Ladb::OpenCutList
     end
 
     def open_docs_page(page)
-      url = 'https://www.lairdubois.fr/opencutlist/docs'
-      url += '-dev' if IS_DEV
-      url += "?v=#{EXTENSION_VERSION}&build=#{EXTENSION_BUILD}-#{(IS_RBZ ? 'rbz' : 'src')}&language=#{language}&locale=#{Sketchup.get_locale}&redirect=1"
+
+      url = IS_DEV ? DOCS_DEV_URL : DOCS_URL
+      url += "?v=#{EXTENSION_VERSION}&build=#{EXTENSION_BUILD}-#{(IS_RBZ ? 'rbz' : 'src')}&language=#{language}&locale=#{Sketchup.get_locale}"
       url += "&page=#{page}"
-      UI.openURL(URI::DEFAULT_PARSER.escape(url))
+
+      # URLs with spaces will raise an InvalidURIError, so we need to encode it.
+      url = URI::DEFAULT_PARSER.escape(url)
+
+      request = Sketchup::Http::Request.new(url, Sketchup::Http::GET)
+      request.start do |request, response|
+
+        if response.status_code == 200
+          json = JSON.parse(response.body)
+          if json['url'] && json['url'].is_a?(String)
+            UI.openURL(URI::DEFAULT_PARSER.escape(json['url']))
+            return
+          end
+        end
+
+        puts "Failed to load docs page (page=#{page}, status=#{response.status_code})"
+      end
+
     end
 
     # -----
@@ -1141,7 +1158,7 @@ module Ladb::OpenCutList
       begin
 
         # URLs with spaces will raise an InvalidURIError, so we need to encode spaces.
-        url = url.gsub(/ /, '%20')
+        url = URI::DEFAULT_PARSER.escape(url)
 
         # This will raise an InvalidURIError if the URL is very wrong. It will still
         # pass for strings like "foo", though.
