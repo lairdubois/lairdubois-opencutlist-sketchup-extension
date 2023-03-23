@@ -23,7 +23,7 @@
     LadbTabSponsor.prototype.bindObjectiveWidget = function ($widget) {
         var that = this;
 
-        var objectiveName = this.dialog.capabilities.manifest.sponsor && this.dialog.capabilities.manifest.sponsor.objectiveName ? this.dialog.capabilities.manifest.sponsor.objectiveName : 'XXX';
+        var objectiveName = this.dialog.capabilities.manifest.sponsor && this.dialog.capabilities.manifest.sponsor.objectiveName ? this.dialog.capabilities.manifest.sponsor.objectiveName : '';
         var objectiveGoal = this.dialog.capabilities.manifest.sponsor && this.dialog.capabilities.manifest.sponsor.objectiveGoal ? this.dialog.capabilities.manifest.sponsor.objectiveGoal : 6000;
         var objectiveCurrency = this.dialog.capabilities.manifest.sponsor && this.dialog.capabilities.manifest.sponsor.objectiveCurrency ? this.dialog.capabilities.manifest.sponsor.objectiveCurrency : 'USD';
 
