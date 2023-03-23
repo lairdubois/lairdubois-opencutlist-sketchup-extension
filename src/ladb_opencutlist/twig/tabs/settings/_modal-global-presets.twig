@@ -4,7 +4,7 @@
 {% set title = ('tab.settings.presets.'~actionName~'_global_presets')|i18next %}
 
 {% block headerToolsInner %}
-    <button class="btn btn-default btn-xs" data-help-page="settings.presets"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
+    <button class="btn btn-default btn-xs" data-help-page="settings.presets.{{ actionName }}"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
 {% endblock %}
 
 {% block bodyInner %}

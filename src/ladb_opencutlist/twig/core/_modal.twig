@@ -17,8 +17,7 @@
                                 {% if not noHeader %}
                                     <div class="modal-header">
                                         {% block headerInner %}
-                                            {% if not noDefaultClose %}<button class="close" data-dismiss="modal" aria-hidden="true">&times;</button>{% endif %}
-                                            <div class="modal-header-tools">{% block headerToolsInner %}{% endblock %}</div>
+                                            <div class="modal-header-tools">{% block headerToolsInner %}{% endblock %}{% if not noDefaultClose %}<button class="close" data-dismiss="modal" aria-hidden="true">&times;</button>{% endif %}</div>
                                             {% if title is defined %}<h3 id="{{ id }}_label" class="modal-title">{{ title|raw }}</h3>{% endif %}
                                         {% endblock %}
                                     </div>

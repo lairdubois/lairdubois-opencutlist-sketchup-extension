@@ -1,4 +1,9 @@
-<li class="dropdown-header dropdown-header-top"><i class="ladb-opencutlist-icon-reset"></i> {{ 'core.preset.restore_from'|i18next }}</li>
+<li class="dropdown-header dropdown-header-top">
+    <div class="dropdown-header-body"><i class="ladb-opencutlist-icon-reset"></i> {{ 'core.preset.restore_from'|i18next }}</div>
+    <div class="ladb-minitools">
+        <a href="#" class="ladb-tool-dark" data-help-page="settings.presets"><i class="ladb-opencutlist-icon-help"></i></a>
+    </div>
+</li>
 <li data-name="_origin">
     <a href="#" class="ladb-widget-preset-btn-restore-app-defaults">{{ 'core.preset.app_defaults'|i18next }}</a>
 </li>
@@ -20,7 +25,9 @@
         </div>
     </li>
 {% endfor %}
-<li class="dropdown-header dropdown-header-middle"><i class="ladb-opencutlist-icon-plus"></i> {{ 'core.preset.save_to'|i18next }}</li>
+<li class="dropdown-header dropdown-header-middle">
+    <div class="dropdown-header-body"><i class="ladb-opencutlist-icon-plus"></i> {{ 'core.preset.save_to'|i18next }}</div>
+</li>
 <li>
     <a href="#" class="ladb-widget-preset-btn-new">{{ 'core.preset.new'|i18next }}...</a>
 </li>

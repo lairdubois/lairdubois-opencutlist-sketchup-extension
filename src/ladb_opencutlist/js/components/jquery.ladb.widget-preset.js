@@ -105,6 +105,9 @@
                 }))
             ;
 
+            // Bind help button
+            that.dialog.bindHelpButtonsInParent(that.$dropdown);
+
             // Bind buttons
             $('.ladb-widget-preset-btn-restore-app-defaults', that.$dropdown).on('click', function () {
                 rubyCallCommand('core_get_app_defaults', {
