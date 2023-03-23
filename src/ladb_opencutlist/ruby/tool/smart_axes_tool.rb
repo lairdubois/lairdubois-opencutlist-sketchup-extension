@@ -446,6 +446,27 @@ module Ladb::OpenCutList
         pop_action
       elsif key == ALT_MODIFIER_KEY && is_action_swap_front_back?
         pop_action
+      elsif key == 9 && @active_part_entity
+
+        picked_paths = []
+        picked_part_entity_paths = []
+        @pick_helper.count.times do |index|
+          path = @pick_helper.path_at(index)
+          part_entity_path = _get_part_entity_path_from_path(path.clone)
+          unless part_entity_path.nil? || picked_part_entity_paths.include?(part_entity_path)
+            picked_paths << path
+            picked_part_entity_paths << part_entity_path
+          end
+        end
+
+        active_index = picked_part_entity_paths.map { |path| path.last }.index(@active_part_entity)
+        new_index = (active_index + 1) % picked_part_entity_paths.length
+
+        @picked_path = picked_paths[new_index]
+        @active_part_entity_path = picked_part_entity_paths[new_index]
+        @active_part_entity = picked_part_entity_paths[new_index].last
+        @active_part = _blop(@active_part_entity_path)
+
       end
     end
 
@@ -480,37 +501,45 @@ module Ladb::OpenCutList
       set_part('')
       if @picked_path
         @picked_path = nil
-        @active_part = false
+        @active_part_entity_path = nil
+        @active_part_entity = nil
+        @active_part = nil
         @space.remove_all
         view.invalidate
       end
     end
 
     def _handle_mouse_event(x, y, view, event = nil)
-      if @pick_helper.do_pick(x, y) > 0
-        @pick_helper.count.times { |pick_path_index|
+      if event == :move
 
-          picked_path = @pick_helper.path_at(pick_path_index)
-          if picked_path == @picked_path && event == :move
-            return  # Previously detected path, stop process to optimize.
-          end
-          if picked_path && picked_path.last.is_a?(Sketchup::Face)
+        if @pick_helper.do_pick(x, y) > 0
+          @pick_helper.count.times { |pick_path_index|
 
-            @picked_path = picked_path.clone
+            picked_path = @pick_helper.path_at(pick_path_index)
+            if picked_path == @picked_path
+              return
+            elsif @active_part_entity_path
+              contains_previous = false
+              @pick_helper.count.times do |pick_path_index|
+                contains_previous = @pick_helper.path_at(pick_path_index).take(@active_part_entity_path.length) == @active_part_entity_path
+                return if contains_previous
+              end
+              return if contains_previous # Previously detected path, stop process to optimize.
+            end
+            if picked_path && picked_path.last.is_a?(Sketchup::Face)
 
-            picked_entity_path = _get_part_entity_path_from_path(picked_path)
-            picked_entity = picked_path.last
-            if picked_entity
+              @picked_path = picked_path.clone
 
-              entity = picked_entity
-              path = picked_entity_path.slice(0..-2)
+              picked_entity_path = _get_part_entity_path_from_path(picked_path)
+              picked_entity = picked_path.last
+              if picked_entity
 
-              part = _blop(entity, path)
-              if part
+                part = _blop(picked_entity_path)
+                if part
 
-                @active_part = part
-
-                if event ==:move
+                  @active_part_entity_path = picked_entity_path
+                  @active_part_entity = picked_entity
+                  @active_part = part
 
                   if is_action_swap_auto? && !part.auto_oriented && part.def.size.length >= part.def.size.width && part.def.size.width >= part.def.size.thickness
                     set_status("✔ #{Plugin.instance.get_i18n_string('tool.smart_axes.success.part_oriented')}", STATUS_TYPE_SUCCESS)
@@ -525,102 +554,106 @@ module Ladb::OpenCutList
                   end
 
                 end
-                if event == :l_button_up || event == :l_button_dblclick
 
-                  definition = view.model.definitions[part.def.definition_id]
+                return
 
-                  unless definition.nil?
-
-                    size = part.def.size
-
-                    ti = nil
-                    if is_action_swap_length_width?
-
-                      if is_action_modifier_anticlockwise?
-                        ti = Geom::Transformation.axes(
-                          ORIGIN,
-                          size.normals[1],
-                          AxisUtils.flipped?(size.normals[1], size.normals[0], size.normals[2]) ? size.normals[0].reverse : size.normals[0],
-                          size.normals[2]
-                        )
-                      else
-                        ti = Geom::Transformation.axes(
-                          ORIGIN,
-                          AxisUtils.flipped?(size.normals[1], size.normals[0], size.normals[2]) ? size.normals[1].reverse : size.normals[1],
-                          size.normals[0],
-                          size.normals[2]
-                        )
-                      end
-
-                    elsif is_action_swap_front_back?
-
-                      ti = Geom::Transformation.axes(
-                        ORIGIN,
-                        size.normals[0],
-                        AxisUtils.flipped?(size.normals[0], size.normals[1], size.normals[2].reverse) ? size.normals[1].reverse : size.normals[1],
-                        size.normals[2].reverse
-                      )
-
-                    elsif is_action_swap_auto?
-
-                      instance_info = part.def.instance_infos.values.first
-                      oriented_size = Size3d.create_from_bounds(instance_info.definition_bounds, part.def.scale, true)
-
-                      ti = Geom::Transformation.axes(
-                        ORIGIN,
-                        oriented_size.normals[0],
-                        AxisUtils.flipped?(oriented_size.normals[0], oriented_size.normals[1], oriented_size.normals[2]) ? oriented_size.normals[1].reverse : oriented_size.normals[1],
-                        oriented_size.normals[2]
-                      )
-
-                    end
-                    unless ti.nil?
-
-                      t = ti.inverse
-
-                      # Start undoable model modification operation
-                      view.model.start_operation('OpenCutList - Part Swap', true, false, false)
-
-                      # Transform definition's entities
-                      entities = definition.entities
-                      entities.transform_entities(t, entities.to_a)
-
-                      # Inverse transform definition's instances
-                      definition.instances.each { |instance|
-                        instance.transformation *= ti
-                      }
-
-                      definition_attributes = DefinitionAttributes.new(definition)
-                      definition_attributes.orientation_locked_on_axis = true
-                      definition_attributes.write_to_attributes
-
-                      # Commit model modification operation
-                      view.model.commit_operation
-
-                      _blop(entity, path)
-
-                    end
-
-                  end
-
-                end
-
+              elsif picked_entity_path
+                _reset(view)
+                set_status("⚠️ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", STATUS_TYPE_ERROR)
+                return
               end
 
-              return
+            end
 
-            elsif picked_entity_path
-              _reset(view)
-              set_status("⚠️ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", STATUS_TYPE_ERROR)
-              return
+          }
+        end
+        _reset(view)
+
+      elsif event == :l_button_up || event == :l_button_dblclick
+
+        if @active_part
+
+          definition = view.model.definitions[@active_part.def.definition_id]
+
+          unless definition.nil?
+
+            size = @active_part.def.size
+
+            ti = nil
+            if is_action_swap_length_width?
+
+              if is_action_modifier_anticlockwise?
+                ti = Geom::Transformation.axes(
+                  ORIGIN,
+                  size.normals[1],
+                  AxisUtils.flipped?(size.normals[1], size.normals[0], size.normals[2]) ? size.normals[0].reverse : size.normals[0],
+                  size.normals[2]
+                )
+              else
+                ti = Geom::Transformation.axes(
+                  ORIGIN,
+                  AxisUtils.flipped?(size.normals[1], size.normals[0], size.normals[2]) ? size.normals[1].reverse : size.normals[1],
+                  size.normals[0],
+                  size.normals[2]
+                )
+              end
+
+            elsif is_action_swap_front_back?
+
+              ti = Geom::Transformation.axes(
+                ORIGIN,
+                size.normals[0],
+                AxisUtils.flipped?(size.normals[0], size.normals[1], size.normals[2].reverse) ? size.normals[1].reverse : size.normals[1],
+                size.normals[2].reverse
+              )
+
+            elsif is_action_swap_auto?
+
+              instance_info = @active_part.def.instance_infos.values.first
+              oriented_size = Size3d.create_from_bounds(instance_info.definition_bounds, @active_part.def.scale, true)
+
+              ti = Geom::Transformation.axes(
+                ORIGIN,
+                oriented_size.normals[0],
+                AxisUtils.flipped?(oriented_size.normals[0], oriented_size.normals[1], oriented_size.normals[2]) ? oriented_size.normals[1].reverse : oriented_size.normals[1],
+                oriented_size.normals[2]
+              )
+
+            end
+            unless ti.nil?
+
+              t = ti.inverse
+
+              # Start undoable model modification operation
+              view.model.start_operation('OpenCutList - Part Swap', true, false, false)
+
+              # Transform definition's entities
+              entities = definition.entities
+              entities.transform_entities(t, entities.to_a)
+
+              # Inverse transform definition's instances
+              definition.instances.each { |instance|
+                instance.transformation *= ti
+              }
+
+              definition_attributes = DefinitionAttributes.new(definition)
+              definition_attributes.orientation_locked_on_axis = true
+              definition_attributes.write_to_attributes
+
+              # Commit model modification operation
+              view.model.commit_operation
+
+              _blop(@active_part_entity_path)
+
             end
 
           end
 
-        }
+        else
+          UI.beep
+        end
+
       end
-      _reset(view)
-      UI.beep if event == :l_button_up || event == :l_button_dblclick
     end
 
     def _get_part_entity_path_from_path(path)
@@ -631,9 +664,11 @@ module Ladb::OpenCutList
       }
     end
 
-    def _blop(entity, path)
+    def _blop(path)
 
-      worker = CutlistGenerateWorker.new({}, entity, path)
+      entity = path.last
+
+      worker = CutlistGenerateWorker.new({}, entity, path.slice(0..-2))
       cutlist = worker.run
 
       part = nil
@@ -672,11 +707,13 @@ module Ladb::OpenCutList
         part_helper.transformation = instance_info.transformation
         @space.append(part_helper)
 
-          # Mesh
-          mesh = Kuix::Mesh.new
-          mesh.add_trangles(_compute_children_faces_triangles(instance_info.entity.definition.entities))
-          mesh.background_color = COLOR_MESH
-          part_helper.append(mesh)
+        # Mesh
+        mesh = Kuix::Mesh.new
+        mesh.add_trangles(_compute_children_faces_triangles(instance_info.entity.definition.entities))
+        mesh.background_color = COLOR_MESH
+        part_helper.append(mesh)
+
+        if part.group.material_type != MaterialAttributes::TYPE_HARDWARE
 
           # Back arrow
           arrow = Kuix::Arrow.new
@@ -707,9 +744,11 @@ module Ladb::OpenCutList
           box_helper.line_stipple = '-'
           part_helper.append(box_helper)
 
-          # Axes helper
-          axes_helper = Kuix::AxesHelper.new
-          part_helper.append(axes_helper)
+        end
+
+        # Axes helper
+        axes_helper = Kuix::AxesHelper.new
+        part_helper.append(axes_helper)
 
       end
 
