@@ -4,8 +4,7 @@
 {% set title = 'tab.importer.load.title'|i18next %}
 {% set unit = ('default.unit_'~lengthUnit)|i18next %}
 
-{% block headerInner %}
-    {{ parent() }}
+{% block headerToolsInner %}
     {% include 'components/_widget-preset.twig' %}
 {% endblock %}
 
