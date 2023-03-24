@@ -125,7 +125,7 @@ module Ladb::OpenCutList
       @part_panel.layout = Kuix::InlineLayout.new(false, unit, Kuix::Anchor.new(Kuix::Anchor::CENTER))
       @part_panel.padding.set_all!(unit * 2)
       @part_panel.visible = false
-      @part_panel.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255, 128))
+      @part_panel.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255, 85))
       panel_south.append(@part_panel)
 
       @part_panel_lbl_1 = Kuix::Label.new
@@ -443,13 +443,7 @@ module Ladb::OpenCutList
 
     def onKeyUp(key, repeat, flags, view)
       return if super
-      if key == CONSTRAIN_MODIFIER_KEY && is_action_swap_length_width?
-        pop_action_modifier
-      elsif key == COPY_MODIFIER_KEY && is_action_swap_length_width?
-        pop_action
-      elsif key == ALT_MODIFIER_KEY && is_action_swap_front_back?
-        pop_action
-      elsif key == 9 && @active_part_entity
+      if key == 9 && @active_part_entity_path # TAB
 
         picked_paths = []
         picked_part_entity_paths = []
@@ -462,14 +456,20 @@ module Ladb::OpenCutList
           end
         end
 
-        active_index = picked_part_entity_paths.map { |path| path.last }.index(@active_part_entity)
+        active_index = picked_part_entity_paths.map { |path| path.last }.index(@active_part_entity_path.last)
         new_index = (active_index + 1) % picked_part_entity_paths.length
 
-        @picked_path = picked_paths[new_index]
-        @active_part_entity_path = picked_part_entity_paths[new_index]
-        @active_part_entity = picked_part_entity_paths[new_index].last
-        @active_part = _blop(@active_part_entity_path)
+        part = _compute_part_from_path(picked_part_entity_paths[new_index])
+        _set_active(picked_part_entity_paths[new_index], part)
 
+        @picked_path = picked_paths[new_index]
+
+      elsif key == CONSTRAIN_MODIFIER_KEY && is_action_swap_length_width?
+        pop_action_modifier
+      elsif key == COPY_MODIFIER_KEY && is_action_swap_length_width?
+        pop_action
+      elsif key == ALT_MODIFIER_KEY && is_action_swap_front_back?
+        pop_action
       end
     end
 
@@ -499,16 +499,116 @@ module Ladb::OpenCutList
 
     private
 
+    def _set_active(part_entity_path, part)
+
+      @active_part_entity_path = part_entity_path
+      @active_part = part
+
+      if part
+
+        # Display part infos
+
+        infos = [ "#{part.length} x #{part.width} x #{part.thickness}" ]
+        infos << part.material_name unless part.material_name.empty?
+        infos << ">|<" if part.flipped
+
+        text_1 = part.name
+        text_2 = infos.join(' | ')
+
+        @part_panel_lbl_1.text = text_1
+        @part_panel_lbl_1.visible = true
+        @part_panel_lbl_2.text = text_2
+        @part_panel_lbl_2.visible = true
+        @part_panel.visible = true
+
+        # Create drawing helpers
+
+        instance_info = part.def.instance_infos.values.first
+
+        @space.remove_all
+
+        arrow_color = part.auto_oriented ? COLOR_ARROW_AUTO_ORIENTED : COLOR_ARROW
+        arrow_line_width = 2
+        arrow_offset = Sketchup.active_model.active_view.pixels_to_model(1, ORIGIN)
+
+        part_helper = Kuix::Group.new
+        part_helper.transformation = instance_info.transformation
+        @space.append(part_helper)
+
+        # Mesh
+        mesh = Kuix::Mesh.new
+        mesh.add_trangles(_compute_children_faces_triangles(instance_info.entity.definition.entities))
+        mesh.background_color = COLOR_MESH
+        part_helper.append(mesh)
+
+        if part.group.material_type != MaterialAttributes::TYPE_HARDWARE
+
+          # Back arrow
+          arrow = Kuix::Arrow.new
+          arrow.pattern_transformation = instance_info.size.oriented_transformation if part.auto_oriented
+          arrow.bounds.origin.copy!(instance_info.definition_bounds.min.offset(Geom::Vector3d.new(0, 0, -arrow_offset)))
+          arrow.bounds.size.copy!(instance_info.definition_bounds)
+          arrow.color = arrow_color
+          arrow.line_width = arrow_line_width
+          arrow.line_stipple = '-'
+          part_helper.append(arrow)
+
+          # Front arrow
+          arrow = Kuix::Arrow.new
+          arrow.pattern_transformation = instance_info.size.oriented_transformation if part.auto_oriented
+          arrow.pattern_transformation *= Geom::Transformation.translation(Z_AXIS)
+          arrow.bounds.origin.copy!(instance_info.definition_bounds.min.offset(Geom::Vector3d.new(0, 0, arrow_offset)))
+          arrow.bounds.size.copy!(instance_info.definition_bounds)
+          arrow.color = arrow_color
+          arrow.line_width = arrow_line_width
+          part_helper.append(arrow)
+
+          # Bounding box helper
+          box_helper = Kuix::BoxHelper.new
+          box_helper.bounds.origin.copy!(instance_info.definition_bounds.min)
+          box_helper.bounds.size.copy!(instance_info.definition_bounds)
+          box_helper.color = COLOR_BOX
+          box_helper.line_width = 2
+          box_helper.line_stipple = '-'
+          part_helper.append(box_helper)
+
+        end
+
+        # Axes helper
+        axes_helper = Kuix::AxesHelper.new
+        part_helper.append(axes_helper)
+
+        # Status
+
+        if part.group.material_type == MaterialAttributes::TYPE_HARDWARE
+          set_status("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_orientable')}", STATUS_TYPE_ERROR)
+          return
+        end
+
+        if is_action_swap_auto? && !part.auto_oriented && part.def.size.length >= part.def.size.width && part.def.size.width >= part.def.size.thickness
+          set_status("✔ #{Plugin.instance.get_i18n_string('tool.smart_axes.success.part_oriented')}", STATUS_TYPE_SUCCESS)
+          return
+        end
+
+        definition = Sketchup.active_model.definitions[part.def.definition_id]
+        if definition && definition.count_used_instances > 1
+          set_status("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count => definition.count_used_instances - 1 })}", STATUS_TYPE_WARNING)
+        else
+          set_status('')
+        end
+
+      else
+        @part_panel.visible = false
+        @space.remove_all
+      end
+
+    end
+
     def _reset(view)
       set_status('')
-      set_part('')
       if @picked_path
         @picked_path = nil
-        @active_part_entity_path = nil
-        @active_part_entity = nil
-        @active_part = nil
-        @space.remove_all
-        view.invalidate
+        _set_active(nil, nil)
       end
     end
 
@@ -534,35 +634,20 @@ module Ladb::OpenCutList
               @picked_path = picked_path.clone
 
               picked_entity_path = _get_part_entity_path_from_path(picked_path)
-              picked_entity = picked_path.last
-              if picked_entity
+              if picked_entity_path.length > 0
 
-                part = _blop(picked_entity_path)
+                part = _compute_part_from_path(picked_entity_path)
                 if part
-
-                  @active_part_entity_path = picked_entity_path
-                  @active_part_entity = picked_entity
-                  @active_part = part
-
-                  if is_action_swap_auto? && !part.auto_oriented && part.def.size.length >= part.def.size.width && part.def.size.width >= part.def.size.thickness
-                    set_status("✔ #{Plugin.instance.get_i18n_string('tool.smart_axes.success.part_oriented')}", STATUS_TYPE_SUCCESS)
-                    return
-                  end
-
-                  definition = view.model.definitions[part.def.definition_id]
-                  if definition && definition.count_used_instances > 1
-                    set_status("⚠️ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count => definition.count_used_instances - 1 })}", STATUS_TYPE_WARNING)
-                  else
-                    set_status('')
-                  end
-
+                  _set_active(picked_entity_path, part)
+                else
+                  _reset(view)
+                  set_status("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", STATUS_TYPE_ERROR)
                 end
-
                 return
 
               elsif picked_entity_path
                 _reset(view)
-                set_status("⚠️ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", STATUS_TYPE_ERROR)
+                set_status("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", STATUS_TYPE_ERROR)
                 return
               end
 
@@ -574,10 +659,9 @@ module Ladb::OpenCutList
 
       elsif event == :l_button_up || event == :l_button_dblclick
 
-        if @active_part
+        if @active_part && @active_part.group.material_type != MaterialAttributes::TYPE_HARDWARE
 
           definition = view.model.definitions[@active_part.def.definition_id]
-
           unless definition.nil?
 
             size = @active_part.def.size
@@ -646,7 +730,8 @@ module Ladb::OpenCutList
               # Commit model modification operation
               view.model.commit_operation
 
-              _blop(@active_part_entity_path)
+              part = _compute_part_from_path(@active_part_entity_path)
+              _set_active(@active_part_entity_path, part)
 
             end
 
@@ -667,7 +752,7 @@ module Ladb::OpenCutList
       }
     end
 
-    def _blop(path)
+    def _compute_part_from_path(path)
 
       entity = path.last
 
@@ -684,76 +769,6 @@ module Ladb::OpenCutList
         }
         break unless part.nil?
       }
-
-      if part
-
-        # Display part infos
-        infos = [ "#{part.length} x #{part.width} x #{part.thickness}" ]
-        infos << part.material_name unless part.material_name.empty?
-        infos << ">|<" if part.flipped
-        set_part(
-          "#{part.name}",
-          "#{infos.join(' | ')}"
-        )
-
-        instance_info = part.def.instance_infos.values.first
-
-        # Create drawing helpers
-
-        @space.remove_all
-
-        arrow_color = part.auto_oriented ? COLOR_ARROW_AUTO_ORIENTED : COLOR_ARROW
-        arrow_line_width = 2
-        arrow_offset = Sketchup.active_model.active_view.pixels_to_model(1, ORIGIN)
-
-        part_helper = Kuix::Group.new
-        part_helper.transformation = instance_info.transformation
-        @space.append(part_helper)
-
-        # Mesh
-        mesh = Kuix::Mesh.new
-        mesh.add_trangles(_compute_children_faces_triangles(instance_info.entity.definition.entities))
-        mesh.background_color = COLOR_MESH
-        part_helper.append(mesh)
-
-        if part.group.material_type != MaterialAttributes::TYPE_HARDWARE
-
-          # Back arrow
-          arrow = Kuix::Arrow.new
-          arrow.pattern_transformation = instance_info.size.oriented_transformation if part.auto_oriented
-          arrow.bounds.origin.copy!(instance_info.definition_bounds.min.offset(Geom::Vector3d.new(0, 0, -arrow_offset)))
-          arrow.bounds.size.copy!(instance_info.definition_bounds)
-          arrow.color = arrow_color
-          arrow.line_width = arrow_line_width
-          arrow.line_stipple = '-'
-          part_helper.append(arrow)
-
-          # Front arrow
-          arrow = Kuix::Arrow.new
-          arrow.pattern_transformation = instance_info.size.oriented_transformation if part.auto_oriented
-          arrow.pattern_transformation *= Geom::Transformation.translation(Z_AXIS)
-          arrow.bounds.origin.copy!(instance_info.definition_bounds.min.offset(Geom::Vector3d.new(0, 0, arrow_offset)))
-          arrow.bounds.size.copy!(instance_info.definition_bounds)
-          arrow.color = arrow_color
-          arrow.line_width = arrow_line_width
-          part_helper.append(arrow)
-
-          # Bounding box helper
-          box_helper = Kuix::BoxHelper.new
-          box_helper.bounds.origin.copy!(instance_info.definition_bounds.min)
-          box_helper.bounds.size.copy!(instance_info.definition_bounds)
-          box_helper.color = COLOR_BOX
-          box_helper.line_width = 2
-          box_helper.line_stipple = '-'
-          part_helper.append(box_helper)
-
-        end
-
-        # Axes helper
-        axes_helper = Kuix::AxesHelper.new
-        part_helper.append(axes_helper)
-
-      end
 
       part
     end

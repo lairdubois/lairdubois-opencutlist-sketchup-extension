@@ -113,7 +113,7 @@ module Ladb::OpenCutList
       # Errors & tips
       if @instance_infos_cache.length == 0
         if model
-          if entities.length == 0
+          if entities && entities.length == 0
             cutlist.add_error('tab.cutlist.error.no_entities')
           else
             if is_entity_selection

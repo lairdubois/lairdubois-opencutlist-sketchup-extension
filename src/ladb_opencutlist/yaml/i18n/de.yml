@@ -1376,10 +1376,10 @@ tool:
     action_2: Automatisch ausrichten
     action_modifier_0: "⤵"
     action_modifier_1: "⤴"
-    error:
-      not_part: Das Zielobjekt ist kein Teil.
+    success:
+      part_oriented: Dieses Teil hat seine Länge bereits auf der größten und seine Dicke auf der kleinsten Dimension.
     warning:
       more_entities: "{{ count }} andere Instanzen mit derselben Definition werden ebenfalls geändert."
       more_entities_plural: "{{ count }} andere Instanzen mit derselben Definition werden ebenfalls geändert."
-    success:
-      part_oriented: Dieses Teil hat seine Länge bereits auf der größten und seine Dicke auf der kleinsten Dimension.
+    error:
+      not_part: Das Zielobjekt ist kein Teil.

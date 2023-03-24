@@ -1376,10 +1376,10 @@ tool:
     action_2: Orient automatically
     action_modifier_0: "⤵"
     action_modifier_1: "⤴"
-    error:
-      not_part: The target object is not a part.
+    success:
+      part_oriented: This part already has its length on the largest dimension and its thickness on the smallest.
     warning:
       more_entities: "{{ count }} other part sharing the same definition will also be modified."
       more_entities_plural: "{{ count }} other parts sharing the same definition will also be modified."
-    success:
-      part_oriented: This part already has its length on the largest dimension and its thickness on the smallest.
+    error:
+      not_part: The target object is not a part.

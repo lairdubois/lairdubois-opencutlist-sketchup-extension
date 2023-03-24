@@ -1378,10 +1378,11 @@ tool:
     action_2: Orienter automatiquement
     action_modifier_0: "⤵"
     action_modifier_1: "⤴"
-    error:
-      not_part: L'objet ciblé n'est pas une pièce.
+    success:
+      part_oriented: Cette pièce a déjà sa longueur sur la plus grande dimension et son épaisseur sur la plus petite.
     warning:
       more_entities: "{{ count }} autre instances partageant la même définition sera également modifiée."
       more_entities_plural: "{{ count }} autres instances partageant la même définition seront également modifiées."
-    success:
-      part_oriented: Cette pièce a déjà sa longueur sur la plus grande dimension et son épaisseur sur la plus petite.
+    error:
+      not_part: L'objet ciblé n'est pas une pièce.
+      not_orientable: Le type de cette pièce ne permet pas de l'orienter.
