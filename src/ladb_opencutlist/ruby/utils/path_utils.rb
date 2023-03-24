@@ -33,17 +33,17 @@ module Ladb::OpenCutList
 
     # -- Named --
 
-    def self.get_named_path(path, ignore_empty_names = true, ignored_leaf_count = 1, separator = '.')  # path is Array<ComponentInstance>
+    def self.get_named_path(path, ignore_empty_names = true, ignored_leaf_count = 1)  # path is Array<ComponentInstance>
       return nil if path.nil?
       path_names = []
       path.first(path.size - ignored_leaf_count).each { |entity|
         if ignore_empty_names
           path_names.push(entity.name) unless entity.name.empty?  # ignore empty names
         else
-          path_names.push(entity.name.empty? ? "##{entity.entityID}" : entity.name)
+          path_names.push(entity.name.empty? ? "##{entity.entityID}#{entity.is_a?(Sketchup::ComponentInstance) ? " <#{entity.definition.name}>" : ''}" : entity.name)
         end
       }
-      path_names.join(separator)
+      path_names  # Array<String>
     end
 
     # -- Geom --

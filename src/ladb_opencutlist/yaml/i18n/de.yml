@@ -919,14 +919,6 @@ tab:
       option_camera_target_auto: Automatisch
       option_camera_target_custom: Benutzerdefiniert
       option_explode: Explosionsdarstellung
-      snippet:
-        number: Nummer
-        name: Bezeichnung
-        number_and_name: Nummer und Bezeichnung
-        number_without_hardware: Nummer (ausser XXXL)
-        size: Taille capable
-        area: Surface capable
-        volume: Volume capable
       error:
         no_part: Es gibt keine Teile zum Zeichnen.
         failed_to_save_as_skp: "Fehler beim Schreiben der SKP Datei, die an Layout gesendet werden soll."
@@ -937,6 +929,14 @@ tab:
       warning:
         is_group_selection: Die Teile innerhalb der **maskierten Gruppen** Ihrer Teileliste werden nicht gezeichnet.
         is_part_selection: Diese Übersichtszeichnung ist auf die **ausgewählten Teile** beschränkt.
+      snippet:
+        number: Nummer
+        name: Bezeichnung
+        number_and_name: Nummer und Bezeichnung
+        number_without_hardware: Nummer (ausser XXXL)
+        size: Taille capable
+        area: Surface capable
+        volume: Volume capable
     error:
       no_model: Es sind keine Modelle geöffnet. Sie müssen mir schon etwas mehr geben ;)
       no_entities: Ihr Modell ist leer. Sie müssen mir schon etwas mehr geben ;)

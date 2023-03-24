@@ -67,6 +67,7 @@ default:
   copy_key_mac: Option
   alt_key_win: Alt
   alt_key_mac: Command
+  tab_key: Tab
 core:
   menu:
     submenu: OpenCutList
@@ -919,14 +920,6 @@ tab:
       option_camera_target_auto: Automatique
       option_camera_target_custom: Personnalisée
       option_explode: Eclaté
-      snippet:
-        number: Numéro
-        name: Désignation
-        number_and_name: Numéro et désignation
-        number_without_hardware: Numéro (sans les accessoires)
-        size: Taille capable
-        area: Surface capable
-        volume: Volume capable
       error:
         no_part: Il y a aucune pièce à dessiner.
         failed_to_save_as_skp: Echec de l'écriture du fichier SKP à envoyer à Layout.
@@ -937,6 +930,14 @@ tab:
       warning:
         is_group_selection: Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas dessinées.
         is_part_selection: Ce dessin d'ensemble se limite aux **pièces sélectionnées**.
+    snippet:
+      number: Numéro
+      name: Désignation
+      number_and_name: Numéro et désignation
+      number_without_hardware: Numéro (sans les accessoires)
+      size: Taille capable
+      area: Surface capable
+      volume: Volume capable
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_entities: Votre modèle est vide. Il va falloir m'en donner un peu plus ;)
@@ -1370,6 +1371,7 @@ tool:
     status_swap_front_back: Cliquez sur une pièce pour permuter la lecture de son Parement avec son Contreparement.
     status_swap_auto: Cliquez sur une pièce pour définir la Longueur sur la plus grand dimension et l'Epaisseur sur la plus petite.
     status_toggle_clockwise: Inverser le sens de rotation.
+    status_toggle_depth: Pièces en arrière plan.
     action: Action
     action_0: Permuter Longueur ↔ Largeur
     action_1: Permuter Parement ↔ Contreparement

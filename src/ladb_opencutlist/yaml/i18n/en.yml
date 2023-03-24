@@ -919,14 +919,6 @@ tab:
       option_camera_target_auto: Automatic
       option_camera_target_custom: Custom
       option_explode: Exploded View
-      snippet:
-        number: Number
-        name: Designation
-        number_and_name: Number and Designation
-        number_without_hardware: Number (without accessories)
-        size: Rough size
-        area: Rough area
-        volume: Rought volume
       error:
         no_part: There is no part to draw.
         failed_to_save_as_skp: Failed to write SKP file to send to Layout.
@@ -937,6 +929,14 @@ tab:
       warning:
         is_group_selection: The parts inside of **masked groups** of your parts list will not be drawn.
         is_part_selection: This overview drawing is limited to the **selected parts**.
+    snippet:
+      number: Number
+      name: Designation
+      number_and_name: Number and Designation
+      number_without_hardware: Number (without accessories)
+      size: Rough size
+      area: Rough area
+      volume: Rought volume
     error:
       no_model: No model is open. You will need to give me more information ;)
       no_entities: Your model is empty. You will need to give me more information ;)

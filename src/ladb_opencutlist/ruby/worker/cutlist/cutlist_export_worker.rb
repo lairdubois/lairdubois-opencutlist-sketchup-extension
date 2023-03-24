@@ -228,7 +228,7 @@ module Ladb::OpenCutList
 
                 data = InstancesListExportRowData.new(
                   StringWrapper.new(part.number),
-                  StringWrapper.new(PathUtils.get_named_path(instance_info.path, false, 1, '/')),
+                  PathWrapper.new(PathUtils.get_named_path(instance_info.path, false, 1)),
                   StringWrapper.new(instance_info.entity.name.empty? ? "##{instance_info.entity.entityID}" : instance_info.entity.name),
                   StringWrapper.new(part.name),
                   LengthWrapper.new(part.def.cutting_length),

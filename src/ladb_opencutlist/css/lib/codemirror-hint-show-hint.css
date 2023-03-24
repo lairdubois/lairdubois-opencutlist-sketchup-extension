@@ -72,6 +72,10 @@
   content: "V";
   background: #e76f51;
 }
+.CodeMirror-hint-path:before {
+  content: "P";
+  background: #cc0000;
+}
 .CodeMirror-hint-material-type:before {
   content: "T";
   background: #bc6c25;

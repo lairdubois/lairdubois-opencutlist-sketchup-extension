@@ -43,7 +43,7 @@ module Ladb::OpenCutList
       if @named_path
         return @named_path
       end
-      @named_path = PathUtils.get_named_path(@path)
+      @named_path = PathUtils.get_named_path(@path).join('.')
     end
 
     def transformation

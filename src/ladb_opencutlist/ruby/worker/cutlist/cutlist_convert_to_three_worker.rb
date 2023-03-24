@@ -51,7 +51,7 @@ module Ladb::OpenCutList
             three_part_instance_def.id = part.id
             three_part_instance_def.text = _evaluate_text(InstanceData.new(
               StringWrapper.new(part.number),
-              StringWrapper.new(PathUtils.get_named_path(instance_info.path, true, 1, '.')),
+              ArrayWrapper.new(PathUtils.get_named_path(instance_info.path, true, 1)),
               StringWrapper.new(instance_info.entity.name),
               StringWrapper.new(part.name),
               LengthWrapper.new(part.def.cutting_length),

@@ -16,7 +16,8 @@
     };
 
     LadbEditorExport.DEFAULTS = {
-        vars: []
+        vars: [],
+        snippetDefs: []
     };
 
     LadbEditorExport.prototype.setColDefs = function (colDefs) {
@@ -185,7 +186,8 @@
             ;
             $inputFormula
                 .ladbTextinputCode({
-                    variableDefs: this.variableDefs
+                    variableDefs: this.variableDefs,
+                    snippetDefs: this.options.snippetDefs
                 })
                 .on('change', function () {
                     $item.data('formula', $(this).val());
@@ -218,7 +220,8 @@
                 this.$helpBlock.hide();
             }
 
-            this.dialog.setupPopovers();
+            this.dialog.setupTooltips(this.$editingForm);
+            this.dialog.setupPopovers(this.$editingForm);
 
         } else {
 

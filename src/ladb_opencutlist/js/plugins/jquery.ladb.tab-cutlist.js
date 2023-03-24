@@ -789,13 +789,20 @@
                     { name: 'veneer_zmax', type: 'veneer' },
                     { name: 'veneer_zmin', type: 'veneer' },
                     { name: 'layers', type: 'array' }
+                ],
+                snippetDefs: [
+                    { name: i18next.t('tab.cutlist.snippet.number_and_name'), value: '@number + " - " + @name' },
+                    { name: '-' },
+                    { name: i18next.t('tab.cutlist.snippet.size'), value: '@bbox_length + " x " + @bbox_width' },
+                    { name: i18next.t('tab.cutlist.snippet.area'), value: '@bbox_length * @bbox_width' },
+                    { name: i18next.t('tab.cutlist.snippet.volume'), value: '@bbox_length * @bbox_width * @bbox_thickness' },
                 ]
             });
             $editorInstancesList.ladbEditorExport({
                 dialog: that.dialog,
                 vars: [
                     { name: 'number', type: 'string' },
-                    { name: 'path', type: 'string' },
+                    { name: 'path', type: 'path' },
                     { name: 'instance_name', type: 'string' },
                     { name: 'name', type: 'string' },
                     { name: 'cutting_length', type: 'length' },
@@ -816,6 +823,13 @@
                     { name: 'veneer_zmax', type: 'veneer' },
                     { name: 'veneer_zmin', type: 'veneer' },
                     { name: 'layer', type: 'string' }
+                ],
+                snippetDefs: [
+                    { name: i18next.t('tab.cutlist.snippet.number_and_name'), value: '@number + " - " + @name' },
+                    { name: '-' },
+                    { name: i18next.t('tab.cutlist.snippet.size'), value: '@bbox_length + " x " + @bbox_width' },
+                    { name: i18next.t('tab.cutlist.snippet.area'), value: '@bbox_length * @bbox_width' },
+                    { name: i18next.t('tab.cutlist.snippet.volume'), value: '@bbox_length * @bbox_width * @bbox_thickness' },
                 ]
             });
 
@@ -1431,7 +1445,7 @@
             $textareaPinsFormula.ladbTextinputCode({
                 variableDefs: fnConvertToVariableDefs([
                     { name: 'number', type: 'string' },
-                    { name: 'path', type: 'string' },
+                    { name: 'path', type: 'path' },
                     { name: 'instance_name', type: 'string' },
                     { name: 'name', type: 'string' },
                     { name: 'cutting_length', type: 'length' },
@@ -1454,15 +1468,15 @@
                     { name: 'layer', type: 'string' }
                 ]),
                 snippetDefs: [
-                    { name: i18next.t('tab.cutlist.layout.snippet.number'), value: '@number' },
-                    { name: i18next.t('tab.cutlist.layout.snippet.name'), value: '@name' },
-                    { name: i18next.t('tab.cutlist.layout.snippet.number_and_name'), value: '@number + " - " + @name' },
+                    { name: i18next.t('tab.cutlist.snippet.number'), value: '@number' },
+                    { name: i18next.t('tab.cutlist.snippet.name'), value: '@name' },
+                    { name: i18next.t('tab.cutlist.snippet.number_and_name'), value: '@number + " - " + @name' },
                     { name: '-' },
-                    { name: i18next.t('tab.cutlist.layout.snippet.size'), value: '@bbox_length + " x " + @bbox_width' },
-                    { name: i18next.t('tab.cutlist.layout.snippet.area'), value: '@bbox_length * @bbox_width' },
-                    { name: i18next.t('tab.cutlist.layout.snippet.volume'), value: '@bbox_length * @bbox_width * @bbox_thickness' },
+                    { name: i18next.t('tab.cutlist.snippet.size'), value: '@bbox_length + " x " + @bbox_width' },
+                    { name: i18next.t('tab.cutlist.snippet.area'), value: '@bbox_length * @bbox_width' },
+                    { name: i18next.t('tab.cutlist.snippet.volume'), value: '@bbox_length * @bbox_width * @bbox_thickness' },
                     { name: '-' },
-                    { name: i18next.t('tab.cutlist.layout.snippet.number_without_hardware'), value: "@number unless @material_type.is_hardware?" },
+                    { name: i18next.t('tab.cutlist.snippet.number_without_hardware'), value: "@number unless @material_type.is_hardware?" },
                 ]
             })
             $selectPinsLength.selectpicker(SELECT_PICKER_OPTIONS);

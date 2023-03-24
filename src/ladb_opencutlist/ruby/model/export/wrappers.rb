@@ -317,7 +317,18 @@ module Ladb::OpenCutList
 
   # -----
 
-  class MaterialTypeWrapper < ValueWrapper
+  class PathWrapper < ArrayWrapper
+
+    def to_s
+      @value.join('/')
+    end
+
+  end
+
+
+  # -----
+
+  class MaterialTypeWrapper < IntegerWrapper
 
     def is_solid_wood?
       @value == MaterialAttributes::TYPE_SOLID_WOOD
@@ -349,10 +360,6 @@ module Ladb::OpenCutList
 
     def to_s
       Plugin.instance.get_i18n_string("tab.materials.type_#{@value}")
-    end
-
-    def export
-      self.to_s
     end
 
   end
