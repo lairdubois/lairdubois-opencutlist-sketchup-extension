@@ -31,7 +31,7 @@ default:
   upgrade: Mettre à jour
   copy: Copier
   select_all: Tout sélectionner
-  unselect_all: Tout désélectionner
+  unselect_all: Rien sélectionner
   draw: Dessiner
   estimate: Estimer
   empty_filename: Sans titre.skp
@@ -1381,8 +1381,7 @@ tool:
     success:
       part_oriented: Cette pièce a déjà sa longueur sur la plus grande dimension et son épaisseur sur la plus petite.
     warning:
-      more_entities: "{{ count }} autre instances partageant la même définition sera également modifiée."
-      more_entities_plural: "{{ count }} autres instances partageant la même définition seront également modifiées."
+      more_entities: "{{ count_used }} instances partageant la même définition seront modifiées."
     error:
       not_part: L'objet ciblé n'est pas une pièce.
       not_orientable: Le type de cette pièce ne permet pas de l'orienter.
