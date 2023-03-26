@@ -219,6 +219,7 @@
         {% for bar in bars %}
             {% set maxBarLength = max(maxBarLength, bar.slices[0].px_length) %}
         {% endfor %}
+        {% set barIndex = 1 %}
         {% for bar in bars %}
             <table id="ladb_cuttingdiagram_group_{{ bar.type_id }}" data-group-id="{{ group.id }}_{{ bar.type_id }}" data-bar-index="{{ loop.index }}" class="table table-bordered ladb-cutlist-group ladb-cutlist-cuttingdiagram-group">
                 <thead>
@@ -231,9 +232,8 @@
                                 <button class="btn btn-default btn-sm ladb-btn-scrollto-next-group" {% if loop.last %}disabled{% endif %}><i class="ladb-opencutlist-icon-chevron-right"></i></button>
                             </div>
                         {% endif %}
-                        {% if not options.bar_folding %}
-                            <div class="ladb-heading pull-right" style="margin-right: 10px;"><strong>{{ loop.index }} / {{ bars|length }}</strong></div>
-                        {% endif %}
+                        <div class="ladb-heading pull-right" style="margin-right: 10px;"><strong>{{ barIndex }}{% if bar.count > 1 %} - {{ barIndex + bar.count - 1 }}{% endif%} / {{ bars|length }}</strong></div>
+                        {% set barIndex = barIndex + sheet.count %}
                         {% if bar.count > 1 %}
                             <div class="ladb-heading-count pull-right">x&nbsp;{{ bar.count }}</div>
                         {% endif %}

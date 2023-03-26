@@ -259,6 +259,7 @@
         {% for sheet in sheets %}
             {% set maxSheetLength = max(maxSheetLength, sheet.px_length) %}
         {% endfor %}
+        {% set sheetIndex = 1 %}
         {% for sheet in sheets %}
             <table id="ladb_cuttingdiagram_group_{{ sheet.type_id }}" data-group-id="{{ group.id }}_{{ sheet.type_id }}" data-sheet-index="{{ loop.index }}" class="table table-bordered ladb-cutlist-group ladb-cutlist-cuttingdiagram-group">
                 <thead>
@@ -271,9 +272,8 @@
                                 <button class="btn btn-default btn-sm ladb-btn-scrollto-next-group" {% if loop.last %}disabled{% endif %}><i class="ladb-opencutlist-icon-chevron-right"></i></button>
                             </div>
                         {% endif %}
-                        {% if not options.sheet_folding %}
-                            <div class="ladb-heading pull-right" style="margin-right: 10px;"><strong>{{ loop.index }} / {{ sheets|length }}</strong></div>
-                        {% endif %}
+                        <div class="ladb-heading pull-right" style="margin-right: 10px;"><strong>{{ sheetIndex }}{% if sheet.count > 1 %} - {{ sheetIndex + sheet.count - 1 }}{% endif%} / {{ sheets|length }}</strong></div>
+                        {% set sheetIndex = sheetIndex + sheet.count %}
                         {% if sheet.count > 1 %}
                             <div class="ladb-heading-count pull-right">x&nbsp;{{ sheet.count }}</div>
                         {% endif %}
