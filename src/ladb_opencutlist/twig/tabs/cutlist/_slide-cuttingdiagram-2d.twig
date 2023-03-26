@@ -272,7 +272,7 @@
                                 <button class="btn btn-default btn-sm ladb-btn-scrollto-next-group" {% if loop.last %}disabled{% endif %}><i class="ladb-opencutlist-icon-chevron-right"></i></button>
                             </div>
                         {% endif %}
-                        <div class="ladb-heading pull-right" style="margin-right: 10px;"><strong>{{ sheetIndex }}{% if sheet.count > 1 %} - {{ sheetIndex + sheet.count - 1 }}{% endif%} / {{ sheets|length }}</strong></div>
+                        <div class="ladb-heading pull-right" style="margin-right: 10px;"><strong>{{ sheetIndex }}{% if sheet.count > 1 %} - {{ sheetIndex + sheet.count - 1 }}{% endif%} / {{ summary.total_used_count }}</strong></div>
                         {% set sheetIndex = sheetIndex + sheet.count %}
                         {% if sheet.count > 1 %}
                             <div class="ladb-heading-count pull-right">x&nbsp;{{ sheet.count }}</div>
