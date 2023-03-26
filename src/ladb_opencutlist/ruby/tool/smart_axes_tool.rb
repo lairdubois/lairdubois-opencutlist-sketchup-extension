@@ -51,7 +51,7 @@ module Ladb::OpenCutList
     @@action_modifier = nil
 
     def initialize
-      super(true, true)
+      super(true, false)
 
       model = Sketchup.active_model
       if model
@@ -76,7 +76,10 @@ module Ladb::OpenCutList
 
       @canvas.layout = Kuix::BorderLayout.new
 
-      unit = [ [ view.vpheight / 150, 8 ].min, 3 * UI.scale_factor ].max
+      unit = 3
+      unit = 4 if view.vpheight > 500
+      unit = 6 if view.vpheight > 1000
+      unit = 8 if view.vpheight > 2000
 
       panel_north = Kuix::Panel.new
       panel_north.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
@@ -424,6 +427,17 @@ module Ladb::OpenCutList
       start_action_modifier = start_action == ACTIONS.first[:action] && @@action_modifier.nil? ? ACTIONS.first[:modifiers].is_a?(Array) ? ACTIONS.first[:modifiers].first : nil : @@action_modifier
       set_root_action(start_action, start_action_modifier)
 
+      # Observe materials events
+      view.model.add_observer(self)
+
+    end
+
+    def onDeactivate(view)
+      super
+
+      # Stop observing materials events
+      view.model.remove_observer(self)
+
     end
 
     def onResume(view)
@@ -493,11 +507,15 @@ module Ladb::OpenCutList
       _handle_mouse_event(x, y, view, :move)
     end
 
-    def onMouseLeave(view)
-      return if super
+    def onTransactionUndo(model)
+      _refresh_active
     end
 
     private
+
+    def _refresh_active
+      _set_active(@active_part_entity_path, _compute_part_from_path(@active_part_entity_path))
+    end
 
     def _set_active(part_entity_path, part)
 
@@ -753,8 +771,10 @@ module Ladb::OpenCutList
     end
 
     def _compute_part_from_path(path)
+      return nil unless path.is_a?(Array)
 
       entity = path.last
+      return nil unless entity.is_a?(Sketchup::Drawingelement)
 
       worker = CutlistGenerateWorker.new({}, entity, path.slice(0..-2))
       cutlist = worker.run

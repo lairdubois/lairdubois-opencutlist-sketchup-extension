@@ -263,11 +263,9 @@ module Ladb::OpenCutList
                 if entity.is_a?(Sketchup::Face)
 
                   # TODO find a way to achieve this in SU < 2022
-                  if Sketchup.version_number >= 2200000000
-                    entity.clear_texture_position(true)
-                  end
+                  entity.clear_texture_position(true) if entity.respond_to?(:clear_texture_position)
 
-                  if angle
+                  if angle != 0
 
                     points = [
                       Geom::Point3d.new(0, 0),
@@ -298,27 +296,6 @@ module Ladb::OpenCutList
 
         end
       end
-    end
-
-    def _apply_(angle, entity_ids, model)
-      ss.each do |i|
-        tw = Sketchup.create_texture_writer
-        uvh = i.get_UVHelper true, false, tw
-
-        trans = Geom::Transformation.rotation i.outer_loop.vertices[0].position, i.normal, angle * Math::PI / 180	#Define rotation
-
-        pointPairs = []
-        (0..1).each do |j|
-          point3d = i.outer_loop.vertices[j].position
-          point3dRotated = point3d.transform(trans)
-          pointPairs << point3dRotated
-          point2d = uvh.get_front_UVQ(point3d)
-          pointPairs << point2d
-        end
-
-        i.position_material(i.material, pointPairs, true)
-      end
-
     end
 
   end

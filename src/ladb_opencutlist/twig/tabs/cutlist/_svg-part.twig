@@ -58,10 +58,10 @@
     {% endif %}
 
     {% if not hideLengthDimension %}
-        <text text-anchor="middle" x="{{ areaSize / 2 }}" y="{{ (areaSize - partWidth) / 2 - 10 }}" font-family="Verdana" font-size="10">{{ 'tab.cutlist.list.length'|i18next }} = {{ part.length }}</text>
+        <text text-anchor="middle" x="{{ areaSize / 2 }}" y="{{ (areaSize - partWidth) / 2 - 10 }}" font-family="Verdana" font-size="10">{{ 'tab.cutlist.list.length_short'|i18next }} = {{ part.length }}</text>
     {% endif %}
     {% if not hideWidthDimension %}
-        <text text-anchor="middle" x="-{{ areaSize / 2 }}" y="{{ (areaSize - partLength) / 2 - 10 }}" font-family="Verdana" font-size="10" transform="rotate(-90)">{{ 'tab.cutlist.list.width'|i18next }} = {{ part.width }}</text>
+        <text text-anchor="middle" x="-{{ areaSize / 2 }}" y="{{ (areaSize - partLength) / 2 - 10 }}" font-family="Verdana" font-size="10" transform="rotate(-90)">{{ 'tab.cutlist.list.width_short'|i18next }} = {{ part.width }}</text>
     {% endif %}
     {% if not hideName %}
         <text text-anchor="middle" alignment-baseline="middle" x="{{ areaSize / 2 }}" y="{{ areaSize / 2 }}" font-family="Verdana" font-size="10" fill="#555">{{ part.name }}</text>

@@ -44,7 +44,7 @@ module Ladb::OpenCutList
     @@action = nil
 
     def initialize(material = nil)
-      super
+      super(true, false)
 
       model = Sketchup.active_model
       if model
@@ -80,7 +80,10 @@ module Ladb::OpenCutList
 
       @canvas.layout = Kuix::BorderLayout.new
 
-      @unit = [ [ view.vpheight / 150, 8 ].min, 4 * UI.scale_factor ].max
+      @unit = 3
+      @unit = 4 if view.vpheight > 500
+      @unit = 6 if view.vpheight > 1000
+      @unit = 8 if view.vpheight > 2000
 
       panel_north = Kuix::Panel.new
       panel_north.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
@@ -204,10 +207,10 @@ module Ladb::OpenCutList
         actions_btn = Kuix::Button.new
         actions_btn.min_size.set_all!(@unit * 10)
         actions_btn.border.set_all!(@unit / 2)
-        actions_btn.set_style_attribute(:background_color, Sketchup::Color.new('white'))
+        actions_btn.set_style_attribute(:background_color, Sketchup::Color.new(240, 240, 240))
         actions_btn.set_style_attribute(:background_color, Sketchup::Color.new(200, 200, 200, 255), :active)
         actions_btn.set_style_attribute(:background_color, Sketchup::Color.new(200, 200, 200, 255).blend(Sketchup::Color.new('white'), 0.2), :hover)
-        actions_btn.set_style_attribute(:border_color, Sketchup::Color.new(200, 200, 200, 255), :selected)
+        actions_btn.set_style_attribute(:border_color, Sketchup::Color.new(0, 0, 255), :selected)
         actions_btn.selected = @@action == action
         actions_btn.data = action
         actions_btn.append_static_label(Plugin.instance.get_i18n_string("tool.smart_paint.action_#{action}"), @unit * 3)
