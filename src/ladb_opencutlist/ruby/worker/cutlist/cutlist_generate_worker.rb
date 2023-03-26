@@ -77,6 +77,7 @@ module Ladb::OpenCutList
 
         # Retrieve selected entities or all if no selection
         if model
+          path = model.active_path ? model.active_path : []
           if model.selection.empty?
             entities = model.active_entities
             is_entity_selection = false
@@ -85,12 +86,12 @@ module Ladb::OpenCutList
             is_entity_selection = true
           end
         else
+          path = []
           entities = []
           is_entity_selection = false
         end
 
         # Fetch component instances in given entities
-        path = model && model.active_path ? model.active_path : []
         entities.each { |entity|
           _fetch_useful_instance_infos(entity, path, @auto_orient)
         }

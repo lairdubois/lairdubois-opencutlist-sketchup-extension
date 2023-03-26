@@ -7,7 +7,7 @@ in 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 * 5.0.0 (WIP)
 
   * Added **Ukrainian** language (thanks to Konstantin and Andrew)
-  * Added new **Drawing** module with exploded view and export to Layout
+  * Added new **Drawing** module with exploded view and export to *Layout* (SketchUp 2018+ only)
   * Added new **Veneer Material Type**
   * Added new **Smart Axes** tool
   * Added module to *export* and *import* **presets** in json file

@@ -513,6 +513,23 @@ module Ladb::OpenCutList
 
     private
 
+    def _instances_to_paths(instances, instance_paths, entities, path)
+      entities.each do |entity|
+        return if entity.is_a?(Sketchup::Edge)   # Minor Speed improvement when there's a lot of edges
+        if entity.visible? && _layer_visible?(entity.layer, path.empty?)
+          if entity.is_a?(Sketchup::ComponentInstance)
+            if instances.include?(entity)
+              instance_paths << path + [ entity ]
+            else
+              _instances_to_paths(instances, instance_paths, entity.definition.entities, path + [entity ])
+            end
+          elsif entity.is_a?(Sketchup::Group)
+            _instances_to_paths(instances, instance_paths, entity.entities, path + [entity ])
+          end
+        end
+      end
+    end
+
     def _refresh_active
       _set_active(@active_part_entity_path, _compute_part_from_path(@active_part_entity_path))
     end
@@ -553,11 +570,11 @@ module Ladb::OpenCutList
         part_helper.transformation = instance_info.transformation
         @space.append(part_helper)
 
-        # Mesh
-        mesh = Kuix::Mesh.new
-        mesh.add_trangles(_compute_children_faces_triangles(instance_info.entity.definition.entities))
-        mesh.background_color = COLOR_MESH
-        part_helper.append(mesh)
+        # # Mesh
+        # mesh = Kuix::Mesh.new
+        # mesh.add_trangles(_compute_children_faces_triangles(instance_info.entity.definition.entities))
+        # mesh.background_color = COLOR_MESH
+        # part_helper.append(mesh)
 
         if part.group.material_type != MaterialAttributes::TYPE_HARDWARE
 
@@ -595,6 +612,27 @@ module Ladb::OpenCutList
         # Axes helper
         axes_helper = Kuix::AxesHelper.new
         part_helper.append(axes_helper)
+
+        # Other instances
+
+        unless part_entity_path.nil?
+
+          active_instance = part_entity_path.last
+          instances = active_instance.definition.instances
+          instance_paths = []
+          _instances_to_paths(instances, instance_paths, Sketchup.active_model.active_entities, Sketchup.active_model.active_path ? Sketchup.active_model.active_path : [])
+
+          instance_paths.each do |path|
+
+            mesh = Kuix::Mesh.new
+            mesh.add_trangles(_compute_children_faces_triangles(path.last.definition.entities))
+            mesh.background_color = COLOR_MESH
+            mesh.transformation = PathUtils::get_transformation(path)
+            @space.append(mesh)
+
+          end
+
+        end
 
         # Status
 
@@ -639,13 +677,14 @@ module Ladb::OpenCutList
             picked_path = @pick_helper.path_at(pick_path_index)
             if picked_path == @picked_path
               return
-            elsif @active_part_entity_path
-              contains_previous = false
-              @pick_helper.count.times do |pick_path_index|
-                contains_previous = @pick_helper.path_at(pick_path_index).take(@active_part_entity_path.length) == @active_part_entity_path
-                return if contains_previous
-              end
-              return if contains_previous # Previously detected path, stop process to optimize.
+            # TODO : This code doesn't support components in components
+            # elsif @active_part_entity_path
+            #   contains_previous = false
+            #   @pick_helper.count.times do |pick_path_index|
+            #     contains_previous = @pick_helper.path_at(pick_path_index).take(@active_part_entity_path.length) == @active_part_entity_path
+            #     return if contains_previous
+            #   end
+            #   return if contains_previous # Previously detected path, stop process to optimize.
             end
             if picked_path && picked_path.last.is_a?(Sketchup::Face)
 

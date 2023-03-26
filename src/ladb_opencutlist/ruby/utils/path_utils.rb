@@ -1,7 +1,5 @@
 module Ladb::OpenCutList
 
-  require_relative 'model_utils'
-
   class PathUtils
 
     SEPARATOR = '>'.freeze
@@ -21,7 +19,7 @@ module Ladb::OpenCutList
       path = []
       entity_ids = serialized_path.split(SEPARATOR)
       entity_ids.each { |entity_id|
-        entity = ModelUtils::find_entity_by_id(Sketchup.active_model, entity_id.to_i)
+        entity = Sketchup.active_model.find_entity_by_id(entity_id.to_i)
         if entity
           path.push(entity)
         else

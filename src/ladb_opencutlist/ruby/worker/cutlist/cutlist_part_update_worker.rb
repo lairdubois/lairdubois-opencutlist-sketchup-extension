@@ -2,7 +2,6 @@ module Ladb::OpenCutList
 
   require_relative '../../helper/boundingbox_helper'
   require_relative '../../model/attributes/definition_attributes'
-  require_relative '../../utils/model_utils'
   require_relative '../../utils/axis_utils'
 
   class CutlistPartUpdateWorker
@@ -250,7 +249,7 @@ module Ladb::OpenCutList
         if material_name.nil? || material_name.empty? || (material = model.materials[material_name])
 
           entity_ids.each { |entity_id|
-            entity = ModelUtils::find_entity_by_id(model, entity_id)
+            entity = model.find_entity_by_id(entity_id)
             if entity
               if material_name.nil? || material_name.empty?
                 entity.material = nil
