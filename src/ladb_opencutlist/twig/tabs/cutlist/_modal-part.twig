@@ -240,13 +240,13 @@
                                         <line x1="0" y1="0" x2="0" y2="6" style="stroke:#f77f00; stroke-width:4" />
                                     </pattern>
                                 </defs>
-                                <g class="increase increase-length"{% if part.flipped %} transform="rotate(180 {{ areaSize / 2 }} {{ areaSize / 2 }})"{% endif %}>
+                                <g class="increase increase-length">
                                     <rect x="{{ (areaSize + partLength) / 2 - partOutlineWidth - increaseLWidth }}" y="{{ (areaSize - partWidth) / 2 + partOutlineWidth }}" width="{{ increaseLWidth }}" height="{{ partWidth - 2 * partOutlineWidth }}" class="increase increase-area" />
                                     <rect x="{{ (areaSize + partLength) / 2 - edgeWidth - edgeOutlineWidth }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ edgeWidth + edgeOutlineWidth * 2 }}" height="{{ partWidth }}" class="edge edge-outer" />
                                     <rect x="{{ (areaSize + partLength) / 2 - edgeWidth }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ edgeWidth }}" height="{{ partWidth }}" class="edge edge-inner" />
                                 </g>
                                 {% if group.material_type == 1 or group.material_type == 2 %} {# 1 = TYPE_SOLID_WOOD, 2 = TYPE_SHEET_GOOD #}
-                                    <g class="increase increase-width">
+                                    <g class="increase increase-width"{% if part.flipped %} transform="rotate(180 {{ areaSize / 2 }} {{ areaSize / 2 }})"{% endif %}>
                                         <rect x="{{ (areaSize - partLength) / 2 + partOutlineWidth }}" y="{{ (areaSize - partWidth) / 2 + edgeWidth }}" width="{{ partLength - 2 * partOutlineWidth }}" height="{{ increaseWWidth }}" class="increase increase-area"/>
                                         <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 + edgeOutlineWidth }}" width="{{ partLength }}" height="{{ edgeWidth + edgeOutlineWidth * 2 }}" class="edge edge-outer" />
                                         <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ edgeWidth }}" class="edge edge-inner" />
