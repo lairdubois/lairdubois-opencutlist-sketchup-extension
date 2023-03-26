@@ -25,6 +25,9 @@ in 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Fixed missed oversize asterisk indicator in cutting diagram parts lists
   * Hatched unavailable cells in parts list summary instead of displaying "-" character
 
+  **BREAK CHANGES**
+  * Flipped parts are now considere flipped along width. This will swap the edge length 1 & 2 from previous versions.
+
 * 4.1.3 (2023-02-28)
 
   * Added teaser "Drawing" button
