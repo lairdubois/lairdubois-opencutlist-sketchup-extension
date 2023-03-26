@@ -142,7 +142,7 @@
         {% if not multiple %}
             <div role="tabpanel" class="tab-pane{% if tab == 'axes' %} active{% endif %}" id="tab_edit_part_axes">
                 <div class="row">
-                    <div class="col-xs-offset-1 col-xs-10">
+                    <div class="col-xs-12">
                         <p class="help-block text-center"><small>{{ 'tab.cutlist.edit_part.axes_help'|i18next }}</small></p>
                     </div>
                     <div class="col-xs-offset-1 col-xs-1">
@@ -380,56 +380,50 @@
             </div>
             <div role="tabpanel" class="tab-pane{% if tab == 'veneers' %} active{% endif %}" id="tab_edit_part_veneers">
                 {% if not multiple %}
-                    <div class="text-center">
-                        {% set svgSize = 330 %}
-                        {% set areaSize = 280 %}
-                        {% set axisWidth = 2 %}
-                        {% set axisLength = 20 %}
-                        {% set axisOffset = 10 %}
-                        {% set partOutlineWidth = 2 %}
-                        {% set partLength = (areaSize - 40) * part.l_ratio %}
-                        {% set partWidth = (areaSize - 40) * part.w_ratio %}
-                        <svg viewBox="0 0 {{ svgSize }} {{ svgSize }}" xmlns="http://www.w3.org/2000/svg" version="1.1" style="width: {{ svgSize }}px; height: {{ svgSize }}px;">
-                            <g transform="translate(50,0)">
-                                {% embed 'tabs/cutlist/_svg-part.twig' %}
-                                    {% set noSvgWrapper = true %}
-                                    {% set hideAxes = true %}
-                                    {% set hideWidthDimension = true %}
-                                    {% set hideGrainDirectionArrow = true %}
-                                    {% set hideName = true %}
-                                    {% set arrowDashed = true %}
-                                    {% block extra %}
-                                        <g class="veneer veneer-zmin{% if part.veneer_entity_ids.zmin is empty %} ladb-disabled{% endif %}" data-toggle="tooltip" data-placement="right" title="{{ 'tab.cutlist.tooltip.veneer_zmin'|i18next }}">
-                                            <defs>
-                                                <pattern id="pattern_veneer_zmin_grain" width="40" height="10" patternUnits="userSpaceOnUse">
-                                                    <path d="M0,5C20,2 20,8 40,5" style="fill:none;stroke:#ddd;stroke-width:1px;"/>
-                                                </pattern>
-                                            </defs>
-                                            <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ partWidth }}" class="veneer veneer-grain" style="fill: url(#pattern_veneer_zmin_grain);" />
-                                            <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ partWidth }}" class="veneer veneer-inner" />
-                                        </g>
-                                    {% endblock %}
-                                {% endembed %}
-                            </g>
-                            <g transform="translate(0,50)">
-                                {% embed 'tabs/cutlist/_svg-part.twig' %}
-                                    {% set noSvgWrapper = true %}
-                                    {% set hideLengthDimension = true %}
-                                    {% set hideGrainDirectionArrow = true %}
-                                    {% block extra %}
-                                        <g class="veneer veneer-zmax{% if part.veneer_entity_ids.zmax is empty %} ladb-disabled{% endif %}" data-toggle="tooltip" data-placement="right" title="{{ 'tab.cutlist.tooltip.veneer_zmax'|i18next }}">
-                                            <defs>
-                                                <pattern id="pattern_veneer_zmax_grain" width="40" height="10" patternUnits="userSpaceOnUse">
-                                                    <path d="M0,5C20,2 20,8 40,5" style="fill:none;stroke:#ddd;stroke-width:1px;"/>
-                                                </pattern>
-                                            </defs>
-                                            <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ partWidth }}" class="veneer veneer-grain" style="fill: url(#pattern_veneer_zmax_grain);" />
-                                            <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ partWidth }}" class="veneer veneer-inner" />
-                                        </g>
-                                    {% endblock %}
-                                {% endembed %}
-                            </g>
-                        </svg>
+                    {% set areaSize = 280 %}
+                    {% set axisWidth = 2 %}
+                    {% set axisLength = 20 %}
+                    {% set axisOffset = 10 %}
+                    {% set partOutlineWidth = 2 %}
+                    {% set partLength = (areaSize - 40) * part.l_ratio %}
+                    {% set partWidth = (areaSize - 40) * part.w_ratio %}
+                    {% set hideGrainDirectionArrow = true %}
+                    <div class="row">
+                        <div class="col-xs-6 text-center">
+                            {% embed 'tabs/cutlist/_svg-part.twig' %}
+                                {% block extra %}
+                                    <g class="veneer veneer-zmax{% if part.veneer_entity_ids.zmax is empty %} ladb-disabled{% endif %}" data-toggle="tooltip" data-placement="bottom" title="{{ 'tab.cutlist.tooltip.veneer_zmax'|i18next }}">
+                                        <defs>
+                                            <pattern id="pattern_veneer_zmax_grain" width="40" height="10" patternUnits="userSpaceOnUse">
+                                                <path d="M0,5C20,2 20,8 40,5" style="fill:none;stroke:#ddd;stroke-width:1px;"/>
+                                            </pattern>
+                                        </defs>
+                                        <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ partWidth }}" class="veneer veneer-grain" style="fill: url(#pattern_veneer_zmax_grain);" />
+                                        <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ partWidth }}" class="veneer veneer-inner" />
+                                    </g>
+                                {% endblock %}
+                            {% endembed %}
+                        </div>
+                        <div class="col-xs-6 text-center">
+                            {% embed 'tabs/cutlist/_svg-part.twig' %}
+                                {% set hideLengthDimension = true %}
+                                {% set hideWidthDimension = true %}
+                                {% set hideName = true %}
+                                {% set arrowDashed = true %}
+                                {% set flipped = not part.flipped %}
+                                {% block extra %}
+                                    <g class="veneer veneer-zmin{% if part.veneer_entity_ids.zmin is empty %} ladb-disabled{% endif %}" data-toggle="tooltip" data-placement="bottom" title="{{ 'tab.cutlist.tooltip.veneer_zmin'|i18next }}">
+                                        <defs>
+                                            <pattern id="pattern_veneer_zmin_grain" width="40" height="10" patternUnits="userSpaceOnUse">
+                                                <path d="M0,5C20,2 20,8 40,5" style="fill:none;stroke:#ddd;stroke-width:1px;"/>
+                                            </pattern>
+                                        </defs>
+                                        <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ partWidth }}" class="veneer veneer-grain" style="fill: url(#pattern_veneer_zmin_grain);" />
+                                        <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ partWidth }}" class="veneer veneer-inner" />
+                                    </g>
+                                {% endblock %}
+                            {% endembed %}
+                        </div>
                     </div>
                 {% endif %}
                 <div class="row">

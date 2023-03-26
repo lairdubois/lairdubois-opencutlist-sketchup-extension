@@ -12,8 +12,8 @@
 {% set hideName = hideName|default(false) %}
 {% set hideGrainDirectionArrow = hideGrainDirectionArrow|default(false) %}
 {% set arrowDashed = arrowDashed|default(false) %}
-{% set noSvgWrapper = noSvgWrapper|default(false) %}
-{% if not noSvgWrapper %}<svg viewBox="0 0 {{ areaSize }} {{ areaSize }}" xmlns="http://www.w3.org/2000/svg" version="1.1" style="width: {{ areaSize }}px; height: {{ areaSize }}px;">{% endif %}
+{% set flipped = flipped|default(part.flipped) %}
+<svg viewBox="0 0 {{ areaSize }} {{ areaSize }}" xmlns="http://www.w3.org/2000/svg" version="1.1" style="width: {{ areaSize }}px; height: {{ areaSize }}px;">
 
     <g class="part">
         <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ partWidth }}" class="part-outer" />
@@ -46,14 +46,14 @@
         {% set axisWLength = min(axisLength, partWidth - axisOffset * 2) %}
         {% set axisLLength = min(axisLength, partLength - axisOffset * 2) %}
         {% set axesX = (areaSize - partLength) / 2 + axisOffset %}
-        {% set axesY = part.flipped ? (areaSize - partWidth) / 2 - axisOffset + axisLLength : (areaSize + partWidth) / 2 - axisOffset - axisLLength %}
+        {% set axesY = flipped ? (areaSize - partWidth) / 2 - axisOffset + axisLLength : (areaSize + partWidth) / 2 - axisOffset - axisLLength %}
         <svg x="{{ axesX }}" y="{{ axesY }}" class="axes" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.part_axes'|i18next }}">
-            {% if part.flipped %}<g transform="scale(1,-1) translate(0,-{{ axisLLength }})">{% endif %}
+            {% if flipped %}<g transform="scale(1,-1) translate(0,-{{ axisLLength }})">{% endif %}
                 <rect x="0" y="0" width="{{ axisLLength }}" height="{{ axisWLength }}" class="axis axis-bg" />
                 <rect x="0" y="{{ axisWLength - axisWidth }}" width="{{ axisWidth }}" height="{{ axisWidth }}" class="axis axis-origin" />
                 <rect x="0" y="0" width="{{ axisWidth }}" height="{{ axisWLength - axisWidth }}" class="axis axis-{{ part.dimensions_to_normals.width }}" />
                 <rect x="{{ axisWidth }}" y="{{ axisWLength - axisWidth }}" width="{{ axisLLength - axisWidth}}" height="{{ axisWidth }}" class="axis axis-{{ part.dimensions_to_normals.length }}" />
-            {% if part.flipped %}</g>{% endif %}
+            {% if flipped %}</g>{% endif %}
         </svg>
     {% endif %}
 
@@ -71,4 +71,4 @@
         {% include 'core/_grain-direction-arrow.twig' with { 'centerX':areaSize / 2, 'centerY':(areaSize + partWidth) / 2 + 20 } %}
     {% endif %}
 
-{% if not noSvgWrapper %}</svg>{% endif %}
+</svg>
