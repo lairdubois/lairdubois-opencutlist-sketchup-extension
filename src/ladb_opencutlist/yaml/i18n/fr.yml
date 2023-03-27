@@ -63,7 +63,7 @@ default:
   load_more: Charger la suite
   reset_to_app_defaults: Restaurer aux valeurs d'origine
   constrain_key: Maj
-  copy_key_win: Control
+  copy_key_win: Ctrl
   copy_key_mac: Option
   alt_key_win: Alt
   alt_key_mac: Command

@@ -63,10 +63,11 @@ default:
   load_more: Load more
   reset_to_app_defaults: Restore to original settings
   constrain_key: Shift
-  copy_key_win: Control
+  copy_key_win: Ctrl
   copy_key_mac: Option
   alt_key_win: Alt
   alt_key_mac: Command
+  tab_key: Tab
 core:
   menu:
     submenu: OpenCutList
@@ -314,7 +315,7 @@ tab:
       numbers_save: Save the part numbers
       numbers_reset: Reinitialize the part numbers
       highlight_parts: $t(tab.cutlist.highlight_parts)
-      group_layout_parts: Draw overview of parts of this group
+      group_layout_parts: Draw overview of parts in group
       group_numbers_save: Save the part numbers of this group
       group_numbers_reset: Reinitialize the part numbers of this group
       group_cuttingdiagram: Cutting Diagram
@@ -636,9 +637,9 @@ tab:
       option_hide_part_list_1d_edge_0: Displayed for each Edge Banding
       option_hide_part_list_2d_good_0: Displayed for each Panel
       option_hide_part_list_2d_veneer_0: Displayed for each Veneer Sheet
-      option_hide_part_list_1: Masked
-      option_hide_part_list_1d_help: Display or mask the list of parts for each board or edge banding.
-      option_hide_part_list_2d_help: Display or mask the list of parts for each panel or veneer sheet.
+      option_hide_part_list_1: Hide
+      option_hide_part_list_1d_help: Display or hide the list of parts for each board or edge banding.
+      option_hide_part_list_2d_help: Display or hide the list of parts for each panel or veneer sheet.
       option_use_names: Part Identification
       option_use_names_0: Use the number
       option_use_names_1: Use the designation
@@ -905,7 +906,7 @@ tab:
       option_page_height: Height
       option_page_header: Header
       option_page_header_0: None
-      option_page_header_1: With
+      option_page_header_1: With header
       option_page_header_help: |
         Select whether the page to be printed contains a header with the name of the document, its description and the date.
         Without a header, the overview drawing takes up the entire page.
@@ -927,16 +928,16 @@ tab:
 
           **Make sure the file is not open in Layout.**
       warning:
-        is_group_selection: The parts inside of **masked groups** of your parts list will not be drawn.
+        is_group_selection: The parts inside of **hidden groups** of your parts list will not be drawn.
         is_part_selection: This overview drawing is limited to the **selected parts**.
     snippet:
       number: Number
       name: Designation
       number_and_name: Number and Designation
       number_without_hardware: Number (without accessories)
-      size: Rough size
-      area: Rough area
-      volume: Rought volume
+      size: Size
+      area: Area
+      volume: Volume
     error:
       no_model: No model is open. You will need to give me more information ;)
       no_entities: Your model is empty. You will need to give me more information ;)
@@ -1281,7 +1282,7 @@ tab:
         *OpenCutList* presets have been successfully imported.
         In order to reflect the changes, you must **close** and **reopen** the OpenCutList window.
       dump_global_presets: Dump presets
-      dump_model_presets: Dump model presets
+      dump_model_presets: Dump model settings
       reset_global_presets: Reinitialize the presets
       reset_global_presets_confirm: |
         You are about to reset all of your saved *OpenCutList* presets.
@@ -1370,6 +1371,7 @@ tool:
     status_swap_front_back: Click on a part to swap Frontface and Backface.
     status_swap_auto: Click on a part to set the Length to the largest dimension and the Thickness to the smallest.
     status_toggle_clockwise: Reverse the direction of rotation.
+    status_toggle_depth: Background parts.
     action: Action
     action_0: Switch Length ↔ Width
     action_1: Switch Frontface ↔ Backface
@@ -1379,7 +1381,7 @@ tool:
     success:
       part_oriented: This part already has its length on the largest dimension and its thickness on the smallest.
     warning:
-      more_entities: "{{ count }} other part sharing the same definition will also be modified."
-      more_entities_plural: "{{ count }} other parts sharing the same definition will also be modified."
+      more_entities: "{{ count_used }} instances sharing the same definition will be modified."
     error:
       not_part: The target object is not a part.
+      not_orientable: The type of this part does not allow orienting it.

@@ -62,11 +62,12 @@ default:
   setup_model_units: Modelleinheiten konfigurieren
   load_more: Weitere laden
   reset_to_app_defaults: Originalwerte wiederherstellen
-  constrain_key: Maj
-  copy_key_win: Control
+  constrain_key: Umschalttaste
+  copy_key_win: Strg
   copy_key_mac: Option
   alt_key_win: Alt
   alt_key_mac: Command
+  tab_key: Tab
 core:
   menu:
     submenu: OpenCutList
@@ -830,7 +831,7 @@ tab:
         part_cutting_size: Rohmaße
         part_cutting_length: Länge - roh
         part_cutting_width: Breite - roh
-        part_cutting_thickness: Rohdicke
+        part_cutting_thickness: Dicke - roh
         part_size: Fertigmaße
         part_length: Länge
         part_width: Breite
@@ -929,14 +930,14 @@ tab:
       warning:
         is_group_selection: Die Teile innerhalb der **maskierten Gruppen** Ihrer Teileliste werden nicht gezeichnet.
         is_part_selection: Diese Übersichtszeichnung ist auf die **ausgewählten Teile** beschränkt.
-      snippet:
-        number: Nummer
-        name: Bezeichnung
-        number_and_name: Nummer und Bezeichnung
-        number_without_hardware: Nummer (ausser XXXL)
-        size: Taille capable
-        area: Surface capable
-        volume: Volume capable
+    snippet:
+      number: Nummer
+      name: Bezeichnung
+      number_and_name: Nummer und Bezeichnung
+      number_without_hardware: Nummer (ausser Zubehör)
+      size: Fertigmaße
+      area: Fläche
+      volume: Volumen
     error:
       no_model: Es sind keine Modelle geöffnet. Sie müssen mir schon etwas mehr geben ;)
       no_entities: Ihr Modell ist leer. Sie müssen mir schon etwas mehr geben ;)
@@ -1370,6 +1371,7 @@ tool:
     status_swap_front_back: Klicken Sie auf ein Teil, um seine Vorderseite mit seiner Rückseite zu vertauschen.
     status_swap_auto: Klicken Sie auf ein Teil, um die Länge an der größten Dimension und die Dicke an der kleinsten Dimension zu definieren.
     status_toggle_clockwise: Drehrichtung umkehren.
+    status_toggle_depth: Teile im Hintergrund.
     action: Action
     action_0: Permutieren Länge ↔ Breite
     action_1: Permutieren Vorderseite ↔ Rückseite
@@ -1379,7 +1381,7 @@ tool:
     success:
       part_oriented: Dieses Teil hat seine Länge bereits auf der größten und seine Dicke auf der kleinsten Dimension.
     warning:
-      more_entities: "{{ count }} andere Instanzen mit derselben Definition werden ebenfalls geändert."
-      more_entities_plural: "{{ count }} andere Instanzen mit derselben Definition werden ebenfalls geändert."
+      more_entities: "{{ count_used }} Instanzen mit derselben Definition werden geändert."
     error:
       not_part: Das Zielobjekt ist kein Teil.
+      not_orientable: Der Typ dieses Teils lässt keine Orientierung zu.
