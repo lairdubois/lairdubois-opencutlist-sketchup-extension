@@ -85,7 +85,7 @@ module Ladb::OpenCutList
 
               order = [ 1, 2, 3 ]
               if part.auto_oriented
-                instance_info.size.dimensions_to_normals.each_with_index do |(dimension, normal), index|
+                instance_info.size.dimensions_to_axes.each_with_index do |(dimension, normal), index|
                   normal == 'x' ? order[0] = index + 1 : normal == 'y' ? order[1] = index + 1 : order[2] = index + 1
                 end
               end

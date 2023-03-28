@@ -36,7 +36,7 @@ module Ladb::OpenCutList
 
     COLOR_STATUS_TEXT_ERROR = Sketchup::Color.new('#d9534f').freeze
     COLOR_STATUS_TEXT_WARNING = Sketchup::Color.new('#997404').freeze
-    COLOR_STATUS_TEXT_SUCCESS = Sketchup::Color.new('#5cb85c').freeze
+    COLOR_STATUS_TEXT_SUCCESS = Sketchup::Color.new('#569553').freeze
     COLOR_STATUS_BACKGROUND = Sketchup::Color.new(255, 255, 255, 200).freeze
     COLOR_STATUS_BACKGROUND_ERROR = COLOR_STATUS_TEXT_ERROR.blend(Sketchup::Color.new('white'), 0.2).freeze
     COLOR_STATUS_BACKGROUND_WARNING = Sketchup::Color.new('#ffe69c').freeze
@@ -81,55 +81,35 @@ module Ladb::OpenCutList
       unit = 6 if view.vpheight > 1000
       unit = 8 if view.vpheight > 2000
 
-      panel_north = Kuix::Panel.new
-      panel_north.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
-      panel_north.layout = Kuix::InlineLayout.new(true, unit, Kuix::Anchor.new(Kuix::Anchor::CENTER_RIGHT))
-      panel_north.padding.set_all!(unit)
-      @canvas.append(panel_north)
-
-      panel_south = Kuix::Panel.new
-      panel_south.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
-      panel_south.layout = Kuix::BorderLayout.new
-      @canvas.append(panel_south)
-
-      # Help Button
-
-      help_btn = Kuix::Button.new
-      help_btn.layout = Kuix::GridLayout.new
-      help_btn.border.set_all!(unit / 2)
-      help_btn.padding.set!(unit, unit * 4, unit, unit * 4)
-      help_btn.set_style_attribute(:background_color, Sketchup::Color.new('white'))
-      help_btn.set_style_attribute(:background_color, Sketchup::Color.new(200, 200, 200, 255), :active)
-      help_btn.set_style_attribute(:background_color, Sketchup::Color.new(200, 200, 200, 255).blend(Sketchup::Color.new('white'), 0.2), :hover)
-      help_btn.set_style_attribute(:border_color, Sketchup::Color.new(200, 200, 200, 255), :hover)
-      help_btn.append_static_label(Plugin.instance.get_i18n_string("default.help"), unit * 3)
-      help_btn.on(:click) { |button|
-        Plugin.instance.open_docs_page('tool.smart-axes')
-      }
-      panel_north.append(help_btn)
+      panel = Kuix::Panel.new
+      panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
+      panel.layout = Kuix::BorderLayout.new
+      @canvas.append(panel)
 
       # Status panel
 
       @status = Kuix::Panel.new
-      @status.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
+      @status.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
       @status.layout = Kuix::InlineLayout.new(false, unit, Kuix::Anchor.new(Kuix::Anchor::CENTER))
       @status.padding.set_all!(unit * 2)
       @status.visible = false
-      panel_south.append(@status)
+      panel.append(@status)
 
       @status_lbl = Kuix::Label.new
-      @status_lbl.text_size = unit * 3
+      @status_lbl.border.set_all!(unit / 4)
+      @status_lbl.padding.set!(unit * 1.5, unit * 2, unit, unit * 2)
+      @status_lbl.text_size = unit * 2.5
       @status.append(@status_lbl)
 
       # Part panel
 
       @part_panel = Kuix::Panel.new
-      @part_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
+      @part_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
       @part_panel.layout = Kuix::InlineLayout.new(false, unit, Kuix::Anchor.new(Kuix::Anchor::CENTER))
       @part_panel.padding.set_all!(unit * 2)
       @part_panel.visible = false
       @part_panel.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255, 85))
-      panel_south.append(@part_panel)
+      panel.append(@part_panel)
 
       @part_panel_lbl_1 = Kuix::Label.new
       @part_panel_lbl_1.text_size = unit * 4
@@ -142,15 +122,15 @@ module Ladb::OpenCutList
       # Actions panel
 
       actions = Kuix::Panel.new
-      actions.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
+      actions.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
       actions.layout = Kuix::BorderLayout.new
-      actions.padding.set_all!(unit * 2)
-      actions.set_style_attribute(:background_color, Sketchup::Color.new('white'))
-      panel_south.append(actions)
+      actions.set_style_attribute(:background_color, Sketchup::Color.new(62, 59, 51))
+      panel.append(actions)
 
       actions_lbl = Kuix::Label.new
       actions_lbl.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::WEST)
       actions_lbl.padding.set!(0, unit * 4, 0, unit * 4)
+      actions_lbl.set_style_attribute(:color, Sketchup::Color.new(214, 212, 205))
       actions_lbl.text = Plugin.instance.get_i18n_string('tool.smart_axes.action').upcase
       actions_lbl.text_size = unit * 3
       actions_lbl.text_bold = true
@@ -158,7 +138,7 @@ module Ladb::OpenCutList
 
       actions_btns_panel = Kuix::Panel.new
       actions_btns_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
-      actions_btns_panel.layout = Kuix::InlineLayout.new(true, unit, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+      actions_btns_panel.layout = Kuix::InlineLayout.new(true, 0, Kuix::Anchor.new(Kuix::Anchor::CENTER))
       actions.append(actions_btns_panel)
 
       @action_buttons = []
@@ -177,12 +157,14 @@ module Ladb::OpenCutList
         actions_btn = Kuix::Button.new
         actions_btn.layout = Kuix::BorderLayout.new
         actions_btn.min_size.set_all!(unit * 10)
-        actions_btn.border.set_all!(unit / 2)
-        actions_btn.set_style_attribute(:background_color, Sketchup::Color.new(240, 240, 240))
-        actions_btn.set_style_attribute(:background_color, Sketchup::Color.new(220, 220, 220).blend(Sketchup::Color.new('white'), 0.2), :hover)
-        actions_btn.set_style_attribute(:border_color, Sketchup::Color.new(220, 220, 220), :hover)
-        actions_btn.set_style_attribute(:border_color, Sketchup::Color.new(0, 0, 255), :selected)
-        actions_btn.append_static_label(Plugin.instance.get_i18n_string("tool.smart_axes.action_#{action}"), unit * 3).padding.set!(0, unit * 4, 0, unit * 4)
+        actions_btn.set_style_attribute(:background_color, Sketchup::Color.new(62, 59, 51))
+        actions_btn.set_style_attribute(:background_color, Sketchup::Color.new(214, 212, 205), :hover)
+        actions_btn.set_style_attribute(:background_color, Sketchup::Color.new(247, 127, 0), :selected)
+        lbl = actions_btn.append_static_label(Plugin.instance.get_i18n_string("tool.smart_axes.action_#{action}"), unit * 3)
+        lbl.padding.set!(0, unit * 4, 0, unit * 4)
+        lbl.set_style_attribute(:color, Sketchup::Color.new(214, 212, 205))
+        lbl.set_style_attribute(:color, Sketchup::Color.new(62, 59, 51), :hover)
+        lbl.set_style_attribute(:color, Sketchup::Color.new(255, 255, 255), :selected)
         actions_btn.data = data
         actions_btn.on(:click) { |button|
           set_root_action(action, data[:last_modifier])
@@ -192,7 +174,7 @@ module Ladb::OpenCutList
         if modifiers.is_a?(Array)
 
           actions_modifiers = Kuix::Panel.new
-          actions_modifiers.layout = Kuix::GridLayout.new(modifiers.length, 0)
+          actions_modifiers.layout = Kuix::GridLayout.new(modifiers.length, 0, unit / 2)
           actions_modifiers.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
           actions_modifiers.padding.set_all!(unit)
           actions_btn.append(actions_modifiers)
@@ -203,8 +185,8 @@ module Ladb::OpenCutList
             actions_modifier_btn.layout = Kuix::BorderLayout.new
             actions_modifier_btn.padding.set!(0, unit * 2, 0, unit * 2)
             actions_modifier_btn.set_style_attribute(:background_color, Sketchup::Color.new('white'))
-            actions_modifier_btn.set_style_attribute(:background_color, Sketchup::Color.new(200, 200, 200).blend(Sketchup::Color.new('white'), 0.2), :hover)
-            actions_modifier_btn.set_style_attribute(:background_color, Sketchup::Color.new(0, 0, 255).blend(Sketchup::Color.new('white'), 0.2), :selected)
+            actions_modifier_btn.set_style_attribute(:background_color, Sketchup::Color.new(214, 212, 205).blend(Sketchup::Color.new('white'), 0.2), :hover)
+            actions_modifier_btn.set_style_attribute(:background_color, Sketchup::Color.new(247, 127, 0).blend(Sketchup::Color.new('white'), 0.2), :selected)
             actions_modifier_btn.data = { :modifier => modifier }
             actions_modifier_btn.append_static_label(Plugin.instance.get_i18n_string("tool.smart_axes.action_modifier_#{modifier}"), unit * 3)
             actions_modifier_btn.on(:click) { |button|
@@ -223,6 +205,22 @@ module Ladb::OpenCutList
 
       }
 
+      # Help Button
+
+      help_btn = Kuix::Button.new
+      help_btn.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
+      help_btn.layout = Kuix::GridLayout.new
+      help_btn.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255))
+      help_btn.set_style_attribute(:background_color, Sketchup::Color.new(214, 212, 205), :hover)
+      lbl = help_btn.append_static_label(Plugin.instance.get_i18n_string("default.help"), unit * 3)
+      lbl.min_size.set!(unit * 15, 0)
+      lbl.padding.set!(0, unit * 4, 0, unit * 4)
+      lbl.set_style_attribute(:color, Sketchup::Color.new(62, 59, 51))
+      help_btn.on(:click) { |button|
+        Plugin.instance.open_docs_page('tool.smart-axes')
+      }
+      actions.append(help_btn)
+
     end
 
     # -- Setters --
@@ -235,16 +233,20 @@ module Ladb::OpenCutList
       case type
       when STATUS_TYPE_ERROR
         @status_lbl.set_style_attribute(:color, COLOR_STATUS_TEXT_ERROR)
-        @status.set_style_attribute(:background_color, COLOR_STATUS_BACKGROUND_ERROR)
+        @status_lbl.set_style_attribute(:background_color, COLOR_STATUS_BACKGROUND_ERROR)
+        @status_lbl.set_style_attribute(:border_color, COLOR_STATUS_TEXT_ERROR)
       when STATUS_TYPE_WARNING
         @status_lbl.set_style_attribute(:color, COLOR_STATUS_TEXT_WARNING)
-        @status.set_style_attribute(:background_color, COLOR_STATUS_BACKGROUND_WARNING)
+        @status_lbl.set_style_attribute(:background_color, COLOR_STATUS_BACKGROUND_WARNING)
+        @status_lbl.set_style_attribute(:border_color, COLOR_STATUS_TEXT_WARNING)
       when STATUS_TYPE_SUCCESS
         @status_lbl.set_style_attribute(:color, COLOR_STATUS_TEXT_SUCCESS)
-        @status.set_style_attribute(:background_color, COLOR_STATUS_BACKGROUND_SUCCESS)
+        @status_lbl.set_style_attribute(:background_color, COLOR_STATUS_BACKGROUND_SUCCESS)
+        @status_lbl.set_style_attribute(:border_color, COLOR_STATUS_TEXT_SUCCESS)
       else
         @status_lbl.set_style_attribute(:color, nil)
-        @status.set_style_attribute(:background_color, COLOR_STATUS_BACKGROUND)
+        @status_lbl.set_style_attribute(:background_color, COLOR_STATUS_BACKGROUND)
+        @status_lbl.set_style_attribute(:border_color, nil)
       end
     end
 
@@ -723,16 +725,16 @@ module Ladb::OpenCutList
               if is_action_modifier_anticlockwise?
                 ti = Geom::Transformation.axes(
                   ORIGIN,
-                  size.normals[1],
-                  AxisUtils.flipped?(size.normals[1], size.normals[0], size.normals[2]) ? size.normals[0].reverse : size.normals[0],
-                  size.normals[2]
+                  size.axes[1],
+                  AxisUtils.flipped?(size.axes[1], size.axes[0], size.axes[2]) ? size.axes[0].reverse : size.axes[0],
+                  size.axes[2]
                 )
               else
                 ti = Geom::Transformation.axes(
                   ORIGIN,
-                  AxisUtils.flipped?(size.normals[1], size.normals[0], size.normals[2]) ? size.normals[1].reverse : size.normals[1],
-                  size.normals[0],
-                  size.normals[2]
+                  AxisUtils.flipped?(size.axes[1], size.axes[0], size.axes[2]) ? size.axes[1].reverse : size.axes[1],
+                  size.axes[0],
+                  size.axes[2]
                 )
               end
 
@@ -740,9 +742,9 @@ module Ladb::OpenCutList
 
               ti = Geom::Transformation.axes(
                 ORIGIN,
-                size.normals[0],
-                AxisUtils.flipped?(size.normals[0], size.normals[1], size.normals[2].reverse) ? size.normals[1].reverse : size.normals[1],
-                size.normals[2].reverse
+                size.axes[0],
+                AxisUtils.flipped?(size.axes[0], size.axes[1], size.axes[2].reverse) ? size.axes[1].reverse : size.axes[1],
+                size.axes[2].reverse
               )
 
             elsif is_action_swap_auto?
@@ -752,9 +754,9 @@ module Ladb::OpenCutList
 
               ti = Geom::Transformation.axes(
                 ORIGIN,
-                oriented_size.normals[0],
-                AxisUtils.flipped?(oriented_size.normals[0], oriented_size.normals[1], oriented_size.normals[2]) ? oriented_size.normals[1].reverse : oriented_size.normals[1],
-                oriented_size.normals[2]
+                oriented_size.axes[0],
+                AxisUtils.flipped?(oriented_size.axes[0], oriented_size.axes[1], oriented_size.axes[2]) ? oriented_size.axes[1].reverse : oriented_size.axes[1],
+                oriented_size.axes[2]
               )
 
             end

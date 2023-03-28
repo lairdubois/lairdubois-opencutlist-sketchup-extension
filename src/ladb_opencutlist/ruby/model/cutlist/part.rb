@@ -100,7 +100,7 @@ module Ladb::OpenCutList
 
   class Part < AbstractPart
 
-    attr_reader :definition_id, :is_dynamic_attributes_name, :resized, :flipped, :normals_flipped, :material_origins, :orientation_locked_on_axis, :symmetrical, :length_increase, :width_increase, :thickness_increase, :entity_ids, :entity_serialized_paths, :length_increased, :width_increased, :thickness_increased, :auto_oriented, :not_aligned_on_axes, :unused_instance_count, :content_layers, :multiple_content_layers, :edge_entity_ids, :veneer_entity_ids, :normals_to_values, :normals_to_dimensions, :dimensions_to_normals
+    attr_reader :definition_id, :is_dynamic_attributes_name, :resized, :flipped, :axes_flipped, :material_origins, :orientation_locked_on_axis, :symmetrical, :length_increase, :width_increase, :thickness_increase, :entity_ids, :entity_serialized_paths, :length_increased, :width_increased, :thickness_increased, :auto_oriented, :not_aligned_on_axes, :unused_instance_count, :content_layers, :multiple_content_layers, :edge_entity_ids, :veneer_entity_ids, :axes_to_values, :axes_to_dimensions, :dimensions_to_axes
 
     def initialize(part_def, group, part_number)
       super(part_def, group)
@@ -110,7 +110,7 @@ module Ladb::OpenCutList
       @is_dynamic_attributes_name = part_def.is_dynamic_attributes_name
       @resized = !part_def.scale.identity?
       @flipped = part_def.flipped
-      @normals_flipped = part_def.size.normals_flipped
+      @axes_flipped = part_def.size.axes_flipped?
       @material_origins = part_def.material_origins
       @orientation_locked_on_axis = part_def.orientation_locked_on_axis
       @symmetrical = part_def.symmetrical
@@ -129,9 +129,9 @@ module Ladb::OpenCutList
       @multiple_content_layers = part_def.multiple_content_layers
       @edge_entity_ids = part_def.edge_entity_ids
       @veneer_entity_ids = part_def.veneer_entity_ids
-      @normals_to_values = part_def.size.normals_to_values
-      @normals_to_dimensions = part_def.size.normals_to_dimensions
-      @dimensions_to_normals = part_def.size.dimensions_to_normals
+      @axes_to_values = part_def.size.axes_to_values
+      @axes_to_dimensions = part_def.size.axes_to_dimensions
+      @dimensions_to_axes = part_def.size.dimensions_to_axes
     end
 
     # -----

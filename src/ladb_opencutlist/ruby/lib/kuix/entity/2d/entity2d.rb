@@ -71,16 +71,20 @@ module Ladb::OpenCutList::Kuix
 
     # -- Style --
 
-    def activate_pseudo_class(pseudo_class)
+    def activate_pseudo_class(pseudo_class, depth = 0)
       unless @active_pseudo_classes.include?(pseudo_class)
         @active_pseudo_classes.push(pseudo_class)
+        @child.activate_pseudo_class(pseudo_class, depth + 1) if @child  # Propagate
+        @next.activate_pseudo_class(pseudo_class, depth) if @next && depth > 0  # Propagate
         invalidate
       end
     end
 
-    def deactivate_pseudo_class(pseudo_class)
+    def deactivate_pseudo_class(pseudo_class, depth = 0)
       if @active_pseudo_classes.include?(pseudo_class)
         @active_pseudo_classes.delete(pseudo_class)
+        @child.deactivate_pseudo_class(pseudo_class, depth + 1) if @child  # Propagate
+        @next.deactivate_pseudo_class(pseudo_class, depth) if @next && depth > 0  # Propagate
         invalidate
       end
     end

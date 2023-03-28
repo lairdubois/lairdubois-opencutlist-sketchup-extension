@@ -157,9 +157,9 @@
                         <div class="row">
                             <div class="col-xs-10">
                                 <ul id="ladb_sortable_part_axes" class="ladb-sortable-list">
-                                    <li data-axis="x"><span class="ladb-handle"><i class="ladb-opencutlist-icon-reorder"></i></span> {{ part[part.normals_to_dimensions.x] }}<span class="ladb-info">{{ ('tab.cutlist.list.'~part.normals_to_dimensions.x)|i18next }}</span></li>
-                                    <li data-axis="y"><span class="ladb-handle"><i class="ladb-opencutlist-icon-reorder"></i></span> {{ part[part.normals_to_dimensions.y] }}<span class="ladb-info">{{ ('tab.cutlist.list.'~part.normals_to_dimensions.y)|i18next }}</span></li>
-                                    <li data-axis="z"><span class="ladb-handle"><i class="ladb-opencutlist-icon-reorder"></i></span> {{ part[part.normals_to_dimensions.z] }}<span class="ladb-info">{{ ('tab.cutlist.list.'~part.normals_to_dimensions.z)|i18next }}</span></li>
+                                    <li data-axis="x"><span class="ladb-handle"><i class="ladb-opencutlist-icon-reorder"></i></span> {{ part[part.axes_to_dimensions.x] }}<span class="ladb-info">{{ ('tab.cutlist.list.'~part.axes_to_dimensions.x)|i18next }}</span></li>
+                                    <li data-axis="y"><span class="ladb-handle"><i class="ladb-opencutlist-icon-reorder"></i></span> {{ part[part.axes_to_dimensions.y] }}<span class="ladb-info">{{ ('tab.cutlist.list.'~part.axes_to_dimensions.y)|i18next }}</span></li>
+                                    <li data-axis="z"><span class="ladb-handle"><i class="ladb-opencutlist-icon-reorder"></i></span> {{ part[part.axes_to_dimensions.z] }}<span class="ladb-info">{{ ('tab.cutlist.list.'~part.axes_to_dimensions.z)|i18next }}</span></li>
                                 </ul>
                             </div>
                             <div class="col-xs-2">
@@ -246,7 +246,7 @@
                                     <rect x="{{ (areaSize + partLength) / 2 - edgeWidth }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ edgeWidth }}" height="{{ partWidth }}" class="edge edge-inner" />
                                 </g>
                                 {% if group.material_type == 1 or group.material_type == 2 %} {# 1 = TYPE_SOLID_WOOD, 2 = TYPE_SHEET_GOOD #}
-                                    <g class="increase increase-width"{% if part.flipped or part.normals_flipped %} transform="rotate(180 {{ areaSize / 2 }} {{ areaSize / 2 }})"{% endif %}>
+                                    <g class="increase increase-width"{% if part.flipped or part.axes_flipped %} transform="rotate(180 {{ areaSize / 2 }} {{ areaSize / 2 }})"{% endif %}>
                                         <rect x="{{ (areaSize - partLength) / 2 + partOutlineWidth }}" y="{{ (areaSize - partWidth) / 2 + edgeWidth }}" width="{{ partLength - 2 * partOutlineWidth }}" height="{{ increaseWWidth }}" class="increase increase-area"/>
                                         <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 + edgeOutlineWidth }}" width="{{ partLength }}" height="{{ edgeWidth + edgeOutlineWidth * 2 }}" class="edge edge-outer" />
                                         <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ edgeWidth }}" class="edge edge-inner" />
@@ -410,7 +410,7 @@
                                 {% set hideWidthDimension = true %}
                                 {% set hideName = true %}
                                 {% set arrowDashed = true %}
-                                {% set flipped = not (part.flipped or part.normals_flipped) %}
+                                {% set flipped = not (part.flipped or part.axes_flipped) %}
                                 {% block extra %}
                                     <g class="veneer veneer-zmin{% if part.veneer_entity_ids.zmin is empty %} ladb-disabled{% endif %}" data-toggle="tooltip" data-placement="bottom" title="{{ 'tab.cutlist.tooltip.veneer_zmin'|i18next }}">
                                         <defs>

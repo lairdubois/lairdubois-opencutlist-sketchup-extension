@@ -114,7 +114,7 @@ module Ladb::OpenCutList
           _create_three_part_def(three_model_def, part, instance_info.entity.definition, materials[part.material_name])
 
           # Retrieve axis order 0 = length axis, 1 = width axis, 2 = thickness axis
-          axes_order = part.def.size.normals
+          axes_order = part.def.size.axes
 
           mt = Geom::Transformation.new
           if part.auto_oriented && part.group.material_type != MaterialAttributes::TYPE_HARDWARE
@@ -130,20 +130,20 @@ module Ladb::OpenCutList
 
           # Extract scale values
           scale = part.def.scale.clone
-          scale.y *= -1 if TransformationUtils.flipped?(it) ^ part.def.size.normals_flipped
+          scale.y *= -1 if TransformationUtils.flipped?(it) ^ part.def.size.axes_flipped?
 
           # Create a scale only transformation
           ist = Geom::Transformation.scaling(scale.x, scale.y, scale.z)
 
           irt = Geom::Transformation.new
           if scale.y < 0
-            if part.def.size.oriented_normal(Z_AXIS) == Y_AXIS
+            if part.def.size.oriented_axis(Z_AXIS) == Y_AXIS
               # Applies a 180° rotation along the length axis if the part is flipped thicknesswise to force front face to be rendered on top
-              irt *= Geom::Transformation.rotation(ORIGIN, part.def.size.oriented_normal(X_AXIS), 180.degrees)
+              irt *= Geom::Transformation.rotation(ORIGIN, part.def.size.oriented_axis(X_AXIS), 180.degrees)
             end
-            if part.def.size.oriented_normal(X_AXIS) == Y_AXIS
+            if part.def.size.oriented_axis(X_AXIS) == Y_AXIS
               # Applies a 180° rotation along the thickness axis if the part is flipped lengthwise to force the origin to be rendered away
-              irt *= Geom::Transformation.rotation(ORIGIN, part.def.size.oriented_normal(Z_AXIS), 180.degrees)
+              irt *= Geom::Transformation.rotation(ORIGIN, part.def.size.oriented_axis(Z_AXIS), 180.degrees)
             end
           end
 

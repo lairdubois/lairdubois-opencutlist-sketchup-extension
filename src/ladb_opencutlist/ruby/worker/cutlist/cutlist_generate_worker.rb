@@ -498,7 +498,7 @@ module Ladb::OpenCutList
           part_def.length_increased = length_increased
           part_def.width_increased = width_increased
           part_def.thickness_increased = thickness_increased
-          part_def.auto_oriented = size.auto_oriented
+          part_def.auto_oriented = size.auto_oriented?
 
           # Propose cutting dimensions display if part is flaged as cumulable
           if definition_attributes.cumulable != DefinitionAttributes::CUMULABLE_NONE
@@ -521,7 +521,7 @@ module Ladb::OpenCutList
               t_plane_count, t_final_area, t_area_ratio = _compute_oriented_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, Z_AXIS)
 
               part_def.final_area = t_final_area
-              part_def.not_aligned_on_axes = !(t_plane_count >= 2 && (_face_infos_by_normal(size.oriented_normal(Y_AXIS), x_face_infos, y_face_infos, z_face_infos).length >= 1 || _face_infos_by_normal(size.oriented_normal(X_AXIS), x_face_infos, y_face_infos, z_face_infos).length >= 1))
+              part_def.not_aligned_on_axes = !(t_plane_count >= 2 && (_face_infos_by_normal(size.oriented_axis(Y_AXIS), x_face_infos, y_face_infos, z_face_infos).length >= 1 || _face_infos_by_normal(size.oriented_axis(X_AXIS), x_face_infos, y_face_infos, z_face_infos).length >= 1))
               part_def.content_layers = content_layers.to_a
 
               # -- Edges --
@@ -1066,7 +1066,7 @@ module Ladb::OpenCutList
 
     def _compute_oriented_final_area_and_ratio(instance_info, x_face_infos, y_face_infos, z_face_infos, axis)
 
-      plane_count, final_area = _compute_largest_final_area(instance_info.size.oriented_normal(axis), x_face_infos, y_face_infos, z_face_infos, instance_info.transformation)
+      plane_count, final_area = _compute_largest_final_area(instance_info.size.oriented_axis(axis), x_face_infos, y_face_infos, z_face_infos, instance_info.transformation)
       area = instance_info.size.area_by_axis(axis)
       area_ratio = (final_area.nil? || area.nil?) ? 0 : final_area / area
 
@@ -1077,8 +1077,8 @@ module Ladb::OpenCutList
 
       min_face_infos = []
       max_face_infos = []
-      oriented_normal = instance_info.size.oriented_normal(axis)
-      plane_grouped_face_infos = _populate_plane_grouped_face_infos_by_normal(oriented_normal, x_face_infos, y_face_infos, z_face_infos)
+      oriented_axis = instance_info.size.oriented_axis(axis)
+      plane_grouped_face_infos = _populate_plane_grouped_face_infos_by_normal(oriented_axis, x_face_infos, y_face_infos, z_face_infos)
       plane_grouped_face_infos.each { |plane, face_infos|
         if instance_info.definition_bounds.min.on_plane?(plane)
           if flipped

@@ -12,7 +12,7 @@
 {% set hideName = hideName|default(false) %}
 {% set hideGrainDirectionArrow = hideGrainDirectionArrow|default(false) %}
 {% set arrowDashed = arrowDashed|default(false) %}
-{% set flipped = flipped|default(part.flipped or part.normals_flipped) %}
+{% set flipped = flipped|default(part.flipped or part.axes_flipped) %}
 <svg viewBox="0 0 {{ areaSize }} {{ areaSize }}" xmlns="http://www.w3.org/2000/svg" version="1.1" style="width: {{ areaSize }}px; height: {{ areaSize }}px;">
 
     <g class="part">
@@ -51,8 +51,8 @@
             {% if flipped %}<g transform="scale(1,-1) translate(0,-{{ axisLLength }})">{% endif %}
                 <rect x="0" y="0" width="{{ axisLLength }}" height="{{ axisWLength }}" class="axis axis-bg" />
                 <rect x="0" y="{{ axisWLength - axisWidth }}" width="{{ axisWidth }}" height="{{ axisWidth }}" class="axis axis-origin" />
-                <rect x="0" y="0" width="{{ axisWidth }}" height="{{ axisWLength - axisWidth }}" class="axis axis-{{ part.dimensions_to_normals.width }}" />
-                <rect x="{{ axisWidth }}" y="{{ axisWLength - axisWidth }}" width="{{ axisLLength - axisWidth}}" height="{{ axisWidth }}" class="axis axis-{{ part.dimensions_to_normals.length }}" />
+                <rect x="0" y="0" width="{{ axisWidth }}" height="{{ axisWLength - axisWidth }}" class="axis axis-{{ part.dimensions_to_axes.width }}" />
+                <rect x="{{ axisWidth }}" y="{{ axisWLength - axisWidth }}" width="{{ axisLLength - axisWidth}}" height="{{ axisWidth }}" class="axis axis-{{ part.dimensions_to_axes.length }}" />
             {% if flipped %}</g>{% endif %}
         </svg>
     {% endif %}

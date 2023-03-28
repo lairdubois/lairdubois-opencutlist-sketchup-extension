@@ -2362,8 +2362,8 @@
             var fnOnAxiesOrderChanged = function () {
                 var axes = fnComputeAxesOrder();
 
-                var oriented = editedPart.normals_to_values[axes[0]] >= editedPart.normals_to_values[axes[1]]
-                    &&  editedPart.normals_to_values[axes[1]] >= editedPart.normals_to_values[axes[2]];
+                var oriented = editedPart.axes_to_values[axes[0]] >= editedPart.axes_to_values[axes[1]]
+                    &&  editedPart.axes_to_values[axes[1]] >= editedPart.axes_to_values[axes[2]];
 
                 // Check Orientation Locked On Axis option if needed
                 $inputOrientationLockedOnAxis.prop('checked', !oriented);
@@ -2605,8 +2605,8 @@
 
             // Bind sorter
             $sortableAxes.on('dblclick', function () {
-               var sortedNormals = Object.keys(editedPart.normals_to_values).sort(function (a, b) {
-                   return editedPart.normals_to_values[b] - editedPart.normals_to_values[a]
+               var sortedNormals = Object.keys(editedPart.axes_to_values).sort(function (a, b) {
+                   return editedPart.axes_to_values[b] - editedPart.axes_to_values[a]
                });
                var $rowX = $('li[data-axis="' + sortedNormals[0] + '"]', $sortablePartAxes);
                var $rowY = $('li[data-axis="' + sortedNormals[1] + '"]', $sortablePartAxes);
