@@ -42,10 +42,10 @@ module Ladb::OpenCutList
     COLOR_STATUS_BACKGROUND_WARNING = Sketchup::Color.new('#ffe69c').freeze
     COLOR_STATUS_BACKGROUND_SUCCESS = COLOR_STATUS_TEXT_SUCCESS.blend(Sketchup::Color.new('white'), 0.2).freeze
 
-    COLOR_MESH = Sketchup::Color.new(0, 62, 255, 100).freeze
+    COLOR_MESH = Sketchup::Color.new(247, 127, 0, 100).freeze
     COLOR_ARROW = Sketchup::Color.new(255, 255, 255).freeze
     COLOR_ARROW_AUTO_ORIENTED = Sketchup::Color.new(123, 213, 239, 255).freeze
-    COLOR_BOX = Sketchup::Color.new(0, 0, 255).freeze
+    COLOR_BOX = Sketchup::Color.new(247, 127, 0).freeze
 
     @@action = nil
     @@action_modifier = nil
@@ -570,12 +570,6 @@ module Ladb::OpenCutList
         part_helper.transformation = instance_info.transformation
         @space.append(part_helper)
 
-        # # Mesh
-        # mesh = Kuix::Mesh.new
-        # mesh.add_trangles(_compute_children_faces_triangles(instance_info.entity.definition.entities))
-        # mesh.background_color = COLOR_MESH
-        # part_helper.append(mesh)
-
         if part.group.material_type != MaterialAttributes::TYPE_HARDWARE
 
           # Back arrow
@@ -613,7 +607,7 @@ module Ladb::OpenCutList
         axes_helper = Kuix::AxesHelper.new
         part_helper.append(axes_helper)
 
-        # Other instances
+        # All instances
 
         unless part_entity_path.nil?
 

@@ -149,11 +149,6 @@ module Ladb::OpenCutList
               axes_convertor[axis]
             }
 
-            # Force axes to be "trihedron"
-            # if AxisUtils::flipped?(part_data.axes_order[0], part_data.axes_order[1], part_data.axes_order[2])
-            #   part_data.axes_order[1] = part_data.axes_order[1].reverse
-            # end
-
             # Create transformations
             ti = Geom::Transformation.axes(ORIGIN, part_data.axes_order[0], part_data.axes_order[1], part_data.axes_order[2])
             t = ti.inverse
