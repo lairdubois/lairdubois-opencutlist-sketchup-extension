@@ -896,7 +896,7 @@ const fnSetupModel = function(modelDef, partsColored, partsOpacity, pinsHidden, 
 
             let dimOffsetA = baseModelRadius / 6;
             let dimOffsetB = dimOffsetA * 1.3;
-            let dimArrowColor = 0x999999;
+            let dimArrowColor = 0x0000ff;
 
             boxDimensionsHelperXDiv = document.createElement('div');
             boxDimensionsHelperXDiv.className = 'dim hide';

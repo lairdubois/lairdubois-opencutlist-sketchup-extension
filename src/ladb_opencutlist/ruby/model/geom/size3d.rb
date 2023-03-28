@@ -1,6 +1,7 @@
 module Ladb::OpenCutList
 
   require_relative 'size2d'
+  require_relative '../../utils/axis_utils'
 
   class Size3d < Size2d
 
@@ -64,6 +65,10 @@ module Ladb::OpenCutList
         else
           raise 'Invalid axis'
       end
+    end
+
+    def normals_flipped
+      AxisUtils.flipped?(@normals[0], @normals[1], @normals[2])
     end
 
     def oriented_transformation

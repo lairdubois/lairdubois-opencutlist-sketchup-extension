@@ -10,11 +10,19 @@ module Ladb::OpenCutList
       vx = Geom::Vector3d.new(transformation_a[0], transformation_a[1], transformation_a[2])
       vy = Geom::Vector3d.new(transformation_a[4], transformation_a[5], transformation_a[6])
       vz = Geom::Vector3d.new(transformation_a[8], transformation_a[9], transformation_a[10])
-      Scale3d.new(vx.length, vy.length, vz.length)
+      Scale3d.new(vx.length.to_f, vy.length.to_f, vz.length.to_f)
     end
 
     def self.flipped?(transformation)
       transformation.xaxis.cross(transformation.yaxis) != transformation.zaxis
+    end
+
+    def self.skewed?(transformation)
+      ![
+        transformation.xaxis % transformation.yaxis,
+        transformation.yaxis % transformation.zaxis,
+        transformation.zaxis % transformation.xaxis
+      ].all? { |p| p == 0 }
     end
 
     def self.multiply(transformation1, transformation2)

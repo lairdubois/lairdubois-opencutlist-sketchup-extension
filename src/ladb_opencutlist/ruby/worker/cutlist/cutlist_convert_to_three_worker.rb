@@ -1,6 +1,5 @@
 module Ladb::OpenCutList
 
-  require_relative '../../lib/lgeom/transformation_helper'
   require_relative '../../helper/layer_visibility_helper'
   require_relative '../../helper/hashable_helper'
   require_relative '../../utils/axis_utils'
@@ -121,23 +120,31 @@ module Ladb::OpenCutList
           if part.auto_oriented && part.group.material_type != MaterialAttributes::TYPE_HARDWARE
 
             # Set model matrix to put length axis along X, width along Y and thickness along Z to display the part always in the same direction even if it is auto oriented
-            mt = Geom::Transformation.axes(ORIGIN, axes_order[0], axes_order[1], axes_order[2]).inverse
+            mt = part.def.size.oriented_transformation.inverse
             three_model_def.matrix = _to_three_matrix(mt)
 
           end
 
           # Extract instance transformation
           it = instance_info.transformation
-          it.extend(LGeom::TransformationHelper)
+
+          # Extract scale values
+          scale = part.def.scale.clone
+          scale.y *= -1 if TransformationUtils.flipped?(it) ^ part.def.size.normals_flipped
 
           # Create a scale only transformation
-          ist = Geom::Transformation.scaling(it.x_scale, it.y_scale, it.z_scale)
+          ist = Geom::Transformation.scaling(scale.x, scale.y, scale.z)
 
-          # Apply a rotation of 180° along length axis if part is flipped along thickness to force front face to be rendered on top
-          if axes_order[2] == X_AXIS && it.x_scale < 0 || axes_order[2] == Y_AXIS && it.y_scale < 0 || axes_order[2] == Z_AXIS && it.z_scale < 0
-            irt = Geom::Transformation.rotation(ORIGIN, axes_order[0], 180.degrees)
-          else
-            irt = Geom::Transformation.new
+          irt = Geom::Transformation.new
+          if scale.y < 0
+            if part.def.size.oriented_normal(Z_AXIS) == Y_AXIS
+              # Applies a 180° rotation along the length axis if the part is flipped thicknesswise to force front face to be rendered on top
+              irt *= Geom::Transformation.rotation(ORIGIN, part.def.size.oriented_normal(X_AXIS), 180.degrees)
+            end
+            if part.def.size.oriented_normal(X_AXIS) == Y_AXIS
+              # Applies a 180° rotation along the thickness axis if the part is flipped lengthwise to force the origin to be rendered away
+              irt *= Geom::Transformation.rotation(ORIGIN, part.def.size.oriented_normal(Z_AXIS), 180.degrees)
+            end
           end
 
           # Setup model axes matrix
@@ -429,6 +436,48 @@ module Ladb::OpenCutList
       puts "#{'+'.rjust(level, ' ')} #{matrix[1].round(1)} #{matrix[5].round(1)} #{matrix[9].round(1)} #{matrix[13].round(1)}"
       puts "#{'+'.rjust(level, ' ')} #{matrix[2].round(1)} #{matrix[6].round(1)} #{matrix[10].round(1)} #{matrix[14].round(1)}"
       puts "#{'+'.rjust(level, ' ')} #{matrix[3].round(1)} #{matrix[7].round(1)} #{matrix[11].round(1)} #{matrix[15].round(1)}"
+    end
+
+    def _separate_translation_scaling_rotation(transformation)
+
+      m = transformation.to_a
+
+      m = m.clone
+
+      # Extract translation
+      translation = m.values_at(12, 13, 14)
+
+      # Extract scaling, considering uniform scale factor (last matrix element)
+      scaling = Array.new(3)
+      scaling[0] = m[15] * Math.sqrt(m[0]**2 + m[1]**2 + m[2]**2)
+      scaling[1] = m[15] * Math.sqrt(m[4]**2 + m[5]**2 + m[6]**2)
+      scaling[2] = m[15] * Math.sqrt(m[8]**2 + m[9]**2 + m[10]**2)
+      # Remove scaling to prepare for extraction of rotation
+      [0, 1, 2].each{ |i| m[i] /= scaling[0] } unless scaling[0] == 0.0
+      [4, 5, 6].each{ |i| m[i] /= scaling[1] } unless scaling[1] == 0.0
+      [8, 9,10].each{ |i| m[i] /= scaling[2] } unless scaling[2] == 0.0
+      m[15] = 1.0
+      # Verify orientation, if necessary invert it.
+      tmp_z_axis = Geom::Vector3d.new(m[0], m[1], m[2]).cross(Geom::Vector3d.new(m[4], m[5], m[6]))
+      if tmp_z_axis.dot( Geom::Vector3d.new(m[8], m[9], m[10]) ) < 0
+        scaling[0] *= -1
+        m[0] = -m[0]
+        m[1] = -m[1]
+        m[2] = -m[2]
+      end
+
+      # Extract rotation
+      # Source: Extracting Euler Angles from a Rotation Matrix, Mike Day, Insomniac Games
+      # http://www.insomniacgames.com/mike-day-extracting-euler-angles-from-a-rotation-matrix/
+      theta1 = Math.atan2(m[6], m[10])
+      c2 = Math.sqrt(m[0]**2 + m[1]**2)
+      theta2 = Math.atan2(-m[2], c2)
+      s1 = Math.sin(theta1)
+      c1 = Math.cos(theta1)
+      theta3 = Math.atan2(s1*m[8] - c1*m[4], c1*m[5] - s1*m[9])
+      rotation = [-theta1, -theta2, -theta3]
+
+      [ translation, scaling, rotation ]
     end
 
   end

@@ -12,7 +12,7 @@
 {% set hideName = hideName|default(false) %}
 {% set hideGrainDirectionArrow = hideGrainDirectionArrow|default(false) %}
 {% set arrowDashed = arrowDashed|default(false) %}
-{% set flipped = flipped|default(part.flipped) %}
+{% set flipped = flipped|default(part.flipped or part.normals_flipped) %}
 <svg viewBox="0 0 {{ areaSize }} {{ areaSize }}" xmlns="http://www.w3.org/2000/svg" version="1.1" style="width: {{ areaSize }}px; height: {{ areaSize }}px;">
 
     <g class="part">
