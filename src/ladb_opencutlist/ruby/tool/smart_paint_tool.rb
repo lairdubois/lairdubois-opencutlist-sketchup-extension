@@ -23,18 +23,19 @@ module Ladb::OpenCutList
     ACTION_PAINT_EDGE = 5
     ACTION_PAINT_VENEER = 6
 
-    ACTION_MODIFIER_1 = 0
-    ACTION_MODIFIER_2 = 1
-    ACTION_MODIFIER_4 = 2
+    ACTION_MODIFIER_0 = 0
+    ACTION_MODIFIER_1 = 1
+    ACTION_MODIFIER_2 = 2
+    ACTION_MODIFIER_4 = 3
 
     ACTIONS = [
       { :action => ACTION_PAINT_PART },
-      # { :action => ACTION_PAINT_EDGE, :modifiers => [ ACTION_MODIFIER_1, ACTION_MODIFIER_2, ACTION_MODIFIER_4 ] },
-      # { :action => ACTION_PAINT_VENEER, :modifiers => [ ACTION_MODIFIER_1, ACTION_MODIFIER_2 ] },
-      { :action => ACTION_PAINT_FACE },
-      { :action => ACTION_UNPAINT_FACE },
-      { :action => ACTION_UNPAINT_PART },
-      { :action => ACTION_PICK }
+      { :action => ACTION_PAINT_EDGE, :modifiers => [ ACTION_MODIFIER_1, ACTION_MODIFIER_2, ACTION_MODIFIER_4 ] },
+      { :action => ACTION_PAINT_VENEER, :modifiers => [ ACTION_MODIFIER_1, ACTION_MODIFIER_2 ] },
+      # { :action => ACTION_PAINT_FACE },
+      # { :action => ACTION_UNPAINT_FACE },
+      # { :action => ACTION_UNPAINT_PART },
+      # { :action => ACTION_PICK }
     ].freeze
 
     COLOR_MATERIAL_TYPES = {
@@ -66,6 +67,14 @@ module Ladb::OpenCutList
             @@current_material.model == model
           rescue => e # Reference to deleted Entity
             @@current_material = nil
+          end
+        end
+
+        # Setup default filter if not set
+        if @@filters.nil?
+          @@filters = {}
+          for type in 0..COLOR_MATERIAL_TYPES.length - 1
+            @@filters[type] = type != MaterialAttributes::TYPE_UNKNOWN
           end
         end
 
@@ -108,10 +117,11 @@ module Ladb::OpenCutList
 
       @status_lbl_1 = Kuix::Label.new
       @status_lbl_1.text_size = @unit * 3
+      @status_lbl_1.text_bold = true
       @status.append(@status_lbl_1)
 
       @status_lbl_2 = Kuix::Label.new
-      @status_lbl_2.text_size = @unit * 2
+      @status_lbl_2.text_size = @unit * 3
       @status.append(@status_lbl_2)
 
       # Settings panel
@@ -119,10 +129,8 @@ module Ladb::OpenCutList
       @settings = Kuix::Panel.new
       @settings.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
       @settings.layout = Kuix::GridLayout.new
-      @settings.border.set!(@unit / 2)
       @settings.padding.set_all!(@unit * 2)
       @settings.set_style_attribute(:background_color, Sketchup::Color.new('white'))
-      @settings.set_style_attribute(:border_color, Sketchup::Color.new(200, 200, 200, 255))
       @settings.visible = false
       panel_south.append(@settings)
 
@@ -142,8 +150,9 @@ module Ladb::OpenCutList
         filters_btn = Kuix::Button.new
         filters_btn.min_size.set_all!(@unit * 8)
         filters_btn.border.set_all!(@unit / 2)
-        filters_btn.set_style_attribute(:background_color, Sketchup::Color.new('white'))
+        filters_btn.set_style_attribute(:background_color, Sketchup::Color.new(220, 220, 220))
         filters_btn.set_style_attribute(:background_color, color, :active)
+        filters_btn.set_style_attribute(:background_color, Sketchup::Color.new('white'), :selected)
         filters_btn.set_style_attribute(:background_color, color.blend(Sketchup::Color.new('white'), 0.2), :hover)
         filters_btn.set_style_attribute(:border_color, color, :selected)
         filters_btn.selected = @@filters[type]
@@ -229,7 +238,7 @@ module Ladb::OpenCutList
       @btns.set_style_attribute(:background_color, Sketchup::Color.new(62, 59, 51))
       panel_south.append(@btns)
 
-      _setup_material_buttons
+      # _setup_material_buttons
 
     end
 
@@ -256,6 +265,63 @@ module Ladb::OpenCutList
 
     def set_action(action, modifier = nil)
       super
+
+      case action
+      when ACTION_PAINT_PART
+
+        set_filter_by_type(MaterialAttributes::TYPE_UNKNOWN, false)
+        set_filter_by_type(MaterialAttributes::TYPE_SOLID_WOOD, true)
+        set_filter_by_type(MaterialAttributes::TYPE_SHEET_GOOD, true)
+        set_filter_by_type(MaterialAttributes::TYPE_DIMENSIONAL, true)
+        set_filter_by_type(MaterialAttributes::TYPE_HARDWARE, true)
+        set_filter_by_type(MaterialAttributes::TYPE_EDGE, false)
+        set_filter_by_type(MaterialAttributes::TYPE_VENEER, false)
+
+        # Re populate material defs & setup corresponding buttons
+        _populate_material_defs(Sketchup.active_model)
+        _setup_material_buttons
+
+        unless [ MaterialAttributes::TYPE_EDGE, MaterialAttributes::TYPE_VENEER, MaterialAttributes::TYPE_UNKNOWN ].index(MaterialAttributes.new(get_current_material).type).nil?
+          @material_buttons.first.fire(:click)
+        end
+
+      when ACTION_PAINT_EDGE
+
+        set_filter_by_type(MaterialAttributes::TYPE_UNKNOWN, false)
+        set_filter_by_type(MaterialAttributes::TYPE_SOLID_WOOD, false)
+        set_filter_by_type(MaterialAttributes::TYPE_SHEET_GOOD, false)
+        set_filter_by_type(MaterialAttributes::TYPE_DIMENSIONAL, false)
+        set_filter_by_type(MaterialAttributes::TYPE_HARDWARE, false)
+        set_filter_by_type(MaterialAttributes::TYPE_EDGE, true)
+        set_filter_by_type(MaterialAttributes::TYPE_VENEER, false)
+
+        # Re populate material defs & setup corresponding buttons
+        _populate_material_defs(Sketchup.active_model)
+        _setup_material_buttons
+
+        if MaterialAttributes.new(get_current_material).type != MaterialAttributes::TYPE_EDGE
+          @material_buttons.first.fire(:click)
+        end
+
+      when ACTION_PAINT_VENEER
+
+        set_filter_by_type(MaterialAttributes::TYPE_UNKNOWN, false)
+        set_filter_by_type(MaterialAttributes::TYPE_SOLID_WOOD, false)
+        set_filter_by_type(MaterialAttributes::TYPE_SHEET_GOOD, false)
+        set_filter_by_type(MaterialAttributes::TYPE_DIMENSIONAL, false)
+        set_filter_by_type(MaterialAttributes::TYPE_HARDWARE, false)
+        set_filter_by_type(MaterialAttributes::TYPE_EDGE, false)
+        set_filter_by_type(MaterialAttributes::TYPE_VENEER, true)
+
+        # Re populate material defs & setup corresponding buttons
+        _populate_material_defs(Sketchup.active_model)
+        _setup_material_buttons
+
+        if MaterialAttributes.new(get_current_material).type != MaterialAttributes::TYPE_VENEER
+          @material_buttons.first.fire(:click)
+        end
+
+      end
 
       # Update status text and root cursor
       case action
@@ -301,12 +367,32 @@ module Ladb::OpenCutList
       @@action == ACTION_PAINT_FACE || @@action == ACTION_PAINT_PART || @@action == ACTION_PAINT_EDGE || @@action == ACTION_PAINT_VENEER
     end
 
+    def is_action_paint_edge?
+      @@action == ACTION_PAINT_EDGE
+    end
+
+    def is_action_paint_veneer?
+      @@action == ACTION_PAINT_VENEER
+    end
+
     def is_action_unpaint?
       @@action == ACTION_UNPAINT_FACE || @@action == ACTION_UNPAINT_PART
     end
 
     def is_action_pick?
       @@action == ACTION_PICK
+    end
+
+    def is_action_modifier_1?
+      @@action_modifier[@@action] == ACTION_MODIFIER_1
+    end
+
+    def is_action_modifier_2?
+      @@action_modifier[@@action] == ACTION_MODIFIER_2
+    end
+
+    def is_action_modifier_4?
+      @@action_modifier[@@action] == ACTION_MODIFIER_4
     end
 
     # -- Filters --
@@ -350,12 +436,14 @@ module Ladb::OpenCutList
       if material_attributes
 
         # Set action according to material type
-        case material_attributes.type
-        when MaterialAttributes::TYPE_EDGE, MaterialAttributes::TYPE_VENEER
-          set_action(ACTION_PAINT_FACE)
-        else
-          set_action(ACTION_PAINT_PART)
-        end
+        # case material_attributes.type
+        # when MaterialAttributes::TYPE_EDGE
+        #   set_action(ACTION_PAINT_EDGE)
+        # when MaterialAttributes::TYPE_VENEER
+        #   set_action(ACTION_PAINT_VENEER)
+        # else
+        #   set_action(ACTION_PAINT_PART)
+        # end
 
       else
         set_action(nil)
@@ -398,7 +486,7 @@ module Ladb::OpenCutList
     def onActivate(view)
 
       # Populate material defs
-      _populate_material_defs(view.model)
+      # _populate_material_defs(view.model)
 
       super
 
@@ -466,10 +554,7 @@ module Ladb::OpenCutList
     end
 
     def onMouseMove(flags, x, y, view)
-      if super
-        _reset(view)
-        return
-      end
+      return if super
       unless is_action_none?
         _handle_mouse_event(x, y, view, :move)
       end
@@ -506,14 +591,6 @@ module Ladb::OpenCutList
 
     def _populate_material_defs(model)
 
-      # Setup default filter if not set
-      if @@filters.nil?
-        @@filters = {}
-        for type in 0..COLOR_MATERIAL_TYPES.length - 1
-          @@filters[type] = true
-        end
-      end
-
       # Build the material defs
       @material_defs = []
       current_material_exists = false
@@ -548,9 +625,10 @@ module Ladb::OpenCutList
     def _setup_material_buttons
 
       @btns.remove_all
-      @btns.layout = Kuix::GridLayout.new([ @material_defs.length, 10 ].min, (@material_defs.length / 10.0).ceil)
 
       if @material_defs.empty?
+
+        @btns.layout = Kuix::GridLayout.new
 
         warning_lbl = Kuix::Label.new
         warning_lbl.margin.set_all!(@unit * 2)
@@ -564,6 +642,8 @@ module Ladb::OpenCutList
         end
 
       end
+
+      @btns.layout = Kuix::GridLayout.new([ [ @material_defs.length, 5 ].max, 10 ].min, (@material_defs.length / 10.0).ceil)
 
       @material_buttons = []
       @material_defs.each do |material_def|
@@ -579,7 +659,7 @@ module Ladb::OpenCutList
         btn.set_style_attribute(:background_color, material.color)
         btn.set_style_attribute(:background_color, material.color.blend(Sketchup::Color.new(material_color_is_dark ? 'white' : 'black'), 0.7), :active)
         btn.set_style_attribute(:border_color, material.color.blend(Sketchup::Color.new(material_color_is_dark ? 'white' : 'black'), 0.8), :hover)
-        btn.set_style_attribute(:border_color, Sketchup::Color.new(247, 127, 0), :selected)
+        btn.set_style_attribute(:border_color, Sketchup::Color.new(255, 255, 255), :selected)
         btn.append_static_label(material.display_name, @unit * 3, material_color_is_dark ? Sketchup::Color.new('white') : nil)
         btn.data = material
         btn.selected = material == get_current_material
@@ -629,6 +709,7 @@ module Ladb::OpenCutList
         @is_down = false
         @picked_path = nil
         @triangles = nil
+        @space.remove_all
         view.invalidate
       end
     end
@@ -638,9 +719,9 @@ module Ladb::OpenCutList
         @pick_helper.count.times { |pick_path_index|
 
           picked_path = @pick_helper.path_at(pick_path_index)
-          if picked_path == @picked_path && event == :move
-            return  # Previously detected path, stop process to optimize.
-          end
+          # if picked_path == @picked_path && event == :move
+          #   return  # Previously detected path, stop process to optimize.
+          # end
           if picked_path && picked_path.last.is_a?(Sketchup::Face)
 
             @picked_path = picked_path.clone
@@ -665,39 +746,176 @@ module Ladb::OpenCutList
 
             elsif is_action_part?
 
-              picked_part_path = _get_part_path_from_path(picked_path)
-              picked_part = picked_path.last
-              if picked_part
+              picked_entity_path = _get_part_entity_path_from_path(picked_path)
+              if picked_entity_path.length > 0
 
-                @unpaint_color = MaterialUtils::get_color_from_path(picked_part_path[0...-1]) # [0...-1] returns array without last element
-                @triangles = _compute_children_faces_triangles(picked_part.definition.entities, PathUtils::get_transformation(picked_part_path))
+                part = _compute_part_from_path(picked_entity_path)
+                if part
 
-                if event == :l_button_up
-                  if is_action_paint?
-                    picked_part.material = get_current_material
-                  elsif is_action_unpaint?
-                    picked_part.material = nil
+                  set_message(part.name)
+
+                  @space.remove_all
+
+                  color = get_current_material.color
+                  color.alpha = 150
+
+                  if is_action_paint_edge?
+
+                    if part.group.material_type != MaterialAttributes::TYPE_SHEET_GOOD
+                      _reset(view)
+                      set_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.wrong_material_type', { :type => Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_SHEET_GOOD}") })}", MESSAGE_TYPE_ERROR)
+                    else
+
+                      model = Sketchup.active_model
+                      edge_faces = {}
+                      part.def.edge_entity_ids.each { |k, v| edge_faces[k] = model.find_entity_by_id(v) if v.is_a?(Array) && !v.empty? }
+
+                      entities = []
+                      if is_action_modifier_1? || is_action_modifier_2?
+
+                        picked_face = @pick_helper.picked_face
+
+                        side = nil
+                        edge_faces.each { |k, v|
+                          v.each { |face|
+                            if face == picked_face
+                              side = k
+                              break
+                            end
+                          }
+                          break unless side.nil?
+                        }
+
+                        if side
+                          entities << edge_faces[side]
+                          if is_action_modifier_2?
+                            entities << edge_faces[:xmin] if side == :xmax
+                            entities << edge_faces[:xmax] if side == :xmin
+                            entities << edge_faces[:ymin] if side == :ymax
+                            entities << edge_faces[:ymax] if side == :ymin
+                          end
+                        end
+
+                      elsif is_action_modifier_4?
+                        entities << edge_faces[:xmin]
+                        entities << edge_faces[:xmax]
+                        entities << edge_faces[:ymin]
+                        entities << edge_faces[:ymax]
+                      end
+                      entities = entities.compact.flatten
+
+                      if entities.empty?
+                        set_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_edge')}", MESSAGE_TYPE_ERROR)
+                      else
+
+                        mesh = Kuix::Mesh.new
+                        mesh.add_trangles(_compute_children_faces_triangles(entities))
+                        mesh.background_color = color
+                        mesh.transformation = PathUtils::get_transformation(picked_entity_path)
+                        @space.append(mesh)
+
+                        definition = Sketchup.active_model.definitions[part.def.definition_id]
+                        if definition && definition.count_used_instances > 1
+                          set_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
+                        else
+                          set_message('')
+                        end
+
+                        if event == :l_button_up
+                          entities.each { |face| face.material = get_current_material }
+                        end
+
+                      end
+
+                    end
+
+                  elsif is_action_paint_veneer?
+
+                    if part.group.material_type != MaterialAttributes::TYPE_SHEET_GOOD
+                      _reset(view)
+                      set_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.wrong_material_type', { :type => Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_SHEET_GOOD}") })}", MESSAGE_TYPE_ERROR)
+                    else
+
+                      model = Sketchup.active_model
+                      veneer_faces = {}
+                      part.def.veneer_entity_ids.each { |k, v| veneer_faces[k] = model.find_entity_by_id(v) if v.is_a?(Array) && !v.empty? }
+
+                      entities = []
+                      if is_action_modifier_1?
+
+                        picked_face = @pick_helper.picked_face
+
+                        side = nil
+                        veneer_faces.each { |k, v|
+                          v.each { |face|
+                            if face == picked_face
+                              side = k
+                              break
+                            end
+                          }
+                          break unless side.nil?
+                        }
+
+                        if side
+                          entities << veneer_faces[side]
+                        end
+
+                      elsif is_action_modifier_2?
+                        entities << veneer_faces[:zmin]
+                        entities << veneer_faces[:zmax]
+                      end
+                      entities = entities.compact.flatten
+
+                      if entities.empty?
+                        set_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_veneer')}", MESSAGE_TYPE_ERROR)
+                      else
+
+                        mesh = Kuix::Mesh.new
+                        mesh.add_trangles(_compute_children_faces_triangles(entities))
+                        mesh.background_color = color
+                        mesh.transformation = PathUtils::get_transformation(picked_entity_path)
+                        @space.append(mesh)
+
+                        definition = Sketchup.active_model.definitions[part.def.definition_id]
+                        if definition && definition.count_used_instances > 1
+                          set_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
+                        else
+                          set_message('')
+                        end
+
+                        if event == :l_button_up
+                          entities.each { |face| face.material = get_current_material }
+                        end
+
+                      end
+
+                    end
+
+                  else
+
+                    mesh = Kuix::Mesh.new
+                    mesh.add_trangles(_compute_children_faces_triangles(picked_entity_path.last.definition.entities))
+                    mesh.background_color = color
+                    mesh.transformation = PathUtils::get_transformation(picked_entity_path)
+                    @space.append(mesh)
+
+                    if event == :l_button_up
+                      picked_entity_path.last.material = get_current_material
+                    end
+
                   end
+
+                else
+                  _reset(view)
+                  set_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
                 end
-
-                # worker = CutlistGenerateWorker.new({}, picked_part, picked_part_path)
-                # cutlist = worker.run
-                #
-                # puts cutlist.groups.first&.parts.first&.def
-
-                # Reset status
-                set_status('')
-
-                view.invalidate
                 return
 
-              elsif picked_part_path
-                set_message("⚠️️ #{Plugin.instance.get_i18n_string("tool.smart_paint.warning.not_part")}", MESSAGE_TYPE_ERROR)
+              elsif picked_entity_path
+                _reset(view)
+                set_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
+                return
               end
-
-              @unpaint_color = nil
-              @triangles = nil
-              return
 
             elsif is_action_pick?
 

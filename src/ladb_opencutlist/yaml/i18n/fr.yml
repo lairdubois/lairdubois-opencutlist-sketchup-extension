@@ -1365,12 +1365,17 @@ tool:
     action_5: Colorier chant
     action_6: Colorier surface
     action_modifier_0: "1"
-    action_modifier_1: "2"
-    action_modifier_2: "4"
+    action_modifier_1: "1"
+    action_modifier_2: "2"
+    action_modifier_3: "4"
     warning:
       no_material: Votre modèle ne contient aucune matière !
       all_filtered: Les filtres choisis masquent toutes les matières !
-      not_part: L'objet ciblé doit être un composant.
+    error:
+      not_part: L'objet ciblé n'est pas une pièce.
+      not_edge: La face ciblée n'est pas un chant de panneau.
+      not_veneer: La face ciblée n'est pas une surface de panneau.
+      wrong_material_type: La pièce ciblée doit être du type '{{ type }}'.
   smart_axes:
     title: Orienter
     status_swap_length_width: Cliquez sur une pièce pour permuter sa Longueur avec sa Largeur.

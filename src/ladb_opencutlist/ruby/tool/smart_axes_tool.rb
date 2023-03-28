@@ -6,7 +6,6 @@ module Ladb::OpenCutList
   require_relative '../helper/face_triangles_helper'
   require_relative '../model/attributes/definition_attributes'
   require_relative '../model/geom/size3d'
-  require_relative '../worker/cutlist/cutlist_generate_worker'
   require_relative '../utils/axis_utils'
   require_relative '../utils/transformation_utils'
 
@@ -29,10 +28,10 @@ module Ladb::OpenCutList
       { :action => ACTION_SWAP_AUTO }
     ].freeze
 
-    COLOR_MESH = Sketchup::Color.new(247, 127, 0, 100).freeze
+    COLOR_MESH = Sketchup::Color.new(255, 255, 0, 100).freeze # Sketchup::Color.new(247, 127, 0, 100).freeze
     COLOR_ARROW = Sketchup::Color.new(255, 255, 255).freeze
     COLOR_ARROW_AUTO_ORIENTED = Sketchup::Color.new(123, 213, 239, 255).freeze
-    COLOR_BOX = Sketchup::Color.new(247, 127, 0).freeze
+    COLOR_BOX = Sketchup::Color.new(255, 255, 0).freeze # Sketchup::Color.new(247, 127, 0).freeze
 
     def initialize
       super(true, false)
@@ -74,6 +73,7 @@ module Ladb::OpenCutList
 
       @part_panel_lbl_1 = Kuix::Label.new
       @part_panel_lbl_1.text_size = unit * 4
+      @part_panel_lbl_1.text_bold = true
       @part_panel.append(@part_panel_lbl_1)
 
       @part_panel_lbl_2 = Kuix::Label.new
@@ -147,11 +147,11 @@ module Ladb::OpenCutList
     end
 
     def is_action_modifier_clockwise?
-      @@action_modifier == ACTION_MODIFIER_CLOCKWISE
+      @@action_modifier[@@action] == ACTION_MODIFIER_CLOCKWISE
     end
 
     def is_action_modifier_anticlockwise?
-      @@action_modifier == ACTION_MODIFIER_ANTICLOCKWIZE
+      @@action_modifier[@@action] == ACTION_MODIFIER_ANTICLOCKWIZE
     end
 
     # -- Menu --
@@ -299,23 +299,6 @@ module Ladb::OpenCutList
     end
 
     private
-
-    def _instances_to_paths(instances, instance_paths, entities, path)
-      entities.each do |entity|
-        return if entity.is_a?(Sketchup::Edge)   # Minor Speed improvement when there's a lot of edges
-        if entity.visible? && _layer_visible?(entity.layer, path.empty?)
-          if entity.is_a?(Sketchup::ComponentInstance)
-            if instances.include?(entity)
-              instance_paths << path + [ entity ]
-            else
-              _instances_to_paths(instances, instance_paths, entity.definition.entities, path + [entity ])
-            end
-          elsif entity.is_a?(Sketchup::Group)
-            _instances_to_paths(instances, instance_paths, entity.entities, path + [entity ])
-          end
-        end
-      end
-    end
 
     def _refresh_active
       _set_active(@active_part_entity_path, _compute_part_from_path(@active_part_entity_path))
@@ -580,37 +563,6 @@ module Ladb::OpenCutList
         end
 
       end
-    end
-
-    def _get_part_entity_path_from_path(path)
-      part_path = path.to_a
-      path.reverse_each { |entity|
-        return part_path if entity.is_a?(Sketchup::ComponentInstance) && !entity.definition.behavior.cuts_opening? && !entity.definition.behavior.always_face_camera?
-        part_path.pop
-      }
-    end
-
-    def _compute_part_from_path(path)
-      return nil unless path.is_a?(Array)
-
-      entity = path.last
-      return nil unless entity.is_a?(Sketchup::Drawingelement)
-
-      worker = CutlistGenerateWorker.new({}, entity, path.slice(0..-2))
-      cutlist = worker.run
-
-      part = nil
-      cutlist.groups.each { |group|
-        group.parts.each { |p|
-          if p.def.definition_id == entity.definition.name
-            part = p
-            break
-          end
-        }
-        break unless part.nil?
-      }
-
-      part
     end
 
   end

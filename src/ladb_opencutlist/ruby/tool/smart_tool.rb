@@ -30,7 +30,7 @@ module Ladb::OpenCutList
     COLOR_MESSAGE_BACKGROUND_SUCCESS = COLOR_MESSAGE_TEXT_SUCCESS.blend(Sketchup::Color.new('white'), 0.2).freeze
 
     @@action = nil
-    @@action_modifier = nil
+    @@action_modifier = {}
 
     def initialize(quit_on_esc = true, quit_on_undo = false)
       super
@@ -41,7 +41,7 @@ module Ladb::OpenCutList
     end
 
     def get_stripped_name
-      ''
+      'smart'
     end
 
     # -- UI stuff --
@@ -115,12 +115,10 @@ module Ladb::OpenCutList
 
         action = action_def[:action]
         modifiers = action_def[:modifiers]
-        default_modifier = modifiers.is_a?(Array) ? modifiers.first : nil
 
         data = {
           :action => action,
           :modifier_buttons => [],
-          :last_modifier => default_modifier
         }
 
         actions_btn = Kuix::Button.new
@@ -140,7 +138,7 @@ module Ladb::OpenCutList
         lbl.set_style_attribute(:color, Sketchup::Color.new(255, 255, 255), :selected)
         actions_btn.data = data
         actions_btn.on(:click) { |button|
-          set_root_action(action, data[:last_modifier])
+          set_root_action(action)
         }
         actions_btns_panel.append(actions_btn)
 
@@ -165,7 +163,6 @@ module Ladb::OpenCutList
             lbl = actions_modifier_btn.append_static_label(Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_modifier_#{modifier}"), unit * 3)
             lbl.set_style_attribute(:color, Sketchup::Color.new(62, 59, 51), :hover)
             actions_modifier_btn.on(:click) { |button|
-              data[:last_modifier] = modifier
               set_root_action(action, modifier)
             }
             actions_modifiers.append(actions_modifier_btn)
@@ -221,7 +218,7 @@ module Ladb::OpenCutList
       else
         @message_panel_lbl.set_style_attribute(:color, nil)
         @message_panel_lbl.set_style_attribute(:background_color, COLOR_MESSAGE_BACKGROUND)
-        @message_panel_lbl.set_style_attribute(:border_color, nil)
+        @message_panel_lbl.set_style_attribute(:border_color, Sketchup::Color.new)
       end
     end
 
@@ -233,8 +230,16 @@ module Ladb::OpenCutList
 
     def set_action(action, modifier = nil)
 
+      if modifier.nil?
+        modifier = @@action_modifier[action]
+        if modifier.nil?
+          modifiers = get_action_defs.select { |action_def| action_def[:action] == action }.first[:modifiers]
+          modifier = modifiers.first if modifiers.is_a?(Array)
+        end
+      end
+
       @@action = action
-      @@action_modifier = modifier
+      @@action_modifier[action] = modifier
 
       # Update buttons
       if @action_buttons
@@ -259,7 +264,7 @@ module Ladb::OpenCutList
     def push_action(action, modifier = nil)
       @action_stack.push({
                            :action => action,
-                           :modifier_stack => modifier ? [ modifier] : []
+                           :modifier_stack => modifier ? [ modifier ] : []
                          })
       set_action(@action_stack.last[:action], @action_stack.last[:modifier_stack].last)
     end
@@ -292,19 +297,66 @@ module Ladb::OpenCutList
       @pick_helper = view.pick_helper
 
       start_action = @@action.nil? ? get_action_defs.first[:action] : @@action
-      start_action_modifier = start_action == get_action_defs.first[:action] && @@action_modifier.nil? ? get_action_defs.first[:modifiers].is_a?(Array) ? get_action_defs.first[:modifiers].first : nil : @@action_modifier
-      set_root_action(start_action, start_action_modifier)
+      set_root_action(start_action)
 
     end
 
     def onResume(view)
-      set_root_action(@@action, @@action_modifier)  # Force SU status text
+      set_root_action(@@action, @@action_modifier[@@action])  # Force SU status text
     end
 
-    private
+    protected
 
     def _reset(view)
       set_message('')
+    end
+
+    def _instances_to_paths(instances, instance_paths, entities, path)
+      entities.each do |entity|
+        return if entity.is_a?(Sketchup::Edge)   # Minor Speed improvement when there's a lot of edges
+        if entity.visible? && _layer_visible?(entity.layer, path.empty?)
+          if entity.is_a?(Sketchup::ComponentInstance)
+            if instances.include?(entity)
+              instance_paths << path + [ entity ]
+            else
+              _instances_to_paths(instances, instance_paths, entity.definition.entities, path + [entity ])
+            end
+          elsif entity.is_a?(Sketchup::Group)
+            _instances_to_paths(instances, instance_paths, entity.entities, path + [entity ])
+          end
+        end
+      end
+    end
+
+    def _get_part_entity_path_from_path(path)
+      part_path = path.to_a
+      path.reverse_each { |entity|
+        return part_path if entity.is_a?(Sketchup::ComponentInstance) && !entity.definition.behavior.cuts_opening? && !entity.definition.behavior.always_face_camera?
+        part_path.pop
+      }
+    end
+
+    def _compute_part_from_path(path)
+      return nil unless path.is_a?(Array)
+
+      entity = path.last
+      return nil unless entity.is_a?(Sketchup::Drawingelement)
+
+      worker = CutlistGenerateWorker.new({}, entity, path.slice(0..-2))
+      cutlist = worker.run
+
+      part = nil
+      cutlist.groups.each { |group|
+        group.parts.each { |p|
+          if p.def.definition_id == entity.definition.name
+            part = p
+            break
+          end
+        }
+        break unless part.nil?
+      }
+
+      part
     end
 
   end
