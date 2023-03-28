@@ -1,5 +1,6 @@
 module Ladb::OpenCutList
 
+  require_relative 'smart_tool'
   require_relative '../lib/kuix/kuix'
   require_relative '../helper/layer_visibility_helper'
   require_relative '../helper/face_triangles_helper'
@@ -9,18 +10,12 @@ module Ladb::OpenCutList
   require_relative '../utils/axis_utils'
   require_relative '../utils/transformation_utils'
 
-  class SmartAxesTool < Kuix::KuixTool
+  class SmartAxesTool < SmartTool
 
     include LayerVisibilityHelper
     include FaceTrianglesHelper
     include CutlistObserverHelper
 
-    STATUS_TYPE_DEFAULT = 0
-    STATUS_TYPE_ERROR = 1
-    STATUS_TYPE_WARNING = 2
-    STATUS_TYPE_SUCCESS = 3
-
-    ACTION_NONE = -1
     ACTION_SWAP_LENGTH_WIDTH = 0
     ACTION_SWAP_FRONT_BACK = 1
     ACTION_SWAP_AUTO = 2
@@ -32,23 +27,12 @@ module Ladb::OpenCutList
       { :action => ACTION_SWAP_LENGTH_WIDTH, :modifiers => [ ACTION_MODIFIER_CLOCKWISE, ACTION_MODIFIER_ANTICLOCKWIZE ] },
       { :action => ACTION_SWAP_FRONT_BACK },
       { :action => ACTION_SWAP_AUTO }
-    ]
-
-    COLOR_STATUS_TEXT_ERROR = Sketchup::Color.new('#d9534f').freeze
-    COLOR_STATUS_TEXT_WARNING = Sketchup::Color.new('#997404').freeze
-    COLOR_STATUS_TEXT_SUCCESS = Sketchup::Color.new('#569553').freeze
-    COLOR_STATUS_BACKGROUND = Sketchup::Color.new(255, 255, 255, 200).freeze
-    COLOR_STATUS_BACKGROUND_ERROR = COLOR_STATUS_TEXT_ERROR.blend(Sketchup::Color.new('white'), 0.2).freeze
-    COLOR_STATUS_BACKGROUND_WARNING = Sketchup::Color.new('#ffe69c').freeze
-    COLOR_STATUS_BACKGROUND_SUCCESS = COLOR_STATUS_TEXT_SUCCESS.blend(Sketchup::Color.new('white'), 0.2).freeze
+    ].freeze
 
     COLOR_MESH = Sketchup::Color.new(247, 127, 0, 100).freeze
     COLOR_ARROW = Sketchup::Color.new(255, 255, 255).freeze
     COLOR_ARROW_AUTO_ORIENTED = Sketchup::Color.new(123, 213, 239, 255).freeze
     COLOR_BOX = Sketchup::Color.new(247, 127, 0).freeze
-
-    @@action = nil
-    @@action_modifier = nil
 
     def initialize
       super(true, false)
@@ -65,41 +49,18 @@ module Ladb::OpenCutList
 
       end
 
-      # Setup action stack
-      @action_stack = []
+    end
 
+    def get_stripped_name
+      'axes'
     end
 
     # -- UI stuff --
 
     def setup_entities(view)
+      super
 
-      @canvas.layout = Kuix::BorderLayout.new
-
-      unit = 3
-      unit = 4 if view.vpheight > 500
-      unit = 6 if view.vpheight > 1000
-      unit = 8 if view.vpheight > 2000
-
-      panel = Kuix::Panel.new
-      panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
-      panel.layout = Kuix::BorderLayout.new
-      @canvas.append(panel)
-
-      # Status panel
-
-      @status = Kuix::Panel.new
-      @status.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
-      @status.layout = Kuix::InlineLayout.new(false, unit, Kuix::Anchor.new(Kuix::Anchor::CENTER))
-      @status.padding.set_all!(unit * 2)
-      @status.visible = false
-      panel.append(@status)
-
-      @status_lbl = Kuix::Label.new
-      @status_lbl.border.set_all!(unit / 4)
-      @status_lbl.padding.set!(unit * 1.5, unit * 2, unit, unit * 2)
-      @status_lbl.text_size = unit * 2.5
-      @status.append(@status_lbl)
+      unit = get_unit(view)
 
       # Part panel
 
@@ -109,7 +70,7 @@ module Ladb::OpenCutList
       @part_panel.padding.set_all!(unit * 2)
       @part_panel.visible = false
       @part_panel.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255, 85))
-      panel.append(@part_panel)
+      @top_panel.append(@part_panel)
 
       @part_panel_lbl_1 = Kuix::Label.new
       @part_panel_lbl_1.text_size = unit * 4
@@ -119,136 +80,9 @@ module Ladb::OpenCutList
       @part_panel_lbl_2.text_size = unit * 3
       @part_panel.append(@part_panel_lbl_2)
 
-      # Actions panel
-
-      actions = Kuix::Panel.new
-      actions.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
-      actions.layout = Kuix::BorderLayout.new
-      actions.set_style_attribute(:background_color, Sketchup::Color.new(62, 59, 51))
-      panel.append(actions)
-
-      actions_lbl = Kuix::Label.new
-      actions_lbl.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::WEST)
-      actions_lbl.padding.set!(0, unit * 4, 0, unit * 4)
-      actions_lbl.set_style_attribute(:color, Sketchup::Color.new(214, 212, 205))
-      actions_lbl.text = Plugin.instance.get_i18n_string('tool.smart_axes.action').upcase
-      actions_lbl.text_size = unit * 3
-      actions_lbl.text_bold = true
-      actions.append(actions_lbl)
-
-      actions_btns_panel = Kuix::Panel.new
-      actions_btns_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
-      actions_btns_panel.layout = Kuix::InlineLayout.new(true, 0, Kuix::Anchor.new(Kuix::Anchor::CENTER))
-      actions.append(actions_btns_panel)
-
-      @action_buttons = []
-      ACTIONS.each { |action_def|
-
-        action = action_def[:action]
-        modifiers = action_def[:modifiers]
-        default_modifier = modifiers.is_a?(Array) ? modifiers.first : nil
-
-        data = {
-          :action => action,
-          :modifier_buttons => [],
-          :last_modifier => default_modifier
-        }
-
-        actions_btn = Kuix::Button.new
-        actions_btn.layout = Kuix::BorderLayout.new
-        actions_btn.min_size.set_all!(unit * 10)
-        actions_btn.set_style_attribute(:background_color, Sketchup::Color.new(62, 59, 51))
-        actions_btn.set_style_attribute(:background_color, Sketchup::Color.new(214, 212, 205), :hover)
-        actions_btn.set_style_attribute(:background_color, Sketchup::Color.new(247, 127, 0), :selected)
-        lbl = actions_btn.append_static_label(Plugin.instance.get_i18n_string("tool.smart_axes.action_#{action}"), unit * 3)
-        lbl.padding.set!(0, unit * 4, 0, unit * 4)
-        lbl.set_style_attribute(:color, Sketchup::Color.new(214, 212, 205))
-        lbl.set_style_attribute(:color, Sketchup::Color.new(62, 59, 51), :hover)
-        lbl.set_style_attribute(:color, Sketchup::Color.new(255, 255, 255), :selected)
-        actions_btn.data = data
-        actions_btn.on(:click) { |button|
-          set_root_action(action, data[:last_modifier])
-        }
-        actions_btns_panel.append(actions_btn)
-
-        if modifiers.is_a?(Array)
-
-          actions_modifiers = Kuix::Panel.new
-          actions_modifiers.layout = Kuix::GridLayout.new(modifiers.length, 0, unit / 2)
-          actions_modifiers.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
-          actions_modifiers.padding.set_all!(unit)
-          actions_btn.append(actions_modifiers)
-
-          modifiers.each { |modifier|
-
-            actions_modifier_btn = Kuix::Button.new
-            actions_modifier_btn.layout = Kuix::BorderLayout.new
-            actions_modifier_btn.padding.set!(0, unit * 2, 0, unit * 2)
-            actions_modifier_btn.set_style_attribute(:background_color, Sketchup::Color.new('white'))
-            actions_modifier_btn.set_style_attribute(:background_color, Sketchup::Color.new(214, 212, 205).blend(Sketchup::Color.new('white'), 0.2), :hover)
-            actions_modifier_btn.set_style_attribute(:background_color, Sketchup::Color.new(247, 127, 0).blend(Sketchup::Color.new('white'), 0.2), :selected)
-            actions_modifier_btn.data = { :modifier => modifier }
-            actions_modifier_btn.append_static_label(Plugin.instance.get_i18n_string("tool.smart_axes.action_modifier_#{modifier}"), unit * 3)
-            actions_modifier_btn.on(:click) { |button|
-              data[:last_modifier] = modifier
-              set_root_action(action, modifier)
-            }
-            actions_modifiers.append(actions_modifier_btn)
-
-            data[:modifier_buttons].push(actions_modifier_btn)
-
-          }
-
-        end
-
-        @action_buttons.push(actions_btn)
-
-      }
-
-      # Help Button
-
-      help_btn = Kuix::Button.new
-      help_btn.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
-      help_btn.layout = Kuix::GridLayout.new
-      help_btn.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255))
-      help_btn.set_style_attribute(:background_color, Sketchup::Color.new(214, 212, 205), :hover)
-      lbl = help_btn.append_static_label(Plugin.instance.get_i18n_string("default.help"), unit * 3)
-      lbl.min_size.set!(unit * 15, 0)
-      lbl.padding.set!(0, unit * 4, 0, unit * 4)
-      lbl.set_style_attribute(:color, Sketchup::Color.new(62, 59, 51))
-      help_btn.on(:click) { |button|
-        Plugin.instance.open_docs_page('tool.smart-axes')
-      }
-      actions.append(help_btn)
-
     end
 
     # -- Setters --
-
-    def set_status(text, type = STATUS_TYPE_DEFAULT)
-      return unless @status && text.is_a?(String)
-      @status_lbl.text = text
-      @status_lbl.visible = !text.empty?
-      @status.visible = @status_lbl.visible?
-      case type
-      when STATUS_TYPE_ERROR
-        @status_lbl.set_style_attribute(:color, COLOR_STATUS_TEXT_ERROR)
-        @status_lbl.set_style_attribute(:background_color, COLOR_STATUS_BACKGROUND_ERROR)
-        @status_lbl.set_style_attribute(:border_color, COLOR_STATUS_TEXT_ERROR)
-      when STATUS_TYPE_WARNING
-        @status_lbl.set_style_attribute(:color, COLOR_STATUS_TEXT_WARNING)
-        @status_lbl.set_style_attribute(:background_color, COLOR_STATUS_BACKGROUND_WARNING)
-        @status_lbl.set_style_attribute(:border_color, COLOR_STATUS_TEXT_WARNING)
-      when STATUS_TYPE_SUCCESS
-        @status_lbl.set_style_attribute(:color, COLOR_STATUS_TEXT_SUCCESS)
-        @status_lbl.set_style_attribute(:background_color, COLOR_STATUS_BACKGROUND_SUCCESS)
-        @status_lbl.set_style_attribute(:border_color, COLOR_STATUS_TEXT_SUCCESS)
-      else
-        @status_lbl.set_style_attribute(:color, nil)
-        @status_lbl.set_style_attribute(:background_color, COLOR_STATUS_BACKGROUND)
-        @status_lbl.set_style_attribute(:border_color, nil)
-      end
-    end
 
     def set_part(text_1, text_2 = '')
       return unless @part_panel && text_1.is_a?(String) && text_2.is_a?(String)
@@ -259,20 +93,14 @@ module Ladb::OpenCutList
       @part_panel.visible = @part_panel_lbl_1.visible? || @part_panel_lbl_2.visible?
     end
 
+    # -- Actions --
+
+    def get_action_defs  # Array<{ :action => THE_ACTION, :modifiers => [ MODIFIER_1, MODIFIER_2, ... ] }>
+      ACTIONS
+    end
+
     def set_action(action, modifier = nil)
-
-      @@action = action
-      @@action_modifier = modifier
-
-      # Update buttons
-      if @action_buttons
-        @action_buttons.each do |button|
-          button.selected = button.data[:action] == action
-          button.data[:modifier_buttons].each do |modifier_button|
-            modifier_button.selected = button.data[:action] == action && modifier_button.data[:modifier] == modifier
-          end
-        end
-      end
+      super
 
       # Update status text and root cursor
       case action
@@ -304,38 +132,6 @@ module Ladb::OpenCutList
         set_root_cursor(@cursor_select_error)
       end
 
-    end
-
-    def set_root_action(action, modifier = nil)
-      @action_stack.clear
-      push_action(action, modifier)
-    end
-
-    def push_action(action, modifier = nil)
-      @action_stack.push({
-                           :action => action,
-                           :modifier_stack => modifier ? [ modifier] : []
-                         })
-      set_action(@action_stack.last[:action], @action_stack.last[:modifier_stack].last)
-    end
-
-    def pop_action
-      @action_stack.pop if @action_stack.length > 1
-      set_action(@action_stack.last[:action], @action_stack.last[:modifier_stack].last)
-    end
-
-    def push_action_modifier(modifier)
-      @action_stack.last[:modifier_stack].push(modifier)
-      set_action(@action_stack.last[:action], @action_stack.last[:modifier_stack].last)
-    end
-
-    def pop_action_modifier
-      @action_stack.last[:modifier_stack].pop if @action_stack.last[:modifier_stack].length > 1
-      set_action(@action_stack.last[:action], @action_stack.last[:modifier_stack].last)
-    end
-
-    def is_action_none?
-      @@action == ACTION_NONE
     end
 
     def is_action_swap_length_width?
@@ -422,13 +218,6 @@ module Ladb::OpenCutList
     def onActivate(view)
       super
 
-      # Retrive pick helper
-      @pick_helper = view.pick_helper
-
-      start_action = @@action.nil? ? ACTIONS.first[:action] : @@action
-      start_action_modifier = start_action == ACTIONS.first[:action] && @@action_modifier.nil? ? ACTIONS.first[:modifiers].is_a?(Array) ? ACTIONS.first[:modifiers].first : nil : @@action_modifier
-      set_root_action(start_action, start_action_modifier)
-
       # Observe materials events
       view.model.add_observer(self)
 
@@ -440,10 +229,6 @@ module Ladb::OpenCutList
       # Stop observing materials events
       view.model.remove_observer(self)
 
-    end
-
-    def onResume(view)
-      set_root_action(@@action, @@action_modifier)  # Force SU status text
     end
 
     def onKeyDown(key, repeat, flags, view)
@@ -633,20 +418,20 @@ module Ladb::OpenCutList
         # Status
 
         if part.group.material_type == MaterialAttributes::TYPE_HARDWARE
-          set_status("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_orientable')}", STATUS_TYPE_ERROR)
+          set_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_orientable')}", MESSAGE_TYPE_ERROR)
           return
         end
 
         if is_action_swap_auto? && !part.auto_oriented && part.def.size.length >= part.def.size.width && part.def.size.width >= part.def.size.thickness
-          set_status("✔ #{Plugin.instance.get_i18n_string('tool.smart_axes.success.part_oriented')}", STATUS_TYPE_SUCCESS)
+          set_message("✔ #{Plugin.instance.get_i18n_string('tool.smart_axes.success.part_oriented')}", MESSAGE_TYPE_SUCCESS)
           return
         end
 
         definition = Sketchup.active_model.definitions[part.def.definition_id]
         if definition && definition.count_used_instances > 1
-          set_status("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", STATUS_TYPE_WARNING)
+          set_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
         else
-          set_status('')
+          set_message('')
         end
 
       else
@@ -657,7 +442,7 @@ module Ladb::OpenCutList
     end
 
     def _reset(view)
-      set_status('')
+      super
       if @picked_path
         @picked_path = nil
         _set_active(nil, nil)
@@ -673,7 +458,7 @@ module Ladb::OpenCutList
             picked_path = @pick_helper.path_at(pick_path_index)
             if picked_path == @picked_path
               return
-            # TODO : This code doesn't support components in components
+            # TODO : This code doesn't support nested components
             # elsif @active_part_entity_path
             #   contains_previous = false
             #   @pick_helper.count.times do |pick_path_index|
@@ -694,13 +479,13 @@ module Ladb::OpenCutList
                   _set_active(picked_entity_path, part)
                 else
                   _reset(view)
-                  set_status("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", STATUS_TYPE_ERROR)
+                  set_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
                 end
                 return
 
               elsif picked_entity_path
                 _reset(view)
-                set_status("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", STATUS_TYPE_ERROR)
+                set_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
                 return
               end
 

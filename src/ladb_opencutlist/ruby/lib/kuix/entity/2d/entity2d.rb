@@ -71,20 +71,28 @@ module Ladb::OpenCutList::Kuix
 
     # -- Style --
 
-    def activate_pseudo_class(pseudo_class, depth = 0)
+    def propagable_pseudo_class(pseudo_class)
+      false
+    end
+
+    def activate_pseudo_class(pseudo_class, propagate = false, depth = 0)
       unless @active_pseudo_classes.include?(pseudo_class)
         @active_pseudo_classes.push(pseudo_class)
-        @child.activate_pseudo_class(pseudo_class, depth + 1) if @child  # Propagate
-        @next.activate_pseudo_class(pseudo_class, depth) if @next && depth > 0  # Propagate
+        if propagate
+          @child.activate_pseudo_class(pseudo_class, depth + 1) if @child
+          @next.activate_pseudo_class(pseudo_class, depth) if @next && depth > 0
+        end
         invalidate
       end
     end
 
-    def deactivate_pseudo_class(pseudo_class, depth = 0)
+    def deactivate_pseudo_class(pseudo_class, propagate = false, depth = 0)
       if @active_pseudo_classes.include?(pseudo_class)
         @active_pseudo_classes.delete(pseudo_class)
-        @child.deactivate_pseudo_class(pseudo_class, depth + 1) if @child  # Propagate
-        @next.deactivate_pseudo_class(pseudo_class, depth) if @next && depth > 0  # Propagate
+        if propagate
+          @child.deactivate_pseudo_class(pseudo_class, depth + 1) if @child
+          @next.deactivate_pseudo_class(pseudo_class, depth) if @next && depth > 0
+        end
         invalidate
       end
     end
@@ -215,24 +223,24 @@ module Ladb::OpenCutList::Kuix
     # -- Events --
 
     def onMouseEnter(flags)
-      activate_pseudo_class(:hover)
+      activate_pseudo_class(:hover, propagable_pseudo_class(:hover))
     end
 
     def onMouseLeave
-      deactivate_pseudo_class(:active)
-      deactivate_pseudo_class(:hover)
+      deactivate_pseudo_class(:active, propagable_pseudo_class(:active))
+      deactivate_pseudo_class(:hover, propagable_pseudo_class(:hover))
     end
 
     def onMouseDown(flags)
-      activate_pseudo_class(:active)
+      activate_pseudo_class(:active, propagable_pseudo_class(:active))
     end
 
     def onMouseClick(flags)
-      deactivate_pseudo_class(:active)
+      deactivate_pseudo_class(:active, propagable_pseudo_class(:active))
     end
 
     def onMouseDoubleClick(flags)
-      deactivate_pseudo_class(:active)
+      deactivate_pseudo_class(:active, propagable_pseudo_class(:active))
     end
 
     # --

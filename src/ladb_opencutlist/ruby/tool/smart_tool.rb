@@ -8,106 +8,106 @@ module Ladb::OpenCutList
   require_relative '../utils/transformation_utils'
   require_relative '../model/geom/size3d'
 
-  class SmartAxesTool < Kuix::KuixTool
+  class SmartTool < Kuix::KuixTool
 
     include LayerVisibilityHelper
     include FaceTrianglesHelper
     include CutlistObserverHelper
 
-    STATUS_TYPE_DEFAULT = 0
-    STATUS_TYPE_ERROR = 1
-    STATUS_TYPE_WARNING = 2
-    STATUS_TYPE_SUCCESS = 3
+    MESSAGE_TYPE_DEFAULT = 0
+    MESSAGE_TYPE_ERROR = 1
+    MESSAGE_TYPE_WARNING = 2
+    MESSAGE_TYPE_SUCCESS = 3
 
     ACTION_NONE = -1
 
-    COLOR_STATUS_TEXT_ERROR = Sketchup::Color.new('#d9534f').freeze
-    COLOR_STATUS_TEXT_WARNING = Sketchup::Color.new('#997404').freeze
-    COLOR_STATUS_TEXT_SUCCESS = Sketchup::Color.new('#5cb85c').freeze
-    COLOR_STATUS_BACKGROUND = Sketchup::Color.new(255, 255, 255, 200).freeze
-    COLOR_STATUS_BACKGROUND_ERROR = COLOR_STATUS_TEXT_ERROR.blend(Sketchup::Color.new('white'), 0.2).freeze
-    COLOR_STATUS_BACKGROUND_WARNING = Sketchup::Color.new('#ffe69c').freeze
-    COLOR_STATUS_BACKGROUND_SUCCESS = COLOR_STATUS_TEXT_SUCCESS.blend(Sketchup::Color.new('white'), 0.2).freeze
+    COLOR_MESSAGE_TEXT_ERROR = Sketchup::Color.new('#d9534f').freeze
+    COLOR_MESSAGE_TEXT_WARNING = Sketchup::Color.new('#997404').freeze
+    COLOR_MESSAGE_TEXT_SUCCESS = Sketchup::Color.new('#569553').freeze
+    COLOR_MESSAGE_BACKGROUND = Sketchup::Color.new(255, 255, 255, 200).freeze
+    COLOR_MESSAGE_BACKGROUND_ERROR = COLOR_MESSAGE_TEXT_ERROR.blend(Sketchup::Color.new('white'), 0.2).freeze
+    COLOR_MESSAGE_BACKGROUND_WARNING = Sketchup::Color.new('#ffe69c').freeze
+    COLOR_MESSAGE_BACKGROUND_SUCCESS = COLOR_MESSAGE_TEXT_SUCCESS.blend(Sketchup::Color.new('white'), 0.2).freeze
 
     @@action = nil
     @@action_modifier = nil
 
-    def initialize
-      super(true, true)
+    def initialize(quit_on_esc = true, quit_on_undo = false)
+      super
 
       # Setup action stack
       @action_stack = []
 
     end
 
+    def get_stripped_name
+      ''
+    end
+
     # -- UI stuff --
+
+    def get_unit(view = nil)
+      return @unit unless @unit.nil?
+      return 3 if view && Sketchup.active_model.nil?
+      view = Sketchup.active_model.active_view if view.nil?
+      if view.vpheight > 2000
+        @unit = 8
+      elsif view.vpheight > 1000
+        @unit = 6
+      elsif view.vpheight > 500
+        @unit = 4
+      else
+        @unit = 3
+      end
+      @unit
+    end
 
     def setup_entities(view)
 
       @canvas.layout = Kuix::BorderLayout.new
 
-      unit = view.vpheight < 800 ? 4 : 8
+      unit = get_unit(view)
 
-      panel_north = Kuix::Panel.new
-      panel_north.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
-      panel_north.layout = Kuix::InlineLayout.new(true, unit, Kuix::Anchor.new(Kuix::Anchor::CENTER_RIGHT))
-      panel_north.padding.set_all!(unit)
-      @canvas.append(panel_north)
-
-      panel_south = Kuix::Panel.new
-      panel_south.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
-      panel_south.layout = Kuix::BorderLayout.new
-      @canvas.append(panel_south)
-
-      # Help Button
-
-      help_btn = Kuix::Button.new
-      help_btn.layout = Kuix::GridLayout.new
-      help_btn.border.set_all!(unit / 2)
-      help_btn.padding.set!(unit, unit * 4, unit, unit * 4)
-      help_btn.set_style_attribute(:background_color, Sketchup::Color.new('white'))
-      help_btn.set_style_attribute(:background_color, Sketchup::Color.new(200, 200, 200, 255), :active)
-      help_btn.set_style_attribute(:background_color, Sketchup::Color.new(200, 200, 200, 255).blend(Sketchup::Color.new('white'), 0.2), :hover)
-      help_btn.set_style_attribute(:border_color, Sketchup::Color.new(200, 200, 200, 255), :hover)
-      help_btn.append_static_label(Plugin.instance.get_i18n_string("default.help"), unit * 3)
-      help_btn.on(:click) { |button|
-        UI.openURL('https://docs.opencutlist.org')  # TODO
-      }
-      panel_north.append(help_btn)
+      @top_panel = Kuix::Panel.new
+      @top_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
+      @top_panel.layout = Kuix::BorderLayout.new
+      @canvas.append(@top_panel)
 
       # Status panel
 
-      @status = Kuix::Panel.new
-      @status.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
-      @status.layout = Kuix::InlineLayout.new(false, unit, Kuix::Anchor.new(Kuix::Anchor::CENTER))
-      @status.padding.set_all!(unit * 3)
-      @status.visible = false
-      panel_south.append(@status)
+      @message_panel = Kuix::Panel.new
+      @message_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
+      @message_panel.layout = Kuix::InlineLayout.new(false, unit, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+      @message_panel.padding.set_all!(unit * 2)
+      @message_panel.visible = false
+      @top_panel.append(@message_panel)
 
-      @status_lbl = Kuix::Label.new
-      @status_lbl.text_size = unit * 3
-      @status.append(@status_lbl)
+      @message_panel_lbl = Kuix::Label.new
+      @message_panel_lbl.border.set_all!(unit / 4)
+      @message_panel_lbl.padding.set!(unit * 1.5, unit * 2, unit, unit * 2)
+      @message_panel_lbl.text_size = unit * 3
+      @message_panel.append(@message_panel_lbl)
 
       # Actions panel
 
       actions = Kuix::Panel.new
-      actions.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
+      actions.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
       actions.layout = Kuix::BorderLayout.new
-      actions.padding.set_all!(unit * 2)
-      actions.set_style_attribute(:background_color, Sketchup::Color.new('white'))
-      panel_south.append(actions)
+      actions.set_style_attribute(:background_color, Sketchup::Color.new(62, 59, 51))
+      @top_panel.append(actions)
 
       actions_lbl = Kuix::Label.new
       actions_lbl.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::WEST)
       actions_lbl.padding.set!(0, unit * 4, 0, unit * 4)
-      actions_lbl.text = Plugin.instance.get_i18n_string('tool.smart_axes.action').upcase
+      actions_lbl.set_style_attribute(:color, Sketchup::Color.new(214, 212, 205))
+      actions_lbl.text = Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.title").upcase
       actions_lbl.text_size = unit * 3
       actions_lbl.text_bold = true
       actions.append(actions_lbl)
 
       actions_btns_panel = Kuix::Panel.new
       actions_btns_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
-      actions_btns_panel.layout = Kuix::InlineLayout.new(true, unit, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+      actions_btns_panel.layout = Kuix::InlineLayout.new(true, 0, Kuix::Anchor.new(Kuix::Anchor::CENTER))
       actions.append(actions_btns_panel)
 
       @action_buttons = []
@@ -125,13 +125,19 @@ module Ladb::OpenCutList
 
         actions_btn = Kuix::Button.new
         actions_btn.layout = Kuix::BorderLayout.new
+        actions_btn.border.set!(0, unit / 4, 0, unit / 4)
         actions_btn.min_size.set_all!(unit * 10)
-        actions_btn.border.set_all!(unit / 2)
-        actions_btn.set_style_attribute(:background_color, Sketchup::Color.new(240, 240, 240))
-        actions_btn.set_style_attribute(:background_color, Sketchup::Color.new(220, 220, 220).blend(Sketchup::Color.new('white'), 0.2), :hover)
-        actions_btn.set_style_attribute(:border_color, Sketchup::Color.new(220, 220, 220), :hover)
-        actions_btn.set_style_attribute(:border_color, Sketchup::Color.new(0, 0, 255), :selected)
-        actions_btn.append_static_label(Plugin.instance.get_i18n_string("tool.smart_axes.action_#{action}"), unit * 3).padding.set!(0, unit * 4, 0, unit * 4)
+        actions_btn.set_style_attribute(:border_color, Sketchup::Color.new(62, 59, 51).blend(Sketchup::Color.new('white'), 0.8))
+        actions_btn.set_style_attribute(:border_color, Sketchup::Color.new(214, 212, 205), :hover)
+        actions_btn.set_style_attribute(:border_color, Sketchup::Color.new(247, 127, 0), :selected)
+        actions_btn.set_style_attribute(:background_color, Sketchup::Color.new(62, 59, 51))
+        actions_btn.set_style_attribute(:background_color, Sketchup::Color.new(214, 212, 205), :hover)
+        actions_btn.set_style_attribute(:background_color, Sketchup::Color.new(247, 127, 0), :selected)
+        lbl = actions_btn.append_static_label(Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}"), unit * 3)
+        lbl.padding.set!(0, unit * (modifiers.is_a?(Array) ? 1 : 4), 0, unit * 4)
+        lbl.set_style_attribute(:color, Sketchup::Color.new(214, 212, 205))
+        lbl.set_style_attribute(:color, Sketchup::Color.new(62, 59, 51), :hover)
+        lbl.set_style_attribute(:color, Sketchup::Color.new(255, 255, 255), :selected)
         actions_btn.data = data
         actions_btn.on(:click) { |button|
           set_root_action(action, data[:last_modifier])
@@ -150,12 +156,14 @@ module Ladb::OpenCutList
 
             actions_modifier_btn = Kuix::Button.new
             actions_modifier_btn.layout = Kuix::BorderLayout.new
+            actions_modifier_btn.border.set_all!(unit / 2)
             actions_modifier_btn.padding.set!(0, unit * 2, 0, unit * 2)
-            actions_modifier_btn.set_style_attribute(:background_color, Sketchup::Color.new('white'))
-            actions_modifier_btn.set_style_attribute(:background_color, Sketchup::Color.new(200, 200, 200).blend(Sketchup::Color.new('white'), 0.2), :hover)
-            actions_modifier_btn.set_style_attribute(:background_color, Sketchup::Color.new(0, 0, 255).blend(Sketchup::Color.new('white'), 0.2), :selected)
+            actions_modifier_btn.set_style_attribute(:background_color, Sketchup::Color.new(214, 212, 205))
+            actions_modifier_btn.set_style_attribute(:background_color, Sketchup::Color.new('white'), :hover)
+            actions_modifier_btn.set_style_attribute(:background_color, Sketchup::Color.new(247, 127, 0).blend(Sketchup::Color.new('white'), 0.5), :selected)
             actions_modifier_btn.data = { :modifier => modifier }
-            actions_modifier_btn.append_static_label(Plugin.instance.get_i18n_string("tool.smart_axes.action_modifier_#{modifier}"), unit * 3)
+            lbl = actions_modifier_btn.append_static_label(Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_modifier_#{modifier}"), unit * 3)
+            lbl.set_style_attribute(:color, Sketchup::Color.new(62, 59, 51), :hover)
             actions_modifier_btn.on(:click) { |button|
               data[:last_modifier] = modifier
               set_root_action(action, modifier)
@@ -172,28 +180,48 @@ module Ladb::OpenCutList
 
       }
 
+      # Help Button
+
+      help_btn = Kuix::Button.new
+      help_btn.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
+      help_btn.layout = Kuix::GridLayout.new
+      help_btn.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255))
+      help_btn.set_style_attribute(:background_color, Sketchup::Color.new(214, 212, 205), :hover)
+      lbl = help_btn.append_static_label(Plugin.instance.get_i18n_string("default.help"), unit * 3)
+      lbl.min_size.set!(unit * 15, 0)
+      lbl.padding.set!(0, unit * 4, 0, unit * 4)
+      lbl.set_style_attribute(:color, Sketchup::Color.new(62, 59, 51))
+      help_btn.on(:click) { |button|
+        Plugin.instance.open_docs_page("tool.smart-#{get_stripped_name}")
+      }
+      actions.append(help_btn)
+
     end
 
     # -- Status --
 
-    def set_status(text, type = STATUS_TYPE_DEFAULT)
-      return unless @status && text.is_a?(String)
-      @status_lbl.text = text
-      @status_lbl.visible = !text.empty?
-      @status.visible = @status_lbl.visible?
+    def set_message(text, type = MESSAGE_TYPE_DEFAULT)
+      return unless @message_panel && text.is_a?(String)
+      @message_panel_lbl.text = text
+      @message_panel_lbl.visible = !text.empty?
+      @message_panel.visible = @message_panel_lbl.visible?
       case type
-      when STATUS_TYPE_ERROR
-        @status_lbl.set_style_attribute(:color, COLOR_STATUS_TEXT_ERROR)
-        @status.set_style_attribute(:background_color, COLOR_STATUS_BACKGROUND_ERROR)
-      when STATUS_TYPE_WARNING
-        @status_lbl.set_style_attribute(:color, COLOR_STATUS_TEXT_WARNING)
-        @status.set_style_attribute(:background_color, COLOR_STATUS_BACKGROUND_WARNING)
-      when STATUS_TYPE_SUCCESS
-        @status_lbl.set_style_attribute(:color, COLOR_STATUS_TEXT_SUCCESS)
-        @status.set_style_attribute(:background_color, COLOR_STATUS_BACKGROUND_SUCCESS)
+      when MESSAGE_TYPE_ERROR
+        @message_panel_lbl.set_style_attribute(:color, COLOR_MESSAGE_TEXT_ERROR)
+        @message_panel_lbl.set_style_attribute(:background_color, COLOR_MESSAGE_BACKGROUND_ERROR)
+        @message_panel_lbl.set_style_attribute(:border_color, COLOR_MESSAGE_TEXT_ERROR)
+      when MESSAGE_TYPE_WARNING
+        @message_panel_lbl.set_style_attribute(:color, COLOR_MESSAGE_TEXT_WARNING)
+        @message_panel_lbl.set_style_attribute(:background_color, COLOR_MESSAGE_BACKGROUND_WARNING)
+        @message_panel_lbl.set_style_attribute(:border_color, COLOR_MESSAGE_TEXT_WARNING)
+      when MESSAGE_TYPE_SUCCESS
+        @message_panel_lbl.set_style_attribute(:color, COLOR_MESSAGE_TEXT_SUCCESS)
+        @message_panel_lbl.set_style_attribute(:background_color, COLOR_MESSAGE_BACKGROUND_SUCCESS)
+        @message_panel_lbl.set_style_attribute(:border_color, COLOR_MESSAGE_TEXT_SUCCESS)
       else
-        @status_lbl.set_style_attribute(:color, nil)
-        @status.set_style_attribute(:background_color, COLOR_STATUS_BACKGROUND)
+        @message_panel_lbl.set_style_attribute(:color, nil)
+        @message_panel_lbl.set_style_attribute(:background_color, COLOR_MESSAGE_BACKGROUND)
+        @message_panel_lbl.set_style_attribute(:border_color, nil)
       end
     end
 
@@ -263,8 +291,8 @@ module Ladb::OpenCutList
       # Retrive pick helper
       @pick_helper = view.pick_helper
 
-      start_action = @@action.nil? ? ACTIONS.first[:action] : @@action
-      start_action_modifier = start_action == ACTIONS.first[:action] && @@action_modifier.nil? ? ACTIONS.first[:modifiers].is_a?(Array) ? ACTIONS.first[:modifiers].first : nil : @@action_modifier
+      start_action = @@action.nil? ? get_action_defs.first[:action] : @@action
+      start_action_modifier = start_action == get_action_defs.first[:action] && @@action_modifier.nil? ? get_action_defs.first[:modifiers].is_a?(Array) ? get_action_defs.first[:modifiers].first : nil : @@action_modifier
       set_root_action(start_action, start_action_modifier)
 
     end
@@ -273,83 +301,10 @@ module Ladb::OpenCutList
       set_root_action(@@action, @@action_modifier)  # Force SU status text
     end
 
-    def onLButtonDown(flags, x, y, view)
-      return if super
-      @is_down = true
-      _handle_mouse_event(x, y, view, :l_button_down)
-    end
-
-    def onLButtonUp(flags, x, y, view)
-      return if super
-      @is_down = false
-      _handle_mouse_event(x, y, view, :l_button_up)
-    end
-
-    def onLButtonDoubleClick(flags, x, y, view)
-      return if super
-      _handle_mouse_event(x, y, view, :l_button_dblclick)
-    end
-
-    def onMouseMove(flags, x, y, view)
-      return if super
-      _handle_mouse_event(x, y, view, :move)
-    end
-
     private
 
     def _reset(view)
-      set_status('')
-      if @picked_path
-        @is_down = false
-        @picked_path = nil
-        @space.remove_all
-        view.invalidate
-      end
-    end
-
-    def _handle_mouse_event(x, y, view, event = nil)
-      if @pick_helper.do_pick(x, y) > 0
-        @pick_helper.count.times { |pick_path_index|
-
-          picked_path = @pick_helper.path_at(pick_path_index)
-          if picked_path == @picked_path && event == :move
-            return  # Previously detected path, stop process to optimize.
-          end
-          if picked_path && picked_path.last.is_a?(Sketchup::Face)
-
-            @picked_path = picked_path.clone
-
-            picked_entity_path = _get_part_entity_path_from_path(picked_path)
-            picked_entity = picked_path.last
-            if picked_entity
-
-              entity = picked_entity
-              path = picked_entity_path.slice(0..-2)
-
-              # TODO
-
-              return
-
-            elsif picked_entity_path
-              _reset(view)
-              set_status("⚠️ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", STATUS_TYPE_ERROR)
-              return
-            end
-
-          end
-
-        }
-      end
-      _reset(view)
-      UI.beep if event == :l_button_up
-    end
-
-    def _get_part_entity_path_from_path(path)
-      part_path = path.to_a
-      path.reverse_each { |entity|
-        return part_path if entity.is_a?(Sketchup::ComponentInstance) && !entity.definition.behavior.cuts_opening? && !entity.definition.behavior.always_face_camera?
-        part_path.pop
-      }
+      set_message('')
     end
 
   end

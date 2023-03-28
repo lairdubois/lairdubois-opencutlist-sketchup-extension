@@ -1343,6 +1343,7 @@ tool:
     transparency: Transparence
     zoom_extents: Zoom étendu
   smart_paint:
+    title: Colorier
     status_paint_face: Cliquez pour colorier une face.
     status_paint_part: Cliquez pour colorier une pièce entière.
     status_unpaint_face: Cliquez pour nettoyer une face.
@@ -1356,23 +1357,27 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action: Action
     action_0: Colorier face
     action_1: Colorier pièce
     action_2: Nettoyer face
     action_3: Nettoyer pièce
     action_4: Prélever
+    action_5: Colorier chant
+    action_6: Colorier surface
+    action_modifier_0: "1"
+    action_modifier_1: "2"
+    action_modifier_2: "4"
     warning:
       no_material: Votre modèle ne contient aucune matière !
       all_filtered: Les filtres choisis masquent toutes les matières !
       not_part: L'objet ciblé doit être un composant.
   smart_axes:
+    title: Orienter
     status_swap_length_width: Cliquez sur une pièce pour permuter sa Longueur avec sa Largeur.
     status_swap_front_back: Cliquez sur une pièce pour permuter la lecture de son Parement avec son Contreparement.
     status_swap_auto: Cliquez sur une pièce pour définir la Longueur sur la plus grand dimension et l'Epaisseur sur la plus petite.
     status_toggle_clockwise: Inverser le sens de rotation.
     status_toggle_depth: Pièces en arrière plan.
-    action: Action
     action_0: Permuter Longueur ↔ Largeur
     action_1: Permuter Parement ↔ Contreparement
     action_2: Orienter automatiquement
