@@ -39,57 +39,47 @@ module Ladb::OpenCutList
     ].freeze
 
     COLOR_MATERIAL_TYPES = {
-      MaterialAttributes::TYPE_UNKNOWN => Sketchup::Color.new(128, 128, 128, 255).freeze,
-      MaterialAttributes::TYPE_SOLID_WOOD => Sketchup::Color.new(76, 175, 80, 255).freeze,
-      MaterialAttributes::TYPE_SHEET_GOOD => Sketchup::Color.new(237, 162, 0, 255).freeze,
-      MaterialAttributes::TYPE_DIMENSIONAL => Sketchup::Color.new(245, 89, 172, 255).freeze,
-      MaterialAttributes::TYPE_EDGE => Sketchup::Color.new(102, 142, 238, 255).freeze,
-      MaterialAttributes::TYPE_VENEER => Sketchup::Color.new(131, 56, 236, 255).freeze,
-      MaterialAttributes::TYPE_HARDWARE => Sketchup::Color.new(0, 0, 0, 255).freeze
+      MaterialAttributes::TYPE_UNKNOWN => Sketchup::Color.new(128, 128, 128).freeze,
+      MaterialAttributes::TYPE_SOLID_WOOD => Sketchup::Color.new(76, 175, 80).freeze,
+      MaterialAttributes::TYPE_SHEET_GOOD => Sketchup::Color.new(237, 162, 0).freeze,
+      MaterialAttributes::TYPE_DIMENSIONAL => Sketchup::Color.new(245, 89, 172).freeze,
+      MaterialAttributes::TYPE_EDGE => Sketchup::Color.new(102, 142, 238).freeze,
+      MaterialAttributes::TYPE_VENEER => Sketchup::Color.new(131, 56, 236).freeze,
+      MaterialAttributes::TYPE_HARDWARE => Sketchup::Color.new(0, 0, 0).freeze
     }
 
-    @@current_material = nil
-    @@filters = nil
     @@action = nil
+    @@action_modifiers = {} # { action => MODIFIER }
+
+    @@action_materials = {} # { action => Sketchup::Material }
+    @@action_filters = {}   # { action => MaterialAttributes:TYPE }
+
+    @@filters = nil
 
     def initialize(material = nil)
       super(true, false)
 
-      model = Sketchup.active_model
-      if model
+      # Keep the given material
+      @startup_material = material
 
-        # Try to use given material
-        @@current_material = material if material
-
-        # Force global current material to be valid
-        unless @@current_material.nil?
-          begin
-            @@current_material.model == model
-          rescue => e # Reference to deleted Entity
-            @@current_material = nil
-          end
+      # Setup default filter if not set
+      if @@filters.nil?
+        @@filters = {}
+        for type in 0..COLOR_MATERIAL_TYPES.length - 1
+          @@filters[type] = type != MaterialAttributes::TYPE_UNKNOWN
         end
-
-        # Setup default filter if not set
-        if @@filters.nil?
-          @@filters = {}
-          for type in 0..COLOR_MATERIAL_TYPES.length - 1
-            @@filters[type] = type != MaterialAttributes::TYPE_UNKNOWN
-          end
-        end
-
-        @paint_down_color = nil
-        @paint_hover_color = nil
-        @unpaint_color = nil
-
-        # Create cursors
-        @cursor_paint_face_id = create_cursor('paint-face', 7, 25)
-        @cursor_paint_part_id = create_cursor('paint-part', 7, 25)
-        @cursor_unpaint_id = create_cursor('unpaint', 7, 25)
-        @cursor_picker_id = create_cursor('picker', 7, 25)
-        @cursor_nopaint_id = create_cursor('nopaint', 7, 25)
-
       end
+
+      @paint_down_color = nil
+      @paint_hover_color = nil
+      @unpaint_color = nil
+
+      # Create cursors
+      @cursor_paint_face_id = create_cursor('paint-face', 7, 25)
+      @cursor_paint_part_id = create_cursor('paint-part', 7, 25)
+      @cursor_unpaint_id = create_cursor('unpaint', 7, 25)
+      @cursor_picker_id = create_cursor('picker', 7, 25)
+      @cursor_nopaint_id = create_cursor('nopaint', 7, 25)
 
     end
 
@@ -160,21 +150,29 @@ module Ladb::OpenCutList
         filters_btn.append_static_label(Plugin.instance.get_i18n_string("tool.smart_paint.filter_#{type}"), @unit * 3)
         filters_btn.on(:click) { |button|
 
-          toggle_filter_by_type(button.data)
+          unless get_enabled_filters_by_action(fetch_action).index(button.data).nil?
 
-          # Re populate material defs & setup corresponding buttons
-          _populate_material_defs(view.model)
-          _setup_material_buttons
+            toggle_filter_by_type(button.data)
+
+            # Re populate material defs & setup corresponding buttons
+            _populate_material_defs(view.model)
+            _setup_material_buttons
+
+          end
 
         }
         filters_btn.on(:doubleclick) { |button|
 
-          set_filters(false)
-          set_filter_by_type(button.data, true)
+          unless get_enabled_filters_by_action(fetch_action).index(button.data).nil?
 
-          # Re populate material defs & setup corresponding buttons
-          _populate_material_defs(view.model)
-          _setup_material_buttons
+            set_filters(false)
+            set_filter_by_type(button.data, true)
+
+            # Re populate material defs & setup corresponding buttons
+            _populate_material_defs(view.model)
+            _setup_material_buttons
+
+          end
 
         }
         filters.append(filters_btn)
@@ -263,139 +261,128 @@ module Ladb::OpenCutList
       ACTIONS
     end
 
-    def set_action(action, modifier = nil)
-      super
+    def store_action(action)
+      @@action = action
+    end
 
-      case action
-      when ACTION_PAINT_PART
+    def fetch_action
+      @@action
+    end
 
-        set_filter_by_type(MaterialAttributes::TYPE_UNKNOWN, false)
-        set_filter_by_type(MaterialAttributes::TYPE_SOLID_WOOD, true)
-        set_filter_by_type(MaterialAttributes::TYPE_SHEET_GOOD, true)
-        set_filter_by_type(MaterialAttributes::TYPE_DIMENSIONAL, true)
-        set_filter_by_type(MaterialAttributes::TYPE_HARDWARE, true)
-        set_filter_by_type(MaterialAttributes::TYPE_EDGE, false)
-        set_filter_by_type(MaterialAttributes::TYPE_VENEER, false)
+    def store_action_modifier(action, modifier)
+      @@action_modifiers[action] = modifier
+    end
 
-        # Re populate material defs & setup corresponding buttons
-        _populate_material_defs(Sketchup.active_model)
-        _setup_material_buttons
+    def fetch_action_modifier(action)
+      @@action_modifiers[action]
+    end
 
-        unless [ MaterialAttributes::TYPE_EDGE, MaterialAttributes::TYPE_VENEER, MaterialAttributes::TYPE_UNKNOWN ].index(MaterialAttributes.new(get_current_material).type).nil?
-          @material_buttons.first.fire(:click)
-        end
+    def store_action_material(action, material)
+      @@action_materials[action] = material
+    end
 
-      when ACTION_PAINT_EDGE
+    def fetch_action_material(action)
+      @@action_materials[action]
+    end
 
-        set_filter_by_type(MaterialAttributes::TYPE_UNKNOWN, false)
-        set_filter_by_type(MaterialAttributes::TYPE_SOLID_WOOD, false)
-        set_filter_by_type(MaterialAttributes::TYPE_SHEET_GOOD, false)
-        set_filter_by_type(MaterialAttributes::TYPE_DIMENSIONAL, false)
-        set_filter_by_type(MaterialAttributes::TYPE_HARDWARE, false)
-        set_filter_by_type(MaterialAttributes::TYPE_EDGE, true)
-        set_filter_by_type(MaterialAttributes::TYPE_VENEER, false)
+    def store_action_filters(action, filters)
+      @@action_filters[action] = filters
+    end
 
-        # Re populate material defs & setup corresponding buttons
-        _populate_material_defs(Sketchup.active_model)
-        _setup_material_buttons
+    def fetch_action_filters(action)
+      @@action_filters[action]
+    end
 
-        if MaterialAttributes.new(get_current_material).type != MaterialAttributes::TYPE_EDGE
-          @material_buttons.first.fire(:click)
-        end
-
-      when ACTION_PAINT_VENEER
-
-        set_filter_by_type(MaterialAttributes::TYPE_UNKNOWN, false)
-        set_filter_by_type(MaterialAttributes::TYPE_SOLID_WOOD, false)
-        set_filter_by_type(MaterialAttributes::TYPE_SHEET_GOOD, false)
-        set_filter_by_type(MaterialAttributes::TYPE_DIMENSIONAL, false)
-        set_filter_by_type(MaterialAttributes::TYPE_HARDWARE, false)
-        set_filter_by_type(MaterialAttributes::TYPE_EDGE, false)
-        set_filter_by_type(MaterialAttributes::TYPE_VENEER, true)
-
-        # Re populate material defs & setup corresponding buttons
-        _populate_material_defs(Sketchup.active_model)
-        _setup_material_buttons
-
-        if MaterialAttributes.new(get_current_material).type != MaterialAttributes::TYPE_VENEER
-          @material_buttons.first.fire(:click)
-        end
-
-      end
-
-      # Update status text and root cursor
-      case action
-      when ACTION_PAINT_FACE
-        Sketchup.set_status_text(
-          Plugin.instance.get_i18n_string('tool.smart_paint.status_paint_face') +
-            ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.status_unpaint_face') +
-            ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.status_pick'),
-          SB_PROMPT)
-        set_root_cursor(@cursor_paint_face_id)
-      when ACTION_PAINT_PART
-        Sketchup.set_status_text(
-          Plugin.instance.get_i18n_string('tool.smart_paint.status_paint_part') +
-            ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.status_unpaint_part') +
-            ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.status_pick'),
-          SB_PROMPT)
-        set_root_cursor(@cursor_paint_part_id)
-      when ACTION_UNPAINT_FACE
-        Sketchup.set_status_text(Plugin.instance.get_i18n_string('tool.smart_paint.status_unpaint_face'), SB_PROMPT)
-        set_root_cursor(@cursor_unpaint_id)
-      when ACTION_UNPAINT_PART
-        Sketchup.set_status_text(Plugin.instance.get_i18n_string('tool.smart_paint.status_unpaint_part'), SB_PROMPT)
-        set_root_cursor(@cursor_unpaint_id)
-      when ACTION_PICK
-        Sketchup.set_status_text(Plugin.instance.get_i18n_string('tool.smart_paint.status_pick'), SB_PROMPT)
-        set_root_cursor(@cursor_picker_id)
+    def get_startup_action
+      if @startup_material.nil?
+        super
       else
-        Sketchup.set_status_text('', SB_PROMPT)
-        set_root_cursor(@cursor_nopaint_id)
+        case MaterialAttributes.new(@startup_material).type
+        when MaterialAttributes::TYPE_EDGE
+          startup_action = ACTION_PAINT_EDGE
+        when MaterialAttributes::TYPE_VENEER
+          startup_action = ACTION_PAINT_VENEER
+        else
+          startup_action = ACTION_PAINT_PART
+        end
+        store_action_material(startup_action, @startup_material)
+        startup_action
       end
-
     end
 
     def is_action_face?
-      @@action == ACTION_PAINT_FACE || @@action == ACTION_UNPAINT_FACE
+      fetch_action == ACTION_PAINT_FACE || fetch_action == ACTION_UNPAINT_FACE
     end
 
     def is_action_part?
-      @@action == ACTION_PAINT_PART || @@action == ACTION_PAINT_EDGE || @@action == ACTION_PAINT_VENEER || @@action == ACTION_UNPAINT_PART
+      fetch_action == ACTION_PAINT_PART || fetch_action == ACTION_PAINT_EDGE || fetch_action == ACTION_PAINT_VENEER || fetch_action == ACTION_UNPAINT_PART
     end
 
     def is_action_paint?
-      @@action == ACTION_PAINT_FACE || @@action == ACTION_PAINT_PART || @@action == ACTION_PAINT_EDGE || @@action == ACTION_PAINT_VENEER
+      fetch_action == ACTION_PAINT_FACE || fetch_action == ACTION_PAINT_PART || fetch_action == ACTION_PAINT_EDGE || fetch_action == ACTION_PAINT_VENEER
     end
 
     def is_action_paint_edge?
-      @@action == ACTION_PAINT_EDGE
+      fetch_action == ACTION_PAINT_EDGE
     end
 
     def is_action_paint_veneer?
-      @@action == ACTION_PAINT_VENEER
+      fetch_action == ACTION_PAINT_VENEER
     end
 
     def is_action_unpaint?
-      @@action == ACTION_UNPAINT_FACE || @@action == ACTION_UNPAINT_PART
+      fetch_action == ACTION_UNPAINT_FACE || fetch_action == ACTION_UNPAINT_PART
     end
 
     def is_action_pick?
-      @@action == ACTION_PICK
+      fetch_action == ACTION_PICK
     end
 
     def is_action_modifier_1?
-      @@action_modifier[@@action] == ACTION_MODIFIER_1
+      fetch_action_modifier(fetch_action) == ACTION_MODIFIER_1
     end
 
     def is_action_modifier_2?
-      @@action_modifier[@@action] == ACTION_MODIFIER_2
+      fetch_action_modifier(fetch_action) == ACTION_MODIFIER_2
     end
 
     def is_action_modifier_4?
-      @@action_modifier[@@action] == ACTION_MODIFIER_4
+      fetch_action_modifier(fetch_action) == ACTION_MODIFIER_4
     end
 
     # -- Filters --
+
+    def get_enabled_filters_by_action(action)
+
+      case action
+      when ACTION_PAINT_PART
+        [
+          MaterialAttributes::TYPE_SOLID_WOOD,
+          MaterialAttributes::TYPE_SHEET_GOOD,
+          MaterialAttributes::TYPE_DIMENSIONAL,
+          MaterialAttributes::TYPE_HARDWARE,
+        ]
+      when ACTION_PAINT_EDGE
+        [
+          MaterialAttributes::TYPE_EDGE
+        ]
+      when ACTION_PAINT_VENEER
+        [
+          MaterialAttributes::TYPE_VENEER
+        ]
+      else
+        [
+          MaterialAttributes::TYPE_UNKNOWN,
+          MaterialAttributes::TYPE_SOLID_WOOD,
+          MaterialAttributes::TYPE_SHEET_GOOD,
+          MaterialAttributes::TYPE_DIMENSIONAL,
+          MaterialAttributes::TYPE_HARDWARE,
+          MaterialAttributes::TYPE_EDGE,
+          MaterialAttributes::TYPE_VENEER
+        ]
+      end
+
+    end
 
     def set_filters(value = true)
 
@@ -423,31 +410,14 @@ module Ladb::OpenCutList
       set_filter_by_type(type, !@@filters[type])
     end
 
-    def set_current_material(material, material_attributes, update_buttons = false)
+    def set_current_material(material, update_buttons = false)
 
       # Save material as current
-      @@current_material = material
+      store_action_material(fetch_action, material)
 
       # Update the paint color
       @paint_down_color = material ? material.color.blend(Sketchup::Color.new(ColorUtils::color_is_dark?(material.color) ? 'white' : 'black'), 0.85) : nil
       @paint_hover_color = material ? material.color : nil
-
-      # Select the pick strategy
-      if material_attributes
-
-        # Set action according to material type
-        # case material_attributes.type
-        # when MaterialAttributes::TYPE_EDGE
-        #   set_action(ACTION_PAINT_EDGE)
-        # when MaterialAttributes::TYPE_VENEER
-        #   set_action(ACTION_PAINT_VENEER)
-        # else
-        #   set_action(ACTION_PAINT_PART)
-        # end
-
-      else
-        set_action(nil)
-      end
 
       # Update buttons
       if update_buttons
@@ -459,7 +429,7 @@ module Ladb::OpenCutList
     end
 
     def get_current_material
-      @@current_material
+      fetch_action_material(fetch_action)
     end
 
     # -- Tool stuff --
@@ -484,11 +454,16 @@ module Ladb::OpenCutList
     # -- Events --
 
     def onActivate(view)
-
-      # Populate material defs
-      # _populate_material_defs(view.model)
-
       super
+
+      # Force global current material to be valid
+      unless get_current_material.nil?
+        begin
+          get_current_material.model == model
+        rescue => e # Reference to deleted Entity
+          store_action_material(fetch_action, nil)
+        end
+      end
 
       # Observe materials events
       view.model.materials.add_observer(self)
@@ -500,6 +475,54 @@ module Ladb::OpenCutList
 
       # Stop observing materials events
       view.model.materials.remove_observer(self)
+
+    end
+
+    def onActionChange(action, modifier)
+
+      # Auto filter
+
+      enabled_filters = get_enabled_filters_by_action(action)
+      set_filters(false)
+      enabled_filters.each { |type| set_filter_by_type(type, true) }
+
+      # Re populate material defs & setup corresponding buttons
+      _populate_material_defs(Sketchup.active_model)
+      _setup_material_buttons
+
+      # Update status text and root cursor
+      case action
+      when ACTION_PAINT_FACE
+        Sketchup.set_status_text(
+          Plugin.instance.get_i18n_string('tool.smart_paint.status_paint_face') +
+            ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.status_unpaint_face') +
+            ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.status_pick'),
+          SB_PROMPT)
+        set_root_cursor(@cursor_paint_face_id)
+      when ACTION_PAINT_PART
+        Sketchup.set_status_text(
+          Plugin.instance.get_i18n_string('tool.smart_paint.status_paint_part') +
+            ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.status_unpaint_part') +
+            ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.status_pick'),
+          SB_PROMPT)
+        set_root_cursor(@cursor_paint_part_id)
+      when ACTION_PAINT_EDGE
+        set_root_cursor(@cursor_paint_part_id)
+      when ACTION_PAINT_VENEER
+        set_root_cursor(@cursor_paint_part_id)
+      when ACTION_UNPAINT_FACE
+        Sketchup.set_status_text(Plugin.instance.get_i18n_string('tool.smart_paint.status_unpaint_face'), SB_PROMPT)
+        set_root_cursor(@cursor_unpaint_id)
+      when ACTION_UNPAINT_PART
+        Sketchup.set_status_text(Plugin.instance.get_i18n_string('tool.smart_paint.status_unpaint_part'), SB_PROMPT)
+        set_root_cursor(@cursor_unpaint_id)
+      when ACTION_PICK
+        Sketchup.set_status_text(Plugin.instance.get_i18n_string('tool.smart_paint.status_pick'), SB_PROMPT)
+        set_root_cursor(@cursor_picker_id)
+      else
+        Sketchup.set_status_text('', SB_PROMPT)
+        set_root_cursor(@cursor_nopaint_id)
+      end
 
     end
 
@@ -532,7 +555,7 @@ module Ladb::OpenCutList
     def onKeyUp(key, repeat, flags, view)
       return if super
       if key == COPY_MODIFIER_KEY || key == ALT_MODIFIER_KEY
-        set_current_material(@@current_material, MaterialAttributes.new(@@current_material))
+        set_current_material(get_current_material)
         view.invalidate
       end
     end
@@ -572,11 +595,11 @@ module Ladb::OpenCutList
 
     def onMaterialRemove(materials, material)
       begin
-        if material == @@current_material
-          @@current_material = nil
+        if material == get_current_material
+          store_action_material(fetch_action, nil)
         end
       rescue => e # Reference to deleted Entity
-        @@current_material = nil
+        store_action_material(fetch_action, nil)
       end
       _populate_material_defs(Sketchup.active_model)
       _setup_material_buttons
@@ -601,23 +624,23 @@ module Ladb::OpenCutList
                                 :material => material,
                                 :material_attributes => material_attributes
                               })
-          if @@current_material.nil? && material == model.materials.current
-            @@current_material = material
+          if get_current_material.nil? && material == model.materials.current
+            store_action_material(fetch_action, material)
           end
         end
-        current_material_exists = current_material_exists || @@current_material == material
+        current_material_exists = current_material_exists || get_current_material == material
       end
 
       # Sort material defs (type > name)
       @material_defs.sort_by! { |material_def| [ MaterialAttributes::type_order(material_def[:material_attributes].type), material_def[:material].display_name ] }
 
       # Select default current material if necessary
-      if model.materials.length == 0
-        set_current_material(nil, nil)
-      elsif !@material_defs.empty? && (@@current_material && !current_material_exists || @@current_material.nil?)
-        set_current_material(@material_defs.first[:material], @material_defs.first[:material_attributes])
+      if model.materials.length == 0 || get_current_material.nil?
+        set_current_material(nil)
+      elsif !@material_defs.empty? && (get_current_material && !current_material_exists)
+        set_current_material(@material_defs.first[:material])
       else
-        set_current_material(@@current_material, @@current_material ? MaterialAttributes.new(@@current_material) : nil)  # Reapply current material to setup the paint color
+        set_current_material(get_current_material)  # Reapply current material to setup the paint color
       end
 
     end
@@ -625,27 +648,30 @@ module Ladb::OpenCutList
     def _setup_material_buttons
 
       @btns.remove_all
-
-      if @material_defs.empty?
-
-        @btns.layout = Kuix::GridLayout.new
-
-        warning_lbl = Kuix::Label.new
-        warning_lbl.margin.set_all!(@unit * 2)
-        warning_lbl.text = Plugin.instance.get_i18n_string("tool.smart_paint.warning.#{Sketchup.active_model.materials.length == 0 ? 'no_material' : 'all_filtered'}")
-        warning_lbl.text_size = @unit * 4
-        warning_lbl.set_style_attribute(:color, Sketchup::Color.new(214, 212, 205))
-        @btns.append(warning_lbl)
-
-        if Sketchup.active_model.materials.length > 0
-          @settings.visible = true
-        end
-
-      end
-
-      @btns.layout = Kuix::GridLayout.new([ [ @material_defs.length, 5 ].max, 10 ].min, (@material_defs.length / 10.0).ceil)
+      @btns.layout = Kuix::GridLayout.new([ [ @material_defs.length + 1, 5 ].max, 10 ].min, ((@material_defs.length + 1) / 10.0).ceil)
 
       @material_buttons = []
+
+      btn = Kuix::Button.new
+      btn.layout = Kuix::StaticLayout.new
+      btn.min_size.set!(@unit * 20, @unit * 8)
+      btn.border.set_all!(@unit)
+      btn.set_style_attribute(:background_color, Sketchup::Color.new('white'))
+      btn.set_style_attribute(:background_color, Sketchup::Color.new('white').blend(Sketchup::Color.new('black'), 0.7), :active)
+      btn.set_style_attribute(:border_color, Sketchup::Color.new('white').blend(Sketchup::Color.new('black'), 0.8), :hover)
+      btn.set_style_attribute(:border_color, Sketchup::Color.new(220, 220, 220), :selected)
+      btn.append_static_label('NONE', @unit * 3)
+      btn.data = nil
+      btn.selected = get_current_material.nil?
+      btn.on(:click) { |button|
+
+        # Set material as current
+        set_current_material(nil, true)
+
+      }
+      @btns.append(btn)
+      @material_buttons.push(btn)
+
       @material_defs.each do |material_def|
 
         material = material_def[:material]
@@ -659,14 +685,14 @@ module Ladb::OpenCutList
         btn.set_style_attribute(:background_color, material.color)
         btn.set_style_attribute(:background_color, material.color.blend(Sketchup::Color.new(material_color_is_dark ? 'white' : 'black'), 0.7), :active)
         btn.set_style_attribute(:border_color, material.color.blend(Sketchup::Color.new(material_color_is_dark ? 'white' : 'black'), 0.8), :hover)
-        btn.set_style_attribute(:border_color, Sketchup::Color.new(255, 255, 255), :selected)
+        btn.set_style_attribute(:border_color, Sketchup::Color.new('white'), :selected)
         btn.append_static_label(material.display_name, @unit * 3, material_color_is_dark ? Sketchup::Color.new('white') : nil)
         btn.data = material
         btn.selected = material == get_current_material
         btn.on(:click) { |button|
 
           # Set material as current
-          set_current_material(material, material_attributes, true)
+          set_current_material(material, true)
 
         }
         btn.on(:enter) { |button|
@@ -676,7 +702,6 @@ module Ladb::OpenCutList
           set_status('')
         }
         @btns.append(btn)
-
         @material_buttons.push(btn)
 
         if material_attributes.type > MaterialAttributes::TYPE_UNKNOWN
@@ -756,9 +781,6 @@ module Ladb::OpenCutList
 
                   @space.remove_all
 
-                  color = get_current_material.color
-                  color.alpha = 150
-
                   if is_action_paint_edge?
 
                     if part.group.material_type != MaterialAttributes::TYPE_SHEET_GOOD
@@ -807,6 +829,10 @@ module Ladb::OpenCutList
                       if entities.empty?
                         set_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_edge')}", MESSAGE_TYPE_ERROR)
                       else
+
+                        current_material = get_current_material
+                        color = current_material ? current_material.color : MaterialUtils::get_color_from_path(picked_entity_path)
+                        color.alpha = 180
 
                         mesh = Kuix::Mesh.new
                         mesh.add_trangles(_compute_children_faces_triangles(entities))
@@ -870,6 +896,10 @@ module Ladb::OpenCutList
                         set_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_veneer')}", MESSAGE_TYPE_ERROR)
                       else
 
+                        current_material = get_current_material
+                        color = current_material ? current_material.color : MaterialUtils::get_color_from_path(picked_entity_path)
+                        color.alpha = 180
+
                         mesh = Kuix::Mesh.new
                         mesh.add_trangles(_compute_children_faces_triangles(entities))
                         mesh.background_color = color
@@ -892,6 +922,10 @@ module Ladb::OpenCutList
                     end
 
                   else
+
+                    current_material = get_current_material
+                    color = current_material ? current_material.color : MaterialUtils::get_color_from_path(picked_entity_path[0...-1]) # [0...-1] returns array without last element
+                    color.alpha = 180
 
                     mesh = Kuix::Mesh.new
                     mesh.add_trangles(_compute_children_faces_triangles(picked_entity_path.last.definition.entities))
@@ -929,7 +963,7 @@ module Ladb::OpenCutList
                 elsif event == :l_button_up
 
                   # Set picked material as current (and switch to paint action)
-                  set_current_material(material, MaterialAttributes.new(material), true)
+                  set_current_material(material, true)
 
                   return
                 end

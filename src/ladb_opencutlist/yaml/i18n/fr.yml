@@ -1362,15 +1362,12 @@ tool:
     action_2: Nettoyer face
     action_3: Nettoyer pièce
     action_4: Prélever
-    action_5: Colorier chant
-    action_6: Colorier surface
+    action_5: Colorier chants
+    action_6: Colorier surfaces
     action_modifier_0: "1"
     action_modifier_1: "1"
     action_modifier_2: "2"
     action_modifier_3: "4"
-    warning:
-      no_material: Votre modèle ne contient aucune matière !
-      all_filtered: Les filtres choisis masquent toutes les matières !
     error:
       not_part: L'objet ciblé n'est pas une pièce.
       not_edge: La face ciblée n'est pas un chant de panneau.

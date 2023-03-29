@@ -29,9 +29,6 @@ module Ladb::OpenCutList
     COLOR_MESSAGE_BACKGROUND_WARNING = Sketchup::Color.new('#ffe69c').freeze
     COLOR_MESSAGE_BACKGROUND_SUCCESS = COLOR_MESSAGE_TEXT_SUCCESS.blend(Sketchup::Color.new('white'), 0.2).freeze
 
-    @@action = nil
-    @@action_modifier = {}
-
     def initialize(quit_on_esc = true, quit_on_undo = false)
       super
 
@@ -41,7 +38,7 @@ module Ladb::OpenCutList
     end
 
     def get_stripped_name
-      'smart'
+      # Implemented in derived class
     end
 
     # -- UI stuff --
@@ -228,18 +225,48 @@ module Ladb::OpenCutList
       []
     end
 
+    def store_action(action)
+      # Implemented in derived class : @@action = action
+    end
+
+    def fetch_action
+      # Implemented in derived class : @@action
+    end
+
+    def store_action_modifier(action, modifier)
+      # Implemented in derived class : @@action_modifiers[action] = modifier
+    end
+
+    def fetch_action_modifier(action)
+      # Implemented in derived class : @@action_modifiers[action]
+    end
+
+    def get_startup_action
+      fetch_action.nil? ? get_action_defs.first[:action] : fetch_action
+    end
+
     def set_action(action, modifier = nil)
 
+      # Select a default action
+      if action.nil?
+        action = get_action_defs.first[:action]
+      end
+
+      # Select a default modifier if exists
       if modifier.nil?
-        modifier = @@action_modifier[action]
+        modifier = fetch_action_modifier(action)
         if modifier.nil?
-          modifiers = get_action_defs.select { |action_def| action_def[:action] == action }.first[:modifiers]
-          modifier = modifiers.first if modifiers.is_a?(Array)
+          action_def = get_action_defs.select { |action_def| action_def[:action] == action }.first
+          unless action_def.nil?
+            modifiers = action_def[:modifiers]
+            modifier = modifiers.first if modifiers.is_a?(Array)
+          end
         end
       end
 
-      @@action = action
-      @@action_modifier[action] = modifier
+      # Store settings in class variable
+      store_action(action)
+      store_action_modifier(action, modifier)
 
       # Update buttons
       if @action_buttons
@@ -251,8 +278,8 @@ module Ladb::OpenCutList
         end
       end
 
-      # Update status text and root cursor
-      # TODO
+      # Fire event
+      onActionChange(action, modifier)
 
     end
 
@@ -285,7 +312,7 @@ module Ladb::OpenCutList
     end
 
     def is_action_none?
-      @@action == ACTION_NONE
+      fetch_action == ACTION_NONE
     end
 
     # -- Events --
@@ -296,13 +323,12 @@ module Ladb::OpenCutList
       # Retrive pick helper
       @pick_helper = view.pick_helper
 
-      start_action = @@action.nil? ? get_action_defs.first[:action] : @@action
-      set_root_action(start_action)
+      set_root_action(get_startup_action)
 
     end
 
     def onResume(view)
-      set_root_action(@@action, @@action_modifier[@@action])  # Force SU status text
+      set_root_action(fetch_action, fetch_action_modifier(fetch_action))  # Force SU status text
     end
 
     protected
