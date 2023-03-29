@@ -124,7 +124,7 @@ module Ladb::OpenCutList
         actions_btn = Kuix::Button.new
         actions_btn.layout = Kuix::BorderLayout.new
         actions_btn.border.set!(0, unit / 4, 0, unit / 4)
-        actions_btn.min_size.set_all!(unit * 10)
+        actions_btn.min_size.set_all!(unit * 9)
         actions_btn.set_style_attribute(:border_color, Sketchup::Color.new(62, 59, 51).blend(Sketchup::Color.new('white'), 0.8))
         actions_btn.set_style_attribute(:border_color, Sketchup::Color.new(214, 212, 205), :hover)
         actions_btn.set_style_attribute(:border_color, Sketchup::Color.new(247, 127, 0), :selected)

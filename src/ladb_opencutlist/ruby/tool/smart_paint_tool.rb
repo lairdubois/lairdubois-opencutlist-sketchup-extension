@@ -480,6 +480,12 @@ module Ladb::OpenCutList
         @open_btn.fire(:click, flags) if @open_btn
       elsif key == VK_DOWN
         @open_btn.fire(:click, flags) if @open_btn
+      elsif key == 49 && (is_action_paint_edge? || is_action_paint_veneer?)
+        push_action_modifier(ACTION_MODIFIER_1)
+      elsif key == 50 && (is_action_paint_edge? || is_action_paint_veneer?)
+        push_action_modifier(ACTION_MODIFIER_2)
+      elsif key == 52 && is_action_paint_edge?
+        push_action_modifier(ACTION_MODIFIER_4)
       end
     end
 
