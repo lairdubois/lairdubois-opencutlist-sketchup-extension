@@ -13,6 +13,15 @@ module Ladb::OpenCutList::Kuix
 
     # -- Drawing --
 
+    def draw_triangle(x1, y1, x2, y2, x3, y3, color = nil)
+      set_drawing_color(color) if color
+      @view.draw2d(GL_TRIANGLES, [
+        Geom::Point3d.new(@origin.x + x1, @origin.y + y1, 0),
+        Geom::Point3d.new(@origin.x + x2, @origin.y + y2, 0),
+        Geom::Point3d.new(@origin.x + x3, @origin.y + y3, 0)
+      ])
+    end
+
     def draw_rect(x, y, width, height, background_color = nil)
       set_drawing_color(background_color) if background_color
       @view.draw2d(GL_QUADS, Bounds2d.new(

@@ -1344,11 +1344,6 @@ tool:
     zoom_extents: Zoom étendu
   smart_paint:
     title: Colorier
-    status_paint_face: Cliquez pour colorier une face.
-    status_paint_part: Cliquez pour colorier une pièce entière.
-    status_unpaint_face: Cliquez pour nettoyer une face.
-    status_unpaint_part: Cliquez pour nettoyer une pièce entière.
-    status_pick: Cliquez pour prélever un échantillon de la matière.
     filters: Filtres
     filter_0: Sans type
     filter_1: $t(tab.materials.type_1)
@@ -1357,13 +1352,14 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: Colorier face
-    action_1: Colorier pièce
-    action_2: Nettoyer face
-    action_3: Nettoyer pièce
-    action_4: Prélever
-    action_5: Colorier chants
-    action_6: Colorier surfaces
+    action_0: Colorier pièce
+    action_0_status: Cliquez sur une pièce pour la colorier.
+    action_1: Colorier chants
+    action_1_status: Cliquez sur un chant de panneau pour le colorier.
+    action_2: Colorier surfaces
+    action_2_status: Cliquez sur une surface de panneau pour la colorier.
+    action_3: Prélever
+    action_3_status: Cliquez sur une face pour prélever un échantillon de la matière.
     action_modifier_0: "1"
     action_modifier_1: "1"
     action_modifier_2: "2"
@@ -1375,14 +1371,14 @@ tool:
       wrong_material_type: La pièce ciblée doit être du type '{{ type }}'.
   smart_axes:
     title: Orienter
-    status_swap_length_width: Cliquez sur une pièce pour permuter sa Longueur avec sa Largeur.
-    status_swap_front_back: Cliquez sur une pièce pour permuter la lecture de son Parement avec son Contreparement.
-    status_swap_auto: Cliquez sur une pièce pour définir la Longueur sur la plus grand dimension et l'Epaisseur sur la plus petite.
     status_toggle_clockwise: Inverser le sens de rotation.
     status_toggle_depth: Pièces en arrière plan.
     action_0: Permuter Longueur ↔ Largeur
+    action_0_status: Cliquez sur une pièce pour permuter sa Longueur avec sa Largeur.
     action_1: Permuter Parement ↔ Contreparement
+    action_1_status: Cliquez sur une pièce pour permuter la lecture de son Parement avec son Contreparement.
     action_2: Orienter automatiquement
+    action_2_status: Cliquez sur une pièce pour définir sa Longueur sur sa plus grand dimension et l'Epaisseur sur sa plus petite.
     action_modifier_0: "⤵"
     action_modifier_1: "⤴"
     success:

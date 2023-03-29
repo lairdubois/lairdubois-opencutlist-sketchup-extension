@@ -35,6 +35,9 @@ module Ladb::OpenCutList
       # Setup action stack
       @action_stack = []
 
+      # Create cursors
+      @cursor_select_error = create_cursor('select-error', 4, 4)
+
     end
 
     def get_stripped_name
@@ -137,6 +140,12 @@ module Ladb::OpenCutList
         actions_btn.on(:click) { |button|
           set_root_action(action)
         }
+        actions_btn.on(:enter) { |button|
+          set_message(Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}_status"))
+        }
+        actions_btn.on(:leave) { |button|
+          set_message('')
+        }
         actions_btns_panel.append(actions_btn)
 
         if modifiers.is_a?(Array)
@@ -225,6 +234,15 @@ module Ladb::OpenCutList
       []
     end
 
+    def get_action_status(action)
+      return '' if action.nil?
+      Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}_status")
+    end
+
+    def get_action_cursor(action)
+      @cursor_select_error
+    end
+
     def store_action(action)
       # Implemented in derived class : @@action = action
     end
@@ -278,8 +296,12 @@ module Ladb::OpenCutList
         end
       end
 
+      # Update status text and root cursor
+      Sketchup.set_status_text(get_action_status(action), SB_PROMPT)
+      set_root_cursor(get_action_cursor(action))
+
       # Fire event
-      onActionChange(action, modifier)
+      onActionChange(action, modifier) if self.respond_to?(:onActionChange)
 
     end
 
