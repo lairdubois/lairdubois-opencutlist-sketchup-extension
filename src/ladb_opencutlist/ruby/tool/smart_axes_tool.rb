@@ -261,7 +261,7 @@ module Ladb::OpenCutList
 
     def onKeyUp(key, repeat, flags, view)
       return if super
-      if key == 9 && @active_part_entity_path # TAB
+      if key == VK_TAB && @active_part_entity_path
 
         picked_paths = []
         picked_part_entity_paths = []
