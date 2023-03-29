@@ -465,7 +465,6 @@ module Ladb::OpenCutList
     end
 
     def onKeyDown(key, repeat, flags, view)
-      puts key
       return if super
       if key == VK_LEFT
         button = _get_selected_material_button
@@ -555,7 +554,7 @@ module Ladb::OpenCutList
                                 :material_attributes => material_attributes
                               })
         end
-        current_material_exists = current_material_exists || get_current_material == material
+        current_material_exists = current_material_exists || get_current_material.object_id == material.object_id
       end
 
       # Sort material defs (type > name)
