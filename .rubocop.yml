@@ -5,16 +5,16 @@
 # needs
 # $ gem install rubocop-sketchup
 # check the versions that were installed
-# $ gem query --local | grep rubocop
-# rubocop (1.22.3)
-# rubocop-ast (1.13.0)
-# rubocop-sketchup (1.1.0)
+# $ gem list --local | grep rubocop
+# rubocop (1.48.1)
+# rubocop-ast (1.28.0)
+# rubocop-sketchup (1.4.0)
 #
 require: rubocop-sketchup
 
 AllCops:
   SketchUp:
-    TargetSketchUpVersion: 2017
+    TargetSketchUpVersion: 2018
   Exclude:
     - test/*
   DisabledByDefault: true
