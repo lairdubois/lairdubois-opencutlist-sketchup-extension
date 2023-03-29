@@ -106,10 +106,12 @@ module Ladb::OpenCutList
 
       def deactivate(view)
         onDeactivate(view)
+        view.invalidate
       end
 
       def suspend(view)
         onSuspend(view)
+        view.invalidate
       end
 
       def resume(view)

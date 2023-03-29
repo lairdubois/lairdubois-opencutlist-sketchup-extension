@@ -6,7 +6,7 @@ module Ladb::OpenCutList::Kuix
       super(id)
 
       view = Sketchup.active_model.active_view
-      line_length = view.pixels_to_model(30, view.guess_target)
+      line_length = view.pixels_to_model(40, view.guess_target)
       line_width = 5
 
       # X axis

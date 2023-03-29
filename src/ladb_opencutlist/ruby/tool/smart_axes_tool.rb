@@ -350,7 +350,7 @@ module Ladb::OpenCutList
         @space.remove_all
 
         arrow_color = part.auto_oriented ? COLOR_ARROW_AUTO_ORIENTED : COLOR_ARROW
-        arrow_line_width = 2
+        arrow_line_width = 2 * UI.scale_factor
         arrow_offset = Sketchup.active_model.active_view.pixels_to_model(1, ORIGIN)
 
         part_helper = Kuix::Group.new

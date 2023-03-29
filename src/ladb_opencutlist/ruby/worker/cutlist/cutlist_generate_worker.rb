@@ -228,8 +228,8 @@ module Ladb::OpenCutList
           # -- Edges --
 
           # Grab min/max face infos
-          xmin_face_infos, xmax_face_infos = _grab_oriented_min_max_face_infos(instance_info, x_face_infos, y_face_infos, z_face_infos, X_AXIS)
-          ymin_face_infos, ymax_face_infos = _grab_oriented_min_max_face_infos(instance_info, x_face_infos, y_face_infos, z_face_infos, Y_AXIS, @flipped_detection && instance_info.flipped)
+          xmin_face_infos, xmax_face_infos = _grab_oriented_min_max_face_infos(instance_info, x_face_infos, y_face_infos, z_face_infos, X_AXIS, @flipped_detection && instance_info.flipped)
+          ymin_face_infos, ymax_face_infos = _grab_oriented_min_max_face_infos(instance_info, x_face_infos, y_face_infos, z_face_infos, Y_AXIS)
 
           # Grab edge materials
           edge_ymin_materials = _grab_face_typed_materials(ymin_face_infos, MaterialAttributes::TYPE_EDGE)
