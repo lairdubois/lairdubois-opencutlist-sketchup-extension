@@ -1343,11 +1343,7 @@ tool:
     transparency: Transparenz
     zoom_extents: Alles zeigen
   smart_paint:
-    status_paint_face: "Klicken Sie, um eine Fläche einzufärben."
-    status_paint_part: "Klicken Sie, um ein ganzes Teil einzufärben."
-    status_unpaint_face: "Klicken Sie, um eine Fläche zu säubern."
-    status_unpaint_part: Klicken Sie um ein ganzes Teil zu säubern.
-    status_pick: Klicken Sie um eine Probe des Materials zu entnehmen.
+    title: Malen
     filters: Filter
     filter_0: Ohne Typ
     filter_1: $t(tab.materials.type_1)
@@ -1356,26 +1352,32 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action: Aktion
-    action_0: Fläche einfärben
-    action_1: Teil einfärben
-    action_2: Fläche säubern
-    action_3: Teil säubern
-    action_4: Entnehmen
-    warning:
-      no_material: Ihr Modell enthält kein Material!
-      all_filtered: Die ausgewählten Filter enthalten kein Material!
-      not_part: Das Zielobjekt muss eine Komponente sein.
+    action_0: Teil bemalen
+    action_0_status: "Klicken Sie auf ein Teil, um es einzufärben."
+    action_1: Kanten bemalen
+    action_1_status: Klicken Sie auf eine Kante, um sie einzufärben.
+    action_2: Flächen bemalen
+    action_2_status: "Klicken Sie auf eine Fläche, um sie einzufärben."
+    action_3: Entnehmen
+    action_3_status: Klicken Sie auf eine Fläche, um eine Probe des Materials zu entnehmen.
+    action_modifier_0: "1"
+    action_modifier_1: "2"
+    action_modifier_2: "4"
+    error:
+      not_part: Das Zielobjekt ist kein Teil.
+      not_edge: Die Zielfläche ist keine Plattenkante.
+      not_veneer: Die Zielfläche ist keine Plattenoberfläche.
+      wrong_material_type: Das Zielteil ist nicht vom Typ '{{ type }}'.
   smart_axes:
-    status_swap_length_width: Klicken Sie auf ein Teil, um seine Länge mit seiner Breite zu vertauschen.
-    status_swap_front_back: Klicken Sie auf ein Teil, um seine Vorderseite mit seiner Rückseite zu vertauschen.
-    status_swap_auto: Klicken Sie auf ein Teil, um die Länge an der größten Dimension und die Dicke an der kleinsten Dimension zu definieren.
+    title: Ausrichten
     status_toggle_clockwise: Drehrichtung umkehren.
-    status_toggle_depth: Teile im Hintergrund.
-    action: Action
+    status_toggle_depth: Hintergrundteile.
     action_0: Permutieren Länge ↔ Breite
+    action_0_status: Klicken Sie auf ein Teil, um seine Länge mit seiner Breite zu vertauschen.
     action_1: Permutieren Vorderseite ↔ Rückseite
+    action_1_status: Klicken Sie auf ein Teil, um seine Vorderseite mit seiner Rückseite zu vertauschen.
     action_2: Automatisch ausrichten
+    action_2_status:  Klicken Sie auf ein Teil, um seine Länge auf die größte und seine Dicke auf die kleinste Abmessung einzustellen.
     action_modifier_0: "⤵"
     action_modifier_1: "⤴"
     success:

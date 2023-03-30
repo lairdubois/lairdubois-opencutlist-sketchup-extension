@@ -1343,11 +1343,7 @@ tool:
     transparency: Transparency
     zoom_extents: Zoom Extents
   smart_paint:
-    status_paint_face: Click to paint a face.
-    status_paint_part: Click to paint an entire part.
-    status_unpaint_face: Click to clean a face.
-    status_unpaint_part: Click to clean an entire part.
-    status_pick: Click to sample the material.
+    title: Paint
     filters: Filters
     filter_0: Without type
     filter_1: $t(tab.materials.type_1)
@@ -1356,26 +1352,32 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action: Action
-    action_0: Paint Face
-    action_1: Paint Part
-    action_2: Clean Face
-    action_3: Clean Part
-    action_4: Sample
-    warning:
-      no_material: Your model does not contain any material!
-      all_filtered: The selected filters mask all materials!
-      not_part: The target object must be a component.
+    action_0: Paint part
+    action_0_status: Click on a part to paint it.
+    action_1: Paint edges
+    action_1_status: Click on an edge to paint it.
+    action_2: Paint faces
+    action_2_status: Click on a face to paint it.
+    action_3: Sample
+    action_3_status: Click on surface to sample the material.
+    action_modifier_0: "1"
+    action_modifier_1: "2"
+    action_modifier_2: "4"
+    error:
+      not_part: The target object is not a part.
+      not_edge: The target face is not a panel edge.
+      not_veneer: The target face is not a panel surface.
+      wrong_material_type: The target part is not of type '{{ type }}'.
   smart_axes:
-    status_swap_length_width: Click on a part to swap Length and Width.
-    status_swap_front_back: Click on a part to swap Frontface and Backface.
-    status_swap_auto: Click on a part to set the Length to the largest dimension and the Thickness to the smallest.
+    title: Orient
     status_toggle_clockwise: Reverse the direction of rotation.
     status_toggle_depth: Background parts.
-    action: Action
-    action_0: Switch Length ↔ Width
-    action_1: Switch Frontface ↔ Backface
+    action_0: Swap length ↔ width
+    action_0_status: Click on a part to swap length with width.
+    action_1: Swap front face ↔ back face
+    action_1_status: Click on a part to swap front face with back face.
     action_2: Orient automatically
+    action_2_status:  Click on a part to set its length to its largest dimension and thickness to its smallest.
     action_modifier_0: "⤵"
     action_modifier_1: "⤴"
     success:
