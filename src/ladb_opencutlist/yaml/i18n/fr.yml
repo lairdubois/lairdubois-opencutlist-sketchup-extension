@@ -1361,9 +1361,8 @@ tool:
     action_3: Prélever
     action_3_status: Cliquez sur une face pour prélever un échantillon de la matière.
     action_modifier_0: "1"
-    action_modifier_1: "1"
-    action_modifier_2: "2"
-    action_modifier_3: "4"
+    action_modifier_1: "2"
+    action_modifier_2: "4"
     error:
       not_part: L'objet ciblé n'est pas une pièce.
       not_edge: La face ciblée n'est pas un chant de panneau.

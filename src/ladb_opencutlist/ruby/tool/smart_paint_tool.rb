@@ -20,10 +20,9 @@ module Ladb::OpenCutList
     ACTION_PAINT_VENEER = 2
     ACTION_PICK = 3
 
-    ACTION_MODIFIER_0 = 0
-    ACTION_MODIFIER_1 = 1
-    ACTION_MODIFIER_2 = 2
-    ACTION_MODIFIER_4 = 3
+    ACTION_MODIFIER_1 = 0
+    ACTION_MODIFIER_2 = 1
+    ACTION_MODIFIER_4 = 2
 
     ACTIONS = [
       { :action => ACTION_PAINT_PART },
@@ -491,7 +490,13 @@ module Ladb::OpenCutList
 
     def onKeyDown(key, repeat, flags, view)
       return if super
-      if key == VK_LEFT
+      if key == ALT_MODIFIER_KEY
+        if is_action_pick?
+          push_action(ACTION_PAINT_PART)
+        else
+          push_action(ACTION_PICK)
+        end
+      elsif key == VK_LEFT
         button = _get_selected_material_button
         if button && button.previous
           button.previous.fire(:click, flags)
@@ -505,12 +510,61 @@ module Ladb::OpenCutList
         @open_btn.fire(:click, flags) if @open_btn
       elsif key == VK_DOWN
         @open_btn.fire(:click, flags) if @open_btn
-      elsif key == VK_NUMPAD1 && (is_action_paint_edge? || is_action_paint_veneer?)
-        push_action_modifier(ACTION_MODIFIER_1)
-      elsif key == VK_NUMPAD2 && (is_action_paint_edge? || is_action_paint_veneer?)
-        push_action_modifier(ACTION_MODIFIER_2)
-      elsif key == VK_NUMPAD4 && is_action_paint_edge?
-        push_action_modifier(ACTION_MODIFIER_4)
+      elsif repeat == 1
+        if key == VK_NUMPAD1 && (is_action_paint_edge? || is_action_paint_veneer?)
+          push_action_modifier(ACTION_MODIFIER_1)
+        elsif key == VK_NUMPAD2 && (is_action_paint_edge? || is_action_paint_veneer?)
+          push_action_modifier(ACTION_MODIFIER_2)
+        elsif key == VK_NUMPAD4 && is_action_paint_edge?
+          push_action_modifier(ACTION_MODIFIER_4)
+        end
+      end
+    end
+
+    def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
+      return if super
+      if after_down
+        if key == ALT_MODIFIER_KEY
+          if is_quick
+            if is_action_paint_part?
+              set_root_action(ACTION_PAINT_PART)
+            elsif is_action_paint_edge?
+              set_root_action(ACTION_PAINT_EDGE)
+            elsif is_action_paint_veneer?
+              set_root_action(ACTION_PAINT_VENEER)
+            elsif is_action_pick?
+              set_root_action(ACTION_PICK)
+            end
+          else
+            pop_action
+          end
+        elsif key == VK_NUMPAD1 && is_action_modifier_1? && (is_action_paint_edge? || is_action_paint_veneer?)
+          if is_quick
+            if is_action_paint_edge?
+              set_root_action(ACTION_PAINT_EDGE, ACTION_MODIFIER_1)
+            elsif is_action_paint_veneer?
+              set_root_action(ACTION_PAINT_VENEER, ACTION_MODIFIER_1)
+            end
+          else
+            pop_action_modifier
+          end
+        elsif key == VK_NUMPAD2 && is_action_modifier_2? && (is_action_paint_edge? || is_action_paint_veneer?)
+          if is_quick
+            if is_action_paint_edge?
+              set_root_action(ACTION_PAINT_EDGE, ACTION_MODIFIER_2)
+            elsif is_action_paint_veneer?
+              set_root_action(ACTION_PAINT_VENEER, ACTION_MODIFIER_2)
+            end
+          else
+            pop_action_modifier
+          end
+        elsif key == VK_NUMPAD4 && is_action_modifier_4? && is_action_paint_edge?
+          if is_quick
+            set_root_action(ACTION_PAINT_EDGE, ACTION_MODIFIER_4)
+          else
+            pop_action_modifier
+          end
+        end
       end
     end
 

@@ -290,23 +290,6 @@ module Ladb::OpenCutList
 
     def set_action(action, modifier = nil)
 
-      # Select a default action
-      if action.nil?
-        action = get_action_defs.first[:action]
-      end
-
-      # Select a default modifier if exists
-      if modifier.nil?
-        modifier = fetch_action_modifier(action)
-        if modifier.nil?
-          action_def = get_action_defs.select { |action_def| action_def[:action] == action }.first
-          unless action_def.nil?
-            modifiers = action_def[:modifiers]
-            modifier = modifiers.first if modifiers.is_a?(Array)
-          end
-        end
-      end
-
       # Store settings in class variable
       store_action(action)
       store_action_modifier(action, modifier)
@@ -332,6 +315,24 @@ module Ladb::OpenCutList
 
     def set_root_action(action, modifier = nil)
       @action_stack.clear
+
+      # Select a default action
+      if action.nil?
+        action = get_action_defs.first[:action]
+      end
+
+      # Select a default modifier if exists
+      if modifier.nil?
+        modifier = fetch_action_modifier(action)
+        if modifier.nil?
+          action_def = get_action_defs.select { |action_def| action_def[:action] == action }.first
+          unless action_def.nil?
+            modifiers = action_def[:modifiers]
+            modifier = modifiers.first if modifiers.is_a?(Array)
+          end
+        end
+      end
+
       push_action(action, modifier)
     end
 
@@ -340,7 +341,7 @@ module Ladb::OpenCutList
                            :action => action,
                            :modifier_stack => modifier ? [ modifier ] : []
                          })
-      set_action(@action_stack.last[:action], @action_stack.last[:modifier_stack].last)
+      set_action(action, modifier)
     end
 
     def pop_action
@@ -349,12 +350,14 @@ module Ladb::OpenCutList
     end
 
     def push_action_modifier(modifier)
+      return if @action_stack.empty?
       @action_stack.last[:modifier_stack].push(modifier)
-      set_action(@action_stack.last[:action], @action_stack.last[:modifier_stack].last)
+      set_action(@action_stack.last[:action], modifier)
     end
 
     def pop_action_modifier
-      @action_stack.last[:modifier_stack].pop if @action_stack.last[:modifier_stack].length > 1
+      return if @action_stack.empty?
+      @action_stack.last[:modifier_stack].pop
       set_action(@action_stack.last[:action], @action_stack.last[:modifier_stack].last)
     end
 

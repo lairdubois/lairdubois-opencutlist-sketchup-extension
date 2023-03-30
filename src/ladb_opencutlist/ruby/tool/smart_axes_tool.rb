@@ -102,17 +102,15 @@ module Ladb::OpenCutList
       case action
       when ACTION_SWAP_LENGTH_WIDTH
         return super +
-            ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_1') +
             ' | ' + Plugin.instance.get_i18n_string("default.constrain_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.status_toggle_clockwise') +
+            ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_1') +
             ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.status_toggle_depth')
       when ACTION_SWAP_FRONT_BACK
         return super +
-            ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_0') +
+            ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_0') +
             ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.status_toggle_depth')
       when ACTION_SWAP_AUTO
         return super +
-            ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_0') +
-            ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_1') +
             ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.status_toggle_depth')
       else
         return super
@@ -252,14 +250,16 @@ module Ladb::OpenCutList
       return if super
       if key == CONSTRAIN_MODIFIER_KEY && is_action_swap_length_width?
         push_action_modifier(is_action_modifier_clockwise? ? ACTION_MODIFIER_ANTICLOCKWIZE : ACTION_MODIFIER_CLOCKWISE)
-      elsif key == COPY_MODIFIER_KEY && !is_action_swap_length_width?
-        push_action(ACTION_SWAP_LENGTH_WIDTH, ACTION_MODIFIER_CLOCKWISE)
-      elsif key == ALT_MODIFIER_KEY && !is_action_swap_front_back?
-        push_action(ACTION_SWAP_FRONT_BACK)
+      elsif key == ALT_MODIFIER_KEY
+        if is_action_swap_length_width?
+          push_action(ACTION_SWAP_FRONT_BACK)
+        elsif is_action_swap_front_back?
+          push_action(ACTION_SWAP_LENGTH_WIDTH)
+        end
       end
     end
 
-    def onKeyUp(key, repeat, flags, view)
+    def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
       return if super
       if key == VK_TAB && @active_part_entity_path
 
@@ -282,12 +282,24 @@ module Ladb::OpenCutList
 
         @picked_path = picked_paths[new_index]
 
-      elsif key == CONSTRAIN_MODIFIER_KEY && is_action_swap_length_width?
-        pop_action_modifier
-      elsif key == COPY_MODIFIER_KEY && is_action_swap_length_width?
-        pop_action
-      elsif key == ALT_MODIFIER_KEY && is_action_swap_front_back?
-        pop_action
+      elsif after_down
+        if key == CONSTRAIN_MODIFIER_KEY && is_action_swap_length_width?
+          if is_quick
+            set_root_action(ACTION_SWAP_LENGTH_WIDTH, fetch_action_modifier(fetch_action))
+          else
+            pop_action_modifier
+          end
+        elsif key == ALT_MODIFIER_KEY && (is_action_swap_length_width? || is_action_swap_front_back?)
+          if is_quick
+            if is_action_swap_length_width?
+              set_root_action(ACTION_SWAP_LENGTH_WIDTH)
+            elsif is_action_swap_front_back?
+              set_root_action(ACTION_SWAP_FRONT_BACK)
+            end
+          else
+            pop_action
+          end
+        end
       end
     end
 

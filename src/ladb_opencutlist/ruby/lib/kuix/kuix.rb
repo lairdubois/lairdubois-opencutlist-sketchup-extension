@@ -63,6 +63,8 @@ module Ladb::OpenCutList
         @mouse_down_widget = nil
         @mouse_hover_widget = nil
 
+        @key_down_times = {}
+
       end
 
       # -- UI stuff --
@@ -192,9 +194,18 @@ module Ladb::OpenCutList
       end
 
       def onKeyDown(key, repeat, flags, view)
+        @key_down_times[key] = Time.new if repeat == 1
+        nil
       end
 
       def onKeyUp(key, repeat, flags, view)
+        key_down_time = @key_down_times[key]
+        after_down = key_down_time.is_a?(Time)
+        @key_down_times[key] = nil
+        onKeyUpExtended(key, repeat, flags, view, after_down, after_down && (Time.new - key_down_time) <= 0.15) # < 150ms
+      end
+
+      def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
       end
 
       def onLButtonDown(flags, x, y, view)
