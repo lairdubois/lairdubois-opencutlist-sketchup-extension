@@ -402,10 +402,10 @@ module Ladb::OpenCutList
     end
 
     def _get_part_entity_path_from_path(path)
-      part_path = path.to_a
+      part_path = path
       path.reverse_each { |entity|
         return part_path if entity.is_a?(Sketchup::ComponentInstance) && !entity.definition.behavior.cuts_opening? && !entity.definition.behavior.always_face_camera?
-        part_path.pop
+        part_path = part_path.slice(0...-1)
       }
     end
 
@@ -415,7 +415,7 @@ module Ladb::OpenCutList
       entity = path.last
       return nil unless entity.is_a?(Sketchup::Drawingelement)
 
-      worker = CutlistGenerateWorker.new({}, entity, path.slice(0..-2))
+      worker = CutlistGenerateWorker.new({}, entity, path.slice(0...-1))
       cutlist = worker.run
 
       part = nil

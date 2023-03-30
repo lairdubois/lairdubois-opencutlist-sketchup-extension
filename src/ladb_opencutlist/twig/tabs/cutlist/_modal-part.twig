@@ -410,7 +410,7 @@
                                 {% set hideWidthDimension = true %}
                                 {% set hideName = true %}
                                 {% set arrowDashed = true %}
-                                {% set flipped = not (part.flipped or part.axes_flipped) %}
+                                {% set flipped = not (part.flipped and not part.axes_flipped) %}
                                 {% block extra %}
                                     <g class="veneer veneer-zmin{% if part.veneer_entity_ids.zmin is empty %} ladb-disabled{% endif %}" data-toggle="tooltip" data-placement="bottom" title="{{ 'tab.cutlist.tooltip.veneer_zmin'|i18next }}">
                                         <defs>

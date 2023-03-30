@@ -350,7 +350,7 @@ module Ladb::OpenCutList
         @space.remove_all
 
         arrow_color = part.auto_oriented ? COLOR_ARROW_AUTO_ORIENTED : COLOR_ARROW
-        arrow_line_width = 2 * UI.scale_factor
+        arrow_line_width = 2
         arrow_offset = Sketchup.active_model.active_view.pixels_to_model(1, ORIGIN)
 
         part_helper = Kuix::Group.new
@@ -473,7 +473,7 @@ module Ladb::OpenCutList
             end
             if picked_path && picked_path.last.is_a?(Sketchup::Face)
 
-              @picked_path = picked_path.clone
+              @picked_path = picked_path
 
               picked_entity_path = _get_part_entity_path_from_path(picked_path)
               if picked_entity_path.length > 0

@@ -309,6 +309,10 @@ module Ladb::OpenCutList
       fetch_action == ACTION_PAINT_PART || fetch_action == ACTION_PAINT_EDGE || fetch_action == ACTION_PAINT_VENEER
     end
 
+    def is_action_paint_part?
+      fetch_action == ACTION_PAINT_PART
+    end
+
     def is_action_paint_edge?
       fetch_action == ACTION_PAINT_EDGE
     end
@@ -665,12 +669,12 @@ module Ladb::OpenCutList
         @pick_helper.count.times { |pick_path_index|
 
           picked_path = @pick_helper.path_at(pick_path_index)
-          # if picked_path == @picked_path && event == :move
-          #   return  # Previously detected path, stop process to optimize.
-          # end
+          if picked_path == @picked_path && event == :move && (is_action_paint_part? || is_action_paint_edge? && is_action_modifier_4? || is_action_paint_veneer? && is_action_modifier_2?)
+            return  # Previously detected path, stop process to optimize.
+          end
           if picked_path && picked_path.last.is_a?(Sketchup::Face)
 
-            @picked_path = picked_path.clone
+            @picked_path = picked_path
 
             if is_action_part?
 
