@@ -1353,13 +1353,13 @@ tool:
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
     action_0: Colorier pièce
-    action_0_status: Cliquez sur une pièce pour la colorier.
+    action_0_status: Cliquez sur une pièce pour la colorier
     action_1: Colorier chants
-    action_1_status: Cliquez sur un chant de panneau pour le colorier.
+    action_1_status: Cliquez sur un chant de panneau pour le colorier
     action_2: Colorier surfaces
-    action_2_status: Cliquez sur une surface de panneau pour la colorier.
+    action_2_status: Cliquez sur une surface de panneau pour la colorier
     action_3: Prélever
-    action_3_status: Cliquez sur une face pour prélever un échantillon de la matière.
+    action_3_status: Cliquez sur une face pour prélever un échantillon de la matière
     action_modifier_0: "1"
     action_modifier_1: "2"
     action_modifier_2: "4"
@@ -1370,14 +1370,14 @@ tool:
       wrong_material_type: La pièce ciblée doit être du type '{{ type }}'.
   smart_axes:
     title: Orienter
-    status_toggle_clockwise: Inverser le sens de rotation.
-    status_toggle_depth: Pièces en arrière plan.
+    status_toggle_clockwise: Inverser le sens de rotation
+    status_toggle_depth: Pièces en arrière plan
     action_0: Permuter Longueur ↔ Largeur
-    action_0_status: Cliquez sur une pièce pour permuter sa Longueur avec sa Largeur.
+    action_0_status: Cliquez sur une pièce pour permuter sa Longueur avec sa Largeur
     action_1: Permuter Parement ↔ Contreparement
-    action_1_status: Cliquez sur une pièce pour permuter la lecture de son Parement avec son Contreparement.
+    action_1_status: Cliquez sur une pièce pour permuter la lecture de son Parement avec son Contreparement
     action_2: Orienter automatiquement
-    action_2_status: Cliquez sur une pièce pour définir sa Longueur sur sa plus grand dimension et l'Epaisseur sur sa plus petite.
+    action_2_status: Cliquez sur une pièce pour définir sa Longueur sur sa plus grand dimension et l'Epaisseur sur sa plus petite
     action_modifier_0: "⤵"
     action_modifier_1: "⤴"
     success:
