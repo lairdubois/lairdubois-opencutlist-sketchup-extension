@@ -65,9 +65,14 @@ module Ladb::OpenCutList
       end
 
       # Create cursors
-      @cursor_paint_part_id = create_cursor('paint-part', 7, 25)
+      @cursor_paint_part_id = create_cursor('paint-part', 2, 15)
+      @cursor_paint_edge_1_id = create_cursor('paint-edge-1', 2, 15)
+      @cursor_paint_edge_2_id = create_cursor('paint-edge-2', 2, 15)
+      @cursor_paint_edge_4_id = create_cursor('paint-edge-4', 2, 15)
+      @cursor_paint_veneer_1_id = create_cursor('paint-veneer-1', 2, 15)
+      @cursor_paint_veneer_2_id = create_cursor('paint-veneer-2', 2, 15)
       @cursor_picker_id = create_cursor('picker', 7, 25)
-      @cursor_nopaint_id = create_cursor('nopaint', 7, 25)
+      @cursor_paint_error_id = create_cursor('paint-error', 2, 15)
 
     end
 
@@ -243,18 +248,35 @@ module Ladb::OpenCutList
       ACTIONS
     end
 
-    def get_action_cursor(action)
+    def get_action_cursor(action, modifier)
 
       # Update status text and root cursor
       case action
-      when ACTION_PAINT_PART, ACTION_PAINT_EDGE, ACTION_PAINT_VENEER
+      when ACTION_PAINT_PART
         return @cursor_paint_part_id
+      when ACTION_PAINT_EDGE
+        case modifier
+        when ACTION_MODIFIER_4
+          return @cursor_paint_edge_4_id
+        when ACTION_MODIFIER_2
+          return @cursor_paint_edge_2_id
+        when ACTION_MODIFIER_1
+          return @cursor_paint_edge_1_id
+        end
+      when ACTION_PAINT_VENEER
+        case modifier
+        when ACTION_MODIFIER_2
+          return @cursor_paint_veneer_2_id
+        when ACTION_MODIFIER_1
+          return @cursor_paint_veneer_1_id
+        end
       when ACTION_PICK
         return @cursor_picker_id
       else
-        return @cursor_nopaint_id
+        return @cursor_paint_error_id
       end
 
+      super
     end
 
     def store_action(action)
@@ -675,6 +697,8 @@ module Ladb::OpenCutList
           if picked_path && picked_path.last.is_a?(Sketchup::Face)
 
             @picked_path = picked_path
+
+            pop_cursor
 
             if is_action_part?
 

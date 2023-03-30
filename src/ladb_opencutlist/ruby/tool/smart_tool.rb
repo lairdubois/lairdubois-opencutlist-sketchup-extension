@@ -264,7 +264,7 @@ module Ladb::OpenCutList
       Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}_status")
     end
 
-    def get_action_cursor(action)
+    def get_action_cursor(action, modifier)
       @cursor_select_error
     end
 
@@ -323,7 +323,7 @@ module Ladb::OpenCutList
 
       # Update status text and root cursor
       Sketchup.set_status_text(get_action_status(action), SB_PROMPT)
-      set_root_cursor(get_action_cursor(action))
+      set_root_cursor(get_action_cursor(action, modifier))
 
       # Fire event
       onActionChange(action, modifier) if self.respond_to?(:onActionChange)

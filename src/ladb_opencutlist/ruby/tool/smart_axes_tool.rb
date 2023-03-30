@@ -120,7 +120,7 @@ module Ladb::OpenCutList
 
     end
 
-    def get_action_cursor(action)
+    def get_action_cursor(action, modifier)
 
       case action
       when ACTION_SWAP_LENGTH_WIDTH
