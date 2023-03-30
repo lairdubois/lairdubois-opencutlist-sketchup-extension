@@ -64,14 +64,14 @@ module Ladb::OpenCutList
       end
 
       # Create cursors
-      @cursor_paint_part_id = create_cursor('paint-part', 2, 15)
-      @cursor_paint_edge_1_id = create_cursor('paint-edge-1', 2, 15)
-      @cursor_paint_edge_2_id = create_cursor('paint-edge-2', 2, 15)
-      @cursor_paint_edge_4_id = create_cursor('paint-edge-4', 2, 15)
-      @cursor_paint_veneer_1_id = create_cursor('paint-veneer-1', 2, 15)
-      @cursor_paint_veneer_2_id = create_cursor('paint-veneer-2', 2, 15)
-      @cursor_picker_id = create_cursor('picker', 7, 25)
-      @cursor_paint_error_id = create_cursor('paint-error', 2, 15)
+      @cursor_paint_part_id = create_cursor('paint-part', 2, 14)
+      @cursor_paint_edge_1_id = create_cursor('paint-edge-1', 2, 14)
+      @cursor_paint_edge_2_id = create_cursor('paint-edge-2', 2, 14)
+      @cursor_paint_edge_4_id = create_cursor('paint-edge-4', 2, 14)
+      @cursor_paint_veneer_1_id = create_cursor('paint-veneer-1', 2, 14)
+      @cursor_paint_veneer_2_id = create_cursor('paint-veneer-2', 2, 14)
+      @cursor_picker_id = create_cursor('picker', 2, 22)
+      @cursor_paint_error_id = create_cursor('paint-error', 2, 14)
 
     end
 
@@ -245,6 +245,27 @@ module Ladb::OpenCutList
 
     def get_action_defs  # Array<{ :action => THE_ACTION, :modifiers => [ MODIFIER_1, MODIFIER_2, ... ] }>
       ACTIONS
+    end
+
+    def get_action_status(action)
+
+      case action
+      when ACTION_PAINT_PART
+        return super +
+          ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3')
+      when ACTION_PAINT_EDGE
+        return super +
+          ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3')
+      when ACTION_PAINT_VENEER
+        return super +
+          ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3')
+      when ACTION_PICK
+        return super +
+          ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_0')
+      else
+        return super
+      end
+
     end
 
     def get_action_cursor(action, modifier)
@@ -639,11 +660,9 @@ module Ladb::OpenCutList
 
       # Select default current material if necessary
       if model.materials.length == 0 || fetch_action_material(fetch_action) == false
-        set_current_material(nil)
+        set_current_material(false)
       elsif !@material_defs.empty? && (!current_material_exists || fetch_action_material(fetch_action).nil?)
         set_current_material(@material_defs.first[:material])
-      # else
-      #   set_current_material(get_current_material)  # Reapply current material to setup the paint color
       end
 
     end
