@@ -9,6 +9,7 @@ in 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added **Ukrainian** language (thanks to Konstantin and Andrew)
   * Added new **Drawing** module with exploded view and export to *Layout* (SketchUp 2018+ only)
   * Added new **Veneer Material Type**
+  * Added new **Smart Paint** tool (rewrite privous)
   * Added new **Smart Axes** tool
   * Added module to *export* and *import* **presets** in json file
   * Added new feature to sort labels according to cutting diagrams bins
@@ -24,9 +25,6 @@ in 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Fixed missed exported edges std dimensions on folded parts
   * Fixed missed oversize asterisk indicator in cutting diagram parts lists
   * Hatched unavailable cells in parts list summary instead of displaying "-" character
-
-  **BREAK CHANGES**
-  * Flipped parts are now considere flipped along width. This will swap the edge length 1 & 2 from previous versions.
 
 * 4.1.3 (2023-02-28)
 
