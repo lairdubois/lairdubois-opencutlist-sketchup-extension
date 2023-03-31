@@ -429,7 +429,9 @@ module Ladb::OpenCutList
         entity.style = entity_style
 
         # Center text on anchor point
-        entity.transform!(Geom::Transformation2d.translation(Geom::Vector2d.new(anchor_2d.x, anchor_2d.y) - Geom::Vector2d.new(entity.text.bounds.upper_left.x + entity.text.bounds.width / 2, entity.text.bounds.upper_left.y + entity.text.bounds.height / 2)))
+        if Geom::Transformation2d.respond_to?(:translation) # SU 2019+
+          entity.transform!(Geom::Transformation2d.translation(Geom::Vector2d.new(anchor_2d.x, anchor_2d.y) - Geom::Vector2d.new(entity.text.bounds.upper_left.x + entity.text.bounds.width / 2, entity.text.bounds.upper_left.y + entity.text.bounds.height / 2)))
+        end
 
       end
       # Connect target to model
