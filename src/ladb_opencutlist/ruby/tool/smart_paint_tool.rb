@@ -838,11 +838,20 @@ module Ladb::OpenCutList
                         color = current_material ? current_material.color : MaterialUtils::get_color_from_path(picked_entity_path)
                         color.alpha = event == :l_button_down ? 255 : 200
 
-                        mesh = Kuix::Mesh.new
-                        mesh.add_trangles(_compute_children_faces_triangles(entities))
-                        mesh.background_color = color
-                        mesh.transformation = PathUtils::get_transformation(picked_entity_path)
-                        @space.append(mesh)
+                        active_instance = picked_entity_path.last
+                        instances = active_instance.definition.instances
+                        instance_paths = []
+                        _instances_to_paths(instances, instance_paths, Sketchup.active_model.active_entities, Sketchup.active_model.active_path ? Sketchup.active_model.active_path : [])
+
+                        instance_paths.each do |path|
+
+                          mesh = Kuix::Mesh.new
+                          mesh.add_trangles(_compute_children_faces_triangles(entities))
+                          mesh.background_color = color
+                          mesh.transformation = PathUtils::get_transformation(path)
+                          @space.append(mesh)
+
+                        end
 
                         definition = Sketchup.active_model.definitions[part.def.definition_id]
                         if definition && definition.count_used_instances > 1
@@ -904,11 +913,20 @@ module Ladb::OpenCutList
                         color = current_material ? current_material.color : MaterialUtils::get_color_from_path(picked_entity_path)
                         color.alpha = event == :l_button_down ? 255 : 200
 
-                        mesh = Kuix::Mesh.new
-                        mesh.add_trangles(_compute_children_faces_triangles(entities))
-                        mesh.background_color = color
-                        mesh.transformation = PathUtils::get_transformation(picked_entity_path)
-                        @space.append(mesh)
+                        active_instance = picked_entity_path.last
+                        instances = active_instance.definition.instances
+                        instance_paths = []
+                        _instances_to_paths(instances, instance_paths, Sketchup.active_model.active_entities, Sketchup.active_model.active_path ? Sketchup.active_model.active_path : [])
+
+                        instance_paths.each do |path|
+
+                          mesh = Kuix::Mesh.new
+                          mesh.add_trangles(_compute_children_faces_triangles(entities))
+                          mesh.background_color = color
+                          mesh.transformation = PathUtils::get_transformation(path)
+                          @space.append(mesh)
+
+                        end
 
                         definition = Sketchup.active_model.definitions[part.def.definition_id]
                         if definition && definition.count_used_instances > 1
