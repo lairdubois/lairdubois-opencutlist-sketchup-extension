@@ -195,17 +195,18 @@ module Ladb::OpenCutList
 
       def onKeyDown(key, repeat, flags, view)
         @key_down_times[key] = Time.new if repeat == 1
-        nil
+        return false
       end
 
       def onKeyUp(key, repeat, flags, view)
         key_down_time = @key_down_times[key]
         after_down = key_down_time.is_a?(Time)
-        @key_down_times[key] = nil
-        onKeyUpExtended(key, repeat, flags, view, after_down, after_down && (Time.new - key_down_time) <= 0.15) # < 150ms
+        @key_down_times.delete(key)
+        return onKeyUpExtended(key, repeat, flags, view, after_down, after_down && (Time.new - key_down_time) <= 0.15) # < 150ms
       end
 
       def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
+        return false
       end
 
       def onLButtonDown(flags, x, y, view)
@@ -215,6 +216,7 @@ module Ladb::OpenCutList
           @mouse_down_widget.onMouseDown(flags)
           return true
         end
+        return false
       end
 
       def onLButtonUp(flags, x, y, view)
@@ -225,6 +227,7 @@ module Ladb::OpenCutList
           return true
         end
         @mouse_down_widget = nil
+        return false
       end
 
       def onLButtonDoubleClick(flags, x, y, view)
@@ -235,6 +238,7 @@ module Ladb::OpenCutList
           return true
         end
         @mouse_down_widget = nil
+        return false
       end
 
       def onMouseMove(flags, x, y, view)
@@ -257,6 +261,7 @@ module Ladb::OpenCutList
           end
           @mouse_hover_widget = nil
         end
+        return false
       end
 
       def onMouseLeave(view)
@@ -265,6 +270,7 @@ module Ladb::OpenCutList
           pop_cursor
         end
         @mouse_hover_widget = nil
+        return false
       end
 
       def onSetCursor

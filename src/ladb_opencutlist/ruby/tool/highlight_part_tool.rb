@@ -320,22 +320,22 @@ module Ladb::OpenCutList
     # -- Events --
 
     def onLButtonUp(flags, x, y, view)
-      return if super
+      return true if super
       _pick_hover_part(x, y, view)
       if @hover_part
         UI.beep
-        return
+        return true
       end
       _quit(view)
     end
 
     def onMouseMove(flags, x, y, view)
-      return if super
+      return true if super
       _pick_hover_part(x, y, view)
     end
 
     def onMouseLeave(view)
-      return if super
+      return true if super
       _reset(view)
     end
 

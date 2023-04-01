@@ -510,7 +510,7 @@ module Ladb::OpenCutList
     end
 
     def onKeyDown(key, repeat, flags, view)
-      return if super
+      return true if super
       if key == ALT_MODIFIER_KEY
         if is_action_pick?
           push_action(ACTION_PAINT_PART)
@@ -551,75 +551,88 @@ module Ladb::OpenCutList
     end
 
     def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
-      return if super
+      return true if super
       if after_down
         if key == ALT_MODIFIER_KEY
           if is_quick
             if is_action_paint_part?
               set_root_action(ACTION_PAINT_PART)
+              return true
             elsif is_action_paint_edge?
               set_root_action(ACTION_PAINT_EDGE)
+              return true
             elsif is_action_paint_veneer?
               set_root_action(ACTION_PAINT_VENEER)
+              return true
             elsif is_action_pick?
               set_root_action(ACTION_PICK)
+              return true
             end
           else
             pop_action
+            return true
           end
         elsif key == VK_NUMPAD1 && is_action_modifier_1? && (is_action_paint_edge? || is_action_paint_veneer?)
           if is_quick
             if is_action_paint_edge?
               set_root_action(ACTION_PAINT_EDGE, ACTION_MODIFIER_1)
+              return true
             elsif is_action_paint_veneer?
               set_root_action(ACTION_PAINT_VENEER, ACTION_MODIFIER_1)
+              return true
             end
           else
             pop_action_modifier
+            return true
           end
         elsif key == VK_NUMPAD2 && is_action_modifier_2? && (is_action_paint_edge? || is_action_paint_veneer?)
           if is_quick
             if is_action_paint_edge?
               set_root_action(ACTION_PAINT_EDGE, ACTION_MODIFIER_2)
+              return true
             elsif is_action_paint_veneer?
               set_root_action(ACTION_PAINT_VENEER, ACTION_MODIFIER_2)
+              return true
             end
           else
             pop_action_modifier
+            return true
           end
         elsif key == VK_NUMPAD4 && is_action_modifier_4? && is_action_paint_edge?
           if is_quick
             set_root_action(ACTION_PAINT_EDGE, ACTION_MODIFIER_4)
+            return true
           else
             pop_action_modifier
+            return true
           end
         end
       end
     end
 
     def onLButtonDown(flags, x, y, view)
-      return if super
+      return true if super
       unless is_action_none?
         _handle_mouse_event(x, y, view, :l_button_down)
       end
     end
 
     def onLButtonUp(flags, x, y, view)
-      return if super
+      return true if super
       unless is_action_none?
         _handle_mouse_event(x, y, view, :l_button_up)
       end
     end
 
     def onMouseMove(flags, x, y, view)
-      return if super
+      return true if super
       unless is_action_none?
         _handle_mouse_event(x, y, view, :move)
       end
     end
 
     def onMouseLeave(view)
-      return if super
+      return true if super
       _reset(view)
     end
 

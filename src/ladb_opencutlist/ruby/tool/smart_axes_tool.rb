@@ -247,7 +247,7 @@ module Ladb::OpenCutList
     end
 
     def onKeyDown(key, repeat, flags, view)
-      return if super
+      return true if super
       if key == CONSTRAIN_MODIFIER_KEY && is_action_swap_length_width?
         push_action_modifier(is_action_modifier_clockwise? ? ACTION_MODIFIER_ANTICLOCKWIZE : ACTION_MODIFIER_CLOCKWISE)
         return true
@@ -263,7 +263,7 @@ module Ladb::OpenCutList
     end
 
     def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
-      return if super
+      return true if super
       if key == VK_TAB && @active_part_entity_path
 
         picked_paths = []
@@ -310,22 +310,22 @@ module Ladb::OpenCutList
     end
 
     def onLButtonDown(flags, x, y, view)
-      return if super
+      return true if super
       _handle_mouse_event(x, y, view, :l_button_down)
     end
 
     def onLButtonUp(flags, x, y, view)
-      return if super
+      return true if super
       _handle_mouse_event(x, y, view, :l_button_up)
     end
 
     def onLButtonDoubleClick(flags, x, y, view)
-      return if super
+      return true if super
       _handle_mouse_event(x, y, view, :l_button_dblclick)
     end
 
     def onMouseMove(flags, x, y, view)
-      return if super
+      return true if super
       _handle_mouse_event(x, y, view, :move)
     end
 
