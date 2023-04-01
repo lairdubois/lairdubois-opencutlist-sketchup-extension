@@ -1353,13 +1353,13 @@ tool:
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
     action_0: Paint part
-    action_0_status: Click on a part to paint it.
+    action_0_status: Click on a part to paint it
     action_1: Paint edges
-    action_1_status: Click on an edge to paint it.
+    action_1_status: Click on an edge to paint it
     action_2: Paint faces
-    action_2_status: Click on a face to paint it.
+    action_2_status: Click on a face to paint it
     action_3: Sample
-    action_3_status: Click on surface to sample the material.
+    action_3_status: Click on surface to sample its material
     action_modifier_0: "1"
     action_modifier_1: "2"
     action_modifier_2: "4"
@@ -1370,14 +1370,14 @@ tool:
       wrong_material_type: The target part is not of type '{{ type }}'.
   smart_axes:
     title: Orient
-    status_toggle_clockwise: Reverse the direction of rotation.
-    status_toggle_depth: Background parts.
+    status_toggle_clockwise: Reverse the direction of rotation
+    status_toggle_depth: Background parts
     action_0: Swap length ↔ width
-    action_0_status: Click on a part to swap length with width.
+    action_0_status: Click on a part to swap length with width
     action_1: Swap front face ↔ back face
-    action_1_status: Click on a part to swap front face with back face.
+    action_1_status: Click on a part to swap front face with back face
     action_2: Orient automatically
-    action_2_status:  Click on a part to set its length to its largest dimension and thickness to its smallest.
+    action_2_status:  Click on a part to set its length to its largest dimension and thickness to its smallest
     action_modifier_0: "⤵"
     action_modifier_1: "⤴"
     success:
