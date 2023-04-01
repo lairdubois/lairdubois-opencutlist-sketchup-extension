@@ -85,7 +85,7 @@ module Ladb::OpenCutList
         # Add boxes from parts
         add_boxes_proc = Proc.new { |part|
           for i in 1..part.count
-            @pack_engine.add_box(part.cutting_length.to_l.to_f, part.cutting_width.to_l.to_f, options.rotatable || part.ignore_grain_direction, part)   # "to_l.to_f" Reconvert string representation of length to float to take advantage Sketchup precision
+            @pack_engine.add_box(part.cutting_length.to_l.to_f, part.cutting_width.to_l.to_f, options.rotatable || part.ignore_grain_direction, part.id, part)   # "to_l.to_f" Reconvert string representation of length to float to take advantage Sketchup precision
           end
         }
         parts.each { |part|
