@@ -177,21 +177,25 @@ module Ladb::OpenCutList
       @south_panel.append(west)
 
       west_btn = Kuix::Button.new
-      west_btn.layout = Kuix::GridLayout.new
-      west_btn.min_size.set_all!(@unit * 10)
+      west_btn.layout = Kuix::StaticLayout.new
+      west_btn.min_size.set!(@unit * 10, @unit * 12)
       west_btn.set_style_attribute(:background_color, Sketchup::Color.new(62, 59, 51))
       west_btn.set_style_attribute(:background_color, Sketchup::Color.new(214, 212, 205), :hover)
       west_btn.set_style_attribute(:background_color, Sketchup::Color.new(214, 212, 205), :active)
-      lbl = west_btn.append_static_label('↑', @unit * 5)
-      lbl.set_style_attribute(:color, Sketchup::Color.new(214, 212, 205))
-      lbl.set_style_attribute(:color, Sketchup::Color.new(62, 59, 51), :hover)
-      lbl.set_style_attribute(:color, Sketchup::Color.new(255, 255, 255), :selected)
       west_btn.on(:click) { |button|
         @filters_panel.visible = !@filters_panel.visible?
-        west_btn.child.text = @filters_panel.visible? ? '↓' : '↑'
+        west_btn.child.pattern_transformation = @filters_panel.visible? ? Geom::Transformation.translation(Geom::Vector3d.new(0, 1, 0)) * Geom::Transformation.scaling(1, -1, 1) : Geom::Transformation.new
       }
       west.append(west_btn)
       @open_btn = west_btn
+
+      west_btn_arrow = Kuix::Lines2d.new(Kuix::Lines2d.pattern_from_svg_path('M0.5,1L0.5,0L0.2,0.3L0.5,0L0.8,0.3'))
+      west_btn_arrow.layout_data = Kuix::StaticLayoutData.new(0.5, 0, @unit * 12, @unit * 12, Kuix::Anchor.new(Kuix::Anchor::TOP_CENTER))
+      west_btn_arrow.padding.set_all!(@unit * 3)
+      west_btn_arrow.line_width = @unit <= 4 ? 1 : 2
+      west_btn_arrow.set_style_attribute(:color, Sketchup::Color.new(214, 212, 205))
+      west_btn_arrow.set_style_attribute(:color, Sketchup::Color.new(62, 59, 51), :hover)
+      west_btn.append(west_btn_arrow)
 
       east = Kuix::Panel.new
       east.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
@@ -201,12 +205,13 @@ module Ladb::OpenCutList
       @south_panel.append(east)
 
       east_btn = Kuix::Button.new
-      east_btn.layout = Kuix::GridLayout.new
-      east_btn.min_size.set_all!(@unit * 10)
+      east_btn.layout = Kuix::StaticLayout.new
+      east_btn.min_size.set!(@unit * 10, @unit * 12)
       east_btn.set_style_attribute(:background_color, Sketchup::Color.new(62, 59, 51))
       east_btn.set_style_attribute(:background_color, Sketchup::Color.new(214, 212, 205), :hover)
       east_btn.set_style_attribute(:background_color, Sketchup::Color.new(214, 212, 205), :active)
       lbl = east_btn.append_static_label('+', @unit * 5)
+      lbl.layout_data = Kuix::StaticLayoutData.new(0.5, 0, @unit * 12, @unit * 12, Kuix::Anchor.new(Kuix::Anchor::TOP_CENTER))
       lbl.set_style_attribute(:color, Sketchup::Color.new(214, 212, 205))
       lbl.set_style_attribute(:color, Sketchup::Color.new(62, 59, 51), :hover)
       lbl.set_style_attribute(:color, Sketchup::Color.new(255, 255, 255), :selected)
@@ -262,10 +267,9 @@ module Ladb::OpenCutList
       when ACTION_PICK
         return super +
           ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_0') + '.'
-      else
-        return super
       end
 
+      super
     end
 
     def get_action_cursor(action, modifier)
@@ -294,6 +298,40 @@ module Ladb::OpenCutList
         return @cursor_picker_id
       else
         return @cursor_paint_error_id
+      end
+
+      super
+    end
+
+    def get_action_modifier_btn_child(action, modifier)
+
+      case action
+      when ACTION_PAINT_EDGE
+        case modifier
+        when ACTION_MODIFIER_1
+          lbl = Kuix::Label.new
+          lbl.text = '1'
+          return lbl
+        when ACTION_MODIFIER_2
+          lbl = Kuix::Label.new
+          lbl.text = '2'
+          return lbl
+        when ACTION_MODIFIER_4
+          lbl = Kuix::Label.new
+          lbl.text = '4'
+          return lbl
+        end
+      when ACTION_PAINT_VENEER
+        case modifier
+        when ACTION_MODIFIER_1
+          lbl = Kuix::Label.new
+          lbl.text = '1'
+          return lbl
+        when ACTION_MODIFIER_2
+          lbl = Kuix::Label.new
+          lbl.text = '2'
+          return lbl
+        end
       end
 
       super

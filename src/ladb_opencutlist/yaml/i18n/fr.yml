@@ -1360,9 +1360,6 @@ tool:
     action_2_status: Cliquez sur une surface de panneau pour la colorier
     action_3: Prélever
     action_3_status: Cliquez sur une face pour prélever un échantillon de la matière
-    action_modifier_0: "1"
-    action_modifier_1: "2"
-    action_modifier_2: "4"
     error:
       not_part: L'objet ciblé n'est pas une pièce.
       not_edge: La face ciblée n'est pas un chant de panneau.
@@ -1378,8 +1375,6 @@ tool:
     action_1_status: Cliquez sur une pièce pour permuter la lecture de son Parement avec son Contreparement
     action_2: Orienter automatiquement
     action_2_status: Cliquez sur une pièce pour définir sa Longueur sur sa plus grand dimension et l'Epaisseur sur sa plus petite
-    action_modifier_0: "⤵"
-    action_modifier_1: "⤴"
     success:
       part_oriented: Cette pièce a déjà sa longueur sur la plus grande dimension et son épaisseur sur la plus petite.
     warning:

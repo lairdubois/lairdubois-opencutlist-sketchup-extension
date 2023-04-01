@@ -1,6 +1,6 @@
 module Ladb::OpenCutList::Kuix
 
-  class BoxHelper < Lines
+  class BoxHelper < Lines3d
 
     def initialize(id = nil)
       super([

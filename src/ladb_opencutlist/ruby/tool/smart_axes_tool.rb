@@ -112,10 +112,9 @@ module Ladb::OpenCutList
       when ACTION_SWAP_AUTO
         return super +
             ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.status_toggle_depth') + '.'
-      else
-        return super
       end
 
+      super
     end
 
     def get_action_cursor(action, modifier)
@@ -127,10 +126,29 @@ module Ladb::OpenCutList
         return @cursor_swap_front_back
       when ACTION_SWAP_AUTO
         return @cursor_swap_auto
-      else
-        return super
       end
 
+      super
+    end
+
+    def get_action_modifier_btn_child(action, modifier)
+
+      case action
+      when ACTION_SWAP_LENGTH_WIDTH
+        case modifier
+        when ACTION_MODIFIER_CLOCKWISE
+          shape = Kuix::Lines2d.new(Kuix::Lines2d.pattern_from_svg_path('M0,1L0,0.8333L0.1667,0.5L0.5,0.3333L0.8333,0.3333L0.6667,0L1,0.3333L0.6667,0.6667L0.8333,0.3333'))
+          shape.line_width = @unit <= 4 ? 0.5 : 1
+          return shape
+        when ACTION_MODIFIER_ANTICLOCKWIZE
+          shape = Kuix::Lines2d.new(Kuix::Lines2d.pattern_from_svg_path('M0,1L0,0.8333L0.1667,0.5L0.5,0.3333L0.8333,0.3333L0.6667,0L1,0.3333L0.6667,0.6667L0.8333,0.3333'))
+          shape.pattern_transformation = Geom::Transformation.translation(Geom::Vector3d.new(1, 0, 0)) * Geom::Transformation.scaling(-1, 1, 1)
+          shape.line_width = @unit <= 4 ? 0.5 : 1
+          return shape
+        end
+      end
+
+      super
     end
 
     def store_action(action)

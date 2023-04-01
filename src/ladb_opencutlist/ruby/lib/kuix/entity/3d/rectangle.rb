@@ -1,6 +1,6 @@
 module Ladb::OpenCutList::Kuix
 
-  class Rectangle < Lines
+  class Rectangle < Lines3d
 
     def initialize(id = nil)
       super([

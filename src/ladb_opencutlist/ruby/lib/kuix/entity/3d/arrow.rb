@@ -1,6 +1,6 @@
 module Ladb::OpenCutList::Kuix
 
-  class Arrow < Lines
+  class Arrow < Lines3d
 
     def initialize(id = nil)
       super([

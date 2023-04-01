@@ -13,6 +13,20 @@ module Ladb::OpenCutList::Kuix
 
     # -- Drawing --
 
+    def draw_line_strip(points, color = nil, line_width = nil)
+      set_drawing_color(color) if color
+      set_line_width(line_width) if line_width
+      set_line_stipple('')
+      @view.draw2d(GL_LINE_STRIP, points.map { |point| Geom::Point3d.new(@origin.x + point.x, @origin.y + point.y, 0) })
+    end
+
+    def draw_line_loop(points, color = nil, line_width = nil)
+      set_drawing_color(color) if color
+      set_line_width(line_width) if line_width
+      set_line_stipple('')
+      @view.draw2d(GL_LINE_LOOP, points.map { |point| Geom::Point3d.new(@origin.x + point.x, @origin.y + point.y, 0) })
+    end
+
     def draw_triangle(x1, y1, x2, y2, x3, y3, color = nil)
       set_drawing_color(color) if color
       @view.draw2d(GL_TRIANGLES, [

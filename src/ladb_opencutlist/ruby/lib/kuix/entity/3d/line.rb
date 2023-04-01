@@ -1,6 +1,6 @@
 module Ladb::OpenCutList::Kuix
 
-  class Line < Lines
+  class Line < Lines3d
 
     def initialize(id = nil)
       super([

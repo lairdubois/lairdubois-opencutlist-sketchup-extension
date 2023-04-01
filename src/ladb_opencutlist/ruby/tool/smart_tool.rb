@@ -184,19 +184,27 @@ module Ladb::OpenCutList
           modifiers.each { |modifier|
 
             actions_modifier_btn = Kuix::Button.new
-            actions_modifier_btn.layout = Kuix::BorderLayout.new
+            actions_modifier_btn.layout = Kuix::StaticLayout.new
             actions_modifier_btn.border.set_all!(unit / 2)
-            actions_modifier_btn.padding.set!(0, unit * 2, 0, unit * 2)
+            actions_modifier_btn.padding.set_all!(unit * 2)
             actions_modifier_btn.set_style_attribute(:background_color, Sketchup::Color.new(214, 212, 205))
             actions_modifier_btn.set_style_attribute(:background_color, Sketchup::Color.new('white'), :hover)
             actions_modifier_btn.set_style_attribute(:background_color, Sketchup::Color.new(247, 127, 0).blend(Sketchup::Color.new('white'), 0.5), :selected)
             actions_modifier_btn.data = { :modifier => modifier }
-            lbl = actions_modifier_btn.append_static_label(Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_modifier_#{modifier}"), unit * 3)
-            lbl.set_style_attribute(:color, Sketchup::Color.new(62, 59, 51), :hover)
             actions_modifier_btn.on(:click) { |button|
               set_root_action(action, modifier)
             }
             actions_modifiers.append(actions_modifier_btn)
+
+            child = get_action_modifier_btn_child(action, modifier)
+            if child
+              child.layout_data = Kuix::StaticLayoutData.new
+              child.text_size = @unit * 3 if child.respond_to?(:text_size=)
+              child.min_size.set_all!(@unit * 3)
+              child.set_style_attribute(:color, Sketchup::Color.new(0, 0, 0))
+              child.set_style_attribute(:color, Sketchup::Color.new(62, 59, 51), :hover)
+              actions_modifier_btn.append(child)
+            end
 
             data[:modifier_buttons].push(actions_modifier_btn)
 
@@ -266,6 +274,10 @@ module Ladb::OpenCutList
 
     def get_action_cursor(action, modifier)
       @cursor_select_error
+    end
+
+    def get_action_modifier_btn_child(action, modifier)
+      nil
     end
 
     def store_action(action)

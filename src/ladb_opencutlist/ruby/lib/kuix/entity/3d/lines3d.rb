@@ -1,6 +1,6 @@
 module Ladb::OpenCutList::Kuix
 
-  class Lines < Entity3d
+  class Lines3d < Entity3d
 
     attr_accessor :pattern_transformation
     attr_accessor :color
