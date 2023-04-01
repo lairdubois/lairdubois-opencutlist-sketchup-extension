@@ -250,11 +250,14 @@ module Ladb::OpenCutList
       return if super
       if key == CONSTRAIN_MODIFIER_KEY && is_action_swap_length_width?
         push_action_modifier(is_action_modifier_clockwise? ? ACTION_MODIFIER_ANTICLOCKWIZE : ACTION_MODIFIER_CLOCKWISE)
+        return true
       elsif key == ALT_MODIFIER_KEY
         if is_action_swap_length_width?
           push_action(ACTION_SWAP_FRONT_BACK)
+          return true
         elsif is_action_swap_front_back?
           push_action(ACTION_SWAP_LENGTH_WIDTH)
+          return true
         end
       end
     end
@@ -282,6 +285,7 @@ module Ladb::OpenCutList
 
         @picked_path = picked_paths[new_index]
 
+        return true
       elsif after_down
         if key == CONSTRAIN_MODIFIER_KEY && is_action_swap_length_width?
           if is_quick
@@ -289,6 +293,7 @@ module Ladb::OpenCutList
           else
             pop_action_modifier
           end
+          return true
         elsif key == ALT_MODIFIER_KEY && (is_action_swap_length_width? || is_action_swap_front_back?)
           if is_quick
             if is_action_swap_length_width?
@@ -299,6 +304,7 @@ module Ladb::OpenCutList
           else
             pop_action
           end
+          return true
         end
       end
     end

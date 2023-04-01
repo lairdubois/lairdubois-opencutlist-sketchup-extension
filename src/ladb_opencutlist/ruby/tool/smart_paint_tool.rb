@@ -517,27 +517,35 @@ module Ladb::OpenCutList
         else
           push_action(ACTION_PICK)
         end
+        return true
       elsif key == VK_LEFT
         button = _get_selected_material_button
         if button && button.previous
           button.previous.fire(:click, flags)
+          return true
         end
       elsif key == VK_RIGHT
         button = _get_selected_material_button
         if button && button.next
           button.next.fire(:click, flags)
+          return true
         end
       elsif key == VK_UP
         @open_btn.fire(:click, flags) if @open_btn
+        return true
       elsif key == VK_DOWN
         @open_btn.fire(:click, flags) if @open_btn
+        return true
       elsif repeat == 1
         if key == VK_NUMPAD1 && (is_action_paint_edge? || is_action_paint_veneer?)
           push_action_modifier(ACTION_MODIFIER_1)
+          return true
         elsif key == VK_NUMPAD2 && (is_action_paint_edge? || is_action_paint_veneer?)
           push_action_modifier(ACTION_MODIFIER_2)
+          return true
         elsif key == VK_NUMPAD4 && is_action_paint_edge?
           push_action_modifier(ACTION_MODIFIER_4)
+          return true
         end
       end
     end
