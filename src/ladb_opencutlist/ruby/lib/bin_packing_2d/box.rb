@@ -29,7 +29,7 @@ module Ladb::OpenCutList::BinPacking2D
     #
     # Initializes a new Box, ensure that it has a length and width > 0.
     #
-    def initialize(length, width, rotatable, cid, data)
+    def initialize(length, width, rotatable, cid = 1, data = nil)
       @x_pos = 0
       @y_pos = 0
       @length = length * 1.0
@@ -42,9 +42,12 @@ module Ladb::OpenCutList::BinPacking2D
       @rotated = false
       @data = data
       # Component id (cid) is used to keep boxes together
-      # that have identical dimensions, but different
-      # definitions.
-      @cid = cid
+      # that have identical dimensions, but different definitions.
+      if cid.nil?
+        @cid = 1
+      else
+        @cid = cid
+      end
     end
 
     #
