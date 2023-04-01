@@ -599,6 +599,14 @@ const fnSetView = function (view = THREE_CAMERA_VIEWS.isometric, dispatchChanged
 
     let targetAuto = fnGetTargetAutoByView(view);
 
+    if (view[0] === THREE_CAMERA_VIEWS.bottom[0] &&
+        view[1] === THREE_CAMERA_VIEWS.bottom[1] &&
+        view[2] === THREE_CAMERA_VIEWS.bottom[2]) {
+        camera.up.set(0, 1, 0)
+    } else {
+        camera.up.set(0, 0, 1)
+    }
+
     controls.target0 = targetAuto.target;
     controls.position0 = targetAuto.position;
     controls.zoom0 = currentZoomIsAuto ? fnGetZoomAutoByView(view) : camera.zoom;

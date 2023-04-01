@@ -139,7 +139,7 @@ module Ladb::OpenCutList
           if scale.x < 0
             if part.def.size.oriented_axis(Z_AXIS) == X_AXIS
               # Applies a 180° rotation along the width axis if the part is flipped thicknesswise to force front face to be rendered on top
-              irt *= Geom::Transformation.rotation(ORIGIN, part.def.size.oriented_axis(X_AXIS), 180.degrees)
+              irt *= Geom::Transformation.rotation(ORIGIN, part.def.size.oriented_axis(Y_AXIS), 180.degrees)
             end
             if part.def.size.oriented_axis(Y_AXIS) == X_AXIS
               # Applies a 180° rotation along the thickness axis if the part is flipped lengthwise to force the origin to be rendered away
