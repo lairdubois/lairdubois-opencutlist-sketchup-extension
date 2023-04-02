@@ -30,7 +30,7 @@ module Ladb::OpenCutList::BinPacking2D
     #
     def initialize(maxlength, maxwidth, saw_kerf)
       # Call super with a fake length/width
-      super(1.0, 1.0, false, nil)
+      super(1.0, 1.0, false, nil, nil)
 
       # Reset fake length/width
       @length = 0

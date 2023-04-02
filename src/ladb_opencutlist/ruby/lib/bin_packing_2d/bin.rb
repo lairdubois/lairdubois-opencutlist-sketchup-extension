@@ -417,11 +417,11 @@ module Ladb::OpenCutList::BinPacking2D
       # Make two dummy boxes that represent the leftovers after the bounding
       # box has been done. Select the combination giving the largest leftover area.
       if @max_length * (@max_width - @max_y) >= (@max_length - @max_x) * @max_width
-        dummy1 = Box.new(@max_length, very_small_dim, false, nil)
-        dummy2 = Box.new(very_small_dim, @max_width, false, nil)
+        dummy1 = Box.new(@max_length, very_small_dim, false, nil, nil)
+        dummy2 = Box.new(very_small_dim, @max_width, false, nil, nil)
       else
-        dummy1 = Box.new(very_small_dim, @max_width, false, nil)
-        dummy2 = Box.new(@max_length, very_small_dim, false, nil)
+        dummy1 = Box.new(very_small_dim, @max_width, false, nil, nil)
+        dummy2 = Box.new(@max_length, very_small_dim, false, nil, nil)
       end
 
       return if bounding_box(dummy1, true)

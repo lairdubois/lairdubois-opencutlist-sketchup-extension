@@ -80,12 +80,12 @@ module Ladb::OpenCutList::BinPacking2D
     #
     # Adds a Box to be packed into Bins.
     #
-    def add_box(length, width, rotatable = true, data = nil)
+    def add_box(length, width, rotatable = true, cid = nil, data = nil)
       if length <= 0 || width <= 0
         @warnings << WARNING_ILLEGAL_SIZED_BOX
       else
         @total_area += (length * width)
-        @boxes << Box.new(length, width, rotatable, data)
+        @boxes << Box.new(length, width, rotatable, cid, data)
       end
     end
 
@@ -397,71 +397,61 @@ module Ladb::OpenCutList::BinPacking2D
       return nil if packers.empty?
 
       stacking_pref = packers[0].options.stacking_pref
-      rotatable = packers[0].options.rotatable
-      nb_packed = packers[0].stat[:nb_packed_boxes]
-      best_packers = []
+      # rotatable = packers[0].options.rotatable
+      # nb_packed = packers[0].stat[:nb_packed_boxes]
 
       # Check if there is at least one Packer with zero unplaced_boxes.
-      packers_with_zero_left = packers.select { |packer| packer.gstat[:nb_unplaced_boxes] == 0 }
+      packers_with_zero_left = packers.select { |p| p.gstat[:nb_unplaced_boxes] == 0 }
       dbg("packers with zero left = #{packers_with_zero_left.size}")
 
       # If that is the case, keep only Packers that did manage to pack all Boxes.
       packers = packers_with_zero_left unless packers_with_zero_left.empty?
+      print_intermediate_packers(packers)
 
       # L_measure is a measure that uniquely identifies the shape of
-      # a packing if it is not perfectly compact, i.e. = 0. Select unique
-      # l_measure Packers, sort best_packers by ascending l_measure.
-      # If nb of packed boxes is less than 3, then l_measure is not a good
-      # indicator because it privileges packings with less boxes packed.
-      if stacking_pref == STACKING_NONE && nb_packed <= 3
-        packers_group = packers.group_by { |p| p.stat[:l_measure] }
-      else
-        packers_group = packers.group_by { |p| -p.stat[:used_area] }
-        # we are missing some better packings when considering the l_measure
-        # so reverting to used_area until resolved!
-        # packers_group = packers.group_by { |p| p.stat[:l_measure] }
-      end
-
-      # In each group of packers, select the best one
-      packers_group.keys.sort.each_with_index do |k, i|
-        b = packers_group[k].min_by { |p| [p.stat[:l_measure], p.stat[:length_cuts], -p.stat[:largest_leftover_area]] }
-        b.stat[:rank] = i + 1
-        best_packers << b
-      end
+      # a packing if it is not perfectly compact, i.e. = 0.
+      best_packers = [
+        packers.min_by { |p| p.stat[:l_measure] },
+        packers.min_by { |p| p.stat[:nb_cuts] },
+        packers.min_by { |p| p.stat[:nb_leftovers] },
+        packers.max_by { |p| p.stat[:efficiency] },
+        packers.max_by { |p| p.stat[:bottA] }
+      ]
 
       dbg("best packers = #{best_packers.size}")
-      print_intermediate_packers(best_packers)
 
       # Select best Packers for this level/Bin using the following unweighted criteria.
       # Try to maximize the used area, i.e. area of packed Boxes. This does minimize at the
       # same time the area of unused Boxes. It is equal to efficiency within a group
       # of the same l_measure.
 
-      update_rank_per_bin(best_packers, :used_area, false)
+      update_rank_per_bin(best_packers, :l_measure, ascending=true)
+      update_rank_per_bin(best_packers, :nb_leftovers, ascending=true)
+      update_rank_per_bin(best_packers, :efficiency, ascending=false)
+      update_rank_per_bin(best_packers, :bottA, ascending=false)
+
       case stacking_pref
       when STACKING_LENGTH
-        update_rank_per_bin(best_packers, :nb_h_through_cuts, false)
-        update_rank_per_bin(best_packers, :nb_v_through_cuts, false) if rotatable
-        update_rank_per_bin(best_packers, :h_together, false)
+        update_rank_per_bin(best_packers, :nb_h_through_cuts, ascending=false)
+        update_rank_per_bin(best_packers, :nb_v_through_cuts, ascending=false)
+        update_rank_per_bin(best_packers, :h_together, ascending=false)
       when STACKING_WIDTH
-        update_rank_per_bin(best_packers, :nb_v_through_cuts, false)
-        update_rank_per_bin(best_packers, :nb_h_through_cuts, false) if rotatable
-        update_rank_per_bin(best_packers, :v_together, false)
+        update_rank_per_bin(best_packers, :nb_v_through_cuts, ascending=false)
+        update_rank_per_bin(best_packers, :nb_h_through_cuts, false)
+        update_rank_per_bin(best_packers, :v_together, ascending=false)
       when STACKING_ALL
-        update_rank_per_bin(best_packers, :v_together, false)
-        update_rank_per_bin(best_packers, :h_together, false)
-        update_rank_per_bin(best_packers, :nb_h_through_cuts, false)
-        update_rank_per_bin(best_packers, :nb_v_through_cuts, false)
+        update_rank_per_bin(best_packers, :v_together, ascending=false)
+        update_rank_per_bin(best_packers, :h_together, ascending=false)
+        update_rank_per_bin(best_packers, :nb_h_through_cuts, ascending=false)
+        update_rank_per_bin(best_packers, :nb_v_through_cuts, ascending=false)
       else # same as STACKING_NONE
-        update_rank_per_bin(best_packers, :nb_h_through_cuts, false)
-        update_rank_per_bin(best_packers, :nb_v_through_cuts, false)
+        update_rank_per_bin(best_packers, :nb_h_through_cuts, ascending=false)
+        update_rank_per_bin(best_packers, :nb_v_through_cuts, ascending=false)
       end
 
       # Return a list of possible candidates for the next Bin to pack.
       best_packers.sort_by! { |packer| packer.stat[:rank] }
-      best_packers = best_packers.slice(0, @nb_best_selection)
-      print_intermediate_packers(best_packers)
-      best_packers
+      best_packers.slice(0, @nb_best_selection)
     end
 
     #
@@ -535,7 +525,7 @@ module Ladb::OpenCutList::BinPacking2D
             packer.add_bin(Bin.new(bin.length, bin.width, bin.type, options, bin.index))
           end
           @boxes.each do |box|
-            packer.add_box(Box.new(box.length, box.width, box.rotatable, box.data))
+            packer.add_box(Box.new(box.length, box.width, box.rotatable, box.cid, box.data))
           end
         else
           # The second level packer will retrieve unplaced boxes and unused bins
