@@ -250,8 +250,8 @@
             var $imgTexture = $('#ladb_materials_img_texture', $modal);
             var $spanTextureWidth = $('#ladb_materials_span_texture_width', $modal);
             var $spanTextureHeight = $('#ladb_materials_span_texture_height', $modal);
-            var $btnTextureRotateLeft = $('#ladb_materials_btn_texture_rotate_left', $modal);
             var $btnTextureRotateRight = $('#ladb_materials_btn_texture_rotate_right', $modal);
+            var $btnTextureRotateLeft = $('#ladb_materials_btn_texture_rotate_left', $modal);
             var $btnTextureColorized = $('#ladb_materials_btn_texture_colorized', $modal);
             var $btnTextureLoad = $('#ladb_materials_btn_texture_load', $modal);
             var $inputTextureWidth = $('#ladb_materials_input_texture_width', $modal);
@@ -363,12 +363,12 @@
             });
 
             // Bind buttons
-            $btnTextureRotateLeft.on('click', function () {
-                fnRotateTexture(-90);
-                this.blur();
-            });
             $btnTextureRotateRight.on('click', function () {
                 fnRotateTexture(90);
+                this.blur();
+            });
+            $btnTextureRotateLeft.on('click', function () {
+                fnRotateTexture(-90);
                 this.blur();
             });
             $btnTextureColorized.on('click', function () {

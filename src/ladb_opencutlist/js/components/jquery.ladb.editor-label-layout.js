@@ -368,18 +368,6 @@
             })
         ;
 
-        var $btnRotateLeft = $('<button class="btn btn-default"><i class="ladb-opencutlist-icon-rotate-left"></i></button>');
-        $btnRotateLeft
-            .on('click', function () {
-                if (elementDef.rotation === undefined) {
-                    elementDef.rotation = 0;
-                }
-                elementDef.rotation = (elementDef.rotation - 90) % 360;
-                svgContentGroup.setAttributeNS(null, 'transform', 'rotate(' + elementDef.rotation + ')');
-                this.blur();
-            })
-        ;
-
         var $btnRotateRight = $('<button class="btn btn-default"><i class="ladb-opencutlist-icon-rotate-right"></i></button>');
         $btnRotateRight
             .on('click', function () {
@@ -392,12 +380,24 @@
             })
         ;
 
+        var $btnRotateLeft = $('<button class="btn btn-default"><i class="ladb-opencutlist-icon-rotate-left"></i></button>');
+        $btnRotateLeft
+            .on('click', function () {
+                if (elementDef.rotation === undefined) {
+                    elementDef.rotation = 0;
+                }
+                elementDef.rotation = (elementDef.rotation - 90) % 360;
+                svgContentGroup.setAttributeNS(null, 'transform', 'rotate(' + elementDef.rotation + ')');
+                this.blur();
+            })
+        ;
+
         this.$btnContainer
             .append($btnRemove)
             .append('<div style="display: inline-block; width: 20px;" />')
-            .append($btnRotateLeft)
-            .append('&nbsp;')
             .append($btnRotateRight)
+            .append('&nbsp;')
+            .append($btnRotateLeft)
         ;
 
         // Form

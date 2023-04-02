@@ -41,8 +41,8 @@
                 </div>
                 <div class="text-center">
                     <input id="ladb_materials_input_texture_rotation" type="hidden" value="{{ material.texture_rotation }}"/>
-                    <button id="ladb_materials_btn_texture_rotate_left" class="btn btn-default"><i class="ladb-opencutlist-icon-rotate-left" style="font-size: 120%"></i></button>
                     <button id="ladb_materials_btn_texture_rotate_right" class="btn btn-default"><i class="ladb-opencutlist-icon-rotate-right" style="font-size: 120%"></i></button>
+                    <button id="ladb_materials_btn_texture_rotate_left" class="btn btn-default"><i class="ladb-opencutlist-icon-rotate-left" style="font-size: 120%"></i></button>
                     {% if material.colorized %}
                         <button id="ladb_materials_btn_texture_colorized" class="btn btn-default" data-toggle="tooltip" data-html="true" title="{{ 'tab.materials.tooltip.texture_colorized'|i18next }}"><i class="ladb-opencutlist-icon-plus" style="font-size: 80%;"></i> <i class="ladb-opencutlist-icon-drop" style="color: {{ material.color }}"></i></button>
                     {% endif %}

@@ -46,13 +46,19 @@ module Ladb::OpenCutList
 
     ACTION_NONE = -1
 
+    COLOR_BLACK = Sketchup::Color.new(0, 0, 0).freeze
+    COLOR_WHITE = Sketchup::Color.new(255, 255, 255).freeze
+    COLOR_BRAND = Sketchup::Color.new(247, 127, 0).freeze
+    COLOR_BRAND_DARK = Sketchup::Color.new(62, 59, 51)
+    COLOR_BRAND_LIGHT = Sketchup::Color.new(214, 212, 205)
+
     COLOR_MESSAGE_TEXT_ERROR = Sketchup::Color.new('#d9534f').freeze
     COLOR_MESSAGE_TEXT_WARNING = Sketchup::Color.new('#997404').freeze
     COLOR_MESSAGE_TEXT_SUCCESS = Sketchup::Color.new('#569553').freeze
     COLOR_MESSAGE_BACKGROUND = Sketchup::Color.new(255, 255, 255, 200).freeze
-    COLOR_MESSAGE_BACKGROUND_ERROR = COLOR_MESSAGE_TEXT_ERROR.blend(Sketchup::Color.new('white'), 0.2).freeze
+    COLOR_MESSAGE_BACKGROUND_ERROR = COLOR_MESSAGE_TEXT_ERROR.blend(COLOR_WHITE, 0.2).freeze
     COLOR_MESSAGE_BACKGROUND_WARNING = Sketchup::Color.new('#ffe69c').freeze
-    COLOR_MESSAGE_BACKGROUND_SUCCESS = COLOR_MESSAGE_TEXT_SUCCESS.blend(Sketchup::Color.new('white'), 0.2).freeze
+    COLOR_MESSAGE_BACKGROUND_SUCCESS = COLOR_MESSAGE_TEXT_SUCCESS.blend(COLOR_WHITE, 0.2).freeze
 
     def initialize(quit_on_esc = true, quit_on_undo = false)
       super
@@ -118,13 +124,13 @@ module Ladb::OpenCutList
       actions = Kuix::Panel.new
       actions.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
       actions.layout = Kuix::BorderLayout.new
-      actions.set_style_attribute(:background_color, Sketchup::Color.new(62, 59, 51))
+      actions.set_style_attribute(:background_color, COLOR_BRAND_DARK)
       @top_panel.append(actions)
 
       actions_lbl = Kuix::Label.new
       actions_lbl.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::WEST)
       actions_lbl.padding.set!(0, unit * 4, 0, unit * 4)
-      actions_lbl.set_style_attribute(:color, Sketchup::Color.new(214, 212, 205))
+      actions_lbl.set_style_attribute(:color, COLOR_BRAND_LIGHT)
       actions_lbl.text = Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.title").upcase
       actions_lbl.text_size = unit * 3
       actions_lbl.text_bold = true
@@ -150,17 +156,17 @@ module Ladb::OpenCutList
         actions_btn.layout = Kuix::BorderLayout.new
         actions_btn.border.set!(0, unit / 4, 0, unit / 4)
         actions_btn.min_size.set_all!(unit * 9)
-        actions_btn.set_style_attribute(:border_color, Sketchup::Color.new(62, 59, 51).blend(Sketchup::Color.new('white'), 0.8))
-        actions_btn.set_style_attribute(:border_color, Sketchup::Color.new(214, 212, 205), :hover)
-        actions_btn.set_style_attribute(:border_color, Sketchup::Color.new(247, 127, 0), :selected)
-        actions_btn.set_style_attribute(:background_color, Sketchup::Color.new(62, 59, 51))
-        actions_btn.set_style_attribute(:background_color, Sketchup::Color.new(214, 212, 205), :hover)
-        actions_btn.set_style_attribute(:background_color, Sketchup::Color.new(247, 127, 0), :selected)
+        actions_btn.set_style_attribute(:border_color, COLOR_BRAND_DARK.blend(COLOR_WHITE, 0.8))
+        actions_btn.set_style_attribute(:border_color, COLOR_BRAND_LIGHT, :hover)
+        actions_btn.set_style_attribute(:border_color, COLOR_BRAND, :selected)
+        actions_btn.set_style_attribute(:background_color, COLOR_BRAND_DARK)
+        actions_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
+        actions_btn.set_style_attribute(:background_color, COLOR_BRAND, :selected)
         lbl = actions_btn.append_static_label(Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}"), unit * 3)
         lbl.padding.set!(0, unit * (modifiers.is_a?(Array) ? 1 : 4), 0, unit * 4)
-        lbl.set_style_attribute(:color, Sketchup::Color.new(214, 212, 205))
-        lbl.set_style_attribute(:color, Sketchup::Color.new(62, 59, 51), :hover)
-        lbl.set_style_attribute(:color, Sketchup::Color.new(255, 255, 255), :selected)
+        lbl.set_style_attribute(:color, COLOR_BRAND_LIGHT)
+        lbl.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
+        lbl.set_style_attribute(:color, COLOR_WHITE, :selected)
         actions_btn.data = data
         actions_btn.on(:click) { |button|
           set_root_action(action)
@@ -187,9 +193,9 @@ module Ladb::OpenCutList
             actions_modifier_btn.layout = Kuix::StaticLayout.new
             actions_modifier_btn.border.set_all!(unit / 2)
             actions_modifier_btn.padding.set_all!(unit * 2)
-            actions_modifier_btn.set_style_attribute(:background_color, Sketchup::Color.new(214, 212, 205))
-            actions_modifier_btn.set_style_attribute(:background_color, Sketchup::Color.new('white'), :hover)
-            actions_modifier_btn.set_style_attribute(:background_color, Sketchup::Color.new(247, 127, 0).blend(Sketchup::Color.new('white'), 0.5), :selected)
+            actions_modifier_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT)
+            actions_modifier_btn.set_style_attribute(:background_color, COLOR_WHITE, :hover)
+            actions_modifier_btn.set_style_attribute(:background_color, COLOR_BRAND.blend(COLOR_WHITE, 0.5), :selected)
             actions_modifier_btn.data = { :modifier => modifier }
             actions_modifier_btn.on(:click) { |button|
               set_root_action(action, modifier)
@@ -202,7 +208,7 @@ module Ladb::OpenCutList
               child.text_size = @unit * 3 if child.respond_to?(:text_size=)
               child.min_size.set_all!(@unit * 3)
               child.set_style_attribute(:color, Sketchup::Color.new(0, 0, 0))
-              child.set_style_attribute(:color, Sketchup::Color.new(62, 59, 51), :hover)
+              child.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
               actions_modifier_btn.append(child)
             end
 
@@ -221,12 +227,12 @@ module Ladb::OpenCutList
       help_btn = Kuix::Button.new
       help_btn.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
       help_btn.layout = Kuix::GridLayout.new
-      help_btn.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255))
-      help_btn.set_style_attribute(:background_color, Sketchup::Color.new(214, 212, 205), :hover)
+      help_btn.set_style_attribute(:background_color, COLOR_WHITE)
+      help_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
       lbl = help_btn.append_static_label(Plugin.instance.get_i18n_string("default.help"), unit * 3)
       lbl.min_size.set!(unit * 15, 0)
       lbl.padding.set!(0, unit * 4, 0, unit * 4)
-      lbl.set_style_attribute(:color, Sketchup::Color.new(62, 59, 51))
+      lbl.set_style_attribute(:color, COLOR_BRAND_DARK)
       help_btn.on(:click) { |button|
         Plugin.instance.open_docs_page("tool.smart-#{get_stripped_name}")
       }

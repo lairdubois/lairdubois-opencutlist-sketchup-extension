@@ -29,7 +29,7 @@ module Ladb::OpenCutList
     ].freeze
 
     COLOR_MESH = Sketchup::Color.new(200, 200, 0, 100).freeze # Sketchup::Color.new(247, 127, 0, 100).freeze
-    COLOR_ARROW = Sketchup::Color.new(255, 255, 255).freeze
+    COLOR_ARROW = COLOR_WHITE.freeze
     COLOR_ARROW_AUTO_ORIENTED = Sketchup::Color.new(123, 213, 239, 255).freeze
     COLOR_BOX = Sketchup::Color.new(255, 255, 0).freeze # Sketchup::Color.new(247, 127, 0).freeze
 

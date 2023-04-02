@@ -21,7 +21,7 @@ module Ladb::OpenCutList::Kuix
 
     def self.pattern_from_svg_path(path)
       pattern = []
-      path.scan(Regexp.new('([ML])(\d+(?:\.\d+)*),(\d(?:\.\d+)*)', Regexp::MULTILINE)) do |m|
+      path.scan(Regexp.new('([ML])(\d+(?:\.\d+)*),(\d(?:\.\d+)*)')) do |m|
         if m[0] == 'M' || m[0] == 'L'
           pattern << Point2d.new(m[1].to_f, m[2].to_f)
         end
