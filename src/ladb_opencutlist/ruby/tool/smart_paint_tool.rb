@@ -267,16 +267,19 @@ module Ladb::OpenCutList
       case action
       when ACTION_PAINT_PART
         return super +
+          ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_1') + '.' +
           ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3') + '.'
       when ACTION_PAINT_EDGE
         return super +
+          ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_2') + '.' +
           ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3') + '.'
       when ACTION_PAINT_VENEER
         return super +
+          ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3') + '.' +
           ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3') + '.'
       when ACTION_PICK
         return super +
-          ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_0') + '.'
+          ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_0') + '.'
       end
 
       super
@@ -560,12 +563,24 @@ module Ladb::OpenCutList
     def onKeyDown(key, repeat, flags, view)
       return true if super
       if key == ALT_MODIFIER_KEY
-        if is_action_pick?
-          push_action(ACTION_PAINT_PART)
-        else
+        unless is_action_pick?
           push_action(ACTION_PICK)
+          return true
         end
-        return true
+      elsif key == COPY_MODIFIER_KEY
+        if is_action_paint_part?
+          set_root_action(ACTION_PAINT_EDGE)
+          return true
+        elsif is_action_paint_edge?
+          set_root_action(ACTION_PAINT_VENEER)
+          return true
+        elsif is_action_paint_veneer?
+          set_root_action(ACTION_PICK)
+          return true
+        elsif is_action_pick?
+          set_root_action(ACTION_PAINT_PART)
+          return true
+        end
       elsif key == VK_LEFT
         button = _get_selected_material_button
         if button && button.previous
@@ -602,22 +617,12 @@ module Ladb::OpenCutList
       return true if super
       if after_down
         if key == ALT_MODIFIER_KEY
-          if is_quick
-            if is_action_paint_part?
-              set_root_action(ACTION_PAINT_PART)
-              return true
-            elsif is_action_paint_edge?
-              set_root_action(ACTION_PAINT_EDGE)
-              return true
-            elsif is_action_paint_veneer?
-              set_root_action(ACTION_PAINT_VENEER)
-              return true
-            elsif is_action_pick?
+          if is_action_pick?
+            if is_quick
               set_root_action(ACTION_PICK)
-              return true
+            else
+              pop_action
             end
-          else
-            pop_action
             return true
           end
         elsif key == VK_NUMPAD1 && is_action_modifier_1? && (is_action_paint_edge? || is_action_paint_veneer?)
@@ -823,7 +828,7 @@ module Ladb::OpenCutList
       if @picked_path
         set_status('')
         @picked_path = nil
-        @space.remove_all
+        clear_space
         view.invalidate
       end
     end
@@ -850,9 +855,11 @@ module Ladb::OpenCutList
                 part = _compute_part_from_path(picked_entity_path)
                 if part
 
+                  # Tooltip part name
                   set_message(part.name)
 
-                  @space.remove_all
+                  # Clear Kuix space
+                  clear_space
 
                   if is_action_paint_edge?
 

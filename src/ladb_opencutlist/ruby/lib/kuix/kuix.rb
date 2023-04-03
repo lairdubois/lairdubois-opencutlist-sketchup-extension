@@ -40,8 +40,8 @@ module Ladb::OpenCutList
 
     class KuixTool
 
-      attr_reader :canvas
-      attr_reader :space
+      attr_reader :canvas # 2D drawing
+      attr_reader :space  # 3D drawing
 
       def initialize(quit_on_esc = true, quit_on_undo = false)
 
@@ -71,7 +71,15 @@ module Ladb::OpenCutList
       # -- UI stuff --
 
       def setup_entities(view)
-        # Override and implement startup widgets here
+        # Override and implement startup entities here
+      end
+
+      def clear_canvas
+        @canvas.remove_all
+      end
+
+      def clear_space
+        @space.remove_all
       end
 
       def create_cursor(name, hot_x, hot_y)
