@@ -565,8 +565,8 @@ module Ladb::OpenCutList
       if key == ALT_MODIFIER_KEY
         unless is_action_pick?
           push_action(ACTION_PICK)
-          return true
         end
+        return true
       elsif key == COPY_MODIFIER_KEY
         if is_action_paint_part?
           set_root_action(ACTION_PAINT_EDGE)
