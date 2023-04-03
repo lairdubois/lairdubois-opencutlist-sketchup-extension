@@ -94,7 +94,7 @@ module Ladb::OpenCutList
       @status.layout = Kuix::InlineLayout.new(true, @unit, Kuix::Anchor.new(Kuix::Anchor::CENTER))
       @status.padding.set_all!(@unit * 2)
       @status.visible = false
-      @status.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255, 128))
+      @status.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255, 85))
       @south_panel.append(@status)
 
         @status_lbl_1 = Kuix::Label.new
@@ -135,7 +135,7 @@ module Ladb::OpenCutList
         filters_btn = Kuix::Button.new
         filters_btn.min_size.set_all!(@unit * 8)
         filters_btn.border.set_all!(@unit / 2)
-        filters_btn.set_style_attribute(:background_color, Sketchup::Color.new(220, 220, 220))
+        filters_btn.set_style_attribute(:background_color, COLOR_LIGHT_GREY)
         filters_btn.set_style_attribute(:background_color, color, :active)
         filters_btn.set_style_attribute(:background_color, COLOR_WHITE, :selected)
         filters_btn.set_style_attribute(:background_color, color.blend(COLOR_WHITE, 0.2), :hover)
@@ -755,7 +755,7 @@ module Ladb::OpenCutList
       btn.set_style_attribute(:background_color, COLOR_WHITE)
       btn.set_style_attribute(:background_color, COLOR_WHITE.blend(COLOR_BLACK, 0.7), :active)
       btn.set_style_attribute(:border_color, COLOR_WHITE.blend(COLOR_BLACK, 0.8), :hover)
-      btn.set_style_attribute(:border_color, Sketchup::Color.new(220, 220, 220), :selected)
+      btn.set_style_attribute(:border_color, COLOR_LIGHT_GREY, :selected)
       btn.append_static_label(Plugin.instance.get_i18n_string('tab.cutlist.material_undefined'), @unit * 3)
       btn.data = false  # = No material
       btn.selected = get_current_material.nil?
