@@ -53,6 +53,11 @@ module Ladb::OpenCutList
       layout_path = UI.savepanel(Plugin.instance.get_i18n_string('tab.cutlist.export.title'), @cutlist.dir, _sanitize_filename("#{doc_name}.layout"))
       if layout_path
 
+        # Force "layout" file extension
+        unless layout_path.end_with?('.layout')
+          layout_path = layout_path + '.layout'
+        end
+
         # Start model modification operation
         model.start_operation('OpenCutList - Export to Layout', true, false, true)
 
