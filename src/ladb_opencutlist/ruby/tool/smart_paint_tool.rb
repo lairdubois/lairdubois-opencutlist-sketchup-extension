@@ -124,7 +124,7 @@ module Ladb::OpenCutList
           Plugin.instance.execute_dialog_command_on_tab('materials', 'new_material')
         }
         west.append(west_btn)
-        @open_btn = west_btn
+        @add_btn = west_btn
 
           west_btn_icon = Kuix::Lines2d.new(Kuix::Lines2d.pattern_from_svg_path('M0,0.5L0.5,0.5L0.5,0L0.5,0.5L1,0.5L0.5,0.5L0.5,1'))
           west_btn_icon.layout_data = Kuix::StaticLayoutData.new(0.5, 0, @unit * 10, @unit * 10, Kuix::Anchor.new(Kuix::Anchor::TOP_CENTER))
@@ -152,7 +152,7 @@ module Ladb::OpenCutList
           button.selected = @filters_panel.visible?
         }
         east.append(east_btn)
-        @add_btn = east_btn
+        @open_btn = east_btn
 
           east_btn_icon = Kuix::Lines2d.new(Kuix::Lines2d.pattern_from_svg_path('M0.4,1L0.4,0.5L0.1,0.2L0.1,0L0.9,0L0.9,0.2L0.6,0.5L0.6,0.9L0.4,1'))
           east_btn_icon.layout_data = Kuix::StaticLayoutData.new(0.5, 0, @unit * 10, @unit * 10, Kuix::Anchor.new(Kuix::Anchor::TOP_CENTER))
