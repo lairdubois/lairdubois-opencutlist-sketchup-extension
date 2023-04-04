@@ -255,8 +255,8 @@ module Ladb::OpenCutList::BinPacking2D
             "#{format('%3d', gstat[:rank])}"
         dbg(s)
       end
-      dbg('   packer    packed/unused/inv.   packed/unplac./inv.  #left ' \
-          '  leftoverA  #cuts  #thru tg    ∑Lm       ∑cutL rank')
+      dbg('   packer    packed/unused/inv.   packed/unplac./inv.  #left   ' \
+          'leftoverA  #cuts  #thru tg    ∑Lm       ∑cutL rank')
     end
 
     #
@@ -425,28 +425,28 @@ module Ladb::OpenCutList::BinPacking2D
       # same time the area of unused Boxes. It is equal to efficiency within a group
       # of the same l_measure.
 
-      update_rank_per_bin(best_packers, :l_measure, ascending=true)
-      update_rank_per_bin(best_packers, :nb_leftovers, ascending=true)
-      update_rank_per_bin(best_packers, :efficiency, ascending=false)
-      update_rank_per_bin(best_packers, :bottA, ascending=false)
+      update_rank_per_bin(best_packers, :l_measure, true)
+      update_rank_per_bin(best_packers, :nb_leftovers, true)
+      update_rank_per_bin(best_packers, :efficiency, false)
+      update_rank_per_bin(best_packers, :bottA, false)
 
       case stacking_pref
       when STACKING_LENGTH
-        update_rank_per_bin(best_packers, :nb_h_through_cuts, ascending=false)
-        update_rank_per_bin(best_packers, :nb_v_through_cuts, ascending=false)
-        update_rank_per_bin(best_packers, :h_together, ascending=false)
-      when STACKING_WIDTH
-        update_rank_per_bin(best_packers, :nb_v_through_cuts, ascending=false)
         update_rank_per_bin(best_packers, :nb_h_through_cuts, false)
-        update_rank_per_bin(best_packers, :v_together, ascending=false)
+        update_rank_per_bin(best_packers, :nb_v_through_cuts, false)
+        update_rank_per_bin(best_packers, :h_together, false)
+      when STACKING_WIDTH
+        update_rank_per_bin(best_packers, :nb_v_through_cuts, false)
+        update_rank_per_bin(best_packers, :nb_h_through_cuts, false)
+        update_rank_per_bin(best_packers, :v_together, false)
       when STACKING_ALL
-        update_rank_per_bin(best_packers, :v_together, ascending=false)
-        update_rank_per_bin(best_packers, :h_together, ascending=false)
-        update_rank_per_bin(best_packers, :nb_h_through_cuts, ascending=false)
-        update_rank_per_bin(best_packers, :nb_v_through_cuts, ascending=false)
+        update_rank_per_bin(best_packers, :v_together, false)
+        update_rank_per_bin(best_packers, :h_together, false)
+        update_rank_per_bin(best_packers, :nb_h_through_cuts, false)
+        update_rank_per_bin(best_packers, :nb_v_through_cuts, false)
       else # same as STACKING_NONE
-        update_rank_per_bin(best_packers, :nb_h_through_cuts, ascending=false)
-        update_rank_per_bin(best_packers, :nb_v_through_cuts, ascending=false)
+        update_rank_per_bin(best_packers, :nb_h_through_cuts, false)
+        update_rank_per_bin(best_packers, :nb_v_through_cuts, false)
       end
 
       # Return a list of possible candidates for the next Bin to pack.

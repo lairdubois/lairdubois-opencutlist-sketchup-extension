@@ -241,7 +241,7 @@ module Ladb::OpenCutList::BinPacking2D
     #
     def make_superboxes_length
       # Stack the boxes by decreasing length.
-      @boxes = @boxes.sort_by {|box| [box.length, box.cid] }.reverse!
+      @boxes = @boxes.sort_by { |box| [box.length, box.cid] }.reverse!
 
       sboxes = []
       until @boxes.empty?
@@ -259,7 +259,7 @@ module Ladb::OpenCutList::BinPacking2D
     #
     def make_superboxes_width
       # Stack the boxes by decreasing width.
-      @boxes = @boxes.sort_by {|box| [box.width, box.cid] }.reverse!
+      @boxes = @boxes.sort_by { |box| [box.width, box.cid] }.reverse!
 
       sboxes = []
       until @boxes.empty?
@@ -431,14 +431,12 @@ module Ladb::OpenCutList::BinPacking2D
             #
             if box.is_a?(SuperBox)
               next_box = nil
-              unless @boxes.empty?
-                next_box = @boxes.shift
-              end
+              next_box = @boxes.shift unless @boxes.empty?
               front, sbox = box.reduce
               # Make array of all boxes, remove the ones that are nil
-              bx = [next_box, front, sbox].reject(&:nil?)
+              bx = [next_box, front, sbox].compact
               # Sort the boxes by area increasing
-              bx.sort_by! { |b| b.area }
+              bx.sort_by!(&:area)
               # Push them back onto the stack of boxes
               bx.each do |b|
                 @boxes.unshift(b)
