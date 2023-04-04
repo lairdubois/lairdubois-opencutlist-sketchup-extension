@@ -106,6 +106,74 @@ module Ladb::OpenCutList
         @status_lbl_2.text_size = @unit * 3
         @status.append(@status_lbl_2)
 
+      # Materials panel
+
+      west = Kuix::Panel.new
+      west.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::WEST)
+      west.layout = Kuix::GridLayout.new
+      west.padding.set!(0, @unit / 2, 0, 0)
+      west.set_style_attribute(:background_color, COLOR_BRAND_DARK)
+      @south_panel.append(west)
+
+        west_btn = Kuix::Button.new
+        west_btn.layout = Kuix::StaticLayout.new
+        west_btn.min_size.set!(@unit * 8, @unit * 8)
+        west_btn.set_style_attribute(:background_color, COLOR_BRAND_DARK)
+        west_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
+        west_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :active)
+        west_btn.set_style_attribute(:background_color, COLOR_BRAND, :selected)
+        west_btn.on(:click) { |button|
+          @filters_panel.visible = !@filters_panel.visible?
+          button.selected = @filters_panel.visible?
+        }
+        west.append(west_btn)
+        @open_btn = west_btn
+
+          west_btn_icon = Kuix::Lines2d.new(Kuix::Lines2d.pattern_from_svg_path('M0.4,1L0.4,0.5L0.1,0.2L0.1,0L0.9,0L0.9,0.2L0.6,0.5L0.6,0.9L0.4,1'))
+          west_btn_icon.layout_data = Kuix::StaticLayoutData.new(0.5, 0, @unit * 10, @unit * 10, Kuix::Anchor.new(Kuix::Anchor::TOP_CENTER))
+          west_btn_icon.padding.set_all!(@unit * 2)
+          west_btn_icon.line_width = @unit <= 4 ? 1 : 2
+          west_btn_icon.set_style_attribute(:color, COLOR_BRAND_LIGHT)
+          west_btn_icon.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
+          west_btn_icon.set_style_attribute(:color, COLOR_WHITE, :selected)
+          west_btn.append(west_btn_icon)
+
+      east = Kuix::Panel.new
+      east.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
+      east.layout = Kuix::GridLayout.new
+      east.padding.set!(0, 0, 0, @unit / 2)
+      east.set_style_attribute(:background_color, COLOR_BRAND_DARK)
+      @south_panel.append(east)
+
+        east_btn = Kuix::Button.new
+        east_btn.layout = Kuix::StaticLayout.new
+        east_btn.min_size.set!(@unit * 8, @unit * 8)
+        east_btn.set_style_attribute(:background_color, COLOR_BRAND_DARK)
+        east_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
+        east_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :active)
+        east_btn.on(:click) { |button|
+          Plugin.instance.execute_dialog_command_on_tab('materials', 'new_material')
+        }
+        east.append(east_btn)
+        @add_btn = east_btn
+
+          east_btn_icon = Kuix::Lines2d.new(Kuix::Lines2d.pattern_from_svg_path('M0,0.5L0.5,0.5L0.5,0L0.5,0.5L1,0.5L0.5,0.5L0.5,1'))
+          east_btn_icon.layout_data = Kuix::StaticLayoutData.new(0.5, 0, @unit * 10, @unit * 10, Kuix::Anchor.new(Kuix::Anchor::TOP_CENTER))
+          east_btn_icon.padding.set_all!(@unit * 2)
+          east_btn_icon.line_width = @unit <= 4 ? 1 : 2
+          east_btn_icon.set_style_attribute(:color, COLOR_BRAND_LIGHT)
+          east_btn_icon.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
+          east_btn_icon.set_style_attribute(:color, COLOR_WHITE, :selected)
+          east_btn.append(east_btn_icon)
+
+      # Buttons panel
+
+      @btns = Kuix::Panel.new
+      @btns.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
+      @btns.padding.set!(@unit, 0, @unit, 0)
+      @btns.set_style_attribute(:background_color, COLOR_BRAND_DARK)
+      @south_panel.append(@btns)
+
       # Filters panel
 
       @filters_panel = Kuix::Panel.new
@@ -116,33 +184,35 @@ module Ladb::OpenCutList
       @filters_panel.visible = false
       @south_panel.append(@filters_panel)
 
-        filters_lbl = Kuix::Label.new
-        filters_lbl.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::WEST)
-        filters_lbl.padding.set!(0, @unit * 3, 0, @unit * 3)
-        filters_lbl.text = Plugin.instance.get_i18n_string('tool.smart_paint.filters').upcase
-        filters_lbl.text_size = @unit * 3
-        filters_lbl.text_bold = true
-        @filters_panel.append(filters_lbl)
+      filters_lbl = Kuix::Label.new
+      filters_lbl.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::WEST)
+      filters_lbl.padding.set!(0, @unit * 3, 0, @unit * 3)
+      filters_lbl.text = Plugin.instance.get_i18n_string('tool.smart_paint.filters').upcase
+      filters_lbl.text_size = @unit * 3
+      filters_lbl.text_bold = true
+      @filters_panel.append(filters_lbl)
 
-        filters_btns_panel = Kuix::Panel.new
-        filters_btns_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
-        filters_btns_panel.layout = Kuix::GridLayout.new(COLOR_MATERIAL_TYPES.length,1, @unit, @unit)
-        @filters_panel.append(filters_btns_panel)
+      filters_btns_panel = Kuix::Panel.new
+      filters_btns_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
+      filters_btns_panel.layout = Kuix::GridLayout.new(COLOR_MATERIAL_TYPES.length,1, @unit, @unit)
+      @filters_panel.append(filters_btns_panel)
 
-        @filter_btns = []
-        COLOR_MATERIAL_TYPES.each do |type, color|
+      @filter_btns = []
+      COLOR_MATERIAL_TYPES.each do |type, color|
 
         filters_btn = Kuix::Button.new
-        filters_btn.min_size.set_all!(@unit * 8)
+        filters_btn.min_size.set_all!(@unit * 6)
         filters_btn.border.set_all!(@unit / 2)
         filters_btn.set_style_attribute(:background_color, COLOR_LIGHT_GREY)
         filters_btn.set_style_attribute(:background_color, color, :active)
         filters_btn.set_style_attribute(:background_color, COLOR_WHITE, :selected)
         filters_btn.set_style_attribute(:background_color, color.blend(COLOR_WHITE, 0.2), :hover)
+        filters_btn.set_style_attribute(:background_color, COLOR_DARK_GREY.blend(COLOR_WHITE, 0.1), :disabled)
         filters_btn.set_style_attribute(:border_color, color, :selected)
         filters_btn.selected = @@filters[type]
         filters_btn.data = type
-        filters_btn.append_static_label(Plugin.instance.get_i18n_string("tool.smart_paint.filter_#{type}"), @unit * 3)
+        lbl = filters_btn.append_static_label(Plugin.instance.get_i18n_string("tool.smart_paint.filter_#{type}"), @unit * 3)
+        lbl.set_style_attribute(:color, COLOR_DARK_GREY, :disabled)
         filters_btn.on(:click) { |button|
 
           unless get_enabled_filters_by_action(fetch_action).index(button.data).nil?
@@ -175,69 +245,6 @@ module Ladb::OpenCutList
         @filter_btns.push(filters_btn)
 
       end
-
-      west = Kuix::Panel.new
-      west.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::WEST)
-      west.layout = Kuix::GridLayout.new
-      west.padding.set!(0, @unit / 2, 0, 0)
-      west.set_style_attribute(:background_color, COLOR_BRAND_DARK)
-      @south_panel.append(west)
-
-      west_btn = Kuix::Button.new
-      west_btn.layout = Kuix::StaticLayout.new
-      west_btn.min_size.set!(@unit * 10, @unit * 10)
-      west_btn.set_style_attribute(:background_color, COLOR_BRAND_DARK)
-      west_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
-      west_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :active)
-      west_btn.set_style_attribute(:background_color, COLOR_BRAND, :selected)
-      west_btn.on(:click) { |button|
-        @filters_panel.visible = !@filters_panel.visible?
-        button.selected = @filters_panel.visible?
-      }
-      west.append(west_btn)
-      @open_btn = west_btn
-
-      # west_btn_arrow = Kuix::Lines2d.new(Kuix::Lines2d.pattern_from_svg_path('M0.5,1L0.5,0L0.2,0.3L0.5,0L0.8,0.3'))
-      west_btn_arrow = Kuix::Lines2d.new(Kuix::Lines2d.pattern_from_svg_path('M0.4,1L0.4,0.5L0.1,0.2L0.1,0L0.9,0L0.9,0.2L0.6,0.5L0.6,0.9L0.4,1'))
-      west_btn_arrow.layout_data = Kuix::StaticLayoutData.new(0.5, 0, @unit * 12, @unit * 12, Kuix::Anchor.new(Kuix::Anchor::TOP_CENTER))
-      west_btn_arrow.padding.set_all!(@unit * 3)
-      west_btn_arrow.line_width = @unit <= 4 ? 1 : 2
-      west_btn_arrow.set_style_attribute(:color, COLOR_BRAND_LIGHT)
-      west_btn_arrow.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
-      west_btn_arrow.set_style_attribute(:color, COLOR_WHITE, :selected)
-      west_btn.append(west_btn_arrow)
-
-      east = Kuix::Panel.new
-      east.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
-      east.layout = Kuix::GridLayout.new
-      east.padding.set!(0, 0, 0, @unit / 2)
-      east.set_style_attribute(:background_color, COLOR_BRAND_DARK)
-      @south_panel.append(east)
-
-        east_btn = Kuix::Button.new
-        east_btn.layout = Kuix::StaticLayout.new
-        east_btn.min_size.set!(@unit * 10, @unit * 10)
-        east_btn.set_style_attribute(:background_color, COLOR_BRAND_DARK)
-        east_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
-        east_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :active)
-        lbl = east_btn.append_static_label('+', @unit * 5)
-        lbl.layout_data = Kuix::StaticLayoutData.new(0.5, 0, @unit * 12, @unit * 12, Kuix::Anchor.new(Kuix::Anchor::TOP_CENTER))
-        lbl.set_style_attribute(:color, COLOR_BRAND_LIGHT)
-        lbl.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
-        lbl.set_style_attribute(:color, COLOR_WHITE, :selected)
-        east_btn.on(:click) { |button|
-          Plugin.instance.execute_dialog_command_on_tab('materials', 'new_material')
-        }
-        east.append(east_btn)
-        @add_btn = east_btn
-
-      # Buttons panel
-
-      @btns = Kuix::Panel.new
-      @btns.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
-      @btns.padding.set!(@unit, 0, @unit, 0)
-      @btns.set_style_attribute(:background_color, COLOR_BRAND_DARK)
-      @south_panel.append(@btns)
 
     end
 
@@ -465,30 +472,35 @@ module Ladb::OpenCutList
 
     end
 
-    def set_filters(value = true)
+    def set_filters(value = true, property = :selected)
 
       @@filters.keys.each do |type|
-        set_filter_by_type(type, value)
+        set_filter_by_type(type, value, property)
       end
 
     end
 
-    def set_filter_by_type(type, value)
+    def set_filter_by_type(type, value, property = :selected)
 
-      @@filters[type] = value
+      @@filters[type] = value if property == :selected
 
       if @filter_btns
         @filter_btns.each { |button|
           if button.data == type
-            button.selected = value
+            case property
+            when :selected
+              button.selected = value
+            when :disabled
+              button.disabled = value
+            end
           end
         }
       end
 
     end
 
-    def toggle_filter_by_type(type)
-      set_filter_by_type(type, !@@filters[type])
+    def toggle_filter_by_type(type, property = :selected)
+      set_filter_by_type(type, !@@filters[type], property)
     end
 
     def set_current_material(material, update_buttons = false)
@@ -549,8 +561,12 @@ module Ladb::OpenCutList
         @south_panel.visible = true
 
         # Auto filter
-        set_filters(false)
-        get_enabled_filters_by_action(action).each { |type| set_filter_by_type(type, true) }
+        set_filters(false, :selected)
+        set_filters(true, :disabled)
+        get_enabled_filters_by_action(action).each do |type|
+          set_filter_by_type(type, true, :selected)
+          set_filter_by_type(type, false, :disabled)
+        end
 
         # Re populate material defs & setup corresponding buttons
         _populate_material_defs(Sketchup.active_model)
@@ -750,7 +766,7 @@ module Ladb::OpenCutList
 
       btn = NoneButton.new
       btn.layout = Kuix::StaticLayout.new
-      btn.min_size.set!(@unit * 20, @unit * 8)
+      btn.min_size.set!(@unit * 20, @unit * 6)
       btn.border.set_all!(@unit)
       btn.set_style_attribute(:background_color, COLOR_WHITE)
       btn.set_style_attribute(:background_color, COLOR_WHITE.blend(COLOR_BLACK, 0.7), :active)
@@ -776,7 +792,7 @@ module Ladb::OpenCutList
 
         btn = Kuix::Button.new
         btn.layout = Kuix::StaticLayout.new
-        btn.min_size.set!(@unit * 20, @unit * 8)
+        btn.min_size.set!(@unit * 20, @unit * 6)
         btn.border.set_all!(@unit)
         btn.set_style_attribute(:background_color, material.color)
         btn.set_style_attribute(:background_color, material.color.blend(material_color_is_dark ? COLOR_WHITE : COLOR_BLACK, 0.7), :active)

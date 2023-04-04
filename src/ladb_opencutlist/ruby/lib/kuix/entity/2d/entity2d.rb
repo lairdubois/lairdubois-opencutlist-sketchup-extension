@@ -223,7 +223,7 @@ module Ladb::OpenCutList::Kuix
     # -- Events --
 
     def onMouseEnter(flags)
-      activate_pseudo_class(:hover, propagable_pseudo_class(:hover)) unless has_pseudo_class?(:selected)
+      activate_pseudo_class(:hover, propagable_pseudo_class(:hover))
     end
 
     def onMouseLeave

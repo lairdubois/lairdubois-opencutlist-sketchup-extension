@@ -2,7 +2,7 @@ module Ladb::OpenCutList::Kuix
 
   class Button < Entity2d
 
-    attr_accessor :selected
+    attr_accessor :selected, :disabled
 
     def initialize(id = nil)
       super(id)
@@ -24,6 +24,18 @@ module Ladb::OpenCutList::Kuix
 
     def selected?
       has_pseudo_class?(:selected)
+    end
+
+    def disabled=(value)
+      if value
+        activate_pseudo_class(:disabled, propagable_pseudo_class(:disabled))
+      else
+        deactivate_pseudo_class(:disabled, propagable_pseudo_class(:disabled))
+      end
+    end
+
+    def disabled?
+      has_pseudo_class?(:disabled)
     end
 
     # --
@@ -65,27 +77,37 @@ module Ladb::OpenCutList::Kuix
     end
 
     def fire(event, *args)
+      return if disabled?
       if @handlers[event]
         @handlers[event].call(self, args)
       end
     end
 
     def onMouseEnter(flags)
+      return if disabled?
       super
       fire(:enter, flags)
     end
 
     def onMouseLeave
+      return if disabled?
       super
       fire(:leave)
     end
 
+    def onMouseDown(flags)
+      return if disabled?
+      super
+    end
+
     def onMouseClick(flags)
+      return if disabled?
       super
       fire(:click, flags)
     end
 
     def onMouseDoubleClick(flags)
+      return if disabled?
       super
       fire(:doubleclick, flags)
     end

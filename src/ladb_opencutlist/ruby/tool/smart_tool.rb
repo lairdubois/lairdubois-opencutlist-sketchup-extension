@@ -52,6 +52,7 @@ module Ladb::OpenCutList
     COLOR_GREEN = Sketchup::Color.new(0, 255, 0).freeze
     COLOR_BLUE = Sketchup::Color.new(0, 0, 255).freeze
     COLOR_LIGHT_GREY = Sketchup::Color.new(220, 220, 220).freeze
+    COLOR_DARK_GREY = Sketchup::Color.new(120, 120, 120).freeze
     COLOR_BRAND = Sketchup::Color.new(247, 127, 0).freeze
     COLOR_BRAND_DARK = Sketchup::Color.new(62, 59, 51)
     COLOR_BRAND_LIGHT = Sketchup::Color.new(214, 212, 205)
