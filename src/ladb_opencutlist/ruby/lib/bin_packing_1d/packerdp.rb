@@ -19,8 +19,8 @@ module Ladb::OpenCutList::BinPacking1D
       # has been found.
       #
       if length < MAX_PARTS
-        boxes_clone = [boxes.clone]
-        boxes_clone.sort_by!(&:length).reverse!
+        boxes_clone = boxes.clone
+        boxes_clone = [boxes_clone.sort_by { |b| [b.length, b.cid] }.reverse!]
       else
         # Try to avoid having only small or only large parts
         # in the slices.

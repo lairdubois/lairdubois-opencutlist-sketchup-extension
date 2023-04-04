@@ -155,8 +155,8 @@ module Ladb::OpenCutList::BinPacking1D
     end
 
     def to_str
-      s = "  nb bins #{@bins.length}\n"\
-          "  overall efficiency #{format('%6.2f', @gstat[:overall_efficiency])} %\n"
+      s = "  nb bins #{@bins.length}\n  " \
+          "overall efficiency #{format('%6.2f', @gstat[:overall_efficiency])} %\n"
 
       @bins.each do |bin|
         s += "#{bin.to_str}\n"
