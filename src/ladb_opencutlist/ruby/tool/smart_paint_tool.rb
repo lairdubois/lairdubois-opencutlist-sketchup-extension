@@ -111,7 +111,6 @@ module Ladb::OpenCutList
       west = Kuix::Panel.new
       west.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::WEST)
       west.layout = Kuix::GridLayout.new
-      west.padding.set!(0, @unit / 2, 0, 0)
       west.set_style_attribute(:background_color, COLOR_BRAND_DARK)
       @south_panel.append(west)
 
@@ -141,7 +140,6 @@ module Ladb::OpenCutList
       east = Kuix::Panel.new
       east.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
       east.layout = Kuix::GridLayout.new
-      east.padding.set!(0, 0, 0, @unit / 2)
       east.set_style_attribute(:background_color, COLOR_BRAND_DARK)
       @south_panel.append(east)
 
@@ -170,7 +168,6 @@ module Ladb::OpenCutList
 
       @btns = Kuix::Panel.new
       @btns.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
-      @btns.padding.set!(@unit, 0, @unit, 0)
       @btns.set_style_attribute(:background_color, COLOR_BRAND_DARK)
       @south_panel.append(@btns)
 
@@ -766,12 +763,13 @@ module Ladb::OpenCutList
 
       btn = NoneButton.new
       btn.layout = Kuix::StaticLayout.new
-      btn.min_size.set!(@unit * 20, @unit * 6)
+      btn.min_size.set!(@unit * 20, @unit * 8)
       btn.border.set_all!(@unit)
       btn.set_style_attribute(:background_color, COLOR_WHITE)
       btn.set_style_attribute(:background_color, COLOR_WHITE.blend(COLOR_BLACK, 0.7), :active)
+      btn.set_style_attribute(:border_color, COLOR_WHITE)
       btn.set_style_attribute(:border_color, COLOR_WHITE.blend(COLOR_BLACK, 0.8), :hover)
-      btn.set_style_attribute(:border_color, COLOR_LIGHT_GREY, :selected)
+      btn.set_style_attribute(:border_color, COLOR_BRAND, :selected)
       btn.append_static_label(Plugin.instance.get_i18n_string('tab.cutlist.material_undefined'), @unit * 3)
       btn.data = false  # = No material
       btn.selected = get_current_material.nil?
@@ -792,12 +790,13 @@ module Ladb::OpenCutList
 
         btn = Kuix::Button.new
         btn.layout = Kuix::StaticLayout.new
-        btn.min_size.set!(@unit * 20, @unit * 6)
+        btn.min_size.set!(@unit * 20, @unit * 8)
         btn.border.set_all!(@unit)
         btn.set_style_attribute(:background_color, material.color)
         btn.set_style_attribute(:background_color, material.color.blend(material_color_is_dark ? COLOR_WHITE : COLOR_BLACK, 0.7), :active)
+        btn.set_style_attribute(:border_color, material.color)
         btn.set_style_attribute(:border_color, material.color.blend(material_color_is_dark ? COLOR_WHITE : COLOR_BLACK, 0.8), :hover)
-        btn.set_style_attribute(:border_color, COLOR_WHITE, :selected)
+        btn.set_style_attribute(:border_color, COLOR_BRAND, :selected)
         btn.append_static_label(material.display_name, @unit * 3, material_color_is_dark ? COLOR_WHITE : nil)
         btn.data = material
         btn.selected = material == get_current_material
@@ -822,7 +821,7 @@ module Ladb::OpenCutList
           btn_overlay.layout_data = Kuix::StaticLayoutData.new(1.0, 0, @unit * 2, @unit * 2, Kuix::Anchor.new(Kuix::Anchor::TOP_RIGHT))
           btn_overlay.set_style_attribute(:background_color, COLOR_MATERIAL_TYPES[material_attributes.type])
           btn_overlay.set_style_attribute(:border_color, COLOR_WHITE)
-          btn_overlay.border.set!(0, 0, @unit / 2, @unit / 2)
+          btn_overlay.border.set_all!(@unit / 4)
           btn_overlay.hittable = false
           btn.append(btn_overlay)
 
