@@ -120,21 +120,18 @@ module Ladb::OpenCutList
         west_btn.set_style_attribute(:background_color, COLOR_BRAND_DARK)
         west_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
         west_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :active)
-        west_btn.set_style_attribute(:background_color, COLOR_BRAND, :selected)
         west_btn.on(:click) { |button|
-          @filters_panel.visible = !@filters_panel.visible?
-          button.selected = @filters_panel.visible?
+          Plugin.instance.execute_dialog_command_on_tab('materials', 'new_material')
         }
         west.append(west_btn)
         @open_btn = west_btn
 
-          west_btn_icon = Kuix::Lines2d.new(Kuix::Lines2d.pattern_from_svg_path('M0.4,1L0.4,0.5L0.1,0.2L0.1,0L0.9,0L0.9,0.2L0.6,0.5L0.6,0.9L0.4,1'))
+          west_btn_icon = Kuix::Lines2d.new(Kuix::Lines2d.pattern_from_svg_path('M0,0.5L0.5,0.5L0.5,0L0.5,0.5L1,0.5L0.5,0.5L0.5,1'))
           west_btn_icon.layout_data = Kuix::StaticLayoutData.new(0.5, 0, @unit * 10, @unit * 10, Kuix::Anchor.new(Kuix::Anchor::TOP_CENTER))
           west_btn_icon.padding.set_all!(@unit * 2)
           west_btn_icon.line_width = @unit <= 4 ? 1 : 2
           west_btn_icon.set_style_attribute(:color, COLOR_BRAND_LIGHT)
           west_btn_icon.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
-          west_btn_icon.set_style_attribute(:color, COLOR_WHITE, :selected)
           west_btn.append(west_btn_icon)
 
       east = Kuix::Panel.new
@@ -149,13 +146,15 @@ module Ladb::OpenCutList
         east_btn.set_style_attribute(:background_color, COLOR_BRAND_DARK)
         east_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
         east_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :active)
+        east_btn.set_style_attribute(:background_color, COLOR_BRAND, :selected)
         east_btn.on(:click) { |button|
-          Plugin.instance.execute_dialog_command_on_tab('materials', 'new_material')
+          @filters_panel.visible = !@filters_panel.visible?
+          button.selected = @filters_panel.visible?
         }
         east.append(east_btn)
         @add_btn = east_btn
 
-          east_btn_icon = Kuix::Lines2d.new(Kuix::Lines2d.pattern_from_svg_path('M0,0.5L0.5,0.5L0.5,0L0.5,0.5L1,0.5L0.5,0.5L0.5,1'))
+          east_btn_icon = Kuix::Lines2d.new(Kuix::Lines2d.pattern_from_svg_path('M0.4,1L0.4,0.5L0.1,0.2L0.1,0L0.9,0L0.9,0.2L0.6,0.5L0.6,0.9L0.4,1'))
           east_btn_icon.layout_data = Kuix::StaticLayoutData.new(0.5, 0, @unit * 10, @unit * 10, Kuix::Anchor.new(Kuix::Anchor::TOP_CENTER))
           east_btn_icon.padding.set_all!(@unit * 2)
           east_btn_icon.line_width = @unit <= 4 ? 1 : 2
