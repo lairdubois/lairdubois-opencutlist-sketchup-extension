@@ -769,7 +769,7 @@ module Ladb::OpenCutList
       btn.set_style_attribute(:border_color, COLOR_WHITE)
       btn.set_style_attribute(:border_color, COLOR_WHITE.blend(COLOR_BLACK, 0.8), :hover)
       btn.set_style_attribute(:border_color, COLOR_BRAND, :selected)
-      btn.append_static_label(Plugin.instance.get_i18n_string('tab.cutlist.material_undefined'), @unit * 3)
+      btn.append_static_label(Plugin.instance.get_i18n_string('tool.smart_paint.default_material'), @unit * 3)
       btn.data = false  # = No material
       btn.selected = get_current_material.nil?
       btn.on(:click) { |button|

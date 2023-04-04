@@ -1344,6 +1344,7 @@ tool:
     zoom_extents: Zoom étendu
   smart_paint:
     title: Colorier
+    default_material: Sans matière
     filters: Filtres
     filter_0: Sans type
     filter_1: $t(tab.materials.type_1)
@@ -1367,8 +1368,8 @@ tool:
       wrong_material_type: La pièce ciblée doit être du type '{{ type }}'.
   smart_axes:
     title: Orienter
-    status_toggle_clockwise: Inverser le sens de rotation
-    status_toggle_depth: Pièces en arrière plan
+    toggle_clockwise: Inverser le sens de rotation
+    toggle_depth: Pièces en arrière plan
     action_0: Permuter Longueur ↔ Largeur
     action_0_status: Cliquez sur une pièce pour permuter sa Longueur avec sa Largeur
     action_1: Permuter Parement ↔ Contreparement
