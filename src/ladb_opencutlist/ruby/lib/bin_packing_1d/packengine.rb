@@ -58,11 +58,11 @@ module Ladb::OpenCutList::BinPacking1D
     #
     # Add a Box to be packed into Bins.
     #
-    def add_box(length, data = nil)
+    def add_box(length, cid = nil, data = nil)
       if length <= 0
         @warnings << WARNING_ILLEGAL_SIZED_BOX if length <= 0
       else
-        @boxes << Box.new(length, data)
+        @boxes << Box.new(length, cid, data)
       end
     end
 
@@ -115,14 +115,14 @@ module Ladb::OpenCutList::BinPacking1D
         gstat = packer.gstat
         next if gstat.nil?
 
-        s = "#{format('%2d', gstat[:algorithm])} "\
+        s = "#{format('%2d', gstat[:algorithm])} " \
             "#{format('%10.2f', gstat[:overall_efficiency])} " \
             "#{format('%11.2f', gstat[:largest_leftover])} " \
-            "#{format('%6d', gstat[:nb_unplaced_boxes])} " \
-            "#{format('%6d', gstat[:nb_packed_bins])} "
+            "#{format('%6d', gstat[:nb_packed_bins])} " \
+            "#{format('%6d', gstat[:nb_unplaced_boxes])} "
         dbg(s)
       end
-      dbg(' alg.    eff.       leftL      #bins  #unplaced_boxes')
+      dbg(' alg.    eff.       Lleft      #bins  #unplaced_boxes')
     end
 
     # Sets the global start time.
@@ -213,6 +213,7 @@ module Ladb::OpenCutList::BinPacking1D
                 else
                   packers_with_zero_left
                 end
+      print_packers(packers)
       packers.min_by { |packer| packer.gstat[:nb_packed_bins] }
     end
 

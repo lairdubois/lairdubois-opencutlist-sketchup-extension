@@ -43,11 +43,11 @@ module Ladb::OpenCutList::BinPacking2D
       @data = data
       # Component id (cid) is used to keep boxes together
       # that have identical dimensions, but different definitions.
-      if cid.nil?
-        @cid = 1
-      else
-        @cid = cid
-      end
+      @cid = if cid.nil?
+               1
+             else
+               cid
+             end
     end
 
     #

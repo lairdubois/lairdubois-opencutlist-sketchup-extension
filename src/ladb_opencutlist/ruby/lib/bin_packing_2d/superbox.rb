@@ -172,8 +172,8 @@ module Ladb::OpenCutList::BinPacking2D
     # Debugging!
     #
     def to_str
-      "superbox shape=#{@shape}, x=#{@x}, y=#{@y}, length=#{@length}," \
-        " width=#{@width}, count=#{@sboxes.size}, rotated=#{@rotated}/#{@rotatable}"
+      "superbox shape=#{@shape}, x=#{@x}, y=#{@y}, length=#{@length}, " \
+        "width=#{@width}, count=#{@sboxes.size}, rotated=#{@rotated}/#{@rotatable}"
     end
   end
 end
