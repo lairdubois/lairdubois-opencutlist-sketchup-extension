@@ -103,8 +103,9 @@ module Ladb::OpenCutList
       when ACTION_SWAP_LENGTH_WIDTH
         return super +
           ' | ' + Plugin.instance.get_i18n_string("default.constrain_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.toggle_clockwise') + '.' +
+          ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.toggle_depth') + '.' +
           ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_1') + '.' +
-          ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.toggle_depth') + '.'
+          ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_2') + '.'
       when ACTION_SWAP_FRONT_BACK
         return super +
           ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_2') + '.' +
@@ -291,27 +292,29 @@ module Ladb::OpenCutList
 
     def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
       return true if super
-      if key == VK_TAB && @active_part_entity_path
+      if key == VK_TAB
+        if @active_part_entity_path
 
-        picked_paths = []
-        picked_part_entity_paths = []
-        @pick_helper.count.times do |index|
-          path = @pick_helper.path_at(index)
-          part_entity_path = _get_part_entity_path_from_path(path.clone)
-          unless part_entity_path.nil? || picked_part_entity_paths.include?(part_entity_path)
-            picked_paths << path
-            picked_part_entity_paths << part_entity_path
+          picked_paths = []
+          picked_part_entity_paths = []
+          @pick_helper.count.times do |index|
+            path = @pick_helper.path_at(index)
+            part_entity_path = _get_part_entity_path_from_path(path.clone)
+            unless part_entity_path.nil? || picked_part_entity_paths.include?(part_entity_path)
+              picked_paths << path
+              picked_part_entity_paths << part_entity_path
+            end
           end
+
+          active_index = picked_part_entity_paths.map { |path| path.last }.index(@active_part_entity_path.last)
+          new_index = (active_index + 1) % picked_part_entity_paths.length
+
+          part = _compute_part_from_path(picked_part_entity_paths[new_index])
+          _set_active(picked_part_entity_paths[new_index], part)
+
+          @picked_path = picked_paths[new_index]
+
         end
-
-        active_index = picked_part_entity_paths.map { |path| path.last }.index(@active_part_entity_path.last)
-        new_index = (active_index + 1) % picked_part_entity_paths.length
-
-        part = _compute_part_from_path(picked_part_entity_paths[new_index])
-        _set_active(picked_part_entity_paths[new_index], part)
-
-        @picked_path = picked_paths[new_index]
-
         return true
       elsif after_down
         if key == ALT_MODIFIER_KEY
