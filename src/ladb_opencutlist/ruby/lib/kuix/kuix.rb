@@ -187,6 +187,7 @@ module Ladb::OpenCutList
       end
 
       def onSuspend(view)
+        @key_down_times.clear
         view.invalidate
       end
 

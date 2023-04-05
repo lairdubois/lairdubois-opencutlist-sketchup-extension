@@ -403,6 +403,7 @@ module Ladb::OpenCutList
     end
 
     def onResume(view)
+      super
       set_root_action(fetch_action, fetch_action_modifier(fetch_action))  # Force SU status text
     end
 

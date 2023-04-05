@@ -292,7 +292,7 @@ module Ladb::OpenCutList
 
     def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
       return true if super
-      if key == VK_TAB
+      if key == VK_TAB  # TAB key doesn't generate "onKeyDown" event
         if @active_part_entity_path
 
           picked_paths = []
