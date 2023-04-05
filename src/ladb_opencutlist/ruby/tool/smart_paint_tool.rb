@@ -621,6 +621,9 @@ module Ladb::OpenCutList
         elsif key == VK_NUMPAD4 && is_action_paint_edge?
           push_action_modifier(ACTION_MODIFIER_4)
           return true
+        elsif key == VK_ADD && is_action_part?
+          @add_btn.fire(:click, flags) if @add_btn
+          return true
         end
       end
     end

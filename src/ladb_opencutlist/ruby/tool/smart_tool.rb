@@ -26,6 +26,7 @@ module Ladb::OpenCutList
       VK_NUMPAD7 = 55
       VK_NUMPAD8 = 56
       VK_NUMPAD9 = 57
+      VK_ADD = 43
     else
       VK_NUMPAD0 = 0x60
       VK_NUMPAD1 = 0x61
@@ -37,6 +38,7 @@ module Ladb::OpenCutList
       VK_NUMPAD7 = 0x67
       VK_NUMPAD8 = 0x68
       VK_NUMPAD9 = 0x69
+      VK_ADD = 0x6B
     end
 
     MESSAGE_TYPE_DEFAULT = 0
