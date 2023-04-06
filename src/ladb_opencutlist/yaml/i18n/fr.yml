@@ -1339,9 +1339,12 @@ tab:
       - [Transifex](https://www.transifex.com) pour leur soutien de projet Open Source.
       - [GitBook](https://www.gitbook.com) pour leur soutien de projet Open Source.
 tool:
-  highlight:
+  default:
     transparency: Transparence
     zoom_extents: Zoom étendu
+  highlight:
+    transparency: $(tool.default.transparency)
+    zoom_extents: $(tool.default.zoom_extents)
   smart_paint:
     title: Colorier
     default_material: Sans matière
@@ -1368,7 +1371,6 @@ tool:
       wrong_material_type: La pièce ciblée doit être du type '{{ type }}'.
   smart_axes:
     title: Orienter
-    toggle_clockwise: Inverser le sens de rotation
     toggle_depth: Pièces en arrière plan
     action_0: Permuter Longueur ↔ Largeur
     action_0_status: Cliquez sur une pièce pour permuter sa Longueur avec sa Largeur

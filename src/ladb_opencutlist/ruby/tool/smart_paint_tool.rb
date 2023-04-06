@@ -82,12 +82,14 @@ module Ladb::OpenCutList
     def setup_entities(view)
       super
 
-      @south_panel = Kuix::Panel.new
-      @south_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
-      @south_panel.layout = Kuix::BorderLayout.new
-      @canvas.append(@south_panel)
+      # Materials panel
 
-      # Status panel
+      @materials_panel = Kuix::Panel.new
+      @materials_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
+      @materials_panel.layout = Kuix::BorderLayout.new
+      @canvas.append(@materials_panel)
+
+      # Material Status panel
 
       @status = Kuix::Panel.new
       @status.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
@@ -95,7 +97,7 @@ module Ladb::OpenCutList
       @status.padding.set_all!(@unit * 2)
       @status.visible = false
       @status.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255, 85))
-      @south_panel.append(@status)
+      @materials_panel.append(@status)
 
         @status_lbl_1 = Kuix::Label.new
         @status_lbl_1.text_size = @unit * 3
@@ -106,141 +108,131 @@ module Ladb::OpenCutList
         @status_lbl_2.text_size = @unit * 3
         @status.append(@status_lbl_2)
 
-      # Materials panel
+      # Materials Add button
 
-      west = Kuix::Panel.new
-      west.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::WEST)
-      west.layout = Kuix::GridLayout.new
-      west.set_style_attribute(:background_color, COLOR_BRAND_DARK)
-      @south_panel.append(west)
+      @materials_add_btn = Kuix::Button.new
+      @materials_add_btn.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::WEST)
+      @materials_add_btn.layout = Kuix::StaticLayout.new
+      @materials_add_btn.min_size.set!(@unit * 8, @unit * 8)
+      @materials_add_btn.set_style_attribute(:background_color, COLOR_BRAND_DARK)
+      @materials_add_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
+      @materials_add_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :active)
+      @materials_add_btn.on(:click) { |button|
+        Plugin.instance.execute_dialog_command_on_tab('materials', 'new_material')
+      }
+      @materials_panel.append(@materials_add_btn)
 
-        west_btn = Kuix::Button.new
-        west_btn.layout = Kuix::StaticLayout.new
-        west_btn.min_size.set!(@unit * 8, @unit * 8)
-        west_btn.set_style_attribute(:background_color, COLOR_BRAND_DARK)
-        west_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
-        west_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :active)
-        west_btn.on(:click) { |button|
-          Plugin.instance.execute_dialog_command_on_tab('materials', 'new_material')
-        }
-        west.append(west_btn)
-        @add_btn = west_btn
+        icon = Kuix::Lines2d.new(Kuix::Lines2d.pattern_from_svg_path('M0,0.5L0.5,0.5L0.5,0L0.5,0.5L1,0.5L0.5,0.5L0.5,1'))
+        icon.layout_data = Kuix::StaticLayoutData.new(0.5, 0, @unit * 10, @unit * 10, Kuix::Anchor.new(Kuix::Anchor::TOP_CENTER))
+        icon.padding.set_all!(@unit * 2)
+        icon.line_width = @unit <= 4 ? 1 : 2
+        icon.set_style_attribute(:color, COLOR_BRAND_LIGHT)
+        icon.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
+        @materials_add_btn.append(icon)
 
-          west_btn_icon = Kuix::Lines2d.new(Kuix::Lines2d.pattern_from_svg_path('M0,0.5L0.5,0.5L0.5,0L0.5,0.5L1,0.5L0.5,0.5L0.5,1'))
-          west_btn_icon.layout_data = Kuix::StaticLayoutData.new(0.5, 0, @unit * 10, @unit * 10, Kuix::Anchor.new(Kuix::Anchor::TOP_CENTER))
-          west_btn_icon.padding.set_all!(@unit * 2)
-          west_btn_icon.line_width = @unit <= 4 ? 1 : 2
-          west_btn_icon.set_style_attribute(:color, COLOR_BRAND_LIGHT)
-          west_btn_icon.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
-          west_btn.append(west_btn_icon)
+      # Materials Filters button
 
-      east = Kuix::Panel.new
-      east.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
-      east.layout = Kuix::GridLayout.new
-      east.set_style_attribute(:background_color, COLOR_BRAND_DARK)
-      @south_panel.append(east)
+      @materials_filters_btn = Kuix::Button.new
+      @materials_filters_btn.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
+      @materials_filters_btn.layout = Kuix::StaticLayout.new
+      @materials_filters_btn.min_size.set!(@unit * 8, @unit * 8)
+      @materials_filters_btn.set_style_attribute(:background_color, COLOR_BRAND_DARK)
+      @materials_filters_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
+      @materials_filters_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :active)
+      @materials_filters_btn.set_style_attribute(:background_color, COLOR_BRAND, :selected)
+      @materials_filters_btn.on(:click) { |button|
+        @materials_filters_panel.visible = !@materials_filters_panel.visible?
+        button.selected = @materials_filters_panel.visible?
+      }
+      @materials_panel.append(@materials_filters_btn)
 
-        east_btn = Kuix::Button.new
-        east_btn.layout = Kuix::StaticLayout.new
-        east_btn.min_size.set!(@unit * 8, @unit * 8)
-        east_btn.set_style_attribute(:background_color, COLOR_BRAND_DARK)
-        east_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
-        east_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :active)
-        east_btn.set_style_attribute(:background_color, COLOR_BRAND, :selected)
-        east_btn.on(:click) { |button|
-          @filters_panel.visible = !@filters_panel.visible?
-          button.selected = @filters_panel.visible?
-        }
-        east.append(east_btn)
-        @open_btn = east_btn
+        icon = Kuix::Lines2d.new(Kuix::Lines2d.pattern_from_svg_path('M0.4,1L0.4,0.5L0.1,0.2L0.1,0L0.9,0L0.9,0.2L0.6,0.5L0.6,0.9L0.4,1'))
+        icon.layout_data = Kuix::StaticLayoutData.new(0.5, 0, @unit * 10, @unit * 10, Kuix::Anchor.new(Kuix::Anchor::TOP_CENTER))
+        icon.padding.set_all!(@unit * 2)
+        icon.line_width = @unit <= 4 ? 1 : 2
+        icon.set_style_attribute(:color, COLOR_BRAND_LIGHT)
+        icon.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
+        icon.set_style_attribute(:color, COLOR_WHITE, :selected)
+        @materials_filters_btn.append(icon)
 
-          east_btn_icon = Kuix::Lines2d.new(Kuix::Lines2d.pattern_from_svg_path('M0.4,1L0.4,0.5L0.1,0.2L0.1,0L0.9,0L0.9,0.2L0.6,0.5L0.6,0.9L0.4,1'))
-          east_btn_icon.layout_data = Kuix::StaticLayoutData.new(0.5, 0, @unit * 10, @unit * 10, Kuix::Anchor.new(Kuix::Anchor::TOP_CENTER))
-          east_btn_icon.padding.set_all!(@unit * 2)
-          east_btn_icon.line_width = @unit <= 4 ? 1 : 2
-          east_btn_icon.set_style_attribute(:color, COLOR_BRAND_LIGHT)
-          east_btn_icon.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
-          east_btn_icon.set_style_attribute(:color, COLOR_WHITE, :selected)
-          east_btn.append(east_btn_icon)
+      # Materials Buttons panel
 
-      # Buttons panel
+      @materials_btns_panel = Kuix::Panel.new
+      @materials_btns_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
+      @materials_btns_panel.set_style_attribute(:background_color, COLOR_BRAND_DARK)
+      @materials_panel.append(@materials_btns_panel)
 
-      @btns = Kuix::Panel.new
-      @btns.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
-      @btns.set_style_attribute(:background_color, COLOR_BRAND_DARK)
-      @south_panel.append(@btns)
+      # Materials Filters panel
 
-      # Filters panel
+      @materials_filters_panel = Kuix::Panel.new
+      @materials_filters_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
+      @materials_filters_panel.layout = Kuix::BorderLayout.new
+      @materials_filters_panel.padding.set_all!(@unit * 2)
+      @materials_filters_panel.set_style_attribute(:background_color, COLOR_WHITE)
+      @materials_filters_panel.visible = false
+      @materials_panel.append(@materials_filters_panel)
 
-      @filters_panel = Kuix::Panel.new
-      @filters_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
-      @filters_panel.layout = Kuix::BorderLayout.new
-      @filters_panel.padding.set_all!(@unit * 2)
-      @filters_panel.set_style_attribute(:background_color, COLOR_WHITE)
-      @filters_panel.visible = false
-      @south_panel.append(@filters_panel)
+        lbl = Kuix::Label.new
+        lbl.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::WEST)
+        lbl.padding.set!(0, @unit * 3, 0, @unit * 3)
+        lbl.text = Plugin.instance.get_i18n_string('tool.smart_paint.filters').upcase
+        lbl.text_size = @unit * 3
+        lbl.text_bold = true
+        @materials_filters_panel.append(lbl)
 
-      filters_lbl = Kuix::Label.new
-      filters_lbl.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::WEST)
-      filters_lbl.padding.set!(0, @unit * 3, 0, @unit * 3)
-      filters_lbl.text = Plugin.instance.get_i18n_string('tool.smart_paint.filters').upcase
-      filters_lbl.text_size = @unit * 3
-      filters_lbl.text_bold = true
-      @filters_panel.append(filters_lbl)
+        panel = Kuix::Panel.new
+        panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
+        panel.layout = Kuix::GridLayout.new(COLOR_MATERIAL_TYPES.length,1, @unit, @unit)
+        @materials_filters_panel.append(panel)
 
-      filters_btns_panel = Kuix::Panel.new
-      filters_btns_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
-      filters_btns_panel.layout = Kuix::GridLayout.new(COLOR_MATERIAL_TYPES.length,1, @unit, @unit)
-      @filters_panel.append(filters_btns_panel)
+        @materials_filters_btns = []
+        COLOR_MATERIAL_TYPES.each do |type, color|
 
-      @filter_btns = []
-      COLOR_MATERIAL_TYPES.each do |type, color|
+          btn = Kuix::Button.new
+          btn.min_size.set_all!(@unit * 6)
+          btn.border.set_all!(@unit / 2)
+          btn.set_style_attribute(:background_color, COLOR_LIGHT_GREY)
+          btn.set_style_attribute(:background_color, color, :active)
+          btn.set_style_attribute(:background_color, COLOR_WHITE, :selected)
+          btn.set_style_attribute(:background_color, color.blend(COLOR_WHITE, 0.2), :hover)
+          btn.set_style_attribute(:background_color, COLOR_DARK_GREY.blend(COLOR_WHITE, 0.1), :disabled)
+          btn.set_style_attribute(:border_color, color, :selected)
+          btn.selected = @@filters[type]
+          btn.data = type
+          lbl = btn.append_static_label(Plugin.instance.get_i18n_string("tool.smart_paint.filter_#{type}"), @unit * 3)
+          lbl.set_style_attribute(:color, COLOR_DARK_GREY, :disabled)
+          btn.on(:click) { |button|
 
-        filters_btn = Kuix::Button.new
-        filters_btn.min_size.set_all!(@unit * 6)
-        filters_btn.border.set_all!(@unit / 2)
-        filters_btn.set_style_attribute(:background_color, COLOR_LIGHT_GREY)
-        filters_btn.set_style_attribute(:background_color, color, :active)
-        filters_btn.set_style_attribute(:background_color, COLOR_WHITE, :selected)
-        filters_btn.set_style_attribute(:background_color, color.blend(COLOR_WHITE, 0.2), :hover)
-        filters_btn.set_style_attribute(:background_color, COLOR_DARK_GREY.blend(COLOR_WHITE, 0.1), :disabled)
-        filters_btn.set_style_attribute(:border_color, color, :selected)
-        filters_btn.selected = @@filters[type]
-        filters_btn.data = type
-        lbl = filters_btn.append_static_label(Plugin.instance.get_i18n_string("tool.smart_paint.filter_#{type}"), @unit * 3)
-        lbl.set_style_attribute(:color, COLOR_DARK_GREY, :disabled)
-        filters_btn.on(:click) { |button|
+            unless get_enabled_filters_by_action(fetch_action).index(button.data).nil?
 
-          unless get_enabled_filters_by_action(fetch_action).index(button.data).nil?
+              toggle_filter_by_type(button.data)
 
-            toggle_filter_by_type(button.data)
+              # Re populate material defs & setup corresponding buttons
+              _populate_material_defs(view.model)
+              _setup_material_buttons
 
-            # Re populate material defs & setup corresponding buttons
-            _populate_material_defs(view.model)
-            _setup_material_buttons
+            end
 
-          end
+          }
+          btn.on(:doubleclick) { |button|
 
-        }
-        filters_btn.on(:doubleclick) { |button|
+            unless get_enabled_filters_by_action(fetch_action).index(button.data).nil?
 
-          unless get_enabled_filters_by_action(fetch_action).index(button.data).nil?
+              set_filters(false)
+              set_filter_by_type(button.data, true)
 
-            set_filters(false)
-            set_filter_by_type(button.data, true)
+              # Re populate material defs & setup corresponding buttons
+              _populate_material_defs(view.model)
+              _setup_material_buttons
 
-            # Re populate material defs & setup corresponding buttons
-            _populate_material_defs(view.model)
-            _setup_material_buttons
+            end
 
-          end
+          }
+          panel.append(btn)
 
-        }
-        filters_btns_panel.append(filters_btn)
+          @materials_filters_btns.push(btn)
 
-        @filter_btns.push(filters_btn)
-
-      end
+        end
 
     end
 
@@ -271,15 +263,15 @@ module Ladb::OpenCutList
       when ACTION_PAINT_PART
         return super +
           ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_1') + '.' +
-          ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3') + '.'
+          ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + '* = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3') + '.'
       when ACTION_PAINT_EDGE
         return super +
           ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_2') + '.' +
-          ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3') + '.'
+          ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + '* = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3') + '.'
       when ACTION_PAINT_VENEER
         return super +
           ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3') + '.' +
-          ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3') + '.'
+          ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + '* = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3') + '.'
       when ACTION_PICK
         return super +
           ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_0') + '.'
@@ -480,8 +472,8 @@ module Ladb::OpenCutList
 
       @@filters[type] = value if property == :selected
 
-      if @filter_btns
-        @filter_btns.each { |button|
+      if @materials_filters_btns
+        @materials_filters_btns.each { |button|
           if button.data == type
             case property
             when :selected
@@ -550,11 +542,11 @@ module Ladb::OpenCutList
 
       if is_action_pick?
 
-        @south_panel.visible = false
+        @materials_panel.visible = false
 
       else
 
-        @south_panel.visible = true
+        @materials_panel.visible = true
 
         # Auto filter
         set_filters(false, :selected)
@@ -606,10 +598,10 @@ module Ladb::OpenCutList
           return true
         end
       elsif key == VK_UP
-        @open_btn.fire(:click, flags) if @open_btn
+        @materials_filters_btn.fire(:click, flags) if @materials_filters_btn
         return true
       elsif key == VK_DOWN
-        @open_btn.fire(:click, flags) if @open_btn
+        @materials_filters_btn.fire(:click, flags) if @materials_filters_btn
         return true
       elsif repeat == 1
         if key == VK_NUMPAD1 && (is_action_paint_edge? || is_action_paint_veneer?)
@@ -622,7 +614,7 @@ module Ladb::OpenCutList
           push_action_modifier(ACTION_MODIFIER_4)
           return true
         elsif key == VK_ADD && is_action_part?
-          @add_btn.fire(:click, flags) if @add_btn
+          @materials_add_btn.fire(:click, flags) if @materials_add_btn
           return true
         end
       end
@@ -758,8 +750,8 @@ module Ladb::OpenCutList
 
     def _setup_material_buttons
 
-      @btns.remove_all
-      @btns.layout = Kuix::GridLayout.new([ [ @material_defs.length + 1, 5 ].max, 10 ].min, ((@material_defs.length + 1) / 10.0).ceil)
+      @materials_btns_panel.remove_all
+      @materials_btns_panel.layout = Kuix::GridLayout.new([[@material_defs.length + 1, 5 ].max, 10 ].min, ((@material_defs.length + 1) / 10.0).ceil)
 
       @material_buttons = []
 
@@ -781,7 +773,7 @@ module Ladb::OpenCutList
         set_current_material(false, true)
 
       }
-      @btns.append(btn)
+      @materials_btns_panel.append(btn)
       @material_buttons.push(btn)
 
       @material_defs.each do |material_def|
@@ -814,7 +806,7 @@ module Ladb::OpenCutList
         btn.on(:leave) { |button|
           set_status('')
         }
-        @btns.append(btn)
+        @materials_btns_panel.append(btn)
         @material_buttons.push(btn)
 
         if material_attributes.type > MaterialAttributes::TYPE_UNKNOWN

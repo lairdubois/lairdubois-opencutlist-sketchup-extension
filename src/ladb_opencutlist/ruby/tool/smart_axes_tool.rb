@@ -57,25 +57,23 @@ module Ladb::OpenCutList
     def setup_entities(view)
       super
 
-      unit = get_unit(view)
-
       # Part panel
 
       @part_panel = Kuix::Panel.new
       @part_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
-      @part_panel.layout = Kuix::InlineLayout.new(true, unit * 4, Kuix::Anchor.new(Kuix::Anchor::CENTER))
-      @part_panel.padding.set_all!(unit * 2)
+      @part_panel.layout = Kuix::InlineLayout.new(true, @unit * 4, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+      @part_panel.padding.set_all!(@unit * 2)
       @part_panel.visible = false
       @part_panel.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255, 85))
       @top_panel.append(@part_panel)
 
       @part_panel_lbl_1 = Kuix::Label.new
-      @part_panel_lbl_1.text_size = unit * 4
+      @part_panel_lbl_1.text_size = @unit * 4
       @part_panel_lbl_1.text_bold = true
       @part_panel.append(@part_panel_lbl_1)
 
       @part_panel_lbl_2 = Kuix::Label.new
-      @part_panel_lbl_2.text_size = unit * 3
+      @part_panel_lbl_2.text_size = @unit * 3
       @part_panel.append(@part_panel_lbl_2)
 
     end
@@ -102,18 +100,18 @@ module Ladb::OpenCutList
       case action
       when ACTION_SWAP_LENGTH_WIDTH
         return super +
-          ' | ' + Plugin.instance.get_i18n_string("default.constrain_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.toggle_clockwise') + '.' +
-          ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.toggle_depth') + '.' +
+          ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' + ' + Plugin.instance.get_i18n_string('tool.default.transparency') + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.toggle_depth') + '.' +
           ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_1') + '.' +
-          ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_2') + '.'
+          ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + '* = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_2') + '.'
       when ACTION_SWAP_FRONT_BACK
         return super +
+          ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' + ' + Plugin.instance.get_i18n_string('tool.default.transparency') + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.toggle_depth') + '.' +
           ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_2') + '.' +
-          ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.toggle_depth') + '.'
+          ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + '* = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_2') + '.'
       when ACTION_SWAP_AUTO
         return super +
-          ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_0') + '.' +
-          ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.toggle_depth') + '.'
+          ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' + ' + Plugin.instance.get_i18n_string('tool.default.transparency') + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.toggle_depth') + '.' +
+          ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_0') + '.'
       end
 
       super
@@ -268,10 +266,7 @@ module Ladb::OpenCutList
 
     def onKeyDown(key, repeat, flags, view)
       return true if super
-      if key == CONSTRAIN_MODIFIER_KEY && is_action_swap_length_width?
-        push_action_modifier(is_action_modifier_clockwise? ? ACTION_MODIFIER_ANTICLOCKWIZE : ACTION_MODIFIER_CLOCKWISE)
-        return true
-      elsif key == ALT_MODIFIER_KEY
+      if key == ALT_MODIFIER_KEY
         unless is_action_swap_auto?
           push_action(ACTION_SWAP_AUTO)
         end
@@ -285,6 +280,14 @@ module Ladb::OpenCutList
           return true
         elsif is_action_swap_auto?
           set_root_action(ACTION_SWAP_LENGTH_WIDTH)
+          return true
+        end
+      elsif repeat == 1
+        if key == VK_NUMPAD1 && is_action_swap_length_width?
+          push_action_modifier(ACTION_MODIFIER_CLOCKWISE)
+          return true
+        elsif key == VK_NUMPAD2 && is_action_swap_length_width?
+          push_action_modifier(ACTION_MODIFIER_ANTICLOCKWIZE)
           return true
         end
       end
@@ -326,9 +329,16 @@ module Ladb::OpenCutList
             end
             return true
           end
-        elsif key == CONSTRAIN_MODIFIER_KEY && is_action_swap_length_width?
+        elsif key == VK_NUMPAD1 && is_action_modifier_clockwise? && is_action_swap_length_width?
           if is_quick
-            set_root_action(ACTION_SWAP_LENGTH_WIDTH, fetch_action_modifier(fetch_action))
+            set_root_action(ACTION_SWAP_LENGTH_WIDTH, ACTION_MODIFIER_CLOCKWISE)
+          else
+            pop_action_modifier
+          end
+          return true
+        elsif key == VK_NUMPAD2 && is_action_modifier_anticlockwise? && is_action_swap_length_width?
+          if is_quick
+            set_root_action(ACTION_SWAP_LENGTH_WIDTH, ACTION_MODIFIER_ANTICLOCKWIZE)
           else
             pop_action_modifier
           end
