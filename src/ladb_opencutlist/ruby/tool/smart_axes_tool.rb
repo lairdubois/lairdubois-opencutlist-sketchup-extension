@@ -52,43 +52,6 @@ module Ladb::OpenCutList
       'axes'
     end
 
-    # -- UI stuff --
-
-    def setup_entities(view)
-      super
-
-      # Part panel
-
-      @part_panel = Kuix::Panel.new
-      @part_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
-      @part_panel.layout = Kuix::InlineLayout.new(true, @unit * 4, Kuix::Anchor.new(Kuix::Anchor::CENTER))
-      @part_panel.padding.set_all!(@unit * 2)
-      @part_panel.visible = false
-      @part_panel.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255, 85))
-      @top_panel.append(@part_panel)
-
-      @part_panel_lbl_1 = Kuix::Label.new
-      @part_panel_lbl_1.text_size = @unit * 4
-      @part_panel_lbl_1.text_bold = true
-      @part_panel.append(@part_panel_lbl_1)
-
-      @part_panel_lbl_2 = Kuix::Label.new
-      @part_panel_lbl_2.text_size = @unit * 3
-      @part_panel.append(@part_panel_lbl_2)
-
-    end
-
-    # -- Setters --
-
-    def set_part(text_1, text_2 = '')
-      return unless @part_panel && text_1.is_a?(String) && text_2.is_a?(String)
-      @part_panel_lbl_1.text = text_1
-      @part_panel_lbl_1.visible = !text_1.empty?
-      @part_panel_lbl_2.text = text_2
-      @part_panel_lbl_2.visible = !text_2.empty?
-      @part_panel.visible = @part_panel_lbl_1.visible? || @part_panel_lbl_2.visible?
-    end
-
     # -- Actions --
 
     def get_action_defs  # Array<{ :action => THE_ACTION, :modifiers => [ MODIFIER_1, MODIFIER_2, ... ] }>
@@ -384,20 +347,13 @@ module Ladb::OpenCutList
 
       if part
 
-        # Display part infos
+        # Show part infos
 
         infos = [ "#{part.length} x #{part.width} x #{part.thickness}" ]
         infos << "#{part.material_name} (#{Plugin.instance.get_i18n_string("tab.materials.type_#{part.group.material_type}")})" unless part.material_name.empty?
         infos << ">|<" if part.flipped
 
-        text_1 = part.name
-        text_2 = infos.join(' | ')
-
-        @part_panel_lbl_1.text = text_1
-        @part_panel_lbl_1.visible = true
-        @part_panel_lbl_2.text = text_2
-        @part_panel_lbl_2.visible = true
-        @part_panel.visible = true
+        show_part_infos(part.name, infos.join(' | '))
 
         # Create drawing helpers
 
@@ -478,24 +434,24 @@ module Ladb::OpenCutList
         # Status
 
         if part.group.material_type == MaterialAttributes::TYPE_HARDWARE
-          set_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_orientable')}", MESSAGE_TYPE_ERROR)
+          show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_orientable')}", MESSAGE_TYPE_ERROR)
           return
         end
 
         if is_action_swap_auto? && !part.auto_oriented && part.def.size.length >= part.def.size.width && part.def.size.width >= part.def.size.thickness
-          set_message("✔ #{Plugin.instance.get_i18n_string('tool.smart_axes.success.part_oriented')}", MESSAGE_TYPE_SUCCESS)
+          show_message("✔ #{Plugin.instance.get_i18n_string('tool.smart_axes.success.part_oriented')}", MESSAGE_TYPE_SUCCESS)
           return
         end
 
         definition = Sketchup.active_model.definitions[part.def.definition_id]
         if definition && definition.count_used_instances > 1
-          set_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
+          show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
         else
-          set_message('')
+          hide_message
         end
 
       else
-        @part_panel.visible = false
+        hide_part_infos
         clear_space
       end
 
@@ -539,13 +495,13 @@ module Ladb::OpenCutList
                   _set_active(picked_entity_path, part)
                 else
                   _reset(view)
-                  set_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
+                  show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
                 end
                 return
 
               elsif picked_entity_path
                 _reset(view)
-                set_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
+                show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
                 return
               end
 

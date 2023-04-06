@@ -89,24 +89,24 @@ module Ladb::OpenCutList
       @materials_panel.layout = Kuix::BorderLayout.new
       @canvas.append(@materials_panel)
 
-      # Material Status panel
+      # Material Infos panel
 
-      @status = Kuix::Panel.new
-      @status.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
-      @status.layout = Kuix::InlineLayout.new(true, @unit, Kuix::Anchor.new(Kuix::Anchor::CENTER))
-      @status.padding.set_all!(@unit * 2)
-      @status.visible = false
-      @status.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255, 85))
-      @materials_panel.append(@status)
+      @material_infos_panel = Kuix::Panel.new
+      @material_infos_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
+      @material_infos_panel.layout = Kuix::InlineLayout.new(true, @unit, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+      @material_infos_panel.padding.set_all!(@unit * 2)
+      @material_infos_panel.visible = false
+      @material_infos_panel.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255, 85))
+      @materials_panel.append(@material_infos_panel)
 
-        @status_lbl_1 = Kuix::Label.new
-        @status_lbl_1.text_size = @unit * 3
-        @status_lbl_1.text_bold = true
-        @status.append(@status_lbl_1)
+        @material_infos_lbl_1 = Kuix::Label.new
+        @material_infos_lbl_1.text_size = @unit * 3
+        @material_infos_lbl_1.text_bold = true
+        @material_infos_panel.append(@material_infos_lbl_1)
 
-        @status_lbl_2 = Kuix::Label.new
-        @status_lbl_2.text_size = @unit * 3
-        @status.append(@status_lbl_2)
+        @material_infos_lbl_2 = Kuix::Label.new
+        @material_infos_lbl_2.text_size = @unit * 3
+        @material_infos_panel.append(@material_infos_lbl_2)
 
       # Materials Add button
 
@@ -236,19 +236,24 @@ module Ladb::OpenCutList
 
     end
 
-    # -- Setters --
+    # -- Show --
 
-    def set_status(text_1, text_2 = '')
-      return unless @status && text_1.is_a?(String) && text_2.is_a?(String)
-      @status_lbl_1.text = text_1
-      @status_lbl_1.visible = !text_1.empty?
-      @status_lbl_2.text = text_2
-      @status_lbl_2.visible = !text_2.empty?
-      @status.visible = @status_lbl_1.visible? || @status_lbl_2.visible?
+    def show_material_infos(material, material_attributes)
+      return if material.nil? || material_attributes.nil?
+
+      text_1 = material.display_name
+      text_2 = material_attributes.type > MaterialAttributes::TYPE_UNKNOWN ? "(#{Plugin.instance.get_i18n_string("tab.materials.type_#{material_attributes.type}")})" : ''
+
+      return unless @material_infos_panel && text_1.is_a?(String) && text_2.is_a?(String)
+      @material_infos_lbl_1.text = text_1
+      @material_infos_lbl_1.visible = !text_1.empty?
+      @material_infos_lbl_2.text = text_2
+      @material_infos_lbl_2.visible = !text_2.empty?
+      @material_infos_panel.visible = @material_infos_lbl_1.visible? || @material_infos_lbl_2.visible?
     end
 
-    def set_status_material(material, material_attributes)
-      set_status(material.display_name, material_attributes.type > 0 ? "(#{Plugin.instance.get_i18n_string("tab.materials.type_#{material_attributes.type}")})" : '')
+    def hide_material_infos
+      @material_infos_panel.visible = false
     end
 
     # -- Actions --
@@ -801,10 +806,10 @@ module Ladb::OpenCutList
 
         }
         btn.on(:enter) { |button|
-          set_status_material(material, material_attributes)
+          show_material_infos(material, material_attributes)
         }
         btn.on(:leave) { |button|
-          set_status('')
+          hide_material_infos
         }
         @materials_btns_panel.append(btn)
         @material_buttons.push(btn)
@@ -835,7 +840,8 @@ module Ladb::OpenCutList
     def _reset(view)
       super
       if @picked_path
-        set_status('')
+        hide_part_infos
+        hide_material_infos
         @picked_path = nil
         clear_space
         view.invalidate
@@ -864,8 +870,8 @@ module Ladb::OpenCutList
                 part = _compute_part_from_path(picked_entity_path)
                 if part
 
-                  # Tooltip part name
-                  set_message(part.name)
+                  # Show part infos
+                  show_part_infos(part.name, "#{part.length} x #{part.width} x #{part.thickness}")
 
                   # Clear Kuix space
                   clear_space
@@ -874,7 +880,7 @@ module Ladb::OpenCutList
 
                     if part.group.material_type != MaterialAttributes::TYPE_SHEET_GOOD
                       _reset(view)
-                      set_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.wrong_material_type', { :type => Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_SHEET_GOOD}") })}", MESSAGE_TYPE_ERROR)
+                      show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.wrong_material_type', { :type => Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_SHEET_GOOD}") })}", MESSAGE_TYPE_ERROR)
                     else
 
                       model = Sketchup.active_model
@@ -916,7 +922,7 @@ module Ladb::OpenCutList
                       entities = entities.compact.flatten
 
                       if entities.empty?
-                        set_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_edge')}", MESSAGE_TYPE_ERROR)
+                        show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_edge')}", MESSAGE_TYPE_ERROR)
                       else
 
                         current_material = get_current_material
@@ -940,9 +946,9 @@ module Ladb::OpenCutList
 
                         definition = Sketchup.active_model.definitions[part.def.definition_id]
                         if definition && definition.count_used_instances > 1
-                          set_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
+                          show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
                         else
-                          set_message('')
+                          show_message('')
                         end
 
                         if event == :l_button_up
@@ -957,7 +963,7 @@ module Ladb::OpenCutList
 
                     if part.group.material_type != MaterialAttributes::TYPE_SHEET_GOOD
                       _reset(view)
-                      set_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.wrong_material_type', { :type => Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_SHEET_GOOD}") })}", MESSAGE_TYPE_ERROR)
+                      show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.wrong_material_type', { :type => Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_SHEET_GOOD}") })}", MESSAGE_TYPE_ERROR)
                     else
 
                       model = Sketchup.active_model
@@ -991,7 +997,7 @@ module Ladb::OpenCutList
                       entities = entities.compact.flatten
 
                       if entities.empty?
-                        set_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_veneer')}", MESSAGE_TYPE_ERROR)
+                        show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_veneer')}", MESSAGE_TYPE_ERROR)
                       else
 
                         current_material = get_current_material
@@ -1015,9 +1021,9 @@ module Ladb::OpenCutList
 
                         definition = Sketchup.active_model.definitions[part.def.definition_id]
                         if definition && definition.count_used_instances > 1
-                          set_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
+                          show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
                         else
-                          set_message('')
+                          show_message('')
                         end
 
                         if event == :l_button_up
@@ -1048,13 +1054,13 @@ module Ladb::OpenCutList
 
                 else
                   _reset(view)
-                  set_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
+                  show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
                 end
                 return
 
               elsif picked_entity_path
                 _reset(view)
-                set_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
+                show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
                 return
               end
 
@@ -1066,7 +1072,7 @@ module Ladb::OpenCutList
 
                   # Display material infos
                   if material
-                    set_message("#{material.name} (#{Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes.new(material).type}")})")
+                    show_message("#{material.name} (#{Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes.new(material).type}")})")
                   end
 
                 elsif event == :l_button_up
@@ -1088,14 +1094,9 @@ module Ladb::OpenCutList
                 end
               else
                 if event == :move
-
-                  # Reset status
-                  set_status('')
-
+                  hide_material_infos
                 elsif event == :l_button_up
-
                   UI.beep # Feedback for "no material"
-
                 end
               end
 

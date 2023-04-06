@@ -111,45 +111,30 @@ module Ladb::OpenCutList
       @top_panel.layout = Kuix::BorderLayout.new
       @canvas.append(@top_panel)
 
-      # Status panel
+        # Actions panel
 
-      @message_panel = Kuix::Panel.new
-      @message_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
-      @message_panel.layout = Kuix::InlineLayout.new(false, unit, Kuix::Anchor.new(Kuix::Anchor::CENTER))
-      @message_panel.padding.set_all!(unit * 2)
-      @message_panel.visible = false
-      @top_panel.append(@message_panel)
+        actions = Kuix::Panel.new
+        actions.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
+        actions.layout = Kuix::BorderLayout.new
+        actions.set_style_attribute(:background_color, COLOR_BRAND_DARK)
+        @top_panel.append(actions)
 
-      @message_panel_lbl = Kuix::Label.new
-      @message_panel_lbl.border.set_all!(unit / 4)
-      @message_panel_lbl.padding.set!(unit * 1.5, unit * 2, unit, unit * 2)
-      @message_panel_lbl.text_size = unit * 3
-      @message_panel.append(@message_panel_lbl)
+          actions_lbl = Kuix::Label.new
+          actions_lbl.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::WEST)
+          actions_lbl.padding.set!(0, unit * 4, 0, unit * 4)
+          actions_lbl.set_style_attribute(:color, COLOR_BRAND_LIGHT)
+          actions_lbl.text = Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.title").upcase
+          actions_lbl.text_size = unit * 3
+          actions_lbl.text_bold = true
+          actions.append(actions_lbl)
 
-      # Actions panel
+          actions_btns_panel = Kuix::Panel.new
+          actions_btns_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
+          actions_btns_panel.layout = Kuix::InlineLayout.new(true, 0, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+          actions.append(actions_btns_panel)
 
-      actions = Kuix::Panel.new
-      actions.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
-      actions.layout = Kuix::BorderLayout.new
-      actions.set_style_attribute(:background_color, COLOR_BRAND_DARK)
-      @top_panel.append(actions)
-
-      actions_lbl = Kuix::Label.new
-      actions_lbl.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::WEST)
-      actions_lbl.padding.set!(0, unit * 4, 0, unit * 4)
-      actions_lbl.set_style_attribute(:color, COLOR_BRAND_LIGHT)
-      actions_lbl.text = Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.title").upcase
-      actions_lbl.text_size = unit * 3
-      actions_lbl.text_bold = true
-      actions.append(actions_lbl)
-
-      actions_btns_panel = Kuix::Panel.new
-      actions_btns_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
-      actions_btns_panel.layout = Kuix::InlineLayout.new(true, 0, Kuix::Anchor.new(Kuix::Anchor::CENTER))
-      actions.append(actions_btns_panel)
-
-      @action_buttons = []
-      get_action_defs.each { |action_def|
+          @action_buttons = []
+          get_action_defs.each { |action_def|
 
         action = action_def[:action]
         modifiers = action_def[:modifiers]
@@ -179,10 +164,10 @@ module Ladb::OpenCutList
           set_root_action(action)
         }
         actions_btn.on(:enter) { |button|
-          set_message(Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}_status"))
+          show_message(Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}_status"))
         }
         actions_btn.on(:leave) { |button|
-          set_message('')
+          show_message('')
         }
         actions_btns_panel.append(actions_btn)
 
@@ -229,49 +214,100 @@ module Ladb::OpenCutList
 
       }
 
-      # Help Button
+          # Help Button
 
-      help_btn = Kuix::Button.new
-      help_btn.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
-      help_btn.layout = Kuix::GridLayout.new
-      help_btn.set_style_attribute(:background_color, COLOR_WHITE)
-      help_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
-      lbl = help_btn.append_static_label(Plugin.instance.get_i18n_string("default.help"), unit * 3)
-      lbl.min_size.set!(unit * 15, 0)
-      lbl.padding.set!(0, unit * 4, 0, unit * 4)
-      lbl.set_style_attribute(:color, COLOR_BRAND_DARK)
-      help_btn.on(:click) { |button|
-        Plugin.instance.open_docs_page("tool.smart-#{get_stripped_name}")
-      }
-      actions.append(help_btn)
+          help_btn = Kuix::Button.new
+          help_btn.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
+          help_btn.layout = Kuix::GridLayout.new
+          help_btn.set_style_attribute(:background_color, COLOR_WHITE)
+          help_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
+          lbl = help_btn.append_static_label(Plugin.instance.get_i18n_string("default.help"), unit * 3)
+          lbl.min_size.set!(unit * 15, 0)
+          lbl.padding.set!(0, unit * 4, 0, unit * 4)
+          lbl.set_style_attribute(:color, COLOR_BRAND_DARK)
+          help_btn.on(:click) { |button|
+            Plugin.instance.open_docs_page("tool.smart-#{get_stripped_name}")
+          }
+          actions.append(help_btn)
+
+        # Part panel
+
+        @part_infos_panel = Kuix::Panel.new
+        @part_infos_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
+        @part_infos_panel.layout = Kuix::InlineLayout.new(true, @unit * 4, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+        @part_infos_panel.padding.set_all!(@unit * 2)
+        @part_infos_panel.visible = false
+        @part_infos_panel.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255, 85))
+        @top_panel.append(@part_infos_panel)
+
+          @part_infos_lbl_1 = Kuix::Label.new
+          @part_infos_lbl_1.text_size = @unit * 3
+          @part_infos_lbl_1.text_bold = true
+          @part_infos_panel.append(@part_infos_lbl_1)
+
+          @part_infos_lbl_2 = Kuix::Label.new
+          @part_infos_lbl_2.text_size = @unit * 3
+          @part_infos_panel.append(@part_infos_lbl_2)
+
+        # Message panel
+
+        @message_panel = Kuix::Panel.new
+        @message_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
+        @message_panel.layout = Kuix::InlineLayout.new(false, unit, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+        @message_panel.padding.set_all!(unit * 2)
+        @message_panel.visible = false
+        @top_panel.append(@message_panel)
+
+          @message_lbl = Kuix::Label.new
+          @message_lbl.border.set_all!(unit / 4)
+          @message_lbl.padding.set!(unit * 1.5, unit * 2, unit, unit * 2)
+          @message_lbl.text_size = unit * 3
+          @message_panel.append(@message_lbl)
 
     end
 
-    # -- Status --
+    # -- Show --
 
-    def set_message(text, type = MESSAGE_TYPE_DEFAULT)
+    def show_message(text, type = MESSAGE_TYPE_DEFAULT)
       return unless @message_panel && text.is_a?(String)
-      @message_panel_lbl.text = text
-      @message_panel_lbl.visible = !text.empty?
-      @message_panel.visible = @message_panel_lbl.visible?
+      @message_lbl.text = text
+      @message_lbl.visible = !text.empty?
+      @message_panel.visible = @message_lbl.visible?
       case type
       when MESSAGE_TYPE_ERROR
-        @message_panel_lbl.set_style_attribute(:color, COLOR_MESSAGE_TEXT_ERROR)
-        @message_panel_lbl.set_style_attribute(:background_color, COLOR_MESSAGE_BACKGROUND_ERROR)
-        @message_panel_lbl.set_style_attribute(:border_color, COLOR_MESSAGE_TEXT_ERROR)
+        @message_lbl.set_style_attribute(:color, COLOR_MESSAGE_TEXT_ERROR)
+        @message_lbl.set_style_attribute(:background_color, COLOR_MESSAGE_BACKGROUND_ERROR)
+        @message_lbl.set_style_attribute(:border_color, COLOR_MESSAGE_TEXT_ERROR)
       when MESSAGE_TYPE_WARNING
-        @message_panel_lbl.set_style_attribute(:color, COLOR_MESSAGE_TEXT_WARNING)
-        @message_panel_lbl.set_style_attribute(:background_color, COLOR_MESSAGE_BACKGROUND_WARNING)
-        @message_panel_lbl.set_style_attribute(:border_color, COLOR_MESSAGE_TEXT_WARNING)
+        @message_lbl.set_style_attribute(:color, COLOR_MESSAGE_TEXT_WARNING)
+        @message_lbl.set_style_attribute(:background_color, COLOR_MESSAGE_BACKGROUND_WARNING)
+        @message_lbl.set_style_attribute(:border_color, COLOR_MESSAGE_TEXT_WARNING)
       when MESSAGE_TYPE_SUCCESS
-        @message_panel_lbl.set_style_attribute(:color, COLOR_MESSAGE_TEXT_SUCCESS)
-        @message_panel_lbl.set_style_attribute(:background_color, COLOR_MESSAGE_BACKGROUND_SUCCESS)
-        @message_panel_lbl.set_style_attribute(:border_color, COLOR_MESSAGE_TEXT_SUCCESS)
+        @message_lbl.set_style_attribute(:color, COLOR_MESSAGE_TEXT_SUCCESS)
+        @message_lbl.set_style_attribute(:background_color, COLOR_MESSAGE_BACKGROUND_SUCCESS)
+        @message_lbl.set_style_attribute(:border_color, COLOR_MESSAGE_TEXT_SUCCESS)
       else
-        @message_panel_lbl.set_style_attribute(:color, nil)
-        @message_panel_lbl.set_style_attribute(:background_color, COLOR_MESSAGE_BACKGROUND)
-        @message_panel_lbl.set_style_attribute(:border_color, Sketchup::Color.new)
+        @message_lbl.set_style_attribute(:color, nil)
+        @message_lbl.set_style_attribute(:background_color, COLOR_MESSAGE_BACKGROUND)
+        @message_lbl.set_style_attribute(:border_color, Sketchup::Color.new)
       end
+    end
+
+    def hide_message
+      @message_panel.visible = false
+    end
+
+    def show_part_infos(text_1, text_2 = '')
+      return unless @part_infos_panel && text_1.is_a?(String) && text_2.is_a?(String)
+      @part_infos_lbl_1.text = text_1
+      @part_infos_lbl_1.visible = !text_1.empty?
+      @part_infos_lbl_2.text = text_2
+      @part_infos_lbl_2.visible = !text_2.empty?
+      @part_infos_panel.visible = @part_infos_lbl_1.visible? || @part_infos_lbl_2.visible?
+    end
+
+    def hide_part_infos
+      @part_infos_panel.visible = false
     end
 
     # -- Actions --
@@ -410,7 +446,7 @@ module Ladb::OpenCutList
     protected
 
     def _reset(view)
-      set_message('')
+      hide_message
     end
 
     def _instances_to_paths(instances, instance_paths, entities, path)
