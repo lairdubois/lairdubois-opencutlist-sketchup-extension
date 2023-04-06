@@ -1339,12 +1339,15 @@ tab:
       - [Transifex](https://www.transifex.com) für die Unterstützung von Open Source Projekten.
       - [GitBook](https://www.gitbook.com) für die Unterstützung von Open Source Projekten.
 tool:
-  highlight:
+  default:
     transparency: Transparenz
     zoom_extents: Alles zeigen
+  highlight:
+    transparency: $(tool.default.transparency)
+    zoom_extents: $(tool.default.zoom_extents)
   smart_paint:
     title: Malen
-    default_material: Ohne Material
+    default_material: Standard
     filters: Filter
     filter_0: Ohne Typ
     filter_1: $t(tab.materials.type_1)
@@ -1368,7 +1371,6 @@ tool:
       wrong_material_type: Das Zielteil ist nicht vom Typ '{{ type }}'.
   smart_axes:
     title: Ausrichten
-    toggle_clockwise: Drehrichtung umkehren
     toggle_depth: Hintergrundteile
     action_0: Permutieren Länge ↔ Breite
     action_0_status: Klicken Sie auf ein Teil, um seine Länge mit seiner Breite zu vertauschen
