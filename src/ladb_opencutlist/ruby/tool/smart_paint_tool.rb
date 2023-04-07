@@ -238,7 +238,7 @@ module Ladb::OpenCutList
 
     # -- Show --
 
-    def show_material_infos(material, material_attributes)
+    def notify_material_infos(material, material_attributes)
       return if material.nil? || material_attributes.nil?
 
       text_1 = material.display_name
@@ -806,7 +806,7 @@ module Ladb::OpenCutList
 
         }
         btn.on(:enter) { |button|
-          show_material_infos(material, material_attributes)
+          notify_material_infos(material, material_attributes)
         }
         btn.on(:leave) { |button|
           hide_material_infos
@@ -840,7 +840,7 @@ module Ladb::OpenCutList
     def _reset(view)
       super
       if @picked_path
-        hide_part_infos
+        hide_infos
         hide_material_infos
         @picked_path = nil
         clear_space
@@ -871,7 +871,7 @@ module Ladb::OpenCutList
                 if part
 
                   # Show part infos
-                  show_part_infos(part.name, "#{part.length} x #{part.width} x #{part.thickness}")
+                  notify_infos(part.name, "#{part.length} x #{part.width} x #{part.thickness}")
 
                   # Clear Kuix space
                   clear_space
@@ -880,7 +880,7 @@ module Ladb::OpenCutList
 
                     if part.group.material_type != MaterialAttributes::TYPE_SHEET_GOOD
                       _reset(view)
-                      show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.wrong_material_type', { :type => Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_SHEET_GOOD}") })}", MESSAGE_TYPE_ERROR)
+                      notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.wrong_material_type', { :type => Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_SHEET_GOOD}") })}", MESSAGE_TYPE_ERROR)
                     else
 
                       model = Sketchup.active_model
@@ -922,7 +922,7 @@ module Ladb::OpenCutList
                       entities = entities.compact.flatten
 
                       if entities.empty?
-                        show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_edge')}", MESSAGE_TYPE_ERROR)
+                        notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_edge')}", MESSAGE_TYPE_ERROR)
                       else
 
                         current_material = get_current_material
@@ -946,9 +946,9 @@ module Ladb::OpenCutList
 
                         definition = Sketchup.active_model.definitions[part.def.definition_id]
                         if definition && definition.count_used_instances > 1
-                          show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
+                          notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
                         else
-                          show_message('')
+                          notify_message('')
                         end
 
                         if event == :l_button_up
@@ -963,7 +963,7 @@ module Ladb::OpenCutList
 
                     if part.group.material_type != MaterialAttributes::TYPE_SHEET_GOOD
                       _reset(view)
-                      show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.wrong_material_type', { :type => Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_SHEET_GOOD}") })}", MESSAGE_TYPE_ERROR)
+                      notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.wrong_material_type', { :type => Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_SHEET_GOOD}") })}", MESSAGE_TYPE_ERROR)
                     else
 
                       model = Sketchup.active_model
@@ -997,7 +997,7 @@ module Ladb::OpenCutList
                       entities = entities.compact.flatten
 
                       if entities.empty?
-                        show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_veneer')}", MESSAGE_TYPE_ERROR)
+                        notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_veneer')}", MESSAGE_TYPE_ERROR)
                       else
 
                         current_material = get_current_material
@@ -1021,9 +1021,9 @@ module Ladb::OpenCutList
 
                         definition = Sketchup.active_model.definitions[part.def.definition_id]
                         if definition && definition.count_used_instances > 1
-                          show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
+                          notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
                         else
-                          show_message('')
+                          notify_message('')
                         end
 
                         if event == :l_button_up
@@ -1054,13 +1054,13 @@ module Ladb::OpenCutList
 
                 else
                   _reset(view)
-                  show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
+                  notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
                 end
                 return
 
               elsif picked_entity_path
                 _reset(view)
-                show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
+                notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
                 return
               end
 
@@ -1072,7 +1072,7 @@ module Ladb::OpenCutList
 
                   # Display material infos
                   if material
-                    show_message("#{material.name} (#{Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes.new(material).type}")})")
+                    notify_infos(material.name, "(#{Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes.new(material).type}")})")
                   end
 
                 elsif event == :l_button_up

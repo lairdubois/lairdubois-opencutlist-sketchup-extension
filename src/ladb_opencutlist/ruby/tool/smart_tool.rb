@@ -164,10 +164,10 @@ module Ladb::OpenCutList
           set_root_action(action)
         }
         actions_btn.on(:enter) { |button|
-          show_message(Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}_status"))
+          notify_message(Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}_status"))
         }
         actions_btn.on(:leave) { |button|
-          show_message('')
+          notify_message('')
         }
         actions_btns_panel.append(actions_btn)
 
@@ -187,7 +187,7 @@ module Ladb::OpenCutList
             actions_modifier_btn.padding.set_all!(unit * 2)
             actions_modifier_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT)
             actions_modifier_btn.set_style_attribute(:background_color, COLOR_WHITE, :hover)
-            actions_modifier_btn.set_style_attribute(:background_color, COLOR_BRAND.blend(COLOR_WHITE, 0.5), :selected)
+            actions_modifier_btn.set_style_attribute(:background_color, COLOR_WHITE, :selected)
             actions_modifier_btn.data = { :modifier => modifier }
             actions_modifier_btn.on(:click) { |button|
               set_root_action(action, modifier)
@@ -199,8 +199,7 @@ module Ladb::OpenCutList
               child.layout_data = Kuix::StaticLayoutData.new
               child.text_size = @unit * 3 if child.respond_to?(:text_size=)
               child.min_size.set_all!(@unit * 3)
-              child.set_style_attribute(:color, Sketchup::Color.new(0, 0, 0))
-              child.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
+              child.set_style_attribute(:color, COLOR_BRAND_DARK)
               actions_modifier_btn.append(child)
             end
 
@@ -268,7 +267,7 @@ module Ladb::OpenCutList
 
     # -- Show --
 
-    def show_message(text, type = MESSAGE_TYPE_DEFAULT)
+    def notify_message(text, type = MESSAGE_TYPE_DEFAULT)
       return unless @message_panel && text.is_a?(String)
       @message_lbl.text = text
       @message_lbl.visible = !text.empty?
@@ -297,7 +296,7 @@ module Ladb::OpenCutList
       @message_panel.visible = false
     end
 
-    def show_part_infos(text_1, text_2 = '')
+    def notify_infos(text_1, text_2 = '')
       return unless @part_infos_panel && text_1.is_a?(String) && text_2.is_a?(String)
       @part_infos_lbl_1.text = text_1
       @part_infos_lbl_1.visible = !text_1.empty?
@@ -306,7 +305,7 @@ module Ladb::OpenCutList
       @part_infos_panel.visible = @part_infos_lbl_1.visible? || @part_infos_lbl_2.visible?
     end
 
-    def hide_part_infos
+    def hide_infos
       @part_infos_panel.visible = false
     end
 

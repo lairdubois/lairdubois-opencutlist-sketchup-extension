@@ -353,7 +353,7 @@ module Ladb::OpenCutList
         infos << "#{part.material_name} (#{Plugin.instance.get_i18n_string("tab.materials.type_#{part.group.material_type}")})" unless part.material_name.empty?
         infos << ">|<" if part.flipped
 
-        show_part_infos(part.name, infos.join(' | '))
+        notify_infos(part.name, infos.join(' | '))
 
         # Create drawing helpers
 
@@ -434,24 +434,24 @@ module Ladb::OpenCutList
         # Status
 
         if part.group.material_type == MaterialAttributes::TYPE_HARDWARE
-          show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_orientable')}", MESSAGE_TYPE_ERROR)
+          notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_orientable')}", MESSAGE_TYPE_ERROR)
           return
         end
 
         if is_action_swap_auto? && !part.auto_oriented && part.def.size.length >= part.def.size.width && part.def.size.width >= part.def.size.thickness
-          show_message("✔ #{Plugin.instance.get_i18n_string('tool.smart_axes.success.part_oriented')}", MESSAGE_TYPE_SUCCESS)
+          notify_message("✔ #{Plugin.instance.get_i18n_string('tool.smart_axes.success.part_oriented')}", MESSAGE_TYPE_SUCCESS)
           return
         end
 
         definition = Sketchup.active_model.definitions[part.def.definition_id]
         if definition && definition.count_used_instances > 1
-          show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
+          notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
         else
           hide_message
         end
 
       else
-        hide_part_infos
+        hide_infos
         clear_space
       end
 
@@ -495,13 +495,13 @@ module Ladb::OpenCutList
                   _set_active(picked_entity_path, part)
                 else
                   _reset(view)
-                  show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
+                  notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
                 end
                 return
 
               elsif picked_entity_path
                 _reset(view)
-                show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
+                notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
                 return
               end
 
