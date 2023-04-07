@@ -1339,12 +1339,15 @@ tab:
       - [Transifex](https://www.transifex.com) for their support of Open Source projects.
       - [GitBook](https://www.gitbook.com) for their support of Open Source projects.
 tool:
-  highlight:
+  default:
     transparency: Transparency
     zoom_extents: Zoom Extents
+  highlight:
+    transparency: $(tool.default.transparency)
+    zoom_extents: $(tool.default.zoom_extents)
   smart_paint:
     title: Paint
-    default_material: No Material
+    default_material: Default
     filters: Filters
     filter_0: Without type
     filter_1: $t(tab.materials.type_1)
@@ -1368,7 +1371,6 @@ tool:
       wrong_material_type: The target part is not of type '{{ type }}'.
   smart_axes:
     title: Orient
-    toggle_clockwise: Reverse the direction of rotation
     toggle_depth: Background parts
     action_0: Swap length ↔ width
     action_0_status: Click on a part to swap length with width
