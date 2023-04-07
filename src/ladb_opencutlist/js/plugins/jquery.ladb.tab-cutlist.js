@@ -36,6 +36,7 @@
         this.ignoreNextMaterialEvents = false;
         this.selectionGroupId = null;
         this.selectionPartIds = [];
+        this.lastOptionsTab = null;
         this.lastEditPartTab = null;
         this.lastExportOptionsTab = null;
         this.lastExportOptionsEditingItem = null;
@@ -4117,12 +4118,23 @@
 
     };
 
-    LadbTabCutlist.prototype.editOptions = function () {
+    LadbTabCutlist.prototype.editOptions = function (tab) {
         var that = this;
 
-        var $modal = that.appendModalInside('ladb_cutlist_modal_options', 'tabs/cutlist/_modal-options.twig');
+        if (tab === undefined) {
+            tab = this.lastOptionsTab;
+        }
+        if (tab === null || tab.length === 0) {
+            tab = 'general';
+        }
+        this.lastOptionsTab = tab;
+
+        var $modal = that.appendModalInside('ladb_cutlist_modal_options', 'tabs/cutlist/_modal-options.twig', {
+            tab: tab
+        });
 
         // Fetch UI elements
+        var $tabs = $('a[data-toggle="tab"]', $modal);
         var $widgetPreset = $('.ladb-widget-preset', $modal);
         var $inputAutoOrient = $('#ladb_input_auto_orient', $modal);
         var $inputFlippedDetection = $('#ladb_input_flipped_detection', $modal);
@@ -4252,6 +4264,11 @@
             dictionary: 'cutlist_options',
             fnFetchOptions: fnFetchOptions,
             fnFillInputs: fnFillInputs
+        });
+
+        // Bind tabs
+        $tabs.on('shown.bs.tab', function (e) {
+            that.lastOptionsTab = $(e.target).attr('href').substring('#tab_options_'.length);
         });
 
         // Bind input
