@@ -284,7 +284,7 @@ module Ladb::OpenCutList
 
       group = tmp_definition.entities.add_group
       group.transformation = transformation
-      group.name = part.number
+      group.name = part.number.to_s
       group.material = material if @parts_colored
 
       # Redraw the entire part through one PolygonMesh
