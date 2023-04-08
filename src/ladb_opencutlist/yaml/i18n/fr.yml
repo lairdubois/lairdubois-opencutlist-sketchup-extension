@@ -1343,8 +1343,8 @@ tool:
     transparency: Transparence
     zoom_extents: Zoom étendu
   highlight:
-    transparency: $(tool.default.transparency)
-    zoom_extents: $(tool.default.zoom_extents)
+    transparency: $t(tool.default.transparency)
+    zoom_extents: $t(tool.default.zoom_extents)
   smart_paint:
     title: Colorier
     default_material: Sans matière
