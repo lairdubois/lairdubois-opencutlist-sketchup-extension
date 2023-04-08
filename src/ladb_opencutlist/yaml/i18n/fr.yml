@@ -1364,6 +1364,16 @@ tool:
     action_2_status: Cliquez sur une surface de panneau pour la colorier
     action_3: Prélever
     action_3_status: Cliquez sur une face pour prélever un échantillon de la matière
+    edges: "{{ count }} chant"
+    edges_plural: "{{ count }} chants"
+    edge_ymin: Longueur 1
+    edge_ymax: Longueur 2
+    edge_xmin: Largeur 1
+    edge_xmax: Largeur 2
+    veneers: "{{ count }} surface"
+    veneers_plural: "{{ count }} surfaces"
+    veneer_zmin: Contreparement
+    veneer_zmax: Parement
     error:
       not_part: L'objet ciblé n'est pas une pièce.
       not_edge: La face ciblée n'est pas un chant de panneau.

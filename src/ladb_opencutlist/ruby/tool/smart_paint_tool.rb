@@ -530,6 +530,9 @@ module Ladb::OpenCutList
         end
       end
 
+      # Observe model events
+      view.model.add_observer(self)
+
       # Observe materials events
       view.model.materials.add_observer(self)
 
@@ -537,6 +540,9 @@ module Ladb::OpenCutList
 
     def onDeactivate(view)
       super
+
+      # Stop observing model events
+      view.model.remove_observer(self)
 
       # Stop observing materials events
       view.model.materials.remove_observer(self)
@@ -690,7 +696,10 @@ module Ladb::OpenCutList
     end
 
     def onMouseMove(flags, x, y, view)
-      return true if super
+      if super
+        _reset(view)
+        return true
+      end
       unless is_action_none?
         _handle_mouse_event(x, y, view, :move)
       end
@@ -699,6 +708,10 @@ module Ladb::OpenCutList
     def onMouseLeave(view)
       return true if super
       _reset(view)
+    end
+
+    def onTransactionUndo(model)
+
     end
 
     def onMaterialAdd(materials, material)
@@ -840,12 +853,42 @@ module Ladb::OpenCutList
     def _reset(view)
       super
       if @picked_path
+        @picked_path = nil
         hide_infos
         hide_material_infos
-        @picked_path = nil
         clear_space
         view.invalidate
       end
+    end
+
+    def _handle_pick(event = nil)
+
+      picked_path = nil
+      @pick_helper.count.times do |index|
+        path = @pick_helper.path_at(index)
+
+        if path.last.is_a?(Sketchup::Face)
+
+          picked_entity_path = _get_part_entity_path_from_path(path)
+          unless picked_entity_path.empty?
+
+            if is_action_paint_edge? && (is_action_modifier_1? || is_action_modifier_2?)
+
+
+
+            else
+              picked_path = path
+              break
+            end
+
+          end
+
+        end
+
+      end
+
+      puts picked_path
+
     end
 
     def _handle_mouse_event(x, y, view, event = nil)
@@ -858,9 +901,9 @@ module Ladb::OpenCutList
           end
           if picked_path && picked_path.last.is_a?(Sketchup::Face)
 
-            @picked_path = picked_path
+            picked_face = picked_path.last
 
-            pop_cursor
+            @picked_path = picked_path
 
             if is_action_part?
 
@@ -869,9 +912,6 @@ module Ladb::OpenCutList
 
                 part = _compute_part_from_path(picked_entity_path)
                 if part
-
-                  # Show part infos
-                  notify_infos(part.name, "#{part.length} x #{part.width} x #{part.thickness}")
 
                   # Clear Kuix space
                   clear_space
@@ -887,43 +927,50 @@ module Ladb::OpenCutList
                       edge_faces = {}
                       part.def.edge_entity_ids.each { |k, v| edge_faces[k] = model.find_entity_by_id(v) if v.is_a?(Array) && !v.empty? }
 
+                      sides = []
                       entities = []
                       if is_action_modifier_1? || is_action_modifier_2?
 
-                        picked_face = @pick_helper.picked_face
-
-                        side = nil
+                        picked_side = nil
                         edge_faces.each { |k, v|
                           v.each { |face|
                             if face == picked_face
-                              side = k
+                              picked_side = k
                               break
                             end
                           }
-                          break unless side.nil?
+                          break unless picked_side.nil?
                         }
 
-                        if side
-                          entities << edge_faces[side]
+                        if picked_side
+                          sides << picked_side unless edge_faces[picked_side].nil?
                           if is_action_modifier_2?
-                            entities << edge_faces[:xmin] if side == :xmax
-                            entities << edge_faces[:xmax] if side == :xmin
-                            entities << edge_faces[:ymin] if side == :ymax
-                            entities << edge_faces[:ymax] if side == :ymin
+                            sides << :ymin if picked_side == :ymax && !edge_faces[:ymin].nil?
+                            sides << :ymax if picked_side == :ymin && !edge_faces[:ymax].nil?
+                            sides << :xmin if picked_side == :xmax && !edge_faces[:xmin].nil?
+                            sides << :xmax if picked_side == :xmin && !edge_faces[:xmax].nil?
                           end
                         end
 
                       elsif is_action_modifier_4?
-                        entities << edge_faces[:xmin]
-                        entities << edge_faces[:xmax]
-                        entities << edge_faces[:ymin]
-                        entities << edge_faces[:ymax]
+                        sides << :ymin unless edge_faces[:ymin].nil?
+                        sides << :ymax unless edge_faces[:ymax].nil?
+                        sides << :xmin unless edge_faces[:xmin].nil?
+                        sides << :xmax unless edge_faces[:xmax].nil?
                       end
-                      entities = entities.compact.flatten
+
+                      sides.each { |side|
+                        entities << edge_faces[side]
+                      }
+                      entities = entities.flatten
 
                       if entities.empty?
+                        _reset(view)
                         notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_edge')}", MESSAGE_TYPE_ERROR)
                       else
+
+                        # Show edges infos
+                        notify_infos(part.name, "#{Plugin.instance.get_i18n_string('tool.smart_paint.edges', { :count => sides.length })} → #{sides.map { |side| Plugin.instance.get_i18n_string("tool.smart_paint.edge_#{side}") }.join(' + ')}" )
 
                         current_material = get_current_material
                         color = current_material ? current_material.color : MaterialUtils::get_color_from_path(picked_entity_path)
@@ -970,35 +1017,42 @@ module Ladb::OpenCutList
                       veneer_faces = {}
                       part.def.veneer_entity_ids.each { |k, v| veneer_faces[k] = model.find_entity_by_id(v) if v.is_a?(Array) && !v.empty? }
 
+                      sides = []
                       entities = []
                       if is_action_modifier_1?
 
-                        picked_face = @pick_helper.picked_face
-
-                        side = nil
+                        picked_side = nil
                         veneer_faces.each { |k, v|
                           v.each { |face|
                             if face == picked_face
-                              side = k
+                              picked_side = k
                               break
                             end
                           }
-                          break unless side.nil?
+                          break unless picked_side.nil?
                         }
 
-                        if side
-                          entities << veneer_faces[side]
+                        if picked_side
+                          sides << picked_side unless veneer_faces[picked_side].nil?
                         end
 
                       elsif is_action_modifier_2?
-                        entities << veneer_faces[:zmin]
-                        entities << veneer_faces[:zmax]
+                        sides << :zmin unless veneer_faces[:zmin].nil?
+                        sides << :zmax unless veneer_faces[:zmax].nil?
                       end
-                      entities = entities.compact.flatten
+
+                      sides.each { |side|
+                        entities << veneer_faces[side]
+                      }
+                      entities = entities.flatten
 
                       if entities.empty?
+                        _reset(view)
                         notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_veneer')}", MESSAGE_TYPE_ERROR)
                       else
+
+                        # Show veneers infos
+                        notify_infos(part.name, "#{Plugin.instance.get_i18n_string('tool.smart_paint.veneers', { :count => sides.length })} → #{sides.map { |side| Plugin.instance.get_i18n_string("tool.smart_paint.veneer_#{side}") }.join(' + ')}" )
 
                         current_material = get_current_material
                         color = current_material ? current_material.color : MaterialUtils::get_color_from_path(picked_entity_path)
@@ -1036,6 +1090,9 @@ module Ladb::OpenCutList
 
                   else
 
+                    # Show part infos
+                    notify_infos(part.name, "#{part.length} x #{part.width} x #{part.thickness}")
+
                     current_material = get_current_material
                     color = current_material ? current_material.color : MaterialUtils::get_color_from_path(picked_entity_path[0...-1]) # [0...-1] returns array without last element
                     color.alpha = event == :l_button_down ? 255 : 200
@@ -1056,8 +1113,8 @@ module Ladb::OpenCutList
                   _reset(view)
                   notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
                 end
-                return
 
+                return
               elsif picked_entity_path
                 _reset(view)
                 notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
@@ -1101,7 +1158,6 @@ module Ladb::OpenCutList
               end
 
               return
-
             end
 
           end

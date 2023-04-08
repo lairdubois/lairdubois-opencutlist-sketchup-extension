@@ -214,7 +214,7 @@ module Ladb::OpenCutList
     def onActivate(view)
       super
 
-      # Observe materials events
+      # Observe model events
       view.model.add_observer(self)
 
     end
@@ -222,7 +222,7 @@ module Ladb::OpenCutList
     def onDeactivate(view)
       super
 
-      # Stop observing materials events
+      # Stop observing model events
       view.model.remove_observer(self)
 
     end
@@ -326,8 +326,18 @@ module Ladb::OpenCutList
     end
 
     def onMouseMove(flags, x, y, view)
+      if super
+        _reset(view)
+        return true
+      end
+      unless is_action_none?
+        _handle_mouse_event(x, y, view, :move)
+      end
+    end
+
+    def onMouseLeave(view)
       return true if super
-      _handle_mouse_event(x, y, view, :move)
+      _reset(view)
     end
 
     def onTransactionUndo(model)

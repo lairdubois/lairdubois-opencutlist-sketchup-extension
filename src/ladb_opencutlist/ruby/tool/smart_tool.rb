@@ -231,22 +231,23 @@ module Ladb::OpenCutList
 
         # Part panel
 
-        @part_infos_panel = Kuix::Panel.new
-        @part_infos_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
-        @part_infos_panel.layout = Kuix::InlineLayout.new(true, @unit * 4, Kuix::Anchor.new(Kuix::Anchor::CENTER))
-        @part_infos_panel.padding.set_all!(@unit * 2)
-        @part_infos_panel.visible = false
-        @part_infos_panel.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255, 85))
-        @top_panel.append(@part_infos_panel)
+        @infos_panel = Kuix::Panel.new
+        @infos_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
+        @infos_panel.layout = Kuix::InlineLayout.new(true, @unit * 4, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+        @infos_panel.padding.set_all!(@unit * 2)
+        @infos_panel.hittable = false
+        @infos_panel.visible = false
+        @infos_panel.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255, 85))
+        @top_panel.append(@infos_panel)
 
-          @part_infos_lbl_1 = Kuix::Label.new
-          @part_infos_lbl_1.text_size = @unit * 3
-          @part_infos_lbl_1.text_bold = true
-          @part_infos_panel.append(@part_infos_lbl_1)
+          @infos_lbl_1 = Kuix::Label.new
+          @infos_lbl_1.text_size = @unit * 3
+          @infos_lbl_1.text_bold = true
+          @infos_panel.append(@infos_lbl_1)
 
-          @part_infos_lbl_2 = Kuix::Label.new
-          @part_infos_lbl_2.text_size = @unit * 3
-          @part_infos_panel.append(@part_infos_lbl_2)
+          @infos_lbl_2 = Kuix::Label.new
+          @infos_lbl_2.text_size = @unit * 3
+          @infos_panel.append(@infos_lbl_2)
 
         # Message panel
 
@@ -254,6 +255,7 @@ module Ladb::OpenCutList
         @message_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
         @message_panel.layout = Kuix::InlineLayout.new(false, unit, Kuix::Anchor.new(Kuix::Anchor::CENTER))
         @message_panel.padding.set_all!(unit * 2)
+        @message_panel.hittable = false
         @message_panel.visible = false
         @top_panel.append(@message_panel)
 
@@ -297,16 +299,16 @@ module Ladb::OpenCutList
     end
 
     def notify_infos(text_1, text_2 = '')
-      return unless @part_infos_panel && text_1.is_a?(String) && text_2.is_a?(String)
-      @part_infos_lbl_1.text = text_1
-      @part_infos_lbl_1.visible = !text_1.empty?
-      @part_infos_lbl_2.text = text_2
-      @part_infos_lbl_2.visible = !text_2.empty?
-      @part_infos_panel.visible = @part_infos_lbl_1.visible? || @part_infos_lbl_2.visible?
+      return unless @infos_panel && text_1.is_a?(String) && text_2.is_a?(String)
+      @infos_lbl_1.text = text_1
+      @infos_lbl_1.visible = !text_1.empty?
+      @infos_lbl_2.text = text_2
+      @infos_lbl_2.visible = !text_2.empty?
+      @infos_panel.visible = @infos_lbl_1.visible? || @infos_lbl_2.visible?
     end
 
     def hide_infos
-      @part_infos_panel.visible = false
+      @infos_panel.visible = false
     end
 
     # -- Actions --
@@ -430,9 +432,10 @@ module Ladb::OpenCutList
     def onActivate(view)
       super
 
-      # Retrive pick helper
+      # Retrieve pick helper
       @pick_helper = view.pick_helper
 
+      # Set startup cursor
       set_root_action(get_startup_action)
 
     end
