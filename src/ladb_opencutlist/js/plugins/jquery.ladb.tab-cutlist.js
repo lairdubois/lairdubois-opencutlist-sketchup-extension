@@ -2329,16 +2329,16 @@
             };
             var fnMaterialNameCopyToAllEdges = function(materialName) {
                 if (materialName !== MULTIPLE_VALUE) {
-                    if (!$selectEdgeYmax.prop( "disabled")) {
+                    if (!$selectEdgeYmax.prop('disabled')) {
                         $selectEdgeYmax.selectpicker('val', materialName);
                     }
-                    if (!$selectEdgeYmin.prop( "disabled")) {
+                    if (!$selectEdgeYmin.prop('disabled')) {
                         $selectEdgeYmin.selectpicker('val', materialName);
                     }
-                    if (!$selectEdgeXmin.prop( "disabled")) {
+                    if (!$selectEdgeXmin.prop('disabled')) {
                         $selectEdgeXmin.selectpicker('val', materialName);
                     }
-                    if (!$selectEdgeXmax.prop( "disabled")) {
+                    if (!$selectEdgeXmax.prop('disabled')) {
                         $selectEdgeXmax.selectpicker('val', materialName);
                     }
                     fnUpdateEdgesPreview();
@@ -2346,10 +2346,10 @@
             };
             var fnMaterialNameCopyToAllVeneers = function(materialName) {
                 if (materialName !== MULTIPLE_VALUE) {
-                    if (!$selectVeneerZmax.prop( "disabled")) {
+                    if (!$selectVeneerZmax.prop('disabled')) {
                         $selectVeneerZmax.selectpicker('val', materialName);
                     }
-                    if (!$selectVeneerZmin.prop( "disabled")) {
+                    if (!$selectVeneerZmin.prop('disabled')) {
                         $selectVeneerZmin.selectpicker('val', materialName);
                     }
                     fnUpdateVeneersPreview();

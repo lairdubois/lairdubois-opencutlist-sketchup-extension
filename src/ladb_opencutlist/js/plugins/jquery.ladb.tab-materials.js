@@ -13,6 +13,7 @@
         this.currentMaterial = null;
         this.editedMaterial = null;
         this.ignoreNextMaterialEvents = false;
+        this.lastEditMaterialTab = null;
         this.lastMaterialPropertiesTab = null;
 
         this.$header = $('.ladb-header', this.$element);
@@ -218,11 +219,19 @@
 
     };
 
-    LadbTabMaterials.prototype.editMaterial = function (id, propertiesTab, callback, updatedCallback) {
+    LadbTabMaterials.prototype.editMaterial = function (id, tab, propertiesTab, callback, updatedCallback) {
         var that = this;
 
         var material = this.findMaterialById(id);
         if (material) {
+
+            if (tab === undefined) {
+                tab = this.lastEditMaterialTab;
+            }
+            if (tab === null || tab.length === 0) {
+                tab = 'general';
+            }
+            this.lastEditMaterialTab = tab;
 
             if (propertiesTab === undefined) {
                 propertiesTab = this.lastMaterialPropertiesTab;
@@ -240,10 +249,12 @@
                 mass_unit_strippedname: that.massUnitStrippedname,
                 length_unit_strippedname: that.lengthUnitStrippedname,
                 material: material,
+                tab: tab,
                 properties_tab: propertiesTab
             });
 
             // Fetch UI elements
+            var $tabs = $('.modal-header a[data-toggle="tab"]', $modal);
             var $btnTabTexture = $('#ladb_materials_btn_tab_texture', $modal);
             var $inputTextureRotation = $('#ladb_materials_input_texture_rotation', $modal);
             var $divTextureThumbnail = $('#ladb_materials_div_texture_thumbnail', $modal);
@@ -354,12 +365,13 @@
             $inputs.inputColor.on('keyup change', fnUpdateBtnUpdateStatus);
 
             // Bind tabs
+            $tabs.on('shown.bs.tab', function (e) {
+                that.lastEditMaterialTab = $(e.target).attr('href').substring('#tab_edit_material_'.length);
+            });
             $btnTabTexture.on('shown.bs.tab', function (e) {
-
-                fnGetMaterialTexture(false);
-
-                // Unbind event
-                $btnTabTexture.off('shown.bs.tab');
+                if ($imgTexture.attr('src') === '') {
+                    fnGetMaterialTexture(false);
+                }
             });
 
             // Bind buttons
@@ -489,6 +501,10 @@
             // Setup tooltips & popovers
             this.dialog.setupTooltips();
             this.dialog.setupPopovers();
+
+            if (tab === 'texture') {
+                fnGetMaterialTexture(false);
+            }
 
             // Callback
             if (typeof callback === 'function') {
@@ -796,7 +812,7 @@
         var that = this;
 
         // Fetch UI elements
-        var $tabs = $('a[data-toggle="tab"]', $modal);
+        var $tabs = $('section a[data-toggle="tab"]', $modal);
         var $widgetPreset = $('.ladb-widget-preset', $modal);
         var $btnTabAttributes = $('#ladb_materials_btn_tab_general_attributes', $modal);
         var $inputName = $('#ladb_materials_input_name', $modal);
@@ -1139,12 +1155,13 @@
         });
         this.registerCommand('edit_material', function (parameters) {
             var materialId = parameters.materialId;
+            var tab = parameters.tab;
             var propertiesTab = parameters.propertiesTab;
             var callback = parameters.callback;
             var updatedCallback = parameters.updatedCallback;
             setTimeout(function () {     // Use setTimeout to give time to UI to refresh
                 that.loadList(function () {
-                    that.editMaterial(materialId, propertiesTab, callback, updatedCallback);
+                    that.editMaterial(materialId, tab, propertiesTab, callback, updatedCallback);
                 });
             }, 1);
         });

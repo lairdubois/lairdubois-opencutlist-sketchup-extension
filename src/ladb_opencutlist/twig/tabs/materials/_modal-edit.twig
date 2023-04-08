@@ -11,8 +11,8 @@
     {{ parent() }}
     {% if material.textured %}
         <ul class="nav nav-tabs nav-justified" role="tablist">
-            <li role="presentation" class="active"><a href="#tab_edit_material_general" role="tab" data-toggle="tab">{{ 'tab.materials.edit_material.general'|i18next }}</a></li>
-            <li role="presentation"><a id="ladb_materials_btn_tab_texture" href="#tab_edit_material_texture" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-texture"></i> {{ 'tab.materials.edit_material.texture'|i18next }}</a></li>
+            <li role="presentation"{% if tab == 'general' %} class="active"{% endif %}><a href="#tab_edit_material_general" role="tab" data-toggle="tab">{{ 'tab.materials.edit_material.general'|i18next }}</a></li>
+            <li role="presentation"{% if tab == 'texture' %} class="active"{% endif %}><a id="ladb_materials_btn_tab_texture" href="#tab_edit_material_texture" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-texture"></i> {{ 'tab.materials.edit_material.texture'|i18next }}</a></li>
         </ul>
     {% endif %}
 {% endblock %}
@@ -20,10 +20,10 @@
 {% block bodyInner %}
     <div class="form form-horizontal">
         <div class="tab-content">
-            <div role="tabpanel" class="tab-pane active" id="tab_edit_material_general">
+            <div role="tabpanel" class="tab-pane{% if tab == 'general' %} active{% endif %}" id="tab_edit_material_general">
                 {% include 'tabs/materials/_material-properties-form.twig' with { 'tab':properties_tab } %}
             </div>
-            <div role="tabpanel" class="tab-pane" id="tab_edit_material_texture">
+            <div role="tabpanel" class="tab-pane{% if tab == 'texture' %} active{% endif %}" id="tab_edit_material_texture">
                 <div class="ladb-material-texture-preview-wrapper">
                     <div class="ladb-material-texture-preview">
                         <div id="ladb_materials_div_texture_thumbnail" class="thumbnail" style="display: none;">
