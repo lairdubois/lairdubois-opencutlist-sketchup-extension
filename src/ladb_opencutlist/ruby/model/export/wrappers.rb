@@ -15,7 +15,7 @@ module Ladb::OpenCutList
 
   class ValueWrapper < Wrapper
 
-    def initialize(value, value_class = Object.class)
+    def initialize(value, value_class = Object)
       @value = value
       @value_class = value_class
     end
@@ -325,10 +325,13 @@ module Ladb::OpenCutList
 
   end
 
-
   # -----
 
-  class MaterialTypeWrapper < IntegerWrapper
+  class MaterialTypeWrapper < ValueWrapper
+
+    def initialize(value)
+      super(value, Integer)
+    end
 
     def is_solid_wood?
       @value == MaterialAttributes::TYPE_SOLID_WOOD
@@ -360,6 +363,10 @@ module Ladb::OpenCutList
 
     def to_s
       Plugin.instance.get_i18n_string("tab.materials.type_#{@value}")
+    end
+
+    def export
+      self.to_s
     end
 
   end
