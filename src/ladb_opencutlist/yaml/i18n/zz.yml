@@ -1383,24 +1383,37 @@ tool:
     action_2_status: 1053 - Click on a face to paint it
     action_3: 1054 - Sample
     action_3_status: 1055 - Click on surface to sample its material
-    error:
-      not_part: 1056 - The target object is not a part.
-      not_edge: 1057 - The target face is not a panel edge.
-      not_veneer: 1058 - The target face is not a panel surface.
-      wrong_material_type: 1059 - The target part is not of type '{{ type }}'.
-  smart_axes:
-    title: 1060 - Orient
-    toggle_depth: 1061 - Background parts
-    action_0: 1062 - Swap length ↔ width
-    action_0_status: 1063 - Click on a part to swap length with width
-    action_1: 1064 - Swap front face ↔ back face
-    action_1_status: 1065 - Click on a part to swap front face with back face
-    action_2: 1066 - Orient automatically
-    action_2_status: 1067 - Click on a part to set its length to its largest dimension and thickness to its smallest
-    success:
-      part_oriented: 1068 - This part already has its length on the largest dimension and its thickness on the smallest.
+    edges: 1056 - {{ count }} edge
+    edges_plural: 1057 - {{ count }} edges
+    edge_ymin: 1058 - Length 1
+    edge_ymax: 1059 - Length 2
+    edge_xmin: 1060 - Width 1
+    edge_xmax: 1061 - Width 2
+    veneers: 1062 - {{ count }} face
+    veneers_plural: 1063 - {{ count }} faces
+    veneer_zmin: 1064 - Back face
+    veneer_zmax: 1065 - Front face
     warning:
-      more_entities: 1069 - {{ count_used }} instances sharing the same definition will be modified.
+      no_material: 1066 - No material
+      no_material_type: 1067 - No material of type '{{ type }}'
     error:
-      not_part: 1070 - The target object is not a part.
-      not_orientable: 1071 - The type of this part does not allow orienting it.
+      not_part: 1068 - The target object is not a part
+      not_edge: 1069 - The target face is not a panel edge
+      not_veneer: 1070 - The target face is not a panel surface
+      wrong_material_type: 1071 - The target part is not of type '{{ type }}'
+  smart_axes:
+    title: 1072 - Orient
+    toggle_depth: 1073 - Background parts
+    action_0: 1074 - Swap length ↔ width
+    action_0_status: 1075 - Click on a part to swap length with width
+    action_1: 1076 - Swap front face ↔ back face
+    action_1_status: 1077 - Click on a part to swap front face with back face
+    action_2: 1078 - Orient automatically
+    action_2_status: 1079 - Click on a part to set its length to its largest dimension and thickness to its smallest
+    success:
+      part_oriented: 1080 - This part already has its length on the largest dimension and its thickness on the smallest
+    warning:
+      more_entities: 1081 - {{ count_used }} instances sharing the same definition will be modified
+    error:
+      not_part: 1082 - The target object is not a part
+      not_orientable: 1083 - The type of this part does not allow orienting it
