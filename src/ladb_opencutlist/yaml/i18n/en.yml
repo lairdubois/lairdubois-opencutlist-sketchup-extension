@@ -1364,11 +1364,24 @@ tool:
     action_2_status: Click on a face to paint it
     action_3: Sample
     action_3_status: Click on surface to sample its material
+    edges: "{{ count }} edge"
+    edges_plural: "{{ count }} edges"
+    edge_ymin: Length 1
+    edge_ymax: Length 2
+    edge_xmin: Width 1
+    edge_xmax: Width 2
+    veneers: "{{ count }} face"
+    veneers_plural: "{{ count }} faces"
+    veneer_zmin: Back face
+    veneer_zmax: Front face
+    warning:
+      no_material: No material
+      no_material_type: No material of type '{{ type }}'
     error:
-      not_part: The target object is not a part.
-      not_edge: The target face is not a panel edge.
-      not_veneer: The target face is not a panel surface.
-      wrong_material_type: The target part is not of type '{{ type }}'.
+      not_part: The target object is not a part
+      not_edge: The target face is not a panel edge
+      not_veneer: The target face is not a panel surface
+      wrong_material_type: The target part is not of type '{{ type }}'
   smart_axes:
     title: Orient
     toggle_depth: Background parts
@@ -1379,9 +1392,9 @@ tool:
     action_2: Orient automatically
     action_2_status:  Click on a part to set its length to its largest dimension and thickness to its smallest
     success:
-      part_oriented: This part already has its length on the largest dimension and its thickness on the smallest.
+      part_oriented: This part already has its length on the largest dimension and its thickness on the smallest
     warning:
-      more_entities: "{{ count_used }} instances sharing the same definition will be modified."
+      more_entities: "{{ count_used }} instances sharing the same definition will be modified"
     error:
-      not_part: The target object is not a part.
-      not_orientable: The type of this part does not allow orienting it.
+      not_part: The target object is not a part
+      not_orientable: The type of this part does not allow orienting it

@@ -884,8 +884,8 @@ tab:
       option_pins_colored_help: Definiert die Farbe des Beschriftungsfeldes.
       option_pins_formula: Formel
       option_pins_formula_help: "Ermöglicht das Schreiben von *Ruby*-Code, um den Text der Beschriftung anzupassen."
-      option_pins_length: Verweislinie
-      option_pins_length_0: Ohne Verweislinie
+      option_pins_length: Führungslinie
+      option_pins_length_0: Ohne Führungslinie
       option_pins_length_1: Kurz
       option_pins_length_2: Mittel
       option_pins_length_3: Lang
@@ -1364,11 +1364,24 @@ tool:
     action_2_status: Klicken Sie auf eine Fläche, um sie einzufärben
     action_3: Entnehmen
     action_3_status: Klicken Sie auf eine Fläche, um eine Probe des Materials zu entnehmen
+    edges: "{{ count }} Kante"
+    edges_plural: "{{ count }} Kanten"
+    edge_ymin: Länge 1
+    edge_ymax: Länge 2
+    edge_xmin: Breite 1
+    edge_xmax: Breite 2
+    veneers: "{{ count }} Fläche"
+    veneers_plural: "{{ count }} Flächen"
+    veneer_zmin: Vorderseite
+    veneer_zmax: Rückseite
+    warning:
+      no_material: Kein Material
+      no_material_type: Kein Material des Typs '{{ type }}'
     error:
-      not_part: Das Zielobjekt ist kein Teil.
-      not_edge: Die Zielfläche ist keine Plattenkante.
-      not_veneer: Die Zielfläche ist keine Plattenoberfläche.
-      wrong_material_type: Das Zielteil ist nicht vom Typ '{{ type }}'.
+      not_part: Das Zielobjekt ist kein Teil
+      not_edge: Die Zielfläche ist keine Plattenkante
+      not_veneer: Die Zielfläche ist keine Plattenoberfläche
+      wrong_material_type: Das Zielteil ist nicht vom Typ '{{ type }}'
   smart_axes:
     title: Ausrichten
     toggle_depth: Hintergrundteile
@@ -1379,9 +1392,9 @@ tool:
     action_2: Automatisch ausrichten
     action_2_status:  Klicken Sie auf ein Teil, um seine Länge auf die größte und seine Dicke auf die kleinste Abmessung einzustellen
     success:
-      part_oriented: Dieses Teil hat seine Länge bereits auf der größten und seine Dicke auf der kleinsten Dimension.
+      part_oriented: Dieses Teil hat seine Länge bereits auf der größten und seine Dicke auf der kleinsten Dimension
     warning:
-      more_entities: "{{ count_used }} Instanzen mit derselben Definition werden geändert."
+      more_entities: "{{ count_used }} Instanzen mit derselben Definition werden geändert"
     error:
-      not_part: Das Zielobjekt ist kein Teil.
-      not_orientable: Der Typ dieses Teils lässt keine Orientierung zu.
+      not_part: Das Zielobjekt ist kein Teil
+      not_orientable: Der Typ dieses Teils lässt keine Orientierung zu
