@@ -791,6 +791,23 @@ module Ladb::OpenCutList
       @materials_btns_panel.append(btn)
       @material_buttons.push(btn)
 
+      if @material_defs.empty?
+
+        lbl = Kuix::Label.new
+        lbl.layout_data = Kuix::GridLayoutData.new(3)
+        lbl.text_size = @unit * 3
+        if is_action_paint_part?
+          lbl.text = Plugin.instance.get_i18n_string('tool.smart_paint.warning.no_material')
+        elsif is_action_paint_edge?
+          lbl.text = Plugin.instance.get_i18n_string('tool.smart_paint.warning.no_material_type', { :type => Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_EDGE}") })
+        elsif is_action_paint_veneer?
+          lbl.text = Plugin.instance.get_i18n_string('tool.smart_paint.warning.no_material_type', { :type => Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_VENEER}") })
+        end
+        lbl.set_style_attribute(:color, COLOR_BRAND_LIGHT)
+        @materials_btns_panel.append(lbl)
+
+      end
+
       @material_defs.each do |material_def|
 
         material = material_def[:material]
@@ -967,7 +984,7 @@ module Ladb::OpenCutList
                       else
 
                         # Show edges infos
-                        notify_infos(part.name, [ "#{Plugin.instance.get_i18n_string('tool.smart_paint.edges', { :count => sides.length })} → #{sides.map { |side| Plugin.instance.get_i18n_string("tool.smart_paint.edge_#{side}") }.join(' + ')}" ])
+                        notify_infos(part.name, [ Plugin.instance.get_i18n_string('tool.smart_paint.edges', { :count => sides.length }) + (sides.length < 4 ? " → #{sides.map { |side| Plugin.instance.get_i18n_string("tool.smart_paint.edge_#{side}") }.join(' + ')}" : '') ])
 
                         current_material = get_current_material
                         color = current_material ? current_material.color : MaterialUtils::get_color_from_path(picked_entity_path)
@@ -1034,8 +1051,8 @@ module Ladb::OpenCutList
                         end
 
                       elsif is_action_modifier_2?
-                        sides << :zmin unless veneer_faces[:zmin].nil?
                         sides << :zmax unless veneer_faces[:zmax].nil?
+                        sides << :zmin unless veneer_faces[:zmin].nil?
                       end
 
                       sides.each { |side|

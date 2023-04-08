@@ -1,5 +1,15 @@
 module Ladb::OpenCutList::Kuix
 
+  class GridLayoutData
+
+    attr_accessor :col_span
+
+    def initialize(col_span = 1)
+      @col_span = [col_span.to_i, 1 ].max
+    end
+
+  end
+
   class GridLayout
 
     def initialize(num_cols = 1, num_rows = 1, horizontal_gap = 0, vertical_gap = 0)
@@ -41,11 +51,17 @@ module Ladb::OpenCutList::Kuix
       until entity.nil?
         if entity.visible?
 
+          if entity.layout_data && entity.layout_data.is_a?(GridLayoutData)
+            col_span = [ entity.layout_data.col_span, @num_cols - col ].min
+          else
+            col_span = 1
+          end
+
           if layout
             entity.bounds.set!(
               col * (cell_width + @horizontal_gap),
               row * (cell_height + @vertical_gap),
-              cell_width,
+              cell_width * col_span + @horizontal_gap * (col_span - 1),
               cell_height
             )
             entity.do_layout
@@ -55,7 +71,7 @@ module Ladb::OpenCutList::Kuix
             prefered_cell_height = [ prefered_cell_height, prefered_size.height ].max
           end
 
-          col += 1
+          col += col_span
           if col >= @num_cols
             col = 0
             row += 1

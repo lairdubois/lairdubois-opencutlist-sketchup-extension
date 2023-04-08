@@ -1374,6 +1374,9 @@ tool:
     veneers_plural: "{{ count }} surfaces"
     veneer_zmin: Contreparement
     veneer_zmax: Parement
+    warning:
+      no_material: Aucune matière
+      no_material_type: Aucune matière de type '{{ type }}'
     error:
       not_part: L'objet ciblé n'est pas une pièce
       not_edge: La face ciblée n'est pas un chant de panneau
