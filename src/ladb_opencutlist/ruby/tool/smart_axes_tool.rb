@@ -326,10 +326,7 @@ module Ladb::OpenCutList
     end
 
     def onMouseMove(flags, x, y, view)
-      if super
-        _reset(view)
-        return true
-      end
+      return true if super
       unless is_action_none?
         _handle_mouse_event(x, y, view, :move)
       end
@@ -363,7 +360,7 @@ module Ladb::OpenCutList
         infos << "#{part.material_name} (#{Plugin.instance.get_i18n_string("tab.materials.type_#{part.group.material_type}")})" unless part.material_name.empty?
         infos << ">|<" if part.flipped
 
-        notify_infos(part.name, infos.join(' | '))
+        notify_infos(part.name, infos)
 
         # Create drawing helpers
 
@@ -373,7 +370,7 @@ module Ladb::OpenCutList
 
         arrow_color = part.auto_oriented ? COLOR_ARROW_AUTO_ORIENTED : COLOR_ARROW
         arrow_line_width = 2
-        arrow_offset = Sketchup.active_model.active_view.pixels_to_model(1, ORIGIN)
+        arrow_offset = Sketchup.active_model.active_view.pixels_to_model(1, Sketchup.active_model.active_view.guess_target)
 
         part_helper = Kuix::Group.new
         part_helper.transformation = instance_info.transformation

@@ -1375,10 +1375,10 @@ tool:
     veneer_zmin: Contreparement
     veneer_zmax: Parement
     error:
-      not_part: L'objet ciblé n'est pas une pièce.
-      not_edge: La face ciblée n'est pas un chant de panneau.
-      not_veneer: La face ciblée n'est pas une surface de panneau.
-      wrong_material_type: La pièce ciblée doit être du type '{{ type }}'.
+      not_part: L'objet ciblé n'est pas une pièce
+      not_edge: La face ciblée n'est pas un chant de panneau
+      not_veneer: La face ciblée n'est pas une surface de panneau
+      wrong_material_type: La pièce ciblée doit être du type '{{ type }}'
   smart_axes:
     title: Orienter
     toggle_depth: Pièces en arrière plan
@@ -1389,9 +1389,9 @@ tool:
     action_2: Orienter automatiquement
     action_2_status: Cliquez sur une pièce pour définir sa Longueur sur sa plus grand dimension et l'Epaisseur sur sa plus petite
     success:
-      part_oriented: Cette pièce a déjà sa longueur sur la plus grande dimension et son épaisseur sur la plus petite.
+      part_oriented: Cette pièce a déjà sa longueur sur la plus grande dimension et son épaisseur sur la plus petite
     warning:
-      more_entities: "{{ count_used }} instances partageant la même définition seront modifiées."
+      more_entities: "{{ count_used }} instances partageant la même définition seront modifiées"
     error:
-      not_part: L'objet ciblé n'est pas une pièce.
-      not_orientable: Le type de cette pièce ne permet pas de l'orienter.
+      not_part: L'objet ciblé n'est pas une pièce
+      not_orientable: Le type de cette pièce ne permet pas de l'orienter

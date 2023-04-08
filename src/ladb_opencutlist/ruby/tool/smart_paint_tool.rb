@@ -696,10 +696,7 @@ module Ladb::OpenCutList
     end
 
     def onMouseMove(flags, x, y, view)
-      if super
-        _reset(view)
-        return true
-      end
+      return true if super
       unless is_action_none?
         _handle_mouse_event(x, y, view, :move)
       end
@@ -970,7 +967,7 @@ module Ladb::OpenCutList
                       else
 
                         # Show edges infos
-                        notify_infos(part.name, "#{Plugin.instance.get_i18n_string('tool.smart_paint.edges', { :count => sides.length })} → #{sides.map { |side| Plugin.instance.get_i18n_string("tool.smart_paint.edge_#{side}") }.join(' + ')}" )
+                        notify_infos(part.name, [ "#{Plugin.instance.get_i18n_string('tool.smart_paint.edges', { :count => sides.length })} → #{sides.map { |side| Plugin.instance.get_i18n_string("tool.smart_paint.edge_#{side}") }.join(' + ')}" ])
 
                         current_material = get_current_material
                         color = current_material ? current_material.color : MaterialUtils::get_color_from_path(picked_entity_path)
@@ -995,7 +992,7 @@ module Ladb::OpenCutList
                         if definition && definition.count_used_instances > 1
                           notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
                         else
-                          notify_message('')
+                          hide_message
                         end
 
                         if event == :l_button_up
@@ -1052,7 +1049,7 @@ module Ladb::OpenCutList
                       else
 
                         # Show veneers infos
-                        notify_infos(part.name, "#{Plugin.instance.get_i18n_string('tool.smart_paint.veneers', { :count => sides.length })} → #{sides.map { |side| Plugin.instance.get_i18n_string("tool.smart_paint.veneer_#{side}") }.join(' + ')}" )
+                        notify_infos(part.name, [ "#{Plugin.instance.get_i18n_string('tool.smart_paint.veneers', { :count => sides.length })} → #{sides.map { |side| Plugin.instance.get_i18n_string("tool.smart_paint.veneer_#{side}") }.join(' + ')}" ])
 
                         current_material = get_current_material
                         color = current_material ? current_material.color : MaterialUtils::get_color_from_path(picked_entity_path)
@@ -1077,7 +1074,7 @@ module Ladb::OpenCutList
                         if definition && definition.count_used_instances > 1
                           notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
                         else
-                          notify_message('')
+                          hide_message
                         end
 
                         if event == :l_button_up
@@ -1091,7 +1088,7 @@ module Ladb::OpenCutList
                   else
 
                     # Show part infos
-                    notify_infos(part.name, "#{part.length} x #{part.width} x #{part.thickness}")
+                    notify_infos(part.name)
 
                     current_material = get_current_material
                     color = current_material ? current_material.color : MaterialUtils::get_color_from_path(picked_entity_path[0...-1]) # [0...-1] returns array without last element
@@ -1129,7 +1126,7 @@ module Ladb::OpenCutList
 
                   # Display material infos
                   if material
-                    notify_infos(material.name, "(#{Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes.new(material).type}")})")
+                    notify_infos(material.name, [ Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes.new(material).type}") ])
                   end
 
                 elsif event == :l_button_up

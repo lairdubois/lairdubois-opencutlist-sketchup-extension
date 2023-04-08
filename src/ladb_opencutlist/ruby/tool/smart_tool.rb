@@ -106,6 +106,8 @@ module Ladb::OpenCutList
 
       unit = get_unit(view)
 
+      # -- TOP
+
       @top_panel = Kuix::Panel.new
       @top_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
       @top_panel.layout = Kuix::BorderLayout.new
@@ -136,82 +138,82 @@ module Ladb::OpenCutList
           @action_buttons = []
           get_action_defs.each { |action_def|
 
-        action = action_def[:action]
-        modifiers = action_def[:modifiers]
+            action = action_def[:action]
+            modifiers = action_def[:modifiers]
 
-        data = {
-          :action => action,
-          :modifier_buttons => [],
-        }
-
-        actions_btn = Kuix::Button.new
-        actions_btn.layout = Kuix::BorderLayout.new
-        actions_btn.border.set!(0, unit / 4, 0, unit / 4)
-        actions_btn.min_size.set_all!(unit * 9)
-        actions_btn.set_style_attribute(:border_color, COLOR_BRAND_DARK.blend(COLOR_WHITE, 0.8))
-        actions_btn.set_style_attribute(:border_color, COLOR_BRAND_LIGHT, :hover)
-        actions_btn.set_style_attribute(:border_color, COLOR_BRAND, :selected)
-        actions_btn.set_style_attribute(:background_color, COLOR_BRAND_DARK)
-        actions_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
-        actions_btn.set_style_attribute(:background_color, COLOR_BRAND, :selected)
-        lbl = actions_btn.append_static_label(Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}"), unit * 3)
-        lbl.padding.set!(0, unit * (modifiers.is_a?(Array) ? 1 : 4), 0, unit * 4)
-        lbl.set_style_attribute(:color, COLOR_BRAND_LIGHT)
-        lbl.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
-        lbl.set_style_attribute(:color, COLOR_WHITE, :selected)
-        actions_btn.data = data
-        actions_btn.on(:click) { |button|
-          set_root_action(action)
-        }
-        actions_btn.on(:enter) { |button|
-          notify_message(Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}_status"))
-        }
-        actions_btn.on(:leave) { |button|
-          notify_message('')
-        }
-        actions_btns_panel.append(actions_btn)
-
-        if modifiers.is_a?(Array)
-
-          actions_modifiers = Kuix::Panel.new
-          actions_modifiers.layout = Kuix::GridLayout.new(modifiers.length, 0)
-          actions_modifiers.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
-          actions_modifiers.padding.set_all!(unit)
-          actions_btn.append(actions_modifiers)
-
-          modifiers.each { |modifier|
-
-            actions_modifier_btn = Kuix::Button.new
-            actions_modifier_btn.layout = Kuix::StaticLayout.new
-            actions_modifier_btn.border.set_all!(unit / 2)
-            actions_modifier_btn.padding.set_all!(unit * 2)
-            actions_modifier_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT)
-            actions_modifier_btn.set_style_attribute(:background_color, COLOR_WHITE, :hover)
-            actions_modifier_btn.set_style_attribute(:background_color, COLOR_WHITE, :selected)
-            actions_modifier_btn.data = { :modifier => modifier }
-            actions_modifier_btn.on(:click) { |button|
-              set_root_action(action, modifier)
+            data = {
+              :action => action,
+              :modifier_buttons => [],
             }
-            actions_modifiers.append(actions_modifier_btn)
 
-            child = get_action_modifier_btn_child(action, modifier)
-            if child
-              child.layout_data = Kuix::StaticLayoutData.new
-              child.text_size = @unit * 3 if child.respond_to?(:text_size=)
-              child.min_size.set_all!(@unit * 3)
-              child.set_style_attribute(:color, COLOR_BRAND_DARK)
-              actions_modifier_btn.append(child)
+            actions_btn = Kuix::Button.new
+            actions_btn.layout = Kuix::BorderLayout.new
+            actions_btn.border.set!(0, unit / 4, 0, unit / 4)
+            actions_btn.min_size.set_all!(unit * 9)
+            actions_btn.set_style_attribute(:border_color, COLOR_BRAND_DARK.blend(COLOR_WHITE, 0.8))
+            actions_btn.set_style_attribute(:border_color, COLOR_BRAND_LIGHT, :hover)
+            actions_btn.set_style_attribute(:border_color, COLOR_BRAND, :selected)
+            actions_btn.set_style_attribute(:background_color, COLOR_BRAND_DARK)
+            actions_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
+            actions_btn.set_style_attribute(:background_color, COLOR_BRAND, :selected)
+            lbl = actions_btn.append_static_label(Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}"), unit * 3)
+            lbl.padding.set!(0, unit * (modifiers.is_a?(Array) ? 1 : 4), 0, unit * 4)
+            lbl.set_style_attribute(:color, COLOR_BRAND_LIGHT)
+            lbl.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
+            lbl.set_style_attribute(:color, COLOR_WHITE, :selected)
+            actions_btn.data = data
+            actions_btn.on(:click) { |button|
+              set_root_action(action)
+            }
+            actions_btn.on(:enter) { |button|
+              notify_message(Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}_status"))
+            }
+            actions_btn.on(:leave) { |button|
+              hide_message
+            }
+            actions_btns_panel.append(actions_btn)
+
+            if modifiers.is_a?(Array)
+
+              actions_modifiers = Kuix::Panel.new
+              actions_modifiers.layout = Kuix::GridLayout.new(modifiers.length, 0)
+              actions_modifiers.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
+              actions_modifiers.padding.set_all!(unit)
+              actions_btn.append(actions_modifiers)
+
+              modifiers.each { |modifier|
+
+                actions_modifier_btn = Kuix::Button.new
+                actions_modifier_btn.layout = Kuix::StaticLayout.new
+                actions_modifier_btn.border.set_all!(unit / 2)
+                actions_modifier_btn.padding.set_all!(unit * 2)
+                actions_modifier_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT)
+                actions_modifier_btn.set_style_attribute(:background_color, COLOR_WHITE, :hover)
+                actions_modifier_btn.set_style_attribute(:background_color, COLOR_WHITE, :selected)
+                actions_modifier_btn.data = { :modifier => modifier }
+                actions_modifier_btn.on(:click) { |button|
+                  set_root_action(action, modifier)
+                }
+                actions_modifiers.append(actions_modifier_btn)
+
+                child = get_action_modifier_btn_child(action, modifier)
+                if child
+                  child.layout_data = Kuix::StaticLayoutData.new
+                  child.text_size = @unit * 3 if child.respond_to?(:text_size=)
+                  child.min_size.set_all!(@unit * 3)
+                  child.set_style_attribute(:color, COLOR_BRAND_DARK)
+                  actions_modifier_btn.append(child)
+                end
+
+                data[:modifier_buttons].push(actions_modifier_btn)
+
+              }
+
             end
 
-            data[:modifier_buttons].push(actions_modifier_btn)
+            @action_buttons.push(actions_btn)
 
           }
-
-        end
-
-        @action_buttons.push(actions_btn)
-
-      }
 
           # Help Button
 
@@ -229,11 +231,11 @@ module Ladb::OpenCutList
           }
           actions.append(help_btn)
 
-        # Part panel
+        # Infos panel
 
         @infos_panel = Kuix::Panel.new
         @infos_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
-        @infos_panel.layout = Kuix::InlineLayout.new(true, @unit * 4, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+        @infos_panel.layout = Kuix::InlineLayout.new(true, @unit * 3, Kuix::Anchor.new(Kuix::Anchor::CENTER))
         @infos_panel.padding.set_all!(@unit * 2)
         @infos_panel.hittable = false
         @infos_panel.visible = false
@@ -244,10 +246,6 @@ module Ladb::OpenCutList
           @infos_lbl_1.text_size = @unit * 3
           @infos_lbl_1.text_bold = true
           @infos_panel.append(@infos_lbl_1)
-
-          @infos_lbl_2 = Kuix::Label.new
-          @infos_lbl_2.text_size = @unit * 3
-          @infos_panel.append(@infos_lbl_2)
 
         # Message panel
 
@@ -272,8 +270,7 @@ module Ladb::OpenCutList
     def notify_message(text, type = MESSAGE_TYPE_DEFAULT)
       return unless @message_panel && text.is_a?(String)
       @message_lbl.text = text
-      @message_lbl.visible = !text.empty?
-      @message_panel.visible = @message_lbl.visible?
+      @message_panel.visible = !text.empty?
       case type
       when MESSAGE_TYPE_ERROR
         @message_lbl.set_style_attribute(:color, COLOR_MESSAGE_TEXT_ERROR)
@@ -298,13 +295,23 @@ module Ladb::OpenCutList
       @message_panel.visible = false
     end
 
-    def notify_infos(text_1, text_2 = '')
-      return unless @infos_panel && text_1.is_a?(String) && text_2.is_a?(String)
-      @infos_lbl_1.text = text_1
-      @infos_lbl_1.visible = !text_1.empty?
-      @infos_lbl_2.text = text_2
-      @infos_lbl_2.visible = !text_2.empty?
-      @infos_panel.visible = @infos_lbl_1.visible? || @infos_lbl_2.visible?
+    def notify_infos(text_1, infos = [])
+      return unless @infos_panel && text_1.is_a?(String) && infos.is_a?(Array)
+      @infos_panel.remove_all
+      unless text_1.empty?
+        @infos_lbl_1.text = text_1
+        @infos_panel.append(@infos_lbl_1)
+      end
+      infos.each do |info|
+        lbl = Kuix::Label.new
+        lbl.border.set!(0, 0, 0, @unit / 4)
+        lbl.padding.set!(0, 0, 0, @unit * 3)
+        lbl.text_size = @unit * 3
+        lbl.text = info
+        lbl.set_style_attribute(:border_color, COLOR_BLACK)
+        @infos_panel.append(lbl)
+      end
+      @infos_panel.visible = !text_1.empty? || !infos.empty?
     end
 
     def hide_infos
