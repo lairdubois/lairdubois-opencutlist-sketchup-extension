@@ -224,8 +224,8 @@ module Ladb::OpenCutList
           _apply_material(part_data.edge_material_names['ymax'], part_data.edge_entity_ids['ymax'], model)
           _apply_material(part_data.edge_material_names['xmin'], part_data.edge_entity_ids['xmin'], model)
           _apply_material(part_data.edge_material_names['xmax'], part_data.edge_entity_ids['xmax'], model)
-          _apply_material(part_data.veneer_material_names['zmin'], part_data.veneer_entity_ids['zmin'], model, part_data.veneer_texture_angles['zmin'].to_i.degrees)
-          _apply_material(part_data.veneer_material_names['zmax'], part_data.veneer_entity_ids['zmax'], model, part_data.veneer_texture_angles['zmax'].to_i.degrees)
+          _apply_material(part_data.veneer_material_names['zmin'], part_data.veneer_entity_ids['zmin'], model, part_data.veneer_texture_angles['zmin'].nil? ? nil : Math::PI - part_data.veneer_texture_angles['zmin'].to_i.degrees)
+          _apply_material(part_data.veneer_material_names['zmax'], part_data.veneer_entity_ids['zmax'], model, part_data.veneer_texture_angles['zmax'].nil? ? nil : part_data.veneer_texture_angles['zmax'].to_i.degrees)
 
         end
 
@@ -238,7 +238,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _apply_material(material_name, entity_ids, model, angle = 0)  # angle in radians
+    def _apply_material(material_name, entity_ids, model, angle = nil)  # angle in radians
       unless entity_ids.nil?
         material = nil
         if material_name.nil? || material_name.empty? || (material = model.materials[material_name])
@@ -254,28 +254,27 @@ module Ladb::OpenCutList
                   entity.material = material
                 end
 
-                if entity.is_a?(Sketchup::Face)
+                if !angle.nil? && entity.is_a?(Sketchup::Face)
 
                   # TODO find a way to achieve this in SU < 2022
                   entity.clear_texture_position(true) if entity.respond_to?(:clear_texture_position)
 
                   if angle != 0
 
+                    edge = entity.edges.first
+
                     points = [
-                      Geom::Point3d.new(0, 0),
-                      Geom::Point3d.new(1, 0)
+                      edge.start.position,
+                      edge.end.position
                     ]
 
                     uv_helper = entity.get_UVHelper(true, false)
-                    t = Geom::Transformation.rotation(points[0], entity.normal, angle)
+                    t = Geom::Transformation.rotation(points[0], entity.normal, angle.to_f)
 
                     mapping = []
                     (0..1).each do |i|
-                      point3d = points[i]
-                      point3d_rotated = point3d.transform(t)
-                      mapping << point3d_rotated
-                      uvq = uv_helper.get_front_UVQ(point3d)
-                      mapping << uvq
+                      mapping << points[i].transform(t)             # Transformed point
+                      mapping << uv_helper.get_front_UVQ(points[i]) # UVQ
                     end
 
                     entity.position_material(entity.material, mapping, true)

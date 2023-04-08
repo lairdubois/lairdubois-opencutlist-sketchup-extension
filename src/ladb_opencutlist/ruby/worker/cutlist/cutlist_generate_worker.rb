@@ -325,8 +325,8 @@ module Ladb::OpenCutList
           veneer_decremented = thickness_decrement > 0
 
           # Compute texture angles
-          veneer_zmin_texture_angle = zmin_face_infos.empty? ? 0 : _get_face_texture_angle(zmin_face_infos.first.face)
-          veneer_zmax_texture_angle = zmax_face_infos.empty? ? 0 : _get_face_texture_angle(zmax_face_infos.first.face)
+          veneer_zmin_texture_angle = zmin_face_infos.empty? ? 0 : _get_face_texture_angle(zmin_face_infos.first, instance_info)
+          veneer_zmax_texture_angle = zmax_face_infos.empty? ? 0 : _get_face_texture_angle(zmax_face_infos.first, instance_info)
 
           # Populate VeneerDef
           veneers_def = {
@@ -659,13 +659,17 @@ module Ladb::OpenCutList
                   veneer_material_attributes = _get_material_attributes(veneer_material)
                   if part_def.veneer_texture_angles[veneer] != 0
 
-                    t = Geom::Transformation.new(Geom::Point3d.new, Z_AXIS, part_def.veneer_texture_angles[veneer])
-                    veneer_bounds = (Geom::BoundingBox.new).add([
-                                                                Geom::Point3d.new(0                           , 0).transform(t),
-                                                                Geom::Point3d.new(part_def.cutting_size.length, 0).transform(t),
-                                                                Geom::Point3d.new(part_def.cutting_size.length, part_def.cutting_size.width).transform(t),
-                                                                Geom::Point3d.new(0                           , part_def.cutting_size.width).transform(t),
-                                                              ])
+                    points = [
+                      Geom::Point3d.new(0                           , 0),
+                      Geom::Point3d.new(part_def.cutting_size.length, 0),
+                      Geom::Point3d.new(part_def.cutting_size.length, part_def.cutting_size.width),
+                      Geom::Point3d.new(0                           , part_def.cutting_size.width),
+                    ]
+                    unless part_def.veneer_texture_angles[veneer].nil?
+                      t = Geom::Transformation.new(Geom::Point3d.new, Z_AXIS, part_def.veneer_texture_angles[veneer])
+                      points.each { |point| point.transform!(t) }
+                    end
+                    veneer_bounds = (Geom::BoundingBox.new).add(points)
 
                     veneer_length = veneer_bounds.width
                     veneer_width = veneer_bounds.height
@@ -1110,37 +1114,31 @@ module Ladb::OpenCutList
       materials
     end
 
-    def _get_face_texture_angle(face, front = true)
+    def _get_face_texture_angle(face_info, instance_info)
+      return nil if instance_info.size.auto_oriented? || instance_info.size.axes_flipped?
+      return nil if face_info.nil? || face_info.face.nil? || face_info.face.material.nil? || face_info.face.material.texture.nil?
 
-      # Returns the angle in radians beteween (0,0)-(0,1) and its UV representation
+      # Returns the angle in radians between one edge of the face and its UV representation
 
-      return 0 unless face.is_a?(Sketchup::Face)
-      return 0 if face.nil? || face.material.nil? || face.material.texture.nil?
+      p0 = face_info.face.edges.first.start.position
+      p1 = face_info.face.edges.first.end.position
 
-      tw = face.material.texture.width
-      th = face.material.texture.height
-
-      uv_helper = face.get_UVHelper(front, !front)
-
-      p0 = Geom::Point3d.new(0, 0)
-      p1 = Geom::Point3d.new(1, 0)
-
+      uv_helper = face_info.face.get_UVHelper(true, false)
       uv0 = uv_helper.get_front_UVQ(p0)
       uv1 = uv_helper.get_front_UVQ(p1)
 
+      tw = face_info.face.material.texture.width
+      th = face_info.face.material.texture.height
       uv0.x *= tw
       uv0.y *= th
       uv1.x *= tw
       uv1.y *= th
 
-      v1 = Geom::Vector3d.new((p1 - p0).to_a)
-      v2 = Geom::Vector3d.new((uv1 - uv0).to_a)
+      v0 = Geom::Vector3d.new((p1 - p0).to_a)
+      v1 = Geom::Vector3d.new((uv1 - uv0).to_a)
 
-      top_face = face.normal.samedirection?(X_AXIS) || face.normal.samedirection?(Y_AXIS) || face.normal.samedirection?(Z_AXIS)
-      v1.x *= -1 unless top_face
-
-      angle = v1.angle_between(v2)
-      angle += Math::PI if v2.y > 0 && top_face
+      angle = v0.angle_between(v1)
+      angle *= -1 if face_info.face.normal.dot(v0.cross(v1)) > 0
       angle % (2 * Math::PI)
     end
 

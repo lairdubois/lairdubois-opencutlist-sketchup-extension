@@ -2282,7 +2282,7 @@
                     $formGroupVeneerZminTextureAngle.hide();
                 } else {
                     $rectVeneerZmin.addClass('ladb-active');
-                    if (fnIsMaterialTexturedAndGrained($selectVeneerZmin.val())) {
+                    if (!part.auto_oriented && fnIsMaterialTexturedAndGrained($selectVeneerZmin.val())) {
                         $rectVeneerZminGrain.show();
                         $patternVeneerZminGrain.attr('patternTransform', 'rotate(' + $inputVeneerZminTextureAngle.val() + ' 0 0)');
                         $formGroupVeneerZminTextureAngle.show();
@@ -2297,7 +2297,7 @@
                     $formGroupVeneerZmaxTextureAngle.hide();
                 } else {
                     $rectVeneerZmax.addClass('ladb-active');
-                    if (fnIsMaterialTexturedAndGrained($selectVeneerZmax.val())) {
+                    if (!part.auto_oriented && fnIsMaterialTexturedAndGrained($selectVeneerZmax.val())) {
                         $rectVeneerZmaxGrain.show();
                         $patternVeneerZmaxGrain.attr('patternTransform', 'rotate(' + parseInt($inputVeneerZmaxTextureAngle.val()) * -1 + ' 0 0)');
                         $formGroupVeneerZmaxTextureAngle.show();
@@ -2493,7 +2493,7 @@
                     resetValue: 0,
                     defaultUnit: 'deg',
                     units: [
-                        {deg: i18next.t('default.unit_angle_0')}
+                        { deg: i18next.t('default.unit_angle_0') }
                     ]
                 })
                 .on('change', function () {
@@ -2504,7 +2504,7 @@
                     resetValue: 0,
                     defaultUnit: 'deg',
                     units: [
-                        {deg: i18next.t('default.unit_angle_0')}
+                        { deg: i18next.t('default.unit_angle_0') }
                     ]
                 })
                 .on('change', function () {
@@ -2744,11 +2744,11 @@
                         editedParts[i].veneer_material_names.zmax = $selectVeneerZmax.val();
                     }
 
-                    if (!$inputVeneerZminTextureAngle.ladbTextinputDimension('isMultiple')) {
-                        editedParts[i].veneer_texture_angles.zmin = $inputVeneerZminTextureAngle.val();
+                    if (!$inputVeneerZminTextureAngle.ladbTextinputNumberWithUnit('isMultiple')) {
+                        editedParts[i].veneer_texture_angles.zmin = $inputVeneerZminTextureAngle.val() === '' ? null : parseInt($inputVeneerZminTextureAngle.val());
                     }
-                    if (!$inputVeneerZmaxTextureAngle.ladbTextinputDimension('isMultiple')) {
-                        editedParts[i].veneer_texture_angles.zmax = $inputVeneerZmaxTextureAngle.val();
+                    if (!$inputVeneerZmaxTextureAngle.ladbTextinputNumberWithUnit('isMultiple')) {
+                        editedParts[i].veneer_texture_angles.zmax = $inputVeneerZmaxTextureAngle.val() === '' ? null : parseInt($inputVeneerZmaxTextureAngle.val());
                     }
 
                 }

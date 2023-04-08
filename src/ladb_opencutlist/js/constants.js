@@ -6,7 +6,7 @@ var EXTENSION_BUILD = '202303301137';   // /!\ Auto-generated line, do not edit 
 // UI /////
 
 var SELECT_PICKER_OPTIONS = {
-    size: 13,
+    size: 10,
     iconBase: 'ladb-opencutlist-icon',
     tickIcon: 'ladb-opencutlist-icon-tick',
     showTick: true,
