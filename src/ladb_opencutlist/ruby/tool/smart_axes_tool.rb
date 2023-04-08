@@ -584,9 +584,11 @@ module Ladb::OpenCutList
                 instance.transformation *= ti
               }
 
-              definition_attributes = DefinitionAttributes.new(definition)
-              definition_attributes.orientation_locked_on_axis = true
-              definition_attributes.write_to_attributes
+              if Plugin.instance.get_model_preset('cutlist_options').fetch('auto_orient')
+                definition_attributes = DefinitionAttributes.new(definition)
+                definition_attributes.orientation_locked_on_axis = true
+                definition_attributes.write_to_attributes
+              end
 
               # Commit model modification operation
               view.model.commit_operation
