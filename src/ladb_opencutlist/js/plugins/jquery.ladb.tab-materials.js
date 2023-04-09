@@ -144,6 +144,7 @@
         };
 
         var $modal = this.appendModalInside('ladb_materials_modal_new', 'tabs/materials/_modal-new.twig', {
+            capabilities: that.dialog.capabilities,
             mass_unit_strippedname: that.massUnitStrippedname,
             length_unit_strippedname: that.lengthUnitStrippedname,
             material: material
