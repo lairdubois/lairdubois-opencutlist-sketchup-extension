@@ -6,10 +6,13 @@
 
     var LadbTextinputColor = function(element, options) {
         LadbTextinputAbstract.call(this, element, options, /^#[0-9a-f]*$/i);
+
+        this.$inputColor = null;
         this.$preview = null;
         this.$storeBtn = null;
         this.$removeBtn = null;
         this.$picker = null;
+
     };
     LadbTextinputColor.prototype = new LadbTextinputAbstract;
 
@@ -31,8 +34,8 @@
         if (color) {
 
             // Preview
-            if (this.$preview) {
-                this.$preview.css('background', color);
+            if (this.$inputColor) {
+                this.$inputColor.val(color);
             }
 
             // Buttons
@@ -61,7 +64,7 @@
         this.removePicker();
 
         this.$picker = $(Twig.twig({ref: 'components/_textinput-color-picker.twig'}).render(that.options));
-        this.$element.parent().append(this.$picker);
+        this.$wrapper.prepend(this.$picker);
         this.$picker.hide();    // By default picker is hidden. Focus $element to show it
 
         $('li.ladb-color-box', this.$picker)
@@ -89,8 +92,7 @@
         if (this.$picker) {
             var pos = this.$wrapper.position();
             this.$picker.css({
-                left: pos.left,
-                top: pos.top + this.$wrapper.outerHeight(false)
+                top: this.$wrapper.outerHeight(false)
             });
             this.$picker.show();
         }
@@ -114,6 +116,9 @@
 
         this.$preview = $('<div class="ladb-textinput-color-preview ladb-textinput-tool" />');
         $toolsContainer.append(this.$preview);
+
+        this.$inputColor = $('<input type="color" class="input-color" value="' + this.options.resetValue + '" tabindex="-1">');
+        this.$preview.append(this.$inputColor);
 
     };
 
@@ -198,14 +203,11 @@
             that.updatePreviewAndButtons();
 
             // Bind UI
-            that.$preview.on('click', function(e) {
-                e.stopPropagation();
-                that.$element.focus();
+            that.$inputColor.on('change', function () {
+                that.$element.val($(this).val());
+                that.updatePreviewAndButtons();
             });
             that.$element
-                .on('click', function (e) {
-                    e.stopPropagation();
-                })
                 .on('focus', function () {
                     that.showPicker();
                 })

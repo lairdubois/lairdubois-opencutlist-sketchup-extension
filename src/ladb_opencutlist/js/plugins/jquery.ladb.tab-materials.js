@@ -1108,7 +1108,9 @@
         $inputName.on('keyup change', function () { fnCheckInputNameValue(true); });
         $inputName.ladbTextinputText();
         $inputColor.on('keyup change', function () { fnCheckInputColorValue(true); });
-        $inputColor.ladbTextinputColor();
+        $inputColor.ladbTextinputColor({
+            resetValue: '#ffffff'
+        });
 
         // Bind modal event
         $modal
