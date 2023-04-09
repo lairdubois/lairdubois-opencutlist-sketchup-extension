@@ -296,6 +296,11 @@
                 attributes.volumic_mass = $inputs.inputVolumicMass.ladbTextinputNumberWithUnit('val');
                 attributes.std_prices = $inputs.editorStdPrices.ladbEditorStdPrices('getStdPrices');
             };
+            var fnResetTextureRotation = function () {
+                var rotation = parseInt($inputTextureRotation.val());
+                $imgTexture.parent().removeClass("ladb-rotate" + rotation);
+                $inputTextureRotation.val(0);
+            }
             var fnRotateTexture = function (angle) {
                 var rotation = parseInt($inputTextureRotation.val());
                 $imgTexture.parent().removeClass("ladb-rotate" + rotation);
@@ -317,7 +322,7 @@
                 }
             };
             var fnGetMaterialTexture = function (colorized) {
-                rubyCallCommand('materials_get_texture_command', { name: material.name, colorized: colorized }, function (response) {
+                rubyCallCommand('materials_get_texture_command', { name: material.name, colorized: false }, function (response) {
 
                     if (response.errors) {
                         that.dialog.notifyErrors(response.errors);
@@ -400,12 +405,19 @@
                         that.dialog.notifyErrors(response.errors);
                     } else if (response.texture_file) {
 
+                        // Reset previous rotation
+                        fnResetTextureRotation();
+
                         // Add texture file to material
+                        material.texture_ratio = response.texture_ratio;
                         material.texture_file = response.texture_file;
                         material.texture_loaded = true;
 
                         // Update img src with generated texture file
                         $imgTexture.attr('src', material.texture_file);
+
+                        // Re-compute size
+                        fnComputeSizeAspectRatio(true);
 
                     }
 

@@ -76,7 +76,7 @@ module Ladb::OpenCutList
           ImageUtils.rotate(@texture_file, @texture_rotation) if @texture_rotation > 0
 
           # Keep previous material color if colorized material
-          if material.materialType == 2 # 2 = Sketchup::Material::MATERIAL_COLORIZED_TEXTURED
+          if !@texture_loaded && material.materialType == 2 # 2 = Sketchup::Material::MATERIAL_COLORIZED_TEXTURED
             color = material.color
           else
             color = nil

@@ -25,7 +25,7 @@ module Ladb::OpenCutList
       materials = model.materials
       material = materials[@name]
 
-      if material
+      if material && material.texture
 
         temp_dir = Plugin.instance.temp_dir
         material_textures_dir = File.join(temp_dir, 'material_textures')
