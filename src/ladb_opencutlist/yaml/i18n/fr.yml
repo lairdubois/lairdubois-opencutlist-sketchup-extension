@@ -983,8 +983,7 @@ tab:
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Direction du fil
-      colorized: Cette teinte sera appliquée à la texture de cette matière lors du rendu dans le modèle
-      texture_colorized: Combiner définitivement la teinte dans l'image de la texture
+      colorized: Cette teinte sera appliquée à la texture lors du rendu dans le modèle
       texture_load: Charger une nouvelle texture
       texture_clear: Effacer la texture
       edit: "Éditer les propriétés de '{{ name }}'"

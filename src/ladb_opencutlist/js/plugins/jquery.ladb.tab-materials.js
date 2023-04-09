@@ -268,7 +268,6 @@
             var $btnTextureClear = $('#ladb_materials_btn_texture_clear', $modal);
             var $btnTextureRotateRight = $('#ladb_materials_btn_texture_rotate_right', $modal);
             var $btnTextureRotateLeft = $('#ladb_materials_btn_texture_rotate_left', $modal);
-            var $btnTextureColorized = $('#ladb_materials_btn_texture_colorized', $modal);
             var $inputTextureWidth = $('#ladb_materials_input_texture_width', $modal);
             var $inputTextureHeight = $('#ladb_materials_input_texture_height', $modal);
             var $btnTextureSizeLock = $('#ladb_material_btn_texture_size_lock', $modal);
@@ -320,24 +319,16 @@
                     $inputTextureHeight.val(tw);
                     material.texture_ratio = 1 / material.texture_ratio;
                 }
-                if (!material.texture_colorizable) {
-                    $btnTextureColorized.removeClass('hide');
-                }
             };
-            var fnGetMaterialTexture = function (colorized) {
+            var fnGetMaterialTexture = function () {
                 if (material.textured) {
                     rubyCallCommand('materials_get_texture_command', {
-                        name: material.name,
-                        colorized: false
+                        name: material.name
                     }, function (response) {
 
                         if (response.errors) {
                             that.dialog.notifyErrors(response.errors);
                         } else if (response.texture_file) {
-
-                            if (response.texture_colorized) {
-                                $btnTextureColorized.addClass('active')
-                            }
 
                             // Update img src with generated texture file
                             $imgTexture.attr('src', response.texture_file);
@@ -427,11 +418,6 @@
                 fnRotateTexture(-90);
                 this.blur();
             });
-            $btnTextureColorized.on('click', function () {
-                $btnTextureColorized.toggleClass('active');
-                fnGetMaterialTexture($btnTextureColorized.hasClass('active'));
-                this.blur();
-            });
             $btnTextureLoad.on('click', function () {
                 rubyCallCommand('materials_load_texture_command', null, function (response) {
 
@@ -512,7 +498,6 @@
                 that.editedMaterial.texture_rotation = parseInt($inputTextureRotation.val());
                 that.editedMaterial.texture_width = $inputTextureWidth.val();
                 that.editedMaterial.texture_height = $inputTextureHeight.val();
-                that.editedMaterial.texture_colorized = $btnTextureColorized.hasClass('active');
                 fnFetchAttributes(that.editedMaterial.attributes);
 
                 // Flag to ignore next material change event

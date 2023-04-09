@@ -5,8 +5,7 @@ module Ladb::OpenCutList
     def initialize(material_data)
       
       @name = material_data.fetch('name')
-      @colorized = material_data.fetch('colorized')
-      
+
     end
 
     # -----
@@ -17,8 +16,7 @@ module Ladb::OpenCutList
       return { :errors => [ 'tab.materials.error.no_model' ] } unless model
 
       response = {
-          :texture_file => '',
-          :texture_colorized => false
+          :texture_file => ''
       }
 
       # Fetch material
@@ -36,9 +34,8 @@ module Ladb::OpenCutList
 
         texture_file = File.join(material_textures_dir, "#{SecureRandom.uuid}.png")
 
-        material.texture.write(texture_file, @colorized)
+        material.texture.write(texture_file)
 
-        response[:texture_colorized] = @colorized
         response[:texture_file] = texture_file
 
       end
