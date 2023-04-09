@@ -2282,7 +2282,10 @@
                     $formGroupVeneerZminTextureAngle.hide();
                 } else {
                     $rectVeneerZmin.addClass('ladb-active');
-                    if (!part.auto_oriented && fnIsMaterialTexturedAndGrained($selectVeneerZmin.val())) {
+                    if (!editedPart.auto_oriented && fnIsMaterialTexturedAndGrained($selectVeneerZmin.val())) {
+                        if ($inputVeneerZminTextureAngle.val() === '') {
+                            $inputVeneerZminTextureAngle.val(0);
+                        }
                         $rectVeneerZminGrain.show();
                         $patternVeneerZminGrain.attr('patternTransform', 'rotate(' + $inputVeneerZminTextureAngle.val() + ' 0 0)');
                         $formGroupVeneerZminTextureAngle.show();
@@ -2297,7 +2300,10 @@
                     $formGroupVeneerZmaxTextureAngle.hide();
                 } else {
                     $rectVeneerZmax.addClass('ladb-active');
-                    if (!part.auto_oriented && fnIsMaterialTexturedAndGrained($selectVeneerZmax.val())) {
+                    if (!editedPart.auto_oriented && fnIsMaterialTexturedAndGrained($selectVeneerZmax.val())) {
+                        if ($inputVeneerZmaxTextureAngle.val() === '') {
+                            $inputVeneerZmaxTextureAngle.val(0);
+                        }
                         $rectVeneerZmaxGrain.show();
                         $patternVeneerZmaxGrain.attr('patternTransform', 'rotate(' + parseInt($inputVeneerZmaxTextureAngle.val()) * -1 + ' 0 0)');
                         $formGroupVeneerZmaxTextureAngle.show();
@@ -2357,8 +2363,10 @@
             };
             var fnIncrementVeneerTextureAngleInputValue = function($input, inc) {
                 let angle = parseInt($input.val());
-                $input.val((angle + inc) % 360);
-                fnUpdateVeneersPreview();
+                if (!isNaN(angle)) {
+                    $input.val((angle + inc) % 360);
+                    fnUpdateVeneersPreview();
+                }
             }
             var fnOnAxiesOrderChanged = function () {
                 var axes = fnComputeAxesOrder();

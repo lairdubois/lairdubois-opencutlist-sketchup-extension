@@ -353,6 +353,10 @@
                 $btnUpdate.prop('disabled', $inputs.inputName.data('ladb-invalid') || $inputs.inputColor.data('ladb-invalid'))
             };
 
+            if (tab === 'texture') {
+                fnGetMaterialTexture(false);
+            }
+
             // Bind img
             $imgTexture.on('load', function() {
                 $divTextureThumbnail.show();
@@ -501,10 +505,6 @@
             // Setup tooltips & popovers
             this.dialog.setupTooltips();
             this.dialog.setupPopovers();
-
-            if (tab === 'texture') {
-                fnGetMaterialTexture(false);
-            }
 
             // Callback
             if (typeof callback === 'function') {

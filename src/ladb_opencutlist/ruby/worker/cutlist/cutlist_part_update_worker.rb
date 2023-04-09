@@ -238,7 +238,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _apply_material(material_name, entity_ids, model, angle = nil)  # angle in radians
+    def _apply_material(material_name, entity_ids, model, angle = nil)  # angle in radians [0..2PI]
       unless entity_ids.nil?
         material = nil
         if material_name.nil? || material_name.empty? || (material = model.materials[material_name])
@@ -259,7 +259,7 @@ module Ladb::OpenCutList
                   # TODO find a way to achieve this in SU < 2022
                   entity.clear_texture_position(true) if entity.respond_to?(:clear_texture_position)
 
-                  if angle != 0
+                  if angle > 0
 
                     edge = entity.edges.first
 
@@ -269,7 +269,7 @@ module Ladb::OpenCutList
                     ]
 
                     uv_helper = entity.get_UVHelper(true, false)
-                    t = Geom::Transformation.rotation(points[0], entity.normal, angle.to_f)
+                    t = Geom::Transformation.rotation(ORIGIN, entity.normal, angle.to_f)
 
                     mapping = []
                     (0..1).each do |i|

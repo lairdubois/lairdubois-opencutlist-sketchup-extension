@@ -1118,7 +1118,7 @@ module Ladb::OpenCutList
       return nil if instance_info.size.auto_oriented? || instance_info.size.axes_flipped?
       return nil if face_info.nil? || face_info.face.nil? || face_info.face.material.nil? || face_info.face.material.texture.nil?
 
-      # Returns the angle in radians between one edge of the face and its UV representation
+      # Returns the angle in radians [0..2PI] between one edge of the face and its UV representation
 
       p0 = face_info.face.edges.first.start.position
       p1 = face_info.face.edges.first.end.position
