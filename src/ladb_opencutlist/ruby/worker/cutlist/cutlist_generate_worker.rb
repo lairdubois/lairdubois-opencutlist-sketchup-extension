@@ -325,8 +325,8 @@ module Ladb::OpenCutList
           veneer_decremented = thickness_decrement > 0
 
           # Compute texture angles
-          veneer_zmin_texture_angle = zmin_face_infos.empty? ? 0 : _get_face_texture_angle(zmin_face_infos.first, instance_info)
-          veneer_zmax_texture_angle = zmax_face_infos.empty? ? 0 : _get_face_texture_angle(zmax_face_infos.first, instance_info)
+          veneer_zmin_texture_angle = zmin_face_infos.empty? ? nil : _get_face_texture_angle(zmin_face_infos.first.face, instance_info)
+          veneer_zmax_texture_angle = zmax_face_infos.empty? ? nil : _get_face_texture_angle(zmax_face_infos.first.face, instance_info)
 
           # Populate VeneerDef
           veneers_def = {
@@ -1114,21 +1114,22 @@ module Ladb::OpenCutList
       materials
     end
 
-    def _get_face_texture_angle(face_info, instance_info)
-      return nil if instance_info.size.auto_oriented? || instance_info.size.axes_flipped?
-      return nil if face_info.nil? || face_info.face.nil? || face_info.face.material.nil? || face_info.face.material.texture.nil?
+    def _get_face_texture_angle(face, instance_info)
+      return nil if instance_info.size.auto_oriented? || instance_info.size.axes_flipped?   # Angles are disabled
+      return nil if face.nil? || !face.respond_to?(:clear_texture_position)                 # SU 2022+
+      return 0 if face.material.nil? || face.material.texture.nil?                          # Default angle
 
       # Returns the angle in radians [0..2PI] between one edge of the face and its UV representation
 
-      p0 = face_info.face.edges.first.start.position
-      p1 = face_info.face.edges.first.end.position
+      p0 = face.edges.first.start.position
+      p1 = face.edges.first.end.position
 
-      uv_helper = face_info.face.get_UVHelper(true, false)
+      uv_helper = face.get_UVHelper(true, false)
       uv0 = uv_helper.get_front_UVQ(p0)
       uv1 = uv_helper.get_front_UVQ(p1)
 
-      tw = face_info.face.material.texture.width
-      th = face_info.face.material.texture.height
+      tw = face.material.texture.width
+      th = face.material.texture.height
       uv0.x *= tw
       uv0.y *= th
       uv1.x *= tw
@@ -1138,7 +1139,7 @@ module Ladb::OpenCutList
       v1 = Geom::Vector3d.new((uv1 - uv0).to_a)
 
       angle = v0.angle_between(v1)
-      angle *= -1 if face_info.face.normal.dot(v0.cross(v1)) > 0
+      angle *= -1 if face.normal.dot(v0.cross(v1)) > 0
       angle % (2 * Math::PI)
     end
 

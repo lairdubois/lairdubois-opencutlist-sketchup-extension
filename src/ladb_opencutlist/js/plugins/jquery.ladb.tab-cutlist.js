@@ -2282,10 +2282,7 @@
                     $formGroupVeneerZminTextureAngle.hide();
                 } else {
                     $rectVeneerZmin.addClass('ladb-active');
-                    if (!editedPart.auto_oriented && fnIsMaterialTexturedAndGrained($selectVeneerZmin.val())) {
-                        if ($inputVeneerZminTextureAngle.val() === '') {
-                            $inputVeneerZminTextureAngle.val(0);
-                        }
+                    if (editedPart.veneer_texture_angles.zmin != null && fnIsMaterialTexturedAndGrained($selectVeneerZmin.val())) {
                         $rectVeneerZminGrain.show();
                         $patternVeneerZminGrain.attr('patternTransform', 'rotate(' + $inputVeneerZminTextureAngle.val() + ' 0 0)');
                         $formGroupVeneerZminTextureAngle.show();
@@ -2300,10 +2297,7 @@
                     $formGroupVeneerZmaxTextureAngle.hide();
                 } else {
                     $rectVeneerZmax.addClass('ladb-active');
-                    if (!editedPart.auto_oriented && fnIsMaterialTexturedAndGrained($selectVeneerZmax.val())) {
-                        if ($inputVeneerZmaxTextureAngle.val() === '') {
-                            $inputVeneerZmaxTextureAngle.val(0);
-                        }
+                    if (editedPart.veneer_texture_angles.zmax != null && fnIsMaterialTexturedAndGrained($selectVeneerZmax.val())) {
                         $rectVeneerZmaxGrain.show();
                         $patternVeneerZmaxGrain.attr('patternTransform', 'rotate(' + parseInt($inputVeneerZmaxTextureAngle.val()) * -1 + ' 0 0)');
                         $formGroupVeneerZmaxTextureAngle.show();

@@ -224,7 +224,7 @@ module Ladb::OpenCutList
           _apply_material(part_data.edge_material_names['ymax'], part_data.edge_entity_ids['ymax'], model)
           _apply_material(part_data.edge_material_names['xmin'], part_data.edge_entity_ids['xmin'], model)
           _apply_material(part_data.edge_material_names['xmax'], part_data.edge_entity_ids['xmax'], model)
-          _apply_material(part_data.veneer_material_names['zmin'], part_data.veneer_entity_ids['zmin'], model, part_data.veneer_texture_angles['zmin'].nil? ? nil : Math::PI - part_data.veneer_texture_angles['zmin'].to_i.degrees)
+          _apply_material(part_data.veneer_material_names['zmin'], part_data.veneer_entity_ids['zmin'], model, part_data.veneer_texture_angles['zmin'].nil? ? nil : part_data.veneer_texture_angles['zmin'].to_i.degrees)
           _apply_material(part_data.veneer_material_names['zmax'], part_data.veneer_entity_ids['zmax'], model, part_data.veneer_texture_angles['zmax'].nil? ? nil : part_data.veneer_texture_angles['zmax'].to_i.degrees)
 
         end
@@ -254,18 +254,19 @@ module Ladb::OpenCutList
                   entity.material = material
                 end
 
-                if !angle.nil? && entity.is_a?(Sketchup::Face)
+                if !angle.nil? && entity.is_a?(Sketchup::Face) && entity.respond_to?(:clear_texture_position) # SU 2022+
 
-                  # TODO find a way to achieve this in SU < 2022
-                  entity.clear_texture_position(true) if entity.respond_to?(:clear_texture_position)
+                  # Reset all texture transformations
+                  entity.clear_texture_position(true)
+
+                  # Adapt angle if face normal is -Z
+                  angle = Math::PI - angle if entity.normal.samedirection?(Z_AXIS.reverse)
 
                   if angle > 0
 
-                    edge = entity.edges.first
-
                     points = [
-                      edge.start.position,
-                      edge.end.position
+                      entity.edges.first.start.position,
+                      entity.edges.first.end.position
                     ]
 
                     uv_helper = entity.get_UVHelper(true, false)
