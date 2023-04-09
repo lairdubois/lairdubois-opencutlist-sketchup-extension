@@ -9,12 +9,10 @@
 
 {% block headerInner %}
     {{ parent() }}
-    {% if material.textured %}
-        <ul class="nav nav-tabs nav-justified" role="tablist">
-            <li role="presentation"{% if tab == 'general' %} class="active"{% endif %}><a href="#tab_edit_material_general" role="tab" data-toggle="tab">{{ 'tab.materials.edit_material.general'|i18next }}</a></li>
-            <li role="presentation"{% if tab == 'texture' %} class="active"{% endif %}><a id="ladb_materials_btn_tab_texture" href="#tab_edit_material_texture" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-texture"></i> {{ 'tab.materials.edit_material.texture'|i18next }}</a></li>
-        </ul>
-    {% endif %}
+    <ul class="nav nav-tabs nav-justified" role="tablist">
+        <li role="presentation"{% if tab == 'general' %} class="active"{% endif %}><a href="#tab_edit_material_general" role="tab" data-toggle="tab">{{ 'tab.materials.edit_material.general'|i18next }}</a></li>
+        <li role="presentation"{% if tab == 'texture' %} class="active"{% endif %}><a id="ladb_materials_btn_tab_texture" href="#tab_edit_material_texture" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-texture"></i> {{ 'tab.materials.edit_material.texture'|i18next }}</a></li>
+    </ul>
 {% endblock %}
 
 {% block bodyInner %}
@@ -26,31 +24,36 @@
             <div role="tabpanel" class="tab-pane{% if tab == 'texture' %} active{% endif %}" id="tab_edit_material_texture">
                 <div class="ladb-material-texture-preview-wrapper">
                     <div class="ladb-material-texture-preview">
-                        <div id="ladb_materials_div_texture_thumbnail" class="thumbnail" style="display: none;">
+                        <div id="ladb_materials_div_texture_thumbnail" class="thumbnail ladb-hidden-no-texture" style="display: none;">
                             <img id="ladb_materials_img_texture" src="">
                             <div style="position: absolute; left: 0; bottom: 10px; right: 0; font-size: 80%; width: 100%; color: #fff; text-shadow: 1px 1px 2px black;"><span id="ladb_materials_span_texture_width">{{ material.texture_image_width }}</span> x <span id="ladb_materials_span_texture_height">{{ material.texture_image_height }}</span> px</div>
                         </div>
+                        <span class="text-muted ladb-hidden-textured" style="display: none;">{{ 'tab.materials.edit_material.no_texture'|i18next }}</span>
                     </div>
                 </div>
                 <div class="text-center">
                     {% set areaWidth = 280 %}
                     {% set areaHeight = 20 %}
-                    <svg viewBox="0 0 {{ areaWidth }} {{ areaHeight }}" style="width: {{ areaWidth }}px; height: {{ areaHeight }}px;">
+                    <svg viewBox="0 0 {{ areaWidth }} {{ areaHeight }}" class="ladb-hidden-no-texture" style="width: {{ areaWidth }}px; height: {{ areaHeight }}px;">
                         {% include 'core/_grain-direction-arrow.twig' with { 'centerX':areaWidth / 2, 'centerY':areaHeight / 2 } %}
                     </svg>
                 </div>
                 <div class="text-center">
+                    <input id="ladb_materials_input_texture_changed" type="hidden" value="false"/>
+                    <input id="ladb_materials_input_texture_ratio" type="hidden" value="{{ material.texture_ratio }}"/>
                     <input id="ladb_materials_input_texture_rotation" type="hidden" value="{{ material.texture_rotation }}"/>
-                    <button id="ladb_materials_btn_texture_rotate_right" class="btn btn-default"><i class="ladb-opencutlist-icon-rotate-right" style="font-size: 120%"></i></button>
-                    <button id="ladb_materials_btn_texture_rotate_left" class="btn btn-default"><i class="ladb-opencutlist-icon-rotate-left" style="font-size: 120%"></i></button>
+                    <button id="ladb_materials_btn_texture_load" class="btn btn-default" data-toggle="tooltip" data-html="true" title="{{ 'tab.materials.tooltip.texture_load'|i18next }}"><i class="ladb-opencutlist-icon-plus"></i> {{ 'default.load'|i18next }}...</button>
+                    <button id="ladb_materials_btn_texture_clear" class="btn btn-danger ladb-hidden-no-texture" data-toggle="tooltip" data-html="true" title="{{ 'tab.materials.tooltip.texture_clear'|i18next }}"><i class="ladb-opencutlist-icon-clear"></i> {{ 'default.clear'|i18next }}</button>
+                    <div style="display: inline-block; width: 20px;" class="ladb-hidden-no-texture"></div>
+                    <button id="ladb_materials_btn_texture_rotate_right" class="btn btn-default ladb-hidden-no-texture"><i class="ladb-opencutlist-icon-rotate-right" style="font-size: 120%"></i></button>
+                    <button id="ladb_materials_btn_texture_rotate_left" class="btn btn-default ladb-hidden-no-texture"><i class="ladb-opencutlist-icon-rotate-left" style="font-size: 120%"></i></button>
                     {% if material.colorized %}
-                        <button id="ladb_materials_btn_texture_colorized" class="btn btn-default" data-toggle="tooltip" data-html="true" title="{{ 'tab.materials.tooltip.texture_colorized'|i18next }}"><i class="ladb-opencutlist-icon-plus" style="font-size: 80%;"></i> <i class="ladb-opencutlist-icon-drop" style="color: {{ material.color }}"></i></button>
+                        <div style="display: inline-block; width: 20px;" class="ladb-hidden-no-texture"></div>
+                        <button id="ladb_materials_btn_texture_colorized" class="btn btn-default ladb-hidden-no-texture" data-toggle="tooltip" data-html="true" title="{{ 'tab.materials.tooltip.texture_colorized'|i18next }}"><i class="ladb-opencutlist-icon-plus" style="font-size: 80%;"></i> <i class="ladb-opencutlist-icon-drop" style="color: {{ material.color }}"></i></button>
                     {% endif %}
-                    &nbsp;
-                    <button id="ladb_materials_btn_texture_load" class="btn btn-default" data-toggle="tooltip" data-html="true" title="{{ 'tab.materials.tooltip.texture_load'|i18next }}"><i class="ladb-opencutlist-icon-plus"></i> {{ 'tab.materials.edit_material.texture_load'|i18next }}...</button>
                 </div>
-                <hr>
-                <div class="row">
+                <hr class="ladb-hidden-no-texture">
+                <div class="row ladb-hidden-no-texture">
                     <div class="media col-xs-10">
                         <div class="media-body">
                             <div class="form-group">
@@ -79,9 +82,7 @@
 {% block footerLeftInner %}
     <button class="btn btn-danger" id="ladb_materials_remove"><i class="ladb-opencutlist-icon ladb-opencutlist-icon-trash"></i> {{ 'default.remove'|i18next }}...</button>
     <button class="btn btn-default" id="ladb_materials_duplicate"><i class="ladb-opencutlist-icon ladb-opencutlist-icon-copy"></i> {{ 'default.duplicate'|i18next }}...</button>
-    {% if capabilities.sketchup_version_number >= 1700000000 %}
-        <button class="btn btn-default" id="ladb_materials_export_to_skm"><i class="ladb-opencutlist-icon ladb-opencutlist-icon-export"></i> {{ 'tab.materials.edit_material.export_to_skm'|i18next }}...</button>
-    {% endif %}
+    <button class="btn btn-default" id="ladb_materials_export_to_skm"><i class="ladb-opencutlist-icon ladb-opencutlist-icon-export"></i> {{ 'tab.materials.edit_material.export_to_skm'|i18next }}...</button>
 {% endblock %}
 
 {% block footerRightInner %}

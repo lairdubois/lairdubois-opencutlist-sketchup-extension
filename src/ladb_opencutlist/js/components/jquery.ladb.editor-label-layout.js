@@ -368,7 +368,7 @@
             })
         ;
 
-        var $btnRotateRight = $('<button class="btn btn-default"><i class="ladb-opencutlist-icon-rotate-right"></i></button>');
+        var $btnRotateRight = $('<button class="btn btn-default"><i class="ladb-opencutlist-icon-rotate-right" style="font-size: 120%"></i></button>');
         $btnRotateRight
             .on('click', function () {
                 if (elementDef.rotation === undefined) {
@@ -380,7 +380,7 @@
             })
         ;
 
-        var $btnRotateLeft = $('<button class="btn btn-default"><i class="ladb-opencutlist-icon-rotate-left"></i></button>');
+        var $btnRotateLeft = $('<button class="btn btn-default"><i class="ladb-opencutlist-icon-rotate-left" style="font-size: 120%"></i></button>');
         $btnRotateLeft
             .on('click', function () {
                 if (elementDef.rotation === undefined) {

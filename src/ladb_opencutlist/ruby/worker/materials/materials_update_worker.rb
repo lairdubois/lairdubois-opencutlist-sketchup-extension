@@ -11,7 +11,7 @@ module Ladb::OpenCutList
       @color = Sketchup::Color.new(material_data.fetch('color'))
       @texture_rotation = material_data.fetch('texture_rotation')
       @texture_file = material_data.fetch('texture_file')
-      @texture_loaded = material_data.fetch('texture_loaded', false)
+      @texture_changed = material_data.fetch('texture_changed', false)
       @texture_width = material_data.fetch('texture_width')
       @texture_height = material_data.fetch('texture_height')
 
@@ -54,7 +54,7 @@ module Ladb::OpenCutList
       # Update properties
       if @display_name != material.name
 
-        material.name = Sketchup.version_number >= 1800000000 ? materials.unique_name(@display_name) : @display_name
+        material.name = materials.respond_to?(:unique_name) ? materials.unique_name(@display_name) : @display_name  # SU 2018+
 
         # In this case the event will be triggered by SU itself
         trigger_change_event = false
@@ -67,62 +67,57 @@ module Ladb::OpenCutList
 
       end
 
-      # Update texture
-      unless @texture_file.nil?
+      if @texture_changed || @texture_rotation > 0
 
-        if @texture_loaded || @texture_rotation > 0
+        # Rotate texture
+        ImageUtils.rotate(@texture_file, @texture_rotation) if @texture_rotation > 0 && @texture_file
 
-          # Rotate texture
-          ImageUtils.rotate(@texture_file, @texture_rotation) if @texture_rotation > 0
-
-          # Keep previous material color if colorized material
-          if !@texture_loaded && material.materialType == 2 # 2 = Sketchup::Material::MATERIAL_COLORIZED_TEXTURED
-            color = material.color
-          else
-            color = nil
-          end
-
-          # Set new texture to the material and re-apply previous color
-          material.texture = @texture_file
-
-          # Re-apply color if colorized material
-          if color
-            material.color = color
-          end
-
-          # In this case the event will be triggered by SU itself
-          trigger_change_event = false
-
+        # Keep previous material color if colorized material
+        if !@texture_changed && material.materialType == 2 # 2 = Sketchup::Material::MATERIAL_COLORIZED_TEXTURED
+          color = material.color
+        else
+          color = nil
         end
 
-        unless @texture_width.nil? || @texture_height.nil?
+        # Set new texture to the material and re-apply previous color
+        material.texture = @texture_file
 
-          material.texture.size = [DimensionUtils.instance.d_to_ifloats(@texture_width).to_l, DimensionUtils.instance.d_to_ifloats(@texture_height).to_l ]
-
-          # In this case the event will be triggered by SU itself
-          trigger_change_event = false
-
+        # Re-apply color if colorized material
+        if color
+          material.color = color
         end
+
+        # In this case the event will be triggered by SU itself
+        trigger_change_event = false
 
       end
 
-        # Update attributes
-        material_attributes = MaterialAttributes.new(material)
-        material_attributes.type = @type
-        material_attributes.thickness = @thickness
-        material_attributes.length_increase = @length_increase
-        material_attributes.width_increase = @width_increase
-        material_attributes.thickness_increase = @thickness_increase
-        material_attributes.std_lengths = @std_lengths
-        material_attributes.std_widths = @std_widths
-        material_attributes.std_thicknesses = @std_thicknesses
-        material_attributes.std_sections = @std_sections
-        material_attributes.std_sizes = @std_sizes
-        material_attributes.grained = @grained
-        material_attributes.edge_decremented = @edge_decremented
-        material_attributes.volumic_mass = @volumic_mass
-        material_attributes.std_prices = @std_prices
-        material_attributes.write_to_attributes
+      unless material.texture.nil? || @texture_width.nil? || @texture_height.nil?
+
+        material.texture.size = [DimensionUtils.instance.d_to_ifloats(@texture_width).to_l, DimensionUtils.instance.d_to_ifloats(@texture_height).to_l ]
+
+        # In this case the event will be triggered by SU itself
+        trigger_change_event = false
+
+      end
+
+      # Update attributes
+      material_attributes = MaterialAttributes.new(material)
+      material_attributes.type = @type
+      material_attributes.thickness = @thickness
+      material_attributes.length_increase = @length_increase
+      material_attributes.width_increase = @width_increase
+      material_attributes.thickness_increase = @thickness_increase
+      material_attributes.std_lengths = @std_lengths
+      material_attributes.std_widths = @std_widths
+      material_attributes.std_thicknesses = @std_thicknesses
+      material_attributes.std_sections = @std_sections
+      material_attributes.std_sizes = @std_sizes
+      material_attributes.grained = @grained
+      material_attributes.edge_decremented = @edge_decremented
+      material_attributes.volumic_mass = @volumic_mass
+      material_attributes.std_prices = @std_prices
+      material_attributes.write_to_attributes
 
       # Trigger change event on materials observer if needed
       if trigger_change_event

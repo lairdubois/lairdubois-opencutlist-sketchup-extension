@@ -30,6 +30,8 @@ module Ladb::OpenCutList
     def onMaterialChange(materials, material)
       # puts "onMaterialChange: #{material}"
 
+      return if material.deleted?
+
       # Trigger event to JS
       Plugin.instance.trigger_event(ON_MATERIAL_CHANGE, { :material_name => material.name })
 

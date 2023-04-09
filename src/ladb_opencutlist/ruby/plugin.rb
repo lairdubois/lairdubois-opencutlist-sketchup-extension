@@ -1448,10 +1448,10 @@ module Ladb::OpenCutList
     end
 
     def compute_size_aspect_ratio_command(params)    # Expected params = { width: WIDTH, height: HEIGHT, ratio: W_ON_H_RATIO, is_width_master: BOOL }
-      width = params['width']
-      height = params['height']
-      ratio = params['ratio']
-      is_width_master = params['is_width_master']
+      width = params.fetch('width', '1m')
+      height = params.fetch('height', '1m')
+      ratio = params.fetch('ratio', 1)
+      is_width_master = params.fetch('is_width_master', true)
 
       # Convert input values to Length
       w = DimensionUtils.instance.d_to_ifloats(width).to_l

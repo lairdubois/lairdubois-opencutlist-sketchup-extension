@@ -257,15 +257,18 @@
             // Fetch UI elements
             var $tabs = $('.modal-header a[data-toggle="tab"]', $modal);
             var $btnTabTexture = $('#ladb_materials_btn_tab_texture', $modal);
+            var $inputTextureChanged = $('#ladb_materials_input_texture_changed', $modal);
+            var $inputTextureRatio = $('#ladb_materials_input_texture_ratio', $modal);
             var $inputTextureRotation = $('#ladb_materials_input_texture_rotation', $modal);
             var $divTextureThumbnail = $('#ladb_materials_div_texture_thumbnail', $modal);
             var $imgTexture = $('#ladb_materials_img_texture', $modal);
             var $spanTextureWidth = $('#ladb_materials_span_texture_width', $modal);
             var $spanTextureHeight = $('#ladb_materials_span_texture_height', $modal);
+            var $btnTextureLoad = $('#ladb_materials_btn_texture_load', $modal);
+            var $btnTextureClear = $('#ladb_materials_btn_texture_clear', $modal);
             var $btnTextureRotateRight = $('#ladb_materials_btn_texture_rotate_right', $modal);
             var $btnTextureRotateLeft = $('#ladb_materials_btn_texture_rotate_left', $modal);
             var $btnTextureColorized = $('#ladb_materials_btn_texture_colorized', $modal);
-            var $btnTextureLoad = $('#ladb_materials_btn_texture_load', $modal);
             var $inputTextureWidth = $('#ladb_materials_input_texture_width', $modal);
             var $inputTextureHeight = $('#ladb_materials_input_texture_height', $modal);
             var $btnTextureSizeLock = $('#ladb_material_btn_texture_size_lock', $modal);
@@ -322,32 +325,40 @@
                 }
             };
             var fnGetMaterialTexture = function (colorized) {
-                rubyCallCommand('materials_get_texture_command', { name: material.name, colorized: false }, function (response) {
+                if (material.textured) {
+                    rubyCallCommand('materials_get_texture_command', {
+                        name: material.name,
+                        colorized: false
+                    }, function (response) {
 
-                    if (response.errors) {
-                        that.dialog.notifyErrors(response.errors);
-                    } else if (response.texture_file) {
+                        if (response.errors) {
+                            that.dialog.notifyErrors(response.errors);
+                        } else if (response.texture_file) {
 
-                        // Add texture file to material
-                        material.texture_file = response.texture_file;
+                            if (response.texture_colorized) {
+                                $btnTextureColorized.addClass('active')
+                            }
 
-                        if (response.texture_colorized) {
-                            $btnTextureColorized.addClass('active')
+                            // Update img src with generated texture file
+                            $imgTexture.attr('src', response.texture_file);
+
+                            // Refresh UI
+                            fnUpdateTextureTab();
+
                         }
 
-                        // Update img src with generated texture file
-                        $imgTexture.attr('src', material.texture_file);
-
-                    }
-
-                });
+                    });
+                } else {
+                    // Refresh UI
+                    fnUpdateTextureTab();
+                }
             };
             var fnComputeSizeAspectRatio = function (isWidthMaster) {
                 if ($btnTextureSizeLock.data('locked')) {
                     rubyCallCommand('core_compute_size_aspect_ratio', {
-                        width: $inputTextureWidth.val(),
-                        height: $inputTextureHeight.val(),
-                        ratio: material.texture_ratio,
+                        width: $inputTextureWidth.val() ? $inputTextureWidth.val() : '1m',
+                        height: $inputTextureHeight.val() ? $inputTextureHeight.val() : '1m',
+                        ratio: $inputTextureRatio.val() ? parseFloat($inputTextureRatio.val()) : 1.0,
                         is_width_master: isWidthMaster
                     }, function (response) {
                         $inputTextureWidth.val(response.width);
@@ -358,6 +369,15 @@
             var fnUpdateBtnUpdateStatus = function() {
                 $btnUpdate.prop('disabled', $inputs.inputName.data('ladb-invalid') || $inputs.inputColor.data('ladb-invalid'))
             };
+            var fnUpdateTextureTab = function () {
+                if ($imgTexture.attr('src') !== '') {
+                    $('.ladb-hidden-no-texture', $modal).show();
+                    $('.ladb-hidden-textured', $modal).hide();
+                } else {
+                    $('.ladb-hidden-no-texture', $modal).hide();
+                    $('.ladb-hidden-textured', $modal).show();
+                }
+            }
 
             if (tab === 'texture') {
                 fnGetMaterialTexture(false);
@@ -373,6 +393,20 @@
             // Bind inputs
             $inputs.inputName.on('keyup change', fnUpdateBtnUpdateStatus);
             $inputs.inputColor.on('keyup change', fnUpdateBtnUpdateStatus);
+            $inputTextureWidth
+                .ladbTextinputDimension({
+                    resetValue: '1m'
+                })
+                .on('blur', function () {
+                    fnComputeSizeAspectRatio(true);
+                });
+            $inputTextureHeight
+                .ladbTextinputDimension({
+                    resetValue: '1m'
+                })
+                .on('blur', function () {
+                    fnComputeSizeAspectRatio(false);
+                });
 
             // Bind tabs
             $tabs.on('shown.bs.tab', function (e) {
@@ -408,21 +442,35 @@
                         // Reset previous rotation
                         fnResetTextureRotation();
 
-                        // Add texture file to material
-                        material.texture_ratio = response.texture_ratio;
-                        material.texture_file = response.texture_file;
-                        material.texture_loaded = true;
+                        // Add texture infos
+                        $inputTextureRatio.val(response.texture_ratio);
+                        $inputTextureChanged.val(true);
 
                         // Update img src with generated texture file
-                        $imgTexture.attr('src', material.texture_file);
+                        $imgTexture.attr('src', response.texture_file);
 
                         // Re-compute size
                         fnComputeSizeAspectRatio(true);
+
+                        // Refresh UI
+                        fnUpdateTextureTab();
 
                     }
 
                 });
                 this.blur();
+            });
+            $btnTextureClear.on('click', function () {
+
+                // Reset img src
+                $imgTexture.attr('src', '');
+
+                // Add texture infos
+                $inputTextureChanged.val(true);
+
+                // Refresh UI
+                fnUpdateTextureTab();
+
             });
             $btnTextureSizeLock.on('click', function () {
                 var $i = $('i', $btnTextureSizeLock);
@@ -459,6 +507,8 @@
 
                 that.editedMaterial.display_name = $inputs.inputName.val().trim();
                 that.editedMaterial.color = $inputs.inputColor.val();
+                that.editedMaterial.texture_file = $imgTexture.attr('src') === '' ? null : $imgTexture.attr('src');
+                that.editedMaterial.texture_changed = $inputTextureChanged.val() === 'true';
                 that.editedMaterial.texture_rotation = parseInt($inputTextureRotation.val());
                 that.editedMaterial.texture_width = $inputTextureWidth.val();
                 that.editedMaterial.texture_height = $inputTextureHeight.val();
@@ -499,14 +549,6 @@
 
                 });
 
-            });
-
-            // Bind inputs
-            $inputTextureWidth.on('blur', function () {
-                fnComputeSizeAspectRatio(true);
-            });
-            $inputTextureHeight.on('blur', function () {
-                fnComputeSizeAspectRatio(false);
             });
 
             // Show modal
