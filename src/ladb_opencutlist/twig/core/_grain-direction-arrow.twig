@@ -5,13 +5,14 @@
 {% set arrowMarkerWidth = 16 %}
 {% set arrowMarkerHeight = 8 %}
 {% set markerId = 'ladb_grain_direction_arrow'~random() %}
+{% set flipped = flipped|default(false) %}
 
 <defs>
     <marker id="{{ markerId }}" markerWidth="{{ arrowMarkerWidth }}" markerHeight="{{ arrowMarkerHeight }}" refX="0" refY="{{ arrowMarkerHeight / 2 }}" orient="auto" markerUnits="userSpaceOnUse">
         <path d="M0,0 L0,{{ arrowMarkerHeight }} L{{ arrowMarkerWidth }},{{ arrowMarkerHeight / 2 }} z" class="grain-marker" />
     </marker>
 </defs>
-<g class="grain-direction" data-toggle="tooltip" title="{{ 'tab.materials.tooltip.grain_direction'|i18next }}">
+<g class="grain-direction" data-toggle="tooltip" title="{{ 'tab.materials.tooltip.grain_direction'|i18next }}"{% if flipped %} transform="translate({{ centerX * 2 }}, 0) scale(-1,1)"{% endif %}>
     <rect x="{{ centerX - arrowLength / 2 }}" y="{{ centerY - arrowMarkerHeight / 2 }}" width="{{ arrowLength }}" height="{{ arrowMarkerHeight }}" class="grain-bg" />
     <line x1="{{ centerX - arrowLength / 2 }}" y1="{{ centerY - arrowMarkerHeight / 2 }}" x2="{{ centerX + arrowLength / 2 - arrowMarkerWidth }}" y2="{{ centerY - arrowMarkerHeight / 2 }}" marker-end="url(#{{ markerId }})" class="grain-line" />
 </g>
