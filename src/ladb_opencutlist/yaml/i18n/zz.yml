@@ -992,9 +992,9 @@ tab:
       grained_0: "$t(tab.materials.edit_material.grained_0)"
       grained_1: "$t(tab.materials.edit_material.grained_1)"
       grain_direction: 804 - Grain orientation
-      colorized: 805 - This tone will be applied to the texture of this material when it is rendered in the model
-      texture_colorized: 806 - Combine this tone with the texture image
-      texture_load: 807 - Load a new texture
+      colorized: 805 - This tone will be applied to the texture when it is rendered in the model
+      texture_load: 806 - Load a new texture
+      texture_clear: 807 - Erase texture
       edit: 808 - Edit the properties of '{{ name }}'
       set_current: |
         809 - Paint parts with '{{ name }}'
@@ -1019,60 +1019,60 @@ tab:
       title: 821 - Properties of Material '{{ name }}'
       general: 822 - General
       texture: 823 - Texture
-      name: 824 - Name
-      type: 825 - Type
-      cut_options: 826 - Cutting Parameters
-      attributes: 827 - Attributes
-      thickness: 828 - Thickness
+      no_texture: 824 - No texture
+      name: 825 - Name
+      type: 826 - Type
+      cut_options: 827 - Cutting Parameters
+      attributes: 828 - Attributes
+      thickness: 829 - Thickness
       thickness_help: |
-        829 - Finished thickness of the material.
+        830 - Finished thickness of the material.
         *Sizes without units are considered to be in model units.*
-      length_increase: 830 - Length Oversize
-      length_increase_help: 831 - Oversize applied to the length to define the **raw length**.
-      width_increase: 832 - Width Oversize
-      width_increase_help: 833 - Oversize applied to the width to define the **raw width**.
-      thickness_increase: 834 - Thickness Oversize
-      thickness_increase_help: 835 - Oversize applied to the thickness to define the **raw thickness**.
-      std_lengths: 836 - Standard Lengths
-      std_lengths_placeholder: 837 - length ; ...
+      length_increase: 831 - Length Oversize
+      length_increase_help: 832 - Oversize applied to the length to define the **raw length**.
+      width_increase: 833 - Width Oversize
+      width_increase_help: 834 - Oversize applied to the width to define the **raw width**.
+      thickness_increase: 835 - Thickness Oversize
+      thickness_increase_help: 836 - Oversize applied to the thickness to define the **raw thickness**.
+      std_lengths: 837 - Standard Lengths
+      std_lengths_placeholder: 838 - length ; ...
       std_lengths_help: |
-        838 - Standard lengths of boards or edge bandings.
+        839 - Standard lengths of boards or edge bandings.
         *Sizes without units are considered to be in model units.*
-      std_widths: 839 - Standard Widths
-      std_widths_placeholder: 840 - width ; ...
+      std_widths: 840 - Standard Widths
+      std_widths_placeholder: 841 - width ; ...
       std_widths_help: |
-        841 - Standard widths of edge bandings.
+        842 - Standard widths of edge bandings.
         *Widths without units are considered to be in model units.*
-      std_thicknesses: 842 - Standard Thickness
-      std_thicknesses_placeholder: 843 - thickness ; ...
+      std_thicknesses: 843 - Standard Thickness
+      std_thicknesses_placeholder: 844 - thickness ; ...
       std_thicknesses_help: |
-        844 - Available **actual** rough thicknesses.
+        845 - Available **actual** rough thicknesses.
         *Sizes without units are considered to be in model units.*
-      std_sections: 845 - Standard Cross Sections
-      std_sections_placeholder: 846 - width x thickness ; ...
+      std_sections: 846 - Standard Cross Sections
+      std_sections_placeholder: 847 - width x thickness ; ...
       std_sections_help: |
-        847 - Expected format: **W**x**T**, where **W** and **T** represent the **actual** *width* and *thickness* of the dimensional piece.
+        848 - Expected format: **W**x**T**, where **W** and **T** represent the **actual** *width* and *thickness* of the dimensional piece.
         *Sizes without units are considered to be in model units.*
-      std_sizes: 848 - Standard Panel Size
-      std_sizes_placeholder: 849 - length x width ; ...
+      std_sizes: 849 - Standard Panel Size
+      std_sizes_placeholder: 850 - length x width ; ...
       std_sizes_help: |
-        850 - Expected format: **L**x**W**, where **L** and **W** represent the **actual** *length* and *width* of the panel.
+        851 - Expected format: **L**x**W**, where **L** and **W** represent the **actual** *length* and *width* of the panel.
         *Sizes without units are considered to be in model units.*
-      grained: 851 - Grain Orientation
-      grained_help: 852 - Configures the grain orientation of the material.
-      grained_0: 853 - No Grain
-      grained_1: 854 - Grain Follows Length
-      edge_decremented: 855 - Reduce Dimensions
-      edge_decremented_help: 856 - Allows you to indicate whether the dimensions of parts should be reduced by the thickness of the edge banding.
-      edge_decremented_0: 857 - No Reduction
-      edge_decremented_1: 858 - Reduce by Edge Banding Thickness
-      volumic_mass: 859 - Density
-      volumic_mass_help: 860 - Allows you to define the density of the material.
-      std_prices: 861 - Price
-      std_prices_help: 862 - Allows you to define the price for all sizes as well as for each standard size of the material.
-      std_prices_dim_placeholder: 863 - Select a size
-      std_prices_add: 864 - Add a price
-      texture_load: 865 - Load
+      grained: 852 - Grain Orientation
+      grained_help: 853 - Configures the grain orientation of the material.
+      grained_0: 854 - No Grain
+      grained_1: 855 - Grain Follows Length
+      edge_decremented: 856 - Reduce Dimensions
+      edge_decremented_help: 857 - Allows you to indicate whether the dimensions of parts should be reduced by the thickness of the edge banding.
+      edge_decremented_0: 858 - No Reduction
+      edge_decremented_1: 859 - Reduce by Edge Banding Thickness
+      volumic_mass: 860 - Density
+      volumic_mass_help: 861 - Allows you to define the density of the material.
+      std_prices: 862 - Price
+      std_prices_help: 863 - Allows you to define the price for all sizes as well as for each standard size of the material.
+      std_prices_dim_placeholder: 864 - Select a size
+      std_prices_add: 865 - Add a price
       texture_width: 866 - Width
       texture_height: 867 - Height
       export_to_skm: 868 - Export (.skm)
@@ -1362,8 +1362,8 @@ tool:
     transparency: 1034 - Transparency
     zoom_extents: 1035 - Zoom Extents
   highlight:
-    transparency: 1036 - $(tool.default.transparency)
-    zoom_extents: 1037 - $(tool.default.zoom_extents)
+    transparency: "$t(tool.default.transparency)"
+    zoom_extents: "$t(tool.default.zoom_extents)"
   smart_paint:
     title: 1038 - Paint
     default_material: 1039 - Default
@@ -1378,18 +1378,18 @@ tool:
     action_0: 1048 - Paint part
     action_0_status: 1049 - Click on a part to paint it
     action_1: 1050 - Paint edges
-    action_1_status: 1051 - Click on an edge to paint it
-    action_2: 1052 - Paint faces
-    action_2_status: 1053 - Click on a face to paint it
+    action_1_status: 1051 - Click on a panel edge to paint it
+    action_2: 1052 - Paint surfaces
+    action_2_status: 1053 - Click on a panel surface to paint it
     action_3: 1054 - Sample
-    action_3_status: 1055 - Click on surface to sample its material
+    action_3_status: 1055 - Click on a face to sample its material
     edges: 1056 - {{ count }} edge
     edges_plural: 1057 - {{ count }} edges
     edge_ymin: 1058 - Length 1
     edge_ymax: 1059 - Length 2
     edge_xmin: 1060 - Width 1
     edge_xmax: 1061 - Width 2
-    veneers: 1062 - {{ count }} face
+    veneers: 1062 - {{ count }} surface
     veneers_plural: 1063 - {{ count }} faces
     veneer_zmin: 1064 - Back face
     veneer_zmax: 1065 - Front face
@@ -1400,16 +1400,16 @@ tool:
       not_part: 1068 - The target object is not a part
       not_edge: 1069 - The target face is not a panel edge
       not_veneer: 1070 - The target face is not a panel surface
-      wrong_material_type: 1071 - The target part is not of type '{{ type }}'
+      wrong_material_type: 1071 - The target part must be of type '{{ type }}'
   smart_axes:
     title: 1072 - Orient
-    toggle_depth: 1073 - Background parts
+    toggle_depth: 1073 - Parts in background
     action_0: 1074 - Swap length ↔ width
-    action_0_status: 1075 - Click on a part to swap length with width
+    action_0_status: 1075 - Click on a part to swap its length with its width
     action_1: 1076 - Swap front face ↔ back face
-    action_1_status: 1077 - Click on a part to swap front face with back face
+    action_1_status: 1077 - Click on a part to swap its front face with its back face
     action_2: 1078 - Orient automatically
-    action_2_status: 1079 - Click on a part to set its length to its largest dimension and thickness to its smallest
+    action_2_status: 1079 - Click on a part to set its length to the largest dimension and its thickness to the smallest
     success:
       part_oriented: 1080 - This part already has its length on the largest dimension and its thickness on the smallest
     warning:
