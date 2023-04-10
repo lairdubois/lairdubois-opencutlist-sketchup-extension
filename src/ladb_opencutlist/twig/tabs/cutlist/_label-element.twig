@@ -22,7 +22,7 @@
     <g transform="translate({{ transX + (areaSize - rectPartWidth) / 2 }} {{ transY + (areaSize - rectPartHeight) / 2 }})">
         <rect x="0" y="0" width="{{ max(0, rectPartWidth) }}" height="{{ max(0, rectPartHeight) }}" fill="#ffffff" stroke="none" />
         {% if group.material_grained %}
-            <g>
+            <g{% if (partInfos.part.flipped b-xor partInfos.part.axes_flipped) == 1 %} transform="translate({{ rectPartWidth }}, 0) scale(-1,1)"{% endif %}>
                 {% set arrowMargin = minUnit / 4 %}
                 {% set arrowX = arrowMargin %}
                 {% set arrowY = arrowMargin %}

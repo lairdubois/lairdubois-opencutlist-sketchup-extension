@@ -137,7 +137,7 @@
 
         var material = {
             name: name ? name : '',
-            color: color ? color : '',
+            color: color ? color : '#ffffff',
             attributes: {
                 type: type ? type : 0
             }
