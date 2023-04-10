@@ -114,9 +114,9 @@ module Ladb::OpenCutList
       @material_origins = part_def.material_origins
       @orientation_locked_on_axis = part_def.orientation_locked_on_axis
       @symmetrical = part_def.symmetrical
-      @length_increase = part_def.length_increase
-      @width_increase = part_def.width_increase
-      @thickness_increase = part_def.thickness_increase
+      @length_increase = part_def.length_increase.to_s
+      @width_increase = part_def.width_increase.to_s
+      @thickness_increase = part_def.thickness_increase.to_s
       @entity_ids = part_def.entity_ids
       @entity_serialized_paths = part_def.entity_serialized_paths
       @length_increased = part_def.length_increased

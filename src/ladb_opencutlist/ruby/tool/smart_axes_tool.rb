@@ -28,10 +28,10 @@ module Ladb::OpenCutList
       { :action => ACTION_SWAP_AUTO }
     ].freeze
 
-    COLOR_MESH = Sketchup::Color.new(200, 200, 0, 100).freeze # Sketchup::Color.new(247, 127, 0, 100).freeze
-    COLOR_ARROW = COLOR_WHITE.freeze
+    COLOR_MESH = Sketchup::Color.new(200, 200, 0, 100).freeze
+    COLOR_ARROW = COLOR_WHITE
     COLOR_ARROW_AUTO_ORIENTED = Sketchup::Color.new(123, 213, 239, 255).freeze
-    COLOR_BOX = Sketchup::Color.new(255, 255, 0).freeze # Sketchup::Color.new(247, 127, 0).freeze
+    COLOR_BOX = COLOR_BLUE
 
     @@action = nil
     @@action_modifiers = {}
@@ -398,12 +398,29 @@ module Ladb::OpenCutList
           arrow.line_width = arrow_line_width
           part_helper.append(arrow)
 
-          if part.not_aligned_on_axes || part.group.material_type == MaterialAttributes::TYPE_UNKNOWN
+          if part.not_aligned_on_axes ||
+            part.length_increased || part.width_increased || part.thickness_increased ||
+            part.group.material_type == MaterialAttributes::TYPE_UNKNOWN
+
+            increases = [ 0, 0, 0 ]
+            part.def.size.axes.each_with_index do |axis, index|
+              case index
+              when 0
+                increases[axis == X_AXIS ? 0 : (axis == Y_AXIS ? 1 : 2)] = part.def.length_increase.to_f if part.length_increased
+              when 1
+                increases[axis == X_AXIS ? 0 : (axis == Y_AXIS ? 1 : 2)] = part.def.width_increase.to_f if part.width_increased
+              when 2
+                increases[axis == X_AXIS ? 0 : (axis == Y_AXIS ? 1 : 2)] = part.def.thickness_increase.to_f if part.thickness_increased
+              end
+            end
 
             # Bounding box helper
             box_helper = Kuix::BoxHelper.new
             box_helper.bounds.origin.copy!(instance_info.definition_bounds.min)
             box_helper.bounds.size.copy!(instance_info.definition_bounds)
+            box_helper.bounds.size.width += increases[0] / part.def.scale.x
+            box_helper.bounds.size.height += increases[1] / part.def.scale.y
+            box_helper.bounds.size.depth += increases[2] / part.def.scale.z
             box_helper.color = COLOR_BOX
             box_helper.line_width = 2
             box_helper.line_stipple = '-'
@@ -415,6 +432,7 @@ module Ladb::OpenCutList
 
         # Axes helper
         axes_helper = Kuix::AxesHelper.new
+        axes_helper.transformation = Geom::Transformation.scaling(1 / part.def.scale.x, 1 / part.def.scale.y, 1 / part.def.scale.z)
         part_helper.append(axes_helper)
 
         # All instances
