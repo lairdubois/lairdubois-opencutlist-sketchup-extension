@@ -983,9 +983,9 @@ tab:
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Grain orientation
-      colorized: This tone will be applied to the texture of this material when it is rendered in the model
-      texture_colorized: Combine this tone with the texture image
+      colorized: This tone will be applied to the texture when it is rendered in the model
       texture_load: Load a new texture
+      texture_clear: Erase texture
       edit: "Edit the properties of '{{ name }}'"
       set_current: |
         Paint parts with '{{ name }}'
@@ -1010,6 +1010,7 @@ tab:
       title: "Properties of Material '{{ name }}'"
       general: General
       texture: Texture
+      no_texture: No texture
       name: Name
       type: Type
       cut_options: Cutting Parameters
@@ -1063,7 +1064,6 @@ tab:
       std_prices_help: Allows you to define the price for all sizes as well as for each standard size of the material.
       std_prices_dim_placeholder: Select a size
       std_prices_add: Add a price
-      texture_load: Load
       texture_width: Width
       texture_height: Height
       export_to_skm: Export (.skm)
@@ -1343,8 +1343,8 @@ tool:
     transparency: Transparency
     zoom_extents: Zoom Extents
   highlight:
-    transparency: $(tool.default.transparency)
-    zoom_extents: $(tool.default.zoom_extents)
+    transparency: $t(tool.default.transparency)
+    zoom_extents: $t(tool.default.zoom_extents)
   smart_paint:
     title: Paint
     default_material: Default
@@ -1359,18 +1359,18 @@ tool:
     action_0: Paint part
     action_0_status: Click on a part to paint it
     action_1: Paint edges
-    action_1_status: Click on an edge to paint it
-    action_2: Paint faces
-    action_2_status: Click on a face to paint it
+    action_1_status: Click on a panel edge to paint it
+    action_2: Paint surfaces
+    action_2_status: Click on a panel surface to paint it
     action_3: Sample
-    action_3_status: Click on surface to sample its material
+    action_3_status: Click on a face to sample its material
     edges: "{{ count }} edge"
     edges_plural: "{{ count }} edges"
     edge_ymin: Length 1
     edge_ymax: Length 2
     edge_xmin: Width 1
     edge_xmax: Width 2
-    veneers: "{{ count }} face"
+    veneers: "{{ count }} surface"
     veneers_plural: "{{ count }} faces"
     veneer_zmin: Back face
     veneer_zmax: Front face
@@ -1381,16 +1381,16 @@ tool:
       not_part: The target object is not a part
       not_edge: The target face is not a panel edge
       not_veneer: The target face is not a panel surface
-      wrong_material_type: The target part is not of type '{{ type }}'
+      wrong_material_type: The target part must be of type '{{ type }}'
   smart_axes:
     title: Orient
-    toggle_depth: Background parts
+    toggle_depth: Parts in background
     action_0: Swap length ↔ width
-    action_0_status: Click on a part to swap length with width
+    action_0_status: Click on a part to swap its length with its width
     action_1: Swap front face ↔ back face
-    action_1_status: Click on a part to swap front face with back face
+    action_1_status: Click on a part to swap its front face with its back face
     action_2: Orient automatically
-    action_2_status:  Click on a part to set its length to its largest dimension and thickness to its smallest
+    action_2_status:  Click on a part to set its length to the largest dimension and its thickness to the smallest
     success:
       part_oriented: This part already has its length on the largest dimension and its thickness on the smallest
     warning:

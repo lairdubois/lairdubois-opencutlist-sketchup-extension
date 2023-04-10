@@ -984,8 +984,8 @@ tab:
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Faserrichtung
       colorized: Diese Farbton wird beim Rendern im Modell auf die Textur des Material angewendet
-      texture_colorized: Farbton mit der Textur kombinieren
       texture_load: Neue Textur laden
+      texture_clear: Textur löschen
       edit: "Eigenschaften von '{{ name }}' bearbeiten"
       set_current: |
         Einfärben von Teilen mit '{{ name }}'
@@ -1010,6 +1010,7 @@ tab:
       title: "Eigenschaften des Materials '{{ name }}'"
       general: Allgemein
       texture: Textur
+      no_texture: Keine Textur
       name: Bezeichnung
       type: Typ
       cut_options: Schnittparameter
@@ -1063,7 +1064,6 @@ tab:
       std_prices_help: Ermöglicht die Definition des Preises für alle Größen sowie für jede einzelne Standardgröße des Materials.
       std_prices_dim_placeholder: Wählen Sie eine Größe
       std_prices_add: Preis hinzufügen
-      texture_load: Laden
       texture_width: Breite
       texture_height: Höhe
       export_to_skm: Exportieren (.skm)
@@ -1343,8 +1343,8 @@ tool:
     transparency: Transparenz
     zoom_extents: Alles zeigen
   highlight:
-    transparency: $(tool.default.transparency)
-    zoom_extents: $(tool.default.zoom_extents)
+    transparency: $t(tool.default.transparency)
+    zoom_extents: $t(tool.default.zoom_extents)
   smart_paint:
     title: Malen
     default_material: Standard
@@ -1361,7 +1361,7 @@ tool:
     action_1: Kanten bemalen
     action_1_status: Klicken Sie auf eine Kante, um sie einzufärben
     action_2: Flächen bemalen
-    action_2_status: Klicken Sie auf eine Fläche, um sie einzufärben
+    action_2_status: Klicken Sie auf eine Plattenfläche, um sie einzufärben
     action_3: Entnehmen
     action_3_status: Klicken Sie auf eine Fläche, um eine Probe des Materials zu entnehmen
     edges: "{{ count }} Kante"
@@ -1381,7 +1381,7 @@ tool:
       not_part: Das Zielobjekt ist kein Teil
       not_edge: Die Zielfläche ist keine Plattenkante
       not_veneer: Die Zielfläche ist keine Plattenoberfläche
-      wrong_material_type: Das Zielteil ist nicht vom Typ '{{ type }}'
+      wrong_material_type: Das Zielteil hat nicht den Typ '{{ type }}'
   smart_axes:
     title: Ausrichten
     toggle_depth: Hintergrundteile
