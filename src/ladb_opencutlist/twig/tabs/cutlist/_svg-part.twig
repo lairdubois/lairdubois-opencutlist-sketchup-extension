@@ -68,7 +68,7 @@
     {% endif %}
 
     {% if not hideGrainDirectionArrow and group.material_grained and not part.ignore_grain_direction %}
-        {% include 'core/_grain-direction-arrow.twig' with { 'centerX':areaSize / 2, 'centerY':(areaSize + partWidth) / 2 + 20 } %}
+        {% include 'core/_grain-direction-arrow.twig' with { 'centerX':areaSize / 2, 'centerY':(areaSize + partWidth) / 2 + 16 } %}
     {% endif %}
 
 </svg>
