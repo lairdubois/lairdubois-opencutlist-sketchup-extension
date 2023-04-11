@@ -6,28 +6,28 @@ in 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 * 5.0.0 (WIP)
 
-  * Added **Ukrainian** language (thanks to Konstantin and Andrew)
+  * Added **Ukrainian** language (thanks to Kostyantyn and Andriy)
   * Added new **Drawing** module with exploded view and export to *Layout* (SketchUp 2018+ only)
   * Added new **Veneer Material Type**
-  * Added new **Smart Paint** tool (rewrite previous)
+  * Added new **Smart Paint** tool (rewrite of previous version)
   * Added new **Smart Axes** tool
-  * Added module to *export* and *import* **presets** in json file
-  * Added new property to sort labels according to cutting diagrams bins
+  * Added module to *export* and *import* **presets** to and from json file
+  * Added new property to sort labels according to cutting diagram bins
   * Added used and unused proportion display in Estimate summary and details
-  * Added duplicate material feature that will copy all attributes
+  * Added feature to duplicate material including all attributes
   * Added left and right arrow shortcut keys to change current material in Smart Paint tool
-  * Added hide edges preview option on 2D cutting diagram (default = true)
+  * Added hide edge preview in 2D cutting diagram (default = true)
   * Added layers (SketchUp tags) column to part and instance list exports
   * Added focus SketchUp window after selecting tool on SketchUp 2021.1+
   * Renamed Reports to Estimate
   * Renamed Tags to Badges
-  * Improved materials property dialog : It's now possible to add, change and clear texture on a material
+  * Improved materials property dialog : It is now possible to add, change and clear texture on a material
   * Improved color pickers : It's now possible to select custom color in picker on SketchUp 2021+
   * Fixed cutting diagram bins number to be displayed even if _Group Similar Panels_ option is ON
   * Fixed cutting diagram 2D edge drawing to correspond to counter-clockwise rotation of part's name
   * Fixed missed exported edges std dimensions on folded parts
   * Fixed missed oversize asterisk indicator in cutting diagram parts lists
-  * Hatched unavailable cells in parts list summary instead of displaying "-" character
+  * Improved summary cells: unavailable cells in parts list summary are hatched instead of displaying "-" character
 
 * 4.1.3 (2023-02-28)
 

@@ -10,6 +10,23 @@ module Ladb::OpenCutList
 
     # -----
 
+    def self.system_call(cmd)
+
+      # Inspired by https://forums.sketchup.com/t/running-external-program-without-flashing-command-line/70734/8
+      cmd = cmd.gsub('"', '""')
+
+      file = Tempfile.new(["cmd", ".vbs"])
+      file.write("Set WshShell = CreateObject(\"WScript.Shell\")\n")
+      file.write("WshShell.Run \"#{cmd}\", 0, True\n")
+      file.write("WScript.Quit\n")
+      file.close
+
+      # Should this fail, revert to old style!
+      if !system("wscript.exe #{file.path}")
+        system(cmd)
+      end
+    end
+
     def self.convert(in_file, options, out_file = nil)
 
       # Force out_file to be in_file if nil
@@ -29,28 +46,24 @@ module Ladb::OpenCutList
           # Prepend the environment variables we need
           lib_path = "DYLD_LIBRARY_PATH=\"#{File.join(bin_dir, 'lib')}\""
 
+          cmd = [lib_path, "\"#{convert_path}\"", "\"#{in_file}\"", options, "\"#{out_file}\""].join(' ')
+          system(cmd)
+
         when :platform_win
 
           bin_dir = File.join(bin_dir, 'x86')
           convert_path = File.absolute_path(File.join(bin_dir, 'convert.exe'))
-          lib_path = ''
+
+          cmd = ["\"#{convert_path}\"", "\"#{in_file}\"", options, "\"#{out_file}\""].join(' ')
+          self.system_call(cmd)
 
         else
           raise "This platform doesn't support ImageMagick."
 
       end
 
-      # Create 'convert' command
-      cmd = [ lib_path, "\"#{convert_path}\"", "\"#{in_file}\"", options, "\"#{out_file}\""].join(' ')
-
-      # System call
-      system(cmd)
-
     end
 
   end
 
 end
-
-
-
