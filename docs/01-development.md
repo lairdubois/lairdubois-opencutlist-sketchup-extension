@@ -116,11 +116,15 @@ First, install [AS On-Demand Ruby / Extension Loader](https://alexschreyer.net/p
 
 After installing the AS On-Demand Ruby Extension, go to the **Extensions** menu, select **Ruby / Extension Loader** and **Load single Ruby file / extension (RB)**.
 
-![AS On-Demand Ruby Extension Menu](img/capture-asmenu.png)
+<p align="center">
+<img src="img/capture-asmenu.png" width="644px" alt="AS On-Demand Ruby Extension Menu">
+</p>
 
 Browse to and select the `ladb_opencutlist.rb` ruby file from the source folder of **OpenCutList**.
 
-![AS On-Demand Ruby Extension File](img/capture-asmain.png)
+<p align="center">
+<img src="img/capture-asmain.png" width="644px" alt="AS On-Demand Ruby Extension File">
+</p>
 
 That's it. You can now play with **OpenCutList**.
 
@@ -128,8 +132,9 @@ That's it. You can now play with **OpenCutList**.
 
 #### Ruby Code Changes
 
-**SketchUp loads ruby files once and does not access them thereafter**. To reflect the changes to the ruby code without reloading SketchUp, you must reload the files that were changed (not `main.rb` if it was not modified).
-Caution! if static or methods definitions were changed, you must restart SketchUp and process from scratch.
+**SketchUp loads ruby files once and does not access them thereafter**. To reflect the changes to the ruby code without reloading SketchUp, you must reload the files that were changed (not `ladb_opencutlist.rb` if it was not modified).
+
+Caution! if static or method definitions were changed, you must restart SketchUp and process from scratch.
 
 #### Yaml or Twig Changes
 
