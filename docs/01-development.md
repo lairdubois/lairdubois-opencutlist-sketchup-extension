@@ -1,8 +1,8 @@
 # Development Environment Setup Instructions
 
-To be able to rebuild the plugin, you will first need to install a few tools. The plugin itself is written in **JavaScript** and **ruby**, but the distribution archive `dist/ladb_toolbox.rbz` is built by a **gulp** task.
+To rebuild the plugin, you will first need to install a few tools. The plugin itself is written in **JavaScript** and **ruby**, but the distribution archive `dist/ladb_opencutlist.rbz` is built by a **gulp** task.
 
-The required tools and steps for successfully building this plugin are described hereafter.
+The following describes the tools and steps required to successfully create this plugin.
 
 ## 1. Getting **Node.js** and **npm**
 
@@ -12,12 +12,12 @@ Read this short note about [Installing Node](https://docs.npmjs.com/getting-star
 
 ``` bash
     $ node -v
-    v18.14.2
-    $ npm -v
-    9.4.0
-    $ npm install npm@latest -g
+    v18.15.0
     $ npm -v
     9.6.0
+    $ npm install npm@latest -g
+    $ npm -v
+    9.6.4
 ```
 
 On Windows you *may* also have to install `gulp-cli` to be able to run **gulp** from the command line.
@@ -49,13 +49,13 @@ Change to the project directory.
      $ cd lairdubois-opencutlist-sketchup-extension
 ```
 
-In the future, if you want to retrieve origin sources updates, just execute the git pull command from your project directory.
+In the future, if you want to retrieve updates to the sources, execute the git pull command from your project directory.
 
 ``` bash
      $ git pull origin master
 ```
 
-**Caution**, changing files will generate conflicts that you will need to resolve.
+**Caution**, changing files will generate conflicts that you will have to resolve.
 
 ## 3. Installing Dependencies
 
@@ -83,7 +83,7 @@ If you wish to build the archive [ladb_opencutlist.rbz](../dist/ladb_opencutlist
     $ gulp build
 ```
 
-If you wish to build the development archive [ladb_opencutlist-dev.rbz](../dist/ladb_opencutlist-dev.rbz), run these commands.
+If you wish to build the development archive, run these commands.
 
 ``` bash
     $ cd build
@@ -103,7 +103,7 @@ After compiling the project (see 4.), your new language will appear in the **Pre
 
 Note: this does **NOT** change the SketchUp language. It may even support a language not supported by SketchUp.
 
-## 6. Run OpenCutList from Dev Project Folder
+## 6. Use OpenCutList from the Source Folder
 
 ### Prerequisite
 
@@ -116,11 +116,15 @@ First, install [AS On-Demand Ruby / Extension Loader](https://alexschreyer.net/p
 
 After installing the AS On-Demand Ruby Extension, go to the **Extensions** menu, select **Ruby / Extension Loader** and **Load single Ruby file / extension (RB)**.
 
-![AS On-Demand Ruby Extension Menu](img/capture-asmenu.png)
+<p align="center">
+<img src="img/capture-asmenu.png" width="644px" alt="AS On-Demand Ruby Extension Menu">
+</p>
 
-Browse to and select the `main.rb` ruby file from the source folder of **OpenCutList**.
+Browse to and select the `ladb_opencutlist.rb` ruby file from the source folder of **OpenCutList**.
 
-![AS On-Demand Ruby Extension File](img/capture-asmain.png)
+<p align="center">
+<img src="img/capture-asmain.png" width="644px" alt="AS On-Demand Ruby Extension File">
+</p>
 
 That's it. You can now play with **OpenCutList**.
 
@@ -128,8 +132,9 @@ That's it. You can now play with **OpenCutList**.
 
 #### Ruby Code Changes
 
-**SketchUp loads ruby files once and does not access them thereafter**. To reflect the changes to the ruby code without reloading SketchUp, you must reload the files that were changed (not `main.rb` if it was not modified).
-Caution! if static or methods definitions were changed, you must restart SketchUp and process from scratch.
+**SketchUp loads ruby files once and does not access them thereafter**. To reflect the changes to the ruby code without reloading SketchUp, you must reload the files that were changed (not `ladb_opencutlist.rb` if it was not modified).
+
+Caution! if static or method definitions were changed, you must restart SketchUp and process from scratch.
 
 #### Yaml or Twig Changes
 
