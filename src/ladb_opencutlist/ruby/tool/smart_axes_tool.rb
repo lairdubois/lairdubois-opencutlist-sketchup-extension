@@ -483,26 +483,33 @@ module Ladb::OpenCutList
         axes_helper.transformation = Geom::Transformation.scaling(1 / part.def.scale.x, 1 / part.def.scale.y, 1 / part.def.scale.z)
         part_helper.append(axes_helper)
 
-        # All instances
+        # Mesh
+        instance_paths = []
+        if is_action_mirror?
 
-        unless part_entity_path.nil?
+          # Only current instance
+          instance_paths << part_entity_path
 
-          active_instance = part_entity_path.last
-          instances = is_action_mirror? ? [ active_instance ] : active_instance.definition.instances
-          instance_paths = []
-          _instances_to_paths(instances, instance_paths, Sketchup.active_model.active_entities, Sketchup.active_model.active_path ? Sketchup.active_model.active_path : [])
+        else
 
-          instance_paths.each do |path|
-
-            mesh = Kuix::Mesh.new
-            mesh.add_trangles(_compute_children_faces_triangles(path.last.definition.entities))
-            mesh.background_color = COLOR_MESH
-            mesh.transformation = PathUtils::get_transformation(path)
-            @space.append(mesh)
-
+          # All instances
+          unless part_entity_path.nil?
+            active_instance = part_entity_path.last
+            instances = active_instance.definition.instances
+            _instances_to_paths(instances, instance_paths, Sketchup.active_model.active_entities, Sketchup.active_model.active_path ? Sketchup.active_model.active_path : [])
           end
 
         end
+        instance_paths.each do |path|
+
+          mesh = Kuix::Mesh.new
+          mesh.add_triangles(_compute_children_faces_triangles(path.last.definition.entities))
+          mesh.background_color = COLOR_MESH
+          mesh.transformation = PathUtils::get_transformation(path)
+          @space.append(mesh)
+
+        end
+
 
         # Status
 

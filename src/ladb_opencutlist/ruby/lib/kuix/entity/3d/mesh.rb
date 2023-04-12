@@ -14,7 +14,7 @@ module Ladb::OpenCutList::Kuix
 
     end
 
-    def add_trangles(triangles) # Array<Geom::Point3d>
+    def add_triangles(triangles) # Array<Geom::Point3d>
       raise 'Points count must be a multiple of 3' if triangles.length % 3 != 0
       @triangles.concat(triangles)
     end

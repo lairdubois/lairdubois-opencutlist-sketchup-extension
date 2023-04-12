@@ -998,7 +998,7 @@ module Ladb::OpenCutList
                         instance_paths.each do |path|
 
                           mesh = Kuix::Mesh.new
-                          mesh.add_trangles(_compute_children_faces_triangles(entities))
+                          mesh.add_triangles(_compute_children_faces_triangles(entities))
                           mesh.background_color = color
                           mesh.transformation = PathUtils::get_transformation(path)
                           @space.append(mesh)
@@ -1080,7 +1080,7 @@ module Ladb::OpenCutList
                         instance_paths.each do |path|
 
                           mesh = Kuix::Mesh.new
-                          mesh.add_trangles(_compute_children_faces_triangles(entities))
+                          mesh.add_triangles(_compute_children_faces_triangles(entities))
                           mesh.background_color = color
                           mesh.transformation = PathUtils::get_transformation(path)
                           @space.append(mesh)
@@ -1112,7 +1112,7 @@ module Ladb::OpenCutList
                     color.alpha = event == :l_button_down ? 255 : 200
 
                     mesh = Kuix::Mesh.new
-                    mesh.add_trangles(_compute_children_faces_triangles(picked_entity_path.last.definition.entities))
+                    mesh.add_triangles(_compute_children_faces_triangles(picked_entity_path.last.definition.entities))
                     mesh.background_color = color
                     mesh.transformation = PathUtils::get_transformation(picked_entity_path)
                     @space.append(mesh)
