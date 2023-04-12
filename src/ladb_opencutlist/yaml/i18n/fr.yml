@@ -1385,14 +1385,17 @@ tool:
   smart_axes:
     title: Orienter
     toggle_depth: Pièces en arrière plan
-    action_0: Permuter Longueur ↔ Largeur
-    action_0_status: Cliquez sur une pièce pour permuter sa Longueur avec sa Largeur
-    action_1: Permuter Face ↔ Contre-face
-    action_1_status: Cliquez sur une pièce pour permuter la lecture de sa face avec sa Contre-face
-    action_2: Retourner
-    action_2_status: Cliquez sur une pièce pour retourner son instance le long de l'une de ses dimensions
+    action_0: Retourner
+    action_0_status: Cliquez sur une pièce pour retourner son instance le long de l'une de ses dimensions
+    action_1: Permuter Longueur ↔ Largeur
+    action_1_status: Cliquez sur une pièce pour permuter sa Longueur avec sa Largeur
+    action_2: Permuter Face ↔ Contre-face
+    action_2_status: Cliquez sur une pièce pour permuter la lecture de sa face avec sa Contre-face
     action_3: Orienter automatiquement
     action_3_status: Cliquez sur une pièce pour définir sa Longueur sur sa plus grand dimension et l'Epaisseur sur sa plus petite
+    action_modifier_length: Lo
+    action_modifier_width: La
+    action_modifier_thickness: Ep
     success:
       part_oriented: Cette pièce a déjà sa longueur sur la plus grande dimension et son épaisseur sur la plus petite
     warning:

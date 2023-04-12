@@ -17,9 +17,9 @@ module Ladb::OpenCutList
     include BoundingBoxHelper
     include CutlistObserverHelper
 
-    ACTION_SWAP_LENGTH_WIDTH = 0
-    ACTION_SWAP_FRONT_BACK = 1
-    ACTION_MIRROR = 2
+    ACTION_MIRROR = 0
+    ACTION_SWAP_LENGTH_WIDTH = 1
+    ACTION_SWAP_FRONT_BACK = 2
     ACTION_SWAP_AUTO = 3
 
     ACTION_MODIFIER_CLOCKWISE = 0
@@ -29,9 +29,9 @@ module Ladb::OpenCutList
     ACTION_MODIFIER_THICKNESS = 4
 
     ACTIONS = [
+      { :action => ACTION_MIRROR, :modifiers => [ ACTION_MODIFIER_THICKNESS, ACTION_MODIFIER_LENGTH, ACTION_MODIFIER_WIDTH ] },
       { :action => ACTION_SWAP_LENGTH_WIDTH, :modifiers => [ ACTION_MODIFIER_CLOCKWISE, ACTION_MODIFIER_ANTICLOCKWIZE ] },
       { :action => ACTION_SWAP_FRONT_BACK },
-      { :action => ACTION_MIRROR, :modifiers => [ ACTION_MODIFIER_THICKNESS, ACTION_MODIFIER_LENGTH, ACTION_MODIFIER_WIDTH ] },
       { :action => ACTION_SWAP_AUTO }
     ].freeze
 
@@ -123,15 +123,15 @@ module Ladb::OpenCutList
         case modifier
         when ACTION_MODIFIER_LENGTH
           lbl = Kuix::Label.new
-          lbl.text = Plugin.instance.get_i18n_string('tab.cutlist.list.length_short')
+          lbl.text = Plugin.instance.get_i18n_string('tool.smart_axes.action_modifier_length')
           return lbl
         when ACTION_MODIFIER_WIDTH
           lbl = Kuix::Label.new
-          lbl.text = Plugin.instance.get_i18n_string('tab.cutlist.list.width_short')
+          lbl.text = Plugin.instance.get_i18n_string('tool.smart_axes.action_modifier_width')
           return lbl
         when ACTION_MODIFIER_THICKNESS
           lbl = Kuix::Label.new
-          lbl.text = Plugin.instance.get_i18n_string('tab.cutlist.list.thickness_short')
+          lbl.text = Plugin.instance.get_i18n_string('tool.smart_axes.action_modifier_thickness')
           return lbl
         end
       end
@@ -276,14 +276,14 @@ module Ladb::OpenCutList
         end
         return true
       elsif key == COPY_MODIFIER_KEY
-        if is_action_swap_length_width?
+        if is_action_mirror?
+          set_root_action(ACTION_SWAP_AUTO)
+          return true
+        elsif is_action_swap_length_width?
           set_root_action(ACTION_SWAP_FRONT_BACK)
           return true
         elsif is_action_swap_front_back?
           set_root_action(ACTION_MIRROR)
-          return true
-        elsif is_action_mirror?
-          set_root_action(ACTION_SWAP_AUTO)
           return true
         elsif is_action_swap_auto?
           set_root_action(ACTION_SWAP_LENGTH_WIDTH)
