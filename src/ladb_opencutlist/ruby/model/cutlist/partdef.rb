@@ -263,7 +263,7 @@ module Ladb::OpenCutList
       @edge_material_names.store(:xmax, edge_xmax_material.name) unless edge_xmax_material.nil?
 
       # Compute edge count
-      @edge_count = [ edge_ymin_material, edge_ymax_material, edge_xmin_material, edge_xmax_material ].select { |m| !m.nil? }.length
+      @edge_count = [ edge_ymin_material, edge_ymax_material, edge_xmin_material, edge_xmax_material ].compact.length
 
       # Bluid edge pattern
       @edge_pattern = "#{edge_ymax_material ? 1 : 0}#{edge_xmax_material ? 1 : 0}#{edge_ymin_material ? 1 : 0}#{edge_xmin_material ? 1 : 0}"
@@ -306,10 +306,10 @@ module Ladb::OpenCutList
       @face_material_names.store(:zmin, veneer_zmin_material.name) unless veneer_zmin_material.nil?
       @face_material_names.store(:zmax, veneer_zmax_material.name) unless veneer_zmax_material.nil?
 
-      # Compute veneer count
-      @face_count = [veneer_zmin_material, veneer_zmax_material ].select { |m| !m.nil? }.length
+      # Compute face count
+      @face_count = [veneer_zmin_material, veneer_zmax_material ].compact.length
 
-      # Bluid veneer pattern
+      # Bluid face pattern
       @face_pattern = "#{veneer_zmax_material ? 1 : 0}#{veneer_zmin_material ? 1 : 0}"
 
     end

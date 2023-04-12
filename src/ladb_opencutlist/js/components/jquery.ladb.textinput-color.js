@@ -282,7 +282,7 @@
             // Bind UI
             that.$inputColor.on('change', function () {
                 that.$element.val($(this).val());
-                that.updatePreviewAndButtons();
+                that.$element.trigger('change');
             });
             that.$element
                 .on('focus', function () {

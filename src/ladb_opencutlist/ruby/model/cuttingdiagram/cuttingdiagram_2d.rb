@@ -207,7 +207,7 @@ module Ladb::OpenCutList
       @face_pattern = _def.cutlist_part.face_pattern
       @face_material_names = _def.cutlist_part.face_material_names
       @face_std_dimensions = _def.cutlist_part.face_std_dimensions
-      @veneer_decrements = _def.cutlist_part.face_decrements
+      @face_decrements = _def.cutlist_part.face_decrements
 
     end
 

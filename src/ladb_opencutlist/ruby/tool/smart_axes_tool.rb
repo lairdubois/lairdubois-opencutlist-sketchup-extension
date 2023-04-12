@@ -234,7 +234,7 @@ module Ladb::OpenCutList
           end
         }
         item = menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_faces_properties')) {
-          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'veneers', dontGenerate: false }")
+          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'faces', dontGenerate: false }")
         }
         menu.set_validation_proc(item) {
           if active_part_material_type == MaterialAttributes::TYPE_SHEET_GOOD

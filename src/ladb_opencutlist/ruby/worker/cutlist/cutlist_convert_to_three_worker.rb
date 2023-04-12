@@ -595,8 +595,8 @@ module Ladb::OpenCutList
       edge_ymax,
       edge_xmin,
       edge_xmax,
-      veneer_zmin,
-      veneer_zmax,
+      face_zmin,
+      face_zmax,
       layer
     )
       @number = number
@@ -618,8 +618,8 @@ module Ladb::OpenCutList
       @edge_ymax = edge_ymax
       @edge_xmin = edge_xmin
       @edge_xmax = edge_xmax
-      @veneer_zmin = veneer_zmin
-      @veneer_zmax = veneer_zmax
+      @face_zmin = face_zmin
+      @face_zmax = face_zmax
       @layer = layer
     end
 
