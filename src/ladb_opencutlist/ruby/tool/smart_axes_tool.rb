@@ -69,16 +69,21 @@ module Ladb::OpenCutList
     def get_action_status(action)
 
       case action
-      when ACTION_SWAP_LENGTH_WIDTH
+      when ACTION_MIRROR
         return super +
           ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' + ' + Plugin.instance.get_i18n_string('tool.default.transparency') + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.toggle_depth') + '.' +
           ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_1') + '.' +
-          ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + '* = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_2') + '.'
-      when ACTION_SWAP_FRONT_BACK
+          ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + '* = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_3') + '.'
+      when ACTION_SWAP_LENGTH_WIDTH
         return super +
           ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' + ' + Plugin.instance.get_i18n_string('tool.default.transparency') + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.toggle_depth') + '.' +
           ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_2') + '.' +
-          ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + '* = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_2') + '.'
+          ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + '* = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_3') + '.'
+      when ACTION_SWAP_FRONT_BACK
+        return super +
+          ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' + ' + Plugin.instance.get_i18n_string('tool.default.transparency') + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.toggle_depth') + '.' +
+          ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_3') + '.' +
+          ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + '* = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_3') + '.'
       when ACTION_SWAP_AUTO
         return super +
           ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' + ' + Plugin.instance.get_i18n_string('tool.default.transparency') + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.toggle_depth') + '.' +
