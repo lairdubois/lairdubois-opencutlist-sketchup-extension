@@ -581,7 +581,7 @@ module Ladb::OpenCutList
           end
 
           group_def.show_edges ||= part_def.edge_count > 0
-          group_def.show_veneers ||= part_def.face_count > 0
+          group_def.show_faces ||= part_def.face_count > 0
           group_def.store_part_def(part_def)
 
           if number

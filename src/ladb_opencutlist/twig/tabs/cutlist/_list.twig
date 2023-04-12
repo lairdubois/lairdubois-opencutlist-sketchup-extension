@@ -189,7 +189,7 @@
     {% set hideThickness = group.material_type == 2 or group.material_type == 3 or group.material_type == 4 or group.material_type == 6 %}    {# 2 = TYPE_SHEET_GOOD, 3 = TYPE_DIMENSIONAL, 4 = TYPE_EDGE, 6 = TYPE_VENEER #}
     {% set showFinalAreas = group.material_type == 2 and not generateOptions.hide_final_areas %}    {# 2 = TYPE_SHEET_GOOD #}
     {% set showEdges = group.show_edges and not generateOptions.hide_edges %}
-    {% set showFaces = group.show_veneers and not generateOptions.hide_faces %}
+    {% set showFaces = group.show_faces and not generateOptions.hide_faces %}
     {% set colspan = 16 %}
     {% if showCuttingDimensions %}
         {% if hideWidth %}

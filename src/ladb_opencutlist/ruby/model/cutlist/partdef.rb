@@ -4,18 +4,10 @@ module Ladb::OpenCutList
 
   class PartDef
 
-    EDGE_YMIN = :ymin
-    EDGE_YMAX = :ymax
-    EDGE_XMIN = :xmin
-    EDGE_XMAX = :xmax
+    EDGES_Y = [ :ymin, :ymax ]
+    EDGES_X = [ :xmin, :xmax ]
 
-    EDGES_Y = [ PartDef::EDGE_YMIN, PartDef::EDGE_YMAX ]
-    EDGES_X = [ PartDef::EDGE_XMIN, PartDef::EDGE_XMAX ]
-
-    VENEER_ZMIN = :zmin
-    VENEER_ZMAX = :zmax
-
-    VENEERS_Z = [ PartDef::VENEER_ZMIN, PartDef::VENEER_ZMAX ]
+    VENEERS_Z = [ :zmin, :zmax ]
 
     attr_accessor :id, :definition_id, :number, :saved_number, :name, :is_dynamic_attributes_name, :description, :count, :cutting_size, :size, :scale, :flipped, :material_name, :material_origins, :cumulable, :instance_count_by_part, :mass, :price, :thickness_layer_count, :orientation_locked_on_axis, :tags, :symmetrical, :ignore_grain_direction, :length_increase, :width_increase, :thickness_increase, :edge_count, :edge_pattern, :edge_entity_ids, :edge_length_decrement, :edge_width_decrement, :edge_decremented, :face_count, :face_pattern, :face_entity_ids, :face_texture_angles, :face_thickness_decrement, :face_decremented, :length_increased, :width_increased, :thickness_increased, :auto_oriented, :not_aligned_on_axes, :unused_instance_count, :content_layers, :final_area, :children_warning_count, :children_length_increased_count, :children_width_increased_count, :children_thickness_increased_count
     attr_reader :id, :edge_material_names, :edge_std_dimensions, :edge_errors, :face_material_names, :face_std_dimensions, :face_errors, :entity_ids, :entity_serialized_paths, :entity_names, :children, :instance_infos, :edge_materials, :edge_group_defs, :veneer_materials, :veneer_group_defs
@@ -259,16 +251,16 @@ module Ladb::OpenCutList
     def set_edge_materials(edge_ymin_material, edge_ymax_material, edge_xmin_material, edge_xmax_material)
 
       # Store materials internaly
-      @edge_materials.store(PartDef::EDGE_YMIN, edge_ymin_material) unless edge_ymin_material.nil?
-      @edge_materials.store(PartDef::EDGE_YMAX, edge_ymax_material) unless edge_ymax_material.nil?
-      @edge_materials.store(PartDef::EDGE_XMIN, edge_xmin_material) unless edge_xmin_material.nil?
-      @edge_materials.store(PartDef::EDGE_XMAX, edge_xmax_material) unless edge_xmax_material.nil?
+      @edge_materials.store(:ymin, edge_ymin_material) unless edge_ymin_material.nil?
+      @edge_materials.store(:ymax, edge_ymax_material) unless edge_ymax_material.nil?
+      @edge_materials.store(:xmin, edge_xmin_material) unless edge_xmin_material.nil?
+      @edge_materials.store(:xmax, edge_xmax_material) unless edge_xmax_material.nil?
 
       # Store material names
-      @edge_material_names.store(PartDef::EDGE_YMIN, edge_ymin_material.name) unless edge_ymin_material.nil?
-      @edge_material_names.store(PartDef::EDGE_YMAX, edge_ymax_material.name) unless edge_ymax_material.nil?
-      @edge_material_names.store(PartDef::EDGE_XMIN, edge_xmin_material.name) unless edge_xmin_material.nil?
-      @edge_material_names.store(PartDef::EDGE_XMAX, edge_xmax_material.name) unless edge_xmax_material.nil?
+      @edge_material_names.store(:ymin, edge_ymin_material.name) unless edge_ymin_material.nil?
+      @edge_material_names.store(:ymax, edge_ymax_material.name) unless edge_ymax_material.nil?
+      @edge_material_names.store(:xmin, edge_xmin_material.name) unless edge_xmin_material.nil?
+      @edge_material_names.store(:xmax, edge_xmax_material.name) unless edge_xmax_material.nil?
 
       # Compute edge count
       @edge_count = [ edge_ymin_material, edge_ymax_material, edge_xmin_material, edge_xmax_material ].select { |m| !m.nil? }.length
@@ -281,38 +273,38 @@ module Ladb::OpenCutList
     def set_edge_entity_ids(edge_ymin_entity_ids, edge_ymax_entity_ids, edge_xmin_entity_ids, edge_xmax_entity_ids)
 
       # Store materials internaly
-      @edge_entity_ids.store(PartDef::EDGE_YMIN, edge_ymin_entity_ids) unless edge_ymin_entity_ids.nil?
-      @edge_entity_ids.store(PartDef::EDGE_YMAX, edge_ymax_entity_ids) unless edge_ymax_entity_ids.nil?
-      @edge_entity_ids.store(PartDef::EDGE_XMIN, edge_xmin_entity_ids) unless edge_xmin_entity_ids.nil?
-      @edge_entity_ids.store(PartDef::EDGE_XMAX, edge_xmax_entity_ids) unless edge_xmax_entity_ids.nil?
+      @edge_entity_ids.store(:ymin, edge_ymin_entity_ids) unless edge_ymin_entity_ids.nil?
+      @edge_entity_ids.store(:ymax, edge_ymax_entity_ids) unless edge_ymax_entity_ids.nil?
+      @edge_entity_ids.store(:xmin, edge_xmin_entity_ids) unless edge_xmin_entity_ids.nil?
+      @edge_entity_ids.store(:xmax, edge_xmax_entity_ids) unless edge_xmax_entity_ids.nil?
 
     end
 
     def set_edge_group_defs(edge_ymin_group_def, edge_ymax_group_def, edge_xmin_group_def, edge_xmax_group_def)
 
       # Store groupDefs internaly
-      @edge_group_defs.store(PartDef::EDGE_YMIN, edge_ymin_group_def) unless edge_ymin_group_def.nil?
-      @edge_group_defs.store(PartDef::EDGE_YMAX, edge_ymax_group_def) unless edge_ymax_group_def.nil?
-      @edge_group_defs.store(PartDef::EDGE_XMIN, edge_xmin_group_def) unless edge_xmin_group_def.nil?
-      @edge_group_defs.store(PartDef::EDGE_XMAX, edge_xmax_group_def) unless edge_xmax_group_def.nil?
+      @edge_group_defs.store(:ymin, edge_ymin_group_def) unless edge_ymin_group_def.nil?
+      @edge_group_defs.store(:ymax, edge_ymax_group_def) unless edge_ymax_group_def.nil?
+      @edge_group_defs.store(:xmin, edge_xmin_group_def) unless edge_xmin_group_def.nil?
+      @edge_group_defs.store(:xmax, edge_xmax_group_def) unless edge_xmax_group_def.nil?
 
       # Store stdDimensions
-      @edge_std_dimensions.store(PartDef::EDGE_YMIN, "#{edge_ymin_group_def.std_thickness} x #{edge_ymin_group_def.std_dimension}") unless edge_ymin_group_def.nil?
-      @edge_std_dimensions.store(PartDef::EDGE_YMAX, "#{edge_ymax_group_def.std_thickness} x #{edge_ymax_group_def.std_dimension}") unless edge_ymax_group_def.nil?
-      @edge_std_dimensions.store(PartDef::EDGE_XMIN, "#{edge_xmin_group_def.std_thickness} x #{edge_xmin_group_def.std_dimension}") unless edge_xmin_group_def.nil?
-      @edge_std_dimensions.store(PartDef::EDGE_XMAX, "#{edge_xmax_group_def.std_thickness} x #{edge_xmax_group_def.std_dimension}") unless edge_xmax_group_def.nil?
+      @edge_std_dimensions.store(:ymin, "#{edge_ymin_group_def.std_thickness} x #{edge_ymin_group_def.std_dimension}") unless edge_ymin_group_def.nil?
+      @edge_std_dimensions.store(:ymax, "#{edge_ymax_group_def.std_thickness} x #{edge_ymax_group_def.std_dimension}") unless edge_ymax_group_def.nil?
+      @edge_std_dimensions.store(:xmin, "#{edge_xmin_group_def.std_thickness} x #{edge_xmin_group_def.std_dimension}") unless edge_xmin_group_def.nil?
+      @edge_std_dimensions.store(:xmax, "#{edge_xmax_group_def.std_thickness} x #{edge_xmax_group_def.std_dimension}") unless edge_xmax_group_def.nil?
 
     end
 
     def set_veneer_materials(veneer_zmin_material, veneer_zmax_material)
 
       # Store materials internaly
-      @veneer_materials.store(PartDef::VENEER_ZMIN, veneer_zmin_material) unless veneer_zmin_material.nil?
-      @veneer_materials.store(PartDef::VENEER_ZMAX, veneer_zmax_material) unless veneer_zmax_material.nil?
+      @veneer_materials.store(:zmin, veneer_zmin_material) unless veneer_zmin_material.nil?
+      @veneer_materials.store(:zmax, veneer_zmax_material) unless veneer_zmax_material.nil?
 
       # Store material names
-      @face_material_names.store(PartDef::VENEER_ZMIN, veneer_zmin_material.name) unless veneer_zmin_material.nil?
-      @face_material_names.store(PartDef::VENEER_ZMAX, veneer_zmax_material.name) unless veneer_zmax_material.nil?
+      @face_material_names.store(:zmin, veneer_zmin_material.name) unless veneer_zmin_material.nil?
+      @face_material_names.store(:zmax, veneer_zmax_material.name) unless veneer_zmax_material.nil?
 
       # Compute veneer count
       @face_count = [veneer_zmin_material, veneer_zmax_material ].select { |m| !m.nil? }.length
@@ -325,28 +317,28 @@ module Ladb::OpenCutList
     def set_veneer_entity_ids(veneer_zmin_entity_ids, veneer_zmax_entity_ids)
 
       # Store materials internaly
-      @face_entity_ids.store(PartDef::VENEER_ZMIN, veneer_zmin_entity_ids) unless veneer_zmin_entity_ids.nil?
-      @face_entity_ids.store(PartDef::VENEER_ZMAX, veneer_zmax_entity_ids) unless veneer_zmax_entity_ids.nil?
+      @face_entity_ids.store(:zmin, veneer_zmin_entity_ids) unless veneer_zmin_entity_ids.nil?
+      @face_entity_ids.store(:zmax, veneer_zmax_entity_ids) unless veneer_zmax_entity_ids.nil?
 
     end
 
     def set_veneer_texture_angles(veneer_zmin_texture_angles, veneer_zmax_texture_angles)
 
       # Store materials internaly
-      @face_texture_angles.store(PartDef::VENEER_ZMIN, veneer_zmin_texture_angles) unless veneer_zmin_texture_angles.nil?
-      @face_texture_angles.store(PartDef::VENEER_ZMAX, veneer_zmax_texture_angles) unless veneer_zmax_texture_angles.nil?
+      @face_texture_angles.store(:zmin, veneer_zmin_texture_angles) unless veneer_zmin_texture_angles.nil?
+      @face_texture_angles.store(:zmax, veneer_zmax_texture_angles) unless veneer_zmax_texture_angles.nil?
 
     end
 
     def set_veneer_group_defs(veneer_zmin_group_def, veneer_zmax_group_def)
 
       # Store groupDefs internaly
-      @veneer_group_defs.store(PartDef::VENEER_ZMIN, veneer_zmin_group_def) unless veneer_zmin_group_def.nil?
-      @veneer_group_defs.store(PartDef::VENEER_ZMAX, veneer_zmax_group_def) unless veneer_zmax_group_def.nil?
+      @veneer_group_defs.store(:zmin, veneer_zmin_group_def) unless veneer_zmin_group_def.nil?
+      @veneer_group_defs.store(:zmax, veneer_zmax_group_def) unless veneer_zmax_group_def.nil?
 
       # Store stdDimensions
-      @face_std_dimensions.store(PartDef::VENEER_ZMIN, "#{veneer_zmin_group_def.std_dimension}") unless veneer_zmin_group_def.nil?
-      @face_std_dimensions.store(PartDef::VENEER_ZMAX, "#{veneer_zmax_group_def.std_dimension}") unless veneer_zmax_group_def.nil?
+      @face_std_dimensions.store(:zmin, "#{veneer_zmin_group_def.std_dimension}") unless veneer_zmin_group_def.nil?
+      @face_std_dimensions.store(:zmax, "#{veneer_zmax_group_def.std_dimension}") unless veneer_zmax_group_def.nil?
 
     end
 
