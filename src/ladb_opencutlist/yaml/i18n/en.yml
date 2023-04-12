@@ -77,7 +77,7 @@ core:
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
-      edit_part_veneers_properties: $t(tab.cutlist.edit_part_veneers_properties)
+      edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
   toolbar:
@@ -215,10 +215,10 @@ tab:
     highlight_part: Highlight in the model
     highlight_parts: Highlight in the model
     edit_part_properties: Edit Part Properties
-    edit_part_axes_properties: Edit Axes Properties of Part
+    edit_part_axes_properties: Edit the properties (axes) of the part
     edit_part_size_increase_properties: Edit the properties (oversizes) of the part
-    edit_part_edges_properties: Edit the properties (edge bandings) of the part
-    edit_part_veneers_properties: Edit the properties (veneers) of the part
+    edit_part_edges_properties: Edit the properties (edges) of the part
+    edit_part_faces_properties: Edit the properties (faces) of the part
     tooltip:
       show_hide_block: Show / Hide group
       scroll_to_block: Scroll to group
@@ -294,17 +294,17 @@ tab:
       size_increased: "Dimension is increased by an oversize of {{ value }}"
       has_edges: "This part contains {{ count }} edge banding"
       has_edges_plural: "This part contains {{ count }} edge bandings"
-      has_veneers: "This part contains {{ count }} veneered surface"
-      has_veneers_plural: "This part contains {{ count }} veneered surfaces"
+      has_faces: "This part contains {{ count }} veneered face"
+      has_faces_plural: "This part contains {{ count }} veneered faces"
       edge_decremented: "Reduced by the thickness of the edge banding ({{ decrement }})"
       edge_ymin: Edge length 1
       edge_ymax: Edge length 2
       edge_xmin: Edge width 1
       edge_xmax: Edge width 2
-      veneer_zmin: Veneer backside
-      veneer_zmax: Veneer frontside
+      face_zmin: Backside
+      face_zmax: Frontside
       dblclick_to_copy_all_edges: Double-click here to duplicate this value to the other edges
-      dblclick_to_copy_all_veneers: Double-click here to duplicate this value to the other face
+      dblclick_to_copy_all_faces: Double-click here to duplicate this value to the other face
       dblclick_to_sort_axes: Double-click here to automatically reorder the axes according to the dimensions of the part
       part_axes: Internal axes of the part
       select_unselect_all_parts: Select / Deselect all parts of the group
@@ -335,8 +335,8 @@ tab:
       multiple_alert: "Shared properties of {{ part_count }} parts."
       general: General
       extra_help: "List of properties specific to the type of material \"**$t(tab.materials.type_{{ material_type }})**\"."
-      edges: Edge Bandings
-      veneers: Veneers
+      edges: Edges
+      faces: Faces
       name: Name
       material: Material
       cumulable: Summable
@@ -408,12 +408,12 @@ tab:
       axes_origin_position_none: Do not change the origin
       axes_origin_position_min: Place the origin at a corner
       axes_origin_position_center: Place the origin at the center
-      axes_origin_position_front_min: Place the origin at a corner of the front face
-      axes_origin_position_front_center: Place the origin at the center of the front face
+      axes_origin_position_front_min: Place the origin at a corner of the front
+      axes_origin_position_front_center: Place the origin at the center of the front
       over_length: Across the length
       over_width: Across the width
       edge_disabled_help: This edge banding is not configurable because no material-carrying face has been detected on this edge of the part in the model.
-      veneer_disabled_help: This surface is not configurable because no material-carrying face has been detected on this edge of the part in the model.
+      face_disabled_help: This surface is not configurable because no material-carrying face has been detected on this edge of the part in the model.
       multiple_values: Multiple values
       export_to_skp: Export (.skp)
       loading_preview: Loading Preview
@@ -459,10 +459,10 @@ tab:
       hide_bbox_dimensions_help: "If this option is selected, the **finished** dimensions of parts will be hidden."
       hide_final_areas: Hide actual area of parts of type *Sheet Goods*
       hide_final_areas_help: "If this option is selected, the **actual areas** of parts of type *Sheet Goods* will be hidden."
-      hide_edges: Hide the columns of edge bandings
+      hide_edges: Hide the columns of edges
       hide_edges_help: "If this option is selected, the **edge banding columns** of parts of type *Sheet Goods* will be hidden."
-      hide_veneers: Hide the columns of veneers
-      hide_veneers_help: "If this option is selected, the **veneer columns** of parts of type *Sheet Goods* will be hidden."
+      hide_faces: Hide the columns of faces
+      hide_faces_help: "If this option is selected, the **veneer columns** of parts of type *Sheet Goods* will be hidden."
       minimize_on_highlight: Minimize after *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "If this option is selected, the OpenCutList window will be minimized when the function *'$t(tab.cutlist.highlight_part)'* is used."
       general: General
@@ -514,8 +514,8 @@ tab:
       width_short: W
       thickness: Thickness
       thickness_short: T
-      edges: Edge Bandings
-      veneers: Veneers
+      edges: Edges
+      faces: Faces
     export:
       title: Export
       info_0: |
@@ -572,8 +572,8 @@ tab:
       edge_ymax: Edge length 2
       edge_xmin: Edge width 1
       edge_xmax: Edge width 2
-      veneer_zmin: Veneer backside
-      veneer_zmax: Veneer frontside
+      face_zmin: Backside
+      face_zmax: Frontside
       layer: Tag
       layers: Tags
       placeholder:
@@ -842,8 +842,8 @@ tab:
         part_edge_ymax: Edge length 2
         part_edge_xmin: Edge width 1
         part_edge_xmax: Edge width 2
-        part_veneer_zmin: Veneer backside
-        part_veneer_zmax: Veneer frontside
+        part_face_zmin: Veneer backside
+        part_face_zmax: Veneer frontside
         thumbnail_proportional: Proportional thumbnail
         thumbnail_square: Square thumbnail
         group_material: Material / Thickness
@@ -1359,9 +1359,9 @@ tool:
     action_0: Paint part
     action_0_status: Click on a part to paint it
     action_1: Paint edges
-    action_1_status: Click on a panel edge to paint it
-    action_2: Paint surfaces
-    action_2_status: Click on a panel surface to paint it
+    action_1_status: Click on a panel edge to apply '$t(tab.materials.type_4)'
+    action_2: Paint faces
+    action_2_status: Click on a panel face to apply '$t(tab.materials.type_6)'
     action_3: Sample
     action_3_status: Click on a face to sample its material
     edges: "{{ count }} edge"
@@ -1370,27 +1370,32 @@ tool:
     edge_ymax: Length 2
     edge_xmin: Width 1
     edge_xmax: Width 2
-    veneers: "{{ count }} surface"
-    veneers_plural: "{{ count }} faces"
-    veneer_zmin: Back face
-    veneer_zmax: Front face
+    faces: "{{ count }} surface"
+    faces_plural: "{{ count }} faces"
+    face_zmin: Backside
+    face_zmax: Front
     warning:
       no_material: No material
       no_material_type: No material of type '{{ type }}'
     error:
       not_part: The target object is not a part
       not_edge: The target face is not a panel edge
-      not_veneer: The target face is not a panel surface
+      not_face: The target face is not a panel surface
       wrong_material_type: The target part must be of type '{{ type }}'
   smart_axes:
     title: Orient
     toggle_depth: Parts in background
-    action_0: Swap length ↔ width
-    action_0_status: Click on a part to swap its length with its width
-    action_1: Swap front face ↔ back face
-    action_1_status: Click on a part to swap its front face with its back face
-    action_2: Orient automatically
-    action_2_status:  Click on a part to set its length to the largest dimension and its thickness to the smallest
+    action_0: Flip
+    action_0_status:  Click on a part to flip an instance along one of its dimensions
+    action_1: Swap length ↔ width
+    action_1_status: Click on a part to swap its length with its width
+    action_2: Swap front ↔ backside
+    action_2_status: Click on a part to swap its front with its backside
+    action_3: Orient automatically
+    action_3_status:  Click on a part to set its length to the largest dimension and its thickness to the smallest
+    action_modifier_length: L
+    action_modifier_width: W
+    action_modifier_thickness: T
     success:
       part_oriented: This part already has its length on the largest dimension and its thickness on the smallest
     warning:

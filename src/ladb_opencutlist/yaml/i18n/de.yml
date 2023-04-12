@@ -77,7 +77,7 @@ core:
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
-      edit_part_veneers_properties: $t(tab.cutlist.edit_part_veneers_properties)
+      edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
   toolbar:
@@ -218,7 +218,7 @@ tab:
     edit_part_axes_properties: Eigenschaften (Achsen) des Teils bearbeiten
     edit_part_size_increase_properties: Eigenschaften (Übermaße) des Teils bearbeiten
     edit_part_edges_properties: Eigenschaften (Kanten) des Teils bearbeiten
-    edit_part_veneers_properties: Eigenschaften (Furniere) des Teils bearbeiten
+    edit_part_faces_properties: Eigenschaften (Furniere) des Teils bearbeiten
     tooltip:
       show_hide_block: Gruppe anzeigen / ausblenden
       scroll_to_block: Zur Gruppe blättern
@@ -294,17 +294,17 @@ tab:
       size_increased: "Dimension mit einem Übermaß von {{ value }}"
       has_edges: "Dieses Teil enthält {{ count }} Kantenband"
       has_edges_plural: "Dieses Teil enthält {{ count }} Kantenbänder"
-      has_veneers: "Dieses Teil enthält {{ count }} furnierte Fläche"
-      has_veneers_plural: "Dieses Teil enthält {{ count }} furnierte Flächen"
+      has_faces: "Dieses Teil enthält {{ count }} furnierte Fläche"
+      has_faces_plural: "Dieses Teil enthält {{ count }} furnierte Flächen"
       edge_decremented: "Um die Kantenbandbreite ({{ decrement }}) verkürzt"
       edge_ymin: Kantenband Länge 1
       edge_ymax: Kantenband Länge 2
       edge_xmin: Kantenband Breite 1
       edge_xmax: Kantenband Breite 2
-      veneer_zmin: Rückseite
-      veneer_zmax: Vorderseite
+      face_zmin: Rückseite
+      face_zmax: Vorderseite
       dblclick_to_copy_all_edges: "Doppelklicken Sie hier, um diesen Wert auf die anderen Kanten zu übertragen"
-      dblclick_to_copy_all_veneers: "Doppelklicken Sie hier, um diesen Wert auf die andere Fläche zu übertragen"
+      dblclick_to_copy_all_faces: "Doppelklicken Sie hier, um diesen Wert auf die andere Fläche zu übertragen"
       dblclick_to_sort_axes: "Doppelklicken Sie hier, um die Achsen automatisch entsprechend den Abmessungen des Teils neu anzuordnen"
       part_axes: Interne Achsen des Teils
       select_unselect_all_parts: Alle Teile dieser Gruppe selektieren / deselektieren
@@ -336,7 +336,7 @@ tab:
       general: Allgemein
       extra_help: "Liste der materialtypspezifischen Eigenschaften \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Kantenbänder
-      veneers: Furniere
+      faces: Furniere
       name: Name
       material: Material
       cumulable: Summierbar
@@ -413,7 +413,7 @@ tab:
       over_length: Der Länge nach
       over_width: Der Breite nach
       edge_disabled_help: "Diese Kante ist nicht konfigurierbar, da an dieser Kante des Teils im Modell keine materialtragende Fläche erkannt wurde."
-      veneer_disabled_help: "Diese Fläche ist nicht konfigurierbar, da an dieser Seite des Teils im Modell keine materialtragende Fläche erkannt wurde."
+      face_disabled_help: "Diese Fläche ist nicht konfigurierbar, da an dieser Seite des Teils im Modell keine materialtragende Fläche erkannt wurde."
       multiple_values: mehrfache Werte
       export_to_skp: Exportieren (.skp)
       loading_preview: Vorschau laden
@@ -461,8 +461,8 @@ tab:
       hide_final_areas_help: "Ist diese Option aktiv, werden die **effektiven Flächen** von Teilen des Typs *Platte* nicht angezeigt."
       hide_edges: Spalten der Kantenbänder ausblenden
       hide_edges_help: "Ist diese Option aktiv, werden die **Spalten der Kantenbänder** der Teile des Typs *Platte* nicht angezeigt."
-      hide_veneers: Spalten der Furniere ausblenden
-      hide_veneers_help: "Ist diese Option aktiv, werden die **Spalten der Furniere** von Teilen des Typs *Platte* nicht angezeigt."
+      hide_faces: Spalten der Furniere ausblenden
+      hide_faces_help: "Ist diese Option aktiv, werden die **Spalten der Furniere** von Teilen des Typs *Platte* nicht angezeigt."
       minimize_on_highlight: Minimieren nach *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Ist diese Option aktiv, wird das OpenCutList Fenster minimiert, wenn die Funktion *'$t(tab.cutlist.highlight_part)'* verwendet wird."
       general: Allgemein
@@ -515,7 +515,7 @@ tab:
       thickness: Dicke
       thickness_short: D
       edges: Kantenbänder
-      veneers: Furniere
+      faces: Furniere
     export:
       title: Export
       info_0: |
@@ -572,8 +572,8 @@ tab:
       edge_ymax: Kantenband Länge 2
       edge_xmin: Kantenband Breite 1
       edge_xmax: Kantenband Breite 2
-      veneer_zmin: Rückseite
-      veneer_zmax: Vorderseite
+      face_zmin: Rückseite
+      face_zmax: Vorderseite
       layer: Tag
       layers: Tags
       placeholder:
@@ -842,8 +842,8 @@ tab:
         part_edge_ymax: Kantenband Länge 2
         part_edge_xmin: Kantenband Breite 1
         part_edge_xmax: Kantenband Breite 2
-        part_veneer_zmin: Furnier Rückseite
-        part_veneer_zmax: Furnier Vorderseite
+        part_face_zmin: Furnier Rückseite
+        part_face_zmax: Furnier Vorderseite
         thumbnail_proportional: Proportionale Vignette
         thumbnail_square: Quadratische Vignette
         group_material: Material / Dicke
@@ -1359,9 +1359,9 @@ tool:
     action_0: Teil bemalen
     action_0_status: Klicken Sie auf ein Teil, um es einzufärben
     action_1: Kanten bemalen
-    action_1_status: Klicken Sie auf eine Kante, um sie einzufärben
+    action_1_status: Klicken Sie auf eine Plattenkante, um ein Material '$t(tab.materials.type_4)' anzuwenden
     action_2: Flächen bemalen
-    action_2_status: Klicken Sie auf eine Plattenfläche, um sie einzufärben
+    action_2_status: Klicken Sie auf eine Plattenfläche, um ein Material '$t(tab.materials.type_6)' anzuwenden
     action_3: Entnehmen
     action_3_status: Klicken Sie auf eine Fläche, um eine Probe des Materials zu entnehmen
     edges: "{{ count }} Kante"
@@ -1370,27 +1370,32 @@ tool:
     edge_ymax: Länge 2
     edge_xmin: Breite 1
     edge_xmax: Breite 2
-    veneers: "{{ count }} Fläche"
-    veneers_plural: "{{ count }} Flächen"
-    veneer_zmin: Vorderseite
-    veneer_zmax: Rückseite
+    faces: "{{ count }} Fläche"
+    faces_plural: "{{ count }} Flächen"
+    face_zmin: Rückseite
+    face_zmax: Vorderseite
     warning:
       no_material: Kein Material
       no_material_type: Kein Material des Typs '{{ type }}'
     error:
       not_part: Das Zielobjekt ist kein Teil
       not_edge: Die Zielfläche ist keine Plattenkante
-      not_veneer: Die Zielfläche ist keine Plattenoberfläche
+      not_face: Die Zielfläche ist keine Plattenfläche
       wrong_material_type: Das Zielteil hat nicht den Typ '{{ type }}'
   smart_axes:
     title: Ausrichten
     toggle_depth: Hintergrundteile
-    action_0: Permutieren Länge ↔ Breite
-    action_0_status: Klicken Sie auf ein Teil, um seine Länge mit seiner Breite zu vertauschen
-    action_1: Permutieren Vorderseite ↔ Rückseite
-    action_1_status: Klicken Sie auf ein Teil, um seine Vorderseite mit seiner Rückseite zu vertauschen
-    action_2: Automatisch ausrichten
-    action_2_status:  Klicken Sie auf ein Teil, um seine Länge auf die größte und seine Dicke auf die kleinste Abmessung einzustellen
+    action_0: Spiegeln
+    action_0_status:  Klicken Sie auf ein Teil, um die Instanz entlang einer seiner Dimensionen zu spiegeln
+    action_1: Länge ↔ Breite vertauschen
+    action_1_status: Klicken Sie auf ein Teil, um seine Länge mit seiner Breite zu vertauschen
+    action_2: Vorderseite ↔ Rückseite vertauschen
+    action_2_status: Klicken Sie auf ein Teil, um seine Vorderseite mit seiner Rückseite zu vertauschen
+    action_3: Automatisch ausrichten
+    action_3_status:  Klicken Sie auf ein Teil, um seine Länge auf die größte und seine Dicke auf die kleinste Abmessung einzustellen
+    action_modifier_length: L
+    action_modifier_width: B
+    action_modifier_thickness: D
     success:
       part_oriented: Dieses Teil hat seine Länge bereits auf der größten und seine Dicke auf der kleinsten Dimension
     warning:
