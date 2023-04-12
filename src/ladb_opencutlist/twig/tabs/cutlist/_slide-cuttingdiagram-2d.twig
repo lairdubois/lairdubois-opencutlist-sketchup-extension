@@ -20,7 +20,7 @@
 
 {% set showCuttingDimensions = group.show_cutting_dimensions %}
 {% set showEdges = group.show_edges and not generateOptions.hide_edges %}
-{% set showVeneers = group.show_veneers and not generateOptions.hide_veneers %}
+{% set showVeneers = group.show_veneers and not generateOptions.hide_faces %}
 
 {% set fullWidthCompatible = compatible_with('svg.height-auto') %}
 {% set sheetStrippedname = group.material_type == 6 ? 'veneer' : 'good' %}  {# 6 = TYPE_VENEER #}
@@ -39,8 +39,8 @@
     {% endif %}
     {% if part.veneer_count > 0 %}
         <div class='tt-section'>
-            {% if part.veneer_material_names.zmin %}<div><i class='ladb-opencutlist-icon-veneer-01'></i>&nbsp;{{ part.veneer_material_names.zmin|escape('html') }}&nbsp;<small>{{ part.veneer_std_dimensions.zmin|escape('html') }}</small></div>{% endif %}
-            {% if part.veneer_material_names.zmax %}<div><i class='ladb-opencutlist-icon-veneer-10'></i>&nbsp;{{ part.veneer_material_names.zmax|escape('html') }}&nbsp;<small>{{ part.veneer_std_dimensions.zmax|escape('html') }}</small></div>{% endif %}
+            {% if part.veneer_material_names.zmin %}<div><i class='ladb-opencutlist-icon-face-01'></i>&nbsp;{{ part.veneer_material_names.zmin|escape('html') }}&nbsp;<small>{{ part.veneer_std_dimensions.zmin|escape('html') }}</small></div>{% endif %}
+            {% if part.veneer_material_names.zmax %}<div><i class='ladb-opencutlist-icon-face-10'></i>&nbsp;{{ part.veneer_material_names.zmax|escape('html') }}&nbsp;<small>{{ part.veneer_std_dimensions.zmax|escape('html') }}</small></div>{% endif %}
         </div>
     {% endif %}
 {% endspaceless %}
@@ -413,7 +413,7 @@
                             <td colspan="4">{{ ('tab.cutlist.list.edges')|i18next }}</td>
                         {% endif %}
                         {% if showVeneers %}
-                            <td colspan="4">{{ ('tab.cutlist.list.veneers')|i18next }}</td>
+                            <td colspan="4">{{ ('tab.cutlist.list.faces')|i18next }}</td>
                         {% endif %}
                     </tr>
                     <tr class="table-column-heading">
@@ -432,8 +432,8 @@
                             <td data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_xmax'|i18next }}"><i class="ladb-opencutlist-icon-edge-0100"></i></td>
                         {% endif %}
                         {% if showVeneers %}
-                            <td data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.veneer_zmax'|i18next }}"><i class="ladb-opencutlist-icon-veneer-10"></i></td>
-                            <td data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.veneer_zmin'|i18next }}"><i class="ladb-opencutlist-icon-veneer-01"></i></td>
+                            <td data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.face_zmax'|i18next }}"><i class="ladb-opencutlist-icon-face-10"></i></td>
+                            <td data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.face_zmin'|i18next }}"><i class="ladb-opencutlist-icon-face-01"></i></td>
                         {% endif %}
                     </tr>
                     {% for part in sheet.grouped_parts %}
@@ -445,7 +445,7 @@
                                         {% if part.thickness_layer_count > 1 %}<a href="#" class="ladb-tool-info" data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.tooltip.thickness_layer_count'|i18next({ 'count':part.thickness_layer_count }) }}"><i class="ladb-opencutlist-icon-thickness-layers"></i></a>{% endif %}
                                         {% if part.flipped %}<a href="#" class="ladb-tool-info" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.flipped'|i18next }}"><i class="ladb-opencutlist-icon-flipped"></i></a>{% endif %}
                                         {% if part.edge_count > 0 %}<a href="#" class="ladb-tool-info" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.has_edges'|i18next({ 'count':part.edge_count }) }}"><i class="ladb-opencutlist-icon-edge-{{ part.edge_pattern }}"></i></a>{% endif %}
-                                        {% if part.veneer_count > 0 %}<a href="#" class="ladb-tool-info" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.has_veneers'|i18next({ 'count':part.veneer_count }) }}"><i class="ladb-opencutlist-icon-veneer-{{ part.veneer_pattern }}"></i></a>{% endif %}
+                                        {% if part.veneer_count > 0 %}<a href="#" class="ladb-tool-info" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.has_faces'|i18next({ 'count':part.veneer_count }) }}"><i class="ladb-opencutlist-icon-face-{{ part.veneer_pattern }}"></i></a>{% endif %}
                                         <span class="ladb-separator no-print"></span>
                                         <a href="#" class="ladb-btn-highlight-part ladb-click-tool no-print" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.highlight_part'|i18next }}"><i class="ladb-opencutlist-icon-magnifier"></i></a>
                                     </div>

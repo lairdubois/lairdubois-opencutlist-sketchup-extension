@@ -112,11 +112,11 @@
           "align": "center"
         },
         {
-          "name": "veneer_zmax",
+          "name": "face_zmax",
           "align": "center"
         },
         {
-          "name": "veneer_zmin",
+          "name": "face_zmin",
           "align": "center"
         },
         {
@@ -202,11 +202,11 @@
           "align": "center"
         },
         {
-          "name": "veneer_zmax",
+          "name": "face_zmax",
           "align": "center"
         },
         {
-          "name": "veneer_zmin",
+          "name": "face_zmin",
           "align": "center"
         },
         {

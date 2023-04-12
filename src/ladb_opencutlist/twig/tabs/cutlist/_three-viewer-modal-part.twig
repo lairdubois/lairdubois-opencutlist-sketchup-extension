@@ -7,8 +7,8 @@
 {% block uiLeft %}
     {{ fn.btn_view('isometric', 'view-isometric', THREE_CAMERA_VIEWS) }}
     {% if group.material_type == 1 or group.material_type == 2  %} {# 1 = TYPE_SOLID_WOOD, 2 = TYPE_SHEET_GOOD #}
-        {{ fn.btn_view('top', 'veneer-10', THREE_CAMERA_VIEWS, 'tab.cutlist.tooltip.veneer_zmax'|i18next) }}
-        {{ fn.btn_view('bottom', 'veneer-01', THREE_CAMERA_VIEWS, 'tab.cutlist.tooltip.veneer_zmin'|i18next) }}
+        {{ fn.btn_view('top', 'face-10', THREE_CAMERA_VIEWS, 'tab.cutlist.tooltip.face_zmax'|i18next) }}
+        {{ fn.btn_view('bottom', 'face-01', THREE_CAMERA_VIEWS, 'tab.cutlist.tooltip.face_zmin'|i18next) }}
         <span>&nbsp;</span>
     {% endif %}
     {{ fn.btn_zoom(null, '<i class="ladb-opencutlist-icon-zoom-auto"></i>', 'tab.cutlist.layout.option_camera_zoom_auto'|i18next) }}

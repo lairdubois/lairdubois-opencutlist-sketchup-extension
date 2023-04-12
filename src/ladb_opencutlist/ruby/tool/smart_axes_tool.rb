@@ -4,6 +4,7 @@ module Ladb::OpenCutList
   require_relative '../lib/kuix/kuix'
   require_relative '../helper/layer_visibility_helper'
   require_relative '../helper/face_triangles_helper'
+  require_relative '../helper/boundingbox_helper'
   require_relative '../model/attributes/definition_attributes'
   require_relative '../model/geom/size3d'
   require_relative '../utils/axis_utils'
@@ -13,18 +14,24 @@ module Ladb::OpenCutList
 
     include LayerVisibilityHelper
     include FaceTrianglesHelper
+    include BoundingBoxHelper
     include CutlistObserverHelper
 
     ACTION_SWAP_LENGTH_WIDTH = 0
     ACTION_SWAP_FRONT_BACK = 1
-    ACTION_SWAP_AUTO = 2
+    ACTION_MIRROR = 2
+    ACTION_SWAP_AUTO = 3
 
     ACTION_MODIFIER_CLOCKWISE = 0
     ACTION_MODIFIER_ANTICLOCKWIZE = 1
+    ACTION_MODIFIER_LENGTH = 2
+    ACTION_MODIFIER_WIDTH = 3
+    ACTION_MODIFIER_THICKNESS = 4
 
     ACTIONS = [
       { :action => ACTION_SWAP_LENGTH_WIDTH, :modifiers => [ ACTION_MODIFIER_CLOCKWISE, ACTION_MODIFIER_ANTICLOCKWIZE ] },
       { :action => ACTION_SWAP_FRONT_BACK },
+      { :action => ACTION_MIRROR, :modifiers => [ ACTION_MODIFIER_THICKNESS, ACTION_MODIFIER_LENGTH, ACTION_MODIFIER_WIDTH ] },
       { :action => ACTION_SWAP_AUTO }
     ].freeze
 
@@ -44,6 +51,7 @@ module Ladb::OpenCutList
       @cursor_swap_length_width_anticlockwise = create_cursor('swap-length-width-anticlockwise', 4, 4)
       @cursor_swap_front_back = create_cursor('swap-front-back', 4, 4)
       @cursor_swap_auto = create_cursor('swap-auto', 4, 4)
+      @cursor_mirror = create_cursor('mirror', 4, 4)
       @cursor_select_error = create_cursor('select-error', 4, 4)
 
     end
@@ -87,6 +95,8 @@ module Ladb::OpenCutList
         return is_action_modifier_anticlockwise? ? @cursor_swap_length_width_anticlockwise : @cursor_swap_length_width_clockwise
       when ACTION_SWAP_FRONT_BACK
         return @cursor_swap_front_back
+      when ACTION_MIRROR
+        return @cursor_mirror
       when ACTION_SWAP_AUTO
         return @cursor_swap_auto
       end
@@ -108,6 +118,21 @@ module Ladb::OpenCutList
           shape.pattern_transformation = Geom::Transformation.translation(Geom::Vector3d.new(1, 0, 0)) * Geom::Transformation.scaling(-1, 1, 1)
           shape.line_width = @unit <= 4 ? 0.5 : 1
           return shape
+        end
+      when ACTION_MIRROR
+        case modifier
+        when ACTION_MODIFIER_LENGTH
+          lbl = Kuix::Label.new
+          lbl.text = Plugin.instance.get_i18n_string('tab.cutlist.list.length_short')
+          return lbl
+        when ACTION_MODIFIER_WIDTH
+          lbl = Kuix::Label.new
+          lbl.text = Plugin.instance.get_i18n_string('tab.cutlist.list.width_short')
+          return lbl
+        when ACTION_MODIFIER_THICKNESS
+          lbl = Kuix::Label.new
+          lbl.text = Plugin.instance.get_i18n_string('tab.cutlist.list.thickness_short')
+          return lbl
         end
       end
 
@@ -138,6 +163,10 @@ module Ladb::OpenCutList
       fetch_action == ACTION_SWAP_FRONT_BACK
     end
 
+    def is_action_mirror?
+      fetch_action == ACTION_MIRROR
+    end
+
     def is_action_swap_auto?
       fetch_action == ACTION_SWAP_AUTO
     end
@@ -148,6 +177,18 @@ module Ladb::OpenCutList
 
     def is_action_modifier_anticlockwise?
       fetch_action_modifier(fetch_action) == ACTION_MODIFIER_ANTICLOCKWIZE
+    end
+
+    def is_action_modifier_length?
+      fetch_action_modifier(fetch_action) == ACTION_MODIFIER_LENGTH
+    end
+
+    def is_action_modifier_width?
+      fetch_action_modifier(fetch_action) == ACTION_MODIFIER_WIDTH
+    end
+
+    def is_action_modifier_thickness?
+      fetch_action_modifier(fetch_action) == ACTION_MODIFIER_THICKNESS
     end
 
     # -- Menu --
@@ -192,7 +233,7 @@ module Ladb::OpenCutList
             MF_GRAYED
           end
         }
-        item = menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_veneers_properties')) {
+        item = menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_faces_properties')) {
           Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'veneers', dontGenerate: false }")
         }
         menu.set_validation_proc(item) {
@@ -239,6 +280,9 @@ module Ladb::OpenCutList
           set_root_action(ACTION_SWAP_FRONT_BACK)
           return true
         elsif is_action_swap_front_back?
+          set_root_action(ACTION_MIRROR)
+          return true
+        elsif is_action_mirror?
           set_root_action(ACTION_SWAP_AUTO)
           return true
         elsif is_action_swap_auto?
@@ -341,6 +385,10 @@ module Ladb::OpenCutList
       _refresh_active
     end
 
+    def onActionChange(action, modifier)
+      _refresh_active
+    end
+
     private
 
     def _refresh_active
@@ -440,7 +488,7 @@ module Ladb::OpenCutList
         unless part_entity_path.nil?
 
           active_instance = part_entity_path.last
-          instances = active_instance.definition.instances
+          instances = is_action_mirror? ? [ active_instance ] : active_instance.definition.instances
           instance_paths = []
           _instances_to_paths(instances, instance_paths, Sketchup.active_model.active_entities, Sketchup.active_model.active_path ? Sketchup.active_model.active_path : [])
 
@@ -468,9 +516,13 @@ module Ladb::OpenCutList
           return
         end
 
-        definition = Sketchup.active_model.definitions[part.def.definition_id]
-        if definition && definition.count_used_instances > 1
-          notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
+        unless is_action_mirror?
+          definition = Sketchup.active_model.definitions[part.def.definition_id]
+          if definition && definition.count_used_instances > 1
+            notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
+          else
+            hide_message
+          end
         else
           hide_message
         end
@@ -572,6 +624,30 @@ module Ladb::OpenCutList
                 AxisUtils.flipped?(size.axes[0], size.axes[1], size.axes[2].reverse) ? size.axes[1].reverse : size.axes[1],
                 size.axes[2].reverse
               )
+
+            elsif is_action_mirror?
+
+              entity = @active_part_entity_path.last
+              bounds = _compute_faces_bounds(entity.definition)
+
+              scaling = {
+                X_AXIS => 1,
+                Y_AXIS => 1,
+                Z_AXIS => 1,
+              }
+              if is_action_modifier_length?
+                scaling[@active_part.def.size.oriented_axis(X_AXIS)] = -1
+              elsif is_action_modifier_width?
+                scaling[@active_part.def.size.oriented_axis(Y_AXIS)] = -1
+              elsif is_action_modifier_thickness?
+                scaling[@active_part.def.size.oriented_axis(Z_AXIS)] = -1
+              end
+
+              t = Geom::Transformation.scaling(bounds.center, scaling[X_AXIS], scaling[Y_AXIS], scaling[Z_AXIS])
+              entity.transformation *= t
+
+              part = _compute_part_from_path(@active_part_entity_path)
+              _set_active(@active_part_entity_path, part)
 
             elsif is_action_swap_auto?
 

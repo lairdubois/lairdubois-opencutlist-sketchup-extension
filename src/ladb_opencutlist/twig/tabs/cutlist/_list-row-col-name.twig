@@ -5,7 +5,7 @@
             {% if part.children_warning_count > 0 %}<a class="ladb-tool-warning no-print" data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.children_warnings')|i18next({ 'count':part.children_warning_count }) }}"><i class="ladb-opencutlist-icon-warning"></i></a>{% endif %}
             {% if showCuttingDimensions or showBoxDimensions %}
                 {% if part.edge_count > 0 %}<a href="#" class="ladb-tool-info" data-tab="edges" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.has_edges'|i18next({ 'count':part.edge_count }) }}"><i class="ladb-opencutlist-icon-edge-{{ part.edge_pattern }}"></i></a>{% endif %}
-                {% if part.veneer_count > 0 %}<a href="#" class="ladb-tool-info" data-tab="veneers" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.has_veneers'|i18next({ 'count':part.veneer_count }) }}"><i class="ladb-opencutlist-icon-veneer-{{ part.veneer_pattern }}"></i></a>{% endif %}
+                {% if part.veneer_count > 0 %}<a href="#" class="ladb-tool-info" data-tab="faces" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.has_faces'|i18next({ 'count':part.veneer_count }) }}"><i class="ladb-opencutlist-icon-face-{{ part.veneer_pattern }}"></i></a>{% endif %}
             {% endif %}
         {% else %}
             {% if part.not_aligned_on_axes %}<a href="#" class="ladb-tool-warning no-print" data-tab="infos_warnings" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.not_aligned_on_axes'|i18next }}"><i class="ladb-opencutlist-icon-not-aligned-on-axes"></i></a>{% endif %}
@@ -21,7 +21,7 @@
                 {% if part.resized %}<a href="#" class="ladb-tool-info no-print" data-tab="infos_warnings" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.resized'|i18next }}"><i class="ladb-opencutlist-icon-resized"></i></a>{% endif %}
                 {% if part.orientation_locked_on_axis %}<a href="#" class="ladb-tool-info no-print" data-tab="axes" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.orientation_locked_on_axis'|i18next }}"><i class="ladb-opencutlist-icon-orientation-locked-on-axis"></i></a>{% endif %}
                 {% if part.edge_count > 0 %}<a href="#" class="ladb-tool-info" data-tab="edges" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.has_edges'|i18next({ 'count':part.edge_count }) }}"><i class="ladb-opencutlist-icon-edge-{{ part.edge_pattern }}"></i></a>{% endif %}
-                {% if part.veneer_count > 0 %}<a href="#" class="ladb-tool-info" data-tab="veneers" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.has_veneers'|i18next({ 'count':part.veneer_count }) }}"><i class="ladb-opencutlist-icon-veneer-{{ part.veneer_pattern }}"></i></a>{% endif %}
+                {% if part.veneer_count > 0 %}<a href="#" class="ladb-tool-info" data-tab="faces" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.has_faces'|i18next({ 'count':part.veneer_count }) }}"><i class="ladb-opencutlist-icon-face-{{ part.veneer_pattern }}"></i></a>{% endif %}
             {% endif %}
             {% include 'tabs/cutlist/_material-origins.twig' with { 'materialOrigins':part.material_origins, 'noPrint':true, 'attr':'data-tab="infos_warnings"' } %}
         {% endif %}

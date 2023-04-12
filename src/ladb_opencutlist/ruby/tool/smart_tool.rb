@@ -198,9 +198,10 @@ module Ladb::OpenCutList
 
                 child = get_action_modifier_btn_child(action, modifier)
                 if child
-                  child.layout_data = Kuix::StaticLayoutData.new
+                  child.layout_data = Kuix::StaticLayoutData.new(0.5, 0.5, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER))
                   child.text_size = @unit * 3 if child.respond_to?(:text_size=)
-                  child.min_size.set_all!(@unit * 3)
+                  child.min_size.width = @unit * 3 unless child.is_a?(Kuix::Label)
+                  child.min_size.height = @unit * 3
                   child.set_style_attribute(:color, COLOR_BRAND_DARK)
                   actions_modifier_btn.append(child)
                 end

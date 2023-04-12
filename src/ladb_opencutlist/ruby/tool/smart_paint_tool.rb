@@ -16,8 +16,8 @@ module Ladb::OpenCutList
     include FaceTrianglesHelper
 
     ACTION_PAINT_PART = 0
-    ACTION_PAINT_EDGE = 1
-    ACTION_PAINT_VENEER = 2
+    ACTION_PAINT_EDGES = 1
+    ACTION_PAINT_FACES = 2
     ACTION_PICK = 3
 
     ACTION_MODIFIER_1 = 0
@@ -26,8 +26,8 @@ module Ladb::OpenCutList
 
     ACTIONS = [
       { :action => ACTION_PAINT_PART },
-      { :action => ACTION_PAINT_EDGE, :modifiers => [ ACTION_MODIFIER_1, ACTION_MODIFIER_2, ACTION_MODIFIER_4 ] },
-      { :action => ACTION_PAINT_VENEER, :modifiers => [ ACTION_MODIFIER_1, ACTION_MODIFIER_2 ] },
+      { :action => ACTION_PAINT_EDGES, :modifiers => [ACTION_MODIFIER_1, ACTION_MODIFIER_2, ACTION_MODIFIER_4 ] },
+      { :action => ACTION_PAINT_FACES, :modifiers => [ACTION_MODIFIER_1, ACTION_MODIFIER_2 ] },
       { :action => ACTION_PICK }
     ].freeze
 
@@ -68,8 +68,8 @@ module Ladb::OpenCutList
       @cursor_paint_edge_1_id = create_cursor('paint-edge-1', 2, 14)
       @cursor_paint_edge_2_id = create_cursor('paint-edge-2', 2, 14)
       @cursor_paint_edge_4_id = create_cursor('paint-edge-4', 2, 14)
-      @cursor_paint_veneer_1_id = create_cursor('paint-veneer-1', 2, 14)
-      @cursor_paint_veneer_2_id = create_cursor('paint-veneer-2', 2, 14)
+      @cursor_paint_face_1_id = create_cursor('paint-face-1', 2, 14)
+      @cursor_paint_face_2_id = create_cursor('paint-face-2', 2, 14)
       @cursor_picker_id = create_cursor('picker', 2, 22)
       @cursor_paint_error_id = create_cursor('paint-error', 2, 14)
 
@@ -269,11 +269,11 @@ module Ladb::OpenCutList
         return super +
           ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_1') + '.' +
           ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + '* = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3') + '.'
-      when ACTION_PAINT_EDGE
+      when ACTION_PAINT_EDGES
         return super +
           ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_2') + '.' +
           ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + '* = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3') + '.'
-      when ACTION_PAINT_VENEER
+      when ACTION_PAINT_FACES
         return super +
           ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3') + '.' +
           ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + '* = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3') + '.'
@@ -291,7 +291,7 @@ module Ladb::OpenCutList
       case action
       when ACTION_PAINT_PART
         return @cursor_paint_part_id
-      when ACTION_PAINT_EDGE
+      when ACTION_PAINT_EDGES
         case modifier
         when ACTION_MODIFIER_4
           return @cursor_paint_edge_4_id
@@ -300,12 +300,12 @@ module Ladb::OpenCutList
         when ACTION_MODIFIER_1
           return @cursor_paint_edge_1_id
         end
-      when ACTION_PAINT_VENEER
+      when ACTION_PAINT_FACES
         case modifier
         when ACTION_MODIFIER_2
-          return @cursor_paint_veneer_2_id
+          return @cursor_paint_face_2_id
         when ACTION_MODIFIER_1
-          return @cursor_paint_veneer_1_id
+          return @cursor_paint_face_1_id
         end
       when ACTION_PICK
         return @cursor_picker_id
@@ -319,7 +319,7 @@ module Ladb::OpenCutList
     def get_action_modifier_btn_child(action, modifier)
 
       case action
-      when ACTION_PAINT_EDGE
+      when ACTION_PAINT_EDGES
         case modifier
         when ACTION_MODIFIER_1
           lbl = Kuix::Label.new
@@ -334,7 +334,7 @@ module Ladb::OpenCutList
           lbl.text = '4'
           return lbl
         end
-      when ACTION_PAINT_VENEER
+      when ACTION_PAINT_FACES
         case modifier
         when ACTION_MODIFIER_1
           lbl = Kuix::Label.new
@@ -387,9 +387,9 @@ module Ladb::OpenCutList
 
       case MaterialAttributes.new(@startup_material).type
       when MaterialAttributes::TYPE_EDGE
-        startup_action = ACTION_PAINT_EDGE
+        startup_action = ACTION_PAINT_EDGES
       when MaterialAttributes::TYPE_VENEER
-        startup_action = ACTION_PAINT_VENEER
+        startup_action = ACTION_PAINT_FACES
       else
         startup_action = ACTION_PAINT_PART
       end
@@ -399,7 +399,7 @@ module Ladb::OpenCutList
     end
 
     def is_action_part?
-      fetch_action == ACTION_PAINT_PART || fetch_action == ACTION_PAINT_EDGE || fetch_action == ACTION_PAINT_VENEER
+      fetch_action == ACTION_PAINT_PART || fetch_action == ACTION_PAINT_EDGES || fetch_action == ACTION_PAINT_FACES
     end
 
     def is_action_paint_part?
@@ -407,11 +407,11 @@ module Ladb::OpenCutList
     end
 
     def is_action_paint_edge?
-      fetch_action == ACTION_PAINT_EDGE
+      fetch_action == ACTION_PAINT_EDGES
     end
 
-    def is_action_paint_veneer?
-      fetch_action == ACTION_PAINT_VENEER
+    def is_action_paint_face?
+      fetch_action == ACTION_PAINT_FACES
     end
 
     def is_action_pick?
@@ -443,11 +443,11 @@ module Ladb::OpenCutList
           MaterialAttributes::TYPE_DIMENSIONAL,
           MaterialAttributes::TYPE_HARDWARE,
         ]
-      when ACTION_PAINT_EDGE
+      when ACTION_PAINT_EDGES
         [
           MaterialAttributes::TYPE_EDGE
         ]
-      when ACTION_PAINT_VENEER
+      when ACTION_PAINT_FACES
         [
           MaterialAttributes::TYPE_VENEER
         ]
@@ -584,12 +584,12 @@ module Ladb::OpenCutList
         return true
       elsif key == COPY_MODIFIER_KEY
         if is_action_paint_part?
-          set_root_action(ACTION_PAINT_EDGE)
+          set_root_action(ACTION_PAINT_EDGES)
           return true
         elsif is_action_paint_edge?
-          set_root_action(ACTION_PAINT_VENEER)
+          set_root_action(ACTION_PAINT_FACES)
           return true
-        elsif is_action_paint_veneer?
+        elsif is_action_paint_face?
           set_root_action(ACTION_PICK)
           return true
         elsif is_action_pick?
@@ -615,10 +615,10 @@ module Ladb::OpenCutList
         @materials_filters_btn.fire(:click, flags) if @materials_filters_btn
         return true
       elsif repeat == 1
-        if key == VK_NUMPAD1 && (is_action_paint_edge? || is_action_paint_veneer?)
+        if key == VK_NUMPAD1 && (is_action_paint_edge? || is_action_paint_face?)
           push_action_modifier(ACTION_MODIFIER_1)
           return true
-        elsif key == VK_NUMPAD2 && (is_action_paint_edge? || is_action_paint_veneer?)
+        elsif key == VK_NUMPAD2 && (is_action_paint_edge? || is_action_paint_face?)
           push_action_modifier(ACTION_MODIFIER_2)
           return true
         elsif key == VK_NUMPAD4 && is_action_paint_edge?
@@ -643,26 +643,26 @@ module Ladb::OpenCutList
             end
             return true
           end
-        elsif key == VK_NUMPAD1 && is_action_modifier_1? && (is_action_paint_edge? || is_action_paint_veneer?)
+        elsif key == VK_NUMPAD1 && is_action_modifier_1? && (is_action_paint_edge? || is_action_paint_face?)
           if is_quick
             if is_action_paint_edge?
-              set_root_action(ACTION_PAINT_EDGE, ACTION_MODIFIER_1)
+              set_root_action(ACTION_PAINT_EDGES, ACTION_MODIFIER_1)
               return true
-            elsif is_action_paint_veneer?
-              set_root_action(ACTION_PAINT_VENEER, ACTION_MODIFIER_1)
+            elsif is_action_paint_face?
+              set_root_action(ACTION_PAINT_FACES, ACTION_MODIFIER_1)
               return true
             end
           else
             pop_action_modifier
             return true
           end
-        elsif key == VK_NUMPAD2 && is_action_modifier_2? && (is_action_paint_edge? || is_action_paint_veneer?)
+        elsif key == VK_NUMPAD2 && is_action_modifier_2? && (is_action_paint_edge? || is_action_paint_face?)
           if is_quick
             if is_action_paint_edge?
-              set_root_action(ACTION_PAINT_EDGE, ACTION_MODIFIER_2)
+              set_root_action(ACTION_PAINT_EDGES, ACTION_MODIFIER_2)
               return true
-            elsif is_action_paint_veneer?
-              set_root_action(ACTION_PAINT_VENEER, ACTION_MODIFIER_2)
+            elsif is_action_paint_face?
+              set_root_action(ACTION_PAINT_FACES, ACTION_MODIFIER_2)
               return true
             end
           else
@@ -671,7 +671,7 @@ module Ladb::OpenCutList
           end
         elsif key == VK_NUMPAD4 && is_action_modifier_4? && is_action_paint_edge?
           if is_quick
-            set_root_action(ACTION_PAINT_EDGE, ACTION_MODIFIER_4)
+            set_root_action(ACTION_PAINT_EDGES, ACTION_MODIFIER_4)
             return true
           else
             pop_action_modifier
@@ -800,7 +800,7 @@ module Ladb::OpenCutList
           lbl.text = Plugin.instance.get_i18n_string('tool.smart_paint.warning.no_material')
         elsif is_action_paint_edge?
           lbl.text = Plugin.instance.get_i18n_string('tool.smart_paint.warning.no_material_type', { :type => Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_EDGE}") })
-        elsif is_action_paint_veneer?
+        elsif is_action_paint_face?
           lbl.text = Plugin.instance.get_i18n_string('tool.smart_paint.warning.no_material_type', { :type => Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_VENEER}") })
         end
         lbl.set_style_attribute(:color, COLOR_BRAND_LIGHT)
@@ -910,7 +910,7 @@ module Ladb::OpenCutList
         @pick_helper.count.times { |pick_path_index|
 
           picked_path = @pick_helper.path_at(pick_path_index)
-          if picked_path == @picked_path && event == :move && (is_action_paint_part? || is_action_paint_edge? && is_action_modifier_4? || is_action_paint_veneer? && is_action_modifier_2?)
+          if picked_path == @picked_path && event == :move && (is_action_paint_part? || is_action_paint_edge? && is_action_modifier_4? || is_action_paint_face? && is_action_modifier_2?)
             return  # Previously detected path, stop process to optimize.
           end
           if picked_path && picked_path.last.is_a?(Sketchup::Face)
@@ -1020,7 +1020,7 @@ module Ladb::OpenCutList
 
                     end
 
-                  elsif is_action_paint_veneer?
+                  elsif is_action_paint_face?
 
                     if part.group.material_type != MaterialAttributes::TYPE_SHEET_GOOD
                       _reset(view)
@@ -1028,15 +1028,15 @@ module Ladb::OpenCutList
                     else
 
                       model = Sketchup.active_model
-                      veneer_faces = {}
-                      part.def.veneer_entity_ids.each { |k, v| veneer_faces[k] = model.find_entity_by_id(v) if v.is_a?(Array) && !v.empty? }
+                      face_faces = {}
+                      part.def.veneer_entity_ids.each { |k, v| face_faces[k] = model.find_entity_by_id(v) if v.is_a?(Array) && !v.empty? }
 
                       sides = []
                       entities = []
                       if is_action_modifier_1?
 
                         picked_side = nil
-                        veneer_faces.each { |k, v|
+                        face_faces.each { |k, v|
                           v.each { |face|
                             if face == picked_face
                               picked_side = k
@@ -1047,26 +1047,26 @@ module Ladb::OpenCutList
                         }
 
                         if picked_side
-                          sides << picked_side unless veneer_faces[picked_side].nil?
+                          sides << picked_side unless face_faces[picked_side].nil?
                         end
 
                       elsif is_action_modifier_2?
-                        sides << :zmax unless veneer_faces[:zmax].nil?
-                        sides << :zmin unless veneer_faces[:zmin].nil?
+                        sides << :zmax unless face_faces[:zmax].nil?
+                        sides << :zmin unless face_faces[:zmin].nil?
                       end
 
                       sides.each { |side|
-                        entities << veneer_faces[side]
+                        entities << face_faces[side]
                       }
                       entities = entities.flatten
 
                       if entities.empty?
                         _reset(view)
-                        notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_veneer')}", MESSAGE_TYPE_ERROR)
+                        notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_face')}", MESSAGE_TYPE_ERROR)
                       else
 
-                        # Show veneers infos
-                        notify_infos(part.name, [ "#{Plugin.instance.get_i18n_string('tool.smart_paint.veneers', { :count => sides.length })} → #{sides.map { |side| Plugin.instance.get_i18n_string("tool.smart_paint.veneer_#{side}") }.join(' + ')}" ])
+                        # Show faces infos
+                        notify_infos(part.name, [ "#{Plugin.instance.get_i18n_string('tool.smart_paint.faces', { :count => sides.length })} → #{sides.map { |side| Plugin.instance.get_i18n_string("tool.smart_paint.face_#{side}") }.join(' + ')}" ])
 
                         current_material = get_current_material
                         color = current_material ? current_material.color : MaterialUtils::get_color_from_path(picked_entity_path)
@@ -1151,9 +1151,9 @@ module Ladb::OpenCutList
                   # Switch action according to material type
                   case MaterialAttributes.new(material).type
                   when MaterialAttributes::TYPE_EDGE
-                    set_root_action(ACTION_PAINT_EDGE)
+                    set_root_action(ACTION_PAINT_EDGES)
                   when MaterialAttributes::TYPE_VENEER
-                    set_root_action(ACTION_PAINT_VENEER)
+                    set_root_action(ACTION_PAINT_FACES)
                   else
                     set_root_action(ACTION_PAINT_PART)
                   end

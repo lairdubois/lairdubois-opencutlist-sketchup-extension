@@ -77,7 +77,7 @@ core:
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
-      edit_part_veneers_properties: $t(tab.cutlist.edit_part_veneers_properties)
+      edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
   toolbar:
@@ -218,7 +218,7 @@ tab:
     edit_part_axes_properties: Éditer les propriétés (axes) de la pièce
     edit_part_size_increase_properties: Éditer les propriétés (surcotes) de la pièce
     edit_part_edges_properties: Éditer les propriétés (chants) de la pièce
-    edit_part_veneers_properties: Éditer les propriétés (placages) de la pièce
+    edit_part_faces_properties: Éditer les propriétés (faces) de la pièce
     tooltip:
       show_hide_block: Afficher / Masquer ce groupe
       scroll_to_block: Défiler vers le groupe
@@ -294,17 +294,17 @@ tab:
       size_increased: "Dimension majorée par une surcote de {{ value }}"
       has_edges: "Cette pièce contient {{ count }} chant plaqué"
       has_edges_plural: "Cette pièce contient {{ count }} chants plaqués"
-      has_veneers: "Cette pièce contient {{ count }} surface plaquée"
-      has_veneers_plural: "Cette pièce contient {{ count }} surfaces plaquées"
+      has_faces: "Cette pièce contient {{ count }} face plaquée"
+      has_faces_plural: "Cette pièce contient {{ count }} faces plaquées"
       edge_decremented: "Réduit de l'épaisseur des chants ({{ decrement }})"
       edge_ymin: Chant Longueur 1
       edge_ymax: Chant Longueur 2
       edge_xmin: Chant Largeur 1
       edge_xmax: Chant Largeur 2
-      veneer_zmin: Contreparement
-      veneer_zmax: Parement
+      face_zmin: Contre-face
+      face_zmax: Face
       dblclick_to_copy_all_edges: Double-cliquez ici pour dupliquer cette valeur aux autres chants
-      dblclick_to_copy_all_veneers: Double-cliquez ici pour dupliquer cette valeur à l'autre surface
+      dblclick_to_copy_all_faces: Double-cliquez ici pour dupliquer cette valeur à l'autre face
       dblclick_to_sort_axes: Double-cliquez ici pour réordonner automatiquement les axes suivant les dimensions de la pièce
       part_axes: Axes internes de la pièce
       select_unselect_all_parts: Sélectionner / Désélectionner toutes les pièces du groupe
@@ -336,7 +336,7 @@ tab:
       general: Générales
       extra_help: "Liste des propriétés spécifiques au type de matière \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Chants
-      veneers: Placages
+      faces: Faces
       name: Nom
       material: Matière
       cumulable: Cumulable
@@ -413,7 +413,7 @@ tab:
       over_length: Sur la longueur
       over_width: Sur la largeur
       edge_disabled_help: Ce chant n'est pas configurable parce qu'aucune face pouvant porter une matière n'a été détectée sur ce bord de la pièce dans le modèle.
-      veneer_disabled_help: Cette surface n'est pas configurable parce qu'aucune face pouvant porter une matière n'a été détectée sur ce bord de la pièce dans le modèle.
+      face_disabled_help: Cette face n'est pas configurable parce qu'aucune face dessinée pouvant porter une matière n'a été détectée sur ce côté de la pièce dans le modèle.
       multiple_values: Valeurs multiples
       export_to_skp: Exporter (.skp)
       loading_preview: Chargement de l'aperçu
@@ -461,8 +461,8 @@ tab:
       hide_final_areas_help: "Si cette option est activée, les **surfaces finies** des pièces de type *Panneau* ne sont pas affichées."
       hide_edges: Masquer les colonnes de chants
       hide_edges_help: "Si cette option est activée, les **colonnes de chants** des pièces de type *Panneau* ne sont pas affichées."
-      hide_veneers: Masquer les colonnes de placages
-      hide_veneers_help: "Si cette option est activée, les **colonnes de placages** des pièces de type *Panneau* ne sont pas affichées."
+      hide_faces: Masquer les colonnes de faces
+      hide_faces_help: "Si cette option est activée, les **colonnes de faces** des pièces de type *Panneau* ne sont pas affichées."
       minimize_on_highlight: Réduire après *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Si cette option est activée, la fenêtre OpenCutList sera réduite lorsque la fonction *'$t(tab.cutlist.highlight_part)'* est utilisée."
       general: Générales
@@ -515,7 +515,7 @@ tab:
       thickness: Épaisseur
       thickness_short: Ép.
       edges: Chants
-      veneers: Placages
+      faces: Faces
     export:
       title: Exportation
       info_0: |
@@ -572,8 +572,8 @@ tab:
       edge_ymax: Chant Longueur 2
       edge_xmin: Chant Largeur 1
       edge_xmax: Chant Largeur 2
-      veneer_zmin: Contreparement
-      veneer_zmax: Parement
+      face_zmin: Contre-face
+      face_zmax: Face
       layer: Balise
       layers: Balises
       placeholder:
@@ -842,8 +842,8 @@ tab:
         part_edge_ymax: Chant longueur 2
         part_edge_xmin: Chant largeur 1
         part_edge_xmax: Chant largeur 2
-        part_veneer_zmin: Placage contreparement
-        part_veneer_zmax: Placage parement
+        part_face_zmin: Placage Contre-face
+        part_face_zmax: Placage Face
         thumbnail_proportional: Vignette proportionnelle
         thumbnail_square: Vignette carrée
         group_material: Matière / Dimension
@@ -1357,11 +1357,11 @@ tool:
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
     action_0: Colorier pièce
-    action_0_status: Cliquez sur une pièce pour la colorier
+    action_0_status: Cliquez sur une pièce pour appliquer une matière à son instance
     action_1: Colorier chants
-    action_1_status: Cliquez sur un chant de panneau pour le colorier
-    action_2: Colorier surfaces
-    action_2_status: Cliquez sur une surface de panneau pour la colorier
+    action_1_status: Cliquez sur un chant de panneau pour lui appliquer une matière '$t(tab.materials.type_4)'
+    action_2: Colorier faces
+    action_2_status: Cliquez sur une face de panneau pour lui appliquer une matière '$t(tab.materials.type_6)'
     action_3: Prélever
     action_3_status: Cliquez sur une face pour prélever un échantillon de la matière
     edges: "{{ count }} chant"
@@ -1370,27 +1370,29 @@ tool:
     edge_ymax: Longueur 2
     edge_xmin: Largeur 1
     edge_xmax: Largeur 2
-    veneers: "{{ count }} surface"
-    veneers_plural: "{{ count }} surfaces"
-    veneer_zmin: Contreparement
-    veneer_zmax: Parement
+    faces: "{{ count }} face"
+    faces_plural: "{{ count }} faces"
+    faces_zmin: Contre-face
+    faces_zmax: Face
     warning:
       no_material: Aucune matière
       no_material_type: Aucune matière de type '{{ type }}'
     error:
       not_part: L'objet ciblé n'est pas une pièce
       not_edge: La face ciblée n'est pas un chant de panneau
-      not_veneer: La face ciblée n'est pas une surface de panneau
+      not_face: La face ciblée n'est pas une face de panneau
       wrong_material_type: La pièce ciblée doit être du type '{{ type }}'
   smart_axes:
     title: Orienter
     toggle_depth: Pièces en arrière plan
     action_0: Permuter Longueur ↔ Largeur
     action_0_status: Cliquez sur une pièce pour permuter sa Longueur avec sa Largeur
-    action_1: Permuter Parement ↔ Contreparement
-    action_1_status: Cliquez sur une pièce pour permuter la lecture de son Parement avec son Contreparement
-    action_2: Orienter automatiquement
-    action_2_status: Cliquez sur une pièce pour définir sa Longueur sur sa plus grand dimension et l'Epaisseur sur sa plus petite
+    action_1: Permuter Face ↔ Contre-face
+    action_1_status: Cliquez sur une pièce pour permuter la lecture de sa face avec sa Contre-face
+    action_2: Retourner
+    action_2_status: Cliquez sur une pièce pour retourner son instance le long de l'une de ses dimensions
+    action_3: Orienter automatiquement
+    action_3_status: Cliquez sur une pièce pour définir sa Longueur sur sa plus grand dimension et l'Epaisseur sur sa plus petite
     success:
       part_oriented: Cette pièce a déjà sa longueur sur la plus grande dimension et son épaisseur sur la plus petite
     warning:

@@ -1405,7 +1405,7 @@ module Ladb::OpenCutList
       unless veneer_part_def
 
         veneer_part_def = PartDef.new(veneer_part_id)
-        veneer_part_def.name = "#{part_def.name}#{part_def.number ? " ( #{part_def.number} ) " : ''} - #{Plugin.instance.get_i18n_string("tab.cutlist.tooltip.veneer_#{veneer}")}"
+        veneer_part_def.name = "#{part_def.name}#{part_def.number ? " ( #{part_def.number} ) " : ''} - #{Plugin.instance.get_i18n_string("tab.cutlist.tooltip.face_#{veneer}")}"
         veneer_part_def.cutting_size = Size3d.new(cutting_length, cutting_width, thickness)
         veneer_part_def.size = Size3d.new(length, width, thickness)
         veneer_part_def.material_name = veneer_group_def.material_name

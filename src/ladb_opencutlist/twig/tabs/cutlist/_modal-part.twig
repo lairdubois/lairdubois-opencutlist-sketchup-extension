@@ -24,7 +24,7 @@
         {% endif %}
         {% if group.material_type == 2 %} {# 2 = TYPE_SHEET_GOOD #}
             <li role="presentation"{% if tab == 'edges' %} class="active"{% endif %}><a href="#tab_edit_part_edges" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-edge-{{ part.edge_pattern }}"></i>&nbsp;{{ 'tab.cutlist.edit_part.edges'|i18next }}</a></li>
-            <li role="presentation"{% if tab == 'veneers' %} class="active"{% endif %}><a href="#tab_edit_part_veneers" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-veneer-{{ part.veneer_pattern }}"></i>&nbsp;{{ 'tab.cutlist.edit_part.veneers'|i18next }}</a></li>
+            <li role="presentation"{% if tab == 'faces' %} class="active"{% endif %}><a href="#tab_edit_part_faces" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-face-{{ part.veneer_pattern }}"></i>&nbsp;{{ 'tab.cutlist.edit_part.faces'|i18next }}</a></li>
         {% endif %}
         {% if not multiple %}
             <li role="presentation"{% if tab == 'infos_warnings' %} class="active"{% endif %}><a href="#tab_edit_part_infos_warnings" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-info"></i>{% if has_warnings %} + <i class="ladb-opencutlist-icon-warning ladb-color-warning"></i>{% endif %}</a></li>
@@ -378,7 +378,7 @@
                     </div>
                 </div>
             </div>
-            <div role="tabpanel" class="tab-pane{% if tab == 'veneers' %} active{% endif %}" id="tab_edit_part_veneers">
+            <div role="tabpanel" class="tab-pane{% if tab == 'faces' %} active{% endif %}" id="tab_edit_part_faces">
                 {% if not multiple %}
                     {% set areaSize = 280 %}
                     {% set axisWidth = 2 %}
@@ -392,14 +392,14 @@
                         <div class="col-xs-6 text-center">
                             {% embed 'tabs/cutlist/_svg-part.twig' %}
                                 {% block extra %}
-                                    <g class="veneer veneer-zmax{% if part.veneer_entity_ids.zmax is empty %} ladb-disabled{% endif %}" data-toggle="tooltip" data-placement="bottom" title="{{ 'tab.cutlist.tooltip.veneer_zmax'|i18next }}">
+                                    <g class="face face-zmax{% if part.veneer_entity_ids.zmax is empty %} ladb-disabled{% endif %}" data-toggle="tooltip" data-placement="bottom" title="{{ 'tab.cutlist.tooltip.face_zmax'|i18next }}">
                                         <defs>
-                                            <pattern id="pattern_veneer_zmax_grain" width="40" height="10" patternUnits="userSpaceOnUse">
+                                            <pattern id="pattern_face_zmax_grain" width="40" height="10" patternUnits="userSpaceOnUse">
                                                 <path d="M0,5C20,2 20,8 40,5" style="fill:none;stroke:#ddd;stroke-width:1px;"/>
                                             </pattern>
                                         </defs>
-                                        <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ partWidth }}" class="veneer veneer-grain" style="fill: url(#pattern_veneer_zmax_grain);" />
-                                        <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ partWidth }}" class="veneer veneer-inner" />
+                                        <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ partWidth }}" class="face face-grain" style="fill: url(#pattern_face_zmax_grain);" />
+                                        <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ partWidth }}" class="face face-inner" />
                                     </g>
                                 {% endblock %}
                             {% endembed %}
@@ -412,14 +412,14 @@
                                 {% set arrowDashed = true %}
                                 {% set flipped = not ((part.flipped b-xor part.axes_flipped) == 1) %}
                                 {% block extra %}
-                                    <g class="veneer veneer-zmin{% if part.veneer_entity_ids.zmin is empty %} ladb-disabled{% endif %}" data-toggle="tooltip" data-placement="bottom" title="{{ 'tab.cutlist.tooltip.veneer_zmin'|i18next }}">
+                                    <g class="face face-zmin{% if part.veneer_entity_ids.zmin is empty %} ladb-disabled{% endif %}" data-toggle="tooltip" data-placement="bottom" title="{{ 'tab.cutlist.tooltip.face_zmin'|i18next }}">
                                         <defs>
-                                            <pattern id="pattern_veneer_zmin_grain" width="40" height="10" patternUnits="userSpaceOnUse">
+                                            <pattern id="pattern_face_zmin_grain" width="40" height="10" patternUnits="userSpaceOnUse">
                                                 <path d="M0,5C20,2 20,8 40,5" style="fill:none;stroke:#ddd;stroke-width:1px;"/>
                                             </pattern>
                                         </defs>
-                                        <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ partWidth }}" class="veneer veneer-grain" style="fill: url(#pattern_veneer_zmin_grain);" />
-                                        <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ partWidth }}" class="veneer veneer-inner" />
+                                        <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ partWidth }}" class="face face-grain" style="fill: url(#pattern_face_zmin_grain);" />
+                                        <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ partWidth }}" class="face face-inner" />
                                     </g>
                                 {% endblock %}
                             {% endembed %}
@@ -428,42 +428,42 @@
                 {% endif %}
                 <div class="row">
                     <div class="form form-horizontal col-xs-6">
-                        <h5 class="text-center">{{ 'tab.cutlist.tooltip.veneer_zmax'|i18next }}</h5>
+                        <h5 class="text-center">{{ 'tab.cutlist.tooltip.face_zmax'|i18next }}</h5>
                         <div class="form-group">
                             {% if part.veneer_entity_ids.zmax is empty %}
-                                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a class="ladb-tool-warning" tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.veneer_disabled_help'|i18next }}"><i class="ladb-opencutlist-icon-warning"></i></a></div>
+                                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a class="ladb-tool-warning" tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.face_disabled_help'|i18next }}"><i class="ladb-opencutlist-icon-warning"></i></a></div>
                             {% endif %}
-                            <label id="ladb_cutlist_part_label_veneer_zmax" class="control-label col-xs-2" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.dblclick_to_copy_all_veneers'|i18next }}"><i class="ladb-opencutlist-icon-veneer-10 ladb-opencutlist-icon-lg"></i></label>
+                            <label id="ladb_cutlist_part_label_face_zmax" class="control-label col-xs-2" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.dblclick_to_copy_all_faces'|i18next }}"><i class="ladb-opencutlist-icon-face-10 ladb-opencutlist-icon-lg"></i></label>
                             <div class="col-xs-{% if part.veneer_entity_ids.zmax is empty %}8{% else %}10{% endif %}">
-                                <select class="form-control" id="ladb_cutlist_part_select_veneer_zmax"{% if part.veneer_entity_ids.zmax is empty %} disabled{% endif %}>
+                                <select class="form-control" id="ladb_cutlist_part_select_face_zmax"{% if part.veneer_entity_ids.zmax is empty %} disabled{% endif %}>
                                     {% include 'tabs/cutlist/_material-usages.twig' with { 'value':part.veneer_material_names.zmax, 'typeFilters':[6] } %} {# TYPE_VENEER #}
                                 </select>
                             </div>
                         </div>
-                        <div id="ladb_cutlist_part_form_group_veneer_zmax_texture_angle" class="form-group">
-                            <label id="ladb_cutlist_part_label_veneer_zmax_texture_angle" class="control-label col-xs-2"><i class="ladb-opencutlist-icon-rotate-left ladb-opencutlist-icon-lg"></i></label>
+                        <div id="ladb_cutlist_part_form_group_face_zmax_texture_angle" class="form-group">
+                            <label id="ladb_cutlist_part_label_face_zmax_texture_angle" class="control-label col-xs-2"><i class="ladb-opencutlist-icon-rotate-left ladb-opencutlist-icon-lg"></i></label>
                             <div class="col-xs-{% if part.veneer_entity_ids.zmax is empty %}8{% else %}10{% endif %}">
-                                <input type="text" class="form-control text-right" id="ladb_cutlist_part_input_veneer_zmax_texture_angle"{% if part.veneer_entity_ids.zmax is empty %} disabled{% endif %} {% if part.veneer_texture_angles.zmax == -1 %}data-multiple="true"{% else %}value="{{ part.veneer_texture_angles.zmax }}"{% endif %}>
+                                <input type="text" class="form-control text-right" id="ladb_cutlist_part_input_face_zmax_texture_angle"{% if part.veneer_entity_ids.zmax is empty %} disabled{% endif %} {% if part.veneer_texture_angles.zmax == -1 %}data-multiple="true"{% else %}value="{{ part.veneer_texture_angles.zmax }}"{% endif %}>
                             </div>
                         </div>
                     </div>
                     <div class="form form-horizontal col-xs-6">
-                        <h5 class="text-center">{{ 'tab.cutlist.tooltip.veneer_zmin'|i18next }}</h5>
+                        <h5 class="text-center">{{ 'tab.cutlist.tooltip.face_zmin'|i18next }}</h5>
                         <div class="form-group">
                             {% if part.veneer_entity_ids.zmin is empty %}
-                                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a class="ladb-tool-warning" tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.veneer_disabled_help'|i18next }}"><i class="ladb-opencutlist-icon-warning"></i></a></div>
+                                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a class="ladb-tool-warning" tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.face_disabled_help'|i18next }}"><i class="ladb-opencutlist-icon-warning"></i></a></div>
                             {% endif %}
-                            <label id="ladb_cutlist_part_label_veneer_zmin" class="control-label col-xs-2" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.dblclick_to_copy_all_veneers'|i18next }}"><i class="ladb-opencutlist-icon-veneer-01 ladb-opencutlist-icon-lg"></i></label>
+                            <label id="ladb_cutlist_part_label_face_zmin" class="control-label col-xs-2" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.dblclick_to_copy_all_faces'|i18next }}"><i class="ladb-opencutlist-icon-face-01 ladb-opencutlist-icon-lg"></i></label>
                             <div class="col-xs-{% if part.veneer_entity_ids.zmin is empty %}8{% else %}10{% endif %}">
-                                <select class="form-control" id="ladb_cutlist_part_select_veneer_zmin"{% if part.veneer_entity_ids.zmin is empty %} disabled{% endif %}>
+                                <select class="form-control" id="ladb_cutlist_part_select_face_zmin"{% if part.veneer_entity_ids.zmin is empty %} disabled{% endif %}>
                                     {% include 'tabs/cutlist/_material-usages.twig' with { 'value':part.veneer_material_names.zmin, 'typeFilters':[6] } %} {# TYPE_VENEER #}
                                 </select>
                             </div>
                         </div>
-                        <div id="ladb_cutlist_part_form_group_veneer_zmin_texture_angle" class="form-group">
-                            <label id="ladb_cutlist_part_label_veneer_zmin_texture_angle" class="control-label col-xs-2"><i class="ladb-opencutlist-icon-rotate-left ladb-opencutlist-icon-lg"></i></label>
+                        <div id="ladb_cutlist_part_form_group_face_zmin_texture_angle" class="form-group">
+                            <label id="ladb_cutlist_part_label_face_zmin_texture_angle" class="control-label col-xs-2"><i class="ladb-opencutlist-icon-rotate-left ladb-opencutlist-icon-lg"></i></label>
                             <div class="col-xs-{% if part.veneer_entity_ids.zmin is empty %}8{% else %}10{% endif %}">
-                                <input type="text" class="form-control text-right" id="ladb_cutlist_part_input_veneer_zmin_texture_angle"{% if part.veneer_entity_ids.zmin is empty %} disabled{% endif %} {% if part.veneer_texture_angles.zmin == -1 %}data-multiple="true"{% else %}value="{{ part.veneer_texture_angles.zmin }}"{% endif %}>
+                                <input type="text" class="form-control text-right" id="ladb_cutlist_part_input_face_zmin_texture_angle"{% if part.veneer_entity_ids.zmin is empty %} disabled{% endif %} {% if part.veneer_texture_angles.zmin == -1 %}data-multiple="true"{% else %}value="{{ part.veneer_texture_angles.zmin }}"{% endif %}>
                             </div>
                         </div>
                     </div>

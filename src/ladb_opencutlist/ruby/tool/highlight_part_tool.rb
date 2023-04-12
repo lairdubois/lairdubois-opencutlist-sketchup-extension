@@ -300,7 +300,7 @@ module Ladb::OpenCutList
             MF_GRAYED
           end
         }
-        item = menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_veneers_properties')) {
+        item = menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_faces_properties')) {
           Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{hover_part_id}', tab: 'veneers', dontGenerate: true }")
         }
         menu.set_validation_proc(item) {

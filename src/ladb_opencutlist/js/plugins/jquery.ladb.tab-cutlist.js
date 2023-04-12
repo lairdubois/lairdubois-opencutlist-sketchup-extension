@@ -2189,32 +2189,32 @@
             var $selectEdgeYmin = $('#ladb_cutlist_part_select_edge_ymin', $modal);
             var $selectEdgeXmin = $('#ladb_cutlist_part_select_edge_xmin', $modal);
             var $selectEdgeXmax = $('#ladb_cutlist_part_select_edge_xmax', $modal);
-            var $selectVeneerZmin = $('#ladb_cutlist_part_select_veneer_zmin', $modal);
-            var $selectVeneerZmax = $('#ladb_cutlist_part_select_veneer_zmax', $modal);
-            var $formGroupVeneerZminTextureAngle = $('#ladb_cutlist_part_form_group_veneer_zmin_texture_angle', $modal);
-            var $formGroupVeneerZmaxTextureAngle = $('#ladb_cutlist_part_form_group_veneer_zmax_texture_angle', $modal);
-            var $inputVeneerZminTextureAngle = $('#ladb_cutlist_part_input_veneer_zmin_texture_angle', $modal);
-            var $inputVeneerZmaxTextureAngle = $('#ladb_cutlist_part_input_veneer_zmax_texture_angle', $modal);
+            var $selectFaceZmin = $('#ladb_cutlist_part_select_face_zmin', $modal);
+            var $selectFaceZmax = $('#ladb_cutlist_part_select_face_zmax', $modal);
+            var $formGroupFaceZminTextureAngle = $('#ladb_cutlist_part_form_group_face_zmin_texture_angle', $modal);
+            var $formGroupFaceZmaxTextureAngle = $('#ladb_cutlist_part_form_group_face_zmax_texture_angle', $modal);
+            var $inputFaceZminTextureAngle = $('#ladb_cutlist_part_input_face_zmin_texture_angle', $modal);
+            var $inputFaceZmaxTextureAngle = $('#ladb_cutlist_part_input_face_zmax_texture_angle', $modal);
             var $rectIncreaseLength = $('svg .increase-length', $modal);
             var $rectIncreaseWidth = $('svg .increase-width', $modal);
             var $rectEdgeYmin = $('svg .edge-ymin', $modal);
             var $rectEdgeYmax = $('svg .edge-ymax', $modal);
             var $rectEdgeXmin = $('svg .edge-xmin', $modal);
             var $rectEdgeXmax = $('svg .edge-xmax', $modal);
-            var $rectVeneerZmin = $('svg .veneer-zmin', $modal);
-            var $rectVeneerZmax = $('svg .veneer-zmax', $modal);
-            var $rectVeneerZminGrain = $('svg .veneer-zmin .veneer-grain', $modal);
-            var $rectVeneerZmaxGrain = $('svg .veneer-zmax .veneer-grain', $modal);
-            var $patternVeneerZminGrain = $('#pattern_veneer_zmin_grain', $modal);
-            var $patternVeneerZmaxGrain = $('#pattern_veneer_zmax_grain', $modal);
+            var $rectFaceZmin = $('svg .face-zmin', $modal);
+            var $rectFaceZmax = $('svg .face-zmax', $modal);
+            var $rectFaceZminGrain = $('svg .face-zmin .face-grain', $modal);
+            var $rectFaceZmaxGrain = $('svg .face-zmax .face-grain', $modal);
+            var $patternFaceZminGrain = $('#pattern_face_zmin_grain', $modal);
+            var $patternFaceZmaxGrain = $('#pattern_face_zmax_grain', $modal);
             var $labelEdgeYmax = $('#ladb_cutlist_part_label_edge_ymax', $modal);
             var $labelEdgeYmin = $('#ladb_cutlist_part_label_edge_ymin', $modal);
             var $labelEdgeXmin = $('#ladb_cutlist_part_label_edge_xmin', $modal);
             var $labelEdgeXmax = $('#ladb_cutlist_part_label_edge_xmax', $modal);
-            var $labelVeneerZmin = $('#ladb_cutlist_part_label_veneer_zmin', $modal);
-            var $labelVeneerZmax = $('#ladb_cutlist_part_label_veneer_zmax', $modal);
-            var $labelVeneerZminTextureAngle = $('#ladb_cutlist_part_label_veneer_zmin_texture_angle', $modal);
-            var $labelVeneerZmaxTextureAngle = $('#ladb_cutlist_part_label_veneer_zmax_texture_angle', $modal);
+            var $labelFaceZmin = $('#ladb_cutlist_part_label_face_zmin', $modal);
+            var $labelFaceZmax = $('#ladb_cutlist_part_label_face_zmax', $modal);
+            var $labelFaceZminTextureAngle = $('#ladb_cutlist_part_label_face_zmin_texture_angle', $modal);
+            var $labelFaceZmaxTextureAngle = $('#ladb_cutlist_part_label_face_zmax_texture_angle', $modal);
             var $btnHighlight = $('#ladb_cutlist_part_highlight', $modal);
             var $btnExportToSkp = $('#ladb_cutlist_part_export_to_skp', $modal);
             var $btnUpdate = $('#ladb_cutlist_part_update', $modal);
@@ -2276,34 +2276,34 @@
                 return false;
             };
             var fnUpdateVeneersPreview = function() {
-                if ($selectVeneerZmin.val() === '') {
-                    $rectVeneerZmin.removeClass('ladb-active');
-                    $rectVeneerZminGrain.hide();
-                    $formGroupVeneerZminTextureAngle.hide();
+                if ($selectFaceZmin.val() === '') {
+                    $rectFaceZmin.removeClass('ladb-active');
+                    $rectFaceZminGrain.hide();
+                    $formGroupFaceZminTextureAngle.hide();
                 } else {
-                    $rectVeneerZmin.addClass('ladb-active');
-                    if (editedPart.veneer_texture_angles.zmin != null && fnIsMaterialTexturedAndGrained($selectVeneerZmin.val())) {
-                        $rectVeneerZminGrain.show();
-                        $patternVeneerZminGrain.attr('patternTransform', 'rotate(' + $inputVeneerZminTextureAngle.val() + ' 0 0)');
-                        $formGroupVeneerZminTextureAngle.show();
+                    $rectFaceZmin.addClass('ladb-active');
+                    if (editedPart.veneer_texture_angles.zmin != null && fnIsMaterialTexturedAndGrained($selectFaceZmin.val())) {
+                        $rectFaceZminGrain.show();
+                        $patternFaceZminGrain.attr('patternTransform', 'rotate(' + $inputFaceZminTextureAngle.val() + ' 0 0)');
+                        $formGroupFaceZminTextureAngle.show();
                     } else {
-                        $rectVeneerZminGrain.hide();
-                        $formGroupVeneerZminTextureAngle.hide();
+                        $rectFaceZminGrain.hide();
+                        $formGroupFaceZminTextureAngle.hide();
                     }
                 }
-                if ($selectVeneerZmax.val() === '') {
-                    $rectVeneerZmax.removeClass('ladb-active');
-                    $rectVeneerZmaxGrain.hide();
-                    $formGroupVeneerZmaxTextureAngle.hide();
+                if ($selectFaceZmax.val() === '') {
+                    $rectFaceZmax.removeClass('ladb-active');
+                    $rectFaceZmaxGrain.hide();
+                    $formGroupFaceZmaxTextureAngle.hide();
                 } else {
-                    $rectVeneerZmax.addClass('ladb-active');
-                    if (editedPart.veneer_texture_angles.zmax != null && fnIsMaterialTexturedAndGrained($selectVeneerZmax.val())) {
-                        $rectVeneerZmaxGrain.show();
-                        $patternVeneerZmaxGrain.attr('patternTransform', 'rotate(' + parseInt($inputVeneerZmaxTextureAngle.val()) * -1 + ' 0 0)');
-                        $formGroupVeneerZmaxTextureAngle.show();
+                    $rectFaceZmax.addClass('ladb-active');
+                    if (editedPart.veneer_texture_angles.zmax != null && fnIsMaterialTexturedAndGrained($selectFaceZmax.val())) {
+                        $rectFaceZmaxGrain.show();
+                        $patternFaceZmaxGrain.attr('patternTransform', 'rotate(' + parseInt($inputFaceZmaxTextureAngle.val()) * -1 + ' 0 0)');
+                        $formGroupFaceZmaxTextureAngle.show();
                     } else {
-                        $rectVeneerZmaxGrain.hide();
-                        $formGroupVeneerZmaxTextureAngle.hide();
+                        $rectFaceZmaxGrain.hide();
+                        $formGroupFaceZmaxTextureAngle.hide();
                     }
                 }
             };
@@ -2346,11 +2346,11 @@
             };
             var fnMaterialNameCopyToAllVeneers = function(materialName) {
                 if (materialName !== MULTIPLE_VALUE) {
-                    if (!$selectVeneerZmax.prop('disabled')) {
-                        $selectVeneerZmax.selectpicker('val', materialName);
+                    if (!$selectFaceZmax.prop('disabled')) {
+                        $selectFaceZmax.selectpicker('val', materialName);
                     }
-                    if (!$selectVeneerZmin.prop('disabled')) {
-                        $selectVeneerZmin.selectpicker('val', materialName);
+                    if (!$selectFaceZmin.prop('disabled')) {
+                        $selectFaceZmin.selectpicker('val', materialName);
                     }
                     fnUpdateVeneersPreview();
                 }
@@ -2490,7 +2490,7 @@
             });
             $inputWidthIncrease.ladbTextinputDimension();
             $inputThicknessIncrease.ladbTextinputDimension();
-            $inputVeneerZminTextureAngle
+            $inputFaceZminTextureAngle
                 .ladbTextinputNumberWithUnit({
                     resetValue: 0,
                     defaultUnit: 'deg',
@@ -2501,7 +2501,7 @@
                 .on('change', function () {
                     fnUpdateVeneersPreview();
                 });
-            $inputVeneerZmaxTextureAngle
+            $inputFaceZmaxTextureAngle
                 .ladbTextinputNumberWithUnit({
                     resetValue: 0,
                     defaultUnit: 'deg',
@@ -2559,16 +2559,16 @@
                         fnUpdateEdgesPreview();
                     }
                 });
-            $selectVeneerZmin.val(editedPart.veneer_material_names.zmin);
-            $selectVeneerZmin
+            $selectFaceZmin.val(editedPart.veneer_material_names.zmin);
+            $selectFaceZmin
                 .selectpicker(SELECT_PICKER_OPTIONS)
                 .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                     if (!fnNewCheck($(this), 6 /* TYPE_VENEER */)) {
                         fnUpdateVeneersPreview();
                     }
                 });
-            $selectVeneerZmax.val(editedPart.veneer_material_names.zmax);
-            $selectVeneerZmax
+            $selectFaceZmax.val(editedPart.veneer_material_names.zmax);
+            $selectFaceZmax
                 .selectpicker(SELECT_PICKER_OPTIONS)
                 .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                     if (!fnNewCheck($(this), 6 /* TYPE_VENEER */)) {
@@ -2599,11 +2599,11 @@
             });
 
             // Bind veneers
-            $rectVeneerZmin.on('click', function() {
-                $selectVeneerZmin.selectpicker('toggle');
+            $rectFaceZmin.on('click', function() {
+                $selectFaceZmin.selectpicker('toggle');
             });
-            $rectVeneerZmax.on('click', function() {
-                $selectVeneerZmax.selectpicker('toggle');
+            $rectFaceZmax.on('click', function() {
+                $selectFaceZmax.selectpicker('toggle');
             });
 
             // Bind sorter
@@ -2640,17 +2640,17 @@
             $labelEdgeXmax.on('dblclick', function() {
                 fnMaterialNameCopyToAllEdges($selectEdgeXmax.val());
             });
-            $labelVeneerZmin.on('dblclick', function() {
-                fnMaterialNameCopyToAllVeneers($selectVeneerZmin.val());
+            $labelFaceZmin.on('dblclick', function() {
+                fnMaterialNameCopyToAllVeneers($selectFaceZmin.val());
             });
-            $labelVeneerZmax.on('dblclick', function() {
-                fnMaterialNameCopyToAllVeneers($selectVeneerZmax.val());
+            $labelFaceZmax.on('dblclick', function() {
+                fnMaterialNameCopyToAllVeneers($selectFaceZmax.val());
             });
-            $labelVeneerZminTextureAngle.on('click', function() {
-                fnIncrementVeneerTextureAngleInputValue($inputVeneerZminTextureAngle, 90);
+            $labelFaceZminTextureAngle.on('click', function() {
+                fnIncrementVeneerTextureAngleInputValue($inputFaceZminTextureAngle, 90);
             });
-            $labelVeneerZmaxTextureAngle.on('click', function() {
-                fnIncrementVeneerTextureAngleInputValue($inputVeneerZmaxTextureAngle, 90);
+            $labelFaceZmaxTextureAngle.on('click', function() {
+                fnIncrementVeneerTextureAngleInputValue($inputFaceZmaxTextureAngle, 90);
             });
 
             // Bind buttons
@@ -2739,18 +2739,18 @@
                         editedParts[i].edge_material_names.xmax = $selectEdgeXmax.val();
                     }
 
-                    if ($selectVeneerZmin.val() !== MULTIPLE_VALUE) {
-                        editedParts[i].veneer_material_names.zmin = $selectVeneerZmin.val();
+                    if ($selectFaceZmin.val() !== MULTIPLE_VALUE) {
+                        editedParts[i].veneer_material_names.zmin = $selectFaceZmin.val();
                     }
-                    if ($selectVeneerZmax.val() !== MULTIPLE_VALUE) {
-                        editedParts[i].veneer_material_names.zmax = $selectVeneerZmax.val();
+                    if ($selectFaceZmax.val() !== MULTIPLE_VALUE) {
+                        editedParts[i].veneer_material_names.zmax = $selectFaceZmax.val();
                     }
 
-                    if (!$inputVeneerZminTextureAngle.ladbTextinputNumberWithUnit('isMultiple')) {
-                        editedParts[i].veneer_texture_angles.zmin = $inputVeneerZminTextureAngle.val() === '' ? null : parseInt($inputVeneerZminTextureAngle.val());
+                    if (!$inputFaceZminTextureAngle.ladbTextinputNumberWithUnit('isMultiple')) {
+                        editedParts[i].veneer_texture_angles.zmin = $inputFaceZminTextureAngle.val() === '' ? null : parseInt($inputFaceZminTextureAngle.val());
                     }
-                    if (!$inputVeneerZmaxTextureAngle.ladbTextinputNumberWithUnit('isMultiple')) {
-                        editedParts[i].veneer_texture_angles.zmax = $inputVeneerZmaxTextureAngle.val() === '' ? null : parseInt($inputVeneerZmaxTextureAngle.val());
+                    if (!$inputFaceZmaxTextureAngle.ladbTextinputNumberWithUnit('isMultiple')) {
+                        editedParts[i].veneer_texture_angles.zmax = $inputFaceZmaxTextureAngle.val() === '' ? null : parseInt($inputFaceZmaxTextureAngle.val());
                     }
 
                 }
@@ -4152,7 +4152,7 @@
         var $inputHideBBoxDimensions = $('#ladb_input_hide_bbox_dimensions', $modal);
         var $inputHideFinalAreas = $('#ladb_input_hide_final_areas', $modal);
         var $inputHideEdges = $('#ladb_input_hide_edges', $modal);
-        var $inputHideVeneers = $('#ladb_input_hide_veneers', $modal);
+        var $inputHideFaces = $('#ladb_input_hide_faces', $modal);
         var $inputMinimizeOnHighlight = $('#ladb_input_minimize_on_highlight', $modal);
         var $sortablePartOrderStrategy = $('#ladb_sortable_part_order_strategy', $modal);
         var $inputTags = $('#ladb_input_tags', $modal);
@@ -4176,7 +4176,7 @@
             options.hide_bbox_dimensions = $inputHideBBoxDimensions.is(':checked');
             options.hide_final_areas = $inputHideFinalAreas.is(':checked');
             options.hide_edges = $inputHideEdges.is(':checked');
-            options.hide_veneers = $inputHideVeneers.is(':checked');
+            options.hide_faces = $inputHideFaces.is(':checked');
             options.minimize_on_highlight = $inputMinimizeOnHighlight.is(':checked');
             options.tags = $inputTags.tokenfield('getTokensList').split(';');
 
@@ -4211,7 +4211,7 @@
             $inputHideBBoxDimensions.prop('checked', options.hide_bbox_dimensions);
             $inputHideFinalAreas.prop('checked', options.hide_final_areas);
             $inputHideEdges.prop('checked', options.hide_edges);
-            $inputHideVeneers.prop('checked', options.hide_veneers);
+            $inputHideFaces.prop('checked', options.hide_faces);
             $inputMinimizeOnHighlight.prop('checked', options.minimize_on_highlight);
             $inputTags.tokenfield('setTokens', options.tags === '' ? ' ' : options.tags);
 
