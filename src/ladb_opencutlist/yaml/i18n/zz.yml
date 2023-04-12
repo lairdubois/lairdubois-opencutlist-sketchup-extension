@@ -75,7 +75,7 @@ core:
       edit_part_axes_properties: "$t(tab.cutlist.edit_part_axes_properties)"
       edit_part_size_increase_properties: "$t(tab.cutlist.edit_part_size_increase_properties)"
       edit_part_edges_properties: "$t(tab.cutlist.edit_part_edges_properties)"
-      edit_part_veneers_properties: "$t(tab.cutlist.edit_part_veneers_properties)"
+      edit_part_faces_properties: "$t(tab.cutlist.edit_part_faces_properties)"
       smart_paint: "$t(core.toolbar.command.smart_paint)"
       smart_axes: "$t(core.toolbar.command.smart_axes)"
   toolbar:
@@ -213,10 +213,10 @@ tab:
     highlight_part: 166 - Highlight in the model
     highlight_parts: 167 - Highlight in the model
     edit_part_properties: 168 - Edit Part Properties
-    edit_part_axes_properties: 169 - Edit Axes Properties of Part
+    edit_part_axes_properties: 169 - Edit the properties (axes) of the part
     edit_part_size_increase_properties: 170 - Edit the properties (oversizes) of the part
-    edit_part_edges_properties: 171 - Edit the properties (edge bandings) of the part
-    edit_part_veneers_properties: 172 - Edit the properties (veneers) of the part
+    edit_part_edges_properties: 171 - Edit the properties (edges) of the part
+    edit_part_faces_properties: 172 - Edit the properties (faces) of the part
     tooltip:
       show_hide_block: 173 - Show / Hide group
       scroll_to_block: 174 - Scroll to group
@@ -292,17 +292,17 @@ tab:
       size_increased: 226 - Dimension is increased by an oversize of {{ value }}
       has_edges: 227 - This part contains {{ count }} edge banding
       has_edges_plural: 228 - This part contains {{ count }} edge bandings
-      has_veneers: 229 - This part contains {{ count }} veneered surface
-      has_veneers_plural: 230 - This part contains {{ count }} veneered surfaces
+      has_faces: 229 - This part contains {{ count }} veneered face
+      has_faces_plural: 230 - This part contains {{ count }} veneered faces
       edge_decremented: 231 - Reduced by the thickness of the edge banding ({{ decrement }})
       edge_ymin: 232 - Edge length 1
       edge_ymax: 233 - Edge length 2
       edge_xmin: 234 - Edge width 1
       edge_xmax: 235 - Edge width 2
-      veneer_zmin: 236 - Veneer backside
-      veneer_zmax: 237 - Veneer frontside
+      face_zmin: 236 - Backside
+      face_zmax: 237 - Frontside
       dblclick_to_copy_all_edges: 238 - Double-click here to duplicate this value to the other edges
-      dblclick_to_copy_all_veneers: 239 - Double-click here to duplicate this value to the other face
+      dblclick_to_copy_all_faces: 239 - Double-click here to duplicate this value to the other face
       dblclick_to_sort_axes: 240 - Double-click here to automatically reorder the axes according to the dimensions of the part
       part_axes: 241 - Internal axes of the part
       select_unselect_all_parts: 242 - Select / Deselect all parts of the group
@@ -333,8 +333,8 @@ tab:
       multiple_alert: 262 - Shared properties of {{ part_count }} parts.
       general: 263 - General
       extra_help: 264 - List of properties specific to the type of material "**$t(tab.materials.type_{{ material_type }})**".
-      edges: 265 - Edge Bandings
-      veneers: 266 - Veneers
+      edges: 265 - Edges
+      faces: 266 - Faces
       name: 267 - Name
       material: 268 - Material
       cumulable: 269 - Summable
@@ -410,12 +410,12 @@ tab:
       axes_origin_position_none: 307 - Do not change the origin
       axes_origin_position_min: 308 - Place the origin at a corner
       axes_origin_position_center: 309 - Place the origin at the center
-      axes_origin_position_front_min: 310 - Place the origin at a corner of the front face
-      axes_origin_position_front_center: 311 - Place the origin at the center of the front face
+      axes_origin_position_front_min: 310 - Place the origin at a corner of the front
+      axes_origin_position_front_center: 311 - Place the origin at the center of the front
       over_length: 312 - Across the length
       over_width: 313 - Across the width
       edge_disabled_help: 314 - This edge banding is not configurable because no material-carrying face has been detected on this edge of the part in the model.
-      veneer_disabled_help: 315 - This surface is not configurable because no material-carrying face has been detected on this edge of the part in the model.
+      face_disabled_help: 315 - This surface is not configurable because no material-carrying face has been detected on this edge of the part in the model.
       multiple_values: 316 - Multiple values
       export_to_skp: 317 - Export (.skp)
       loading_preview: 318 - Loading Preview
@@ -462,10 +462,10 @@ tab:
       hide_bbox_dimensions_help: 343 - If this option is selected, the **finished** dimensions of parts will be hidden.
       hide_final_areas: 344 - Hide actual area of parts of type *Sheet Goods*
       hide_final_areas_help: 345 - If this option is selected, the **actual areas** of parts of type *Sheet Goods* will be hidden.
-      hide_edges: 346 - Hide the columns of edge bandings
+      hide_edges: 346 - Hide the columns of edges
       hide_edges_help: 347 - If this option is selected, the **edge banding columns** of parts of type *Sheet Goods* will be hidden.
-      hide_veneers: 348 - Hide the columns of veneers
-      hide_veneers_help: 349 - If this option is selected, the **veneer columns** of parts of type *Sheet Goods* will be hidden.
+      hide_faces: 348 - Hide the columns of faces
+      hide_faces_help: 349 - If this option is selected, the **veneer columns** of parts of type *Sheet Goods* will be hidden.
       minimize_on_highlight: 350 - Minimize after *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: 351 - If this option is selected, the OpenCutList window will be minimized when the function *'$t(tab.cutlist.highlight_part)'* is used.
       general: 352 - General
@@ -518,8 +518,8 @@ tab:
       width_short: 394 - W
       thickness: 395 - Thickness
       thickness_short: 396 - T
-      edges: 397 - Edge Bandings
-      veneers: 398 - Veneers
+      edges: 397 - Edges
+      faces: 398 - Faces
     export:
       title: 399 - Export
       info_0: '400 - With this function the *parts list* can be exported into a [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file.
@@ -580,8 +580,8 @@ tab:
       edge_ymax: 447 - Edge length 2
       edge_xmin: 448 - Edge width 1
       edge_xmax: 449 - Edge width 2
-      veneer_zmin: 450 - Veneer backside
-      veneer_zmax: 451 - Veneer frontside
+      face_zmin: 450 - Backside
+      face_zmax: 451 - Frontside
       layer: 452 - Tag
       layers: 453 - Tags
       placeholder:
@@ -851,8 +851,8 @@ tab:
         part_edge_ymax: 681 - Edge length 2
         part_edge_xmin: 682 - Edge width 1
         part_edge_xmax: 683 - Edge width 2
-        part_veneer_zmin: 684 - Veneer backside
-        part_veneer_zmax: 685 - Veneer frontside
+        part_face_zmin: 684 - Veneer backside
+        part_face_zmax: 685 - Veneer frontside
         thumbnail_proportional: 686 - Proportional thumbnail
         thumbnail_square: 687 - Square thumbnail
         group_material: 688 - Material / Thickness
@@ -1378,9 +1378,9 @@ tool:
     action_0: 1048 - Paint part
     action_0_status: 1049 - Click on a part to paint it
     action_1: 1050 - Paint edges
-    action_1_status: 1051 - Click on a panel edge to paint it
-    action_2: 1052 - Paint surfaces
-    action_2_status: 1053 - Click on a panel surface to paint it
+    action_1_status: 1051 - Click on a panel edge to apply '$t(tab.materials.type_4)'
+    action_2: 1052 - Paint faces
+    action_2_status: 1053 - Click on a panel face to apply '$t(tab.materials.type_6)'
     action_3: 1054 - Sample
     action_3_status: 1055 - Click on a face to sample its material
     edges: 1056 - {{ count }} edge
@@ -1389,31 +1389,36 @@ tool:
     edge_ymax: 1059 - Length 2
     edge_xmin: 1060 - Width 1
     edge_xmax: 1061 - Width 2
-    veneers: 1062 - {{ count }} surface
-    veneers_plural: 1063 - {{ count }} faces
-    veneer_zmin: 1064 - Back face
-    veneer_zmax: 1065 - Front face
+    faces: 1062 - {{ count }} surface
+    faces_plural: 1063 - {{ count }} faces
+    face_zmin: 1064 - Backside
+    face_zmax: 1065 - Front
     warning:
       no_material: 1066 - No material
       no_material_type: 1067 - No material of type '{{ type }}'
     error:
       not_part: 1068 - The target object is not a part
       not_edge: 1069 - The target face is not a panel edge
-      not_veneer: 1070 - The target face is not a panel surface
+      not_face: 1070 - The target face is not a panel surface
       wrong_material_type: 1071 - The target part must be of type '{{ type }}'
   smart_axes:
     title: 1072 - Orient
     toggle_depth: 1073 - Parts in background
-    action_0: 1074 - Swap length ↔ width
-    action_0_status: 1075 - Click on a part to swap its length with its width
-    action_1: 1076 - Swap front face ↔ back face
-    action_1_status: 1077 - Click on a part to swap its front face with its back face
-    action_2: 1078 - Orient automatically
-    action_2_status: 1079 - Click on a part to set its length to the largest dimension and its thickness to the smallest
+    action_0: 1074 - Flip
+    action_0_status: 1075 - Click on a part to flip an instance along one of its dimensions
+    action_1: 1076 - Swap length ↔ width
+    action_1_status: 1077 - Click on a part to swap its length with its width
+    action_2: 1078 - Swap front ↔ backside
+    action_2_status: 1079 - Click on a part to swap its front with its backside
+    action_3: 1080 - Orient automatically
+    action_3_status: 1081 - Click on a part to set its length to the largest dimension and its thickness to the smallest
+    action_modifier_length: 1082 - L
+    action_modifier_width: 1083 - W
+    action_modifier_thickness: 1084 - T
     success:
-      part_oriented: 1080 - This part already has its length on the largest dimension and its thickness on the smallest
+      part_oriented: 1085 - This part already has its length on the largest dimension and its thickness on the smallest
     warning:
-      more_entities: 1081 - {{ count_used }} instances sharing the same definition will be modified
+      more_entities: 1086 - {{ count_used }} instances sharing the same definition will be modified
     error:
-      not_part: 1082 - The target object is not a part
-      not_orientable: 1083 - The type of this part does not allow orienting it
+      not_part: 1087 - The target object is not a part
+      not_orientable: 1088 - The type of this part does not allow orienting it
