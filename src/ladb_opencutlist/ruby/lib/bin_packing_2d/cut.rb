@@ -11,27 +11,29 @@ module Ladb::OpenCutList::BinPacking2D
     # Direction of this guillotine Cut (see Packing2D).
     attr_reader :is_horizontal
 
-    # Is this a top level through Cut?
-    attr_reader :is_through
-
     # Level of the Cut.
     attr_reader :level
 
-    # True if this Cut is the final bounding box Cut.
-    attr_reader :is_final
+    # Index of the Cut within Bin.
+    attr_reader :index
+
+    # Type of cut (see packing2d.rb)
+    attr_reader :cut_type
 
     #
     # Initializes a new Cut.
     #
-    def initialize(x, y, length, horizontal, level)
+    def initialize(x, y, length, horizontal, level, index = 0)
       super(nil)
       @x_pos = x
       @y_pos = y
       @length = length
       @is_horizontal = horizontal
-      @is_through = false
-      @is_final = false
+
+      @cut_type = INTERNAL_CUT
+
       @level = level
+      @index = index
     end
 
     #
@@ -39,6 +41,10 @@ module Ladb::OpenCutList::BinPacking2D
     #
     def update_length(length)
       @length = length
+    end
+
+    def set_index(index)
+      @index = index
     end
 
     #
@@ -52,15 +58,21 @@ module Ladb::OpenCutList::BinPacking2D
     # Marks this Cut as a through Cut (top level).
     #
     def mark_through
-      @is_through = true
+      @cut_type = INTERNAL_THROUGH_CUT
     end
 
     #
     # Marks this Cut as the final bounding box Cut (outermost two cuts).
     #
     def mark_final
-      @is_through = true
-      @is_final = true
+      @cut_type = BOUNDING_CUT
+    end
+
+    #
+    # Marks this Cut as a trimming cut.
+    #
+    def mark_trimming
+      @cut_type = TRIMMING_CUT
     end
 
     #
@@ -68,6 +80,8 @@ module Ladb::OpenCutList::BinPacking2D
     # returns true if the Cut is inside of it.
     #
     def resize_to(max_x, max_y)
+      # Trimming cuts are kept, but not shortened
+      return true if @cut_type == TRIMMING_CUT
       # Starting point of the cut is well inside of the bounding box
       return false unless @x_pos < max_x && @y_pos < max_y
 
@@ -86,7 +100,9 @@ module Ladb::OpenCutList::BinPacking2D
       dir = @is_horizontal ? 'H' : 'V'
       s = "cut : #{format('%5d', object_id)} [#{format('%9.2f', @x_pos)}, "
       s += "#{format('%9.2f', @y_pos)}, #{format('%9.2f', @length)}], "
-      s + "#{dir}, #{format('%3d', @level)}, #{@is_through}, #{@is_final}]"
+      s += "#{dir}, level=#{format('%3d', @level)}, "
+      s += "index=#{format('%3d', @index)}, "
+      s += "type=#{@cut_type}"
     end
   end
 end

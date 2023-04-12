@@ -127,6 +127,13 @@ module Ladb::OpenCutList
     OPT_MEDIUM = 0
     OPT_ADVANCED = 1
     OPTIMIZATION = ['light', 'advanced'].freeze
+
+    # Cut types.
+    TRIMMING_CUT = 0
+    BOUNDING_CUT = 1
+    INTERNAL_THROUGH_CUT = 2
+    INTERNAL_CUT = 3
+
     #
     # Exception raised in this module.
     #
