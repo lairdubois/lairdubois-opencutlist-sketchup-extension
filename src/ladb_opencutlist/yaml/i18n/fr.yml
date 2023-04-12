@@ -1372,8 +1372,8 @@ tool:
     edge_xmax: Largeur 2
     faces: "{{ count }} face"
     faces_plural: "{{ count }} faces"
-    faces_zmin: Contre-face
-    faces_zmax: Face
+    face_zmin: Contre-face
+    face_zmax: Face
     warning:
       no_material: Aucune matière
       no_material_type: Aucune matière de type '{{ type }}'
