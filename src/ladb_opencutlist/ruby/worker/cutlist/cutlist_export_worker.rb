@@ -194,11 +194,11 @@ module Ladb::OpenCutList
                 part.def.edge_group_defs[:xmax] ? part.def.edge_group_defs[:xmax].std_width : nil
               ),
               VeneerWrapper.new(
-                part.veneer_material_names[:zmin],
+                part.face_material_names[:zmin],
                 part.def.veneer_group_defs[:zmin] ? part.def.veneer_group_defs[:zmin].std_thickness : nil
               ),
               VeneerWrapper.new(
-                part.veneer_material_names[:zmax],
+                part.face_material_names[:zmax],
                 part.def.veneer_group_defs[:zmax] ? part.def.veneer_group_defs[:zmax].std_thickness : nil
               ),
               ArrayWrapper.new(part.def.instance_infos.values.map { |instance_info| instance_info.layer.name }.uniq),
@@ -263,11 +263,11 @@ module Ladb::OpenCutList
                     part.def.edge_group_defs[:xmax] ? part.def.edge_group_defs[:xmax].std_width : nil
                   ),
                   VeneerWrapper.new(
-                    part.veneer_material_names[:zmin],
+                    part.face_material_names[:zmin],
                     part.def.veneer_group_defs[:zmin] ? part.def.veneer_group_defs[:zmin].std_thickness : nil
                   ),
                   VeneerWrapper.new(
-                    part.veneer_material_names[:zmax],
+                    part.face_material_names[:zmax],
                     part.def.veneer_group_defs[:zmax] ? part.def.veneer_group_defs[:zmax].std_thickness : nil
                   ),
                   StringWrapper.new(instance_info.layer.name),
@@ -377,8 +377,8 @@ module Ladb::OpenCutList
       edge_ymax,
       edge_xmin,
       edge_xmax,
-      veneer_zmin,
-      veneer_zmax,
+      face_zmin,
+      face_zmax,
       layers
     )
       @number = number
@@ -400,8 +400,8 @@ module Ladb::OpenCutList
       @edge_ymax = edge_ymax
       @edge_xmin = edge_xmin
       @edge_xmax = edge_xmax
-      @veneer_zmin = veneer_zmin
-      @veneer_zmax = veneer_zmax
+      @face_zmin = face_zmin
+      @face_zmax = face_zmax
       @layers = layers
     end
 
@@ -429,8 +429,8 @@ module Ladb::OpenCutList
       edge_ymax,
       edge_xmin,
       edge_xmax,
-      veneer_zmin,
-      veneer_zmax,
+      face_zmin,
+      face_zmax,
       layer
     )
       @number = number
@@ -452,8 +452,8 @@ module Ladb::OpenCutList
       @edge_ymax = edge_ymax
       @edge_xmin = edge_xmin
       @edge_xmax = edge_xmax
-      @veneer_zmin = veneer_zmin
-      @veneer_zmax = veneer_zmax
+      @face_zmin = face_zmin
+      @face_zmax = face_zmax
       @layer = layer
     end
 

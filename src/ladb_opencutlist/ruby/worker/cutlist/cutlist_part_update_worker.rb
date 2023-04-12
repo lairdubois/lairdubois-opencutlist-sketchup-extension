@@ -30,9 +30,9 @@ module Ladb::OpenCutList
         :thickness_increase,
         :edge_material_names,
         :edge_entity_ids,
-        :veneer_material_names,
-        :veneer_entity_ids,
-        :veneer_texture_angles,
+        :face_material_names,
+        :face_entity_ids,
+        :face_texture_angles,
         :entity_ids
     )
 
@@ -66,9 +66,9 @@ module Ladb::OpenCutList
             part_data.fetch('thickness_increase'),
             part_data.fetch('edge_material_names'),
             part_data.fetch('edge_entity_ids'),
-            part_data.fetch('veneer_material_names'),
-            part_data.fetch('veneer_entity_ids'),
-            part_data.fetch('veneer_texture_angles'),
+            part_data.fetch('face_material_names'),
+            part_data.fetch('face_entity_ids'),
+            part_data.fetch('face_texture_angles'),
             part_data.fetch('entity_ids')
         )
       }
@@ -224,8 +224,8 @@ module Ladb::OpenCutList
           _apply_material(part_data.edge_material_names['ymax'], part_data.edge_entity_ids['ymax'], model)
           _apply_material(part_data.edge_material_names['xmin'], part_data.edge_entity_ids['xmin'], model)
           _apply_material(part_data.edge_material_names['xmax'], part_data.edge_entity_ids['xmax'], model)
-          _apply_material(part_data.veneer_material_names['zmin'], part_data.veneer_entity_ids['zmin'], model, part_data.veneer_texture_angles['zmin'].nil? ? nil : part_data.veneer_texture_angles['zmin'].to_i.degrees)
-          _apply_material(part_data.veneer_material_names['zmax'], part_data.veneer_entity_ids['zmax'], model, part_data.veneer_texture_angles['zmax'].nil? ? nil : part_data.veneer_texture_angles['zmax'].to_i.degrees)
+          _apply_material(part_data.face_material_names['zmin'], part_data.face_entity_ids['zmin'], model, part_data.face_texture_angles['zmin'].nil? ? nil : part_data.face_texture_angles['zmin'].to_i.degrees)
+          _apply_material(part_data.face_material_names['zmax'], part_data.face_entity_ids['zmax'], model, part_data.face_texture_angles['zmax'].nil? ? nil : part_data.face_texture_angles['zmax'].to_i.degrees)
 
         end
 

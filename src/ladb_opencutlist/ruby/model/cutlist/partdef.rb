@@ -17,8 +17,8 @@ module Ladb::OpenCutList
 
     VENEERS_Z = [ PartDef::VENEER_ZMIN, PartDef::VENEER_ZMAX ]
 
-    attr_accessor :id, :definition_id, :number, :saved_number, :name, :is_dynamic_attributes_name, :description, :count, :cutting_size, :size, :scale, :flipped, :material_name, :material_origins, :cumulable, :instance_count_by_part, :mass, :price, :thickness_layer_count, :orientation_locked_on_axis, :tags, :symmetrical, :ignore_grain_direction, :length_increase, :width_increase, :thickness_increase, :edge_count, :edge_pattern, :edge_entity_ids, :edge_length_decrement, :edge_width_decrement, :edge_decremented, :veneer_count, :veneer_pattern, :veneer_entity_ids, :veneer_texture_angles, :veneer_thickness_decrement, :veneer_decremented, :length_increased, :width_increased, :thickness_increased, :auto_oriented, :not_aligned_on_axes, :unused_instance_count, :content_layers, :final_area, :children_warning_count, :children_length_increased_count, :children_width_increased_count, :children_thickness_increased_count
-    attr_reader :id, :edge_material_names, :edge_std_dimensions, :edge_errors, :veneer_material_names, :veneer_std_dimensions, :veneer_errors, :entity_ids, :entity_serialized_paths, :entity_names, :children, :instance_infos, :edge_materials, :edge_group_defs, :veneer_materials, :veneer_group_defs
+    attr_accessor :id, :definition_id, :number, :saved_number, :name, :is_dynamic_attributes_name, :description, :count, :cutting_size, :size, :scale, :flipped, :material_name, :material_origins, :cumulable, :instance_count_by_part, :mass, :price, :thickness_layer_count, :orientation_locked_on_axis, :tags, :symmetrical, :ignore_grain_direction, :length_increase, :width_increase, :thickness_increase, :edge_count, :edge_pattern, :edge_entity_ids, :edge_length_decrement, :edge_width_decrement, :edge_decremented, :face_count, :face_pattern, :face_entity_ids, :face_texture_angles, :face_thickness_decrement, :face_decremented, :length_increased, :width_increased, :thickness_increased, :auto_oriented, :not_aligned_on_axes, :unused_instance_count, :content_layers, :final_area, :children_warning_count, :children_length_increased_count, :children_width_increased_count, :children_thickness_increased_count
+    attr_reader :id, :edge_material_names, :edge_std_dimensions, :edge_errors, :face_material_names, :face_std_dimensions, :face_errors, :entity_ids, :entity_serialized_paths, :entity_names, :children, :instance_infos, :edge_materials, :edge_group_defs, :veneer_materials, :veneer_group_defs
 
     def initialize(id)
       @id = id
@@ -56,15 +56,15 @@ module Ladb::OpenCutList
       @edge_decremented = false
       @edge_entity_ids = {}
       @edge_errors = []
-      @veneer_count = 0
-      @veneer_pattern = nil               # A string from 00 to 11
-      @veneer_material_names = {}
-      @veneer_std_dimensions = {}
-      @veneer_thickness_decrement = 0
-      @veneer_decremented = false
-      @veneer_entity_ids = {}
-      @veneer_texture_angles = {}
-      @veneer_errors = []
+      @face_count = 0
+      @face_pattern = nil               # A string from 00 to 11
+      @face_material_names = {}
+      @face_std_dimensions = {}
+      @face_thickness_decrement = 0
+      @face_decremented = false
+      @face_entity_ids = {}
+      @face_texture_angles = {}
+      @face_errors = []
       @entity_ids = []                    # All unique entity ids (array count could be smaller than @count)
       @entity_serialized_paths = []       # All Serialized paths to each entity (array count should be egals to @count)
       @entity_names = {}                  # All non empty entity instance names (key = name, value = array of 'named path')
@@ -311,30 +311,30 @@ module Ladb::OpenCutList
       @veneer_materials.store(PartDef::VENEER_ZMAX, veneer_zmax_material) unless veneer_zmax_material.nil?
 
       # Store material names
-      @veneer_material_names.store(PartDef::VENEER_ZMIN, veneer_zmin_material.name) unless veneer_zmin_material.nil?
-      @veneer_material_names.store(PartDef::VENEER_ZMAX, veneer_zmax_material.name) unless veneer_zmax_material.nil?
+      @face_material_names.store(PartDef::VENEER_ZMIN, veneer_zmin_material.name) unless veneer_zmin_material.nil?
+      @face_material_names.store(PartDef::VENEER_ZMAX, veneer_zmax_material.name) unless veneer_zmax_material.nil?
 
       # Compute veneer count
-      @veneer_count = [ veneer_zmin_material, veneer_zmax_material ].select { |m| !m.nil? }.length
+      @face_count = [veneer_zmin_material, veneer_zmax_material ].select { |m| !m.nil? }.length
 
       # Bluid veneer pattern
-      @veneer_pattern = "#{veneer_zmax_material ? 1 : 0}#{veneer_zmin_material ? 1 : 0}"
+      @face_pattern = "#{veneer_zmax_material ? 1 : 0}#{veneer_zmin_material ? 1 : 0}"
 
     end
 
     def set_veneer_entity_ids(veneer_zmin_entity_ids, veneer_zmax_entity_ids)
 
       # Store materials internaly
-      @veneer_entity_ids.store(PartDef::VENEER_ZMIN, veneer_zmin_entity_ids) unless veneer_zmin_entity_ids.nil?
-      @veneer_entity_ids.store(PartDef::VENEER_ZMAX, veneer_zmax_entity_ids) unless veneer_zmax_entity_ids.nil?
+      @face_entity_ids.store(PartDef::VENEER_ZMIN, veneer_zmin_entity_ids) unless veneer_zmin_entity_ids.nil?
+      @face_entity_ids.store(PartDef::VENEER_ZMAX, veneer_zmax_entity_ids) unless veneer_zmax_entity_ids.nil?
 
     end
 
     def set_veneer_texture_angles(veneer_zmin_texture_angles, veneer_zmax_texture_angles)
 
       # Store materials internaly
-      @veneer_texture_angles.store(PartDef::VENEER_ZMIN, veneer_zmin_texture_angles) unless veneer_zmin_texture_angles.nil?
-      @veneer_texture_angles.store(PartDef::VENEER_ZMAX, veneer_zmax_texture_angles) unless veneer_zmax_texture_angles.nil?
+      @face_texture_angles.store(PartDef::VENEER_ZMIN, veneer_zmin_texture_angles) unless veneer_zmin_texture_angles.nil?
+      @face_texture_angles.store(PartDef::VENEER_ZMAX, veneer_zmax_texture_angles) unless veneer_zmax_texture_angles.nil?
 
     end
 
@@ -345,8 +345,8 @@ module Ladb::OpenCutList
       @veneer_group_defs.store(PartDef::VENEER_ZMAX, veneer_zmax_group_def) unless veneer_zmax_group_def.nil?
 
       # Store stdDimensions
-      @veneer_std_dimensions.store(PartDef::VENEER_ZMIN, "#{veneer_zmin_group_def.std_dimension}") unless veneer_zmin_group_def.nil?
-      @veneer_std_dimensions.store(PartDef::VENEER_ZMAX, "#{veneer_zmax_group_def.std_dimension}") unless veneer_zmax_group_def.nil?
+      @face_std_dimensions.store(PartDef::VENEER_ZMIN, "#{veneer_zmin_group_def.std_dimension}") unless veneer_zmin_group_def.nil?
+      @face_std_dimensions.store(PartDef::VENEER_ZMAX, "#{veneer_zmax_group_def.std_dimension}") unless veneer_zmax_group_def.nil?
 
     end
 

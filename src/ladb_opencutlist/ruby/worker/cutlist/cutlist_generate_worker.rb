@@ -560,10 +560,10 @@ module Ladb::OpenCutList
                 part_def.set_veneer_entity_ids(veneers_def[:zmin_entity_ids], veneers_def[:zmax_entity_ids])
                 part_def.set_veneer_texture_angles(veneers_def[:zmin_texture_angle], veneers_def[:zmax_texture_angle])
                 part_def.set_veneer_group_defs(veneer_zmin_group_def, veneer_zmax_group_def)
-                part_def.veneer_thickness_decrement = veneers_def[:thickness_decrement]
-                part_def.veneer_decremented = veneers_def[:veneer_decremented]
+                part_def.face_thickness_decrement = veneers_def[:thickness_decrement]
+                part_def.face_decremented = veneers_def[:face_decremented]
 
-                group_def.veneer_decremented ||= veneers_def[:thickness_decrement] > 0
+                group_def.face_decremented ||= veneers_def[:thickness_decrement] > 0
 
               end
 
@@ -581,7 +581,7 @@ module Ladb::OpenCutList
           end
 
           group_def.show_edges ||= part_def.edge_count > 0
-          group_def.show_veneers ||= part_def.veneer_count > 0
+          group_def.show_veneers ||= part_def.face_count > 0
           group_def.store_part_def(part_def)
 
           if number
@@ -653,11 +653,11 @@ module Ladb::OpenCutList
                 end
               }
             end
-            if part_def.veneer_count > 0
+            if part_def.face_count > 0
               PartDef::VENEERS_Z.each { |veneer|
                 unless (veneer_group_def = part_def.veneer_group_defs[veneer]).nil? || (veneer_material = part_def.veneer_materials[veneer]).nil?
                   veneer_material_attributes = _get_material_attributes(veneer_material)
-                  if part_def.veneer_texture_angles[veneer] != 0
+                  if part_def.face_texture_angles[veneer] != 0
 
                     points = [
                       Geom::Point3d.new(0                           , 0),
@@ -665,8 +665,8 @@ module Ladb::OpenCutList
                       Geom::Point3d.new(part_def.cutting_size.length, part_def.cutting_size.width),
                       Geom::Point3d.new(0                           , part_def.cutting_size.width),
                     ]
-                    unless part_def.veneer_texture_angles[veneer].nil?
-                      t = Geom::Transformation.new(Geom::Point3d.new, Z_AXIS, part_def.veneer_texture_angles[veneer])
+                    unless part_def.face_texture_angles[veneer].nil?
+                      t = Geom::Transformation.new(Geom::Point3d.new, Z_AXIS, part_def.face_texture_angles[veneer])
                       points.each { |point| point.transform!(t) }
                     end
                     veneer_bounds = (Geom::BoundingBox.new).add(points)
@@ -763,7 +763,7 @@ module Ladb::OpenCutList
                 (@hide_tags || folder_part_def.tags == part_def.tags) &&
                 (@hide_final_areas || ((folder_part_def.final_area.nil? ? 0 : folder_part_def.final_area) - (part_def.final_area.nil? ? 0 : part_def.final_area)).abs < 0.001) &&      # final_area workaround for rounding error
                 folder_part_def.edge_material_names == part_def.edge_material_names &&
-                folder_part_def.veneer_material_names == part_def.veneer_material_names &&
+                folder_part_def.face_material_names == part_def.face_material_names &&
                 folder_part_def.cumulable == part_def.cumulable &&
                 folder_part_def.ignore_grain_direction == part_def.ignore_grain_direction
               if folder_part_def.children.empty?
@@ -789,12 +789,12 @@ module Ladb::OpenCutList
                 folder_part_def.edge_group_defs.merge!(first_child_part_def.edge_group_defs)
                 folder_part_def.edge_length_decrement = first_child_part_def.edge_length_decrement
                 folder_part_def.edge_width_decrement = first_child_part_def.edge_width_decrement
-                folder_part_def.veneer_count = first_child_part_def.veneer_count
-                folder_part_def.veneer_pattern = first_child_part_def.veneer_pattern
-                folder_part_def.veneer_material_names.merge!(first_child_part_def.veneer_material_names)
-                folder_part_def.veneer_std_dimensions.merge!(first_child_part_def.veneer_std_dimensions)
+                folder_part_def.face_count = first_child_part_def.face_count
+                folder_part_def.face_pattern = first_child_part_def.face_pattern
+                folder_part_def.face_material_names.merge!(first_child_part_def.face_material_names)
+                folder_part_def.face_std_dimensions.merge!(first_child_part_def.face_std_dimensions)
                 folder_part_def.veneer_group_defs.merge!(first_child_part_def.veneer_group_defs)
-                folder_part_def.veneer_thickness_decrement = first_child_part_def.veneer_thickness_decrement
+                folder_part_def.face_thickness_decrement = first_child_part_def.face_thickness_decrement
                 folder_part_def.merge_entity_names(first_child_part_def.entity_names)
                 folder_part_def.final_area = first_child_part_def.final_area
 

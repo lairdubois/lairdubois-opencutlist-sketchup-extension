@@ -11,7 +11,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :id, :material_id, :material_name, :material_display_name, :material_type, :material_color, :material_grained, :part_count, :std_available, :std_dimension_stipped_name, :std_dimension, :std_dimension_real, :std_dimension_rounded, :std_width, :std_thickness, :total_cutting_length, :total_cutting_area, :total_cutting_volume, :total_final_area, :invalid_final_area_part_count, :show_cutting_dimensions, :show_edges, :edge_decremented, :show_veneers, :veneer_decremented, :parts
+    attr_reader :id, :material_id, :material_name, :material_display_name, :material_type, :material_color, :material_grained, :part_count, :std_available, :std_dimension_stipped_name, :std_dimension, :std_dimension_real, :std_dimension_rounded, :std_width, :std_thickness, :total_cutting_length, :total_cutting_area, :total_cutting_volume, :total_final_area, :invalid_final_area_part_count, :show_cutting_dimensions, :show_edges, :edge_decremented, :show_veneers, :face_decremented, :parts
 
     def initialize(group_def, cutlist)
       @_def = group_def
@@ -41,7 +41,7 @@ module Ladb::OpenCutList
       @show_edges = group_def.show_edges
       @edge_decremented = group_def.edge_decremented
       @show_veneers = group_def.show_veneers
-      @veneer_decremented = group_def.veneer_decremented
+      @veneer_decremented = group_def.face_decremented
 
       @parts = []
     end

@@ -85,11 +85,11 @@ module Ladb::OpenCutList
                 part.def.edge_group_defs[:xmax] ? part.def.edge_group_defs[:xmax].std_width : nil
               ),
               VeneerWrapper.new(
-                part.veneer_material_names[:zmin],
+                part.face_material_names[:zmin],
                 part.def.veneer_group_defs[:zmin] ? part.def.veneer_group_defs[:zmin].std_thickness : nil
               ),
               VeneerWrapper.new(
-                part.veneer_material_names[:zmax],
+                part.face_material_names[:zmax],
                 part.def.veneer_group_defs[:zmax] ? part.def.veneer_group_defs[:zmax].std_thickness : nil
               ),
               StringWrapper.new(instance_info.layer.name),

@@ -787,8 +787,8 @@
                     { name: 'edge_ymax', type: 'edge' },
                     { name: 'edge_xmin', type: 'edge' },
                     { name: 'edge_xmax', type: 'edge' },
-                    { name: 'veneer_zmax', type: 'veneer' },
-                    { name: 'veneer_zmin', type: 'veneer' },
+                    { name: 'face_zmax', type: 'veneer' },
+                    { name: 'face_zmin', type: 'veneer' },
                     { name: 'layers', type: 'array' }
                 ],
                 snippetDefs: [
@@ -821,8 +821,8 @@
                     { name: 'edge_ymax', type: 'edge' },
                     { name: 'edge_xmin', type: 'edge' },
                     { name: 'edge_xmax', type: 'edge' },
-                    { name: 'veneer_zmax', type: 'veneer' },
-                    { name: 'veneer_zmin', type: 'veneer' },
+                    { name: 'face_zmax', type: 'veneer' },
+                    { name: 'face_zmin', type: 'veneer' },
                     { name: 'layer', type: 'string' }
                 ],
                 snippetDefs: [
@@ -1464,8 +1464,8 @@
                     { name: 'edge_ymax', type: 'edge' },
                     { name: 'edge_xmin', type: 'edge' },
                     { name: 'edge_xmax', type: 'edge' },
-                    { name: 'veneer_zmax', type: 'veneer' },
-                    { name: 'veneer_zmin', type: 'veneer' },
+                    { name: 'face_zmax', type: 'veneer' },
+                    { name: 'face_zmin', type: 'veneer' },
                     { name: 'layer', type: 'string' }
                 ]),
                 snippetDefs: [
@@ -2125,17 +2125,17 @@
                 if (editedPart.edge_material_names.xmax !== editedParts[i].edge_material_names.xmax) {
                     editedPart.edge_material_names.xmax = MULTIPLE_VALUE;
                 }
-                if (editedPart.veneer_material_names.zmin !== editedParts[i].veneer_material_names.zmin) {
-                    editedPart.veneer_material_names.zmin = MULTIPLE_VALUE;
+                if (editedPart.face_material_names.zmin !== editedParts[i].face_material_names.zmin) {
+                    editedPart.face_material_names.zmin = MULTIPLE_VALUE;
                 }
-                if (editedPart.veneer_material_names.zmax !== editedParts[i].veneer_material_names.zmax) {
-                    editedPart.veneer_material_names.zmax = MULTIPLE_VALUE;
+                if (editedPart.face_material_names.zmax !== editedParts[i].face_material_names.zmax) {
+                    editedPart.face_material_names.zmax = MULTIPLE_VALUE;
                 }
-                if (editedPart.veneer_texture_angles.zmin !== editedParts[i].veneer_texture_angles.zmin) {
-                    editedPart.veneer_texture_angles.zmin = MULTIPLE_VALUE;
+                if (editedPart.face_texture_angles.zmin !== editedParts[i].face_texture_angles.zmin) {
+                    editedPart.face_texture_angles.zmin = MULTIPLE_VALUE;
                 }
-                if (editedPart.veneer_texture_angles.zmax !== editedParts[i].veneer_texture_angles.zmax) {
-                    editedPart.veneer_texture_angles.zmax = MULTIPLE_VALUE;
+                if (editedPart.face_texture_angles.zmax !== editedParts[i].face_texture_angles.zmax) {
+                    editedPart.face_texture_angles.zmax = MULTIPLE_VALUE;
                 }
             }
 
@@ -2146,7 +2146,7 @@
                 || tab === 'extra' && group.material_type === 0 /* 0 = TYPE_UNKNOWN */
                 || tab === 'axes' && multiple
                 || tab === 'edges' && group.material_type !== 2 /* 2 = TYPE_SHEET_GOOD */
-                || tab === 'veneers' && group.material_type !== 2 /* 2 = TYPE_SHEET_GOOD */
+                || tab === 'faces' && group.material_type !== 2 /* 2 = TYPE_SHEET_GOOD */
                 || tab === 'infos_warnings' && multiple
             ) {
                 tab = 'general';
@@ -2275,14 +2275,14 @@
                 }
                 return false;
             };
-            var fnUpdateVeneersPreview = function() {
+            var fnUpdateFacesPreview = function() {
                 if ($selectFaceZmin.val() === '') {
                     $rectFaceZmin.removeClass('ladb-active');
                     $rectFaceZminGrain.hide();
                     $formGroupFaceZminTextureAngle.hide();
                 } else {
                     $rectFaceZmin.addClass('ladb-active');
-                    if (editedPart.veneer_texture_angles.zmin != null && fnIsMaterialTexturedAndGrained($selectFaceZmin.val())) {
+                    if (editedPart.face_texture_angles.zmin != null && fnIsMaterialTexturedAndGrained($selectFaceZmin.val())) {
                         $rectFaceZminGrain.show();
                         $patternFaceZminGrain.attr('patternTransform', 'rotate(' + $inputFaceZminTextureAngle.val() + ' 0 0)');
                         $formGroupFaceZminTextureAngle.show();
@@ -2297,7 +2297,7 @@
                     $formGroupFaceZmaxTextureAngle.hide();
                 } else {
                     $rectFaceZmax.addClass('ladb-active');
-                    if (editedPart.veneer_texture_angles.zmax != null && fnIsMaterialTexturedAndGrained($selectFaceZmax.val())) {
+                    if (editedPart.face_texture_angles.zmax != null && fnIsMaterialTexturedAndGrained($selectFaceZmax.val())) {
                         $rectFaceZmaxGrain.show();
                         $patternFaceZmaxGrain.attr('patternTransform', 'rotate(' + parseInt($inputFaceZmaxTextureAngle.val()) * -1 + ' 0 0)');
                         $formGroupFaceZmaxTextureAngle.show();
@@ -2352,14 +2352,14 @@
                     if (!$selectFaceZmin.prop('disabled')) {
                         $selectFaceZmin.selectpicker('val', materialName);
                     }
-                    fnUpdateVeneersPreview();
+                    fnUpdateFacesPreview();
                 }
             };
             var fnIncrementVeneerTextureAngleInputValue = function($input, inc) {
                 let angle = parseInt($input.val());
                 if (!isNaN(angle)) {
                     $input.val((angle + inc) % 360);
-                    fnUpdateVeneersPreview();
+                    fnUpdateFacesPreview();
                 }
             }
             var fnOnAxiesOrderChanged = function () {
@@ -2499,7 +2499,7 @@
                     ]
                 })
                 .on('change', function () {
-                    fnUpdateVeneersPreview();
+                    fnUpdateFacesPreview();
                 });
             $inputFaceZmaxTextureAngle
                 .ladbTextinputNumberWithUnit({
@@ -2510,7 +2510,7 @@
                     ]
                 })
                 .on('change', function () {
-                    fnUpdateVeneersPreview();
+                    fnUpdateFacesPreview();
                 });
 
             // Bind select
@@ -2559,20 +2559,20 @@
                         fnUpdateEdgesPreview();
                     }
                 });
-            $selectFaceZmin.val(editedPart.veneer_material_names.zmin);
+            $selectFaceZmin.val(editedPart.face_material_names.zmin);
             $selectFaceZmin
                 .selectpicker(SELECT_PICKER_OPTIONS)
                 .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                     if (!fnNewCheck($(this), 6 /* TYPE_VENEER */)) {
-                        fnUpdateVeneersPreview();
+                        fnUpdateFacesPreview();
                     }
                 });
-            $selectFaceZmax.val(editedPart.veneer_material_names.zmax);
+            $selectFaceZmax.val(editedPart.face_material_names.zmax);
             $selectFaceZmax
                 .selectpicker(SELECT_PICKER_OPTIONS)
                 .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                     if (!fnNewCheck($(this), 6 /* TYPE_VENEER */)) {
-                        fnUpdateVeneersPreview();
+                        fnUpdateFacesPreview();
                     }
                 });
 
@@ -2598,7 +2598,7 @@
                 $selectEdgeXmax.selectpicker('toggle');
             });
 
-            // Bind veneers
+            // Bind faces
             $rectFaceZmin.on('click', function() {
                 $selectFaceZmin.selectpicker('toggle');
             });
@@ -2740,17 +2740,17 @@
                     }
 
                     if ($selectFaceZmin.val() !== MULTIPLE_VALUE) {
-                        editedParts[i].veneer_material_names.zmin = $selectFaceZmin.val();
+                        editedParts[i].face_material_names.zmin = $selectFaceZmin.val();
                     }
                     if ($selectFaceZmax.val() !== MULTIPLE_VALUE) {
-                        editedParts[i].veneer_material_names.zmax = $selectFaceZmax.val();
+                        editedParts[i].face_material_names.zmax = $selectFaceZmax.val();
                     }
 
                     if (!$inputFaceZminTextureAngle.ladbTextinputNumberWithUnit('isMultiple')) {
-                        editedParts[i].veneer_texture_angles.zmin = $inputFaceZminTextureAngle.val() === '' ? null : parseInt($inputFaceZminTextureAngle.val());
+                        editedParts[i].face_texture_angles.zmin = $inputFaceZminTextureAngle.val() === '' ? null : parseInt($inputFaceZminTextureAngle.val());
                     }
                     if (!$inputFaceZmaxTextureAngle.ladbTextinputNumberWithUnit('isMultiple')) {
-                        editedParts[i].veneer_texture_angles.zmax = $inputFaceZmaxTextureAngle.val() === '' ? null : parseInt($inputFaceZmaxTextureAngle.val());
+                        editedParts[i].face_texture_angles.zmax = $inputFaceZmaxTextureAngle.val() === '' ? null : parseInt($inputFaceZmaxTextureAngle.val());
                     }
 
                 }
@@ -2804,8 +2804,8 @@
             // Init edges preview
             fnUpdateEdgesPreview();
 
-            // Init veneers preview
-            fnUpdateVeneersPreview();
+            // Init faces preview
+            fnUpdateFacesPreview();
 
             // Show modal
             $modal.modal('show');

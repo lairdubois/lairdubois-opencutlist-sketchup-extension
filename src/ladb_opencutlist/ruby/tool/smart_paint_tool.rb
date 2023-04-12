@@ -1029,7 +1029,7 @@ module Ladb::OpenCutList
 
                       model = Sketchup.active_model
                       face_faces = {}
-                      part.def.veneer_entity_ids.each { |k, v| face_faces[k] = model.find_entity_by_id(v) if v.is_a?(Array) && !v.empty? }
+                      part.def.face_entity_ids.each { |k, v| face_faces[k] = model.find_entity_by_id(v) if v.is_a?(Array) && !v.empty? }
 
                       sides = []
                       entities = []
