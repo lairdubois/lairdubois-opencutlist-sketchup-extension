@@ -325,8 +325,8 @@ module Ladb::OpenCutList
           veneer_decremented = thickness_decrement > 0
 
           # Compute texture angles
-          veneer_zmin_texture_angle = zmin_face_infos.empty? ? nil : _get_face_texture_angle(zmin_face_infos.first.face, instance_info)
-          veneer_zmax_texture_angle = zmax_face_infos.empty? ? nil : _get_face_texture_angle(zmax_face_infos.first.face, instance_info)
+          veneer_zmin_texture_angle = !veneer_zmin_material_attributes.grained || zmin_face_infos.empty? ? nil : _get_face_texture_angle(zmin_face_infos.first.face, instance_info)
+          veneer_zmax_texture_angle = !veneer_zmax_material_attributes.grained || zmax_face_infos.empty? ? nil : _get_face_texture_angle(zmax_face_infos.first.face, instance_info)
 
           # Populate VeneerDef
           veneers_def = {
