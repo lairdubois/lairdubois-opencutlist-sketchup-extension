@@ -456,6 +456,49 @@ module Ladb::OpenCutList
       set_root_action(fetch_action, fetch_action_modifier(fetch_action))  # Force SU status text
     end
 
+    def onKeyUp(key, repeat, flags, view)
+      if key == 9 || key == 25  # TAB key doesn't generate "onKeyDown" event
+
+        action_defs = get_action_defs
+        action = fetch_action
+        action_index = action_defs.index { |action_def| action_def[:action] == action }
+        unless action_index.nil?
+
+          if (flags & CONSTRAIN_MODIFIER_MASK) == CONSTRAIN_MODIFIER_KEY
+
+            # Select next modifier if exists
+
+            modifier = fetch_action_modifier(action)
+            unless modifier.nil? || action_defs[action_index][:modifiers].nil?
+
+              modifier_index = action_defs[action_index][:modifiers].index(modifier)
+              unless modifier_index.nil?
+
+                next_modifier_index = (modifier_index + 1) % action_defs[action_index][:modifiers].length
+                next_modifier = action_defs[action_index][:modifiers][next_modifier_index]
+                set_root_action(action, next_modifier)
+
+                return true
+              end
+
+            end
+
+          else
+
+            # Select next action
+
+            next_action_index = (action_index + 1) % action_defs.length
+            next_action = action_defs[next_action_index][:action]
+            set_root_action(next_action, fetch_action_modifier(next_action))
+
+            return true
+          end
+
+        end
+
+      end
+    end
+
     protected
 
     def _reset(view)
