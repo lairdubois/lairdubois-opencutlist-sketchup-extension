@@ -53,7 +53,7 @@
 {% endmacro %}
 {% macro cut_tooltip(cut, options) %}
 {% spaceless %}
-    <div class='tt-header'><span class='tt-name'>{{ ('tab.cutlist.cuttingdiagram.list.cut'~(cut.is_trimming ? '_trimming' : (cut.is_bounding ? '_bounding' : (cut.is_internal_through ? '_through' : ''))))|i18next }}</span></div>
+    <div class='tt-header'><span class='tt-name'>{{ ('tab.cutlist.cuttingdiagram.list.cut'~(cut.is_trimming ? '_trimming' : (cut.is_bounding ? '_bounding' : (cut.is_internal_through ? '_internal_through' : ''))))|i18next }}</span></div>
     <div class='tt-data'>{{ _self.cut_position(cut, options) }}</div>
     <div class='tt-data'><i class='ladb-opencutlist-icon-saw'></i> {{ options.saw_kerf|escape('html') }}</div>
 {% endspaceless %}
@@ -389,7 +389,7 @@
                                 {% endfor %}
                             </div>
                             <div class="col-xs-3 ladb-cutlist-cuttingdiagram-cuts-summary ladb-cutlist-cuttingdiagram-cuts-summary-through">
-                                <div>{{ 'tab.cutlist.cuttingdiagram.list.cut_through_plural'|i18next }}</div>
+                                <div>{{ 'tab.cutlist.cuttingdiagram.list.cut_internal_through_plural'|i18next }}</div>
                                 {% for cut in sheet.cuts if cut.is_internal_through and not cut.is_bounding %}
                                     <div>{{ fn.cut_position(cut, options) }}</div>
                                 {% else %}

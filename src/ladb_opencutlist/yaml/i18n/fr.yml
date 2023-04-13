@@ -746,8 +746,8 @@ tab:
         cut_trimming_plural: Coupes de propreté
         cut_bounding: Coupe primaire (niveau 1)
         cut_bounding_plural: Coupes primaires (niveau 1)
-        cut_through: Coupe primaire (niveau 2)
-        cut_through_plural: Coupes primaires (niveau 2)
+        cut_internal_through: Coupe primaire (niveau 2)
+        cut_internal_through_plural: Coupes primaires (niveau 2)
         cut_none: Aucune
         bar_dimensional_type_0: Barre standard
         bar_dimensional_type_1: Reste de barre
