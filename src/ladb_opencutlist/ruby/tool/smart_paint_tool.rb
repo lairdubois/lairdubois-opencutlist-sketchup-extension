@@ -267,19 +267,16 @@ module Ladb::OpenCutList
       case action
       when ACTION_PAINT_PART
         return super +
-          ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_1') + '.' +
-          ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + '* = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3') + '.'
+          ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_1') + '.'
       when ACTION_PAINT_EDGES
         return super +
-          ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_2') + '.' +
-          ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + '* = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3') + '.'
+          ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_2') + '.'
       when ACTION_PAINT_FACES
         return super +
-          ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3') + '.' +
-          ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + '* = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3') + '.'
+          ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3') + '.'
       when ACTION_PICK
         return super +
-          ' | ' + Plugin.instance.get_i18n_string("default.copy_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_0') + '.'
+          ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_0') + '.'
       end
 
       super
@@ -577,25 +574,6 @@ module Ladb::OpenCutList
 
     def onKeyDown(key, repeat, flags, view)
       return true if super
-      # if key == ALT_MODIFIER_KEY
-      #   unless is_action_pick?
-      #     push_action(ACTION_PICK)
-      #   end
-      #   return true
-      # elsif key == COPY_MODIFIER_KEY
-      #   if is_action_paint_part?
-      #     set_root_action(ACTION_PAINT_EDGES)
-      #     return true
-      #   elsif is_action_paint_edge?
-      #     set_root_action(ACTION_PAINT_FACES)
-      #     return true
-      #   elsif is_action_paint_face?
-      #     set_root_action(ACTION_PICK)
-      #     return true
-      #   elsif is_action_pick?
-      #     set_root_action(ACTION_PAINT_PART)
-      #     return true
-      #   end
       if key == VK_LEFT
         button = _get_selected_material_button
         if button && button.previous && button.previous.is_a?(Kuix::Button)
@@ -608,75 +586,13 @@ module Ladb::OpenCutList
           button.next.fire(:click, flags)
           return true
         end
-      elsif key == VK_UP
-        @materials_filters_btn.fire(:click, flags) if @materials_filters_btn
-        return true
-      elsif key == VK_DOWN
+      elsif key == VK_UP || key == VK_DOWN
         @materials_filters_btn.fire(:click, flags) if @materials_filters_btn
         return true
       elsif repeat == 1
-        if key == VK_NUMPAD1 && (is_action_paint_edge? || is_action_paint_face?)
-          push_action_modifier(ACTION_MODIFIER_1)
-          return true
-        elsif key == VK_NUMPAD2 && (is_action_paint_edge? || is_action_paint_face?)
-          push_action_modifier(ACTION_MODIFIER_2)
-          return true
-        elsif key == VK_NUMPAD4 && is_action_paint_edge?
-          push_action_modifier(ACTION_MODIFIER_4)
-          return true
-        elsif key == VK_ADD && is_action_part?
+        if key == VK_ADD && is_action_part?
           @materials_add_btn.fire(:click, flags) if @materials_add_btn
           return true
-        end
-      end
-    end
-
-    def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
-      return true if super
-      if after_down
-        if key == ALT_MODIFIER_KEY
-          if is_action_pick?
-            if is_quick
-              set_root_action(ACTION_PICK)
-            else
-              pop_action
-            end
-            return true
-          end
-        elsif key == VK_NUMPAD1 && is_action_modifier_1? && (is_action_paint_edge? || is_action_paint_face?)
-          if is_quick
-            if is_action_paint_edge?
-              set_root_action(ACTION_PAINT_EDGES, ACTION_MODIFIER_1)
-              return true
-            elsif is_action_paint_face?
-              set_root_action(ACTION_PAINT_FACES, ACTION_MODIFIER_1)
-              return true
-            end
-          else
-            pop_action_modifier
-            return true
-          end
-        elsif key == VK_NUMPAD2 && is_action_modifier_2? && (is_action_paint_edge? || is_action_paint_face?)
-          if is_quick
-            if is_action_paint_edge?
-              set_root_action(ACTION_PAINT_EDGES, ACTION_MODIFIER_2)
-              return true
-            elsif is_action_paint_face?
-              set_root_action(ACTION_PAINT_FACES, ACTION_MODIFIER_2)
-              return true
-            end
-          else
-            pop_action_modifier
-            return true
-          end
-        elsif key == VK_NUMPAD4 && is_action_modifier_4? && is_action_paint_edge?
-          if is_quick
-            set_root_action(ACTION_PAINT_EDGES, ACTION_MODIFIER_4)
-            return true
-          else
-            pop_action_modifier
-            return true
-          end
         end
       end
     end

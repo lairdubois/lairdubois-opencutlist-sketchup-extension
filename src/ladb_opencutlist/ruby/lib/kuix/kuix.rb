@@ -166,6 +166,12 @@ module Ladb::OpenCutList
         Sketchup.active_model.bounds
       end
 
+      # -- Keys --
+
+      def is_key_down?(key)
+        @key_down_times[key].is_a?(Time)
+      end
+
       # -- Events --
 
       def onActivate(view)
