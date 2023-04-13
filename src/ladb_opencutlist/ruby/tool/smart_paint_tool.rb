@@ -577,26 +577,26 @@ module Ladb::OpenCutList
 
     def onKeyDown(key, repeat, flags, view)
       return true if super
-      if key == ALT_MODIFIER_KEY
-        unless is_action_pick?
-          push_action(ACTION_PICK)
-        end
-        return true
-      elsif key == COPY_MODIFIER_KEY
-        if is_action_paint_part?
-          set_root_action(ACTION_PAINT_EDGES)
-          return true
-        elsif is_action_paint_edge?
-          set_root_action(ACTION_PAINT_FACES)
-          return true
-        elsif is_action_paint_face?
-          set_root_action(ACTION_PICK)
-          return true
-        elsif is_action_pick?
-          set_root_action(ACTION_PAINT_PART)
-          return true
-        end
-      elsif key == VK_LEFT
+      # if key == ALT_MODIFIER_KEY
+      #   unless is_action_pick?
+      #     push_action(ACTION_PICK)
+      #   end
+      #   return true
+      # elsif key == COPY_MODIFIER_KEY
+      #   if is_action_paint_part?
+      #     set_root_action(ACTION_PAINT_EDGES)
+      #     return true
+      #   elsif is_action_paint_edge?
+      #     set_root_action(ACTION_PAINT_FACES)
+      #     return true
+      #   elsif is_action_paint_face?
+      #     set_root_action(ACTION_PICK)
+      #     return true
+      #   elsif is_action_pick?
+      #     set_root_action(ACTION_PAINT_PART)
+      #     return true
+      #   end
+      if key == VK_LEFT
         button = _get_selected_material_button
         if button && button.previous && button.previous.is_a?(Kuix::Button)
           button.previous.fire(:click, flags)

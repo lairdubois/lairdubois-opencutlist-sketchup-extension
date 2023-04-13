@@ -275,26 +275,26 @@ module Ladb::OpenCutList
 
     def onKeyDown(key, repeat, flags, view)
       return true if super
-      if key == ALT_MODIFIER_KEY
-        unless is_action_swap_auto?
-          push_action(ACTION_SWAP_AUTO)
-        end
-        return true
-      elsif key == COPY_MODIFIER_KEY
-        if is_action_mirror?
-          set_root_action(ACTION_SWAP_LENGTH_WIDTH)
-          return true
-        elsif is_action_swap_length_width?
-          set_root_action(ACTION_SWAP_FRONT_BACK)
-          return true
-        elsif is_action_swap_front_back?
-          set_root_action(ACTION_SWAP_AUTO)
-          return true
-        elsif is_action_swap_auto?
-          set_root_action(ACTION_MIRROR)
-          return true
-        end
-      elsif key == VK_RIGHT
+      # if key == ALT_MODIFIER_KEY
+      #   unless is_action_swap_auto?
+      #     push_action(ACTION_SWAP_AUTO)
+      #   end
+      #   return true
+      # elsif key == COPY_MODIFIER_KEY
+      #   if is_action_mirror?
+      #     set_root_action(ACTION_SWAP_LENGTH_WIDTH)
+      #     return true
+      #   elsif is_action_swap_length_width?
+      #     set_root_action(ACTION_SWAP_FRONT_BACK)
+      #     return true
+      #   elsif is_action_swap_front_back?
+      #     set_root_action(ACTION_SWAP_AUTO)
+      #     return true
+      #   elsif is_action_swap_auto?
+      #     set_root_action(ACTION_MIRROR)
+      #     return true
+      #   end
+      if key == VK_RIGHT
         if is_action_mirror?
           set_root_action(ACTION_MIRROR, ACTION_MODIFIER_LENGTH)
           return true
