@@ -457,7 +457,7 @@ module Ladb::OpenCutList
     end
 
     def onKeyUp(key, repeat, flags, view)
-      puts "key = #{key}"
+      puts "key = #{key}, flags & COPY_MODIFIER_MASK #{flags & COPY_MODIFIER_MASK}"
       if key == 9 || key == 25  # TAB key doesn't generate "onKeyDown" event
 
         action_defs = get_action_defs
@@ -465,7 +465,7 @@ module Ladb::OpenCutList
         action_index = action_defs.index { |action_def| action_def[:action] == action }
         unless action_index.nil?
 
-          if (flags & CONSTRAIN_MODIFIER_MASK) == CONSTRAIN_MODIFIER_KEY
+          if flags & COPY_MODIFIER_MASK == COPY_MODIFIER_KEY
 
             # Select next modifier if exists
 
@@ -475,7 +475,7 @@ module Ladb::OpenCutList
               modifier_index = action_defs[action_index][:modifiers].index(modifier)
               unless modifier_index.nil?
 
-                next_modifier_index = (modifier_index + 1) % action_defs[action_index][:modifiers].length
+                next_modifier_index = (modifier_index + (flags & CONSTRAIN_MODIFIER_MASK == CONSTRAIN_MODIFIER_KEY ? -1 : 1)) % action_defs[action_index][:modifiers].length
                 next_modifier = action_defs[action_index][:modifiers][next_modifier_index]
                 set_root_action(action, next_modifier)
 
@@ -488,7 +488,7 @@ module Ladb::OpenCutList
 
             # Select next action
 
-            next_action_index = (action_index + 1) % action_defs.length
+            next_action_index = (action_index + (flags & CONSTRAIN_MODIFIER_MASK == CONSTRAIN_MODIFIER_KEY ? -1 : 1)) % action_defs.length
             next_action = action_defs[next_action_index][:action]
             set_root_action(next_action, fetch_action_modifier(next_action))
 
