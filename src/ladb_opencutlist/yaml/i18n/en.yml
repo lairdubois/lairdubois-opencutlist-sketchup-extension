@@ -742,10 +742,11 @@ tab:
         leftover: Leftover
         cut: Cut
         cut_plural: Cuts
-        cut_final: Primary cut (level 1)
-        cut_final_plural: Primary cuts (level 1)
-        cut_through: Primary cut (level 2)
-        cut_through_plural: Primary cuts (level 2)
+        cut_trimming: Trimming cut
+        cut_bounding: Primary cut (level 1)
+        cut_bounding_plural: Primary cuts (level 1)
+        cut_internal_through: Primary cut (level 2)
+        cut_internal_through_plural: Primary cuts (level 2)
         cut_none: None
         bar_dimensional_type_0: Standard Dimensional
         bar_dimensional_type_1: Offcut Board
@@ -1385,8 +1386,8 @@ tool:
   smart_axes:
     title: Orient
     toggle_depth: Parts in background
-    action_0: Flip
-    action_0_status:  Click on a part to flip an instance along one of its dimensions
+    action_0: Mirror
+    action_0_status:  Click on a part to mirror its instance along one of its dimensions
     action_1: Swap length ↔ width
     action_1_status: Click on a part to swap its length with its width
     action_2: Swap front ↔ backside

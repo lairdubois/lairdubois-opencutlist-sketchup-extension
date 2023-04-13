@@ -742,10 +742,11 @@ tab:
         leftover: Verschnitt
         cut: Schnitt
         cut_plural: Schnitte
-        cut_final: Primärschnitt (Stufe 1)
-        cut_final_plural: Primäre Schnitte (Stufe 1)
-        cut_through: Primärschnitt (Stufe 2)
-        cut_through_plural: Primäre Schnitte (Stufe 2)
+        cut_trimming: Säuberungsschnitt
+        cut_bounding: Primärschnitt (Stufe 1)
+        cut_bounding_plural: Primäre Schnitte (Stufe 1)
+        cut_internal_through: Primärschnitt (Stufe 2)
+        cut_internal_through_plural: Primäre Schnitte (Stufe 2)
         cut_none: Kein
         bar_dimensional_type_0: Standard-Stange
         bar_dimensional_type_1: Stangenrest
