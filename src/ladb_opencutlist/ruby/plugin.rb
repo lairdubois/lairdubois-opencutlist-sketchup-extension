@@ -952,7 +952,7 @@ module Ladb::OpenCutList
               :top => @dialog_top,
               :min_width => DIALOG_MINIMIZED_WIDTH,
               :min_height => DIALOG_MINIMIZED_HEIGHT,
-              :style => UI::HtmlDialog::STYLE_DIALOG
+              :style => UI::HtmlDialog::STYLE_UTILITY
           })
       @dialog.set_on_closed {
         @dialog = nil
