@@ -743,7 +743,6 @@ tab:
         cut: Coupe
         cut_plural: Coupes
         cut_trimming: Coupe de propreté
-        cut_trimming_plural: Coupes de propreté
         cut_bounding: Coupe primaire (niveau 1)
         cut_bounding_plural: Coupes primaires (niveau 1)
         cut_internal_through: Coupe primaire (niveau 2)
