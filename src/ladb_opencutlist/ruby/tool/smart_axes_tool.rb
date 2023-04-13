@@ -29,7 +29,7 @@ module Ladb::OpenCutList
     ACTION_MODIFIER_THICKNESS = 4
 
     ACTIONS = [
-      { :action => ACTION_MIRROR, :modifiers => [ ACTION_MODIFIER_THICKNESS, ACTION_MODIFIER_LENGTH, ACTION_MODIFIER_WIDTH ] },
+      { :action => ACTION_MIRROR, :modifiers => [ ACTION_MODIFIER_WIDTH, ACTION_MODIFIER_THICKNESS, ACTION_MODIFIER_LENGTH ], :startup_modifier => ACTION_MODIFIER_THICKNESS },
       { :action => ACTION_SWAP_LENGTH_WIDTH, :modifiers => [ ACTION_MODIFIER_CLOCKWISE, ACTION_MODIFIER_ANTICLOCKWIZE ] },
       { :action => ACTION_SWAP_FRONT_BACK },
       { :action => ACTION_SWAP_AUTO }
@@ -294,6 +294,15 @@ module Ladb::OpenCutList
           set_root_action(ACTION_MIRROR)
           return true
         end
+      elsif key == VK_RIGHT && is_action_mirror?
+        set_root_action(ACTION_MIRROR, ACTION_MODIFIER_LENGTH)
+        return true
+      elsif key == VK_LEFT && is_action_mirror?
+        set_root_action(ACTION_MIRROR, ACTION_MODIFIER_WIDTH)
+        return true
+      elsif key == VK_UP && is_action_mirror?
+        set_root_action(ACTION_MIRROR, ACTION_MODIFIER_THICKNESS)
+        return true
       elsif repeat == 1
         if key == VK_NUMPAD1 && is_action_swap_length_width?
           push_action_modifier(ACTION_MODIFIER_CLOCKWISE)

@@ -397,8 +397,11 @@ module Ladb::OpenCutList
         if modifier.nil?
           action_def = get_action_defs.select { |action_def| action_def[:action] == action }.first
           unless action_def.nil?
-            modifiers = action_def[:modifiers]
-            modifier = modifiers.first if modifiers.is_a?(Array)
+            modifier = action_def[:startup_modifier]
+            if modifier.nil?
+              modifiers = action_def[:modifiers]
+              modifier = modifiers.first if modifiers.is_a?(Array)
+            end
           end
         end
       end
