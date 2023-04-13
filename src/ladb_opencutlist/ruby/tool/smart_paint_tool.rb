@@ -598,13 +598,13 @@ module Ladb::OpenCutList
         end
       elsif key == VK_LEFT
         button = _get_selected_material_button
-        if button && button.previous
+        if button && button.previous && button.previous.is_a?(Kuix::Button)
           button.previous.fire(:click, flags)
           return true
         end
       elsif key == VK_RIGHT
         button = _get_selected_material_button
-        if button && button.next
+        if button && button.next && button.next.is_a?(Kuix::Button)
           button.next.fire(:click, flags)
           return true
         end
