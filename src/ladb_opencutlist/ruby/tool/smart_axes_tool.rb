@@ -30,7 +30,7 @@ module Ladb::OpenCutList
 
     ACTIONS = [
       { :action => ACTION_MIRROR, :modifiers => [ ACTION_MODIFIER_WIDTH, ACTION_MODIFIER_THICKNESS, ACTION_MODIFIER_LENGTH ], :startup_modifier => ACTION_MODIFIER_THICKNESS },
-      { :action => ACTION_SWAP_LENGTH_WIDTH, :modifiers => [ ACTION_MODIFIER_CLOCKWISE, ACTION_MODIFIER_ANTICLOCKWIZE ] },
+      { :action => ACTION_SWAP_LENGTH_WIDTH, :modifiers => [ ACTION_MODIFIER_ANTICLOCKWIZE, ACTION_MODIFIER_CLOCKWISE ], :startup_modifier => ACTION_MODIFIER_CLOCKWISE },
       { :action => ACTION_SWAP_FRONT_BACK },
       { :action => ACTION_SWAP_AUTO }
     ].freeze
@@ -294,23 +294,25 @@ module Ladb::OpenCutList
           set_root_action(ACTION_MIRROR)
           return true
         end
-      elsif key == VK_RIGHT && is_action_mirror?
-        set_root_action(ACTION_MIRROR, ACTION_MODIFIER_LENGTH)
-        return true
-      elsif key == VK_LEFT && is_action_mirror?
-        set_root_action(ACTION_MIRROR, ACTION_MODIFIER_WIDTH)
-        return true
+      elsif key == VK_RIGHT
+        if is_action_mirror?
+          set_root_action(ACTION_MIRROR, ACTION_MODIFIER_LENGTH)
+          return true
+        elsif is_action_swap_length_width?
+          set_root_action(ACTION_SWAP_LENGTH_WIDTH, ACTION_MODIFIER_CLOCKWISE)
+          return true
+        end
+      elsif key == VK_LEFT
+        if is_action_mirror?
+          set_root_action(ACTION_MIRROR, ACTION_MODIFIER_WIDTH)
+          return true
+        elsif is_action_swap_length_width?
+          set_root_action(ACTION_SWAP_LENGTH_WIDTH, ACTION_MODIFIER_ANTICLOCKWIZE)
+          return true
+        end
       elsif key == VK_UP && is_action_mirror?
         set_root_action(ACTION_MIRROR, ACTION_MODIFIER_THICKNESS)
         return true
-      elsif repeat == 1
-        if key == VK_NUMPAD1 && is_action_swap_length_width?
-          push_action_modifier(ACTION_MODIFIER_CLOCKWISE)
-          return true
-        elsif key == VK_NUMPAD2 && is_action_swap_length_width?
-          push_action_modifier(ACTION_MODIFIER_ANTICLOCKWIZE)
-          return true
-        end
       end
     end
 
@@ -350,20 +352,6 @@ module Ladb::OpenCutList
             end
             return true
           end
-        elsif key == VK_NUMPAD1 && is_action_modifier_clockwise? && is_action_swap_length_width?
-          if is_quick
-            set_root_action(ACTION_SWAP_LENGTH_WIDTH, ACTION_MODIFIER_CLOCKWISE)
-          else
-            pop_action_modifier
-          end
-          return true
-        elsif key == VK_NUMPAD2 && is_action_modifier_anticlockwise? && is_action_swap_length_width?
-          if is_quick
-            set_root_action(ACTION_SWAP_LENGTH_WIDTH, ACTION_MODIFIER_ANTICLOCKWIZE)
-          else
-            pop_action_modifier
-          end
-          return true
         end
       end
     end
