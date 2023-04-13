@@ -103,10 +103,10 @@
         }
       }
 
-      &.cut-through {
+      &.cut-trimming {
         &.cut-highlighted {
           .cut-outer, .cut-inner {
-            fill: #2DB84D;
+            fill: #f548ec;
           }
           .cut-outer {
             fill-opacity: 0.5;
@@ -114,12 +114,12 @@
         }
         &:hover {
           .cut-outer, .cut-inner {
-            fill: #2DB84D;
+            fill: #f548ec;
           }
         }
       }
 
-      &.cut-final {
+      &.cut-bounding {
         &.cut-highlighted {
           .cut-outer, .cut-inner {
             fill: #F5486E;
@@ -131,6 +131,22 @@
         &:hover {
           .cut-outer, .cut-inner {
             fill: #F5486E;
+          }
+        }
+      }
+
+      &.cut-internal-through {
+        &.cut-highlighted {
+          .cut-outer, .cut-inner {
+            fill: #2DB84D;
+          }
+          .cut-outer {
+            fill-opacity: 0.5;
+          }
+        }
+        &:hover {
+          .cut-outer, .cut-inner {
+            fill: #2DB84D;
           }
         }
       }

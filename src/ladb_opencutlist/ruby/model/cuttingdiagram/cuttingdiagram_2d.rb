@@ -243,7 +243,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :px_x, :px_y, :px_length, :x, :y, :is_horizontal, :is_through, :is_final
+    attr_reader :px_x, :px_y, :px_length, :x, :y, :is_horizontal, :is_internal_through, :is_trimming, :is_bounding
 
     def initialize(_def)
       @_def = _def
@@ -254,8 +254,9 @@ module Ladb::OpenCutList
       @x = _def.x.to_l.to_s
       @y = _def.y.to_l.to_s
       @is_horizontal = _def.is_horizontal
-      @is_through = _def.is_through
-      @is_final = _def.is_final
+      @is_internal_through = _def.is_internal_through
+      @is_trimming = _def.is_trimming
+      @is_bounding = _def.is_bounding
 
     end
 

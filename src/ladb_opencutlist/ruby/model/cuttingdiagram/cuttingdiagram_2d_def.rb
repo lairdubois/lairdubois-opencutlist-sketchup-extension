@@ -226,7 +226,7 @@ module Ladb::OpenCutList
 
   class Cuttingdiagram2dCutDef
 
-    attr_accessor :px_x, :px_y, :px_length, :x, :y, :length, :is_horizontal, :is_through, :is_final
+    attr_accessor :px_x, :px_y, :px_length, :x, :y, :length, :is_horizontal, :is_internal_through, :is_trimming, :is_bounding
 
     def initialize
 
@@ -237,8 +237,9 @@ module Ladb::OpenCutList
       @y = 0
       @length = 0
       @is_horizontal = false
-      @is_through = false
-      @is_final = false
+      @is_internal_through = false
+      @is_trimming = false
+      @is_bounding = false
 
     end
 

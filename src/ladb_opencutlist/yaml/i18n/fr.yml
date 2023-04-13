@@ -742,8 +742,10 @@ tab:
         leftover: Chute
         cut: Coupe
         cut_plural: Coupes
-        cut_final: Coupe primaire (niveau 1)
-        cut_final_plural: Coupes primaires (niveau 1)
+        cut_trimming: Coupe de propreté
+        cut_trimming_plural: Coupes de propreté
+        cut_bounding: Coupe primaire (niveau 1)
+        cut_bounding_plural: Coupes primaires (niveau 1)
         cut_through: Coupe primaire (niveau 2)
         cut_through_plural: Coupes primaires (niveau 2)
         cut_none: Aucune
