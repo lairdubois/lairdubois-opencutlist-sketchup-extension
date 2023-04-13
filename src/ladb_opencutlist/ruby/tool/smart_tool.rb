@@ -457,6 +457,7 @@ module Ladb::OpenCutList
     end
 
     def onKeyUp(key, repeat, flags, view)
+      puts "key = #{key}"
       if key == 9 || key == 25  # TAB key doesn't generate "onKeyDown" event
 
         action_defs = get_action_defs
