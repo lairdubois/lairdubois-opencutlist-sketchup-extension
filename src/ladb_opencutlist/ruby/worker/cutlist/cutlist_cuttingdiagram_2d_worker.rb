@@ -292,8 +292,8 @@ module Ladb::OpenCutList
           cut_def.y = cut.y_pos
           cut_def.length = cut.length
           cut_def.is_horizontal = cut.is_horizontal
-          cut_def.is_through = cut.is_through
-          cut_def.is_final = cut.is_final
+          cut_def.is_through = (cut.cut_type == BinPacking2D::INTERNAL_THROUGH_CUT)
+          cut_def.is_final = (cut.cut_type == BinPacking2D::TRIMMING_CUT || cut.cut_type == BinPacking2D::BOUNDING_CUT)
           sheet_def.cut_defs.push(cut_def)
 
         }
