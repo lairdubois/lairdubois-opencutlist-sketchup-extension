@@ -1393,12 +1393,10 @@ tool:
     action_2: Permuter Face ↔ Contre-face
     action_2_status: Cliquez sur une pièce pour permuter la lecture de sa Face avec sa Contre-face
     action_3: Adapter les axes
-    action_3_status: Cliquez sur la face ou l'arête d'une pièce pour y adapter l'orientation des axes
+    action_3_status: Cliquez sur la face, l'arrête un un sommet d'une pièce pour y adapter l'orientation des axes
     action_modifier_length: Lo
     action_modifier_width: La
     action_modifier_thickness: Ep
-    success:
-      part_oriented: Cette pièce a déjà sa longueur sur la plus grande dimension et son épaisseur sur la plus petite
     warning:
       more_entities: "{{ count_used }} instances partageant la même définition seront modifiées"
     error:
