@@ -493,7 +493,19 @@ module Ladb::OpenCutList
       set_filter_by_type(type, !@@filters[type], property)
     end
 
-    def set_current_material(material, update_buttons = false)
+    def set_current_material(material, update_buttons = false, update_action = false)
+
+      # Switch action according to material type
+      if update_action
+        case MaterialAttributes.new(material).type
+        when MaterialAttributes::TYPE_EDGE
+          set_root_action(ACTION_PAINT_EDGES)
+        when MaterialAttributes::TYPE_VENEER
+          set_root_action(ACTION_PAINT_FACES)
+        else
+          set_root_action(ACTION_PAINT_PART)
+        end
+      end
 
       # Save material as current
       store_action_material(fetch_action, material)
@@ -630,6 +642,7 @@ module Ladb::OpenCutList
     def onMaterialAdd(materials, material)
       _populate_material_defs(Sketchup.active_model)
       _setup_material_buttons
+      set_current_material(material, true, true)
     end
 
     def onMaterialRemove(materials, material)
@@ -1064,18 +1077,8 @@ module Ladb::OpenCutList
 
                 elsif event == :l_button_up
 
-                  # Switch action according to material type
-                  case MaterialAttributes.new(material).type
-                  when MaterialAttributes::TYPE_EDGE
-                    set_root_action(ACTION_PAINT_EDGES)
-                  when MaterialAttributes::TYPE_VENEER
-                    set_root_action(ACTION_PAINT_FACES)
-                  else
-                    set_root_action(ACTION_PAINT_PART)
-                  end
-
-                  # Set picked material as current (and switch to paint action)
-                  set_current_material(material, true)
+                  # Set picked material as current
+                  set_current_material(material, true, true)
 
                   return
                 end
