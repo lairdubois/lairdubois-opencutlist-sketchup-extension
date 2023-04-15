@@ -129,6 +129,57 @@ class ConditionalLineMaterial extends THREE.ShaderMaterial {
 
 }
 
+class Box3HelperDashed extends THREE.LineSegments {
+
+    constructor(box, color = 0xffff00) {
+
+        let baseLines = [
+            new THREE.Vector3(1, 1, 1),
+            new THREE.Vector3(1, 1, -1),
+            new THREE.Vector3(1, 1, -1),
+            new THREE.Vector3(1, -1, -1),
+            new THREE.Vector3(1, -1, -1),
+            new THREE.Vector3(1, -1, 1)
+        ]
+        let axis = new THREE.Vector3(0, 1, 0);
+        let pts = [];
+        for (let i = 0; i < 4; i++) {
+            baseLines.forEach(bl => {
+                pts.push(bl.clone().applyAxisAngle(axis, Math.PI * 0.5 * i));
+            })
+        }
+
+        const geometry = new THREE.BufferGeometry().setFromPoints(pts);
+
+        super(geometry, new THREE.LineDashedMaterial({color: color, toneMapped: false, dashSize: 0.1, gapSize: 0.1}));
+
+        this.box = box;
+
+        this.type = 'Box3HelperDashed';
+
+        this.geometry.computeBoundingSphere();
+        this.computeLineDistances();
+
+    }
+
+    updateMatrixWorld(force) {
+
+        const box = this.box;
+
+        if (box.isEmpty()) return;
+
+        box.getCenter(this.position);
+
+        box.getSize(this.scale);
+
+        this.scale.multiplyScalar(0.5);
+
+        super.updateMatrixWorld(force);
+
+    }
+}
+
+
 // Declarations
 
 const DPI = 96;
@@ -892,7 +943,7 @@ const fnSetupModel = function(modelDef, partsColored, partsOpacity, pinsHidden, 
         };
 
         // Create box helper
-        boxHelper = new THREE.Box3Helper(modelBox, 0x0000ff);
+        boxHelper = new Box3HelperDashed(modelBox, 0x0000ff);
         boxHelper.visible = false;
         scene.add(boxHelper);
 
