@@ -48,13 +48,6 @@ module Ladb::OpenCutList
 
     ACTION_NONE = -1
 
-    COLOR_BLACK = Sketchup::Color.new(0, 0, 0).freeze
-    COLOR_WHITE = Sketchup::Color.new(255, 255, 255).freeze
-    COLOR_RED = Sketchup::Color.new(255, 0, 0).freeze
-    COLOR_GREEN = Sketchup::Color.new(0, 255, 0).freeze
-    COLOR_BLUE = Sketchup::Color.new(0, 0, 255).freeze
-    COLOR_LIGHT_GREY = Sketchup::Color.new(220, 220, 220).freeze
-    COLOR_DARK_GREY = Sketchup::Color.new(120, 120, 120).freeze
     COLOR_BRAND = Sketchup::Color.new(247, 127, 0).freeze
     COLOR_BRAND_DARK = Sketchup::Color.new(62, 59, 51)
     COLOR_BRAND_LIGHT = Sketchup::Color.new(214, 212, 205)
@@ -443,8 +436,9 @@ module Ladb::OpenCutList
     def onActivate(view)
       super
 
-      # Retrieve pick helper
+      # Create pick helpers
       @pick_helper = view.pick_helper
+      @input_point = Sketchup::InputPoint.new
 
       # Set startup cursor
       set_root_action(get_startup_action)

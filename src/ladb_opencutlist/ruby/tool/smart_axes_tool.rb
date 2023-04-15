@@ -5,6 +5,7 @@ module Ladb::OpenCutList
   require_relative '../helper/layer_visibility_helper'
   require_relative '../helper/face_triangles_helper'
   require_relative '../helper/boundingbox_helper'
+  require_relative '../helper/entities_helper'
   require_relative '../model/attributes/definition_attributes'
   require_relative '../model/geom/size3d'
   require_relative '../utils/axis_utils'
@@ -15,12 +16,13 @@ module Ladb::OpenCutList
     include LayerVisibilityHelper
     include FaceTrianglesHelper
     include BoundingBoxHelper
+    include EntitiesHelper
     include CutlistObserverHelper
 
     ACTION_FLIP = 0
     ACTION_SWAP_LENGTH_WIDTH = 1
     ACTION_SWAP_FRONT_BACK = 2
-    ACTION_SWAP_AUTO = 3
+    ACTION_ADAPT_AXES = 3
 
     ACTION_MODIFIER_CLOCKWISE = 0
     ACTION_MODIFIER_ANTICLOCKWIZE = 1
@@ -32,7 +34,7 @@ module Ladb::OpenCutList
       { :action => ACTION_FLIP, :modifiers => [ACTION_MODIFIER_LENGTH, ACTION_MODIFIER_WIDTH, ACTION_MODIFIER_THICKNESS ], :startup_modifier => ACTION_MODIFIER_THICKNESS },
       { :action => ACTION_SWAP_LENGTH_WIDTH, :modifiers => [ ACTION_MODIFIER_ANTICLOCKWIZE, ACTION_MODIFIER_CLOCKWISE ], :startup_modifier => ACTION_MODIFIER_CLOCKWISE },
       { :action => ACTION_SWAP_FRONT_BACK },
-      { :action => ACTION_SWAP_AUTO }
+      { :action => ACTION_ADAPT_AXES }
     ].freeze
 
     COLOR_MESH = Sketchup::Color.new(200, 200, 0, 100).freeze
@@ -50,7 +52,7 @@ module Ladb::OpenCutList
       @cursor_swap_length_width_clockwise = create_cursor('swap-length-width-clockwise', 4, 4)
       @cursor_swap_length_width_anticlockwise = create_cursor('swap-length-width-anticlockwise', 4, 4)
       @cursor_swap_front_back = create_cursor('swap-front-back', 4, 4)
-      @cursor_swap_auto = create_cursor('swap-auto', 4, 4)
+      @cursor_adapt_axes = create_cursor('adapt-axes', 4, 4)
       @cursor_flip = create_cursor('flip', 4, 4)
       @cursor_select_error = create_cursor('select-error', 4, 4)
 
@@ -81,7 +83,7 @@ module Ladb::OpenCutList
         return super +
           ' | ↑↓ + ' + Plugin.instance.get_i18n_string('tool.default.transparency') + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.toggle_depth') + '.' +
           ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_3') + '.'
-      when ACTION_SWAP_AUTO
+      when ACTION_ADAPT_AXES
         return super +
           ' | ↑↓ + ' + Plugin.instance.get_i18n_string('tool.default.transparency') + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.toggle_depth') + '.' +
           ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_0') + '.'
@@ -99,8 +101,8 @@ module Ladb::OpenCutList
         return @cursor_swap_front_back
       when ACTION_FLIP
         return @cursor_flip
-      when ACTION_SWAP_AUTO
-        return @cursor_swap_auto
+      when ACTION_ADAPT_AXES
+        return @cursor_adapt_axes
       end
 
       super
@@ -169,8 +171,8 @@ module Ladb::OpenCutList
       fetch_action == ACTION_FLIP
     end
 
-    def is_action_swap_auto?
-      fetch_action == ACTION_SWAP_AUTO
+    def is_action_adapt_axes?
+      fetch_action == ACTION_ADAPT_AXES
     end
 
     def is_action_modifier_clockwise?
@@ -424,7 +426,11 @@ module Ladb::OpenCutList
         end
 
         # Axes helper
-        axes_helper = Kuix::AxesHelper.new
+        if is_action_adapt_axes?
+          axes_helper = Kuix::AxesHelper.new(20, 2, COLOR_RED.blend(COLOR_WHITE, 0.4), COLOR_GREEN.blend(COLOR_WHITE, 0.4), COLOR_BLUE.blend(COLOR_WHITE, 0.4))
+        else
+          axes_helper = Kuix::AxesHelper.new
+        end
         axes_helper.transformation = Geom::Transformation.scaling(1 / part.def.scale.x, 1 / part.def.scale.y, 1 / part.def.scale.z)
         part_helper.append(axes_helper)
 
@@ -454,17 +460,67 @@ module Ladb::OpenCutList
           @space.append(mesh)
 
         end
+        if is_action_adapt_axes?
+
+          input_face, input_edge, t = _get_input_axes(instance_info)
+
+          bounds = Geom::BoundingBox.new
+          bounds.add(_compute_children_faces_triangles(instance_info.entity.definition.entities, t.inverse))
+
+          v = input_face.normal
+          v.length *= 0.01
+
+          mesh = Kuix::Mesh.new
+          mesh.add_triangles(_compute_children_faces_triangles([ input_face ]))
+          mesh.background_color = Sketchup::Color.new(255, 0, 255, 0.2)
+          mesh.transformation = instance_info.transformation * Geom::Transformation.translation(v)
+          @space.append(mesh)
+
+          # Back arrow
+          arrow = Kuix::Arrow.new
+          arrow.bounds.origin.copy!(bounds.min.offset(Geom::Vector3d.new(0, 0, -arrow_offset)))
+          arrow.bounds.size.copy!(bounds)
+          arrow.color = Sketchup::Color.new(255, 0, 255)
+          arrow.line_width = arrow_line_width
+          arrow.line_stipple = '-'
+          arrow.transformation = t
+          part_helper.append(arrow)
+
+          # Front arrow
+          arrow = Kuix::Arrow.new
+          arrow.pattern_transformation = Geom::Transformation.translation(Z_AXIS)
+          arrow.bounds.origin.copy!(bounds.min.offset(Geom::Vector3d.new(0, 0, arrow_offset)))
+          arrow.bounds.size.copy!(bounds)
+          arrow.color = Sketchup::Color.new(255, 0, 255)
+          arrow.line_width = arrow_line_width
+          arrow.transformation = t
+          part_helper.append(arrow)
+
+          # Box helper
+          box_helper = Kuix::BoxHelper.new
+          box_helper.bounds.origin.copy!(bounds.min)
+          box_helper.bounds.size.copy!(bounds)
+          box_helper.bounds.size.width += increases[0] / part.def.scale.x
+          box_helper.bounds.size.height += increases[1] / part.def.scale.y
+          box_helper.bounds.size.depth += increases[2] / part.def.scale.z
+          box_helper.color = is_action_adapt_axes? ? Sketchup::Color.new(255, 0, 255) : COLOR_BOX
+          box_helper.line_width = 2
+          box_helper.line_stipple = '-'
+          box_helper.transformation = t
+          part_helper.append(box_helper)
+
+          # Axes helper
+          axes_helper = Kuix::AxesHelper.new
+          axes_helper.transformation = t
+          part_helper.append(axes_helper)
+
+        end
 
 
         # Status
 
         if !is_action_flip? && part.group.material_type == MaterialAttributes::TYPE_HARDWARE
           notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_orientable')}", MESSAGE_TYPE_ERROR)
-          return
-        end
-
-        if is_action_swap_auto? && !part.auto_oriented && part.def.size.length >= part.def.size.width && part.def.size.width >= part.def.size.thickness
-          notify_message("✔ #{Plugin.instance.get_i18n_string('tool.smart_axes.success.part_oriented')}", MESSAGE_TYPE_SUCCESS)
           return
         end
 
@@ -497,11 +553,13 @@ module Ladb::OpenCutList
     def _handle_mouse_event(x, y, view, event = nil)
       if event == :move
 
+        @input_point.pick(view, x, y)
+
         if @pick_helper.do_pick(x, y) > 0
           @pick_helper.count.times { |pick_path_index|
 
             picked_path = @pick_helper.path_at(pick_path_index)
-            if picked_path == @picked_path
+            if picked_path == @picked_path && !is_action_adapt_axes?
               return
             # TODO : This code doesn't support nested components
             # elsif @active_part_entity_path
@@ -601,17 +659,10 @@ module Ladb::OpenCutList
                 size.axes[2].reverse
               )
 
-            elsif is_action_swap_auto?
+            elsif is_action_adapt_axes?
 
               instance_info = @active_part.def.instance_infos.values.first
-              oriented_size = Size3d.create_from_bounds(instance_info.definition_bounds, @active_part.def.scale, true)
-
-              ti = Geom::Transformation.axes(
-                ORIGIN,
-                oriented_size.axes[0],
-                AxisUtils.flipped?(oriented_size.axes[0], oriented_size.axes[1], oriented_size.axes[2]) ? oriented_size.axes[1].reverse : oriented_size.axes[1],
-                oriented_size.axes[2]
-              )
+              input_face, input_edge, ti = _get_input_axes(instance_info)
 
             end
             unless ti.nil?
@@ -651,6 +702,32 @@ module Ladb::OpenCutList
         end
 
       end
+    end
+
+    def _get_input_axes(instance_info)
+
+      input_face = @input_point.face
+      if input_face.nil?
+        input_face = find_largest_face(instance_info.entity, instance_info.transformation)
+      end
+
+      input_edge = @input_point.edge
+      if input_edge.nil? || !input_edge.faces.include?(input_face)
+        input_edge = find_longest_outer_edge(input_face, instance_info.transformation)
+      end
+
+      input_vertex = @input_point.vertex
+      if input_vertex.nil? || !input_vertex.faces.include?(input_face)
+        origin = input_face.bounds.center
+      else
+        origin = input_vertex.position
+      end
+
+      z_axis = input_face.normal
+      x_axis = (Geom::Vector3d.new(input_edge.end.position.to_a) - Geom::Vector3d.new(input_edge.start.position.to_a)).normalize
+      y_axis = z_axis.cross(x_axis).normalize
+
+      [ input_face, input_edge, Geom::Transformation.axes(origin, x_axis, y_axis, z_axis) ]
     end
 
   end
