@@ -6,16 +6,16 @@ _description: "Genereer materiaallijsten, zaagschema's voor panelen en balken vo
 default:
   minimize: Minimaliseren
   maximize: Maximaliseren
-  cancel: Annuleer
+  cancel: Annuleren
   validate: Bevestigen
   confirm: Bevestigen
   ok: OK
-  open: Open
-  see: Bekijk
+  open: Openen
+  see: Bekijken
   close: Sluiten
-  clear: Maak leeg
-  refresh: Ververs
-  generate: Bereken
+  clear: Leeg maken
+  refresh: Verversen
+  generate: Genereren
   print: Afdrukken
   export: Exporteren
   import: Importeren
@@ -23,13 +23,17 @@ default:
   preview: In zicht
   options: Opties
   caution: Let op
-  remove: Verwijder
-  create: Maak
-  duplicate: Duplizieren
+  remove: Verwijderen
+  create: Maken
+  duplicate: Kopiëren
   ignore: Negeren
   download: Downloaden
-  upgrade: Updaten
+  upgrade: Verversen
   copy: Gekopieerd
+  select_all: Selecteer alle
+  unselect_all: Alles deselecteren
+  draw: ""
+  estimate: ""
   empty_filename: geen bestandnaam.skp
   help: Help
   error: Oeps!
@@ -58,6 +62,12 @@ default:
   setup_model_units: Configureer modeleenheden
   load_more: Meer laden
   reset_to_app_defaults: Terugzetten naar oorspronkelijke waarden
+  constrain_key: ""
+  copy_key_win: ""
+  copy_key_mac: Optie
+  alt_key_win: Alt
+  alt_key_mac: Opdracht
+  tab_key: ""
 core:
   menu:
     submenu: OpenCutList
@@ -67,13 +77,15 @@ core:
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
-      edit_part_veneers_properties: $t(tab.cutlist.edit_part_veneers_properties)
+      edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       smart_paint: $t(core.toolbar.command.smart_paint)
+      smart_axes: $t(core.toolbar.command.smart_axes)
   toolbar:
     name: OpenCutList
     command:
       dialog: OpenCutList
       smart_paint: Kleur de onderdelen
+      smart_axes: ""
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
@@ -92,10 +104,8 @@ core:
       Het wordt niet aanbevolen om deze tijdens productie te gebruiken.
 
       Om een ​​bug te rapporteren: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
-    old_su: |
-      U gebruikt een oudere versie van SketchUp ({{ sketchup_version }}). Deze plug-in zal werken, maar kan bepaalde bugs vertonen.
-      Om volledig te profiteren van OpenCutList, raden we aan om te upgraden naar ten minste **SketchUp 2017**.
-    feature_locked: "*Niet de-activeerbaar in deze versie van SketchUp*"
+  error:
+    feature_unavailable: "Deze functie vereist SketchUp {{ version }} of hoger"
   event:
     model_change: Er zijn veranderingen aangebracht.
     options_change: Er zijn opties aangepast.
@@ -125,6 +135,7 @@ core:
       unzip: Er ging iets mis bij het uitpakken van het archief.
   preset:
     label: Voorkeuren
+    manage: ""
     save_to: Opslaan als
     restore_from: Terugzetten vanaf
     app_defaults: oorspronkelijke presets
@@ -145,6 +156,20 @@ core:
     tooltip:
       save_to: "Voorinstelling '{{ name }}' bijwerken"
       delete: "Voorinstelling '{{ name }}' verwijderen"
+    dictionary:
+      component_textinput_color: Kleurenpalet
+      cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
+      cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
+      cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
+      cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
+      cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
+      cutlist_options: $t(tab.cutlist.label) / $t(default.options)
+      cutlist_report_options: $t(tab.cutlist.label) / $t(tab.cutlist.report.title)
+      importer_import_options: $t(tab.importer.label) / $t(default.import)
+      importer_load_options: $t(tab.importer.label) / $t(default.open)
+      materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
+      materials_options: $t(tab.materials.label) / $t(default.options)
+      settings_model: $t(tab.settings.label) / Model
   progress:
     please_wait: Berekening van een wereld van vrede
   component:
@@ -154,7 +179,22 @@ core:
       store: Bewaar kleur
       remove: Kleur vergeten
     textinput_code:
+      snippets: ""
       help: Druk op **@** om de lijst met gegevensvariabelen te openen.
+    three_viewer:
+      view: "Beeld {{ view }}"
+      view_isometric: Isometrisch
+      view_top: Bovenaanzicht
+      view_bottom: Onderaanzicht
+      view_front: Vooraanzicht
+      view_back: Achteraanzicht
+      view_left: Links
+      view_right: Rechts
+      zoom: "{{ zoom }} Schaal"
+      explode_factor: ""
+      toggle_box_helper: ""
+      toggle_box_dimensions_helper: Afmetingen tonen of verbergen
+      toggle_axes_helper: Toon of verberg de assen
   docs:
     error:
       failed_to_load: |
@@ -178,7 +218,7 @@ tab:
     edit_part_axes_properties: Bewerk de eigenschappen (assen) van het onderdeel
     edit_part_size_increase_properties: Bewerk de eigenschappen (overmaat) van het onderdeel
     edit_part_edges_properties: Bewerk de eigenschappen (randbanden) van het onderdeel
-    edit_part_veneers_properties: Bewerk de eigenschappen (fineren) van het onderdeel
+    edit_part_faces_properties: Bewerk de eigenschappen (fineren) van het onderdeel
     tooltip:
       show_hide_block: Toon / verberg groep
       scroll_to_block: Scroll naar groep
@@ -254,17 +294,17 @@ tab:
       size_increased: "Deze afmeting wordt vergroot met een overmaat voor {{ value }} gegroepeerde onderdelen"
       has_edges: "Dit onderdeel bevat {{ count }} randafwerking"
       has_edges_plural: "Dit onderdeel bevat {{ count }} randafwerkingen"
-      has_veneers: "Dit deel bevat {{ count }} gefineerd oppervlak"
-      has_veneers_plural: "Dit deel bevat {{ count }} gefineerde oppervlakken"
+      has_faces: "Dit deel bevat {{ count }} gefineerd oppervlak"
+      has_faces_plural: "Dit deel bevat {{ count }} gefineerde oppervlakken"
       edge_decremented: "Verminderd met de dikte van de randafwerking ({{ decrement }})"
       edge_ymin: Kantenband lengte 1
       edge_ymax: Kantenband lengte 2
       edge_xmin: Kantenband breedte 1
       edge_xmax: Kantenband breedte 2
-      veneer_zmin: Achterkant
-      veneer_zmax: Voorzijde
+      face_zmin: Achterkant
+      face_zmax: Voorzijde
       dblclick_to_copy_all_edges: Dubbelklik hier om deze waarde naar de andere randen te dupliceren
-      dblclick_to_copy_all_veneers: Dubbelklik hier om deze waarde over te brengen naar het andere oppervlak
+      dblclick_to_copy_all_faces: Dubbelklik hier om deze waarde over te brengen naar het andere oppervlak
       dblclick_to_sort_axes: Dubbelklik hier om de volgorde van de assen automatisch aan te passen aan de afmetingen van het onderdeel
       part_axes: Interne assen van het onderdeel
       select_unselect_all_parts: Selecteer / De-selecteer alle onderdelen van de groep
@@ -275,10 +315,11 @@ tab:
       numbers_save: Bewaar de onderdeel nummers
       numbers_reset: Stel de onderdeel nummers opnieuw in
       highlight_parts: $t(tab.cutlist.highlight_parts)
+      group_layout_parts: ""
       group_numbers_save: Bewaar de onderdeel nummers van deze groep
       group_numbers_reset: Stel de onderdeel nummers van deze groep opnieuw in
       group_cuttingdiagram: Zaagschema
-      group_labels: Druk etiketten af
+      group_labels: ""
       edit_material: "Wijzig materiaal '{{ material_name }}'"
       expand_all: Alle lijnen uitklappen
       collapse_all: Alle lijnen inklappen
@@ -295,7 +336,7 @@ tab:
       general: Algemeen
       extra_help: "Lijst van materiaalsoort-specifieke eigenschappen \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Randafwerkingen
-      veneers: Fineren
+      faces: Fineren
       name: Beschrijving
       material: Materiaal
       cumulable: Cumulatief
@@ -314,9 +355,9 @@ tab:
       instance_count_by_part_1: 1 per onderdeel
       instance_count_by_part_2: 2 stuks per onderdeel
       mass: Massa
-      mass_help: De gewicht van het deel zal worden gebruikt bij het genereren van **Rapporten**.
+      mass_help: De gewicht van het deel zal worden gebruikt bij het genereren van **Schatting**.
       price: Prijs
-      price_help: De prijs van het deel zal worden gebruikt bij het genereren van **Rapporten**.
+      price_help: De prijs van het deel zal worden gebruikt bij het genereren van **Schatting**.
       thickness_layer_count: Aantal lagen
       thickness_layer_count_help: |
         Definieer hier het aantal lagen dat de dikte van het getekende stuk verdeelt.
@@ -326,12 +367,12 @@ tab:
       description: Beschrijving
       description_help: |
         In de *Beschrijving* kunt u persoonlijke informatie invoeren voor elke sub-definitie.
-      tags: Tags
+      tags: Badges
       tags_help: |
-        Met *Tags* kunt u aangepaste trefwoorden toevoegen aan elke definitie van een onderdeel.
-        U kunt zoveel tags toevoegen als u wilt.
-        De zichtbare delen van uw cutlist kunnen vervolgens worden gefilterd op basis van deze tags.
-      tags_multiple_info: Alleen algemene tags zijn zichtbaar
+        Met *Badges* kunt u aangepaste trefwoorden toevoegen aan elke definitie van een onderdeel.
+        U kunt zoveel badges toevoegen als u wilt.
+        De zichtbare delen van uw cutlist kunnen vervolgens worden gefilterd op basis van deze badges.
+      tags_multiple_info: Alleen algemene badges zijn zichtbaar
       orientation: Oriëntatie
       orientation_locked_on_axis: Vergrendel orientatie op as
       orientation_locked_on_axis_help: |
@@ -367,13 +408,15 @@ tab:
       axes_origin_position_none: Verander het nulpunt niet
       axes_origin_position_min: Plaats het nulpunt in een hoek
       axes_origin_position_center: Plaats het nulpunt in het midden
-      axes_origin_position_min_center: Plaats het nulpunt in het midden van een face
+      axes_origin_position_front_min: ""
+      axes_origin_position_front_center: ""
       over_length: Over de lengte
       over_width: Over de breedte
       edge_disabled_help: Deze randafwerking is niet configureerbaar omdat aan deze rand van het onderdeel in het model geen materiaaldragend oppervlak is gedetecteerd.
-      veneer_disabled_help: Dit oppervlak is niet configureerbaar omdat op dit oppervlak van het onderdeel in het model geen materiaaldragend oppervlak is gedetecteerd.
+      face_disabled_help: Dit oppervlak is niet configureerbaar omdat op dit oppervlak van het onderdeel in het model geen materiaaldragend oppervlak is gedetecteerd.
       multiple_values: Meerdere waarden
       export_to_skp: Exporteren (.skp)
+      loading_preview: ""
     export_to_skp:
       title: Exporteer een .skp bestand
     option:
@@ -401,15 +444,15 @@ tab:
       part_number_sequence_by_group_help: "Wanneer deze optie ingeschakeld is, dan wordt de nummering van de onderdelen hernomen van 1 (of A) voor elke groep (lijst van onderdelen van hetzelfde materiaal en dezelfde bruto dikte)."
       part_folding: Groepeer identieke onderdelen
       part_folding_help: |
-        Wanneer deze optie geselecteerd is, dan zullen onderdelen van **dezelfde geschikte grootte**, met **dezelfde tags** en **hetzelfde afgewerkte oppervlak** *(als de weergave van dit oppervlak niet verborgen is)* gegroepeerd worden op éénzelfde lijn.
+        Wanneer deze optie geselecteerd is, dan zullen onderdelen van **dezelfde geschikte grootte**, met **dezelfde badges** en **hetzelfde afgewerkte oppervlak** *(als de weergave van dit oppervlak niet verborgen is)* gegroepeerd worden op éénzelfde lijn.
 
-        De onderdelen worden nog steeds als verschillend beschouwd voor labels en snijplannen.
+        De onderdelen worden nog steeds als verschillend beschouwd voor labels en zaagplannen.
       hide_entity_names: Verberg instantie namen
       hide_entity_names_help: "Wanneer deze optie ingeschakeld is, dan zullen de **instantie namen** niet weergegeven worden."
       hide_descriptions: Beschrijvingen verbergen
       hide_descriptions_help: "Als deze optie is geselecteerd, worden de **beschrijvingen** van de onderdelen niet weergegeven."
-      hide_tags: Verberg de tags
-      hide_tags_help: "Wanneer deze optie ingeschakeld is, dan zullen de **tags** die op de onderdelen geplaatst werden niet weergegeven worden."
+      hide_tags: Verberg de badges
+      hide_tags_help: "Wanneer deze optie ingeschakeld is, dan zullen de **badges** die op de onderdelen geplaatst werden niet weergegeven worden."
       hide_cutting_dimensions: Verberg de afmetingen van de onderdelen
       hide_cutting_dimensions_help: "Wanneer deze optie is ingeschakeld, dan zullen de afmetingen van de **onderdelen** niet getoond worden."
       hide_bbox_dimensions: Verberg de netto afmetingen
@@ -418,8 +461,8 @@ tab:
       hide_final_areas_help: "Wanneer deze optie ingeschakeld is, dan zullen de **afgewerkte oppervlakten** van het type *Plaatmateriaal* niet getoond worden."
       hide_edges: Verberg de kolommen met kantenbanden
       hide_edges_help: "Wanneer deze optie ingeschakeld is, dan zullen de **kantenbanden kolommen** van het type *Paneel* niet weergegeven worden."
-      hide_veneers: Verberg de kolommen met fineer
-      hide_veneers_help: "Wanneer deze optie ingeschakeld is, dan zullen de **fineer kolommen** van het type *Paneel* niet weergegeven worden."
+      hide_faces: Verberg de kolommen met fineer
+      hide_faces_help: "Wanneer deze optie ingeschakeld is, dan zullen de **fineer kolommen** van het type *Paneel* niet weergegeven worden."
       minimize_on_highlight: Minimaliseer na *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Wanneer deze optie ingeschakeld is, dan zal het venster OpenCutList geminimaliseerd worden wanneer de functie *'$t(tab.cutlist.highlight_part)'* gebruikt wordt."
       general: Algemeen
@@ -436,11 +479,11 @@ tab:
       property_name: Beschrijving
       property_count: Hoeveelheid
       property_edge_pattern: Aantal kantenbanden
-      property_tags: Tags
+      property_tags: Badges
       property_thickness_layer_count: Aantal lagen
-      tags: Tags
-      tags_help: Lijst van eigen tags voorgesteld in het venster van de eigenschappen van onderdelen.
-      tags_placeholder: Voeg trefwoord toe
+      tags: Badges
+      tags_help: Lijst van eigen badges voorgesteld in het venster van de eigenschappen van onderdelen.
+      tags_placeholder: voeg een badge toe
     list:
       filters: Filters
       filters_warning_0: "Dit filter verbergt alle onderdelen!"
@@ -448,7 +491,7 @@ tab:
       filters_warning_plural: "Dit filter geeft slechts **{{ count }}** onderdelen weer op een totaal van {{ total }}."
       edge_material_names_filter: Te filteren lijst van kantenband materiaal
       veneer_material_names_filter: Te filteren lijst van fineer materiaal
-      tags_filter: Te filteren Tags
+      tags_filter: Te filteren Badges
       dimensions_help: Afmetingen begrijpen
       summary: Overzicht
       material_type: Type
@@ -472,7 +515,7 @@ tab:
       thickness: Dikte
       thickness_short: D.
       edges: Randafwerkingen
-      veneers: Fineren
+      faces: Fineren
     export:
       title: Exporteren
       info_0: |
@@ -505,7 +548,6 @@ tab:
       number: N°
       path: Pad
       instance_name: Instantie
-      definition_name: Definitie
       name: Beschrijving
       total_cutting_length: Lengte totaal - onbewerkt
       total_cutting_area: Oppervlakte totaal - onbewerkt
@@ -525,13 +567,13 @@ tab:
       material_name: Materiaal
       entity_names: Naam instance
       description: Beschrijving
-      tags: Tags
+      tags: Badges
       edge_ymin: Kantenband lengte 1
       edge_ymax: Kantenband lengte 2
       edge_xmin: Kantenband breedte 1
       edge_xmax: Kantenband breedte 2
-      veneer_zmin: Achterkant
-      veneer_zmax: Voorzijde
+      face_zmin: Achterkant
+      face_zmax: Voorzijde
       layer: Tag
       layers: Tags
       placeholder:
@@ -543,9 +585,9 @@ tab:
       success:
         copied: Gekopieerd naar klembord.
     report:
-      title: Rapport
+      title: Schatting
       info_0: |
-        Deze functionaliteit laat u toe om een rapport te genereren van de **massa's** en **kosten** van het **basis materiaal**, nodig voor de productie van de onderdelen in de stuklijst.
+        Deze functionaliteit laat u toe om een schatting te genereren van de **massa's** en **kosten** van het **basis materiaal**, nodig voor de productie van de onderdelen in de stuklijst.
       options_general: Algemeen
       options_solid_wood: $t(tab.materials.type_1)
       option_solid_wood_coefficient: "*$t(tab.materials.type_1)* coëfficient"
@@ -570,7 +612,7 @@ tab:
         is_group_selection: Onderdelen in de **gemaskeerde groepen** van uw stuklijst worden niet meegeteld.
       tip:
         not_enough_data: |
-          Om het rapport correct te berekenen,:
+          Om het schatting correct te berekenen,:
           - de gebruikte materialen hebben ten minste één dichtheid en één prijs.
           - de gebruikte accessoires hebben ten minste één dichtheid en één prijs.
     cuttingdiagram:
@@ -601,7 +643,7 @@ tab:
       option_use_names: Identificatie van onderdelen
       option_use_names_0: Gebruik nummer
       option_use_names_1: Gebruik de beschrijving
-      option_use_names_help: Hiermee kunt u kiezen tussen **nummer** en **beschrijwing** om onderdelen op het zaagschema identificeren.
+      option_use_names_help: Hiermee kunt u kiezen tussen **nummer** en **beschrijving** om onderdelen op het zaagschema te identificeren.
       option_origin_corner: Positie van de oorsprong
       option_origin_corner_1d_0: Links
       option_origin_corner_1d_1: Rechts
@@ -700,10 +742,11 @@ tab:
         leftover: Overschot
         cut: Snede
         cut_plural: Sneden
-        cut_final: Primaire zaagsnedes (niveau 1)
-        cut_final_plural: Primaire snijwonden (niveau 1)
-        cut_through: Primaire zaagsnedes (niveau 2)
-        cut_through_plural: Primaire snijwonden (niveau 2)
+        cut_trimming: ""
+        cut_bounding: Primaire zaagsnede (niveau 1)
+        cut_bounding_plural: Primaire zaagsnedes (niveau 1)
+        cut_internal_through: Primaire zaagsnede (niveau 2)
+        cut_internal_through_plural: Primaire zaagsnedes (niveau 2)
         cut_none: Geen
         bar_dimensional_type_0: Standaard plank
         bar_dimensional_type_1: Plank overschot
@@ -766,7 +809,7 @@ tab:
       option_grid: Aantal etiketten per pagina
       option_col_count: Kolommen
       option_row_count: Rijen
-      option_cutting_marks: Snijtekens
+      option_cutting_marks: Markeringen
       option_cutting_marks_0: Geen enkele
       option_cutting_marks_1: Afgedrukt
       option_formula: Waarde
@@ -794,14 +837,14 @@ tab:
         part_length: Lengte
         part_width: Breedte
         part_thickness: Dikte
-        part_tags: Tags
+        part_tags: Badges
         part_batch: Lot
         part_edge_ymin: Kantenband lengte 1
         part_edge_ymax: Kantenband lengte 2
         part_edge_xmin: Kantenband breedte 1
         part_edge_xmax: Kantenband breedte 2
-        part_veneer_zmin: Fineer achterkant
-        part_veneer_zmax: Fineer voorzijde
+        part_face_zmin: Fineer achterkant
+        part_face_zmax: Fineer voorzijde
         thumbnail_proportional: Proportionele voorvertoning
         thumbnail_square: Vierkante voorvertoning
         group_material: Materiaal / Afmeting
@@ -817,6 +860,80 @@ tab:
       warning:
         is_part_selection: Deze labels zijn beperkt tot **geselecteerde onderdelen**.
         formula_not_available: Formule is in deze context niet beschikbaar
+    layout:
+      title: ""
+      to_layout: Exporteren naar Layout
+      options_layout: Layout
+      options_settings: Configuratie
+      option_parts: ""
+      option_parts_colored: Kleur
+      option_parts_colored_0: ""
+      option_parts_colored_1: ""
+      option_parts_colored_help: ""
+      option_parts_opacity: ""
+      option_parts_opacity_0: ""
+      option_parts_opacity_1: Opaak
+      option_parts_opacity_help: Selecteer de opaciteit van de delen.
+      option_pins: ""
+      option_pins_hidden: Weergave
+      option_pins_hidden_0: ""
+      option_pins_hidden_1: ""
+      option_pins_hidden_help: ""
+      option_pins_colored: Kleur
+      option_pins_colored_0: ""
+      option_pins_colored_1: ""
+      option_pins_colored_help: ""
+      option_pins_formula: Formule
+      option_pins_formula_help: ""
+      option_pins_length: Lengte
+      option_pins_length_0: ""
+      option_pins_length_1: Klein
+      option_pins_length_2: Medium
+      option_pins_length_3: Lang
+      option_pins_length_help: ""
+      option_pins_direction: Richting
+      option_pins_direction_0: Langs de Rode as
+      option_pins_direction_1: Langs de Groene as
+      option_pins_direction_2: Langs de Blauwe as
+      option_pins_direction_3: ""
+      option_pins_direction_4: ""
+      option_pins_direction_help: ""
+      option_page: Papier
+      option_page_format: Formaat
+      option_page_format_portrait: Portret
+      option_page_format_landscape: Landschap
+      option_page_format_custom: Gepersonaliseerd
+      option_page_width: Breedte
+      option_page_height: Hoogte
+      option_page_header: ""
+      option_page_header_0: ""
+      option_page_header_1: ""
+      option_page_header_help: |
+      option_camera: ""
+      option_camera_view: ""
+      option_camera_view_custom: ""
+      option_camera_zoom: ""
+      option_camera_zoom_auto: Automaat
+      option_camera_zoom_custom: ""
+      option_camera_target: ""
+      option_camera_target_auto: Automaat
+      option_camera_target_custom: ""
+      option_explode: ""
+      error:
+        no_part: ""
+        failed_to_save_as_skp: ""
+        failed_to_layout: |
+      warning:
+        is_group_selection: ""
+        is_part_selection: ""
+    snippet:
+      number: Nummer
+      name: Beschrijving
+      number_and_name: ""
+      number_without_hardware: ""
+      size: Afmeting
+      area: ""
+      volume: ""
     error:
       no_model: Er is geen enkel model open. U moet me wat meer informatie geven ;)
       no_entities: Uw model is leeg. U moet me iets meer geven ;)
@@ -863,8 +980,8 @@ tab:
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Nerf richting
       colorized: Deze tint zal toegepast worden op de textuur van dit materiaal wanneer het in het model toegepast wordt
-      texture_colorized: Combineer de tint definitief met de afbeelding van de textuur
       texture_load: Laad een nieuwe textuur
+      texture_clear: ""
       edit: "Wijzig de eigenschappen van '{{ name }}'"
       set_current: |
         Kleur delen met '{{ name }}'
@@ -889,11 +1006,13 @@ tab:
       title: "Eigenschappen van materiaal '{{ name }}'"
       general: Algemeen
       texture: Textuur
+      no_texture: ""
       name: Beschrijving
       type: Type
       cut_options: Onderdelen opties
       attributes: Attributen
       thickness: Dikte
+      thickness_help: |
       length_increase: Lengte overmaat
       length_increase_help: Overmaat wordt opgeteld bij de uiteindelijke lengte om de **brutto lengte** te bepalen.
       width_increase: Breedte overmaat
@@ -939,7 +1058,6 @@ tab:
       std_prices_help: Laat toe om de prijs voor alle afmetingen aan te duiden alsook voor elke standaard afmeting van het materiaal.
       std_prices_dim_placeholder: Kies een afmeting
       std_prices_add: Voeg een prijs toe
-      texture_load: Laden
       texture_width: Breedte
       texture_height: Hoogte
       export_to_skm: Exporteren (.skm)
@@ -1027,7 +1145,7 @@ tab:
       bbox_width: Breedte
       bbox_thickness: Dikte
       material: Materiaal
-      tags: Tags
+      tags: Badges
     tooltip:
       errors: Dit deel wordt niet geïmporteerd omdat het de volgende fouten bevat
       warnings: "Dit deel is geïmporteerd, maar het bevat de volgende fouten"
@@ -1104,7 +1222,7 @@ tab:
     objective_slogan: "OpenCutList zijn we allemaal"
     objective_title:
       default: Doelen
-      cuttingdiagram_export: Financiering van de uitvoer van snijschema's
+      cuttingdiagram_export: Financiering van de uitvoer van zaagschema's
     objective_details:
       default: |
         De voortdurende verbetering van *OpenCutList* is belangrijk voor ons en het project heeft nog steeds uw hulp nodig voor de volgende update **5.0**!
@@ -1112,6 +1230,7 @@ tab:
         Het is voor ons belangrijk dat *OpenCutList* kan worden aangepast aan het brede scala van gebruikerseisen voor de *squaring* functie.
         Om de mogelijkheden verder uit te breiden, zouden we graag de export van lay-out diagrammen in **SVG** formaat mogelijk maken.
         Door ons de middelen te geven om aan deze export te werken, geeft u ons de kans om u te helpen het meeste uit *OpenCutList* te halen.
+      layout: |
     objective_crowdfunding: |
       De ontwikkeling van deze nieuwe functie zal gebeuren via **participatiefinanciering** en kan beginnen zodra het **financiële doel** is bereikt.
     objective_thanks: |
@@ -1142,7 +1261,13 @@ tab:
     suppress_units_display: Toon de lengte-eenheid voor elke waarde
     mass_unit: Eenheid van massa
     currency_symbol: Valutateken
-    menu:
+    presets:
+      export_global_presets: ""
+      export_global_presets_help: |
+      export_global_presets_success: ""
+      import_global_presets: ""
+      import_global_presets_help: |
+      import_global_presets_success: |
       dump_global_presets: reset de voorkeursinstellingen
       dump_model_presets: reset model voorkeursinstellingen
       reset_global_presets: reset alle voorkeursinstellingen
@@ -1161,6 +1286,12 @@ tab:
       reset_model_presets_success: |
         De instellingen van *OpenCutList* voor het huidige model zijn gereset.
         Om de wijzigingen weer te geven, moet u het venster OpenCutList **sluiten** en **opnieuw openen**.
+      error:
+        no_preset_to_export: ""
+        no_preset_to_import: ""
+        failed_to_import: ""
+        failed_to_import_invalid_hexdigest: ""
+        failed_to_import_bad_file_format: ""
   about:
     label: Over
     title: Over
@@ -1181,6 +1312,7 @@ tab:
       - Soul Issam (*Arabisch*), zondeer interface RTL
       - Dany Dhondt, Eric Lugtigheid (*Nederlands*)
       - Nguyen Ngoc Tan (*Vietnamees*)
+      - Andrii Toporivskyi, Kostiantyn Shcherbey (*oekraïens*)
     credits_description: |
       De ontwikkeling van deze uitbreiding maakt deel uit van het project [L'Air du Bois](https://www.lairdubois.fr), een uitwisselingsplatform voor houtbewerkers.
       In die zin is het ook *open source* en voor iedereen beschikbaar onder licentie [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) op [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
@@ -1194,19 +1326,15 @@ tab:
       - [Transifex](https://www.transifex.com) voor hun steun aan open source projecten.
       - [GitBook](https://www.gitbook.com) voor hun steun aan open source projecten.
 tool:
-  highlight:
+  default:
     transparency: Transparant
     zoom_extents: Alles tonen
+  highlight:
+    transparency: $t(tool.default.transparency)
+    zoom_extents: $t(tool.default.zoom_extents)
   smart_paint:
-    copy_key_win: Controle
-    copy_key_mac: Optie
-    alt_key_win: Alt
-    alt_key_mac: Opdracht
-    status_paint_face: Klik om een ​​zijde te kleuren.
-    status_paint_part: Klik om het ge​​hele object te kleuren.
-    status_unpaint_face: Klik om het vlak op te schonen.
-    status_unpaint_part: Klik om het gehele vlak op te schonen.
-    status_pick: Kies het materiaal..
+    title: ""
+    default_material: Geen materiaal gedefinieerd
     filters: Filters
     filter_0: Zonder type
     filter_1: $t(tab.materials.type_1)
@@ -1215,13 +1343,50 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action: Voorraad
     action_0: Kleur het vlak
+    action_0_status: ""
     action_1: Kleur het object
+    action_1_status: ""
     action_2: Vlak opschonen
+    action_2_status: ""
     action_3: Object opschonen
-    action_4: Verzamel
+    action_3_status: ""
+    edges: ""
+    edges_plural: ""
+    edge_ymin: ""
+    edge_ymax: ""
+    edge_xmin: ""
+    edge_xmax: ""
+    faces: ""
+    faces_plural: ""
+    face_zmin: Achterkant
+    face_zmax: Vooraanzicht
     warning:
       no_material: Uw model bevat geen materialen!
-      all_filtered: De geselecteerde filters verbergen alle materialen!
-      not_part: Het doelobject moet een component zijn.
+      no_material_type: ""
+    error:
+      not_part: ""
+      not_edge: ""
+      not_face: ""
+      wrong_material_type: ""
+  smart_axes:
+    title: ""
+    toggle_depth: ""
+    action_0: ""
+    action_0_status: ""
+    action_1: ""
+    action_1_status: ""
+    action_2: ""
+    action_2_status: ""
+    action_3: ""
+    action_3_status: ""
+    action_modifier_length: ""
+    action_modifier_width: ""
+    action_modifier_thickness: ""
+    success:
+      part_oriented: ""
+    warning:
+      more_entities: ""
+    error:
+      not_part: ""
+      not_orientable: ""

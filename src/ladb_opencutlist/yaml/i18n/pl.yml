@@ -25,11 +25,15 @@ default:
   caution: Uwaga
   remove: Usuń
   create: Stwórz
-  duplicate: ""
+  duplicate: Duplikat
   ignore: Ignoruj
   download: Pobierz
   upgrade: Aktualizuj
   copy: Kopia
+  select_all: ""
+  unselect_all: ""
+  draw: ""
+  estimate: ""
   empty_filename: BezTytulu.skp
   help: Pomoc
   error: Ceruj!
@@ -48,7 +52,7 @@ default:
   unit_5: Jard
   unit_mass_0: Kilogram
   unit_mass_1: Funt
-  unit_angle_0: ""
+  unit_angle_0: Stopni
   instance_single: Pozycja
   instance_plural: Pozycje
   part_single: część
@@ -58,22 +62,30 @@ default:
   setup_model_units: Ustaw jednostki modelu
   load_more: Załaduj więcej
   reset_to_app_defaults: Przywróć oryginalne wartości
+  constrain_key: ""
+  copy_key_win: ""
+  copy_key_mac: Option
+  alt_key_win: Alt
+  alt_key_mac: Cmd
+  tab_key: ""
 core:
   menu:
     submenu: OpenCutList
     item:
-      generate_cutlist:  Generowanie listy cięć
+      generate_cutlist:  Generowanie listy części
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
-      edit_part_veneers_properties: $t(tab.cutlist.edit_part_veneers_properties)
+      edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       smart_paint: $t(core.toolbar.command.smart_paint)
+      smart_axes: $t(core.toolbar.command.smart_axes)
   toolbar:
     name: OpenCutList
     command:
       dialog: OpenCutList
       smart_paint: Części do kolorowania
+      smart_axes: ""
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
@@ -92,10 +104,8 @@ core:
       Nie zaleca się używania jej w produkcji.
 
       Aby zgłosić błąd: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
-    old_su: |
-      Używasz starszej wersji SketchUp ({{ sketchup_version }}). Plugin będzie działać, ale może generować błędy.
-      Aby w pełni wykorzystać OpenCutList zalecamy przynajmniej **SketchUp 2017**.
-    feature_locked: "*Nie można dezaktywować w tej wersji programu SketchUp*"
+  error:
+    feature_unavailable: ""
   event:
     model_change: Aktywny model został zmieniony.
     options_change: Opcje w modelu zostały zmienione.
@@ -125,6 +135,7 @@ core:
       unzip: Błąd podczas dekompresji archiwum.
   preset:
     label: Ustawienia
+    manage: ""
     save_to: Zapisz jako
     restore_from: Przywróć
     app_defaults: Ustawienia fabryczne
@@ -145,6 +156,20 @@ core:
     tooltip:
       save_to: "Zaktualizuj ustawienia '{{ name }}'"
       delete: "Usuń ustawienia '{{ name }}'"
+    dictionary:
+      component_textinput_color: ""
+      cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
+      cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
+      cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
+      cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
+      cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
+      cutlist_options: $t(tab.cutlist.label) / $t(default.options)
+      cutlist_report_options: $t(tab.cutlist.label) / $t(tab.cutlist.report.title)
+      importer_import_options: $t(tab.importer.label) / $t(default.import)
+      importer_load_options: $t(tab.importer.label) / $t(default.open)
+      materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
+      materials_options: $t(tab.materials.label) / $t(default.options)
+      settings_model: $t(tab.settings.label) / Modelu
   progress:
     please_wait: Obliczanie świata pokoju
   component:
@@ -154,7 +179,27 @@ core:
       store: Zapisz kolor
       remove: Kolor zapomniany
     textinput_code:
+      snippets: ""
       help: "Wpisz **@**, aby uzyskać listę zmiennych."
+    three_viewer:
+      view: ""
+      view_isometric: ""
+      view_top: ""
+      view_bottom: ""
+      view_front: Przód forniru
+      view_back: ""
+      view_left: Lewy
+      view_right: Prawy
+      zoom: ""
+      explode_factor: ""
+      toggle_box_helper: ""
+      toggle_box_dimensions_helper: Ukryj gotowe wymiary
+      toggle_axes_helper: ""
+  docs:
+    error:
+      failed_to_load: |
+        Dokumentacja nie może zostać otwarta.
+        Sprawdź, czy jesteś podłączony do Internetu.
 tab:
   cutlist:
     label: Części
@@ -173,7 +218,7 @@ tab:
     edit_part_axes_properties: Edytuj właściwości (osie) części
     edit_part_size_increase_properties: Edytuj właściwości (nadwymiary) części
     edit_part_edges_properties: Edytuj właściwości (obrzeża) części
-    edit_part_veneers_properties: ""
+    edit_part_faces_properties: Edytuj właściwości (forniru) części
     tooltip:
       show_hide_block: Pokaż / ukryj grupę
       scroll_to_block: Przewiń do grupy
@@ -239,7 +284,7 @@ tab:
       thickness_layered: "Podana tutaj ilość oznacza liczbę elementów, które należy wyciąć, aby uzyskać wszystkie warstwy."
       thickness_layered_equation: "**{{ count }}** *część* x **{{ layerCount }}** *warstwy* = **{{ cuttingPartCount }}**"
       thickness_layered_equation_plural: "**{{ count }}** *części* x **{{ layerCount }}** *warstwy* = **{{ cuttingPartCount }}**"
-      multiple_layers: "Uwaga, ta część składa się z części podrzędnych obecnych na {{ count }} różnych warstwach: <br> {{ layers }}"
+      multiple_content_layers: "Uwaga, ta część składa się z części podrzędnych obecnych na {{ count }} różnych warstwach:<br> {{ layers }}"
       children_warnings: "Uwaga, w zgrupowanych częściach występuje ostrzeżenie {{ count }}"
       children_warnings_plural: "Uwaga, znajdują się {{ count }} ostrzeżenia w zgrupowanych częściach"
       children_size_increase: "Wymiar ten jest powiększony o naddatek dla {{ count }} zgrupowanych części"
@@ -249,17 +294,17 @@ tab:
       size_increased: "Wymiar zwiększony o {{ value }}"
       has_edges: "Ten kawałek zawiera {{ count }} fornirowaną krawędź"
       has_edges_plural: "Ten kawałek zawiera {{ count }} formirowane krawędzie"
-      has_veneers: ""
-      has_veneers_plural: ""
+      has_faces: "Ta część zawiera {{ count }} powierzchnię fornirowaną"
+      has_faces_plural: "Ta część zawiera {{ count }} powierzchni fornirowanych"
       edge_decremented: "Zmniejszona o grubość obrzeża ({{ decrement }})"
       edge_ymin: Długość krawędzi 1
       edge_ymax: Długość krawędzi 2
       edge_xmin: Szerokość krawędzi 1
       edge_xmax: Szerokość krawędzi 2
-      veneer_zmin: ""
-      veneer_zmax: ""
+      face_zmin: Tył forniru
+      face_zmax: Przód forniru
       dblclick_to_copy_all_edges: "Kliknij tutaj dwukrotnie, aby powielić tę wartość na innych krawędziach"
-      dblclick_to_copy_all_veneers: ""
+      dblclick_to_copy_all_faces: "Kliknij dwukrotnie tutaj, aby powielić tę wartość na drugą powierzchnię"
       dblclick_to_sort_axes: "Kliknij dwukrotnie tutaj, aby automatycznie zmienić kolejność osi zgodnie z wymiarami części"
       part_axes: Osie wewnętrzne części
       select_unselect_all_parts: Zaznacz / odznacz wszystkie części w grupie
@@ -270,10 +315,11 @@ tab:
       numbers_save: Zachowaj numery części
       numbers_reset: Zresetuj numery części
       highlight_parts: $t(tab.cutlist.highlight_parts)
+      group_layout_parts: ""
       group_numbers_save: Zachowaj numery części grupy
       group_numbers_reset: Zresetuj numery części grupy
       group_cuttingdiagram: Schemat cięcia
-      group_labels: Drukuj etykiety
+      group_labels: ""
       edit_material: "Edytuj materiał '{{ material_name }}'"
       expand_all: Rozwiń wszystkie linie
       collapse_all: Zwiń wszystkie linie
@@ -290,7 +336,7 @@ tab:
       general: Główne
       extra_help: "Lista właściwości charakterystycznych dla danego typu materiału \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Obrzeża
-      veneers: ""
+      faces: Fornir
       name: Opis
       material: Materiał
       cumulable: Podsumowanie
@@ -309,9 +355,9 @@ tab:
       instance_count_by_part_1: 1 jednostka na część
       instance_count_by_part_2: 2 jednostki na część
       mass: Masa
-      mass_help: Waga części będzie użyta podczas tworzenia **Reportów**.
+      mass_help: ""
       price: Cena
-      price_help: Cena części będzie użyta podczas tworzenia **Reportów**.
+      price_help: ""
       thickness_layer_count: Nb warstw
       thickness_layer_count_help: |
         Zdefiniuj tutaj liczbę warstw, które podzielą rysowaną część na grubości.
@@ -321,12 +367,12 @@ tab:
       description: Opis
       description_help: |
         Opcja *Opis* umożliwia podanie spersonalizowanych informacji na temat każdej definicji części.
-      tags: Oznaczenia
+      tags: Plakietki
       tags_help: |
-        *Oznaczenia* umożliwiają dodawanie niestandardowych słów kluczowych do definicji każdej części.
-        Możesz dodać dowolną liczbę oznaczeń.
-        Widoczne części listy cięć mogą być następnie filtrowane na podstawie tych oznaczeń.
-      tags_multiple_info: Wyświetlane są tylko popularne oznaczenia
+        *Plakietki* to niestandardowe słowa kluczowe, które można dodać do każdej definicji części. 
+        Możesz dodać dowolną liczbę plakietek. 
+        Widoczne części listy części można następnie filtrować według tych plakietek.
+      tags_multiple_info: Wyświetlane są tylko popularne plakietki
       orientation: Orientacja
       orientation_locked_on_axis: Zablokuj orientację na osiach części
       orientation_locked_on_axis_help: |
@@ -362,13 +408,15 @@ tab:
       axes_origin_position_none: Nie zmieniaj pozycji początku
       axes_origin_position_min: Umieść początek na narożniku
       axes_origin_position_center: Umieść początek w środku
-      axes_origin_position_min_center: Umieść początek na środku płaszczyzny
+      axes_origin_position_front_min: ""
+      axes_origin_position_front_center: ""
       over_length: Na całej długości
       over_width: Na całej szerokości
       edge_disabled_help: "To obrzeże krawędzi nie jest konfigurowalne, ponieważ na tej krawędzi części w modelu nie wykryto powierzchni nośnej materiału."
-      veneer_disabled_help: ""
+      face_disabled_help: "Tej powierzchni nie można konfigurować, ponieważ na tej krawędzi części w modelu nie wykryto powierzchni przenoszącej materiał."
       multiple_values: Wiele wartości
       export_to_skp: Eksportuj (.skp)
+      loading_preview: ""
     export_to_skp:
       title: Eksportuj do pliku .skp
     option:
@@ -396,15 +444,15 @@ tab:
       part_number_sequence_by_group_help: "Jeśli ta opcja jest wybrana, numeracja części jest ponownie inicjowana do 1 (lub A) dla każdej grupy (lista części o tym samym typie materiału i grubości)."
       part_folding: Grupuj identyczne części
       part_folding_help: |
-        Jeśli ta opcja jest wybrana, części z **identycznym rozmiarem** oraz z **identycznymi oznakowaniem** będą grupowane (o ile wyświetlanie tego obszaru nie jest ukryte).
+        Jeśli ta opcja jest włączona, części wykonane z **drewna litego, arkuszy lub wymiarowych**, mające **ten sam przybliżony rozmiar**, z **tymi samymi plakietkami** i **taką samą wykończoną powierzchnią** *( jeśli wyświetlanie tej powierzchni nie jest ukryte)* zostaną zgrupowane w tej samej linii na *liście części*.
 
-        Części będą nadal uważane za różne dla celów etykietowania i schematu cięcia.
+        Części nadal będą traktowane jako różne do celów etykietowania i schematów cięcia.
       hide_entity_names: Ukryj nazwy instancji
       hide_entity_names_help: "Jeśli ta opcja jest zaznaczona, **nazwy instancji** części nie będą wyświetlane."
       hide_descriptions: Ukryj opisy
       hide_descriptions_help: "Jeśli ta opcja zostanie wybrana, **opis** umieszczony na częściach nie będzie wyświetlany."
-      hide_tags: Ukryj oznakowania
-      hide_tags_help: "Jeśli ta opcja jest zaznaczona, **oznakowania** zostaną ukryte."
+      hide_tags: Ukryj plakietki
+      hide_tags_help: "Jeśli ta opcja jest zaznaczona, **plakietki** nie będą wyświetlane."
       hide_cutting_dimensions: Ukryj przybliżone wymiary
       hide_cutting_dimensions_help: "Jeśli ta opcja jest wybrana, **przybliżone** wymiary części zostaną ukryte."
       hide_bbox_dimensions: Ukryj gotowe wymiary
@@ -413,8 +461,8 @@ tab:
       hide_final_areas_help: "Jeśli ta opcja jest zaznaczona, **rzeczywiste obszary** części typu *Płyty* zostaną ukryte."
       hide_edges: Ukryj kolumny obrzeży
       hide_edges_help: "Jeśli ta opcja jest zaznaczona, **kolumny obrzeża** części typu *Płyty* będą ukryte."
-      hide_veneers: ""
-      hide_veneers_help: ""
+      hide_faces: Ukryj kolumny fornirów
+      hide_faces_help: "Jeśli ta opcja jest zaznaczona, **kolumny forniru** części typu *płyty* zostaną ukryte."
       minimize_on_highlight: Minimalizuj po *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Jeśli ta opcja jest zaznaczona, okno OpenCutList zostanie zminimalizowane, gdy zostanie użyta funkcja *'$t(tab.cutlist.highlight_part)'*."
       general: Główne
@@ -431,19 +479,19 @@ tab:
       property_name: Opis
       property_count: Ilość
       property_edge_pattern: Liczba obrzeży
-      property_tags: Oznaczenia
+      property_tags: Plakietki
       property_thickness_layer_count: Liczba warstw
-      tags: Oznaczenia
-      tags_help: Własna lista oznaczeń dostępna w oknie właściwości części.
-      tags_placeholder: Dodaj oznaczenie
+      tags: Plakietki
+      tags_help: Niestandardowa lista odznak proponowanych w oknie właściwości części.
+      tags_placeholder: Dodaj plakietkę
     list:
       filters: Filtry
       filters_warning_0: "Ten filtr ukrywa wszystkie części!"
       filters_warning: "Ten filtr pokazuje tylko **{{ count }}** części z łącznej liczby {{ total }}."
       filters_warning_plural: "Ten filtr wyświetla tylko **{{ count }}** części z łącznej liczby {{ total }}."
       edge_material_names_filter: Filtruj według materiału do oklejania krawędzi
-      veneer_material_names_filter: ""
-      tags_filter: Filtruj według oznakowań
+      veneer_material_names_filter: Filtruj według materiału okleiny
+      tags_filter: Filtruj według plakietek
       dimensions_help: Zrozumienie wymiarów
       summary: Podsumowanie
       material_type: Rodzaj
@@ -467,7 +515,7 @@ tab:
       thickness: Grubość
       thickness_short: gr.
       edges: Obrzeża
-      veneers: ""
+      faces: Fornir
     export:
       title: Eksport
       info_0: |
@@ -500,7 +548,6 @@ tab:
       number: No.
       path: Ścieżka
       instance_name: Instancja
-      definition_name: Definicja
       name: Opis
       total_cutting_length: Długość - wstępna
       total_cutting_area: Powierzchnia - wstępna
@@ -520,13 +567,15 @@ tab:
       material_name: Materiał
       entity_names: Nazwy instancji
       description: Opis
-      tags: Oznaczenia
+      tags: Plakietki
       edge_ymin: Długość krawędzi 1
       edge_ymax: Długość krawędzi 2
       edge_xmin: Szerokość krawędzi 1
       edge_xmax: Szerokość krawędzi 2
-      veneer_zmin: ""
-      veneer_zmax: ""
+      face_zmin: Przód forniru
+      face_zmax: Przód forniru
+      layer: Etykieta
+      layers: Etykiety
       placeholder:
         no_column_title: Wprowadź tytuł
         no_column_formula_native: "Wartość natywna kolumny '{{ col_name }}'"
@@ -536,9 +585,8 @@ tab:
       success:
         copied: Skopiowane do schowka.
     report:
-      title: Raport
+      title: ""
       info_0: |
-        Funkcjonalność ta pozwala na wygenerowanie raportu **mas** i **kosztów** **surowców** niezbędnych do produkcji części znajdujących się na *liście części*.
       options_general: Główne
       options_solid_wood: $t(tab.materials.type_1)
       option_solid_wood_coefficient: Współczynnik odpadów dla *$t(tab.materials.type_1)*
@@ -546,17 +594,17 @@ tab:
       raw_materials: Surowce
       coefficient: Współczynnik
       total: Suma
-      total_used: ""
+      total_used: Używany
       total_unused: Nieużywane
       total_mass: Σ Wagi
       total_cost: Σ Kosztów
       total_count: Szt.
-      total_instance_count: ""
+      total_instance_count: Σ Jednostki
       total_volume: Σ Objętości
       total_area: Σ Powierzchni
       total_length: Σ Długości
       error:
-        no_typed_material_parts: "Żadna część ze zdefiniowanym typem materiału (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** lub **$t(tab.materials.type_5)**) nie została dostarczona do wygenerowania raportu."
+        no_typed_material_parts: ""
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} błąd**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} błędy**."
       warning:
@@ -576,18 +624,18 @@ tab:
       option_bar_folding_1: Tak
       option_bar_folding_help: Grupuj płyty lub obrzeża zawierające takie same części i cięcia.
       option_sheet_folding_good: Grupuj podobne arkusze
-      option_sheet_folding_veneer: ""
+      option_sheet_folding_veneer: Grupuj podobne arkusze forniru
       option_sheet_folding_0: Nie
       option_sheet_folding_1: Tak
-      option_sheet_folding_help: ""
+      option_sheet_folding_help: Grupuj panele lub arkusze mające te same części i cięcia.
       option_hide_part_list: Lista części
       option_hide_part_list_1d_dimensional_0: Wyświetlana dla każdej płyty
       option_hide_part_list_1d_edge_0: Wyświetlane dla każdego obrzeża
       option_hide_part_list_2d_good_0: Wyświetlane dla każdego arkusza
-      option_hide_part_list_2d_veneer_0: ""
+      option_hide_part_list_2d_veneer_0: Wyświetlane dla każdego arkusza forniru
       option_hide_part_list_1: Zamaskowana
       option_hide_part_list_1d_help: Wyświetl lub maskuj listę części dla każdej płyty lub obrzeża.
-      option_hide_part_list_2d_help: ""
+      option_hide_part_list_2d_help: Wyświetl lub zamaskuj listę części dla każdego panelu.
       option_use_names: Identyfikacja części
       option_use_names_0: Użyj numeru
       option_use_names_1: Stosować oznaczenie
@@ -615,6 +663,10 @@ tab:
       option_highlight_primary_cuts_0: Tylko przegląd
       option_highlight_primary_cuts_1: Zawsze widoczne
       option_highlight_primary_cuts_help: Pozwala wyświetlić cięcia główne.
+      option_hide_edges_preview: Wyświetlanie obrzeży
+      option_hide_edges_preview_0: Wyświetlane na schemacie cięcia
+      option_hide_edges_preview_1: Ukryte na schemacie cięcia
+      option_hide_edges_preview_help: Umożliwia pokazanie lub ukrycie wizualnego wyświetlania obrzeży dla każdej części na schemacie cięcia.
       option_saw_kerf: Grubość linii cięcia
       option_saw_kerf_help: Szerokość materiału usuwanego w wyniku cięcia.
       option_trimming: Rozmiar przycinania
@@ -647,14 +699,21 @@ tab:
         Ilość jest opcjonalna.
         *Wielkości bez jednostek są traktowane jak w jednostkach modelu.*
       option_std_sheet_good: Arkusz o standardowych wymiarach
-      option_std_sheet_veneer: ""
+      option_std_sheet_veneer: Fornir standardowy
       option_std_sheet_help: |
+        Wybierz standardowy panel lub arkusz forniru, który zostanie zduplikowany, aby obliczyć najlepsze możliwe położenie.
+        Ta lista jest zdefiniowana w polu **$t(tab.materials.edit_material.std_sizes)** materiału.
+        Edytuj materiał '{{ material_name }}', aby uzupełnić tę listę.
       option_std_sheet_add: Dodaj rozmiar arkusza
       option_std_sheet_none: Żaden
       option_scrap_sheet_good_sizes: Arkusze odpadu
-      option_scrap_sheet_veneer_sizes: ""
+      option_scrap_sheet_veneer_sizes: Odcinki forniru
       option_scrap_sheet_sizes_placeholder: długość x szerokość x ilość ; ...
       option_scrap_sheet_sizes_help: |
+        Wymień wszystkie przycięte arkusze lub forniry, które mają być traktowane priorytetowo na schemacie cięcia.
+        Oczekiwany format: **L**x**W**x**Q**, gdzie **L** i **W** oznacza *długość* i *szerokość* panelu, a **Q** ilość.
+         Ilość jest opcjonalna.
+        *Rozmiary bez jednostek są podane w jednostkach modelowych.*
       tooltip:
         scroll_to_block_1d: Przewiń do pierwszej deski lub obrzeża
         scroll_to_block_2d: Przewiń do pierwszego arkusza
@@ -679,10 +738,11 @@ tab:
         leftover: Pozostałość
         cut: Cięcie
         cut_plural: Cięcia
-        cut_final: Cięcie główne (poziom 1)
-        cut_final_plural: Cięcia podstawowe (poziom 1)
-        cut_through: Cięcie główne (poziom 2)
-        cut_through_plural: Cięcia podstawowe (poziom 2)
+        cut_trimming: ""
+        cut_bounding: Cięcie główne (poziom 1)
+        cut_bounding_plural: Cięcia podstawowe (poziom 1)
+        cut_internal_through: Cięcie główne (poziom 2)
+        cut_internal_through_plural: Cięcia podstawowe (poziom 2)
         cut_none: Brak
         bar_dimensional_type_0: Płyta o standardowych wymiarach
         bar_dimensional_type_1: Odpad
@@ -690,8 +750,8 @@ tab:
         bar_edge_type_1: Odpady obrzeży
         sheet_good_type_0: Arkusz o standardowych wymiarach
         sheet_good_type_1: Odpad
-        sheet_veneer_type_0: ""
-        sheet_veneer_type_1: ""
+        sheet_veneer_type_0: Fornir standardowy
+        sheet_veneer_type_1: Ścinki forniru
         unused: Nieużywane
         parts: "{{ count }} część"
         parts_plural: "{{ count }} części"
@@ -764,7 +824,7 @@ tab:
         part_description: Opis
         part_entity_named_path: Scieżka instancji
         part_entity_name: Nazwa instancji
-        part_bin: ""
+        part_bin: Kosz
         part_cutting_size: Wymiary wstępne
         part_cutting_length: Długość - wstępna
         part_cutting_width: Szerokość - wstępna
@@ -773,14 +833,14 @@ tab:
         part_length: Długość
         part_width: Szerokość
         part_thickness: Grubość
-        part_tags: Oznaczenia
+        part_tags: Plakietki
         part_batch: Partia
         part_edge_ymin: Długość krawędzi 1
         part_edge_ymax: Długość krawędzi 2
         part_edge_xmin: Szerokość krawędzi 1
         part_edge_xmax: Szerokość krawędzi 2
-        part_veneer_zmin: ""
-        part_veneer_zmax: ""
+        part_face_zmin: Tylna strona forniru
+        part_face_zmax: Przednia strona forniru
         thumbnail_proportional: Miniaturka prostokątna
         thumbnail_square: Miniaturka kwadratowa
         group_material: Materiał / Grubość
@@ -795,7 +855,81 @@ tab:
         invalid_size: Wprowadzone parametry konfiguracji nie pozwalają na ustawienie prawidłowego rozmiaru etykiety.
       warning:
         is_part_selection: Te etykiety są ograniczone tylko do **wybranych części**.
-        formula_not_available: ""
+        formula_not_available: Formuła nie jest dostępna w tym kontekście
+    layout:
+      title: ""
+      to_layout: ""
+      options_layout: Układ
+      options_settings: Konfiguracja
+      option_parts: ""
+      option_parts_colored: Kolor
+      option_parts_colored_0: ""
+      option_parts_colored_1: ""
+      option_parts_colored_help: ""
+      option_parts_opacity: ""
+      option_parts_opacity_0: ""
+      option_parts_opacity_1: ""
+      option_parts_opacity_help: ""
+      option_pins: ""
+      option_pins_hidden: Wyświetlanie
+      option_pins_hidden_0: ""
+      option_pins_hidden_1: ""
+      option_pins_hidden_help: ""
+      option_pins_colored: Kolor
+      option_pins_colored_0: ""
+      option_pins_colored_1: ""
+      option_pins_colored_help: ""
+      option_pins_formula: Wzór
+      option_pins_formula_help: ""
+      option_pins_length: Długość
+      option_pins_length_0: ""
+      option_pins_length_1: Mały
+      option_pins_length_2: ""
+      option_pins_length_3: ""
+      option_pins_length_help: ""
+      option_pins_direction: ""
+      option_pins_direction_0: ""
+      option_pins_direction_1: ""
+      option_pins_direction_2: ""
+      option_pins_direction_3: ""
+      option_pins_direction_4: ""
+      option_pins_direction_help: ""
+      option_page: Rozmiar Papieru
+      option_page_format: Format
+      option_page_format_portrait: Orientacja pionowa
+      option_page_format_landscape: Orientacja pozioma
+      option_page_format_custom: Własny
+      option_page_width: Szerokość
+      option_page_height: Wysokość
+      option_page_header: ""
+      option_page_header_0: ""
+      option_page_header_1: ""
+      option_page_header_help: |
+      option_camera: ""
+      option_camera_view: ""
+      option_camera_view_custom: ""
+      option_camera_zoom: ""
+      option_camera_zoom_auto: Automatyczny
+      option_camera_zoom_custom: ""
+      option_camera_target: ""
+      option_camera_target_auto: Automatyczny
+      option_camera_target_custom: ""
+      option_explode: ""
+      error:
+        no_part: ""
+        failed_to_save_as_skp: ""
+        failed_to_layout: |
+      warning:
+        is_group_selection: ""
+        is_part_selection: ""
+    snippet:
+      number: Numer
+      name: Opis
+      number_and_name: ""
+      number_without_hardware: ""
+      size: Wymiar
+      area: ""
+      volume: ""
     error:
       no_model: Żaden model nie jest otwarty. Będziesz musiał podać mi więcej informacji;)
       no_entities: Twój model jest pusty. Będziesz musiał podać mi więcej informacji;)
@@ -829,7 +963,7 @@ tab:
     type_3: Wymiarowy
     type_4: Oklejanie krawędzi
     type_5: Dopasowywanie
-    type_6: ""
+    type_6: Fornir
     tooltip:
       type_0: Typ materiału '$t(tab.materials.type_0)'
       type_1: Typ materiału '$t(tab.materials.type_1)'
@@ -842,8 +976,8 @@ tab:
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Kierunek wzoru
       colorized: Ten odcień zostanie zastosowany do tekstury tego materiału podczas renderowania w modelu
-      texture_colorized: Zdecydowanie połącz ten odcień w obrazie tekstury
       texture_load: Załaduj nową teksturę
+      texture_clear: ""
       edit: "Edytuj właściwości '{{ name }}'"
       set_current: |
         Kolorowanie części za pomocą '{{ name }}'. 
@@ -868,11 +1002,13 @@ tab:
       title: "Właściwości materiału '{{ name }}'"
       general: Główne
       texture: Tekstura
+      no_texture: ""
       name: Nazwa
       type: Rodzaj
       cut_options: Parametry cięcia
       attributes: Atrybuty
       thickness: Grubość
+      thickness_help: |
       length_increase: Długość ponadwymiarowa
       length_increase_help: Nadmiar dodany do długości aby określić **wstępną długość**.
       width_increase: Szerokość ponadwymiarowa
@@ -918,7 +1054,6 @@ tab:
       std_prices_help: "Pozwala określić cenę dla wszystkich rozmiarów, a także dla każdego standardowego rozmiaru materiału."
       std_prices_dim_placeholder: Wybierz rozmiar
       std_prices_add: Dodaj cenę
-      texture_load: Załaduj
       texture_width: Szerokość
       texture_height: Wysokość
       export_to_skm: Eksport (.skm)
@@ -941,6 +1076,7 @@ tab:
         Potwierdź aby kontynuować.
     duplicate:
       message: |
+        Wybierz nazwę nowego materiału do skopiowania z **{{ material_name }}**.
     error:
       no_model: Żaden model nie jest otwarty. Będziesz musiał podać mi więcej informacji;)
       no_materials: Twój model nie zawiera żadnych materiałów.
@@ -948,7 +1084,7 @@ tab:
       failed_import_skm_file: "Błąd podczas importu z pliku skm **{{ error }}**"
       failed_export_skm_file: "Błąd podczas eksportu do pliku skm **{{ error }}**"
       failed_removing_material: "Błąd podczas usuwania materiału **{{ error }}**"
-      failed_duplicating_material: ""
+      failed_duplicating_material: "Podczas powielania materiału wystąpił błąd. **{{ error }}"
       invalid_image_file: Nieprawidłowy obraz
     success:
       exported_to: "Pomyślny eksport do {{ export_path }}."
@@ -1005,7 +1141,7 @@ tab:
       bbox_width: Szerokość
       bbox_thickness: Grubość
       material: Materiał
-      tags: Oznaczenia
+      tags: Plakietki
     tooltip:
       errors: Ta część nie zostanie zaimportowana ponieważ zawiera następujące błędy
       warnings: Ta część zostanie zaimportowana ale generuje następujące ostrzeżenia
@@ -1090,6 +1226,7 @@ tab:
         Ważne jest dla nas, aby *OpenCutList* mógł być dostosowany do bardzo różnych oczekiwań użytkowników w stosunku do funkcji *schematu cięcia*.
         Aby jeszcze bardziej rozszerzyć możliwości, chcielibyśmy umożliwić eksport diagramów układu w formacie **SVG**.
         Udostępniając nam środki do pracy nad tym eksportem, dajesz nam szansę, aby pomóc Ci w pełni wykorzystać możliwości *OpenCutList*.
+      layout: |
     objective_crowdfunding: |
       Nowe funkcje zostaną opracowane przez **Pozyskiwanie funduszy** i rozpoczną się po osiągnięciu **Celu Finansowego**.
     objective_thanks: |
@@ -1120,7 +1257,13 @@ tab:
     suppress_units_display: Wyświetl jednostkę długości dla każdej wartości
     mass_unit: Jednostka masy
     currency_symbol: Symbol waluty
-    menu:
+    presets:
+      export_global_presets: ""
+      export_global_presets_help: |
+      export_global_presets_success: ""
+      import_global_presets: ""
+      import_global_presets_help: |
+      import_global_presets_success: |
       dump_global_presets: Zrzuć ustawienia wstępne
       dump_model_presets: Zrzuć ustawienia wstępne modelu
       reset_global_presets: Ponownie zainicjuj ustawienia wstępne
@@ -1139,6 +1282,12 @@ tab:
       reset_model_presets_success: |
         Ustawienia wstępne *OpenCutList* dla bieżącego modelu zostały zresetowane.
         Aby odzwierciedlić zmiany, musisz **zamknąć** i **ponownie otworzyć** okno OpenCutList.
+      error:
+        no_preset_to_export: ""
+        no_preset_to_import: ""
+        failed_to_import: ""
+        failed_to_import_invalid_hexdigest: ""
+        failed_to_import_bad_file_format: ""
   about:
     label: O programie
     title: O programie
@@ -1159,6 +1308,7 @@ tab:
       - Soul Issam (*Arabski*), interfejs RTL jeszcze nie obsługiwany
       - Dany Dhondt, Eric Lugtigheid (*Holenderski*)
       - Nguyen Ngoc Tan (*Wietnamski*)
+      - Andrii Toporivskyi, Kostiantyn Shcherbey (*Ukraina*)
     credits_description: |
       Rozwój tego rozszerzenia jest częścią projektu platformy udostępniania [L'Air du Bois](https://www.lairdubois.fr).
       To rozszerzenie jest *Open Source* i jest dostępne na licencji [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) w swoim repozytorium [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
@@ -1172,19 +1322,15 @@ tab:
       - [Transifex](https://www.transifex.com) za ich wsparcie projektów Open Source.
       - [GitBook](https://www.gitbook.com) za ich wsparcie projektów Open Source.
 tool:
-  highlight:
+  default:
     transparency: Przezroczystość
     zoom_extents: Zakres powiększenia
+  highlight:
+    transparency: $t(tool.default.transparency)
+    zoom_extents: $t(tool.default.zoom_extents)
   smart_paint:
-    copy_key_win: Ctrl
-    copy_key_mac: Option
-    alt_key_win: Alt
-    alt_key_mac: Cmd
-    status_paint_face: "Kliknij, aby pokolorować twarz."
-    status_paint_part: "Kliknij, aby pokolorować cały pokój."
-    status_unpaint_face: "Kliknij, aby wyczyścić jedną stronę."
-    status_unpaint_part: "Kliknij, aby wyczyścić całe pomieszczenie."
-    status_pick: "Kliknij, aby obejrzeć próbkę materiału."
+    title: ""
+    default_material: Brak zdefiniowanego materiału
     filters: Filtry
     filter_0: Bez typu
     filter_1: $t(tab.materials.type_1)
@@ -1193,13 +1339,50 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action: Działanie
     action_0: Kolorowa twarz
+    action_0_status: ""
     action_1: Kolorowanka
+    action_1_status: ""
     action_2: Czysta twarz
+    action_2_status: ""
     action_3: Czysty pokój
-    action_4: Próbka
+    action_3_status: ""
+    edges: ""
+    edges_plural: ""
+    edge_ymin: ""
+    edge_ymax: ""
+    edge_xmin: ""
+    edge_xmax: ""
+    faces: ""
+    faces_plural: ""
+    face_zmin: Przód forniru
+    face_zmax: Przód forniru
     warning:
       no_material: Twój model nie zawiera żadnych materiałów!
-      all_filtered: Wybrane filtry maskują wszystkie materiały!
-      not_part: Obiekt docelowy musi być komponentem.
+      no_material_type: ""
+    error:
+      not_part: ""
+      not_edge: ""
+      not_face: ""
+      wrong_material_type: ""
+  smart_axes:
+    title: ""
+    toggle_depth: ""
+    action_0: ""
+    action_0_status: ""
+    action_1: ""
+    action_1_status: ""
+    action_2: ""
+    action_2_status: ""
+    action_3: ""
+    action_3_status: ""
+    action_modifier_length: ""
+    action_modifier_width: ""
+    action_modifier_thickness: ""
+    success:
+      part_oriented: ""
+    warning:
+      more_entities: ""
+    error:
+      not_part: ""
+      not_orientable: ""

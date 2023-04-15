@@ -32,6 +32,8 @@ default:
   copy: Копіювати
   select_all: Вибрати все
   unselect_all: Зняти виділення з усіх
+  draw: ""
+  estimate: ""
   empty_filename: Безіменний.skp
   help: Допомога
   error: Виправити!
@@ -60,6 +62,12 @@ default:
   setup_model_units: Налаштування одиниць виміру моделі
   load_more: Завантажити більше
   reset_to_app_defaults: Відновити до початкових значень
+  constrain_key: ""
+  copy_key_win: ""
+  copy_key_mac: Опції
+  alt_key_win: Alt
+  alt_key_mac: Команда
+  tab_key: ""
 core:
   menu:
     submenu: OpenCutList
@@ -69,13 +77,15 @@ core:
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
-      edit_part_veneers_properties: $t(tab.cutlist.edit_part_veneers_properties)
+      edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       smart_paint: $t(core.toolbar.command.smart_paint)
+      smart_axes: $t(core.toolbar.command.smart_axes)
   toolbar:
     name: OpenCutList
     command:
       dialog: OpenCutList
       smart_paint: Нанесення матеріалів на деталі
+      smart_axes: ""
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
@@ -94,7 +104,8 @@ core:
       Не рекомендується використовувати її у виробництві.
 
       Щоб повідомити про помилку: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
-    feature_locked: "*Не вимикається в цій версії SketchUp*"
+  error:
+    feature_unavailable: "Для цієї функції потрібен SketchUp {{ version }} або новіше"
   event:
     model_change: Активна модель була змінена.
     options_change: Параметри моделі змінено.
@@ -124,6 +135,7 @@ core:
       unzip: Помилка при розпакуванні архіву.
   preset:
     label: Пресети
+    manage: ""
     save_to: Зберегти
     restore_from: Відновити з
     app_defaults: Пресет за замовчуванням
@@ -167,6 +179,7 @@ core:
       store: Запам'ятати цей колір
       remove: Забути цей колір
     textinput_code:
+      snippets: ""
       help: "Натисніть **@**, щоб відкрити введення змінних даних."
     three_viewer:
       view: "Вид {{ view }}"
@@ -180,7 +193,7 @@ core:
       zoom: "Маштаб {{ zoom }}"
       explode_factor: Величина рознесення
       toggle_box_helper: Показати або приховати панель інструментів
-      toggle_box_dimensions_helper: Показати або приховати розміри
+      toggle_box_dimensions_helper: Показати або приховати доступні розміри
       toggle_axes_helper: Показати або приховати осі
   docs:
     error:
@@ -205,7 +218,7 @@ tab:
     edit_part_axes_properties: Редагувати властивості (осі) деталі
     edit_part_size_increase_properties: Редагувати властивості (розміри) деталі
     edit_part_edges_properties: Редагувати властивості (крайки) деталі
-    edit_part_veneers_properties: Редагувати властивості (шпон) деталі
+    edit_part_faces_properties: Редагувати властивості (шпон) деталі
     tooltip:
       show_hide_block: Показати / Приховати цю групу
       scroll_to_block: Перейти до групи
@@ -281,17 +294,17 @@ tab:
       size_increased: "Розмір збільшено на {{ value }}"
       has_edges: "Ця деталь містить {{ count }} крайку"
       has_edges_plural: "Ця деталь містить {{ count }} крайки"
-      has_veneers: "Ця деталь містить {{ count }} облицьовану поверхню"
-      has_veneers_plural: "Ця деталь містить {{ count }} облицьовані поверхні"
+      has_faces: "Ця деталь містить {{ count }} облицьовану поверхню"
+      has_faces_plural: "Ця деталь містить {{ count }} облицьовані поверхні"
       edge_decremented: "Віднімається товщина крайки ({{ decrement }})"
       edge_ymin: Крайка по довжині 1
       edge_ymax: Крайка по довжині 2
       edge_xmin: Крайка по ширині 1
       edge_xmax: Крайка по ширині 2
-      veneer_zmin: Зіставлення
-      veneer_zmax: Облицювання
+      face_zmin: Зіставлення
+      face_zmax: Облицювання
       dblclick_to_copy_all_edges: "Двічі клацніть тут, щоб скопіювати це значення для всіх інших крайок"
-      dblclick_to_copy_all_veneers: "Двічі клацніть тут, щоб скопіювати це значення на іншу поверхню"
+      dblclick_to_copy_all_faces: "Двічі клацніть тут, щоб скопіювати це значення на іншу поверхню"
       dblclick_to_sort_axes: "Двічі клацніть тут, щоб автоматично орієнтувати осі відповідно до розмірів деталі"
       part_axes: Внутрішні осі деталі
       select_unselect_all_parts: Виділити/Зняти виділення з усіх деталей у групі
@@ -323,7 +336,7 @@ tab:
       general: Загальні
       extra_help: "Список властивостей, що залежать від типу матеріалу \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Крайки
-      veneers: Шпон
+      faces: Шпон
       name: Ім’я
       material: Матеріал
       cumulable: Підсумувати
@@ -395,11 +408,12 @@ tab:
       axes_origin_position_none: Не змінювати початок координат
       axes_origin_position_min: Розміщення початку координат по кутку
       axes_origin_position_center: Розміщення початку координат у центрі
-      axes_origin_position_min_center: Розміщення початку координат по центру грані
+      axes_origin_position_front_min: ""
+      axes_origin_position_front_center: ""
       over_length: По довжині
       over_width: По ширині
       edge_disabled_help: "Ця крайка не налаштовується, тому що в моделі не було виявлено жодної поверхні, яка могла б нести у собі матеріал крайки."
-      veneer_disabled_help: "Цю поверхню неможливо налаштувати, оскільки на цьому краю деталі в моделі не було виявлено поверхню, що має матеріал."
+      face_disabled_help: "Цю поверхню неможливо налаштувати, оскільки на цьому краю деталі в моделі не було виявлено поверхню, що має матеріал."
       multiple_values: Множинні значення
       export_to_skp: Експорт (.skp)
       loading_preview: Завантаження попереднього перегляду
@@ -447,8 +461,8 @@ tab:
       hide_final_areas_help: "Якщо ця опція активована, то **фактична площа** деталей з типом *Листовий* буде прихована."
       hide_edges: Приховати стовпчик крайок
       hide_edges_help: "Якщо ця опція активована, то **стовпці крайок** деталей з типом *Листовий* будуть приховані."
-      hide_veneers: Сховати стовпці зі шпоном
-      hide_veneers_help: "Якщо цей параметр увімкнено, то **Стовпці шпону** у деталях типу *Листовий* не відображаються."
+      hide_faces: Сховати стовпці зі шпоном
+      hide_faces_help: "Якщо цей параметр увімкнено, то **Стовпці шпону** у деталях типу *Листовий* не відображаються."
       minimize_on_highlight: Стовпці після *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Якщо цей параметр увімкнено, вікно OpenCutList буде згорнуто під час використання функції *'$t(tab.cutlist.highlight_part)'*."
       general: Загальні
@@ -501,7 +515,7 @@ tab:
       thickness: Товщина
       thickness_short: Т
       edges: Крайки
-      veneers: Шпон
+      faces: Шпон
     export:
       title: Експорт
       info_0: |
@@ -534,7 +548,6 @@ tab:
       number: N°
       path: Шлях
       instance_name: Екземпляр
-      definition_name: Визначення
       name: Позначення
       total_cutting_length: Сумарна довжина різів
       total_cutting_area: Сумарна площа розкрою
@@ -559,8 +572,8 @@ tab:
       edge_ymax: Крайка по довжині 2
       edge_xmin: Крайка по ширині 1
       edge_xmax: Крайка по ширині 2
-      veneer_zmin: Зіставлення
-      veneer_zmax: Облицювання
+      face_zmin: Зіставлення
+      face_zmax: Облицювання
       layer: Тег
       layers: Теги
       placeholder:
@@ -729,10 +742,11 @@ tab:
         leftover: Залишок
         cut: Розріз
         cut_plural: Розрізи
-        cut_final: Первинний розріз (рівень 1)
-        cut_final_plural: Первинні розрізи (рівень 1)
-        cut_through: Первинний розріз (рівень 2)
-        cut_through_plural: Первинні розрізи (рівень 2)
+        cut_trimming: ""
+        cut_bounding: Первинний розріз (рівень 1)
+        cut_bounding_plural: Первинні розрізи (рівень 1)
+        cut_internal_through: Первинний розріз (рівень 2)
+        cut_internal_through_plural: Первинні розрізи (рівень 2)
         cut_none: Ні
         bar_dimensional_type_0: Стандартний розмір
         bar_dimensional_type_1: Обрізок
@@ -829,8 +843,8 @@ tab:
         part_edge_ymax: Крайка по довжині 2
         part_edge_xmin: Крайка по ширині 1
         part_edge_xmax: Крайка по ширині 2
-        part_veneer_zmin: Тильний шпон
-        part_veneer_zmax: Лицьовий шпон
+        part_face_zmin: Тильний шпон
+        part_face_zmax: Лицьовий шпон
         thumbnail_proportional: Мініатюра прямокутна
         thumbnail_square: Мініатюра квадратна
         group_material: Матеріал / Товщина
@@ -848,6 +862,7 @@ tab:
         formula_not_available: Недоступно в цьому контексті
     layout:
       title: Креслення
+      to_layout: Експорт до Layout
       options_layout: Склад
       options_settings: Конфігурація
       option_parts: Деталі
@@ -868,11 +883,8 @@ tab:
       option_pins_colored_0: Безбарвний
       option_pins_colored_1: Колір деталі
       option_pins_colored_help: Дозволяє вибрати колір шпильок.
-      option_pins_text: Текст
-      option_pins_text_0: Номер деталі
-      option_pins_text_1: Позначення деталі
-      option_pins_text_2: Номер деталі та позначення
-      option_pins_text_help: "Дозволяє вибрати текст, який відображатиметься на значках шпильок."
+      option_pins_formula: Формула
+      option_pins_formula_help: Дозволяє писати код *Ruby* для налаштування тексту етикеток.
       option_pins_length: Довжина
       option_pins_length_0: Без стрілки
       option_pins_length_1: Малий
@@ -911,9 +923,22 @@ tab:
       option_explode: Рознесений вид
       error:
         no_part: Немає деталей для відображення.
+        failed_to_save_as_skp: Не вдалося записати файл SKP для відправки в Layout.
+        failed_to_layout: |
+          Помилка запису файлу Layout : *{{ error }}*
+
+          **Переконайтеся, що файл не відкрито в Layout.**
       warning:
         is_group_selection: "Деталі, що містяться в **прихованих групах** вашого списку деталей, не будуть виведені."
         is_part_selection: Це креслення обмежено **вибраними деталями**.
+    snippet:
+      number: Номер
+      name: Позначення
+      number_and_name: ""
+      number_without_hardware: ""
+      size: Доступний розмір
+      area: ""
+      volume: ""
     error:
       no_model: Жодна модель не відкрита. Вам доведеться дати мені трохи більше інформації ;)
       no_entities: Ваша модель порожня. Вам доведеться дати мені трохи більше інформації ;)
@@ -960,8 +985,8 @@ tab:
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Напрямок фактури
       colorized: Цей відтінок буде застосовано до текстури цього матеріалу під час візуалізації в моделі
-      texture_colorized: Комбінуйте малюнок фактури для керування напрямом текстури матеріалу
       texture_load: Завантажити нову текстуру
+      texture_clear: ""
       edit: "Редагувати властивості '{{ name }}'"
       set_current: |
         Задати матеріал деталям '{{ name }}'
@@ -986,6 +1011,7 @@ tab:
       title: "Властивості матеріалу '{{ name }}'"
       general: Загальні
       texture: Текстура
+      no_texture: ""
       name: Ім’я
       type: Тип
       cut_options: Параметри розкрою
@@ -1039,7 +1065,6 @@ tab:
       std_prices_help: "Дозволяє визначити ціну як для всіх розмірів, так і для кожного типорозміру матеріалу."
       std_prices_dim_placeholder: Виберіть розмір
       std_prices_add: Додати ціну
-      texture_load: Завантаження
       texture_width: Ширина
       texture_height: Висота
       export_to_skm: Експорт (.skm)
@@ -1212,6 +1237,7 @@ tab:
         Для нас важливо, щоб *OpenCutList* міг адаптуватися до дуже різноманітних очікувань користувачів щодо функції *layout*.
         Щоб ще більше розширити можливості, ми хотіли б мати можливість експортувати карти розкрою у форматі **SVG**.
         Надаючи нам засоби для роботи над цим експортом, ви даєте нам можливість дозволити вам отримати максимальну віддачу від *OpenCutList*.
+      layout: |
     objective_crowdfunding: |
       Розробка нових продуктів здійснюватиметься завдяки **краудфандингу** і може розпочатися після досягнення **Фінансової цілі**.
     objective_thanks: |
@@ -1299,6 +1325,7 @@ tab:
       - Soul Issam (*арабська*), без інтерфейсу зправа на ліво
       - Dany Dhondt, Eric Lugtigheid (*голландська*)
       - Nguyen Ngoc Tan (*в’єтнамська*)
+      - Андрій Топорівський, Костянтин Щербей (*українська*)
     credits_description: |
       Розробка цього розширення є частиною проекту платформи спільного доступу [L'Air du Bois](https://www.lairdubois.fr).
       І як такий, він також є *Open Source* і доступний під [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) на своєму [репозиторій GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
@@ -1312,19 +1339,15 @@ tab:
       - [Transifex](https://www.transifex.com) за підтримку проекту з відкритим кодом.
       - [GitBook](https://www.gitbook.com) за підтримку проекту з відкритим кодом.
 tool:
-  highlight:
+  default:
     transparency: Прозорість
     zoom_extents: Наблизити
+  highlight:
+    transparency: $t(tool.default.transparency)
+    zoom_extents: $t(tool.default.zoom_extents)
   smart_paint:
-    copy_key_win: Ctrl
-    copy_key_mac: Опції
-    alt_key_win: Alt
-    alt_key_mac: Команда
-    status_paint_face: "Натисніть, щоб розфарбувати один бік."
-    status_paint_part: "Натисніть, щоб розфарбувати все."
-    status_unpaint_face: Натисніть для очищення однієї сторони.
-    status_unpaint_part: "Натисніть, щоб очистити все."
-    status_pick: "Натисніть, щоб взяти зразок матеріалу."
+    title: ""
+    default_material: Матеріал не заданий
     filters: Фільтри
     filter_0: Не визначений
     filter_1: $t(tab.materials.type_1)
@@ -1333,13 +1356,50 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action: Дія
     action_0: Розфарбувати сторону
+    action_0_status: ""
     action_1: Розфарбувати деталь
+    action_1_status: ""
     action_2: Очистити сторону
+    action_2_status: ""
     action_3: Очистити деталь
-    action_4: Взяти зразок
+    action_3_status: ""
+    edges: ""
+    edges_plural: ""
+    edge_ymin: ""
+    edge_ymax: ""
+    edge_xmin: ""
+    edge_xmax: ""
+    faces: ""
+    faces_plural: ""
+    face_zmin: Зіставлення
+    face_zmax: Спереду
     warning:
       no_material: Ваша модель не містить матеріалів!
-      all_filtered: Вибір фільтрів не відповідає матеріалам моделі!
-      not_part: Об'єкт має бути компонентом.
+      no_material_type: ""
+    error:
+      not_part: ""
+      not_edge: ""
+      not_face: ""
+      wrong_material_type: ""
+  smart_axes:
+    title: ""
+    toggle_depth: ""
+    action_0: ""
+    action_0_status: ""
+    action_1: ""
+    action_1_status: ""
+    action_2: ""
+    action_2_status: ""
+    action_3: ""
+    action_3_status: ""
+    action_modifier_length: ""
+    action_modifier_width: ""
+    action_modifier_thickness: ""
+    success:
+      part_oriented: ""
+    warning:
+      more_entities: ""
+    error:
+      not_part: ""
+      not_orientable: ""

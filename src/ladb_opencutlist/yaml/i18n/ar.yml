@@ -32,6 +32,8 @@ default:
   copy: نسخ
   select_all: تحديد الكل
   unselect_all: إزالة تحديد الكل
+  draw: ""
+  estimate: ""
   empty_filename: skp.غير معنون
   help: مساعدة
   error: أُفّ !
@@ -60,6 +62,12 @@ default:
   setup_model_units: تكوين وحدات النموذج
   load_more: رفع إضافي
   reset_to_app_defaults: استعادة القيم الأصلية
+  constrain_key: ""
+  copy_key_win: ""
+  copy_key_mac: Option
+  alt_key_win: Alt
+  alt_key_mac: Command
+  tab_key: ""
 core:
   menu:
     submenu: OpenCutList
@@ -69,13 +77,15 @@ core:
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
-      edit_part_veneers_properties: $t(tab.cutlist.edit_part_veneers_properties)
+      edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       smart_paint: $t(core.toolbar.command.smart_paint)
+      smart_axes: $t(core.toolbar.command.smart_axes)
   toolbar:
     name: OpenCutList
     command:
       dialog: OpenCutList
       smart_paint: صباغة القِطع
+      smart_axes: ""
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
@@ -94,7 +104,8 @@ core:
       لا ينصح باستعمالها في الإنتاج.
 
       للتبليغ عن خطإ برمجي: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
-    feature_locked: "*إمكانية الإيقاف غير موجودة في هذه النسخة من SketchUp*"
+  error:
+    feature_unavailable: "تتطلب هذه الخاصية توفر النسخة {{ version }} من SketchUp أو أعلى"
   event:
     model_change: لقد غُيّر النموذج النشط.
     options_change: لقد غُيّرت الخيارات في النموذج.
@@ -124,6 +135,7 @@ core:
       unzip: خطأ أثناء فك الضغط عن الملف.
   preset:
     label: الإعدادات المسبقة
+    manage: ""
     save_to: حفظ باسم
     restore_from: استرجاع من
     app_defaults: إعدادات المصنع المسبقة
@@ -167,6 +179,7 @@ core:
       store: احفظ اللون
       remove: انس أمر اللون
     textinput_code:
+      snippets: ""
       help: اضغط على **@** للحصول على قائمة المتغيرات.
     three_viewer:
       view: "المنظر {{ view }}"
@@ -205,7 +218,7 @@ tab:
     edit_part_axes_properties: عدّل خصائص (محاور) القطعة
     edit_part_size_increase_properties: عدّل خصائص (تمديدات) القطعة
     edit_part_edges_properties: عدل خصائص (حواشي) القطعة
-    edit_part_veneers_properties: عدّل خصائص القطعة (قشرة الخشب)
+    edit_part_faces_properties: عدّل خصائص القطعة (قشرة الخشب)
     tooltip:
       show_hide_block: إظهار / إخفاء المجموعة
       scroll_to_block: مرور إلى المجموعة
@@ -281,17 +294,17 @@ tab:
       size_increased: "زاد البعد وفقا لتمديد قدره {{ value }}"
       has_edges: "تحتوي هذه القطعة على {{ count }} حاشية"
       has_edges_plural: "تحتوي هذه القطعة على {{ count }} حواشٍ"
-      has_veneers: "تحتوي هذه القطعة على {{ count }} سطح مكسو بقشرة خشب"
-      has_veneers_plural: "تحتوي هذه القطعة على {{ count }} أسطح مكسوة بقشرة خشب"
+      has_faces: "تحتوي هذه القطعة على {{ count }} سطح مكسو بقشرة خشب"
+      has_faces_plural: "تحتوي هذه القطعة على {{ count }} أسطح مكسوة بقشرة خشب"
       edge_decremented: "تقليل بقدر سُمك الحواشي ({{ decrement }})"
       edge_ymin: طول الحاشية 1
       edge_ymax: طول الحاشية 2
       edge_xmin: عرض الحاشية 1
       edge_xmax: عرض الحاشية 2
-      veneer_zmin: ظهر قشرة الخشب
-      veneer_zmax: وجه قشرة الخشب
+      face_zmin: ظهر قشرة الخشب
+      face_zmax: وجه قشرة الخشب
       dblclick_to_copy_all_edges: انقر هنا نقرا مزدوجا لتكرار هذه القيمة لبقية الحواشي
-      dblclick_to_copy_all_veneers: انقر هنا نقرا مزدوجا لاستنساخ هذه القيمة إلى الوجه الآخر
+      dblclick_to_copy_all_faces: انقر هنا نقرا مزدوجا لاستنساخ هذه القيمة إلى الوجه الآخر
       dblclick_to_sort_axes: انقر هنا نقرًا مزدوجًا لإعادة ترتيب المحاور تلقائيًا وفقًا لأبعاد القطعة
       part_axes: محاور القطعةِ الداخليةُ
       select_unselect_all_parts: حدد / أزل التحديد عن كل القطع في المجموعة
@@ -323,7 +336,7 @@ tab:
       general: عام
       extra_help: "\"**$t(tab.materials.type_{{ material_type }})**\". قائمة الخصائص المحددة لنوع الخامة"
       edges: الحواشي
-      veneers: قِشرُ الخشب
+      faces: قِشرُ الخشب
       name: وصف
       material: الخامة
       cumulable: مجموع
@@ -395,11 +408,12 @@ tab:
       axes_origin_position_none: لا تغير المبدأ
       axes_origin_position_min: ضع المبدأ في زاوية
       axes_origin_position_center: ضع المبدأ في المركز
-      axes_origin_position_min_center: ضع المبدأ في وسط وجه ما
+      axes_origin_position_front_min: ""
+      axes_origin_position_front_center: ""
       over_length: على الطول
       over_width: على العرض
       edge_disabled_help: هذه الحاشية غير قابلة للتكوين لأنه لم يُعثر على وجه حامل للخامة في طرف هذه القطعة داخل النموذج.
-      veneer_disabled_help: هذا السطح غير قابل للتكوين لأنه لم يتم اكتشاف أي وجه بوسعه استقبال خامة في حافة هذه القِطعة من النموذج.
+      face_disabled_help: هذا السطح غير قابل للتكوين لأنه لم يتم اكتشاف أي وجه بوسعه استقبال خامة في حافة هذه القِطعة من النموذج.
       multiple_values: قيم متعددة
       export_to_skp: تصدير (skp.)
       loading_preview: تحميل المعاينة
@@ -447,8 +461,8 @@ tab:
       hide_final_areas_help: "إن كانت هذه الخاصية محددة فإن **المساحات النهائية** للقِطع لن تُعرض."
       hide_edges: أخف خانات الحواشي
       hide_edges_help: "إن كانت هذه الخاصية محددة فإن **أعمدة الحواشي** ضمن التصنيف *لوح* لن تُعرض."
-      hide_veneers: أخف أعمدة قِشرِ الخشب
-      hide_veneers_help: "إن كانت هذه الخاصية محددة، فستُخفى **أعمدة قِشرِ الخشب** من القطع المندرجة تحت النوع *لوح*"
+      hide_faces: أخف أعمدة قِشرِ الخشب
+      hide_faces_help: "إن كانت هذه الخاصية محددة، فستُخفى **أعمدة قِشرِ الخشب** من القطع المندرجة تحت النوع *لوح*"
       minimize_on_highlight: "*'$t(tab.cutlist.highlight_part)...'* تصغير بعد"
       minimize_on_highlight_help: "تحديد هذه الخاصية سيُصغّر OpenCutList\nعند استخدام الوظيفة *'$t(tab.cutlist.highlight_part)'*"
       general: عام
@@ -501,7 +515,7 @@ tab:
       thickness: السُمك
       thickness_short: س
       edges: الحواشي
-      veneers: قِشرُ الخشب
+      faces: قِشرُ الخشب
     export:
       title: صدِّر
       info_0: |
@@ -534,7 +548,6 @@ tab:
       number: الرقم
       path: المسار
       instance_name: مثيل
-      definition_name: تعريف
       name: وصف
       total_cutting_length: الطول الإجمالي - أولي
       total_cutting_area: المساحة الإجمالية - أولية
@@ -559,8 +572,8 @@ tab:
       edge_ymax: طول الحاشية 2
       edge_xmin: عرض الحاشية 1
       edge_xmax: عرض الحاشية 2
-      veneer_zmin: الوجه الخلفي لقشرة الخشب
-      veneer_zmax: الوجه الأمامي لقشرة الخشب
+      face_zmin: الوجه الخلفي لقشرة الخشب
+      face_zmax: الوجه الأمامي لقشرة الخشب
       layer: وسم
       layers: وسوم
       placeholder:
@@ -729,10 +742,11 @@ tab:
         leftover: البواقي
         cut: قطع
         cut_plural: قطع
-        cut_final: القَطع الابتدائي (المستوى 1)
-        cut_final_plural: التقطيعات الابتدائية (المستوى 1)
-        cut_through: القَطع الابتدائي (المستوى 2)
-        cut_through_plural: التقطيعات الابتدائية (المستوى 2)
+        cut_trimming: ""
+        cut_bounding: القَطع الابتدائي (المستوى 1)
+        cut_bounding_plural: التقطيعات الابتدائية (المستوى 1)
+        cut_internal_through: القَطع الابتدائي (المستوى 2)
+        cut_internal_through_plural: التقطيعات الابتدائية (المستوى 2)
         cut_none: لا شيء
         bar_dimensional_type_0: قضيب نظامي
         bar_dimensional_type_1: باقي تقطيع القضيب
@@ -829,8 +843,8 @@ tab:
         part_edge_ymax: طول الحاشية 2
         part_edge_xmin: عرض الحاشية 1
         part_edge_xmax: عرض الحاشية 2
-        part_veneer_zmin: ظهر قشرة الخشب
-        part_veneer_zmax: وجه قشرة الخشب
+        part_face_zmin: ظهر قشرة الخشب
+        part_face_zmax: وجه قشرة الخشب
         thumbnail_proportional: ملصق متناسب
         thumbnail_square: ملصق مربع
         group_material: الخامة / السُمك
@@ -848,6 +862,7 @@ tab:
         formula_not_available: المعادلة غير متاحة في هذا السياق
     layout:
       title: الرسم
+      to_layout: التصدير إلى Layout
       options_layout: النموذج الطباعي
       options_settings: إعداد
       option_parts: القِطع
@@ -868,11 +883,8 @@ tab:
       option_pins_colored_0: بلا لون
       option_pins_colored_1: لون القِطعة
       option_pins_colored_help: حدد لون الفقاعات
-      option_pins_text: النص
-      option_pins_text_0: رقم القِطعة
-      option_pins_text_1: وصف القِطعَة
-      option_pins_text_2: رقم و وصف القطعة
-      option_pins_text_help: حدد النص المعروض داخل الفقاعات
+      option_pins_formula: الصيغة
+      option_pins_formula_help: تتيح لك كتاب كود برمجي بلغة *Ruby* لتخصيص نص اللصاقة
       option_pins_length: الطول
       option_pins_length_0: بلا سهم
       option_pins_length_1: صغير
@@ -911,9 +923,22 @@ tab:
       option_explode: منظر مُفجَّر
       error:
         no_part: ليست هناك قطعة لتُرسم.
+        failed_to_save_as_skp: فشلت كتابة الملف SKP الموجه إلى Layout
+        failed_to_layout: |
+          خطأ أثناء كتابة ملف Layout كالتالي: *{{ error }}*
+
+          **تأكد أن الملف ليس مفتوحا في Layout**
       warning:
         is_group_selection: لن تُرسم القِطَعُ المتضمَّنة في **المجموعات المخفية** داخل قائمة القِطَع.
         is_part_selection: معينة هذا الرسم محدودة بـ **القطع المحددة**
+    snippet:
+      number: الرقم
+      name: التسمية
+      number_and_name: ""
+      number_without_hardware: ""
+      size: البعد النهائي
+      area: ""
+      volume: ""
     error:
       no_model: لا يوجد نموذج مفتوح. عليك أن تزودني بمعلومات أكثر ;)
       no_entities: نموذجك فارغ. عليك أن تزودني بمعلومات أكثر ;)
@@ -960,8 +985,8 @@ tab:
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: اتجاه تعرّق الألياف
       colorized: سيضاف هذا اللون إلى الهيئة السطحية -تكستشر- لهذه الخامة عندما يجري تصييرها -رندرتها- في النموذج
-      texture_colorized: دمج اللون نهائيا في في الهيئة السطحية -التكستشر-
       texture_load: حمّل هيئة سطحية - تكستشر جديدة
+      texture_clear: ""
       edit: "عدل خصائص '{{ name }}'"
       set_current: |
         اصبغ القِطع بـ '{{ name }}'
@@ -986,6 +1011,7 @@ tab:
       title: "خصائص الخامة '{{ name }}'"
       general: عام
       texture: الهيئة السطحية -التكستشر-
+      no_texture: ""
       name: وصف
       type: النوع
       cut_options: خيارات التقطيع
@@ -1039,7 +1065,6 @@ tab:
       std_prices_help: تتيح لك تعيين السعر لكل القياسات و أيضا لكل قياس نظامي من الخامة.
       std_prices_dim_placeholder: حدد مقاسا
       std_prices_add: أضف سعرا
-      texture_load: رفع
       texture_width: العرض
       texture_height: الارتفاع
       export_to_skm: تصدير (skm.)
@@ -1212,6 +1237,7 @@ tab:
         يهمنا أن يمكن تكييف خاصية *رسم التقطيعِ التخطيطيّ* في *OpenCutList* مع توقعات المستعملين المختلفة.
         لتوسيع الاحتمالات بشكل أكبر، نود تمكين تصدير مخططات التقطيع بتنسيق **SVG**.
         من خلال تزويدنا بالموارد للعمل على هذه الصادرات ، فإنك تمنحنا الفرصة لمساعدتك في تحقيق أقصى استفادة من *OpenCutList*.
+      layout: |
     objective_crowdfunding: |
       سيجري تطوير هذه الوظائف الجديدة عبر **التمويل التشاركي** و ستكون البداية عند بلوغ **الهدف المالي**.
     objective_thanks: |
@@ -1299,6 +1325,7 @@ tab:
       - عصام سول (*العربية*) واجهة العمل من اليمين إلى اليسار غير مدعومة بعد
       - Dany Dhondt, Eric Lugtigheid (*اللغة الهولندية*)
       - Nguyen Ngoc Tan (*فيتنامي*)
+      - Andriy Toporivskyi، Kostyantyn Shcherbey (*الأوكرانية*)
     credits_description: |
       تطوير هذه الإضافة مرتبط بمشروع منصة المشاركة [L'Air du Bois](https://www.lairdubois.fr).
       هذه الإضافة *مفتوحة المصدر* و متوفرة ضمن [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) على [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
@@ -1312,19 +1339,15 @@ tab:
       - [Transifex](https://www.transifex.com) على دعم المشاريع مفتوحة المصدر.
       - [GitBook](https://www.gitbook.com) على دعم المشاريع مفتوحة المصدر .
 tool:
-  highlight:
+  default:
     transparency: الشفافية
     zoom_extents: نطاقات التكبير و التصغير
+  highlight:
+    transparency: $t(tool.default.transparency)
+    zoom_extents: $t(tool.default.zoom_extents)
   smart_paint:
-    copy_key_win: Control
-    copy_key_mac: Option
-    alt_key_win: Alt
-    alt_key_mac: Command
-    status_paint_face: انقر لصباغة وجه من الأوجه.
-    status_paint_part: انقر لصباغة قطعة بكاملها.
-    status_unpaint_face: انقر لتنقية وجه من الأوجه.
-    status_unpaint_part: انقر لتنقية قطعة بكاملها.
-    status_pick: انقر لأخذ عينة من الخامة.
+    title: ""
+    default_material: بلا خامة
     filters: مُرَشِّح
     filter_0: بلا نوع محدد
     filter_1: $t(tab.materials.type_1)
@@ -1333,13 +1356,50 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action: الإجراء
     action_0: صباغة وجهٍ
+    action_0_status: ""
     action_1: صباغة قطعةٍ
+    action_1_status: ""
     action_2: تنقية وجهٍ
+    action_2_status: ""
     action_3: تنقية قطعةٍ
-    action_4: أخذ عينةٍ
+    action_3_status: ""
+    edges: ""
+    edges_plural: ""
+    edge_ymin: ""
+    edge_ymax: ""
+    edge_xmin: ""
+    edge_xmax: ""
+    faces: ""
+    faces_plural: ""
+    face_zmin: ظهر قشرة الخشب
+    face_zmax: أمام
     warning:
       no_material: لا يحتوي نموذجك على أي خامة!
-      all_filtered: تغطي المُرشِّحات المحددة كل الخامات!
-      not_part: يجب أن يكون المجسم المستهدف عنصرا.
+      no_material_type: ""
+    error:
+      not_part: ""
+      not_edge: ""
+      not_face: ""
+      wrong_material_type: ""
+  smart_axes:
+    title: ""
+    toggle_depth: ""
+    action_0: ""
+    action_0_status: ""
+    action_1: ""
+    action_1_status: ""
+    action_2: ""
+    action_2_status: ""
+    action_3: ""
+    action_3_status: ""
+    action_modifier_length: ""
+    action_modifier_width: ""
+    action_modifier_thickness: ""
+    success:
+      part_oriented: ""
+    warning:
+      more_entities: ""
+    error:
+      not_part: ""
+      not_orientable: ""

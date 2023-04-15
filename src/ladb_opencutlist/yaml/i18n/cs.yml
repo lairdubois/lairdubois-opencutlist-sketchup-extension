@@ -32,6 +32,8 @@ default:
   copy: Kopírovat
   select_all: Vybrat všechno
   unselect_all: Odznačit všechno
+  draw: ""
+  estimate: ""
   empty_filename: Nepojmenovany.skp
   help: Pomoc
   error: Spravit!
@@ -60,6 +62,12 @@ default:
   setup_model_units: Nakonfigurujte modelové jednotky
   load_more: Více
   reset_to_app_defaults: Obnovit původní hodnoty
+  constrain_key: ""
+  copy_key_win: ""
+  copy_key_mac: Nastavení
+  alt_key_win: Atl
+  alt_key_mac: Příkaz
+  tab_key: ""
 core:
   menu:
     submenu: OpenCutList
@@ -69,13 +77,15 @@ core:
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
-      edit_part_veneers_properties: $t(tab.cutlist.edit_part_veneers_properties)
+      edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       smart_paint: $t(core.toolbar.command.smart_paint)
+      smart_axes: $t(core.toolbar.command.smart_axes)
   toolbar:
     name: OpenCutList
     command:
       dialog: OpenCutList
       smart_paint: Barvy dílů
+      smart_axes: ""
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
@@ -94,7 +104,8 @@ core:
       Nedoporučuje se jej používat ve výrobě.
 
       Chcete-li nahlásit chybu:<a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
-    feature_locked: "*Nelze deaktivovat v této verzi SketchUp*"
+  error:
+    feature_unavailable: "Tato funkce vyžaduje aplikaci SketchUp {{ version }} nebo vyšší"
   event:
     model_change: Aktivní model byl změněn.
     options_change: Nastavení v modelu se změnilo.
@@ -124,6 +135,7 @@ core:
       unzip: Chyba při dekompresi archivu.
   preset:
     label: Předvolby
+    manage: ""
     save_to: Uložit do
     restore_from: Obnovit z
     app_defaults: Tovární nastavení
@@ -167,6 +179,7 @@ core:
       store: Uložit barvu
       remove: Smazat barvu
     textinput_code:
+      snippets: ""
       help: "Chcete-li získat seznam proměnných, zadejte **@**."
     three_viewer:
       view: "{{ view }} Zobrazit"
@@ -205,7 +218,7 @@ tab:
     edit_part_axes_properties: Upravte vlastnosti (osy) součásti
     edit_part_size_increase_properties: Upravte vlastnosti (nadměrné velikosti) součásti
     edit_part_edges_properties: Upravte vlastnosti (lemování okrajů) součásti
-    edit_part_veneers_properties: Upravte vlastnosti (dýhy) této součásti
+    edit_part_faces_properties: Upravte vlastnosti (dýhy) této součásti
     tooltip:
       show_hide_block: Zobrazit / Skrýt
       scroll_to_block: Přejděte na skupinu
@@ -281,17 +294,17 @@ tab:
       size_increased: "Rozměr je větší o nadmíru {{ value }}"
       has_edges: "Tento dílec obsahuje {{ count }} hranování"
       has_edges_plural: "Tento dílec obsahuje {{ count }} hranování"
-      has_veneers: "Tato část obsahuje {{ count }} dýhovaný povrch"
-      has_veneers_plural: "Tato část obsahuje {{ count }} dýhovaných povrchů"
+      has_faces: "Tato část obsahuje {{ count }} dýhovaný povrch"
+      has_faces_plural: "Tato část obsahuje {{ count }} dýhovaných povrchů"
       edge_decremented: "Zmenšeno o tloušťku hrany ({{ decrement }})"
       edge_ymin: Hrana podél 1
       edge_ymax: Hrana podél 2
       edge_xmin: Hrana napříč 1
       edge_xmax: Hrana napříč 2
-      veneer_zmin: Zadní strana z dýhy
-      veneer_zmax: Přední strana z dýhy
+      face_zmin: Zadní strana z dýhy
+      face_zmax: Přední strana z dýhy
       dblclick_to_copy_all_edges: Dvojklikem zde duplikujete tuto hodnotu na ostatní hrany
-      dblclick_to_copy_all_veneers: Dvojitým kliknutím duplikujete tuto hodnotu na druhou plochu
+      dblclick_to_copy_all_faces: Dvojitým kliknutím duplikujete tuto hodnotu na druhou plochu
       dblclick_to_sort_axes: Dvojklikem zde automaticky změníte pořadí os podle rozměrů dílu
       part_axes: Vnitřní osy dílu
       select_unselect_all_parts: Výberte/zruště výběr dílců ve skupině
@@ -323,7 +336,7 @@ tab:
       general: Všeobecné
       extra_help: "Seznam vlastností specifických pro typ materiálu \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Hranování
-      veneers: Dýhy
+      faces: Dýhy
       name: Název
       material: Materiál
       cumulable: Shrnutí
@@ -395,11 +408,12 @@ tab:
       axes_origin_position_none: Neměňte původ
       axes_origin_position_min: Umístěte počátek do rohu
       axes_origin_position_center: Umístěte počátek do středu
-      axes_origin_position_min_center: Umístěte počátek doprostřed plochy
+      axes_origin_position_front_min: ""
+      axes_origin_position_front_center: ""
       over_length: Po délce
       over_width: Po šířce
       edge_disabled_help: "Toto hranování není konfigurovatelné, protože nebyla nalezena žádná plocha, která by mohla nést materiál pro olepování okrajů v modelu."
-      veneer_disabled_help: "Tento povrch nelze konfigurovat, protože na této hraně dílu v modelu nebyla detekována žádná plocha nesoucí materiál."
+      face_disabled_help: "Tento povrch nelze konfigurovat, protože na této hraně dílu v modelu nebyla detekována žádná plocha nesoucí materiál."
       multiple_values: Více hodnot
       export_to_skp: Exportovat (.skp)
       loading_preview: Načítání náhledu
@@ -447,8 +461,8 @@ tab:
       hide_final_areas_help: "Pokud je vybraná tato možnost, budou skryty **skutečné oblasti** dílců typu *Tabule*."
       hide_edges: Skrýt sloupce pro hranování
       hide_edges_help: "Pokud je vybrána tato možnost, budou **sloupce pro hranování** u dílců typu *Tabule* skryty."
-      hide_veneers: Skryjte sloupce dýh
-      hide_veneers_help: "Pokud je vybrána tato možnost, skryjí se **sloupce dýhy** dílů typu *Tabule*."
+      hide_faces: Skryjte sloupce dýh
+      hide_faces_help: "Pokud je vybrána tato možnost, skryjí se **sloupce dýhy** dílů typu *Tabule*."
       minimize_on_highlight: Minimalizovat po *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Pokud je vybrána tato možnost, okno OpenCutList bude minimalizováno při použití funkce *'$t(tab.cutlist.highlight_part)'*."
       general: Všeobecné
@@ -501,7 +515,7 @@ tab:
       thickness: Tloušťka
       thickness_short: T
       edges: Hranování
-      veneers: Dýhy
+      faces: Dýhy
     export:
       title: Exportovat
       info_0: |
@@ -534,7 +548,6 @@ tab:
       number: Číslo
       path: Cesta
       instance_name: Instance
-      definition_name: Definice
       name: Označení
       total_cutting_length: Celková hrubá délka
       total_cutting_area: Celková hrubá plocha
@@ -559,8 +572,8 @@ tab:
       edge_ymax: Hrana podél 2
       edge_xmin: Hrana napříč 1
       edge_xmax: Hrana napříč 2
-      veneer_zmin: Zadní strana z dýhy
-      veneer_zmax: Přední strana z dýhy
+      face_zmin: Zadní strana z dýhy
+      face_zmax: Přední strana z dýhy
       layer: Štítek
       layers: Štítky
       placeholder:
@@ -729,10 +742,11 @@ tab:
         leftover: Zbytek
         cut: Řez
         cut_plural: Řezy
-        cut_final: Primární řez (úroveň 1)
-        cut_final_plural: primárních řezů (úroveň 1)
-        cut_through: Primární řez (úroveň 2)
-        cut_through_plural: primárních řezů (úroveň 2)
+        cut_trimming: ""
+        cut_bounding: Primární řez (úroveň 1)
+        cut_bounding_plural: primárních řezů (úroveň 1)
+        cut_internal_through: Primární řez (úroveň 2)
+        cut_internal_through_plural: primárních řezů (úroveň 2)
         cut_none: Ne skládat
         bar_dimensional_type_0: Standardní rozměry
         bar_dimensional_type_1: Odřezky
@@ -829,8 +843,8 @@ tab:
         part_edge_ymax: Hrana podél 2
         part_edge_xmin: Hrana napříč 1
         part_edge_xmax: Hrana napříč 2
-        part_veneer_zmin: Zadní strana z dýhy
-        part_veneer_zmax: Přední strana z dýhy
+        part_face_zmin: Zadní strana z dýhy
+        part_face_zmax: Přední strana z dýhy
         thumbnail_proportional: Proporcionální miniatura
         thumbnail_square: Čtvercová miniatura
         group_material: Materíál / Tloušťka
@@ -848,6 +862,7 @@ tab:
         formula_not_available: Vzorec není v tomto kontextu k dispozici
     layout:
       title: Kreslení
+      to_layout: Export do Layout
       options_layout: Rozložení
       options_settings: Konfigurace
       option_parts: Díly
@@ -868,11 +883,8 @@ tab:
       option_pins_colored_0: Bez barvy
       option_pins_colored_1: Barva dílu
       option_pins_colored_help: Vyberte barvu štítků.
-      option_pins_text: Text
-      option_pins_text_0: Číslo dílu
-      option_pins_text_1: Označení dílu
-      option_pins_text_2: Číslo a označení dílu
-      option_pins_text_help: Vyberte text zobrazený na štítcích.
+      option_pins_formula: Vzorec
+      option_pins_formula_help: Umožňuje napsat kód *Ruby* pro přizpůsobení textu štítku.
       option_pins_length: Délka
       option_pins_length_0: Bez vodící čáry
       option_pins_length_1: Malý
@@ -911,9 +923,22 @@ tab:
       option_explode: Rozložený pohled
       error:
         no_part: Není zde žádná část ke kreslení.
+        failed_to_save_as_skp: Nepodařilo se zapsat soubor SKP pro odeslání do modulu Layout.
+        failed_to_layout: |
+          Chyba při zápisu souboru Layout: *{{ error }}*
+
+          **Ujistěte se, že soubor není otevřen v Rozložení.**
       warning:
         is_group_selection: Součásti uvnitř **maskovaných skupin** vašeho kusovníku nebudou vykresleny.
         is_part_selection: Tento přehledový výkres je omezen na **vybrané díly**.
+    snippet:
+      number: Číslo
+      name: Označení
+      number_and_name: ""
+      number_without_hardware: ""
+      size: Rozměry
+      area: ""
+      volume: ""
     error:
       no_model: Model nejde otevřít. Potřebujeme více informací ;)
       no_entities: Váš model je prázdný. Potřebujeme více informací ;)
@@ -960,8 +985,8 @@ tab:
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Směr let
       colorized: "Tento barevný odstín bude aplikován na texturu tohoto materiálu, když je vykreslen v modelu"
-      texture_colorized: Kombinujte tento odstín v dekoru textury
       texture_load: Načtěte novou texturu
+      texture_clear: ""
       edit: "Upravit vlastnosti pro '{{ name }}'"
       set_current: |
         Malovat části s '{{ name }}'
@@ -986,6 +1011,7 @@ tab:
       title: "Vlastnosti materiálu pro '{{ name }}'"
       general: Všeobecné
       texture: Textura
+      no_texture: ""
       name: Popis
       type: Typ
       cut_options: Parametry řezání
@@ -1039,7 +1065,6 @@ tab:
       std_prices_help: Umožňuje definovat cenu pro všechny velikosti i pro každou standardní velikost materiálu.
       std_prices_dim_placeholder: Vyberte velikost
       std_prices_add: Přidat cenu
-      texture_load: Nahrát
       texture_width: Šířka
       texture_height: Výška
       export_to_skm: Export (.skm)
@@ -1212,6 +1237,7 @@ tab:
         Je pro nás důležité, aby *OpenCutList* bylo možné přizpůsobit velmi rozdílným očekáváním uživatelů od funkce *řezový diagram*.
         Pro další rozšíření možností bychom rádi umožnili export rozvrhových diagramů ve formátu **SVG**.
         Tím, že nám poskytnete prostředky pro práci na těchto exportech, nám dáte příležitost pomoci vám co nejlépe využít *OpenCutList*.
+      layout: |
     objective_crowdfunding: |
       Vývoj nových funkcí bude probíhat prostřednictvím **Investičního financování** a může být zahájen po dosažení **Finančního cíle**.
     objective_thanks: |
@@ -1299,6 +1325,7 @@ tab:
       - Soul Issam (*arabština*), bez RTL rozhraní
       - Dany Dhondt, Eric Lugtigheid (*holandský*)
       - Nguyen Ngoc Tan (*vietnamština*)
+      - Andrii Toporivskyi, Kostiantyn Shcherbey (*ukrajina*)
     credits_description: |
       Vývoj tohoto rozšíření souvisí s projektem sdílení platforem [L'Air du Bois](https://www.lairdubois.fr).
       Toto rozšíření je také *Open Source* a je k dispozici pod licencí [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) na [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
@@ -1312,19 +1339,15 @@ tab:
       - [Transifex](https://www.transifex.com) za jejich podporu projektů Open Source.
       - [GitBook](https://www.gitbook.com) za jejich podporu projektů Open Source.
 tool:
-  highlight:
+  default:
     transparency: Průhlednost
     zoom_extents: Rozsahy zvětšení
+  highlight:
+    transparency: $t(tool.default.transparency)
+    zoom_extents: $t(tool.default.zoom_extents)
   smart_paint:
-    copy_key_win: Ovládání
-    copy_key_mac: Nastavení
-    alt_key_win: Atl
-    alt_key_mac: Příkaz
-    status_paint_face: Kliknutím obarvíme plochu.
-    status_paint_part: Kliknutím obarvíme celý díl.
-    status_unpaint_face: Kliknutím smažeme barvu plochy.
-    status_unpaint_part: Kliknutím zmažeme barvu celého dílu.
-    status_pick: Kliknutím zobrazíme vzorek materiálu.
+    title: ""
+    default_material: Není definován žádný materiál
     filters: Filtr
     filter_0: Bez typu
     filter_1: $t(tab.materials.type_1)
@@ -1333,13 +1356,50 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action: Akce
     action_0: Barva plochy
+    action_0_status: ""
     action_1: Barva části
+    action_1_status: ""
     action_2: Vyčistit plochu
+    action_2_status: ""
     action_3: Vyčistit část
-    action_4: Vzorek
+    action_3_status: ""
+    edges: ""
+    edges_plural: ""
+    edge_ymin: ""
+    edge_ymax: ""
+    edge_xmin: ""
+    edge_xmax: ""
+    faces: ""
+    faces_plural: ""
+    face_zmin: Zadní strana z dýhy
+    face_zmax: Přední
     warning:
       no_material: Váš model neobsahuje žádný materiál!
-      all_filtered: Vybrané filtry maskují všechny materiály!
-      not_part: Cílovým objektem musí být komponenta.
+      no_material_type: ""
+    error:
+      not_part: ""
+      not_edge: ""
+      not_face: ""
+      wrong_material_type: ""
+  smart_axes:
+    title: ""
+    toggle_depth: ""
+    action_0: ""
+    action_0_status: ""
+    action_1: ""
+    action_1_status: ""
+    action_2: ""
+    action_2_status: ""
+    action_3: ""
+    action_3_status: ""
+    action_modifier_length: ""
+    action_modifier_width: ""
+    action_modifier_thickness: ""
+    success:
+      part_oriented: ""
+    warning:
+      more_entities: ""
+    error:
+      not_part: ""
+      not_orientable: ""
