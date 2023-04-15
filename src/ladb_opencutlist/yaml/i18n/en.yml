@@ -302,7 +302,7 @@ tab:
       edge_xmin: Edge width 1
       edge_xmax: Edge width 2
       face_zmin: Backside
-      face_zmax: Frontside
+      face_zmax: Front
       dblclick_to_copy_all_edges: Double-click here to duplicate this value to the other edges
       dblclick_to_copy_all_faces: Double-click here to duplicate this value to the other face
       dblclick_to_sort_axes: Double-click here to automatically reorder the axes according to the dimensions of the part
@@ -459,10 +459,10 @@ tab:
       hide_bbox_dimensions_help: "If this option is selected, the **finished** dimensions of parts will be hidden."
       hide_final_areas: Hide actual area of parts of type *Sheet Goods*
       hide_final_areas_help: "If this option is selected, the **actual areas** of parts of type *Sheet Goods* will be hidden."
-      hide_edges: Hide the columns of edges
+      hide_edges: Hide the edge columns
       hide_edges_help: "If this option is selected, the **edge banding columns** of parts of type *Sheet Goods* will be hidden."
-      hide_faces: Hide the columns of faces
-      hide_faces_help: "If this option is selected, the **veneer columns** of parts of type *Sheet Goods* will be hidden."
+      hide_faces: Hide the face columns
+      hide_faces_help: "If this option is selected, the **face columns** of parts of type *Sheet Goods* will be hidden."
       minimize_on_highlight: Minimize after *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "If this option is selected, the OpenCutList window will be minimized when the function *'$t(tab.cutlist.highlight_part)'* is used."
       general: General
@@ -637,7 +637,7 @@ tab:
       option_hide_part_list_1d_edge_0: Displayed for each Edge Banding
       option_hide_part_list_2d_good_0: Displayed for each Panel
       option_hide_part_list_2d_veneer_0: Displayed for each Veneer Sheet
-      option_hide_part_list_1: Hide
+      option_hide_part_list_1: Hidden
       option_hide_part_list_1d_help: Display or hide the list of parts for each board or edge banding.
       option_hide_part_list_2d_help: Display or hide the list of parts for each panel or veneer sheet.
       option_use_names: Part Identification
@@ -844,7 +844,7 @@ tab:
         part_edge_xmin: Edge width 1
         part_edge_xmax: Edge width 2
         part_face_zmin: Veneer backside
-        part_face_zmax: Veneer frontside
+        part_face_zmax: Veneer front
         thumbnail_proportional: Proportional thumbnail
         thumbnail_square: Square thumbnail
         group_material: Material / Thickness
@@ -986,7 +986,7 @@ tab:
       grain_direction: Grain orientation
       colorized: This tone will be applied to the texture when it is rendered in the model
       texture_load: Load a new texture
-      texture_clear: Erase texture
+      texture_clear: Remove texture
       edit: "Edit the properties of '{{ name }}'"
       set_current: |
         Paint parts with '{{ name }}'
@@ -1238,7 +1238,7 @@ tab:
         To further expand the possibilities, we would like to enable the export of layout diagrams in **SVG** format.
         By providing us with the means to work on these exports, you are giving us the opportunity to help you get the most out of *OpenCutList*.
       layout: |
-         The objective of this module is to allow you to easily print a preview of your project as an **exploded view** with identification from information generated in the parts list.
+        The objective of this module is to allow you to easily print a preview of your project as an **exploded view** with identification from information generated in the parts list.
     objective_crowdfunding: |
       The development of new features will be done through **Fundraising** and will start when the **Financial Goal** is reached.
     objective_thanks: |
@@ -1348,7 +1348,7 @@ tool:
     zoom_extents: $t(tool.default.zoom_extents)
   smart_paint:
     title: Paint
-    default_material: Default
+    default_material: No material
     filters: Filters
     filter_0: Without type
     filter_1: $t(tab.materials.type_1)
@@ -1358,7 +1358,7 @@ tool:
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
     action_0: Paint part
-    action_0_status: Click on a part to paint it
+    action_0_status: Click on a part to paint its instance
     action_1: Paint edges
     action_1_status: Click on a panel edge to apply '$t(tab.materials.type_4)'
     action_2: Paint faces
@@ -1371,29 +1371,29 @@ tool:
     edge_ymax: Length 2
     edge_xmin: Width 1
     edge_xmax: Width 2
-    faces: "{{ count }} surface"
+    faces: "{{ count }} face"
     faces_plural: "{{ count }} faces"
     face_zmin: Backside
     face_zmax: Front
     warning:
       no_material: No material
-      no_material_type: No material of type '{{ type }}'
+      no_material_type: "No material of type '{{ type }}'"
     error:
       not_part: The target object is not a part
       not_edge: The target face is not a panel edge
-      not_face: The target face is not a panel surface
-      wrong_material_type: The target part must be of type '{{ type }}'
+      not_face: The target face is not a panel face
+      wrong_material_type: "The target part must be of type '{{ type }}'"
   smart_axes:
     title: Orient
-    toggle_depth: Parts in background
+    toggle_depth: Background parts
     action_0: Mirror
-    action_0_status:  Click on a part to mirror its instance along one of its dimensions
+    action_0_status: Click on a part to mirror its instance along one of its dimensions
     action_1: Swap length ↔ width
     action_1_status: Click on a part to swap its length with its width
     action_2: Swap front ↔ backside
     action_2_status: Click on a part to swap its front with its backside
     action_3: Orient automatically
-    action_3_status:  Click on a part to set its length to the largest dimension and its thickness to the smallest
+    action_3_status: Click on a part to set its length to the largest dimension and its thickness to the smallest
     action_modifier_length: L
     action_modifier_width: W
     action_modifier_thickness: T

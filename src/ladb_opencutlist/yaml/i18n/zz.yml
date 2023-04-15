@@ -300,7 +300,7 @@ tab:
       edge_xmin: 234 - Edge width 1
       edge_xmax: 235 - Edge width 2
       face_zmin: 236 - Backside
-      face_zmax: 237 - Frontside
+      face_zmax: 237 - Front
       dblclick_to_copy_all_edges: 238 - Double-click here to duplicate this value to the other edges
       dblclick_to_copy_all_faces: 239 - Double-click here to duplicate this value to the other face
       dblclick_to_sort_axes: 240 - Double-click here to automatically reorder the axes according to the dimensions of the part
@@ -462,10 +462,10 @@ tab:
       hide_bbox_dimensions_help: 343 - If this option is selected, the **finished** dimensions of parts will be hidden.
       hide_final_areas: 344 - Hide actual area of parts of type *Sheet Goods*
       hide_final_areas_help: 345 - If this option is selected, the **actual areas** of parts of type *Sheet Goods* will be hidden.
-      hide_edges: 346 - Hide the columns of edges
+      hide_edges: 346 - Hide the edge columns
       hide_edges_help: 347 - If this option is selected, the **edge banding columns** of parts of type *Sheet Goods* will be hidden.
-      hide_faces: 348 - Hide the columns of faces
-      hide_faces_help: 349 - If this option is selected, the **veneer columns** of parts of type *Sheet Goods* will be hidden.
+      hide_faces: 348 - Hide the face columns
+      hide_faces_help: 349 - If this option is selected, the **face columns** of parts of type *Sheet Goods* will be hidden.
       minimize_on_highlight: 350 - Minimize after *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: 351 - If this option is selected, the OpenCutList window will be minimized when the function *'$t(tab.cutlist.highlight_part)'* is used.
       general: 352 - General
@@ -646,7 +646,7 @@ tab:
       option_hide_part_list_1d_edge_0: 500 - Displayed for each Edge Banding
       option_hide_part_list_2d_good_0: 501 - Displayed for each Panel
       option_hide_part_list_2d_veneer_0: 502 - Displayed for each Veneer Sheet
-      option_hide_part_list_1: 503 - Hide
+      option_hide_part_list_1: 503 - Hidden
       option_hide_part_list_1d_help: 504 - Display or hide the list of parts for each board or edge banding.
       option_hide_part_list_2d_help: 505 - Display or hide the list of parts for each panel or veneer sheet.
       option_use_names: 506 - Part Identification
@@ -853,7 +853,7 @@ tab:
         part_edge_xmin: 683 - Edge width 1
         part_edge_xmax: 684 - Edge width 2
         part_face_zmin: 685 - Veneer backside
-        part_face_zmax: 686 - Veneer frontside
+        part_face_zmax: 686 - Veneer front
         thumbnail_proportional: 687 - Proportional thumbnail
         thumbnail_square: 688 - Square thumbnail
         group_material: 689 - Material / Thickness
@@ -995,7 +995,7 @@ tab:
       grain_direction: 805 - Grain orientation
       colorized: 806 - This tone will be applied to the texture when it is rendered in the model
       texture_load: 807 - Load a new texture
-      texture_clear: 808 - Erase texture
+      texture_clear: 808 - Remove texture
       edit: 809 - Edit the properties of '{{ name }}'
       set_current: |
         810 - Paint parts with '{{ name }}'
@@ -1367,7 +1367,7 @@ tool:
     zoom_extents: "$t(tool.default.zoom_extents)"
   smart_paint:
     title: 1039 - Paint
-    default_material: 1040 - Default
+    default_material: 1040 - No material
     filters: 1041 - Filters
     filter_0: 1042 - Without type
     filter_1: "$t(tab.materials.type_1)"
@@ -1377,7 +1377,7 @@ tool:
     filter_5: "$t(tab.materials.type_5)"
     filter_6: "$t(tab.materials.type_6)"
     action_0: 1049 - Paint part
-    action_0_status: 1050 - Click on a part to paint it
+    action_0_status: 1050 - Click on a part to paint its instance
     action_1: 1051 - Paint edges
     action_1_status: 1052 - Click on a panel edge to apply '$t(tab.materials.type_4)'
     action_2: 1053 - Paint faces
@@ -1390,7 +1390,7 @@ tool:
     edge_ymax: 1060 - Length 2
     edge_xmin: 1061 - Width 1
     edge_xmax: 1062 - Width 2
-    faces: 1063 - {{ count }} surface
+    faces: 1063 - {{ count }} face
     faces_plural: 1064 - {{ count }} faces
     face_zmin: 1065 - Backside
     face_zmax: 1066 - Front
@@ -1400,11 +1400,11 @@ tool:
     error:
       not_part: 1069 - The target object is not a part
       not_edge: 1070 - The target face is not a panel edge
-      not_face: 1071 - The target face is not a panel surface
+      not_face: 1071 - The target face is not a panel face
       wrong_material_type: 1072 - The target part must be of type '{{ type }}'
   smart_axes:
     title: 1073 - Orient
-    toggle_depth: 1074 - Parts in background
+    toggle_depth: 1074 - Background parts
     action_0: 1075 - Mirror
     action_0_status: 1076 - Click on a part to mirror its instance along one of its dimensions
     action_1: 1077 - Swap length ↔ width
