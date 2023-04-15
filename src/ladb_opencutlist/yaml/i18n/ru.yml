@@ -32,6 +32,8 @@ default:
   copy: Копировать
   select_all: Выбрать всё
   unselect_all: Отменить выбор
+  draw: ""
+  estimate: ""
   empty_filename: Безымянный.skp
   help: Помощь
   error: Исправить!
@@ -60,6 +62,12 @@ default:
   setup_model_units: Установка единиц измерения
   load_more: Загрузить больше
   reset_to_app_defaults: Восстановить исходные значения
+  constrain_key: ""
+  copy_key_win: ""
+  copy_key_mac: Вариант
+  alt_key_win: Alt
+  alt_key_mac: Команда
+  tab_key: ""
 core:
   menu:
     submenu: OpenCutList
@@ -69,13 +77,15 @@ core:
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
-      edit_part_veneers_properties: $t(tab.cutlist.edit_part_veneers_properties)
+      edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       smart_paint: $t(core.toolbar.command.smart_paint)
+      smart_axes: $t(core.toolbar.command.smart_axes)
   toolbar:
     name: OpenCutList
     command:
       dialog: OpenCutList
       smart_paint: Раскраска деталей
+      smart_axes: ""
   dialog:
     title: OpenCutList от L'Air du Bois
   leftbar:
@@ -125,6 +135,7 @@ core:
       unzip: Ошибка при распаковке архива.
   preset:
     label: Пресеты
+    manage: ""
     save_to: Сохранить
     restore_from: Восстановить с
     app_defaults: Пресеты по умолчанию
@@ -168,6 +179,7 @@ core:
       store: Запомнить этот цвет
       remove: Забыть этот цвет
     textinput_code:
+      snippets: ""
       help: "Нажмите **@**, чтобы открыть ввод переменных данных."
     three_viewer:
       view: "Вид {{ view }}"
@@ -206,7 +218,7 @@ tab:
     edit_part_axes_properties: Отредактируйте свойства (осей) детали
     edit_part_size_increase_properties: Отредактируйте свойства (размеры) детали
     edit_part_edges_properties: Отредактируйте свойства (кромки) детали
-    edit_part_veneers_properties: Редактировать свойства детали (Шпон)
+    edit_part_faces_properties: Редактировать свойства детали (Шпон)
     tooltip:
       show_hide_block: Показать / Скрыть эту группу
       scroll_to_block: Прокрутка в группу
@@ -282,17 +294,17 @@ tab:
       size_increased: "Размер увеличен на величину {{ value }}"
       has_edges: "Эта деталь содержит {{ count }} кромки"
       has_edges_plural: "Эти детали содержат {{ count }} кромки"
-      has_veneers: "Эта деталь содержит {{ count }} облицованную поверхность"
-      has_veneers_plural: "Эта деталь содержит {{ count }} облицованные поверхности"
+      has_faces: "Эта деталь содержит {{ count }} облицованную поверхность"
+      has_faces_plural: "Эта деталь содержит {{ count }} облицованные поверхности"
       edge_decremented: "Вычтена толщина кромки ({{ decrement }})"
       edge_ymin: Кромка по длине 1
       edge_ymax: Кромка по длине 2
       edge_xmin: Кромка по ширине 1
       edge_xmax: Кромка по ширине 2
-      veneer_zmin: Сопоставление
-      veneer_zmax: Облицовка
+      face_zmin: Сопоставление
+      face_zmax: Облицовка
       dblclick_to_copy_all_edges: "Дважды щелкните здесь, чтобы скопировать это значение на все остальные кромки"
-      dblclick_to_copy_all_veneers: "Дважды щелкните здесь, чтобы скопировать это значение на другую поверхность"
+      dblclick_to_copy_all_faces: "Дважды щелкните здесь, чтобы скопировать это значение на другую поверхность"
       dblclick_to_sort_axes: "Дважды щелкните здесь, чтобы автоматически ориентировать оси в соответствии с размерами детали"
       part_axes: Внутренние оси детали
       select_unselect_all_parts: Выделение/отмена выделения всех деталей в группе
@@ -324,7 +336,7 @@ tab:
       general: Общие
       extra_help: "Список свойств, зависящих от типа материала \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Кромки
-      veneers: Шпон
+      faces: Шпон
       name: Определение
       material: Материал
       cumulable: Суммировать
@@ -396,11 +408,12 @@ tab:
       axes_origin_position_none: Не изменять начало координат
       axes_origin_position_min: Размещение начала координат по углу
       axes_origin_position_center: Размещение начала координат в центре
-      axes_origin_position_min_center: Размещение начала координат по центру грани
+      axes_origin_position_front_min: ""
+      axes_origin_position_front_center: ""
       over_length: По всей длине
       over_width: По всей ширине
       edge_disabled_help: "Эта кромка не настраивается, так как в модели не было обнаружено ни одной поверхности, которая могла бы нести в себе материал кромочной полосы."
-      veneer_disabled_help: "Эта поверхность не является настраиваемой, т.к. в модели не обнаружено поверхностей с нанесенным материалом."
+      face_disabled_help: "Эта поверхность не является настраиваемой, т.к. в модели не обнаружено поверхностей с нанесенным материалом."
       multiple_values: Множественные значения
       export_to_skp: Экспорт (.skp)
       loading_preview: Загрузка предварительного просмотра
@@ -448,8 +461,8 @@ tab:
       hide_final_areas_help: "Если эта опция активирована, то **фактическая площадь** деталей с типом *Листовой* будет скрыта."
       hide_edges: Скрыть столбец кромок
       hide_edges_help: "Если эта опция активирована, то **столбцы кромок** деталей с типом *Листовой* будут скрыты."
-      hide_veneers: Скрыть столбцы шпона
-      hide_veneers_help: "Если этот параметр включен, то **Столбцы шпона** в деталях типа *Листовой* не отображаются."
+      hide_faces: Скрыть столбцы шпона
+      hide_faces_help: "Если этот параметр включен, то **Столбцы шпона** в деталях типа *Листовой* не отображаются."
       minimize_on_highlight: Столбцы после *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Если эта опция активна, окно OpenCutList будет свернуто, когда функция *'$t(tab.cutlist.highlight_part)'* применена."
       general: Общие
@@ -502,7 +515,7 @@ tab:
       thickness: Толщина
       thickness_short: T
       edges: Схема кромок
-      veneers: Шпон
+      faces: Шпон
     export:
       title: Экспорт
       info_0: |
@@ -559,8 +572,8 @@ tab:
       edge_ymax: Кромка по длине 2
       edge_xmin: Кромка по ширине 1
       edge_xmax: Кромка по ширине 2
-      veneer_zmin: Сопоставление
-      veneer_zmax: Облицовка
+      face_zmin: Сопоставление
+      face_zmax: Облицовка
       layer: Маяк
       layers: Маяки
       placeholder:
@@ -729,10 +742,11 @@ tab:
         leftover: Остаток
         cut: Пропил
         cut_plural: Распилы
-        cut_final: Первичный рез (уровень 1)
-        cut_final_plural: Первичные разрезы (уровень 1)
-        cut_through: Первичный рез (уровень 2)
-        cut_through_plural: Первичные разрезы (уровень 2)
+        cut_trimming: ""
+        cut_bounding: Первичный рез (уровень 1)
+        cut_bounding_plural: Первичные разрезы (уровень 1)
+        cut_internal_through: Первичный рез (уровень 2)
+        cut_internal_through_plural: Первичные разрезы (уровень 2)
         cut_none: Нет
         bar_dimensional_type_0: Стандартный размер
         bar_dimensional_type_1: Обрезок
@@ -829,8 +843,8 @@ tab:
         part_edge_ymax: Кромка по длине 2
         part_edge_xmin: Кромка по ширине 1
         part_edge_xmax: Кромка по ширине 2
-        part_veneer_zmin: Тыльный шпон
-        part_veneer_zmax: Лицевой шпон
+        part_face_zmin: Тыльный шпон
+        part_face_zmax: Лицевой шпон
         thumbnail_proportional: Пропорциональная
         thumbnail_square: Квадратная
         group_material: Материал / Толщина
@@ -917,6 +931,14 @@ tab:
       warning:
         is_group_selection: "Детали, содержащиеся в **скрытых группах** вашей карты раскроя, не будут нарисованы."
         is_part_selection: Этот сборочный чертеж ограничен **выделенными деталями**.
+    snippet:
+      number: Номер
+      name: Наименование
+      number_and_name: ""
+      number_without_hardware: ""
+      size: Доступный размер
+      area: ""
+      volume: ""
     error:
       no_model: Модель не открыта. Вы должны предоставить мне дополнительную информацию ;)
       no_entities: Ваша модель пуста. Вам нужно дать мне больше информации ;)
@@ -963,8 +985,8 @@ tab:
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Направление волокон
       colorized: "Этот рисунок фактуры будет применен к текстуре этого материала, когда он будет отображен в модели"
-      texture_colorized: Комбинируйте рисунок фактуры для управления направлением изображения текстуры материала
       texture_load: Загрузить новую текстуру
+      texture_clear: ""
       edit: "Редактирование свойств '{{ name }}'"
       set_current: |
         Раскрашивайте части с помощью '{{ name }}'
@@ -989,6 +1011,7 @@ tab:
       title: "Свойства материала '{{ name }}'"
       general: Общие
       texture: Текстура
+      no_texture: ""
       name: Имя
       type: Тип
       cut_options: Параметры раскроя
@@ -1042,7 +1065,6 @@ tab:
       std_prices_help: "Позволяет задать стоимость материала в зависимости от расчета цены за единицу: объема, площади, штуки."
       std_prices_dim_placeholder: Введите размер
       std_prices_add: Добавьте цену
-      texture_load: Загрузка
       texture_width: Ширина
       texture_height: Высота
       export_to_skm: Экспорт (.skm)
@@ -1215,6 +1237,7 @@ tab:
         Для нас важно, чтобы *OpenCutList* соответствовал ожиданиям пользователей, использующих расчет *карт раскроя*.
         Для расширения возможностей плагина мы хотели бы сделать возможным экспорт карт раскроя в формате **SVG**.
         Помогая нам финансово, вы даете нам возможность расширить функционал плагина, чтобы в итоге получить максимальную отдачу от *OpenCutList*.
+      layout: |
     objective_crowdfunding: |
       Разработка новых опций будет осуществляться за счет собранных средств через **краудфандинг** и начнется, когда будет достигнута **финансовая цель**.
     objective_thanks: |
@@ -1316,19 +1339,15 @@ tab:
       - [Transifex](https://www.transifex.com) за их поддержку проекта Open Source.
       - [GitBook](https://www.gitbook.com) за их поддержку проекта Open Source.
 tool:
-  highlight:
+  default:
     transparency: Прозрачность
     zoom_extents: Приблизить
+  highlight:
+    transparency: $t(tool.default.transparency)
+    zoom_extents: $t(tool.default.zoom_extents)
   smart_paint:
-    copy_key_win: Ctrl
-    copy_key_mac: Вариант
-    alt_key_win: Alt
-    alt_key_mac: Команда
-    status_paint_face: "Кликните, чтобы раскрасить одну сторону."
-    status_paint_part: "Кликните, чтобы раскрасить всё."
-    status_unpaint_face: Кликните для очистки одной стороны.
-    status_unpaint_part: "Кликните, чтобы очистить всё."
-    status_pick: "Кликните, чтобы взять образец материала."
+    title: ""
+    default_material: Материал не задан
     filters: Фильтры
     filter_0: Не определён
     filter_1: $t(tab.materials.type_1)
@@ -1337,13 +1356,50 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action: Действие
     action_0: Раскрасить сторону
+    action_0_status: ""
     action_1: Раскрасить деталь
+    action_1_status: ""
     action_2: Очистить сторону
+    action_2_status: ""
     action_3: Очистить деталь
-    action_4: Взять образец
+    action_3_status: ""
+    edges: ""
+    edges_plural: ""
+    edge_ymin: ""
+    edge_ymax: ""
+    edge_xmin: ""
+    edge_xmax: ""
+    faces: ""
+    faces_plural: ""
+    face_zmin: Сопоставление
+    face_zmax: Перед
     warning:
       no_material: Ваша модель не содержит материалов!
-      all_filtered: Выбор фильтров не соответствует материалам модели!
-      not_part: Объект должен быть компонентом.
+      no_material_type: ""
+    error:
+      not_part: ""
+      not_edge: ""
+      not_face: ""
+      wrong_material_type: ""
+  smart_axes:
+    title: ""
+    toggle_depth: ""
+    action_0: ""
+    action_0_status: ""
+    action_1: ""
+    action_1_status: ""
+    action_2: ""
+    action_2_status: ""
+    action_3: ""
+    action_3_status: ""
+    action_modifier_length: ""
+    action_modifier_width: ""
+    action_modifier_thickness: ""
+    success:
+      part_oriented: ""
+    warning:
+      more_entities: ""
+    error:
+      not_part: ""
+      not_orientable: ""

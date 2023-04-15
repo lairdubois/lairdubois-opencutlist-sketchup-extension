@@ -1392,8 +1392,8 @@ tool:
     action_1_status: "Klicken Sie auf ein Teil, um seine Länge mit seiner Breite zu vertauschen"
     action_2: Vorderseite ↔ Rückseite vertauschen
     action_2_status: "Klicken Sie auf ein Teil, um seine Vorderseite mit seiner Rückseite zu vertauschen"
-    action_3: Automatisch ausrichten
-    action_3_status: "Klicken Sie auf ein Teil, um seine Länge auf die größte und seine Dicke auf die kleinste Abmessung einzustellen"
+    action_3: Achsen ausrichten
+    action_3_status: "Klicken Sie auf die Fläche oder Kante eines Teils, um die Achsenausrichtung anzupassen"
     action_modifier_length: L
     action_modifier_width: B
     action_modifier_thickness: D

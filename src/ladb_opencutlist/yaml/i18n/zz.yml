@@ -1405,14 +1405,14 @@ tool:
   smart_axes:
     title: 1073 - Orient
     toggle_depth: 1074 - Background parts
-    action_0: 1075 - Mirror
-    action_0_status: 1076 - Click on a part to mirror its instance along one of its dimensions
+    action_0: 1075 - Flip
+    action_0_status: 1076 - Click on a part to flip its instance along one of its dimensions
     action_1: 1077 - Swap length ↔ width
     action_1_status: 1078 - Click on a part to swap its length with its width
     action_2: 1079 - Swap front ↔ backside
     action_2_status: 1080 - Click on a part to swap its front with its backside
-    action_3: 1081 - Orient automatically
-    action_3_status: 1082 - Click on a part to set its length to the largest dimension and its thickness to the smallest
+    action_3: 1081 - Adapt axes
+    action_3_status: 1082 - Click on the face or edge of a part to adjust the orientation of the axes
     action_modifier_length: 1083 - L
     action_modifier_width: 1084 - W
     action_modifier_thickness: 1085 - T

@@ -32,6 +32,8 @@ default:
   copy: Copiar
   select_all: Selecione todos
   unselect_all: Desmarque todos
+  draw: ""
+  estimate: ""
   empty_filename: Sem nome.skp
   help: Ajuda
   error: Droga!
@@ -60,6 +62,12 @@ default:
   setup_model_units: Configure as unidades do modelo
   load_more: Carregue mais
   reset_to_app_defaults: Restaurar os valores originais
+  constrain_key: ""
+  copy_key_win: ""
+  copy_key_mac: Opções
+  alt_key_win: Alt
+  alt_key_mac: Command
+  tab_key: ""
 core:
   menu:
     submenu: OpenCutList
@@ -69,13 +77,15 @@ core:
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
-      edit_part_veneers_properties: $t(tab.cutlist.edit_part_veneers_properties)
+      edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       smart_paint: $t(core.toolbar.command.smart_paint)
+      smart_axes: $t(core.toolbar.command.smart_axes)
   toolbar:
     name: OpenCutList
     command:
       dialog: OpenCutList
       smart_paint: Pintar peças
+      smart_axes: ""
   dialog:
     title: OpenCutList por L'Air du Bois
   leftbar:
@@ -94,7 +104,8 @@ core:
       Não é recomendado usá-lo na produção.
 
       Para relatar um bug: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
-    feature_locked: "*Não é possível desativar nesta versão do SketchUp*"
+  error:
+    feature_unavailable: ""
   event:
     model_change: O modelo ativo foi alterado.
     options_change: As opções do modelo mudaram.
@@ -124,6 +135,7 @@ core:
       unzip: Erro ao descompactar o arquivo.
   preset:
     label: Predefinições
+    manage: ""
     save_to: Salvar como
     restore_from: Restaurar a partir de
     app_defaults: Definições de fábrica
@@ -167,6 +179,7 @@ core:
       store: Memorizar esta cor
       remove: Esquecer esta cor
     textinput_code:
+      snippets: ""
       help: Digite **@** para obter uma lista de variáveis.
     three_viewer:
       view: "{{ view }} Ver"
@@ -205,7 +218,7 @@ tab:
     edit_part_axes_properties: Editar as propriedades (eixos) da peça
     edit_part_size_increase_properties: Editar as propriedades (tamanho grande) da peça
     edit_part_edges_properties: Editar as propriedades (bandagens de borda) da peça
-    edit_part_veneers_properties: Editar as propriedades (laminados) da peça
+    edit_part_faces_properties: Editar as propriedades (laminados) da peça
     tooltip:
       show_hide_block: Mostrar / ocultar este grupo
       scroll_to_block: Role para o grupo
@@ -281,17 +294,17 @@ tab:
       size_increased: "A dimensão foi aumentada pelo superdimensionamento de {{ value }}"
       has_edges: "Esta peça contém {{ count }} fitas de borda"
       has_edges_plural: "Esta peça contém {{ count }} fitas de borda"
-      has_veneers: "Esta peça contém {{ count }} superfície laminada"
-      has_veneers_plural: "Esta peça contém {{ count }} superfícies laminadas"
+      has_faces: "Esta peça contém {{ count }} superfície laminada"
+      has_faces_plural: "Esta peça contém {{ count }} superfícies laminadas"
       edge_decremented: "Reduzido pela espessura das fitas da borda ({{ decrement }})"
       edge_ymin: Comprimento da borda 1
       edge_ymax: Comprimento da borda 2
       edge_xmin: Largura da borda 1
       edge_xmax: Largura da borda 2
-      veneer_zmin: Verso da chapa laminada
-      veneer_zmax: Frente da chapa laminada
+      face_zmin: Verso da chapa laminada
+      face_zmax: Frente da chapa laminada
       dblclick_to_copy_all_edges: Clique duas vezes aqui para duplicar este valor para todas as outras arestas
-      dblclick_to_copy_all_veneers: Clique duas vezes aqui para replicar este valor para a outra face
+      dblclick_to_copy_all_faces: Clique duas vezes aqui para replicar este valor para a outra face
       dblclick_to_sort_axes: Dê duplo clique aqui para reordenar automaticamente os eixos de acordo com as dimensões da peça
       part_axes: Eixos internos da peça
       select_unselect_all_parts: Selecione / desmarque todas as peças do grupo
@@ -323,7 +336,7 @@ tab:
       general: Geral
       extra_help: "Lista de propriedades específicas do tipo de material \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Fita de Borda
-      veneers: Laminados
+      faces: Laminados
       name: Descrição
       material: Material
       cumulable: Pode somar
@@ -395,11 +408,12 @@ tab:
       axes_origin_position_none: Não mude a origem
       axes_origin_position_min: Coloque a origem em um canto
       axes_origin_position_center: Coloque a origem no centro
-      axes_origin_position_min_center: Coloque a origem no meio de uma das faces
+      axes_origin_position_front_min: ""
+      axes_origin_position_front_center: ""
       over_length: Em todo o comprimento
       over_width: Em toda a largura
       edge_disabled_help: Esta borda não é configurável porque não foi detectada nenhuma face com o mesmo material desta fita de borda no modelo.
-      veneer_disabled_help: Esta superfície não é configurável porque nenhuma face com revestimento foi detectada nesta borda da peça do modelo.
+      face_disabled_help: Esta superfície não é configurável porque nenhuma face com revestimento foi detectada nesta borda da peça do modelo.
       multiple_values: Valores múltiplos
       export_to_skp: Exportar (.skp)
       loading_preview: Carregando uma Prévia
@@ -447,8 +461,8 @@ tab:
       hide_final_areas_help: "Se esta opção for selecionada, as **áreas reais** das peças do tipo *Chapa* serão ocultadas."
       hide_edges: Esconda a coluna de Fitas de Borda
       hide_edges_help: "Se esta opção for selecionada, as **colunas de Fita de Borda** de peças do tipo *Chapa* serão ocultadas."
-      hide_veneers: Ocultar as colunas dos laminados
-      hide_veneers_help: "Se esta opção for selecionada, as **colunas \"laminados\"** das peças do tipo *Chapas* ficarão ocultas."
+      hide_faces: Ocultar as colunas dos laminados
+      hide_faces_help: "Se esta opção for selecionada, as **colunas \"laminados\"** das peças do tipo *Chapas* ficarão ocultas."
       minimize_on_highlight: Mimimize após *'$t(tab.cutlist.highlight_part) ...'*
       minimize_on_highlight_help: "Se esta opção for selecionada, a janela OpenCutList será minimizada quando a função *'$t(tab.cutlist.highlight_part)'* for aplicada."
       general: Geral
@@ -501,7 +515,7 @@ tab:
       thickness: Espessura
       thickness_short: E
       edges: Fita de Borda
-      veneers: Laminados
+      faces: Laminados
     export:
       title: Exportar
       info_0: |
@@ -534,7 +548,6 @@ tab:
       number: Não.
       path: Caminho
       instance_name: Instância
-      definition_name: Definição
       name: Descrição
       total_cutting_length: Comprimento total - bruto
       total_cutting_area: Área total - bruta
@@ -559,8 +572,8 @@ tab:
       edge_ymax: Comprimento da borda 2
       edge_xmin: Largura da borda 1
       edge_xmax: Largura da borda 2
-      veneer_zmin: Verso do laminado
-      veneer_zmax: Frente do laminado
+      face_zmin: Verso do laminado
+      face_zmax: Frente do laminado
       layer: Etiqueta
       layers: Etiquetas
       placeholder:
@@ -729,10 +742,11 @@ tab:
         leftover: Sobras
         cut: Corte
         cut_plural: Cortes
-        cut_final: Corte primário (nível 1)
-        cut_final_plural: Cortes primários (nível 1)
-        cut_through: Corte primário (nível 2)
-        cut_through_plural: Cortes primários (nível 2)
+        cut_trimming: ""
+        cut_bounding: Corte primário (nível 1)
+        cut_bounding_plural: Cortes primários (nível 1)
+        cut_internal_through: Corte primário (nível 2)
+        cut_internal_through_plural: Cortes primários (nível 2)
         cut_none: Nenhum
         bar_dimensional_type_0: Prancha MLC padrão
         bar_dimensional_type_1: Sobra de prancha
@@ -829,8 +843,8 @@ tab:
         part_edge_ymax: Comprimento da borda 2
         part_edge_xmin: Largura da borda 1
         part_edge_xmax: Largura da borda 2
-        part_veneer_zmin: Verso do laminado
-        part_veneer_zmax: Frente do laminado
+        part_face_zmin: Verso do laminado
+        part_face_zmax: Frente do laminado
         thumbnail_proportional: Miniatura proporcional
         thumbnail_square: Miniatura quadrada
         group_material: Espessura do material
@@ -848,6 +862,7 @@ tab:
         formula_not_available: A fórmula não está disponível neste contexto
     layout:
       title: Desenho
+      to_layout: ""
       options_layout: Composição
       options_settings: Configuração
       option_parts: Peças
@@ -868,11 +883,8 @@ tab:
       option_pins_colored_0: Sem cor
       option_pins_colored_1: Cor da peça
       option_pins_colored_help: Permite que você escolha a cor das setas.
-      option_pins_text: Texto
-      option_pins_text_0: Número da peça
-      option_pins_text_1: Designação da peça
-      option_pins_text_2: Número e designação da peça
-      option_pins_text_help: Permite que você escolha o texto exibido nas setas.
+      option_pins_formula: Fórmula
+      option_pins_formula_help: ""
       option_pins_length: Comprimento
       option_pins_length_0: Sem seta
       option_pins_length_1: Pequena
@@ -911,9 +923,19 @@ tab:
       option_explode: Vista Explodida
       error:
         no_part: Não tem nenhuma peça para desenhar.
+        failed_to_save_as_skp: ""
+        failed_to_layout: |
       warning:
         is_group_selection: As peças dentro dos **grupos mascarados** da sua lista de peças não serão desenhadas.
         is_part_selection: Esta visão geral é limitada às **peças selecionadas**.
+    snippet:
+      number: Número
+      name: Descrição
+      number_and_name: ""
+      number_without_hardware: ""
+      size: Dimensão
+      area: ""
+      volume: ""
     error:
       no_model: Nenhum modelo está aberto. Você precisará me fornecer mais informações;)
       no_entities: Seu modelo está vazio. Você precisará me fornecer mais informações;)
@@ -960,8 +982,8 @@ tab:
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Direção dos veios
       colorized: Este tom será aplicado à textura deste material quando for renderizado no modelo
-      texture_colorized: Combinar definitivamente este tom na imagem da textura
       texture_load: Carrega uma nova textura
+      texture_clear: ""
       edit: "Edite as propriedades de '{{ name }}'"
       set_current: |
         Pinta peças com '{{ name }}'.
@@ -986,6 +1008,7 @@ tab:
       title: "Propriedades do material '{{ name }}'"
       general: Geral
       texture: Textura
+      no_texture: ""
       name: Nome
       type: Tipo
       cut_options: Parâmetros de corte
@@ -1039,7 +1062,6 @@ tab:
       std_prices_help: Permite definir o preço para todos os tamanhos e também para cada tamanho padrão do material.
       std_prices_dim_placeholder: Escolha um tamanho
       std_prices_add: Adicionar preço
-      texture_load: Carregar
       texture_width: Largura
       texture_height: Altura
       export_to_skm: Exportar (.skm)
@@ -1212,6 +1234,7 @@ tab:
         É importante para nós que a *OpenCutList* possa ser adaptada às expectativas muito diferentes dos usuários para a função *diagrama de corte*.
         Para expandir ainda mais as possibilidades, gostaríamos de possibilitar a exportação de diagramas de layout no formato **SVG**.
         Ao nos fornecer os meios para trabalhar nestas exportações, você está nos dando a oportunidade de ajudá-lo a obter o máximo da *OpenCutList*.
+      layout: |
     objective_crowdfunding: |
       O desenvolvimento dos novos produtos será feito graças ao **Financiamento participativo** e poderá começar quando seu **Objetivo financeiro** for alcançado.
     objective_thanks: |
@@ -1299,6 +1322,7 @@ tab:
       - Soul Issam (*Árabe*), sem interface RTL
       - Dany Dhondt, Eric Lugtigheid (*Holandês*)
       - Nguyen Ngoc Tan (*Vietnamês*)
+      - Andrii Toporivskyi, Kostiantyn Shcherbey (*Ucraniano*)
     credits_description: |
       O desenvolvimento desta extensão faz parte do projeto da plataforma de compartilhamento [L'Air du Bois](https://www.lairdubois.fr).
       E como tal, é também *Open Source* e está disponível sob licença [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) em seu [repositório GitHub].(https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
@@ -1312,19 +1336,15 @@ tab:
       - [Transifex](https://www.transifex.com) por seu apoio a projetos de código aberto.
       - [GitBook](https://www.gitbook.com) por seu apoio a projetos de código aberto.
 tool:
-  highlight:
+  default:
     transparency: Transparência
     zoom_extents: Limite do zoom
+  highlight:
+    transparency: $t(tool.default.transparency)
+    zoom_extents: $t(tool.default.zoom_extents)
   smart_paint:
-    copy_key_win: Control
-    copy_key_mac: Opções
-    alt_key_win: Alt
-    alt_key_mac: Command
-    status_paint_face: Clique para pintar uma face.
-    status_paint_part: Clique para pintar uma parte inteira.
-    status_unpaint_face: Clique para limpar uma face.
-    status_unpaint_part: Clique para limpar uma parte inteira.
-    status_pick: Clique para recolher uma amostra do material.
+    title: ""
+    default_material: Nenhum material definido
     filters: Filtros
     filter_0: Sem tipo
     filter_1: $t(tab.materials.type_1)
@@ -1333,13 +1353,50 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action: Ação
     action_0: Pintar a face
+    action_0_status: ""
     action_1: Pintar peça
+    action_1_status: ""
     action_2: Limpar face
+    action_2_status: ""
     action_3: Limpar peça
-    action_4: Amostra
+    action_3_status: ""
+    edges: ""
+    edges_plural: ""
+    edge_ymin: ""
+    edge_ymax: ""
+    edge_xmin: ""
+    edge_xmax: ""
+    faces: ""
+    faces_plural: ""
+    face_zmin: Verso do laminado
+    face_zmax: Frontal
     warning:
       no_material: O seu modelo não contém nenhum material!
-      all_filtered: Os filtros selecionados mascaram todos os materiais!
-      not_part: O objeto-alvo deve ser um componente.
+      no_material_type: ""
+    error:
+      not_part: ""
+      not_edge: ""
+      not_face: ""
+      wrong_material_type: ""
+  smart_axes:
+    title: ""
+    toggle_depth: ""
+    action_0: ""
+    action_0_status: ""
+    action_1: ""
+    action_1_status: ""
+    action_2: ""
+    action_2_status: ""
+    action_3: ""
+    action_3_status: ""
+    action_modifier_length: ""
+    action_modifier_width: ""
+    action_modifier_thickness: ""
+    success:
+      part_oriented: ""
+    warning:
+      more_entities: ""
+    error:
+      not_part: ""
+      not_orientable: ""
