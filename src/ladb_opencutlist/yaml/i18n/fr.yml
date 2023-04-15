@@ -1392,8 +1392,8 @@ tool:
     action_1_status: Cliquez sur une pièce pour permuter sa Longueur avec sa Largeur
     action_2: Permuter Face ↔ Contre-face
     action_2_status: Cliquez sur une pièce pour permuter la lecture de sa Face avec sa Contre-face
-    action_3: Orienter automatiquement
-    action_3_status: Cliquez sur une pièce pour définir sa Longueur sur sa plus grand dimension et l'Epaisseur sur sa plus petite
+    action_3: Adapter les axes
+    action_3_status: Cliquez sur la face ou l'arrête d'une pièce pour y adapter l'orientation des axes
     action_modifier_length: Lo
     action_modifier_width: La
     action_modifier_thickness: Ep
