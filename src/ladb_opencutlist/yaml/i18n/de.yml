@@ -31,7 +31,7 @@ default:
   upgrade: Aktualisieren
   copy: Kopieren
   select_all: Alles selektieren
-  unselect_all: Alles deselektieren
+  unselect_all: Nichts selektieren
   draw: Zeichnen
   estimate: Schätzen
   empty_filename: Unbenannt.skp
@@ -218,7 +218,7 @@ tab:
     edit_part_axes_properties: Eigenschaften (Achsen) des Teils bearbeiten
     edit_part_size_increase_properties: Eigenschaften (Übermaße) des Teils bearbeiten
     edit_part_edges_properties: Eigenschaften (Kanten) des Teils bearbeiten
-    edit_part_faces_properties: Eigenschaften (Furniere) des Teils bearbeiten
+    edit_part_faces_properties: Eigenschaften (Flächen) des Teils bearbeiten
     tooltip:
       show_hide_block: Gruppe anzeigen / ausblenden
       scroll_to_block: Zur Gruppe blättern
@@ -335,8 +335,8 @@ tab:
       multiple_alert: "Gemeinsame Eigenschaften von {{ part_count }} Teilen."
       general: Allgemein
       extra_help: "Liste der materialtypspezifischen Eigenschaften \"**$t(tab.materials.type_{{ material_type }})**\"."
-      edges: Kantenbänder
-      faces: Furniere
+      edges: Kanten
+      faces: Flächen
       name: Name
       material: Material
       cumulable: Summierbar
@@ -409,7 +409,7 @@ tab:
       axes_origin_position_min: Ursprung an einer Ecke anlegen
       axes_origin_position_center: Ursprung im Zentrum anlegen
       axes_origin_position_front_min: Ursprung an einer Ecke der Vorderseite
-      axes_origin_position_front_center: Ursprung im Zentrum der Vorderseite
+      axes_origin_position_front_center: Ursprung in der Mitte der Vorderseite anlegen
       over_length: Der Länge nach
       over_width: Der Breite nach
       edge_disabled_help: "Diese Kante ist nicht konfigurierbar, da an dieser Kante des Teils im Modell keine materialtragende Fläche erkannt wurde."
@@ -459,10 +459,10 @@ tab:
       hide_bbox_dimensions_help: "Ist diese Option aktiv, werden die **Fertigmaße** der Teile nicht angezeigt."
       hide_final_areas: Effektive Flächen von *Plattenteilen* ausblenden
       hide_final_areas_help: "Ist diese Option aktiv, werden die **effektiven Flächen** von Teilen des Typs *Platte* nicht angezeigt."
-      hide_edges: Spalten der Kantenbänder ausblenden
+      hide_edges: Spalten der Kanten ausblenden
       hide_edges_help: "Ist diese Option aktiv, werden die **Spalten der Kantenbänder** der Teile des Typs *Platte* nicht angezeigt."
-      hide_faces: Spalten der Furniere ausblenden
-      hide_faces_help: "Ist diese Option aktiv, werden die **Spalten der Furniere** von Teilen des Typs *Platte* nicht angezeigt."
+      hide_faces: Spalten der Flächen ausblenden
+      hide_faces_help: "Ist diese Option aktiv, werden die **Spalten der Flächen** von Teilen des Typs *Platte* nicht angezeigt."
       minimize_on_highlight: Minimieren nach *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Ist diese Option aktiv, wird das OpenCutList Fenster minimiert, wenn die Funktion *'$t(tab.cutlist.highlight_part)'* verwendet wird."
       general: Allgemein
@@ -515,7 +515,7 @@ tab:
       thickness: Dicke
       thickness_short: D
       edges: Kantenbänder
-      faces: Furniere
+      faces: Flächen
     export:
       title: Export
       info_0: |
@@ -1348,7 +1348,7 @@ tool:
     zoom_extents: $t(tool.default.zoom_extents)
   smart_paint:
     title: Malen
-    default_material: Standard
+    default_material: Ohne Material
     filters: Filter
     filter_0: Ohne Typ
     filter_1: $t(tab.materials.type_1)
@@ -1358,13 +1358,13 @@ tool:
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
     action_0: Teil bemalen
-    action_0_status: Klicken Sie auf ein Teil, um es einzufärben
+    action_0_status: "Klicken Sie auf ein Teil, um die Instanz einzufärben"
     action_1: Kanten bemalen
-    action_1_status: Klicken Sie auf eine Plattenkante, um ein Material '$t(tab.materials.type_4)' anzuwenden
+    action_1_status: "Klicken Sie auf eine Plattenkante, um ein Material '$t(tab.materials.type_4)' anzuwenden"
     action_2: Flächen bemalen
-    action_2_status: Klicken Sie auf eine Plattenfläche, um ein Material '$t(tab.materials.type_6)' anzuwenden
+    action_2_status: "Klicken Sie auf eine Plattenfläche, um ein Material '$t(tab.materials.type_6)' anzuwenden"
     action_3: Entnehmen
-    action_3_status: Klicken Sie auf eine Fläche, um eine Probe des Materials zu entnehmen
+    action_3_status: "Klicken Sie auf eine Fläche, um eine Probe des Materials zu entnehmen"
     edges: "{{ count }} Kante"
     edges_plural: "{{ count }} Kanten"
     edge_ymin: Länge 1
@@ -1377,23 +1377,23 @@ tool:
     face_zmax: Vorderseite
     warning:
       no_material: Kein Material
-      no_material_type: Kein Material des Typs '{{ type }}'
+      no_material_type: "Kein Material des Typs '{{ type }}'"
     error:
       not_part: Das Zielobjekt ist kein Teil
       not_edge: Die Zielfläche ist keine Plattenkante
       not_face: Die Zielfläche ist keine Plattenfläche
-      wrong_material_type: Das Zielteil hat nicht den Typ '{{ type }}'
+      wrong_material_type: "Das Zielteil hat nicht den Typ '{{ type }}'"
   smart_axes:
     title: Ausrichten
     toggle_depth: Hintergrundteile
     action_0: Spiegeln
-    action_0_status:  Klicken Sie auf ein Teil, um die Instanz entlang einer seiner Dimensionen zu spiegeln
+    action_0_status: "Klicken Sie auf ein Teil, um die Instanz entlang einer seiner Dimensionen zu spiegeln"
     action_1: Länge ↔ Breite vertauschen
-    action_1_status: Klicken Sie auf ein Teil, um seine Länge mit seiner Breite zu vertauschen
+    action_1_status: "Klicken Sie auf ein Teil, um seine Länge mit seiner Breite zu vertauschen"
     action_2: Vorderseite ↔ Rückseite vertauschen
-    action_2_status: Klicken Sie auf ein Teil, um seine Vorderseite mit seiner Rückseite zu vertauschen
+    action_2_status: "Klicken Sie auf ein Teil, um seine Vorderseite mit seiner Rückseite zu vertauschen"
     action_3: Automatisch ausrichten
-    action_3_status:  Klicken Sie auf ein Teil, um seine Länge auf die größte und seine Dicke auf die kleinste Abmessung einzustellen
+    action_3_status: "Klicken Sie auf ein Teil, um seine Länge auf die größte und seine Dicke auf die kleinste Abmessung einzustellen"
     action_modifier_length: L
     action_modifier_width: B
     action_modifier_thickness: D
