@@ -17,7 +17,7 @@ module Ladb::OpenCutList
     include BoundingBoxHelper
     include CutlistObserverHelper
 
-    ACTION_MIRROR = 0
+    ACTION_FLIP = 0
     ACTION_SWAP_LENGTH_WIDTH = 1
     ACTION_SWAP_FRONT_BACK = 2
     ACTION_SWAP_AUTO = 3
@@ -29,7 +29,7 @@ module Ladb::OpenCutList
     ACTION_MODIFIER_THICKNESS = 4
 
     ACTIONS = [
-      { :action => ACTION_MIRROR, :modifiers => [ ACTION_MODIFIER_LENGTH, ACTION_MODIFIER_WIDTH, ACTION_MODIFIER_THICKNESS ], :startup_modifier => ACTION_MODIFIER_THICKNESS },
+      { :action => ACTION_FLIP, :modifiers => [ACTION_MODIFIER_LENGTH, ACTION_MODIFIER_WIDTH, ACTION_MODIFIER_THICKNESS ], :startup_modifier => ACTION_MODIFIER_THICKNESS },
       { :action => ACTION_SWAP_LENGTH_WIDTH, :modifiers => [ ACTION_MODIFIER_ANTICLOCKWIZE, ACTION_MODIFIER_CLOCKWISE ], :startup_modifier => ACTION_MODIFIER_CLOCKWISE },
       { :action => ACTION_SWAP_FRONT_BACK },
       { :action => ACTION_SWAP_AUTO }
@@ -51,7 +51,7 @@ module Ladb::OpenCutList
       @cursor_swap_length_width_anticlockwise = create_cursor('swap-length-width-anticlockwise', 4, 4)
       @cursor_swap_front_back = create_cursor('swap-front-back', 4, 4)
       @cursor_swap_auto = create_cursor('swap-auto', 4, 4)
-      @cursor_mirror = create_cursor('mirror', 4, 4)
+      @cursor_flip = create_cursor('flip', 4, 4)
       @cursor_select_error = create_cursor('select-error', 4, 4)
 
     end
@@ -69,7 +69,7 @@ module Ladb::OpenCutList
     def get_action_status(action)
 
       case action
-      when ACTION_MIRROR
+      when ACTION_FLIP
         return super +
           ' | ↑↓ + ' + Plugin.instance.get_i18n_string('tool.default.transparency') + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.toggle_depth') + '.' +
           ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_1') + '.'
@@ -97,8 +97,8 @@ module Ladb::OpenCutList
         return is_action_modifier_anticlockwise? ? @cursor_swap_length_width_anticlockwise : @cursor_swap_length_width_clockwise
       when ACTION_SWAP_FRONT_BACK
         return @cursor_swap_front_back
-      when ACTION_MIRROR
-        return @cursor_mirror
+      when ACTION_FLIP
+        return @cursor_flip
       when ACTION_SWAP_AUTO
         return @cursor_swap_auto
       end
@@ -121,7 +121,7 @@ module Ladb::OpenCutList
           shape.line_width = @unit <= 4 ? 0.5 : 1
           return shape
         end
-      when ACTION_MIRROR
+      when ACTION_FLIP
         case modifier
         when ACTION_MODIFIER_LENGTH
           lbl = Kuix::Label.new
@@ -165,8 +165,8 @@ module Ladb::OpenCutList
       fetch_action == ACTION_SWAP_FRONT_BACK
     end
 
-    def is_action_mirror?
-      fetch_action == ACTION_MIRROR
+    def is_action_flip?
+      fetch_action == ACTION_FLIP
     end
 
     def is_action_swap_auto?
@@ -430,7 +430,7 @@ module Ladb::OpenCutList
 
         # Mesh
         instance_paths = []
-        if is_action_mirror?
+        if is_action_flip?
 
           # Only current instance
           instance_paths << part_entity_path
@@ -458,7 +458,7 @@ module Ladb::OpenCutList
 
         # Status
 
-        if !is_action_mirror? && part.group.material_type == MaterialAttributes::TYPE_HARDWARE
+        if !is_action_flip? && part.group.material_type == MaterialAttributes::TYPE_HARDWARE
           notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_orientable')}", MESSAGE_TYPE_ERROR)
           return
         end
@@ -468,7 +468,7 @@ module Ladb::OpenCutList
           return
         end
 
-        unless is_action_mirror?
+        unless is_action_flip?
           definition = Sketchup.active_model.definitions[part.def.definition_id]
           if definition && definition.count_used_instances > 1
             notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
@@ -542,7 +542,7 @@ module Ladb::OpenCutList
 
       elsif event == :l_button_up || event == :l_button_dblclick
 
-        if @active_part && is_action_mirror? || @active_part.group.material_type != MaterialAttributes::TYPE_HARDWARE
+        if @active_part && is_action_flip? || @active_part.group.material_type != MaterialAttributes::TYPE_HARDWARE
 
           definition = view.model.definitions[@active_part.def.definition_id]
           unless definition.nil?
@@ -550,7 +550,31 @@ module Ladb::OpenCutList
             size = @active_part.def.size
 
             ti = nil
-            if is_action_swap_length_width?
+            if is_action_flip?
+
+              entity = @active_part_entity_path.last
+              bounds = _compute_faces_bounds(entity.definition)
+
+              scaling = {
+                X_AXIS => 1,
+                Y_AXIS => 1,
+                Z_AXIS => 1,
+              }
+              if is_action_modifier_length?
+                scaling[@active_part.def.size.oriented_axis(X_AXIS)] = -1
+              elsif is_action_modifier_width?
+                scaling[@active_part.def.size.oriented_axis(Y_AXIS)] = -1
+              elsif is_action_modifier_thickness?
+                scaling[@active_part.def.size.oriented_axis(Z_AXIS)] = -1
+              end
+
+              t = Geom::Transformation.scaling(bounds.center, scaling[X_AXIS], scaling[Y_AXIS], scaling[Z_AXIS])
+              entity.transformation *= t
+
+              part = _compute_part_from_path(@active_part_entity_path)
+              _set_active(@active_part_entity_path, part)
+
+            elsif is_action_swap_length_width?
 
               if is_action_modifier_anticlockwise?
                 ti = Geom::Transformation.axes(
@@ -576,30 +600,6 @@ module Ladb::OpenCutList
                 AxisUtils.flipped?(size.axes[0], size.axes[1], size.axes[2].reverse) ? size.axes[1].reverse : size.axes[1],
                 size.axes[2].reverse
               )
-
-            elsif is_action_mirror?
-
-              entity = @active_part_entity_path.last
-              bounds = _compute_faces_bounds(entity.definition)
-
-              scaling = {
-                X_AXIS => 1,
-                Y_AXIS => 1,
-                Z_AXIS => 1,
-              }
-              if is_action_modifier_length?
-                scaling[@active_part.def.size.oriented_axis(X_AXIS)] = -1
-              elsif is_action_modifier_width?
-                scaling[@active_part.def.size.oriented_axis(Y_AXIS)] = -1
-              elsif is_action_modifier_thickness?
-                scaling[@active_part.def.size.oriented_axis(Z_AXIS)] = -1
-              end
-
-              t = Geom::Transformation.scaling(bounds.center, scaling[X_AXIS], scaling[Y_AXIS], scaling[Z_AXIS])
-              entity.transformation *= t
-
-              part = _compute_part_from_path(@active_part_entity_path)
-              _set_active(@active_part_entity_path, part)
 
             elsif is_action_swap_auto?
 
