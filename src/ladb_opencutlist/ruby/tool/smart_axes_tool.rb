@@ -71,19 +71,19 @@ module Ladb::OpenCutList
       case action
       when ACTION_MIRROR
         return super +
-          ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' + ' + Plugin.instance.get_i18n_string('tool.default.transparency') + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.toggle_depth') + '.' +
+          ' | ↑↓ + ' + Plugin.instance.get_i18n_string('tool.default.transparency') + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.toggle_depth') + '.' +
           ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_1') + '.'
       when ACTION_SWAP_LENGTH_WIDTH
         return super +
-          ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' + ' + Plugin.instance.get_i18n_string('tool.default.transparency') + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.toggle_depth') + '.' +
+          ' | ↑↓ + ' + Plugin.instance.get_i18n_string('tool.default.transparency') + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.toggle_depth') + '.' +
           ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_2') + '.'
       when ACTION_SWAP_FRONT_BACK
         return super +
-          ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' + ' + Plugin.instance.get_i18n_string('tool.default.transparency') + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.toggle_depth') + '.' +
+          ' | ↑↓ + ' + Plugin.instance.get_i18n_string('tool.default.transparency') + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.toggle_depth') + '.' +
           ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_3') + '.'
       when ACTION_SWAP_AUTO
         return super +
-          ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' + ' + Plugin.instance.get_i18n_string('tool.default.transparency') + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.toggle_depth') + '.' +
+          ' | ↑↓ + ' + Plugin.instance.get_i18n_string('tool.default.transparency') + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.toggle_depth') + '.' +
           ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_0') + '.'
       end
 
@@ -270,52 +270,9 @@ module Ladb::OpenCutList
 
     end
 
-    def onKeyDown(key, repeat, flags, view)
-      return true if super
-      # if key == ALT_MODIFIER_KEY
-      #   unless is_action_swap_auto?
-      #     push_action(ACTION_SWAP_AUTO)
-      #   end
-      #   return true
-      # elsif key == COPY_MODIFIER_KEY
-      #   if is_action_mirror?
-      #     set_root_action(ACTION_SWAP_LENGTH_WIDTH)
-      #     return true
-      #   elsif is_action_swap_length_width?
-      #     set_root_action(ACTION_SWAP_FRONT_BACK)
-      #     return true
-      #   elsif is_action_swap_front_back?
-      #     set_root_action(ACTION_SWAP_AUTO)
-      #     return true
-      #   elsif is_action_swap_auto?
-      #     set_root_action(ACTION_MIRROR)
-      #     return true
-      #   end
-      if key == VK_RIGHT
-        if is_action_mirror?
-          set_root_action(ACTION_MIRROR, ACTION_MODIFIER_LENGTH)
-          return true
-        elsif is_action_swap_length_width?
-          set_root_action(ACTION_SWAP_LENGTH_WIDTH, ACTION_MODIFIER_CLOCKWISE)
-          return true
-        end
-      elsif key == VK_LEFT
-        if is_action_mirror?
-          set_root_action(ACTION_MIRROR, ACTION_MODIFIER_WIDTH)
-          return true
-        elsif is_action_swap_length_width?
-          set_root_action(ACTION_SWAP_LENGTH_WIDTH, ACTION_MODIFIER_ANTICLOCKWIZE)
-          return true
-        end
-      elsif key == VK_UP && is_action_mirror?
-        set_root_action(ACTION_MIRROR, ACTION_MODIFIER_THICKNESS)
-        return true
-      end
-    end
-
     def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
       return true if super
-      if key == ALT_MODIFIER_KEY
+      if key == VK_UP || key == VK_DOWN
         if @active_part_entity_path
 
           picked_paths = []
@@ -330,7 +287,7 @@ module Ladb::OpenCutList
           end
 
           active_index = picked_part_entity_paths.map { |path| path.last }.index(@active_part_entity_path.last)
-          new_index = (active_index + 1) % picked_part_entity_paths.length
+          new_index = (active_index + (key == VK_UP ? 1 : -1)) % picked_part_entity_paths.length
 
           part = _compute_part_from_path(picked_part_entity_paths[new_index])
           _set_active(picked_part_entity_paths[new_index], part)
@@ -501,7 +458,7 @@ module Ladb::OpenCutList
 
         # Status
 
-        if part.group.material_type == MaterialAttributes::TYPE_HARDWARE
+        if !is_action_mirror? && part.group.material_type == MaterialAttributes::TYPE_HARDWARE
           notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_orientable')}", MESSAGE_TYPE_ERROR)
           return
         end
@@ -585,7 +542,7 @@ module Ladb::OpenCutList
 
       elsif event == :l_button_up || event == :l_button_dblclick
 
-        if @active_part && @active_part.group.material_type != MaterialAttributes::TYPE_HARDWARE
+        if @active_part && is_action_mirror? || @active_part.group.material_type != MaterialAttributes::TYPE_HARDWARE
 
           definition = view.model.definitions[@active_part.def.definition_id]
           unless definition.nil?

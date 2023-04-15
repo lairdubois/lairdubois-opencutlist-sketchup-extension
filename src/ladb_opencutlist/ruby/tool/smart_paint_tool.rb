@@ -586,7 +586,7 @@ module Ladb::OpenCutList
           button.next.fire(:click, flags)
           return true
         end
-      elsif key == VK_UP || key == VK_DOWN
+      elsif key == ALT_MODIFIER_KEY
         @materials_filters_btn.fire(:click, flags) if @materials_filters_btn
         return true
       elsif repeat == 1
