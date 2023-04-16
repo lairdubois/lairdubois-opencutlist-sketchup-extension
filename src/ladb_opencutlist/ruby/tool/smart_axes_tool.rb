@@ -85,7 +85,6 @@ module Ladb::OpenCutList
           ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_3') + '.'
       when ACTION_ADAPT_AXES
         return super +
-          ' | ↑↓ + ' + Plugin.instance.get_i18n_string('tool.default.transparency') + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.toggle_depth') + '.' +
           ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_0') + '.'
       end
 
@@ -275,7 +274,7 @@ module Ladb::OpenCutList
     def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
       return true if super
       if key == VK_UP || key == VK_DOWN
-        if @active_part_entity_path
+        if @active_part_entity_path && !is_action_adapt_axes?
 
           picked_paths = []
           picked_part_entity_paths = []
@@ -294,7 +293,7 @@ module Ladb::OpenCutList
           part = _compute_part_from_path(picked_part_entity_paths[new_index])
           _set_active(picked_part_entity_paths[new_index], part)
 
-          @picked_path = picked_paths[new_index]
+          # @picked_path = picked_paths[new_index]
 
         end
         return true
@@ -548,21 +547,24 @@ module Ladb::OpenCutList
     def _handle_mouse_event(x, y, view, event = nil)
       if event == :move
 
-        if @input_part_entity_path
+        if @input_face_path
+          input_part_entity_path = _get_part_entity_path_from_path(@input_face_path)
+          if input_part_entity_path
 
-          part = _compute_part_from_path(@input_part_entity_path)
-          if part
-            _set_active(@input_part_entity_path, part)
+            part = _compute_part_from_path(input_part_entity_path)
+            if part
+              _set_active(input_part_entity_path, part)
+            else
+              _reset(view)
+              notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
+            end
+            return
+
           else
             _reset(view)
             notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
+            return
           end
-          return
-
-        elsif @input_face
-          _reset(view)
-          notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
-          return
         end
         _reset(view)
 

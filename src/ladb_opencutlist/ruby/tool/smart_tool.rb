@@ -473,7 +473,7 @@ module Ladb::OpenCutList
 
         @input_point.pick(view, x, y)
 
-        # SKETCHUP_CONSOLE.clear
+        SKETCHUP_CONSOLE.clear
         # puts "@@@ input_point"
         # puts "  Face = #{@input_point.face}"
         # puts "  Edge = #{@input_point.edge} -> onface? = #{@input_point.edge ? @input_point.edge.faces.include?(@input_point.face) : ''}"
@@ -483,7 +483,7 @@ module Ladb::OpenCutList
 
         unless @input_point.face.nil?
 
-          @input_part_entity_path = nil if @input_face != @input_point.face
+          @input_face_path = @input_part_entity_path = nil if @input_face != @input_point.face
 
           @input_face = @input_point.face
           @input_vertex = @input_point.vertex
@@ -516,7 +516,7 @@ module Ladb::OpenCutList
                 if @pick_helper.do_pick(x, y)
                   @pick_helper.count.times do |index|
                     if @pick_helper.leaf_at(index) == @input_face
-                      @input_part_entity_path = _get_part_entity_path_from_path(@pick_helper.path_at(index))
+                      @input_face_path = @pick_helper.path_at(index)
                       break
                     end
                   end
@@ -527,11 +527,15 @@ module Ladb::OpenCutList
             end
 
           else
-            @input_part_entity_path = _get_part_entity_path_from_path(@input_point.instance_path.to_a)
+            if @input_point.instance_path.leaf.is_a?(Sketchup::Face)
+              @input_face_path = @input_point.instance_path.to_a
+            else
+              @input_face_path = @input_point.instance_path.to_a[0...-1] + [ @input_face ]
+            end
           end
 
         else
-          @input_part_entity_path = nil
+          @input_face_path = nil
           @input_face = nil
           @input_edge = nil
           @input_vertex = nil
@@ -541,7 +545,7 @@ module Ladb::OpenCutList
         # puts "  Face = #{@input_face}"
         # puts "  Edge = #{@input_edge} -> onface? = #{@input_edge ? @input_edge.faces.include?(@input_face) : ''}"
         # puts "  Vertex = #{@input_vertex}"
-        # puts "  PartEntityPath = #{@input_part_entity_path ? @input_part_entity_path.join(' -> ') : ''}"
+        # puts "  FacePath = #{@input_face_path ? @input_face_path.join(' -> ') : ''}"
 
       end
       false
