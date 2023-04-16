@@ -387,7 +387,7 @@ module Ladb::OpenCutList
 
         if is_action_adapt_axes?
 
-          origin, x_axis, y_axis, z_axis, input_face, input_edge, input_vertex = _get_input_axes(instance_info)
+          origin, x_axis, y_axis, z_axis, input_face, input_edge = _get_input_axes(instance_info)
 
           t = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
 
@@ -399,31 +399,9 @@ module Ladb::OpenCutList
           mesh.background_color = Sketchup::Color.new(255, 0, 255, 0.2)
           part_helper.append(mesh)
 
-          lo = Kuix::Point3d.new.copy!(input_edge.start.position)
-          lv = input_edge.end.position - input_edge.start.position
-
-          puts lo, lv
-
-          tsx = 1
-          tsy = 1
-          tsz = 1
-          if lv.x < 0
-            tsx = -1
-            lv.x = lv.x.abs
-          end
-          if lv.y < 0
-            tsy = -1
-            lv.y = lv.y.abs
-          end
-          if lv.z < 0
-            tsz = -1
-            lv.z = lv.z.abs
-          end
-
           line = Kuix::Line.new
-          line.pattern_transformation = Geom::Transformation.scaling(tsx, tsy, tsz)
-          line.bounds.origin.copy!(lo)
-          line.bounds.size.set!(lv.x, lv.y, lv.z)
+          line.start.copy!(input_edge.start.position)
+          line.end.copy!(input_edge.end.position)
           line.color = Sketchup::Color.new(255, 0, 255)
           line.line_width = 5
           part_helper.append(line)
@@ -573,69 +551,33 @@ module Ladb::OpenCutList
 
     def _reset(view)
       super
-      if @picked_path
-        @picked_path = nil
-        _set_active(nil, nil)
-      end
+      _set_active(nil, nil)
     end
 
     def _handle_mouse_event(x, y, view, event = nil)
       if event == :move
 
-        @input_point.pick(view, x, y)
+        if @input_part_entity_path
 
-        SKETCHUP_CONSOLE.clear
-        puts "@input_point"
-        puts "Face = #{@input_point.face}"
-        puts "Edge = #{@input_point.edge} -> #{@input_point.edge ? @input_point.edge.faces.include?(@input_point.face) : ''} length = #{@input_point.edge ? @input_point.edge.length : ''}"
-        puts "Vertex = #{@input_point.vertex} -> #{@input_point.vertex ? @input_point.vertex.faces.include?(@input_point.face) : ''}"
+          part = _compute_part_from_path(@input_part_entity_path)
+          if part
+            _set_active(@input_part_entity_path, part)
+          else
+            _reset(view)
+            notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
+          end
+          return
 
-        if @pick_helper.do_pick(x, y) > 0
-          @pick_helper.count.times { |pick_path_index|
-
-            picked_path = @pick_helper.path_at(pick_path_index)
-            if picked_path == @picked_path && !is_action_adapt_axes?
-              return
-            # TODO : This code doesn't support nested components
-            # elsif @active_part_entity_path
-            #   contains_previous = false
-            #   @pick_helper.count.times do |pick_path_index|
-            #     contains_previous = @pick_helper.path_at(pick_path_index).take(@active_part_entity_path.length) == @active_part_entity_path
-            #     return if contains_previous
-            #   end
-            #   return if contains_previous # Previously detected path, stop process to optimize.
-            end
-            if picked_path && picked_path.last.is_a?(Sketchup::Face)
-
-              @picked_path = picked_path
-
-              picked_entity_path = _get_part_entity_path_from_path(picked_path)
-              if picked_entity_path.length > 0
-
-                part = _compute_part_from_path(picked_entity_path)
-                if part
-                  _set_active(picked_entity_path, part)
-                else
-                  _reset(view)
-                  notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
-                end
-                return
-
-              elsif picked_entity_path
-                _reset(view)
-                notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
-                return
-              end
-
-            end
-
-          }
+        elsif @input_face
+          _reset(view)
+          notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
+          return
         end
         _reset(view)
 
       elsif event == :l_button_up || event == :l_button_dblclick
 
-        if @active_part && is_action_flip? || @active_part.group.material_type != MaterialAttributes::TYPE_HARDWARE
+        if @active_part && (is_action_flip? || @active_part.group.material_type != MaterialAttributes::TYPE_HARDWARE)
 
           definition = view.model.definitions[@active_part.def.definition_id]
           unless definition.nil?
@@ -742,36 +684,39 @@ module Ladb::OpenCutList
 
     def _get_input_axes(instance_info)
 
-      input_face = @input_point.face
+      input_face = @input_face # @input_point.face
       if input_face.nil?
         input_face = find_largest_face(instance_info.entity, instance_info.transformation)
       end
 
-      input_edge = @input_point.edge
+      input_edge = @input_edge # @input_point.edge
       if input_edge.nil? || !input_edge.faces.include?(input_face)
         input_edge = find_longest_outer_edge(input_face, instance_info.transformation)
       end
-      if input_edge.curve.is_a?(Sketchup::ArcCurve)
-        input_edge = input_edge.curve.first_edge
-      end
+      # if input_edge.curve.is_a?(Sketchup::ArcCurve)
+      #   input_edge = input_edge.curve.first_edge if input_edge.curve.first_edge.faces.include?(input_face)
+      # end
 
-      input_vertex = @input_point.vertex
-      if input_vertex.nil? || !input_vertex.faces.include?(input_face)
-        origin = input_face.bounds.center
-      else
-        origin = input_vertex.position
-      end
+      # input_vertex = @input_vertex # @input_point.vertex
+      # if input_vertex.nil? #|| !input_position.edges.include?(input_edge)
+      #   origin = input_face.bounds.center
+      # else
+      #   origin = input_position
+      # end
+
+      origin = ORIGIN
 
       z_axis = input_face.normal
       x_axis = (Geom::Vector3d.new(input_edge.end.position.to_a) - Geom::Vector3d.new(input_edge.start.position.to_a)).normalize
+      x_axis.reverse! if x_axis.x < 0
       y_axis = z_axis.cross(x_axis).normalize
 
-      puts "_get_input_axes"
-      puts "Face = #{input_face}"
-      puts "Edge = #{input_edge} -> #{input_edge ? input_edge.faces.include?(input_face) : ''} length = #{input_edge ? input_edge.length : ''}"
-      puts "Vertex = #{input_vertex} -> #{input_vertex ? input_vertex.faces.include?(input_face) : ''}"
+      # puts "_get_input_axes"
+      # puts "Face = #{input_face}"
+      # puts "Edge = #{input_edge} -> #{input_edge ? input_edge.faces.include?(input_face) : ''} length = #{input_edge ? input_edge.length : ''}"
+      # puts "Vertex = #{input_position} -> #{input_position ? input_position.faces.include?(input_face) : ''}"
 
-      [ origin, x_axis, y_axis, z_axis, input_face, input_edge, input_vertex ]
+      [ origin, x_axis, y_axis, z_axis, input_face, input_edge ]
     end
 
   end

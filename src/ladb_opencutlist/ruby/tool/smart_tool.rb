@@ -467,6 +467,64 @@ module Ladb::OpenCutList
       end
     end
 
+    def onMouseMove(flags, x, y, view)
+      return true if super
+      unless is_action_none?
+
+        @input_point.pick(view, x, y)
+
+        # SKETCHUP_CONSOLE.clear
+        # puts "@@@ input_point"
+        # puts "  Face = #{@input_point.face}"
+        # puts "  Edge = #{@input_point.edge} -> onface? = #{@input_point.edge ? @input_point.edge.faces.include?(@input_point.face) : ''}"
+        # puts "  Vertex = #{@input_point.vertex} -> onedge? = #{@input_point.vertex ? @input_point.vertex.edges.include?(@input_point.edge) : ''}"
+        # puts "  instance_path = #{@input_point.instance_path.to_a.join(' -> ')}"
+
+        unless @input_point.face.nil?
+
+          @input_part_entity_path = nil if @input_face != @input_point.face
+
+          @input_face = @input_point.face
+          @input_vertex = @input_point.vertex
+          @input_edge = @input_point.edge unless @input_vertex
+
+          if @input_point.instance_path.empty?
+
+            unless @input_face.nil?
+
+              # Input point give a face without path, let's try to use pick helper to pick the face path
+              if @pick_helper.do_pick(x, y)
+                @pick_helper.count.times do |index|
+                  if @pick_helper.leaf_at(index).is_a?(Sketchup::Face)
+                    @input_part_entity_path = _get_part_entity_path_from_path(@pick_helper.path_at(index))
+                    break
+                  end
+                end
+              end
+
+            end
+
+          else
+            @input_part_entity_path = _get_part_entity_path_from_path(@input_point.instance_path.to_a)
+          end
+
+        else
+          @input_part_entity_path = nil
+          @input_face = nil
+          @input_edge = nil
+          @input_vertex = nil
+        end
+
+        # puts "#### KEEP"
+        # puts "  Face = #{@input_face}"
+        # puts "  Edge = #{@input_edge}"
+        # puts "  Vertex = #{@input_vertex}"
+        # puts "  InstancePath = #{PathUtils.get_named_path(@input_part_entity_path)}"
+
+      end
+      false
+    end
+
     protected
 
     def _reset(view)

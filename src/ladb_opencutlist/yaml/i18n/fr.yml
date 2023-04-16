@@ -1393,7 +1393,7 @@ tool:
     action_2: Permuter Face ↔ Contre-face
     action_2_status: Cliquez sur une pièce pour permuter la lecture de sa Face avec sa Contre-face
     action_3: Adapter les axes
-    action_3_status: Cliquez sur la face, l'arrête un un sommet d'une pièce pour y adapter l'orientation des axes
+    action_3_status: Cliquez sur la face ou une arrête d'une pièce pour y adapter l'orientation des axes
     action_modifier_length: Lo
     action_modifier_width: La
     action_modifier_thickness: Ep

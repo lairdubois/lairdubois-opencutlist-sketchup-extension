@@ -23,6 +23,16 @@ module Ladb::OpenCutList::Kuix
       set!(point.x, point.y, point.z)
     end
 
+    # -- Operations --
+
+    def +(point)
+      set!(x + point.x, y + point.y, z + point.z)
+    end
+
+    def -(point)
+      set!(x - point.x, y - point.y, z - point.z)
+    end
+
     # -- Manipulations --
 
     def translate!(dx, dy, dz)
