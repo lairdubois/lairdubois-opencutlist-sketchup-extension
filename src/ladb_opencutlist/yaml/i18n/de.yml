@@ -1393,7 +1393,7 @@ tool:
     action_2: Vorderseite ↔ Rückseite vertauschen
     action_2_status: "Klicken Sie auf ein Teil, um seine Vorderseite mit seiner Rückseite zu vertauschen"
     action_3: Achsen ausrichten
-    action_3_status: "Klicken Sie auf eine Fläche, eine Kante oder einen Eckpunkt eines Teils, um die Achsenorientierung anzupassen"
+    action_3_status: "Klicken Sie auf die Fläche oder Kante eines Teils, um die Achsenausrichtung anzupassen"
     action_modifier_length: L
     action_modifier_width: B
     action_modifier_thickness: D

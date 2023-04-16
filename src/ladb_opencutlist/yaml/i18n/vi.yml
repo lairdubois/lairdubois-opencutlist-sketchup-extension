@@ -30,10 +30,10 @@ default:
   download: Tải xuống
   upgrade: Cập nhật
   copy: Sao chép
-  select_all: ""
-  unselect_all: ""
-  draw: ""
-  estimate: ""
+  select_all: Chọn tất cả
+  unselect_all: Bỏ chọn tất cả
+  draw: Vẽ tranh
+  estimate: Ước tính
   empty_filename: Untitled.skp
   help: Trợ giúp
   error: "Ôi, lại nữa rồi!"
@@ -62,12 +62,12 @@ default:
   setup_model_units: Cài đặt đơn vị cho mô hình
   load_more: Tải thêm
   reset_to_app_defaults: Khôi phục về giá trị ban đầu
-  constrain_key: ""
-  copy_key_win: ""
+  constrain_key: Shift
+  copy_key_win: Ctrl
   copy_key_mac: Tùy chọn
   alt_key_win: Alt
-  alt_key_mac: Cmd
-  tab_key: ""
+  alt_key_mac: Yêu cầu
+  tab_key: Tab
 core:
   menu:
     submenu: OpenCutList
@@ -85,7 +85,7 @@ core:
     command:
       dialog: OpenCutList
       smart_paint: Màu các bộ phận
-      smart_axes: ""
+      smart_axes: Định hướng các bộ phận
   dialog:
     title: OpenCutList tạo bởi L'Air du Bois
   leftbar:
@@ -105,7 +105,7 @@ core:
 
       Để báo cáo một lỗi: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
   error:
-    feature_unavailable: ""
+    feature_unavailable: "Chức năng này yêu cầu Sketchup phiên bản {{ version }} hoặc cao hơn"
   event:
     model_change: Mô hình hoạt động đã được thay đổi.
     options_change: Các tùy chọn trong mô hình đã được thay đổi.
@@ -135,7 +135,7 @@ core:
       unzip: Lỗi khi giải nén kho lưu trữ.
   preset:
     label: Mẫu cài đặt
-    manage: ""
+    manage: Quản lý mẫu cài đặt trước
     save_to: Lưu như
     restore_from: Khôi phục từ
     app_defaults: Kho mẫu cài đặt
@@ -157,7 +157,7 @@ core:
       save_to: "Cập nhật mẫu cài đặt '{{ name }}'"
       delete: "Xóa mẫu cài đặt '{{ name }}'"
     dictionary:
-      component_textinput_color: ""
+      component_textinput_color: Bảng màu
       cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
       cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
       cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
@@ -169,7 +169,7 @@ core:
       importer_load_options: $t(tab.importer.label) / $t(default.open)
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
-      settings_model: ""
+      settings_model: $t(tab.settings.label) / Model
   progress:
     please_wait: Đang tính toán trong một thế giới hòa bình
   component:
@@ -179,22 +179,22 @@ core:
       store: Lưu màu
       remove: Xóa màu
     textinput_code:
-      snippets: ""
+      snippets: Công thức ví dụ
       help: Nhập **@** để nhận danh sách các biến.
     three_viewer:
-      view: ""
-      view_isometric: ""
-      view_top: ""
-      view_bottom: ""
+      view: "Xem {{ view }}"
+      view_isometric: Isometric
+      view_top: Phía trên
+      view_bottom: Phía dưới
       view_front: Mặt trước Veneer
-      view_back: ""
+      view_back: Phía sau
       view_left: Trái
       view_right: Phải
-      zoom: ""
-      explode_factor: ""
-      toggle_box_helper: ""
+      zoom: "Tỷ lệ {{ zoom }}"
+      explode_factor: Biên độ vụ nổ
+      toggle_box_helper: Hiển thị / Ẩn hộp giới hạn
       toggle_box_dimensions_helper: Ẩn kích thước đã hoàn thành
-      toggle_axes_helper: ""
+      toggle_axes_helper: Hiển thị / Ẩn trục bộ phận
   docs:
     error:
       failed_to_load: |
@@ -315,11 +315,11 @@ tab:
       numbers_save: Lưu số bộ phận
       numbers_reset: Khởi tạo lại số bộ phận
       highlight_parts: $t(tab.cutlist.highlight_parts)
-      group_layout_parts: ""
+      group_layout_parts: Vẽ tổng quan các bộ phận trong nhóm
       group_numbers_save: Lưu số bộ phận của nhóm này
       group_numbers_reset: Tạo lại số bộ phận của nhóm này
       group_cuttingdiagram: Sơ đồ cắt
-      group_labels: ""
+      group_labels: In nhãn của các bộ phận trong nhóm
       edit_material: "Sửa tên vật liệu '{{ material_name }}'"
       expand_all: Trãi ra tất cả các dòng
       collapse_all: Gấp lại tất cả các dòng
@@ -355,9 +355,9 @@ tab:
       instance_count_by_part_1: 1 đơn vị mỗi bộ phận
       instance_count_by_part_2: 2 đơn vị mỗi bộ phận
       mass: Trọng lượng
-      mass_help: ""
+      mass_help: Trọng lượng của bộ phận sẽ được sử dụng khi tạo **Ước tính**.
       price: Giá
-      price_help: ""
+      price_help: Giá của bộ phận sẽ được sử dụng khi tạo **Ước tính**.
       thickness_layer_count: Nb của các lớp
       thickness_layer_count_help: |
         Xác định ở đây số lớp phân chia phần được vẽ theo độ dày của nó.
@@ -408,15 +408,15 @@ tab:
       axes_origin_position_none: Không thay đổi gốc tọa độ
       axes_origin_position_min: Đặt gốc tọa độ ở một góc
       axes_origin_position_center: Đặt gốc tọa độ ở trung tâm
-      axes_origin_position_front_min: ""
-      axes_origin_position_front_center: ""
+      axes_origin_position_front_min: Đặt gốc tọa độ ở một góc của mặt trước
+      axes_origin_position_front_center: Đặt gốc tọa độ ở trung tâm của mặt trước
       over_length: Trên suốt chiều dài
       over_width: Trên suốt chiều rộng
       edge_disabled_help: Dải cạnh này không thể định cấu hình được vì không có mặt áp vật liệu nào được phát hiện trên cạnh này của bộ phận trong mô hình.
       face_disabled_help: Bề mặt này không thể định cấu hình vì không có bề mặt mang vật liệu nào được phát hiện trên cạnh này của bộ phận trong mô hình.
       multiple_values: Nhiều giá trị
       export_to_skp: Xuất (.skm)
-      loading_preview: ""
+      loading_preview: Đang tải bảng xem trước
     export_to_skp:
       title: Xuất tệp .skm
     option:
@@ -585,8 +585,9 @@ tab:
       success:
         copied: Sao chép vào clipboard.
     report:
-      title: ""
+      title: Ước tính
       info_0: |
+        Tạo ước tính về **trọng lượng** và **chi phí** của **nguyên liệu thô** cần thiết để sản xuất các bộ phận trong *danh sách các bộ phận*.
       options_general: Chung
       options_solid_wood: $t(tab.materials.type_1)
       option_solid_wood_coefficient: Tỉ lệ thải bỏ*$t(tab.materials.type_1)*
@@ -604,13 +605,16 @@ tab:
       total_area: Σ Diện tích
       total_length: Σ Chiều dài
       error:
-        no_typed_material_parts: ""
+        no_typed_material_parts: "Không có bộ phận nào có loại vật liệu xác định (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_5)** hoặc **$t(tab.materials.type_6)**) đã được cung cấp để tạo ước tính."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} lỗi**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} lỗi**."
       warning:
         is_group_selection: Các bộ phận bên trong **nhóm ẩn** của danh sách bộ phận sẽ không được tính.
       tip:
         not_enough_data: |
+          Để ước tính này được tính toán chính xác:
+          - các vật liệu được sử dụng ít nhất phải có tỉ trọng và giá cả.
+          - các phụ kiện được sử dụng ít nhất phải có tỉ trọng và giá cả.
     cuttingdiagram:
       title: Sơ đồ cắt
       start_msg: Chạy tối ưu hóa
@@ -738,7 +742,7 @@ tab:
         leftover: Phần thừa
         cut: Đường cắt
         cut_plural: Đường cắt
-        cut_trimming: ""
+        cut_trimming: Cắt tỉa
         cut_bounding: Đường cắt chính (cấp 1)
         cut_bounding_plural: Đường cắt chính (cấp 1)
         cut_internal_through: Đường cắt chính (cấp 2)
@@ -857,43 +861,43 @@ tab:
         is_part_selection: Các nhãn này được giới hạn ở **các bộ phận đã chọn**.
         formula_not_available: Công thức không khả dụng trong ngữ cảnh này
     layout:
-      title: ""
-      to_layout: ""
+      title: Vẽ
+      to_layout: Xuất qua Layout
       options_layout: Bố trí
       options_settings: Cấu hình
-      option_parts: ""
+      option_parts: Các bộ phận
       option_parts_colored: Màu sắc
-      option_parts_colored_0: ""
-      option_parts_colored_1: ""
-      option_parts_colored_help: ""
-      option_parts_opacity: ""
-      option_parts_opacity_0: ""
-      option_parts_opacity_1: ""
-      option_parts_opacity_help: ""
-      option_pins: ""
+      option_parts_colored_0: Không màu
+      option_parts_colored_1: Màu sắc của vật liệu
+      option_parts_colored_help: Chọn sự xuất hiện của các bộ phận.
+      option_parts_opacity: Độ mờ
+      option_parts_opacity_0: Độ trong suốt
+      option_parts_opacity_1: Mờ đục
+      option_parts_opacity_help: Chọn độ mờ của các bộ phận.
+      option_pins: Nhãn
       option_pins_hidden: Hiển thị
-      option_pins_hidden_0: ""
-      option_pins_hidden_1: ""
-      option_pins_hidden_help: ""
+      option_pins_hidden_0: Với nhãn
+      option_pins_hidden_1: Không có nhãn
+      option_pins_hidden_help: Hiển thị hoặc ẩn các nhãn của bộ phận có số hoặc được chỉ định.
       option_pins_colored: Màu sắc
-      option_pins_colored_0: ""
-      option_pins_colored_1: ""
-      option_pins_colored_help: ""
+      option_pins_colored_0: Không màu
+      option_pins_colored_1: Màu sắc của bộ phận
+      option_pins_colored_help: Chọn màu của các nhãn.
       option_pins_formula: Công thức
-      option_pins_formula_help: ""
+      option_pins_formula_help: Cho phép bạn viết mã *Ruby* để tùy chỉnh văn bản nhãn.
       option_pins_length: Chiều dài
-      option_pins_length_0: ""
+      option_pins_length_0: Không có đường dẫn chính
       option_pins_length_1: Nhỏ
-      option_pins_length_2: ""
-      option_pins_length_3: ""
-      option_pins_length_help: ""
-      option_pins_direction: ""
-      option_pins_direction_0: ""
-      option_pins_direction_1: ""
-      option_pins_direction_2: ""
-      option_pins_direction_3: ""
-      option_pins_direction_4: ""
-      option_pins_direction_help: ""
+      option_pins_length_2: Trung bình
+      option_pins_length_3: Dài
+      option_pins_length_help: Chọn độ dài của đường dẫn.
+      option_pins_direction: Hướng
+      option_pins_direction_0: Dọc theo trục màu đỏ
+      option_pins_direction_1: Dọc theo trục màu xanh lá
+      option_pins_direction_2: Dọc theo trục màu xanh dương
+      option_pins_direction_3: Chỉ về phía trung tâm của nhóm cha mẹ
+      option_pins_direction_4: Chỉ về phía trung tâm của vùng chọn
+      option_pins_direction_help: Chọn hướng của các đường dẫn để dán nhãn để dễ đọc hơn.
       option_page: Khổ giấy
       option_page_format: Định dạng
       option_page_format_portrait: Chiều đứng
@@ -901,35 +905,40 @@ tab:
       option_page_format_custom: Tùy chỉnh
       option_page_width: Chiều rộng
       option_page_height: Chiều cao
-      option_page_header: ""
-      option_page_header_0: ""
-      option_page_header_1: ""
+      option_page_header: Tiêu đề
+      option_page_header_0: Không có
+      option_page_header_1: Với tiêu đề
       option_page_header_help: |
-      option_camera: ""
-      option_camera_view: ""
-      option_camera_view_custom: ""
-      option_camera_zoom: ""
+        Chọn xem trang sẽ được in có chứa tiêu đề với tên tài liệu, mô tả tài liệu và ngày tháng hay không.
+        Không có tiêu đề, bản vẽ tổng quan chiếm toàn bộ trang.
+      option_camera: Camera
+      option_camera_view: Xem
+      option_camera_view_custom: Tùy chỉnh
+      option_camera_zoom: Tỷ lệ
       option_camera_zoom_auto: Tự động
-      option_camera_zoom_custom: ""
-      option_camera_target: ""
+      option_camera_zoom_custom: Tùy chỉnh
+      option_camera_target: Vị trí
       option_camera_target_auto: Tự động
-      option_camera_target_custom: ""
-      option_explode: ""
+      option_camera_target_custom: Tùy chỉnh
+      option_explode: Chế độ xem bùng nổ
       error:
-        no_part: ""
-        failed_to_save_as_skp: ""
+        no_part: Không có phần nào để vẽ.
+        failed_to_save_as_skp: Không thể ghi tệp SKP để gửi tới Layout.
         failed_to_layout: |
+          Lỗi khi ghi tệp Layout: **{{ error }}**
+
+          **Đảm bảo tệp không được mở trong Layout.**
       warning:
-        is_group_selection: ""
-        is_part_selection: ""
+        is_group_selection: Các bộ phận bên trong **nhóm ẩn** trong danh sách bộ phận của bạn sẽ không được vẽ.
+        is_part_selection: Bản vẽ tổng quan này được giới hạn ở **các phần được chọn**.
     snippet:
       number: Số
       name: Tên gọi
-      number_and_name: ""
-      number_without_hardware: ""
+      number_and_name: Số lượng và chỉ định
+      number_without_hardware: Số lượng (không có phụ kiện)
       size: Kích thước
-      area: ""
-      volume: ""
+      area: Diện tích
+      volume: Khối lượng
     error:
       no_model: Không có mô hình nào được mở. Bạn sẽ cần phải cung cấp cho tôi thêm thông tin;)
       no_entities: Mô hình của bạn rỗng. Bạn sẽ cần phải cung cấp cho tôi thêm thông tin ;)
@@ -977,7 +986,7 @@ tab:
       grain_direction: Hướng thớ gỗ
       colorized: Tông màu này sẽ được áp dụng cho texture của vật liệu này khi nó được hiển thị trong mô hình
       texture_load: Tải texture mới
-      texture_clear: ""
+      texture_clear: Xóa bỏ texture
       edit: "Chỉnh sửa thuộc tính của '{{ name }}'"
       set_current: |
         Tô các bộ phận bằng '{{ name }}'
@@ -1002,13 +1011,15 @@ tab:
       title: "Thuộc tính của vật liệu '{{ name }}'"
       general: Chung
       texture: Texture
-      no_texture: ""
+      no_texture: Không có texture
       name: Tên
       type: Loại
       cut_options: Thông số cắt
       attributes: Thuộc tính
       thickness: Độ dày
       thickness_help: |
+        Độ dày hoàn thiện của vật liệu.
+        *Kích thước không có đơn vị được coi là đơn vị mô hình.*
       length_increase: Chiều dài quá khổ
       length_increase_help: Áp dụng kích thước quá khổ cho chiều dài để xác định **chiều dài thô**.
       width_increase: Chiều rộng quá khổ
@@ -1227,6 +1238,7 @@ tab:
         Để tiếp tục mở rộng các khả năng, chúng tôi muốn cho phép xuất sơ đồ bố trí ở định dạng **SVG**.
         Bằng cách cung cấp cho chúng tôi phương tiện để xử lý các bản xuất này, bạn đang cho chúng tôi cơ hội giúp bạn tận dụng tối đa *OpenCutList*.
       layout: |
+        Mục tiêu của mô-đun này là cho phép bạn dễ dàng in bản xem trước của dự án dưới dạng **chế độ xem bùng nổ** với nhận dạng từ thông tin được tạo trong danh sách các bộ phận.
     objective_crowdfunding: |
       Việc phát triển các tính năng mới sẽ được thực hiện thông qua **Gây quỹ** và sẽ bắt đầu khi đạt được **Mục tiêu tài chính**.
     objective_thanks: |
@@ -1258,12 +1270,18 @@ tab:
     mass_unit: Đơn vị trọng lượng
     currency_symbol: Ký hiệu tiền tệ
     presets:
-      export_global_presets: ""
+      export_global_presets: Xuất mẫu cài đặt trước
       export_global_presets_help: |
-      export_global_presets_success: ""
-      import_global_presets: ""
+        Tính năng này cho phép bạn xuất các giá trị đặt trước của mình sang tệp **.json**.
+        Chọn các mẫu cài đặt trước bạn muốn xuất sang nó.
+      export_global_presets_success: Các mẫu cài đặt trước đã được xuất thành công.
+      import_global_presets: Nhập mẫu cài đặt trước
       import_global_presets_help: |
+        Chọn các giá trị đặt trước trong tệp **.json** mà bạn muốn nhập.
+        Xin lưu ý rằng giá trị đặt trước có cùng tên đã tồn tại sẽ được thay thế bằng phiên bản đã nhập.
       import_global_presets_success: |
+        *OpenCutList* mẫu cài đặt trước đã được nhập thành công.
+        Để nhìn thấy các thay đổi, bạn phải **đóng** và **mở lại** cửa sổ OpenCutList.
       dump_global_presets: Kết xuất mẫu cài đặt trước
       dump_model_presets: Kết xuất các giá trị mẫu cài đặt trước của mô hình
       reset_global_presets: Khởi tạo lại các mẫu cài đặt trước
@@ -1283,11 +1301,11 @@ tab:
         Các mẫu cài đặt trước *OpenCutList* cho mô hình hiện tại đã được đặt lại.
         Để thấy các thay đổi, bạn phải **đóng** và **mở lại** cửa sổ OpenCutList.
       error:
-        no_preset_to_export: ""
-        no_preset_to_import: ""
-        failed_to_import: ""
-        failed_to_import_invalid_hexdigest: ""
-        failed_to_import_bad_file_format: ""
+        no_preset_to_export: Không có mẫu cài đặt trước nào để xuất.
+        no_preset_to_import: Không có mẫu cài đặt trước nào để nhập.
+        failed_to_import: "Không thể nhập các mẫu cài đặt trước: **{{ error }}**."
+        failed_to_import_invalid_hexdigest: Tập tin này đã được sửa đổi. Nó không thể được nhập.
+        failed_to_import_bad_file_format: Định dạng tập tin không hợp lệ.
   about:
     label: Giới thiệu
     title: Giới thiệu
@@ -1329,7 +1347,7 @@ tool:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_paint:
-    title: ""
+    title: Sơn
     default_material: Không có vật liệu xác định
     filters: Lọc
     filter_0: Không có loại
@@ -1340,49 +1358,47 @@ tool:
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
     action_0: Tô bề mặt
-    action_0_status: ""
+    action_0_status: Click vào bộ phận để thể hiện sơn
     action_1: Tô bộ phận
-    action_1_status: ""
+    action_1_status: Nhấp vào một cạnh của bảng để áp dụng '$t(tab.materials.type_4)'
     action_2: Dọn dẹp bề mặt
-    action_2_status: ""
+    action_2_status: Nhấp vào một mặt bảng để áp dụng '$t(tab.materials.type_6)'
     action_3: Dọn dẹp bộ phận
-    action_3_status: ""
-    edges: ""
-    edges_plural: ""
-    edge_ymin: ""
-    edge_ymax: ""
-    edge_xmin: ""
-    edge_xmax: ""
-    faces: ""
-    faces_plural: ""
+    action_3_status: Nhấp vào một mặt để lấy mẫu vật liệu của nó
+    edges: "{{ count }} cạnh"
+    edges_plural: "{{ count }} cạnh"
+    edge_ymin: Chiều dài 1
+    edge_ymax: Chiều dài 2
+    edge_xmin: Chiều rộng 1
+    edge_xmax: Chiều rộng 2
+    faces: "{{ count }} mặt"
+    faces_plural: "{{ count }} mặt"
     face_zmin: Mặt sau Veneer
     face_zmax: Mặt trước Veneer
     warning:
       no_material: Mô hình của bạn không chứa bất kỳ vật liệu nào!
-      no_material_type: ""
+      no_material_type: "Không có vật liệu của loại '{{ type }}'"
     error:
-      not_part: ""
-      not_edge: ""
-      not_face: ""
-      wrong_material_type: ""
+      not_part: Đối tượng mục tiêu không phải là một bộ phận
+      not_edge: Mặt mục tiêu không phải là cạnh bảng
+      not_face: Mặt mục tiêu không phải là mặt bảng
+      wrong_material_type: "Bộ phận mục tiêu phải là của loại '{{ type }}'"
   smart_axes:
-    title: ""
-    toggle_depth: ""
-    action_0: ""
-    action_0_status: ""
-    action_1: ""
-    action_1_status: ""
-    action_2: ""
-    action_2_status: ""
-    action_3: ""
-    action_3_status: ""
-    action_modifier_length: ""
-    action_modifier_width: ""
-    action_modifier_thickness: ""
-    success:
-      part_oriented: ""
+    title: Định hướng
+    toggle_depth: Nền bộ phận
+    action_0: Lật
+    action_0_status: Nhấp vào một bộ phận để lật nó trường hợp dọc theo một trong các kích thước của nó
+    action_1: Hoán đổi chiều dài ↔ chiều rộng
+    action_1_status: Nhấp vào một bộ phận để hoán đổi chiều dài của nó với chiều rộng của nó
+    action_2: Hoán đổi mặt trước ↔ mặt sau
+    action_2_status: Nhấp vào một bộ phận để hoán đổi mặt trước với mặt sau của nó
+    action_3: Điều chỉnh trục
+    action_3_status: "Nhấp vào mặt, cạnh hoặc đỉnh của một bộ phận để điều chỉnh hướng của các trục"
+    action_modifier_length: L
+    action_modifier_width: W
+    action_modifier_thickness: T
     warning:
-      more_entities: ""
+      more_entities: "{{ count_used }} các trường hợp chia sẻ cùng một định nghĩa sẽ được sửa đổi"
     error:
-      not_part: ""
-      not_orientable: ""
+      not_part: Đối tượng mục tiêu không phải là một bộ phận
+      not_orientable: Loại bộ phận này không cho phép định hướng nó

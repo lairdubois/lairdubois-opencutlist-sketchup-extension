@@ -1393,7 +1393,7 @@ tool:
     action_2: Swap front ↔ backside
     action_2_status: Click on a part to swap its front with its backside
     action_3: Adapt axes
-    action_3_status: "Click on the face, edge or vertex of a part to adjust the orientation of the axes"
+    action_3_status: Click on the face or edge of a part to adjust the orientation of the axes
     action_modifier_length: L
     action_modifier_width: W
     action_modifier_thickness: T

@@ -32,8 +32,8 @@ default:
   copy: Copiare
   select_all: Seleziona tutto
   unselect_all: Deseleziona tutto
-  draw: ""
-  estimate: ""
+  draw: Disegna
+  estimate: Preventivo
   empty_filename: Senza titolo.skp
   help: Aiuto
   error: OOps!
@@ -62,12 +62,12 @@ default:
   setup_model_units: Impostare le unità del modello
   load_more: Carica di più
   reset_to_app_defaults: Ripristina i valori originali
-  constrain_key: ""
-  copy_key_win: ""
+  constrain_key: Tasto Maiusc
+  copy_key_win: tasto Ctrl
   copy_key_mac: Opzione
   alt_key_win: Alt
   alt_key_mac: Comando
-  tab_key: ""
+  tab_key: Tab
 core:
   menu:
     submenu: OpenCutList
@@ -85,7 +85,7 @@ core:
     command:
       dialog: OpenCutList
       smart_paint: Colorare parti
-      smart_axes: ""
+      smart_axes: Orienta gli elementi
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
@@ -123,8 +123,8 @@ core:
     downloading: Download in corso
     changelog: "Lista delle nuove funzionalita"
     ignore_update: Ignorare questo aggiornamento
-    download_rescue: "Problemi a scaricare?"
-    manual_download: Scaricamento manuale
+    download_rescue: "Problemi di trasferimento?"
+    manual_download: Trasferimento manuale
     zzz: "Al momento mi sto riposando dopo l'aggiornamento. Per svegliarmi, è necessario riavviare SketchUp."
     success: |
       L'aggiornamento di OpenCutList è terminato!
@@ -135,7 +135,7 @@ core:
       unzip: Si è verificato un errore durante l'espansione dell'archivio compresso.
   preset:
     label: Impostazioni
-    manage: ""
+    manage: Gestione configurazioni
     save_to: Salva con nome
     restore_from: Ricarica da
     app_defaults: Impostazione originale
@@ -179,7 +179,7 @@ core:
       store: Memorizzare questo colore
       remove: Rimuovi il colore
     textinput_code:
-      snippets: ""
+      snippets: Esempi di formule
       help: Digitare **@** per ottenere la lista delle variabili.
     three_viewer:
       view: "Visualizzazione {{ view }}"
@@ -190,7 +190,7 @@ core:
       view_back: Posteriore
       view_left: Sinistra
       view_right: Destra
-      zoom: "Scalatura {{ zoom }}"
+      zoom: "Fattore di scala {{ zoom }}"
       explode_factor: Ampiezza dell'esploso
       toggle_box_helper: Mostra/Nascondi il riquadro di ingombro
       toggle_box_dimensions_helper: Mostra/Nascondi le dimensioni
@@ -328,7 +328,7 @@ tab:
         Stai per azzerare i prezzi di tutte le parti del tuo modello.
         Questa azione è definitiva. **Tutti i prezzi saranno azzerati.**
         Confermare per continuare.
-      reset_prices_success: I prezzi di tutti i parti sono stati azzerati.
+      reset_prices_success: I prezzi di tutte le parti sono stati azzerati.
     edit_part:
       title: "Elenca proprietà della parte '{{ name }}'"
       title_multiple: Elenca proprietà di un gruppo di parti
@@ -345,7 +345,7 @@ tab:
       cumulable_0: Non sommabile
       cumulable_1: Sommabile sulla lunghezza
       cumulable_2: Sommabile sulla larghezza
-      instance_count_by_part: Condizionamento
+      instance_count_by_part: Lotto
       instance_count_by_part_help: |
         Permette di considerare la parte come un *lotto* di una o più *unità*.
         La quantità associata al pezzo nel elenco di parti rappresenterà quindi il numero di lotti interi necessari per contenere il numero di unità effettivamente presenti nel modello.
@@ -408,8 +408,8 @@ tab:
       axes_origin_position_none: Non cambiare l'origine
       axes_origin_position_min: Posiziona l'origine sullo spigolo
       axes_origin_position_center: Posiziona l'origine al centro
-      axes_origin_position_front_min: ""
-      axes_origin_position_front_center: ""
+      axes_origin_position_front_min: Posizionare l'origine nell'angolo del frontale
+      axes_origin_position_front_center: Posizionare l'origine al centro del frontale
       over_length: Sulla lunghezza
       over_width: Sulla larghezza
       edge_disabled_help: La bordatura non è configurabile perchè nel modello non è stata trovata alcuna faccia che può ospitare un materiale di tipo *bordatura*.
@@ -629,7 +629,7 @@ tab:
       option_bar_folding_1: Si
       option_bar_folding_help: Raggruppa tavole o bordi con dimensioni e tagli identici.
       option_sheet_folding_good: Raggruppa pannelli identici
-      option_sheet_folding_veneer: Raggruppa fogli identici
+      option_sheet_folding_veneer: Raggruppa laminati identici
       option_sheet_folding_0: No
       option_sheet_folding_1: Si
       option_sheet_folding_help: Raggruppa pannelli o fogli con dimensioni e tagli identici.
@@ -743,7 +743,7 @@ tab:
         leftover: Rimanente
         cut: Taglio
         cut_plural: Tagli
-        cut_trimming: ""
+        cut_trimming: Sezionatura
         cut_bounding: Taglio principale (livello 1)
         cut_bounding_plural: Tagli primari (livello 1)
         cut_internal_through: Taglio principale (livello 2)
@@ -935,11 +935,11 @@ tab:
     snippet:
       number: Numero
       name: Designazione
-      number_and_name: ""
-      number_without_hardware: ""
+      number_and_name: Numero e Descrizione
+      number_without_hardware: Numero (senza accessori)
       size: Dimensione
-      area: ""
-      volume: ""
+      area: Area
+      volume: Volume
     error:
       no_model: Nessun modello caricato. Sono necessarie più informazioni per procedere ;)
       no_entities: Il modello non ha parti. Sono necessarie più informazioni per procedere ;)
@@ -987,7 +987,7 @@ tab:
       grain_direction: Direzione della venatura
       colorized: Questa tonalità di colore sarà applicata alla struttura del materiale al momento della resa visiva del modello
       texture_load: Carica una nuova texture
-      texture_clear: ""
+      texture_clear: Rimuovi texture
       edit: "Modifica le proprietà di '{{ name }}'"
       set_current: |
         Assegna il materiale '{{ name }}'
@@ -1012,7 +1012,7 @@ tab:
       title: "Proprietà del Materiale '{{ name }}'"
       general: Generale
       texture: Struttura
-      no_texture: ""
+      no_texture: Nessuna texture
       name: Nome
       type: Tipo
       cut_options: Impostazioni del taglio
@@ -1239,6 +1239,7 @@ tab:
         Tale formato permette di riutilizzare gli schemi di taglio OCL da parte di altri sofware.
         Finanziando la realizzazione di questa interoperabilità si crea un'opportunità per un ulteriore miglioramento di OpenCutList.
       layout: |
+        Questo modulo consente di stampare un'anteprima del progetto in **vista esplosa** con la numerazione generata nell' Elenco Parti.
     objective_crowdfunding: |
       Lo sviluppo di nuove funzionalità grazie al **finanziamento collettivo (crowfunding)** potrà iniziare non appena il **Finanziamento** sarà completato.
     objective_thanks: |
@@ -1346,7 +1347,7 @@ tool:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_paint:
-    title: ""
+    title: Assegna il materiale
     default_material: Nessun materiale definito
     filters: Filtri
     filter_0: Tipo indefinito
@@ -1357,49 +1358,47 @@ tool:
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
     action_0: Assegna il materiale alla faccia
-    action_0_status: ""
+    action_0_status: Seleziona un elemento a cui applicare il materiale
     action_1: Assegna il materiale all'elemento
-    action_1_status: ""
+    action_1_status: Seleziona un bordo del pannello a cui applicare '$t(tab.materials.type_4)'
     action_2: Elimina il materiale della faccia
-    action_2_status: ""
+    action_2_status: Seleziona una faccia del pannello a cui applicare '$t(tab.materials.type_6)'
     action_3: Elimina il materiale dell'elemento
-    action_3_status: ""
-    edges: ""
-    edges_plural: ""
+    action_3_status: Seleziona una faccia del pannello da cui copiare il materiale
+    edges: "{{ count }} bordo"
+    edges_plural: "{{ count }} bordi"
     edge_ymin: Lunghezza 1
     edge_ymax: Lunghezza 2
     edge_xmin: Larghezza 1
     edge_xmax: Larghezza 2
-    faces: ""
-    faces_plural: ""
+    faces: "{{ count }} faccia"
+    faces_plural: "{{ count }} facce"
     face_zmin: Piallaccio interno
     face_zmax: Anteriore
     warning:
       no_material: Il modello non contiene alcun materiale!
-      no_material_type: ""
+      no_material_type: "Nessun materiale di tipo '{{ type }}'"
     error:
-      not_part: ""
-      not_edge: ""
-      not_face: ""
-      wrong_material_type: ""
+      not_part: L'oggetto di destinazione non è di tipo Parte
+      not_edge: La faccia di destinazione non è un bordo
+      not_face: La faccia di destinazione non è una faccia
+      wrong_material_type: "L'elemento di destinazione deve essere di tipo '{{ type }}'"
   smart_axes:
-    title: ""
-    toggle_depth: ""
-    action_0: ""
-    action_0_status: ""
-    action_1: ""
-    action_1_status: ""
-    action_2: ""
-    action_2_status: ""
-    action_3: ""
-    action_3_status: ""
-    action_modifier_length: ""
-    action_modifier_width: ""
-    action_modifier_thickness: ""
-    success:
-      part_oriented: ""
+    title: Orientare
+    toggle_depth: Elementi in secondo piano
+    action_0: Invertire
+    action_0_status: Selezionare un elemento per invertire una delle sue dimensioni
+    action_1: Inverti Lunghezza ↔ Larghezza
+    action_1_status: Seleziona una elemento per invertire la lunghezza con la larghezza
+    action_2: Inverti fronte ↔ retro
+    action_2_status: Seleziona un elemento per invertire il fronte con il retro
+    action_3: Adatta gli assi
+    action_3_status: Seleziona una faccia o un bordo di un elemento per modificare l'orientamento degli assi
+    action_modifier_length: L
+    action_modifier_width: La
+    action_modifier_thickness: Sp
     warning:
-      more_entities: ""
+      more_entities: "saranno modificate {{ count_used }} occorrenze che condividono la stessa definizione"
     error:
-      not_part: ""
-      not_orientable: ""
+      not_part: L'oggetto di destinazione non è di tipo Parte
+      not_orientable: Questo elemento non consente di cambiarne l'orientamento
