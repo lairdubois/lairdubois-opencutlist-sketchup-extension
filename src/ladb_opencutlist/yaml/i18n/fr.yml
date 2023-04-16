@@ -1365,6 +1365,8 @@ tool:
     action_2_status: Cliquez sur une face de panneau pour lui appliquer une matière '$t(tab.materials.type_6)'
     action_3: Prélever
     action_3_status: Cliquez sur une face pour prélever un échantillon de la matière
+    action_4: Nettoyer
+    action_4_status: Cliquez sur une pièce pour nettoyer sa définition et toutes ses instances de toutes ses matières
     edges: "{{ count }} chant"
     edges_plural: "{{ count }} chants"
     edge_ymin: Longueur 1
