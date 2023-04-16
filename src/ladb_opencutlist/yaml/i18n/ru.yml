@@ -32,8 +32,8 @@ default:
   copy: Копировать
   select_all: Выбрать всё
   unselect_all: Отменить выбор
-  draw: ""
-  estimate: ""
+  draw: Чертеж
+  estimate: Сметчик
   empty_filename: Безымянный.skp
   help: Помощь
   error: Исправить!
@@ -62,12 +62,12 @@ default:
   setup_model_units: Установка единиц измерения
   load_more: Загрузить больше
   reset_to_app_defaults: Восстановить исходные значения
-  constrain_key: ""
-  copy_key_win: ""
+  constrain_key: Сдвиг
+  copy_key_win: Ctrl
   copy_key_mac: Вариант
   alt_key_win: Alt
   alt_key_mac: Команда
-  tab_key: ""
+  tab_key: Tab
 core:
   menu:
     submenu: OpenCutList
@@ -85,7 +85,7 @@ core:
     command:
       dialog: OpenCutList
       smart_paint: Раскраска деталей
-      smart_axes: ""
+      smart_axes: Ориентация деталей
   dialog:
     title: OpenCutList от L'Air du Bois
   leftbar:
@@ -135,7 +135,7 @@ core:
       unzip: Ошибка при распаковке архива.
   preset:
     label: Пресеты
-    manage: ""
+    manage: Управление пресетами
     save_to: Сохранить
     restore_from: Восстановить с
     app_defaults: Пресеты по умолчанию
@@ -179,7 +179,7 @@ core:
       store: Запомнить этот цвет
       remove: Забыть этот цвет
     textinput_code:
-      snippets: ""
+      snippets: Примеры формул
       help: "Нажмите **@**, чтобы открыть ввод переменных данных."
     three_viewer:
       view: "Вид {{ view }}"
@@ -408,8 +408,8 @@ tab:
       axes_origin_position_none: Не изменять начало координат
       axes_origin_position_min: Размещение начала координат по углу
       axes_origin_position_center: Размещение начала координат в центре
-      axes_origin_position_front_min: ""
-      axes_origin_position_front_center: ""
+      axes_origin_position_front_min: Поместите начало координат в торец
+      axes_origin_position_front_center: Поместите начало координат в центр
       over_length: По всей длине
       over_width: По всей ширине
       edge_disabled_help: "Эта кромка не настраивается, так как в модели не было обнаружено ни одной поверхности, которая могла бы нести в себе материал кромочной полосы."
@@ -742,7 +742,7 @@ tab:
         leftover: Остаток
         cut: Пропил
         cut_plural: Распилы
-        cut_trimming: ""
+        cut_trimming: Чистый рез
         cut_bounding: Первичный рез (уровень 1)
         cut_bounding_plural: Первичные разрезы (уровень 1)
         cut_internal_through: Первичный рез (уровень 2)
@@ -934,11 +934,11 @@ tab:
     snippet:
       number: Номер
       name: Наименование
-      number_and_name: ""
-      number_without_hardware: ""
+      number_and_name: Номер детали
+      number_without_hardware: Количество (без аксессуаров)
       size: Доступный размер
-      area: ""
-      volume: ""
+      area: Расчетная площадь
+      volume: Расчетный объем
     error:
       no_model: Модель не открыта. Вы должны предоставить мне дополнительную информацию ;)
       no_entities: Ваша модель пуста. Вам нужно дать мне больше информации ;)
@@ -986,7 +986,7 @@ tab:
       grain_direction: Направление волокон
       colorized: "Этот рисунок фактуры будет применен к текстуре этого материала, когда он будет отображен в модели"
       texture_load: Загрузить новую текстуру
-      texture_clear: ""
+      texture_clear: Очистить текстуру
       edit: "Редактирование свойств '{{ name }}'"
       set_current: |
         Раскрашивайте части с помощью '{{ name }}'
@@ -1011,7 +1011,7 @@ tab:
       title: "Свойства материала '{{ name }}'"
       general: Общие
       texture: Текстура
-      no_texture: ""
+      no_texture: Текстура песка
       name: Имя
       type: Тип
       cut_options: Параметры раскроя
@@ -1238,6 +1238,7 @@ tab:
         Для расширения возможностей плагина мы хотели бы сделать возможным экспорт карт раскроя в формате **SVG**.
         Помогая нам финансово, вы даете нам возможность расширить функционал плагина, чтобы в итоге получить максимальную отдачу от *OpenCutList*.
       layout: |
+        Этот модуль позволит вам продемонстрировать ваш проект в **разнесённом виде** и идентифицировать детали в проекте с их номерами, сгенерированными в карте раскроя при ее расчете.
     objective_crowdfunding: |
       Разработка новых опций будет осуществляться за счет собранных средств через **краудфандинг** и начнется, когда будет достигнута **финансовая цель**.
     objective_thanks: |
@@ -1346,7 +1347,7 @@ tool:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_paint:
-    title: ""
+    title: Раскрасить
     default_material: Материал не задан
     filters: Фильтры
     filter_0: Не определён
@@ -1357,49 +1358,47 @@ tool:
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
     action_0: Раскрасить сторону
-    action_0_status: ""
+    action_0_status: "Кликните на деталь, чтобы применить материал к ее экземпляру"
     action_1: Раскрасить деталь
-    action_1_status: ""
+    action_1_status: "Кликните на торец панели, чтобы применить материал '$t(tab.materials.type_4)'"
     action_2: Очистить сторону
-    action_2_status: ""
+    action_2_status: "Кликните на лицевую сторону панели, чтобы применить к ней материал '$t(tab.materials.type_6)'"
     action_3: Очистить деталь
-    action_3_status: ""
-    edges: ""
-    edges_plural: ""
-    edge_ymin: ""
-    edge_ymax: ""
-    edge_xmin: ""
-    edge_xmax: ""
-    faces: ""
-    faces_plural: ""
+    action_3_status: "Кликните на сторону, чтобы взять образец материала"
+    edges: "{{ count }} торец"
+    edges_plural: "{{ count }} торцов"
+    edge_ymin: Длина 1
+    edge_ymax: Длина 2
+    edge_xmin: Ширина 1
+    edge_xmax: Ширина 2
+    faces: "{{ count }} лицевая"
+    faces_plural: "{{ count }} лицевых"
     face_zmin: Сопоставление
     face_zmax: Перед
     warning:
       no_material: Ваша модель не содержит материалов!
-      no_material_type: ""
+      no_material_type: "Нет материала типа '{{ type }}'"
     error:
-      not_part: ""
-      not_edge: ""
-      not_face: ""
-      wrong_material_type: ""
+      not_part: Целевой объект не является деталью
+      not_edge: Целевая поверхность не является торцом панели
+      not_face: Целевое поверхность не является лицевой
+      wrong_material_type: "Целевая деталь должна быть типа '{{ type }}'"
   smart_axes:
-    title: ""
-    toggle_depth: ""
-    action_0: ""
-    action_0_status: ""
-    action_1: ""
-    action_1_status: ""
-    action_2: ""
-    action_2_status: ""
-    action_3: ""
-    action_3_status: ""
-    action_modifier_length: ""
-    action_modifier_width: ""
-    action_modifier_thickness: ""
-    success:
-      part_oriented: ""
+    title: Ориентир
+    toggle_depth: Детали на заднем плане
+    action_0: Вернуть
+    action_0_status: "Кликните на деталь, чтобы сориентировать ее экземпляр вдоль одного из размеров"
+    action_1: Переключить Длина ↔ Ширина
+    action_1_status: "Кликните на детали, чтобы поменять ее длину на ширину"
+    action_2: Переключатель Лицевая ↔ Обратная
+    action_2_status: "Кликните на деталь, чтобы перевернуть отображение лицевой стороны на тыльную сторону и обратно"
+    action_3: Адаптировать оси
+    action_3_status: "Кликните по грани, краю или вершине детали, чтобы настроить ориентацию осей"
+    action_modifier_length: Дл
+    action_modifier_width: Шр
+    action_modifier_thickness: Тл
     warning:
-      more_entities: ""
+      more_entities: "{{ count_used }} экземпляры, имеющие одинаковое определение, будут изменены"
     error:
-      not_part: ""
-      not_orientable: ""
+      not_part: Целевой объект не является деталью
+      not_orientable: Тип этой детали не позволяет сориентировать ее по осям
