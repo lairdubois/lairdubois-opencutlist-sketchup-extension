@@ -392,7 +392,14 @@ module Ladb::OpenCutList
 
           t = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
 
-          unless t.identity?
+          line = Kuix::Line.new
+          line.start.copy!(input_edge.start.position)
+          line.end.copy!(input_edge.end.position)
+          line.color = Sketchup::Color.new(255, 0, 255)
+          line.line_width = 5
+          part_helper.append(line)
+
+          unless (t * part.def.size.oriented_transformation).identity?
 
             show_axes = false
 
@@ -403,23 +410,6 @@ module Ladb::OpenCutList
             mesh.add_triangles(_compute_children_faces_triangles([ input_face ]))
             mesh.background_color = Sketchup::Color.new(255, 0, 255, 0.2)
             part_helper.append(mesh)
-
-            line = Kuix::Line.new
-            line.start.copy!(input_edge.start.position)
-            line.end.copy!(input_edge.end.position)
-            line.color = Sketchup::Color.new(255, 0, 255)
-            line.line_width = 5
-            part_helper.append(line)
-
-            # # Back arrow
-            # arrow = Kuix::Arrow.new
-            # arrow.bounds.origin.copy!(bounds.min.offset(Geom::Vector3d.new(0, 0, -arrow_offset)))
-            # arrow.bounds.size.copy!(bounds)
-            # arrow.color = Sketchup::Color.new(255, 0, 255)
-            # arrow.line_width = 2
-            # arrow.line_stipple = '-'
-            # arrow.transformation = t
-            # part_helper.append(arrow)
 
             # Front arrow
             arrow = Kuix::Arrow.new
@@ -455,19 +445,15 @@ module Ladb::OpenCutList
 
         if part.group.material_type != MaterialAttributes::TYPE_HARDWARE
 
-          unless is_action_adapt_axes?
-
-            # Back arrow
-            arrow = Kuix::Arrow.new
-            arrow.pattern_transformation = instance_info.size.oriented_transformation if part.auto_oriented
-            arrow.bounds.origin.copy!(instance_info.definition_bounds.min.offset(Geom::Vector3d.new(0, 0, -arrow_offset)))
-            arrow.bounds.size.copy!(instance_info.definition_bounds)
-            arrow.color = arrow_color
-            arrow.line_width = arrow_line_width
-            arrow.line_stipple = '-'
-            part_helper.append(arrow)
-
-          end
+          # Back arrow
+          arrow = Kuix::Arrow.new
+          arrow.pattern_transformation = instance_info.size.oriented_transformation if part.auto_oriented
+          arrow.bounds.origin.copy!(instance_info.definition_bounds.min.offset(Geom::Vector3d.new(0, 0, -arrow_offset)))
+          arrow.bounds.size.copy!(instance_info.definition_bounds)
+          arrow.color = arrow_color
+          arrow.line_width = arrow_line_width
+          arrow.line_stipple = '-'
+          part_helper.append(arrow)
 
           # Front arrow
           arrow = Kuix::Arrow.new
@@ -479,23 +465,17 @@ module Ladb::OpenCutList
           arrow.line_width = arrow_line_width
           part_helper.append(arrow)
 
-          if part.not_aligned_on_axes ||
-            part.length_increased || part.width_increased || part.thickness_increased ||
-            part.group.material_type == MaterialAttributes::TYPE_UNKNOWN
-
-            # Bounding box helper
-            box_helper = Kuix::BoxHelper.new
-            box_helper.bounds.origin.copy!(instance_info.definition_bounds.min)
-            box_helper.bounds.size.copy!(instance_info.definition_bounds)
-            box_helper.bounds.size.width += increases[0] / part.def.scale.x
-            box_helper.bounds.size.height += increases[1] / part.def.scale.y
-            box_helper.bounds.size.depth += increases[2] / part.def.scale.z
-            box_helper.color = COLOR_BOX
-            box_helper.line_width = 2
-            box_helper.line_stipple = '-'
-            part_helper.append(box_helper)
-
-          end
+          # Bounding box helper
+          box_helper = Kuix::BoxHelper.new
+          box_helper.bounds.origin.copy!(instance_info.definition_bounds.min)
+          box_helper.bounds.size.copy!(instance_info.definition_bounds)
+          box_helper.bounds.size.width += increases[0] / part.def.scale.x
+          box_helper.bounds.size.height += increases[1] / part.def.scale.y
+          box_helper.bounds.size.depth += increases[2] / part.def.scale.z
+          box_helper.color = COLOR_BOX
+          box_helper.line_width = 2
+          box_helper.line_stipple = '-'
+          part_helper.append(box_helper)
 
         end
 
@@ -701,33 +681,16 @@ module Ladb::OpenCutList
       end
 
       input_edge = @input_edge
-      if input_edge.nil? || !input_edge.faces.include?(input_face)
+      if input_edge.nil? || !input_edge.used_by?(input_face)
         input_edge = find_longest_outer_edge(input_face, instance_info.transformation)
       end
-      # if input_edge.curve.is_a?(Sketchup::ArcCurve)
-      #   input_edge = input_edge.curve.first_edge if input_edge.curve.first_edge.faces.include?(input_face)
-      # end
-
-      # input_vertex = @input_vertex # @input_point.vertex
-      # if input_vertex.nil? #|| !input_position.edges.include?(input_edge)
-      #   origin = input_face.bounds.center
-      # else
-      #   origin = input_position
-      # end
-
-      origin = ORIGIN
 
       z_axis = input_face.normal
-      x_axis = (Geom::Vector3d.new(input_edge.end.position.to_a) - Geom::Vector3d.new(input_edge.start.position.to_a)).normalize
+      x_axis = input_edge.line[1]
       x_axis.reverse! if x_axis.angle_between(instance_info.size.oriented_axis(X_AXIS)) >= Math::PI / 2 # Try to keep part length orientation
-      y_axis = z_axis.cross(x_axis).normalize
+      y_axis = z_axis.cross(x_axis)
 
-      # puts "_get_input_axes"
-      # puts "Face = #{input_face}"
-      # puts "Edge = #{input_edge} -> #{input_edge ? input_edge.faces.include?(input_face) : ''} length = #{input_edge ? input_edge.length : ''}"
-      # puts "Vertex = #{input_position} -> #{input_position ? input_position.faces.include?(input_face) : ''}"
-
-      [ origin, x_axis, y_axis, z_axis, input_face, input_edge ]
+      [ ORIGIN, x_axis, y_axis, z_axis, input_face, input_edge ]
     end
 
   end

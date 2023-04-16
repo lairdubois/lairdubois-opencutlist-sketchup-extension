@@ -46,6 +46,7 @@ module Ladb::OpenCutList
       edge_min = nil
 
       face.outer_loop.edges.each do |e|
+        next if !e.visible? || e.smooth? || e.soft?
 
         e_length = transformation ? e.length(transformation) : e.length
         e_min = e.start.position < e.end.position ? e.start.position : e.end.position

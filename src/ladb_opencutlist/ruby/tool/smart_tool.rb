@@ -479,6 +479,7 @@ module Ladb::OpenCutList
         # puts "  Edge = #{@input_point.edge} -> onface? = #{@input_point.edge ? @input_point.edge.faces.include?(@input_point.face) : ''}"
         # puts "  Vertex = #{@input_point.vertex} -> onedge? = #{@input_point.vertex ? @input_point.vertex.edges.include?(@input_point.edge) : ''}"
         # puts "  instance_path = #{@input_point.instance_path.to_a.join(' -> ')}"
+        # puts "  transformation = #{@input_point.transformation}"
 
         unless @input_point.face.nil?
 
@@ -489,19 +490,38 @@ module Ladb::OpenCutList
           @input_edge = @input_point.edge unless @input_vertex
 
           if @input_point.instance_path.empty? ||
-            (@input_point.instance_path.leaf.is_a?(Sketchup::Edge) || @input_point.instance_path.leaf.is_a?(Sketchup::Vertex)) && !@input_point.instance_path.leaf.faces.include?(@input_face)
+            (@input_point.instance_path.leaf.is_a?(Sketchup::Edge) || @input_point.instance_path.leaf.is_a?(Sketchup::Vertex)) && !@input_point.instance_path.leaf.used_by?(@input_face)
 
             unless @input_face.nil?
 
-              # Input point give a face without path or with part for an other part
-              # Let's try to use pick helper to pick the face path
-              if @pick_helper.do_pick(x, y)
-                @pick_helper.count.times do |index|
-                  if @pick_helper.leaf_at(index) == @input_face
-                    @input_part_entity_path = _get_part_entity_path_from_path(@pick_helper.path_at(index))
-                    break
+              unless @input_edge.nil?
+
+                # Input point give an edge but on an other face
+                # Let's try to use pick helper to pick the an edge used by the input face
+                if @pick_helper.do_pick(x, y)
+                  @pick_helper.count.times do |index|
+                    if @pick_helper.leaf_at(index).is_a?(Sketchup::Edge) && @pick_helper.leaf_at(index).used_by?(@input_face)
+                      @input_edge = @pick_helper.leaf_at(index)
+                      break
+                    end
                   end
                 end
+
+              end
+
+              if @input_point.instance_path.empty?
+
+                # Input point gives a face without instance path
+                # Let's try to use pick helper to pick the face path
+                if @pick_helper.do_pick(x, y)
+                  @pick_helper.count.times do |index|
+                    if @pick_helper.leaf_at(index) == @input_face
+                      @input_part_entity_path = _get_part_entity_path_from_path(@pick_helper.path_at(index))
+                      break
+                    end
+                  end
+                end
+
               end
 
             end
@@ -519,9 +539,9 @@ module Ladb::OpenCutList
 
         # puts "#### KEEP"
         # puts "  Face = #{@input_face}"
-        # puts "  Edge = #{@input_edge}"
+        # puts "  Edge = #{@input_edge} -> onface? = #{@input_edge ? @input_edge.faces.include?(@input_face) : ''}"
         # puts "  Vertex = #{@input_vertex}"
-        # puts "  InstancePath = #{PathUtils.get_named_path(@input_part_entity_path)}"
+        # puts "  PartEntityPath = #{@input_part_entity_path ? @input_part_entity_path.join(' -> ') : ''}"
 
       end
       false
