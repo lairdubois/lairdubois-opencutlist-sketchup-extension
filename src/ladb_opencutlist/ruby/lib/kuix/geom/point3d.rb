@@ -12,6 +12,7 @@ module Ladb::OpenCutList::Kuix
       @x = x
       @y = y
       @z = z
+      self
     end
 
     def set_all!(value = 0)
@@ -28,6 +29,7 @@ module Ladb::OpenCutList::Kuix
       @x += dx
       @y += dy
       @z += dz
+      self
     end
 
     # --

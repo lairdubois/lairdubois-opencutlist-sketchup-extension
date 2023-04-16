@@ -11,6 +11,7 @@ module Ladb::OpenCutList::Kuix
     def set!(x = 0, y = 0)
       @x = x
       @y = y
+      self
     end
 
     def set_all!(value = 0)
@@ -26,6 +27,7 @@ module Ladb::OpenCutList::Kuix
     def translate!(dx, dy)
       @x += dx
       @y += dy
+      self
     end
 
     # --

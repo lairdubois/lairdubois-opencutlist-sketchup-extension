@@ -11,6 +11,7 @@ module Ladb::OpenCutList::Kuix
     def set!(width = 0, height = 0)
       @width = width >= 0 ? width : 0       # Force width to be positive
       @height = height >= 0 ? height : 0    # Force height to be positive
+      self
     end
 
     def set_all!(value = 0)

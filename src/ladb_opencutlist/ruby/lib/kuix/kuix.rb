@@ -40,6 +40,33 @@ module Ladb::OpenCutList
 
     class KuixTool
 
+      VK_TAB = 9
+      if Sketchup.platform == :platform_osx
+        VK_NUMPAD0 = 48
+        VK_NUMPAD1 = 49
+        VK_NUMPAD2 = 50
+        VK_NUMPAD3 = 51
+        VK_NUMPAD4 = 52
+        VK_NUMPAD5 = 53
+        VK_NUMPAD6 = 54
+        VK_NUMPAD7 = 55
+        VK_NUMPAD8 = 56
+        VK_NUMPAD9 = 57
+        VK_ADD = 43
+      else
+        VK_NUMPAD0 = 0x60
+        VK_NUMPAD1 = 0x61
+        VK_NUMPAD2 = 0x62
+        VK_NUMPAD3 = 0x63
+        VK_NUMPAD4 = 0x64
+        VK_NUMPAD5 = 0x65
+        VK_NUMPAD6 = 0x66
+        VK_NUMPAD7 = 0x67
+        VK_NUMPAD8 = 0x68
+        VK_NUMPAD9 = 0x69
+        VK_ADD = 0x6B
+      end
+
       COLOR_BLACK = Sketchup::Color.new(0, 0, 0).freeze
       COLOR_WHITE = Sketchup::Color.new(255, 255, 255).freeze
       COLOR_RED = Sketchup::Color.new(255, 0, 0).freeze
