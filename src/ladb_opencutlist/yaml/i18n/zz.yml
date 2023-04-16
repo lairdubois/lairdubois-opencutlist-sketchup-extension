@@ -1412,14 +1412,12 @@ tool:
     action_2: 1079 - Swap front ↔ backside
     action_2_status: 1080 - Click on a part to swap its front with its backside
     action_3: 1081 - Adapt axes
-    action_3_status: 1082 - Click on the face or edge of a part to adjust the orientation of the axes
+    action_3_status: 1082 - Click on the face, edge or vertex of a part to adjust the orientation of the axes
     action_modifier_length: 1083 - L
     action_modifier_width: 1084 - W
     action_modifier_thickness: 1085 - T
-    success:
-      part_oriented: 1086 - This part already has its length on the largest dimension and its thickness on the smallest
     warning:
-      more_entities: 1087 - {{ count_used }} instances sharing the same definition will be modified
+      more_entities: 1086 - {{ count_used }} instances sharing the same definition will be modified
     error:
-      not_part: 1088 - The target object is not a part
-      not_orientable: 1089 - The type of this part does not allow orienting it
+      not_part: 1087 - The target object is not a part
+      not_orientable: 1088 - The type of this part does not allow orienting it
