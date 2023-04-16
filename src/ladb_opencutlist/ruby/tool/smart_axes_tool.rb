@@ -363,8 +363,8 @@ module Ladb::OpenCutList
 
         clear_space
 
-        arrow_color = is_action_adapt_axes? ? COLOR_BLUE : part.auto_oriented ? COLOR_ARROW_AUTO_ORIENTED : COLOR_ARROW
-        arrow_line_width = is_action_adapt_axes? ? 1 : 2
+        arrow_color = part.auto_oriented ? COLOR_ARROW_AUTO_ORIENTED : COLOR_ARROW
+        arrow_line_width = 2
         arrow_offset = Sketchup.active_model.active_view.pixels_to_model(1, Sketchup.active_model.active_view.guess_target)
 
         increases = [ 0, 0, 0 ]
@@ -385,78 +385,89 @@ module Ladb::OpenCutList
         part_helper.transformation = instance_info.transformation
         @space.append(part_helper)
 
+        show_axes = true
         if is_action_adapt_axes?
 
           origin, x_axis, y_axis, z_axis, input_face, input_edge = _get_input_axes(instance_info)
 
           t = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
 
-          bounds = Geom::BoundingBox.new
-          bounds.add(_compute_children_faces_triangles(instance_info.entity.definition.entities, t.inverse))
+          unless t.identity?
 
-          mesh = Kuix::Mesh.new
-          mesh.add_triangles(_compute_children_faces_triangles([ input_face ]))
-          mesh.background_color = Sketchup::Color.new(255, 0, 255, 0.2)
-          part_helper.append(mesh)
+            show_axes = false
 
-          line = Kuix::Line.new
-          line.start.copy!(input_edge.start.position)
-          line.end.copy!(input_edge.end.position)
-          line.color = Sketchup::Color.new(255, 0, 255)
-          line.line_width = 5
-          part_helper.append(line)
+            bounds = Geom::BoundingBox.new
+            bounds.add(_compute_children_faces_triangles(instance_info.entity.definition.entities, t.inverse))
 
-          # Back arrow
-          arrow = Kuix::Arrow.new
-          arrow.bounds.origin.copy!(bounds.min.offset(Geom::Vector3d.new(0, 0, -arrow_offset)))
-          arrow.bounds.size.copy!(bounds)
-          arrow.color = Sketchup::Color.new(255, 0, 255)
-          arrow.line_width = 2
-          arrow.line_stipple = '-'
-          arrow.transformation = t
-          part_helper.append(arrow)
+            mesh = Kuix::Mesh.new
+            mesh.add_triangles(_compute_children_faces_triangles([ input_face ]))
+            mesh.background_color = Sketchup::Color.new(255, 0, 255, 0.2)
+            part_helper.append(mesh)
 
-          # Front arrow
-          arrow = Kuix::Arrow.new
-          arrow.pattern_transformation = Geom::Transformation.translation(Z_AXIS)
-          arrow.bounds.origin.copy!(bounds.min.offset(Geom::Vector3d.new(0, 0, arrow_offset)))
-          arrow.bounds.size.copy!(bounds)
-          arrow.color = Sketchup::Color.new(255, 0, 255)
-          arrow.line_width = 2
-          arrow.transformation = t
-          part_helper.append(arrow)
+            line = Kuix::Line.new
+            line.start.copy!(input_edge.start.position)
+            line.end.copy!(input_edge.end.position)
+            line.color = Sketchup::Color.new(255, 0, 255)
+            line.line_width = 5
+            part_helper.append(line)
 
-          # Box helper
-          box_helper = Kuix::BoxHelper.new
-          box_helper.bounds.origin.copy!(bounds.min)
-          box_helper.bounds.size.copy!(bounds)
-          box_helper.bounds.size.width += increases[0] / part.def.scale.x
-          box_helper.bounds.size.height += increases[1] / part.def.scale.y
-          box_helper.bounds.size.depth += increases[2] / part.def.scale.z
-          box_helper.color = is_action_adapt_axes? ? Sketchup::Color.new(255, 0, 255) : COLOR_BOX
-          box_helper.line_width = 2
-          box_helper.line_stipple = '-'
-          box_helper.transformation = t
-          part_helper.append(box_helper)
+            # # Back arrow
+            # arrow = Kuix::Arrow.new
+            # arrow.bounds.origin.copy!(bounds.min.offset(Geom::Vector3d.new(0, 0, -arrow_offset)))
+            # arrow.bounds.size.copy!(bounds)
+            # arrow.color = Sketchup::Color.new(255, 0, 255)
+            # arrow.line_width = 2
+            # arrow.line_stipple = '-'
+            # arrow.transformation = t
+            # part_helper.append(arrow)
 
-          # Axes helper
-          axes_helper = Kuix::AxesHelper.new
-          axes_helper.transformation = t
-          part_helper.append(axes_helper)
+            # Front arrow
+            arrow = Kuix::Arrow.new
+            arrow.pattern_transformation = Geom::Transformation.translation(Z_AXIS)
+            arrow.bounds.origin.copy!(bounds.min.offset(Geom::Vector3d.new(0, 0, arrow_offset)))
+            arrow.bounds.size.copy!(bounds)
+            arrow.color = Sketchup::Color.new(255, 0, 255)
+            arrow.line_width = 2
+            arrow.transformation = t
+            part_helper.append(arrow)
+
+            # Box helper
+            box_helper = Kuix::BoxHelper.new
+            box_helper.bounds.origin.copy!(bounds.min)
+            box_helper.bounds.size.copy!(bounds)
+            box_helper.bounds.size.width += increases[0] / part.def.scale.x
+            box_helper.bounds.size.height += increases[1] / part.def.scale.y
+            box_helper.bounds.size.depth += increases[2] / part.def.scale.z
+            box_helper.color = is_action_adapt_axes? ? Sketchup::Color.new(255, 0, 255) : COLOR_BOX
+            box_helper.line_width = 2
+            box_helper.line_stipple = '-'
+            box_helper.transformation = t
+            part_helper.append(box_helper)
+
+            # Axes helper
+            axes_helper = Kuix::AxesHelper.new
+            axes_helper.transformation = t
+            part_helper.append(axes_helper)
+
+          end
 
         end
 
         if part.group.material_type != MaterialAttributes::TYPE_HARDWARE
 
-          # Back arrow
-          arrow = Kuix::Arrow.new
-          arrow.pattern_transformation = instance_info.size.oriented_transformation if part.auto_oriented
-          arrow.bounds.origin.copy!(instance_info.definition_bounds.min.offset(Geom::Vector3d.new(0, 0, -arrow_offset)))
-          arrow.bounds.size.copy!(instance_info.definition_bounds)
-          arrow.color = arrow_color
-          arrow.line_width = arrow_line_width
-          arrow.line_stipple = '-'
-          part_helper.append(arrow)
+          unless is_action_adapt_axes?
+
+            # Back arrow
+            arrow = Kuix::Arrow.new
+            arrow.pattern_transformation = instance_info.size.oriented_transformation if part.auto_oriented
+            arrow.bounds.origin.copy!(instance_info.definition_bounds.min.offset(Geom::Vector3d.new(0, 0, -arrow_offset)))
+            arrow.bounds.size.copy!(instance_info.definition_bounds)
+            arrow.color = arrow_color
+            arrow.line_width = arrow_line_width
+            arrow.line_stipple = '-'
+            part_helper.append(arrow)
+
+          end
 
           # Front arrow
           arrow = Kuix::Arrow.new
@@ -488,14 +499,14 @@ module Ladb::OpenCutList
 
         end
 
-        # Axes helper
-        if is_action_adapt_axes?
-          axes_helper = Kuix::AxesHelper.new(20, 2, COLOR_RED.blend(COLOR_WHITE, 0.4), COLOR_GREEN.blend(COLOR_WHITE, 0.4), COLOR_BLUE.blend(COLOR_WHITE, 0.4))
-        else
+        if show_axes
+
+          # Axes helper
           axes_helper = Kuix::AxesHelper.new
+          axes_helper.transformation = Geom::Transformation.scaling(1 / part.def.scale.x, 1 / part.def.scale.y, 1 / part.def.scale.z)
+          part_helper.append(axes_helper)
+
         end
-        axes_helper.transformation = Geom::Transformation.scaling(1 / part.def.scale.x, 1 / part.def.scale.y, 1 / part.def.scale.z)
-        part_helper.append(axes_helper)
 
         # Mesh
         instance_paths = []
@@ -708,7 +719,7 @@ module Ladb::OpenCutList
 
       z_axis = input_face.normal
       x_axis = (Geom::Vector3d.new(input_edge.end.position.to_a) - Geom::Vector3d.new(input_edge.start.position.to_a)).normalize
-      x_axis.reverse! if x_axis.x < 0
+      x_axis.reverse! if x_axis.angle_between(instance_info.size.oriented_axis(X_AXIS)) >= Math::PI / 2 # Try to keep part length orientation
       y_axis = z_axis.cross(x_axis).normalize
 
       # puts "_get_input_axes"
