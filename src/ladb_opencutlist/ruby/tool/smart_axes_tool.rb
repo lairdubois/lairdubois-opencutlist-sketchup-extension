@@ -684,12 +684,12 @@ module Ladb::OpenCutList
 
     def _get_input_axes(instance_info)
 
-      input_face = @input_face # @input_point.face
+      input_face = @input_face
       if input_face.nil?
         input_face = find_largest_face(instance_info.entity, instance_info.transformation)
       end
 
-      input_edge = @input_edge # @input_point.edge
+      input_edge = @input_edge
       if input_edge.nil? || !input_edge.faces.include?(input_face)
         input_edge = find_longest_outer_edge(input_face, instance_info.transformation)
       end

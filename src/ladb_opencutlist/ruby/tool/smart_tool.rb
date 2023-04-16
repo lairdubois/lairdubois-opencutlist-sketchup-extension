@@ -488,14 +488,16 @@ module Ladb::OpenCutList
           @input_vertex = @input_point.vertex
           @input_edge = @input_point.edge unless @input_vertex
 
-          if @input_point.instance_path.empty?
+          if @input_point.instance_path.empty? ||
+            (@input_point.instance_path.leaf.is_a?(Sketchup::Edge) || @input_point.instance_path.leaf.is_a?(Sketchup::Vertex)) && !@input_point.instance_path.leaf.faces.include?(@input_face)
 
             unless @input_face.nil?
 
-              # Input point give a face without path, let's try to use pick helper to pick the face path
+              # Input point give a face without path or with part for an other part
+              # Let's try to use pick helper to pick the face path
               if @pick_helper.do_pick(x, y)
                 @pick_helper.count.times do |index|
-                  if @pick_helper.leaf_at(index).is_a?(Sketchup::Face)
+                  if @pick_helper.leaf_at(index) == @input_face
                     @input_part_entity_path = _get_part_entity_path_from_path(@pick_helper.path_at(index))
                     break
                   end
