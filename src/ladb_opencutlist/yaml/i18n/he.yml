@@ -30,10 +30,10 @@ default:
   download: להוריד
   upgrade: עדכון
   copy: להעתיק
-  select_all: ""
-  unselect_all: ""
-  draw: ""
-  estimate: ""
+  select_all: בחר הכל
+  unselect_all: בטל בחירת הכל
+  draw: צייר
+  estimate: להעריך
   empty_filename: ללא שם.skp
   help: עזרה
   error: לתקן!
@@ -62,12 +62,12 @@ default:
   setup_model_units: הגדרת יחידות במודל
   load_more: טען עוד
   reset_to_app_defaults: לשחזר ערכים מקוריים
-  constrain_key: ""
-  copy_key_win: ""
+  constrain_key: Shift
+  copy_key_win: Ctrl
   copy_key_mac: אופציה
   alt_key_win: Alt
   alt_key_mac: פקודה
-  tab_key: ""
+  tab_key: Tab
 core:
   menu:
     submenu: OpenCutList
@@ -85,7 +85,7 @@ core:
     command:
       dialog: OpenCutList
       smart_paint: צביעת חלקים
-      smart_axes: ""
+      smart_axes: כוון חלקים
   dialog:
     title: OpenCutList מאת L'Air du Bois
   leftbar:
@@ -105,7 +105,7 @@ core:
 
       לדיווח על באג: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
   error:
-    feature_unavailable: ""
+    feature_unavailable: "תכונה זו דורשת גרסת SketchUp {{ version }} ומעלה"
   event:
     model_change: המודל הפעיל השתנה.
     options_change: אפשרויות המודל שונו.
@@ -135,7 +135,7 @@ core:
       unzip: שגיאה בפתיחת הארכיון.
   preset:
     label: הגדרות קבועות מראש
-    manage: ""
+    manage: נהל הגדרות קבועות מראש
     save_to: לשמור ל-
     restore_from: שחזר מ-
     app_defaults: הגדרות ברירת מחדל
@@ -157,7 +157,7 @@ core:
       save_to: "עדכן הגדרה '{{ name }}'"
       delete: "למחק הגדרה '{{ name }}'"
     dictionary:
-      component_textinput_color: ""
+      component_textinput_color: פלטת צבע
       cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
       cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
       cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
@@ -179,22 +179,22 @@ core:
       store: שמור צבע
       remove: תשכח צבע
     textinput_code:
-      snippets: ""
+      snippets: דוגמאות לנוסחאות
       help: "הקש **@**, כדי לפתוח את רשימת המשתנים."
     three_viewer:
-      view: ""
-      view_isometric: ""
-      view_top: ""
-      view_bottom: ""
+      view: "מבט {{ view }}"
+      view_isometric: איזומטרי
+      view_top: למלה
+      view_bottom: למטה
       view_front: חזית הפורניר
-      view_back: ""
+      view_back: גב
       view_left: משמאל
       view_right: מימין
-      zoom: ""
-      explode_factor: ""
-      toggle_box_helper: ""
+      zoom: "קנה מדה {{ zoom }}"
+      explode_factor: גודל פיצוץ
+      toggle_box_helper: הצג/הסתר תיבה תוחמת
       toggle_box_dimensions_helper: הסתר מידות סופיות
-      toggle_axes_helper: ""
+      toggle_axes_helper: הצג/הסתר צירי חלק
   docs:
     error:
       failed_to_load: |
@@ -315,7 +315,7 @@ tab:
       numbers_save: שמור את מספרי החלקים
       numbers_reset: עדכן את מספרי החלקים
       highlight_parts: $t(tab.cutlist.highlight_parts)
-      group_layout_parts: ""
+      group_layout_parts: הדפס שרטוט הרכבה של חלקי קבוצה
       group_numbers_save: שמור את מספרי החלקים בקבוצה
       group_numbers_reset: עדכן את מספרי החלקים בקבוצה
       group_cuttingdiagram: תוכנית חיתוך
@@ -1379,8 +1379,6 @@ tool:
     action_modifier_length: ""
     action_modifier_width: ""
     action_modifier_thickness: ""
-    success:
-      part_oriented: ""
     warning:
       more_entities: ""
     error:
