@@ -689,17 +689,25 @@ module Ladb::OpenCutList
 
       input_face = @input_face
       if input_face.nil?
-        input_face = find_largest_face(instance_info.entity, instance_info.transformation)
+        input_face, inner_path = find_largest_face(instance_info.entity, instance_info.transformation)
+      else
+        inner_path = @input_face_path - instance_info.path
       end
+
+      inner_transformation = PathUtils.get_transformation(inner_path)
 
       input_edge = @input_edge
       if input_edge.nil? || !input_edge.used_by?(input_face)
-        input_edge = find_longest_outer_edge(input_face, instance_info.transformation)
+        input_edge = find_longest_outer_edge(input_face, TransformationUtils.multiply(instance_info.transformation, inner_transformation))
       end
 
       z_axis = input_face.normal
+      z_axis.transform(inner_transformation) unless inner_transformation.nil?
+
       x_axis = input_edge.line[1]
+      x_axis = x_axis.transform(inner_transformation) unless inner_transformation.nil?
       x_axis.reverse! if x_axis.angle_between(instance_info.size.oriented_axis(X_AXIS)) >= Math::PI / 2 # Try to keep part length orientation
+
       y_axis = z_axis.cross(x_axis)
 
       [ ORIGIN, x_axis, y_axis, z_axis, input_face, input_edge ]

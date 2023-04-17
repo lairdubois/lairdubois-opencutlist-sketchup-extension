@@ -1,6 +1,7 @@
 module Ladb::OpenCutList
 
   require_relative '../model/geom/scale3d'
+  require_relative 'axis_utils'
 
   class TransformationUtils
 
@@ -14,15 +15,11 @@ module Ladb::OpenCutList
     end
 
     def self.flipped?(transformation)
-      transformation.xaxis.cross(transformation.yaxis) != transformation.zaxis
+      AxisUtils.flipped?(transformation.xaxis, transformation.yaxis, transformation.zaxis)
     end
 
     def self.skewed?(transformation)
-      ![
-        transformation.xaxis % transformation.yaxis,
-        transformation.yaxis % transformation.zaxis,
-        transformation.zaxis % transformation.xaxis
-      ].all? { |p| p == 0 }
+      AxisUtils.skewed?(transformation.xaxis, transformation.yaxis, transformation.zaxis)
     end
 
     def self.multiply(transformation1, transformation2)
