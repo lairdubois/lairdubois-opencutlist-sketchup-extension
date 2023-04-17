@@ -56,6 +56,8 @@ module Ladb::OpenCutList
     SETTINGS_KEY_DIALOG_LEFT = 'settings.dialog_left'
     SETTINGS_KEY_DIALOG_TOP = 'settings.dialog_top'
     SETTINGS_KEY_DIALOG_PRINT_MARGIN = 'settings.dialog_print_margin'
+    SETTINGS_KEY_COMPONENTS_LAST_DIR = 'settings.components_last_dir'
+    SETTINGS_KEY_MATERIALS_LAST_DIR = 'settings.materials_last_dir'
 
     DIALOG_MINIMIZED_WIDTH = 90
     DIALOG_MINIMIZED_HEIGHT = 30 + 80 + 80 * 3     # = 3 Tab buttons
