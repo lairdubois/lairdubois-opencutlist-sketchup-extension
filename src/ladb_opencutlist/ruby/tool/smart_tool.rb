@@ -471,9 +471,16 @@ module Ladb::OpenCutList
       return true if super
       unless is_action_none?
 
+        # @pick_helper.do_pick(x, y)
+
+        # SKETCHUP_CONSOLE.clear
+        # puts "@@@ @pick_helper"
+        # puts "  Face = #{@pick_helper.picked_face}"
+        # puts "  Edge = #{@pick_helper.picked_edge} -> onface? = #{@pick_helper.picked_edge ? @pick_helper.picked_edge.faces.include?(@pick_helper.picked_face) : ''}"
+
         @input_point.pick(view, x, y)
 
-        SKETCHUP_CONSOLE.clear
+        # SKETCHUP_CONSOLE.clear
         # puts "@@@ input_point"
         # puts "  Face = #{@input_point.face}"
         # puts "  Edge = #{@input_point.edge} -> onface? = #{@input_point.edge ? @input_point.edge.faces.include?(@input_point.face) : ''}"
@@ -494,31 +501,25 @@ module Ladb::OpenCutList
 
             unless @input_face.nil?
 
+              # Input point gives a face without instance path
+              # Let's try to use pick helper to pick the face path
+              if @pick_helper.do_pick(x, y)
+                @pick_helper.count.times do |index|
+                  if @pick_helper.leaf_at(index) == @input_face
+                    @input_face_path = @pick_helper.path_at(index)
+                    break
+                  end
+                end
+              end
+
               unless @input_edge.nil?
 
                 # Input point give an edge but on an other face
                 # Let's try to use pick helper to pick the an edge used by the input face
-                if @pick_helper.do_pick(x, y)
-                  @pick_helper.count.times do |index|
-                    if @pick_helper.leaf_at(index).is_a?(Sketchup::Edge) && @pick_helper.leaf_at(index).used_by?(@input_face)
-                      @input_edge = @pick_helper.leaf_at(index)
-                      break
-                    end
-                  end
-                end
-
-              end
-
-              if @input_point.instance_path.empty?
-
-                # Input point gives a face without instance path
-                # Let's try to use pick helper to pick the face path
-                if @pick_helper.do_pick(x, y)
-                  @pick_helper.count.times do |index|
-                    if @pick_helper.leaf_at(index) == @input_face
-                      @input_face_path = @pick_helper.path_at(index)
-                      break
-                    end
+                @pick_helper.count.times do |index|
+                  if @pick_helper.leaf_at(index).is_a?(Sketchup::Edge) && @pick_helper.leaf_at(index).used_by?(@input_face)
+                    @input_edge = @pick_helper.leaf_at(index)
+                    break
                   end
                 end
 
