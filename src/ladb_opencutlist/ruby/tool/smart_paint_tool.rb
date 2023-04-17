@@ -753,16 +753,18 @@ module Ladb::OpenCutList
 
         material = material_def[:material]
         material_attributes = material_def[:material_attributes]
-        material_color_is_dark = ColorUtils::color_is_dark?(material.color)
+        material_color = material.color
+        material_color.alpha = 255
+        material_color_is_dark = ColorUtils::color_is_dark?(material_color)
 
         btn = Kuix::Button.new
         btn.layout = Kuix::StaticLayout.new
         btn.min_size.set!(@unit * 20, @unit * 8)
         btn.border.set_all!(@unit)
-        btn.set_style_attribute(:background_color, material.color)
-        btn.set_style_attribute(:background_color, material.color.blend(material_color_is_dark ? COLOR_WHITE : COLOR_BLACK, 0.7), :active)
-        btn.set_style_attribute(:border_color, material.color)
-        btn.set_style_attribute(:border_color, material.color.blend(material_color_is_dark ? COLOR_WHITE : COLOR_BLACK, 0.8), :hover)
+        btn.set_style_attribute(:background_color, material_color)
+        btn.set_style_attribute(:background_color, material_color.blend(material_color_is_dark ? COLOR_WHITE : COLOR_BLACK, 0.7), :active)
+        btn.set_style_attribute(:border_color, material_color)
+        btn.set_style_attribute(:border_color, material_color.blend(material_color_is_dark ? COLOR_WHITE : COLOR_BLACK, 0.8), :hover)
         btn.set_style_attribute(:border_color, COLOR_BRAND, :selected)
         btn.append_static_label(material.display_name, @unit * 3, material_color_is_dark ? COLOR_WHITE : nil)
         btn.data = material
