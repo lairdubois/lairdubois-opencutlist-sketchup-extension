@@ -15,7 +15,7 @@ module Ladb::OpenCutList
     include LayerVisibilityHelper
     include FaceTrianglesHelper
 
-    ACTION_PAINT_PART = 0
+    ACTION_PAINT_PARTS = 0
     ACTION_PAINT_EDGES = 1
     ACTION_PAINT_FACES = 2
     ACTION_PICK = 3
@@ -27,7 +27,7 @@ module Ladb::OpenCutList
     ACTION_MODIFIER_ALL = 4
 
     ACTIONS = [
-      { :action => ACTION_PAINT_PART, :modifiers => [ACTION_MODIFIER_1, ACTION_MODIFIER_ALL ], :startup_modifier => ACTION_MODIFIER_ALL },
+      { :action => ACTION_PAINT_PARTS, :modifiers => [ACTION_MODIFIER_1, ACTION_MODIFIER_ALL ], :startup_modifier => ACTION_MODIFIER_ALL },
       { :action => ACTION_PAINT_EDGES, :modifiers => [ACTION_MODIFIER_1, ACTION_MODIFIER_2, ACTION_MODIFIER_4 ] },
       { :action => ACTION_PAINT_FACES, :modifiers => [ACTION_MODIFIER_1, ACTION_MODIFIER_2 ] },
       { :action => ACTION_PICK },
@@ -269,7 +269,7 @@ module Ladb::OpenCutList
     def get_action_status(action)
 
       case action
-      when ACTION_PAINT_PART
+      when ACTION_PAINT_PARTS
         return super +
           ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_1') + '.'
       when ACTION_PAINT_EDGES
@@ -293,7 +293,7 @@ module Ladb::OpenCutList
 
       # Update status text and root cursor
       case action
-      when ACTION_PAINT_PART
+      when ACTION_PAINT_PARTS
         return @cursor_paint_part_id
       when ACTION_PAINT_EDGES
         case modifier
@@ -325,7 +325,7 @@ module Ladb::OpenCutList
     def get_action_modifier_btn_child(action, modifier)
 
       case action
-      when ACTION_PAINT_PART
+      when ACTION_PAINT_PARTS
         case modifier
         when ACTION_MODIFIER_1
           lbl = Kuix::Label.new
@@ -408,7 +408,7 @@ module Ladb::OpenCutList
       when MaterialAttributes::TYPE_VENEER
         startup_action = ACTION_PAINT_FACES
       else
-        startup_action = ACTION_PAINT_PART
+        startup_action = ACTION_PAINT_PARTS
       end
       store_action_material(startup_action, @startup_material)
       startup_action
@@ -416,11 +416,11 @@ module Ladb::OpenCutList
     end
 
     def is_action_part?
-      is_action_paint_part? || is_action_paint_edges? || is_action_paint_faces? || is_action_paint_clean?
+      is_action_paint_parts? || is_action_paint_edges? || is_action_paint_faces? || is_action_paint_clean?
     end
 
-    def is_action_paint_part?
-      fetch_action == ACTION_PAINT_PART
+    def is_action_paint_parts?
+      fetch_action == ACTION_PAINT_PARTS
     end
 
     def is_action_paint_edges?
@@ -460,7 +460,7 @@ module Ladb::OpenCutList
     def get_enabled_filters_by_action(action)
 
       case action
-      when ACTION_PAINT_PART
+      when ACTION_PAINT_PARTS
         [
           MaterialAttributes::TYPE_UNKNOWN,
           MaterialAttributes::TYPE_SOLID_WOOD,
@@ -531,7 +531,7 @@ module Ladb::OpenCutList
         when MaterialAttributes::TYPE_VENEER
           set_root_action(ACTION_PAINT_FACES)
         else
-          set_root_action(ACTION_PAINT_PART)
+          set_root_action(ACTION_PAINT_PARTS)
         end
       end
 
@@ -753,7 +753,7 @@ module Ladb::OpenCutList
         lbl = Kuix::Label.new
         lbl.layout_data = Kuix::GridLayoutData.new(3)
         lbl.text_size = @unit * 3
-        if is_action_paint_part?
+        if is_action_paint_parts?
           lbl.text = Plugin.instance.get_i18n_string('tool.smart_paint.warning.no_material')
         elsif is_action_paint_edges?
           lbl.text = Plugin.instance.get_i18n_string('tool.smart_paint.warning.no_material_type', { :type => Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_EDGE}") })
@@ -1122,6 +1122,8 @@ module Ladb::OpenCutList
                   else
                     hide_message
                   end
+                else
+                  hide_message
                 end
 
                 if event == :l_button_up
