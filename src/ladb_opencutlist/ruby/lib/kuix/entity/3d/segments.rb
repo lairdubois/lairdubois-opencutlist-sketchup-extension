@@ -1,22 +1,25 @@
 module Ladb::OpenCutList::Kuix
 
-  class Mesh < Entity3d
+  class Segments < Entity3d
 
-    attr_accessor :background_color
+    attr_accessor :color
+    attr_accessor :line_width, :line_stipple
 
     def initialize(id = nil)
       super(id)
 
-      @background_color = nil
+      @color = nil
+      @line_width = 1
+      @line_stipple = ''
       @segments = [] # Array<Geom::Point3d>
 
       @points = []
 
     end
 
-    def add_triangles(triangles) # Array<Geom::Point3d>
-      raise 'Points count must be a multiple of 3' if triangles.length % 3 != 0
-      @segments.concat(triangles)
+    def add_segments(segments) # Array<Geom::Point3d>
+      raise 'Points count must be a multiple of 2' if segments.length % 2 != 0
+      @segments.concat(segments)
     end
 
     # -- LAYOUT --
@@ -31,7 +34,7 @@ module Ladb::OpenCutList::Kuix
     # -- Render --
 
     def paint_content(graphics)
-      graphics.draw_triangles(@points, @background_color)
+      graphics.draw_lines(@points, @color, @line_width, @line_stipple)
       super
     end
 

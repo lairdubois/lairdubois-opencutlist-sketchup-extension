@@ -4,6 +4,7 @@ module Ladb::OpenCutList
   require_relative '../lib/kuix/kuix'
   require_relative '../helper/layer_visibility_helper'
   require_relative '../helper/face_triangles_helper'
+  require_relative '../helper/edge_segments_helper'
   require_relative '../helper/boundingbox_helper'
   require_relative '../helper/entities_helper'
   require_relative '../model/attributes/definition_attributes'
@@ -15,6 +16,7 @@ module Ladb::OpenCutList
 
     include LayerVisibilityHelper
     include FaceTrianglesHelper
+    include EdgeSegmentsHelper
     include BoundingBoxHelper
     include EntitiesHelper
     include CutlistObserverHelper
@@ -391,12 +393,12 @@ module Ladb::OpenCutList
 
           t = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
 
-          line = Kuix::Line.new
-          line.start.copy!(input_edge.start.position)
-          line.end.copy!(input_edge.end.position)
-          line.color = Sketchup::Color.new(255, 0, 255)
-          line.line_width = 5
-          part_helper.append(line)
+          # Highlight input edge
+          segments = Kuix::Segments.new
+          segments.add_segments(_compute_children_edge_segments(instance_info.entity.definition.entities, nil,[ input_edge ]))
+          segments.color = Sketchup::Color.new(255, 0, 255)
+          segments.line_width = 5
+          part_helper.append(segments)
 
           unless (t * part.def.size.oriented_transformation).identity?
 
@@ -405,8 +407,9 @@ module Ladb::OpenCutList
             bounds = Geom::BoundingBox.new
             bounds.add(_compute_children_faces_triangles(instance_info.entity.definition.entities, t.inverse))
 
+            # Highlight input face
             mesh = Kuix::Mesh.new
-            mesh.add_triangles(_compute_children_faces_triangles([ input_face ]))
+            mesh.add_triangles(_compute_children_faces_triangles(instance_info.entity.definition.entities, nil,[ input_face ]))
             mesh.background_color = Sketchup::Color.new(255, 0, 255, 0.2)
             part_helper.append(mesh)
 
@@ -597,7 +600,14 @@ module Ladb::OpenCutList
               end
 
               t = Geom::Transformation.scaling(bounds.center, scaling[X_AXIS], scaling[Y_AXIS], scaling[Z_AXIS])
+
+              # Start undoable model modification operation
+              view.model.start_operation('OpenCutList - Part flip', true, false, false)
+
               entity.transformation *= t
+
+              # Commit model modification operation
+              view.model.commit_operation
 
               part = _compute_part_from_path(@active_part_entity_path)
               _set_active(@active_part_entity_path, part)

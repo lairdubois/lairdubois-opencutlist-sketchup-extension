@@ -1357,16 +1357,16 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: Colorier pièce
+    action_0: Colorier pièces
     action_0_status: Cliquez sur une pièce pour appliquer une matière à son instance
     action_1: Colorier chants
-    action_1_status: Cliquez sur un chant de panneau pour lui appliquer une matière '$t(tab.materials.type_4)'
+    action_1_status: Cliquez sur un chant d'une pièce panneau pour lui appliquer une matière '$t(tab.materials.type_4)'
     action_2: Colorier faces
-    action_2_status: Cliquez sur une face de panneau pour lui appliquer une matière '$t(tab.materials.type_6)'
+    action_2_status: Cliquez sur une face d'une pièce panneau pour lui appliquer une matière '$t(tab.materials.type_6)'
     action_3: Prélever
     action_3_status: Cliquez sur une face pour prélever un échantillon de la matière
     action_4: Nettoyer
-    action_4_status: Cliquez sur une pièce pour nettoyer sa définition et toutes ses instances de toutes ses matières
+    action_4_status: Cliquez sur une pièce pour supprimer toutes les matières de sa définition et de toutes ses instances
     edges: "{{ count }} chant"
     edges_plural: "{{ count }} chants"
     edge_ymin: Longueur 1

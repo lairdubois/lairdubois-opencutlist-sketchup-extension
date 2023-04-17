@@ -24,9 +24,10 @@ module Ladb::OpenCutList
     ACTION_MODIFIER_1 = 0
     ACTION_MODIFIER_2 = 1
     ACTION_MODIFIER_4 = 2
+    ACTION_MODIFIER_ALL = 4
 
     ACTIONS = [
-      { :action => ACTION_PAINT_PART },
+      { :action => ACTION_PAINT_PART, :modifiers => [ACTION_MODIFIER_1, ACTION_MODIFIER_ALL ], :startup_modifier => ACTION_MODIFIER_ALL },
       { :action => ACTION_PAINT_EDGES, :modifiers => [ACTION_MODIFIER_1, ACTION_MODIFIER_2, ACTION_MODIFIER_4 ] },
       { :action => ACTION_PAINT_FACES, :modifiers => [ACTION_MODIFIER_1, ACTION_MODIFIER_2 ] },
       { :action => ACTION_PICK },
@@ -324,6 +325,17 @@ module Ladb::OpenCutList
     def get_action_modifier_btn_child(action, modifier)
 
       case action
+      when ACTION_PAINT_PART
+        case modifier
+        when ACTION_MODIFIER_1
+          lbl = Kuix::Label.new
+          lbl.text = '1'
+          return lbl
+        when ACTION_MODIFIER_ALL
+          lbl = Kuix::Label.new
+          lbl.text = '∞'
+          return lbl
+        end
       when ACTION_PAINT_EDGES
         case modifier
         when ACTION_MODIFIER_1
@@ -437,6 +449,10 @@ module Ladb::OpenCutList
 
     def is_action_modifier_4?
       fetch_action_modifier(fetch_action) == ACTION_MODIFIER_4
+    end
+
+    def is_action_modifier_all?
+      fetch_action_modifier(fetch_action) == ACTION_MODIFIER_ALL
     end
 
     # -- Filters --
@@ -843,7 +859,7 @@ module Ladb::OpenCutList
                   part.def.edge_entity_ids.each { |k, v| edge_faces[k] = model.find_entity_by_id(v) if v.is_a?(Array) && !v.empty? }
 
                   sides = []
-                  entities = []
+                  faces = []
                   if is_action_modifier_1? || is_action_modifier_2?
 
                     picked_side = nil
@@ -875,11 +891,11 @@ module Ladb::OpenCutList
                   end
 
                   sides.each { |side|
-                    entities << edge_faces[side]
+                    faces << edge_faces[side]
                   }
-                  entities = entities.flatten
+                  faces = faces.flatten
 
-                  if entities.empty?
+                  if faces.empty?
                     _reset(view)
                     notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_edge')}", MESSAGE_TYPE_ERROR)
                   else
@@ -891,11 +907,12 @@ module Ladb::OpenCutList
                     color = current_material ? current_material.color : MaterialUtils::get_color_from_path(input_part_entity_path)
                     color.alpha = event == :l_button_down ? 255 : 200
 
-                    triangles = _compute_children_faces_triangles(entities)
                     active_instance = input_part_entity_path.last
                     instances = active_instance.definition.instances
                     instance_paths = []
                     _instances_to_paths(instances, instance_paths, Sketchup.active_model.active_entities, Sketchup.active_model.active_path ? Sketchup.active_model.active_path : [])
+
+                    triangles = _compute_children_faces_triangles(active_instance.definition.entities, nil, faces)
 
                     instance_paths.each do |path|
 
@@ -915,7 +932,15 @@ module Ladb::OpenCutList
                     end
 
                     if event == :l_button_up
-                      entities.each { |face| face.material = current_material }
+
+                      # Start undoable model modification operation
+                      view.model.start_operation('OpenCutList - Paint edges', true, false, false)
+
+                      faces.each { |face| face.material = current_material }
+
+                      # Commit model modification operation
+                      view.model.commit_operation
+
                     end
 
                   end
@@ -934,7 +959,7 @@ module Ladb::OpenCutList
                   part.def.face_entity_ids.each { |k, v| face_faces[k] = model.find_entity_by_id(v) if v.is_a?(Array) && !v.empty? }
 
                   sides = []
-                  entities = []
+                  faces = []
                   if is_action_modifier_1?
 
                     picked_side = nil
@@ -958,11 +983,11 @@ module Ladb::OpenCutList
                   end
 
                   sides.each { |side|
-                    entities << face_faces[side]
+                    faces << face_faces[side]
                   }
-                  entities = entities.flatten
+                  faces = faces.flatten
 
-                  if entities.empty?
+                  if faces.empty?
                     _reset(view)
                     notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_face')}", MESSAGE_TYPE_ERROR)
                   else
@@ -974,11 +999,12 @@ module Ladb::OpenCutList
                     color = current_material ? current_material.color : MaterialUtils::get_color_from_path(input_part_entity_path)
                     color.alpha = event == :l_button_down ? 255 : 200
 
-                    triangles = _compute_children_faces_triangles(entities)
                     active_instance = input_part_entity_path.last
                     instances = active_instance.definition.instances
                     instance_paths = []
                     _instances_to_paths(instances, instance_paths, Sketchup.active_model.active_entities, Sketchup.active_model.active_path ? Sketchup.active_model.active_path : [])
+
+                    triangles = _compute_children_faces_triangles(active_instance.definition.entities, nil, faces)
 
                     instance_paths.each do |path|
 
@@ -998,7 +1024,15 @@ module Ladb::OpenCutList
                     end
 
                     if event == :l_button_up
-                      entities.each { |face| face.material = current_material }
+
+                      # Start undoable model modification operation
+                      view.model.start_operation('OpenCutList - Paint faces', true, false, false)
+
+                      faces.each { |face| face.material = current_material }
+
+                      # Commit model modification operation
+                      view.model.commit_operation
+
                     end
 
                   end
@@ -1013,11 +1047,12 @@ module Ladb::OpenCutList
                 color = MaterialUtils::get_color_from_path(input_part_entity_path[0...-1]) # [0...-1] returns array without last element
                 color.alpha = event == :l_button_down ? 255 : 200
 
-                triangles = _compute_children_faces_triangles(input_part_entity_path.last.definition.entities)
                 active_instance = input_part_entity_path.last
                 instances = active_instance.definition.instances
                 instance_paths = []
                 _instances_to_paths(instances, instance_paths, Sketchup.active_model.active_entities, Sketchup.active_model.active_path ? Sketchup.active_model.active_path : [])
+
+                triangles = _compute_children_faces_triangles(active_instance.definition.entities)
 
                 instance_paths.each do |path|
 
@@ -1026,10 +1061,6 @@ module Ladb::OpenCutList
                   mesh.background_color = color
                   mesh.transformation = PathUtils::get_transformation(path)
                   @space.append(mesh)
-
-                  if event == :l_button_up
-                    path.last.material = nil
-                  end
 
                 end
 
@@ -1041,7 +1072,21 @@ module Ladb::OpenCutList
                 end
 
                 if event == :l_button_up
+
+                  # Start undoable model modification operation
+                  view.model.start_operation('OpenCutList - Paint clean', true, false, false)
+
+                  # Clean definition
                   _propagate_material(input_part_entity_path.last.definition.entities, nil)
+
+                  # Clean instances
+                  instances.each do |instance|
+                    instance.material = nil
+                  end
+
+                  # Commit model modification operation
+                  view.model.commit_operation
+
                 end
 
               else
@@ -1053,14 +1098,45 @@ module Ladb::OpenCutList
                 color = current_material ? current_material.color : MaterialUtils::get_color_from_path(input_part_entity_path[0...-1]) # [0...-1] returns array without last element
                 color.alpha = event == :l_button_down ? 255 : 200
 
-                mesh = Kuix::Mesh.new
-                mesh.add_triangles(_compute_children_faces_triangles(input_part_entity_path.last.definition.entities))
-                mesh.background_color = color
-                mesh.transformation = PathUtils::get_transformation(input_part_entity_path)
-                @space.append(mesh)
+                active_instance = input_part_entity_path.last
+                instances = is_action_modifier_all? ? active_instance.definition.instances : [ active_instance ]
+                instance_paths = []
+                _instances_to_paths(instances, instance_paths, Sketchup.active_model.active_entities, Sketchup.active_model.active_path ? Sketchup.active_model.active_path : [])
+
+                triangles = _compute_children_faces_triangles(active_instance.definition.entities)
+
+                instance_paths.each do |path|
+
+                  mesh = Kuix::Mesh.new
+                  mesh.add_triangles(triangles)
+                  mesh.background_color = color
+                  mesh.transformation = PathUtils::get_transformation(path)
+                  @space.append(mesh)
+
+                end
+
+                if is_action_modifier_all?
+                  definition = Sketchup.active_model.definitions[part.def.definition_id]
+                  if definition && definition.count_used_instances > 1
+                    notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
+                  else
+                    hide_message
+                  end
+                end
 
                 if event == :l_button_up
-                  input_part_entity_path.last.material = current_material
+
+                  # Start undoable model modification operation
+                  view.model.start_operation('OpenCutList - Paint parts', true, false, false)
+
+                  # Paint instances
+                  instances.each do |instance|
+                    instance.material = current_material
+                  end
+
+                  # Commit model modification operation
+                  view.model.commit_operation
+
                 end
 
               end

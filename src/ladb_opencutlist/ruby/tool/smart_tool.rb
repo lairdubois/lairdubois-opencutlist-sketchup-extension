@@ -496,43 +496,42 @@ module Ladb::OpenCutList
           @input_vertex = @input_point.vertex
           @input_edge = @input_point.edge unless @input_vertex
 
-          if @input_point.instance_path.empty? ||
-            (@input_point.instance_path.leaf.is_a?(Sketchup::Edge) || @input_point.instance_path.leaf.is_a?(Sketchup::Vertex)) && !@input_point.instance_path.leaf.used_by?(@input_face)
+          if @input_point.instance_path.leaf == @input_face
+            @input_face_path = @input_point.instance_path.to_a
+          elsif @input_point.instance_path.leaf.respond_to?(:used_by?) && @input_point.instance_path.leaf.used_by?(@input_face)
+            @input_face_path = @input_point.instance_path.to_a[0...-1] + [ @input_face ]
+          else
 
             unless @input_face.nil?
 
-              # Input point gives a face without instance path
-              # Let's try to use pick helper to pick the face path
               if @pick_helper.do_pick(x, y)
+
+                # Input point gives a face without instance path
+                # Let's try to use pick helper to pick the face path
                 @pick_helper.count.times do |index|
                   if @pick_helper.leaf_at(index) == @input_face
                     @input_face_path = @pick_helper.path_at(index)
                     break
                   end
                 end
-              end
 
-              unless @input_edge.nil?
+                unless @input_edge.nil?
 
-                # Input point give an edge but on an other face
-                # Let's try to use pick helper to pick the an edge used by the input face
-                @pick_helper.count.times do |index|
-                  if @pick_helper.leaf_at(index).is_a?(Sketchup::Edge) && @pick_helper.leaf_at(index).used_by?(@input_face)
-                    @input_edge = @pick_helper.leaf_at(index)
-                    break
+                  # Input point give an edge but on an other face
+                  # Let's try to use pick helper to pick the an edge used by the input face
+                  @pick_helper.count.times do |index|
+                    if @pick_helper.leaf_at(index).is_a?(Sketchup::Edge) && @pick_helper.leaf_at(index).used_by?(@input_face)
+                      @input_edge = @pick_helper.leaf_at(index)
+                      break
+                    end
                   end
+
                 end
 
               end
 
             end
 
-          else
-            if @input_point.instance_path.leaf.is_a?(Sketchup::Face)
-              @input_face_path = @input_point.instance_path.to_a
-            else
-              @input_face_path = @input_point.instance_path.to_a[0...-1] + [ @input_face ]
-            end
           end
 
         else

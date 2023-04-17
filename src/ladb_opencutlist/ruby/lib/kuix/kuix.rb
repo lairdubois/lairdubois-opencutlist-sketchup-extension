@@ -37,6 +37,7 @@ module Ladb::OpenCutList
     require_relative 'entity/3d/arrow'
     require_relative 'entity/3d/box_helper'
     require_relative 'entity/3d/mesh'
+    require_relative 'entity/3d/segments'
 
     class KuixTool
 
