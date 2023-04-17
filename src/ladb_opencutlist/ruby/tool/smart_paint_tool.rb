@@ -1160,12 +1160,14 @@ module Ladb::OpenCutList
         elsif is_action_pick?
 
           material = MaterialUtils::get_material_from_path(@input_face_path)
-          if material
+          if @input_face
             if event == :move
 
               # Display material infos
               if material
                 notify_infos(material.name, [ Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes.new(material).type}") ])
+              else
+                notify_infos(Plugin.instance.get_i18n_string('tool.smart_paint.default_material'))
               end
 
             elsif event == :l_button_up

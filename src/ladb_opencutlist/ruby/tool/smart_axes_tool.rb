@@ -702,10 +702,10 @@ module Ladb::OpenCutList
       end
 
       z_axis = input_face.normal
-      z_axis.transform(inner_transformation) unless inner_transformation.nil?
+      z_axis.transform!(inner_transformation).normalize! unless inner_transformation.nil?
 
       x_axis = input_edge.line[1]
-      x_axis = x_axis.transform(inner_transformation) unless inner_transformation.nil?
+      x_axis.transform!(inner_transformation).normalize! unless inner_transformation.nil?
       x_axis.reverse! if x_axis.angle_between(instance_info.size.oriented_axis(X_AXIS)) >= Math::PI / 2 # Try to keep part length orientation
 
       y_axis = z_axis.cross(x_axis)
