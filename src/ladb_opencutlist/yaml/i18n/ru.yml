@@ -184,15 +184,15 @@ core:
     three_viewer:
       view: "Вид {{ view }}"
       view_isometric: Изометрия
-      view_top: Вверх
-      view_bottom: Вниз
-      view_front: Перед
-      view_back: Зад
+      view_top: Сверху
+      view_bottom: Снизу
+      view_front: Спереди
+      view_back: Сзади
       view_left: Слева
       view_right: Справа
       zoom: "Масштаб {{ zoom }}"
       explode_factor: Амплитуда выноса
-      toggle_box_helper: Показать или скрыть панель инсрументов
+      toggle_box_helper: Показать или скрыть панель инструментов
       toggle_box_dimensions_helper: Показать или скрыть размеры
       toggle_axes_helper: Показать или скрыть оси
   docs:
@@ -873,31 +873,31 @@ tab:
       option_parts_opacity: Прозрачность
       option_parts_opacity_0: Прозрачный
       option_parts_opacity_1: Матовый
-      option_parts_opacity_help: Позволяет выбрать уровень непрозрачности.
+      option_parts_opacity_help: Позволяет выбрать уровень прозрачности деталей на чертеже.
       option_pins: Булавки
       option_pins_hidden: Просмотр
       option_pins_hidden_0: С булавками
-      option_pins_hidden_1: Без булавки
-      option_pins_hidden_help: "Отображает или скрывает булавки, прикрепленные на детали, чтобы указать их номер или обозначение."
+      option_pins_hidden_1: Без булавок
+      option_pins_hidden_help: "Настройка показывает или скрывает на чертеже идентификационные булавки, прикрепленные на детали. На булавке может быть указан номер детали или буквенное обозначение, соответствующие карте раскроя."
       option_pins_colored: Цвет
       option_pins_colored_0: Без цвета
       option_pins_colored_1: Цвет детали
-      option_pins_colored_help: Позволяет выбрать цвет булавок.
+      option_pins_colored_help: Позволяет выбрать цвет головки булавок.
       option_pins_formula: Формула
       option_pins_formula_help: Позволяет вам писать код *Ruby* для настройки текста на булавках.
       option_pins_length: Длина
       option_pins_length_0: Без стрелки
-      option_pins_length_1: Малый
-      option_pins_length_2: Среднее
-      option_pins_length_3: Большое
-      option_pins_length_help: Позволяет выбрать длину стрелки булавки.
+      option_pins_length_1: Малая
+      option_pins_length_2: Средняя
+      option_pins_length_3: Большая
+      option_pins_length_help: Позволяет задать длину стрелки булавки.
       option_pins_direction: Направление
       option_pins_direction_0: По красной оси
       option_pins_direction_1: По зеленой оси
       option_pins_direction_2: По синей оси
       option_pins_direction_3: Указывает на центр исходной группы
       option_pins_direction_4: Указывает на центр выделения
-      option_pins_direction_help: "Позволяет выбрать направление булавок, чтобы адаптировать их читаемость на модели."
+      option_pins_direction_help: "Позволяет задать направление булавок, чтобы адаптировать их читаемость на чертеже."
       option_page: Бумага
       option_page_format: Формат
       option_page_format_portrait: Книжный
@@ -920,9 +920,9 @@ tab:
       option_camera_target: Положение
       option_camera_target_auto: Автоматический
       option_camera_target_custom: Индивидуально
-      option_explode: Разбор
+      option_explode: Разброс
       error:
-        no_part: Нет деталей для прорисовки.
+        no_part: Нет деталей для отрисовки.
         failed_to_save_as_skp: Не удалось записать файл с расширением SKP для отправки в Layout.
         failed_to_layout: |
           Ошибка записи файла Layout: *{{ error }}*
