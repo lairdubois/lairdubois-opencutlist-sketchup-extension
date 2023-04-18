@@ -1272,12 +1272,12 @@ tab:
     presets:
       export_global_presets: Экспорт пресетов
       export_global_presets_help: |
-        Эта функция позволяет экспортировать пресеты в файл **.json**.
+        Эта функция позволяет экспортировать пресеты в файл формата **.json**.
         Выберите пресеты, которые вы хотите экспортировать в этот формат.
       export_global_presets_success: Пресеты успешно экспортированы.
       import_global_presets: Импорт пресетов
       import_global_presets_help: |
-        Выберите пресеты из файла **.json**, который вы хотите импортировать.
+        Выберите файл пресета формата **.json**, который вы хотите импортировать.
         Внимание, импортируемая версия заменит существующий пресет, если они имеют одинаковое название.
       import_global_presets_success: |
         Пресеты *OpenCutList* успешно импортированы.
@@ -1326,7 +1326,7 @@ tab:
       - Soul Issam (*Арабский*), без интерфейса справа налево
       - Dany Dhondt, Eric Lugtigheid (*Нидерландский*)
       - Nguyen Ngoc Tan (*Вьетнамский*)
-      - Андрей Топоривский, Константин Щербей (*украинский*)
+      - Андрей Топоривский, Константин Щербей (*Украинский*)
     credits_description: |
       Разработка этого расширения связана с проектом совместной платформы [L'Air du Bois](https://www.lairdubois.fr).
       Это расширение является *Open Source*, а также доступно в разделе [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) с лицензией [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
@@ -1347,7 +1347,7 @@ tool:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_paint:
-    title: Раскрасить
+    title: Раскраска
     default_material: Материал не задан
     filters: Фильтры
     filter_0: Не определён
@@ -1358,7 +1358,7 @@ tool:
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
     action_0: Раскрасить сторону
-    action_0_status: "Кликните на деталь, чтобы применить материал к ее экземпляру"
+    action_0_status: "Для правильной раскраски необходимой детали, надо выбрать нужный материал из представленных в модели и кликнуть по детали"
     action_1: Раскрасить деталь
     action_1_status: "Кликните на торец панели, чтобы применить материал '$t(tab.materials.type_4)'"
     action_2: Очистить сторону
@@ -1373,25 +1373,25 @@ tool:
     edge_xmax: Ширина 2
     faces: "{{ count }} лицевая"
     faces_plural: "{{ count }} лицевых"
-    face_zmin: Сопоставление
-    face_zmax: Перед
+    face_zmin: Обратная
+    face_zmax: Лицевая
     warning:
       no_material: Ваша модель не содержит материалов!
       no_material_type: "Нет материала типа '{{ type }}'"
     error:
       not_part: Целевой объект не является деталью
       not_edge: Целевая поверхность не является торцом панели
-      not_face: Целевое поверхность не является лицевой
+      not_face: Целевая поверхность не является лицевой
       wrong_material_type: "Целевая деталь должна быть типа '{{ type }}'"
   smart_axes:
-    title: Ориентир
+    title: Ориентация осей
     toggle_depth: Детали на заднем плане
-    action_0: Вернуть
+    action_0: Отменить
     action_0_status: "Кликните на деталь, чтобы сориентировать ее экземпляр вдоль одного из размеров"
     action_1: Переключить Длина ↔ Ширина
     action_1_status: "Кликните на детали, чтобы поменять ее длину на ширину"
-    action_2: Переключатель Лицевая ↔ Обратная
-    action_2_status: "Кликните на деталь, чтобы перевернуть отображение лицевой стороны на тыльную сторону и обратно"
+    action_2: Переключить Лицевая ↔ Обратная
+    action_2_status: "Кликните на деталь, чтобы перевернуть отображение лицевой стороны на тыльную сторону"
     action_3: Адаптировать оси
     action_3_status: "Кликните по вершине детали или краю, чтобы настроить ориентацию осей"
     action_modifier_length: Дл

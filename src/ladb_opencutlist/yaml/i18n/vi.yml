@@ -103,7 +103,7 @@ core:
       Phiên bản này chỉ có sẵn để thử nghiệm.
       Nó không được khuyến khích sử dụng trong sản xuất.
 
-      Để báo cáo một lỗi: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
+      Để báo cáo lỗi: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
   error:
     feature_unavailable: "Chức năng này yêu cầu Sketchup phiên bản {{ version }} hoặc cao hơn"
   event:
@@ -186,14 +186,14 @@ core:
       view_isometric: Isometric
       view_top: Phía trên
       view_bottom: Phía dưới
-      view_front: Mặt trước Veneer
+      view_front: Mặt trước
       view_back: Phía sau
       view_left: Trái
       view_right: Phải
       zoom: "Tỷ lệ {{ zoom }}"
       explode_factor: Biên độ vụ nổ
       toggle_box_helper: Hiển thị / Ẩn hộp giới hạn
-      toggle_box_dimensions_helper: Ẩn kích thước đã hoàn thành
+      toggle_box_dimensions_helper: Hiện / Ẩn kích thước
       toggle_axes_helper: Hiển thị / Ẩn trục bộ phận
   docs:
     error:
@@ -218,7 +218,7 @@ tab:
     edit_part_axes_properties: Chỉnh sửa thuộc tính trục của bộ phận
     edit_part_size_increase_properties: Chỉnh sửa các thuộc tính (ngoại cỡ) của bộ phận
     edit_part_edges_properties: Chỉnh sửa các thuộc tính (dải cạnh) của bộ phận
-    edit_part_faces_properties: Chỉnh sửa các thuộc tính (Veneer) của bộ phận
+    edit_part_faces_properties: Chỉnh sửa các thuộc tính (các mặt) của bộ phận
     tooltip:
       show_hide_block: Hiện / Ẩn nhóm
       scroll_to_block: Di chuyển đến nhóm
@@ -294,17 +294,17 @@ tab:
       size_increased: "Kích thước được tăng theo kích thước quá khổ của {{ value }}"
       has_edges: "Bộ phận này chứa {{ count }} dải cạnh"
       has_edges_plural: "Bộ phận này chứa {{ count }} dải cạnh"
-      has_faces: "Bộ phận này chứa {{ count }} bề mặt veneer"
-      has_faces_plural: "Bộ phận này chứa {{ count }} bề mặt veneer"
+      has_faces: "Bộ phận này chứa {{ count }} mặt veneer"
+      has_faces_plural: "Bộ phận này chứa {{ count }} mặt veneer"
       edge_decremented: "Giảm theo độ dày của dải cạnh ({{ decrement }})"
       edge_ymin: Chiều dài cạnh 1
       edge_ymax: Chiều dài cạnh 2
       edge_xmin: Chiều rộng cạnh 1
       edge_xmax: Chiều rộng cạnh 2
-      face_zmin: Mặt sau Veneer
-      face_zmax: Mặt trước Veneer
+      face_zmin: Phía sau
+      face_zmax: Mặt trước
       dblclick_to_copy_all_edges: Nhấp đúp vào đây để nhân đôi giá trị này sang các cạnh khác
-      dblclick_to_copy_all_faces: Nhấp đúp vào đây để nhân đôi giá trị này sang mặt khác
+      dblclick_to_copy_all_faces: Click đúp vào đây để nhân đôi giá trị này sang mặt khác
       dblclick_to_sort_axes: Nhấp đúp vào đây để tự động sắp xếp lại các trục theo kích thước của bộ phận
       part_axes: Các trục bên trong của bộ phận
       select_unselect_all_parts: Chọn / bỏ chọn tất cả các bộ phận trong nhóm
@@ -336,7 +336,7 @@ tab:
       general: Chung
       extra_help: "Danh sách các thuộc tính dành riêng cho loại vật liệu \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Dải cạnh
-      faces: Veneer
+      faces: Các mặt
       name: Tên
       material: Vật liệu
       cumulable: Tổng hợp
@@ -461,8 +461,8 @@ tab:
       hide_final_areas_help: "Nếu tùy chọn này được chọn, **diện tích thực tế** của các bộ phận thuộc loại *Hàng dạng tấm* sẽ bị ẩn."
       hide_edges: Ẩn các cột của dải cạnh
       hide_edges_help: "Nếu tùy chọn này được chọn, **cột dải cạnh** của các bộ phận thuộc loại *Hàng dạng tấm* sẽ bị ẩn."
-      hide_faces: Ẩn các cột của Veneer
-      hide_faces_help: "Nếu tùy chọn này được chọn, **Cột veneer** của các bộ phận thuộc loại *Hàng dạng tấm* sẽ bị ẩn."
+      hide_faces: Ẩn các cột của bề mặt
+      hide_faces_help: "Nếu tùy chọn này được chọn, **Cột bề mặt** của các bộ phận thuộc loại *Hàng dạng tấm* sẽ bị ẩn."
       minimize_on_highlight: Thu nhỏ sau *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Nếu tùy chọn này được chọn, cửa sổ OpenCutList sẽ được thu nhỏ khi chức năng *'$t(tab.cutlist.highlight_part)'* được sử dụng."
       general: Chung
@@ -515,7 +515,7 @@ tab:
       thickness: Độ dày
       thickness_short: T
       edges: Dải cạnh
-      faces: Veneer
+      faces: Các mặt
     export:
       title: Xuất
       info_0: |
@@ -572,8 +572,8 @@ tab:
       edge_ymax: Chiều dài cạnh 2
       edge_xmin: Chiều rộng cạnh 1
       edge_xmax: Chiều rộng cạnh 2
-      face_zmin: Mặt sau Veneer
-      face_zmax: Mặt trước Veneer
+      face_zmin: Mặt sau
+      face_zmax: Mặt trước
       layer: Thẻ
       layers: Thẻ
       placeholder:
@@ -885,9 +885,9 @@ tab:
       option_pins_colored_help: Chọn màu của các nhãn.
       option_pins_formula: Công thức
       option_pins_formula_help: Cho phép bạn viết mã *Ruby* để tùy chỉnh văn bản nhãn.
-      option_pins_length: Chiều dài
+      option_pins_length: Dòng chính
       option_pins_length_0: Không có đường dẫn chính
-      option_pins_length_1: Nhỏ
+      option_pins_length_1: Ngắn
       option_pins_length_2: Trung bình
       option_pins_length_3: Dài
       option_pins_length_help: Chọn độ dài của đường dẫn.
@@ -984,7 +984,7 @@ tab:
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Hướng thớ gỗ
-      colorized: Tông màu này sẽ được áp dụng cho texture của vật liệu này khi nó được hiển thị trong mô hình
+      colorized: Tông màu này sẽ được áp dụng cho texture của vật liệu khi nó được hiển thị trong mô hình
       texture_load: Tải texture mới
       texture_clear: Xóa bỏ texture
       edit: "Chỉnh sửa thuộc tính của '{{ name }}'"
@@ -1283,8 +1283,8 @@ tab:
         *OpenCutList* mẫu cài đặt trước đã được nhập thành công.
         Để nhìn thấy các thay đổi, bạn phải **đóng** và **mở lại** cửa sổ OpenCutList.
       dump_global_presets: Kết xuất mẫu cài đặt trước
-      dump_model_presets: Kết xuất các giá trị mẫu cài đặt trước của mô hình
-      reset_global_presets: Khởi tạo lại các mẫu cài đặt trước
+      dump_model_presets: Kết xuất cài đặt mô hình
+      reset_global_presets: Cài đặt lại các mẫu cài đặt trước
       reset_global_presets_confirm: |
         Bạn sắp đặt lại tất cả các mẫu cài đặt trước *OpenCutList* đã lưu của mình
          Sau khi hành động kết thúc: **Tất cả các mẫu cài đặt trước sẽ bị mất.**
@@ -1292,13 +1292,13 @@ tab:
       reset_global_presets_success: |
         Mẫu cài đặt trước *OpenCutList* đã được đặt lại
         Để thấy các thay đổi, bạn phải **đóng** và **mở lại** cửa sổ OpenCutList.
-      reset_model_presets: Khởi tạo lại các mẫu cài đặt trước của mô hình
+      reset_model_presets: Cài đặt lại các cài đặt của mô hình
       reset_model_presets_confirm: |
-        Bạn sắp đặt lại tất cả các mẫu cài đặt trước *OpenCutList* cho mô hình hiện tại.
+        Bạn sắp cài đặt lại tất cả các cài đặt *OpenCutList* cho mô hình hiện tại.
         Sau khi hành động này kết thúc. **Tất cả cài đặt sẽ được khôi phục về giá trị mặc định.**
         Xác nhận để tiếp tục.
       reset_model_presets_success: |
-        Các mẫu cài đặt trước *OpenCutList* cho mô hình hiện tại đã được đặt lại.
+        Cáì đặt *OpenCutList* cho mô hình hiện tại đã được đặt lại.
         Để thấy các thay đổi, bạn phải **đóng** và **mở lại** cửa sổ OpenCutList.
       error:
         no_preset_to_export: Không có mẫu cài đặt trước nào để xuất.
@@ -1348,7 +1348,7 @@ tool:
     zoom_extents: $t(tool.default.zoom_extents)
   smart_paint:
     title: Sơn
-    default_material: Không có vật liệu xác định
+    default_material: Không có vật liệu
     filters: Lọc
     filter_0: Không có loại
     filter_1: $t(tab.materials.type_1)
@@ -1357,13 +1357,13 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: Tô bề mặt
+    action_0: Sơn bộ phận
     action_0_status: Click vào bộ phận để thể hiện sơn
-    action_1: Tô bộ phận
+    action_1: Sơn các cạnh
     action_1_status: Nhấp vào một cạnh của bảng để áp dụng '$t(tab.materials.type_4)'
-    action_2: Dọn dẹp bề mặt
+    action_2: Sơn các bề mặt
     action_2_status: Nhấp vào một mặt bảng để áp dụng '$t(tab.materials.type_6)'
-    action_3: Dọn dẹp bộ phận
+    action_3: Vật mẫu
     action_3_status: Nhấp vào một mặt để lấy mẫu vật liệu của nó
     edges: "{{ count }} cạnh"
     edges_plural: "{{ count }} cạnh"
@@ -1373,10 +1373,10 @@ tool:
     edge_xmax: Chiều rộng 2
     faces: "{{ count }} mặt"
     faces_plural: "{{ count }} mặt"
-    face_zmin: Mặt sau Veneer
-    face_zmax: Mặt trước Veneer
+    face_zmin: Mặt sau
+    face_zmax: Mặt trước
     warning:
-      no_material: Mô hình của bạn không chứa bất kỳ vật liệu nào!
+      no_material: Không có vật liệu
       no_material_type: "Không có vật liệu của loại '{{ type }}'"
     error:
       not_part: Đối tượng mục tiêu không phải là một bộ phận
@@ -1393,7 +1393,7 @@ tool:
     action_2: Hoán đổi mặt trước ↔ mặt sau
     action_2_status: Nhấp vào một bộ phận để hoán đổi mặt trước với mặt sau của nó
     action_3: Điều chỉnh trục
-    action_3_status: "Nhấp vào mặt, cạnh hoặc đỉnh của một bộ phận để điều chỉnh hướng của các trục"
+    action_3_status: Nhấp vào mặt hoặc cạnh của một bộ phận để điều chỉnh hướng của các trục
     action_modifier_length: L
     action_modifier_width: W
     action_modifier_thickness: T
