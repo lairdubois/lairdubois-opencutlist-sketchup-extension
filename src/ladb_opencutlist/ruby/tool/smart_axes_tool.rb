@@ -391,8 +391,6 @@ module Ladb::OpenCutList
 
           origin, x_axis, y_axis, z_axis, input_face, input_edge = _get_input_axes(instance_info)
 
-          t = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
-
           # Highlight input edge
           segments = Kuix::Segments.new
           segments.add_segments(_compute_children_edge_segments(instance_info.entity.definition.entities, nil,[ input_edge ]))
@@ -406,6 +404,7 @@ module Ladb::OpenCutList
           mesh.background_color = Sketchup::Color.new(255, 0, 255, 0.2)
           part_helper.append(mesh)
 
+          t = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
           unless (t * part.def.size.oriented_transformation).identity?
 
             show_axes = false
@@ -592,11 +591,11 @@ module Ladb::OpenCutList
                 Z_AXIS => 1,
               }
               if is_action_modifier_length?
-                scaling[@active_part.def.size.oriented_axis(X_AXIS)] = -1
+                scaling[size.oriented_axis(X_AXIS)] = -1
               elsif is_action_modifier_width?
-                scaling[@active_part.def.size.oriented_axis(Y_AXIS)] = -1
+                scaling[size.oriented_axis(Y_AXIS)] = -1
               elsif is_action_modifier_thickness?
-                scaling[@active_part.def.size.oriented_axis(Z_AXIS)] = -1
+                scaling[size.oriented_axis(Z_AXIS)] = -1
               end
 
               t = Geom::Transformation.scaling(bounds.center, scaling[X_AXIS], scaling[Y_AXIS], scaling[Z_AXIS])
@@ -651,7 +650,7 @@ module Ladb::OpenCutList
               t = ti.inverse
 
               # Start undoable model modification operation
-              view.model.start_operation('OpenCutList - Part Swap', true, false, false)
+              view.model.start_operation('OpenCutList - Part Change Axes', true, false, false)
 
               # Transform definition's entities
               entities = definition.entities

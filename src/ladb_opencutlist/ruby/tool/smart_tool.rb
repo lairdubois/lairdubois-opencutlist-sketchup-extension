@@ -471,27 +471,19 @@ module Ladb::OpenCutList
       return true if super
       unless is_action_none?
 
-        # @pick_helper.do_pick(x, y)
-
-        # SKETCHUP_CONSOLE.clear
-        # puts "@@@ @pick_helper"
-        # puts "  Face = #{@pick_helper.picked_face}"
-        # puts "  Edge = #{@pick_helper.picked_edge} -> onface? = #{@pick_helper.picked_edge ? @pick_helper.picked_edge.faces.include?(@pick_helper.picked_face) : ''}"
-
         @input_point.pick(view, x, y)
 
         # SKETCHUP_CONSOLE.clear
-        # puts "@@@ input_point"
+        # puts "# INPUT"
         # puts "  Face = #{@input_point.face}"
-        # puts "  Edge = #{@input_point.edge} -> onface? = #{@input_point.edge ? @input_point.edge.faces.include?(@input_point.face) : ''}"
-        # puts "  Vertex = #{@input_point.vertex} -> onedge? = #{@input_point.vertex ? @input_point.vertex.edges.include?(@input_point.edge) : ''}"
-        # puts "  instance_path = #{@input_point.instance_path.to_a.join(' -> ')}"
-        # puts "  transformation = #{@input_point.transformation}"
+        # puts "  Edge = #{@input_point.edge} -> onface? = #{@input_point.edge ? @input_point.edge.used_by?(@input_point.face) : ''}"
+        # puts "  Vertex = #{@input_point.vertex} -> onface? = #{@input_point.vertex ? @input_point.vertex.used_by?(@input_point.face) : ''}"
+        # puts "  InstancePath = #{@input_point.instance_path.to_a.join(' -> ')}"
+        # puts "  Transformation = #{@input_point.transformation}"
 
         unless @input_point.face.nil?
 
-          @input_face_path = @input_face_path = nil if @input_face != @input_point.face
-
+          @input_face_path = nil
           @input_face = @input_point.face
           @input_edge = @input_point.edge unless @input_point.vertex  # Try to keep previous edge when vertex is picked
           @input_vertex = @input_point.vertex
@@ -502,30 +494,26 @@ module Ladb::OpenCutList
             @input_face_path = @input_point.instance_path.to_a[0...-1] + [ @input_face ]
           else
 
-            unless @input_face.nil?
+            if @pick_helper.do_pick(x, y)
 
-              if @pick_helper.do_pick(x, y)
+              # Input point gives a face without instance path
+              # Let's try to use pick helper to pick the face path
+              @pick_helper.count.times do |index|
+                if @pick_helper.leaf_at(index) == @input_face
+                  @input_face_path = @pick_helper.path_at(index)
+                  break
+                end
+              end
 
-                # Input point gives a face without instance path
-                # Let's try to use pick helper to pick the face path
+              unless @input_edge.nil?
+
+                # Input point give an edge but on an other face
+                # Let's try to use pick helper to pick an edge used by the input face
                 @pick_helper.count.times do |index|
-                  if @pick_helper.leaf_at(index) == @input_face
-                    @input_face_path = @pick_helper.path_at(index)
+                  if @pick_helper.leaf_at(index).is_a?(Sketchup::Edge) && @pick_helper.leaf_at(index).used_by?(@input_face)
+                    @input_edge = @pick_helper.leaf_at(index)
                     break
                   end
-                end
-
-                unless @input_edge.nil?
-
-                  # Input point give an edge but on an other face
-                  # Let's try to use pick helper to pick an edge used by the input face
-                  @pick_helper.count.times do |index|
-                    if @pick_helper.leaf_at(index).is_a?(Sketchup::Edge) && @pick_helper.leaf_at(index).used_by?(@input_face)
-                      @input_edge = @pick_helper.leaf_at(index)
-                      break
-                    end
-                  end
-
                 end
 
               end
@@ -541,10 +529,10 @@ module Ladb::OpenCutList
           @input_vertex = nil
         end
 
-        # puts "#### KEEP"
+        # puts "# OUTPUT"
         # puts "  Face = #{@input_face}"
-        # puts "  Edge = #{@input_edge} -> onface? = #{@input_edge ? @input_edge.faces.include?(@input_face) : ''}"
-        # puts "  Vertex = #{@input_vertex}"
+        # puts "  Edge = #{@input_edge} -> onface? = #{@input_edge ? @input_edge.used_by?(@input_face) : ''}"
+        # puts "  Vertex = #{@input_vertex} -> onface? = #{@input_vertex ? @input_vertex.used_by?(@input_face) : ''}"
         # puts "  FacePath = #{@input_face_path ? @input_face_path.join(' -> ') : ''}"
 
       end
