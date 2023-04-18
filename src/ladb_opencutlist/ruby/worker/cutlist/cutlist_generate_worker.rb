@@ -1190,7 +1190,7 @@ module Ladb::OpenCutList
 
     # -- Material Utils --
 
-    def _get_material(path, smart = true)
+    def _get_material(path, smart = true, no_virtual = true)
       unless path
         return nil, MATERIAL_ORIGIN_UNKNOW
       end
@@ -1199,16 +1199,14 @@ module Ladb::OpenCutList
         return nil, MATERIAL_ORIGIN_UNKNOW
       end
       material = entity.material
-      material = nil if _get_material_attributes(material).type == MaterialAttributes::TYPE_EDGE || _get_material_attributes(material).type == MaterialAttributes::TYPE_VENEER
+      material = nil if no_virtual && MaterialAttributes.is_virtual?(_get_material_attributes(material))
       material_origin = MATERIAL_ORIGIN_OWNED
       unless material || !smart
-        material = _get_dominant_child_material(entity)
-        material = nil if _get_material_attributes(material).type == MaterialAttributes::TYPE_EDGE || _get_material_attributes(material).type == MaterialAttributes::TYPE_VENEER
+        material = _get_dominant_child_material(entity, 0, no_virtual)
         if material
           material_origin = MATERIAL_ORIGIN_CHILD
         else
           material = _get_inherited_material(path)
-          material = nil if _get_material_attributes(material).type == MaterialAttributes::TYPE_EDGE || _get_material_attributes(material).type == MaterialAttributes::TYPE_VENEER
           if material
             material_origin = MATERIAL_ORIGIN_INHERITED
           end
@@ -1217,7 +1215,7 @@ module Ladb::OpenCutList
       [ material, material_origin ]
     end
 
-    def _get_dominant_child_material(entity, level = 0)
+    def _get_dominant_child_material(entity, level = 0, no_virtual = true)
       material = nil
       if entity.is_a?(Sketchup::Group) || (entity.is_a?(Sketchup::ComponentInstance) && level == 0)
 
@@ -1230,7 +1228,7 @@ module Ladb::OpenCutList
           entities = entity.entities
         end
         entities.each { |child_entity|
-          child_material = _get_dominant_child_material(child_entity, level + 1)
+          child_material = _get_dominant_child_material(child_entity, level + 1, no_virtual)
           if child_material
             unless materials.has_key? child_material.name
               materials[child_material.name] = {
@@ -1257,8 +1255,8 @@ module Ladb::OpenCutList
 
       elsif entity.is_a?(Sketchup::Face)
 
-        # Entity is a face : return entity's material
-        material = entity.material
+        # Entity is a face : return entity's material if it isn't virtual
+        material = entity.material unless no_virtual && MaterialAttributes.is_virtual?(_get_material_attributes(entity.material))
 
       end
       material
@@ -1274,7 +1272,7 @@ module Ladb::OpenCutList
       end
       material = entity.material
       unless material
-        material = _get_inherited_material(path.take(path.size - 1))
+        material = _get_inherited_material(path[0...-1])
       end
       material
     end

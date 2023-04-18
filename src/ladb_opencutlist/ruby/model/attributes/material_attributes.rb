@@ -123,6 +123,19 @@
       end
     end
 
+    def self.is_virtual?(value)
+      if value.is_a?(MaterialAttributes)
+        type = value.type
+      elsif value.is_a?(Sketchup::Material)
+        type = MaterialAttributes.new(value).type
+      elsif value.is_a?(Integer)
+        type = value
+      else
+        return false
+      end
+      type == TYPE_EDGE || type == TYPE_VENEER
+    end
+
     # -----
 
     def uuid
