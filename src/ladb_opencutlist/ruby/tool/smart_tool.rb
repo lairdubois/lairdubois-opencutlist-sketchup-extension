@@ -490,11 +490,11 @@ module Ladb::OpenCutList
 
         unless @input_point.face.nil?
 
-          @input_face_path = @input_part_entity_path = nil if @input_face != @input_point.face
+          @input_face_path = @input_face_path = nil if @input_face != @input_point.face
 
           @input_face = @input_point.face
+          @input_edge = @input_point.edge unless @input_point.vertex  # Try to keep previous edge when vertex is picked
           @input_vertex = @input_point.vertex
-          @input_edge = @input_point.edge unless @input_vertex
 
           if @input_point.instance_path.leaf == @input_face
             @input_face_path = @input_point.instance_path.to_a
@@ -518,7 +518,7 @@ module Ladb::OpenCutList
                 unless @input_edge.nil?
 
                   # Input point give an edge but on an other face
-                  # Let's try to use pick helper to pick the an edge used by the input face
+                  # Let's try to use pick helper to pick an edge used by the input face
                   @pick_helper.count.times do |index|
                     if @pick_helper.leaf_at(index).is_a?(Sketchup::Edge) && @pick_helper.leaf_at(index).used_by?(@input_face)
                       @input_edge = @pick_helper.leaf_at(index)

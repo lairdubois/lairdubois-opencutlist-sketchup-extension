@@ -1173,7 +1173,7 @@ module Ladb::OpenCutList
             elsif event == :l_button_up
 
               # Set picked material as current
-              set_current_material(material, true, true)
+              set_current_material(material.nil? ? false : material, true, true)
 
               return
             end

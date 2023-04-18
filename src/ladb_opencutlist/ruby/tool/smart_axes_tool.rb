@@ -400,18 +400,18 @@ module Ladb::OpenCutList
           segments.line_width = 5
           part_helper.append(segments)
 
+          # Highlight input face
+          mesh = Kuix::Mesh.new
+          mesh.add_triangles(_compute_children_faces_triangles(instance_info.entity.definition.entities, nil,[ input_face ]))
+          mesh.background_color = Sketchup::Color.new(255, 0, 255, 0.2)
+          part_helper.append(mesh)
+
           unless (t * part.def.size.oriented_transformation).identity?
 
             show_axes = false
 
             bounds = Geom::BoundingBox.new
             bounds.add(_compute_children_faces_triangles(instance_info.entity.definition.entities, t.inverse))
-
-            # Highlight input face
-            mesh = Kuix::Mesh.new
-            mesh.add_triangles(_compute_children_faces_triangles(instance_info.entity.definition.entities, nil,[ input_face ]))
-            mesh.background_color = Sketchup::Color.new(255, 0, 255, 0.2)
-            part_helper.append(mesh)
 
             # Front arrow
             arrow = Kuix::Arrow.new

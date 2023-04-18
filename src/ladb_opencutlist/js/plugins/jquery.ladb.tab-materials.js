@@ -153,7 +153,7 @@
         // Fetch UI elements
         var $btnCreate = $('#ladb_materials_create', $modal);
 
-        // Define usefull functions
+        // Define useful functions
         var fnUpdateBtnCreateStatus = function() {
             $btnCreate.prop('disabled', $inputs.inputName.data('ladb-invalid') || $inputs.inputColor.data('ladb-invalid'))
         };
@@ -281,7 +281,7 @@
                 $btnExportToSkm.prop('disabled', true);
             });
 
-            // Define usefull functions
+            // Define useful functions
             var fnFetchAttributes = function (attributes) {
                 attributes.type = parseInt($inputs.selectType.val());
                 attributes.thickness = $inputs.inputThickness.val();
@@ -874,7 +874,7 @@
         var $inputVolumicMass = $('#ladb_materials_input_volumic_mass', $modal);
         var $editorStdPrices = $('#ladb_materials_editor_std_prices', $modal);
 
-        // Define usefull functions
+        // Define useful functions
         var fnFetchType = function (options) {
             options.type = parseInt($selectType.val());
         };

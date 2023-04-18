@@ -147,7 +147,7 @@
                 var model_is_empty = response.model_is_empty;
                 var lengthUnit = response.length_unit;
 
-                // Keep usefull data
+                // Keep useful data
                 that.loadOptions = loadOptions;
                 that.importablePartCount = importablePartCount;
                 that.model_is_empty = model_is_empty;

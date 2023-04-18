@@ -1049,7 +1049,7 @@
                     // Render and append layout-locked template
                     that.$element.append(Twig.twig({ref: 'core/layout-zzz.twig'}).render());
 
-                    // Fetch usefull elements
+                    // Fetch useful elements
                     var $btnZzz = $('.ladb-zzz a', that.$element);
 
                     // Bind button
@@ -1065,7 +1065,7 @@
                         tabDefs: that.options.tabDefs
                     }));
 
-                    // Fetch usefull elements
+                    // Fetch useful elements
                     that.$wrapper = $('#ladb_wrapper', that.$element);
                     that.$wrapperSlides = $('#ladb_wrapper_slides', that.$element);
                     that.$leftbar = $('#ladb_leftbar', that.$element).ladbLeftbar({ dialog: that });

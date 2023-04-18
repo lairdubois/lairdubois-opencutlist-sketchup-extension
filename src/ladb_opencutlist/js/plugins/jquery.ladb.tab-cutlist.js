@@ -119,7 +119,7 @@
                 var edgeMaterialCount = response.edge_material_count;
                 var hardwareMaterialCount = response.hardware_material_count;
 
-                // Keep usefull data
+                // Keep useful data
                 that.filename = filename;
                 that.modelName = modelName;
                 that.modelDescription = modelDescription;
