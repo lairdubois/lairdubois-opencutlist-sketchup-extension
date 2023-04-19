@@ -30,6 +30,7 @@ in 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Fixed missed oversize asterisk indicator in cutting diagram parts lists
   * Improved part's material detection by ignoring edges banding and veneer material types applied on faces
   * Improved summary cells: unavailable cells in parts list summary are hatched instead of displaying "-" character
+  * Improved UX : Added "escape" key to 1. close modals, 2. minimize OpenCutList dialog
 
 * 4.1.3 (2023-02-28)
 

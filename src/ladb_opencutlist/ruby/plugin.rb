@@ -995,6 +995,7 @@ module Ladb::OpenCutList
 
         if tab_name
           # Startup tab name is defined call JS to select it
+          @dialog.bring_to_front
           @dialog.execute_script("$('body').ladbDialog('selectTab', '#{tab_name}');")
         end
 
@@ -1105,6 +1106,7 @@ module Ladb::OpenCutList
       show_dialog(nil, true) do
         # parameters and callback must be formatted as JS code
         if tab_name and command
+          @dialog.bring_to_front
           @dialog.execute_script("$('body').ladbDialog('executeCommandOnTab', [ '#{tab_name}', '#{command}', #{parameters}, #{callback} ]);")
         end
       end
