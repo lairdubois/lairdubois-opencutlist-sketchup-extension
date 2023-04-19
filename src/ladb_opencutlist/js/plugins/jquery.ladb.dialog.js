@@ -955,7 +955,43 @@
 
         // Bind validate with enter on modals
         $('body').on('keydown', function (e) {
-            if (e.keyCode === 13) {   // Only intercept "enter" key
+            if (e.keyCode === 27) {   // "escape" key
+
+                // Dropdown detection
+                if ($(e.target).hasClass('dropdown')) {
+                    return;
+                }
+
+                // CodeMirror dropdown detection
+                if ($(e.target).attr('aria-autocomplete') === 'list') {
+                    return;
+                }
+
+                // Bootstrap select detection
+                if ($(e.target).attr('role') === 'listbox' || $(e.target).attr('role') === 'combobox') {
+                    return;
+                }
+
+                // Try to retrieve the current top modal (1. from global dialog modal, 2. from active tab inner modal)
+                var $modal = null;
+                if (that._$modal) {
+                    $modal = that._$modal;
+                } else {
+                    var jQueryPlugin = that.getTabPlugin(that.getActiveTab());
+                    if (jQueryPlugin) {
+                        $modal = jQueryPlugin._$modal;
+                    }
+                }
+
+                if ($modal) {
+                    // A modal is shown, hide it
+                    $modal.modal('hide');
+                } else {
+                    // No modal, minimize the dialog
+                    that.minimize();
+                }
+
+            } else if (e.keyCode === 13) {   // Only intercept "enter" key
 
                 var $target = $(e.target);
                 if (!$target.is('input[type=text]')) {  // Only intercept if focus is on input[type=text] field

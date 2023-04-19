@@ -7,7 +7,7 @@
 {% set noHeader = noHeader|default(false) %}
 
 {% block modal %}
-    <div id="{{ id }}" class="modal{% if classes is defined %} {{ classes }}{% endif %}"{% if noDefaultClose %} data-keyboard="false" data-backdrop="static"{% endif%} role="dialog" tabindex="-1" aria-hidden="true" aria-labelledby="{{ id }}_label">
+    <div id="{{ id }}" class="modal{% if classes is defined %} {{ classes }}{% endif %}" data-keyboard="false"{% if noDefaultClose %} data-backdrop="static"{% endif%} role="dialog" tabindex="-1" aria-hidden="true" aria-labelledby="{{ id }}_label">
         {% block dialog %}
             <div class="modal-dialog">
                 {% block content %}
