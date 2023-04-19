@@ -1373,10 +1373,15 @@ module Ladb::OpenCutList
 
     def dialog_minimize_command
       if @dialog
+
         dialog_store_current_position
         dialog_store_current_size
         dialog_set_size(DIALOG_MINIMIZED_WIDTH, DIALOG_MINIMIZED_HEIGHT)
         @dialog_maximized = false
+
+        # Focus SketchUp
+        Sketchup.focus if Sketchup.respond_to?(:focus)
+
       end
     end
 

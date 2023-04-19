@@ -215,9 +215,6 @@
         this.dialog.setupTooltips();
         this.dialog.setupPopovers();
 
-        // Focus
-        $inputs.inputName.focus();
-
     };
 
     LadbTabMaterials.prototype.editMaterial = function (id, tab, propertiesTab, callback, updatedCallback) {

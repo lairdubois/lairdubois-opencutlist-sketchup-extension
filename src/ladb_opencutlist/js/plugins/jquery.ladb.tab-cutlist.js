@@ -2810,9 +2810,6 @@
             // Show modal
             $modal.modal('show');
 
-            // Focus
-            $inputName.focus();
-
             // Setup popovers and tooltips
             that.dialog.setupPopovers();
             that.dialog.setupTooltips();
