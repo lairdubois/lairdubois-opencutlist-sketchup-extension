@@ -256,7 +256,7 @@ LadbAbstractTab.prototype.appendModalInside = function (id, twigFile, renderPara
             .removeClass('modal-open')
             .css('padding-right', 0);
         that.$element.addClass('modal-open');
-        $('input[autofocus]', that._$modal).focus();
+        $('input[autofocus]', that._$modal).first().focus();
     });
     this._$modal.on('hidden.bs.modal', function () {
         $(this)

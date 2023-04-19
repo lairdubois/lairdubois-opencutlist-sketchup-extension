@@ -576,6 +576,7 @@
                 .data('bs.modal', null)
                 .remove();
             that._$modal = null;
+            $('input[autofocus]', that._$modal).first().focus();
         });
 
         // Append modal
