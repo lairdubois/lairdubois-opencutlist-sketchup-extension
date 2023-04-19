@@ -984,8 +984,8 @@
                 }
 
                 if ($modal) {
-                    // A modal is shown, hide it
-                    $modal.modal('hide');
+                    // A modal is shown, try to click on close button
+                    $('button.close', $modal).click();
                 } else {
                     // No modal, minimize the dialog
                     that.minimize();
