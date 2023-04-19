@@ -54,7 +54,8 @@ module Ladb::OpenCutList
 
         e_length = transformation ? e.length(transformation) : e.length
         e_min = e.start.position < e.end.position ? e.start.position : e.end.position
-        if (e_length - edge_length).abs < 0.0001 && (edge_min.nil? || edge_min < e_min ) || e_length > edge_length
+        e_point, e_vector = e.line
+        if (e_length - edge_length).abs < 0.0001 && (edge_min.nil? || edge_min < e_min ) || e_length > edge_length || e_vector.parallel?(X_AXIS)
           edge = e
           edge_length = e_length
           edge_min = e_min
