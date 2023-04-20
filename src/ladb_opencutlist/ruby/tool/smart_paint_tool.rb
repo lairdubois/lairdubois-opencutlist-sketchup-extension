@@ -791,6 +791,12 @@ module Ladb::OpenCutList
           set_current_material(material, true)
 
         }
+        btn.on(:doubleclick) { |button|
+
+          # Edit material
+          Plugin.instance.execute_dialog_command_on_tab('materials', 'edit_material', "{ materialId: #{material.entityID} }")
+
+        }
         btn.on(:enter) { |button|
           notify_material_infos(material, material_attributes)
         }

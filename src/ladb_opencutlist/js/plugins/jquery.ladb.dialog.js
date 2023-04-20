@@ -985,8 +985,8 @@
                 }
 
                 if ($modal) {
-                    // A modal is shown, try to click on close button
-                    $('button.close', $modal).click();
+                    // A modal is shown, try to click on first "dismiss" button
+                    $('[data-dismiss="modal"]', $modal).first().click();
                 } else {
                     // No modal, minimize the dialog
                     that.minimize();
