@@ -1376,7 +1376,7 @@ tool:
     filter_4: "$t(tab.materials.type_4)"
     filter_5: "$t(tab.materials.type_5)"
     filter_6: "$t(tab.materials.type_6)"
-    action_0: 1049 - Paint part
+    action_0: 1049 - Paint parts
     action_0_status: 1050 - Click on a part to paint its instance
     action_1: 1051 - Paint edges
     action_1_status: 1052 - Click on a panel edge to apply '$t(tab.materials.type_4)'
@@ -1384,40 +1384,42 @@ tool:
     action_2_status: 1054 - Click on a panel face to apply '$t(tab.materials.type_6)'
     action_3: 1055 - Sample
     action_3_status: 1056 - Click on a face to sample its material
-    edges: 1057 - {{ count }} edge
-    edges_plural: 1058 - {{ count }} edges
-    edge_ymin: 1059 - Length 1
-    edge_ymax: 1060 - Length 2
-    edge_xmin: 1061 - Width 1
-    edge_xmax: 1062 - Width 2
-    faces: 1063 - {{ count }} face
-    faces_plural: 1064 - {{ count }} faces
-    face_zmin: 1065 - Backside
-    face_zmax: 1066 - Front
+    action_4: 1057 - Clean
+    action_4_status: 1058 - Click on a part to remove all materials from its definition and all instances
+    edges: 1059 - {{ count }} edge
+    edges_plural: 1060 - {{ count }} edges
+    edge_ymin: 1061 - Length 1
+    edge_ymax: 1062 - Length 2
+    edge_xmin: 1063 - Width 1
+    edge_xmax: 1064 - Width 2
+    faces: 1065 - {{ count }} face
+    faces_plural: 1066 - {{ count }} faces
+    face_zmin: 1067 - Backside
+    face_zmax: 1068 - Front
     warning:
-      no_material: 1067 - No material
-      no_material_type: 1068 - No material of type '{{ type }}'
+      no_material: 1069 - No material
+      no_material_type: 1070 - No material of type '{{ type }}'
     error:
-      not_part: 1069 - The target object is not a part
-      not_edge: 1070 - The target face is not a panel edge
-      not_face: 1071 - The target face is not a panel face
-      wrong_material_type: 1072 - The target part must be of type '{{ type }}'
+      not_part: 1071 - The target object is not a part
+      not_edge: 1072 - The target face is not a panel edge
+      not_face: 1073 - The target face is not a panel face
+      wrong_material_type: 1074 - The target part must be of type '{{ type }}'
   smart_axes:
-    title: 1073 - Orient
-    toggle_depth: 1074 - Background parts
-    action_0: 1075 - Flip
-    action_0_status: 1076 - Click on a part to flip its instance along one of its dimensions
-    action_1: 1077 - Swap length ↔ width
-    action_1_status: 1078 - Click on a part to swap its length with its width
-    action_2: 1079 - Swap front ↔ backside
-    action_2_status: 1080 - Click on a part to swap its front with its backside
-    action_3: 1081 - Adapt axes
-    action_3_status: 1082 - Click on the face or edge of a part to adjust the orientation of the axes
-    action_modifier_length: 1083 - L
-    action_modifier_width: 1084 - W
-    action_modifier_thickness: 1085 - T
+    title: 1075 - Orient
+    toggle_depth: 1076 - Background parts
+    action_0: 1077 - Flip
+    action_0_status: 1078 - Click on a part to flip its instance along one of its dimensions
+    action_1: 1079 - Swap length ↔ width
+    action_1_status: 1080 - Click on a part to swap its length with its width
+    action_2: 1081 - Swap front ↔ backside
+    action_2_status: 1082 - Click on a part to swap its front with its backside
+    action_3: 1083 - Adapt axes
+    action_3_status: 1084 - Click on the face or edge of a part to adjust the orientation of the axes
+    action_modifier_length: 1085 - L
+    action_modifier_width: 1086 - W
+    action_modifier_thickness: 1087 - T
     warning:
-      more_entities: 1086 - {{ count_used }} instances sharing the same definition will be modified
+      more_entities: 1088 - {{ count_used }} instances sharing the same definition will be modified
     error:
-      not_part: 1087 - The target object is not a part
-      not_orientable: 1088 - The type of this part does not allow orienting it
+      not_part: 1089 - The target object is not a part
+      not_orientable: 1090 - The type of this part does not allow orienting it

@@ -1357,7 +1357,7 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: Teil bemalen
+    action_0: Teile bemalen
     action_0_status: "Klicken Sie auf ein Teil, um die Instanz einzufärben"
     action_1: Kanten bemalen
     action_1_status: "Klicken Sie auf eine Plattenkante, um ein Material '$t(tab.materials.type_4)' anzuwenden"
@@ -1365,6 +1365,8 @@ tool:
     action_2_status: "Klicken Sie auf eine Plattenfläche, um ein Material '$t(tab.materials.type_6)' anzuwenden"
     action_3: Entnehmen
     action_3_status: "Klicken Sie auf eine Fläche, um eine Probe des Materials zu entnehmen"
+    action_4: Säubern
+    action_4_status: "Klicken Sie auf ein Teil, um alle Materialien aus seiner Definition und aus allen Instanzen zu entfernen"
     edges: "{{ count }} Kante"
     edges_plural: "{{ count }} Kanten"
     edge_ymin: Länge 1
