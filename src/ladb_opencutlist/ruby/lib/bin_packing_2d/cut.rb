@@ -102,7 +102,7 @@ module Ladb::OpenCutList::BinPacking2D
       s += "#{format('%9.2f', @y_pos)}, #{format('%9.2f', @length)}], "
       s += "#{dir}, level=#{format('%3d', @level)}, "
       s += "index=#{format('%3d', @index)}, "
-      s += "type=#{@cut_type}"
+      s + "type=#{@cut_type}"
     end
   end
 end
