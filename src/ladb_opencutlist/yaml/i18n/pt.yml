@@ -8,7 +8,7 @@ default:
   maximize: Maximizar
   cancel: Cancelar
   validate: Aplicar
-  confirm: Validar
+  confirm: Confirmar
   ok: Ok
   open: Abrir
   see: Ver
@@ -32,7 +32,7 @@ default:
   copy: Copiar
   select_all: Selecione todos
   unselect_all: Desmarque todos
-  draw: ""
+  draw: Desenhar
   estimate: ""
   empty_filename: Sem nome.skp
   help: Ajuda
@@ -62,12 +62,12 @@ default:
   setup_model_units: Configure as unidades do modelo
   load_more: Carregue mais
   reset_to_app_defaults: Restaurar os valores originais
-  constrain_key: ""
-  copy_key_win: ""
+  constrain_key: Shift
+  copy_key_win: Ctrl
   copy_key_mac: Opções
   alt_key_win: Alt
-  alt_key_mac: Command
-  tab_key: ""
+  alt_key_mac: Comando
+  tab_key: Tab
 core:
   menu:
     submenu: OpenCutList
@@ -85,7 +85,7 @@ core:
     command:
       dialog: OpenCutList
       smart_paint: Pintar peças
-      smart_axes: ""
+      smart_axes: Orientação das peças
   dialog:
     title: OpenCutList por L'Air du Bois
   leftbar:
@@ -105,7 +105,7 @@ core:
 
       Para relatar um bug: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
   error:
-    feature_unavailable: ""
+    feature_unavailable: "Este recurso requer SketchUp {{ version }} ou superior"
   event:
     model_change: O modelo ativo foi alterado.
     options_change: As opções do modelo mudaram.
@@ -135,7 +135,7 @@ core:
       unzip: Erro ao descompactar o arquivo.
   preset:
     label: Predefinições
-    manage: ""
+    manage: Gerenciar predefinições
     save_to: Salvar como
     restore_from: Restaurar a partir de
     app_defaults: Definições de fábrica
@@ -179,7 +179,7 @@ core:
       store: Memorizar esta cor
       remove: Esquecer esta cor
     textinput_code:
-      snippets: ""
+      snippets: Exemplos de fórmulas
       help: Digite **@** para obter uma lista de variáveis.
     three_viewer:
       view: "{{ view }} Ver"
@@ -408,8 +408,8 @@ tab:
       axes_origin_position_none: Não mude a origem
       axes_origin_position_min: Coloque a origem em um canto
       axes_origin_position_center: Coloque a origem no centro
-      axes_origin_position_front_min: ""
-      axes_origin_position_front_center: ""
+      axes_origin_position_front_min: Coloque a origem no canto da face da chapa
+      axes_origin_position_front_center: Coloque a origem no centro da face da chapa
       over_length: Em todo o comprimento
       over_width: Em toda a largura
       edge_disabled_help: Esta borda não é configurável porque não foi detectada nenhuma face com o mesmo material desta fita de borda no modelo.
@@ -884,7 +884,7 @@ tab:
       option_pins_colored_1: Cor da peça
       option_pins_colored_help: Permite que você escolha a cor das setas.
       option_pins_formula: Fórmula
-      option_pins_formula_help: ""
+      option_pins_formula_help: Permite escrever o código *Ruby* para personalizar o texto dos alfinetes.
       option_pins_length: Comprimento
       option_pins_length_0: Sem seta
       option_pins_length_1: Pequena
@@ -1235,6 +1235,7 @@ tab:
         Para expandir ainda mais as possibilidades, gostaríamos de possibilitar a exportação de diagramas de layout no formato **SVG**.
         Ao nos fornecer os meios para trabalhar nestas exportações, você está nos dando a oportunidade de ajudá-lo a obter o máximo da *OpenCutList*.
       layout: |
+        O objetivo deste módulo é permitir que você imprima facilmente uma visualização de seu projeto como uma **visão explodida** com identificação a partir das informações geradas na lista de peças.
     objective_crowdfunding: |
       O desenvolvimento dos novos produtos será feito graças ao **Financiamento participativo** e poderá começar quando seu **Objetivo financeiro** for alcançado.
     objective_thanks: |
@@ -1393,8 +1394,6 @@ tool:
     action_modifier_length: ""
     action_modifier_width: ""
     action_modifier_thickness: ""
-    success:
-      part_oriented: ""
     warning:
       more_entities: ""
     error:

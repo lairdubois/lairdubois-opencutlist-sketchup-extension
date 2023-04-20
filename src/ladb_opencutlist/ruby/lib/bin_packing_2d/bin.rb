@@ -46,10 +46,10 @@ module Ladb::OpenCutList::BinPacking2D
       if @options.trimsize > 0
         c_h = Cut.new(0, @options.trimsize - @options.saw_kerf, @length, true, 0, 1)
         c_h.mark_trimming
-        @cuts_h.append(c_h)
+        @cuts_h.push(c_h)
         c_v = Cut.new(@options.trimsize - @options.saw_kerf, @options.trimsize, @width - @options.trimsize, false, 0, 1)
         c_v.mark_trimming
-        @cuts_v.append(c_v)
+        @cuts_v.push(c_v)
       end
 
       # Max. length and width of a box inside this bin.

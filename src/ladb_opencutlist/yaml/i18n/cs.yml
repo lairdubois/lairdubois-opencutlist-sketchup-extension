@@ -62,12 +62,12 @@ default:
   setup_model_units: Nakonfigurujte modelové jednotky
   load_more: Více
   reset_to_app_defaults: Obnovit původní hodnoty
-  constrain_key: ""
-  copy_key_win: ""
+  constrain_key: Shift
+  copy_key_win: Ctrl
   copy_key_mac: Nastavení
   alt_key_win: Atl
   alt_key_mac: Příkaz
-  tab_key: ""
+  tab_key: Tab
 core:
   menu:
     submenu: OpenCutList
@@ -295,7 +295,7 @@ tab:
       has_edges: "Tento dílec obsahuje {{ count }} hranování"
       has_edges_plural: "Tento dílec obsahuje {{ count }} hranování"
       has_faces: "Tato část obsahuje {{ count }} dýhovaný povrch"
-      has_faces_plural: "Tato část obsahuje {{ count }} dýhovaných povrchů"
+      has_faces_plural: "Tato část obsahuje {{ count }} dýhované povrchy"
       edge_decremented: "Zmenšeno o tloušťku hrany ({{ decrement }})"
       edge_ymin: Hrana podél 1
       edge_ymax: Hrana podél 2
@@ -1396,8 +1396,6 @@ tool:
     action_modifier_length: ""
     action_modifier_width: ""
     action_modifier_thickness: ""
-    success:
-      part_oriented: ""
     warning:
       more_entities: ""
     error:

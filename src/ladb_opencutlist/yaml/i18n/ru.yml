@@ -301,8 +301,8 @@ tab:
       edge_ymax: Кромка по длине 2
       edge_xmin: Кромка по ширине 1
       edge_xmax: Кромка по ширине 2
-      face_zmin: Сопоставление
-      face_zmax: Облицовка
+      face_zmin: Тыльная
+      face_zmax: Лицевая
       dblclick_to_copy_all_edges: "Дважды щелкните здесь, чтобы скопировать это значение на все остальные кромки"
       dblclick_to_copy_all_faces: "Дважды щелкните здесь, чтобы скопировать это значение на другую поверхность"
       dblclick_to_sort_axes: "Дважды щелкните здесь, чтобы автоматически ориентировать оси в соответствии с размерами детали"
@@ -336,7 +336,7 @@ tab:
       general: Общие
       extra_help: "Список свойств, зависящих от типа материала \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Кромки
-      faces: Шпон
+      faces: Лицевые
       name: Определение
       material: Материал
       cumulable: Суммировать
@@ -933,7 +933,7 @@ tab:
         is_part_selection: Этот сборочный чертеж ограничен **выделенными деталями**.
     snippet:
       number: Номер
-      name: Наименование
+      name: Определение
       number_and_name: Номер детали
       number_without_hardware: Количество (без аксессуаров)
       size: Доступный размер
@@ -1357,13 +1357,13 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: Раскрасить сторону
+    action_0: Раскрасить деталь
     action_0_status: "Для правильной раскраски необходимой детали, надо выбрать нужный материал из представленных в модели и кликнуть по детали"
-    action_1: Раскрасить деталь
+    action_1: Раскраска торцов
     action_1_status: "Кликните на торец панели, чтобы применить материал '$t(tab.materials.type_4)'"
-    action_2: Очистить сторону
+    action_2: Облицовка шпоном
     action_2_status: "Кликните на лицевую сторону панели, чтобы применить к ней материал '$t(tab.materials.type_6)'"
-    action_3: Очистить деталь
+    action_3: Образец
     action_3_status: "Кликните на сторону, чтобы взять образец материала"
     edges: "{{ count }} торец"
     edges_plural: "{{ count }} торцов"

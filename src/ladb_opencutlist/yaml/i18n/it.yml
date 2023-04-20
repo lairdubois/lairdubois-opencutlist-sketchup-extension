@@ -886,7 +886,7 @@ tab:
       option_pins_colored_help: Seleziona il colore delle etichette residue.
       option_pins_formula: Formula
       option_pins_formula_help: Permette di scrivere codice *Ruby* per personalizzare il contenuto dell'etichetta.
-      option_pins_length: Lunghezza
+      option_pins_length: Linea guida
       option_pins_length_0: Nessun
       option_pins_length_1: Corto
       option_pins_length_2: Medio
