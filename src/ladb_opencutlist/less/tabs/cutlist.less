@@ -201,6 +201,12 @@
         }
       }
 
+      hr {
+        margin-top: 3px;
+        margin-bottom: 3px;
+        border-color: @ladb-global-border;
+      }
+
     }
 
     td.ladb-cutlist-edge {
@@ -613,8 +619,20 @@
 
     }
 
-    tbody tr.ladb-cutlist-row td.ladb-cutlist-value i.ladb-opencutlist-icon-asterisk {
-      color: #aaa !important;
+    tbody tr.ladb-cutlist-row td.ladb-cutlist-value {
+
+      i {
+        color: #000 !important;
+      }
+
+      i.ladb-opencutlist-icon-asterisk {
+        color: #aaa !important;
+      }
+
+      hr {
+        border-color: #000 !important;
+      }
+
     }
 
   }

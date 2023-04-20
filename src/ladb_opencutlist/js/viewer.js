@@ -943,7 +943,7 @@ const fnSetupModel = function(modelDef, partsColored, partsOpacity, pinsHidden, 
         };
 
         // Create box helper
-        boxHelper = new Box3HelperDashed(modelBox, 0x0000ff);
+        boxHelper = new THREE.Box3Helper(modelBox, 0x0000ff);
         boxHelper.visible = false;
         scene.add(boxHelper);
 
