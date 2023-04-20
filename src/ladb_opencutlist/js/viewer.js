@@ -151,7 +151,7 @@ class Box3HelperDashed extends THREE.LineSegments {
 
         const geometry = new THREE.BufferGeometry().setFromPoints(pts);
 
-        super(geometry, new THREE.LineDashedMaterial({color: color, toneMapped: false, dashSize: 0.1, gapSize: 0.1}));
+        super(geometry, new THREE.LineDashedMaterial({ color: color, toneMapped: false, dashSize: 0.1, gapSize: 0.1 }));
 
         this.box = box;
 
