@@ -1357,7 +1357,7 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: Paint part
+    action_0: Paint parts
     action_0_status: Click on a part to paint its instance
     action_1: Paint edges
     action_1_status: Click on a panel edge to apply '$t(tab.materials.type_4)'
@@ -1365,6 +1365,8 @@ tool:
     action_2_status: Click on a panel face to apply '$t(tab.materials.type_6)'
     action_3: Sample
     action_3_status: Click on a face to sample its material
+    action_4: Clean
+    action_4_status: Click on a part to remove all materials from its definition and all instances
     edges: "{{ count }} edge"
     edges_plural: "{{ count }} edges"
     edge_ymin: Length 1
