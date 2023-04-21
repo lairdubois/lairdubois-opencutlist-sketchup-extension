@@ -176,7 +176,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :id, :number, :saved_number, :name, :description, :length, :width, :cutting_length, :cutting_width, :length_increase, :width_increase, :length_increased, :width_increased, :count, :tags, :flipped, :thickness_layer_count, :edge_count, :edge_pattern, :edge_material_names, :edge_std_dimensions, :edge_decrements, :face_count, :face_pattern, :face_material_names, :face_std_dimensions, :face_decrements
+    attr_reader :id, :number, :saved_number, :name, :description, :length, :width, :cutting_length, :cutting_width, :edge_cutting_length, :edge_cutting_width, :length_increase, :width_increase, :length_increased, :width_increased, :count, :tags, :flipped, :thickness_layer_count, :edge_count, :edge_pattern, :edge_material_names, :edge_std_dimensions, :edge_decrements, :face_count, :face_pattern, :face_material_names, :face_std_dimensions, :face_decrements
 
     def initialize(_def)
       @_def = _def
@@ -190,6 +190,8 @@ module Ladb::OpenCutList
       @width = _def.cutlist_part.width
       @cutting_length = _def.cutlist_part.cutting_length
       @cutting_width = _def.cutlist_part.cutting_width
+      @edge_cutting_length = _def.cutlist_part.edge_cutting_length
+      @edge_cutting_width = _def.cutlist_part.edge_cutting_width
       @length_increase = _def.cutlist_part.length_increase
       @width_increase = _def.cutlist_part.width_increase
       @length_increased = _def.cutlist_part.length_increased

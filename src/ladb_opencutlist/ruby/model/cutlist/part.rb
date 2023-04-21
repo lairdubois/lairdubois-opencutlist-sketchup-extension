@@ -8,7 +8,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :id, :number, :saved_number, :name, :description, :length, :width, :thickness, :count, :cutting_length, :cutting_width, :cutting_thickness, :post_cutting_length, :post_cutting_width, :material_name, :cumulable, :cumulative_cutting_length, :cumulative_cutting_width, :instance_count_by_part, :mass, :price, :thickness_layer_count, :tags, :ignore_grain_direction, :edge_count, :edge_pattern, :edge_material_names, :edge_std_dimensions, :edge_decrements, :face_count, :face_pattern, :face_material_names, :face_texture_angles, :face_std_dimensions, :face_decrements, :entity_names, :final_area, :l_ratio, :w_ratio
+    attr_reader :id, :number, :saved_number, :name, :description, :length, :width, :thickness, :count, :cutting_length, :cutting_width, :cutting_thickness, :edge_cutting_length, :edge_cutting_width, :material_name, :cumulable, :cumulative_cutting_length, :cumulative_cutting_width, :instance_count_by_part, :mass, :price, :thickness_layer_count, :tags, :ignore_grain_direction, :edge_count, :edge_pattern, :edge_material_names, :edge_std_dimensions, :edge_decrements, :face_count, :face_pattern, :face_material_names, :face_texture_angles, :face_std_dimensions, :face_decrements, :entity_names, :final_area, :l_ratio, :w_ratio
 
     def initialize(part_def, group)
       @_def = part_def
@@ -26,8 +26,8 @@ module Ladb::OpenCutList
       @cutting_length = part_def.cutting_length.to_s
       @cutting_width = part_def.cutting_width.to_s
       @cutting_thickness = part_def.cutting_size.thickness.to_s
-      @post_cutting_length = part_def.post_cutting_length.to_s
-      @post_cutting_width = part_def.post_cutting_width.to_s
+      @edge_cutting_length = part_def.edge_cutting_length.to_s
+      @edge_cutting_width = part_def.edge_cutting_width.to_s
       @material_name = part_def.material_name
       @cumulable = part_def.cumulable
       @cumulative_cutting_length = part_def.cumulative_cutting_length.to_s

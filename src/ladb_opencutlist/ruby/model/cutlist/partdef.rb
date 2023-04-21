@@ -198,11 +198,11 @@ module Ladb::OpenCutList
       # [@cutting_size.width - @edge_width_decrement, 0].max.to_l
     end
 
-    def post_cutting_length
+    def edge_cutting_length
       [@size.length - @edge_length_decrement, 0].max.to_l
     end
 
-    def post_cutting_width
+    def edge_cutting_width
       [@size.width - @edge_width_decrement, 0].max.to_l
     end
 
