@@ -1356,7 +1356,7 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: Розфарбувати сторону
+    action_0: ""
     action_0_status: ""
     action_1: Розфарбувати деталь
     action_1_status: ""
@@ -1364,6 +1364,8 @@ tool:
     action_2_status: ""
     action_3: Очистити деталь
     action_3_status: ""
+    action_4: ""
+    action_4_status: ""
     edges: ""
     edges_plural: ""
     edge_ymin: ""
@@ -1396,8 +1398,6 @@ tool:
     action_modifier_length: ""
     action_modifier_width: ""
     action_modifier_thickness: ""
-    success:
-      part_oriented: ""
     warning:
       more_entities: ""
     error:

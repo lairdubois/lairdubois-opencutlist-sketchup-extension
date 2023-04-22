@@ -32,8 +32,8 @@ default:
   copy: Gekopieerd
   select_all: Selecteer alle
   unselect_all: Alles deselecteren
-  draw: ""
-  estimate: ""
+  draw: Tekenen
+  estimate: Schatting
   empty_filename: geen bestandnaam.skp
   help: Help
   error: Oeps!
@@ -62,12 +62,12 @@ default:
   setup_model_units: Configureer modeleenheden
   load_more: Meer laden
   reset_to_app_defaults: Terugzetten naar oorspronkelijke waarden
-  constrain_key: ""
-  copy_key_win: ""
+  constrain_key: Shift
+  copy_key_win: Ctrl
   copy_key_mac: Optie
   alt_key_win: Alt
   alt_key_mac: Opdracht
-  tab_key: ""
+  tab_key: Tab
 core:
   menu:
     submenu: OpenCutList
@@ -85,7 +85,7 @@ core:
     command:
       dialog: OpenCutList
       smart_paint: Kleur de onderdelen
-      smart_axes: ""
+      smart_axes: Oriënt Onderdelen
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
@@ -135,7 +135,7 @@ core:
       unzip: Er ging iets mis bij het uitpakken van het archief.
   preset:
     label: Voorkeuren
-    manage: ""
+    manage: Voorkeursinstellingen beheren
     save_to: Opslaan als
     restore_from: Terugzetten vanaf
     app_defaults: oorspronkelijke presets
@@ -179,7 +179,7 @@ core:
       store: Bewaar kleur
       remove: Kleur vergeten
     textinput_code:
-      snippets: ""
+      snippets: Formulevoorbeelden
       help: Druk op **@** om de lijst met gegevensvariabelen te openen.
     three_viewer:
       view: "Beeld {{ view }}"
@@ -315,11 +315,11 @@ tab:
       numbers_save: Bewaar de onderdeel nummers
       numbers_reset: Stel de onderdeel nummers opnieuw in
       highlight_parts: $t(tab.cutlist.highlight_parts)
-      group_layout_parts: ""
+      group_layout_parts: Overzicht van onderdelen in groep tekenen
       group_numbers_save: Bewaar de onderdeel nummers van deze groep
       group_numbers_reset: Stel de onderdeel nummers van deze groep opnieuw in
       group_cuttingdiagram: Zaagschema
-      group_labels: ""
+      group_labels: Etiketten afdrukken van onderdelen in groep
       edit_material: "Wijzig materiaal '{{ material_name }}'"
       expand_all: Alle lijnen uitklappen
       collapse_all: Alle lijnen inklappen
@@ -408,15 +408,15 @@ tab:
       axes_origin_position_none: Verander het nulpunt niet
       axes_origin_position_min: Plaats het nulpunt in een hoek
       axes_origin_position_center: Plaats het nulpunt in het midden
-      axes_origin_position_front_min: ""
-      axes_origin_position_front_center: ""
+      axes_origin_position_front_min: Plaats de oorsprong op een hoek van de voorkant
+      axes_origin_position_front_center: Plaats de oorsprong in het midden van de voorkant
       over_length: Over de lengte
       over_width: Over de breedte
       edge_disabled_help: Deze randafwerking is niet configureerbaar omdat aan deze rand van het onderdeel in het model geen materiaaldragend oppervlak is gedetecteerd.
       face_disabled_help: Dit oppervlak is niet configureerbaar omdat op dit oppervlak van het onderdeel in het model geen materiaaldragend oppervlak is gedetecteerd.
       multiple_values: Meerdere waarden
       export_to_skp: Exporteren (.skp)
-      loading_preview: ""
+      loading_preview: Voorbeeld laden
     export_to_skp:
       title: Exporteer een .skp bestand
     option:
@@ -1343,7 +1343,7 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: Kleur het vlak
+    action_0: ""
     action_0_status: ""
     action_1: Kleur het object
     action_1_status: ""
@@ -1351,6 +1351,8 @@ tool:
     action_2_status: ""
     action_3: Object opschonen
     action_3_status: ""
+    action_4: ""
+    action_4_status: ""
     edges: ""
     edges_plural: ""
     edge_ymin: ""
@@ -1383,8 +1385,6 @@ tool:
     action_modifier_length: ""
     action_modifier_width: ""
     action_modifier_thickness: ""
-    success:
-      part_oriented: ""
     warning:
       more_entities: ""
     error:
