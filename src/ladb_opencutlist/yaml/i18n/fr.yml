@@ -766,7 +766,8 @@ tab:
         parameters: Les paramètres sont incorrects. La marge dépasse 25 % de la barre ou bande la plus grande.
         no_parts: Aucune pièce.
         no_sheet: Le panneau standard n'est pas correctement configuré et aucun reste n'est défini.
-        no_placement_possible: "Aucune pièce n'a pu être placée (panneau standard trop petit, marge trop grande, lame de scie trop épaisse, ...)."
+        no_placement_possible_1d: "Aucune pièce n'a pu être placée (barre standard trop petite, marge trop grande, lame de scie trop épaisse, ...)."
+        no_placement_possible_2d: "Aucune pièce n'a pu être placée (panneau standard trop petit, marge trop grande, lame de scie trop épaisse, ...)."
         bad_error: "Erreur d'algorithme. Veuillez contacter les développeurs, car vous avez là un cas intéressant."
         unplaced_parts: "**1 pièce** est trop grande pour être placée."
         unplaced_parts_plural: "**{{ count }} pièces** sont trop grandes pour être placées."

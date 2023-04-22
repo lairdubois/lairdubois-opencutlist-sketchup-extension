@@ -138,7 +138,7 @@ module Ladb::OpenCutList
           when BinPacking2D::ERROR_PARAMETERS
             errors << 'tab.cutlist.cuttingdiagram.error.parameters'
           when BinPacking2D::ERROR_NO_PLACEMENT_POSSIBLE
-            errors << 'tab.cutlist.cuttingdiagram.error.no_placement_possible'
+            errors << 'tab.cutlist.cuttingdiagram.error.no_placement_possible_2d'
           else # BinPacking2D::ERROR_BAD_ERROR and others
             errors << 'tab.cutlist.cuttingdiagram.error.bad_error'
         end
