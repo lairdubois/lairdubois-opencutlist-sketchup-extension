@@ -183,6 +183,8 @@
         background-image: url(../img/bg-hatched.svg);
         background-repeat: repeat;
         background-size: 10px;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
       }
 
       &.ladb-cutlist-value-highlighted {
@@ -193,12 +195,12 @@
         text-align: right;
       }
 
+      span.ladb-opencutlist-icon {
+        color: #999;
+      }
+
       i.ladb-opencutlist-icon-asterisk {
         color: @ladb-brand-info;
-
-        &.ladb-opencutlist-icon-asterisk-mute {
-          color: #aaa;
-        }
       }
 
       hr {
@@ -621,12 +623,8 @@
 
     tbody tr.ladb-cutlist-row td.ladb-cutlist-value {
 
-      i {
+      i, span.ladb-opencutlist-icon {
         color: #000 !important;
-      }
-
-      i.ladb-opencutlist-icon-asterisk {
-        color: #aaa !important;
       }
 
       hr {
