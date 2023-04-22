@@ -62,8 +62,8 @@ default:
   setup_model_units: Impostare le unità del modello
   load_more: Carica di più
   reset_to_app_defaults: Ripristina i valori originali
-  constrain_key: Tasto Maiusc
-  copy_key_win: tasto Ctrl
+  constrain_key: Maiusc
+  copy_key_win: Ctrl
   copy_key_mac: Opzione
   alt_key_win: Alt
   alt_key_mac: Comando
@@ -769,7 +769,7 @@ tab:
         no_sheet: Le dimensioni dei pannelli non sono correttamente configurate e non ci sono ritagli disponibili.
         no_placement_possible: "Le dimensioni delle parti sono troppo grandi per essere contenute in un pannello (squadratura troppo larga, dimensioni insufficienti del pannello, taglio della lama troppo grande, ...)."
         bad_error: "Errore negli algoritmi di calcolo, contatta lo sviluppatore, il tuo può essere un caso interessante."
-        unplaced_parts: "**Una parte** non può essere schematizzata, perchè è troppo grande."
+        unplaced_parts: "**1 parte** non può essere schematizzata, perchè è troppo grande."
         unplaced_parts_plural: "Ci sono **{{ count }} parti** che non possono essere schematizzate perchè troppo grandi."
       warning:
         is_part_selection: Lo schema di taglio mostra solo le **parti selezionate**.
@@ -1357,7 +1357,7 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: Assegna il materiale alla faccia
+    action_0: Colorare parti
     action_0_status: Seleziona un elemento a cui applicare il materiale
     action_1: Assegna il materiale all'elemento
     action_1_status: Seleziona un bordo del pannello a cui applicare '$t(tab.materials.type_4)'
@@ -1365,6 +1365,8 @@ tool:
     action_2_status: Seleziona una faccia del pannello a cui applicare '$t(tab.materials.type_6)'
     action_3: Elimina il materiale dell'elemento
     action_3_status: Seleziona una faccia del pannello da cui copiare il materiale
+    action_4: Pulire
+    action_4_status: Seleziona un elemento per rimuovere tutti i materiali dalla sua definizione e da tutte le sue istanze
     edges: "{{ count }} bordo"
     edges_plural: "{{ count }} bordi"
     edge_ymin: Lunghezza 1
@@ -1393,12 +1395,12 @@ tool:
     action_2: Inverti fronte ↔ retro
     action_2_status: Seleziona un elemento per invertire il fronte con il retro
     action_3: Adatta gli assi
-    action_3_status: Seleziona una faccia o un bordo di un elemento per modificare l'orientamento degli assi
+    action_3_status: Seleziona una faccia o un bordo di un elemento per adattare gli assi
     action_modifier_length: L
     action_modifier_width: La
     action_modifier_thickness: Sp
     warning:
       more_entities: "saranno modificate {{ count_used }} occorrenze che condividono la stessa definizione"
     error:
-      not_part: L'oggetto di destinazione non è di tipo Parte
+      not_part: L'oggetto di destinazione non è una parte
       not_orientable: Questo elemento non consente di cambiarne l'orientamento

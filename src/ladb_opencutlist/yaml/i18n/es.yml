@@ -32,8 +32,8 @@ default:
   copy: Copiar
   select_all: Seleccionar todo
   unselect_all: Deseleccionar todo
-  draw: ""
-  estimate: ""
+  draw: Dibujar
+  estimate: Estimar
   empty_filename: Sin título.skp
   help: Ayuda
   error: ¡Upss!
@@ -62,12 +62,12 @@ default:
   setup_model_units: Configurar las unidades del modelo
   load_more: Carga más
   reset_to_app_defaults: Restaurar a los valores originales
-  constrain_key: ""
-  copy_key_win: ""
+  constrain_key: Shift
+  copy_key_win: Ctrl
   copy_key_mac: Option
   alt_key_win: Alt
   alt_key_mac: Command
-  tab_key: ""
+  tab_key: Tab
 core:
   menu:
     submenu: OpenCutList
@@ -84,8 +84,8 @@ core:
     name: OpenCutList
     command:
       dialog: OpenCutList
-      smart_paint: Colorear partes
-      smart_axes: ""
+      smart_paint: Colorear piezas
+      smart_axes: Orientar piezas
   dialog:
     title: OpenCutList por L'Air du Bois
   leftbar:
@@ -135,7 +135,7 @@ core:
       unzip: Error al descomprimir el archivo.
   preset:
     label: Preajustes
-    manage: ""
+    manage: Gestionar preajustes
     save_to: Guardar como
     restore_from: Restaurar desde
     app_defaults: Preajuste de fábrica
@@ -179,7 +179,7 @@ core:
       store: Memorizar este color
       remove: Olvidar el color
     textinput_code:
-      snippets: ""
+      snippets: Ejemplos de fórmulas
       help: Escriba **@** para abrir la lista de variables de datos.
     three_viewer:
       view: "Vista {{ view }}"
@@ -408,8 +408,8 @@ tab:
       axes_origin_position_none: No cambies el origen
       axes_origin_position_min: Coloque el origen en una esquina
       axes_origin_position_center: Coloque el origen en el centro
-      axes_origin_position_front_min: ""
-      axes_origin_position_front_center: ""
+      axes_origin_position_front_min: Sitúe el origen en la esquina del frontal
+      axes_origin_position_front_center: Sitúe el origen en el centro del frontal
       over_length: A lo largo
       over_width: A lo ancho
       edge_disabled_help: Esta banda de borde no es configurable porque no se ha detectado ninguna cara que pueda llevar material de banda de borde en el modelo.
@@ -742,7 +742,7 @@ tab:
         leftover: Sobrante
         cut: Cortar
         cut_plural: Cortes
-        cut_trimming: ""
+        cut_trimming: Corte de limpieza
         cut_bounding: Corte primario (nivel 1)
         cut_bounding_plural: Cortes primarios (nivel 1)
         cut_internal_through: Corte primario (nivel 2)
@@ -934,11 +934,11 @@ tab:
     snippet:
       number: Número
       name: Designación
-      number_and_name: ""
-      number_without_hardware: ""
+      number_and_name: Número y designación
+      number_without_hardware: Número (sin accesorios)
       size: Dimensiones
-      area: ""
-      volume: ""
+      area: Superficie capaz
+      volume: Volumen capaz
     error:
       no_model: Ningún modelo está abierto. Necesitarás darme más información ;)
       no_entities: Tu modelo está vacío. Necesitarás darme más información. ;)
@@ -986,7 +986,7 @@ tab:
       grain_direction: Dirección de fibra
       colorized: Este tono se aplicará a la textura de este material cuando se renderice en el modelo
       texture_load: Cargar una nueva textura
-      texture_clear: ""
+      texture_clear: Borrar la textura
       edit: "Edita las propiedades de '{{ name }}'"
       set_current: |
         Colorear partes con '{{ name }}'.
@@ -1011,7 +1011,7 @@ tab:
       title: "Propiedades del material '{{ name }}'"
       general: General
       texture: Textura
-      no_texture: ""
+      no_texture: Sin textura
       name: Nombre
       type: Tipo
       cut_options: Parámetros de corte
@@ -1238,6 +1238,7 @@ tab:
         Para ampliar aún más las posibilidades, nos gustaría permitir la exportación de diagramas de corte en formato **SVG**.
         Al proporcionarnos los medios para trabajar en estas exportaciones, nos está dando la oportunidad de ayudarle a sacar el máximo provecho de *OpenCutList*.
       layout: |
+        El objetivo de este módulo es permitirle imprimir fácilmente una vista general de su proyecto en **vista explosionada** con identificación de las piezas por su número generado en el listatod de partes.
     objective_crowdfunding: |
       El desarrollo de nuevas funcionalidades se realizará gracias a la **Recaudación de fondos** y comenzará cuando se alcance su **Meta financiera**.
     objective_thanks: |
@@ -1346,7 +1347,7 @@ tool:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_paint:
-    title: ""
+    title: Colorear
     default_material: Ningún material definido
     filters: Filtro
     filter_0: Sin tipo
@@ -1356,50 +1357,50 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: Colorear la cara
-    action_0_status: ""
-    action_1: Colorear parte
-    action_1_status: ""
+    action_0: Colorear piezas
+    action_0_status: Haga clic en una pieza para aplicar un material a su instancia
+    action_1: Colorear cantos
+    action_1_status: Haga clic en un borde de una pieza del panel para aplicarle un material '$t(tab.materials.type_4)'
     action_2: Limpiar cara
-    action_2_status: ""
+    action_2_status: Haga clic en una cara de un panel para aplicarle un material '$t(tab.materials.type_6)'
     action_3: Limpiar pieza
-    action_3_status: ""
-    edges: ""
-    edges_plural: ""
+    action_3_status: Haga clic en una cara para tomar una muestra del material
+    action_4: Limpiar
+    action_4_status: Haga clic en una pieza para eliminar todos los materiales de su definición y de todas sus instancias
+    edges: "{{ count }} canto"
+    edges_plural: "{{ count }} cantos"
     edge_ymin: Longitud 1
     edge_ymax: Longitud 2
     edge_xmin: Anchura 1
     edge_xmax: Anchura 2
-    faces: ""
-    faces_plural: ""
+    faces: "{{ count }} cara"
+    faces_plural: "{{ count }} caras"
     face_zmin: Dorso
     face_zmax: Frontal
     warning:
       no_material: Su modelo no contiene ningún material!
-      no_material_type: ""
+      no_material_type: "No hay material '{{ type }}"
     error:
-      not_part: ""
-      not_edge: ""
-      not_face: ""
-      wrong_material_type: ""
+      not_part: El objeto no es una pieza
+      not_edge: La cara objetivo no es un borde de panel
+      not_face: La cara objetivo no es una cara de panel
+      wrong_material_type: "La pieza seleccionada debe ser del tipo '{{ type }}'"
   smart_axes:
-    title: ""
-    toggle_depth: ""
-    action_0: ""
-    action_0_status: ""
-    action_1: ""
-    action_1_status: ""
-    action_2: ""
-    action_2_status: ""
-    action_3: ""
-    action_3_status: ""
-    action_modifier_length: ""
-    action_modifier_width: ""
-    action_modifier_thickness: ""
-    success:
-      part_oriented: ""
+    title: Oriente
+    toggle_depth: Piezas en el fondo
+    action_0: Voltear
+    action_0_status: Haga clic en una pieza para voltear su instancia a lo largo de una de sus dimensiones
+    action_1: Invertir Longitud ↔ Anchura
+    action_1_status: Haga clic en una pieza para intercambiar su longitud con su anchura
+    action_2: Cambiar anverso ↔ reverso
+    action_2_status: Haga clic en una pieza para intercambiar su anverso por su reverso
+    action_3: Adaptar los ejes
+    action_3_status: Haga clic en la cara o en una arista de una pieza para adaptar sus ejes
+    action_modifier_length: L
+    action_modifier_width: A
+    action_modifier_thickness: E
     warning:
-      more_entities: ""
+      more_entities: "{{ count_used }} se modificarán las instancias que compartan la misma definición"
     error:
-      not_part: ""
-      not_orientable: ""
+      not_part: El objeto no es una pieza
+      not_orientable: El tipo de esta pieza no permite orientarla

@@ -1354,7 +1354,7 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: Pintar a face
+    action_0: ""
     action_0_status: ""
     action_1: Pintar peça
     action_1_status: ""
@@ -1362,6 +1362,8 @@ tool:
     action_2_status: ""
     action_3: Limpar peça
     action_3_status: ""
+    action_4: ""
+    action_4_status: ""
     edges: ""
     edges_plural: ""
     edge_ymin: ""
