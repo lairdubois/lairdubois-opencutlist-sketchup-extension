@@ -1357,16 +1357,16 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: ""
+    action_0: Sơn các bộ phận
     action_0_status: Click vào bộ phận để thể hiện sơn
     action_1: Sơn các cạnh
-    action_1_status: ""
+    action_1_status: Click vào một cạnh của bảng để áp dụng '$t(tab.materials.type_4)'
     action_2: Sơn các bề mặt
-    action_2_status: ""
+    action_2_status: Click vào một mặt của bảng để áp dụng '$t(tab.materials.type_6)'
     action_3: Vật mẫu
     action_3_status: Nhấp vào một mặt để lấy mẫu vật liệu của nó
-    action_4: ""
-    action_4_status: ""
+    action_4: Dọn dẹp
+    action_4_status: Nhấp vào một bộ phận để xóa tất cả các vật liệu từ định nghĩa của nó và tất cả các đối tượng
     edges: "{{ count }} cạnh"
     edges_plural: "{{ count }} cạnh"
     edge_ymin: Chiều dài 1
@@ -1395,12 +1395,12 @@ tool:
     action_2: Hoán đổi mặt trước ↔ mặt sau
     action_2_status: Nhấp vào một bộ phận để hoán đổi mặt trước với mặt sau của nó
     action_3: Điều chỉnh trục
-    action_3_status: ""
+    action_3_status: Nhấp vào mặt hoặc cạnh của một bộ phận để điều chỉnh hướng của các trục
     action_modifier_length: L
     action_modifier_width: W
     action_modifier_thickness: T
     warning:
-      more_entities: "{{ count_used }} các trường hợp chia sẻ cùng một định nghĩa sẽ được sửa đổi"
+      more_entities: "{{ count_used }} các đối tượng chia sẻ cùng một định nghĩa sẽ được sửa đổi"
     error:
       not_part: Đối tượng mục tiêu không phải là một bộ phận
       not_orientable: Loại bộ phận này không cho phép định hướng nó

@@ -31,9 +31,9 @@ default:
   upgrade: Оновлення
   copy: Копіювати
   select_all: Вибрати все
-  unselect_all: Зняти виділення з усіх
-  draw: ""
-  estimate: ""
+  unselect_all: Нічого не виділяти
+  draw: Креслення
+  estimate: Кошторис
   empty_filename: Безіменний.skp
   help: Допомога
   error: Виправити!
@@ -62,12 +62,12 @@ default:
   setup_model_units: Налаштування одиниць виміру моделі
   load_more: Завантажити більше
   reset_to_app_defaults: Відновити до початкових значень
-  constrain_key: ""
-  copy_key_win: ""
+  constrain_key: Зміщення
+  copy_key_win: Ctrl
   copy_key_mac: Опції
   alt_key_win: Alt
   alt_key_mac: Команда
-  tab_key: ""
+  tab_key: Tab
 core:
   menu:
     submenu: OpenCutList
@@ -85,7 +85,7 @@ core:
     command:
       dialog: OpenCutList
       smart_paint: Нанесення матеріалів на деталі
-      smart_axes: ""
+      smart_axes: Орієнтація деталей
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
@@ -135,7 +135,7 @@ core:
       unzip: Помилка при розпакуванні архіву.
   preset:
     label: Пресети
-    manage: ""
+    manage: Керування пресетами
     save_to: Зберегти
     restore_from: Відновити з
     app_defaults: Пресет за замовчуванням
@@ -179,7 +179,7 @@ core:
       store: Запам'ятати цей колір
       remove: Забути цей колір
     textinput_code:
-      snippets: ""
+      snippets: Приклади формул
       help: "Натисніть **@**, щоб відкрити введення змінних даних."
     three_viewer:
       view: "Вид {{ view }}"
@@ -218,7 +218,7 @@ tab:
     edit_part_axes_properties: Редагувати властивості (осі) деталі
     edit_part_size_increase_properties: Редагувати властивості (розміри) деталі
     edit_part_edges_properties: Редагувати властивості (крайки) деталі
-    edit_part_faces_properties: Редагувати властивості (шпон) деталі
+    edit_part_faces_properties: Редагувати властивості деталі (грані)
     tooltip:
       show_hide_block: Показати / Приховати цю групу
       scroll_to_block: Перейти до групи
@@ -301,7 +301,7 @@ tab:
       edge_ymax: Крайка по довжині 2
       edge_xmin: Крайка по ширині 1
       edge_xmax: Крайка по ширині 2
-      face_zmin: Зіставлення
+      face_zmin: Тил
       face_zmax: Облицювання
       dblclick_to_copy_all_edges: "Двічі клацніть тут, щоб скопіювати це значення для всіх інших крайок"
       dblclick_to_copy_all_faces: "Двічі клацніть тут, щоб скопіювати це значення на іншу поверхню"
@@ -408,8 +408,8 @@ tab:
       axes_origin_position_none: Не змінювати початок координат
       axes_origin_position_min: Розміщення початку координат по кутку
       axes_origin_position_center: Розміщення початку координат у центрі
-      axes_origin_position_front_min: ""
-      axes_origin_position_front_center: ""
+      axes_origin_position_front_min: Помістіть початок координат у торець
+      axes_origin_position_front_center: Помістіть початок координат у центр
       over_length: По довжині
       over_width: По ширині
       edge_disabled_help: "Ця крайка не налаштовується, тому що в моделі не було виявлено жодної поверхні, яка могла б нести у собі матеріал крайки."
@@ -572,7 +572,7 @@ tab:
       edge_ymax: Крайка по довжині 2
       edge_xmin: Крайка по ширині 1
       edge_xmax: Крайка по ширині 2
-      face_zmin: Зіставлення
+      face_zmin: Тил
       face_zmax: Облицювання
       layer: Тег
       layers: Теги
@@ -742,7 +742,7 @@ tab:
         leftover: Залишок
         cut: Розріз
         cut_plural: Розрізи
-        cut_trimming: ""
+        cut_trimming: Чистий різ
         cut_bounding: Первинний розріз (рівень 1)
         cut_bounding_plural: Первинні розрізи (рівень 1)
         cut_internal_through: Первинний розріз (рівень 2)
@@ -934,11 +934,11 @@ tab:
     snippet:
       number: Номер
       name: Позначення
-      number_and_name: ""
-      number_without_hardware: ""
+      number_and_name: Номер і позначення
+      number_without_hardware: Кількість (без фурнітури)
       size: Доступний розмір
-      area: ""
-      volume: ""
+      area: Площа
+      volume: Об'єм
     error:
       no_model: Жодна модель не відкрита. Вам доведеться дати мені трохи більше інформації ;)
       no_entities: Ваша модель порожня. Вам доведеться дати мені трохи більше інформації ;)
@@ -986,7 +986,7 @@ tab:
       grain_direction: Напрямок фактури
       colorized: Цей відтінок буде застосовано до текстури цього матеріалу під час візуалізації в моделі
       texture_load: Завантажити нову текстуру
-      texture_clear: ""
+      texture_clear: Видалити текстуру
       edit: "Редагувати властивості '{{ name }}'"
       set_current: |
         Задати матеріал деталям '{{ name }}'
@@ -1011,7 +1011,7 @@ tab:
       title: "Властивості матеріалу '{{ name }}'"
       general: Загальні
       texture: Текстура
-      no_texture: ""
+      no_texture: Без текстури
       name: Ім’я
       type: Тип
       cut_options: Параметри розкрою
@@ -1238,6 +1238,7 @@ tab:
         Щоб ще більше розширити можливості, ми хотіли б мати можливість експортувати карти розкрою у форматі **SVG**.
         Надаючи нам засоби для роботи над цим експортом, ви даєте нам можливість дозволити вам отримати максимальну віддачу від *OpenCutList*.
       layout: |
+        Мета цього модуля — дозволити вам легко надрукувати огляд вашого проекту в **рознесеному вигляді** з ідентифікацією частин за їх номерами, згенерованими в списку елементів.
     objective_crowdfunding: |
       Розробка нових продуктів здійснюватиметься завдяки **краудфандингу** і може розпочатися після досягнення **Фінансової цілі**.
     objective_thanks: |
@@ -1346,7 +1347,7 @@ tool:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_paint:
-    title: ""
+    title: Зафарбувати
     default_material: Матеріал не заданий
     filters: Фільтри
     filter_0: Не визначений
@@ -1356,50 +1357,50 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: ""
-    action_0_status: ""
+    action_0: Фарбування деталей
+    action_0_status: "Натисніть на деталь, щоб застосувати матеріал до її екземпляра"
     action_1: Розфарбувати деталь
-    action_1_status: ""
+    action_1_status: "Клацніть край частини панелі, щоб застосувати до нього матеріал «$t(tab.materials.type_4)»"
     action_2: Очистити сторону
-    action_2_status: ""
+    action_2_status: "Клацніть на грані частини панелі, щоб застосувати до неї матеріал «$t(tab.materials.type_6)»"
     action_3: Очистити деталь
-    action_3_status: ""
-    action_4: ""
-    action_4_status: ""
-    edges: ""
-    edges_plural: ""
-    edge_ymin: ""
-    edge_ymax: ""
-    edge_xmin: ""
-    edge_xmax: ""
-    faces: ""
-    faces_plural: ""
-    face_zmin: Зіставлення
+    action_3_status: "Натисніть на площину, щоб взяти зразок матеріалу"
+    action_4: Очистити
+    action_4_status: "Натисніть на частину, щоб видалити всі матеріали з її визначення та всіх екземплярів"
+    edges: "{{ count }} торець"
+    edges_plural: "{{ count }} торців"
+    edge_ymin: Довжина 1
+    edge_ymax: Довжина 2
+    edge_xmin: Ширина 1
+    edge_xmax: Ширина 2
+    faces: "{{ count }} площина"
+    faces_plural: "{{ count }} площин"
+    face_zmin: Тил
     face_zmax: Спереду
     warning:
       no_material: Ваша модель не містить матеріалів!
-      no_material_type: ""
+      no_material_type: "Незалежно від типу '{{ type }}'"
     error:
-      not_part: ""
-      not_edge: ""
-      not_face: ""
-      wrong_material_type: ""
+      not_part: Вказаний об'єкт не є деталлю
+      not_edge: Вказана поверхня не є торцем панелі
+      not_face: Вказана поверхня не є площиною панелі
+      wrong_material_type: "Вказана деталь має бути типу '{{ type }}'"
   smart_axes:
-    title: ""
-    toggle_depth: ""
-    action_0: ""
-    action_0_status: ""
-    action_1: ""
-    action_1_status: ""
-    action_2: ""
-    action_2_status: ""
-    action_3: ""
-    action_3_status: ""
-    action_modifier_length: ""
-    action_modifier_width: ""
-    action_modifier_thickness: ""
+    title: Орієнтація
+    toggle_depth: Деталі на задньому плані
+    action_0: Скасувати
+    action_0_status: "Натисніть на деталь, щоб перевернути її екземпляр уздовж одного з її розмірів"
+    action_1: Поміняти довжину ↔ ширину
+    action_1_status: "Натисніть на деталь, щоб поміняти її довжину на ширину"
+    action_2: Поміняйте Лице ↔ Тил
+    action_2_status: "Клацніть на деталі, щоб поміняти читання її лиця на зворотню сторону"
+    action_3: Адаптувати осі
+    action_3_status: "Натисніть на грань або край деталі, щоб пристосувати до нього осі"
+    action_modifier_length: Д
+    action_modifier_width: Ш
+    action_modifier_thickness: Т
     warning:
-      more_entities: ""
+      more_entities: "{{ count_used }} екземпляри, що мають однакове визначення, будуть змінені"
     error:
-      not_part: ""
-      not_orientable: ""
+      not_part: Вказаний об'єкт не є деталлю
+      not_orientable: Тип цієї деталі не дозволяє її зорієнтувати
