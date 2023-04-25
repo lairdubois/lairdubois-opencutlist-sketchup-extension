@@ -766,7 +766,8 @@ tab:
         parameters: Los parámetros son incorrectos. El recorte es superior al 25% de la tira de canto más larga.
         no_parts: Ninguna parte.
         no_sheet: Los tamaños de panel estándar están configurados incorrectamente y no hay cortes disponibles.
-        no_placement_possible: "Todas sus piezas son demasiado grandes para caber en un panel (recorte demasiado grande, panel estándar demasiado pequeño, corte de sierra demasiado grande, ...)."
+        no_placement_possible_1d: "Todas sus piezas son demasiado grandes para caber en un panel (liston estándar demasiado pequeño, recorte demasiado grande, corte de sierra demasiado grande, ...)."
+        no_placement_possible_2d: "Todas sus piezas son demasiado grandes para caber en un panel (panel estándar demasiado pequeño, recorte demasiado grande, corte de sierra demasiado grande, ...)."
         bad_error: "Pánico algorítmico, póngase en contacto con los desarrolladores, tiene un caso interesante."
         unplaced_parts: "**1 Una pieza** no se pudo colocar porque es demasiado grande para colocar."
         unplaced_parts_plural: "Existen **{{ count }} piezas** que no se pudieron colocar porque son demasiado grandes para colocar."

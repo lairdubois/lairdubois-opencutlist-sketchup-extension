@@ -766,7 +766,8 @@ tab:
         parameters: Die Parameter sind nicht korrekt. Die Randabfallbreite ist grösser als 25 % der längsten Stange oder des längsten Kantenbands.
         no_parts: Kein Teil.
         no_sheet: Standard-Plattenmaße sind falsch konfiguriert und es stehen keine Plattenreste zu Verfügung.
-        no_placement_possible: "Keine Platzierung möglich (Seitenrand zu groß, Standard-Platte zu klein, Sägeschnitt zu groß, ...)."
+        no_placement_possible_1d: "Keine Platzierung möglich (Standard-Stange zu klein, Seitenrand zu groß, Sägeschnitt zu groß, ...)."
+        no_placement_possible_2d: "Keine Platzierung möglich (Standard-Platte zu klein, Seitenrand zu groß, Sägeschnitt zu groß, ...)."
         bad_error: "Algorithmusfehler. Bitte kontaktieren Sie die Entwickler, da Sie einen interessanten Fall haben."
         unplaced_parts: "**1 zu großes Teil** konnte nicht platziert werden."
         unplaced_parts_plural: "**{{ count }} zu große Teile** konnten nicht platziert werden."
