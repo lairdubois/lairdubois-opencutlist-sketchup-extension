@@ -33,7 +33,7 @@ default:
   select_all: Vybrat všechno
   unselect_all: Odznačit všechno
   draw: Kreslení
-  estimate: Odhadovat
+  estimate: Kalkulace
   empty_filename: Nepojmenovany.skp
   help: Pomoc
   error: Spravit!
