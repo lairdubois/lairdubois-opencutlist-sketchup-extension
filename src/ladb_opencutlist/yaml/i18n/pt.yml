@@ -766,7 +766,8 @@ tab:
         parameters: Os parâmetros são incorretos. A margem excede 25% da maior prancha ou fita de borda.
         no_parts: Nenhuma peça.
         no_sheet: Os tamanhos de chapa padrão estão configurados incorretamente e não há cortes disponíveis.
-        no_placement_possible: "Todas as suas partes são muito grandes para caber em uma chapa (aparagem muito grande, painel padrão muito pequeno, corte de serra muito grande, ...)."
+        no_placement_possible_1d: "Nenhuma peça pode ser colocada (barra padrão muito pequena, margem muito grande, lâmina de serra muito grossa, ...)."
+        no_placement_possible_2d: "Todas as suas partes são muito grandes para caber em uma chapa (painel padrão muito pequeno, aparagem muito grande, corte de serra muito grande, ...)."
         bad_error: "Erro de algoritmo. Favor entrar em contato com os desenvolvedores, pois você tem um caso interessante aqui."
         unplaced_parts: "**1 peça** é muito grande para colocar."
         unplaced_parts_plural: "**{{ count }} peças** são grandes demais para serem colocadas."
