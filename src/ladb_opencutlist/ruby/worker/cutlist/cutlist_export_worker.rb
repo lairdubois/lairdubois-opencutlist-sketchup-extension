@@ -24,7 +24,7 @@ module Ladb::OpenCutList
 
       @source = settings.fetch('source', options.fetch('source'))
       @col_sep = settings.fetch('col_sep', options.fetch('col_sep'))
-      @encoding = settings.fetch('col_sep', options.fetch('encoding'))
+      @encoding = settings.fetch('encoding', options.fetch('encoding'))
       @col_defs = settings.fetch('col_defs')
       @target = settings.fetch('target')
       @hidden_group_ids = settings.fetch('hidden_group_ids')
