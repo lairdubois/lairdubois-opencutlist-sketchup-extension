@@ -32,8 +32,8 @@ default:
   copy: نسخ
   select_all: تحديد الكل
   unselect_all: إزالة تحديد الكل
-  draw: ""
-  estimate: ""
+  draw: ارسم
+  estimate: ثمِّن
   empty_filename: skp.غير معنون
   help: مساعدة
   error: أُفّ !
@@ -85,7 +85,7 @@ core:
     command:
       dialog: OpenCutList
       smart_paint: صباغة القِطع
-      smart_axes: ""
+      smart_axes: وجِّه القطع
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
@@ -135,7 +135,7 @@ core:
       unzip: خطأ أثناء فك الضغط عن الملف.
   preset:
     label: الإعدادات المسبقة
-    manage: ""
+    manage: أدِر الإعدادات المسبقة
     save_to: حفظ باسم
     restore_from: استرجاع من
     app_defaults: إعدادات المصنع المسبقة
@@ -179,18 +179,18 @@ core:
       store: احفظ اللون
       remove: انس أمر اللون
     textinput_code:
-      snippets: ""
+      snippets: أمثلة عن المعادلات
       help: اضغط على **@** للحصول على قائمة المتغيرات.
     three_viewer:
-      view: "المنظر {{ view }}"
+      view: "منظر {{ view }}"
       view_isometric: متقايس
-      view_top: فوق
-      view_bottom: تحت
-      view_front: أمام
-      view_back: خلف
-      view_left: يسار
-      view_right: يمين
-      zoom: "المقياس {{ zoom }}"
+      view_top: علوي
+      view_bottom: سفلي
+      view_front: أمامي
+      view_back: خلفي
+      view_left: أيسر
+      view_right: أيمن
+      zoom: "مقياس {{ zoom }}"
       explode_factor: مدى التفجير
       toggle_box_helper: أظهر / أخف مكعب الإحاطة
       toggle_box_dimensions_helper: أظهر / أخف الأبعاد
@@ -408,8 +408,8 @@ tab:
       axes_origin_position_none: لا تغير المبدأ
       axes_origin_position_min: ضع المبدأ في زاوية
       axes_origin_position_center: ضع المبدأ في المركز
-      axes_origin_position_front_min: ""
-      axes_origin_position_front_center: ""
+      axes_origin_position_front_min: ضع المبدأ في إحدى زوايا الوجه الأمامي
+      axes_origin_position_front_center: ضع المبدأ في منتصف الوجه الأمامي
       over_length: على الطول
       over_width: على العرض
       edge_disabled_help: هذه الحاشية غير قابلة للتكوين لأنه لم يُعثر على وجه حامل للخامة في طرف هذه القطعة داخل النموذج.
@@ -742,7 +742,7 @@ tab:
         leftover: البواقي
         cut: قطع
         cut_plural: قطع
-        cut_trimming: ""
+        cut_trimming: التَّقليم
         cut_bounding: القَطع الابتدائي (المستوى 1)
         cut_bounding_plural: التقطيعات الابتدائية (المستوى 1)
         cut_internal_through: القَطع الابتدائي (المستوى 2)
@@ -766,7 +766,8 @@ tab:
         parameters: المؤشرات غير صحيحة، حجم التقليم يفوق 25% من حجم القضيب أو شريط الحاشية الأكبر
         no_parts: لا قطعة.
         no_sheet: لم يكوَّن اللوح النظامي بشكل صحيح و لا بواقيَ للقِطع محددةٌ.
-        no_placement_possible: "لا يمكن وضع أي قطعة ( حجم التقليم كبير للغاية، اللوح النظامي صغير للغاية، شفرة المنشار سميكة للغاية، ...)."
+        no_placement_possible_1d: ""
+        no_placement_possible_2d: "لا يمكن وضع أي قطعة ( حجم التقليم كبير للغاية، اللوح النظامي صغير للغاية، شفرة المنشار سميكة للغاية، ...)."
         bad_error: "خطأ لوغاريتمي، اتصل بالمطورين رجاء، فلديك حالة مهمة."
         unplaced_parts: "هناك **1 قطعة** لا يمكن أن تُدرج لأنها أكبر من أن تُحتوى."
         unplaced_parts_plural: "هناك **{{ count }} قطع** لا يمكن أن تدرج لأنها أكبر من أن تُحتوى."
@@ -876,28 +877,28 @@ tab:
       option_parts_opacity_help: حدد معدل شفافية القِطع.
       option_pins: البطاقات
       option_pins_hidden: عرض
-      option_pins_hidden_0: بالفقاعات
-      option_pins_hidden_1: بلا فقاعات
-      option_pins_hidden_help: أظهر أو أخف فقاعات القِطَعِ المحتوية على رقمها أو وصفها
+      option_pins_hidden_0: بالبطاقات
+      option_pins_hidden_1: بلا بطاقات
+      option_pins_hidden_help: أظهر أو أخف بطاقات القِطَعِ المحتوية على رقمها أو وصفها
       option_pins_colored: اللون
       option_pins_colored_0: بلا لون
-      option_pins_colored_1: لون القِطعة
-      option_pins_colored_help: حدد لون الفقاعات
+      option_pins_colored_1: بلون القِطعة
+      option_pins_colored_help: حدد لون البطاقات
       option_pins_formula: الصيغة
-      option_pins_formula_help: تتيح لك كتاب كود برمجي بلغة *Ruby* لتخصيص نص اللصاقة
+      option_pins_formula_help: تتيح لك كتابة كود برمجي بلغة *Ruby* لتخصيص النص داخل البطاقة
       option_pins_length: الطول
       option_pins_length_0: بلا سهم
-      option_pins_length_1: صغير
-      option_pins_length_2: متوسطة
-      option_pins_length_3: كبيرة
-      option_pins_length_help: حدد طول سهم الفقاعة
+      option_pins_length_1: قصير
+      option_pins_length_2: متوسط
+      option_pins_length_3: كبير
+      option_pins_length_help: حدد طول سهم البطاقة
       option_pins_direction: الاتجاه
       option_pins_direction_0: وفقا للمحور الأحمر
       option_pins_direction_1: وفقا للمحور الأخضر
       option_pins_direction_2: وفقا للمحور الأزرق
       option_pins_direction_3: التوجه نحو مركز المجموعة الأم
       option_pins_direction_4: التوجه نحو مركز التحديد
-      option_pins_direction_help: حدد اتجاه أسهم الفقاعات لقراءة أفضل
+      option_pins_direction_help: حدد اتجاه أسهم البطاقات لقراءة أفضل
       option_page: حجم الورق
       option_page_format: المقاس
       option_page_format_portrait: اتجاه عمودي
@@ -930,15 +931,15 @@ tab:
           **تأكد أن الملف ليس مفتوحا في Layout**
       warning:
         is_group_selection: لن تُرسم القِطَعُ المتضمَّنة في **المجموعات المخفية** داخل قائمة القِطَع.
-        is_part_selection: معينة هذا الرسم محدودة بـ **القطع المحددة**
+        is_part_selection: معاينة هذا الرسم محدودة بـ **القطع المحددة**
     snippet:
       number: الرقم
       name: التسمية
-      number_and_name: ""
-      number_without_hardware: ""
+      number_and_name: الرقم و الوصف
+      number_without_hardware: الرقم (بدون الأكسسوارات)
       size: البعد النهائي
-      area: ""
-      volume: ""
+      area: المساحة
+      volume: الحجم
     error:
       no_model: لا يوجد نموذج مفتوح. عليك أن تزودني بمعلومات أكثر ;)
       no_entities: نموذجك فارغ. عليك أن تزودني بمعلومات أكثر ;)
@@ -986,7 +987,7 @@ tab:
       grain_direction: اتجاه تعرّق الألياف
       colorized: سيضاف هذا اللون إلى الهيئة السطحية -تكستشر- لهذه الخامة عندما يجري تصييرها -رندرتها- في النموذج
       texture_load: حمّل هيئة سطحية - تكستشر جديدة
-      texture_clear: ""
+      texture_clear: أزل الهيئة السطحية - التكستشر
       edit: "عدل خصائص '{{ name }}'"
       set_current: |
         اصبغ القِطع بـ '{{ name }}'
@@ -1011,7 +1012,7 @@ tab:
       title: "خصائص الخامة '{{ name }}'"
       general: عام
       texture: الهيئة السطحية -التكستشر-
-      no_texture: ""
+      no_texture: لا وجود لهيئة سطحية - تكستشر
       name: وصف
       type: النوع
       cut_options: خيارات التقطيع
@@ -1346,7 +1347,7 @@ tool:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_paint:
-    title: ""
+    title: لوِّن
     default_material: بلا خامة
     filters: مُرَشِّح
     filter_0: بلا نوع محدد
@@ -1356,20 +1357,22 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: صباغة وجهٍ
+    action_0: لوِّن قِطعًا بأكملها
     action_0_status: ""
     action_1: صباغة قطعةٍ
     action_1_status: ""
     action_2: تنقية وجهٍ
     action_2_status: ""
     action_3: تنقية قطعةٍ
-    action_3_status: ""
+    action_3_status: انقر على وجه معين لأخذ عينة من خامته.
+    action_4: نقِّ
+    action_4_status: ""
     edges: ""
     edges_plural: ""
-    edge_ymin: ""
-    edge_ymax: ""
-    edge_xmin: ""
-    edge_xmax: ""
+    edge_ymin: الطول 1
+    edge_ymax: الطول 2
+    edge_xmin: العرض 1
+    edge_xmax: العرض 2
     faces: ""
     faces_plural: ""
     face_zmin: ظهر قشرة الخشب
@@ -1385,19 +1388,17 @@ tool:
   smart_axes:
     title: ""
     toggle_depth: ""
-    action_0: ""
+    action_0: اقلِب
     action_0_status: ""
-    action_1: ""
-    action_1_status: ""
-    action_2: ""
-    action_2_status: ""
+    action_1: بادِل الطول ↔ العرض
+    action_1_status: انقر على قِطعة معينة لمبادلة طولها بعرضها
+    action_2: بادل الأمام ↔ الخلف
+    action_2_status: انقر على قِطعة معينة لمبادلة أمامِها بخلفها
     action_3: ""
     action_3_status: ""
-    action_modifier_length: ""
-    action_modifier_width: ""
-    action_modifier_thickness: ""
-    success:
-      part_oriented: ""
+    action_modifier_length: ط
+    action_modifier_width: ع
+    action_modifier_thickness: س
     warning:
       more_entities: ""
     error:
