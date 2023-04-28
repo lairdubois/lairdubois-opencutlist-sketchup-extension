@@ -1391,10 +1391,10 @@ tool:
     toggle_depth: Zadní část
     action_0: Překlopit
     action_0_status: Kliknutím na díl otočíte jeho osy podél jednoho z jeho rozměrů
-    action_1: Výměna délka ↔ šířka
-    action_1_status: Kliknutím na díl zaměníte jeho délku za šířku
-    action_2: Vyměňte přední ↔ zadní stranu
-    action_2_status: Kliknutím na díl zaměníte jeho přední stranu se zadní stranou
+    action_1: Výměna ... délka ↔ šířka ... u dílce
+    action_1_status: Kliknutím na dílec zaměníte jeho délku za šířku
+    action_2: Vyměna ... přední hrana ↔ zadní hrana ... u dílce
+    action_2_status: Kliknutím na dílec zaměníte jeho přední hranu se zadní hranou
     action_3: Přizpůsobte osy
     action_3_status: Kliknutím na plochu nebo hranu dílce upravíte orientaci os
     action_modifier_length: D
