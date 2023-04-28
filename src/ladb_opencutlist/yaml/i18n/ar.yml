@@ -62,12 +62,12 @@ default:
   setup_model_units: تكوين وحدات النموذج
   load_more: رفع إضافي
   reset_to_app_defaults: استعادة القيم الأصلية
-  constrain_key: ""
-  copy_key_win: ""
+  constrain_key: Shift
+  copy_key_win: Ctrl
   copy_key_mac: Option
   alt_key_win: Alt
   alt_key_mac: Command
-  tab_key: ""
+  tab_key: Tab
 core:
   menu:
     submenu: OpenCutList
@@ -766,7 +766,7 @@ tab:
         parameters: المؤشرات غير صحيحة، حجم التقليم يفوق 25% من حجم القضيب أو شريط الحاشية الأكبر
         no_parts: لا قطعة.
         no_sheet: لم يكوَّن اللوح النظامي بشكل صحيح و لا بواقيَ للقِطع محددةٌ.
-        no_placement_possible_1d: ""
+        no_placement_possible_1d: "لا يمكن وضع أي قطعة ( حجم التقليم كبير للغاية، اللوح النظامي صغير للغاية، شفرة المنشار سميكة للغاية، ...)."
         no_placement_possible_2d: "لا يمكن وضع أي قطعة ( حجم التقليم كبير للغاية، اللوح النظامي صغير للغاية، شفرة المنشار سميكة للغاية، ...)."
         bad_error: "خطأ لوغاريتمي، اتصل بالمطورين رجاء، فلديك حالة مهمة."
         unplaced_parts: "هناك **1 قطعة** لا يمكن أن تُدرج لأنها أكبر من أن تُحتوى."
@@ -1239,6 +1239,7 @@ tab:
         لتوسيع الاحتمالات بشكل أكبر، نود تمكين تصدير مخططات التقطيع بتنسيق **SVG**.
         من خلال تزويدنا بالموارد للعمل على هذه الصادرات ، فإنك تمنحنا الفرصة لمساعدتك في تحقيق أقصى استفادة من *OpenCutList*.
       layout: |
+        الهدف من هذا الجزء هو تسهيل طباعة معاينة لمشروعك و إظهار **منظرٍ مُفجَّرٍ** له مع تعيين للقِطَعِ وفقا لرقمها المعطى لها في قائمة القِطع.
     objective_crowdfunding: |
       سيجري تطوير هذه الوظائف الجديدة عبر **التمويل التشاركي** و ستكون البداية عند بلوغ **الهدف المالي**.
     objective_thanks: |
@@ -1358,49 +1359,49 @@ tool:
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
     action_0: لوِّن قِطعًا بأكملها
-    action_0_status: ""
+    action_0_status: انقر على قِطعة معينة لتطبق لونا على مثيلتها
     action_1: صباغة قطعةٍ
-    action_1_status: ""
+    action_1_status: "'$t(tab.materials.type_4)' انقر على حاشية لوح معين لتطبيق"
     action_2: تنقية وجهٍ
-    action_2_status: ""
+    action_2_status: "'$t(tab.materials.type_6)' انقر على وجه لوح معين لتطبيق"
     action_3: تنقية قطعةٍ
     action_3_status: انقر على وجه معين لأخذ عينة من خامته.
     action_4: نقِّ
-    action_4_status: ""
-    edges: ""
-    edges_plural: ""
+    action_4_status: انقر على قطعة معينة لتزيل كل الخامات منها و من مثيلاتها
+    edges: "حاشية {{ count }}"
+    edges_plural: " حواشٍ {{ count }}"
     edge_ymin: الطول 1
     edge_ymax: الطول 2
     edge_xmin: العرض 1
     edge_xmax: العرض 2
-    faces: ""
-    faces_plural: ""
+    faces: "وجه {{ count }}"
+    faces_plural: "وجوه {{ count }}"
     face_zmin: ظهر قشرة الخشب
     face_zmax: أمام
     warning:
       no_material: لا يحتوي نموذجك على أي خامة!
-      no_material_type: ""
+      no_material_type: "'{{ type }}' لا توجد خامة من نوع"
     error:
-      not_part: ""
-      not_edge: ""
-      not_face: ""
-      wrong_material_type: ""
+      not_part: الموضع المستهدف ليس قِطعة
+      not_edge: الوجه المستهدف ليس حاشية لوح
+      not_face: الوجه المستهدف ليس وجه لوح
+      wrong_material_type: "يجب أن تكون القِطعة المستهدفة من النوع '{{ type }}'"
   smart_axes:
-    title: ""
-    toggle_depth: ""
+    title: وجِّه
+    toggle_depth: القِطع في الخلفية
     action_0: اقلِب
-    action_0_status: ""
+    action_0_status: انقر على قِطعة معينة لتقلب مثيلتها تبعا لأحد أبعادها
     action_1: بادِل الطول ↔ العرض
     action_1_status: انقر على قِطعة معينة لمبادلة طولها بعرضها
     action_2: بادل الأمام ↔ الخلف
     action_2_status: انقر على قِطعة معينة لمبادلة أمامِها بخلفها
-    action_3: ""
-    action_3_status: ""
+    action_3: عدِّل المحاور
+    action_3_status: انقر على وجه أو حاشية قِطعة ما لتعديل توجيه محاورها
     action_modifier_length: ط
     action_modifier_width: ع
     action_modifier_thickness: س
     warning:
-      more_entities: ""
+      more_entities: "{{ count_used }} مثيلات تشترك في التعريف ذاته ستُعدّل"
     error:
-      not_part: ""
-      not_orientable: ""
+      not_part: الموضع المستهدف ليس قِطعة
+      not_orientable: نوع هذه القِطعة لا يسمح بتوجيهها
