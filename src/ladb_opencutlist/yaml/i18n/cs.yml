@@ -33,7 +33,7 @@ default:
   select_all: Vybrat všechno
   unselect_all: Odznačit všechno
   draw: Kreslení
-  estimate: Odhadovat
+  estimate: Kalkulace
   empty_filename: Nepojmenovany.skp
   help: Pomoc
   error: Spravit!
@@ -766,7 +766,8 @@ tab:
         parameters: Parametry jsou nesprávné. Velikost ořezu je větší než 25% nejdelší desky nebo hrany.
         no_parts: Žádný dílec.
         no_sheet: Standardní velikosti panelů je špatně nakonfigurována a nejsou k dispozici žádné zbytky.
-        no_placement_possible: "Není možné žádné umístění (příliš velká velikost ořezu, příliš malý standardní panel, příliš velká šířka řezu, ...)."
+        no_placement_possible_1d: "Není možné umístění (standardní deska je příliš malá, velikost ořezu příliš velká, řezná spára příliš velká, ...)."
+        no_placement_possible_2d: "Není možné žádné umístění (příliš velká velikost ořezu, příliš malý standardní panel, příliš velká šířka řezu, ...)."
         bad_error: "Chyba v algoritmu, prosím kontaktujte vývojáře, máte zajímavý případ."
         unplaced_parts: "**1 část** nelze umístit, protože je příliš velká, nevleze se."
         unplaced_parts_plural: "Existují části **{{ count }}** nelze umístit, protože je příliš velká, nevleze se."
@@ -1347,7 +1348,7 @@ tool:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_paint:
-    title: Malovat
+    title: Přiřazení materiálů
     default_material: Není definován žádný materiál
     filters: Filtr
     filter_0: Bez typu
@@ -1358,15 +1359,15 @@ tool:
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
     action_0: Materiál dílů
-    action_0_status: Kliknutím na součást povrchově upravíte její instanci
+    action_0_status: Kliknutím na díl přiřadíme materiál
     action_1: Materiál hran
-    action_1_status: Kliknutím na hranu dílce použijete '$t(tab.materials.type_4)'
+    action_1_status: Kliknutím na hranu dílce přiřadíme '$t(tab.materials.type_4)'
     action_2: Materiál dýh
-    action_2_status: Kliknutím na plochu dílce použijete '$t(tab.materials.type_6)'
-    action_3: Vyčistit část
+    action_2_status: Kliknutím na plochu dílce přiřadíme '$t(tab.materials.type_6)'
+    action_3: Vzorek materiálu - kapátko
     action_3_status: Kliknutím na plochu naberete její materiál
-    action_4: Vyčistit
-    action_4_status: Kliknutím na díl odstraníte všechny materiály z jeho definice a instance
+    action_4: Vyčistit díl
+    action_4_status: Kliknutím na díl odstraníte všechny materiály z tohoto dílu
     edges: "{{ count }} hrana"
     edges_plural: "{{ count }} hran"
     edge_ymin: Délka 1
@@ -1389,11 +1390,11 @@ tool:
     title: Orientace
     toggle_depth: Zadní část
     action_0: Překlopit
-    action_0_status: Kliknutím na díl otočíte jeho instanci podél jednoho z jeho rozměrů
+    action_0_status: Kliknutím na díl otočíte jeho osy podél jednoho z jeho rozměrů
     action_1: Výměna délka ↔ šířka
     action_1_status: Kliknutím na díl zaměníte jeho délku za šířku
     action_2: Vyměňte přední ↔ zadní stranu
-    action_2_status: Kliknutím na součást prohodíte její přední stranu se zadní stranou
+    action_2_status: Kliknutím na díl zaměníte jeho přední stranu se zadní stranou
     action_3: Přizpůsobte osy
     action_3_status: Kliknutím na plochu nebo hranu dílce upravíte orientaci os
     action_modifier_length: D

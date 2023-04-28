@@ -31,9 +31,9 @@ default:
   upgrade: Atualizar
   copy: Copiar
   select_all: Selecione todos
-  unselect_all: Desmarque todos
+  unselect_all: Desmarcar tudo
   draw: Desenhar
-  estimate: ""
+  estimate: Estimar
   empty_filename: Sem nome.skp
   help: Ajuda
   error: Droga!
@@ -290,7 +290,7 @@ tab:
       children_size_increase: "Esta dimensão foi aumentada por um superdimensionamento para {{ count }} peça agrupadas"
       invalid_final_area: "Cuidado, a somatória desta área não pôde ser calculada porque {{ count }} peça (de {{ total }}) tem uma área inválida"
       invalid_final_area_plural: "Cuidado, a somatória desta área não pôde ser calculada porque {{ count }} peças (de {{ total }}) têm uma área inválida"
-      is_dynamic_attributes_name: Descrição extraída do atributo 'Name' do componente dinâmico
+      is_dynamic_attributes_name: Designação extraída do atributo 'Name' do componente dinâmico
       size_increased: "A dimensão foi aumentada pelo superdimensionamento de {{ value }}"
       has_edges: "Esta peça contém {{ count }} fitas de borda"
       has_edges_plural: "Esta peça contém {{ count }} fitas de borda"
@@ -301,8 +301,8 @@ tab:
       edge_ymax: Comprimento da borda 2
       edge_xmin: Largura da borda 1
       edge_xmax: Largura da borda 2
-      face_zmin: Verso da chapa laminada
-      face_zmax: Frente da chapa laminada
+      face_zmin: Verso
+      face_zmax: Frente
       dblclick_to_copy_all_edges: Clique duas vezes aqui para duplicar este valor para todas as outras arestas
       dblclick_to_copy_all_faces: Clique duas vezes aqui para replicar este valor para a outra face
       dblclick_to_sort_axes: Dê duplo clique aqui para reordenar automaticamente os eixos de acordo com as dimensões da peça
@@ -336,7 +336,7 @@ tab:
       general: Geral
       extra_help: "Lista de propriedades específicas do tipo de material \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Fita de Borda
-      faces: Laminados
+      faces: Face
       name: Descrição
       material: Material
       cumulable: Pode somar
@@ -408,8 +408,8 @@ tab:
       axes_origin_position_none: Não mude a origem
       axes_origin_position_min: Coloque a origem em um canto
       axes_origin_position_center: Coloque a origem no centro
-      axes_origin_position_front_min: Coloque a origem no canto da face da chapa
-      axes_origin_position_front_center: Coloque a origem no centro da face da chapa
+      axes_origin_position_front_min: Coloque a origem no canto da chapa
+      axes_origin_position_front_center: Coloque a origem no centro da chapa
       over_length: Em todo o comprimento
       over_width: Em toda a largura
       edge_disabled_help: Esta borda não é configurável porque não foi detectada nenhuma face com o mesmo material desta fita de borda no modelo.
@@ -462,7 +462,7 @@ tab:
       hide_edges: Esconda a coluna de Fitas de Borda
       hide_edges_help: "Se esta opção for selecionada, as **colunas de Fita de Borda** de peças do tipo *Chapa* serão ocultadas."
       hide_faces: Ocultar as colunas dos laminados
-      hide_faces_help: "Se esta opção for selecionada, as **colunas \"laminados\"** das peças do tipo *Chapas* ficarão ocultas."
+      hide_faces_help: "Se esta opção for selecionada, as **colunas face** das peças do tipo *Chapas* ficarão ocultas."
       minimize_on_highlight: Mimimize após *'$t(tab.cutlist.highlight_part) ...'*
       minimize_on_highlight_help: "Se esta opção for selecionada, a janela OpenCutList será minimizada quando a função *'$t(tab.cutlist.highlight_part)'* for aplicada."
       general: Geral
@@ -476,7 +476,7 @@ tab:
       property_thickness: Espessura
       property_length: Comprimento
       property_width: Largura
-      property_name: Descrição
+      property_name: Designação
       property_count: Quantidade
       property_edge_pattern: Número de fitas de borda
       property_tags: Identificação
@@ -501,7 +501,7 @@ tab:
       area_short: Área
       volume: Volume
       number: Não.
-      name: Descrição
+      name: Designação
       count: Qtd.
       cutting: Aproximado
       bbox: Acabado
@@ -515,7 +515,7 @@ tab:
       thickness: Espessura
       thickness_short: E
       edges: Fita de Borda
-      faces: Laminados
+      faces: Faces
     export:
       title: Exportar
       info_0: |
@@ -548,7 +548,7 @@ tab:
       number: Não.
       path: Caminho
       instance_name: Instância
-      name: Descrição
+      name: Designação
       total_cutting_length: Comprimento total - bruto
       total_cutting_area: Área total - bruta
       total_cutting_volume: Volume total - bruto
@@ -572,8 +572,8 @@ tab:
       edge_ymax: Comprimento da borda 2
       edge_xmin: Largura da borda 1
       edge_xmax: Largura da borda 2
-      face_zmin: Verso do laminado
-      face_zmax: Frente do laminado
+      face_zmin: Verso
+      face_zmax: Face
       layer: Etiqueta
       layers: Etiquetas
       placeholder:
@@ -742,7 +742,7 @@ tab:
         leftover: Sobras
         cut: Corte
         cut_plural: Cortes
-        cut_trimming: ""
+        cut_trimming: Corte de apara
         cut_bounding: Corte primário (nível 1)
         cut_bounding_plural: Cortes primários (nível 1)
         cut_internal_through: Corte primário (nível 2)
@@ -766,7 +766,8 @@ tab:
         parameters: Os parâmetros são incorretos. A margem excede 25% da maior prancha ou fita de borda.
         no_parts: Nenhuma peça.
         no_sheet: Os tamanhos de chapa padrão estão configurados incorretamente e não há cortes disponíveis.
-        no_placement_possible: "Todas as suas partes são muito grandes para caber em uma chapa (aparagem muito grande, painel padrão muito pequeno, corte de serra muito grande, ...)."
+        no_placement_possible_1d: "Nenhuma peça pode ser colocada (barra padrão muito pequena, margem muito grande, lâmina de serra muito grossa, ...)."
+        no_placement_possible_2d: "Todas as suas partes são muito grandes para caber em uma chapa (painel padrão muito pequeno, aparagem muito grande, corte de serra muito grande, ...)."
         bad_error: "Erro de algoritmo. Favor entrar em contato com os desenvolvedores, pois você tem um caso interessante aqui."
         unplaced_parts: "**1 peça** é muito grande para colocar."
         unplaced_parts_plural: "**{{ count }} peças** são grandes demais para serem colocadas."
@@ -824,7 +825,7 @@ tab:
       option_color: Cor
       formula:
         part_number: Número
-        part_name: Descrição
+        part_name: Designação
         part_description: Descrição
         part_entity_named_path: Caminho da instância
         part_entity_name: Nome da instância
@@ -862,7 +863,7 @@ tab:
         formula_not_available: A fórmula não está disponível neste contexto
     layout:
       title: Desenho
-      to_layout: ""
+      to_layout: Exportar para o Layout
       options_layout: Composição
       options_settings: Configuração
       option_parts: Peças
@@ -878,7 +879,7 @@ tab:
       option_pins_hidden: Exibição
       option_pins_hidden_0: Com etiquetas
       option_pins_hidden_1: Sem etiquetas
-      option_pins_hidden_help: Exibe ou esconde as setas apontando para as peças para indicar seu número ou designação.
+      option_pins_hidden_help: Exibe ou esconde as setas que indicam o número ou designação das peças.
       option_pins_colored: Cor
       option_pins_colored_0: Sem cor
       option_pins_colored_1: Cor da peça
@@ -923,19 +924,22 @@ tab:
       option_explode: Vista Explodida
       error:
         no_part: Não tem nenhuma peça para desenhar.
-        failed_to_save_as_skp: ""
+        failed_to_save_as_skp: Falha ao escrever o arquivo SKP para enviar ao Layout.
         failed_to_layout: |
+          Erro ao escrever o arquivo do Layout: *{{ error }}*
+
+          **Certifique-se de que o arquivo não está aberto no Layout.**
       warning:
         is_group_selection: As peças dentro dos **grupos mascarados** da sua lista de peças não serão desenhadas.
         is_part_selection: Esta visão geral é limitada às **peças selecionadas**.
     snippet:
       number: Número
-      name: Descrição
-      number_and_name: ""
-      number_without_hardware: ""
-      size: Dimensão
-      area: ""
-      volume: ""
+      name: Designação
+      number_and_name: Número e designação
+      number_without_hardware: Número (sem acessórios)
+      size: Tamanho
+      area: Superfície disponível
+      volume: Volume
     error:
       no_model: Nenhum modelo está aberto. Você precisará me fornecer mais informações;)
       no_entities: Seu modelo está vazio. Você precisará me fornecer mais informações;)
@@ -983,7 +987,7 @@ tab:
       grain_direction: Direção dos veios
       colorized: Este tom será aplicado à textura deste material quando for renderizado no modelo
       texture_load: Carrega uma nova textura
-      texture_clear: ""
+      texture_clear: Remover textura
       edit: "Edite as propriedades de '{{ name }}'"
       set_current: |
         Pinta peças com '{{ name }}'.
@@ -1008,7 +1012,7 @@ tab:
       title: "Propriedades do material '{{ name }}'"
       general: Geral
       texture: Textura
-      no_texture: ""
+      no_texture: Sem textura
       name: Nome
       type: Tipo
       cut_options: Parâmetros de corte
@@ -1143,7 +1147,7 @@ tab:
       unused: Não utilizado
       mandatory: Campos obrigatórios
       optional: Campos opcionais
-      name: Descrição
+      name: Designação
       count: Quantidade
       bbox_length: Comprimento
       bbox_width: Largura
@@ -1162,7 +1166,7 @@ tab:
         *Verifique se você selecionou o separador de campo correto.*
       empty_file: O arquivo parece vazio ou não pode ser interpretado.
       no_importable_part: Nenhuma peça pode ser importada. Atribua os campos obrigatórios às colunas correspondentes.
-      invalid_name: Descrição inválida
+      invalid_name: Designação inválida
       invalid_length: Comprimento inválido
       invalid_width: Largura inválida
       invalid_thickness: Espessura inválida
@@ -1344,7 +1348,7 @@ tool:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_paint:
-    title: ""
+    title: Pintar
     default_material: Nenhum material definido
     filters: Filtros
     filter_0: Sem tipo
@@ -1354,50 +1358,50 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: ""
-    action_0_status: ""
+    action_0: Pintar peças
+    action_0_status: Clique em uma peça para aplicar um material à sua instância
     action_1: Pintar peça
-    action_1_status: ""
+    action_1_status: Clique na borda de uma peça do painel para aplicar um material '$t(tab.materials.type_4)' ao mesmo
     action_2: Limpar face
-    action_2_status: ""
-    action_3: Limpar peça
-    action_3_status: ""
-    action_4: ""
-    action_4_status: ""
-    edges: ""
-    edges_plural: ""
-    edge_ymin: ""
-    edge_ymax: ""
-    edge_xmin: ""
-    edge_xmax: ""
-    faces: ""
-    faces_plural: ""
-    face_zmin: Verso do laminado
-    face_zmax: Frontal
+    action_2_status: Clique na face de uma peça da chapa para aplicar um material '$t(tab.materials.type_6)' a ela
+    action_3: Amostra
+    action_3_status: Clique em uma face para obter uma amostra do material
+    action_4: Limpar
+    action_4_status: Clique em uma peça para remover todos os materiais do desenho e de todas as suas instâncias
+    edges: "{{ count }} canto"
+    edges_plural: "{{ count }} cantos"
+    edge_ymin: Composição 1
+    edge_ymax: Comprimento 2
+    edge_xmin: Largura 1
+    edge_xmax: Largura 2
+    faces: "{{ count }} face"
+    faces_plural: "{{ count }} faces"
+    face_zmin: Verso
+    face_zmax: Frente
     warning:
-      no_material: O seu modelo não contém nenhum material!
-      no_material_type: ""
+      no_material: Nenhum material definido
+      no_material_type: "Nenhum material '{{ type }}'"
     error:
-      not_part: ""
-      not_edge: ""
-      not_face: ""
-      wrong_material_type: ""
+      not_part: O objeto de destino não é uma peça
+      not_edge: A face selecionada não é um canto da placa
+      not_face: A face selecionada não é uma face da placa
+      wrong_material_type: "A peça de destino deve ser do tipo '{{ type }}'"
   smart_axes:
-    title: ""
-    toggle_depth: ""
-    action_0: ""
-    action_0_status: ""
-    action_1: ""
-    action_1_status: ""
-    action_2: ""
-    action_2_status: ""
-    action_3: ""
-    action_3_status: ""
-    action_modifier_length: ""
-    action_modifier_width: ""
-    action_modifier_thickness: ""
+    title: Orientação
+    toggle_depth: Peças de fundo
+    action_0: Inverter
+    action_0_status: Clique em uma peça para virar sua instância ao longo de uma de suas dimensões
+    action_1: Inverter Comprimento ↔ Largura
+    action_1_status: Clique em uma peça para inverter o comprimento pela largura
+    action_2: Trocar frente ↔ Fundo
+    action_2_status: Clique em uma peça para trocar a Frente pelo seu fundo
+    action_3: Adaptar os eixos
+    action_3_status: Clique na face ou na borda de uma peça para alterar seus eixos
+    action_modifier_length: C
+    action_modifier_width: L
+    action_modifier_thickness: E
     warning:
-      more_entities: ""
+      more_entities: "{{ count_used }} as instâncias que compartilham a mesma definição serão modificadas"
     error:
-      not_part: ""
-      not_orientable: ""
+      not_part: O objeto de destino não é uma peça
+      not_orientable: O tipo desta peça não permite que a orientação seja modificada
