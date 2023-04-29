@@ -67,15 +67,15 @@ module Ladb::OpenCutList
       end
 
       # Create cursors
-      @cursor_paint_part_id = create_cursor('paint-part', 2, 14)
-      @cursor_paint_edge_1_id = create_cursor('paint-edge-1', 2, 14)
-      @cursor_paint_edge_2_id = create_cursor('paint-edge-2', 2, 14)
-      @cursor_paint_edge_4_id = create_cursor('paint-edge-4', 2, 14)
-      @cursor_paint_face_1_id = create_cursor('paint-face-1', 2, 14)
-      @cursor_paint_face_2_id = create_cursor('paint-face-2', 2, 14)
-      @cursor_paint_clean_id = create_cursor('paint-clean', 2, 14)
-      @cursor_picker_id = create_cursor('picker', 2, 22)
-      @cursor_paint_error_id = create_cursor('paint-error', 2, 14)
+      @cursor_paint_part_id = create_cursor('paint-part', 2, 15)
+      @cursor_paint_edge_1_id = create_cursor('paint-edge-1', 2, 15)
+      @cursor_paint_edge_2_id = create_cursor('paint-edge-2', 2, 15)
+      @cursor_paint_edge_4_id = create_cursor('paint-edge-4', 2, 15)
+      @cursor_paint_face_1_id = create_cursor('paint-face-1', 2, 15)
+      @cursor_paint_face_2_id = create_cursor('paint-face-2', 2, 15)
+      @cursor_paint_clean_id = create_cursor('paint-clean', 2, 15)
+      @cursor_picker_id = create_cursor('picker', 3, 29)
+      @cursor_paint_error_id = create_cursor('paint-error', 2, 15)
 
     end
 

@@ -51,12 +51,12 @@ module Ladb::OpenCutList
       super(true, false)
 
       # Create cursors
-      @cursor_swap_length_width_clockwise = create_cursor('swap-length-width-clockwise', 4, 4)
-      @cursor_swap_length_width_anticlockwise = create_cursor('swap-length-width-anticlockwise', 4, 4)
-      @cursor_swap_front_back = create_cursor('swap-front-back', 4, 4)
-      @cursor_adapt_axes = create_cursor('adapt-axes', 4, 4)
-      @cursor_flip = create_cursor('flip', 4, 4)
-      @cursor_select_error = create_cursor('select-error', 4, 4)
+      @cursor_swap_length_width_clockwise = create_cursor('swap-length-width-clockwise', 0, 0)
+      @cursor_swap_length_width_anticlockwise = create_cursor('swap-length-width-anticlockwise', 0, 0)
+      @cursor_swap_front_back = create_cursor('swap-front-back', 0, 0)
+      @cursor_adapt_axes = create_cursor('adapt-axes', 0, 0)
+      @cursor_flip = create_cursor('flip', 0, 0)
+      @cursor_select_error = create_cursor('select-error', 0, 0)
 
     end
 

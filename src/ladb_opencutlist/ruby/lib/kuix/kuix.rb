@@ -92,7 +92,7 @@ module Ladb::OpenCutList
         @quit_on_undo = quit_on_undo
 
         # Cursor management
-        @cursor_select_id = create_cursor('select', 4, 7)
+        @cursor_select_id = create_cursor('select', 0, 0)
         @cursors = [ @cursor_select_id ]
 
         # Internals
