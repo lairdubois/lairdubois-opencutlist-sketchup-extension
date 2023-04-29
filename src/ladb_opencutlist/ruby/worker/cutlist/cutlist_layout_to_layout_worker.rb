@@ -138,120 +138,131 @@ module Ladb::OpenCutList
 
         # CREATE LAYOUT FILE
 
-        doc = Layout::Document.new
+        begin
 
-        # Set document's page infos
-        page_info = doc.page_info
-        page_info.width = @page_width
-        page_info.height = @page_height
-        page_info.top_margin = 0.25
-        page_info.right_margin = 0.25
-        page_info.bottom_margin = 0.25
-        page_info.left_margin = 0.25
+          doc = Layout::Document.new
 
-        # Set document's units and precision
-        case DimensionUtils.instance.length_unit
-        when DimensionUtils::INCHES
-          if DimensionUtils.instance.length_format == DimensionUtils::FRACTIONAL
-            doc.units = Layout::Document::FRACTIONAL_INCHES
-          else
-            doc.units = Layout::Document::DECIMAL_INCHES
+          # Set document's page infos
+          page_info = doc.page_info
+          page_info.width = [ 200, [ 1, @page_width ].max ].min     # Layout width limits [0, 200]
+          page_info.height = [ 200, [ 1, @page_height ].max ].min   # Layout height limits [1, 200]
+          page_info.top_margin = 0.25
+          page_info.right_margin = 0.25
+          page_info.bottom_margin = 0.25
+          page_info.left_margin = 0.25
+
+          # Set document's units and precision
+          case DimensionUtils.instance.length_unit
+          when DimensionUtils::INCHES
+            if DimensionUtils.instance.length_format == DimensionUtils::FRACTIONAL
+              doc.units = Layout::Document::FRACTIONAL_INCHES
+            else
+              doc.units = Layout::Document::DECIMAL_INCHES
+            end
+          when DimensionUtils::FEET
+            doc.units = Layout::Document::DECIMAL_FEET
+          when DimensionUtils::MILLIMETER
+            doc.units = Layout::Document::DECIMAL_MILLIMETERS
+          when DimensionUtils::CENTIMETER
+            doc.units = Layout::Document::DECIMAL_CENTIMETERS
+          when DimensionUtils::METER
+            doc.units = Layout::Document::DECIMAL_METERS
           end
-        when DimensionUtils::FEET
-          doc.units = Layout::Document::DECIMAL_FEET
-        when DimensionUtils::MILLIMETER
-          doc.units = Layout::Document::DECIMAL_MILLIMETERS
-        when DimensionUtils::CENTIMETER
-          doc.units = Layout::Document::DECIMAL_CENTIMETERS
-        when DimensionUtils::METER
-          doc.units = Layout::Document::DECIMAL_METERS
-        end
-        doc.precision = _to_layout_length_precision(DimensionUtils.instance.length_precision)
+          doc.precision = _to_layout_length_precision(DimensionUtils.instance.length_precision)
 
-        page = doc.pages.first
-        layer = doc.layers.first
+          page = doc.pages.first
+          layer = doc.layers.first
 
-        # Set page name
-        page.name = doc_name
+          # Set page name
+          page.name = doc_name
 
-        # Set auto text definitions
-        doc.auto_text_definitions.add('OpenCutListGeneratedAt', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = @generated_at
-        doc.auto_text_definitions.add('OpenCutListLengthUnit', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = Plugin.instance.get_i18n_string("default.unit_#{DimensionUtils.instance.length_unit}")
-        doc.auto_text_definitions.add('OpenCutListScale', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = _camera_zoom_to_scale(@camera_zoom)
-        doc.auto_text_definitions.add('OpenCutListModelDescription', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = @cutlist.model_description
-        doc.auto_text_definitions.add('OpenCutListPageDescription', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = @cutlist.page_description
+          # Set auto text definitions
+          doc.auto_text_definitions.add('OpenCutListGeneratedAt', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = @generated_at
+          doc.auto_text_definitions.add('OpenCutListLengthUnit', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = Plugin.instance.get_i18n_string("default.unit_#{DimensionUtils.instance.length_unit}")
+          doc.auto_text_definitions.add('OpenCutListScale', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = _camera_zoom_to_scale(@camera_zoom)
+          doc.auto_text_definitions.add('OpenCutListModelDescription', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = @cutlist.model_description
+          doc.auto_text_definitions.add('OpenCutListPageDescription', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = @cutlist.page_description
 
-        # Add header
-        current_y = page_info.top_margin
-        if @page_header
+          # Add header
+          current_y = page_info.top_margin
+          if @page_header
 
-          gutter = 0.1
-          font_family = 'Verdana'
+            gutter = 0.1
+            font_family = 'Verdana'
 
-          draw_text = _add_formated_text(doc, layer, page, Plugin.instance.get_i18n_string('tab.cutlist.layout.title'), Geom::Point2d.new(page_info.left_margin, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_LEFT, { :font_family => font_family, :font_size => 18, :text_alignment => Layout::Style::ALIGN_LEFT })
-          current_y = draw_text.drawing_bounds.lower_left.y
+            draw_text = _add_formated_text(doc, layer, page, Plugin.instance.get_i18n_string('tab.cutlist.layout.title'), Geom::Point2d.new(page_info.left_margin, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_LEFT, { :font_family => font_family, :font_size => 18, :text_alignment => Layout::Style::ALIGN_LEFT })
+            current_y = draw_text.drawing_bounds.lower_left.y
 
-          _add_formated_text(doc, layer, page, '<OpenCutListGeneratedAt>  |  <OpenCutListLengthUnit>  |  <OpenCutListScale>', Geom::Point2d.new(page_info.width - page_info.right_margin, current_y), Layout::FormattedText::ANCHOR_TYPE_BOTTOM_RIGHT, { :font_family => font_family, :font_size => 10, :text_alignment => Layout::Style::ALIGN_RIGHT })
+            _add_formated_text(doc, layer, page, '<OpenCutListGeneratedAt>  |  <OpenCutListLengthUnit>  |  <OpenCutListScale>', Geom::Point2d.new(page_info.width - page_info.right_margin, current_y), Layout::FormattedText::ANCHOR_TYPE_BOTTOM_RIGHT, { :font_family => font_family, :font_size => 10, :text_alignment => Layout::Style::ALIGN_RIGHT })
 
-          name_text = _add_formated_text(doc, layer, page, '<PageName>', Geom::Point2d.new(page_info.width / 2, current_y + gutter * 2), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => font_family, :font_size => 15, :text_alignment => Layout::Style::ALIGN_CENTER })
-          current_y = name_text.drawing_bounds.lower_left.y
+            name_text = _add_formated_text(doc, layer, page, '<PageName>', Geom::Point2d.new(page_info.width / 2, current_y + gutter * 2), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => font_family, :font_size => 15, :text_alignment => Layout::Style::ALIGN_CENTER })
+            current_y = name_text.drawing_bounds.lower_left.y
 
-          unless @cutlist.model_description.empty?
-            model_description_text = _add_formated_text(doc, layer, page, '<OpenCutListModelDescription>', Geom::Point2d.new(page_info.width / 2, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => font_family, :font_size => 9, :text_alignment => Layout::Style::ALIGN_CENTER })
-            current_y = model_description_text.drawing_bounds.lower_left.y
-          end
+            unless @cutlist.model_description.empty?
+              model_description_text = _add_formated_text(doc, layer, page, '<OpenCutListModelDescription>', Geom::Point2d.new(page_info.width / 2, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => font_family, :font_size => 9, :text_alignment => Layout::Style::ALIGN_CENTER })
+              current_y = model_description_text.drawing_bounds.lower_left.y
+            end
 
-          unless @cutlist.page_description.empty?
-            page_description_text = _add_formated_text(doc, layer, page, '<OpenCutListPageDescription>', Geom::Point2d.new(page_info.width / 2, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => font_family, :font_size => 9, :text_alignment => Layout::Style::ALIGN_CENTER })
-            current_y = page_description_text.drawing_bounds.lower_left.y
-          end
+            unless @cutlist.page_description.empty?
+              page_description_text = _add_formated_text(doc, layer, page, '<OpenCutListPageDescription>', Geom::Point2d.new(page_info.width / 2, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => font_family, :font_size => 9, :text_alignment => Layout::Style::ALIGN_CENTER })
+              current_y = page_description_text.drawing_bounds.lower_left.y
+            end
 
-          rectangle = _add_rectangle(doc, layer, page, Geom::Point2d.new(page_info.left_margin, draw_text.bounds.lower_right.y + gutter), Geom::Point2d.new(page_info.width - page_info.right_margin, current_y + gutter), { :solid_filled => false })
-          current_y = rectangle.drawing_bounds.lower_left.y + gutter
+            rectangle = _add_rectangle(doc, layer, page, Geom::Point2d.new(page_info.left_margin, draw_text.bounds.lower_right.y + gutter), Geom::Point2d.new(page_info.width - page_info.right_margin, current_y + gutter), { :solid_filled => false })
+            current_y = rectangle.drawing_bounds.lower_left.y + gutter
 
-        end
-
-        # Add SketchUp model entity
-        skp = Layout::SketchUpModel.new(skp_path, Geom::Bounds2d.new(
-          page_info.left_margin,
-          current_y,
-          page_info.width - page_info.left_margin - page_info.right_margin,
-          page_info.height - current_y - page_info.bottom_margin
-        ))
-        skp.perspective = false
-        skp.render_mode = @parts_colored ?  Layout::SketchUpModel::HYBRID_RENDER : Layout::SketchUpModel::VECTOR_RENDER
-        skp.display_background = false
-        skp.scale = @camera_zoom
-        skp.preserve_scale_on_resize = true
-        doc.add_entity(skp, layer, page)
-
-        skp.render
-
-        # Add pins
-        unless @pins_hidden
-
-          leader_type =
-
-          @pins_infos.each do |pin_info|
-            _add_connected_label(doc, layer, page, skp,
-                                 pin_info['text'],
-                                 Geom::Point3d.new(pin_info['target']),
-                                 Geom::Point3d.new(pin_info['position']),
-                                 {
-                                   :text_font_size => 7,
-                                   :text_solid_filled => true,
-                                   :text_fill_color => pin_info['background_color'].nil? ? Sketchup::Color.new(0xffffff) : Sketchup::Color.new(pin_info['background_color']),
-                                   :text_text_color => pin_info['color'].nil? ? nil : Sketchup::Color.new(pin_info['color']),
-                                   :text_text_alignment => Layout::Style::ALIGN_CENTER,
-                                   :text_stroke_width => 0.5,
-                                   :text_stroke_color => pin_info['border_color'].nil? ? nil : Sketchup::Color.new(pin_info['border_color']),
-                                   :leader_line_stroke_width => 0.5,
-                                   :leader_line_start_arrow_type => Layout::Style::ARROW_FILLED_CIRCLE,
-                                   :leader_line_start_arrow_size => 0.5
-                                 }
-            )
           end
 
+          # Add SketchUp model entity
+          skp = Layout::SketchUpModel.new(skp_path, Geom::Bounds2d.new(
+            page_info.left_margin,
+            current_y,
+            page_info.width - page_info.left_margin - page_info.right_margin,
+            page_info.height - current_y - page_info.bottom_margin
+          ))
+          skp.perspective = false
+          skp.render_mode = @parts_colored ?  Layout::SketchUpModel::HYBRID_RENDER : Layout::SketchUpModel::VECTOR_RENDER
+          skp.display_background = false
+          skp.scale = @camera_zoom
+          skp.preserve_scale_on_resize = true
+          doc.add_entity(skp, layer, page)
+
+          skp.render
+
+          # Add pins
+          unless @pins_hidden
+
+            @pins_infos.each do |pin_info|
+              _add_connected_label(doc, layer, page, skp,
+                                   pin_info['text'],
+                                   Geom::Point3d.new(pin_info['target']),
+                                   Geom::Point3d.new(pin_info['position']),
+                                   {
+                                     :text_font_size => 7,
+                                     :text_solid_filled => true,
+                                     :text_fill_color => pin_info['background_color'].nil? ? Sketchup::Color.new(0xffffff) : Sketchup::Color.new(pin_info['background_color']),
+                                     :text_text_color => pin_info['color'].nil? ? nil : Sketchup::Color.new(pin_info['color']),
+                                     :text_text_alignment => Layout::Style::ALIGN_CENTER,
+                                     :text_stroke_width => 0.5,
+                                     :text_stroke_color => pin_info['border_color'].nil? ? nil : Sketchup::Color.new(pin_info['border_color']),
+                                     :leader_line_stroke_width => 0.5,
+                                     :leader_line_start_arrow_type => Layout::Style::ARROW_FILLED_CIRCLE,
+                                     :leader_line_start_arrow_size => 0.5
+                                   }
+              )
+            end
+
+          end
+
+        rescue => e
+
+          SKETCHUP_CONSOLE.show
+
+          puts "Please email this error to opencutlist@lairdubois.fr"
+          puts "#{e.class} → #{e.message}"
+          puts e.backtrace.join("\n")
+
+          return { :errors => [ "#{Plugin.instance.get_i18n_string('default.error')}<br>#{e.class} → #{e.message}" ] }
         end
 
         # Save Layout file

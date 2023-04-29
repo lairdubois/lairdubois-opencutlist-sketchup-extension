@@ -1436,8 +1436,12 @@
                 fnFillInputs: fnFillInputs
             });
             $selectPageFormat.selectpicker(SELECT_PICKER_OPTIONS);
-            $inputPageWidth.ladbTextinputDimension();
-            $inputPageHeight.ladbTextinputDimension();
+            $inputPageWidth.ladbTextinputDimension({
+                resetValue: '210mm'
+            });
+            $inputPageHeight.ladbTextinputDimension({
+                resetValue: '297mm'
+            });
             $selectPageHeader.selectpicker(SELECT_PICKER_OPTIONS);
             $selectPartsColored.selectpicker(SELECT_PICKER_OPTIONS);
             $selectPartsOpacity.selectpicker(SELECT_PICKER_OPTIONS);
