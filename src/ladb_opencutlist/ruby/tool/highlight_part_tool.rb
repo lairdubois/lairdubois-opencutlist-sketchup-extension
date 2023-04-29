@@ -367,7 +367,7 @@ module Ladb::OpenCutList
         instance_count = part.instance_count_by_part * part.count - part.unused_instance_count
 
         @lbl_1.visible = true
-        @lbl_2.visible = true
+        @lbl_2.visible = !part.tags.empty?
         @lbl_3.visible = true
 
         @lbl_1.text = "[#{part.number}] #{part.name}"
