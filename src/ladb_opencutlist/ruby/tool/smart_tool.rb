@@ -539,9 +539,11 @@ module Ladb::OpenCutList
       false
     end
 
+    # -----
+
     protected
 
-    def _reset(view)
+    def _reset
       hide_message
     end
 
@@ -570,7 +572,7 @@ module Ladb::OpenCutList
       }
     end
 
-    def _compute_part_from_path(path)
+    def _generate_part_from_path(path)
       return nil unless path.is_a?(Array)
 
       entity = path.last

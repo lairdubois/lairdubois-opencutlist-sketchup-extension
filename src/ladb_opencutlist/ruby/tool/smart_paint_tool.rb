@@ -679,7 +679,7 @@ module Ladb::OpenCutList
 
     def onMouseLeave(view)
       return true if super
-      _reset(view)
+      _reset
     end
 
     def onTransactionUndo(model)
@@ -708,6 +708,8 @@ module Ladb::OpenCutList
       _populate_material_defs(Sketchup.active_model)
       _setup_material_buttons
     end
+
+    # -----
 
     private
 
@@ -848,17 +850,17 @@ module Ladb::OpenCutList
       nil
     end
 
-    def _reset(view)
+    def _reset
       super
       hide_infos
       hide_material_infos
       clear_space
-      view.invalidate
     end
 
     def _handle_mouse_event(event = nil)
-      model = Sketchup.active_model
       unless @input_face.nil?
+
+        model = Sketchup.active_model
 
         if is_action_part?
 
@@ -867,7 +869,7 @@ module Ladb::OpenCutList
             input_part_entity_path = _get_part_entity_path_from_path(@input_face_path)
             if input_part_entity_path
 
-              part = _compute_part_from_path(input_part_entity_path)
+              part = _generate_part_from_path(input_part_entity_path)
               if part
 
                 # Clear Kuix space
@@ -876,7 +878,7 @@ module Ladb::OpenCutList
                 if is_action_paint_edges?
 
                   if part.group.material_type != MaterialAttributes::TYPE_SHEET_GOOD
-                    _reset(model.active_view)
+                    _reset
                     notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.wrong_material_type', { :type => Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_SHEET_GOOD}") })}", MESSAGE_TYPE_ERROR)
                     UI.beep if event == :l_button_up
                   else
@@ -922,7 +924,7 @@ module Ladb::OpenCutList
                     faces = faces.flatten
 
                     if faces.empty?
-                      _reset(model.active_view)
+                      _reset
                       notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_edge')}", MESSAGE_TYPE_ERROR)
                       UI.beep if event == :l_button_up
                     else
@@ -977,7 +979,7 @@ module Ladb::OpenCutList
                 elsif is_action_paint_faces?
 
                   if part.group.material_type != MaterialAttributes::TYPE_SHEET_GOOD
-                    _reset(model.active_view)
+                    _reset
                     notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.wrong_material_type', { :type => Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_SHEET_GOOD}") })}", MESSAGE_TYPE_ERROR)
                     UI.beep if event == :l_button_up
                   else
@@ -1015,7 +1017,7 @@ module Ladb::OpenCutList
                     faces = faces.flatten
 
                     if faces.empty?
-                      _reset(model.active_view)
+                      _reset
                       notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_face')}", MESSAGE_TYPE_ERROR)
                       UI.beep if event == :l_button_up
                     else
@@ -1172,14 +1174,14 @@ module Ladb::OpenCutList
                 end
 
               else
-                _reset(model.active_view)
+                _reset
                 notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
                 UI.beep if event == :l_button_up
               end
 
               return
             else
-              _reset(model.active_view)
+              _reset
               notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
               UI.beep if event == :l_button_up
               return
@@ -1219,7 +1221,7 @@ module Ladb::OpenCutList
         end
 
       end
-      _reset(model.active_view)
+      _reset
       UI.beep if event == :l_button_up
     end
 

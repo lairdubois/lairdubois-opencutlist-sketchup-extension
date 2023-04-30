@@ -292,7 +292,7 @@ module Ladb::OpenCutList
           active_index = picked_part_entity_paths.map { |path| path.last }.index(@active_part_entity_path.last)
           new_index = (active_index + (key == VK_UP ? 1 : -1)) % picked_part_entity_paths.length
 
-          part = _compute_part_from_path(picked_part_entity_paths[new_index])
+          part = _generate_part_from_path(picked_part_entity_paths[new_index])
           _set_active(picked_part_entity_paths[new_index], part)
 
           # @picked_path = picked_paths[new_index]
@@ -304,29 +304,29 @@ module Ladb::OpenCutList
 
     def onLButtonDown(flags, x, y, view)
       return true if super
-      _handle_mouse_event(x, y, view, :l_button_down)
+      _handle_mouse_event(:l_button_down)
     end
 
     def onLButtonUp(flags, x, y, view)
       return true if super
-      _handle_mouse_event(x, y, view, :l_button_up)
+      _handle_mouse_event(:l_button_up)
     end
 
     def onLButtonDoubleClick(flags, x, y, view)
       return true if super
-      _handle_mouse_event(x, y, view, :l_button_dblclick)
+      _handle_mouse_event(:l_button_dblclick)
     end
 
     def onMouseMove(flags, x, y, view)
       return true if super
       unless is_action_none?
-        _handle_mouse_event(x, y, view, :move)
+        _handle_mouse_event(:move)
       end
     end
 
     def onMouseLeave(view)
       return true if super
-      _reset(view)
+      _reset
     end
 
     def onTransactionUndo(model)
@@ -337,10 +337,12 @@ module Ladb::OpenCutList
       _refresh_active
     end
 
+    # -----
+
     private
 
     def _refresh_active
-      _set_active(@active_part_entity_path, _compute_part_from_path(@active_part_entity_path))
+      _set_active(@active_part_entity_path, _generate_part_from_path(@active_part_entity_path))
     end
 
     def _set_active(part_entity_path, part)
@@ -429,7 +431,7 @@ module Ladb::OpenCutList
             box_helper.bounds.size.width += increases[0] / part.def.scale.x
             box_helper.bounds.size.height += increases[1] / part.def.scale.y
             box_helper.bounds.size.depth += increases[2] / part.def.scale.z
-            box_helper.color = is_action_adapt_axes? ? Sketchup::Color.new(255, 0, 255) : COLOR_BOX
+            box_helper.color = Sketchup::Color.new(255, 0, 255)
             box_helper.line_width = 2
             box_helper.line_stipple = '-'
             box_helper.transformation = t
@@ -541,40 +543,41 @@ module Ladb::OpenCutList
 
     end
 
-    def _reset(view)
+    def _reset
       super
       _set_active(nil, nil)
     end
 
-    def _handle_mouse_event(x, y, view, event = nil)
+    def _handle_mouse_event(event = nil)
       if event == :move
 
         if @input_face_path
           input_part_entity_path = _get_part_entity_path_from_path(@input_face_path)
           if input_part_entity_path
 
-            part = _compute_part_from_path(input_part_entity_path)
+            part = _generate_part_from_path(input_part_entity_path)
             if part
               _set_active(input_part_entity_path, part)
             else
-              _reset(view)
+              _reset
               notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
             end
             return
 
           else
-            _reset(view)
+            _reset
             notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
             return
           end
         end
-        _reset(view)
+        _reset  # No input
 
       elsif event == :l_button_up || event == :l_button_dblclick
 
         if @active_part && (is_action_flip? || @active_part.group.material_type != MaterialAttributes::TYPE_HARDWARE)
 
-          definition = view.model.definitions[@active_part.def.definition_id]
+          model = Sketchup.active_model
+          definition = model.definitions[@active_part.def.definition_id]
           unless definition.nil?
 
             size = @active_part.def.size
@@ -601,15 +604,15 @@ module Ladb::OpenCutList
               t = Geom::Transformation.scaling(bounds.center, scaling[X_AXIS], scaling[Y_AXIS], scaling[Z_AXIS])
 
               # Start undoable model modification operation
-              view.model.start_operation('OpenCutList - Part flip', true, false, false)
+              model.start_operation('OpenCutList - Part flip', true, false, false)
 
               entity.transformation *= t
 
               # Commit model modification operation
-              view.model.commit_operation
+              model.commit_operation
 
-              part = _compute_part_from_path(@active_part_entity_path)
-              _set_active(@active_part_entity_path, part)
+              # Refresh active
+              _refresh_active
 
             elsif is_action_swap_length_width?
 
@@ -650,7 +653,7 @@ module Ladb::OpenCutList
               t = ti.inverse
 
               # Start undoable model modification operation
-              view.model.start_operation('OpenCutList - Part Change Axes', true, false, false)
+              model.start_operation('OpenCutList - Part Change Axes', true, false, false)
 
               # Transform definition's entities
               entities = definition.entities
@@ -668,10 +671,10 @@ module Ladb::OpenCutList
               end
 
               # Commit model modification operation
-              view.model.commit_operation
+              model.commit_operation
 
-              part = _compute_part_from_path(@active_part_entity_path)
-              _set_active(@active_part_entity_path, part)
+              # Refresh active
+              _refresh_active
 
             end
 

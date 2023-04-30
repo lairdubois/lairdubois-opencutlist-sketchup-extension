@@ -221,7 +221,7 @@ module Ladb::OpenCutList
             page_info.height - current_y - page_info.bottom_margin
           ))
           skp.perspective = false
-          skp.render_mode = @parts_colored ?  Layout::SketchUpModel::HYBRID_RENDER : Layout::SketchUpModel::VECTOR_RENDER
+          skp.render_mode = @parts_colored ? Layout::SketchUpModel::HYBRID_RENDER : Layout::SketchUpModel::VECTOR_RENDER
           skp.display_background = false
           skp.scale = @camera_zoom
           skp.preserve_scale_on_resize = true
@@ -258,31 +258,27 @@ module Ladb::OpenCutList
 
           SKETCHUP_CONSOLE.show
 
-          puts "Please email this error to opencutlist@lairdubois.fr"
-          puts "#{e.class} → #{e.message}"
+          puts "Please email the following error to opencutlist@lairdubois.fr"
+          puts "#{e.inspect}"
           puts e.backtrace.join("\n")
 
-          return { :errors => [ "#{Plugin.instance.get_i18n_string('default.error')}<br>#{e.class} → #{e.message}" ] }
+          return { :errors => [ "#{Plugin.instance.get_i18n_string('default.error')}<br>#{e.inspect}" ] }
         end
 
         # Save Layout file
         begin
           doc.save(layout_path)
         rescue => e
-          return { :errors => [ [ 'tab.cutlist.layout.error.failed_to_layout', { :error => e.message } ] ] }
+          return { :errors => [ [ 'tab.cutlist.layout.error.failed_to_layout', { :error => e.inspect } ] ] }
         ensure
           # Delete Skp file
           File.delete(skp_path)
         end
 
-        return {
-          :export_path => layout_path
-        }
+        return { :export_path => layout_path }
       end
 
-      {
-        :cancelled => true
-      }
+      { :cancelled => true }
     end
 
     # -----
