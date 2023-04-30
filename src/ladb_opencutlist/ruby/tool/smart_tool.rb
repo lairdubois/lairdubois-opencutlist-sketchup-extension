@@ -404,6 +404,19 @@ module Ladb::OpenCutList
       fetch_action == ACTION_NONE
     end
 
+    # -- Menu --
+
+    def getMenu(menu, flags, x, y, view)
+      onMouseMove(flags, x, y, view)  # Simulate mouse move
+      populate_menu(menu)
+    end
+
+    def populate_menu(menu)
+      menu.add_item(Plugin.instance.get_i18n_string('default.close')) {
+        _quit
+      }
+    end
+
     # -- Events --
 
     def onActivate(view)
@@ -545,6 +558,10 @@ module Ladb::OpenCutList
 
     def _reset
       hide_message
+    end
+
+    def _quit
+      Sketchup.active_model.select_tool(nil)  # Unselect tool
     end
 
     def _instances_to_paths(instances, instance_paths, entities, path)

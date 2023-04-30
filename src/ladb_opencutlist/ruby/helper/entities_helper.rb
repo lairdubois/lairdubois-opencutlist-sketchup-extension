@@ -6,7 +6,7 @@ module Ladb::OpenCutList
 
     include LayerVisibilityHelper
 
-    def find_largest_face(entity, transformation = nil)
+    def _find_largest_face(entity, transformation = nil)
       return [ nil, [] ] unless entity.visible? && _layer_visible?(entity.layer)
 
       face = nil
@@ -21,7 +21,7 @@ module Ladb::OpenCutList
         entity.entities.each do |e|
           next if e.is_a?(Sketchup::Edge)   # Minor Speed improvement when there's a lot of edges
 
-          f, p = find_largest_face(e, transformation)
+          f, p = _find_largest_face(e, transformation)
           unless f.nil?
             f_area = transformation ? f.area(transformation) : f.area
             f_min = f.bounds.min
@@ -35,14 +35,14 @@ module Ladb::OpenCutList
 
         end
       elsif entity.is_a?(Sketchup::ComponentInstance)
-        face, p = self.find_largest_face(entity.definition, TransformationUtils::multiply(transformation, entity.transformation))
+        face, p = self._find_largest_face(entity.definition, TransformationUtils::multiply(transformation, entity.transformation))
         path = [ entity ] + p
       end
 
       [ face, path ]
     end
 
-    def find_longest_outer_edge(face, transformation = nil)
+    def _find_longest_outer_edge(face, transformation = nil)
       return nil unless face.is_a?(Sketchup::Face)
 
       edge = nil

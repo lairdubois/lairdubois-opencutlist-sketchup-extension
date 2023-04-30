@@ -198,16 +198,11 @@ module Ladb::OpenCutList
 
     # -- Menu --
 
-    def getMenu(menu, flags, x, y, view)
-      # _pick_hover_part(x, y, view) unless view.nil?
-      build_menu(menu, view)
-    end
-
-    def build_menu(menu, view = nil)
+    def populate_menu(menu)
       if @active_part
         active_part_id = @active_part.id
         active_part_material_type = @active_part.group.material_type
-        item = menu.add_item(@active_part.name) {}
+        item = menu.add_item("#{@active_part.saved_number ? "[#{@active_part.saved_number}] " : ''} #{@active_part.name}") {}
         menu.set_validation_proc(item) { MF_GRAYED }
         menu.add_separator
         menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_properties')) {
@@ -248,13 +243,11 @@ module Ladb::OpenCutList
             MF_GRAYED
           end
         }
-      elsif view
-        menu.add_item(Plugin.instance.get_i18n_string('default.close')) {
-          _quit(view)
-        }
+      else
+        super
       end
     end
-    
+
     # -- Events --
 
     def onActivate(view)
@@ -549,7 +542,7 @@ module Ladb::OpenCutList
     end
 
     def _handle_mouse_event(event = nil)
-      if event == :move
+      if event == :move || event == :menu
 
         if @input_face_path
           input_part_entity_path = _get_part_entity_path_from_path(@input_face_path)
@@ -691,7 +684,7 @@ module Ladb::OpenCutList
 
       input_face = @input_face
       if input_face.nil?
-        input_face, inner_path = find_largest_face(instance_info.entity, instance_info.transformation)
+        input_face, inner_path = _find_largest_face(instance_info.entity, instance_info.transformation)
       else
         inner_path = @input_face_path - instance_info.path
       end
@@ -700,7 +693,7 @@ module Ladb::OpenCutList
 
       input_edge = @input_edge
       if input_edge.nil? || !input_edge.used_by?(input_face)
-        input_edge = find_longest_outer_edge(input_face, TransformationUtils.multiply(instance_info.transformation, inner_transformation))
+        input_edge = _find_longest_outer_edge(input_face, TransformationUtils.multiply(instance_info.transformation, inner_transformation))
       end
 
       z_axis = input_face.normal
