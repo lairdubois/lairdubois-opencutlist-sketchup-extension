@@ -345,6 +345,8 @@ module Ladb::OpenCutList
 
       if part
 
+        clear_space
+
         # Show part infos
 
         infos = [ "#{part.length} x #{part.width} x #{part.thickness}" ]
@@ -357,11 +359,9 @@ module Ladb::OpenCutList
 
         instance_info = part.def.instance_infos.values.first
 
-        clear_space
-
         arrow_color = part.auto_oriented ? COLOR_ARROW_AUTO_ORIENTED : COLOR_ARROW
         arrow_line_width = 2
-        arrow_offset = Sketchup.active_model.active_view.pixels_to_model(1, Sketchup.active_model.active_view.guess_target)
+        arrow_offset = Sketchup.active_model.active_view.pixels_to_model(1, instance_info.definition_bounds.center)
 
         increases = [ 0, 0, 0 ]
         if part.length_increased || part.width_increased || part.thickness_increased
@@ -472,6 +472,46 @@ module Ladb::OpenCutList
           box_helper.line_width = 2
           box_helper.line_stipple = '-'
           part_helper.append(box_helper)
+
+          if is_action_flip?
+
+            rect_offset = Sketchup.active_model.active_view.pixels_to_model(30, instance_info.definition_bounds.center)
+
+            r_width = rect_offset * 2
+            r_height = rect_offset * 2
+            r_t = Geom::Transformation.translation(instance_info.definition_bounds.center)
+
+            if is_action_modifier_length?
+              r_width += instance_info.definition_bounds.height
+              r_height += instance_info.definition_bounds.depth
+              r_t *= Geom::Transformation.rotation(ORIGIN, instance_info.size.oriented_axis(Z_AXIS), 90.degrees) * Geom::Transformation.rotation(ORIGIN, instance_info.size.oriented_axis(X_AXIS), 90.degrees)
+            elsif is_action_modifier_width?
+              r_width += instance_info.definition_bounds.width
+              r_height += instance_info.definition_bounds.depth
+              r_t *= Geom::Transformation.rotation(ORIGIN, instance_info.size.oriented_axis(X_AXIS), 90.degrees)
+            elsif is_action_modifier_thickness?
+              r_width += instance_info.definition_bounds.width
+              r_height += instance_info.definition_bounds.height
+            end
+            r_t *= Geom::Transformation.translation(Geom::Vector3d.new(r_width / -2.0, r_height / -2.0, 0))
+            r_t *= Geom::Transformation.scaling(ORIGIN, r_width, r_height, 0)
+
+            rect = Kuix::Rectangle.new
+            rect.bounds.size.set!(1, 1, 0)
+            rect.transformation = r_t
+            rect.color = Sketchup::Color.new(255, 0, 255)
+            rect.line_width = 2
+            part_helper.append(rect)
+
+              fill = Kuix::Mesh.new
+              fill.add_triangles([
+                                   Geom::Point3d.new(0, 0, 0), Geom::Point3d.new(1, 0, 0), Geom::Point3d.new(1, 1, 0),
+                                   Geom::Point3d.new(0, 0, 0), Geom::Point3d.new(0, 1, 0), Geom::Point3d.new(1, 1, 0)
+                                 ])
+              fill.background_color = Sketchup::Color.new(255, 0, 255, 0.2)
+              rect.append(fill)
+
+          end
 
         end
 

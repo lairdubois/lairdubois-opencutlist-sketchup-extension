@@ -8,7 +8,7 @@ module Ladb::OpenCutList::Kuix
       super(id)
 
       @background_color = nil
-      @segments = [] # Array<Geom::Point3d>
+      @triangles = [] # Array<Geom::Point3d>
 
       @points = []
 
@@ -16,13 +16,13 @@ module Ladb::OpenCutList::Kuix
 
     def add_triangles(triangles) # Array<Geom::Point3d>
       raise 'Points count must be a multiple of 3' if triangles.length % 3 != 0
-      @segments.concat(triangles)
+      @triangles.concat(triangles)
     end
 
     # -- LAYOUT --
 
     def do_layout(transformation)
-      @points = @segments.map { |point|
+      @points = @triangles.map { |point|
         point.transform(transformation * @transformation)
       }
       super
