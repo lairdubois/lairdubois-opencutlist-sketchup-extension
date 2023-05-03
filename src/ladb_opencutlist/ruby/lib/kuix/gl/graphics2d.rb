@@ -13,17 +13,17 @@ module Ladb::OpenCutList::Kuix
 
     # -- Drawing --
 
-    def draw_line_strip(points, color = nil, line_width = nil)
+    def draw_line_strip(points, color = nil, line_width = nil, line_stripple = '')
       set_drawing_color(color) if color
       set_line_width(line_width) if line_width
-      set_line_stipple('')
+      set_line_stipple(line_stripple) if line_stripple
       @view.draw2d(GL_LINE_STRIP, points.map { |point| Geom::Point3d.new(@origin.x + point.x, @origin.y + point.y, 0) })
     end
 
-    def draw_line_loop(points, color = nil, line_width = nil)
+    def draw_line_loop(points, color = nil, line_width = nil, line_stripple = '')
       set_drawing_color(color) if color
       set_line_width(line_width) if line_width
-      set_line_stipple('')
+      set_line_stipple(line_stripple) if line_stripple
       @view.draw2d(GL_LINE_LOOP, points.map { |point| Geom::Point3d.new(@origin.x + point.x, @origin.y + point.y, 0) })
     end
 

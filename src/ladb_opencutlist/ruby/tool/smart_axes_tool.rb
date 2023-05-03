@@ -117,11 +117,11 @@ module Ladb::OpenCutList
       when ACTION_SWAP_LENGTH_WIDTH
         case modifier
         when ACTION_MODIFIER_CLOCKWISE
-          shape = Kuix::Lines2d.new(Kuix::Lines2d.pattern_from_svg_path('M0,1L0,0.8333L0.1667,0.5L0.5,0.3333L0.8333,0.3333L0.6667,0L1,0.3333L0.6667,0.6667L0.8333,0.3333'))
+          shape = Kuix::Lines2d.new(Kuix::Lines2d.patterns_from_svg_path('M0,1L0,0.8333L0.1667,0.5L0.5,0.3333L0.8333,0.3333L0.6667,0L1,0.3333L0.6667,0.6667L0.8333,0.3333'))
           shape.line_width = @unit <= 4 ? 0.5 : 1
           return shape
         when ACTION_MODIFIER_ANTICLOCKWIZE
-          shape = Kuix::Lines2d.new(Kuix::Lines2d.pattern_from_svg_path('M0,1L0,0.8333L0.1667,0.5L0.5,0.3333L0.8333,0.3333L0.6667,0L1,0.3333L0.6667,0.6667L0.8333,0.3333'))
+          shape = Kuix::Lines2d.new(Kuix::Lines2d.patterns_from_svg_path('M0,1L0,0.8333L0.1667,0.5L0.5,0.3333L0.8333,0.3333L0.6667,0L1,0.3333L0.6667,0.6667L0.8333,0.3333'))
           shape.pattern_transformation = Geom::Transformation.translation(Geom::Vector3d.new(1, 0, 0)) * Geom::Transformation.scaling(-1, 1, 1)
           shape.line_width = @unit <= 4 ? 0.5 : 1
           return shape

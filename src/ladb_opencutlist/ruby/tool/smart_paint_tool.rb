@@ -89,7 +89,7 @@ module Ladb::OpenCutList
       # Materials panel
 
       @materials_panel = Kuix::Panel.new
-      @materials_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
+      @materials_panel.layout_data = Kuix::StaticLayoutData.new(0, 1.0, 1.0, -1, Kuix::Anchor.new(Kuix::Anchor::BOTTOM_LEFT))
       @materials_panel.layout = Kuix::BorderLayout.new
       @canvas.append(@materials_panel)
 
@@ -126,7 +126,7 @@ module Ladb::OpenCutList
       }
       @materials_panel.append(@materials_add_btn)
 
-        icon = Kuix::Lines2d.new(Kuix::Lines2d.pattern_from_svg_path('M0,0.5L0.5,0.5L0.5,0L0.5,0.5L1,0.5L0.5,0.5L0.5,1'))
+        icon = Kuix::Lines2d.new(Kuix::Lines2d.patterns_from_svg_path('M0,0.5L0.5,0.5L0.5,0L0.5,0.5L1,0.5L0.5,0.5L0.5,1'))
         icon.layout_data = Kuix::StaticLayoutData.new(0.5, 0, @unit * 10, @unit * 10, Kuix::Anchor.new(Kuix::Anchor::TOP_CENTER))
         icon.padding.set_all!(@unit * 2)
         icon.line_width = @unit <= 4 ? 1 : 2
@@ -150,7 +150,7 @@ module Ladb::OpenCutList
       }
       @materials_panel.append(@materials_filters_btn)
 
-        icon = Kuix::Lines2d.new(Kuix::Lines2d.pattern_from_svg_path('M0.4,1L0.4,0.5L0.1,0.2L0.1,0L0.9,0L0.9,0.2L0.6,0.5L0.6,0.9L0.4,1'))
+        icon = Kuix::Lines2d.new(Kuix::Lines2d.patterns_from_svg_path('M0.4,1L0.4,0.5L0.1,0.2L0.1,0L0.9,0L0.9,0.2L0.6,0.5L0.6,0.9L0.4,1'))
         icon.layout_data = Kuix::StaticLayoutData.new(0.5, 0, @unit * 10, @unit * 10, Kuix::Anchor.new(Kuix::Anchor::TOP_CENTER))
         icon.padding.set_all!(@unit * 2)
         icon.line_width = @unit <= 4 ? 1 : 2

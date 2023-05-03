@@ -68,14 +68,15 @@ module Ladb::OpenCutList
 
     def setup_entities(view)
 
-      @canvas.layout = Kuix::BorderLayout.new
+      # @canvas.layout = Kuix::BorderLayout.new
+      @canvas.layout = Kuix::StaticLayout.new
 
       unit = get_unit(view)
 
       # -- TOP
 
       @top_panel = Kuix::Panel.new
-      @top_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
+      @top_panel.layout_data = Kuix::StaticLayoutData.new(0, 0, 1.0, -1)
       @top_panel.layout = Kuix::BorderLayout.new
       @canvas.append(@top_panel)
 
@@ -230,6 +231,57 @@ module Ladb::OpenCutList
           @message_lbl.text_size = unit * 3
           @message_panel.append(@message_lbl)
 
+      # -- MINITOOL
+
+      @minitool_panel = Kuix::Panel.new
+      @minitool_panel.layout_data = Kuix::StaticLayoutData.new(1.0, 0.5, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER_RIGHT))
+      @minitool_panel.layout = Kuix::GridLayout.new(1, 2, 0, unit)
+      @minitool_panel.margin.right = unit * 2
+      @canvas.append(@minitool_panel)
+
+        setup_minitools_buttons(view)
+
+    end
+
+    def setup_minitools_buttons(view)
+
+      # Transparency
+      # @transparency_minitool_btn = append_minitool_button('M0,0L0,0.2L0.4,0.2L0.4,1L0.6,1L0.6,0.2L1,0.2L1,0L0,0') do |button|
+      @transparency_minitool_btn = append_minitool_button('M0,0.2L0.6,0L1,0.2L0.4,0.4L0,0.2 M0.5,0.6333L0.6,0.6 M0.6,0.6L0.7,0.65 M0.6,0.1L0.6,0.2 M0.6,0.3L0.6,0.4 M0.6,0.5L0.6,0.6 M0.8,0.7L0.9,0.75 M0.4,0.6667L0.3,0.7 M0.2,0.7333L0.1,0.7667 M0.4,0.4L0.4,1 M0,0.2L0,0.8L0.4,1L1,0.8L1,0.2') do |button|
+        view.model.rendering_options["ModelTransparency"] = !view.model.rendering_options["ModelTransparency"]
+      end
+      @transparency_minitool_btn.selected = view.model.rendering_options['ModelTransparency']
+
+      # Zoom extends
+      append_minitool_button('M0,0.3L0,0L0.3,0M0.4,0.4L0,0 M0.7,0L1,0L1,0.3M0.6,0.4L1,0 M1,0.7L1,1L0.7,1M0.6,0.6L1,1 M0.3,1L0,1L0,0.7M0.4,0.6L0,1') do |button|
+        view.zoom_extents
+      end
+
+    end
+
+    def append_minitool_button(icon, &block)
+
+      minitool_btn = Kuix::Button.new
+      minitool_btn.layout = Kuix::GridLayout.new
+      minitool_btn.border.set_all!(@unit * 0.5)
+      minitool_btn.padding.set_all!(@unit * 2)
+      minitool_btn.min_size.set!(@unit * 5, @unit * 5)
+      minitool_btn.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255, 0.5))
+      minitool_btn.set_style_attribute(:background_color, COLOR_WHITE, :hover)
+      minitool_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :active)
+      minitool_btn.set_style_attribute(:border_color, Sketchup::Color.new(255, 255, 255, 0.5))
+      minitool_btn.set_style_attribute(:border_color, COLOR_WHITE, :hover)
+      minitool_btn.set_style_attribute(:border_color, COLOR_BRAND_LIGHT, :active)
+      minitool_btn.set_style_attribute(:border_color, COLOR_BRAND, :selected)
+      minitool_btn.on([ :click, :doubleclick ], &block)
+      @minitool_panel.append(minitool_btn)
+
+        shape = Kuix::Lines2d.new(Kuix::Lines2d.patterns_from_svg_path(icon))
+        shape.line_width = @unit <= 4 ? 1 : 2
+        shape.set_style_attribute(:color, COLOR_BRAND_DARK)
+        minitool_btn.append(shape)
+
+      minitool_btn
     end
 
     # -- Show --
@@ -429,6 +481,17 @@ module Ladb::OpenCutList
       # Set startup cursor
       set_root_action(get_startup_action)
 
+      # Observe rendering options events
+      view.model.rendering_options.add_observer(self)
+
+    end
+
+    def onDeactivate(view)
+      super
+
+      # Stop observing rendering options events
+      view.model.rendering_options.remove_observer(self)
+
     end
 
     def onResume(view)
@@ -550,6 +613,12 @@ module Ladb::OpenCutList
 
       end
       false
+    end
+
+    def onRenderingOptionsChanged(rendering_options, type)
+      if type == Sketchup::RenderingOptions::ROPSetModelTransparency && @transparency_minitool_btn
+        @transparency_minitool_btn.selected = rendering_options['ModelTransparency']
+      end
     end
 
     # -----

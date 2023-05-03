@@ -68,19 +68,20 @@ module Ladb::OpenCutList::Kuix
 
     # -- Events --
 
-    def on(event, &block)
-      @handlers[event] = block
+    def on(events, &block)
+      events = [ events ] unless events.is_a?(Array)
+      events.each { |event| @handlers[event] = block }
     end
 
-    def off(event)
-      @handlers.delete!(event)
+    def off(events)
+      events = [ events ] unless events.is_a?(Array)
+      events.each { |event| @handlers.delete!(event) }
     end
 
-    def fire(event, *args)
+    def fire(events, *args)
       return if disabled?
-      if @handlers[event]
-        @handlers[event].call(self, args)
-      end
+      events = [ events ] unless events.is_a?(Array)
+      events.each { |event| @handlers[event].call(self, args) if @handlers[event] }
     end
 
     def onMouseEnter(flags)
