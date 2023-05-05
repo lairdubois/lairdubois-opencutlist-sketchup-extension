@@ -766,7 +766,8 @@ tab:
         parameters: Parametry są niepoprawne. Rozmiar przycinania jest większy niż 25% najdłuższej płyty lub obrzeża.
         no_parts: Brak części.
         no_sheet: Standardowe rozmiary arkuszy są źle skonfigurowane i nie są dostępne żadne ścinki.
-        no_placement_possible: "Nie można umieścić na rozkroju (margines za duży, standardowy arkusz za mały, narzędzie zbyt grube, ...)."
+        no_placement_possible_1d: "Nie można umieścić na rozkroju (standardowy arkusz za mały, margines za duży, narzędzie zbyt grube, ...)."
+        no_placement_possible_2d: "Nie można umieścić na rozkroju (standardowy arkusz za mały, margines za duży, narzędzie zbyt grube, ...)."
         bad_error: "Błąd krytyczny, proszę o kontakt z programistami, masz ciekawy przypadek."
         unplaced_parts: "**1 część** nie może zostać umieszczona na rozkroju, ponieważ jest zbyt duża."
         unplaced_parts_plural: "Istnieją **{{ count }} części**, których nie można umieścić na rozkroju, ponieważ są zbyt duże, aby się zmieścić."
