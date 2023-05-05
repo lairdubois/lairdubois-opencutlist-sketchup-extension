@@ -635,7 +635,7 @@ module Ladb::OpenCutList
         end
       elsif key == ALT_MODIFIER_KEY
         unless is_action_pick?
-          push_action(ACTION_PICK)
+          # push_action(ACTION_PICK)
         end
         return true
       elsif repeat == 1

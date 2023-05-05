@@ -321,13 +321,21 @@ module Ladb::OpenCutList
         @infos_panel.append(@infos_lbl_1)
       end
       infos.each do |info|
-        lbl = Kuix::Label.new
-        lbl.border.set!(0, 0, 0, @unit / 4)
-        lbl.padding.set!(0, 0, 0, @unit * 3)
-        lbl.text_size = @unit * 3
-        lbl.text = info
-        lbl.set_style_attribute(:border_color, COLOR_BLACK)
-        @infos_panel.append(lbl)
+        if info.is_a?(String)
+          entity = Kuix::Label.new
+          entity.text_size = @unit * 3
+          entity.text = info
+        elsif info.is_a?(Kuix::Entity2d)
+          entity = info
+          entity.min_size.set_all!(@unit * 4)
+          entity.set_style_attribute(:color, COLOR_BLACK)
+        else
+          next
+        end
+        entity.border.set!(0, 0, 0, @unit / 4)
+        entity.padding.set!(0, 0, 0, @unit * 3)
+        entity.set_style_attribute(:border_color, COLOR_MEDIUM_GREY)
+        @infos_panel.append(entity)
       end
       @infos_panel.visible = !text_1.empty? || !infos.empty?
     end
