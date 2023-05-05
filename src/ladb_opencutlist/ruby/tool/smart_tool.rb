@@ -239,27 +239,26 @@ module Ladb::OpenCutList
       @minitool_panel.margin.right = unit * 2
       @canvas.append(@minitool_panel)
 
-        setup_minitools_buttons(view)
+        setup_minitools_btns(view)
 
     end
 
-    def setup_minitools_buttons(view)
+    def setup_minitools_btns(view)
 
       # Transparency
-      # @transparency_minitool_btn = append_minitool_button('M0,0L0,0.2L0.4,0.2L0.4,1L0.6,1L0.6,0.2L1,0.2L1,0L0,0') do |button|
-      @transparency_minitool_btn = append_minitool_button('M0,0.2L0.6,0L1,0.2L0.4,0.4L0,0.2 M0.5,0.6333L0.6,0.6 M0.6,0.6L0.7,0.65 M0.6,0.1L0.6,0.2 M0.6,0.3L0.6,0.4 M0.6,0.5L0.6,0.6 M0.8,0.7L0.9,0.75 M0.4,0.6667L0.3,0.7 M0.2,0.7333L0.1,0.7667 M0.4,0.4L0.4,1 M0,0.2L0,0.8L0.4,1L1,0.8L1,0.2') do |button|
+      @transparency_minitool_btn = append_minitool_btn('M0,0.2L0.6,0L1,0.2L0.4,0.4L0,0.2 M0.5,0.6333L0.6,0.6 M0.6,0.6L0.7,0.65 M0.6,0.1L0.6,0.2 M0.6,0.3L0.6,0.4 M0.6,0.5L0.6,0.6 M0.8,0.7L0.9,0.75 M0.4,0.6667L0.3,0.7 M0.2,0.7333L0.1,0.7667 M0.4,0.4L0.4,1 M0,0.2L0,0.8L0.4,1L1,0.8L1,0.2') do |button|
         view.model.rendering_options["ModelTransparency"] = !view.model.rendering_options["ModelTransparency"]
       end
       @transparency_minitool_btn.selected = view.model.rendering_options['ModelTransparency']
 
       # Zoom extends
-      append_minitool_button('M0,0.3L0,0L0.3,0M0.4,0.4L0,0 M0.7,0L1,0L1,0.3M0.6,0.4L1,0 M1,0.7L1,1L0.7,1M0.6,0.6L1,1 M0.3,1L0,1L0,0.7M0.4,0.6L0,1') do |button|
+      append_minitool_btn('M0,0.3L0,0L0.3,0 M0.7,0L1,0L1,0.3 M1,0.7L1,1L0.7,1 M0.3,1L0,1L0,0.7 M0.2,0.3L0.5,0.2L0.8,0.3L0.5,0.4L0.2,0.3 M0.2,0.3L0.2,0.7L0.5,0.8L0.8,0.7L0.8,0.3 M0.5,0.4L0.5,0.8') do |button|
         view.zoom_extents
       end
 
     end
 
-    def append_minitool_button(icon, &block)
+    def append_minitool_btn(icon, &block)
 
       minitool_btn = Kuix::Button.new
       minitool_btn.layout = Kuix::GridLayout.new
@@ -277,7 +276,7 @@ module Ladb::OpenCutList
       @minitool_panel.append(minitool_btn)
 
         shape = Kuix::Lines2d.new(Kuix::Lines2d.patterns_from_svg_path(icon))
-        shape.line_width = @unit <= 4 ? 1 : 2
+        shape.line_width = @unit <= 4 ? 0.5 : 1
         shape.set_style_attribute(:color, COLOR_BRAND_DARK)
         minitool_btn.append(shape)
 
