@@ -766,7 +766,8 @@ tab:
         parameters: Các thông số không chính xác. Kích thước phần cắt lớn hơn 25% của bảng hoặc dải cạnh dài nhất.
         no_parts: Không có bộ phận nào.
         no_sheet: Kích thước tấm tiêu chuẩn bị định cấu hình sai và không có phần cắt thừa.
-        no_placement_possible: "Không thể sắp xếp (kích thước phần cắt quá lớn, tấm tiêu chuẩn quá nhỏ, vết cưa quá lớn, ...)."
+        no_placement_possible_1d: "Không thể sắp xếp (kích thước phần cắt quá lớn, tấm tiêu chuẩn quá nhỏ, vết cưa quá lớn, ...)."
+        no_placement_possible_2d: "Không thể sắp xếp (kích thước phần cắt quá lớn, tấm tiêu chuẩn quá nhỏ, vết cưa quá lớn, ...)."
         bad_error: "Lỗi thuật toán. Vui lòng liên hệ với các nhà phát triển, vì đây là một trường hợp thú vị."
         unplaced_parts: "**1 bộ phận** không thể đặt được vì nó quá lớn không thể đặt vừa."
         unplaced_parts_plural: "Có **{{ count }} bộ phận** không thể đặt được vì chúng quá lớn để vừa."
