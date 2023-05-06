@@ -640,18 +640,18 @@ module Ladb::OpenCutList
       Sketchup.active_model.select_tool(nil)  # Unselect tool
     end
 
-    def _instances_to_paths(instances, instance_paths, entities, path)
+    def _instances_to_paths(instances, instance_paths, entities, path = [])
       entities.each do |entity|
-        return if entity.is_a?(Sketchup::Edge)   # Minor Speed improvement when there's a lot of edges
+        next if entity.is_a?(Sketchup::Edge) || entity.is_a?(Sketchup::Face)   # Minor Speed improvement
         if entity.visible? && _layer_visible?(entity.layer, path.empty?)
           if entity.is_a?(Sketchup::ComponentInstance)
             if instances.include?(entity)
               instance_paths << path + [ entity ]
             else
-              _instances_to_paths(instances, instance_paths, entity.definition.entities, path + [entity ])
+              _instances_to_paths(instances, instance_paths, entity.definition.entities, path + [ entity ])
             end
           elsif entity.is_a?(Sketchup::Group)
-            _instances_to_paths(instances, instance_paths, entity.entities, path + [entity ])
+            _instances_to_paths(instances, instance_paths, entity.entities, path + [ entity ])
           end
         end
       end
