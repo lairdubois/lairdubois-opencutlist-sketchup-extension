@@ -40,6 +40,7 @@ module Ladb::OpenCutList
     ].freeze
 
     COLOR_MESH = Sketchup::Color.new(200, 200, 0, 100).freeze
+    COLOR_MESH_HIGHLIGHTED = Sketchup::Color.new(200, 200, 0, 200).freeze
     COLOR_ARROW = COLOR_WHITE
     COLOR_ARROW_AUTO_ORIENTED = Sketchup::Color.new(123, 213, 239).freeze
     COLOR_BOX = COLOR_BLUE
@@ -334,20 +335,8 @@ module Ladb::OpenCutList
 
     private
 
-    def _refresh_active
-      _set_active(@active_part_entity_path, _generate_part_from_path(@active_part_entity_path))
-    end
-
-    def _set_active(part_entity_path, part)
-
-      @active_part_entity_path = part_entity_path
-      @active_part = part
-
-      # Clear Kuix space
-      clear_space
-
-      # Reset cursor
-      pop_to_root_cursor
+    def _set_active(part_entity_path, part, highlighted = false)
+      super
 
       if part
 
@@ -553,7 +542,7 @@ module Ladb::OpenCutList
 
           mesh = Kuix::Mesh.new
           mesh.add_triangles(_compute_children_faces_triangles(path.last.definition.entities))
-          mesh.background_color = COLOR_MESH
+          mesh.background_color = highlighted ? COLOR_MESH_HIGHLIGHTED : COLOR_MESH
           mesh.transformation = PathUtils::get_transformation(path)
           @space.append(mesh)
 
@@ -584,11 +573,6 @@ module Ladb::OpenCutList
 
     end
 
-    def _reset
-      super
-      _set_active(nil, nil)
-    end
-
     def _handle_mouse_event(event = nil)
       if event == :move
 
@@ -614,6 +598,10 @@ module Ladb::OpenCutList
           end
         end
         _reset  # No input
+
+      elsif event == :l_button_down
+
+        _refresh_active(true)
 
       elsif event == :l_button_up || event == :l_button_dblclick
 

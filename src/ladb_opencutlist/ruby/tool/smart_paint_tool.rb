@@ -876,23 +876,12 @@ module Ladb::OpenCutList
       nil
     end
 
-    def _refresh_active
-      _set_active(@active_part_entity_path, _generate_part_from_path(@active_part_entity_path))
-    end
-
     def _set_active(part_entity_path, part, highlighted = false)
+      super
 
-      @active_part_entity_path = part_entity_path
-      @active_part = part
       @active_instances = []
       @active_faces = []
       @active_material = nil
-
-      # Clear Kuix space
-      clear_space
-
-      # Reset cursor
-      pop_to_root_cursor
 
       if part
 
@@ -1152,13 +1141,7 @@ module Ladb::OpenCutList
 
     end
 
-    def _reset
-      super
-      _set_active(nil, nil)
-    end
-
     def _handle_mouse_event(event = nil)
-      begin
       if is_action_part?
 
         if event == :move
@@ -1172,14 +1155,14 @@ module Ladb::OpenCutList
                 _set_active(input_part_entity_path, part, event == :l_button_down)
               else
                 _reset
-                notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
+                notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_part')}", MESSAGE_TYPE_ERROR)
                 push_cursor(@cursor_paint_error_id)
               end
               return
 
             else
               _reset
-              notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
+              notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_part')}", MESSAGE_TYPE_ERROR)
               push_cursor(@cursor_paint_error_id)
               return
             end
@@ -1188,7 +1171,7 @@ module Ladb::OpenCutList
 
         elsif event == :l_button_down
 
-          _set_active(@active_part_entity_path, _generate_part_from_path(@active_part_entity_path), true)
+          _refresh_active(true)
 
         elsif event == :l_button_up || event == :l_button_dblclick
 
@@ -1306,10 +1289,6 @@ module Ladb::OpenCutList
           end
         end
 
-      end
-      rescue => e
-        puts e.inspect
-        puts e.backtrace
       end
     end
 

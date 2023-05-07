@@ -575,15 +575,20 @@ module Ladb::OpenCutList
 
         unless @input_point.face.nil?
 
-          @input_face_path = nil
-          @input_face = @input_point.face
-          @input_edge = @input_point.edge unless @input_point.vertex  # Try to keep previous edge when vertex is picked
-          @input_vertex = @input_point.vertex
+          input_face_path = nil
+          input_face = @input_point.face
+          input_edge = @input_point.vertex ? @input_edge : @input_point.edge  # Try to keep previous edge when vertex is picked
+          input_vertex = @input_point.vertex
 
-          if @input_point.instance_path.leaf == @input_face
-            @input_face_path = @input_point.instance_path.to_a
-          elsif @input_point.instance_path.leaf.respond_to?(:used_by?) && @input_point.instance_path.leaf.used_by?(@input_face)
-            @input_face_path = @input_point.instance_path.to_a[0...-1] + [ @input_face ]
+          # @input_face_path = nil
+          # @input_face = @input_point.face
+          # @input_edge = @input_point.edge unless @input_point.vertex  # Try to keep previous edge when vertex is picked
+          # @input_vertex = @input_point.vertex
+
+          if @input_point.instance_path.leaf == input_face
+            input_face_path = @input_point.instance_path.to_a
+          elsif @input_point.instance_path.leaf.respond_to?(:used_by?) && @input_point.instance_path.leaf.used_by?(input_face)
+            input_face_path = @input_point.instance_path.to_a[0...-1] + [ input_face ]
           else
 
             if @pick_helper.do_pick(x, y)
@@ -591,19 +596,19 @@ module Ladb::OpenCutList
               # Input point gives a face without instance path
               # Let's try to use pick helper to pick the face path
               @pick_helper.count.times do |index|
-                if @pick_helper.leaf_at(index) == @input_face
-                  @input_face_path = @pick_helper.path_at(index)
+                if @pick_helper.leaf_at(index) == input_face
+                  input_face_path = @pick_helper.path_at(index)
                   break
                 end
               end
 
-              unless @input_edge.nil?
+              unless input_edge.nil?
 
                 # Input point give an edge but on an other face
                 # Let's try to use pick helper to pick an edge used by the input face
                 @pick_helper.count.times do |index|
-                  if @pick_helper.leaf_at(index).is_a?(Sketchup::Edge) && @pick_helper.leaf_at(index).used_by?(@input_face)
-                    @input_edge = @pick_helper.leaf_at(index)
+                  if @pick_helper.leaf_at(index).is_a?(Sketchup::Edge) && @pick_helper.leaf_at(index).visible? && @pick_helper.leaf_at(index).used_by?(input_face)
+                    input_edge = @pick_helper.leaf_at(index)
                     break
                   end
                 end
@@ -614,6 +619,14 @@ module Ladb::OpenCutList
 
           end
 
+          # Exit if picked elements are the same
+          return true if input_face == @input_face && input_face == @input_face && input_edge == @input_edge && input_vertex == @input_vertex
+
+          @input_face_path = input_face_path
+          @input_face = input_face
+          @input_edge = input_edge
+          @input_vertex = input_vertex
+
         else
           @input_face_path = nil
           @input_face = nil
@@ -621,11 +634,11 @@ module Ladb::OpenCutList
           @input_vertex = nil
         end
 
-        # puts "# OUTPUT"
-        # puts "  Face = #{@input_face}"
-        # puts "  Edge = #{@input_edge} -> onface? = #{@input_edge ? @input_edge.used_by?(@input_face) : ''}"
-        # puts "  Vertex = #{@input_vertex} -> onface? = #{@input_vertex ? @input_vertex.used_by?(@input_face) : ''}"
-        # puts "  FacePath = #{@input_face_path ? @input_face_path.join(' -> ') : ''}"
+        puts "# OUTPUT"
+        puts "  Face = #{@input_face}"
+        puts "  Edge = #{@input_edge} -> onface? = #{@input_edge ? @input_edge.used_by?(@input_face) : ''}"
+        puts "  Vertex = #{@input_vertex} -> onface? = #{@input_vertex ? @input_vertex.used_by?(@input_face) : ''}"
+        puts "  FacePath = #{@input_face_path ? @input_face_path.join(' -> ') : ''}"
 
       end
       false
@@ -641,8 +654,26 @@ module Ladb::OpenCutList
 
     protected
 
+    def _refresh_active(highlighted = false)
+      _set_active(@active_part_entity_path, _generate_part_from_path(@active_part_entity_path), highlighted)
+    end
+
+    def _set_active(part_entity_path, part, highlighted = false)
+
+      @active_part_entity_path = part_entity_path
+      @active_part = part
+
+      # Clear Kuix space
+      clear_space
+
+      # Reset cursor
+      pop_to_root_cursor
+
+    end
+
     def _reset
       hide_message
+      _set_active(nil, nil)
     end
 
     def _quit
