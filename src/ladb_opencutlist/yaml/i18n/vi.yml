@@ -1233,7 +1233,7 @@ tab:
       cuttingdiagram_export: Kinh phí của sơ đồ cắt được xuất
     objective_details:
       default: |
-        Sự cải tiến liên tục của *OpenCutList* rất quan trọng đối với chúng tôi và dự án tiếp tục cần sự trợ giúp của bạn cho bản cập nhật tiếp theo **5.0**!
+        Sự cải tiến liên tục của *OpenCutList* rất quan trọng đối với chúng tôi và dự án tiếp tục cần sự trợ giúp của bạn cho bản cập nhật tiếp theo!
       cuttingdiagram_export: |
         Điều quan trọng đối với chúng tôi là *OpenCutList* có thể được điều chỉnh cho phù hợp với những kỳ vọng rất khác nhau của người dùng đối với chức năng *Sơ đồ cắt*.
         Để tiếp tục mở rộng các khả năng, chúng tôi muốn cho phép xuất sơ đồ bố trí ở định dạng **SVG**.

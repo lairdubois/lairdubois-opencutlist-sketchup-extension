@@ -1233,7 +1233,7 @@ tab:
       cuttingdiagram_export: Funding of cutting diagram exports
     objective_details:
       default: |
-        The ongoing improvement of *OpenCutList* is important to us and the project continues to need your help for its next update **5.0**!
+        The ongoing improvement of *OpenCutList* is important to us and the project continues to need your help for its next update!
       cuttingdiagram_export: |
         It is important to us that *OpenCutList* can be adapted to the very different expectations of the users for the *cutting diagram* function.
         To further expand the possibilities, we would like to enable the export of layout diagrams in **SVG** format.
