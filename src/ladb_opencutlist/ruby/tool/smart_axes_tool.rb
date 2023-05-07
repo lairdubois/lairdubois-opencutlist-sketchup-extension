@@ -320,7 +320,7 @@ module Ladb::OpenCutList
 
     def onMouseLeave(view)
       return true if super
-      _reset
+      _reset_active
     end
 
     def onTransactionUndo(model)
@@ -333,7 +333,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    private
+    protected
 
     def _set_active(part_entity_path, part, highlighted = false)
       super
@@ -562,18 +562,16 @@ module Ladb::OpenCutList
           definition = model.definitions[part.def.definition_id]
           if definition && definition.count_used_instances > 1
             notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
-          else
-            hide_message
           end
-        else
-          hide_message
         end
 
-      else
-        hide_infos
       end
 
     end
+
+    # -----
+
+    private
 
     def _handle_mouse_event(event = nil)
       if event == :move
@@ -586,20 +584,20 @@ module Ladb::OpenCutList
             if part
               _set_active(input_part_entity_path, part)
             else
-              _reset
+              _reset_active
               notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
               push_cursor(@cursor_select_error)
             end
             return
 
           else
-            _reset
+            _reset_active
             notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
             push_cursor(@cursor_select_error)
             return
           end
         end
-        _reset  # No input
+        _reset_active  # No input
 
       elsif event == :l_button_down
 

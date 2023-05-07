@@ -411,6 +411,7 @@ module Ladb::OpenCutList
       # Update status text and root cursor
       Sketchup.set_status_text(get_action_status(action), SB_PROMPT)
       set_root_cursor(get_action_cursor(action, modifier))
+      pop_to_root_cursor
 
       # Fire event
       onActionChange(action, modifier) if self.respond_to?(:onActionChange)
@@ -658,10 +659,20 @@ module Ladb::OpenCutList
       _set_active(@active_part_entity_path, _generate_part_from_path(@active_part_entity_path), highlighted)
     end
 
+    def _reset_active
+      _set_active(nil, nil)
+    end
+
     def _set_active(part_entity_path, part, highlighted = false)
 
       @active_part_entity_path = part_entity_path
       @active_part = part
+
+      _reset_ui
+
+    end
+
+    def _reset_ui
 
       # Clear Kuix space
       clear_space
@@ -669,11 +680,10 @@ module Ladb::OpenCutList
       # Reset cursor
       pop_to_root_cursor
 
-    end
-
-    def _reset
+      # Hide previous overlays
       hide_message
-      _set_active(nil, nil)
+      hide_infos
+
     end
 
     def _quit

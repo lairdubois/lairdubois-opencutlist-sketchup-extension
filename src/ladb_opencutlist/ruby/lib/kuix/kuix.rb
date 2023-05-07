@@ -142,6 +142,7 @@ module Ladb::OpenCutList
           @cursors.delete(cursor_id)
         end
         @cursors.push(cursor_id)
+        onSetCursor
       end
 
       def pop_cursor(cursor_id = nil)
@@ -151,11 +152,15 @@ module Ladb::OpenCutList
           else
             @cursors.pop
           end
+          onSetCursor
         end
       end
 
       def pop_to_root_cursor
-        @cursors.slice!(1)
+        if @cursors.length > 1
+          @cursors.slice!(1)
+          onSetCursor
+        end
       end
 
       # -- Tool stuff --
