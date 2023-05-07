@@ -1119,7 +1119,7 @@ module Ladb::OpenCutList
 
                   end
 
-                else
+                elsif is_action_paint_parts?
 
                   # Show part infos
                   notify_infos(part.name)

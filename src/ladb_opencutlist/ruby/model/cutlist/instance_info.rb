@@ -1,5 +1,6 @@
 module Ladb::OpenCutList
 
+  require_relative '../../model/geom/scale3d'
   require_relative '../../utils/path_utils'
 
   class InstanceInfo
@@ -13,6 +14,8 @@ module Ladb::OpenCutList
     def initialize(path = [])
       @path = path
     end
+
+    # -----
 
     def read_name(try_from_dynamic_attributes = false)
       if try_from_dynamic_attributes
@@ -57,7 +60,7 @@ module Ladb::OpenCutList
       if @scale
         return @scale
       end
-      @scale = TransformationUtils::get_scale3d(transformation)
+      @scale = Scale3d.create_from_transformation(transformation)
     end
 
     def flipped
