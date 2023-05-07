@@ -345,6 +345,10 @@ module Ladb::OpenCutList
         return false
       end
 
+      def onMouseWheel(flags, delta, x, y, view)
+        return false
+      end
+
       def onSetCursor
         UI.set_cursor(@cursors.last)
       end

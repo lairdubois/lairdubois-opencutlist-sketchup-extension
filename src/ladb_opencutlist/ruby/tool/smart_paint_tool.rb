@@ -689,28 +689,6 @@ module Ladb::OpenCutList
           pop_action
         end
         return true
-      elsif key == VK_UP || key == VK_DOWN
-        if @active_part_entity_path && !is_action_pick?
-
-          picked_paths = []
-          picked_part_entity_paths = []
-          @pick_helper.count.times do |index|
-            path = @pick_helper.path_at(index)
-            part_entity_path = _get_part_entity_path_from_path(path.clone)
-            unless part_entity_path.nil? || picked_part_entity_paths.include?(part_entity_path)
-              picked_paths << path
-              picked_part_entity_paths << part_entity_path
-            end
-          end
-
-          active_index = picked_part_entity_paths.map { |path| path.last }.index(@active_part_entity_path.last)
-          new_index = (active_index + (key == VK_UP ? 1 : -1)) % picked_part_entity_paths.length
-
-          part = _generate_part_from_path(picked_part_entity_paths[new_index])
-          _set_active_part(picked_part_entity_paths[new_index], part)
-
-        end
-        return true
       end
     end
 
@@ -1021,6 +999,10 @@ module Ladb::OpenCutList
 
       end
 
+    end
+
+    def _can_pick_deeper?
+      super && !is_action_pick?
     end
 
     def _reset_ui

@@ -557,7 +557,13 @@ module Ladb::OpenCutList
 
         end
 
+      elsif key == VK_UP || key == VK_DOWN
+        if @active_part_entity_path
+          _pick_deeper(key == VK_UP ? 1 : -1)
+        end
+        return true
       end
+      return false
     end
 
     def onMouseMove(flags, x, y, view)
@@ -645,6 +651,16 @@ module Ladb::OpenCutList
       false
     end
 
+    def onMouseWheel(flags, delta, x, y, view)
+      return true if super
+      if flags & COPY_MODIFIER_MASK == COPY_MODIFIER_KEY
+        if @active_part_entity_path
+          _pick_deeper(delta)
+        end
+        return true
+      end
+    end
+
     def onRenderingOptionsChanged(rendering_options, type)
       if type == Sketchup::RenderingOptions::ROPSetModelTransparency && @transparency_minitool_btn
         @transparency_minitool_btn.selected = rendering_options['ModelTransparency']
@@ -670,6 +686,33 @@ module Ladb::OpenCutList
 
       _reset_ui
 
+    end
+
+    def _can_pick_deeper?
+      !@pick_helper.nil? && !@active_part_entity_path.nil?
+    end
+
+    def _pick_deeper(delta = 1)
+      if _can_pick_deeper?
+
+        picked_paths = []
+        picked_part_entity_paths = []
+        @pick_helper.count.times do |index|
+          path = @pick_helper.path_at(index)
+          part_entity_path = _get_part_entity_path_from_path(path.clone)
+          unless part_entity_path.nil? || picked_part_entity_paths.include?(part_entity_path)
+            picked_paths << path
+            picked_part_entity_paths << part_entity_path
+          end
+        end
+
+        active_index = picked_part_entity_paths.map { |path| path.last }.index(@active_part_entity_path.last)
+        new_index = (active_index + delta) % picked_part_entity_paths.length
+
+        part = _generate_part_from_path(picked_part_entity_paths[new_index])
+        _set_active_part(picked_part_entity_paths[new_index], part)
+
+      end
     end
 
     def _reset_ui
