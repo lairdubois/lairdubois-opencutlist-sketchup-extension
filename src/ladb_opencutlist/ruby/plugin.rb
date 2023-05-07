@@ -1401,7 +1401,8 @@ module Ladb::OpenCutList
     def open_external_file_command(params)    # Expected params = { path: PATH_TO_FILE }
       path = params['path']
       if path && path.is_a?(String)
-        UI.openURL(platform_is_mac ? URI::DEFAULT_PARSER.escape("file:///#{path}") : "file:///#{path.gsub(/ /, '%20')}")
+        url = "file:///#{path}"
+        UI.openURL(platform_is_mac ? URI::DEFAULT_PARSER.escape(url) : url)
       end
     end
 
