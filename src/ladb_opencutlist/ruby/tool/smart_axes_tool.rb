@@ -340,6 +340,8 @@ module Ladb::OpenCutList
 
       if part
 
+        model = Sketchup.active_model
+
         # Show part infos
 
         infos = [ "#{part.length} x #{part.width} x #{part.thickness}" ]
@@ -375,7 +377,7 @@ module Ladb::OpenCutList
         @space.append(part_helper)
 
         show_axes = true
-        if is_action_adapt_axes?
+        if is_action_adapt_axes? && part.group.material_type != MaterialAttributes::TYPE_HARDWARE
 
           origin, x_axis, y_axis, z_axis, input_face, input_edge = _get_input_axes(instance_info)
 
@@ -434,7 +436,7 @@ module Ladb::OpenCutList
 
         if is_action_flip?
 
-          rect_offset = Sketchup.active_model.active_view.pixels_to_model(30, instance_info.definition_bounds.center)
+          rect_offset = model.active_view.pixels_to_model(30, instance_info.definition_bounds.center)
           rect_offset_bounds = Geom::BoundingBox.new
           rect_offset_bounds.add(Geom::Point3d.new.transform!(instance_info.transformation.inverse))
           rect_offset_bounds.add(Geom::Point3d.new(rect_offset, rect_offset, rect_offset).transform!(instance_info.transformation.inverse))
@@ -466,13 +468,13 @@ module Ladb::OpenCutList
           rect.line_width = 2
           part_helper.append(rect)
 
-          fill = Kuix::Mesh.new
-          fill.add_triangles([
-                               Geom::Point3d.new(0, 0, 0), Geom::Point3d.new(1, 0, 0), Geom::Point3d.new(1, 1, 0),
-                               Geom::Point3d.new(0, 0, 0), Geom::Point3d.new(0, 1, 0), Geom::Point3d.new(1, 1, 0)
-                             ])
-          fill.background_color = COLOR_ACTION_FILL
-          rect.append(fill)
+            fill = Kuix::Mesh.new
+            fill.add_triangles([
+                                 Geom::Point3d.new(0, 0, 0), Geom::Point3d.new(1, 0, 0), Geom::Point3d.new(1, 1, 0),
+                                 Geom::Point3d.new(0, 0, 0), Geom::Point3d.new(0, 1, 0), Geom::Point3d.new(1, 1, 0)
+                               ])
+            fill.background_color = COLOR_ACTION_FILL
+            rect.append(fill)
 
         end
 
@@ -534,7 +536,7 @@ module Ladb::OpenCutList
           unless part_entity_path.nil?
             active_instance = part_entity_path.last
             instances = active_instance.definition.instances
-            _instances_to_paths(instances, instance_paths, Sketchup.active_model.active_entities, Sketchup.active_model.active_path ? Sketchup.active_model.active_path : [])
+            _instances_to_paths(instances, instance_paths, model.active_entities, model.active_path ? model.active_path : [])
           end
 
         end
@@ -556,8 +558,8 @@ module Ladb::OpenCutList
           return
         end
 
-        unless is_action_flip?
-          definition = Sketchup.active_model.definitions[part.def.definition_id]
+        if !is_action_flip?
+          definition = model.definitions[part.def.definition_id]
           if definition && definition.count_used_instances > 1
             notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
           else

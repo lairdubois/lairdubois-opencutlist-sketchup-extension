@@ -634,11 +634,11 @@ module Ladb::OpenCutList
           @input_vertex = nil
         end
 
-        puts "# OUTPUT"
-        puts "  Face = #{@input_face}"
-        puts "  Edge = #{@input_edge} -> onface? = #{@input_edge ? @input_edge.used_by?(@input_face) : ''}"
-        puts "  Vertex = #{@input_vertex} -> onface? = #{@input_vertex ? @input_vertex.used_by?(@input_face) : ''}"
-        puts "  FacePath = #{@input_face_path ? @input_face_path.join(' -> ') : ''}"
+        # puts "# OUTPUT"
+        # puts "  Face = #{@input_face}"
+        # puts "  Edge = #{@input_edge} -> onface? = #{@input_edge ? @input_edge.used_by?(@input_face) : ''}"
+        # puts "  Vertex = #{@input_vertex} -> onface? = #{@input_vertex ? @input_vertex.used_by?(@input_face) : ''}"
+        # puts "  FacePath = #{@input_face_path ? @input_face_path.join(' -> ') : ''}"
 
       end
       false
