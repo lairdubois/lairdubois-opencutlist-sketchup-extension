@@ -77,15 +77,15 @@ module Ladb::OpenCutList
       case action
       when ACTION_FLIP
         return super +
-          ' | ↑↓ + ' + Plugin.instance.get_i18n_string('tool.default.transparency') + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.toggle_depth') + '.' +
+          ' | ↑↓ + ' + Plugin.instance.get_i18n_string('tool.default.transparency') + ' = ' + Plugin.instance.get_i18n_string('tool.default.toggle_depth') + '.' +
           ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_1') + '.'
       when ACTION_SWAP_LENGTH_WIDTH
         return super +
-          ' | ↑↓ + ' + Plugin.instance.get_i18n_string('tool.default.transparency') + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.toggle_depth') + '.' +
+          ' | ↑↓ + ' + Plugin.instance.get_i18n_string('tool.default.transparency') + ' = ' + Plugin.instance.get_i18n_string('tool.default.toggle_depth') + '.' +
           ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_2') + '.'
       when ACTION_SWAP_FRONT_BACK
         return super +
-          ' | ↑↓ + ' + Plugin.instance.get_i18n_string('tool.default.transparency') + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.toggle_depth') + '.' +
+          ' | ↑↓ + ' + Plugin.instance.get_i18n_string('tool.default.transparency') + ' = ' + Plugin.instance.get_i18n_string('tool.default.toggle_depth') + '.' +
           ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_3') + '.'
       when ACTION_ADAPT_AXES
         return super +
@@ -290,8 +290,6 @@ module Ladb::OpenCutList
           part = _generate_part_from_path(picked_part_entity_paths[new_index])
           _set_active(picked_part_entity_paths[new_index], part)
 
-          # @picked_path = picked_paths[new_index]
-
         end
         return true
       end
@@ -345,9 +343,13 @@ module Ladb::OpenCutList
       @active_part_entity_path = part_entity_path
       @active_part = part
 
-      if part
+      # Clear Kuix space
+      clear_space
 
-        clear_space
+      # Reset cursor
+      pop_to_root_cursor
+
+      if part
 
         # Show part infos
 
@@ -561,6 +563,7 @@ module Ladb::OpenCutList
 
         if !is_action_flip? && part.group.material_type == MaterialAttributes::TYPE_HARDWARE
           notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_orientable')}", MESSAGE_TYPE_ERROR)
+          push_cursor(@cursor_select_error)
           return
         end
 
@@ -577,7 +580,6 @@ module Ladb::OpenCutList
 
       else
         hide_infos
-        clear_space
       end
 
     end
@@ -600,12 +602,14 @@ module Ladb::OpenCutList
             else
               _reset
               notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
+              push_cursor(@cursor_select_error)
             end
             return
 
           else
             _reset
             notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
+            push_cursor(@cursor_select_error)
             return
           end
         end

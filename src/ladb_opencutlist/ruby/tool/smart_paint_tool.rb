@@ -271,14 +271,17 @@ module Ladb::OpenCutList
       case action
       when ACTION_PAINT_PARTS
         return super +
+          ' | ↑↓ + ' + Plugin.instance.get_i18n_string('tool.default.transparency') + ' = ' + Plugin.instance.get_i18n_string('tool.default.toggle_depth') + '.' +
           ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_1') + '.' +
           ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3') + '.'
       when ACTION_PAINT_EDGES
         return super +
+          ' | ↑↓ + ' + Plugin.instance.get_i18n_string('tool.default.transparency') + ' = ' + Plugin.instance.get_i18n_string('tool.default.toggle_depth') + '.' +
           ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_2') + '.' +
           ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3') + '.'
       when ACTION_PAINT_FACES
         return super +
+          ' | ↑↓ + ' + Plugin.instance.get_i18n_string('tool.default.transparency') + ' = ' + Plugin.instance.get_i18n_string('tool.default.toggle_depth') + '.' +
           ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3') + '.' +
           ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3') + '.'
       when ACTION_PICK
@@ -286,6 +289,7 @@ module Ladb::OpenCutList
           ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_0') + '.'
       when ACTION_PAINT_CLEAN
         return super +
+          ' | ↑↓ + ' + Plugin.instance.get_i18n_string('tool.default.transparency') + ' = ' + Plugin.instance.get_i18n_string('tool.default.toggle_depth') + '.' +
           ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_0') + '.' +
           ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3') + '.'
       end
@@ -635,7 +639,7 @@ module Ladb::OpenCutList
         end
       elsif key == ALT_MODIFIER_KEY
         unless is_action_pick?
-          # push_action(ACTION_PICK)
+          push_action(ACTION_PICK)
         end
         return true
       elsif repeat == 1
@@ -651,6 +655,28 @@ module Ladb::OpenCutList
       if key == ALT_MODIFIER_KEY
         if is_action_pick?
           pop_action
+        end
+        return true
+      elsif key == VK_UP || key == VK_DOWN
+        if @active_part_entity_path && !is_action_pick?
+
+          picked_paths = []
+          picked_part_entity_paths = []
+          @pick_helper.count.times do |index|
+            path = @pick_helper.path_at(index)
+            part_entity_path = _get_part_entity_path_from_path(path.clone)
+            unless part_entity_path.nil? || picked_part_entity_paths.include?(part_entity_path)
+              picked_paths << path
+              picked_part_entity_paths << part_entity_path
+            end
+          end
+
+          active_index = picked_part_entity_paths.map { |path| path.last }.index(@active_part_entity_path.last)
+          new_index = (active_index + (key == VK_UP ? 1 : -1)) % picked_part_entity_paths.length
+
+          part = _generate_part_from_path(picked_part_entity_paths[new_index])
+          _set_active(picked_part_entity_paths[new_index], part)
+
         end
         return true
       end
@@ -683,7 +709,7 @@ module Ladb::OpenCutList
     end
 
     def onTransactionUndo(model)
-      _handle_mouse_event(:move)
+      _refresh_active
     end
 
     def onMaterialAdd(materials, material)
@@ -850,379 +876,441 @@ module Ladb::OpenCutList
       nil
     end
 
-    def _reset
-      super
-      hide_infos
-      hide_material_infos
-      clear_space
+    def _refresh_active
+      _set_active(@active_part_entity_path, _generate_part_from_path(@active_part_entity_path))
     end
 
-    def _handle_mouse_event(event = nil)
-      unless @input_face.nil?
+    def _set_active(part_entity_path, part, highlighted = false)
+
+      @active_part_entity_path = part_entity_path
+      @active_part = part
+      @active_instances = []
+      @active_faces = []
+      @active_material = nil
+
+      # Clear Kuix space
+      clear_space
+
+      # Reset cursor
+      pop_to_root_cursor
+
+      if part
 
         model = Sketchup.active_model
 
-        if is_action_part?
+        if is_action_paint_parts?
+
+          # Show part infos
+          notify_infos(part.name)
+
+          @active_material = get_current_material
+          color = @active_material ? @active_material.color : MaterialUtils::get_color_from_path(@active_part_entity_path[0...-1]) # [0...-1] returns array without last element
+          color.alpha = highlighted ? 255 : 200
+
+          active_instance = @active_part_entity_path.last
+          instances = is_action_modifier_all? ? active_instance.definition.instances : [ active_instance ]
+          instance_paths = []
+          _instances_to_paths(instances, instance_paths, model.active_entities, model.active_path ? model.active_path : [])
+
+          triangles = _compute_children_faces_triangles(active_instance.definition.entities)
+
+          instance_paths.each do |path|
+
+            mesh = Kuix::Mesh.new
+            mesh.add_triangles(triangles)
+            mesh.background_color = color
+            mesh.transformation = PathUtils::get_transformation(path)
+            @space.append(mesh)
+
+          end
+
+          if is_action_modifier_all?
+            definition = Sketchup.active_model.definitions[part.def.definition_id]
+            if definition && definition.count_used_instances > 1
+              notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
+            else
+              hide_message
+            end
+          else
+            hide_message
+          end
+
+          @active_instances = instances
+
+        elsif is_action_paint_edges?
+
+          if part.group.material_type != MaterialAttributes::TYPE_SHEET_GOOD
+            notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.wrong_material_type', { :type => Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_SHEET_GOOD}") })}", MESSAGE_TYPE_ERROR)
+            push_cursor(@cursor_paint_error_id)
+          else
+
+            edge_faces = {}
+            part.def.edge_entity_ids.each { |k, v| edge_faces[k] = model.find_entity_by_id(v) if v.is_a?(Array) && !v.empty? }
+
+            sides = []
+            faces = []
+            if is_action_modifier_1? || is_action_modifier_2?
+
+              picked_side = nil
+              edge_faces.each { |k, v|
+                v.each { |face|
+                  if face == @input_face # picked_face
+                    picked_side = k
+                    break
+                  end
+                }
+                break unless picked_side.nil?
+              }
+
+              if picked_side
+                sides << picked_side unless edge_faces[picked_side].nil?
+                if is_action_modifier_2?
+                  sides << :ymin if picked_side == :ymax && !edge_faces[:ymin].nil?
+                  sides << :ymax if picked_side == :ymin && !edge_faces[:ymax].nil?
+                  sides << :xmin if picked_side == :xmax && !edge_faces[:xmin].nil?
+                  sides << :xmax if picked_side == :xmin && !edge_faces[:xmax].nil?
+                end
+              end
+
+            elsif is_action_modifier_4?
+              sides << :ymin unless edge_faces[:ymin].nil?
+              sides << :ymax unless edge_faces[:ymax].nil?
+              sides << :xmin unless edge_faces[:xmin].nil?
+              sides << :xmax unless edge_faces[:xmax].nil?
+            end
+
+            sides.each { |side|
+              faces << edge_faces[side]
+            }
+            faces = faces.flatten
+
+            if faces.empty?
+              notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_edge')}", MESSAGE_TYPE_ERROR)
+              push_cursor(@cursor_paint_error_id)
+            else
+
+              # Show edges infos
+              notify_infos(part.name, [ Plugin.instance.get_i18n_string('tool.smart_paint.edges', { :count => sides.length }) + (sides.length < 4 ? " → #{sides.map { |side| Plugin.instance.get_i18n_string("tool.smart_paint.edge_#{side}") }.join(' + ')}" : '') ])
+
+              @active_material = get_current_material
+              color = @active_material ? @active_material.color : MaterialUtils::get_color_from_path(@active_part_entity_path)
+              color.alpha = highlighted ? 255 : 200
+
+              active_instance = @active_part_entity_path.last
+              instances = active_instance.definition.instances
+              instance_paths = []
+              _instances_to_paths(instances, instance_paths, model.active_entities, model.active_path ? model.active_path : [])
+
+              triangles = _compute_children_faces_triangles(active_instance.definition.entities, nil, faces)
+
+              instance_paths.each do |path|
+
+                mesh = Kuix::Mesh.new
+                mesh.add_triangles(triangles)
+                mesh.background_color = color
+                mesh.transformation = PathUtils::get_transformation(path)
+                @space.append(mesh)
+
+              end
+
+              definition = Sketchup.active_model.definitions[part.def.definition_id]
+              if definition && definition.count_used_instances > 1
+                notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
+              else
+                hide_message
+              end
+
+              @active_instances = instances
+              @active_faces = faces
+
+            end
+
+          end
+
+        elsif is_action_paint_faces?
+
+          if part.group.material_type != MaterialAttributes::TYPE_SHEET_GOOD
+            notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.wrong_material_type', { :type => Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_SHEET_GOOD}") })}", MESSAGE_TYPE_ERROR)
+            push_cursor(@cursor_paint_error_id)
+          else
+
+            face_faces = {}
+            part.def.face_entity_ids.each { |k, v| face_faces[k] = model.find_entity_by_id(v) if v.is_a?(Array) && !v.empty? }
+
+            sides = []
+            faces = []
+            if is_action_modifier_1?
+
+              picked_side = nil
+              face_faces.each { |k, v|
+                v.each { |face|
+                  if face == @input_face # picked_face
+                    picked_side = k
+                    break
+                  end
+                }
+                break unless picked_side.nil?
+              }
+
+              if picked_side
+                sides << picked_side unless face_faces[picked_side].nil?
+              end
+
+            elsif is_action_modifier_2?
+              sides << :zmax unless face_faces[:zmax].nil?
+              sides << :zmin unless face_faces[:zmin].nil?
+            end
+
+            sides.each { |side|
+              faces << face_faces[side]
+            }
+            faces = faces.flatten
+
+            if faces.empty?
+              notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_face')}", MESSAGE_TYPE_ERROR)
+              push_cursor(@cursor_paint_error_id)
+            else
+
+              # Show faces infos
+              notify_infos(part.name, [ "#{Plugin.instance.get_i18n_string('tool.smart_paint.faces', { :count => sides.length })} → #{sides.map { |side| Plugin.instance.get_i18n_string("tool.smart_paint.face_#{side}") }.join(' + ')}" ])
+
+              @active_material = get_current_material
+              color = @active_material ? @active_material.color : MaterialUtils::get_color_from_path(@active_part_entity_path)
+              color.alpha = highlighted ? 255 : 200
+
+              active_instance = @active_part_entity_path.last
+              instances = active_instance.definition.instances
+              instance_paths = []
+              _instances_to_paths(instances, instance_paths, model.active_entities, model.active_path ? model.active_path : [])
+
+              triangles = _compute_children_faces_triangles(active_instance.definition.entities, nil, faces)
+
+              instance_paths.each do |path|
+
+                mesh = Kuix::Mesh.new
+                mesh.add_triangles(triangles)
+                mesh.background_color = color
+                mesh.transformation = PathUtils::get_transformation(path)
+                @space.append(mesh)
+
+              end
+
+              definition = Sketchup.active_model.definitions[part.def.definition_id]
+              if definition && definition.count_used_instances > 1
+                notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
+              else
+                hide_message
+              end
+
+              @active_instances = instances
+              @active_faces = faces
+
+            end
+
+          end
+
+        elsif is_action_paint_clean?
+
+          # Show part infos
+          notify_infos(part.name)
+
+          color = MaterialUtils::get_color_from_path(@active_part_entity_path[0...-1]) # [0...-1] returns array without last element
+          color.alpha = highlighted ? 255 : 200
+
+          active_instance = @active_part_entity_path.last
+          instances = active_instance.definition.instances
+          instance_paths = []
+          _instances_to_paths(instances, instance_paths, model.active_entities, model.active_path ? model.active_path : [])
+
+          triangles = _compute_children_faces_triangles(active_instance.definition.entities)
+
+          instance_paths.each do |path|
+
+            mesh = Kuix::Mesh.new
+            mesh.add_triangles(triangles)
+            mesh.background_color = color
+            mesh.transformation = PathUtils::get_transformation(path)
+            @space.append(mesh)
+
+          end
+
+          definition = model.definitions[part.def.definition_id]
+          if definition && definition.count_used_instances > 1
+            notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
+          else
+            hide_message
+          end
+
+          @active_instances = instances
+
+        end
+
+      else
+        hide_infos
+        hide_material_infos
+      end
+
+    end
+
+    def _reset
+      super
+      _set_active(nil, nil)
+    end
+
+    def _handle_mouse_event(event = nil)
+      begin
+      if is_action_part?
+
+        if event == :move
 
           if @input_face_path
-
             input_part_entity_path = _get_part_entity_path_from_path(@input_face_path)
             if input_part_entity_path
 
               part = _generate_part_from_path(input_part_entity_path)
               if part
-
-                # Clear Kuix space
-                clear_space
-
-                if is_action_paint_edges?
-
-                  if part.group.material_type != MaterialAttributes::TYPE_SHEET_GOOD
-                    _reset
-                    notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.wrong_material_type', { :type => Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_SHEET_GOOD}") })}", MESSAGE_TYPE_ERROR)
-                    UI.beep if event == :l_button_up
-                  else
-
-                    edge_faces = {}
-                    part.def.edge_entity_ids.each { |k, v| edge_faces[k] = model.find_entity_by_id(v) if v.is_a?(Array) && !v.empty? }
-
-                    sides = []
-                    faces = []
-                    if is_action_modifier_1? || is_action_modifier_2?
-
-                      picked_side = nil
-                      edge_faces.each { |k, v|
-                        v.each { |face|
-                          if face == @input_face # picked_face
-                            picked_side = k
-                            break
-                          end
-                        }
-                        break unless picked_side.nil?
-                      }
-
-                      if picked_side
-                        sides << picked_side unless edge_faces[picked_side].nil?
-                        if is_action_modifier_2?
-                          sides << :ymin if picked_side == :ymax && !edge_faces[:ymin].nil?
-                          sides << :ymax if picked_side == :ymin && !edge_faces[:ymax].nil?
-                          sides << :xmin if picked_side == :xmax && !edge_faces[:xmin].nil?
-                          sides << :xmax if picked_side == :xmin && !edge_faces[:xmax].nil?
-                        end
-                      end
-
-                    elsif is_action_modifier_4?
-                      sides << :ymin unless edge_faces[:ymin].nil?
-                      sides << :ymax unless edge_faces[:ymax].nil?
-                      sides << :xmin unless edge_faces[:xmin].nil?
-                      sides << :xmax unless edge_faces[:xmax].nil?
-                    end
-
-                    sides.each { |side|
-                      faces << edge_faces[side]
-                    }
-                    faces = faces.flatten
-
-                    if faces.empty?
-                      _reset
-                      notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_edge')}", MESSAGE_TYPE_ERROR)
-                      UI.beep if event == :l_button_up
-                    else
-
-                      # Show edges infos
-                      notify_infos(part.name, [ Plugin.instance.get_i18n_string('tool.smart_paint.edges', { :count => sides.length }) + (sides.length < 4 ? " → #{sides.map { |side| Plugin.instance.get_i18n_string("tool.smart_paint.edge_#{side}") }.join(' + ')}" : '') ])
-
-                      current_material = get_current_material
-                      color = current_material ? current_material.color : MaterialUtils::get_color_from_path(input_part_entity_path)
-                      color.alpha = event == :l_button_down ? 255 : 200
-
-                      active_instance = input_part_entity_path.last
-                      instances = active_instance.definition.instances
-                      instance_paths = []
-                      _instances_to_paths(instances, instance_paths, Sketchup.active_model.active_entities, Sketchup.active_model.active_path ? Sketchup.active_model.active_path : [])
-
-                      triangles = _compute_children_faces_triangles(active_instance.definition.entities, nil, faces)
-
-                      instance_paths.each do |path|
-
-                        mesh = Kuix::Mesh.new
-                        mesh.add_triangles(triangles)
-                        mesh.background_color = color
-                        mesh.transformation = PathUtils::get_transformation(path)
-                        @space.append(mesh)
-
-                      end
-
-                      definition = Sketchup.active_model.definitions[part.def.definition_id]
-                      if definition && definition.count_used_instances > 1
-                        notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
-                      else
-                        hide_message
-                      end
-
-                      if event == :l_button_up
-
-                        # Start undoable model modification operation
-                        model.start_operation('OpenCutList - Paint edges', true, false, false)
-
-                        faces.each { |face| face.material = current_material }
-
-                        # Commit model modification operation
-                        model.commit_operation
-
-                      end
-
-                    end
-
-                  end
-
-                elsif is_action_paint_faces?
-
-                  if part.group.material_type != MaterialAttributes::TYPE_SHEET_GOOD
-                    _reset
-                    notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.wrong_material_type', { :type => Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_SHEET_GOOD}") })}", MESSAGE_TYPE_ERROR)
-                    UI.beep if event == :l_button_up
-                  else
-
-                    face_faces = {}
-                    part.def.face_entity_ids.each { |k, v| face_faces[k] = model.find_entity_by_id(v) if v.is_a?(Array) && !v.empty? }
-
-                    sides = []
-                    faces = []
-                    if is_action_modifier_1?
-
-                      picked_side = nil
-                      face_faces.each { |k, v|
-                        v.each { |face|
-                          if face == @input_face # picked_face
-                            picked_side = k
-                            break
-                          end
-                        }
-                        break unless picked_side.nil?
-                      }
-
-                      if picked_side
-                        sides << picked_side unless face_faces[picked_side].nil?
-                      end
-
-                    elsif is_action_modifier_2?
-                      sides << :zmax unless face_faces[:zmax].nil?
-                      sides << :zmin unless face_faces[:zmin].nil?
-                    end
-
-                    sides.each { |side|
-                      faces << face_faces[side]
-                    }
-                    faces = faces.flatten
-
-                    if faces.empty?
-                      _reset
-                      notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_face')}", MESSAGE_TYPE_ERROR)
-                      UI.beep if event == :l_button_up
-                    else
-
-                      # Show faces infos
-                      notify_infos(part.name, [ "#{Plugin.instance.get_i18n_string('tool.smart_paint.faces', { :count => sides.length })} → #{sides.map { |side| Plugin.instance.get_i18n_string("tool.smart_paint.face_#{side}") }.join(' + ')}" ])
-
-                      current_material = get_current_material
-                      color = current_material ? current_material.color : MaterialUtils::get_color_from_path(input_part_entity_path)
-                      color.alpha = event == :l_button_down ? 255 : 200
-
-                      active_instance = input_part_entity_path.last
-                      instances = active_instance.definition.instances
-                      instance_paths = []
-                      _instances_to_paths(instances, instance_paths, Sketchup.active_model.active_entities, Sketchup.active_model.active_path ? Sketchup.active_model.active_path : [])
-
-                      triangles = _compute_children_faces_triangles(active_instance.definition.entities, nil, faces)
-
-                      instance_paths.each do |path|
-
-                        mesh = Kuix::Mesh.new
-                        mesh.add_triangles(triangles)
-                        mesh.background_color = color
-                        mesh.transformation = PathUtils::get_transformation(path)
-                        @space.append(mesh)
-
-                      end
-
-                      definition = Sketchup.active_model.definitions[part.def.definition_id]
-                      if definition && definition.count_used_instances > 1
-                        notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
-                      else
-                        hide_message
-                      end
-
-                      if event == :l_button_up
-
-                        # Start undoable model modification operation
-                        model.start_operation('OpenCutList - Paint faces', true, false, false)
-
-                        faces.each { |face| face.material = current_material }
-
-                        # Commit model modification operation
-                        model.commit_operation
-
-                      end
-
-                    end
-
-                  end
-
-                elsif is_action_paint_clean?
-
-                  # Show part infos
-                  notify_infos(part.name)
-
-                  color = MaterialUtils::get_color_from_path(input_part_entity_path[0...-1]) # [0...-1] returns array without last element
-                  color.alpha = event == :l_button_down ? 255 : 200
-
-                  active_instance = input_part_entity_path.last
-                  instances = active_instance.definition.instances
-                  instance_paths = []
-                  _instances_to_paths(instances, instance_paths, Sketchup.active_model.active_entities, Sketchup.active_model.active_path ? Sketchup.active_model.active_path : [])
-
-                  triangles = _compute_children_faces_triangles(active_instance.definition.entities)
-
-                  instance_paths.each do |path|
-
-                    mesh = Kuix::Mesh.new
-                    mesh.add_triangles(triangles)
-                    mesh.background_color = color
-                    mesh.transformation = PathUtils::get_transformation(path)
-                    @space.append(mesh)
-
-                  end
-
-                  definition = Sketchup.active_model.definitions[part.def.definition_id]
-                  if definition && definition.count_used_instances > 1
-                    notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
-                  else
-                    hide_message
-                  end
-
-                  if event == :l_button_up
-
-                    # Start undoable model modification operation
-                    model.start_operation('OpenCutList - Paint clean', true, false, false)
-
-                    # Clean definition
-                    _propagate_material(input_part_entity_path.last.definition.entities, nil)
-
-                    # Clean instances
-                    instances.each do |instance|
-                      instance.material = nil
-                    end
-
-                    # Commit model modification operation
-                    model.commit_operation
-
-                  end
-
-                elsif is_action_paint_parts?
-
-                  # Show part infos
-                  notify_infos(part.name)
-
-                  current_material = get_current_material
-                  color = current_material ? current_material.color : MaterialUtils::get_color_from_path(input_part_entity_path[0...-1]) # [0...-1] returns array without last element
-                  color.alpha = event == :l_button_down ? 255 : 200
-
-                  active_instance = input_part_entity_path.last
-                  instances = is_action_modifier_all? ? active_instance.definition.instances : [ active_instance ]
-                  instance_paths = []
-                  _instances_to_paths(instances, instance_paths, Sketchup.active_model.active_entities, Sketchup.active_model.active_path ? Sketchup.active_model.active_path : [])
-
-                  triangles = _compute_children_faces_triangles(active_instance.definition.entities)
-
-                  instance_paths.each do |path|
-
-                    mesh = Kuix::Mesh.new
-                    mesh.add_triangles(triangles)
-                    mesh.background_color = color
-                    mesh.transformation = PathUtils::get_transformation(path)
-                    @space.append(mesh)
-
-                  end
-
-                  if is_action_modifier_all?
-                    definition = Sketchup.active_model.definitions[part.def.definition_id]
-                    if definition && definition.count_used_instances > 1
-                      notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
-                    else
-                      hide_message
-                    end
-                  else
-                    hide_message
-                  end
-
-                  if event == :l_button_up
-
-                    # Start undoable model modification operation
-                    model.start_operation('OpenCutList - Paint parts', true, false, false)
-
-                    # Paint instances
-                    instances.each do |instance|
-                      instance.material = current_material
-                    end
-
-                    # Commit model modification operation
-                    model.commit_operation
-
-                  end
-
-                end
-
+                _set_active(input_part_entity_path, part, event == :l_button_down)
               else
                 _reset
                 notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
-                UI.beep if event == :l_button_up
+                push_cursor(@cursor_paint_error_id)
               end
-
               return
+
             else
               _reset
               notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
-              UI.beep if event == :l_button_up
+              push_cursor(@cursor_paint_error_id)
+              return
+            end
+          end
+          _reset  # No input
+
+        elsif event == :l_button_down
+
+          _set_active(@active_part_entity_path, _generate_part_from_path(@active_part_entity_path), true)
+
+        elsif event == :l_button_up || event == :l_button_dblclick
+
+          model = Sketchup.active_model
+
+          if is_action_paint_parts?
+
+            if @active_instances.nil? || @active_instances.empty?
+              UI.beep
               return
             end
 
-          end
+            # Start undoable model modification operation
+            model.start_operation('OpenCutList - Paint parts', true, false, false)
 
-        elsif is_action_pick?
+            # Paint instances
+            @active_instances.each do |instance|
+              instance.material = @active_material
+            end
 
-          material = MaterialUtils::get_material_from_path(@input_face_path)
-          if @input_face
-            if event == :move
+            # Commit model modification operation
+            model.commit_operation
 
-              # Display material infos
-              if material
-                notify_infos(material.name, [ Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes.new(material).type}") ])
-              else
-                notify_infos(Plugin.instance.get_i18n_string('tool.smart_paint.default_material'))
-              end
+            # Refresh active
+            _refresh_active
 
-            elsif event == :l_button_up
+          elsif is_action_paint_edges?
 
-              # Set picked material as current
-              set_current_material(material.nil? ? false : material, true, true)
-
+            if @active_faces.nil? || @active_faces.empty?
+              UI.beep
               return
             end
-          else
-            if event == :move
-              hide_material_infos
-            elsif event == :l_button_up
-              UI.beep # Feedback for "no material"
+
+            # Start undoable model modification operation
+            model.start_operation('OpenCutList - Paint edges', true, false, false)
+
+            @active_faces.each { |face| face.material = @active_material }
+
+            # Commit model modification operation
+            model.commit_operation
+
+            # Refresh active
+            _refresh_active
+
+          elsif is_action_paint_faces?
+
+            if @active_faces.nil? || @active_faces.empty?
+              UI.beep
+              return
             end
+
+            # Start undoable model modification operation
+            model.start_operation('OpenCutList - Paint faces', true, false, false)
+
+            @active_faces.each { |face| face.material = @active_material }
+
+            # Commit model modification operation
+            model.commit_operation
+
+            # Refresh active
+            _refresh_active
+
+          elsif is_action_paint_clean?
+
+            if @active_instances.nil? || @active_instances.empty?
+              UI.beep
+              return
+            end
+
+            # Start undoable model modification operation
+            model.start_operation('OpenCutList - Paint clean', true, false, false)
+
+            # Clean definition
+            _propagate_material(@active_instances.first.definition.entities, nil)
+
+            # Clean instances
+            @active_instances.each do |instance|
+              instance.material = nil
+            end
+
+            # Commit model modification operation
+            model.commit_operation
+
+            # Refresh active
+            _refresh_active
+
           end
 
-          return
+        end
+
+      elsif is_action_pick?
+
+        material = MaterialUtils::get_material_from_path(@input_face_path)
+        if @input_face
+          if event == :move
+
+            # Display material infos
+            if material
+              notify_infos(material.name, [ Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes.new(material).type}") ])
+            else
+              notify_infos(Plugin.instance.get_i18n_string('tool.smart_paint.default_material'))
+            end
+
+          elsif event == :l_button_up
+
+            # Set picked material as current
+            set_current_material(material.nil? ? false : material, true, true)
+
+          end
+        else
+          if event == :move
+            _reset
+          elsif event == :l_button_up
+            UI.beep # Feedback for "no material"
+          end
         end
 
       end
-      _reset
-      UI.beep if event == :l_button_up
+      rescue => e
+        puts e.inspect
+        puts e.backtrace
+      end
     end
 
     def _propagate_material(entities, material = nil)

@@ -120,6 +120,8 @@ module Ladb::OpenCutList
         @space.remove_all
       end
 
+      # -- Cursors stuff --
+
       def create_cursor(name, hot_x, hot_y)
         cursor_id = nil
         cursor_path = File.join(__dir__, '..', '..', '..', 'img', "cursor-#{name}.#{Plugin.instance.platform_is_mac ? 'pdf' : 'svg'}")
@@ -135,13 +137,25 @@ module Ladb::OpenCutList
       end
 
       def push_cursor(cursor_id)
+        if @cursors.include?(cursor_id)
+          return if @cursors.find_index(cursor_id) == 0
+          @cursors.delete(cursor_id)
+        end
         @cursors.push(cursor_id)
       end
 
-      def pop_cursor
+      def pop_cursor(cursor_id = nil)
         if @cursors.length > 1
-          @cursors.pop
+          if !cursor_id.nil?
+            @cursors.delete(cursor_id)
+          else
+            @cursors.pop
+          end
         end
+      end
+
+      def pop_to_root_cursor
+        @cursors.slice!(1)
       end
 
       # -- Tool stuff --

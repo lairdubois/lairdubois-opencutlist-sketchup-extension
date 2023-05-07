@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="100%" height="100%" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+<svg width="100%" height="100%" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
     <g id="error" transform="matrix(1.50134,0,0,1.50134,-3.77251,-3.51743)">
-        <g transform="matrix(1.865,0,0,1.865,-20.4001,-20.57)">
-            <path d="M20.5,18C21.88,18 23,19.12 23,20.5C23,21.88 21.88,23 20.5,23C19.12,23 18,21.88 18,20.5C18,19.12 19.12,18 20.5,18ZM20.5,18.5C21.604,18.5 22.5,19.396 22.5,20.5C22.5,21.604 21.604,22.5 20.5,22.5C19.396,22.5 18.5,21.604 18.5,20.5C18.5,19.396 19.396,18.5 20.5,18.5Z" style="fill:rgb(255,0,0);"/>
+        <g transform="matrix(0.666071,0,0,0.666071,2.51276,2.34286)">
+            <path d="M23,15C18.584,15 15,18.584 15,23C15,27.416 18.584,31 23,31C27.416,31 31,27.416 31,23C31,18.584 27.416,15 23,15ZM27.225,21.179C27.466,21.737 27.6,22.353 27.6,23C27.6,25.539 25.539,27.6 23,27.6C22.353,27.6 21.738,27.466 21.179,27.225L27.225,21.179ZM24.821,18.775L18.775,24.821C18.534,24.263 18.4,23.647 18.4,23C18.4,20.461 20.461,18.4 23,18.4C23.647,18.4 24.263,18.534 24.821,18.775L24.821,18.775Z" style="fill:white;"/>
         </g>
-        <g transform="matrix(1.865,0,0,1.865,-20.4001,-20.57)">
-            <path d="M19,22L22,19" style="fill:none;stroke:rgb(255,0,0);stroke-width:0.5px;"/>
+        <g transform="matrix(0.666071,0,0,0.666071,2.51276,2.34286)">
+            <path d="M23,16C26.864,16 30,19.136 30,23C30,26.864 26.864,30 23,30C19.136,30 16,26.864 16,23C16,19.136 19.136,16 23,16ZM27.423,19.567C28.161,20.515 28.6,21.707 28.6,23C28.6,26.091 26.091,28.6 23,28.6C21.707,28.6 20.515,28.161 19.567,27.423L27.423,19.567ZM26.433,18.577L18.577,26.433C17.839,25.485 17.4,24.293 17.4,23C17.4,19.909 19.909,17.4 23,17.4C24.293,17.4 25.485,17.839 26.433,18.577Z" style="fill:rgb(255,0,0);"/>
         </g>
     </g>
     <g id="paint" transform="matrix(-0.0290161,0,0,0.0290161,19.6978,0.114875)">
