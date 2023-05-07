@@ -319,7 +319,7 @@ tab:
       group_numbers_save: שמור את מספרי החלקים בקבוצה
       group_numbers_reset: עדכן את מספרי החלקים בקבוצה
       group_cuttingdiagram: תוכנית חיתוך
-      group_labels: ""
+      group_labels: הדפס תוויות עבור חלקים בקבוצה
       edit_material: "ערוך חומר '{{ material_name }}'"
       expand_all: פתח את כל השורות
       collapse_all: קפל את כל השורות
@@ -355,9 +355,9 @@ tab:
       instance_count_by_part_1: פריט 1 בחלק
       instance_count_by_part_2: 2 פריטים בחלק
       mass: משקל
-      mass_help: ""
+      mass_help: המסה של החלק תשמש בעת יצירת **הערכה**.
       price: מחיר
-      price_help: ""
+      price_help: המחיר של החלק ישמש בעת הפקת **הערכה**.
       thickness_layer_count: Nb של שכבות
       thickness_layer_count_help: |
         הגדירו כאן את מספר השכבות המחלקות את החלק המצויר בעוביו.
@@ -408,15 +408,15 @@ tab:
       axes_origin_position_none: לא לשנות ראשית הצירים
       axes_origin_position_min: מיקום ראשית הצירים לפי זווית
       axes_origin_position_center: מיקום ראשית הצירים במרכז
-      axes_origin_position_front_min: ""
-      axes_origin_position_front_center: ""
+      axes_origin_position_front_min: תניח את ראשית הצירים בקצה החזית
+      axes_origin_position_front_center: תניח את ראשית הצירים במרכז החזית
       over_length: לכל האורך
       over_width: לכל הרוחב
       edge_disabled_help: לא ניתן להגדיר את הקאנט מכיוון שבמודל לא נמצא משטח שכולל חומר הקאנט.
       face_disabled_help: משטח זה אינו ניתן להגדרה מכיוון שלא זוהו פנים נושאי חומר בקצה זה של החלק בדגם.
       multiple_values: ערכים מרובים
       export_to_skp: ייצוא ​​(skp.)
-      loading_preview: ""
+      loading_preview: טוען תצוגה מקדימה
     export_to_skp:
       title: ייצוא לקובץ skp.
     option:
@@ -585,8 +585,9 @@ tab:
       success:
         copied: הועתק ללוח.
     report:
-      title: ""
-      info_0: |
+      title: הערכה
+      info_0: |-
+        תכונה זו מאפשרת לך להפיק אומדן של **המסה** ו**העלות** של **חומרי הגלם** הדרושים לייצור החלקים של *תוכנית חיתוך*.
       options_general: כללי
       options_solid_wood: $t(tab.materials.type_1)
       option_solid_wood_coefficient: מקדם *$t(tab.materials.type_1)*
@@ -604,13 +605,16 @@ tab:
       total_area: שטח כללי
       total_length: סה"כ אורכים
       error:
-        no_typed_material_parts: ""
+        no_typed_material_parts: "אין חלק בעל חומר עם סוג מוגדר (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** , **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** או **$t(tab.materials.type_5)**) מסופקים כדי ליצור את ההערכה."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} שגיאה**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} שגיאות**."
       warning:
         is_group_selection: חלקים בתוך **קבוצות נסתרות** של תוכנית חיתוך לא יובאו בחשבון.
       tip:
         not_enough_data: |
+          כדי שאומדן זה יחושב נכון:
+          - החומרים המשמשים חייבים להיות בעלי צפיפות ומחיר מוגדרים אחד לפחות.
+          - האביזרים המשמשים חייבים להיות בעלי מסה ומחיר לפחות.
     cuttingdiagram:
       title: תוכנית חיתוך
       start_msg: אופטימיזציה פועלת
@@ -738,7 +742,7 @@ tab:
         leftover: פחת
         cut: חיתוך
         cut_plural: חיתוכים
-        cut_trimming: ""
+        cut_trimming: ניתוך נטו
         cut_bounding: חיתוך ראשוני (רמה 1)
         cut_bounding_plural: חתכים ראשוניים (רמה 1)
         cut_internal_through: חיתוך ראשוני (רמה 2)
@@ -762,7 +766,8 @@ tab:
         parameters: ההגדרות שגויות. גודל החיתוך עולה על 25% של הלוח או קאנט הארוכים ביותר.
         no_parts: אין חלק.
         no_sheet: הלוח הסטנדרטי אינו מוגדר כהלכה ולא מוגדרת שום פחת.
-        no_placement_possible: "לא ניתן היה להציב חלק (לוח רגיל קטן מדי, שוליים גדולים מדי, להב מסור עבה מדי, ...)."
+        no_placement_possible_1d: "לא ניתן היה להניח חלק (חומר גלם קטן מדי, השוליים גדולים מדי, להב המסור עבה מדי, ...)."
+        no_placement_possible_2d: "לא ניתן היה להציב חלק (לוח רגיל קטן מדי, שוליים גדולים מדי, להב מסור עבה מדי, ...)."
         bad_error: "שגיאת חישוב. אנא צרו קשר עם המפתחים, מכיוון שיש לכם מקרה מעניין."
         unplaced_parts: "**חלק 1** גדולה מכדי למקם אותו."
         unplaced_parts_plural: "**{{ count }} חלקים** גדולים מכדי למקם."
@@ -857,26 +862,26 @@ tab:
         is_part_selection: תוויות האלה מוגבלות ל-**חלקים נבחרים**.
         formula_not_available: נוסחה לא זמינה בהקשר זה
     layout:
-      title: ""
-      to_layout: ""
+      title: שרטוט
+      to_layout: ייצוא לפריסה
       options_layout: הרכב
       options_settings: תצורה
-      option_parts: ""
+      option_parts: חלקים
       option_parts_colored: צבע
-      option_parts_colored_0: ""
-      option_parts_colored_1: ""
-      option_parts_colored_help: ""
-      option_parts_opacity: ""
-      option_parts_opacity_0: ""
-      option_parts_opacity_1: ""
-      option_parts_opacity_help: ""
-      option_pins: ""
+      option_parts_colored_0: ללא צבע
+      option_parts_colored_1: צבע החומר שלהם
+      option_parts_colored_help: מאפשר לבחור את המראה של החלקים.
+      option_parts_opacity: שקיפות
+      option_parts_opacity_0: שקוף
+      option_parts_opacity_1: מט
+      option_parts_opacity_help: מאפשר לבחור את השקיפות של החלקים.
+      option_pins: סיכות
       option_pins_hidden: להציג
-      option_pins_hidden_0: ""
-      option_pins_hidden_1: ""
-      option_pins_hidden_help: ""
+      option_pins_hidden_0: עם סיכות
+      option_pins_hidden_1: ללא סיכות
+      option_pins_hidden_help: מציג או מסתיר סיכות המצביעות על חלקים כדי לציין את מספרם או ייעודם.
       option_pins_colored: צבע
-      option_pins_colored_0: ""
+      option_pins_colored_0: ללא צבע
       option_pins_colored_1: ""
       option_pins_colored_help: ""
       option_pins_formula: נוסחה
@@ -1339,7 +1344,7 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: צבע פנים
+    action_0: ""
     action_0_status: ""
     action_1: צבע חלק
     action_1_status: ""
@@ -1347,6 +1352,8 @@ tool:
     action_2_status: ""
     action_3: נקה חלק
     action_3_status: ""
+    action_4: ""
+    action_4_status: ""
     edges: ""
     edges_plural: ""
     edge_ymin: ""
