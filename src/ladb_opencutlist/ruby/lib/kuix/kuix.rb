@@ -186,9 +186,8 @@ module Ladb::OpenCutList
         onResume(view)
       end
 
-      def quit(view)
-        # Deactivate the tool
-        view.model.select_tool(nil)
+      def quit
+        Sketchup.active_model.select_tool(nil) # Deactivate the tool
       end
 
       def draw(view)
@@ -262,7 +261,7 @@ module Ladb::OpenCutList
         # 0 = the user canceled the current operation by hitting the escape key
         # 2 = the user did an undo while the tool was active.
         if (reason == 0 && @quit_on_esc) || (reason == 2 && @quit_on_undo)
-          quit(view)
+          quit
         end
       end
 

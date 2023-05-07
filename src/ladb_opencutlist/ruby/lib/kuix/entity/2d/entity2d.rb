@@ -79,8 +79,8 @@ module Ladb::OpenCutList::Kuix
       unless @active_pseudo_classes.include?(pseudo_class)
         @active_pseudo_classes.push(pseudo_class)
         if propagate
-          @child.activate_pseudo_class(pseudo_class, depth + 1) if @child
-          @next.activate_pseudo_class(pseudo_class, depth) if @next && depth > 0
+          @child.activate_pseudo_class(pseudo_class, propagate, depth + 1) if @child
+          @next.activate_pseudo_class(pseudo_class, propagate, depth) if @next && depth > 0
         end
         invalidate
       end
@@ -90,8 +90,8 @@ module Ladb::OpenCutList::Kuix
       if @active_pseudo_classes.include?(pseudo_class)
         @active_pseudo_classes.delete(pseudo_class)
         if propagate
-          @child.deactivate_pseudo_class(pseudo_class, depth + 1) if @child
-          @next.deactivate_pseudo_class(pseudo_class, depth) if @next && depth > 0
+          @child.deactivate_pseudo_class(pseudo_class, propagate, depth + 1) if @child
+          @next.deactivate_pseudo_class(pseudo_class, propagate, depth) if @next && depth > 0
         end
         invalidate
       end

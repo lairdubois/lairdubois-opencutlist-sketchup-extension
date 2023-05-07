@@ -289,7 +289,7 @@ module Ladb::OpenCutList
           new_index = (active_index + (key == VK_UP ? 1 : -1)) % picked_part_entity_paths.length
 
           part = _generate_part_from_path(picked_part_entity_paths[new_index])
-          _set_active(picked_part_entity_paths[new_index], part)
+          _set_active_part(picked_part_entity_paths[new_index], part)
 
         end
         return true
@@ -320,22 +320,22 @@ module Ladb::OpenCutList
 
     def onMouseLeave(view)
       return true if super
-      _reset_active
+      _reset_active_part
     end
 
     def onTransactionUndo(model)
-      _refresh_active
+      _refresh_active_part
     end
 
     def onActionChange(action, modifier)
-      _refresh_active
+      _refresh_active_part
     end
 
     # -----
 
     protected
 
-    def _set_active(part_entity_path, part, highlighted = false)
+    def _set_active_part(part_entity_path, part, highlighted = false)
       super
 
       if part
@@ -582,26 +582,26 @@ module Ladb::OpenCutList
 
             part = _generate_part_from_path(input_part_entity_path)
             if part
-              _set_active(input_part_entity_path, part)
+              _set_active_part(input_part_entity_path, part)
             else
-              _reset_active
+              _reset_active_part
               notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
               push_cursor(@cursor_select_error)
             end
             return
 
           else
-            _reset_active
+            _reset_active_part
             notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
             push_cursor(@cursor_select_error)
             return
           end
         end
-        _reset_active  # No input
+        _reset_active_part  # No input
 
       elsif event == :l_button_down
 
-        _refresh_active(true)
+        _refresh_active_part(true)
 
       elsif event == :l_button_up || event == :l_button_dblclick
 
@@ -643,7 +643,7 @@ module Ladb::OpenCutList
               model.commit_operation
 
               # Refresh active
-              _refresh_active
+              _refresh_active_part
 
             elsif is_action_swap_length_width?
 
@@ -705,7 +705,7 @@ module Ladb::OpenCutList
               model.commit_operation
 
               # Refresh active
-              _refresh_active
+              _refresh_active_part
 
             end
 

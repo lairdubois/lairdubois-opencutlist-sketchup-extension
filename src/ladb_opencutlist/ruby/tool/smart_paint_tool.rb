@@ -5,14 +5,12 @@ module Ladb::OpenCutList
   require_relative '../utils/path_utils'
   require_relative '../utils/color_utils'
   require_relative '../utils/material_utils'
-  require_relative '../helper/layer_visibility_helper'
   require_relative '../helper/face_triangles_helper'
   require_relative '../model/attributes/material_attributes'
   require_relative '../worker/cutlist/cutlist_generate_worker'
 
   class SmartPaintTool < SmartTool
 
-    include LayerVisibilityHelper
     include FaceTrianglesHelper
 
     ACTION_PAINT_PARTS = 0
@@ -39,16 +37,16 @@ module Ladb::OpenCutList
       MaterialAttributes::TYPE_SOLID_WOOD => Sketchup::Color.new(76, 175, 80).freeze,
       MaterialAttributes::TYPE_SHEET_GOOD => Sketchup::Color.new(237, 162, 0).freeze,
       MaterialAttributes::TYPE_DIMENSIONAL => Sketchup::Color.new(245, 89, 172).freeze,
+      MaterialAttributes::TYPE_HARDWARE => Sketchup::Color.new(0, 0, 0).freeze,
       MaterialAttributes::TYPE_EDGE => Sketchup::Color.new(102, 142, 238).freeze,
-      MaterialAttributes::TYPE_VENEER => Sketchup::Color.new(131, 56, 236).freeze,
-      MaterialAttributes::TYPE_HARDWARE => Sketchup::Color.new(0, 0, 0).freeze
+      MaterialAttributes::TYPE_VENEER => Sketchup::Color.new(131, 56, 236).freeze
     }
 
     @@action = nil
     @@action_modifiers = {} # { action => MODIFIER }
 
     @@action_materials = {} # { action => Sketchup::Material }
-    @@action_filters = {}   # { action => MaterialAttributes:TYPE }
+    @@action_filters = {}   # { action => Array<MaterialAttributes:TYPE> }
 
     @@filters = nil
 
@@ -62,7 +60,7 @@ module Ladb::OpenCutList
       if @@filters.nil?
         @@filters = {}
         for type in 0..COLOR_MATERIAL_TYPES.length - 1
-          @@filters[type] = type != MaterialAttributes::TYPE_UNKNOWN
+          @@filters[type] = true
         end
       end
 
@@ -150,14 +148,28 @@ module Ladb::OpenCutList
       }
       @materials_panel.append(@materials_filters_btn)
 
-        icon = Kuix::Lines2d.new(Kuix::Lines2d.patterns_from_svg_path('M0.4,1L0.4,0.5L0.1,0.2L0.1,0L0.9,0L0.9,0.2L0.6,0.5L0.6,0.9L0.4,1'))
-        icon.layout_data = Kuix::StaticLayoutData.new(0.5, 0, @unit * 10, @unit * 10, Kuix::Anchor.new(Kuix::Anchor::TOP_CENTER))
-        icon.padding.set_all!(@unit * 2)
-        icon.line_width = @unit <= 4 ? 1 : 2
-        icon.set_style_attribute(:color, COLOR_BRAND_LIGHT)
-        icon.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
-        icon.set_style_attribute(:color, COLOR_WHITE, :selected)
-        @materials_filters_btn.append(icon)
+        panel = Kuix::Panel.new
+        panel.layout_data = Kuix::StaticLayoutData.new(0.5, 0, 0, @unit * 10, Kuix::Anchor.new(Kuix::Anchor::TOP_CENTER))
+        panel.layout = Kuix::InlineLayout.new
+        @materials_filters_btn.append(panel)
+
+          icon = Kuix::Lines2d.new(Kuix::Lines2d.patterns_from_svg_path('M0.4,1L0.4,0.5L0.1,0.2L0.1,0L0.9,0L0.9,0.2L0.6,0.5L0.6,0.9L0.4,1'))
+          icon.padding.set_all!(@unit * 2)
+          icon.min_size.set_all!(@unit * 6)
+          icon.line_width = @unit <= 4 ? 1 : 2
+          icon.set_style_attribute(:color, COLOR_BRAND_LIGHT)
+          icon.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
+          icon.set_style_attribute(:color, COLOR_WHITE, :selected)
+          panel.append(icon)
+
+          @materials_filters_btn_lbl = Kuix::Label.new('glop')
+          @materials_filters_btn_lbl.padding.set!(0, @unit * 2, 0, 0)
+          @materials_filters_btn_lbl.text_size = @unit * 3
+          @materials_filters_btn_lbl.visible = false
+          @materials_filters_btn_lbl.set_style_attribute(:color, COLOR_BRAND_LIGHT)
+          @materials_filters_btn_lbl.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
+          @materials_filters_btn_lbl.set_style_attribute(:color, COLOR_WHITE, :selected)
+          panel.append(@materials_filters_btn_lbl)
 
       # Materials Buttons panel
 
@@ -210,6 +222,9 @@ module Ladb::OpenCutList
             unless get_enabled_filters_by_action(fetch_action).index(button.data).nil?
 
               toggle_filter_by_type(button.data)
+              update_filters_ratio
+
+              store_action_filters(fetch_action, @@filters.clone)
 
               # Re populate material defs & setup corresponding buttons
               _populate_material_defs(view.model)
@@ -224,6 +239,7 @@ module Ladb::OpenCutList
 
               set_filters(false)
               set_filter_by_type(button.data, true)
+              update_filters_ratio
 
               # Re populate material defs & setup corresponding buttons
               _populate_material_defs(view.model)
@@ -529,6 +545,19 @@ module Ladb::OpenCutList
       set_filter_by_type(type, !@@filters[type], property)
     end
 
+    def update_filters_ratio
+
+      enabled_filters = get_enabled_filters_by_action(fetch_action)
+      selected_filter_count = 0
+      enabled_filters.each do |type|
+        selected_filter_count += 1 if @@filters[type]
+      end
+
+      @materials_filters_btn_lbl.text = "#{selected_filter_count}/#{enabled_filters.length}"
+      @materials_filters_btn_lbl.visible = selected_filter_count < enabled_filters.length
+
+    end
+
     def set_current_material(material, update_buttons = false, update_action = false)
 
       # Switch action according to material type
@@ -605,12 +634,15 @@ module Ladb::OpenCutList
         @materials_panel.visible = true
 
         # Auto filter
+        action_filters = fetch_action_filters(action)
+        enabled_filters = get_enabled_filters_by_action(action)
         set_filters(false, :selected)
         set_filters(true, :disabled)
-        get_enabled_filters_by_action(action).each do |type|
-          set_filter_by_type(type, true, :selected)
+        enabled_filters.each do |type|
+          set_filter_by_type(type, action_filters.nil? || action_filters[type].nil? ? true : action_filters[type], :selected)
           set_filter_by_type(type, false, :disabled)
         end
+        update_filters_ratio
 
         # Re populate material defs & setup corresponding buttons
         _populate_material_defs(Sketchup.active_model)
@@ -675,7 +707,7 @@ module Ladb::OpenCutList
           new_index = (active_index + (key == VK_UP ? 1 : -1)) % picked_part_entity_paths.length
 
           part = _generate_part_from_path(picked_part_entity_paths[new_index])
-          _set_active(picked_part_entity_paths[new_index], part)
+          _set_active_part(picked_part_entity_paths[new_index], part)
 
         end
         return true
@@ -705,11 +737,11 @@ module Ladb::OpenCutList
 
     def onMouseLeave(view)
       return true if super
-      _reset_active
+      _reset_active_part
     end
 
     def onTransactionUndo(model)
-      _refresh_active
+      _refresh_active_part
     end
 
     def onMaterialAdd(materials, material)
@@ -739,7 +771,7 @@ module Ladb::OpenCutList
 
     protected
 
-    def _set_active(part_entity_path, part, highlighted = false)
+    def _set_active_part(part_entity_path, part, highlighted = false)
       super
 
       @active_instances = []
@@ -1151,26 +1183,26 @@ module Ladb::OpenCutList
 
               part = _generate_part_from_path(input_part_entity_path)
               if part
-                _set_active(input_part_entity_path, part, event == :l_button_down)
+                _set_active_part(input_part_entity_path, part, event == :l_button_down)
               else
-                _reset_active
+                _reset_active_part
                 notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_part')}", MESSAGE_TYPE_ERROR)
                 push_cursor(@cursor_paint_error_id)
               end
               return
 
             else
-              _reset_active
+              _reset_active_part
               notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_part')}", MESSAGE_TYPE_ERROR)
               push_cursor(@cursor_paint_error_id)
               return
             end
           end
-          _reset_active  # No input
+          _reset_active_part  # No input
 
         elsif event == :l_button_down
 
-          _refresh_active(true)
+          _refresh_active_part(true)
 
         elsif event == :l_button_up || event == :l_button_dblclick
 
@@ -1195,7 +1227,7 @@ module Ladb::OpenCutList
             model.commit_operation
 
             # Refresh active
-            _refresh_active
+            _refresh_active_part
 
           elsif is_action_paint_edges?
 
@@ -1213,7 +1245,7 @@ module Ladb::OpenCutList
             model.commit_operation
 
             # Refresh active
-            _refresh_active
+            _refresh_active_part
 
           elsif is_action_paint_faces?
 
@@ -1231,7 +1263,7 @@ module Ladb::OpenCutList
             model.commit_operation
 
             # Refresh active
-            _refresh_active
+            _refresh_active_part
 
           elsif is_action_paint_clean?
 
@@ -1255,7 +1287,7 @@ module Ladb::OpenCutList
             model.commit_operation
 
             # Refresh active
-            _refresh_active
+            _refresh_active_part
 
           end
 

@@ -482,7 +482,7 @@ module Ladb::OpenCutList
 
     def populate_menu(menu)
       menu.add_item(Plugin.instance.get_i18n_string('default.close')) {
-        _quit
+        quit
       }
     end
 
@@ -655,15 +655,15 @@ module Ladb::OpenCutList
 
     protected
 
-    def _refresh_active(highlighted = false)
-      _set_active(@active_part_entity_path, _generate_part_from_path(@active_part_entity_path), highlighted)
+    def _refresh_active_part(highlighted = false)
+      _set_active_part(@active_part_entity_path, _generate_part_from_path(@active_part_entity_path), highlighted)
     end
 
-    def _reset_active
-      _set_active(nil, nil)
+    def _reset_active_part
+      _set_active_part(nil, nil)
     end
 
-    def _set_active(part_entity_path, part, highlighted = false)
+    def _set_active_part(part_entity_path, part, highlighted = false)
 
       @active_part_entity_path = part_entity_path
       @active_part = part
@@ -684,10 +684,6 @@ module Ladb::OpenCutList
       hide_message
       hide_infos
 
-    end
-
-    def _quit
-      Sketchup.active_model.select_tool(nil)  # Unselect tool
     end
 
     def _instances_to_paths(instances, instance_paths, entities, path = [])
