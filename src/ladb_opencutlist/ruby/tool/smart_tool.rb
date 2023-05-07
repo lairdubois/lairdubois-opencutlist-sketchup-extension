@@ -66,6 +66,15 @@ module Ladb::OpenCutList
       @unit
     end
 
+    def get_text_unit_factor
+      case Plugin.instance.language
+      when 'ar'
+        return 1.5
+      else
+        return 1.0
+      end
+    end
+
     def setup_entities(view)
 
       # @canvas.layout = Kuix::BorderLayout.new
@@ -93,7 +102,7 @@ module Ladb::OpenCutList
           actions_lbl.padding.set!(0, unit * 4, 0, unit * 4)
           actions_lbl.set_style_attribute(:color, COLOR_BRAND_LIGHT)
           actions_lbl.text = Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.title").upcase
-          actions_lbl.text_size = unit * 3
+          actions_lbl.text_size = unit * 3 * get_text_unit_factor
           actions_lbl.text_bold = true
           actions.append(actions_lbl)
 
@@ -123,7 +132,7 @@ module Ladb::OpenCutList
             actions_btn.set_style_attribute(:background_color, COLOR_BRAND_DARK)
             actions_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
             actions_btn.set_style_attribute(:background_color, COLOR_BRAND, :selected)
-            lbl = actions_btn.append_static_label(Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}"), unit * 3)
+            lbl = actions_btn.append_static_label(Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}"), unit * 3 * get_text_unit_factor)
             lbl.padding.set!(0, unit * (modifiers.is_a?(Array) ? 1 : 4), 0, unit * 4)
             lbl.set_style_attribute(:color, COLOR_BRAND_LIGHT)
             lbl.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
@@ -190,7 +199,7 @@ module Ladb::OpenCutList
           help_btn.layout = Kuix::GridLayout.new
           help_btn.set_style_attribute(:background_color, COLOR_WHITE)
           help_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
-          lbl = help_btn.append_static_label(Plugin.instance.get_i18n_string("default.help"), unit * 3)
+          lbl = help_btn.append_static_label(Plugin.instance.get_i18n_string("default.help"), unit * 3 * get_text_unit_factor)
           lbl.min_size.set!(unit * 15, 0)
           lbl.padding.set!(0, unit * 4, 0, unit * 4)
           lbl.set_style_attribute(:color, COLOR_BRAND_DARK)
@@ -211,7 +220,7 @@ module Ladb::OpenCutList
         @top_panel.append(@infos_panel)
 
           @infos_lbl_1 = Kuix::Label.new
-          @infos_lbl_1.text_size = @unit * 3
+          @infos_lbl_1.text_size = @unit * 3 * get_text_unit_factor
           @infos_lbl_1.text_bold = true
           @infos_panel.append(@infos_lbl_1)
 
@@ -228,7 +237,7 @@ module Ladb::OpenCutList
           @message_lbl = Kuix::Label.new
           @message_lbl.border.set_all!(unit / 4)
           @message_lbl.padding.set!(unit * 1.5, unit * 2, unit, unit * 2)
-          @message_lbl.text_size = unit * 3
+          @message_lbl.text_size = unit * 3 * get_text_unit_factor
           @message_panel.append(@message_lbl)
 
       # -- MINITOOL
@@ -323,7 +332,7 @@ module Ladb::OpenCutList
       infos.each do |info|
         if info.is_a?(String)
           entity = Kuix::Label.new
-          entity.text_size = @unit * 3
+          entity.text_size = @unit * 3 * get_text_unit_factor
           entity.text = info
         elsif info.is_a?(Kuix::Entity2d)
           entity = info

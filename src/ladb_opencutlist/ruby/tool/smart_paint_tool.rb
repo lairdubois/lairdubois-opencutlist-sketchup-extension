@@ -104,12 +104,12 @@ module Ladb::OpenCutList
       @materials_panel.append(@material_infos_panel)
 
         @material_infos_lbl_1 = Kuix::Label.new
-        @material_infos_lbl_1.text_size = @unit * 3
+        @material_infos_lbl_1.text_size = @unit * 3 * get_text_unit_factor
         @material_infos_lbl_1.text_bold = true
         @material_infos_panel.append(@material_infos_lbl_1)
 
         @material_infos_lbl_2 = Kuix::Label.new
-        @material_infos_lbl_2.text_size = @unit * 3
+        @material_infos_lbl_2.text_size = @unit * 3 * get_text_unit_factor
         @material_infos_panel.append(@material_infos_lbl_2)
 
       # Materials Add button
@@ -180,7 +180,7 @@ module Ladb::OpenCutList
         lbl.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::WEST)
         lbl.padding.set!(0, @unit * 3, 0, @unit * 3)
         lbl.text = Plugin.instance.get_i18n_string('tool.smart_paint.filters').upcase
-        lbl.text_size = @unit * 3
+        lbl.text_size = @unit * 3 * get_text_unit_factor
         lbl.text_bold = true
         @materials_filters_panel.append(lbl)
 
@@ -203,7 +203,7 @@ module Ladb::OpenCutList
           btn.set_style_attribute(:border_color, color, :selected)
           btn.selected = @@filters[type]
           btn.data = type
-          lbl = btn.append_static_label(Plugin.instance.get_i18n_string("tool.smart_paint.filter_#{type}"), @unit * 3)
+          lbl = btn.append_static_label(Plugin.instance.get_i18n_string("tool.smart_paint.filter_#{type}"), @unit * 3 * get_text_unit_factor)
           lbl.set_style_attribute(:color, COLOR_DARK_GREY, :disabled)
           btn.on(:click) { |button|
 
@@ -757,7 +757,7 @@ module Ladb::OpenCutList
       btn.set_style_attribute(:border_color, COLOR_WHITE)
       btn.set_style_attribute(:border_color, COLOR_WHITE.blend(COLOR_BLACK, 0.8), :hover)
       btn.set_style_attribute(:border_color, COLOR_BRAND, :selected)
-      btn.append_static_label(Plugin.instance.get_i18n_string('tool.smart_paint.default_material'), @unit * 3)
+      btn.append_static_label(Plugin.instance.get_i18n_string('tool.smart_paint.default_material'), @unit * 3 * get_text_unit_factor)
       btn.data = false  # = No material
       btn.selected = get_current_material.nil?
       btn.on(:click) { |button|
@@ -773,7 +773,7 @@ module Ladb::OpenCutList
 
         lbl = Kuix::Label.new
         lbl.layout_data = Kuix::GridLayoutData.new(3)
-        lbl.text_size = @unit * 3
+        lbl.text_size = @unit * 3 * get_text_unit_factor
         if is_action_paint_parts?
           lbl.text = Plugin.instance.get_i18n_string('tool.smart_paint.warning.no_material')
         elsif is_action_paint_edges?
@@ -803,7 +803,7 @@ module Ladb::OpenCutList
         btn.set_style_attribute(:border_color, material_color)
         btn.set_style_attribute(:border_color, material_color.blend(material_color_is_dark ? COLOR_WHITE : COLOR_BLACK, 0.7), :hover)
         btn.set_style_attribute(:border_color, COLOR_BRAND, :selected)
-        btn.append_static_label(material.display_name, @unit * 3, material_color_is_dark ? COLOR_WHITE : nil)
+        btn.append_static_label(material.display_name, @unit * 3 * get_text_unit_factor, material_color_is_dark ? COLOR_WHITE : nil)
         btn.data = material
         btn.selected = material == get_current_material
         btn.on(:click) { |button|

@@ -189,13 +189,11 @@ module Ladb::OpenCutList
     # ---
 
     def cutting_length
-      @cutting_size.length
-      # [@cutting_size.length - @edge_length_decrement, 0].max.to_l
+      @cutting_size.length == @size.length && @edge_length_decrement ? edge_cutting_length : @cutting_size.length
     end
 
     def cutting_width
-      @cutting_size.width
-      # [@cutting_size.width - @edge_width_decrement, 0].max.to_l
+      @cutting_size.width == @size.width && @edge_width_decrement ? edge_cutting_width : @cutting_size.width
     end
 
     def edge_cutting_length
