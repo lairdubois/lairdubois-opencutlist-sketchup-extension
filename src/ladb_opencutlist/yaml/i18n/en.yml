@@ -1362,13 +1362,13 @@ tool:
     action_0: Paint parts
     action_0_status: Click on a part to paint its instance
     action_1: Paint edges
-    action_1_status: Click on a panel edge to apply '$t(tab.materials.type_4)'
+    action_1_status: Click on a panel edge to apply material '$t(tab.materials.type_4)'
     action_2: Paint faces
-    action_2_status: Click on a panel face to apply '$t(tab.materials.type_6)'
+    action_2_status: Click on a panel face to apply material '$t(tab.materials.type_6)'
     action_3: Sample
     action_3_status: Click on a face to sample its material
     action_4: Clean
-    action_4_status: Click on a part to remove all materials from its definition and all instances
+    action_4_status: Click on a part to remove all materials from its definition and from all its instances
     edges: "{{ count }} edge"
     edges_plural: "{{ count }} edges"
     edge_ymin: Length 1
@@ -1396,7 +1396,7 @@ tool:
     action_2: Swap front ↔ backside
     action_2_status: Click on a part to swap its front with its backside
     action_3: Adapt axes
-    action_3_status: Click on the face or edge of a part to adjust the orientation of the axes
+    action_3_status: Click on the face or edge of a part to adapt its axes
     action_modifier_length: L
     action_modifier_width: W
     action_modifier_thickness: T
