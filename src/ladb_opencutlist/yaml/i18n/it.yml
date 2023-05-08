@@ -767,7 +767,7 @@ tab:
         parameters: Impostazioni non corrette. La squadratura supera il 25% della tavola o del bordo più grande.
         no_parts: Nessuna parte.
         no_sheet: Le dimensioni dei pannelli non sono correttamente configurate e non ci sono ritagli disponibili.
-        no_placement_possible_1d: "Le dimensioni delle parti sono troppo grandi per essere contenute in un pannello (dimensioni insufficienti della barra, squadratura troppo larga, taglio della lama troppo grande, ...)."
+        no_placement_possible_1d: "Le dimensioni delle parti sono troppo grandi per essere contenute in una barra (dimensioni insufficienti della barra, squadratura troppo larga, taglio della lama troppo grande, ...)."
         no_placement_possible_2d: "Le dimensioni delle parti sono troppo grandi per essere contenute in un pannello (dimensioni insufficienti del pannello, squadratura troppo larga, taglio della lama troppo grande, ...)."
         bad_error: "Errore negli algoritmi di calcolo, contatta lo sviluppatore, il tuo può essere un caso interessante."
         unplaced_parts: "**1 parte** non può essere schematizzata, perchè è troppo grande."
@@ -927,7 +927,7 @@ tab:
         no_part: Nessuna parte da disegnare.
         failed_to_save_as_skp: Impossibile scrivere il file SKP da inviare a Layout.
         failed_to_layout: |
-          Errore nella scrittura del file Layout: *{{ error }}* 
+          Errore nella scrittura del file Layout: *{{ error }}*
 
           **Assicurarsi che il file non sia aperto in Layout.**
       warning:
@@ -1344,6 +1344,7 @@ tool:
   default:
     transparency: Transparenza
     zoom_extents: Zoom dimensioni
+    toggle_depth: Elementi in secondo piano
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -1388,7 +1389,6 @@ tool:
       wrong_material_type: "L'elemento di destinazione deve essere di tipo '{{ type }}'"
   smart_axes:
     title: Orientare
-    toggle_depth: Elementi in secondo piano
     action_0: Invertire
     action_0_status: Selezionare un elemento per invertire una delle sue dimensioni
     action_1: Inverti Lunghezza ↔ Larghezza

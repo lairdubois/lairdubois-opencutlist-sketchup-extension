@@ -1226,7 +1226,7 @@ tab:
       cuttingdiagram_export: Financiering van de uitvoer van zaagschema's
     objective_details:
       default: |
-        De voortdurende verbetering van *OpenCutList* is belangrijk voor ons en het project heeft nog steeds uw hulp nodig voor de volgende update **5.0**!
+        De voortdurende verbetering van *OpenCutList* is belangrijk voor ons en het project heeft nog steeds uw hulp nodig voor de volgende update!
       cuttingdiagram_export: |
         Het is voor ons belangrijk dat *OpenCutList* kan worden aangepast aan het brede scala van gebruikerseisen voor de *squaring* functie.
         Om de mogelijkheden verder uit te breiden, zouden we graag de export van lay-out diagrammen in **SVG** formaat mogelijk maken.
