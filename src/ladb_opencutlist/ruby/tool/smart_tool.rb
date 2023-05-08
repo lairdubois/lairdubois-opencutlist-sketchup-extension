@@ -653,7 +653,7 @@ module Ladb::OpenCutList
 
     def onMouseWheel(flags, delta, x, y, view)
       return true if super
-      if flags & COPY_MODIFIER_MASK == COPY_MODIFIER_KEY
+      if flags & COPY_MODIFIER_MASK == COPY_MODIFIER_MASK
         if @active_part_entity_path
           _pick_deeper(delta)
         end
