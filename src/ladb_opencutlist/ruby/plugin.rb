@@ -941,10 +941,9 @@ module Ladb::OpenCutList
       start
 
       # Create dialog instance
-      dialog_title = get_i18n_string('core.dialog.title') + ' - ' + EXTENSION_VERSION + (IS_DEV ? " ( build: #{EXTENSION_BUILD} )" : '')
       @dialog = UI::HtmlDialog.new(
           {
-              :dialog_title => dialog_title,
+              :dialog_title => get_i18n_string('core.dialog.title') + ' - ' + EXTENSION_VERSION + (IS_DEV ? " ( build: #{EXTENSION_BUILD} )" : ''),
               :preferences_key => DIALOG_PREF_KEY,
               :scrollable => true,
               :resizable => true,
@@ -1350,6 +1349,7 @@ module Ladb::OpenCutList
           :sketchup_version => Sketchup.version,
           :sketchup_version_number => Sketchup.version_number,
           :ruby_version => RUBY_VERSION,
+          :chrome_version => defined?(UI::HtmlDialog::CHROME_VERSION) ? UI::HtmlDialog::CHROME_VERSION : nil,
           :platform_name => platform_name,
           :is_64bit => Sketchup.respond_to?(:is_64bit?) && Sketchup.is_64bit?,
           :locale => Sketchup.get_locale,

@@ -288,7 +288,7 @@ LadbAbstractTab.prototype.print = function (title, margin, size) {
     if (title === undefined) {
         title = 'OpenCutList';
     }
-    document.title = title
+    // document.title = title;
 
     if (margin === undefined) {
         if (this.dialog.capabilities.dialog_print_margin === 1) {     /* 1 = Small */

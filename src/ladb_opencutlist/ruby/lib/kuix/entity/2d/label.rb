@@ -30,18 +30,22 @@ module Ladb::OpenCutList::Kuix
     end
 
     def text_font=(value)
+      return if @text_options[:font] == value
       @text_options[:font] = value
       invalidate
     end
 
     def text_size=(value)
-      @text_options[:size] = Sketchup.platform == :platform_win ? value * 0.75 : value  # Windows workaround -> 0.75 = 96 / 72
+      size = Sketchup.platform == :platform_win ? value * 0.75 : value  # Windows workaround -> 0.75 = 96 / 72
+      return if @text_options[:size] == size
+      @text_options[:size] = size
       compute_min_size
       compute_letter_width
       invalidate
     end
 
     def text_bold=(value)
+      return if @text_options[:bold] == value
       @text_options[:bold] = value
       compute_min_size
       compute_letter_width
@@ -49,11 +53,13 @@ module Ladb::OpenCutList::Kuix
     end
 
     def text_align=(value)
+      return if @text_options[:align] == value
       @text_options[:align] = value
       invalidate
     end
 
     def text_vertical_align=(value)
+      return if @text_options[:vertical_align] == value
       @text_options[:vertical_align] = value
       invalidate
     end

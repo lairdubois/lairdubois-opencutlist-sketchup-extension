@@ -116,7 +116,7 @@ module Ladb::OpenCutList
         styles.add_style(File.join(__dir__, '..', '..', '..', 'style', "ocl_layout_#{@parts_colored ? 'colored' : 'monochrome'}_#{@parts_opacity == 1 ? 'opaque' : 'translucent'}.style"), true)
 
         # Save tmp definition as in skp file
-        skp_success = tmp_definition.save_as(skp_path)
+        skp_success = tmp_definition.save_copy(skp_path) && File.exist?(skp_path)
 
         # Restore model's style
         styles.selected_style = selected_style

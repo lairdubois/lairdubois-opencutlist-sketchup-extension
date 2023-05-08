@@ -199,7 +199,7 @@ module Ladb::OpenCutList
           help_btn.layout = Kuix::GridLayout.new
           help_btn.set_style_attribute(:background_color, COLOR_WHITE)
           help_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
-          lbl = help_btn.append_static_label(Plugin.instance.get_i18n_string("default.help"), unit * 3 * get_text_unit_factor)
+          lbl = help_btn.append_static_label(Plugin.instance.get_i18n_string("default.help").upcase, unit * 3 * get_text_unit_factor)
           lbl.min_size.set!(unit * 15, 0)
           lbl.padding.set!(0, unit * 4, 0, unit * 4)
           lbl.set_style_attribute(:color, COLOR_BRAND_DARK)
@@ -706,11 +706,21 @@ module Ladb::OpenCutList
           end
         end
 
+        # Try to retrieve current index
         active_index = picked_part_entity_paths.map { |path| path.last }.index(@active_part_entity_path.last)
-        new_index = (active_index + delta) % picked_part_entity_paths.length
+        if active_index
 
-        part = _generate_part_from_path(picked_part_entity_paths[new_index])
-        _set_active_part(picked_part_entity_paths[new_index], part)
+          # Compute the new index
+          new_index = (active_index + delta) % picked_part_entity_paths.length
+
+          # Compute the new part
+          picked_part_entity_path = picked_part_entity_paths[new_index]
+          part = _generate_part_from_path(picked_part_entity_path)
+          if part
+            _set_active_part(picked_part_entity_path, part)
+          end
+
+        end
 
       end
     end

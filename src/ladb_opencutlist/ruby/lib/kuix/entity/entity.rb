@@ -94,6 +94,7 @@ module Ladb::OpenCutList::Kuix
     # -- Layout --
 
     def visible=(value)
+      return if @visible == value
       @visible = value
       invalidate
     end

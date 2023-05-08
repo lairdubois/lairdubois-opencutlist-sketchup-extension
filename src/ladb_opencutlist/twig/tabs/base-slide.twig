@@ -3,7 +3,7 @@
 {# set slideClasses (facultative) #}
 
 {% block slide %}
-<div{% block id %} id="{{ id }}"{% endblock %} class="ladb-slide {% if out|default(false) %}out{% else %}in{% endif %}{% if slideClasses is defined %} {{ slideClasses }}{% endif %}">
+<div{% if id %} id="{{ id }}"{% endif %} class="ladb-slide {% if out|default(false) %}out{% else %}in{% endif %}{% if slideClasses is defined %} {{ slideClasses }}{% endif %}">
     <div class="ladb-header-wrapper">
         <div class="ladb-header">
             <div class="container-fluid">

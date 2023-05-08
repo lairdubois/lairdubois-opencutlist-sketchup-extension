@@ -16,9 +16,9 @@ module Ladb::OpenCutList::Kuix
 
     def selected=(value)
       if value
-        activate_pseudo_class(:selected, propagable_pseudo_class(:selected))
+        activate_pseudo_class(:selected)
       else
-        deactivate_pseudo_class(:selected, propagable_pseudo_class(:selected))
+        deactivate_pseudo_class(:selected)
       end
     end
 
@@ -28,9 +28,9 @@ module Ladb::OpenCutList::Kuix
 
     def disabled=(value)
       if value
-        activate_pseudo_class(:disabled, propagable_pseudo_class(:disabled))
+        activate_pseudo_class(:disabled)
       else
-        deactivate_pseudo_class(:disabled, propagable_pseudo_class(:disabled))
+        deactivate_pseudo_class(:disabled)
       end
     end
 
@@ -62,8 +62,8 @@ module Ladb::OpenCutList::Kuix
 
     # -- Style --
 
-    def propagable_pseudo_class(pseudo_class)
-      true
+    def propagable_pseudo_class(pseudo_class, depth)
+      depth == 0
     end
 
     # -- Events --
