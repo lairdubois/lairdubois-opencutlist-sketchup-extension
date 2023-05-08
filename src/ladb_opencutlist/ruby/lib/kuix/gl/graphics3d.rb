@@ -15,6 +15,13 @@ module Ladb::OpenCutList::Kuix
       @view.draw_lines(points)
     end
 
+    def draw_line_strip(points, color = nil, line_width = nil, line_stipple = nil)
+      set_drawing_color(color) if color
+      set_line_width(line_width) if line_width
+      set_line_stipple(line_stipple) if line_stipple
+      @view.draw(GL_LINE_STRIP, points)
+    end
+
     def draw_line_loop(points, color = nil, line_width = nil, line_stipple = nil)
       set_drawing_color(color) if color
       set_line_width(line_width) if line_width

@@ -118,14 +118,14 @@ module Ladb::OpenCutList
       when ACTION_SWAP_LENGTH_WIDTH
         case modifier
         when ACTION_MODIFIER_CLOCKWISE
-          shape = Kuix::Lines2d.new(Kuix::Lines2d.patterns_from_svg_path('M0,1L0,0.8333L0.1667,0.5L0.5,0.3333L0.8333,0.3333L0.6667,0L1,0.3333L0.6667,0.6667L0.8333,0.3333'))
-          shape.line_width = @unit <= 4 ? 0.5 : 1
-          return shape
+          motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0,0.8333L0.1667,0.5L0.5,0.3333L0.8333,0.3333L0.6667,0L1,0.3333L0.6667,0.6667L0.8333,0.3333'))
+          motif.line_width = @unit <= 4 ? 0.5 : 1
+          return motif
         when ACTION_MODIFIER_ANTICLOCKWIZE
-          shape = Kuix::Lines2d.new(Kuix::Lines2d.patterns_from_svg_path('M0,1L0,0.8333L0.1667,0.5L0.5,0.3333L0.8333,0.3333L0.6667,0L1,0.3333L0.6667,0.6667L0.8333,0.3333'))
-          shape.pattern_transformation = Geom::Transformation.translation(Geom::Vector3d.new(1, 0, 0)) * Geom::Transformation.scaling(-1, 1, 1)
-          shape.line_width = @unit <= 4 ? 0.5 : 1
-          return shape
+          motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0,0.8333L0.1667,0.5L0.5,0.3333L0.8333,0.3333L0.6667,0L1,0.3333L0.6667,0.6667L0.8333,0.3333'))
+          motif.patterns_transformation = Geom::Transformation.translation(Geom::Vector3d.new(1, 0, 0)) * Geom::Transformation.scaling(-1, 1, 1)
+          motif.line_width = @unit <= 4 ? 0.5 : 1
+          return motif
         end
       when ACTION_FLIP
         case modifier
@@ -319,8 +319,8 @@ module Ladb::OpenCutList
 
         infos = [ "#{part.length} x #{part.width} x #{part.thickness}" ]
         infos << "#{part.material_name} (#{Plugin.instance.get_i18n_string("tab.materials.type_#{part.group.material_type}")})" unless part.material_name.empty?
-        infos << Kuix::Lines2d.new(Kuix::Lines2d.patterns_from_svg_path('M0.5,0L0.5,0.2 M0.5,0.4L0.5,0.6 M0.5,0.8L0.5,1 M0,0.2L0.3,0.5L0,0.8L0,0.2 M1,0.2L0.7,0.5L1,0.8L1,0.2')) if part.flipped
-        infos << Kuix::Lines2d.new(Kuix::Lines2d.patterns_from_svg_path('M0.6,0L0.4,0 M0.6,0.4L0.8,0.2L0.5,0.2 M0.8,0.2L0.8,0.5 M0.8,0L1,0L1,0.2 M1,0.4L1,0.6 M1,0.8L1,1L0.8,1 M0.2,0L0,0L0,0.2 M0,1L0,0.4L0.6,0.4L0.6,1L0,1')) if part.resized
+        infos << Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.5,0L0.5,0.2 M0.5,0.4L0.5,0.6 M0.5,0.8L0.5,1 M0,0.2L0.3,0.5L0,0.8L0,0.2 M1,0.2L0.7,0.5L1,0.8L1,0.2')) if part.flipped
+        infos << Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.6,0L0.4,0 M0.6,0.4L0.8,0.2L0.5,0.2 M0.8,0.2L0.8,0.5 M0.8,0L1,0L1,0.2 M1,0.4L1,0.6 M1,0.8L1,1L0.8,1 M0.2,0L0,0L0,0.2 M0,1L0,0.4L0.6,0.4L0.6,1L0,1')) if part.resized
 
         notify_infos(part.name, infos)
 
@@ -376,8 +376,8 @@ module Ladb::OpenCutList
             bounds.add(_compute_children_faces_triangles(instance_info.entity.definition.entities, t.inverse))
 
             # Front arrow
-            arrow = Kuix::Arrow.new
-            arrow.pattern_transformation = Geom::Transformation.translation(Z_AXIS)
+            arrow = Kuix::ArrowMotif.new
+            arrow.patterns_transformation = Geom::Transformation.translation(Z_AXIS)
             arrow.bounds.origin.copy!(bounds.min)
             arrow.bounds.size.copy!(bounds)
             arrow.color = COLOR_ACTION
@@ -386,7 +386,7 @@ module Ladb::OpenCutList
             part_helper.append(arrow)
 
             # Box helper
-            box_helper = Kuix::BoxHelper.new
+            box_helper = Kuix::BoxMotif.new
             box_helper.bounds.origin.copy!(bounds.min)
             box_helper.bounds.size.copy!(bounds)
             box_helper.bounds.size.width += increases[0] / part.def.scale.x
@@ -436,7 +436,7 @@ module Ladb::OpenCutList
           r_t *= Geom::Transformation.translation(Geom::Vector3d.new(r_width / -2.0, r_height / -2.0, 0))
           r_t *= Geom::Transformation.scaling(ORIGIN, r_width, r_height, 0)
 
-          rect = Kuix::Rectangle.new
+          rect = Kuix::RectangleMotif.new
           rect.bounds.size.set!(1, 1, 0)
           rect.transformation = r_t
           rect.color = COLOR_ACTION
@@ -456,8 +456,8 @@ module Ladb::OpenCutList
         if part.group.material_type != MaterialAttributes::TYPE_HARDWARE
 
           # Back arrow
-          arrow = Kuix::Arrow.new
-          arrow.pattern_transformation = instance_info.size.oriented_transformation
+          arrow = Kuix::ArrowMotif.new
+          arrow.patterns_transformation = instance_info.size.oriented_transformation
           arrow.bounds.origin.copy!(instance_info.definition_bounds.min)
           arrow.bounds.size.copy!(instance_info.definition_bounds)
           arrow.color = arrow_color
@@ -466,9 +466,9 @@ module Ladb::OpenCutList
           part_helper.append(arrow)
 
           # Front arrow
-          arrow = Kuix::Arrow.new
-          arrow.pattern_transformation = instance_info.size.oriented_transformation
-          arrow.pattern_transformation *= Geom::Transformation.translation(Z_AXIS)
+          arrow = Kuix::ArrowMotif.new
+          arrow.patterns_transformation = instance_info.size.oriented_transformation
+          arrow.patterns_transformation *= Geom::Transformation.translation(Z_AXIS)
           arrow.bounds.origin.copy!(instance_info.definition_bounds.min)
           arrow.bounds.size.copy!(instance_info.definition_bounds)
           arrow.color = arrow_color
@@ -476,7 +476,7 @@ module Ladb::OpenCutList
           part_helper.append(arrow)
 
           # Bounding box helper
-          box_helper = Kuix::BoxHelper.new
+          box_helper = Kuix::BoxMotif.new
           box_helper.bounds.origin.copy!(instance_info.definition_bounds.min)
           box_helper.bounds.size.copy!(instance_info.definition_bounds)
           box_helper.bounds.size.width += increases[0] / part.def.scale.x

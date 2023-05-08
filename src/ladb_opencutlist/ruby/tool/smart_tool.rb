@@ -213,6 +213,7 @@ module Ladb::OpenCutList
         @infos_panel = Kuix::Panel.new
         @infos_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
         @infos_panel.layout = Kuix::InlineLayout.new(true, @unit * 3, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+        @infos_panel.min_size.set_all!(@unit * 4)
         @infos_panel.padding.set_all!(@unit * 2)
         @infos_panel.hittable = false
         @infos_panel.visible = false
@@ -284,10 +285,10 @@ module Ladb::OpenCutList
       minitool_btn.on([ :click, :doubleclick ], &block)
       @minitool_panel.append(minitool_btn)
 
-        shape = Kuix::Lines2d.new(Kuix::Lines2d.patterns_from_svg_path(icon))
-        shape.line_width = @unit <= 4 ? 0.5 : 1
-        shape.set_style_attribute(:color, COLOR_BRAND_DARK)
-        minitool_btn.append(shape)
+        motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path(icon))
+        motif.line_width = @unit <= 4 ? 0.5 : 1
+        motif.set_style_attribute(:color, COLOR_BRAND_DARK)
+        minitool_btn.append(motif)
 
       minitool_btn
     end
@@ -336,14 +337,15 @@ module Ladb::OpenCutList
           entity.text = info
         elsif info.is_a?(Kuix::Entity2d)
           entity = info
-          entity.min_size.set_all!(@unit * 4)
+          entity.min_size.set_all!(@unit * get_text_unit_factor * 4)
+          entity.line_width = @unit <= 4 ? 0.5 : 1
           entity.set_style_attribute(:color, COLOR_BLACK)
         else
           next
         end
         entity.border.set!(0, 0, 0, @unit / 4)
         entity.padding.set!(0, 0, 0, @unit * 3)
-        entity.set_style_attribute(:border_color, COLOR_MEDIUM_GREY)
+        entity.set_style_attribute(:border_color, COLOR_DARK_GREY)
         @infos_panel.append(entity)
       end
       @infos_panel.visible = !text_1.empty? || !infos.empty?

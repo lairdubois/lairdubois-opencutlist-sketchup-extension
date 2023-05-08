@@ -124,13 +124,13 @@ module Ladb::OpenCutList
       }
       @materials_panel.append(@materials_add_btn)
 
-        icon = Kuix::Lines2d.new(Kuix::Lines2d.patterns_from_svg_path('M0,0.5L0.5,0.5L0.5,0L0.5,0.5L1,0.5L0.5,0.5L0.5,1'))
-        icon.layout_data = Kuix::StaticLayoutData.new(0.5, 0, @unit * 10, @unit * 10, Kuix::Anchor.new(Kuix::Anchor::TOP_CENTER))
-        icon.padding.set_all!(@unit * 2)
-        icon.line_width = @unit <= 4 ? 1 : 2
-        icon.set_style_attribute(:color, COLOR_BRAND_LIGHT)
-        icon.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
-        @materials_add_btn.append(icon)
+        motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.5L0.5,0.5L0.5,0L0.5,0.5L1,0.5L0.5,0.5L0.5,1'))
+        motif.layout_data = Kuix::StaticLayoutData.new(0.5, 0, @unit * 10, @unit * 10, Kuix::Anchor.new(Kuix::Anchor::TOP_CENTER))
+        motif.padding.set_all!(@unit * 2)
+        motif.line_width = @unit <= 4 ? 1 : 2
+        motif.set_style_attribute(:color, COLOR_BRAND_LIGHT)
+        motif.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
+        @materials_add_btn.append(motif)
 
       # Materials Filters button
 
@@ -153,14 +153,14 @@ module Ladb::OpenCutList
         panel.layout = Kuix::InlineLayout.new
         @materials_filters_btn.append(panel)
 
-          icon = Kuix::Lines2d.new(Kuix::Lines2d.patterns_from_svg_path('M0.4,1L0.4,0.5L0.1,0.2L0.1,0L0.9,0L0.9,0.2L0.6,0.5L0.6,0.9L0.4,1'))
-          icon.padding.set_all!(@unit * 2)
-          icon.min_size.set_all!(@unit * 6)
-          icon.line_width = @unit <= 4 ? 1 : 2
-          icon.set_style_attribute(:color, COLOR_BRAND_LIGHT)
-          icon.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
-          icon.set_style_attribute(:color, COLOR_WHITE, :selected)
-          panel.append(icon)
+          motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.4,1L0.4,0.5L0.1,0.2L0.1,0L0.9,0L0.9,0.2L0.6,0.5L0.6,0.9L0.4,1'))
+          motif.padding.set_all!(@unit * 2)
+          motif.min_size.set_all!(@unit * 6)
+          motif.line_width = @unit <= 4 ? 1 : 2
+          motif.set_style_attribute(:color, COLOR_BRAND_LIGHT)
+          motif.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
+          motif.set_style_attribute(:color, COLOR_WHITE, :selected)
+          panel.append(motif)
 
           @materials_filters_btn_lbl = Kuix::Label.new('glop')
           @materials_filters_btn_lbl.padding.set!(0, @unit * 2, 0, 0)

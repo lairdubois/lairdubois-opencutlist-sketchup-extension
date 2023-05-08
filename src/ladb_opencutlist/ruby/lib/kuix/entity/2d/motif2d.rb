@@ -1,19 +1,20 @@
 module Ladb::OpenCutList::Kuix
 
-  class Lines2d < Entity2d
+  class Motif2d < Entity2d
 
-    attr_reader :pattern_transformation
-    attr_accessor :line_width
+    attr_reader :patterns_transformation
+    attr_accessor :line_width, :line_stipple
 
-    def initialize(patterns = [], is_loop = false, id = '')
+    def initialize(patterns = [], id = '')
       super(id)
 
       @patterns = patterns  # Normalized Array<Array<Kuix::Point2d>>
-      @pattern_transformation = Geom::Transformation.new
+      @patterns_transformation = Geom::Transformation.new
 
       @line_width = 1
+      @line_stipple = ''
 
-      @lines = []
+      @paths = []
 
     end
 
@@ -36,9 +37,9 @@ module Ladb::OpenCutList::Kuix
 
     # -- Properties --
 
-    def pattern_transformation=(value)
-      return if @pattern_transformation == value
-      @pattern_transformation = value
+    def patterns_transformation=(value)
+      return if @patterns_transformation == value
+      @patterns_transformation = value
       invalidate
     end
 
@@ -48,15 +49,15 @@ module Ladb::OpenCutList::Kuix
 
       content_size = self.content_size
 
-      @lines.clear
+      @paths.clear
       @patterns.each do |pattern|
         points = []
         pattern.each do |pattern_point|
           pt = Geom::Point3d.new(pattern_point.x, pattern_point.y, 0)
-          pt.transform!(@pattern_transformation) unless @pattern_transformation.identity?
+          pt.transform!(@patterns_transformation) unless @patterns_transformation.identity?
           points << Geom::Point3d.new(pt.x * content_size.width, pt.y * content_size.height, 0)
         end
-        @lines.push(points)
+        @paths << points
       end
 
       super
@@ -65,11 +66,7 @@ module Ladb::OpenCutList::Kuix
     # -- Render --
 
     def paint_content(graphics)
-      if @is_loop
-        graphics.draw_line_loop(@points, @color, @line_width)
-      else
-        @lines.each { |points| graphics.draw_line_strip(points, @color, @line_width) }
-      end
+      @paths.each { |points| graphics.draw_line_strip(points, @color, @line_width, @line_stipple) }
       super
     end
 
