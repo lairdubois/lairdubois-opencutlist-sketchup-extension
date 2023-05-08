@@ -2425,6 +2425,9 @@
                                 $divPartThumbnail.html($img);
 
                         } else {
+                            if (response['errors']) {
+                                that.dialog.notifyErrors(response['errors']);
+                            }
                             $divPartThumbnail.hide();
                         }
 

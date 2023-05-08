@@ -12,7 +12,7 @@ module Ladb::OpenCutList::Kuix
 
     end
 
-    # -- Properties --
+    # -- PROPERTIES --
 
     def selected=(value)
       if value
@@ -38,7 +38,7 @@ module Ladb::OpenCutList::Kuix
       has_pseudo_class?(:disabled)
     end
 
-    # --
+    # -- STATIC --
 
     def append_static_label(text, text_size, text_color = nil)
 
@@ -60,13 +60,13 @@ module Ladb::OpenCutList::Kuix
       label
     end
 
-    # -- Style --
+    # -- STYLE --
 
     def propagable_pseudo_class(pseudo_class, depth)
       depth == 0
     end
 
-    # -- Events --
+    # -- EVENTS --
 
     def on(events, &block)
       events = [ events ] unless events.is_a?(Array)

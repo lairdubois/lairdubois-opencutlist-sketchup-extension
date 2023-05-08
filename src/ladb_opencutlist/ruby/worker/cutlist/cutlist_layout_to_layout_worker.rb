@@ -255,14 +255,8 @@ module Ladb::OpenCutList
           end
 
         rescue => e
-
-          SKETCHUP_CONSOLE.show
-
-          puts "Please email the following error to opencutlist@lairdubois.fr"
-          puts "#{e.inspect}"
-          puts e.backtrace.join("\n")
-
-          return { :errors => [ "#{Plugin.instance.get_i18n_string('default.error')}<br>#{e.inspect}" ] }
+          Plugin.instance.dump_exception(e)
+          return { :errors => [ 'default.error' ] }
         end
 
         # Save Layout file

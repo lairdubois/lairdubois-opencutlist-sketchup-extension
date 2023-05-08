@@ -37,7 +37,12 @@ module Ladb::OpenCutList
           return response unless part
 
           worker = CutlistConvertToThreeWorker.new([ part ])
-          three_model_def = worker.run
+          begin
+            three_model_def = worker.run
+          rescue => e
+            Plugin.instance.dump_exception(e)
+            return { :errors => [ 'default.error' ] }
+          end
 
           response[:three_model_def] = three_model_def.to_hash
 

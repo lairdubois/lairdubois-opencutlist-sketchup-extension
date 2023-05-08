@@ -35,7 +35,7 @@ module Ladb::OpenCutList::Kuix
       patterns
     end
 
-    # -- Properties --
+    # -- PROPERTIES --
 
     def patterns_transformation=(value)
       return if @patterns_transformation == value
@@ -63,7 +63,7 @@ module Ladb::OpenCutList::Kuix
       super
     end
 
-    # -- Render --
+    # -- RENDER --
 
     def paint_content(graphics)
       @paths.each { |points| graphics.draw_line_strip(points, @color, @line_width, @line_stipple) }

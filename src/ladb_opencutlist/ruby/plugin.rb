@@ -231,6 +231,21 @@ module Ladb::OpenCutList
 
     end
 
+    def dump_exception(e)
+
+      SKETCHUP_CONSOLE.show
+
+      heading = "Please email the following error to opencutlist@lairdubois.fr"
+      puts '-' * heading.length
+      puts heading
+      puts '-' * heading.length
+      puts "OpenCutList #{EXTENSION_VERSION} (build:#{EXTENSION_BUILD})"
+      puts "#{e.inspect}"
+      puts e.backtrace.join("\n")
+      puts '-' * heading.length
+
+    end
+
     # -----
 
     def clear_app_defaults_cache

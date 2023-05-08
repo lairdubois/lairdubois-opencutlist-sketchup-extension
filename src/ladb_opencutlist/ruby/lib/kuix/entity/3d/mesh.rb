@@ -28,7 +28,7 @@ module Ladb::OpenCutList::Kuix
       super
     end
 
-    # -- Render --
+    # -- RENDER --
 
     def paint_content(graphics)
       graphics.draw_triangles(@points, @background_color)

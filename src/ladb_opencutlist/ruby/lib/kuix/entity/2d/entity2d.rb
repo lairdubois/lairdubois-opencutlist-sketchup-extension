@@ -36,7 +36,7 @@ module Ladb::OpenCutList::Kuix
 
     end
 
-    # -- Properties --
+    # -- PROPERTIES --
 
     def insets
       Inset2d.new(
@@ -69,7 +69,15 @@ module Ladb::OpenCutList::Kuix
       size
     end
 
-    # -- Style --
+    def hittable=(value)
+      @hittable = value
+    end
+
+    def hittable?
+      @hittable && (@background_color || @border_color)
+    end
+
+    # -- STYLE --
 
     def propagable_pseudo_class(pseudo_class, depth)
       true
@@ -131,15 +139,7 @@ module Ladb::OpenCutList::Kuix
       super
     end
 
-    # -- Layout --
-
-    def hittable=(value)
-      @hittable = value
-    end
-
-    def hittable?
-      @hittable && (@background_color || @border_color)
-    end
+    # -- LAYOUT --
 
     def do_layout
       do_style

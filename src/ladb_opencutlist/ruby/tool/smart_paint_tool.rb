@@ -1311,6 +1311,9 @@ module Ladb::OpenCutList
         next if entity.is_a?(Sketchup::ComponentInstance) && !entity.definition.behavior.cuts_opening? && !entity.definition.behavior.always_face_camera?
         if entity.is_a?(Sketchup::Drawingelement)
           entity.material = material
+          if material.nil? && entity.respond_to?(:clear_texture_position)
+            entity.clear_texture_position(true) # Clear texture position is possible (entity is a Face and SU 2020+)
+          end
         end
         if entity.is_a?(Sketchup::Group)
           _propagate_material(entity.entities, material)

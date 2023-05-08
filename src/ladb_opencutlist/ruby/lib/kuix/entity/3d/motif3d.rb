@@ -38,7 +38,7 @@ module Ladb::OpenCutList::Kuix
       super
     end
 
-    # -- Render --
+    # -- RENDER --
 
     def paint_content(graphics)
       @paths.each { |points| graphics.draw_line_strip(points, @color, @line_width, @line_stipple) }
@@ -63,6 +63,8 @@ module Ladb::OpenCutList::Kuix
       @end = Point3d.new
 
     end
+
+    # -- LAYOUT --
 
     def do_layout(transformation)
 

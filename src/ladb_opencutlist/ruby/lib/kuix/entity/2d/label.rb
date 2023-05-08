@@ -19,7 +19,7 @@ module Ladb::OpenCutList::Kuix
       @text_point = Point2d.new
     end
 
-    # -- Properties --
+    # -- PROPERTIES --
 
     def text=(value)
       return if @text == value
@@ -63,6 +63,8 @@ module Ladb::OpenCutList::Kuix
       @text_options[:vertical_align] = value
       invalidate
     end
+
+    # -- LAYOUT --
 
     def do_style
       super
@@ -133,7 +135,7 @@ module Ladb::OpenCutList::Kuix
       end
     end
 
-    # -- Render --
+    # -- RENDER --
 
     def paint_content(graphics)
       graphics.draw_text(@text_point.x, @text_point.y, @truncated_text, @text_options)

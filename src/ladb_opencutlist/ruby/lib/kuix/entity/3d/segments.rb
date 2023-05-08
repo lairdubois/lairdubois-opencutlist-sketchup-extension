@@ -31,7 +31,7 @@ module Ladb::OpenCutList::Kuix
       super
     end
 
-    # -- Render --
+    # -- RENDER --
 
     def paint_content(graphics)
       graphics.draw_lines(@points, @color, @line_width, @line_stipple)

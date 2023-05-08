@@ -91,7 +91,7 @@ module Ladb::OpenCutList::Kuix
       end
     end
 
-    # -- Layout --
+    # -- LAYOUT --
 
     def visible=(value)
       return if @visible == value
@@ -118,7 +118,7 @@ module Ladb::OpenCutList::Kuix
       end
     end
 
-    # -- Render --
+    # -- RENDER --
 
     def paint(graphics)
       paint_itself(graphics) if self.visible?

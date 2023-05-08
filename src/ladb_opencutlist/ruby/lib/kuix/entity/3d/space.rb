@@ -9,7 +9,7 @@ module Ladb::OpenCutList::Kuix
       @view = view
     end
 
-    # -- Layout --
+    # -- LAYOUT --
 
     def invalidate
       super
