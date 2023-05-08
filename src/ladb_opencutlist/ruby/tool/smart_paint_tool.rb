@@ -292,12 +292,10 @@ module Ladb::OpenCutList
           ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3') + '.'
       when ACTION_PAINT_EDGES
         return super +
-          ' | ↑↓ + ' + Plugin.instance.get_i18n_string('tool.default.transparency') + ' = ' + Plugin.instance.get_i18n_string('tool.default.toggle_depth') + '.' +
           ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_2') + '.' +
           ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3') + '.'
       when ACTION_PAINT_FACES
         return super +
-          ' | ↑↓ + ' + Plugin.instance.get_i18n_string('tool.default.transparency') + ' = ' + Plugin.instance.get_i18n_string('tool.default.toggle_depth') + '.' +
           ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3') + '.' +
           ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3') + '.'
       when ACTION_PICK
@@ -1002,7 +1000,7 @@ module Ladb::OpenCutList
     end
 
     def _can_pick_deeper?
-      super && !is_action_pick?
+      super && !is_action_paint_edges? && !is_action_paint_faces? && !is_action_pick?
     end
 
     def _reset_ui

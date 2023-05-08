@@ -265,10 +265,9 @@ module Ladb::OpenCutList
 
       mesh = face.mesh(0) # POLYGON_MESH_POINTS
       points = mesh.points
+      points.each { |point| point.transform!(transformation) } unless transformation.nil?
 
       red, green, blue = _to_three_vertex_color(face.material.nil? ? material : face.material)
-
-      Point3dUtils::transform_points(points, transformation)
 
       vertices = []
       colors = []

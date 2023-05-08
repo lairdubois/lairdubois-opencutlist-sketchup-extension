@@ -350,7 +350,7 @@ module Ladb::OpenCutList
           entity.edges.each { |edge|
             if edge.soft?
               edge_points = edge.vertices.map { |vertex| vertex.position }
-              Point3dUtils.transform_points(edge_points, transformation)
+              edge_points.each { |point| point.transform!(transformation) } unless transformation.nil?
               soft_edges_points << edge_points
             end
           }
