@@ -369,8 +369,8 @@ tab:
         Opcja *Opis* umożliwia podanie spersonalizowanych informacji na temat każdej definicji części.
       tags: Plakietki
       tags_help: |
-        *Plakietki* to niestandardowe słowa kluczowe, które można dodać do każdej definicji części. 
-        Możesz dodać dowolną liczbę plakietek. 
+        *Plakietki* to niestandardowe słowa kluczowe, które można dodać do każdej definicji części.
+        Możesz dodać dowolną liczbę plakietek.
         Widoczne części listy części można następnie filtrować według tych plakietek.
       tags_multiple_info: Wyświetlane są tylko popularne plakietki
       orientation: Orientacja
@@ -990,7 +990,7 @@ tab:
       texture_clear: Usuń teksturę
       edit: "Edytuj właściwości '{{ name }}'"
       set_current: |
-        Kolorowanie części za pomocą '{{ name }}'. 
+        Kolorowanie części za pomocą '{{ name }}'.
         *Kliknij dwukrotnie, aby zwinąć*
     menu:
       import_from_skm: Importuj materiał (.skm)
@@ -1344,6 +1344,7 @@ tool:
   default:
     transparency: Przezroczystość
     zoom_extents: Zakres powiększenia
+    toggle_depth: Części tła
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -1388,7 +1389,6 @@ tool:
       wrong_material_type: "Część docelowa musi być typu „{{ type }}”"
   smart_axes:
     title: Orientacja
-    toggle_depth: Części tła
     action_0: Zamień
     action_0_status: "Kliknij część, aby odwrócić jej wystąpienie wzdłuż jednego z wymiarów"
     action_1: Zamień długość ↔ szerokość

@@ -1344,6 +1344,7 @@ tool:
   default:
     transparency: Nhìn trong suốt
     zoom_extents: Thu phóng vừa khung nhìn
+    toggle_depth: Nền bộ phận
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -1388,7 +1389,6 @@ tool:
       wrong_material_type: "Bộ phận mục tiêu phải là của loại '{{ type }}'"
   smart_axes:
     title: Định hướng
-    toggle_depth: Nền bộ phận
     action_0: Lật
     action_0_status: Nhấp vào một bộ phận để lật nó trường hợp dọc theo một trong các kích thước của nó
     action_1: Hoán đổi chiều dài ↔ chiều rộng

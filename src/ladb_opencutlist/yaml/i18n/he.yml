@@ -1226,7 +1226,7 @@ tab:
       cuttingdiagram_export: עלות תוכנית חיתוך ביצוא
     objective_details:
       default: |
-        השיפור המתמיד של *OpenCutList* חשוב לנו מאוד והפרויקט ממשיך להזדקק לעזרתכם לעדכון הבא **5.0**!
+        השיפור המתמיד של *OpenCutList* חשוב לנו מאוד והפרויקט ממשיך להזדקק לעזרתכם לעדכון הבא!
       cuttingdiagram_export: |
         חשוב לנו שניתן להתאים את *OpenCutList* לציפיות השונות מאוד של המשתמשים לפונקציית *תוכנית חיתוך*.
         כדי להרחיב עוד יותר את האפשרויות, ברצוננו לאפשר ייצוא של תוכניות חיתוך בפורמט **SVG**.
@@ -1330,6 +1330,7 @@ tool:
   default:
     transparency: שקיפות
     zoom_extents: זום מורחב
+    toggle_depth: ""
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -1374,7 +1375,6 @@ tool:
       wrong_material_type: ""
   smart_axes:
     title: ""
-    toggle_depth: ""
     action_0: ""
     action_0_status: ""
     action_1: ""
