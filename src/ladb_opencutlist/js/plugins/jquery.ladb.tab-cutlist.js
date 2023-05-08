@@ -2673,7 +2673,15 @@
                         that.dialog.notifyErrors(response.errors);
                     }
                     if (response.export_path) {
-                        that.dialog.notifySuccess(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }));
+                        that.dialog.notifySuccess(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }), [
+                            Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
+
+                                rubyCallCommand('core_open_external_file', {
+                                    path: response.export_path
+                                });
+
+                            })
+                        ]);
                     }
 
                 });
