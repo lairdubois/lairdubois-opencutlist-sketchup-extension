@@ -1233,7 +1233,7 @@ tab:
       cuttingdiagram_export: Financování vývozu řezných diagramů
     objective_details:
       default: |
-        Neustálé zlepšování *OpenCutList* je pro nás důležité, a proto projekt stále potřebuje vaši pomoc pro další aktualizaci **5.0**!
+        Neustálé zlepšování *OpenCutList* je pro nás důležité, a proto projekt stále potřebuje vaši pomoc pro další aktualizaci!
       cuttingdiagram_export: |
         Je pro nás důležité, aby *OpenCutList* bylo možné přizpůsobit velmi rozdílným očekáváním uživatelů od funkce *řezový diagram*.
         Pro další rozšíření možností bychom rádi umožnili export rozvrhových diagramů ve formátu **SVG**.

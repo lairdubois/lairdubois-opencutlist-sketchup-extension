@@ -1234,7 +1234,7 @@ tab:
       cuttingdiagram_export: Finanziamento della possibilità di esportare lo schema di taglio
     objective_details:
       default: |
-        Per noi il continuo miglioramento di *OpenCutList* è importante e il progetto continua ad avere bisogno del tuo aiuto per il prossimo aggiornamento **5.0**!
+        Per noi il continuo miglioramento di *OpenCutList* è importante e il progetto continua ad avere bisogno del tuo aiuto per il prossimo aggiornamento!
       cuttingdiagram_export: |
         Riteniamo importante che l'opzione "schema di taglio" di OpenCutList possa soddisfare le esigenze del maggior numero di utenti e per farlo vorremmo aggiungere la possibilità di esportare lo schema in formato **SVG**.
         Tale formato permette di riutilizzare gli schemi di taglio OCL da parte di altri sofware.

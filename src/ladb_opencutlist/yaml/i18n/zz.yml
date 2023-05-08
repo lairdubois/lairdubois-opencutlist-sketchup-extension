@@ -1245,7 +1245,7 @@ tab:
       default: 973 - Objectives
       cuttingdiagram_export: 974 - Funding of cutting diagram exports
     objective_details:
-      default: '975 - The ongoing improvement of *OpenCutList* is important to us and the project continues to need your help for its next update **5.0**!
+      default: '975 - The ongoing improvement of *OpenCutList* is important to us and the project continues to need your help for its next update!
 
         '
       cuttingdiagram_export: |

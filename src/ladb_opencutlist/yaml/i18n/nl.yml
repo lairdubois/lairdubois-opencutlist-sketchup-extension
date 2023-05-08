@@ -766,7 +766,8 @@ tab:
         parameters: De parameters zijn niet correct. De trimmaat overschrijdt 25% van de grootste plank.
         no_parts: Geen enkel onderdeel.
         no_sheet: Het standaard paneel is niet correct geconfigureerd en geen enkel overschot is gedefinieerd.
-        no_placement_possible: "Geen enkel onderdeel kon geplaatst worden (standaard paneel te klein, marge te groot, zaagblad te dik, ...)."
+        no_placement_possible_1d: ""
+        no_placement_possible_2d: "Geen enkel onderdeel kon geplaatst worden (standaard paneel te klein, marge te groot, zaagblad te dik, ...)."
         bad_error: "Fout in het algoritme. Gelieve de ontwikkelaars te contacteren want je bent op een interessante case gestoten."
         unplaced_parts: "**1 onderdeel** is te groot om geplaatst te worden."
         unplaced_parts_plural: "**{{ count }} onderdelen** zijn te groot om geplaatst te worden."

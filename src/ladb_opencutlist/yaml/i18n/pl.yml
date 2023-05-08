@@ -1233,7 +1233,7 @@ tab:
       cuttingdiagram_export: Finansowanie wywozu schematów cięcia
     objective_details:
       default: |
-        Ciągłe ulepszanie *OpenCutList* jest dla nas ważne, a projekt nadal potrzebuje Twojej pomocy przy następnej aktualizacji **5.0**!
+        Ciągłe ulepszanie *OpenCutList* jest dla nas ważne, a projekt nadal potrzebuje Twojej pomocy przy następnej aktualizacji!
       cuttingdiagram_export: |
         Ważne jest dla nas, aby *OpenCutList* mógł być dostosowany do bardzo różnych oczekiwań użytkowników w stosunku do funkcji *schematu cięcia*.
         Aby jeszcze bardziej rozszerzyć możliwości, chcielibyśmy umożliwić eksport diagramów układu w formacie **SVG**.

@@ -1233,7 +1233,7 @@ tab:
       cuttingdiagram_export: Financiación de las exportaciones del diagrama de corte
     objective_details:
       default: |
-        ¡La mejora continua de *OpenCutList* es muy importante para nosotros y el proyecto continúa necesitándote para su próxima actualización **5.0**!
+        ¡La mejora continua de *OpenCutList* es muy importante para nosotros y el proyecto continúa necesitándote para su próxima actualización!
       cuttingdiagram_export: |
         Es importante para nosotros que *OpenCutList* pueda adaptarse a las muy diferentes expectativas de los usuarios para la función de *diagrama de corte*.
         Para ampliar aún más las posibilidades, nos gustaría permitir la exportación de diagramas de corte en formato **SVG**.
