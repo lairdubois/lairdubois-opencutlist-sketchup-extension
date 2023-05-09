@@ -882,23 +882,23 @@ tab:
       option_pins_hidden_help: מציג או מסתיר סיכות המצביעות על חלקים כדי לציין את מספרם או ייעודם.
       option_pins_colored: צבע
       option_pins_colored_0: ללא צבע
-      option_pins_colored_1: ""
-      option_pins_colored_help: ""
+      option_pins_colored_1: צבע חלק
+      option_pins_colored_help: מאפשר לך לבחור את צבע ראש הסיכות.
       option_pins_formula: נוסחה
-      option_pins_formula_help: ""
+      option_pins_formula_help: מאפשר לך לכתוב קוד *Ruby* כדי להגדיר את הטקסט על הסיכה.
       option_pins_length: אורך
-      option_pins_length_0: ""
+      option_pins_length_0: ללא חץ
       option_pins_length_1: קטן
-      option_pins_length_2: ""
-      option_pins_length_3: ""
-      option_pins_length_help: ""
-      option_pins_direction: ""
-      option_pins_direction_0: ""
-      option_pins_direction_1: ""
-      option_pins_direction_2: ""
-      option_pins_direction_3: ""
-      option_pins_direction_4: ""
-      option_pins_direction_help: ""
+      option_pins_length_2: בינונית
+      option_pins_length_3: גדולה
+      option_pins_length_help: מאפשר לבחור את אורך החץ של הסיכות.
+      option_pins_direction: כיוון
+      option_pins_direction_0: לאורך הציר האדום
+      option_pins_direction_1: לאורך הציר הירוק
+      option_pins_direction_2: לאורך הציר הכחול
+      option_pins_direction_3: מצביע על מרכז הקבוצה המקורית
+      option_pins_direction_4: מצביע על מרכז הבחירה
+      option_pins_direction_help: מאפשר לבחור את כיוון הסיכות על מנת להתאים את קריאותם לפי השרטוט.
       option_page: נייר
       option_page_format: פורמט
       option_page_format_portrait: לאורך
@@ -906,35 +906,40 @@ tab:
       option_page_format_custom: מותאם אישית
       option_page_width: רוחב
       option_page_height: גובה
-      option_page_header: ""
-      option_page_header_0: ""
-      option_page_header_1: ""
+      option_page_header: כותרת
+      option_page_header_0: ללא
+      option_page_header_1: עם
       option_page_header_help: |
-      option_camera: ""
-      option_camera_view: ""
-      option_camera_view_custom: ""
-      option_camera_zoom: ""
+        מאפשר לבחור אם העמוד שיודפס יכיל כותרת עם שם המסמך, תיאורו, התאריך, היחידה והקנה מידה.
+        ללא כותרת, הפרויקט יתפוס את כל העמוד.
+      option_camera: מצלמה
+      option_camera_view: תצוגה
+      option_camera_view_custom: מותאם אישית
+      option_camera_zoom: קנה מידה
       option_camera_zoom_auto: אוטומטי
-      option_camera_zoom_custom: ""
-      option_camera_target: ""
+      option_camera_zoom_custom: מותאם אישית
+      option_camera_target: מיקום
       option_camera_target_auto: אוטומטי
-      option_camera_target_custom: ""
-      option_explode: ""
+      option_camera_target_custom: מותאם אישית
+      option_explode: תצוגה מפוצצת
       error:
-        no_part: ""
-        failed_to_save_as_skp: ""
+        no_part: אין חלקים לצייר.
+        failed_to_save_as_skp: כתיבת קובץ SKP לשליחה ל-Layout נכשלה.
         failed_to_layout: |
+          שגיאה בכתיבת קובץ Layout : *{{ error }}*
+
+          **ודא שהקובץ לא פתוח ב-Layout.**
       warning:
-        is_group_selection: ""
-        is_part_selection: ""
+        is_group_selection: חלקים הכלולים ב**קבוצות נסתרות** של תוכנית חיתוך שלך לא יוצגו.
+        is_part_selection: שרטוט ההרכבה מוגבל ל-**חלקים נבחרים**.
     snippet:
       number: מספר
       name: תיאור
-      number_and_name: ""
-      number_without_hardware: ""
+      number_and_name: מספר ויעוד
+      number_without_hardware: מספר (ללא אביזרים)
       size: מידה סופית
-      area: ""
-      volume: ""
+      area: שטח משוער
+      volume: נפח משוער
     error:
       no_model: אין מודל פתוח. אתה תצטרך לתת לי קצת יותר מידע ;)
       no_entities: המודל ריק. אתה תצטרך לתת לי קצת יותר מידע ;)
