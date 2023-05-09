@@ -987,7 +987,7 @@ tab:
       grain_direction: כיוון סיבים
       colorized: ציור הצללה זה יוחל על המרקם של החומר שיופיע במודל
       texture_load: טען מרקם חדש
-      texture_clear: ""
+      texture_clear: הסר מרקם
       edit: "ערוך מאפיינים של '{{ name }}'"
       set_current: |
         צבע חלקים עם '{{ name }}'
@@ -1012,13 +1012,15 @@ tab:
       title: "מאפייני חומר '{{ name }}'"
       general: כללי
       texture: מרקם
-      no_texture: ""
+      no_texture: ללא מרקם
       name: תיאור
       type: סוג
       cut_options: הגדרות חיתוך
       attributes: תכונות
       thickness: עובי
       thickness_help: |
+        עובי מוגמר של החומר.
+        *אם לא צוינו יחידות, יחידת המודל תילקח בחשבון.*
       length_increase: תוספת לאורך
       length_increase_help: תוספת מוחלת על האורך בפועל לקביעת **אורך החיתוך**.
       width_increase: תוספת לרוחב
@@ -1237,6 +1239,7 @@ tab:
         כדי להרחיב עוד יותר את האפשרויות, ברצוננו לאפשר ייצוא של תוכניות חיתוך בפורמט **SVG**.
         בכך שאתה מספק לנו את האמצעים לעבוד על היצוא הזה, אתה נותן לנו את ההזדמנות לעזור לך להפיק את המרב מ-*OpenCutList*.
       layout: |
+        המטרה של מודול זה היא לאפשר לך להדפיס בקלות תצוגה מקדימה של הפרויקט שלך כ**תצוגה מפוצצת** עם זיהוי ממידע שנוצר ברשימת החלקים.
     objective_crowdfunding: |
       פיתוח אפשרויות חדשות ייעשה באמצעות **מימון המונים** ויכול להתחיל כאשר **היעדים הכספיים** שלו הושגו.
     objective_thanks: |
@@ -1268,12 +1271,18 @@ tab:
     mass_unit: יחידת משקל
     currency_symbol: סמל המטבע
     presets:
-      export_global_presets: ""
+      export_global_presets: ייצא הגדרות קבועות מראש
       export_global_presets_help: |
-      export_global_presets_success: ""
-      import_global_presets: ""
+        תכונה זו מאפשרת לך לייצא את ההגדרות המוגדרות מראש שלך לקובץ **.json**.
+        בחר את ההגדרות המוגדרות מראש שברצונך לייצא לשם.
+      export_global_presets_success: ההגדרות המוגדרות מראש יוצאו בהצלחה.
+      import_global_presets: ייבוא ​​הגדרות קבועות מראש
       import_global_presets_help: |
+        בחר את המוגדרות מראש הקיימות בקובץ **.json** שברצונך לייבא.
+        היזהר, אם כבר קיימת הגדרה מראש עם שם זהה, היא תוחלף בגרסה המיובאת.
       import_global_presets_success: |
+        הגדרות קבועות מראש של *OpenCutList* יובאו בהצלחה.
+        על מנת לקחת בחשבון את השינויים, עליך **לסגור** ו**לפתוח מחדש** את חלון OpenCutList.
       dump_global_presets: גיבוי הגדרות קבועות מראש
       dump_model_presets: גיבוי הגדרות מודל
       reset_global_presets: אפס הגדרות קבועות מראש
@@ -1293,11 +1302,11 @@ tab:
         הגדרות *OpenCutList* של המודל הנוכחי אופסו.
         על מנת להתחל את השינויים, עליך **לסגור** ו-**לפתח** מחדש את חלון OpenCutList.
       error:
-        no_preset_to_export: ""
-        no_preset_to_import: ""
-        failed_to_import: ""
-        failed_to_import_invalid_hexdigest: ""
-        failed_to_import_bad_file_format: ""
+        no_preset_to_export: אין הגדרות קבועות מראש לייצוא.
+        no_preset_to_import: אין הגדרות קבועות מראש לייבוא.
+        failed_to_import: "ייבוא ​​הגדרות קבועות מראש נכשל: **{{ error }}**."
+        failed_to_import_invalid_hexdigest: קובץ זה שונה. לא ניתן לייבא אותו.
+        failed_to_import_bad_file_format: פורמט קובץ לא חוקי.
   about:
     label: אודות
     title: אודות
@@ -1335,12 +1344,12 @@ tool:
   default:
     transparency: שקיפות
     zoom_extents: זום מורחב
-    toggle_depth: ""
+    toggle_depth: חלקים ברקע
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_paint:
-    title: ""
+    title: גוון
     default_material: חומר לא מוגדר
     filters: סינון
     filter_0: סוג אינו מוגדר
@@ -1350,49 +1359,49 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: ""
-    action_0_status: ""
+    action_0: צביעת חלקים
+    action_0_status: לחץ על חלק כדי לצבוע את הפריטים שלו
     action_1: צבע חלק
-    action_1_status: ""
+    action_1_status: לחץ על הקאנט של החלק כדי להחיל עליו חומר '$t(tab.materials.type_4)'
     action_2: נקה פנים
-    action_2_status: ""
+    action_2_status: לחץ על החזית של חלק בלוח כדי להחיל עליו חומר '$t(tab.materials.type_6)'
     action_3: נקה חלק
-    action_3_status: ""
-    action_4: ""
-    action_4_status: ""
-    edges: ""
-    edges_plural: ""
-    edge_ymin: ""
-    edge_ymax: ""
-    edge_xmin: ""
-    edge_xmax: ""
-    faces: ""
-    faces_plural: ""
+    action_3_status: לחץ על החזית כדי לקחת דוגמה מהחומר
+    action_4: לנקות
+    action_4_status: לחץ על חלק כדי להסיר את כל החומרים מההגדרה שלו ומכל הפריטים
+    edges: "קאנט {{ count }}"
+    edges_plural: "{{ count }} קאנטים"
+    edge_ymin: אורך 1
+    edge_ymax: אורך 2
+    edge_xmin: רוחב 1
+    edge_xmax: רוחב 2
+    faces: "חזית {{ count }}"
+    faces_plural: "{{ count }} חזיתות"
     face_zmin: גב
     face_zmax: חזית הפורניר
     warning:
       no_material: הדגם שלך אינו מכיל חומרים!
-      no_material_type: ""
+      no_material_type: "אין חומר מסוג '{{ type }}'"
     error:
-      not_part: ""
-      not_edge: ""
-      not_face: ""
-      wrong_material_type: ""
+      not_part: אובייקט היעד אינו חלק
+      not_edge: משטח היעד אינו קאנט הלוח
+      not_face: משטח היעד אינה חזית הלוח
+      wrong_material_type: "חלק היעד חייב להיות מסוג '{{ type }}'"
   smart_axes:
-    title: ""
-    action_0: ""
-    action_0_status: ""
-    action_1: ""
-    action_1_status: ""
-    action_2: ""
-    action_2_status: ""
-    action_3: ""
-    action_3_status: ""
-    action_modifier_length: ""
-    action_modifier_width: ""
-    action_modifier_thickness: ""
+    title: כוון
+    action_0: להפוך
+    action_0_status: לחץ על חלק כדי להפוך את הפריט שלו לאורך אחד הממדים שלו
+    action_1: החלפה אורך ↔ רוחב
+    action_1_status: לחץ על חלק כדי להחליף את האורך שלו עם הרוחב שלו
+    action_2: החלפה חזית ↔ גב
+    action_2_status: לחץ על חלק כדי להחליף את החזית שלו עם הגב שלו
+    action_3: התאם צירים
+    action_3_status: לחץ על החזית או קאנט של חלק כדי להתאים את הצירים שלו אליו
+    action_modifier_length: א'
+    action_modifier_width: ר'
+    action_modifier_thickness: ע'
     warning:
-      more_entities: ""
+      more_entities: "{{ count_used }} פריטים החולקים את אותה הגדרה ישונו"
     error:
-      not_part: ""
-      not_orientable: ""
+      not_part: אובייקט היעד אינו חלק
+      not_orientable: סוג החלק אינו מאפשר לכוון אותו
