@@ -139,7 +139,7 @@ module Ladb::OpenCutList
         @language = 'en'
       end
       if persist
-        write_default(SETTINGS_KEY_LANGUAGE, language)
+        write_default(SETTINGS_KEY_LANGUAGE, @language)
       end
       @i18n_strings_cache = nil # Reset i18n strings cache
     end
