@@ -19,6 +19,7 @@ in 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added hide edge preview option in 2D cutting diagram (default = true)
   * Added layers (SketchUp tags) column to part and instance list exports
   * Added focus SketchUp window after selecting tool (SketchUp 2021.1+)
+  * Removed **Dutch** language due to lack of support
   * Renamed Reports to Estimate
   * Renamed Tags to Badges
   * Improved materials property dialog : It is now possible to add, change and clear texture on a material
