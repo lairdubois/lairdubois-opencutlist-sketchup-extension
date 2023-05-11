@@ -1196,7 +1196,7 @@ module Ladb::OpenCutList
             end
 
             # Start undoable model modification operation
-            model.start_operation('OpenCutList - Paint parts', true, false, false)
+            model.start_operation('OCL Paint Parts', true, false, false)
 
             # Paint instances
             @active_instances.each do |instance|
@@ -1217,7 +1217,7 @@ module Ladb::OpenCutList
             end
 
             # Start undoable model modification operation
-            model.start_operation('OpenCutList - Paint edges', true, false, false)
+            model.start_operation('OCL Paint Edges', true, false, false)
 
             @active_faces.each { |face| face.material = @active_material }
 
@@ -1235,7 +1235,7 @@ module Ladb::OpenCutList
             end
 
             # Start undoable model modification operation
-            model.start_operation('OpenCutList - Paint faces', true, false, false)
+            model.start_operation('OCL Paint Faces', true, false, false)
 
             @active_faces.each { |face| face.material = @active_material }
 
@@ -1253,7 +1253,7 @@ module Ladb::OpenCutList
             end
 
             # Start undoable model modification operation
-            model.start_operation('OpenCutList - Paint clean', true, false, false)
+            model.start_operation('OCL Paint Clean', true, false, false)
 
             # Clean definition
             _propagate_material(@active_instances.first.definition.entities, nil)
@@ -1312,7 +1312,7 @@ module Ladb::OpenCutList
         if entity.is_a?(Sketchup::Drawingelement)
           entity.material = material
           if material.nil? && entity.respond_to?(:clear_texture_position)
-            entity.clear_texture_position(true) # Clear texture position is possible (entity is a Face and SU 2020+)
+            entity.clear_texture_position(true) # Clear texture position is possible (entity is a Face and SU 2022+)
           end
         end
         if entity.is_a?(Sketchup::Group)

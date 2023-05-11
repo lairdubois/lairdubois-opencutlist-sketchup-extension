@@ -26,7 +26,7 @@ module Ladb::OpenCutList
     
     include Singleton
 
-    IS_RBZ = __dir__.start_with?(Sketchup.find_support_file('Plugins'))
+    IS_RBZ = __dir__.start_with?(Sketchup.find_support_file('Plugins', ''))
     IS_DEV = EXTENSION_VERSION.end_with?('-dev')
 
     require 'pp' if IS_DEV
@@ -107,6 +107,15 @@ module Ladb::OpenCutList
 
     # -----
 
+    def root_dir
+      if @root_dir
+        return @root_dir
+      end
+      dir = __dir__
+      dir.force_encoding('UTF-8') if dir.respond_to?(:force_encoding)
+      @root_dir = File.expand_path(File.join(dir, '..'))
+    end
+
     def temp_dir
       if @temp_dir
         return @temp_dir
@@ -146,7 +155,7 @@ module Ladb::OpenCutList
 
     def get_available_languages
       available_languages = []
-      Dir[File.join(__dir__, '..', 'js', 'i18n', '*.js')].each { |file|
+      Dir[File.join(root_dir, 'js', 'i18n', '*.js')].each { |file|
         available_languages.push(File.basename(file, File.extname(file)))
       }
       available_languages.sort
@@ -171,7 +180,7 @@ module Ladb::OpenCutList
     def get_i18n_string(path_key, vars = nil)
 
       unless @i18n_strings_cache
-        file_path = File.join(__dir__, '..', 'yaml', 'i18n', "#{language}.yml")
+        file_path = File.join(root_dir, 'yaml', 'i18n', "#{language}.yml")
         begin
           @i18n_strings_cache = YAML::load_file(file_path)
         rescue => e
@@ -260,7 +269,7 @@ module Ladb::OpenCutList
 
       unless @app_defaults_cache && @app_defaults_cache.has_key?(cache_key)
 
-        file_path = File.join(__dir__, '..', 'json', 'defaults', "#{dictionary}.json")
+        file_path = File.join(root_dir, 'json', 'defaults', "#{dictionary}.json")
         begin
           file = File.open(file_path)
           data = JSON.load(file)
@@ -586,7 +595,7 @@ module Ladb::OpenCutList
       return unless Sketchup.active_model
 
       # Start model modification operation
-      Sketchup.active_model.start_operation('write_model_presets', true, false, true)
+      Sketchup.active_model.start_operation('OCL Write Model Presets', true, false, true)
 
       set_attribute(Sketchup.active_model, PRESETS_KEY, @model_presets_cache)
 
@@ -981,7 +990,7 @@ module Ladb::OpenCutList
       }
 
       # Setup dialog page
-      @dialog.set_file(File.join(__dir__, '..', 'html', "dialog-#{language}.html"))
+      @dialog.set_file(File.join(root_dir, 'html', "dialog-#{language}.html"))
 
       # Set dialog size and position
       # dialog_set_size(DIALOG_MINIMIZED_WIDTH, DIALOG_MINIMIZED_HEIGHT)
@@ -1435,7 +1444,7 @@ module Ladb::OpenCutList
     end
 
     def play_sound_command(params)    # Expected params = { filename: WAV_FILE_TO_PLAY }
-      UI.play_sound(File.join(__dir__, '..', params['filename']))
+      UI.play_sound(File.join(root_dir, params['filename']))
     end
 
     def send_action_command(params)

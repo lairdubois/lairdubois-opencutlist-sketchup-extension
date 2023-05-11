@@ -27,7 +27,7 @@ module Ladb::OpenCutList
       else
 
         # Try to use SU Components dir
-        components_dir = Sketchup.find_support_file('Components')
+        components_dir = Sketchup.find_support_file('Components', '')
         if File.directory?(components_dir)
 
           # Join with OpenCutList subdir and create it if it dosen't exist

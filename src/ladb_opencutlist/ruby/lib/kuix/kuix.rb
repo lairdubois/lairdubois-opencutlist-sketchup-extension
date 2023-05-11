@@ -120,7 +120,7 @@ module Ladb::OpenCutList
 
       def create_cursor(name, hot_x, hot_y)
         cursor_id = nil
-        cursor_path = File.join(__dir__, '..', '..', '..', 'img', "cursor-#{name}.#{Plugin.instance.platform_is_mac ? 'pdf' : 'svg'}")
+        cursor_path = File.join(Plugin.instance.root_dir,'img', "cursor-#{name}.#{Plugin.instance.platform_is_mac ? 'pdf' : 'svg'}")
         if cursor_path
           cursor_id = UI.create_cursor(cursor_path, hot_x, hot_y)
         end

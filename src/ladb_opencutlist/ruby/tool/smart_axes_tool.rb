@@ -614,7 +614,7 @@ module Ladb::OpenCutList
               t = Geom::Transformation.scaling(bounds.center, scaling[X_AXIS], scaling[Y_AXIS], scaling[Z_AXIS])
 
               # Start undoable model modification operation
-              model.start_operation('OpenCutList - Part flip', true, false, false)
+              model.start_operation('OCL Part Flip', true, false, false)
 
               entity.transformation *= t
 
@@ -663,7 +663,7 @@ module Ladb::OpenCutList
               t = ti.inverse
 
               # Start undoable model modification operation
-              model.start_operation('OpenCutList - Part Change Axes', true, false, false)
+              model.start_operation('OCL Change Axes', true, false, false)
 
               # Transform definition's entities
               entities = definition.entities

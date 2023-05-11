@@ -59,7 +59,7 @@ module Ladb::OpenCutList
         end
 
         # Start model modification operation
-        model.start_operation('OpenCutList - Export to Layout', true, false, true)
+        model.start_operation('OCL Export To Layout', true, false, true)
 
         # CREATE SKP FILE
 
@@ -113,7 +113,7 @@ module Ladb::OpenCutList
 
         # Add style
         selected_style = styles.selected_style
-        styles.add_style(File.join(__dir__, '..', '..', '..', 'style', "ocl_layout_#{@parts_colored ? 'colored' : 'monochrome'}_#{@parts_opacity == 1 ? 'opaque' : 'translucent'}.style"), true)
+        styles.add_style(File.join(Plugin.instance.root_dir,'style', "ocl_layout_#{@parts_colored ? 'colored' : 'monochrome'}_#{@parts_opacity == 1 ? 'opaque' : 'translucent'}.style"), true)
 
         # Save tmp definition as in skp file
         skp_success = tmp_definition.save_copy(skp_path) && File.exist?(skp_path)

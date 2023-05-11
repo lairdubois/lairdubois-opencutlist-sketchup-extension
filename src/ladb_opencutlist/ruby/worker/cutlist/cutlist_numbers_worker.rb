@@ -23,7 +23,7 @@ module Ladb::OpenCutList
       return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
 
       # Start model modification operation
-      model.start_operation('OpenCutList - Numbers', true, false, true)
+      model.start_operation('OCL Numbers', true, false, true)
 
       definitions = model.definitions
 

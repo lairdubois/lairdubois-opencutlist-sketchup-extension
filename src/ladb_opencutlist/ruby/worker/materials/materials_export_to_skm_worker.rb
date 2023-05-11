@@ -28,7 +28,7 @@ module Ladb::OpenCutList
       else
 
         # Try to use SU Materials dir
-        materials_dir = Sketchup.find_support_file('Materials')
+        materials_dir = Sketchup.find_support_file('Materials', '')
         if File.directory?(materials_dir)
 
           # Join with OpenCutList subdir and create it if it dosen't exist

@@ -119,17 +119,17 @@ module Ladb::OpenCutList::Kuix
 
     def compute_min_size
       if @text_options[:size]
-        if Sketchup.version_number < 2000000000 || Sketchup.active_model.nil?
-          # Estimate text size
-          @min_size.set!(
-            @text.length * @text_options[:size].to_i * 0.7,
-            @text_options[:size]
-          )
-        else
+        if !Sketchup.active_model.nil? && Sketchup.active_model.active_view.respond_to?(:text_bounds) # SU 2020+
           text_bounds = Sketchup.active_model.active_view.text_bounds(Geom::Point3d.new, @text, @text_options)
           @min_size.set!(
             text_bounds.width,
             text_bounds.height
+          )
+        else
+          # Estimate text size
+          @min_size.set!(
+            @text.length * @text_options[:size].to_i * 0.7,
+            @text_options[:size]
           )
         end
       end

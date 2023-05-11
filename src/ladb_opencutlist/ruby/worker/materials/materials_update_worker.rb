@@ -41,7 +41,7 @@ module Ladb::OpenCutList
       return { :errors => [ 'tab.materials.error.no_model' ] } unless model
 
       # Start model modification operation
-      model.start_operation('OpenCutList - Material Update', true, false, true)
+      model.start_operation('OCL Material Update', true, false, true)
 
       # Fetch material
       materials = model.materials
