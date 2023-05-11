@@ -3,7 +3,9 @@ module Ladb::OpenCutList
   class MaterialsListWorker
 
     def initialize(settings)
-      @material_order_strategy = settings['material_order_strategy']
+
+      @material_order_strategy = settings.fetch('material_order_strategy')
+
     end
 
     # -----
@@ -63,8 +65,6 @@ module Ladb::OpenCutList
                   :texture_ratio => material.texture.nil? ? nil : material.texture.width / material.texture.height,
                   :texture_image_width => material.texture.nil? ? nil : material.texture.image_width,
                   :texture_image_height => material.texture.nil? ? nil : material.texture.image_height,
-                  :texture_colorizable => Sketchup.version_number >= 16000000,
-                  :texture_colorized => Sketchup.version_number < 16000000,
                   :attributes => {
                       :type => material_attributes.type,
                       :thickness => material_attributes.thickness,

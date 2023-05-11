@@ -33,7 +33,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :px_saw_kerf, :saw_kerf, :trimming, :sheet_folding, :hide_part_list, :use_names, :full_width_diagram, :hide_cross, :wrap_length
+    attr_reader :px_saw_kerf, :saw_kerf, :trimming, :sheet_folding, :hide_part_list, :use_names, :full_width_diagram, :hide_cross, :origin_corner, :highlight_primary_cuts, :hide_edges_preview
 
     def initialize(_def)
       @_def = _def
@@ -50,6 +50,7 @@ module Ladb::OpenCutList
       @hide_cross = _def.hide_cross
       @origin_corner = _def.origin_corner
       @highlight_primary_cuts = _def.highlight_primary_cuts
+      @hide_edges_preview = _def.hide_edges_preview
 
     end
 
@@ -112,7 +113,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :type_id, :type, :count, :px_length, :px_width, :length, :width, :efficiency, :total_cut_length
+    attr_reader :type_id, :type, :count, :px_length, :px_width, :length, :width, :efficiency, :total_cut_length, :parts, :grouped_parts, :cuts, :leftovers
 
     def initialize(_def)
       @_def = _def
@@ -143,7 +144,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :id, :number, :name, :cutting_length, :cutting_width, :edge_count, :edge_material_names, :edge_std_dimensions, :px_x, :px_y, :px_length, :px_width, :rotated
+    attr_reader :id, :number, :name, :cutting_length, :cutting_width, :edge_count, :edge_material_names, :edge_std_dimensions, :face_count, :face_material_names, :face_std_dimensions, :px_x, :px_y, :px_length, :px_width, :rotated
 
     def initialize(_def)
       @_def = _def
@@ -156,6 +157,9 @@ module Ladb::OpenCutList
       @edge_count = _def.cutlist_part.edge_count
       @edge_material_names = _def.cutlist_part.edge_material_names
       @edge_std_dimensions = _def.cutlist_part.edge_std_dimensions
+      @face_count = _def.cutlist_part.face_count
+      @face_material_names = _def.cutlist_part.face_material_names
+      @face_std_dimensions = _def.cutlist_part.face_std_dimensions
 
       @px_x = _def.px_x
       @px_y = _def.px_y
@@ -172,7 +176,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :id, :number, :saved_number, :name, :description, :length, :width, :cutting_length, :cutting_width, :count, :tags, :flipped, :thickness_layer_count, :edge_count, :edge_pattern, :edge_material_names, :edge_std_dimensions, :edge_decrements
+    attr_reader :id, :number, :saved_number, :name, :description, :length, :width, :cutting_length, :cutting_width, :edge_cutting_length, :edge_cutting_width, :length_increase, :width_increase, :length_increased, :width_increased, :count, :tags, :flipped, :thickness_layer_count, :edge_count, :edge_pattern, :edge_material_names, :edge_std_dimensions, :edge_decrements, :face_count, :face_pattern, :face_material_names, :face_std_dimensions, :face_decrements
 
     def initialize(_def)
       @_def = _def
@@ -186,6 +190,12 @@ module Ladb::OpenCutList
       @width = _def.cutlist_part.width
       @cutting_length = _def.cutlist_part.cutting_length
       @cutting_width = _def.cutlist_part.cutting_width
+      @edge_cutting_length = _def.cutlist_part.edge_cutting_length
+      @edge_cutting_width = _def.cutlist_part.edge_cutting_width
+      @length_increase = _def.cutlist_part.length_increase
+      @width_increase = _def.cutlist_part.width_increase
+      @length_increased = _def.cutlist_part.length_increased
+      @width_increased = _def.cutlist_part.width_increased
       @count = _def.count
       @tags = _def.cutlist_part.tags
       @flipped = _def.cutlist_part.flipped
@@ -195,6 +205,11 @@ module Ladb::OpenCutList
       @edge_material_names = _def.cutlist_part.edge_material_names
       @edge_std_dimensions = _def.cutlist_part.edge_std_dimensions
       @edge_decrements = _def.cutlist_part.edge_decrements
+      @face_count = _def.cutlist_part.face_count
+      @face_pattern = _def.cutlist_part.face_pattern
+      @face_material_names = _def.cutlist_part.face_material_names
+      @face_std_dimensions = _def.cutlist_part.face_std_dimensions
+      @face_decrements = _def.cutlist_part.face_decrements
 
     end
 
@@ -230,7 +245,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :px_x, :px_y, :px_length, :x, :y, :is_horizontal, :is_through, :is_final
+    attr_reader :px_x, :px_y, :px_length, :x, :y, :is_horizontal, :is_internal_through, :is_trimming, :is_bounding
 
     def initialize(_def)
       @_def = _def
@@ -241,8 +256,9 @@ module Ladb::OpenCutList
       @x = _def.x.to_l.to_s
       @y = _def.y.to_l.to_s
       @is_horizontal = _def.is_horizontal
-      @is_through = _def.is_through
-      @is_final = _def.is_final
+      @is_internal_through = _def.is_internal_through
+      @is_trimming = _def.is_trimming
+      @is_bounding = _def.is_bounding
 
     end
 

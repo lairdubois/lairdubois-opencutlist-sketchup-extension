@@ -19,7 +19,7 @@ module Ladb::OpenCutList
       path = UI.openpanel(Plugin.instance.get_i18n_string('tab.materials.texture_load.title'), '', "Image Files|*.jpg;*.jpeg;*.png;||")
       if path
 
-        extname = File.extname(path)
+        extname = File.extname(path).downcase
         return { :errors => [ 'tab.materials.error.invalid_image_file' ] } unless extname.match(/^\.(?:jpg|jpeg|png)$/)
 
         temp_dir = Plugin.instance.temp_dir
@@ -33,6 +33,19 @@ module Ladb::OpenCutList
 
         # Copy file to temp folder
         FileUtils.cp(path, texture_file)
+
+        # Load image
+        image_rep = Sketchup::ImageRep.new
+        begin
+          image_rep.load_file(texture_file)
+        rescue ArgumentError => e
+          return { :errors => [ 'tab.materials.error.invalid_image_file' ] }
+        end
+
+        # Fetch image size in pixels
+        response[:texture_ratio] = image_rep.width.to_f / image_rep.height
+        response[:texture_image_width] = image_rep.width
+        response[:texture_image_height] = image_rep.height
 
         response[:texture_file] = texture_file
       end

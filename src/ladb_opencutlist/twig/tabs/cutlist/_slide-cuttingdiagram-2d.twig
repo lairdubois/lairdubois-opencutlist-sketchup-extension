@@ -20,8 +20,10 @@
 
 {% set showCuttingDimensions = group.show_cutting_dimensions %}
 {% set showEdges = group.show_edges and not generateOptions.hide_edges %}
+{% set showFaces = group.show_faces and not generateOptions.hide_faces %}
 
 {% set fullWidthCompatible = compatible_with('svg.height-auto') %}
+{% set sheetStrippedname = group.material_type == 6 ? 'veneer' : 'good' %}  {# 6 = TYPE_VENEER #}
 
 {% macro part_tooltip(part) %}
 {% spaceless %}
@@ -35,6 +37,12 @@
             {% if part.edge_material_names.xmax %}<div><i class='ladb-opencutlist-icon-edge-0100'></i>&nbsp;{{ part.edge_material_names.xmax|escape('html') }}&nbsp;<small>{{ part.edge_std_dimensions.xmax|escape('html') }}</small></div>{% endif %}
         </div>
     {% endif %}
+    {% if part.face_count > 0 %}
+        <div class='tt-section'>
+            {% if part.face_material_names.zmin %}<div><i class='ladb-opencutlist-icon-face-01'></i>&nbsp;{{ part.face_material_names.zmin|escape('html') }}&nbsp;<small>{{ part.face_std_dimensions.zmin|escape('html') }}</small></div>{% endif %}
+            {% if part.face_material_names.zmax %}<div><i class='ladb-opencutlist-icon-face-10'></i>&nbsp;{{ part.face_material_names.zmax|escape('html') }}&nbsp;<small>{{ part.face_std_dimensions.zmax|escape('html') }}</small></div>{% endif %}
+        </div>
+    {% endif %}
 {% endspaceless %}
 {% endmacro %}
 {% macro leftover_tooltip(leftover) %}
@@ -45,7 +53,7 @@
 {% endmacro %}
 {% macro cut_tooltip(cut, options) %}
 {% spaceless %}
-    <div class='tt-header'><span class='tt-name'>{{ ('tab.cutlist.cuttingdiagram.list.cut'~(cut.is_final ? '_final' : (cut.is_through ? '_through' : '')))|i18next }}</span></div>
+    <div class='tt-header'><span class='tt-name'>{{ ('tab.cutlist.cuttingdiagram.list.cut'~(cut.is_trimming ? '_trimming' : (cut.is_bounding ? '_bounding' : (cut.is_internal_through ? '_internal_through' : ''))))|i18next }}</span></div>
     <div class='tt-data'>{{ _self.cut_position(cut, options) }}</div>
     <div class='tt-data'><i class='ladb-opencutlist-icon-saw'></i> {{ options.saw_kerf|escape('html') }}</div>
 {% endspaceless %}
@@ -60,9 +68,7 @@
 
 {% block headerInner %}
     {{ parent() }}
-    <div class="ladb-header-extra">
-        {% include 'tabs/cutlist/_header-extra.twig' with { 'generatedAt':'000' } %}
-    </div>
+    {% include 'tabs/cutlist/_header-extra.twig' %}
 {% endblock %}
 
 {% block headerHeadingInner %}
@@ -72,8 +78,10 @@
 {% block headerToolsInner %}
     <button id="ladb_btn_cuttingdiagram" class="btn btn-primary"><i class="ladb-opencutlist-icon-refresh"></i> {{ 'tab.cutlist.menu.group_cuttingdiagram'|i18next }}...</button>
     <button id="ladb_btn_print" class="btn btn-default"><i class="ladb-opencutlist-icon-print"></i> {{ 'default.print'|i18next }}</button>
-{#    <button id="ladb_btn_export" class="btn btn-default btn-sponsored"><i class="ladb-opencutlist-icon-export"></i> {{ 'default.export'|i18next }}</button>#}
+    &nbsp;
     <button id="ladb_btn_labels" class="btn btn-default"><i class="ladb-opencutlist-icon-labels"></i> {{ 'tab.cutlist.labels.title'|i18next }}...</button>
+    &nbsp;
+    <button class="btn btn-default" data-help-page="cutlist.cuttingdiagram2d"><i class="ladb-opencutlist-icon-help"></i></button>
     &nbsp;
     <button id="ladb_btn_close" class="btn btn-default"><i class="ladb-opencutlist-icon-close"></i> {{ 'default.close'|i18next }}</button>
 {% endblock %}
@@ -100,22 +108,22 @@
                     </td>
                 </tr>
                 <tr class="table-column-heading">
-                    <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.list.number'|i18next }}</td>
-                    <td class="text-center" rowspan="2" style="vertical-align: middle !important;">{{ 'tab.cutlist.list.name'|i18next }}</td>
-                    <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.list.count'|i18next }}</td>
+                    <td rowspan="2" width="5%">{{ 'tab.cutlist.list.number'|i18next }}</td>
+                    <td rowspan="2">{{ 'tab.cutlist.list.name'|i18next }}</td>
+                    <td rowspan="2" width="5%">{{ 'tab.cutlist.list.count'|i18next }}</td>
                     {% if showCuttingDimensions %}
-                        <td class="text-center" colspan="2">{{ 'tab.cutlist.list.cutting'|i18next }}</td>
+                        <td colspan="2">{{ 'tab.cutlist.list.cutting'|i18next }}</td>
                     {% endif %}
-                    <td class="text-center" colspan="2">{{ 'tab.cutlist.list.bbox'|i18next }}</td>
+                    <td colspan="2">{{ 'tab.cutlist.list.bbox'|i18next }}</td>
                 </tr>
                 <tr class="table-column-heading">
                     {% if showCuttingDimensions %}
                         {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
-                            <td class="text-center" width="8%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
+                            <td width="8%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
                         {% endfor %}
                     {% endif %}
                     {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
-                        <td class="text-center" width="8%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
+                        <td width="8%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
                     {% endfor %}
                 </tr>
                 </thead>
@@ -196,7 +204,7 @@
                 {% for sheet in summary.sheets  %}
                     <tr class="ladb-cutlist-row{% if sheet.is_used and not isFirstUsed %} ladb-cutlist-row-separator{% set isFirstUsed = true %}{% endif %}"{% if not sheet.is_used %} data-toggle="tooltip" data-placement="left" title="{{ 'tab.cutlist.cuttingdiagram.list.unused'|i18next }}" style="text-decoration: line-through;color: #888;"{% endif %}>
                         <td>
-                            <i class="ladb-opencutlist-icon-material-type-2"></i> {{ group.material_name|escape('html') }} / <strong>{{ group.std_dimension }}</strong> - {{ ('tab.cutlist.cuttingdiagram.list.sheet_type_'~sheet.type)|i18next }}
+                            <i class="ladb-opencutlist-icon-material-type-2"></i> {{ group.material_name|escape('html') }} / <strong>{{ group.std_dimension }}</strong> - {{ ('tab.cutlist.cuttingdiagram.list.sheet_'~sheetStrippedname~'_type_'~sheet.type)|i18next }}
                             {% if sheet.is_used %}
                                 <div class="ladb-minitools ladb-minitools-right no-print">
                                     <a href="#ladb_cuttingdiagram_group_{{ sheet.type_id }}" class="ladb-btn-scrollto ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.cuttingdiagram.tooltip.scroll_to_block_2d'|i18next }}"><i class="ladb-opencutlist-icon-arrow-circle-down"></i></a>
@@ -236,20 +244,24 @@
         {% if options.hide_part_list %}
             {% set colspan = 1 %}
         {% else %}
-            {% set colspan = 11 %}
+            {% set colspan = 13 %}
             {% if not showCuttingDimensions %}
                 {% set colspan = colspan - 2 %}
             {% endif %}
             {% if not showEdges %}
                 {% set colspan = colspan - 4 %}
             {% endif %}
+            {% if not showFaces %}
+                {% set colspan = colspan - 2 %}
+            {% endif %}
         {% endif %}
         {% set maxSheetLength = 0 %}
         {% for sheet in sheets %}
             {% set maxSheetLength = max(maxSheetLength, sheet.px_length) %}
         {% endfor %}
+        {% set sheetIndex = 1 %}
         {% for sheet in sheets %}
-            <table id="ladb_cuttingdiagram_group_{{ sheet.type_id }}" data-group-id="{{ group.id }}_{{ sheet.type_id }}" data-sheet-index="{{ loop.index }}" class="table table-bordered ladb-cutlist-group ladb-cuttingdiagram-group">
+            <table id="ladb_cuttingdiagram_group_{{ sheet.type_id }}" data-group-id="{{ group.id }}_{{ sheet.type_id }}" data-sheet-index="{{ loop.index }}" class="table table-bordered ladb-cutlist-group ladb-cutlist-cuttingdiagram-group">
                 <thead>
                 <tr class="table-heading">
                     <td colspan="{{ colspan }}">
@@ -260,13 +272,12 @@
                                 <button class="btn btn-default btn-sm ladb-btn-scrollto-next-group" {% if loop.last %}disabled{% endif %}><i class="ladb-opencutlist-icon-chevron-right"></i></button>
                             </div>
                         {% endif %}
-                        {% if not options.sheet_folding %}
-                            <div class="ladb-heading pull-right" style="margin-right: 10px;"><strong>{{ loop.index }} / {{ sheets|length }}</strong></div>
-                        {% endif %}
+                        <div class="ladb-heading pull-right" style="margin-right: 10px;"><strong>{{ sheetIndex }}{% if sheet.count > 1 %} ... {{ sheetIndex + sheet.count - 1 }}{% endif%} / {{ summary.total_used_count }}</strong></div>
+                        {% set sheetIndex = sheetIndex + sheet.count %}
                         {% if sheet.count > 1 %}
                             <div class="ladb-heading-count pull-right">x&nbsp;{{ sheet.count }}</div>
                         {% endif %}
-                        <div class="ladb-heading"><i class="ladb-opencutlist-icon-material-type-2"></i> {{ group.material_name|escape('html') }} / <strong>{{ group.std_dimension }}</strong> - <i class="ladb-opencutlist-icon-size-length-width"></i> <em>{{ sheet.length }} x {{ sheet.width }}</em> - <span style="padding: 2px 5px; border: 1px solid #000; font-size: 80%;">{{ ('tab.cutlist.cuttingdiagram.list.sheet_type_'~sheet.type)|i18next }}</span></div>
+                        <div class="ladb-heading"><i class="ladb-opencutlist-icon-material-type-2"></i> {{ group.material_name|escape('html') }} / <strong>{{ group.std_dimension }}</strong> - <i class="ladb-opencutlist-icon-size-length-width"></i> <em>{{ sheet.length }} x {{ sheet.width }}</em> - <span style="padding: 2px 5px; border: 1px solid #000; font-size: 80%;">{{ ('tab.cutlist.cuttingdiagram.list.sheet_'~sheetStrippedname~'_type_'~sheet.type)|i18next }}</span></div>
                     </td>
                 </tr>
                 </thead>
@@ -315,17 +326,19 @@
                                 <g class="part" data-part-id="{{ part.id }}" data-toggle="tooltip" data-html="true" title="{{ fn.part_tooltip(part) }}">
                                     <rect class="part-outer" x="{{ part.px_x }}" y="{{ part.px_y }}" width="{{ part.px_length }}" height="{{ part.px_width }}"></rect>
                                     <rect class="part-inner" x="{{ part.px_x + partOutlineWidth }}" y="{{ part.px_y + partOutlineWidth }}" width="{{ part.px_length - partOutlineWidth * 2 }}" height="{{ part.px_width - partOutlineWidth * 2 }}"></rect>
-                                    {% if part.rotated and part.edge_material_names.xmin or not part.rotated and part.edge_material_names.ymax %}
-                                        <rect class="part-edge" x="{{ part.px_x + partOutlineWidth }}" y="{{ part.px_y + partOutlineWidth }}" width="{{ part.px_length - partOutlineWidth * 2 }}" height="{{ edgeWidth }}"></rect>
-                                    {% endif %}
-                                    {% if part.rotated and part.edge_material_names.xmax or not part.rotated and part.edge_material_names.ymin %}
-                                        <rect class="part-edge" x="{{ part.px_x + partOutlineWidth }}" y="{{ part.px_y + part.px_width - edgeWidth - partOutlineWidth }}" width="{{ part.px_length - partOutlineWidth * 2 }}" height="{{ edgeWidth }}"></rect>
-                                    {% endif %}
-                                    {% if part.rotated and part.edge_material_names.ymin or not part.rotated and part.edge_material_names.xmin %}
-                                        <rect class="part-edge" x="{{ part.px_x + partOutlineWidth }}" y="{{ part.px_y + partOutlineWidth }}" width="{{ edgeWidth }}" height="{{ part.px_width - partOutlineWidth * 2 }}"></rect>
-                                    {% endif %}
-                                    {% if part.rotated and part.edge_material_names.ymax or not part.rotated and part.edge_material_names.xmax %}
-                                        <rect class="part-edge" x="{{ part.px_x + part.px_length - edgeWidth - partOutlineWidth }}" y="{{ part.px_y + partOutlineWidth }}" width="{{ edgeWidth }}" height="{{ part.px_width - partOutlineWidth * 2 }}"></rect>
+                                    {% if not options.hide_edges_preview %}
+                                        {% if part.rotated and part.edge_material_names.xmax or not part.rotated and part.edge_material_names.ymax %}
+                                            <rect class="part-edge" x="{{ part.px_x + partOutlineWidth }}" y="{{ part.px_y + partOutlineWidth }}" width="{{ part.px_length - partOutlineWidth * 2 }}" height="{{ edgeWidth }}"></rect>
+                                        {% endif %}
+                                        {% if part.rotated and part.edge_material_names.xmin or not part.rotated and part.edge_material_names.ymin %}
+                                            <rect class="part-edge" x="{{ part.px_x + partOutlineWidth }}" y="{{ part.px_y + part.px_width - edgeWidth - partOutlineWidth }}" width="{{ part.px_length - partOutlineWidth * 2 }}" height="{{ edgeWidth }}"></rect>
+                                        {% endif %}
+                                        {% if part.rotated and part.edge_material_names.ymax or not part.rotated and part.edge_material_names.xmin %}
+                                            <rect class="part-edge" x="{{ part.px_x + partOutlineWidth }}" y="{{ part.px_y + partOutlineWidth }}" width="{{ edgeWidth }}" height="{{ part.px_width - partOutlineWidth * 2 }}"></rect>
+                                        {% endif %}
+                                        {% if part.rotated and part.edge_material_names.ymin or not part.rotated and part.edge_material_names.xmax %}
+                                            <rect class="part-edge" x="{{ part.px_x + part.px_length - edgeWidth - partOutlineWidth }}" y="{{ part.px_y + partOutlineWidth }}" width="{{ edgeWidth }}" height="{{ part.px_width - partOutlineWidth * 2 }}"></rect>
+                                        {% endif %}
                                     {% endif %}
                                     {% set _numberText = options.use_names ? part.name : part.number %}
                                     {% set _numberTextLength = _numberText|length %}
@@ -356,7 +369,7 @@
                                 </g>
                             {% endfor %}
                             {% for cut in sheet.cuts %}
-                                <g class="cut{% if cut.is_through %}{% if options.highlight_primary_cuts %} cut-highlighted{% endif%} cut-through{% endif %}{% if cut.is_final %} cut-final{% endif %}" data-toggle="tooltip" data-html="true" title="{{ fn.cut_tooltip(cut, options) }}">
+                                <g class="cut{% if options.highlight_primary_cuts %} cut-highlighted{% endif %}{% if cut.is_trimming %} cut-trimming{% elseif cut.is_bounding %} cut-bounding{% elseif cut.is_internal_through %} cut-internal-through{% endif %}" data-toggle="tooltip" data-html="true" title="{{ fn.cut_tooltip(cut, options) }}">
                                     <rect class="cut-outer" x="{{ cut.px_x - cutOutlineWidth }}" y="{{ cut.px_y - cutOutlineWidth }}" width="{{ (cut.is_horizontal ? cut.px_length : options.px_saw_kerf) + cutOutlineWidth * 2 }}" height="{{ (cut.is_horizontal ? options.px_saw_kerf : cut.px_length) + cutOutlineWidth * 2 }}"></rect>
                                     <rect class="cut-inner" x="{{ cut.px_x }}" y="{{ cut.px_y }}" width="{{ cut.is_horizontal ? cut.px_length : options.px_saw_kerf }}" height="{{ cut.is_horizontal ? options.px_saw_kerf : cut.px_length }}"></rect>
                                 </g>
@@ -367,17 +380,17 @@
                         </svg>
 
                         {% if options.highlight_primary_cuts %}
-                            <div class="col-xs-3 col-xs-offset-3 ladb-cuttingdiagram-cuts-summary ladb-cuttingdiagram-cuts-summary-final">
-                                <div>{{ 'tab.cutlist.cuttingdiagram.list.cut_final_plural'|i18next }}</div>
-                                {% for cut in sheet.cuts if cut.is_final %}
+                            <div class="col-xs-3 col-xs-offset-3 ladb-cutlist-cuttingdiagram-cuts-summary ladb-cutlist-cuttingdiagram-cuts-summary-final">
+                                <div>{{ 'tab.cutlist.cuttingdiagram.list.cut_bounding_plural'|i18next }}</div>
+                                {% for cut in sheet.cuts if cut.is_bounding %}
                                     <div>{{ fn.cut_position(cut, options) }}</div>
                                 {% else %}
                                     <div><em>{{ 'tab.cutlist.cuttingdiagram.list.cut_none'|i18next }}</em></div>
                                 {% endfor %}
                             </div>
-                            <div class="col-xs-3 ladb-cuttingdiagram-cuts-summary ladb-cuttingdiagram-cuts-summary-through">
-                                <div>{{ 'tab.cutlist.cuttingdiagram.list.cut_through_plural'|i18next }}</div>
-                                {% for cut in sheet.cuts if cut.is_through and not cut.is_final %}
+                            <div class="col-xs-3 ladb-cutlist-cuttingdiagram-cuts-summary ladb-cutlist-cuttingdiagram-cuts-summary-through">
+                                <div>{{ 'tab.cutlist.cuttingdiagram.list.cut_internal_through_plural'|i18next }}</div>
+                                {% for cut in sheet.cuts if cut.is_internal_through and not cut.is_bounding %}
                                     <div>{{ fn.cut_position(cut, options) }}</div>
                                 {% else %}
                                     <div><em>{{ 'tab.cutlist.cuttingdiagram.list.cut_none'|i18next }}</em></div>
@@ -389,44 +402,54 @@
                 </tr>
                 {% if not options.hide_part_list %}
                     <tr class="table-column-heading">
-                        <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.list.number'|i18next }}</td>
-                        <td class="text-center" rowspan="2" style="vertical-align: middle !important;">{{ 'tab.cutlist.list.name'|i18next }}</td>
-                        <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="8%">{{ 'tab.cutlist.list.count'|i18next }}</td>
+                        <td rowspan="2" width="5%">{{ 'tab.cutlist.list.number'|i18next }}</td>
+                        <td rowspan="2">{{ 'tab.cutlist.list.name'|i18next }}</td>
+                        <td rowspan="2" width="8%">{{ 'tab.cutlist.list.count'|i18next }}</td>
                         {% if showCuttingDimensions %}
-                            <td class="text-center" colspan="2">{{ 'tab.cutlist.list.cutting'|i18next }}</td>
+                            <td colspan="2">{{ 'tab.cutlist.list.cutting'|i18next }}</td>
                         {% endif %}
-                        <td class="text-center" colspan="2">{{ 'tab.cutlist.list.bbox'|i18next }}</td>
+                        <td colspan="2">{{ 'tab.cutlist.list.bbox'|i18next }}</td>
                         {% if showEdges %}
-                            <td class="text-center" colspan="4">{{ ('tab.cutlist.list.edges')|i18next }}</td>
+                            <td colspan="4">{{ ('tab.cutlist.list.edges')|i18next }}</td>
+                        {% endif %}
+                        {% if showFaces %}
+                            <td colspan="4">{{ ('tab.cutlist.list.faces')|i18next }}</td>
                         {% endif %}
                     </tr>
                     <tr class="table-column-heading">
                         {% if showCuttingDimensions %}
                             {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
-                                <td class="text-center" width="8%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
+                                <td width="8%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
                             {% endfor %}
                         {% endif %}
                         {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
-                            <td class="text-center" width="8%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
+                            <td width="8%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
                         {% endfor %}
                         {% if showEdges %}
-                            <td class="text-center" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_ymin'|i18next }}"><i class="ladb-opencutlist-icon-edge-0010"></i></td>
-                            <td class="text-center" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_ymax'|i18next }}"><i class="ladb-opencutlist-icon-edge-1000"></i></td>
-                            <td class="text-center" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_xmin'|i18next }}"><i class="ladb-opencutlist-icon-edge-0001"></i></td>
-                            <td class="text-center" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_xmax'|i18next }}"><i class="ladb-opencutlist-icon-edge-0100"></i></td>
+                            <td data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_ymin'|i18next }}"><i class="ladb-opencutlist-icon-edge-0010"></i></td>
+                            <td data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_ymax'|i18next }}"><i class="ladb-opencutlist-icon-edge-1000"></i></td>
+                            <td data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_xmin'|i18next }}"><i class="ladb-opencutlist-icon-edge-0001"></i></td>
+                            <td data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edge_xmax'|i18next }}"><i class="ladb-opencutlist-icon-edge-0100"></i></td>
+                        {% endif %}
+                        {% if showFaces %}
+                            <td data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.face_zmax'|i18next }}"><i class="ladb-opencutlist-icon-face-10"></i></td>
+                            <td data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.face_zmin'|i18next }}"><i class="ladb-opencutlist-icon-face-01"></i></td>
                         {% endif %}
                     </tr>
                     {% for part in sheet.grouped_parts %}
                         <tr class="ladb-cutlist-row ladb-minitools-holder" data-part-id="{{ part.id }}">
                             {% include 'tabs/cutlist/_list-row-col-number.twig' %}
                             <td>
-                                <div class="ladb-minitools ladb-minitools-right">
-                                    {% if part.thickness_layer_count > 1 %}<a href="#" class="ladb-tool-info" data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.tooltip.thickness_layer_count'|i18next({ 'count':part.thickness_layer_count }) }}"><i class="ladb-opencutlist-icon-thickness-layers"></i></a>{% endif %}
-                                    {% if part.flipped %}<a href="#" class="ladb-tool-info" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.flipped'|i18next }}"><i class="ladb-opencutlist-icon-flipped"></i></a>{% endif %}
-                                    {% if part.edge_count > 0 %}<a href="#" class="ladb-tool-info" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.has_edges'|i18next({ 'count':part.edge_count }) }}"><i class="ladb-opencutlist-icon-edge-{{ part.edge_pattern }}"></i></a>{% endif %}
-                                    <span class="ladb-separator no-print"></span>
-                                    <a href="#" class="ladb-btn-highlight-part ladb-click-tool no-print" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.highlight_part'|i18next }}"><i class="ladb-opencutlist-icon-magnifier"></i></a>
-                                </div>
+                                {% if group.material_type != 6 %}   {# 6 = TYPE_VENEER #}
+                                    <div class="ladb-minitools ladb-minitools-right">
+                                        {% if part.thickness_layer_count > 1 %}<a href="#" class="ladb-tool-info" data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.tooltip.thickness_layer_count'|i18next({ 'count':part.thickness_layer_count }) }}"><i class="ladb-opencutlist-icon-thickness-layers"></i></a>{% endif %}
+                                        {% if part.flipped %}<a href="#" class="ladb-tool-info" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.flipped'|i18next }}"><i class="ladb-opencutlist-icon-flipped"></i></a>{% endif %}
+                                        {% if part.edge_count > 0 %}<a href="#" class="ladb-tool-info" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.has_edges'|i18next({ 'count':part.edge_count }) }}"><i class="ladb-opencutlist-icon-edge-{{ part.edge_pattern }}"></i></a>{% endif %}
+                                        {% if part.face_count > 0 %}<a href="#" class="ladb-tool-info" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.has_faces'|i18next({ 'count':part.face_count }) }}"><i class="ladb-opencutlist-icon-face-{{ part.face_pattern }}"></i></a>{% endif %}
+                                        <span class="ladb-separator no-print"></span>
+                                        <a href="#" class="ladb-btn-highlight-part ladb-click-tool no-print" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.highlight_part'|i18next }}"><i class="ladb-opencutlist-icon-magnifier"></i></a>
+                                    </div>
+                                {% endif %}
                                 <span class="ladb-cutlist-part-name">{{ part.name|escape }}</span>
                                 {% if not generateOptions.hide_descriptions and part.description is not empty %}
                                     <div class="ladb-part-description">{{ part.description|nl2br }}</div>
@@ -453,6 +476,10 @@
                                 <td class="ladb-cutlist-edge">{% if part.edge_material_names.ymax %}<span class="ladb-cutlist-edge-material-name">{{ part.edge_material_names.ymax }}</span><span class="ladb-cutlist-edge-std-dimension">{{ part.edge_std_dimensions.ymax }}</span>{% endif %}</td>
                                 <td class="ladb-cutlist-edge">{% if part.edge_material_names.xmin %}<span class="ladb-cutlist-edge-material-name">{{ part.edge_material_names.xmin }}</span><span class="ladb-cutlist-edge-std-dimension">{{ part.edge_std_dimensions.xmin }}</span>{% endif %}</td>
                                 <td class="ladb-cutlist-edge">{% if part.edge_material_names.xmax %}<span class="ladb-cutlist-edge-material-name">{{ part.edge_material_names.xmax }}</span><span class="ladb-cutlist-edge-std-dimension">{{ part.edge_std_dimensions.xmax }}</span>{% endif %}</td>
+                            {% endif %}
+                            {% if showFaces %}
+                                <td class="ladb-cutlist-face">{% if part.face_material_names.zmax %}<span class="ladb-cutlist-face-material-name">{{ part.face_material_names.zmax }}</span><span class="ladb-cutlist-face-std-dimension">{{ part.face_std_dimensions.zmax }}</span>{% endif %}</td>
+                                <td class="ladb-cutlist-face">{% if part.face_material_names.zmin %}<span class="ladb-cutlist-face-material-name">{{ part.face_material_names.zmin }}</span><span class="ladb-cutlist-face-std-dimension">{{ part.face_std_dimensions.zmin }}</span>{% endif %}</td>
                             {% endif %}
                         </tr>
                     {% endfor %}

@@ -1,0 +1,87 @@
+//
+// Sortable List
+//
+
+.ladb-sortable-list {
+  list-style: none;
+  padding: 0;
+
+  > li {
+    margin: 5px 0;
+    border: 1px solid @ladb-global-border;
+    padding: 5px 10px 5px 0;
+    background: lighten(@ladb-global-border, 10%);
+    cursor: pointer;
+    user-select: none;
+
+    &:first-child {
+      margin-top: 0;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .ladb-handle {
+      display: inline-block;
+      cursor: ns-resize;
+      color: lighten(#000, 50%);
+      padding: 0 10px;
+    }
+
+    .ladb-info {
+      float: right;
+      color: #bbb;
+      line-height: 20px;
+      font-size: 80%;
+    }
+
+    .ladb-minitools > a {
+
+      &.ladb-active {
+        background-color: #333;
+        color: #fff;
+        border-radius: 4px;
+
+        &:hover {
+          background-color: lighten(#333, 30%);
+        }
+
+      }
+
+    }
+
+    &.ladb-disabled {
+      opacity: 0.5;
+      text-decoration: line-through;
+    }
+
+    &.ladb-inactive {
+      opacity: 0.5;
+    }
+
+    &.ladb-selected {
+      border-color: @ladb-global-color-focus;
+      background: lighten(@ladb-global-color-focus, 30%);
+    }
+
+    .ladb-cutlist-export-col-formula {
+      margin: 10px 0 5px 10px;
+    }
+
+  }
+
+}
+
+.ladb-sortable-list-extra {
+  list-style: none;
+  padding: 0;
+
+  > li {
+    margin: 5px 0;
+    padding: 6px 0;
+    font-size: 80%;
+  }
+
+}
+

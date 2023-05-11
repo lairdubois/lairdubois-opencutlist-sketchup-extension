@@ -1,6 +1,6 @@
-<div class="ladb-widget-preset" style="position: absolute; top: {{ top|default(15) }}px; right: {{ right|default(40) }}px;">
+<div class="ladb-widget-preset"{% if top is defined or right is defined %} style="position:absolute; top:{{ top|default(15) }}px; right:{{ right|default(40) }}px;"{% endif %}>
     <div class="btn-group">
-        <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+        <button class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
             <i class="ladb-opencutlist-icon-preset"></i> {{ 'core.preset.label'|i18next }} <span class="caret"></span>
         </button>
         <ul class="dropdown-menu dropdown-menu-right"></ul>

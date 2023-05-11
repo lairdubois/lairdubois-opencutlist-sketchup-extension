@@ -25,10 +25,15 @@ default:
   caution: Precaución
   remove: Remover
   create: Crear
+  duplicate: Duplicar
   ignore: Ignorar
   download: Descargar
   upgrade: Actualizar
   copy: Copiar
+  select_all: Seleccionar todo
+  unselect_all: Deseleccionar todo
+  draw: Dibujar
+  estimate: Estimar
   empty_filename: Sin título.skp
   help: Ayuda
   error: ¡Upss!
@@ -47,6 +52,7 @@ default:
   unit_5: Yarda
   unit_mass_0: Kilogramo
   unit_mass_1: Libra
+  unit_angle_0: Grados
   instance_single: unidad
   instance_plural: unidades
   part_single: pieza
@@ -56,6 +62,12 @@ default:
   setup_model_units: Configurar las unidades del modelo
   load_more: Carga más
   reset_to_app_defaults: Restaurar a los valores originales
+  constrain_key: Shift
+  copy_key_win: Ctrl
+  copy_key_mac: Option
+  alt_key_win: Alt
+  alt_key_mac: Command
+  tab_key: Tab
 core:
   menu:
     submenu: OpenCutList
@@ -65,12 +77,15 @@ core:
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
+      edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       smart_paint: $t(core.toolbar.command.smart_paint)
+      smart_axes: $t(core.toolbar.command.smart_axes)
   toolbar:
     name: OpenCutList
     command:
       dialog: OpenCutList
-      smart_paint: Colorear partes
+      smart_paint: Colorear piezas
+      smart_axes: Orientar piezas
   dialog:
     title: OpenCutList por L'Air du Bois
   leftbar:
@@ -89,10 +104,8 @@ core:
       No se recomienda su uso en producción.
 
       Para informar de un error: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
-    old_su: |
-      Estás ejecutando una versión anterior de SketchUp ({{ sketchup_version }}). Este complemento funcionará, pero puede presentar ciertos errores.
-      Para aprovechar al máximo OpenCutList, recomendamos actualizar al menos a **SketchUp 2017**.
-    feature_locked: "*No se puede desactivar en esta versión de SketchUp*"
+  error:
+    feature_unavailable: "Esta función requiere SketchUp {{ version }} o superior"
   event:
     model_change: Se ha cambiado el modelo activo.
     options_change: Las opciones en el modelo han cambiado.
@@ -122,13 +135,14 @@ core:
       unzip: Error al descomprimir el archivo.
   preset:
     label: Preajustes
+    manage: Gestionar preajustes
     save_to: Guardar como
     restore_from: Restaurar desde
     app_defaults: Preajuste de fábrica
     user_defaults: Mis ajustes por defecto
     new: Nuevo preajuste
     new_prompt: |
-      La creación de un preajuste personalizado le permite mantener la configuración actual del formulario de forma global para que pueda reutilizarla en todas sus plantillas más adelante.
+      *La creación de un preajuste personalizado le permite mantener la configuración actual del formulario de forma global para que pueda reutilizarla en todas sus plantillas más adelante.*
 
       Introduzca el nombre de la preselección:
     delete_confirm_title: Supresión
@@ -142,6 +156,20 @@ core:
     tooltip:
       save_to: "Actualizar la configuración de '{{ name }}'"
       delete: "Eliminar la configuración '{{ name }}'"
+    dictionary:
+      component_textinput_color: Paleta de colores
+      cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
+      cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
+      cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
+      cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
+      cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
+      cutlist_options: $t(tab.cutlist.label) / $t(default.options)
+      cutlist_report_options: $t(tab.cutlist.label) / $t(tab.cutlist.report.title)
+      importer_import_options: $t(tab.importer.label) / $t(default.import)
+      importer_load_options: $t(tab.importer.label) / $t(default.open)
+      materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
+      materials_options: $t(tab.materials.label) / $t(default.options)
+      settings_model: $t(tab.settings.label) / Modelo
   progress:
     please_wait: Calculando un mundo pacífico
   component:
@@ -151,7 +179,27 @@ core:
       store: Memorizar este color
       remove: Olvidar el color
     textinput_code:
+      snippets: Ejemplos de fórmulas
       help: Escriba **@** para abrir la lista de variables de datos.
+    three_viewer:
+      view: "Vista {{ view }}"
+      view_isometric: Isométrica
+      view_top: Planta
+      view_bottom: Abajo
+      view_front: Frontal
+      view_back: Atrás
+      view_left: Izquierda
+      view_right: Derecha
+      zoom: "Escala {{ zoom }}"
+      explode_factor: Amplitud de la explosión
+      toggle_box_helper: Mostrar/ocultar cuadro delimitador
+      toggle_box_dimensions_helper: Mostrar/ocultar dimensiones
+      toggle_axes_helper: Mostrar/ocultar ejes
+  docs:
+    error:
+      failed_to_load: |
+        No se puede abrir la documentación.
+        Compruebe que está conectado a Internet.
 tab:
   cutlist:
     label: Partes
@@ -170,12 +218,13 @@ tab:
     edit_part_axes_properties: Edita las propiedades (ejes) de la pieza
     edit_part_size_increase_properties: Edita las propiedades (sobredimensionados) de la pieza
     edit_part_edges_properties: Edita las propiedades (tiras de los cantos) de la pieza
+    edit_part_faces_properties: Edita las propiedades (chapas de madera) de la pieza
     tooltip:
       show_hide_block: Mostrar / Ocultar
       scroll_to_block: Desplaza al grupo
-      not_available_std_width: "El ancho *{{ std_dimension }}* no se ha definido en el material '{{ material_name }}'"
-      not_available_std_thickness: "El grosor *{{ std_dimension }}* no se ha definido en el material '{{ material_name }}'"
-      not_available_std_section: "La sección transversal *{{ std_dimension }}* no se ha definido en el material '{{ material_name }}'"
+      not_available_std_width: "El ancho *{{ std_dimension_real }}* no se ha definido en el material '{{ material_name }}'"
+      not_available_std_thickness: "El grosor *{{ std_dimension_real }}* no se ha definido en el material '{{ material_name }}'"
+      not_available_std_section: "La sección transversal *{{ std_dimension_real }}* no se ha definido en el material '{{ material_name }}'"
       add_std_width_to_material: |
         Añade anchura *{{ std_dimension }}*
         al material '{{ material_name }}'
@@ -223,6 +272,8 @@ tab:
       remove_label_filter: "No filtrar por '{{ label }}'"
       add_edge_material_name_filter: "Filtrar por '{{ material_name }}'"
       remove_edge_material_name_filter: "No filtrar por '{{ material_name }}'"
+      add_veneer_material_name_filter: "Filtrar por '{{ material_name }}'"
+      remove_veneer_material_name_filter: "No filtrar por '{{ material_name }}'"
       not_aligned_on_axes: "Atención, esta parte puede no estar orientada correctamente con respecto a sus ejes"
       instance_count_by_part: "Esta pieza se cuenta en lotes de **{{ count }}** unidades."
       unused_instance_count: "Tenga en cuenta que no se utilizará **{{ count }}** unidad del último lote."
@@ -233,7 +284,7 @@ tab:
       thickness_layered: "La cantidad aquí representa el número de piezas que hay que cortar para obtener todas las capas."
       thickness_layered_equation: "**{{ count }}** *parte* x **{{ layerCount }}** *capas* = **{{ cuttingPartCount }}**"
       thickness_layered_equation_plural: "**{{ count }}** *partes* x **{{ layerCount }}** *capas* = **{{ cuttingPartCount }}**"
-      multiple_layers: "Atención, esta parte se compone de subpartes presentes en {{ count }} capas diferentes:<br>{{ layers }}"
+      multiple_content_layers: "Atención, esta parte se compone de subpartes presentes en {{ count }} capas, etiquetas o tags, diferentes:<br>{{ layers }}"
       children_warnings: "Precaución, hay {{ count }} alerta en partes agrupadas"
       children_warnings_plural: "Precauciones, hay {{ count }} alertas en partes agrupadas"
       children_size_increase: "Esta dimensión se incrementa en un tamaño grande para {{ count }} partes agrupadas"
@@ -243,12 +294,17 @@ tab:
       size_increased: "La dimensión aumenta con un tamaño superior a {{ value }}"
       has_edges: "Esta parte contiene {{ count }} tiras de los cantos"
       has_edges_plural: "Esta parte contiene {{ count }} tiras de los cantos"
+      has_faces: "Esta parte contiene {{ count }} superficie chapada"
+      has_faces_plural: "Esta parte contiene {{ count }} superficies chapadas"
       edge_decremented: "Reducido por el grosor de las tiras de los cantos ({{ decrement }})"
       edge_ymin: Longitud del borde 1
       edge_ymax: Longitud del borde 2
       edge_xmin: Ancho de borde 1
       edge_xmax: Ancho de borde 2
+      face_zmin: Dorso
+      face_zmax: Frente
       dblclick_to_copy_all_edges: Haga doble clic aquí para duplicar este valor en todos los demás bordes
+      dblclick_to_copy_all_faces: Haga doble clic aquí para duplicar este valor en la otra superficie
       dblclick_to_sort_axes: Haga doble clic aquí para reordenar automáticamente los ejes según las dimensiones de la pieza
       part_axes: Ejes internos de la pieza
       select_unselect_all_parts: Selecciona/Deselecciona todas las partes del grupo
@@ -259,10 +315,11 @@ tab:
       numbers_save: Guarde los números de pieza
       numbers_reset: Reinicializar los números de pieza
       highlight_parts: $t(tab.cutlist.highlight_parts)
+      group_layout_parts: Imprimir el dibujo general de las piezas del grupo
       group_numbers_save: Guarde los números de pieza de este grupo
       group_numbers_reset: Reinicializar los números de pieza de este grupo
       group_cuttingdiagram: Diagrama de corte
-      group_labels: Imprimir etiquetas
+      group_labels: Imprimir etiquetas para las piezas del grupo
       edit_material: "Editar material '{{ material_name }}'"
       expand_all: Dividir todas las líneas
       collapse_all: Doblar todas las líneas
@@ -279,6 +336,7 @@ tab:
       general: General
       extra_help: "Lista de propiedades específicas del tipo de material \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Tiras de cantos
+      faces: Chapa de madera
       name: Descripción
       material: Material
       cumulable: Acumulable
@@ -297,9 +355,9 @@ tab:
       instance_count_by_part_1: 1 unidad por pieza
       instance_count_by_part_2: 2 unidades por pieza
       mass: Masa
-      mass_help: La masa de la pieza se utilizará al generar los **Reportes**.
+      mass_help: La masa de la pieza se utilizará al generar un **Estimado**.
       price: Precio
-      price_help: El precio de la pieza se utilizará cuando se generen **Reportes**.
+      price_help: El precio de la pieza se utilizará al generar un **Estimado**.
       thickness_layer_count: Nb de capas
       thickness_layer_count_help: |
         Defina aquí el número de capas que dividen la parte dibujada en su espesor.
@@ -350,12 +408,15 @@ tab:
       axes_origin_position_none: No cambies el origen
       axes_origin_position_min: Coloque el origen en una esquina
       axes_origin_position_center: Coloque el origen en el centro
-      axes_origin_position_min_center: Coloca el origen en el medio de una cara
+      axes_origin_position_front_min: Sitúe el origen en la esquina del frontal
+      axes_origin_position_front_center: Sitúe el origen en el centro del frontal
       over_length: A lo largo
       over_width: A lo ancho
-      edge_disabled_help: Esta banda de borde no se puede configurar porque no se ha detectado ninguna cara que pueda llevar material de banda de borde en el modelo.
+      edge_disabled_help: Esta banda de borde no es configurable porque no se ha detectado ninguna cara que pueda llevar material de banda de borde en el modelo.
+      face_disabled_help: Esta superficie no es configurable porque no se ha detectado ninguna cara portadora de material en esta arista de la pieza en el modelo.
       multiple_values: Varios valores
       export_to_skp: Exportar (.skp)
+      loading_preview: Cargar la previsualización
     export_to_skp:
       title: Exportar a fichero .skp
     option:
@@ -400,6 +461,8 @@ tab:
       hide_final_areas_help: "Si se selecciona esta opción, se ocultarán las **áreas reales** de las partes del tipo *Tablero*."
       hide_edges: Ocultar la columna de tiras de cantos
       hide_edges_help: "Si se selecciona esta opción, las **columnas de Tiras de Cantos** de las partes del tipo *Tableros* se ocultarán."
+      hide_faces: Ocultar las columnas de chapas
+      hide_faces_help: "Si se selecciona esta opción, las **columnas de Chapas de Madera** de las partes del tipo *Tableros* se ocultarán."
       minimize_on_highlight: Minimizar después *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Si se selecciona esta opción, la ventana OpenCutList se minimizará *'$t(tab.cutlist.highlight_part)'* cuando se aplique la función."
       general: General
@@ -427,6 +490,7 @@ tab:
       filters_warning: "Este filtro solo muestra **{{ count }}** parte de un total de {{ total }}."
       filters_warning_plural: "Este filtro solo muestra **{{ count }}** partes de un total de {{ total }}."
       edge_material_names_filter: Material de borde de cantos a filtrar
+      veneer_material_names_filter: Material de chapa de madera a filtrar
       tags_filter: Filtrar por etiquetas
       dimensions_help: Ilustración de las dimensiones
       summary: Resumen
@@ -451,10 +515,11 @@ tab:
       thickness: Espesor
       thickness_short: E
       edges: Tiras de cantos
+      faces: Chapa de madera
     export:
       title: Exportación
       info_0: |
-        Con esta función puede exportar la *lista de piezas* a un archivo [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
+        Con esta función puede exportar la *lista de piezas* a un archivo [CSV](https://es.wikipedia.org/wiki/Valores_separados_por_comas).
       customize_help: |
         Reordenar, Ocultar, Añadir, Eliminar o Seleccionar una columna de la lista para personalizar su **título** y la **fórmula** que genera el valor mostrado para cada fila exportada.
       add_column: Añadir una columna
@@ -483,7 +548,6 @@ tab:
       number: No.
       path: Camino
       instance_name: Instancia
-      definition_name: Definición
       name: Designación
       total_cutting_length: Longitud total - crudo
       total_cutting_area: Área total - cruda
@@ -508,6 +572,10 @@ tab:
       edge_ymax: Longitud de borde 2
       edge_xmin: Ancho del borde 1
       edge_xmax: Ancho del borde 2
+      face_zmin: Dorso
+      face_zmax: Frente
+      layer: Etiqueta
+      layers: Etiquetas
       placeholder:
         no_column_title: Introduzca un título
         no_column_formula_native: "Valor nativo de la columna '{{ col_name }}'"
@@ -517,9 +585,9 @@ tab:
       success:
         copied: Copiado en el portapapeles.
     report:
-      title: Reporte
+      title: Estimación
       info_0: |
-        Esta función le permite generar un informe de las **masas** y los **costes** de las **materias primas** necesarias para fabricar las piezas del *listado de partes*.
+        Esta función le permite generar una estimaciónde las **masas** y los **costes** de las **materias primas** necesarias para fabricar las piezas del *listado de partes*.
       options_general: General
       options_solid_wood: $t(tab.materials.type_1)
       option_solid_wood_coefficient: Coeficiente para *$t(tab.materials.type_1)*
@@ -527,41 +595,51 @@ tab:
       raw_materials: Materias primas
       coefficient: Coeficiente
       total: Total
+      total_used: Usado
+      total_unused: No usado
       total_mass: Σ Masas
       total_cost: Σ Costos
       total_count: Cant.
+      total_instance_count: Σ Unidades
       total_volume: Σ Volúmenes
       total_area: Σ Areas
       total_length: Σ Longitudes
       error:
-        no_typed_material_parts: "No hay piezas con un tipo de material definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)** o **$t(tab.materials.type_5)**) para generar el informe."
+        no_typed_material_parts: "No hay piezas con un tipo de material definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** o **$t(tab.materials.type_5)**) para generar la estimación."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errores**."
       warning:
         is_group_selection: Las piezas dentro de los **grupos ocultos** de su listado de partes no se contabilizarán.
+      tip:
+        not_enough_data: |
+          Para que esta estimación se calcule correctamente:
+          - Los materiales utilizados deben tener al menos una densidad y un precio configurados.
+          - Los accesorios utilizados deben tener al menos una masa y un precio.
     cuttingdiagram:
       title: Diagrama de corte
       start_msg: Optimización en curso
       end_msg: Optimización completada
       options_material: Material
       options_config: Configuración
-      options_display: Mostrar
+      options_display: Visualización
       option_bar_folding_dimensional: Agrupar tableros similares
       option_bar_folding_edge: Agrupar tiros de canto similares
       option_bar_folding_0: No
       option_bar_folding_1: Si
       option_bar_folding_help: Agrupar tableros o tiros de canto que tengan las mismas partes y cortes.
-      option_sheet_folding: Agrupar paneles similares
+      option_sheet_folding_good: Agrupar paneles similares
+      option_sheet_folding_veneer: Agrupación de hojas idénticas
       option_sheet_folding_0: No
       option_sheet_folding_1: Si
-      option_sheet_folding_help: Agrupar paneles que tengan las mismas partes y cortes.
+      option_sheet_folding_help: Permite agrupar paneles u hojas que contengan las mismas piezas y cortes.
       option_hide_part_list: Lista de partes
       option_hide_part_list_1d_dimensional_0: Mostrado para cada tablero
       option_hide_part_list_1d_edge_0: Mostrado para cada tira de canto
-      option_hide_part_list_2d_0: Mostrado para cada panel
+      option_hide_part_list_2d_good_0: Mostrado para cada panel
+      option_hide_part_list_2d_veneer_0: Mostrado para cada hoja
       option_hide_part_list_1: Enmascarado
       option_hide_part_list_1d_help: Muestre o enmascare la lista de partes de cada tablero o tira de canto.
-      option_hide_part_list_2d_help: Muestre o enmascare la lista de partes de cada panel.
+      option_hide_part_list_2d_help: Muestre o enmascare la lista de partes de cada tablero o hoja.
       option_use_names: Identificación de la parte
       option_use_names_0: Utilice el número
       option_use_names_1: Utilice la designación
@@ -589,6 +667,10 @@ tab:
       option_highlight_primary_cuts_0: Sólo en vista general
       option_highlight_primary_cuts_1: Siempre visible
       option_highlight_primary_cuts_help: Le permite resaltar cortes primarios.
+      option_hide_edges_preview: Indicadores de cantos
+      option_hide_edges_preview_0: Visualizado en el diagrama
+      option_hide_edges_preview_1: Enmascarado en el diagrama
+      option_hide_edges_preview_help: Permite mostrar u ocultar la indicación visual de los cantos para cada parte del diagrama.
       option_saw_kerf: Espesor de la hoja
       option_saw_kerf_help: El ancho del material eliminado por el corte de la hoja de sierra.
       option_trimming: Tamaño de recorte
@@ -620,17 +702,19 @@ tab:
         Formato esperado: **L** x **Q**, donde **L** es la *longitud* del recorte y **Q** la cantidad.
         La cantidad es opcional.
         *Si no se especifica ninguna unidad, se tendrá en cuenta la unidad modelo.*
-      option_std_sheet: Panel estándar
+      option_std_sheet_good: Panel estándar
+      option_std_sheet_veneer: Hoja estándar
       option_std_sheet_help: |
-        Seleccione el panel estándar que se duplicará para contener todas las partes.
+        Seleccione el panel o la hoja estándar que se duplicará para contener todas las partes.
         Esta lista se define en el campo **$t(tab.materials.edit_material.std_sizes)** del material.
         Edita el material '{{ material_name }}' para actualizar esta lista.
       option_std_sheet_add: Agregar un tamaño de panel
       option_std_sheet_none: No
-      option_scrap_sheet_sizes: Productos en piezas cortadas
+      option_scrap_sheet_good_sizes: Productos en piezas cortadas
+      option_scrap_sheet_veneer_sizes: Restos de hojas
       option_scrap_sheet_sizes_placeholder: largo x ancho x cantidad; ...
       option_scrap_sheet_sizes_help: |
-        Enumere todos los productos de Piezas cortadas que le gustaría que se consideren en el diagrama de corte.
+        Indique aquí la lista de sus paneles u hojas sobrantes que deben considerarse prioritarios para el diagrama de corte.
         Formato esperado: **L** x **W** x **Q**, donde **L** y **W** representan el *largo* y el *ancho* del panel y **Q** la cantidad.
         La cantidad es opcional.
         *Si no se especifica ninguna unidad, se tendrá en cuenta la unidad modelo.*
@@ -658,17 +742,20 @@ tab:
         leftover: Sobrante
         cut: Cortar
         cut_plural: Cortes
-        cut_final: Corte primario (nivel 1)
-        cut_final_plural: Cortes primarios (nivel 1)
-        cut_through: Corte primario (nivel 2)
-        cut_through_plural: Cortes primarios (nivel 2)
+        cut_trimming: Corte de limpieza
+        cut_bounding: Corte primario (nivel 1)
+        cut_bounding_plural: Cortes primarios (nivel 1)
+        cut_internal_through: Corte primario (nivel 2)
+        cut_internal_through_plural: Cortes primarios (nivel 2)
         cut_none: Ninguna
         bar_dimensional_type_0: Dimensiones estándar
         bar_dimensional_type_1: Trozo
         bar_edge_type_0: Canto estándar
         bar_edge_type_1: Resto de canto
-        sheet_type_0: Panel de tamaño estándar
-        sheet_type_1: Trozo
+        sheet_good_type_0: Panel estándar
+        sheet_good_type_1: Trozo
+        sheet_veneer_type_0: Hoja estándar
+        sheet_veneer_type_1: Resto de hojas
         unused: No usado
         parts: "{{ count }} parte"
         parts_plural: "{{ count }} partes"
@@ -679,7 +766,8 @@ tab:
         parameters: Los parámetros son incorrectos. El recorte es superior al 25% de la tira de canto más larga.
         no_parts: Ninguna parte.
         no_sheet: Los tamaños de panel estándar están configurados incorrectamente y no hay cortes disponibles.
-        no_placement_possible: "Todas sus piezas son demasiado grandes para caber en un panel (recorte demasiado grande, panel estándar demasiado pequeño, corte de sierra demasiado grande, ...)."
+        no_placement_possible_1d: "Todas sus piezas son demasiado grandes para caber en un panel (liston estándar demasiado pequeño, recorte demasiado grande, corte de sierra demasiado grande, ...)."
+        no_placement_possible_2d: "Todas sus piezas son demasiado grandes para caber en un panel (panel estándar demasiado pequeño, recorte demasiado grande, corte de sierra demasiado grande, ...)."
         bad_error: "Pánico algorítmico, póngase en contacto con los desarrolladores, tiene un caso interesante."
         unplaced_parts: "**1 Una pieza** no se pudo colocar porque es demasiado grande para colocar."
         unplaced_parts_plural: "Existen **{{ count }} piezas** que no se pudieron colocar porque son demasiado grandes para colocar."
@@ -741,6 +829,7 @@ tab:
         part_description: Descripción
         part_entity_named_path: Ruta de instancia
         part_entity_name: Nombre de instancia
+        part_bin: Contenedor
         part_cutting_size: Dimensiones aproximadas
         part_cutting_length: Longitud - cruda
         part_cutting_width: Ancho - crudo
@@ -755,6 +844,8 @@ tab:
         part_edge_ymax: Longitud de borde 2
         part_edge_xmin: Ancho de borde 1
         part_edge_xmax: Ancho de borde 2
+        part_face_zmin: Chapa de madera dorso
+        part_face_zmax: Chapa de madera frente
         thumbnail_proportional: Miniatura proporcional
         thumbnail_square: Miniatura cuadrada
         group_material: Espesor / Material
@@ -769,8 +860,86 @@ tab:
         invalid_size: Los parámetros de configuración ingresados ​​no permiten establecer un tamaño de etiqueta válido.
       warning:
         is_part_selection: Estas etiquetas se limitan a las **piezas seleccionadas**.
+        formula_not_available: No disponible en este contexto
     layout:
       title: Dibujo
+      to_layout: Exportar a Layout
+      options_layout: Composición
+      options_settings: Configuración
+      option_parts: Piezas
+      option_parts_colored: Color
+      option_parts_colored_0: Sin color
+      option_parts_colored_1: Color del material
+      option_parts_colored_help: Permite elegir el aspecto de las piezas.
+      option_parts_opacity: Opacidad
+      option_parts_opacity_0: Transparente
+      option_parts_opacity_1: Opaco
+      option_parts_opacity_help: Permite elegir la opacidad de las partes.
+      option_pins: Etiquetas
+      option_pins_hidden: Visualización
+      option_pins_hidden_0: Con etiquetas
+      option_pins_hidden_1: Sin etiquetas
+      option_pins_hidden_help: Mostrar u ocultar las etiquetas de pieza con número o designación.
+      option_pins_colored: Color
+      option_pins_colored_0: Sin color
+      option_pins_colored_1: Color de la pieza
+      option_pins_colored_help: Seleccione el color de las etiquetas.
+      option_pins_formula: Fórmula
+      option_pins_formula_help: Permite escribir código *Ruby* para personalizar el texto de las etiquetas.
+      option_pins_length: Longitud
+      option_pins_length_0: Sin línea de guía
+      option_pins_length_1: Pequeño
+      option_pins_length_2: Media
+      option_pins_length_3: Grande
+      option_pins_length_help: Seleccione la longitud de la línea guía.
+      option_pins_direction: Dirección
+      option_pins_direction_0: A lo largo del eje rojo
+      option_pins_direction_1: A lo largo del eje verde
+      option_pins_direction_2: A lo largo del eje azul
+      option_pins_direction_3: Apuntando hacia el centro del grupo de padres
+      option_pins_direction_4: Apuntando hacia el centro de la selección
+      option_pins_direction_help: Seleccione la dirección de las líneas guía a las etiquetas para una mejor legibilidad.
+      option_page: Tamaño de papel
+      option_page_format: Formato
+      option_page_format_portrait: Retrato
+      option_page_format_landscape: Paisaje
+      option_page_format_custom: Personalizado
+      option_page_width: Anchura
+      option_page_height: Altura
+      option_page_header: Cabecera
+      option_page_header_0: Ninguna
+      option_page_header_1: Con cabecera
+      option_page_header_help: |
+        Seleccione si la página que desea imprimir contiene una cabecera con el nombre del documento, su descripción y la fecha.
+        Sin cabecera, el dibujo general ocupa toda la página.
+      option_camera: Cámara
+      option_camera_view: Vista
+      option_camera_view_custom: Personalizado
+      option_camera_zoom: Escala
+      option_camera_zoom_auto: Automático
+      option_camera_zoom_custom: Personalizado
+      option_camera_target: Posición
+      option_camera_target_auto: Automático
+      option_camera_target_custom: Personalizado
+      option_explode: Vista desarrollada
+      error:
+        no_part: No hay parte que dibujar.
+        failed_to_save_as_skp: No se ha podido escribir el archivo SKP para enviarlo a Layout.
+        failed_to_layout: |
+          Error al escribir el archivo Layout: *{{ error }}*
+
+          **Asegúrese de que el archivo no está abierto en Layout.**
+      warning:
+        is_group_selection: Las piezas dentro de **grupos enmascarados** de su lista de piezas no se dibujarán.
+        is_part_selection: Este plano de conjunto se limita a las **piezas seleccionadas**.
+    snippet:
+      number: Número
+      name: Designación
+      number_and_name: Número y designación
+      number_without_hardware: Número (sin accesorios)
+      size: Dimensiones
+      area: Superficie capaz
+      volume: Volumen capaz
     error:
       no_model: Ningún modelo está abierto. Necesitarás darme más información ;)
       no_entities: Tu modelo está vacío. Necesitarás darme más información. ;)
@@ -804,6 +973,7 @@ tab:
     type_3: Liston
     type_4: Canto
     type_5: Accesorio
+    type_6: Chapa de madera
     tooltip:
       type_0: Tipo de material '$t(tab.materials.type_0)'
       type_1: Tipo de material '$t(tab.materials.type_1)'
@@ -811,15 +981,16 @@ tab:
       type_3: Tipo de material '$t(tab.materials.type_3)'
       type_4: Tipo de material '$t(tab.materials.type_4)'
       type_5: Tipo de material '$t(tab.materials.type_5)'
+      type_6: Tipo de material '$t(tab.materials.type_6)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Dirección de fibra
       colorized: Este tono se aplicará a la textura de este material cuando se renderice en el modelo
-      texture_colorized: Combina definitivamente este tono en la imagen de textura
       texture_load: Cargar una nueva textura
+      texture_clear: Borrar la textura
       edit: "Edita las propiedades de '{{ name }}'"
       set_current: |
-        Colorear partes con '{{ nombre }}'.
+        Colorear partes con '{{ name }}'.
         *Doble clic para colapsar*
     menu:
       import_from_skm: Importar material (.skm)
@@ -841,11 +1012,15 @@ tab:
       title: "Propiedades del material '{{ name }}'"
       general: General
       texture: Textura
+      no_texture: Sin textura
       name: Nombre
       type: Tipo
       cut_options: Parámetros de corte
       attributes: Atributos
       thickness: Espesor
+      thickness_help: |
+        Espesor final del material.
+        *Si no se especifica ninguna unidad, se tendrá en cuenta la unidad modelo.*
       length_increase: Longitud sobremedida
       length_increase_help: Sobredimensionado aplicado a la longitud para definir la **longitud bruta**.
       width_increase: Ancho sobremedida
@@ -865,7 +1040,7 @@ tab:
       std_thicknesses: Espesores estándar
       std_thicknesses_placeholder: grosor ; ...
       std_thicknesses_help: |
-        Adisponibles **espesores rugosos actuales**.
+        Espesores **estándar**.
         *Los tamaños sin unidades se consideran en unidades modelo.*
       std_sections: Secciones transversales estándar
       std_sections_placeholder: ancho x espesor ; ...
@@ -891,10 +1066,9 @@ tab:
       std_prices_help: "Le permite definir el precio para todos los tamaños, así como para cada tamaño estándar del material."
       std_prices_dim_placeholder: Elige una talla
       std_prices_add: Añade un precio
-      texture_load: Cargar
       texture_width: Ancho
       texture_height: Altura
-      export_to_skm: Exportar a fichero (.skm)
+      export_to_skm: Exportar (.skm)
     texture_load:
       title: Cargar una imagen
     import_from_skm:
@@ -912,6 +1086,9 @@ tab:
       message: |
         Estás a punto de eliminar el material **{{ material_name }}** de su modelo.
         Confirma para continuar.
+    duplicate:
+      message: |
+        Seleccione el nombre del nuevo material, que se copiará de **{{ material_name }}**.
     error:
       no_model: Ningún modelo está abierto. Necesitarás darme más información ;)
       no_materials: El modelo no contiene ningún material.
@@ -919,6 +1096,7 @@ tab:
       failed_import_skm_file: "Se produjo un error al importar desde el archivo .skm. **{{ error }}**"
       failed_export_skm_file: "Ocurrió un error al exportar a un archivo .skm. **{{ error }}**"
       failed_removing_material: "Se produjo un error al eliminar este material. **{{ error }}**"
+      failed_duplicating_material: "Se ha producido un error al duplicar el material. **{{ error }}**"
       invalid_image_file: Imagen inválida
     success:
       exported_to: "Exportar a {{ export_path }} exitoso."
@@ -1052,12 +1230,16 @@ tab:
     objective_slogan: "OpenCutList somos todos"
     objective_title:
       default: Objetivo
-      layout: Financiación de un módulo de previsualización de dibujos
+      cuttingdiagram_export: Financiación de las exportaciones del diagrama de corte
     objective_details:
       default: |
-        ¡La mejora continua de *OpenCutList* es muy importante para nosotros y el proyecto continúa necesitándote para su próxima actualización **4.0**!
+        ¡La mejora continua de *OpenCutList* es muy importante para nosotros y el proyecto continúa necesitándote para su próxima actualización!
+      cuttingdiagram_export: |
+        Es importante para nosotros que *OpenCutList* pueda adaptarse a las muy diferentes expectativas de los usuarios para la función de *diagrama de corte*.
+        Para ampliar aún más las posibilidades, nos gustaría permitir la exportación de diagramas de corte en formato **SVG**.
+        Al proporcionarnos los medios para trabajar en estas exportaciones, nos está dando la oportunidad de ayudarle a sacar el máximo provecho de *OpenCutList*.
       layout: |
-        El objetivo de este módulo es permitirle imprimir fácilmente un dibujo de su proyecto en **vista explosionada** con identificación de las piezas por su número generado en la lista de piezas.
+        El objetivo de este módulo es permitirle imprimir fácilmente una vista general de su proyecto en **vista explosionada** con identificación de las piezas por su número generado en el listatod de partes.
     objective_crowdfunding: |
       El desarrollo de nuevas funcionalidades se realizará gracias a la **Recaudación de fondos** y comenzará cuando se alcance su **Meta financiera**.
     objective_thanks: |
@@ -1066,7 +1248,7 @@ tab:
   settings:
     label: Preferencias
     title: Preferencias
-    global_settings: Preferencias Globales
+    global_settings: Preferencias globales
     language: Idioma
     language_auto: Automático
     zoom: Tamaño de letra
@@ -1088,7 +1270,19 @@ tab:
     suppress_units_display: Muestra la unidad de longitud para cada valor
     mass_unit: Unidad de masa
     currency_symbol: Símbolo de moneda
-    menu:
+    presets:
+      export_global_presets: Exportar preajustes
+      export_global_presets_help: |
+        Esta función le permite exportar sus preajustes a un archivo **.json**.
+        Seleccione los preajustes que desea exportar.
+      export_global_presets_success: Los preajustes se han exportado correctamente.
+      import_global_presets: Importar preajustes
+      import_global_presets_help: |
+        Seleccione los preajustes del archivo **.json** que desea importar.
+        Tenga en cuenta que si ya existe un preajuste con un nombre idéntico, será sustituido por la versión importada.
+      import_global_presets_success: |
+        Los preajustes *OpenCutList* se han importado correctamente.
+        Para tener en cuenta los cambios, debe **cerrar** y **reabrir** la ventana OpenCutList.
       dump_global_presets: Volcado de preajustes
       dump_model_presets: Volcado de preajustes de modelos
       reset_global_presets: Reiniciar los preajustes
@@ -1107,6 +1301,12 @@ tab:
       reset_model_presets_success: |
         Los preajustes de *OpenCutList* del modelo actual se han restablecido.
         Para tener en cuenta los cambios, debe **cerrar** y **reabrir** la ventana OpenCutList.
+      error:
+        no_preset_to_export: No hay preajustes para exportar.
+        no_preset_to_import: No hay preajustes para importar.
+        failed_to_import: "No se pueden importar preajustes: **{{ error }}**."
+        failed_to_import_invalid_hexdigest: Este archivo ha sido modificado. No se puede importar.
+        failed_to_import_bad_file_format: Formato de archivo no válido.
   about:
     label: Acerca de
     title: Acerca de
@@ -1125,8 +1325,8 @@ tab:
       - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*polaco*)
       - Sergey Isupov (*hebreo*), sin interfaz RTL
       - Soul Issam (*árabe*), sin interfaz RTL
-      - Dany Dhondt, Eric Lugtigheid (*holandés*)
       - Nguyen Ngoc Tan (*vietnamita*)
+      - Andrii Toporivskyi, Kostiantyn Shcherbey (*ucraniano*)
     credits_description: |
       El desarrollo de esta extensión está vinculado al proyecto de plataforma de intercambio. [L'Air du Bois](https://www.lairdubois.fr).
       Esta extensión también es de *código abierto* y está disponible en [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) licencia en [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
@@ -1140,19 +1340,16 @@ tab:
       - [Transifex](https://www.transifex.com) por su apoyo a los proyectos de código abierto.
       - [GitBook](https://www.gitbook.com) por su apoyo a los proyectos de código abierto.
 tool:
-  highlight:
+  default:
     transparency: Transparencia
     zoom_extents: Centrado
+    toggle_depth: Piezas en el fondo
+  highlight:
+    transparency: $t(tool.default.transparency)
+    zoom_extents: $t(tool.default.zoom_extents)
   smart_paint:
-    copy_key_win: Control
-    copy_key_mac: Option
-    alt_key_win: Alt
-    alt_key_mac: Command
-    status_paint_face: Haga clic para colorear un lado.
-    status_paint_part: Haga clic para colorear una parte entera.
-    status_unpaint_face: Haga clic para limpiar un lado.
-    status_unpaint_part: Haga clic para limpiar una parte entera.
-    status_pick: Haga clic para tomar una muestra del material.
+    title: Colorear
+    default_material: Ningún material definido
     filters: Filtro
     filter_0: Sin tipo
     filter_1: $t(tab.materials.type_1)
@@ -1160,13 +1357,50 @@ tool:
     filter_3: $t(tab.materials.type_3)
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
-    action: Acción
-    action_0: Colorear la cara
-    action_1: Colorear parte
+    filter_6: $t(tab.materials.type_6)
+    action_0: Colorear piezas
+    action_0_status: Haga clic en una pieza para aplicar un material a su instancia
+    action_1: Colorear cantos
+    action_1_status: Haga clic en un borde de una pieza del panel para aplicarle un material '$t(tab.materials.type_4)'
     action_2: Limpiar cara
-    action_3: Limpiar parte
-    action_4: Tomar
+    action_2_status: Haga clic en una cara de un panel para aplicarle un material '$t(tab.materials.type_6)'
+    action_3: Limpiar pieza
+    action_3_status: Haga clic en una cara para tomar una muestra del material
+    action_4: Limpiar
+    action_4_status: Haga clic en una pieza para eliminar todos los materiales de su definición y de todas sus instancias
+    edges: "{{ count }} canto"
+    edges_plural: "{{ count }} cantos"
+    edge_ymin: Longitud 1
+    edge_ymax: Longitud 2
+    edge_xmin: Anchura 1
+    edge_xmax: Anchura 2
+    faces: "{{ count }} cara"
+    faces_plural: "{{ count }} caras"
+    face_zmin: Dorso
+    face_zmax: Frontal
     warning:
       no_material: Su modelo no contiene ningún material!
-      all_filtered: ¡Los filtros elegidos ocultan todo el material!
-      not_part: El objeto de destino debe ser un componente.
+      no_material_type: "No hay material '{{ type }}"
+    error:
+      not_part: El objeto no es una pieza
+      not_edge: La cara objetivo no es un borde de panel
+      not_face: La cara objetivo no es una cara de panel
+      wrong_material_type: "La pieza seleccionada debe ser del tipo '{{ type }}'"
+  smart_axes:
+    title: Oriente
+    action_0: Voltear
+    action_0_status: Haga clic en una pieza para voltear su instancia a lo largo de una de sus dimensiones
+    action_1: Invertir Longitud ↔ Anchura
+    action_1_status: Haga clic en una pieza para intercambiar su longitud con su anchura
+    action_2: Cambiar anverso ↔ reverso
+    action_2_status: Haga clic en una pieza para intercambiar su anverso por su reverso
+    action_3: Adaptar los ejes
+    action_3_status: Haga clic en la cara o en una arista de una pieza para adaptar sus ejes
+    action_modifier_length: L
+    action_modifier_width: A
+    action_modifier_thickness: E
+    warning:
+      more_entities: "{{ count_used }} se modificarán las instancias que compartan la misma definición"
+    error:
+      not_part: El objeto no es una pieza
+      not_orientable: El tipo de esta pieza no permite orientarla

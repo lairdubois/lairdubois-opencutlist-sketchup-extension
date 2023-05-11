@@ -23,10 +23,13 @@ module Ladb::OpenCutList::BinPacking2D
     # Reference to an external object. This value is kept during optimization.
     attr_reader :data
 
+    # Component ID. Unique sortable key per items sharing the same definition.
+    attr_reader :cid
+
     #
     # Initializes a new Box, ensure that it has a length and width > 0.
     #
-    def initialize(length, width, rotatable, data)
+    def initialize(length, width, rotatable, cid = 1, data = nil)
       @x_pos = 0
       @y_pos = 0
       @length = length * 1.0
@@ -38,6 +41,13 @@ module Ladb::OpenCutList::BinPacking2D
       @rotatable = rotatable
       @rotated = false
       @data = data
+      # Component id (cid) is used to keep boxes together
+      # that have identical dimensions, but different definitions.
+      @cid = if cid.nil?
+               1
+             else
+               cid
+             end
     end
 
     #
@@ -118,7 +128,7 @@ module Ladb::OpenCutList::BinPacking2D
     end
 
     #
-    # Returns true if this Box is strictly greated than other Box.
+    # Returns true if this Box is strictly greater than other Box.
     #
     def greater?(other)
       return true if other.nil?

@@ -106,6 +106,9 @@ LadbAbstractTab.prototype.pushSlide = function ($slide, callback) {
     // Push in slides stack
     this._$slides.push($slide);
 
+    // Bind help buttons (if exist)
+    this.dialog.bindHelpButtonsInParent($slide);
+
     // Animation
     $slide.addClass('animated');
     $slide.switchClass('out', 'in', {
@@ -155,8 +158,9 @@ LadbAbstractTab.prototype.popSlide = function (noAnimation) {
             $poppedSlide.switchClass('in', 'out', {
                 duration: 300,
                 complete: function () {
-                    $poppedSlide.removeClass('animated');
-                    $poppedSlide.remove();
+                    $poppedSlide
+                        .removeClass('animated')
+                        .remove();
                 }
             });
         }
@@ -252,16 +256,21 @@ LadbAbstractTab.prototype.appendModalInside = function (id, twigFile, renderPara
             .removeClass('modal-open')
             .css('padding-right', 0);
         that.$element.addClass('modal-open');
+        $('input[autofocus]', that._$modal).first().focus();
     });
     this._$modal.on('hidden.bs.modal', function () {
         $(this)
             .data('bs.modal', null)
             .remove();
         that.$element.removeClass('modal-open');
+        that._$modal = null;
     });
 
     // Append modal
     this.$element.append(this._$modal);
+
+    // Bind help buttons (if exist)
+    this.dialog.bindHelpButtonsInParent(this._$modal);
 
     return this._$modal;
 };
@@ -274,12 +283,12 @@ LadbAbstractTab.prototype.hideModalInside = function () {
 
 // Print /////
 
-LadbAbstractTab.prototype.print = function (title, margin) {
+LadbAbstractTab.prototype.print = function (title, margin, size) {
 
     if (title === undefined) {
         title = 'OpenCutList';
     }
-    document.title = title
+    // document.title = title;
 
     if (margin === undefined) {
         if (this.dialog.capabilities.dialog_print_margin === 1) {     /* 1 = Small */
@@ -289,15 +298,21 @@ LadbAbstractTab.prototype.print = function (title, margin) {
         }
     }
 
-    // Retrieve and modifiy Page rule to set margin to desired one
+    if (size === undefined) {
+        size = '';
+    }
+
+    // Retrieve and modifiy Page rule to set margin and size to desired one
     var cssPageRuleStyle = document.styleSheets[0].cssRules[0].style;
     cssPageRuleStyle.margin = margin;
+    cssPageRuleStyle.size = size;
 
     // Print
     window.print();
 
-    // Retore margin
+    // Restore margin
     cssPageRuleStyle.margin = '';
+    cssPageRuleStyle.size = '';
 
 };
 

@@ -43,8 +43,20 @@ i, span.ladb-opencutlist-icon:before {
 }
 
 
-.ladb-opencutlist-icon-layout:before {
-  content: "\e994";
+.ladb-opencutlist-icon-explode:before {
+  content: "\e99d";
+}
+.ladb-opencutlist-icon-zoom-auto:before {
+  content: "\e99e";
+}
+.ladb-opencutlist-icon-view-back:before {
+  content: "\e99f";
+}
+.ladb-opencutlist-icon-view-front:before {
+  content: "\e99c";
+}
+.ladb-opencutlist-icon-view-isometric:before {
+  content: "\e999";
 }
 .ladb-opencutlist-icon-copy:before {
   content: "\e993";
@@ -93,6 +105,9 @@ i, span.ladb-opencutlist-icon:before {
 }
 .ladb-opencutlist-icon-reset:before {
   content: "\e905";
+}
+.ladb-opencutlist-icon-snippets:before {
+  content: "\e9a0";
 }
 .ladb-opencutlist-icon-formula:before {
   content: "\e906";
@@ -145,8 +160,11 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-filter-off:before {
   content: "\e917";
 }
-.ladb-opencutlist-icon-origin-min-center:before {
+.ladb-opencutlist-icon-origin-front-center:before {
   content: "\e918";
+}
+.ladb-opencutlist-icon-origin-front-min:before {
+  content: "\e9a1";
 }
 .ladb-opencutlist-icon-origin-center:before {
   content: "\e919";
@@ -286,6 +304,12 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-material-origin-2:before {
   content: "\e942";
 }
+.ladb-opencutlist-icon-layout:before {
+  content: "\e99a";
+}
+.ladb-opencutlist-icon-layout-selection:before {
+  content: "\e99b";
+}
 .ladb-opencutlist-icon-edit:before {
   content: "\e943";
 }
@@ -360,6 +384,18 @@ i, span.ladb-opencutlist-icon:before {
 }
 .ladb-opencutlist-icon-asterisk:before {
   content: "\e958";
+}
+.ladb-opencutlist-icon-face-11:before {
+  content: "\e995";
+}
+.ladb-opencutlist-icon-face-01:before {
+  content: "\e996";
+}
+.ladb-opencutlist-icon-face-10:before {
+  content: "\e997";
+}
+.ladb-opencutlist-icon-face-00:before {
+  content: "\e998";
 }
 .ladb-opencutlist-icon-edge-1111:before {
   content: "\e959";
@@ -468,6 +504,9 @@ i, span.ladb-opencutlist-icon:before {
 }
 .ladb-opencutlist-icon-material-type-2:before {
   content: "\e97a";
+}
+.ladb-opencutlist-icon-material-type-6:before {
+  content: "\e994";
 }
 .ladb-opencutlist-icon-arrow-right:before {
   content: "\e97b";

@@ -1,0 +1,223 @@
+{% extends 'core/_modal.twig' %}
+
+{% set id = 'ladb_cutlist_modal_layout' %}
+{% set title = ('tab.cutlist.layout.title'|i18next) %}
+{% if group and group.material_type != 0 %} {# 0 = TYPE_UNKNOW #}
+    {% set title = title~'<small class="ladb-horizontal-left-separator">'~group.material_name|escape('html')~(group.std_dimension ? ' / '~group.std_dimension : '')~'</small>' %}
+{% endif %}
+{% set noDefaultClose = true %}
+
+{% block headerToolsInner %}
+    {% include 'components/_widget-preset.twig' %}
+    <button class="btn btn-default btn-xs" data-help-page="cutlist.layout"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
+{% endblock %}
+
+{% block headerInner %}
+    {{ parent() }}
+    <ul class="nav nav-tabs nav-justified" role="tablist">
+        <li role="presentation"{% if tab == 'layout' %} class="active"{% endif %}><a href="#tab_layout_options_layout" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-layout"></i> {{ 'tab.cutlist.layout.options_layout'|i18next }}</a></li>
+        <li role="presentation"{% if tab == 'settings' %} class="active"{% endif %}><a href="#tab_layout_options_settings" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-settings"></i> {{ 'tab.cutlist.layout.options_settings'|i18next }}</a></li>
+    </ul>
+{% endblock %}
+
+{% block bodyInner %}
+    {% if isGroupSelection %}
+        <div class="alert alert-info text-center">{{ 'tab.cutlist.layout.warning.is_group_selection'|i18next }}</div>
+    {% endif %}
+    {% if isPartSelection %}
+        <div class="alert alert-info text-center">{{ 'tab.cutlist.layout.warning.is_part_selection'|i18next }}</div>
+    {% endif %}
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane{% if tab == 'layout' %} active{% endif %}" id="tab_layout_options_layout">
+            <div class="form form-horizontal" style="margin-top: 15px;">
+                <section>
+                    <h4>{{ 'tab.cutlist.layout.option_parts'|i18next }}</h4>
+                    <div class="form-group">
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.layout.option_parts_colored_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                        <label for="ladb_select_parts_colored" class="control-label col-xs-3">{{ 'tab.cutlist.layout.option_parts_colored'|i18next }}</label>
+                        <div class="col-xs-8">
+                            <select class="form-control" id="ladb_select_parts_colored">
+                                <option value="0" data-content="{{ 'tab.cutlist.layout.option_parts_colored_0'|i18next }}"></option>
+                                <option value="1" data-content="{{ 'tab.cutlist.layout.option_parts_colored_1'|i18next }}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.layout.option_parts_opacity_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                        <label for="ladb_select_parts_opacity" class="control-label col-xs-3">{{ 'tab.cutlist.layout.option_parts_opacity'|i18next }}</label>
+                        <div class="col-xs-8">
+                            <select class="form-control" id="ladb_select_parts_opacity">
+                                <option value="1" data-content="{{ 'tab.cutlist.layout.option_parts_opacity_1'|i18next }}"></option>
+                                <option value="0.5" data-content="{{ 'tab.cutlist.layout.option_parts_opacity_0'|i18next }}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+                <section>
+                    <h4>{{ 'tab.cutlist.layout.option_pins'|i18next }}</h4>
+                    <div class="form-group">
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.layout.option_pins_hidden_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                        <label for="ladb_select_pins_hidden" class="control-label col-xs-3">{{ 'tab.cutlist.layout.option_pins_hidden'|i18next }}</label>
+                        <div class="col-xs-8">
+                            <select class="form-control" id="ladb_select_pins_hidden">
+                                <option value="0" data-content="{{ 'tab.cutlist.layout.option_pins_hidden_0'|i18next }}"></option>
+                                <option value="1" data-content="{{ 'tab.cutlist.layout.option_pins_hidden_1'|i18next }}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group ladb-cutlist-layout-form-group-pins" style="padding-top: 10px;">
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.layout.option_pins_formula_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                        <label for="ladb_textarea_pins_formula" class="control-label col-xs-3">{{ 'tab.cutlist.layout.option_pins_formula'|i18next }} <small style="font-weight: normal;">(Ruby)</small></label>
+                        <div class="col-xs-8">
+                            <textarea id="ladb_textarea_pins_formula" class="form-control" placeholder="{{ 'tab.cutlist.export.number'|i18next }}"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group ladb-cutlist-layout-form-group-pins">
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.layout.option_pins_colored_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                        <label for="ladb_select_pins_colored" class="control-label col-xs-3">{{ 'tab.cutlist.layout.option_pins_colored'|i18next }}</label>
+                        <div class="col-xs-8">
+                            <select class="form-control" id="ladb_select_pins_colored">
+                                <option value="0" data-content="{{ 'tab.cutlist.layout.option_pins_colored_0'|i18next }}"></option>
+                                <option value="1" data-content="{{ 'tab.cutlist.layout.option_pins_colored_1'|i18next }}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group ladb-cutlist-layout-form-group-pins">
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.layout.option_pins_length_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                        <label for="ladb_select_pins_length" class="control-label col-xs-3">{{ 'tab.cutlist.layout.option_pins_length'|i18next }}</label>
+                        <div class="col-xs-8">
+                            <select class="form-control" id="ladb_select_pins_length">
+                                <option value="0" data-content="{{ 'tab.cutlist.layout.option_pins_length_0'|i18next }}"></option>
+                                <option value="1" data-content="{{ 'tab.cutlist.layout.option_pins_length_1'|i18next }}"></option>
+                                <option value="2" data-content="{{ 'tab.cutlist.layout.option_pins_length_2'|i18next }}"></option>
+                                <option value="3" data-content="{{ 'tab.cutlist.layout.option_pins_length_3'|i18next }}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group ladb-cutlist-layout-form-group-pins ladb-cutlist-layout-form-group-pins-direction">
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.layout.option_pins_direction_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                        <label for="ladb_select_pins_direction" class="control-label col-xs-3">{{ 'tab.cutlist.layout.option_pins_direction'|i18next }}</label>
+                        <div class="col-xs-8">
+                            <select class="form-control" id="ladb_select_pins_direction">
+                                <option value="0" data-content="{{ 'tab.cutlist.layout.option_pins_direction_0'|i18next }}"></option>
+                                <option value="1" data-content="{{ 'tab.cutlist.layout.option_pins_direction_1'|i18next }}"></option>
+                                <option value="2" data-content="{{ 'tab.cutlist.layout.option_pins_direction_2'|i18next }}"></option>
+                                <option value="3" data-content="{{ 'tab.cutlist.layout.option_pins_direction_3'|i18next }}"></option>
+                                <option value="4" data-content="{{ 'tab.cutlist.layout.option_pins_direction_4'|i18next }}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane{% if tab == 'settings' %} active{% endif %}" id="tab_layout_options_settings">
+            <div class="row">
+                <div class="col-xs-6 form form-horizontal">
+                    <section>
+                        <h4>{{ 'tab.cutlist.layout.option_page'|i18next }}</h4>
+                        <div class="form-group">
+                            <label for="ladb_select_page_format" class="control-label col-xs-4">{{ 'tab.cutlist.layout.option_page_format'|i18next }}</label>
+                            <div class="col-xs-7">
+                                <select class="form-control" id="ladb_select_page_format">
+                                    <option value="210mmx297mm" data-content="A4 - {{ 'tab.cutlist.layout.option_page_format_portrait'|i18next }}"></option>
+                                    <option value="297mmx210mm" data-content="A4 - {{ 'tab.cutlist.layout.option_page_format_landscape'|i18next }}"></option>
+                                    <option value="297mmx420mm" data-content="A3 - {{ 'tab.cutlist.layout.option_page_format_portrait'|i18next }}"></option>
+                                    <option value="420mmx297mm" data-content="A3 - {{ 'tab.cutlist.layout.option_page_format_landscape'|i18next }}"></option>
+                                    <option data-divider="true"></option>
+                                    <option value='8.5"x11"' data-content="Letter - {{ 'tab.cutlist.layout.option_page_format_portrait'|i18next }}"></option>
+                                    <option value='11"x8.5"' data-content="Letter - {{ 'tab.cutlist.layout.option_page_format_landscape'|i18next }}"></option>
+                                    <option value='11"x17"' data-content="Tabloid - {{ 'tab.cutlist.layout.option_page_format_portrait'|i18next }}"></option>
+                                    <option value='17"x11"' data-content="Tabloid - {{ 'tab.cutlist.layout.option_page_format_landscape'|i18next }}"></option>
+                                    <option data-divider="true"></option>
+                                    <option value="0" data-content="{{ 'tab.cutlist.layout.option_page_format_custom'|i18next }}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="ladb_input_page_width" class="control-label col-xs-4">{{ 'tab.cutlist.layout.option_page_width'|i18next }}</label>
+                            <div class="col-xs-7">
+                                <input type="text" class="form-control" id="ladb_input_page_width">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="ladb_input_page_height" class="control-label col-xs-4">{{ 'tab.cutlist.layout.option_page_height'|i18next }}</label>
+                            <div class="col-xs-7">
+                                <input type="text" class="form-control" id="ladb_input_page_height">
+                            </div>
+                        </div>
+                        <br>
+                        <div class="form-group">
+                            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.layout.option_page_header_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                            <label for="ladb_select_page_header" class="control-label col-xs-4">{{ 'tab.cutlist.layout.option_page_header'|i18next }}</label>
+                            <div class="col-xs-7">
+                                <select class="form-control" id="ladb_select_page_header">
+                                    <option value="0" data-content="{{ 'tab.cutlist.layout.option_page_header_0'|i18next }}"></option>
+                                    <option value="1" data-content="{{ 'tab.cutlist.layout.option_page_header_1'|i18next }}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <div class="col-xs-6 form form-horizontal">
+                    <section>
+                        <h4>{{ 'tab.cutlist.layout.option_camera'|i18next }}</h4>
+                        <div class="form-group">
+                            <label for="ladb_select_camera_view" class="control-label col-xs-4">{{ 'tab.cutlist.layout.option_camera_view'|i18next }}</label>
+                            <div class="col-xs-7">
+                                <select class="form-control" id="ladb_select_camera_view" title="{{ 'tab.cutlist.layout.option_camera_view_custom'|i18next }}">
+                                    <option value="{{ THREE_CAMERA_VIEWS.isometric|json_encode|escape('html') }}" data-content="<i class='ladb-opencutlist-icon-view-isometric'></i> {{ 'core.component.three_viewer.view_isometric'|i18next }}"></option>
+                                    <option value="{{ THREE_CAMERA_VIEWS.front|json_encode|escape('html') }}" data-content="<i class='ladb-opencutlist-icon-view-front'></i> {{ 'core.component.three_viewer.view_front'|i18next }}"></option>
+                                    <option value="{{ THREE_CAMERA_VIEWS.back|json_encode|escape('html') }}" data-content="<i class='ladb-opencutlist-icon-view-back'></i> {{ 'core.component.three_viewer.view_back'|i18next }}"></option>
+                                    <option value="{{ THREE_CAMERA_VIEWS.top|json_encode|escape('html') }}" data-content="<i class='ladb-opencutlist-icon-arrow-down'></i> {{ 'core.component.three_viewer.view_top'|i18next }}"></option>
+                                    <option value="{{ THREE_CAMERA_VIEWS.bottom|json_encode|escape('html') }}" data-content="<i class='ladb-opencutlist-icon-arrow-up'></i> {{ 'core.component.three_viewer.view_bottom'|i18next }}"></option>
+                                    <option value="{{ THREE_CAMERA_VIEWS.left|json_encode|escape('html') }}" data-content="<i class='ladb-opencutlist-icon-arrow-right'></i> {{ 'core.component.three_viewer.view_left'|i18next }}"></option>
+                                    <option value="{{ THREE_CAMERA_VIEWS.right|json_encode|escape('html') }}" data-content="<i class='ladb-opencutlist-icon-arrow-left'></i> {{ 'core.component.three_viewer.view_right'|i18next }}"></option>
+                                </select>
+                                <input type="hidden" id="ladb_input_camera_view">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="ladb_select_camera_zoom" class="control-label col-xs-4">{{ 'tab.cutlist.layout.option_camera_zoom'|i18next }}</label>
+                            <div class="col-xs-7">
+                                <select class="form-control" id="ladb_select_camera_zoom" title="{{ 'tab.cutlist.layout.option_camera_zoom_custom'|i18next }}">
+                                    <option value="null" data-content="{{ 'tab.cutlist.layout.option_camera_zoom_auto'|i18next }}"></option>
+                                    <option data-divider="true"></option>
+                                    <option value="2" data-content="2:1"></option>
+                                    <option value="1" data-content="1:1"></option>
+                                    <option value="0.5" data-content="1:2"></option>
+                                    <option value="0.2" data-content="1:5"></option>
+                                    <option value="0.1" data-content="1:10"></option>
+                                    <option value="0.05" data-content="1:20"></option>
+                                    <option value="0.02" data-content="1:50"></option>
+                                </select>
+                                <input type="hidden" id="ladb_input_camera_zoom">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="ladb_select_camera_zoom" class="control-label col-xs-4">{{ 'tab.cutlist.layout.option_camera_target'|i18next }}</label>
+                            <div class="col-xs-7">
+                                <select class="form-control" id="ladb_select_camera_target" title="{{ 'tab.cutlist.layout.option_camera_target_custom'|i18next }}">
+                                    <option value="null" data-content="{{ 'tab.cutlist.layout.option_camera_target_auto'|i18next }}"></option>
+                                </select>
+                                <input type="hidden" id="ladb_input_camera_target">
+                            </div>
+                        </div>
+                    </section>
+                    <section>
+                        <h4>{{ 'tab.cutlist.layout.option_explode'|i18next }}</h4>
+                        <div class="form-group">
+                            <div class="text-center">
+                                <input class="form-control" id="ladb_input_explode_factor" data-slider-value="0" data-slider-min="0" data-slider-max="3" data-slider-step="0.1">
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footerRightInner %}
+    <button class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
+    <button class="btn btn-primary btn-validate-modal" id="ladb_cutlist_layout_btn_generate">{{ 'default.generate'|i18next }}</button>
+{% endblock %}

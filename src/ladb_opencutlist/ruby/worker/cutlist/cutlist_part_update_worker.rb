@@ -2,7 +2,6 @@ module Ladb::OpenCutList
 
   require_relative '../../helper/boundingbox_helper'
   require_relative '../../model/attributes/definition_attributes'
-  require_relative '../../utils/model_utils'
   require_relative '../../utils/axis_utils'
 
   class CutlistPartUpdateWorker
@@ -31,38 +30,46 @@ module Ladb::OpenCutList
         :thickness_increase,
         :edge_material_names,
         :edge_entity_ids,
+        :face_material_names,
+        :face_entity_ids,
+        :face_texture_angles,
         :entity_ids
     )
 
     def initialize(settings, cutlist)
+
+      @auto_orient = settings.fetch('auto_orient', false)
       @parts_data = []
 
-      parts_data = settings['parts_data']
+      parts_data = settings.fetch('parts_data')
 
       parts_data.each { |part_data|
         @parts_data << PartData.new(
-            part_data['definition_id'],
-            part_data['name'],
-            part_data['is_dynamic_attributes_name'],
-            part_data['material_name'],
-            DefinitionAttributes.valid_cumulable(part_data['cumulable']),
-            part_data['instance_count_by_part'],
-            part_data['mass'],
-            part_data['price'],
-            part_data['thickness_layer_count'],
-            part_data['description'],
-            DefinitionAttributes.valid_tags(part_data['tags']),
-            part_data['orientation_locked_on_axis'],
-            part_data['symmetrical'],
-            part_data['ignore_grain_direction'],
-            part_data['axes_order'],
-            part_data['axes_origin_position'],
-            part_data['length_increase'],
-            part_data['width_increase'],
-            part_data['thickness_increase'],
-            part_data['edge_material_names'],
-            part_data['edge_entity_ids'],
-            part_data['entity_ids']
+            part_data.fetch('definition_id'),
+            part_data.fetch('name'),
+            part_data.fetch('is_dynamic_attributes_name'),
+            part_data.fetch('material_name'),
+            DefinitionAttributes.valid_cumulable(part_data.fetch('cumulable')),
+            part_data.fetch('instance_count_by_part'),
+            part_data.fetch('mass'),
+            part_data.fetch('price'),
+            part_data.fetch('thickness_layer_count'),
+            part_data.fetch('description'),
+            DefinitionAttributes.valid_tags(part_data.fetch('tags')),
+            part_data.fetch('orientation_locked_on_axis'),
+            part_data.fetch('symmetrical'),
+            part_data.fetch('ignore_grain_direction'),
+            part_data.fetch('axes_order', nil),
+            part_data.fetch('axes_origin_position', nil),
+            part_data.fetch('length_increase'),
+            part_data.fetch('width_increase'),
+            part_data.fetch('thickness_increase'),
+            part_data.fetch('edge_material_names'),
+            part_data.fetch('edge_entity_ids'),
+            part_data.fetch('face_material_names'),
+            part_data.fetch('face_entity_ids'),
+            part_data.fetch('face_texture_angles'),
+            part_data.fetch('entity_ids')
         )
       }
 
@@ -80,7 +87,7 @@ module Ladb::OpenCutList
       return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
 
       # Start model modification operation
-      model.start_operation('OpenCutList - Part Update', true, false, true)
+      model.start_operation('OCL Part Update', true, false, true)
 
       definitions = model.definitions
       @parts_data.each { |part_data|
@@ -128,13 +135,6 @@ module Ladb::OpenCutList
             definition_attributes.write_to_attributes
           end
 
-          # Update materials
-          _apply_material(part_data.material_name, part_data.entity_ids, model)
-          _apply_material(part_data.edge_material_names['ymin'], part_data.edge_entity_ids['ymin'], model)
-          _apply_material(part_data.edge_material_names['ymax'], part_data.edge_entity_ids['ymax'], model)
-          _apply_material(part_data.edge_material_names['xmin'], part_data.edge_entity_ids['xmin'], model)
-          _apply_material(part_data.edge_material_names['xmax'], part_data.edge_entity_ids['xmax'], model)
-
           # Transform part axes if axes order exist
           if part_data.axes_order.is_a?(Array) && part_data.axes_order.length == 3
 
@@ -148,11 +148,6 @@ module Ladb::OpenCutList
             part_data.axes_order.map! { |axis|
               axes_convertor[axis]
             }
-
-            # Force axes to be "trihedron"
-            if AxisUtils::flipped?(part_data.axes_order[0], part_data.axes_order[1], part_data.axes_order[2])
-              part_data.axes_order[1] = part_data.axes_order[1].reverse
-            end
 
             # Create transformations
             ti = Geom::Transformation.axes(ORIGIN, part_data.axes_order[0], part_data.axes_order[1], part_data.axes_order[2])
@@ -180,8 +175,30 @@ module Ladb::OpenCutList
               origin = bounds.min
             when 'center'
               origin = bounds.center
-            when 'min-center'
-              origin = Geom::Point3d.new(bounds.min.x , bounds.center.y, bounds.center.z)
+            when 'front-min'
+              size = Size3d::create_from_bounds(bounds, Scale3d.new, @auto_orient && !part_data.orientation_locked_on_axis)
+              case size.oriented_axis(Z_AXIS)
+              when X_AXIS
+                origin = Geom::Point3d.new(bounds.max.x , bounds.min.y, bounds.min.z)
+              when Y_AXIS
+                origin = Geom::Point3d.new(bounds.min.x , bounds.max.y, bounds.min.z)
+              when Z_AXIS
+                origin = Geom::Point3d.new(bounds.min.x , bounds.min.y, bounds.max.z)
+              else
+                origin = ORIGIN # Strange axis
+              end
+            when 'front-center'
+              size = Size3d::create_from_bounds(bounds, Scale3d.new, @auto_orient && !part_data.orientation_locked_on_axis)
+              case size.oriented_axis(Z_AXIS)
+              when X_AXIS
+                origin = Geom::Point3d.new(bounds.max.x , bounds.center.y, bounds.center.z)
+              when Y_AXIS
+                origin = Geom::Point3d.new(bounds.center.x , bounds.max.y, bounds.center.z)
+              when Z_AXIS
+                origin = Geom::Point3d.new(bounds.center.x , bounds.center.y, bounds.max.z)
+              else
+                origin = ORIGIN # Strange axis
+              end
             else
               origin = ORIGIN
             end
@@ -201,6 +218,15 @@ module Ladb::OpenCutList
 
           end
 
+          # Update materials
+          _apply_material(part_data.material_name, part_data.entity_ids, model)
+          _apply_material(part_data.edge_material_names['ymin'], part_data.edge_entity_ids['ymin'], model)
+          _apply_material(part_data.edge_material_names['ymax'], part_data.edge_entity_ids['ymax'], model)
+          _apply_material(part_data.edge_material_names['xmin'], part_data.edge_entity_ids['xmin'], model)
+          _apply_material(part_data.edge_material_names['xmax'], part_data.edge_entity_ids['xmax'], model)
+          _apply_material(part_data.face_material_names['zmin'], part_data.face_entity_ids['zmin'], model, part_data.face_texture_angles['zmin'].nil? ? nil : part_data.face_texture_angles['zmin'].to_i.degrees)
+          _apply_material(part_data.face_material_names['zmax'], part_data.face_entity_ids['zmax'], model, part_data.face_texture_angles['zmax'].nil? ? nil : part_data.face_texture_angles['zmax'].to_i.degrees)
+
         end
 
       }
@@ -212,18 +238,52 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _apply_material(material_name, entity_ids, model)
+    def _apply_material(material_name, entity_ids, model, angle = nil)  # angle in radians [0..2PI]
       unless entity_ids.nil?
         material = nil
         if material_name.nil? || material_name.empty? || (material = model.materials[material_name])
 
           entity_ids.each { |entity_id|
-            entity = ModelUtils::find_entity_by_id(model, entity_id)
+            entity = model.find_entity_by_id(entity_id)
             if entity
               if material_name.nil? || material_name.empty?
                 entity.material = nil
-              elsif entity.material != material
-                entity.material = material
+              else
+
+                if entity.material != material
+                  entity.material = material
+                end
+
+                if !angle.nil? && entity.is_a?(Sketchup::Face) && entity.respond_to?(:clear_texture_position) # SU 2022+
+
+                  # Reset all texture transformations
+                  entity.clear_texture_position(true)
+
+                  # Adapt angle if face normal is -Z
+                  angle = Math::PI - angle if entity.normal.samedirection?(Z_AXIS.reverse)
+
+                  if angle > 0
+
+                    points = [
+                      entity.edges.first.start.position,
+                      entity.edges.first.end.position
+                    ]
+
+                    uv_helper = entity.get_UVHelper(true, false)
+                    t = Geom::Transformation.rotation(ORIGIN, entity.normal, angle.to_f)
+
+                    mapping = []
+                    (0..1).each do |i|
+                      mapping << points[i].transform(t)             # Transformed point
+                      mapping << uv_helper.get_front_UVQ(points[i]) # UVQ
+                    end
+
+                    entity.position_material(entity.material, mapping, true)
+
+                  end
+
+                end
+
               end
             end
           }

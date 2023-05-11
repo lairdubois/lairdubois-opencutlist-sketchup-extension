@@ -2,7 +2,40 @@ CHANGELOG
 =========
 
 This changelog references the relevant changes (bug and security fixes) done
-in 4.x, 3.x, 2.x, 1.x and 0.x versions.
+in 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
+
+* 5.0.0 (2023-05-11)
+
+  * Added **Ukrainian** language (thanks to Kostyantyn and Andriy)
+  * Added new **Drawing** module with exploded view and export to *Layout* (SketchUp 2018+ only)
+  * Added new **Veneer Material Type**
+  * Added new **Smart Paint** tool (rewrite of previous version) + new icon
+  * Added new **Smart Axes** tool + new icon
+  * Added module to *export* and *import* **presets** to and from json file
+  * Added new property to sort labels according to cutting diagram bins
+  * Added used and unused proportion display in Estimate summary and details
+  * Added feature to duplicate material including all attributes
+  * Added left and right arrow shortcut keys to change current material in Smart Paint tool
+  * Added hide edge preview option in 2D cutting diagram (default = true)
+  * Added layers (SketchUp tags) column to part and instance list exports
+  * Added focus SketchUp window after selecting tool (SketchUp 2021.1+)
+  * Renamed Reports to Estimate
+  * Renamed Tags to Badges
+  * Improved materials property dialog : It is now possible to add, change and clear texture on a material
+  * Improved color pickers : It's now possible to select custom color in picker (SketchUp 2021+)
+  * Saved last material export / import and part export used folder 
+  * Fixed cutting diagram bins number to be displayed even if _Group Similar Panels_ option is ON
+  * Fixed cutting diagram 2D edge drawing to correspond to counter-clockwise rotation of part's name
+  * Fixed missed exported edges std dimensions on folded parts
+  * Fixed missed oversize asterisk indicator in cutting diagram parts lists
+  * Improved part's material detection by ignoring edges banding and veneer material types applied on faces
+  * Improved summary cells: unavailable cells in parts list summary are hatched instead of displaying "-" character
+  * Improved UX : Added "escape" key to 1. close modals, 2. minimize OpenCutList dialog
+  * Improved UX : Added Double click behavior on material button of the Smart Paint Tool to edit the corresponding material
+
+* 4.1.3 (2023-02-28)
+
+  * Added teaser "Drawing" button
 
 * 4.1.3 (2023-02-28)
 
@@ -10,12 +43,12 @@ in 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 * 4.1.2 (2023-01-27)
 
-  * Fixed forum loading error due to Open Collective API changes.
+  * Fixed forum loading error due to Open Collective API changes
 
 * 4.1.1 (2023-01-05)
 
-  * Fixed highlight part tool error when part's material doesn't have type.
-  
+  * Fixed highlight part tool error when part's material doesn't have type
+
 * 4.1.0 (2023-01-03)
 
   * Added **Vietnamese** language (thanks to Nguyen Ngoc Tan for joining the translators team)
@@ -34,8 +67,8 @@ in 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 * 4.0.0 (2022-09-21)
 
-  * Added SmartPaint tool
-  * Added cutlist export customization
+  * Added **SmartPaint tool**
+  * Added cutlist **export customization**
   * Added copy to clipboard from Export preview
   * Added cutting diagram 1D progress bar
   * Added cutting diagram 2D progress bar

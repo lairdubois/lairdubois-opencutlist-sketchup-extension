@@ -1,5 +1,4 @@
 var gulp = require('gulp');
-var gulpif = require('gulp-if');
 var del = require('del');
 var minimist = require('minimist');
 var fs = require('fs');
@@ -41,12 +40,12 @@ gulp.task('css_minify', function () {
         .pipe(gulp.dest('../src/ladb_opencutlist/css'));
 });
 
-// Minify .js files
+// Minify lib .js files
 gulp.task('js_minify', function () {
     return gulp.src('../src/ladb_opencutlist/js/lib/**/!(*.min).js')
         .pipe(uglify())
         .pipe(rename({ suffix: '.min' }))
-        .pipe(gulp.dest('../src/ladb_opencutlist/lib'));
+        .pipe(gulp.dest('../src/ladb_opencutlist/js/lib'));
 });
 
 // Convert twig runtime templates to .js precompiled files
@@ -114,7 +113,7 @@ gulp.task('i18n_compile', function () {
 gulp.task('i18n_dialog_compile', function () {
 
     // Clean previously generated dialog files
-    del('../src/ladb_opencutlist/html/*', {
+    del('../src/ladb_opencutlist/html/dialog-*', {
         force: true
     });
 
@@ -137,7 +136,7 @@ gulp.task('rbz_create', function () {
         blob.push('!src/**/yaml/i18n/zz.yml');
     }
     return gulp.src(blob, { cwd: '../'})
-        .pipe(gulpif(isProd, zip('ladb_opencutlist.rbz'), zip('ladb_opencutlist-' + options.env.toLowerCase() + '.rbz')))
+        .pipe(zip('ladb_opencutlist.rbz'))
         .pipe(gulp.dest('../dist'));
 });
 
@@ -156,9 +155,10 @@ gulp.task('version', function () {
 
     if (options.manifest || options.manifest === undefined) {
         // Update version property in manifest.json
-        gulp.src('../dist/manifest' + (isProd ? '' : '-' + options.env.toLowerCase()) + '.json')
+        gulp.src('../dist/manifest.json')
             .pipe(replace(/"version": "[0-9.]+(-[a-z]*)?"/g, '"version": "' + version + '"'))
             .pipe(replace(/"build": "[0-9]{12}?"/g, '"build": "' + build + '"'))
+            .pipe(replace(/"url": "[a-z:\/.\-]+"/g, '"url": "https://www.lairdubois.fr/opencutlist/download' + (isProd ? '' : '-' + options.env.toLowerCase()) + '"'))
             .pipe(gulp.dest('../dist'))
             .pipe(touch());
     }

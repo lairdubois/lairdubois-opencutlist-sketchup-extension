@@ -1,0 +1,32 @@
+{% extends 'tabs/base-slide.twig' %}
+
+{% set id = 'ladb_cutlist_slide_layout' %}
+{% set out = true %}
+{% set slideClasses = 'ladb-slide-fullpage print-no-header' %}
+
+{% block headerHeadingInner %}
+    {{ 'tab.cutlist.layout.title'|i18next}}{% if group and group.material_type != 0 %} {# 0 = TYPE_UNKNOW #} <small>| {{ group.material_name|escape('html') }}{% if group.std_dimension %} / <strong>{{ group.std_dimension}}</strong>{% endif %}</small>{% endif %}
+{% endblock %}
+
+{% block headerToolsInner %}
+    <button id="ladb_btn_layout" class="btn btn-primary"><i class="ladb-opencutlist-icon-refresh"></i> {{ 'default.draw'|i18next }}...</button>
+    <button id="ladb_btn_print" class="btn btn-default"><i class="ladb-opencutlist-icon-print"></i> {{ 'default.print'|i18next }}</button>
+    {% if capabilities.sketchup_version_number >= 1800000000 %}
+        &nbsp;
+        <button id="ladb_btn_export" class="btn btn-default"><i class="ladb-opencutlist-icon-export"></i> {{ 'tab.cutlist.layout.to_layout'|i18next }}...</button>
+    {% endif %}
+    &nbsp;
+    <button class="btn btn-default" data-help-page="cutlist.layout"><i class="ladb-opencutlist-icon-help"></i></button>
+    &nbsp;
+    <button id="ladb_btn_close" class="btn btn-default"><i class="ladb-opencutlist-icon-close"></i> {{ 'default.close'|i18next }}</button>
+{% endblock %}
+
+{% block containerFluidOuter %}
+    {% include 'core/_alert-errors.twig' %}
+    {% if not errors or errors|length == 0 %}
+        {% embed 'tabs/cutlist/_three-viewer-slide-layout.twig' %}
+            {% block headerHeadingInner %}{{ block('headerHeadingInner') }}{% endblock %}
+        {% endembed %}
+    {% endif %}
+{% endblock %}
+

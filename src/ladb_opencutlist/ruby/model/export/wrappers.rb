@@ -1,6 +1,7 @@
 module Ladb::OpenCutList
 
   require_relative '../../utils/unit_utils'
+  require_relative '../../model/attributes/material_attributes'
 
   class Wrapper
 
@@ -14,7 +15,7 @@ module Ladb::OpenCutList
 
   class ValueWrapper < Wrapper
 
-    def initialize(value, value_class = Object.class)
+    def initialize(value, value_class = Object)
       @value = value
       @value_class = value_class
     end
@@ -144,6 +145,10 @@ module Ladb::OpenCutList
 
     def initialize(value)
       super(value.to_s, String)
+    end
+
+    def ==(value)
+      @value == value
     end
 
     def to_str
@@ -312,6 +317,62 @@ module Ladb::OpenCutList
 
   # -----
 
+  class PathWrapper < ArrayWrapper
+
+    def to_s
+      @value.join('/')
+    end
+
+  end
+
+  # -----
+
+  class MaterialTypeWrapper < ValueWrapper
+
+    def initialize(value)
+      super(value, Integer)
+    end
+
+    def is_solid_wood?
+      @value == MaterialAttributes::TYPE_SOLID_WOOD
+    end
+
+    def is_sheet_good?
+      @value == MaterialAttributes::TYPE_SHEET_GOOD
+    end
+
+    def is_dimensional?
+      @value == MaterialAttributes::TYPE_DIMENSIONAL
+    end
+
+    def is_hardware?
+      @value == MaterialAttributes::TYPE_HARDWARE
+    end
+
+    def is_edge?
+      @value == MaterialAttributes::TYPE_EDGE
+    end
+
+    def is_veneer?
+      @value == MaterialAttributes::TYPE_VENEER
+    end
+
+    def to_i
+      @value
+    end
+
+    def to_s
+      Plugin.instance.get_i18n_string("tab.materials.type_#{@value}")
+    end
+
+    def export
+      self.to_s
+    end
+
+  end
+
+  # -----
+
   class EdgeWrapper < Wrapper
 
     attr_reader :material_name, :std_thickness, :std_width
@@ -329,6 +390,32 @@ module Ladb::OpenCutList
     def to_s
       return '' if @material_name.empty?
       "#{@material_name.to_s} (#{@std_thickness.to_s} x #{@std_width.to_s})"
+    end
+
+    def export
+      self.to_s
+    end
+
+  end
+
+  # -----
+
+  class VeneerWrapper < Wrapper
+
+    attr_reader :material_name, :std_thickness
+
+    def initialize(material_name, std_thickness)
+      @material_name = StringWrapper.new(material_name)
+      @std_thickness = LengthWrapper.new(std_thickness)
+    end
+
+    def empty?
+      @material_name.empty?
+    end
+
+    def to_s
+      return '' if @material_name.empty?
+      "#{@material_name.to_s} (#{@std_thickness.to_s})"
     end
 
     def export

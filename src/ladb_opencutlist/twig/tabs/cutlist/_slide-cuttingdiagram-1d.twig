@@ -47,9 +47,7 @@
 
 {% block headerInner %}
     {{ parent() }}
-    <div class="ladb-header-extra">
-        {% include 'tabs/cutlist/_header-extra.twig' with { 'generatedAt':'000' } %}
-    </div>
+    {% include 'tabs/cutlist/_header-extra.twig' %}
 {% endblock %}
 
 {% block headerHeadingInner %}
@@ -59,8 +57,10 @@
 {% block headerToolsInner %}
     <button id="ladb_btn_cuttingdiagram" class="btn btn-primary"><i class="ladb-opencutlist-icon-refresh"></i> {{ 'tab.cutlist.menu.group_cuttingdiagram'|i18next }}...</button>
     <button id="ladb_btn_print" class="btn btn-default"><i class="ladb-opencutlist-icon-print"></i> {{ 'default.print'|i18next }}</button>
-{#    <button id="ladb_btn_export" class="btn btn-default btn-sponsored"><i class="ladb-opencutlist-icon-export"></i> {{ 'default.export'|i18next }}</button>#}
+    &nbsp;
     <button id="ladb_btn_labels" class="btn btn-default"><i class="ladb-opencutlist-icon-labels"></i> {{ 'tab.cutlist.labels.title'|i18next }}...</button>
+    &nbsp;
+    <button class="btn btn-default" data-help-page="cutlist.cuttingdiagram1d"><i class="ladb-opencutlist-icon-help"></i></button>
     &nbsp;
     <button id="ladb_btn_close" class="btn btn-default"><i class="ladb-opencutlist-icon-close"></i> {{ 'default.close'|i18next }}</button>
 {% endblock %}
@@ -87,19 +87,19 @@
                     </td>
                 </tr>
                 <tr class="table-column-heading">
-                    <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.list.number'|i18next }}</td>
-                    <td class="text-center" rowspan="2" style="vertical-align: middle !important;">{{ 'tab.cutlist.list.name'|i18next }}</td>
-                    <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.list.count'|i18next }}</td>
+                    <td rowspan="2" width="5%">{{ 'tab.cutlist.list.number'|i18next }}</td>
+                    <td rowspan="2">{{ 'tab.cutlist.list.name'|i18next }}</td>
+                    <td rowspan="2" width="5%">{{ 'tab.cutlist.list.count'|i18next }}</td>
                     {% if showCuttingDimensions %}
-                        <td class="text-center">{{ 'tab.cutlist.list.cutting'|i18next }}</td>
+                        <td>{{ 'tab.cutlist.list.cutting'|i18next }}</td>
                     {% endif %}
-                    <td class="text-center">{{ 'tab.cutlist.list.bbox'|i18next }}</td>
+                    <td>{{ 'tab.cutlist.list.bbox'|i18next }}</td>
                 </tr>
                 <tr class="table-column-heading">
                     {% if showCuttingDimensions %}
-                        <td class="text-center" width="8%">{{ ('tab.cutlist.list.length_short')|i18next }}</td>
+                        <td width="8%">{{ ('tab.cutlist.list.length_short')|i18next }}</td>
                     {% endif %}
-                    <td class="text-center" width="8%">{{ ('tab.cutlist.list.length_short')|i18next }}</td>
+                    <td width="8%">{{ ('tab.cutlist.list.length_short')|i18next }}</td>
                 </tr>
                 </thead>
                 <tbody>
@@ -219,8 +219,9 @@
         {% for bar in bars %}
             {% set maxBarLength = max(maxBarLength, bar.slices[0].px_length) %}
         {% endfor %}
+        {% set barIndex = 1 %}
         {% for bar in bars %}
-            <table id="ladb_cuttingdiagram_group_{{ bar.type_id }}" data-group-id="{{ group.id }}_{{ bar.type_id }}" data-bar-index="{{ loop.index }}" class="table table-bordered ladb-cutlist-group ladb-cuttingdiagram-group">
+            <table id="ladb_cuttingdiagram_group_{{ bar.type_id }}" data-group-id="{{ group.id }}_{{ bar.type_id }}" data-bar-index="{{ loop.index }}" class="table table-bordered ladb-cutlist-group ladb-cutlist-cuttingdiagram-group">
                 <thead>
                 <tr class="table-heading">
                     <td colspan="{{ colspan }}">
@@ -231,9 +232,8 @@
                                 <button class="btn btn-default btn-sm ladb-btn-scrollto-next-group" {% if loop.last %}disabled{% endif %}><i class="ladb-opencutlist-icon-chevron-right"></i></button>
                             </div>
                         {% endif %}
-                        {% if not options.bar_folding %}
-                            <div class="ladb-heading pull-right" style="margin-right: 10px;"><strong>{{ loop.index }} / {{ bars|length }}</strong></div>
-                        {% endif %}
+                        <div class="ladb-heading pull-right" style="margin-right: 10px;"><strong>{{ barIndex }}{% if bar.count > 1 %} ... {{ barIndex + bar.count - 1 }}{% endif%} / {{ summary.total_used_count }}</strong></div>
+                        {% set barIndex = barIndex + bar.count %}
                         {% if bar.count > 1 %}
                             <div class="ladb-heading-count pull-right">x&nbsp;{{ bar.count }}</div>
                         {% endif %}
@@ -323,25 +323,25 @@
                 </tr>
                 {% if not options.hide_part_list %}
                     <tr class="table-column-heading">
-                        <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.list.number'|i18next }}</td>
-                        <td class="text-center" rowspan="2" style="vertical-align: middle !important;">{{ 'tab.cutlist.list.name'|i18next }}</td>
-                        <td class="text-center" rowspan="2" style="vertical-align: middle !important;" width="8%">{{ 'tab.cutlist.list.count'|i18next }}</td>
+                        <td rowspan="2" width="5%">{{ 'tab.cutlist.list.number'|i18next }}</td>
+                        <td rowspan="2">{{ 'tab.cutlist.list.name'|i18next }}</td>
+                        <td rowspan="2" width="8%">{{ 'tab.cutlist.list.count'|i18next }}</td>
                         {% if showCuttingDimensions %}
-                            <td class="text-center">{{ 'tab.cutlist.list.cutting'|i18next }}</td>
+                            <td>{{ 'tab.cutlist.list.cutting'|i18next }}</td>
                         {% endif %}
-                        <td class="text-center">{{ 'tab.cutlist.list.bbox'|i18next }}</td>
+                        <td>{{ 'tab.cutlist.list.bbox'|i18next }}</td>
                     </tr>
                     <tr class="table-column-heading">
                         {% if showCuttingDimensions %}
-                            <td class="text-center" width="8%">{{ ('tab.cutlist.list.length_short')|i18next }}</td>
+                            <td width="8%">{{ ('tab.cutlist.list.length_short')|i18next }}</td>
                         {% endif %}
-                        <td class="text-center" width="8%">{{ ('tab.cutlist.list.length_short')|i18next }}</td>
+                        <td width="8%">{{ ('tab.cutlist.list.length_short')|i18next }}</td>
                     </tr>
                     {% for part in bar.grouped_parts %}
                         <tr class="ladb-cutlist-row ladb-minitools-holder" data-part-id="{{ part.id }}">
                             {% include 'tabs/cutlist/_list-row-col-number.twig' %}
                             <td>
-                                {% if group.material_type == 3 %}   {# 3 = TYPE_DIMENSIONAL #}
+                                {% if group.material_type != 4 %}   {# 4 = TYPE_EDGE #}
                                     <div class="ladb-minitools ladb-minitools-right no-print">
                                         {% if part.flipped %}<a href="#" class="ladb-tool-info" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.flipped'|i18next }}"><i class="ladb-opencutlist-icon-flipped"></i></a>{% endif %}
                                         <span class="ladb-separator"></span>

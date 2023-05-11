@@ -1,0 +1,226 @@
+//
+// Cutlist Cuttingdiagram
+//
+
+.ladb-cutlist-cuttingdiagram-group {
+  page-break-inside: avoid;
+
+  svg {
+    shape-rendering: geometricPrecision;
+    text-rendering: optimizeLegibility;
+    width: 100%;
+
+    /* .sheet,.bar */
+
+    .sheet, .bar {
+
+      &:hover {
+        .sheet-inner, .bar-inner {
+          fill: @ladb-brand-primary;
+        }
+      }
+
+      .sheet-outer, .bar-outer {
+        fill: #333;
+      }
+      .sheet-inner, .bar-inner {
+        fill: #d3d3d3;
+      }
+      .sheet-dimension, .bar-dimension {
+        fill: #888;
+      }
+
+    }
+
+    /* .part */
+
+    .part {
+      cursor: url('../img/cursor-highlight.png'), auto;
+
+      &:hover {
+
+        .part-outer {
+          fill: @ladb-brand-primary;
+        }
+        .part-inner {
+          fill: lighten(@ladb-brand-primary, 40%);
+          filter: none;
+        }
+
+      }
+
+      .part-outer {
+        fill: #fff;
+      }
+      .part-inner {
+        fill: #eee;
+      }
+      .part-edge {
+        fill: @ladb-material-type-4;
+      }
+      .part-number {
+        fill: #000;
+      }
+      .part-dimension {
+        fill: #000;
+      }
+    }
+
+    /* .leftover */
+
+    .leftover {
+
+      &:hover {
+        .leftover-inner {
+          fill: #fafafa;
+        }
+        .leftover-cross {
+          stroke: @ladb-brand-primary;
+        }
+      }
+
+      .leftover-inner {
+        fill: #fff;
+      }
+      .leftover-cross {
+        stroke: #aaa;
+        stroke-width: 1px;
+      }
+      .leftover-dimension {
+        fill: #888;
+      }
+
+    }
+
+    /* .cut */
+
+    .cut {
+
+      &:hover {
+        .cut-outer, .cut-inner {
+          fill: @ladb-brand-primary;
+          fill-opacity: 1.0;
+        }
+      }
+
+      &.cut-trimming {
+        &.cut-highlighted {
+          .cut-outer, .cut-inner {
+            fill: #555555;
+          }
+          .cut-outer {
+            fill-opacity: 0.5;
+          }
+        }
+        &:hover {
+          .cut-outer, .cut-inner {
+            fill: @ladb-brand-primary;
+          }
+          .cut-outer {
+            fill-opacity: 1.0;
+          }
+        }
+      }
+
+      &.cut-bounding {
+        &.cut-highlighted {
+          .cut-outer, .cut-inner {
+            fill: #F5486E;
+          }
+          .cut-outer {
+            fill-opacity: 0.5;
+          }
+        }
+        &:hover {
+          .cut-outer, .cut-inner {
+            fill: #F5486E;
+          }
+          .cut-outer {
+            fill-opacity: 1.0;
+          }
+        }
+      }
+
+      &.cut-internal-through {
+        &.cut-highlighted {
+          .cut-outer, .cut-inner {
+            fill: #2DB84D;
+          }
+          .cut-outer {
+            fill-opacity: 0.5;
+          }
+        }
+        &:hover {
+          .cut-outer, .cut-inner {
+            fill: #2DB84D;
+          }
+          .cut-outer {
+            fill-opacity: 1.0;
+          }
+        }
+      }
+
+      .cut-outer {
+        fill: #ffffff;
+        fill-opacity: 0.01;
+      }
+      .cut-inner {
+        fill: #555;
+      }
+
+    }
+
+  }
+
+}
+
+// Cuts summary
+
+.ladb-cutlist-cuttingdiagram-cuts-summary {
+  border-left-width: 2px;
+  border-left-style: solid;
+  margin-bottom: 4px;
+
+  &.ladb-cutlist-cuttingdiagram-cuts-summary-final {
+    border-color: #F5486E;
+  }
+  &.ladb-cutlist-cuttingdiagram-cuts-summary-through {
+    border-color: #2DB84D;
+  }
+
+  > div:first-child {
+    font-size: 16px;
+    margin-bottom: 4px;
+  }
+
+}
+
+@media print {
+
+  .ladb-cutlist-cuttingdiagram-group svg {
+
+    &.full-width-diagram {
+      max-height: 86vh !important;
+    }
+
+    .part {
+      .part-outer {
+        fill: #fff;
+      }
+      .part-inner {
+        fill: #fff;
+      }
+    }
+
+    .cut {
+      .cut-inner {
+        fill: #000;
+      }
+      .cut-outer {
+        fill: none !important;
+      }
+    }
+
+  }
+
+}

@@ -15,10 +15,10 @@
                 <div class="col-xs-5 text-left"><span style="font-size: 130%; font-weight: bold;">{{ capabilities.manifest.version }}</span>{% if capabilities.is_dev %}<br><small>( build: {{ capabilities.manifest.build }} )</small>{% endif %}</div>
             </div>
             <p class="text-center">
-                <a href="https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/CHANGELOG.md" target="_blank">{{ 'core.upgrade.changelog'|i18next }}</a>
+                <a id="ladb_link_changelog" href="#">{{ 'core.upgrade.changelog'|i18next }}</a>
             </p>
         {% else %}
-            <p>{{ 'core.upgrade.up_to_date'|i18next }}</p>
+            <p style="margin:20px;">{{ 'core.upgrade.up_to_date'|i18next }}</p>
         {% endif %}
     </div>
     <div id="ladb_panel_progress" style="display: none;">
@@ -30,8 +30,12 @@
     </div>
 {% endblock %}
 
-{% block footerInner %}
-    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.close'|i18next }}</button>
+{% block footerLeftInner %}
+    <button class="btn btn-default" data-help-page="core.upgrade"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
+{% endblock %}
+
+{% block footerRightInner %}
+    <button class="btn btn-default" data-dismiss="modal">{{ 'default.close'|i18next }}</button>
     {% if capabilities.manifest.version is empty %}
         <button id="ladb_btn_download" class="btn btn-primary ladb-btn-download">{{ 'default.download'|i18next }}</button>
     {% elseif capabilities.update_available %}

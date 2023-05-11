@@ -105,6 +105,9 @@
                 }))
             ;
 
+            // Bind help button
+            that.dialog.bindHelpButtonsInParent(that.$dropdown);
+
             // Bind buttons
             $('.ladb-widget-preset-btn-restore-app-defaults', that.$dropdown).on('click', function () {
                 rubyCallCommand('core_get_app_defaults', {
@@ -137,7 +140,7 @@
 
             });
             $('.ladb-widget-preset-btn-new', that.$dropdown).on('click', function () {
-                that.dialog.prompt(i18next.t('core.preset.new'), i18next.t('core.preset.new_prompt'), function (name) {
+                that.dialog.prompt(i18next.t('core.preset.new'), i18next.t('core.preset.new_prompt'), '', function (name) {
                     that.saveToPreset(name, true);
                 });
             });

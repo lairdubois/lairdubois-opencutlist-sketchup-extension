@@ -5,7 +5,8 @@ module Ladb::OpenCutList
   class CutlistNumbersWorker
 
     def initialize(settings, cutlist, reset)
-      @group_id = settings['group_id']
+
+      @group_id = settings.fetch('group_id', nil)
 
       @cutlist = cutlist
       @reset = reset
@@ -22,7 +23,7 @@ module Ladb::OpenCutList
       return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
 
       # Start model modification operation
-      model.start_operation('OpenCutList - Numbers', true, false, true)
+      model.start_operation('OCL Numbers', true, false, true)
 
       definitions = model.definitions
 

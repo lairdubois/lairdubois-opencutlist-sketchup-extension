@@ -1,10 +1,18 @@
-{% set areaSize = 280 %}
-{% set axisWidth = 2 %}
-{% set axisLength = 20 %}
-{% set axisOffset = 10 %}
-{% set partOutlineWidth = 2 %}
-{% set partLength = (areaSize - 40) * part.l_ratio %}
-{% set partWidth = (areaSize - 40) * part.w_ratio %}
+{% set areaSize = areaSize|default(280) %}
+{% set axisWidth = axisWidth|default(2) %}
+{% set axisLength = axisLength|default(20) %}
+{% set axisOffset = axisOffset|default(10) %}
+{% set partOutlineWidth = partOutlineWidth|default(2) %}
+{% set partLength = partLength|default((areaSize - 40) * part.l_ratio) %}
+{% set partWidth = partWidth|default((areaSize - 40) * part.w_ratio) %}
+{% set hideArrow = hideArrow|default(false) %}
+{% set hideAxes = hideAxes|default(false) %}
+{% set hideLengthDimension = hideLengthDimension|default(false) %}
+{% set hideWidthDimension = hideWidthDimension|default(false) %}
+{% set hideName = hideName|default(false) %}
+{% set hideGrainDirectionArrow = hideGrainDirectionArrow|default(false) %}
+{% set arrowDashed = arrowDashed|default(false) %}
+{% set flipped = flipped|default((part.flipped b-xor part.axes_flipped) == 1) %}
 <svg viewBox="0 0 {{ areaSize }} {{ areaSize }}" xmlns="http://www.w3.org/2000/svg" version="1.1" style="width: {{ areaSize }}px; height: {{ areaSize }}px;">
 
     <g class="part">
@@ -12,47 +20,55 @@
         <rect x="{{ (areaSize - partLength) / 2 + partOutlineWidth }}" y="{{ (areaSize - partWidth) / 2 + partOutlineWidth }}" width="{{ partLength - partOutlineWidth * 2 }}" height="{{ partWidth - partOutlineWidth * 2 }}" class="part-inner" />
     </g>
 
-    <g class="arrow">
-        {% set arrowOriginX = part.flipped ? areaSize - (areaSize - partLength) / 2 - partOutlineWidth * 2 : (areaSize - partLength) / 2 + partOutlineWidth * 2 %}
-        {% set arrowOriginY = (areaSize - partWidth) / 2 + partOutlineWidth * 2 %}
-        {% set arrowWidth = partLength - partOutlineWidth * 4 %}
-        {% set arrowLength = partWidth - partOutlineWidth * 4 %}
-        {% set arrowPattern = [
-            [     0 , 1/3.0 ],
-            [ 1/2.0 , 1/3.0 ],
-            [ 1/2.0 ,     0 ],
-            [     1 , 1/2.0 ],
-            [ 1/2.0 ,     1 ],
-            [ 1/2.0 , 2/3.0 ],
-            [     0 , 2/3.0 ],
-            [     0 , 1/3.0 ],
-        ] %}
-        <polyline points="{% for point in arrowPattern %}{{ arrowOriginX + arrowWidth * point[0] * (part.flipped ? -1 : 1) }},{{ arrowOriginY + arrowLength * point[1] }} {% endfor %}"/>
-    </g>
+    {% if not hideArrow %}
+        <g class="arrow">
+            {% set arrowOriginX = flipped ? areaSize - (areaSize - partLength) / 2 - partOutlineWidth * 2 : (areaSize - partLength) / 2 + partOutlineWidth * 2 %}
+            {% set arrowOriginY = (areaSize - partWidth) / 2 + partOutlineWidth * 2 %}
+            {% set arrowWidth = partLength - partOutlineWidth * 4 %}
+            {% set arrowLength = partWidth - partOutlineWidth * 4 %}
+            {% set arrowPattern = [
+                [     0 , 1/3.0 ],
+                [ 1/2.0 , 1/3.0 ],
+                [ 1/2.0 ,     0 ],
+                [     1 , 1/2.0 ],
+                [ 1/2.0 ,     1 ],
+                [ 1/2.0 , 2/3.0 ],
+                [     0 , 2/3.0 ],
+                [     0 , 1/3.0 ],
+            ] %}
+            <polyline points="{% for point in arrowPattern %}{{ arrowOriginX + arrowWidth * point[0] * (flipped ? -1 : 1) }},{{ arrowOriginY + arrowLength * point[1] }} {% endfor %}"{% if arrowDashed %} stroke-dasharray="4"{% endif %}/>
+        </g>
+    {% endif %}
 
     {% block extra %}{% endblock %}
 
-    {% if partLength > (axisOffset + axisWidth) * 2 and partWidth > (axisOffset + axisWidth) * 2 %}
+    {% if not hideAxes and partLength > (axisOffset + axisWidth) * 2 and partWidth > (axisOffset + axisWidth) * 2 %}
         {% set axisWLength = min(axisLength, partWidth - axisOffset * 2) %}
         {% set axisLLength = min(axisLength, partLength - axisOffset * 2) %}
-        {% set axesX = part.flipped ? (areaSize + partLength) / 2 - axisOffset - axisWLength : (areaSize - partLength) / 2 + axisOffset %}
+        {% set axesX = flipped ? (areaSize + partLength) / 2 - axisOffset - axisWLength : (areaSize - partLength) / 2 + axisOffset %}
         {% set axesY = (areaSize + partWidth) / 2 - axisOffset - axisLLength %}
         <svg x="{{ axesX }}" y="{{ axesY }}" class="axes" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.part_axes'|i18next }}">
-            {% if part.flipped %}<g transform="scale(-1,1) translate(-{{ axisWLength }},0)">{% endif %}
+            {% if flipped %}<g transform="translate({{ axisWLength }},0) scale(-1,1) ">{% endif %}
                 <rect x="0" y="0" width="{{ axisLLength }}" height="{{ axisWLength }}" class="axis axis-bg" />
                 <rect x="0" y="{{ axisWLength - axisWidth }}" width="{{ axisWidth }}" height="{{ axisWidth }}" class="axis axis-origin" />
-                <rect x="0" y="0" width="{{ axisWidth }}" height="{{ axisWLength - axisWidth }}" class="axis axis-{{ part.dimensions_to_normals.width }}" />
-                <rect x="{{ axisWidth }}" y="{{ axisWLength - axisWidth }}" width="{{ axisLLength - axisWidth}}" height="{{ axisWidth }}" class="axis axis-{{ part.dimensions_to_normals.length }}" />
-            {% if part.flipped %}</g>{% endif %}
+                <rect x="0" y="0" width="{{ axisWidth }}" height="{{ axisWLength - axisWidth }}" class="axis axis-{{ part.dimensions_to_axes.width }}" />
+                <rect x="{{ axisWidth }}" y="{{ axisWLength - axisWidth }}" width="{{ axisLLength - axisWidth}}" height="{{ axisWidth }}" class="axis axis-{{ part.dimensions_to_axes.length }}" />
+            {% if flipped %}</g>{% endif %}
         </svg>
     {% endif %}
 
-    <text text-anchor="middle" x="{{ areaSize / 2 }}" y="{{ (areaSize - partWidth) / 2 - 10 }}" font-family="Verdana" font-size="10">{{ 'tab.cutlist.list.length'|i18next }} = {{ part.length }}</text>
-    <text text-anchor="middle" x="-{{ areaSize / 2 }}" y="{{ (areaSize - partLength) / 2 - 10 }}" font-family="Verdana" font-size="10" transform="rotate(-90)">{{ 'tab.cutlist.list.width'|i18next }} = {{ part.width }}</text>
-    <text text-anchor="middle" alignment-baseline="middle" x="{{ areaSize / 2 }}" y="{{ areaSize / 2 }}" font-family="Verdana" font-size="10" fill="#aaa">{{ part.name }}</text>
+    {% if not hideLengthDimension %}
+        <text text-anchor="middle" x="{{ areaSize / 2 }}" y="{{ (areaSize - partWidth) / 2 - 10 }}" font-family="Verdana" font-size="10">{{ 'tab.cutlist.list.length_short'|i18next }} = {{ part.length }}</text>
+    {% endif %}
+    {% if not hideWidthDimension %}
+        <text text-anchor="middle" x="-{{ areaSize / 2 }}" y="{{ (areaSize - partLength) / 2 - 10 }}" font-family="Verdana" font-size="10" transform="rotate(-90)">{{ 'tab.cutlist.list.width_short'|i18next }} = {{ part.width }}</text>
+    {% endif %}
+    {% if not hideName %}
+        <text text-anchor="middle" alignment-baseline="middle" x="{{ areaSize / 2 }}" y="{{ areaSize / 2 }}" font-family="Verdana" font-size="10" fill="#555">{{ part.name }}</text>
+    {% endif %}
 
-    {% if group.material_grained and not part.ignore_grain_direction %}
-        {% include 'core/_grain-direction-arrow.twig' with { 'centerX':areaSize / 2, 'centerY':(areaSize + partWidth) / 2 + 20 } %}
+    {% if not hideGrainDirectionArrow and group.material_grained and not part.ignore_grain_direction %}
+        {% include 'core/_grain-direction-arrow.twig' with { 'centerX':areaSize / 2, 'centerY':(areaSize + partWidth) / 2 + 16 } %}
     {% endif %}
 
 </svg>

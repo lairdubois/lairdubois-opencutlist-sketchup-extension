@@ -5,7 +5,7 @@
         <a id="ladb_tab_btn_{{ tabDef.name }}"{% if tabDef.classes %} class="{{ tabDef.classes }}"{% endif %} href="#"><i class="{{ tabDef.icon }}"></i><div>{{ ('tab.'~tabDef.name~'.label')|i18next }}</div></a>
     {% endfor %}
     <div id="ladb_leftbar_bottom" class="ladb-leftbar-bottom" style="display: none;">
-        <a href="#" id="ladb_leftbar_btn_docs"><i class="ladb-opencutlist-icon-help"></i><div>{{ 'core.leftbar.more_docs'|i18next }}</div></a>
+        <a href="#" data-help-page=""><i class="ladb-opencutlist-icon-help"></i><div>{{ 'core.leftbar.more_docs'|i18next }}</div></a>
         <div id="ladb_leftbar_btn_more" class="ladb-leftbar-subbar ladb-leftbar-subbar-{% if capabilities.language == 'fr' %}8{% else %}6{% endif %}">
             <div class="ladb-subbar-toggle">
                 <div class="ladb-toggle-handle"><i class="ladb-opencutlist-icon-more"></i><div>{{ 'core.leftbar.more'|i18next }}</div></div>
@@ -43,19 +43,6 @@
             </div>
             <div class="countdown">
                 <div class="countdown-bar" style="width: 100%;"></div>
-            </div>
-        </div>
-    {% elseif not capabilities.html_dialog_compatible and not compatibilityAlertHidden %}
-        <div id="ladb_compatibility_alert" class="no-print alert alert-warning">
-            <div class="media">
-                <button id="ladb_btn_close_compatibility_alert" type="button" class="close"><span>&times;</span></button>
-                <div class="media-left">
-                    <i class="ladb-opencutlist-icon-warning" style="font-size: 150%;"></i>
-                </div>
-                <div class="media-body">
-                    <h4 class="media-heading">{{ 'default.caution'|i18next }}</h4>
-                    <p>{{ 'core.warning.old_su'|i18next({ 'sketchup_version':capabilities.sketchup_version }) }}</p>
-                </div>
             </div>
         </div>
     {% endif %}

@@ -10,7 +10,8 @@
     LadbTextinputCode.prototype = new LadbTextinputAbstract;
 
     LadbTextinputCode.DEFAULTS = $.extend(LadbTextinputAbstract.DEFAULTS, {
-        variableDefs: []
+        variableDefs: [],
+        snippetDefs: []
     });
 
     LadbTextinputCode.prototype.focus = function () {
@@ -23,8 +24,59 @@
         this.cm.refresh();
     };
 
+    LadbTextinputCode.prototype.val = function (value) {
+        if (this.cm) {
+            this.cm.setValue(value);
+            this.cm.refresh();
+        }
+        return LadbTextinputAbstract.prototype.val.call(this, value);
+    };
+
     LadbTextinputCode.prototype.createLeftToolsContainer = function ($toolContainer) {
         // Do not create left tools container
+    };
+
+    LadbTextinputCode.prototype.appendRightTools = function ($toolsContainer) {
+        var that = this;
+
+        if (this.options.snippetDefs && this.options.snippetDefs.length > 0) {
+
+            var $snippetDropdownBtn = $('<div data-toggle="dropdown">')
+                .append('<i class="ladb-opencutlist-icon-snippets">')
+            ;
+            var $snippetDropdown = $('<ul class="dropdown-menu dropdown-menu-right">');
+
+            for (var i = 0; i < this.options.snippetDefs.length; i++) {
+                let snippetDef = that.options.snippetDefs[i];
+                if (snippetDef.name === '-') {
+                    $snippetDropdown
+                        .append($('<li role="separator" class="divider">'))
+                    ;
+                } else {
+                    $snippetDropdown
+                        .append($('<li>')
+                            .append($('<a href="#">')
+                                .on('click', function () {
+                                    that.val(snippetDef.value);
+                                    $(this).blur();
+                                    that.focus();
+                                })
+                                .append(snippetDef.name)
+                            )
+                        )
+                    ;
+                }
+            }
+
+            var $snippetBtn = $('<div class="ladb-textinput-tool ladb-textinput-tool-btn dropdown" tabindex="-1" data-toggle="tooltip" title="' + i18next.t('core.component.textinput_code.snippets') + '">')
+                .append($snippetDropdownBtn)
+                .append($snippetDropdown)
+            ;
+            $toolsContainer.append($snippetBtn);
+
+        }
+
+        LadbTextinputAbstract.prototype.appendRightTools.call(this, $toolsContainer);
     };
 
     LadbTextinputCode.prototype.init = function() {

@@ -18,14 +18,25 @@
     display: inline-block;
   }
 
-  &.ladb-minitools-lg {
-    margin-right: 20px;
+  &.ladb-minitools-lg, &.ladb-minitools-lgw {
     font-size: 150%;
     height: 35px;
     line-height: 35px;
 
     > a {
-      width: 30px;
+      width: 28px;
+    }
+
+  }
+
+  &.ladb-minitools-lgw {
+
+    &.ladb-minitools-right {
+      margin-right: 20px;
+    }
+
+    &.ladb-minitools-left {
+      margin-left: 20px;
     }
 
   }
@@ -73,6 +84,10 @@
         color: darken(#888, 30%);
       }
 
+      &.ladb-tool-black {
+        color: lighten(#000, 30%);
+      }
+
     }
 
     &:hover, &:focus {
@@ -97,6 +112,10 @@
 
     &.ladb-tool-dark {
       color: #888;
+    }
+
+    &.ladb-tool-black {
+      color: #000;
     }
 
   }

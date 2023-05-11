@@ -6,9 +6,7 @@
 
 {% block headerInner %}
     {{ parent() }}
-    <div class="ladb-header-extra">
-        {% include 'tabs/cutlist/_header-extra.twig' with { 'generatedAt':'000' } %}
-    </div>
+    {% include 'tabs/cutlist/_header-extra.twig' %}
 {% endblock %}
 
 {% block headerHeadingInner %}
@@ -18,6 +16,8 @@
 {% block headerToolsInner %}
     <button id="ladb_btn_labels" class="btn btn-primary"><i class="ladb-opencutlist-icon-refresh"></i> {{ 'tab.cutlist.labels.title'|i18next }}...</button>
     <button id="ladb_btn_print" class="btn btn-default"><i class="ladb-opencutlist-icon-print"></i> {{ 'default.print'|i18next }}</button>
+    &nbsp;
+    <button class="btn btn-default" data-help-page="cutlist.labels"><i class="ladb-opencutlist-icon-help"></i></button>
     &nbsp;
     <button id="ladb_btn_close" class="btn btn-default"><i class="ladb-opencutlist-icon-close"></i> {{ 'default.close'|i18next }}</button>
 {% endblock %}
@@ -39,7 +39,7 @@
         {% include 'core/_alert-warnings.twig' %}
 
         {% for page in pages %}
-            <table id="ladb_cuttingdiagram_group_label_page_{{ loop.index }}" data-page-index="{{ loop.index }}" class="table table-bordered ladb-cutlist-group ladb-cuttingdiagram-labels-group">
+            <table id="ladb_cuttingdiagram_group_label_page_{{ loop.index }}" data-page-index="{{ loop.index }}" class="table table-bordered ladb-cutlist-group ladb-cutlist-labels-group">
                 <thead class="no-print">
                 <tr class="table-heading">
                     <td>
@@ -52,7 +52,7 @@
                 <tr>
                     <td class="text-center">
 
-                        {% set partCount = page.part_infos|length %}
+                        {% set partCount = page.partInfos|length %}
 
                         <svg viewBox="0 0 {{ page_width }} {{ page_height }}" {% if compatible_with('svg.height-auto') %}width="80%"{% else %}width="{{ page_width * 72 }}" height="{{ page_height * 72 }}"{% endif %}>
 
@@ -64,8 +64,8 @@
                                         {% set labelX = col * (labelWidth + spacing_v) %}
                                         {% set partIndex = row * col_count + col %}
                                         {% if partIndex < partCount %}
-                                            {% set part_info = page.part_infos[partIndex] %}
-                                            {% if part_info.part %}
+                                            {% set partInfo = page.partInfos[partIndex] %}
+                                            {% if partInfo.part %}
                                                 <g transform="translate({{ labelX + labelWidth / 2 }} {{ labelY + labelHeight / 2 }})">
                                                     {% for elementDef in layout %}
                                                         <g transform="translate({{ elementDef.x * labelWidth }} {{ elementDef.y * labelHeight }}){% if elementDef.rotation %} rotate({{ elementDef.rotation }}){% endif %}">

@@ -1,14 +1,15 @@
 module Ladb::OpenCutList
 
   require_relative 'size2d'
+  require_relative '../../utils/axis_utils'
 
   class Size3d < Size2d
 
-    DEFAULT_NORMALS = [ X_AXIS, Y_AXIS, Z_AXIS ]
+    DEFAULT_AXES = [ X_AXIS, Y_AXIS, Z_AXIS ]
 
-    attr_accessor :thickness
+    attr_accessor :thickness, :axes
 
-    def initialize(length = 0, width = 0, thickness = 0, normals = DEFAULT_NORMALS)
+    def initialize(length = 0, width = 0, thickness = 0, axes = DEFAULT_AXES)
       if length.is_a?(String)    # String representation of a size "LxLxL"
         s_length, s_width, s_thickness = StringUtils.split_dxdxd(length)
         length = s_length.to_l
@@ -22,7 +23,7 @@ module Ladb::OpenCutList
       end
       super(length, width)
       @thickness = thickness
-      @normals = normals
+      @axes = axes
     end
 
     # -----
@@ -30,11 +31,11 @@ module Ladb::OpenCutList
     def self.create_from_bounds(bounds, scale, auto_orient = false)
       if auto_orient
         ordered = [
-            { :value => (bounds.width * scale.x).to_l, :normal => X_AXIS, :sub_sort_index => 2 },
-            { :value => (bounds.height * scale.y).to_l, :normal => Y_AXIS, :sub_sort_index => 1 },
-            { :value => (bounds.depth * scale.z).to_l, :normal => Z_AXIS, :sub_sort_index => 0 }
+            { :value => (bounds.width * scale.x).to_l, :axis => X_AXIS, :sub_sort_index => 2 },
+            { :value => (bounds.height * scale.y).to_l, :axis => Y_AXIS, :sub_sort_index => 1 },
+            { :value => (bounds.depth * scale.z).to_l, :axis => Z_AXIS, :sub_sort_index => 0 }
         ].sort_by { |item| [ item[:value], item[:sub_sort_index] ] }   # Added sub_sort_index as sort parameter to sort equals values in default axes order.
-        Size3d.new(ordered[2][:value], ordered[1][:value], ordered[0][:value], [ ordered[2][:normal], ordered[1][:normal], ordered[0][:normal] ])
+        Size3d.new(ordered[2][:value], ordered[1][:value], ordered[0][:value], [ ordered[2][:axis], ordered[1][:axis], ordered[0][:axis] ])
       else
         Size3d.new((bounds.width * scale.x).to_l, (bounds.height * scale.y).to_l, (bounds.depth * scale.z).to_l)
       end
@@ -49,50 +50,58 @@ module Ladb::OpenCutList
 
     # -----
 
-    def auto_oriented
-      @normals != DEFAULT_NORMALS
+    def auto_oriented?
+      @axes != DEFAULT_AXES
     end
 
-    def oriented_normal(axis)
+    def axes_flipped?
+      AxisUtils.flipped?(@axes[0], @axes[1], @axes[2])
+    end
+
+    def oriented_axis(axis)
       case axis
         when X_AXIS
-          @normals[0]
+          @axes[0]
         when Y_AXIS
-          @normals[1]
+          @axes[1]
         when Z_AXIS
-          @normals[2]
+          @axes[2]
         else
           raise 'Invalid axis'
       end
     end
 
-    def normals_to_values
+    def oriented_transformation
+      Geom::Transformation.axes(ORIGIN, @axes[0], @axes[1], @axes[2])
+    end
+
+    def axes_to_values
       r = {}
-      r[@normals[0] == X_AXIS ? :x : @normals[0] == Y_AXIS ? :y : :z] = @length.to_f
-      r[@normals[1] == X_AXIS ? :x : @normals[1] == Y_AXIS ? :y : :z] = @width.to_f
-      r[@normals[2] == X_AXIS ? :x : @normals[2] == Y_AXIS ? :y : :z] = @thickness.to_f
+      r[@axes[0] == X_AXIS ? :x : @axes[0] == Y_AXIS ? :y : :z] = @length.to_f
+      r[@axes[1] == X_AXIS ? :x : @axes[1] == Y_AXIS ? :y : :z] = @width.to_f
+      r[@axes[2] == X_AXIS ? :x : @axes[2] == Y_AXIS ? :y : :z] = @thickness.to_f
       r
     end
 
-    def normals_to_dimensions
+    def axes_to_dimensions
       r = {}
-      r[@normals[0] == X_AXIS ? :x : @normals[0] == Y_AXIS ? :y : :z] = 'length'
-      r[@normals[1] == X_AXIS ? :x : @normals[1] == Y_AXIS ? :y : :z] = 'width'
-      r[@normals[2] == X_AXIS ? :x : @normals[2] == Y_AXIS ? :y : :z] = 'thickness'
+      r[@axes[0] == X_AXIS ? :x : @axes[0] == Y_AXIS ? :y : :z] = 'length'
+      r[@axes[1] == X_AXIS ? :x : @axes[1] == Y_AXIS ? :y : :z] = 'width'
+      r[@axes[2] == X_AXIS ? :x : @axes[2] == Y_AXIS ? :y : :z] = 'thickness'
       r
     end
 
-    def dimensions_to_normals
+    def dimensions_to_axes
       r = {}
-      r[:length] = @normals[0] == X_AXIS ? 'x' : @normals[0] == Y_AXIS ? 'y' : 'z'
-      r[:width] = @normals[1] == X_AXIS ? 'x' : @normals[1] == Y_AXIS ? 'y' : 'z'
-      r[:thickness] = @normals[2] == X_AXIS ? 'x' : @normals[2] == Y_AXIS ? 'y' : 'z'
+      r[:length] = @axes[0] == X_AXIS ? 'x' : @axes[0] == Y_AXIS ? 'y' : 'z'
+      r[:width] = @axes[1] == X_AXIS ? 'x' : @axes[1] == Y_AXIS ? 'y' : 'z'
+      r[:thickness] = @axes[2] == X_AXIS ? 'x' : @axes[2] == Y_AXIS ? 'y' : 'z'
       r
     end
 
     # -----
 
-    # Returns square area normal to given axis
+    # Returns square area axis to given axis
     def area_by_axis(axis)
       case axis
         when X_AXIS

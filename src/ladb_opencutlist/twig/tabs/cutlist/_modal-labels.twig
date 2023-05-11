@@ -1,15 +1,19 @@
 {% extends 'core/_modal.twig' %}
 
 {% set id = 'ladb_cutlist_modal_labels' %}
-{% set title = ('tab.cutlist.labels.title'|i18next())~'<small class="ladb-horizontal-left-separator">'~group.material_name|escape('html')~' / '~group.std_dimension~'</small>' %}
+{% set title = ('tab.cutlist.labels.title'|i18next)~'<small class="ladb-horizontal-left-separator">'~group.material_name|escape('html')~' / '~group.std_dimension~'</small>' %}
+
+{% block headerToolsInner %}
+    {% include 'components/_widget-preset.twig' %}
+    <button class="btn btn-default btn-xs" data-help-page="cutlist.labels"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
+{% endblock %}
 
 {% block headerInner %}
     {{ parent() }}
-    {% include 'components/_widget-preset.twig' %}
     <ul class="nav nav-tabs nav-justified" role="tablist">
         <li role="presentation"{% if tab == 'layout' %} class="active"{% endif %}><a href="#tab_labels_options_layout" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-labels"></i> {{ 'tab.cutlist.labels.options_layout'|i18next }}</a></li>
         <li role="presentation"{% if tab == 'settings' %} class="active"{% endif %}><a href="#tab_labels_options_settings" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-settings"></i> {{ 'tab.cutlist.labels.options_settings'|i18next }}</a></li>
-        <li role="presentation"{% if tab == 'part_order_strategy' %} class="active"{% endif %}><a href="#tab_labels_options_part_order_strategy" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-sort-asc"></i> {{ 'tab.cutlist.labels.options_part_order_strategy'|i18next }}</a></li>
+        <li role="presentation"{% if tab == 'part_order_strategy' %} class="active"{% endif %}><a href="#tab_labels_options_part_order_strategy" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-sort-asc"></i> {{ 'tab.cutlist.labels.options_part_order_strategy'|i18next }}{% if isBinSorterDisabled %} <i class="ladb-opencutlist-icon-warning ladb-color-warning"></i>{% endif %}</a></li>
         <li role="presentation"{% if tab == 'offset' %} class="active"{% endif %}><a href="#tab_labels_options_offset" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-labels-offset"></i> {{ 'tab.cutlist.labels.options_offset'|i18next }}</a></li>
     </ul>
 {% endblock %}
@@ -33,6 +37,7 @@
                                 <select class="form-control" id="ladb_select_page_format">
                                     <option value="210mmx297mm" data-content="A4 - {{ 'tab.cutlist.labels.option_page_format_portrait'|i18next }}"></option>
                                     <option value="297mmx210mm" data-content="A4 - {{ 'tab.cutlist.labels.option_page_format_landscape'|i18next }}"></option>
+                                    <option data-divider="true"></option>
                                     <option value='8.5"x11"' data-content="Letter - {{ 'tab.cutlist.labels.option_page_format_portrait'|i18next }}"></option>
                                     <option value='11"x8.5"' data-content="Letter - {{ 'tab.cutlist.labels.option_page_format_landscape'|i18next }}"></option>
                                     <option data-divider="true"></option>
@@ -139,8 +144,7 @@
     </div>
 {% endblock %}
 
-{% block footerInner %}
-    <button type="button" class="btn btn-default pull-left" id="ladb_cutlist_labels_btn_help"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
-    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
-    <button type="button" class="btn btn-primary btn-validate-modal" id="ladb_cutlist_labels_btn_generate">{{ 'default.generate'|i18next }}</button>
+{% block footerRightInner %}
+    <button class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
+    <button class="btn btn-primary btn-validate-modal" id="ladb_cutlist_labels_btn_generate">{{ 'default.generate'|i18next }}</button>
 {% endblock %}

@@ -9,17 +9,17 @@ module Ladb::OpenCutList
 
     include LayerVisibilityHelper
 
-    def _compute_children_faces_triangles(view, entities, transformation = nil)
+    def _compute_children_faces_triangles(entities, transformation = nil, filtered_faces = nil)
       triangles = []
       entities.each { |entity|
         next if entity.is_a?(Sketchup::Edge)   # Minor Speed improvement when there's a lot of edges
         if entity.visible? && _layer_visible?(entity.layer)
           if entity.is_a?(Sketchup::Face)
-            triangles.concat(_compute_face_triangles(view, entity, transformation))
+            triangles.concat(_compute_face_triangles(entity, transformation)) if filtered_faces.nil? || filtered_faces.include?(entity)
           elsif entity.is_a?(Sketchup::Group)
-            triangles.concat(_compute_children_faces_triangles(view, entity.entities, TransformationUtils::multiply(transformation, entity.transformation)))
+            triangles.concat(_compute_children_faces_triangles(entity.entities, TransformationUtils::multiply(transformation, entity.transformation), filtered_faces))
           elsif entity.is_a?(Sketchup::ComponentInstance) && entity.definition.behavior.cuts_opening?
-            triangles.concat(_compute_children_faces_triangles(view, entity.definition.entities, TransformationUtils::multiply(transformation, entity.transformation)))
+            triangles.concat(_compute_children_faces_triangles(entity.definition.entities, TransformationUtils::multiply(transformation, entity.transformation), filtered_faces))
           end
         end
       }
@@ -27,20 +27,19 @@ module Ladb::OpenCutList
     end
 
     #
-    # Returns face triangles as array of points offseted toward camera
+    # Returns face triangles as array of points
     #
-    def _compute_face_triangles(view, face, transformation = nil)
+    def _compute_face_triangles(face, transformation = nil)
 
       # Thank you @thomthom for this piece of code ;)
 
       if face.deleted?
-        return false
+        return []
       end
 
       mesh = face.mesh(0) # POLYGON_MESH_POINTS
       points = mesh.points
 
-      Point3dUtils::offset_toward_camera(view, points)
       Point3dUtils::transform_points(points, transformation)
 
       triangles = []

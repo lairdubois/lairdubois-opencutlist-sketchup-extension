@@ -1,0 +1,47 @@
+//
+// Cutlist Labels
+//
+
+.ladb-cutlist-labels-group svg {
+  box-shadow: 3px 3px 10px #999;
+
+  .grid-line {
+    stroke: #000;
+
+    &.no-print {
+      stroke: #ddd;
+    }
+
+  }
+
+}
+
+@media print {
+
+  .ladb-cutlist-labels-group {
+    border: none !important;
+    page-break-after: always;
+    position: relative;
+
+    &:before {
+      content: ' '; // Here to be able to use SVG absolute position and maintain page break
+    }
+
+    & > tbody > tr > td {
+      border: none !important;
+    }
+
+    svg {
+      position: absolute;
+      width: 100vw;
+      top: 50vh;
+      margin-top: -50vh;
+      left: 50vw;
+      margin-left: -50vw;
+      border: none;
+      box-shadow: none;
+    }
+
+  }
+
+}

@@ -1,0 +1,22 @@
+{% set hideBtnInfo = hideBtnInfo|default(false) %}
+
+<div class="ladb-sponsor-objective-widget panel panel-default">
+    <div class="panel-heading">
+        <span class="ladb-sponsor-objective-label">{{ 'tab.sponsor.objective'|i18next }}</span><span class="ladb-sponsor-objective-progress-label"></span>
+        <div class="pull-right">
+            <span class="ladb-sponsor-objective-goal-label" data-toggle="tooltip" title="{{ 'tab.sponsor.objective_slogan'|i18next }}"></span>
+            {% if not hideBtnInfo %}
+                <div class="ladb-minitools ladb-minitools-inline">
+                    <span class="ladb-separator ladb-separator-dark"></span>
+                    <a href="#" class="ladb-sponsor-objective-info-btn ladb-tool-info"><i class="ladb-opencutlist-icon-info"></i></a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="panel-body">
+        {% include 'core/_loading.twig' with { 'noHidden':true } %}
+        <div class="progress">
+            <div class="progress-bar progress-bar-striped active"></div>
+        </div>
+    </div>
+</div>

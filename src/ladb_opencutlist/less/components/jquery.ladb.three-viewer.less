@@ -1,0 +1,53 @@
+//
+// Three Viewer
+//
+
+.ladb-three-viewer {
+  position: relative;
+
+  iframe {
+    border: none;
+    height: 300px;
+    width: 100%;
+  }
+
+  > .ladb-three-viewer-ui-left, > .ladb-three-viewer-ui-right {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    button {
+      padding: 5px 5px;
+      width: 30px;
+    }
+
+    div.ladb-flex {
+      display: flex;
+    }
+
+  }
+
+  > .ladb-three-viewer-ui-left button {
+    margin: 0 5px 5px 0;
+  }
+
+  > .ladb-three-viewer-ui-right button {
+    margin: 5px 5px 0 0;
+  }
+
+  > .ladb-three-viewer-ui-left, > .ladb-three-viewer-ui-right {
+    top: 0;
+    bottom: 0;
+    flex-direction: column;
+  }
+
+  > .ladb-three-viewer-ui-left {
+    left: 4px;
+  }
+
+  > .ladb-three-viewer-ui-right {
+    right: 4px;
+  }
+
+}

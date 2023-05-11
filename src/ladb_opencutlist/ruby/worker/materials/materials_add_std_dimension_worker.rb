@@ -3,8 +3,10 @@ module Ladb::OpenCutList
   class MaterialsAddStdDimensionWorker
 
     def initialize(settings)
-      @material_name = settings['material_name']
-      @std_dimension = settings['std_dimension']
+
+      @material_name = settings.fetch('material_name')
+      @std_dimension = settings.fetch('std_dimension')
+
     end
 
     # -----
@@ -15,7 +17,7 @@ module Ladb::OpenCutList
       return { :errors => [ 'tab.materials.error.no_model' ] } unless model
 
       # Start model modification operation
-      model.start_operation('OpenCutList - Material Add Std Dimension', true, false, true)
+      model.start_operation('OCL Material Add Std Dimension', true, false, true)
 
       # Fetch material
       materials = model.materials

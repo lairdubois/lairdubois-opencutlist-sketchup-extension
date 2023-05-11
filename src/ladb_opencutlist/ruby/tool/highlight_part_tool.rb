@@ -2,7 +2,6 @@ module Ladb::OpenCutList
 
   require_relative '../lib/kuix/kuix'
   require_relative '../helper/layer_visibility_helper'
-  require_relative '../helper/screen_scale_factor_helper'
   require_relative '../helper/face_triangles_helper'
   require_relative '../utils/point3d_utils'
   require_relative '../model/cutlist/cutlist'
@@ -10,7 +9,6 @@ module Ladb::OpenCutList
   class HighlightPartTool < Kuix::KuixTool
 
     include LayerVisibilityHelper
-    include ScreenScaleFactorHelper
     include FaceTrianglesHelper
     include CutlistObserverHelper
 
@@ -80,14 +78,14 @@ module Ladb::OpenCutList
           part.def.instance_infos.each { |serialized_path, instance_info|
 
             # Compute instance faces triangles
-            draw_def[:face_triangles].concat(_compute_children_faces_triangles(view, instance_info.entity.definition.entities, instance_info.transformation))
+            draw_def[:face_triangles].concat(_compute_children_faces_triangles(instance_info.entity.definition.entities, instance_info.transformation))
 
             # Compute back and front face arrows
-            if part.group.material_type != MaterialAttributes::TYPE_HARDWARE && part.group.material_type != MaterialAttributes::TYPE_UNKNOWN
+            if part.group.material_type != MaterialAttributes::TYPE_HARDWARE
 
               order = [ 1, 2, 3 ]
               if part.auto_oriented
-                instance_info.size.dimensions_to_normals.each_with_index do |(dimension, normal), index|
+                instance_info.size.dimensions_to_axes.each_with_index do |(dimension, normal), index|
                   normal == 'x' ? order[0] = index + 1 : normal == 'y' ? order[1] = index + 1 : order[2] = index + 1
                 end
               end
@@ -110,22 +108,22 @@ module Ladb::OpenCutList
 
     # -- UI stuff --
 
-    def setup_widgets(view)
+    def setup_entities(view)
 
       @canvas.layout = Kuix::BorderLayout.new
 
-      unit = [ [ view.vpheight / 150, 10 ].min, 5 ].max
+      unit = [ [ view.vpheight / 150, 8 ].min, 4 * UI.scale_factor ].max
 
-      panel = Kuix::Widget.new
+      panel = Kuix::Entity2d.new
       panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
       panel.layout = Kuix::BorderLayout.new
-      panel.padding.set_all(unit)
+      panel.padding.set_all!(unit)
       panel.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255, 200))
       @canvas.append(panel)
 
         # Labels
 
-        lbls = Kuix::Widget.new
+        lbls = Kuix::Entity2d.new
         lbls.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
         lbls.layout = Kuix::InlineLayout.new(false, unit, Kuix::Anchor.new(Kuix::Anchor::CENTER))
         panel.append(lbls)
@@ -153,15 +151,15 @@ module Ladb::OpenCutList
         btn_border_hover_color = Sketchup::Color.new(128, 128, 128, 255)
         btn_border_selected_color = Sketchup::Color.new(0, 0, 255, 255)
 
-        btns = Kuix::Widget.new
+        btns = Kuix::Entity2d.new
         btns.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
         btns.layout = Kuix::InlineLayout.new(true, unit, Kuix::Anchor.new(Kuix::Anchor::BOTTOM_RIGHT))
         panel.append(btns)
 
           btn_1 = Kuix::Button.new
           btn_1.layout = Kuix::BorderLayout.new
-          btn_1.border.set_all(btn_border)
-          btn_1.min_size.set(btn_min_width, btn_min_height)
+          btn_1.border.set_all!(btn_border)
+          btn_1.min_size.set!(btn_min_width, btn_min_height)
           btn_1.set_style_attribute(:background_color, btn_bg_color)
           btn_1.set_style_attribute(:background_color, btn_bg_active_color, :active)
           btn_1.set_style_attribute(:border_color, btn_border_color)
@@ -182,8 +180,8 @@ module Ladb::OpenCutList
 
           btn_2 = Kuix::Button.new
           btn_2.layout = Kuix::BorderLayout.new
-          btn_2.border.set_all(btn_border)
-          btn_2.min_size.set(btn_min_width, btn_min_height)
+          btn_2.border.set_all!(btn_border)
+          btn_2.min_size.set!(btn_min_width, btn_min_height)
           btn_2.set_style_attribute(:background_color, btn_bg_color)
           btn_2.set_style_attribute(:background_color, btn_bg_active_color, :active)
           btn_2.set_style_attribute(:border_color, btn_border_color)
@@ -262,17 +260,9 @@ module Ladb::OpenCutList
 
     # -- Menu --
 
-    if Sketchup.version.to_i < 15
-      # Compatible with SketchUp 2014 and older:
-      def getMenu(menu)
-        build_menu(menu)
-      end
-    else
-      # Only works with SketchUp 2015 and newer:
-      def getMenu(menu, flags, x, y, view)
-        _pick_hover_part(x, y, view) unless view.nil?
-        build_menu(menu, view)
-      end
+    def getMenu(menu, flags, x, y, view)
+      _pick_hover_part(x, y, view) unless view.nil?
+      build_menu(menu, view)
     end
 
     def build_menu(menu, view = nil)
@@ -310,6 +300,16 @@ module Ladb::OpenCutList
             MF_GRAYED
           end
         }
+        item = menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_faces_properties')) {
+          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{hover_part_id}', tab: 'faces', dontGenerate: true }")
+        }
+        menu.set_validation_proc(item) {
+          if hover_part_material_type == MaterialAttributes::TYPE_SHEET_GOOD
+            MF_ENABLED
+          else
+            MF_GRAYED
+          end
+        }
       elsif view
         menu.add_item(Plugin.instance.get_i18n_string('default.close')) {
           _quit(view)
@@ -320,22 +320,22 @@ module Ladb::OpenCutList
     # -- Events --
 
     def onLButtonUp(flags, x, y, view)
-      return if super
+      return true if super
       _pick_hover_part(x, y, view)
       if @hover_part
         UI.beep
-        return
+        return true
       end
       _quit(view)
     end
 
     def onMouseMove(flags, x, y, view)
-      return if super
+      return true if super
       _pick_hover_part(x, y, view)
     end
 
     def onMouseLeave(view)
-      return if super
+      return true if super
       _reset(view)
     end
 
@@ -367,7 +367,7 @@ module Ladb::OpenCutList
         instance_count = part.instance_count_by_part * part.count - part.unused_instance_count
 
         @lbl_1.visible = true
-        @lbl_2.visible = true
+        @lbl_2.visible = !part.tags.empty?
         @lbl_3.visible = true
 
         @lbl_1.text = "[#{part.number}] #{part.name}"

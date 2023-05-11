@@ -12,7 +12,9 @@
     var DOCS_URL = 'https://www.lairdubois.fr/opencutlist/docs';
     var DOCS_DEV_URL = 'https://www.lairdubois.fr/opencutlist/docs-dev';
 
-    var SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN = 'core.compatibility_alert_hidden';
+    var CHANGELOG_URL = 'https://www.lairdubois.fr/opencutlist/changelog';
+    var CHANGELOG_DEV_URL = 'https://www.lairdubois.fr/opencutlist/changelog-dev';
+
     var SETTING_KEY_MUTED_UPDATE_BUILD = 'core.muted_update_build';
     var SETTING_KEY_LAST_LISTED_NEWS_TIMESTAMP = 'core.last_listed_news_timestamp';
 
@@ -32,6 +34,7 @@
             sketchup_version: options.sketchup_version,
             sketchup_version_number: options.sketchup_version_number,
             ruby_version: options.ruby_version,
+            chrome_version: options.chrome_version,
             platform_name: options.platform_name,
             is_64bit: options.is_64bit,
             user_agent: window.navigator.userAgent,
@@ -39,7 +42,7 @@
             language: options.language,
             available_languages: options.available_languages,
             decimal_separator: options.decimal_separator,
-            html_dialog_compatible: options.html_dialog_compatible,
+            webgl_available: options.webgl_available,
             manifest: options.manifest,
             update_available: options.update_available,
             update_muted: options.update_muted,
@@ -390,6 +393,9 @@
             this.setupTooltips();
             this.setupPopovers();
 
+            // Bind help buttons (if exist)
+            this.bindHelpButtonsInParent($tab);
+
             // Cache tab
             this.$tabs[tabName] = $tab;
 
@@ -571,10 +577,14 @@
                 .data('bs.modal', null)
                 .remove();
             that._$modal = null;
+            $('input[autofocus]', that._$modal).first().focus();
         });
 
         // Append modal
         this.$element.append(this._$modal);
+
+        // Bind help buttons (if exist)
+        this.bindHelpButtonsInParent(this._$modal);
 
         return this._$modal;
     };
@@ -595,10 +605,11 @@
         var $btnUpgrade = $('#ladb_btn_upgrade', $modal);
         var $btnDownload = $('.ladb-btn-download', $modal);
         var $btnSponsor = $('#ladb_btn_sponsor', $modal);
+        var $linkChangelog = $('#ladb_link_changelog', $modal);
         var $progressBar = $('div[role=progressbar]', $modal);
 
         // Bind buttons
-        $btnIgnoreUpdate.on('click', function() {
+        $btnIgnoreUpdate.on('click', function () {
 
             that.mutedUpdateBuild = that.capabilities.manifest.build;
             that.setSetting(SETTING_KEY_MUTED_UPDATE_BUILD, that.mutedUpdateBuild);
@@ -620,7 +631,7 @@
             $modal.remove();
 
         });
-        $btnUpgrade.on('click', function() {
+        $btnUpgrade.on('click', function () {
 
             $panelInfos.hide();
             $panelProgress.show();
@@ -658,7 +669,7 @@
 
             return false;
         });
-        $btnDownload.on('click', function() {
+        $btnDownload.on('click', function () {
 
             // Open url
             rubyCallCommand('core_open_url', { url: that.capabilities.manifest && that.capabilities.manifest.url ? that.appendOclMetasToUrlQueryParams(that.capabilities.manifest.url) : EW_URL });
@@ -669,7 +680,7 @@
 
             return false;
         });
-        $btnSponsor.on('click', function() {
+        $btnSponsor.on('click', function () {
 
             // Open sponsor tab
             that.selectTab('sponsor');
@@ -680,6 +691,9 @@
 
             return false;
         });
+        $linkChangelog.on('click', function () {
+            rubyCallCommand('core_open_url', { url: that.getChangelogUrl() });
+        })
 
         // Show modal
         $modal.modal('show');
@@ -744,12 +758,14 @@
 
     };
 
-    LadbDialog.prototype.prompt = function (title, text, callback) {
+    LadbDialog.prototype.prompt = function (title, text, value, callback, options) {
 
         // Append modal
         var $modal = this.appendModal('ladb_core_modal_prompt', 'core/_modal-prompt.twig', {
             title: title,
-            text: text
+            text: text,
+            value: value,
+            options: options
         });
 
         // Fetch UI elements
@@ -773,11 +789,15 @@
 
         });
 
+        // State
+        $btnValidate.prop('disabled', $input.val().trim().length === 0);
+
         // Show modal
         $modal.modal('show');
 
         // Bring focus to input
         $input.focus();
+        $input[0].selectionStart = $input[0].selectionEnd = $input.val().trim().length;
 
     };
 
@@ -789,7 +809,7 @@
             buttons = [];
         }
         if (undefined === timeout) {
-            timeout = 3000;
+            timeout = 5000;
         }
         var n = new Noty({
             type: type,
@@ -820,15 +840,19 @@
         }
     };
 
-    LadbDialog.prototype.setupTooltips = function () {
+    LadbDialog.prototype.notifySuccess = function (text, buttons) {
+        this.notify('<i class="ladb-opencutlist-icon-check-mark"></i> ' + text, 'success', buttons);
+    };
+
+    LadbDialog.prototype.setupTooltips = function ($element) {
         $('.tooltip').tooltip('hide'); // Assume that previouly created tooltips are closed
-        $('[data-toggle="tooltip"]').tooltip({
+        $('[data-toggle="tooltip"]', $element).tooltip({
             container: 'body'
         });
     };
 
-    LadbDialog.prototype.setupPopovers = function () {
-        $('[data-toggle="popover"]').popover({
+    LadbDialog.prototype.setupPopovers = function ($element) {
+        $('[data-toggle="popover"]', $element).popover({
             html: true
         });
     };
@@ -845,13 +869,6 @@
         });
     }
 
-    LadbDialog.prototype.getDocsPageUrl = function (page) {
-        return this.appendOclMetasToUrlQueryParams(
-            this.capabilities.is_dev ? DOCS_DEV_URL : DOCS_URL,
-            (page && (typeof page  === "string")) ? { page: page } : null
-        );
-    }
-
     LadbDialog.prototype.appendOclMetasToUrlQueryParams = function (url, params) {
         url = url + '?v=' + this.capabilities.version + '&build=' + this.capabilities.build + '-' + (this.capabilities.is_rbz ? 'rbz' : 'src') + '&language=' + this.capabilities.language + '&locale=' + this.capabilities.locale;
         if (params && (typeof params  === "object")) {
@@ -860,6 +877,37 @@
             }
         }
         return url
+    }
+
+    LadbDialog.prototype.getDocsPageUrl = function (page) {
+        return this.appendOclMetasToUrlQueryParams(
+            this.capabilities.is_dev ? DOCS_DEV_URL : DOCS_URL,
+            (page && (typeof page  === "string")) ? { page: page } : null
+        );
+    }
+
+    LadbDialog.prototype.getChangelogUrl = function () {
+        return this.appendOclMetasToUrlQueryParams(
+            this.capabilities.is_dev ? CHANGELOG_DEV_URL : CHANGELOG_URL
+        );
+    }
+
+    LadbDialog.prototype.bindHelpButtonsInParent = function ($parent) {
+        var that = this;
+        let $btns = $('[data-help-page]', $parent);
+        $btns.on('click', function () {
+            let page = $(this).data('help-page');
+            $.getJSON(that.getDocsPageUrl(page ? page : ''), function (data) {
+                rubyCallCommand('core_open_url', data);
+            })
+                .fail(function () {
+                    that.notifyErrors([
+                        'core.docs.error.failed_to_load'
+                    ]);
+                })
+            ;
+            $(this).blur();
+        });
     }
 
     LadbDialog.prototype.copyToClipboard = function (text) {
@@ -891,17 +939,9 @@
                 that.selectTab(tabName);
             });
         });
-        $('#ladb_btn_close_compatibility_alert', that.$element).on('click', function () {
-            $('#ladb_compatibility_alert').hide();
-            that.compatibilityAlertHidden = true;
-            that.setSetting(SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN, that.compatibilityAlertHidden);
-        });
-        $('#ladb_leftbar_btn_docs', this.$leftbar).on('click', function () {
-            $.getJSON(that.getDocsPageUrl(), function (data) {
-                rubyCallCommand('core_open_url', data);
-            });
-            return false;
-        });
+
+        // Bind "docs" button
+        this.bindHelpButtonsInParent(this.$leftbar);
 
         // Bind fake tabs
         $('a[data-ladb-tab-name]', this.$element).on('click', function() {
@@ -917,7 +957,43 @@
 
         // Bind validate with enter on modals
         $('body').on('keydown', function (e) {
-            if (e.keyCode === 13) {   // Only intercept "enter" key
+            if (e.keyCode === 27) {   // "escape" key
+
+                // Dropdown detection
+                if ($(e.target).hasClass('dropdown')) {
+                    return;
+                }
+
+                // CodeMirror dropdown detection
+                if ($(e.target).attr('aria-autocomplete') === 'list') {
+                    return;
+                }
+
+                // Bootstrap select detection
+                if ($(e.target).attr('role') === 'listbox' || $(e.target).attr('role') === 'combobox') {
+                    return;
+                }
+
+                // Try to retrieve the current top modal (1. from global dialog modal, 2. from active tab inner modal)
+                var $modal = null;
+                if (that._$modal) {
+                    $modal = that._$modal;
+                } else {
+                    var jQueryPlugin = that.getTabPlugin(that.getActiveTab());
+                    if (jQueryPlugin) {
+                        $modal = jQueryPlugin._$modal;
+                    }
+                }
+
+                if ($modal) {
+                    // A modal is shown, try to click on first "dismiss" button
+                    $('[data-dismiss="modal"]', $modal).first().click();
+                } else {
+                    // No modal, minimize the dialog
+                    that.minimize();
+                }
+
+            } else if (e.keyCode === 13) {   // Only intercept "enter" key
 
                 var $target = $(e.target);
                 if (!$target.is('input[type=text]')) {  // Only intercept if focus is on input[type=text] field
@@ -955,13 +1031,11 @@
         var that = this;
 
         this.pullSettings([
-                SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN,
                 SETTING_KEY_MUTED_UPDATE_BUILD,
                 SETTING_KEY_LAST_LISTED_NEWS_TIMESTAMP
             ],
             function () {
 
-                that.compatibilityAlertHidden = that.getSetting(SETTING_KEY_COMPATIBILITY_ALERT_HIDDEN, false);
                 that.mutedUpdateBuild = that.getSetting(SETTING_KEY_MUTED_UPDATE_BUILD, null);
                 that.lastListedNewsTimestamp = that.getSetting(SETTING_KEY_LAST_LISTED_NEWS_TIMESTAMP, null);
 
@@ -997,13 +1071,6 @@
                         maximumFractionDigits: 0
                     });
                 });
-                Twig.extendFilter('format_mass', function (value, options) {
-                    return value.toLocaleString(that.capabilities.language, {
-                        style: 'decimal',
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: 0
-                    }) + ' kg';
-                });
                 Twig.extendFilter('sanitize_links', function (value, options) {
                     return value.replace(/<a\s+(?:[^>]*?\s+)?href=(["'])(.*?)\1>/g, '<a href="$2" target="_blank">');
                 });
@@ -1020,7 +1087,7 @@
                     // Render and append layout-locked template
                     that.$element.append(Twig.twig({ref: 'core/layout-zzz.twig'}).render());
 
-                    // Fetch usefull elements
+                    // Fetch useful elements
                     var $btnZzz = $('.ladb-zzz a', that.$element);
 
                     // Bind button
@@ -1033,11 +1100,10 @@
                     // Render and append layout template
                     that.$element.append(Twig.twig({ref: 'core/layout.twig'}).render({
                         capabilities: that.capabilities,
-                        compatibilityAlertHidden: that.compatibilityAlertHidden,
                         tabDefs: that.options.tabDefs
                     }));
 
-                    // Fetch usefull elements
+                    // Fetch useful elements
                     that.$wrapper = $('#ladb_wrapper', that.$element);
                     that.$wrapperSlides = $('#ladb_wrapper_slides', that.$element);
                     that.$leftbar = $('#ladb_leftbar', that.$element).ladbLeftbar({ dialog: that });
@@ -1067,18 +1133,20 @@
                     // Dev alert
                     var $devAlert = $('#ladb_dev_alert');
                     if ($devAlert.length > 0) {
-                        var devAlertTotalTime = 10000;
+                        var devAlertTotalTime = 20000;
                         var devAlertRemaining = devAlertTotalTime;
                         var fnDevAlertCountdown = function () {
-                            devAlertRemaining -= 100;
-                            $('.countdown-bar', $devAlert).css('width', Math.max((devAlertRemaining / devAlertTotalTime) * 100, 0) + '%');
-                            if (devAlertRemaining < 0) {
-                                $devAlert.hide();
-                                return;
+                            if ($devAlert.is(':visible')) {
+                                devAlertRemaining -= 200;
+                                $('.countdown-bar', $devAlert).css('width', Math.max((devAlertRemaining / devAlertTotalTime) * 100, 0) + '%');
+                                if (devAlertRemaining < 0) {
+                                    $devAlert.hide();
+                                    return;
+                                }
                             }
                             setTimeout(function () {
                                 window.requestAnimationFrame(fnDevAlertCountdown);
-                            }, 100);
+                            }, 200);
                         }
                         window.requestAnimationFrame(fnDevAlertCountdown);
                     }

@@ -5,39 +5,50 @@
             {% if part.children_warning_count > 0 %}<a class="ladb-tool-warning no-print" data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.children_warnings')|i18next({ 'count':part.children_warning_count }) }}"><i class="ladb-opencutlist-icon-warning"></i></a>{% endif %}
             {% if showCuttingDimensions or showBoxDimensions %}
                 {% if part.edge_count > 0 %}<a href="#" class="ladb-tool-info" data-tab="edges" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.has_edges'|i18next({ 'count':part.edge_count }) }}"><i class="ladb-opencutlist-icon-edge-{{ part.edge_pattern }}"></i></a>{% endif %}
+                {% if part.face_count > 0 %}<a href="#" class="ladb-tool-info" data-tab="faces" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.has_faces'|i18next({ 'count':part.face_count }) }}"><i class="ladb-opencutlist-icon-face-{{ part.face_pattern }}"></i></a>{% endif %}
             {% endif %}
         {% else %}
-            {% if part.not_aligned_on_axes %}<a href="#" class="ladb-tool-warning no-print" data-tab="warnings" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.not_aligned_on_axes'|i18next }}"><i class="ladb-opencutlist-icon-not-aligned-on-axes"></i></a>{% endif %}
-            {% if part.multiple_layers %}<a href="#" class="ladb-tool-warning no-print" data-tab="warnings" data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.tooltip.multiple_layers'|i18next({ 'count':(part.layers|length), 'layers':(part.layers|join(', ')) }) }}"><i class="ladb-opencutlist-icon-multiple-layers"></i></a>{% endif %}
-            {% if part.unused_instance_count > 0 %}<a href="#" class="ladb-tool-warning no-print" data-tab="warnings" data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.tooltip.unused_instance_count'|i18next({ 'count':part.unused_instance_count }) }}"><i class="ladb-opencutlist-icon-missing-instance-count"></i></a>{% endif %}
-            {% if part.instance_count_by_part > 1 %}<a href="#" class="ladb-tool-info no-print" data-tab="infos" data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.tooltip.instance_count_by_part'|i18next({ 'count':part.instance_count_by_part }) }}"><i class="ladb-opencutlist-icon-instance-count-by-part"></i></a>{% endif %}
-            {% if part.is_dynamic_attributes_name %}<a href="#" class="ladb-tool-info no-print" data-tab="infos" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.is_dynamic_attributes_name'|i18next }}"><i class="ladb-opencutlist-icon-dynamic-component"></i></a>{% endif %}
+            {% if part.not_aligned_on_axes %}<a href="#" class="ladb-tool-warning no-print" data-tab="infos_warnings" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.not_aligned_on_axes'|i18next }}"><i class="ladb-opencutlist-icon-not-aligned-on-axes"></i></a>{% endif %}
+            {% if part.multiple_content_layers %}<a href="#" class="ladb-tool-warning no-print" data-tab="infos_warnings" data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.tooltip.multiple_content_layers'|i18next({ 'count':(part.content_layers|length), 'layers':(part.content_layers|join(', ')) }) }}"><i class="ladb-opencutlist-icon-multiple-layers"></i></a>{% endif %}
+            {% if part.unused_instance_count > 0 %}<a href="#" class="ladb-tool-warning no-print" data-tab="infos_warnings" data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.tooltip.unused_instance_count'|i18next({ 'count':part.unused_instance_count }) }}"><i class="ladb-opencutlist-icon-missing-instance-count"></i></a>{% endif %}
+            {% if part.instance_count_by_part > 1 %}<a href="#" class="ladb-tool-info no-print" data-tab="infos_warnings" data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.tooltip.instance_count_by_part'|i18next({ 'count':part.instance_count_by_part }) }}"><i class="ladb-opencutlist-icon-instance-count-by-part"></i></a>{% endif %}
+            {% if part.is_dynamic_attributes_name %}<a href="#" class="ladb-tool-info no-print" data-tab="infos_warnings" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.is_dynamic_attributes_name'|i18next }} : <{{ part.definition_id }}>"><i class="ladb-opencutlist-icon-dynamic-component"></i></a>{% endif %}
             {% if part.thickness_layer_count > 1 %}<a href="#" class="ladb-tool-info" data-tab="extra" data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.tooltip.thickness_layer_count'|i18next({ 'count':part.thickness_layer_count }) }}"><i class="ladb-opencutlist-icon-thickness-layers"></i></a>{% endif %}
             {% if part.flipped %}<a href="#" class="ladb-tool-info" data-tab="axes" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.flipped'|i18next }}"><i class="ladb-opencutlist-icon-flipped"></i></a>{% endif %}
             {% if part.symmetrical %}<a href="#" class="ladb-tool-info no-print" data-tab="axes" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.symmetrical'|i18next }}"><i class="ladb-opencutlist-icon-symmetrical"></i></a>{% endif %}
             {% if showCuttingDimensions or showBoxDimensions %}
                 {% if part.auto_oriented %}<a href="#" class="ladb-tool-info no-print" data-tab="axes" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.auto_oriented'|i18next }}"><i class="ladb-opencutlist-icon-auto-oriented"></i></a>{% endif %}
-                {% if part.resized %}<a href="#" class="ladb-tool-info no-print" data-tab="infos" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.resized'|i18next }}"><i class="ladb-opencutlist-icon-resized"></i></a>{% endif %}
+                {% if part.resized %}<a href="#" class="ladb-tool-info no-print" data-tab="infos_warnings" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.resized'|i18next }}"><i class="ladb-opencutlist-icon-resized"></i></a>{% endif %}
                 {% if part.orientation_locked_on_axis %}<a href="#" class="ladb-tool-info no-print" data-tab="axes" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.orientation_locked_on_axis'|i18next }}"><i class="ladb-opencutlist-icon-orientation-locked-on-axis"></i></a>{% endif %}
                 {% if part.edge_count > 0 %}<a href="#" class="ladb-tool-info" data-tab="edges" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.has_edges'|i18next({ 'count':part.edge_count }) }}"><i class="ladb-opencutlist-icon-edge-{{ part.edge_pattern }}"></i></a>{% endif %}
+                {% if part.face_count > 0 %}<a href="#" class="ladb-tool-info" data-tab="faces" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.has_faces'|i18next({ 'count':part.face_count }) }}"><i class="ladb-opencutlist-icon-face-{{ part.face_pattern }}"></i></a>{% endif %}
             {% endif %}
-            {% include 'tabs/cutlist/_material-origins.twig' with { 'materialOrigins':part.material_origins, 'noPrint':true, 'attr':'data-tab="infos"' } %}
+            {% include 'tabs/cutlist/_material-origins.twig' with { 'materialOrigins':part.material_origins, 'noPrint':true, 'attr':'data-tab="infos_warnings"' } %}
         {% endif %}
-        {% if part.children or part.definition_id %}
+        {% set showHighlight = group.material_type != 4 and group.material_type != 6 %} {# 4 = TYPE_EDGE, 6 = TYPE_VENEER #}
+        {% set showEdit = group.material_type != 4 and group.material_type != 6 %}   {# 4 = TYPE_EDGE, 6 = TYPE_VENEER #}
+        {% set showSelect = not isChild %}
+        {% if part.children or showHighlight or showEdit or showSelect %}
             <span class="ladb-separator no-print"></span>
-            {% if part.children %}
-                <a href="#" class="ladb-btn-folding-toggle-row ladb-click-tool no-print" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.folding_part'|i18next }}"><i class="ladb-opencutlist-icon-arrow-down"></i></a>
-                {% if group.material_type != 4 %}       {# 4 = TYPE_EDGE #}
-                    <a href="#" class="ladb-btn-highlight-part no-print" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.highlight_parts'|i18next }}"><i class="ladb-opencutlist-icon-magnifier-multiple"></i></a>
-                    <a href="#" class="ladb-btn-edit-part no-print" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edit_parts_properties'|i18next }}..."><i class="ladb-opencutlist-icon-edit-multiple"></i></a>
-                {% endif %}
-            {% else %}
+        {% endif %}
+        {% if part.children %}
+            <a href="#" class="ladb-btn-folding-toggle-row ladb-click-tool no-print" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.folding_part'|i18next }}"><i class="ladb-opencutlist-icon-arrow-down"></i></a>
+            {% if showHighlight %}
+                <a href="#" class="ladb-btn-highlight-part no-print" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.highlight_parts'|i18next }}"><i class="ladb-opencutlist-icon-magnifier-multiple"></i></a>
+            {% endif %}
+            {% if showEdit %}
+                <a href="#" class="ladb-btn-edit-part no-print" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edit_parts_properties'|i18next }}..."><i class="ladb-opencutlist-icon-edit-multiple"></i></a>
+            {% endif %}
+        {% else %}
+            {% if showHighlight %}
                 <a href="#" class="ladb-btn-highlight-part no-print" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.highlight_part'|i18next }}"><i class="ladb-opencutlist-icon-magnifier"></i></a>
+            {% endif %}
+            {% if showEdit %}
                 <a href="#" class="ladb-btn-edit-part ladb-click-tool no-print" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edit_part_properties'|i18next }}..."><i class="ladb-opencutlist-icon-edit"></i></a>
             {% endif %}
-            {% if not isChild and group.material_type != 4 %}       {# 4 = TYPE_EDGE #}
-                <a href="#" class="ladb-btn-select-part no-print"><i class="ladb-opencutlist-icon-check-box"></i></a>
-            {% endif %}
+        {% endif %}
+        {% if showSelect %}
+            <a href="#" class="ladb-btn-select-part no-print"><i class="ladb-opencutlist-icon-check-box"></i></a>
         {% endif %}
     </div>
     <span class="ladb-cutlist-part-name">{{ part.name|escape }}</span>

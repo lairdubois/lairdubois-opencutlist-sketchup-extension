@@ -21,7 +21,7 @@
 
     LadbEditorLabelLayout.DEFAULTS = {
         group: null,
-        part: null,
+        partInfo: null,
         labelWidth: 100,
         labelHeight: 100,
     };
@@ -300,10 +300,7 @@
 
         var formula = Twig.twig({ref: 'tabs/cutlist/_label-element.twig'}).render($.extend({
             elementDef: elementDef,
-            part_info: {
-                position_in_batch: 1,
-                part: this.options.part
-            },
+            partInfo: this.options.partInfo,
             noEmptyValue: true
         }, this.options));
 
@@ -371,7 +368,7 @@
             })
         ;
 
-        var $btnRotateLeft = $('<button class="btn btn-default"><i class="ladb-opencutlist-icon-rotate-left"></i></button>');
+        var $btnRotateLeft = $('<button class="btn btn-default"><i class="ladb-opencutlist-icon-rotate-left" style="font-size: 120%"></i></button>');
         $btnRotateLeft
             .on('click', function () {
                 if (elementDef.rotation === undefined) {
@@ -383,7 +380,7 @@
             })
         ;
 
-        var $btnRotateRight = $('<button class="btn btn-default"><i class="ladb-opencutlist-icon-rotate-right"></i></button>');
+        var $btnRotateRight = $('<button class="btn btn-default"><i class="ladb-opencutlist-icon-rotate-right" style="font-size: 120%"></i></button>');
         $btnRotateRight
             .on('click', function () {
                 if (elementDef.rotation === undefined) {
@@ -447,7 +444,7 @@
             })
         ;
 
-        this.dialog.setupTooltips();
+        this.dialog.setupTooltips(this.$element);
 
     };
 

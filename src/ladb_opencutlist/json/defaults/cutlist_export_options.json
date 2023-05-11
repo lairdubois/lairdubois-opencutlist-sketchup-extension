@@ -110,6 +110,18 @@
         {
           "name": "edge_xmax",
           "align": "center"
+        },
+        {
+          "name": "face_zmax",
+          "align": "center"
+        },
+        {
+          "name": "face_zmin",
+          "align": "center"
+        },
+        {
+          "name": "layers",
+          "align": "left"
         }
       ],
       "2": [ /* EXPORT_OPTION_SOURCE_INSTANCES_LIST */
@@ -126,7 +138,7 @@
           "align": "left"
         },
         {
-          "name": "definition_name",
+          "name": "name",
           "align": "left"
         },
         {
@@ -188,6 +200,18 @@
         {
           "name": "edge_xmax",
           "align": "center"
+        },
+        {
+          "name": "face_zmax",
+          "align": "center"
+        },
+        {
+          "name": "face_zmin",
+          "align": "center"
+        },
+        {
+          "name": "layer",
+          "align": "left"
         }
       ]
     }

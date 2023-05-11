@@ -117,14 +117,14 @@ module Ladb::OpenCutList::BinPacking2D
 
       # Make copies of unplaced boxes so that each packer has its own instances.
       @previous_packer.unplaced_boxes.each do |box|
-        new_box = Box.new(box.length, box.width, box.rotatable, box.data)
+        new_box = Box.new(box.length, box.width, box.rotatable, box.cid, box.data)
         new_box.set_rotated if box.rotated?
         @boxes << new_box
       end
 
       # Invalid boxes for one bin, may be valid for the next bin.
       @previous_packer.invalid_boxes.each do |box|
-        new_box = Box.new(box.length, box.width, box.rotatable, box.data)
+        new_box = Box.new(box.length, box.width, box.rotatable, box.cid, box.data)
         @boxes << new_box
       end
 
@@ -187,21 +187,21 @@ module Ladb::OpenCutList::BinPacking2D
     def sort_boxes
       case @options.presort
       when PRESORT_WIDTH_DECR
-        @boxes.sort_by! { |box| [-box.width, -box.length] }
+        @boxes.sort_by! { |box| [-box.width, -box.length, box.cid] }
       when PRESORT_LENGTH_DECR
-        @boxes.sort_by! { |box| [-box.length, -box.width] }
+        @boxes.sort_by! { |box| [-box.length, -box.width, box.cid] }
       when PRESORT_AREA_DECR
-        @boxes.sort_by! { |box| [-box.width * box.length, -box.length] }
+        @boxes.sort_by! { |box| [-box.width * box.length, -box.length, box.cid] }
       when PRESORT_LONGEST_SIDE_DECR
-        @boxes.sort_by! { |box| [[box.length, box.width].min, [box.length, box.width].min] }
+        @boxes.sort_by! { |box| [[box.length, box.width].min, [box.length, box.width].min, box.cid] }
       when PRESORT_SHORTEST_SIDE_DECR
-        @boxes.sort_by! { |box| [[box.length, box.width].max, [box.length, box.width].max] }
+        @boxes.sort_by! { |box| [[box.length, box.width].max, [box.length, box.width].max, box.cid] }
       when PRESORT_PERIMETER_DECR
-        @boxes.sort_by! { |box| [-(box.length + box.width), -box.length] }
+        @boxes.sort_by! { |box| [-(box.length + box.width), -box.length, box.cid] }
       when PRESORT_SMALLEST_DIFF_DECR
-        @boxes.sort_by! { |box| [[box.length - box.width].max, [box.length - box.width].min] }
+        @boxes.sort_by! { |box| [[box.length - box.width].max, [box.length - box.width].min, box.cid] }
       when PRESORT_LARGEST_DIFF_DECR
-        @boxes.sort_by! { |box| [[box.length - box.width].min, [box.length - box.width].max] }
+        @boxes.sort_by! { |box| [[box.length - box.width].min, [box.length - box.width].max, box.cid] }
       when PRESORT_ALTERNATING_WIDTHS
         w_max = @boxes.max_by(&:width)
         wl, ws = @boxes.partition { |box| box.width >= (@stacking_maxwidth - w_max.width) }
@@ -241,7 +241,7 @@ module Ladb::OpenCutList::BinPacking2D
     #
     def make_superboxes_length
       # Stack the boxes by decreasing length.
-      @boxes.sort_by!(&:length).reverse!
+      @boxes = @boxes.sort_by { |box| [box.length, box.cid] }.reverse!
 
       sboxes = []
       until @boxes.empty?
@@ -259,7 +259,7 @@ module Ladb::OpenCutList::BinPacking2D
     #
     def make_superboxes_width
       # Stack the boxes by decreasing width.
-      @boxes.sort_by!(&:width).reverse!
+      @boxes = @boxes.sort_by { |box| [box.width, box.cid] }.reverse!
 
       sboxes = []
       until @boxes.empty?
@@ -431,14 +431,12 @@ module Ladb::OpenCutList::BinPacking2D
             #
             if box.is_a?(SuperBox)
               next_box = nil
-              if not @boxes.empty?
-                next_box = @boxes.shift
-              end
+              next_box = @boxes.shift unless @boxes.empty?
               front, sbox = box.reduce
               # Make array of all boxes, remove the ones that are nil
-              bx = [next_box, front, sbox].reject(&:nil?)
+              bx = [next_box, front, sbox].compact
               # Sort the boxes by area increasing
-              bx.sort_by! { |b| b.area() }
+              bx.sort_by!(&:area)
               # Push them back onto the stack of boxes
               bx.each do |b|
                 @boxes.unshift(b)

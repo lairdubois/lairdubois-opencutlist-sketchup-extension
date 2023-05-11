@@ -14,7 +14,9 @@ module Ladb::OpenCutList
       @_def = _def
 
       @total_mass = _def.total_mass == 0 ? nil : MassUtils.instance.format_to_readable_mass(_def.total_mass)
+      @total_used_mass = _def.total_used_mass == 0 ? nil : MassUtils.instance.format_to_readable_mass(_def.total_used_mass)
       @total_cost = _def.total_cost == 0 ? nil : PriceUtils.instance.format_to_readable_price(_def.total_cost)
+      @total_used_cost = _def.total_used_cost == 0 ? nil : PriceUtils.instance.format_to_readable_price(_def.total_used_cost)
 
     end
 
@@ -48,7 +50,7 @@ module Ladb::OpenCutList
 
   class SolidWoodReportEntry < AbstractReportEntry
 
-    attr_reader :total_volume
+    attr_reader :total_volume, :total_used_volume
 
     def initialize(_def)
       super(_def)
@@ -57,6 +59,7 @@ module Ladb::OpenCutList
       @std_price = _def.std_price.nil? || _def.std_price[:val] == 0 ? nil : UnitUtils.format_readable(_def.std_price[:val], _def.std_price[:unit], 2, 2)
 
       @total_volume = _def.total_volume == 0 ? nil : DimensionUtils.instance.format_to_readable_volume(_def.total_volume, @material_type)
+      @total_used_volume = _def.total_used_volume == 0 ? nil : DimensionUtils.instance.format_to_readable_volume(_def.total_used_volume, @material_type)
 
     end
 
@@ -66,7 +69,7 @@ module Ladb::OpenCutList
 
   class SheetGoodReportEntry < AbstractReportEntry
 
-    attr_reader :volumic_mass,:std_price, :total_count, :total_area, :sheets
+    attr_reader :volumic_mass,:std_price, :total_count, :total_area, :total_used_area, :sheets
 
     def initialize(_def)
       super(_def)
@@ -75,8 +78,9 @@ module Ladb::OpenCutList
 
       @total_count = _def.total_count
       @total_area = _def.total_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(_def.total_area)
+      @total_used_area = _def.total_used_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(_def.total_used_area)
 
-      @sheets = _def.sheet_defs.map { |sheet_def| sheet_def.create_sheet }
+      @sheets = _def.sheet_defs.values.map { |sheet_def| sheet_def.create_sheet }
 
       @std_price = @sheets.map { |sheet| sheet.std_price }.select { |std_price| !std_price.nil? }.uniq.join(', ')
 
@@ -86,18 +90,20 @@ module Ladb::OpenCutList
 
   class SheetGoodReportEntrySheet < AbstractReportItem
 
-    attr_reader :std_price, :type, :length, :width, :count, :total_area
+    attr_reader :std_price, :type, :length, :width, :count, :total_area, :total_used_area
 
     def initialize(_def)
       super(_def)
 
       @std_price = _def.std_price.nil? || _def.std_price[:val] == 0 ? nil : UnitUtils.format_readable(_def.std_price[:val], _def.std_price[:unit], 2, 2)
 
-      @type = _def.cuttingdiagram2d_summary_sheet.type
-      @length = _def.cuttingdiagram2d_summary_sheet.length
-      @width = _def.cuttingdiagram2d_summary_sheet.width
-      @count = _def.cuttingdiagram2d_summary_sheet.count
-      @total_area = _def.cuttingdiagram2d_summary_sheet.total_area
+      @type = _def.type
+      @length = _def.length.to_l.to_s
+      @width = _def.width.to_l.to_s
+
+      @count = _def.count
+      @total_area = DimensionUtils.instance.format_to_readable_area(_def.total_area)
+      @total_used_area = DimensionUtils.instance.format_to_readable_area(_def.total_used_area)
 
     end
 
@@ -107,7 +113,7 @@ module Ladb::OpenCutList
 
   class DimensionalReportEntry < AbstractReportEntry
 
-    attr_reader :volumic_mass, :std_price, :total_count, :total_length, :bars
+    attr_reader :volumic_mass, :std_price, :total_count, :total_length, :total_used_length, :bars
 
     def initialize(_def)
       super(_def)
@@ -116,8 +122,9 @@ module Ladb::OpenCutList
 
       @total_count = _def.total_count
       @total_length = _def.total_length == 0 ? nil : DimensionUtils.instance.format_to_readable_length(_def.total_length)
+      @total_used_length = _def.total_length == 0 ? nil : DimensionUtils.instance.format_to_readable_length(_def.total_used_length)
 
-      @bars = _def.bar_defs.map { |bar_def| bar_def.create_bar }
+      @bars = _def.bar_defs.values.map { |bar_def| bar_def.create_bar }
 
       @std_price = @bars.map { |bar| bar.std_price }.select { |std_price| !std_price.nil? }.uniq.join(', ')
 
@@ -127,17 +134,19 @@ module Ladb::OpenCutList
 
   class DimensionalReportEntryBar < AbstractReportItem
 
-    attr_reader :std_price, :type, :length, :count, :total_length
+    attr_reader :std_price, :type, :length, :count, :total_length, :total_used_length
 
     def initialize(_def)
       super(_def)
 
       @std_price = _def.std_price.nil? || _def.std_price[:val] == 0 ? nil : UnitUtils.format_readable(_def.std_price[:val], _def.std_price[:unit], 2, 2)
 
-      @type = _def.cuttingdiagram1d_summary_bar.type
-      @length = _def.cuttingdiagram1d_summary_bar.length
-      @count = _def.cuttingdiagram1d_summary_bar.count
-      @total_length = _def.cuttingdiagram1d_summary_bar.total_length
+      @type = _def.type
+      @length = _def.length.to_l.to_s
+
+      @count = _def.count
+      @total_length = DimensionUtils.instance.format_to_readable_length(_def.total_length)
+      @total_used_length = DimensionUtils.instance.format_to_readable_length(_def.total_used_length)
 
     end
 
@@ -147,7 +156,7 @@ module Ladb::OpenCutList
 
   class EdgeReportEntry < AbstractReportEntry
 
-    attr_reader :volumic_mass, :std_price, :total_count, :total_length, :bars
+    attr_reader :volumic_mass, :std_price, :total_count, :total_length, :total_used_length, :bars
 
     def initialize(_def)
       super(_def)
@@ -156,8 +165,9 @@ module Ladb::OpenCutList
 
       @total_count = _def.total_count
       @total_length = _def.total_length == 0 ? nil : DimensionUtils.instance.format_to_readable_length(_def.total_length)
+      @total_used_length = _def.total_length == 0 ? nil : DimensionUtils.instance.format_to_readable_length(_def.total_used_length)
 
-      @bars = _def.bar_defs.map { |bar_def| bar_def.create_bar }
+      @bars = _def.bar_defs.values.map { |bar_def| bar_def.create_bar }
 
       @std_price = @bars.map { |bar| bar.std_price }.select { |std_price| !std_price.nil? }.uniq.join(', ')
 
@@ -167,17 +177,19 @@ module Ladb::OpenCutList
 
   class EdgeReportEntryBar < AbstractReportItem
 
-    attr_reader :std_price, :type, :length, :count, :total_length
+    attr_reader :std_price, :type, :length, :count, :total_length, :total_used_length
 
     def initialize(_def)
       super(_def)
 
       @std_price = _def.std_price.nil? || _def.std_price[:val] == 0 ? nil : UnitUtils.format_readable(_def.std_price[:val], _def.std_price[:unit], 2, 2)
 
-      @type = _def.cuttingdiagram1d_summary_bar.type
-      @length = _def.cuttingdiagram1d_summary_bar.length
-      @count = _def.cuttingdiagram1d_summary_bar.count
-      @total_length = _def.cuttingdiagram1d_summary_bar.total_length
+      @type = _def.type
+      @length = _def.length.to_l.to_s
+
+      @count = _def.count
+      @total_length = DimensionUtils.instance.format_to_readable_length(_def.total_length)
+      @total_used_length = DimensionUtils.instance.format_to_readable_length(_def.total_used_length)
 
     end
 
@@ -194,6 +206,9 @@ module Ladb::OpenCutList
 
       @total_count = _def.total_count
 
+      @total_instance_count = _def.total_instance_count
+      @total_used_instance_count = _def.total_used_instance_count
+
       @parts = _def.part_defs.map { |part_def| part_def.create_part }
 
     end
@@ -202,7 +217,7 @@ module Ladb::OpenCutList
 
   class HardwareReportEntryPart < AbstractReportItem
 
-    attr_reader :id, :name, :flipped, :count, :mass, :price
+    attr_reader :id, :name, :flipped, :count, :mass, :price, :total_instance_count, :total_used_instance_count
 
     def initialize(_def)
       super(_def)
@@ -216,6 +231,53 @@ module Ladb::OpenCutList
 
       @mass = _def.mass.nil? || _def.mass[:val] == 0 ? nil : UnitUtils.format_readable(_def.mass[:val], _def.mass[:unit], 3)
       @price = _def.price.nil? || _def.price[:val] == 0 ? nil : UnitUtils.format_readable(_def.price[:val], _def.price[:unit], 2, 2)
+
+      @total_instance_count = _def.total_instance_count
+      @total_used_instance_count = _def.total_used_instance_count
+
+    end
+
+  end
+
+  # -----
+
+  class VeneerReportEntry < AbstractReportEntry
+
+    attr_reader :volumic_mass,:std_price, :total_count, :total_area, :total_used_area, :sheets
+
+    def initialize(_def)
+      super(_def)
+
+      @volumic_mass = _def.volumic_mass.nil? || _def.volumic_mass[:val] == 0 ? nil : UnitUtils.format_readable(_def.volumic_mass[:val], _def.volumic_mass[:unit])
+
+      @total_count = _def.total_count
+      @total_area = _def.total_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(_def.total_area)
+      @total_used_area = _def.total_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(_def.total_used_area)
+
+      @sheets = _def.sheet_defs.values.map { |sheet_def| sheet_def.create_sheet }
+
+      @std_price = @sheets.map { |sheet| sheet.std_price }.select { |std_price| !std_price.nil? }.uniq.join(', ')
+
+    end
+
+  end
+
+  class VeneerReportEntrySheet < AbstractReportItem
+
+    attr_reader :std_price, :type, :length, :width, :count, :total_area, :total_used_area
+
+    def initialize(_def)
+      super(_def)
+
+      @std_price = _def.std_price.nil? || _def.std_price[:val] == 0 ? nil : UnitUtils.format_readable(_def.std_price[:val], _def.std_price[:unit], 2, 2)
+
+      @type = _def.type
+      @length = _def.length.to_l.to_s
+      @width = _def.width.to_l.to_s
+
+      @count = _def.count
+      @total_area = DimensionUtils.instance.format_to_readable_area(_def.total_area)
+      @total_used_area = DimensionUtils.instance.format_to_readable_area(_def.total_used_area)
 
     end
 

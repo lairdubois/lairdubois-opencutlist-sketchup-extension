@@ -16,7 +16,8 @@
 
         this.generateFilters = {
           tags_filter: [],
-          edge_material_names_filter: []
+          edge_material_names_filter: [],
+          veneer_material_names_filter: []
         };
 
         this.generateAt = null;
@@ -29,11 +30,13 @@
         this.lengthUnit = null;
         this.usedTags = [];
         this.usedEdgeMaterialDisplayNames = [];
+        this.usedVeneerMaterialDisplayNames = [];
         this.materialUsages = [];
         this.groups = [];
         this.ignoreNextMaterialEvents = false;
         this.selectionGroupId = null;
         this.selectionPartIds = [];
+        this.lastOptionsTab = null;
         this.lastEditPartTab = null;
         this.lastExportOptionsTab = null;
         this.lastExportOptionsEditingItem = null;
@@ -41,6 +44,7 @@
         this.lastCuttingdiagram1dOptionsTab = null;
         this.lastCuttingdiagram2dOptionsTab = null;
         this.lastLabelsOptionsTab = null;
+        this.lastLayoutOptionsTab = null;
 
         this.$header = $('.ladb-header', this.$element);
         this.$headerExtra = $('.ladb-header-extra', this.$header);
@@ -74,6 +78,7 @@
         // Destroy previously created tokenfields
         $('#ladb_cutlist_tags_filter', that.$page).tokenfield('destroy');
         $('#ladb_cutlist_edge_material_names_filter', that.$page).tokenfield('destroy');
+        $('#ladb_cutlist_veneer_material_names_filter', that.$page).tokenfield('destroy');
 
         this.groups = [];
         this.$page.empty();
@@ -114,7 +119,7 @@
                 var edgeMaterialCount = response.edge_material_count;
                 var hardwareMaterialCount = response.hardware_material_count;
 
-                // Keep usefull data
+                // Keep useful data
                 that.filename = filename;
                 that.modelName = modelName;
                 that.modelDescription = modelDescription;
@@ -127,6 +132,7 @@
                 that.massUnitStrippedname = massUnitStrippedname;
                 that.usedTags = usedTags;
                 that.usedEdgeMaterialDisplayNames = [];
+                that.usedVeneerMaterialDisplayNames = [];
                 that.materialUsages = materialUsages;
                 that.groups = groups;
 
@@ -134,6 +140,13 @@
                 for (var i = 0; i < materialUsages.length; i++) {
                     if (materialUsages[i].type === 4 && materialUsages[i].use_count > 0) {     // 4 = TYPE_EDGE
                         that.usedEdgeMaterialDisplayNames.push(materialUsages[i].display_name);
+                    }
+                }
+
+                // Compute usedVeneerMaterialDisplayNames
+                for (var i = 0; i < materialUsages.length; i++) {
+                    if (materialUsages[i].type === 6 && materialUsages[i].use_count > 0) {     // 6 = TYPE_VENEER
+                        that.usedVeneerMaterialDisplayNames.push(materialUsages[i].display_name);
                     }
                 }
 
@@ -168,6 +181,7 @@
                 // Update page
                 that.$page.empty();
                 that.$page.append(Twig.twig({ ref: "tabs/cutlist/_list.twig" }).render({
+                    capabilities: that.dialog.capabilities,
                     showThicknessSeparators: that.generateOptions.part_order_strategy.startsWith('thickness') || that.generateOptions.part_order_strategy.startsWith('-thickness'),
                     showWidthSeparators: that.generateOptions.part_order_strategy.startsWith('width') || that.generateOptions.part_order_strategy.startsWith('-width'),
                     dimensionColumnOrderStrategy: that.generateOptions.dimension_column_order_strategy.split('>'),
@@ -180,6 +194,7 @@
                     ignoredInstanceCount: ignoredInstanceCount,
                     usedTags: usedTags,
                     usedEdgeMaterialDisplayNames: that.usedEdgeMaterialDisplayNames,
+                    usedVeneerMaterialDisplayNames: that.usedVeneerMaterialDisplayNames,
                     groups: groups
                 }));
 
@@ -289,6 +304,44 @@
                         });
                     })
                 ;
+                $('#ladb_cutlist_veneer_material_names_filter', that.$page)
+                    .tokenfield($.extend(TOKENFIELD_OPTIONS, {
+                        autocomplete: {
+                            source: that.usedVeneerMaterialDisplayNames,
+                            delay: 100
+                        },
+                        showAutocompleteOnFocus: false
+                    }))
+                    .on('tokenfield:createtoken', function (e) {
+
+                        // Unique token
+                        var existingTokens = $(this).tokenfield('getTokens');
+                        $.each(existingTokens, function (index, token) {
+                            if (token.value === e.attrs.value) {
+                                e.preventDefault();
+                            }
+                        });
+
+                        // Available token only
+                        var available = false;
+                        $.each(that.usedVeneerMaterialDisplayNames, function (index, token) {
+                            if (token === e.attrs.value) {
+                                available = true;
+                                return false;
+                            }
+                        });
+                        if (!available) {
+                            e.preventDefault();
+                        }
+                    })
+                    .on('tokenfield:createdtoken tokenfield:removedtoken', function (e) {
+                        var tokenList = $(this).tokenfield('getTokensList');
+                        that.generateFilters.veneer_material_names_filter = tokenList.length === 0 ? [] : tokenList.split(';');
+                        that.generateCutlist(function () {
+                            $('#ladb_cutlist_veneer_material_names_filter-tokenfield', that.$page).focus();
+                        });
+                    })
+                ;
 
                 // Bind buttons
                 $('.ladb-btn-setup-model-units', that.$header).on('click', function() {
@@ -303,6 +356,11 @@
                 $('#ladb_cutlist_btn_edge_material_names_filter_clear', that.$page).on('click', function () {
                     $(this).blur();
                     that.generateFilters.edge_material_names_filter = [];
+                    that.generateCutlist();
+                });
+                $('#ladb_cutlist_btn_veneer_material_names_filter_clear', that.$page).on('click', function () {
+                    $(this).blur();
+                    that.generateFilters.veneer_material_names_filter = [];
                     that.generateCutlist();
                 });
                 $('.ladb-btn-toggle-no-print', that.$page).on('click', function () {
@@ -323,7 +381,7 @@
                     that.scrollSlideToTarget(null, $target, true, true);
                     return false;
                 });
-                $('a.ladb-btn-material-filter', that.$page).on('click', function () {
+                $('a.ladb-btn-edge-material-filter', that.$page).on('click', function () {
                     $(this).blur();
                     var materialFilter = $(this).data('material-display-name');
                     var indexOf = that.generateFilters.edge_material_names_filter.indexOf(materialFilter);
@@ -331,6 +389,18 @@
                         that.generateFilters.edge_material_names_filter.splice(indexOf, 1);
                     } else {
                         that.generateFilters.edge_material_names_filter.push(materialFilter);
+                    }
+                    that.generateCutlist();
+                    return false;
+                });
+                $('a.ladb-btn-veneer-material-filter', that.$page).on('click', function () {
+                    $(this).blur();
+                    var materialFilter = $(this).data('material-display-name');
+                    var indexOf = that.generateFilters.veneer_material_names_filter.indexOf(materialFilter);
+                    if (indexOf > -1) {
+                        that.generateFilters.veneer_material_names_filter.splice(indexOf, 1);
+                    } else {
+                        that.generateFilters.veneer_material_names_filter.push(materialFilter);
                     }
                     that.generateCutlist();
                     return false;
@@ -439,6 +509,12 @@
                     $(this).blur();
                     that.showAllGroups();
                 });
+                $('a.ladb-item-dimensions-help', that.$page).on('click', function () {
+                    $(this).blur();
+                    var $group = $(this).parents('.ladb-cutlist-group');
+                    var groupId = $group.data('group-id');
+                    that.dimensionsHelpGroup(groupId);
+                });
                 $('a.ladb-item-numbers-save', that.$page).on('click', function () {
                     $(this).blur();
                     var $group = $(this).parents('.ladb-cutlist-group');
@@ -475,11 +551,11 @@
                     var groupId = $group.data('group-id');
                     that.labelsGroup(groupId);
                 });
-                $('button.ladb-btn-group-dimensions-help', that.$page).on('click', function () {
+                $('button.ladb-btn-group-layout', that.$page).on('click', function () {
                     $(this).blur();
                     var $group = $(this).parents('.ladb-cutlist-group');
                     var groupId = $group.data('group-id');
-                    that.dimensionsHelpGroup(groupId);
+                    that.layoutGroupParts(groupId);
                 });
                 $('.ladb-minitools a[data-tab]', that.$page).on('click', function () {
                     $(this).blur();
@@ -599,7 +675,6 @@
             var $editorSummary = $('#ladb_cutlist_export_editor_summary', $modal);
             var $editorCutlist = $('#ladb_cutlist_export_editor_cutlist', $modal);
             var $editorInstancesList = $('#ladb_cutlist_export_editor_instances_list', $modal);
-            var $btnHelp = $('#ladb_cutlist_export_btn_help', $modal);
             var $btnPreview = $('#ladb_cutlist_export_btn_preview', $modal);
             var $btnExport = $('#ladb_cutlist_export_btn_export', $modal);
 
@@ -711,16 +786,26 @@
                     { name: 'edge_ymin', type: 'edge' },
                     { name: 'edge_ymax', type: 'edge' },
                     { name: 'edge_xmin', type: 'edge' },
-                    { name: 'edge_xmax', type: 'edge' }
+                    { name: 'edge_xmax', type: 'edge' },
+                    { name: 'face_zmax', type: 'veneer' },
+                    { name: 'face_zmin', type: 'veneer' },
+                    { name: 'layers', type: 'array' }
+                ],
+                snippetDefs: [
+                    { name: i18next.t('tab.cutlist.snippet.number_and_name'), value: '@number + " - " + @name' },
+                    { name: '-' },
+                    { name: i18next.t('tab.cutlist.snippet.size'), value: '@bbox_length + " x " + @bbox_width' },
+                    { name: i18next.t('tab.cutlist.snippet.area'), value: '@bbox_length * @bbox_width' },
+                    { name: i18next.t('tab.cutlist.snippet.volume'), value: '@bbox_length * @bbox_width * @bbox_thickness' },
                 ]
             });
             $editorInstancesList.ladbEditorExport({
                 dialog: that.dialog,
                 vars: [
                     { name: 'number', type: 'string' },
-                    { name: 'path', type: 'string' },
+                    { name: 'path', type: 'path' },
                     { name: 'instance_name', type: 'string' },
-                    { name: 'definition_name', type: 'string' },
+                    { name: 'name', type: 'string' },
                     { name: 'cutting_length', type: 'length' },
                     { name: 'cutting_width', type: 'length' },
                     { name: 'cutting_thickness', type: 'length' },
@@ -735,7 +820,17 @@
                     { name: 'edge_ymin', type: 'edge' },
                     { name: 'edge_ymax', type: 'edge' },
                     { name: 'edge_xmin', type: 'edge' },
-                    { name: 'edge_xmax', type: 'edge' }
+                    { name: 'edge_xmax', type: 'edge' },
+                    { name: 'face_zmax', type: 'veneer' },
+                    { name: 'face_zmin', type: 'veneer' },
+                    { name: 'layer', type: 'string' }
+                ],
+                snippetDefs: [
+                    { name: i18next.t('tab.cutlist.snippet.number_and_name'), value: '@number + " - " + @name' },
+                    { name: '-' },
+                    { name: i18next.t('tab.cutlist.snippet.size'), value: '@bbox_length + " x " + @bbox_width' },
+                    { name: i18next.t('tab.cutlist.snippet.area'), value: '@bbox_length * @bbox_width' },
+                    { name: i18next.t('tab.cutlist.snippet.volume'), value: '@bbox_length * @bbox_width * @bbox_thickness' },
                 ]
             });
 
@@ -752,12 +847,6 @@
             });
 
             // Bind buttons
-            $btnHelp.on('click', function () {
-                $.getJSON(that.dialog.getDocsPageUrl('features.parts.export'), function (data) {
-                    rubyCallCommand('core_open_url', data);
-                });
-                return false;
-            });
             $btnPreview.on('click', function () {
 
                 // Fetch options
@@ -816,11 +905,11 @@
                         });
                         $itemCopyAll.on('click', function () {
                             that.dialog.copyToClipboard(fnRowsToTsv(0));
-                            that.dialog.notify(i18next.t('tab.cutlist.export.success.copied'), 'success');
+                            that.dialog.notifySuccess(i18next.t('tab.cutlist.export.success.copied'));
                         });
                         $itemCopyValues.on('click', function () {
                             that.dialog.copyToClipboard(fnRowsToTsv(1));
-                            that.dialog.notify(i18next.t('tab.cutlist.export.success.copied'), 'success');
+                            that.dialog.notifySuccess(i18next.t('tab.cutlist.export.success.copied'));
                         });
                         $btnClose.on('click', function () {
                             that.popSlide();
@@ -855,7 +944,7 @@
                         that.dialog.notifyErrors(response.errors);
                     }
                     if (response.export_path) {
-                        that.dialog.notify(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }), 'success', [
+                        that.dialog.notifySuccess(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }), [
                             Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
 
                                 rubyCallCommand('core_open_external_file', {
@@ -915,7 +1004,6 @@
             var $tabs = $('a[data-toggle="tab"]', $modal);
             var $widgetPreset = $('.ladb-widget-preset', $modal);
             var $inputSolidWoodCoefficient = $('#ladb_input_solid_wood_coefficient', $modal);
-            var $btnHelp = $('#ladb_cutlist_report_btn_help', $modal);
             var $btnGenerate = $('#ladb_cutlist_report_btn_generate', $modal);
 
             var fnFetchOptions = function (options) {
@@ -943,19 +1031,13 @@
             });
 
             // Bind buttons
-            $btnHelp.on('click', function () {
-                $.getJSON(that.dialog.getDocsPageUrl('features.parts.report'), function (data) {
-                    rubyCallCommand('core_open_url', data);
-                });
-                return false;
-            });
             $btnGenerate.on('click', function () {
 
                 // Fetch options
                 fnFetchOptions(reportOptions);
 
                 // Store options
-                rubyCallCommand('core_set_model_preset', {dictionary: 'cutlist_report_options', values: reportOptions });
+                rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_report_options', values: reportOptions });
 
                 // Generate report
                 that.generateReportCutlist(reportOptions);
@@ -1016,6 +1098,7 @@
                             that.reportCutlist();
                         });
                         $btnPrint.on('click', function () {
+                            this.blur();
                             that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.report.title'));
                         });
                         $btnClose.on('click', function () {
@@ -1157,38 +1240,16 @@
     // Highlight /////
 
     LadbTabCutlist.prototype.highlightAllParts = function () {
-        var that = this;
-
-        rubyCallCommand('cutlist_highlight_parts', { minimize_on_highlight: that.generateOptions.minimize_on_highlight }, function (response) {
-
-            if (response['errors']) {
-                that.dialog.notifyErrors(response['errors']);
-            } else if (that.generateOptions.minimize_on_highlight) {
-                that.dialog.minimize();
-            }
-
-        });
-
+        let partIdsWithContext = this.grabVisiblePartIdsWithContext(null, REAL_MATERIALS_FILTER);
+        this.highlightParts(partIdsWithContext.partIds, partIdsWithContext.context);
     };
 
     LadbTabCutlist.prototype.highlightGroupParts = function (groupId) {
-        var that = this;
-
-        rubyCallCommand('cutlist_highlight_parts', { minimize_on_highlight: that.generateOptions.minimize_on_highlight, group_id: groupId }, function (response) {
-
-            if (response['errors']) {
-                that.dialog.notifyErrors(response['errors']);
-            } else if (that.generateOptions.minimize_on_highlight) {
-                that.dialog.minimize();
-            }
-
-        });
-
+        let partIdsWithContext = this.grabVisiblePartIdsWithContext(groupId, REAL_MATERIALS_FILTER);
+        this.highlightParts(partIdsWithContext.partIds, partIdsWithContext.context);
     };
 
     LadbTabCutlist.prototype.highlightPart = function (partId) {
-        var that = this;
-
         var groupAndPart = this.findGroupAndPartById(partId);
         if (groupAndPart) {
 
@@ -1208,21 +1269,598 @@
                 partIds = [ partId ];
             }
 
-            rubyCallCommand('cutlist_highlight_parts', { minimize_on_highlight: that.generateOptions.minimize_on_highlight, part_ids: partIds }, function (response) {
+            this.highlightParts(partIds);
 
-                if (response['errors']) {
-                    that.dialog.notifyErrors(response['errors']);
-                } else if (that.generateOptions.minimize_on_highlight) {
-                    that.dialog.minimize();
+        }
+    };
+
+    LadbTabCutlist.prototype.highlightParts = function (partIds, context) { // partIds ignored if groupId is defined
+        var that = this;
+
+        var groupId = context && context.targetGroup ? context.targetGroup.id : null;
+
+        rubyCallCommand('cutlist_highlight_parts', { minimize_on_highlight: this.generateOptions.minimize_on_highlight, group_id: groupId, part_ids: partIds }, function (response) {
+
+            if (response['errors']) {
+                that.dialog.notifyErrors(response['errors']);
+            } else if (that.generateOptions.minimize_on_highlight) {
+                that.dialog.minimize();
+            }
+
+        });
+
+    }
+
+    // Layout /////
+
+    LadbTabCutlist.prototype.layoutAllParts = function () {
+        let partIdsWithContext = this.grabVisiblePartIdsWithContext(null, REAL_MATERIALS_FILTER);
+        this.layoutParts(partIdsWithContext.partIds, partIdsWithContext.context);
+    };
+
+    LadbTabCutlist.prototype.layoutGroupParts = function (groupId) {
+        let partIdsWithContext = this.grabVisiblePartIdsWithContext(groupId, REAL_MATERIALS_FILTER);
+        this.layoutParts(partIdsWithContext.partIds, partIdsWithContext.context);
+    };
+
+    LadbTabCutlist.prototype.layoutParts = function (partIds, context, forceDefaultTab) {
+        var that = this;
+
+        var section = context && context.targetGroup ? context.targetGroup.id : null;
+
+        // Retrieve label options
+        rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_layout_options', section: section }, function (response) {
+
+            var layoutOptions = response.preset;
+
+            var $modal = that.appendModalInside('ladb_cutlist_modal_layout', 'tabs/cutlist/_modal-layout.twig', {
+                group: context.targetGroup,
+                isGroupSelection: context ? context.isGroupSelection : false,
+                isPartSelection: context ? context.isPartSelection : false,
+                tab: forceDefaultTab || that.lastLayoutOptionsTab == null ? 'layout' : that.lastLayoutOptionsTab,
+                THREE_CAMERA_VIEWS: THREE_CAMERA_VIEWS
+            });
+
+            // Fetch UI elements
+            var $tabs = $('a[data-toggle="tab"]', $modal);
+            var $widgetPreset = $('.ladb-widget-preset', $modal);
+            var $selectPageFormat = $('#ladb_select_page_format', $modal);
+            var $inputPageWidth = $('#ladb_input_page_width', $modal);
+            var $inputPageHeight = $('#ladb_input_page_height', $modal);
+            var $selectPageHeader = $('#ladb_select_page_header', $modal);
+            var $selectPartsColored = $('#ladb_select_parts_colored', $modal);
+            var $selectPartsOpacity = $('#ladb_select_parts_opacity', $modal);
+            var $selectPinsHidden = $('#ladb_select_pins_hidden', $modal);
+            var $selectPinsColored = $('#ladb_select_pins_colored', $modal);
+            var $textareaPinsFormula = $('#ladb_textarea_pins_formula', $modal);
+            var $selectPinsLength = $('#ladb_select_pins_length', $modal);
+            var $selectPinsDirection = $('#ladb_select_pins_direction', $modal);
+            var $selectCameraView = $('#ladb_select_camera_view', $modal);
+            var $selectCameraZoom = $('#ladb_select_camera_zoom', $modal);
+            var $selectCameraTarget = $('#ladb_select_camera_target', $modal);
+            var $inputCameraView = $('#ladb_input_camera_view', $modal);
+            var $inputCameraZoom = $('#ladb_input_camera_zoom', $modal);
+            var $inputCameraTarget = $('#ladb_input_camera_target', $modal);
+            var $inputExplodeFactor = $('#ladb_input_explode_factor', $modal);
+            var $formGroupPins = $('.ladb-cutlist-layout-form-group-pins', $modal);
+            var $formGroupPinsDirection = $('.ladb-cutlist-layout-form-group-pins-direction', $modal);
+            var $btnGenerate = $('#ladb_cutlist_layout_btn_generate', $modal);
+
+            var fnUpdatePageSizeFieldsAvailability = function () {
+                if ($selectPageFormat.selectpicker('val') == null) {
+                    $selectPageFormat.selectpicker('val', '0');
+                    $inputPageWidth.ladbTextinputDimension('enable');
+                    $inputPageHeight.ladbTextinputDimension('enable');
+                } else {
+                    $inputPageWidth.ladbTextinputDimension('disable');
+                    $inputPageHeight.ladbTextinputDimension('disable');
                 }
+            }
+            var fnUpdateFieldsVisibility = function () {
+                if ($selectPinsHidden.val() === '1') {
+                    $formGroupPins.hide();
+                } else {
+                    $formGroupPins.show();
+                    if ($selectPinsLength.val() === '0') {
+                        $formGroupPinsDirection.hide();
+                    } else {
+                        $formGroupPinsDirection.show();
+                    }
+                }
+            }
+            var fnConvertPageSettings = function(pageWidth, pageHeight, callback) {
+                rubyCallCommand('core_length_to_float', {
+                    page_width: pageWidth,
+                    page_height: pageHeight
+                }, function (response) {
+                    callback(response.page_width, response.page_height);
+                });
+            }
+            var fnConvertToVariableDefs = function (vars) {
+
+                // Generate variableDefs for formula editor
+                var variableDefs = [];
+                for (var i = 0; i < vars.length; i++) {
+                    variableDefs.push({
+                        text: vars[i].name,
+                        displayText: i18next.t('tab.cutlist.export.' + vars[i].name),
+                        type: vars[i].type
+                    });
+                }
+
+                return variableDefs;
+            }
+            var fnFetchOptions = function (options) {
+                options.page_width = $inputPageWidth.val();
+                options.page_height = $inputPageHeight.val();
+                options.page_header = $selectPageHeader.val() === '1';
+                options.parts_colored = $selectPartsColored.val() === '1';
+                options.parts_opacity = parseFloat($selectPartsOpacity.val());
+                options.pins_hidden = $selectPinsHidden.val() === '1';
+                options.pins_colored = $selectPinsColored.val() === '1';
+                options.pins_formula = $textareaPinsFormula.val();
+                options.pins_length = parseInt($selectPinsLength.val());
+                options.pins_direction = parseInt($selectPinsDirection.val());
+                options.camera_view = JSON.parse($inputCameraView.val());
+                options.camera_zoom = JSON.parse($inputCameraZoom.val());
+                options.camera_target = JSON.parse($inputCameraTarget.val());
+                options.explode_factor = $inputExplodeFactor.slider('getValue');
+            }
+            var fnFillInputs = function (options) {
+                $selectPageFormat.selectpicker('val', options.page_width.replace(',', '.') + 'x' + options.page_height.replace(',', '.'));
+                $inputPageWidth.val(options.page_width);
+                $inputPageHeight.val(options.page_height);
+                $selectPageHeader.selectpicker('val', options.page_header ? '1' : '0');
+                $selectPartsColored.selectpicker('val', options.parts_colored ? '1' : '0');
+                $selectPartsOpacity.selectpicker('val', options.parts_opacity);
+                $selectPinsHidden.selectpicker('val', options.pins_hidden ? '1' : '0');
+                $selectPinsColored.selectpicker('val', options.pins_colored ? '1' : '0');
+                $textareaPinsFormula.ladbTextinputCode('val', [ typeof options.pins_formula == 'string' ? options.pins_formula : '' ]);
+                $selectPinsLength.selectpicker('val', options.pins_length);
+                $selectPinsDirection.selectpicker('val', options.pins_direction);
+                $selectCameraView.selectpicker('val', JSON.stringify(options.camera_view));
+                $inputCameraView.val(JSON.stringify(options.camera_view));
+                $selectCameraZoom.selectpicker('val', JSON.stringify(options.camera_zoom));
+                $inputCameraZoom.val(JSON.stringify(options.camera_zoom));
+                $selectCameraTarget.selectpicker('val', JSON.stringify(options.camera_target));
+                $inputCameraTarget.val(JSON.stringify(options.camera_target));
+                $inputExplodeFactor.slider('setValue', options.explode_factor);
+                fnUpdatePageSizeFieldsAvailability();
+                fnUpdateFieldsVisibility();
+            }
+
+            $widgetPreset.ladbWidgetPreset({
+                dialog: that.dialog,
+                dictionary: 'cutlist_layout_options',
+                fnFetchOptions: fnFetchOptions,
+                fnFillInputs: fnFillInputs
+            });
+            $selectPageFormat.selectpicker(SELECT_PICKER_OPTIONS);
+            $inputPageWidth.ladbTextinputDimension({
+                resetValue: '210mm'
+            });
+            $inputPageHeight.ladbTextinputDimension({
+                resetValue: '297mm'
+            });
+            $selectPageHeader.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectPartsColored.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectPartsOpacity.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectPinsHidden.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectPinsColored.selectpicker(SELECT_PICKER_OPTIONS);
+            $textareaPinsFormula.ladbTextinputCode({
+                variableDefs: fnConvertToVariableDefs([
+                    { name: 'number', type: 'string' },
+                    { name: 'path', type: 'path' },
+                    { name: 'instance_name', type: 'string' },
+                    { name: 'name', type: 'string' },
+                    { name: 'cutting_length', type: 'length' },
+                    { name: 'cutting_width', type: 'length' },
+                    { name: 'cutting_thickness', type: 'length' },
+                    { name: 'bbox_length', type: 'length' },
+                    { name: 'bbox_width', type: 'length' },
+                    { name: 'bbox_thickness', type: 'length' },
+                    { name: 'final_area', type: 'area' },
+                    { name: 'material_type', type: 'material-type' },
+                    { name: 'material_name', type: 'string' },
+                    { name: 'description', type: 'string' },
+                    { name: 'tags', type: 'array' },
+                    { name: 'edge_ymin', type: 'edge' },
+                    { name: 'edge_ymax', type: 'edge' },
+                    { name: 'edge_xmin', type: 'edge' },
+                    { name: 'edge_xmax', type: 'edge' },
+                    { name: 'face_zmax', type: 'veneer' },
+                    { name: 'face_zmin', type: 'veneer' },
+                    { name: 'layer', type: 'string' }
+                ]),
+                snippetDefs: [
+                    { name: i18next.t('tab.cutlist.snippet.number'), value: '@number' },
+                    { name: i18next.t('tab.cutlist.snippet.name'), value: '@name' },
+                    { name: i18next.t('tab.cutlist.snippet.number_and_name'), value: '@number + " - " + @name' },
+                    { name: '-' },
+                    { name: i18next.t('tab.cutlist.snippet.size'), value: '@bbox_length + " x " + @bbox_width' },
+                    { name: i18next.t('tab.cutlist.snippet.area'), value: '@bbox_length * @bbox_width' },
+                    { name: i18next.t('tab.cutlist.snippet.volume'), value: '@bbox_length * @bbox_width * @bbox_thickness' },
+                    { name: '-' },
+                    { name: i18next.t('tab.cutlist.snippet.number_without_hardware'), value: "@number unless @material_type.is_hardware?" },
+                ]
+            })
+            $selectPinsLength.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectPinsDirection.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectCameraView.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectCameraZoom.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectCameraTarget.selectpicker(SELECT_PICKER_OPTIONS);
+            $inputExplodeFactor.slider(SLIDER_OPTIONS);
+
+            fnFillInputs(layoutOptions);
+
+            // Bind tabs
+            $tabs.on('shown.bs.tab', function (e) {
+                that.lastLayoutOptionsTab = $(e.target).attr('href').substring('#tab_layout_options_'.length);
+            });
+
+            // Bind select
+            $selectPageFormat.on('change', function () {
+                var format = $(this).val();
+                if (format !== '0') {
+                    $inputPageWidth.ladbTextinputDimension('disable');
+                    $inputPageHeight.ladbTextinputDimension('disable');
+                    var dimensions = format.split('x');
+                    $inputPageWidth.val(dimensions[0]);
+                    $inputPageHeight.val(dimensions[1]);
+                } else {
+                    $inputPageWidth.ladbTextinputDimension('enable');
+                    $inputPageHeight.ladbTextinputDimension('enable');
+                }
+            });
+            $selectPinsHidden.on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                fnUpdateFieldsVisibility();
+            });
+            $selectPinsLength.on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                fnUpdateFieldsVisibility();
+            });
+            $selectCameraTarget.on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                $inputCameraTarget.val($(this).val());
+            });
+            $selectCameraView.on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                $inputCameraView.val($(this).val());
+            });
+            $selectCameraZoom.on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                $inputCameraZoom.val($(this).val());
+            });
+
+            // Bind buttons
+            $btnGenerate.on('click', function () {
+
+                // Fetch options
+                fnFetchOptions(layoutOptions);
+
+                // Store options
+                rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_layout_options', values: layoutOptions, section: section });
+
+                fnConvertPageSettings(layoutOptions.page_width, layoutOptions.page_height, function (pageWidth, pageHeight) {
+
+                    window.requestAnimationFrame(function () {
+
+                        // Start progress feedback
+                        that.dialog.startProgress(1);
+
+                        // Generate layout
+                        rubyCallCommand('cutlist_layout_parts', {
+                            part_ids: partIds,
+                            parts_colored: layoutOptions.parts_colored,
+                            pins_formula: layoutOptions.pins_formula
+                        }, function (response) {
+
+                            var controlsData = {
+                                zoom: layoutOptions.camera_zoom,
+                                target: layoutOptions.camera_target,
+                                exploded_model_radius: 1
+                            }
+
+                            var $slide = that.pushNewSlide('ladb_cutlist_slide_layout', 'tabs/cutlist/_slide-layout.twig', {
+                                capabilities: that.dialog.capabilities,
+                                errors: response.errors,
+                                filename: that.filename,
+                                modelName: that.modelName,
+                                modelDescription: that.modelDescription,
+                                pageName: that.pageName,
+                                pageDescription: that.pageDescription,
+                                isEntitySelection: that.isEntitySelection,
+                                lengthUnit: that.lengthUnit,
+                                generatedAt: new Date().getTime() / 1000,
+                                group: context.targetGroup,
+                                pageHeader: layoutOptions.page_header,
+                                THREE_CAMERA_VIEWS: THREE_CAMERA_VIEWS
+                            }, function () {
+
+                                // Load frame when slide animation completed
+                                $viewer.ladbThreeViewer('loadFrame');
+
+                            });
+
+                            // Fetch UI elements
+                            var $btnLayout = $('#ladb_btn_layout', $slide);
+                            var $btnPrint = $('#ladb_btn_print', $slide);
+                            var $btnExport = $('#ladb_btn_export', $slide);
+                            var $btnClose = $('#ladb_btn_close', $slide);
+                            var $viewer = $('.ladb-three-viewer', $slide);
+                            var $lblScale = $('.ladb-lbl-scale', $slide);
+
+                            // Bind buttons
+                            $btnLayout.on('click', function () {
+                                that.layoutParts(partIds, context);
+                            });
+                            $btnPrint.on('click', function () {
+                                $(this).blur();
+                                that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.layout.title'), '0', `${pageWidth}in ${pageHeight}in`);
+                            });
+                            $btnExport.on('click', function () {
+                                $(this).blur();
+
+                                window.requestAnimationFrame(function () {
+
+                                    // Start progress feedback
+                                    that.dialog.startProgress(1);
+
+                                    $viewer.ladbThreeViewer('callCommand', ['get_exploded_parts_matrices', null, function (data) {
+
+                                        rubyCallCommand('cutlist_layout_to_layout', $.extend({
+                                            parts_infos: data.parts_infos,
+                                            pins_infos: data.pins_infos,
+                                            target_group_id: context && context.targetGroup ? context.targetGroup.id : null,
+                                            generated_at: Twig.twig({ data: "{{ generatedAt|date(('default.date_format'|i18next)) }}" }).render({ generatedAt: new Date().getTime() / 1000 })
+                                        }, layoutOptions, controlsData), function (response) {
+
+                                            // Finish progress feedback
+                                            that.dialog.finishProgress();
+
+                                            if (response.errors) {
+                                                that.dialog.notifyErrors(response.errors);
+                                            }
+                                            if (response.export_path) {
+                                                that.dialog.notifySuccess(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }), [
+                                                    Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
+
+                                                        rubyCallCommand('core_open_external_file', {
+                                                            path: response.export_path
+                                                        });
+
+                                                    })
+                                                ]);
+                                            }
+
+                                        });
+
+                                    }]);
+
+                                });
+
+                            });
+                            $btnClose.on('click', function () {
+                                that.popSlide();
+                            });
+                            $('.ladb-btn-setup-model-units', $slide).on('click', function () {
+                                $(this).blur();
+                                that.dialog.executeCommandOnTab('settings', 'highlight_panel', { panel:'model' });
+                            });
+
+                            // Bind viewer
+                            var storeOptionsTimeoutId = null;
+                            $viewer.ladbThreeViewer({
+                                autoload: false,
+                                dialog: that.dialog,
+                                modelDef: response.three_model_def,
+                                partsColored: layoutOptions.parts_colored,
+                                partsOpacity: layoutOptions.parts_opacity,
+                                pinsHidden: layoutOptions.pins_hidden,
+                                pinsColored: layoutOptions.pins_colored,
+                                pinsRounded: typeof layoutOptions.pins_formula != 'string' || layoutOptions.pins_formula.length === 0,
+                                pinsLength: layoutOptions.pins_length,
+                                pinsDirection: layoutOptions.pins_direction,
+                                cameraView: layoutOptions.camera_view,
+                                cameraZoom: layoutOptions.camera_zoom,
+                                cameraTarget: layoutOptions.camera_target,
+                                explodeFactor: layoutOptions.explode_factor,
+                            }).on('changed.controls', function (e, data) {
+
+                                layoutOptions.camera_view = data.cameraView;
+                                layoutOptions.camera_zoom = data.cameraZoomIsAuto ? null : data.cameraZoom;
+                                layoutOptions.camera_target = data.cameraTargetIsAuto ? null : data.cameraTarget;
+                                layoutOptions.explode_factor = data.explodeFactor;
+
+                                controlsData.camera_zoom = data.cameraZoom;
+                                controlsData.camera_target = data.cameraTarget;
+                                controlsData.exploded_model_radius = data.explodedModelRadius;
+
+                                if (data.trigger === 'user') {  // Avoid double storing on viewer init
+
+                                    // Store options (only one time per 500ms)
+                                    if (storeOptionsTimeoutId) {
+                                        clearTimeout(storeOptionsTimeoutId);
+                                    }
+                                    storeOptionsTimeoutId = setTimeout(function () {
+                                        rubyCallCommand('core_set_model_preset', {
+                                            dictionary: 'cutlist_layout_options',
+                                            values: layoutOptions,
+                                            section: section
+                                        });
+                                        storeOptionsTimeoutId = null;
+                                    }, 500);
+
+                                }
+
+                                var scale;
+                                if (data.cameraZoom > 1) {
+                                    scale = Number.parseFloat(data.cameraZoom.toFixed(3)) + ':1';
+                                } else if (data.cameraZoom < 1) {
+                                    scale = '1:' + Number.parseFloat((1 / data.cameraZoom).toFixed(3));
+                                } else {
+                                    scale = '1:1';
+                                }
+                                $lblScale.html(scale);
+
+                            });
+
+                            // Bind slide
+                            $slide.on('remove', function () {
+                                $viewer.ladbThreeViewer('destroy');
+                            });
+
+                            var $paperPage = $('.ladb-paper-page', $viewer)
+                            if ($paperPage.length > 0 && pageWidth && pageHeight) {
+
+                                $paperPage.outerWidth(pageWidth + 'in');
+                                $paperPage.outerHeight(pageHeight + 'in');
+                                $paperPage.css('padding', '0.25in');
+
+                                // Scale frame to fit viewer on window resize
+                                var fnScaleFrame = function (e) {
+
+                                    // Auto remove listener
+                                    if (e && !$paperPage.get(0).isConnected) {
+
+                                        // Unbind window resize event
+                                        $(window).off('resize', fnScaleFrame);
+
+                                        // Unbind dialog maximized and minimized events
+                                        that.dialog.$element.off('maximized.ladb.dialog', fnScaleFrame);
+
+                                        // Unbind tab shown events
+                                        that.$element.off('shown.ladb.tab', fnScaleFrame);
+
+                                        return;
+                                    }
+
+                                    if (!$paperPage.is(':visible')) {
+                                        return;
+                                    }
+
+                                    var spaceIW = $viewer.innerWidth();
+                                    var spaceIH = $viewer.innerHeight();
+                                    var frameOW = $paperPage.outerWidth();
+                                    var frameOH = $paperPage.outerHeight();
+                                    var scale = Math.min(
+                                        spaceIW / frameOW,
+                                        spaceIH / frameOH,
+                                        1.0
+                                    );
+
+                                    $paperPage.css('transformOrigin', '0 0');
+                                    $paperPage.css('transform', `translate(${(spaceIW - frameOW * scale) / 2}px, ${(spaceIH - frameOH * scale) / 2}px) scale(${scale})`);
+
+                                };
+
+                                // Bind window resize event
+                                $(window).on('resize', fnScaleFrame);
+
+                                // Bind dialog maximized and minimized events
+                                that.dialog.$element.on('maximized.ladb.dialog', fnScaleFrame);
+
+                                // Bind tab shown events
+                                that.$element.on('shown.ladb.tab', fnScaleFrame);
+
+                                fnScaleFrame();
+
+                            }
+
+                            // Finish progress feedback
+                            that.dialog.finishProgress();
+
+                        });
+
+                    });
+
+                    // Hide modal
+                    $modal.modal('hide');
+
+                });
 
             });
 
-        }
+            // Bind modal
+            $modal.on('hide.bs.modal', function () {
+                $inputExplodeFactor.slider('destroy');
+            });
 
-    };
+            // Show modal
+            $modal.modal('show');
+
+            // Setup popovers
+            that.dialog.setupPopovers();
+
+        });
+
+    }
 
     // Parts /////
+
+    LadbTabCutlist.prototype.grabVisiblePartIdsWithContext = function (groupId, materialFilter) {
+        var that = this;
+
+        let partIds = [];
+        let targetGroup = null;
+        let isGroupSelection = false;
+        let isPartSelection = false;
+
+        let fnIsGroupExcluded = function (group) {
+            return materialFilter && !materialFilter.includes(group.material_type);
+        };
+        let fnGrabFromGroup = function (group) {
+
+            if (fnIsGroupExcluded(group)) {
+                return;
+            }
+
+            if (that.generateOptions.hidden_group_ids.indexOf(group.id) >= 0) {
+                isGroupSelection = true;
+                return;
+            }
+
+            for (let part of group.parts) {
+                partIds.push(part.id);
+            }
+
+        };
+
+        if (groupId) {
+
+            targetGroup = this.findGroupById(groupId);
+            if (targetGroup && !fnIsGroupExcluded(targetGroup)) {
+
+                if (this.selectionGroupId === groupId && this.selectionPartIds.length > 0) {
+
+                    isPartSelection = true;
+
+                    // Take only selected parts
+                    partIds = this.selectionPartIds;
+
+                } else {
+
+                    // Take all part from the group
+                    fnGrabFromGroup(targetGroup);
+
+                }
+
+            }
+
+        } else {
+
+            // Grab from all visible groups
+            for (let group of this.groups) {
+                fnGrabFromGroup(group);
+            }
+
+        }
+
+        return {
+            partIds: partIds,
+            context: {
+                targetGroup: targetGroup,
+                isGroupSelection: isGroupSelection,
+                isPartSelection: isPartSelection,
+            }
+        }
+    }
 
     LadbTabCutlist.prototype.findGroupAndPartById = function (id) {
         for (var i = 0; i < this.groups.length; i++) {
@@ -1269,7 +1907,7 @@
     LadbTabCutlist.prototype.renderSelectionOnGroup = function (id) {
         var that = this;
         var $group = $('#ladb_group_' + id, this.$page);
-        var defs = [ 'cuttingdiagram1d', 'cuttingdiagram2d', 'labels' ];
+        var defs = [ 'cuttingdiagram1d', 'cuttingdiagram2d', 'labels', 'layout' ];
         $.each(defs, function () {
             var $btn = $('button.ladb-btn-group-' + this, $group);
             var $i = $('i', $btn);
@@ -1491,6 +2129,18 @@
                 if (editedPart.edge_material_names.xmax !== editedParts[i].edge_material_names.xmax) {
                     editedPart.edge_material_names.xmax = MULTIPLE_VALUE;
                 }
+                if (editedPart.face_material_names.zmin !== editedParts[i].face_material_names.zmin) {
+                    editedPart.face_material_names.zmin = MULTIPLE_VALUE;
+                }
+                if (editedPart.face_material_names.zmax !== editedParts[i].face_material_names.zmax) {
+                    editedPart.face_material_names.zmax = MULTIPLE_VALUE;
+                }
+                if (editedPart.face_texture_angles.zmin !== editedParts[i].face_texture_angles.zmin) {
+                    editedPart.face_texture_angles.zmin = MULTIPLE_VALUE;
+                }
+                if (editedPart.face_texture_angles.zmax !== editedParts[i].face_texture_angles.zmax) {
+                    editedPart.face_texture_angles.zmax = MULTIPLE_VALUE;
+                }
             }
 
             if (tab === undefined) {
@@ -1500,488 +2150,689 @@
                 || tab === 'extra' && group.material_type === 0 /* 0 = TYPE_UNKNOWN */
                 || tab === 'axes' && multiple
                 || tab === 'edges' && group.material_type !== 2 /* 2 = TYPE_SHEET_GOOD */
-                || tab === 'infos'
-                || tab === 'warnings'
+                || tab === 'faces' && group.material_type !== 2 /* 2 = TYPE_SHEET_GOOD */
+                || tab === 'infos_warnings' && multiple
             ) {
                 tab = 'general';
             }
             this.lastEditPartTab = tab;
 
-            var fnOpenModal = function(thumbnailFile) {
+            var $modal = that.appendModalInside('ladb_cutlist_modal_part', 'tabs/cutlist/_modal-part.twig', {
+                group: group,
+                part: editedPart,
+                partCount: editedParts.length,
+                multiple: multiple,
+                materialUsages: that.materialUsages,
+                tab: tab
+            });
 
-                var $modal = that.appendModalInside('ladb_cutlist_modal_part', 'tabs/cutlist/_modal-part.twig', {
-                    group: group,
-                    part: editedPart,
-                    part_count: editedParts.length,
-                    multiple: multiple,
-                    thumbnailFile: thumbnailFile,
-                    materialUsages: that.materialUsages,
-                    tab: tab
+            // Fetch UI elements
+            var $tabs = $('a[data-toggle="tab"]', $modal);
+            var $divPartThumbnail = $('#ladb_cutlist_part_thumbnail', $modal);
+            var $inputName = $('#ladb_cutlist_part_input_name', $modal);
+            var $selectMaterialName = $('#ladb_cutlist_part_select_material_name', $modal);
+            var $selectCumulable = $('#ladb_cutlist_part_select_cumulable', $modal);
+            var $inputInstanceCountByPart = $('#ladb_cutlist_part_input_instance_count_by_part', $modal);
+            var $inputMass = $('#ladb_cutlist_part_input_mass', $modal);
+            var $inputPrice = $('#ladb_cutlist_part_input_price', $modal);
+            var $inputThicknessLayerCount = $('#ladb_cutlist_part_input_thickness_layer_count', $modal);
+            var $inputDescription = $('#ladb_cutlist_part_input_description', $modal);
+            var $inputTags = $('#ladb_cutlist_part_input_tags', $modal);
+            var $inputOrientationLockedOnAxis = $('#ladb_cutlist_part_input_orientation_locked_on_axis', $modal);
+            var $inputSymmetrical = $('#ladb_cutlist_part_input_symmetrical', $modal);
+            var $inputIgnoreGrainDirection = $('#ladb_cutlist_part_input_ignore_grain_direction', $modal);
+            var $inputPartAxes = $('#ladb_cutlist_part_input_axes', $modal);
+            var $sortableAxes = $('#ladb_sortable_axes', $modal);
+            var $sortablePartAxes = $('#ladb_sortable_part_axes', $modal);
+            var $sortablePartAxesExtra = $('#ladb_sortable_part_axes_extra', $modal);
+            var $selectPartAxesOriginPosition = $('#ladb_cutlist_part_select_axes_origin_position', $modal);
+            var $inputLengthIncrease = $('#ladb_cutlist_part_input_length_increase', $modal);
+            var $inputWidthIncrease = $('#ladb_cutlist_part_input_width_increase', $modal);
+            var $inputThicknessIncrease = $('#ladb_cutlist_part_input_thickness_increase', $modal);
+            var $selectEdgeYmax = $('#ladb_cutlist_part_select_edge_ymax', $modal);
+            var $selectEdgeYmin = $('#ladb_cutlist_part_select_edge_ymin', $modal);
+            var $selectEdgeXmin = $('#ladb_cutlist_part_select_edge_xmin', $modal);
+            var $selectEdgeXmax = $('#ladb_cutlist_part_select_edge_xmax', $modal);
+            var $selectFaceZmin = $('#ladb_cutlist_part_select_face_zmin', $modal);
+            var $selectFaceZmax = $('#ladb_cutlist_part_select_face_zmax', $modal);
+            var $formGroupFaceZminTextureAngle = $('#ladb_cutlist_part_form_group_face_zmin_texture_angle', $modal);
+            var $formGroupFaceZmaxTextureAngle = $('#ladb_cutlist_part_form_group_face_zmax_texture_angle', $modal);
+            var $inputFaceZminTextureAngle = $('#ladb_cutlist_part_input_face_zmin_texture_angle', $modal);
+            var $inputFaceZmaxTextureAngle = $('#ladb_cutlist_part_input_face_zmax_texture_angle', $modal);
+            var $rectIncreaseLength = $('svg .increase-length', $modal);
+            var $rectIncreaseWidth = $('svg .increase-width', $modal);
+            var $rectEdgeYmin = $('svg .edge-ymin', $modal);
+            var $rectEdgeYmax = $('svg .edge-ymax', $modal);
+            var $rectEdgeXmin = $('svg .edge-xmin', $modal);
+            var $rectEdgeXmax = $('svg .edge-xmax', $modal);
+            var $rectFaceZmin = $('svg .face-zmin', $modal);
+            var $rectFaceZmax = $('svg .face-zmax', $modal);
+            var $rectFaceZminGrain = $('svg .face-zmin .face-grain', $modal);
+            var $rectFaceZmaxGrain = $('svg .face-zmax .face-grain', $modal);
+            var $patternFaceZminGrain = $('#pattern_face_zmin_grain', $modal);
+            var $patternFaceZmaxGrain = $('#pattern_face_zmax_grain', $modal);
+            var $labelEdgeYmax = $('#ladb_cutlist_part_label_edge_ymax', $modal);
+            var $labelEdgeYmin = $('#ladb_cutlist_part_label_edge_ymin', $modal);
+            var $labelEdgeXmin = $('#ladb_cutlist_part_label_edge_xmin', $modal);
+            var $labelEdgeXmax = $('#ladb_cutlist_part_label_edge_xmax', $modal);
+            var $labelFaceZmin = $('#ladb_cutlist_part_label_face_zmin', $modal);
+            var $labelFaceZmax = $('#ladb_cutlist_part_label_face_zmax', $modal);
+            var $labelFaceZminTextureAngle = $('#ladb_cutlist_part_label_face_zmin_texture_angle', $modal);
+            var $labelFaceZmaxTextureAngle = $('#ladb_cutlist_part_label_face_zmax_texture_angle', $modal);
+            var $btnHighlight = $('#ladb_cutlist_part_highlight', $modal);
+            var $btnExportToSkp = $('#ladb_cutlist_part_export_to_skp', $modal);
+            var $btnUpdate = $('#ladb_cutlist_part_update', $modal);
+
+            var thumbnailLoaded = false;
+
+            // Utils function
+            var fnComputeAxesOrder = function () {
+                var axes = [];
+                $sortablePartAxes.children('li').each(function () {
+                    axes.push($(this).data('axis'));
+                });
+                $inputPartAxes.val(axes);
+                return axes;
+            };
+            var fnDisplayAxisDimensions = function () {
+                if (!that.generateOptions.auto_orient || $inputOrientationLockedOnAxis.is(':checked')) {
+                    $sortablePartAxes.closest('div').switchClass('col-xs-12', 'col-xs-10', 0);
+                    $sortablePartAxesExtra.closest('div').show();
+                    $('li .ladb-info', $sortablePartAxes).each(function () {
+                        $(this).hide();
+                    });
+                } else {
+                    $sortablePartAxes.closest('div').switchClass('col-xs-10', 'col-xs-12', 0);
+                    $sortablePartAxesExtra.closest('div').hide();
+                    $('li .ladb-info', $sortablePartAxes).each(function () {
+                        $(this).show();
+                    });
+                }
+            };
+            var fnUpdateEdgesPreview = function() {
+                if ($selectEdgeYmax.val() === '') {
+                    $rectEdgeYmax.removeClass('ladb-active');
+                } else {
+                    $rectEdgeYmax.addClass('ladb-active');
+                }
+                if ($selectEdgeYmin.val() === '') {
+                    $rectEdgeYmin.removeClass('ladb-active');
+                } else {
+                    $rectEdgeYmin.addClass('ladb-active');
+                }
+                if ($selectEdgeXmin.val() === '') {
+                    $rectEdgeXmin.removeClass('ladb-active');
+                } else {
+                    $rectEdgeXmin.addClass('ladb-active');
+                }
+                if ($selectEdgeXmax.val() === '') {
+                    $rectEdgeXmax.removeClass('ladb-active');
+                } else {
+                    $rectEdgeXmax.addClass('ladb-active');
+                }
+            };
+            var fnIsMaterialTexturedAndGrained = function(name) {
+                for (let materialUsage of that.materialUsages) {
+                    if (materialUsage.name === name) {
+                        return materialUsage.textured && materialUsage.grained;
+                    }
+                }
+                return false;
+            };
+            var fnUpdateFacesPreview = function() {
+                if ($selectFaceZmin.val() === '') {
+                    $rectFaceZmin.removeClass('ladb-active');
+                    $rectFaceZminGrain.hide();
+                    $formGroupFaceZminTextureAngle.hide();
+                } else {
+                    $rectFaceZmin.addClass('ladb-active');
+                    if (editedPart.face_texture_angles.zmin != null && fnIsMaterialTexturedAndGrained($selectFaceZmin.val())) {
+                        $rectFaceZminGrain.show();
+                        $patternFaceZminGrain.attr('patternTransform', 'rotate(' + $inputFaceZminTextureAngle.val() + ' 0 0)');
+                        $formGroupFaceZminTextureAngle.show();
+                    } else {
+                        $rectFaceZminGrain.hide();
+                        $formGroupFaceZminTextureAngle.hide();
+                    }
+                }
+                if ($selectFaceZmax.val() === '') {
+                    $rectFaceZmax.removeClass('ladb-active');
+                    $rectFaceZmaxGrain.hide();
+                    $formGroupFaceZmaxTextureAngle.hide();
+                } else {
+                    $rectFaceZmax.addClass('ladb-active');
+                    if (editedPart.face_texture_angles.zmax != null && fnIsMaterialTexturedAndGrained($selectFaceZmax.val())) {
+                        $rectFaceZmaxGrain.show();
+                        $patternFaceZmaxGrain.attr('patternTransform', 'rotate(' + parseInt($inputFaceZmaxTextureAngle.val()) * -1 + ' 0 0)');
+                        $formGroupFaceZmaxTextureAngle.show();
+                    } else {
+                        $rectFaceZmaxGrain.hide();
+                        $formGroupFaceZmaxTextureAngle.hide();
+                    }
+                }
+            };
+            var fnUpdateIncreasesPreview = function() {
+                if ($inputLengthIncrease.val() == null || $inputLengthIncrease.val().length === 0 || $inputLengthIncrease.val().match(/^0([.,]{0,1}[0]*)(m|cm|mm|yd|'|")*$/g)) {
+                    $rectIncreaseLength.removeClass('ladb-active');
+                } else {
+                    $rectIncreaseLength.addClass('ladb-active');
+                }
+                if ($inputWidthIncrease.val() == null || $inputWidthIncrease.val().length === 0 || $inputWidthIncrease.val().match(/^0([.,]{0,1}[0]*)(m|cm|mm|yd|'|")*$/g)) {
+                    $rectIncreaseWidth.removeClass('ladb-active');
+                } else {
+                    $rectIncreaseWidth.addClass('ladb-active');
+                }
+            };
+            var fnNewCheck = function($select, type) {
+                if ($select.val() === 'new') {
+                    that.dialog.executeCommandOnTab('materials', 'new_material', { type: type });
+                    $modal.modal('hide');
+                    return true;
+                }
+                return false;
+            };
+            var fnMaterialNameCopyToAllEdges = function(materialName) {
+                if (materialName !== MULTIPLE_VALUE) {
+                    if (!$selectEdgeYmax.prop('disabled')) {
+                        $selectEdgeYmax.selectpicker('val', materialName);
+                    }
+                    if (!$selectEdgeYmin.prop('disabled')) {
+                        $selectEdgeYmin.selectpicker('val', materialName);
+                    }
+                    if (!$selectEdgeXmin.prop('disabled')) {
+                        $selectEdgeXmin.selectpicker('val', materialName);
+                    }
+                    if (!$selectEdgeXmax.prop('disabled')) {
+                        $selectEdgeXmax.selectpicker('val', materialName);
+                    }
+                    fnUpdateEdgesPreview();
+                }
+            };
+            var fnMaterialNameCopyToAllVeneers = function(materialName) {
+                if (materialName !== MULTIPLE_VALUE) {
+                    if (!$selectFaceZmax.prop('disabled')) {
+                        $selectFaceZmax.selectpicker('val', materialName);
+                    }
+                    if (!$selectFaceZmin.prop('disabled')) {
+                        $selectFaceZmin.selectpicker('val', materialName);
+                    }
+                    fnUpdateFacesPreview();
+                }
+            };
+            var fnIncrementVeneerTextureAngleInputValue = function($input, inc) {
+                let angle = parseInt($input.val());
+                if (!isNaN(angle)) {
+                    $input.val((angle + inc) % 360);
+                    fnUpdateFacesPreview();
+                }
+            }
+            var fnOnAxiesOrderChanged = function () {
+                var axes = fnComputeAxesOrder();
+
+                var oriented = editedPart.axes_to_values[axes[0]] >= editedPart.axes_to_values[axes[1]]
+                    &&  editedPart.axes_to_values[axes[1]] >= editedPart.axes_to_values[axes[2]];
+
+                // Check Orientation Locked On Axis option if needed
+                $inputOrientationLockedOnAxis.prop('checked', !oriented);
+                fnDisplayAxisDimensions();
+
+                // By default set origin position to 'min'
+                $selectPartAxesOriginPosition
+                    .selectpicker('val', 'min')
+                    .trigger('change')
+                ;
+
+            }
+            var fnLoadThumbnail = function () {
+                if (!thumbnailLoaded && !multiple) {
+
+                    // Generate and Retrieve part thumbnail file
+                    rubyCallCommand('cutlist_part_get_thumbnail', part, function (response) {
+
+                        var threeModelDef = response['three_model_def'];
+                        var thumbnailFile = response['thumbnail_file'];
+
+                        if (threeModelDef) {
+
+                            var $viewer = $(Twig.twig({ref: 'tabs/cutlist/_three-viewer-modal-part.twig'}).render({
+                                THREE_CAMERA_VIEWS: THREE_CAMERA_VIEWS,
+                                group: group,
+                                part: part
+                            }));
+
+                            $viewer.ladbThreeViewer({
+                                dialog: that.dialog,
+                                modelDef: threeModelDef,
+                                partsColored: true,
+                                partsOpacity: 0.8,
+                                pinsHidden: true,
+                                showBoxHelper: part.not_aligned_on_axes
+                            });
+
+                            $divPartThumbnail.html($viewer);
+
+                        } else if (thumbnailFile) {
+
+                                var $img = $('<img>')
+                                    .attr('src', thumbnailFile)
+                                ;
+                                if (part.flipped) {
+                                    $img
+                                        .css('transform', 'scaleX(-1)')
+                                    ;
+                                }
+
+                                $divPartThumbnail.html($img);
+
+                        } else {
+                            if (response['errors']) {
+                                that.dialog.notifyErrors(response['errors']);
+                            }
+                            $divPartThumbnail.hide();
+                        }
+
+                        thumbnailLoaded = true;
+
+                    });
+
+                }
+            }
+
+            fnDisplayAxisDimensions();
+            fnUpdateIncreasesPreview();
+
+            if (tab === 'general') {
+                fnLoadThumbnail();
+            }
+
+            // Bind tabs
+            $tabs.on('shown.bs.tab', function (e) {
+                that.lastEditPartTab = $(e.target).attr('href').substring('#tab_edit_part_'.length);
+                if (that.lastEditPartTab === 'general') {
+                    fnLoadThumbnail();
+                }
+            });
+
+            // Bind input
+            $inputName.ladbTextinputText();
+            $inputInstanceCountByPart.ladbTextinputNumberWithUnit({
+                resetValue: '1',
+                defaultUnit: 'u_p',
+                units: [
+                    { u_p: i18next.t('default.instance_plural') + ' / ' + i18next.t('default.part_single') },
+                ]
+            });
+            $inputMass.ladbTextinputNumberWithUnit({
+                resetValue: ' ',
+                defaultUnit: that.massUnitStrippedname + '_p',
+                units: [
+                    { kg_p: 'kg / ' + i18next.t('default.part_single') },
+                    { lb_p: 'lb / ' + i18next.t('default.part_single') }
+                ]
+            });
+            $inputPrice.ladbTextinputNumberWithUnit({
+                resetValue: ' ',
+                defaultUnit: '$_p',
+                units: [
+                    { $_p: that.currencySymbol + ' / ' + i18next.t('default.part_single') }
+                ]
+            });
+            $inputThicknessLayerCount.ladbTextinputNumberWithUnit({
+                resetValue: '1'
+            });
+            $inputDescription.ladbTextinputArea();
+            $inputTags.ladbTextinputTokenfield({
+                unique: true,
+                autocomplete: {
+                    source: that.usedTags.concat(that.generateOptions.tags).unique(),
+                    delay: 100
+                }
+            });
+            $inputLengthIncrease.on('change', function() {
+                fnUpdateIncreasesPreview();
+            });
+            $inputLengthIncrease.ladbTextinputDimension();
+            $inputWidthIncrease.on('change', function() {
+                fnUpdateIncreasesPreview();
+            });
+            $inputWidthIncrease.ladbTextinputDimension();
+            $inputThicknessIncrease.ladbTextinputDimension();
+            $inputFaceZminTextureAngle
+                .ladbTextinputNumberWithUnit({
+                    resetValue: 0,
+                    defaultUnit: 'deg',
+                    units: [
+                        { deg: i18next.t('default.unit_angle_0') }
+                    ]
+                })
+                .on('change', function () {
+                    fnUpdateFacesPreview();
+                });
+            $inputFaceZmaxTextureAngle
+                .ladbTextinputNumberWithUnit({
+                    resetValue: 0,
+                    defaultUnit: 'deg',
+                    units: [
+                        { deg: i18next.t('default.unit_angle_0') }
+                    ]
+                })
+                .on('change', function () {
+                    fnUpdateFacesPreview();
                 });
 
-                // Fetch UI elements
-                var $tabs = $('a[data-toggle="tab"]', $modal);
-                var $inputName = $('#ladb_cutlist_part_input_name', $modal);
-                var $selectMaterialName = $('#ladb_cutlist_part_select_material_name', $modal);
-                var $selectCumulable = $('#ladb_cutlist_part_select_cumulable', $modal);
-                var $inputInstanceCountByPart = $('#ladb_cutlist_part_input_instance_count_by_part', $modal);
-                var $inputMass = $('#ladb_cutlist_part_input_mass', $modal);
-                var $inputPrice = $('#ladb_cutlist_part_input_price', $modal);
-                var $inputThicknessLayerCount = $('#ladb_cutlist_part_input_thickness_layer_count', $modal);
-                var $inputDescription = $('#ladb_cutlist_part_input_description', $modal);
-                var $inputTags = $('#ladb_cutlist_part_input_tags', $modal);
-                var $inputOrientationLockedOnAxis = $('#ladb_cutlist_part_input_orientation_locked_on_axis', $modal);
-                var $inputSymmetrical = $('#ladb_cutlist_part_input_symmetrical', $modal);
-                var $inputIgnoreGrainDirection = $('#ladb_cutlist_part_input_ignore_grain_direction', $modal);
-                var $inputPartAxes = $('#ladb_cutlist_part_input_axes', $modal);
-                var $sortableAxes = $('#ladb_sortable_axes', $modal);
-                var $sortablePartAxes = $('#ladb_sortable_part_axes', $modal);
-                var $sortablePartAxesExtra = $('#ladb_sortable_part_axes_extra', $modal);
-                var $selectPartAxesOriginPosition = $('#ladb_cutlist_part_select_axes_origin_position', $modal);
-                var $inputLengthIncrease = $('#ladb_cutlist_part_input_length_increase', $modal);
-                var $inputWidthIncrease = $('#ladb_cutlist_part_input_width_increase', $modal);
-                var $inputThicknessIncrease = $('#ladb_cutlist_part_input_thickness_increase', $modal);
-                var $selectEdgeYmaxMaterialName = $('#ladb_cutlist_part_select_edge_ymax_material_name', $modal);
-                var $selectEdgeYminMaterialName = $('#ladb_cutlist_part_select_edge_ymin_material_name', $modal);
-                var $selectEdgeXminMaterialName = $('#ladb_cutlist_part_select_edge_xmin_material_name', $modal);
-                var $selectEdgeXmaxMaterialName = $('#ladb_cutlist_part_select_edge_xmax_material_name', $modal);
-                var $rectIncreaseLength = $('svg .increase-length', $modal);
-                var $rectIncreaseWidth = $('svg .increase-width', $modal);
-                var $rectEdgeYmax = $('svg .edge-ymax', $modal);
-                var $rectEdgeYmin = $('svg .edge-ymin', $modal);
-                var $rectEdgeXmin = $('svg .edge-xmin', $modal);
-                var $rectEdgeXmax = $('svg .edge-xmax', $modal);
-                var $labelEdgeYmax = $('#ladb_cutlist_part_label_edge_ymax', $modal);
-                var $labelEdgeYmin = $('#ladb_cutlist_part_label_edge_ymin', $modal);
-                var $labelEdgeXmin = $('#ladb_cutlist_part_label_edge_xmin', $modal);
-                var $labelEdgeXmax = $('#ladb_cutlist_part_label_edge_xmax', $modal);
-                var $btnHighlight = $('#ladb_cutlist_part_highlight', $modal);
-                var $btnExportToSkp = $('#ladb_cutlist_part_export_to_skp', $modal);
-                var $btnUpdate = $('#ladb_cutlist_part_update', $modal);
-
-                // Utils function
-                var fnComputeAxesOrder = function () {
-                    var axes = [];
-                    $sortablePartAxes.children('li').each(function () {
-                        axes.push($(this).data('axis'));
-                    });
-                    $inputPartAxes.val(axes);
-                    return axes;
-                };
-                var fnDisplayAxisDimensions = function () {
-                    if (!that.generateOptions.auto_orient || $inputOrientationLockedOnAxis.is(':checked')) {
-                        $sortablePartAxes.closest('div').switchClass('col-xs-12', 'col-xs-10', 0);
-                        $sortablePartAxesExtra.closest('div').show();
-                        $('li .ladb-info', $sortablePartAxes).each(function () {
-                            $(this).hide();
-                        });
-                    } else {
-                        $sortablePartAxes.closest('div').switchClass('col-xs-10', 'col-xs-12', 0);
-                        $sortablePartAxesExtra.closest('div').hide();
-                        $('li .ladb-info', $sortablePartAxes).each(function () {
-                            $(this).show();
-                        });
-                    }
-                };
-                var fnUpdateEdgesPreview = function() {
-                    if ($selectEdgeYmaxMaterialName.val() === '') {
-                        $rectEdgeYmax.removeClass('ladb-active');
-                    } else {
-                        $rectEdgeYmax.addClass('ladb-active');
-                    }
-                    if ($selectEdgeYminMaterialName.val() === '') {
-                        $rectEdgeYmin.removeClass('ladb-active');
-                    } else {
-                        $rectEdgeYmin.addClass('ladb-active');
-                    }
-                    if ($selectEdgeXminMaterialName.val() === '') {
-                        $rectEdgeXmin.removeClass('ladb-active');
-                    } else {
-                        $rectEdgeXmin.addClass('ladb-active');
-                    }
-                    if ($selectEdgeXmaxMaterialName.val() === '') {
-                        $rectEdgeXmax.removeClass('ladb-active');
-                    } else {
-                        $rectEdgeXmax.addClass('ladb-active');
-                    }
-                };
-                var fnUpdateIncreasesPreview = function() {
-                    if ($inputLengthIncrease.val() == null || $inputLengthIncrease.val().length === 0 || $inputLengthIncrease.val().match(/^0([.,]{0,1}[0]*)(m|cm|mm|yd|'|")*$/g)) {
-                        $rectIncreaseLength.removeClass('ladb-active');
-                    } else {
-                        $rectIncreaseLength.addClass('ladb-active');
-                    }
-                    if ($inputWidthIncrease.val() == null || $inputWidthIncrease.val().length === 0 || $inputWidthIncrease.val().match(/^0([.,]{0,1}[0]*)(m|cm|mm|yd|'|")*$/g)) {
-                        $rectIncreaseWidth.removeClass('ladb-active');
-                    } else {
-                        $rectIncreaseWidth.addClass('ladb-active');
-                    }
-                };
-                var fnNewCheck = function($select, type) {
-                    if ($select.val() === 'new') {
-                        that.dialog.executeCommandOnTab('materials', 'new_material', { type: type });
-                        $modal.modal('hide');
-                        return true;
-                    }
-                    return false;
-                };
-                var fnMaterialNameCopyToAllEdges = function(materialName) {
-                    if (materialName !== MULTIPLE_VALUE) {
-                        if (!$selectEdgeYmaxMaterialName.prop( "disabled")) {
-                            $selectEdgeYmaxMaterialName.selectpicker('val', materialName);
-                        }
-                        if (!$selectEdgeYminMaterialName.prop( "disabled")) {
-                            $selectEdgeYminMaterialName.selectpicker('val', materialName);
-                        }
-                        if (!$selectEdgeXminMaterialName.prop( "disabled")) {
-                            $selectEdgeXminMaterialName.selectpicker('val', materialName);
-                        }
-                        if (!$selectEdgeXmaxMaterialName.prop( "disabled")) {
-                            $selectEdgeXmaxMaterialName.selectpicker('val', materialName);
-                        }
+            // Bind select
+            $selectMaterialName.val(editedPart.material_name);
+            $selectMaterialName
+                .selectpicker(SELECT_PICKER_OPTIONS)
+                .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                    fnNewCheck($(this));
+                });
+            $selectCumulable.val(editedPart.cumulable);
+            $selectCumulable.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectPartAxesOriginPosition
+                .selectpicker(SELECT_PICKER_OPTIONS)
+                .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                    fnComputeAxesOrder();
+                });
+            $selectEdgeYmin.val(editedPart.edge_material_names.ymin);
+            $selectEdgeYmin
+                .selectpicker(SELECT_PICKER_OPTIONS)
+                .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                    if (!fnNewCheck($(this), 4 /* TYPE_EDGE */)) {
                         fnUpdateEdgesPreview();
                     }
-                };
-                var fnOnAxiesOrderChanged = function () {
-                    var axes = fnComputeAxesOrder();
+                });
+            $selectEdgeYmax.val(editedPart.edge_material_names.ymax);
+            $selectEdgeYmax
+                .selectpicker(SELECT_PICKER_OPTIONS)
+                .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                    if (!fnNewCheck($(this), 4 /* TYPE_EDGE */)) {
+                        fnUpdateEdgesPreview();
+                    }
+                });
+            $selectEdgeXmin.val(editedPart.edge_material_names.xmin);
+            $selectEdgeXmin
+                .selectpicker(SELECT_PICKER_OPTIONS)
+                .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                    if (!fnNewCheck($(this), 4 /* TYPE_EDGE */)) {
+                        fnUpdateEdgesPreview();
+                    }
+                });
+            $selectEdgeXmax.val(editedPart.edge_material_names.xmax);
+            $selectEdgeXmax
+                .selectpicker(SELECT_PICKER_OPTIONS)
+                .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                    if (!fnNewCheck($(this), 4 /* TYPE_EDGE */)) {
+                        fnUpdateEdgesPreview();
+                    }
+                });
+            $selectFaceZmin.val(editedPart.face_material_names.zmin);
+            $selectFaceZmin
+                .selectpicker(SELECT_PICKER_OPTIONS)
+                .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                    if (!fnNewCheck($(this), 6 /* TYPE_VENEER */)) {
+                        fnUpdateFacesPreview();
+                    }
+                });
+            $selectFaceZmax.val(editedPart.face_material_names.zmax);
+            $selectFaceZmax
+                .selectpicker(SELECT_PICKER_OPTIONS)
+                .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                    if (!fnNewCheck($(this), 6 /* TYPE_VENEER */)) {
+                        fnUpdateFacesPreview();
+                    }
+                });
 
-                    var oriented = editedPart.normals_to_values[axes[0]] >= editedPart.normals_to_values[axes[1]]
-                        &&  editedPart.normals_to_values[axes[1]] >= editedPart.normals_to_values[axes[2]];
+            // Bind increases
+            $rectIncreaseLength.on('click', function() {
+                $inputLengthIncrease.focus();
+            });
+            $rectIncreaseWidth.on('click', function() {
+                $inputWidthIncrease.focus();
+            });
 
-                    // Check Orientation Locked On Axis option if needed
-                    $inputOrientationLockedOnAxis.prop('checked', !oriented);
-                    fnDisplayAxisDimensions();
+            // Bind edges
+            $rectEdgeYmin.on('click', function() {
+                $selectEdgeYmin.selectpicker('toggle');
+            });
+            $rectEdgeYmax.on('click', function() {
+                $selectEdgeYmax.selectpicker('toggle');
+            });
+            $rectEdgeXmin.on('click', function() {
+                $selectEdgeXmin.selectpicker('toggle');
+            });
+            $rectEdgeXmax.on('click', function() {
+                $selectEdgeXmax.selectpicker('toggle');
+            });
 
-                    // By default set origin position to 'min'
-                    $selectPartAxesOriginPosition
-                        .selectpicker('val', 'min')
-                        .trigger('change')
-                    ;
+            // Bind faces
+            $rectFaceZmin.on('click', function() {
+                $selectFaceZmin.selectpicker('toggle');
+            });
+            $rectFaceZmax.on('click', function() {
+                $selectFaceZmax.selectpicker('toggle');
+            });
+
+            // Bind sorter
+            $sortableAxes.on('dblclick', function () {
+               var sortedNormals = Object.keys(editedPart.axes_to_values).sort(function (a, b) {
+                   return editedPart.axes_to_values[b] - editedPart.axes_to_values[a]
+               });
+               var $rowX = $('li[data-axis="' + sortedNormals[0] + '"]', $sortablePartAxes);
+               var $rowY = $('li[data-axis="' + sortedNormals[1] + '"]', $sortablePartAxes);
+               var $rowZ = $('li[data-axis="' + sortedNormals[2] + '"]', $sortablePartAxes);
+                $rowY.insertBefore($rowZ);
+                $rowX.insertBefore($rowY);
+                fnOnAxiesOrderChanged();
+            });
+            $sortablePartAxes.sortable({
+                cursor: 'ns-resize',
+                handle: '.ladb-handle',
+                stop: fnOnAxiesOrderChanged
+            });
+
+            // Bind checkbox
+            $inputOrientationLockedOnAxis.on('change', fnDisplayAxisDimensions);
+
+            // Bind labels
+            $labelEdgeYmax.on('dblclick', function() {
+                fnMaterialNameCopyToAllEdges($selectEdgeYmax.val());
+            });
+            $labelEdgeYmin.on('dblclick', function() {
+                fnMaterialNameCopyToAllEdges($selectEdgeYmin.val());
+            });
+            $labelEdgeXmin.on('dblclick', function() {
+                fnMaterialNameCopyToAllEdges($selectEdgeXmin.val());
+            });
+            $labelEdgeXmax.on('dblclick', function() {
+                fnMaterialNameCopyToAllEdges($selectEdgeXmax.val());
+            });
+            $labelFaceZmin.on('dblclick', function() {
+                fnMaterialNameCopyToAllVeneers($selectFaceZmin.val());
+            });
+            $labelFaceZmax.on('dblclick', function() {
+                fnMaterialNameCopyToAllVeneers($selectFaceZmax.val());
+            });
+            $labelFaceZminTextureAngle.on('click', function() {
+                fnIncrementVeneerTextureAngleInputValue($inputFaceZminTextureAngle, 90);
+            });
+            $labelFaceZmaxTextureAngle.on('click', function() {
+                fnIncrementVeneerTextureAngleInputValue($inputFaceZmaxTextureAngle, 90);
+            });
+
+            // Bind buttons
+            $btnHighlight.on('click', function () {
+                this.blur();
+                that.highlightPart(part.id);
+                return false;
+            });
+            $btnExportToSkp.on('click', function () {
+                this.blur();
+                rubyCallCommand('cutlist_part_export_to_skp', {
+                    definition_id: part.definition_id
+                }, function (response) {
+
+                    if (response.errors) {
+                        that.dialog.notifyErrors(response.errors);
+                    }
+                    if (response.export_path) {
+                        that.dialog.notifySuccess(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }), [
+                            Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
+
+                                rubyCallCommand('core_open_external_file', {
+                                    path: response.export_path
+                                });
+
+                            })
+                        ]);
+                    }
+
+                });
+                return false;
+            });
+            $btnUpdate.on('click', function () {
+
+                for (var i = 0; i < editedParts.length; i++) {
+
+                    if (!multiple) {
+
+                        editedParts[i].name = $inputName.val().trim();
+
+                        editedParts[i].orientation_locked_on_axis = $inputOrientationLockedOnAxis.is(':checked');
+                        editedParts[i].symmetrical = $inputSymmetrical.is(':checked');
+                        editedParts[i].ignore_grain_direction = $inputIgnoreGrainDirection.is(":checked");
+                        editedParts[i].axes_order = $inputPartAxes.val().length > 0 ? $inputPartAxes.val().split(',') : [];
+                        editedParts[i].axes_origin_position = $selectPartAxesOriginPosition.val();
+
+                    }
+
+                    if ($selectMaterialName.val() !== MULTIPLE_VALUE) {
+                        editedParts[i].material_name = $selectMaterialName.val();
+                    }
+                    if ($selectCumulable.val() !== MULTIPLE_VALUE) {
+                        editedParts[i].cumulable = parseInt($selectCumulable.val());
+                    }
+                    if (!$inputInstanceCountByPart.ladbTextinputNumberWithUnit('isMultiple')) {
+                        editedParts[i].instance_count_by_part = Math.max(1, $inputInstanceCountByPart.val() === '' ? 1 : parseInt($inputInstanceCountByPart.val()));
+                    }
+                    if (!$inputMass.ladbTextinputNumberWithUnit('isMultiple')) {
+                        editedParts[i].mass = $inputMass.ladbTextinputNumberWithUnit('val');
+                    }
+                    if (!$inputPrice.ladbTextinputNumberWithUnit('isMultiple')) {
+                        editedParts[i].price = $inputPrice.val().trim();
+                    }
+                    if (!$inputThicknessLayerCount.ladbTextinputNumberWithUnit('isMultiple')) {
+                        editedParts[i].thickness_layer_count = Math.max(1, $inputThicknessLayerCount.val() === '' ? 1 : parseInt($inputThicknessLayerCount.val()));
+                    }
+                    if (!$inputDescription.ladbTextinputArea('isMultiple')) {
+                        editedParts[i].description = $inputDescription.val().trim();
+                    }
+
+                    var untouchTags = editedParts[i].tags.filter(function (tag) { return !editedPart.tags.includes(tag) });
+                    editedParts[i].tags = untouchTags.concat($inputTags.tokenfield('getTokensList').split(';'));
+
+                    if (!$inputLengthIncrease.ladbTextinputDimension('isMultiple')) {
+                        editedParts[i].length_increase = $inputLengthIncrease.val();
+                    }
+                    if (!$inputWidthIncrease.ladbTextinputDimension('isMultiple')) {
+                        editedParts[i].width_increase = $inputWidthIncrease.val();
+                    }
+                    if (!$inputThicknessIncrease.ladbTextinputDimension('isMultiple')) {
+                        editedParts[i].thickness_increase = $inputThicknessIncrease.val();
+                    }
+
+                    if ($selectEdgeYmin.val() !== MULTIPLE_VALUE) {
+                        editedParts[i].edge_material_names.ymin = $selectEdgeYmin.val();
+                    }
+                    if ($selectEdgeYmax.val() !== MULTIPLE_VALUE) {
+                        editedParts[i].edge_material_names.ymax = $selectEdgeYmax.val();
+                    }
+                    if ($selectEdgeXmin.val() !== MULTIPLE_VALUE) {
+                        editedParts[i].edge_material_names.xmin = $selectEdgeXmin.val();
+                    }
+                    if ($selectEdgeXmax.val() !== MULTIPLE_VALUE) {
+                        editedParts[i].edge_material_names.xmax = $selectEdgeXmax.val();
+                    }
+
+                    if ($selectFaceZmin.val() !== MULTIPLE_VALUE) {
+                        editedParts[i].face_material_names.zmin = $selectFaceZmin.val();
+                    }
+                    if ($selectFaceZmax.val() !== MULTIPLE_VALUE) {
+                        editedParts[i].face_material_names.zmax = $selectFaceZmax.val();
+                    }
+
+                    if (!$inputFaceZminTextureAngle.ladbTextinputNumberWithUnit('isMultiple')) {
+                        editedParts[i].face_texture_angles.zmin = $inputFaceZminTextureAngle.val() === '' ? null : parseInt($inputFaceZminTextureAngle.val());
+                    }
+                    if (!$inputFaceZmaxTextureAngle.ladbTextinputNumberWithUnit('isMultiple')) {
+                        editedParts[i].face_texture_angles.zmax = $inputFaceZmaxTextureAngle.val() === '' ? null : parseInt($inputFaceZmaxTextureAngle.val());
+                    }
 
                 }
 
-                fnDisplayAxisDimensions();
-                fnUpdateIncreasesPreview();
+                rubyCallCommand('cutlist_part_update', { auto_orient: that.generateOptions.auto_orient, parts_data: editedParts }, function (response) {
 
-                // Bind tabs
-                $tabs.on('shown.bs.tab', function (e) {
-                    that.lastEditPartTab = $(e.target).attr('href').substring('#tab_edit_part_'.length);
-                });
+                    if (response['errors']) {
 
-                // Bind input
-                $inputName.ladbTextinputText();
-                $inputInstanceCountByPart.ladbTextinputNumberWithUnit({
-                    resetValue: '1',
-                    defaultUnit: 'u_p',
-                    units: [
-                        { u_p: i18next.t('default.instance_plural') + ' / ' + i18next.t('default.part_single') },
-                    ]
-                });
-                $inputMass.ladbTextinputNumberWithUnit({
-                    resetValue: ' ',
-                    defaultUnit: that.massUnitStrippedname + '_p',
-                    units: [
-                        { kg_p: 'kg / ' + i18next.t('default.part_single') },
-                        { lb_p: 'lb / ' + i18next.t('default.part_single') }
-                    ]
-                });
-                $inputPrice.ladbTextinputNumberWithUnit({
-                    resetValue: ' ',
-                    defaultUnit: '$_p',
-                    units: [
-                        { $_p: that.currencySymbol + ' / ' + i18next.t('default.part_single') }
-                    ]
-                });
-                $inputThicknessLayerCount.ladbTextinputNumberWithUnit({
-                    resetValue: '1'
-                });
-                $inputDescription.ladbTextinputArea();
-                $inputTags.ladbTextinputTokenfield({
-                    unique: true,
-                    autocomplete: {
-                        source: that.usedTags.concat(that.generateOptions.tags).unique(),
-                        delay: 100
-                    }
-                });
-                $inputLengthIncrease.on('change', function() {
-                    fnUpdateIncreasesPreview();
-                });
-                $inputLengthIncrease.ladbTextinputDimension();
-                $inputWidthIncrease.on('change', function() {
-                    fnUpdateIncreasesPreview();
-                });
-                $inputWidthIncrease.ladbTextinputDimension();
-                $inputThicknessIncrease.ladbTextinputDimension();
+                        that.dialog.notifyErrors(response['errors']);
 
-                // Bind select
-                $selectMaterialName.val(editedPart.material_name);
-                $selectMaterialName
-                    .selectpicker(SELECT_PICKER_OPTIONS)
-                    .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                        fnNewCheck($(this));
-                    });
-                $selectCumulable.val(editedPart.cumulable);
-                $selectCumulable.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectPartAxesOriginPosition
-                    .selectpicker(SELECT_PICKER_OPTIONS)
-                    .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                        fnComputeAxesOrder();
-                    });
-                $selectEdgeYminMaterialName.val(editedPart.edge_material_names.ymin);
-                $selectEdgeYminMaterialName
-                    .selectpicker(SELECT_PICKER_OPTIONS)
-                    .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                        if (!fnNewCheck($(this), 4 /* TYPE_EDGE */)) {
-                            fnUpdateEdgesPreview();
-                        }
-                    });
-                $selectEdgeYmaxMaterialName.val(editedPart.edge_material_names.ymax);
-                $selectEdgeYmaxMaterialName
-                    .selectpicker(SELECT_PICKER_OPTIONS)
-                    .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                        if (!fnNewCheck($(this), 4 /* TYPE_EDGE */)) {
-                            fnUpdateEdgesPreview();
-                        }
-                    });
-                $selectEdgeXminMaterialName.val(editedPart.edge_material_names.xmin);
-                $selectEdgeXminMaterialName
-                    .selectpicker(SELECT_PICKER_OPTIONS)
-                    .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                        if (!fnNewCheck($(this), 4 /* TYPE_EDGE */)) {
-                            fnUpdateEdgesPreview();
-                        }
-                    });
-                $selectEdgeXmaxMaterialName.val(editedPart.edge_material_names.xmax);
-                $selectEdgeXmaxMaterialName
-                    .selectpicker(SELECT_PICKER_OPTIONS)
-                    .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                        if (!fnNewCheck($(this), 4 /* TYPE_EDGE */)) {
-                            fnUpdateEdgesPreview();
-                        }
-                    });
+                    } else {
 
-                // Bind increases
-                $rectIncreaseLength.on('click', function() {
-                    $inputLengthIncrease.focus();
-                });
-                $rectIncreaseWidth.on('click', function() {
-                    $inputWidthIncrease.focus();
-                });
-
-                // Bind edges
-                $rectEdgeYmin.on('click', function() {
-                    $selectEdgeYminMaterialName.selectpicker('toggle');
-                });
-                $rectEdgeYmax.on('click', function() {
-                    $selectEdgeYmaxMaterialName.selectpicker('toggle');
-                });
-                $rectEdgeXmin.on('click', function() {
-                    $selectEdgeXminMaterialName.selectpicker('toggle');
-                });
-                $rectEdgeXmax.on('click', function() {
-                    $selectEdgeXmaxMaterialName.selectpicker('toggle');
-                });
-
-                // Bind sorter
-                $sortableAxes.on('dblclick', function () {
-                   var sortedNormals = Object.keys(editedPart.normals_to_values).sort(function (a, b) {
-                       return editedPart.normals_to_values[b] - editedPart.normals_to_values[a]
-                   });
-                   var $rowX = $('li[data-axis="' + sortedNormals[0] + '"]', $sortablePartAxes);
-                   var $rowY = $('li[data-axis="' + sortedNormals[1] + '"]', $sortablePartAxes);
-                   var $rowZ = $('li[data-axis="' + sortedNormals[2] + '"]', $sortablePartAxes);
-                    $rowY.insertBefore($rowZ);
-                    $rowX.insertBefore($rowY);
-                    fnOnAxiesOrderChanged();
-                });
-                $sortablePartAxes.sortable({
-                    cursor: 'ns-resize',
-                    handle: '.ladb-handle',
-                    stop: fnOnAxiesOrderChanged
-                });
-
-                // Bind checkbox
-                $inputOrientationLockedOnAxis.on('change', fnDisplayAxisDimensions);
-
-                // Bind labels
-                $labelEdgeYmax.on('dblclick', function() {
-                    fnMaterialNameCopyToAllEdges($selectEdgeYmaxMaterialName.val());
-                });
-                $labelEdgeYmin.on('dblclick', function() {
-                    fnMaterialNameCopyToAllEdges($selectEdgeYminMaterialName.val());
-                });
-                $labelEdgeXmin.on('dblclick', function() {
-                    fnMaterialNameCopyToAllEdges($selectEdgeXminMaterialName.val());
-                });
-                $labelEdgeXmax.on('dblclick', function() {
-                    fnMaterialNameCopyToAllEdges($selectEdgeXmaxMaterialName.val());
-                });
-
-                // Bind buttons
-                $btnHighlight.on('click', function () {
-                    this.blur();
-                    that.highlightPart(part.id);
-                    return false;
-                });
-                $btnExportToSkp.on('click', function () {
-                    this.blur();
-                    rubyCallCommand('cutlist_part_export_to_skp', {
-                        definition_id: part.definition_id
-                    }, function (response) {
-
-                        if (response.errors) {
-                            that.dialog.notifyErrors(response.errors);
-                        }
-                        if (response.export_path) {
-                            that.dialog.notify(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }), 'success');
-                        }
-
-                    });
-                    return false;
-                });
-                $btnUpdate.on('click', function () {
-
-                    for (var i = 0; i < editedParts.length; i++) {
-
-                        if (!multiple) {
-
-                            editedParts[i].name = $inputName.val().trim();
-
-                            editedParts[i].orientation_locked_on_axis = $inputOrientationLockedOnAxis.is(':checked');
-                            editedParts[i].symmetrical = $inputSymmetrical.is(':checked');
-                            editedParts[i].ignore_grain_direction = $inputIgnoreGrainDirection.is(":checked");
-                            editedParts[i].axes_order = $inputPartAxes.val().length > 0 ? $inputPartAxes.val().split(',') : [];
-                            editedParts[i].axes_origin_position = $selectPartAxesOriginPosition.val();
-
-                        }
-
-                        if ($selectMaterialName.val() !== MULTIPLE_VALUE) {
-                            editedParts[i].material_name = $selectMaterialName.val();
-                        }
-                        if ($selectCumulable.val() !== MULTIPLE_VALUE) {
-                            editedParts[i].cumulable = parseInt($selectCumulable.val());
-                        }
-                        if (!$inputInstanceCountByPart.ladbTextinputNumberWithUnit('isMultiple')) {
-                            editedParts[i].instance_count_by_part = Math.max(1, $inputInstanceCountByPart.val() === '' ? 1 : parseInt($inputInstanceCountByPart.val()));
-                        }
-                        if (!$inputMass.ladbTextinputNumberWithUnit('isMultiple')) {
-                            editedParts[i].mass = $inputMass.ladbTextinputNumberWithUnit('val');
-                        }
-                        if (!$inputPrice.ladbTextinputNumberWithUnit('isMultiple')) {
-                            editedParts[i].price = $inputPrice.val().trim();
-                        }
-                        if (!$inputThicknessLayerCount.ladbTextinputNumberWithUnit('isMultiple')) {
-                            editedParts[i].thickness_layer_count = Math.max(1, $inputThicknessLayerCount.val() === '' ? 1 : parseInt($inputThicknessLayerCount.val()));
-                        }
-                        if (!$inputDescription.ladbTextinputArea('isMultiple')) {
-                            editedParts[i].description = $inputDescription.val().trim();
-                        }
-
-                        var untouchTags = editedParts[i].tags.filter(function (tag) { return !editedPart.tags.includes(tag) });
-                        editedParts[i].tags = untouchTags.concat($inputTags.tokenfield('getTokensList').split(';'));
-
-                        if (!$inputLengthIncrease.ladbTextinputDimension('isMultiple')) {
-                            editedParts[i].length_increase = $inputLengthIncrease.val();
-                        }
-                        if (!$inputWidthIncrease.ladbTextinputDimension('isMultiple')) {
-                            editedParts[i].width_increase = $inputWidthIncrease.val();
-                        }
-                        if (!$inputThicknessIncrease.ladbTextinputDimension('isMultiple')) {
-                            editedParts[i].thickness_increase = $inputThicknessIncrease.val();
-                        }
-
-                        if ($selectEdgeYminMaterialName.val() !== MULTIPLE_VALUE) {
-                            editedParts[i].edge_material_names.ymin = $selectEdgeYminMaterialName.val();
-                        }
-                        if ($selectEdgeYmaxMaterialName.val() !== MULTIPLE_VALUE) {
-                            editedParts[i].edge_material_names.ymax = $selectEdgeYmaxMaterialName.val();
-                        }
-                        if ($selectEdgeXminMaterialName.val() !== MULTIPLE_VALUE) {
-                            editedParts[i].edge_material_names.xmin = $selectEdgeXminMaterialName.val();
-                        }
-                        if ($selectEdgeXmaxMaterialName.val() !== MULTIPLE_VALUE) {
-                            editedParts[i].edge_material_names.xmax = $selectEdgeXmaxMaterialName.val();
-                        }
-
-                    }
-
-                    rubyCallCommand('cutlist_part_update', { parts_data: editedParts }, function (response) {
-
-                        if (response['errors']) {
-
-                            that.dialog.notifyErrors(response['errors']);
-
+                        if (typeof updatedCallback === 'function') {
+                            updatedCallback()
                         } else {
 
-                            if (typeof updatedCallback === 'function') {
-                                updatedCallback()
-                            } else {
+                            var partId = editedPart.id;
+                            var wTop = $('#ladb_part_' + partId).offset().top - $(window).scrollTop();
 
-                                var partId = editedPart.id;
-                                var wTop = $('#ladb_part_' + partId).offset().top - $(window).scrollTop();
+                            // Refresh the list
+                            that.generateCutlist(function () {
 
-                                // Refresh the list
-                                that.generateCutlist(function () {
-
-                                    // Try to scroll to the edited part's row
-                                    var $part = $('#ladb_part_' + partId, that.$page);
-                                    if ($part.length > 0) {
-                                        if ($part.hasClass('hide')) {
-                                            that.expandFoldingRow($('#ladb_part_' + $part.data('folder-id')));
-                                        }
-                                        $part.effect('highlight', {}, 1500);
-                                        that.$rootSlide.animate({ scrollTop: $part.offset().top - wTop }, 0);
+                                // Try to scroll to the edited part's row
+                                var $part = $('#ladb_part_' + partId, that.$page);
+                                if ($part.length > 0) {
+                                    if ($part.hasClass('hide')) {
+                                        that.expandFoldingRow($('#ladb_part_' + $part.data('folder-id')));
                                     }
+                                    $part.effect('highlight', {}, 1500);
+                                    that.$rootSlide.animate({ scrollTop: $part.offset().top - wTop }, 0);
+                                }
 
-                                });
-
-                            }
-
-                            // Hide modal
-                            $modal.modal('hide');
+                            });
 
                         }
 
-                    });
+                        // Hide modal
+                        $modal.modal('hide');
+
+                    }
 
                 });
 
-                // Bind modal
-                $modal.on('hide.bs.modal', function () {
-                    $inputTags.ladbTextinputTokenfield('destroy');
-                });
+            });
 
-                // Init edges preview
-                fnUpdateEdgesPreview();
+            // Bind modal
+            $modal.on('hide.bs.modal', function () {
+                $inputTags.ladbTextinputTokenfield('destroy');
+            });
 
-                // Show modal
-                $modal.modal('show');
+            // Init edges preview
+            fnUpdateEdgesPreview();
 
-                // Focus
-                $inputName.focus();
+            // Init faces preview
+            fnUpdateFacesPreview();
 
-                // Setup popovers and tooltips
-                that.dialog.setupPopovers();
-                that.dialog.setupTooltips();
+            // Show modal
+            $modal.modal('show');
 
-                // Change event
-                $('input, select', $modal).on('change', function () {
-                    $btnExportToSkp.prop('disabled', true);
-                });
+            // Setup popovers and tooltips
+            that.dialog.setupPopovers();
+            that.dialog.setupTooltips();
 
-            };
-
-            if (multiple) {
-                fnOpenModal();
-            } else {
-
-                // Generate and Retrieve part thumbnail file
-                rubyCallCommand('cutlist_part_get_thumbnail', part, function (response) {
-                    var thumbnailFile = response['thumbnail_file'];
-                    fnOpenModal(thumbnailFile);
-                });
-
-            }
+            // Change event
+            $('input, select', $modal).on('change', function () {
+                $btnExportToSkp.prop('disabled', true);
+            });
 
         } else {
 
@@ -2302,10 +3153,27 @@
                                             that.cuttingdiagram1dGroup(groupId);
                                         });
                                         $btnPrint.on('click', function () {
+                                            $(this).blur();
                                             that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.cuttingdiagram.title'));
                                         });
                                         $btnLabels.on('click', function () {
-                                            that.labelsGroup(groupId);
+
+                                            // Compute label bins (a list of bar index attached to part id)
+                                            let binDefs = {};
+                                            let barIndex = 0;
+                                            $.each(response.bars, function () {
+                                                for (var i = 0 ; i < this.count; i++) {
+                                                    barIndex++;
+                                                    $.each(this.parts, function () {
+                                                        if (!binDefs[this.id]) {
+                                                            binDefs[this.id] = [];
+                                                        }
+                                                        binDefs[this.id].push(barIndex);
+                                                    });
+                                                }
+                                            });
+
+                                            that.labelsGroup(groupId, binDefs);
                                         });
                                         $btnClose.on('click', function () {
                                             that.popSlide();
@@ -2326,7 +3194,7 @@
                                         $('.ladb-btn-scrollto-prev-group', $slide).on('click', function () {
                                             var $group = $(this).parents('.ladb-cutlist-group');
                                             var groupId = $group.data('bar-index');
-                                            var $target = $('.ladb-cuttingdiagram-group[data-bar-index=' + (parseInt(groupId) - 1) + ']');
+                                            var $target = $('.ladb-cutlist-cuttingdiagram-group[data-bar-index=' + (parseInt(groupId) - 1) + ']');
                                             $slide.animate({scrollTop: $slide.scrollTop() + $target.position().top - $('.ladb-header', $slide).outerHeight(true) - 20}, 200).promise().then(function () {
                                                 $target.effect('highlight', {}, 1500);
                                             });
@@ -2336,7 +3204,7 @@
                                         $('.ladb-btn-scrollto-next-group', $slide).on('click', function () {
                                             var $group = $(this).parents('.ladb-cutlist-group');
                                             var groupId = $group.data('bar-index');
-                                            var $target = $('.ladb-cuttingdiagram-group[data-bar-index=' + (parseInt(groupId) + 1) + ']');
+                                            var $target = $('.ladb-cutlist-cuttingdiagram-group[data-bar-index=' + (parseInt(groupId) + 1) + ']');
                                             $slide.animate({scrollTop: $slide.scrollTop() + $target.position().top - $('.ladb-header', $slide).outerHeight(true) - 20}, 200).promise().then(function () {
                                                 $target.effect('highlight', {}, 1500);
                                             });
@@ -2391,7 +3259,7 @@
                         }
 
                         window.requestAnimationFrame(function () {
-                            rubyCallCommand('cutlist_group_cuttingdiagram_1d_start', $.extend({ group_id: groupId, part_ids: isPartSelection ? that.selectionPartIds : null }, cuttingdiagram1dOptions, that.generateOptions), function (response) {
+                            rubyCallCommand('cutlist_group_cuttingdiagram_1d_start', $.extend({ group_id: groupId, part_ids: isPartSelection ? that.selectionPartIds : null }, cuttingdiagram1dOptions), function (response) {
                                 window.requestAnimationFrame(function () {
                                     that.dialog.startProgress(response.estimated_steps);
                                     fnAdvance();
@@ -2460,6 +3328,7 @@
                 var $selectHideCross = $('#ladb_select_hide_cross', $modal);
                 var $selectOriginCorner = $('#ladb_select_origin_corner', $modal);
                 var $selectHighlightPrimaryCuts = $('#ladb_select_highlight_primary_cuts', $modal);
+                var $selectHideEdgesPreview = $('#ladb_select_hide_edges_preview', $modal);
                 var $btnEditMaterial = $('#ladb_btn_edit_material', $modal);
                 var $btnGenerate = $('#ladb_btn_generate', $modal);
 
@@ -2477,6 +3346,7 @@
                     options.hide_cross = $selectHideCross.val() === '1';
                     options.origin_corner = parseInt($selectOriginCorner.val());
                     options.highlight_primary_cuts = $selectHighlightPrimaryCuts.val() === '1';
+                    options.hide_edges_preview = $selectHideEdgesPreview.val() === '1';
                 }
                 var fnFillInputs = function (options) {
                     $inputSawKerf.val(options.saw_kerf);
@@ -2490,6 +3360,7 @@
                     $selectHideCross.selectpicker('val', options.hide_cross ? '1' : '0');
                     $selectOriginCorner.selectpicker('val', options.origin_corner);
                     $selectHighlightPrimaryCuts.selectpicker('val', options.highlight_primary_cuts ? '1' : '0');
+                    $selectHideEdgesPreview.selectpicker('val', options.hide_edges_preview ? '1' : '0');
                 }
                 var fnEditMaterial = function (callback) {
 
@@ -2536,6 +3407,7 @@
                 $selectHideCross.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectOriginCorner.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectHighlightPrimaryCuts.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectHideEdgesPreview.selectpicker(SELECT_PICKER_OPTIONS);
 
                 fnFillInputs(cuttingdiagram2dOptions);
 
@@ -2604,10 +3476,27 @@
                                             that.cuttingdiagram2dGroup(groupId);
                                         });
                                         $btnPrint.on('click', function () {
+                                            $(this).blur();
                                             that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.cuttingdiagram.title'));
                                         });
                                         $btnLabels.on('click', function () {
-                                            that.labelsGroup(groupId);
+
+                                            // Compute label bins (a list of sheet index attached to part id)
+                                            let binDefs = {};
+                                            let sheetIndex = 0;
+                                            $.each(response.sheets, function () {
+                                                for (var i = 0 ; i < this.count; i++) {
+                                                    sheetIndex++;
+                                                    $.each(this.parts, function () {
+                                                        if (!binDefs[this.id]) {
+                                                            binDefs[this.id] = [];
+                                                        }
+                                                        binDefs[this.id].push(sheetIndex);
+                                                    });
+                                                }
+                                            });
+
+                                            that.labelsGroup(groupId, binDefs);
                                         });
                                         $btnClose.on('click', function () {
                                             that.popSlide();
@@ -2628,7 +3517,7 @@
                                         $('.ladb-btn-scrollto-prev-group', $slide).on('click', function () {
                                             var $group = $(this).parents('.ladb-cutlist-group');
                                             var groupId = $group.data('sheet-index');
-                                            var $target = $('.ladb-cuttingdiagram-group[data-sheet-index=' + (parseInt(groupId) - 1) + ']');
+                                            var $target = $('.ladb-cutlist-cuttingdiagram-group[data-sheet-index=' + (parseInt(groupId) - 1) + ']');
                                             that.scrollSlideToTarget($slide, $target, true, true);
                                             $(this).blur();
                                             return false;
@@ -2636,7 +3525,7 @@
                                         $('.ladb-btn-scrollto-next-group', $slide).on('click', function () {
                                             var $group = $(this).parents('.ladb-cutlist-group');
                                             var groupId = $group.data('sheet-index');
-                                            var $target = $('.ladb-cuttingdiagram-group[data-sheet-index=' + (parseInt(groupId) + 1) + ']');
+                                            var $target = $('.ladb-cutlist-cuttingdiagram-group[data-sheet-index=' + (parseInt(groupId) + 1) + ']');
                                             that.scrollSlideToTarget($slide, $target, true, true);
                                             $(this).blur();
                                             return false;
@@ -2687,7 +3576,7 @@
                         }
 
                         window.requestAnimationFrame(function () {
-                            rubyCallCommand('cutlist_group_cuttingdiagram_2d_start', $.extend({ group_id: groupId, part_ids: isPartSelection ? that.selectionPartIds : null }, cuttingdiagram2dOptions, that.generateOptions), function (response) {
+                            rubyCallCommand('cutlist_group_cuttingdiagram_2d_start', $.extend({ group_id: groupId, part_ids: isPartSelection ? that.selectionPartIds : null }, cuttingdiagram2dOptions), function (response) {
                                 window.requestAnimationFrame(function () {
                                     that.dialog.startProgress(response.estimated_steps);
                                     fnAdvance();
@@ -2719,30 +3608,60 @@
 
     };
 
-    LadbTabCutlist.prototype.labelsGroup = function (groupId, forceDefaultTab) {
+    LadbTabCutlist.prototype.labelsGroup = function (groupId, binDefs, forceDefaultTab) {
         var that = this;
 
         var group = this.findGroupById(groupId);
         var isPartSelection = this.selectionGroupId === groupId && this.selectionPartIds.length > 0;
+        var isBinSorterDisabled = !binDefs;
 
-        // Retrieve parts to use
-        var fnAppendPart = function(parts, part) {
+        // Retrieve parts
+        var tmpBinDefs = binDefs ? JSON.parse(JSON.stringify(binDefs)) : null;
+        var partInfos = [];
+        var fnAppendPartInfo = function(part) { // Construct part info
+            var flatPathsAndNames = [];
+            var layered = part.thickness_layer_count > 1;
+            for (var l = 1; l <= part.thickness_layer_count; l++) {
+                $.each(part.entity_names, function () {
+                    var count = this[1].length;
+                    for (var i = 0; i < count; i++) {
+                        flatPathsAndNames.push({
+                            path: this[1][i],
+                            name: this[0] + (layered ? ' // ' + l : ''),
+                        });
+                    }
+                });
+            }
+            for (var i = 1; i <= part.count; i++) {
+                var bin = null;
+                if (tmpBinDefs && tmpBinDefs[part.id]) {
+                    bin = tmpBinDefs[part.id].shift();
+                }
+                partInfos.push({
+                    position_in_batch: i,
+                    entity_named_path: flatPathsAndNames.length > 0 ? flatPathsAndNames[i - 1].path : '',
+                    entity_name: flatPathsAndNames.length > 0 ? flatPathsAndNames[i - 1].name : '',
+                    bin: bin,
+                    part: part
+                });
+            }
+        }
+        var fnAppendPart = function(part) { // Check children
             if (part.children) {
                 $.each(part.children, function (index) {
-                    parts.push(this);
+                    fnAppendPartInfo(this);
                 });
             } else {
-                parts.push(part);
+                fnAppendPartInfo(part);
             }
         };
-        var parts = [];
-        $.each(group.parts, function (index) {
+        $.each(group.parts, function (index) {  // Iterate on selection
             if (isPartSelection) {
                 if (that.selectionPartIds.includes(this.id)) {
-                    fnAppendPart(parts, this);
+                    fnAppendPart(this);
                 }
             } else {
-                fnAppendPart(parts, this);
+                fnAppendPart(this);
             }
         });
 
@@ -2754,6 +3673,7 @@
             var $modal = that.appendModalInside('ladb_cutlist_modal_labels', 'tabs/cutlist/_modal-labels.twig', {
                 group: group,
                 isPartSelection: isPartSelection,
+                isBinSorterDisabled: isBinSorterDisabled,
                 tab: forceDefaultTab || that.lastLabelsOptionsTab == null ? 'layout' : that.lastLabelsOptionsTab
             });
 
@@ -2774,7 +3694,6 @@
             var $selectCuttingMarks = $('#ladb_select_cutting_marks', $modal);
             var $sortablePartOrderStrategy = $('#ladb_sortable_part_order_strategy', $modal);
             var $editorLabelOffset = $('#ladb_editor_label_offset', $modal);
-            var $btnHelp = $('#ladb_cutlist_labels_btn_help', $modal);
             var $btnGenerate = $('#ladb_cutlist_labels_btn_generate', $modal);
 
             var fnValidOffset = function (offset, colCount, rowCount) {
@@ -2783,7 +3702,7 @@
                 }
                 return offset;
             }
-            var fnPageSizeVisibility = function () {
+            var fnUpdatePageSizeFieldsAvailability = function () {
                 if ($selectPageFormat.selectpicker('val') == null) {
                     $selectPageFormat.selectpicker('val', '0');
                     $inputPageWidth.ladbTextinputDimension('enable');
@@ -2857,7 +3776,7 @@
                 fnConvertPageSettings(options.page_width, options.page_height, options.margin_top, options.margin_right, options.margin_bottom, options.margin_left, options.spacing_h, options.spacing_v, options.col_count, options.row_count, function (response, colCount, rowCount) {
                     $editorLabelOffset.ladbEditorLabelOffset('updateSizeAndOffset', [ response.page_width, response.page_height, response.margin_top, response.margin_right, response.margin_bottom, response.margin_left, response.spacing_h, response.spacing_v, colCount, rowCount, fnValidOffset(options.offset, colCount, rowCount) ]);
                 });
-                fnPageSizeVisibility();
+                fnUpdatePageSizeFieldsAvailability();
 
                 // Part order sortables
 
@@ -2867,7 +3786,8 @@
                     var property = properties[i];
                     $sortablePartOrderStrategy.append(Twig.twig({ref: "tabs/cutlist/_labels-option-part-order-strategy-property.twig"}).render({
                         order: property.startsWith('-') ? '-' : '',
-                        property: property.startsWith('-') ? property.substring(1) : property
+                        property: property.startsWith('-') ? property.substring(1) : property,
+                        enabled: property !== 'bin' || !isBinSorterDisabled
                     }));
                 }
                 $sortablePartOrderStrategy.find('a').on('click', function () {
@@ -2898,7 +3818,7 @@
             $editorLabelLayout.ladbEditorLabelLayout({
                 dialog: that.dialog,
                 group: group,
-                part: parts[0],
+                partInfo: partInfos[0],
             });
             $selectPageFormat.selectpicker(SELECT_PICKER_OPTIONS);
             $inputPageWidth.ladbTextinputDimension();
@@ -2956,12 +3876,6 @@
             });
 
             // Bind buttons
-            $btnHelp.on('click', function () {
-                $.getJSON(that.dialog.getDocsPageUrl('features.parts.parts-list.labels'), function (data) {
-                    rubyCallCommand('core_open_url', data);
-                });
-                return false;
-            });
             $btnGenerate.on('click', function () {
 
                 // Fetch options
@@ -2999,32 +3913,6 @@
 
                     } else {
 
-                        // Compute part infos
-                        var partInfos = [];
-                        $.each(parts, function (index) {
-                            var flatPathsAndNames = [];
-                            var layered = this.thickness_layer_count > 1;
-                            for (var l = 1; l <= this.thickness_layer_count; l++) {
-                                $.each(this.entity_names, function () {
-                                    var count = this[1].length;
-                                    for (var i = 0; i < count; i++) {
-                                        flatPathsAndNames.push({
-                                            path: this[1][i],
-                                            name: this[0] + (layered ? ' // ' + l : ''),
-                                        });
-                                    }
-                                });
-                            }
-                            for (var i = 1; i <= this.count; i++) {
-                                partInfos.push({
-                                    position_in_batch: i,
-                                    entity_named_path: flatPathsAndNames.length > 0 ? flatPathsAndNames[i - 1].path : '',
-                                    entity_name: flatPathsAndNames.length > 0 ? flatPathsAndNames[i - 1].name : '',
-                                    part: this
-                                });
-                            }
-                        });
-
                         // Sort part infos
                         var fnFieldSorter = function (properties) {
                             return function (a, b) {
@@ -3042,6 +3930,9 @@
                                         } else if (property === 'entity_name') {
                                             valA = a.entity_name;
                                             valB = b.entity_name;
+                                        } else if (property === 'bin') {
+                                            valA = a.bin;
+                                            valB = b.bin;
                                         } else if (property === 'number') {
                                             valA = isNaN(a.part.number) ? a.part.number.padStart(3, ' ') : a.part.number;    // Pad part number with ' ' to be sure that 'AA' is greater than 'Z' -> " AA" > "  Z"
                                             valB = isNaN(a.part.number) ? b.part.number.padStart(3, ' ') : b.part.number;
@@ -3060,17 +3951,17 @@
                         };
                         partInfos.sort(fnFieldSorter(labelsOptions.part_order_strategy.split('>')));
 
-                        // Split parts into pages
+                        // Split part infos into pages
                         var page;
                         var gIndex = 0;
                         for (var i = 1; i <= labelsOptions.offset; i++) {
                             if (gIndex % (labelsOptions.row_count * labelsOptions.col_count) === 0) {
                                 page = {
-                                    part_infos: []
+                                    partInfos: []
                                 }
                                 pages.push(page);
                             }
-                            page.part_infos.push({
+                            page.partInfos.push({
                                 part: null
                             });
                             gIndex++;
@@ -3078,11 +3969,11 @@
                         $.each(partInfos, function (index) {
                             if (gIndex % (labelsOptions.row_count * labelsOptions.col_count) === 0) {
                                 page = {
-                                    part_infos: []
+                                    partInfos: []
                                 }
                                 pages.push(page);
                             }
-                            page.part_infos.push(this);
+                            page.partInfos.push(this);
                             gIndex++;
                         })
 
@@ -3110,10 +4001,11 @@
 
                     // Bind buttons
                     $btnLabels.on('click', function () {
-                        that.labelsGroup(groupId);
+                        that.labelsGroup(groupId, binDefs);
                     });
                     $btnPrint.on('click', function () {
-                        that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.labels.title'), '0');
+                        $(this).blur();
+                        that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.labels.title'), '0', `${response.page_width}in ${response.page_height}in`);
                     });
                     $btnClose.on('click', function () {
                         that.popSlide();
@@ -3240,12 +4132,23 @@
 
     };
 
-    LadbTabCutlist.prototype.editOptions = function () {
+    LadbTabCutlist.prototype.editOptions = function (tab) {
         var that = this;
 
-        var $modal = that.appendModalInside('ladb_cutlist_modal_options', 'tabs/cutlist/_modal-options.twig');
+        if (tab === undefined) {
+            tab = this.lastOptionsTab;
+        }
+        if (tab === null || tab.length === 0) {
+            tab = 'general';
+        }
+        this.lastOptionsTab = tab;
+
+        var $modal = that.appendModalInside('ladb_cutlist_modal_options', 'tabs/cutlist/_modal-options.twig', {
+            tab: tab
+        });
 
         // Fetch UI elements
+        var $tabs = $('a[data-toggle="tab"]', $modal);
         var $widgetPreset = $('.ladb-widget-preset', $modal);
         var $inputAutoOrient = $('#ladb_input_auto_orient', $modal);
         var $inputFlippedDetection = $('#ladb_input_flipped_detection', $modal);
@@ -3261,6 +4164,7 @@
         var $inputHideBBoxDimensions = $('#ladb_input_hide_bbox_dimensions', $modal);
         var $inputHideFinalAreas = $('#ladb_input_hide_final_areas', $modal);
         var $inputHideEdges = $('#ladb_input_hide_edges', $modal);
+        var $inputHideFaces = $('#ladb_input_hide_faces', $modal);
         var $inputMinimizeOnHighlight = $('#ladb_input_minimize_on_highlight', $modal);
         var $sortablePartOrderStrategy = $('#ladb_sortable_part_order_strategy', $modal);
         var $inputTags = $('#ladb_input_tags', $modal);
@@ -3284,6 +4188,7 @@
             options.hide_bbox_dimensions = $inputHideBBoxDimensions.is(':checked');
             options.hide_final_areas = $inputHideFinalAreas.is(':checked');
             options.hide_edges = $inputHideEdges.is(':checked');
+            options.hide_faces = $inputHideFaces.is(':checked');
             options.minimize_on_highlight = $inputMinimizeOnHighlight.is(':checked');
             options.tags = $inputTags.tokenfield('getTokensList').split(';');
 
@@ -3318,6 +4223,7 @@
             $inputHideBBoxDimensions.prop('checked', options.hide_bbox_dimensions);
             $inputHideFinalAreas.prop('checked', options.hide_final_areas);
             $inputHideEdges.prop('checked', options.hide_edges);
+            $inputHideFaces.prop('checked', options.hide_faces);
             $inputMinimizeOnHighlight.prop('checked', options.minimize_on_highlight);
             $inputTags.tokenfield('setTokens', options.tags === '' ? ' ' : options.tags);
 
@@ -3372,6 +4278,11 @@
             dictionary: 'cutlist_options',
             fnFetchOptions: fnFetchOptions,
             fnFillInputs: fnFillInputs
+        });
+
+        // Bind tabs
+        $tabs.on('shown.bs.tab', function (e) {
+            that.lastOptionsTab = $(e.target).attr('href').substring('#tab_options_'.length);
         });
 
         // Bind input
@@ -3495,17 +4406,15 @@
             this.blur();
         });
         this.$btnPrint.on('click', function () {
-            that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.title'));
             this.blur();
-        });
-        this.$btnLayout.on('click', function () {
-
-            // Show Objective modal
-            that.dialog.executeCommandOnTab('sponsor', 'show_objective_modal', { objectiveStrippedName: 'layout', objectiveImage:'sponsor-objective-layout.png' }, null, true);
-
+            that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.title'));
         });
         this.$btnExport.on('click', function () {
             that.exportCutlist();
+            this.blur();
+        });
+        this.$btnLayout.on('click', function () {
+            that.layoutAllParts();
             this.blur();
         });
         this.$btnReport.on('click', function () {

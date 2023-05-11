@@ -20,24 +20,34 @@ module Ladb::OpenCutList
       # Fetch material
       materials = model.materials
 
-      # Try to use SU Materials dir
-      materials_dir = Sketchup.find_support_file('Materials')
-      if File.directory?(materials_dir)
+      last_dir = Plugin.instance.read_default(Plugin::SETTINGS_KEY_MATERIALS_LAST_DIR, nil)
+      if last_dir && File.directory?(last_dir) && File.exist?(last_dir)
+        dir = last_dir
+      else
 
-        # Join with OpenCutList subdir and create it if it dosen't exist
-        dir = File.join(materials_dir, 'OpenCutList')
-        unless File.directory?(dir)
-          FileUtils.mkdir_p(dir)
+        # Try to use SU Materials dir
+        materials_dir = Sketchup.find_support_file('Materials', '')
+        if File.directory?(materials_dir)
+
+          # Join with OpenCutList subdir and create it if it dosen't exist
+          dir = File.join(materials_dir, 'OpenCutList')
+          unless File.directory?(dir)
+            FileUtils.mkdir_p(dir)
+          end
+
+        else
+          dir = File.dirname(model.path)
         end
 
-      else
-        dir = File.dirname(model.path)
       end
 
       dir = dir.gsub(/ /, '%20') if Plugin.instance.platform_is_mac
 
       path = UI.openpanel(Plugin.instance.get_i18n_string('tab.materials.import_from_skm.title'), dir, "Material Files|*.skm;||")
       if path
+
+        # Save last dir
+        Plugin.instance.write_default(Plugin::SETTINGS_KEY_MATERIALS_LAST_DIR, File.dirname(path))
 
         # Try to Load zip
         # begin
@@ -107,7 +117,7 @@ module Ladb::OpenCutList
           material = materials.load(path)
           return { :material_id => material.entityID }
         rescue => e
-          return { :error => [ 'tab.materials.error.failed_import_skm_file', { :error => e.message } ] }
+          return { :errors => [ [ 'tab.materials.error.failed_import_skm_file', { :error => e.message } ] ] }
         end
       end
 

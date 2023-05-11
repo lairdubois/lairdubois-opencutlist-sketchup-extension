@@ -4,9 +4,13 @@
 {% set title = 'tab.cutlist.export.title'|i18next %}
 {% set noDefaultClose = true %}
 
+{% block headerToolsInner %}
+    {% include 'components/_widget-preset.twig' %}
+    <button class="btn btn-default btn-xs" data-help-page="cutlist.export"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
+{% endblock %}
+
 {% block headerInner %}
     {{ parent() }}
-    {% include 'components/_widget-preset.twig' %}
     <ul class="nav nav-tabs nav-justified" role="tablist">
         <li role="presentation"{% if tab == 'general' %} class="active"{% endif %}><a href="#tab_export_options_general" role="tab" data-toggle="tab">{{ 'tab.cutlist.export.options'|i18next }}</a></li>
         <li role="presentation"{% if tab == 'customize' %} class="active"{% endif %}><a href="#tab_export_options_customize" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-settings"></i> {{ 'tab.cutlist.export.options_customize'|i18next }}</a></li>
@@ -66,9 +70,8 @@
     </div>
 {% endblock %}
 
-{% block footerInner %}
-    <button type="button" class="btn btn-default pull-left" id="ladb_cutlist_export_btn_help"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
-    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
-    <button type="button" class="btn btn-default" id="ladb_cutlist_export_btn_preview">{{ 'default.preview'|i18next }}</button>
-    <button type="button" class="btn btn-primary" id="ladb_cutlist_export_btn_export">{{ 'default.export'|i18next }}&nbsp;<i class="ladb-opencutlist-icon-arrow-right"></i>&nbsp;CSV</button>
+{% block footerRightInner %}
+    <button class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
+    <button class="btn btn-default" id="ladb_cutlist_export_btn_preview">{{ 'default.preview'|i18next }}</button>
+    <button class="btn btn-primary" id="ladb_cutlist_export_btn_export">{{ 'default.export'|i18next }}&nbsp;<i class="ladb-opencutlist-icon-arrow-right"></i>&nbsp;CSV</button>
 {% endblock %}

@@ -3,9 +3,13 @@
 {% set id = 'ladb_materials_modal_options' %}
 {% set title = 'default.options'|i18next %}
 
+{% block headerToolsInner %}
+    {% include 'components/_widget-preset.twig' %}
+    <button class="btn btn-default btn-xs" data-help-page="materials.options"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
+{% endblock %}
+
 {% block headerInner %}
     {{ parent() }}
-    {% include 'components/_widget-preset.twig' %}
     <ul class="nav nav-tabs nav-justified" role="tablist">
         <li role="presentation" class="active"><a href="#tab_options_material_order_strategy" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-sort-asc"></i> {{ 'tab.materials.option.material_order_strategy'|i18next }}</a></li>
     </ul>
@@ -26,7 +30,7 @@
     </div>
 {% endblock %}
 
-{% block footerInner %}
-    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
-    <button type="button" class="btn btn-primary" id="ladb_materials_options_update">{{ 'default.validate'|i18next }}</button>
+{% block footerRightInner %}
+    <button class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
+    <button class="btn btn-primary" id="ladb_materials_options_update">{{ 'default.validate'|i18next }}</button>
 {% endblock %}

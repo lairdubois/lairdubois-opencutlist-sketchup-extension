@@ -10,19 +10,20 @@ module Ladb::OpenCutList
     ORIGIN_CORNER_RIGHT = 1
 
     def initialize(settings, cutlist)
-      @group_id = settings['group_id']
-      @part_ids = settings['part_ids']
-      @std_bar_length = DimensionUtils.instance.str_to_ifloat(settings['std_bar']).to_l.to_f
-      @scrap_bar_lengths = DimensionUtils.instance.dxq_to_ifloats(settings['scrap_bar_lengths'])
-      @saw_kerf = DimensionUtils.instance.str_to_ifloat(settings['saw_kerf']).to_l.to_f
-      @trimming = DimensionUtils.instance.str_to_ifloat(settings['trimming']).to_l.to_f
-      @bar_folding = settings['bar_folding']
-      @hide_part_list = settings['hide_part_list']
-      @use_names = settings['use_names']
-      @full_width_diagram = settings['full_width_diagram']
-      @hide_cross = settings['hide_cross']
-      @origin_corner = settings['origin_corner']
-      @wrap_length = DimensionUtils.instance.str_to_ifloat(settings['wrap_length']).to_l.to_f
+
+      @group_id = settings.fetch('group_id')
+      @part_ids = settings.fetch('part_ids', nil)
+      @std_bar_length = DimensionUtils.instance.str_to_ifloat(settings.fetch('std_bar')).to_l.to_f
+      @scrap_bar_lengths = DimensionUtils.instance.dxq_to_ifloats(settings.fetch('scrap_bar_lengths'))
+      @saw_kerf = DimensionUtils.instance.str_to_ifloat(settings.fetch('saw_kerf')).to_l.to_f
+      @trimming = DimensionUtils.instance.str_to_ifloat(settings.fetch('trimming')).to_l.to_f
+      @bar_folding = settings.fetch('bar_folding')
+      @hide_part_list = settings.fetch('hide_part_list')
+      @use_names = settings.fetch('use_names')
+      @full_width_diagram = settings.fetch('full_width_diagram')
+      @hide_cross = settings.fetch('hide_cross')
+      @origin_corner = settings.fetch('origin_corner')
+      @wrap_length = DimensionUtils.instance.str_to_ifloat(settings.fetch('wrap_length')).to_l.to_f
 
       @cutlist = cutlist
 
@@ -65,7 +66,7 @@ module Ladb::OpenCutList
         # Add boxes from parts
         add_boxes_proc = Proc.new { |part|
           for i in 1..part.count
-            @pack_engine.add_box(part.cutting_length.to_l.to_f, part)   # "to_l.to_f" Reconvert string représentation of length to float to take advantage Sketchup precision
+            @pack_engine.add_box(part.cutting_length.to_l.to_f, part.number, part)   # "to_l.to_f" Reconvert string représentation of length to float to take advantage Sketchup precision
           end
         }
         parts.each { |part|
@@ -118,7 +119,7 @@ module Ladb::OpenCutList
         when BinPacking1D::ERROR_PARAMETERS
           errors << 'tab.cutlist.cuttingdiagram.error.parameters'
         when BinPacking1D::ERROR_NO_PLACEMENT_POSSIBLE
-          errors << 'tab.cutlist.cuttingdiagram.error.no_placement_possible'
+          errors << 'tab.cutlist.cuttingdiagram.error.no_placement_possible_1d'
         else # BinPacking1D::ERROR_BAD_ERROR and others
           errors << 'tab.cutlist.cuttingdiagram.error.bad_error'
         end

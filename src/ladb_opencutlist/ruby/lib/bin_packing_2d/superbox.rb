@@ -30,7 +30,7 @@ module Ladb::OpenCutList::BinPacking2D
     #
     def initialize(maxlength, maxwidth, saw_kerf)
       # Call super with a fake length/width
-      super(1.0, 1.0, false, nil)
+      super(1.0, 1.0, false, nil, nil)
 
       # Reset fake length/width
       @length = 0
@@ -172,8 +172,8 @@ module Ladb::OpenCutList::BinPacking2D
     # Debugging!
     #
     def to_str
-      "superbox shape=#{@shape}, x=#{@x}, y=#{@y}, length=#{@length}," \
-        " width=#{@width}, count=#{@sboxes.size}, rotated=#{@rotated}/#{@rotatable}"
+      "superbox shape=#{@shape}, x=#{@x}, y=#{@y}, length=#{@length}, " \
+        "width=#{@width}, count=#{@sboxes.size}, rotated=#{@rotated}/#{@rotatable}"
     end
   end
 end

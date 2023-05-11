@@ -9,6 +9,7 @@ module Ladb::OpenCutList
   require 'tempfile'
   require 'set'
   require 'open-uri'
+  require 'digest'
   require_relative 'constants'
   require_relative 'observer/app_observer'
   require_relative 'observer/plugin_observer'
@@ -19,12 +20,13 @@ module Ladb::OpenCutList
   require_relative 'utils/dimension_utils'
   require_relative 'utils/path_utils'
   require_relative 'tool/smart_paint_tool'
+  require_relative 'tool/smart_axes_tool'
 
   class Plugin
     
     include Singleton
 
-    IS_RBZ = __dir__.start_with?(Sketchup.find_support_file('Plugins'))
+    IS_RBZ = __dir__.start_with?(Sketchup.find_support_file('Plugins', ''))
     IS_DEV = EXTENSION_VERSION.end_with?('-dev')
 
     require 'pp' if IS_DEV
@@ -45,21 +47,29 @@ module Ladb::OpenCutList
     PRESETS_STORAGE_GLOBAL_ONLY = 1              # Value stored in global presets only
     PRESETS_STORAGE_MODEL_ONLY = 2               # Value stored in model presets only
 
+    PRESETS_CLEANER_NONE = 0
+    PRESETS_CLEANER_ORDER_STRATEGY = 1           # Clean order strategy value
+
     SETTINGS_KEY_LANGUAGE = 'settings.language'
     SETTINGS_KEY_DIALOG_MAXIMIZED_WIDTH = 'settings.dialog_maximized_width'
     SETTINGS_KEY_DIALOG_MAXIMIZED_HEIGHT = 'settings.dialog_maximized_height'
     SETTINGS_KEY_DIALOG_LEFT = 'settings.dialog_left'
     SETTINGS_KEY_DIALOG_TOP = 'settings.dialog_top'
     SETTINGS_KEY_DIALOG_PRINT_MARGIN = 'settings.dialog_print_margin'
+    SETTINGS_KEY_COMPONENTS_LAST_DIR = 'settings.components_last_dir'
+    SETTINGS_KEY_MATERIALS_LAST_DIR = 'settings.materials_last_dir'
 
     DIALOG_MINIMIZED_WIDTH = 90
     DIALOG_MINIMIZED_HEIGHT = 30 + 80 + 80 * 3     # = 3 Tab buttons
-    DIALOG_DEFAULT_MAXIMIZED_WIDTH = 1100
+    DIALOG_DEFAULT_MAXIMIZED_WIDTH = 1150
     DIALOG_DEFAULT_MAXIMIZED_HEIGHT = 640
     DIALOG_DEFAULT_LEFT = 60
     DIALOG_DEFAULT_TOP = 100
     DIALOG_DEFAULT_PRINT_MARGIN = 0   # 0 = Normal, 1 = Small
     DIALOG_PREF_KEY = 'fr.lairdubois.opencutlist'
+
+    DOCS_URL = 'https://www.lairdubois.fr/opencutlist/docs'
+    DOCS_DEV_URL = 'https://www.lairdubois.fr/opencutlist/docs-dev'
 
     # -----
 
@@ -67,9 +77,11 @@ module Ladb::OpenCutList
 
       @temp_dir = nil
       @language = nil
+      @webgl_available = false
+
       @i18n_strings_cache = nil
       @app_defaults_cache = nil
-      @html_dialog_compatible = nil
+
       @manifest = nil
       @update_available = nil
       @update_muted = false
@@ -94,6 +106,15 @@ module Ladb::OpenCutList
     end
 
     # -----
+
+    def root_dir
+      if @root_dir
+        return @root_dir
+      end
+      dir = __dir__
+      dir.force_encoding('UTF-8') if dir.respond_to?(:force_encoding)
+      @root_dir = File.expand_path(File.join(dir, '..'))
+    end
 
     def temp_dir
       if @temp_dir
@@ -127,17 +148,21 @@ module Ladb::OpenCutList
         @language = 'en'
       end
       if persist
-        write_default(SETTINGS_KEY_LANGUAGE, language)
+        write_default(SETTINGS_KEY_LANGUAGE, @language)
       end
       @i18n_strings_cache = nil # Reset i18n strings cache
     end
 
     def get_available_languages
       available_languages = []
-      Dir[File.join(__dir__, '..', 'js', 'i18n', '*.js')].each { |file|
+      Dir[File.join(root_dir, 'js', 'i18n', '*.js')].each { |file|
         available_languages.push(File.basename(file, File.extname(file)))
       }
       available_languages.sort
+    end
+
+    def webgl_available
+      @webgl_available
     end
 
     def platform_is_win
@@ -149,18 +174,23 @@ module Ladb::OpenCutList
     end
 
     def platform_name
-      Sketchup.platform == :platform_win ? 'win' : 'mac'
+      Sketchup.platform == :platform_osx ? 'mac' : 'win'
     end
 
-    def get_i18n_string(path_key)
+    def get_i18n_string(path_key, vars = nil)
 
       unless @i18n_strings_cache
-        file_path = File.join(__dir__, '..', 'yaml', 'i18n', "#{language}.yml")
+        file_path = File.join(root_dir, 'yaml', 'i18n', "#{language}.yml")
         begin
           @i18n_strings_cache = YAML::load_file(file_path)
         rescue => e
           raise "Error loading i18n file (file='#{file_path}') : #{e.message}."
         end
+      end
+
+      # Process plural if a count var is defined
+      if vars.is_a?(Hash) && !vars[:count].nil? && vars[:count] > 1 && !path_key.end_with?('_plural')
+        path_key += '_plural'
       end
 
       # Iterate over values
@@ -172,23 +202,57 @@ module Ladb::OpenCutList
       end
 
       if i18n_string && i18n_string.is_a?(String)
-        i18n_string.gsub(/\$t\(([^$()]+)\)/){ get_i18n_string("#{ $1.strip }") }
+        i18n_string = i18n_string.gsub(/\$t\(([^$()]+)\)/){ get_i18n_string("#{ $1.strip }", vars) }
+        if vars.is_a?(Hash)
+          vars.each do |k, v|
+            i18n_string = i18n_string.gsub(Regexp.new("{{\s*#{k}\s*}}")){ v.to_s }
+          end
+        end
+        i18n_string
       else
         path_key
       end
 
     end
 
-    def html_dialog_compatible
-      if @html_dialog_compatible
-        return @html_dialog_compatible
+    def open_docs_page(page)
+
+      url = IS_DEV ? DOCS_DEV_URL : DOCS_URL
+      url += "?v=#{EXTENSION_VERSION}&build=#{EXTENSION_BUILD}-#{(IS_RBZ ? 'rbz' : 'src')}&language=#{language}&locale=#{Sketchup.get_locale}"
+      url += "&page=#{page}"
+
+      # URLs with spaces will raise an InvalidURIError, so we need to encode it.
+      url = URI::DEFAULT_PARSER.escape(url)
+
+      request = Sketchup::Http::Request.new(url, Sketchup::Http::GET)
+      request.start do |request, response|
+
+        if response.status_code == 200
+          json = JSON.parse(response.body)
+          if json['url'] && json['url'].is_a?(String)
+            UI.openURL(URI::DEFAULT_PARSER.escape(json['url']))
+            return
+          end
+        end
+
+        puts "Failed to load docs page (page=#{page}, status=#{response.status_code})"
       end
-      begin
-        @html_dialog_compatible = Object.const_defined?('UI::HtmlDialog')
-      rescue NameError
-        @html_dialog_compatible = false
-      end
-      @html_dialog_compatible
+
+    end
+
+    def dump_exception(e)
+
+      SKETCHUP_CONSOLE.show
+
+      heading = "Please email the following error to opencutlist@lairdubois.fr"
+      puts '-' * heading.length
+      puts heading
+      puts '-' * heading.length
+      puts "OpenCutList #{EXTENSION_VERSION} (build:#{EXTENSION_BUILD})"
+      puts "#{e.inspect}"
+      puts e.backtrace.join("\n")
+      puts '-' * heading.length
+
     end
 
     # -----
@@ -200,12 +264,12 @@ module Ladb::OpenCutList
     def get_app_defaults(dictionary, section = nil, raise_not_found = true)
 
       section = '0' if section.nil?
-      section = section.to_s
+      section = section.to_s unless section.is_a?(String)
       cache_key = "#{dictionary}_#{section}"
 
       unless @app_defaults_cache && @app_defaults_cache.has_key?(cache_key)
 
-        file_path = File.join(__dir__, '..', 'json', 'defaults', "#{dictionary}.json")
+        file_path = File.join(root_dir, 'json', 'defaults', "#{dictionary}.json")
         begin
           file = File.open(file_path)
           data = JSON.load(file)
@@ -321,13 +385,56 @@ module Ladb::OpenCutList
       processed_values
     end
 
-    def _merge_preset_values_with_defaults(values, default_values)
+    def _merge_preset_values_with_defaults(dictionary, values, default_values)
       merged_values = {}
       contains_default_values = false
       if default_values
         default_values.keys.each do |key|
           if values.has_key?(key)
-            merged_values[key] = values[key]
+
+            cleaners = get_app_defaults(dictionary, '_cleaners', false)
+            case cleaners[key]
+              when PRESETS_CLEANER_ORDER_STRATEGY
+
+                if values[key] != default_values[key]
+
+                  if values[key].is_a?(String)  # Values must be a string else use default
+
+                    # Remove properties that doesn't exist in default
+                    # Add properties that exist in default, but not in model
+                    # Use prior custom values
+
+                    h_custom_properties = values[key].split('>').map { |v| [v.delete('-'), v] }.to_h # { 'length' => '-length', ... }
+                    h_default_properties = default_values[key].split('>').map { |v| [v.delete('-'), v] }.to_h # { 'length' => '-length', ... }
+
+                    sorters = []
+
+                    # Remove old properties
+                    h_custom_properties.each { |property, sorter|
+                      next unless h_default_properties.has_key?(property) && !sorter.nil?
+                      sorters.push(sorter)
+                      h_default_properties.delete(property)
+                    }
+
+                    # Append new properties
+                    h_default_properties.each { |property, sorter|
+                      sorters.push(sorter)
+                    }
+
+                    merged_values[key] = sorters.join('>')
+
+                  else
+                    merged_values[key] = default_values[key]
+                  end
+
+                else
+                  merged_values[key] = values[key]
+                end
+
+            else
+              merged_values[key] = values[key]
+            end
+
           else
             merged_values[key] = default_values[key]
             contains_default_values = true
@@ -352,10 +459,16 @@ module Ladb::OpenCutList
       write_global_presets
     end
 
+    def get_global_presets
+      read_global_presets if @global_presets_cache.nil?
+      @global_presets_cache
+    end
+
     def set_global_preset(dictionary, values, name = nil, section = nil, fire_event = false)
 
       name = PRESETS_DEFAULT_NAME if name.nil?
       section = '0' if section.nil?
+      section = section.to_s unless section.is_a?(String)
 
       # Force name to be string
       name = name.to_s unless name.is_a? String
@@ -401,6 +514,7 @@ module Ladb::OpenCutList
 
       name = PRESETS_DEFAULT_NAME if name.nil?
       section = '0' if section.nil?
+      section = section.to_s unless section.is_a?(String)
 
       # Read global presets cache if not previouly cached
       read_global_presets if @global_presets_cache.nil?
@@ -418,7 +532,7 @@ module Ladb::OpenCutList
       if @global_presets_cache.has_key?(dictionary) && @global_presets_cache[dictionary].has_key?(section) && @global_presets_cache[dictionary][section].has_key?(name)
 
         # Preset exists, synchronize returned values with default_values data and structure
-        values, contains_default_values = _merge_preset_values_with_defaults(@global_presets_cache[dictionary][section][name], default_values)
+        values, contains_default_values = _merge_preset_values_with_defaults(dictionary, @global_presets_cache[dictionary][section][name], default_values)
 
       else
 
@@ -443,6 +557,7 @@ module Ladb::OpenCutList
 
     def list_global_preset_names(dictionary, section = nil)
       section = '0' if section.nil?
+      section = section.to_s unless section.is_a?(String)
       read_global_presets if @global_presets_cache.nil?
       return @global_presets_cache[dictionary][section].keys.select { |k, v| k != PRESETS_DEFAULT_NAME }.sort if @global_presets_cache.has_key?(dictionary) && @global_presets_cache[dictionary].has_key?(section)
       []
@@ -480,7 +595,7 @@ module Ladb::OpenCutList
       return unless Sketchup.active_model
 
       # Start model modification operation
-      Sketchup.active_model.start_operation('write_model_presets', true, false, true)
+      Sketchup.active_model.start_operation('OCL Write Model Presets', true, false, true)
 
       set_attribute(Sketchup.active_model, PRESETS_KEY, @model_presets_cache)
 
@@ -496,6 +611,7 @@ module Ladb::OpenCutList
     def set_model_preset(dictionary, values, section = nil, app_defaults_section = nil, fire_event = false)
 
       section = '0' if section.nil?
+      section = section.to_s unless section.is_a?(String)
       app_defaults_section = '0' if app_defaults_section.nil?
 
       # Read model presets cache if not previouly cached
@@ -537,6 +653,7 @@ module Ladb::OpenCutList
     def get_model_preset_context(dictionary, section = nil, app_defaults_section = nil)
 
       section = '0' if section.nil?
+      section = section.to_s unless section.is_a?(String)
       app_defaults_section = '0' if app_defaults_section.nil?
 
       # Read model presets cache if not previouly cached
@@ -546,7 +663,7 @@ module Ladb::OpenCutList
       if @model_presets_cache.has_key?(dictionary) && @model_presets_cache[dictionary].has_key?(section)
 
         # Preset exists, synchronize returned values with default_values data and structure
-        values, contains_default_values = _merge_preset_values_with_defaults(@model_presets_cache[dictionary][section], default_values)
+        values, contains_default_values = _merge_preset_values_with_defaults(dictionary, @model_presets_cache[dictionary][section], default_values)
 
       else
 
@@ -674,6 +791,9 @@ module Ladb::OpenCutList
       submenu.add_item(get_i18n_string('core.menu.item.smart_paint')) {
         Sketchup.active_model.select_tool(SmartPaintTool.new)
       }
+      submenu.add_item(get_i18n_string('core.menu.item.smart_axes')) {
+        Sketchup.active_model.select_tool(SmartAxesTool.new)
+      }
 
       # Setup Context Menu
       UI.add_context_menu_handler do |context_menu|
@@ -715,6 +835,16 @@ module Ladb::OpenCutList
       cmd.tooltip = get_i18n_string('core.toolbar.command.smart_paint')
       cmd.status_bar_text = get_i18n_string('core.toolbar.command.smart_paint')
       cmd.menu_text = get_i18n_string('core.toolbar.command.smart_paint')
+      toolbar = toolbar.add_item(cmd)
+
+      cmd = UI::Command.new(get_i18n_string('core.toolbar.command.smart_axes')) {
+        Sketchup.active_model.select_tool(SmartAxesTool.new)
+      }
+      cmd.small_icon = '../img/icon-smart-axes-72x72.png'
+      cmd.large_icon = '../img/icon-smart-axes-114x114.png'
+      cmd.tooltip = get_i18n_string('core.toolbar.command.smart_axes')
+      cmd.status_bar_text = get_i18n_string('core.toolbar.command.smart_axes')
+      cmd.menu_text = get_i18n_string('core.toolbar.command.smart_axes')
       toolbar = toolbar.add_item(cmd)
 
       toolbar.restore
@@ -779,7 +909,7 @@ module Ladb::OpenCutList
           write_settings_command(params)
         end
         register_command('core_dialog_loaded') do |params|
-          dialog_loaded_command
+          dialog_loaded_command(params)
         end
         register_command('core_dialog_ready') do |params|
           dialog_ready_command
@@ -835,71 +965,43 @@ module Ladb::OpenCutList
       start
 
       # Create dialog instance
-      dialog_title = get_i18n_string('core.dialog.title') + ' - ' + EXTENSION_VERSION + (IS_DEV ? " ( build: #{EXTENSION_BUILD} )" : '')
-      if html_dialog_compatible
-        @dialog = UI::HtmlDialog.new(
-            {
-                :dialog_title => dialog_title,
-                :preferences_key => DIALOG_PREF_KEY,
-                :scrollable => true,
-                :resizable => true,
-                :width => DIALOG_MINIMIZED_WIDTH,
-                :height => DIALOG_MINIMIZED_HEIGHT,
-                :left => @dialog_left,
-                :top => @dialog_top,
-                :min_width => DIALOG_MINIMIZED_WIDTH,
-                :min_height => DIALOG_MINIMIZED_HEIGHT,
-                :style => UI::HtmlDialog::STYLE_DIALOG
-            })
-        @dialog.set_on_closed {
-          @dialog = nil
-          @dialog_maximized = false
-        }
-        @dialog.set_can_close {
-          dialog_store_current_position
-          dialog_store_current_size
-          true
-        }
-      else
-        @dialog = UI::WebDialog.new(
-            dialog_title,
-            true,
-            DIALOG_PREF_KEY,
-            DIALOG_MINIMIZED_WIDTH,
-            DIALOG_MINIMIZED_HEIGHT,
-            @dialog_left,
-            @dialog_top,
-            true
-        )
-        @dialog.min_width = DIALOG_MINIMIZED_WIDTH
-        @dialog.min_height = DIALOG_MINIMIZED_HEIGHT
-        @dialog.set_on_close {
-          @dialog = nil
-          @dialog_maximized = false
-        }
-      end
+      @dialog = UI::HtmlDialog.new(
+          {
+              :dialog_title => get_i18n_string('core.dialog.title') + ' - ' + EXTENSION_VERSION + (IS_DEV ? " ( build: #{EXTENSION_BUILD} )" : ''),
+              :preferences_key => DIALOG_PREF_KEY,
+              :scrollable => true,
+              :resizable => true,
+              :width => DIALOG_MINIMIZED_WIDTH,
+              :height => DIALOG_MINIMIZED_HEIGHT,
+              :left => @dialog_left,
+              :top => @dialog_top,
+              :min_width => DIALOG_MINIMIZED_WIDTH,
+              :min_height => DIALOG_MINIMIZED_HEIGHT,
+              :style => UI::HtmlDialog::STYLE_DIALOG
+          })
+      @dialog.set_on_closed {
+        @dialog = nil
+        @dialog_maximized = false
+      }
+      @dialog.set_can_close {
+        dialog_store_current_position
+        dialog_store_current_size
+        true
+      }
 
       # Setup dialog page
-      @dialog.set_file(File.join(__dir__, '..', 'html', "dialog-#{language}.html"))
+      @dialog.set_file(File.join(root_dir, 'html', "dialog-#{language}.html"))
 
       # Set dialog size and position
-      dialog_set_size(DIALOG_MINIMIZED_WIDTH, DIALOG_MINIMIZED_HEIGHT)
-      dialog_set_position(@dialog_left, @dialog_top)
+      # dialog_set_size(DIALOG_MINIMIZED_WIDTH, DIALOG_MINIMIZED_HEIGHT)
+      # dialog_set_position(@dialog_left, @dialog_top)
 
       # Setup dialog actions
-      call_json = ''
-      @dialog.add_action_callback('ladb_opencutlist_command') do |action_context, chunk|
-        match = /^([0-9]+)\/([0-9]+)\/(.+)$/.match(chunk)
-        current_chunk_index = match[1]
-        last_chunk_index = match[2]
-        call_json += match[3]
-        if current_chunk_index == last_chunk_index
-          call = JSON.parse(call_json)
-          call_json = ''
-          response = execute_command(call['command'], call['params'])
-          script = "rubyCommandCallback(#{call['id']}, '#{response.is_a?(Hash) ? Base64.strict_encode64(JSON.generate(response)) : ''}');"
-          @dialog.execute_script(script) if @dialog
-        end
+      @dialog.add_action_callback('ladb_opencutlist_command') do |action_context, call_json|
+        call = JSON.parse(call_json)
+        response = execute_command(call['command'], call['params'])
+        script = "rubyCommandCallback(#{call['id']}, '#{response.is_a?(Hash) ? Base64.strict_encode64(JSON.generate(response)) : ''}');"
+        @dialog.execute_script(script) if @dialog
       end
 
     end
@@ -916,11 +1018,12 @@ module Ladb::OpenCutList
 
         if tab_name
           # Startup tab name is defined call JS to select it
+          @dialog.bring_to_front
           @dialog.execute_script("$('body').ladbDialog('selectTab', '#{tab_name}');")
         end
 
         if ready_block
-          # Immediatly invoke the read block
+          # Immediatly invoke the ready block
           ready_block.call
         end
 
@@ -933,15 +1036,11 @@ module Ladb::OpenCutList
         @dialog_ready_block = ready_block
 
         # Show dialog
-        if html_dialog_compatible
-          @dialog.show
-        else
-          if platform_is_mac
-            @dialog.show_modal
-          else
-            @dialog.show
-          end
-        end
+        @dialog.show
+
+        # Set dialog size and position (those functions must be called after `show` call to have a coherent position on Windows)
+        dialog_set_size(DIALOG_MINIMIZED_WIDTH, DIALOG_MINIMIZED_HEIGHT)
+        dialog_set_position(@dialog_left, @dialog_top)
 
       end
 
@@ -971,18 +1070,14 @@ module Ladb::OpenCutList
 
     def dialog_store_current_size
       if @dialog && @dialog.respond_to?('get_size') && @dialog_maximized
-        size = @dialog.get_size
-        dialog_store_size(size[0], size[1]) if size && size.length == 2
+        width, height = @dialog.get_size
+        dialog_store_size(width, height) if width >= DIALOG_MINIMIZED_WIDTH && height >= DIALOG_MINIMIZED_HEIGHT
       end
     end
 
     def dialog_set_size(width, height)
       if @dialog
-        if platform_is_mac && !html_dialog_compatible
-          @dialog.execute_script("window.resizeTo(#{width},#{height})")
-        else
-          @dialog.set_size(width, height)
-        end
+        @dialog.set_size(width, height)
       end
     end
 
@@ -1002,18 +1097,18 @@ module Ladb::OpenCutList
 
     def dialog_store_current_position
       if @dialog && @dialog.respond_to?('get_position')
-        position = @dialog.get_position
-        dialog_store_position(position[0], position[1]) if position && position.length == 2
+        if @dialog.respond_to?('get_size')
+          width, height = @dialog.get_size
+          return if width < DIALOG_MINIMIZED_WIDTH || height < DIALOG_MINIMIZED_HEIGHT  # Do not store the position if dialog size is smaller than minimized size
+        end
+        left, top = @dialog.get_position
+        dialog_store_position(left, top) if left > 0 && top > 0
       end
     end
 
     def dialog_set_position(left, top)
       if @dialog
-        if platform_is_mac && !html_dialog_compatible
-          @dialog.execute_script("window.moveTo(#{left},#{top});")
-        else
-          @dialog.set_position(left, top)
-        end
+        @dialog.set_position(left, top)
       end
     end
 
@@ -1034,6 +1129,7 @@ module Ladb::OpenCutList
       show_dialog(nil, true) do
         # parameters and callback must be formatted as JS code
         if tab_name and command
+          @dialog.bring_to_front
           @dialog.execute_script("$('body').ladbDialog('executeCommandOnTab', [ '#{tab_name}', '#{command}', #{parameters}, #{callback} ]);")
         end
       end
@@ -1092,7 +1188,7 @@ module Ladb::OpenCutList
       begin
 
         # URLs with spaces will raise an InvalidURIError, so we need to encode spaces.
-        url = url.gsub(/ /, '%20')
+        url = URI::DEFAULT_PARSER.escape(url)
 
         # This will raise an InvalidURIError if the URL is very wrong. It will still
         # pass for strings like "foo", though.
@@ -1264,7 +1360,10 @@ module Ladb::OpenCutList
 
     end
 
-    def dialog_loaded_command
+    def dialog_loaded_command(params)
+
+      @webgl_available = params['webgl_available'] == true
+
       {
           :version => EXTENSION_VERSION,
           :build => EXTENSION_BUILD,
@@ -1274,13 +1373,14 @@ module Ladb::OpenCutList
           :sketchup_version => Sketchup.version,
           :sketchup_version_number => Sketchup.version_number,
           :ruby_version => RUBY_VERSION,
+          :chrome_version => defined?(UI::HtmlDialog::CHROME_VERSION) ? UI::HtmlDialog::CHROME_VERSION : nil,
           :platform_name => platform_name,
           :is_64bit => Sketchup.respond_to?(:is_64bit?) && Sketchup.is_64bit?,
           :locale => Sketchup.get_locale,
           :language => Plugin.instance.language,
           :available_languages => Plugin.instance.get_available_languages,
           :decimal_separator => DimensionUtils.instance.decimal_separator,
-          :html_dialog_compatible => html_dialog_compatible,
+          :webgl_available => @webgl_available,
           :manifest => @manifest,
           :update_available => @update_available,
           :update_muted => @update_muted,
@@ -1299,10 +1399,15 @@ module Ladb::OpenCutList
 
     def dialog_minimize_command
       if @dialog
+
         dialog_store_current_position
         dialog_store_current_size
         dialog_set_size(DIALOG_MINIMIZED_WIDTH, DIALOG_MINIMIZED_HEIGHT)
         @dialog_maximized = false
+
+        # Focus SketchUp
+        Sketchup.focus if Sketchup.respond_to?(:focus)
+
       end
     end
 
@@ -1320,14 +1425,15 @@ module Ladb::OpenCutList
     def open_external_file_command(params)    # Expected params = { path: PATH_TO_FILE }
       path = params['path']
       if path && path.is_a?(String)
-        UI.openURL("file:///#{path.gsub(/ /, '%20')}")  # Encode spaces with %20
+        url = "file:///#{path}"
+        UI.openURL(platform_is_mac ? URI::DEFAULT_PARSER.escape(url) : url)
       end
     end
 
     def open_url_command(params)    # Expected params = { url: URL }
       url = params['url']
       if url && url.is_a?(String)
-        UI.openURL(url.gsub(/ /, '%20'))  # Encode spaces with %20
+        UI.openURL(URI::DEFAULT_PARSER.escape(url))
       end
     end
 
@@ -1338,7 +1444,7 @@ module Ladb::OpenCutList
     end
 
     def play_sound_command(params)    # Expected params = { filename: WAV_FILE_TO_PLAY }
-      UI.play_sound(File.join(__dir__, '..', params['filename']))
+      UI.play_sound(File.join(root_dir, params['filename']))
     end
 
     def send_action_command(params)
@@ -1376,10 +1482,10 @@ module Ladb::OpenCutList
     end
 
     def compute_size_aspect_ratio_command(params)    # Expected params = { width: WIDTH, height: HEIGHT, ratio: W_ON_H_RATIO, is_width_master: BOOL }
-      width = params['width']
-      height = params['height']
-      ratio = params['ratio']
-      is_width_master = params['is_width_master']
+      width = params.fetch('width', '1m')
+      height = params.fetch('height', '1m')
+      ratio = params.fetch('ratio', 1)
+      is_width_master = params.fetch('is_width_master', true)
 
       # Convert input values to Length
       w = DimensionUtils.instance.d_to_ifloats(width).to_l

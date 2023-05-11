@@ -25,10 +25,15 @@ default:
   caution: Caution
   remove: Remove
   create: Create
+  duplicate: Duplicate
   ignore: Ignore
   download: Download
   upgrade: Update
   copy: Copy
+  select_all: Select all
+  unselect_all: Unselect all
+  draw: Draw
+  estimate: Estimate
   empty_filename: Untitled.skp
   help: Help
   error: Darn!
@@ -47,6 +52,7 @@ default:
   unit_5: Yard
   unit_mass_0: Kilogram
   unit_mass_1: Pound
+  unit_angle_0: Degrees
   instance_single: item
   instance_plural: items
   part_single: part
@@ -55,7 +61,13 @@ default:
   thickness_layer_plural: layers
   setup_model_units: Setup the model units
   load_more: Load more
-  reset_to_app_defaults: Restore to original values
+  reset_to_app_defaults: Restore to original settings
+  constrain_key: Shift
+  copy_key_win: Ctrl
+  copy_key_mac: Option
+  alt_key_win: Alt
+  alt_key_mac: Command
+  tab_key: Tab
 core:
   menu:
     submenu: OpenCutList
@@ -65,12 +77,15 @@ core:
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
+      edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       smart_paint: $t(core.toolbar.command.smart_paint)
+      smart_axes: $t(core.toolbar.command.smart_axes)
   toolbar:
     name: OpenCutList
     command:
       dialog: OpenCutList
       smart_paint: Paint Parts
+      smart_axes: Orient Parts
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
@@ -89,10 +104,8 @@ core:
       It is not recommended to use it in production.
 
       To report a bug: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
-    old_su: |
-      You are using an older version of SketchUp ({{ sketchup_version }}). This plugin will work, but may exhibit certain bugs.
-      To take full advantage of OpenCutList, we recommend to upgrade to at least **SketchUp 2017**.
-    feature_locked: "*Not deactivable in this version of SketchUp*"
+  error:
+    feature_unavailable: "This function requires SketchUp {{ version }} or higher"
   event:
     model_change: The active model has been changed.
     options_change: Options in the model have been changed.
@@ -122,6 +135,7 @@ core:
       unzip: Error while decompressing the archive.
   preset:
     label: Presets
+    manage: Manage Presets
     save_to: Save as
     restore_from: Restore from
     app_defaults: Factory preset
@@ -142,6 +156,20 @@ core:
     tooltip:
       save_to: "Update preset '{{ name }}'"
       delete: "Delete preset '{{ name }}'"
+    dictionary:
+      component_textinput_color: Color Palette
+      cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
+      cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
+      cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
+      cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
+      cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
+      cutlist_options: $t(tab.cutlist.label) / $t(default.options)
+      cutlist_report_options: $t(tab.cutlist.label) / $t(tab.cutlist.report.title)
+      importer_import_options: $t(tab.importer.label) / $t(default.import)
+      importer_load_options: $t(tab.importer.label) / $t(default.open)
+      materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
+      materials_options: $t(tab.materials.label) / $t(default.options)
+      settings_model: $t(tab.settings.label) / Model
   progress:
     please_wait: Calculating a world of peace
   component:
@@ -151,7 +179,27 @@ core:
       store: Save color
       remove: Remove color
     textinput_code:
+      snippets: Formula examples
       help: Type **@** to get a list of variables.
+    three_viewer:
+      view: "{{ view }} View"
+      view_isometric: Isometric
+      view_top: Top
+      view_bottom: Bottom
+      view_front: Front
+      view_back: Back
+      view_left: Left
+      view_right: Right
+      zoom: "{{ zoom }} Scale"
+      explode_factor: Amplitude of explosion
+      toggle_box_helper: Show/Hide Bounding Box
+      toggle_box_dimensions_helper: Show/Hide Dimensions
+      toggle_axes_helper: Show/Hide Part Axes
+  docs:
+    error:
+      failed_to_load: |
+        Unable to open the documentation.
+        Make sure you are connected to the Internet.
 tab:
   cutlist:
     label: Parts
@@ -164,18 +212,19 @@ tab:
     not_available_std_width: Width undefined
     not_available_std_thickness: Thickness undefined
     not_available_std_section: Cross section undefined
-    highlight_part: Highlight part in the model
-    highlight_parts: Highlight parts in the model
+    highlight_part: Highlight in the model
+    highlight_parts: Highlight in the model
     edit_part_properties: Edit Part Properties
-    edit_part_axes_properties: Edit Axes Properties of Part
+    edit_part_axes_properties: Edit the properties (axes) of the part
     edit_part_size_increase_properties: Edit the properties (oversizes) of the part
-    edit_part_edges_properties: Edit the properties (edge bandings) of the part
+    edit_part_edges_properties: Edit the properties (edges) of the part
+    edit_part_faces_properties: Edit the properties (faces) of the part
     tooltip:
-      show_hide_block: Show / hide group
+      show_hide_block: Show / Hide group
       scroll_to_block: Scroll to group
       not_available_std_width: "The width *{{ std_dimension_real }}* is not defined in the standard widths of the material '{{ material_name }}'"
-      not_available_std_thickness: "The thickness *{{ std_dimension }}* is not defined in the standard thicknesses of the material '{{ material_name }}'"
-      not_available_std_section: "The cross section *{{ std_dimension }}* is not defined in the standard cross sections of the material '{{ material_name }}'"
+      not_available_std_thickness: "The thickness *{{ std_dimension_real }}* is not defined in the standard thicknesses of the material '{{ material_name }}'"
+      not_available_std_section: "The cross section *{{ std_dimension_real }}* is not defined in the standard cross sections of the material '{{ material_name }}'"
       add_std_width_to_material: |
         Add width *{{ std_dimension }}*
         to material '{{ material_name }}'
@@ -217,12 +266,14 @@ tab:
       resized: This part was resized with respect to its component definition
       flipped: This part is mirrored compared to its component definition
       symmetrical: Mirrored part detection is disabled on this part
-      ignore_grain_direction: Grain direction is ignored on this part
+      ignore_grain_direction: Grain orientation is ignored on this part
       auto_oriented: This part has been reoriented automatically
       add_label_filter: "Filtering on '{{ label }}'"
       remove_label_filter: "Remove filtering on '{{ label }}'"
       add_edge_material_name_filter: "Filter on '{{ material_name }}'"
       remove_edge_material_name_filter: "Remove filtering on '{{ material_name }}'"
+      add_veneer_material_name_filter: "Filter on '{{ material_name }}'"
+      remove_veneer_material_name_filter: "Remove filtering on '{{ material_name }}'"
       not_aligned_on_axes: "Caution, this part may not be oriented correctly with respect to its axes"
       instance_count_by_part: "This part is counted in packages of **{{ count }}** items."
       unused_instance_count: "Note that **{{ count }}** item from the last package will not be used."
@@ -233,7 +284,7 @@ tab:
       thickness_layered: "The quantity here represents the number of pieces to be cut to obtain all the layers."
       thickness_layered_equation: "**{{ count }}** *part* x **{{ layerCount }}** *layers* = **{{ cuttingPartCount }}**"
       thickness_layered_equation_plural: "**{{ count }}** *parts* x **{{ layerCount }}** *layers* = **{{ cuttingPartCount }}**"
-      multiple_layers: "Caution, this part is composed of sub-parts present in {{ count }} different layers:<br>{{ layers }}"
+      multiple_content_layers: "Caution, this part is composed of sub-parts present in {{ count }} different layers or tags:<br>{{ layers }}"
       children_warnings: "Caution, there is {{ count }} alert in grouped parts"
       children_warnings_plural: "Caution, there are {{ count }} alerts in grouped parts"
       children_size_increase: "This dimension is increased by an oversize for {{ count }} grouped parts"
@@ -243,15 +294,20 @@ tab:
       size_increased: "Dimension is increased by an oversize of {{ value }}"
       has_edges: "This part contains {{ count }} edge banding"
       has_edges_plural: "This part contains {{ count }} edge bandings"
+      has_faces: "This part contains {{ count }} veneered face"
+      has_faces_plural: "This part contains {{ count }} veneered faces"
       edge_decremented: "Reduced by the thickness of the edge banding ({{ decrement }})"
       edge_ymin: Edge length 1
       edge_ymax: Edge length 2
       edge_xmin: Edge width 1
       edge_xmax: Edge width 2
+      face_zmin: Backside
+      face_zmax: Front
       dblclick_to_copy_all_edges: Double-click here to duplicate this value to the other edges
+      dblclick_to_copy_all_faces: Double-click here to duplicate this value to the other face
       dblclick_to_sort_axes: Double-click here to automatically reorder the axes according to the dimensions of the part
       part_axes: Internal axes of the part
-      select_unselect_all_parts: Select/deselect all parts in this group
+      select_unselect_all_parts: Select / Deselect all parts of the group
       setup_group_cuttingdiagram: "Configure the cutting diagram of '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
     menu:
       show_all_groups: Show all groups
@@ -259,16 +315,17 @@ tab:
       numbers_save: Save the part numbers
       numbers_reset: Reinitialize the part numbers
       highlight_parts: $t(tab.cutlist.highlight_parts)
+      group_layout_parts: Draw overview of parts in group
       group_numbers_save: Save the part numbers of this group
       group_numbers_reset: Reinitialize the part numbers of this group
       group_cuttingdiagram: Cutting Diagram
-      group_labels: Print labels
+      group_labels: Print labels of parts in group
       edit_material: "Edit the material '{{ material_name }}'"
       expand_all: Unfold all lines
       collapse_all: Fold all lines
       reset_prices: Reset the prices of all parts
       reset_prices_confirm: |
-        You are about to reset the prices of all parts in your model.
+        You are about to reset the prices of all parts in your model
         This action is final. **All prices will be reset to zero.**
         Confirm to continue.
       reset_prices_success: The prices of all parts have been reset.
@@ -278,7 +335,8 @@ tab:
       multiple_alert: "Shared properties of {{ part_count }} parts."
       general: General
       extra_help: "List of properties specific to the type of material \"**$t(tab.materials.type_{{ material_type }})**\"."
-      edges: Edge Bandings
+      edges: Edges
+      faces: Faces
       name: Name
       material: Material
       cumulable: Summable
@@ -297,9 +355,9 @@ tab:
       instance_count_by_part_1: 1 unit per part
       instance_count_by_part_2: 2 units per part
       mass: Weight
-      mass_help: The weight of the part will be used when generating **Reports**.
+      mass_help: The weight of the part will be used when generating an **Estimate**.
       price: Price
-      price_help: The price of the part will be used when generating **Reports**.
+      price_help: The price of the part will be used when generating an **Estimate**.
       thickness_layer_count: Nb of Layers
       thickness_layer_count_help: |
         Define here the number of layers that divide the drawn part in its thickness.
@@ -309,12 +367,12 @@ tab:
       description: Description
       description_help: |
         The *Description* allows you to provide personalized information on each part definition.
-      tags: Tags
+      tags: Badges
       tags_help: |
-        *Tags* are custom keywords that can be added to each part definition.
-        You can add as many tags as you want.
-        The visible parts of your parts list can then be filtered against these tags.
-      tags_multiple_info: Only common tags are displayed
+        *Badges* are custom keywords that can be added to each part definition.
+        You can add as many badges as you want.
+        The visible parts of your parts list can then be filtered against these badges.
+      tags_multiple_info: Only common badges are displayed
       orientation: Orientation
       orientation_locked_on_axis: Lock orientation on axes
       orientation_locked_on_axis_help: |
@@ -327,9 +385,9 @@ tab:
       symmetrical: Disable mirrored part detection on this part
       symmetrical_help: |
         If this box is checked, the detection of a *mirrored part* will have no effect on the part.
-      ignore_grain_direction: Ignore grain direction on this part
+      ignore_grain_direction: Ignore grain orientation on this part
       ignore_grain_direction_help: |
-        If this box is checked, the grain direction of the material will be ignored for this part.
+        If this box is checked, the grain orientation of the material will be ignored for this part.
       size_increase: Oversizes
       size_increase_help: |
         Oversizes increase the dimensions of a single part.
@@ -350,12 +408,15 @@ tab:
       axes_origin_position_none: Do not change the origin
       axes_origin_position_min: Place the origin at a corner
       axes_origin_position_center: Place the origin at the center
-      axes_origin_position_min_center: Place the origin in the middle of a face
+      axes_origin_position_front_min: Place the origin at a corner of the front
+      axes_origin_position_front_center: Place the origin at the center of the front
       over_length: Across the length
       over_width: Across the width
-      edge_disabled_help: This edge banding is not configurable because no material-bearing face has been detected on this edge of the part in the model.
+      edge_disabled_help: This edge banding is not configurable because no material-carrying face has been detected on this edge of the part in the model.
+      face_disabled_help: This surface is not configurable because no material-carrying face has been detected on this edge of the part in the model.
       multiple_values: Multiple values
       export_to_skp: Export (.skp)
+      loading_preview: Loading Preview
     export_to_skp:
       title: Export to .skp file
     option:
@@ -383,23 +444,25 @@ tab:
       part_number_sequence_by_group_help: "If this option is selected, the enumeration of parts is reinitialized to 1 (or A) for each group (list of parts with same material type and thickness)."
       part_folding: Group similar parts
       part_folding_help: |
-        If this option is enabled, parts made of **Solid Wood, Sheet Goods or Dimensional**, having the **same rough size**, with the **same tags** and the **same finished surface** *(if the display of this surface is not hidden)* will be grouped on the same line in the *parts list*.
+        If this option is enabled, parts made of **Solid Wood, Sheet Goods or Dimensional**, having the **same rough size**, with the **same badges** and the **same finished surface** *(if the display of this surface is not hidden)* will be grouped on the same line in the *parts list*.
 
         The parts will still be considered different for labeling and cutting diagram purposes.
       hide_entity_names: Hide instance names
       hide_entity_names_help: "If this option is selected, **instance names** of parts will not be displayed."
       hide_descriptions: Hide descriptions
       hide_descriptions_help: "If this option is selected, the **descriptions** placed on the parts will not be displayed."
-      hide_tags: Hide tags
-      hide_tags_help: "If this option is selected, **tags** will not be displayed."
+      hide_tags: Hide badges
+      hide_tags_help: "If this option is selected, **badges** will not be displayed."
       hide_cutting_dimensions: Hide rough dimensions
       hide_cutting_dimensions_help: "If this option is selected, the **rough** dimensions of parts will be hidden."
       hide_bbox_dimensions: Hide finished dimensions
       hide_bbox_dimensions_help: "If this option is selected, the **finished** dimensions of parts will be hidden."
       hide_final_areas: Hide actual area of parts of type *Sheet Goods*
       hide_final_areas_help: "If this option is selected, the **actual areas** of parts of type *Sheet Goods* will be hidden."
-      hide_edges: Hide the columns of edge bandings
+      hide_edges: Hide the edge columns
       hide_edges_help: "If this option is selected, the **edge banding columns** of parts of type *Sheet Goods* will be hidden."
+      hide_faces: Hide the face columns
+      hide_faces_help: "If this option is selected, the **face columns** of parts of type *Sheet Goods* will be hidden."
       minimize_on_highlight: Minimize after *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "If this option is selected, the OpenCutList window will be minimized when the function *'$t(tab.cutlist.highlight_part)'* is used."
       general: General
@@ -416,18 +479,19 @@ tab:
       property_name: Designation
       property_count: Quantity
       property_edge_pattern: Number of edge bandings
-      property_tags: Tags
+      property_tags: Badges
       property_thickness_layer_count: Number of layers
-      tags: Tags
-      tags_help: Custom list of tags proposed in the part properties window.
-      tags_placeholder: Add a tag
+      tags: Badges
+      tags_help: Custom list of badges proposed in the part properties window.
+      tags_placeholder: Add a badge
     list:
       filters: Filter
       filters_warning_0: "This filter masks all parts!"
       filters_warning: "This filter only displays **{{ count }}** part out of a total of {{ total }}."
       filters_warning_plural: "This filter only displays **{{ count }}** parts out of a total of {{ total }}."
       edge_material_names_filter: Filter by edge banding material
-      tags_filter: Filter by Tags
+      veneer_material_names_filter: Filter by veneer material
+      tags_filter: Filter by Badges
       dimensions_help: Understanding dimensions
       summary: Summary
       material_type: Type
@@ -450,7 +514,8 @@ tab:
       width_short: W
       thickness: Thickness
       thickness_short: T
-      edges: Edge Bandings
+      edges: Edges
+      faces: Faces
     export:
       title: Export
       info_0: |
@@ -483,7 +548,6 @@ tab:
       number: No.
       path: Path
       instance_name: Instance
-      definition_name: Definition
       name: Designation
       total_cutting_length: Length total - raw
       total_cutting_area: Area total - raw
@@ -503,11 +567,15 @@ tab:
       material_name: Material
       entity_names: Instance names
       description: Description
-      tags: Tags
+      tags: Badges
       edge_ymin: Edge length 1
       edge_ymax: Edge length 2
       edge_xmin: Edge width 1
       edge_xmax: Edge width 2
+      face_zmin: Backside
+      face_zmax: Frontside
+      layer: Tag
+      layers: Tags
       placeholder:
         no_column_title: Enter a title
         no_column_formula_native: "Native value of column '{{ col_name }}'"
@@ -517,9 +585,9 @@ tab:
       success:
         copied: Copied to clipboard.
     report:
-      title: Report
+      title: Estimate
       info_0: |
-        Reports generate a summary of the **weight** and **cost** of the **raw materials** needed to produce the parts of the *parts list*.
+        Generate an estimate of the **weight** and **cost** of the **raw materials** needed to produce the parts on the *parts list*.
       options_general: General
       options_solid_wood: $t(tab.materials.type_1)
       option_solid_wood_coefficient: Waste ratio for *$t(tab.materials.type_1)*
@@ -527,18 +595,26 @@ tab:
       raw_materials: Raw materials
       coefficient: Coefficient
       total: Total
+      total_used: Used
+      total_unused: Not Used
       total_mass: Σ Weight
       total_cost: Σ Cost
       total_count: Qty.
+      total_instance_count: Σ Units
       total_volume: Σ Volume
       total_area: Σ Area
       total_length: Σ Length
       error:
-        no_typed_material_parts: "No part with a defined material type (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)** or **$t(tab.materials.type_5)**) has been provided to generate the report."
+        no_typed_material_parts: "No part with a defined material type (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** or **$t(tab.materials.type_5)**) has been provided to generate the estimate."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errors**."
       warning:
         is_group_selection: Parts inside **hidden groups** of the parts list will not be accounted for.
+      tip:
+        not_enough_data: |
+          For this estimate to be calculated correctly:
+          - the used materials must have at least a density and a price.
+          - the used accessories must have at least a density and a price.
     cuttingdiagram:
       title: Cutting Diagram
       start_msg: Optimization running
@@ -551,17 +627,19 @@ tab:
       option_bar_folding_0: No
       option_bar_folding_1: Yes
       option_bar_folding_help: Group boards or edge bandings containing the same parts and cuts.
-      option_sheet_folding: Group Similar Panels
+      option_sheet_folding_good: Group Similar Panels
+      option_sheet_folding_veneer: Group Similar Veneer Sheets
       option_sheet_folding_0: No
       option_sheet_folding_1: Yes
-      option_sheet_folding_help: Group panels having the same parts and cuts.
+      option_sheet_folding_help: Group panels or sheets having the same parts and cuts.
       option_hide_part_list: Parts List
       option_hide_part_list_1d_dimensional_0: Displayed for each Board
       option_hide_part_list_1d_edge_0: Displayed for each Edge Banding
-      option_hide_part_list_2d_0: Displayed for Each Panel
-      option_hide_part_list_1: Masked
-      option_hide_part_list_1d_help: Display or mask the list of parts for each board or edge banding.
-      option_hide_part_list_2d_help: Display or mask the list of parts for each panel.
+      option_hide_part_list_2d_good_0: Displayed for each Panel
+      option_hide_part_list_2d_veneer_0: Displayed for each Veneer Sheet
+      option_hide_part_list_1: Hidden
+      option_hide_part_list_1d_help: Display or hide the list of parts for each board or edge banding.
+      option_hide_part_list_2d_help: Display or hide the list of parts for each panel or veneer sheet.
       option_use_names: Part Identification
       option_use_names_0: Use the number
       option_use_names_1: Use the designation
@@ -588,7 +666,11 @@ tab:
       option_highlight_primary_cuts: Primary cuts
       option_highlight_primary_cuts_0: Flyover only
       option_highlight_primary_cuts_1: Always visible
-      option_highlight_primary_cuts_help: Allows you to highlight primary cuts.
+      option_highlight_primary_cuts_help: Allows you to always highlight primary cuts.
+      option_hide_edges_preview: Display of edge bands
+      option_hide_edges_preview_0: Displayed in the cutting diagram
+      option_hide_edges_preview_1: Hidden in the cutting diagram
+      option_hide_edges_preview_help: Allows you to show or hide the visual display of the edge bands for each part in the cutting diagram.
       option_saw_kerf: Blade Thickness
       option_saw_kerf_help: The width of material removed by the sawblade cut.
       option_trimming: Trimming Size
@@ -620,17 +702,19 @@ tab:
         Expected format: **L**x**Q**, where **L** is the *length* of the offcut and **Q** the quantity.
         Quantity is optional.
         *Sizes without units are considered to be in model units.*
-      option_std_sheet: Standard Panel
+      option_std_sheet_good: Standard Panel
+      option_std_sheet_veneer: Standard Veneer
       option_std_sheet_help: |
-        Select the standard panel which will be duplicated to calculate the best possible placement.
-        This list is defined in the field **$t(tab.materials.edit_material.std_sizes)** of the material.
+        Select the standard panel or veneer sheet which will be duplicated to calculate the best possible placement.
+        This list is defined by the **$t(tab.materials.edit_material.std_sizes)** field of the material.
         Edit the material '{{ material_name }}' to complete this list.
       option_std_sheet_add: Add a panel size
       option_std_sheet_none: None
-      option_scrap_sheet_sizes: Offcuts
+      option_scrap_sheet_good_sizes: Panel Offcuts
+      option_scrap_sheet_veneer_sizes: Veneer Offcuts
       option_scrap_sheet_sizes_placeholder: length x width x quantity ; ...
       option_scrap_sheet_sizes_help: |
-        List all offcut sheet goods you would like to be considered in priority for the cutting diagram.
+        List all offcut sheet goods or veneers you would like to be considered in priority for the cutting diagram.
         Expected format: **L**x**W**x**Q**, where **L** and **W** represent the *length* and the *width* of the panel and **Q** the quantity.
         Quantity is optional.
         *Sizes without units are considered to be in model units.*
@@ -658,17 +742,20 @@ tab:
         leftover: Leftover
         cut: Cut
         cut_plural: Cuts
-        cut_final: Primary cut (level 1)
-        cut_final_plural: Primary cuts (level 1)
-        cut_through: Primary cut (level 2)
-        cut_through_plural: Primary cuts (level 2)
+        cut_trimming: Trimming cut
+        cut_bounding: Primary cut (level 1)
+        cut_bounding_plural: Primary cuts (level 1)
+        cut_internal_through: Primary cut (level 2)
+        cut_internal_through_plural: Primary cuts (level 2)
         cut_none: None
         bar_dimensional_type_0: Standard Dimensional
         bar_dimensional_type_1: Offcut Board
         bar_edge_type_0: Standard Edge Banding
         bar_edge_type_1: Offcut Edge Banding
-        sheet_type_0: Standard Panel
-        sheet_type_1: Offcut
+        sheet_good_type_0: Standard Panel
+        sheet_good_type_1: Panel Offcut
+        sheet_veneer_type_0: Standard Veneer Sheet
+        sheet_veneer_type_1: Veneer Offcut
         unused: Unused
         parts: "{{ count }} part"
         parts_plural: "{{ count }} parts"
@@ -679,7 +766,8 @@ tab:
         parameters: Parameters are incorrect. The trim size is larger than 25% of the longest board or edge banding.
         no_parts: No part.
         no_sheet: Standard panel sizes are misconfigured and no offcuts are available.
-        no_placement_possible: "No placement possible (trim size too large, standard panel too small, saw kerf too large, ...)."
+        no_placement_possible_1d: "No placement possible (standard board too small, trim size too large, saw kerf too large, ...)."
+        no_placement_possible_2d: "No placement possible (standard panel too small, trim size too large, saw kerf too large, ...)."
         bad_error: "Algorithm error. Please contact the developers, as this is an interesting case."
         unplaced_parts: "**1 part** could not be placed, because it is too large to fit."
         unplaced_parts_plural: "There are **{{ count }} parts** which could not be placed because they are too large to fit."
@@ -741,6 +829,7 @@ tab:
         part_description: Description
         part_entity_named_path: Instance path
         part_entity_name: Instance name
+        part_bin: Bin
         part_cutting_size: Rough dimensions
         part_cutting_length: Length - rough
         part_cutting_width: Width - rough
@@ -749,12 +838,14 @@ tab:
         part_length: Length
         part_width: Width
         part_thickness: Thickness
-        part_tags: Tags
+        part_tags: Badges
         part_batch: Batch
         part_edge_ymin: Edge length 1
         part_edge_ymax: Edge length 2
         part_edge_xmin: Edge width 1
         part_edge_xmax: Edge width 2
+        part_face_zmin: Veneer backside
+        part_face_zmax: Veneer front
         thumbnail_proportional: Proportional thumbnail
         thumbnail_square: Square thumbnail
         group_material: Material / Thickness
@@ -769,8 +860,86 @@ tab:
         invalid_size: The configuration parameters entered do not allow a valid label size to be set.
       warning:
         is_part_selection: These labels are limited to the **selected parts**.
+        formula_not_available: Formula is not available in this context
     layout:
       title: Drawing
+      to_layout: Export to Layout
+      options_layout: Composition
+      options_settings: Configuration
+      option_parts: Parts
+      option_parts_colored: Color
+      option_parts_colored_0: Without color
+      option_parts_colored_1: Color of the material
+      option_parts_colored_help: Select the appearance of the parts.
+      option_parts_opacity: Opacity
+      option_parts_opacity_0: Transparent
+      option_parts_opacity_1: Opaque
+      option_parts_opacity_help: Select the opacity of the parts.
+      option_pins: Labels
+      option_pins_hidden: Display
+      option_pins_hidden_0: With labels
+      option_pins_hidden_1: Without labels
+      option_pins_hidden_help: Show or hide the part labels with number or designation.
+      option_pins_colored: Color
+      option_pins_colored_0: Without color
+      option_pins_colored_1: Color of the part
+      option_pins_colored_help: Select the color of the labels.
+      option_pins_formula: Formula
+      option_pins_formula_help: Allows you to write *Ruby* code to customize the label text.
+      option_pins_length: Leader Line
+      option_pins_length_0: Without leader line
+      option_pins_length_1: Short
+      option_pins_length_2: Medium
+      option_pins_length_3: Long
+      option_pins_length_help: Select the length of the leader line.
+      option_pins_direction: Direction
+      option_pins_direction_0: Along the Red axis
+      option_pins_direction_1: Along the Green axis
+      option_pins_direction_2: Along the Blue axis
+      option_pins_direction_3: Pointing towards the center of the parent group
+      option_pins_direction_4: Pointing towards the center of the selection
+      option_pins_direction_help: Select the direction of the leader lines to labels for better readability.
+      option_page: Paper
+      option_page_format: Format
+      option_page_format_portrait: Portrait
+      option_page_format_landscape: Landscape
+      option_page_format_custom: Custom
+      option_page_width: Width
+      option_page_height: Height
+      option_page_header: Header
+      option_page_header_0: None
+      option_page_header_1: With header
+      option_page_header_help: |
+        Select whether the page to be printed contains a header with the name of the document, its description and the date.
+        Without a header, the overview drawing takes up the entire page.
+      option_camera: Camera
+      option_camera_view: View
+      option_camera_view_custom: Custom
+      option_camera_zoom: Scale
+      option_camera_zoom_auto: Automatic
+      option_camera_zoom_custom: Custom
+      option_camera_target: Position
+      option_camera_target_auto: Automatic
+      option_camera_target_custom: Custom
+      option_explode: Exploded View
+      error:
+        no_part: There is no part to draw.
+        failed_to_save_as_skp: Failed to write SKP file to send to Layout.
+        failed_to_layout: |
+          Error writing the Layout file: **{{ error }}**
+
+          **Make sure the file is not open in Layout.**
+      warning:
+        is_group_selection: The parts inside of **hidden groups** of your parts list will not be drawn.
+        is_part_selection: This overview drawing is limited to the **selected parts**.
+    snippet:
+      number: Number
+      name: Designation
+      number_and_name: Number and Designation
+      number_without_hardware: Number (without accessories)
+      size: Size
+      area: Area
+      volume: Volume
     error:
       no_model: No model is open. You will need to give me more information ;)
       no_entities: Your model is empty. You will need to give me more information ;)
@@ -804,6 +973,7 @@ tab:
     type_3: Dimensional
     type_4: Edge Banding
     type_5: Hardware
+    type_6: Veneer
     tooltip:
       type_0: Material type '$t(tab.materials.type_0)'
       type_1: Material type '$t(tab.materials.type_1)'
@@ -811,12 +981,13 @@ tab:
       type_3: Material type '$t(tab.materials.type_3)'
       type_4: Material type '$t(tab.materials.type_4)'
       type_5: Material type '$t(tab.materials.type_5)'
+      type_6: Material type '$t(tab.materials.type_6)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
-      grain_direction: Grain direction
-      colorized: This tone will be applied to the texture of this material when it is rendered in the model
-      texture_colorized: Combine this tone with the texture image
+      grain_direction: Grain orientation
+      colorized: This tone will be applied to the texture when it is rendered in the model
       texture_load: Load a new texture
+      texture_clear: Remove texture
       edit: "Edit the properties of '{{ name }}'"
       set_current: |
         Paint parts with '{{ name }}'
@@ -841,11 +1012,15 @@ tab:
       title: "Properties of Material '{{ name }}'"
       general: General
       texture: Texture
+      no_texture: No texture
       name: Name
       type: Type
       cut_options: Cutting Parameters
       attributes: Attributes
       thickness: Thickness
+      thickness_help: |
+        Finished thickness of the material.
+        *Sizes without units are considered to be in model units.*
       length_increase: Length Oversize
       length_increase_help: Oversize applied to the length to define the **raw length**.
       width_increase: Width Oversize
@@ -877,8 +1052,8 @@ tab:
       std_sizes_help: |
         Expected format: **L**x**W**, where **L** and **W** represent the **actual** *length* and *width* of the panel.
         *Sizes without units are considered to be in model units.*
-      grained: Grain Direction
-      grained_help: Configures the grain direction of the material.
+      grained: Grain Orientation
+      grained_help: Configures the grain orientation of the material.
       grained_0: No Grain
       grained_1: Grain Follows Length
       edge_decremented: Reduce Dimensions
@@ -891,7 +1066,6 @@ tab:
       std_prices_help: Allows you to define the price for all sizes as well as for each standard size of the material.
       std_prices_dim_placeholder: Select a size
       std_prices_add: Add a price
-      texture_load: Load
       texture_width: Width
       texture_height: Height
       export_to_skm: Export (.skm)
@@ -912,6 +1086,9 @@ tab:
       message: |
         You are about to remove the material **{{ material_name }}** from your model.
         Confirm to continue.
+    duplicate:
+      message: |
+        Select the name of the new material, which will be copied from **{{ material_name }}**.
     error:
       no_model: No model is open. You will need to give me more information ;)
       no_materials: Your model does not contain any material.
@@ -919,6 +1096,7 @@ tab:
       failed_import_skm_file: "An error occurred while importing from the .skm file. **{{ error }}**"
       failed_export_skm_file: "An error occurred while exporting to .skm file. **{{ error }}**"
       failed_removing_material: "An error occurred while suppressing this material. **{{ error }}**"
+      failed_duplicating_material: "An error occured while duplicating the material. **{{ error }}**"
       invalid_image_file: Invalid image
     success:
       exported_to: "Successful export to {{ export_path }}."
@@ -975,7 +1153,7 @@ tab:
       bbox_width: Width
       bbox_thickness: Thickness
       material: Material
-      tags: Tags
+      tags: Badges
     tooltip:
       errors: This part will not be imported because it produced the following errors
       warnings: This part will be imported but it produced the following warnings
@@ -1052,12 +1230,16 @@ tab:
     objective_slogan: "OpenCutList is all of us"
     objective_title:
       default: Objectives
-      layout: Funding of a drawing preview module
+      cuttingdiagram_export: Funding of cutting diagram exports
     objective_details:
       default: |
-        The ongoing improvement of *OpenCutList* is important to us and the project continues to need your help for its next update **4.0**!
+        The ongoing improvement of *OpenCutList* is important to us and the project continues to need your help for its next update!
+      cuttingdiagram_export: |
+        It is important to us that *OpenCutList* can be adapted to the very different expectations of the users for the *cutting diagram* function.
+        To further expand the possibilities, we would like to enable the export of layout diagrams in **SVG** format.
+        By providing us with the means to work on these exports, you are giving us the opportunity to help you get the most out of *OpenCutList*.
       layout: |
-        The objective of this module is to allow you to easily print a preview of your project in **exploded view** with identification of the parts by their number generated in the parts list.
+        The objective of this module is to allow you to easily print a preview of your project as an **exploded view** with identification from information generated in the parts list.
     objective_crowdfunding: |
       The development of new features will be done through **Fundraising** and will start when the **Financial Goal** is reached.
     objective_thanks: |
@@ -1078,7 +1260,7 @@ tab:
     print_margin_small: Small
     size_and_position: Size and Position of the Window
     model_settings: Model Preferences
-    length_unit: Unit of length
+    length_unit: Unit of Length
     length_format: Format
     length_format_0: Decimal
     length_format_1: Architectural
@@ -1086,11 +1268,23 @@ tab:
     length_format_3: Fractional
     length_precision: Precision
     suppress_units_display: Display length unit for each value
-    mass_unit: Unit of weight
-    currency_symbol: Currency symbol
-    menu:
+    mass_unit: Unit of Weight
+    currency_symbol: Currency Symbol
+    presets:
+      export_global_presets: Export presets
+      export_global_presets_help: |
+        This feature allows you to export your presets to a **.json** file.
+        Select the presets you want to export to it.
+      export_global_presets_success: Presets have been successfully exported.
+      import_global_presets: Import presets
+      import_global_presets_help: |
+        Select the presets in the **.json** file that you would like to import.
+        Please note that a preset with identical name that already exists will be replaced by the imported version.
+      import_global_presets_success: |
+        *OpenCutList* presets have been successfully imported.
+        In order to reflect the changes, you must **close** and **reopen** the OpenCutList window.
       dump_global_presets: Dump presets
-      dump_model_presets: Dump model presets
+      dump_model_presets: Dump model settings
       reset_global_presets: Reinitialize the presets
       reset_global_presets_confirm: |
         You are about to reset all of your saved *OpenCutList* presets.
@@ -1099,14 +1293,20 @@ tab:
       reset_global_presets_success: |
         *OpenCutList* presets have been reset.
         In order to reflect the changes, you must **close** and **reopen** the OpenCutList window.
-      reset_model_presets: Reinitialize model presets
+      reset_model_presets: Reinitialize model settings
       reset_model_presets_confirm: |
-        You are about to reset all *OpenCutList* presets for the current model.
+        You are about to reset all *OpenCutList* settings for the current model.
         This action is final. **All settings will be restored to their default values.**
         Confirm to continue.
       reset_model_presets_success: |
-        The *OpenCutList* presets for the current model have been reset.
+        The *OpenCutList* settings for the current model have been reset.
         In order to reflect the changes, you must **close** and **reopen** the OpenCutList window.
+      error:
+        no_preset_to_export: No presets to export.
+        no_preset_to_import: No presets to import.
+        failed_to_import: "Impossible to import the presets: **{{ error }}**."
+        failed_to_import_invalid_hexdigest: This file was modified. It cannot be imported.
+        failed_to_import_bad_file_format: Invalid file format.
   about:
     label: About
     title: About
@@ -1125,8 +1325,8 @@ tab:
       - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*Polish*)
       - Sergey Isupov (*Hebrew*), RTL interface not yet supported
       - Soul Issam (*Arabic*), RTL interface not yet supported
-      - Dany Dhondt, Eric Lugtigheid (*Dutch*)
       - Nguyen Ngoc Tan (*Vietnamese*)
+      - Andriy Toporivsky, Kostyantyn Shcherbey (*Ukrainian*)
     credits_description: |
       The developpment of this extension is linked to the sharing plateform project [L'Air du Bois](https://www.lairdubois.fr).
       This extension is *Open Source* as well and available under [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) license on [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
@@ -1140,19 +1340,16 @@ tab:
       - [Transifex](https://www.transifex.com) for their support of Open Source projects.
       - [GitBook](https://www.gitbook.com) for their support of Open Source projects.
 tool:
-  highlight:
+  default:
     transparency: Transparency
     zoom_extents: Zoom Extents
+    toggle_depth: Background parts
+  highlight:
+    transparency: $t(tool.default.transparency)
+    zoom_extents: $t(tool.default.zoom_extents)
   smart_paint:
-    copy_key_win: Ctrl
-    copy_key_mac: Option
-    alt_key_win: Alt
-    alt_key_mac: Cmd
-    status_paint_face: Click to paint a face.
-    status_paint_part: Click to paint an entire part.
-    status_unpaint_face: Click to clean a face.
-    status_unpaint_part: Click to clean an entire part.
-    status_pick: Click to sample the material.
+    title: Paint
+    default_material: No material
     filters: Filters
     filter_0: Without type
     filter_1: $t(tab.materials.type_1)
@@ -1160,13 +1357,50 @@ tool:
     filter_3: $t(tab.materials.type_3)
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
-    action: Action
-    action_0: Paint Face
-    action_1: Paint Part
-    action_2: Clean Face
-    action_3: Clean Part
-    action_4: Sample
+    filter_6: $t(tab.materials.type_6)
+    action_0: Paint parts
+    action_0_status: Click on a part to paint its instance
+    action_1: Paint edges
+    action_1_status: Click on a panel edge to apply material '$t(tab.materials.type_4)'
+    action_2: Paint faces
+    action_2_status: Click on a panel face to apply material '$t(tab.materials.type_6)'
+    action_3: Sample
+    action_3_status: Click on a face to sample its material
+    action_4: Clean
+    action_4_status: Click on a part to remove all materials from its definition and from all its instances
+    edges: "{{ count }} edge"
+    edges_plural: "{{ count }} edges"
+    edge_ymin: Length 1
+    edge_ymax: Length 2
+    edge_xmin: Width 1
+    edge_xmax: Width 2
+    faces: "{{ count }} face"
+    faces_plural: "{{ count }} faces"
+    face_zmin: Backside
+    face_zmax: Front
     warning:
-      no_material: Your model does not contain any material!
-      all_filtered: The selected filters mask all materials!
-      not_part: The target object must be a component.
+      no_material: No material
+      no_material_type: "No material of type '{{ type }}'"
+    error:
+      not_part: The target object is not a part
+      not_edge: The target face is not a panel edge
+      not_face: The target face is not a panel face
+      wrong_material_type: "The target part must be of type '{{ type }}'"
+  smart_axes:
+    title: Orient
+    action_0: Flip
+    action_0_status: Click on a part to flip its instance along one of its dimensions
+    action_1: Swap length ↔ width
+    action_1_status: Click on a part to swap its length with its width
+    action_2: Swap front ↔ backside
+    action_2_status: Click on a part to swap its front with its backside
+    action_3: Adapt axes
+    action_3_status: Click on the face or edge of a part to adapt its axes
+    action_modifier_length: L
+    action_modifier_width: W
+    action_modifier_thickness: T
+    warning:
+      more_entities: "{{ count_used }} instances sharing the same definition will be modified"
+    error:
+      not_part: The target object is not a part
+      not_orientable: The type of this part does not allow orienting it

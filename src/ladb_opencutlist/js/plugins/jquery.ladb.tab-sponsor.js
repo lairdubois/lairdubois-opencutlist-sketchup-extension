@@ -23,16 +23,21 @@
     LadbTabSponsor.prototype.bindObjectiveWidget = function ($widget) {
         var that = this;
 
-        var objectiveGoal = 6000;
-        var objectiveCurrency = 'USD';
+        var objectiveName = this.dialog.capabilities.manifest.sponsor && this.dialog.capabilities.manifest.sponsor.objectiveName ? this.dialog.capabilities.manifest.sponsor.objectiveName : '';
+        var objectiveGoal = this.dialog.capabilities.manifest.sponsor && this.dialog.capabilities.manifest.sponsor.objectiveGoal ? this.dialog.capabilities.manifest.sponsor.objectiveGoal : 6000;
+        var objectiveCurrency = this.dialog.capabilities.manifest.sponsor && this.dialog.capabilities.manifest.sponsor.objectiveCurrency ? this.dialog.capabilities.manifest.sponsor.objectiveCurrency : 'USD';
 
         // Fetch UI elements
         var $loading = $('.ladb-loading', $widget);
         var $btnInfo = $('.ladb-sponsor-objective-info-btn', $widget);
+        var $labelObjective = $('.ladb-sponsor-objective-label', $widget);
         var $labelObjectiveGoal = $('.ladb-sponsor-objective-goal-label', $widget);
         var $labelObjectiveProgress = $('.ladb-sponsor-objective-progress-label', $widget);
         var $progressObjective = $('.progress', $widget);
         var $progressBarObjective = $('.progress-bar', $widget);
+
+        // Append objective name
+        $labelObjective.append(' ' + objectiveName);
 
         // Append currency formatted objective goal
         $labelObjectiveGoal.append(that.dialog.amountToLocaleString(objectiveGoal, objectiveCurrency));
@@ -188,7 +193,6 @@
     };
 
     LadbTabSponsor.prototype.showObjectiveModal = function (objectiveStrippedName, objectiveImage) {
-        var that = this;
 
         var $modal = this.dialog.appendModal('ladb_sponsor_modal_objective', 'tabs/sponsor/_modal-objective.twig', {
             objectiveStrippedName: objectiveStrippedName ? objectiveStrippedName : 'default',
@@ -209,7 +213,6 @@
             $modal.modal('hide');
 
         });
-        // HOP
 
         // Show modal
         $modal.modal('show');
@@ -224,7 +227,7 @@
         var that = this;
 
         this.registerCommand('show_objective_modal', function (parameters) {
-            that.showObjectiveModal(parameters.objectiveStrippedName, parameters.objectiveImage);
+            that.showObjectiveModal(parameters.objectiveStrippedName);
         });
 
     };

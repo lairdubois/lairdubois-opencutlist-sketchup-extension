@@ -72,9 +72,21 @@
   content: "V";
   background: #e76f51;
 }
+.CodeMirror-hint-path:before {
+  content: "P";
+  background: #cc0000;
+}
+.CodeMirror-hint-material-type:before {
+  content: "T";
+  background: #bc6c25;
+}
 .CodeMirror-hint-edge:before {
   content: "E";
-  background: #668EEE;
+  background: #668eee;
+}
+.CodeMirror-hint-veneer:before {
+  content: "V";
+  background: #8338ec;
 }
 
 li.CodeMirror-hint-active {

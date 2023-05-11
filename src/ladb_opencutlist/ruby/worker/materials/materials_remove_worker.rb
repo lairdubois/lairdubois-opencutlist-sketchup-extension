@@ -3,7 +3,9 @@ module Ladb::OpenCutList
   class MaterialsRemoveWorker
 
     def initialize(material_data)
-      @name = material_data['name']
+
+      @name = material_data.fetch('name')
+
     end
 
     # -----
@@ -22,7 +24,7 @@ module Ladb::OpenCutList
       begin
         success = materials.remove(material)
       rescue => e
-        return { :errors => [ 'tab.materials.error.failed_removing_material', { :error => e.message } ] }
+        return { :errors => [ [ 'tab.materials.error.failed_removing_material', { :error => e.message } ] ] }
       end
 
       {

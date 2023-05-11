@@ -17,11 +17,32 @@
 
   &.out {
     left: 100%;
-    right: -100%;
+    right: calc(-100% + @ladb-leftbar-width);
   }
 
   &.animated {
     z-index: 2;
+  }
+
+  &.ladb-slide-fullpage {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    .ladb-header {
+      flex-grow: 0;
+
+      .ladb-header-extra .ladb-file-infos {
+        margin-bottom: 0;
+      }
+
+    }
+
+    .ladb-container {
+      flex-grow: 1;
+      position: relative;
+    }
+
   }
 
   .ladb-header {
@@ -82,6 +103,12 @@
     right: 0;
     height: auto;
     overflow: hidden;
+
+    &.ladb-slide-fullpage {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+    }
 
     .ladb-container {
       padding: 0;

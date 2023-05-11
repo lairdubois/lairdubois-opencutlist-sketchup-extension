@@ -1,5 +1,6 @@
 module Ladb::OpenCutList
 
+  require_relative '../../model/geom/scale3d'
   require_relative '../../utils/path_utils'
 
   class InstanceInfo
@@ -14,10 +15,12 @@ module Ladb::OpenCutList
       @path = path
     end
 
+    # -----
+
     def read_name(try_from_dynamic_attributes = false)
       if try_from_dynamic_attributes
         name = entity.get_attribute('dynamic_attributes', 'name', nil)
-        return name, true unless name.nil?
+        return [ name, true ] unless name.nil?
       end
       [ entity.definition.name, false ]
     end
@@ -26,6 +29,10 @@ module Ladb::OpenCutList
 
     def entity
       @path.last
+    end
+
+    def layer
+      entity.layer
     end
 
     def serialized_path
@@ -39,7 +46,7 @@ module Ladb::OpenCutList
       if @named_path
         return @named_path
       end
-      @named_path = PathUtils.get_named_path(@path)
+      @named_path = PathUtils.get_named_path(@path).join('.')
     end
 
     def transformation
@@ -53,7 +60,7 @@ module Ladb::OpenCutList
       if @scale
         return @scale
       end
-      @scale = TransformationUtils::get_scale3d(transformation)
+      @scale = Scale3d.create_from_transformation(transformation)
     end
 
     def flipped

@@ -19,12 +19,15 @@ module Ladb::OpenCutList
     EXPORT_OPTION_ENCODING_UTF16BE = 2
 
     def initialize(settings, cutlist)
-      @source = settings['source']
-      @col_sep = settings['col_sep']
-      @encoding = settings['encoding']
-      @col_defs = settings['col_defs']
-      @target = settings['target']
-      @hidden_group_ids = settings['hidden_group_ids']
+
+      options = Plugin.instance.get_model_preset('cutlist_export_options')
+
+      @source = settings.fetch('source', options.fetch('source'))
+      @col_sep = settings.fetch('col_sep', options.fetch('col_sep'))
+      @encoding = settings.fetch('encoding', options.fetch('encoding'))
+      @col_defs = settings.fetch('col_defs')
+      @target = settings.fetch('target')
+      @hidden_group_ids = settings.fetch('hidden_group_ids')
 
       @cutlist = cutlist
 
@@ -129,10 +132,10 @@ module Ladb::OpenCutList
         rows << _evaluate_header
 
         @cutlist.groups.each { |group|
-          next if @hidden_group_ids.include? group.id
+          next if @hidden_group_ids.include?(group.id)
 
           data = SummaryExportRowData.new(
-            StringWrapper.new(Plugin.instance.get_i18n_string("tab.materials.type_#{group.material_type}")),
+            MaterialTypeWrapper.new(group.material_type),
             StringWrapper.new((group.material_name ? group.material_name : Plugin.instance.get_i18n_string('tab.cutlist.material_undefined')) + (group.material_type != MaterialAttributes::TYPE_UNKNOWN && group.material_type != MaterialAttributes::TYPE_HARDWARE ? ' / ' + group.std_dimension : '')),
             IntegerWrapper.new(group.part_count),
             LengthWrapper.new(group.def.total_cutting_length, false),
@@ -151,11 +154,8 @@ module Ladb::OpenCutList
 
         # Content rows
         @cutlist.groups.each { |group|
-          next if @hidden_group_ids.include? group.id
+          next if @hidden_group_ids.include?(group.id)
           group.parts.each { |part|
-
-            no_cutting_dimensions = group.material_type == MaterialAttributes::TYPE_UNKNOWN
-            no_dimensions = group.material_type == MaterialAttributes::TYPE_HARDWARE
 
             data = CutlistExportRowData.new(
               StringWrapper.new(part.number),
@@ -168,7 +168,7 @@ module Ladb::OpenCutList
               LengthWrapper.new(part.def.size.width),
               LengthWrapper.new(part.def.size.thickness),
               AreaWrapper.new(part.def.final_area),
-              StringWrapper.new(Plugin.instance.get_i18n_string("tab.materials.type_#{group.material_type}")),
+              MaterialTypeWrapper.new(group.material_type),
               StringWrapper.new(group.material_display_name),
               ArrayWrapper.new(part.entity_names.map(&:first)),
               StringWrapper.new(part.description),
@@ -192,7 +192,16 @@ module Ladb::OpenCutList
                 part.edge_material_names[:xmax],
                 part.def.edge_group_defs[:xmax] ? part.def.edge_group_defs[:xmax].std_thickness : nil,
                 part.def.edge_group_defs[:xmax] ? part.def.edge_group_defs[:xmax].std_width : nil
-              )
+              ),
+              VeneerWrapper.new(
+                part.face_material_names[:zmin],
+                part.def.veneer_group_defs[:zmin] ? part.def.veneer_group_defs[:zmin].std_thickness : nil
+              ),
+              VeneerWrapper.new(
+                part.face_material_names[:zmax],
+                part.def.veneer_group_defs[:zmax] ? part.def.veneer_group_defs[:zmax].std_thickness : nil
+              ),
+              ArrayWrapper.new(part.def.instance_infos.values.map { |instance_info| instance_info.layer.name }.uniq),
             )
 
             rows << _evaluate_row(data)
@@ -206,12 +215,10 @@ module Ladb::OpenCutList
 
         # Content rows
         @cutlist.groups.each { |group|
-          next if @hidden_group_ids.include? group.id
-          next if group.material_type == MaterialAttributes::TYPE_EDGE    # Edges don't have instances
+          next if @hidden_group_ids.include?(group.id)
+          next if group.material_type == MaterialAttributes::TYPE_EDGE      # Edges don't have instances
+          next if group.material_type == MaterialAttributes::TYPE_VENEER    # Veneers don't have instances
           group.parts.each { |part|
-
-            no_cutting_dimensions = group.material_type == MaterialAttributes::TYPE_UNKNOWN
-            no_dimensions = group.material_type == MaterialAttributes::TYPE_UNKNOWN || group.material_type == MaterialAttributes::TYPE_HARDWARE
 
             parts = part.is_a?(FolderPart) ? part.children : [ part ]
             parts.each { |part|
@@ -221,10 +228,9 @@ module Ladb::OpenCutList
 
                 data = InstancesListExportRowData.new(
                   StringWrapper.new(part.number),
-                  StringWrapper.new(PathUtils.get_named_path(instance_info.path, false, 1, '/')),
+                  PathWrapper.new(PathUtils.get_named_path(instance_info.path, false, 1)),
                   StringWrapper.new(instance_info.entity.name.empty? ? "##{instance_info.entity.entityID}" : instance_info.entity.name),
                   StringWrapper.new(part.name),
-                  IntegerWrapper.new(part.count),
                   LengthWrapper.new(part.def.cutting_length),
                   LengthWrapper.new(part.def.cutting_width),
                   LengthWrapper.new(part.def.cutting_size.thickness),
@@ -232,7 +238,7 @@ module Ladb::OpenCutList
                   LengthWrapper.new(part.def.size.width),
                   LengthWrapper.new(part.def.size.thickness),
                   AreaWrapper.new(part.def.final_area),
-                  StringWrapper.new(Plugin.instance.get_i18n_string("tab.materials.type_#{group.material_type}")),
+                  MaterialTypeWrapper.new(group.material_type),
                   StringWrapper.new(group.material_display_name),
                   StringWrapper.new(part.description),
                   ArrayWrapper.new(part.tags),
@@ -255,7 +261,16 @@ module Ladb::OpenCutList
                     part.edge_material_names[:xmax],
                     part.def.edge_group_defs[:xmax] ? part.def.edge_group_defs[:xmax].std_thickness : nil,
                     part.def.edge_group_defs[:xmax] ? part.def.edge_group_defs[:xmax].std_width : nil
-                  )
+                  ),
+                  VeneerWrapper.new(
+                    part.face_material_names[:zmin],
+                    part.def.veneer_group_defs[:zmin] ? part.def.veneer_group_defs[:zmin].std_thickness : nil
+                  ),
+                  VeneerWrapper.new(
+                    part.face_material_names[:zmax],
+                    part.def.veneer_group_defs[:zmax] ? part.def.veneer_group_defs[:zmax].std_thickness : nil
+                  ),
+                  StringWrapper.new(instance_info.layer.name),
                 )
 
                 rows << _evaluate_row(data)
@@ -361,7 +376,10 @@ module Ladb::OpenCutList
       edge_ymin,
       edge_ymax,
       edge_xmin,
-      edge_xmax
+      edge_xmax,
+      face_zmin,
+      face_zmax,
+      layers
     )
       @number = number
       @name = name
@@ -382,6 +400,9 @@ module Ladb::OpenCutList
       @edge_ymax = edge_ymax
       @edge_xmin = edge_xmin
       @edge_xmax = edge_xmax
+      @face_zmin = face_zmin
+      @face_zmax = face_zmax
+      @layers = layers
     end
 
   end
@@ -392,8 +413,7 @@ module Ladb::OpenCutList
       number,
       path,
       instance_name,
-      definition_name,
-      count,
+      name,
       cutting_length,
       cutting_width,
       cutting_thickness,
@@ -408,13 +428,15 @@ module Ladb::OpenCutList
       edge_ymin,
       edge_ymax,
       edge_xmin,
-      edge_xmax
+      edge_xmax,
+      face_zmin,
+      face_zmax,
+      layer
     )
       @number = number
       @path = path
       @instance_name = instance_name
-      @definition_name = definition_name
-      @count = count
+      @name = name
       @cutting_length = cutting_length
       @cutting_width = cutting_width
       @cutting_thickness = cutting_thickness
@@ -430,6 +452,9 @@ module Ladb::OpenCutList
       @edge_ymax = edge_ymax
       @edge_xmin = edge_xmin
       @edge_xmax = edge_xmax
+      @face_zmin = face_zmin
+      @face_zmax = face_zmax
+      @layer = layer
     end
 
   end

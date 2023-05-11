@@ -1,29 +1,5 @@
 
-// Add startsWith function to string (Internet Explorer compatibility fix)
-// https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Objets_globaux/String/startsWith#Proth%C3%A8se_d'%C3%A9mulation_(polyfill)
-if (!String.prototype.startsWith) {
-    Object.defineProperty(String.prototype, 'startsWith', {
-        value: function (search, pos) {
-            pos = !pos || pos < 0 ? 0 : +pos;
-            return this.substring(pos, pos + search.length) === search;
-        }
-    });
-}
-
-// Add endsWith function to string (Internet Explorer compatibility fix)
-// https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Objets_globaux/String/endsWith#Proth%C3%A8se_d'%C3%A9mulation_(polyfill)
-if (!String.prototype.endsWith) {
-    String.prototype.endsWith = function (searchString, position) {
-        var subjectString = this.toString();
-        if (typeof position !== 'number' || !isFinite(position) || Math.floor(position) !== position || position > subjectString.length) {
-            position = subjectString.length;
-        }
-        position -= searchString.length;
-        var lastIndex = subjectString.lastIndexOf(searchString, position);
-        return lastIndex !== -1 && lastIndex === position;
-    };
-}
-
+// Chrome 57
 // https://vanillajstoolkit.com/polyfills/stringpadstart/
 if (!String.prototype.padStart) {
     Object.defineProperty(String.prototype, 'padStart', {
@@ -43,39 +19,18 @@ if (!String.prototype.padStart) {
     });
 }
 
-// https://tc39.github.io/ecma262/#sec-array.prototype.includes
-if (!Array.prototype.includes) {
-    Object.defineProperty(Array.prototype, 'includes', {
-        value: function(searchElement, fromIndex) {
+// Not standard
 
-            if (this == null) {
-                throw new TypeError('"this" est nul ou non défini');
-            }
+if (!String.prototype.nl2br) {
+    String.prototype.nl2br = function () {
+        return this.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1<br>');
+    }
+}
 
-            var o = Object(this);
-            var len = o.length >>> 0;
-
-            if (len === 0) {
-                return false;
-            }
-
-            var n = fromIndex | 0;
-            var k = Math.max(n >= 0 ? n : len - Math.abs(n), 0);
-
-            function sameValueZero(x, y) {
-                return x === y || (typeof x === 'number' && typeof y === 'number' && isNaN(x) && isNaN(y));
-            }
-
-            while (k < len) {
-                if (sameValueZero(o[k], searchElement)) {
-                    return true;
-                }
-                k++;
-            }
-
-            return false;
-        }
-    });
+if (!String.prototype.striptags) {
+    String.prototype.striptags = function () {
+        return this.replace(/[<]/g, '&lt;').replace(/[>]/g, '&gt;');
+    }
 }
 
 // Add unique function on Arrays
@@ -84,17 +39,11 @@ if (!Array.prototype.unique) {
         var a = this.concat();
         for (var i = 0; i < a.length; ++i) {
             for (var j = i + 1; j < a.length; ++j) {
-                if (a[i] === a[j])
+                if (a[i] === a[j]) {
                     a.splice(j--, 1);
+                }
             }
         }
         return a;
-    };
-}
-
-// Add requestAnimationFrame support
-if (!window.requestAnimationFrame) {
-    window.requestAnimationFrame = function (callback) {
-        window.setTimeout(callback, 1000 / 60);
     };
 }

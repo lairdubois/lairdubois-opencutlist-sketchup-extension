@@ -38,6 +38,10 @@
     border-left: 3px solid @ladb-material-type-5;
   }
 
+  &.ladb-material-type-6 {
+    border-left: 3px solid @ladb-material-type-6;
+  }
+
   &.table-danger {
 
     thead tr.table-heading {
@@ -63,35 +67,44 @@
 
   }
 
-  thead tr td {
-    border-bottom: 0;
+  thead tr {
+
+    &.table-heading {
+      background-color: #eee;
+
+      .ladb-material-type-icon {
+        margin: 2px 8px 2px 0;
+      }
+
+      .ladb-heading {
+        line-height: 30px;
+        font-size: 16px;
+      }
+
+      .ladb-heading-count {
+        line-height: 30px;
+        font-size: 16px;
+        margin-right: 10px;
+        padding: 0 7px 0 7px;
+        border-radius: 5px;
+        background: #555;
+        color: #fff;
+      }
+
+    }
+
+    td {
+      border-bottom: 0;
+    }
+
   }
 
-  thead tr.table-heading {
-    background-color: #eee;
+  tr.table-column-heading {
 
-    .ladb-material-type-icon {
-      margin: 2px 8px 2px 0;
+    td {
+      text-align: center;
+      vertical-align: middle;
     }
-
-    .ladb-heading {
-      line-height: 30px;
-      font-size: 16px;
-    }
-
-    .ladb-heading-count {
-      line-height: 30px;
-      font-size: 16px;
-      margin-right: 10px;
-      padding: 0 7px 0 7px;
-      border-radius: 5px;
-      background: #555;
-      color: #fff;
-    }
-
-  }
-
-  thead tr.table-column-heading {
 
     .ladb-minitools a {
       font-size: 16px;
@@ -166,6 +179,14 @@
       white-space: nowrap;
       text-align: center;
 
+      &.ladb-disabled {
+        background-image: url(../img/bg-hatched.svg);
+        background-repeat: repeat;
+        background-size: 10px;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
       &.ladb-cutlist-value-highlighted {
         color: red;
       }
@@ -174,12 +195,23 @@
         text-align: right;
       }
 
+      span.ladb-opencutlist-icon {
+        color: #999;
+      }
+
       i.ladb-opencutlist-icon-asterisk {
         color: @ladb-brand-info;
+      }
 
-        &.ladb-opencutlist-icon-asterisk-mute {
-          color: #aaa;
+      hr {
+
+        &:first-child {
+          display: none;
         }
+
+        margin-top: 3px;
+        margin-bottom: 3px;
+        border-color: @ladb-global-border;
       }
 
     }
@@ -204,6 +236,33 @@
       }
 
       .ladb-cutlist-edge-std-dimension {
+        display: block;
+        font-size: 55%;
+        text-align: center;
+      }
+
+    }
+
+    td.ladb-cutlist-face {
+
+      &.ladb-active {
+        font-weight: bold;
+        background-color: #fafafa;
+      }
+
+      &.ladb-disabled {
+        background-image: url(../img/bg-hatched.svg);
+        background-repeat: repeat;
+        background-size: 10px;
+      }
+
+      .ladb-cutlist-face-material-name {
+        display: block;
+        font-size: 70%;
+        text-align: center;
+      }
+
+      .ladb-cutlist-face-std-dimension {
         display: block;
         font-size: 55%;
         text-align: center;
@@ -283,279 +342,34 @@
 }
 
 .ladb-part-thumbnail {
-  text-align: center;
-  margin-bottom: @ladb-gutter / 4;
-}
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  margin-bottom: @ladb-gutter / 2;
+  min-height: 200px;
 
-.ladb-sortable-list {
-  list-style: none;
-  padding: 0;
-
-  > li {
-    margin: 5px 0;
-    border: 1px solid @ladb-global-border;
-    padding: 5px 10px 5px 0;
-    background: lighten(@ladb-global-border, 10%);
-    cursor: pointer;
-    user-select: none;
-
-    &:first-child {
-      margin-top: 0;
-    }
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-
-    .ladb-handle {
-      cursor: ns-resize;
-      color: lighten(#000, 50%);
-      padding: 10px;
-    }
-
-    .ladb-info {
-      float: right;
-      color: #bbb;
-      line-height: 20px;
-      font-size: 80%;
-    }
-
-    .ladb-minitools > a {
-      color: #000;
-      cursor: pointer;
-
-      &:focus {
-        color: inherit;
-      }
-
-      &.ladb-active {
-        background-color: #333;
-        color: #fff;
-        border-radius: 4px;
-
-        &:hover {
-          background-color: lighten(#333, 30%);
-        }
-
-      }
-
-    }
-
-    &.ladb-inactive {
-      opacity: 0.5;
-    }
-
-    &.ladb-selected {
-      border-color: @ladb-global-color-focus;
-      background: lighten(@ladb-global-color-focus, 30%);
-    }
-
-    .ladb-cutlist-export-col-formula {
-      margin: 10px 0 5px 10px;
-    }
-
+  .ladb-part-thumbnail-loading {
+    color: #999;
   }
 
-}
-
-.ladb-sortable-list-extra {
-  list-style: none;
-  padding: 0;
-
-  > li {
-    margin: 5px 0;
-    padding: 6px 0;
-    font-size: 80%;
-    line-height: 20px;
+  .ladb-three-viewer.ladb-three-viewer-modal-part {
+    flex-grow: 1;
   }
 
-}
+  img {
+    width: 200px;
+    height: 200px;
+  }
 
-#ladb_cutlist_modal_labels {
-
-  section {
-
-    h4 {
-      text-align: center;
-      margin-bottom: 15px;
+  @media screen and (max-height: 850px) {
+    .ladb-three-viewer.ladb-three-viewer-modal-part iframe {
+      height: 200px;
     }
-
   }
 
 }
 
 // SVG
-
-// Workaround for IE bug on height auto with SVG
-body.no-ie, body.ie-gt11 {
-
-  .ladb-cuttingdiagram-group svg, .ladb-cuttingdiagram-labels-group svg {
-    height: auto;
-  }
-
-}
-
-.ladb-cuttingdiagram-group {
-  page-break-inside: avoid;
-
-  svg {
-    shape-rendering: geometricPrecision;
-    text-rendering: optimizeLegibility;
-    width: 100%;
-
-    /* .sheet,.bar */
-
-    .sheet, .bar {
-
-      &:hover {
-        .sheet-inner, .bar-inner {
-          fill: @ladb-brand-primary;
-        }
-      }
-
-      .sheet-outer, .bar-outer {
-        fill: #333;
-      }
-      .sheet-inner, .bar-inner {
-        fill: #d3d3d3;
-      }
-      .sheet-dimension, .bar-dimension {
-        fill: #888;
-      }
-
-    }
-
-    /* .part */
-
-    .part {
-      cursor: url('../img/cursor-highlight.png'), auto;
-
-      &:hover {
-
-        .part-outer {
-          fill: @ladb-brand-primary;
-        }
-        .part-inner {
-          fill: lighten(@ladb-brand-primary, 40%);
-          filter: none;
-        }
-
-      }
-
-      .part-outer {
-        fill: #fff;
-      }
-      .part-inner {
-        fill: #eee;
-      }
-      .part-edge {
-        fill: @ladb-material-type-4;
-      }
-      .part-number {
-        fill: #000;
-      }
-      .part-dimension {
-        fill: #000;
-      }
-    }
-
-    /* .leftover */
-
-    .leftover {
-
-      &:hover {
-        .leftover-inner {
-          fill: #fafafa;
-        }
-        .leftover-cross {
-          stroke: @ladb-brand-primary;
-        }
-      }
-
-      .leftover-inner {
-        fill: #fff;
-      }
-      .leftover-cross {
-        stroke: #aaa;
-        stroke-width: 1px;
-      }
-      .leftover-dimension {
-        fill: #888;
-      }
-
-    }
-
-    /* .cut */
-
-    .cut {
-
-      &:hover {
-        .cut-outer, .cut-inner {
-          fill: @ladb-brand-primary;
-          fill-opacity: 1.0;
-        }
-      }
-
-      &.cut-through {
-        &.cut-highlighted {
-          .cut-outer, .cut-inner {
-            fill: #2DB84D;
-          }
-          .cut-outer {
-            fill-opacity: 0.5;
-          }
-        }
-        &:hover {
-          .cut-outer, .cut-inner {
-            fill: #2DB84D;
-          }
-        }
-      }
-
-      &.cut-final {
-        &.cut-highlighted {
-          .cut-outer, .cut-inner {
-            fill: #F5486E;
-          }
-          .cut-outer {
-            fill-opacity: 0.5;
-          }
-        }
-        &:hover {
-          .cut-outer, .cut-inner {
-            fill: #F5486E;
-          }
-        }
-      }
-
-      .cut-outer {
-        fill: #ffffff;
-        fill-opacity: 0.01;
-      }
-      .cut-inner {
-        fill: #555;
-      }
-
-    }
-
-  }
-
-}
-
-.ladb-cuttingdiagram-labels-group svg {
-  border: 1px solid #ddd;
-  box-shadow: 3px 3px 10px #999;
-
-  .grid-line {
-    stroke: #000;
-
-    &.no-print {
-      stroke: #ddd;
-    }
-
-  }
-
-}
 
 #ladb_cutlist_modal_help svg {
 
@@ -619,6 +433,10 @@ body.no-ie, body.ie-gt11 {
 
 #ladb_cutlist_modal_part svg {
 
+  text {
+    pointer-events: none;
+  }
+
   .part {
 
     .part-outer {
@@ -634,6 +452,7 @@ body.no-ie, body.ie-gt11 {
   .arrow {
     fill: #fff;
     stroke: #eee;
+    stroke-width: 2px;
   }
 
   .axis {
@@ -687,6 +506,40 @@ body.no-ie, body.ie-gt11 {
 
   }
 
+  .face {
+    cursor: pointer;
+
+    &:hover {
+      .face-inner {
+        fill: @ladb-brand-primary !important;
+        fill-opacity: 0.2;
+        stroke: @ladb-brand-primary !important;
+        stroke-width: 2px;
+      }
+    }
+
+    &.ladb-active {
+      .face-inner {
+        fill: @ladb-material-type-6;
+        fill-opacity: 0.2;
+        stroke: @ladb-material-type-6;
+        stroke-width: 2px;
+      }
+    }
+
+    &.ladb-disabled {
+      .face-inner {
+        fill: #efefef !important;
+        fill-opacity: 0.8;
+      }
+    }
+
+    .face-inner {
+      fill: rgba(0, 0, 0, 0.01);
+    }
+
+  }
+
   .increase {
     cursor: pointer;
 
@@ -713,96 +566,6 @@ body.no-ie, body.ie-gt11 {
     }
 
     fill: rgba(0, 0, 0, 0.01);
-
-  }
-
-}
-
-// Cuts summary
-
-.ladb-cuttingdiagram-cuts-summary {
-  border-left-width: 2px;
-  border-left-style: solid;
-  margin-bottom: 4px;
-
-  &.ladb-cuttingdiagram-cuts-summary-final {
-    border-color: #F5486E;
-  }
-  &.ladb-cuttingdiagram-cuts-summary-through {
-    border-color: #2DB84D;
-  }
-
-  > div:first-child {
-    font-size: 16px;
-    margin-bottom: 4px;
-  }
-
-}
-
-// Tooltips
-
-.tt-header {
-  text-align: left;
-  padding: 3px 0;
-
-  .tt-number {
-    font-size: 120%;
-    background-color: #fff;
-    color: #000;
-    margin-right: 5px;
-    border-radius: 3px;
-    padding: 2px 4px;
-  }
-
-  .tt-name {
-    font-size: 110%;
-  }
-
-}
-
-.tt-data {
-  text-align: left;
-  font-size: 16px;
-}
-
-.tt-section {
-  text-align: left;
-  margin-top: 5px;
-  border-top: 1px solid #fff;
-  padding-top: 5px;
-}
-
-// Export
-
-.ladb-table-spreadsheet {
-
-  .ladb-table-spreadsheet-cell {
-    white-space: nowrap;
-    user-select: none;
-    cursor: pointer;
-  }
-
-  .ladb-table-spreadsheet-cell-header-col, .ladb-table-spreadsheet-cell-header-row {
-    background-color: #efefef;
-  }
-
-  .ladb-table-spreadsheet-cell-header-col {
-    text-align: center;
-  }
-
-  .ladb-table-spreadsheet-cell-header-row {
-    text-align: right;
-    color: #ccc;
-    font-weight: normal;
-    border-right-width: 2px;
-  }
-
-  .ladb-table-spreadsheet-cell {
-
-    &.ladb-invalid-value {
-      color: @ladb-brand-danger;
-      background-color: lighten(#ff0000, 49%);
-    }
 
   }
 
@@ -849,75 +612,30 @@ body.no-ie, body.ie-gt11 {
 
         .ladb-heading-count {
           line-height: 20px !important;
-          margin: 0;
-          padding: 0;
-          background-color: #fff;
-          color: #000;
-          font-weight: bold;
+          background-color: #000;
+          padding: 1px 6px;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
         }
 
       }
 
       .ladb-heading {
-        line-height: 20px !important;
+        line-height: 22px !important;
       }
 
     }
 
-    tbody tr.ladb-cutlist-row td.ladb-cutlist-value i.ladb-opencutlist-icon-asterisk {
-      color: #aaa !important;
-    }
+    tbody tr.ladb-cutlist-row td.ladb-cutlist-value {
 
-  }
-
-  .ladb-cuttingdiagram-group svg {
-
-    &.full-width-diagram {
-      max-height: 86vh !important;
-    }
-
-    .part {
-      .part-outer {
-        fill: #fff;
+      i, span.ladb-opencutlist-icon {
+        color: #000 !important;
       }
-      .part-inner {
-        fill: #fff;
+
+      hr {
+        border-color: #000 !important;
       }
-    }
 
-    .cut {
-      .cut-inner {
-        fill: #000;
-      }
-      .cut-outer {
-        fill: none !important;
-      }
-    }
-
-  }
-
-  .ladb-cuttingdiagram-labels-group {
-    border: none !important;
-    page-break-after: always;
-    position: relative;
-
-    &:before {
-      content: ' '; // Here to be able to use SVG absolute position and maintain page break
-    }
-
-    & > tbody > tr > td {
-      border: none !important;
-    }
-
-    svg {
-      position: absolute;
-      width: 100vw;
-      top: 50vh;
-      margin-top: -50vh;
-      left: 50vw;
-      margin-left: -50vw;
-      border: none;
-      box-shadow: none;
     }
 
   }

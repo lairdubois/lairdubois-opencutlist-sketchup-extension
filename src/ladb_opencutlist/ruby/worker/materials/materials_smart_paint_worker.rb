@@ -5,7 +5,9 @@ module Ladb::OpenCutList
   class MaterialsSmartPaintWorker
 
     def initialize(settings)
-      @name = settings['name']
+
+      @name = settings.fetch('name', nil)
+
     end
 
     # -----
@@ -22,11 +24,12 @@ module Ladb::OpenCutList
       return { :errors => [ 'tab.materials.error.material_not_found' ] } unless material
 
       # Select Smart Paint Tool
-      Sketchup.active_model.select_tool(SmartPaintTool.new(material))
+      model.select_tool(SmartPaintTool.new(material))
 
-      {
-          :success => true,
-      }
+      # Focus SketchUp
+      Sketchup.focus if Sketchup.respond_to?(:focus)
+
+      { :success => true }
     end
 
     # -----

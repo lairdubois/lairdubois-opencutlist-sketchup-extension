@@ -52,82 +52,82 @@ module Ladb::OpenCutList::Kuix
       center_width = 0
       center_height = 0
 
-      north_widget = nil
-      west_widget = nil
-      east_widget = nil
-      south_widget = nil
-      center_widget = nil
+      north_entity = nil
+      west_entity = nil
+      east_entity = nil
+      south_entity = nil
+      center_entity = nil
 
       # Loop on children
-      widget = target.child
-      until widget.nil?
-        if widget.visible?
+      entity = target.child
+      until entity.nil?
+        if entity.visible?
 
-          if widget.layout_data && widget.layout_data.is_a?(BorderLayoutData)
+          if entity.layout_data && entity.layout_data.is_a?(BorderLayoutData)
 
-            case widget.layout_data.position
+            case entity.layout_data.position
             when BorderLayoutData::NORTH
-              north_widget = widget
+              north_entity = entity
             when BorderLayoutData::WEST
-              west_widget = widget
+              west_entity = entity
             when BorderLayoutData::EAST
-              east_widget = widget
+              east_entity = entity
             when BorderLayoutData::SOUTH
-              south_widget = widget
+              south_entity = entity
             else
-              if center_widget.nil?
-                center_widget = widget
+              if center_entity.nil?
+                center_entity = entity
               end
             end
 
-          elsif center_widget.nil?
-            center_widget = widget
+          elsif center_entity.nil?
+            center_entity = entity
           end
 
         end
-        widget = widget.next
+        entity = entity.next
       end
 
       # Compute gap values
-      vertical_top_gap = (!north_widget.nil? && (!west_widget.nil? || !center_widget.nil? || !east_widget.nil? || !south_widget.nil?)) ? @vertical_gap : 0
-      vertical_bottom_gap = (!south_widget.nil? && (!west_widget.nil? || !center_widget.nil? || !east_widget.nil?)) ? @vertical_gap : 0
-      horizontal_left_gap = (!west_widget.nil? && (!center_widget.nil? || !east_widget.nil?)) ? @horizontal_gap : 0
-      horizontal_right_gap = (!east_widget.nil? && (!center_widget.nil? || !west_widget.nil?)) ? @horizontal_gap : 0
+      vertical_top_gap = (!north_entity.nil? && (!west_entity.nil? || !center_entity.nil? || !east_entity.nil? || !south_entity.nil?)) ? @vertical_gap : 0
+      vertical_bottom_gap = (!south_entity.nil? && (!west_entity.nil? || !center_entity.nil? || !east_entity.nil?)) ? @vertical_gap : 0
+      horizontal_left_gap = (!west_entity.nil? && (!center_entity.nil? || !east_entity.nil?)) ? @horizontal_gap : 0
+      horizontal_right_gap = (!east_entity.nil? && (!center_entity.nil? || !west_entity.nil?)) ? @horizontal_gap : 0
 
       total_horizontal_gap = horizontal_left_gap + horizontal_right_gap
       total_vertical_gap = vertical_top_gap + vertical_bottom_gap
 
       # North
-      if north_widget
-        prefered_size = north_widget.get_prefered_size(available_width)
+      if north_entity
+        prefered_size = north_entity.get_prefered_size(available_width)
         center_width = prefered_size.width
         top_height = prefered_size.height
       end
 
       # West
-      if west_widget
-        prefered_size = west_widget.get_prefered_size(available_width - total_horizontal_gap)
+      if west_entity
+        prefered_size = west_entity.get_prefered_size(available_width - total_horizontal_gap)
         left_width = prefered_size.width
         center_height = prefered_size.height
       end
 
       # East
-      if east_widget
-        prefered_size = east_widget.get_prefered_size(available_width - left_width - total_horizontal_gap)
+      if east_entity
+        prefered_size = east_entity.get_prefered_size(available_width - left_width - total_horizontal_gap)
         right_width = prefered_size.width
         center_height = [ center_height, prefered_size.height].max
       end
 
       # South
-      if south_widget
-        prefered_size = south_widget.get_prefered_size(available_width)
+      if south_entity
+        prefered_size = south_entity.get_prefered_size(available_width)
         center_width = [ center_width, prefered_size.width ].max
         bottom_height = prefered_size.height
       end
 
       # Center
-      if center_widget
-        prefered_size = center_widget.get_prefered_size(available_width - left_width - right_width - total_horizontal_gap)
+      if center_entity
+        prefered_size = center_entity.get_prefered_size(available_width - left_width - right_width - total_horizontal_gap)
         center_width = [ center_width, prefered_size.width ].max
         center_height = [ center_height, prefered_size.height].max
       end
@@ -138,62 +138,62 @@ module Ladb::OpenCutList::Kuix
         center_height = available_height - top_height - bottom_height - total_vertical_gap
 
         # Center
-        if center_widget
-          center_widget.bounds.set(
+        if center_entity
+          center_entity.bounds.set!(
             left_width + horizontal_left_gap,
             top_height + vertical_top_gap,
             center_width,
             center_height
           )
-          center_widget.do_layout
+          center_entity.do_layout
         end
 
         # North
-        if north_widget
-          north_widget.bounds.set(
+        if north_entity
+          north_entity.bounds.set!(
             0,
             0,
             available_width,
             top_height
           )
-          north_widget.do_layout
+          north_entity.do_layout
         end
 
         # West
-        if west_widget
-          west_widget.bounds.set(
+        if west_entity
+          west_entity.bounds.set!(
             0,
             top_height + vertical_top_gap,
             left_width,
             center_height
           )
-          west_widget.do_layout
+          west_entity.do_layout
         end
 
         # East
-        if east_widget
-          east_widget.bounds.set(
+        if east_entity
+          east_entity.bounds.set!(
             available_width - right_width,
             top_height + vertical_top_gap,
             right_width,
             center_height
           )
-          east_widget.do_layout
+          east_entity.do_layout
         end
 
         # South
-        if south_widget
-          south_widget.bounds.set(
+        if south_entity
+          south_entity.bounds.set!(
             0,
             available_height - bottom_height,
             available_width,
             bottom_height
           )
-          south_widget.do_layout
+          south_entity.do_layout
         end
 
       else
-        size.set(
+        size.set!(
           insets.left + [ target.min_size.width, left_width + center_width + right_width + total_horizontal_gap ].max + insets.right,
           insets.top + [ target.min_size.height, top_height + center_height + bottom_height + total_vertical_gap ].max + insets.bottom
         )

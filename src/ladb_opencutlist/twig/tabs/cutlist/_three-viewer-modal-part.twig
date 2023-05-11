@@ -1,0 +1,24 @@
+{% extends 'components/_three-viewer.twig' %}
+
+{% set viewerClasses = 'ladb-three-viewer-modal-part' %}
+
+{% import 'components/_three-viewer.twig' as fn %}
+
+{% block uiLeft %}
+    {{ fn.btn_view('isometric', 'view-isometric', THREE_CAMERA_VIEWS) }}
+    {% if group.material_type == 1 or group.material_type == 2  %} {# 1 = TYPE_SOLID_WOOD, 2 = TYPE_SHEET_GOOD #}
+        {{ fn.btn_view('top', 'face-10', THREE_CAMERA_VIEWS, 'tab.cutlist.tooltip.face_zmax'|i18next) }}
+        {{ fn.btn_view('bottom', 'face-01', THREE_CAMERA_VIEWS, 'tab.cutlist.tooltip.face_zmin'|i18next) }}
+        <span>&nbsp;</span>
+    {% endif %}
+    {{ fn.btn_zoom(null, '<i class="ladb-opencutlist-icon-zoom-auto"></i>', 'tab.cutlist.layout.option_camera_zoom_auto'|i18next) }}
+{% endblock %}
+
+{% block uiRight %}
+    {{ fn.btn_command('plan', 'set_box_helper_visible', { visible:null }, 'core.component.three_viewer.toggle_box_helper'|i18next, 'left', 'color: #00f;') }}
+    {% if group.material_type != 5  %} {# 4 = TYPE_HARDWARE #}
+        {{ fn.btn_command('width', 'set_box_dimensions_helper_visible', { visible:null }, 'core.component.three_viewer.toggle_box_dimensions_helper'|i18next, 'left', 'color: #00f;') }}
+    {% endif %}
+    {{ fn.btn_command('axes', 'set_axes_helper_visible', { visible:null }, 'core.component.three_viewer.toggle_axes_helper'|i18next, 'left') }}
+{% endblock %}
+

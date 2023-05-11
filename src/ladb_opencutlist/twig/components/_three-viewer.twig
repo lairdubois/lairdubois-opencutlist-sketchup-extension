@@ -1,0 +1,26 @@
+{% macro btn_command(icon, command, params, ttLabel, ttPlacement = 'right', iconStyle = null) %}
+    <button class="btn btn-default btn-sm" data-command="{{ command }}" data-params="{{ params|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="{{ ttPlacement }}" title="{{ ttLabel }}"><i class="ladb-opencutlist-icon-{{ icon }}"{% if iconStyle %} style="{{ iconStyle }}"{% endif %}></i></button>
+{% endmacro %}
+{% macro btn_view(viewName, icon, THREE_CAMERA_VIEWS, ttLabel = null, ttPlacement = 'right') %}
+    <button class="btn btn-default btn-sm" data-command="set_view" data-params="{{ { view:THREE_CAMERA_VIEWS[viewName] }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="{{ ttPlacement }}" title="{{ 'core.component.three_viewer.view'|i18next({ 'view':ttLabel ? ttLabel : ('core.component.three_viewer.view_'~viewName)|i18next }) }}"><i class="ladb-opencutlist-icon-{{ icon }}"></i></button>
+{% endmacro %}
+{% macro btn_zoom(zoomValue, btnLabel, ttLabel, btnLabelSize = null, classes = null, ttPlacement = 'right') %}
+    <button class="btn btn-default btn-sm{% if classes %} {{ classes }}{% endif %}" data-command="set_zoom" data-params="{{ { zoom:zoomValue }|json_encode|escape('html') }}" data-toggle="tooltip" data-placement="{{ ttPlacement }}" title="{{ 'core.component.three_viewer.zoom'|i18next({ 'zoom':ttLabel }) }}">{% if btnLabelSize %}<span style="font-size:{{ btnLabelSize }}px">{% endif %}{{ btnLabel }}{% if btnLabelSize %}</span>{% endif %}</button>
+{% endmacro %}
+{% macro slider_explode(ttPlacement = 'left') %}
+    <div class="ladb-three-viewer-explode-factor-slider-wrapper">
+        <i class="ladb-opencutlist-icon-explode" data-toggle="tooltip" data-placement="{{ ttPlacement }}" title="{{ 'core.component.three_viewer.explode_factor'|i18next }}"></i>
+        <input data-command="set_explode_factor" data-param-name="factor" data-slider-orientation="vertical" data-slider-reversed="true" data-slider-value="0" data-slider-min="0" data-slider-max="3" data-slider-step="0.1">
+    </div>
+{% endmacro %}
+<div class="ladb-three-viewer{% if viewerClasses is defined %} {{ viewerClasses }}{% endif %}">
+    {% block iframeOutter %}
+        <iframe{% if iframeClasses is defined %} class="{{ iframeClasses }}"{% endif %}></iframe>
+    {% endblock %}
+    <div class="ladb-three-viewer-ui-left no-print">
+        {% block uiLeft %}{% endblock %}
+    </div>
+    <div class="ladb-three-viewer-ui-right no-print">
+        {% block uiRight %}{% endblock %}
+    </div>
+</div>

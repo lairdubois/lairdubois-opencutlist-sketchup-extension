@@ -1,0 +1,48 @@
+{% extends 'components/_three-viewer.twig' %}
+
+{% set viewerClasses = 'ladb-three-viewer-slide-layout' %}
+{% set iframeClasses = 'ladb-paper-page-body' %}
+
+{% import 'components/_three-viewer.twig' as fn %}
+
+{% block iframeOutter %}
+    <div class="ladb-paper-page">
+        {% if pageHeader %}
+            <div class="ladb-paper-page-header">
+                <div class="ladb-header">
+                    <div class="container-fluid">
+                        <h1 class="ladb-heading">{% block headerHeadingInner %}{% endblock %}</h1>
+                        {% embed 'tabs/cutlist/_header-extra.twig' with { 'printPreview':true } %}
+                            {% block timeAndUnitInner %}{{ parent() }}<span class="ladb-horizontal-left-separator ladb-lbl-scale"></span>{% endblock %}
+                        {% endembed %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        {{ parent() }}
+    </div>
+{% endblock %}
+{% block uiLeft %}
+    {{ fn.btn_view('isometric', 'view-isometric', THREE_CAMERA_VIEWS) }}
+    {{ fn.btn_view('top', 'arrow-down', THREE_CAMERA_VIEWS) }}
+    <div class="ladb-flex">
+        {{ fn.btn_view('left', 'arrow-right', THREE_CAMERA_VIEWS, null, 'left') }}
+        {{ fn.btn_view('front', 'view-front', THREE_CAMERA_VIEWS, null, 'top') }}
+        {{ fn.btn_view('right', 'arrow-left', THREE_CAMERA_VIEWS) }}
+    </div>
+    {{ fn.btn_view('bottom', 'arrow-up', THREE_CAMERA_VIEWS) }}
+    {{ fn.btn_view('back', 'view-back', THREE_CAMERA_VIEWS) }}
+    <span>&nbsp;</span>
+    {{ fn.btn_zoom(null, '<i class="ladb-opencutlist-icon-zoom-auto"></i>', 'tab.cutlist.layout.option_camera_zoom_auto'|i18next) }}
+    {{ fn.btn_zoom(2, '2:1', '2:1', null, 'hide-lt-600h') }}
+    {{ fn.btn_zoom(1, '1:1', '1:1') }}
+    {{ fn.btn_zoom(0.5, '1:2', '1:2') }}
+    {{ fn.btn_zoom(0.2, '1:5', '1:5') }}
+    {{ fn.btn_zoom(0.1, '1:10', '1:10', 8) }}
+    {{ fn.btn_zoom(0.05, '1:20', '1:20', 8, 'hide-lt-600h') }}
+    {{ fn.btn_zoom(0.02, '1:50', '1:50', 8, 'hide-lt-600h') }}
+    <span>&nbsp;</span>
+{% endblock %}
+{% block uiRight %}
+    {{ fn.slider_explode() }}
+{% endblock %}

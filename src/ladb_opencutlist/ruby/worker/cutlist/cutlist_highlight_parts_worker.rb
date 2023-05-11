@@ -4,11 +4,14 @@ module Ladb::OpenCutList
 
   class CutlistHighlightPartsWorker
 
-    def initialize(cutlist, settings)
+    def initialize(settings, cutlist)
+
+      @minimize_on_highlight = settings.fetch('minimize_on_highlight')
+      @part_ids = settings.fetch('part_ids', nil)
+      @group_id = settings.fetch('group_id', nil)
+
       @cutlist = cutlist
-      @minimize_on_highlight = settings['minimize_on_highlight']
-      @group_id = settings['group_id']
-      @part_ids = settings['part_ids']
+
     end
 
     # -----
@@ -21,19 +24,11 @@ module Ladb::OpenCutList
       return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
 
       # Retrieve parts
-      material_types_filter = [ MaterialAttributes::TYPE_UNKNOWN, MaterialAttributes::TYPE_SOLID_WOOD, MaterialAttributes::TYPE_SHEET_GOOD, MaterialAttributes::TYPE_DIMENSIONAL ]
-      parts = []
+      parts = @cutlist.get_real_parts(@part_ids)
+
+      # Retrieve group (if given)
       group = nil
-      if @group_id
-        group = @cutlist.get_group(@group_id)
-        if group && material_types_filter.include?(group.def.material_type)
-          parts = group.get_real_parts
-        end
-      elsif @part_ids
-        parts = @cutlist.get_real_parts(@part_ids, material_types_filter)
-      else
-        parts = @cutlist.get_real_parts(nil, material_types_filter)
-      end
+      group = @cutlist.get_group(@group_id) if @group_id
 
       # Compute part count
       instance_count = parts.inject(0) { |sum, part| sum + part.instance_count_by_part * part.count - part.unused_instance_count }
@@ -43,9 +38,12 @@ module Ladb::OpenCutList
       end
 
       # Create and activate highlight part tool
-      highlight_tool = HighlightPartTool.new(@cutlist, group, parts, instance_count, @minimize_on_highlight)
-      model.select_tool(highlight_tool)
+      model.select_tool(HighlightPartTool.new(@cutlist, group, parts, instance_count, @minimize_on_highlight))
 
+      # Focus SketchUp
+      Sketchup.focus if Sketchup.respond_to?(:focus)
+
+      { :success => true }
     end
 
     # -----

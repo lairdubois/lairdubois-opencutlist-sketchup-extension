@@ -1,8 +1,8 @@
 module Ladb::OpenCutList
 
   require_relative '../../lib/bin_packing_2d/packengine'
-  require_relative '../../model/geom/size2d'
   require_relative '../../utils/dimension_utils'
+  require_relative '../../model/geom/size2d'
   require_relative '../../model/cuttingdiagram/cuttingdiagram_2d_def'
 
   class CutlistCuttingdiagram2dWorker
@@ -13,23 +13,25 @@ module Ladb::OpenCutList
     ORIGIN_CORNER_BOTTOM_RIGHT = 3
 
     def initialize(settings, cutlist)
-      @group_id = settings['group_id']
-      @part_ids = settings['part_ids']
-      s_length, s_width = StringUtils.split_dxd(settings['std_sheet'])
+
+      @group_id = settings.fetch('group_id')
+      @part_ids = settings.fetch('part_ids', nil)
+      s_length, s_width = StringUtils.split_dxd(settings.fetch('std_sheet'))
       @std_sheet_length = DimensionUtils.instance.str_to_ifloat(s_length).to_l.to_f
       @std_sheet_width = DimensionUtils.instance.str_to_ifloat(s_width).to_l.to_f
-      @scrap_sheet_sizes = DimensionUtils.instance.dxdxq_to_ifloats(settings['scrap_sheet_sizes'])
-      @saw_kerf = DimensionUtils.instance.str_to_ifloat(settings['saw_kerf']).to_l.to_f
-      @trimming = DimensionUtils.instance.str_to_ifloat(settings['trimming']).to_l.to_f
-      @optimization = settings['optimization']
-      @stacking = settings['stacking']
-      @sheet_folding = settings['sheet_folding']
-      @use_names = settings['use_names']
-      @full_width_diagram = settings['full_width_diagram']
-      @hide_part_list = settings['hide_part_list']
-      @hide_cross = settings['hide_cross']
-      @origin_corner = settings['origin_corner']
-      @highlight_primary_cuts = settings['highlight_primary_cuts']
+      @scrap_sheet_sizes = DimensionUtils.instance.dxdxq_to_ifloats(settings.fetch('scrap_sheet_sizes'))
+      @saw_kerf = DimensionUtils.instance.str_to_ifloat(settings.fetch('saw_kerf')).to_l.to_f
+      @trimming = DimensionUtils.instance.str_to_ifloat(settings.fetch('trimming')).to_l.to_f
+      @optimization = settings.fetch('optimization')
+      @stacking = settings.fetch('stacking')
+      @sheet_folding = settings.fetch('sheet_folding')
+      @use_names = settings.fetch('use_names')
+      @full_width_diagram = settings.fetch('full_width_diagram')
+      @hide_part_list = settings.fetch('hide_part_list')
+      @hide_cross = settings.fetch('hide_cross')
+      @origin_corner = settings.fetch('origin_corner')
+      @highlight_primary_cuts = settings.fetch('highlight_primary_cuts')
+      @hide_edges_preview = settings.fetch('hide_edges_preview')
 
       @cutlist = cutlist
 
@@ -83,7 +85,7 @@ module Ladb::OpenCutList
         # Add boxes from parts
         add_boxes_proc = Proc.new { |part|
           for i in 1..part.count
-            @pack_engine.add_box(part.cutting_length.to_l.to_f, part.cutting_width.to_l.to_f, options.rotatable || part.ignore_grain_direction, part)   # "to_l.to_f" Reconvert string representation of length to float to take advantage Sketchup precision
+            @pack_engine.add_box(part.cutting_length.to_l.to_f, part.cutting_width.to_l.to_f, options.rotatable || part.ignore_grain_direction, part.number, part)   # "to_l.to_f" Reconvert string representation of length to float to take advantage Sketchup precision
           end
         }
         parts.each { |part|
@@ -136,7 +138,7 @@ module Ladb::OpenCutList
           when BinPacking2D::ERROR_PARAMETERS
             errors << 'tab.cutlist.cuttingdiagram.error.parameters'
           when BinPacking2D::ERROR_NO_PLACEMENT_POSSIBLE
-            errors << 'tab.cutlist.cuttingdiagram.error.no_placement_possible'
+            errors << 'tab.cutlist.cuttingdiagram.error.no_placement_possible_2d'
           else # BinPacking2D::ERROR_BAD_ERROR and others
             errors << 'tab.cutlist.cuttingdiagram.error.bad_error'
         end
@@ -163,6 +165,7 @@ module Ladb::OpenCutList
       cuttingdiagram2d_def.options_def.hide_cross = @hide_cross
       cuttingdiagram2d_def.options_def.origin_corner = @origin_corner
       cuttingdiagram2d_def.options_def.highlight_primary_cuts = @highlight_primary_cuts
+      cuttingdiagram2d_def.options_def.hide_edges_preview = @hide_edges_preview
 
       cuttingdiagram2d_def.errors += errors
 
@@ -289,8 +292,9 @@ module Ladb::OpenCutList
           cut_def.y = cut.y_pos
           cut_def.length = cut.length
           cut_def.is_horizontal = cut.is_horizontal
-          cut_def.is_through = cut.is_through
-          cut_def.is_final = cut.is_final
+          cut_def.is_trimming = cut.cut_type == BinPacking2D::TRIMMING_CUT
+          cut_def.is_bounding = cut.cut_type == BinPacking2D::BOUNDING_CUT
+          cut_def.is_internal_through = cut.cut_type == BinPacking2D::INTERNAL_THROUGH_CUT
           sheet_def.cut_defs.push(cut_def)
 
         }

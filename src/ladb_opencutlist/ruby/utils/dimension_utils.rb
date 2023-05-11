@@ -50,7 +50,7 @@
 
     include Singleton
 
-    attr_accessor :decimal_separator, :length_unit
+    attr_accessor :decimal_separator, :length_unit, :length_format, :length_precision
 
     LENGTH_MIN_PRECISION = 3
 
@@ -58,7 +58,7 @@
     LIST_SEPARATOR = ';'.freeze
     DXD_SEPARATOR = 'x'.freeze
 
-    @separator
+    @decimal_separator
     @length_unit
     @length_format
     @length_precision
@@ -448,7 +448,7 @@
       end
       if model_unit_is_metric
         multiplier = 0.0254
-        precision = [3, @length_precision].max
+        precision = [2, @length_precision].max
         unit_strippedname = UNIT_STRIPPEDNAME_METER
       else
         multiplier = 1 / 12.0
@@ -468,7 +468,7 @@
       end
       if model_unit_is_metric
         multiplier = 0.0254**2
-        precision = [3, @length_precision].max
+        precision = [2, @length_precision].max
         unit_strippedname = UNIT_STRIPPEDNAME_METER_2
       else
         multiplier = 1 / 144.0
@@ -488,7 +488,7 @@
       end
       if model_unit_is_metric
         multiplier = 0.0254**3
-        precision = [3, @length_precision].max
+        precision = [2, @length_precision].max
         unit_strippedname = UNIT_STRIPPEDNAME_METER_3
       else
         if material_type == MaterialAttributes::TYPE_SOLID_WOOD

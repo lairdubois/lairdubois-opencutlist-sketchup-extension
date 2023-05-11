@@ -3,8 +3,9 @@ module Ladb::OpenCutList
   class MaterialsGetTextureWorker
 
     def initialize(material_data)
-      @name = material_data['name']
-      @colorized = material_data['colorized']
+      
+      @name = material_data.fetch('name')
+
     end
 
     # -----
@@ -15,15 +16,14 @@ module Ladb::OpenCutList
       return { :errors => [ 'tab.materials.error.no_model' ] } unless model
 
       response = {
-          :texture_file => '',
-          :texture_colorized => false
+          :texture_file => ''
       }
 
       # Fetch material
       materials = model.materials
       material = materials[@name]
 
-      if material
+      if material && material.texture
 
         temp_dir = Plugin.instance.temp_dir
         material_textures_dir = File.join(temp_dir, 'material_textures')
@@ -34,41 +34,10 @@ module Ladb::OpenCutList
 
         texture_file = File.join(material_textures_dir, "#{SecureRandom.uuid}.png")
 
-        if Sketchup.version_number >= 16000000
-
-          material.texture.write(texture_file, @colorized)
-
-          response[:texture_colorized] = @colorized
-
-        else
-
-          # Workaround to write texture to file from SU prior to 2016
-
-          # Create a fake face
-          model = Sketchup.active_model
-          entities = model.active_entities
-          group = entities.add_group
-          pts = []
-          pts[0] = [0, 0, 0]
-          pts[1] = [1, 0, 0]
-          pts[2] = [1, 1, 0]
-          pts[3] = [0, 1, 0]
-          face = group.entities.add_face(pts)
-          face.material = material
-
-          tw = Sketchup.create_texture_writer
-          tw.load(face, true)
-          tw.write(face, true, texture_file)
-
-          # Erease the group
-          group.erase!
-
-          # This BC workaround force texture to be colorized
-          response[:texture_colorized] = true
-
-        end
+        material.texture.write(texture_file)
 
         response[:texture_file] = texture_file
+
       end
 
       response
