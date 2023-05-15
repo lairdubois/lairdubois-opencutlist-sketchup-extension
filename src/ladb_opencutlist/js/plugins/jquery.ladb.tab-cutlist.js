@@ -2221,6 +2221,7 @@
             var $labelFaceZmaxTextureAngle = $('#ladb_cutlist_part_label_face_zmax_texture_angle', $modal);
             var $btnHighlight = $('#ladb_cutlist_part_highlight', $modal);
             var $btnExportToSkp = $('#ladb_cutlist_part_export_to_skp', $modal);
+            var $btnExportToStl = $('#ladb_cutlist_part_export_to_stl', $modal);
             var $btnUpdate = $('#ladb_cutlist_part_update', $modal);
 
             var thumbnailLoaded = false;
@@ -2670,6 +2671,30 @@
                 this.blur();
                 rubyCallCommand('cutlist_part_export_to_skp', {
                     definition_id: part.definition_id
+                }, function (response) {
+
+                    if (response.errors) {
+                        that.dialog.notifyErrors(response.errors);
+                    }
+                    if (response.export_path) {
+                        that.dialog.notifySuccess(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }), [
+                            Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
+
+                                rubyCallCommand('core_open_external_file', {
+                                    path: response.export_path
+                                });
+
+                            })
+                        ]);
+                    }
+
+                });
+                return false;
+            });
+            $btnExportToStl.on('click', function () {
+                this.blur();
+                rubyCallCommand('cutlist_part_export_to_stl', {
+                    part_id: part.id
                 }, function (response) {
 
                     if (response.errors) {

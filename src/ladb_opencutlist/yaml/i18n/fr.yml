@@ -415,10 +415,11 @@ tab:
       edge_disabled_help: Ce chant n'est pas configurable parce qu'aucune face pouvant porter une matière n'a été détectée sur ce bord de la pièce dans le modèle.
       face_disabled_help: Cette face n'est pas configurable parce qu'aucune face dessinée pouvant porter une matière n'a été détectée sur ce côté de la pièce dans le modèle.
       multiple_values: Valeurs multiples
-      export_to_skp: Exporter (.skp)
       loading_preview: Chargement de l'aperçu
     export_to_skp:
-      title: Exporter un fichier .skp
+      title: Exporter vers un fichier .skp
+    export_to_stl:
+      title: Exporter vers un fichier .stl
     option:
       auto_orient: Orientation automatique des pièces
       auto_orient_help: |
@@ -947,6 +948,7 @@ tab:
       no_component_in_model: Aucune instance de composant visible n'a été détectée sur votre scène.
       failed_to_write_export_file: "Echec de l'écriture du fichier d'export. **{{ error }}**"
       failed_export_skp_file: "Une erreur s'est produite lors de l'exportation du fichier .skp. **{{ error }}**"
+      failed_export_stl_file: "Une erreur s'est produite lors de l'exportation du fichier .stl. **{{ error }}**"
       unknow_part: La pièce sélectionnée n'existe pas dans la fiche de débit.
       obsolete_cutlist: "Impossible, la fiche de débit générée est obsolète. Re-générez là."
     warning:

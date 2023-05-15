@@ -648,7 +648,15 @@
     {% else %}
         <button class="btn btn-default" id="ladb_cutlist_part_highlight"><i class="ladb-opencutlist-icon-magnifier"></i> {{ 'tab.cutlist.highlight_part'|i18next }}</button>
     {% endif %}
-    <button class="btn btn-default" id="ladb_cutlist_part_export_to_skp"><i class="ladb-opencutlist-icon ladb-opencutlist-icon-export"></i> {{ 'tab.cutlist.edit_part.export_to_skp'|i18next }}...</button>
+    <div class="btn-group">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="ladb-opencutlist-icon ladb-opencutlist-icon-export"></i> {{ 'default.export'|i18next }} <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li><a href="#" id="ladb_cutlist_part_export_to_skp">SKP...</a></li>
+            <li><a href="#" id="ladb_cutlist_part_export_to_stl">STL...</a></li>
+        </ul>
+    </div>
 {% endblock %}
 
 {% block footerRightInner %}
