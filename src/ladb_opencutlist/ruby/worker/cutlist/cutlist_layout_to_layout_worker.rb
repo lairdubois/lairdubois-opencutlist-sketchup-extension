@@ -215,10 +215,10 @@ module Ladb::OpenCutList
 
           # Add SketchUp model entity
           skp = Layout::SketchUpModel.new(skp_path, Geom::Bounds2d.new(
-            page_info.left_margin,
-            current_y,
-            page_info.width - page_info.left_margin - page_info.right_margin,
-            page_info.height - current_y - page_info.bottom_margin
+            [ 0, page_info.left_margin ].max,
+            [ 0, current_y ].max,
+            [ 1, page_info.width - page_info.left_margin - page_info.right_margin ].max,
+            [ 1, page_info.height - current_y - page_info.bottom_margin ].max
           ))
           skp.perspective = false
           skp.render_mode = @parts_colored ? Layout::SketchUpModel::HYBRID_RENDER : Layout::SketchUpModel::VECTOR_RENDER
@@ -254,7 +254,7 @@ module Ladb::OpenCutList
 
           end
 
-        rescue => e
+        rescue StandardError => e
           Plugin.instance.dump_exception(e)
           return { :errors => [ 'default.error' ] }
         end
