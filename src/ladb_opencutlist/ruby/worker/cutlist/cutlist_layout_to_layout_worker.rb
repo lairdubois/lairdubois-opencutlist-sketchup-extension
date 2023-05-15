@@ -1,6 +1,5 @@
 module Ladb::OpenCutList
 
-  require 'securerandom'
   require_relative '../../plugin'
   require_relative '../../helper/layer_visibility_helper'
 
@@ -63,19 +62,16 @@ module Ladb::OpenCutList
 
         # CREATE SKP FILE
 
-        uuid = SecureRandom.uuid
-
-        skp_dir = File.join(Plugin.instance.temp_dir, 'skp')
-        unless Dir.exist?(skp_dir)
-          Dir.mkdir(skp_dir)
-        end
-        skp_path = File.join(skp_dir, "#{uuid}.skp")
-
         materials = model.materials
         definitions = model.definitions
         styles = model.styles
 
-        tmp_definition = definitions.add(uuid)
+        tmp_definition = definitions.add("export-#{Time.new.to_i}")
+
+        skp_dir = File.join(Plugin.instance.temp_dir, 'skp')
+        Dir.mkdir(skp_dir) unless Dir.exist?(skp_dir)
+        skp_path = File.join(skp_dir, "#{tmp_definition.guid}.skp")
+        File.delete(skp_path) if File.exist?(skp_path)
 
         # Iterate on parts
         @parts_infos.each do |part_info|
@@ -115,7 +111,7 @@ module Ladb::OpenCutList
         selected_style = styles.selected_style
         styles.add_style(File.join(Plugin.instance.root_dir,'style', "ocl_layout_#{@parts_colored ? 'colored' : 'monochrome'}_#{@parts_opacity == 1 ? 'opaque' : 'translucent'}.style"), true)
 
-        # Save tmp definition as in skp file
+        # Save tmp definition in skp file
         skp_success = tmp_definition.save_copy(skp_path) && File.exist?(skp_path)
 
         # Restore model's style
@@ -227,8 +223,6 @@ module Ladb::OpenCutList
           skp.preserve_scale_on_resize = true
           doc.add_entity(skp, layer, page)
 
-          skp.render
-
           # Add pins
           unless @pins_hidden
 
@@ -257,6 +251,9 @@ module Ladb::OpenCutList
         rescue StandardError => e
           Plugin.instance.dump_exception(e)
           return { :errors => [ 'default.error' ] }
+        ensure
+          # Delete Skp file
+          File.delete(skp_path)
         end
 
         # Save Layout file
@@ -264,9 +261,6 @@ module Ladb::OpenCutList
           doc.save(layout_path)
         rescue => e
           return { :errors => [ [ 'tab.cutlist.layout.error.failed_to_layout', { :error => e.inspect } ] ] }
-        ensure
-          # Delete Skp file
-          File.delete(skp_path)
         end
 
         return { :export_path => layout_path }
