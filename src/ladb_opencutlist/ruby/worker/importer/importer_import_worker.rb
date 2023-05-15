@@ -6,9 +6,9 @@ module Ladb::OpenCutList
 
     def initialize(settings, parts)
 
-      @remove_all = settings.fetch('remove_all')
-      @keep_definitions_settings = settings.fetch('keep_definitions_settings')
-      @keep_materials_settings = settings.fetch('keep_materials_settings')
+      @remove_all = settings.fetch('remove_all', false)
+      @keep_definitions_settings = settings.fetch('keep_definitions_settings', true)
+      @keep_materials_settings = settings.fetch('keep_materials_settings', true)
 
       @parts = parts
 

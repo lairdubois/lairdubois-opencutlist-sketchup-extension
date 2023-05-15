@@ -4,6 +4,10 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
+* 5.0.1 (WIP)
+
+  * Fixed import freeze when the model is empty
+
 * 5.0.0 (2023-05-11)
 
   * Added **Ukrainian** language (thanks to Kostyantyn and Andriy)
