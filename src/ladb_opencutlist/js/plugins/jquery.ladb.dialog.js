@@ -1077,6 +1077,12 @@
                 Twig.extendFilter('type_of', function (value) {
                     return typeof value;
                 });
+                Twig.extendFilter('trim_tilde', function (value) {
+                    if (value.startsWith('~ ')) {
+                        return value.slice(2);
+                    }
+                    return value;
+                });
 
                 // Check if JS build number corresponds to Ruby build number
                 if (EXTENSION_BUILD !== that.capabilities.build) {
