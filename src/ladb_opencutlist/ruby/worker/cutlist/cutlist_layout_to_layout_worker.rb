@@ -138,14 +138,21 @@ module Ladb::OpenCutList
 
           doc = Layout::Document.new
 
+          page_width = [ 200, [ 1, @page_width ].max ].min     # Layout width limits [0, 200]
+          page_height = [ 200, [ 1, @page_height ].max ].min   # Layout height limits [1, 200]
+          page_top_margin = 0.25
+          page_right_margin = 0.25
+          page_bottom_margin = 0.25
+          page_left_margin = 0.25
+
           # Set document's page infos
           page_info = doc.page_info
-          page_info.width = [ 200, [ 1, @page_width ].max ].min     # Layout width limits [0, 200]
-          page_info.height = [ 200, [ 1, @page_height ].max ].min   # Layout height limits [1, 200]
-          page_info.top_margin = 0.25
-          page_info.right_margin = 0.25
-          page_info.bottom_margin = 0.25
-          page_info.left_margin = 0.25
+          page_info.width = page_width
+          page_info.height = page_height
+          page_info.top_margin = page_top_margin
+          page_info.right_margin = page_right_margin
+          page_info.bottom_margin = page_bottom_margin
+          page_info.left_margin = page_left_margin
 
           # Set document's units and precision
           case DimensionUtils.instance.length_unit
@@ -180,41 +187,41 @@ module Ladb::OpenCutList
           doc.auto_text_definitions.add('OpenCutListPageDescription', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = @cutlist.page_description
 
           # Add header
-          current_y = page_info.top_margin
+          current_y = page_top_margin
           if @page_header
 
             gutter = 0.1
             font_family = 'Verdana'
 
-            draw_text = _add_formated_text(doc, layer, page, Plugin.instance.get_i18n_string('tab.cutlist.layout.title'), Geom::Point2d.new(page_info.left_margin, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_LEFT, { :font_family => font_family, :font_size => 18, :text_alignment => Layout::Style::ALIGN_LEFT })
+            draw_text = _add_formated_text(doc, layer, page, Plugin.instance.get_i18n_string('tab.cutlist.layout.title'), Geom::Point2d.new(page_left_margin, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_LEFT, { :font_family => font_family, :font_size => 18, :text_alignment => Layout::Style::ALIGN_LEFT })
             current_y = draw_text.drawing_bounds.lower_left.y
 
-            _add_formated_text(doc, layer, page, '<OpenCutListGeneratedAt>  |  <OpenCutListLengthUnit>  |  <OpenCutListScale>', Geom::Point2d.new(page_info.width - page_info.right_margin, current_y), Layout::FormattedText::ANCHOR_TYPE_BOTTOM_RIGHT, { :font_family => font_family, :font_size => 10, :text_alignment => Layout::Style::ALIGN_RIGHT })
+            _add_formated_text(doc, layer, page, '<OpenCutListGeneratedAt>  |  <OpenCutListLengthUnit>  |  <OpenCutListScale>', Geom::Point2d.new(page_width - page_right_margin, current_y), Layout::FormattedText::ANCHOR_TYPE_BOTTOM_RIGHT, { :font_family => font_family, :font_size => 10, :text_alignment => Layout::Style::ALIGN_RIGHT })
 
-            name_text = _add_formated_text(doc, layer, page, '<PageName>', Geom::Point2d.new(page_info.width / 2, current_y + gutter * 2), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => font_family, :font_size => 15, :text_alignment => Layout::Style::ALIGN_CENTER })
+            name_text = _add_formated_text(doc, layer, page, '<PageName>', Geom::Point2d.new(page_width / 2, current_y + gutter * 2), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => font_family, :font_size => 15, :text_alignment => Layout::Style::ALIGN_CENTER })
             current_y = name_text.drawing_bounds.lower_left.y
 
             unless @cutlist.model_description.empty?
-              model_description_text = _add_formated_text(doc, layer, page, '<OpenCutListModelDescription>', Geom::Point2d.new(page_info.width / 2, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => font_family, :font_size => 9, :text_alignment => Layout::Style::ALIGN_CENTER })
+              model_description_text = _add_formated_text(doc, layer, page, '<OpenCutListModelDescription>', Geom::Point2d.new(page_width / 2, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => font_family, :font_size => 9, :text_alignment => Layout::Style::ALIGN_CENTER })
               current_y = model_description_text.drawing_bounds.lower_left.y
             end
 
             unless @cutlist.page_description.empty?
-              page_description_text = _add_formated_text(doc, layer, page, '<OpenCutListPageDescription>', Geom::Point2d.new(page_info.width / 2, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => font_family, :font_size => 9, :text_alignment => Layout::Style::ALIGN_CENTER })
+              page_description_text = _add_formated_text(doc, layer, page, '<OpenCutListPageDescription>', Geom::Point2d.new(page_width / 2, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => font_family, :font_size => 9, :text_alignment => Layout::Style::ALIGN_CENTER })
               current_y = page_description_text.drawing_bounds.lower_left.y
             end
 
-            rectangle = _add_rectangle(doc, layer, page, Geom::Point2d.new(page_info.left_margin, draw_text.bounds.lower_right.y + gutter), Geom::Point2d.new(page_info.width - page_info.right_margin, current_y + gutter), { :solid_filled => false })
+            rectangle = _add_rectangle(doc, layer, page, Geom::Point2d.new(page_left_margin, draw_text.bounds.lower_right.y + gutter), Geom::Point2d.new(page_width - page_right_margin, current_y + gutter), { :solid_filled => false })
             current_y = rectangle.drawing_bounds.lower_left.y + gutter
 
           end
 
           # Add SketchUp model entity
           skp = Layout::SketchUpModel.new(skp_path, Geom::Bounds2d.new(
-            [ 0, page_info.left_margin ].max,
+            [ 0, page_left_margin ].max,
             [ 0, current_y ].max,
-            [ 1, page_info.width - page_info.left_margin - page_info.right_margin ].max,
-            [ 1, page_info.height - current_y - page_info.bottom_margin ].max
+            [ 1, page_width - page_left_margin - page_right_margin ].max,
+            [ 1, page_height - current_y - page_bottom_margin ].max
           ))
           skp.perspective = false
           skp.render_mode = @parts_colored ? Layout::SketchUpModel::HYBRID_RENDER : Layout::SketchUpModel::VECTOR_RENDER
@@ -222,6 +229,8 @@ module Ladb::OpenCutList
           skp.scale = @camera_zoom
           skp.preserve_scale_on_resize = true
           doc.add_entity(skp, layer, page)
+
+          skp.render  # Render to be able to use 'model_to_paper_point' function
 
           # Add pins
           unless @pins_hidden
