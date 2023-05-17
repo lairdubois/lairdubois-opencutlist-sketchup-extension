@@ -1,6 +1,7 @@
 module Ladb::OpenCutList
 
   require_relative '../../helper/hashable_helper'
+  require_relative '../../utils/color_utils'
 
   class MaterialUsage
 
@@ -22,7 +23,7 @@ module Ladb::OpenCutList
 
     def to_hash
       hash = super.to_hash
-      hash['color'] = @color.nil? ? nil : "#%02x%02x%02x" % [ @color.red, @color.green, @color.blue ]
+      hash['color'] = ColorUtils.color_to_hex(@color)
       hash
     end
 

@@ -5,6 +5,7 @@ module Ladb::OpenCutList
   require_relative '../../utils/dimension_utils'
   require_relative '../../utils/mass_utils'
   require_relative '../../utils/price_utils'
+  require_relative '../../utils/color_utils'
 
   class Group
 
@@ -22,7 +23,7 @@ module Ladb::OpenCutList
       @material_name = group_def.material_name
       @material_display_name = group_def.material_display_name
       @material_type = group_def.material_type
-      @material_color = group_def.material_color.nil? ? nil : "#%02x%02x%02x" % [ group_def.material_color.red, group_def.material_color.green, group_def.material_color.blue ]
+      @material_color = ColorUtils.color_to_hex(group_def.material_color)
       @material_grained = group_def.material_grained
       @part_count = group_def.part_count
       @std_available = group_def.std_available

@@ -79,12 +79,18 @@
 }
 @keyframes blinker { 50% { opacity: 0; } }
 
-/* Hatched */
+/* hatched */
 
 .hatched() {
+  .printable-background();
   background-image: url(../img/bg-hatched.svg);
   background-repeat: repeat;
   background-size: 10px;
+}
+
+/* printable-background */
+
+.printable-background() {
   -webkit-print-color-adjust: exact !important;
   print-color-adjust: exact !important;
 }

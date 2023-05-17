@@ -1,5 +1,7 @@
 module Ladb::OpenCutList
 
+  require_relative '../../utils/color_utils'
+
   class MaterialsListWorker
 
     def initialize(settings)
@@ -54,7 +56,7 @@ module Ladb::OpenCutList
                   :name => material.name,
                   :display_name => material.display_name,
                   :thumbnail_file => thumbnail_file,
-                  :color => ("#%02x%02x%02x" % [material.color.red, material.color.green, material.color.blue]),
+                  :color => ColorUtils.color_to_hex(material.color),
                   :alpha => material.alpha,
                   :colorized => material.materialType == 2, # 2 = Sketchup::Material::MATERIAL_COLORIZED_TEXTURED
                   :textured => (material.materialType == 1 || material.materialType == 2),  # 1 = Sketchup::Material::MATERIAL_TEXTURED, 2 = Sketchup::Material::MATERIAL_COLORIZED_TEXTURED

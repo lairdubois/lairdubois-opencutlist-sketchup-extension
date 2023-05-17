@@ -39,14 +39,14 @@
                     [     0 , 2/3.0 ],
                     [     0 , 1/3.0 ],
                 ] %}
-                <polyline points="{% for point in arrowPattern %}{{ arrowX + arrowWidth * point[0] }},{{ arrowY + arrowLength * point[1] }} {% endfor %}" stroke="#000" stroke-width="{{ arrowStrokeWidth }}" fill="none" />
+                <polyline points="{% for point in arrowPattern %}{{ arrowX + arrowWidth * point[0] }},{{ arrowY + arrowLength * point[1] }} {% endfor %}" stroke="{{ elementDef.color }}" stroke-width="{{ arrowStrokeWidth }}" fill="none" />
             </g>
         {% endif %}
         <g>
-            <line x1="0" y1="0" x2="{{ rectPartWidth }}" y2="0" stroke-linecap="square"{% if partInfo.part.edge_material_names.ymax %} stroke="{{ elementDef.color }}" stroke-width="{{ plainStrokeWidth }}"{% else %}stroke="#000" stroke-width="{{ dashedStrokeWidth }}" stroke-dasharray="{{ dashedStrokeWidth * 2 }}"{% endif%} />
-            <line x1="{{ rectPartWidth }}" y1="0" x2="{{ rectPartWidth }}" y2="{{ rectPartHeight }}" stroke-linecap="square"{% if partInfo.part.edge_material_names.xmax %} stroke="{{ elementDef.color }}" stroke-width="{{ plainStrokeWidth }}"{% else %}stroke="#000"  stroke-width="{{ dashedStrokeWidth }}" stroke-dasharray="{{ dashedStrokeWidth * 2 }}"{% endif%} />
-            <line x1="{{ rectPartWidth }}" y1="{{ rectPartHeight }}" x2="0" y2="{{ rectPartHeight }}" stroke-linecap="square"{% if partInfo.part.edge_material_names.ymin %} stroke="{{ elementDef.color }}" stroke-width="{{ plainStrokeWidth }}"{% else %}stroke="#000"  stroke-width="{{ dashedStrokeWidth }}" stroke-dasharray="{{ dashedStrokeWidth * 2 }}"{% endif%} />
-            <line x1="0" y1="{{ rectPartHeight }}" x2="0" y2="0" stroke-linecap="square"{% if partInfo.part.edge_material_names.xmin %} stroke="{{ elementDef.color }}" stroke-width="{{ plainStrokeWidth }}"{% else %} stroke-width="{{ dashedStrokeWidth }}"stroke="#000"  stroke-dasharray="{{ dashedStrokeWidth * 2 }}"{% endif%} />
+            <line x1="0" y1="0" x2="{{ rectPartWidth }}" y2="0" stroke-linecap="square"{% if partInfo.part.edge_material_names.ymax %} stroke="{{ partInfo.part.edge_material_colors.ymax }}" stroke-width="{{ plainStrokeWidth }}"{% else %}stroke="{{ elementDef.color }}" stroke-width="{{ dashedStrokeWidth }}" stroke-dasharray="{{ dashedStrokeWidth * 2 }}"{% endif%} />
+            <line x1="{{ rectPartWidth }}" y1="0" x2="{{ rectPartWidth }}" y2="{{ rectPartHeight }}" stroke-linecap="square"{% if partInfo.part.edge_material_names.xmax %} stroke="{{ partInfo.part.edge_material_colors.xmax }}" stroke-width="{{ plainStrokeWidth }}"{% else %}stroke="{{ elementDef.color }}"  stroke-width="{{ dashedStrokeWidth }}" stroke-dasharray="{{ dashedStrokeWidth * 2 }}"{% endif%} />
+            <line x1="{{ rectPartWidth }}" y1="{{ rectPartHeight }}" x2="0" y2="{{ rectPartHeight }}" stroke-linecap="square"{% if partInfo.part.edge_material_names.ymin %} stroke="{{ partInfo.part.edge_material_colors.ymin }}" stroke-width="{{ plainStrokeWidth }}"{% else %}stroke="{{ elementDef.color }}"  stroke-width="{{ dashedStrokeWidth }}" stroke-dasharray="{{ dashedStrokeWidth * 2 }}"{% endif%} />
+            <line x1="0" y1="{{ rectPartHeight }}" x2="0" y2="0" stroke-linecap="square"{% if partInfo.part.edge_material_names.xmin %} stroke="{{ partInfo.part.edge_material_colors.xmin }}" stroke-width="{{ plainStrokeWidth }}"{% else %} stroke-width="{{ dashedStrokeWidth }}"stroke="{{ elementDef.color }}"  stroke-dasharray="{{ dashedStrokeWidth * 2 }}"{% endif%} />
         </g>
     </g>
 {% else %}
