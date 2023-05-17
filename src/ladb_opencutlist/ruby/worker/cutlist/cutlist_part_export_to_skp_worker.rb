@@ -57,7 +57,7 @@ module Ladb::OpenCutList
         end
 
         begin
-          success = definition.save_copy(path)
+          success = definition.save_as(path) && File.exist?(path)
           return { :errors => [ [ 'tab.cutlist.error.failed_export_skp_file', { :error => '' } ] ] } unless success
           return { :export_path => path }
         rescue => e

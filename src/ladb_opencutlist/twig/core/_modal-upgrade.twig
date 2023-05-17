@@ -40,7 +40,7 @@
         <button id="ladb_btn_download" class="btn btn-primary ladb-btn-download">{{ 'default.download'|i18next }}</button>
     {% elseif capabilities.update_available %}
         {% if not capabilities.update_muted %}
-            <button id="ladb_btn_ignore_update" class="btn btn-default pull-left">{{ 'core.upgrade.ignore_update'|i18next }}</button>
+            <button id="ladb_btn_ignore_update" class="btn btn-default">{{ 'core.upgrade.ignore_update'|i18next }}</button>
         {% endif %}
         <button id="ladb_btn_upgrade" class="btn btn-primary">{{ 'default.upgrade'|i18next }}</button>
     {% else %}

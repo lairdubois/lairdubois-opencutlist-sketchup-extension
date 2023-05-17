@@ -629,7 +629,7 @@ module Ladb::OpenCutList
           end
 
           # Exit if picked elements are the same
-          return true if input_face == @input_face && input_face == @input_face && input_edge == @input_edge && input_vertex == @input_vertex
+          return true if input_face_path == @input_face_path && input_face == @input_face && input_edge == @input_edge && input_vertex == @input_vertex
 
           @input_face_path = input_face_path
           @input_face = input_face

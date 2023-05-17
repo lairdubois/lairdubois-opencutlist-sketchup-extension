@@ -54,7 +54,7 @@
 
                         {% set partCount = page.partInfos|length %}
 
-                        <svg viewBox="0 0 {{ page_width }} {{ page_height }}" {% if compatible_with('svg.height-auto') %}width="80%"{% else %}width="{{ page_width * 72 }}" height="{{ page_height * 72 }}"{% endif %}>
+                        <svg viewBox="0 0 {{ page_width }} {{ page_height }}" width="80%">
 
                             <g transform="translate({{ margin_left }} {{ margin_top }})">
 

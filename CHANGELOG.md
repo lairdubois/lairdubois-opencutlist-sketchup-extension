@@ -4,9 +4,15 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
+* 5.0.2 (WIP)
+
+  * Improved Smart Tool element picker
+  * Improved cutting diagram dimensions display
+  
 * 5.0.1 (WIP)
 
   * Fixed import freeze when the model is empty
+  * Fixed export to Layout freeze (SketchUp < 2022) by replacing ComponentDefinition::save_copy use by ComponentDefinition::save_as
 
 * 5.0.0 (2023-05-11)
 
