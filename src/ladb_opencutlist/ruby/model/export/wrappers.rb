@@ -304,6 +304,10 @@ module Ladb::OpenCutList
       @value.to_yard.to_yard.to_yard.round(6)   # Returns the float representation of the value converted from inches to yards³
     end
 
+    def to_fbm
+      (to_inch3 / 144.0).round(6)               # Returns the float representation of the value converted from inches to board feet
+    end
+
     def to_s
       return '' if @value == 0
       DimensionUtils.instance.format_to_readable_volume(@value)
