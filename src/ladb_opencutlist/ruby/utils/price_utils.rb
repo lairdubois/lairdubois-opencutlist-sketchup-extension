@@ -29,9 +29,8 @@ module Ladb::OpenCutList
     # Take a float containing a price
     # and convert it to a string representation according to the
     # local unit settings.
-    #
-    def format_to_readable_price(f)
-      UnitUtils.format_readable(f, UNIT_STRIPPEDNAME, 0, 2)
+    def format_to_readable_price(f, precision = 0)
+      UnitUtils.format_readable(f, UNIT_STRIPPEDNAME, [ 2, precision ].min, 2)
     end
 
   end
