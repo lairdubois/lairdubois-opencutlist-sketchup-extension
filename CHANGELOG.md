@@ -11,6 +11,7 @@ in 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 * 5.0.2 (WIP)
 
+  * Added `to_fbm` function to VolumeWrapper
   * Improved Smart Tool element picker
   * Improved cutting diagram dimensions display
   * Fixed hide all Draw buttons if WebGL is not supported
