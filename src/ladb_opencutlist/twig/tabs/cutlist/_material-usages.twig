@@ -6,7 +6,7 @@
     <option data-divider="true"></option>
     <option value="-1" data-content="<span style='color: #ccc; font-style: italic;'><i class='ladb-opencutlist-icon-multiple'></i> {{ 'tab.cutlist.edit_part.multiple_values'|i18next }}</span>"></option>
 {% endif %}
-{% for materialUsage in materialUsages if typeFilters is not defined or materialUsage.type in typeFilters  %}
+{% for materialUsage in materialUsages if typeFilters is not defined or materialUsage.type in typeFilters %}
     {% if loop.index0 == 0 %}<option data-divider="true"></option>{% endif %}
     <option value="{{ materialUsage.name }}" data-content="{% include 'tabs/materials/_material-type-icon.twig' with { 'type':materialUsage.type, 'compact':true } %} {% include 'tabs/materials/_material-color-drop.twig' with { 'material_color':materialUsage.color } %} {{ materialUsage.display_name|escape('html') }}"></option>
 {% endfor %}

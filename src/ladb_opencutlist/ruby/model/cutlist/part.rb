@@ -9,13 +9,14 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :id, :number, :saved_number, :name, :description, :length, :width, :thickness, :count, :cutting_length, :cutting_width, :cutting_thickness, :edge_cutting_length, :edge_cutting_width, :material_name, :cumulable, :cumulative_cutting_length, :cumulative_cutting_width, :instance_count_by_part, :mass, :price, :thickness_layer_count, :tags, :ignore_grain_direction, :edge_count, :edge_pattern, :edge_material_names, :edge_material_colors, :edge_std_dimensions, :edge_decrements, :face_count, :face_pattern, :face_material_names, :face_material_colors, :face_texture_angles, :face_std_dimensions, :face_decrements, :entity_names, :final_area, :l_ratio, :w_ratio
+    attr_reader :id, :virtual, :number, :saved_number, :name, :description, :length, :width, :thickness, :count, :cutting_length, :cutting_width, :cutting_thickness, :edge_cutting_length, :edge_cutting_width, :material_name, :cumulable, :cumulative_cutting_length, :cumulative_cutting_width, :instance_count_by_part, :mass, :price, :thickness_layer_count, :tags, :ignore_grain_direction, :edge_count, :edge_pattern, :edge_material_names, :edge_material_colors, :edge_std_dimensions, :edge_decrements, :face_count, :face_pattern, :face_material_names, :face_material_colors, :face_texture_angles, :face_std_dimensions, :face_decrements, :entity_names, :final_area, :l_ratio, :w_ratio
 
     def initialize(part_def, group)
       @_def = part_def
       @_group = group
 
       @id = part_def.id
+      @virtual = part_def.virtual
       @number = part_def.number
       @saved_number = part_def.saved_number
       @name = part_def.name

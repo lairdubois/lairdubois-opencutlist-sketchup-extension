@@ -2147,11 +2147,11 @@
                 tab = this.lastEditPartTab;
             }
             if (tab === null || tab.length === 0
-                || tab === 'extra' && group.material_type === 0 /* 0 = TYPE_UNKNOWN */
-                || tab === 'axes' && multiple
+                || tab === 'extra' && group.material_type === 0 /* 0 = TYPE_UNKNOWN */ || part.virtual
+                || tab === 'axes' && (multiple || part.virtual)
                 || tab === 'edges' && group.material_type !== 2 /* 2 = TYPE_SHEET_GOOD */
                 || tab === 'faces' && group.material_type !== 2 /* 2 = TYPE_SHEET_GOOD */
-                || tab === 'infos_warnings' && multiple
+                || tab === 'infos_warnings' && (multiple || part.virtual)
             ) {
                 tab = 'general';
             }
@@ -2385,7 +2385,7 @@
 
             }
             var fnLoadThumbnail = function () {
-                if (!thumbnailLoaded && !multiple) {
+                if (!thumbnailLoaded && !multiple && !part.virtual) {
 
                     // Generate and Retrieve part thumbnail file
                     rubyCallCommand('cutlist_part_get_thumbnail', part, function (response) {
@@ -2719,7 +2719,7 @@
 
                 for (var i = 0; i < editedParts.length; i++) {
 
-                    if (!multiple) {
+                    if (!multiple && !part.virtual) {
 
                         editedParts[i].name = $inputName.val().trim();
 
@@ -2734,63 +2734,70 @@
                     if ($selectMaterialName.val() !== MULTIPLE_VALUE) {
                         editedParts[i].material_name = $selectMaterialName.val();
                     }
-                    if ($selectCumulable.val() !== MULTIPLE_VALUE) {
-                        editedParts[i].cumulable = parseInt($selectCumulable.val());
-                    }
-                    if (!$inputInstanceCountByPart.ladbTextinputNumberWithUnit('isMultiple')) {
-                        editedParts[i].instance_count_by_part = Math.max(1, $inputInstanceCountByPart.val() === '' ? 1 : parseInt($inputInstanceCountByPart.val()));
-                    }
-                    if (!$inputMass.ladbTextinputNumberWithUnit('isMultiple')) {
-                        editedParts[i].mass = $inputMass.ladbTextinputNumberWithUnit('val');
-                    }
-                    if (!$inputPrice.ladbTextinputNumberWithUnit('isMultiple')) {
-                        editedParts[i].price = $inputPrice.val().trim();
-                    }
-                    if (!$inputThicknessLayerCount.ladbTextinputNumberWithUnit('isMultiple')) {
-                        editedParts[i].thickness_layer_count = Math.max(1, $inputThicknessLayerCount.val() === '' ? 1 : parseInt($inputThicknessLayerCount.val()));
-                    }
-                    if (!$inputDescription.ladbTextinputArea('isMultiple')) {
-                        editedParts[i].description = $inputDescription.val().trim();
-                    }
 
-                    var untouchTags = editedParts[i].tags.filter(function (tag) { return !editedPart.tags.includes(tag) });
-                    editedParts[i].tags = untouchTags.concat($inputTags.tokenfield('getTokensList').split(';'));
+                    if (!part.virtual) {
 
-                    if (!$inputLengthIncrease.ladbTextinputDimension('isMultiple')) {
-                        editedParts[i].length_increase = $inputLengthIncrease.val();
-                    }
-                    if (!$inputWidthIncrease.ladbTextinputDimension('isMultiple')) {
-                        editedParts[i].width_increase = $inputWidthIncrease.val();
-                    }
-                    if (!$inputThicknessIncrease.ladbTextinputDimension('isMultiple')) {
-                        editedParts[i].thickness_increase = $inputThicknessIncrease.val();
-                    }
+                        if ($selectCumulable.val() !== MULTIPLE_VALUE) {
+                            editedParts[i].cumulable = parseInt($selectCumulable.val());
+                        }
+                        if (!$inputInstanceCountByPart.ladbTextinputNumberWithUnit('isMultiple')) {
+                            editedParts[i].instance_count_by_part = Math.max(1, $inputInstanceCountByPart.val() === '' ? 1 : parseInt($inputInstanceCountByPart.val()));
+                        }
+                        if (!$inputMass.ladbTextinputNumberWithUnit('isMultiple')) {
+                            editedParts[i].mass = $inputMass.ladbTextinputNumberWithUnit('val');
+                        }
+                        if (!$inputPrice.ladbTextinputNumberWithUnit('isMultiple')) {
+                            editedParts[i].price = $inputPrice.val().trim();
+                        }
+                        if (!$inputThicknessLayerCount.ladbTextinputNumberWithUnit('isMultiple')) {
+                            editedParts[i].thickness_layer_count = Math.max(1, $inputThicknessLayerCount.val() === '' ? 1 : parseInt($inputThicknessLayerCount.val()));
+                        }
+                        if (!$inputDescription.ladbTextinputArea('isMultiple')) {
+                            editedParts[i].description = $inputDescription.val().trim();
+                        }
 
-                    if ($selectEdgeYmin.val() !== MULTIPLE_VALUE) {
-                        editedParts[i].edge_material_names.ymin = $selectEdgeYmin.val();
-                    }
-                    if ($selectEdgeYmax.val() !== MULTIPLE_VALUE) {
-                        editedParts[i].edge_material_names.ymax = $selectEdgeYmax.val();
-                    }
-                    if ($selectEdgeXmin.val() !== MULTIPLE_VALUE) {
-                        editedParts[i].edge_material_names.xmin = $selectEdgeXmin.val();
-                    }
-                    if ($selectEdgeXmax.val() !== MULTIPLE_VALUE) {
-                        editedParts[i].edge_material_names.xmax = $selectEdgeXmax.val();
-                    }
+                        var untouchTags = editedParts[i].tags.filter(function (tag) {
+                            return !editedPart.tags.includes(tag)
+                        });
+                        editedParts[i].tags = untouchTags.concat($inputTags.tokenfield('getTokensList').split(';'));
 
-                    if ($selectFaceZmin.val() !== MULTIPLE_VALUE) {
-                        editedParts[i].face_material_names.zmin = $selectFaceZmin.val();
-                    }
-                    if ($selectFaceZmax.val() !== MULTIPLE_VALUE) {
-                        editedParts[i].face_material_names.zmax = $selectFaceZmax.val();
-                    }
+                        if (!$inputLengthIncrease.ladbTextinputDimension('isMultiple')) {
+                            editedParts[i].length_increase = $inputLengthIncrease.val();
+                        }
+                        if (!$inputWidthIncrease.ladbTextinputDimension('isMultiple')) {
+                            editedParts[i].width_increase = $inputWidthIncrease.val();
+                        }
+                        if (!$inputThicknessIncrease.ladbTextinputDimension('isMultiple')) {
+                            editedParts[i].thickness_increase = $inputThicknessIncrease.val();
+                        }
 
-                    if (!$inputFaceZminTextureAngle.ladbTextinputNumberWithUnit('isMultiple')) {
-                        editedParts[i].face_texture_angles.zmin = $inputFaceZminTextureAngle.val() === '' ? null : parseInt($inputFaceZminTextureAngle.val());
-                    }
-                    if (!$inputFaceZmaxTextureAngle.ladbTextinputNumberWithUnit('isMultiple')) {
-                        editedParts[i].face_texture_angles.zmax = $inputFaceZmaxTextureAngle.val() === '' ? null : parseInt($inputFaceZmaxTextureAngle.val());
+                        if ($selectEdgeYmin.val() !== MULTIPLE_VALUE) {
+                            editedParts[i].edge_material_names.ymin = $selectEdgeYmin.val();
+                        }
+                        if ($selectEdgeYmax.val() !== MULTIPLE_VALUE) {
+                            editedParts[i].edge_material_names.ymax = $selectEdgeYmax.val();
+                        }
+                        if ($selectEdgeXmin.val() !== MULTIPLE_VALUE) {
+                            editedParts[i].edge_material_names.xmin = $selectEdgeXmin.val();
+                        }
+                        if ($selectEdgeXmax.val() !== MULTIPLE_VALUE) {
+                            editedParts[i].edge_material_names.xmax = $selectEdgeXmax.val();
+                        }
+
+                        if ($selectFaceZmin.val() !== MULTIPLE_VALUE) {
+                            editedParts[i].face_material_names.zmin = $selectFaceZmin.val();
+                        }
+                        if ($selectFaceZmax.val() !== MULTIPLE_VALUE) {
+                            editedParts[i].face_material_names.zmax = $selectFaceZmax.val();
+                        }
+
+                        if (!$inputFaceZminTextureAngle.ladbTextinputNumberWithUnit('isMultiple')) {
+                            editedParts[i].face_texture_angles.zmin = $inputFaceZminTextureAngle.val() === '' ? null : parseInt($inputFaceZminTextureAngle.val());
+                        }
+                        if (!$inputFaceZmaxTextureAngle.ladbTextinputNumberWithUnit('isMultiple')) {
+                            editedParts[i].face_texture_angles.zmax = $inputFaceZmaxTextureAngle.val() === '' ? null : parseInt($inputFaceZmaxTextureAngle.val());
+                        }
+
                     }
 
                 }

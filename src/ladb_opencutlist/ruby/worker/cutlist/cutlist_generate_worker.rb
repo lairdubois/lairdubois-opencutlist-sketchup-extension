@@ -733,7 +733,7 @@ module Ladb::OpenCutList
       # PHASE 2
 
       # Sort material usages and add them to cutlist
-      cutlist.add_material_usages(@material_usages_cache.values.sort_by { |v| [ v.display_name.downcase ] })
+      cutlist.add_material_usages(@material_usages_cache.values.sort_by { |v| [ MaterialAttributes.type_order(v.type), v.display_name.downcase ] })
 
       part_number = cutlist.max_number ? cutlist.max_number.succ : (@part_number_with_letters ? 'A' : 1)
 
@@ -769,7 +769,7 @@ module Ladb::OpenCutList
               if folder_part_def.children.empty?
                 first_child_part_def = part_defs.pop
 
-                folder_part_def = PartDef.new(first_child_part_def.id + '_folder')
+                folder_part_def = PartDef.new(first_child_part_def.id + '_folder', first_child_part_def.virtual)
                 folder_part_def.name = first_child_part_def.name
                 folder_part_def.description = first_child_part_def.description
                 folder_part_def.count = first_child_part_def.count
@@ -1328,15 +1328,16 @@ module Ladb::OpenCutList
 
     def _populate_edge_part_def(part_def, edge, edge_group_def, length, cutting_length, width, thickness)
 
-      edge_part_id = PartDef.generate_edge_part_id(part_def.id, edge, length, width, thickness)
+      edge_part_id = PartDef.generate_edge_part_id(edge_group_def.id, part_def.id, edge, length, width, thickness)
       edge_part_def = edge_group_def.get_part_def(edge_part_id)
       unless edge_part_def
 
-        edge_part_def = PartDef.new(edge_part_id)
+        edge_part_def = PartDef.new(edge_part_id, true)
         edge_part_def.name = "#{part_def.name}#{part_def.number ? " ( #{part_def.number} ) " : ''} - #{Plugin.instance.get_i18n_string("tab.cutlist.tooltip.edge_#{edge}")}"
         edge_part_def.cutting_size = Size3d.new(cutting_length, width, thickness)
         edge_part_def.size = Size3d.new(length, width, thickness)
         edge_part_def.material_name = edge_group_def.material_name
+        part_def.edge_entity_ids[edge].each { |entity_id| edge_part_def.add_entity_id(entity_id) }
 
         edge_group_def.store_part_def(edge_part_def)
 
@@ -1399,15 +1400,16 @@ module Ladb::OpenCutList
 
     def _populate_veneer_part_def(part_def, veneer, veneer_group_def, length, width, cutting_length, cutting_width, thickness)
 
-      veneer_part_id = PartDef.generate_veneer_part_id(part_def.id, veneer, length, width, thickness)
+      veneer_part_id = PartDef.generate_veneer_part_id(veneer_group_def.id, part_def.id, veneer, length, width, thickness)
       veneer_part_def = veneer_group_def.get_part_def(veneer_part_id)
       unless veneer_part_def
 
-        veneer_part_def = PartDef.new(veneer_part_id)
+        veneer_part_def = PartDef.new(veneer_part_id, true)
         veneer_part_def.name = "#{part_def.name}#{part_def.number ? " ( #{part_def.number} ) " : ''} - #{Plugin.instance.get_i18n_string("tab.cutlist.tooltip.face_#{veneer}")}"
         veneer_part_def.cutting_size = Size3d.new(cutting_length, cutting_width, thickness)
         veneer_part_def.size = Size3d.new(length, width, thickness)
         veneer_part_def.material_name = veneer_group_def.material_name
+        part_def.face_entity_ids[veneer].each { |entity_id| veneer_part_def.add_entity_id(entity_id) }
 
         veneer_group_def.store_part_def(veneer_part_def)
 

@@ -26,7 +26,7 @@
             {% include 'tabs/cutlist/_material-origins.twig' with { 'materialOrigins':part.material_origins, 'noPrint':true, 'attr':'data-tab="infos_warnings"' } %}
         {% endif %}
         {% set showHighlight = group.material_type != 4 and group.material_type != 6 %} {# 4 = TYPE_EDGE, 6 = TYPE_VENEER #}
-        {% set showEdit = group.material_type != 4 and group.material_type != 6 %}   {# 4 = TYPE_EDGE, 6 = TYPE_VENEER #}
+        {% set showEdit = true or (group.material_type != 4 and group.material_type != 6) %}   {# 4 = TYPE_EDGE, 6 = TYPE_VENEER #}
         {% set showSelect = not isChild %}
         {% if part.children or showHighlight or showEdit or showSelect %}
             <span class="ladb-separator no-print"></span>

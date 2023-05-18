@@ -8,6 +8,7 @@ in 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
   * Added export part to STL
   * Added edge material color display in part list, cutting diagram and labels
+  * Added edit material for edge and veneer virtual parts
 
 * 5.0.2 (WIP)
 
