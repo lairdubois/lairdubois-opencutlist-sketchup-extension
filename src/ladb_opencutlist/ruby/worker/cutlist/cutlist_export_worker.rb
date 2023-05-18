@@ -71,7 +71,7 @@ module Ladb::OpenCutList
               col_sep = "\t"
             end
 
-            # Convert col_sep
+            # Convert encoding
             case @encoding
             when EXPORT_OPTION_ENCODING_UTF16LE
               bom = "\xFF\xFE".force_encoding('utf-16le')
@@ -84,10 +84,10 @@ module Ladb::OpenCutList
               encoding = 'UTF-8'
             end
 
-            # Write ro CSV file
+            # Write CSV file
             File.open(export_path, "wb+:#{encoding}") do |f|
               options = { :col_sep => col_sep }
-              csv_file = CSV.generate(**options) do |csv|
+              content = CSV.generate(**options) do |csv|
 
                 _compute_rows.each { |row|
                   csv << row
@@ -97,7 +97,7 @@ module Ladb::OpenCutList
 
               # Write file
               f.write(bom)
-              f.write(csv_file)
+              f.write(content)
 
               # Populate response
               response[:export_path] = export_path.tr("\\", '/')  # Standardize path by replacing \ by /
@@ -113,7 +113,7 @@ module Ladb::OpenCutList
         end
 
       else
-        response[:error] = 'Unknow target'
+        response[:errors] << [ 'Unknow target' ]
       end
       response
     end
