@@ -66,30 +66,36 @@ module Ladb::OpenCutList
               ArrayWrapper.new(part.tags),
               EdgeWrapper.new(
                 part.edge_material_names[:ymin],
+                part.edge_material_colors[:ymin],
                 part.def.edge_group_defs[:ymin] ? part.def.edge_group_defs[:ymin].std_thickness : nil,
                 part.def.edge_group_defs[:ymin] ? part.def.edge_group_defs[:ymin].std_width : nil
               ),
               EdgeWrapper.new(
                 part.edge_material_names[:ymax],
+                part.edge_material_colors[:ymax],
                 part.def.edge_group_defs[:ymax] ? part.def.edge_group_defs[:ymax].std_thickness : nil,
                 part.def.edge_group_defs[:ymax] ? part.def.edge_group_defs[:ymax].std_width : nil
               ),
               EdgeWrapper.new(
                 part.edge_material_names[:xmin],
+                part.edge_material_colors[:xmin],
                 part.def.edge_group_defs[:xmin] ? part.def.edge_group_defs[:xmin].std_thickness : nil,
                 part.def.edge_group_defs[:xmin] ? part.def.edge_group_defs[:xmin].std_width : nil
               ),
               EdgeWrapper.new(
                 part.edge_material_names[:xmax],
+                part.edge_material_colors[:xmax],
                 part.def.edge_group_defs[:xmax] ? part.def.edge_group_defs[:xmax].std_thickness : nil,
                 part.def.edge_group_defs[:xmax] ? part.def.edge_group_defs[:xmax].std_width : nil
               ),
               VeneerWrapper.new(
                 part.face_material_names[:zmin],
+                part.face_material_colors[:zmin],
                 part.def.veneer_group_defs[:zmin] ? part.def.veneer_group_defs[:zmin].std_thickness : nil
               ),
               VeneerWrapper.new(
                 part.face_material_names[:zmax],
+                part.face_material_colors[:zmax],
                 part.def.veneer_group_defs[:zmax] ? part.def.veneer_group_defs[:zmax].std_thickness : nil
               ),
               StringWrapper.new(instance_info.layer.name),

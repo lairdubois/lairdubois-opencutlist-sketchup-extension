@@ -120,7 +120,7 @@
                             {{ part.count }}
                         </td>
                         {% if showCuttingDimensions %}
-                            {% include 'tabs/cutlist/_list-row-cutting-dimension.twig' with { property:'length' } %}
+                            {% include 'tabs/cutlist/_list-row-col-cutting-dimension.twig' with { 'property':'length' } %}
                         {% endif %}
                         <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ part.length }}</td>
                     </tr>
@@ -366,9 +366,9 @@
                             </td>
                             <td class="text-center">{{ part.count }}</td>
                             {% if showCuttingDimensions %}
-                                {% include 'tabs/cutlist/_list-row-cutting-dimension.twig' with { 'property':'length' } %}
+                                {% include 'tabs/cutlist/_list-row-col-cutting-dimension.twig' with { 'property':'length' } %}
                             {% endif %}
-                            {% include 'tabs/cutlist/_list-row-box-dimension.twig' with { 'property':'length' } %}
+                            {% include 'tabs/cutlist/_list-row-col-box-dimension.twig' with { 'property':'length' } %}
                         </tr>
                     {% endfor %}
                 {% endif %}

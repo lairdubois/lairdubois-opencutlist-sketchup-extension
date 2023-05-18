@@ -9,7 +9,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :id, :number, :saved_number, :name, :description, :length, :width, :thickness, :count, :cutting_length, :cutting_width, :cutting_thickness, :edge_cutting_length, :edge_cutting_width, :material_name, :cumulable, :cumulative_cutting_length, :cumulative_cutting_width, :instance_count_by_part, :mass, :price, :thickness_layer_count, :tags, :ignore_grain_direction, :edge_count, :edge_pattern, :edge_material_names, :edge_material_colors, :edge_std_dimensions, :edge_decrements, :face_count, :face_pattern, :face_material_names, :face_texture_angles, :face_std_dimensions, :face_decrements, :entity_names, :final_area, :l_ratio, :w_ratio
+    attr_reader :id, :number, :saved_number, :name, :description, :length, :width, :thickness, :count, :cutting_length, :cutting_width, :cutting_thickness, :edge_cutting_length, :edge_cutting_width, :material_name, :cumulable, :cumulative_cutting_length, :cumulative_cutting_width, :instance_count_by_part, :mass, :price, :thickness_layer_count, :tags, :ignore_grain_direction, :edge_count, :edge_pattern, :edge_material_names, :edge_material_colors, :edge_std_dimensions, :edge_decrements, :face_count, :face_pattern, :face_material_names, :face_material_colors, :face_texture_angles, :face_std_dimensions, :face_decrements, :entity_names, :final_area, :l_ratio, :w_ratio
 
     def initialize(part_def, group)
       @_def = part_def
@@ -48,6 +48,7 @@ module Ladb::OpenCutList
       @face_count = part_def.face_count
       @face_pattern = part_def.face_pattern
       @face_material_names = part_def.face_material_names
+      @face_material_colors = part_def.face_material_colors.transform_values { |v| ColorUtils.color_to_hex(ColorUtils.color_is_dark?(v) ? v : v.blend(Sketchup::Color.new, 0.8)) }
       @face_texture_angles = part_def.face_texture_angles.each { |k, v| part_def.face_texture_angles[k] = v.radians.round }
       @face_std_dimensions = part_def.face_std_dimensions
       @face_decrements = { :thickness => part_def.face_thickness_decrement > 0 ? part_def.face_thickness_decrement.to_s : nil }

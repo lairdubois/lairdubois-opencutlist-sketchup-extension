@@ -181,6 +181,20 @@ module Ladb::OpenCutList
 
   # -----
 
+  class ColorWrapper < ValueWrapper
+
+    def initialize(value)
+      super(value, Sketchup::Color)
+    end
+
+    def export
+      self.to_s
+    end
+
+  end
+
+  # -----
+
   class LengthWrapper < FloatWrapper
 
     def initialize(value, output_to_model_unit = true)
@@ -375,10 +389,11 @@ module Ladb::OpenCutList
 
   class EdgeWrapper < Wrapper
 
-    attr_reader :material_name, :std_thickness, :std_width
+    attr_reader :material_name, :material_color, :std_thickness, :std_width
 
-    def initialize(material_name, std_thickness, std_width)
+    def initialize(material_name, material_color, std_thickness, std_width)
       @material_name = StringWrapper.new(material_name)
+      @material_color = ColorWrapper.new(material_color)
       @std_thickness = LengthWrapper.new(std_thickness)
       @std_width = LengthWrapper.new(std_width)
     end
@@ -402,10 +417,11 @@ module Ladb::OpenCutList
 
   class VeneerWrapper < Wrapper
 
-    attr_reader :material_name, :std_thickness
+    attr_reader :material_name, :material_color, :std_thickness
 
-    def initialize(material_name, std_thickness)
+    def initialize(material_name, material_color, std_thickness)
       @material_name = StringWrapper.new(material_name)
+      @material_color = ColorWrapper.new(material_color)
       @std_thickness = LengthWrapper.new(std_thickness)
     end
 
