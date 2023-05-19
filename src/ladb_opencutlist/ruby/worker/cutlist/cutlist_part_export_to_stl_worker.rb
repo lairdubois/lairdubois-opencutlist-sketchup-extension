@@ -49,6 +49,8 @@ module Ladb::OpenCutList
 
           return { :export_path => path }
         rescue => e
+          puts e.inspect
+          puts e.backtrace
           return { :errors => [ [ 'tab.cutlist.error.failed_export_stl_file', { :error => e.message } ] ] }
         end
       end
@@ -72,11 +74,11 @@ module Ladb::OpenCutList
 
     end
 
-    def _write_entities(file, entities, transformation, unit_converter)
+    def _write_entities(file, unit_converter, entities, transformation)
       entities.each do |entity|
         if entity.is_a?(Sketchup::Face)
 
-          mesh = entity.mesh(7)
+          mesh = entity.mesh(4) # PolygonMeshPoints | PolygonMeshNormals
           mesh.transform!(transformation)
           polygons = mesh.polygons
           polygons.each do |polygon|
