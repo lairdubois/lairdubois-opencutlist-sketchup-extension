@@ -35,9 +35,6 @@ module Ladb::OpenCutList
       path = UI.savepanel(Plugin.instance.get_i18n_string('tab.cutlist.export_to_stl.title'), @cutlist.dir, definition.name + '.stl')
       if path
 
-        # Save last dir
-        Plugin.instance.write_default(Plugin::SETTINGS_KEY_COMPONENTS_LAST_DIR, File.dirname(path))
-
         # Force "stl" file extension
         unless path.end_with?('.stl')
           path = path + '.stl'
