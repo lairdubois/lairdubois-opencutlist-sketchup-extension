@@ -45,7 +45,10 @@ module Ladb::OpenCutList
 
         begin
 
-          _write_definition(path, definition, instance_info.transformation)
+          scale = instance_info.scale
+          transformation = Geom::Transformation.scaling(scale.x * (part.flipped ? -1 : 1), scale.y, scale.z)
+
+          _write_definition(path, definition, transformation)
 
           return { :export_path => path }
         rescue => e
@@ -55,9 +58,7 @@ module Ladb::OpenCutList
         end
       end
 
-      {
-          :cancelled => true
-      }
+      { :cancelled => true }
     end
 
     # -----
