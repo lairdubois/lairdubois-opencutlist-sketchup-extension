@@ -48,6 +48,7 @@
             update_muted: options.update_muted,
             last_news_timestamp: options.last_news_timestamp,
             dialog_print_margin: options.dialog_print_margin,
+            dialog_table_size: options.dialog_table_size,
         };
 
         this.settings = {};
@@ -294,6 +295,16 @@
             return value;
         }
         return defaultValue;
+    };
+
+    // UI /////
+
+    LadbDialog.prototype.setCompact = function (compact) {
+        if (compact) {
+            $('body').addClass('ladb-table-compact');
+        } else {
+            $('body').removeClass('ladb-table-compact');
+        }
     };
 
     // Actions /////
@@ -1131,6 +1142,10 @@
                     }
 
                     that.bind();
+
+                    if (that.options.dialog_table_size) {
+                        that.setCompact(true);
+                    }
 
                     if (that.options.dialog_startup_tab_name) {
                         that.selectTab(that.options.dialog_startup_tab_name);

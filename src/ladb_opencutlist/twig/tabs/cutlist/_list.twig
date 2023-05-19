@@ -262,7 +262,7 @@
                 {% if group.material_display_name is not empty %}
                     {% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type, 'filled':group.material_type > 0, 'classes':'pull-left' } %}
                 {% endif %}
-                <div class="ladb-heading">{% include 'tabs/cutlist/_group-label.twig' with { 'hideAddBtn':false } %}{% if showGrain %}<span class="ladb-horizontal-left-separator" style="font-size: 80%; color: #555;"><i class="ladb-opencutlist-icon-grained-{{ group.material_grained ? '1' : '0' }}"></i> {{ ('tab.materials.edit_material.grained_'~(group.material_grained ? '1' : '0'))|i18next }}</span>{% endif %}</div>
+                <div class="ladb-heading">{% include 'tabs/cutlist/_group-label.twig' with { 'hideAddBtn':false } %}{% if showGrain %}<span class="ladb-horizontal-left-separator ladb-heading-info"><i class="ladb-opencutlist-icon-grained-{{ group.material_grained ? '1' : '0' }}"></i> {{ ('tab.materials.edit_material.grained_'~(group.material_grained ? '1' : '0'))|i18next }}</span>{% endif %}</div>
             </td>
         </tr>
         <tr class="table-column-heading">

@@ -56,6 +56,7 @@ module Ladb::OpenCutList
     SETTINGS_KEY_DIALOG_LEFT = 'settings.dialog_left'
     SETTINGS_KEY_DIALOG_TOP = 'settings.dialog_top'
     SETTINGS_KEY_DIALOG_PRINT_MARGIN = 'settings.dialog_print_margin'
+    SETTINGS_KEY_DIALOG_TABLE_SIZE = 'settings.dialog_table_size'
     SETTINGS_KEY_COMPONENTS_LAST_DIR = 'settings.components_last_dir'
     SETTINGS_KEY_MATERIALS_LAST_DIR = 'settings.materials_last_dir'
 
@@ -66,6 +67,7 @@ module Ladb::OpenCutList
     DIALOG_DEFAULT_LEFT = 60
     DIALOG_DEFAULT_TOP = 100
     DIALOG_DEFAULT_PRINT_MARGIN = 0   # 0 = Normal, 1 = Small
+    DIALOG_DEFAULT_TABLE_SIZE = 0   # 0 = Normal, 1 = Compact
     DIALOG_PREF_KEY = 'fr.lairdubois.opencutlist'
 
     DOCS_URL = 'https://www.lairdubois.fr/opencutlist/docs'
@@ -102,6 +104,7 @@ module Ladb::OpenCutList
       @dialog_left = read_default(SETTINGS_KEY_DIALOG_LEFT, DIALOG_DEFAULT_LEFT)
       @dialog_top = read_default(SETTINGS_KEY_DIALOG_TOP, DIALOG_DEFAULT_TOP)
       @dialog_print_margin = read_default(SETTINGS_KEY_DIALOG_PRINT_MARGIN, DIALOG_DEFAULT_PRINT_MARGIN)
+      @dialog_table_size = read_default(SETTINGS_KEY_DIALOG_TABLE_SIZE, DIALOG_DEFAULT_TABLE_SIZE)
 
     end
 
@@ -1124,6 +1127,13 @@ module Ladb::OpenCutList
       end
     end
 
+    def dialog_set_table_size(table_size, persist = false)
+      @dialog_table_size = table_size
+      if persist
+        write_default(SETTINGS_KEY_DIALOG_TABLE_SIZE, table_size)
+      end
+    end
+
     def execute_dialog_command_on_tab(tab_name, command, parameters = nil, callback = nil)
 
       show_dialog(nil, true) do
@@ -1386,6 +1396,7 @@ module Ladb::OpenCutList
           :update_muted => @update_muted,
           :last_news_timestamp => @last_news_timestamp,
           :dialog_print_margin => @dialog_print_margin,
+          :dialog_table_size => @dialog_table_size,
           :dialog_startup_tab_name => @dialog_startup_tab_name  # nil if none
       }
     end

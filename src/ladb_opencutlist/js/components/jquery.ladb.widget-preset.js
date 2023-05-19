@@ -32,7 +32,7 @@
                 name: name
             }, function () {
                 if (!noNotification) {
-                    that.dialog.notify(i18next.t('core.preset.delete_success', { name: name }), 'success');
+                    that.dialog.notifySuccess(i18next.t('core.preset.delete_success', { name: name }));
                 }
                 that.refresh();
             });
@@ -58,11 +58,11 @@
                 if (isNew) {
                     that.refresh();
                     if (!noNotification) {
-                        that.dialog.notify(i18next.t('core.preset.new_success', { name: name }), 'success');
+                        that.dialog.notifySuccess(i18next.t('core.preset.new_success', { name: name }));
                     }
                 } else {
                     if (!noNotification) {
-                        that.dialog.notify(i18next.t('core.preset.override_success', {name: name ? name : i18next.t('core.preset.user_defaults')}), 'success');
+                        that.dialog.notifySuccess(i18next.t('core.preset.override_success', {name: name ? name : i18next.t('core.preset.user_defaults')}));
                     }
                 }
             });
@@ -87,7 +87,7 @@
         }, function (response) {
             that.options.fnFillInputs(response.preset);
             if (!noNotification) {
-                that.dialog.notify(i18next.t('core.preset.restore_success', { name: name ? name : i18next.t('core.preset.user_defaults') }), 'success');
+                that.dialog.notifySuccess(i18next.t('core.preset.restore_success', { name: name ? name : i18next.t('core.preset.user_defaults') }));
             }
         });
     };
@@ -115,7 +115,7 @@
                     section: that.options.section,
                 }, function (response) {
                     that.options.fnFillInputs(response.defaults);
-                    that.dialog.notify(i18next.t('core.preset.restore_success', {name: name ? name : i18next.t('core.preset.app_defaults')}), 'success');
+                    that.dialog.notifySuccess(i18next.t('core.preset.restore_success', {name: name ? name : i18next.t('core.preset.app_defaults')}));
                 });
             });
             $('.ladb-widget-preset-btn-restore-user-defaults', that.$dropdown).on('click', function () {

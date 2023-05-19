@@ -91,6 +91,11 @@
         color: #fff;
       }
 
+      .ladb-heading-info {
+        font-size: 75%;
+        color: #555;
+      }
+
     }
 
     td {
@@ -606,14 +611,18 @@
           line-height: 20px !important;
           background-color: #000;
           padding: 1px 6px;
-          -webkit-print-color-adjust: exact !important;
-          print-color-adjust: exact !important;
+          .printable-background();
         }
 
       }
 
       .ladb-heading {
         line-height: 22px !important;
+
+        .ladb-heading-info {
+          color: #000;
+        }
+
       }
 
     }
