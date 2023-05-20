@@ -38,6 +38,11 @@ module Ladb::OpenCutList
       super(true, false)
 
       # Create cursors
+      @cursor_export_skp = create_cursor('export-skp', 0, 0)
+      @cursor_export_stl = create_cursor('export-stl', 0, 0)
+      @cursor_export_obj = create_cursor('export-obj', 0, 0)
+      @cursor_export_dxf = create_cursor('export-dxf', 0, 0)
+      @cursor_export_svg = create_cursor('export-svg', 0, 0)
 
     end
 
@@ -64,6 +69,18 @@ module Ladb::OpenCutList
 
     def get_action_cursor(action, modifier)
 
+      case modifier
+      when ACTION_MODIFIER_SKP
+        return @cursor_export_skp
+      when ACTION_MODIFIER_STL
+        return @cursor_export_stl
+      when ACTION_MODIFIER_OBJ
+        return @cursor_export_obj
+      when ACTION_MODIFIER_DXF
+        return @cursor_export_dxf
+      when ACTION_MODIFIER_SVG
+        return @cursor_export_svg
+      end
 
       super
     end
@@ -318,14 +335,14 @@ module Ladb::OpenCutList
               else
                 _reset_active_part
                 notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_part')}", MESSAGE_TYPE_ERROR)
-                push_cursor(@cursor_paint_error_id)
+                push_cursor(@cursor_select_error)
               end
               return
 
             else
               _reset_active_part
               notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_part')}", MESSAGE_TYPE_ERROR)
-              push_cursor(@cursor_paint_error_id)
+              push_cursor(@cursor_select_error)
               return
             end
 

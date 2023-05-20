@@ -40,7 +40,7 @@ module Ladb::OpenCutList
       @action_stack = []
 
       # Create cursors
-      @cursor_select_error = create_cursor('select-error', 4, 4)
+      @cursor_select_error = create_cursor('select-error', 0, 0)
 
     end
 

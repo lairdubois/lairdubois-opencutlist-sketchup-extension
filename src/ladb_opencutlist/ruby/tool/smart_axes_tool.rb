@@ -59,7 +59,6 @@ module Ladb::OpenCutList
       @cursor_swap_front_back = create_cursor('swap-front-back', 0, 0)
       @cursor_adapt_axes = create_cursor('adapt-axes', 0, 0)
       @cursor_flip = create_cursor('flip', 0, 0)
-      @cursor_select_error = create_cursor('select-error', 0, 0)
 
     end
 
