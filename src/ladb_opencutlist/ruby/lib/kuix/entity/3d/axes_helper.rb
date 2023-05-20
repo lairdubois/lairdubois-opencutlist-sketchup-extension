@@ -2,6 +2,8 @@ module Ladb::OpenCutList::Kuix
 
   class AxesHelper < Group
 
+    attr_accessor :line_x, :line_y, :line_z
+
     def initialize(pixel_size = 40, line_width = 5, x_color = KuixTool::COLOR_RED, y_color = KuixTool::COLOR_GREEN, z_color = KuixTool::COLOR_BLUE, id = '')
       super(id)
 

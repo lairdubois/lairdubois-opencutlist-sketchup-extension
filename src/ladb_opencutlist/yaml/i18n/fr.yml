@@ -80,12 +80,14 @@ core:
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
+      smart_export: $t(core.toolbar.command.smart_export)
   toolbar:
     name: OpenCutList
     command:
       dialog: OpenCutList
       smart_paint: Colorier des pièces
       smart_axes: Orienter des pièces
+      smart_export: Exporter des pièces
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
@@ -1410,3 +1412,11 @@ tool:
     error:
       not_part: L'objet ciblé n'est pas une pièce
       not_orientable: Le type de cette pièce ne permet pas de l'orienter
+  smart_export:
+    title: Exporter
+    action_0: Exporter une pièce
+    action_0_status: Cliquez sur une pièce ...
+    action_1: Exporter une face
+    action_1_status: Cliquez sur une face
+    error:
+      not_part: L'objet ciblé n'est pas une pièce

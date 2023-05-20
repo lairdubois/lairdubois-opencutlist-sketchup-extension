@@ -60,10 +60,6 @@ module Ladb::OpenCutList
         part_update_command(settings)
       end
 
-      Plugin.instance.register_command("cutlist_part_export_to_skp") do |settings|
-        part_export_to_skp_command(settings)
-      end
-
       Plugin.instance.register_command("cutlist_part_export_to_3d") do |settings|
         part_export_to_3d_command(settings)
       end
@@ -214,16 +210,6 @@ module Ladb::OpenCutList
 
       # Setup worker
       worker = CutlistPartUpdateWorker.new(settings, @cutlist)
-
-      # Run !
-      worker.run
-    end
-
-    def part_export_to_skp_command(settings)
-      require_relative '../worker/cutlist/cutlist_part_export_to_skp_worker'
-
-      # Setup worker
-      worker = CutlistPartExportToSkpWorker.new(settings)
 
       # Run !
       worker.run

@@ -21,6 +21,7 @@ module Ladb::OpenCutList
   require_relative 'utils/path_utils'
   require_relative 'tool/smart_paint_tool'
   require_relative 'tool/smart_axes_tool'
+  require_relative 'tool/smart_export_tool'
 
   class Plugin
     
@@ -797,6 +798,9 @@ module Ladb::OpenCutList
       submenu.add_item(get_i18n_string('core.menu.item.smart_axes')) {
         Sketchup.active_model.select_tool(SmartAxesTool.new)
       }
+      submenu.add_item(get_i18n_string('core.menu.item.smart_export')) {
+        Sketchup.active_model.select_tool(SmartExportTool.new)
+      }
 
       # Setup Context Menu
       UI.add_context_menu_handler do |context_menu|
@@ -848,6 +852,16 @@ module Ladb::OpenCutList
       cmd.tooltip = get_i18n_string('core.toolbar.command.smart_axes')
       cmd.status_bar_text = get_i18n_string('core.toolbar.command.smart_axes')
       cmd.menu_text = get_i18n_string('core.toolbar.command.smart_axes')
+      toolbar = toolbar.add_item(cmd)
+
+      cmd = UI::Command.new(get_i18n_string('core.toolbar.command.smart_export')) {
+        Sketchup.active_model.select_tool(SmartExportTool.new)
+      }
+      cmd.small_icon = '../img/icon-smart-export-72x72.png'
+      cmd.large_icon = '../img/icon-smart-export-114x114.png'
+      cmd.tooltip = get_i18n_string('core.toolbar.command.smart_export')
+      cmd.status_bar_text = get_i18n_string('core.toolbar.command.smart_export')
+      cmd.menu_text = get_i18n_string('core.toolbar.command.smart_export')
       toolbar = toolbar.add_item(cmd)
 
       toolbar.restore

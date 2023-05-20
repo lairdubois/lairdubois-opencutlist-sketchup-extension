@@ -673,6 +673,20 @@ module Ladb::OpenCutList
 
     protected
 
+    def _refresh_active_face(highlighted = false)
+      _set_active_face(@input_face_path, @input_face, highlighted)
+    end
+
+    def _reset_active_face
+      _set_active_face(nil, nil)
+    end
+
+    def _set_active_face(face_path, face, highlighted = false)
+
+      _reset_ui
+
+    end
+
     def _refresh_active_part(highlighted = false)
       _set_active_part(@active_part_entity_path, _generate_part_from_path(@active_part_entity_path), highlighted)
     end
