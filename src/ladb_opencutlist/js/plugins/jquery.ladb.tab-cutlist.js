@@ -2222,6 +2222,8 @@
             var $btnHighlight = $('#ladb_cutlist_part_highlight', $modal);
             var $btnExportToSkp = $('#ladb_cutlist_part_export_to_skp', $modal);
             var $btnExportToStl = $('#ladb_cutlist_part_export_to_stl', $modal);
+            var $btnExportToObj = $('#ladb_cutlist_part_export_to_obj', $modal);
+            var $btnExportToDxf = $('#ladb_cutlist_part_export_to_dxf', $modal);
             var $btnUpdate = $('#ladb_cutlist_part_update', $modal);
 
             var thumbnailLoaded = false;
@@ -2669,51 +2671,19 @@
             });
             $btnExportToSkp.on('click', function () {
                 this.blur();
-                rubyCallCommand('cutlist_part_export_to_skp', {
-                    definition_id: part.definition_id
-                }, function (response) {
-
-                    if (response.errors) {
-                        that.dialog.notifyErrors(response.errors);
-                    }
-                    if (response.export_path) {
-                        that.dialog.notifySuccess(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }), [
-                            Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
-
-                                rubyCallCommand('core_open_external_file', {
-                                    path: response.export_path
-                                });
-
-                            })
-                        ]);
-                    }
-
-                });
-                return false;
+                that.exportPartTo3d(part.id, 'skp');
             });
             $btnExportToStl.on('click', function () {
                 this.blur();
-                rubyCallCommand('cutlist_part_export_to_stl', {
-                    part_id: part.id
-                }, function (response) {
-
-                    if (response.errors) {
-                        that.dialog.notifyErrors(response.errors);
-                    }
-                    if (response.export_path) {
-                        that.dialog.notifySuccess(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }), [
-                            Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
-
-                                rubyCallCommand('core_open_external_file', {
-                                    path: response.export_path
-                                });
-
-                            })
-                        ]);
-                    }
-
-                });
-                return false;
+                that.exportPartTo3d(part.id, 'stl');
+            });
+            $btnExportToObj.on('click', function () {
+                this.blur();
+                that.exportPartTo3d(part.id, 'obj');
+            });
+            $btnExportToDxf.on('click', function () {
+                this.blur();
+                that.exportPartTo3d(part.id, 'dxf');
             });
             $btnUpdate.on('click', function () {
 
@@ -2875,6 +2845,33 @@
 
         }
     };
+
+    LadbTabCutlist.prototype.exportPartTo3d = function (id, fileFormat) {
+        var that = this;
+
+        rubyCallCommand('cutlist_part_export_to_3d', {
+            part_id: id,
+            file_format: fileFormat
+        }, function (response) {
+
+            if (response.errors) {
+                that.dialog.notifyErrors(response.errors);
+            }
+            if (response.export_path) {
+                that.dialog.notifySuccess(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }), [
+                    Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
+
+                        rubyCallCommand('core_open_external_file', {
+                            path: response.export_path
+                        });
+
+                    })
+                ]);
+            }
+
+        });
+
+    }
 
     LadbTabCutlist.prototype.toggleFoldingRow = function ($row, dataKey) {
         var $btn = $('.ladb-btn-folding-toggle-row', $row);

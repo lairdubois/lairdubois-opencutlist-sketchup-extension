@@ -418,8 +418,8 @@ tab:
       loading_preview: Chargement de l'aperçu
     export_to_skp:
       title: Exporter vers un fichier .skp
-    export_to_stl:
-      title: Exporter vers un fichier .stl
+    export_to_3d:
+      title: Exporter vers un fichier .{{ file_format}}
     option:
       auto_orient: Orientation automatique des pièces
       auto_orient_help: |
@@ -948,7 +948,7 @@ tab:
       no_component_in_model: Aucune instance de composant visible n'a été détectée sur votre scène.
       failed_to_write_export_file: "Echec de l'écriture du fichier d'export. **{{ error }}**"
       failed_export_skp_file: "Une erreur s'est produite lors de l'exportation du fichier .skp. **{{ error }}**"
-      failed_export_stl_file: "Une erreur s'est produite lors de l'exportation du fichier .stl. **{{ error }}**"
+      failed_export_to_3d_file: "Une erreur s'est produite lors de l'exportation du fichier .{{ file_format }}. **{{ error }}**"
       unknow_part: La pièce sélectionnée n'existe pas dans la fiche de débit.
       obsolete_cutlist: "Impossible, la fiche de débit générée est obsolète. Re-générez là."
     warning:
