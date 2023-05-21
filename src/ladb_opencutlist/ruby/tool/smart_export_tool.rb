@@ -317,7 +317,7 @@ module Ladb::OpenCutList
 
           # Axes helper
           axes_helper = Kuix::AxesHelper.new
-          axes_helper.line_z.visible = false
+          axes_helper.box_z.visible = false
           axes_helper.transformation = t * to
           face_helper.append(axes_helper)
 

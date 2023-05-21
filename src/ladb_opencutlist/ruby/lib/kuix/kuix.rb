@@ -70,6 +70,7 @@ module Ladb::OpenCutList
       COLOR_GREEN = Sketchup::Color.new(0, 255, 0).freeze
       COLOR_BLUE = Sketchup::Color.new(0, 0, 255).freeze
       COLOR_MAGENTA = Sketchup::Color.new(255, 0, 255).freeze
+      COLOR_YELLOW = Sketchup::Color.new(255, 255, 0).freeze
       COLOR_LIGHT_GREY = Sketchup::Color.new(220, 220, 220).freeze
       COLOR_MEDIUM_GREY = Sketchup::Color.new(170, 170, 170).freeze
       COLOR_DARK_GREY = Sketchup::Color.new(120, 120, 120).freeze

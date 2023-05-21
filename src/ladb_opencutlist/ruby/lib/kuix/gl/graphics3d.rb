@@ -34,6 +34,11 @@ module Ladb::OpenCutList::Kuix
       @view.draw(GL_TRIANGLES, points)
     end
 
+    def draw_quads(points, background_color = nil)
+      set_drawing_color(background_color) if background_color
+      @view.draw(GL_QUADS, points)
+    end
+
   end
 
 end

@@ -9,7 +9,7 @@ module Ladb::OpenCutList::Kuix
     def initialize(patterns = [], id = nil)
       super(id)
 
-      @patterns = patterns  # Normalized Array<Array<Kuix::Point2d>>
+      @patterns = patterns  # Normalized Array<Array<Kuix::Point3d>>
       @patterns_transformation = Geom::Transformation.new
 
       @color = nil
@@ -146,6 +146,27 @@ module Ladb::OpenCutList::Kuix
                 [ 1, 1, 1 ],
               ],
             ], id)
+    end
+
+  end
+
+  class BoxFillMotif < Motif3d
+
+    def initialize(id = nil)
+      super([[
+              [ 0, 0, 0 ], [ 1, 0, 0 ], [ 1, 1, 0 ], [ 0, 1, 0 ],
+              [ 0, 0, 1 ], [ 1, 0, 1 ], [ 1, 1, 1 ], [ 0, 1, 1 ],
+              [ 0, 0, 0 ], [ 1, 0, 0 ], [ 1, 0, 1 ], [ 0, 0, 1 ],
+              [ 0, 1, 0 ], [ 1, 1, 0 ], [ 1, 1, 1 ], [ 0, 1, 1 ],
+              [ 0, 0, 0 ], [ 0, 1, 0 ], [ 0, 1, 1 ], [ 0, 0, 1 ],
+              [ 1, 0, 0 ], [ 1, 1, 0 ], [ 1, 1, 1 ], [ 1, 0, 1 ]
+             ]], id)
+    end
+
+    # -- RENDER --
+
+    def paint_content(graphics)
+      @paths.each { |points| graphics.draw_quads(points, @color) }
     end
 
   end
