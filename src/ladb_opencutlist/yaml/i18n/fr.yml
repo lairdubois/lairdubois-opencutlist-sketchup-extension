@@ -1262,7 +1262,7 @@ tab:
     print_margin: Marges d'impression
     print_margin_normal: Normales
     print_margin_small: Petites
-    table_size: Taille de tableau
+    table_size: Taille des lignes de tableau
     table_size_normal: Normale
     table_size_compact: Compacte
     size_and_position: Taille et position de la fenêtre
