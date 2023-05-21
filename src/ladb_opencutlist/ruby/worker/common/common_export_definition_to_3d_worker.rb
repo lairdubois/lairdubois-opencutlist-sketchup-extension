@@ -71,7 +71,8 @@ module Ladb::OpenCutList
       when FILE_FORMAT_OBJ
         file.puts("g #{definition.name}")
       when FILE_FORMAT_DXF
-        file.puts(%w[0 SECTION 2 ENTITIES].join("\n"))
+        _dxf(file, 0, 'SECTION')
+        _dxf(file, 2, 'ENTITIES')
       end
 
       # Write faces
@@ -82,7 +83,8 @@ module Ladb::OpenCutList
       when FILE_FORMAT_STL
         file.puts("endsolid #{definition.name}")
       when FILE_FORMAT_DXF
-        file.puts(%w[0 ENDSEC 0 EOF].join("\n"))
+        _dxf(file, 0, 'ENDSEC')
+        _dxf(file, 0, 'EOF')
       end
 
       # Close output file
@@ -134,32 +136,49 @@ module Ladb::OpenCutList
 
           when FILE_FORMAT_DXF
 
+            # Export face to POLYFACE
+
             mesh = entity.mesh(0) # PolygonMeshPoints
             mesh.transform!(transformation)
             polygons = mesh.polygons
-            polygons.each do |polygon|
-              if polygon.length > 2
-                flags = 0
-                file.puts(%w[0 3DFACE 8 0].join("\n"))
-                for j in 0..polygon.length do
-                  if j == polygon.length
-                    count = polygon.length - 1
-                  else
-                    count = j
-                  end
-                  # Retrieve edge visibility
-                  if polygon[count] < 0
-                    flags += 2**j
-                  end
-                  point = mesh.point_at(polygon[count].abs)
-                  file.puts("#{(10+j)}\n#{_convert(point.x, unit_converter)}")
-                  file.puts("#{(20+j)}\n#{_convert(point.y, unit_converter)}")
-                  file.puts("#{(30+j)}\n#{_convert(point.z, unit_converter)}")
-                end
-                # Set edge visibiliy flags
-                file.puts("70\n#{flags}")
-              end
+            points = mesh.points
+
+            _dxf(file, 0, 'POLYLINE')
+            _dxf(file, 8, 0) # Layer
+            _dxf(file, 66, 1)
+            _dxf(file, 10, 0.0)
+            _dxf(file, 20, 0.0)
+            _dxf(file, 30, 0.0)
+            _dxf(file, 70, 64) # 64 = The polyline is a polyface mesh
+            _dxf(file, 71, points.length) # Polygon mesh M vertex count
+            _dxf(file, 72, 1) # Polygon mesh N vertex count
+
+            points.each do |point|
+
+              _dxf(file, 0, 'VERTEX')
+              _dxf(file, 8, 0) # Layer
+              _dxf(file, 10, _convert(point.x, unit_converter))
+              _dxf(file, 20, _convert(point.y, unit_converter))
+              _dxf(file, 30, _convert(point.z, unit_converter))
+              _dxf(file, 70, 64 ^ 128) # 64 = 3D polygon mesh, 128 = Polyface mesh vertex
+
             end
+
+            polygons.each do |polygon|
+
+              _dxf(file, 0, 'VERTEX')
+              _dxf(file, 8, 0) # Layer
+              _dxf(file, 10, 0.0)
+              _dxf(file, 20, 0.0)
+              _dxf(file, 30, 0.0)
+              _dxf(file, 70, 128) # 128 = Polyface mesh vertex
+              _dxf(file, 71, polygon[0]) # 71 = Polyface mesh vertex index
+              _dxf(file, 72, polygon[1]) # 72 = Polyface mesh vertex index
+              _dxf(file, 73, polygon[2]) # 73 = Polyface mesh vertex index
+
+            end
+
+            _dxf(file, 0, 'SEQEND')
 
           end
 
@@ -173,6 +192,11 @@ module Ladb::OpenCutList
 
     def _convert(value, unit_converter, precision = 6)
       (value.to_f * unit_converter).round(precision)
+    end
+
+    def _dxf(file, code, value)
+      file.puts(code.to_s)
+      file.puts(value.to_s)
     end
 
   end

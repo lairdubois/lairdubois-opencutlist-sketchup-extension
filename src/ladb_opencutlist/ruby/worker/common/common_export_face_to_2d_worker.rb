@@ -66,27 +66,35 @@ module Ladb::OpenCutList
       case @file_format
       when FILE_FORMAT_DXF
 
-        file.puts(%w[0 SECTION 2 ENTITIES].join("\n"))
+        _dxf(file, 0, 'SECTION')
+        _dxf(file, 2, 'ENTITIES')
 
         face.loops.each do |loop|
 
-          file.puts(%w[0 POLYLINE 8 0 66 1].join("\n"))
-          file.puts(%w[70 1 10 0.0 20 0.0 30 0.0].join("\n"))
+          _dxf(file, 0, 'POLYLINE')
+          _dxf(file, 8, 0)
+          _dxf(file, 66, 1)
+          _dxf(file, 70, 1) # 1 = This is a closed polyline (or a polygon mesh closed in the M direction)
+          _dxf(file, 10, 0.0)
+          _dxf(file, 20, 0.0)
+          _dxf(file, 30, 0.0)
 
           loop.vertices.each do |vertex|
             point = vertex.position.transform(transformation)
-            file.puts(%w[0 VERTEX 8 0].join("\n"))
-            file.puts("10\n#{_convert(point.x, unit_converter)}")
-            file.puts("20\n#{_convert(point.y, unit_converter)}")
-            file.puts("30\n0.0")
-            file.puts("70\n32")
+            _dxf(file, 0, 'VERTEX')
+            _dxf(file, 8, 0)
+            _dxf(file, 10, _convert(point.x, unit_converter))
+            _dxf(file, 20, _convert(point.y, unit_converter))
+            _dxf(file, 30, 0.0)
+            _dxf(file, 70, 32) # 32 = 3D polyline vertex
           end
 
-          file.puts(%w[0 SEQEND].join("\n"))
+          _dxf(file, 0, 'SEQEND')
 
         end
 
-        file.puts(%w[0 ENDSEC 0 EOF].join("\n"))
+        _dxf(file, 0, 'ENDSEC')
+        _dxf(file, 0, 'EOF')
 
       when FILE_FORMAT_SVG
 
@@ -128,6 +136,11 @@ module Ladb::OpenCutList
 
     def _convert(value, unit_converter, precision = 6)
       (value.to_f * unit_converter).round(precision)
+    end
+
+    def _dxf(file, code, value)
+      file.puts(code.to_s)
+      file.puts(value.to_s)
     end
 
   end
