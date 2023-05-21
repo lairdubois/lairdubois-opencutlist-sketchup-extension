@@ -250,12 +250,19 @@ module Ladb::OpenCutList
         active_instance = @active_part_entity_path.last
         transformation = PathUtils::get_transformation(@active_part_entity_path)
 
-        # Highlight active part
-        mesh = Kuix::Mesh.new
-        mesh.add_triangles(_compute_children_faces_triangles(active_instance.definition.entities))
-        mesh.background_color = highlighted ? COLOR_MESH_HIGHLIGHTED : COLOR_MESH
-        mesh.transformation = transformation
-        @space.append(mesh)
+        part_helper = Kuix::Group.new
+        part_helper.transformation = transformation
+        @space.append(part_helper)
+
+          # Highlight active part
+          mesh = Kuix::Mesh.new
+          mesh.add_triangles(_compute_children_faces_triangles(active_instance.definition.entities))
+          mesh.background_color = highlighted ? COLOR_MESH_HIGHLIGHTED : COLOR_MESH
+          part_helper.append(mesh)
+
+          # Axes helper
+          axes_helper = Kuix::AxesHelper.new
+          part_helper.append(axes_helper)
 
       end
 
