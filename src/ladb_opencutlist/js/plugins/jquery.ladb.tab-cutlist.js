@@ -2849,7 +2849,7 @@
     LadbTabCutlist.prototype.exportPartTo3d = function (id, fileFormat) {
         var that = this;
 
-        rubyCallCommand('cutlist_part_export_to_3d', {
+        rubyCallCommand('cutlist_part_export_to_file', {
             part_id: id,
             file_format: fileFormat
         }, function (response) {

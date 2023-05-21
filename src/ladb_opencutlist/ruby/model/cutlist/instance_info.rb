@@ -27,6 +27,11 @@ module Ladb::OpenCutList
 
     # -----
 
+    def definition
+      return @definition if @definition
+      @definition = entity.definition if entity.is_a?(Sketchup::ComponentInstance)
+    end
+
     def entity
       @path.last
     end
@@ -36,46 +41,34 @@ module Ladb::OpenCutList
     end
 
     def serialized_path
-      if @serialized_path
-        return @serialized_path
-      end
+      return @serialized_path if @serialized_path
       @serialized_path = PathUtils.serialize_path(@path)
     end
 
     def named_path
-      if @named_path
-        return @named_path
-      end
+      return @named_path if @named_path
       @named_path = PathUtils.get_named_path(@path).join('.')
     end
 
     def transformation
-      if @transformation
-        return @transformation
-      end
+      return @transformation if @transformation
       @transformation = PathUtils.get_transformation(@path)
     end
 
     def scale
-      if @scale
-        return @scale
-      end
+      return @scale if @scale
       @scale = Scale3d.create_from_transformation(transformation)
     end
 
     def flipped
-      if @flipped
-        return @flipped
-      end
+      return @flipped if @flipped
       @flipped = TransformationUtils::flipped?(transformation)
     end
 
     # -----
 
     def size
-      if @size
-        return @size
-      end
+      return @size if @size
       Size3d.new
     end
 

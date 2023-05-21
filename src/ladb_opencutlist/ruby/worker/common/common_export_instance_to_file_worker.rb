@@ -1,6 +1,8 @@
 module Ladb::OpenCutList
 
-  class CommonExportDefinitionTo3dWorker
+  require_relative '../../model/cutlist/instance_info'
+
+  class CommonExportInstanceToFileWorker
 
     FILE_FORMAT_SKP = 'skp'.freeze
     FILE_FORMAT_STL = 'stl'.freeze
@@ -9,10 +11,10 @@ module Ladb::OpenCutList
 
     SUPPORTED_FILE_FORMATS = [ FILE_FORMAT_SKP, FILE_FORMAT_STL, FILE_FORMAT_OBJ, FILE_FORMAT_DXF ]
 
-    def initialize(definition, transformation, file_format)
+    def initialize(instance_info, options, file_format)
 
-      @definition = definition
-      @transformation = transformation
+      @instance_info = instance_info
+      @options = options
       @file_format = file_format
 
     end
@@ -21,10 +23,10 @@ module Ladb::OpenCutList
 
     def run
       return { :errors => [ 'default.error' ] } unless SUPPORTED_FILE_FORMATS.include?(@file_format)
-      return { :errors => [ 'default.error' ] } unless @definition
+      return { :errors => [ 'default.error' ] } unless @instance_info.is_a?(InstanceInfo)
 
       # Open save panel
-      path = UI.savepanel(Plugin.instance.get_i18n_string('tab.cutlist.export_to_3d.title', { :file_format => @file_format }), '', "#{@definition.name}.#{@file_format}")
+      path = UI.savepanel(Plugin.instance.get_i18n_string('tab.cutlist.export_to_3d.title', { :file_format => @file_format }), '', "#{@instance_info.definition.name}.#{@file_format}")
       if path
 
         # Force "file_format" file extension
@@ -34,7 +36,7 @@ module Ladb::OpenCutList
 
         begin
 
-          success = _write_definition(path, @definition, @transformation, DimensionUtils.instance.length_to_model_unit_float(1.0.to_l)) && File.exist?(path)
+          success = _write_instance(path, @instance_info, DimensionUtils.instance.length_to_model_unit_float(1.0.to_l)) && File.exist?(path)
 
           return { :errors => [ [ 'tab.cutlist.error.failed_export_to_3d_file', { :file_format => @file_format, :error => e.message } ] ] } unless success
           return { :export_path => path }
@@ -52,7 +54,10 @@ module Ladb::OpenCutList
 
     private
 
-    def _write_definition(path, definition, transformation, unit_converter)
+    def _write_instance(path, instance_info, unit_converter)
+
+      definition = instance_info.definition
+      transformation = instance_info.transformation
 
       if @file_format == FILE_FORMAT_SKP
 

@@ -683,6 +683,9 @@ module Ladb::OpenCutList
 
     def _set_active_face(face_path, face, highlighted = false)
 
+      @active_face_path = face_path
+      @active_face = face
+
       _reset_ui
 
     end

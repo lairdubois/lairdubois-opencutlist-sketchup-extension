@@ -2,7 +2,7 @@ module Ladb::OpenCutList
 
   require_relative '../../helper/face_triangles_helper'
 
-  class CommonExportFaceTo2dWorker
+  class CommonExportFacesToFileWorker
 
     include FaceTrianglesHelper
 
@@ -11,10 +11,10 @@ module Ladb::OpenCutList
 
     SUPPORTED_FILE_FORMATS = [ FILE_FORMAT_DXF, FILE_FORMAT_SVG ]
 
-    def initialize(face, transformation, file_format, file_name = 'FACE')
+    def initialize(face_infos, options, file_format, file_name = 'FACE')
 
-      @face = face
-      @transformation = transformation
+      @face_infos = face_infos
+      @options = options
       @file_format = file_format
       @file_name = file_name
 
@@ -24,7 +24,7 @@ module Ladb::OpenCutList
 
     def run
       return { :errors => [ 'default.error' ] } unless SUPPORTED_FILE_FORMATS.include?(@file_format)
-      return { :errors => [ 'default.error' ] } unless @face
+      return { :errors => [ 'default.error' ] } unless @face_infos.is_a?(Array)
 
       # Open save panel
       path = UI.savepanel(Plugin.instance.get_i18n_string('tab.cutlist.export_to_3d.title', { :file_format => @file_format }), '', "#{@file_name}.#{@file_format}")
@@ -39,7 +39,7 @@ module Ladb::OpenCutList
 
           unit_converter = DimensionUtils.instance.length_to_model_unit_float(1.0.to_l)
 
-          success = _write_face(path, @face, @transformation,unit_converter ) && File.exist?(path)
+          success = _write_faces(path, @face_infos, unit_converter ) && File.exist?(path)
 
           return { :errors => [ [ 'tab.cutlist.error.failed_export_to_3d_file', { :file_format => @file_format, :error => e.message } ] ] } unless success
           return { :export_path => path }
@@ -57,7 +57,7 @@ module Ladb::OpenCutList
 
     private
 
-    def _write_face(path, face, transformation, unit_converter)
+    def _write_faces(path, face_infos, unit_converter)
 
       # Open output file
       file = File.new(path , 'w')
@@ -69,7 +69,12 @@ module Ladb::OpenCutList
         _dxf(file, 0, 'SECTION')
         _dxf(file, 2, 'ENTITIES')
 
-        face.loops.each do |loop|
+        face_infos.each do |face_info|
+
+          face = face_info.face
+          transformation = face_info.transformation
+
+          face.loops.each do |loop|
 
           _dxf(file, 0, 'POLYLINE')
           _dxf(file, 8, 0)
@@ -91,6 +96,8 @@ module Ladb::OpenCutList
 
           _dxf(file, 0, 'SEQEND')
 
+          end
+
         end
 
         _dxf(file, 0, 'ENDSEC')
@@ -98,7 +105,11 @@ module Ladb::OpenCutList
 
       when FILE_FORMAT_SVG
 
-        bounds = Geom::BoundingBox.new.add(_compute_children_faces_triangles([ face ], transformation))
+        bounds = Geom::BoundingBox.new
+        face_infos.each do |face_info|
+          bounds.add(_compute_children_faces_triangles([ face_info.face ], face_info.transformation))
+        end
+
         width = _convert(bounds.width, unit_converter)
         height = _convert(bounds.height, unit_converter)
         unit_sign = DimensionUtils.instance.unit_sign
@@ -107,21 +118,28 @@ module Ladb::OpenCutList
         file.puts('<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">')
         file.puts("<svg width=\"#{width}#{unit_sign}\" height=\"#{height}#{unit_sign}\" viewBox=\"0 -#{height} #{width} #{height}\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:shaper=\"http://www.shapertools.com/namespaces/shaper\">")
 
-        outside = []
-        pockets = []
-        face.loops.each do |loop|
-          coords = []
-          loop.vertices.each do |vertex|
-            point = vertex.position.transform(transformation)
-            coords << "#{_convert(point.x, unit_converter)},-#{_convert(point.y, unit_converter)}"
+        face_infos.each do |face_info|
+
+          face = face_info.face
+          transformation = face_info.transformation
+
+          outside = []
+          pockets = []
+          face.loops.each do |loop|
+            coords = []
+            loop.vertices.each do |vertex|
+              point = vertex.position.transform(transformation)
+              coords << "#{_convert(point.x, unit_converter)},-#{_convert(point.y, unit_converter)}"
+            end
+            data = "M#{coords.join('L')}Z"
+            outside << data
+            pockets << data unless loop.outer?
           end
-          data = "M#{coords.join('L')}Z"
-          outside << data
-          pockets << data unless loop.outer?
-        end
-        file.puts("<path d=\"#{outside.join}\" shaper:cutType=\"outside\" fill=\"#000000\" />")
-        pockets.each do |pocket|
-          file.puts("<path d=\"#{pocket}\" shaper:cutType=\"pocket\" fill=\"#7F7F7F\" />")
+          file.puts("<path d=\"#{outside.join}\" shaper:cutType=\"outside\" fill=\"#000000\" />")
+          pockets.each do |pocket|
+            file.puts("<path d=\"#{pocket}\" shaper:cutType=\"pocket\" fill=\"#7F7F7F\" />")
+          end
+
         end
 
         file.puts("</svg>")

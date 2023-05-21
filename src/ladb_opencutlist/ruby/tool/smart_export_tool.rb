@@ -3,8 +3,9 @@ module Ladb::OpenCutList
   require_relative 'smart_tool'
   require_relative '../helper/edge_segments_helper'
   require_relative '../helper/entities_helper'
-  require_relative '../worker/common/common_export_face_to_2d_worker'
-  require_relative '../worker/cutlist/cutlist_part_export_to_3d_worker'
+  require_relative '../model/cutlist/face_info'
+  require_relative '../worker/common/common_export_instance_to_file_worker'
+  require_relative '../worker/common/common_export_faces_to_file_worker'
 
   class SmartExportTool < SmartTool
 
@@ -21,8 +22,8 @@ module Ladb::OpenCutList
     ACTION_MODIFIER_SVG = 4
 
     ACTIONS = [
-      { :action => ACTION_EXPORT_PART, :modifiers => [ACTION_MODIFIER_SKP, ACTION_MODIFIER_STL, ACTION_MODIFIER_OBJ, ACTION_MODIFIER_DXF ] },
-      { :action => ACTION_EXPORT_FACE, :modifiers => [ACTION_MODIFIER_DXF, ACTION_MODIFIER_SVG ] },
+      { :action => ACTION_EXPORT_PART, :modifiers => [ ACTION_MODIFIER_SKP, ACTION_MODIFIER_STL, ACTION_MODIFIER_OBJ, ACTION_MODIFIER_DXF ] },
+      { :action => ACTION_EXPORT_FACE, :modifiers => [ ACTION_MODIFIER_DXF, ACTION_MODIFIER_SVG ] },
     ].freeze
 
     COLOR_MESH = Sketchup::Color.new(200, 200, 0, 100).freeze
@@ -275,15 +276,17 @@ module Ladb::OpenCutList
 
         transformation = PathUtils::get_transformation(face_path)
 
-        origin, x_axis, y_axis, z_axis, input_face, input_edge = _get_input_axes
+        origin, x_axis, y_axis, z_axis, @active_edge = _get_input_axes
 
         t = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
         ti = t.inverse
 
-        bounds = Geom::BoundingBox.new
-        bounds.add(_compute_children_faces_triangles([ input_face ], ti))
+        @active_face_bounds = Geom::BoundingBox.new
+        @active_face_bounds.add(_compute_children_faces_triangles([ @active_face ], ti))
 
-        to = Geom::Transformation.translation(bounds.min)
+        to = Geom::Transformation.translation(@active_face_bounds.min)
+
+        @active_face_transformation = t * to
 
         face_helper = Kuix::Group.new
         face_helper.transformation = transformation
@@ -291,21 +294,21 @@ module Ladb::OpenCutList
 
           # Highlight input edge
           segments = Kuix::Segments.new
-          segments.add_segments(_compute_children_edge_segments(input_face.edges, nil,[ input_edge ]))
+          segments.add_segments(_compute_children_edge_segments(@active_face.edges, nil,[ @active_edge ]))
           segments.color = COLOR_ACTION
           segments.line_width = 5
           face_helper.append(segments)
 
           # Highlight input face
           mesh = Kuix::Mesh.new
-          mesh.add_triangles(_compute_children_faces_triangles([ input_face ], nil))
+          mesh.add_triangles(_compute_children_faces_triangles([ @active_face ], nil))
           mesh.background_color = highlighted ? COLOR_ACTION_FILL_HIGHLIGHTED : COLOR_ACTION_FILL
           face_helper.append(mesh)
 
           # Box helper
           box_helper = Kuix::BoxMotif.new
-          box_helper.bounds.origin.copy!(bounds.min)
-          box_helper.bounds.size.copy!(bounds)
+          box_helper.bounds.origin.copy!(@active_face_bounds.min)
+          box_helper.bounds.size.copy!(@active_face_bounds)
           box_helper.color = COLOR_BLUE
           box_helper.line_width = 2
           box_helper.line_stipple = '-'
@@ -317,6 +320,12 @@ module Ladb::OpenCutList
           axes_helper.line_z.visible = false
           axes_helper.transformation = t * to
           face_helper.append(axes_helper)
+
+      else
+
+        @active_edge = nil
+        @active_face_bounds = nil
+        @active_face_transformation = nil
 
       end
 
@@ -381,60 +390,41 @@ module Ladb::OpenCutList
             return
           end
 
+          instance_info = @active_part.def.instance_infos.values.first
+          options = {}
           file_format = nil
           if is_action_modifier_skp?
-            file_format = CommonExportDefinitionTo3dWorker::FILE_FORMAT_SKP
+            file_format = CommonExportInstanceToFileWorker::FILE_FORMAT_SKP
           elsif is_action_modifier_stl?
-            file_format = CommonExportDefinitionTo3dWorker::FILE_FORMAT_STL
+            file_format = CommonExportInstanceToFileWorker::FILE_FORMAT_STL
           elsif is_action_modifier_obj?
-            file_format = CommonExportDefinitionTo3dWorker::FILE_FORMAT_OBJ
+            file_format = CommonExportInstanceToFileWorker::FILE_FORMAT_OBJ
           elsif is_action_modifier_dxf?
-            file_format = CommonExportDefinitionTo3dWorker::FILE_FORMAT_DXF
+            file_format = CommonExportInstanceToFileWorker::FILE_FORMAT_DXF
           end
 
-          settings = {
-            'part_id' => @active_part.id,
-            'file_format' => file_format,
-          }
-
-          worker = CutlistPartExportTo3dWorker.new(settings, @active_part.group.cutlist)
+          worker = CommonExportInstanceToFileWorker.new(instance_info, options, file_format)
           response = worker.run
 
-          ex = Sketchup.extensions['OpenCutList']
-          unless ex.nil?
-            notification = UI::Notification.new(ex, Plugin.instance.get_i18n_string('tab.cutlist.success.exported_to', { :export_path => response[:export_path] }))
-            notification.icon_name = File.join(Plugin.instance.root_dir, 'img', 'icon-72x72.png')
-            notification.on_accept(Plugin.instance.get_i18n_string('default.open')) { puts "OPEN" }
-            notification.on_dismiss(Plugin.instance.get_i18n_string('default.close')) { puts "CLOSE" }
-            notification.show
-          end
+          # TODO
+          puts Plugin.instance.get_i18n_string('tab.cutlist.success.exported_to', { :export_path => response[:export_path] })
 
         elsif is_action_export_face?
 
+          face_infos = [ FaceInfo.new(@active_face, @active_face_transformation) ]
+          options = {}
           file_format = nil
           if is_action_modifier_dxf?
-            file_format = CommonExportFaceTo2dWorker::FILE_FORMAT_DXF
+            file_format = CommonExportFacesToFileWorker::FILE_FORMAT_DXF
           elsif is_action_modifier_svg?
-            file_format = CommonExportFaceTo2dWorker::FILE_FORMAT_SVG
+            file_format = CommonExportFacesToFileWorker::FILE_FORMAT_SVG
           end
 
-          origin, x_axis, y_axis, z_axis, input_face, input_edge = _get_input_axes
-
-          t = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
-          bounds = Geom::BoundingBox.new.add(_compute_children_faces_triangles([ input_face ], t.inverse))
-          t = t * Geom::Transformation.translation(bounds.min)
-
-          worker = CommonExportFaceTo2dWorker.new(input_face, t.inverse, file_format)
+          worker = CommonExportFacesToFileWorker.new(face_infos, options, file_format)
           response = worker.run
 
-          ex = Sketchup.extensions['OpenCutList']
-          unless ex.nil?
-            notification = UI::Notification.new(ex, Plugin.instance.get_i18n_string('tab.cutlist.success.exported_to', { :export_path => response[:export_path] }))
-            notification.icon_name = File.join(Plugin.instance.root_dir, 'img', 'icon-72x72.png')
-            notification.on_accept(Plugin.instance.get_i18n_string('default.open')) { puts "OPEN" }
-            notification.on_dismiss(Plugin.instance.get_i18n_string('default.close')) { puts "CLOSE" }
-            notification.show
-          end
+          # TODO
+          puts Plugin.instance.get_i18n_string('tab.cutlist.success.exported_to', { :export_path => response[:export_path] })
 
         end
 
@@ -446,17 +436,16 @@ module Ladb::OpenCutList
 
       transformation = nil #PathUtils.get_transformation(@input_face_path)
 
-      input_face = @input_face
       input_edge = @input_edge
-      if input_edge.nil? || !input_edge.used_by?(input_face)
-        input_edge = _find_longest_outer_edge(input_face, transformation)
+      if input_edge.nil? || !input_edge.used_by?(@input_face)
+        input_edge = _find_longest_outer_edge(@input_face, transformation)
       end
 
-      z_axis = input_face.normal
+      z_axis = @input_face.normal
       x_axis = input_edge.line[1]
       y_axis = z_axis.cross(x_axis)
 
-      [ ORIGIN, x_axis, y_axis, z_axis, input_face, input_edge ]
+      [ ORIGIN, x_axis, y_axis, z_axis, input_edge ]
     end
 
   end

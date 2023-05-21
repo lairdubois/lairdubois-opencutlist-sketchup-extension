@@ -25,9 +25,9 @@ module Ladb::OpenCutList
     ACTION_MODIFIER_ALL = 4
 
     ACTIONS = [
-      { :action => ACTION_PAINT_PARTS, :modifiers => [ACTION_MODIFIER_1, ACTION_MODIFIER_ALL ] },
-      { :action => ACTION_PAINT_EDGES, :modifiers => [ACTION_MODIFIER_1, ACTION_MODIFIER_2, ACTION_MODIFIER_4 ] },
-      { :action => ACTION_PAINT_FACES, :modifiers => [ACTION_MODIFIER_1, ACTION_MODIFIER_2 ] },
+      { :action => ACTION_PAINT_PARTS, :modifiers => [ ACTION_MODIFIER_1, ACTION_MODIFIER_ALL ] },
+      { :action => ACTION_PAINT_EDGES, :modifiers => [ ACTION_MODIFIER_1, ACTION_MODIFIER_2, ACTION_MODIFIER_4 ] },
+      { :action => ACTION_PAINT_FACES, :modifiers => [ ACTION_MODIFIER_1, ACTION_MODIFIER_2 ] },
       { :action => ACTION_PICK },
       { :action => ACTION_PAINT_CLEAN }
     ].freeze

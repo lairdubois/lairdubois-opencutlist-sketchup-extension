@@ -1,8 +1,8 @@
 module Ladb::OpenCutList
 
-  require_relative '../common/common_export_definition_to_3d_worker'
+  require_relative '../common/common_export_instance_to_file_worker'
 
-  class CutlistPartExportTo3dWorker
+  class CutlistPartExportToFileWorker
 
     def initialize(settings, cutlist)
 
@@ -28,17 +28,8 @@ module Ladb::OpenCutList
       part = parts.first
       instance_info = part.def.instance_infos.values.first
 
-      # Fetch definition
-      definitions = model.definitions
-      definition = definitions[part.def.definition_id]
-      return { :errors => [ 'tab.cutlist.error.definition_not_found' ] } unless definition
-
-      # Compute transformation
-      scale = instance_info.scale
-      transformation = Geom::Transformation.scaling(scale.x * (part.flipped ? -1 : 1), scale.y, scale.z)
-
       # Run export worker
-      worker = CommonExportDefinitionTo3dWorker.new(definition, transformation, @file_format)
+      worker = CommonExportInstanceToFileWorker.new(instance_info, {}, @file_format)
       response = worker.run
 
       response
