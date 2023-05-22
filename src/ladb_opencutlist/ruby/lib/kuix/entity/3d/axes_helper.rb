@@ -4,7 +4,7 @@ module Ladb::OpenCutList::Kuix
 
     attr_accessor :box_0, :box_x, :box_y, :box_z
 
-    def initialize(pixel_size = 40, line_width = 5, x_color = KuixTool::COLOR_RED, y_color = KuixTool::COLOR_GREEN, z_color = KuixTool::COLOR_BLUE, id = '')
+    def initialize(pixel_size = 40, line_width = 5, x_color = KuixTool::COLOR_X, y_color = KuixTool::COLOR_Y, z_color = KuixTool::COLOR_Z, id = '')
       super(id)
 
       @pixel_size = pixel_size

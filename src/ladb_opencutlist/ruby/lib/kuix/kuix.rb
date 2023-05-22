@@ -74,6 +74,9 @@ module Ladb::OpenCutList
       COLOR_LIGHT_GREY = Sketchup::Color.new(220, 220, 220).freeze
       COLOR_MEDIUM_GREY = Sketchup::Color.new(170, 170, 170).freeze
       COLOR_DARK_GREY = Sketchup::Color.new(120, 120, 120).freeze
+      COLOR_X = COLOR_RED
+      COLOR_Y = COLOR_GREEN
+      COLOR_Z = COLOR_BLUE
 
       attr_reader :canvas # 2D drawing
       attr_reader :space  # 3D drawing

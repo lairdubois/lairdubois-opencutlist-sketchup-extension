@@ -59,11 +59,11 @@ module Ladb::OpenCutList
       # Check settings
       language = settings['language']
       print_margin = settings['print_margin']
-      table_size = settings['table_size']
+      table_row_size = settings['table_row_size']
 
       Plugin.instance.set_language(language, true)
       Plugin.instance.dialog_set_print_margin(print_margin, true)
-      Plugin.instance.dialog_set_table_size(table_size, true)
+      Plugin.instance.dialog_set_table_row_size(table_row_size, true)
 
     end
 

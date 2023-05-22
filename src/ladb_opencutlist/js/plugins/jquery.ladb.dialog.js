@@ -48,7 +48,7 @@
             update_muted: options.update_muted,
             last_news_timestamp: options.last_news_timestamp,
             dialog_print_margin: options.dialog_print_margin,
-            dialog_table_size: options.dialog_table_size,
+            dialog_table_row_size: options.dialog_table_row_size,
         };
 
         this.settings = {};
@@ -1143,7 +1143,7 @@
 
                     that.bind();
 
-                    if (that.options.dialog_table_size) {
+                    if (that.options.dialog_table_row_size) {
                         that.setCompact(true);
                     }
 
