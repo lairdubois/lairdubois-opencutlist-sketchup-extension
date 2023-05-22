@@ -10,17 +10,14 @@ in 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added edge material color display in part list, cutting diagram and labels
   * Added edit material for edge and veneer virtual parts
 
-* 5.0.2 (WIP)
+* 5.0.1 (2023-05-22)
 
   * Added `to_fbm` function to VolumeWrapper
   * Improved Smart Tool element picker
   * Improved cutting diagram dimensions display
   * Fixed hide all Draw buttons if WebGL is not supported
-  
-* 5.0.1 (WIP)
-
   * Fixed import freeze when the model is empty
-  * Fixed export to Layout freeze (SketchUp < 2022) by replacing ComponentDefinition::save_copy use by ComponentDefinition::save_as
+  * Fixed Export to Layout freeze (SketchUp < 2022) by replacing ComponentDefinition::save_copy use by ComponentDefinition::save_as
 
 * 5.0.0 (2023-05-11)
 
