@@ -83,8 +83,8 @@ module Ladb::OpenCutList
           settings['sheet_folding'] = false   # Remove unneeded computations
           settings['hide_part_list'] = true   # Remove unneeded computations
 
-          if settings['std_sheet'] == ''
-            std_sizes = material_attributes.std_sizes.split(';')
+          std_sizes = material_attributes.std_sizes.split(';')
+          if settings['std_sheet'] == '' || !std_sizes.include?(settings['std_sheet'])
             settings['std_sheet'] = std_sizes[0] unless std_sizes.empty?
           end
 
@@ -162,8 +162,8 @@ module Ladb::OpenCutList
           settings['bar_folding'] = false     # Remove unneeded computations
           settings['hide_part_list'] = true   # Remove unneeded computations
 
-          if settings['std_bar'] == ''
-            std_sizes = material_attributes.std_lengths.split(';')
+          std_sizes = material_attributes.std_lengths.split(';')
+          if settings['std_bar'] == '' || !std_sizes.include?(settings['std_bar'])
             settings['std_bar'] = std_sizes[0] unless std_sizes.empty?
           end
 
