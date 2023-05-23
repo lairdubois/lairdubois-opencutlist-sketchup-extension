@@ -81,15 +81,15 @@
                 sponsorAd: false
             },
             {
-                name: 'cutlist',
-                bar: 'leftbar',
-                icon: 'ladb-opencutlist-icon-cutlist',
-                sponsorAd: true
-            },
-            {
                 name: 'outliner',
                 bar: 'leftbar',
                 icon: 'ladb-opencutlist-icon-outliner',
+                sponsorAd: true
+            },
+            {
+                name: 'cutlist',
+                bar: 'leftbar',
+                icon: 'ladb-opencutlist-icon-cutlist',
                 sponsorAd: true
             },
             {
