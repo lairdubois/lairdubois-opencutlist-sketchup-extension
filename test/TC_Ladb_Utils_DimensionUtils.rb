@@ -76,6 +76,7 @@ class TC_Ladb_Utils_DimensionUtils < TestUp::TestCase
     assert_equal_fn(fn, '3 /', '0')
     assert_equal_fn(fn, '2/0', '0')
     assert_equal_fn(fn, 'x', '0')
+    assert_equal_fn(fn, '0m', '0')
     assert_equal_fn(fn, '1', '1' + @separator + '0"')
     assert_equal_fn(fn, '-1', '-1' + @separator + '0"')
     assert_equal_fn(fn, '--1', '1' + @separator + '0"')
