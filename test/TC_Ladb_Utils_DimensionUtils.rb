@@ -84,6 +84,7 @@ class TC_Ladb_Utils_DimensionUtils < TestUp::TestCase
     assert_equal_fn(fn, '1.5', '0' + @separator + '05905511811023623"')
     assert_equal_fn(fn, '1.5 mm', '0' + @separator + '05905511811023623"')
     assert_equal_fn(fn, '1 1/2"', '1' + @separator + '5"')
+    assert_equal_fn(fn, '1 1/2mm', '0' + @separator + '05905511811023623"')
 
     @dimutils.set_length_unit(Length::Centimeter)
     assert_equal_fn(fn, '1', '0' + @separator + '39370078740157477"')

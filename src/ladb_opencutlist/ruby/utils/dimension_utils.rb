@@ -113,20 +113,6 @@
 
     # -----
 
-    def _obsolete_from_fractional(s)
-      if s.nil?
-        s = "0"
-      elsif s.include?("/")
-        input_split = (s.split('/').map( &:to_i ))
-        if input_split.length == 2 && input_split[1] != 0
-          s = Rational(*input_split)
-        else
-          s = "0"
-        end
-      end
-      s.to_f
-    end
-
     def model_units_to_inches(i)
       case @length_unit
       when MILLIMETER
@@ -170,27 +156,6 @@
       end
     end
 
-    # Take a fraction and try to simplify it by turning:
-    # 1. x/0 into x
-    # 2. 0/x into 0
-    #
-    def _obsolete_simplify(i)
-      i = i.to_s
-      match = i.match(/^(\d*)\/(\d*)$/)
-      if match
-        num, den = match.captures
-        if num == '0'
-          return '0'
-        elsif den == '1'
-          return num
-        else
-          return i
-        end
-      else
-        i
-      end
-    end
-
     # Take a single dimension as a string and
     # 1. add units if none are present, assuming that no units means model units
     # 2. convert garbage into 0
@@ -198,7 +163,8 @@
     def str_add_units(s)
       return '0'.to_l.to_s if s.nil? || s.empty?
       s = s.strip
-      s = s.gsub(/,/, '.')
+      s = s.gsub(/,/, @decimal_separator) # convert separator to native
+      s = s.gsub(/\./, @decimal_separator) # convert separator to native
       nb = "0.0"
 
       if s.is_a?(String)
@@ -206,7 +172,7 @@
         # cannot use m and mm in the same regexp!
         if (match = s.match(/\A.*(cm|mm|\'|\"|yd)+.*\z/)) || (match = s.match(/\A.*(m)+.*\z/))
           unit, = match.captures
-          # puts("parsed unit = #{unit} in #{s}")
+          puts("parsed unit = #{unit} in #{s}")
           nb = s.gsub(/\s*#{unit}\s*/, "#{unit}") # remove space around unit
           unit_present = true
         end
@@ -217,11 +183,11 @@
           s = "0.0"
         end
         if !unit_present
-          # puts("default unit = #{unit_sign()} in #{s}")
+          puts("default unit = #{unit_sign()} in #{s}")
           nb = s + unit_sign()
         end
       end
-      nb = nb.sub(/\./, @decimal_separator)
+      nb
     end
 
     # Takes a single dimension as a string and converts it into a
@@ -231,19 +197,21 @@
     def str_to_ifloat(s)
       s = s.sub(/~/, '') # strip approximate sign away
       s = s.strip
+      s = s.gsub(/,/, @decimal_separator) # convert separator to native
+      s = s.gsub(/\./, @decimal_separator) # convert separator to native
       nb = "0.0" # default value if conversion fails!
 
       # make sure the entry is a string and starts with the proper magic
       if s.is_a?(String)
         s = s.gsub(/\s*\/\s*/, '/') # remove blanks around /
-        s = s.gsub(/,/, '.') # standard decimal_separator
+        puts("start = #{s}")
         begin
           nb = ((s.to_l).to_f).to_s
         rescue => e
           puts("OCL [dimension input error]: #{e}")
         end
       end
-      # puts("#{s} => #{nb}#{UNIT_SYMBOL_INCHES}")
+      puts("#{s} => #{nb}#{UNIT_SYMBOL_INCHES}")
       nb = nb.gsub(/\./, @decimal_separator) + UNIT_SYMBOL_INCHES
     end
 
