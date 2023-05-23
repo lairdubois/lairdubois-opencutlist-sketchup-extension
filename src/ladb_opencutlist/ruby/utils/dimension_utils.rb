@@ -154,31 +154,29 @@
     # 2. convert garbage into 0
     #
     def str_add_units(s)
-      return '0'.to_l.to_s if s.nil? || s.empty?
+      return '0' if !s.is_a?(String) || s.is_a?(String) && s.empty?
+
       s = s.strip
       s = s.gsub(/,/, @decimal_separator) # convert separator to native
       s = s.gsub(/\./, @decimal_separator) # convert separator to native
-      nb = "0.0"
 
-      if s.is_a?(String)
-        unit_present = false
-        # cannot use m and mm in the same regexp!
-        if (match = s.match(/\A.*(cm|mm|\'|\"|yd)+.*\z/)) || (match = s.match(/\A.*(m)+.*\z/))
-          unit, = match.captures
-          puts("parsed unit = #{unit} in #{s}")
-          nb = s.gsub(/\s*#{unit}\s*/, "#{unit}") # remove space around unit
-          unit_present = true
-        end
-        begin # try to convert to length
-          x = s.to_l
-        rescue => e
-          puts("OCL [dimension input error]: #{e}")
-          s = "0.0"
-        end
-        if !unit_present
-          puts("default unit = #{unit_sign()} in #{s}")
-          nb = s + unit_sign()
-        end
+      unit_present = false
+      # Cannot use m and mm in the same regexp!
+      if (match = s.match(/\A.*(cm|mm|\'|\"|yd)+.*\z/)) || (match = s.match(/\A.*(m)+.*\z/))
+        unit, = match.captures
+        # puts("parsed unit = #{unit} in #{s}")
+        nb = s.gsub(/\s*#{unit}\s*/, "#{unit}") # Remove space around unit
+        unit_present = true
+      end
+      begin # Try to convert to length
+        x = s.to_l
+      rescue => e
+        # puts("OCL [dimension input error]: #{e}")
+        s = '0'
+      end
+      unless unit_present
+        # puts("default unit = #{unit_sign} in #{s}")
+        nb = s + unit_sign
       end
       nb
     end
@@ -197,14 +195,14 @@
       # make sure the entry is a string and starts with the proper magic
       if s.is_a?(String)
         s = s.gsub(/\s*\/\s*/, '/') # remove blanks around /
-        puts("start = #{s}")
+        # puts("start = #{s}")
         begin
           nb = ((s.to_l).to_f).to_s
         rescue => e
           puts("OCL [dimension input error]: #{e}")
         end
       end
-      puts("#{s} => #{nb}#{UNIT_SYMBOL_INCHES}")
+      # puts("#{s} => #{nb}#{UNIT_SYMBOL_INCHES}")
       nb = nb.gsub(/\./, @decimal_separator) + UNIT_SYMBOL_INCHES
     end
 
