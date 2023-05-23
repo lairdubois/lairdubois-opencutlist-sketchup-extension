@@ -248,21 +248,20 @@
           elsif three == UNIT_SYMBOL_INCHES
             sum = one
           end
-        elsif match = i.match(/^(((\d*([.,]\d*)?)(\s*\')?)?\s+)?((\d*)\s+)?(\d*\/\d*)?(\s*\")?$/)
-          one, two, three, four, five, six, seven, eight, nine = match.captures
-          if three.nil? && six.nil?
-            #puts "i = #{'%15s' % i} => fractional+unit:: #{'%7s' % eight}  #{nine}"
-            sum = from_fractional(eight).to_f
-          elsif seven.nil? && five.nil?
-            #puts "i = #{'%15s' % i} => inch+fractional+unit #{'%7s' % three} #{'%7s' % eight} #{nine}"
-            sum = three.to_f + from_fractional(eight).to_f
-          elsif seven.nil? && five == "'"
-            #puts "i = #{'%15s' % i} => feet+fractional+unit:: #{'%7s' % three} #{four} #{'%7s' % seven} #{eight} #{nine}"
-            sum = 12 * three.to_f + from_fractional(eight).to_f
+        elsif match = i.match(/^(((\d*)\s*\')?\s+)?(?:(\d*)|((\d*)\s+)?(\d+\/\d+))?(\s*\")?$/)
+          one, two, three, four, five, six, seven, eight = match.captures
+          if three.nil? && five.nil? && four.nil?
+            # puts "i = #{'%15s' % i} => fractional+unit: #{'%7s' % seven} #{eight}"
+            sum = from_fractional(seven).to_f
+          elsif three.nil? && four.nil?
+            # puts "i = #{'%15s' % i} => inch+fractional+unit: #{'%7s' % five} #{'%7s' % seven} #{eight}"
+            sum = five.to_f + from_fractional(seven).to_f
+          elsif five.nil? && seven.nil?
+            # puts "i = #{'%15s' % i} => feet+inch+unit: #{'%7s' % three}' #{'%7s' % four} #{eight}"
+            sum = 12 * three.to_f + four.to_f
           else
-            #puts "i = #{'%15s' % i} => feet+inch+fractional+unit:: #{'%7s' % three} #{five} #{'%7s' % seven}#{'%7s' % eight} #{nine}"
-            sum = 12 * three.to_f + six.to_f + from_fractional(eight).to_f
-            sum = sum.to_f # force number to be a float, may not be necessary!
+            # puts "i = #{'%15s' % i} => feet+inch+fractional+unit: #{'%7s' % three}' #{'%7s' % five}#{'%7s' % seven} #{eight}"
+            sum = 12 * three.to_f + five.to_f + from_fractional(seven).to_f
           end
         else
           sum = 0 # garbage always becomes 0

@@ -94,10 +94,18 @@ module Ladb::OpenCutList
 
       unless material.texture.nil? || @texture_width.nil? || @texture_height.nil?
 
-        material.texture.size = [DimensionUtils.instance.d_to_ifloats(@texture_width).to_l, DimensionUtils.instance.d_to_ifloats(@texture_height).to_l ]
+        texture_width = DimensionUtils.instance.d_to_ifloats(@texture_width).to_l
+        texture_height = DimensionUtils.instance.d_to_ifloats(@texture_height).to_l
 
-        # In this case the event will be triggered by SU itself
-        trigger_change_event = false
+        # Set only if positive and not null dimensions
+        if texture_width > 0 && texture_height > 0
+
+          material.texture.size = [ texture_width, texture_height ]
+
+          # In this case the event will be triggered by SU itself
+          trigger_change_event = false
+
+        end
 
       end
 

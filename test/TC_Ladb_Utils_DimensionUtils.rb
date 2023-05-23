@@ -49,6 +49,8 @@ class TC_Ladb_Utils_DimensionUtils < TestUp::TestCase
     assert_equal_fn(fn, '1.5', '1' + @separator + '5"')
     assert_equal_fn(fn, '1 1/2', '1' + @separator + '5"')
     assert_equal_fn(fn, '2', '2' + @separator + '0"')
+    assert_equal_fn(fn, '1\' 1"', '11' + @separator + '0"')
+    assert_equal_fn(fn, '1\' 1 "', '11' + @separator + '0"')
 
     @units_options_provider['LengthUnit'] = Length::Feet
     assert_equal_fn(fn, '1', '12' + @separator + '0"')
