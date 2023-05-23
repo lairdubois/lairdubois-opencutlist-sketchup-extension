@@ -87,6 +87,12 @@
                 sponsorAd: true
             },
             {
+                name: 'outliner',
+                bar: 'leftbar',
+                icon: 'ladb-opencutlist-icon-outliner',
+                sponsorAd: true
+            },
+            {
                 name: 'importer',
                 bar: 'leftbar',
                 icon: 'ladb-opencutlist-icon-import',

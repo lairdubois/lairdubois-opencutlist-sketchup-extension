@@ -1105,6 +1105,12 @@ tab:
     success:
       exported_to: "Export réussi vers {{ export_path }}."
     obsolete_base: "Pour rester synchronisé, vous devez rafraîchir la liste de matières."
+  outliner:
+    label: Structure
+    title: Structure
+    error:
+      no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
+      no_entities: Votre modèle ne contient aucune pièce.
   importer:
     label: Importer
     title: Importer des pièces

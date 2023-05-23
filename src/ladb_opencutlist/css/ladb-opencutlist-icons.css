@@ -346,6 +346,9 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-cutlist:before {
   content: "\e94e";
 }
+.ladb-opencutlist-icon-outliner:before {
+  content: "\e9a2";
+}
 .ladb-opencutlist-icon-mini-logo-ladb:before {
   content: "\e951";
 }

@@ -1,0 +1,12 @@
+{% set coolors = [ "#61bd4f", "#f2d600", "#ffab4a", "#eb5a46", "#c377e0", "#0079bf", "#00c2e0", "#51e898", "#ff80ce", "#cccccc", "#000000", "#ffffff" ] %}
+{% set coolor = coolors[depth % coolors|length] %}
+<div class="ladb-outliner-node collapse in" style="border-color: {{ coolor }}">
+    <div class="ladb-outliner-node-heading" style="background-color: {{ coolor }}">{{ node.name|length == 0 ? 'Groupe' : node.name|escape('html') }}</div>
+    {% if node.nodes|length > 0 %}
+        <div id="ladb_outliner_node_{{ node.id }}_body" class="ladb-outliner-node-body">
+            {% for node in node.nodes %}
+                {% include 'tabs/outliner/_node.twig' with { 'depth':depth + 1 } %}
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>

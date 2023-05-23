@@ -1,0 +1,8 @@
+{# set errors #}
+{# set warnings #}
+{# set entities #}
+
+{% include 'core/_alert-errors.twig' %}
+{% include 'core/_alert-warnings.twig' %}
+
+{% include 'tabs/outliner/_node.twig' with { 'node':root_node, 'depth':0 } %}
