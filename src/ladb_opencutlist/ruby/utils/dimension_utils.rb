@@ -113,20 +113,6 @@
 
     # -----
 
-    def _obsolete_from_fractional(s)
-      if s.nil?
-        s = "0"
-      elsif s.include?("/")
-        input_split = (s.split('/').map( &:to_i ))
-        if input_split.length == 2 && input_split[1] != 0
-          s = Rational(*input_split)
-        else
-          s = "0"
-        end
-      end
-      s.to_f
-    end
-
     def model_units_to_inches(i)
       case @length_unit
       when MILLIMETER
@@ -167,27 +153,6 @@
           return true
         else
           return false
-      end
-    end
-
-    # Take a fraction and try to simplify it by turning:
-    # 1. x/0 into x
-    # 2. 0/x into 0
-    #
-    def _obsolete_simplify(i)
-      i = i.to_s
-      match = i.match(/^(\d*)\/(\d*)$/)
-      if match
-        num, den = match.captures
-        if num == '0'
-          return '0'
-        elsif den == '1'
-          return num
-        else
-          return i
-        end
-      else
-        i
       end
     end
 
