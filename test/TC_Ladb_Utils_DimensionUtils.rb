@@ -14,7 +14,19 @@ class TC_Ladb_Utils_DimensionUtils < TestUp::TestCase
     end
   end
 
+  def backup_options
+    @length_unit = @units_options_provider['LengthUnit']
+    @length_precision = @units_options_provider['LengthPrecision']
+  end
+
+  def restore_options
+    @units_options_provider['LengthUnit'] = @length_unit
+    @units_options_provider['LengthPrecision'] = @length_precision
+  end
+
   def test_str_add_units
+
+    backup_options
 
     fn = :str_add_units
 
@@ -25,7 +37,7 @@ class TC_Ladb_Utils_DimensionUtils < TestUp::TestCase
     assert_equal_fn(fn, '1\'', '1\'')
 
     @units_options_provider['LengthUnit'] = Length::Meter
-    @units_options_provider['Precision'] = 1
+    @units_options_provider['LengthPrecision'] = 1
     Ladb::OpenCutList::DimensionUtils.instance.fetch_length_options
     assert_equal_fn(fn, '1/2 m', '1/2m')
     assert_equal_fn(fn, '1/2', '1/2m')
@@ -49,9 +61,13 @@ class TC_Ladb_Utils_DimensionUtils < TestUp::TestCase
 
     # ...
 
+    restore_options
+
   end
 
   def test_str_to_ifloat
+
+    backup_options
 
     fn = :str_to_ifloat
 
@@ -112,6 +128,8 @@ class TC_Ladb_Utils_DimensionUtils < TestUp::TestCase
     assert_equal_fn(fn, '3/2', '59' + @separator + '05511811023622"')
 
     # ...
+
+    restore_options
 
   end
 
