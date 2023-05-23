@@ -82,13 +82,6 @@
       @length_precision = model ? model.options['UnitsOptions']['LengthPrecision'] : 0
     end
 
-    # Set unit length for Tests only!
-    def set_length_unit(unit)
-      @length_unit = unit
-      model = Sketchup.active_model
-      model.options['UnitsOptions']['LengthUnit'] = unit
-    end
-
     # -----
 
     def ocl_length_precision
