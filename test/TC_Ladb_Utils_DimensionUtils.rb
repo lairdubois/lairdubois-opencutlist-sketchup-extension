@@ -42,7 +42,7 @@ class TC_Ladb_Utils_DimensionUtils < TestUp::TestCase
     assert_equal_fn(fn, '1/2 m', '1/2m')
     assert_equal_fn(fn, '1/2', '1/2m')
     assert_equal_fn(fn, '', '0')  # It depends of model precision
-    assert_equal_fn(fn, 'm', 'm')
+    assert_equal_fn(fn, 'm', '0')
 
     @units_options_provider['LengthUnit'] = Length::Inches
     Ladb::OpenCutList::DimensionUtils.instance.fetch_length_options
@@ -73,11 +73,14 @@ class TC_Ladb_Utils_DimensionUtils < TestUp::TestCase
 
     @units_options_provider['LengthUnit'] = Length::Inches
     Ladb::OpenCutList::DimensionUtils.instance.fetch_length_options
+    assert_equal_fn(fn, '3 /', '0')
+    assert_equal_fn(fn, '2/0', '0')
+    assert_equal_fn(fn, 'x', '0')
     assert_equal_fn(fn, '1', '1' + @separator + '0"')
+    assert_equal_fn(fn, '-1', '-1' + @separator + '0"')
+    assert_equal_fn(fn, '--1', '1' + @separator + '0"')
     assert_equal_fn(fn, '1.5', '1' + @separator + '5"')
     assert_equal_fn(fn, '3 / 2 ', '1' + @separator + '5"')
-    assert_equal_fn(fn, '3 /', '0' + @separator + '0"')
-    assert_equal_fn(fn, '2/0', '0' + @separator + '0"')
     assert_equal_fn(fn, '1 1/2', '1' + @separator + '5"')
     assert_equal_fn(fn, '1\' 1"', '13' + @separator + '0"')
     assert_equal_fn(fn, '1 \' 1 "', '13' + @separator + '0"')
