@@ -9,6 +9,7 @@ module Ladb::OpenCutList
     TYPE_MODEL = 0
     TYPE_GROUP = 1
     TYPE_COMPONENT = 2
+    TYPE_PART = 3
 
     attr_accessor :path, :type, :name, :definition_name, :visible, :part_count
     attr_reader :id, :children

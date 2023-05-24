@@ -16,18 +16,26 @@
 {% endblock %}
 
 {% block bodyInner %}
-    <div class="form form-horizontal">
-        <div class="tab-content">
-            <div role="tabpanel" class="tab-pane{% if tab == 'general' %} active{% endif %}" id="tab_edit_node_general">
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane{% if tab == 'general' %} active{% endif %}" id="tab_edit_node_general">
+            <div class="form form-horizontal" style="margin-top: 15px;">
                 <div class="form-group">
                     <label for="ladb_outliner_node_input_name" class="control-label col-xs-4">{{ 'tab.outliner.edit_node.name'|i18next }}</label>
                     <div class="col-xs-7">
-                        <input type="text" class="form-control" id="ladb_outliner_node_input_name" value="{{ node.name|escape }}" data-ladb-invalid="false" autofocus placeholder="{% include 'tabs/outliner/_default-name.twig' %}">
+                        <input type="text" class="form-control" id="ladb_outliner_node_input_name" value="{{ node.name|escape }}" autofocus>
                     </div>
                 </div>
+                {% if node.type == 2 or node.type == 3 %}{# 2 = TYPE_COMPONENT, 3 = TYPE_PART #}
+                    <div class="form-group">
+                        <label for="ladb_outliner_node_input_definition_name" class="control-label col-xs-4">{{ 'tab.outliner.edit_node.definition_name'|i18next }}</label>
+                        <div class="col-xs-7">
+                            <input type="text" class="form-control" id="ladb_outliner_node_input_definition_name" value="{{ node.definition_name|escape }}">
+                        </div>
+                    </div>
+                {% endif %}
             </div>
-            <div role="tabpanel" class="tab-pane{% if tab == 'preview' %} active{% endif %}" id="tab_edit_node_preview"></div>
         </div>
+        <div role="tabpanel" class="tab-pane{% if tab == 'preview' %} active{% endif %}" id="tab_edit_node_preview"></div>
     </div>
 {% endblock %}
 

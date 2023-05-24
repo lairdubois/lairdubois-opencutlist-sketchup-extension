@@ -5,7 +5,8 @@ module Ladb::OpenCutList
     def initialize(node_data, outliner)
 
       @id = node_data.fetch('id')
-      @name = node_data.fetch('name')
+      @name = node_data.fetch('name', nil)
+      @definition_name = node_data.fetch('definition_name', nil)
 
       @outline = outliner
 
@@ -29,8 +30,12 @@ module Ladb::OpenCutList
       # Start model modification operation
       model.start_operation('OCL Outliner Update', true, false, true)
 
-      if @name != entity.name
-        entity.name = @name
+      if @name.is_a?(String) && @name != entity.name
+        entity.name = @name.strip
+      end
+
+      if entity.is_a?(Sketchup::ComponentInstance) && @definition_name.is_a?(String) && @definition_name != entity.definition.name
+        entity.definition.name = @definition_name.strip
       end
 
       # Commit model modification operation

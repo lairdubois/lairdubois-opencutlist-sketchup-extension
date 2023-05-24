@@ -1108,22 +1108,31 @@ tab:
   outliner:
     label: Structure
     title: Structure
+    list: Arboressance des entités
     nodes: Noeuds
     part_count: Nb Pièces
     type_0: Modèle
     type_1: Groupe
     type_2: Composant
+    type_3: Pièce
     edit_node:
-      title: "Propriétés du noeud '{{ name }}'"
+      title: "Propriétés de l'entité **{{ name }}**"
       general: Générales
       preview: Aperçu
       name: Instance
+      definition_name: Definition
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_entities: Votre modèle ne contient aucune pièce.
       node_not_found: Noeud introuvable
       entity_not_found: Instance introuvable
       obsolete_outliner: "Impossible, la structure générée est obsolète. Re-générez là."
+    tip:
+      no_node: |
+        Votre modèle ne dispose pour le moment d'aucun noeud à afficher ici.
+        Un noeud est un **groupe** ou un **composant** qui ne soit pas une pièce.
+        Grouper des parties de votre modèle pour mieux le structuré.
+    obsolete_base: "Pour rester synchronisé, vous devez re-générer la structure."
   importer:
     label: Importer
     title: Importer des pièces

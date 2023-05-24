@@ -7,7 +7,7 @@ module Ladb::OpenCutList
     include HashableHelper
 
     attr_accessor :root_node
-    attr_reader :filename, :model_name
+    attr_reader :errors, :warnings, :tips, :filename, :model_name
 
     def initialize(filename, model_name)
       @_obsolete = false

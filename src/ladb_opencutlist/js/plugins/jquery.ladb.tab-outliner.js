@@ -40,6 +40,7 @@
 
                 var errors = response.errors;
                 var warnings = response.warnings;
+                var tips = response.tips;
                 var filename = response.filename;
                 var modelName = response.model_name;
                 var root_node = response.root_node;
@@ -59,6 +60,7 @@
                 that.$page.append(Twig.twig({ ref: "tabs/outliner/_list.twig" }).render({
                     errors: errors,
                     warnings: warnings,
+                    tips: tips,
                     root_node: root_node
                 }));
 
@@ -185,6 +187,7 @@
             // Fetch UI elements
             var $tabs = $('.modal-header a[data-toggle="tab"]', $modal);
             var $inputName = $('#ladb_outliner_node_input_name', $modal);
+            var $inputDefinitionName = $('#ladb_outliner_node_input_definition_name', $modal);
             var $btnUpdate = $('#ladb_outliner_node_update', $modal);
 
             // Bind tabs
@@ -194,11 +197,13 @@
 
             // Bind input
             $inputName.ladbTextinputText();
+            $inputDefinitionName.ladbTextinputText();
 
             // Bind buttons
             $btnUpdate.on('click', function () {
 
-                that.editedNode.name = $inputName.val().trim();
+                that.editedNode.name = $inputName.val();
+                that.editedNode.definition_name = $inputDefinitionName.val();
 
                 rubyCallCommand('outliner_update', that.editedNode, function (response) {
 
@@ -314,7 +319,7 @@
             // Set tab as obsolete
             this.setObsolete(true);
 
-            var $modal = this.appendModalInside('ladb_outliner_modal_obsolete', 'tabs/cutlist/_modal-outliner.twig', {
+            var $modal = this.appendModalInside('ladb_outliner_modal_obsolete', 'tabs/outliner/_modal-obsolete.twig', {
                 messageI18nKey: messageI18nKey
             });
 
@@ -344,6 +349,12 @@
         this.$btnGenerate.on('click', function () {
             that.generateOutliner();
             this.blur();
+        });
+
+        // Events
+
+        addEventCallback([ 'on_new_model', 'on_open_model', 'on_activate_model' ], function (params) {
+            that.showObsolete('core.event.model_change', true);
         });
 
     };

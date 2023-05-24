@@ -2,6 +2,8 @@ module Ladb::OpenCutList::Kuix
 
   class Graphics
 
+    attr_reader :view
+
     def initialize(view)
       @view = view
     end

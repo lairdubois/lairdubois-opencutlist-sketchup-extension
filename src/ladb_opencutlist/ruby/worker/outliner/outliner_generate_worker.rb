@@ -25,7 +25,7 @@ module Ladb::OpenCutList
 
       outliner = Outliner.new(filename, model_name)
 
-      # Errors & tips
+      # Errors
       unless model
         outliner.add_error('tab.outliner.error.no_model') unless model
         return outliner
@@ -41,6 +41,11 @@ module Ladb::OpenCutList
         outliner.root_node = root_node_def.create_node
       end
 
+      # Tips
+      if root_node_def.children.length == 0
+        outliner.add_tip('tab.outliner.tip.no_node')
+      end
+
       outliner
     end
 
@@ -53,10 +58,13 @@ module Ladb::OpenCutList
       part_count = 0
       if entity.is_a?(Sketchup::Model)
 
+        dir, filename = File.split(entity.path)
+        filename = Plugin.instance.get_i18n_string('default.empty_filename') if filename.empty?
+
         node_def = NodeDef.new(NodeDef.generate_node_id(entity, path))
         node_def.type = NodeDef::TYPE_MODEL
         node_def.name = entity.name
-        dir, node_def.definition_name = File.split(entity.path)
+        node_def.definition_name = filename
 
         entity.entities.each { |child_entity|
           child_node_def, child_face_count, child_part_count = _fetch_node_defs(child_entity, node_def, path)
@@ -110,7 +118,11 @@ module Ladb::OpenCutList
           unless bounds.empty? || [ bounds.width, bounds.height, bounds.depth ].min == 0    # Exclude empty or flat bounds
 
             # It's a part
-            return node_def, 0, part_count + 1
+
+            node_def.type = NodeDef::TYPE_PART
+
+            face_count = 0
+            part_count += 1
 
           end
 

@@ -2,6 +2,7 @@ module Ladb::OpenCutList::Kuix
 
   class Segments < Entity3d
 
+    attr_accessor :on_top
     attr_accessor :color
     attr_accessor :line_width, :line_stipple
 
@@ -14,6 +15,8 @@ module Ladb::OpenCutList::Kuix
       @segments = [] # Array<Geom::Point3d>
 
       @points = []
+
+      @on_top = false
 
     end
 
@@ -34,7 +37,15 @@ module Ladb::OpenCutList::Kuix
     # -- RENDER --
 
     def paint_content(graphics)
-      graphics.draw_lines(@points, @color, @line_width, @line_stipple)
+      if @on_top
+        points2d = @points.map { |point| graphics.view.screen_coords(point) }
+        graphics.set_drawing_color(@color)
+        graphics.set_line_width(@line_width)
+        graphics.set_line_stipple(@line_stipple)
+        graphics.view.draw2d(GL_LINE_STRIP, points2d)
+      else
+        graphics.draw_lines(@points, @color, @line_width, @line_stipple)
+      end
       super
     end
 

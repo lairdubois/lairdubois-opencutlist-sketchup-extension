@@ -353,13 +353,6 @@ module Ladb::OpenCutList
 
           origin, x_axis, y_axis, z_axis, input_face, input_edge = _get_input_axes(instance_info)
 
-          # Highlight input edge
-          segments = Kuix::Segments.new
-          segments.add_segments(_compute_children_edge_segments(instance_info.entity.definition.entities, nil,[ input_edge ]))
-          segments.color = COLOR_ACTION
-          segments.line_width = 5
-          part_helper.append(segments)
-
           # Highlight input face
           mesh = Kuix::Mesh.new
           mesh.add_triangles(_compute_children_faces_triangles(instance_info.entity.definition.entities, nil,[ input_face ]))
@@ -403,6 +396,14 @@ module Ladb::OpenCutList
             part_helper.append(axes_helper)
 
           end
+
+          # Highlight input edge
+          segments = Kuix::Segments.new
+          segments.add_segments(_compute_children_edge_segments(instance_info.entity.definition.entities, nil,[ input_edge ]))
+          segments.color = COLOR_ACTION
+          segments.line_width = 4
+          segments.on_top = true
+          part_helper.append(segments)
 
         end
 

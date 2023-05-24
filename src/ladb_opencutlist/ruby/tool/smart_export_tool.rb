@@ -297,13 +297,6 @@ module Ladb::OpenCutList
         face_helper.transformation = transformation * tto
         @space.append(face_helper)
 
-          # Highlight input edge
-          segments = Kuix::Segments.new
-          segments.add_segments(_compute_children_edge_segments(@active_face.edges, @active_face_export_transformation,[ @active_edge ]))
-          segments.color = COLOR_ACTION
-          segments.line_width = 5
-          face_helper.append(segments)
-
           # Highlight input face
           mesh = Kuix::Mesh.new
           mesh.add_triangles(_compute_children_faces_triangles([ @active_face ], @active_face_export_transformation))
@@ -322,6 +315,14 @@ module Ladb::OpenCutList
           axes_helper = Kuix::AxesHelper.new
           axes_helper.box_z.visible = false
           face_helper.append(axes_helper)
+
+          # Highlight input edge
+          segments = Kuix::Segments.new
+          segments.add_segments(_compute_children_edge_segments(@active_face.edges, @active_face_export_transformation,[ @active_edge ]))
+          segments.color = COLOR_ACTION
+          segments.line_width = 4
+          segments.on_top = true
+          face_helper.append(segments)
 
       else
 

@@ -1,0 +1,23 @@
+{% extends 'core/_modal.twig' %}
+
+{% set id = 'ladb_outliner_modal_obsolete' %}
+
+{% block header %}{% endblock %}
+
+{% block bodyInner %}
+    <div class="media">
+        <div class="media-left">
+            <i class="ladb-opencutlist-icon-obsolete" style="font-size: 150%;"></i>
+        </div>
+        <div class="media-body">
+            <h4 class="media-heading">{{ 'default.caution'|i18next }}</h4>
+            {{ messageI18nKey|i18next }}<br>
+            {{ 'tab.outliner.obsolete_base'|i18next }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block footerRightInner %}
+    <button class="btn btn-default" data-dismiss="modal">{{ 'default.ignore'|i18next }}</button>
+    <button class="btn btn-primary" id="ladb_outliner_obsolete_generate"><i class="ladb-opencutlist-icon-refresh"></i> {{ 'default.generate'|i18next }}</button>
+{% endblock %}
