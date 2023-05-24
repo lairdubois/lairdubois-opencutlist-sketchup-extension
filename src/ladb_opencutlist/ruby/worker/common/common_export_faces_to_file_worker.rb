@@ -110,10 +110,23 @@ module Ladb::OpenCutList
           bounds.add(_compute_children_faces_triangles([ face_info.face ], face_info.transformation))
         end
 
+        # Tweak unit converter to restrict to SVG compatible units (in, mm, cm)
+        case DimensionUtils.instance.length_unit
+        when DimensionUtils::INCHES
+          unit_converter = 1.0
+          unit_sign = 'in'
+        when DimensionUtils::CENTIMETER
+          unit_converter = 1.0.to_cm
+          unit_sign = 'cm'
+        else
+          unit_converter = 1.0.to_mm
+          unit_sign = 'mm'
+        end
+
         width = _convert(bounds.width, unit_converter)
         height = _convert(bounds.height, unit_converter)
-        unit_sign = DimensionUtils.instance.unit_sign
 
+        # Y coords are * -1 because SVG coordinates system is Top to Bottom
         file.puts('<?xml version="1.0" encoding="UTF-8" standalone="no"?>')
         file.puts('<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">')
         file.puts("<svg width=\"#{width}#{unit_sign}\" height=\"#{height}#{unit_sign}\" viewBox=\"0 #{height * -1} #{width} #{height}\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:shaper=\"http://www.shapertools.com/namespaces/shaper\">")
