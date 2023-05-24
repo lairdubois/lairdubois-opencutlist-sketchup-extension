@@ -310,6 +310,9 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-layout-selection:before {
   content: "\e99b";
 }
+.ladb-opencutlist-icon-cursor:before {
+  content: "\e9a5";
+}
 .ladb-opencutlist-icon-edit:before {
   content: "\e943";
 }

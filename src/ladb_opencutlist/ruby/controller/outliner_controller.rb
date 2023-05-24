@@ -1,7 +1,6 @@
 module Ladb::OpenCutList
 
   require_relative 'controller'
-  require_relative '../model/attributes/material_attributes'
 
   class OutlinerController < Controller
 
@@ -12,8 +11,14 @@ module Ladb::OpenCutList
     def setup_commands()
 
       # Setup opencutlist dialog actions
-      Plugin.instance.register_command("outliner_list") do |settings|
-        list_command(settings)
+      Plugin.instance.register_command("outliner_generate") do |settings|
+        generate_command(settings)
+      end
+      Plugin.instance.register_command("outliner_update") do |node_data|
+        update_command(node_data)
+      end
+      Plugin.instance.register_command("outliner_set_active") do |node_data|
+        set_active_command(node_data)
       end
 
     end
@@ -27,7 +32,7 @@ module Ladb::OpenCutList
                                          ]) do |params|
 
         # Invalidate Cutlist if exists
-        @cutlist.invalidate if @cutlist
+        @outliner.invalidate if @outliner
 
       end
 
@@ -37,11 +42,36 @@ module Ladb::OpenCutList
 
     # -- Commands --
 
-    def list_command(settings)
-      require_relative '../worker/outliner/outliner_list_worker'
+    def generate_command(settings)
+      require_relative '../worker/outliner/outliner_generate_worker'
+
+      # Invalidate Outliner if it exists
+      @outliner.invalidate if @outliner
 
       # Setup worker
-      worker = OutlinerListWorker.new(settings)
+      worker = OutlinerGenerateWorker.new(settings)
+
+      # Run !
+      @outliner = worker.run
+
+      @outliner.to_hash
+    end
+
+    def update_command(node_data)
+      require_relative '../worker/outliner/outliner_update_worker'
+
+      # Setup worker
+      worker = OutlinerUpdateWorker.new(node_data, @outliner)
+
+      # Run !
+      worker.run
+    end
+
+    def set_active_command(node_data)
+      require_relative '../worker/outliner/outliner_set_active_worker'
+
+      # Setup worker
+      worker = OutlinerSetActiveWorker.new(node_data, @outliner)
 
       # Run !
       worker.run

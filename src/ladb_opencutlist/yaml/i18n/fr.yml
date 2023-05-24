@@ -1108,9 +1108,22 @@ tab:
   outliner:
     label: Structure
     title: Structure
+    nodes: Noeuds
+    part_count: Nb Pièces
+    type_0: Modèle
+    type_1: Groupe
+    type_2: Composant
+    edit_node:
+      title: "Propriétés du noeud '{{ name }}'"
+      general: Générales
+      preview: Aperçu
+      name: Instance
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_entities: Votre modèle ne contient aucune pièce.
+      node_not_found: Noeud introuvable
+      entity_not_found: Instance introuvable
+      obsolete_outliner: "Impossible, la structure générée est obsolète. Re-générez là."
   importer:
     label: Importer
     title: Importer des pièces

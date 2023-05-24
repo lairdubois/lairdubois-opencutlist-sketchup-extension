@@ -2,31 +2,30 @@ module Ladb::OpenCutList
 
   require 'digest'
 
+  require_relative '../../helper/def_helper'
   require_relative '../../helper/hashable_helper'
 
   class Node
 
+    include DefHelper
     include HashableHelper
 
     attr_accessor :name, :definition_name, :visible, :part_count
-    attr_reader :id, :nodes
+    attr_reader :id, :children
 
-    def initialize(id)
-      @id = id
+    def initialize(_def)
+      @_def = _def
 
-      @name = nil
-      @definition_name = nil
-      @visible = true
+      @id = _def.id
+      @type = _def.type
+      @name = _def.name
+      @definition_name = _def.definition_name
+      @visible = _def.visible
 
-      @part_count = 0
+      @part_count = _def.part_count
 
-      @nodes = []
-    end
+      @children = _def.children.map { |node_def| node_def.create_node }
 
-    # -----
-
-    def self.generate_node_id(entity, path)
-      Digest::MD5.hexdigest("#{entity.guid}|#{path.object_id}")
     end
 
   end

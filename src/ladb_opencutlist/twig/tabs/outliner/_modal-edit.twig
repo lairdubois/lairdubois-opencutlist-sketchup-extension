@@ -1,0 +1,37 @@
+{% extends 'core/_modal.twig' %}
+
+{% set id = 'ladb_outliner_modal_edit' %}
+{% set title = 'tab.outliner.edit_node.title'|i18next({ 'name':node.name }) %}
+
+{% block headerToolsInner %}
+    <button class="btn btn-default btn-xs" data-help-page="outliner.edit"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
+{% endblock %}
+
+{% block headerInner %}
+    {{ parent() }}
+    <ul class="nav nav-tabs nav-justified" role="tablist">
+        <li role="presentation"{% if tab == 'general' %} class="active"{% endif %}><a href="#tab_edit_node_general" role="tab" data-toggle="tab">{{ 'tab.outliner.edit_node.general'|i18next }}</a></li>
+        <li role="presentation"{% if tab == 'preview' %} class="active"{% endif %}><a href="#tab_edit_node_preview" role="tab" data-toggle="tab">{{ 'tab.outliner.edit_node.preview'|i18next }}</a></li>
+    </ul>
+{% endblock %}
+
+{% block bodyInner %}
+    <div class="form form-horizontal">
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane{% if tab == 'general' %} active{% endif %}" id="tab_edit_node_general">
+                <div class="form-group">
+                    <label for="ladb_outliner_node_input_name" class="control-label col-xs-4">{{ 'tab.outliner.edit_node.name'|i18next }}</label>
+                    <div class="col-xs-7">
+                        <input type="text" class="form-control" id="ladb_outliner_node_input_name" value="{{ node.name|escape }}" data-ladb-invalid="false" autofocus placeholder="{% include 'tabs/outliner/_default-name.twig' %}">
+                    </div>
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane{% if tab == 'preview' %} active{% endif %}" id="tab_edit_node_preview"></div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footerRightInner %}
+    <button class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
+    <button class="btn btn-primary btn-validate-modal" id="ladb_outliner_node_update">{{ 'default.validate'|i18next }}</button>
+{% endblock %}
