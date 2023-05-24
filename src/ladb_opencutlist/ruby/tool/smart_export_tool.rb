@@ -278,54 +278,56 @@ module Ladb::OpenCutList
 
         origin, x_axis, y_axis, z_axis, @active_edge = _get_input_axes
 
+        # Change axis transformation
         t = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
         ti = t.inverse
 
+        # Compute new bounds
         @active_face_bounds = Geom::BoundingBox.new
         @active_face_bounds.add(_compute_children_faces_triangles([ @active_face ], ti))
 
+        # Translate to 0,0 transformation
         to = Geom::Transformation.translation(@active_face_bounds.min)
 
-        @active_face_transformation = t * to
+        # Combine
+        tto = t * to
+        @active_face_export_transformation = tto.inverse
 
         face_helper = Kuix::Group.new
-        face_helper.transformation = transformation
+        face_helper.transformation = transformation * tto
         @space.append(face_helper)
 
           # Highlight input edge
           segments = Kuix::Segments.new
-          segments.add_segments(_compute_children_edge_segments(@active_face.edges, nil,[ @active_edge ]))
+          segments.add_segments(_compute_children_edge_segments(@active_face.edges, @active_face_export_transformation,[ @active_edge ]))
           segments.color = COLOR_ACTION
           segments.line_width = 5
           face_helper.append(segments)
 
           # Highlight input face
           mesh = Kuix::Mesh.new
-          mesh.add_triangles(_compute_children_faces_triangles([ @active_face ], nil))
+          mesh.add_triangles(_compute_children_faces_triangles([ @active_face ], @active_face_export_transformation))
           mesh.background_color = highlighted ? COLOR_ACTION_FILL_HIGHLIGHTED : COLOR_ACTION_FILL
           face_helper.append(mesh)
 
           # Box helper
           box_helper = Kuix::BoxMotif.new
-          box_helper.bounds.origin.copy!(@active_face_bounds.min)
           box_helper.bounds.size.copy!(@active_face_bounds)
           box_helper.color = COLOR_BLUE
           box_helper.line_width = 2
           box_helper.line_stipple = '-'
-          box_helper.transformation = t
           face_helper.append(box_helper)
 
           # Axes helper
           axes_helper = Kuix::AxesHelper.new
           axes_helper.box_z.visible = false
-          axes_helper.transformation = t * to
           face_helper.append(axes_helper)
 
       else
 
         @active_edge = nil
         @active_face_bounds = nil
-        @active_face_transformation = nil
+        @active_face_export_transformation = nil
 
       end
 
@@ -416,7 +418,7 @@ module Ladb::OpenCutList
             return
           end
 
-          face_infos = [ FaceInfo.new(@active_face, @active_face_transformation) ]
+          face_infos = [ FaceInfo.new(@active_face, @active_face_export_transformation) ]
           options = {}
           file_format = nil
           if is_action_modifier_dxf?
