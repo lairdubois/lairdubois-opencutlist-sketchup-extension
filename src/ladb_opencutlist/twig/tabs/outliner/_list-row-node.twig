@@ -1,18 +1,18 @@
-<tr class="ladb-outliner-row{% if not node.visible or not parentNodeVisible %} ladb-mute{% endif %}{{ parentClasses }}{% if not parentNodeVisible %} hide{% endif %}" data-node-id="{{ node.id }}">
-    <td style="background: #f7f7f7; padding:0 0 0 {{ depth * 20 }}px;">
-        <div style="background: #fff; padding: 8px;{% if depth > 0 %} border-left: 1px solid #ddd;{% endif %}">
+<tr class="ladb-outliner-row ladb-minitools-holder{% if not node.visible or not parentNodeVisible %} ladb-mute{% endif %}{{ parentClasses }}{% if not parentNodeVisible %} hide{% endif %}" data-node-id="{{ node.id }}">
+    <td class="table-cell-fluid" style="padding-left: {{ depth * 20 }}px;">
+        <div class="table-cell-fluid-inner{% if depth > 0 %} table-cell-fluid-inner-padded-left{% endif %}">
             <div class="ladb-minitools ladb-minitools-left">
                 {% if node.children|length > 0 %}
-                    <a href="#" class="ladb-btn-folding-toggle-row ladb-tool-dark"><i class="ladb-opencutlist-icon-arrow-{% if node.visible %}down{% else %}right{% endif %}"></i></a>
+                    <a href="#" class="ladb-btn-folding-toggle-row"><i class="ladb-opencutlist-icon-arrow-{% if node.visible %}down{% else %}right{% endif %}"></i></a>
                 {% else %}
-                    <a href="#" class="ladb-btn-add-row ladb-tool-dark"><i class="ladb-opencutlist-icon-plus"></i></a>
+                    <a href="#" class="ladb-btn-add-row"><i class="ladb-opencutlist-icon-plus" style="color: #fff;"></i></a>
                 {% endif %}
             </div>
             &nbsp;<i class="ladb-opencutlist-icon-{% if node.type == 0 %}{# 0 = TYPE_MODEL #}view-front{% elseif node.type == 2 %}{# 2 = TYPE_COMPONENT #}component{% else %}group{% endif %}" data-toggle="tooltip" title="{{ ('tab.outliner.type_'~node.type)|i18next }}"></i>&nbsp;{% if node.name %}<strong>{{ node.name|escape('html') }}</strong>{% endif %} {% if node.type != 1 or node.name is empty %}<span style="color: #999;">{% include 'tabs/outliner/_default-name.twig' %}</span>{% endif %}
             <div class="ladb-minitools ladb-minitools-right">
-                <a href="#" class="ladb-btn-set-active-node"><i class="ladb-opencutlist-icon-cursor"></i></a>
-                <a href="#" class="ladb-btn-toggle-node-visibility"><i class="ladb-opencutlist-icon-eye-{% if node.visible %}open{% else %}close{% endif %}"></i></a>
-                <a href="#" class="ladb-btn-edit-node ladb-click-tool"><i class="ladb-opencutlist-icon-edit"></i></a>
+                <a href="#" class="ladb-btn-node-set-active"><i class="ladb-opencutlist-icon-cursor"></i></a>
+                {% if node.type != 0 %}{# 0 = TYPE_MODEL #}<a href="#" class="ladb-btn-node-toggle-visible"><i class="ladb-opencutlist-icon-eye-{% if node.visible %}open{% else %}close{% endif %}"></i></a>{% endif %}
+                <a href="#" class="ladb-btn-node-edit ladb-click-tool"><i class="ladb-opencutlist-icon-edit"></i></a>
             </div>
         </div>
     </td>

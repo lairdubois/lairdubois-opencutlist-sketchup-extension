@@ -20,6 +20,9 @@ module Ladb::OpenCutList
       Plugin.instance.register_command("outliner_set_active") do |node_data|
         set_active_command(node_data)
       end
+      Plugin.instance.register_command("outliner_toggle_visible") do |node_data|
+        toggle_visible_command(node_data)
+      end
 
     end
 
@@ -72,6 +75,16 @@ module Ladb::OpenCutList
 
       # Setup worker
       worker = OutlinerSetActiveWorker.new(node_data, @outliner)
+
+      # Run !
+      worker.run
+    end
+
+    def toggle_visible_command(node_data)
+      require_relative '../worker/outliner/outliner_toggle_visible_worker'
+
+      # Setup worker
+      worker = OutlinerToggleVisibleWorker.new(node_data, @outliner)
 
       # Run !
       worker.run

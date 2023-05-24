@@ -56,6 +56,31 @@
       opacity: 0.4;
     }
 
+    td.table-cell-fluid {
+      background-color: #f7f7f7;
+      padding: 0;
+
+      &:hover {
+        background-color: darken(#f7f7f7, 5%);
+
+        > .table-cell-fluid-inner {
+          background-color: #f9f9f9;
+        }
+
+      }
+
+      > .table-cell-fluid-inner {
+        background-color: #fff;
+        padding: 8px;
+
+        &.table-cell-fluid-inner-padded-left {
+          border-left: 1px solid @ladb-global-border;
+        }
+
+      }
+
+    }
+
     td.ladb-cutlist-value {
       white-space: nowrap;
       text-align: center;

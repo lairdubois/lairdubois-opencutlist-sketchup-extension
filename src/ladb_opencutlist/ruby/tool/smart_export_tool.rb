@@ -411,6 +411,11 @@ module Ladb::OpenCutList
 
         elsif is_action_export_face?
 
+          if @active_face.nil?
+            UI.beep
+            return
+          end
+
           face_infos = [ FaceInfo.new(@active_face, @active_face_transformation) ]
           options = {}
           file_format = nil

@@ -89,7 +89,7 @@
 
                     return false;
                 });
-                $('a.ladb-btn-set-active-node', that.$page).on('click', function () {
+                $('a.ladb-btn-node-set-active', that.$page).on('click', function () {
                     $(this).blur();
                     var $row = $(this).parents('.ladb-outliner-row');
                     var nodeId = $row.data('node-id');
@@ -106,16 +106,30 @@
 
                     return false;
                 });
-                $('a.ladb-btn-toggle-node-visibility', that.$page).on('click', function () {
+                $('a.ladb-btn-node-toggle-visible', that.$page).on('click', function () {
                     $(this).blur();
                     var $row = $(this).parents('.ladb-outliner-row');
                     var nodeId = $row.data('node-id');
 
-                    alert('TODO :)');
+                    rubyCallCommand('outliner_toggle_visible', { id: nodeId }, function (response) {
+
+                        if (response['errors']) {
+                            that.dialog.notifyErrors(response['errors']);
+                        } else {
+
+                            if (response.visible) {
+                                $row.removeClass('ladb-mute');
+                            } else {
+                                $row.addClass('ladb-mute');
+                            }
+
+                        }
+
+                    });
 
                     return false;
                 });
-                $('a.ladb-btn-edit-node', that.$page).on('click', function () {
+                $('a.ladb-btn-node-edit', that.$page).on('click', function () {
                     $(this).blur();
                     var $row = $(this).parents('.ladb-outliner-row');
                     var nodeId = $row.data('node-id');
