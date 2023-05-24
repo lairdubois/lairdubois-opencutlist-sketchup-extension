@@ -129,7 +129,7 @@ module Ladb::OpenCutList
             coords = []
             loop.vertices.each do |vertex|
               point = vertex.position.transform(transformation)
-              coords << "#{_convert(point.x, unit_converter)},-#{_convert(point.y, unit_converter)}"
+              coords << "#{_convert(point.x, unit_converter)},#{_convert(point.y, unit_converter) * -1}"
             end
             data = "M#{coords.join('L')}Z"
             outside << data
