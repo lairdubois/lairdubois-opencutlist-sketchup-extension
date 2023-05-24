@@ -5,4 +5,19 @@
 {% include 'core/_alert-errors.twig' %}
 {% include 'core/_alert-warnings.twig' %}
 
-{% include 'tabs/outliner/_node.twig' with { 'node':root_node, 'depth':0 } %}
+<table class="table table-bordered ladb-outliner-group">
+    <thead>
+    <tr class="table-heading">
+        <td colspan="4">COOL</td>
+    </tr>
+    <tr class="table-column-heading">
+        <td>Node</td>
+        <td width="8%">Parts</td>
+    </tr>
+    </thead>
+    <tbody>
+    {% for node in root_node.nodes %}
+        {% include 'tabs/outliner/_list-row-node.twig' with { 'depth':0 } %}
+    {% endfor %}
+    </tbody>
+</table>

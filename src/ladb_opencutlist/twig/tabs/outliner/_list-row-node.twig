@@ -1,0 +1,20 @@
+{% set coolors = [ "#61bd4f", "#f2d600", "#ffab4a", "#eb5a46", "#c377e0", "#0079bf", "#00c2e0", "#51e898", "#ff80ce", "#cccccc", "#000000", "#ffffff" ] %}
+{% set coolor = coolors[depth % coolors|length] %}
+<tr class="ladb-outliner-row{% if not node.visible %} ladb-mute{% endif %}{{ parentClasses }}" data-folder-id="{{ node.id }}">
+    <td style="background: #f7f7f7; padding:0 0 0 {{ depth * 20 }}px;">
+        <div style="background: #fff; padding: 8px;{% if depth > 0 %} border-left: 1px solid #ddd;{% endif %}">
+            <i class="ladb-opencutlist-icon-{% if node.definition_name %}component{% else %}group{% endif %}"></i>&nbsp;{% if node.name %}<strong>{{ node.name|escape('html') }}</strong>{% elseif node.definition_name is null %}<small><em>Groupe</em></small>{% endif %}{% if node.definition_name %} <small><em>&lt;{{ node.definition_name|escape('html') }}&gt;</em></small>{% endif %}
+            <div class="ladb-minitools ladb-minitools-right">
+                {% if node.nodes|length > 0 %}<a href="#" class="ladb-btn-folding-toggle-row"><i class="ladb-opencutlist-icon-arrow-up"></i></a>{% endif %}
+                <a href="#"><i class="ladb-opencutlist-icon-eye-{% if node.visible %}open{% else %}close{% endif %}"></i></a>
+            </div>
+        </div>
+    </td>
+    <td class="ladb-cutlist-value">{{ node.part_count }}</td>
+</tr>
+{% if node.nodes|length > 0 %}
+    {% set parentClasses = (parentClasses~' folder-'~node.id) %}
+    {% for node in node.nodes %}
+        {% include 'tabs/outliner/_list-row-node.twig' with { 'depth':depth + 1 } %}
+    {% endfor %}
+{% endif %}

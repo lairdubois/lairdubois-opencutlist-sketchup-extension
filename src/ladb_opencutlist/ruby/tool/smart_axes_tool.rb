@@ -5,7 +5,7 @@ module Ladb::OpenCutList
   require_relative '../helper/layer_visibility_helper'
   require_relative '../helper/face_triangles_helper'
   require_relative '../helper/edge_segments_helper'
-  require_relative '../helper/boundingbox_helper'
+  require_relative '../helper/bounding_box_helper'
   require_relative '../helper/entities_helper'
   require_relative '../model/attributes/definition_attributes'
   require_relative '../model/geom/size3d'

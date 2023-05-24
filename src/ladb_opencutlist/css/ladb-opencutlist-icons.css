@@ -448,6 +448,12 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-edge-0000:before {
   content: "\e968";
 }
+.ladb-opencutlist-icon-group:before {
+  content: "\e9a3";
+}
+.ladb-opencutlist-icon-component:before {
+  content: "\e9a4";
+}
 .ladb-opencutlist-icon-dynamic-component:before {
   content: "\e969";
 }

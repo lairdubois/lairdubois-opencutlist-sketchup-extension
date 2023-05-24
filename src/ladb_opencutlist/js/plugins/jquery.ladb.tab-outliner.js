@@ -35,8 +35,6 @@
 
             rubyCallCommand('outliner_list', {}, function (response) {
 
-                console.log(response);
-
                 var errors = response.errors;
                 var warnings = response.warnings;
                 var filename = response.filename;
@@ -68,7 +66,12 @@
                 that.dialog.setupTooltips();
 
                 // Bind rows
-                // TODO
+                $('a.ladb-btn-folding-toggle-row', that.$page).on('click', function () {
+                    $(this).blur();
+                    var $row = $(this).parents('.ladb-outliner-row');
+                    that.toggleFoldingRow($row);
+                    return false;
+                });
 
                 // Restore button state
                 that.$btnList.prop('disabled', false);
@@ -88,6 +91,57 @@
 
         });
 
+    };
+
+    LadbTabOutliner.prototype.toggleFoldingRow = function ($row, dataKey) {
+        var $btn = $('.ladb-btn-folding-toggle-row', $row);
+        var $i = $('i', $btn);
+
+        if ($i.hasClass('ladb-opencutlist-icon-arrow-down')) {
+            this.expandFoldingRow($row, dataKey);
+        } else {
+            this.collapseFoldingRow($row, dataKey);
+        }
+    };
+
+    LadbTabOutliner.prototype.expandFoldingRow = function ($row, dataKey) {
+        var rowId = $row.data(dataKey ? dataKey : 'folder-id');
+        var $btn = $('.ladb-btn-folding-toggle-row', $row);
+        var $i = $('i', $btn);
+
+        $i.addClass('ladb-opencutlist-icon-arrow-up');
+        $i.removeClass('ladb-opencutlist-icon-arrow-down');
+
+        // Show children
+        $row.siblings('tr.folder-' + rowId).removeClass('hide');
+
+    };
+
+    LadbTabOutliner.prototype.collapseFoldingRow = function ($row, dataKey) {
+        var rowId = $row.data(dataKey ? dataKey : 'folder-id');
+        var $btn = $('.ladb-btn-folding-toggle-row', $row);
+        var $i = $('i', $btn);
+
+        $i.addClass('ladb-opencutlist-icon-arrow-down');
+        $i.removeClass('ladb-opencutlist-icon-arrow-up');
+
+        // Hide children
+        $row.siblings('tr.folder-' + rowId).addClass('hide');
+
+    };
+
+    LadbTabOutliner.prototype.expandAllFoldingRows = function ($slide, dataKey) {
+        var that = this;
+        $('.ladb-cutlist-row-folder', $slide === undefined ? this.$page : $slide).each(function () {
+            that.expandFoldingRow($(this), dataKey);
+        });
+    };
+
+    LadbTabOutliner.prototype.collapseAllFoldingRows = function ($slide, dataKey) {
+        var that = this;
+        $('.ladb-cutlist-row-folder', $slide === undefined ? this.$page : $slide).each(function () {
+            that.collapseFoldingRow($(this), dataKey);
+        });
     };
 
     // Init ///
