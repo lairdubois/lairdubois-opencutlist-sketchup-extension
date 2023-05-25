@@ -1,9 +1,9 @@
-<tr class="ladb-outliner-row ladb-minitools-holder{% if not node.visible or not parentNodeVisible %} ladb-mute{% endif %}{{ parentClasses }}{% if not parentNodeVisible or parentNode and parentNode.type == 3 %}{# 3 = TYPE_PART #} hide{% endif %}" data-node-id="{{ node.id }}">
+<tr id="ladb_outliner_row_{{ node.id }}" class="ladb-outliner-row ladb-minitools-holder{% if not node.visible or not parentNodeVisible %} ladb-mute{% endif %}{{ parentClasses }}{% if not parentNodeExpended %} hide{% endif %}" data-node-id="{{ node.id }}">
     <td class="table-cell-fluid" style="padding-left: {{ depth * 20 }}px;">
         <div class="table-cell-fluid-inner{% if depth > 0 %} table-cell-fluid-inner-padded-left{% endif %}">
             <div class="ladb-minitools ladb-minitools-left">
                 {% if node.children|length > 0 %}
-                    <a href="#" class="ladb-btn-folding-toggle-row"><i class="ladb-opencutlist-icon-arrow-{% if node.visible and node.type != 3 %}{# 3 = TYPE_PART #}down{% else %}right{% endif %}"></i></a>
+                    <a href="#" class="ladb-btn-folding-toggle-row"><i class="ladb-opencutlist-icon-arrow-{% if node.expended %}down{% else %}right{% endif %}"></i></a>
                 {% else %}
                     <div style="display: inline-block; width: 20px;"></div>
                 {% endif %}
@@ -28,6 +28,7 @@
     {% set parentNode = node %}
     {% set parentClasses = (parentClasses~' folder-'~node.id) %}
     {% set parentNodeVisible = node.visible and parentNodeVisible %}
+    {% set parentNodeExpended = node.expended and parentNodeExpended %}
     {% set depth = depth + 1 %}
     {% for node in node.children %}
         {% include 'tabs/outliner/_list-row-node.twig' %}

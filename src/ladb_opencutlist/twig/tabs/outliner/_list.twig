@@ -9,18 +9,13 @@
 {% if root_node %}
     <table class="table table-bordered ladb-outliner-group ladb-outliner-group-dark">
         <thead>
-        <tr class="table-heading">
-            <td colspan="4" class="text-middle">
-                <div class="ladb-heading">&nbsp;{{ 'tab.outliner.list'|i18next }}</div>
-            </td>
-        </tr>
         <tr class="table-column-heading">
             <td>{{ 'tab.outliner.nodes'|i18next }}</td>
             <td width="8%">{{ 'tab.outliner.part_count'|i18next }}</td>
         </tr>
         </thead>
         <tbody>
-        {% include 'tabs/outliner/_list-row-node.twig' with { 'node':root_node, 'depth':0, 'parentNodeVisible':true } %}
+        {% include 'tabs/outliner/_list-row-node.twig' with { 'node':root_node, 'depth':0, 'parentNodeVisible':true, 'parentNodeExpended':true } %}
         </tbody>
     </table>
 {% endif %}

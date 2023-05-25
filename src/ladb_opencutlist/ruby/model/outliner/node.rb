@@ -10,7 +10,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_accessor :name, :definition_name, :layer_name, :visible, :part_count
+    attr_accessor :name, :definition_name, :layer_name, :visible, :expended, :part_count
     attr_reader :id, :children
 
     def initialize(_def)
@@ -22,6 +22,7 @@ module Ladb::OpenCutList
       @definition_name = _def.definition_name
       @layer_name = _def.layer_name
       @visible = _def.visible
+      @expended = _def.expended
 
       @part_count = _def.part_count
 

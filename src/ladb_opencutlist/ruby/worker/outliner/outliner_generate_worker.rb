@@ -4,6 +4,7 @@ module Ladb::OpenCutList
   require_relative '../../helper/layer_visibility_helper'
   require_relative '../../model/outliner/outliner'
   require_relative '../../model/outliner/node_def'
+  require_relative '../../model/attributes/instance_attributes'
 
   class OutlinerGenerateWorker
 
@@ -65,6 +66,7 @@ module Ladb::OpenCutList
         node_def.type = NodeDef::TYPE_MODEL
         node_def.name = entity.name
         node_def.definition_name = filename
+        node_def.expended = true
 
         entity.entities.each { |child_entity|
           child_node_def, child_face_count, child_part_count = _fetch_node_defs(child_entity, node_def, path)
@@ -77,14 +79,17 @@ module Ladb::OpenCutList
 
       elsif entity.is_a?(Sketchup::Group)
 
+        instance_attributes = InstanceAttributes.new(entity)
+
         path += [ entity]
 
         node_def = NodeDef.new(NodeDef.generate_node_id(entity, path), path)
         node_def.type = NodeDef::TYPE_GROUP
         node_def.name = entity.name
         node_def.definition_name = Plugin.instance.get_i18n_string("tab.outliner.type_#{NodeDef::TYPE_GROUP}")
-        node_def.layer_name = entity.layer.name
+        node_def.layer_name = entity.layer.name if entity.layer != cached_layer0
         node_def.visible = entity.visible? && _layer_visible?(entity.layer, parent_node_def.nil?)
+        node_def.expended = instance_attributes.outliner_expended
 
         entity.entities.each { |child_entity|
           child_node_def, child_face_count, child_part_count = _fetch_node_defs(child_entity, node_def, path)
@@ -99,14 +104,17 @@ module Ladb::OpenCutList
 
       elsif entity.is_a?(Sketchup::ComponentInstance)
 
-        path += [ entity]
+        instance_attributes = InstanceAttributes.new(entity)
+
+        path += [ entity ]
 
         node_def = NodeDef.new(NodeDef.generate_node_id(entity, path), path)
         node_def.type = NodeDef::TYPE_COMPONENT
         node_def.name = entity.name
         node_def.definition_name = entity.definition.name
-        node_def.layer_name = entity.layer.name
+        node_def.layer_name = entity.layer.name if entity.layer != cached_layer0
         node_def.visible = entity.visible? && _layer_visible?(entity.layer, parent_node_def.nil?)
+        node_def.expended = instance_attributes.outliner_expended
 
         entity.definition.entities.each { |child_entity|
           child_node_def, child_face_count, child_part_count = _fetch_node_defs(child_entity, node_def, path)
@@ -144,7 +152,14 @@ module Ladb::OpenCutList
     end
 
     def _sort_children(node_def)
-      node_def.children.sort_by! { |node_def| [node_def.name.nil? || node_def.name.empty? ? '1' : '0', node_def.name ] }
+      node_def.children.sort_by! do |node_def|
+        [
+          node_def.type == NodeDef::TYPE_PART ? 1 : 0,
+          (node_def.name.nil? || node_def.name.empty?) ? 1 : 0,
+          node_def.name,
+          node_def.definition_name
+        ]
+      end
     end
 
   end

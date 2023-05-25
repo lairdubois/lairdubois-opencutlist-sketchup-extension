@@ -79,7 +79,8 @@
                 $('a.ladb-btn-folding-toggle-row', that.$page).on('click', function () {
                     $(this).blur();
                     var $row = $(this).parents('.ladb-outliner-row');
-                    that.toggleFoldingRow($row);
+                    var nodeId = $row.data('node-id');
+                    that.toggleFoldingNode(nodeId, $row);
                     return false;
                 });
                 $('a.ladb-btn-node-set-active', that.$page).on('click', function () {
@@ -278,32 +279,59 @@
 
     };
 
-    LadbTabOutliner.prototype.explodeNode = function(id) {
-        var that = this;
-
-        this.dialog.confirm(i18next.t('default.caution'), i18next.t('tab.outliner.explode.message', { id: id }), function () {
-
-            rubyCallCommand('outliner_explode', {
-                id: id,
-            }, function (response) {
-
-                if (response.errors && response.errors.length > 0) {
-                    that.dialog.notifyErrors(response.errors);
-                } else {
-
-                    // Reload the list
-                    that.generateOutliner();
-
-                }
+    LadbTabOutliner.prototype.toggleFoldingNode = function (id, $row) {
+        var node = this.findNodeById(id);
+        if (node) {
+            node.expended = !node.expended;
+            if ($row === undefined) {
+                $row = $('#ladb_outliner_row_' + node.id, this.$page);
+            }
+            if (node.expended) {
+                this.expendNodeRow(node, $row);
+            } else {
+                this.collapseNodeRow(node, $row);
+            }
+            rubyCallCommand('outliner_set_expended', node, function (response) {
 
             });
-
-        }, {
-            confirmBtnType: 'danger',
-            confirmBtnLabel: i18next.t('tab.outliner.edit_node.explode')
-        });
-
+        }
     };
+
+    LadbTabOutliner.prototype.expendNodeRow = function (node, $row) {
+        if (node.expended) {
+
+            var $btn = $('.ladb-btn-folding-toggle-row', $row);
+            var $i = $('i', $btn);
+
+            $i.addClass('ladb-opencutlist-icon-arrow-down');
+            $i.removeClass('ladb-opencutlist-icon-arrow-right');
+
+            for (var i = 0; i < node.children.length; i++) {
+                $row = $('#ladb_outliner_row_' + node.children[i].id, this.$page);
+                $row.removeClass('hide');
+                this.expendNodeRow(node.children[i], $row);
+            }
+
+        }
+    };
+
+    LadbTabOutliner.prototype.collapseNodeRow = function (node, $row) {
+        if (!node.expended) {
+
+            var $btn = $('.ladb-btn-folding-toggle-row', $row);
+            var $i = $('i', $btn);
+
+            $i.addClass('ladb-opencutlist-icon-arrow-right');
+            $i.removeClass('ladb-opencutlist-icon-arrow-down');
+
+        }
+        for (var i = 0; i < node.children.length; i++) {
+            $row = $('#ladb_outliner_row_' + node.children[i].id, this.$page);
+            $row.addClass('hide');
+            this.collapseNodeRow(node.children[i], $row);
+        }
+    };
+
     LadbTabOutliner.prototype.toggleFoldingRow = function ($row, dataKey) {
         var $btn = $('.ladb-btn-folding-toggle-row', $row);
         var $i = $('i', $btn);
