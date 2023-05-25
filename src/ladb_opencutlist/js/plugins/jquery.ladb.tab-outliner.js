@@ -102,6 +102,7 @@
                 });
                 $('a.ladb-btn-node-toggle-visible', that.$page).on('click', function () {
                     $(this).blur();
+                    var $i = $('i', $(this));
                     var $row = $(this).parents('.ladb-outliner-row');
                     var nodeId = $row.data('node-id');
 
@@ -113,8 +114,12 @@
 
                             if (response.visible) {
                                 $row.removeClass('ladb-mute');
+                                $i.addClass('ladb-opencutlist-icon-eye-open');
+                                $i.removeClass('ladb-opencutlist-icon-eye-close');
                             } else {
                                 $row.addClass('ladb-mute');
+                                $i.removeClass('ladb-opencutlist-icon-eye-open');
+                                $i.addClass('ladb-opencutlist-icon-eye-close');
                             }
 
                         }
