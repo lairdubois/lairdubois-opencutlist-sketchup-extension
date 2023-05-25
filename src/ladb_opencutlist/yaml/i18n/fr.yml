@@ -1121,6 +1121,8 @@ tab:
       preview: Aperçu
       name: Instance
       definition_name: Definition
+      explode: Eclater
+      explode_message: Confirmez-vous l'éclatement de l'instance **{{ name }}** ?
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_entities: Votre modèle ne contient aucune pièce.

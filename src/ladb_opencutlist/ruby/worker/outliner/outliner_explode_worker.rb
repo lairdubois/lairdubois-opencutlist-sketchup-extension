@@ -1,6 +1,6 @@
 module Ladb::OpenCutList
 
-  class OutlinerToggleVisibleWorker
+  class OutlinerExplodeWorker
 
     def initialize(node_data, outliner)
 
@@ -24,18 +24,19 @@ module Ladb::OpenCutList
 
       entity = node.def.entity
       return { :errors => [ 'tab.outliner.error.entity_not_found' ] } if !entity.is_a?(Sketchup::Entity) || entity.deleted?
+      return { :errors => [ 'default.error' ] } unless entity.respond_to?(:explode)
 
       # Start model modification operation
-      model.start_operation('OCL Outliner Toggle Visible', true, false, false)
+      model.start_operation('OCL Outliner Explode', true, false, false)
 
 
-      entity.visible = !entity.visible?
+      entity.explode
 
 
       # Commit model modification operation
       model.commit_operation
 
-      { :visible => entity.visible? }
+      { :success => true }
     end
 
     # -----

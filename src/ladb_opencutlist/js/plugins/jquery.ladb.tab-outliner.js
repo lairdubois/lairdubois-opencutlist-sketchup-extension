@@ -82,15 +82,6 @@
                     that.toggleFoldingRow($row);
                     return false;
                 });
-                $('a.ladb-btn-add-row', that.$page).on('click', function () {
-                    $(this).blur();
-                    var $row = $(this).parents('.ladb-outliner-row');
-                    var nodeId = $row.data('node-id');
-
-                    alert('TODO :)');
-
-                    return false;
-                });
                 $('a.ladb-btn-node-set-active', that.$page).on('click', function () {
                     $(this).blur();
                     var $row = $(this).parents('.ladb-outliner-row');
@@ -188,6 +179,7 @@
             var $tabs = $('.modal-header a[data-toggle="tab"]', $modal);
             var $inputName = $('#ladb_outliner_node_input_name', $modal);
             var $inputDefinitionName = $('#ladb_outliner_node_input_definition_name', $modal);
+            var $btnExplode = $('#ladb_outliner_node_explode', $modal);
             var $btnUpdate = $('#ladb_outliner_node_update', $modal);
 
             // Bind tabs
@@ -200,6 +192,47 @@
             $inputDefinitionName.ladbTextinputText();
 
             // Bind buttons
+            $btnExplode.on('click', function () {
+
+                var names = [];
+                if (that.editedNode.name) {
+                    names.push(that.editedNode.name);
+                }
+                if (that.editedNode.definition_name) {
+                    var definitionName = that.editedNode.definition_name
+                    if (that.editedNode.type === 2 || that.editedNode.type === 3) {   // 2 = TYPE_COMPONENT, 3 = TYPE_PART
+                        definitionName = '<' + definitionName + '>'
+                    }
+                    names.push(definitionName);
+                }
+
+                that.dialog.confirm(i18next.t('default.caution'), i18next.t('tab.outliner.edit_node.explode_message', { name: names.join(' ') }), function () {
+
+                    rubyCallCommand('outliner_explode', that.editedNode, function (response) {
+
+                        if (response['errors']) {
+                            that.dialog.notifyErrors(response['errors']);
+                        } else {
+
+                            // Reload the list
+                            that.generateOutliner();
+
+                            // Reset edited material
+                            that.editedNode = null;
+
+                            // Hide modal
+                            $modal.modal('hide');
+
+                        }
+
+                    });
+
+                }, {
+                    confirmBtnType: 'danger',
+                    confirmBtnLabel: i18next.t('tab.outliner.edit_node.explode')
+                });
+
+            });
             $btnUpdate.on('click', function () {
 
                 that.editedNode.name = $inputName.val();
@@ -242,6 +275,32 @@
 
     };
 
+    LadbTabOutliner.prototype.explodeNode = function(id) {
+        var that = this;
+
+        this.dialog.confirm(i18next.t('default.caution'), i18next.t('tab.outliner.explode.message', { id: id }), function () {
+
+            rubyCallCommand('outliner_explode', {
+                id: id,
+            }, function (response) {
+
+                if (response.errors && response.errors.length > 0) {
+                    that.dialog.notifyErrors(response.errors);
+                } else {
+
+                    // Reload the list
+                    that.generateOutliner();
+
+                }
+
+            });
+
+        }, {
+            confirmBtnType: 'danger',
+            confirmBtnLabel: i18next.t('tab.outliner.edit_node.explode')
+        });
+
+    };
     LadbTabOutliner.prototype.toggleFoldingRow = function ($row, dataKey) {
         var $btn = $('.ladb-btn-folding-toggle-row', $row);
         var $i = $('i', $btn);

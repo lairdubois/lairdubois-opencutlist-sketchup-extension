@@ -64,7 +64,7 @@ module Ladb::OpenCutList
         node_def = NodeDef.new(NodeDef.generate_node_id(entity, path))
         node_def.type = NodeDef::TYPE_MODEL
         node_def.name = entity.name
-        node_def.definition_name = filename
+        node_def.default_name = filename
 
         entity.entities.each { |child_entity|
           child_node_def, child_face_count, child_part_count = _fetch_node_defs(child_entity, node_def, path)
@@ -82,7 +82,7 @@ module Ladb::OpenCutList
         node_def = NodeDef.new(NodeDef.generate_node_id(entity, path), path)
         node_def.type = NodeDef::TYPE_GROUP
         node_def.name = entity.name
-        node_def.definition_name = Plugin.instance.get_i18n_string("tab.outliner.type_#{NodeDef::TYPE_GROUP}")
+        node_def.default_name = Plugin.instance.get_i18n_string("tab.outliner.type_#{NodeDef::TYPE_GROUP}")
         node_def.visible = entity.visible? && _layer_visible?(entity.layer, parent_node_def.nil?)
 
         entity.entities.each { |child_entity|
@@ -103,7 +103,7 @@ module Ladb::OpenCutList
         node_def = NodeDef.new(NodeDef.generate_node_id(entity, path), path)
         node_def.type = NodeDef::TYPE_COMPONENT
         node_def.name = entity.name
-        node_def.definition_name = entity.definition.name
+        node_def.default_name = "<#{entity.definition.name}>"
         node_def.visible = entity.visible? && _layer_visible?(entity.layer, parent_node_def.nil?)
 
         entity.definition.entities.each { |child_entity|
