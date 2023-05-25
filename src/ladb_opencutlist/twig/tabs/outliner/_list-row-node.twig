@@ -8,12 +8,18 @@
                     <div style="display: inline-block; width: 20px;"></div>
                 {% endif %}
             </div>
-            &nbsp;<i class="ladb-opencutlist-icon-{% if node.type == 0 %}{# 0 = TYPE_MODEL #}view-front{% elseif node.type == 2 %}{# 2 = TYPE_COMPONENT #}component{% elseif node.type == 3 %}{# 2 = TYPE_PART #}plan{% else %}group{% endif %}" data-toggle="tooltip" title="{{ ('tab.outliner.type_'~node.type)|i18next }}"></i>&nbsp;{% if node.name %}<strong>{{ node.name|escape('html') }}</strong>{% endif %} {% if node.type != 1 or node.name is empty %}<span style="color: #999;">{% include 'tabs/outliner/_default-name.twig' %}</span>{% endif %}
+            &nbsp;{% include 'tabs/outliner/_node-icon.twig' %}&nbsp;{% if node.name is not empty %}<strong>{{ node.name|escape('html') }}</strong>{% endif %}{% if node.type != 1 or node.name is empty %} <span class="text-muted">{% include 'tabs/outliner/_node-default-name.twig' %}</span>{% endif %}
             <div class="ladb-minitools ladb-minitools-right">
+                <span class="ladb-separator no-print"></span>
                 <a href="#" class="ladb-btn-node-set-active"><i class="ladb-opencutlist-icon-cursor"></i></a>
                 {% if node.type != 0 %}{# 0 = TYPE_MODEL #}<a href="#" class="ladb-btn-node-toggle-visible"><i class="ladb-opencutlist-icon-eye-{% if node.visible %}open{% else %}close{% endif %}"></i></a>{% endif %}
                 <a href="#" class="ladb-btn-node-edit ladb-click-tool"><i class="ladb-opencutlist-icon-edit"></i></a>
             </div>
+            {% if node.layer_name is not empty and node.layer_name != 'Layer0' %}
+                <ul class="ladb-outliner-node-layers">
+                    <li><a href="#">{{ node.layer_name }}</a></li>
+                </ul>
+            {% endif %}
         </div>
     </td>
     <td class="ladb-cutlist-value">{{ node.part_count }}</td>

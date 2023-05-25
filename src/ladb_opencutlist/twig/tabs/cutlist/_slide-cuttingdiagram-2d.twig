@@ -457,8 +457,8 @@
                                 {% endif %}
                                 {% if not generateOptions.hide_tags and part.tags is not empty %}
                                     <ul class="ladb-cutlist-part-tags">
-                                        {% for label in part.tags %}
-                                            <li><a href="#" class="no-hover">{{ label }}</a></li>
+                                        {% for tag in part.tags %}
+                                            <li><a href="#" class="no-hover">{{ tag }}</a></li>
                                         {% endfor %}
                                     </ul>
                                 {% endif %}

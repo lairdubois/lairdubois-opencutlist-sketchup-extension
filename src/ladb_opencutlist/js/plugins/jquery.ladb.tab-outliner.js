@@ -179,6 +179,7 @@
             var $tabs = $('.modal-header a[data-toggle="tab"]', $modal);
             var $inputName = $('#ladb_outliner_node_input_name', $modal);
             var $inputDefinitionName = $('#ladb_outliner_node_input_definition_name', $modal);
+            var $inputLayerName = $('#ladb_outliner_node_input_layer_name', $modal);
             var $btnExplode = $('#ladb_outliner_node_explode', $modal);
             var $btnUpdate = $('#ladb_outliner_node_update', $modal);
 
@@ -190,6 +191,7 @@
             // Bind input
             $inputName.ladbTextinputText();
             $inputDefinitionName.ladbTextinputText();
+            $inputLayerName.ladbTextinputText();
 
             // Bind buttons
             $btnExplode.on('click', function () {
@@ -237,6 +239,7 @@
 
                 that.editedNode.name = $inputName.val();
                 that.editedNode.definition_name = $inputDefinitionName.val();
+                that.editedNode.layer_name = $inputLayerName.val();
 
                 rubyCallCommand('outliner_update', that.editedNode, function (response) {
 
@@ -247,7 +250,7 @@
                         // Reload the list
                         var nodeId = that.editedNode.id;
                         that.generateOutliner(function() {
-                            that.scrollSlideToTarget(null, $('#ladb_outliner_node_' + nodeId, that.$page), false, true);
+                            that.scrollSlideToTarget(null, $('[data-node-id=' + nodeId + ']', that.$page), false, true);
                         });
 
                         // Reset edited material

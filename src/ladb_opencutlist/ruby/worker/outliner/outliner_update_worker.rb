@@ -7,6 +7,7 @@ module Ladb::OpenCutList
       @id = node_data.fetch('id')
       @name = node_data.fetch('name', nil)
       @definition_name = node_data.fetch('definition_name', nil)
+      @layer_name = node_data.fetch('layer_name', nil)
 
       @outline = outliner
 
@@ -36,6 +37,14 @@ module Ladb::OpenCutList
 
       if entity.is_a?(Sketchup::ComponentInstance) && @definition_name.is_a?(String) && @definition_name != entity.definition.name
         entity.definition.name = @definition_name.strip
+      end
+
+      if entity.is_a?(Sketchup::Drawingelement) && @layer_name.is_a?(String) && @layer_name != entity.layer.name
+        layer = model.layers[@layer_name]
+        if layer.nil?
+          layer = model.layers.add(@layer_name)
+        end
+        entity.layer = layer
       end
 
       # Commit model modification operation

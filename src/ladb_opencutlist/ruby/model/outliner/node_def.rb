@@ -3,6 +3,7 @@ module Ladb::OpenCutList
   require 'digest'
 
   require_relative 'node'
+  require_relative '../../utils/path_utils'
 
   class NodeDef
 
@@ -11,7 +12,7 @@ module Ladb::OpenCutList
     TYPE_COMPONENT = 2
     TYPE_PART = 3
 
-    attr_accessor :path, :type, :name, :definition_name, :visible, :part_count
+    attr_accessor :path, :type, :name, :definition_name, :layer_name, :visible, :part_count
     attr_reader :id, :children
 
     def initialize(id, path = [])
@@ -21,6 +22,7 @@ module Ladb::OpenCutList
       @type = nil
       @name = nil
       @definition_name = nil
+      @layer_name = nil
       @visible = true
       @part_count = 0
 
@@ -31,7 +33,7 @@ module Ladb::OpenCutList
     # -----
 
     def self.generate_node_id(entity, path)
-      Digest::MD5.hexdigest("#{entity.guid}|#{path.object_id}")
+      Digest::MD5.hexdigest("#{entity.guid}|#{PathUtils.serialize_path(path)}")
     end
 
     # -----

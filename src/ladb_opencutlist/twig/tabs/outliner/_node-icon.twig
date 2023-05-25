@@ -1,0 +1,1 @@
+<i class="ladb-opencutlist-icon-{% if node.type == 0 %}{# 0 = TYPE_MODEL #}view-front{% elseif node.type == 2 %}{# 2 = TYPE_COMPONENT #}component{% elseif node.type == 3 %}{# 2 = TYPE_PART #}plan{% else %}group{% endif %}" data-toggle="tooltip" title="{{ ('tab.outliner.type_'~node.type)|i18next }}"></i>

@@ -33,6 +33,14 @@
                         </div>
                     </div>
                 {% endif %}
+                {% if node.type != 0 %}{# 0 = TYPE_MODEL #}
+                    <div class="form-group">
+                        <label for="ladb_outliner_node_input_layer_name" class="control-label col-xs-4">{{ 'tab.outliner.edit_node.layer_name'|i18next }}</label>
+                        <div class="col-xs-7">
+                            <input type="text" class="form-control" id="ladb_outliner_node_input_layer_name" value="{{ node.layer_name|escape }}">
+                        </div>
+                    </div>
+                {% endif %}
             </div>
         </div>
         <div role="tabpanel" class="tab-pane{% if tab == 'preview' %} active{% endif %}" id="tab_edit_node_preview"></div>
