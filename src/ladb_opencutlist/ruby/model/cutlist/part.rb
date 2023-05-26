@@ -43,13 +43,13 @@ module Ladb::OpenCutList
       @edge_count = part_def.edge_count
       @edge_pattern = part_def.edge_pattern
       @edge_material_names = part_def.edge_material_names
-      @edge_material_colors = part_def.edge_material_colors.transform_values { |v| ColorUtils.color_to_hex(ColorUtils.color_visible_over_white(v)) }
+      @edge_material_colors = part_def.edge_material_colors.map { |k, v| [ k, ColorUtils.color_to_hex(ColorUtils.color_visible_over_white(v)) ] }.to_h
       @edge_std_dimensions = part_def.edge_std_dimensions
       @edge_decrements = { :length => part_def.edge_length_decrement > 0 ? part_def.edge_length_decrement.to_s : nil, :width => part_def.edge_width_decrement > 0 ? part_def.edge_width_decrement.to_s : nil }
       @face_count = part_def.face_count
       @face_pattern = part_def.face_pattern
       @face_material_names = part_def.face_material_names
-      @face_material_colors = part_def.face_material_colors.transform_values { |v| ColorUtils.color_to_hex(ColorUtils.color_visible_over_white(v)) }
+      @face_material_colors = part_def.face_material_colors.map { |k, v| [ k, ColorUtils.color_to_hex(ColorUtils.color_visible_over_white(v)) ] }.to_h
       @face_texture_angles = part_def.face_texture_angles.each { |k, v| part_def.face_texture_angles[k] = v.radians.round }
       @face_std_dimensions = part_def.face_std_dimensions
       @face_decrements = { :thickness => part_def.face_thickness_decrement > 0 ? part_def.face_thickness_decrement.to_s : nil }

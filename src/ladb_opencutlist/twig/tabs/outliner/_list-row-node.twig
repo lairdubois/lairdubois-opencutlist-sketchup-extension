@@ -17,7 +17,10 @@
             </div>
             {% if node.layer_name is not empty and node.layer_name != 'Layer0' %}
                 <ul class="ladb-outliner-node-layers">
-                    <li><a href="#">{{ node.layer_name }}</a></li>
+                    {% for folder in node.layer_folders %}
+                        <li><a href="#"><i class="ladb-opencutlist-icon-folder"></i> {{ folder }}</a></li>
+                    {% endfor %}
+                    <li><a href="#"><i class="ladb-opencutlist-icon-tag"></i> {{ node.layer_name }}</a></li>
                 </ul>
             {% endif %}
         </div>

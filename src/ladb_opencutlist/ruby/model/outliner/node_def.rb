@@ -12,7 +12,7 @@ module Ladb::OpenCutList
     TYPE_COMPONENT = 2
     TYPE_PART = 3
 
-    attr_accessor :path, :type, :name, :definition_name, :layer_name, :visible, :expended, :part_count
+    attr_accessor :path, :type, :name, :definition_name, :layer_name, :layer_folders, :visible, :expended, :part_count
     attr_reader :id, :children
 
     def initialize(id, path = [])
@@ -23,6 +23,7 @@ module Ladb::OpenCutList
       @name = nil
       @definition_name = nil
       @layer_name = nil
+      @layer_folders = nil
       @visible = true
       @expended = false
 

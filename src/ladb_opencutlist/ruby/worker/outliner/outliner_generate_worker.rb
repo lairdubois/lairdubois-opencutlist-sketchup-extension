@@ -88,6 +88,7 @@ module Ladb::OpenCutList
         node_def.name = entity.name
         node_def.definition_name = Plugin.instance.get_i18n_string("tab.outliner.type_#{NodeDef::TYPE_GROUP}")
         node_def.layer_name = entity.layer.name if entity.layer != cached_layer0
+        node_def.layer_folders = _layer_folders(entity.layer) if entity.layer != cached_layer0
         node_def.visible = entity.visible? && _layer_visible?(entity.layer, parent_node_def.nil?)
         node_def.expended = instance_attributes.outliner_expended
 
@@ -113,6 +114,7 @@ module Ladb::OpenCutList
         node_def.name = entity.name
         node_def.definition_name = entity.definition.name
         node_def.layer_name = entity.layer.name if entity.layer != cached_layer0
+        node_def.layer_folders = _layer_folders(entity.layer) if entity.layer != cached_layer0
         node_def.visible = entity.visible? && _layer_visible?(entity.layer, parent_node_def.nil?)
         node_def.expended = instance_attributes.outliner_expended
 
@@ -160,6 +162,14 @@ module Ladb::OpenCutList
           node_def.definition_name
         ]
       end
+    end
+
+    def _layer_folders(layer, folders = [])
+      if layer.respond_to?(:folder) && layer.folder
+        folders.unshift(layer.folder.name)
+        _layer_folders(layer.folder, folders)
+      end
+      folders
     end
 
   end
