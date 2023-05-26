@@ -13,6 +13,7 @@ module Ladb::OpenCutList
     # -----
 
     def run
+      return { :errors => [ [ 'core.error.feature_unavailable', { :version => 2020 } ] ] } if Sketchup.version_number < 2000000000
       return { :errors => [ 'default.error' ] } unless @outline
       return { :errors => [ 'tab.outliner.error.obsolete_outliner' ] } if @outline.obsolete?
 

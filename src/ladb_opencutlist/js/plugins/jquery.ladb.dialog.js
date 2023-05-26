@@ -84,7 +84,7 @@
                 name: 'outliner',
                 bar: 'leftbar',
                 icon: 'ladb-opencutlist-icon-outliner',
-                sponsorAd: true
+                sponsorAd: false
             },
             {
                 name: 'cutlist',

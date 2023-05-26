@@ -1109,7 +1109,7 @@ tab:
     label: Structure
     title: Structure
     list: Arboressance des entités
-    nodes: Noeuds
+    nodes: Instances
     part_count: Nb Pièces
     type_0: Modèle
     type_1: Groupe
