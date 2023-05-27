@@ -4,6 +4,7 @@ module Ladb::OpenCutList
   require_relative '../../helper/layer_visibility_helper'
   require_relative '../../model/outliner/outliner'
   require_relative '../../model/outliner/node_def'
+  require_relative '../../model/outliner/layer_def'
   require_relative '../../model/attributes/instance_attributes'
 
   class OutlinerGenerateWorker
@@ -52,7 +53,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _fetch_node_defs(entity, parent_node_def = nil, path = [])
+    def _fetch_node_defs(entity, path = [])
       return nil, 0, 0 if entity.is_a?(Sketchup::Edge)   # Minor Speed improvement when there's a lot of edges
       node_def = nil
       face_count = 0
@@ -62,20 +63,23 @@ module Ladb::OpenCutList
         dir, filename = File.split(entity.path)
         filename = Plugin.instance.get_i18n_string('default.empty_filename') if filename.empty?
 
-        node_def = NodeDef.new(NodeDef.generate_node_id(entity, path))
-        node_def.type = NodeDef::TYPE_MODEL
-        node_def.name = entity.name
-        node_def.definition_name = filename
-        node_def.expended = true
-
+        children = []
         entity.entities.each { |child_entity|
-          child_node_def, child_face_count, child_part_count = _fetch_node_defs(child_entity, node_def, path)
+
+          child_node_def, child_face_count, child_part_count = _fetch_node_defs(child_entity, path)
+          children << child_node_def unless child_node_def.nil?
+
           face_count += child_face_count
           part_count += child_part_count
+
         }
 
-        _sort_children(node_def)
+        node_def = NodeModelDef.new(path)
+        node_def.file_name = filename
+        node_def.default_name = filename
+        node_def.expanded = true
         node_def.part_count = part_count
+        node_def.children.concat(_sort_children(children))
 
       elsif entity.is_a?(Sketchup::Group)
 
@@ -83,25 +87,23 @@ module Ladb::OpenCutList
 
         path += [ entity]
 
-        node_def = NodeDef.new(NodeDef.generate_node_id(entity, path), path)
-        node_def.type = NodeDef::TYPE_GROUP
-        node_def.name = entity.name
-        node_def.definition_name = Plugin.instance.get_i18n_string("tab.outliner.type_#{NodeDef::TYPE_GROUP}")
-        node_def.layer_name = entity.layer.name if entity.layer != cached_layer0
-        node_def.layer_folders = _layer_folders(entity.layer) if entity.layer != cached_layer0
-        node_def.visible = entity.visible? && _layer_visible?(entity.layer, parent_node_def.nil?)
-        node_def.expended = instance_attributes.outliner_expended
-
+        children = []
         entity.entities.each { |child_entity|
-          child_node_def, child_face_count, child_part_count = _fetch_node_defs(child_entity, node_def, path)
+
+          child_node_def, child_face_count, child_part_count = _fetch_node_defs(child_entity, path)
+          children << child_node_def unless child_node_def.nil?
+
           face_count += child_face_count
           part_count += child_part_count
+
         }
 
-        _sort_children(node_def)
+        node_def = NodeGroupDef.new(path)
+        node_def.default_name = Plugin.instance.get_i18n_string("tab.outliner.type_#{AbstractNodeDef::TYPE_GROUP}")
+        node_def.layer_def = _create_layer_def(entity.layer)
+        node_def.expanded = instance_attributes.outliner_expanded
         node_def.part_count = part_count
-
-        parent_node_def.children << node_def unless parent_node_def.nil?
+        node_def.children.concat(_sort_children(children))
 
       elsif entity.is_a?(Sketchup::ComponentInstance)
 
@@ -109,21 +111,18 @@ module Ladb::OpenCutList
 
         path += [ entity ]
 
-        node_def = NodeDef.new(NodeDef.generate_node_id(entity, path), path)
-        node_def.type = NodeDef::TYPE_COMPONENT
-        node_def.name = entity.name
-        node_def.definition_name = entity.definition.name
-        node_def.layer_name = entity.layer.name if entity.layer != cached_layer0
-        node_def.layer_folders = _layer_folders(entity.layer) if entity.layer != cached_layer0
-        node_def.visible = entity.visible? && _layer_visible?(entity.layer, parent_node_def.nil?)
-        node_def.expended = instance_attributes.outliner_expended
-
+        children = []
         entity.definition.entities.each { |child_entity|
-          child_node_def, child_face_count, child_part_count = _fetch_node_defs(child_entity, node_def, path)
+
+          child_node_def, child_face_count, child_part_count = _fetch_node_defs(child_entity, path)
+          children << child_node_def unless child_node_def.nil?
+
           face_count += child_face_count
           part_count += child_part_count
+
         }
 
+        node_def = nil
         if face_count > 0
 
           bounds = _compute_faces_bounds(entity.definition, nil)
@@ -131,7 +130,7 @@ module Ladb::OpenCutList
 
             # It's a part
 
-            node_def.type = NodeDef::TYPE_PART
+            node_def = NodePartDef.new(path)
 
             face_count = 0
             part_count += 1
@@ -140,10 +139,13 @@ module Ladb::OpenCutList
 
         end
 
-        _sort_children(node_def)
+        node_def = NodeComponentDef.new(path) if node_def.nil?
+        node_def.default_name = "<#{entity.definition.name}>"
+        node_def.definition_name = entity.definition.name
+        node_def.layer_def = _create_layer_def(entity.layer)
+        node_def.expanded = instance_attributes.outliner_expanded
         node_def.part_count = part_count
-
-        parent_node_def.children << node_def
+        node_def.children.concat(_sort_children(children))
 
       elsif entity.is_a?(Sketchup::Face)
 
@@ -153,23 +155,24 @@ module Ladb::OpenCutList
       [ node_def, face_count, part_count ]
     end
 
-    def _sort_children(node_def)
-      node_def.children.sort_by! do |node_def|
-        [
-          node_def.type == NodeDef::TYPE_PART ? 1 : 0,
-          (node_def.name.nil? || node_def.name.empty?) ? 1 : 0,
-          node_def.name,
-          node_def.definition_name
-        ]
-      end
+    private
+
+    def _create_layer_def(layer)
+      return nil if layer == cached_layer0
+      layer_def = layer.is_a?(Sketchup::Layer) ? LayerDef.new(layer) : LayerFolderDef.new(layer)
+      layer_def.folder = _create_layer_def(layer.folder) if layer.respond_to?(:folder) && !layer.folder.nil?
+      layer_def
     end
 
-    def _layer_folders(layer, folders = [])
-      if layer.respond_to?(:folder) && layer.folder
-        folders.unshift(layer.folder.name)
-        _layer_folders(layer.folder, folders)
+    def _sort_children(children)
+      children.sort_by! do |node_def|
+        [
+            node_def.type == AbstractNodeDef::TYPE_PART ? 1 : 0,
+            (node_def.entity.name.nil? || node_def.entity.name.empty?) ? 1 : 0,
+            node_def.entity.name,
+            node_def.default_name
+        ]
       end
-      folders
     end
 
   end

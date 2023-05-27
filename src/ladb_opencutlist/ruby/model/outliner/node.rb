@@ -1,16 +1,14 @@
 module Ladb::OpenCutList
 
-  require 'digest'
-
   require_relative '../../helper/def_helper'
   require_relative '../../helper/hashable_helper'
 
-  class Node
+  class AbstractNode
 
     include DefHelper
     include HashableHelper
 
-    attr_accessor :name, :definition_name, :layer_name, :layer_folders, :visible, :expended, :part_count
+    attr_accessor :type, :name, :default_name, :expanded, :part_count
     attr_reader :id, :children
 
     def initialize(_def)
@@ -18,17 +16,66 @@ module Ladb::OpenCutList
 
       @id = _def.id
       @type = _def.type
-      @name = _def.name
-      @definition_name = _def.definition_name
-      @layer_name = _def.layer_name
-      @layer_folders = _def.layer_folders
-      @visible = _def.visible
-      @expended = _def.expended
 
+      @name = _def.entity.name
+      @default_name = _def.default_name
+
+      @expanded = _def.expanded
       @part_count = _def.part_count
 
       @children = _def.children.map { |node_def| node_def.create_node }
 
+    end
+
+  end
+
+
+  class NodeModel < AbstractNode
+
+    attr_reader :file_name
+
+    def initialize(_def)
+      super
+
+      @file_name = _def.file_name
+
+    end
+
+  end
+
+  class NodeGroup < AbstractNode
+
+    attr_reader :locked, :visible, :layer
+
+    def initialize(_def)
+      super
+
+      @locked = _def.entity.locked?
+      @visible = _def.entity.visible?
+
+      @layer = _def.layer_def ? _def.layer_def.create_layer : nil
+
+    end
+
+  end
+
+  class NodeComponent < NodeGroup
+
+    attr_reader :definition_name
+
+    def initialize(_def)
+      super
+
+      @definition_name = _def.definition_name
+
+    end
+
+  end
+
+  class NodePart < NodeComponent
+
+    def initialize(_def)
+      super
     end
 
   end

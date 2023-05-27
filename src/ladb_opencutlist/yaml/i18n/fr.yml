@@ -1116,7 +1116,7 @@ tab:
     type_2: Composant
     type_3: Pièce
     edit_node:
-      title: "Propriétés de l'entité **{{ name }}**"
+      title: "Propriétés de l'instance **{{ name }}**"
       general: Générales
       preview: Aperçu
       name: Instance

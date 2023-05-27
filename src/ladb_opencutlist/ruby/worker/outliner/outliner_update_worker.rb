@@ -1,13 +1,17 @@
 module Ladb::OpenCutList
 
+  require_relative '../../helper/layer0_caching_helper'
+
   class OutlinerUpdateWorker
+
+    include Layer0CachingHelper
 
     def initialize(node_data, outliner)
 
       @id = node_data.fetch('id')
       @name = node_data.fetch('name', nil)
       @definition_name = node_data.fetch('definition_name', nil)
-      @layer_name = node_data.fetch('layer_name', nil)
+      @layer_name = node_data.fetch('layer_name', '').strip
 
       @outline = outliner
 
@@ -40,11 +44,15 @@ module Ladb::OpenCutList
       end
 
       if entity.is_a?(Sketchup::Drawingelement) && @layer_name.is_a?(String) && @layer_name != entity.layer.name
-        layer = model.layers[@layer_name]
-        if layer.nil?
-          layer = model.layers.add(@layer_name)
+        if @layer_name.empty?
+          entity.layer = cached_layer0
+        else
+          layer = model.layers[@layer_name]
+          if layer.nil?
+            layer = model.layers.add(@layer_name)
+          end
+          entity.layer = layer
         end
-        entity.layer = layer
       end
 
       # Commit model modification operation

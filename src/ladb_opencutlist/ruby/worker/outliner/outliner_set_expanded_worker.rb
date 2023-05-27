@@ -2,12 +2,12 @@ module Ladb::OpenCutList
 
   require_relative '../../model/attributes/instance_attributes'
 
-  class OutlinerSetExpendedWorker
+  class OutlinerSetExpandedWorker
 
     def initialize(node_data, outliner)
 
       @id = node_data.fetch('id')
-      @expended = node_data.fetch('expended', false)
+      @expanded = node_data.fetch('expanded', false)
 
       @outline = outliner
 
@@ -26,13 +26,13 @@ module Ladb::OpenCutList
       return { :errors => [ 'tab.outliner.error.node_not_found' ] } unless node
 
       # Start model modification operation
-      model.start_operation('OCL Outliner Set Active', true, false, true)
+      model.start_operation('OCL Outliner Set Expanded', true, false, true)
 
 
-      node.expended = @expended
+      node.expanded = @expanded
 
       instance_attributes = InstanceAttributes.new(node.def.entity)
-      instance_attributes.outliner_expended = @expended
+      instance_attributes.outliner_expanded = @expanded
       instance_attributes.write_to_attributes
 
 

@@ -20,8 +20,8 @@ module Ladb::OpenCutList
       Plugin.instance.register_command("outliner_set_active") do |node_data|
         set_active_command(node_data)
       end
-      Plugin.instance.register_command("outliner_set_expended") do |node_data|
-        set_expended_command(node_data)
+      Plugin.instance.register_command("outliner_set_expanded") do |node_data|
+        set_expanded_command(node_data)
       end
       Plugin.instance.register_command("outliner_toggle_visible") do |node_data|
         toggle_visible_command(node_data)
@@ -86,11 +86,11 @@ module Ladb::OpenCutList
       worker.run
     end
 
-    def set_expended_command(node_data)
-      require_relative '../worker/outliner/outliner_set_expended_worker'
+    def set_expanded_command(node_data)
+      require_relative '../worker/outliner/outliner_set_expanded_worker'
 
       # Setup worker
-      worker = OutlinerSetExpendedWorker.new(node_data, @outliner)
+      worker = OutlinerSetExpandedWorker.new(node_data, @outliner)
 
       # Run !
       worker.run

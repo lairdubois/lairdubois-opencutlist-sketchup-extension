@@ -287,23 +287,23 @@
     LadbTabOutliner.prototype.toggleFoldingNode = function (id, $row) {
         var node = this.findNodeById(id);
         if (node) {
-            node.expended = !node.expended;
+            node.expanded = !node.expanded;
             if ($row === undefined) {
                 $row = $('#ladb_outliner_row_' + node.id, this.$page);
             }
-            if (node.expended) {
+            if (node.expanded) {
                 this.expendNodeRow(node, $row);
             } else {
                 this.collapseNodeRow(node, $row);
             }
-            rubyCallCommand('outliner_set_expended', node, function (response) {
+            rubyCallCommand('outliner_set_expanded', node, function (response) {
 
             });
         }
     };
 
     LadbTabOutliner.prototype.expendNodeRow = function (node, $row) {
-        if (node.expended) {
+        if (node.expanded) {
 
             var $btn = $('.ladb-btn-folding-toggle-row', $row);
             var $i = $('i', $btn);
@@ -321,7 +321,7 @@
     };
 
     LadbTabOutliner.prototype.collapseNodeRow = function (node, $row) {
-        if (!node.expended) {
+        if (!node.expanded) {
 
             var $btn = $('.ladb-btn-folding-toggle-row', $row);
             var $i = $('i', $btn);

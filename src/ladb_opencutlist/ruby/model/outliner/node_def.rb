@@ -5,28 +5,28 @@ module Ladb::OpenCutList
   require_relative 'node'
   require_relative '../../utils/path_utils'
 
-  class NodeDef
+  class AbstractNodeDef
 
     TYPE_MODEL = 0
     TYPE_GROUP = 1
     TYPE_COMPONENT = 2
     TYPE_PART = 3
 
-    attr_accessor :path, :type, :name, :definition_name, :layer_name, :layer_folders, :visible, :expended, :part_count
-    attr_reader :id, :children
+    attr_accessor :default_name, :layer_def, :expanded, :part_count
+    attr_reader :path, :entity, :id, :type, :children
 
-    def initialize(id, path = [])
-      @id = id
+    def initialize(path = [])
       @path = path
+      @entity = @path.empty? ? Sketchup.active_model : path.last
+      @id = Digest::MD5.hexdigest("#{@entity.guid}|#{PathUtils.serialize_path(path)}")
 
       @type = nil
-      @name = nil
-      @definition_name = nil
-      @layer_name = nil
-      @layer_folders = nil
-      @visible = true
-      @expended = false
 
+      @default_name = nil
+
+      @layer_def = nil
+
+      @expanded = false
       @part_count = 0
 
       @children = []
@@ -35,21 +35,85 @@ module Ladb::OpenCutList
 
     # -----
 
-    def self.generate_node_id(entity, path)
-      Digest::MD5.hexdigest("#{entity.guid}|#{PathUtils.serialize_path(path)}")
+    def create_node
+      raise 'Abstract method : Override it'
     end
 
-    # -----
+  end
 
-    def entity
-      return Sketchup.active_model if @path.empty?
-      @path.last
+
+  class NodeModelDef < AbstractNodeDef
+
+    attr_accessor :file_name
+
+    def initialize(path = [])
+      super
+      @type = TYPE_MODEL
+
+      @file_name = nil
+
     end
 
     # -----
 
     def create_node
-      Node.new(self)
+      NodeModel.new(self)
+    end
+
+  end
+
+  class NodeGroupDef < AbstractNodeDef
+
+    attr_accessor :layer_name, :layer_folders
+
+    def initialize(path = [])
+      super
+      @type = TYPE_GROUP
+
+      @layer_name = nil
+      @layer_folders = nil
+
+    end
+
+    # -----
+
+    def create_node
+      NodeGroup.new(self)
+    end
+
+  end
+
+  class NodeComponentDef < NodeGroupDef
+
+    attr_accessor :definition_name
+
+    def initialize(path = [])
+      super
+      @type = TYPE_COMPONENT
+
+      @definition_name = nil
+
+    end
+
+    # -----
+
+    def create_node
+      NodeComponent.new(self)
+    end
+
+  end
+
+  class NodePartDef < NodeComponentDef
+
+    def initialize(path = [])
+      super
+      @type = TYPE_PART
+    end
+
+    # -----
+
+    def create_node
+      NodePart.new(self)
     end
 
   end
