@@ -19,25 +19,33 @@
     <div class="tab-content">
         <div role="tabpanel" class="tab-pane{% if tab == 'general' %} active{% endif %}" id="tab_edit_node_general">
             <div class="form form-horizontal" style="margin-top: 15px;">
+                {% if node.layer is defined %}
+                    <div class="form-group">
+                        <label for="ladb_outliner_node_input_layer_name" class="control-label col-xs-4">{{ 'tab.outliner.edit_node.layer_name'|i18next }}</label>
+                        <div class="col-xs-7">
+                            <input type="text" class="form-control" id="ladb_outliner_node_input_layer_name" value="{{ node.layer.name|escape('html') }}">
+                        </div>
+                    </div>
+                {% endif %}
                 <div class="form-group">
                     <label for="ladb_outliner_node_input_name" class="control-label col-xs-4">{{ 'tab.outliner.edit_node.name'|i18next }}</label>
                     <div class="col-xs-7">
                         <input type="text" class="form-control" id="ladb_outliner_node_input_name" value="{{ node.name|escape }}" autofocus>
                     </div>
                 </div>
-                {% if node.type == 2 or node.type == 3 %}{# 2 = TYPE_COMPONENT, 3 = TYPE_PART #}
+                {% if node.definition_name is defined %}
                     <div class="form-group">
                         <label for="ladb_outliner_node_input_definition_name" class="control-label col-xs-4">{{ 'tab.outliner.edit_node.definition_name'|i18next }}</label>
                         <div class="col-xs-7">
-                            <input type="text" class="form-control" id="ladb_outliner_node_input_definition_name" value="{{ node.definition_name|escape }}">
+                            <input type="text" class="form-control" id="ladb_outliner_node_input_definition_name" value="{{ node.definition_name|escape('html') }}">
                         </div>
                     </div>
                 {% endif %}
-                {% if node.type != 0 %}{# 0 = TYPE_MODEL #}
+                {% if node.description is defined %}
                     <div class="form-group">
-                        <label for="ladb_outliner_node_input_layer_name" class="control-label col-xs-4">{{ 'tab.outliner.edit_node.layer_name'|i18next }}</label>
+                        <label for="ladb_outliner_node_input_description" class="control-label col-xs-4">{{ 'tab.outliner.edit_node.description'|i18next }}</label>
                         <div class="col-xs-7">
-                            <input type="text" class="form-control" id="ladb_outliner_node_input_layer_name" value="{{ node.layer.name|escape }}">
+                            <textarea class="form-control" id="ladb_outliner_node_input_description">{{ node.description|escape('html') }}</textarea>
                         </div>
                     </div>
                 {% endif %}

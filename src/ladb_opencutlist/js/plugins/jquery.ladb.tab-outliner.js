@@ -194,6 +194,7 @@
             var $inputName = $('#ladb_outliner_node_input_name', $modal);
             var $inputDefinitionName = $('#ladb_outliner_node_input_definition_name', $modal);
             var $inputLayerName = $('#ladb_outliner_node_input_layer_name', $modal);
+            var $inputDescription = $('#ladb_outliner_node_input_description', $modal);
             var $btnExplode = $('#ladb_outliner_node_explode', $modal);
             var $btnUpdate = $('#ladb_outliner_node_update', $modal);
 
@@ -206,6 +207,7 @@
             $inputName.ladbTextinputText();
             $inputDefinitionName.ladbTextinputText();
             $inputLayerName.ladbTextinputText();
+            $inputDescription.ladbTextinputArea();
 
             // Bind buttons
             $btnExplode.on('click', function () {
@@ -251,11 +253,21 @@
             });
             $btnUpdate.on('click', function () {
 
-                that.editedNode.name = $inputName.val();
-                that.editedNode.definition_name = $inputDefinitionName.val();
-                that.editedNode.layer_name = $inputLayerName.val();
+                var data = {
+                    id: that.editedNode.id,
+                    name: $inputName.val()
+                }
+                if ($inputDefinitionName.length > 0) {
+                    data['definition_name'] = $inputDefinitionName.val();
+                }
+                if ($inputLayerName.length > 0) {
+                    data['layer_name'] = $inputLayerName.val();
+                }
+                if ($inputDescription.length > 0) {
+                    data['description'] = $inputDescription.val();
+                }
 
-                rubyCallCommand('outliner_update', that.editedNode, function (response) {
+                rubyCallCommand('outliner_update', data, function (response) {
 
                     if (response['errors']) {
                         that.dialog.notifyErrors(response['errors']);

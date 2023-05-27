@@ -11,7 +11,8 @@ module Ladb::OpenCutList
       @id = node_data.fetch('id')
       @name = node_data.fetch('name', nil)
       @definition_name = node_data.fetch('definition_name', nil)
-      @layer_name = node_data.fetch('layer_name', '').strip
+      @layer_name = node_data.fetch('layer_name', nil)
+      @description = node_data.fetch('description', nil)
 
       @outline = outliner
 
@@ -35,6 +36,7 @@ module Ladb::OpenCutList
       # Start model modification operation
       model.start_operation('OCL Outliner Update', true, false, true)
 
+
       if @name.is_a?(String) && @name != entity.name
         entity.name = @name.strip
       end
@@ -43,7 +45,15 @@ module Ladb::OpenCutList
         entity.definition.name = @definition_name.strip
       end
 
+      if entity.is_a?(Sketchup::Model) && @description.is_a?(String) && @description != entity.description
+        entity.description = @description.strip
+      end
+      if entity.is_a?(Sketchup::ComponentInstance) && @description.is_a?(String) && @description != entity.definition.description
+        entity.definition.description = @description.strip
+      end
+
       if entity.is_a?(Sketchup::Drawingelement) && @layer_name.is_a?(String) && @layer_name != entity.layer.name
+        @layer_name.strip!
         if @layer_name.empty?
           entity.layer = cached_layer0
         else
@@ -54,6 +64,7 @@ module Ladb::OpenCutList
           entity.layer = layer
         end
       end
+
 
       # Commit model modification operation
       model.commit_operation

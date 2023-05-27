@@ -44,14 +44,9 @@ module Ladb::OpenCutList
 
   class NodeModelDef < AbstractNodeDef
 
-    attr_accessor :file_name
-
     def initialize(path = [])
       super
       @type = TYPE_MODEL
-
-      @file_name = nil
-
     end
 
     # -----
@@ -90,9 +85,6 @@ module Ladb::OpenCutList
     def initialize(path = [])
       super
       @type = TYPE_COMPONENT
-
-      @definition_name = nil
-
     end
 
     # -----

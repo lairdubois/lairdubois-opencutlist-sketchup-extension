@@ -75,7 +75,6 @@ module Ladb::OpenCutList
         }
 
         node_def = NodeModelDef.new(path)
-        node_def.file_name = filename
         node_def.default_name = filename
         node_def.expanded = true
         node_def.part_count = part_count

@@ -32,12 +32,12 @@ module Ladb::OpenCutList
 
   class NodeModel < AbstractNode
 
-    attr_reader :file_name
+    attr_reader :description
 
     def initialize(_def)
       super
 
-      @file_name = _def.file_name
+      @description = _def.entity.description
 
     end
 
@@ -61,12 +61,13 @@ module Ladb::OpenCutList
 
   class NodeComponent < NodeGroup
 
-    attr_reader :definition_name
+    attr_reader :definition_name, :description
 
     def initialize(_def)
       super
 
-      @definition_name = _def.definition_name
+      @definition_name = _def.entity.definition.name
+      @description = _def.entity.description
 
     end
 

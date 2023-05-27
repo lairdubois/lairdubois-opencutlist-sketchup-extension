@@ -1122,6 +1122,7 @@ tab:
       preview: Aperçu
       name: Instance
       definition_name: Definition
+      description: Description
       layer_name: Balise
       explode: Eclater
       explode_message: Confirmez-vous l'éclatement de l'instance **{{ name }}** ?
