@@ -8,6 +8,7 @@
         LadbAbstractTab.call(this, element, options, opencutlist);
 
         this.editedNode = null;
+        this.ignoreNextSelectionEvents = false;
         this.lastEditNodeTab = null;
 
         this.$header = $('.ladb-header', this.$element);
@@ -58,6 +59,7 @@
                 // Update page
                 that.$page.empty();
                 that.$page.append(Twig.twig({ ref: "tabs/outliner/_list.twig" }).render({
+                    capabilities: that.dialog.capabilities,
                     errors: errors,
                     warnings: warnings,
                     tips: tips,
@@ -88,7 +90,13 @@
                     var $row = $(this).parents('.ladb-outliner-row');
                     var nodeId = $row.data('node-id');
 
+                    // Flag to ignore next selection change event
+                    that.ignoreNextSelectionEvents = true;
+
                     rubyCallCommand('outliner_set_active', { id: nodeId }, function (response) {
+
+                        // Flag to stop ignoring next selection change event
+                        that.ignoreNextSelectionEvents = false;
 
                         if (response['errors']) {
                             that.dialog.notifyErrors(response['errors']);
@@ -337,57 +345,6 @@
         }
     };
 
-    LadbTabOutliner.prototype.toggleFoldingRow = function ($row, dataKey) {
-        var $btn = $('.ladb-btn-folding-toggle-row', $row);
-        var $i = $('i', $btn);
-
-        if ($i.hasClass('ladb-opencutlist-icon-arrow-right')) {
-            this.expandFoldingRow($row, dataKey);
-        } else {
-            this.collapseFoldingRow($row, dataKey);
-        }
-    };
-
-    LadbTabOutliner.prototype.expandFoldingRow = function ($row, dataKey) {
-        var rowId = $row.data(dataKey ? dataKey : 'node-id');
-        var $btn = $('.ladb-btn-folding-toggle-row', $row);
-        var $i = $('i', $btn);
-
-        $i.addClass('ladb-opencutlist-icon-arrow-down');
-        $i.removeClass('ladb-opencutlist-icon-arrow-right');
-
-        // Show children
-        $row.siblings('tr.folder-' + rowId).removeClass('hide');
-
-    };
-
-    LadbTabOutliner.prototype.collapseFoldingRow = function ($row, dataKey) {
-        var rowId = $row.data(dataKey ? dataKey : 'node-id');
-        var $btn = $('.ladb-btn-folding-toggle-row', $row);
-        var $i = $('i', $btn);
-
-        $i.addClass('ladb-opencutlist-icon-arrow-right');
-        $i.removeClass('ladb-opencutlist-icon-arrow-down');
-
-        // Hide children
-        $row.siblings('tr.folder-' + rowId).addClass('hide');
-
-    };
-
-    LadbTabOutliner.prototype.expandAllFoldingRows = function ($slide, dataKey) {
-        var that = this;
-        $('.ladb-cutlist-row-folder', $slide === undefined ? this.$page : $slide).each(function () {
-            that.expandFoldingRow($(this), dataKey);
-        });
-    };
-
-    LadbTabOutliner.prototype.collapseAllFoldingRows = function ($slide, dataKey) {
-        var that = this;
-        $('.ladb-cutlist-row-folder', $slide === undefined ? this.$page : $slide).each(function () {
-            that.collapseFoldingRow($(this), dataKey);
-        });
-    };
-
     // Internals /////
 
     LadbTabOutliner.prototype.findNodeById = function (id, parent) {
@@ -450,6 +407,14 @@
 
         addEventCallback([ 'on_new_model', 'on_open_model', 'on_activate_model' ], function (params) {
             that.showObsolete('core.event.model_change', true);
+        });
+        addEventCallback([ 'on_layer_changed', 'on_layer_removed', 'on_layers_folder_changed', 'on_layers_folder_removed', 'on_remove_all_layers' ], function (params) {
+            that.showObsolete('core.event.layers_change', true);
+        });
+        addEventCallback([ 'on_selection_bulk_change' ], function (params) {
+            if (!that.ignoreNextSelectionEvents) {
+                that.showObsolete('core.event.selection_change', true);
+            }
         });
 
     };

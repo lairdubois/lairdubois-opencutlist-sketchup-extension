@@ -98,7 +98,7 @@ module Ladb::OpenCutList
                                              MaterialsObserver::ON_MATERIAL_REMOVE,
                                          ]) do |params|
 
-        # Invalidate Cutlist if if exists
+        # Invalidate Cutlist if it exists
         @cutlist.invalidate if @cutlist
 
       end

@@ -38,6 +38,12 @@ module Ladb::OpenCutList
                                              AppObserver::ON_NEW_MODEL,
                                              AppObserver::ON_OPEN_MODEL,
                                              AppObserver::ON_ACTIVATE_MODEL,
+                                             LayersObserver::ON_LAYER_CHANGED,
+                                             LayersObserver::ON_LAYER_REMOVED,
+                                             LayersObserver::ON_LAYERS_FOLDER_CHANGED,
+                                             LayersObserver::ON_LAYERS_FOLDER_REMOVED,
+                                             LayersObserver::ON_REMOVE_ALL_LAYERS,
+                                             SelectionObserver::ON_SELECTION_BULK_CHANGE,
                                          ]) do |params|
 
         # Invalidate Cutlist if exists

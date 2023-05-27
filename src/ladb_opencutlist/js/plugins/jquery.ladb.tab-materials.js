@@ -1256,6 +1256,13 @@
 
         addEventCallback([ 'on_new_model', 'on_open_model', 'on_activate_model' ], function (params) {
             that.showObsolete('core.event.model_change', true);
+
+            // Hide edit option model (if it exists)
+            $('#ladb_materials_modal_options').modal('hide');
+
+            // Reload options (from new active model)
+            that.loadOptions();
+
         });
         addEventCallback('on_options_provider_changed', function () {
             that.showObsolete('core.event.options_change', true);

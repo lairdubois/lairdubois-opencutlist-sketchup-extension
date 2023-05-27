@@ -6,6 +6,7 @@ module Ladb::OpenCutList
   require_relative 'materials_observer'
   require_relative 'selection_observer'
   require_relative 'pages_observer'
+  require_relative 'layers_observer'
 
   class AppObserver < Sketchup::AppObserver
 
@@ -100,6 +101,9 @@ module Ladb::OpenCutList
         if model.pages
           model.pages.add_observer(PagesObserver.instance)
         end
+        if model.layers
+          model.layers.add_observer(LayersObserver.instance)
+        end
       end
     end
 
@@ -117,6 +121,9 @@ module Ladb::OpenCutList
         end
         if model.pages
           model.pages.remove_observer(PagesObserver.instance)
+        end
+        if model.layers
+          model.layers.remove_observer(LayersObserver.instance)
         end
       end
     end
