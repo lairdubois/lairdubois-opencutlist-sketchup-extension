@@ -1128,15 +1128,14 @@ tab:
       explode_message: Confirmez-vous l'éclatement de l'instance **{{ name }}** ?
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
-      no_entities: Votre modèle ne contient aucune pièce.
+      no_entities: Votre modèle est vide !
       node_not_found: Noeud introuvable
       entity_not_found: Instance introuvable
       obsolete_outliner: "Impossible, la structure générée est obsolète. Re-générez là."
     tip:
       no_node: |
-        Votre modèle ne dispose pour le moment d'aucun noeud à afficher ici.
-        Un noeud est un **groupe** ou un **composant** qui ne soit pas une pièce.
-        Grouper des parties de votre modèle pour mieux le structuré.
+        Votre modèle ne dispose pour le moment d'aucune instance à afficher ici.
+        Une instance est un **groupe** ou un **composant** placé dans la scène.
     obsolete_base: "Pour rester synchronisé, vous devez re-générer la structure."
   importer:
     label: Importer

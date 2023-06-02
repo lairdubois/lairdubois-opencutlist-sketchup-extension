@@ -2,6 +2,60 @@ module Ladb::OpenCutList
 
   module Kuix
 
+    # Key constants
+
+    VK_TAB = 9
+    if Sketchup.platform == :platform_osx
+      VK_NUMPAD0 = 48
+      VK_NUMPAD1 = 49
+      VK_NUMPAD2 = 50
+      VK_NUMPAD3 = 51
+      VK_NUMPAD4 = 52
+      VK_NUMPAD5 = 53
+      VK_NUMPAD6 = 54
+      VK_NUMPAD7 = 55
+      VK_NUMPAD8 = 56
+      VK_NUMPAD9 = 57
+      VK_ADD = 43
+    else
+      VK_NUMPAD0 = 0x60
+      VK_NUMPAD1 = 0x61
+      VK_NUMPAD2 = 0x62
+      VK_NUMPAD3 = 0x63
+      VK_NUMPAD4 = 0x64
+      VK_NUMPAD5 = 0x65
+      VK_NUMPAD6 = 0x66
+      VK_NUMPAD7 = 0x67
+      VK_NUMPAD8 = 0x68
+      VK_NUMPAD9 = 0x69
+      VK_ADD = 0x6B
+    end
+
+    # Color constants
+
+    COLOR_BLACK = Sketchup::Color.new(0, 0, 0).freeze
+    COLOR_WHITE = Sketchup::Color.new(255, 255, 255).freeze
+    COLOR_RED = Sketchup::Color.new(255, 0, 0).freeze
+    COLOR_GREEN = Sketchup::Color.new(0, 255, 0).freeze
+    COLOR_BLUE = Sketchup::Color.new(0, 0, 255).freeze
+    COLOR_MAGENTA = Sketchup::Color.new(255, 0, 255).freeze
+    COLOR_YELLOW = Sketchup::Color.new(255, 255, 0).freeze
+    COLOR_LIGHT_GREY = Sketchup::Color.new(220, 220, 220).freeze
+    COLOR_MEDIUM_GREY = Sketchup::Color.new(170, 170, 170).freeze
+    COLOR_DARK_GREY = Sketchup::Color.new(120, 120, 120).freeze
+    COLOR_X = COLOR_RED
+    COLOR_Y = COLOR_GREEN
+    COLOR_Z = COLOR_BLUE
+
+    # Line stipple constants
+
+    LINE_STIPPLE_SOLID = ''.freeze
+    LINE_STIPPLE_DOTTED = '.'.freeze
+    LINE_STIPPLE_SHORT_DASHES = '-'.freeze
+    LINE_STIPPLE_LONG_DASHES = '-'.freeze
+    LINE_STIPPLE_DASH_DOT_DASH = '-.-'.freeze
+
+
     require_relative 'gl/graphics'
     require_relative 'gl/graphics2d'
     require_relative 'gl/graphics3d'
@@ -36,47 +90,6 @@ module Ladb::OpenCutList
     require_relative 'entity/3d/segments'
 
     class KuixTool
-
-      VK_TAB = 9
-      if Sketchup.platform == :platform_osx
-        VK_NUMPAD0 = 48
-        VK_NUMPAD1 = 49
-        VK_NUMPAD2 = 50
-        VK_NUMPAD3 = 51
-        VK_NUMPAD4 = 52
-        VK_NUMPAD5 = 53
-        VK_NUMPAD6 = 54
-        VK_NUMPAD7 = 55
-        VK_NUMPAD8 = 56
-        VK_NUMPAD9 = 57
-        VK_ADD = 43
-      else
-        VK_NUMPAD0 = 0x60
-        VK_NUMPAD1 = 0x61
-        VK_NUMPAD2 = 0x62
-        VK_NUMPAD3 = 0x63
-        VK_NUMPAD4 = 0x64
-        VK_NUMPAD5 = 0x65
-        VK_NUMPAD6 = 0x66
-        VK_NUMPAD7 = 0x67
-        VK_NUMPAD8 = 0x68
-        VK_NUMPAD9 = 0x69
-        VK_ADD = 0x6B
-      end
-
-      COLOR_BLACK = Sketchup::Color.new(0, 0, 0).freeze
-      COLOR_WHITE = Sketchup::Color.new(255, 255, 255).freeze
-      COLOR_RED = Sketchup::Color.new(255, 0, 0).freeze
-      COLOR_GREEN = Sketchup::Color.new(0, 255, 0).freeze
-      COLOR_BLUE = Sketchup::Color.new(0, 0, 255).freeze
-      COLOR_MAGENTA = Sketchup::Color.new(255, 0, 255).freeze
-      COLOR_YELLOW = Sketchup::Color.new(255, 255, 0).freeze
-      COLOR_LIGHT_GREY = Sketchup::Color.new(220, 220, 220).freeze
-      COLOR_MEDIUM_GREY = Sketchup::Color.new(170, 170, 170).freeze
-      COLOR_DARK_GREY = Sketchup::Color.new(120, 120, 120).freeze
-      COLOR_X = COLOR_RED
-      COLOR_Y = COLOR_GREEN
-      COLOR_Z = COLOR_BLUE
 
       attr_reader :canvas # 2D drawing
       attr_reader :space  # 3D drawing

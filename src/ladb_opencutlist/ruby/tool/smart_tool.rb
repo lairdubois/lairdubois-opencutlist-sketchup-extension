@@ -29,9 +29,9 @@ module Ladb::OpenCutList
     COLOR_MESSAGE_TEXT_WARNING = Sketchup::Color.new('#997404').freeze
     COLOR_MESSAGE_TEXT_SUCCESS = Sketchup::Color.new('#569553').freeze
     COLOR_MESSAGE_BACKGROUND = Sketchup::Color.new(255, 255, 255, 200).freeze
-    COLOR_MESSAGE_BACKGROUND_ERROR = COLOR_MESSAGE_TEXT_ERROR.blend(COLOR_WHITE, 0.2).freeze
+    COLOR_MESSAGE_BACKGROUND_ERROR = COLOR_MESSAGE_TEXT_ERROR.blend(Kuix::COLOR_WHITE, 0.2).freeze
     COLOR_MESSAGE_BACKGROUND_WARNING = Sketchup::Color.new('#ffe69c').freeze
-    COLOR_MESSAGE_BACKGROUND_SUCCESS = COLOR_MESSAGE_TEXT_SUCCESS.blend(COLOR_WHITE, 0.2).freeze
+    COLOR_MESSAGE_BACKGROUND_SUCCESS = COLOR_MESSAGE_TEXT_SUCCESS.blend(Kuix::COLOR_WHITE, 0.2).freeze
 
     def initialize(quit_on_esc = true, quit_on_undo = false)
       super
@@ -126,7 +126,7 @@ module Ladb::OpenCutList
             actions_btn.layout = Kuix::BorderLayout.new
             actions_btn.border.set!(0, unit / 4, 0, unit / 4)
             actions_btn.min_size.set_all!(unit * 9)
-            actions_btn.set_style_attribute(:border_color, COLOR_BRAND_DARK.blend(COLOR_WHITE, 0.8))
+            actions_btn.set_style_attribute(:border_color, COLOR_BRAND_DARK.blend(Kuix::COLOR_WHITE, 0.8))
             actions_btn.set_style_attribute(:border_color, COLOR_BRAND_LIGHT, :hover)
             actions_btn.set_style_attribute(:border_color, COLOR_BRAND, :selected)
             actions_btn.set_style_attribute(:background_color, COLOR_BRAND_DARK)
@@ -136,7 +136,7 @@ module Ladb::OpenCutList
             lbl.padding.set!(0, unit * (modifiers.is_a?(Array) ? 1 : 4), 0, unit * 4)
             lbl.set_style_attribute(:color, COLOR_BRAND_LIGHT)
             lbl.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
-            lbl.set_style_attribute(:color, COLOR_WHITE, :selected)
+            lbl.set_style_attribute(:color, Kuix::COLOR_WHITE, :selected)
             actions_btn.data = data
             actions_btn.on(:click) { |button|
               set_root_action(action)
@@ -164,8 +164,8 @@ module Ladb::OpenCutList
                 actions_modifier_btn.border.set_all!(unit / 2)
                 actions_modifier_btn.padding.set_all!(unit * 2)
                 actions_modifier_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT)
-                actions_modifier_btn.set_style_attribute(:background_color, COLOR_WHITE, :hover)
-                actions_modifier_btn.set_style_attribute(:background_color, COLOR_WHITE, :selected)
+                actions_modifier_btn.set_style_attribute(:background_color, Kuix::COLOR_WHITE, :hover)
+                actions_modifier_btn.set_style_attribute(:background_color, Kuix::COLOR_WHITE, :selected)
                 actions_modifier_btn.data = { :modifier => modifier }
                 actions_modifier_btn.on(:click) { |button|
                   set_root_action(action, modifier)
@@ -197,7 +197,7 @@ module Ladb::OpenCutList
           help_btn = Kuix::Button.new
           help_btn.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
           help_btn.layout = Kuix::GridLayout.new
-          help_btn.set_style_attribute(:background_color, COLOR_WHITE)
+          help_btn.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
           help_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
           lbl = help_btn.append_static_label(Plugin.instance.get_i18n_string("default.help").upcase, unit * 3 * get_text_unit_factor)
           lbl.min_size.set!(unit * 15, 0)
@@ -276,10 +276,10 @@ module Ladb::OpenCutList
       minitool_btn.padding.set_all!(@unit * 2)
       minitool_btn.min_size.set!(@unit * 5, @unit * 5)
       minitool_btn.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255, 0.5))
-      minitool_btn.set_style_attribute(:background_color, COLOR_WHITE, :hover)
+      minitool_btn.set_style_attribute(:background_color, Kuix::COLOR_WHITE, :hover)
       minitool_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :active)
       minitool_btn.set_style_attribute(:border_color, Sketchup::Color.new(255, 255, 255, 0.5))
-      minitool_btn.set_style_attribute(:border_color, COLOR_WHITE, :hover)
+      minitool_btn.set_style_attribute(:border_color, Kuix::COLOR_WHITE, :hover)
       minitool_btn.set_style_attribute(:border_color, COLOR_BRAND_LIGHT, :active)
       minitool_btn.set_style_attribute(:border_color, COLOR_BRAND, :selected)
       minitool_btn.on([ :click, :doubleclick ], &block)
@@ -339,13 +339,13 @@ module Ladb::OpenCutList
           entity = info
           entity.min_size.set_all!(@unit * get_text_unit_factor * 4)
           entity.line_width = @unit <= 4 ? 0.5 : 1
-          entity.set_style_attribute(:color, COLOR_BLACK)
+          entity.set_style_attribute(:color, Kuix::COLOR_BLACK)
         else
           next
         end
         entity.border.set!(0, 0, 0, @unit / 4)
         entity.padding.set!(0, 0, 0, @unit * 3)
-        entity.set_style_attribute(:border_color, COLOR_DARK_GREY)
+        entity.set_style_attribute(:border_color, Kuix::COLOR_DARK_GREY)
         @infos_panel.append(entity)
       end
       @infos_panel.visible = !text_1.empty? || !infos.empty?

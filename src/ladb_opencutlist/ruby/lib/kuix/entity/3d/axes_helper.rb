@@ -4,7 +4,7 @@ module Ladb::OpenCutList::Kuix
 
     attr_accessor :box_0, :box_x, :box_y, :box_z
 
-    def initialize(pixel_size = 40, line_width = 5, x_color = KuixTool::COLOR_X, y_color = KuixTool::COLOR_Y, z_color = KuixTool::COLOR_Z, id = '')
+    def initialize(pixel_size = 40, line_width = 5, x_color = Kuix::COLOR_X, y_color = Kuix::COLOR_Y, z_color = Kuix::COLOR_Z, id = '')
       super(id)
 
       @pixel_size = pixel_size
@@ -12,7 +12,7 @@ module Ladb::OpenCutList::Kuix
       @box_0 = BoxFillMotif.new
       @box_0.bounds.size.set!(0.05, 0.05, 0.05)
       @box_0.bounds.origin.set!(-0.025, -0.025, -0.025)
-      @box_0.color = KuixTool::COLOR_BLACK
+      @box_0.color = Kuix::COLOR_BLACK
       append(@box_0)
 
       @box_x = BoxFillMotif.new

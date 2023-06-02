@@ -67,7 +67,7 @@ module Ladb::OpenCutList
       super
 
       @definition_name = _def.entity.definition.name
-      @description = _def.entity.description
+      @description = _def.entity.definition.description
 
     end
 

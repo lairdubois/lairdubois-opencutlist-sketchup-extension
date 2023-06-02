@@ -232,11 +232,11 @@ module Ladb::OpenCutList
         # Draw arrows
         view.line_width = 3
         view.drawing_color = draw_def[:line_color]
-        view.line_stipple = ''
+        view.line_stipple = LINE_STIPPLE_SOLID
         draw_def[:front_arrow_points].each { |points|
           view.draw(GL_LINES, points)
         }
-        view.line_stipple = '-'
+        view.line_stipple = LINE_STIPPLE_SHORT_DASHES
         draw_def[:back_arrow_points].each { |points|
           view.draw(GL_LINES, points)
         }

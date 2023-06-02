@@ -18,17 +18,17 @@ module Ladb::OpenCutList
     ACTION_MODIFIER_SKP = 0
     ACTION_MODIFIER_STL = 1
     ACTION_MODIFIER_OBJ = 2
-    ACTION_MODIFIER_DXF = 3
-    ACTION_MODIFIER_SVG = 4
+    ACTION_MODIFIER_SVG = 3
+    ACTION_MODIFIER_DXF = 4
 
     ACTIONS = [
       { :action => ACTION_EXPORT_PART, :modifiers => [ ACTION_MODIFIER_SKP, ACTION_MODIFIER_STL, ACTION_MODIFIER_OBJ, ACTION_MODIFIER_DXF ] },
-      { :action => ACTION_EXPORT_FACE, :modifiers => [ ACTION_MODIFIER_DXF, ACTION_MODIFIER_SVG ] },
+      { :action => ACTION_EXPORT_FACE, :modifiers => [ ACTION_MODIFIER_SVG, ACTION_MODIFIER_DXF ] },
     ].freeze
 
     COLOR_MESH = Sketchup::Color.new(200, 200, 0, 100).freeze
     COLOR_MESH_HIGHLIGHTED = Sketchup::Color.new(200, 200, 0, 200).freeze
-    COLOR_ACTION = COLOR_MAGENTA
+    COLOR_ACTION = Kuix::COLOR_MAGENTA
     COLOR_ACTION_FILL = Sketchup::Color.new(255, 0, 255, 51).freeze
     COLOR_ACTION_FILL_HIGHLIGHTED = Sketchup::Color.new(255, 0, 255, 102).freeze
 
@@ -306,9 +306,9 @@ module Ladb::OpenCutList
           # Box helper
           box_helper = Kuix::BoxMotif.new
           box_helper.bounds.size.copy!(@active_face_bounds)
-          box_helper.color = COLOR_BLUE
+          box_helper.color = Kuix::COLOR_BLUE
           box_helper.line_width = 2
-          box_helper.line_stipple = '-'
+          box_helper.line_stipple = LINE_STIPPLE_SHORT_DASHES
           face_helper.append(box_helper)
 
           # Axes helper
@@ -321,6 +321,7 @@ module Ladb::OpenCutList
           segments.add_segments(_compute_children_edge_segments(@active_face.edges, @active_face_export_transformation,[ @active_edge ]))
           segments.color = COLOR_ACTION
           segments.line_width = 4
+          segments.line_stipple = LINE_STIPPLE_LONG_DASHES
           segments.on_top = true
           face_helper.append(segments)
 

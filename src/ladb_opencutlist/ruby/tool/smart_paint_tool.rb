@@ -184,7 +184,7 @@ module Ladb::OpenCutList
       @materials_filters_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
       @materials_filters_panel.layout = Kuix::BorderLayout.new
       @materials_filters_panel.padding.set_all!(@unit * 2)
-      @materials_filters_panel.set_style_attribute(:background_color, COLOR_WHITE)
+      @materials_filters_panel.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
       @materials_filters_panel.visible = false
       @materials_panel.append(@materials_filters_panel)
 
@@ -207,16 +207,16 @@ module Ladb::OpenCutList
           btn = Kuix::Button.new
           btn.min_size.set_all!(@unit * 6)
           btn.border.set_all!(@unit / 2)
-          btn.set_style_attribute(:background_color, COLOR_LIGHT_GREY)
+          btn.set_style_attribute(:background_color, Kuix::COLOR_LIGHT_GREY)
           btn.set_style_attribute(:background_color, color, :active)
-          btn.set_style_attribute(:background_color, COLOR_WHITE, :selected)
-          btn.set_style_attribute(:background_color, color.blend(COLOR_WHITE, 0.2), :hover)
-          btn.set_style_attribute(:background_color, COLOR_DARK_GREY.blend(COLOR_WHITE, 0.1), :disabled)
+          btn.set_style_attribute(:background_color, Kuix::COLOR_WHITE, :selected)
+          btn.set_style_attribute(:background_color, color.blend(Kuix::COLOR_WHITE, 0.2), :hover)
+          btn.set_style_attribute(:background_color, Kuix::COLOR_DARK_GREY.blend(Kuix::COLOR_WHITE, 0.1), :disabled)
           btn.set_style_attribute(:border_color, color, :selected)
           btn.selected = @@filters[type]
           btn.data = type
           lbl = btn.append_static_label(Plugin.instance.get_i18n_string("tool.smart_paint.filter_#{type}"), @unit * 3 * get_text_unit_factor)
-          lbl.set_style_attribute(:color, COLOR_DARK_GREY, :disabled)
+          lbl.set_style_attribute(:color, Kuix::COLOR_DARK_GREY, :disabled)
           btn.on(:click) { |button|
 
             unless get_enabled_filters_by_action(fetch_action).index(button.data).nil?
@@ -1054,10 +1054,10 @@ module Ladb::OpenCutList
       btn.layout = Kuix::StaticLayout.new
       btn.min_size.set!(@unit * 20, @unit * 8)
       btn.border.set_all!(@unit)
-      btn.set_style_attribute(:background_color, COLOR_WHITE)
-      btn.set_style_attribute(:background_color, COLOR_WHITE.blend(COLOR_BLACK, 0.7), :active)
-      btn.set_style_attribute(:border_color, COLOR_WHITE)
-      btn.set_style_attribute(:border_color, COLOR_WHITE.blend(COLOR_BLACK, 0.8), :hover)
+      btn.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
+      btn.set_style_attribute(:background_color, Kuix::COLOR_WHITE.blend(Kuix::COLOR_BLACK, 0.7), :active)
+      btn.set_style_attribute(:border_color, Kuix::COLOR_WHITE)
+      btn.set_style_attribute(:border_color, Kuix::COLOR_WHITE.blend(Kuix::COLOR_BLACK, 0.8), :hover)
       btn.set_style_attribute(:border_color, COLOR_BRAND, :selected)
       btn.append_static_label(Plugin.instance.get_i18n_string('tool.smart_paint.default_material'), @unit * 3 * get_text_unit_factor)
       btn.data = false  # = No material
@@ -1101,11 +1101,11 @@ module Ladb::OpenCutList
         btn.min_size.set!(@unit * 20, @unit * 8)
         btn.border.set_all!(@unit)
         btn.set_style_attribute(:background_color, material_color)
-        btn.set_style_attribute(:background_color, material_color.blend(material_color_is_dark ? COLOR_WHITE : COLOR_BLACK, 0.7), :active)
+        btn.set_style_attribute(:background_color, material_color.blend(material_color_is_dark ? Kuix::COLOR_WHITE : Kuix::COLOR_BLACK, 0.7), :active)
         btn.set_style_attribute(:border_color, material_color)
-        btn.set_style_attribute(:border_color, material_color.blend(material_color_is_dark ? COLOR_WHITE : COLOR_BLACK, 0.7), :hover)
+        btn.set_style_attribute(:border_color, material_color.blend(material_color_is_dark ? Kuix::COLOR_WHITE : Kuix::COLOR_BLACK, 0.7), :hover)
         btn.set_style_attribute(:border_color, COLOR_BRAND, :selected)
-        btn.append_static_label(material.display_name, @unit * 3 * get_text_unit_factor, material_color_is_dark ? COLOR_WHITE : nil)
+        btn.append_static_label(material.display_name, @unit * 3 * get_text_unit_factor, material_color_is_dark ? Kuix::COLOR_WHITE : nil)
         btn.data = material
         btn.selected = material == get_current_material
         btn.on(:click) { |button|
@@ -1134,7 +1134,7 @@ module Ladb::OpenCutList
           btn_overlay = Kuix::Panel.new
           btn_overlay.layout_data = Kuix::StaticLayoutData.new(1.0, 0, @unit * 2, @unit * 2, Kuix::Anchor.new(Kuix::Anchor::TOP_RIGHT))
           btn_overlay.set_style_attribute(:background_color, COLOR_MATERIAL_TYPES[material_attributes.type])
-          btn_overlay.set_style_attribute(:border_color, COLOR_WHITE)
+          btn_overlay.set_style_attribute(:border_color, Kuix::COLOR_WHITE)
           btn_overlay.border.set_all!(@unit / 4)
           btn_overlay.hittable = false
           btn.append(btn_overlay)

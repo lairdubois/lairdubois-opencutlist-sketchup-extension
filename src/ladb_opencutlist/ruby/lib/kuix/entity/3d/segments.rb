@@ -11,7 +11,7 @@ module Ladb::OpenCutList::Kuix
 
       @color = nil
       @line_width = 1
-      @line_stipple = ''
+      @line_stipple = LINE_STIPPLE_SOLID
       @segments = [] # Array<Geom::Point3d>
 
       @points = []

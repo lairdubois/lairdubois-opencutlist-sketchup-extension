@@ -12,7 +12,7 @@ module Ladb::OpenCutList::Kuix
       @patterns_transformation = Geom::Transformation.new
 
       @line_width = 1
-      @line_stipple = ''
+      @line_stipple = LINE_STIPPLE_SOLID
 
       @paths = []
 

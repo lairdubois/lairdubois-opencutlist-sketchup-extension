@@ -41,10 +41,10 @@ module Ladb::OpenCutList
 
     COLOR_MESH = Sketchup::Color.new(200, 200, 0, 100).freeze
     COLOR_MESH_HIGHLIGHTED = Sketchup::Color.new(200, 200, 0, 200).freeze
-    COLOR_ARROW = COLOR_WHITE
+    COLOR_ARROW = Kuix::COLOR_WHITE
     COLOR_ARROW_AUTO_ORIENTED = Sketchup::Color.new(123, 213, 239).freeze
-    COLOR_BOX = COLOR_BLUE
-    COLOR_ACTION = COLOR_MAGENTA
+    COLOR_BOX = Kuix::COLOR_BLUE
+    COLOR_ACTION = Kuix::COLOR_MAGENTA
     COLOR_ACTION_FILL = Sketchup::Color.new(255, 0, 255, 0.2).freeze
 
     @@action = nil
@@ -386,7 +386,7 @@ module Ladb::OpenCutList
             box_helper.bounds.size.depth += increases[2] / part.def.scale.z
             box_helper.color = COLOR_ACTION
             box_helper.line_width = 2
-            box_helper.line_stipple = '-'
+            box_helper.line_stipple = LINE_STIPPLE_SHORT_DASHES
             box_helper.transformation = t
             part_helper.append(box_helper)
 
@@ -462,7 +462,7 @@ module Ladb::OpenCutList
           arrow.bounds.size.copy!(instance_info.definition_bounds)
           arrow.color = arrow_color
           arrow.line_width = arrow_line_width
-          arrow.line_stipple = '-'
+          arrow.line_stipple = LINE_STIPPLE_SHORT_DASHES
           part_helper.append(arrow)
 
           # Front arrow
@@ -484,7 +484,7 @@ module Ladb::OpenCutList
           box_helper.bounds.size.depth += increases[2] / part.def.scale.z
           box_helper.color = COLOR_BOX
           box_helper.line_width = 2
-          box_helper.line_stipple = '-'
+          box_helper.line_stipple = LINE_STIPPLE_SHORT_DASHES
           part_helper.append(box_helper)
 
         end
