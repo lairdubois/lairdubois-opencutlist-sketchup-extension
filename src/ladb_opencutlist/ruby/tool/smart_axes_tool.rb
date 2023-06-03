@@ -386,7 +386,7 @@ module Ladb::OpenCutList
             box_helper.bounds.size.depth += increases[2] / part.def.scale.z
             box_helper.color = COLOR_ACTION
             box_helper.line_width = 2
-            box_helper.line_stipple = LINE_STIPPLE_SHORT_DASHES
+            box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
             box_helper.transformation = t
             part_helper.append(box_helper)
 
@@ -462,7 +462,7 @@ module Ladb::OpenCutList
           arrow.bounds.size.copy!(instance_info.definition_bounds)
           arrow.color = arrow_color
           arrow.line_width = arrow_line_width
-          arrow.line_stipple = LINE_STIPPLE_SHORT_DASHES
+          arrow.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
           part_helper.append(arrow)
 
           # Front arrow
@@ -484,7 +484,7 @@ module Ladb::OpenCutList
           box_helper.bounds.size.depth += increases[2] / part.def.scale.z
           box_helper.color = COLOR_BOX
           box_helper.line_width = 2
-          box_helper.line_stipple = LINE_STIPPLE_SHORT_DASHES
+          box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
           part_helper.append(box_helper)
 
         end

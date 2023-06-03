@@ -159,7 +159,7 @@ module Ladb::OpenCutList
           motif.line_width = @unit <= 4 ? 1 : 2
           motif.set_style_attribute(:color, COLOR_BRAND_LIGHT)
           motif.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
-          motif.set_style_attribute(:color, COLOR_WHITE, :selected)
+          motif.set_style_attribute(:color, Kuix::COLOR_WHITE, :selected)
           panel.append(motif)
 
           @materials_filters_btn_lbl = Kuix::Label.new('glop')
@@ -168,7 +168,7 @@ module Ladb::OpenCutList
           @materials_filters_btn_lbl.visible = false
           @materials_filters_btn_lbl.set_style_attribute(:color, COLOR_BRAND_LIGHT)
           @materials_filters_btn_lbl.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
-          @materials_filters_btn_lbl.set_style_attribute(:color, COLOR_WHITE, :selected)
+          @materials_filters_btn_lbl.set_style_attribute(:color, Kuix::COLOR_WHITE, :selected)
           panel.append(@materials_filters_btn_lbl)
 
       # Materials Buttons panel

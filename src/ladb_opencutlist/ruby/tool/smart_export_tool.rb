@@ -308,7 +308,7 @@ module Ladb::OpenCutList
           box_helper.bounds.size.copy!(@active_face_bounds)
           box_helper.color = Kuix::COLOR_BLUE
           box_helper.line_width = 2
-          box_helper.line_stipple = LINE_STIPPLE_SHORT_DASHES
+          box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
           face_helper.append(box_helper)
 
           # Axes helper
@@ -321,7 +321,6 @@ module Ladb::OpenCutList
           segments.add_segments(_compute_children_edge_segments(@active_face.edges, @active_face_export_transformation,[ @active_edge ]))
           segments.color = COLOR_ACTION
           segments.line_width = 4
-          segments.line_stipple = LINE_STIPPLE_LONG_DASHES
           segments.on_top = true
           face_helper.append(segments)
 
