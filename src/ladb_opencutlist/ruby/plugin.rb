@@ -1162,6 +1162,24 @@ module Ladb::OpenCutList
 
     end
 
+    # -- Devtool ---
+
+    def devtool(tool)
+      case tool
+      when 'webgl_report'
+        dialog = UI::HtmlDialog.new({
+                                      :min_width => 500,
+                                      :min_height => 500,
+                                      :style => UI::HtmlDialog::STYLE_DIALOG
+                                    })
+        dialog.set_url('https://webglreport.com/')
+        dialog.center
+        dialog.show
+      else
+        UI.messagebox("Unknow DevTool #{tool}")
+      end
+    end
+
     private
 
     # -- Utils ---
