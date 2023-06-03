@@ -27,6 +27,7 @@ module Ladb::OpenCutList
       @encoding = settings.fetch('encoding', options.fetch('encoding'))
       @col_defs = settings.fetch('col_defs')
       @target = settings.fetch('target')
+      @no_header = settings.fetch('no_header', false)
       @hidden_group_ids = settings.fetch('hidden_group_ids')
 
       @cutlist = cutlist
@@ -47,6 +48,18 @@ module Ladb::OpenCutList
       when 'table'
 
         response[:rows] = _compute_rows
+
+      when 'pasteable'
+
+        options = { :col_sep => "\t" }
+        pasteable = CSV.generate(**options) do |csv|
+
+          _compute_rows.each { |row|
+            csv << row
+          }
+
+        end
+        response[:pasteable] = pasteable
 
       when 'csv'
 
@@ -129,7 +142,7 @@ module Ladb::OpenCutList
       when EXPORT_OPTION_SOURCE_SUMMARY
 
         # Header row
-        rows << _evaluate_header
+        rows << _evaluate_header unless @no_header
 
         @cutlist.groups.each { |group|
           next if @hidden_group_ids.include?(group.id)
@@ -150,7 +163,7 @@ module Ladb::OpenCutList
       when EXPORT_OPTION_SOURCE_CUTLIST
 
         # Header row
-        rows << _evaluate_header
+        rows << _evaluate_header unless @no_header
 
         # Content rows
         @cutlist.groups.each { |group|
@@ -217,7 +230,7 @@ module Ladb::OpenCutList
       when EXPORT_OPTION_SOURCE_INSTANCES_LIST
 
         # Header row
-        rows << _evaluate_header
+        rows << _evaluate_header unless @no_header
 
         # Content rows
         @cutlist.groups.each { |group|

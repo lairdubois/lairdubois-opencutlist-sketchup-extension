@@ -54,7 +54,7 @@
                         <th class="no-print ladb-table-spreadsheet-cell ladb-table-spreadsheet-cell-header-row">{{ loop.index }}</th>
                         {% for col in row %}
                             {% set colDef = col_defs[loop.index0] %}
-                            <td class="ladb-table-spreadsheet-cell{% if col and col.error %} ladb-invalid-value{% endif %}{% if col.error is not defined %}{% if colDef.align == 'center' %} text-center{% elseif colDef.align == 'right' %} text-right{% endif %}{% endif %}">{% if col and col.error %}<i class="ladb-opencutlist-icon-warning"></i>&nbsp;{{ col.error }}{% else %}{{ col|escape('html') }}{% endif %}</td>
+                            <td class="ladb-table-spreadsheet-cell{% if col and col.error %} ladb-invalid-value{% endif %}{% if col.error is not defined %}{% if colDef.align == 'center' %} text-center{% elseif colDef.align == 'right' %} text-right{% endif %}{% endif %}">{% if col and col.error %}<i class="ladb-opencutlist-icon-warning"></i>&nbsp;{{ col.error }}{% else %}{{ col|escape('html')|nl2br }}{% endif %}</td>
                         {% endfor %}
                     </tr>
                 {% endfor %}

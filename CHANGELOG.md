@@ -15,6 +15,7 @@ in 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
   * Fixed Architecture dimension parser
   * Fixed Reset standard bar or sheet configured on cutting diagram 1D or 2D if it no longer exists on material
+  * Improved Export Cutlist "Copy" feature now puts a TSV string to clipboard
 
 * 5.0.1 (2023-05-22)
 

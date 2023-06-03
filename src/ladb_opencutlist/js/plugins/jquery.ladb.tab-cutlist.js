@@ -880,36 +880,33 @@
 
                         });
 
+                        var fnCopyToClipboard = function(noHeader) {
+                            rubyCallCommand('cutlist_export', $.extend(exportOptions, { col_defs: exportOptions.source_col_defs[exportOptions.source], target: 'pasteable', no_header: noHeader }, that.generateOptions), function (response) {
+                                if (response.errors) {
+                                    that.dialog.notifyErrors(response.errors);
+                                }
+                                if (response.pasteable) {
+                                    that.dialog.copyToClipboard(response.pasteable);
+                                    that.dialog.notifySuccess(i18next.t('tab.cutlist.export.success.copied'));
+                                }
+                            });
+                        }
+
                         // Fetch UI elements
                         var $btnExport = $('#ladb_btn_export', $slide);
                         var $itemCopyAll = $('#ladb_item_copy_all', $slide);
                         var $itemCopyValues = $('#ladb_item_copy_values', $slide);
                         var $btnClose = $('#ladb_btn_close', $slide);
 
-                        // Define useful functions
-
-                        var fnRowsToTsv = function (startIndex) {
-
-                            // Convert rows to TSV string
-                            var rows = [];
-                            for (var i = startIndex; i < response.rows.length; i++) {
-                                rows.push(response.rows[i].join("\t"));
-                            }
-
-                            return rows.join("\n");
-                        }
-
                         // Bind buttons
                         $btnExport.on('click', function () {
                             that.exportCutlist();
                         });
                         $itemCopyAll.on('click', function () {
-                            that.dialog.copyToClipboard(fnRowsToTsv(0));
-                            that.dialog.notifySuccess(i18next.t('tab.cutlist.export.success.copied'));
+                            fnCopyToClipboard(false);
                         });
                         $itemCopyValues.on('click', function () {
-                            that.dialog.copyToClipboard(fnRowsToTsv(1));
-                            that.dialog.notifySuccess(i18next.t('tab.cutlist.export.success.copied'));
+                            fnCopyToClipboard(true);
                         });
                         $btnClose.on('click', function () {
                             that.popSlide();
