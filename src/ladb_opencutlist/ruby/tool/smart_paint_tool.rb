@@ -120,7 +120,14 @@ module Ladb::OpenCutList
       @materials_add_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
       @materials_add_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :active)
       @materials_add_btn.on(:click) { |button|
-        Plugin.instance.execute_dialog_command_on_tab('materials', 'new_material')
+        if is_action_paint_edges?
+          type = MaterialAttributes::TYPE_EDGE
+        elsif is_action_paint_faces?
+          type = MaterialAttributes::TYPE_VENEER
+        else
+          type = MaterialAttributes::TYPE_UNKNOWN
+        end
+        Plugin.instance.execute_dialog_command_on_tab('materials', 'new_material', "{ type: #{type} }")
       }
       @materials_panel.append(@materials_add_btn)
 
@@ -673,7 +680,7 @@ module Ladb::OpenCutList
         end
         return true
       elsif repeat == 1
-        if key == VK_ADD && is_action_part?
+        if key == Kuix::VK_ADD && is_action_part?
           @materials_add_btn.fire(:click, flags) if @materials_add_btn
           return true
         end

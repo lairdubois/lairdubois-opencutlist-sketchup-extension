@@ -22,8 +22,8 @@ module Ladb::OpenCutList
     ACTION_NONE = -1
 
     COLOR_BRAND = Sketchup::Color.new(247, 127, 0).freeze
-    COLOR_BRAND_DARK = Sketchup::Color.new(62, 59, 51)
-    COLOR_BRAND_LIGHT = Sketchup::Color.new(214, 212, 205)
+    COLOR_BRAND_DARK = Sketchup::Color.new(62, 59, 51).freeze
+    COLOR_BRAND_LIGHT = Sketchup::Color.new(214, 212, 205).freeze
 
     COLOR_MESSAGE_TEXT_ERROR = Sketchup::Color.new('#d9534f').freeze
     COLOR_MESSAGE_TEXT_WARNING = Sketchup::Color.new('#997404').freeze
