@@ -306,7 +306,7 @@ module Ladb::OpenCutList
           # Box helper
           box_helper = Kuix::BoxMotif.new
           box_helper.bounds.size.copy!(@active_face_bounds)
-          box_helper.color = Kuix::COLOR_BLUE
+          box_helper.color = Kuix::COLOR_BLACK
           box_helper.line_width = 2
           box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
           face_helper.append(box_helper)
@@ -350,7 +350,7 @@ module Ladb::OpenCutList
 
               part = _generate_part_from_path(input_part_entity_path)
               if part
-                _set_active_part(input_part_entity_path, part, event == :l_button_down)
+                _set_active_part(input_part_entity_path, part)
               else
                 _reset_active_part
                 notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_part')}", MESSAGE_TYPE_ERROR)
