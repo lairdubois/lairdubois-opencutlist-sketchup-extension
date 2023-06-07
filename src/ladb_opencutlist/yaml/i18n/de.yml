@@ -80,12 +80,14 @@ core:
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
+      smart_export: $t(core.toolbar.command.smart_export)
   toolbar:
     name: OpenCutList
     command:
       dialog: OpenCutList
       smart_paint: Teile einfärben
       smart_axes: Teile orientieren
+      smart_export: Teile exportieren
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
@@ -111,6 +113,7 @@ core:
     options_change: Die Optionen des Modells wurden verändert.
     material_change: Mindestens ein Material wurde verändert.
     selection_change: Die Auswahl im aktiven Modell wurde verändert.
+    layers_change: Tags im Modell wurden verändert.
   upgrade:
     unavailable: Die neueste Version von *OpenCutList* wurde nicht gefunden.
     available: |
@@ -415,10 +418,11 @@ tab:
       edge_disabled_help: "Diese Kante ist nicht konfigurierbar, da an dieser Kante des Teils im Modell keine materialtragende Fläche erkannt wurde."
       face_disabled_help: "Diese Fläche ist nicht konfigurierbar, da an dieser Seite des Teils im Modell keine materialtragende Fläche erkannt wurde."
       multiple_values: mehrfache Werte
-      export_to_skp: Exportieren (.skp)
       loading_preview: Vorschau laden
     export_to_skp:
       title: In .skp Datei exportieren
+    export_to_3d:
+      title: In .{{ file_format }} Datei exportieren
     option:
       auto_orient: Automatische Orientierung der Teile
       auto_orient_help: |
@@ -947,8 +951,9 @@ tab:
       no_component_in_model: Es wurden keine sichtbaren Komponenteninstanzen in Ihrer Szene gefunden.
       failed_to_write_export_file: "Das Schreiben der Exportdatei ist fehlgeschlagen. **{{ error }}**"
       failed_export_skp_file: "Beim Exportieren der .skp Datei ist ein Fehler aufgetreten. **{{ error }}**"
+      failed_export_to_3d_file: "Beim Exportieren der .{{ file_format }} Datei ist ein Fehler aufgetreten. **{{ error }}**"
       unknow_part: Das ausgewählte Teil existiert nicht in der Holzliste.
-      obsolete_cutlist: "Unmöglich, die Holzliste ist nicht mehr aktuell. Bitte neue generieren."
+      obsolete_cutlist: "Unmöglich, die Holzliste ist nicht mehr aktuell. Bitte, aktualisieren Sie sie."
     warning:
       is_entity_selection: Nur die in Ihrem Modell ausgewählten Teile wurden berücksichtigt.
       no_typed_materials_in_model: "Ihr Modell verwendet kein definiertes Material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** oder **$t(tab.materials.type_5)**)."
@@ -1101,6 +1106,37 @@ tab:
     success:
       exported_to: "Erfolgreicher Export nach {{ export_path }}."
     obsolete_base: "Um synchron zu bleiben, müssen Sie die Materialliste aktualisieren."
+  outliner:
+    label: Struktur
+    title: Struktur
+    list: Entitätsstrukturbaum
+    nodes: Entitäten
+    part_count: Anz. Teile
+    type_0: Modell
+    type_1: Gruppe
+    type_2: Komponente
+    type_3: Teil
+    edit_node:
+      title: "Eigenschaften der Instanz **{{ name }}**"
+      general: Allgemein
+      preview: Übersicht
+      name: Instanz
+      definition_name: Definition
+      description: Beschreibung
+      layer_name: Tag
+      explode: Explodieren
+      explode_message: Bestätigen Sie die Explosion der Instanz **{{ name }}**?
+    error:
+      no_model: Kein Modell ist offen. Sie müssen mir mehr Information geben ;)
+      no_entities: Ihr Modell ist leer!
+      node_not_found: Knoten nicht gefunden
+      entity_not_found: Instanz nicht gefunden
+      obsolete_outliner: "Unmöglich, die generierte Struktur ist nicht mehr aktuell. Bitte, aktualisieren Sie sie."
+    tip:
+      no_node: |
+        Ihr Modell enthält keine Instanzen zum Anzeigen.
+        Eine Instanz ist eine **Gruppe** oder eine **Komponente** in der Szene.
+    obsolete_base: "Um synchron zu bleiben, muss die Struktur neu generiert werden."
   importer:
     label: Importieren
     title: Teile importieren
@@ -1258,6 +1294,9 @@ tab:
     print_margin: Druckränder
     print_margin_normal: Normal
     print_margin_small: Klein
+    table_row_size: Zeilenhöhe
+    table_row_size_normal: Normal
+    table_row_size_compact: Kompakt
     size_and_position: Größe und Position des Fensters
     model_settings: Modell-Einstellungen
     length_unit: Längeneinheit
@@ -1317,6 +1356,7 @@ tab:
     credits_translations: Übersetzungen
     credits_translators: |
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*English*, *Deutsch*)
+      - Gildas Boureau (*französische* Dokumentation)
       - Vladimir Badulya (*Russisch*)
       - Pierluigi Colombo (*Italienisch*)
       - Nayton Sanches Barbosa, korrigiert und überarbeitet von [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*Portugiesisch*)
@@ -1404,3 +1444,11 @@ tool:
     error:
       not_part: Das Zielobjekt ist kein Teil
       not_orientable: Der Typ dieses Teils lässt keine Orientierung zu
+  smart_export:
+    title: Export
+    action_0: Teil exportieren
+    action_0_status: Auf Teil klicken
+    action_1: Fläche exportieren
+    action_1_status: Auf Fläche klicken
+    error:
+      not_part: Das Zielobjekt ist kein Teil

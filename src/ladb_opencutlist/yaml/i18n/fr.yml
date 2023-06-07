@@ -422,7 +422,7 @@ tab:
     export_to_skp:
       title: Exporter vers un fichier .skp
     export_to_3d:
-      title: Exporter vers un fichier .{{ file_format}}
+      title: Exporter vers un fichier .{{ file_format }}
     option:
       auto_orient: Orientation automatique des pièces
       auto_orient_help: |
@@ -1109,7 +1109,7 @@ tab:
   outliner:
     label: Structure
     title: Structure
-    list: Arboressance des entités
+    list: Arborescence des entités
     nodes: Instances
     part_count: Nb Pièces
     type_0: Modèle
@@ -1447,7 +1447,7 @@ tool:
   smart_export:
     title: Exporter
     action_0: Exporter une pièce
-    action_0_status: Cliquez sur une pièce ...
+    action_0_status: Cliquez sur une pièce
     action_1: Exporter une face
     action_1_status: Cliquez sur une face
     error:
