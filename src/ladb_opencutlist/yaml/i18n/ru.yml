@@ -572,8 +572,8 @@ tab:
       edge_ymax: Кромка по длине 2
       edge_xmin: Кромка по ширине 1
       edge_xmax: Кромка по ширине 2
-      face_zmin: Сопоставление
-      face_zmax: Облицовка
+      face_zmin: Тыльная
+      face_zmax: Лицевая
       layer: Маяк
       layers: Маяки
       placeholder:
