@@ -177,7 +177,7 @@ core:
       reset: Скинути це значення
     textinput_color:
       store: Запам'ятати цей колір
-      remove: Забути цей колір
+      remove: Видалити цей колір
     textinput_code:
       snippets: Приклади формул
       help: "Натисніть **@**, щоб відкрити введення змінних даних."
@@ -302,7 +302,7 @@ tab:
       edge_xmin: Крайка по ширині 1
       edge_xmax: Крайка по ширині 2
       face_zmin: Тил
-      face_zmax: Облицювання
+      face_zmax: Лице
       dblclick_to_copy_all_edges: "Двічі клацніть тут, щоб скопіювати це значення для всіх інших крайок"
       dblclick_to_copy_all_faces: "Двічі клацніть тут, щоб скопіювати це значення на іншу поверхню"
       dblclick_to_sort_axes: "Двічі клацніть тут, щоб автоматично орієнтувати осі відповідно до розмірів деталі"
@@ -461,7 +461,7 @@ tab:
       hide_final_areas_help: "Якщо ця опція активована, то **фактична площа** деталей з типом *Листовий* буде прихована."
       hide_edges: Приховати стовпчик крайок
       hide_edges_help: "Якщо ця опція активована, то **стовпці крайок** деталей з типом *Листовий* будуть приховані."
-      hide_faces: Сховати стовпці зі шпоном
+      hide_faces: Сховати стовпці з облицюванням
       hide_faces_help: "Якщо цей параметр увімкнено, то **Стовпці шпону** у деталях типу *Листовий* не відображаються."
       minimize_on_highlight: Стовпці після *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Якщо цей параметр увімкнено, вікно OpenCutList буде згорнуто під час використання функції *'$t(tab.cutlist.highlight_part)'*."
@@ -556,9 +556,9 @@ tab:
       cutting_length: Довжина - пильна
       cutting_width: Ширина - пильна
       cutting_thickness: Товщина - пильна
-      bbox_length: Пильна довжина
-      bbox_width: Пильна ширина
-      bbox_thickness: Пильна товщина
+      bbox_length: Довжина - фактична
+      bbox_width: Ширина - фактична
+      bbox_thickness: Товщина - фактична
       final_area: Площа - фактична
       count: Кількість
       part_count: Кількість деталей
@@ -573,7 +573,7 @@ tab:
       edge_xmin: Крайка по ширині 1
       edge_xmax: Крайка по ширині 2
       face_zmin: Тил
-      face_zmax: Облицювання
+      face_zmax: Лице
       layer: Тег
       layers: Теги
       placeholder:
@@ -873,7 +873,7 @@ tab:
       option_parts_colored_help: Дозволяє вибрати зовнішній вигляд деталей.
       option_parts_opacity: Непрозорість
       option_parts_opacity_0: Прозорий
-      option_parts_opacity_1: Матовий
+      option_parts_opacity_1: Непрозорий
       option_parts_opacity_help: Дозволяє вибрати прозорість деталей.
       option_pins: Шпильки
       option_pins_hidden: Перегляд
@@ -1377,7 +1377,7 @@ tool:
     faces: "{{ count }} площина"
     faces_plural: "{{ count }} площин"
     face_zmin: Тил
-    face_zmax: Спереду
+    face_zmax: Лице
     warning:
       no_material: Ваша модель не містить матеріалів!
       no_material_type: "Незалежно від типу '{{ type }}'"
