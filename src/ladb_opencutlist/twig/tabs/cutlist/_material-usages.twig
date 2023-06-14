@@ -8,7 +8,7 @@
 {% endif %}
 {% for materialUsage in materialUsages if typeFilters is not defined or materialUsage.type in typeFilters  %}
     {% if loop.index0 == 0 %}<option data-divider="true"></option>{% endif %}
-    <option value="{{ materialUsage.name }}" data-content="{% include 'tabs/materials/_material-type-icon.twig' with { 'type':materialUsage.type, 'compact':true } %} {% include 'tabs/materials/_material-color-drop.twig' with { 'material_color':materialUsage.color } %} {{ materialUsage.display_name|escape('html') }}"></option>
+    <option value="{{ materialUsage.name|escape('html') }}" data-content="{% include 'tabs/materials/_material-type-icon.twig' with { 'type':materialUsage.type, 'compact':true } %} {% include 'tabs/materials/_material-color-drop.twig' with { 'material_color':materialUsage.color } %} {{ materialUsage.display_name|escape('html') }}"></option>
 {% endfor %}
 <option data-divider="true"></option>
 <option value="new" data-content="<i class='ladb-opencutlist-icon-plus'></i> {{ 'tab.materials.new'|i18next }}..."></option>
