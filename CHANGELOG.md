@@ -11,13 +11,14 @@ in 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added edge material color display in part list, cutting diagram and labels
   * Added edit material for edge and veneer virtual parts
 
-* 5.0.2 (WIP)
+* 5.0.2 (2023-06-20)
 
   * Fixed Architecture dimension parser
   * Fixed Reset standard bar or sheet configured on cutting diagram 1D or 2D if it no longer exists on material
   * Fixed Escape special characters in material names
   * Improved Export Cutlist "Copy" feature now puts a TSV string to clipboard
-  * Improved RU / UK
+  * Improved Ukrainian terms
+  * Improved Russian terms
 
 * 5.0.1 (2023-05-22)
 
