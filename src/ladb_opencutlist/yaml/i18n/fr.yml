@@ -1117,10 +1117,12 @@ tab:
     type_2: Composant
     type_3: Pièce
     edit_node:
-      title: "Propriétés de l'instance **{{ name }}**"
+      title_model: "Propriétés de du modèle"
+      title_instance: "Propriétés de l'instance **{{ name }}**"
       general: Générales
       preview: Aperçu
-      name: Instance
+      name: Nom
+      instance_name: Instance
       definition_name: Definition
       description: Description
       layer_name: Balise
