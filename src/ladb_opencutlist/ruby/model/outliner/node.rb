@@ -37,8 +37,6 @@ module Ladb::OpenCutList
     def initialize(_def)
       super
 
-      @is_model = true
-
       @description = _def.entity.description
 
     end
@@ -51,8 +49,6 @@ module Ladb::OpenCutList
 
     def initialize(_def)
       super
-
-      @is_group = true
 
       @locked = _def.entity.locked?
       @visible = _def.entity.visible?
@@ -70,8 +66,6 @@ module Ladb::OpenCutList
     def initialize(_def)
       super
 
-      @is_component = true
-
       @definition_name = _def.entity.definition.name
       @description = _def.entity.definition.description
 
@@ -83,9 +77,6 @@ module Ladb::OpenCutList
 
     def initialize(_def)
       super
-
-      @is_part = true
-
     end
 
   end
