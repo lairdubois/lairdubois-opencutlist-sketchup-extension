@@ -2,7 +2,7 @@ CHANGELOG
 =========
 
 This changelog references the relevant changes (bug and security fixes) done
-in 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
+in 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 * 6.0.0 (WIP)
 
@@ -11,6 +11,10 @@ in 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added edge material color display in part list, cutting diagram and labels
   * Added edit material for edge and veneer virtual parts
   * Changed material color bullet from drop to circle
+
+* 5.0.3 (WIP)
+
+  * Fixed the dimension parser that misinterpret decimal separator 
 
 * 5.0.2 (2023-06-20)
 

@@ -35,6 +35,10 @@ class TC_Ladb_Utils_DimensionUtils < TestUp::TestCase
     assert_equal_fn(fn, '1mm', '1mm')
     assert_equal_fn(fn, '1"', '1"')
     assert_equal_fn(fn, '1\'', '1\'')
+    assert_equal_fn(fn, '1.0"', '1' + @separator + '0"')
+    assert_equal_fn(fn, '1.0\'', '1' + @separator + '0\'')
+    assert_equal_fn(fn, '1,0"', '1' + @separator + '0"')
+    assert_equal_fn(fn, '1,0\'', '1' + @separator + '0\'')
 
     @units_options_provider['LengthUnit'] = Length::Meter
     @units_options_provider['LengthPrecision'] = 1
