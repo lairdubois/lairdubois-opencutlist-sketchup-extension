@@ -161,7 +161,7 @@
       s = s.gsub(/\./, @decimal_separator) # convert separator to native
 
       unit_present = false
-      if (match = s.match(/^-*(?:[0-9.\/~']+\s*)+(m|cm|mm|\'|\"|yd)\s*$/))
+      if (match = s.match(/^-*(?:[0-9.,\/~']+\s*)+(m|cm|mm|\'|\"|yd)\s*$/))
         unit, = match.captures
         # puts("parsed unit = #{unit} in #{s}")
         s = s.gsub(/\s*#{unit}\s*/, "#{unit}") # Remove space around unit
