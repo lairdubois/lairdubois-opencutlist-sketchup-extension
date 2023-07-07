@@ -1,5 +1,6 @@
 module Ladb::OpenCutList
 
+  require_relative '../../lib/rubyzip/zip'
   require_relative '../../plugin'
   require_relative '../../helper/layer_visibility_helper'
 
@@ -265,12 +266,64 @@ module Ladb::OpenCutList
           File.delete(skp_path)
         end
 
-        # Save Layout file
         begin
+
+          # Save Layout file
           doc.save(layout_path)
+
         rescue => e
           return { :errors => [ [ 'tab.cutlist.layout.error.failed_to_layout', { :error => e.inspect } ] ] }
         end
+
+        # Change layout default styles
+        # Zip::File.open(layout_path, create: false) do |zipfile|
+        #
+        #   require "rexml/document"
+        #
+        #   style_manager_filename = 'styleManager.xml'
+        #
+        #   xml = zipfile.read(style_manager_filename)
+        #
+        #   begin
+        #
+        #     # Parse XML
+        #     xdoc = REXML::Document.new(xml)
+        #
+        #     # Extract elements
+        #     style_manager_elm = xdoc.elements['/styleManager']
+        #     style_manager_elm.elements.each('t:dicItem') { |style_elm|
+        #
+        #       style_name = style_elm.attribute('key').value
+        #       p style_name
+        #
+        #       style_elm.elements.each('t:variant/e:styleAttributes/t:dicItem') { |style_attribute_elm|
+        #
+        #         style_attribute_name = style_attribute_elm.attribute('key').value
+        #         p style_attribute_name
+        #
+        #         style_attribute_value_elm = style_attribute_elm.elements.first
+        #         style_attribute_value_type = style_attribute_value_elm.attribute('type').value
+        #         style_attribute_value_text = style_attribute_value_elm.text
+        #
+        #         p style_attribute_value_type
+        #         p style_attribute_value_text
+        #
+        #
+        #       }
+        #
+        #     }
+        #
+        #     output = ''
+        #     xdoc.write(output)
+        #
+        #     zipfile.get_output_stream(style_manager_filename){ |f| f.puts output }
+        #
+        #   rescue REXML::ParseException => error
+        #     # Return nil if an exception is thrown
+        #     puts error.message
+        #   end
+        #
+        # end
 
         return { :export_path => layout_path }
       end

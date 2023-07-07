@@ -49,22 +49,7 @@ module Ladb::OpenCutList
         # Save last dir
         Plugin.instance.write_default(Plugin::SETTINGS_KEY_MATERIALS_LAST_DIR, File.dirname(path))
 
-        # Try to Load zip
-        # begin
-        #   require 'zip'
-        # rescue LoadError
-        #   begin
-        #     Gem::install('rubyzip')
-        #   rescue Gem::InstallError => error
-        #     puts 'ERROR! RubyZip could not be installed.'
-        #     puts error.message
-        #   else
-        #     require 'zip'
-        #   end
-        # end
-        #
-        # if defined?(Zip)
-        #   Zip::File.open(path, create: false) { |zipfile|
+        # Zip::File.open(path, create: false) { |zipfile|
         #
         #   require "rexml/document"
         #

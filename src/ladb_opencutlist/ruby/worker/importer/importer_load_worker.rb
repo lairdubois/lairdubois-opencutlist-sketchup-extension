@@ -1,7 +1,7 @@
 module Ladb::OpenCutList
 
   require 'csv'
-  require_relative '../../lib/rchardet'
+  require_relative '../../lib/rchardet/rchardet'
 
   class ImporterLoadWorker
 
