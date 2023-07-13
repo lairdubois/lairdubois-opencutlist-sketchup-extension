@@ -7,7 +7,7 @@
     var FORMAT_DXD = 'dxd';
     var FORMAT_DXDXQ = 'dxdxq';
 
-    var REGEXP_PATTERN_MULTIPLICATOR = '[xX*]';
+    var REGEXP_PATTERN_MULTIPLICATOR = '[×xX*]';
     var REGEXP_PATTERN_LENGTH = '(\\d*\\s*\'\\s*\\d*\\s*\\d+\/\\d+\\s*"|\\d*\\s*\\d+\/\\d+(?:\\s*(?:\'|"))?|(?:\\d*[\.,]?)?\\d+(?:\\s*(?:mm|cm|m|\'|"))?)';   // Fractional or Decimal
     var REGEXP_PATTERN_QUANTITY = '(?:\\s*' + REGEXP_PATTERN_MULTIPLICATOR + '\\s*(\\d+))?';
 
@@ -116,6 +116,7 @@
             })
             .on('tokenfield:createdtoken', function (e) {
                 that.tokenfieldValidator(e);
+                console.log('CREATED TOKEN', e)
             })
         ;
 
