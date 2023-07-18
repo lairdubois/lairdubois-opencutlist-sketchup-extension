@@ -6,8 +6,9 @@ in 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 * 5.0.3 (WIP)
 
-  * Fixed the dimension parser that misinterpret decimal separator 
-  * Improved tokenfield dimension regex 
+  * Fixed the dimension parser that misinterpret decimal separator
+  * Improved tokenfield dimension regex
+  * Fixed wrong counting of invalid sized parts in 2D
 
 * 5.0.2 (2023-06-20)
 
@@ -47,7 +48,7 @@ in 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Renamed Tags to Badges
   * Improved materials property dialog : It is now possible to add, change and clear texture on a material
   * Improved color pickers : It's now possible to select custom color in picker (SketchUp 2021+)
-  * Saved last material export / import and part export used folder 
+  * Saved last material export / import and part export used folder
   * Fixed cutting diagram bins number to be displayed even if _Group Similar Panels_ option is ON
   * Fixed cutting diagram 2D edge drawing to correspond to counter-clockwise rotation of part's name
   * Fixed missed exported edges std dimensions on folded parts
