@@ -418,6 +418,9 @@ module Ladb::OpenCutList::BinPacking2D
         packers.max_by { |p| p.stat[:bottA] }
       ]
 
+      # Make sure they are unique if we have more than one
+      best_packers.uniq!{ |p| p.object_id } if best_packers.length > 1
+      
       dbg("best packers = #{best_packers.size}")
 
       # Select best Packers for this level/Bin using the following unweighted criteria.
@@ -600,7 +603,7 @@ module Ladb::OpenCutList::BinPacking2D
         else
           if packings_done?(@packers)
             @done = true
-            @last_packers = select_best_x_packings(@packers) if !@packers.nil? && !@packers.empty?
+            @last_packers = select_best_x_packings(@packers) if (!@packers.nil?) && (!@packers.empty?)
           else
             @packers = select_best_x_packings(@packers)
             @last_packers = @packers

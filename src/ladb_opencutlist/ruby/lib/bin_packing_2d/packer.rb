@@ -162,14 +162,15 @@ module Ladb::OpenCutList::BinPacking2D
     # TODO: We do not yet make a distinction between invalid and not placeable box in the GUI.
     #
     def add_invalid_boxes(invalid_boxes)
+      puts("#{self.object_id}")
       @invalid_boxes += invalid_boxes
-      gstat[:nb_invalid_boxes] += invalid_boxes.size
+      @gstat[:nb_invalid_boxes] += invalid_boxes.size
       @unplaced_boxes += invalid_boxes
     end
 
     def add_invalid_bins(invalid_bins)
       @invalid_bins += invalid_bins
-      gstat[:nb_invalid_bins] += invalid_bins.size
+      @gstat[:nb_invalid_bins] += invalid_bins.size
       @unused_bins += invalid_bins
     end
 
