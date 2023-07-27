@@ -73,6 +73,36 @@ module Ladb::OpenCutList
       end
     end
 
+    def ==(value)
+      if value.respond_to?(:to_f)
+        self.to_f == value.to_f
+      end
+    end
+
+    def >(value)
+      if value.respond_to?(:to_f)
+        self.to_f > value.to_f
+      end
+    end
+
+    def >=(value)
+      if value.respond_to?(:to_f)
+        self.to_f >= value.to_f
+      end
+    end
+
+    def <(value)
+      if value.respond_to?(:to_f)
+        self.to_f < value.to_f
+      end
+    end
+
+    def <=(value)
+      if value.respond_to?(:to_f)
+        self.to_f <= value.to_f
+      end
+    end
+
     def to_mm
       @value.to_mm.round(6)    # Returns the float representation of the value converted from inches to milimeters
     end
