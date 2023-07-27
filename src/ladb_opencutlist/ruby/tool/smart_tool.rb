@@ -690,6 +690,15 @@ module Ladb::OpenCutList
 
     end
 
+    def _select_active_part_entity
+      model = Sketchup.active_model
+      if model && @active_part_entity_path && @active_part_entity_path.length > 0
+        selection = model.selection
+        selection.clear
+        selection.add(@active_part_entity_path.last)
+      end
+    end
+
     def _can_pick_deeper?
       !@pick_helper.nil? && !@active_part_entity_path.nil?
     end

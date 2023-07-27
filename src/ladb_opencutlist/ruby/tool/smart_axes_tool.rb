@@ -209,12 +209,15 @@ module Ladb::OpenCutList
         menu.set_validation_proc(item) { MF_GRAYED }
         menu.add_separator
         menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_properties')) {
+          _select_active_part_entity
           Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'general', dontGenerate: false }")
         }
         menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_axes_properties')) {
+          _select_active_part_entity
           Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'axes', dontGenerate: false }")
         }
         item = menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_size_increase_properties')) {
+          _select_active_part_entity
           Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'size_increase', dontGenerate: false }")
         }
         menu.set_validation_proc(item) {
@@ -227,6 +230,7 @@ module Ladb::OpenCutList
           end
         }
         item = menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_edges_properties')) {
+          _select_active_part_entity
           Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'edges', dontGenerate: false }")
         }
         menu.set_validation_proc(item) {
@@ -237,6 +241,7 @@ module Ladb::OpenCutList
           end
         }
         item = menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_faces_properties')) {
+          _select_active_part_entity
           Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'faces', dontGenerate: false }")
         }
         menu.set_validation_proc(item) {
