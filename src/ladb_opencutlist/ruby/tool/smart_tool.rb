@@ -709,7 +709,7 @@ module Ladb::OpenCutList
 
     def _select_active_part_entity
       model = Sketchup.active_model
-      if model && @active_part_entity_path && @active_part_entity_path.length > 0
+      if model && @active_part_entity_path.is_a?(Array) && @active_part_entity_path.length > 0
         selection = model.selection
         selection.clear
         selection.add(@active_part_entity_path.last)
