@@ -407,8 +407,34 @@
         // UI
         var $selectFormula = $('#ladb_select_formula', this.$editingForm);
         var $selectSize = $('#ladb_select_size', this.$editingForm);
+        var $divCustomFormula = $('#ladb_div_custom_formula', this.$editingForm);
+        var $textareaCustomFormula = $('#ladb_textarea_custom_formula', this.$editingForm);
         var $selectAnchor = $('#ladb_select_anchor', this.$editingForm);
         var $inputColor = $('#ladb_input_color', this.$editingForm);
+
+        var fnConvertToVariableDefs = function (vars) {
+
+            // Generate variableDefs for formula editor
+            var variableDefs = [];
+            for (var i = 0; i < vars.length; i++) {
+                variableDefs.push({
+                    text: vars[i].name,
+                    displayText: i18next.t('tab.cutlist.export.' + vars[i].name),
+                    type: vars[i].type
+                });
+            }
+
+            return variableDefs;
+        }
+        var fnUpdateCustomFormulaVisibility = function () {
+            if (elementDef.formula === 'custom') {
+                $divCustomFormula.show();
+            } else {
+                $divCustomFormula.hide();
+            }
+        }
+
+        fnUpdateCustomFormulaVisibility();
 
         // Bind
         $selectFormula
@@ -417,6 +443,7 @@
             .on('change', function () {
                 elementDef.formula = $(this).val();
                 that.appendFormula(svgContentGroup, elementDef);
+                fnUpdateCustomFormulaVisibility();
             })
         ;
         $selectSize
@@ -425,6 +452,39 @@
             .on('change', function () {
                 elementDef.size = $(this).val();
                 that.appendFormula(svgContentGroup, elementDef);
+            })
+        ;
+        $textareaCustomFormula
+            .val(elementDef.custom_formula)
+            .ladbTextinputCode({
+                variableDefs: fnConvertToVariableDefs([
+                    { name: 'number', type: 'string' },
+                    { name: 'name', type: 'string' },
+                    { name: 'cutting_length', type: 'length' },
+                    { name: 'cutting_width', type: 'length' },
+                    { name: 'cutting_thickness', type: 'length' },
+                    { name: 'bbox_length', type: 'length' },
+                    { name: 'bbox_width', type: 'length' },
+                    { name: 'bbox_thickness', type: 'length' },
+                    { name: 'final_area', type: 'area' },
+                    { name: 'material_type', type: 'material-type' },
+                    { name: 'material_name', type: 'string' },
+                    { name: 'description', type: 'string' },
+                    { name: 'tags', type: 'array' },
+                    { name: 'edge_ymin', type: 'edge' },
+                    { name: 'edge_ymax', type: 'edge' },
+                    { name: 'edge_xmin', type: 'edge' },
+                    { name: 'edge_xmax', type: 'edge' },
+                    { name: 'face_zmax', type: 'veneer' },
+                    { name: 'face_zmin', type: 'veneer' },
+                    { name: 'layer', type: 'string' }
+                ]),
+                snippetDefs: [
+                    { name: i18next.t('tab.cutlist.snippet.number'), value: '@number' }
+                ]
+            })
+            .on('change', function () {
+                elementDef.custom_formula = $(this).val();
             })
         ;
         $selectAnchor

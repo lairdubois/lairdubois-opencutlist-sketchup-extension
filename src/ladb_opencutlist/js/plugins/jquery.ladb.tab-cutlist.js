@@ -1480,7 +1480,7 @@
                     { name: '-' },
                     { name: i18next.t('tab.cutlist.snippet.number_without_hardware'), value: "@number unless @material_type.is_hardware?" },
                 ]
-            })
+            });
             $selectPinsLength.selectpicker(SELECT_PICKER_OPTIONS);
             $selectPinsDirection.selectpicker(SELECT_PICKER_OPTIONS);
             $selectCameraView.selectpicker(SELECT_PICKER_OPTIONS);
@@ -3932,10 +3932,64 @@
 
                     }
 
+                    var fnRenderSlide = function () {
+
+                        var $slide = that.pushNewSlide('ladb_cutlist_slide_labels', 'tabs/cutlist/_slide-labels.twig', $.extend({
+                            errors: errors,
+                            warnings: warnings,
+                            filename: that.filename,
+                            modelName: that.modelName,
+                            pageName: that.pageName,
+                            isEntitySelection: that.isEntitySelection,
+                            lengthUnit: that.lengthUnit,
+                            generatedAt: new Date().getTime() / 1000,
+                            group: group,
+                            pages: pages,
+                        }, labelsOptions), function () {
+                            that.dialog.setupTooltips();
+                        });
+
+                        // Fetch UI elements
+                        var $btnLabels = $('#ladb_btn_labels', $slide);
+                        var $btnPrint = $('#ladb_btn_print', $slide);
+                        var $btnClose = $('#ladb_btn_close', $slide);
+
+                        // Bind buttons
+                        $btnLabels.on('click', function () {
+                            that.labelsGroup(groupId, binDefs);
+                        });
+                        $btnPrint.on('click', function () {
+                            $(this).blur();
+                            that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.labels.title'), '0', `${response.page_width}in ${response.page_height}in`);
+                        });
+                        $btnClose.on('click', function () {
+                            that.popSlide();
+                        });
+                        $('.ladb-btn-setup-model-units', $slide).on('click', function() {
+                            $(this).blur();
+                            that.dialog.executeCommandOnTab('settings', 'highlight_panel', { panel:'model' });
+                        });
+                        $('.ladb-btn-toggle-no-print', $slide).on('click', function () {
+                            var $page = $(this).parents('.ladb-cutlist-group');
+                            if ($page.hasClass('no-print')) {
+                                that.showGroup($page, true);
+                            } else {
+                                that.hideGroup($page, true);
+                            }
+                            $(this).blur();
+                        });
+
+                        // Hide modal
+                        $modal.modal('hide');
+
+                    };
+
                     if (labelWidth <= 0 || isNaN(labelWidth) || labelHeight <= 0 || isNaN(labelHeight)) {
 
                         // Invalid size push an error
                         errors.push('tab.cutlist.labels.error.invalid_size');
+
+                        fnRenderSlide();
 
                     } else {
 
@@ -3977,81 +4031,49 @@
                         };
                         partInfos.sort(fnFieldSorter(labelsOptions.part_order_strategy.split('>')));
 
-                        // Split part infos into pages
-                        var page;
-                        var gIndex = 0;
-                        for (var i = 1; i <= labelsOptions.offset; i++) {
-                            if (gIndex % (labelsOptions.row_count * labelsOptions.col_count) === 0) {
-                                page = {
-                                    partInfos: []
-                                }
-                                pages.push(page);
+                        // Compute custom formulas
+                        rubyCallCommand('cutlist_compute_labels_formulas', { part_infos: partInfos, layout: labelsOptions.layout }, function (response) {
+
+                            console.log(response);
+
+                            if (response.errors) {
+                                errors.push(response.errors);
                             }
-                            page.partInfos.push({
-                                part: null
-                            });
-                            gIndex++;
-                        }
-                        $.each(partInfos, function (index) {
-                            if (gIndex % (labelsOptions.row_count * labelsOptions.col_count) === 0) {
-                                page = {
-                                    partInfos: []
-                                }
-                                pages.push(page);
+                            if (response.part_infos) {
+                                partInfos = response.part_infos;
                             }
-                            page.partInfos.push(this);
-                            gIndex++;
-                        })
+
+                            // Split part infos into pages
+                            var page;
+                            var gIndex = 0;
+                            for (var i = 1; i <= labelsOptions.offset; i++) {
+                                if (gIndex % (labelsOptions.row_count * labelsOptions.col_count) === 0) {
+                                    page = {
+                                        partInfos: []
+                                    }
+                                    pages.push(page);
+                                }
+                                page.partInfos.push({
+                                    part: null
+                                });
+                                gIndex++;
+                            }
+                            $.each(partInfos, function (index) {
+                                if (gIndex % (labelsOptions.row_count * labelsOptions.col_count) === 0) {
+                                    page = {
+                                        partInfos: []
+                                    }
+                                    pages.push(page);
+                                }
+                                page.partInfos.push(this);
+                                gIndex++;
+                            })
+
+                            fnRenderSlide();
+
+                        });
 
                     }
-
-                    var $slide = that.pushNewSlide('ladb_cutlist_slide_labels', 'tabs/cutlist/_slide-labels.twig', $.extend({
-                        errors: errors,
-                        warnings: warnings,
-                        filename: that.filename,
-                        modelName: that.modelName,
-                        pageName: that.pageName,
-                        isEntitySelection: that.isEntitySelection,
-                        lengthUnit: that.lengthUnit,
-                        generatedAt: new Date().getTime() / 1000,
-                        group: group,
-                        pages: pages,
-                    }, labelsOptions), function () {
-                        that.dialog.setupTooltips();
-                    });
-
-                    // Fetch UI elements
-                    var $btnLabels = $('#ladb_btn_labels', $slide);
-                    var $btnPrint = $('#ladb_btn_print', $slide);
-                    var $btnClose = $('#ladb_btn_close', $slide);
-
-                    // Bind buttons
-                    $btnLabels.on('click', function () {
-                        that.labelsGroup(groupId, binDefs);
-                    });
-                    $btnPrint.on('click', function () {
-                        $(this).blur();
-                        that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.labels.title'), '0', `${response.page_width}in ${response.page_height}in`);
-                    });
-                    $btnClose.on('click', function () {
-                        that.popSlide();
-                    });
-                    $('.ladb-btn-setup-model-units', $slide).on('click', function() {
-                        $(this).blur();
-                        that.dialog.executeCommandOnTab('settings', 'highlight_panel', { panel:'model' });
-                    });
-                    $('.ladb-btn-toggle-no-print', $slide).on('click', function () {
-                        var $page = $(this).parents('.ladb-cutlist-group');
-                        if ($page.hasClass('no-print')) {
-                            that.showGroup($page, true);
-                        } else {
-                            that.hideGroup($page, true);
-                        }
-                        $(this).blur();
-                    });
-
-                    // Hide modal
-                    $modal.modal('hide');
 
                 });
 

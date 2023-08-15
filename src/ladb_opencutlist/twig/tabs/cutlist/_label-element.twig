@@ -102,6 +102,12 @@
         {% set value = lengthUnit ? ('default.unit_'~lengthUnit)|i18next : '' %}
     {% elseif terms[0] == 'generated_at' %}
         {% set value = generatedAt|date(('default.date_format'|i18next)) %}
+    {% elseif terms[0] == 'custom' %}
+        {% if partInfo.custom_values[index]['error'] %}
+            {% set error = partInfo.custom_values[index]['error'] %}
+        {% else %}
+            {% set value = partInfo.custom_values[index]|split('\n') %}
+        {% endif %}
     {% endif %}
     {% if value|trim is empty and noEmptyValue|default(false) %}
         {% set value = '['~('tab.cutlist.labels.formula.'~(elementDef.formula|replace({ '.':'_' })))|i18next~']' %}
@@ -113,13 +119,17 @@
         {% set textAnchor = elementDef.anchor %}
         {% set transY = 0 %}
     {% endif %}
-    <text class="ladb-label-element" x="0" y="{{ transY }}" font-size="{{ elementDef.size * minUnit }}" text-anchor="{{ textAnchor }}" fill="{{ elementDef.color }}">{% spaceless %}
-        {% if value is iterable %}
-            {% for line in value %}
-                <tspan {% if loop.first %}dy="-{{ elementDef.size * minUnit * ((value|length) - 1) }}"{% else %}x="0" dy="{{ elementDef.size * minUnit }}"{% endif %}>{{ line|trim|escape }}</tspan>
-            {% endfor %}
+    <text class="ladb-label-element" x="0" y="{{ transY }}" font-size="{{ error ? 0.5 * minUnit : elementDef.size * minUnit }}" text-anchor="{{ textAnchor }}" fill="{{ error ? 'red' : elementDef.color }}">{% spaceless %}
+        {% if error %}
+            {{ error|trim|escape }}
         {% else %}
-            {{ value|trim|escape }}
+            {% if value is iterable %}
+                {% for line in value %}
+                    <tspan {% if loop.first %}dy="-{{ elementDef.size * minUnit * ((value|length) - 1) }}"{% else %}x="0" dy="{{ elementDef.size * minUnit }}"{% endif %}>{{ line|trim|escape }}</tspan>
+                {% endfor %}
+            {% else %}
+                {{ value|trim|escape }}
+            {% endif %}
         {% endif %}
     {% endspaceless %}</text>
 {% endif %}

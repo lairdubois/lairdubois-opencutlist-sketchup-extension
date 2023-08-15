@@ -69,7 +69,7 @@
                                                 <g transform="translate({{ labelX + labelWidth / 2 }} {{ labelY + labelHeight / 2 }})">
                                                     {% for elementDef in layout %}
                                                         <g transform="translate({{ elementDef.x * labelWidth }} {{ elementDef.y * labelHeight }}){% if elementDef.rotation %} rotate({{ elementDef.rotation }}){% endif %}">
-                                                            {% include 'tabs/cutlist/_label-element.twig' %}
+                                                            {% include 'tabs/cutlist/_label-element.twig' with { index:loop.index0 } %}
                                                         </g>
                                                     {% endfor %}
                                                 </g>

@@ -819,6 +819,7 @@ tab:
       option_cutting_marks_1: Imprimés
       option_formula: Valeur
       option_size: Taille
+      option_custom_formula: Formule
       option_anchor: Ancrage
       option_anchor_start: Début - Bas
       option_anchor_middle: Milieu - Bas
@@ -828,6 +829,7 @@ tab:
       option_anchor_end_top: Fin - Haut
       option_color: Couleur
       formula:
+        custom: Formule
         part_number: Numéro
         part_name: Désignation
         part_description: Description
