@@ -774,6 +774,8 @@
                     { name: 'cutting_length', type: 'length' },
                     { name: 'cutting_width', type: 'length' },
                     { name: 'cutting_thickness', type: 'length' },
+                    { name: 'edge_cutting_length', type: 'length' },
+                    { name: 'edge_cutting_width', type: 'length' },
                     { name: 'bbox_length', type: 'length' },
                     { name: 'bbox_width', type: 'length' },
                     { name: 'bbox_thickness', type: 'length' },
@@ -809,6 +811,8 @@
                     { name: 'cutting_length', type: 'length' },
                     { name: 'cutting_width', type: 'length' },
                     { name: 'cutting_thickness', type: 'length' },
+                    { name: 'edge_cutting_length', type: 'length' },
+                    { name: 'edge_cutting_width', type: 'length' },
                     { name: 'bbox_length', type: 'length' },
                     { name: 'bbox_width', type: 'length' },
                     { name: 'bbox_thickness', type: 'length' },
@@ -1453,6 +1457,8 @@
                     { name: 'cutting_length', type: 'length' },
                     { name: 'cutting_width', type: 'length' },
                     { name: 'cutting_thickness', type: 'length' },
+                    { name: 'edge_cutting_length', type: 'length' },
+                    { name: 'edge_cutting_width', type: 'length' },
                     { name: 'bbox_length', type: 'length' },
                     { name: 'bbox_width', type: 'length' },
                     { name: 'bbox_thickness', type: 'length' },
@@ -4033,8 +4039,6 @@
 
                         // Compute custom formulas
                         rubyCallCommand('cutlist_compute_labels_formulas', { part_infos: partInfos, layout: labelsOptions.layout }, function (response) {
-
-                            console.log(response);
 
                             if (response.errors) {
                                 errors.push(response.errors);

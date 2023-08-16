@@ -24,8 +24,11 @@ module Ladb::OpenCutList
 
       @part_infos.each do |part_info|
 
-        part_id = part_info['part']['id']
-        part = @cutlist.get_real_parts([ part_id ]).first
+        next if part_info['part'].nil? || part_info['part']['id'].nil?
+
+        part = @cutlist.get_real_parts([ part_info['part']['id'] ]).first
+
+        next if part.nil?
 
         custom_values = []
 
@@ -39,6 +42,8 @@ module Ladb::OpenCutList
               LengthWrapper.new(part.def.cutting_length),
               LengthWrapper.new(part.def.cutting_width),
               LengthWrapper.new(part.def.cutting_size.thickness),
+              LengthWrapper.new(part.def.edge_cutting_length),
+              LengthWrapper.new(part.def.edge_cutting_width),
               LengthWrapper.new(part.def.size.length),
               LengthWrapper.new(part.def.size.width),
               LengthWrapper.new(part.def.size.thickness),
@@ -130,6 +135,8 @@ class PartData
     cutting_length,
     cutting_width,
     cutting_thickness,
+    edge_cutting_length,
+    edge_cutting_width,
     bbox_length,
     bbox_width,
     bbox_thickness,
@@ -151,6 +158,8 @@ class PartData
     @cutting_length = cutting_length
     @cutting_width = cutting_width
     @cutting_thickness = cutting_thickness
+    @edge_cutting_length = edge_cutting_length
+    @edge_cutting_width = edge_cutting_width
     @bbox_length = bbox_length
     @bbox_width = bbox_width
     @bbox_thickness = bbox_thickness

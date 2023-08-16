@@ -560,6 +560,8 @@ tab:
       cutting_length: Longueur débit
       cutting_width: Largeur débit
       cutting_thickness: Épaisseur débit
+      edge_cutting_length: Longueur débit chants
+      edge_cutting_width: Largeur débit chants
       bbox_length: Longueur capable
       bbox_width: Largeur capable
       bbox_thickness: Épaisseur capable
@@ -840,6 +842,9 @@ tab:
         part_cutting_length: Longueur de débit
         part_cutting_width: Largeur de débit
         part_cutting_thickness: Epaisseur de débit
+        part_edge_cutting_size: Taille débit chants
+        part_edge_cutting_length: Longueur débit chants
+        part_edge_cutting_width: Largeur débit chants
         part_size: Taille capable
         part_length: Longueur capable
         part_width: Largeur capable

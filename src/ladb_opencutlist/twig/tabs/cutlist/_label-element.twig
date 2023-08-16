@@ -62,6 +62,8 @@
             {% set value = partInfo.bin %}
         {% elseif key == 'cutting_size' %}
             {% set value = partInfo.part.cutting_length~' x '~partInfo.part.cutting_width %}
+        {% elseif key == 'edge_cutting_size' %}
+            {% set value = partInfo.part.edge_cutting_length~' x '~partInfo.part.edge_cutting_width %}
         {% elseif key == 'size' %}
             {% set value = partInfo.part.length~' x '~partInfo.part.width %}
         {% elseif key == 'batch' %}

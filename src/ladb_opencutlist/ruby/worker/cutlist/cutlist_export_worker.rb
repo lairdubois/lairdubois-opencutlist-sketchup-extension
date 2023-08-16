@@ -177,6 +177,8 @@ module Ladb::OpenCutList
               LengthWrapper.new(part.def.cutting_length),
               LengthWrapper.new(part.def.cutting_width),
               LengthWrapper.new(part.def.cutting_size.thickness),
+              LengthWrapper.new(part.def.edge_cutting_length),
+              LengthWrapper.new(part.def.edge_cutting_width),
               LengthWrapper.new(part.def.size.length),
               LengthWrapper.new(part.def.size.width),
               LengthWrapper.new(part.def.size.thickness),
@@ -253,6 +255,8 @@ module Ladb::OpenCutList
                   LengthWrapper.new(part.def.cutting_length),
                   LengthWrapper.new(part.def.cutting_width),
                   LengthWrapper.new(part.def.cutting_size.thickness),
+                  LengthWrapper.new(part.def.edge_cutting_length),
+                  LengthWrapper.new(part.def.edge_cutting_width),
                   LengthWrapper.new(part.def.size.length),
                   LengthWrapper.new(part.def.size.width),
                   LengthWrapper.new(part.def.size.thickness),
@@ -389,6 +393,8 @@ module Ladb::OpenCutList
       cutting_length,
       cutting_width,
       cutting_thickness,
+      edge_cutting_length,
+      edge_cutting_width,
       bbox_length,
       bbox_width,
       bbox_thickness,
@@ -412,6 +418,8 @@ module Ladb::OpenCutList
       @cutting_length = cutting_length
       @cutting_width = cutting_width
       @cutting_thickness = cutting_thickness
+      @edge_cutting_length = edge_cutting_length
+      @edge_cutting_width = edge_cutting_width
       @bbox_length = bbox_length
       @bbox_width = bbox_width
       @bbox_thickness = bbox_thickness
@@ -442,6 +450,8 @@ module Ladb::OpenCutList
       cutting_length,
       cutting_width,
       cutting_thickness,
+      edge_cutting_length,
+      edge_cutting_width,
       bbox_length,
       bbox_width,
       bbox_thickness,
@@ -465,6 +475,8 @@ module Ladb::OpenCutList
       @cutting_length = cutting_length
       @cutting_width = cutting_width
       @cutting_thickness = cutting_thickness
+      @edge_cutting_length = edge_cutting_length
+      @edge_cutting_width = edge_cutting_width
       @bbox_length = bbox_length
       @bbox_width = bbox_width
       @bbox_thickness = bbox_thickness

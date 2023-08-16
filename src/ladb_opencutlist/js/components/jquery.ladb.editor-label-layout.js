@@ -442,6 +442,10 @@
             .selectpicker(SELECT_PICKER_OPTIONS)
             .on('change', function () {
                 elementDef.formula = $(this).val();
+                if (elementDef.formula !== 'custom') {
+                    elementDef.custom_formula = '';
+                    $textareaCustomFormula.ladbTextinputCode('val', '');
+                }
                 that.appendFormula(svgContentGroup, elementDef);
                 fnUpdateCustomFormulaVisibility();
             })
@@ -463,6 +467,8 @@
                     { name: 'cutting_length', type: 'length' },
                     { name: 'cutting_width', type: 'length' },
                     { name: 'cutting_thickness', type: 'length' },
+                    { name: 'edge_cutting_length', type: 'length' },
+                    { name: 'edge_cutting_width', type: 'length' },
                     { name: 'bbox_length', type: 'length' },
                     { name: 'bbox_width', type: 'length' },
                     { name: 'bbox_thickness', type: 'length' },
@@ -480,7 +486,11 @@
                     { name: 'layer', type: 'string' }
                 ]),
                 snippetDefs: [
-                    { name: i18next.t('tab.cutlist.snippet.number'), value: '@number' }
+                    { name: i18next.t('tab.cutlist.snippet.number'), value: '@number' },
+                    { name: '-' },
+                    { name: i18next.t('tab.cutlist.snippet.size'), value: '@bbox_length + " x " + @bbox_width' },
+                    { name: i18next.t('tab.cutlist.snippet.area'), value: '@bbox_length * @bbox_width' },
+                    { name: i18next.t('tab.cutlist.snippet.volume'), value: '@bbox_length * @bbox_width * @bbox_thickness' },
                 ]
             })
             .on('change', function () {
