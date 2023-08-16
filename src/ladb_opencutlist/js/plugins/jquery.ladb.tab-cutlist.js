@@ -1068,6 +1068,7 @@
                     if (response.remaining_step === 0 || response.remaining_step === undefined) {
 
                         var $slide = that.pushNewSlide('ladb_cutlist_slide_report', 'tabs/cutlist/_slide-report.twig', $.extend({
+                            generateOptions: that.generateOptions,
                             errors: response.errors,
                             filename: that.filename,
                             modelName: that.modelName,
