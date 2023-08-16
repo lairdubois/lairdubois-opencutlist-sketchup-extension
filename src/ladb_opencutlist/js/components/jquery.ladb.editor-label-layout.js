@@ -245,6 +245,15 @@
 
             })
         ;
+        var $btnRemoveAll = $('<button class="btn btn-danger"><i class="ladb-opencutlist-icon-clear"></i> ' + i18next.t('tab.cutlist.labels.remove_all_elements') + '</button>');
+        $btnRemoveAll
+            .on('click', function () {
+
+                that.elementDefs.length = 0;
+                $('g.draggable', $(svg)).remove();
+
+            })
+        ;
 
         var $btnContainer = $('<div style="display: inline-block" />')
 
@@ -252,9 +261,11 @@
             $('<div class="ladb-editor-label-layout-buttons" style="margin: 10px;"></div>')
                 .append($btnAdd)
                 .append('&nbsp;')
+                .append($btnRemoveAll)
                 .append($btnContainer)
         );
 
+        this.$btnRemoveAll = $btnRemoveAll;
         this.$btnContainer = $btnContainer;
 
     };
@@ -343,6 +354,13 @@
         }
         if (this.$btnContainer) {
             this.$btnContainer.empty();
+        }
+        if (this.$btnRemoveAll) {
+            if (svgElement) {
+                this.$btnRemoveAll.hide();
+            } else {
+                this.$btnRemoveAll.show();
+            }
         }
 
         // Editing flag
@@ -494,7 +512,11 @@
                     { name: 'page_description', type: 'string' }
                 ]),
                 snippetDefs: [
+                    { name: i18next.t('tab.cutlist.snippet.hello') + ' 👋', value: '"' + i18next.t('tab.cutlist.snippet.hello') + ' 👋"' },
+                    { name: '-' },
                     { name: i18next.t('tab.cutlist.snippet.number'), value: '@number' },
+                    { name: i18next.t('tab.cutlist.snippet.name'), value: '@name' },
+                    { name: i18next.t('tab.cutlist.snippet.number_and_name'), value: '@number + " - " + @name' },
                     { name: '-' },
                     { name: i18next.t('tab.cutlist.snippet.size'), value: '@bbox_length + " x " + @bbox_width' },
                     { name: i18next.t('tab.cutlist.snippet.area'), value: '@bbox_length * @bbox_width' },

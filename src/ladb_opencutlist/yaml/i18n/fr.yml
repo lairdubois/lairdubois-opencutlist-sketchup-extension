@@ -799,6 +799,7 @@ tab:
       size: Taille réelle de l'étiquette
       add_element: Ajouter un élément
       remove_element: Retirer
+      remove_all_elements: Retirer tout
       part_order_strategy_help: |
         Réorganiser les propriétés suivantes pour définir la stratégie de tri des étiquettes.
         Chaque propriété peut être triée de façon <i class="ladb-opencutlist-icon-sort-asc"></i> *croissante* ou <i class="ladb-opencutlist-icon-sort-desc"></i> *décroissante*.
@@ -951,6 +952,7 @@ tab:
         is_group_selection: Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas dessinées.
         is_part_selection: Ce dessin d'ensemble se limite aux **pièces sélectionnées**.
     snippet:
+      hello: Bonjour
       number: Numéro
       name: Désignation
       number_and_name: Numéro et désignation
