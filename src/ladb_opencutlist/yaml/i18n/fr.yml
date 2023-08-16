@@ -584,6 +584,11 @@ tab:
       face_zmax: Face
       layer: Balise
       layers: Balises
+      filename: Nom de fichier
+      model_name: Nom du modèle
+      model_description: Description du modèle
+      page_name: Nom de la scène
+      page_description: Description de la scène
       placeholder:
         no_column_title: Saisissez un titre
         no_column_formula_native: "Valeur native de la colonne '{{ col_name }}'"

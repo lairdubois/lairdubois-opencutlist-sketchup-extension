@@ -7,7 +7,7 @@ module Ladb::OpenCutList
     # -- Serialization --
 
     def self.serialize_path(path)  # path is Array<ComponentInstance>
-      return nil if path.nil?
+      return nil unless path.is_a?(Array)
       entity_ids = []
       path.each { |entity|
         entity_ids.push(entity.entityID)
@@ -16,6 +16,7 @@ module Ladb::OpenCutList
     end
 
     def self.unserialize_path(serialized_path)
+      return nil unless serialized_path.is_a?(String)
       path = []
       entity_ids = serialized_path.split(SEPARATOR)
       entity_ids.each { |entity_id|

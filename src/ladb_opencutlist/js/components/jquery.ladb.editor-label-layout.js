@@ -299,6 +299,7 @@
     LadbEditorLabelLayout.prototype.appendFormula = function (svgContentGroup, elementDef) {
 
         var formula = Twig.twig({ref: 'tabs/cutlist/_label-element.twig'}).render($.extend({
+            index: this.elementDefs ? this.elementDefs.indexOf(elementDef) : 0,
             elementDef: elementDef,
             partInfo: this.options.partInfo,
             noEmptyValue: true
@@ -463,6 +464,8 @@
             .ladbTextinputCode({
                 variableDefs: fnConvertToVariableDefs([
                     { name: 'number', type: 'string' },
+                    { name: 'path', type: 'path' },
+                    { name: 'instance_name', type: 'string' },
                     { name: 'name', type: 'string' },
                     { name: 'cutting_length', type: 'length' },
                     { name: 'cutting_width', type: 'length' },
@@ -483,7 +486,12 @@
                     { name: 'edge_xmax', type: 'edge' },
                     { name: 'face_zmax', type: 'veneer' },
                     { name: 'face_zmin', type: 'veneer' },
-                    { name: 'layer', type: 'string' }
+                    { name: 'layer', type: 'string' },
+                    { name: 'filename', type: 'string' },
+                    { name: 'model_name', type: 'string' },
+                    { name: 'model_description', type: 'string' },
+                    { name: 'page_name', type: 'string' },
+                    { name: 'page_description', type: 'string' }
                 ]),
                 snippetDefs: [
                     { name: i18next.t('tab.cutlist.snippet.number'), value: '@number' },
@@ -495,6 +503,18 @@
             })
             .on('change', function () {
                 elementDef.custom_formula = $(this).val();
+                rubyCallCommand('cutlist_compute_labels_formulas', { part_infos: [ that.options.partInfo ], layout: [ elementDef ] }, function (response) {
+
+                    if (response.errors) {
+                        console.log(response.errors);
+                    }
+                    if (response.part_infos) {
+                        var index = that.elementDefs.indexOf(elementDef);
+                        that.options.partInfo.custom_values[index] = response.part_infos[0].custom_values[0];
+                        that.appendFormula(svgContentGroup, elementDef);
+                    }
+
+                });
             })
         ;
         $selectAnchor
@@ -535,10 +555,23 @@
     };
 
     LadbEditorLabelLayout.prototype.updateSizeAndElementDefs = function (labelWidth, labelHeight, elementDefs) {
+        var that = this;
+
         this.elementDefs = elementDefs;
 
-        // Empty the container
-        this.updateSize(labelWidth, labelHeight);
+        rubyCallCommand('cutlist_compute_labels_formulas', { part_infos: [ this.options.partInfo ], layout: elementDefs }, function (response) {
+
+            if (response.errors) {
+                console.log(response.errors);
+            }
+            if (response.part_infos) {
+                that.options.partInfo = response.part_infos[0];
+            }
+
+            // Empty the container
+            that.updateSize(labelWidth, labelHeight);
+
+        });
 
     };
 

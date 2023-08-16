@@ -368,6 +368,7 @@ module Ladb::OpenCutList
   class PathWrapper < ArrayWrapper
 
     def to_s
+      return '' unless @value.is_a?(Array)
       @value.join('/')
     end
 

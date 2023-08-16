@@ -27,7 +27,6 @@ module Ladb::OpenCutList
         next if part_info['part'].nil? || part_info['part']['id'].nil?
 
         part = @cutlist.get_real_parts([ part_info['part']['id'] ]).first
-
         next if part.nil?
 
         custom_values = []
@@ -36,8 +35,10 @@ module Ladb::OpenCutList
 
           if element_def['formula'] == 'custom'
 
-            data = PartData.new(
+            data = LabelData.new(
               StringWrapper.new(part.number),
+              PathWrapper.new(PathUtils.get_named_path(PathUtils.unserialize_path([]), false, 1)),
+              StringWrapper.new(part_info['entity_name']),
               StringWrapper.new(part.name),
               LengthWrapper.new(part.def.cutting_length),
               LengthWrapper.new(part.def.cutting_width),
@@ -87,6 +88,11 @@ module Ladb::OpenCutList
                 part.def.veneer_group_defs[:zmax] ? part.def.veneer_group_defs[:zmax].std_thickness : nil
               ),
               ArrayWrapper.new(part.def.instance_infos.values.map { |instance_info| instance_info.layer.name }.uniq),
+              StringWrapper.new(@cutlist.filename),
+              StringWrapper.new(@cutlist.model_name),
+              StringWrapper.new(@cutlist.model_description),
+              StringWrapper.new(@cutlist.page_name),
+              StringWrapper.new(@cutlist.page_description)
             )
             custom_values.push(_evaluate_text(element_def['custom_formula'], data))
 
@@ -127,10 +133,13 @@ end
 
 # -----
 
-class PartData
+class LabelData
 
   def initialize(
+
     number,
+    path,
+    instance_name,
     name,
     cutting_length,
     cutting_width,
@@ -151,9 +160,18 @@ class PartData
     edge_xmax,
     face_zmin,
     face_zmax,
-    layer
+    layer,
+
+    filename,
+    model_name,
+    model_description,
+    page_name,
+    page_description
+
   )
     @number =  number
+    @path = path
+    @instance_name = instance_name
     @name = name
     @cutting_length = cutting_length
     @cutting_width = cutting_width
@@ -175,6 +193,13 @@ class PartData
     @face_zmin = face_zmin
     @face_zmax = face_zmax
     @layer = layer
+
+    @filename = filename
+    @model_name = model_name
+    @model_description = model_description
+    @page_name = page_name
+    @page_description = page_description
+
   end
 
   def get_binding
