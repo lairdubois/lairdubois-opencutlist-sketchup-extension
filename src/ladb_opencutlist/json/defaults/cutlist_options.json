@@ -22,6 +22,7 @@
     "hide_final_areas": true,
     "hide_edges": true,
     "hide_faces": true,
+    "hide_material_colors": false,
     "minimize_on_highlight": true,
     "part_order_strategy": "-thickness>-length>-width>-count>name>-edge_pattern>tags>thickness_layer_count",
     "dimension_column_order_strategy": "length>width>thickness",

@@ -1,4 +1,4 @@
-{% include 'tabs/materials/_material-color-drop.twig' with { 'material_color':group.material_color } %}
+{% if not generateOptions.hide_material_colors %}{% include 'tabs/materials/_material-color-drop.twig' with { 'material_color':group.material_color } %}{% endif %}
 <span{% if group.material_type == 0 %} class="text-muted" style="font-style: italic;"{% endif %}>
     {% if group.material_display_name is empty %}
         {{ 'tab.cutlist.material_undefined'|i18next }}

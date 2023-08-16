@@ -467,6 +467,8 @@ tab:
       hide_edges_help: "Si cette option est activée, les **colonnes de chants** des pièces de type *Panneau* ne sont pas affichées."
       hide_faces: Masquer les colonnes de faces
       hide_faces_help: "Si cette option est activée, les **colonnes de faces** des pièces de type *Panneau* ne sont pas affichées."
+      hide_material_colors: Masquer les couleurs des matières
+      hide_material_colors_help: "Si cette option est activée, les couleurs des matières ne seront pas affichées."
       minimize_on_highlight: Réduire après *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Si cette option est activée, la fenêtre OpenCutList sera réduite lorsque la fonction *'$t(tab.cutlist.highlight_part)'* est utilisée."
       general: Générales

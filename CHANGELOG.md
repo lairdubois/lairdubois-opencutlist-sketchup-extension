@@ -8,6 +8,7 @@ in 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
   * Added Outliner tab
   * Added export part to STL, OBJ, DXF
+  * Added _Hide material colors_ cutlist option
   * Added edge material color display in part list, cutting diagram and labels
   * Added edit material for edge and veneer virtual parts
   * Added labels formulas

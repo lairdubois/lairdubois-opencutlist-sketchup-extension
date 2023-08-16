@@ -4217,6 +4217,7 @@
         var $inputHideFinalAreas = $('#ladb_input_hide_final_areas', $modal);
         var $inputHideEdges = $('#ladb_input_hide_edges', $modal);
         var $inputHideFaces = $('#ladb_input_hide_faces', $modal);
+        var $inputHideMaterialColors = $('#ladb_input_hide_material_colors', $modal);
         var $inputMinimizeOnHighlight = $('#ladb_input_minimize_on_highlight', $modal);
         var $sortablePartOrderStrategy = $('#ladb_sortable_part_order_strategy', $modal);
         var $inputTags = $('#ladb_input_tags', $modal);
@@ -4241,6 +4242,7 @@
             options.hide_final_areas = $inputHideFinalAreas.is(':checked');
             options.hide_edges = $inputHideEdges.is(':checked');
             options.hide_faces = $inputHideFaces.is(':checked');
+            options.hide_material_colors = $inputHideMaterialColors.is(':checked');
             options.minimize_on_highlight = $inputMinimizeOnHighlight.is(':checked');
             options.tags = $inputTags.tokenfield('getTokensList').split(';');
 
@@ -4276,6 +4278,7 @@
             $inputHideFinalAreas.prop('checked', options.hide_final_areas);
             $inputHideEdges.prop('checked', options.hide_edges);
             $inputHideFaces.prop('checked', options.hide_faces);
+            $inputHideMaterialColors.prop('checked', options.hide_material_colors);
             $inputMinimizeOnHighlight.prop('checked', options.minimize_on_highlight);
             $inputTags.tokenfield('setTokens', options.tags === '' ? ' ' : options.tags);
 
