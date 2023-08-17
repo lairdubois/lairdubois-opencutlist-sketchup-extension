@@ -3,6 +3,7 @@ module Ladb::OpenCutList
   require_relative '../../lib/rubyzip/zip'
   require_relative '../../plugin'
   require_relative '../../helper/layer_visibility_helper'
+  require_relative '../../utils/dimension_utils'
 
   class CutlistLayoutToLayoutWorker
 
@@ -212,7 +213,7 @@ module Ladb::OpenCutList
               current_y = page_description_text.drawing_bounds.lower_left.y
             end
 
-            rectangle = _add_rectangle(doc, layer, page, Geom::Point2d.new(page_left_margin, draw_text.bounds.lower_right.y + gutter), Geom::Point2d.new(page_width - page_right_margin, current_y + gutter), { :solid_filled => false })
+            rectangle = _add_rectangle(doc, layer, page, Geom::Point2d.new(page_left_margin, draw_text.bounds.lower_right.y + gutter), Geom::Point2d.new(page_width - page_right_margin, current_y + gutter), { :solid_filled => false, :stroke_width => 0.5 })
             current_y = rectangle.drawing_bounds.lower_left.y + gutter
 
           end
@@ -275,55 +276,82 @@ module Ladb::OpenCutList
           return { :errors => [ [ 'tab.cutlist.layout.error.failed_to_layout', { :error => e.inspect } ] ] }
         end
 
-        # Change layout default styles
-        # Zip::File.open(layout_path, create: false) do |zipfile|
-        #
-        #   require "rexml/document"
-        #
-        #   style_manager_filename = 'styleManager.xml'
-        #
-        #   xml = zipfile.read(style_manager_filename)
-        #
-        #   begin
-        #
-        #     # Parse XML
-        #     xdoc = REXML::Document.new(xml)
-        #
-        #     # Extract elements
-        #     style_manager_elm = xdoc.elements['/styleManager']
-        #     style_manager_elm.elements.each('t:dicItem') { |style_elm|
-        #
-        #       style_name = style_elm.attribute('key').value
-        #       p style_name
-        #
-        #       style_elm.elements.each('t:variant/e:styleAttributes/t:dicItem') { |style_attribute_elm|
-        #
-        #         style_attribute_name = style_attribute_elm.attribute('key').value
-        #         p style_attribute_name
-        #
-        #         style_attribute_value_elm = style_attribute_elm.elements.first
-        #         style_attribute_value_type = style_attribute_value_elm.attribute('type').value
-        #         style_attribute_value_text = style_attribute_value_elm.text
-        #
-        #         p style_attribute_value_type
-        #         p style_attribute_value_text
-        #
-        #
-        #       }
-        #
-        #     }
-        #
-        #     output = ''
-        #     xdoc.write(output)
-        #
-        #     zipfile.get_output_stream(style_manager_filename){ |f| f.puts output }
-        #
-        #   rescue REXML::ParseException => error
-        #     # Return nil if an exception is thrown
-        #     puts error.message
-        #   end
-        #
-        # end
+        # Override layout 'LinearDimensionTool' default style
+
+        defaults = {
+          'arrow.start.size' => { :type => 6, :value => 2 },
+          'arrow.start.type' => { :type => 2, :value => 17 },
+          'arrow.end.size' => { :type => 6, :value => 2 },
+          'arrow.end.type' => { :type => 2, :value => 17 },
+          'stroke.width' => { :type => 6, :value => 0.5 },
+          'dimension.units.unit' => { :type => 2, :value => DimensionUtils.instance.length_unit },
+          'dimension.units.format' => { :type => 2, :value => DimensionUtils.instance.length_format },
+          'dimension.units.precision' => { :type => 4, :value => DimensionUtils.instance.length_precision },
+          'dimension.units.suppression' => { :type => 2, :value => DimensionUtils.instance.length_suppress_unit_display ? 1 : 0 },
+          'dimension.startoffsetlength' => { :type => 7, :value => 0.125 },
+          'dimension.startoffsettype' => { :type => 4, :value => 0 },
+          'dimension.endoffsetlength' => { :type => 7, :value => 0.125 },
+          'dimension.endoffsettype' => { :type => 4, :value => 0 },
+        }
+
+        Zip::File.open(layout_path, create: false) do |zipfile|
+
+          require "rexml/document"
+
+          style_manager_filename = 'styleManager.xml'
+          xml = zipfile.read(style_manager_filename)
+
+          begin
+
+            # Parse XML
+            xdoc = REXML::Document.new(xml)
+
+            # Extract style manager element
+            style_manager_elm = xdoc.elements['/styleManager']
+            if style_manager_elm
+
+              # Add new 'LinearDimensionTool' default attributes
+
+              style_attributes_elm = REXML::Element.new('e:styleAttributes')
+
+              style_value_elm = REXML::Element.new('t:variant')
+              style_value_elm.add_attribute('type', 13)
+              style_value_elm.add_element(style_attributes_elm)
+
+              style_elm = REXML::Element.new('t:dicItem')
+              style_elm.add_attribute('key', 'LinearDimensionTool')
+              style_elm.add_element(style_value_elm)
+
+              style_manager_elm.add_element(style_elm)
+
+              defaults.each { |attribute, type_and_value|
+
+                attribute_value_elm = REXML::Element.new('t:variant')
+                attribute_value_elm.add_attribute('type', type_and_value[:type])
+                attribute_value_elm.add_text(REXML::Text.new(type_and_value[:value].to_s))
+
+                attribute_elm = REXML::Element.new('t:dicItem')
+                attribute_elm.add_attribute('key', attribute)
+                attribute_elm.add_element(attribute_value_elm)
+
+                style_attributes_elm.add_element(attribute_elm)
+
+              }
+
+              output = ''
+              xdoc.write(output)
+
+              zipfile.get_output_stream(style_manager_filename){ |f| f.puts output }
+              zipfile.commit
+
+            end
+
+          rescue REXML::ParseException => error
+            # Return nil if an exception is thrown
+            puts error.message
+          end
+
+        end
 
         return { :export_path => layout_path }
       end
@@ -443,6 +471,8 @@ module Ladb::OpenCutList
       if style
         entity_style = entity.style
         entity_style.solid_filled = style[:solid_filled] unless style[:solid_filled].nil?
+        entity_style.stroke_width = style[:stroke_width] unless style[:stroke_width].nil?
+        entity_style.stroke_color = style[:stroke_color] unless style[:stroke_color].nil?
         entity.style = entity_style
       end
       entity

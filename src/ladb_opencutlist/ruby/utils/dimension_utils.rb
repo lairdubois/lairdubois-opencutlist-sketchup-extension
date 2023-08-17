@@ -50,7 +50,7 @@
 
     include Singleton
 
-    attr_accessor :decimal_separator, :length_unit, :length_format, :length_precision
+    attr_accessor :decimal_separator, :length_unit, :length_format, :length_precision, :length_suppress_unit_display
 
     LENGTH_MIN_PRECISION = 3
 
@@ -62,6 +62,7 @@
     @length_unit
     @length_format
     @length_precision
+    @length_suppress_unit_display
 
     # -----
 
@@ -80,6 +81,7 @@
       @length_unit = model ? model.options['UnitsOptions']['LengthUnit'] : MILLIMETER
       @length_format = model ? model.options['UnitsOptions']['LengthFormat'] : DECIMAL
       @length_precision = model ? model.options['UnitsOptions']['LengthPrecision'] : 0
+      @length_suppress_unit_display = model ? model.options['UnitsOptions']['SuppressUnitsDisplay'] : false
     end
 
     # -----
