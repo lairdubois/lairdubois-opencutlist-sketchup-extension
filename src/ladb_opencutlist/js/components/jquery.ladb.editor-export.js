@@ -147,6 +147,10 @@
         this.$editingItem = $item;
         if ($item) {
 
+            if (this.$btnRemoveAll) {
+                this.$btnRemoveAll.hide();
+            }
+
             // Mark item as selected
             this.$editingItem.addClass('ladb-selected');
 
@@ -229,6 +233,10 @@
                 this.$helpBlock.show();
             }
 
+            if (this.$btnRemoveAll) {
+                this.$btnRemoveAll.show();
+            }
+
         }
 
     };
@@ -280,6 +288,9 @@
         this.$element.addClass('row');
 
         var $header = $('<div class="ladb-editor-export-columns-header">' + i18next.t('tab.cutlist.export.columns') + '</div>')
+            .on('click', function (e) {
+                that.editColumn(null);
+            });
         this.$sortable = $('<ul class="ladb-editor-export-columns-sortable ladb-sortable-list" />')
             .sortable(SORTABLE_OPTIONS)
         ;
@@ -320,6 +331,14 @@
             .append($('<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>'))
             .append($dropDown)
 
+        var $btnRemoveAll = $('<button class="btn btn-danger"><i class="ladb-opencutlist-icon-clear"></i> ' + i18next.t('tab.cutlist.export.remove_all_columns') + '</button>')
+            .on('click', function () {
+                $(this).blur();
+                that.$sortable.empty();
+                that.editColumn(null);
+                return false;
+            });
+
         var $btnContainer = $('<div style="display: inline-block" />');
 
         this.$element.append(
@@ -327,11 +346,13 @@
                 $('<div class="ladb-editor-export-buttons" style="margin: 10px;"></div>')
                     .append($btnGroup)
                     .append('&nbsp;')
+                    .append($btnRemoveAll)
                     .append($btnContainer)
             )
         );
 
         this.$btnContainer = $btnContainer;
+        this.$btnRemoveAll = $btnRemoveAll;
 
         // Help
 

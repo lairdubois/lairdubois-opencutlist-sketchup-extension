@@ -531,6 +531,7 @@ tab:
       add_column: Ajouter une colonne
       add_native_columns: Ajouter une colonne native
       remove_column: Retirer
+      remove_all_columns: Retirer tout
       columns: Colonnes
       column_title: Titre
       column_title_help: |

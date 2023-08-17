@@ -134,7 +134,7 @@ module Ladb::OpenCutList
       end
 
       cuttingdiagram1d_def = Cuttingdiagram1dDef.new
-      cuttingdiagram1d_def.options_def.px_saw_kerf = [_to_px(@saw_kerf), 1].max
+      cuttingdiagram1d_def.options_def.px_saw_kerf = [ _to_px(@saw_kerf), 1 ].max
       cuttingdiagram1d_def.options_def.saw_kerf = @saw_kerf
       cuttingdiagram1d_def.options_def.trimming = @trimming
       cuttingdiagram1d_def.options_def.bar_folding = @bar_folding
