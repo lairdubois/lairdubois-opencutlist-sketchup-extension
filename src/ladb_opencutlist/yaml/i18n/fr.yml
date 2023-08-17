@@ -163,6 +163,7 @@ core:
       component_textinput_color: Palette de couleurs
       cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
       cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
+      cutlist_cuttingdiagram2d_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 2D
       cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
       cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
       cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
@@ -774,6 +775,13 @@ tab:
         parts: "{{ count }} pièce"
         parts_plural: "{{ count }} pièces"
         settings: Paramètres
+      export:
+        title: Exporter le calepinage
+        options_general: General
+        option_file_format: Format
+        option_file_format_svg: SVG
+        option_file_format_dxf: DXF
+        option_file_format_help: Choisissez
       error:
         no_bar_dimensional: La barre standard n'est pas correctement configurée et aucun reste n'est défini.
         no_bar_edge: La bande standard n'est pas correctement configurée et aucun reste n'est défini.

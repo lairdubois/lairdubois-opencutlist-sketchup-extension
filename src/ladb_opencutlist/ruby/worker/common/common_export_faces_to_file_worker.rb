@@ -76,25 +76,25 @@ module Ladb::OpenCutList
 
           face.loops.each do |loop|
 
-          _dxf(file, 0, 'POLYLINE')
-          _dxf(file, 8, 0)
-          _dxf(file, 66, 1)
-          _dxf(file, 70, 1) # 1 = This is a closed polyline (or a polygon mesh closed in the M direction)
-          _dxf(file, 10, 0.0)
-          _dxf(file, 20, 0.0)
-          _dxf(file, 30, 0.0)
-
-          loop.vertices.each do |vertex|
-            point = vertex.position.transform(transformation)
-            _dxf(file, 0, 'VERTEX')
+            _dxf(file, 0, 'POLYLINE')
             _dxf(file, 8, 0)
-            _dxf(file, 10, _convert(point.x, unit_converter))
-            _dxf(file, 20, _convert(point.y, unit_converter))
+            _dxf(file, 66, 1)
+            _dxf(file, 70, 1) # 1 = This is a closed polyline (or a polygon mesh closed in the M direction)
+            _dxf(file, 10, 0.0)
+            _dxf(file, 20, 0.0)
             _dxf(file, 30, 0.0)
-            _dxf(file, 70, 32) # 32 = 3D polyline vertex
-          end
 
-          _dxf(file, 0, 'SEQEND')
+            loop.vertices.each do |vertex|
+              point = vertex.position.transform(transformation)
+              _dxf(file, 0, 'VERTEX')
+              _dxf(file, 8, 0)
+              _dxf(file, 10, _convert(point.x, unit_converter))
+              _dxf(file, 20, _convert(point.y, unit_converter))
+              _dxf(file, 30, 0.0)
+              _dxf(file, 70, 32) # 32 = 3D polyline vertex
+            end
+
+            _dxf(file, 0, 'SEQEND')
 
           end
 

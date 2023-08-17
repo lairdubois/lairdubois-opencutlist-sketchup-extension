@@ -3501,6 +3501,7 @@
                                         // Fetch UI elements
                                         var $btnCuttingDiagram = $('#ladb_btn_cuttingdiagram', $slide);
                                         var $btnPrint = $('#ladb_btn_print', $slide);
+                                        var $btnExport = $('#ladb_btn_export', $slide);
                                         var $btnLabels = $('#ladb_btn_labels', $slide);
                                         var $btnClose = $('#ladb_btn_close', $slide);
 
@@ -3511,6 +3512,72 @@
                                         $btnPrint.on('click', function () {
                                             $(this).blur();
                                             that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.cuttingdiagram.title'));
+                                        });
+                                        $btnExport.on('click', function () {
+                                            $(this).blur();
+
+                                            // Retrieve cutting diagram options
+                                            rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_cuttingdiagram2d_export_options', section: groupId }, function (response) {
+
+                                                var exportOptions = response.preset;
+
+                                                var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_2d_export', 'tabs/cutlist/_modal-cuttingdiagram-2d-export.twig', {
+                                                    material_attributes: response,
+                                                    group: group,
+                                                    isPartSelection: isPartSelection,
+                                                    tab: 'general'
+                                                });
+
+                                                // Fetch UI elements
+                                                var $widgetPreset = $('.ladb-widget-preset', $modal);
+                                                var $selectFileFormat = $('#ladb_select_file_format', $modal);
+                                                var $btnExport = $('#ladb_btn_export', $modal);
+
+                                                var fnFetchOptions = function (options) {
+                                                    options.file_format = $selectFileFormat.val();
+                                                }
+                                                var fnFillInputs = function (options) {
+                                                    $selectFileFormat.selectpicker('val', options.file_format);
+                                                }
+
+                                                $widgetPreset.ladbWidgetPreset({
+                                                    dialog: that.dialog,
+                                                    dictionary: 'cutlist_cuttingdiagram2d_export_options',
+                                                    fnFetchOptions: fnFetchOptions,
+                                                    fnFillInputs: fnFillInputs
+                                                });
+                                                $selectFileFormat.selectpicker(SELECT_PICKER_OPTIONS);
+
+                                                fnFillInputs(exportOptions);
+
+                                                // Bind buttons
+                                                $btnExport.on('click', function () {
+
+                                                    // Fetch options
+                                                    fnFetchOptions(exportOptions);
+
+                                                    // Store options
+                                                    rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_cuttingdiagram2d_export_options', values: exportOptions, section: groupId });
+
+                                                    rubyCallCommand('cutlist_export_cuttingdiagram_2d', exportOptions, function (response) {
+
+                                                        console.log(response);
+
+                                                    });
+
+                                                    // Hide modal
+                                                    $modal.modal('hide');
+
+                                                });
+
+                                                // Show modal
+                                                $modal.modal('show');
+
+                                                // Setup popovers
+                                                that.dialog.setupPopovers();
+
+                                            });
+
                                         });
                                         $btnLabels.on('click', function () {
 
