@@ -28,14 +28,14 @@ module Ladb::OpenCutList
       dir = UI.select_directory(title: Plugin.instance.get_i18n_string('tab.cutlist.cuttingdiagram.export.title'), directory: @cutlist.dir)
       if dir
 
-        puts dir, @file_format
-
-        @cuttingdiagram2d.sheets.each_with_index do |sheet, index|
-          _write_sheet(dir, sheet, index)
+        sheet_index = 1
+        @cuttingdiagram2d.sheets.each do |sheet|
+          _write_sheet(dir, sheet, sheet_index)
+          sheet_index += sheet.count
         end
 
         return {
-          :success => true
+          :export_path => dir
         }
       end
 
@@ -48,10 +48,10 @@ module Ladb::OpenCutList
 
     private
 
-    def _write_sheet(dir, sheet, index)
+    def _write_sheet(dir, sheet, sheet_index)
 
       # Open output file
-      file = File.new(File.join(dir, "sheet_#{index}.#{@file_format}") , 'w')
+      file = File.new(File.join(dir, "sheet_#{sheet_index}#{sheet.count > 1 ? "_to_#{sheet.count}" : ''}.#{@file_format}") , 'w')
 
       case @file_format
       when FILE_FORMAT_DXF
@@ -159,6 +159,17 @@ module Ladb::OpenCutList
       end
 
       _dxf(file, 0, 'SEQEND')
+
+    end
+
+    def _dxf_line(file, x1, y1, x2, y2)
+
+      _dxf(file, 0, 'LINE')
+      _dxf(file, 8, 0)
+      _dxf(file, 10, x1)
+      _dxf(file, 20, y1)
+      _dxf(file, 11, x2)
+      _dxf(file, 21, y2)
 
     end
 
