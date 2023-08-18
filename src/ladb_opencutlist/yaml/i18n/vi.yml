@@ -1236,7 +1236,7 @@ tab:
         Sự cải tiến liên tục của *OpenCutList* rất quan trọng đối với chúng tôi và dự án tiếp tục cần sự trợ giúp của bạn cho bản cập nhật tiếp theo!
       cuttingdiagram_export: |
         Điều quan trọng đối với chúng tôi là *OpenCutList* có thể được điều chỉnh cho phù hợp với những kỳ vọng rất khác nhau của người dùng đối với chức năng *Sơ đồ cắt*.
-        Để tiếp tục mở rộng các khả năng, chúng tôi muốn cho phép xuất sơ đồ bố trí ở định dạng **SVG**.
+        Để tiếp tục mở rộng các khả năng, chúng tôi muốn cho phép xuất sơ đồ bố trí ở định dạng **SVG** và **DXF**.
         Bằng cách cung cấp cho chúng tôi phương tiện để xử lý các bản xuất này, bạn đang cho chúng tôi cơ hội giúp bạn tận dụng tối đa *OpenCutList*.
       layout: |
         Mục tiêu của mô-đun này là cho phép bạn dễ dàng in bản xem trước của dự án dưới dạng **chế độ xem bùng nổ** với nhận dạng từ thông tin được tạo trong danh sách các bộ phận.

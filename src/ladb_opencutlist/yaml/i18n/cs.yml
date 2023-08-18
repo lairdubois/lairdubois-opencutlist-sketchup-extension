@@ -1236,7 +1236,7 @@ tab:
         Neustálé zlepšování *OpenCutList* je pro nás důležité, a proto projekt stále potřebuje vaši pomoc pro další aktualizaci!
       cuttingdiagram_export: |
         Je pro nás důležité, aby *OpenCutList* bylo možné přizpůsobit velmi rozdílným očekáváním uživatelů od funkce *řezový diagram*.
-        Pro další rozšíření možností bychom rádi umožnili export rozvrhových diagramů ve formátu **SVG**.
+        Pro další rozšíření možností bychom rádi umožnili export rozvrhových diagramů ve formátu **SVG** a **DXF**.
         Tím, že nám poskytnete prostředky pro práci na těchto exportech, nám dáte příležitost pomoci vám co nejlépe využít *OpenCutList*.
       layout: |
         Cílem tohoto modulu je umožnit vám snadno vytisknout náhled vašeho projektu jako **rozložený pohled** s identifikací a popisem vygenerovaných do kusovníku.
