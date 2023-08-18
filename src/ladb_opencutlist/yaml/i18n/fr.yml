@@ -68,6 +68,8 @@ default:
   alt_key_win: Alt
   alt_key_mac: Command
   tab_key: Tab
+  file: Fichier
+  file_plural: Fichiers
 core:
   menu:
     submenu: OpenCutList

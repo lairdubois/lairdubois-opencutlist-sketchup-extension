@@ -247,7 +247,7 @@ module Ladb::OpenCutList
       # Run !
       cuttingdiagram1d = @cuttingdiagram1d_worker.run(true)
 
-      if cuttingdiagram2d.sheets.length > 0
+      if cuttingdiagram1d.bars.length > 0
         @cuttingdiagram1d_worker = nil
         @cuttingdiagram1d = cuttingdiagram1d
       end

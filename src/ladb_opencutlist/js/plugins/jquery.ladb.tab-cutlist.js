@@ -3551,7 +3551,7 @@
                                                 $selectFileFormat
                                                     .selectpicker(SELECT_PICKER_OPTIONS)
                                                     .on('changed.bs.select', function () {
-                                                        $('#ladb_btn_export_file_format', $btnExport).html($(this).val().toUpperCase() + ' x ' + sheetCount);
+                                                        $('#ladb_btn_export_file_format', $btnExport).html($(this).val().toUpperCase() + ' <small>( ' + sheetCount + ' ' + i18next.t('default.file', { count: sheetCount }) + ' )</small>');
                                                     })
                                                 ;
 
