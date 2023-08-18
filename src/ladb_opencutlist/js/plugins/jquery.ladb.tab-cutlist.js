@@ -3154,7 +3154,7 @@
 
                         var fnAdvance = function () {
                             window.requestAnimationFrame(function () {
-                                rubyCallCommand('cutlist_group_cuttingdiagram_1d_advance', null, function (response) {
+                                rubyCallCommand('cutlist_group_cuttingdiagram1d_advance', null, function (response) {
 
                                     if (response.errors && response.errors.length > 0 || response.bars && response.bars.length > 0) {
 
@@ -3292,7 +3292,7 @@
                         }
 
                         window.requestAnimationFrame(function () {
-                            rubyCallCommand('cutlist_group_cuttingdiagram_1d_start', $.extend({ group_id: groupId, part_ids: isPartSelection ? that.selectionPartIds : null }, cuttingdiagram1dOptions), function (response) {
+                            rubyCallCommand('cutlist_group_cuttingdiagram1d_start', $.extend({ group_id: groupId, part_ids: isPartSelection ? that.selectionPartIds : null }, cuttingdiagram1dOptions), function (response) {
                                 window.requestAnimationFrame(function () {
                                     that.dialog.startProgress(response.estimated_steps);
                                     fnAdvance();
@@ -3477,7 +3477,7 @@
 
                         var fnAdvance = function () {
                             window.requestAnimationFrame(function () {
-                                rubyCallCommand('cutlist_group_cuttingdiagram_2d_advance', null, function (response) {
+                                rubyCallCommand('cutlist_group_cuttingdiagram2d_advance', null, function (response) {
 
                                     if (response.errors && response.errors.length > 0 || response.sheets && response.sheets.length > 0) {
 
@@ -3582,7 +3582,7 @@
                                                     // Store options
                                                     rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_cuttingdiagram2d_export_options', values: exportOptions, section: groupId });
 
-                                                    rubyCallCommand('cutlist_cuttingdiagram_2d_export', exportOptions, function (response) {
+                                                    rubyCallCommand('cutlist_cuttingdiagram2d_export', exportOptions, function (response) {
 
                                                         if (response.errors) {
                                                             that.dialog.notifyErrors(response.errors);
@@ -3712,7 +3712,7 @@
                         }
 
                         window.requestAnimationFrame(function () {
-                            rubyCallCommand('cutlist_group_cuttingdiagram_2d_start', $.extend({ group_id: groupId, part_ids: isPartSelection ? that.selectionPartIds : null }, cuttingdiagram2dOptions), function (response) {
+                            rubyCallCommand('cutlist_group_cuttingdiagram2d_start', $.extend({ group_id: groupId, part_ids: isPartSelection ? that.selectionPartIds : null }, cuttingdiagram2dOptions), function (response) {
                                 window.requestAnimationFrame(function () {
                                     that.dialog.startProgress(response.estimated_steps);
                                     fnAdvance();
@@ -4142,7 +4142,7 @@
                         partInfos.sort(fnFieldSorter(labelsOptions.part_order_strategy.split('>')));
 
                         // Compute custom formulas
-                        rubyCallCommand('cutlist_compute_labels_formulas', { part_infos: partInfos, layout: labelsOptions.layout }, function (response) {
+                        rubyCallCommand('cutlist_labels_compute_formulas', { part_infos: partInfos, layout: labelsOptions.layout }, function (response) {
 
                             if (response.errors) {
                                 errors.push(response.errors);

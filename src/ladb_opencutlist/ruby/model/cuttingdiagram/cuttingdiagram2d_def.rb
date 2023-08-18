@@ -1,6 +1,6 @@
 module Ladb::OpenCutList
 
-  require_relative 'cuttingdiagram_2d'
+  require_relative 'cuttingdiagram2d'
 
   class Cuttingdiagram2dDef
 

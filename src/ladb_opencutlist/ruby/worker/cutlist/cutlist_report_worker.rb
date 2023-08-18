@@ -1,7 +1,7 @@
 module Ladb::OpenCutList
 
-  require_relative 'cutlist_cuttingdiagram_1d_worker'
-  require_relative 'cutlist_cuttingdiagram_2d_worker'
+  require_relative 'cutlist_cuttingdiagram1d_worker'
+  require_relative 'cutlist_cuttingdiagram2d_worker'
   require_relative '../../model/report/report_def'
   require_relative '../../model/report/report_entry_def'
 

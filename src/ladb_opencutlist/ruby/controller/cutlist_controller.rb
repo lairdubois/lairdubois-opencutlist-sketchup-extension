@@ -64,28 +64,28 @@ module Ladb::OpenCutList
         part_export_to_file_command(settings)
       end
 
-      Plugin.instance.register_command("cutlist_group_cuttingdiagram_1d_start") do |settings|
-        group_cuttingdiagram_1d_start_command(settings)
+      Plugin.instance.register_command("cutlist_group_cuttingdiagram1d_start") do |settings|
+        group_cuttingdiagram1d_start_command(settings)
       end
 
-      Plugin.instance.register_command("cutlist_group_cuttingdiagram_1d_advance") do |settings|
-        group_cuttingdiagram_1d_advance_command
+      Plugin.instance.register_command("cutlist_group_cuttingdiagram1d_advance") do |settings|
+        group_cuttingdiagram1d_advance_command
       end
 
-      Plugin.instance.register_command("cutlist_group_cuttingdiagram_2d_start") do |settings|
-        group_cuttingdiagram_2d_start_command(settings)
+      Plugin.instance.register_command("cutlist_group_cuttingdiagram2d_start") do |settings|
+        group_cuttingdiagram2d_start_command(settings)
       end
 
-      Plugin.instance.register_command("cutlist_group_cuttingdiagram_2d_advance") do |settings|
-        group_cuttingdiagram_2d_advance_command
+      Plugin.instance.register_command("cutlist_group_cuttingdiagram2d_advance") do |settings|
+        group_cuttingdiagram2d_advance_command
       end
 
-      Plugin.instance.register_command("cutlist_cuttingdiagram_2d_export") do |settings|
-        cuttingdiagram_2d_export_command(settings)
+      Plugin.instance.register_command("cutlist_cuttingdiagram2d_export") do |settings|
+        cuttingdiagram2d_export_command(settings)
       end
 
-      Plugin.instance.register_command("cutlist_compute_labels_formulas") do |settings|
-        compute_labels_formulas_command(settings)
+      Plugin.instance.register_command("cutlist_labels_compute_formulas") do |settings|
+        labels_compute_formulas_command(settings)
       end
 
       Plugin.instance.register_command("cutlist_reset_prices") do |settings|
@@ -229,8 +229,8 @@ module Ladb::OpenCutList
       worker.run
     end
 
-    def group_cuttingdiagram_1d_start_command(settings)
-      require_relative '../worker/cutlist/cutlist_cuttingdiagram_1d_worker'
+    def group_cuttingdiagram1d_start_command(settings)
+      require_relative '../worker/cutlist/cutlist_cuttingdiagram1d_worker'
 
       # Setup worker
       @cuttingdiagram1d_worker = CutlistCuttingdiagram1dWorker.new(settings, @cutlist)
@@ -241,7 +241,7 @@ module Ladb::OpenCutList
       cuttingdiagram1d.to_hash
     end
 
-    def group_cuttingdiagram_1d_advance_command
+    def group_cuttingdiagram1d_advance_command
       return { :errors => [ 'default.error' ] } unless @cuttingdiagram1d_worker
 
       # Run !
@@ -255,8 +255,8 @@ module Ladb::OpenCutList
       cuttingdiagram1d.to_hash
     end
 
-    def group_cuttingdiagram_2d_start_command(settings)
-      require_relative '../worker/cutlist/cutlist_cuttingdiagram_2d_worker'
+    def group_cuttingdiagram2d_start_command(settings)
+      require_relative '../worker/cutlist/cutlist_cuttingdiagram2d_worker'
 
       # Setup worker
       @cuttingdiagram2d_worker = CutlistCuttingdiagram2dWorker.new(settings, @cutlist)
@@ -267,7 +267,7 @@ module Ladb::OpenCutList
       cuttingdiagram2d.to_hash
     end
 
-    def group_cuttingdiagram_2d_advance_command
+    def group_cuttingdiagram2d_advance_command
       return { :errors => [ 'default.error' ] } unless @cuttingdiagram2d_worker
 
       # Run !
@@ -281,10 +281,10 @@ module Ladb::OpenCutList
       cuttingdiagram2d.to_hash
     end
 
-    def cuttingdiagram_2d_export_command(settings)
+    def cuttingdiagram2d_export_command(settings)
       return { :errors => [ 'default.error' ] } unless @cuttingdiagram2d
 
-      require_relative '../worker/cutlist/cutlist_cuttingdiagram_2d_export_worker'
+      require_relative '../worker/cutlist/cutlist_cuttingdiagram2d_export_worker'
 
       # Setup worker
       worker = CutlistCuttingdiagram2dExportWorker.new(settings, @cutlist, @cuttingdiagram2d)
@@ -293,11 +293,11 @@ module Ladb::OpenCutList
       worker.run
     end
 
-    def compute_labels_formulas_command(settings)
-      require_relative '../worker/cutlist/cutlist_compute_labels_formulas_worker'
+    def labels_compute_formulas_command(settings)
+      require_relative '../worker/cutlist/cutlist_labels_compute_formulas_worker'
 
       # Setup worker
-      worker = CutlistComputeLabelsFormulasWorker.new(settings, @cutlist)
+      worker = CutlistLabelsComputeFormulasWorker.new(settings, @cutlist)
 
       # Run !
       worker.run

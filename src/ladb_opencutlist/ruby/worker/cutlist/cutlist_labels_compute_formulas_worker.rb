@@ -2,7 +2,7 @@ module Ladb::OpenCutList
 
   require_relative '../../model/export/wrappers'
 
-  class CutlistComputeLabelsFormulasWorker
+  class CutlistLabelsComputeFormulasWorker
 
     def initialize(settings, cutlist)
 
@@ -88,6 +88,8 @@ module Ladb::OpenCutList
                 part.def.veneer_group_defs[:zmax] ? part.def.veneer_group_defs[:zmax].std_thickness : nil
               ),
               ArrayWrapper.new(part.def.instance_infos.values.map { |instance_info| instance_info.layer.name }.uniq),
+              BatchWrapper.new(part_info['position_in_batch'], part.count),
+              IntegerWrapper.new(part_info['bin']),
               StringWrapper.new(@cutlist.filename),
               StringWrapper.new(@cutlist.model_name),
               StringWrapper.new(@cutlist.model_description),
@@ -162,6 +164,9 @@ class LabelData
     face_zmax,
     layer,
 
+    batch,
+    bin,
+
     filename,
     model_name,
     model_description,
@@ -193,6 +198,9 @@ class LabelData
     @face_zmin = face_zmin
     @face_zmax = face_zmax
     @layer = layer
+
+    @batch = batch
+    @bin = bin
 
     @filename = filename
     @model_name = model_name

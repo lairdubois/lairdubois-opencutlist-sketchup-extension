@@ -2,7 +2,7 @@ module Ladb::OpenCutList
 
   require_relative '../../lib/bin_packing_1d/packengine'
   require_relative '../../utils/dimension_utils'
-  require_relative '../../model/cuttingdiagram/cuttingdiagram_1d_def'
+  require_relative '../../model/cuttingdiagram/cuttingdiagram1d_def'
 
   class CutlistCuttingdiagram1dWorker
 

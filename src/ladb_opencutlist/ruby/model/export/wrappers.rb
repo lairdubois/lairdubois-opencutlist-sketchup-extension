@@ -422,6 +422,33 @@ module Ladb::OpenCutList
 
   # -----
 
+  class BatchWrapper < Wrapper
+
+    attr_reader :position, :count
+
+    def initialize(position, count)
+      @position = IntegerWrapper.new(position)
+      @count = IntegerWrapper.new(count)
+    end
+
+    def +(value)
+      if value.is_a?(String)
+        self.to_s + value
+      end
+    end
+
+    def to_s
+      "#{@position.to_s }/#{@count.to_s}"
+    end
+
+    def export
+      self.to_s
+    end
+
+  end
+
+  # -----
+
   class EdgeWrapper < Wrapper
 
     attr_reader :material_name, :material_color, :std_thickness, :std_width

@@ -588,6 +588,8 @@ tab:
       face_zmax: Face
       layer: Balise
       layers: Balises
+      batch: Lot
+      bin: Conteneur
       filename: Nom de fichier
       model_name: Nom du modèle
       model_description: Description du modèle
