@@ -45,6 +45,8 @@ module Ladb
         ex.description = 'Плагін розрахунку карт розкрою листового та погонного матеріалів для деревообробників і не тільки. Відкритий вихідний код, фінансується користувачами і простий у використанні ;)'
       when 'vi'
         ex.description = 'Danh sách cắt và Trình tạo sơ đồ cắt cho thợ mộc. Mã nguồn mở, được huy động vốn từ cộng đồng và dễ sử dụng;)'
+      when 'zz'
+        ex.description = '3 - Cutlist and Cutting Diagram Generator for Woodworkers. Open Source, crowdfunded and easy to use ;)'
       else
         ex.description = 'Cutlist and Cutting Diagram Generator for Woodworkers. Open Source, crowdfunded and easy to use ;)'
       ## DESCRIPTION_END ##
