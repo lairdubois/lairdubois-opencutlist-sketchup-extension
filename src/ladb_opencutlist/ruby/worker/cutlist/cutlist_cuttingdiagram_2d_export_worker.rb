@@ -10,6 +10,10 @@ module Ladb::OpenCutList
     def initialize(settings, cutlist, cuttingdiagram2d)
 
       @file_format = settings.fetch('file_format', nil)
+      @hide_sheet = settings.fetch('hide_sheet', false)
+      @hide_parts = settings.fetch('hide_parts', false)
+      @hide_leftovers = settings.fetch('hide_leftovers', true)
+      @hide_cuts = settings.fetch('hide_cuts', true)
 
       @cutlist = cutlist
       @cuttingdiagram2d = cuttingdiagram2d
@@ -64,17 +68,47 @@ module Ladb::OpenCutList
         sheet_width = _convert(_to_inch(sheet.px_length), unit_converter)
         sheet_height = _convert(_to_inch(sheet.px_width), unit_converter)
 
-        _dxf_rect(file, 0, 0, sheet_width, sheet_height)
+        unless @hide_sheet
+          _dxf_rect(file, 0, 0, sheet_width, sheet_height, 'sheet')
+        end
 
-        sheet.parts.each do |part|
+        unless @hide_parts
+          sheet.parts.each do |part|
 
-          part_x = _convert(_to_inch(part.px_x), unit_converter)
-          part_y = _convert(_to_inch(sheet.px_width - part.px_y - part.px_width), unit_converter)
-          part_width = _convert(_to_inch(part.px_length), unit_converter)
-          part_height = _convert(_to_inch(part.px_width), unit_converter)
+            part_x = _convert(_to_inch(part.px_x), unit_converter)
+            part_y = _convert(_to_inch(sheet.px_width - part.px_y - part.px_width), unit_converter)
+            part_width = _convert(_to_inch(part.px_length), unit_converter)
+            part_height = _convert(_to_inch(part.px_width), unit_converter)
 
-          _dxf_rect(file, part_x, part_y, part_width, part_height, 1)
+            _dxf_rect(file, part_x, part_y, part_width, part_height, 'parts')
 
+          end
+        end
+
+        unless @hide_leftovers
+          sheet.leftovers.each do |leftover|
+
+            leftover_x = _convert(_to_inch(leftover.px_x), unit_converter)
+            leftover_y = _convert(_to_inch(sheet.px_width - leftover.px_y - leftover.px_width), unit_converter)
+            leftover_width = _convert(_to_inch(leftover.px_length), unit_converter)
+            leftover_height = _convert(_to_inch(leftover.px_width), unit_converter)
+
+            _dxf_rect(file, leftover_x, leftover_y, leftover_width, leftover_height, 'leftovers')
+
+          end
+        end
+
+        unless @hide_cuts
+          sheet.cuts.each do |cut|
+
+            cut_x1 = _convert(_to_inch(cut.px_x), unit_converter)
+            cut_y1 = _convert(_to_inch(sheet.px_width - cut.px_y), unit_converter)
+            cut_x2 = _convert(_to_inch(cut.px_x + (cut.is_horizontal ? cut.px_length : 0)), unit_converter)
+            cut_y2 = _convert(_to_inch(sheet.px_width - cut.px_y - (!cut.is_horizontal ? cut.px_length : 0)), unit_converter)
+
+            _dxf_line(file, cut_x1, cut_y1, cut_x2, cut_y2, 'cuts')
+
+          end
         end
 
         _dxf(file, 0, 'ENDSEC')
@@ -102,22 +136,56 @@ module Ladb::OpenCutList
         file.puts('<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">')
         file.puts("<svg width=\"#{sheet_width}#{unit_sign}\" height=\"#{sheet_height}#{unit_sign}\" viewBox=\"0 0 #{sheet_width} #{sheet_height}\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:shaper=\"http://www.shapertools.com/namespaces/shaper\">")
 
-        file.puts("<g>")
-        file.puts("<rect x=\"0\" y=\"0\" width=\"#{sheet_width}\" height=\"#{sheet_height}\" fill=\"none\" stroke=\"#000000\" stroke-width=\"1\" />")
-        file.puts("</g>")
-
-        file.puts("<g>")
-        sheet.parts.each do |part|
-
-          part_x = _convert(_to_inch(part.px_x), unit_converter)
-          part_y = _convert(_to_inch(part.px_y), unit_converter)
-          part_width = _convert(_to_inch(part.px_length), unit_converter)
-          part_height = _convert(_to_inch(part.px_width), unit_converter)
-
-          file.puts("<rect x=\"#{part_x}\" y=\"#{part_y}\" width=\"#{part_width}\" height=\"#{part_height}\" fill=\"none\" stroke=\"#000000\" stroke-width=\"1\" />")
-
+        unless @hide_sheet
+          file.puts("<g id=\"sheet\">")
+          file.puts("<rect x=\"0\" y=\"0\" width=\"#{sheet_width}\" height=\"#{sheet_height}\" fill=\"none\" stroke=\"#000000\" />")
+          file.puts("</g>")
         end
-        file.puts("</g>")
+
+        unless @hide_parts
+          file.puts("<g id=\"parts\">")
+          sheet.parts.each do |part|
+
+            part_x = _convert(_to_inch(part.px_x), unit_converter)
+            part_y = _convert(_to_inch(part.px_y), unit_converter)
+            part_width = _convert(_to_inch(part.px_length), unit_converter)
+            part_height = _convert(_to_inch(part.px_width), unit_converter)
+
+            file.puts("<rect x=\"#{part_x}\" y=\"#{part_y}\" width=\"#{part_width}\" height=\"#{part_height}\" fill=\"none\" stroke=\"#000000\" />")
+
+          end
+          file.puts("</g>")
+        end
+
+        unless @hide_leftovers
+          file.puts("<g id=\"leftovers\">")
+          sheet.leftovers.each do |leftover|
+
+            leftover_x = _convert(_to_inch(leftover.px_x), unit_converter)
+            leftover_y = _convert(_to_inch(leftover.px_y), unit_converter)
+            leftover_width = _convert(_to_inch(leftover.px_length), unit_converter)
+            leftover_height = _convert(_to_inch(leftover.px_width), unit_converter)
+
+            file.puts("<rect x=\"#{leftover_x}\" y=\"#{leftover_y}\" width=\"#{leftover_width}\" height=\"#{leftover_height}\" fill=\"none\" stroke=\"#000000\" />")
+
+          end
+          file.puts("</g>")
+        end
+
+        unless @hide_cuts
+          file.puts("<g id=\"cuts\">")
+          sheet.cuts.each do |cut|
+
+            cut_x1 = _convert(_to_inch(cut.px_x), unit_converter)
+            cut_y1 = _convert(_to_inch(cut.px_y), unit_converter)
+            cut_x2 = _convert(_to_inch(cut.px_x + (cut.is_horizontal ? cut.px_length : 0)), unit_converter)
+            cut_y2 = _convert(_to_inch(cut.px_y + (!cut.is_horizontal ? cut.px_length : 0)), unit_converter)
+
+            file.puts("<line x1=\"#{cut_x1}\" y1=\"#{cut_y1}\" x2=\"#{cut_x2}\" y2=\"#{cut_y2}\" stroke=\"#000000\" />")
+
+          end
+          file.puts("</g>")
+        end
 
         file.puts("</svg>")
 

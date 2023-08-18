@@ -9,9 +9,9 @@ module Ladb::OpenCutList
   require_relative '../../model/cutlist/face_info'
   require_relative '../../model/cutlist/instance_info'
   require_relative '../../model/cutlist/material_usage'
-  require_relative '../../model/cutlist/groupdef'
+  require_relative '../../model/cutlist/group_def'
   require_relative '../../model/cutlist/group'
-  require_relative '../../model/cutlist/partdef'
+  require_relative '../../model/cutlist/part_def'
   require_relative '../../model/cutlist/part'
   require_relative '../../utils/transformation_utils'
   require_relative '../../tool/highlight_part_tool'
@@ -617,7 +617,7 @@ module Ladb::OpenCutList
         part_def.store_instance_info(instance_info)
 
         if group_def.material_type != MaterialAttributes::TYPE_UNKNOWN
-          if group_def.material_type == MaterialAttributes::TYPE_DIMENSIONAL
+          if group_def.material_type == MaterialAttributes::TYPE_SOLID_WOOD || group_def.material_type == MaterialAttributes::TYPE_DIMENSIONAL
             group_def.total_cutting_length += part_def.cutting_size.length
           end
           if group_def.material_type == MaterialAttributes::TYPE_SOLID_WOOD || group_def.material_type == MaterialAttributes::TYPE_SHEET_GOOD

@@ -1,5 +1,9 @@
 {
   "0": {
-    "file_format": "svg"
+    "file_format": "dxf",
+    "hide_sheet": false,
+    "hide_parts": false,
+    "hide_leftovers": true,
+    "hide_cuts": true
   }
 }

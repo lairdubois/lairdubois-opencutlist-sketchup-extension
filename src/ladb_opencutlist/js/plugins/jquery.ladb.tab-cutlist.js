@@ -3533,13 +3533,25 @@
                                                 // Fetch UI elements
                                                 var $widgetPreset = $('.ladb-widget-preset', $modal);
                                                 var $selectFileFormat = $('#ladb_select_file_format', $modal);
+                                                var $selectHideSheet = $('#ladb_select_hide_sheet', $modal);
+                                                var $selectHideParts = $('#ladb_select_hide_parts', $modal);
+                                                var $selectHideLeftovers = $('#ladb_select_hide_leftovers', $modal);
+                                                var $selectHideCuts = $('#ladb_select_hide_cuts', $modal);
                                                 var $btnExport = $('#ladb_btn_export', $modal);
 
                                                 var fnFetchOptions = function (options) {
                                                     options.file_format = $selectFileFormat.val();
+                                                    options.hide_sheet = $selectHideSheet.val() === '1';
+                                                    options.hide_parts = $selectHideParts.val() === '1';
+                                                    options.hide_leftovers = $selectHideLeftovers.val() === '1';
+                                                    options.hide_cuts = $selectHideCuts.val() === '1';
                                                 }
                                                 var fnFillInputs = function (options) {
                                                     $selectFileFormat.selectpicker('val', options.file_format);
+                                                    $selectHideSheet.selectpicker('val', options.hide_sheet ? '1' : '0');
+                                                    $selectHideParts.selectpicker('val', options.hide_parts ? '1' : '0');
+                                                    $selectHideLeftovers.selectpicker('val', options.hide_leftovers ? '1' : '0');
+                                                    $selectHideCuts.selectpicker('val', options.hide_cuts ? '1' : '0');
                                                 }
 
                                                 $widgetPreset.ladbWidgetPreset({
@@ -3551,9 +3563,13 @@
                                                 $selectFileFormat
                                                     .selectpicker(SELECT_PICKER_OPTIONS)
                                                     .on('changed.bs.select', function () {
-                                                        $('#ladb_btn_export_file_format', $btnExport).html($(this).val().toUpperCase() + ' <small>( ' + sheetCount + ' ' + i18next.t('default.file', { count: sheetCount }) + ' )</small>');
+                                                        $('#ladb_btn_export_file_format', $btnExport).html($(this).val().toUpperCase() + ' <small>( ' + sheetCount + ' ' + i18next.t('default.file', { count: sheetCount }).toLowerCase() + ' )</small>');
                                                     })
                                                 ;
+                                                $selectHideSheet.selectpicker(SELECT_PICKER_OPTIONS);
+                                                $selectHideParts.selectpicker(SELECT_PICKER_OPTIONS);
+                                                $selectHideLeftovers.selectpicker(SELECT_PICKER_OPTIONS);
+                                                $selectHideCuts.selectpicker(SELECT_PICKER_OPTIONS);
 
                                                 fnFillInputs(exportOptions);
 
