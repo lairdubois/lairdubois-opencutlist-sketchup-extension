@@ -3142,6 +3142,7 @@
                                         // Fetch UI elements
                                         var $btnCuttingDiagram = $('#ladb_btn_cuttingdiagram', $slide);
                                         var $btnPrint = $('#ladb_btn_print', $slide);
+                                        var $btnExport = $('#ladb_btn_export', $slide);
                                         var $btnLabels = $('#ladb_btn_labels', $slide);
                                         var $btnClose = $('#ladb_btn_close', $slide);
 
@@ -3152,6 +3153,12 @@
                                         $btnPrint.on('click', function () {
                                             $(this).blur();
                                             that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.cuttingdiagram.title'));
+                                        });
+                                        $btnExport.on('click', function () {
+
+                                            // Show Objective modal
+                                            that.dialog.executeCommandOnTab('sponsor', 'show_objective_modal', { objectiveStrippedName: 'cuttingdiagram_export', objectiveIcon: 'cuttingdiagram2d' }, null, true);
+
                                         });
                                         $btnLabels.on('click', function () {
 
@@ -3465,6 +3472,7 @@
                                         // Fetch UI elements
                                         var $btnCuttingDiagram = $('#ladb_btn_cuttingdiagram', $slide);
                                         var $btnPrint = $('#ladb_btn_print', $slide);
+                                        var $btnExport = $('#ladb_btn_export', $slide);
                                         var $btnLabels = $('#ladb_btn_labels', $slide);
                                         var $btnClose = $('#ladb_btn_close', $slide);
 
@@ -3475,6 +3483,12 @@
                                         $btnPrint.on('click', function () {
                                             $(this).blur();
                                             that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.cuttingdiagram.title'));
+                                        });
+                                        $btnExport.on('click', function () {
+
+                                            // Show Objective modal
+                                            that.dialog.executeCommandOnTab('sponsor', 'show_objective_modal', { objectiveStrippedName: 'cuttingdiagram_export', objectiveIcon: 'cuttingdiagram2d' }, null, true);
+
                                         });
                                         $btnLabels.on('click', function () {
 
