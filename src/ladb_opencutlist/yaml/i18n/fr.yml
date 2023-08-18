@@ -105,7 +105,7 @@ core:
 
       Pour signaler un bug : <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
   error:
-    feature_unavailable: Cette fonctionnalité nécessite SketchUp {{ version }} ou plus
+    feature_unavailable: "Cette fonctionnalité nécessite SketchUp {{ version }} ou plus"
   event:
     model_change: Le modèle actif a changé.
     options_change: Les options du modèle ont été modifiées.
@@ -182,7 +182,7 @@ core:
       snippets: Exemples de formules
       help: Tappez **@** pour ouvrir la liste des variables de donnée.
     three_viewer:
-      view: Vue {{ view }}
+      view: "Vue {{ view }}"
       view_isometric: Isométrique
       view_top: Dessus
       view_bottom: Dessous
@@ -190,7 +190,7 @@ core:
       view_back: Arrière
       view_left: Gauche
       view_right: Droite
-      zoom: Echelle {{ zoom }}
+      zoom: "Echelle {{ zoom }}"
       explode_factor: Amplitude de l'éclaté
       toggle_box_helper: Afficher ou masquer la boîte capable
       toggle_box_dimensions_helper: Afficher ou masquer les dimensions capables
@@ -1236,7 +1236,7 @@ tab:
         L'amélioration en continue d'*OpenCutList* nous tient à coeur et le projet continue d'avoir besoin de vous pour sa prochaine mise à jour !
       cuttingdiagram_export: |
         Il nous tient à coeur qu'*OpenCutList* puisse s'adapter aux attentes très variées des utilisateurs pour la fonction de *calepinage*.
-        Pour élargir encore les possibilités, nous souhaitons permettre d'exporter les diagrammes de calepinage au format **SVG**.
+        Pour élargir encore les possibilités, nous souhaitons permettre d'exporter les diagrammes de calepinage au format **SVG** et **DXF**.
         En nous fournissant les moyens de travailler sur ces exports, vous nous donnez l'occasion de vous permettre de tirer le meilleur d'*OpenCutList*.
       layout: |
         L'objectif de ce module est de vous permettre d'imprimer facilement un aperçu de votre projet en **vue éclatée** avec identification des pièces par leur numéro généré dans la fiche de débit.
@@ -1381,12 +1381,12 @@ tool:
     face_zmax: Face
     warning:
       no_material: Aucune matière
-      no_material_type: Aucune matière de type '{{ type }}'
+      no_material_type: "Aucune matière de type '{{ type }}'"
     error:
       not_part: L'objet ciblé n'est pas une pièce
       not_edge: La face ciblée n'est pas un chant de panneau
       not_face: La face ciblée n'est pas une face de panneau
-      wrong_material_type: La pièce ciblée doit être du type '{{ type }}'
+      wrong_material_type: "La pièce ciblée doit être du type '{{ type }}'"
   smart_axes:
     title: Orienter
     action_0: Retourner

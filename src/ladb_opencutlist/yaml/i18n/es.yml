@@ -1236,7 +1236,7 @@ tab:
         ¡La mejora continua de *OpenCutList* es muy importante para nosotros y el proyecto continúa necesitándote para su próxima actualización!
       cuttingdiagram_export: |
         Es importante para nosotros que *OpenCutList* pueda adaptarse a las muy diferentes expectativas de los usuarios para la función de *diagrama de corte*.
-        Para ampliar aún más las posibilidades, nos gustaría permitir la exportación de diagramas de corte en formato **SVG**.
+        Para ampliar aún más las posibilidades, nos gustaría permitir la exportación de diagramas de corte en formato **SVG** y **DXF**.
         Al proporcionarnos los medios para trabajar en estas exportaciones, nos está dando la oportunidad de ayudarle a sacar el máximo provecho de *OpenCutList*.
       layout: |
         El objetivo de este módulo es permitirle imprimir fácilmente una vista general de su proyecto en **vista explosionada** con identificación de las piezas por su número generado en el listatod de partes.
