@@ -3481,6 +3481,8 @@
 
                                     if (response.errors && response.errors.length > 0 || response.sheets && response.sheets.length > 0) {
 
+                                        var sheetCount = response.sheets.length;
+
                                         var $slide = that.pushNewSlide('ladb_cutlist_slide_cuttingdiagram_2d', 'tabs/cutlist/_slide-cuttingdiagram-2d.twig', $.extend({
                                             capabilities: that.dialog.capabilities,
                                             generateOptions: that.generateOptions,
@@ -3546,7 +3548,12 @@
                                                     fnFetchOptions: fnFetchOptions,
                                                     fnFillInputs: fnFillInputs
                                                 });
-                                                $selectFileFormat.selectpicker(SELECT_PICKER_OPTIONS);
+                                                $selectFileFormat
+                                                    .selectpicker(SELECT_PICKER_OPTIONS)
+                                                    .on('changed.bs.select', function () {
+                                                        $('#ladb_btn_export_file_format', $btnExport).html($(this).val().toUpperCase() + ' x ' + sheetCount);
+                                                    })
+                                                ;
 
                                                 fnFillInputs(exportOptions);
 
@@ -3559,7 +3566,7 @@
                                                     // Store options
                                                     rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_cuttingdiagram2d_export_options', values: exportOptions, section: groupId });
 
-                                                    rubyCallCommand('cutlist_export_cuttingdiagram_2d', exportOptions, function (response) {
+                                                    rubyCallCommand('cutlist_cuttingdiagram_2d_export', exportOptions, function (response) {
 
                                                         if (response.errors) {
                                                             that.dialog.notifyErrors(response.errors);

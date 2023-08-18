@@ -1,6 +1,6 @@
 module Ladb::OpenCutList
 
-  class CutlistExportCuttingdiagram2dWorker
+  class CutlistCuttingdiagram2dExportWorker
 
     FILE_FORMAT_DXF = 'dxf'.freeze
     FILE_FORMAT_SVG = 'svg'.freeze
@@ -73,7 +73,7 @@ module Ladb::OpenCutList
           part_width = _convert(_to_inch(part.px_length), unit_converter)
           part_height = _convert(_to_inch(part.px_width), unit_converter)
 
-          _dxf_rect(file, part_x, part_y, part_width, part_height)
+          _dxf_rect(file, part_x, part_y, part_width, part_height, 1)
 
         end
 
@@ -102,8 +102,11 @@ module Ladb::OpenCutList
         file.puts('<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">')
         file.puts("<svg width=\"#{sheet_width}#{unit_sign}\" height=\"#{sheet_height}#{unit_sign}\" viewBox=\"0 0 #{sheet_width} #{sheet_height}\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:shaper=\"http://www.shapertools.com/namespaces/shaper\">")
 
+        file.puts("<g>")
         file.puts("<rect x=\"0\" y=\"0\" width=\"#{sheet_width}\" height=\"#{sheet_height}\" fill=\"none\" stroke=\"#000000\" stroke-width=\"1\" />")
+        file.puts("</g>")
 
+        file.puts("<g>")
         sheet.parts.each do |part|
 
           part_x = _convert(_to_inch(part.px_x), unit_converter)
@@ -114,9 +117,9 @@ module Ladb::OpenCutList
           file.puts("<rect x=\"#{part_x}\" y=\"#{part_y}\" width=\"#{part_width}\" height=\"#{part_height}\" fill=\"none\" stroke=\"#000000\" stroke-width=\"1\" />")
 
         end
+        file.puts("</g>")
 
         file.puts("</svg>")
-
 
       end
 
@@ -139,7 +142,7 @@ module Ladb::OpenCutList
       file.puts(value.to_s)
     end
 
-    def _dxf_rect(file, x, y, width, height)
+    def _dxf_rect(file, x, y, width, height, layer = 0)
 
       points = [
         Geom::Point3d.new(x, y, 0),
@@ -149,7 +152,7 @@ module Ladb::OpenCutList
       ]
 
       _dxf(file, 0, 'LWPOLYLINE')
-      _dxf(file, 8, 0)
+      _dxf(file, 8, layer)
       _dxf(file, 90, 4)
       _dxf(file, 70, 1) # 1 = This is a closed polyline (or a polygon mesh closed in the M direction)
 
@@ -162,10 +165,10 @@ module Ladb::OpenCutList
 
     end
 
-    def _dxf_line(file, x1, y1, x2, y2)
+    def _dxf_line(file, x1, y1, x2, y2, layer = 0)
 
       _dxf(file, 0, 'LINE')
-      _dxf(file, 8, 0)
+      _dxf(file, 8, layer)
       _dxf(file, 10, x1)
       _dxf(file, 20, y1)
       _dxf(file, 11, x2)

@@ -80,8 +80,8 @@ module Ladb::OpenCutList
         group_cuttingdiagram_2d_advance_command
       end
 
-      Plugin.instance.register_command("cutlist_export_cuttingdiagram_2d") do |settings|
-        export_cuttingdiagram_2d_command(settings)
+      Plugin.instance.register_command("cutlist_cuttingdiagram_2d_export") do |settings|
+        cuttingdiagram_2d_export_command(settings)
       end
 
       Plugin.instance.register_command("cutlist_compute_labels_formulas") do |settings|
@@ -281,13 +281,13 @@ module Ladb::OpenCutList
       cuttingdiagram2d.to_hash
     end
 
-    def export_cuttingdiagram_2d_command(settings)
+    def cuttingdiagram_2d_export_command(settings)
       return { :errors => [ 'default.error' ] } unless @cuttingdiagram2d
 
-      require_relative '../worker/cutlist/cutlist_export_cuttingdiagram_2d'
+      require_relative '../worker/cutlist/cutlist_cuttingdiagram_2d_export_worker'
 
       # Setup worker
-      worker = CutlistExportCuttingdiagram2dWorker.new(settings, @cutlist, @cuttingdiagram2d)
+      worker = CutlistCuttingdiagram2dExportWorker.new(settings, @cutlist, @cuttingdiagram2d)
 
       # Run !
       worker.run
