@@ -29,6 +29,10 @@ var SLIDER_OPTIONS = {
     tooltip: 'hide'
 };
 
+var TEXTINPUT_COLOR_OPTIONS = {
+    resetValue: null
+};
+
 // GraphQL /////
 
 var GRAPHQL_ENDPOINT = 'https://api.opencollective.com/graphql/v2/';

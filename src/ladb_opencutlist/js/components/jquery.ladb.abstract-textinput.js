@@ -38,6 +38,9 @@ LadbTextinputAbstract.prototype.reset = function () {
 };
 
 LadbTextinputAbstract.prototype.val = function (value) {
+    if (value === undefined) {
+        return this.$element.val();
+    }
     return this.$element.val(value);
 };
 

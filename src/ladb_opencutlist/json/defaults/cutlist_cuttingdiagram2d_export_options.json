@@ -1,9 +1,16 @@
 {
   "0": {
     "file_format": "dxf",
-    "hide_sheet": false,
-    "hide_parts": false,
-    "hide_leftovers": true,
-    "hide_cuts": true
+    "sheet_hidden": false,
+    "sheet_stroke_color": "#00FFFF",
+    "sheet_fill_color": null,
+    "parts_hidden": false,
+    "parts_stroke_color": null,
+    "parts_fill_color": null,
+    "leftovers_hidden": true,
+    "leftovers_stroke_color": "#AAAAAA",
+    "leftovers_fill_color": null,
+    "cuts_hidden": true,
+    "cuts_stroke_color": "#FF00FF"
   }
 }

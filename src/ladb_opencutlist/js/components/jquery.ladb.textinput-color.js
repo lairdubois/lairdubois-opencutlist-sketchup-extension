@@ -22,6 +22,37 @@
         colorsPerLine: 6
     };
 
+    LadbTextinputColor.prototype.disable = function () {
+        LadbTextinputAbstract.prototype.disable.call(this);
+        if (this.$inputColor) this.$inputColor.prop('disabled', true);
+        if (this.$preview) this.$preview.css('opacity', '0.2')
+        if (this.$storeBtn) this.$storeBtn.hide();
+        if (this.$removeBtn) this.$removeBtn.hide();
+        this.hidePicker();
+    };
+
+    LadbTextinputColor.prototype.enable = function () {
+        LadbTextinputAbstract.prototype.enable.call(this);
+        if (this.$inputColor) this.$inputColor.prop('disabled', false);
+        if (this.$preview) this.$preview.css('opacity', '1')
+        this.updatePreviewAndButtons();
+    };
+
+    LadbTextinputColor.prototype.val = function (value) {
+
+        if (value === undefined) {
+            var val = LadbTextinputAbstract.prototype.val.call(this);
+            if (val.match(/^#[0-9a-f]{6}$/i)) {
+                return val;
+            }
+            return this.options.resetValue;
+        }
+
+        var r = LadbTextinputAbstract.prototype.val.call(this, value);
+        this.updatePreviewAndButtons();
+        return r;
+    };
+
     LadbTextinputColor.prototype.sanitizeColor = function(color) {
         if (color && typeof(color) === 'string') {
             return color.toLowerCase();
@@ -104,6 +135,7 @@
                 if (this.$preview) {
                     try {
                         this.$preview.css('border-color', this.blendColors(color, '#000000', 0.2));
+                        this.$preview.css('border-style', 'solid');
                     } catch (e) {}
                 }
             } else {
@@ -112,6 +144,7 @@
                 }
                 if (this.$preview) {
                     this.$preview.css('border-color', '#ffffff');
+                    this.$preview.css('border-style', 'solid');
                 }
             }
 
@@ -132,6 +165,20 @@
                 }
             }
 
+        } else {
+            if (this.$inputColor) {
+                this.$inputColor.val('#ffffff');
+            }
+            if (this.$preview) {
+                this.$preview.css('border-color', '#cccccc');
+                this.$preview.css('border-style', 'dotted');
+            }
+            if (this.$storeBtn) {
+                this.$storeBtn.hide();
+            }
+            if (this.$removeBtn) {
+                this.$removeBtn.hide();
+            }
         }
     };
 
@@ -194,7 +241,7 @@
         this.$preview = $('<div class="ladb-textinput-color-preview ladb-textinput-tool" />');
         $toolsContainer.append(this.$preview);
 
-        this.$inputColor = $('<input type="color" class="input-color" value="' + this.options.resetValue + '" tabindex="-1">');
+        this.$inputColor = $('<input type="color" class="input-color" value="' + (this.options.resetValue ? this.options.resetValue : '#ffffff') + '" tabindex="-1">');
         this.$preview.append(this.$inputColor);
 
     };

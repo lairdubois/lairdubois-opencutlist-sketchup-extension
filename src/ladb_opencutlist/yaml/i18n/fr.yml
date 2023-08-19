@@ -783,25 +783,17 @@ tab:
         title: Exporter le calepinage
         options_general: General
         option_file_format: Format
-        option_file_format_svg: SVG
-        option_file_format_dxf: DXF
         option_file_format_help: Choisissez
-        option_hide_sheet: Panneau
-        option_hide_sheet_0: Dessiné
-        option_hide_sheet_1: Masqué
-        option_hide_sheet_help: Choisissez
-        option_hide_parts: Pièces
-        option_hide_parts_0: Dessinées
-        option_hide_parts_1: Masquées
-        option_hide_parts_help: Choisissez
-        option_hide_leftovers: Chutes
-        option_hide_leftovers_0: Dessinées
-        option_hide_leftovers_1: Masquées
-        option_hide_leftovers_help: Choisissez
-        option_hide_cuts: Coupes
-        option_hide_cuts_0: Dessinées
-        option_hide_cuts_1: Masquées
-        option_hide_cuts_help: Choisissez
+        option_sheet: Panneau
+        option_sheet_help: Choisissez
+        option_parts: Pièces capables
+        option_parts_help: Choisissez
+        option_leftovers: Chutes
+        option_leftovers_help: Choisissez
+        option_cuts: Coupes
+        option_cuts_help: Choisissez
+        option_stroke_color: Couleur de trait
+        option_fill_color: Couleur de remplissage
       error:
         no_bar_dimensional: La barre standard n'est pas correctement configurée et aucun reste n'est défini.
         no_bar_edge: La bande standard n'est pas correctement configurée et aucun reste n'est défini.

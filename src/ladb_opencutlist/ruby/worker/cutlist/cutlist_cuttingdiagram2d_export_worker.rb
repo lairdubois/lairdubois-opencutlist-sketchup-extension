@@ -10,10 +10,17 @@ module Ladb::OpenCutList
     def initialize(settings, cutlist, cuttingdiagram2d)
 
       @file_format = settings.fetch('file_format', nil)
-      @hide_sheet = settings.fetch('hide_sheet', false)
-      @hide_parts = settings.fetch('hide_parts', false)
-      @hide_leftovers = settings.fetch('hide_leftovers', true)
-      @hide_cuts = settings.fetch('hide_cuts', true)
+      @sheet_hidden = settings.fetch('sheet_hidden', false)
+      @sheet_stroke_color = settings.fetch('sheet_stroke_color', nil)
+      @sheet_fill_color = settings.fetch('sheet_fill_color', nil)
+      @parts_hidden = settings.fetch('parts_hidden', false)
+      @parts_stroke_color = settings.fetch('parts_stroke_color', nil)
+      @parts_fill_color = settings.fetch('parts_fill_color', nil)
+      @leftovers_hidden = settings.fetch('leftovers_hidden', true)
+      @leftovers_stroke_color = settings.fetch('leftovers_stroke_color', nil)
+      @leftovers_fill_color = settings.fetch('leftovers_fill_color', nil)
+      @cuts_hidden = settings.fetch('cuts_hidden', true)
+      @cuts_stroke_color = settings.fetch('cuts_stroke_color', nil)
 
       @cutlist = cutlist
       @cuttingdiagram2d = cuttingdiagram2d
@@ -68,11 +75,11 @@ module Ladb::OpenCutList
         sheet_width = _convert(_to_inch(sheet.px_length), unit_converter)
         sheet_height = _convert(_to_inch(sheet.px_width), unit_converter)
 
-        unless @hide_sheet
+        unless @sheet_hidden
           _dxf_rect(file, 0, 0, sheet_width, sheet_height, 'sheet')
         end
 
-        unless @hide_parts
+        unless @parts_hidden
           sheet.parts.each do |part|
 
             part_x = _convert(_to_inch(part.px_x), unit_converter)
@@ -85,7 +92,7 @@ module Ladb::OpenCutList
           end
         end
 
-        unless @hide_leftovers
+        unless @leftovers_hidden
           sheet.leftovers.each do |leftover|
 
             leftover_x = _convert(_to_inch(leftover.px_x), unit_converter)
@@ -98,7 +105,7 @@ module Ladb::OpenCutList
           end
         end
 
-        unless @hide_cuts
+        unless @cuts_hidden
           sheet.cuts.each do |cut|
 
             cut_x1 = _convert(_to_inch(cut.px_x), unit_converter)
@@ -136,13 +143,13 @@ module Ladb::OpenCutList
         file.puts('<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">')
         file.puts("<svg width=\"#{sheet_width}#{unit_sign}\" height=\"#{sheet_height}#{unit_sign}\" viewBox=\"0 0 #{sheet_width} #{sheet_height}\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:shaper=\"http://www.shapertools.com/namespaces/shaper\">")
 
-        unless @hide_sheet
+        unless @sheet_hidden
           file.puts("<g id=\"sheet\">")
-          file.puts("<rect x=\"0\" y=\"0\" width=\"#{sheet_width}\" height=\"#{sheet_height}\" fill=\"none\" stroke=\"#000000\" />")
+          _svg_rect(file, 0, 0, sheet_width, sheet_height, @sheet_stroke_color, @sheet_fill_color)
           file.puts("</g>")
         end
 
-        unless @hide_parts
+        unless @parts_hidden
           file.puts("<g id=\"parts\">")
           sheet.parts.each do |part|
 
@@ -151,13 +158,13 @@ module Ladb::OpenCutList
             part_width = _convert(_to_inch(part.px_length), unit_converter)
             part_height = _convert(_to_inch(part.px_width), unit_converter)
 
-            file.puts("<rect x=\"#{part_x}\" y=\"#{part_y}\" width=\"#{part_width}\" height=\"#{part_height}\" fill=\"none\" stroke=\"#000000\" />")
+            _svg_rect(file, part_x, part_y, part_width, part_height, @parts_stroke_color, @parts_fill_color)
 
           end
           file.puts("</g>")
         end
 
-        unless @hide_leftovers
+        unless @leftovers_hidden
           file.puts("<g id=\"leftovers\">")
           sheet.leftovers.each do |leftover|
 
@@ -166,13 +173,13 @@ module Ladb::OpenCutList
             leftover_width = _convert(_to_inch(leftover.px_length), unit_converter)
             leftover_height = _convert(_to_inch(leftover.px_width), unit_converter)
 
-            file.puts("<rect x=\"#{leftover_x}\" y=\"#{leftover_y}\" width=\"#{leftover_width}\" height=\"#{leftover_height}\" fill=\"none\" stroke=\"#000000\" />")
+            _svg_rect(file, leftover_x, leftover_y, leftover_width, leftover_height, @leftovers_stroke_color, @leftovers_fill_color)
 
           end
           file.puts("</g>")
         end
 
-        unless @hide_cuts
+        unless @cuts_hidden
           file.puts("<g id=\"cuts\">")
           sheet.cuts.each do |cut|
 
@@ -181,7 +188,7 @@ module Ladb::OpenCutList
             cut_x2 = _convert(_to_inch(cut.px_x + (cut.is_horizontal ? cut.px_length : 0)), unit_converter)
             cut_y2 = _convert(_to_inch(cut.px_y + (!cut.is_horizontal ? cut.px_length : 0)), unit_converter)
 
-            file.puts("<line x1=\"#{cut_x1}\" y1=\"#{cut_y1}\" x2=\"#{cut_x2}\" y2=\"#{cut_y2}\" stroke=\"#000000\" />")
+            _svg_line(file, cut_x1, cut_y1, cut_x2, cut_y2, @cuts_stroke_color)
 
           end
           file.puts("</g>")
@@ -205,12 +212,20 @@ module Ladb::OpenCutList
       pixel_value / 7 # 840px = 120" ~ 3m
     end
 
+    def _svg_rect(file, x, y, width, height, stroke_color, fill_color)
+      file.puts("<rect x=\"#{x}\" y=\"#{y}\" width=\"#{width}\" height=\"#{height}\" stroke=\"#{stroke_color ? "#{stroke_color}" : "#{fill_color ? 'none' : '#000000'}"}\" fill=\"#{fill_color ? "#{fill_color}" : 'none'}\" />")
+    end
+
+    def _svg_line(file, x1, y1, x2, y2, stroke_color)
+      file.puts("<line x1=\"#{x1}\" y1=\"#{y1}\" x2=\"#{x2}\" y2=\"#{y2}\" stroke=\"#{stroke_color ? "#{stroke_color}" : '#000000'}\" />")
+    end
+
     def _dxf(file, code, value)
       file.puts(code.to_s)
       file.puts(value.to_s)
     end
 
-    def _dxf_rect(file, x, y, width, height, layer = 0)
+    def _dxf_rect(file, x, y, width, height, layer = 0, stroke_color = nil)
 
       points = [
         Geom::Point3d.new(x, y, 0),
@@ -233,7 +248,7 @@ module Ladb::OpenCutList
 
     end
 
-    def _dxf_line(file, x1, y1, x2, y2, layer = 0)
+    def _dxf_line(file, x1, y1, x2, y2, layer = 0, stroke_color = nil)
 
       _dxf(file, 0, 'LINE')
       _dxf(file, 8, layer)
