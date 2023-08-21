@@ -1,8 +1,11 @@
 module Ladb::OpenCutList
 
   require_relative '../../model/cutlist/instance_info'
+  require_relative '../../helper/dxf_helper'
 
   class CommonExportInstanceToFileWorker
+
+    include DxfHelper
 
     FILE_FORMAT_SKP = 'skp'.freeze
     FILE_FORMAT_STL = 'stl'.freeze
@@ -197,11 +200,6 @@ module Ladb::OpenCutList
 
     def _convert(value, unit_converter, precision = 6)
       (value.to_f * unit_converter).round(precision)
-    end
-
-    def _dxf(file, code, value)
-      file.puts(code.to_s)
-      file.puts(value.to_s)
     end
 
   end

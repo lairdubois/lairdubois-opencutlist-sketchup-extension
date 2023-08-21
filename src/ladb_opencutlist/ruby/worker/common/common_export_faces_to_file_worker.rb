@@ -1,10 +1,14 @@
 module Ladb::OpenCutList
 
   require_relative '../../helper/face_triangles_helper'
+  require_relative '../../helper/dxf_helper'
+  require_relative '../../helper/svg_helper'
 
   class CommonExportFacesToFileWorker
 
     include FaceTrianglesHelper
+    include DxfHelper
+    include SvgHelper
 
     FILE_FORMAT_DXF = 'dxf'.freeze
     FILE_FORMAT_SVG = 'svg'.freeze
@@ -62,7 +66,6 @@ module Ladb::OpenCutList
       # Open output file
       file = File.new(path , 'w')
 
-      # Write header
       case @file_format
       when FILE_FORMAT_DXF
 
@@ -126,10 +129,7 @@ module Ladb::OpenCutList
         width = _convert(bounds.width, unit_converter)
         height = _convert(bounds.height, unit_converter)
 
-        # Y coords are * -1 because SVG coordinates system is Top to Bottom
-        file.puts('<?xml version="1.0" encoding="UTF-8" standalone="no"?>')
-        file.puts('<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">')
-        file.puts("<svg width=\"#{width}#{unit_sign}\" height=\"#{height}#{unit_sign}\" viewBox=\"0 #{height * -1} #{width} #{height}\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:shaper=\"http://www.shapertools.com/namespaces/shaper\">")
+        _svg_start(file, width, height, unit_sign)
 
         face_infos.each do |face_info|
 
@@ -142,20 +142,20 @@ module Ladb::OpenCutList
             coords = []
             loop.vertices.each do |vertex|
               point = vertex.position.transform(transformation)
-              coords << "#{_convert(point.x, unit_converter)},#{_convert(point.y, unit_converter) * -1}"
+              coords << "#{_convert(point.x, unit_converter)},#{height - _convert(point.y, unit_converter)}"
             end
             data = "M#{coords.join('L')}Z"
             outside << data
             pockets << data unless loop.outer?
           end
-          file.puts("<path d=\"#{outside.join}\" shaper:cutType=\"outside\" fill=\"#000000\" />")
+          _svg_path(file, outside.join, '#000000')
           pockets.each do |pocket|
-            file.puts("<path d=\"#{pocket}\" shaper:cutType=\"pocket\" fill=\"#7F7F7F\" />")
+            _svg_path(file, pocket, '#7F7F7F')
           end
 
         end
 
-        file.puts("</svg>")
+        _svg_end(file)
 
       end
 
@@ -167,11 +167,6 @@ module Ladb::OpenCutList
 
     def _convert(value, unit_converter, precision = 6)
       (value.to_f * unit_converter).round(precision)
-    end
-
-    def _dxf(file, code, value)
-      file.puts(code.to_s)
-      file.puts(value.to_s)
     end
 
   end

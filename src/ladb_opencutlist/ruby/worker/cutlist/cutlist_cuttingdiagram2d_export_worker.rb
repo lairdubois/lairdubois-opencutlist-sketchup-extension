@@ -1,10 +1,14 @@
 module Ladb::OpenCutList
 
   require_relative '../../helper/sanitizer_helper'
+  require_relative '../../helper/dxf_helper'
+  require_relative '../../helper/svg_helper'
 
   class CutlistCuttingdiagram2dExportWorker
 
     include SanitizerHelper
+    include DxfHelper
+    include SvgHelper
 
     FILE_FORMAT_DXF = 'dxf'.freeze
     FILE_FORMAT_SVG = 'svg'.freeze
@@ -38,7 +42,7 @@ module Ladb::OpenCutList
     def run
       return { :errors => [ 'default.error' ] } unless @cutlist
       return { :errors => [ 'tab.cutlist.error.obsolete_cutlist' ] } if @cutlist.obsolete?
-      return { :errors => [ 'default.error' ] } unless @cuttingdiagram2d
+      return { :errors => [ 'default.error' ] } unless @cuttingdiagram2d && @cuttingdiagram2d.def.group
       return { :errors => [ 'default.error' ] } unless SUPPORTED_FILE_FORMATS.include?(@file_format)
 
       # Ask for output dir
@@ -79,10 +83,10 @@ module Ladb::OpenCutList
 
     private
 
-    def _write_sheet(dir, sheet, sheet_index)
+    def _write_sheet(export_path, sheet, sheet_index)
 
       # Open output file
-      file = File.new(File.join(dir, "sheet_#{sheet_index.to_s.rjust(3, '0')}#{sheet.count > 1 ? "_to_#{(sheet_index + sheet.count - 1).to_s.rjust(3, '0')}" : ''}.#{@file_format}") , 'w')
+      file = File.new(File.join(export_path, "sheet_#{sheet_index.to_s.rjust(3, '0')}#{sheet.count > 1 ? "_to_#{(sheet_index + sheet.count - 1).to_s.rjust(3, '0')}" : ''}.#{@file_format}") , 'w')
 
       case @file_format
       when FILE_FORMAT_DXF
@@ -159,18 +163,16 @@ module Ladb::OpenCutList
         sheet_width = _convert(_to_inch(sheet.px_length), unit_converter)
         sheet_height = _convert(_to_inch(sheet.px_width), unit_converter)
 
-        file.puts('<?xml version="1.0" encoding="UTF-8" standalone="no"?>')
-        file.puts('<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">')
-        file.puts("<svg width=\"#{sheet_width}#{unit_sign}\" height=\"#{sheet_height}#{unit_sign}\" viewBox=\"0 0 #{sheet_width} #{sheet_height}\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:shaper=\"http://www.shapertools.com/namespaces/shaper\">")
+        _svg_start(file, sheet_width, sheet_height, unit_sign)
 
         unless @sheet_hidden
-          file.puts('<g id="sheet">')
+          _svg_group_start(file, 'sheet')
           _svg_rect(file, 0, 0, sheet_width, sheet_height, @sheet_stroke_color, @sheet_fill_color)
-          file.puts('</g>')
+          _svg_group_end(file)
         end
 
         unless @parts_hidden
-          file.puts('<g id="parts">')
+          _svg_group_start(file, 'parts')
           sheet.parts.each do |part|
 
             part_x = _convert(_to_inch(part.px_x), unit_converter)
@@ -181,11 +183,11 @@ module Ladb::OpenCutList
             _svg_rect(file, part_x, part_y, part_width, part_height, @parts_stroke_color, @parts_fill_color, @use_names ? part.name : part.number)
 
           end
-          file.puts('</g>')
+          _svg_group_end(file)
         end
 
         unless @leftovers_hidden
-          file.puts('<g id="leftovers">')
+          _svg_group_start(file, 'leftovers')
           sheet.leftovers.each do |leftover|
 
             leftover_x = _convert(_to_inch(leftover.px_x), unit_converter)
@@ -196,11 +198,11 @@ module Ladb::OpenCutList
             _svg_rect(file, leftover_x, leftover_y, leftover_width, leftover_height, @leftovers_stroke_color, @leftovers_fill_color)
 
           end
-          file.puts('</g>')
+          _svg_group_end(file)
         end
 
         unless @cuts_hidden
-          file.puts('<g id="cuts">')
+          _svg_group_start(file, 'cuts')
           sheet.cuts.each do |cut|
 
             cut_x1 = _convert(_to_inch(cut.px_x), unit_converter)
@@ -211,10 +213,10 @@ module Ladb::OpenCutList
             _svg_line(file, cut_x1, cut_y1, cut_x2, cut_y2, @cuts_stroke_color)
 
           end
-          file.puts('</g>')
+          _svg_group_end(file)
         end
 
-        file.puts('</svg>')
+        _svg_end(file)
 
       end
 
@@ -230,53 +232,6 @@ module Ladb::OpenCutList
     # Convert pixel float value to inch
     def _to_inch(pixel_value)
       pixel_value / 7 # 840px = 120" ~ 3m
-    end
-
-    def _svg_rect(file, x, y, width, height, stroke_color, fill_color, id = nil)
-      file.puts("<rect x=\"#{x}\" y=\"#{y}\" width=\"#{width}\" height=\"#{height}\" stroke=\"#{stroke_color ? "#{stroke_color}" : "#{fill_color ? 'none' : '#000000'}"}\" fill=\"#{fill_color ? "#{fill_color}" : 'none'}\"#{id ? " id=\"#{id}\"" : ''} />")
-    end
-
-    def _svg_line(file, x1, y1, x2, y2, stroke_color)
-      file.puts("<line x1=\"#{x1}\" y1=\"#{y1}\" x2=\"#{x2}\" y2=\"#{y2}\" stroke=\"#{stroke_color ? "#{stroke_color}" : '#000000'}\" />")
-    end
-
-    def _dxf(file, code, value)
-      file.puts(code.to_s)
-      file.puts(value.to_s)
-    end
-
-    def _dxf_rect(file, x, y, width, height, layer = 0, stroke_color = nil)
-
-      points = [
-        Geom::Point3d.new(x, y, 0),
-        Geom::Point3d.new(x + width, y, 0),
-        Geom::Point3d.new(x + width, y + height, 0),
-        Geom::Point3d.new(x, y + height, 0),
-      ]
-
-      _dxf(file, 0, 'LWPOLYLINE')
-      _dxf(file, 8, layer)
-      _dxf(file, 90, 4)
-      _dxf(file, 70, 1) # 1 = This is a closed polyline (or a polygon mesh closed in the M direction)
-
-      points.each do |point|
-        _dxf(file, 10, point.x.to_f)
-        _dxf(file, 20, point.y.to_f)
-      end
-
-      _dxf(file, 0, 'SEQEND')
-
-    end
-
-    def _dxf_line(file, x1, y1, x2, y2, layer = 0, stroke_color = nil)
-
-      _dxf(file, 0, 'LINE')
-      _dxf(file, 8, layer)
-      _dxf(file, 10, x1)
-      _dxf(file, 20, y1)
-      _dxf(file, 11, x2)
-      _dxf(file, 21, y2)
-
     end
 
   end
