@@ -3518,6 +3518,15 @@
                                         $btnExport.on('click', function () {
                                             $(this).blur();
 
+                                            // Count hidden groups
+                                            var hiddenSheetIndices = [];
+                                            $('.ladb-cutlist-cuttingdiagram-group', $slide).each(function () {
+                                                if ($(this).hasClass('no-print')) {
+                                                    hiddenSheetIndices.push($(this).data('sheet-index'));
+                                                }
+                                            });
+                                            var isSheetSelection = hiddenSheetIndices.length > 0
+
                                             // Retrieve cutting diagram options
                                             rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_cuttingdiagram2d_export_options', section: groupId }, function (response) {
 
@@ -3526,8 +3535,8 @@
                                                 var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_2d_export', 'tabs/cutlist/_modal-cuttingdiagram-2d-export.twig', {
                                                     material_attributes: response,
                                                     group: group,
-                                                    isPartSelection: isPartSelection,
-                                                    tab: 'general'
+                                                    isSheetSelection: isSheetSelection,
+                                                    tab: 'general',
                                                 });
 
                                                 // Fetch UI elements
@@ -3608,7 +3617,8 @@
                                                 $selectFileFormat
                                                     .selectpicker(SELECT_PICKER_OPTIONS)
                                                     .on('changed.bs.select', function () {
-                                                        $('#ladb_btn_export_file_format', $btnExport).html($(this).val().toUpperCase() + ' <small>( ' + sheetCount + ' ' + i18next.t('default.file', { count: sheetCount }).toLowerCase() + ' )</small>');
+                                                        var fileCount = sheetCount - hiddenSheetIndices.length;
+                                                        $('#ladb_btn_export_file_format', $btnExport).html($(this).val().toUpperCase() + ' <small>( ' + fileCount + ' ' + i18next.t('default.file', { count: fileCount }).toLowerCase() + ' )</small>');
                                                         fnUpdateColorsVisibility();
                                                     })
                                                 ;
@@ -3631,7 +3641,7 @@
                                                     // Store options
                                                     rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_cuttingdiagram2d_export_options', values: exportOptions, section: groupId });
 
-                                                    rubyCallCommand('cutlist_cuttingdiagram2d_export', exportOptions, function (response) {
+                                                    rubyCallCommand('cutlist_cuttingdiagram2d_export', $.extend(exportOptions, { hidden_sheet_indices: hiddenSheetIndices }, cuttingdiagram2dOptions), function (response) {
 
                                                         if (response.errors) {
                                                             that.dialog.notifyErrors(response.errors);

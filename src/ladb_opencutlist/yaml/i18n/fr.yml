@@ -794,6 +794,8 @@ tab:
         option_cuts_help: Choisissez
         option_stroke_color: Couleur de trait
         option_fill_color: Couleur de remplissage
+        warning:
+          is_sheet_selection: Les **panneaux masqués** ne seront pas exportés.
       error:
         no_bar_dimensional: La barre standard n'est pas correctement configurée et aucun reste n'est défini.
         no_bar_edge: La bande standard n'est pas correctement configurée et aucun reste n'est défini.

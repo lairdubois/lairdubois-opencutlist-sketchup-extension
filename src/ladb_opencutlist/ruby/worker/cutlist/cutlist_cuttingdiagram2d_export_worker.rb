@@ -21,6 +21,8 @@ module Ladb::OpenCutList
       @leftovers_fill_color = settings.fetch('leftovers_fill_color', nil)
       @cuts_hidden = settings.fetch('cuts_hidden', true)
       @cuts_stroke_color = settings.fetch('cuts_stroke_color', nil)
+      @hidden_sheet_indices = settings.fetch('hidden_sheet_indices', [])
+      @use_names = settings.fetch('use_names', false)
 
       @cutlist = cutlist
       @cuttingdiagram2d = cuttingdiagram2d
@@ -41,6 +43,7 @@ module Ladb::OpenCutList
 
         sheet_index = 1
         @cuttingdiagram2d.sheets.each do |sheet|
+          next if @hidden_sheet_indices.include?(sheet_index)
           _write_sheet(dir, sheet, sheet_index)
           sheet_index += sheet.count
         end
@@ -144,13 +147,13 @@ module Ladb::OpenCutList
         file.puts("<svg width=\"#{sheet_width}#{unit_sign}\" height=\"#{sheet_height}#{unit_sign}\" viewBox=\"0 0 #{sheet_width} #{sheet_height}\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:shaper=\"http://www.shapertools.com/namespaces/shaper\">")
 
         unless @sheet_hidden
-          file.puts("<g id=\"sheet\">")
+          file.puts('<g id="sheet">')
           _svg_rect(file, 0, 0, sheet_width, sheet_height, @sheet_stroke_color, @sheet_fill_color)
-          file.puts("</g>")
+          file.puts('</g>')
         end
 
         unless @parts_hidden
-          file.puts("<g id=\"parts\">")
+          file.puts('<g id="parts">')
           sheet.parts.each do |part|
 
             part_x = _convert(_to_inch(part.px_x), unit_converter)
@@ -158,14 +161,14 @@ module Ladb::OpenCutList
             part_width = _convert(_to_inch(part.px_length), unit_converter)
             part_height = _convert(_to_inch(part.px_width), unit_converter)
 
-            _svg_rect(file, part_x, part_y, part_width, part_height, @parts_stroke_color, @parts_fill_color)
+            _svg_rect(file, part_x, part_y, part_width, part_height, @parts_stroke_color, @parts_fill_color, @use_names ? part.name : part.number)
 
           end
-          file.puts("</g>")
+          file.puts('</g>')
         end
 
         unless @leftovers_hidden
-          file.puts("<g id=\"leftovers\">")
+          file.puts('<g id="leftovers">')
           sheet.leftovers.each do |leftover|
 
             leftover_x = _convert(_to_inch(leftover.px_x), unit_converter)
@@ -176,11 +179,11 @@ module Ladb::OpenCutList
             _svg_rect(file, leftover_x, leftover_y, leftover_width, leftover_height, @leftovers_stroke_color, @leftovers_fill_color)
 
           end
-          file.puts("</g>")
+          file.puts('</g>')
         end
 
         unless @cuts_hidden
-          file.puts("<g id=\"cuts\">")
+          file.puts('<g id="cuts">')
           sheet.cuts.each do |cut|
 
             cut_x1 = _convert(_to_inch(cut.px_x), unit_converter)
@@ -191,10 +194,10 @@ module Ladb::OpenCutList
             _svg_line(file, cut_x1, cut_y1, cut_x2, cut_y2, @cuts_stroke_color)
 
           end
-          file.puts("</g>")
+          file.puts('</g>')
         end
 
-        file.puts("</svg>")
+        file.puts('</svg>')
 
       end
 
@@ -212,8 +215,8 @@ module Ladb::OpenCutList
       pixel_value / 7 # 840px = 120" ~ 3m
     end
 
-    def _svg_rect(file, x, y, width, height, stroke_color, fill_color)
-      file.puts("<rect x=\"#{x}\" y=\"#{y}\" width=\"#{width}\" height=\"#{height}\" stroke=\"#{stroke_color ? "#{stroke_color}" : "#{fill_color ? 'none' : '#000000'}"}\" fill=\"#{fill_color ? "#{fill_color}" : 'none'}\" />")
+    def _svg_rect(file, x, y, width, height, stroke_color, fill_color, id = nil)
+      file.puts("<rect x=\"#{x}\" y=\"#{y}\" width=\"#{width}\" height=\"#{height}\" stroke=\"#{stroke_color ? "#{stroke_color}" : "#{fill_color ? 'none' : '#000000'}"}\" fill=\"#{fill_color ? "#{fill_color}" : 'none'}\"#{id ? " id=\"#{id}\"" : ''} />")
     end
 
     def _svg_line(file, x1, y1, x2, y2, stroke_color)
