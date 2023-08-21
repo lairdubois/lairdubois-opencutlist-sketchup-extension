@@ -3,11 +3,13 @@ module Ladb::OpenCutList
   require_relative '../../lib/rubyzip/zip'
   require_relative '../../plugin'
   require_relative '../../helper/layer_visibility_helper'
+  require_relative '../../helper/sanitizer_helper'
   require_relative '../../utils/dimension_utils'
 
   class CutlistLayoutToLayoutWorker
 
     include LayerVisibilityHelper
+    include SanitizerHelper
 
     def initialize(settings, cutlist)
 
@@ -545,14 +547,6 @@ module Ladb::OpenCutList
         scale = '1:1'
       end
       scale
-    end
-
-    # File stuffs
-
-    def _sanitize_filename(filename)
-      filename
-        .gsub(/\//, '∕')
-        .gsub(/꞉/, '꞉')
     end
 
   end

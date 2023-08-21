@@ -32,16 +32,16 @@ module Ladb::OpenCutList
     # -----
 
     def run(step_by_step = false)
-      return Cuttingdiagram1dDef.new([ 'default.error' ]).create_cuttingdiagram1d unless @cutlist
+      return Cuttingdiagram1dDef.new(nil, [ 'default.error' ]).create_cuttingdiagram1d unless @cutlist
 
       model = Sketchup.active_model
-      return Cuttingdiagram1dDef.new([ 'tab.cutlist.error.no_model' ]).create_cuttingdiagram1d unless model
+      return Cuttingdiagram1dDef.new(nil, [ 'tab.cutlist.error.no_model' ]).create_cuttingdiagram1d unless model
 
       group = @cutlist.get_group(@group_id)
-      return Cuttingdiagram1dDef.new([ 'default.error' ]).create_cuttingdiagram1d unless group
+      return Cuttingdiagram1dDef.new(nil, [ 'default.error' ]).create_cuttingdiagram1d unless group
 
       parts = @part_ids.nil? ? group.parts : group.get_parts(@part_ids)
-      return Cuttingdiagram1dDef.new([ 'default.error' ]).create_cuttingdiagram1d if parts.empty?
+      return Cuttingdiagram1dDef.new(nil, [ 'default.error' ]).create_cuttingdiagram1d if parts.empty?
 
       unless @pack_engine
 
@@ -130,10 +130,10 @@ module Ladb::OpenCutList
       # --------
 
       unless result
-        return Cuttingdiagram1dDef.new(errors).create_cuttingdiagram1d
+        return Cuttingdiagram1dDef.new(group, errors).create_cuttingdiagram1d
       end
 
-      cuttingdiagram1d_def = Cuttingdiagram1dDef.new
+      cuttingdiagram1d_def = Cuttingdiagram1dDef.new(group)
       cuttingdiagram1d_def.options_def.px_saw_kerf = [ _to_px(@saw_kerf), 1 ].max
       cuttingdiagram1d_def.options_def.saw_kerf = @saw_kerf
       cuttingdiagram1d_def.options_def.trimming = @trimming

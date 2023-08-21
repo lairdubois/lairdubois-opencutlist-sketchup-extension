@@ -4,9 +4,10 @@ module Ladb::OpenCutList
 
   class Cuttingdiagram2dDef
 
-    attr_accessor :errors, :warnings, :tips, :unplaced_part_defs, :options_def, :summary_def, :sheet_defs
+    attr_accessor :group, :errors, :warnings, :tips, :unplaced_part_defs, :options_def, :summary_def, :sheet_defs
 
-    def initialize(errors = [])
+    def initialize(group, errors = [])
+      @group = group
 
       @errors = errors
       @warnings = []

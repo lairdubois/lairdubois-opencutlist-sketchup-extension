@@ -1,6 +1,10 @@
 module Ladb::OpenCutList
 
+  require_relative '../../helper/sanitizer_helper'
+
   class CutlistCuttingdiagram2dExportWorker
+
+    include SanitizerHelper
 
     FILE_FORMAT_DXF = 'dxf'.freeze
     FILE_FORMAT_SVG = 'svg'.freeze
@@ -41,15 +45,28 @@ module Ladb::OpenCutList
       dir = UI.select_directory(title: Plugin.instance.get_i18n_string('tab.cutlist.cuttingdiagram.export.title'), directory: @cutlist.dir)
       if dir
 
+        group = @cuttingdiagram2d.def.group
+        folder = _sanitize_filename("#{group.material_display_name} - #{group.std_dimension}")
+        export_path = File.join(dir, folder)
+
+        if File.exists?(export_path)
+          if UI.messagebox(Plugin.instance.get_i18n_string('core.messagebox.dir_override', { :target => folder, :parent => File.basename(dir) }), MB_YESNO) == IDYES
+            FileUtils.remove_dir(export_path, true)
+          else
+            return { :cancelled => true }
+          end
+        end
+        Dir.mkdir(export_path)
+
         sheet_index = 1
         @cuttingdiagram2d.sheets.each do |sheet|
           next if @hidden_sheet_indices.include?(sheet_index)
-          _write_sheet(dir, sheet, sheet_index)
+          _write_sheet(export_path, sheet, sheet_index)
           sheet_index += sheet.count
         end
 
         return {
-          :export_path => dir
+          :export_path => export_path
         }
       end
 
@@ -65,7 +82,7 @@ module Ladb::OpenCutList
     def _write_sheet(dir, sheet, sheet_index)
 
       # Open output file
-      file = File.new(File.join(dir, "sheet_#{sheet_index}#{sheet.count > 1 ? "_to_#{sheet.count}" : ''}.#{@file_format}") , 'w')
+      file = File.new(File.join(dir, "sheet_#{sheet_index.to_s.rjust(3, '0')}#{sheet.count > 1 ? "_to_#{(sheet_index + sheet.count - 1).to_s.rjust(3, '0')}" : ''}.#{@file_format}") , 'w')
 
       case @file_format
       when FILE_FORMAT_DXF

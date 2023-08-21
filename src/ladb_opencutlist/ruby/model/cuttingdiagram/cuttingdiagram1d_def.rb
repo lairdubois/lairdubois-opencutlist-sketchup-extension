@@ -6,7 +6,8 @@ module Ladb::OpenCutList
 
     attr_accessor :errors, :warnings, :tips, :unplaced_part_defs, :options_def, :summary_def, :bar_defs
 
-    def initialize(errors = [])
+    def initialize(group, errors = [])
+      @group = group
 
       @errors = errors
       @warnings = []
