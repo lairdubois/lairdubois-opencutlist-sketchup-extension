@@ -14,8 +14,8 @@ module Ladb::OpenCutList
       # Clear app default cache
       Plugin.instance.clear_app_defaults_cache if name == 'LengthUnit'
 
-      # Fetch new length options
-      DimensionUtils.instance.fetch_length_options if name == 'LengthUnit' || name == 'LengthPrecision' || name == 'LengthFormat'
+      # Fetch new length, area, volume options
+      DimensionUtils.instance.fetch_options if name == 'LengthUnit' || name == 'LengthPrecision' || name == 'LengthFormat' || name == 'AreaUnit' || name == 'AreaPrecision' || name == 'VolumeUnit' || name == 'VolumePrecision'
 
       # Trigger event to JS
       Plugin.instance.trigger_event(ON_OPTIONS_PROVIDER_CHANGED, { :name => name })
