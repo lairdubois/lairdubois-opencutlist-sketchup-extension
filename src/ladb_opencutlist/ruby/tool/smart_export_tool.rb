@@ -261,6 +261,18 @@ module Ladb::OpenCutList
           mesh.background_color = highlighted ? COLOR_MESH_HIGHLIGHTED : COLOR_MESH
           part_helper.append(mesh)
 
+          bounds = Geom::BoundingBox.new
+          bounds.add(_compute_children_faces_triangles(active_instance.definition.entities))
+
+          # Box helper
+          box_helper = Kuix::BoxMotif.new
+          box_helper.bounds.origin.copy!(bounds.min)
+          box_helper.bounds.size.copy!(bounds)
+          box_helper.color = Kuix::COLOR_BLACK
+          box_helper.line_width = 2
+          box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+          part_helper.append(box_helper)
+
           # Axes helper
           axes_helper = Kuix::AxesHelper.new
           part_helper.append(axes_helper)
@@ -397,13 +409,13 @@ module Ladb::OpenCutList
           options = {}
           file_format = nil
           if is_action_modifier_skp?
-            file_format = CommonExportInstanceToFileWorker::FILE_FORMAT_SKP
+            file_format = FILE_FORMAT_SKP
           elsif is_action_modifier_stl?
-            file_format = CommonExportInstanceToFileWorker::FILE_FORMAT_STL
+            file_format = FILE_FORMAT_STL
           elsif is_action_modifier_obj?
-            file_format = CommonExportInstanceToFileWorker::FILE_FORMAT_OBJ
+            file_format = FILE_FORMAT_OBJ
           elsif is_action_modifier_dxf?
-            file_format = CommonExportInstanceToFileWorker::FILE_FORMAT_DXF
+            file_format = FILE_FORMAT_DXF
           end
 
           worker = CommonExportInstanceToFileWorker.new(instance_info, options, file_format)
@@ -423,9 +435,9 @@ module Ladb::OpenCutList
           options = {}
           file_format = nil
           if is_action_modifier_dxf?
-            file_format = CommonExportFacesToFileWorker::FILE_FORMAT_DXF
+            file_format = FILE_FORMAT_DXF
           elsif is_action_modifier_svg?
-            file_format = CommonExportFacesToFileWorker::FILE_FORMAT_SVG
+            file_format = FILE_FORMAT_SVG
           end
 
           worker = CommonExportFacesToFileWorker.new(face_infos, options, file_format)

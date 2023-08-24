@@ -1,17 +1,15 @@
 module Ladb::OpenCutList
 
+  require_relative '../../constants'
   require_relative '../../helper/face_triangles_helper'
-  require_relative '../../helper/dxf_helper'
-  require_relative '../../helper/svg_helper'
+  require_relative '../../helper/dxf_writer_helper'
+  require_relative '../../helper/svg_writer_helper'
 
   class CommonExportFacesToFileWorker
 
     include FaceTrianglesHelper
-    include DxfHelper
-    include SvgHelper
-
-    FILE_FORMAT_DXF = 'dxf'.freeze
-    FILE_FORMAT_SVG = 'svg'.freeze
+    include DxfWriterHelper
+    include SvgWriterHelper
 
     SUPPORTED_FILE_FORMATS = [ FILE_FORMAT_DXF, FILE_FORMAT_SVG ]
 
@@ -69,8 +67,8 @@ module Ladb::OpenCutList
       case @file_format
       when FILE_FORMAT_DXF
 
-        _dxf(file, 0, 'SECTION')
-        _dxf(file, 2, 'ENTITIES')
+        _dxf_write(file, 0, 'SECTION')
+        _dxf_write(file, 2, 'ENTITIES')
 
         face_infos.each do |face_info|
 
@@ -79,32 +77,32 @@ module Ladb::OpenCutList
 
           face.loops.each do |loop|
 
-            _dxf(file, 0, 'POLYLINE')
-            _dxf(file, 8, 0)
-            _dxf(file, 66, 1)
-            _dxf(file, 70, 1) # 1 = This is a closed polyline (or a polygon mesh closed in the M direction)
-            _dxf(file, 10, 0.0)
-            _dxf(file, 20, 0.0)
-            _dxf(file, 30, 0.0)
+            _dxf_write(file, 0, 'POLYLINE')
+            _dxf_write(file, 8, 0)
+            _dxf_write(file, 66, 1)
+            _dxf_write(file, 70, 1) # 1 = This is a closed polyline (or a polygon mesh closed in the M direction)
+            _dxf_write(file, 10, 0.0)
+            _dxf_write(file, 20, 0.0)
+            _dxf_write(file, 30, 0.0)
 
             loop.vertices.each do |vertex|
               point = vertex.position.transform(transformation)
-              _dxf(file, 0, 'VERTEX')
-              _dxf(file, 8, 0)
-              _dxf(file, 10, _convert(point.x, unit_converter))
-              _dxf(file, 20, _convert(point.y, unit_converter))
-              _dxf(file, 30, 0.0)
-              _dxf(file, 70, 32) # 32 = 3D polyline vertex
+              _dxf_write(file, 0, 'VERTEX')
+              _dxf_write(file, 8, 0)
+              _dxf_write(file, 10, _convert(point.x, unit_converter))
+              _dxf_write(file, 20, _convert(point.y, unit_converter))
+              _dxf_write(file, 30, 0.0)
+              _dxf_write(file, 70, 32) # 32 = 3D polyline vertex
             end
 
-            _dxf(file, 0, 'SEQEND')
+            _dxf_write(file, 0, 'SEQEND')
 
           end
 
         end
 
-        _dxf(file, 0, 'ENDSEC')
-        _dxf(file, 0, 'EOF')
+        _dxf_write(file, 0, 'ENDSEC')
+        _dxf_write(file, 0, 'EOF')
 
       when FILE_FORMAT_SVG
 
@@ -129,7 +127,7 @@ module Ladb::OpenCutList
         width = _convert(bounds.width, unit_converter)
         height = _convert(bounds.height, unit_converter)
 
-        _svg_start(file, width, height, unit_sign)
+        _svg_write_start(file, width, height, unit_sign)
 
         face_infos.each do |face_info|
 
@@ -148,14 +146,14 @@ module Ladb::OpenCutList
             outside << data
             pockets << data unless loop.outer?
           end
-          _svg_path(file, outside.join, '#000000')
+          _svg_write_path(file, outside.join, '#000000')
           pockets.each do |pocket|
-            _svg_path(file, pocket, '#7F7F7F')
+            _svg_write_path(file, pocket, '#7F7F7F')
           end
 
         end
 
-        _svg_end(file)
+        _svg_write_end(file)
 
       end
 

@@ -1,16 +1,12 @@
 module Ladb::OpenCutList
 
+  require_relative '../../constants'
   require_relative '../../model/cutlist/instance_info'
-  require_relative '../../helper/dxf_helper'
+  require_relative '../../helper/dxf_writer_helper'
 
   class CommonExportInstanceToFileWorker
 
-    include DxfHelper
-
-    FILE_FORMAT_SKP = 'skp'.freeze
-    FILE_FORMAT_STL = 'stl'.freeze
-    FILE_FORMAT_OBJ = 'obj'.freeze
-    FILE_FORMAT_DXF = 'dxf'.freeze
+    include DxfWriterHelper
 
     SUPPORTED_FILE_FORMATS = [ FILE_FORMAT_SKP, FILE_FORMAT_STL, FILE_FORMAT_OBJ, FILE_FORMAT_DXF ]
 
@@ -79,8 +75,8 @@ module Ladb::OpenCutList
       when FILE_FORMAT_OBJ
         file.puts("g #{definition.name}")
       when FILE_FORMAT_DXF
-        _dxf(file, 0, 'SECTION')
-        _dxf(file, 2, 'ENTITIES')
+        _dxf_write(file, 0, 'SECTION')
+        _dxf_write(file, 2, 'ENTITIES')
       end
 
       # Write faces
@@ -91,8 +87,8 @@ module Ladb::OpenCutList
       when FILE_FORMAT_STL
         file.puts("endsolid #{definition.name}")
       when FILE_FORMAT_DXF
-        _dxf(file, 0, 'ENDSEC')
-        _dxf(file, 0, 'EOF')
+        _dxf_write(file, 0, 'ENDSEC')
+        _dxf_write(file, 0, 'EOF')
       end
 
       # Close output file
@@ -151,42 +147,42 @@ module Ladb::OpenCutList
             polygons = mesh.polygons
             points = mesh.points
 
-            _dxf(file, 0, 'POLYLINE')
-            _dxf(file, 8, 0) # Layer
-            _dxf(file, 66, 1)
-            _dxf(file, 10, 0.0)
-            _dxf(file, 20, 0.0)
-            _dxf(file, 30, 0.0)
-            _dxf(file, 70, 64) # 64 = The polyline is a polyface mesh
-            _dxf(file, 71, points.length) # Polygon mesh M vertex count
-            _dxf(file, 72, 1) # Polygon mesh N vertex count
+            _dxf_write(file, 0, 'POLYLINE')
+            _dxf_write(file, 8, 0) # Layer
+            _dxf_write(file, 66, 1)
+            _dxf_write(file, 10, 0.0)
+            _dxf_write(file, 20, 0.0)
+            _dxf_write(file, 30, 0.0)
+            _dxf_write(file, 70, 64) # 64 = The polyline is a polyface mesh
+            _dxf_write(file, 71, points.length) # Polygon mesh M vertex count
+            _dxf_write(file, 72, 1) # Polygon mesh N vertex count
 
             points.each do |point|
 
-              _dxf(file, 0, 'VERTEX')
-              _dxf(file, 8, 0) # Layer
-              _dxf(file, 10, _convert(point.x, unit_converter))
-              _dxf(file, 20, _convert(point.y, unit_converter))
-              _dxf(file, 30, _convert(point.z, unit_converter))
-              _dxf(file, 70, 64 ^ 128) # 64 = 3D polygon mesh, 128 = Polyface mesh vertex
+              _dxf_write(file, 0, 'VERTEX')
+              _dxf_write(file, 8, 0) # Layer
+              _dxf_write(file, 10, _convert(point.x, unit_converter))
+              _dxf_write(file, 20, _convert(point.y, unit_converter))
+              _dxf_write(file, 30, _convert(point.z, unit_converter))
+              _dxf_write(file, 70, 64 ^ 128) # 64 = 3D polygon mesh, 128 = Polyface mesh vertex
 
             end
 
             polygons.each do |polygon|
 
-              _dxf(file, 0, 'VERTEX')
-              _dxf(file, 8, 0) # Layer
-              _dxf(file, 10, 0.0)
-              _dxf(file, 20, 0.0)
-              _dxf(file, 30, 0.0)
-              _dxf(file, 70, 128) # 128 = Polyface mesh vertex
-              _dxf(file, 71, polygon[0]) # 71 = Polyface mesh vertex index
-              _dxf(file, 72, polygon[1]) # 72 = Polyface mesh vertex index
-              _dxf(file, 73, polygon[2]) # 73 = Polyface mesh vertex index
+              _dxf_write(file, 0, 'VERTEX')
+              _dxf_write(file, 8, 0) # Layer
+              _dxf_write(file, 10, 0.0)
+              _dxf_write(file, 20, 0.0)
+              _dxf_write(file, 30, 0.0)
+              _dxf_write(file, 70, 128) # 128 = Polyface mesh vertex
+              _dxf_write(file, 71, polygon[0]) # 71 = Polyface mesh vertex index
+              _dxf_write(file, 72, polygon[1]) # 72 = Polyface mesh vertex index
+              _dxf_write(file, 73, polygon[2]) # 73 = Polyface mesh vertex index
 
             end
 
-            _dxf(file, 0, 'SEQEND')
+            _dxf_write(file, 0, 'SEQEND')
 
           end
 
