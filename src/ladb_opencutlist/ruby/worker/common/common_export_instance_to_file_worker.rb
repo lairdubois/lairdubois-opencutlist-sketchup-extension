@@ -3,18 +3,21 @@ module Ladb::OpenCutList
   require_relative '../../constants'
   require_relative '../../model/cutlist/instance_info'
   require_relative '../../helper/dxf_writer_helper'
+  require_relative '../../helper/sanitizer_helper'
 
   class CommonExportInstanceToFileWorker
 
     include DxfWriterHelper
+    include SanitizerHelper
 
     SUPPORTED_FILE_FORMATS = [ FILE_FORMAT_SKP, FILE_FORMAT_STL, FILE_FORMAT_OBJ, FILE_FORMAT_DXF ]
 
-    def initialize(instance_info, options, file_format)
+    def initialize(instance_info, options, file_format, file_name = 'PART')
 
       @instance_info = instance_info
       @options = options
       @file_format = file_format
+      @file_name = _sanitize_filename(file_name)
 
     end
 
@@ -25,7 +28,7 @@ module Ladb::OpenCutList
       return { :errors => [ 'default.error' ] } unless @instance_info.is_a?(InstanceInfo)
 
       # Open save panel
-      path = UI.savepanel(Plugin.instance.get_i18n_string('tab.cutlist.export_to_3d.title', { :file_format => @file_format }), '', "#{@instance_info.definition.name}.#{@file_format}")
+      path = UI.savepanel(Plugin.instance.get_i18n_string('tab.cutlist.export_to_3d.title', { :file_format => @file_format }), '', "#{@file_name}.#{@file_format}")
       if path
 
         # Force "file_format" file extension

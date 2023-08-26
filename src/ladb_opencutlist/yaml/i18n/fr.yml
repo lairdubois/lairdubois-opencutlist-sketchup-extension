@@ -1492,9 +1492,11 @@ tool:
       not_orientable: Le type de cette pièce ne permet pas de l'orienter
   smart_export:
     title: Exporter
-    action_0: Exporter une pièce
+    action_0: Exporter une pièce 3D
     action_0_status: Cliquez sur une pièce
-    action_1: Exporter une face
-    action_1_status: Cliquez sur une face
+    action_1: Exporter une pièce 2D
+    action_1_status: Cliquez sur la face d'une pièce
+    action_2: Exporter une face
+    action_2_status: Cliquez sur une face
     error:
       not_part: L'objet ciblé n'est pas une pièce

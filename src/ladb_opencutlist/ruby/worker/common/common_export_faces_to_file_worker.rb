@@ -4,12 +4,14 @@ module Ladb::OpenCutList
   require_relative '../../helper/face_triangles_helper'
   require_relative '../../helper/dxf_writer_helper'
   require_relative '../../helper/svg_writer_helper'
+  require_relative '../../helper/sanitizer_helper'
 
   class CommonExportFacesToFileWorker
 
     include FaceTrianglesHelper
     include DxfWriterHelper
     include SvgWriterHelper
+    include SanitizerHelper
 
     SUPPORTED_FILE_FORMATS = [ FILE_FORMAT_DXF, FILE_FORMAT_SVG ]
 
@@ -18,7 +20,7 @@ module Ladb::OpenCutList
       @face_infos = face_infos
       @options = options
       @file_format = file_format
-      @file_name = file_name
+      @file_name = _sanitize_filename(file_name)
 
     end
 
@@ -129,13 +131,12 @@ module Ladb::OpenCutList
 
         _svg_write_start(file, width, height, unit_sign)
 
-        face_infos.each do |face_info|
+        face_infos.sort_by { |face_info| face_info.data[:depth] }.each do |face_info|
 
           face = face_info.face
           transformation = face_info.transformation
+          depth = DimensionUtils.instance.to_ocl_precision_f(face_info.data[:depth].to_f)
 
-          outside = []
-          pockets = []
           face.loops.each do |loop|
             coords = []
             loop.vertices.each do |vertex|
@@ -143,12 +144,18 @@ module Ladb::OpenCutList
               coords << "#{_convert(point.x, unit_converter)},#{height - _convert(point.y, unit_converter)}"
             end
             data = "M#{coords.join('L')}Z"
-            outside << data
-            pockets << data unless loop.outer?
-          end
-          _svg_write_path(file, outside.join, '#000000')
-          pockets.each do |pocket|
-            _svg_write_path(file, pocket, '#7F7F7F')
+            if loop.outer?
+              if depth == 0
+                # Outside
+                _svg_write_path(file, data, '#000000', '#000000', 'shaper:cutType': 'outside')
+              else
+                # Pocket
+                _svg_write_path(file, data, '#7F7F7F', nil, 'shaper:cutType': 'pocket', 'shaper:cutDepth': _convert(depth, unit_converter))
+              end
+            else
+              # Inside
+              _svg_write_path(file, data, '#FFFFFF', '#000000', 'shaper:cutType': 'inside', 'shaper:cutDepth': height)
+            end
           end
 
         end

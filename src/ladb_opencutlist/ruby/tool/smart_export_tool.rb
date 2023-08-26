@@ -1,6 +1,7 @@
 module Ladb::OpenCutList
 
   require_relative 'smart_tool'
+  require_relative '../helper/layer_visibility_helper'
   require_relative '../helper/edge_segments_helper'
   require_relative '../helper/entities_helper'
   require_relative '../model/cutlist/face_info'
@@ -9,11 +10,13 @@ module Ladb::OpenCutList
 
   class SmartExportTool < SmartTool
 
+    include LayerVisibilityHelper
     include EdgeSegmentsHelper
     include EntitiesHelper
 
-    ACTION_EXPORT_PART = 0
-    ACTION_EXPORT_FACE = 1
+    ACTION_EXPORT_PART_3D = 0
+    ACTION_EXPORT_PART_2D = 1
+    ACTION_EXPORT_FACE = 2
 
     ACTION_MODIFIER_SKP = 0
     ACTION_MODIFIER_STL = 1
@@ -22,12 +25,14 @@ module Ladb::OpenCutList
     ACTION_MODIFIER_DXF = 4
 
     ACTIONS = [
-      { :action => ACTION_EXPORT_PART, :modifiers => [ ACTION_MODIFIER_SKP, ACTION_MODIFIER_STL, ACTION_MODIFIER_OBJ, ACTION_MODIFIER_DXF ] },
+      { :action => ACTION_EXPORT_PART_3D, :modifiers => [ACTION_MODIFIER_SKP, ACTION_MODIFIER_STL, ACTION_MODIFIER_OBJ, ACTION_MODIFIER_DXF ] },
+      { :action => ACTION_EXPORT_PART_2D, :modifiers => [ACTION_MODIFIER_SVG, ACTION_MODIFIER_DXF ] },
       { :action => ACTION_EXPORT_FACE, :modifiers => [ ACTION_MODIFIER_SVG, ACTION_MODIFIER_DXF ] },
     ].freeze
 
     COLOR_MESH = Sketchup::Color.new(200, 200, 0, 100).freeze
     COLOR_MESH_HIGHLIGHTED = Sketchup::Color.new(200, 200, 0, 200).freeze
+    COLOR_MESH_DEEP = Sketchup::Color.new(50, 50, 0, 100).freeze
     COLOR_ACTION = Kuix::COLOR_MAGENTA
     COLOR_ACTION_FILL = Sketchup::Color.new(255, 0, 255, 51).freeze
     COLOR_ACTION_FILL_HIGHLIGHTED = Sketchup::Color.new(255, 0, 255, 102).freeze
@@ -37,6 +42,8 @@ module Ladb::OpenCutList
 
     def initialize(material = nil)
       super(true, false)
+
+      @selected_faces = []
 
       # Create cursors
       @cursor_export_skp = create_cursor('export-skp', 0, 0)
@@ -89,7 +96,7 @@ module Ladb::OpenCutList
     def get_action_modifier_btn_child(action, modifier)
 
       case action
-      when ACTION_EXPORT_PART
+      when ACTION_EXPORT_PART_3D
         case modifier
         when ACTION_MODIFIER_SKP
           lbl = Kuix::Label.new
@@ -106,6 +113,17 @@ module Ladb::OpenCutList
         when ACTION_MODIFIER_DXF
           lbl = Kuix::Label.new
           lbl.text = 'DXF'
+          return lbl
+        end
+      when ACTION_EXPORT_PART_2D
+        case modifier
+        when ACTION_MODIFIER_DXF
+          lbl = Kuix::Label.new
+          lbl.text = 'DXF'
+          return lbl
+        when ACTION_MODIFIER_SVG
+          lbl = Kuix::Label.new
+          lbl.text = 'SVG'
           return lbl
         end
       when ACTION_EXPORT_FACE
@@ -156,8 +174,12 @@ module Ladb::OpenCutList
       @@action_filters[action]
     end
 
-    def is_action_export_part?
-      fetch_action == ACTION_EXPORT_PART
+    def is_action_export_part_3d?
+      fetch_action == ACTION_EXPORT_PART_3D
+    end
+
+    def is_action_export_part_2d?
+      fetch_action == ACTION_EXPORT_PART_2D
     end
 
     def is_action_export_face?
@@ -251,31 +273,146 @@ module Ladb::OpenCutList
         active_instance = @active_part_entity_path.last
         transformation = PathUtils::get_transformation(@active_part_entity_path)
 
-        part_helper = Kuix::Group.new
-        part_helper.transformation = transformation
-        @space.append(part_helper)
+        input_inner_transforamtion = PathUtils::get_transformation(@input_face_path - @active_part_entity_path)
+        input_normal = @input_face.normal.transform(transformation * input_inner_transforamtion)
 
-          # Highlight active part
-          mesh = Kuix::Mesh.new
-          mesh.add_triangles(_compute_children_faces_triangles(active_instance.definition.entities))
-          mesh.background_color = highlighted ? COLOR_MESH_HIGHLIGHTED : COLOR_MESH
-          part_helper.append(mesh)
+        if is_action_export_part_2d?
 
+          @active_face_infos = _get_face_infos_by_normal(active_instance.definition.entities, input_normal, transformation)
+          if @active_face_infos.empty?
+            @active_face_infos = [ FaceInfo.new(@input_face, input_inner_transforamtion)  ]
+          end
+
+          origin, x_axis, y_axis, z_axis, @active_edge, auto = _get_input_axes(input_inner_transforamtion)
+          if auto
+            input_inner_normal = @input_face.normal.transform(input_inner_transforamtion)
+            if input_inner_normal.parallel?(Z_AXIS)
+              z_axis = input_inner_normal
+              x_axis = z_axis.cross(X_AXIS).y < 0 ? X_AXIS.reverse : X_AXIS
+              y_axis = z_axis.cross(x_axis)
+              @active_edge = nil
+            elsif input_inner_normal.parallel?(X_AXIS)
+              z_axis = input_inner_normal
+              x_axis = z_axis.cross(Y_AXIS).y < 0 ? Y_AXIS.reverse : Y_AXIS
+              y_axis = z_axis.cross(x_axis)
+              @active_edge = nil
+            elsif input_inner_normal.parallel?(Y_AXIS)
+              z_axis = input_inner_normal
+              x_axis = z_axis.cross(X_AXIS).y < 0 ? X_AXIS.reverse : X_AXIS
+              y_axis = z_axis.cross(x_axis)
+              @active_edge = nil
+            end
+          end
+
+          # Change axis transformation
+          t =  Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
+          ti = t.inverse
+
+          # Compute new bounds
           bounds = Geom::BoundingBox.new
-          bounds.add(_compute_children_faces_triangles(active_instance.definition.entities))
+          @active_face_infos.each do |face_info|
+            bounds.add(_compute_children_faces_triangles([ face_info.face ], ti * face_info.transformation))
+          end
 
-          # Box helper
-          box_helper = Kuix::BoxMotif.new
-          box_helper.bounds.origin.copy!(bounds.min)
-          box_helper.bounds.size.copy!(bounds)
-          box_helper.color = Kuix::COLOR_BLACK
-          box_helper.line_width = 2
-          box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-          part_helper.append(box_helper)
+          # Compute face distance to 0
+          o = Geom::Point3d.new(bounds.min.x, bounds.min.y, bounds.max.z)
+          @active_face_infos.each do |face_info|
 
-          # Axes helper
-          axes_helper = Kuix::AxesHelper.new
-          part_helper.append(axes_helper)
+            point = face_info.face.vertices.first.position
+            vector = face_info.face.normal
+            plane = [ point.transform(ti * face_info.transformation), vector.transform(ti * face_info.transformation) ]
+
+            face_info.data[:depth] = o.distance_to_plane(plane)
+
+          end
+
+          # Translate to 0,0 transformation
+          to = Geom::Transformation.translation(Geom::Vector3d.new(bounds.min.x, bounds.min.y, bounds.max.z))
+
+          tto = t * to
+          export_transformation = tto.inverse
+
+          # Update face infos transformations
+          @active_face_infos.each do |face_info|
+            face_info.transformation = export_transformation * face_info.transformation
+          end
+
+          face_helper = Kuix::Group.new
+          face_helper.transformation = transformation * tto
+          @space.append(face_helper)
+
+            @active_face_infos.each do |face_info|
+
+              # Highlight face
+              mesh = Kuix::Mesh.new
+              mesh.add_triangles(_compute_children_faces_triangles([ face_info.face ], face_info.transformation))
+              mesh.background_color = COLOR_MESH_DEEP.blend(highlighted ? COLOR_MESH_HIGHLIGHTED : COLOR_MESH, bounds.depth > 0 ? face_info.data[:depth] / bounds.depth : 0.0)
+              face_helper.append(mesh)
+
+            end
+
+            # Box helper
+            box_helper = Kuix::BoxMotif.new
+            box_helper.bounds.size.copy!(bounds)
+            box_helper.bounds.size.depth = 0
+            box_helper.color = Kuix::COLOR_BLACK
+            box_helper.line_width = 2
+            box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+            face_helper.append(box_helper)
+
+            # Axes helper
+            inch_offset = Sketchup.active_model.active_view.pixels_to_model(10, Geom::Point3d.new.transform(transformation))
+            axes_helper = Kuix::AxesHelper.new
+            axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(inch_offset, inch_offset, 0))
+            axes_helper.box_0.visible = false
+            axes_helper.box_z.visible = false
+            face_helper.append(axes_helper)
+
+            if @active_edge
+
+              # Highlight input edge
+              segments = Kuix::Segments.new
+              segments.add_segments(_compute_children_edge_segments(@input_face.edges, tto.inverse * input_inner_transforamtion,[ @active_edge ]))
+              segments.color = COLOR_ACTION
+              segments.line_width = 4
+              segments.on_top = true
+              face_helper.append(segments)
+
+            end
+
+        else
+
+          part_helper = Kuix::Group.new
+          part_helper.transformation = transformation
+          @space.append(part_helper)
+
+            # Highlight active part
+            mesh = Kuix::Mesh.new
+            mesh.add_triangles(_compute_children_faces_triangles(active_instance.definition.entities))
+            mesh.background_color = highlighted ? COLOR_MESH_HIGHLIGHTED : COLOR_MESH
+            part_helper.append(mesh)
+
+            bounds = Geom::BoundingBox.new
+            bounds.add(_compute_children_faces_triangles(active_instance.definition.entities))
+
+            # Box helper
+            box_helper = Kuix::BoxMotif.new
+            box_helper.bounds.origin.copy!(bounds.min)
+            box_helper.bounds.size.copy!(bounds)
+            box_helper.color = Kuix::COLOR_BLACK
+            box_helper.line_width = 2
+            box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+            part_helper.append(box_helper)
+
+            # Axes helper
+            axes_helper = Kuix::AxesHelper.new
+            part_helper.append(axes_helper)
+
+        end
+
+      else
+
+        @active_face_infos = nil
 
       end
 
@@ -295,15 +432,17 @@ module Ladb::OpenCutList
         ti = t.inverse
 
         # Compute new bounds
-        @active_face_bounds = Geom::BoundingBox.new
-        @active_face_bounds.add(_compute_children_faces_triangles([ @active_face ], ti))
+        bounds = Geom::BoundingBox.new
+        bounds.add(_compute_children_faces_triangles([ @active_face ], ti))
 
         # Translate to 0,0 transformation
-        to = Geom::Transformation.translation(@active_face_bounds.min)
+        to = Geom::Transformation.translation(bounds.min)
 
         # Combine
         tto = t * to
-        @active_face_export_transformation = tto.inverse
+        export_transformation = tto.inverse
+
+        @active_face_infos = [ FaceInfo.new(@active_face, export_transformation) ]
 
         face_helper = Kuix::Group.new
         face_helper.transformation = transformation * tto
@@ -311,13 +450,13 @@ module Ladb::OpenCutList
 
           # Highlight input face
           mesh = Kuix::Mesh.new
-          mesh.add_triangles(_compute_children_faces_triangles([ @active_face ], @active_face_export_transformation))
-          mesh.background_color = highlighted ? COLOR_ACTION_FILL_HIGHLIGHTED : COLOR_ACTION_FILL
+          mesh.add_triangles(_compute_children_faces_triangles([ @active_face ], export_transformation))
+          mesh.background_color = highlighted ? COLOR_MESH_HIGHLIGHTED : COLOR_MESH
           face_helper.append(mesh)
 
           # Box helper
           box_helper = Kuix::BoxMotif.new
-          box_helper.bounds.size.copy!(@active_face_bounds)
+          box_helper.bounds.size.copy!(bounds)
           box_helper.color = Kuix::COLOR_BLACK
           box_helper.line_width = 2
           box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
@@ -325,12 +464,15 @@ module Ladb::OpenCutList
 
           # Axes helper
           axes_helper = Kuix::AxesHelper.new
+          inch_offset = Sketchup.active_model.active_view.pixels_to_model(10, Geom::Point3d.new.transform(transformation))
+          axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(inch_offset, inch_offset, 0))
+          axes_helper.box_0.visible = false
           axes_helper.box_z.visible = false
           face_helper.append(axes_helper)
 
           # Highlight input edge
           segments = Kuix::Segments.new
-          segments.add_segments(_compute_children_edge_segments(@active_face.edges, @active_face_export_transformation,[ @active_edge ]))
+          segments.add_segments(_compute_children_edge_segments(@active_face.edges, export_transformation,[ @active_edge ]))
           segments.color = COLOR_ACTION
           segments.line_width = 4
           segments.on_top = true
@@ -339,8 +481,6 @@ module Ladb::OpenCutList
       else
 
         @active_edge = nil
-        @active_face_bounds = nil
-        @active_face_export_transformation = nil
 
       end
 
@@ -355,7 +495,7 @@ module Ladb::OpenCutList
 
         if @input_face_path
 
-          if is_action_export_part?
+          if is_action_export_part_3d? || is_action_export_part_2d?
 
             input_part_entity_path = _get_part_entity_path_from_path(@input_face_path)
             if input_part_entity_path
@@ -390,7 +530,9 @@ module Ladb::OpenCutList
 
       elsif event == :l_button_down
 
-        if is_action_export_part?
+        if is_action_export_part_3d?
+          _refresh_active_part(true)
+        elsif is_action_export_part_2d?
           _refresh_active_part(true)
         elsif is_action_export_face?
           _refresh_active_face(true)
@@ -398,7 +540,7 @@ module Ladb::OpenCutList
 
       elsif event == :l_button_up || event == :l_button_dblclick
 
-        if is_action_export_part?
+        if is_action_export_part_3d?
 
           if @active_part.nil?
             UI.beep
@@ -418,20 +560,19 @@ module Ladb::OpenCutList
             file_format = FILE_FORMAT_DXF
           end
 
-          worker = CommonExportInstanceToFileWorker.new(instance_info, options, file_format)
+          worker = CommonExportInstanceToFileWorker.new(instance_info, options, file_format, @active_part.name)
           response = worker.run
 
           # TODO
           puts Plugin.instance.get_i18n_string('tab.cutlist.success.exported_to', { :export_path => response[:export_path] })
 
-        elsif is_action_export_face?
+        elsif is_action_export_part_2d? || is_action_export_face?
 
-          if @active_face.nil?
+          if @active_face_infos.nil?
             UI.beep
             return
           end
 
-          face_infos = [ FaceInfo.new(@active_face, @active_face_export_transformation) ]
           options = {}
           file_format = nil
           if is_action_modifier_dxf?
@@ -440,7 +581,7 @@ module Ladb::OpenCutList
             file_format = FILE_FORMAT_SVG
           end
 
-          worker = CommonExportFacesToFileWorker.new(face_infos, options, file_format)
+          worker = CommonExportFacesToFileWorker.new(@active_face_infos, options, file_format, @active_part.nil? ? 'Face' : @active_part.name)
           response = worker.run
 
           # TODO
@@ -452,9 +593,7 @@ module Ladb::OpenCutList
 
     end
 
-    def _get_input_axes
-
-      transformation = nil #PathUtils.get_transformation(@input_face_path)
+    def _get_input_axes(transformation = nil)
 
       input_edge = @input_edge
       if input_edge.nil? || !input_edge.used_by?(@input_face)
@@ -462,10 +601,29 @@ module Ladb::OpenCutList
       end
 
       z_axis = @input_face.normal
+      z_axis.transform!(transformation).normalize! unless transformation.nil?
       x_axis = input_edge.line[1]
+      x_axis.transform!(transformation).normalize! unless transformation.nil?
+      x_axis.reverse! if input_edge.reversed_in?(@input_face)
       y_axis = z_axis.cross(x_axis)
 
-      [ ORIGIN, x_axis, y_axis, z_axis, input_edge ]
+      [ ORIGIN, x_axis, y_axis, z_axis, input_edge, input_edge != @input_edge ]
+    end
+
+    def _get_face_infos_by_normal(entities, normal, root_transformation, inner_transformation = Geom::Transformation.new)
+      face_infos = []
+      entities.each do |entity|
+        if entity.visible? && _layer_visible?(entity.layer)
+          if entity.is_a?(Sketchup::Face)
+            face_infos.push(FaceInfo.new(entity, inner_transformation)) if entity.normal.transform(root_transformation * inner_transformation) == normal
+          elsif entity.is_a?(Sketchup::Group)
+            face_infos += _get_face_infos_by_normal(entity.entities, normal, root_transformation, inner_transformation * entity.transformation)
+          elsif entity.is_a?(Sketchup::ComponentInstance) && (entity.definition.behavior.cuts_opening? || entity.definition.behavior.always_face_camera?)
+            face_infos += _get_face_infos_by_normal(entity.definition.entities, normal, root_transformation, inner_transformation * entity.transformation)
+          end
+        end
+      end
+      face_infos
     end
 
   end

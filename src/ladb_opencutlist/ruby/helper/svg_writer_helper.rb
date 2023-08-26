@@ -28,8 +28,12 @@ module Ladb::OpenCutList
       file.puts("<line x1=\"#{x1}\" y1=\"#{y1}\" x2=\"#{x2}\" y2=\"#{y2}\" stroke=\"#{stroke_color ? "#{stroke_color}" : '#000000'}\"#{id ? " id=\"#{id}\"" : ''} />")
     end
 
-    def _svg_write_path(file, d, fill_color = nil, stroke_color = nil, id = nil)
-      file.puts("<path d=\"#{d}\" stroke=\"#{stroke_color ? "#{stroke_color}" : '#000000'}\"#{fill_color ? " fill=\"#{fill_color}\"" : ''}#{id ? " id=\"#{id}\"" : ''} />")
+    def _svg_write_path(file, d, fill_color = nil, stroke_color = nil, attributes = {})
+      file.puts("<path d=\"#{d}\" stroke=\"#{stroke_color ? "#{stroke_color}" : "#{fill_color ? 'none' : '#000000'}"}\"#{fill_color ? " fill=\"#{fill_color}\"" : ''}#{_svg_attributes(attributes)} />")
+    end
+
+    def _svg_attributes(attributes = {})
+      "#{attributes.empty? ? '' : ' '}#{attributes.map { |key, value| "#{key}=\"#{value}\"" }.join(' ')}"
     end
 
   end
