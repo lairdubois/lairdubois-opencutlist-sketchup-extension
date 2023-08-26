@@ -37,7 +37,7 @@ module Ladb::OpenCutList
 
             data = LabelData.new(
               StringWrapper.new(part.number),
-              PathWrapper.new(PathUtils.get_named_path(PathUtils.unserialize_path([]), false, 1)),
+              PathWrapper.new(part_info['entity_named_path'].split('.')),
               StringWrapper.new(part_info['entity_name']),
               StringWrapper.new(part.name),
               LengthWrapper.new(part.def.cutting_length),
