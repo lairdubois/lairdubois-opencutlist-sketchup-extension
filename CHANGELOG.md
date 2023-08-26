@@ -21,6 +21,7 @@ in 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
   * Fixed the dimension parser that misinterpret decimal separator
   * Fixed wrong counting of invalid sized parts in 2D
+  * Fixed Bottom right notification box no long print
   * Improved part material detection
   * Improved tokenfield dimension regex
   * Improved Smart Axes Tool "edit part" properties by selecting part entity
