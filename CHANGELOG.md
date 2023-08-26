@@ -25,6 +25,7 @@ in 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Improved part material detection
   * Improved tokenfield dimension regex
   * Improved Smart Axes Tool "edit part" properties by selecting part entity
+  * Added active named path to printable headers
   * Added compare functions to NumericWarapper
 
 * 5.0.2 (2023-06-20)
