@@ -2,13 +2,13 @@
     {% if not printPreview|default(false) %}
         <ul class="ladb-file-tabs nav nav-tabs no-print">
             {% embed 'tabs/base-file-tab.twig' %}
-                {% block inner %}{{ parent() }}{% if pageName %} - <em>{{ pageName|escape('html') }}</em>{% endif %}{% if isEntitySelection %} <span style="font-weight: normal; color: #003eff;" data-toggle="tooltip" data-placement="right" title="{{ 'tab.cutlist.warning.is_entity_selection'|i18next }}">({{ 'tab.cutlist.is_selection'|i18next }})</span>{% endif %}{% include 'core/_length-unit-extra.twig' %}{% endblock %}
+                {% block inner %}{{ parent() }}{% if pageName %} - <em>{{ pageName|escape('html') }}</em>{% endif %}{% if modelActivePath %} - <em>{{ modelActivePath|join('/') }}</em>{% endif %}{% if isEntitySelection %} <span style="font-weight: normal; color: #003eff;" data-toggle="tooltip" data-placement="right" title="{{ 'tab.cutlist.warning.is_entity_selection'|i18next }}">({{ 'tab.cutlist.is_selection'|i18next }})</span>{% endif %}{% include 'core/_length-unit-extra.twig' %}{% endblock %}
             {% endembed %}
         </ul>
     {% endif %}
     <div class="ladb-time-and-unit{% if not printPreview|default(false) %} no-screen{% endif %}">{% block timeAndUnitInner %}{{ generateAt|date(('default.date_format'|i18next)) }}{% if lengthUnit is not empty %}<span class="ladb-horizontal-left-separator">{{ ('default.unit_'~lengthUnit)|i18next }}</span>{% endif %}{% endblock %}</div>
     <div class="ladb-file-infos{% if not printPreview|default(false) %} no-screen{% endif %}">
-        <div class="ladb-file-infos-name">{{ modelName ? modelName|escape('html') : (filename ? filename|escape('html') : 'default.empty_filename'|i18next) }}{% if pageName %} - <em>{{ pageName }}</em>{% endif %}</div>
+        <div class="ladb-file-infos-name">{{ modelName ? modelName|escape('html') : (filename ? filename|escape('html') : 'default.empty_filename'|i18next) }}{% if pageName %} - <em>{{ pageName }}</em>{% endif %}{% if modelActivePath %} - <em>{{ modelActivePath|join('/') }}</em>{% endif %}</div>
         {% if modelDescription %}
             <div class="ladb-file-infos-description">{{ modelDescription|escape('html') }}</div>
         {% endif %}
