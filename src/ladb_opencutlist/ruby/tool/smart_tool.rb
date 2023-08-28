@@ -228,6 +228,7 @@ module Ladb::OpenCutList
                   btn.set_style_attribute(:border_color, COLOR_BRAND, :hover)
                   btn.set_style_attribute(:border_color, COLOR_BRAND, :selected)
                   btn.border.set_all!(unit * 0.5)
+                  btn.data = { :option_group => option_group, :option => option }
                   actions_options_panel.append(btn)
 
                     child = get_action_option_btn_child(action, option_group, option)
@@ -237,7 +238,7 @@ module Ladb::OpenCutList
                         child.padding.set!(unit, unit * 2, unit, unit * 2)
                         child.min_size.width = unit * 6
                       elsif child.is_a?(Kuix::Motif2d)
-                        child.line_width = @unit <= 4 ? 0.5 : 1.5
+                        child.line_width = @unit <= 4 ? 0.5 : 1.0
                         child.margin.set_all!(unit)
                         child.min_size.width = unit * 4
                       end
@@ -245,7 +246,16 @@ module Ladb::OpenCutList
                       child.set_style_attribute(:color, Kuix::COLOR_WHITE, :active)
                       btn.append(child)
                       btn.on(:click) { |button|
-                        button.selected = !button.selected?
+                        if get_action_option_group_unique(action, option_group)
+                          b = button.parent.child
+                          until b.nil? do
+                            b.selected = false if b.is_a?(Kuix::Button) && b.data[:option_group] == option_group
+                            b = b.next
+                          end
+                          button.selected = true
+                        else
+                          button.selected = !button.selected?
+                        end
                       }
                     end
 
@@ -437,6 +447,10 @@ module Ladb::OpenCutList
 
     def get_action_modifier_btn_child(action, modifier)
       nil
+    end
+
+    def get_action_option_group_unique(action, option_group)
+      false
     end
 
     def get_action_option_btn_child(action, option_group, option)

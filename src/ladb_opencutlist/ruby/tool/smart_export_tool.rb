@@ -189,6 +189,17 @@ module Ladb::OpenCutList
       super
     end
 
+    def get_action_option_group_unique(action, option_group)
+
+      case option_group
+      when ACTION_OPTION_FILE_FORMAT
+      when ACTION_OPTION_UNIT
+        return true
+      end
+
+      super
+    end
+
     def get_action_option_btn_child(action, option_group, option)
 
       case option_group
