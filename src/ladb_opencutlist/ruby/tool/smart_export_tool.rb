@@ -192,8 +192,7 @@ module Ladb::OpenCutList
     def get_action_option_group_unique(action, option_group)
 
       case option_group
-      when ACTION_OPTION_FILE_FORMAT
-      when ACTION_OPTION_UNIT
+      when ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_UNIT
         return true
       end
 
