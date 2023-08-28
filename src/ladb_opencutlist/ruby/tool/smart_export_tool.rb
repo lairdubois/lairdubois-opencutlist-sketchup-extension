@@ -28,11 +28,11 @@ module Ladb::OpenCutList
     ACTION_OPTION_FILE_FORMAT_SKP = 3
     ACTION_OPTION_FILE_FORMAT_SVG = 4
 
-    ACTION_OPTION_UNIT_IN = 0
-    ACTION_OPTION_UNIT_YD = 1
-    ACTION_OPTION_UNIT_MM = 2
-    ACTION_OPTION_UNIT_CM = 3
-    ACTION_OPTION_UNIT_M = 4
+    ACTION_OPTION_UNIT_IN = DimensionUtils::INCHES
+    ACTION_OPTION_UNIT_FT = DimensionUtils::FEET
+    ACTION_OPTION_UNIT_MM = DimensionUtils::MILLIMETER
+    ACTION_OPTION_UNIT_CM = DimensionUtils::CENTIMETER
+    ACTION_OPTION_UNIT_M = DimensionUtils::METER
 
     ACTION_OPTION_OPTIONS_DEPTH = 0
     ACTION_OPTION_OPTIONS_ANCHOR = 1
@@ -42,7 +42,7 @@ module Ladb::OpenCutList
         :action => ACTION_EXPORT_PART_3D,
         :options => {
           ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_DXF, ACTION_OPTION_FILE_FORMAT_STL, ACTION_OPTION_FILE_FORMAT_OBJ, ACTION_OPTION_FILE_FORMAT_SKP ],
-          ACTION_OPTION_UNIT => [ ACTION_OPTION_UNIT_MM, ACTION_OPTION_UNIT_CM, ACTION_OPTION_UNIT_M, ACTION_OPTION_UNIT_IN, ACTION_OPTION_UNIT_YD ]
+          ACTION_OPTION_UNIT => [ACTION_OPTION_UNIT_MM, ACTION_OPTION_UNIT_CM, ACTION_OPTION_UNIT_M, ACTION_OPTION_UNIT_IN, ACTION_OPTION_UNIT_FT ]
         }
       },
       {
@@ -77,6 +77,9 @@ module Ladb::OpenCutList
       super(true, false)
 
       # Create cursors
+      @cursor_export_part_3d = create_cursor('export-part-3d', 0, 0)
+      @cursor_export_part_2d = create_cursor('export-part-2d', 0, 0)
+
       @cursor_export_skp = create_cursor('export-skp', 0, 0)
       @cursor_export_stl = create_cursor('export-stl', 0, 0)
       @cursor_export_obj = create_cursor('export-obj', 0, 0)
@@ -107,6 +110,13 @@ module Ladb::OpenCutList
     end
 
     def get_action_cursor(action, modifier)
+
+      case action
+      when ACTION_EXPORT_PART_3D
+        return @cursor_export_part_3d
+      when ACTION_EXPORT_PART_2D
+        return @cursor_export_part_2d
+      end
 
       super
     end
@@ -140,15 +150,15 @@ module Ladb::OpenCutList
       when ACTION_OPTION_UNIT
         case option
         when ACTION_OPTION_UNIT_IN
-          return Kuix::Label.new('in')
-        when ACTION_OPTION_UNIT_YD
-          return Kuix::Label.new('yd')
+          return Kuix::Label.new(DimensionUtils::UNIT_STRIPPEDNAME_INCHES)
+        when ACTION_OPTION_UNIT_FT
+          return Kuix::Label.new(DimensionUtils::UNIT_STRIPPEDNAME_FEET)
         when ACTION_OPTION_UNIT_MM
-          return Kuix::Label.new('mm')
+          return Kuix::Label.new(DimensionUtils::UNIT_STRIPPEDNAME_MILLIMETER)
         when ACTION_OPTION_UNIT_CM
-          return Kuix::Label.new('cm')
+          return Kuix::Label.new(DimensionUtils::UNIT_STRIPPEDNAME_CENTIMETER)
         when ACTION_OPTION_UNIT_M
-          return Kuix::Label.new('m')
+          return Kuix::Label.new(DimensionUtils::UNIT_STRIPPEDNAME_METER)
         end
       when ACTION_OPTION_OPTIONS
         case option
@@ -302,6 +312,8 @@ module Ladb::OpenCutList
         input_inner_transforamtion = PathUtils::get_transformation(@input_face_path - @active_part_entity_path)
         input_normal = @input_face.normal.transform(transformation * input_inner_transforamtion)
 
+        inch_offset = Sketchup.active_model.active_view.pixels_to_model(5, Geom::Point3d.new.transform(transformation))
+
         if is_action_export_part_2d?
 
           if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_DEPTH)
@@ -386,16 +398,14 @@ module Ladb::OpenCutList
             box_helper = Kuix::BoxMotif.new
             box_helper.bounds.size.copy!(bounds)
             box_helper.bounds.size.depth = 0
+            box_helper.bounds.apply_offset(inch_offset, inch_offset, 0)
             box_helper.color = Kuix::COLOR_BLACK
             box_helper.line_width = 2
             box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-            box_helper.on_top = true
             face_helper.append(box_helper)
 
             # Axes helper
-            inch_offset = Sketchup.active_model.active_view.pixels_to_model(10, Geom::Point3d.new.transform(transformation))
             axes_helper = Kuix::AxesHelper.new
-            axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(inch_offset, inch_offset, 0))
             axes_helper.box_0.visible = false
             axes_helper.box_z.visible = false
             face_helper.append(axes_helper)
@@ -431,6 +441,7 @@ module Ladb::OpenCutList
             box_helper = Kuix::BoxMotif.new
             box_helper.bounds.origin.copy!(bounds.min)
             box_helper.bounds.size.copy!(bounds)
+            box_helper.bounds.apply_offset(inch_offset, inch_offset, inch_offset)
             box_helper.color = Kuix::COLOR_BLACK
             box_helper.line_width = 2
             box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
@@ -486,9 +497,12 @@ module Ladb::OpenCutList
           mesh.background_color = highlighted ? COLOR_MESH_HIGHLIGHTED : COLOR_MESH
           face_helper.append(mesh)
 
+          inch_offset = Sketchup.active_model.active_view.pixels_to_model(5, Geom::Point3d.new.transform(transformation))
+
           # Box helper
           box_helper = Kuix::BoxMotif.new
           box_helper.bounds.size.copy!(bounds)
+          box_helper.bounds.apply_offset(inch_offset, inch_offset, 0)
           box_helper.color = Kuix::COLOR_BLACK
           box_helper.line_width = 2
           box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
@@ -496,8 +510,6 @@ module Ladb::OpenCutList
 
           # Axes helper
           axes_helper = Kuix::AxesHelper.new
-          inch_offset = Sketchup.active_model.active_view.pixels_to_model(10, Geom::Point3d.new.transform(transformation))
-          axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(inch_offset, inch_offset, 0))
           axes_helper.box_0.visible = false
           axes_helper.box_z.visible = false
           face_helper.append(axes_helper)

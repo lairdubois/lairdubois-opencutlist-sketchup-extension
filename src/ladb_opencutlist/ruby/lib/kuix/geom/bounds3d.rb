@@ -114,6 +114,15 @@ module Ladb::OpenCutList::Kuix
       )
     end
 
+    def apply_offset(offset_x, offset_y, offset_z)
+      @origin.x -= offset_x
+      @size.width += offset_x * 2
+      @origin.y -= offset_y
+      @size.height += offset_y * 2
+      @origin.z -= offset_z
+      @size.depth += offset_z * 2
+    end
+
     # -- Tests --
 
     def is_empty?
