@@ -5,6 +5,7 @@ module Ladb::OpenCutList::Kuix
     attr_accessor :patterns_transformation
     attr_accessor :color
     attr_accessor :line_width, :line_stipple
+    attr_accessor :on_top
 
     def initialize(patterns = [], id = nil)
       super(id)
@@ -15,6 +16,7 @@ module Ladb::OpenCutList::Kuix
       @color = nil
       @line_width = 1
       @line_stipple = LINE_STIPPLE_SOLID
+      @on_top = false
 
       @paths = []
 
@@ -41,7 +43,17 @@ module Ladb::OpenCutList::Kuix
     # -- RENDER --
 
     def paint_content(graphics)
-      @paths.each { |points| graphics.draw_line_strip(points, @color, @line_width, @line_stipple) }
+      @paths.each do |points|
+        if @on_top
+          points2d = points.map { |point| graphics.view.screen_coords(point) }
+          graphics.set_drawing_color(@color)
+          graphics.set_line_width(@line_width)
+          graphics.set_line_stipple(@line_stipple)
+          graphics.view.draw2d(GL_LINE_STRIP, points2d)
+        else
+          graphics.draw_line_strip(points, @color, @line_width, @line_stipple)
+        end
+      end
       super
     end
 

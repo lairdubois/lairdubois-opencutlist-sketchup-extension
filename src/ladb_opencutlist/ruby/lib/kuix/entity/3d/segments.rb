@@ -2,9 +2,9 @@ module Ladb::OpenCutList::Kuix
 
   class Segments < Entity3d
 
-    attr_accessor :on_top
     attr_accessor :color
     attr_accessor :line_width, :line_stipple
+    attr_accessor :on_top
 
     def initialize(id = nil)
       super(id)
@@ -12,11 +12,10 @@ module Ladb::OpenCutList::Kuix
       @color = nil
       @line_width = 1
       @line_stipple = LINE_STIPPLE_SOLID
+      @on_top = false
       @segments = [] # Array<Geom::Point3d>
 
       @points = []
-
-      @on_top = false
 
     end
 

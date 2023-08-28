@@ -135,7 +135,7 @@ module Ladb::OpenCutList
 
           face = face_info.face
           transformation = face_info.transformation
-          depth = DimensionUtils.instance.to_ocl_precision_f(face_info.data[:depth].to_f)
+          depth = face_info.data[:depth].to_f
 
           face.loops.each do |loop|
             coords = []

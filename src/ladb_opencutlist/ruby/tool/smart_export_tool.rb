@@ -24,15 +24,62 @@ module Ladb::OpenCutList
     ACTION_MODIFIER_SVG = 3
     ACTION_MODIFIER_DXF = 4
 
+    ACTION_OPTION_FILE_FORMAT = 0
+    ACTION_OPTION_UNIT = 1
+    ACTION_OPTION_OPTIONS = 2
+
+    ACTION_OPTION_FILE_FORMAT_SKP = 0
+    ACTION_OPTION_FILE_FORMAT_STL = 1
+    ACTION_OPTION_FILE_FORMAT_OBJ = 2
+    ACTION_OPTION_FILE_FORMAT_SVG = 3
+    ACTION_OPTION_FILE_FORMAT_DXF = 4
+
+    ACTION_OPTION_UNIT_IN = 0
+    ACTION_OPTION_UNIT_YD = 1
+    ACTION_OPTION_UNIT_MM = 2
+    ACTION_OPTION_UNIT_CM = 3
+    ACTION_OPTION_UNIT_M = 4
+
+    ACTION_OPTION_OPTIONS_DEPTH = 0
+    ACTION_OPTION_OPTIONS_ANCHOR = 1
+
+    GROUPS = {
+      ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_SVG, ACTION_OPTION_FILE_FORMAT_DXF ],
+      ACTION_OPTION_UNIT => [ ACTION_OPTION_UNIT_MM, ACTION_OPTION_UNIT_CM, ACTION_OPTION_UNIT_IN ],
+      ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_DEPTH, ACTION_OPTION_OPTIONS_ANCHOR ]
+    }
+
     ACTIONS = [
-      { :action => ACTION_EXPORT_PART_3D, :modifiers => [ACTION_MODIFIER_SKP, ACTION_MODIFIER_STL, ACTION_MODIFIER_OBJ, ACTION_MODIFIER_DXF ] },
-      { :action => ACTION_EXPORT_PART_2D, :modifiers => [ACTION_MODIFIER_SVG, ACTION_MODIFIER_DXF ] },
-      { :action => ACTION_EXPORT_FACE, :modifiers => [ ACTION_MODIFIER_SVG, ACTION_MODIFIER_DXF ] },
+      {
+        :action => ACTION_EXPORT_PART_3D,
+        :options => {
+          ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_SKP, ACTION_OPTION_FILE_FORMAT_STL, ACTION_OPTION_FILE_FORMAT_OBJ, ACTION_OPTION_FILE_FORMAT_DXF ],
+          ACTION_OPTION_UNIT => [ ACTION_OPTION_UNIT_MM, ACTION_OPTION_UNIT_CM, ACTION_OPTION_UNIT_M, ACTION_OPTION_UNIT_IN, ACTION_OPTION_UNIT_YD ]
+        }
+      },
+      {
+        :action => ACTION_EXPORT_PART_2D,
+        :options => {
+          ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_SVG, ACTION_OPTION_FILE_FORMAT_DXF ],
+          ACTION_OPTION_UNIT => [ ACTION_OPTION_UNIT_MM, ACTION_OPTION_UNIT_CM, ACTION_OPTION_UNIT_IN ],
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_DEPTH, ACTION_OPTION_OPTIONS_ANCHOR ]
+        }
+      },
+      {
+        :action => ACTION_EXPORT_FACE,
+        :options => {
+          ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_SVG, ACTION_OPTION_FILE_FORMAT_DXF ],
+          ACTION_OPTION_UNIT => [ ACTION_OPTION_UNIT_MM, ACTION_OPTION_UNIT_CM, ACTION_OPTION_UNIT_IN ]
+        }
+      },
+      # { :action => ACTION_EXPORT_PART_3D, :modifiers => [ ACTION_MODIFIER_SKP, ACTION_MODIFIER_STL, ACTION_MODIFIER_OBJ, ACTION_MODIFIER_DXF ] },
+      # { :action => ACTION_EXPORT_PART_2D, :modifiers => [ ACTION_MODIFIER_SVG, ACTION_MODIFIER_DXF ] },
+      # { :action => ACTION_EXPORT_FACE, :modifiers => [ ACTION_MODIFIER_SVG, ACTION_MODIFIER_DXF ] },
     ].freeze
 
-    COLOR_MESH = Sketchup::Color.new(200, 200, 0, 100).freeze
+    COLOR_MESH = Sketchup::Color.new(200, 200, 0, 150).freeze
     COLOR_MESH_HIGHLIGHTED = Sketchup::Color.new(200, 200, 0, 200).freeze
-    COLOR_MESH_DEEP = Sketchup::Color.new(50, 50, 0, 100).freeze
+    COLOR_MESH_DEEP = Sketchup::Color.new(50, 50, 0, 150).freeze
     COLOR_ACTION = Kuix::COLOR_MAGENTA
     COLOR_ACTION_FILL = Sketchup::Color.new(255, 0, 255, 51).freeze
     COLOR_ACTION_FILL_HIGHLIGHTED = Sketchup::Color.new(255, 0, 255, 102).freeze
@@ -142,6 +189,69 @@ module Ladb::OpenCutList
       super
     end
 
+    def get_action_option_btn_child(action, option_group, option)
+
+      case option_group
+      when ACTION_OPTION_FILE_FORMAT
+        case option
+        when ACTION_OPTION_FILE_FORMAT_SKP
+          lbl = Kuix::Label.new
+          lbl.text = 'SKP'
+          return lbl
+        when ACTION_OPTION_FILE_FORMAT_STL
+          lbl = Kuix::Label.new
+          lbl.text = 'STL'
+          return lbl
+        when ACTION_OPTION_FILE_FORMAT_OBJ
+          lbl = Kuix::Label.new
+          lbl.text = 'OBJ'
+          return lbl
+        when ACTION_OPTION_FILE_FORMAT_SVG
+          lbl = Kuix::Label.new
+          lbl.text = 'SVG'
+          return lbl
+        when ACTION_OPTION_FILE_FORMAT_DXF
+          lbl = Kuix::Label.new
+          lbl.text = 'DXF'
+          return lbl
+        end
+      when ACTION_OPTION_UNIT
+        case option
+        when ACTION_OPTION_UNIT_IN
+          lbl = Kuix::Label.new
+          lbl.text = 'in'
+          return lbl
+        when ACTION_OPTION_UNIT_YD
+          lbl = Kuix::Label.new
+          lbl.text = 'yd'
+          return lbl
+        when ACTION_OPTION_UNIT_MM
+          lbl = Kuix::Label.new
+          lbl.text = 'mm'
+          return lbl
+        when ACTION_OPTION_UNIT_CM
+          lbl = Kuix::Label.new
+          lbl.text = 'cm'
+          return lbl
+        when ACTION_OPTION_UNIT_M
+          lbl = Kuix::Label.new
+          lbl.text = 'm'
+          return lbl
+        end
+      when ACTION_OPTION_OPTIONS
+        case option
+        when ACTION_OPTION_OPTIONS_ANCHOR
+          motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.273,0L0.273,0.727L1,0.727 M0.091,0.545L0.455,0.545L0.455,0.909L0.091,0.909L0.091,0.545 M0.091,0.182L0.273,0L0.455,0.182 M0.818,0.545L1,0.727L0.818,0.909'))
+          return motif
+        when ACTION_OPTION_OPTIONS_DEPTH
+          motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.5,0.083L1,0.333L0.75,0.458L0.5,0.333L0.25,0.458L0,0.333L0.5,0.083Z M0.5,0.833L0.25,0.708L0.5,0.583L0.75,0.708L0.5,0.833Z'))
+          return motif
+        end
+      end
+
+      super
+    end
+
     def store_action(action)
       @@action = action
     end
@@ -156,22 +266,6 @@ module Ladb::OpenCutList
 
     def fetch_action_modifier(action)
       @@action_modifiers[action]
-    end
-
-    def store_action_material(action, material)
-      @@action_materials[action] = material
-    end
-
-    def fetch_action_material(action)
-      @@action_materials[action]
-    end
-
-    def store_action_filters(action, filters)
-      @@action_filters[action] = filters
-    end
-
-    def fetch_action_filters(action)
-      @@action_filters[action]
     end
 
     def is_action_export_part_3d?
@@ -268,7 +362,13 @@ module Ladb::OpenCutList
       if part
 
         # Show part infos
-        notify_infos(part.name)
+
+        infos = [ "#{part.length} x #{part.width} x #{part.thickness}" ]
+        infos << "#{part.material_name} (#{Plugin.instance.get_i18n_string("tab.materials.type_#{part.group.material_type}")})" unless part.material_name.empty?
+        infos << Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.5,0L0.5,0.2 M0.5,0.4L0.5,0.6 M0.5,0.8L0.5,1 M0,0.2L0.3,0.5L0,0.8L0,0.2 M1,0.2L0.7,0.5L1,0.8L1,0.2')) if part.flipped
+        infos << Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.6,0L0.4,0 M0.6,0.4L0.8,0.2L0.5,0.2 M0.8,0.2L0.8,0.5 M0.8,0L1,0L1,0.2 M1,0.4L1,0.6 M1,0.8L1,1L0.8,1 M0.2,0L0,0L0,0.2 M0,1L0,0.4L0.6,0.4L0.6,1L0,1')) if part.resized
+
+        notify_infos(part.name, infos)
 
         active_instance = @active_part_entity_path.last
         transformation = PathUtils::get_transformation(@active_part_entity_path)
@@ -305,7 +405,8 @@ module Ladb::OpenCutList
           end
 
           # Change axis transformation
-          t =  Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
+          t = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
+          t = t * Geom::Transformation.scaling(-1, 1, 1) if TransformationUtils.flipped?(transformation)
           ti = t.inverse
 
           # Compute new bounds
@@ -315,14 +416,14 @@ module Ladb::OpenCutList
           end
 
           # Compute face distance to 0
-          o = Geom::Point3d.new(bounds.min.x, bounds.min.y, bounds.max.z)
+          origin = Geom::Point3d.new(bounds.min.x, bounds.min.y, bounds.max.z)
           @active_face_infos.each do |face_info|
 
             point = face_info.face.vertices.first.position
             vector = face_info.face.normal
             plane = [ point.transform(ti * face_info.transformation), vector.transform(ti * face_info.transformation) ]
 
-            face_info.data[:depth] = o.distance_to_plane(plane)
+            face_info.data[:depth] = origin.distance_to_plane(plane)
 
           end
 
@@ -358,6 +459,7 @@ module Ladb::OpenCutList
             box_helper.color = Kuix::COLOR_BLACK
             box_helper.line_width = 2
             box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+            box_helper.on_top = true
             face_helper.append(box_helper)
 
             # Axes helper
