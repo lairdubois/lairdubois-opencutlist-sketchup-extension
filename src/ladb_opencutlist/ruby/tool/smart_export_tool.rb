@@ -18,21 +18,15 @@ module Ladb::OpenCutList
     ACTION_EXPORT_PART_2D = 1
     ACTION_EXPORT_FACE = 2
 
-    ACTION_MODIFIER_SKP = 0
-    ACTION_MODIFIER_STL = 1
-    ACTION_MODIFIER_OBJ = 2
-    ACTION_MODIFIER_SVG = 3
-    ACTION_MODIFIER_DXF = 4
-
     ACTION_OPTION_FILE_FORMAT = 0
     ACTION_OPTION_UNIT = 1
     ACTION_OPTION_OPTIONS = 2
 
-    ACTION_OPTION_FILE_FORMAT_SKP = 0
+    ACTION_OPTION_FILE_FORMAT_DXF = 0
     ACTION_OPTION_FILE_FORMAT_STL = 1
     ACTION_OPTION_FILE_FORMAT_OBJ = 2
-    ACTION_OPTION_FILE_FORMAT_SVG = 3
-    ACTION_OPTION_FILE_FORMAT_DXF = 4
+    ACTION_OPTION_FILE_FORMAT_SKP = 3
+    ACTION_OPTION_FILE_FORMAT_SVG = 4
 
     ACTION_OPTION_UNIT_IN = 0
     ACTION_OPTION_UNIT_YD = 1
@@ -43,24 +37,18 @@ module Ladb::OpenCutList
     ACTION_OPTION_OPTIONS_DEPTH = 0
     ACTION_OPTION_OPTIONS_ANCHOR = 1
 
-    GROUPS = {
-      ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_SVG, ACTION_OPTION_FILE_FORMAT_DXF ],
-      ACTION_OPTION_UNIT => [ ACTION_OPTION_UNIT_MM, ACTION_OPTION_UNIT_CM, ACTION_OPTION_UNIT_IN ],
-      ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_DEPTH, ACTION_OPTION_OPTIONS_ANCHOR ]
-    }
-
     ACTIONS = [
       {
         :action => ACTION_EXPORT_PART_3D,
         :options => {
-          ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_SKP, ACTION_OPTION_FILE_FORMAT_STL, ACTION_OPTION_FILE_FORMAT_OBJ, ACTION_OPTION_FILE_FORMAT_DXF ],
+          ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_DXF, ACTION_OPTION_FILE_FORMAT_STL, ACTION_OPTION_FILE_FORMAT_OBJ, ACTION_OPTION_FILE_FORMAT_SKP ],
           ACTION_OPTION_UNIT => [ ACTION_OPTION_UNIT_MM, ACTION_OPTION_UNIT_CM, ACTION_OPTION_UNIT_M, ACTION_OPTION_UNIT_IN, ACTION_OPTION_UNIT_YD ]
         }
       },
       {
         :action => ACTION_EXPORT_PART_2D,
         :options => {
-          ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_SVG, ACTION_OPTION_FILE_FORMAT_DXF ],
+          ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_DXF, ACTION_OPTION_FILE_FORMAT_SVG ],
           ACTION_OPTION_UNIT => [ ACTION_OPTION_UNIT_MM, ACTION_OPTION_UNIT_CM, ACTION_OPTION_UNIT_IN ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_DEPTH, ACTION_OPTION_OPTIONS_ANCHOR ]
         }
@@ -68,13 +56,10 @@ module Ladb::OpenCutList
       {
         :action => ACTION_EXPORT_FACE,
         :options => {
-          ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_SVG, ACTION_OPTION_FILE_FORMAT_DXF ],
+          ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_DXF, ACTION_OPTION_FILE_FORMAT_SVG ],
           ACTION_OPTION_UNIT => [ ACTION_OPTION_UNIT_MM, ACTION_OPTION_UNIT_CM, ACTION_OPTION_UNIT_IN ]
         }
       },
-      # { :action => ACTION_EXPORT_PART_3D, :modifiers => [ ACTION_MODIFIER_SKP, ACTION_MODIFIER_STL, ACTION_MODIFIER_OBJ, ACTION_MODIFIER_DXF ] },
-      # { :action => ACTION_EXPORT_PART_2D, :modifiers => [ ACTION_MODIFIER_SVG, ACTION_MODIFIER_DXF ] },
-      # { :action => ACTION_EXPORT_FACE, :modifiers => [ ACTION_MODIFIER_SVG, ACTION_MODIFIER_DXF ] },
     ].freeze
 
     COLOR_MESH = Sketchup::Color.new(200, 200, 0, 150).freeze
@@ -86,11 +71,10 @@ module Ladb::OpenCutList
 
     @@action = nil
     @@action_modifiers = {} # { action => MODIFIER }
+    @@action_options = {} # { action => { OPTION_GROUP => { OPTION => bool } } }
 
     def initialize(material = nil)
       super(true, false)
-
-      @selected_faces = []
 
       # Create cursors
       @cursor_export_skp = create_cursor('export-skp', 0, 0)
@@ -124,72 +108,10 @@ module Ladb::OpenCutList
 
     def get_action_cursor(action, modifier)
 
-      case modifier
-      when ACTION_MODIFIER_SKP
-        return @cursor_export_skp
-      when ACTION_MODIFIER_STL
-        return @cursor_export_stl
-      when ACTION_MODIFIER_OBJ
-        return @cursor_export_obj
-      when ACTION_MODIFIER_DXF
-        return @cursor_export_dxf
-      when ACTION_MODIFIER_SVG
-        return @cursor_export_svg
-      end
-
       super
     end
 
-    def get_action_modifier_btn_child(action, modifier)
-
-      case action
-      when ACTION_EXPORT_PART_3D
-        case modifier
-        when ACTION_MODIFIER_SKP
-          lbl = Kuix::Label.new
-          lbl.text = 'SKP'
-          return lbl
-        when ACTION_MODIFIER_STL
-          lbl = Kuix::Label.new
-          lbl.text = 'STL'
-          return lbl
-        when ACTION_MODIFIER_OBJ
-          lbl = Kuix::Label.new
-          lbl.text = 'OBJ'
-          return lbl
-        when ACTION_MODIFIER_DXF
-          lbl = Kuix::Label.new
-          lbl.text = 'DXF'
-          return lbl
-        end
-      when ACTION_EXPORT_PART_2D
-        case modifier
-        when ACTION_MODIFIER_DXF
-          lbl = Kuix::Label.new
-          lbl.text = 'DXF'
-          return lbl
-        when ACTION_MODIFIER_SVG
-          lbl = Kuix::Label.new
-          lbl.text = 'SVG'
-          return lbl
-        end
-      when ACTION_EXPORT_FACE
-        case modifier
-        when ACTION_MODIFIER_DXF
-          lbl = Kuix::Label.new
-          lbl.text = 'DXF'
-          return lbl
-        when ACTION_MODIFIER_SVG
-          lbl = Kuix::Label.new
-          lbl.text = 'SVG'
-          return lbl
-        end
-      end
-
-      super
-    end
-
-    def get_action_option_group_unique(action, option_group)
+    def get_action_option_group_unique?(action, option_group)
 
       case option_group
       when ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_UNIT
@@ -205,57 +127,35 @@ module Ladb::OpenCutList
       when ACTION_OPTION_FILE_FORMAT
         case option
         when ACTION_OPTION_FILE_FORMAT_SKP
-          lbl = Kuix::Label.new
-          lbl.text = 'SKP'
-          return lbl
+          return Kuix::Label.new('SKP')
         when ACTION_OPTION_FILE_FORMAT_STL
-          lbl = Kuix::Label.new
-          lbl.text = 'STL'
-          return lbl
+          return Kuix::Label.new('STL')
         when ACTION_OPTION_FILE_FORMAT_OBJ
-          lbl = Kuix::Label.new
-          lbl.text = 'OBJ'
-          return lbl
-        when ACTION_OPTION_FILE_FORMAT_SVG
-          lbl = Kuix::Label.new
-          lbl.text = 'SVG'
-          return lbl
+          return Kuix::Label.new('OBJ')
         when ACTION_OPTION_FILE_FORMAT_DXF
-          lbl = Kuix::Label.new
-          lbl.text = 'DXF'
-          return lbl
+          return Kuix::Label.new('DXF')
+        when ACTION_OPTION_FILE_FORMAT_SVG
+          return Kuix::Label.new('SVG')
         end
       when ACTION_OPTION_UNIT
         case option
         when ACTION_OPTION_UNIT_IN
-          lbl = Kuix::Label.new
-          lbl.text = 'in'
-          return lbl
+          return Kuix::Label.new('in')
         when ACTION_OPTION_UNIT_YD
-          lbl = Kuix::Label.new
-          lbl.text = 'yd'
-          return lbl
+          return Kuix::Label.new('yd')
         when ACTION_OPTION_UNIT_MM
-          lbl = Kuix::Label.new
-          lbl.text = 'mm'
-          return lbl
+          return Kuix::Label.new('mm')
         when ACTION_OPTION_UNIT_CM
-          lbl = Kuix::Label.new
-          lbl.text = 'cm'
-          return lbl
+          return Kuix::Label.new('cm')
         when ACTION_OPTION_UNIT_M
-          lbl = Kuix::Label.new
-          lbl.text = 'm'
-          return lbl
+          return Kuix::Label.new('m')
         end
       when ACTION_OPTION_OPTIONS
         case option
         when ACTION_OPTION_OPTIONS_ANCHOR
-          motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.273,0L0.273,0.727L1,0.727 M0.091,0.545L0.455,0.545L0.455,0.909L0.091,0.909L0.091,0.545 M0.091,0.182L0.273,0L0.455,0.182 M0.818,0.545L1,0.727L0.818,0.909'))
-          return motif
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.273,0L0.273,0.727L1,0.727 M0.091,0.545L0.455,0.545L0.455,0.909L0.091,0.909L0.091,0.545 M0.091,0.182L0.273,0L0.455,0.182 M0.818,0.545L1,0.727L0.818,0.909'))
         when ACTION_OPTION_OPTIONS_DEPTH
-          motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.5,0.083L1,0.333L0.75,0.458L0.5,0.333L0.25,0.458L0,0.333L0.5,0.083Z M0.5,0.833L0.25,0.708L0.5,0.583L0.75,0.708L0.5,0.833Z'))
-          return motif
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.5,0.083L1,0.333L0.75,0.458L0.5,0.333L0.25,0.458L0,0.333L0.5,0.083Z M0.5,0.833L0.25,0.708L0.5,0.583L0.75,0.708L0.5,0.833Z'))
         end
       end
 
@@ -278,6 +178,42 @@ module Ladb::OpenCutList
       @@action_modifiers[action]
     end
 
+    def store_action_option(action, option_group, option, enabled)
+      @@action_options[action] = {} if @@action_options[action].nil?
+      @@action_options[action][option_group] = {} if @@action_options[action][option_group].nil?
+      @@action_options[action][option_group][option] = enabled
+    end
+
+    def fetch_action_option(action, option_group, option)
+      return get_startup_action_option(action, option_group, option) if @@action_options[action].nil? || @@action_options[action][option_group].nil? || @@action_options[action][option_group][option].nil?
+      @@action_options[action][option_group][option]
+    end
+
+    def get_startup_action_option(action, option_group, option)
+
+      case option_group
+      when ACTION_OPTION_FILE_FORMAT
+        case option
+        when ACTION_OPTION_FILE_FORMAT_DXF
+          return true
+        end
+      when ACTION_OPTION_UNIT
+        case option
+        when ACTION_OPTION_UNIT_IN
+          return !DimensionUtils.instance.model_unit_is_metric
+        when ACTION_OPTION_UNIT_MM
+          return DimensionUtils.instance.model_unit_is_metric
+        end
+      when ACTION_OPTION_OPTIONS
+        case option
+        when ACTION_OPTION_OPTIONS_DEPTH
+          return true
+        end
+      end
+
+      false
+    end
+
     def is_action_export_part_3d?
       fetch_action == ACTION_EXPORT_PART_3D
     end
@@ -288,26 +224,6 @@ module Ladb::OpenCutList
 
     def is_action_export_face?
       fetch_action == ACTION_EXPORT_FACE
-    end
-
-    def is_action_modifier_skp?
-      fetch_action_modifier(fetch_action) == ACTION_MODIFIER_SKP
-    end
-
-    def is_action_modifier_stl?
-      fetch_action_modifier(fetch_action) == ACTION_MODIFIER_STL
-    end
-
-    def is_action_modifier_obj?
-      fetch_action_modifier(fetch_action) == ACTION_MODIFIER_OBJ
-    end
-
-    def is_action_modifier_dxf?
-      fetch_action_modifier(fetch_action) == ACTION_MODIFIER_DXF
-    end
-
-    def is_action_modifier_svg?
-      fetch_action_modifier(fetch_action) == ACTION_MODIFIER_SVG
     end
 
     # -- Events --
@@ -388,7 +304,11 @@ module Ladb::OpenCutList
 
         if is_action_export_part_2d?
 
-          @active_face_infos = _get_face_infos_by_normal(active_instance.definition.entities, input_normal, transformation)
+          if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_DEPTH)
+            @active_face_infos = _get_face_infos_by_normal(active_instance.definition.entities, input_normal, transformation)
+          else
+            @active_face_infos = []
+          end
           if @active_face_infos.empty?
             @active_face_infos = [ FaceInfo.new(@input_face, input_inner_transforamtion)  ]
           end
@@ -662,13 +582,13 @@ module Ladb::OpenCutList
           instance_info = @active_part.def.instance_infos.values.first
           options = {}
           file_format = nil
-          if is_action_modifier_skp?
+          if fetch_action_option(ACTION_EXPORT_PART_3D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_SKP)
             file_format = FILE_FORMAT_SKP
-          elsif is_action_modifier_stl?
+          elsif fetch_action_option(ACTION_EXPORT_PART_3D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_STL)
             file_format = FILE_FORMAT_STL
-          elsif is_action_modifier_obj?
+          elsif fetch_action_option(ACTION_EXPORT_PART_3D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_OBJ)
             file_format = FILE_FORMAT_OBJ
-          elsif is_action_modifier_dxf?
+          elsif fetch_action_option(ACTION_EXPORT_PART_3D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
             file_format = FILE_FORMAT_DXF
           end
 
@@ -687,9 +607,9 @@ module Ladb::OpenCutList
 
           options = {}
           file_format = nil
-          if is_action_modifier_dxf?
+          if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
             file_format = FILE_FORMAT_DXF
-          elsif is_action_modifier_svg?
+          elsif fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_SVG)
             file_format = FILE_FORMAT_SVG
           end
 

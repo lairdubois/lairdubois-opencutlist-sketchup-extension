@@ -4,9 +4,9 @@ module Ladb::OpenCutList::Kuix
 
     attr_reader :text, :text_options
 
-    def initialize(id = '')
+    def initialize(text = '', id = '')
       super(id)
-      @text = ''
+      @text = text
       @text_options = {
           :font => 'Verdana',
           :size => 15,

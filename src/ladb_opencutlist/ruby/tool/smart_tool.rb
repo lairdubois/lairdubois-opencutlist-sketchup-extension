@@ -229,6 +229,7 @@ module Ladb::OpenCutList
                   btn.set_style_attribute(:border_color, COLOR_BRAND, :selected)
                   btn.border.set_all!(unit * 0.5)
                   btn.data = { :option_group => option_group, :option => option }
+                  btn.selected = fetch_action_option(action, option_group, option)
                   actions_options_panel.append(btn)
 
                     child = get_action_option_btn_child(action, option_group, option)
@@ -246,15 +247,20 @@ module Ladb::OpenCutList
                       child.set_style_attribute(:color, Kuix::COLOR_WHITE, :active)
                       btn.append(child)
                       btn.on(:click) { |button|
-                        if get_action_option_group_unique(action, option_group)
+                        if get_action_option_group_unique?(action, option_group)
                           b = button.parent.child
                           until b.nil? do
-                            b.selected = false if b.is_a?(Kuix::Button) && b.data[:option_group] == option_group
+                            if b.is_a?(Kuix::Button) && b.data[:option_group] == option_group
+                              b.selected = false
+                              store_action_option(action, option_group, b.data[:option], false)
+                            end
                             b = b.next
                           end
                           button.selected = true
+                          store_action_option(action, option_group, option, true)
                         else
                           button.selected = !button.selected?
+                          store_action_option(action, option_group, option, button.selected?)
                         end
                       }
                     end
@@ -449,7 +455,7 @@ module Ladb::OpenCutList
       nil
     end
 
-    def get_action_option_group_unique(action, option_group)
+    def get_action_option_group_unique?(action, option_group)
       false
     end
 
@@ -473,8 +479,21 @@ module Ladb::OpenCutList
       # Implemented in derived class : @@action_modifiers[action]
     end
 
+    def store_action_option(action, option_group, option, enabled)
+      # Implemented in derived class : @@action_options[action][option_group][option] = enabled
+    end
+
+    def fetch_action_option(action, option_group, option)
+      # Implemented in derived class : @@action_options[action][option_group][option]
+      false
+    end
+
     def get_startup_action
       fetch_action.nil? ? get_action_defs.first[:action] : fetch_action
+    end
+
+    def get_startup_action_option(action, option_group, option)
+      false
     end
 
     def set_action(action, modifier = nil)
