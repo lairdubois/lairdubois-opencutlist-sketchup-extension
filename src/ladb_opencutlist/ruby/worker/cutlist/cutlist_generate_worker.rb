@@ -9,9 +9,9 @@ module Ladb::OpenCutList
   require_relative '../../model/cutlist/face_info'
   require_relative '../../model/cutlist/instance_info'
   require_relative '../../model/cutlist/material_usage'
-  require_relative '../../model/cutlist/groupdef'
+  require_relative '../../model/cutlist/group_def'
   require_relative '../../model/cutlist/group'
-  require_relative '../../model/cutlist/partdef'
+  require_relative '../../model/cutlist/part_def'
   require_relative '../../model/cutlist/part'
   require_relative '../../utils/transformation_utils'
   require_relative '../../tool/highlight_part_tool'
@@ -105,11 +105,12 @@ module Ladb::OpenCutList
       dir, filename = File.split(model && !model.path.empty? ? model.path : Plugin.instance.get_i18n_string('default.empty_filename'))
       model_name = model ? model.name : ''
       model_description = model ? model.description : ''
+      model_active_path = model ? PathUtils.get_named_path(model.active_path, true, 0) : nil
       page_name = model && model.pages && model.pages.selected_page ? model.pages.selected_page.name : ''
       page_description = model && model.pages && model.pages.selected_page ? model.pages.selected_page.description : ''
 
       # Create cut list
-      cutlist = Cutlist.new(dir, filename, model_name, model_description, page_name, page_description, is_entity_selection, length_unit, mass_unit_strippedname, currency_symbol, @instance_infos_cache.length)
+      cutlist = Cutlist.new(dir, filename, model_name, model_description, model_active_path, page_name, page_description, is_entity_selection, length_unit, mass_unit_strippedname, currency_symbol, @instance_infos_cache.length)
 
       # Errors & tips
       if @instance_infos_cache.length == 0
@@ -617,7 +618,7 @@ module Ladb::OpenCutList
         part_def.store_instance_info(instance_info)
 
         if group_def.material_type != MaterialAttributes::TYPE_UNKNOWN
-          if group_def.material_type == MaterialAttributes::TYPE_DIMENSIONAL
+          if group_def.material_type == MaterialAttributes::TYPE_SOLID_WOOD || group_def.material_type == MaterialAttributes::TYPE_DIMENSIONAL
             group_def.total_cutting_length += part_def.cutting_size.length
           end
           if group_def.material_type == MaterialAttributes::TYPE_SOLID_WOOD || group_def.material_type == MaterialAttributes::TYPE_SHEET_GOOD

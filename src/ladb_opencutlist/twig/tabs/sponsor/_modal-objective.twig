@@ -6,7 +6,7 @@
 {% block bodyInner %}
     <div class="media">
         <div class="media-left">
-            <i class="ladb-opencutlist-icon-{{ objectiveStrippedName == 'default' ? 'sponsor' : objectiveStrippedName }} ladb-opencutlist-icon-xl"></i>
+            <i class="ladb-opencutlist-icon-{{ objectiveIcon == 'default' ? 'sponsor' : objectiveIcon }} ladb-opencutlist-icon-xl"></i>
         </div>
         <div class="media-body">
             <p>{{ ('tab.sponsor.objective_details.'~objectiveStrippedName)|i18next }}</p>

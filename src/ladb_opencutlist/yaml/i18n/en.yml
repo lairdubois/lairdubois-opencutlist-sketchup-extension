@@ -1272,7 +1272,7 @@ tab:
         The ongoing improvement of *OpenCutList* is important to us and the project continues to need your help for its next update!
       cuttingdiagram_export: |
         It is important to us that *OpenCutList* can be adapted to the very different expectations of the users for the *cutting diagram* function.
-        To further expand the possibilities, we would like to enable the export of layout diagrams in **SVG** format.
+        To further expand the possibilities, we would like to enable the export of layout diagrams in **SVG** and **DXF** format.
         By providing us with the means to work on these exports, you are giving us the opportunity to help you get the most out of *OpenCutList*.
       layout: |
         The objective of this module is to allow you to easily print a preview of your project as an **exploded view** with identification from information generated in the parts list.

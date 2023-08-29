@@ -77,7 +77,6 @@ module Ladb::OpenCutList
 
     def setup_entities(view)
 
-      # @canvas.layout = Kuix::BorderLayout.new
       @canvas.layout = Kuix::StaticLayout.new
 
       unit = get_unit(view)
@@ -95,6 +94,7 @@ module Ladb::OpenCutList
         actions.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
         actions.layout = Kuix::BorderLayout.new
         actions.set_style_attribute(:background_color, COLOR_BRAND_DARK)
+        @actions_panel = actions
         @top_panel.append(actions)
 
           actions_lbl = Kuix::Label.new
@@ -112,7 +112,8 @@ module Ladb::OpenCutList
           actions.append(actions_btns_panel)
 
           @action_buttons = []
-          get_action_defs.each { |action_def|
+          @actions_options_panels = []
+          get_action_defs.each do |action_def|
 
             action = action_def[:action]
             modifiers = action_def[:modifiers]
@@ -125,7 +126,7 @@ module Ladb::OpenCutList
             actions_btn = Kuix::Button.new
             actions_btn.layout = Kuix::BorderLayout.new
             actions_btn.border.set!(0, unit / 4, 0, unit / 4)
-            actions_btn.min_size.set_all!(unit * 9)
+            actions_btn.min_size.set_all!(unit * 10)
             actions_btn.set_style_attribute(:border_color, COLOR_BRAND_DARK.blend(Kuix::COLOR_WHITE, 0.8))
             actions_btn.set_style_attribute(:border_color, COLOR_BRAND_LIGHT, :hover)
             actions_btn.set_style_attribute(:border_color, COLOR_BRAND, :selected)
@@ -148,6 +149,7 @@ module Ladb::OpenCutList
               hide_message
             }
             actions_btns_panel.append(actions_btn)
+            @action_buttons.push(actions_btn)
 
             if modifiers.is_a?(Array)
 
@@ -188,9 +190,88 @@ module Ladb::OpenCutList
 
             end
 
-            @action_buttons.push(actions_btn)
+            # Options Panels
 
-          }
+            options = action_def[:options]
+            if options.is_a?(Hash)
+
+              actions_options_panel = Kuix::Panel.new
+              actions_options_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
+              actions_options_panel.layout = Kuix::InlineLayout.new(true, unit, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+              actions_options_panel.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
+              actions_options_panel.min_size.set!(0, unit * 10)
+              actions_options_panel.data = { :action => action }
+              @actions_options_panels.push(actions_options_panel)
+
+              options.each do |option_group, options|
+
+                lbl = Kuix::Label.new
+                lbl.text = Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_option_group_#{option_group}")
+                lbl.text_bold = true
+                lbl.text_size = unit * 3 * get_text_unit_factor
+                if actions_options_panel.child
+                  lbl.margin.left = unit * 3
+                  lbl.border.left = unit * 0.2
+                  lbl.padding.left = unit * 3
+                  lbl.set_style_attribute(:border_color, Kuix::COLOR_BLACK)
+                end
+                actions_options_panel.append(lbl)
+
+                options.each do |option|
+
+                  btn = Kuix::Button.new
+                  btn.layout = Kuix::GridLayout.new
+                  btn.set_style_attribute(:background_color, Sketchup::Color.new(240, 240, 240))
+                  btn.set_style_attribute(:background_color, Kuix::COLOR_WHITE, :selected)
+                  btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
+                  btn.set_style_attribute(:background_color, COLOR_BRAND, :active)
+                  btn.set_style_attribute(:border_color, COLOR_BRAND, :hover)
+                  btn.set_style_attribute(:border_color, COLOR_BRAND, :selected)
+                  btn.border.set_all!(unit * 0.5)
+                  btn.data = { :option_group => option_group, :option => option }
+                  btn.selected = fetch_action_option(action, option_group, option)
+                  actions_options_panel.append(btn)
+
+                    child = get_action_option_btn_child(action, option_group, option)
+                    if child
+                      if child.is_a?(Kuix::Label)
+                        child.text_size = unit * 3 * get_text_unit_factor if child.respond_to?(:text_size=)
+                        child.padding.set!(unit, unit * 2, unit, unit * 2)
+                        child.min_size.width = unit * 6
+                      elsif child.is_a?(Kuix::Motif2d)
+                        child.line_width = @unit <= 4 ? 0.5 : 1.0
+                        child.margin.set_all!(unit)
+                        child.min_size.width = unit * 4
+                      end
+                      child.set_style_attribute(:color, Kuix::COLOR_BLACK)
+                      child.set_style_attribute(:color, Kuix::COLOR_WHITE, :active)
+                      btn.append(child)
+                      btn.on(:click) { |button|
+                        if get_action_option_group_unique?(action, option_group)
+                          b = button.parent.child
+                          until b.nil? do
+                            if b.is_a?(Kuix::Button) && b.data[:option_group] == option_group
+                              b.selected = false
+                              store_action_option(action, option_group, b.data[:option], false)
+                            end
+                            b = b.next
+                          end
+                          button.selected = true
+                          store_action_option(action, option_group, option, true)
+                        else
+                          button.selected = !button.selected?
+                          store_action_option(action, option_group, option, button.selected?)
+                        end
+                      }
+                    end
+
+                end
+
+              end
+
+            end
+
+          end
 
           # Help Button
 
@@ -357,7 +438,7 @@ module Ladb::OpenCutList
 
     # -- Actions --
 
-    def get_action_defs  # Array<{ :action => THE_ACTION, :modifiers => [ MODIFIER_1, MODIFIER_2, ... ] }>
+    def get_action_defs  # Array<{ :action => THE_ACTION, :modifiers => [ MODIFIER_1, MODIFIER_2, ... ], :options => { OPTION_GROUP_1 => [ OPTION_1, OPTION_2 ] } }>
       []
     end
 
@@ -371,6 +452,14 @@ module Ladb::OpenCutList
     end
 
     def get_action_modifier_btn_child(action, modifier)
+      nil
+    end
+
+    def get_action_option_group_unique?(action, option_group)
+      false
+    end
+
+    def get_action_option_btn_child(action, option_group, option)
       nil
     end
 
@@ -390,8 +479,21 @@ module Ladb::OpenCutList
       # Implemented in derived class : @@action_modifiers[action]
     end
 
+    def store_action_option(action, option_group, option, enabled)
+      # Implemented in derived class : @@action_options[action][option_group][option] = enabled
+    end
+
+    def fetch_action_option(action, option_group, option)
+      # Implemented in derived class : @@action_options[action][option_group][option]
+      false
+    end
+
     def get_startup_action
       fetch_action.nil? ? get_action_defs.first[:action] : fetch_action
+    end
+
+    def get_startup_action_option(action, option_group, option)
+      false
     end
 
     def set_action(action, modifier = nil)
@@ -407,6 +509,15 @@ module Ladb::OpenCutList
           button.data[:modifier_buttons].each do |modifier_button|
             modifier_button.selected = button.data[:action] == action && modifier_button.data[:modifier] == modifier
           end
+        end
+      end
+
+      # Update options panel
+      @actions_options_panels.each do |actions_options_panel|
+        if actions_options_panel.data[:action] == action
+          @actions_panel.append(actions_options_panel)
+        else
+          actions_options_panel.remove
         end
       end
 

@@ -1272,7 +1272,7 @@ tab:
         Die kontinuierliche Verbesserung von *OpenCutList* ist uns wichtig und das Projekt braucht weiterhin Ihre Hilfe für das nächste Update!
       cuttingdiagram_export: |
         Es ist uns wichtig, dass *OpenCutList* an die vielfältigen Anforderungen der Anwender an die *Schnittplan*-Funktion angepasst werden kann.
-        Um die Möglichkeiten weiter auszubauen, möchten wir den Export von Schnittplänen im **SVG**-Format ermöglichen.
+        Um die Möglichkeiten weiter auszubauen, möchten wir den Export von Schnittplänen im **SVG**- und **DXF**-Format ermöglichen.
         Indem Sie uns die Mittel zur Verfügung stellen, um diese Exporte zu bearbeiten, geben Sie uns die Möglichkeit, Ihnen zu helfen, das Beste aus *OpenCutList* herauszuholen.
       layout: |
         Ziel dieses Moduls ist es, dass Sie auf einfache Weise eine Übersicht Ihres Projekts in **explodierter Ansicht** ausdrucken können, wobei die Teile anhand der Information aus der Holzliste identifiziert werden.

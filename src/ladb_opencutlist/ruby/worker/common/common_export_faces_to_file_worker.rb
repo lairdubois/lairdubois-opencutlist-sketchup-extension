@@ -1,22 +1,28 @@
 module Ladb::OpenCutList
 
+  require_relative '../../constants'
   require_relative '../../helper/face_triangles_helper'
+  require_relative '../../helper/dxf_writer_helper'
+  require_relative '../../helper/svg_writer_helper'
+  require_relative '../../helper/sanitizer_helper'
 
   class CommonExportFacesToFileWorker
 
     include FaceTrianglesHelper
-
-    FILE_FORMAT_DXF = 'dxf'.freeze
-    FILE_FORMAT_SVG = 'svg'.freeze
+    include DxfWriterHelper
+    include SvgWriterHelper
+    include SanitizerHelper
 
     SUPPORTED_FILE_FORMATS = [ FILE_FORMAT_DXF, FILE_FORMAT_SVG ]
 
-    def initialize(face_infos, options, file_format, file_name = 'FACE')
+    def initialize(face_infos, settings)
 
       @face_infos = face_infos
-      @options = options
-      @file_format = file_format
-      @file_name = file_name
+
+      @file_name = _sanitize_filename(settings.fetch('file_name', 'FACE'))
+      @file_format = settings.fetch('file_format', nil)
+      @unit = settings.fetch('unit', nil)
+      @max_depth = settings.fetch('max_depth', 0)
 
     end
 
@@ -37,9 +43,24 @@ module Ladb::OpenCutList
 
         begin
 
-          unit_converter = DimensionUtils.instance.length_to_model_unit_float(1.0.to_l)
+          case @unit
+          when DimensionUtils::INCHES
+            unit_converter = 1.0
+          when DimensionUtils::FEET
+            unit_converter = 1.0.to_l.to_feet
+          when DimensionUtils::YARD
+            unit_converter = 1.0.to_l.to_yard
+          when DimensionUtils::MILLIMETER
+            unit_converter = 1.0.to_l.to_mm
+          when DimensionUtils::CENTIMETER
+            unit_converter = 1.0.to_l.to_cm
+          when DimensionUtils::METER
+            unit_converter = 1.0.to_l.to_m
+          else
+            unit_converter = DimensionUtils.instance.length_to_model_unit_float(1.0.to_l)
+          end
 
-          success = _write_faces(path, @face_infos, unit_converter ) && File.exist?(path)
+          success = _write_faces(path, @face_infos, unit_converter) && File.exist?(path)
 
           return { :errors => [ [ 'tab.cutlist.error.failed_export_to_3d_file', { :file_format => @file_format, :error => e.message } ] ] } unless success
           return { :export_path => path }
@@ -62,12 +83,11 @@ module Ladb::OpenCutList
       # Open output file
       file = File.new(path , 'w')
 
-      # Write header
       case @file_format
       when FILE_FORMAT_DXF
 
-        _dxf(file, 0, 'SECTION')
-        _dxf(file, 2, 'ENTITIES')
+        _dxf_write(file, 0, 'SECTION')
+        _dxf_write(file, 2, 'ENTITIES')
 
         face_infos.each do |face_info|
 
@@ -76,32 +96,32 @@ module Ladb::OpenCutList
 
           face.loops.each do |loop|
 
-            _dxf(file, 0, 'POLYLINE')
-            _dxf(file, 8, 0)
-            _dxf(file, 66, 1)
-            _dxf(file, 70, 1) # 1 = This is a closed polyline (or a polygon mesh closed in the M direction)
-            _dxf(file, 10, 0.0)
-            _dxf(file, 20, 0.0)
-            _dxf(file, 30, 0.0)
+            _dxf_write(file, 0, 'POLYLINE')
+            _dxf_write(file, 8, 0)
+            _dxf_write(file, 66, 1)
+            _dxf_write(file, 70, 1) # 1 = This is a closed polyline (or a polygon mesh closed in the M direction)
+            _dxf_write(file, 10, 0.0)
+            _dxf_write(file, 20, 0.0)
+            _dxf_write(file, 30, 0.0)
 
             loop.vertices.each do |vertex|
               point = vertex.position.transform(transformation)
-              _dxf(file, 0, 'VERTEX')
-              _dxf(file, 8, 0)
-              _dxf(file, 10, _convert(point.x, unit_converter))
-              _dxf(file, 20, _convert(point.y, unit_converter))
-              _dxf(file, 30, 0.0)
-              _dxf(file, 70, 32) # 32 = 3D polyline vertex
+              _dxf_write(file, 0, 'VERTEX')
+              _dxf_write(file, 8, 0)
+              _dxf_write(file, 10, _convert(point.x, unit_converter))
+              _dxf_write(file, 20, _convert(point.y, unit_converter))
+              _dxf_write(file, 30, 0.0)
+              _dxf_write(file, 70, 32) # 32 = 3D polyline vertex
             end
 
-            _dxf(file, 0, 'SEQEND')
+            _dxf_write(file, 0, 'SEQEND')
 
           end
 
         end
 
-        _dxf(file, 0, 'ENDSEC')
-        _dxf(file, 0, 'EOF')
+        _dxf_write(file, 0, 'ENDSEC')
+        _dxf_write(file, 0, 'EOF')
 
       when FILE_FORMAT_SVG
 
@@ -111,12 +131,10 @@ module Ladb::OpenCutList
         end
 
         # Tweak unit converter to restrict to SVG compatible units (in, mm, cm)
-        case DimensionUtils.instance.length_unit
+        case @unit
         when DimensionUtils::INCHES
-          unit_converter = 1.0
           unit_sign = 'in'
         when DimensionUtils::CENTIMETER
-          unit_converter = 1.0.to_cm
           unit_sign = 'cm'
         else
           unit_converter = 1.0.to_mm
@@ -126,36 +144,38 @@ module Ladb::OpenCutList
         width = _convert(bounds.width, unit_converter)
         height = _convert(bounds.height, unit_converter)
 
-        # Y coords are * -1 because SVG coordinates system is Top to Bottom
-        file.puts('<?xml version="1.0" encoding="UTF-8" standalone="no"?>')
-        file.puts('<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">')
-        file.puts("<svg width=\"#{width}#{unit_sign}\" height=\"#{height}#{unit_sign}\" viewBox=\"0 #{height * -1} #{width} #{height}\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:shaper=\"http://www.shapertools.com/namespaces/shaper\">")
+        _svg_write_start(file, width, height, unit_sign)
 
-        face_infos.each do |face_info|
+        face_infos.sort_by { |face_info| face_info.data[:depth] }.each do |face_info|
 
           face = face_info.face
           transformation = face_info.transformation
+          depth = face_info.data[:depth].to_f
 
-          outside = []
-          pockets = []
           face.loops.each do |loop|
             coords = []
             loop.vertices.each do |vertex|
               point = vertex.position.transform(transformation)
-              coords << "#{_convert(point.x, unit_converter)},#{_convert(point.y, unit_converter) * -1}"
+              coords << "#{_convert(point.x, unit_converter)},#{height - _convert(point.y, unit_converter)}"
             end
             data = "M#{coords.join('L')}Z"
-            outside << data
-            pockets << data unless loop.outer?
-          end
-          file.puts("<path d=\"#{outside.join}\" shaper:cutType=\"outside\" fill=\"#000000\" />")
-          pockets.each do |pocket|
-            file.puts("<path d=\"#{pocket}\" shaper:cutType=\"pocket\" fill=\"#7F7F7F\" />")
+            if loop.outer?
+              if depth == 0
+                # Outside
+                _svg_write_path(file, data, '#000000', '#000000', 'shaper:cutType': 'outside')
+              else
+                # Pocket
+                _svg_write_path(file, data, '#7F7F7F', nil, 'shaper:cutType': 'pocket', 'shaper:cutDepth': _convert(depth, unit_converter))
+              end
+            else
+              # Inside
+              _svg_write_path(file, data, '#FFFFFF', '#000000', 'shaper:cutType': 'inside', 'shaper:cutDepth': @max_depth)
+            end
           end
 
         end
 
-        file.puts("</svg>")
+        _svg_write_end(file)
 
       end
 
@@ -167,11 +187,6 @@ module Ladb::OpenCutList
 
     def _convert(value, unit_converter, precision = 6)
       (value.to_f * unit_converter).round(precision)
-    end
-
-    def _dxf(file, code, value)
-      file.puts(code.to_s)
-      file.puts(value.to_s)
     end
 
   end

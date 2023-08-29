@@ -4,19 +4,35 @@
 
   class DimensionUtils
 
-    # Format - just here for convenience
+    # Formats - just here for convenience
     DECIMAL       = Length::Decimal
     ARCHITECTURAL = Length::Architectural
     ENGINEERING   = Length::Engineering
     FRACTIONAL    = Length::Fractional
 
-    # Unit - just here for convenience
+    # Units - just here for convenience
     INCHES        = Length::Inches
     FEET          = Length::Feet
     YARD          = Sketchup.version_number >= 2000000000 ? Length::Yard : 5
     MILLIMETER    = Length::Millimeter
     CENTIMETER    = Length::Centimeter
     METER         = Length::Meter
+
+    INCHES_2      = Sketchup.version_number >= 1920000000 ? Length::SquareInches : 0
+    FEET_2        = Sketchup.version_number >= 1920000000 ? Length::SquareFeet : 1
+    YARD_2        = Sketchup.version_number >= 2000000000 ? Length::SquareYard : 5
+    MILLIMETER_2  = Sketchup.version_number >= 1920000000 ? Length::SquareMillimeter : 2
+    CENTIMETER_2  = Sketchup.version_number >= 1920000000 ? Length::SquareCentimeter : 3
+    METER_2       = Sketchup.version_number >= 1920000000 ? Length::SquareMeter : 4
+
+    INCHES_3      = Sketchup.version_number >= 1920000000 ? Length::CubicInches : 0
+    FEET_3        = Sketchup.version_number >= 1920000000 ? Length::CubicFeet : 1
+    YARD_3        = Sketchup.version_number >= 2000000000 ? Length::CubicYard : 5
+    USGALLON      = Sketchup.version_number >= 2000000000 ? Length::USGallon : 7
+    MILLIMETER_3  = Sketchup.version_number >= 1920000000 ? Length::CubicMillimeter : 2
+    CENTIMETER_3  = Sketchup.version_number >= 1920000000 ? Length::CubicCentimeter : 3
+    METER_3       = Sketchup.version_number >= 1920000000 ? Length::CubicMeter : 4
+    LITER         = Sketchup.version_number >= 1920000000 ? Length::Liter : 6
 
     # Unit symbols
     UNIT_SYMBOL_INCHES = '"'
@@ -26,12 +42,22 @@
     UNIT_SYMBOL_CENTIMETER = 'cm'
     UNIT_SYMBOL_MILLIMETER = 'mm'
 
-    UNIT_SYMBOL_METER_2 = 'm²'
+    UNIT_SYMBOL_INCHES_2 = 'in²'
     UNIT_SYMBOL_FEET_2 = 'ft²'
+    UNIT_SYMBOL_YARD_2 = 'yd²'
+    UNIT_SYMBOL_MILLIMETER_2 = 'mm²'
+    UNIT_SYMBOL_CENTIMETER_2 = 'cm²'
+    UNIT_SYMBOL_METER_2 = 'm²'
 
-    UNIT_SYMBOL_METER_3 = 'm³'
+    UNIT_SYMBOL_INCHES_3 = 'in³'
     UNIT_SYMBOL_FEET_3 = 'ft³'
+    UNIT_SYMBOL_YARD_3 = 'yd³'
+    UNIT_SYMBOL_USGALLON = 'gal'
     UNIT_SYMBOL_BOARD_FEET = 'FBM'
+    UNIT_SYMBOL_MILLIMETER_3 = 'mm³'
+    UNIT_SYMBOL_CENTIMETER_3 = 'cm³'
+    UNIT_SYMBOL_METER_3 = 'm³'
+    UNIT_SYMBOL_LITER = 'L'
 
     # Unit strippednames
     UNIT_STRIPPEDNAME_INCHES = 'in'
@@ -41,16 +67,29 @@
     UNIT_STRIPPEDNAME_CENTIMETER = 'cm'
     UNIT_STRIPPEDNAME_MILLIMETER = 'mm'
 
-    UNIT_STRIPPEDNAME_METER_2 = 'm2'
+    UNIT_STRIPPEDNAME_INCHES_2 = 'in2'
     UNIT_STRIPPEDNAME_FEET_2 = 'ft2'
+    UNIT_STRIPPEDNAME_YARD_2 = 'yd2'
+    UNIT_STRIPPEDNAME_MILLIMETER_2 = 'm2'
+    UNIT_STRIPPEDNAME_CENTIMETER_2 = 'm2'
+    UNIT_STRIPPEDNAME_METER_2 = 'm2'
 
-    UNIT_STRIPPEDNAME_METER_3 = 'm3'
+    UNIT_STRIPPEDNAME_INCHES_3 = 'in3'
     UNIT_STRIPPEDNAME_FEET_3 = 'ft3'
+    UNIT_STRIPPEDNAME_YARD_3 = 'yd3'
+    UNIT_STRIPPEDNAME_USGALLON = 'gal'
     UNIT_STRIPPEDNAME_BOARD_FEET = 'fbm'
+    UNIT_STRIPPEDNAME_MILLIMETER_3 = 'm3'
+    UNIT_STRIPPEDNAME_CENTIMETER_3 = 'm3'
+    UNIT_STRIPPEDNAME_METER_3 = 'm3'
+    UNIT_STRIPPEDNAME_LITER = 'l'
 
     include Singleton
 
-    attr_accessor :decimal_separator, :length_unit, :length_format, :length_precision, :length_suppress_unit_display
+    attr_accessor :decimal_separator,
+                  :length_unit, :length_format, :length_precision, :length_suppress_unit_display,
+                  :area_unit, :area_precision,
+                  :volume_unit, :volume_precision
 
     LENGTH_MIN_PRECISION = 3
 
@@ -59,10 +98,17 @@
     DXD_SEPARATOR = 'x'.freeze
 
     @decimal_separator
+
     @length_unit
     @length_format
     @length_precision
     @length_suppress_unit_display
+
+    @area_unit
+    @area_precision
+
+    @volume_unit
+    @volume_precision
 
     # -----
 
@@ -73,15 +119,26 @@
       rescue
         @decimal_separator = ','
       end
-      fetch_length_options
+      fetch_options
     end
 
-    def fetch_length_options
+    def fetch_options
       model = Sketchup.active_model
       @length_unit = model ? model.options['UnitsOptions']['LengthUnit'] : MILLIMETER
       @length_format = model ? model.options['UnitsOptions']['LengthFormat'] : DECIMAL
       @length_precision = model ? model.options['UnitsOptions']['LengthPrecision'] : 0
       @length_suppress_unit_display = model ? model.options['UnitsOptions']['SuppressUnitsDisplay'] : false
+      if Sketchup.version_number >= 2000000000
+        @area_unit = model ? model.options['UnitsOptions']['AreaUnit'] : METER_2
+        @area_precision = model ? model.options['UnitsOptions']['AreaPrecision'] : 2
+        @volume_unit = model ? model.options['UnitsOptions']['AreaUnit'] : METER_3
+        @volume_precision = model ? model.options['UnitsOptions']['VolumePrecision'] : 2
+      else
+        @area_unit = model_unit_is_metric ? METER_2 : FEET_2
+        @area_precision = 2
+        @volume_unit = model_unit_is_metric ? METER_3 : FEET_3
+        @volume_precision = 2
+      end
     end
 
     # -----
@@ -125,29 +182,29 @@
       end
     end
 
-    def unit_sign
-      case @length_unit
-        when MILLIMETER
-          return UNIT_SYMBOL_MILLIMETER
-        when CENTIMETER
-          return UNIT_SYMBOL_CENTIMETER
-        when METER
-          return UNIT_SYMBOL_METER
-        when FEET
-          return UNIT_SYMBOL_FEET
-        when YARD
-          return UNIT_SYMBOL_YARD
-        else
-          return UNIT_SYMBOL_INCHES
-      end
-    end
-
     def model_unit_is_metric
       case @length_unit
         when MILLIMETER, CENTIMETER, METER
           return true
         else
           return false
+      end
+    end
+
+    def unit_sign
+      case @length_unit
+      when MILLIMETER
+        return UNIT_SYMBOL_MILLIMETER
+      when CENTIMETER
+        return UNIT_SYMBOL_CENTIMETER
+      when METER
+        return UNIT_SYMBOL_METER
+      when FEET
+        return UNIT_SYMBOL_FEET
+      when YARD
+        return UNIT_SYMBOL_YARD
+      else
+        return UNIT_SYMBOL_INCHES
       end
     end
 
@@ -404,11 +461,11 @@
       end
       if model_unit_is_metric
         multiplier = 0.0254**2
-        precision = [2, @length_precision].max
+        precision = [2, @area_precision].max
         unit_strippedname = UNIT_STRIPPEDNAME_METER_2
       else
         multiplier = 1 / 144.0
-        precision = [2, @length_precision].max
+        precision = [2, @area_precision].max
         unit_strippedname = UNIT_STRIPPEDNAME_FEET_2
       end
       UnitUtils.format_readable(f2 * multiplier, unit_strippedname, precision, precision)
@@ -424,16 +481,16 @@
       end
       if model_unit_is_metric
         multiplier = 0.0254**3
-        precision = [2, @length_precision].max
+        precision = [2, @volume_precision].max
         unit_strippedname = UNIT_STRIPPEDNAME_METER_3
       else
         if material_type == MaterialAttributes::TYPE_SOLID_WOOD
           multiplier = 1 / 144.0
-          precision = [2, @length_precision].max
+          precision = [2, @volume_precision].max
           unit_strippedname = UNIT_STRIPPEDNAME_BOARD_FEET
         else
           multiplier = 1 / 1728.0
-          precision = [2, @length_precision].max
+          precision = [2, @volume_precision].max
           unit_strippedname = UNIT_STRIPPEDNAME_FEET_3
         end
       end

@@ -1,21 +1,24 @@
 module Ladb::OpenCutList
 
+  require_relative '../../constants'
   require_relative '../../model/cutlist/instance_info'
+  require_relative '../../helper/dxf_writer_helper'
+  require_relative '../../helper/sanitizer_helper'
 
   class CommonExportInstanceToFileWorker
 
-    FILE_FORMAT_SKP = 'skp'.freeze
-    FILE_FORMAT_STL = 'stl'.freeze
-    FILE_FORMAT_OBJ = 'obj'.freeze
-    FILE_FORMAT_DXF = 'dxf'.freeze
+    include DxfWriterHelper
+    include SanitizerHelper
 
     SUPPORTED_FILE_FORMATS = [ FILE_FORMAT_SKP, FILE_FORMAT_STL, FILE_FORMAT_OBJ, FILE_FORMAT_DXF ]
 
-    def initialize(instance_info, options, file_format)
+    def initialize(instance_info, settings)
 
       @instance_info = instance_info
-      @options = options
-      @file_format = file_format
+
+      @file_name = _sanitize_filename(settings.fetch('file_name', 'FACE'))
+      @file_format = settings.fetch('file_format', nil)
+      @unit = settings.fetch('unit', nil)
 
     end
 
@@ -26,7 +29,7 @@ module Ladb::OpenCutList
       return { :errors => [ 'default.error' ] } unless @instance_info.is_a?(InstanceInfo)
 
       # Open save panel
-      path = UI.savepanel(Plugin.instance.get_i18n_string('tab.cutlist.export_to_3d.title', { :file_format => @file_format }), '', "#{@instance_info.definition.name}.#{@file_format}")
+      path = UI.savepanel(Plugin.instance.get_i18n_string('tab.cutlist.export_to_3d.title', { :file_format => @file_format }), '', "#{@file_name}.#{@file_format}")
       if path
 
         # Force "file_format" file extension
@@ -36,7 +39,24 @@ module Ladb::OpenCutList
 
         begin
 
-          success = _write_instance(path, @instance_info, DimensionUtils.instance.length_to_model_unit_float(1.0.to_l)) && File.exist?(path)
+          case @unit
+          when DimensionUtils::INCHES
+            unit_converter = 1.0
+          when DimensionUtils::FEET
+            unit_converter = 1.0.to_l.to_feet
+          when DimensionUtils::YARD
+            unit_converter = 1.0.to_l.to_yard
+          when DimensionUtils::MILLIMETER
+            unit_converter = 1.0.to_l.to_mm
+          when DimensionUtils::CENTIMETER
+            unit_converter = 1.0.to_l.to_cm
+          when DimensionUtils::METER
+            unit_converter = 1.0.to_l.to_m
+          else
+            unit_converter = DimensionUtils.instance.length_to_model_unit_float(1.0.to_l)
+          end
+
+          success = _write_instance(path, @instance_info, unit_converter) && File.exist?(path)
 
           return { :errors => [ [ 'tab.cutlist.error.failed_export_to_3d_file', { :file_format => @file_format, :error => e.message } ] ] } unless success
           return { :export_path => path }
@@ -76,8 +96,8 @@ module Ladb::OpenCutList
       when FILE_FORMAT_OBJ
         file.puts("g #{definition.name}")
       when FILE_FORMAT_DXF
-        _dxf(file, 0, 'SECTION')
-        _dxf(file, 2, 'ENTITIES')
+        _dxf_write(file, 0, 'SECTION')
+        _dxf_write(file, 2, 'ENTITIES')
       end
 
       # Write faces
@@ -88,8 +108,8 @@ module Ladb::OpenCutList
       when FILE_FORMAT_STL
         file.puts("endsolid #{definition.name}")
       when FILE_FORMAT_DXF
-        _dxf(file, 0, 'ENDSEC')
-        _dxf(file, 0, 'EOF')
+        _dxf_write(file, 0, 'ENDSEC')
+        _dxf_write(file, 0, 'EOF')
       end
 
       # Close output file
@@ -148,42 +168,42 @@ module Ladb::OpenCutList
             polygons = mesh.polygons
             points = mesh.points
 
-            _dxf(file, 0, 'POLYLINE')
-            _dxf(file, 8, 0) # Layer
-            _dxf(file, 66, 1)
-            _dxf(file, 10, 0.0)
-            _dxf(file, 20, 0.0)
-            _dxf(file, 30, 0.0)
-            _dxf(file, 70, 64) # 64 = The polyline is a polyface mesh
-            _dxf(file, 71, points.length) # Polygon mesh M vertex count
-            _dxf(file, 72, 1) # Polygon mesh N vertex count
+            _dxf_write(file, 0, 'POLYLINE')
+            _dxf_write(file, 8, 0) # Layer
+            _dxf_write(file, 66, 1)
+            _dxf_write(file, 10, 0.0)
+            _dxf_write(file, 20, 0.0)
+            _dxf_write(file, 30, 0.0)
+            _dxf_write(file, 70, 64) # 64 = The polyline is a polyface mesh
+            _dxf_write(file, 71, points.length) # Polygon mesh M vertex count
+            _dxf_write(file, 72, 1) # Polygon mesh N vertex count
 
             points.each do |point|
 
-              _dxf(file, 0, 'VERTEX')
-              _dxf(file, 8, 0) # Layer
-              _dxf(file, 10, _convert(point.x, unit_converter))
-              _dxf(file, 20, _convert(point.y, unit_converter))
-              _dxf(file, 30, _convert(point.z, unit_converter))
-              _dxf(file, 70, 64 ^ 128) # 64 = 3D polygon mesh, 128 = Polyface mesh vertex
+              _dxf_write(file, 0, 'VERTEX')
+              _dxf_write(file, 8, 0) # Layer
+              _dxf_write(file, 10, _convert(point.x, unit_converter))
+              _dxf_write(file, 20, _convert(point.y, unit_converter))
+              _dxf_write(file, 30, _convert(point.z, unit_converter))
+              _dxf_write(file, 70, 64 ^ 128) # 64 = 3D polygon mesh, 128 = Polyface mesh vertex
 
             end
 
             polygons.each do |polygon|
 
-              _dxf(file, 0, 'VERTEX')
-              _dxf(file, 8, 0) # Layer
-              _dxf(file, 10, 0.0)
-              _dxf(file, 20, 0.0)
-              _dxf(file, 30, 0.0)
-              _dxf(file, 70, 128) # 128 = Polyface mesh vertex
-              _dxf(file, 71, polygon[0]) # 71 = Polyface mesh vertex index
-              _dxf(file, 72, polygon[1]) # 72 = Polyface mesh vertex index
-              _dxf(file, 73, polygon[2]) # 73 = Polyface mesh vertex index
+              _dxf_write(file, 0, 'VERTEX')
+              _dxf_write(file, 8, 0) # Layer
+              _dxf_write(file, 10, 0.0)
+              _dxf_write(file, 20, 0.0)
+              _dxf_write(file, 30, 0.0)
+              _dxf_write(file, 70, 128) # 128 = Polyface mesh vertex
+              _dxf_write(file, 71, polygon[0]) # 71 = Polyface mesh vertex index
+              _dxf_write(file, 72, polygon[1]) # 72 = Polyface mesh vertex index
+              _dxf_write(file, 73, polygon[2]) # 73 = Polyface mesh vertex index
 
             end
 
-            _dxf(file, 0, 'SEQEND')
+            _dxf_write(file, 0, 'SEQEND')
 
           end
 
@@ -197,11 +217,6 @@ module Ladb::OpenCutList
 
     def _convert(value, unit_converter, precision = 6)
       (value.to_f * unit_converter).round(precision)
-    end
-
-    def _dxf(file, code, value)
-      file.puts(code.to_s)
-      file.puts(value.to_s)
     end
 
   end

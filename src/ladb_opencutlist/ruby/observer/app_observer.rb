@@ -30,7 +30,7 @@ module Ladb::OpenCutList
       Plugin.instance.clear_model_presets_cache
 
       # Fetch new length options
-      DimensionUtils.instance.fetch_length_options
+      DimensionUtils.instance.fetch_options
 
       # Fetch new mass options
       MassUtils.instance.fetch_mass_options
@@ -51,7 +51,7 @@ module Ladb::OpenCutList
       Plugin.instance.clear_model_presets_cache
 
       # Fetch new length options
-      DimensionUtils.instance.fetch_length_options
+      DimensionUtils.instance.fetch_options
 
       # Fetch new mass options
       MassUtils.instance.fetch_mass_options
@@ -71,7 +71,7 @@ module Ladb::OpenCutList
       Plugin.instance.clear_model_presets_cache
 
       # Fetch new length options
-      DimensionUtils.instance.fetch_length_options
+      DimensionUtils.instance.fetch_options
 
       # Fetch new mass options
       MassUtils.instance.fetch_mass_options

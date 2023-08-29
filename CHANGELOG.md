@@ -14,15 +14,18 @@ in 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added labels formulas
   * Added labels remove all elements button
   * Added export remove all columns button
+  * Added table row size options
   * Changed material color bullet from drop to circle
 
 * 5.0.3 (WIP)
 
   * Fixed the dimension parser that misinterpret decimal separator
   * Fixed wrong counting of invalid sized parts in 2D
+  * Fixed Bottom right notification box no long print
   * Improved part material detection
   * Improved tokenfield dimension regex
   * Improved Smart Axes Tool "edit part" properties by selecting part entity
+  * Added active named path to printable headers
   * Added compare functions to NumericWarapper
 
 * 5.0.2 (2023-06-20)

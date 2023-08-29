@@ -767,7 +767,7 @@ tab:
         no_parts: Nenhuma peça.
         no_sheet: Os tamanhos de chapa padrão estão configurados incorretamente e não há cortes disponíveis.
         no_placement_possible_1d: "Nenhuma peça pode ser colocada (barra padrão muito pequena, margem muito grande, lâmina de serra muito grossa, ...)."
-        no_placement_possible_2d: "Todas as suas partes são muito grandes para caber em uma chapa (painel padrão muito pequeno, aparagem muito grande, corte de serra muito grande, ...)."
+        no_placement_possible_2d: "Não foi possível colocar nenhuma peça (painel standard demasiado pequeno, margem demasiado grande, lâmina de serra demasiado grossa, etc.)."
         bad_error: "Erro de algoritmo. Favor entrar em contato com os desenvolvedores, pois você tem um caso interessante aqui."
         unplaced_parts: "**1 peça** é muito grande para colocar."
         unplaced_parts_plural: "**{{ count }} peças** são grandes demais para serem colocadas."
@@ -1235,9 +1235,9 @@ tab:
       default: |
         A melhoria contínua da *OpenCutList* é importante para nós e o projeto continua precisando de sua ajuda para sua próxima atualização!
       cuttingdiagram_export: |
-        É importante para nós que a *OpenCutList* possa ser adaptada às expectativas muito diferentes dos usuários para a função *diagrama de corte*.
-        Para expandir ainda mais as possibilidades, gostaríamos de possibilitar a exportação de diagramas de layout no formato **SVG**.
-        Ao nos fornecer os meios para trabalhar nestas exportações, você está nos dando a oportunidade de ajudá-lo a obter o máximo da *OpenCutList*.
+        É importante para nós que o *OpenCutList* se possa adaptar à grande variedade de requisitos dos utilizadores para a função *Diagrama de Corte*.
+        Para ampliar ainda mais as possibilidades, gostaríamos de poder exportar diagramas de disposição nos formatos **SVG** e **DXF**.
+        Ao fornecer-nos os meios para efetuar estas exportações, estará ao mesmo tempo dando-nos a oportunidade de ajudá-lo a tirar o máximo proveito da *OpenCutList*.
       layout: |
         O objetivo deste módulo é permitir que você imprima facilmente uma visualização de seu projeto como uma **visão explodida** com identificação a partir das informações geradas na lista de peças.
     objective_crowdfunding: |

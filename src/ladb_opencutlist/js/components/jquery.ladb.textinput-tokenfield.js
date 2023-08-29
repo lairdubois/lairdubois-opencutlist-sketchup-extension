@@ -116,7 +116,6 @@
             })
             .on('tokenfield:createdtoken', function (e) {
                 that.tokenfieldValidator(e);
-                console.log('CREATED TOKEN', e)
             })
         ;
 

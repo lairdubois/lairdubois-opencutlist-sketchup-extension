@@ -80,6 +80,10 @@
   content: "T";
   background: #bc6c25;
 }
+.CodeMirror-hint-batch:before {
+  content: "B";
+  background: #aaaaaa;
+}
 .CodeMirror-hint-edge:before {
   content: "E";
   background: #668eee;

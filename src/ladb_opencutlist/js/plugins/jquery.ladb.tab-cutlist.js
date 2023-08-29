@@ -24,6 +24,7 @@
         this.filename = null;
         this.modelName = null;
         this.modelDescription = null;
+        this.modelActivePath = null;
         this.pageName = null;
         this.pageDescription = null;
         this.isEntitySelection = null;
@@ -102,6 +103,7 @@
                 var filename = response.filename;
                 var modelName = response.model_name;
                 var modelDescription = response.model_description;
+                var modelActivePath = response.model_active_path;
                 var pageName = response.page_name;
                 var pageDescription = response.page_description;
                 var isEntitySelection = response.is_entity_selection;
@@ -123,6 +125,7 @@
                 that.filename = filename;
                 that.modelName = modelName;
                 that.modelDescription = modelDescription;
+                that.modelActivePath = modelActivePath;
                 that.pageName = pageName;
                 that.pageDescription = pageDescription;
                 that.cutlistTitle = (modelName ? modelName : filename.replace(/\.[^/.]+$/, '')) + (pageName ? ' - ' + pageName : '');
@@ -156,6 +159,7 @@
                     filename: filename,
                     modelName: modelName,
                     modelDescription: modelDescription,
+                    modelActivePath: modelActivePath,
                     pageName: pageName,
                     pageDescription: pageDescription,
                     isEntitySelection: isEntitySelection,
@@ -874,6 +878,7 @@
                             filename: that.filename,
                             modelName: that.modelName,
                             modelDescription: that.modelDescription,
+                            modelActivePath: that.modelActivePath,
                             pageName: that.pageName,
                             pageDescription: that.pageDescription,
                             isEntitySelection: that.isEntitySelection,
@@ -1073,6 +1078,7 @@
                             filename: that.filename,
                             modelName: that.modelName,
                             modelDescription: that.modelDescription,
+                            modelActivePath: that.modelActivePath,
                             pageName: that.pageName,
                             pageDescription: that.pageDescription,
                             isEntitySelection: that.isEntitySelection,
@@ -1567,6 +1573,7 @@
                                 filename: that.filename,
                                 modelName: that.modelName,
                                 modelDescription: that.modelDescription,
+                                modelActivePath: that.modelActivePath,
                                 pageName: that.pageName,
                                 pageDescription: that.pageDescription,
                                 isEntitySelection: that.isEntitySelection,
@@ -3154,7 +3161,7 @@
 
                         var fnAdvance = function () {
                             window.requestAnimationFrame(function () {
-                                rubyCallCommand('cutlist_group_cuttingdiagram_1d_advance', null, function (response) {
+                                rubyCallCommand('cutlist_group_cuttingdiagram1d_advance', null, function (response) {
 
                                     if (response.errors && response.errors.length > 0 || response.bars && response.bars.length > 0) {
 
@@ -3165,6 +3172,7 @@
                                             filename: that.filename,
                                             modelName: that.modelName,
                                             modelDescription: that.modelDescription,
+                                            modelActivePath: that.modelActivePath,
                                             pageName: that.pageName,
                                             pageDescription: that.pageDescription,
                                             isEntitySelection: that.isEntitySelection,
@@ -3292,7 +3300,7 @@
                         }
 
                         window.requestAnimationFrame(function () {
-                            rubyCallCommand('cutlist_group_cuttingdiagram_1d_start', $.extend({ group_id: groupId, part_ids: isPartSelection ? that.selectionPartIds : null }, cuttingdiagram1dOptions), function (response) {
+                            rubyCallCommand('cutlist_group_cuttingdiagram1d_start', $.extend({ group_id: groupId, part_ids: isPartSelection ? that.selectionPartIds : null }, cuttingdiagram1dOptions), function (response) {
                                 window.requestAnimationFrame(function () {
                                     that.dialog.startProgress(response.estimated_steps);
                                     fnAdvance();
@@ -3477,9 +3485,11 @@
 
                         var fnAdvance = function () {
                             window.requestAnimationFrame(function () {
-                                rubyCallCommand('cutlist_group_cuttingdiagram_2d_advance', null, function (response) {
+                                rubyCallCommand('cutlist_group_cuttingdiagram2d_advance', null, function (response) {
 
                                     if (response.errors && response.errors.length > 0 || response.sheets && response.sheets.length > 0) {
+
+                                        var sheetCount = response.sheets.length;
 
                                         var $slide = that.pushNewSlide('ladb_cutlist_slide_cuttingdiagram_2d', 'tabs/cutlist/_slide-cuttingdiagram-2d.twig', $.extend({
                                             capabilities: that.dialog.capabilities,
@@ -3488,6 +3498,7 @@
                                             filename: that.filename,
                                             modelName: that.modelName,
                                             modelDescription: that.modelDescription,
+                                            modelActivePath: that.modelActivePath,
                                             pageName: that.pageName,
                                             pageDescription: that.pageDescription,
                                             isEntitySelection: that.isEntitySelection,
@@ -3516,6 +3527,15 @@
                                         $btnExport.on('click', function () {
                                             $(this).blur();
 
+                                            // Count hidden groups
+                                            var hiddenSheetIndices = [];
+                                            $('.ladb-cutlist-cuttingdiagram-group', $slide).each(function () {
+                                                if ($(this).hasClass('no-print')) {
+                                                    hiddenSheetIndices.push($(this).data('sheet-index'));
+                                                }
+                                            });
+                                            var isSheetSelection = hiddenSheetIndices.length > 0
+
                                             // Retrieve cutting diagram options
                                             rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_cuttingdiagram2d_export_options', section: groupId }, function (response) {
 
@@ -3524,21 +3544,78 @@
                                                 var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_2d_export', 'tabs/cutlist/_modal-cuttingdiagram-2d-export.twig', {
                                                     material_attributes: response,
                                                     group: group,
-                                                    isPartSelection: isPartSelection,
-                                                    tab: 'general'
+                                                    isSheetSelection: isSheetSelection,
+                                                    tab: 'general',
                                                 });
 
                                                 // Fetch UI elements
                                                 var $widgetPreset = $('.ladb-widget-preset', $modal);
                                                 var $selectFileFormat = $('#ladb_select_file_format', $modal);
+                                                var $inputSheetHidden = $('#ladb_input_sheet_hidden', $modal);
+                                                var $inputSheetStrokeColor = $('#ladb_input_sheet_stroke_color', $modal);
+                                                var $inputSheetFillColor = $('#ladb_input_sheet_fill_color', $modal);
+                                                var $inputPartsHidden = $('#ladb_input_parts_hidden', $modal);
+                                                var $inputPartsStrokeColor = $('#ladb_input_parts_stroke_color', $modal);
+                                                var $inputPartsFillColor = $('#ladb_input_parts_fill_color', $modal);
+                                                var $inputLeftoversHidden = $('#ladb_input_leftovers_hidden', $modal);
+                                                var $inputLeftoversStrokeColor = $('#ladb_input_leftovers_stroke_color', $modal);
+                                                var $inputLeftoversFillColor = $('#ladb_input_leftovers_fill_color', $modal);
+                                                var $inputCutsHidden = $('#ladb_input_cuts_hidden', $modal);
+                                                var $inputCutsStrokeColor = $('#ladb_input_cuts_stroke_color', $modal);
                                                 var $btnExport = $('#ladb_btn_export', $modal);
 
                                                 var fnFetchOptions = function (options) {
                                                     options.file_format = $selectFileFormat.val();
-                                                }
+                                                    options.sheet_hidden = !$inputSheetHidden.is(':checked');
+                                                    options.sheet_stroke_color = $inputSheetStrokeColor.ladbTextinputColor('val');
+                                                    options.sheet_fill_color = $inputSheetFillColor.ladbTextinputColor('val');
+                                                    options.parts_hidden = !$inputPartsHidden.is(':checked');
+                                                    options.parts_stroke_color = $inputPartsStrokeColor.ladbTextinputColor('val');
+                                                    options.parts_fill_color = $inputPartsFillColor.ladbTextinputColor('val');
+                                                    options.leftovers_hidden = !$inputLeftoversHidden.is(':checked');
+                                                    options.leftovers_stroke_color = $inputLeftoversStrokeColor.ladbTextinputColor('val');
+                                                    options.leftovers_fill_color = $inputLeftoversFillColor.ladbTextinputColor('val');
+                                                    options.cuts_hidden = !$inputCutsHidden.is(':checked');
+                                                    options.cuts_stroke_color = $inputCutsStrokeColor.ladbTextinputColor('val');
+                                                };
                                                 var fnFillInputs = function (options) {
                                                     $selectFileFormat.selectpicker('val', options.file_format);
-                                                }
+                                                    $inputSheetHidden.prop('checked', !options.sheet_hidden);
+                                                    $inputSheetStrokeColor.ladbTextinputColor('val', options.sheet_stroke_color);
+                                                    $inputSheetFillColor.ladbTextinputColor('val', options.sheet_fill_color);
+                                                    $inputPartsHidden.prop('checked', !options.parts_hidden);
+                                                    $inputPartsStrokeColor.ladbTextinputColor('val', options.parts_stroke_color);
+                                                    $inputPartsFillColor.ladbTextinputColor('val', options.parts_fill_color);
+                                                    $inputLeftoversHidden.prop('checked', !options.leftovers_hidden);
+                                                    $inputLeftoversStrokeColor.ladbTextinputColor('val', options.leftovers_stroke_color);
+                                                    $inputLeftoversFillColor.ladbTextinputColor('val', options.leftovers_fill_color);
+                                                    $inputCutsHidden.prop('checked', !options.cuts_hidden);
+                                                    $inputCutsStrokeColor.ladbTextinputColor('val', options.cuts_stroke_color);
+                                                };
+                                                var fnUpdateColorsVisibility = function () {
+                                                    var disableStroke = $selectFileFormat.val() === 'dxf';
+                                                    var disableFill = $selectFileFormat.val() === 'dxf';
+                                                    if (disableStroke) {
+                                                        $inputSheetStrokeColor.ladbTextinputColor('disable');
+                                                        $inputPartsStrokeColor.ladbTextinputColor('disable');
+                                                        $inputLeftoversStrokeColor.ladbTextinputColor('disable');
+                                                        $inputCutsStrokeColor.ladbTextinputColor('disable');
+                                                    } else {
+                                                        $inputSheetStrokeColor.ladbTextinputColor('enable');
+                                                        $inputPartsStrokeColor.ladbTextinputColor('enable');
+                                                        $inputLeftoversStrokeColor.ladbTextinputColor('enable');
+                                                        $inputCutsStrokeColor.ladbTextinputColor('enable');
+                                                    }
+                                                    if (disableFill) {
+                                                        $inputSheetFillColor.ladbTextinputColor('disable');
+                                                        $inputPartsFillColor.ladbTextinputColor('disable');
+                                                        $inputLeftoversFillColor.ladbTextinputColor('disable');
+                                                    } else {
+                                                        $inputSheetFillColor.ladbTextinputColor('enable');
+                                                        $inputPartsFillColor.ladbTextinputColor('enable');
+                                                        $inputLeftoversFillColor.ladbTextinputColor('enable');
+                                                    }
+                                                };
 
                                                 $widgetPreset.ladbWidgetPreset({
                                                     dialog: that.dialog,
@@ -3546,7 +3623,21 @@
                                                     fnFetchOptions: fnFetchOptions,
                                                     fnFillInputs: fnFillInputs
                                                 });
-                                                $selectFileFormat.selectpicker(SELECT_PICKER_OPTIONS);
+                                                $selectFileFormat
+                                                    .selectpicker(SELECT_PICKER_OPTIONS)
+                                                    .on('changed.bs.select', function () {
+                                                        var fileCount = sheetCount - hiddenSheetIndices.length;
+                                                        $('#ladb_btn_export_file_format', $btnExport).html($(this).val().toUpperCase() + ' <small>( ' + fileCount + ' ' + i18next.t('default.file', { count: fileCount }).toLowerCase() + ' )</small>');
+                                                        fnUpdateColorsVisibility();
+                                                    })
+                                                ;
+                                                $inputSheetStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+                                                $inputSheetFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+                                                $inputPartsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+                                                $inputPartsFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+                                                $inputLeftoversStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+                                                $inputLeftoversFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+                                                $inputCutsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
 
                                                 fnFillInputs(exportOptions);
 
@@ -3559,7 +3650,7 @@
                                                     // Store options
                                                     rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_cuttingdiagram2d_export_options', values: exportOptions, section: groupId });
 
-                                                    rubyCallCommand('cutlist_export_cuttingdiagram_2d', exportOptions, function (response) {
+                                                    rubyCallCommand('cutlist_cuttingdiagram2d_export', $.extend(exportOptions, { hidden_sheet_indices: hiddenSheetIndices }, cuttingdiagram2dOptions), function (response) {
 
                                                         if (response.errors) {
                                                             that.dialog.notifyErrors(response.errors);
@@ -3689,7 +3780,7 @@
                         }
 
                         window.requestAnimationFrame(function () {
-                            rubyCallCommand('cutlist_group_cuttingdiagram_2d_start', $.extend({ group_id: groupId, part_ids: isPartSelection ? that.selectionPartIds : null }, cuttingdiagram2dOptions), function (response) {
+                            rubyCallCommand('cutlist_group_cuttingdiagram2d_start', $.extend({ group_id: groupId, part_ids: isPartSelection ? that.selectionPartIds : null }, cuttingdiagram2dOptions), function (response) {
                                 window.requestAnimationFrame(function () {
                                     that.dialog.startProgress(response.estimated_steps);
                                     fnAdvance();
@@ -4119,7 +4210,7 @@
                         partInfos.sort(fnFieldSorter(labelsOptions.part_order_strategy.split('>')));
 
                         // Compute custom formulas
-                        rubyCallCommand('cutlist_compute_labels_formulas', { part_infos: partInfos, layout: labelsOptions.layout }, function (response) {
+                        rubyCallCommand('cutlist_labels_compute_formulas', { part_infos: partInfos, layout: labelsOptions.layout }, function (response) {
 
                             if (response.errors) {
                                 errors.push(response.errors);

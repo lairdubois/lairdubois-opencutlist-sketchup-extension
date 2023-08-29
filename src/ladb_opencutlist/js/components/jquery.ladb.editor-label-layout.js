@@ -505,6 +505,8 @@
                     { name: 'face_zmax', type: 'veneer' },
                     { name: 'face_zmin', type: 'veneer' },
                     { name: 'layer', type: 'string' },
+                    { name: 'batch', type: 'batch' },
+                    { name: 'bin', type: 'integer' },
                     { name: 'filename', type: 'string' },
                     { name: 'model_name', type: 'string' },
                     { name: 'model_description', type: 'string' },
@@ -525,7 +527,7 @@
             })
             .on('change', function () {
                 elementDef.custom_formula = $(this).val();
-                rubyCallCommand('cutlist_compute_labels_formulas', { part_infos: [ that.options.partInfo ], layout: [ elementDef ] }, function (response) {
+                rubyCallCommand('cutlist_labels_compute_formulas', { part_infos: [ that.options.partInfo ], layout: [ elementDef ] }, function (response) {
 
                     if (response.errors) {
                         console.log(response.errors);
@@ -581,7 +583,7 @@
 
         this.elementDefs = elementDefs;
 
-        rubyCallCommand('cutlist_compute_labels_formulas', { part_infos: [ this.options.partInfo ], layout: elementDefs }, function (response) {
+        rubyCallCommand('cutlist_labels_compute_formulas', { part_infos: [ this.options.partInfo ], layout: elementDefs }, function (response) {
 
             if (response.errors) {
                 console.log(response.errors);
