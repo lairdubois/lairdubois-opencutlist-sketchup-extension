@@ -12,12 +12,13 @@ module Ladb::OpenCutList
 
     SUPPORTED_FILE_FORMATS = [ FILE_FORMAT_SKP, FILE_FORMAT_STL, FILE_FORMAT_OBJ, FILE_FORMAT_DXF ]
 
-    def initialize(instance_info, options, file_format, file_name = 'PART')
+    def initialize(instance_info, settings)
 
       @instance_info = instance_info
-      @options = options
-      @file_format = file_format
-      @file_name = _sanitize_filename(file_name)
+
+      @file_name = _sanitize_filename(settings.fetch('file_name', 'FACE'))
+      @file_format = settings.fetch('file_format', nil)
+      @unit = settings.fetch('unit', nil)
 
     end
 
@@ -38,7 +39,24 @@ module Ladb::OpenCutList
 
         begin
 
-          success = _write_instance(path, @instance_info, DimensionUtils.instance.length_to_model_unit_float(1.0.to_l)) && File.exist?(path)
+          case @unit
+          when DimensionUtils::INCHES
+            unit_converter = 1.0
+          when DimensionUtils::FEET
+            unit_converter = 1.0.to_l.to_feet
+          when DimensionUtils::YARD
+            unit_converter = 1.0.to_l.to_yard
+          when DimensionUtils::MILLIMETER
+            unit_converter = 1.0.to_l.to_mm
+          when DimensionUtils::CENTIMETER
+            unit_converter = 1.0.to_l.to_cm
+          when DimensionUtils::METER
+            unit_converter = 1.0.to_l.to_m
+          else
+            unit_converter = DimensionUtils.instance.length_to_model_unit_float(1.0.to_l)
+          end
+
+          success = _write_instance(path, @instance_info, unit_converter) && File.exist?(path)
 
           return { :errors => [ [ 'tab.cutlist.error.failed_export_to_3d_file', { :file_format => @file_format, :error => e.message } ] ] } unless success
           return { :export_path => path }

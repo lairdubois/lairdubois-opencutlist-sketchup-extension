@@ -592,7 +592,7 @@ module Ladb::OpenCutList
           end
 
           instance_info = @active_part.def.instance_infos.values.first
-          options = {}
+          file_name = @active_part.name
           file_format = nil
           if fetch_action_option(ACTION_EXPORT_PART_3D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_SKP)
             file_format = FILE_FORMAT_SKP
@@ -603,8 +603,24 @@ module Ladb::OpenCutList
           elsif fetch_action_option(ACTION_EXPORT_PART_3D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
             file_format = FILE_FORMAT_DXF
           end
+          unit = nil
+          if fetch_action_option(ACTION_EXPORT_PART_3D, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_IN)
+            unit = DimensionUtils::INCHES
+          elsif fetch_action_option(ACTION_EXPORT_PART_3D, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_FT)
+            unit = DimensionUtils::FEET
+          elsif fetch_action_option(ACTION_EXPORT_PART_3D, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_MM)
+            unit = DimensionUtils::MILLIMETER
+          elsif fetch_action_option(ACTION_EXPORT_PART_3D, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_CM)
+            unit = DimensionUtils::CENTIMETER
+          elsif fetch_action_option(ACTION_EXPORT_PART_3D, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_M)
+            unit = DimensionUtils::METER
+          end
 
-          worker = CommonExportInstanceToFileWorker.new(instance_info, options, file_format, @active_part.name)
+          worker = CommonExportInstanceToFileWorker.new(instance_info, {
+            'file_name' => file_name,
+            'file_format' => file_format,
+            'unit' => unit
+          })
           response = worker.run
 
           # TODO
@@ -617,15 +633,28 @@ module Ladb::OpenCutList
             return
           end
 
-          options = {}
+          file_name = @active_part.nil? ? nil : @active_part.name
           file_format = nil
           if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
             file_format = FILE_FORMAT_DXF
           elsif fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_SVG)
             file_format = FILE_FORMAT_SVG
           end
+          unit = nil
+          if fetch_action_option(fetch_action, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_IN)
+            unit = DimensionUtils::INCHES
+          elsif fetch_action_option(fetch_action, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_MM)
+            unit = DimensionUtils::MILLIMETER
+          elsif fetch_action_option(fetch_action, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_CM)
+            unit = DimensionUtils::CENTIMETER
+          end
 
-          worker = CommonExportFacesToFileWorker.new(@active_face_infos, options, file_format, @active_part.nil? ? 'Face' : @active_part.name)
+          worker = CommonExportFacesToFileWorker.new(@active_face_infos, {
+            'file_name' => file_name,
+            'file_format' => file_format,
+            'unit' => unit,
+            'max_depth' => 0
+          })
           response = worker.run
 
           # TODO

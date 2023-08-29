@@ -15,12 +15,14 @@ module Ladb::OpenCutList
 
     SUPPORTED_FILE_FORMATS = [ FILE_FORMAT_DXF, FILE_FORMAT_SVG ]
 
-    def initialize(face_infos, options, file_format, file_name = 'FACE')
+    def initialize(face_infos, settings)
 
       @face_infos = face_infos
-      @options = options
-      @file_format = file_format
-      @file_name = _sanitize_filename(file_name)
+
+      @file_name = _sanitize_filename(settings.fetch('file_name', 'FACE'))
+      @file_format = settings.fetch('file_format', nil)
+      @unit = settings.fetch('unit', nil)
+      @max_depth = settings.fetch('max_depth', 0)
 
     end
 
@@ -41,9 +43,24 @@ module Ladb::OpenCutList
 
         begin
 
-          unit_converter = DimensionUtils.instance.length_to_model_unit_float(1.0.to_l)
+          case @unit
+          when DimensionUtils::INCHES
+            unit_converter = 1.0
+          when DimensionUtils::FEET
+            unit_converter = 1.0.to_l.to_feet
+          when DimensionUtils::YARD
+            unit_converter = 1.0.to_l.to_yard
+          when DimensionUtils::MILLIMETER
+            unit_converter = 1.0.to_l.to_mm
+          when DimensionUtils::CENTIMETER
+            unit_converter = 1.0.to_l.to_cm
+          when DimensionUtils::METER
+            unit_converter = 1.0.to_l.to_m
+          else
+            unit_converter = DimensionUtils.instance.length_to_model_unit_float(1.0.to_l)
+          end
 
-          success = _write_faces(path, @face_infos, unit_converter ) && File.exist?(path)
+          success = _write_faces(path, @face_infos, unit_converter) && File.exist?(path)
 
           return { :errors => [ [ 'tab.cutlist.error.failed_export_to_3d_file', { :file_format => @file_format, :error => e.message } ] ] } unless success
           return { :export_path => path }
@@ -114,12 +131,10 @@ module Ladb::OpenCutList
         end
 
         # Tweak unit converter to restrict to SVG compatible units (in, mm, cm)
-        case DimensionUtils.instance.length_unit
+        case @unit
         when DimensionUtils::INCHES
-          unit_converter = 1.0
           unit_sign = 'in'
         when DimensionUtils::CENTIMETER
-          unit_converter = 1.0.to_cm
           unit_sign = 'cm'
         else
           unit_converter = 1.0.to_mm
@@ -154,7 +169,7 @@ module Ladb::OpenCutList
               end
             else
               # Inside
-              _svg_write_path(file, data, '#FFFFFF', '#000000', 'shaper:cutType': 'inside', 'shaper:cutDepth': height)
+              _svg_write_path(file, data, '#FFFFFF', '#000000', 'shaper:cutType': 'inside', 'shaper:cutDepth': @max_depth)
             end
           end
 
