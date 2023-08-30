@@ -170,8 +170,6 @@ module Ladb::OpenCutList
         width = _convert(bounds.width, unit_converter)
         height = _convert(bounds.height, unit_converter)
 
-        y_offset = height + y
-
         _svg_write_start(file, x, y, width, height, unit_sign)
 
         face_infos.sort_by { |face_info| face_info.data[:depth] }.each do |face_info|
@@ -184,7 +182,7 @@ module Ladb::OpenCutList
             coords = []
             loop.vertices.each do |vertex|
               point = vertex.position.transform(transformation)
-              coords << "#{_convert(point.x, unit_converter)},#{y_offset - _convert(point.y, unit_converter)}"
+              coords << "#{_convert(point.x, unit_converter)},#{_convert(-point.y, unit_converter)}"
             end
             data = "M#{coords.join('L')}Z"
             if loop.outer?
@@ -213,7 +211,7 @@ module Ladb::OpenCutList
             coords = []
             edge.vertices.each do |vertex|
               point = vertex.position.transform(transformation)
-              coords << "#{_convert(point.x, unit_converter)},#{y_offset - _convert(point.y, unit_converter)}"
+              coords << "#{_convert(point.x, unit_converter)},#{_convert(-point.y, unit_converter)}"
             end
             data += "M#{coords.join('L')}"
 
@@ -224,11 +222,11 @@ module Ladb::OpenCutList
         if @anchor
 
           x1 = 0
-          y1 = y_offset
+          y1 = 0
           x2 = 0
-          y2 = y_offset - _convert(10.mm, unit_converter)
+          y2 = _convert(-10.mm, unit_converter)
           x3 = _convert(5.mm, unit_converter)
-          y3 = y_offset
+          y3 = 0
 
           _svg_write_polygon(file, "#{x1},#{y1} #{x2},#{y2} #{x3},#{y3}", nil, '#FF0000', id: 'anchor')
 
