@@ -23,7 +23,7 @@ module Ladb::OpenCutList
       @file_name = _sanitize_filename(settings.fetch('file_name', 'FACE'))
       @file_format = settings.fetch('file_format', nil)
       @unit = settings.fetch('unit', nil)
-      @anchor_origin = settings.fetch('anchor_origin', Geom::Point3d.new)
+      @anchor = settings.fetch('anchor', false)
       @max_depth = settings.fetch('max_depth', 0)
 
     end
@@ -145,7 +145,7 @@ module Ladb::OpenCutList
       when FILE_FORMAT_SVG
 
         bounds = Geom::BoundingBox.new
-        bounds.add(@anchor_origin)
+        bounds.add(Geom::Point3d.new) if @anchor
         face_infos.each do |face_info|
           bounds.add(_compute_children_faces_triangles([ face_info.face ], face_info.transformation))
         end
@@ -172,9 +172,7 @@ module Ladb::OpenCutList
 
         y_offset = height + y
 
-        puts y_offset
-
-        _svg_write_start(file, 0, 0, width, height, unit_sign)
+        _svg_write_start(file, x, y, width, height, unit_sign)
 
         face_infos.sort_by { |face_info| face_info.data[:depth] }.each do |face_info|
 
@@ -220,19 +218,19 @@ module Ladb::OpenCutList
             data += "M#{coords.join('L')}"
 
           end
-          _svg_write_path(file, data, nil,'#2272F6', 'stroke-width': 0.1, 'shaper:cutType': 'guide')
+          _svg_write_path(file, data, nil,'#2272F6', 'shaper:cutType': 'guide')
         end
 
-        if @anchor_origin != ORIGIN
+        if @anchor
 
-          x1 = _convert(@anchor_origin.x, unit_converter)
-          y1 = y_offset - _convert(@anchor_origin.y, unit_converter)
-          x2 = _convert(@anchor_origin.x, unit_converter)
-          y2 = y_offset - _convert(@anchor_origin.y + 10.mm, unit_converter)
-          x3 = _convert(@anchor_origin.x + 5.mm, unit_converter)
-          y3 = y_offset - _convert(@anchor_origin.y, unit_converter)
+          x1 = 0
+          y1 = y_offset
+          x2 = 0
+          y2 = y_offset - _convert(10.mm, unit_converter)
+          x3 = _convert(5.mm, unit_converter)
+          y3 = y_offset
 
-          _svg_write_polygon(file, "#{x1},#{y1} #{x2},#{y2} #{x3},#{y3}", nil, '#FF0000')
+          _svg_write_polygon(file, "#{x1},#{y1} #{x2},#{y2} #{x3},#{y3}", nil, '#FF0000', id: 'anchor')
 
         end
 

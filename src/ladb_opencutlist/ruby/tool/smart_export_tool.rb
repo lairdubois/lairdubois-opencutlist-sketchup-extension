@@ -67,6 +67,7 @@ module Ladb::OpenCutList
     COLOR_MESH = Sketchup::Color.new(200, 200, 0, 150).freeze
     COLOR_MESH_HIGHLIGHTED = Sketchup::Color.new(200, 200, 0, 200).freeze
     COLOR_MESH_DEEP = Sketchup::Color.new(50, 50, 0, 150).freeze
+    COLOR_GUIDE = Sketchup::Color.new('#2272F6').freeze
     COLOR_ACTION = Kuix::COLOR_MAGENTA
     COLOR_ACTION_FILL = Sketchup::Color.new(255, 0, 255, 51).freeze
     COLOR_ACTION_FILL_HIGHLIGHTED = Sketchup::Color.new(255, 0, 255, 102).freeze
@@ -346,12 +347,12 @@ module Ladb::OpenCutList
               @active_edge = nil
             elsif input_inner_normal.parallel?(X_AXIS)
               z_axis = input_inner_normal
-              x_axis = z_axis.cross(Y_AXIS).y < 0 ? Y_AXIS.reverse : Y_AXIS
+              x_axis = z_axis.cross(Y_AXIS).y > 0 ? Y_AXIS.reverse : Y_AXIS
               y_axis = z_axis.cross(x_axis)
               @active_edge = nil
             elsif input_inner_normal.parallel?(Y_AXIS)
               z_axis = input_inner_normal
-              x_axis = z_axis.cross(X_AXIS).y < 0 ? X_AXIS.reverse : X_AXIS
+              x_axis = z_axis.cross(X_AXIS).y > 0 ? X_AXIS.reverse : X_AXIS
               y_axis = z_axis.cross(x_axis)
               @active_edge = nil
             end
@@ -372,11 +373,12 @@ module Ladb::OpenCutList
             bounds.add(edge_info.edge.end.position.transform(ti * edge_info.transformation))
           end
 
-          bounds_origin = Geom::Point3d.new(bounds.min.x, bounds.min.y, bounds.max.z)
+          bounds.add(Geom::Point3d.new(0, 0, bounds.max.z)) if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR)
+          bound_origin = Geom::Point3d.new(bounds.min.x, bounds.min.y, bounds.max.z)
           if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR)
-            @active_anchor_origin = Geom::Point3d.new(-bounds.min.x, -bounds.min.y, 0)
+            origin = Geom::Point3d.new(0, 0, bounds.max.z)
           else
-            @active_anchor_origin = Geom::Point3d.new
+            origin = Geom::Point3d.new(bounds.min.x, bounds.min.y, bounds.max.z)
           end
 
           # Compute face distance to 0
@@ -386,12 +388,12 @@ module Ladb::OpenCutList
             vector = face_info.face.normal
             plane = [ point.transform(ti * face_info.transformation), vector.transform(ti * face_info.transformation) ]
 
-            face_info.data[:depth] = bounds_origin.distance_to_plane(plane)
+            face_info.data[:depth] = origin.distance_to_plane(plane)
 
           end
 
           # Translate to 0,0 transformation
-          to = Geom::Transformation.translation(Geom::Vector3d.new(bounds_origin.to_a))
+          to = Geom::Transformation.translation(Geom::Vector3d.new(origin.to_a))
 
           tto = t * to
           export_transformation = tto.inverse
@@ -404,6 +406,7 @@ module Ladb::OpenCutList
           @active_edge_infos.each do |edge_info|
             edge_info.transformation = export_transformation * edge_info.transformation
           end
+          bound_origin = bound_origin.transform(to.inverse)
 
           face_helper = Kuix::Group.new
           face_helper.transformation = transformation * tto
@@ -424,8 +427,8 @@ module Ladb::OpenCutList
               # Highlight edge
               segments = Kuix::Segments.new
               segments.add_segments(_compute_children_edge_segments([ edge_info.edge ], edge_info.transformation))
-              segments.color = Kuix::COLOR_BLUE
-              segments.line_width = 4
+              segments.color = COLOR_GUIDE
+              segments.line_width = 2
               segments.on_top = true
               face_helper.append(segments)
 
@@ -433,6 +436,7 @@ module Ladb::OpenCutList
 
             # Box helper
             box_helper = Kuix::BoxMotif.new
+            box_helper.bounds.origin.copy!(bound_origin)
             box_helper.bounds.size.copy!(bounds)
             box_helper.bounds.size.depth = 0
             box_helper.bounds.apply_offset(inch_offset, inch_offset, 0)
@@ -453,9 +457,8 @@ module Ladb::OpenCutList
 
             end
 
-            # # Axes helper
+            # Axes helper
             axes_helper = Kuix::AxesHelper.new
-            axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(@active_anchor_origin.to_a)) if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR)
             axes_helper.box_0.visible = false
             axes_helper.box_z.visible = false
             face_helper.append(axes_helper)
@@ -578,6 +581,14 @@ module Ladb::OpenCutList
 
         if @input_face_path
 
+          # Check if face is not curved
+          if @input_face.edges.index { |edge| edge.soft? }
+            _reset_ui
+            notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_export.error.not_flat_face')}", MESSAGE_TYPE_ERROR)
+            push_cursor(@cursor_select_error)
+            return
+          end
+
           if is_action_export_part_3d? || is_action_export_part_2d?
 
             input_part_entity_path = _get_part_entity_path_from_path(@input_face_path)
@@ -687,12 +698,13 @@ module Ladb::OpenCutList
           elsif fetch_action_option(fetch_action, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_CM)
             unit = DimensionUtils::CENTIMETER
           end
+          anchor = fetch_action_option(fetch_action, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR)
 
           worker = CommonExportFacesToFileWorker.new(@active_face_infos, @active_edge_infos, {
             'file_name' => file_name,
             'file_format' => file_format,
             'unit' => unit,
-            'anchor_origin' => @active_anchor_origin,
+            'anchor' => anchor,
             'max_depth' => 0
           })
           response = worker.run
