@@ -7,7 +7,7 @@ module Ladb::OpenCutList
       file.puts(value.to_s)
     end
 
-    def _dxf_write_line(file, x1, y1, x2, y2, layer = 0, stroke_color = nil)
+    def _dxf_write_line(file, x1, y1, x2, y2, layer = 0, layer_color = nil)
 
       _dxf_write(file, 0, 'LINE')
       _dxf_write(file, 8, layer)
@@ -18,7 +18,7 @@ module Ladb::OpenCutList
 
     end
 
-    def _dxf_write_rect(file, x, y, width, height, layer = 0, stroke_color = nil)
+    def _dxf_write_rect(file, x, y, width, height, layer = 0, layer_color = nil)
 
       points = [
         Geom::Point3d.new(x, y, 0),
