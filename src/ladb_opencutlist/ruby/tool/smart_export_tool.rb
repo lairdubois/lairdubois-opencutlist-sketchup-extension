@@ -5,6 +5,7 @@ module Ladb::OpenCutList
   require_relative '../helper/edge_segments_helper'
   require_relative '../helper/entities_helper'
   require_relative '../model/cutlist/face_info'
+  require_relative '../model/cutlist/edge_info'
   require_relative '../worker/common/common_export_instance_to_file_worker'
   require_relative '../worker/common/common_export_faces_to_file_worker'
 
@@ -36,6 +37,7 @@ module Ladb::OpenCutList
 
     ACTION_OPTION_OPTIONS_DEPTH = 0
     ACTION_OPTION_OPTIONS_ANCHOR = 1
+    ACTION_OPTION_OPTIONS_GUIDES = 2
 
     ACTIONS = [
       {
@@ -50,7 +52,7 @@ module Ladb::OpenCutList
         :options => {
           ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_DXF, ACTION_OPTION_FILE_FORMAT_SVG ],
           ACTION_OPTION_UNIT => [ ACTION_OPTION_UNIT_MM, ACTION_OPTION_UNIT_CM, ACTION_OPTION_UNIT_IN ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_DEPTH, ACTION_OPTION_OPTIONS_ANCHOR ]
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_DEPTH, ACTION_OPTION_OPTIONS_ANCHOR, ACTION_OPTION_OPTIONS_GUIDES ]
         }
       },
       {
@@ -65,6 +67,7 @@ module Ladb::OpenCutList
     COLOR_MESH = Sketchup::Color.new(200, 200, 0, 150).freeze
     COLOR_MESH_HIGHLIGHTED = Sketchup::Color.new(200, 200, 0, 200).freeze
     COLOR_MESH_DEEP = Sketchup::Color.new(50, 50, 0, 150).freeze
+    COLOR_GUIDE = Sketchup::Color.new('#2272F6').freeze
     COLOR_ACTION = Kuix::COLOR_MAGENTA
     COLOR_ACTION_FILL = Sketchup::Color.new(255, 0, 255, 51).freeze
     COLOR_ACTION_FILL_HIGHLIGHTED = Sketchup::Color.new(255, 0, 255, 102).freeze
@@ -162,10 +165,12 @@ module Ladb::OpenCutList
         end
       when ACTION_OPTION_OPTIONS
         case option
-        when ACTION_OPTION_OPTIONS_ANCHOR
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.273,0L0.273,0.727L1,0.727 M0.091,0.545L0.455,0.545L0.455,0.909L0.091,0.909L0.091,0.545 M0.091,0.182L0.273,0L0.455,0.182 M0.818,0.545L1,0.727L0.818,0.909'))
         when ACTION_OPTION_OPTIONS_DEPTH
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.5,0.083L1,0.333L0.75,0.458L0.5,0.333L0.25,0.458L0,0.333L0.5,0.083Z M0.5,0.833L0.25,0.708L0.5,0.583L0.75,0.708L0.5,0.833Z'))
+        when ACTION_OPTION_OPTIONS_ANCHOR
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.273,0L0.273,0.727L1,0.727 M0.091,0.545L0.455,0.545L0.455,0.909L0.091,0.909L0.091,0.545 M0.091,0.182L0.273,0L0.455,0.182 M0.818,0.545L1,0.727L0.818,0.909'))
+        when ACTION_OPTION_OPTIONS_GUIDES
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.167,0L0.167,1 M0,0.167L1,0.167 M0,0.833L1,0.833 M0.833,0L0.833,1'))
         end
       end
 
@@ -309,8 +314,10 @@ module Ladb::OpenCutList
         active_instance = @active_part_entity_path.last
         transformation = PathUtils::get_transformation(@active_part_entity_path)
 
-        input_inner_transforamtion = PathUtils::get_transformation(@input_face_path - @active_part_entity_path)
-        input_normal = @input_face.normal.transform(transformation * input_inner_transforamtion)
+        input_transformation = PathUtils::get_transformation(@input_face_path)
+        input_inner_transformation = PathUtils::get_transformation(@input_face_path - @active_part_entity_path)
+        input_normal = @input_face.normal.transform(input_transformation)
+        input_plane = [ @input_face.vertices.first.position.transform(input_transformation), input_normal ]
 
         inch_offset = Sketchup.active_model.active_view.pixels_to_model(5, Geom::Point3d.new.transform(transformation))
 
@@ -322,25 +329,31 @@ module Ladb::OpenCutList
             @active_face_infos = []
           end
           if @active_face_infos.empty?
-            @active_face_infos = [ FaceInfo.new(@input_face, input_inner_transforamtion)  ]
+            @active_face_infos = [ FaceInfo.new(@input_face, input_transformation)  ]
           end
 
-          origin, x_axis, y_axis, z_axis, @active_edge, auto = _get_input_axes(input_inner_transforamtion)
+          if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_GUIDES)
+            @active_edge_infos = _get_edge_infos_by_plane(active_instance.definition.entities, input_plane, transformation)
+          else
+            @active_edge_infos = []
+          end
+
+          origin, x_axis, y_axis, z_axis, @active_edge, auto = _get_input_axes(input_transformation)
           if auto
-            input_inner_normal = @input_face.normal.transform(input_inner_transforamtion)
+            input_inner_normal = @input_face.normal.transform(input_inner_transformation)
             if input_inner_normal.parallel?(Z_AXIS)
-              z_axis = input_inner_normal
-              x_axis = z_axis.cross(X_AXIS).y < 0 ? X_AXIS.reverse : X_AXIS
+              z_axis = input_normal
+              x_axis = (z_axis.cross(X_AXIS).y < 0 ? X_AXIS.reverse : X_AXIS).transform(transformation)
               y_axis = z_axis.cross(x_axis)
               @active_edge = nil
             elsif input_inner_normal.parallel?(X_AXIS)
-              z_axis = input_inner_normal
-              x_axis = z_axis.cross(Y_AXIS).y < 0 ? Y_AXIS.reverse : Y_AXIS
+              z_axis = input_normal
+              x_axis = (z_axis.cross(Y_AXIS).y > 0 ? Y_AXIS.reverse : Y_AXIS).transform(transformation)
               y_axis = z_axis.cross(x_axis)
               @active_edge = nil
             elsif input_inner_normal.parallel?(Y_AXIS)
-              z_axis = input_inner_normal
-              x_axis = z_axis.cross(X_AXIS).y < 0 ? X_AXIS.reverse : X_AXIS
+              z_axis = input_normal
+              x_axis = (z_axis.cross(X_AXIS).y > 0 ? X_AXIS.reverse : X_AXIS).transform(transformation)
               y_axis = z_axis.cross(x_axis)
               @active_edge = nil
             end
@@ -348,7 +361,7 @@ module Ladb::OpenCutList
 
           # Change axis transformation
           t = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
-          t = t * Geom::Transformation.scaling(-1, 1, 1) if TransformationUtils.flipped?(transformation)
+          t = t * Geom::Transformation.scaling(-1, -1, 1) if TransformationUtils.flipped?(transformation)
           ti = t.inverse
 
           # Compute new bounds
@@ -356,9 +369,23 @@ module Ladb::OpenCutList
           @active_face_infos.each do |face_info|
             bounds.add(_compute_children_faces_triangles([ face_info.face ], ti * face_info.transformation))
           end
+          @active_edge_infos.each do |edge_info|
+            bounds.add(edge_info.edge.start.position.transform(ti * edge_info.transformation))
+            bounds.add(edge_info.edge.end.position.transform(ti * edge_info.transformation))
+          end
+
+          if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR)
+            part_origin = ORIGIN.transform(ti * transformation)
+            bounds.add(Geom::Point3d.new(part_origin.x, part_origin.y, bounds.max.z))
+          end
+          bound_origin = Geom::Point3d.new(bounds.min.x, bounds.min.y, bounds.max.z)
+          if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR)
+            origin = Geom::Point3d.new(part_origin.x, part_origin.y, bounds.max.z)
+          else
+            origin = Geom::Point3d.new(bounds.min.x, bounds.min.y, bounds.max.z)
+          end
 
           # Compute face distance to 0
-          origin = Geom::Point3d.new(bounds.min.x, bounds.min.y, bounds.max.z)
           @active_face_infos.each do |face_info|
 
             point = face_info.face.vertices.first.position
@@ -366,22 +393,28 @@ module Ladb::OpenCutList
             plane = [ point.transform(ti * face_info.transformation), vector.transform(ti * face_info.transformation) ]
 
             face_info.data[:depth] = origin.distance_to_plane(plane)
+            face_info.data[:depth_ratio] = bounds.depth > 0 ? face_info.data[:depth] / bounds.depth : 0.0
 
           end
 
           # Translate to 0,0 transformation
-          to = Geom::Transformation.translation(Geom::Vector3d.new(bounds.min.x, bounds.min.y, bounds.max.z))
+          to = Geom::Transformation.translation(Geom::Vector3d.new(origin.to_a))
 
           tto = t * to
-          export_transformation = tto.inverse
+          ttoi = tto.inverse
 
           # Update face infos transformations
           @active_face_infos.each do |face_info|
-            face_info.transformation = export_transformation * face_info.transformation
+            face_info.transformation = ttoi * face_info.transformation
           end
+          # Update edge infos transformations
+          @active_edge_infos.each do |edge_info|
+            edge_info.transformation = ttoi * edge_info.transformation
+          end
+          bound_origin = bound_origin.transform(to.inverse)
 
           face_helper = Kuix::Group.new
-          face_helper.transformation = transformation * tto
+          face_helper.transformation = tto
           @space.append(face_helper)
 
             @active_face_infos.each do |face_info|
@@ -389,13 +422,26 @@ module Ladb::OpenCutList
               # Highlight face
               mesh = Kuix::Mesh.new
               mesh.add_triangles(_compute_children_faces_triangles([ face_info.face ], face_info.transformation))
-              mesh.background_color = COLOR_MESH_DEEP.blend(highlighted ? COLOR_MESH_HIGHLIGHTED : COLOR_MESH, bounds.depth > 0 ? face_info.data[:depth] / bounds.depth : 0.0)
+              mesh.background_color = COLOR_MESH_DEEP.blend(highlighted ? COLOR_MESH_HIGHLIGHTED : COLOR_MESH, face_info.data[:depth_ratio])
               face_helper.append(mesh)
+
+            end
+
+            @active_edge_infos.each do |edge_info|
+
+              # Highlight edge
+              segments = Kuix::Segments.new
+              segments.add_segments(_compute_children_edge_segments([ edge_info.edge ], edge_info.transformation))
+              segments.color = COLOR_GUIDE
+              segments.line_width = 2
+              segments.on_top = true
+              face_helper.append(segments)
 
             end
 
             # Box helper
             box_helper = Kuix::BoxMotif.new
+            box_helper.bounds.origin.copy!(bound_origin)
             box_helper.bounds.size.copy!(bounds)
             box_helper.bounds.size.depth = 0
             box_helper.bounds.apply_offset(inch_offset, inch_offset, 0)
@@ -404,23 +450,23 @@ module Ladb::OpenCutList
             box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
             face_helper.append(box_helper)
 
+            if @active_edge
+
+              # Highlight input edge
+              segments = Kuix::Segments.new
+              segments.add_segments(_compute_children_edge_segments(@input_face.edges, ttoi * input_transformation,[ @active_edge ]))
+              segments.color = COLOR_ACTION
+              segments.line_width = 3
+              segments.on_top = true
+              face_helper.append(segments)
+
+            end
+
             # Axes helper
             axes_helper = Kuix::AxesHelper.new
             axes_helper.box_0.visible = false
             axes_helper.box_z.visible = false
             face_helper.append(axes_helper)
-
-            if @active_edge
-
-              # Highlight input edge
-              segments = Kuix::Segments.new
-              segments.add_segments(_compute_children_edge_segments(@input_face.edges, tto.inverse * input_inner_transforamtion,[ @active_edge ]))
-              segments.color = COLOR_ACTION
-              segments.line_width = 4
-              segments.on_top = true
-              face_helper.append(segments)
-
-            end
 
         else
 
@@ -456,6 +502,7 @@ module Ladb::OpenCutList
       else
 
         @active_face_infos = nil
+        @active_edge_infos = nil
 
       end
 
@@ -518,7 +565,7 @@ module Ladb::OpenCutList
           segments = Kuix::Segments.new
           segments.add_segments(_compute_children_edge_segments(@active_face.edges, export_transformation,[ @active_edge ]))
           segments.color = COLOR_ACTION
-          segments.line_width = 4
+          segments.line_width = 3
           segments.on_top = true
           face_helper.append(segments)
 
@@ -539,6 +586,14 @@ module Ladb::OpenCutList
 
         if @input_face_path
 
+          # Check if face is not curved
+          if @input_face.edges.index { |edge| edge.soft? }
+            _reset_ui
+            notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_export.error.not_flat_face')}", MESSAGE_TYPE_ERROR)
+            push_cursor(@cursor_select_error)
+            return
+          end
+
           if is_action_export_part_3d? || is_action_export_part_2d?
 
             input_part_entity_path = _get_part_entity_path_from_path(@input_face_path)
@@ -549,14 +604,14 @@ module Ladb::OpenCutList
                 _set_active_part(input_part_entity_path, part)
               else
                 _reset_active_part
-                notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_part')}", MESSAGE_TYPE_ERROR)
+                notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_export.error.not_part')}", MESSAGE_TYPE_ERROR)
                 push_cursor(@cursor_select_error)
               end
               return
 
             else
               _reset_active_part
-              notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_part')}", MESSAGE_TYPE_ERROR)
+              notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_export.error.not_part')}", MESSAGE_TYPE_ERROR)
               push_cursor(@cursor_select_error)
               return
             end
@@ -648,11 +703,13 @@ module Ladb::OpenCutList
           elsif fetch_action_option(fetch_action, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_CM)
             unit = DimensionUtils::CENTIMETER
           end
+          anchor = fetch_action_option(fetch_action, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR)
 
-          worker = CommonExportFacesToFileWorker.new(@active_face_infos, {
+          worker = CommonExportFacesToFileWorker.new(@active_face_infos, @active_edge_infos, {
             'file_name' => file_name,
             'file_format' => file_format,
             'unit' => unit,
+            'anchor' => anchor,
             'max_depth' => 0
           })
           response = worker.run
@@ -683,20 +740,43 @@ module Ladb::OpenCutList
       [ ORIGIN, x_axis, y_axis, z_axis, input_edge, input_edge != @input_edge ]
     end
 
-    def _get_face_infos_by_normal(entities, normal, root_transformation, inner_transformation = Geom::Transformation.new)
+    def _get_face_infos_by_normal(entities, normal, transformation = Geom::Transformation.new)
       face_infos = []
       entities.each do |entity|
         if entity.visible? && _layer_visible?(entity.layer)
           if entity.is_a?(Sketchup::Face)
-            face_infos.push(FaceInfo.new(entity, inner_transformation)) if entity.normal.transform(root_transformation * inner_transformation) == normal
+            face_infos.push(FaceInfo.new(entity, transformation)) if entity.normal.transform(transformation) == normal
           elsif entity.is_a?(Sketchup::Group)
-            face_infos += _get_face_infos_by_normal(entity.entities, normal, root_transformation, inner_transformation * entity.transformation)
+            face_infos += _get_face_infos_by_normal(entity.entities, normal, transformation * entity.transformation)
           elsif entity.is_a?(Sketchup::ComponentInstance) && (entity.definition.behavior.cuts_opening? || entity.definition.behavior.always_face_camera?)
-            face_infos += _get_face_infos_by_normal(entity.definition.entities, normal, root_transformation, inner_transformation * entity.transformation)
+            face_infos += _get_face_infos_by_normal(entity.definition.entities, normal, transformation * entity.transformation)
           end
         end
       end
       face_infos
+    end
+
+    def _get_edge_infos_by_plane(entities, plane, transformation = Geom::Transformation.new)
+      edge_infos = []
+      entities.each do |entity|
+        if entity.visible? && _layer_visible?(entity.layer)
+          if entity.is_a?(Sketchup::Edge)
+            if entity.faces.empty?
+
+              line = entity.line
+              point = line.first.transform(transformation)
+              vector = line.last.transform(transformation)
+
+              edge_infos.push(EdgeInfo.new(entity, transformation)) if vector.perpendicular?(plane[1]) && point.on_plane?(plane)
+            end
+          elsif entity.is_a?(Sketchup::Group)
+            edge_infos += _get_edge_infos_by_plane(entity.entities, plane, transformation * entity.transformation)
+          elsif entity.is_a?(Sketchup::ComponentInstance) && (entity.definition.behavior.cuts_opening? || entity.definition.behavior.always_face_camera?)
+            edge_infos += _get_edge_infos_by_plane(entity.definition.entities, plane, transformation * entity.transformation)
+          end
+        end
+      end
+      edge_infos
     end
 
   end

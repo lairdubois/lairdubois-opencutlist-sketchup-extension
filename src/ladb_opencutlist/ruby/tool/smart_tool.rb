@@ -447,6 +447,11 @@ module Ladb::OpenCutList
       Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}_status") + '.'
     end
 
+    def get_action_option_status(action, option_group, option)
+      return '' if action.nil?
+      Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}_status") + '.'
+    end
+
     def get_action_cursor(action, modifier)
       @cursor_select_error
     end
