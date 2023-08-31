@@ -5,6 +5,7 @@ module Ladb::OpenCutList
   require_relative '../../helper/dxf_writer_helper'
   require_relative '../../helper/svg_writer_helper'
   require_relative '../../helper/sanitizer_helper'
+  require_relative '../../utils/color_utils'
 
   class CommonExportFacesToFileWorker
 
@@ -145,7 +146,9 @@ module Ladb::OpenCutList
       when FILE_FORMAT_SVG
 
         bounds = Geom::BoundingBox.new
-        bounds.add(Geom::Point3d.new) if @anchor
+        if @anchor
+          bounds.add([ Geom::Point3d.new, Geom::Point3d.new(0, 10.mm), Geom::Point3d.new(5.mm, 0) ]) if @anchor
+        end
         face_infos.each do |face_info|
           bounds.add(_compute_children_faces_triangles([ face_info.face ], face_info.transformation))
         end
@@ -166,7 +169,7 @@ module Ladb::OpenCutList
         end
 
         x = _convert(bounds.min.x, unit_converter)
-        y = _convert(bounds.min.y, unit_converter)
+        y = _convert(-(bounds.height + bounds.min.y), unit_converter)
         width = _convert(bounds.width, unit_converter)
         height = _convert(bounds.height, unit_converter)
 
@@ -177,6 +180,7 @@ module Ladb::OpenCutList
           face = face_info.face
           transformation = face_info.transformation
           depth = face_info.data[:depth].to_f
+          depth_ratio = face_info.data[:depth_ratio]
 
           face.loops.each do |loop|
             coords = []
@@ -191,7 +195,7 @@ module Ladb::OpenCutList
                 _svg_write_path(file, data, '#000000', '#000000', 'shaper:cutType': 'outside')
               else
                 # Pocket
-                _svg_write_path(file, data, '#7F7F7F', nil, 'shaper:cutType': 'pocket', 'shaper:cutDepth': "#{_convert(depth, unit_converter)}#{unit_sign}")
+                _svg_write_path(file, data, ColorUtils.color_to_hex(Sketchup::Color.new('#7F7F7F').blend(Sketchup::Color.new('#AAAAAA'), depth_ratio)), nil, 'shaper:cutType': 'pocket', 'shaper:cutDepth': "#{_convert(depth, unit_converter)}#{unit_sign}")
               end
             else
               # Inside
