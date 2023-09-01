@@ -15,6 +15,7 @@ module Ladb::OpenCutList
       _dxf_write(file, 20, y1)
       _dxf_write(file, 11, x2)
       _dxf_write(file, 21, y2)
+      _dxf_write(file, 62, layer_color) if layer_color
 
     end
 
@@ -31,6 +32,7 @@ module Ladb::OpenCutList
       _dxf_write(file, 8, layer)
       _dxf_write(file, 90, 4)
       _dxf_write(file, 70, 1) # 1 = This is a closed polyline (or a polygon mesh closed in the M direction)
+      _dxf_write(file, 62, layer_color) if layer_color
 
       points.each do |point|
         _dxf_write(file, 10, point.x.to_f)

@@ -7,7 +7,7 @@ module Ladb::OpenCutList
   require_relative '../../helper/sanitizer_helper'
   require_relative '../../utils/color_utils'
 
-  class CommonExportFacesToFileWorker
+  class CommonExportDrawing2dWorker
 
     include FaceTrianglesHelper
     include DxfWriterHelper
@@ -136,7 +136,7 @@ module Ladb::OpenCutList
           x2 = _convert(point2.x, unit_converter)
           y2 = _convert(point2.y, unit_converter)
 
-          _dxf_write_line(file, x1, y1, x2, y2, 'guide')
+          _dxf_write_line(file, x1, y1, x2, y2, 'guide', 4)
 
         end
 
