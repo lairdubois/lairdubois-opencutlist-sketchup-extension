@@ -68,6 +68,8 @@ default:
   alt_key_win: Alt
   alt_key_mac: Command
   tab_key: Tab
+  file: File
+  file_plural: Files
 core:
   menu:
     submenu: OpenCutList
@@ -88,6 +90,11 @@ core:
       smart_paint: Paint Parts
       smart_axes: Orient Parts
       smart_export: Export Parts
+  messagebox:
+      dir_override: |
+        « {{ target }} » already exists. Would you like to replace it?
+
+        A folder with the same name is already present in the folder {{ parent }}. If you replace it, the original content will be lost.
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
@@ -163,6 +170,7 @@ core:
       component_textinput_color: Color Palette
       cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
       cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
+      cutlist_cuttingdiagram2d_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 2D
       cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
       cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
       cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
@@ -467,6 +475,8 @@ tab:
       hide_edges_help: "If this option is selected, the **edge banding columns** of parts of type *Sheet Goods* will be hidden."
       hide_faces: Hide the face columns
       hide_faces_help: "If this option is selected, the **face columns** of parts of type *Sheet Goods* will be hidden."
+      hide_material_colors: Hide material colors
+      hide_material_colors_help: "If this option is selected, the material colors will not be displayed."
       minimize_on_highlight: Minimize after *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "If this option is selected, the OpenCutList window will be minimized when the function *'$t(tab.cutlist.highlight_part)'* is used."
       general: General
@@ -529,6 +539,7 @@ tab:
       add_column: Add a column
       add_native_columns: Add a native column
       remove_column: Remove
+      remove_all_columns: Remove all
       columns: Columns
       column_title: Title
       column_title_help: |
@@ -560,6 +571,8 @@ tab:
       cutting_length: Length - raw
       cutting_width: Width - raw
       cutting_thickness: Thickness - raw
+      edge_cutting_length: Length edges - raw
+      edge_cutting_width: Width edges - raw
       bbox_length: Length
       bbox_width: Width
       bbox_thickness: Thickness
@@ -580,6 +593,13 @@ tab:
       face_zmax: Frontside
       layer: Tag
       layers: Tags
+      batch: Batch
+      bin: Container
+      filename: File name
+      model_name: Model name
+      model_description: Model description
+      page_name: Scene name
+      page_description: Scene description
       placeholder:
         no_column_title: Enter a title
         no_column_formula_native: "Native value of column '{{ col_name }}'"
@@ -764,6 +784,23 @@ tab:
         parts: "{{ count }} part"
         parts_plural: "{{ count }} parts"
         settings: Settings
+      export:
+        title: Export cutting diagram
+        options_general: General
+        option_file_format: Format
+        option_file_format_help: TBD
+        option_sheet: Panel
+        option_sheet_help: TBD
+        option_parts: Parts
+        option_parts_help: TBD
+        option_leftovers: Leftovers
+        option_leftovers_help: TBD
+        option_cuts: Cuts
+        option_cuts_help: TBD
+        option_stroke_color: Stroke color
+        option_fill_color: Fill color
+        warning:
+          is_sheet_selection: The **masked panels** are not exported.
       error:
         no_bar_dimensional: The standard board was not configured correctly and no offcuts were defined.
         no_bar_edge: The standard edge banding was not correctly configured and no offcuts were defined.
@@ -790,6 +827,7 @@ tab:
       size: Real size of label
       add_element: Add an element
       remove_element: Remove
+      remove_all_elements: Remove all
       part_order_strategy_help: |
         Reorganize the tiles to define the sort order of labels.
         Properties can be sorted in <i class="ladb-opencutlist-icon-sort-asc"></i> *increasing* or <i class="ladb-opencutlist-icon-sort-desc"></i> *decreasing* order.
@@ -819,6 +857,7 @@ tab:
       option_cutting_marks_1: Printed
       option_formula: Fieldname
       option_size: Size
+      option_custom_formula: Formula
       option_anchor: Anchor
       option_anchor_start: Start - Bottom
       option_anchor_middle: Middle - Bottom
@@ -828,6 +867,7 @@ tab:
       option_anchor_end_top: End - Top
       option_color: Color
       formula:
+        custom: Formula
         part_number: Number
         part_name: Designation
         part_description: Description
@@ -838,6 +878,9 @@ tab:
         part_cutting_length: Length - rough
         part_cutting_width: Width - rough
         part_cutting_thickness: Thickness - rough
+        part_edge_cutting_size: Edge dimensions
+        part_edge_cutting_length: Length edges - rough
+        part_edge_cutting_width: Width edges - rough
         part_size: Dimension
         part_length: Length
         part_width: Width
@@ -937,6 +980,7 @@ tab:
         is_group_selection: The parts inside of **hidden groups** of your parts list will not be drawn.
         is_part_selection: This overview drawing is limited to the **selected parts**.
     snippet:
+      hello: TBD
       number: Number
       name: Designation
       number_and_name: Number and Designation
@@ -1117,10 +1161,12 @@ tab:
     type_2: Component
     type_3: Part
     edit_node:
-      title: "Properties of instance **{{ name }}**"
+      title_model: "Properties of the model"
+      title_instance: "Properties of instance **{{ name }}**"
       general: General
       preview: Overview
-      name: Instance
+      name: Name
+      instance_name: Instance
       definition_name: Definition
       description: Description
       layer_name: Tag
@@ -1442,13 +1488,19 @@ tool:
     warning:
       more_entities: "{{ count_used }} instances sharing the same definition will be modified"
     error:
-      not_part: The targeted object is not a part
+      not_part: The target object is not a part
       not_orientable: The type of this part does not allow orienting it
   smart_export:
     title: Export
     action_0: Export a part
     action_0_status: Click on a part
-    action_1: Export a face
-    action_1_status: Click on a face
+    action_1: Export a 2D part
+    action_1_status: Click the face of a part
+    action_2: Export a face
+    action_2_status: Click on a face
+    action_option_group_0: Format
+    action_option_group_1: Unit
+    action_option_group_2: Options
     error:
-      not_part: The targeted object is not a part
+    not_part: The target object is not a part
+    not_flat_face: The target surface is not planar
