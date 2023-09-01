@@ -163,9 +163,9 @@ module Ladb::OpenCutList
       end
 
       z_axis = input_face.normal
-      z_axis.transform!(transformation) unless transformation.nil?
+      z_axis = z_axis.transform(transformation) unless transformation.nil?
       x_axis = active_edge.line[1]
-      x_axis.transform!(transformation) unless transformation.nil?
+      x_axis = x_axis.transform(transformation) unless transformation.nil?
       x_axis.reverse! if active_edge.reversed_in?(input_face)
       y_axis = z_axis.cross(x_axis)
 
