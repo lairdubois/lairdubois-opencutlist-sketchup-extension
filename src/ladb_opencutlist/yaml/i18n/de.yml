@@ -68,6 +68,8 @@ default:
   alt_key_win: Alt
   alt_key_mac: Command
   tab_key: Tab
+  file: Datei
+  file_plural: Dateien
 core:
   menu:
     submenu: OpenCutList
@@ -88,6 +90,11 @@ core:
       smart_paint: Teile einfärben
       smart_axes: Teile orientieren
       smart_export: Teile exportieren
+  messagebox:
+    dir_override: |
+      « {{ target }} » existiert schon. Möchten Sie es ersetzen?
+
+      Ein Verzeichnis mit diesem Namen befindet sich schon im Verzeichnis {{ parent }}. Wenn Sie ihn ersetzen, geht der ursprüngliche Inhalt verloren.
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
@@ -163,6 +170,7 @@ core:
       component_textinput_color: Farbpalette
       cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
       cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
+      cutlist_cuttingdiagram2d_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 2D
       cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
       cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
       cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
@@ -467,6 +475,8 @@ tab:
       hide_edges_help: "Ist diese Option aktiv, werden die **Spalten der Kantenbänder** der Teile des Typs *Platte* nicht angezeigt."
       hide_faces: Spalten der Flächen ausblenden
       hide_faces_help: "Ist diese Option aktiv, werden die **Spalten der Flächen** von Teilen des Typs *Platte* nicht angezeigt."
+      hide_material_colors: Farben der Materialien verbergen
+      hide_material_colors_help: "Ist diese Option aktiv, werden die Farben der Materialien angezeigt."
       minimize_on_highlight: Minimieren nach *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Ist diese Option aktiv, wird das OpenCutList Fenster minimiert, wenn die Funktion *'$t(tab.cutlist.highlight_part)'* verwendet wird."
       general: Allgemein
@@ -529,6 +539,7 @@ tab:
       add_column: Spalte hinzufügen
       add_native_columns: Native Spalte hinzufügen
       remove_column: Entfernen
+      remove_all_columns: Alles entfernen
       columns: Spalten
       column_title: Titel
       column_title_help: |
@@ -560,6 +571,8 @@ tab:
       cutting_length: Länge - roh
       cutting_width: Breite - roh
       cutting_thickness: Dicke - roh
+      edge_cutting_length: Länge Kante - roh
+      edge_cutting_width: Breite Kante - roh
       bbox_length: Länge
       bbox_width: Breite
       bbox_thickness: Dicke
@@ -580,6 +593,13 @@ tab:
       face_zmax: Vorderseite
       layer: Tag
       layers: Tags
+      batch: Lot
+      bin: Conteneur
+      filename: Nom de fichier
+      model_name: Nom du modèle
+      model_description: Description du modèle
+      page_name: Nom de la scène
+      page_description: Description de la scène
       placeholder:
         no_column_title: Überschrift eingeben
         no_column_formula_native: "Nativer Wert der Spalte '{{ col_name }}'"
@@ -764,6 +784,23 @@ tab:
         parts: "{{ count }} Teil"
         parts_plural: "{{ count }} Teile"
         settings: Einstellungen
+      export:
+        title: Schnittplan exportieren
+        options_general: Allgemein
+        option_file_format: Format
+        option_file_format_help: TBD
+        option_sheet: Platte
+        option_sheet_help: TBD
+        option_parts: Teile
+        option_parts_help: TBD
+        option_leftovers: Reste
+        option_leftovers_help: TBD
+        option_cuts: Schnitte
+        option_cuts_help: TBD
+        option_stroke_color: Strichfarbe
+        option_fill_color: Füllfarbe
+        warning:
+          is_sheet_selection: "**Ausgeblendete Platten** werden nicht exportiert."
       error:
         no_bar_dimensional: Die Standard-Länge ist falsch konfiguriert und es stehen keine Stangenreste zu Verfügung.
         no_bar_edge: Die Standard-Länge ist falsch konfiguriert und es stehen keine Kantenbandreste zu Verfügung.
@@ -790,6 +827,7 @@ tab:
       size: Tatsächliche Etikettengröße
       add_element: Element hinzufügen
       remove_element: Entfernen
+      remove_all_elements: Alles entfernen
       part_order_strategy_help: |
         Die Sortierreihenfolge der Etiketten wird durch die Anordnung der folgenden Kacheln definiert.
         Eigenschaften können in <i class="ladb-opencutlist-icon-sort-asc"></i> *aufsteigender* oder <i class="ladb-opencutlist-icon-sort-desc"></i> *absteigender* Reihenfolge sortiert werden.
@@ -819,6 +857,7 @@ tab:
       option_cutting_marks_1: Sichtbar
       option_formula: Feld
       option_size: Grösse
+      option_custom_formula: Formel
       option_anchor: Anker
       option_anchor_start: Anfang - Unten
       option_anchor_middle: Mitte - Unten
@@ -828,6 +867,7 @@ tab:
       option_anchor_end_top: Ende - Oben
       option_color: Farbe
       formula:
+        custom: Formel
         part_number: Nummer
         part_name: Bezeichnung
         part_description: Beschreibung
@@ -838,6 +878,9 @@ tab:
         part_cutting_length: Länge - roh
         part_cutting_width: Breite - roh
         part_cutting_thickness: Dicke - roh
+        part_edge_cutting_size: Rohmaße Kanten
+        part_edge_cutting_length: Länge Kante - roh
+        part_edge_cutting_width: Breite Kante - roh
         part_size: Fertigmaße
         part_length: Länge
         part_width: Breite
@@ -937,6 +980,7 @@ tab:
         is_group_selection: Die Teile innerhalb der **maskierten Gruppen** Ihrer Teileliste werden nicht gezeichnet.
         is_part_selection: Diese Übersichtszeichnung ist auf die **ausgewählten Teile** beschränkt.
     snippet:
+      hello: TBD
       number: Nummer
       name: Bezeichnung
       number_and_name: Nummer und Bezeichnung
@@ -1117,10 +1161,12 @@ tab:
     type_2: Komponente
     type_3: Teil
     edit_node:
-      title: "Eigenschaften der Instanz **{{ name }}**"
+      title_model: "Eigenschaften des Modells"
+      title_instance: "Eigenschaften der Instanz **{{ name }}**"
       general: Allgemein
       preview: Übersicht
-      name: Instanz
+      name: Name
+      instance_name: Instanz
       definition_name: Definition
       description: Beschreibung
       layer_name: Tag
@@ -1446,9 +1492,15 @@ tool:
       not_orientable: Der Typ dieses Teils lässt keine Orientierung zu
   smart_export:
     title: Export
-    action_0: Teil exportieren
+    action_0: 3D Teil exportieren
     action_0_status: Auf Teil klicken
-    action_1: Fläche exportieren
-    action_1_status: Auf Fläche klicken
+    action_1: 2D Teil exportieren
+    action_1_status: Auf Fläche eines Teils klicken
+    action_2: Fläche exportieren
+    action_2_status: Auf Fläche klicken
+    action_option_group_0: Format
+    action_option_group_1: Einheit
+    action_option_group_2: Optionen
     error:
       not_part: Das Zielobjekt ist kein Teil
+      not_flat_face: Die Zielfläche ist nicht eben

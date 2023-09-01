@@ -1161,7 +1161,7 @@ tab:
     type_2: Composant
     type_3: Pièce
     edit_node:
-      title_model: "Propriétés de du modèle"
+      title_model: "Propriétés du modèle"
       title_instance: "Propriétés de l'instance **{{ name }}**"
       general: Générales
       preview: Aperçu
