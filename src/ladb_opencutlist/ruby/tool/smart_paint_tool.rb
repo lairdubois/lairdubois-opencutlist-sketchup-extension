@@ -72,7 +72,7 @@ module Ladb::OpenCutList
       @cursor_paint_face_1_id = create_cursor('paint-face-1', 2, 15)
       @cursor_paint_face_2_id = create_cursor('paint-face-2', 2, 15)
       @cursor_paint_clean_id = create_cursor('paint-clean', 2, 15)
-      @cursor_picker_id = create_cursor('picker', 3, 29)
+      @cursor_picker_id = create_cursor('picker', 0, 0)
       @cursor_paint_error_id = create_cursor('paint-error', 2, 15)
 
     end
