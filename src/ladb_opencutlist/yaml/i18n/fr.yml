@@ -1500,7 +1500,8 @@ tool:
     action_2_status: Cliquez sur une face
     action_option_group_0: Format
     action_option_group_1: Unité
-    action_option_group_2: Options
+    action_option_group_2: Faces
+    action_option_group_3: Options
     error:
       not_part: L'objet ciblé n'est pas une pièce
       not_flat_face: La surface ciblée n'est pas plane

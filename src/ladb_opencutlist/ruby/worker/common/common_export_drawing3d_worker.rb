@@ -85,6 +85,8 @@ module Ladb::OpenCutList
       case @file_format
       when FILE_FORMAT_DXF
 
+        _dxf_write_header(file)
+
         _dxf_write(file, 0, 'SECTION')
         _dxf_write(file, 2, 'ENTITIES')
 
@@ -100,9 +102,11 @@ module Ladb::OpenCutList
           polygons = mesh.polygons
           points = mesh.points
 
+          # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-ABF6B778-BE20-4B49-9B58-A94E64CEFFF3
+
           _dxf_write(file, 0, 'POLYLINE')
           _dxf_write(file, 8, 0) # Layer
-          _dxf_write(file, 66, 1)
+          _dxf_write(file, 66, 1) # Deprecated
           _dxf_write(file, 10, 0.0)
           _dxf_write(file, 20, 0.0)
           _dxf_write(file, 30, 0.0)
@@ -152,7 +156,7 @@ module Ladb::OpenCutList
           x2 = _convert(point2.x, unit_converter)
           y2 = _convert(point2.y, unit_converter)
 
-          _dxf_write_line(file, x1, y1, x2, y2, 'guide', 4)
+          _dxf_write_line(file, x1, y1, x2, y2, 'OCL_GUIDE', 4)
 
         end
 

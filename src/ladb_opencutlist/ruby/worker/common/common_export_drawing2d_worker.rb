@@ -89,6 +89,8 @@ module Ladb::OpenCutList
       case @file_format
       when FILE_FORMAT_DXF
 
+        _dxf_write_header(file)
+
         _dxf_write(file, 0, 'SECTION')
         _dxf_write(file, 2, 'ENTITIES')
 
@@ -136,7 +138,7 @@ module Ladb::OpenCutList
           x2 = _convert(point2.x, unit_converter)
           y2 = _convert(point2.y, unit_converter)
 
-          _dxf_write_line(file, x1, y1, x2, y2, 'guide', 4)
+          _dxf_write_line(file, x1, y1, x2, y2, 'OCL_GUIDE', 4)
 
         end
 
@@ -220,7 +222,9 @@ module Ladb::OpenCutList
             data += "M#{coords.join('L')}"
 
           end
+          _svg_write_group_start(file, id: 'OCL_GUIDES')
           _svg_write_path(file, data, nil,'#2272F6', 'shaper:cutType': 'guide')
+          _svg_write_group_end(file)
         end
 
         if @anchor
@@ -232,7 +236,9 @@ module Ladb::OpenCutList
           x3 = _convert(5.mm, unit_converter)
           y3 = 0
 
-          _svg_write_polygon(file, "#{x1},#{y1} #{x2},#{y2} #{x3},#{y3}", nil, '#FF0000', id: 'anchor')
+          _svg_write_group_start(file, id: 'OCL_ANCHOR')
+          _svg_write_polygon(file, "#{x1},#{y1} #{x2},#{y2} #{x3},#{y3}", nil, '#FF0000')
+          _svg_write_group_end(file)
 
         end
 

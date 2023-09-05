@@ -23,7 +23,8 @@ module Ladb::OpenCutList
 
     ACTION_OPTION_FILE_FORMAT = 0
     ACTION_OPTION_UNIT = 1
-    ACTION_OPTION_OPTIONS = 2
+    ACTION_OPTION_FACE = 2
+    ACTION_OPTION_OPTIONS = 3
 
     ACTION_OPTION_FILE_FORMAT_DXF = 0
     ACTION_OPTION_FILE_FORMAT_STL = 1
@@ -35,6 +36,10 @@ module Ladb::OpenCutList
     ACTION_OPTION_UNIT_MM = DimensionUtils::MILLIMETER
     ACTION_OPTION_UNIT_CM = DimensionUtils::CENTIMETER
     ACTION_OPTION_UNIT_M = DimensionUtils::METER
+
+    ACTION_OPTION_FACE_SINGLE = 0
+    ACTION_OPTION_FACE_COPLANAR = 1
+    ACTION_OPTION_FACE_PARALLEL = 2
 
     ACTION_OPTION_OPTIONS_DEPTH = 0
     ACTION_OPTION_OPTIONS_ANCHOR = 1
@@ -54,7 +59,8 @@ module Ladb::OpenCutList
         :options => {
           ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_DXF, ACTION_OPTION_FILE_FORMAT_SVG ],
           ACTION_OPTION_UNIT => [ ACTION_OPTION_UNIT_MM, ACTION_OPTION_UNIT_CM, ACTION_OPTION_UNIT_IN ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_DEPTH, ACTION_OPTION_OPTIONS_ANCHOR, ACTION_OPTION_OPTIONS_GUIDES ]
+          ACTION_OPTION_FACE => [ACTION_OPTION_FACE_SINGLE, ACTION_OPTION_FACE_COPLANAR, ACTION_OPTION_FACE_PARALLEL ],
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_ANCHOR, ACTION_OPTION_OPTIONS_GUIDES ]
         }
       }
     ].freeze
@@ -122,7 +128,7 @@ module Ladb::OpenCutList
     def get_action_option_group_unique?(action, option_group)
 
       case option_group
-      when ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_UNIT
+      when ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_UNIT, ACTION_OPTION_FACE
         return true
       end
 
@@ -156,10 +162,17 @@ module Ladb::OpenCutList
         when ACTION_OPTION_UNIT_M
           return Kuix::Label.new(DimensionUtils::UNIT_STRIPPEDNAME_METER)
         end
+      when ACTION_OPTION_FACE
+        case option
+        when ACTION_OPTION_FACE_SINGLE
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.375L0.25,0.25L0.5,0.375L0.25,0.5L0,0.375Z'))
+        when ACTION_OPTION_FACE_COPLANAR
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.375L0.25,0.25L0.5,0.375L0.25,0.5L0,0.375Z M0.25,0.25L0.5,0.125L1,0.375L0.75,0.5L0.5,0.375Z'))
+        when ACTION_OPTION_FACE_PARALLEL
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.375L0.25,0.25L0.5,0.375L0.25,0.5L0,0.375Z M0.25,0.25L0.5,0.125L1,0.375L0.75,0.5L0.5,0.375Z M0.5,0.813L0.25,0.688L0.5,0.563L0.75,0.688L0.5,0.813Z'))
+        end
       when ACTION_OPTION_OPTIONS
         case option
-        when ACTION_OPTION_OPTIONS_DEPTH
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.5,0.083L1,0.333L0.75,0.458L0.5,0.333L0.25,0.458L0,0.333L0.5,0.083Z M0.5,0.833L0.25,0.708L0.5,0.583L0.75,0.708L0.5,0.833Z'))
         when ACTION_OPTION_OPTIONS_ANCHOR
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.273,0L0.273,0.727L1,0.727 M0.091,0.545L0.455,0.545L0.455,0.909L0.091,0.909L0.091,0.545 M0.091,0.182L0.273,0L0.455,0.182 M0.818,0.545L1,0.727L0.818,0.909'))
         when ACTION_OPTION_OPTIONS_GUIDES
@@ -212,10 +225,13 @@ module Ladb::OpenCutList
         when ACTION_OPTION_UNIT_MM
           return DimensionUtils.instance.model_unit_is_metric
         end
+      when ACTION_OPTION_FACE
+        case option
+        when ACTION_OPTION_FACE_PARALLEL
+          return true
+        end
       when ACTION_OPTION_OPTIONS
         case option
-        when ACTION_OPTION_OPTIONS_DEPTH
-          return true
         when ACTION_OPTION_OPTIONS_ANCHOR
           return true
         end
@@ -317,13 +333,17 @@ module Ladb::OpenCutList
 
         if is_action_export_part_2d?
 
-          if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_DEPTH)
+          if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACE, ACTION_OPTION_FACE_PARALLEL)
             face_validator = lambda { |face, transformation|
               face.normal.transform(transformation) == input_normal
             }
-          else
+          elsif fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACE, ACTION_OPTION_FACE_COPLANAR)
             face_validator = lambda { |face, transformation|
               face.normal.transform(transformation) == input_normal && face.vertices.first.position.transform(transformation).on_plane?(input_plane)
+            }
+          else
+            face_validator = lambda { |face, transformation|
+              face == @input_face
             }
           end
 
@@ -415,161 +435,6 @@ module Ladb::OpenCutList
             preview.append(axes_helper)
 
           end
-
-
-
-          # if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_DEPTH)
-          #   @active_face_infos = _get_face_infos(active_instance.definition.entities, transformation) { |face, transformation| face.normal.transform(transformation) == input_normal }
-          # else
-          #   @active_face_infos = []
-          # end
-          # if @active_face_infos.empty?
-          #   @active_face_infos = [ FaceInfo.new(@input_face, input_transformation)  ]
-          # end
-          #
-          # if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_GUIDES)
-          #   @active_edge_infos = _get_edge_infos(active_instance.definition.entities, transformation) { |edge, transformation|
-          #     if edge.faces.empty?
-          #       line = edge.line
-          #       point = line.first.transform(transformation)
-          #       vector = line.last.transform(transformation)
-          #       vector.perpendicular?(input_plane[1]) && point.on_plane?(input_plane)
-          #     else
-          #       false
-          #     end
-          #   }
-          # else
-          #   @active_edge_infos = []
-          # end
-          #
-          # origin, x_axis, y_axis, z_axis, @active_edge, auto = _get_input_axes(input_transformation)
-          # if auto
-          #   input_inner_normal = @input_face.normal.transform(input_inner_transformation)
-          #   if input_inner_normal.parallel?(Z_AXIS)
-          #     z_axis = input_normal
-          #     x_axis = (z_axis.cross(X_AXIS).y < 0 ? X_AXIS.reverse : X_AXIS).transform(transformation)
-          #     y_axis = z_axis.cross(x_axis)
-          #     @active_edge = nil
-          #   elsif input_inner_normal.parallel?(X_AXIS)
-          #     z_axis = input_normal
-          #     x_axis = (z_axis.cross(Y_AXIS).y > 0 ? Y_AXIS.reverse : Y_AXIS).transform(transformation)
-          #     y_axis = z_axis.cross(x_axis)
-          #     @active_edge = nil
-          #   elsif input_inner_normal.parallel?(Y_AXIS)
-          #     z_axis = input_normal
-          #     x_axis = (z_axis.cross(X_AXIS).y > 0 ? X_AXIS.reverse : X_AXIS).transform(transformation)
-          #     y_axis = z_axis.cross(x_axis)
-          #     @active_edge = nil
-          #   end
-          # end
-          #
-          # # Change axes transformation
-          # t = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
-          # t = t * Geom::Transformation.scaling(-1, -1, 1) if TransformationUtils.flipped?(transformation)
-          # ti = t.inverse
-          #
-          # # Compute bounds in new axes system
-          # bounds = Geom::BoundingBox.new
-          # @active_face_infos.each do |face_info|
-          #   bounds.add(face_info.face.outer_loop.vertices.map { |vertex| vertex.position.transform(ti * face_info.transformation) })
-          # end
-          # @active_edge_infos.each do |edge_info|
-          #   bounds.add(edge_info.edge.vertices.map { |vertex| vertex.position.transform(ti * edge_info.transformation) })
-          # end
-          #
-          # if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR)
-          #   part_origin = ORIGIN.transform(ti * transformation)
-          #   bounds.add(Geom::Point3d.new(part_origin.x, part_origin.y, bounds.max.z))
-          # end
-          # bounds_origin = Geom::Point3d.new(bounds.min.x, bounds.min.y, bounds.max.z)
-          # if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR)
-          #   origin = Geom::Point3d.new(part_origin.x, part_origin.y, bounds.max.z)
-          # else
-          #   origin = Geom::Point3d.new(bounds.min.x, bounds.min.y, bounds.max.z)
-          # end
-          #
-          # # Compute face distance to 0
-          # @active_face_infos.each do |face_info|
-          #
-          #   point = face_info.face.vertices.first.position
-          #   vector = face_info.face.normal
-          #   plane = [ point.transform(ti * face_info.transformation), vector.transform(ti * face_info.transformation) ]
-          #
-          #   face_info.data[:depth] = origin.distance_to_plane(plane)
-          #   face_info.data[:depth_ratio] = bounds.depth > 0 ? face_info.data[:depth] / bounds.depth : 0.0
-          #
-          # end
-          #
-          # # Translate to 0,0 transformation
-          # to = Geom::Transformation.translation(Geom::Vector3d.new(origin.to_a))
-          #
-          # tto = t * to
-          # ttoi = tto.inverse
-          #
-          # # Update face infos transformations
-          # @active_face_infos.each do |face_info|
-          #   face_info.transformation = ttoi * face_info.transformation
-          # end
-          # # Update edge infos transformations
-          # @active_edge_infos.each do |edge_info|
-          #   edge_info.transformation = ttoi * edge_info.transformation
-          # end
-          # bounds_origin = bounds_origin.transform(to.inverse)
-          #
-          # face_helper = Kuix::Group.new
-          # face_helper.transformation = tto
-          # @space.append(face_helper)
-          #
-          #   @active_face_infos.each do |face_info|
-          #
-          #     # Highlight face
-          #     mesh = Kuix::Mesh.new
-          #     mesh.add_triangles(_compute_children_faces_triangles([ face_info.face ], face_info.transformation))
-          #     mesh.background_color = COLOR_MESH_DEEP.blend(highlighted ? COLOR_MESH_HIGHLIGHTED : COLOR_MESH, face_info.data[:depth_ratio])
-          #     face_helper.append(mesh)
-          #
-          #   end
-          #
-          #   @active_edge_infos.each do |edge_info|
-          #
-          #     # Highlight edge
-          #     segments = Kuix::Segments.new
-          #     segments.add_segments(_compute_children_edge_segments([ edge_info.edge ], edge_info.transformation))
-          #     segments.color = COLOR_GUIDE
-          #     segments.line_width = 2
-          #     segments.on_top = true
-          #     face_helper.append(segments)
-          #
-          #   end
-          #
-          #   # Box helper
-          #   box_helper = Kuix::BoxMotif.new
-          #   box_helper.bounds.origin.copy!(bounds_origin)
-          #   box_helper.bounds.size.copy!(bounds)
-          #   box_helper.bounds.size.depth = 0
-          #   box_helper.bounds.apply_offset(inch_offset, inch_offset, 0)
-          #   box_helper.color = Kuix::COLOR_BLACK
-          #   box_helper.line_width = 2
-          #   box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-          #   face_helper.append(box_helper)
-          #
-          #   if @active_edge
-          #
-          #     # Highlight input edge
-          #     segments = Kuix::Segments.new
-          #     segments.add_segments(_compute_children_edge_segments(@input_face.edges, ttoi * input_transformation,[ @active_edge ]))
-          #     segments.color = COLOR_ACTION
-          #     segments.line_width = 3
-          #     segments.on_top = true
-          #     face_helper.append(segments)
-          #
-          #   end
-          #
-          #   # Axes helper
-          #   axes_helper = Kuix::AxesHelper.new
-          #   axes_helper.box_0.visible = false
-          #   axes_helper.box_z.visible = false
-          #   face_helper.append(axes_helper)
 
         else
 
