@@ -62,7 +62,7 @@ module Ladb::OpenCutList
     COLOR_MESH = Sketchup::Color.new(200, 200, 0, 150).freeze
     COLOR_MESH_HIGHLIGHTED = Sketchup::Color.new(200, 200, 0, 200).freeze
     COLOR_MESH_DEEP = Sketchup::Color.new(50, 50, 0, 150).freeze
-    COLOR_GUIDE = Sketchup::Color.new('#2272F6').freeze
+    COLOR_GUIDE = Sketchup::Color.new(34, 114, 246).freeze
     COLOR_ACTION = Kuix::COLOR_MAGENTA
     COLOR_ACTION_FILL = Sketchup::Color.new(255, 0, 255, 51).freeze
     COLOR_ACTION_FILL_HIGHLIGHTED = Sketchup::Color.new(255, 0, 255, 102).freeze

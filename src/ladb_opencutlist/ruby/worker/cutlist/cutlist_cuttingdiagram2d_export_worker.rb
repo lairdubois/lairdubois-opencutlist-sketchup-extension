@@ -98,7 +98,7 @@ module Ladb::OpenCutList
         sheet_height = _convert(_to_inch(sheet.px_width), unit_converter)
 
         unless @sheet_hidden
-          _dxf_write_rect(file, 0, 0, sheet_width, sheet_height, 'sheet')
+          _dxf_write_rect(file, 0, 0, sheet_width, sheet_height, 'OCL_SHEET')
         end
 
         unless @parts_hidden
@@ -109,7 +109,7 @@ module Ladb::OpenCutList
             part_width = _convert(_to_inch(part.px_length), unit_converter)
             part_height = _convert(_to_inch(part.px_width), unit_converter)
 
-            _dxf_write_rect(file, part_x, part_y, part_width, part_height, 'parts')
+            _dxf_write_rect(file, part_x, part_y, part_width, part_height, 'OCL_PARTS')
 
           end
         end
@@ -122,7 +122,7 @@ module Ladb::OpenCutList
             leftover_width = _convert(_to_inch(leftover.px_length), unit_converter)
             leftover_height = _convert(_to_inch(leftover.px_width), unit_converter)
 
-            _dxf_write_rect(file, leftover_x, leftover_y, leftover_width, leftover_height, 'leftovers')
+            _dxf_write_rect(file, leftover_x, leftover_y, leftover_width, leftover_height, 'OCL_LEFTOVERS')
 
           end
         end
@@ -135,7 +135,7 @@ module Ladb::OpenCutList
             cut_x2 = _convert(_to_inch(cut.px_x + (cut.is_horizontal ? cut.px_length : 0)), unit_converter)
             cut_y2 = _convert(_to_inch(sheet.px_width - cut.px_y - (!cut.is_horizontal ? cut.px_length : 0)), unit_converter)
 
-            _dxf_write_line(file, cut_x1, cut_y1, cut_x2, cut_y2, 'cuts')
+            _dxf_write_line(file, cut_x1, cut_y1, cut_x2, cut_y2, 'OCL_CUTS')
 
           end
         end
