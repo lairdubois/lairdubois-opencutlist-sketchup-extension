@@ -131,7 +131,7 @@ module Ladb::OpenCutList
       min = drawing_def.bounds.min.transform(toi)
       max = drawing_def.bounds.max.transform(toi)
       drawing_def.bounds.clear
-      drawing_def.bounds.add([ min, max ])
+      drawing_def.bounds.add([ ORIGIN, min, max ])
 
       unless @ignore_faces
         drawing_def.face_infos.each do |face_info|

@@ -661,7 +661,7 @@ module Ladb::OpenCutList
             unit = DimensionUtils::METER
           end
 
-          worker = CommonExportDrawing3dWorker.new(@active_drawing_def.face_infos, @active_drawing_def.edge_infos, {
+          worker = CommonExportDrawing3dWorker.new(@active_drawing_def.bounds, @active_drawing_def.face_infos, @active_drawing_def.edge_infos, {
             'file_name' => file_name,
             'file_format' => file_format,
             'unit' => unit
@@ -695,7 +695,7 @@ module Ladb::OpenCutList
           end
           anchor = fetch_action_option(fetch_action, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR)
 
-          worker = CommonExportDrawing2dWorker.new(@active_drawing_def.face_infos, @active_drawing_def.edge_infos, {
+          worker = CommonExportDrawing2dWorker.new(@active_drawing_def.bounds, @active_drawing_def.face_infos, @active_drawing_def.edge_infos, {
             'file_name' => file_name,
             'file_format' => file_format,
             'unit' => unit,

@@ -91,17 +91,22 @@ module Ladb::OpenCutList
 
         unit_converter = DimensionUtils.instance.length_to_model_unit_float(1.0.to_l)
 
-        _dxf_write_header(file)
-        _dxf_write_tables(file)
+        sheet_width = _convert(_to_inch(sheet.px_length), unit_converter)
+        sheet_height = _convert(_to_inch(sheet.px_width), unit_converter)
+
+
+        _dxf_write_header(file, Geom::Point3d.new, Geom::Point3d.new(sheet_width, sheet_height, 0), [
+          { :name => 'OCL_SHEET', :color => 4 },
+          { :name => 'OCL_PARTS' },
+          { :name => 'OCL_LEFTOVERS', :color => 8 },
+          { :name => 'OCL_CUTS', :color => 6 }
+        ])
 
         _dxf_write(file, 0, 'SECTION')
         _dxf_write(file, 2, 'ENTITIES')
 
-        sheet_width = _convert(_to_inch(sheet.px_length), unit_converter)
-        sheet_height = _convert(_to_inch(sheet.px_width), unit_converter)
-
         unless @sheet_hidden
-          _dxf_write_rect(file, 0, 0, sheet_width, sheet_height, 'OCL_SHEET', 4)
+          _dxf_write_rect(file, 0, 0, sheet_width, sheet_height, 'OCL_SHEET')
         end
 
         unless @parts_hidden
@@ -125,7 +130,7 @@ module Ladb::OpenCutList
             leftover_width = _convert(_to_inch(leftover.px_length), unit_converter)
             leftover_height = _convert(_to_inch(leftover.px_width), unit_converter)
 
-            _dxf_write_rect(file, leftover_x, leftover_y, leftover_width, leftover_height, 'OCL_LEFTOVERS', 8)
+            _dxf_write_rect(file, leftover_x, leftover_y, leftover_width, leftover_height, 'OCL_LEFTOVERS')
 
           end
         end
@@ -138,7 +143,7 @@ module Ladb::OpenCutList
             cut_x2 = _convert(_to_inch(cut.px_x + (cut.is_horizontal ? cut.px_length : 0)), unit_converter)
             cut_y2 = _convert(_to_inch(sheet.px_width - cut.px_y - (!cut.is_horizontal ? cut.px_length : 0)), unit_converter)
 
-            _dxf_write_line(file, cut_x1, cut_y1, cut_x2, cut_y2, 'OCL_CUTS', 6)
+            _dxf_write_line(file, cut_x1, cut_y1, cut_x2, cut_y2, 'OCL_CUTS')
 
           end
         end

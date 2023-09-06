@@ -14,8 +14,9 @@ module Ladb::OpenCutList
 
     SUPPORTED_FILE_FORMATS = [ FILE_FORMAT_DXF, FILE_FORMAT_STL, FILE_FORMAT_OBJ ]
 
-    def initialize(face_infos, edge_infos, settings)
+    def initialize(bounds, face_infos, edge_infos, settings)
 
+      @bounds = bounds
       @face_infos = face_infos
       @edge_infos = edge_infos
 
@@ -85,7 +86,10 @@ module Ladb::OpenCutList
       case @file_format
       when FILE_FORMAT_DXF
 
-        _dxf_write_header(file)
+        _dxf_write_header(file, _convert_point(@bounds.min, unit_converter), _convert_point(@bounds.max, unit_converter), [
+          { :name => 'OCL_DRAWING' },
+          { :name => 'OCL_GUIDE', :color => 4 }
+        ])
 
         _dxf_write(file, 0, 'SECTION')
         _dxf_write(file, 2, 'ENTITIES')
@@ -99,6 +103,7 @@ module Ladb::OpenCutList
 
           mesh = face.mesh(0) # PolygonMeshPoints
           mesh.transform!(transformation)
+
           polygons = mesh.polygons
           points = mesh.points
 
@@ -107,9 +112,6 @@ module Ladb::OpenCutList
           _dxf_write(file, 0, 'POLYLINE')
           _dxf_write(file, 8, 0) # Layer
           _dxf_write(file, 66, 1) # Deprecated
-          _dxf_write(file, 10, 0.0)
-          _dxf_write(file, 20, 0.0)
-          _dxf_write(file, 30, 0.0)
           _dxf_write(file, 70, 64) # 64 = The polyline is a polyface mesh
           _dxf_write(file, 71, points.length) # Polygon mesh M vertex count
           _dxf_write(file, 72, 1) # Polygon mesh N vertex count
@@ -128,7 +130,7 @@ module Ladb::OpenCutList
           polygons.each do |polygon|
 
             _dxf_write(file, 0, 'VERTEX')
-            _dxf_write(file, 8, 0) # Layer
+            _dxf_write(file, 8, 'OCL_DRAWING')
             _dxf_write(file, 10, 0.0)
             _dxf_write(file, 20, 0.0)
             _dxf_write(file, 30, 0.0)
@@ -156,7 +158,7 @@ module Ladb::OpenCutList
           x2 = _convert(point2.x, unit_converter)
           y2 = _convert(point2.y, unit_converter)
 
-          _dxf_write_line(file, x1, y1, x2, y2, 'OCL_GUIDE', 4)
+          _dxf_write_line(file, x1, y1, x2, y2, 'OCL_GUIDE')
 
         end
 
@@ -229,6 +231,13 @@ module Ladb::OpenCutList
 
     def _convert(value, unit_converter, precision = 6)
       (value.to_f * unit_converter).round(precision)
+    end
+
+    def _convert_point(point, unit_converter, precision = 6)
+      point.x = _convert(point.x, unit_converter, precision)
+      point.y = _convert(point.y, unit_converter, precision)
+      point.z = _convert(point.z, unit_converter, precision)
+      point
     end
 
   end
