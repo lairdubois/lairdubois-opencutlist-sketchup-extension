@@ -714,7 +714,7 @@ module Ladb::OpenCutList
     end
 
     def execute_command(command, params = nil)
-      if @commands.has_key? command
+      if @commands.has_key?(command)
         block = @commands[command]
         return block.call(params)
       end
@@ -730,7 +730,7 @@ module Ladb::OpenCutList
         events = [ event ]
       end
       events.each do |e|
-        unless @event_callbacks.has_key? e
+        unless @event_callbacks.has_key?(e)
           @event_callbacks[e] = []
         end
         @event_callbacks[e].push(block)
@@ -738,7 +738,7 @@ module Ladb::OpenCutList
     end
 
     def trigger_event(event, params)
-      if @event_callbacks.has_key? event
+      if @event_callbacks.has_key?(event)
         blocks = @event_callbacks[event]
         blocks.each do |block|
           block.call(params)

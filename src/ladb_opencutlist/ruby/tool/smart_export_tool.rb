@@ -41,9 +41,8 @@ module Ladb::OpenCutList
     ACTION_OPTION_FACE_COPLANAR = 1
     ACTION_OPTION_FACE_PARALLEL = 2
 
-    ACTION_OPTION_OPTIONS_DEPTH = 0
-    ACTION_OPTION_OPTIONS_ANCHOR = 1
-    ACTION_OPTION_OPTIONS_GUIDES = 2
+    ACTION_OPTION_OPTIONS_ANCHOR = 0
+    ACTION_OPTION_OPTIONS_GUIDES = 1
 
     ACTIONS = [
       {
@@ -322,11 +321,11 @@ module Ladb::OpenCutList
 
         notify_infos("#{part.saved_number ? "[#{part.saved_number}] " : ''}#{part.name}", infos)
 
-        active_instance = @active_part_entity_path.last
         transformation = PathUtils::get_transformation(@active_part_entity_path)
 
         input_transformation = PathUtils::get_transformation(@input_face_path)
-        input_normal = @input_face.normal.transform(input_transformation)
+        input_transformation_array = input_transformation.to_a
+        input_normal = @input_face.normal.transform(input_transformation).normalize
         input_plane = [ @input_face.vertices.first.position.transform(input_transformation), input_normal ]
 
         inch_offset = Sketchup.active_model.active_view.pixels_to_model(5, Geom::Point3d.new.transform(transformation))
@@ -335,15 +334,15 @@ module Ladb::OpenCutList
 
           if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACE, ACTION_OPTION_FACE_PARALLEL)
             face_validator = lambda { |face, transformation|
-              face.normal.transform(transformation) == input_normal
+              face.normal.transform(transformation).normalize == input_normal
             }
           elsif fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACE, ACTION_OPTION_FACE_COPLANAR)
             face_validator = lambda { |face, transformation|
-              face.normal.transform(transformation) == input_normal && face.vertices.first.position.transform(transformation).on_plane?(input_plane)
+              face.normal.transform(transformation).normalize == input_normal && face.vertices.first.position.transform(transformation).on_plane?(input_plane)
             }
           else
             face_validator = lambda { |face, transformation|
-              face == @input_face
+              face == @input_face && transformation.to_a == input_transformation_array
             }
           end
 
@@ -633,12 +632,11 @@ module Ladb::OpenCutList
 
         if is_action_export_part_3d?
 
-          if @active_part.nil?
+          if @active_drawing_def.nil?
             UI.beep
             return
           end
 
-          instance_info = @active_part.def.instance_infos.values.first
           file_name = @active_part.name
           file_format = nil
           if fetch_action_option(ACTION_EXPORT_PART_3D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_STL)
@@ -661,7 +659,7 @@ module Ladb::OpenCutList
             unit = DimensionUtils::METER
           end
 
-          worker = CommonExportDrawing3dWorker.new(@active_drawing_def.bounds, @active_drawing_def.face_infos, @active_drawing_def.edge_infos, {
+          worker = CommonExportDrawing3dWorker.new(@active_drawing_def, {
             'file_name' => file_name,
             'file_format' => file_format,
             'unit' => unit
@@ -678,7 +676,9 @@ module Ladb::OpenCutList
             return
           end
 
+          view = @active_drawing_def.view
           file_name = @active_part.nil? ? nil : @active_part.name
+          file_name += " - #{view}" unless file_name.nil? || view.nil?
           file_format = nil
           if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
             file_format = FILE_FORMAT_DXF
@@ -695,7 +695,7 @@ module Ladb::OpenCutList
           end
           anchor = fetch_action_option(fetch_action, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR)
 
-          worker = CommonExportDrawing2dWorker.new(@active_drawing_def.bounds, @active_drawing_def.face_infos, @active_drawing_def.edge_infos, {
+          worker = CommonExportDrawing2dWorker.new(@active_drawing_def, {
             'file_name' => file_name,
             'file_format' => file_format,
             'unit' => unit,

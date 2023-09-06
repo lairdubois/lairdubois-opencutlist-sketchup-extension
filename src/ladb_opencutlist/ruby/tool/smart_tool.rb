@@ -230,6 +230,29 @@ module Ladb::OpenCutList
                   btn.border.set_all!(unit * 0.5)
                   btn.data = { :option_group => option_group, :option => option }
                   btn.selected = fetch_action_option(action, option_group, option)
+                  btn.on(:click) { |button|
+                    if get_action_option_group_unique?(action, option_group)
+                      b = button.parent.child
+                      until b.nil? do
+                        if b.is_a?(Kuix::Button) && b.data[:option_group] == option_group
+                          b.selected = false
+                          store_action_option(action, option_group, b.data[:option], false)
+                        end
+                        b = b.next
+                      end
+                      button.selected = true
+                      store_action_option(action, option_group, option, true)
+                    else
+                      button.selected = !button.selected?
+                      store_action_option(action, option_group, option, button.selected?)
+                    end
+                  }
+                  btn.on(:enter) { |button|
+                    notify_message(Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_option_#{option_group}_#{option}_status"))
+                  }
+                  btn.on(:leave) { |button|
+                    hide_message
+                  }
                   actions_options_panel.append(btn)
 
                     child = get_action_option_btn_child(action, option_group, option)
@@ -246,23 +269,7 @@ module Ladb::OpenCutList
                       child.set_style_attribute(:color, Kuix::COLOR_BLACK)
                       child.set_style_attribute(:color, Kuix::COLOR_WHITE, :active)
                       btn.append(child)
-                      btn.on(:click) { |button|
-                        if get_action_option_group_unique?(action, option_group)
-                          b = button.parent.child
-                          until b.nil? do
-                            if b.is_a?(Kuix::Button) && b.data[:option_group] == option_group
-                              b.selected = false
-                              store_action_option(action, option_group, b.data[:option], false)
-                            end
-                            b = b.next
-                          end
-                          button.selected = true
-                          store_action_option(action, option_group, option, true)
-                        else
-                          button.selected = !button.selected?
-                          store_action_option(action, option_group, option, button.selected?)
-                        end
-                      }
+
                     end
 
                 end

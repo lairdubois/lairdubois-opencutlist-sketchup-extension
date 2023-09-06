@@ -103,19 +103,19 @@ module Ladb::OpenCutList
         z_axis = Z_AXIS.transform(transformation)
       end
 
-      t = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
-      t = t * Geom::Transformation.scaling(-1, 1, 1) if TransformationUtils.flipped?(transformation)
-      ti = t.inverse
+      ta = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
+      ta = ta * Geom::Transformation.scaling(-1, 1, 1) if TransformationUtils.flipped?(transformation)
+      tai = ta.inverse
 
       # Compute bounds
       unless @ignore_faces
         drawing_def.face_infos.each do |face_info|
-          drawing_def.bounds.add(face_info.face.outer_loop.vertices.map { |vertex| vertex.position.transform(ti * face_info.transformation) })
+          drawing_def.bounds.add(face_info.face.outer_loop.vertices.map { |vertex| vertex.position.transform(tai * face_info.transformation) })
         end
       end
       unless @ignore_edges
         drawing_def.edge_infos.each do |edge_info|
-          drawing_def.bounds.add(edge_info.edge.vertices.map { |vertex| vertex.position.transform(ti * edge_info.transformation) })
+          drawing_def.bounds.add(edge_info.edge.vertices.map { |vertex| vertex.position.transform(tai * edge_info.transformation) })
         end
       end
 
@@ -125,8 +125,8 @@ module Ladb::OpenCutList
         to = Geom::Transformation.new
       end
       toi = to.inverse
-      tto = t * to
-      ttoi = tto.inverse
+      tato = ta * to
+      tatoi = tato.inverse
 
       min = drawing_def.bounds.min.transform(toi)
       max = drawing_def.bounds.max.transform(toi)
@@ -135,18 +135,21 @@ module Ladb::OpenCutList
 
       unless @ignore_faces
         drawing_def.face_infos.each do |face_info|
-          face_info.transformation = ttoi * face_info.transformation
+          face_info.transformation = tatoi * face_info.transformation
         end
       end
       unless @ignore_edges
         drawing_def.edge_infos.each do |edge_info|
-          edge_info.transformation = ttoi * edge_info.transformation
+          edge_info.transformation = tatoi * edge_info.transformation
         end
       end
 
-      drawing_def.transformation = tto
-      drawing_def.active_face_info.transformation = ttoi * drawing_def.active_face_info.transformation unless drawing_def.active_face_info.nil?
-      drawing_def.active_edge_info.transformation = ttoi * drawing_def.active_edge_info.transformation unless drawing_def.active_edge_info.nil?
+      drawing_def.transformation = tato
+      drawing_def.x_axis = x_axis
+      drawing_def.y_axis = y_axis
+      drawing_def.z_axis = z_axis
+      drawing_def.active_face_info.transformation = tatoi * drawing_def.active_face_info.transformation unless drawing_def.active_face_info.nil?
+      drawing_def.active_edge_info.transformation = tatoi * drawing_def.active_edge_info.transformation unless drawing_def.active_edge_info.nil?
 
       drawing_def
     end
@@ -155,17 +158,17 @@ module Ladb::OpenCutList
 
     private
 
-    def  _get_input_axes(input_face, input_edge, transformation = nil)
+    def  _get_input_axes(input_face, input_edge, input_transformation = nil)
 
       active_edge = input_edge
       if active_edge.nil? || !active_edge.used_by?(input_face)
-        active_edge = _find_longest_outer_edge(input_face, transformation)
+        active_edge = _find_longest_outer_edge(input_face, input_transformation)
       end
 
       z_axis = input_face.normal
-      z_axis = z_axis.transform(transformation) unless transformation.nil?
+      z_axis = z_axis.transform(input_transformation).normalize unless input_transformation.nil?
       x_axis = active_edge.line[1]
-      x_axis = x_axis.transform(transformation) unless transformation.nil?
+      x_axis = x_axis.transform(input_transformation).normalize unless input_transformation.nil?
       x_axis.reverse! if active_edge.reversed_in?(input_face)
       y_axis = z_axis.cross(x_axis)
 

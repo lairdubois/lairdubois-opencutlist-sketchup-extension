@@ -5,6 +5,7 @@ module Ladb::OpenCutList
   require_relative '../../helper/dxf_writer_helper'
   require_relative '../../helper/sanitizer_helper'
   require_relative '../../utils/color_utils'
+  require_relative '../../model/cutlist/drawing_def'
 
   class CommonExportDrawing3dWorker
 
@@ -14,11 +15,9 @@ module Ladb::OpenCutList
 
     SUPPORTED_FILE_FORMATS = [ FILE_FORMAT_DXF, FILE_FORMAT_STL, FILE_FORMAT_OBJ ]
 
-    def initialize(bounds, face_infos, edge_infos, settings)
+    def initialize(drawing_def, settings)
 
-      @bounds = bounds
-      @face_infos = face_infos
-      @edge_infos = edge_infos
+      @drawing_def = drawing_def
 
       @file_name = _sanitize_filename(settings.fetch('file_name', 'FACE'))
       @file_format = settings.fetch('file_format', nil)
@@ -30,7 +29,7 @@ module Ladb::OpenCutList
 
     def run
       return { :errors => [ 'default.error' ] } unless SUPPORTED_FILE_FORMATS.include?(@file_format)
-      return { :errors => [ 'default.error' ] } unless @face_infos.is_a?(Array)
+      return { :errors => [ 'default.error' ] } unless @drawing_def.is_a?(DrawingDef)
 
       # Open save panel
       path = UI.savepanel(Plugin.instance.get_i18n_string('tab.cutlist.export_to_3d.title', { :file_format => @file_format }), '', "#{@file_name}.#{@file_format}")
@@ -60,7 +59,7 @@ module Ladb::OpenCutList
             unit_converter = DimensionUtils.instance.length_to_model_unit_float(1.0.to_l)
           end
 
-          success = _write_faces(path, @face_infos, @edge_infos, unit_converter) && File.exist?(path)
+          success = _write_3d(path, @drawing_def.face_infos, @drawing_def.edge_infos, unit_converter) && File.exist?(path)
 
           return { :errors => [ [ 'tab.cutlist.error.failed_export_to_3d_file', { :file_format => @file_format, :error => e.message } ] ] } unless success
           return { :export_path => path }
@@ -78,7 +77,7 @@ module Ladb::OpenCutList
 
     private
 
-    def _write_faces(path, face_infos, edge_infos, unit_converter)
+    def _write_3d(path, face_infos, edge_infos, unit_converter)
 
       # Open output file
       file = File.new(path , 'w')
@@ -86,7 +85,7 @@ module Ladb::OpenCutList
       case @file_format
       when FILE_FORMAT_DXF
 
-        _dxf_write_header(file, _convert_point(@bounds.min, unit_converter), _convert_point(@bounds.max, unit_converter), [
+        _dxf_write_header(file, _convert_point(@drawing_def.bounds.min, unit_converter), _convert_point(@drawing_def.bounds.max, unit_converter), [
           { :name => 'OCL_DRAWING' },
           { :name => 'OCL_GUIDE', :color => 4 }
         ])

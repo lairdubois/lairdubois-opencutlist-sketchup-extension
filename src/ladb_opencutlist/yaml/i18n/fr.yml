@@ -1502,6 +1502,20 @@ tool:
     action_option_group_1: Unité
     action_option_group_2: Faces
     action_option_group_3: Options
+    action_option_0_0_status: Exporter vers un fichier DXF
+    action_option_0_1_status: Exporter vers un fichier STL
+    action_option_0_2_status: Exporter vers un fichier OBJ
+    action_option_0_3_status: Exporter vers un fichier SVG
+    action_option_1_0_status: $t(default.unit_0)
+    action_option_1_1_status: $t(default.unit_1)
+    action_option_1_2_status: $t(default.unit_2)
+    action_option_1_3_status: $t(default.unit_3)
+    action_option_1_4_status: $t(default.unit_4)
+    action_option_2_0_status: Exporter uniquement la face ciblée
+    action_option_2_1_status: Exporter toutes les faces coplanaires à la face ciblée
+    action_option_2_2_status: Exporter toutes les faces parallèles à la face ciblée
+    action_option_3_0_status: Projeter l'origine de la pièce
+    action_option_3_1_status: Exporter comme guides les arrêtes flotantes et coplanaires à la face ciblée contenues dans la pièce
     error:
       not_part: L'objet ciblé n'est pas une pièce
       not_flat_face: La surface ciblée n'est pas plane
