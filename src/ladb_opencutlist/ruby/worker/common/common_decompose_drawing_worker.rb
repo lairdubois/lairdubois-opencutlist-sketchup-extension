@@ -145,9 +145,6 @@ module Ladb::OpenCutList
       end
 
       drawing_def.transformation = tato
-      drawing_def.x_axis = x_axis
-      drawing_def.y_axis = y_axis
-      drawing_def.z_axis = z_axis
       drawing_def.active_face_info.transformation = tatoi * drawing_def.active_face_info.transformation unless drawing_def.active_face_info.nil?
       drawing_def.active_edge_info.transformation = tatoi * drawing_def.active_edge_info.transformation unless drawing_def.active_edge_info.nil?
 
@@ -164,6 +161,13 @@ module Ladb::OpenCutList
       if active_edge.nil? || !active_edge.used_by?(input_face)
         active_edge = _find_longest_outer_edge(input_face, input_transformation)
       end
+
+      # o1, v1 = input_face.edges.first.line
+      # o2, v2 = input_face.edges.last.line
+      #
+      # v1 = v1.transform(input_transformation) unless input_transformation.nil?
+      # v2 = v2.transform(input_transformation) unless input_transformation.nil?
+      # z_axis = v2.cross(v1).normalize
 
       z_axis = input_face.normal
       z_axis = z_axis.transform(input_transformation).normalize unless input_transformation.nil?

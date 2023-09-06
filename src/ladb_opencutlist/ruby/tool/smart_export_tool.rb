@@ -676,9 +676,7 @@ module Ladb::OpenCutList
             return
           end
 
-          view = @active_drawing_def.view
           file_name = @active_part.nil? ? nil : @active_part.name
-          file_name += " - #{view}" unless file_name.nil? || view.nil?
           file_format = nil
           if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
             file_format = FILE_FORMAT_DXF

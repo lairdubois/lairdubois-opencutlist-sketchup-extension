@@ -173,7 +173,7 @@ module Ladb::OpenCutList
 
         unless @sheet_hidden
           _svg_write_group_start(file, id: 'sheet')
-          _svg_write_rect(file, 0, 0, sheet_width, sheet_height, @sheet_stroke_color, @sheet_fill_color)
+          _svg_write_rect(file, 0, 0, sheet_width, sheet_height, @sheet_stroke_color, @sheet_fill_color, id: "#{sheet.length} x #{sheet.width}")
           _svg_write_group_end(file)
         end
 

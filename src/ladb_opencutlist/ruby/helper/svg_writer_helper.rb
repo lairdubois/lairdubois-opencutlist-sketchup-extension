@@ -38,7 +38,7 @@ module Ladb::OpenCutList
 
     def _svg_attributes(attributes = {})
       return unless attributes.is_a?(Hash)
-      "#{attributes.empty? ? '' : ' '}#{attributes.map { |key, value| "#{key}=\"#{value}\"" }.join(' ')}"
+      "#{attributes.empty? ? '' : ' '}#{attributes.map { |key, value| "#{key}=\"#{value.to_s.gsub(/["']/, '')}\"" }.join(' ')}"
     end
 
   end
