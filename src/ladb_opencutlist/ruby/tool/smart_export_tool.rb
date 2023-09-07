@@ -43,6 +43,7 @@ module Ladb::OpenCutList
 
     ACTION_OPTION_OPTIONS_ANCHOR = 0
     ACTION_OPTION_OPTIONS_GUIDES = 1
+    ACTION_OPTION_OPTIONS_CURVES = 2
 
     ACTIONS = [
       {
@@ -59,7 +60,7 @@ module Ladb::OpenCutList
           ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_DXF, ACTION_OPTION_FILE_FORMAT_SVG ],
           ACTION_OPTION_UNIT => [ ACTION_OPTION_UNIT_MM, ACTION_OPTION_UNIT_CM, ACTION_OPTION_UNIT_IN ],
           ACTION_OPTION_FACE => [ACTION_OPTION_FACE_SINGLE, ACTION_OPTION_FACE_COPLANAR, ACTION_OPTION_FACE_PARALLEL ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_ANCHOR, ACTION_OPTION_OPTIONS_GUIDES ]
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_ANCHOR, ACTION_OPTION_OPTIONS_GUIDES, ACTION_OPTION_OPTIONS_CURVES ]
         }
       }
     ].freeze
@@ -176,6 +177,8 @@ module Ladb::OpenCutList
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.273,0L0.273,0.727L1,0.727 M0.091,0.545L0.455,0.545L0.455,0.909L0.091,0.909L0.091,0.545 M0.091,0.182L0.273,0L0.455,0.182 M0.818,0.545L1,0.727L0.818,0.909'))
         when ACTION_OPTION_OPTIONS_GUIDES
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.167,0L0.167,1 M0,0.167L1,0.167 M0,0.833L1,0.833 M0.833,0L0.833,1'))
+        when ACTION_OPTION_OPTIONS_CURVES
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M1,0.5L0.97,0.329L0.883,0.179L0.75,0.067L0.587,0.008L0.413,0.008L0.25,0.067L0.117,0.179L0.03,0.329L0,0.5'))
         end
       end
 
@@ -403,11 +406,15 @@ module Ladb::OpenCutList
 
             end
 
+            bounds = Geom::BoundingBox.new
+            bounds.add(Geom::Point3d.new(@active_drawing_def.bounds.min.x, @active_drawing_def.bounds.min.y, @active_drawing_def.bounds.max.z))
+            bounds.add(@active_drawing_def.bounds.max)
+            bounds.add(Geom::Point3d.new(0, 0, @active_drawing_def.bounds.max.z))
+
             # Box helper
             box_helper = Kuix::BoxMotif.new
-            box_helper.bounds.origin.set!(@active_drawing_def.bounds.min.x, @active_drawing_def.bounds.min.y, @active_drawing_def.bounds.max.z)
-            box_helper.bounds.size.copy!(@active_drawing_def.bounds)
-            box_helper.bounds.size.depth = 0
+            box_helper.bounds.origin.copy!(bounds.min)
+            box_helper.bounds.size.copy!(bounds)
             box_helper.bounds.apply_offset(inch_offset, inch_offset, 0)
             box_helper.color = Kuix::COLOR_BLACK
             box_helper.line_width = 2
@@ -471,10 +478,15 @@ module Ladb::OpenCutList
 
             end
 
+            bounds = Geom::BoundingBox.new
+            bounds.add(@active_drawing_def.bounds.min)
+            bounds.add(@active_drawing_def.bounds.max)
+            bounds.add(ORIGIN)
+
             # Box helper
             box_helper = Kuix::BoxMotif.new
-            box_helper.bounds.origin.copy!(@active_drawing_def.bounds.min)
-            box_helper.bounds.size.copy!(@active_drawing_def.bounds)
+            box_helper.bounds.origin.copy!(bounds.min)
+            box_helper.bounds.size.copy!(bounds)
             box_helper.bounds.apply_offset(inch_offset, inch_offset, inch_offset)
             box_helper.color = Kuix::COLOR_BLACK
             box_helper.line_width = 2
@@ -692,12 +704,14 @@ module Ladb::OpenCutList
             unit = DimensionUtils::CENTIMETER
           end
           anchor = fetch_action_option(fetch_action, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR)
+          curves = fetch_action_option(fetch_action, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_CURVES)
 
           worker = CommonExportDrawing2dWorker.new(@active_drawing_def, {
             'file_name' => file_name,
             'file_format' => file_format,
             'unit' => unit,
             'anchor' => anchor,
+            'curves' => curves,
             'max_depth' => 0
           })
           response = worker.run

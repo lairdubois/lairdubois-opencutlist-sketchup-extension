@@ -25,6 +25,7 @@ module Ladb::OpenCutList
       @file_format = settings.fetch('file_format', nil)
       @unit = settings.fetch('unit', nil)
       @anchor = settings.fetch('anchor', false)
+      @curves = settings.fetch('curves', false)
       @max_depth = settings.fetch('max_depth', 0)
 
     end
@@ -104,10 +105,26 @@ module Ladb::OpenCutList
 
           face.loops.each do |loop|
 
-            _dxf_write_polygon(file, loop.vertices.map { |vertex|
-              point = vertex.position.transform(transformation)
-              Geom::Point3d.new(_convert(point.x, unit_converter), _convert(point.y, unit_converter))
-            }, 'OCL_DRAWING')
+            if @curves && loop.edges.first.curve.is_a?(Sketchup::ArcCurve) && loop.edges.first.curve.circular?
+
+              curve = loop.edges.first.curve
+              center = curve.center.transform(transformation)
+              radius = curve.radius # TODO : transform
+
+              cx = _convert(center.x, unit_converter)
+              cy = _convert(center.y, unit_converter)
+              r = _convert(radius, unit_converter)
+
+              _dxf_write_circle(file, cx, cy, r, 'OCL_DRAWING')
+
+            else
+
+              _dxf_write_polygon(file, loop.vertices.map { |vertex|
+                point = vertex.position.transform(transformation)
+                Geom::Point3d.new(_convert(point.x, unit_converter), _convert(point.y, unit_converter))
+              }, 'OCL_DRAWING')
+
+            end
 
           end
 
@@ -173,24 +190,50 @@ module Ladb::OpenCutList
           depth_ratio = face_info.data[:depth_ratio]
 
           face.loops.each do |loop|
-            coords = []
-            loop.vertices.each do |vertex|
-              point = vertex.position.transform(transformation)
-              coords << "#{_convert(point.x, unit_converter)},#{_convert(-point.y, unit_converter)}"
-            end
-            data = "M#{coords.join('L')}Z"
-            if loop.outer?
-              if depth.round(6) == 0
-                # Outside
-                _svg_write_path(file, data, '#000000', '#000000', 'shaper:cutType': 'outside')
+
+            if @curves && loop.edges.first.curve.is_a?(Sketchup::ArcCurve) && loop.edges.first.curve.circular?
+
+              curve = loop.edges.first.curve
+              center = curve.center.transform(transformation)
+              radius = curve.radius # TODO : transform
+
+              cx = _convert(center.x, unit_converter)
+              cy = _convert(-center.y, unit_converter)
+              r = _convert(radius, unit_converter)
+
+              if loop.outer?
+                if depth.round(6) == 0
+                  _svg_write_circle(file, cx, cy, r, '#000000', '#000000', 'shaper:cutType': 'outside')
+                else
+                  _svg_write_circle(file, cx, cy, r, nil, ColorUtils.color_to_hex(Sketchup::Color.new('#7F7F7F').blend(Sketchup::Color.new('#AAAAAA'), depth_ratio)), 'shaper:cutType': 'inside', 'shaper:cutDepth': "#{_convert(depth, unit_converter)}#{unit_sign}")
+                end
               else
-                # Pocket
-                _svg_write_path(file, data, ColorUtils.color_to_hex(Sketchup::Color.new('#7F7F7F').blend(Sketchup::Color.new('#AAAAAA'), depth_ratio)), nil, 'shaper:cutType': 'pocket', 'shaper:cutDepth': "#{_convert(depth, unit_converter)}#{unit_sign}")
+                _svg_write_circle(file, cx, cy, r, '#000000', '#ffffff', 'shaper:cutType': 'inside', 'shaper:cutDepth': @max_depth)
               end
+
             else
-              # Inside
-              _svg_write_path(file, data, '#FFFFFF', '#000000', 'shaper:cutType': 'inside', 'shaper:cutDepth': @max_depth)
+
+              coords = []
+              loop.vertices.each do |vertex|
+                point = vertex.position.transform(transformation)
+                coords << "#{_convert(point.x, unit_converter)},#{_convert(-point.y, unit_converter)}"
+              end
+              data = "M#{coords.join('L')}Z"
+              if loop.outer?
+                if depth.round(6) == 0
+                  # Outside
+                  _svg_write_path(file, data, '#000000', '#000000', 'shaper:cutType': 'outside')
+                else
+                  # Pocket
+                  _svg_write_path(file, data, nil, ColorUtils.color_to_hex(Sketchup::Color.new('#7F7F7F').blend(Sketchup::Color.new('#AAAAAA'), depth_ratio)), 'shaper:cutType': 'pocket', 'shaper:cutDepth': "#{_convert(depth, unit_converter)}#{unit_sign}")
+                end
+              else
+                # Inside
+                _svg_write_path(file, data, '#000000', '#FFFFFF', 'shaper:cutType': 'inside', 'shaper:cutDepth': @max_depth)
+              end
+
             end
+
           end
 
         end

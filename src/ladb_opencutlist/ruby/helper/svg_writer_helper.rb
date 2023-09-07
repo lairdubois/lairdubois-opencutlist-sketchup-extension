@@ -32,7 +32,11 @@ module Ladb::OpenCutList
       file.puts("<polygon points=\"#{points}\" stroke=\"#{stroke_color ? "#{stroke_color}" : "#{fill_color ? 'none' : '#000000'}"}\" fill=\"#{fill_color ? "#{fill_color}" : 'none'}\"#{_svg_attributes(attributes)} />")
     end
 
-    def _svg_write_path(file, d, fill_color = nil, stroke_color = nil, attributes = {})
+    def _svg_write_circle(file, cx, cy, r, stroke_color = nil, fill_color = nil, attributes = {})
+      file.puts("<circle cx=\"#{cx}\" cy=\"#{cy}\" r=\"#{r}\" stroke=\"#{stroke_color ? "#{stroke_color}" : "#{fill_color ? 'none' : '#000000'}"}\" fill=\"#{fill_color ? "#{fill_color}" : 'none'}\"#{_svg_attributes(attributes)} />")
+    end
+
+    def _svg_write_path(file, d, stroke_color = nil, fill_color = nil, attributes = {})
       file.puts("<path d=\"#{d}\" stroke=\"#{stroke_color ? "#{stroke_color}" : "#{fill_color ? 'none' : '#000000'}"}\"#{fill_color ? " fill=\"#{fill_color}\"" : ''}#{_svg_attributes(attributes)} />")
     end
 

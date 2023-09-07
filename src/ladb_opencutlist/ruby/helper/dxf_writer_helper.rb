@@ -213,7 +213,7 @@ module Ladb::OpenCutList
       _dxf_write(file, code, value)
     end
 
-    def _dxf_write_line(file, x1, y1, x2, y2, layer = 1)
+    def _dxf_write_line(file, x1, y1, x2, y2, layer = 0)
 
       # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-FCEF5726-53AE-4C43-B4EA-C84EB8686A66
 
@@ -226,7 +226,19 @@ module Ladb::OpenCutList
 
     end
 
-    def _dxf_write_rect(file, x, y, width, height, layer = 1)
+    def _dxf_write_circle(file, cx, cy, r, layer = 0)
+
+      # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-8663262B-222C-414D-B133-4A8506A27C18
+
+      _dxf_write(file, 0, 'CIRCLE')
+      _dxf_write(file, 8, layer)
+      _dxf_write(file, 10, cx)
+      _dxf_write(file, 20, cy)
+      _dxf_write(file, 40, r)
+
+    end
+
+    def _dxf_write_rect(file, x, y, width, height, layer = 0)
 
       points = [
         Geom::Point3d.new(x, y),

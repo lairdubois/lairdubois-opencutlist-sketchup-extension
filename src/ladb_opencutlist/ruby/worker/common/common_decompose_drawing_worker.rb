@@ -131,7 +131,7 @@ module Ladb::OpenCutList
       min = drawing_def.bounds.min.transform(toi)
       max = drawing_def.bounds.max.transform(toi)
       drawing_def.bounds.clear
-      drawing_def.bounds.add([ ORIGIN, min, max ])
+      drawing_def.bounds.add([ min, max ])
 
       unless @ignore_faces
         drawing_def.face_infos.each do |face_info|
@@ -162,6 +162,7 @@ module Ladb::OpenCutList
         active_edge = _find_longest_outer_edge(input_face, input_transformation)
       end
 
+      # TODO Manage skewed transforms
       # o1, v1 = input_face.edges.first.line
       # o2, v2 = input_face.edges.last.line
       #
