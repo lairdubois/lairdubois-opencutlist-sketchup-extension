@@ -94,13 +94,13 @@ module Ladb::OpenCutList
         sheet_width = _convert(_to_inch(sheet.px_length), unit_converter)
         sheet_height = _convert(_to_inch(sheet.px_width), unit_converter)
 
+        layer_defs = []
+        layer_defs.push({ :name => 'OCL_SHEET', :color => 150 }) unless @sheet_hidden
+        layer_defs.push({ :name => 'OCL_PARTS', :color => 7 }) unless @parts_hidden
+        layer_defs.push({ :name => 'OCL_LEFTOVERS', :color => 8 }) unless @leftovers_hidden
+        layer_defs.push({ :name => 'OCL_CUTS', :color => 6 }) unless @cuts_hidden
 
-        _dxf_write_header(file, Geom::Point3d.new, Geom::Point3d.new(sheet_width, sheet_height, 0), [
-          { :name => 'OCL_SHEET', :color => 4 },
-          { :name => 'OCL_PARTS' },
-          { :name => 'OCL_LEFTOVERS', :color => 8 },
-          { :name => 'OCL_CUTS', :color => 6 }
-        ])
+        _dxf_write_header(file, Geom::Point3d.new, Geom::Point3d.new(sheet_width, sheet_height, 0), layer_defs)
 
         _dxf_write(file, 0, 'SECTION')
         _dxf_write(file, 2, 'ENTITIES')

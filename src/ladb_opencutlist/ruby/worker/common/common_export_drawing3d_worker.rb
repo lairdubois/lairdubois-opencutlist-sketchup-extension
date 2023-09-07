@@ -85,10 +85,11 @@ module Ladb::OpenCutList
       case @file_format
       when FILE_FORMAT_DXF
 
-        _dxf_write_header(file, _convert_point(@drawing_def.bounds.min, unit_converter), _convert_point(@drawing_def.bounds.max, unit_converter), [
-          { :name => 'OCL_DRAWING' },
-          { :name => 'OCL_GUIDE', :color => 4 }
-        ])
+        layer_defs = []
+        layer_defs.push({ :name => 'OCL_DRAWING', :color => 7 }) unless face_infos.empty?
+        layer_defs.push({ :name => 'OCL_GUIDE', :color => 150 }) unless edge_infos.empty?
+
+        _dxf_write_header(file, _convert_point(@drawing_def.bounds.min, unit_converter), _convert_point(@drawing_def.bounds.max, unit_converter), layer_defs)
 
         _dxf_write(file, 0, 'SECTION')
         _dxf_write(file, 2, 'ENTITIES')
