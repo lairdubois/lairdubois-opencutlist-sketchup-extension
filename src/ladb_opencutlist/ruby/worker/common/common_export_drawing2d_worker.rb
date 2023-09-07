@@ -254,7 +254,7 @@ module Ladb::OpenCutList
 
           end
           _svg_write_group_start(file, id: 'OCL_GUIDES')
-          _svg_write_path(file, data, nil,'#2272F6', 'shaper:cutType': 'guide')
+          _svg_write_path(file, data, '#0068FF', nil, 'shaper:cutType': 'guide')
           _svg_write_group_end(file)
         end
 
