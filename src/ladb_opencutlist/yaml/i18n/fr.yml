@@ -1512,8 +1512,8 @@ tool:
     action_option_1_3_status: $t(default.unit_3)
     action_option_1_4_status: $t(default.unit_4)
     action_option_2_0_status: Exporter uniquement la face ciblée
-    action_option_2_1_status: Exporter toutes les faces coplanaires à la face ciblée
-    action_option_2_2_status: Exporter toutes les faces parallèles à la face ciblée
+    action_option_2_1_status: Exporter toutes les faces coplanaires à la face ciblée contenues dans la pièce
+    action_option_2_2_status: Exporter toutes les faces parallèles à la face ciblée contenues dans la pièce
     action_option_3_0_status: Projeter l'origine de la pièce
     action_option_3_1_status: Exporter comme guides les arrêtes flotantes et coplanaires à la face ciblée contenues dans la pièce
     action_option_3_2_status: Arrondir les cercles et arcs

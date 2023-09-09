@@ -216,6 +216,18 @@ module Ladb::OpenCutList
               }
             end
 
+            coords = []
+            loop.vertices.each do |vertex|
+              point = vertex.position.transform(transformation)
+              coords << "#{_convert(point.x, unit_converter)},#{_convert(-point.y, unit_converter)}"
+            end
+            data = "M#{coords.join('L')}Z"
+
+            _svg_write_tag(file, 'path', attributes.merge(
+              d: data
+            ))
+
+
             # if @curves && loop.edges.first.curve.is_a?(Sketchup::ArcCurve)
             #
             #   curve = loop.edges.first.curve
@@ -241,17 +253,17 @@ module Ladb::OpenCutList
             #   ))
             #
             # else
-
-              coords = []
-              loop.vertices.each do |vertex|
-                point = vertex.position.transform(transformation)
-                coords << "#{_convert(point.x, unit_converter)},#{_convert(-point.y, unit_converter)}"
-              end
-              data = "M#{coords.join('L')}Z"
-
-              _svg_write_tag(file, 'path', attributes.merge(
-                d: data
-              ))
+            #
+            #   coords = []
+            #   loop.vertices.each do |vertex|
+            #     point = vertex.position.transform(transformation)
+            #     coords << "#{_convert(point.x, unit_converter)},#{_convert(-point.y, unit_converter)}"
+            #   end
+            #   data = "M#{coords.join('L')}Z"
+            #
+            #   _svg_write_tag(file, 'path', attributes.merge(
+            #     d: data
+            #   ))
 
             # end
 
