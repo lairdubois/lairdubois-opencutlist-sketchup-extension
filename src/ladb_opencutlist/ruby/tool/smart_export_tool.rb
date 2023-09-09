@@ -4,6 +4,8 @@ module Ladb::OpenCutList
   require_relative '../helper/layer_visibility_helper'
   require_relative '../helper/edge_segments_helper'
   require_relative '../helper/entities_helper'
+  require_relative '../manipulator/face_manipulator'
+  require_relative '../manipulator/edge_manipulator'
   require_relative '../model/cutlist/face_info'
   require_relative '../model/cutlist/edge_info'
   require_relative '../worker/common/common_export_instance_to_file_worker'
@@ -328,55 +330,38 @@ module Ladb::OpenCutList
 
         input_transformation = PathUtils::get_transformation(@input_face_path)
         input_transformation_array = input_transformation.to_a
-        input_normal = @input_face.normal.transform(input_transformation).normalize
-        input_plane = [ @input_face.vertices.first.position.transform(input_transformation), input_normal ]
+
+        input_face_manipulator = FaceManipulator.new(@input_face, input_transformation)
 
         inch_offset = Sketchup.active_model.active_view.pixels_to_model(5, Geom::Point3d.new.transform(transformation))
 
         if is_action_export_part_2d?
 
           if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACE, ACTION_OPTION_FACE_PARALLEL)
-            face_validator = lambda { |face, transformation|
-              face.normal.transform(transformation).normalize == input_normal
-            }
+            face_validator = CommonDecomposeDrawingWorker::FACE_VALIDATOR_PARALLEL
           elsif fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACE, ACTION_OPTION_FACE_COPLANAR)
-            face_validator = lambda { |face, transformation|
-              face.normal.transform(transformation).normalize == input_normal && face.vertices.first.position.transform(transformation).on_plane?(input_plane)
-            }
+            face_validator = CommonDecomposeDrawingWorker::FACE_VALIDATOR_COPLANAR
           else
-            face_validator = lambda { |face, transformation|
-              face == @input_face && transformation.to_a == input_transformation_array
-            }
+            face_validator = CommonDecomposeDrawingWorker::FACE_VALIDATOR_SINGLE
           end
 
           options = {
             'input_face_path' => @input_face_path,
             'input_edge_path' => @input_edge.nil? ? nil : @input_face_path + [ @input_edge ],
-            'use_min_bounds_origin' => !fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR),
+            'use_bounds_min_as_origin' => !fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR),
             'face_validator' => face_validator,
             'ignore_edges' => !fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_GUIDES),
-            'edge_validator' => lambda { |edge, transformation|
-              if edge.faces.empty?
-                point, vector = edge.line
-                vector.transform(transformation).perpendicular?(input_plane[1]) && point.transform(transformation).on_plane?(input_plane)
-              else
-                false
-              end
-            }
+            'edge_validator' => CommonDecomposeDrawingWorker::EDGE_VALIDATOR_STRAY_COPLANAR
           }
 
           @active_drawing_def = CommonDecomposeDrawingWorker.new(@active_part_entity_path, options).run
           if @active_drawing_def.is_a?(DrawingDef)
 
             # Compute face depths
-            @active_drawing_def.face_infos.each do |face_info|
+            @active_drawing_def.face_manipulators.each do |face_manipulator|
 
-              point = face_info.face.vertices.first.position
-              vector = face_info.face.normal
-              plane = [ point.transform(face_info.transformation), vector.transform(face_info.transformation) ]
-
-              face_info.data[:depth] = @active_drawing_def.bounds.max.distance_to_plane(plane)
-              face_info.data[:depth_ratio] = @active_drawing_def.bounds.depth > 0 ? face_info.data[:depth] / @active_drawing_def.bounds.depth : 0.0
+              face_manipulator.data[:depth] = @active_drawing_def.bounds.max.distance_to_plane(face_manipulator.plane)
+              face_manipulator.data[:depth_ratio] = @active_drawing_def.bounds.depth > 0 ? face_manipulator.data[:depth] / @active_drawing_def.bounds.depth : 0.0
 
             end
 
@@ -384,21 +369,21 @@ module Ladb::OpenCutList
             preview.transformation = @active_drawing_def.transformation
             @space.append(preview)
 
-            @active_drawing_def.face_infos.each do |face_info|
+            @active_drawing_def.face_manipulators.each do |face_manipulator|
 
               # Highlight face
               mesh = Kuix::Mesh.new
-              mesh.add_triangles(_compute_children_faces_triangles([ face_info.face ], face_info.transformation))
-              mesh.background_color = COLOR_MESH_DEEP.blend((highlighted ? COLOR_MESH_HIGHLIGHTED : COLOR_MESH), face_info.data[:depth_ratio])
+              mesh.add_triangles(face_manipulator.triangles)
+              mesh.background_color = COLOR_MESH_DEEP.blend((highlighted ? COLOR_MESH_HIGHLIGHTED : COLOR_MESH), face_manipulator.data[:depth_ratio])
               preview.append(mesh)
 
             end
 
-            @active_drawing_def.edge_infos.each do |edge_info|
+            @active_drawing_def.edge_manipulators.each do |edge_manipulator|
 
               # Highlight edge
               segments = Kuix::Segments.new
-              segments.add_segments(_compute_children_edge_segments([ edge_info.edge ], edge_info.transformation))
+              segments.add_segments(edge_manipulator.segment)
               segments.color = COLOR_GUIDE
               segments.line_width = 2
               segments.on_top = true
@@ -421,11 +406,11 @@ module Ladb::OpenCutList
             box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
             preview.append(box_helper)
 
-            if @active_drawing_def.active_edge_info
+            if @active_drawing_def.input_edge_manipulator
 
               # Highlight input edge
               segments = Kuix::Segments.new
-              segments.add_segments(_compute_children_edge_segments([ @active_drawing_def.active_edge_info.edge ], @active_drawing_def.active_edge_info.transformation))
+              segments.add_segments(@active_drawing_def.input_edge_manipulator.segment)
               segments.color = COLOR_ACTION
               segments.line_width = 3
               segments.on_top = true
@@ -445,8 +430,8 @@ module Ladb::OpenCutList
         else
 
           options = {
-            'use_min_bounds_origin' => !fetch_action_option(ACTION_EXPORT_PART_3D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR),
-            'ignore_edges' => true,
+            'use_bounds_min_as_origin' => !fetch_action_option(ACTION_EXPORT_PART_3D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR),
+            'ignore_edges' => true
           }
 
           @active_drawing_def = CommonDecomposeDrawingWorker.new(@active_part_entity_path, options).run
@@ -456,21 +441,21 @@ module Ladb::OpenCutList
             preview.transformation = @active_drawing_def.transformation
             @space.append(preview)
 
-            @active_drawing_def.face_infos.each do |face_info|
+            @active_drawing_def.face_manipulators.each do |face_info|
 
               # Highlight face
               mesh = Kuix::Mesh.new
-              mesh.add_triangles(_compute_children_faces_triangles([ face_info.face ], face_info.transformation))
+              mesh.add_triangles(FaceManipulator.new(face_info.face, face_info.transformation).triangles)
               mesh.background_color = COLOR_MESH
               preview.append(mesh)
 
             end
 
-            @active_drawing_def.edge_infos.each do |edge_info|
+            @active_drawing_def.edge_manipulators.each do |edge_info|
 
               # Highlight edge
               segments = Kuix::Segments.new
-              segments.add_segments(_compute_children_edge_segments([ edge_info.edge ], edge_info.transformation))
+              segments.add_segments(EdgeManipulator.new(edge_info.edge, edge_info.transformation).segment)
               segments.color = COLOR_GUIDE
               segments.line_width = 2
               segments.on_top = true
@@ -504,8 +489,6 @@ module Ladb::OpenCutList
       else
 
         @active_drawing_def = nil
-        # @active_face_infos = nil
-        # @active_edge_infos = nil
 
       end
 

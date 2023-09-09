@@ -6,11 +6,21 @@ module Ladb::OpenCutList
   require_relative '../../utils/path_utils'
   require_relative '../../utils/transformation_utils'
   require_relative '../../model/cutlist/drawing_def'
+  require_relative '../../manipulator/face_manipulator'
+  require_relative '../../manipulator/edge_manipulator'
 
   class CommonDecomposeDrawingWorker
 
     include FaceTrianglesHelper
     include EntitiesHelper
+
+    FACE_VALIDATOR_NONE = 0
+    FACE_VALIDATOR_SINGLE = 1
+    FACE_VALIDATOR_COPLANAR = 2
+    FACE_VALIDATOR_PARALLEL = 3
+
+    EDGE_VALIDATOR_NONE = 0
+    EDGE_VALIDATOR_STRAY_COPLANAR = 1
 
     def initialize(path, option = {})
 
@@ -19,13 +29,13 @@ module Ladb::OpenCutList
       @input_face_path = option.fetch('input_face_path', nil)
       @input_edge_path = option.fetch('input_edge_path', nil)
 
-      @use_min_bounds_origin = option.fetch('use_min_bounds_origin', false)
+      @use_bounds_min_as_origin = option.fetch('use_bounds_min_as_origin', false)
 
       @ignore_faces = option.fetch('ignore_faces', false)
-      @face_validator = option.fetch('face_validator', nil)
+      @face_validator = option.fetch('face_validator', FACE_VALIDATOR_NONE)
 
       @ignore_edges = option.fetch('ignore_edges', false)
-      @edge_validator = option.fetch('edge_validator', nil)
+      @edge_validator = option.fetch('edge_validator', EDGE_VALIDATOR_NONE)
 
     end
 
@@ -55,11 +65,7 @@ module Ladb::OpenCutList
       # Create output data structure
       drawing_def = DrawingDef.new
 
-      # Populate face infos
-      _popultate_face_infos(drawing_def.face_infos, entities, transformation, &@face_validator) unless @ignore_faces
-
-      # Populate edge infos
-      _populate_edge_infos(drawing_def.edge_infos, entities, transformation, &@edge_validator) unless @ignore_edges
+      # STEP 1 : Determine ouput axes
 
       origin = ORIGIN.transform(transformation)
       if @input_face_path
@@ -68,85 +74,143 @@ module Ladb::OpenCutList
         input_edge = @input_edge_path.nil? ? nil : @input_edge_path.last
         input_transformation = PathUtils::get_transformation(@input_face_path)
 
-        x_axis, y_axis, z_axis, active_edge, auto = _get_input_axes(input_face, input_edge, input_transformation)
-        if auto
+        drawing_def.input_face_manipulator = FaceManipulator.new(input_face, input_transformation)
+        drawing_def.input_edge_manipulator = input_edge.is_a?(Sketchup::Edge) ? EdgeManipulator.new(input_edge, input_transformation) : nil
 
-          input_normal = input_face.normal.transform(input_transformation)
+        if input_edge
+
+          x_axis, y_axis, z_axis, drawing_def.input_edge_manipulator = _get_input_axes(drawing_def.input_face_manipulator, drawing_def.input_edge_manipulator)
+
+        else
+
           input_inner_transformation = PathUtils::get_transformation(@input_face_path - @path)
-          input_inner_normal = input_face.normal.transform(input_inner_transformation)
+          input_inner_face_manipulator = FaceManipulator.new(input_face, input_inner_transformation)
 
-          if input_inner_normal.parallel?(Z_AXIS)
-            z_axis = input_normal
-            x_axis = (z_axis.cross(X_AXIS).y < 0 ? X_AXIS.reverse : X_AXIS).transform(transformation)
+          if input_inner_face_manipulator.normal.parallel?(Z_AXIS) || input_inner_face_manipulator.normal.parallel?(Y_AXIS)
+            z_axis = drawing_def.input_face_manipulator.normal
+            x_axis = X_AXIS.transform(transformation)
+            x_axis.reverse! if TransformationUtils.flipped?(transformation)
             y_axis = z_axis.cross(x_axis)
-            active_edge = nil
-          elsif input_inner_normal.parallel?(X_AXIS)
-            z_axis = input_normal
-            x_axis = (z_axis.cross(Y_AXIS).y > 0 ? Y_AXIS.reverse : Y_AXIS).transform(transformation)
+          elsif input_inner_face_manipulator.normal.parallel?(X_AXIS)
+            z_axis = drawing_def.input_face_manipulator.normal
+            x_axis = Y_AXIS.transform(transformation)
+            x_axis.reverse! if TransformationUtils.flipped?(transformation)
             y_axis = z_axis.cross(x_axis)
-            active_edge = nil
-          elsif input_inner_normal.parallel?(Y_AXIS)
-            z_axis = input_normal
-            x_axis = (z_axis.cross(X_AXIS).y > 0 ? X_AXIS.reverse : X_AXIS).transform(transformation)
-            y_axis = z_axis.cross(x_axis)
-            active_edge = nil
+          else
+            x_axis, y_axis, z_axis, drawing_def.input_edge_manipulator = _get_input_axes(drawing_def.input_face_manipulator, nil)
           end
 
         end
 
-        drawing_def.active_face_info = FaceInfo.new(input_face, input_transformation) unless input_face.nil?
-        drawing_def.active_edge_info = EdgeInfo.new(active_edge, input_transformation) unless active_edge.nil?
-
       else
-        x_axis = X_AXIS.transform(transformation)
-        y_axis = Y_AXIS.transform(transformation)
-        z_axis = Z_AXIS.transform(transformation)
+
+        x_axis = X_AXIS.transform(transformation).normalize
+        x_axis.reverse! if TransformationUtils.flipped?(transformation)
+        y_axis = Y_AXIS.transform(transformation).normalize
+
+        xy_plane = Geom.fit_plane_to_points(ORIGIN, Geom::Point3d.new(x_axis.to_a), Geom::Point3d.new(y_axis.to_a))
+        z_axis = Geom::Vector3d.new(xy_plane[0..2])
+        y_axis = z_axis.cross(x_axis)
+
       end
 
       ta = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
-      ta = ta * Geom::Transformation.scaling(-1, 1, 1) if TransformationUtils.flipped?(transformation)
       tai = ta.inverse
 
-      # Compute bounds
+      drawing_def.transformation = ta
+      drawing_def.input_face_manipulator.transformation = tai * drawing_def.input_face_manipulator.transformation unless drawing_def.input_face_manipulator.nil?
+      drawing_def.input_edge_manipulator.transformation = tai * drawing_def.input_edge_manipulator.transformation unless drawing_def.input_edge_manipulator.nil?
+
+      # STEP 2 : Populate faces and edges
+
+      # Faces
       unless @ignore_faces
-        drawing_def.face_infos.each do |face_info|
-          drawing_def.bounds.add(face_info.face.outer_loop.vertices.map { |vertex| vertex.position.transform(tai * face_info.transformation) })
+
+        validator = nil
+        if drawing_def.input_face_manipulator
+          case @face_validator
+          when FACE_VALIDATOR_SINGLE
+            validator = lambda { |face_manipulator|
+              face_manipulator == drawing_def.input_face_manipulator
+            }
+          when FACE_VALIDATOR_COPLANAR
+            validator = lambda { |face_manipulator|
+              face_manipulator.coplanar?(drawing_def.input_face_manipulator)
+            }
+          when FACE_VALIDATOR_PARALLEL
+            validator = lambda { |face_manipulator|
+              face_manipulator.parallel?(drawing_def.input_face_manipulator)
+            }
+          end
+        end
+
+        _populate_face_infos(drawing_def.face_manipulators, entities, tai * transformation, &validator)
+
+      end
+
+      # Edges
+      unless @ignore_edges
+
+        validator = nil
+        if drawing_def.input_face_manipulator
+          case @edge_validator
+          when EDGE_VALIDATOR_STRAY_COPLANAR
+            validator = lambda { |edge_manipulator|
+              if edge_manipulator.edge.faces.empty?
+                point, vector = edge_manipulator.line
+                vector.perpendicular?(drawing_def.input_face_manipulator.normal) && point.on_plane?(drawing_def.input_face_manipulator.plane)
+              else
+                false
+              end
+            }
+          end
+        end
+
+        _populate_edge_infos(drawing_def.edge_manipulators, entities, tai * transformation, &validator)
+
+      end
+
+      # STEP 3 : Compute bounds
+
+      unless @ignore_faces
+        drawing_def.face_manipulators.each do |face_manipulator|
+          drawing_def.bounds.add(face_manipulator.outer_loop_points)
         end
       end
       unless @ignore_edges
-        drawing_def.edge_infos.each do |edge_info|
-          drawing_def.bounds.add(edge_info.edge.vertices.map { |vertex| vertex.position.transform(tai * edge_info.transformation) })
+        drawing_def.edge_manipulators.each do |edge_manipulator|
+          drawing_def.bounds.add(edge_manipulator.points)
         end
       end
 
-      if @use_min_bounds_origin
+      # STEP 4 : Customize origin
+
+      if @use_bounds_min_as_origin
+
         to = Geom::Transformation.translation(Geom::Vector3d.new(drawing_def.bounds.min.to_a))
-      else
-        to = Geom::Transformation.new
-      end
-      toi = to.inverse
-      tato = ta * to
-      tatoi = tato.inverse
+        toi = to.inverse
 
-      min = drawing_def.bounds.min.transform(toi)
-      max = drawing_def.bounds.max.transform(toi)
-      drawing_def.bounds.clear
-      drawing_def.bounds.add([ min, max ])
+        drawing_def.transformation *= to
+        drawing_def.input_face_manipulator.transformation = toi * drawing_def.input_face_manipulator.transformation unless drawing_def.input_face_manipulator.nil?
+        drawing_def.input_edge_manipulator.transformation = toi * drawing_def.input_edge_manipulator.transformation unless drawing_def.input_edge_manipulator.nil?
 
-      unless @ignore_faces
-        drawing_def.face_infos.each do |face_info|
-          face_info.transformation = tatoi * face_info.transformation
+        min = drawing_def.bounds.min.transform(toi)
+        max = drawing_def.bounds.max.transform(toi)
+        drawing_def.bounds.clear
+        drawing_def.bounds.add([ min, max ])
+
+        unless @ignore_faces
+          drawing_def.face_manipulators.each do |face_manipulator|
+            face_manipulator.transformation = toi * face_manipulator.transformation
+          end
         end
-      end
-      unless @ignore_edges
-        drawing_def.edge_infos.each do |edge_info|
-          edge_info.transformation = tatoi * edge_info.transformation
+        unless @ignore_edges
+          drawing_def.edge_manipulators.each do |edge_manipulator|
+            edge_manipulator.transformation = toi * edge_manipulator.transformation
+          end
         end
-      end
 
-      drawing_def.transformation = tato
-      drawing_def.active_face_info.transformation = tatoi * drawing_def.active_face_info.transformation unless drawing_def.active_face_info.nil?
-      drawing_def.active_edge_info.transformation = tatoi * drawing_def.active_edge_info.transformation unless drawing_def.active_edge_info.nil?
+      end
 
       drawing_def
     end
@@ -155,40 +219,30 @@ module Ladb::OpenCutList
 
     private
 
-    def  _get_input_axes(input_face, input_edge, input_transformation = nil)
+    def  _get_input_axes(input_face_manipulator, input_edge_manipulator = nil)
 
-      active_edge = input_edge
-      if active_edge.nil? || !active_edge.used_by?(input_face)
-        active_edge = _find_longest_outer_edge(input_face, input_transformation)
+      if input_edge_manipulator.nil? || !input_edge_manipulator.edge.used_by?(input_face_manipulator.face)
+        input_edge_manipulator = EdgeManipulator.new(input_face_manipulator.longest_outer_edge, input_face_manipulator.transformation)
       end
 
-      # TODO Manage skewed transforms
-      # o1, v1 = input_face.edges.first.line
-      # o2, v2 = input_face.edges.last.line
-      #
-      # v1 = v1.transform(input_transformation) unless input_transformation.nil?
-      # v2 = v2.transform(input_transformation) unless input_transformation.nil?
-      # z_axis = v2.cross(v1).normalize
-
-      z_axis = input_face.normal
-      z_axis = z_axis.transform(input_transformation).normalize unless input_transformation.nil?
-      x_axis = active_edge.line[1]
-      x_axis = x_axis.transform(input_transformation).normalize unless input_transformation.nil?
-      x_axis.reverse! if active_edge.reversed_in?(input_face)
+      z_axis = input_face_manipulator.normal
+      x_axis = input_edge_manipulator.line[1]
+      x_axis.reverse! if input_edge_manipulator.edge.reversed_in?(input_face_manipulator.face)
       y_axis = z_axis.cross(x_axis)
 
-      [ x_axis, y_axis, z_axis, active_edge, active_edge != input_edge ]
+      [ x_axis, y_axis, z_axis, input_edge_manipulator ]
     end
 
-    def _popultate_face_infos(face_infos, entities, transformation = Geom::Transformation.new, &validator)
+    def _populate_face_infos(face_infos, entities, transformation = Geom::Transformation.new, &validator)
       entities.each do |entity|
         if entity.visible? && _layer_visible?(entity.layer)
           if entity.is_a?(Sketchup::Face)
-            face_infos.push(FaceInfo.new(entity, transformation)) if !block_given? || yield(entity, transformation)
+            manipulator = FaceManipulator.new(entity, transformation)
+            face_infos.push(manipulator) if !block_given? || yield(manipulator)
           elsif entity.is_a?(Sketchup::Group)
-            _popultate_face_infos(face_infos, entity.entities, transformation * entity.transformation, &validator)
+            _populate_face_infos(face_infos, entity.entities, transformation * entity.transformation, &validator)
           elsif entity.is_a?(Sketchup::ComponentInstance) && (entity.definition.behavior.cuts_opening? || entity.definition.behavior.always_face_camera?)
-            _popultate_face_infos(face_infos, entity.definition.entities, transformation * entity.transformation, &validator)
+            _populate_face_infos(face_infos, entity.definition.entities, transformation * entity.transformation, &validator)
           end
         end
       end
@@ -198,7 +252,8 @@ module Ladb::OpenCutList
       entities.each do |entity|
         if entity.visible? && _layer_visible?(entity.layer)
           if entity.is_a?(Sketchup::Edge)
-            edge_infos.push(EdgeInfo.new(entity, transformation)) if !block_given? || yield(entity, transformation)
+            manipulator = EdgeManipulator.new(entity, transformation)
+            edge_infos.push(manipulator) if !block_given? || yield(manipulator)
           elsif entity.is_a?(Sketchup::Group)
             _populate_edge_infos(edge_infos, entity.entities, transformation * entity.transformation, &validator)
           elsif entity.is_a?(Sketchup::ComponentInstance) && (entity.definition.behavior.cuts_opening? || entity.definition.behavior.always_face_camera?)

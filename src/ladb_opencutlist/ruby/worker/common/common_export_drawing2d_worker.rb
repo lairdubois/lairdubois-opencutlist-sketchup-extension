@@ -64,7 +64,7 @@ module Ladb::OpenCutList
             unit_converter = DimensionUtils.instance.length_to_model_unit_float(1.0.to_l)
           end
 
-          success = _write_2d(path, @drawing_def.face_infos, @drawing_def.edge_infos, unit_converter) && File.exist?(path)
+          success = _write_2d(path, @drawing_def.face_manipulators, @drawing_def.edge_manipulators, unit_converter) && File.exist?(path)
 
           return { :errors => [ [ 'tab.cutlist.error.failed_export_to_3d_file', { :file_format => @file_format, :error => e.message } ] ] } unless success
           return { :export_path => path }
@@ -82,7 +82,7 @@ module Ladb::OpenCutList
 
     private
 
-    def _write_2d(path, face_infos, edge_infos, unit_converter)
+    def _write_2d(path, face_manipulators, edge_manipulators, unit_converter)
 
       # Open output file
       file = File.new(path , 'w')
@@ -91,18 +91,18 @@ module Ladb::OpenCutList
       when FILE_FORMAT_DXF
 
         layer_defs = []
-        layer_defs.push({ :name => 'OCL_DRAWING', :color => 7 }) unless face_infos.empty?
-        layer_defs.push({ :name => 'OCL_GUIDE', :color => 150 }) unless edge_infos.empty?
+        layer_defs.push({ :name => 'OCL_DRAWING', :color => 7 }) unless face_manipulators.empty?
+        layer_defs.push({ :name => 'OCL_GUIDE', :color => 150 }) unless edge_manipulators.empty?
 
         _dxf_write_header(file, _convert_point(@drawing_def.bounds.min, unit_converter), _convert_point(@drawing_def.bounds.max, unit_converter), layer_defs)
 
         _dxf_write(file, 0, 'SECTION')
         _dxf_write(file, 2, 'ENTITIES')
 
-        face_infos.each do |face_info|
+        face_manipulators.each do |face_manipulator|
 
-          face = face_info.face
-          transformation = face_info.transformation
+          face = face_manipulator.face
+          transformation = face_manipulator.transformation
 
           face.loops.each do |loop|
 
@@ -131,10 +131,10 @@ module Ladb::OpenCutList
 
         end
 
-        edge_infos.each do |edge_info|
+        edge_manipulators.each do |edge_manipulator|
 
-          edge = edge_info.edge
-          transformation = edge_info.transformation
+          edge = edge_manipulator.edge
+          transformation = edge_manipulator.transformation
 
           point1 = edge.start.position.transform(transformation)
           point2 = edge.end.position.transform(transformation)
@@ -157,10 +157,10 @@ module Ladb::OpenCutList
         if @anchor
           bounds.add([ Geom::Point3d.new, Geom::Point3d.new(0, 10.mm), Geom::Point3d.new(5.mm, 0) ]) if @anchor
         end
-        face_infos.each do |face_info|
+        face_manipulators.each do |face_info|
           bounds.add(_compute_children_faces_triangles([ face_info.face ], face_info.transformation))
         end
-        edge_infos.each do |edge_info|
+        edge_manipulators.each do |edge_info|
           bounds.add(edge_info.edge.start.position.transform(edge_info.transformation))
           bounds.add(edge_info.edge.end.position.transform(edge_info.transformation))
         end
@@ -183,36 +183,64 @@ module Ladb::OpenCutList
 
         _svg_write_start(file, x, y, width, height, unit_sign)
 
-        face_infos.sort_by { |face_info| face_info.data[:depth] }.each do |face_info|
+        face_manipulators.sort_by { |face_manipulator| face_manipulator.data[:depth] }.each do |face_manipulator|
 
-          face = face_info.face
-          transformation = face_info.transformation
-          depth = face_info.data[:depth].to_f
-          depth_ratio = face_info.data[:depth_ratio]
+          face = face_manipulator.face
+          transformation = face_manipulator.transformation
+          depth = face_manipulator.data[:depth].to_f
+          depth_ratio = face_manipulator.data[:depth_ratio]
 
           face.loops.each do |loop|
 
-            if @curves && loop.edges.first.curve.is_a?(Sketchup::ArcCurve) && loop.edges.first.curve.circular?
-
-              curve = loop.edges.first.curve
-              center = curve.center.transform(transformation)
-              radius = curve.radius # TODO : transform
-
-              cx = _convert(center.x, unit_converter)
-              cy = _convert(-center.y, unit_converter)
-              r = _convert(radius, unit_converter)
-
-              if loop.outer?
-                if depth.round(6) == 0
-                  _svg_write_circle(file, cx, cy, r, '#000000', '#000000', 'shaper:cutType': 'outside')
-                else
-                  _svg_write_circle(file, cx, cy, r, nil, ColorUtils.color_to_hex(Sketchup::Color.new('#7F7F7F').blend(Sketchup::Color.new('#AAAAAA'), depth_ratio)), 'shaper:cutType': 'inside', 'shaper:cutDepth': "#{_convert(depth, unit_converter)}#{unit_sign}")
-                end
+            attributes = {}
+            if loop.outer?
+              if depth.round(6) == 0
+                attributes = {
+                  stroke: '#000000',
+                  fill: '#000000',
+                  'shaper:cutType': 'outside'
+                }
               else
-                _svg_write_circle(file, cx, cy, r, '#000000', '#ffffff', 'shaper:cutType': 'inside', 'shaper:cutDepth': @max_depth)
+                attributes = {
+                  fill: ColorUtils.color_to_hex(Sketchup::Color.new('#7F7F7F').blend(Sketchup::Color.new('#AAAAAA'), depth_ratio)),
+                  'shaper:cutType': 'pocket',
+                  'shaper:cutDepth': "#{_convert(depth, unit_converter)}#{unit_sign}"
+                }
               end
-
             else
+              attributes = {
+                stroke: '#000000',
+                fill: '#FFFFFF',
+                'shaper:cutType': 'inside',
+                'shaper:cutDepth': @max_depth
+              }
+            end
+
+            # if @curves && loop.edges.first.curve.is_a?(Sketchup::ArcCurve)
+            #
+            #   curve = loop.edges.first.curve
+            #   center = curve.center.transform(transformation)
+            #
+            #   start_point = curve.vertices.first.position.transform(transformation)
+            #   end_point = curve.vertices.last.position.transform(transformation)
+            #
+            #   start_angle = curve.start_angle
+            #   end_angle = curve.end_angle
+            #
+            #   startx = start_point.x
+            #   starty = start_point.y
+            #   rx = _convert(curve.xaxis.transform(transformation).length, unit_converter)
+            #   ry = _convert(curve.yaxis.transform(transformation).length, unit_converter)
+            #   rotx = 0
+            #   sweep = 1
+            #   endx = _convert(center.x, unit_converter)
+            #   endy = _convert(-center.y, unit_converter)
+            #
+            #   _svg_write_tag(file, 'path', attributes.merge(
+            #     d: "M #{startx} #{starty} A #{rx} #{ry} #{rotx} #{sweep} #{endx} #{endy} Z"
+            #   ))
+            #
+            # else
 
               coords = []
               loop.vertices.each do |vertex|
@@ -220,28 +248,20 @@ module Ladb::OpenCutList
                 coords << "#{_convert(point.x, unit_converter)},#{_convert(-point.y, unit_converter)}"
               end
               data = "M#{coords.join('L')}Z"
-              if loop.outer?
-                if depth.round(6) == 0
-                  # Outside
-                  _svg_write_path(file, data, '#000000', '#000000', 'shaper:cutType': 'outside')
-                else
-                  # Pocket
-                  _svg_write_path(file, data, nil, ColorUtils.color_to_hex(Sketchup::Color.new('#7F7F7F').blend(Sketchup::Color.new('#AAAAAA'), depth_ratio)), 'shaper:cutType': 'pocket', 'shaper:cutDepth': "#{_convert(depth, unit_converter)}#{unit_sign}")
-                end
-              else
-                # Inside
-                _svg_write_path(file, data, '#000000', '#FFFFFF', 'shaper:cutType': 'inside', 'shaper:cutDepth': @max_depth)
-              end
 
-            end
+              _svg_write_tag(file, 'path', attributes.merge(
+                d: data
+              ))
+
+            # end
 
           end
 
         end
 
-        unless edge_infos.empty?
+        unless edge_manipulators.empty?
           data = ''
-          edge_infos.each do |edge_info|
+          edge_manipulators.each do |edge_info|
 
             edge = edge_info.edge
             transformation = edge_info.transformation
@@ -255,7 +275,12 @@ module Ladb::OpenCutList
 
           end
           _svg_write_group_start(file, id: 'OCL_GUIDES')
-          _svg_write_path(file, data, '#0068FF', nil, 'shaper:cutType': 'guide')
+          _svg_write_tag(file, 'path', {
+            d: data,
+            stroke: '#0068FF',
+            fill: 'none',
+            'shaper:cutType': 'guide'
+          })
           _svg_write_group_end(file)
         end
 
@@ -269,7 +294,10 @@ module Ladb::OpenCutList
           y3 = 0
 
           _svg_write_group_start(file, id: 'OCL_ANCHOR')
-          _svg_write_polygon(file, "#{x1},#{y1} #{x2},#{y2} #{x3},#{y3}", nil, '#FF0000')
+          _svg_write_tag(file, 'polygon', {
+            points: "#{x1},#{y1} #{x2},#{y2} #{x3},#{y3}",
+            fill: '#FF0000'
+          })
           _svg_write_group_end(file)
 
         end

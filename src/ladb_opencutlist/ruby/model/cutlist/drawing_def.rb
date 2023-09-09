@@ -2,8 +2,8 @@ module Ladb::OpenCutList
 
   class DrawingDef
 
-    attr_reader :bounds, :face_infos, :edge_infos
-    attr_accessor :transformation, :active_face_info, :active_edge_info
+    attr_reader :bounds, :face_manipulators, :edge_manipulators
+    attr_accessor :transformation, :input_face_manipulator, :input_edge_manipulator
 
     def initialize
 
@@ -11,11 +11,11 @@ module Ladb::OpenCutList
 
       @bounds = Geom::BoundingBox.new
 
-      @face_infos = []
-      @edge_infos = []
+      @face_manipulators = []
+      @edge_manipulators = []
 
-      @active_face_info = nil
-      @active_edge_info = nil
+      @input_face_manipulator = nil
+      @input_edge_manipulator = nil
 
     end
 

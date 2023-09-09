@@ -59,7 +59,7 @@ module Ladb::OpenCutList
             unit_converter = DimensionUtils.instance.length_to_model_unit_float(1.0.to_l)
           end
 
-          success = _write_3d(path, @drawing_def.face_infos, @drawing_def.edge_infos, unit_converter) && File.exist?(path)
+          success = _write_3d(path, @drawing_def.face_manipulators, @drawing_def.edge_manipulators, unit_converter) && File.exist?(path)
 
           return { :errors => [ [ 'tab.cutlist.error.failed_export_to_3d_file', { :file_format => @file_format, :error => e.message } ] ] } unless success
           return { :export_path => path }
@@ -77,7 +77,7 @@ module Ladb::OpenCutList
 
     private
 
-    def _write_3d(path, face_infos, edge_infos, unit_converter)
+    def _write_3d(path, face_manipulators, edge_manipulators, unit_converter)
 
       # Open output file
       file = File.new(path , 'w')
@@ -86,18 +86,18 @@ module Ladb::OpenCutList
       when FILE_FORMAT_DXF
 
         layer_defs = []
-        layer_defs.push({ :name => 'OCL_DRAWING', :color => 7 }) unless face_infos.empty?
-        layer_defs.push({ :name => 'OCL_GUIDE', :color => 150 }) unless edge_infos.empty?
+        layer_defs.push({ :name => 'OCL_DRAWING', :color => 7 }) unless face_manipulators.empty?
+        layer_defs.push({ :name => 'OCL_GUIDE', :color => 150 }) unless edge_manipulators.empty?
 
         _dxf_write_header(file, _convert_point(@drawing_def.bounds.min, unit_converter), _convert_point(@drawing_def.bounds.max, unit_converter), layer_defs)
 
         _dxf_write(file, 0, 'SECTION')
         _dxf_write(file, 2, 'ENTITIES')
 
-        face_infos.each do |face_info|
+        face_manipulators.each do |face_manipulator|
 
-          face = face_info.face
-          transformation = face_info.transformation
+          face = face_manipulator.face
+          transformation = face_manipulator.transformation
 
           # Export face to POLYFACE
 
@@ -145,10 +145,10 @@ module Ladb::OpenCutList
 
         end
 
-        edge_infos.each do |edge_info|
+        edge_manipulators.each do |edge_manipulator|
 
-          edge = edge_info.edge
-          transformation = edge_info.transformation
+          edge = edge_manipulator.edge
+          transformation = edge_manipulator.transformation
 
           point1 = edge.start.position.transform(transformation)
           point2 = edge.end.position.transform(transformation)
@@ -169,10 +169,10 @@ module Ladb::OpenCutList
 
         file.puts("solid #{@file_name}")
 
-        face_infos.each do |face_info|
+        face_manipulators.each do |face_manipulator|
 
-          face = face_info.face
-          transformation = face_info.transformation
+          face = face_manipulator.face
+          transformation = face_manipulator.transformation
 
           mesh = face.mesh(4) # PolygonMeshPoints | PolygonMeshNormals
           mesh.transform!(transformation)
@@ -199,10 +199,10 @@ module Ladb::OpenCutList
 
         file.puts("g #{@file_name}")
 
-        face_infos.each do |face_info|
+        face_manipulators.each do |face_manipulator|
 
-          face = face_info.face
-          transformation = face_info.transformation
+          face = face_manipulator.face
+          transformation = face_manipulator.transformation
 
           mesh = face.mesh(4) # PolygonMeshPoints | PolygonMeshNormals
           mesh.transform!(transformation)
