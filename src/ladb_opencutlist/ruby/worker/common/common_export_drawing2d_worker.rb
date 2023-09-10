@@ -108,16 +108,51 @@ module Ladb::OpenCutList
           face_manipulator.loop_manipulators.each do |loop_manipulator|
 
             if @curves
+
               # Extract loop points from ordered edges and arc curves
-              _dxf_write_polygon(file, loop_manipulator.edge_and_arc_manipulators.map.with_index { |manipulator, index|
-                points = manipulator.points
-                points = points.reverse if manipulator.reversed_in?(face_manipulator.face)
-                points.shift unless index == 0
-                points.map { |point| _convert_point(point, unit_converter) }
-              }.flatten, LAYER_DRAWING)
+              loop_manipulator.edge_and_arc_manipulators.each { |manipulator|
+
+                if manipulator.reversed_in?(face_manipulator.face)
+                  start_point = manipulator.end_point
+                  end_point = manipulator.start_point
+                else
+                  start_point = manipulator.start_point
+                  end_point = manipulator.end_point
+                end
+
+                if manipulator.is_a?(ArcCurveManipulator)
+
+                  center = manipulator.center
+                  vertex_xaxis = manipulator.vertex_xaxis
+
+                  cx = _convert(center.x, unit_converter)
+                  cy = _convert(center.y, unit_converter)
+                  vx = _convert(vertex_xaxis.x, unit_converter)
+                  vy = _convert(vertex_xaxis.y, unit_converter)
+                  vr = manipulator.yradius / manipulator.xradius
+                  as = manipulator.start_angle
+                  ae = manipulator.end_angle
+
+                  _dxf_write_ellipse(file, cx, cy, vx, vy, vr, as, ae, LAYER_DRAWING)
+
+                else
+
+                  x1 = _convert(start_point.x, unit_converter)
+                  y1 = _convert(start_point.y, unit_converter)
+                  x2 = _convert(end_point.x, unit_converter)
+                  y2 = _convert(end_point.y, unit_converter)
+
+                  _dxf_write_line(file, x1, y1, x2, y2, LAYER_DRAWING)
+
+                end
+
+              }
+
             else
+
               # Extract loop points from vertices (quicker)
               _dxf_write_polygon(file, loop_manipulator.points.map { |point| _convert_point(point, unit_converter) }, LAYER_DRAWING)
+
             end
 
           end
@@ -126,10 +161,15 @@ module Ladb::OpenCutList
 
         edge_manipulators.each do |edge_manipulator|
 
-          point1 = _convert_point(edge_manipulator.start_point, unit_converter)
-          point2 = _convert_point(edge_manipulator.end_point, unit_converter)
+          start_point = edge_manipulator.start_point
+          end_point = edge_manipulator.end_point
 
-          _dxf_write_line(file, point1.x, point1.y, point2.x, point2.y, LAYER_GUIDES)
+          x1 = _convert(start_point.x, unit_converter)
+          y1 = _convert(start_point.y, unit_converter)
+          x2 = _convert(end_point.x, unit_converter)
+          y2 = _convert(end_point.y, unit_converter)
+
+          _dxf_write_line(file, x1, y1, x2, y2, LAYER_GUIDES)
 
         end
 
@@ -203,6 +243,7 @@ module Ladb::OpenCutList
               end
 
               if @curves
+
                 # Extract loop points from ordered edges and arc curves
                 data = "#{loop_manipulator.edge_and_arc_manipulators.map.with_index { |manipulator, index|
 
@@ -221,7 +262,7 @@ module Ladb::OpenCutList
                     start_angle = manipulator.start_angle
                     end_angle = manipulator.end_angle
                     center = manipulator.center
-                    middle = manipulator.ellipse_point_at_angle((end_angle + start_angle) / 2.0, true)
+                    middle = manipulator.ellipse_point_at_angle((end_angle - start_angle) / 2.0, true)
 
                     rx = _convert(manipulator.xradius, unit_converter)
                     ry = _convert(manipulator.yradius, unit_converter)
@@ -244,9 +285,12 @@ module Ladb::OpenCutList
 
                   data
                 }.join(' ')} Z"
+
               else
+
                 # Extract loop points from vertices (quicker)
                 data = "M #{loop_manipulator.points.map { |point| "#{_convert(point.x, unit_converter)},#{_convert(-point.y, unit_converter)}" }.join(' L ')} Z"
+
               end
 
               _svg_write_tag(file, 'path', attributes.merge(
@@ -316,6 +360,7 @@ module Ladb::OpenCutList
     end
 
     def _convert_point(point, unit_converter, precision = 6)
+      point = point.clone
       point.x = _convert(point.x, unit_converter, precision)
       point.y = _convert(point.y, unit_converter, precision)
       point.z = _convert(point.z, unit_converter, precision)

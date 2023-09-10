@@ -26,6 +26,13 @@ module Ladb::OpenCutList
 
     # -----
 
+    def ==(other)
+      return false unless other.is_a?(EdgeSegmentsHelper)
+      @edge == other.edge && super
+    end
+
+    # -----
+
     def start_point
       points.first
     end
@@ -44,13 +51,13 @@ module Ladb::OpenCutList
 
     def line
       if @line.nil?
-        @line = [ self.start_point, self.end_point - self.start_point ]
+        @line = [ start_point, end_point - start_point ]
       end
       @line
     end
 
     def length
-      (self.end_point - self.start_point).length
+      (end_point - start_point).length
     end
 
     def segment
@@ -69,7 +76,7 @@ module Ladb::OpenCutList
     # -----
 
     def to_s
-      "EDGE from #{self.start_point} to #{self.end_point}"
+      "EDGE from #{start_point} to #{end_point}"
     end
 
   end

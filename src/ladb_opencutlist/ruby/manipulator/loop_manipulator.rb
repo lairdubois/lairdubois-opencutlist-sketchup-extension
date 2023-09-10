@@ -22,6 +22,13 @@ module Ladb::OpenCutList
 
     # -----
 
+    def ==(other)
+      return false unless other.is_a?(LoopManipulator)
+      @loop == other.loop && super
+    end
+
+    # -----
+
     def points
       if @points.nil?
         @points = @loop.vertices.map { |vertex| vertex.position.transform(@transformation) }

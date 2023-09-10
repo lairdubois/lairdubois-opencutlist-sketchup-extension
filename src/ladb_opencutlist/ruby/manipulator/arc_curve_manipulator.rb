@@ -22,6 +22,8 @@ module Ladb::OpenCutList
       @vertex_xaxis = nil
       @vertex_yaxis = nil
       @vertex_angle = nil
+      @start_angle = nil
+      @end_angle = nil
       @xradius = nil
       @yradius = nil
       @segments = nil
@@ -29,12 +31,27 @@ module Ladb::OpenCutList
 
     # -----
 
+    def ==(other)
+      return false unless other.is_a?(ArcCurveManipulator)
+      @arc_curve == other.arc_curve && super
+    end
+
+    def reversed_in?(face)
+      @arc_curve.first_edge.reversed_in?(face)
+    end
+
+    def circular?
+      @arc_curve.circular?
+    end
+
+    # -----
+
     def start_point
-      self.points.first
+      points.first
     end
 
     def end_point
-      self.points.last
+      points.last
     end
 
     def center
@@ -68,43 +85,49 @@ module Ladb::OpenCutList
 
     def vertex_xaxis
       if @vertex_xaxis.nil?
-        @vertex_xaxis = Geom::Vector3d.new(ellipse_point_at_angle(self.vertex_angle).to_a)
+        @vertex_xaxis = Geom::Vector3d.new(ellipse_point_at_angle(vertex_angle).to_a)
       end
       @vertex_xaxis
     end
 
     def vertex_yaxis
       if @vertex_yaxis.nil?
-        @vertex_yaxis = Geom::Vector3d.new(ellipse_point_at_angle(self.vertex_angle + Math::PI / 2).to_a)
+        @vertex_yaxis = Geom::Vector3d.new(ellipse_point_at_angle(vertex_angle + Math::PI / 2).to_a)
       end
       @vertex_yaxis
     end
 
     def vertex_angle
       if @vertex_angle.nil?
-        @vertex_angle = 0.5 * Math.atan2(self.xaxis.dot(self.yaxis) * 2, self.xaxis.dot(self.xaxis) - self.yaxis.dot(self.yaxis))
+        @vertex_angle = 0.5 * Math.atan2(xaxis.dot(yaxis) * 2, xaxis.dot(xaxis) - yaxis.dot(yaxis))
       end
       @vertex_angle
     end
 
     def start_angle
-      @arc_curve.start_angle
+      if @start_angle.nil?
+        @start_angle = @arc_curve.start_angle - vertex_angle
+      end
+      @start_angle
     end
 
     def end_angle
-      @arc_curve.end_angle
+      if @end_angle.nil?
+        @end_angle = @arc_curve.end_angle - vertex_angle
+      end
+      @end_angle
     end
 
     def xradius
       if @xradius.nil?
-        @xradius = self.vertex_xaxis.length
+        @xradius = vertex_xaxis.length
       end
       @xradius
     end
 
     def yradius
       if @yradius.nil?
-        @yradius = self.vertex_yaxis.length
+        @yradius = vertex_yaxis.length
       end
       @yradius
     end
@@ -121,17 +144,9 @@ module Ladb::OpenCutList
 
     # -----
 
-    def reversed_in?(face)
-      @arc_curve.first_edge.reversed_in?(face)
-    end
-
-    def circular?
-      @arc_curve.circular?
-    end
-
     def ellipse_point_at_angle(angle, absolute = false)
-      vx = Geom::Vector3d.new(self.xaxis.x * Math.cos(angle), self.xaxis.y * Math.cos(angle), 0)
-      vy = Geom::Vector3d.new(self.yaxis.x * Math.sin(angle), self.yaxis.y * Math.sin(angle), 0)
+      vx = Geom::Vector3d.new(xaxis.x * Math.cos(angle), xaxis.y * Math.cos(angle), 0)
+      vy = Geom::Vector3d.new(yaxis.x * Math.sin(angle), yaxis.y * Math.sin(angle), 0)
       v = vx + vy
       v = v + Geom::Vector3d.new(center.to_a) if absolute
       Geom::Point3d.new(v.to_a)
@@ -141,14 +156,13 @@ module Ladb::OpenCutList
 
     def to_s
       [
-        "ARCCURVE from #{self.start_point} to #{self.end_point}",
+        "ARCCURVE from #{start_point} to #{end_point}",
         "- #{@arc_curve.count_edges} edges",
         "- circular? = #{circular?}",
         "- center = #{center}",
         "- vertex_xaxis_angle = #{vertex_xaxis.angle_between(X_AXIS).radians}",
         "- vertex_xaxis = #{vertex_xaxis}",
         "- vertex_yaxis = #{vertex_yaxis}",
-        "- radius = #{@arc_curve.radius}",
         "- xradius = #{xradius}",
         "- yradius = #{yradius}",
         "- start_angle = #{start_angle.radians}",

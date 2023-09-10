@@ -13,7 +13,7 @@ module Ladb::OpenCutList
     end
 
     def _svg_append_indent
-      ''.ljust(@_svg_indent.to_i)
+      ''.ljust([ @_svg_indent.to_i, 0 ].max)
     end
 
     def _svg_append_attributes(attributes = {})
@@ -23,6 +23,7 @@ module Ladb::OpenCutList
 
     def _svg_write_start(file, x, y, width, height, unit_sign)
       file.puts('<?xml version="1.0" encoding="UTF-8" standalone="no"?>')
+      file.puts('<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">')
       file.puts("<!-- Generator: SketchUp, #{EXTENSION_NAME} Extension, Version #{EXTENSION_VERSION} -->")
       file.puts("<svg width=\"#{width}#{unit_sign}\" height=\"#{height}#{unit_sign}\" viewBox=\"#{x} #{y} #{width} #{height}\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:shaper=\"http://www.shapertools.com/namespaces/shaper\">")
       _svg_indent

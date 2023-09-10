@@ -34,7 +34,7 @@ module Ladb::OpenCutList
 
     def ==(other)
       return false unless other.is_a?(FaceManipulator)
-      @face == other.face && (@transformation * other.transformation.inverse).identity?
+      @face == other.face && super
     end
 
     def coplanar?(other)
@@ -116,7 +116,11 @@ module Ladb::OpenCutList
     # -----
 
     def to_s
-      "FACE plane=#{plane} "
+      [
+        "FACE",
+        "- #{@face.loops.length} loops",
+        "- plane = #{plane}",
+      ].join("\n")
     end
 
   end

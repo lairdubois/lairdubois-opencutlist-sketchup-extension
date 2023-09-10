@@ -238,6 +238,22 @@ module Ladb::OpenCutList
 
     end
 
+    def _dxf_write_ellipse(file, cx, cy, vx, vy, vr, as = 0, ae = 2 * Math::PI, layer = 0)
+
+      # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-107CB04F-AD4D-4D2F-8EC9-AC90888063AB
+
+      _dxf_write(file, 0, 'ELLIPSE')
+      _dxf_write(file, 8, layer)
+      _dxf_write(file, 10, cx)
+      _dxf_write(file, 20, cy)
+      _dxf_write(file, 11, vx)
+      _dxf_write(file, 21, vy)
+      _dxf_write(file, 40, vr)
+      _dxf_write(file, 41, as)
+      _dxf_write(file, 42, ae)
+
+    end
+
     def _dxf_write_rect(file, x, y, width, height, layer = 0)
 
       points = [
