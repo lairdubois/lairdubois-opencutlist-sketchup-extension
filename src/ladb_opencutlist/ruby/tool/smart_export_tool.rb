@@ -6,6 +6,8 @@ module Ladb::OpenCutList
   require_relative '../helper/entities_helper'
   require_relative '../manipulator/face_manipulator'
   require_relative '../manipulator/edge_manipulator'
+  require_relative '../manipulator/loop_manipulator'
+  require_relative '../manipulator/arc_curve_manipulator'
   require_relative '../model/cutlist/face_info'
   require_relative '../model/cutlist/edge_info'
   require_relative '../worker/common/common_export_instance_to_file_worker'
@@ -328,11 +330,6 @@ module Ladb::OpenCutList
 
         transformation = PathUtils::get_transformation(@active_part_entity_path)
 
-        input_transformation = PathUtils::get_transformation(@input_face_path)
-        input_transformation_array = input_transformation.to_a
-
-        input_face_manipulator = FaceManipulator.new(@input_face, input_transformation)
-
         inch_offset = Sketchup.active_model.active_view.pixels_to_model(5, Geom::Point3d.new.transform(transformation))
 
         if is_action_export_part_2d?
@@ -369,6 +366,67 @@ module Ladb::OpenCutList
             preview.transformation = @active_drawing_def.transformation
             @space.append(preview)
 
+            # DEBUG #####
+
+            @active_drawing_def.input_face_manipulator.loop_manipulators.each do |loop_manipulator|
+
+              loop_manipulator.edge_and_arc_manipulators.each do |manipulator|
+
+                if manipulator.is_a?(EdgeManipulator)
+
+                  segments = Kuix::Segments.new
+                  segments.add_segments(manipulator.segment)
+                  segments.color = manipulator.reversed_in?(@active_drawing_def.input_face_manipulator.face) ? Kuix::COLOR_RED : Kuix::COLOR_GREEN
+                  segments.line_width = 4
+                  segments.on_top = true
+                  preview.append(segments)
+
+                  o, v = manipulator.line
+                  arrow_size = inch_offset * 4
+
+                  t = Geom::Transformation.axes(manipulator.start_point, v, @active_drawing_def.input_face_manipulator.normal.cross(v), @active_drawing_def.input_face_manipulator.normal)
+                  t *= Geom::Transformation.translation(Geom::Vector3d.new(-(manipulator.length + arrow_size) / 2, -arrow_size / 2, 0))
+
+                  arrow = Kuix::ArrowMotif.new
+                  arrow.transformation = t
+                  arrow.bounds.size.set_all!(arrow_size)
+                  arrow.line_width = 2
+                  arrow.color = Kuix::COLOR_DARK_GREY
+                  preview.append(arrow)
+
+                elsif manipulator.is_a?(ArcCurveManipulator)
+
+                  segments = Kuix::Segments.new
+                  segments.add_segments(manipulator.segments)
+                  segments.color = manipulator.reversed_in?(@active_drawing_def.input_face_manipulator.face) ? Kuix::COLOR_RED : Kuix::COLOR_CYAN
+                  segments.line_width = 4
+                  segments.on_top = true
+                  preview.append(segments)
+
+                  edge_manipulator = EdgeManipulator.new(manipulator.arc_curve.first_edge, loop_manipulator.transformation)
+                  o, v = edge_manipulator.line
+                  arrow_size = inch_offset * 4
+
+                  t = Geom::Transformation.axes(edge_manipulator.start_point, v, @active_drawing_def.input_face_manipulator.normal.cross(v), @active_drawing_def.input_face_manipulator.normal)
+                  t *= Geom::Transformation.translation(Geom::Vector3d.new(-(edge_manipulator.length + arrow_size) / 2, -arrow_size / 2, 0))
+
+                  arrow = Kuix::ArrowMotif.new
+                  arrow.transformation = t
+                  arrow.bounds.size.set_all!(arrow_size)
+                  arrow.line_width = 2
+                  arrow.color = Kuix::COLOR_DARK_GREY
+                  preview.append(arrow)
+
+
+                end
+
+              end
+
+            end
+
+            # DEBUG #####
+
+
             @active_drawing_def.face_manipulators.each do |face_manipulator|
 
               # Highlight face
@@ -397,7 +455,7 @@ module Ladb::OpenCutList
             bounds.add(Geom::Point3d.new(0, 0, @active_drawing_def.bounds.max.z))
 
             # Box helper
-            box_helper = Kuix::BoxMotif.new
+            box_helper = Kuix::RectangleMotif.new
             box_helper.bounds.origin.copy!(bounds.min)
             box_helper.bounds.size.copy!(bounds)
             box_helper.bounds.apply_offset(inch_offset, inch_offset, 0)

@@ -26,26 +26,50 @@ module Ladb::OpenCutList
 
     # -----
 
-    def points(reset_cache = false)
-      if @points.nil? || !reset_cache
+    def start_point
+      points.first
+    end
+
+    def end_point
+      points.last
+    end
+
+    def points
+      if @points.nil?
         @points = @edge.vertices.map { |vertex| vertex.position.transform(@transformation) }
         @points.reverse! if TransformationUtils.flipped?(@transformation)
       end
       @points
     end
 
-    def line(reset_cache = false)
-      if @line.nil? || !reset_cache
-        @line = [ points(reset_cache).first, points.last - points.first ]
+    def line
+      if @line.nil?
+        @line = [ self.start_point, self.start_point - self.end_point ]
       end
       @line
     end
 
-    def segment(reset_cache = false)
-      if @segment.nil? || !reset_cache
+    def length
+      (self.end_point - self.start_point).length
+    end
+
+    def segment
+      if @segment.nil?
         @segment = _compute_edge_segment(@edge, @transformation)
       end
       @segment
+    end
+
+    # -----
+
+    def reversed_in?(face)
+      @edge.reversed_in?(face)
+    end
+
+    # -----
+
+    def to_s
+      "EDGE from #{self.start_point} -> #{self.end_point}"
     end
 
   end

@@ -1,6 +1,7 @@
 module Ladb::OpenCutList
 
   require_relative 'manipulator'
+  require_relative 'loop_manipulator'
   require_relative '../helper/entities_helper'
   require_relative '../helper/face_triangles_helper'
   require_relative '../utils/transformation_utils'
@@ -48,52 +49,74 @@ module Ladb::OpenCutList
 
     # -----
 
-    def outer_loop_points(reset_cache = false)
-      if @outer_loop_points.nil? || !reset_cache
+    def outer_loop_points
+      if @outer_loop_points.nil?
         @outer_loop_points = @face.outer_loop.vertices.map { |vertex| vertex.position.transform(@transformation) }
         @outer_loop_points.reverse! if TransformationUtils.flipped?(@transformation)
       end
       @outer_loop_points
     end
 
-    def plane(reset_cache = false)
-      if @plane.nil? || !reset_cache
-        @plane = Geom.fit_plane_to_points(outer_loop_points(reset_cache))
+    def plane
+      if @plane.nil?
+        @plane = Geom.fit_plane_to_points(outer_loop_points)
       end
       @plane
     end
 
-    def plane_point(reset_cache = false)
-      if @plane_point.nil? || !reset_cache
+    def plane_point
+      if @plane_point.nil?
         @plane_point = Geom::Point3d.new(plane[0..2].map { |v| v * plane.last })
       end
       @plane_point
     end
 
-    def plane_vector(reset_cache = false)
-      if @plane_vector.nil? || !reset_cache
+    def plane_vector
+      if @plane_vector.nil?
         @plane_vector = Geom::Vector3d.new(plane[0..2])
       end
       @plane_vector
     end
 
-    def normal(reset_cache = false)
-      if @normal.nil? || !reset_cache
-        @normal = Geom::Vector3d.new(plane(reset_cache)[0..2])
+    def normal
+      if @normal.nil?
+        @normal = Geom::Vector3d.new(plane[0..2])
       end
       @normal
     end
 
-    def triangles(reset_cache = false)
-      if @triangles.nil? || !reset_cache
+    def mesh
+      if @mesh.nil?
+        @mesh = @face.mesh(4) # PolygonMeshPoints | PolygonMeshNormals
+        @mesh.transform!(@transformation)
+      end
+      @mesh
+    end
+
+    def triangles
+      if @triangles.nil?
         @triangles = _compute_face_triangles(@face, @transformation)
       end
       @triangles
-
     end
 
     def longest_outer_edge
       _find_longest_outer_edge(@face, @transformation)
+    end
+
+    # -----
+
+    def loop_manipulators
+      if @loop_manipulators.nil?
+        @loop_manipulators = @face.loops.map { |loop| LoopManipulator.new(loop, @transformation) }
+      end
+      @loop_manipulators
+    end
+
+    # -----
+
+    def to_s
+      "FACE plane=#{plane} "
     end
 
   end

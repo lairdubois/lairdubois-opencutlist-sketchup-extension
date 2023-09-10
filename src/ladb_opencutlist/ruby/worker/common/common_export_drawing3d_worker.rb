@@ -13,6 +13,9 @@ module Ladb::OpenCutList
     include DxfWriterHelper
     include SanitizerHelper
 
+    LAYER_DRAWING = 'OCL_DRAWING'.freeze
+    LAYER_GUIDES = 'OCL_GUIDES'.freeze
+
     SUPPORTED_FILE_FORMATS = [ FILE_FORMAT_DXF, FILE_FORMAT_STL, FILE_FORMAT_OBJ ]
 
     def initialize(drawing_def, settings)
@@ -86,8 +89,8 @@ module Ladb::OpenCutList
       when FILE_FORMAT_DXF
 
         layer_defs = []
-        layer_defs.push({ :name => 'OCL_DRAWING', :color => 7 }) unless face_manipulators.empty?
-        layer_defs.push({ :name => 'OCL_GUIDE', :color => 150 }) unless edge_manipulators.empty?
+        layer_defs.push({ :name => LAYER_DRAWING, :color => 7 }) unless face_manipulators.empty?
+        layer_defs.push({ :name => LAYER_GUIDES, :color => 150 }) unless edge_manipulators.empty?
 
         _dxf_write_header(file, _convert_point(@drawing_def.bounds.min, unit_converter), _convert_point(@drawing_def.bounds.max, unit_converter), layer_defs)
 
@@ -96,13 +99,9 @@ module Ladb::OpenCutList
 
         face_manipulators.each do |face_manipulator|
 
-          face = face_manipulator.face
-          transformation = face_manipulator.transformation
-
           # Export face to POLYFACE
 
-          mesh = face.mesh(0) # PolygonMeshPoints
-          mesh.transform!(transformation)
+          mesh = face_manipulator.mesh
 
           polygons = mesh.polygons
           points = mesh.points
@@ -130,7 +129,7 @@ module Ladb::OpenCutList
           polygons.each do |polygon|
 
             _dxf_write(file, 0, 'VERTEX')
-            _dxf_write(file, 8, 'OCL_DRAWING')
+            _dxf_write(file, 8, LAYER_DRAWING)
             _dxf_write(file, 10, 0.0)
             _dxf_write(file, 20, 0.0)
             _dxf_write(file, 30, 0.0)
@@ -147,18 +146,15 @@ module Ladb::OpenCutList
 
         edge_manipulators.each do |edge_manipulator|
 
-          edge = edge_manipulator.edge
-          transformation = edge_manipulator.transformation
-
-          point1 = edge.start.position.transform(transformation)
-          point2 = edge.end.position.transform(transformation)
+          point1 = edge_manipulator.start_point
+          point2 = edge_manipulator.end_point
 
           x1 = _convert(point1.x, unit_converter)
           y1 = _convert(point1.y, unit_converter)
           x2 = _convert(point2.x, unit_converter)
           y2 = _convert(point2.y, unit_converter)
 
-          _dxf_write_line(file, x1, y1, x2, y2, 'OCL_GUIDE')
+          _dxf_write_line(file, x1, y1, x2, y2, LAYER_GUIDES)
 
         end
 
@@ -171,11 +167,7 @@ module Ladb::OpenCutList
 
         face_manipulators.each do |face_manipulator|
 
-          face = face_manipulator.face
-          transformation = face_manipulator.transformation
-
-          mesh = face.mesh(4) # PolygonMeshPoints | PolygonMeshNormals
-          mesh.transform!(transformation)
+          mesh = face_manipulator.mesh
           polygons = mesh.polygons
           polygons.each do |polygon|
             if polygon.length == 3
@@ -201,11 +193,7 @@ module Ladb::OpenCutList
 
         face_manipulators.each do |face_manipulator|
 
-          face = face_manipulator.face
-          transformation = face_manipulator.transformation
-
-          mesh = face.mesh(4) # PolygonMeshPoints | PolygonMeshNormals
-          mesh.transform!(transformation)
+          mesh = face_manipulator.mesh
           polygons = mesh.polygons
           polygons.each do |polygon|
             if polygon.length == 3

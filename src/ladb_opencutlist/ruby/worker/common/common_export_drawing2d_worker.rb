@@ -15,6 +15,10 @@ module Ladb::OpenCutList
     include SvgWriterHelper
     include SanitizerHelper
 
+    LAYER_DRAWING = 'OCL_DRAWING'.freeze
+    LAYER_GUIDES = 'OCL_GUIDES'.freeze
+    LAYER_ANCHOR = 'OCL_ANCHOR'.freeze
+
     SUPPORTED_FILE_FORMATS = [ FILE_FORMAT_DXF, FILE_FORMAT_SVG ]
 
     def initialize(drawing_def, settings)
@@ -91,8 +95,8 @@ module Ladb::OpenCutList
       when FILE_FORMAT_DXF
 
         layer_defs = []
-        layer_defs.push({ :name => 'OCL_DRAWING', :color => 7 }) unless face_manipulators.empty?
-        layer_defs.push({ :name => 'OCL_GUIDE', :color => 150 }) unless edge_manipulators.empty?
+        layer_defs.push({ :name => LAYER_DRAWING, :color => 7 }) unless face_manipulators.empty?
+        layer_defs.push({ :name => LAYER_GUIDES, :color => 150 }) unless edge_manipulators.empty?
 
         _dxf_write_header(file, _convert_point(@drawing_def.bounds.min, unit_converter), _convert_point(@drawing_def.bounds.max, unit_converter), layer_defs)
 
@@ -101,30 +105,19 @@ module Ladb::OpenCutList
 
         face_manipulators.each do |face_manipulator|
 
-          face = face_manipulator.face
-          transformation = face_manipulator.transformation
+          face_manipulator.loop_manipulators.each do |loop_manipulator|
 
-          face.loops.each do |loop|
-
-            if @curves && loop.edges.first.curve.is_a?(Sketchup::ArcCurve) && loop.edges.first.curve.circular?
-
-              curve = loop.edges.first.curve
-              center = curve.center.transform(transformation)
-              radius = curve.radius # TODO : transform
-
-              cx = _convert(center.x, unit_converter)
-              cy = _convert(center.y, unit_converter)
-              r = _convert(radius, unit_converter)
-
-              _dxf_write_circle(file, cx, cy, r, 'OCL_DRAWING')
-
+            if @curves
+              # Extract loop points from ordered edges and arc curves
+              _dxf_write_polygon(file, loop_manipulator.edge_and_arc_manipulators.map.with_index { |manipulator, index|
+                points = manipulator.points
+                points = points.reverse if manipulator.reversed_in?(face_manipulator.face)
+                points.shift unless index == 0
+                points.map { |point| _convert_point(point, unit_converter) }
+              }.flatten, LAYER_DRAWING)
             else
-
-              _dxf_write_polygon(file, loop.vertices.map { |vertex|
-                point = vertex.position.transform(transformation)
-                Geom::Point3d.new(_convert(point.x, unit_converter), _convert(point.y, unit_converter))
-              }, 'OCL_DRAWING')
-
+              # Extract loop points from vertices (quicker)
+              _dxf_write_polygon(file, loop_manipulator.points.map { |point| _convert_point(point, unit_converter) }, LAYER_DRAWING)
             end
 
           end
@@ -133,18 +126,10 @@ module Ladb::OpenCutList
 
         edge_manipulators.each do |edge_manipulator|
 
-          edge = edge_manipulator.edge
-          transformation = edge_manipulator.transformation
+          point1 = _convert_point(edge_manipulator.start_point, unit_converter)
+          point2 = _convert_point(edge_manipulator.end_point, unit_converter)
 
-          point1 = edge.start.position.transform(transformation)
-          point2 = edge.end.position.transform(transformation)
-
-          x1 = _convert(point1.x, unit_converter)
-          y1 = _convert(point1.y, unit_converter)
-          x2 = _convert(point2.x, unit_converter)
-          y2 = _convert(point2.y, unit_converter)
-
-          _dxf_write_line(file, x1, y1, x2, y2, 'OCL_GUIDE')
+          _dxf_write_line(file, point1.x, point1.y, point2.x, point2.y, LAYER_GUIDES)
 
         end
 
@@ -185,19 +170,16 @@ module Ladb::OpenCutList
 
         unless face_manipulators.empty?
 
-          _svg_write_group_start(file, id: 'OCL_DRAWING')
+          _svg_write_group_start(file, id: LAYER_DRAWING)
 
           face_manipulators.sort_by { |face_manipulator| face_manipulator.data[:depth] }.each do |face_manipulator|
 
-            face = face_manipulator.face
-            transformation = face_manipulator.transformation
             depth = face_manipulator.data[:depth].to_f
             depth_ratio = face_manipulator.data[:depth_ratio]
 
-            face.loops.each do |loop|
+            face_manipulator.loop_manipulators.each do |loop_manipulator|
 
-              attributes = {}
-              if loop.outer?
+              if loop_manipulator.loop.outer?
                 if depth.round(6) == 0
                   attributes = {
                     stroke: '#000000',
@@ -216,16 +198,22 @@ module Ladb::OpenCutList
                   stroke: '#000000',
                   fill: '#FFFFFF',
                   'shaper:cutType': 'inside',
-                  'shaper:cutDepth': @max_depth
                 }
+                attributes.merge({ 'shaper:cutDepth': @max_depth }) if @max_depth > 0
               end
 
-              coords = []
-              loop.vertices.each do |vertex|
-                point = vertex.position.transform(transformation)
-                coords << "#{_convert(point.x, unit_converter)},#{_convert(-point.y, unit_converter)}"
+              if @curves
+                # Extract loop points from ordered edges and arc curves
+                data = "M#{loop_manipulator.edge_and_arc_manipulators.map.with_index { |manipulator, index|
+                  points = manipulator.points
+                  points = points.reverse if manipulator.reversed_in?(face_manipulator.face)
+                  points.shift unless index == 0
+                  points.map { |point| "#{_convert(point.x, unit_converter)},#{_convert(-point.y, unit_converter)}" }
+                }.join(' L')}Z"
+              else
+                # Extract loop points from vertices (quicker)
+                data = "M#{loop_manipulator.points.map { |point| "#{_convert(point.x, unit_converter)},#{_convert(-point.y, unit_converter)}" }.join('L')}Z"
               end
-              data = "M#{coords.join('L')}Z"
 
               _svg_write_tag(file, 'path', attributes.merge(
                 d: data
@@ -241,20 +229,12 @@ module Ladb::OpenCutList
 
         unless edge_manipulators.empty?
 
-          _svg_write_group_start(file, id: 'OCL_GUIDES')
+          _svg_write_group_start(file, id: LAYER_GUIDES)
 
           data = ''
-          edge_manipulators.each do |edge_info|
+          edge_manipulators.each do |edge_manipulator|
 
-            edge = edge_info.edge
-            transformation = edge_info.transformation
-
-            coords = []
-            edge.vertices.each do |vertex|
-              point = vertex.position.transform(transformation)
-              coords << "#{_convert(point.x, unit_converter)},#{_convert(-point.y, unit_converter)}"
-            end
-            data += "M#{coords.join('L')}"
+            data += "M#{edge_manipulator.points.each.map { |point| "#{_convert(point.x, unit_converter)},#{_convert(-point.y, unit_converter)}" }.join('L')}"
 
           end
 
@@ -278,7 +258,7 @@ module Ladb::OpenCutList
           x3 = _convert(5.mm, unit_converter)
           y3 = 0
 
-          _svg_write_group_start(file, id: 'OCL_ANCHOR')
+          _svg_write_group_start(file, id: LAYER_ANCHOR)
           _svg_write_tag(file, 'polygon', {
             points: "#{x1},#{y1} #{x2},#{y2} #{x3},#{y3}",
             fill: '#FF0000'
