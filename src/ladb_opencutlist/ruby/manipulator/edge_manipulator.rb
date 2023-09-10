@@ -69,7 +69,7 @@ module Ladb::OpenCutList
     # -----
 
     def to_s
-      "EDGE from #{self.start_point} -> #{self.end_point}"
+      "EDGE from #{self.start_point} to #{self.end_point}"
     end
 
   end

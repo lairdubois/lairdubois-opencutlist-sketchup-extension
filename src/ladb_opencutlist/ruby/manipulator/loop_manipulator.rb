@@ -63,7 +63,10 @@ module Ladb::OpenCutList
     # -----
 
     def to_s
-      "LOOP edge_count=#{@loop.edges.length} "
+      [
+        "LOOP",
+        "- #{@loop.count_edges} edges",
+      ].join("\n")
     end
 
   end

@@ -15,16 +15,28 @@ module Ladb::OpenCutList
 
     def reset_cache
       super
+      @center = nil
+      @points = nil
+      @xaxis = nil
+      @yaxis = nil
+      @segments = nil
     end
 
     # -----
 
-    def start
+    def start_point
       points.first
     end
 
-    def end
+    def end_point
       points.last
+    end
+
+    def center
+      if @center.nil?
+        @center = @arc_curve.center.transform(@transformation)
+      end
+      @center
     end
 
     def points
@@ -33,6 +45,36 @@ module Ladb::OpenCutList
         @points.reverse! if TransformationUtils.flipped?(@transformation)
       end
       @points
+    end
+
+    def xaxis
+      if @xaxis.nil?
+        @xaxis = @arc_curve.xaxis.transform(@transformation)
+      end
+      @xaxis
+    end
+
+    def yaxis
+      if @yaxis.nil?
+        @yaxis = @arc_curve.yaxis.transform(@transformation)
+      end
+      @yaxis
+    end
+
+    def xradius
+      self.xaxis.length
+    end
+
+    def yradius
+      self.yaxis.length
+    end
+
+    def start_angle
+      @arc_curve.start_angle
+    end
+
+    def end_angle
+      @arc_curve.end_angle
     end
 
     def segments
@@ -51,10 +93,27 @@ module Ladb::OpenCutList
       @arc_curve.first_edge.reversed_in?(face)
     end
 
+    def circular?
+      @arc_curve.circular?
+    end
+
     # -----
 
     def to_s
-      "CURVE from #{self.start} -> #{self.end} #{@arc_curve.count_edges} edges"
+      [
+        "ARCCURVE from #{self.start} to #{self.end}",
+        "- #{@arc_curve.count_edges} edges",
+        "- circular? = #{circular?}",
+        "- center = #{center}",
+        "- xaxis = #{xaxis}",
+        "- xaxis angle = #{xaxis.angle_between(X_AXIS).radians}",
+        "- yaxis = #{yaxis}",
+        "- radius = #{@arc_curve.radius}",
+        "- xradius = #{xradius}",
+        "- yradius = #{yradius}",
+        "- start_angle = #{start_angle.radians}",
+        "- end_angle = #{end_angle.radians}",
+      ].join("\n")
     end
 
   end

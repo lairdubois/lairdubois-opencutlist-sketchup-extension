@@ -368,64 +368,67 @@ module Ladb::OpenCutList
 
             # DEBUG #####
 
-            @active_drawing_def.input_face_manipulator.loop_manipulators.each do |loop_manipulator|
-
-              loop_manipulator.edge_and_arc_manipulators.each do |manipulator|
-
-                if manipulator.is_a?(EdgeManipulator)
-
-                  segments = Kuix::Segments.new
-                  segments.add_segments(manipulator.segment)
-                  segments.color = manipulator.reversed_in?(@active_drawing_def.input_face_manipulator.face) ? Kuix::COLOR_RED : Kuix::COLOR_GREEN
-                  segments.line_width = 4
-                  segments.on_top = true
-                  preview.append(segments)
-
-                  o, v = manipulator.line
-                  arrow_size = inch_offset * 4
-
-                  t = Geom::Transformation.axes(manipulator.start_point, v, @active_drawing_def.input_face_manipulator.normal.cross(v), @active_drawing_def.input_face_manipulator.normal)
-                  t *= Geom::Transformation.translation(Geom::Vector3d.new(-(manipulator.length + arrow_size) / 2, -arrow_size / 2, 0))
-
-                  arrow = Kuix::ArrowMotif.new
-                  arrow.transformation = t
-                  arrow.bounds.size.set_all!(arrow_size)
-                  arrow.line_width = 2
-                  arrow.color = Kuix::COLOR_DARK_GREY
-                  preview.append(arrow)
-
-                elsif manipulator.is_a?(ArcCurveManipulator)
-
-                  segments = Kuix::Segments.new
-                  segments.add_segments(manipulator.segments)
-                  segments.color = manipulator.reversed_in?(@active_drawing_def.input_face_manipulator.face) ? Kuix::COLOR_RED : Kuix::COLOR_CYAN
-                  segments.line_width = 4
-                  segments.on_top = true
-                  preview.append(segments)
-
-                  edge_manipulator = EdgeManipulator.new(manipulator.arc_curve.first_edge, loop_manipulator.transformation)
-                  o, v = edge_manipulator.line
-                  arrow_size = inch_offset * 4
-
-                  t = Geom::Transformation.axes(edge_manipulator.start_point, v, @active_drawing_def.input_face_manipulator.normal.cross(v), @active_drawing_def.input_face_manipulator.normal)
-                  t *= Geom::Transformation.translation(Geom::Vector3d.new(-(edge_manipulator.length + arrow_size) / 2, -arrow_size / 2, 0))
-
-                  arrow = Kuix::ArrowMotif.new
-                  arrow.transformation = t
-                  arrow.bounds.size.set_all!(arrow_size)
-                  arrow.line_width = 2
-                  arrow.color = Kuix::COLOR_DARK_GREY
-                  preview.append(arrow)
-
-
-                end
-
-              end
-
-            end
+            # SKETCHUP_CONSOLE.clear
+            #
+            # @active_drawing_def.input_face_manipulator.loop_manipulators.each do |loop_manipulator|
+            #
+            #   loop_manipulator.edge_and_arc_manipulators.each do |manipulator|
+            #
+            #     if manipulator.is_a?(EdgeManipulator)
+            #
+            #       segments = Kuix::Segments.new
+            #       segments.add_segments(manipulator.segment)
+            #       segments.color = manipulator.reversed_in?(@active_drawing_def.input_face_manipulator.face) ? Kuix::COLOR_RED : Kuix::COLOR_GREEN
+            #       segments.line_width = 4
+            #       segments.on_top = true
+            #       preview.append(segments)
+            #
+            #       o, v = manipulator.line
+            #       arrow_size = inch_offset * 4
+            #
+            #       t = Geom::Transformation.axes(manipulator.start_point, v, @active_drawing_def.input_face_manipulator.normal.cross(v), @active_drawing_def.input_face_manipulator.normal)
+            #       t *= Geom::Transformation.translation(Geom::Vector3d.new(-(manipulator.length + arrow_size) / 2, -arrow_size / 2, 0))
+            #
+            #       arrow = Kuix::ArrowMotif.new
+            #       arrow.transformation = t
+            #       arrow.bounds.size.set_all!(arrow_size)
+            #       arrow.line_width = 2
+            #       arrow.color = Kuix::COLOR_DARK_GREY
+            #       preview.append(arrow)
+            #
+            #     elsif manipulator.is_a?(ArcCurveManipulator)
+            #
+            #       puts manipulator
+            #
+            #       segments = Kuix::Segments.new
+            #       segments.add_segments(manipulator.segments)
+            #       segments.color = manipulator.reversed_in?(@active_drawing_def.input_face_manipulator.face) ? Kuix::COLOR_RED : Kuix::COLOR_CYAN
+            #       segments.line_width = 4
+            #       segments.on_top = true
+            #       preview.append(segments)
+            #
+            #       edge_manipulator = EdgeManipulator.new(manipulator.arc_curve.first_edge, loop_manipulator.transformation)
+            #       o, v = edge_manipulator.line
+            #       arrow_size = inch_offset * 4
+            #
+            #       t = Geom::Transformation.axes(edge_manipulator.start_point, v, @active_drawing_def.input_face_manipulator.normal.cross(v), @active_drawing_def.input_face_manipulator.normal)
+            #       t *= Geom::Transformation.translation(Geom::Vector3d.new(-(edge_manipulator.length + arrow_size) / 2, -arrow_size / 2, 0))
+            #
+            #       arrow = Kuix::ArrowMotif.new
+            #       arrow.transformation = t
+            #       arrow.bounds.size.set_all!(arrow_size)
+            #       arrow.line_width = 2
+            #       arrow.color = Kuix::COLOR_DARK_GREY
+            #       preview.append(arrow)
+            #
+            #
+            #     end
+            #
+            #   end
+            #
+            # end
 
             # DEBUG #####
-
 
             @active_drawing_def.face_manipulators.each do |face_manipulator|
 
@@ -434,6 +437,24 @@ module Ladb::OpenCutList
               mesh.add_triangles(face_manipulator.triangles)
               mesh.background_color = COLOR_MESH_DEEP.blend((highlighted ? COLOR_MESH_HIGHLIGHTED : COLOR_MESH), face_manipulator.data[:depth_ratio])
               preview.append(mesh)
+
+              # Highlight arcs (if activated)
+              if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_CURVES)
+                face_manipulator.loop_manipulators.each do |loop_manipulator|
+                  loop_manipulator.edge_and_arc_manipulators.each do |manipulator|
+                    if manipulator.is_a?(ArcCurveManipulator)
+
+                      segments = Kuix::Segments.new
+                      segments.add_segments(manipulator.segments)
+                      segments.color = COLOR_BRAND
+                      segments.line_width = 3
+                      segments.on_top = true
+                      preview.append(segments)
+
+                    end
+                  end
+                end
+              end
 
             end
 
