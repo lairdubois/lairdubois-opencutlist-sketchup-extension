@@ -99,7 +99,7 @@ module Ladb::OpenCutList
 
     def vertex_angle
       if @vertex_angle.nil?
-        @vertex_angle = 0.5 * Math.atan2(xaxis.dot(yaxis) * 2, xaxis.dot(xaxis) - yaxis.dot(yaxis))
+        @vertex_angle = 0.5 * Math.atan2(xaxis.dot(yaxis) * 2, 0)
       end
       @vertex_angle
     end
@@ -160,11 +160,11 @@ module Ladb::OpenCutList
         "- #{@arc_curve.count_edges} edges",
         "- circular? = #{circular?}",
         "- center = #{center}",
-        "- vertex_xaxis_angle = #{vertex_xaxis.angle_between(X_AXIS).radians}",
         "- vertex_xaxis = #{vertex_xaxis}",
         "- vertex_yaxis = #{vertex_yaxis}",
         "- xradius = #{xradius}",
         "- yradius = #{yradius}",
+        "- vertex_xaxis_angle = #{vertex_angle.radians}",
         "- start_angle = #{start_angle.radians}",
         "- end_angle = #{end_angle.radians}",
       ].join("\n")

@@ -400,7 +400,7 @@ module Ladb::OpenCutList
             #
             #       puts manipulator
             #
-            #       # Xaxis
+            #       # Vertex xaxis
             #       line = Kuix::LineMotif.new
             #       line.start.copy!(manipulator.center)
             #       line.end.copy!(manipulator.center.transform(Geom::Transformation.translation(manipulator.vertex_xaxis)))
@@ -410,7 +410,7 @@ module Ladb::OpenCutList
             #       line.on_top = true
             #       preview.append(line)
             #
-            #       # Yaxis
+            #       # Vertex yaxis
             #       line = Kuix::LineMotif.new
             #       line.start.copy!(manipulator.center)
             #       line.end.copy!(manipulator.center.transform(Geom::Transformation.translation(manipulator.vertex_yaxis)))

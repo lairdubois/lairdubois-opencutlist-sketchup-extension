@@ -112,14 +112,6 @@ module Ladb::OpenCutList
               # Extract loop points from ordered edges and arc curves
               loop_manipulator.edge_and_arc_manipulators.each { |manipulator|
 
-                if manipulator.reversed_in?(face_manipulator.face)
-                  start_point = manipulator.end_point
-                  end_point = manipulator.start_point
-                else
-                  start_point = manipulator.start_point
-                  end_point = manipulator.end_point
-                end
-
                 if manipulator.is_a?(ArcCurveManipulator)
 
                   center = manipulator.center
@@ -136,6 +128,14 @@ module Ladb::OpenCutList
                   _dxf_write_ellipse(file, cx, cy, vx, vy, vr, as, ae, LAYER_DRAWING)
 
                 else
+
+                  if manipulator.reversed_in?(face_manipulator.face)
+                    start_point = manipulator.end_point
+                    end_point = manipulator.start_point
+                  else
+                    start_point = manipulator.start_point
+                    end_point = manipulator.end_point
+                  end
 
                   x1 = _convert(start_point.x, unit_converter)
                   y1 = _convert(start_point.y, unit_converter)
