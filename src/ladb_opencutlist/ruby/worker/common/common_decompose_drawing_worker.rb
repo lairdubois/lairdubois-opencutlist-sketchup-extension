@@ -65,7 +65,7 @@ module Ladb::OpenCutList
       # Create output data structure
       drawing_def = DrawingDef.new
 
-      # STEP 1 : Determine ouput axes
+      # STEP 1 : Determine output axes
 
       origin = ORIGIN.transform(transformation)
       if @input_face_path
@@ -227,7 +227,7 @@ module Ladb::OpenCutList
 
       z_axis = input_face_manipulator.normal
       x_axis = input_edge_manipulator.line[1]
-      x_axis.reverse! if input_edge_manipulator.edge.reversed_in?(input_face_manipulator.face)
+      x_axis.reverse! if input_edge_manipulator.reversed_in?(input_face_manipulator.face)
       y_axis = z_axis.cross(x_axis)
 
       [ x_axis, y_axis, z_axis, input_edge_manipulator ]

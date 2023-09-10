@@ -387,7 +387,7 @@ module Ladb::OpenCutList
             #       arrow_size = inch_offset * 4
             #
             #       t = Geom::Transformation.axes(manipulator.start_point, v, @active_drawing_def.input_face_manipulator.normal.cross(v), @active_drawing_def.input_face_manipulator.normal)
-            #       t *= Geom::Transformation.translation(Geom::Vector3d.new(-(manipulator.length + arrow_size) / 2, -arrow_size / 2, 0))
+            #       t *= Geom::Transformation.translation(Geom::Vector3d.new((manipulator.length - arrow_size) / 2, -arrow_size / 2, 0))
             #
             #       arrow = Kuix::ArrowMotif.new
             #       arrow.transformation = t
@@ -399,6 +399,27 @@ module Ladb::OpenCutList
             #     elsif manipulator.is_a?(ArcCurveManipulator)
             #
             #       puts manipulator
+            #
+            #       # Xaxis
+            #       line = Kuix::LineMotif.new
+            #       line.start.copy!(manipulator.center)
+            #       line.end.copy!(manipulator.center.transform(Geom::Transformation.translation(manipulator.vertex_xaxis)))
+            #       line.color = Kuix::COLOR_RED
+            #       line.line_width = 2
+            #       line.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+            #       line.on_top = true
+            #       preview.append(line)
+            #
+            #       # Yaxis
+            #       line = Kuix::LineMotif.new
+            #       line.start.copy!(manipulator.center)
+            #       line.end.copy!(manipulator.center.transform(Geom::Transformation.translation(manipulator.vertex_yaxis)))
+            #       line.color = Kuix::COLOR_GREEN
+            #       line.line_width = 2
+            #       line.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+            #       line.on_top = true
+            #       preview.append(line)
+            #
             #
             #       segments = Kuix::Segments.new
             #       segments.add_segments(manipulator.segments)
@@ -412,7 +433,7 @@ module Ladb::OpenCutList
             #       arrow_size = inch_offset * 4
             #
             #       t = Geom::Transformation.axes(edge_manipulator.start_point, v, @active_drawing_def.input_face_manipulator.normal.cross(v), @active_drawing_def.input_face_manipulator.normal)
-            #       t *= Geom::Transformation.translation(Geom::Vector3d.new(-(edge_manipulator.length + arrow_size) / 2, -arrow_size / 2, 0))
+            #       t *= Geom::Transformation.translation(Geom::Vector3d.new((edge_manipulator.length - arrow_size) / 2, -arrow_size / 2, 0))
             #
             #       arrow = Kuix::ArrowMotif.new
             #       arrow.transformation = t

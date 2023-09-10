@@ -44,7 +44,7 @@ module Ladb::OpenCutList
 
     def line
       if @line.nil?
-        @line = [ self.start_point, self.start_point - self.end_point ]
+        @line = [ self.start_point, self.end_point - self.start_point ]
       end
       @line
     end

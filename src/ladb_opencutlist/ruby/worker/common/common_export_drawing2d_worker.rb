@@ -221,17 +221,21 @@ module Ladb::OpenCutList
                     start_angle = manipulator.start_angle
                     end_angle = manipulator.end_angle
                     center = manipulator.center
-                    middle = _ellipse_point_at_angle(manipulator.xaxis, manipulator.yaxis, manipulator.center, (end_angle + start_angle) / 2.0, true)
+                    middle = manipulator.ellipse_point_at_angle((end_angle + start_angle) / 2.0, true)
 
                     rx = _convert(manipulator.xradius, unit_converter)
                     ry = _convert(manipulator.yradius, unit_converter)
-                    xrot = manipulator.xaxis.angle_between(X_AXIS).radians
-                    lflag = (end_angle - start_angle) > (Math::PI / 2.0) ? 1 : 0
+                    xrot = manipulator.vertex_xaxis.angle_between(X_AXIS).radians
+                    lflag = 0
                     sflag = (middle - center).dot(_cw_normal(start_point - center)) > 0 ? 0 : 1
-                    x = _convert(end_point.x, unit_converter)
-                    y = _convert(-end_point.y, unit_converter)
+                    x1 = _convert(middle.x, unit_converter)
+                    y1 = _convert(-middle.y, unit_converter)
+                    x2 = _convert(end_point.x, unit_converter)
+                    y2 = _convert(-end_point.y, unit_converter)
 
-                    data << "A #{rx},#{ry} #{xrot} #{lflag},#{sflag} #{x},#{y}"
+                    data << "A #{rx},#{ry} #{xrot} #{lflag},#{sflag} #{x1},#{y1}"
+                    data << "A #{rx},#{ry} #{xrot} #{lflag},#{sflag} #{x2},#{y2}"
+
                   else
 
                     data << "L #{_convert(end_point.x, unit_converter)},#{_convert(-end_point.y, unit_converter)}"
@@ -242,7 +246,7 @@ module Ladb::OpenCutList
                 }.join(' ')} Z"
               else
                 # Extract loop points from vertices (quicker)
-                data = "M #{loop_manipulator.points.map { |point| "#{_convert(point.x, unit_converter)},#{_convert(-point.y, unit_converter)}" }.join(' L')} Z"
+                data = "M #{loop_manipulator.points.map { |point| "#{_convert(point.x, unit_converter)},#{_convert(-point.y, unit_converter)}" }.join(' L ')} Z"
               end
 
               _svg_write_tag(file, 'path', attributes.merge(
@@ -316,14 +320,6 @@ module Ladb::OpenCutList
       point.y = _convert(point.y, unit_converter, precision)
       point.z = _convert(point.z, unit_converter, precision)
       point
-    end
-
-    def _ellipse_point_at_angle(xaxis, yaxis, center, angle, absolute = false)
-      xaxis = Geom::Vector3d.new(xaxis.x * Math.cos(angle), xaxis.y * Math.cos(angle), 0)
-      yaxis = Geom::Vector3d.new(yaxis.x * Math.sin(angle), yaxis.y * Math.sin(angle), 0)
-      p = xaxis + yaxis
-      p = p + Geom::Vector3d.new(center.to_a) if absolute
-      Geom::Point3d.new(p.to_a)
     end
 
     def _cw_normal(v)
