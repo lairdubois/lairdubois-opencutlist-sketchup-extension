@@ -600,6 +600,9 @@ module Ladb::OpenCutList
     def onActivate(view)
       super
 
+      # Clear current selection
+      Sketchup.active_model.selection.clear if Sketchup.active_model
+
       # Force global current material to be valid
       unless get_current_material.nil?
         begin

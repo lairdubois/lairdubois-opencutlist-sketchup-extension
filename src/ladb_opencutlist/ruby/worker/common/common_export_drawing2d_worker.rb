@@ -190,7 +190,8 @@ module Ladb::OpenCutList
         end
 
         _dxf_write(file, 0, 'ENDSEC')
-        _dxf_write(file, 0, 'EOF')
+
+        _dxf_write_footer(file)
 
       when FILE_FORMAT_SVG
 

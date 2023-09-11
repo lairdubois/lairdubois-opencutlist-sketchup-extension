@@ -260,6 +260,9 @@ module Ladb::OpenCutList
     def onActivate(view)
       super
 
+      # Clear current selection
+      Sketchup.active_model.selection.clear if Sketchup.active_model
+
       # Observe model events
       view.model.add_observer(self)
 

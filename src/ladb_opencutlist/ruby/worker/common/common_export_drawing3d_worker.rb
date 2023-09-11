@@ -109,7 +109,10 @@ module Ladb::OpenCutList
           # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-ABF6B778-BE20-4B49-9B58-A94E64CEFFF3
 
           _dxf_write(file, 0, 'POLYLINE')
-          _dxf_write(file, 8, 0) # Layer
+          id = _dxf_write_id(file)
+          _dxf_write_owner_id(file, @_dxf_model_space_id)
+          _dxf_write_sub_classes(file, [ 'AcDb3dPolyline' ])
+          _dxf_write(file, 8, LAYER_DRAWING) # Layer
           _dxf_write(file, 66, 1) # Deprecated
           _dxf_write(file, 70, 64) # 64 = The polyline is a polyface mesh
           _dxf_write(file, 71, points.length) # Polygon mesh M vertex count
@@ -118,7 +121,10 @@ module Ladb::OpenCutList
           points.each do |point|
 
             _dxf_write(file, 0, 'VERTEX')
-            _dxf_write(file, 8, 0) # Layer
+            _dxf_write_id(file)
+            _dxf_write_owner_id(file, id)
+            _dxf_write_sub_classes(file, [ 'AcDbVertex', 'AcDb3dPolylineVertex' ])
+            _dxf_write(file, 8, LAYER_DRAWING) # Layer
             _dxf_write(file, 10, _convert(point.x, unit_converter))
             _dxf_write(file, 20, _convert(point.y, unit_converter))
             _dxf_write(file, 30, _convert(point.z, unit_converter))
@@ -129,6 +135,9 @@ module Ladb::OpenCutList
           polygons.each do |polygon|
 
             _dxf_write(file, 0, 'VERTEX')
+            _dxf_write_id(file)
+            _dxf_write_owner_id(file, id)
+            _dxf_write_sub_classes(file, [ 'AcDbVertex', 'AcDb3dPolylineVertex' ])
             _dxf_write(file, 8, LAYER_DRAWING)
             _dxf_write(file, 10, 0.0)
             _dxf_write(file, 20, 0.0)
@@ -159,7 +168,8 @@ module Ladb::OpenCutList
         end
 
         _dxf_write(file, 0, 'ENDSEC')
-        _dxf_write(file, 0, 'EOF')
+
+        _dxf_write_footer(file)
 
       when FILE_FORMAT_STL
 
