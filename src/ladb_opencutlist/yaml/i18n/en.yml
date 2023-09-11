@@ -1492,10 +1492,10 @@ tool:
       not_orientable: The type of this part does not allow orienting it
   smart_export:
     title: Export
-    action_0: Export a part
+    action_0: Export a 3D part
     action_0_status: Click on a part
     action_1: Export a 2D part
-    action_1_status: Click the face of a part
+    action_1_status: Click on the face of a part
     action_2: Export a face
     action_2_status: Click on a face
     action_option_group_0: Format
