@@ -23,11 +23,10 @@ module Ladb::OpenCutList
       @vertex_yaxis = nil
       @vertex_angle = nil
       @start_axis = nil
-      @start_angle = nil
       @end_axis = nil
-      @end_angle = nil
       @xradius = nil
       @yradius = nil
+      @normal = nil
       @segments = nil
     end
 
@@ -40,10 +39,6 @@ module Ladb::OpenCutList
 
     def reversed_in?(face)
       @arc_curve.first_edge.reversed_in?(face)
-    end
-
-    def circular?
-      @arc_curve.circular?
     end
 
     # -----
@@ -114,10 +109,7 @@ module Ladb::OpenCutList
     end
 
     def start_angle
-      if @start_angle.nil?
-        @start_angle = @arc_curve.start_angle
-      end
-      @start_angle
+      @arc_curve.start_angle
     end
 
     def end_axis
@@ -128,10 +120,7 @@ module Ladb::OpenCutList
     end
 
     def end_angle
-      if @end_angle.nil?
-        @end_angle = @arc_curve.end_angle
-      end
-      @end_angle
+      @arc_curve.end_angle
     end
 
     def xradius
@@ -146,6 +135,13 @@ module Ladb::OpenCutList
         @yradius = vertex_yaxis.length
       end
       @yradius
+    end
+
+    def normal
+      if @normal.nil?
+        @normal = vertex_xaxis.cross(vertex_yaxis).normalize
+      end
+      @normal
     end
 
     def segments
@@ -174,8 +170,8 @@ module Ladb::OpenCutList
       [
         "ARCCURVE from #{start_point} to #{end_point}",
         "- #{@arc_curve.count_edges} edges",
-        "- circular? = #{circular?}",
         "- center = #{center}",
+        "- normal = #{normal}",
         "- vertex_xaxis = #{vertex_xaxis}",
         "- vertex_yaxis = #{vertex_yaxis}",
         "- xradius = #{xradius}",

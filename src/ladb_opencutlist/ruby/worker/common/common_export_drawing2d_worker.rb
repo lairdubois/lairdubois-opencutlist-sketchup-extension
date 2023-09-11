@@ -117,16 +117,29 @@ module Ladb::OpenCutList
                   center = manipulator.center
                   vertex_xaxis = manipulator.vertex_xaxis
 
-                  # da = manipulator.reversed_in?(face_manipulator.face) ? manipulator.end_axis.angle_between(manipulator.vertex_xaxis) : manipulator.start_axis.angle_between(manipulator.vertex_xaxis)
-                  da = manipulator.start_axis.angle_between(manipulator.vertex_xaxis)
+                  reversed_in = manipulator.reversed_in?(face_manipulator.face)
+                  samedirection = manipulator.normal.samedirection?(face_manipulator.normal)
+
+                  if samedirection
+                    start_angle = manipulator.start_angle - manipulator.vertex_angle
+                    end_angle = manipulator.end_angle - manipulator.vertex_angle
+                  else
+                    if reversed_in
+                      start_angle = manipulator.vertex_angle - manipulator.end_angle
+                      end_angle = manipulator.vertex_angle - manipulator.start_angle
+                    else
+                      start_angle = manipulator.end_angle + manipulator.vertex_angle
+                      end_angle = manipulator.start_angle + manipulator.vertex_angle
+                    end
+                  end
 
                   cx = _convert(center.x, unit_converter)
                   cy = _convert(center.y, unit_converter)
                   vx = _convert(vertex_xaxis.x, unit_converter)
                   vy = _convert(vertex_xaxis.y, unit_converter)
                   vr = manipulator.yradius / manipulator.xradius
-                  as = manipulator.start_angle - da
-                  ae = manipulator.end_angle - da
+                  as = start_angle
+                  ae = end_angle
 
                   _dxf_write_ellipse(file, cx, cy, vx, vy, vr, as, ae, LAYER_DRAWING)
 
