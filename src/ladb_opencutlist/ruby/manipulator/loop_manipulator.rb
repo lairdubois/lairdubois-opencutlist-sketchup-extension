@@ -51,13 +51,13 @@ module Ladb::OpenCutList
 
     def edge_and_arc_manipulators
       if @edge_and_arc_manipulators.nil?
-        curves = []
+        captured_curves = []
         @edge_and_arc_manipulators = []
         @loop.edges.each do |edge|
-          if edge.curve.is_a?(Sketchup::ArcCurve)
-            unless curves.include?(edge.curve)
+          if edge.curve.is_a?(Sketchup::ArcCurve) && edge.curve.normal.parallel?(@loop.face.normal)
+            unless captured_curves.include?(edge.curve)
               @edge_and_arc_manipulators << ArcCurveManipulator.new(edge.curve, @transformation)
-              curves << edge.curve
+              captured_curves << edge.curve
             end
           else
             @edge_and_arc_manipulators << EdgeManipulator.new(edge, @transformation)

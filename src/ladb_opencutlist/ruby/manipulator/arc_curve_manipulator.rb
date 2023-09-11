@@ -22,7 +22,9 @@ module Ladb::OpenCutList
       @vertex_xaxis = nil
       @vertex_yaxis = nil
       @vertex_angle = nil
+      @start_axis = nil
       @start_angle = nil
+      @end_axis = nil
       @end_angle = nil
       @xradius = nil
       @yradius = nil
@@ -99,21 +101,35 @@ module Ladb::OpenCutList
 
     def vertex_angle
       if @vertex_angle.nil?
-        @vertex_angle = 0.5 * Math.atan2(xaxis.dot(yaxis) * 2, 0)
+        @vertex_angle = 0.5 * Math.atan2(xaxis.dot(yaxis) * 2, xaxis.dot(xaxis) - yaxis.dot(yaxis))
       end
       @vertex_angle
     end
 
+    def start_axis
+      if @start_axis.nil?
+        @start_axis = Geom::Vector3d.new(ellipse_point_at_angle(start_angle).to_a)
+      end
+      @start_axis
+    end
+
     def start_angle
       if @start_angle.nil?
-        @start_angle = @arc_curve.start_angle - vertex_angle
+        @start_angle = @arc_curve.start_angle
       end
       @start_angle
     end
 
+    def end_axis
+      if @end_axis.nil?
+        @end_axis = Geom::Vector3d.new(ellipse_point_at_angle(end_angle).to_a)
+      end
+      @end_axis
+    end
+
     def end_angle
       if @end_angle.nil?
-        @end_angle = @arc_curve.end_angle - vertex_angle
+        @end_angle = @arc_curve.end_angle
       end
       @end_angle
     end
@@ -167,6 +183,8 @@ module Ladb::OpenCutList
         "- vertex_xaxis_angle = #{vertex_angle.radians}",
         "- start_angle = #{start_angle.radians}",
         "- end_angle = #{end_angle.radians}",
+        "- dsa = #{start_axis.angle_between(vertex_xaxis).radians}",
+        "- dea = #{end_axis.angle_between(vertex_xaxis).radians}",
       ].join("\n")
     end
 
