@@ -788,15 +788,15 @@ tab:
         title: Exporter le calepinage
         options_general: General
         option_file_format: Format
-        option_file_format_help: Choisissez
+        option_file_format_help: TBD
         option_sheet: Panneau
-        option_sheet_help: Choisissez
+        option_sheet_help: TBD
         option_parts: Pièces capables
-        option_parts_help: Choisissez
+        option_parts_help: TBD
         option_leftovers: Chutes
-        option_leftovers_help: Choisissez
+        option_leftovers_help: TBD
         option_cuts: Coupes
-        option_cuts_help: Choisissez
+        option_cuts_help: TBD
         option_stroke_color: Couleur de trait
         option_fill_color: Couleur de remplissage
         warning:
@@ -1515,7 +1515,7 @@ tool:
     action_option_2_1_status: Exporter toutes les faces coplanaires à la face ciblée contenues dans la pièce
     action_option_2_2_status: Exporter toutes les faces parallèles à la face ciblée contenues dans la pièce
     action_option_3_0_status: Projeter l'origine de la pièce
-    action_option_3_1_status: Exporter comme guides les arrêtes flotantes et coplanaires à la face ciblée contenues dans la pièce
+    action_option_3_1_status: Exporter comme guides les arrêtes flottantes et coplanaires à la face ciblée contenues dans la pièce
     action_option_3_2_status: Arrondir les cercles et arcs
     error:
       not_part: L'objet ciblé n'est pas une pièce

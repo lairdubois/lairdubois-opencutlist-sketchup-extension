@@ -1500,7 +1500,23 @@ tool:
     action_2_status: Click on a face
     action_option_group_0: Format
     action_option_group_1: Unit
-    action_option_group_2: Options
+    action_option_group_2: Faces
+    action_option_group_3: Options
+    action_option_0_0_status: Export to DXF file
+    action_option_0_1_status: Export to STL file
+    action_option_0_2_status: Export to OBJ file
+    action_option_0_3_status: Export to SVG file
+    action_option_1_0_status: $t(default.unit_0)
+    action_option_1_1_status: $t(default.unit_1)
+    action_option_1_2_status: $t(default.unit_2)
+    action_option_1_3_status: $t(default.unit_3)
+    action_option_1_4_status: $t(default.unit_4)
+    action_option_2_0_status: Export target face only
+    action_option_2_1_status: Export all faces in the part that are coplanar with the target face
+    action_option_2_2_status: Export all faces parallel to the target face contained in the part
+    action_option_3_0_status: Project part origin
+    action_option_3_1_status: Export as guides the floating and coplanar edges of the target face contained in the part
+    action_option_3_2_status: Smooth out circles and arcs
     error:
     not_part: The target object is not a part
     not_flat_face: The target surface is not planar
