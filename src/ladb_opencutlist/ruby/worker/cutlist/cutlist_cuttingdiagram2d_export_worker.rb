@@ -173,31 +173,39 @@ module Ladb::OpenCutList
         _svg_write_start(file, 0, 0, sheet_width, sheet_height, unit_sign)
 
         unless @sheet_hidden
-          _svg_write_group_start(file, id: 'sheet')
+
+          id = "#{sheet.length} x #{sheet.width}"
+
+          _svg_write_group_start(file, id: 'OCL_SHEET')
           _svg_write_tag(file, 'rect', {
             x: 0,
             y: 0,
             width: sheet_width,
             height: sheet_height,
-            stroke: @sheet_stroke_color,
-            fill: @sheet_fill_color,
-            id: "#{sheet.length} x #{sheet.width}"
+            stroke: _svg_stroke_color(@sheet_stroke_color, @sheet_fill_color),
+            fill: _svg_fill_color(@sheet_fill_color),
+            id: _svg_sanitize_id(id),
+            'serif:id': id
           })
           _svg_write_group_end(file)
+
         end
 
         unless @parts_hidden
-          _svg_write_group_start(file, id: 'parts')
+          _svg_write_group_start(file, id: 'OCL_PARTS')
           sheet.parts.each do |part|
 
-            _svg_write_tag(file, 'rext', {
+            id = @use_names ? part.name : part.number
+
+            _svg_write_tag(file, 'rect', {
               x: _convert(_to_inch(part.px_x), unit_converter),
               y: _convert(_to_inch(part.px_y), unit_converter),
               width: _convert(_to_inch(part.px_length), unit_converter),
               height: _convert(_to_inch(part.px_width), unit_converter),
-              stroke: @parts_stroke_color,
-              fill: @parts_fill_color,
-              id: (@use_names ? part.name : part.number)
+              stroke: _svg_stroke_color(@parts_stroke_color, @parts_fill_color),
+              fill: _svg_fill_color(@parts_fill_color),
+              id: _svg_sanitize_id(id),
+              'serif:id': id
             })
 
           end
@@ -205,16 +213,20 @@ module Ladb::OpenCutList
         end
 
         unless @leftovers_hidden
-          _svg_write_group_start(file, id: 'leftovers')
+          _svg_write_group_start(file, id: 'OCL_LEFTOVERS')
           sheet.leftovers.each do |leftover|
+
+            id = "#{leftover.length} x #{leftover.width}"
 
             _svg_write_tag(file, 'rect', {
               x: _convert(_to_inch(leftover.px_x), unit_converter),
               y: _convert(_to_inch(leftover.px_y), unit_converter),
               width: _convert(_to_inch(leftover.px_length), unit_converter),
               height: _convert(_to_inch(leftover.px_width), unit_converter),
-              stroke: @leftovers_stroke_color,
-              fill: @leftovers_fill_color
+              stroke: _svg_stroke_color(@leftovers_stroke_color, @leftovers_fill_color),
+              fill: _svg_fill_color(@leftovers_fill_color),
+              id: _svg_sanitize_id(id),
+              'serif:id': id
             })
 
           end
@@ -222,15 +234,23 @@ module Ladb::OpenCutList
         end
 
         unless @cuts_hidden
-          _svg_write_group_start(file, id: 'cuts')
+          _svg_write_group_start(file, id: 'OCL_CUTS')
           sheet.cuts.each do |cut|
 
-            _svg_write_tag(file, 'lin', {
+            if cut.is_horizontal
+              id = "y = #{_convert(_to_inch(cut.px_y), unit_converter)}"
+            else
+              id = "x = #{_convert(_to_inch(cut.px_x), unit_converter)}"
+            end
+
+            _svg_write_tag(file, 'line', {
               x1: _convert(_to_inch(cut.px_x), unit_converter),
               y1: _convert(_to_inch(cut.px_y), unit_converter),
               x2: _convert(_to_inch(cut.px_x + (cut.is_horizontal ? cut.px_length : 0)), unit_converter),
               y2: _convert(_to_inch(cut.px_y + (!cut.is_horizontal ? cut.px_length : 0)), unit_converter),
-              stroke: @cuts_stroke_color
+              stroke: _svg_stroke_color(@cuts_stroke_color),
+              id: _svg_sanitize_id(id),
+              'serif:id': id
             })
 
           end

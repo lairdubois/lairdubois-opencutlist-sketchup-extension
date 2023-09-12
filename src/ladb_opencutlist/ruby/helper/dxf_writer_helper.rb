@@ -42,7 +42,7 @@ module Ladb::OpenCutList
 
       layer_defs = [ { :name => '0'} ] + layer_defs
 
-      _dxf_write(file, 999, "Created from OpenCutList #{EXTENSION_VERSION}")
+      _dxf_write(file, 999, "Generator: SketchUp, #{EXTENSION_NAME} Extension, Version #{EXTENSION_VERSION}")
 
       # HEADER
 
