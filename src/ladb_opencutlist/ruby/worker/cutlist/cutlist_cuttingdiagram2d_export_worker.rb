@@ -11,6 +11,11 @@ module Ladb::OpenCutList
     include DxfWriterHelper
     include SvgWriterHelper
 
+    LAYER_SHEET = 'OCL_SHEET'.freeze
+    LAYER_PARTS = 'OCL_PARTS'.freeze
+    LAYER_LEFTOVERS = 'OCL_LEFTOVERS'.freeze
+    LAYER_CUTS = 'OCL_CUTS'.freeze
+
     SUPPORTED_FILE_FORMATS = [ FILE_FORMAT_DXF, FILE_FORMAT_SVG ]
 
     def initialize(settings, cutlist, cuttingdiagram2d)
@@ -44,7 +49,7 @@ module Ladb::OpenCutList
       return { :errors => [ 'default.error' ] } unless SUPPORTED_FILE_FORMATS.include?(@file_format)
 
       # Ask for output dir
-      dir = UI.select_directory(title: Plugin.instance.get_i18n_string('tab.cutlist.cuttingdiagram.export.title'), directory: @cutlist.dir)
+      dir = UI.select_directory(title: Plugin.instance.get_i18n_string('tab.cutlist.cuttingdiagram.export.title'), directory: '')
       if dir
 
         group = @cuttingdiagram2d.def.group
@@ -95,10 +100,10 @@ module Ladb::OpenCutList
         sheet_height = _convert(_to_inch(sheet.px_width), unit_converter)
 
         layer_defs = []
-        layer_defs.push({ :name => 'OCL_SHEET', :color => 150 }) unless @sheet_hidden
-        layer_defs.push({ :name => 'OCL_PARTS', :color => 7 }) unless @parts_hidden
-        layer_defs.push({ :name => 'OCL_LEFTOVERS', :color => 8 }) unless @leftovers_hidden
-        layer_defs.push({ :name => 'OCL_CUTS', :color => 6 }) unless @cuts_hidden
+        layer_defs.push({ :name => LAYER_SHEET, :color => 150 }) unless @sheet_hidden
+        layer_defs.push({ :name => LAYER_PARTS, :color => 7 }) unless @parts_hidden
+        layer_defs.push({ :name => LAYER_LEFTOVERS, :color => 8 }) unless @leftovers_hidden
+        layer_defs.push({ :name => LAYER_CUTS, :color => 6 }) unless @cuts_hidden
 
         _dxf_write_header(file, Geom::Point3d.new, Geom::Point3d.new(sheet_width, sheet_height, 0), layer_defs)
 
@@ -106,7 +111,7 @@ module Ladb::OpenCutList
         _dxf_write(file, 2, 'ENTITIES')
 
         unless @sheet_hidden
-          _dxf_write_rect(file, 0, 0, sheet_width, sheet_height, 'OCL_SHEET')
+          _dxf_write_rect(file, 0, 0, sheet_width, sheet_height, LAYER_SHEET)
         end
 
         unless @parts_hidden
@@ -117,7 +122,7 @@ module Ladb::OpenCutList
             part_width = _convert(_to_inch(part.px_length), unit_converter)
             part_height = _convert(_to_inch(part.px_width), unit_converter)
 
-            _dxf_write_rect(file, part_x, part_y, part_width, part_height, 'OCL_PARTS')
+            _dxf_write_rect(file, part_x, part_y, part_width, part_height, LAYER_PARTS)
 
           end
         end
@@ -130,7 +135,7 @@ module Ladb::OpenCutList
             leftover_width = _convert(_to_inch(leftover.px_length), unit_converter)
             leftover_height = _convert(_to_inch(leftover.px_width), unit_converter)
 
-            _dxf_write_rect(file, leftover_x, leftover_y, leftover_width, leftover_height, 'OCL_LEFTOVERS')
+            _dxf_write_rect(file, leftover_x, leftover_y, leftover_width, leftover_height, LAYER_LEFTOVERS)
 
           end
         end
@@ -143,7 +148,7 @@ module Ladb::OpenCutList
             cut_x2 = _convert(_to_inch(cut.px_x + (cut.is_horizontal ? cut.px_length : 0)), unit_converter)
             cut_y2 = _convert(_to_inch(sheet.px_width - cut.px_y - (!cut.is_horizontal ? cut.px_length : 0)), unit_converter)
 
-            _dxf_write_line(file, cut_x1, cut_y1, cut_x2, cut_y2, 'OCL_CUTS')
+            _dxf_write_line(file, cut_x1, cut_y1, cut_x2, cut_y2, LAYER_CUTS)
 
           end
         end
@@ -176,7 +181,7 @@ module Ladb::OpenCutList
 
           id = "#{sheet.length} x #{sheet.width}"
 
-          _svg_write_group_start(file, id: 'OCL_SHEET')
+          _svg_write_group_start(file, id: LAYER_SHEET)
           _svg_write_tag(file, 'rect', {
             x: 0,
             y: 0,
@@ -192,7 +197,7 @@ module Ladb::OpenCutList
         end
 
         unless @parts_hidden
-          _svg_write_group_start(file, id: 'OCL_PARTS')
+          _svg_write_group_start(file, id: LAYER_PARTS)
           sheet.parts.each do |part|
 
             id = @use_names ? part.name : part.number
@@ -213,7 +218,7 @@ module Ladb::OpenCutList
         end
 
         unless @leftovers_hidden
-          _svg_write_group_start(file, id: 'OCL_LEFTOVERS')
+          _svg_write_group_start(file, id: LAYER_LEFTOVERS)
           sheet.leftovers.each do |leftover|
 
             id = "#{leftover.length} x #{leftover.width}"
@@ -234,7 +239,7 @@ module Ladb::OpenCutList
         end
 
         unless @cuts_hidden
-          _svg_write_group_start(file, id: 'OCL_CUTS')
+          _svg_write_group_start(file, id: LAYER_CUTS)
           sheet.cuts.each do |cut|
 
             if cut.is_horizontal
