@@ -12,7 +12,7 @@ module Ladb::OpenCutList
 
     def _dxf_write(file, code, value)
       file.puts(code.to_s.rjust(3))
-      file.puts(value.is_a?(Integer) ? value.to_s.rjust(6) : value.to_s)
+      file.puts(value.is_a?(Integer) ? value.to_s.rjust(code >= 90 && code <= 99 ? 9 : 6) : value.to_s)
     end
 
     def _dxf_write_header_value(file, key, code, value, code2 = nil, value2 = nil, code3 = nil, value3 = nil)
@@ -672,31 +672,24 @@ module Ladb::OpenCutList
 
     def _dxf_write_polygon(file, points, layer = 0)
 
-      # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-ABF6B778-BE20-4B49-9B58-A94E64CEFFF3
+      # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-748FC305-F3F2-4F74-825A-61F04D757A50
 
-      _dxf_write(file, 0, 'POLYLINE')
-      id = _dxf_write_id(file)
+      _dxf_write(file, 0, 'LWPOLYLINE')
+      _dxf_write_id(file)
       _dxf_write_owner_id(file, @_dxf_model_space_id)
-      _dxf_write_sub_classes(file, [ 'AcDb2dPolyline' ])
+      _dxf_write_sub_classes(file, [ 'AcDbEntity' ])
       _dxf_write(file, 8, layer)
-      _dxf_write(file, 66, 1) # Deprecated
+      _dxf_write_sub_classes(file, [ 'AcDbPolyline' ])
+      _dxf_write(file, 90, 4) # Vertex count
       _dxf_write(file, 70, 1) # 1 = Closed
+      _dxf_write(file, 43, 0.0)
 
       points.each do |point|
 
-        _dxf_write(file, 0, 'VERTEX')
-        _dxf_write_id(file)
-        _dxf_write_owner_id(file, id)
-        _dxf_write_sub_classes(file, [ 'AcDbVertex', 'AcDb2dVertex' ])
-        _dxf_write(file, 8, layer)
         _dxf_write(file, 10, point.x.to_f)
         _dxf_write(file, 20, point.y.to_f)
-        _dxf_write(file, 00, 0.0)
 
       end
-
-      _dxf_write(file, 0, 'SEQEND')
-      _dxf_write(file, 8, layer)
 
     end
 
