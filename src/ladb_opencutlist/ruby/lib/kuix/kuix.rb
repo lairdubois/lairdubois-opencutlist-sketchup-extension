@@ -201,7 +201,7 @@ module Ladb::OpenCutList
       end
 
       def quit
-        Sketchup.active_model.select_tool(nil) # Deactivate the tool
+        Sketchup.active_model.select_tool(nil) if Sketchup.active_model # Deactivate the tool
       end
 
       def draw(view)

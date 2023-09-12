@@ -179,8 +179,6 @@ module Ladb::OpenCutList
         "- vertex_xaxis_angle = #{vertex_angle.radians}",
         "- start_angle = #{start_angle.radians}",
         "- end_angle = #{end_angle.radians}",
-        "- dsa = #{start_axis.angle_between(vertex_xaxis).radians}",
-        "- dea = #{end_axis.angle_between(vertex_xaxis).radians}",
       ].join("\n")
     end
 

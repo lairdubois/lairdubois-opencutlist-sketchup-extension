@@ -794,13 +794,13 @@ module Ladb::OpenCutList
       }
       submenu.add_separator
       submenu.add_item(get_i18n_string('core.menu.item.smart_paint')) {
-        Sketchup.active_model.select_tool(SmartPaintTool.new)
+        Sketchup.active_model.select_tool(SmartPaintTool.new) if Sketchup.active_model
       }
       submenu.add_item(get_i18n_string('core.menu.item.smart_axes')) {
-        Sketchup.active_model.select_tool(SmartAxesTool.new)
+        Sketchup.active_model.select_tool(SmartAxesTool.new) if Sketchup.active_model
       }
       submenu.add_item(get_i18n_string('core.menu.item.smart_export')) {
-        Sketchup.active_model.select_tool(SmartExportTool.new)
+        Sketchup.active_model.select_tool(SmartExportTool.new) if Sketchup.active_model
       }
 
       # Setup Context Menu
@@ -836,7 +836,7 @@ module Ladb::OpenCutList
       toolbar = toolbar.add_item(cmd)
 
       cmd = UI::Command.new(get_i18n_string('core.toolbar.command.smart_paint')) {
-        Sketchup.active_model.select_tool(SmartPaintTool.new)
+        Sketchup.active_model.select_tool(SmartPaintTool.new) if Sketchup.active_model
       }
       cmd.small_icon = '../img/icon-smart-paint-72x72.png'
       cmd.large_icon = '../img/icon-smart-paint-114x114.png'
@@ -846,7 +846,7 @@ module Ladb::OpenCutList
       toolbar = toolbar.add_item(cmd)
 
       cmd = UI::Command.new(get_i18n_string('core.toolbar.command.smart_axes')) {
-        Sketchup.active_model.select_tool(SmartAxesTool.new)
+        Sketchup.active_model.select_tool(SmartAxesTool.new) if Sketchup.active_model
       }
       cmd.small_icon = '../img/icon-smart-axes-72x72.png'
       cmd.large_icon = '../img/icon-smart-axes-114x114.png'
@@ -856,7 +856,7 @@ module Ladb::OpenCutList
       toolbar = toolbar.add_item(cmd)
 
       cmd = UI::Command.new(get_i18n_string('core.toolbar.command.smart_export')) {
-        Sketchup.active_model.select_tool(SmartExportTool.new)
+        Sketchup.active_model.select_tool(SmartExportTool.new) if Sketchup.active_model
       }
       cmd.small_icon = '../img/icon-smart-export-72x72.png'
       cmd.large_icon = '../img/icon-smart-export-114x114.png'

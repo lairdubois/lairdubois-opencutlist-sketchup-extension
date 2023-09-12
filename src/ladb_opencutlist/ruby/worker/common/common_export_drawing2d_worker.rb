@@ -195,16 +195,14 @@ module Ladb::OpenCutList
 
       when FILE_FORMAT_SVG
 
-        bounds = Geom::BoundingBox.new
         if @anchor
-          bounds.add([ Geom::Point3d.new, Geom::Point3d.new(0, 10.mm), Geom::Point3d.new(5.mm, 0) ]) if @anchor
-        end
-        face_manipulators.each do |face_info|
-          bounds.add(_compute_children_faces_triangles([ face_info.face ], face_info.transformation))
-        end
-        edge_manipulators.each do |edge_info|
-          bounds.add(edge_info.edge.start.position.transform(edge_info.transformation))
-          bounds.add(edge_info.edge.end.position.transform(edge_info.transformation))
+          # Recompute bounding box to be sur to extends to anchor triangle
+          bounds = Geom::BoundingBox.new
+          bounds.add(@drawing_def.bounds.min)
+          bounds.add(@drawing_def.bounds.max)
+          bounds.add([ Geom::Point3d.new, Geom::Point3d.new(0, 10.mm), Geom::Point3d.new(5.mm, 0) ])
+        else
+          bounds = @drawing_def.bounds
         end
 
         # Tweak unit converter to restrict to SVG compatible units (in, mm, cm)

@@ -44,7 +44,7 @@ module Ladb::OpenCutList
 
       _dxf_write(file, 999, "Generator: SketchUp, #{EXTENSION_NAME} Extension, Version #{EXTENSION_VERSION}")
 
-      # HEADER
+      # HEADER and base blocks
 
       _dxf_write(file, 0, 'SECTION')
       _dxf_write(file, 2, 'HEADER')
@@ -636,6 +636,12 @@ module Ladb::OpenCutList
 
       # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-107CB04F-AD4D-4D2F-8EC9-AC90888063AB
 
+      # Workaround to be sure that full ellipse is clockwise
+      if as + ae >= Math::PI * 2
+        as = 0.0
+        ae = Math::PI * 2
+      end
+
       _dxf_write(file, 0, 'ELLIPSE')
       _dxf_write_id(file)
       _dxf_write_owner_id(file, @_dxf_model_space_id)
@@ -657,19 +663,6 @@ module Ladb::OpenCutList
 
     end
 
-    def _dxf_write_rect(file, x, y, width, height, layer = 0)
-
-      points = [
-        Geom::Point3d.new(x, y),
-        Geom::Point3d.new(x + width, y),
-        Geom::Point3d.new(x + width, y + height),
-        Geom::Point3d.new(x, y + height),
-      ]
-
-      _dxf_write_polygon(file, points, layer)
-
-    end
-
     def _dxf_write_polygon(file, points, layer = 0)
 
       # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-748FC305-F3F2-4F74-825A-61F04D757A50
@@ -680,9 +673,8 @@ module Ladb::OpenCutList
       _dxf_write_sub_classes(file, [ 'AcDbEntity' ])
       _dxf_write(file, 8, layer)
       _dxf_write_sub_classes(file, [ 'AcDbPolyline' ])
-      _dxf_write(file, 90, 4) # Vertex count
+      _dxf_write(file, 90, points.length) # Vertex count
       _dxf_write(file, 70, 1) # 1 = Closed
-      _dxf_write(file, 43, 0.0)
 
       points.each do |point|
 
@@ -690,6 +682,19 @@ module Ladb::OpenCutList
         _dxf_write(file, 20, point.y.to_f)
 
       end
+
+    end
+
+    def _dxf_write_rect(file, x, y, width, height, layer = 0)
+
+      points = [
+        Geom::Point3d.new(x, y),
+        Geom::Point3d.new(x + width, y),
+        Geom::Point3d.new(x + width, y + height),
+        Geom::Point3d.new(x, y + height),
+      ]
+
+      _dxf_write_polygon(file, points, layer)
 
     end
 
