@@ -40,8 +40,8 @@
 
   .table-bordered {
     border: 1px solid #000 !important;
-    font-size: 85%;
-    break-inside: avoid;
+    font-size: 12px;
+    //break-inside: avoid;
 
     & > tbody > tr.table-row-section {
       background: none !important;
@@ -54,6 +54,24 @@
     & > tbody > tr > td,
     & > tfoot > tr > td {
       border-color: #000 !important;
+    }
+
+  }
+
+  .ladb-table-compact {
+
+    .table {
+      font-size: 10px;
+
+      & > thead > tr > th,
+      & > tbody > tr > th,
+      & > tfoot > tr > th,
+      & > thead > tr > td,
+      & > tbody > tr > td,
+      & > tfoot > tr > td {
+        padding: 6px;
+      }
+
     }
 
   }

@@ -95,6 +95,8 @@ core:
       « {{ target }} » existe déjà. Souhaitez-vous le remplacer ?
 
       Un dossier du même nom se trouve déjà dans le dossier {{ parent }}. Si vous le remplacez, le contenu d'origine sera perdu.
+  savepanel:
+    export_to_file: Exporter vers un fichier {{ file_format }}
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:

@@ -41,7 +41,7 @@ module Ladb::OpenCutList
       return { :errors => [ 'default.error' ] } unless @drawing_def.is_a?(DrawingDef)
 
       # Open save panel
-      path = UI.savepanel(Plugin.instance.get_i18n_string('tab.cutlist.export_to_3d.title', { :file_format => @file_format }), '', "#{@file_name}.#{@file_format}")
+      path = UI.savepanel(Plugin.instance.get_i18n_string('core.savepanel.export_to_file', { :file_format => @file_format.upcase }), '', "#{@file_name}.#{@file_format}")
       if path
 
         # Force "file_format" file extension
