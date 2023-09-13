@@ -1,12 +1,11 @@
 module Ladb::OpenCutList
 
-  require_relative 'manipulator'
+  require_relative 'transformation_manipulator'
   require_relative 'loop_manipulator'
   require_relative '../helper/entities_helper'
   require_relative '../helper/face_triangles_helper'
-  require_relative '../utils/transformation_utils'
 
-  class FaceManipulator < Manipulator
+  class FaceManipulator < TransformationManipulator
 
     include EntitiesHelper
     include FaceTrianglesHelper
@@ -52,7 +51,7 @@ module Ladb::OpenCutList
     def outer_loop_points
       if @outer_loop_points.nil?
         @outer_loop_points = @face.outer_loop.vertices.map { |vertex| vertex.position.transform(@transformation) }
-        @outer_loop_points.reverse! if TransformationUtils.flipped?(@transformation)
+        @outer_loop_points.reverse! if flipped?
       end
       @outer_loop_points
     end

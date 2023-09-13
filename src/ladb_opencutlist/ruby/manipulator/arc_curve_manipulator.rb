@@ -1,8 +1,8 @@
 module Ladb::OpenCutList
 
-  require_relative 'manipulator'
+  require_relative 'transformation_manipulator'
 
-  class ArcCurveManipulator < Manipulator
+  class ArcCurveManipulator < TransformationManipulator
 
     attr_reader :arc_curve
 
@@ -61,7 +61,7 @@ module Ladb::OpenCutList
     def points
       if @points.nil?
         @points = @arc_curve.vertices.map { |vertex| vertex.position.transform(@transformation) }
-        @points.reverse! if TransformationUtils.flipped?(@transformation)
+        @points.reverse! if flipped?
       end
       @points
     end

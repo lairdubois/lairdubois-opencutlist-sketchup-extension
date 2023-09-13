@@ -8,9 +8,6 @@ module Ladb::OpenCutList
   require_relative '../manipulator/edge_manipulator'
   require_relative '../manipulator/loop_manipulator'
   require_relative '../manipulator/arc_curve_manipulator'
-  require_relative '../model/cutlist/face_info'
-  require_relative '../model/cutlist/edge_info'
-  require_relative '../worker/common/common_export_instance_to_file_worker'
   require_relative '../worker/common/common_export_drawing2d_worker'
   require_relative '../worker/common/common_export_drawing3d_worker'
   require_relative '../worker/common/common_decompose_drawing_worker'
@@ -847,38 +844,6 @@ module Ladb::OpenCutList
       y_axis = z_axis.cross(x_axis)
 
       [ ORIGIN, x_axis, y_axis, z_axis, input_edge, input_edge != @input_edge ]
-    end
-
-    def _get_face_infos(entities, transformation = Geom::Transformation.new, &conditional_block)
-      face_infos = []
-      entities.each do |entity|
-        if entity.visible? && _layer_visible?(entity.layer)
-          if entity.is_a?(Sketchup::Face)
-            face_infos.push(FaceInfo.new(entity, transformation)) if !block_given? || yield(entity, transformation)
-          elsif entity.is_a?(Sketchup::Group)
-            face_infos += _get_face_infos(entity.entities, transformation * entity.transformation, &conditional_block)
-          elsif entity.is_a?(Sketchup::ComponentInstance) && (entity.definition.behavior.cuts_opening? || entity.definition.behavior.always_face_camera?)
-            face_infos += _get_face_infos(entity.definition.entities, transformation * entity.transformation, &conditional_block)
-          end
-        end
-      end
-      face_infos
-    end
-
-    def _get_edge_infos(entities, transformation = Geom::Transformation.new, &conditional_block)
-      edge_infos = []
-      entities.each do |entity|
-        if entity.visible? && _layer_visible?(entity.layer)
-          if entity.is_a?(Sketchup::Edge)
-            edge_infos.push(EdgeInfo.new(entity, transformation)) if !block_given? || yield(entity, transformation)
-          elsif entity.is_a?(Sketchup::Group)
-            edge_infos += _get_edge_infos(entity.entities, transformation * entity.transformation, &conditional_block)
-          elsif entity.is_a?(Sketchup::ComponentInstance) && (entity.definition.behavior.cuts_opening? || entity.definition.behavior.always_face_camera?)
-            edge_infos += _get_edge_infos(entity.definition.entities, transformation * entity.transformation, &conditional_block)
-          end
-        end
-      end
-      edge_infos
     end
 
   end

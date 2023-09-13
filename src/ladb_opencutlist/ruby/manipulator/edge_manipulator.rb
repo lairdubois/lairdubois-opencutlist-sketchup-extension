@@ -1,10 +1,9 @@
 module Ladb::OpenCutList
 
-  require_relative 'manipulator'
-  require_relative '../utils/transformation_utils'
+  require_relative 'transformation_manipulator'
   require_relative '../helper/edge_segments_helper'
 
-  class EdgeManipulator < Manipulator
+  class EdgeManipulator < TransformationManipulator
 
     include EdgeSegmentsHelper
 
@@ -44,7 +43,7 @@ module Ladb::OpenCutList
     def points
       if @points.nil?
         @points = @edge.vertices.map { |vertex| vertex.position.transform(@transformation) }
-        @points.reverse! if TransformationUtils.flipped?(@transformation)
+        @points.reverse! if flipped?
       end
       @points
     end
