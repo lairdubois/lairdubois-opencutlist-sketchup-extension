@@ -63,6 +63,7 @@ module Ladb::OpenCutList
             @edge_and_arc_manipulators << EdgeManipulator.new(edge, @transformation)
           end
         end
+        @edge_and_arc_manipulators.reverse! if flipped?
       end
       @edge_and_arc_manipulators
     end

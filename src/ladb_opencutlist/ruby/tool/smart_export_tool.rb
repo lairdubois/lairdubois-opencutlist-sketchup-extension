@@ -495,31 +495,11 @@ module Ladb::OpenCutList
             #       line.on_top = true
             #       preview.append(line)
             #
-            #       # Start axis
-            #       line = Kuix::LineMotif.new
-            #       line.start.copy!(manipulator.center)
-            #       line.end.copy!(manipulator.center.transform(Geom::Transformation.translation(manipulator.start_axis)))
-            #       line.color = Kuix::COLOR_BLACK
-            #       line.line_width = 2
-            #       line.line_stipple = Kuix::LINE_STIPPLE_DASH_DOT_DASH
-            #       line.on_top = true
-            #       preview.append(line)
-            #
-            #       # End axis
-            #       line = Kuix::LineMotif.new
-            #       line.start.copy!(manipulator.center)
-            #       line.end.copy!(manipulator.center.transform(Geom::Transformation.translation(manipulator.end_axis)))
-            #       line.color = Kuix::COLOR_DARK_GREY
-            #       line.line_width = 2
-            #       line.line_stipple = Kuix::LINE_STIPPLE_DASH_DOT_DASH
-            #       line.on_top = true
-            #       preview.append(line)
-            #
-            #
             #       segments = Kuix::Segments.new
             #       segments.add_segments(manipulator.segments)
             #       segments.color = manipulator.reversed_in?(@active_drawing_def.input_face_manipulator.face) ? Kuix::COLOR_RED : Kuix::COLOR_CYAN
             #       segments.line_width = 4
+            #       segments.line_stipple = manipulator.normal.samedirection?(@active_drawing_def.input_face_manipulator.normal) ? Kuix::LINE_STIPPLE_SOLID : Kuix::LINE_STIPPLE_SHORT_DASHES
             #       segments.on_top = true
             #       preview.append(segments)
             #

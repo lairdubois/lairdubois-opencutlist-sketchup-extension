@@ -636,12 +636,6 @@ module Ladb::OpenCutList
 
       # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-107CB04F-AD4D-4D2F-8EC9-AC90888063AB
 
-      # Workaround to be sure that full ellipse is clockwise
-      if (as + ae).abs >= Math::PI * 2
-        as = 0.0
-        ae = Math::PI * 2
-      end
-
       _dxf_write(file, 0, 'ELLIPSE')
       _dxf_write_id(file)
       _dxf_write_owner_id(file, @_dxf_model_space_id)

@@ -117,20 +117,13 @@ module Ladb::OpenCutList
                   center = manipulator.center
                   vertex_xaxis = manipulator.vertex_xaxis
 
-                  reversed_in = manipulator.reversed_in?(face_manipulator.face)
-                  samedirection = manipulator.normal.samedirection?(face_manipulator.normal)
-
-                  if samedirection
+                  # DXF ellipse angles must be counter clockwise
+                  if manipulator.normal.samedirection?(face_manipulator.normal)
                     start_angle = manipulator.start_angle - manipulator.vertex_angle
                     end_angle = manipulator.end_angle - manipulator.vertex_angle
                   else
-                    if reversed_in
-                      start_angle = manipulator.vertex_angle - manipulator.end_angle
-                      end_angle = manipulator.vertex_angle - manipulator.start_angle
-                    else
-                      start_angle = manipulator.end_angle + manipulator.vertex_angle
-                      end_angle = manipulator.start_angle + manipulator.vertex_angle
-                    end
+                    start_angle = manipulator.vertex_angle - manipulator.end_angle
+                    end_angle = manipulator.vertex_angle - manipulator.start_angle
                   end
 
                   cx = _convert(center.x, unit_converter)
@@ -281,7 +274,7 @@ module Ladb::OpenCutList
 
                     rx = _convert(manipulator.xradius, unit_converter)
                     ry = _convert(manipulator.yradius, unit_converter)
-                    xrot = manipulator.vertex_xaxis.angle_between(X_AXIS).radians.round(6)
+                    xrot = -manipulator.vertex_xaxis.angle_between(X_AXIS).radians.round(6)
                     lflag = 0
                     sflag = (middle - center).dot(_cw_normal(start_point - center)) > 0 ? 0 : 1
                     x1 = _convert(middle.x, unit_converter)
