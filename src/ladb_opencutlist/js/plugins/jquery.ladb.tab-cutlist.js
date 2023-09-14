@@ -232,6 +232,32 @@
 
                 // Bind inputs
                 $('#ladb_cutlist_tags_filter', that.$page)
+                    .on('tokenfield:createtoken', function (e) {
+
+                        e.attrs.ko = e.attrs.value.startsWith('!');
+                        if (e.attrs.ko) {
+                            e.attrs.label = e.attrs.value.substring(1);
+                        }
+
+                        // Unique token
+                        var tokenList = $(this).tokenfield('getTokensList');
+                        if (Array.isArray(tokenList) && tokenList.includes(e.attrs.value)) {
+                            e.preventDefault();
+                            return false;
+                        }
+
+                        // Used token only
+                        if (!that.usedTags.includes(e.attrs.label)) {
+                            e.preventDefault();
+                            return false;
+                        }
+
+                    })
+                    .on('tokenfield:createdtoken', function (e) {
+                        if (e.attrs.ko) {
+                            $('.token-label', e.relatedTarget).css('text-decoration', 'line-through');
+                        }
+                    })
                     .tokenfield($.extend(TOKENFIELD_OPTIONS, {
                         autocomplete: {
                             source: that.usedTags,
@@ -239,29 +265,6 @@
                         },
                         showAutocompleteOnFocus: false
                     }))
-                    .on('tokenfield:createtoken', function (e) {
-
-                        // Unique token
-                        var existingTokens = $(this).tokenfield('getTokens');
-                        $.each(existingTokens, function (index, token) {
-                            if (token.value === e.attrs.value) {
-                                e.preventDefault();
-                            }
-                        });
-
-                        // Available token only
-                        var available = false;
-                        $.each(that.usedTags, function (index, token) {
-                            if (token === e.attrs.value) {
-                                available = true;
-                                return false;
-                            }
-                        });
-                        if (!available) {
-                            e.preventDefault();
-                        }
-
-                    })
                     .on('tokenfield:createdtoken tokenfield:removedtoken', function (e) {
                         var tokenList = $(this).tokenfield('getTokensList');
                         that.generateFilters.tags_filter = tokenList.length === 0 ? [] : tokenList.split(';');
@@ -281,24 +284,18 @@
                     .on('tokenfield:createtoken', function (e) {
 
                         // Unique token
-                        var existingTokens = $(this).tokenfield('getTokens');
-                        $.each(existingTokens, function (index, token) {
-                            if (token.value === e.attrs.value) {
-                                e.preventDefault();
-                            }
-                        });
+                        var tokenList = $(this).tokenfield('getTokensList');
+                        if (Array.isArray(tokenList) && tokenList.includes(e.attrs.value)) {
+                            e.preventDefault();
+                            return false;
+                        }
 
                         // Available token only
-                        var available = false;
-                        $.each(that.usedEdgeMaterialDisplayNames, function (index, token) {
-                            if (token === e.attrs.value) {
-                                available = true;
-                                return false;
-                            }
-                        });
-                        if (!available) {
+                        if (!that.usedEdgeMaterialDisplayNames.includes(e.attrs.label)) {
                             e.preventDefault();
+                            return false;
                         }
+
                     })
                     .on('tokenfield:createdtoken tokenfield:removedtoken', function (e) {
                         var tokenList = $(this).tokenfield('getTokensList');
@@ -319,24 +316,18 @@
                     .on('tokenfield:createtoken', function (e) {
 
                         // Unique token
-                        var existingTokens = $(this).tokenfield('getTokens');
-                        $.each(existingTokens, function (index, token) {
-                            if (token.value === e.attrs.value) {
-                                e.preventDefault();
-                            }
-                        });
+                        var tokenList = $(this).tokenfield('getTokensList');
+                        if (Array.isArray(tokenList) && tokenList.includes(e.attrs.value)) {
+                            e.preventDefault();
+                            return false;
+                        }
 
                         // Available token only
-                        var available = false;
-                        $.each(that.usedVeneerMaterialDisplayNames, function (index, token) {
-                            if (token === e.attrs.value) {
-                                available = true;
-                                return false;
-                            }
-                        });
-                        if (!available) {
+                        if (!that.usedVeneerMaterialDisplayNames.includes(e.attrs.label)) {
                             e.preventDefault();
+                            return false;
                         }
+
                     })
                     .on('tokenfield:createdtoken tokenfield:removedtoken', function (e) {
                         var tokenList = $(this).tokenfield('getTokensList');
