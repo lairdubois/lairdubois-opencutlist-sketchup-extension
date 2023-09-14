@@ -104,18 +104,23 @@ module Ladb::OpenCutList
 
       else
 
+        # Get transformed X axis and reverse it if transformation is flipped to keep a right hand oriented system
         x_axis = X_AXIS.transform(transformation).normalize
         x_axis.reverse! if TransformationUtils.flipped?(transformation)
-        y_axis = Y_AXIS.transform(transformation).normalize
 
+        # Use transformed Y axis to determine XY plane and compute Z as perpendicular to this plane
+        y_axis = Y_AXIS.transform(transformation).normalize
         xy_plane = Geom.fit_plane_to_points(ORIGIN, Geom::Point3d.new(x_axis.to_a), Geom::Point3d.new(y_axis.to_a))
         z_axis = Geom::Vector3d.new(xy_plane[0..2])
-        y_axis = z_axis.cross(x_axis)
+
+        # Reset Y axis as cross product Z * X
+        y_axis = z_axis * x_axis
 
       end
 
       ta = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
       tai = ta.inverse
+      ttai = tai * transformation
 
       drawing_def.transformation = ta
       drawing_def.input_face_manipulator.transformation = tai * drawing_def.input_face_manipulator.transformation unless drawing_def.input_face_manipulator.nil?
@@ -144,7 +149,7 @@ module Ladb::OpenCutList
           end
         end
 
-        _populate_face_infos(drawing_def.face_manipulators, entities, tai * transformation, &validator)
+        _populate_face_manipulators(drawing_def.face_manipulators, entities, ttai, &validator)
 
       end
 
@@ -166,7 +171,7 @@ module Ladb::OpenCutList
           end
         end
 
-        _populate_edge_infos(drawing_def.edge_manipulators, entities, tai * transformation, &validator)
+        _populate_edge_manipulators(drawing_def.edge_manipulators, entities, ttai, &validator)
 
       end
 
@@ -233,31 +238,31 @@ module Ladb::OpenCutList
       [ x_axis, y_axis, z_axis, input_edge_manipulator ]
     end
 
-    def _populate_face_infos(face_infos, entities, transformation = Geom::Transformation.new, &validator)
+    def _populate_face_manipulators(face_infos, entities, transformation = Geom::Transformation.new, &validator)
       entities.each do |entity|
         if entity.visible? && _layer_visible?(entity.layer)
           if entity.is_a?(Sketchup::Face)
             manipulator = FaceManipulator.new(entity, transformation)
             face_infos.push(manipulator) if !block_given? || yield(manipulator)
           elsif entity.is_a?(Sketchup::Group)
-            _populate_face_infos(face_infos, entity.entities, transformation * entity.transformation, &validator)
+            _populate_face_manipulators(face_infos, entity.entities, transformation * entity.transformation, &validator)
           elsif entity.is_a?(Sketchup::ComponentInstance) && (entity.definition.behavior.cuts_opening? || entity.definition.behavior.always_face_camera?)
-            _populate_face_infos(face_infos, entity.definition.entities, transformation * entity.transformation, &validator)
+            _populate_face_manipulators(face_infos, entity.definition.entities, transformation * entity.transformation, &validator)
           end
         end
       end
     end
 
-    def _populate_edge_infos(edge_infos, entities, transformation = Geom::Transformation.new, &validator)
+    def _populate_edge_manipulators(edge_infos, entities, transformation = Geom::Transformation.new, &validator)
       entities.each do |entity|
         if entity.visible? && _layer_visible?(entity.layer)
           if entity.is_a?(Sketchup::Edge)
             manipulator = EdgeManipulator.new(entity, transformation)
             edge_infos.push(manipulator) if !block_given? || yield(manipulator)
           elsif entity.is_a?(Sketchup::Group)
-            _populate_edge_infos(edge_infos, entity.entities, transformation * entity.transformation, &validator)
+            _populate_edge_manipulators(edge_infos, entity.entities, transformation * entity.transformation, &validator)
           elsif entity.is_a?(Sketchup::ComponentInstance) && (entity.definition.behavior.cuts_opening? || entity.definition.behavior.always_face_camera?)
-            _populate_edge_infos(edge_infos, entity.definition.entities, transformation * entity.transformation, &validator)
+            _populate_edge_manipulators(edge_infos, entity.definition.entities, transformation * entity.transformation, &validator)
           end
         end
       end
