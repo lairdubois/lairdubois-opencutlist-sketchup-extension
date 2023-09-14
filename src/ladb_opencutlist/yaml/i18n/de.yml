@@ -95,6 +95,8 @@ core:
       « {{ target }} » existiert schon. Möchten Sie es ersetzen?
 
       Ein Verzeichnis mit diesem Namen befindet sich schon im Verzeichnis {{ parent }}. Wenn Sie ihn ersetzen, geht der ursprüngliche Inhalt verloren.
+  savepanel:
+    export_to_file: In {{ file_format }} Datei exportieren
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
