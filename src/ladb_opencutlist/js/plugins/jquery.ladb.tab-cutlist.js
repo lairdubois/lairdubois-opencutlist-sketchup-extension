@@ -230,20 +230,41 @@
                     that.saveUIOptionsHiddenGroupIds();
                 }
 
+                // Fetch UI
+                var $inputTagFilter = $('#ladb_cutlist_tags_filter', that.$page);
+
+                // Useful function
+                var fnReloadTags = function () {
+                    var tokenList = $inputTagFilter.tokenfield('getTokensList');
+                    that.generateFilters.tags_filter = tokenList.length === 0 ? [] : tokenList.split(';');
+                    that.generateCutlist(function () {
+                        $('#ladb_cutlist_tags_filter-tokenfield', that.$page).focus();
+                    });
+                }
+
                 // Bind inputs
-                $('#ladb_cutlist_tags_filter', that.$page)
+                $inputTagFilter
                     .on('tokenfield:createtoken', function (e) {
 
-                        e.attrs.ko = e.attrs.value.startsWith('!');
-                        if (e.attrs.ko) {
-                            e.attrs.label = e.attrs.value.substring(1);
+                        var m = e.attrs.value.match(/([+-])(.*)/);
+                        if (m) {
+                            e.attrs.oko = m[1]
+                            e.attrs.label = m[2];
+                        } else {
+                            e.attrs.oko = '+'
+                            e.attrs.label = e.attrs.value;
+                            e.attrs.value = '+' + e.attrs.value;
                         }
 
                         // Unique token
-                        var tokenList = $(this).tokenfield('getTokensList');
-                        if (Array.isArray(tokenList) && tokenList.includes(e.attrs.value)) {
-                            e.preventDefault();
-                            return false;
+                        var tokens = $(this).tokenfield('getTokens');
+                        if (Array.isArray(tokens)) {
+                            $.each(tokens, function (index, token) {
+                                if (token.label === e.attrs.label) {
+                                    e.preventDefault();
+                                    return false;
+                                }
+                            })
                         }
 
                         // Used token only
@@ -254,7 +275,13 @@
 
                     })
                     .on('tokenfield:createdtoken', function (e) {
-                        if (e.attrs.ko) {
+                        var $btnOko = $('<a href="#" class="oko">±</a>')
+                            .on('click', function () {
+                                e.attrs.value = (e.attrs.oko === '+' ? '-' : '+') + e.attrs.label;
+                                fnReloadTags();
+                            });
+                        $btnOko.insertBefore($('.close', e.relatedTarget));
+                        if (e.attrs.oko === '-') {
                             $('.token-label', e.relatedTarget).css('text-decoration', 'line-through');
                         }
                     })
@@ -266,11 +293,7 @@
                         showAutocompleteOnFocus: false
                     }))
                     .on('tokenfield:createdtoken tokenfield:removedtoken', function (e) {
-                        var tokenList = $(this).tokenfield('getTokensList');
-                        that.generateFilters.tags_filter = tokenList.length === 0 ? [] : tokenList.split(';');
-                        that.generateCutlist(function () {
-                            $('#ladb_cutlist_tags_filter-tokenfield', that.$page).focus();
-                        });
+                        fnReloadTags();
                     })
                 ;
                 $('#ladb_cutlist_edge_material_names_filter', that.$page)
@@ -284,10 +307,14 @@
                     .on('tokenfield:createtoken', function (e) {
 
                         // Unique token
-                        var tokenList = $(this).tokenfield('getTokensList');
-                        if (Array.isArray(tokenList) && tokenList.includes(e.attrs.value)) {
-                            e.preventDefault();
-                            return false;
+                        var tokens = $(this).tokenfield('getTokens');
+                        if (Array.isArray(tokens)) {
+                            $.each(tokens, function (index, token) {
+                                if (token.label === e.attrs.label) {
+                                    e.preventDefault();
+                                    return false;
+                                }
+                            })
                         }
 
                         // Available token only
@@ -316,10 +343,14 @@
                     .on('tokenfield:createtoken', function (e) {
 
                         // Unique token
-                        var tokenList = $(this).tokenfield('getTokensList');
-                        if (Array.isArray(tokenList) && tokenList.includes(e.attrs.value)) {
-                            e.preventDefault();
-                            return false;
+                        var tokens = $(this).tokenfield('getTokens');
+                        if (Array.isArray(tokens)) {
+                            $.each(tokens, function (index, token) {
+                                if (token.label === e.attrs.label) {
+                                    e.preventDefault();
+                                    return false;
+                                }
+                            })
                         }
 
                         // Available token only
@@ -605,7 +636,7 @@
                 });
                 $('a.ladb-btn-label-filter', that.$page).on('click', function () {
                     $(this).blur();
-                    var labelFilter = $(this).html();
+                    var labelFilter = '+' + $(this).html();
                     var indexOf = that.generateFilters.tags_filter.indexOf(labelFilter);
                     if (indexOf > -1) {
                         that.generateFilters.tags_filter.splice(indexOf, 1);

@@ -154,12 +154,10 @@ module Ladb::OpenCutList
         unless @tags_filter.empty?
           ok_tags = []
           ko_tags = []
-          @tags_filter.each do |tag|
-            if tag.start_with?('!')
-              ko_tags << tag[1..-1]
-            else
-              ok_tags << tag
-            end
+          @tags_filter.each do |value|
+            m = /([+-])(.*)/.match(value)
+            ok_tags << m[2] if m && m[1] == '+'
+            ko_tags << m[2] if m && m[1] == '-'
           end
           if !ok_tags.empty? && !definition_attributes.has_tags(ok_tags) || !ko_tags.empty? && definition_attributes.has_tags(ko_tags)
             cutlist.ignored_instance_count += 1
