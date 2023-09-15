@@ -1,8 +1,7 @@
 module Ladb::OpenCutList
 
   require_relative '../../constants'
-  require_relative '../../helper/face_triangles_helper'
-  require_relative '../../helper/entities_helper'
+  require_relative '../../helper/layer_visibility_helper'
   require_relative '../../utils/path_utils'
   require_relative '../../utils/transformation_utils'
   require_relative '../../model/cutlist/drawing_def'
@@ -11,15 +10,14 @@ module Ladb::OpenCutList
 
   class CommonDecomposeDrawingWorker
 
-    include FaceTrianglesHelper
-    include EntitiesHelper
+    include LayerVisibilityHelper
 
-    FACE_VALIDATOR_NONE = 0
+    FACE_VALIDATOR_ALL = 0
     FACE_VALIDATOR_SINGLE = 1
     FACE_VALIDATOR_COPLANAR = 2
     FACE_VALIDATOR_PARALLEL = 3
 
-    EDGE_VALIDATOR_NONE = 0
+    EDGE_VALIDATOR_ALL = 0
     EDGE_VALIDATOR_STRAY_COPLANAR = 1
 
     def initialize(path, option = {})
@@ -32,10 +30,10 @@ module Ladb::OpenCutList
       @use_bounds_min_as_origin = option.fetch('use_bounds_min_as_origin', false)
 
       @ignore_faces = option.fetch('ignore_faces', false)
-      @face_validator = option.fetch('face_validator', FACE_VALIDATOR_NONE)
+      @face_validator = option.fetch('face_validator', FACE_VALIDATOR_ALL)
 
       @ignore_edges = option.fetch('ignore_edges', false)
-      @edge_validator = option.fetch('edge_validator', EDGE_VALIDATOR_NONE)
+      @edge_validator = option.fetch('edge_validator', EDGE_VALIDATOR_ALL)
 
     end
 
