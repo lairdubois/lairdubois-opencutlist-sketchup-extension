@@ -230,12 +230,9 @@
                     that.saveUIOptionsHiddenGroupIds();
                 }
 
-                // Fetch UI
-                var $inputTagFilter = $('#ladb_cutlist_tags_filter', that.$page);
-
                 // Useful function
-                var fnReloadTags = function () {
-                    var tokenList = $inputTagFilter.tokenfield('getTokensList');
+                var fnGenerateWithTagsFilter = function () {
+                    var tokenList = $('#ladb_cutlist_tags_filter', that.$page).tokenfield('getTokensList');
                     that.generateFilters.tags_filter = tokenList.length === 0 ? [] : tokenList.split(';');
                     that.generateCutlist(function () {
                         $('#ladb_cutlist_tags_filter-tokenfield', that.$page).focus();
@@ -243,7 +240,7 @@
                 }
 
                 // Bind inputs
-                $inputTagFilter
+                $('#ladb_cutlist_tags_filter', that.$page)
                     .on('tokenfield:createtoken', function (e) {
 
                         var m = e.attrs.value.match(/([+-])(.*)/);
@@ -275,14 +272,15 @@
 
                     })
                     .on('tokenfield:createdtoken', function (e) {
-                        var $btnOko = $('<a href="#" class="oko">±</a>')
+                        $('<a href="#" class="oko">±</a>')
                             .on('click', function () {
                                 e.attrs.value = (e.attrs.oko === '+' ? '-' : '+') + e.attrs.label;
-                                fnReloadTags();
-                            });
-                        $btnOko.insertBefore($('.close', e.relatedTarget));
+                                fnGenerateWithTagsFilter();
+                            })
+                            .insertBefore($('.close', e.relatedTarget))
+                        ;
                         if (e.attrs.oko === '-') {
-                            $('.token-label', e.relatedTarget).css('text-decoration', 'line-through');
+                            $(e.relatedTarget).addClass('ko');
                         }
                     })
                     .tokenfield($.extend(TOKENFIELD_OPTIONS, {
@@ -293,7 +291,7 @@
                         showAutocompleteOnFocus: false
                     }))
                     .on('tokenfield:createdtoken tokenfield:removedtoken', function (e) {
-                        fnReloadTags();
+                        fnGenerateWithTagsFilter();
                     })
                 ;
                 $('#ladb_cutlist_edge_material_names_filter', that.$page)

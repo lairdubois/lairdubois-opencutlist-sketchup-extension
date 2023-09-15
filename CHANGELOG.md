@@ -15,7 +15,7 @@ in 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added labels remove all elements button
   * Added export remove all columns button
   * Added table row size options
-  * Added "not" capabilities in tags filters tokenfield
+  * Added Toggle button in cutlist tags filters to switch from "present" to "not present"
   * Changed material color bullet from drop to circle
 
 * 5.0.4 (2023-09-14)
