@@ -124,7 +124,7 @@ module Ladb::OpenCutList
       drawing_def.input_face_manipulator.transformation = tai * drawing_def.input_face_manipulator.transformation unless drawing_def.input_face_manipulator.nil?
       drawing_def.input_edge_manipulator.transformation = tai * drawing_def.input_edge_manipulator.transformation unless drawing_def.input_edge_manipulator.nil?
 
-      # STEP 2 : Populate faces and edges
+      # STEP 2 : Populate faces and edges manipulators
 
       # Faces
       unless @ignore_faces

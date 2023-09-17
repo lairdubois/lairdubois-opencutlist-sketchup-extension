@@ -17,6 +17,7 @@ module Ladb::OpenCutList
     def reset_cache
       super
       @flipped = nil
+      @skewed = nil
     end
 
     # -----
@@ -31,6 +32,13 @@ module Ladb::OpenCutList
         @flipped = TransformationUtils.flipped?(@transformation)
       end
       @flipped
+    end
+
+    def skewed?
+      if @skewed.nil?
+        @skewed = TransformationUtils.skewed?(@transformation)
+      end
+      @skewed
     end
 
     # -----
