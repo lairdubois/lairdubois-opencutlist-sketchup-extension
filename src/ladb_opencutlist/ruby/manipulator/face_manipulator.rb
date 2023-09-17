@@ -46,6 +46,16 @@ module Ladb::OpenCutList
       normal.samedirection?(other.normal)
     end
 
+    def perpendicular?(other)
+      return false unless other.is_a?(FaceManipulator)
+      normal.perpendicular?(other.normal)
+    end
+
+    def angle_between(other)
+      return false unless other.is_a?(FaceManipulator)
+      normal.angle_between(other.normal)
+    end
+
     # -----
 
     def outer_loop_points

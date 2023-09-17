@@ -41,6 +41,7 @@ module Ladb::OpenCutList
     ACTION_OPTION_FACE_SINGLE = 0
     ACTION_OPTION_FACE_COPLANAR = 1
     ACTION_OPTION_FACE_PARALLEL = 2
+    ACTION_OPTION_FACE_NOT_PERPENDICULAR = 3
 
     ACTION_OPTION_OPTIONS_ANCHOR = 0
     ACTION_OPTION_OPTIONS_GUIDES = 1
@@ -60,7 +61,7 @@ module Ladb::OpenCutList
         :options => {
           ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_DXF, ACTION_OPTION_FILE_FORMAT_SVG ],
           ACTION_OPTION_UNIT => [ ACTION_OPTION_UNIT_MM, ACTION_OPTION_UNIT_CM, ACTION_OPTION_UNIT_IN ],
-          ACTION_OPTION_FACE => [ACTION_OPTION_FACE_SINGLE, ACTION_OPTION_FACE_COPLANAR, ACTION_OPTION_FACE_PARALLEL ],
+          ACTION_OPTION_FACE => [ACTION_OPTION_FACE_SINGLE, ACTION_OPTION_FACE_COPLANAR, ACTION_OPTION_FACE_PARALLEL, ACTION_OPTION_FACE_NOT_PERPENDICULAR ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_ANCHOR, ACTION_OPTION_OPTIONS_GUIDES, ACTION_OPTION_OPTIONS_CURVES ]
         }
       }
@@ -171,6 +172,8 @@ module Ladb::OpenCutList
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.375L0.25,0.25L0.5,0.375L0.25,0.5L0,0.375Z M0.25,0.25L0.5,0.125L1,0.375L0.75,0.5L0.5,0.375Z'))
         when ACTION_OPTION_FACE_PARALLEL
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.375L0.25,0.25L0.5,0.375L0.25,0.5L0,0.375Z M0.25,0.25L0.5,0.125L1,0.375L0.75,0.5L0.5,0.375Z M0.5,0.813L0.25,0.688L0.5,0.563L0.75,0.688L0.5,0.813Z'))
+        when ACTION_OPTION_FACE_NOT_PERPENDICULAR
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.375L0.25,0.25L0.5,0.375L0.25,0.5L0,0.375Z M0.25,0.25L0.5,0.125L1,0.375L0.75,0.5L0.5,0.375Z M0.5,0.813L0.25,0.688L0.5,0.563L0.75,0.688L0.5,0.813Z'))
         end
       when ACTION_OPTION_OPTIONS
         case option
@@ -267,6 +270,9 @@ module Ladb::OpenCutList
 
     def onDeactivate(view)
       super
+
+      # @group.erase! unless @group.nil?
+
     end
 
     def onActionChange(action, modifier)
@@ -335,7 +341,9 @@ module Ladb::OpenCutList
 
         if is_action_export_part_2d?
 
-          if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACE, ACTION_OPTION_FACE_PARALLEL)
+          if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACE, ACTION_OPTION_FACE_NOT_PERPENDICULAR)
+            face_validator = CommonDecomposeDrawingWorker::FACE_VALIDATOR_NOT_PERPENDICULAR
+          elsif fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACE, ACTION_OPTION_FACE_PARALLEL)
             face_validator = CommonDecomposeDrawingWorker::FACE_VALIDATOR_PARALLEL
           elsif fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACE, ACTION_OPTION_FACE_COPLANAR)
             face_validator = CommonDecomposeDrawingWorker::FACE_VALIDATOR_COPLANAR
@@ -357,11 +365,25 @@ module Ladb::OpenCutList
 
             # Compute face depths
             @active_drawing_def.face_manipulators.each do |face_manipulator|
-
-              face_manipulator.data[:depth] = @active_drawing_def.bounds.max.distance_to_plane(face_manipulator.plane)
-              face_manipulator.data[:depth_ratio] = @active_drawing_def.bounds.depth > 0 ? face_manipulator.data[:depth] / @active_drawing_def.bounds.depth : 0.0
+              if face_manipulator.parallel?(@active_drawing_def.input_face_manipulator) && @active_drawing_def.bounds.depth > 0
+                face_manipulator.data[:depth] = @active_drawing_def.bounds.max.distance_to_plane(face_manipulator.plane)
+                face_manipulator.data[:depth_ratio] = face_manipulator.data[:depth] / @active_drawing_def.bounds.depth
+              else
+                face_manipulator.data[:depth] = 0
+                face_manipulator.data[:depth_ratio] = 0.0
+              end
 
             end
+
+
+            # DEBUG
+
+            _draw_outer_shape(@active_drawing_def)
+
+            # DEBUG
+
+
+
 
             preview = Kuix::Group.new
             preview.transformation = @active_drawing_def.transformation
@@ -824,6 +846,42 @@ module Ladb::OpenCutList
       y_axis = z_axis.cross(x_axis)
 
       [ ORIGIN, x_axis, y_axis, z_axis, input_edge, input_edge != @input_edge ]
+    end
+
+    def _draw_outer_shape(drawing_def)
+
+      @group = Sketchup.active_model.entities.add_group if @group.nil?
+      @group.entities.clear!
+
+      face_defs = []
+
+      # Combine zmin and zmax faces
+      drawing_def.face_manipulators.each do |face_manipulator|
+
+        face_def = {
+          :outer => face_manipulator.outer_loop_points.map { |point| Geom::Point3d.new(point.x, point.y, -face_manipulator.data[:depth]) },
+          :holes => [],
+          :material => !face_manipulator.data[:depth].nil? && face_manipulator.data[:depth] > 0 ? 'red' : nil
+        }
+        face_defs << face_def
+
+        face_manipulator.loop_manipulators.each do |loop_manipulator|
+          next if loop_manipulator.loop.outer?
+
+          face_def[:holes] << loop_manipulator.points.map { |point| Geom::Point3d.new(point.x, point.y, 0) }
+
+        end
+
+      end
+
+      @group.entities.build do |builder|
+        face_defs.each do |face_def|
+          face = builder.add_face(face_def[:outer], holes: face_def[:holes])
+          face.reverse! unless face.normal.samedirection?(Z_AXIS)
+          face.material = face_def[:material] unless face_def[:material].nil?
+        end
+      end
+
     end
 
   end
