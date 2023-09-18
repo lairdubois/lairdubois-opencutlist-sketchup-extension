@@ -16,7 +16,7 @@ module Ladb::OpenCutList
     FACE_VALIDATOR_SINGLE = 1
     FACE_VALIDATOR_COPLANAR = 2
     FACE_VALIDATOR_PARALLEL = 3
-    FACE_VALIDATOR_NOT_PERPENDICULAR = 4
+    FACE_VALIDATOR_EXPOSED = 4
 
     EDGE_VALIDATOR_ALL = 0
     EDGE_VALIDATOR_STRAY_COPLANAR = 1
@@ -145,7 +145,7 @@ module Ladb::OpenCutList
             validator = lambda { |face_manipulator|
               face_manipulator.parallel?(drawing_def.input_face_manipulator)
             }
-          when FACE_VALIDATOR_NOT_PERPENDICULAR
+          when FACE_VALIDATOR_EXPOSED
             validator = lambda { |face_manipulator|
               !face_manipulator.perpendicular?(drawing_def.input_face_manipulator) && drawing_def.input_face_manipulator.angle_between(face_manipulator) < Math::PI / 2.0
             }
