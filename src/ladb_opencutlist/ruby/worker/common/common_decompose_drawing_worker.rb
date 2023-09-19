@@ -1,8 +1,7 @@
 module Ladb::OpenCutList
 
   require_relative '../../constants'
-  require_relative '../../helper/face_triangles_helper'
-  require_relative '../../helper/entities_helper'
+  require_relative '../../helper/layer_visibility_helper'
   require_relative '../../utils/path_utils'
   require_relative '../../utils/transformation_utils'
   require_relative '../../model/cutlist/drawing_def'
@@ -11,15 +10,15 @@ module Ladb::OpenCutList
 
   class CommonDecomposeDrawingWorker
 
-    include FaceTrianglesHelper
-    include EntitiesHelper
+    include LayerVisibilityHelper
 
-    FACE_VALIDATOR_NONE = 0
+    FACE_VALIDATOR_ALL = 0
     FACE_VALIDATOR_SINGLE = 1
     FACE_VALIDATOR_COPLANAR = 2
     FACE_VALIDATOR_PARALLEL = 3
+    FACE_VALIDATOR_EXPOSED = 4
 
-    EDGE_VALIDATOR_NONE = 0
+    EDGE_VALIDATOR_ALL = 0
     EDGE_VALIDATOR_STRAY_COPLANAR = 1
 
     def initialize(path, option = {})
@@ -32,10 +31,10 @@ module Ladb::OpenCutList
       @use_bounds_min_as_origin = option.fetch('use_bounds_min_as_origin', false)
 
       @ignore_faces = option.fetch('ignore_faces', false)
-      @face_validator = option.fetch('face_validator', FACE_VALIDATOR_NONE)
+      @face_validator = option.fetch('face_validator', FACE_VALIDATOR_ALL)
 
       @ignore_edges = option.fetch('ignore_edges', false)
-      @edge_validator = option.fetch('edge_validator', EDGE_VALIDATOR_NONE)
+      @edge_validator = option.fetch('edge_validator', EDGE_VALIDATOR_ALL)
 
     end
 
@@ -104,24 +103,29 @@ module Ladb::OpenCutList
 
       else
 
+        # Get transformed X axis and reverse it if transformation is flipped to keep a right hand oriented system
         x_axis = X_AXIS.transform(transformation).normalize
         x_axis.reverse! if TransformationUtils.flipped?(transformation)
-        y_axis = Y_AXIS.transform(transformation).normalize
 
+        # Use transformed Y axis to determine XY plane and compute Z as perpendicular to this plane
+        y_axis = Y_AXIS.transform(transformation).normalize
         xy_plane = Geom.fit_plane_to_points(ORIGIN, Geom::Point3d.new(x_axis.to_a), Geom::Point3d.new(y_axis.to_a))
         z_axis = Geom::Vector3d.new(xy_plane[0..2])
-        y_axis = z_axis.cross(x_axis)
+
+        # Reset Y axis as cross product Z * X
+        y_axis = z_axis * x_axis
 
       end
 
       ta = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
       tai = ta.inverse
+      ttai = tai * transformation
 
       drawing_def.transformation = ta
       drawing_def.input_face_manipulator.transformation = tai * drawing_def.input_face_manipulator.transformation unless drawing_def.input_face_manipulator.nil?
       drawing_def.input_edge_manipulator.transformation = tai * drawing_def.input_edge_manipulator.transformation unless drawing_def.input_edge_manipulator.nil?
 
-      # STEP 2 : Populate faces and edges
+      # STEP 2 : Populate faces and edges manipulators
 
       # Faces
       unless @ignore_faces
@@ -141,10 +145,14 @@ module Ladb::OpenCutList
             validator = lambda { |face_manipulator|
               face_manipulator.parallel?(drawing_def.input_face_manipulator)
             }
+          when FACE_VALIDATOR_EXPOSED
+            validator = lambda { |face_manipulator|
+              !face_manipulator.perpendicular?(drawing_def.input_face_manipulator) && drawing_def.input_face_manipulator.angle_between(face_manipulator) < Math::PI / 2.0
+            }
           end
         end
 
-        _populate_face_infos(drawing_def.face_manipulators, entities, tai * transformation, &validator)
+        _populate_face_manipulators(drawing_def.face_manipulators, entities, ttai, &validator)
 
       end
 
@@ -166,7 +174,7 @@ module Ladb::OpenCutList
           end
         end
 
-        _populate_edge_infos(drawing_def.edge_manipulators, entities, tai * transformation, &validator)
+        _populate_edge_manipulators(drawing_def.edge_manipulators, entities, ttai, &validator)
 
       end
 
@@ -233,31 +241,31 @@ module Ladb::OpenCutList
       [ x_axis, y_axis, z_axis, input_edge_manipulator ]
     end
 
-    def _populate_face_infos(face_infos, entities, transformation = Geom::Transformation.new, &validator)
+    def _populate_face_manipulators(face_infos, entities, transformation = Geom::Transformation.new, &validator)
       entities.each do |entity|
         if entity.visible? && _layer_visible?(entity.layer)
           if entity.is_a?(Sketchup::Face)
             manipulator = FaceManipulator.new(entity, transformation)
             face_infos.push(manipulator) if !block_given? || yield(manipulator)
           elsif entity.is_a?(Sketchup::Group)
-            _populate_face_infos(face_infos, entity.entities, transformation * entity.transformation, &validator)
+            _populate_face_manipulators(face_infos, entity.entities, transformation * entity.transformation, &validator)
           elsif entity.is_a?(Sketchup::ComponentInstance) && (entity.definition.behavior.cuts_opening? || entity.definition.behavior.always_face_camera?)
-            _populate_face_infos(face_infos, entity.definition.entities, transformation * entity.transformation, &validator)
+            _populate_face_manipulators(face_infos, entity.definition.entities, transformation * entity.transformation, &validator)
           end
         end
       end
     end
 
-    def _populate_edge_infos(edge_infos, entities, transformation = Geom::Transformation.new, &validator)
+    def _populate_edge_manipulators(edge_infos, entities, transformation = Geom::Transformation.new, &validator)
       entities.each do |entity|
         if entity.visible? && _layer_visible?(entity.layer)
           if entity.is_a?(Sketchup::Edge)
             manipulator = EdgeManipulator.new(entity, transformation)
             edge_infos.push(manipulator) if !block_given? || yield(manipulator)
           elsif entity.is_a?(Sketchup::Group)
-            _populate_edge_infos(edge_infos, entity.entities, transformation * entity.transformation, &validator)
+            _populate_edge_manipulators(edge_infos, entity.entities, transformation * entity.transformation, &validator)
           elsif entity.is_a?(Sketchup::ComponentInstance) && (entity.definition.behavior.cuts_opening? || entity.definition.behavior.always_face_camera?)
-            _populate_edge_infos(edge_infos, entity.definition.entities, transformation * entity.transformation, &validator)
+            _populate_edge_manipulators(edge_infos, entity.definition.entities, transformation * entity.transformation, &validator)
           end
         end
       end

@@ -1,6 +1,7 @@
 module Ladb::OpenCutList
 
   require_relative 'smart_tool'
+  require_relative '../lib/geom2d/geom2d'
   require_relative '../helper/layer_visibility_helper'
   require_relative '../helper/edge_segments_helper'
   require_relative '../helper/entities_helper'
@@ -41,6 +42,7 @@ module Ladb::OpenCutList
     ACTION_OPTION_FACE_SINGLE = 0
     ACTION_OPTION_FACE_COPLANAR = 1
     ACTION_OPTION_FACE_PARALLEL = 2
+    ACTION_OPTION_FACE_EXPOSED = 3
 
     ACTION_OPTION_OPTIONS_ANCHOR = 0
     ACTION_OPTION_OPTIONS_GUIDES = 1
@@ -60,7 +62,7 @@ module Ladb::OpenCutList
         :options => {
           ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_DXF, ACTION_OPTION_FILE_FORMAT_SVG ],
           ACTION_OPTION_UNIT => [ ACTION_OPTION_UNIT_MM, ACTION_OPTION_UNIT_CM, ACTION_OPTION_UNIT_IN ],
-          ACTION_OPTION_FACE => [ACTION_OPTION_FACE_SINGLE, ACTION_OPTION_FACE_COPLANAR, ACTION_OPTION_FACE_PARALLEL ],
+          ACTION_OPTION_FACE => [ACTION_OPTION_FACE_SINGLE, ACTION_OPTION_FACE_COPLANAR, ACTION_OPTION_FACE_PARALLEL, ACTION_OPTION_FACE_EXPOSED ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_ANCHOR, ACTION_OPTION_OPTIONS_GUIDES, ACTION_OPTION_OPTIONS_CURVES ]
         }
       }
@@ -171,6 +173,8 @@ module Ladb::OpenCutList
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.375L0.25,0.25L0.5,0.375L0.25,0.5L0,0.375Z M0.25,0.25L0.5,0.125L1,0.375L0.75,0.5L0.5,0.375Z'))
         when ACTION_OPTION_FACE_PARALLEL
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.375L0.25,0.25L0.5,0.375L0.25,0.5L0,0.375Z M0.25,0.25L0.5,0.125L1,0.375L0.75,0.5L0.5,0.375Z M0.5,0.813L0.25,0.688L0.5,0.563L0.75,0.688L0.5,0.813Z'))
+        when ACTION_OPTION_FACE_EXPOSED
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.375L0.25,0.25L0.5,0.375L0.25,0.5L0,0.375Z M0.25,0.25L0.5,0.125L1,0.375L0.75,0.5L0.5,0.375Z M0.5,0.813L0.25,0.688L0.5,0.563L0.75,0.688L0.5,0.813Z'))
         end
       when ACTION_OPTION_OPTIONS
         case option
@@ -230,7 +234,7 @@ module Ladb::OpenCutList
         end
       when ACTION_OPTION_FACE
         case option
-        when ACTION_OPTION_FACE_PARALLEL
+        when ACTION_OPTION_FACE_EXPOSED
           return true
         end
       when ACTION_OPTION_OPTIONS
@@ -267,6 +271,9 @@ module Ladb::OpenCutList
 
     def onDeactivate(view)
       super
+
+      # @group.erase! unless @group.nil?
+
     end
 
     def onActionChange(action, modifier)
@@ -335,7 +342,9 @@ module Ladb::OpenCutList
 
         if is_action_export_part_2d?
 
-          if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACE, ACTION_OPTION_FACE_PARALLEL)
+          if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACE, ACTION_OPTION_FACE_EXPOSED)
+            face_validator = CommonDecomposeDrawingWorker::FACE_VALIDATOR_EXPOSED
+          elsif fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACE, ACTION_OPTION_FACE_PARALLEL)
             face_validator = CommonDecomposeDrawingWorker::FACE_VALIDATOR_PARALLEL
           elsif fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACE, ACTION_OPTION_FACE_COPLANAR)
             face_validator = CommonDecomposeDrawingWorker::FACE_VALIDATOR_COPLANAR
@@ -357,11 +366,25 @@ module Ladb::OpenCutList
 
             # Compute face depths
             @active_drawing_def.face_manipulators.each do |face_manipulator|
-
-              face_manipulator.data[:depth] = @active_drawing_def.bounds.max.distance_to_plane(face_manipulator.plane)
-              face_manipulator.data[:depth_ratio] = @active_drawing_def.bounds.depth > 0 ? face_manipulator.data[:depth] / @active_drawing_def.bounds.depth : 0.0
+              if face_manipulator.parallel?(@active_drawing_def.input_face_manipulator) && @active_drawing_def.bounds.depth > 0
+                face_manipulator.data[:depth] = @active_drawing_def.bounds.max.distance_to_plane(face_manipulator.plane).round(6)
+                face_manipulator.data[:depth_ratio] = face_manipulator.data[:depth] / @active_drawing_def.bounds.depth
+              else
+                face_manipulator.data[:depth] = (@active_drawing_def.bounds.max.z - face_manipulator.outer_loop_points.max { |p1, p2| p1.z <=> p2.z }.z).round(6)
+                face_manipulator.data[:depth_ratio] = 0.0
+              end
 
             end
+
+
+            # DEBUG
+
+            # _draw_outer_shape(@active_drawing_def)
+
+            # DEBUG
+
+
+
 
             preview = Kuix::Group.new
             preview.transformation = @active_drawing_def.transformation
@@ -824,6 +847,104 @@ module Ladb::OpenCutList
       y_axis = z_axis.cross(x_axis)
 
       [ ORIGIN, x_axis, y_axis, z_axis, input_edge, input_edge != @input_edge ]
+    end
+
+    def _draw_outer_shape(drawing_def)
+
+      @group = Sketchup.active_model.entities.add_group if @group.nil?
+      @group.entities.clear!
+
+      face_defs = []
+
+      drawing_def.face_manipulators.each do |face_manipulator|
+
+        face_def = {
+          :outer => face_manipulator.outer_loop_points.map { |point| [ point.x, point.y ] },
+          :holes => [],
+          :depth => face_manipulator.data[:depth]
+        }
+        face_defs << face_def
+
+        face_manipulator.loop_manipulators.each do |loop_manipulator|
+          next if loop_manipulator.loop.outer?
+
+          face_def[:holes] << loop_manipulator.points.map { |point| [ point.x, point.y ] }
+
+        end
+
+      end
+
+      layer_defs = {}
+      layer_defs[0.0] = {
+        :depth => 0.0,
+        :ps => Geom2D::PolygonSet.new
+      }
+
+      face_defs.each do |face_def|
+
+        f_ps = Geom2D::PolygonSet.new
+        f_ps << Geom2D::Polygon.new(face_def[:outer])
+
+        unless face_def[:holes].empty?
+          h_ps = Geom2D::PolygonSet.new(face_def[:holes].map { |hole| Geom2D::Polygon.new(hole) })
+          f_ps = Geom2D::Algorithms::PolygonOperation.run(f_ps, h_ps, :difference)
+        end
+
+        layer_def = layer_defs[face_def[:depth]]
+        if layer_def.nil?
+          layer_def = {
+            :depth => face_def[:depth],
+            :ps => f_ps
+          }
+          layer_defs[face_def[:depth]] = layer_def
+        else
+          layer_def[:ps] = Geom2D::Algorithms::PolygonOperation.run(layer_def[:ps], f_ps, :union)
+        end
+
+      end
+
+      ld = layer_defs.values.sort_by { |layer_def| layer_def[:depth] }
+
+      # Top cut Lower
+      ld.each_with_index do |layer_def, index|
+        next if layer_def[:ps].polygons.empty?
+        ld[(index + 1)..-1].each do |lower_layer_def|
+          next if lower_layer_def[:ps].polygons.empty?
+          lower_layer_def[:ps] = Geom2D::Algorithms::PolygonOperation.run(lower_layer_def[:ps], layer_def[:ps], :difference)
+        end
+      end
+
+      # Lower merge to Top
+      ld.each_with_index do |layer_def, index|
+        next if layer_def[:ps].polygons.empty?
+        ld[(index + 1)..-1].reverse.each do |lower_layer_def|
+          next if lower_layer_def[:ps].polygons.empty?
+          ld[index][:ps] = Geom2D::Algorithms::PolygonOperation.run(ld[index][:ps], lower_layer_def[:ps], :union)
+        end
+      end
+
+      ld.each_with_index do |layer_def, layer_index|
+        next if layer_def[:ps].polygons.empty?
+        bbox0 = layer_def[:ps].polygons[0].bbox
+        layer_def[:ps].polygons.each_with_index do |polygon, polygon_index|
+
+          hole = polygon_index > 0 &&
+            polygon.bbox.min_x > bbox0.min_x && polygon.bbox.min_y > bbox0.min_y &&
+            polygon.bbox.max_x < bbox0.max_x && polygon.bbox.max_y < bbox0.max_y
+
+          face = @group.entities.add_face(polygon.each_vertex.map { |point| Geom::Point3d.new(point.x, point.y, @active_drawing_def.bounds.max.z - layer_def[:depth]) })
+          face.reverse! unless face.normal.samedirection?(Z_AXIS)
+          if hole
+            face.material = 'White'
+          elsif layer_def[:depth] > 0
+            face.material = 'DarkGray'
+          else
+            face.material = 'Black'
+          end
+
+        end
+      end
+
     end
 
   end

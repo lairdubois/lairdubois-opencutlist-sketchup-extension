@@ -151,9 +151,18 @@ module Ladb::OpenCutList
         cutlist.add_used_tags(definition_attributes.tags)
 
         # Tags filter
-        if !@tags_filter.empty? && !definition_attributes.has_tags(@tags_filter)
-          cutlist.ignored_instance_count += 1
-          next
+        unless @tags_filter.empty?
+          ok_tags = []
+          ko_tags = []
+          @tags_filter.each do |value|
+            m = /([+-])(.*)/.match(value)
+            ok_tags << m[2] if m && m[1] == '+'
+            ko_tags << m[2] if m && m[1] == '-'
+          end
+          if !ok_tags.empty? && !definition_attributes.has_tags(ok_tags) || !ko_tags.empty? && definition_attributes.has_tags(ko_tags)
+            cutlist.ignored_instance_count += 1
+            next
+          end
         end
 
         material, material_origin = _get_material(instance_info.path, @smart_material)

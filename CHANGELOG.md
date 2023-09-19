@@ -15,9 +15,14 @@ in 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added labels remove all elements button
   * Added export remove all columns button
   * Added table row size options
+  * Added Toggle button in cutlist tags filters to switch from "present" to "not present"
   * Changed material color bullet from drop to circle
 
-* 5.0.3 (WIP)
+* 5.0.4 (2023-09-14)
+
+  * Fixed "Export to Layout" hang
+  
+* 5.0.3 (2023-09-13)
 
   * Fixed the dimension parser that misinterpret decimal separator
   * Fixed wrong counting of invalid sized parts in 2D

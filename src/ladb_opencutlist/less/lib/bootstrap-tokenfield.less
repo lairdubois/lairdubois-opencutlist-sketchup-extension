@@ -15,6 +15,40 @@
 
     }
 
+    &.ko {
+
+      > span.token-label {
+        text-decoration: line-through;
+      }
+
+    }
+
+    > a.oko {
+      display: inline-block;
+      font-size: 1.1em;
+      line-height: 1.2em;
+      margin-left: 5px;
+      float: none;
+      height: 100%;
+      vertical-align: top;
+      padding-left: 4px;
+
+      font-weight: bold;
+      color: #000;
+      text-shadow: 0 1px 0 #fff;
+      filter: alpha(opacity=20);
+      opacity: .2;
+
+      &:hover, &:focus {
+        color: #000;
+        text-decoration: none;
+        cursor: pointer;
+        filter: alpha(opacity=50);
+        opacity: .5;
+      }
+
+    }
+
   }
 
 }

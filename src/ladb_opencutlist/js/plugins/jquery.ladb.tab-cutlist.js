@@ -230,8 +230,59 @@
                     that.saveUIOptionsHiddenGroupIds();
                 }
 
+                // Useful function
+                var fnGenerateWithTagsFilter = function () {
+                    var tokenList = $('#ladb_cutlist_tags_filter', that.$page).tokenfield('getTokensList');
+                    that.generateFilters.tags_filter = tokenList.length === 0 ? [] : tokenList.split(';');
+                    that.generateCutlist(function () {
+                        $('#ladb_cutlist_tags_filter-tokenfield', that.$page).focus();
+                    });
+                }
+
                 // Bind inputs
                 $('#ladb_cutlist_tags_filter', that.$page)
+                    .on('tokenfield:createtoken', function (e) {
+
+                        var m = e.attrs.value.match(/([+-])(.*)/);
+                        if (m) {
+                            e.attrs.oko = m[1]
+                            e.attrs.label = m[2];
+                        } else {
+                            e.attrs.oko = '+'
+                            e.attrs.label = e.attrs.value;
+                            e.attrs.value = '+' + e.attrs.value;
+                        }
+
+                        // Unique token
+                        var tokens = $(this).tokenfield('getTokens');
+                        if (Array.isArray(tokens)) {
+                            $.each(tokens, function (index, token) {
+                                if (token.label === e.attrs.label) {
+                                    e.preventDefault();
+                                    return false;
+                                }
+                            })
+                        }
+
+                        // Used token only
+                        if (!that.usedTags.includes(e.attrs.label)) {
+                            e.preventDefault();
+                            return false;
+                        }
+
+                    })
+                    .on('tokenfield:createdtoken', function (e) {
+                        $('<a href="#" class="oko">±</a>')
+                            .on('click', function () {
+                                e.attrs.value = (e.attrs.oko === '+' ? '-' : '+') + e.attrs.label;
+                                fnGenerateWithTagsFilter();
+                            })
+                            .insertBefore($('.close', e.relatedTarget))
+                        ;
+                        if (e.attrs.oko === '-') {
+                            $(e.relatedTarget).addClass('ko');
+                        }
+                    })
                     .tokenfield($.extend(TOKENFIELD_OPTIONS, {
                         autocomplete: {
                             source: that.usedTags,
@@ -239,35 +290,8 @@
                         },
                         showAutocompleteOnFocus: false
                     }))
-                    .on('tokenfield:createtoken', function (e) {
-
-                        // Unique token
-                        var existingTokens = $(this).tokenfield('getTokens');
-                        $.each(existingTokens, function (index, token) {
-                            if (token.value === e.attrs.value) {
-                                e.preventDefault();
-                            }
-                        });
-
-                        // Available token only
-                        var available = false;
-                        $.each(that.usedTags, function (index, token) {
-                            if (token === e.attrs.value) {
-                                available = true;
-                                return false;
-                            }
-                        });
-                        if (!available) {
-                            e.preventDefault();
-                        }
-
-                    })
                     .on('tokenfield:createdtoken tokenfield:removedtoken', function (e) {
-                        var tokenList = $(this).tokenfield('getTokensList');
-                        that.generateFilters.tags_filter = tokenList.length === 0 ? [] : tokenList.split(';');
-                        that.generateCutlist(function () {
-                            $('#ladb_cutlist_tags_filter-tokenfield', that.$page).focus();
-                        });
+                        fnGenerateWithTagsFilter();
                     })
                 ;
                 $('#ladb_cutlist_edge_material_names_filter', that.$page)
@@ -281,24 +305,22 @@
                     .on('tokenfield:createtoken', function (e) {
 
                         // Unique token
-                        var existingTokens = $(this).tokenfield('getTokens');
-                        $.each(existingTokens, function (index, token) {
-                            if (token.value === e.attrs.value) {
-                                e.preventDefault();
-                            }
-                        });
+                        var tokens = $(this).tokenfield('getTokens');
+                        if (Array.isArray(tokens)) {
+                            $.each(tokens, function (index, token) {
+                                if (token.label === e.attrs.label) {
+                                    e.preventDefault();
+                                    return false;
+                                }
+                            })
+                        }
 
                         // Available token only
-                        var available = false;
-                        $.each(that.usedEdgeMaterialDisplayNames, function (index, token) {
-                            if (token === e.attrs.value) {
-                                available = true;
-                                return false;
-                            }
-                        });
-                        if (!available) {
+                        if (!that.usedEdgeMaterialDisplayNames.includes(e.attrs.label)) {
                             e.preventDefault();
+                            return false;
                         }
+
                     })
                     .on('tokenfield:createdtoken tokenfield:removedtoken', function (e) {
                         var tokenList = $(this).tokenfield('getTokensList');
@@ -319,24 +341,22 @@
                     .on('tokenfield:createtoken', function (e) {
 
                         // Unique token
-                        var existingTokens = $(this).tokenfield('getTokens');
-                        $.each(existingTokens, function (index, token) {
-                            if (token.value === e.attrs.value) {
-                                e.preventDefault();
-                            }
-                        });
+                        var tokens = $(this).tokenfield('getTokens');
+                        if (Array.isArray(tokens)) {
+                            $.each(tokens, function (index, token) {
+                                if (token.label === e.attrs.label) {
+                                    e.preventDefault();
+                                    return false;
+                                }
+                            })
+                        }
 
                         // Available token only
-                        var available = false;
-                        $.each(that.usedVeneerMaterialDisplayNames, function (index, token) {
-                            if (token === e.attrs.value) {
-                                available = true;
-                                return false;
-                            }
-                        });
-                        if (!available) {
+                        if (!that.usedVeneerMaterialDisplayNames.includes(e.attrs.label)) {
                             e.preventDefault();
+                            return false;
                         }
+
                     })
                     .on('tokenfield:createdtoken tokenfield:removedtoken', function (e) {
                         var tokenList = $(this).tokenfield('getTokensList');
@@ -614,7 +634,7 @@
                 });
                 $('a.ladb-btn-label-filter', that.$page).on('click', function () {
                     $(this).blur();
-                    var labelFilter = $(this).html();
+                    var labelFilter = '+' + $(this).html();
                     var indexOf = that.generateFilters.tags_filter.indexOf(labelFilter);
                     if (indexOf > -1) {
                         that.generateFilters.tags_filter.splice(indexOf, 1);
