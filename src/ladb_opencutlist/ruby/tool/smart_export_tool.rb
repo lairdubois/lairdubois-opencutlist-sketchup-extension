@@ -1,8 +1,7 @@
 module Ladb::OpenCutList
 
-  require_relative '../lib/rclipper/rclipper'
-  require_relative '../lib/geom2d/geom2d'
   require_relative 'smart_tool'
+  require_relative '../lib/geom2d/geom2d'
   require_relative '../helper/layer_visibility_helper'
   require_relative '../helper/edge_segments_helper'
   require_relative '../helper/entities_helper'
@@ -235,7 +234,7 @@ module Ladb::OpenCutList
         end
       when ACTION_OPTION_FACE
         case option
-        when ACTION_OPTION_FACE_PARALLEL
+        when ACTION_OPTION_FACE_EXPOSED
           return true
         end
       when ACTION_OPTION_OPTIONS
@@ -371,7 +370,7 @@ module Ladb::OpenCutList
                 face_manipulator.data[:depth] = @active_drawing_def.bounds.max.distance_to_plane(face_manipulator.plane).round(6)
                 face_manipulator.data[:depth_ratio] = face_manipulator.data[:depth] / @active_drawing_def.bounds.depth
               else
-                face_manipulator.data[:depth] = 0.0
+                face_manipulator.data[:depth] = (@active_drawing_def.bounds.max.z - face_manipulator.outer_loop_points.max { |p1, p2| p1.z <=> p2.z }.z).round(6)
                 face_manipulator.data[:depth_ratio] = 0.0
               end
 
@@ -380,7 +379,7 @@ module Ladb::OpenCutList
 
             # DEBUG
 
-            _draw_outer_shape(@active_drawing_def)
+            # _draw_outer_shape(@active_drawing_def)
 
             # DEBUG
 
@@ -876,6 +875,10 @@ module Ladb::OpenCutList
       end
 
       layer_defs = {}
+      layer_defs[0.0] = {
+        :depth => 0.0,
+        :ps => Geom2D::PolygonSet.new
+      }
 
       face_defs.each do |face_def|
 
@@ -902,14 +905,20 @@ module Ladb::OpenCutList
 
       ld = layer_defs.values.sort_by { |layer_def| layer_def[:depth] }
 
+      # Top cut Lower
       ld.each_with_index do |layer_def, index|
+        next if layer_def[:ps].polygons.empty?
         ld[(index + 1)..-1].each do |lower_layer_def|
+          next if lower_layer_def[:ps].polygons.empty?
           lower_layer_def[:ps] = Geom2D::Algorithms::PolygonOperation.run(lower_layer_def[:ps], layer_def[:ps], :difference)
         end
       end
 
+      # Lower merge to Top
       ld.each_with_index do |layer_def, index|
+        next if layer_def[:ps].polygons.empty?
         ld[(index + 1)..-1].reverse.each do |lower_layer_def|
+          next if lower_layer_def[:ps].polygons.empty?
           ld[index][:ps] = Geom2D::Algorithms::PolygonOperation.run(ld[index][:ps], lower_layer_def[:ps], :union)
         end
       end
@@ -923,7 +932,7 @@ module Ladb::OpenCutList
             polygon.bbox.min_x > bbox0.min_x && polygon.bbox.min_y > bbox0.min_y &&
             polygon.bbox.max_x < bbox0.max_x && polygon.bbox.max_y < bbox0.max_y
 
-          face = @group.entities.add_face(polygon.each_vertex.map { |point| Geom::Point3d.new(point.x, point.y, layer_def[:depth]) })
+          face = @group.entities.add_face(polygon.each_vertex.map { |point| Geom::Point3d.new(point.x, point.y, @active_drawing_def.bounds.max.z - layer_def[:depth]) })
           face.reverse! unless face.normal.samedirection?(Z_AXIS)
           if hole
             face.material = 'White'
