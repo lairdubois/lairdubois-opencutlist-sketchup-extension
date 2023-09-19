@@ -272,15 +272,19 @@
 
                     })
                     .on('tokenfield:createdtoken', function (e) {
-                        $('<a href="#" class="oko">±</a>')
+                        var $okoBtn = $('<a href="#" class="oko" data-toggle="tooltip" title="' + i18next.t('tab.cutlist.tooltip.oko_label_filter') + '"></a>')
                             .on('click', function () {
                                 e.attrs.value = (e.attrs.oko === '+' ? '-' : '+') + e.attrs.label;
                                 fnGenerateWithTagsFilter();
                             })
                             .insertBefore($('.close', e.relatedTarget))
                         ;
+                        that.dialog.setupTooltips($(e.relatedTarget));
                         if (e.attrs.oko === '-') {
+                            $okoBtn.append($('<i class="ladb-opencutlist-icon-eye-open"></i>'))
                             $(e.relatedTarget).addClass('ko');
+                        } else {
+                            $okoBtn.append($('<i class="ladb-opencutlist-icon-eye-close"></i>'))
                         }
                     })
                     .tokenfield($.extend(TOKENFIELD_OPTIONS, {

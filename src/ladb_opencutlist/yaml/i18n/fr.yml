@@ -281,6 +281,7 @@ tab:
       symmetrical: La détection de pièce en miroir est désactivée sur cette pièce
       ignore_grain_direction: La direction du fil est ignorée sur cette pièce
       auto_oriented: Cette pièce a été réorientée automatiquement
+      oko_label_filter: "Inclure / Exclure ce badge"
       add_label_filter: "Filtrer sur '{{ label }}'"
       remove_label_filter: "Ne plus filtrer sur '{{ label }}'"
       add_edge_material_name_filter: "Filtrer sur '{{ material_name }}'"
