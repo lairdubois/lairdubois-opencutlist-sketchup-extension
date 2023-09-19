@@ -932,14 +932,14 @@ module Ladb::OpenCutList
             polygon.bbox.min_x > bbox0.min_x && polygon.bbox.min_y > bbox0.min_y &&
             polygon.bbox.max_x < bbox0.max_x && polygon.bbox.max_y < bbox0.max_y
 
-          face = @group.entities.add_face(polygon.each_vertex.map { |point| Geom::Point3d.new(point.x, point.y, @active_drawing_def.bounds.max.z - layer_def[:depth]) })
+          face = @group.entities.add_face(polygon.each_vertex.map { |point| Geom::Point3d.new(point.x, point.y, layer_def[:depth]) })
           face.reverse! unless face.normal.samedirection?(Z_AXIS)
           if hole
             face.material = 'White'
           elsif layer_def[:depth] > 0
             face.material = 'DarkGray'
           else
-            face.material = 'Black'
+            face.material = Sketchup::Color.new(0, 0, 0, 0.8)
           end
 
         end
