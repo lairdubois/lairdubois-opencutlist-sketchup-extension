@@ -281,6 +281,7 @@ tab:
       symmetrical: Mirrored part detection is disabled on this part
       ignore_grain_direction: Grain orientation is ignored on this part
       auto_oriented: This part has been reoriented automatically
+      oko_label_filter: "Include / Exclude this badge"
       add_label_filter: "Filtering on '{{ label }}'"
       remove_label_filter: "Remove filtering on '{{ label }}'"
       add_edge_material_name_filter: "Filter on '{{ material_name }}'"
@@ -1520,5 +1521,5 @@ tool:
     action_option_3_1_status: Export as guides the floating and coplanar edges of the target face contained in the part
     action_option_3_2_status: Smooth out circles and arcs
     error:
-    not_part: The target object is not a part
-    not_flat_face: The target surface is not planar
+      not_part: The target object is not a part
+      not_flat_face: The target surface is not planar
