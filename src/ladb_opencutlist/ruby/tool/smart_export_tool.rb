@@ -13,7 +13,11 @@ module Ladb::OpenCutList
   require_relative '../worker/common/common_export_drawing3d_worker'
   require_relative '../worker/common/common_decompose_drawing_worker'
 
+  require 'benchmark'
+
   class SmartExportTool < SmartTool
+
+    include Benchmark
 
     include LayerVisibilityHelper
     include EdgeSegmentsHelper
@@ -379,7 +383,7 @@ module Ladb::OpenCutList
 
             # DEBUG
 
-            # _draw_outer_shape(@active_drawing_def)
+            _draw_outer_shape(@active_drawing_def)
 
             # DEBUG
 
@@ -851,99 +855,129 @@ module Ladb::OpenCutList
 
     def _draw_outer_shape(drawing_def)
 
+      SKETCHUP_CONSOLE.clear
+
       @group = Sketchup.active_model.entities.add_group if @group.nil?
       @group.entities.clear!
 
       face_defs = []
 
-      drawing_def.face_manipulators.each do |face_manipulator|
+      Benchmark.benchmark(CAPTION, 20, FORMAT, "TOTAL :") do |x|
 
-        face_def = {
-          :outer => face_manipulator.outer_loop_points.map { |point| [ point.x, point.y ] },
-          :holes => [],
-          :depth => face_manipulator.data[:depth]
-        }
-        face_defs << face_def
+        tp = x.report("Get points :")   {
 
-        face_manipulator.loop_manipulators.each do |loop_manipulator|
-          next if loop_manipulator.loop.outer?
+          drawing_def.face_manipulators.each do |face_manipulator|
 
-          face_def[:holes] << loop_manipulator.points.map { |point| [ point.x, point.y ] }
+            face_def = {
+              :outer => face_manipulator.outer_loop_points.map { |point| [ point.x, point.y ] },
+              :holes => [],
+              :depth => face_manipulator.data[:depth]
+            }
+            face_defs << face_def
 
-        end
+            face_manipulator.loop_manipulators.each do |loop_manipulator|
+              next if loop_manipulator.loop.outer?
 
-      end
+              face_def[:holes] << loop_manipulator.points.map { |point| [ point.x, point.y ] }
 
-      layer_defs = {}
-      layer_defs[0.0] = {
-        :depth => 0.0,
-        :ps => Geom2D::PolygonSet.new
-      }
+            end
 
-      face_defs.each do |face_def|
-
-        f_ps = Geom2D::PolygonSet.new
-        f_ps << Geom2D::Polygon.new(face_def[:outer])
-
-        unless face_def[:holes].empty?
-          h_ps = Geom2D::PolygonSet.new(face_def[:holes].map { |hole| Geom2D::Polygon.new(hole) })
-          f_ps = Geom2D::Algorithms::PolygonOperation.run(f_ps, h_ps, :difference)
-        end
-
-        layer_def = layer_defs[face_def[:depth]]
-        if layer_def.nil?
-          layer_def = {
-            :depth => face_def[:depth],
-            :ps => f_ps
-          }
-          layer_defs[face_def[:depth]] = layer_def
-        else
-          layer_def[:ps] = Geom2D::Algorithms::PolygonOperation.run(layer_def[:ps], f_ps, :union)
-        end
-
-      end
-
-      ld = layer_defs.values.sort_by { |layer_def| layer_def[:depth] }
-
-      # Top cut Lower
-      ld.each_with_index do |layer_def, index|
-        next if layer_def[:ps].polygons.empty?
-        ld[(index + 1)..-1].each do |lower_layer_def|
-          next if lower_layer_def[:ps].polygons.empty?
-          lower_layer_def[:ps] = Geom2D::Algorithms::PolygonOperation.run(lower_layer_def[:ps], layer_def[:ps], :difference)
-        end
-      end
-
-      # Lower merge to Top
-      ld.each_with_index do |layer_def, index|
-        next if layer_def[:ps].polygons.empty?
-        ld[(index + 1)..-1].reverse.each do |lower_layer_def|
-          next if lower_layer_def[:ps].polygons.empty?
-          ld[index][:ps] = Geom2D::Algorithms::PolygonOperation.run(ld[index][:ps], lower_layer_def[:ps], :union)
-        end
-      end
-
-      ld.each_with_index do |layer_def, layer_index|
-        next if layer_def[:ps].polygons.empty?
-        bbox0 = layer_def[:ps].polygons[0].bbox
-        layer_def[:ps].polygons.each_with_index do |polygon, polygon_index|
-
-          hole = polygon_index > 0 &&
-            polygon.bbox.min_x > bbox0.min_x && polygon.bbox.min_y > bbox0.min_y &&
-            polygon.bbox.max_x < bbox0.max_x && polygon.bbox.max_y < bbox0.max_y
-
-          face = @group.entities.add_face(polygon.each_vertex.map { |point| Geom::Point3d.new(point.x, point.y, layer_def[:depth]) })
-          face.reverse! unless face.normal.samedirection?(Z_AXIS)
-          if hole
-            face.material = 'White'
-          elsif layer_def[:depth] > 0
-            face.material = 'DarkGray'
-          else
-            face.material = Sketchup::Color.new(0, 0, 0, 0.8)
           end
 
-        end
+        }
+
+        layer_defs = {}
+        layer_defs[0.0] = {
+          :depth => 0.0,
+          :ps => Geom2D::PolygonSet.new
+        }
+
+        tl = x.report("Get layers :")   {
+
+          face_defs.each do |face_def|
+
+            f_ps = Geom2D::PolygonSet.new
+            f_ps << Geom2D::Polygon.new(face_def[:outer])
+
+            unless face_def[:holes].empty?
+              h_ps = Geom2D::PolygonSet.new(face_def[:holes].map { |hole| Geom2D::Polygon.new(hole) })
+              f_ps = Geom2D::Algorithms::PolygonOperation.run(f_ps, h_ps, :difference)
+            end
+
+            layer_def = layer_defs[face_def[:depth]]
+            if layer_def.nil?
+              layer_def = {
+                :depth => face_def[:depth],
+                :ps => f_ps
+              }
+              layer_defs[face_def[:depth]] = layer_def
+            else
+              layer_def[:ps] = Geom2D::Algorithms::PolygonOperation.run(layer_def[:ps], f_ps, :union)
+            end
+
+          end
+
+        }
+
+        ld = layer_defs.values.sort_by { |layer_def| layer_def[:depth] }
+
+        td = x.report("Diff Up -> Down :")   {
+
+          # Up to Down diff
+          ld.each_with_index do |layer_def, index|
+            next if layer_def[:ps].polygons.empty?
+            ld[(index + 1)..-1].each do |lower_layer_def|
+              next if lower_layer_def[:ps].polygons.empty?
+              lower_layer_def[:ps] = Geom2D::Algorithms::PolygonOperation.run(lower_layer_def[:ps], layer_def[:ps], :difference)
+            end
+          end
+
+        }
+
+        tu = x.report("Union Down -> Up :")   {
+
+          # Down to Up union
+          ld.each_with_index do |layer_def, index|
+            next if layer_def[:ps].polygons.empty?
+            ld[(index + 1)..-1].reverse.each do |lower_layer_def|
+              next if lower_layer_def[:ps].polygons.empty?
+              ld[index][:ps] = Geom2D::Algorithms::PolygonOperation.run(ld[index][:ps], lower_layer_def[:ps], :union)
+            end
+          end
+
+        }
+
+        tdr = x.report("Draw :")   {
+
+          ld.each_with_index do |layer_def, layer_index|
+            next if layer_def[:ps].polygons.empty?
+            bbox0 = layer_def[:ps].polygons[0].bbox
+            layer_def[:ps].polygons.each_with_index do |polygon, polygon_index|
+
+              hole = polygon_index > 0 &&
+                polygon.bbox.min_x > bbox0.min_x && polygon.bbox.min_y > bbox0.min_y &&
+                polygon.bbox.max_x < bbox0.max_x && polygon.bbox.max_y < bbox0.max_y
+
+              face = @group.entities.add_face(polygon.each_vertex.map { |point| Geom::Point3d.new(point.x, point.y, layer_def[:depth]) })
+              face.reverse! unless face.normal.samedirection?(Z_AXIS)
+              if hole
+                face.material = 'White'
+              elsif layer_def[:depth] > 0
+                face.material = 'DarkGray'
+              else
+                face.material = Sketchup::Color.new(0, 0, 0, 0.8)
+              end
+
+            end
+          end
+
+        }
+
+        [ tp + tl + td + tu + tdr ]
       end
+
+      puts "--> Faces    : #{drawing_def.face_manipulators.length}"
+      puts "--> Segments : #{face_defs.map { |face_def| face_def[:outer].length + face_def[:holes].map { |hole| hole.length }.sum }.sum}"
 
     end
 
