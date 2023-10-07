@@ -132,16 +132,10 @@ module Ladb::OpenCutList::Geometrix
     end
 
     def points_between_indices(start_index, end_index)
-      start_index = start_index % @points.length
-      end_index = end_index % @points.length
-      if start_index < end_index
-        return @points[start_index..end_index]
-      elsif start_index > end_index
-        return @points[start_index..-1] + @points[0..end_index]
-      elsif start_index == 0 && end_index == 0
-        return @points + [ @points.first ]
-      end
-      []
+      start_index = start_index % (@points.length * 2)
+      end_index = end_index % (@points.length * 2)
+      end_index = [ start_index + @points.length + 1, end_index ].min
+      (@points + @points)[start_index..end_index]
     end
 
     def ellipse?
