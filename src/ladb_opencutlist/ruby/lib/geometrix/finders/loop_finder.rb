@@ -131,6 +131,19 @@ module Ladb::OpenCutList::Geometrix
       @points[index % @points.length]
     end
 
+    def points_between_indices(start_index, end_index)
+      start_index = start_index % @points.length
+      end_index = end_index % @points.length
+      if start_index < end_index
+        return @points[start_index..end_index]
+      elsif start_index > end_index
+        return @points[start_index..-1] + @points[0..end_index]
+      elsif start_index == 0 && end_index == 0
+        return @points + [ @points.first ]
+      end
+      []
+    end
+
     def ellipse?
       @portions.length == 1 && @portions.first.is_a?(ArcLoopPortionDef)
     end
@@ -161,6 +174,10 @@ module Ladb::OpenCutList::Geometrix
 
     def end_point
       @loop_def.point_at_index(end_index)
+    end
+
+    def segments
+      @loop_def.points_between_indices(@start_index, end_index).each_cons(2).to_a.flatten
     end
 
   end

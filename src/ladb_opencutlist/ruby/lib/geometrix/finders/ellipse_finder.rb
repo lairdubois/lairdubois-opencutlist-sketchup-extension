@@ -4,7 +4,7 @@ module Ladb::OpenCutList::Geometrix
 
     ZERO = 1e-10
 
-    # Use first 5 points to find ellipse definition or nil if it doesn't match an ellipse.
+    # Use first 5 points to find ellipse 2D definition or nil if it doesn't match an ellipse.
     # Input points are only considered as 2D points.
     #
     # @param [Array<Geom::Point3d>|nil] points

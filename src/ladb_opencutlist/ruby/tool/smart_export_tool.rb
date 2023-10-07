@@ -2,6 +2,7 @@ module Ladb::OpenCutList
 
   require_relative 'smart_tool'
   require_relative '../lib/geom2d/geom2d'
+  require_relative '../lib/geometrix/geometrix'
   require_relative '../helper/layer_visibility_helper'
   require_relative '../helper/edge_segments_helper'
   require_relative '../helper/entities_helper'
@@ -383,7 +384,7 @@ module Ladb::OpenCutList
 
             # DEBUG
 
-            _draw_outer_shape(@active_drawing_def)
+            # _draw_outer_shape(@active_drawing_def)
 
             # DEBUG
 
@@ -405,18 +406,37 @@ module Ladb::OpenCutList
               # Highlight arcs (if activated)
               if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_CURVES)
                 face_manipulator.loop_manipulators.each do |loop_manipulator|
-                  loop_manipulator.edge_and_arc_manipulators.each do |manipulator|
-                    if manipulator.is_a?(ArcCurveManipulator)
+
+                  loop_def = Geometrix::LoopFinder.find_loop_def(loop_manipulator.points)
+                  if loop_def
+
+                    loop_def.portions.grep(Geometrix::ArcLoopPortionDef).each do |portion|
 
                       segments = Kuix::Segments.new
-                      segments.add_segments(manipulator.segments)
+                      segments.add_segments(portion.segments)
                       segments.color = COLOR_BRAND
                       segments.line_width = 3
                       segments.on_top = true
                       preview.append(segments)
 
                     end
+
                   end
+
+
+                  # loop_manipulator.edge_and_arc_manipulators.each do |manipulator|
+                  #   if manipulator.is_a?(ArcCurveManipulator)
+                  #
+                  #     segments = Kuix::Segments.new
+                  #     segments.add_segments(manipulator.segments)
+                  #     segments.color = COLOR_BRAND
+                  #     segments.line_width = 3
+                  #     segments.on_top = true
+                  #     preview.append(segments)
+                  #
+                  #   end
+                  # end
+
                 end
               end
 
