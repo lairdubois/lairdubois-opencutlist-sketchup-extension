@@ -88,10 +88,14 @@ module Ladb::OpenCutList::Geometrix
 
       # Axes
 
+      v1 = points[0] - center
+      v2 = points[1] - center
+      normal = v1.cross(v2)
+
       xaxis = X_AXIS.transform(Geom::Transformation.rotation(ORIGIN, Z_AXIS, angle))
       xaxis.length = rmax
 
-      yaxis = Z_AXIS.cross(xaxis)
+      yaxis = normal.cross(xaxis)
       yaxis.length = rmin
 
       EllipseDef.new(
@@ -120,7 +124,7 @@ module Ladb::OpenCutList::Geometrix
       (ellipse_def.a * point.x**2 + ellipse_def.b * point.x * point.y + ellipse_def.c * point.y**2 + ellipse_def.d * point.x + ellipse_def.e * point.y + ellipse_def.f).abs < 1e-8
     end
 
-    # Get ellipse angle at point
+    # Get ellipse CCW angle at point
     #
     # @param [EllipseDef] ellipse_def
     # @param [Geom::Point3d] point
@@ -128,9 +132,7 @@ module Ladb::OpenCutList::Geometrix
     # @return [Float] angle in radians
     #
     def self.ellipse_angle_at_point(ellipse_def, point)
-      angle = ellipse_def.angle + Math.atan2(ellipse_def.center.x - point.x, ellipse_def.center.y - point.y) + Math::PI * 0.5
-      angle = 2.0 * Math::PI + angle if angle < 0
-      angle
+      -(ellipse_def.angle + Math.atan2(ellipse_def.center.x - point.x, ellipse_def.center.y - point.y) + Math::PI * 0.5)
     end
 
   end
@@ -155,15 +157,23 @@ module Ladb::OpenCutList::Geometrix
     end
 
     def circular?
-      (rmax - rmin).abs < 1e-10
+      (xradius - yradius).abs < 1e-10
     end
 
-    def rmax
+    def xradius
       @xaxis.length
     end
 
-    def rmin
+    def yradius
       @yaxis.length
+    end
+
+    def point_at_angle(angle, absolute = false)
+      vx = Geom::Vector3d.new(xaxis.x * Math.cos(angle), xaxis.y * Math.cos(angle), 0)
+      vy = Geom::Vector3d.new(yaxis.x * Math.sin(angle), yaxis.y * Math.sin(angle), 0)
+      v = vx + vy
+      v = v + Geom::Vector3d.new(center.to_a) if absolute
+      Geom::Point3d.new(v.to_a)
     end
 
     def ==(other)

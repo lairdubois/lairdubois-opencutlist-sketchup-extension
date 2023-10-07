@@ -110,41 +110,37 @@ module Ladb::OpenCutList
             if @curves
 
               # Extract loop points from ordered edges and arc curves
-              loop_manipulator.edge_and_arc_manipulators.each { |manipulator|
+              loop_manipulator.edge_and_arc_portions.each { |portion|
 
-                if manipulator.is_a?(ArcCurveManipulator)
+                if portion.is_a?(Geometrix::ArcLoopPortionDef)
 
-                  center = manipulator.center
-                  vertex_xaxis = manipulator.vertex_xaxis
+                  center = portion.ellipse_def.center
+                  xaxis = portion.ellipse_def.xaxis
 
                   # DXF ellipse angles must be counter clockwise
-                  if manipulator.normal.samedirection?(face_manipulator.normal)
-                    start_angle = manipulator.start_angle - manipulator.vertex_angle
-                    end_angle = manipulator.end_angle - manipulator.vertex_angle
+                  if portion.normal.samedirection?(face_manipulator.normal)
+                    start_angle = portion.start_angle
+                    end_angle = portion.end_angle
                   else
-                    start_angle = manipulator.vertex_angle - manipulator.end_angle
-                    end_angle = manipulator.vertex_angle - manipulator.start_angle
+                    start_angle = portion.end_angle
+                    end_angle = portion.start_angle
                   end
 
                   cx = _convert(center.x, unit_converter)
                   cy = _convert(center.y, unit_converter)
-                  vx = _convert(vertex_xaxis.x, unit_converter)
-                  vy = _convert(vertex_xaxis.y, unit_converter)
-                  vr = manipulator.yradius / manipulator.xradius
+                  vx = _convert(xaxis.x, unit_converter)
+                  vy = _convert(xaxis.y, unit_converter)
+                  vr = portion.ellipse_def.yradius / portion.ellipse_def.xradius
                   as = start_angle
                   ae = end_angle
 
                   _dxf_write_ellipse(file, cx, cy, vx, vy, vr, as, ae, LAYER_DRAWING)
+                  _dxf_write_point(file, cx, cy, LAYER_GUIDES)
 
                 else
 
-                  if manipulator.reversed_in?(face_manipulator.face)
-                    start_point = manipulator.end_point
-                    end_point = manipulator.start_point
-                  else
-                    start_point = manipulator.start_point
-                    end_point = manipulator.end_point
-                  end
+                  start_point = portion.start_point
+                  end_point = portion.end_point
 
                   x1 = _convert(start_point.x, unit_converter)
                   y1 = _convert(start_point.y, unit_converter)
@@ -156,6 +152,52 @@ module Ladb::OpenCutList
                 end
 
               }
+              # loop_manipulator.edge_and_arc_manipulators.each { |manipulator|
+              #
+              #   if manipulator.is_a?(ArcCurveManipulator)
+              #
+              #     center = manipulator.center
+              #     vertex_xaxis = manipulator.vertex_xaxis
+              #
+              #     # DXF ellipse angles must be counter clockwise
+              #     if manipulator.normal.samedirection?(face_manipulator.normal)
+              #       start_angle = manipulator.start_angle - manipulator.vertex_angle
+              #       end_angle = manipulator.end_angle - manipulator.vertex_angle
+              #     else
+              #       start_angle = manipulator.vertex_angle - manipulator.end_angle
+              #       end_angle = manipulator.vertex_angle - manipulator.start_angle
+              #     end
+              #
+              #     cx = _convert(center.x, unit_converter)
+              #     cy = _convert(center.y, unit_converter)
+              #     vx = _convert(vertex_xaxis.x, unit_converter)
+              #     vy = _convert(vertex_xaxis.y, unit_converter)
+              #     vr = manipulator.yradius / manipulator.xradius
+              #     as = start_angle
+              #     ae = end_angle
+              #
+              #     _dxf_write_ellipse(file, cx, cy, vx, vy, vr, as, ae, LAYER_DRAWING)
+              #
+              #   else
+              #
+              #     if manipulator.reversed_in?(face_manipulator.face)
+              #       start_point = manipulator.end_point
+              #       end_point = manipulator.start_point
+              #     else
+              #       start_point = manipulator.start_point
+              #       end_point = manipulator.end_point
+              #     end
+              #
+              #     x1 = _convert(start_point.x, unit_converter)
+              #     y1 = _convert(start_point.y, unit_converter)
+              #     x2 = _convert(end_point.x, unit_converter)
+              #     y2 = _convert(end_point.y, unit_converter)
+              #
+              #     _dxf_write_line(file, x1, y1, x2, y2, LAYER_DRAWING)
+              #
+              #   end
+              #
+              # }
 
             else
 
@@ -253,28 +295,23 @@ module Ladb::OpenCutList
               if @curves
 
                 # Extract loop points from ordered edges and arc curves
-                data = "#{loop_manipulator.edge_and_arc_manipulators.map.with_index { |manipulator, index|
+                data = "#{loop_manipulator.edge_and_arc_portions.map.with_index { |portion, index|
 
                   data = []
-                  if manipulator.reversed_in?(face_manipulator.face)
-                    start_point = manipulator.end_point
-                    end_point = manipulator.start_point
-                  else
-                    start_point = manipulator.start_point
-                    end_point = manipulator.end_point
-                  end
+                  start_point = portion.start_point
+                  end_point = portion.end_point
                   data << "M #{_convert(start_point.x, unit_converter)},#{_convert(-start_point.y, unit_converter)}" if index == 0
 
-                  if manipulator.is_a?(ArcCurveManipulator)
+                  if portion.is_a?(Geometrix::ArcLoopPortionDef)
 
-                    start_angle = manipulator.start_angle
-                    end_angle = manipulator.end_angle
-                    center = manipulator.center
-                    middle = manipulator.ellipse_point_at_angle((end_angle - start_angle) / 2.0, true)
+                    start_angle = portion.start_angle
+                    end_angle = portion.end_angle
+                    center = portion.ellipse_def.center
+                    middle = portion.ellipse_def.point_at_angle((end_angle - start_angle) / 2.0, true)
 
-                    rx = _convert(manipulator.xradius, unit_converter)
-                    ry = _convert(manipulator.yradius, unit_converter)
-                    xrot = -manipulator.vertex_xaxis.angle_between(X_AXIS).radians.round(6)
+                    rx = _convert(portion.ellipse_def.xradius, unit_converter)
+                    ry = _convert(portion.ellipse_def.yradius, unit_converter)
+                    xrot = -portion.ellipse_def.xaxis.angle_between(X_AXIS).radians.round(6)
                     lflag = 0
                     sflag = (middle - center).dot(_cw_normal(start_point - center)) > 0 ? 0 : 1
                     x1 = _convert(middle.x, unit_converter)
@@ -293,6 +330,47 @@ module Ladb::OpenCutList
 
                   data
                 }.join(' ')} Z"
+
+                # data = "#{loop_manipulator.edge_and_arc_manipulators.map.with_index { |manipulator, index|
+                #
+                #   data = []
+                #   if manipulator.reversed_in?(face_manipulator.face)
+                #     start_point = manipulator.end_point
+                #     end_point = manipulator.start_point
+                #   else
+                #     start_point = manipulator.start_point
+                #     end_point = manipulator.end_point
+                #   end
+                #   data << "M #{_convert(start_point.x, unit_converter)},#{_convert(-start_point.y, unit_converter)}" if index == 0
+                #
+                #   if manipulator.is_a?(ArcCurveManipulator)
+                #
+                #     start_angle = manipulator.start_angle
+                #     end_angle = manipulator.end_angle
+                #     center = manipulator.center
+                #     middle = manipulator.ellipse_point_at_angle((end_angle - start_angle) / 2.0, true)
+                #
+                #     rx = _convert(manipulator.xradius, unit_converter)
+                #     ry = _convert(manipulator.yradius, unit_converter)
+                #     xrot = -manipulator.vertex_xaxis.angle_between(X_AXIS).radians.round(6)
+                #     lflag = 0
+                #     sflag = (middle - center).dot(_cw_normal(start_point - center)) > 0 ? 0 : 1
+                #     x1 = _convert(middle.x, unit_converter)
+                #     y1 = _convert(-middle.y, unit_converter)
+                #     x2 = _convert(end_point.x, unit_converter)
+                #     y2 = _convert(-end_point.y, unit_converter)
+                #
+                #     data << "A #{rx},#{ry} #{xrot} #{lflag},#{sflag} #{x1},#{y1}"
+                #     data << "A #{rx},#{ry} #{xrot} #{lflag},#{sflag} #{x2},#{y2}"
+                #
+                #   else
+                #
+                #     data << "L #{_convert(end_point.x, unit_converter)},#{_convert(-end_point.y, unit_converter)}"
+                #
+                #   end
+                #
+                #   data
+                # }.join(' ')} Z"
 
               else
 

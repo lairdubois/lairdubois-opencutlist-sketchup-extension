@@ -55,6 +55,7 @@ module Ladb::OpenCutList::Geometrix
 
             if ellipse_edge_count >= 6
 
+              # Append Arc portion
               loop_def.portions << ArcLoopPortionDef.new(loop_def, ellipse_start_index, ellipse_edge_count, ellipse_def)
 
               index = ellipse_start_index + ellipse_edge_count
@@ -65,7 +66,7 @@ module Ladb::OpenCutList::Geometrix
 
         end
 
-        # Add simple edge to loop portions
+        # Append Edge portion
         loop_def.portions << EdgeLoopPortionDef.new(loop_def, index)
 
         index += 1
@@ -134,7 +135,7 @@ module Ladb::OpenCutList::Geometrix
     def points_between_indices(start_index, end_index)
       start_index = start_index % (@points.length * 2)
       end_index = end_index % (@points.length * 2)
-      end_index = [ start_index + @points.length + 1, end_index ].min
+      end_index = [ start_index + @points.length + 1, [ start_index + 1, end_index ].max ].min
       (@points + @points)[start_index..end_index]
     end
 
@@ -191,6 +192,10 @@ module Ladb::OpenCutList::Geometrix
     def initialize(loop_def, start_index, edge_count, ellipse_def)
       super(loop_def, start_index, edge_count)
       @ellipse_def = ellipse_def
+    end
+
+    def normal
+      @ellipse_def.xaxis.cross(@ellipse_def.yaxis).normalize
     end
 
     def start_angle
