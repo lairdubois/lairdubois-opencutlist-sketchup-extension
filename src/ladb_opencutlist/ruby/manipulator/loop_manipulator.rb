@@ -51,16 +51,11 @@ module Ladb::OpenCutList
 
     # -----
 
-    def edge_and_arc_portions
-      if @edge_and_arc_portions.nil?
-        loop_def = Geometrix::LoopFinder.find_loop_def(points)
-        if loop_def
-          @edge_and_arc_portions = loop_def.portions
-        else
-          @edge_and_arc_portions = []
-        end
+    def loop_def
+      if @loop_def.nil?
+        @loop_def = Geometrix::LoopFinder.find_loop_def(points)
       end
-      @edge_and_arc_portions
+      @loop_def
     end
 
     def edge_and_arc_manipulators

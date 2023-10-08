@@ -407,7 +407,7 @@ module Ladb::OpenCutList
               if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_CURVES)
                 face_manipulator.loop_manipulators.each do |loop_manipulator|
 
-                  loop_manipulator.edge_and_arc_portions.grep(Geometrix::ArcLoopPortionDef).each do |portion|
+                  loop_manipulator.loop_def.portions.grep(Geometrix::ArcLoopPortionDef).each do |portion|
 
                     segments = Kuix::Segments.new
                     segments.add_segments(portion.segments)
