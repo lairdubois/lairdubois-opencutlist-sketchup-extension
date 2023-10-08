@@ -4,6 +4,8 @@ module Ladb::OpenCutList::Geometrix
 
   class LoopFinder
 
+    MIN_DELTA_ANGLE = 0.25 * Math::PI
+
     # @param [Array<Geom::Point3d>] points
     #
     # @return [LoopDef|nil]
@@ -44,8 +46,8 @@ module Ladb::OpenCutList::Geometrix
               aa = EllipseFinder.ellipse_angle_at_point(ellipse_def, p)
               vaa = ellipse_def.xaxis.transform(Geom::Transformation.rotation(ellipse_def.center, Z_AXIS, aa))
 
-              # Break if angle between previous point > PI / 4
-              break unless va.angle_between(vaa) < 0.25 * Math::PI
+              # Break if angle between previous point > MIN_DELTA_ANGLE
+              break if va.angle_between(vaa) > MIN_DELTA_ANGLE
 
               a = aa
               va = vaa
@@ -151,7 +153,7 @@ module Ladb::OpenCutList::Geometrix
 
   class LoopPortionDef
 
-    attr_accessor :loop, :start_index, :edge_count
+    attr_accessor :loop_def, :start_index, :edge_count
 
     def initialize(loop_def, start_index, edge_count)
       @loop_def = loop_def

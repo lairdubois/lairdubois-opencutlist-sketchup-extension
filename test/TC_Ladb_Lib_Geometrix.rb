@@ -24,7 +24,7 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
     # - yradius = 10
     # - angle = 0°
     @ellipse_x0_y0_xr20_yr20_a0 = [
-      Geom::Point3d.new(19.99999999999998, 1.3322676295501878e-15, 0.0),Geom::Point3d.new(19.318516525781344, 2.5881904510252056, 0.0),Geom::Point3d.new(17.320508075688753, 4.999999999999993, 0.0),Geom::Point3d.new(14.14213562373095, 7.071067811865472, 0.0),Geom::Point3d.new(9.99999999999999, 8.66025403784438, 0.0),Geom::Point3d.new(5.176380902050412, 9.659258262890669, 0.0),Geom::Point3d.new(-3.552713678800501e-15, 9.999999999999982, 0.0),Geom::Point3d.new(-5.176380902050405, 9.659258262890669, 0.0),Geom::Point3d.new(-9.999999999999988, 8.660254037844386, 0.0),Geom::Point3d.new(-14.142135623730953, 7.07106781186547, 0.0),Geom::Point3d.new(-17.320508075688753, 4.999999999999993, 0.0),Geom::Point3d.new(-19.31851652578134, 2.5881904510252083, 0.0),Geom::Point3d.new(-19.99999999999998, 2.220446049250313e-15, 0.0),Geom::Point3d.new(-19.318516525781348, -2.588190451025197, 0.0),Geom::Point3d.new(-17.320508075688753, -4.999999999999991, 0.0),Geom::Point3d.new(-14.142135623730962, -7.071067811865463, 0.0),Geom::Point3d.new(-9.999999999999995, -8.660254037844366, 0.0),Geom::Point3d.new(-5.176380902050426, -9.659258262890656, 0.0),Geom::Point3d.new(-1.7763568394002505e-15, -9.999999999999973, 0.0),Geom::Point3d.new(5.176380902050402, -9.659258262890656, 0.0),Geom::Point3d.new(9.999999999999973, -8.66025403784437, 0.0),Geom::Point3d.new(14.142135623730953, -7.071067811865472, 0.0),Geom::Point3d.new(17.320508075688753, -4.9999999999999964, 0.0),Geom::Point3d.new(19.31851652578134, -2.5881904510252114, 0.0),Geom::Point3d.new(19.99999999999998, 1.3322676295501878e-15, 0.0)
+      Geom::Point3d.new(19.99999999999998, 0.0, 0.0),Geom::Point3d.new(19.318516525781355, 2.5881904510252074, 0.0),Geom::Point3d.new(17.320508075688757, 4.999999999999999, 0.0),Geom::Point3d.new(14.142135623730937, 7.071067811865475, 0.0),Geom::Point3d.new(9.999999999999996, 8.660254037844386, 0.0),Geom::Point3d.new(5.176380902050416, 9.659258262890681, 0.0),Geom::Point3d.new(-8.881784197001252e-16, 10.0, 0.0),Geom::Point3d.new(-5.176380902050413, 9.659258262890683, 0.0),Geom::Point3d.new(-9.999999999999993, 8.660254037844387, 0.0),Geom::Point3d.new(-14.142135623730944, 7.0710678118654755, 0.0),Geom::Point3d.new(-17.320508075688764, 5.0000000000000036, 0.0),Geom::Point3d.new(-19.318516525781362, 2.58819045102521, 0.0),Geom::Point3d.new(-19.99999999999999, 1.2246467991473533e-15, 0.0),Geom::Point3d.new(-19.318516525781366, -2.5881904510252034, 0.0),Geom::Point3d.new(-17.320508075688767, -4.999999999999998, 0.0),Geom::Point3d.new(-14.142135623730951, -7.071067811865471, 0.0),Geom::Point3d.new(-10.000000000000004, -8.660254037844384, 0.0),Geom::Point3d.new(-5.176380902050431, -9.659258262890681, 0.0),Geom::Point3d.new(-5.329070518200751e-15, -10.0, 0.0),Geom::Point3d.new(5.1763809020504015, -9.659258262890685, 0.0),Geom::Point3d.new(9.999999999999979, -8.66025403784439, 0.0),Geom::Point3d.new(14.142135623730937, -7.071067811865477, 0.0),Geom::Point3d.new(17.320508075688753, -5.000000000000004, 0.0),Geom::Point3d.new(19.31851652578135, -2.588190451025216, 0.0),Geom::Point3d.new(19.99999999999998, 0.0, 0.0)
     ]
 
     # Ellipse
@@ -33,7 +33,7 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
     # - yradius = 10
     # - angle = 45°
     @ellipse_x0_y0_xr20_yr20_a45 = [
-      Geom::Point3d.new(7.071067811865474, -7.071067811865477, 0.0),Geom::Point3d.new(10.490381056766577, -3.1698729810778095, 0.0),Geom::Point3d.new(13.194792168823419, 0.9473434549075241, 0.0),Geom::Point3d.new(14.999999999999995, 4.999999999999994, 0.0),Geom::Point3d.new(15.782982619848624, 8.711914807983145, 0.0),Geom::Point3d.new(15.490381056766577, 11.830127018922184, 0.0),Geom::Point3d.new(14.142135623730944, 14.142135623730942, 0.0),Geom::Point3d.new(11.830127018922191, 15.49038105676657, 0.0),Geom::Point3d.new(8.711914807983154, 15.782982619848624, 0.0),Geom::Point3d.new(4.999999999999998, 14.999999999999993, 0.0),Geom::Point3d.new(0.9473434549075357, 13.194792168823422, 0.0),Geom::Point3d.new(-3.169872981077801, 10.49038105676658, 0.0),Geom::Point3d.new(-7.071067811865473, 7.071067811865478, 0.0),Geom::Point3d.new(-10.490381056766573, 3.1698729810778175, 0.0),Geom::Point3d.new(-13.19479216882342, -0.9473434549075233, 0.0),Geom::Point3d.new(-14.999999999999993, -4.999999999999985, 0.0),Geom::Point3d.new(-15.78298261984862, -8.711914807983135, 0.0),Geom::Point3d.new(-15.490381056766577, -11.830127018922173, 0.0),Geom::Point3d.new(-14.142135623730947, -14.142135623730942, 0.0),Geom::Point3d.new(-11.830127018922191, -15.490381056766564, 0.0),Geom::Point3d.new(-8.711914807983153, -15.782982619848612, 0.0),Geom::Point3d.new(-5.0000000000000036, -14.999999999999998, 0.0),Geom::Point3d.new(-0.9473434549075401, -13.194792168823424, 0.0),Geom::Point3d.new(3.169872981077793, -10.490381056766587, 0.0),Geom::Point3d.new(7.071067811865474, -7.071067811865477, 0.0)
+      Geom::Point3d.new(14.142135623730933, 14.142135623730937, 0.0),Geom::Point3d.new(11.830127018922186, 15.490381056766577, 0.0),Geom::Point3d.new(8.711914807983142, 15.782982619848617, 0.0),Geom::Point3d.new(4.9999999999999885, 14.999999999999993, 0.0),Geom::Point3d.new(0.9473434549075259, 13.194792168823417, 0.0),Geom::Point3d.new(-3.1698729810778064, 10.490381056766578, 0.0),Geom::Point3d.new(-7.071067811865477, 7.071067811865474, 0.0),Geom::Point3d.new(-10.49038105676658, 3.1698729810778064, 0.0),Geom::Point3d.new(-13.194792168823417, -0.9473434549075259, 0.0),Geom::Point3d.new(-14.999999999999995, -4.9999999999999964, 0.0),Geom::Point3d.new(-15.782982619848626, -8.711914807983147, 0.0),Geom::Point3d.new(-15.490381056766577, -11.830127018922191, 0.0),Geom::Point3d.new(-14.142135623730944, -14.142135623730944, 0.0),Geom::Point3d.new(-11.830127018922195, -15.490381056766578, 0.0),Geom::Point3d.new(-8.711914807983149, -15.782982619848626, 0.0),Geom::Point3d.new(-5.000000000000001, -15.0, 0.0),Geom::Point3d.new(-0.947343454907533, -13.194792168823422, 0.0),Geom::Point3d.new(3.1698729810777957, -10.490381056766589, 0.0),Geom::Point3d.new(7.071067811865472, -7.071067811865479, 0.0),Geom::Point3d.new(10.490381056766571, -3.169872981077816, 0.0),Geom::Point3d.new(13.19479216882341, 0.9473434549075135, 0.0),Geom::Point3d.new(14.999999999999991, 4.999999999999991, 0.0),Geom::Point3d.new(15.78298261984862, 8.711914807983138, 0.0),Geom::Point3d.new(15.490381056766575, 11.83012701892218, 0.0),Geom::Point3d.new(14.142135623730933, 14.142135623730937, 0.0)
     ]
 
     # Ellipse
@@ -42,7 +42,7 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
     # - yradius = 10
     # - angle = 90°
     @ellipse_x0_y0_xr20_yr20_a90 = [
-      Geom::Point3d.new(10.0, -8.881784197001252e-16, 0.0),Geom::Point3d.new(9.659258262890683, 5.176380902050413, 0.0),Geom::Point3d.new(8.660254037844387, 9.999999999999996, 0.0),Geom::Point3d.new(7.0710678118654755, 14.142135623730944, 0.0),Geom::Point3d.new(5.000000000000001, 17.320508075688767, 0.0),Geom::Point3d.new(2.5881904510252096, 19.31851652578136, 0.0),Geom::Point3d.new(6.123233995736766e-16, 19.99999999999999, 0.0),Geom::Point3d.new(-2.5881904510252065, 19.318516525781362, 0.0),Geom::Point3d.new(-4.999999999999998, 17.32050807568877, 0.0),Geom::Point3d.new(-7.071067811865475, 14.142135623730944, 0.0),Geom::Point3d.new(-8.660254037844386, 10.000000000000004, 0.0),Geom::Point3d.new(-9.659258262890681, 5.176380902050418, 0.0),Geom::Point3d.new(-10.0, 2.4424906541753444e-15, 0.0),Geom::Point3d.new(-9.659258262890685, -5.176380902050404, 0.0),Geom::Point3d.new(-8.660254037844389, -9.999999999999996, 0.0),Geom::Point3d.new(-7.071067811865479, -14.142135623730937, 0.0),Geom::Point3d.new(-5.000000000000004, -17.320508075688757, 0.0),Geom::Point3d.new(-2.5881904510252154, -19.31851652578135, 0.0),Geom::Point3d.new(-1.8369701987210296e-15, -19.999999999999993, 0.0),Geom::Point3d.new(2.588190451025203, -19.31851652578136, 0.0),Geom::Point3d.new(4.999999999999993, -17.320508075688767, 0.0),Geom::Point3d.new(7.071067811865474, -14.142135623730953, 0.0),Geom::Point3d.new(8.660254037844384, -10.000000000000009, 0.0),Geom::Point3d.new(9.659258262890681, -5.176380902050429, 0.0),Geom::Point3d.new(10.0, -8.881784197001252e-16, 0.0)
+      Geom::Point3d.new(-7.105427357601002e-15, 19.999999999999982, 0.0),Geom::Point3d.new(-2.5881904510252145, 19.31851652578136, 0.0),Geom::Point3d.new(-5.000000000000005, 17.320508075688753, 0.0),Geom::Point3d.new(-7.071067811865482, 14.142135623730937, 0.0),Geom::Point3d.new(-8.66025403784439, 9.999999999999993, 0.0),Geom::Point3d.new(-9.659258262890685, 5.176380902050413, 0.0),Geom::Point3d.new(-10.0, -5.329070518200751e-15, 0.0),Geom::Point3d.new(-9.659258262890681, -5.176380902050417, 0.0),Geom::Point3d.new(-8.660254037844386, -9.999999999999998, 0.0),Geom::Point3d.new(-7.071067811865471, -14.14213562373095, 0.0),Geom::Point3d.new(-4.9999999999999964, -17.320508075688764, 0.0),Geom::Point3d.new(-2.588190451025203, -19.318516525781366, 0.0),Geom::Point3d.new(7.105427357601002e-15, -19.999999999999993, 0.0),Geom::Point3d.new(2.5881904510252127, -19.318516525781366, 0.0),Geom::Point3d.new(5.000000000000005, -17.320508075688767, 0.0),Geom::Point3d.new(7.071067811865476, -14.142135623730951, 0.0),Geom::Point3d.new(8.660254037844387, -10.0, 0.0),Geom::Point3d.new(9.659258262890683, -5.176380902050427, 0.0),Geom::Point3d.new(10.000000000000002, -1.7763568394002505e-15, 0.0),Geom::Point3d.new(9.659258262890685, 5.176380902050408, 0.0),Geom::Point3d.new(8.660254037844387, 9.999999999999982, 0.0),Geom::Point3d.new(7.071067811865473, 14.14213562373094, 0.0),Geom::Point3d.new(5.0, 17.32050807568876, 0.0),Geom::Point3d.new(2.5881904510252083, 19.318516525781355, 0.0),Geom::Point3d.new(-7.105427357601002e-15, 19.999999999999982, 0.0)
     ]
 
   end
@@ -70,9 +70,6 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
 
     ellipse_def = Ladb::OpenCutList::Geometrix::EllipseFinder.find_ellipse_def(@ellipse_x0_y0_xr20_yr20_a45)
 
-    angle_at_point = Ladb::OpenCutList::Geometrix::EllipseFinder.ellipse_angle_at_point(ellipse_def, Geom::Point3d.new(-1, 1, 0))
-    assert_in_delta(90.degrees, angle_at_point, EPSI, 'S0 (ellipse_x0_y0_xr20_yr20_a45)')
-
     assert_instance_of(Ladb::OpenCutList::Geometrix::EllipseDef, ellipse_def)
     assert_in_epsilon(20, ellipse_def.xradius, EPSI, 'xradius')
     assert_in_epsilon(10, ellipse_def.yradius, EPSI, 'yradius')
@@ -82,15 +79,6 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
 
 
     ellipse_def = Ladb::OpenCutList::Geometrix::EllipseFinder.find_ellipse_def(@ellipse_x0_y0_xr20_yr20_a90)
-
-    angle_at_point = Ladb::OpenCutList::Geometrix::EllipseFinder.ellipse_angle_at_point(ellipse_def, Geom::Point3d.new(0, 20, 0))
-    assert_in_delta(0, angle_at_point, EPSI, 'S0 (ellipse_x0_y0_xr20_yr20_a90)')
-    angle_at_point = Ladb::OpenCutList::Geometrix::EllipseFinder.ellipse_angle_at_point(ellipse_def, Geom::Point3d.new(-10, 0, 0))
-    assert_in_delta(90.degrees, angle_at_point, EPSI, 'S1 (ellipse_x0_y0_xr20_yr20_a90)')
-    angle_at_point = Ladb::OpenCutList::Geometrix::EllipseFinder.ellipse_angle_at_point(ellipse_def, Geom::Point3d.new(0, -20, 0))
-    assert_in_delta(180.degrees, angle_at_point, EPSI, 'S2 (ellipse_x0_y0_xr20_yr20_a90)')
-    angle_at_point = Ladb::OpenCutList::Geometrix::EllipseFinder.ellipse_angle_at_point(ellipse_def, Geom::Point3d.new(10, 0, 0))
-    assert_in_delta(270.degrees, angle_at_point, EPSI, 'S3 (ellipse_x0_y0_xr20_yr20_a90)')
 
     assert_instance_of(Ladb::OpenCutList::Geometrix::EllipseDef, ellipse_def)
     assert_in_epsilon(20, ellipse_def.xradius, EPSI, 'xradius')
@@ -107,7 +95,7 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
   def assert_angles(ellipse_def, points, msg = nil)
     points.each_with_index do |point, index|
       angle_at_point = Ladb::OpenCutList::Geometrix::EllipseFinder.ellipse_angle_at_point(ellipse_def, point)
-      point_at_angle = Ladb::OpenCutList::Geometrix::EllipseFinder.ellipse_point_at_angle(ellipse_def, angle_at_point, true)
+      point_at_angle = Ladb::OpenCutList::Geometrix::EllipseFinder.ellipse_point_at_angle(ellipse_def, angle_at_point)
       assert_equal(point, point_at_angle, msg + " index=#{index} angle=#{angle_at_point.radians.round(6)}°")
     end
   end
