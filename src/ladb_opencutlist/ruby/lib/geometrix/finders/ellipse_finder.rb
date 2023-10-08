@@ -2,8 +2,6 @@ module Ladb::OpenCutList::Geometrix
 
   class EllipseFinder
 
-    ZERO = 1e-10
-
     # Use first 5 points to find ellipse 2D definition or nil if it doesn't match an ellipse.
     # Input points are only considered as 2D points.
     #
@@ -31,7 +29,7 @@ module Ladb::OpenCutList::Geometrix
       vector_b = Matrix[*v_b]
 
       # Check if matrix is inversible
-      return nil if matrix_a.det.abs < ZERO
+      return nil if matrix_a.det.abs < Float::EPSILON  # TODO check if this "zero" value is not too low.
 
       # Solve the system of equations to find the coefficients of the ellipse
       sol = matrix_a.inverse * vector_b
@@ -71,8 +69,8 @@ module Ladb::OpenCutList::Geometrix
       qaqc = q * a - q * c
       qb = q * b
 
-      if qaqc.abs < ZERO
-        if qb.abs < ZERO
+      if qaqc.abs < Float::EPSILON
+        if qb.abs < Float::EPSILON
           angle = 0.0
         elsif qb > 0
           angle = 0.25 * Math::PI
@@ -190,7 +188,7 @@ module Ladb::OpenCutList::Geometrix
     end
 
     def circular?
-      (xradius - yradius).abs < 1e-10
+      (xradius - yradius).abs < Float::EPSILON
     end
 
     def xradius
@@ -207,7 +205,7 @@ module Ladb::OpenCutList::Geometrix
       @c - other.c +
       @d - other.d +
       @e - other.e +
-      @f - other.f < 1e-10
+      @f - other.f < Float::EPSILON
     end
 
   end

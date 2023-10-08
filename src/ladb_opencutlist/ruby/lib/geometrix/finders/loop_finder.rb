@@ -29,8 +29,7 @@ module Ladb::OpenCutList::Geometrix
             ellipse_start_index = index
             ellipse_edge_count = 0
 
-            a = EllipseFinder.ellipse_angle_at_point(ellipse_def, twice_points[index])
-            va = ellipse_def.xaxis.transform(Geom::Transformation.rotation(ellipse_def.center, Z_AXIS, a))
+            va = ellipse_def.xaxis.transform(Geom::Transformation.rotation(ellipse_def.center, Z_AXIS, EllipseFinder.ellipse_angle_at_point(ellipse_def, twice_points[index])))
             while true
 
               i = index + ellipse_edge_count + 1
@@ -43,13 +42,11 @@ module Ladb::OpenCutList::Geometrix
               # Break if point not included in ellipse
               break unless EllipseFinder.ellipse_include_point?(ellipse_def, p)
 
-              aa = EllipseFinder.ellipse_angle_at_point(ellipse_def, p)
-              vaa = ellipse_def.xaxis.transform(Geom::Transformation.rotation(ellipse_def.center, Z_AXIS, aa))
+              vaa = ellipse_def.xaxis.transform(Geom::Transformation.rotation(ellipse_def.center, Z_AXIS, EllipseFinder.ellipse_angle_at_point(ellipse_def, p)))
 
               # Break if angle between previous point > MIN_DELTA_ANGLE
               break if va.angle_between(vaa) > MIN_DELTA_ANGLE
 
-              a = aa
               va = vaa
 
               ellipse_edge_count += 1
