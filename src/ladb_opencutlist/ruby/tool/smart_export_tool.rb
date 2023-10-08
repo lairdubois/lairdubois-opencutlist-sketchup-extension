@@ -2,6 +2,7 @@ module Ladb::OpenCutList
 
   require_relative 'smart_tool'
   require_relative '../lib/geom2d/geom2d'
+  require_relative '../lib/geometrix/geometrix'
   require_relative '../helper/layer_visibility_helper'
   require_relative '../helper/edge_segments_helper'
   require_relative '../helper/entities_helper'
@@ -383,7 +384,7 @@ module Ladb::OpenCutList
 
             # DEBUG
 
-            _draw_outer_shape(@active_drawing_def)
+            # _draw_outer_shape(@active_drawing_def)
 
             # DEBUG
 
@@ -405,18 +406,85 @@ module Ladb::OpenCutList
               # Highlight arcs (if activated)
               if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_CURVES)
                 face_manipulator.loop_manipulators.each do |loop_manipulator|
-                  loop_manipulator.edge_and_arc_manipulators.each do |manipulator|
-                    if manipulator.is_a?(ArcCurveManipulator)
 
-                      segments = Kuix::Segments.new
-                      segments.add_segments(manipulator.segments)
-                      segments.color = COLOR_BRAND
-                      segments.line_width = 3
-                      segments.on_top = true
-                      preview.append(segments)
+                  loop_manipulator.loop_def.portions.grep(Geometrix::ArcLoopPortionDef).each do |portion|
 
-                    end
+                    segments = Kuix::Segments.new
+                    segments.add_segments(portion.segments)
+                    segments.color = COLOR_BRAND
+                    segments.line_width = 3
+                    segments.on_top = true
+                    preview.append(segments)
+
+                    # xaxis
+                    line = Kuix::LineMotif.new
+                    line.start.copy!(portion.ellipse_def.center)
+                    line.end.copy!(portion.ellipse_def.center.transform(Geom::Transformation.translation(portion.ellipse_def.xaxis)))
+                    line.color = Kuix::COLOR_RED
+                    line.line_width = 2
+                    line.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+                    line.on_top = true
+                    preview.append(line)
+
+                    # yaxis
+                    line = Kuix::LineMotif.new
+                    line.start.copy!(portion.ellipse_def.center)
+                    line.end.copy!(portion.ellipse_def.center.transform(Geom::Transformation.translation(portion.ellipse_def.yaxis)))
+                    line.color = Kuix::COLOR_GREEN
+                    line.line_width = 2
+                    line.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+                    line.on_top = true
+                    preview.append(line)
+
+                    # normal
+                    line = Kuix::LineMotif.new
+                    line.start.copy!(portion.ellipse_def.center)
+                    line.end.copy!(portion.ellipse_def.center.transform(Geom::Transformation.translation(portion.normal)))
+                    line.color = Kuix::COLOR_BLUE
+                    line.line_width = 2
+                    line.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+                    line.on_top = true
+                    preview.append(line)
+
+                    # start point
+                    axes_helper = Kuix::AxesHelper.new(200, 5, Kuix::COLOR_GREEN)
+                    axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(portion.start_point.to_a))
+                    axes_helper.box_x.visible = false
+                    axes_helper.box_y.visible = false
+                    axes_helper.box_z.visible = false
+                    preview.append(axes_helper)
+
+                    # mid point
+                    axes_helper = Kuix::AxesHelper.new(200, 5, Kuix::COLOR_CYAN)
+                    axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(portion.mid_point.to_a))
+                    axes_helper.box_x.visible = false
+                    axes_helper.box_y.visible = false
+                    axes_helper.box_z.visible = false
+                    preview.append(axes_helper)
+
+                    # end point
+                    axes_helper = Kuix::AxesHelper.new(200, 5, Kuix::COLOR_RED)
+                    axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(portion.end_point.to_a))
+                    axes_helper.box_x.visible = false
+                    axes_helper.box_y.visible = false
+                    axes_helper.box_z.visible = false
+                    preview.append(axes_helper)
+
                   end
+
+                  # loop_manipulator.edge_and_arc_manipulators.each do |manipulator|
+                  #   if manipulator.is_a?(ArcCurveManipulator)
+                  #
+                  #     segments = Kuix::Segments.new
+                  #     segments.add_segments(manipulator.segments)
+                  #     segments.color = COLOR_BRAND
+                  #     segments.line_width = 3
+                  #     segments.on_top = true
+                  #     preview.append(segments)
+                  #
+                  #   end
+                  # end
+
                 end
               end
 

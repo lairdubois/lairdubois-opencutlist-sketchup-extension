@@ -613,6 +613,22 @@ module Ladb::OpenCutList
 
     # -----
 
+    def _dxf_write_point(file, x, y, layer = 0)
+
+      # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-FCEF5726-53AE-4C43-B4EA-C84EB8686A66
+
+      _dxf_write(file, 0, 'POINT')
+      _dxf_write_id(file)
+      _dxf_write_owner_id(file, @_dxf_model_space_id)
+      _dxf_write_sub_classes(file, [ 'AcDbEntity' ])
+      _dxf_write(file, 8, layer)
+      _dxf_write_sub_classes(file, [ 'AcDbPoint' ])
+      _dxf_write(file, 10, x)
+      _dxf_write(file, 20, y)
+      _dxf_write(file, 30, 0.0)
+
+    end
+
     def _dxf_write_line(file, x1, y1, x2, y2, layer = 0)
 
       # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-FCEF5726-53AE-4C43-B4EA-C84EB8686A66
