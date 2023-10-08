@@ -448,7 +448,16 @@ module Ladb::OpenCutList
 
                     # start point
                     axes_helper = Kuix::AxesHelper.new(200, 5, Kuix::COLOR_GREEN)
-                    axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(portion.start_point.x, portion.start_point.y, @active_drawing_def.bounds.max.z))
+                    axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(portion.start_point.to_a))
+                    axes_helper.box_x.visible = false
+                    axes_helper.box_y.visible = false
+                    axes_helper.box_z.visible = false
+                    preview.append(axes_helper)
+
+                    # mid point
+                    mid_point = portion.ellipse_def.point_at_angle(portion.start_angle + (portion.end_angle - portion.start_angle) / 2.0, true)
+                    axes_helper = Kuix::AxesHelper.new(200, 5, Kuix::COLOR_CYAN)
+                    axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(mid_point.x, mid_point.y, @active_drawing_def.bounds.max.z))
                     axes_helper.box_x.visible = false
                     axes_helper.box_y.visible = false
                     axes_helper.box_z.visible = false
@@ -456,7 +465,7 @@ module Ladb::OpenCutList
 
                     # end point
                     axes_helper = Kuix::AxesHelper.new(200, 5, Kuix::COLOR_RED)
-                    axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(portion.end_point.x, portion.end_point.y, @active_drawing_def.bounds.max.z))
+                    axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(portion.end_point.to_a))
                     axes_helper.box_x.visible = false
                     axes_helper.box_y.visible = false
                     axes_helper.box_z.visible = false

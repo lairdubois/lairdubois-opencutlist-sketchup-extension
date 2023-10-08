@@ -307,11 +307,11 @@ module Ladb::OpenCutList
                     start_angle = portion.start_angle
                     end_angle = portion.end_angle
                     center = portion.ellipse_def.center
-                    middle = portion.ellipse_def.point_at_angle((end_angle - start_angle) / 2.0, true)
+                    middle = portion.ellipse_def.point_at_angle(start_angle + (end_angle - start_angle) / 2.0, true)
 
                     rx = _convert(portion.ellipse_def.xradius, unit_converter)
                     ry = _convert(portion.ellipse_def.yradius, unit_converter)
-                    xrot = -portion.ellipse_def.xaxis.angle_between(X_AXIS).radians.round(6)
+                    xrot = -portion.ellipse_def.angle.radians.round(6)
                     lflag = 0
                     sflag = (middle - center).dot(_cw_normal(start_point - center)) > 0 ? 0 : 1
                     x1 = _convert(middle.x, unit_converter)

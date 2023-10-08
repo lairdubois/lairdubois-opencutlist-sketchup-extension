@@ -51,7 +51,8 @@ module Ladb::OpenCutList::Geometrix
 
       center = Geom::Point3d.new(
         (b * e - 2.0 * c * d) / discr,
-        (b * d - 2.0 * a * e) / discr
+        (b * d - 2.0 * a * e) / discr,
+        points[0].z
       )
 
       # Radius
@@ -65,6 +66,8 @@ module Ladb::OpenCutList::Geometrix
 
       # Angle
 
+      # angle = 0.5 * Math.atan2(2 * b, a - c)
+
       qaqc = q * a - q * c
       qb = q * b
 
@@ -77,11 +80,12 @@ module Ladb::OpenCutList::Geometrix
           angle = 0.75 * Math::PI
         end
       elsif qaqc > 0
-        if qb >= 0
+        # if qb >= 0
           angle = 0.5 * Math.atan(b / (a - c))
-        else
-          angle = 0.5 * Math.atan(b / (a - c)) + Math::PI
-        end
+        # else
+        #   puts "EEE"
+        #   angle = 0.5 * Math.atan(b / (a - c)) + Math::PI
+        # end
       else
         angle = 0.5 * (Math.atan(b / (a - c)) + Math::PI)
       end
@@ -132,7 +136,37 @@ module Ladb::OpenCutList::Geometrix
     # @return [Float] angle in radians
     #
     def self.ellipse_angle_at_point(ellipse_def, point)
-      -(ellipse_def.angle + Math.atan2(ellipse_def.center.x - point.x, ellipse_def.center.y - point.y) + Math::PI * 0.5)
+      angle = Math.atan2(point.y - ellipse_def.center.y, point.x - ellipse_def.center.x) - ellipse_def.angle
+      angle = 2.0 * Math::PI + angle if angle < 0
+      angle
+
+      # Math.atan2(point.y - ellipse_def.center.y, point.x - ellipse_def.center.x) - ellipse_def.angle
+      # -(ellipse_def.angle + Math.atan2(ellipse_def.center.x - point.x, ellipse_def.center.y - point.y) + Math::PI * 0.5)
+    end
+
+    # Get ellipse point at angle
+    #
+    # @param [EllipseDef] ellipse_def
+    # @param [Float] angle in radians
+    # @param [Boolean] absolute
+    #
+    # @return [Geom::Point3d]
+    #
+    def self.ellipse_point_at_angle(ellipse_def, angle, absolute = false)
+
+      angle = angle - ellipse_def.angle
+      p = Geom::Point3d.new(
+        ellipse_def.center.x + ellipse_def.xradius * Math.cos(angle),
+        ellipse_def.center.y + ellipse_def.yradius * Math.sin(angle),
+        ellipse_def.center.z
+      )
+      p.transform(Geom::Transformation.rotation(ellipse_def.center, Z_AXIS, ellipse_def.angle))
+
+      # vx = Geom::Vector3d.new(ellipse_def.xaxis.x * Math.cos(angle), ellipse_def.xaxis.y * Math.cos(angle), ellipse_def.center.z)
+      # vy = Geom::Vector3d.new(ellipse_def.yaxis.x * Math.sin(angle), ellipse_def.yaxis.y * Math.sin(angle), ellipse_def.center.z)
+      # v = vx + vy
+      # v = v + Geom::Vector3d.new(ellipse_def.center.x, ellipse_def.center.y, 0) if absolute
+      # Geom::Point3d.new(v.to_a)
     end
 
   end
@@ -169,8 +203,8 @@ module Ladb::OpenCutList::Geometrix
     end
 
     def point_at_angle(angle, absolute = false)
-      vx = Geom::Vector3d.new(xaxis.x * Math.cos(angle), xaxis.y * Math.cos(angle), 0)
-      vy = Geom::Vector3d.new(yaxis.x * Math.sin(angle), yaxis.y * Math.sin(angle), 0)
+      vx = Geom::Vector3d.new(xaxis.x * Math.cos(angle), xaxis.y * Math.cos(angle), @center.z)
+      vy = Geom::Vector3d.new(yaxis.x * Math.sin(angle), yaxis.y * Math.sin(angle), @center.z)
       v = vx + vy
       v = v + Geom::Vector3d.new(center.to_a) if absolute
       Geom::Point3d.new(v.to_a)
