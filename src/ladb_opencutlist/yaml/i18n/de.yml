@@ -281,6 +281,7 @@ tab:
       symmetrical: Die Erkennung gespiegelter Teile ist bei diesem Teil deaktiviert
       ignore_grain_direction: Die Faserrichtung wird für dieses Teil nicht beachtet
       auto_oriented: Dieses Teil wurde automatisch orientiert
+      oko_label_filter: "Badge einschließen / ausschließen"
       add_label_filter: "Nach '{{ label }}' auswählen"
       remove_label_filter: "Auswahl nach '{{ label }}' aufheben"
       add_edge_material_name_filter: "Nach '{{ material_name }}' auswählen"
