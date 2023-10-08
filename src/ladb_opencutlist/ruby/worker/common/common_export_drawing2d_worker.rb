@@ -249,7 +249,7 @@ module Ladb::OpenCutList
                 attributes.merge({ 'shaper:cutDepth': @max_depth }) if @max_depth > 0
               end
 
-              if @curves
+              if @curves && loop_manipulator.loop_def
 
                 # Extract loop points from ordered edges and arc curves
                 data = "#{loop_manipulator.loop_def.portions.map.with_index { |portion, index|
