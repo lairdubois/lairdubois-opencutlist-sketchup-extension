@@ -307,7 +307,7 @@ module Ladb::OpenCutList
                     start_angle = portion.start_angle
                     end_angle = portion.end_angle
                     center = portion.ellipse_def.center
-                    middle = portion.ellipse_def.point_at_angle(start_angle + (end_angle - start_angle) / 2.0, true)
+                    middle = portion.mid_point
 
                     rx = _convert(portion.ellipse_def.xradius, unit_converter)
                     ry = _convert(portion.ellipse_def.yradius, unit_converter)

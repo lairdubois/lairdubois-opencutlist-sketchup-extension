@@ -87,7 +87,6 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
     assert_equal(false, ellipse_def.circular?, 'circular?')
     assert_angles(ellipse_def, @ellipse_x0_y0_xr20_yr20_a90, 'angles (ellipse_x0_y0_xr20_yr20_a90)')
 
-
   end
 
   private

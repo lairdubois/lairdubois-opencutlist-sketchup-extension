@@ -201,14 +201,6 @@ module Ladb::OpenCutList::Geometrix
       @yaxis.length
     end
 
-    def point_at_angle(angle, absolute = false)
-      vx = Geom::Vector3d.new(xaxis.x * Math.cos(angle), xaxis.y * Math.cos(angle), @center.z)
-      vy = Geom::Vector3d.new(yaxis.x * Math.sin(angle), yaxis.y * Math.sin(angle), @center.z)
-      v = vx + vy
-      v = v + Geom::Vector3d.new(center.to_a) if absolute
-      Geom::Point3d.new(v.to_a)
-    end
-
     def ==(other)
       @a - other.a +
       @b - other.b +

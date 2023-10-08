@@ -455,9 +455,8 @@ module Ladb::OpenCutList
                     preview.append(axes_helper)
 
                     # mid point
-                    mid_point = portion.ellipse_def.point_at_angle(portion.start_angle + (portion.end_angle - portion.start_angle) / 2.0, true)
                     axes_helper = Kuix::AxesHelper.new(200, 5, Kuix::COLOR_CYAN)
-                    axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(mid_point.x, mid_point.y, @active_drawing_def.bounds.max.z))
+                    axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(portion.mid_point.to_a))
                     axes_helper.box_x.visible = false
                     axes_helper.box_y.visible = false
                     axes_helper.box_z.visible = false

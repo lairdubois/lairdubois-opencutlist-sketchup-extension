@@ -208,6 +208,26 @@ module Ladb::OpenCutList::Geometrix
       EllipseFinder.ellipse_angle_at_point(@ellipse_def, end_point)
     end
 
+    def mid_angle
+
+      as = start_angle
+      ae = end_angle
+      n = normal
+
+      diff = ae - as
+      if diff == 0
+        diff = 2.0 * Math::PI
+      elsif diff < 0 && n.samedirection?(Z_AXIS) || diff > 0 && !n.samedirection?(Z_AXIS)
+        diff = diff - 2.0 * Math::PI
+      end
+
+      as + (diff / 2.0)
+    end
+
+    def mid_point
+      EllipseFinder.ellipse_point_at_angle(@ellipse_def, mid_angle)
+    end
+
   end
 
 end
