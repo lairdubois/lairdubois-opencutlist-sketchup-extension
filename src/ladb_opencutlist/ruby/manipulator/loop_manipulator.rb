@@ -19,7 +19,6 @@ module Ladb::OpenCutList
       @points = nil
       @segments = nil
       @edge_and_arc_portions = nil
-      @edge_and_arc_manipulators = nil
     end
 
     # -----
@@ -56,25 +55,6 @@ module Ladb::OpenCutList
         @loop_def = Geometrix::LoopFinder.find_loop_def(points)
       end
       @loop_def
-    end
-
-    def edge_and_arc_manipulators
-      if @edge_and_arc_manipulators.nil?
-        captured_curves = []
-        @edge_and_arc_manipulators = []
-        @loop.edges.each do |edge|
-          if edge.curve.is_a?(Sketchup::ArcCurve) && edge.curve.normal.parallel?(@loop.face.normal)
-            unless captured_curves.include?(edge.curve)
-              @edge_and_arc_manipulators << ArcCurveManipulator.new(edge.curve, @transformation)
-              captured_curves << edge.curve
-            end
-          else
-            @edge_and_arc_manipulators << EdgeManipulator.new(edge, @transformation)
-          end
-        end
-        @edge_and_arc_manipulators.reverse! if flipped?
-      end
-      @edge_and_arc_manipulators
     end
 
     # -----

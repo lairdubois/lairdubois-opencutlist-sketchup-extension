@@ -138,7 +138,6 @@ module Ladb::OpenCutList
                   ae = end_angle
 
                   _dxf_write_ellipse(file, cx, cy, vx, vy, vr, as, ae, LAYER_DRAWING)
-                  _dxf_write_point(file, cx, cy, LAYER_GUIDES)
 
                 else
 

@@ -50,14 +50,16 @@ module Ladb::OpenCutList::Geometrix
               va = vaa
 
               ellipse_edge_count += 1
+
             end
 
-            if ellipse_edge_count >= 6
+            if ellipse_edge_count >= 5
 
               # Append Arc portion
               loop_def.portions << ArcLoopPortionDef.new(loop_def, ellipse_start_index, ellipse_edge_count, ellipse_def)
 
               index = ellipse_start_index + ellipse_edge_count
+
               next
             end
 
@@ -66,7 +68,7 @@ module Ladb::OpenCutList::Geometrix
         end
 
         # Append Edge portion
-        loop_def.portions << EdgeLoopPortionDef.new(loop_def, index)
+        loop_def.portions << LineLoopPortionDef.new(loop_def, index)
 
         index += 1
 
@@ -176,7 +178,7 @@ module Ladb::OpenCutList::Geometrix
 
   end
 
-  class EdgeLoopPortionDef < LoopPortionDef
+  class LineLoopPortionDef < LoopPortionDef
 
     def initialize(loop_def, start_index)
       super(loop_def, start_index, 1)

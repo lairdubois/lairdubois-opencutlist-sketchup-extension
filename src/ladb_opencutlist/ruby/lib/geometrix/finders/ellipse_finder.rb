@@ -81,7 +81,6 @@ module Ladb::OpenCutList::Geometrix
         # if qb >= 0
           angle = 0.5 * Math.atan(b / (a - c))
         # else
-        #   puts "EEE"
         #   angle = 0.5 * Math.atan(b / (a - c)) + Math::PI
         # end
       else
@@ -122,8 +121,8 @@ module Ladb::OpenCutList::Geometrix
     # @return [Boolean]
     #
     def self.ellipse_include_point?(ellipse_def, point)
-      # ax^2 + bxy + cy^2 + dx + ey + f = 0
-      (ellipse_def.a * point.x**2 + ellipse_def.b * point.x * point.y + ellipse_def.c * point.y**2 + ellipse_def.d * point.x + ellipse_def.e * point.y + ellipse_def.f).abs < 1e-8
+      # (x - cx)^2 / xradius^2 + (y - cy)^2 / yradius^2 = 1
+      ((point.x - ellipse_def.center.x)**2 / ellipse_def.xradius**2 + (point.y - ellipse_def.center.y)**2 / ellipse_def.yradius**2 - 1).abs < 1e-8
     end
 
     # Get ellipse CCW angle at point
