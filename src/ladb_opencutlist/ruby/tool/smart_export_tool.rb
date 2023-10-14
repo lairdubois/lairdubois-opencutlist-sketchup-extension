@@ -9,7 +9,6 @@ module Ladb::OpenCutList
   require_relative '../manipulator/face_manipulator'
   require_relative '../manipulator/edge_manipulator'
   require_relative '../manipulator/loop_manipulator'
-  require_relative '../manipulator/arc_curve_manipulator'
   require_relative '../worker/common/common_export_drawing2d_worker'
   require_relative '../worker/common/common_export_drawing3d_worker'
   require_relative '../worker/common/common_decompose_drawing_worker'
