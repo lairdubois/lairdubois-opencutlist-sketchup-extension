@@ -1318,6 +1318,7 @@ tab:
     credits_translators: |
       - [Radek Rýznar](https://onlinesketchup.cz) (*česky*)
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*anglicky*, *německy*)
+      - Gildas Boureau (*francouzská* dokumentace)
       - Vladimir Badulya (*ruský*)
       - Pierluigi Colombo (*italský*)
       - Nayton Sanches Barbosa, opraveno a revidováno [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*portugalský*)
@@ -1327,6 +1328,8 @@ tab:
       - Soul Issam (*arabština*), bez RTL rozhraní
       - Nguyen Ngoc Tan (*vietnamština*)
       - Andrii Toporivskyi, Kostiantyn Shcherbey (*ukrajina*)
+      - [刘涛](https://www.liutao91.cn) (*zjednodušená čínština*)
+      - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*holandský*)
     credits_description: |
       Vývoj tohoto rozšíření souvisí s projektem sdílení platforem [L'Air du Bois](https://www.lairdubois.fr).
       Toto rozšíření je také *Open Source* a je k dispozici pod licencí [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) na [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).

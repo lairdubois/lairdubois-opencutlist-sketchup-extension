@@ -1318,6 +1318,7 @@ tab:
     credits_translators: |
       - Pierluigi Colombo (*italiano*)
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*inglese*, *tedesco*)
+      - Gildas Boureau (documentazione *francese*)
       - Vladimir Badulya (*russo*)
       - Nayton Sanches Barbosa, corretto e rivisto da [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*portoghese*)
       - [Leonardo Romero Giménez](https://latablamarilla.com/) (*spagnolo*)
@@ -1327,6 +1328,8 @@ tab:
       - Soul Issam (*arabico*), interfaccia RTL non anchora implementata
       - Nguyen Ngoc Tan (*vietnamita*)
       - Andrii Toporivskyi, Kostiantyn Shcherbey (*ucraina*)
+      - [刘涛](https://www.liutao91.cn) (*cinese semplificato*)
+      - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*olandese*)
     credits_description: |
       Lo sviluppo di questa estensione è collegata alla piattaforma condivisa del progetto [L'Air du Bois](https://www.lairdubois.fr).
       Questa estensione è *Open Source* e disponibile con licenza [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) su [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
