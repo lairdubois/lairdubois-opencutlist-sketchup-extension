@@ -1316,6 +1316,7 @@ tab:
       *OpenCutList* من تطوير [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) و أيضا [Martin Müller](https://www.lairdubois.fr/@mobilarte). *قائمة بجميع [المساهمين](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: المترجمون
     credits_translators: |
+      - عصام سول (*العربية*) واجهة العمل من اليمين إلى اليسار غير مدعومة بعد
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*الإنجليزية* و *الألمانية*)
       - Vladimir Badulya (*الروسية*)
       - Pierluigi Colombo (*الإيطالية*)
@@ -1324,7 +1325,6 @@ tab:
       - [Radek Rýznar](https://onlinesketchup.cz) (*التشيكية*)
       - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*البولندية*)
       - Sergey Isupov (*اللغة العبرية*) واجهة العمل من اليمين إلى اليسار غير مدعومة بعد
-      - عصام سول (*العربية*) واجهة العمل من اليمين إلى اليسار غير مدعومة بعد
       - Nguyen Ngoc Tan (*فيتنامي*)
       - Andriy Toporivskyi، Kostyantyn Shcherbey (*الأوكرانية*)
     credits_description: |

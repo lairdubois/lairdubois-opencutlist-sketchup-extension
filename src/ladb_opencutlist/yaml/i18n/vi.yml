@@ -1316,6 +1316,7 @@ tab:
       *OpenCutList* được phát triển bởi [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) và [Martin Müller](https://www.lairdubois.fr/@mobilarte). Liệt kê tất cả [người đóng góp](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: Bản dịch
     credits_translators: |
+      - Nguyễn Ngọc Tân (*Tiếng Việt*)
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*Tiếng Anh*, *Tiếng Đức*)
       - Vladimir Badulya (*Tiếng Nga*)
       - Pierluigi Colombo (*Tiếng Ý*)
@@ -1325,7 +1326,6 @@ tab:
       - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*Tiếng Ba Lan*)
       - Sergey Isupov (*Tiếng Do Thái*), Giao diện RTL chưa được hỗ trợ
       - Soul Issam (*Tiếng Ả Rập*), Giao diện RTL chưa được hỗ trợ
-      - Nguyễn Ngọc Tân (*Tiếng Việt*)
       - Andriy Toporivskyi, Kostyantyn Shcherbey (*Tiếng Ukraine*)
     credits_description: |
       Việc phát triển phần mở rộng này được liên kết với dự án chia sẻ [L'Air du Bois](https://www.lairdubois.fr).
