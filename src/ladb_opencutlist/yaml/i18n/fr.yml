@@ -83,6 +83,7 @@ core:
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
+      reset_dialog_position: Replacer la fenêtre
   toolbar:
     name: OpenCutList
     command:

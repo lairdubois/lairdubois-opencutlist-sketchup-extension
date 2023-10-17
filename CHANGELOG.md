@@ -17,6 +17,7 @@ in 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added table row size options
   * Added Toggle button in cutlist tags filters to switch from "present" to "not present"
   * Added Mass and Currency custom precision in settings tab
+  * Added item to reset dialog position to default in extensions menu
   * Changed material color bullet from drop to circle
 
 * 5.0.4 (2023-09-14)

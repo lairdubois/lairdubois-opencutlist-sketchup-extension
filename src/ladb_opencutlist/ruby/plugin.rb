@@ -802,6 +802,10 @@ module Ladb::OpenCutList
       submenu.add_item(get_i18n_string('core.menu.item.smart_export')) {
         Sketchup.active_model.select_tool(SmartExportTool.new) if Sketchup.active_model
       }
+      submenu.add_separator
+      submenu.add_item(get_i18n_string('core.menu.item.reset_dialog_position')) {
+        dialog_reset_position
+      }
 
       # Setup Context Menu
       UI.add_context_menu_handler do |context_menu|
@@ -1076,6 +1080,17 @@ module Ladb::OpenCutList
 
     def toggle_dialog
       unless hide_dialog
+        show_dialog
+      end
+    end
+
+    def dialog_reset_position
+      @dialog_left = DIALOG_DEFAULT_LEFT
+      @dialog_top = DIALOG_DEFAULT_TOP
+      dialog_store_position(@dialog_left, @dialog_top)
+      if @dialog
+        dialog_set_position(@dialog_left, @dialog_top)
+      else
         show_dialog
       end
     end
