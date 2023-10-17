@@ -1235,9 +1235,9 @@ tab:
       default: |
         השיפור המתמיד של *OpenCutList* חשוב לנו מאוד והפרויקט ממשיך להזדקק לעזרתכם לעדכון הבא!
       cuttingdiagram_export: |
-        חשוב לנו שניתן להתאים את *OpenCutList* לציפיות השונות מאוד של המשתמשים לפונקציית *תוכנית חיתוך*.
-        כדי להרחיב עוד יותר את האפשרויות, ברצוננו לאפשר ייצוא של תוכניות חיתוך בפורמט **SVG** ו- **DXF**.
-        בכך שאתה מספק לנו את האמצעים לעבוד על היצוא הזה, אתה נותן לנו את ההזדמנות לעזור לך להפיק את המרב מ-*OpenCutList*.
+        חשוב לנו ש*OpenCutList* יוכל להתאים לציפיות המגוונות מאוד של המשתמשים לפונקציית *תוכנית חיתוך*.
+        כדי להרחיב עוד יותר את האפשרויות, נרצה לאפשר לייצא תוכניות חיתוך בפורמט **SVG** ו- **DXF**.
+        על ידי מתן האמצעים לעבודה על יצוא אלה, אתה נותן לנו את ההזדמנות לאפשר לך להפיק את המרב מ-*OpenCutList*.
       layout: |
         המטרה של מודול זה היא לאפשר לך להדפיס בקלות תצוגה מקדימה של הפרויקט שלך כ**תצוגה מפוצצת** עם זיהוי ממידע שנוצר ברשימת החלקים.
     objective_crowdfunding: |
@@ -1316,17 +1316,20 @@ tab:
       *OpenCutList* פותח על ידי [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) ו- [Martin Müller](https://www.lairdubois.fr/@mobilarte). *רשום את [התורמים](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: תרגומים
     credits_translators: |
+      - Sergey Isupov (*עברית*), ללא ממשק מימין לשמאל
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*אנגלית*, *גרמנית*)
+      - Gildas Boureau (תיעוד *צרפתי*)
       - Vladimir Badulya (*רוסית*)
       - Pierluigi Colombo (*איטלקית*)
       - Nayton Sanches Barbosa, תוקן ונערך [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*פורטוגזית*)
       - [Leonardo Romero Giménez](https://latablamarilla.com/) (*ספרדית*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*צ'כית*)
       - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*פולנית*)
-      - Sergey Isupov (*עברית*), ללא ממשק מימין לשמאל
       - Soul Issam (*ערבית*), ללא ממשק מימין לשמאל
       - Nguyen Ngoc Tan (*וייטנאמית*)
       - Andrii Toporivskyi, Kostiantyn Shcherbey (*אוקראינית*)
+      - [刘涛](https://www.liutao91.cn) (*סינית פשוטה*)
+      - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*הולנדית*)
     credits_description: |
       פיתוח הרחבה זו הוא חלק מפרויקט פלטפורמת השיתוף [L'Air du Bois](https://www.lairdubois.fr).
       ובנוסף, הוא גם *קוד פתוח* וזמין ברישיון [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE)sur son [dépôt GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).

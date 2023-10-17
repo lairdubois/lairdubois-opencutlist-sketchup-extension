@@ -1316,17 +1316,20 @@ tab:
       *OpenCutList* jest rozwijany przez [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) and [Martin Müller](https://www.lairdubois.fr/@mobilarte). *[Wszyscy współautorzy](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: Tłumaczenia
     credits_translators: |
+      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*Polski*)
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*Angielski*, *Niemiecki*)
+      - Gildas Boureau (dokumentacja *francuska*)
       - Vladimir Badulya (*Rosyjski*)
       - Pierluigi Colombo (*Włoski*)
       - Nayton Sanches Barbosa, poprawione i sprawdzone przez [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*Portugalski*)
       - [Leonardo Romero Giménez](https://latablamarilla.com/) (*Hiszpański*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*Czeski*)
-      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*Polski*)
       - Sergey Isupov (*Hebrajski*), interfejs RTL jeszcze nie obsługiwany
       - Soul Issam (*Arabski*), interfejs RTL jeszcze nie obsługiwany
       - Nguyen Ngoc Tan (*Wietnamski*)
       - Andrii Toporivskyi, Kostiantyn Shcherbey (*Ukraina*)
+      - [刘涛](https://www.liutao91.cn) (*chiński uproszczony*)
+      - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*holenderski*)
     credits_description: |
       Rozwój tego rozszerzenia jest częścią projektu platformy udostępniania [L'Air du Bois](https://www.lairdubois.fr).
       To rozszerzenie jest *Open Source* i jest dostępne na licencji [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) w swoim repozytorium [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).

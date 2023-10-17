@@ -871,7 +871,7 @@ tab:
       option_parts_colored_0: Безбарвний
       option_parts_colored_1: Колір матеріалу
       option_parts_colored_help: Дозволяє вибрати зовнішній вигляд деталей.
-      option_parts_opacity: Непрозорість
+      option_parts_opacity: Прозорість
       option_parts_opacity_0: Прозорий
       option_parts_opacity_1: Непрозорий
       option_parts_opacity_help: Дозволяє вибрати прозорість деталей.
@@ -1316,7 +1316,9 @@ tab:
       *OpenCutList* розроблений [Борис Болант](https://www.lairdubois.fr/@borisbeaulant) і [Мартін Мюллер](https://www.lairdubois.fr/@mobilarte). *Список [співавторів](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: Переклади
     credits_translators: |
+      - Андрій Топорівський, Костянтин Щербей (*українська*)
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*англійська*, *німецька*)
+      - Gildas Boureau (*французька* документація)
       - Vladimir Badulya (*російська*)
       - Pierluigi Colombo (*італійська*)
       - Nayton Sanches Barbosa, виправлення і рецензування [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*португальська*)
@@ -1326,7 +1328,8 @@ tab:
       - Sergey Isupov (*іврит*), без інтерфейсу зправа на ліво
       - Soul Issam (*арабська*), без інтерфейсу зправа на ліво
       - Nguyen Ngoc Tan (*в’єтнамська*)
-      - Андрій Топорівський, Костянтин Щербей (*українська*)
+      - [刘涛](https://www.liutao91.cn) (*спрощена китайська*)
+      - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*голландський*)
     credits_description: |
       Розробка цього розширення є частиною проекту платформи спільного доступу [L'Air du Bois](https://www.lairdubois.fr).
       І як такий, він також є *Open Source* і доступний під [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) на своєму [репозиторій GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
@@ -1360,14 +1363,14 @@ tool:
     filter_6: $t(tab.materials.type_6)
     action_0: Фарбування деталей
     action_0_status: "Натисніть на деталь, щоб застосувати матеріал до її екземпляра"
-    action_1: Розфарбувати деталь
-    action_1_status: "Клацніть край частини панелі, щоб застосувати до нього матеріал «$t(tab.materials.type_4)»"
-    action_2: Очистити сторону
-    action_2_status: "Клацніть на грані частини панелі, щоб застосувати до неї матеріал «$t(tab.materials.type_6)»"
+    action_1: Розфарбувати торці
+    action_1_status: "Натисніть на край деталі, щоб застосувати до неї матеріал«$t(tab.materials.type_4)»"
+    action_2: Розфарбувати площину
+    action_2_status: "Клацніть на площині деталі, щоб застосувати до неї матеріал «$t(tab.materials.type_6)»"
     action_3: Очистити деталь
     action_3_status: "Натисніть на площину, щоб взяти зразок матеріалу"
     action_4: Очистити
-    action_4_status: "Натисніть на частину, щоб видалити всі матеріали з її визначення та всіх екземплярів"
+    action_4_status: "Натисніть на деталь, щоб видалити всі матеріали з її визначення та всіх екземплярів"
     edges: "{{ count }} торець"
     edges_plural: "{{ count }} торців"
     edge_ymin: Довжина 1

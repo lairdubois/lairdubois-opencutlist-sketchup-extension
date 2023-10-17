@@ -767,7 +767,7 @@ tab:
         no_parts: Nenhuma peça.
         no_sheet: Os tamanhos de chapa padrão estão configurados incorretamente e não há cortes disponíveis.
         no_placement_possible_1d: "Nenhuma peça pode ser colocada (barra padrão muito pequena, margem muito grande, lâmina de serra muito grossa, ...)."
-        no_placement_possible_2d: "Não foi possível colocar nenhuma peça (painel standard demasiado pequeno, margem demasiado grande, lâmina de serra demasiado grossa, etc.)."
+        no_placement_possible_2d: "Não foi possível colocar nenhuma peça (painel standard demasiado pequeno, margem demasiado grande, lâmina de serra demasiado grossa, ...)."
         bad_error: "Erro de algoritmo. Favor entrar em contato com os desenvolvedores, pois você tem um caso interessante aqui."
         unplaced_parts: "**1 peça** é muito grande para colocar."
         unplaced_parts_plural: "**{{ count }} peças** são grandes demais para serem colocadas."
@@ -1316,10 +1316,11 @@ tab:
       *OpenCutList* é desenvolvido por [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) o [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Listar [colaboradores](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: Traduções
     credits_translators: |
+      - Nayton Sanches Barbosa, revisado e ampliado por [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*Português*)
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*Inglês*, *Alemão*)
+      - Gildas Boureau (documentação *francesa*)
       - Vladimir Badulya (*Russo*)
       - Pierluigi Colombo (*Italiano*)
-      - Nayton Sanches Barbosa, revisado e ampliado por [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*Português*)
       - [Leonardo Romero Giménez](https://latablamarilla.com/) (*Espanhol*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*Tcheco*)
       - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*Polonês*)
@@ -1327,6 +1328,8 @@ tab:
       - Soul Issam (*Árabe*), sem interface RTL
       - Nguyen Ngoc Tan (*Vietnamês*)
       - Andrii Toporivskyi, Kostiantyn Shcherbey (*Ucraniano*)
+      - [刘涛](https://www.liutao91.cn) (*chinês simplificado*)
+      - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*holandês*)
     credits_description: |
       O desenvolvimento desta extensão faz parte do projeto da plataforma de compartilhamento [L'Air du Bois](https://www.lairdubois.fr).
       E como tal, é também *Open Source* e está disponível sob licença [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) em seu [repositório GitHub].(https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).

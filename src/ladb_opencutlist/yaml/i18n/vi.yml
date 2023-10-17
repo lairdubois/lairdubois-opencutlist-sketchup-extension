@@ -1316,7 +1316,9 @@ tab:
       *OpenCutList* được phát triển bởi [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) và [Martin Müller](https://www.lairdubois.fr/@mobilarte). Liệt kê tất cả [người đóng góp](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: Bản dịch
     credits_translators: |
+      - Nguyễn Ngọc Tân (*Tiếng Việt*)
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*Tiếng Anh*, *Tiếng Đức*)
+      - Gildas Boureau (tài liệu *tiếng Pháp*)
       - Vladimir Badulya (*Tiếng Nga*)
       - Pierluigi Colombo (*Tiếng Ý*)
       - Nayton Sanches Barbosa, được hiệu chỉnh và sửa đổi bởi [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*Tiếng Bồ Đào Nha*)
@@ -1325,8 +1327,9 @@ tab:
       - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*Tiếng Ba Lan*)
       - Sergey Isupov (*Tiếng Do Thái*), Giao diện RTL chưa được hỗ trợ
       - Soul Issam (*Tiếng Ả Rập*), Giao diện RTL chưa được hỗ trợ
-      - Nguyễn Ngọc Tân (*Tiếng Việt*)
       - Andriy Toporivskyi, Kostyantyn Shcherbey (*Tiếng Ukraine*)
+      - [刘涛](https://www.liutao91.cn) (*tiếng Trung giản thể*)
+      - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*tiếng Hà Lan*)
     credits_description: |
       Việc phát triển phần mở rộng này được liên kết với dự án chia sẻ [L'Air du Bois](https://www.lairdubois.fr).
       Tiện ích mở rộng này cũng là *Nguồn mở* và có sẵn theo giấy phép [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) giấy phép trên [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
