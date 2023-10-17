@@ -387,15 +387,21 @@
         var $selectLengthPrecision = $('#ladb_model_select_length_precision', that.$element);
         var $inputSuppressUnitsDisplay = $('#ladb_model_input_suppress_units_display', that.$element);
         var $selectMassUnit = $('#ladb_model_select_mass_unit', that.$element);
+        var $selectMassPrecision = $('#ladb_model_select_mass_precision', that.$element);
         var $inputCurrencySymbol = $('#ladb_model_input_currency_symbol', that.$element);
+        var $selectCurrencyPrecision = $('#ladb_model_select_currency_precision', that.$element);
 
         var fnFetchOptions = function (options) {
             options.mass_unit = parseInt($selectMassUnit.selectpicker('val'));
+            options.mass_precision = parseInt($selectMassPrecision.selectpicker('val'));
             options.currency_symbol = $inputCurrencySymbol.val();
+            options.currency_precision = parseInt($selectCurrencyPrecision.val());
         };
         var fnFillInputs = function (options) {
             $selectMassUnit.selectpicker('val', options.mass_unit);
+            $selectMassPrecision.selectpicker('val', options.mass_precision);
             $inputCurrencySymbol.val(options.currency_symbol);
+            $selectCurrencyPrecision.selectpicker('val', options.currency_precision);
         };
         var fnAdaptLengthPrecisionToFormat = function () {
             if (modelLengthFormat === 0 /* DECIMAL */ || modelLengthFormat === 2 /* ENGINEERING */) {
@@ -473,6 +479,8 @@
         $selectLengthFormat.selectpicker(SELECT_PICKER_OPTIONS);
         $selectLengthPrecision.selectpicker(SELECT_PICKER_OPTIONS);
         $selectMassUnit.selectpicker(SELECT_PICKER_OPTIONS);
+        $selectMassPrecision.selectpicker(SELECT_PICKER_OPTIONS);
+        $selectCurrencyPrecision.selectpicker(SELECT_PICKER_OPTIONS);
 
         fnRetrieveModelOptions();
 
@@ -513,7 +521,9 @@
             })
         ;
         $selectMassUnit.on('change', fnSaveOptions);
+        $selectMassPrecision.on('change', fnSaveOptions);
         $inputCurrencySymbol.on('change', fnSaveOptions);
+        $selectCurrencyPrecision.on('change', fnSaveOptions);
 
         // Events
 

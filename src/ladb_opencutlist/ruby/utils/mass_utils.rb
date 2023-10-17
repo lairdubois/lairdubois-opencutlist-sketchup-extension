@@ -27,6 +27,7 @@ module Ladb::OpenCutList
     def fetch_mass_options
       settings_model = Plugin.instance.get_model_preset('settings_model')
       @mass_unit = settings_model['mass_unit'].to_i
+      @mass_precision = settings_model['mass_precision'].to_i
     end
 
     def get_symbol
@@ -82,7 +83,7 @@ module Ladb::OpenCutList
     # local unit settings.
     #
     def format_to_readable_mass(f)
-      UnitUtils.format_readable(f, get_strippedname, 0, 2)
+      UnitUtils.format_readable(f, get_strippedname, @mass_precision, [ 2, @mass_precision ].max)
     end
 
   end

@@ -1357,7 +1357,9 @@ tab:
     length_precision: Précision
     suppress_units_display: Afficher l'unité de longueur à chaque valeur
     mass_unit: Unité de masse
+    mass_precision: Précision
     currency_symbol: Symbole monétaire
+    currency_precision: Précision
     presets:
       export_global_presets: Exporter les préréglages
       export_global_presets_help: |

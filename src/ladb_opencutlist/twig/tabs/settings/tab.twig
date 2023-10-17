@@ -144,18 +144,44 @@
                         </div>
                     </section>
                     <hr>
-                    <section style="position: relative;">
-                        {% include 'components/_widget-preset.twig' with { 'top':0, 'right':0 } %}
-                        <div class="form-group">
-                            <label>{{ 'tab.settings.mass_unit'|i18next }}</label>
-                            <select id="ladb_model_select_mass_unit" class="form-control">
-                                <option data-content="{{ 'default.unit_mass_0'|i18next }}">0</option>
-                                <option data-content="{{ 'default.unit_mass_1'|i18next }}">1</option>
-                            </select>
+                    <section class="row">
+                        <div class="col-xs-12 text-right">
+                            {% include 'components/_widget-preset.twig' %}
                         </div>
-                        <div class="form-group">
-                            <label>{{ 'tab.settings.currency_symbol'|i18next }}</label>
-                            <input id="ladb_model_input_currency_symbol" class="form-control">
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label>{{ 'tab.settings.mass_unit'|i18next }}</label>
+                                <select id="ladb_model_select_mass_unit" class="form-control">
+                                    <option data-content="{{ 'default.unit_mass_0'|i18next }}">0</option>
+                                    <option data-content="{{ 'default.unit_mass_1'|i18next }}">1</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label>{{ 'tab.settings.mass_precision'|i18next }}</label>
+                                <select id="ladb_model_select_mass_precision" class="form-control">
+                                    <option data-content="0">0</option>
+                                    <option data-content="0{{ capabilities.decimal_separator }}0">1</option>
+                                    <option data-content="0{{ capabilities.decimal_separator }}00">2</option>
+                                    <option data-content="0{{ capabilities.decimal_separator }}000">3</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label>{{ 'tab.settings.currency_symbol'|i18next }}</label>
+                                <input id="ladb_model_input_currency_symbol" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label>{{ 'tab.settings.currency_precision'|i18next }}</label>
+                                <select id="ladb_model_select_currency_precision" class="form-control">
+                                    <option data-content="0">0</option>
+                                    <option data-content="0{{ capabilities.decimal_separator }}00">2</option>
+                                </select>
+                            </div>
                         </div>
                     </section>
                 </div>
