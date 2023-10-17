@@ -1520,8 +1520,8 @@ tool:
     action_option_2_1_status: Export all faces in the part that are coplanar with the target face
     action_option_2_2_status: Export all faces parallel to the target face contained in the part
     action_option_3_0_status: Project part origin
-    action_option_3_1_status: Export as guides the floating and coplanar edges of the target face contained in the part
-    action_option_3_2_status: Smooth out circles and arcs
+    action_option_3_1_status: Smooth out circles and arcs
+    action_option_3_2_status: Export as guides the floating and coplanar edges of the target face contained in the part
     error:
       not_part: The target object is not a part
       not_flat_face: The target surface is not planar

@@ -1522,9 +1522,10 @@ tool:
     action_option_2_0_status: Exporter uniquement la face ciblée
     action_option_2_1_status: Exporter toutes les faces coplanaires à la face ciblée contenues dans la pièce
     action_option_2_2_status: Exporter toutes les faces parallèles à la face ciblée contenues dans la pièce
+    action_option_2_3_status: Exporter toutes les faces exposées
     action_option_3_0_status: Projeter l'origine de la pièce
-    action_option_3_1_status: Exporter comme guides les arrêtes flottantes et coplanaires à la face ciblée contenues dans la pièce
-    action_option_3_2_status: Arrondir les cercles et arcs
+    action_option_3_1_status: Arrondir les cercles et arcs
+    action_option_3_2_status: Exporter comme guides les arrêtes flottantes et coplanaires à la face ciblée contenues dans la pièce
     error:
       not_part: L'objet ciblé n'est pas une pièce
       not_flat_face: La surface ciblée n'est pas plane
