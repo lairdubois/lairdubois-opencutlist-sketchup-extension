@@ -1233,7 +1233,7 @@ tab:
       cuttingdiagram_export: Финансирование разработки новой функции
     objective_details:
       default: |
-        Постоянное совершенствование OpenCutList очень важно для всех нас и Ваша финансовая помощь, по-прежнему, станет основой для следующего обновления !
+        Постоянное совершенствование *OpenCutList* очень важно для всех нас и Ваша финансовая помощь, по-прежнему, станет основой для следующего обновления !
       cuttingdiagram_export: |
         Для нас важно, чтобы *OpenCutList* соответствовал ожиданиям пользователей, использующих расчет *карт раскроя*.
         Для расширения возможностей плагина мы хотели бы сделать возможным экспорт карт раскроя в формате **SVG** и **DXF**.
@@ -1316,8 +1316,9 @@ tab:
       *OpenCutList* разработал [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) и [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Весь список [соавторов](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: Переводы
     credits_translators: |
-      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*Английский*, *Немецкий язык*)
       - Владимир Бадюля (*Русский*)
+      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*Английский*, *Немецкий язык*)
+      - Gildas Boureau (*французская* документация)
       - Pierluigi Colombo (*Итальянский*)
       - Nayton Sanches Barbosa, исправлено и отредактировано [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*Португальский*)
       - [Leonardo Romero Giménez](https://latablamarilla.com/) (*Испанский*)
@@ -1327,6 +1328,8 @@ tab:
       - Soul Issam (*Арабский*), без интерфейса справа налево
       - Nguyen Ngoc Tan (*Вьетнамский*)
       - Андрей Топоривский, Константин Щербей (*Украинский*)
+      - [刘涛](https://www.liutao91.cn) (*упрощенный китайский*)
+      - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*голландский*)
     credits_description: |
       Разработка этого расширения связана с проектом совместной платформы [L'Air du Bois](https://www.lairdubois.fr).
       Это расширение является *Open Source*, а также доступно в разделе [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) с лицензией [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).

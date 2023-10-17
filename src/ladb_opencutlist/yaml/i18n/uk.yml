@@ -1316,7 +1316,9 @@ tab:
       *OpenCutList* розроблений [Борис Болант](https://www.lairdubois.fr/@borisbeaulant) і [Мартін Мюллер](https://www.lairdubois.fr/@mobilarte). *Список [співавторів](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: Переклади
     credits_translators: |
+      - Андрій Топорівський, Костянтин Щербей (*українська*)
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*англійська*, *німецька*)
+      - Gildas Boureau (*французька* документація)
       - Vladimir Badulya (*російська*)
       - Pierluigi Colombo (*італійська*)
       - Nayton Sanches Barbosa, виправлення і рецензування [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*португальська*)
@@ -1326,7 +1328,8 @@ tab:
       - Sergey Isupov (*іврит*), без інтерфейсу зправа на ліво
       - Soul Issam (*арабська*), без інтерфейсу зправа на ліво
       - Nguyen Ngoc Tan (*в’єтнамська*)
-      - Андрій Топорівський, Костянтин Щербей (*українська*)
+      - [刘涛](https://www.liutao91.cn) (*спрощена китайська*)
+      - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*голландський*)
     credits_description: |
       Розробка цього розширення є частиною проекту платформи спільного доступу [L'Air du Bois](https://www.lairdubois.fr).
       І як такий, він також є *Open Source* і доступний під [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) на своєму [репозиторій GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).

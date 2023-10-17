@@ -1317,6 +1317,7 @@ tab:
     credits_translations: Übersetzungen
     credits_translators: |
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*English*, *Deutsch*)
+      - Gildas Boureau (*französische* Dokumentation)
       - Vladimir Badulya (*Russisch*)
       - Pierluigi Colombo (*Italienisch*)
       - Nayton Sanches Barbosa, korrigiert und überarbeitet von [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*Portugiesisch*)
@@ -1327,6 +1328,8 @@ tab:
       - Soul Issam (*Arabisch*), noch ohne RTL Schnittstelle
       - Nguyen Ngoc Tan (*Vietnamesisch*)
       - Andrii Toporivskyi, Kostiantyn Shcherbey (*Ukrainisch*)
+      - [刘涛](https://www.liutao91.cn) (*vereinfachtes Chinesisch*)
+      - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*Niederländisch*)
     credits_description: |
       Die Entwicklung dieser Erweiterung ist Teil des Projektes [L'Air du Bois](https://www.lairdubois.fr), eine Austauschplattform für Holzwerker.
       In diesem Sinn ist auch sie *Open Source* und steht unter Lizenz [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) auf [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension) allen zu Verfügung.

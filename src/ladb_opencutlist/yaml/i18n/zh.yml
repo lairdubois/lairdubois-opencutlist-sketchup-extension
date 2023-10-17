@@ -1318,6 +1318,7 @@ tab:
     credits_translators: |
       - [刘涛](https://www.liutao91.cn) (*简体中文*)
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*英语*、*德语*)
+      - Gildas Boureau（*法语*文档)
       - Vladimir Badulya (*俄语*)
       - Pierluigi Colombo (*意大利语*)
       - Nayton Sanches Barbosa，由 [Carlos Maciel ELT](https://www.inglesonline.pro.br) 更正和修订 (*葡萄牙语*）
@@ -1328,6 +1329,7 @@ tab:
       - Soul Issam (*阿拉伯语*)，尚不支持 RTL 接口
       - Nguyen Ngoc Tan (*越南语*)
       - Andriy Toporivsky, Kostyantyn Shcherbey (*乌克兰语*)
+      - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere（*荷兰语*)
     credits_description: |
       这个插件项目的开发与共享平台项目 [L'Air du Bois](https://www.lairdubois.fr) 有关.
       此插件也是 *开源* 的，并可根据 [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) 许可证在 [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension)上使用.
