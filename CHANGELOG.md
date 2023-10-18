@@ -4,6 +4,11 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
+* 5.1.0 (2023-10-18)
+
+  * Added **Dutch** language (thanks to Dany Dhondt, Eric Lugtigheid and Koen Dejonckheere)
+  * Added **Simplified Chinese** language (thanks to liutao91)
+  
 * 5.0.4 (2023-09-14)
 
   * Fixed "Export to Layout" hang
