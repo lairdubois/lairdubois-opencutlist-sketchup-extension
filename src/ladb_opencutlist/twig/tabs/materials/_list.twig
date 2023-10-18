@@ -51,7 +51,7 @@
                 <div class="ladb-footer">
                     {% if descriptionLink %}
                         <div class="ladb-minitools ladb-minitools-left">
-                            <a href="{{ descriptionLink|escape }}" class="ladb-btn-open-description ladb-active-tool"><i class="ladb-opencutlist-icon-link"></i></a>
+                            <a href="{{ descriptionLink|escape }}" class="ladb-btn-open-description ladb-active-tool" data-toggle="tooltip" data-html="true" title="{{ 'tab.materials.tooltip.open_description_link'|i18next }}"><i class="ladb-opencutlist-icon-link"></i></a>
                         </div>
                     {% endif %}
                     <div class="ladb-minitools ladb-minitools-right">

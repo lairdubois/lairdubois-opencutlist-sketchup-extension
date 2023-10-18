@@ -1045,6 +1045,7 @@ tab:
       set_current: |
         Colorier des pièces avec '{{ name }}'
         *Double-clic pour réduire*
+      open_description_link: Ouvrir le lien de la description
     menu:
       import_from_skm: Importer une matière (.skm)
       purge_unused: Purger les matières inutilisées
