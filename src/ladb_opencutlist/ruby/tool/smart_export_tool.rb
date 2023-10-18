@@ -383,7 +383,7 @@ module Ladb::OpenCutList
 
             # DEBUG
 
-            # _draw_outer_shape(@active_drawing_def)
+            _draw_outer_shape(@active_drawing_def)
 
             # DEBUG
 
@@ -858,8 +858,8 @@ module Ladb::OpenCutList
         }
 
         layer_defs = {}
-        layer_defs[0.0] = {
-          :depth => 0.0,
+        layer_defs[drawing_def.bounds.min.z] = {
+          :depth => drawing_def.bounds.min.z,
           :ps => Geom2D::PolygonSet.new
         }
 
@@ -869,11 +869,9 @@ module Ladb::OpenCutList
 
             f_ps = Geom2D::PolygonSet.new
             f_ps << Geom2D::Polygon.new(face_def[:outer])
-
-            unless face_def[:holes].empty?
-              h_ps = Geom2D::PolygonSet.new(face_def[:holes].map { |hole| Geom2D::Polygon.new(hole) })
-              f_ps = Geom2D::Algorithms::PolygonOperation.run(f_ps, h_ps, :difference)
-            end
+            face_def[:holes].each { |hole|
+              f_ps << Geom2D::Polygon.new(hole)
+            }
 
             layer_def = layer_defs[face_def[:depth]]
             if layer_def.nil?
@@ -936,7 +934,7 @@ module Ladb::OpenCutList
               elsif layer_def[:depth] > 0
                 face.material = 'DarkGray'
               else
-                face.material = Sketchup::Color.new(0, 0, 0, 0.8)
+                face.material = 'Black'
               end
 
             end
