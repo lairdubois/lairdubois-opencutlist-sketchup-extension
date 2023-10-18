@@ -4,7 +4,6 @@ module Ladb::OpenCutList
   require_relative '../../helper/layer_visibility_helper'
   require_relative '../../utils/path_utils'
   require_relative '../../utils/transformation_utils'
-  require_relative '../../model/cutlist/drawing_def'
   require_relative '../../manipulator/face_manipulator'
   require_relative '../../manipulator/edge_manipulator'
 
@@ -227,7 +226,7 @@ module Ladb::OpenCutList
 
     private
 
-    def  _get_input_axes(input_face_manipulator, input_edge_manipulator = nil)
+    def _get_input_axes(input_face_manipulator, input_edge_manipulator = nil)
 
       if input_edge_manipulator.nil? || !input_edge_manipulator.edge.used_by?(input_face_manipulator.face)
         input_edge_manipulator = EdgeManipulator.new(input_face_manipulator.longest_outer_edge, input_face_manipulator.transformation)
@@ -269,6 +268,29 @@ module Ladb::OpenCutList
           end
         end
       end
+    end
+
+  end
+
+  # -----
+
+  class DrawingDef
+
+    attr_reader :bounds, :face_manipulators, :edge_manipulators
+    attr_accessor :transformation, :input_face_manipulator, :input_edge_manipulator
+
+    def initialize
+
+      @transformation = Geom::Transformation.new
+
+      @bounds = Geom::BoundingBox.new
+
+      @face_manipulators = []
+      @edge_manipulators = []
+
+      @input_face_manipulator = nil
+      @input_edge_manipulator = nil
+
     end
 
   end

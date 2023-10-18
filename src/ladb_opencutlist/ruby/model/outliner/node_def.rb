@@ -41,7 +41,6 @@ module Ladb::OpenCutList
 
   end
 
-
   class NodeModelDef < AbstractNodeDef
 
     def initialize(path = [])

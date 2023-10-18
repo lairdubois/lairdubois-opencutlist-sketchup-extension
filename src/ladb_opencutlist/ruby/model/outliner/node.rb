@@ -29,7 +29,6 @@ module Ladb::OpenCutList
 
   end
 
-
   class NodeModel < AbstractNode
 
     attr_reader :description

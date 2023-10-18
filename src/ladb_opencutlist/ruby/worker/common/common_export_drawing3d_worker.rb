@@ -5,7 +5,7 @@ module Ladb::OpenCutList
   require_relative '../../helper/dxf_writer_helper'
   require_relative '../../helper/sanitizer_helper'
   require_relative '../../utils/color_utils'
-  require_relative '../../model/cutlist/drawing_def'
+  require_relative '../../worker/common/common_decompose_drawing_worker'
 
   class CommonExportDrawing3dWorker
 
