@@ -383,7 +383,7 @@ module Ladb::OpenCutList
 
             # DEBUG
 
-            _draw_outer_shape(@active_drawing_def)
+            # _draw_outer_shape(@active_drawing_def)
 
             # DEBUG
 
