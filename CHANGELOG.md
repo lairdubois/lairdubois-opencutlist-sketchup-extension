@@ -20,6 +20,11 @@ in 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added item to reset dialog position to default in extensions menu
   * Changed material color bullet from drop to circle
 
+* 5.1.0 (2023-10-18)
+
+  * Added **Dutch** language (thanks to Dany Dhondt, Eric Lugtigheid and Koen Dejonckheere)
+  * Added **Simplified Chinese** language (thanks to liutao91)
+  
 * 5.0.4 (2023-09-14)
 
   * Fixed "Export to Layout" hang
