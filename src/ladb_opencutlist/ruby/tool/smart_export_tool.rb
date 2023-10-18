@@ -837,10 +837,15 @@ module Ladb::OpenCutList
 
         tp = x.report("Get points :")   {
 
-          drawing_def.face_manipulators.each do |face_manipulator|
+          # Only exposed faces
+          exposed_face_manipulators = drawing_def.face_manipulators.filter do |face_manipulator|
+            !face_manipulator.perpendicular?(drawing_def.input_face_manipulator) && drawing_def.input_face_manipulator.angle_between(face_manipulator) < Math::PI / 2.0
+          end
+
+          exposed_face_manipulators.each do |face_manipulator|
 
             face_def = {
-              :outer => face_manipulator.outer_loop_points.map { |point| [ point.x, point.y ] },
+              :outer => face_manipulator.outer_loop_points.map { |point| [point.x, point.y] },
               :holes => [],
               :depth => face_manipulator.data[:depth]
             }
@@ -849,7 +854,7 @@ module Ladb::OpenCutList
             face_manipulator.loop_manipulators.each do |loop_manipulator|
               next if loop_manipulator.loop.outer?
 
-              face_def[:holes] << loop_manipulator.points.map { |point| [ point.x, point.y ] }
+              face_def[:holes] << loop_manipulator.points.map { |point| [point.x, point.y] }
 
             end
 
@@ -857,11 +862,18 @@ module Ladb::OpenCutList
 
         }
 
-        layer_defs = {}
-        layer_defs[drawing_def.bounds.min.z] = {
-          :depth => drawing_def.bounds.min.z,
+        top_layer_def = {
+          :depth => 0.0,
           :ps => Geom2D::PolygonSet.new
         }
+        bottom_layer_def = {
+          :depth => drawing_def.bounds.max.z,
+          :ps => Geom2D::PolygonSet.new
+        }
+
+        layer_defs = {}
+        layer_defs[0.0] = top_layer_def
+        layer_defs[drawing_def.bounds.max.z] = bottom_layer_def
 
         tl = x.report("Get layers :")   {
 
@@ -892,7 +904,7 @@ module Ladb::OpenCutList
 
         td = x.report("Diff Up -> Down :")   {
 
-          # Up to Down diff
+          # Up to Down difference
           ld.each_with_index do |layer_def, index|
             next if layer_def[:ps].polygons.empty?
             ld[(index + 1)..-1].each do |lower_layer_def|
@@ -916,6 +928,34 @@ module Ladb::OpenCutList
 
         }
 
+        tz = x.report("Union Bottom -> Up :")   {
+
+          bbox0 = top_layer_def[:ps].polygons[0].bbox
+          top_layer_def[:ps].polygons.each_with_index do |polygon, polygon_index|
+
+            hole = polygon_index > 0 &&
+              polygon.bbox.min_x > bbox0.min_x && polygon.bbox.min_y > bbox0.min_y &&
+              polygon.bbox.max_x < bbox0.max_x && polygon.bbox.max_y < bbox0.max_y
+
+            bbox0 = polygon.bbox unless hole
+
+            if hole
+              bottom_layer_def[:ps] << polygon
+            end
+
+          end
+
+          # Down to Up union
+          ld.each_with_index do |layer_def, index|
+            next if layer_def[:ps].polygons.empty?
+            ld[(index + 1)..-1].reverse.each do |lower_layer_def|
+              next if lower_layer_def[:ps].polygons.empty?
+              ld[index][:ps] = Geom2D::Algorithms::PolygonOperation.run(ld[index][:ps], lower_layer_def[:ps], :union)
+            end
+          end
+
+        }
+
         tdr = x.report("Draw :")   {
 
           ld.each_with_index do |layer_def, layer_index|
@@ -927,18 +967,26 @@ module Ladb::OpenCutList
                 polygon.bbox.min_x > bbox0.min_x && polygon.bbox.min_y > bbox0.min_y &&
                 polygon.bbox.max_x < bbox0.max_x && polygon.bbox.max_y < bbox0.max_y
 
-              face = @group.entities.add_face(polygon.each_vertex.map { |point| Geom::Point3d.new(point.x, point.y, layer_def[:depth]) })
+              bbox0 = polygon.bbox unless hole
+
+              face = @group.entities.add_face(polygon.each_vertex.map { |point| Geom::Point3d.new(point.x, point.y, drawing_def.bounds.max.z - layer_def[:depth]) })
               face.reverse! unless face.normal.samedirection?(Z_AXIS)
-              if hole
-                face.material = 'White'
-              elsif layer_def[:depth] > 0
-                face.material = 'DarkGray'
-              else
+              if layer_def[:depth] == 0
                 face.material = 'Black'
+              elsif layer_def[:depth] == drawing_def.bounds.max.z
+                face.material = 'White'
+              else
+                face.material = 'DarkGray'
+              end
+
+              if hole
+                @group.entities.erase_entities(face)
               end
 
             end
           end
+
+          @group.transformation = drawing_def.transformation
 
         }
 

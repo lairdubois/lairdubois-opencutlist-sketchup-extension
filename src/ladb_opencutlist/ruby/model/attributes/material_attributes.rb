@@ -19,7 +19,7 @@
 
     DEFAULTS_DICTIONARY = 'materials_material_attributes'.freeze
 
-    attr_accessor :uuid, :type, :thickness, :length_increase, :width_increase, :thickness_increase, :std_lengths, :std_widths, :std_thicknesses, :std_sections, :std_sizes, :grained, :edge_decremented, :volumic_mass, :std_prices
+    attr_accessor :uuid, :description, :type, :thickness, :length_increase, :width_increase, :thickness_increase, :std_lengths, :std_widths, :std_thicknesses, :std_sections, :std_sizes, :grained, :edge_decremented, :volumic_mass, :std_prices
     attr_reader :material
 
     @@cached_uuids = {}
@@ -393,6 +393,7 @@
 
         defaults = Plugin.instance.get_app_defaults(DEFAULTS_DICTIONARY, @type)
 
+        @description = Plugin.instance.get_attribute(@material, 'description', '')
         @type = MaterialAttributes.valid_type(Plugin.instance.get_attribute(@material, 'type', TYPE_UNKNOWN))
         @thickness = Plugin.instance.get_attribute(@material, 'thickness', defaults['thickness'])
         @length_increase = Plugin.instance.get_attribute(@material, 'length_increase', defaults['length_increase'])
@@ -408,6 +409,7 @@
         @volumic_mass = Plugin.instance.get_attribute(@material, 'volumic_mass', defaults['volumic_mass'])
         @std_prices = Plugin.instance.get_attribute(@material, 'std_prices', defaults['std_prices'])
       else
+        @description = ''
         @type = TYPE_UNKNOWN
       end
     end
@@ -420,6 +422,7 @@
           MaterialAttributes.delete_cached_uuid(@material)
         end
 
+        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'description', @description)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'type', @type)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness', DimensionUtils.instance.str_add_units(@thickness))
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'length_increase', DimensionUtils.instance.str_add_units(@length_increase))

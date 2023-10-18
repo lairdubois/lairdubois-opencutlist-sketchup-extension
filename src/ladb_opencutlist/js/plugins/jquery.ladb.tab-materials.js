@@ -109,6 +109,12 @@
                         that.dialog.minimize();
                         return false;
                     });
+                $('.ladb-btn-open-description', that.$page)
+                    .on('click', function () {
+                        $(this).blur();
+                        rubyCallCommand('core_open_url', { url: $(this).attr('href') });
+                        return false;
+                    })
 
                 // Restore button state
                 that.$btnList.prop('disabled', false);
@@ -139,6 +145,7 @@
             name: name ? name : '',
             color: color ? color : '#ffffff',
             attributes: {
+                description: '',
                 type: type ? type : 0
             }
         };
@@ -175,6 +182,7 @@
                 name: $inputs.inputName.val().trim(),
                 color: $inputs.inputColor.val(),
                 attributes: {
+                    description: $inputs.inputDescription.val(),
                     type: parseInt($inputs.selectType.val()),
                     thickness: $inputs.inputThickness.val(),
                     length_increase: $inputs.inputLengthIncrease.val(),
@@ -280,6 +288,7 @@
 
             // Define useful functions
             var fnFetchAttributes = function (attributes) {
+                attributes.description = $inputs.inputDescription.val();
                 attributes.type = parseInt($inputs.selectType.val());
                 attributes.thickness = $inputs.inputThickness.val();
                 attributes.length_increase = $inputs.inputLengthIncrease.val();
@@ -856,6 +865,7 @@
         var $inputNameWarning = $('#ladb_materials_input_name_warning', $modal);
         var $inputColor = $('#ladb_materials_input_color', $modal);
         var $inputColorWarning = $('#ladb_materials_input_color_warning', $modal);
+        var $inputDescription = $('#ladb_materials_input_description', $modal);
         var $selectType = $('#ladb_materials_input_type', $modal);
         var $inputThickness = $('#ladb_materials_input_thickness', $modal);
         var $inputLengthIncrease = $('#ladb_materials_input_length_increase', $modal);
@@ -1108,6 +1118,7 @@
         $inputColor.ladbTextinputColor({
             resetValue: '#ffffff'
         });
+        $inputDescription.ladbTextinputArea();
 
         // Bind modal event
         $modal
@@ -1160,6 +1171,7 @@
         return {
             inputName: $inputName,
             inputColor: $inputColor,
+            inputDescription: $inputDescription,
             selectType: $selectType,
             inputThickness: $inputThickness,
             inputLengthIncrease: $inputLengthIncrease,

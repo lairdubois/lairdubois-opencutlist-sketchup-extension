@@ -68,6 +68,7 @@ module Ladb::OpenCutList
                   :texture_image_width => material.texture.nil? ? nil : material.texture.image_width,
                   :texture_image_height => material.texture.nil? ? nil : material.texture.image_height,
                   :attributes => {
+                      :description => material_attributes.description,
                       :type => material_attributes.type,
                       :thickness => material_attributes.thickness,
                       :length_increase => material_attributes.length_increase,

@@ -1067,6 +1067,7 @@ tab:
       texture: Texture
       no_texture: Sans texture
       name: Nom
+      description: Description
       type: Type
       cut_options: Options de débit
       attributes: Attributs

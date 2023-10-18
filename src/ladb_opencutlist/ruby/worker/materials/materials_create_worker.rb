@@ -7,6 +7,7 @@ module Ladb::OpenCutList
       @name = material_data.fetch('name')
       @color = Sketchup::Color.new(material_data.fetch('color'))
       attributes = material_data.fetch('attributes')
+      @description = attributes.fetch('description', '')
       @type = MaterialAttributes.valid_type(attributes.fetch('type'))
       @thickness = attributes.fetch('thickness')
       @length_increase = attributes.fetch('length_increase')
@@ -40,6 +41,7 @@ module Ladb::OpenCutList
 
       # Set attributes
       material_attributes = MaterialAttributes.new(material)
+      material_attributes.description = @description
       material_attributes.type = @type
       material_attributes.thickness = @thickness
       material_attributes.length_increase = @length_increase

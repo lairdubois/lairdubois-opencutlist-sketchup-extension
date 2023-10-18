@@ -240,31 +240,31 @@ module Ladb::OpenCutList
       [ x_axis, y_axis, z_axis, input_edge_manipulator ]
     end
 
-    def _populate_face_manipulators(face_infos, entities, transformation = Geom::Transformation.new, &validator)
+    def _populate_face_manipulators(face_manipulators, entities, transformation = Geom::Transformation.new, &validator)
       entities.each do |entity|
         if entity.visible? && _layer_visible?(entity.layer)
           if entity.is_a?(Sketchup::Face)
             manipulator = FaceManipulator.new(entity, transformation)
-            face_infos.push(manipulator) if !block_given? || yield(manipulator)
+            face_manipulators.push(manipulator) if !block_given? || yield(manipulator)
           elsif entity.is_a?(Sketchup::Group)
-            _populate_face_manipulators(face_infos, entity.entities, transformation * entity.transformation, &validator)
+            _populate_face_manipulators(face_manipulators, entity.entities, transformation * entity.transformation, &validator)
           elsif entity.is_a?(Sketchup::ComponentInstance) && (entity.definition.behavior.cuts_opening? || entity.definition.behavior.always_face_camera?)
-            _populate_face_manipulators(face_infos, entity.definition.entities, transformation * entity.transformation, &validator)
+            _populate_face_manipulators(face_manipulators, entity.definition.entities, transformation * entity.transformation, &validator)
           end
         end
       end
     end
 
-    def _populate_edge_manipulators(edge_infos, entities, transformation = Geom::Transformation.new, &validator)
+    def _populate_edge_manipulators(edge_manipulators, entities, transformation = Geom::Transformation.new, &validator)
       entities.each do |entity|
         if entity.visible? && _layer_visible?(entity.layer)
           if entity.is_a?(Sketchup::Edge)
             manipulator = EdgeManipulator.new(entity, transformation)
-            edge_infos.push(manipulator) if !block_given? || yield(manipulator)
+            edge_manipulators.push(manipulator) if !block_given? || yield(manipulator)
           elsif entity.is_a?(Sketchup::Group)
-            _populate_edge_manipulators(edge_infos, entity.entities, transformation * entity.transformation, &validator)
+            _populate_edge_manipulators(edge_manipulators, entity.entities, transformation * entity.transformation, &validator)
           elsif entity.is_a?(Sketchup::ComponentInstance) && (entity.definition.behavior.cuts_opening? || entity.definition.behavior.always_face_camera?)
-            _populate_edge_manipulators(edge_infos, entity.definition.entities, transformation * entity.transformation, &validator)
+            _populate_edge_manipulators(edge_manipulators, entity.definition.entities, transformation * entity.transformation, &validator)
           end
         end
       end
@@ -275,6 +275,12 @@ module Ladb::OpenCutList
   # -----
 
   class DrawingDef
+
+    FACE_FILTER_ALL = 0
+    FACE_FILTER_SINGLE = 1
+    FACE_FILTER_COPLANAR = 2
+    FACE_FILTER_PARALLEL = 3
+    FACE_FILTER_EXPOSED = 4
 
     attr_reader :bounds, :face_manipulators, :edge_manipulators
     attr_accessor :transformation, :input_face_manipulator, :input_edge_manipulator
