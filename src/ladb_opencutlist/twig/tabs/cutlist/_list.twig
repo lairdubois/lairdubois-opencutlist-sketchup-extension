@@ -170,7 +170,7 @@
                     </div>
                     {% include 'tabs/cutlist/_group-label.twig' %}
                     {% if not generateOptions.hide_descriptions and group.material_description is not empty %}
-                        <div class="ladb-part-description">{{ group.material_description|nl2br }}</div>
+                        <div class="ladb-material-description">{{ group.material_description|nl2br }}</div>
                     {% endif %}
                 </td>
                 <td class="text-center">{% if group.part_count == 0 %}-{% else %}{{ group.part_count }}{% endif %}</td>

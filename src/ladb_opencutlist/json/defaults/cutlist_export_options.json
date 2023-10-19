@@ -14,15 +14,15 @@
           "align": "left"
         },
         {
+          "name": "material_std_dimension",
+          "align": "left"
+        },
+        {
           "name": "material_description",
           "align": "left"
         },
         {
           "name": "material_url",
-          "align": "left"
-        },
-        {
-          "name": "material_std_dimension",
           "align": "left"
         },
         {

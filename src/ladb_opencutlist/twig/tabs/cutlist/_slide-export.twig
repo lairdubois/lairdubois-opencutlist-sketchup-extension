@@ -4,7 +4,10 @@
 {% set out = true %}
 {% set slideClasses = 'ladb-overflow-x-auto' %}
 
-{% set col_defs = source_col_defs[source] %}
+{% set colDefs = [] %}
+{% for colDef in source_col_defs[source] %}
+    {% if not colDef.hidden %}{% set colDefs = colDefs|merge([ colDef ]) %}{% endif %}
+{% endfor %}
 
 {% block headerInner %}
     {{ parent() }}
@@ -53,7 +56,7 @@
                     <tr>
                         <th class="no-print ladb-table-spreadsheet-cell ladb-table-spreadsheet-cell-header-row">{{ loop.index }}</th>
                         {% for col in row %}
-                            {% set colDef = col_defs[loop.index0] %}
+                            {% set colDef = colDefs[loop.index0] %}
                             <td class="ladb-table-spreadsheet-cell{% if col and col.error %} ladb-invalid-value{% endif %}{% if col.error is not defined %}{% if colDef.align == 'center' %} text-center{% elseif colDef.align == 'right' %} text-right{% endif %}{% endif %}">{% if col and col.error %}<i class="ladb-opencutlist-icon-warning"></i>&nbsp;{{ col.error }}{% else %}{{ col|escape('html')|nl2br }}{% endif %}</td>
                         {% endfor %}
                     </tr>

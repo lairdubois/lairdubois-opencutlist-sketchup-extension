@@ -796,9 +796,9 @@
                 vars: [
                     { name: 'material_type', type: 'string' },
                     { name: 'material_name', type: 'string' },
+                    { name: 'material_std_dimension', type: 'string' },
                     { name: 'material_description', type: 'string' },
                     { name: 'material_url', type: 'string' },
-                    { name: 'material_std_dimension', type: 'string' },
                     { name: 'part_count', type: 'integer' },
                     { name: 'total_cutting_length', type: 'length' },
                     { name: 'total_cutting_area', type: 'area' },

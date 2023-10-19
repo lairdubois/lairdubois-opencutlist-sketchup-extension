@@ -150,9 +150,9 @@ module Ladb::OpenCutList
           data = SummaryExportRowData.new(
             MaterialTypeWrapper.new(group.material_type),
             StringWrapper.new(group.material_name ? group.material_name : Plugin.instance.get_i18n_string('tab.cutlist.material_undefined')),
+            StringWrapper.new(group.std_dimension),
             StringWrapper.new(group.material_description),
             StringWrapper.new(group.material_url),
-            StringWrapper.new(group.material_type != MaterialAttributes::TYPE_UNKNOWN && group.material_type != MaterialAttributes::TYPE_HARDWARE ? group.std_dimension : ''),
             IntegerWrapper.new(group.part_count),
             LengthWrapper.new(group.def.total_cutting_length, false),
             AreaWrapper.new(group.def.total_cutting_area),
@@ -376,9 +376,9 @@ module Ladb::OpenCutList
     def initialize(
       material_type,
       material_name,
+      material_std_dimension,
       material_description,
       material_url,
-      material_std_dimension,
       part_count,
       total_cutting_length,
       total_cutting_area,
@@ -387,9 +387,9 @@ module Ladb::OpenCutList
     )
       @material_type = material_type
       @material_name = material_name
+      @material_std_dimension = material_std_dimension
       @material_description = material_description
       @material_url = material_url
-      @material_std_dimension = material_std_dimension
       @part_count = part_count
       @total_cutting_length = total_cutting_length
       @total_cutting_area = total_cutting_area
