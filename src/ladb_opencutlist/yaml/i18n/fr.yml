@@ -1174,6 +1174,8 @@ tab:
     type_1: Groupe
     type_2: Composant
     type_3: Pièce
+    tooltip:
+      open_node_url: Ouvrir l'URL de l'instance
     edit_node:
       title_model: "Propriétés du modèle"
       title_instance: "Propriétés de l'instance **{{ name }}**"
@@ -1183,6 +1185,7 @@ tab:
       instance_name: Instance
       definition_name: Definition
       description: Description
+      url: URL
       layer_name: Balise
       explode: Eclater
       explode_message: Confirmez-vous l'éclatement de l'instance **{{ name }}** ?

@@ -18,6 +18,7 @@
             </div>
             <div class="ladb-minitools ladb-minitools-right">
                 <span class="ladb-separator no-print"></span>
+                {% if node.url is not empty %}<a href="{{ node.url }}" class="ladb-btn-open-node-url" data-toggle="tooltip" title="{{ 'tab.outliner.tooltip.open_node_url'|i18next }}"><i class="ladb-opencutlist-icon-link"></i></a>{% endif %}
                 {% if node.locked %}<a href="#" class="ladb-tool-black"><i class="ladb-opencutlist-icon-lock"></i></a>{% endif %}
                 {% if capabilities.sketchup_version_number >= 2000000000 %}<a href="#" class="ladb-btn-node-set-active"><i class="ladb-opencutlist-icon-cursor"></i></a>{% endif %}
                 {% if node.type != 0 %}{# 0 = TYPE_MODEL #}<a href="#" class="ladb-btn-node-toggle-visible"><i class="ladb-opencutlist-icon-eye-{% if node.visible %}open{% else %}close{% endif %}"></i></a>{% endif %}

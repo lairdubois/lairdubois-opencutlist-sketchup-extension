@@ -85,6 +85,11 @@
                     that.toggleFoldingNode(nodeId, $row);
                     return false;
                 });
+                $('a.ladb-btn-open-node-url', that.$page).on('click', function () {
+                    $(this).blur();
+                    rubyCallCommand('core_open_url', { url: $(this).attr('href') });
+                    return false;
+                });
                 $('a.ladb-btn-node-set-active', that.$page).on('click', function () {
                     $(this).blur();
                     var $row = $(this).parents('.ladb-outliner-row');
@@ -195,6 +200,7 @@
             var $inputDefinitionName = $('#ladb_outliner_node_input_definition_name', $modal);
             var $inputLayerName = $('#ladb_outliner_node_input_layer_name', $modal);
             var $inputDescription = $('#ladb_outliner_node_input_description', $modal);
+            var $inputUrl = $('#ladb_outliner_node_input_url', $modal);
             var $btnExplode = $('#ladb_outliner_node_explode', $modal);
             var $btnUpdate = $('#ladb_outliner_node_update', $modal);
 
@@ -208,6 +214,7 @@
             $inputDefinitionName.ladbTextinputText();
             $inputLayerName.ladbTextinputText();
             $inputDescription.ladbTextinputArea();
+            $inputUrl.ladbTextinputUrl();
 
             // Bind buttons
             $btnExplode.on('click', function () {
@@ -265,6 +272,9 @@
                 }
                 if ($inputDescription.length > 0) {
                     data['description'] = $inputDescription.val();
+                }
+                if ($inputUrl.length > 0) {
+                    data['url'] = $inputUrl.val();
                 }
 
                 rubyCallCommand('outliner_update', data, function (response) {

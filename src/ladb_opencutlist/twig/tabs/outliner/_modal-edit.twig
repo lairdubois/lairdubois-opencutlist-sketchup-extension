@@ -40,6 +40,7 @@
                     </div>
                 </div>
                 {% if node.definition_name is defined %}
+                    <hr>
                     <div class="form-group">
                         <label for="ladb_outliner_node_input_definition_name" class="control-label col-xs-4">{{ 'tab.outliner.edit_node.definition_name'|i18next }}</label>
                         <div class="col-xs-7">
@@ -52,6 +53,14 @@
                         <label for="ladb_outliner_node_input_description" class="control-label col-xs-4">{{ 'tab.outliner.edit_node.description'|i18next }}</label>
                         <div class="col-xs-7">
                             <textarea class="form-control" id="ladb_outliner_node_input_description">{{ node.description|escape('html') }}</textarea>
+                        </div>
+                    </div>
+                {% endif %}
+                {% if node.url is defined %}
+                    <div class="form-group">
+                        <label for="ladb_outliner_node_input_description" class="control-label col-xs-4">{{ 'tab.outliner.edit_node.url'|i18next }}</label>
+                        <div class="col-xs-7">
+                            <input type="text" class="form-control" id="ladb_outliner_node_input_url" value="{{ node.url|escape('html') }}">
                         </div>
                     </div>
                 {% endif %}

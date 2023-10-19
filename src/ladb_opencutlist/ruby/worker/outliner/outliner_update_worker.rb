@@ -13,6 +13,7 @@ module Ladb::OpenCutList
       @definition_name = node_data.fetch('definition_name', nil)
       @layer_name = node_data.fetch('layer_name', nil)
       @description = node_data.fetch('description', nil)
+      @url = node_data.fetch('url', nil)
 
       @outline = outliner
 
@@ -50,6 +51,13 @@ module Ladb::OpenCutList
       end
       if entity.is_a?(Sketchup::ComponentInstance) && @description.is_a?(String) && @description != entity.definition.description
         entity.definition.description = @description.strip
+      end
+      if entity.is_a?(Sketchup::ComponentInstance) && @url.is_a?(String)
+        definition_attributes = DefinitionAttributes.new(entity.definition)
+        if @url != definition_attributes.url
+          definition_attributes.url = @url.strip
+          definition_attributes.write_to_attributes
+        end
       end
 
       if entity.is_a?(Sketchup::Drawingelement) && @layer_name.is_a?(String) && @layer_name != entity.layer.name

@@ -2,6 +2,7 @@ module Ladb::OpenCutList
 
   require_relative '../../helper/def_helper'
   require_relative '../../helper/hashable_helper'
+  require_relative '../attributes/definition_attributes'
 
   class AbstractNode
 
@@ -60,13 +61,14 @@ module Ladb::OpenCutList
 
   class NodeComponent < NodeGroup
 
-    attr_reader :definition_name, :description
+    attr_reader :definition_name, :description, :url
 
     def initialize(_def)
       super
 
       @definition_name = _def.entity.definition.name
       @description = _def.entity.definition.description
+      @url = DefinitionAttributes.new(_def.entity.definition).url
 
     end
 
