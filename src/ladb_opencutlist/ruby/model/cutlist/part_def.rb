@@ -9,7 +9,7 @@ module Ladb::OpenCutList
 
     VENEERS_Z = [ :zmin, :zmax ]
 
-    attr_accessor :id, :definition_id, :number, :saved_number, :name, :is_dynamic_attributes_name, :description, :count, :cutting_size, :size, :scale, :flipped, :material_name, :material_origins, :cumulable, :instance_count_by_part, :mass, :price, :thickness_layer_count, :orientation_locked_on_axis, :tags, :symmetrical, :ignore_grain_direction, :length_increase, :width_increase, :thickness_increase, :edge_count, :edge_pattern, :edge_entity_ids, :edge_length_decrement, :edge_width_decrement, :edge_decremented, :face_count, :face_pattern, :face_entity_ids, :face_texture_angles, :face_thickness_decrement, :face_decremented, :length_increased, :width_increased, :thickness_increased, :auto_oriented, :not_aligned_on_axes, :unused_instance_count, :content_layers, :final_area, :children_warning_count, :children_length_increased_count, :children_width_increased_count, :children_thickness_increased_count
+    attr_accessor :id, :definition_id, :number, :saved_number, :name, :is_dynamic_attributes_name, :description, :url, :count, :cutting_size, :size, :scale, :flipped, :material_name, :material_origins, :cumulable, :instance_count_by_part, :mass, :price, :thickness_layer_count, :orientation_locked_on_axis, :tags, :symmetrical, :ignore_grain_direction, :length_increase, :width_increase, :thickness_increase, :edge_count, :edge_pattern, :edge_entity_ids, :edge_length_decrement, :edge_width_decrement, :edge_decremented, :face_count, :face_pattern, :face_entity_ids, :face_texture_angles, :face_thickness_decrement, :face_decremented, :length_increased, :width_increased, :thickness_increased, :auto_oriented, :not_aligned_on_axes, :unused_instance_count, :content_layers, :final_area, :children_warning_count, :children_length_increased_count, :children_width_increased_count, :children_thickness_increased_count
     attr_reader :id, :edge_material_names, :edge_material_colors, :edge_std_dimensions, :edge_errors, :face_material_names, :face_material_colors, :face_std_dimensions, :face_errors, :entity_ids, :entity_serialized_paths, :entity_names, :children, :instance_infos, :edge_materials, :edge_group_defs, :veneer_materials, :veneer_group_defs, :virtual
 
     def initialize(id, virtual = false)
@@ -21,6 +21,7 @@ module Ladb::OpenCutList
       @name = ''
       @is_dynamic_attributes_name = false
       @description = ''
+      @url = ''
       @count = 0
       @cutting_size = Size3d.new
       @size = Size3d.new

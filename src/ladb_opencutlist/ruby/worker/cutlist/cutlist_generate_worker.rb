@@ -499,6 +499,7 @@ module Ladb::OpenCutList
           part_def.instance_count_by_part = definition_attributes.instance_count_by_part
           part_def.mass = definition_attributes.mass
           part_def.price = definition_attributes.price
+          part_def.url = definition_attributes.url
           part_def.thickness_layer_count = definition_attributes.thickness_layer_count
           part_def.tags = definition_attributes.tags
           part_def.orientation_locked_on_axis = definition_attributes.orientation_locked_on_axis

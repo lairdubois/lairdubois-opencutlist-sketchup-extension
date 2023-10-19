@@ -18,7 +18,8 @@ in 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added Toggle button in cutlist tags filters to switch from "present" to "not present"
   * Added Mass and Currency custom precision in settings tab
   * Added item to reset dialog position to default in extensions menu
-  * Added Description field to Material's attributes with link feature
+  * Added Description and URL fields to Material's attributes
+  * Added URL field to Part's attributes
   * Changed material color bullet from drop to circle
 
 * 5.1.0 (2023-10-18)

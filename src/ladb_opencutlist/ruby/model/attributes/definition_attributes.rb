@@ -9,7 +9,7 @@ module Ladb::OpenCutList
     CUMULABLE_LENGTH = 1
     CUMULABLE_WIDTH = 2
 
-    attr_accessor :uuid, :cumulable, :instance_count_by_part, :mass, :price, :symmetrical, :ignore_grain_direction, :tags, :orientation_locked_on_axis, :length_increase, :width_increase, :thickness_increase, :thickness_layer_count
+    attr_accessor :uuid, :cumulable, :instance_count_by_part, :mass, :price, :url, :symmetrical, :ignore_grain_direction, :tags, :orientation_locked_on_axis, :length_increase, :width_increase, :thickness_increase, :thickness_layer_count
     attr_reader :definition
 
     @@cached_uuids = {}
@@ -155,6 +155,7 @@ module Ladb::OpenCutList
         @instance_count_by_part = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'instance_count_by_part', 1)
         @mass = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'mass', '')
         @price = DefinitionAttributes.valid_price(@definition.get_attribute(Plugin::SU_ATTRIBUTE_DICTIONARY, 'Price', ''))
+        @url = @definition.get_attribute(Plugin::SU_ATTRIBUTE_DICTIONARY, 'Url', '')
         @symmetrical = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'symmetrical', false)
         @ignore_grain_direction = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'ignore_grain_direction', false)
         @tags = DefinitionAttributes.valid_tags(@definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'tags', @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'labels', []))) # BC for "labels" key
@@ -179,6 +180,7 @@ module Ladb::OpenCutList
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'instance_count_by_part', @instance_count_by_part)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'mass', @mass)
         @definition.set_attribute(Plugin::SU_ATTRIBUTE_DICTIONARY, 'Price', @price)
+        @definition.set_attribute(Plugin::SU_ATTRIBUTE_DICTIONARY, 'Url', @url)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'symmetrical', @symmetrical)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'ignore_grain_direction', @ignore_grain_direction)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'tags', @tags)

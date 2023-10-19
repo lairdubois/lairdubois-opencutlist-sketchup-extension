@@ -324,6 +324,7 @@ tab:
       part_axes: Axes internes de la pièce
       select_unselect_all_parts: Sélectionner / Désélectionner toutes les pièces du groupe
       setup_group_cuttingdiagram: "Configurer le calepinage de '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
+      open_part_url: Ouvrir l'URL de la pièce
     menu:
       show_all_groups: Afficher tous les groupes
       hide_all_other_groups: Masquer tous les autres groupes
@@ -382,6 +383,9 @@ tab:
       description: Description
       description_help: |
         La *Description* permet d'apporter des informations personnalisées sur chaque définition de pièce.
+      url: URL
+      url_help: |
+        L'*URL* permet d'apporter un lien personnalisé vers une page extérieure sur chaque définition de pièce.
       tags: Badges
       tags_help: |
         Les *Badges* vous permettent d'ajouter des mots-clés personnalisés sur chaque définition de pièce.

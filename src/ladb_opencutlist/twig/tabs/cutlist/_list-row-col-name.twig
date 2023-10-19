@@ -31,6 +31,7 @@
         {% if part.children or showHighlight or showEdit or showSelect %}
             <span class="ladb-separator no-print"></span>
         {% endif %}
+        {% if part.url is not empty %}<a href="{{ part.url|escape }}" class="ladb-btn-open-part-url no-print" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.open_part_url'|i18next }}"><i class="ladb-opencutlist-icon-link"></i></a>{% endif %}
         {% if part.children %}
             <a href="#" class="ladb-btn-folding-toggle-row ladb-click-tool no-print" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.folding_part'|i18next }}"><i class="ladb-opencutlist-icon-arrow-down"></i></a>
             {% if showHighlight %}

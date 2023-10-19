@@ -621,6 +621,11 @@
                         return false;
                     })
                 ;
+                $('a.ladb-btn-open-part-url', that.$page).on('click', function () {
+                    $(this).blur();
+                    rubyCallCommand('core_open_url', { url: $(this).attr('href') });
+                    return false;
+                });
                 $('a.ladb-btn-highlight-part', that.$page).on('click', function () {
                     $(this).blur();
                     var $part = $(this).parents('.ladb-cutlist-row');
@@ -2145,6 +2150,9 @@
                 if (editedPart.description !== editedParts[i].description) {
                     editedPart.description = MULTIPLE_VALUE;
                 }
+                if (editedPart.url !== editedParts[i].url) {
+                    editedPart.url = MULTIPLE_VALUE;
+                }
                 editedPart.tags = editedPart.tags.filter(function(tag) {  // Extract only commun tags
                     return -1 !== editedParts[i].tags.indexOf(tag);
                 });
@@ -2217,6 +2225,7 @@
             var $inputPrice = $('#ladb_cutlist_part_input_price', $modal);
             var $inputThicknessLayerCount = $('#ladb_cutlist_part_input_thickness_layer_count', $modal);
             var $inputDescription = $('#ladb_cutlist_part_input_description', $modal);
+            var $inputUrl = $('#ladb_cutlist_part_input_url', $modal);
             var $inputTags = $('#ladb_cutlist_part_input_tags', $modal);
             var $inputOrientationLockedOnAxis = $('#ladb_cutlist_part_input_orientation_locked_on_axis', $modal);
             var $inputSymmetrical = $('#ladb_cutlist_part_input_symmetrical', $modal);
@@ -2524,6 +2533,7 @@
                 resetValue: '1'
             });
             $inputDescription.ladbTextinputArea();
+            $inputUrl.ladbTextinputUrl();
             $inputTags.ladbTextinputTokenfield({
                 unique: true,
                 autocomplete: {
@@ -2764,6 +2774,9 @@
                         }
                         if (!$inputDescription.ladbTextinputArea('isMultiple')) {
                             editedParts[i].description = $inputDescription.val().trim();
+                        }
+                        if (!$inputUrl.ladbTextinputUrl('isMultiple')) {
+                            editedParts[i].url = $inputUrl.val().trim();
                         }
 
                         var untouchTags = editedParts[i].tags.filter(function (tag) {
