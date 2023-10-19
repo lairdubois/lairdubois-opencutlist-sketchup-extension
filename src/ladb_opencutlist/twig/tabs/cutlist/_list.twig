@@ -152,6 +152,9 @@
                 <td class="text-center">{% if group.material_display_name is not empty %}{% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type, 'filled':group.material_type > 0 } %}{% else %}-{% endif %}</td>
                 <td>
                     <div class="ladb-minitools ladb-minitools-right no-print">
+                        {% if group.material_url is not empty %}
+                            <a href="{{ group.material_url }}" class="ladb-btn-open-material-url" data-toggle="tooltip" title="{{ 'tab.materials.tooltip.open_url'|i18next }}"><i class="ladb-opencutlist-icon-link"></i></a>
+                        {% endif %}
                         {% if group.material_type == 4 %}    {# 4 = TYPE_EDGE #}
                             {% set filtered = group.material_display_name in generateFilters.edge_material_names_filter %}
                             <a href="#ladb_group_{{ group.id }}" class="ladb-btn-edge-material-filter" data-material-display-name="{{ group.material_display_name }}" data-toggle="tooltip" title="{{ ('tab.cutlist.tooltip.'~(filtered ? 'remove' : 'add')~'_edge_material_name_filter')|i18next({ 'material_name':group.material_display_name }) }}"><i class="ladb-opencutlist-icon-filter-{% if filtered %}on{% else %}off{% endif %}"></i></a>
@@ -166,6 +169,9 @@
                         {% endif %}
                     </div>
                     {% include 'tabs/cutlist/_group-label.twig' %}
+                    {% if not generateOptions.hide_descriptions and group.material_description is not empty %}
+                        <div class="ladb-part-description">{{ group.material_description|nl2br }}</div>
+                    {% endif %}
                 </td>
                 <td class="text-center">{% if group.part_count == 0 %}-{% else %}{{ group.part_count }}{% endif %}</td>
                 <td class="ladb-cutlist-value ladb-cutlist-value-right{% if group.total_cutting_length is null %} ladb-disabled{% endif %}">{{ group.total_cutting_length }}</td>

@@ -1045,7 +1045,7 @@ tab:
       set_current: |
         Colorier des pièces avec '{{ name }}'
         *Double-clic pour réduire*
-      open_description_link: Ouvrir le lien de la description
+      open_url: Ouvrir l'URL de la matière
     menu:
       import_from_skm: Importer une matière (.skm)
       purge_unused: Purger les matières inutilisées
@@ -1068,8 +1068,9 @@ tab:
       texture: Texture
       no_texture: Sans texture
       name: Nom
-      description: Description
       type: Type
+      description: Description
+      url: URL
       cut_options: Options de débit
       attributes: Attributs
       thickness: Épaisseur

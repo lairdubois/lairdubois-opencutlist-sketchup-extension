@@ -16,8 +16,9 @@ module Ladb::OpenCutList
       @texture_height = material_data.fetch('texture_height')
 
       attributes = material_data.fetch('attributes')
-      @description = attributes.fetch('description', '')
       @type = MaterialAttributes.valid_type(attributes.fetch('type'))
+      @description = attributes.fetch('description', '')
+      @url = attributes.fetch('url', '')
       @thickness = attributes.fetch('thickness')
       @length_increase = attributes.fetch('length_increase')
       @width_increase = attributes.fetch('width_increase')
@@ -112,8 +113,9 @@ module Ladb::OpenCutList
 
       # Update attributes
       material_attributes = MaterialAttributes.new(material)
-      material_attributes.description = @description
       material_attributes.type = @type
+      material_attributes.description = @description
+      material_attributes.url = @url
       material_attributes.thickness = @thickness
       material_attributes.length_increase = @length_increase
       material_attributes.width_increase = @width_increase

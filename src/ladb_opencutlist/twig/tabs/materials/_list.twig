@@ -7,17 +7,6 @@
 
 <div class="row">
 {% for material in materials %}
-    {% if material.attributes.description %}
-        {% set description = '' %}
-        {% set descriptionLink = '' %}
-        {% for item in material.attributes.description|split('\n') %}
-            {% if descriptionLink == '' and item starts with 'http' %}
-                {% set descriptionLink = item %}
-            {% elseif description == '' %}
-                {% set description = item %}
-            {% endif %}
-        {% endfor %}
-    {% endif %}
     <div id="ladb_material_{{ material.id }}" class="col-sm-2 col-xs-3">
         <div class="ladb-material-box ladb-minitools-holder ladb-highlightable" data-material-id="{{ material.id }}">
             <div class="ladb-content">
@@ -39,8 +28,8 @@
                             {% endif %}
                             {{ material.display_name|escape }}
                         </div>
-                        {% if material.attributes.description %}
-                            <div><small>{{ description|truncate(20) }}</small></div>
+                        {% if material.attributes.description is not empty %}
+                            <div><small>{{ material.attributes.description|nl2br|truncate(20) }}</small></div>
                         {% endif %}
                     </div>
                     {% if material.colorized %}
@@ -49,9 +38,9 @@
                     <div class="ladb-overlay-icon">{% include 'tabs/materials/_material-type-icon.twig' with { 'type':material.attributes.type, 'filled':material.attributes.type > 0 } %}</div>
                 </div>
                 <div class="ladb-footer">
-                    {% if descriptionLink %}
+                    {% if material.attributes.url is not empty %}
                         <div class="ladb-minitools ladb-minitools-left">
-                            <a href="{{ descriptionLink|escape }}" class="ladb-btn-open-description ladb-active-tool" data-toggle="tooltip" data-html="true" title="{{ 'tab.materials.tooltip.open_description_link'|i18next }}"><i class="ladb-opencutlist-icon-link"></i></a>
+                            <a href="{{ material.attributes.url|escape }}" class="ladb-btn-open-material-url ladb-active-tool" data-toggle="tooltip" data-html="true" title="{{ 'tab.materials.tooltip.open_url'|i18next }}"><i class="ladb-opencutlist-icon-link"></i></a>
                         </div>
                     {% endif %}
                     <div class="ladb-minitools ladb-minitools-right">

@@ -437,6 +437,8 @@ module Ladb::OpenCutList
           group_def.material_display_name = material_display_name
           group_def.material_type = material_attributes.type
           group_def.material_color = material.color if material
+          group_def.material_description = material_attributes.description
+          group_def.material_url = material_attributes.url
           group_def.material_grained = material_attributes.grained
           group_def.std_available = std_info[:available]
           group_def.std_dimension_stipped_name = std_info[:dimension_stipped_name]

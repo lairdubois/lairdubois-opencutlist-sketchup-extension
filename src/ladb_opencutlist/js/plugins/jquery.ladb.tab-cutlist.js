@@ -400,6 +400,11 @@
                         that.hideGroup($group);
                     }
                 });
+                $('a.ladb-btn-open-material-url', that.$page).on('click', function () {
+                    $(this).blur();
+                    rubyCallCommand('core_open_url', { url: $(this).attr('href') });
+                    return false;
+                });
                 $('a.ladb-btn-scrollto', that.$page).on('click', function () {
                     $(this).blur();
                     var $target = $($(this).attr('href'));

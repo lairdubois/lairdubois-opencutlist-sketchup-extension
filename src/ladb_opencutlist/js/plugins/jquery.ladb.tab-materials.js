@@ -109,7 +109,7 @@
                         that.dialog.minimize();
                         return false;
                     });
-                $('.ladb-btn-open-description', that.$page)
+                $('.ladb-btn-open-material-url', that.$page)
                     .on('click', function () {
                         $(this).blur();
                         rubyCallCommand('core_open_url', { url: $(this).attr('href') });
@@ -145,8 +145,9 @@
             name: name ? name : '',
             color: color ? color : '#ffffff',
             attributes: {
+                type: type ? type : 0,
                 description: '',
-                type: type ? type : 0
+                url: ''
             }
         };
 
@@ -182,8 +183,9 @@
                 name: $inputs.inputName.val().trim(),
                 color: $inputs.inputColor.val(),
                 attributes: {
-                    description: $inputs.inputDescription.val(),
                     type: parseInt($inputs.selectType.val()),
+                    description: $inputs.inputDescription.val(),
+                    url: $inputs.inputUrl.val(),
                     thickness: $inputs.inputThickness.val(),
                     length_increase: $inputs.inputLengthIncrease.val(),
                     width_increase: $inputs.inputWidthIncrease.val(),
@@ -288,8 +290,9 @@
 
             // Define useful functions
             var fnFetchAttributes = function (attributes) {
-                attributes.description = $inputs.inputDescription.val();
                 attributes.type = parseInt($inputs.selectType.val());
+                attributes.description = $inputs.inputDescription.val();
+                attributes.url = $inputs.inputUrl.val();
                 attributes.thickness = $inputs.inputThickness.val();
                 attributes.length_increase = $inputs.inputLengthIncrease.val();
                 attributes.width_increase = $inputs.inputWidthIncrease.val();
@@ -865,8 +868,9 @@
         var $inputNameWarning = $('#ladb_materials_input_name_warning', $modal);
         var $inputColor = $('#ladb_materials_input_color', $modal);
         var $inputColorWarning = $('#ladb_materials_input_color_warning', $modal);
-        var $inputDescription = $('#ladb_materials_input_description', $modal);
         var $selectType = $('#ladb_materials_input_type', $modal);
+        var $inputDescription = $('#ladb_materials_input_description', $modal);
+        var $inputUrl = $('#ladb_materials_input_url', $modal);
         var $inputThickness = $('#ladb_materials_input_thickness', $modal);
         var $inputLengthIncrease = $('#ladb_materials_input_length_increase', $modal);
         var $inputWidthIncrease = $('#ladb_materials_input_width_increase', $modal);
@@ -1119,6 +1123,7 @@
             resetValue: '#ffffff'
         });
         $inputDescription.ladbTextinputArea();
+        $inputUrl.ladbTextinputUrl();
 
         // Bind modal event
         $modal
@@ -1171,8 +1176,9 @@
         return {
             inputName: $inputName,
             inputColor: $inputColor,
-            inputDescription: $inputDescription,
             selectType: $selectType,
+            inputDescription: $inputDescription,
+            inputUrl: $inputUrl,
             inputThickness: $inputThickness,
             inputLengthIncrease: $inputLengthIncrease,
             inputWidthIncrease: $inputWidthIncrease,
