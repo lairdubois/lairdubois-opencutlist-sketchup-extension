@@ -83,6 +83,7 @@ core:
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
+      reset_dialog_position: Reset the window position
   toolbar:
     name: OpenCutList
     command:
@@ -323,6 +324,7 @@ tab:
       part_axes: Internal axes of the part
       select_unselect_all_parts: Select / Deselect all parts of the group
       setup_group_cuttingdiagram: "Configure the cutting diagram of '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
+      open_part_url: Open part URL
     menu:
       show_all_groups: Show all groups
       hide_all_other_groups: Hide all other groups
@@ -381,6 +383,9 @@ tab:
       description: Description
       description_help: |
         The *Description* allows you to provide personalized information on each part definition.
+      url: URL
+      url_help: |
+        The *URL* provides a personalized link to an external page on each part definition.
       tags: Badges
       tags_help: |
         *Badges* are custom keywords that can be added to each part definition.
@@ -585,8 +590,11 @@ tab:
       material_type: Type
       material_thickness: Material / Thickness
       material_name: Material
+      material_description: Material description
+      material_url: URL of the material
       entity_names: Instance names
       description: Description
+      url: URL
       tags: Badges
       edge_ymin: Edge length 1
       edge_ymax: Edge length 2
@@ -1044,6 +1052,7 @@ tab:
       set_current: |
         Paint parts with '{{ name }}'
         *Double-click to minimize*
+      open_url: Open URL of the material
     menu:
       import_from_skm: Import material (.skm)
       purge_unused: Purge unused materials
@@ -1067,6 +1076,8 @@ tab:
       no_texture: No texture
       name: Name
       type: Type
+      description: Description
+      url: URL
       cut_options: Cutting Parameters
       attributes: Attributes
       thickness: Thickness
@@ -1357,7 +1368,9 @@ tab:
     length_precision: Precision
     suppress_units_display: Display length unit for each value
     mass_unit: Unit of Weight
+    mass_precision: Precision
     currency_symbol: Currency Symbol
+    currency_precision: Precision
     presets:
       export_global_presets: Export presets
       export_global_presets_help: |
@@ -1519,6 +1532,7 @@ tool:
     action_option_2_0_status: Export target face only
     action_option_2_1_status: Export all faces in the part that are coplanar with the target face
     action_option_2_2_status: Export all faces parallel to the target face contained in the part
+    action_option_2_3_status: Export all exposed faces
     action_option_3_0_status: Project part origin
     action_option_3_1_status: Smooth out circles and arcs
     action_option_3_2_status: Export as guides the floating and coplanar edges of the target face contained in the part
