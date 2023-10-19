@@ -588,10 +588,13 @@ tab:
       count: Quantité
       part_count: Nombre de pièces
       material_type: Type
-      material_thickness: Matière / Dimension
       material_name: Matière
+      material_description: Description de la matière
+      material_url: URL de la matière
+      material_std_dimension: Dimension standard
       entity_names: Noms d'instance
       description: Description
+      url: URL
       tags: Badges
       edge_ymin: Chant Longueur 1
       edge_ymax: Chant Longueur 2

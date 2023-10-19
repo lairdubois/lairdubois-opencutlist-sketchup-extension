@@ -51,7 +51,10 @@ module Ladb::OpenCutList
               AreaWrapper.new(part.def.final_area),
               MaterialTypeWrapper.new(part.group.material_type),
               StringWrapper.new(part.group.material_display_name),
+              StringWrapper.new(part.group.material_description),
+              StringWrapper.new(part.group.material_url),
               StringWrapper.new(part.description),
+              StringWrapper.new(part.url),
               ArrayWrapper.new(part.tags),
               EdgeWrapper.new(
                 part.edge_material_names[:ymin],
@@ -154,7 +157,10 @@ class LabelData
     final_area,
     material_type,
     material_name,
+    material_description,
+    material_url,
     description,
+    url,
     tags,
     edge_ymin,
     edge_ymax,
@@ -189,7 +195,10 @@ class LabelData
     @final_area = final_area
     @material_type = material_type
     @material_name = material_name
+    @material_description = material_description
+    @material_url = material_url
     @description = description
+    @url = url
     @tags = tags
     @edge_ymin = edge_ymin
     @edge_ymax = edge_ymax

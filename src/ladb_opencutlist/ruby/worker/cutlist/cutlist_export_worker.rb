@@ -149,7 +149,10 @@ module Ladb::OpenCutList
 
           data = SummaryExportRowData.new(
             MaterialTypeWrapper.new(group.material_type),
-            StringWrapper.new((group.material_name ? group.material_name : Plugin.instance.get_i18n_string('tab.cutlist.material_undefined')) + (group.material_type != MaterialAttributes::TYPE_UNKNOWN && group.material_type != MaterialAttributes::TYPE_HARDWARE ? ' / ' + group.std_dimension : '')),
+            StringWrapper.new(group.material_name ? group.material_name : Plugin.instance.get_i18n_string('tab.cutlist.material_undefined')),
+            StringWrapper.new(group.material_description),
+            StringWrapper.new(group.material_url),
+            StringWrapper.new(group.material_type != MaterialAttributes::TYPE_UNKNOWN && group.material_type != MaterialAttributes::TYPE_HARDWARE ? group.std_dimension : ''),
             IntegerWrapper.new(group.part_count),
             LengthWrapper.new(group.def.total_cutting_length, false),
             AreaWrapper.new(group.def.total_cutting_area),
@@ -185,8 +188,11 @@ module Ladb::OpenCutList
               AreaWrapper.new(part.def.final_area),
               MaterialTypeWrapper.new(group.material_type),
               StringWrapper.new(group.material_display_name),
+              StringWrapper.new(group.material_description),
+              StringWrapper.new(group.material_url),
               ArrayWrapper.new(part.entity_names.map(&:first)),
               StringWrapper.new(part.description),
+              StringWrapper.new(part.url),
               ArrayWrapper.new(part.tags),
               EdgeWrapper.new(
                 part.edge_material_names[:ymin],
@@ -263,7 +269,10 @@ module Ladb::OpenCutList
                   AreaWrapper.new(part.def.final_area),
                   MaterialTypeWrapper.new(group.material_type),
                   StringWrapper.new(group.material_display_name),
+                  StringWrapper.new(group.material_description),
+                  StringWrapper.new(group.material_url),
                   StringWrapper.new(part.description),
+                  StringWrapper.new(part.url),
                   ArrayWrapper.new(part.tags),
                   EdgeWrapper.new(
                     part.edge_material_names[:ymin],
@@ -366,7 +375,10 @@ module Ladb::OpenCutList
 
     def initialize(
       material_type,
-      material_thickness,
+      material_name,
+      material_description,
+      material_url,
+      material_std_dimension,
       part_count,
       total_cutting_length,
       total_cutting_area,
@@ -374,7 +386,10 @@ module Ladb::OpenCutList
       total_final_area
     )
       @material_type = material_type
-      @material_thickness = material_thickness
+      @material_name = material_name
+      @material_description = material_description
+      @material_url = material_url
+      @material_std_dimension = material_std_dimension
       @part_count = part_count
       @total_cutting_length = total_cutting_length
       @total_cutting_area = total_cutting_area
@@ -401,8 +416,11 @@ module Ladb::OpenCutList
       final_area,
       material_type,
       material_name,
+      material_description,
+      material_url,
       entity_names,
       description,
+      url,
       tags,
       edge_ymin,
       edge_ymax,
@@ -426,8 +444,11 @@ module Ladb::OpenCutList
       @final_area = final_area
       @material_type = material_type
       @material_name = material_name
+      @material_description = material_description
+      @material_url = material_url
       @entity_names = entity_names
       @description = description
+      @url = url
       @tags = tags
       @edge_ymin = edge_ymin
       @edge_ymax = edge_ymax
@@ -458,7 +479,10 @@ module Ladb::OpenCutList
       final_area,
       material_type,
       material_name,
+      material_description,
+      material_url,
       description,
+      url,
       tags,
       edge_ymin,
       edge_ymax,
@@ -483,7 +507,10 @@ module Ladb::OpenCutList
       @final_area = final_area
       @material_type = material_type
       @material_name = material_name
+      @material_description = material_description
+      @material_url = material_url
       @description = description
+      @url = url
       @tags = tags
       @edge_ymin = edge_ymin
       @edge_ymax = edge_ymax

@@ -1493,6 +1493,7 @@ module Ladb::OpenCutList
     def open_url_command(params)    # Expected params = { url: URL }
       url = params['url']
       if url && url.is_a?(String)
+        url = 'https://' + url unless /^https?:\/\//.match(url)  # Force url starts by "https://"
         UI.openURL(URI::DEFAULT_PARSER.escape(url))
       end
     end
