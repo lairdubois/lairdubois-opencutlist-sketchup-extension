@@ -4082,6 +4082,7 @@
                 dialog: that.dialog,
                 group: group,
                 partInfo: partInfos[0],
+                hideMaterialColors: that.generateOptions.hide_material_colors
             });
             $selectPageFormat.selectpicker(SELECT_PICKER_OPTIONS);
             $inputPageWidth.ladbTextinputDimension();
@@ -4182,6 +4183,7 @@
                             generatedAt: new Date().getTime() / 1000,
                             group: group,
                             pages: pages,
+                            hideMaterialColors: that.generateOptions.hide_material_colors
                         }, labelsOptions), function () {
                             that.dialog.setupTooltips();
                         });

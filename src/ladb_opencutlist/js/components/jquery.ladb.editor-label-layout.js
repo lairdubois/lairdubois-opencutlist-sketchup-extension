@@ -24,6 +24,7 @@
         partInfo: null,
         labelWidth: 100,
         labelHeight: 100,
+        hideMaterialColors: false
     };
 
     LadbEditorLabelLayout.prototype.createSvg = function () {
@@ -313,7 +314,8 @@
             index: this.elementDefs ? this.elementDefs.indexOf(elementDef) : 0,
             elementDef: elementDef,
             partInfo: this.options.partInfo,
-            noEmptyValue: true
+            noEmptyValue: true,
+            hideMaterialColors: this.options.hideMaterialColors
         }, this.options));
 
         // Workaround to avoid use of innerHtml on an svg element (not implemented on IE and Safari)
