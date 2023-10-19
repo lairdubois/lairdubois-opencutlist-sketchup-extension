@@ -286,6 +286,7 @@
                                             {% if part.instance_count_by_part > 1 %}<a href="#" class="ladb-tool-info" data-tab="infos" data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.tooltip.instance_count_by_part'|i18next({ 'count':part.instance_count_by_part }) }}"><i class="ladb-opencutlist-icon-instance-count-by-part"></i></a>{% endif %}
                                             {% if part.flipped %}<a href="#" class="ladb-tool-info" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.flipped'|i18next }}"><i class="ladb-opencutlist-icon-flipped"></i></a>{% endif %}
                                             <span class="ladb-separator"></span>
+                                            {% if part.url is not empty %}<a href="{{  part.url }}" class="ladb-btn-open-part-url" data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.tooltip.open_part_url'|i18next }}"><i class="ladb-opencutlist-icon-link"></i></a>{% endif %}
                                             <a href="#" class="ladb-btn-highlight-part" data-part-id="{{ part.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.highlight_part'|i18next }}"><i class="ladb-opencutlist-icon-magnifier"></i></a>
                                             <a href="#" class="ladb-btn-edit-part" data-part-id="{{ part.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edit_part_properties'|i18next }}..."><i class="ladb-opencutlist-icon-edit"></i></a>
                                         </div>
