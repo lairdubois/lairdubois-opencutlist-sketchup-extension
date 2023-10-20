@@ -22,6 +22,10 @@ in 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added URL field to Part's attributes
   * Changed material color bullet from drop to circle
 
+* 5.1.1 (2023-10-)
+
+  * Avoid negative dimensions input
+  
 * 5.1.0 (2023-10-18)
 
   * Added **Dutch** language (thanks to Dany Dhondt, Eric Lugtigheid and Koen Dejonckheere)

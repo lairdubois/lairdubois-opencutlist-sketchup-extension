@@ -220,7 +220,7 @@
       s = s.gsub(/\./, @decimal_separator) # convert separator to native
 
       unit_present = false
-      if (match = s.match(/^-*(?:[0-9.,\/~']+\s*)+(m|cm|mm|\'|\"|yd)\s*$/))
+      if (match = s.match(/^*(?:[0-9.,\/~']+\s*)+(m|cm|mm|\'|\"|yd)\s*$/))
         unit, = match.captures
         # puts("parsed unit = #{unit} in #{s}")
         s = s.gsub(/\s*#{unit}\s*/, "#{unit}") # Remove space around unit
@@ -228,7 +228,7 @@
       end
       begin # Try to convert to length
         x = s.to_l
-        return '0' if x == 0
+        return '0' if x <= 0  # Accept only positive dimensions
       rescue => e
         # puts("OCL [dimension input error]: #{e}")
         s = '0'
@@ -256,7 +256,7 @@
       s = s.gsub(/\s*\/\s*/, '/') # remove blanks around /
       begin
         f = (s.to_l).to_f
-        return '0' if f == 0
+        return '0' if f <= 0
         s = f.to_s
       rescue => e
         # puts("OCL [dimension input error]: #{e}")
