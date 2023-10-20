@@ -1174,6 +1174,8 @@ tab:
     type_1: Gruppe
     type_2: Komponente
     type_3: Teil
+    tooltip:
+      open_node_url: URL der Instanz öffnen
     edit_node:
       title_model: "Eigenschaften des Modells"
       title_instance: "Eigenschaften der Instanz **{{ name }}**"
@@ -1183,6 +1185,7 @@ tab:
       instance_name: Instanz
       definition_name: Definition
       description: Beschreibung
+      url: URL
       layer_name: Tag
       explode: Explodieren
       explode_message: Bestätigen Sie die Explosion der Instanz **{{ name }}**?
