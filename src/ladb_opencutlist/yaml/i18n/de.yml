@@ -83,6 +83,7 @@ core:
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
+      reset_dialog_position: Rücksetzen der Fensterposition
   toolbar:
     name: OpenCutList
     command:
@@ -323,6 +324,7 @@ tab:
       part_axes: Interne Achsen des Teils
       select_unselect_all_parts: Alle Teile dieser Gruppe selektieren / deselektieren
       setup_group_cuttingdiagram: "Das Schnittdiagram für '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}' konfigurieren"
+      open_part_url: URL des Teils öffnen
     menu:
       show_all_groups: Alle Gruppen einblenden
       hide_all_other_groups: Alle anderen Gruppen ausblenden
@@ -381,6 +383,9 @@ tab:
       description: Beschreibung
       description_help: |
         Die *Beschreibung* ermöglicht es Ihnen, benutzerdefinierte Informationen zu jeder Teildefinition anzugeben.
+      url: URL
+      url_help: |
+        Die *URL* bietet einen personalisierten Link zu einer externen Seite auf jeder Teildefinition.
       tags: Badges
       tags_help: |
         Mit *Badges* können Sie jede Teildefinition mit Schlüsselwörtern ergänzen.
@@ -585,8 +590,11 @@ tab:
       material_type: Typ
       material_thickness: Material / Dicke
       material_name: Material
+      material_description: Materialbeschreibung
+      material_url: URL des Materials
       entity_names: Instanzbezeichnungen
       description: Beschreibung
+      url: URL
       tags: Badges
       edge_ymin: Kantenband Länge 1
       edge_ymax: Kantenband Länge 2
@@ -1044,6 +1052,7 @@ tab:
       set_current: |
         Einfärben von Teilen mit '{{ name }}'
         *Doppelklick zum Minimieren*
+      open_url: URL des Materials öffnen
     menu:
       import_from_skm: Material importieren (.skm)
       purge_unused: Unbenutztes Material löschen
@@ -1067,6 +1076,8 @@ tab:
       no_texture: Keine Textur
       name: Bezeichnung
       type: Typ
+      description: Beschreibung
+      url: URL
       cut_options: Schnittparameter
       attributes: Attribute
       thickness: Dicke
@@ -1357,7 +1368,9 @@ tab:
     length_precision: Genauigkeit
     suppress_units_display: Längeneinheiten für jeden Wert anzeigen
     mass_unit: Masseneinheit
+    mass_precision: Genauigkeit
     currency_symbol: Währungssymbol
+    currency_precision: Genauigkeit
     presets:
       export_global_presets: Exportieren
       export_global_presets_help: |
@@ -1519,6 +1532,7 @@ tool:
     action_option_2_0_status: Nur die Zielfläche exportieren
     action_option_2_1_status: Exportieren aller im Teil enthaltenen Flächen, die mit der Zielfläche koplanar sind
     action_option_2_2_status: Exportieren aller im Teil enthaltenen Flächen, die parallel zur Zielfläche sind
+    action_option_2_3_status: Exportieren aller exponierten Flächen
     action_option_3_0_status: Ursprung des Teils projizieren
     action_option_3_1_status: Bögen und Kreise glätten
     action_option_3_2_status: Exportieren der im Teil enthaltenen schwebenden und mit der Zielfläche koplanaren Kanten als Hilfslinien
