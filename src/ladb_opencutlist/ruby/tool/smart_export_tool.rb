@@ -356,6 +356,8 @@ module Ladb::OpenCutList
             face_validator = CommonDecomposeDrawingWorker::FACE_VALIDATOR_SINGLE
           end
 
+          face_validator = nil
+
           options = {
             'input_face_path' => @input_face_path,
             'input_edge_path' => @input_edge.nil? ? nil : @input_face_path + [ @input_edge ],
@@ -383,7 +385,7 @@ module Ladb::OpenCutList
 
             # DEBUG
 
-            # _draw_outer_shape(@active_drawing_def)
+            _draw_outer_shape(@active_drawing_def)
 
             # DEBUG
 
@@ -838,7 +840,7 @@ module Ladb::OpenCutList
         tp = x.report("Get points :")   {
 
           # Only exposed faces
-          exposed_face_manipulators = drawing_def.face_manipulators.filter do |face_manipulator|
+          exposed_face_manipulators = drawing_def.face_manipulators.select do |face_manipulator|
             !face_manipulator.perpendicular?(drawing_def.input_face_manipulator) && drawing_def.input_face_manipulator.angle_between(face_manipulator) < Math::PI / 2.0
           end
 
@@ -969,7 +971,7 @@ module Ladb::OpenCutList
 
               bbox0 = polygon.bbox unless hole
 
-              face = @group.entities.add_face(polygon.each_vertex.map { |point| Geom::Point3d.new(point.x, point.y, drawing_def.bounds.max.z - layer_def[:depth]) })
+              face = @group.entities.add_face(polygon.each_vertex.map { |point| Geom::Point3d.new(point.x, point.y, layer_def[:depth]) })
               face.reverse! unless face.normal.samedirection?(Z_AXIS)
               if layer_def[:depth] == 0
                 face.material = 'Black'
@@ -986,15 +988,12 @@ module Ladb::OpenCutList
             end
           end
 
-          @group.transformation = drawing_def.transformation
+          # @group.transformation = drawing_def.transformation
 
         }
 
         [ tp + tl + td + tu + tdr ]
       end
-
-      puts "--> Faces    : #{drawing_def.face_manipulators.length}"
-      puts "--> Segments : #{face_defs.map { |face_def| face_def[:outer].length + face_def[:holes].map { |hole| hole.length }.sum }.sum}"
 
     end
 

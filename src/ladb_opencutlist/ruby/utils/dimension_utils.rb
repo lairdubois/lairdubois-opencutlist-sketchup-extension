@@ -32,7 +32,7 @@
     MILLIMETER_3  = Sketchup.version_number >= 1920000000 ? Length::CubicMillimeter : 2
     CENTIMETER_3  = Sketchup.version_number >= 1920000000 ? Length::CubicCentimeter : 3
     METER_3       = Sketchup.version_number >= 1920000000 ? Length::CubicMeter : 4
-    LITER         = Sketchup.version_number >= 1920000000 ? Length::Liter : 6
+    LITER         = Sketchup.version_number >= 2000000000 ? Length::Liter : 6
 
     # Unit symbols
     UNIT_SYMBOL_INCHES = '"'
