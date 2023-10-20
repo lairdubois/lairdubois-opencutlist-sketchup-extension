@@ -1052,7 +1052,7 @@ tab:
       set_current: |
         Paint parts with '{{ name }}'
         *Double-click to minimize*
-      open_url: Open URL of the material
+      open_url: Open material URL
     menu:
       import_from_skm: Import material (.skm)
       purge_unused: Purge unused materials
@@ -1174,6 +1174,8 @@ tab:
     type_1: Group
     type_2: Component
     type_3: Part
+    tooltip:
+      open_node_url: Open instance URL
     edit_node:
       title_model: "Properties of the model"
       title_instance: "Properties of instance **{{ name }}**"
@@ -1183,6 +1185,7 @@ tab:
       instance_name: Instance
       definition_name: Definition
       description: Description
+      url: URL
       layer_name: Tag
       explode: Explode
       explode_message: Do you confirm the explosion of instance **{{ name }}**?
