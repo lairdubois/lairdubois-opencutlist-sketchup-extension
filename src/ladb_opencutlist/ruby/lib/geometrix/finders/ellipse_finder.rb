@@ -187,7 +187,7 @@ module Ladb::OpenCutList::Geometrix
     end
 
     def circular?
-      (xradius - yradius).abs < Float::EPSILON
+      (xradius - yradius).abs < 1e-12
     end
 
     def xradius
@@ -204,7 +204,7 @@ module Ladb::OpenCutList::Geometrix
       @c - other.c +
       @d - other.d +
       @e - other.e +
-      @f - other.f < Float::EPSILON
+      @f - other.f < 1e-12
     end
 
   end
