@@ -4,6 +4,10 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
+* 5.1.1 (2023-10-)
+
+  * Avoid negative dimensions input
+  
 * 5.1.0 (2023-10-18)
 
   * Added **Dutch** language (thanks to Dany Dhondt, Eric Lugtigheid and Koen Dejonckheere)
