@@ -1,7 +1,7 @@
 module Ladb::OpenCutList
 
   require_relative 'smart_tool'
-  require_relative '../lib/geom2d/geom2d'
+  require_relative '../lib/clippy/clippy'
   require_relative '../lib/geometrix/geometrix'
   require_relative '../helper/layer_visibility_helper'
   require_relative '../helper/edge_segments_helper'
@@ -385,7 +385,7 @@ module Ladb::OpenCutList
 
             # DEBUG
 
-            _draw_outer_shape(@active_drawing_def)
+            _draw_outer_shape_clipper(@active_drawing_def)
 
             # DEBUG
 
@@ -826,7 +826,7 @@ module Ladb::OpenCutList
       [ ORIGIN, x_axis, y_axis, z_axis, input_edge, input_edge != @input_edge ]
     end
 
-    def _draw_outer_shape(drawing_def)
+    def _draw_outer_shape_clipper(drawing_def)
 
       SKETCHUP_CONSOLE.clear
 
@@ -847,18 +847,10 @@ module Ladb::OpenCutList
           exposed_face_manipulators.each do |face_manipulator|
 
             face_def = {
-              :outer => face_manipulator.outer_loop_points.map { |point| [point.x, point.y] },
-              :holes => [],
+              :loops => face_manipulator.loop_manipulators.map { |loop_manipulator| loop_manipulator.points },
               :depth => face_manipulator.data[:depth]
             }
             face_defs << face_def
-
-            face_manipulator.loop_manipulators.each do |loop_manipulator|
-              next if loop_manipulator.loop.outer?
-
-              face_def[:holes] << loop_manipulator.points.map { |point| [point.x, point.y] }
-
-            end
 
           end
 
@@ -866,11 +858,11 @@ module Ladb::OpenCutList
 
         top_layer_def = {
           :depth => 0.0,
-          :ps => Geom2D::PolygonSet.new
+          :coords => []
         }
         bottom_layer_def = {
           :depth => drawing_def.bounds.max.z,
-          :ps => Geom2D::PolygonSet.new
+          :coords => []
         }
 
         layer_defs = {}
@@ -881,21 +873,25 @@ module Ladb::OpenCutList
 
           face_defs.each do |face_def|
 
-            f_ps = Geom2D::PolygonSet.new
-            f_ps << Geom2D::Polygon.new(face_def[:outer])
-            face_def[:holes].each { |hole|
-              f_ps << Geom2D::Polygon.new(hole)
+            f_coords = []
+            face_def[:loops].each { |points|
+              f_coords << Clippy.points_to_coords(points)
             }
 
             layer_def = layer_defs[face_def[:depth]]
             if layer_def.nil?
               layer_def = {
                 :depth => face_def[:depth],
-                :ps => f_ps
+                :coords => f_coords
               }
               layer_defs[face_def[:depth]] = layer_def
             else
-              layer_def[:ps] = Geom2D::Algorithms::PolygonOperation.run(layer_def[:ps], f_ps, :union)
+
+              Clippy.clear
+              Clippy.append_subjects(layer_def[:coords])
+              Clippy.append_clips(f_coords)
+
+              layer_def[:coords] = Clippy.compute_union
             end
 
           end
@@ -908,10 +904,16 @@ module Ladb::OpenCutList
 
           # Up to Down difference
           ld.each_with_index do |layer_def, index|
-            next if layer_def[:ps].polygons.empty?
+            next if layer_def[:coords].empty?
             ld[(index + 1)..-1].each do |lower_layer_def|
-              next if lower_layer_def[:ps].polygons.empty?
-              lower_layer_def[:ps] = Geom2D::Algorithms::PolygonOperation.run(lower_layer_def[:ps], layer_def[:ps], :difference)
+              next if lower_layer_def[:coords].empty?
+
+              Clippy.clear
+              Clippy.append_subjects(lower_layer_def[:coords])
+              Clippy.append_clips(layer_def[:coords])
+
+              lower_layer_def[:coords] = Clippy.compute_difference
+
             end
           end
 
@@ -920,58 +922,64 @@ module Ladb::OpenCutList
         tu = x.report("Union Down -> Up :")   {
 
           # Down to Up union
-          ld.each_with_index do |layer_def, index|
-            next if layer_def[:ps].polygons.empty?
-            ld[(index + 1)..-1].reverse.each do |lower_layer_def|
-              next if lower_layer_def[:ps].polygons.empty?
-              ld[index][:ps] = Geom2D::Algorithms::PolygonOperation.run(ld[index][:ps], lower_layer_def[:ps], :union)
-            end
-          end
+          # ld.each_with_index do |layer_def, index|
+          #   next if layer_def[:coords].empty?
+          #   ld[(index + 1)..-1].reverse.each do |lower_layer_def|
+          #     next if lower_layer_def[:coords].empty?
+          #
+          #     Clippy.clear
+          #     Clippy.append_subjects(ld[index][:coords])
+          #     Clippy.append_clips(lower_layer_def[:coords])
+          #
+          #     ld[index][:coords] = Clippy.compute_union
+          #
+          #   end
+          # end
 
         }
 
         tz = x.report("Union Bottom -> Up :")   {
 
-          bbox0 = top_layer_def[:ps].polygons[0].bbox
-          top_layer_def[:ps].polygons.each_with_index do |polygon, polygon_index|
-
-            hole = polygon_index > 0 &&
-              polygon.bbox.min_x > bbox0.min_x && polygon.bbox.min_y > bbox0.min_y &&
-              polygon.bbox.max_x < bbox0.max_x && polygon.bbox.max_y < bbox0.max_y
-
-            bbox0 = polygon.bbox unless hole
-
-            if hole
-              bottom_layer_def[:ps] << polygon
-            end
-
-          end
-
-          # Down to Up union
-          ld.each_with_index do |layer_def, index|
-            next if layer_def[:ps].polygons.empty?
-            ld[(index + 1)..-1].reverse.each do |lower_layer_def|
-              next if lower_layer_def[:ps].polygons.empty?
-              ld[index][:ps] = Geom2D::Algorithms::PolygonOperation.run(ld[index][:ps], lower_layer_def[:ps], :union)
-            end
-          end
+          # Add top holes as bottom plain
+          # top_layer_def[:coords].each do |coords|
+          #
+          #   points = Clippy.coords_to_points(coords)
+          #   unless Clippy.ccw?(points)
+          #     bottom_layer_def[:coords] << coords
+          #   end
+          #
+          # end
+          #
+          # unless bottom_layer_def[:coords].empty?
+          #
+          #   # Down to Up union
+          #   ld.each_with_index do |layer_def, index|
+          #     next if layer_def[:coords].empty?
+          #     ld[(index + 1)..-1].reverse.each do |lower_layer_def|
+          #       next if lower_layer_def[:coords].empty?
+          #
+          #       Clippy.clear
+          #       Clippy.append_subjects(ld[index][:coords])
+          #       Clippy.append_clips(lower_layer_def[:coords])
+          #
+          #       ld[index][:coords] = Clippy.compute_union
+          #
+          #     end
+          #   end
+          #
+          # end
 
         }
 
         tdr = x.report("Draw :")   {
 
           ld.each_with_index do |layer_def, layer_index|
-            next if layer_def[:ps].polygons.empty?
-            bbox0 = layer_def[:ps].polygons[0].bbox
-            layer_def[:ps].polygons.each_with_index do |polygon, polygon_index|
+            next if layer_def[:coords].empty?
+            layer_def[:coords].each do |coords|
 
-              hole = polygon_index > 0 &&
-                polygon.bbox.min_x > bbox0.min_x && polygon.bbox.min_y > bbox0.min_y &&
-                polygon.bbox.max_x < bbox0.max_x && polygon.bbox.max_y < bbox0.max_y
+              points = Clippy.coords_to_points(coords)
 
-              bbox0 = polygon.bbox unless hole
-
-              face = @group.entities.add_face(polygon.each_vertex.map { |point| Geom::Point3d.new(point.x, point.y, layer_def[:depth]) })
+              face = @group.entities.add_face(points.map { |point| Geom::Point3d.new(point.x, point.y, drawing_def.bounds.max.z - layer_def[:depth]) })
               face.reverse! unless face.normal.samedirection?(Z_AXIS)
               if layer_def[:depth] == 0
                 face.material = 'Black'
@@ -981,14 +989,14 @@ module Ladb::OpenCutList
                 face.material = 'DarkGray'
               end
 
-              if hole
+              unless Clippy.ccw?(points) || layer_def[:depth] == drawing_def.bounds.max.z
                 @group.entities.erase_entities(face)
               end
 
+              @group.transformation = drawing_def.transformation
+
             end
           end
-
-          # @group.transformation = drawing_def.transformation
 
         }
 
