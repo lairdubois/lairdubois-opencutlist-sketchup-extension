@@ -11,7 +11,7 @@ module Ladb::OpenCutList
     when :platform_osx
       dlload File.join(__dir__, '../../../bin/osx/lib/libClippy.dylib')
     when :platform_win
-      dlload File.join(__dir__, '../../../bin/x86/lib/libClippy.dll')
+      dlload File.join(__dir__, '../../../bin/x86/lib/Clipper2_64.dll')
     end
 
     extern 'void c_clear_subjects(void)'
