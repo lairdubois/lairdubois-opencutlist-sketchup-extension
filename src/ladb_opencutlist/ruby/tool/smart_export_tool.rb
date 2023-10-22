@@ -12,6 +12,7 @@ module Ladb::OpenCutList
   require_relative '../worker/common/common_export_drawing2d_worker'
   require_relative '../worker/common/common_export_drawing3d_worker'
   require_relative '../worker/common/common_decompose_drawing_worker'
+  require_relative '../worker/common/common_projection_worker'
 
   require 'benchmark'
 
@@ -383,102 +384,126 @@ module Ladb::OpenCutList
             end
 
 
-            # DEBUG
-
-            _draw_outer_shape_clipper(@active_drawing_def)
-
-            # DEBUG
-
-
+            projection_def = CommonProjectionWorker.new(@active_drawing_def).run
 
 
             preview = Kuix::Group.new
             preview.transformation = @active_drawing_def.transformation
             @space.append(preview)
 
-            @active_drawing_def.face_manipulators.each do |face_manipulator|
+            projection_def.layer_defs.each do |layer_def|
+              layer_def.polygon_defs.each do |polygon_def|
 
-              # Highlight face
-              mesh = Kuix::Mesh.new
-              mesh.add_triangles(face_manipulator.triangles)
-              mesh.background_color = COLOR_MESH_DEEP.blend((highlighted ? COLOR_MESH_HIGHLIGHTED : COLOR_MESH), face_manipulator.data[:depth_ratio])
-              preview.append(mesh)
+                segments = Kuix::Segments.new
+                segments.add_segments(polygon_def.segments)
+                segments.color = layer_def.depth > 0 ? Kuix::COLOR_CYAN : Kuix::COLOR_BLACK
+                segments.line_width = 3
+                segments.line_stipple = layer_def.depth > 0 ? Kuix::LINE_STIPPLE_SHORT_DASHES : Kuix::LINE_STIPPLE_SOLID
+                segments.on_top = true
+                preview.append(segments)
 
-              # Highlight arcs (if activated)
-              if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_CURVES)
-                face_manipulator.loop_manipulators.each do |loop_manipulator|
-                  loop_manipulator.loop_def.portions.grep(Geometrix::ArcLoopPortionDef).each do |portion|
+                # Highlight arcs (if activated)
+                if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_CURVES)
+                  loop_def = Geometrix::LoopFinder.find_loop_def(polygon_def.points)
+                  loop_def.portions.grep(Geometrix::ArcLoopPortionDef).each do |portion|
 
                     segments = Kuix::Segments.new
                     segments.add_segments(portion.segments)
                     segments.color = COLOR_BRAND
                     segments.line_width = 3
+                    segments.line_stipple = layer_def.depth > 0 ? Kuix::LINE_STIPPLE_SHORT_DASHES : Kuix::LINE_STIPPLE_SOLID
                     segments.on_top = true
                     preview.append(segments)
 
-                    # DEBUG
-
-                    # # xaxis
-                    # line = Kuix::LineMotif.new
-                    # line.start.copy!(portion.ellipse_def.center)
-                    # line.end.copy!(portion.ellipse_def.center.transform(Geom::Transformation.translation(portion.ellipse_def.xaxis)))
-                    # line.color = Kuix::COLOR_RED
-                    # line.line_width = 2
-                    # line.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-                    # line.on_top = true
-                    # preview.append(line)
-                    #
-                    # # yaxis
-                    # line = Kuix::LineMotif.new
-                    # line.start.copy!(portion.ellipse_def.center)
-                    # line.end.copy!(portion.ellipse_def.center.transform(Geom::Transformation.translation(portion.ellipse_def.yaxis)))
-                    # line.color = Kuix::COLOR_GREEN
-                    # line.line_width = 2
-                    # line.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-                    # line.on_top = true
-                    # preview.append(line)
-                    #
-                    # # normal
-                    # line = Kuix::LineMotif.new
-                    # line.start.copy!(portion.ellipse_def.center)
-                    # line.end.copy!(portion.ellipse_def.center.transform(Geom::Transformation.translation(portion.normal)))
-                    # line.color = Kuix::COLOR_BLUE
-                    # line.line_width = 2
-                    # line.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-                    # line.on_top = true
-                    # preview.append(line)
-                    #
-                    # # start point
-                    # axes_helper = Kuix::AxesHelper.new(200, 5, Kuix::COLOR_GREEN)
-                    # axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(portion.start_point.to_a))
-                    # axes_helper.box_x.visible = false
-                    # axes_helper.box_y.visible = false
-                    # axes_helper.box_z.visible = false
-                    # preview.append(axes_helper)
-                    #
-                    # # mid point
-                    # axes_helper = Kuix::AxesHelper.new(200, 5, Kuix::COLOR_CYAN)
-                    # axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(portion.mid_point.to_a))
-                    # axes_helper.box_x.visible = false
-                    # axes_helper.box_y.visible = false
-                    # axes_helper.box_z.visible = false
-                    # preview.append(axes_helper)
-                    #
-                    # # end point
-                    # axes_helper = Kuix::AxesHelper.new(200, 5, Kuix::COLOR_RED)
-                    # axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(portion.end_point.to_a))
-                    # axes_helper.box_x.visible = false
-                    # axes_helper.box_y.visible = false
-                    # axes_helper.box_z.visible = false
-                    # preview.append(axes_helper)
-
-                    # DEBUG
-
                   end
                 end
-              end
 
+              end
             end
+
+            # @active_drawing_def.face_manipulators.each do |face_manipulator|
+            #
+            #   # Highlight face
+            #   # mesh = Kuix::Mesh.new
+            #   # mesh.add_triangles(face_manipulator.triangles)
+            #   # mesh.background_color = COLOR_MESH_DEEP.blend((highlighted ? COLOR_MESH_HIGHLIGHTED : COLOR_MESH), face_manipulator.data[:depth_ratio])
+            #   # preview.append(mesh)
+            #
+            #   # Highlight arcs (if activated)
+            #   # if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_CURVES)
+            #   #   face_manipulator.loop_manipulators.each do |loop_manipulator|
+            #   #     loop_manipulator.loop_def.portions.grep(Geometrix::ArcLoopPortionDef).each do |portion|
+            #   #
+            #   #       segments = Kuix::Segments.new
+            #   #       segments.add_segments(portion.segments)
+            #   #       segments.color = COLOR_BRAND
+            #   #       segments.line_width = 3
+            #   #       segments.on_top = true
+            #   #       preview.append(segments)
+            #   #
+            #   #       # DEBUG
+            #   #
+            #   #       # # xaxis
+            #   #       # line = Kuix::LineMotif.new
+            #   #       # line.start.copy!(portion.ellipse_def.center)
+            #   #       # line.end.copy!(portion.ellipse_def.center.transform(Geom::Transformation.translation(portion.ellipse_def.xaxis)))
+            #   #       # line.color = Kuix::COLOR_RED
+            #   #       # line.line_width = 2
+            #   #       # line.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+            #   #       # line.on_top = true
+            #   #       # preview.append(line)
+            #   #       #
+            #   #       # # yaxis
+            #   #       # line = Kuix::LineMotif.new
+            #   #       # line.start.copy!(portion.ellipse_def.center)
+            #   #       # line.end.copy!(portion.ellipse_def.center.transform(Geom::Transformation.translation(portion.ellipse_def.yaxis)))
+            #   #       # line.color = Kuix::COLOR_GREEN
+            #   #       # line.line_width = 2
+            #   #       # line.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+            #   #       # line.on_top = true
+            #   #       # preview.append(line)
+            #   #       #
+            #   #       # # normal
+            #   #       # line = Kuix::LineMotif.new
+            #   #       # line.start.copy!(portion.ellipse_def.center)
+            #   #       # line.end.copy!(portion.ellipse_def.center.transform(Geom::Transformation.translation(portion.normal)))
+            #   #       # line.color = Kuix::COLOR_BLUE
+            #   #       # line.line_width = 2
+            #   #       # line.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+            #   #       # line.on_top = true
+            #   #       # preview.append(line)
+            #   #       #
+            #   #       # # start point
+            #   #       # axes_helper = Kuix::AxesHelper.new(200, 5, Kuix::COLOR_GREEN)
+            #   #       # axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(portion.start_point.to_a))
+            #   #       # axes_helper.box_x.visible = false
+            #   #       # axes_helper.box_y.visible = false
+            #   #       # axes_helper.box_z.visible = false
+            #   #       # preview.append(axes_helper)
+            #   #       #
+            #   #       # # mid point
+            #   #       # axes_helper = Kuix::AxesHelper.new(200, 5, Kuix::COLOR_CYAN)
+            #   #       # axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(portion.mid_point.to_a))
+            #   #       # axes_helper.box_x.visible = false
+            #   #       # axes_helper.box_y.visible = false
+            #   #       # axes_helper.box_z.visible = false
+            #   #       # preview.append(axes_helper)
+            #   #       #
+            #   #       # # end point
+            #   #       # axes_helper = Kuix::AxesHelper.new(200, 5, Kuix::COLOR_RED)
+            #   #       # axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(portion.end_point.to_a))
+            #   #       # axes_helper.box_x.visible = false
+            #   #       # axes_helper.box_y.visible = false
+            #   #       # axes_helper.box_z.visible = false
+            #   #       # preview.append(axes_helper)
+            #   #
+            #   #       # DEBUG
+            #   #
+            #   #     end
+            #   #   end
+            #   # end
+            #
+            # end
 
             @active_drawing_def.edge_manipulators.each do |edge_manipulator|
 
@@ -502,7 +527,7 @@ module Ladb::OpenCutList
             box_helper.bounds.origin.copy!(bounds.min)
             box_helper.bounds.size.copy!(bounds)
             box_helper.bounds.apply_offset(inch_offset, inch_offset, 0)
-            box_helper.color = Kuix::COLOR_BLACK
+            box_helper.color = Kuix::COLOR_DARK_GREY
             box_helper.line_width = 2
             box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
             preview.append(box_helper)
@@ -574,7 +599,7 @@ module Ladb::OpenCutList
             box_helper.bounds.origin.copy!(bounds.min)
             box_helper.bounds.size.copy!(bounds)
             box_helper.bounds.apply_offset(inch_offset, inch_offset, inch_offset)
-            box_helper.color = Kuix::COLOR_BLACK
+            box_helper.color = Kuix::COLOR_DARK_GREY
             box_helper.line_width = 2
             box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
             preview.append(box_helper)
@@ -795,8 +820,7 @@ module Ladb::OpenCutList
             'file_format' => file_format,
             'unit' => unit,
             'anchor' => anchor,
-            'curves' => curves,
-            'max_depth' => 0
+            'curves' => curves
           })
           response = worker.run
 
@@ -824,185 +848,6 @@ module Ladb::OpenCutList
       y_axis = z_axis.cross(x_axis)
 
       [ ORIGIN, x_axis, y_axis, z_axis, input_edge, input_edge != @input_edge ]
-    end
-
-    def _draw_outer_shape_clipper(drawing_def)
-
-      SKETCHUP_CONSOLE.clear
-
-      @group = Sketchup.active_model.entities.add_group if @group.nil?
-      @group.entities.clear!
-
-      face_defs = []
-
-      Benchmark.benchmark(CAPTION, 20, FORMAT, "TOTAL :") do |x|
-
-        tp = x.report("Get points :")   {
-
-          # Only exposed faces
-          exposed_face_manipulators = drawing_def.face_manipulators.select do |face_manipulator|
-            !face_manipulator.perpendicular?(drawing_def.input_face_manipulator) && drawing_def.input_face_manipulator.angle_between(face_manipulator) < Math::PI / 2.0
-          end
-
-          exposed_face_manipulators.each do |face_manipulator|
-
-            face_def = {
-              :loops => face_manipulator.loop_manipulators.map { |loop_manipulator| loop_manipulator.points },
-              :depth => face_manipulator.data[:depth]
-            }
-            face_defs << face_def
-
-          end
-
-        }
-
-        top_layer_def = {
-          :depth => 0.0,
-          :coords => []
-        }
-        bottom_layer_def = {
-          :depth => drawing_def.bounds.max.z,
-          :coords => []
-        }
-
-        layer_defs = {}
-        layer_defs[0.0] = top_layer_def
-        layer_defs[drawing_def.bounds.max.z] = bottom_layer_def
-
-        tl = x.report("Get layers :")   {
-
-          face_defs.each do |face_def|
-
-            f_coords = []
-            face_def[:loops].each { |points|
-              f_coords << Clippy.points_to_coords(points)
-            }
-
-            layer_def = layer_defs[face_def[:depth]]
-            if layer_def.nil?
-              layer_def = {
-                :depth => face_def[:depth],
-                :coords => f_coords
-              }
-              layer_defs[face_def[:depth]] = layer_def
-            else
-
-              Clippy.clear
-              Clippy.append_subjects(layer_def[:coords])
-              Clippy.append_clips(f_coords)
-
-              layer_def[:coords] = Clippy.compute_union
-            end
-
-          end
-
-        }
-
-        ld = layer_defs.values.sort_by { |layer_def| layer_def[:depth] }
-
-        td = x.report("Diff Up -> Down :")   {
-
-          # Up to Down difference
-          ld.each_with_index do |layer_def, index|
-            next if layer_def[:coords].empty?
-            ld[(index + 1)..-1].each do |lower_layer_def|
-              next if lower_layer_def[:coords].empty?
-
-              Clippy.clear
-              Clippy.append_subjects(lower_layer_def[:coords])
-              Clippy.append_clips(layer_def[:coords])
-
-              lower_layer_def[:coords] = Clippy.compute_difference
-
-            end
-          end
-
-        }
-
-        tu = x.report("Union Down -> Up :")   {
-
-          # Down to Up union
-          # ld.each_with_index do |layer_def, index|
-          #   next if layer_def[:coords].empty?
-          #   ld[(index + 1)..-1].reverse.each do |lower_layer_def|
-          #     next if lower_layer_def[:coords].empty?
-          #
-          #     Clippy.clear
-          #     Clippy.append_subjects(ld[index][:coords])
-          #     Clippy.append_clips(lower_layer_def[:coords])
-          #
-          #     ld[index][:coords] = Clippy.compute_union
-          #
-          #   end
-          # end
-
-        }
-
-        tz = x.report("Union Bottom -> Up :")   {
-
-          # Add top holes as bottom plain
-          # top_layer_def[:coords].each do |coords|
-          #
-          #   points = Clippy.coords_to_points(coords)
-          #   unless Clippy.ccw?(points)
-          #     bottom_layer_def[:coords] << coords
-          #   end
-          #
-          # end
-          #
-          # unless bottom_layer_def[:coords].empty?
-          #
-          #   # Down to Up union
-          #   ld.each_with_index do |layer_def, index|
-          #     next if layer_def[:coords].empty?
-          #     ld[(index + 1)..-1].reverse.each do |lower_layer_def|
-          #       next if lower_layer_def[:coords].empty?
-          #
-          #       Clippy.clear
-          #       Clippy.append_subjects(ld[index][:coords])
-          #       Clippy.append_clips(lower_layer_def[:coords])
-          #
-          #       ld[index][:coords] = Clippy.compute_union
-          #
-          #     end
-          #   end
-          #
-          # end
-
-        }
-
-        tdr = x.report("Draw :")   {
-
-          ld.each_with_index do |layer_def, layer_index|
-            next if layer_def[:coords].empty?
-            layer_def[:coords].each do |coords|
-
-              points = Clippy.coords_to_points(coords)
-
-              face = @group.entities.add_face(points.map { |point| Geom::Point3d.new(point.x, point.y, drawing_def.bounds.max.z - layer_def[:depth]) })
-              face.reverse! unless face.normal.samedirection?(Z_AXIS)
-              if layer_def[:depth] == 0
-                face.material = 'Black'
-              elsif layer_def[:depth] == drawing_def.bounds.max.z
-                face.material = 'White'
-              else
-                face.material = 'DarkGray'
-              end
-
-              unless Clippy.ccw?(points) || layer_def[:depth] == drawing_def.bounds.max.z
-                @group.entities.erase_entities(face)
-              end
-
-              @group.transformation = drawing_def.transformation
-
-            end
-          end
-
-        }
-
-        [ tp + tl + td + tu + tdr ]
-      end
-
     end
 
   end

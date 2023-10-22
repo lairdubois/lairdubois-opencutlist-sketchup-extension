@@ -10,6 +10,7 @@ module Ladb::OpenCutList
     case Sketchup.platform
     when :platform_osx
       dlload File.join(__dir__, '../../../bin/osx/lib/libClippy.dylib')
+      # dlload File.join(__dir__, '../../../bin/osx/lib/libclipper2.1.2.3.so')
     when :platform_win
       dlload File.join(__dir__, '../../../bin/x86/lib/Clipper2_64.dll')
     end
@@ -82,9 +83,9 @@ module Ladb::OpenCutList
       points.map { |point| [ (point.x * FACTOR).to_i, (point.y * FACTOR).to_i ] }.flatten
     end
 
-    def self.coords_to_points(coords)
+    def self.coords_to_points(coords, z = 0.0)
       points = []
-      coords.each_slice(2) { |coord_a, coord_b| points << Geom::Point3d.new(coord_a / FACTOR, coord_b / FACTOR) }
+      coords.each_slice(2) { |coord_a, coord_b| points << Geom::Point3d.new(coord_a / FACTOR, coord_b / FACTOR, z) }
       points
     end
 

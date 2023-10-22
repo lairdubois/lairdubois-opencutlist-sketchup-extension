@@ -21,7 +21,7 @@ module Ladb::OpenCutList
 
     SUPPORTED_FILE_FORMATS = [ FILE_FORMAT_DXF, FILE_FORMAT_SVG ]
 
-    def initialize(drawing_def, settings)
+    def initialize(drawing_def, settings = {})
 
       @drawing_def = drawing_def
 
@@ -30,7 +30,6 @@ module Ladb::OpenCutList
       @unit = settings.fetch('unit', nil)
       @anchor = settings.fetch('anchor', false)
       @curves = settings.fetch('curves', false)
-      @max_depth = settings.fetch('max_depth', 0)
 
     end
 
@@ -88,6 +87,12 @@ module Ladb::OpenCutList
 
     def _write_2d(path, face_manipulators, edge_manipulators, unit_converter)
 
+      # Compute projection
+      projection_def = CommonProjectionWorker.new(@drawing_def, {
+        'down_to_up_union' => true,
+        'passthrough_holes' => true
+      }).run
+
       # Open output file
       file = File.new(path , 'w')
 
@@ -103,14 +108,13 @@ module Ladb::OpenCutList
         _dxf_write(file, 0, 'SECTION')
         _dxf_write(file, 2, 'ENTITIES')
 
-        face_manipulators.each do |face_manipulator|
+        projection_def.layer_defs.each do |layer_def|
+          layer_def.polygon_defs.each do |polygon_def|
 
-          face_manipulator.loop_manipulators.each do |loop_manipulator|
-
-            if @curves && loop_manipulator.loop_def
+            if @curves && polygon_def.loop_def
 
               # Extract loop points from ordered edges and arc curves
-              loop_manipulator.loop_def.portions.each { |portion|
+              polygon_def.loop_def.portions.each { |portion|
 
                 if portion.is_a?(Geometrix::ArcLoopPortionDef)
 
@@ -121,7 +125,7 @@ module Ladb::OpenCutList
                   if portion.loop_def.ellipse?
                     start_angle = 0.0
                     end_angle = 2.0 * Math::PI
-                  elsif portion.normal.samedirection?(face_manipulator.normal)
+                  elsif portion.normal.samedirection?(Z_AXIS)
                     start_angle = portion.start_angle
                     end_angle = portion.end_angle
                   else
@@ -158,12 +162,11 @@ module Ladb::OpenCutList
             else
 
               # Extract loop points from vertices (quicker)
-              _dxf_write_polygon(file, loop_manipulator.points.map { |point| _convert_point(point, unit_converter) }, LAYER_DRAWING)
+              _dxf_write_polygon(file, polygon_def.points.map { |point| _convert_point(point, unit_converter) }, LAYER_DRAWING)
 
             end
 
           end
-
         end
 
         edge_manipulators.each do |edge_manipulator|
@@ -214,29 +217,26 @@ module Ladb::OpenCutList
 
         _svg_write_start(file, x, y, width, height, unit_sign)
 
-        unless face_manipulators.empty?
+        unless projection_def.layer_defs.empty?
 
           _svg_write_group_start(file, id: LAYER_DRAWING)
 
-          face_manipulators.sort_by { |face_manipulator| face_manipulator.data[:depth] }.each do |face_manipulator|
+          projection_def.layer_defs.each do |layer_def|
+            layer_def.polygon_defs.each do |polygon_def|
 
-            depth = face_manipulator.data[:depth].to_f
-            depth_ratio = face_manipulator.data[:depth_ratio]
-
-            face_manipulator.loop_manipulators.each do |loop_manipulator|
-
-              if loop_manipulator.loop.outer?
-                if depth.round(6) == 0
+              if polygon_def.outer?
+                if layer_def.depth.round(6) == 0
                   attributes = {
                     stroke: '#000000',
                     fill: '#000000',
                     'shaper:cutType': 'outside'
                   }
+                  attributes.merge!({ 'shaper:cutDepth': "#{_convert(@drawing_def.bounds.depth, unit_converter)}#{unit_sign}" }) if @drawing_def.bounds.depth > 0
                 else
                   attributes = {
-                    fill: ColorUtils.color_to_hex(Sketchup::Color.new('#7F7F7F').blend(Sketchup::Color.new('#AAAAAA'), depth_ratio)),
+                    fill: ColorUtils.color_to_hex(Sketchup::Color.new('#7F7F7F').blend(Sketchup::Color.new('#AAAAAA'), @drawing_def.bounds.depth > 0 ? layer_def.depth / @drawing_def.bounds.depth : 1.0)),
                     'shaper:cutType': 'pocket',
-                    'shaper:cutDepth': "#{_convert(depth, unit_converter)}#{unit_sign}"
+                    'shaper:cutDepth': "#{_convert(layer_def.depth, unit_converter)}#{unit_sign}"
                   }
                 end
               else
@@ -245,13 +245,13 @@ module Ladb::OpenCutList
                   fill: '#FFFFFF',
                   'shaper:cutType': 'inside',
                 }
-                attributes.merge({ 'shaper:cutDepth': @max_depth }) if @max_depth > 0
+                attributes.merge!({ 'shaper:cutDepth': "#{_convert(@drawing_def.bounds.depth, unit_converter)}#{unit_sign}" }) if @drawing_def.bounds.depth > 0
               end
 
-              if @curves && loop_manipulator.loop_def
+              if @curves && polygon_def.loop_def
 
                 # Extract loop points from ordered edges and arc curves
-                data = "#{loop_manipulator.loop_def.portions.map.with_index { |portion, index|
+                data = "#{polygon_def.loop_def.portions.map.with_index { |portion, index|
 
                   data = []
                   start_point = portion.start_point
@@ -288,7 +288,7 @@ module Ladb::OpenCutList
               else
 
                 # Extract loop points from vertices (quicker)
-                data = "M #{loop_manipulator.points.map { |point| "#{_convert(point.x, unit_converter)},#{_convert(-point.y, unit_converter)}" }.join(' L ')} Z"
+                data = "M #{polygon_def.points.map { |point| "#{_convert(point.x, unit_converter)},#{_convert(-point.y, unit_converter)}" }.join(' L ')} Z"
 
               end
 
@@ -297,7 +297,6 @@ module Ladb::OpenCutList
               ))
 
             end
-
           end
 
           _svg_write_group_end(file)

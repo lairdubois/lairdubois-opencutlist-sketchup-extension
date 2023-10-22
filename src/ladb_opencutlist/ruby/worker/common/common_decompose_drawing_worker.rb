@@ -20,20 +20,20 @@ module Ladb::OpenCutList
     EDGE_VALIDATOR_ALL = 0
     EDGE_VALIDATOR_STRAY_COPLANAR = 1
 
-    def initialize(path, option = {})
+    def initialize(path, settings = {})
 
       @path = path
 
-      @input_face_path = option.fetch('input_face_path', nil)
-      @input_edge_path = option.fetch('input_edge_path', nil)
+      @input_face_path = settings.fetch('input_face_path', nil)
+      @input_edge_path = settings.fetch('input_edge_path', nil)
 
-      @use_bounds_min_as_origin = option.fetch('use_bounds_min_as_origin', false)
+      @use_bounds_min_as_origin = settings.fetch('use_bounds_min_as_origin', false)
 
-      @ignore_faces = option.fetch('ignore_faces', false)
-      @face_validator = option.fetch('face_validator', FACE_VALIDATOR_ALL)
+      @ignore_faces = settings.fetch('ignore_faces', false)
+      @face_validator = settings.fetch('face_validator', FACE_VALIDATOR_ALL)
 
-      @ignore_edges = option.fetch('ignore_edges', false)
-      @edge_validator = option.fetch('edge_validator', EDGE_VALIDATOR_ALL)
+      @ignore_edges = settings.fetch('ignore_edges', false)
+      @edge_validator = settings.fetch('edge_validator', EDGE_VALIDATOR_ALL)
 
     end
 

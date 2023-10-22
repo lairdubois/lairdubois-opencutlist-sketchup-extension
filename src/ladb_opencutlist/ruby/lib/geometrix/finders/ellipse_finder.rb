@@ -32,7 +32,12 @@ module Ladb::OpenCutList::Geometrix
       return nil if matrix_a.det.abs < Float::EPSILON  # TODO check if this "zero" value is not too low.
 
       # Solve the system of equations to find the coefficients of the ellipse
-      sol = matrix_a.inverse * vector_b
+      begin
+        sol = matrix_a.inverse * vector_b
+      rescue Exception => e
+        puts "EllipseFinder.find_ellipse_def : #{e.message}"
+        return nil
+      end
 
       # Extract the coefficients from the ellipse
       # ax^2 + bxy + cy^2 + dx + ey + f = 0
