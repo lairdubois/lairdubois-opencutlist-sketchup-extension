@@ -10,7 +10,6 @@ module Ladb::OpenCutList
     case Sketchup.platform
     when :platform_osx
       dlload File.join(__dir__, '../../../bin/osx/lib/libClippy.dylib')
-      # dlload File.join(__dir__, '../../../bin/osx/lib/libclipper2.1.2.3.so')
     when :platform_win
       dlload File.join(__dir__, '../../../bin/x86/lib/Clipper2_64.dll')
     end
@@ -21,8 +20,8 @@ module Ladb::OpenCutList
     extern 'void c_clear_clips(void)'
     extern 'void c_append_clip(int64_t* coords, size_t len)'
 
-    extern 'size_t c_union(void)'
-    extern 'size_t c_difference(void)'
+    extern 'size_t c_compute_union(void)'
+    extern 'size_t c_compute_difference(void)'
 
     extern 'void c_clear_solution(void)'
     extern 'size_t c_get_solution_len(void)'
@@ -68,12 +67,12 @@ module Ladb::OpenCutList
     end
 
     def self.compute_union
-      c_union
+      c_compute_union
       _unpack_solution
     end
 
     def self.compute_difference
-      c_difference
+      c_compute_difference
       _unpack_solution
     end
 
@@ -108,8 +107,12 @@ module Ladb::OpenCutList
 
         path_len = c_get_solution_path_len_at(index)
         part_coords_ptr = c_get_solution_path_coords_at(index)
+        part_coords_ptr.size = path_len * Fiddle::SIZEOF_LONG_LONG * 2
 
-        solution << part_coords_ptr[0, path_len * Fiddle::SIZEOF_LONG_LONG * 2].unpack('q*')
+        solution << part_coords_ptr.to_str(part_coords_ptr.size).unpack('q*')
+
+        Fiddle.free(part_coords_ptr)
+
       end
       solution
     end

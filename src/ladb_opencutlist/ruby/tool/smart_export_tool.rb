@@ -1,7 +1,6 @@
 module Ladb::OpenCutList
 
   require_relative 'smart_tool'
-  require_relative '../lib/clippy/clippy'
   require_relative '../lib/geometrix/geometrix'
   require_relative '../helper/layer_visibility_helper'
   require_relative '../helper/edge_segments_helper'
@@ -44,10 +43,8 @@ module Ladb::OpenCutList
     ACTION_OPTION_UNIT_CM = DimensionUtils::CENTIMETER
     ACTION_OPTION_UNIT_M = DimensionUtils::METER
 
-    ACTION_OPTION_FACE_SINGLE = 0
-    ACTION_OPTION_FACE_COPLANAR = 1
-    ACTION_OPTION_FACE_PARALLEL = 2
-    ACTION_OPTION_FACE_EXPOSED = 3
+    ACTION_OPTION_FACE_ONE = 0
+    ACTION_OPTION_FACE_ALL = 1
 
     ACTION_OPTION_OPTIONS_ANCHOR = 0
     ACTION_OPTION_OPTIONS_CURVES = 1
@@ -67,7 +64,7 @@ module Ladb::OpenCutList
         :options => {
           ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_DXF, ACTION_OPTION_FILE_FORMAT_SVG ],
           ACTION_OPTION_UNIT => [ ACTION_OPTION_UNIT_MM, ACTION_OPTION_UNIT_CM, ACTION_OPTION_UNIT_IN ],
-          ACTION_OPTION_FACE => [ ACTION_OPTION_FACE_SINGLE, ACTION_OPTION_FACE_COPLANAR, ACTION_OPTION_FACE_PARALLEL, ACTION_OPTION_FACE_EXPOSED ],
+          ACTION_OPTION_FACE => [ ACTION_OPTION_FACE_ONE, ACTION_OPTION_FACE_ALL ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_ANCHOR, ACTION_OPTION_OPTIONS_CURVES, ACTION_OPTION_OPTIONS_GUIDES ]
         }
       }
@@ -172,14 +169,10 @@ module Ladb::OpenCutList
         end
       when ACTION_OPTION_FACE
         case option
-        when ACTION_OPTION_FACE_SINGLE
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.375L0.25,0.25L0.5,0.375L0.25,0.5L0,0.375Z'))
-        when ACTION_OPTION_FACE_COPLANAR
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.375L0.25,0.25L0.5,0.375L0.25,0.5L0,0.375Z M0.25,0.25L0.5,0.125L1,0.375L0.75,0.5L0.5,0.375Z'))
-        when ACTION_OPTION_FACE_PARALLEL
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.375L0.25,0.25L0.5,0.375L0.25,0.5L0,0.375Z M0.25,0.25L0.5,0.125L1,0.375L0.75,0.5L0.5,0.375Z M0.5,0.813L0.25,0.688L0.5,0.563L0.75,0.688L0.5,0.813Z'))
-        when ACTION_OPTION_FACE_EXPOSED
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.375L0.25,0.25L0.5,0.375L0.25,0.5L0,0.375Z M0.25,0.25L0.5,0.125L1,0.375L0.75,0.5L0.5,0.375Z M0.5,0.813L0.25,0.688L0.5,0.563L0.75,0.688L0.5,0.813Z'))
+        when ACTION_OPTION_FACE_ONE
+          return Kuix::Label.new('1')
+        when ACTION_OPTION_FACE_ALL
+          return Kuix::Label.new('∞')
         end
       when ACTION_OPTION_OPTIONS
         case option
@@ -239,7 +232,7 @@ module Ladb::OpenCutList
         end
       when ACTION_OPTION_FACE
         case option
-        when ACTION_OPTION_FACE_PARALLEL
+        when ACTION_OPTION_FACE_ALL
           return true
         end
       when ACTION_OPTION_OPTIONS
@@ -271,13 +264,6 @@ module Ladb::OpenCutList
 
       # Clear current selection
       Sketchup.active_model.selection.clear if Sketchup.active_model
-
-    end
-
-    def onDeactivate(view)
-      super
-
-      # @group.erase! unless @group.nil?
 
     end
 
@@ -347,71 +333,40 @@ module Ladb::OpenCutList
 
         if is_action_export_part_2d?
 
-          if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACE, ACTION_OPTION_FACE_EXPOSED)
-            face_validator = CommonDecomposeDrawingWorker::FACE_VALIDATOR_EXPOSED
-          elsif fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACE, ACTION_OPTION_FACE_PARALLEL)
-            face_validator = CommonDecomposeDrawingWorker::FACE_VALIDATOR_PARALLEL
-          elsif fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACE, ACTION_OPTION_FACE_COPLANAR)
-            face_validator = CommonDecomposeDrawingWorker::FACE_VALIDATOR_COPLANAR
-          else
-            face_validator = CommonDecomposeDrawingWorker::FACE_VALIDATOR_SINGLE
-          end
-
-          face_validator = nil
-
-          options = {
+          @active_drawing_def = CommonDecomposeDrawingWorker.new(@active_part_entity_path, {
             'input_face_path' => @input_face_path,
             'input_edge_path' => @input_edge.nil? ? nil : @input_face_path + [ @input_edge ],
             'use_bounds_min_as_origin' => !fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR),
-            'face_validator' => face_validator,
+            'face_validator' => fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACE, ACTION_OPTION_FACE_ONE) ? CommonDecomposeDrawingWorker::FACE_VALIDATOR_ONE : CommonDecomposeDrawingWorker::FACE_VALIDATOR_ALL,
             'ignore_edges' => !fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_GUIDES),
             'edge_validator' => CommonDecomposeDrawingWorker::EDGE_VALIDATOR_STRAY_COPLANAR
-          }
-
-          @active_drawing_def = CommonDecomposeDrawingWorker.new(@active_part_entity_path, options).run
+          }).run
           if @active_drawing_def.is_a?(DrawingDef)
 
-            # Compute face depths
-            @active_drawing_def.face_manipulators.each do |face_manipulator|
-              if face_manipulator.parallel?(@active_drawing_def.input_face_manipulator) && @active_drawing_def.bounds.depth > 0
-                face_manipulator.data[:depth] = @active_drawing_def.bounds.max.distance_to_plane(face_manipulator.plane).round(6)
-                face_manipulator.data[:depth_ratio] = face_manipulator.data[:depth] / @active_drawing_def.bounds.depth
-              else
-                face_manipulator.data[:depth] = (@active_drawing_def.bounds.max.z - face_manipulator.outer_loop_points.max { |p1, p2| p1.z <=> p2.z }.z).round(6)
-                face_manipulator.data[:depth_ratio] = 0.0
-              end
-
-            end
-
-
             projection_def = CommonProjectionWorker.new(@active_drawing_def).run
-
 
             preview = Kuix::Group.new
             preview.transformation = @active_drawing_def.transformation
             @space.append(preview)
 
-            projection_def.layer_defs.each do |layer_def|
+            projection_def.layer_defs.reverse.each do |layer_def| # reverse layer order to present from Bottom to Top
               layer_def.polygon_defs.each do |polygon_def|
 
                 segments = Kuix::Segments.new
                 segments.add_segments(polygon_def.segments)
-                segments.color = layer_def.depth > 0 ? Kuix::COLOR_CYAN : Kuix::COLOR_BLACK
+                segments.color = layer_def.depth > 0 ? Kuix::COLOR_CYAN : Kuix::COLOR_BLUE
                 segments.line_width = 3
-                segments.line_stipple = layer_def.depth > 0 ? Kuix::LINE_STIPPLE_SHORT_DASHES : Kuix::LINE_STIPPLE_SOLID
                 segments.on_top = true
                 preview.append(segments)
 
                 # Highlight arcs (if activated)
                 if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_CURVES)
-                  loop_def = Geometrix::LoopFinder.find_loop_def(polygon_def.points)
-                  loop_def.portions.grep(Geometrix::ArcLoopPortionDef).each do |portion|
+                  polygon_def.loop_def.portions.grep(Geometrix::ArcLoopPortionDef).each do |portion|
 
                     segments = Kuix::Segments.new
                     segments.add_segments(portion.segments)
                     segments.color = COLOR_BRAND
                     segments.line_width = 3
-                    segments.line_stipple = layer_def.depth > 0 ? Kuix::LINE_STIPPLE_SHORT_DASHES : Kuix::LINE_STIPPLE_SOLID
                     segments.on_top = true
                     preview.append(segments)
 
@@ -527,8 +482,8 @@ module Ladb::OpenCutList
             box_helper.bounds.origin.copy!(bounds.min)
             box_helper.bounds.size.copy!(bounds)
             box_helper.bounds.apply_offset(inch_offset, inch_offset, 0)
-            box_helper.color = Kuix::COLOR_DARK_GREY
-            box_helper.line_width = 2
+            box_helper.color = Kuix::COLOR_BLACK
+            box_helper.line_width = 1
             box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
             preview.append(box_helper)
 
@@ -555,12 +510,12 @@ module Ladb::OpenCutList
 
         else
 
-          options = {
+          settings = {
             'use_bounds_min_as_origin' => !fetch_action_option(ACTION_EXPORT_PART_3D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR),
             'ignore_edges' => true
           }
 
-          @active_drawing_def = CommonDecomposeDrawingWorker.new(@active_part_entity_path, options).run
+          @active_drawing_def = CommonDecomposeDrawingWorker.new(@active_part_entity_path, settings).run
           if @active_drawing_def.is_a?(DrawingDef)
 
             preview = Kuix::Group.new
@@ -599,8 +554,8 @@ module Ladb::OpenCutList
             box_helper.bounds.origin.copy!(bounds.min)
             box_helper.bounds.size.copy!(bounds)
             box_helper.bounds.apply_offset(inch_offset, inch_offset, inch_offset)
-            box_helper.color = Kuix::COLOR_DARK_GREY
-            box_helper.line_width = 2
+            box_helper.color = Kuix::COLOR_BLACK
+            box_helper.line_width = 1
             box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
             preview.append(box_helper)
 

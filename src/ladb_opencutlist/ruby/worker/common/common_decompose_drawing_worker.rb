@@ -6,13 +6,14 @@ module Ladb::OpenCutList
   require_relative '../../utils/transformation_utils'
   require_relative '../../manipulator/face_manipulator'
   require_relative '../../manipulator/edge_manipulator'
+  require_relative '../../manipulator/surface_manipulator'
 
   class CommonDecomposeDrawingWorker
 
     include LayerVisibilityHelper
 
     FACE_VALIDATOR_ALL = 0
-    FACE_VALIDATOR_SINGLE = 1
+    FACE_VALIDATOR_ONE = 1
     FACE_VALIDATOR_COPLANAR = 2
     FACE_VALIDATOR_PARALLEL = 3
     FACE_VALIDATOR_EXPOSED = 4
@@ -132,7 +133,7 @@ module Ladb::OpenCutList
         validator = nil
         if drawing_def.input_face_manipulator
           case @face_validator
-          when FACE_VALIDATOR_SINGLE
+          when FACE_VALIDATOR_ONE
             validator = lambda { |face_manipulator|
               face_manipulator == drawing_def.input_face_manipulator
             }
@@ -150,6 +151,8 @@ module Ladb::OpenCutList
             }
           end
         end
+
+        @surface_manipulators = []
 
         _populate_face_manipulators(drawing_def.face_manipulators, entities, ttai, &validator)
 
@@ -245,7 +248,24 @@ module Ladb::OpenCutList
         if entity.visible? && _layer_visible?(entity.layer)
           if entity.is_a?(Sketchup::Face)
             manipulator = FaceManipulator.new(entity, transformation)
-            face_manipulators.push(manipulator) if !block_given? || yield(manipulator)
+
+            if !block_given? || yield(manipulator)
+
+              # TODO : Quite slow
+              if manipulator.belongs_to_a_surface?
+                surface_manipulator = _get_surface_manipulator_by_face(entity)
+                if surface_manipulator.nil?
+                  surface_manipulator = SurfaceManipulator.new(transformation)
+                  _populate_surface_manipulator(surface_manipulator, entity)
+                end
+                manipulator.surface_manipulator = surface_manipulator
+              end
+              # TODO : Quite slow
+
+              face_manipulators.push(manipulator)
+
+            end
+
           elsif entity.is_a?(Sketchup::Group)
             _populate_face_manipulators(face_manipulators, entity.entities, transformation * entity.transformation, &validator)
           elsif entity.is_a?(Sketchup::ComponentInstance) && (entity.definition.behavior.cuts_opening? || entity.definition.behavior.always_face_camera?)
@@ -268,6 +288,25 @@ module Ladb::OpenCutList
           end
         end
       end
+    end
+
+    def _populate_surface_manipulator(surface_manipulator, face)
+      return if surface_manipulator.include?(face)
+      face.edges.each do |edge|
+        next unless edge.soft?
+        surface_manipulator.faces.push(face)
+        edge.faces.each do |f|
+          next if f == face
+          _populate_surface_manipulator(surface_manipulator, f)
+        end
+      end
+    end
+
+    def _get_surface_manipulator_by_face(face)
+      @surface_manipulators.each do |surface_manipulator|
+        return surface_manipulator if surface_manipulator.include?(face)
+      end
+      nil
     end
 
   end

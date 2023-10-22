@@ -11,10 +11,12 @@ module Ladb::OpenCutList
     include FaceTrianglesHelper
 
     attr_reader :face
+    attr_accessor :surface_manipulator
 
     def initialize(face, transformation = Geom::Transformation.new)
       super(transformation)
       @face = face
+      @surface_manipulator = nil
     end
 
     # -----
@@ -54,6 +56,14 @@ module Ladb::OpenCutList
     def angle_between(other)
       return false unless other.is_a?(FaceManipulator)
       normal.angle_between(other.normal)
+    end
+
+    def z_max
+      outer_loop_points.max { |p1, p2| p1.z <=> p2.z }.z
+    end
+
+    def belongs_to_a_surface?
+      @face.edges.index { |edge| edge.soft? }
     end
 
     # -----
