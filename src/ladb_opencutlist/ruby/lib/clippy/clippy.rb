@@ -9,24 +9,26 @@ module Ladb::OpenCutList
 
     case Sketchup.platform
     when :platform_osx
+
       dlload File.join(__dir__, '../../../bin/osx/lib/libClippy.dylib')
+
+      extern 'void c_clear_subjects(void)'
+      extern 'void c_append_subject(int64_t* coords, size_t len)'
+
+      extern 'void c_clear_clips(void)'
+      extern 'void c_append_clip(int64_t* coords, size_t len)'
+
+      extern 'size_t c_compute_union(void)'
+      extern 'size_t c_compute_difference(void)'
+
+      extern 'void c_clear_solution(void)'
+      extern 'size_t c_get_solution_len(void)'
+      extern 'size_t c_get_solution_path_len_at(int index)'
+      extern 'int64_t* c_get_solution_path_coords_at(int index)'
+
     when :platform_win
-      dlload File.join(__dir__, '../../../bin/x86/lib/Clipper2_64.dll')
+      # TODO : Compile a valid DLL of CLippy ...
     end
-
-    extern 'void c_clear_subjects(void)'
-    extern 'void c_append_subject(int64_t* coords, size_t len)'
-
-    extern 'void c_clear_clips(void)'
-    extern 'void c_append_clip(int64_t* coords, size_t len)'
-
-    extern 'size_t c_compute_union(void)'
-    extern 'size_t c_compute_difference(void)'
-
-    extern 'void c_clear_solution(void)'
-    extern 'size_t c_get_solution_len(void)'
-    extern 'size_t c_get_solution_path_len_at(int index)'
-    extern 'int64_t* c_get_solution_path_coords_at(int index)'
 
     def self.clear
       c_clear_subjects
@@ -78,10 +80,12 @@ module Ladb::OpenCutList
 
     # -- Utils --
 
+    # Convert Array<Geom::Point3d> to Array<Integer>
     def self.points_to_coords(points)
       points.map { |point| [ (point.x * FACTOR).to_i, (point.y * FACTOR).to_i ] }.flatten
     end
 
+    # Convert Array<Integer> to Array<Geom::Point3d>
     def self.coords_to_points(coords, z = 0.0)
       points = []
       coords.each_slice(2) { |coord_a, coord_b| points << Geom::Point3d.new(coord_a / FACTOR, coord_b / FACTOR, z) }
@@ -105,13 +109,18 @@ module Ladb::OpenCutList
       solution = []
       (0...c_get_solution_len).each do |index|
 
+        # Retrieve the solution length (= number of coords)
         path_len = c_get_solution_path_len_at(index)
-        part_coords_ptr = c_get_solution_path_coords_at(index)
-        part_coords_ptr.size = path_len * Fiddle::SIZEOF_LONG_LONG * 2
 
-        solution << part_coords_ptr.to_str(part_coords_ptr.size).unpack('q*')
+        # Retrieve solution array pointer
+        path_coords_ptr = c_get_solution_path_coords_at(index)
+        path_coords_ptr.size = path_len * Fiddle::SIZEOF_LONG_LONG * 2  # Fiddle::SIZEOF_LONG_LONG * 2 = sizeof(int64_t)
 
-        Fiddle.free(part_coords_ptr)
+        # Unpack pointer data to Ruby Array<Integer> (q* to read 64bits integers)
+        solution << path_coords_ptr.to_str(path_coords_ptr.size).unpack('q*')
+
+        # Free pointer
+        Fiddle.free(path_coords_ptr)
 
       end
       solution
