@@ -24,6 +24,7 @@ module Ladb::OpenCutList
     def reset_cache
       super
       @outer_loop_points = nil
+      @z_max = nil
       @plane = nil
       @plane_point = nil
       @plane_vector = nil
@@ -58,10 +59,6 @@ module Ladb::OpenCutList
       normal.angle_between(other.normal)
     end
 
-    def z_max
-      outer_loop_points.max { |p1, p2| p1.z <=> p2.z }.z
-    end
-
     def belongs_to_a_surface?
       @face.edges.index { |edge| edge.soft? }
     end
@@ -74,6 +71,13 @@ module Ladb::OpenCutList
         @outer_loop_points.reverse! if flipped?
       end
       @outer_loop_points
+    end
+
+    def z_max
+      if @z_max.nil?
+        @z_max = outer_loop_points.max { |p1, p2| p1.z <=> p2.z }.z
+      end
+      @z_max
     end
 
     def plane

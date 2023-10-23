@@ -5,7 +5,7 @@ module Ladb::OpenCutList
   module Clippy
     extend Fiddle::Importer
 
-    FACTOR = 1e10
+    FACTOR = 1e13
 
     case Sketchup.platform
     when :platform_osx
