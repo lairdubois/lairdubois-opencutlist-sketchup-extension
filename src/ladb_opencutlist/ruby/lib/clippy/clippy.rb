@@ -114,10 +114,9 @@ module Ladb::OpenCutList
 
         # Retrieve solution array pointer
         path_coords_ptr = c_get_solution_path_coords_at(index)
-        path_coords_ptr.size = path_len * Fiddle::SIZEOF_LONG_LONG * 2  # Fiddle::SIZEOF_LONG_LONG * 2 = sizeof(int64_t)
 
         # Unpack pointer data to Ruby Array<Integer> (q* to read 64bits integers)
-        solution << path_coords_ptr.to_str(path_coords_ptr.size).unpack('q*')
+        solution << path_coords_ptr.to_str(path_len * Fiddle::SIZEOF_LONG_LONG * 2).unpack('q*')  # Fiddle::SIZEOF_LONG_LONG * 2 = sizeof(int64_t)
 
         # Free pointer
         c_free_coords(path_coords_ptr)
