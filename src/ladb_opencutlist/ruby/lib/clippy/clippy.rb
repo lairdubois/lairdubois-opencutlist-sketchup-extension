@@ -27,7 +27,7 @@ module Ladb::OpenCutList
       extern 'int64_t* c_get_solution_path_coords_at(int index)'
 
     when :platform_win
-      # TODO : Compile a valid DLL of CLippy ...
+      puts 'TODO : Compile a valid DLL of CLippy for Windows ...'
     end
 
     def self.clear
