@@ -225,7 +225,7 @@ module Ladb::OpenCutList
             layer_def.polygon_defs.each do |polygon_def|
 
               if polygon_def.outer?
-                if layer_def.depth.round(6) == 0
+                if layer_def.depth == 0
                   attributes = {
                     stroke: '#000000',
                     fill: '#000000',

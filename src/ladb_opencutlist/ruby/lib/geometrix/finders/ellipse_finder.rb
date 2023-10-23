@@ -1,3 +1,5 @@
+require 'matrix'
+
 module Ladb::OpenCutList::Geometrix
 
   class EllipseFinder
