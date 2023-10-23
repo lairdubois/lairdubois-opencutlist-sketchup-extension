@@ -9,26 +9,26 @@ module Ladb::OpenCutList
 
     case Sketchup.platform
     when :platform_osx
-
       dlload File.join(__dir__, '../../../bin/osx/lib/libClippy.dylib')
-
-      extern 'void c_clear_subjects(void)'
-      extern 'void c_append_subject(int64_t* coords, size_t len)'
-
-      extern 'void c_clear_clips(void)'
-      extern 'void c_append_clip(int64_t* coords, size_t len)'
-
-      extern 'size_t c_compute_union(void)'
-      extern 'size_t c_compute_difference(void)'
-
-      extern 'void c_clear_solution(void)'
-      extern 'size_t c_get_solution_len(void)'
-      extern 'size_t c_get_solution_path_len_at(int index)'
-      extern 'int64_t* c_get_solution_path_coords_at(int index)'
-
     when :platform_win
-      puts 'TODO : Compile a valid DLL of CLippy for Windows ...'
+      dlload File.join(__dir__, '../../../bin/x86/lib/libClippy.dll')
     end
+
+    extern 'void c_clear_subjects(void)'
+    extern 'void c_append_subject(int64_t* coords, size_t len)'
+
+    extern 'void c_clear_clips(void)'
+    extern 'void c_append_clip(int64_t* coords, size_t len)'
+
+    extern 'size_t c_compute_union(void)'
+    extern 'size_t c_compute_difference(void)'
+
+    extern 'void c_clear_solution(void)'
+    extern 'size_t c_get_solution_len(void)'
+    extern 'size_t c_get_solution_path_len_at(int index)'
+    extern 'int64_t* c_get_solution_path_coords_at(int index)'
+
+    extern 'void c_free_coords(int64_t *coords)'
 
     def self.clear
       c_clear_subjects
@@ -120,7 +120,7 @@ module Ladb::OpenCutList
         solution << path_coords_ptr.to_str(path_coords_ptr.size).unpack('q*')
 
         # Free pointer
-        Fiddle.free(path_coords_ptr)
+        c_free_coords(path_coords_ptr)
 
       end
       solution
