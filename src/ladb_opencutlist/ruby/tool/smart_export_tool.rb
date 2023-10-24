@@ -376,6 +376,23 @@ module Ladb::OpenCutList
               end
             end
 
+            # DEBUG
+
+            # exposed_face_manipulators = @active_drawing_def.face_manipulators.select do |face_manipulator|
+            #   !face_manipulator.perpendicular?(@active_drawing_def.input_face_manipulator) && @active_drawing_def.input_face_manipulator.angle_between(face_manipulator) < Math::PI / 2.0
+            # end
+            # exposed_face_manipulators.each do |face_manipulator|
+            #
+            #   # Highlight face
+            #   mesh = Kuix::Mesh.new
+            #   mesh.add_triangles(face_manipulator.triangles)
+            #   mesh.background_color = COLOR_MESH
+            #   preview.append(mesh)
+            #
+            # end
+
+            # DEBUG
+
             # @active_drawing_def.face_manipulators.each do |face_manipulator|
             #
             #   # Highlight face
