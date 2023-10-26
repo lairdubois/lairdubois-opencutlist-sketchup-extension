@@ -511,7 +511,7 @@ module Ladb::OpenCutList
             box_helper.bounds.size.copy!(bounds)
             box_helper.bounds.apply_offset(inch_offset, inch_offset, 0)
             box_helper.color = Kuix::COLOR_BLACK
-            box_helper.line_width = 2
+            box_helper.line_width = 1
             box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
             preview.append(box_helper)
 
