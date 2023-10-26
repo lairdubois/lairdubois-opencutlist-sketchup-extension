@@ -78,7 +78,7 @@ module Ladb::OpenCutList
       }
     ].freeze
 
-    COLOR_MESH = Sketchup::Color.new(200, 200, 0, 150).freeze
+    COLOR_MESH = Sketchup::Color.new(0, 0, 255, 100).freeze # Sketchup::Color.new(200, 200, 0, 150).freeze
     COLOR_MESH_HIGHLIGHTED = Sketchup::Color.new(200, 200, 0, 200).freeze
     COLOR_MESH_DEEP = Sketchup::Color.new(50, 50, 0, 150).freeze
     COLOR_GUIDE = Kuix::COLOR_CYAN #Sketchup::Color.new(0, 104, 255).freeze
@@ -96,6 +96,7 @@ module Ladb::OpenCutList
       # Create cursors
       @cursor_export_part_3d = create_cursor('export-part-3d', 0, 0)
       @cursor_export_part_2d = create_cursor('export-part-2d', 0, 0)
+      @cursor_export_face = create_cursor('export-part-2d', 0, 0)
 
       @cursor_export_skp = create_cursor('export-skp', 0, 0)
       @cursor_export_stl = create_cursor('export-stl', 0, 0)
@@ -133,6 +134,8 @@ module Ladb::OpenCutList
         return @cursor_export_part_3d
       when ACTION_EXPORT_PART_2D
         return @cursor_export_part_2d
+      when ACTION_EXPORT_FACE
+        return @cursor_export_face
       end
 
       super
