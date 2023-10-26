@@ -386,7 +386,8 @@ module Ladb::OpenCutList
                     segments = Kuix::Segments.new
                     segments.add_segments(portion.segments)
                     segments.color = COLOR_BRAND
-                    segments.line_width = 3
+                    segments.line_width = 2
+                    segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES unless polygon_def.outer?
                     segments.on_top = true
                     preview.append(segments)
 
@@ -395,107 +396,6 @@ module Ladb::OpenCutList
 
               end
             end
-
-            # DEBUG
-
-            # exposed_face_manipulators = @active_drawing_def.face_manipulators.select do |face_manipulator|
-            #   !face_manipulator.perpendicular?(@active_drawing_def.input_face_manipulator) && @active_drawing_def.input_face_manipulator.angle_between(face_manipulator) < Math::PI / 2.0
-            # end
-            # exposed_face_manipulators.each do |face_manipulator|
-            #
-            #   # Highlight face
-            #   mesh = Kuix::Mesh.new
-            #   mesh.add_triangles(face_manipulator.triangles)
-            #   mesh.background_color = COLOR_MESH
-            #   preview.append(mesh)
-            #
-            # end
-
-            # DEBUG
-
-            # @active_drawing_def.face_manipulators.each do |face_manipulator|
-            #
-            #   # Highlight face
-            #   # mesh = Kuix::Mesh.new
-            #   # mesh.add_triangles(face_manipulator.triangles)
-            #   # mesh.background_color = COLOR_MESH_DEEP.blend((highlighted ? COLOR_MESH_HIGHLIGHTED : COLOR_MESH), face_manipulator.data[:depth_ratio])
-            #   # preview.append(mesh)
-            #
-            #   # Highlight arcs (if activated)
-            #   # if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_CURVES)
-            #   #   face_manipulator.loop_manipulators.each do |loop_manipulator|
-            #   #     loop_manipulator.loop_def.portions.grep(Geometrix::ArcLoopPortionDef).each do |portion|
-            #   #
-            #   #       segments = Kuix::Segments.new
-            #   #       segments.add_segments(portion.segments)
-            #   #       segments.color = COLOR_BRAND
-            #   #       segments.line_width = 3
-            #   #       segments.on_top = true
-            #   #       preview.append(segments)
-            #   #
-            #   #       # DEBUG
-            #   #
-            #   #       # # xaxis
-            #   #       # line = Kuix::LineMotif.new
-            #   #       # line.start.copy!(portion.ellipse_def.center)
-            #   #       # line.end.copy!(portion.ellipse_def.center.transform(Geom::Transformation.translation(portion.ellipse_def.xaxis)))
-            #   #       # line.color = Kuix::COLOR_RED
-            #   #       # line.line_width = 2
-            #   #       # line.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-            #   #       # line.on_top = true
-            #   #       # preview.append(line)
-            #   #       #
-            #   #       # # yaxis
-            #   #       # line = Kuix::LineMotif.new
-            #   #       # line.start.copy!(portion.ellipse_def.center)
-            #   #       # line.end.copy!(portion.ellipse_def.center.transform(Geom::Transformation.translation(portion.ellipse_def.yaxis)))
-            #   #       # line.color = Kuix::COLOR_GREEN
-            #   #       # line.line_width = 2
-            #   #       # line.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-            #   #       # line.on_top = true
-            #   #       # preview.append(line)
-            #   #       #
-            #   #       # # normal
-            #   #       # line = Kuix::LineMotif.new
-            #   #       # line.start.copy!(portion.ellipse_def.center)
-            #   #       # line.end.copy!(portion.ellipse_def.center.transform(Geom::Transformation.translation(portion.normal)))
-            #   #       # line.color = Kuix::COLOR_BLUE
-            #   #       # line.line_width = 2
-            #   #       # line.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-            #   #       # line.on_top = true
-            #   #       # preview.append(line)
-            #   #       #
-            #   #       # # start point
-            #   #       # axes_helper = Kuix::AxesHelper.new(200, 5, Kuix::COLOR_GREEN)
-            #   #       # axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(portion.start_point.to_a))
-            #   #       # axes_helper.box_x.visible = false
-            #   #       # axes_helper.box_y.visible = false
-            #   #       # axes_helper.box_z.visible = false
-            #   #       # preview.append(axes_helper)
-            #   #       #
-            #   #       # # mid point
-            #   #       # axes_helper = Kuix::AxesHelper.new(200, 5, Kuix::COLOR_CYAN)
-            #   #       # axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(portion.mid_point.to_a))
-            #   #       # axes_helper.box_x.visible = false
-            #   #       # axes_helper.box_y.visible = false
-            #   #       # axes_helper.box_z.visible = false
-            #   #       # preview.append(axes_helper)
-            #   #       #
-            #   #       # # end point
-            #   #       # axes_helper = Kuix::AxesHelper.new(200, 5, Kuix::COLOR_RED)
-            #   #       # axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(portion.end_point.to_a))
-            #   #       # axes_helper.box_x.visible = false
-            #   #       # axes_helper.box_y.visible = false
-            #   #       # axes_helper.box_z.visible = false
-            #   #       # preview.append(axes_helper)
-            #   #
-            #   #       # DEBUG
-            #   #
-            #   #     end
-            #   #   end
-            #   # end
-            #
-            # end
 
             @active_drawing_def.edge_manipulators.each do |edge_manipulator|
 

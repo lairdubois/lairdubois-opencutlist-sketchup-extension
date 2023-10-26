@@ -131,7 +131,7 @@ module Ladb::OpenCutList::Geometrix
     #
     def self.ellipse_include_point?(ellipse_def, point)
       # (x - cx)^2 / xradius^2 + (y - cy)^2 / yradius^2 = 1
-      ((point.x - ellipse_def.center.x)**2 / ellipse_def.xradius**2 + (point.y - ellipse_def.center.y)**2 / ellipse_def.yradius**2 - 1).abs < 1e-8
+      ((point.x - ellipse_def.center.x)**2 / ellipse_def.xradius**2 + (point.y - ellipse_def.center.y)**2 / ellipse_def.yradius**2 - 1).abs < 1e-6
     end
 
     # Get ellipse CCW angle at point

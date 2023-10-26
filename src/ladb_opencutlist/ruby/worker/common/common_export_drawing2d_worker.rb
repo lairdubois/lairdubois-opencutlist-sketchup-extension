@@ -222,41 +222,42 @@ module Ladb::OpenCutList
           _svg_write_group_start(file, id: LAYER_DRAWING)
 
           projection_def.layer_defs.each do |layer_def|
-            layer_def.polygon_defs.each do |polygon_def|
 
-              if polygon_def.outer?
-                if layer_def.depth == 0
-                  attributes = {
-                    stroke: '#000000',
-                    fill: '#000000',
-                    'shaper:cutType': 'outside'
-                  }
-                  attributes.merge!({ 'shaper:cutDepth': "#{_convert(@drawing_def.bounds.depth, unit_converter)}#{unit_sign}" }) if @drawing_def.bounds.depth > 0
-                else
-                  attributes = {
-                    fill: ColorUtils.color_to_hex(Sketchup::Color.new('#7F7F7F').blend(Sketchup::Color.new('#AAAAAA'), @drawing_def.bounds.depth > 0 ? layer_def.depth / @drawing_def.bounds.depth : 1.0)),
-                    'shaper:cutType': 'pocket',
-                    'shaper:cutDepth': "#{_convert(layer_def.depth, unit_converter)}#{unit_sign}"
-                  }
-                end
-              else
-                attributes = {
-                  stroke: '#000000',
-                  fill: '#FFFFFF',
-                  'shaper:cutType': 'inside',
-                }
-                attributes.merge!({ 'shaper:cutDepth': "#{_convert(@drawing_def.bounds.depth, unit_converter)}#{unit_sign}" }) if @drawing_def.bounds.depth > 0
-              end
+            if layer_def.position == CommonProjectionWorker::LAYER_POSITION_TOP
+              attributes = {
+                stroke: '#000000',
+                fill: '#000000',
+                'shaper:cutType': 'outside'
+              }
+              attributes.merge!({ 'shaper:cutDepth': "#{_convert(@drawing_def.bounds.depth, unit_converter)}#{unit_sign}" }) if @drawing_def.bounds.depth > 0
+            elsif layer_def.position == CommonProjectionWorker::LAYER_POSITION_BOTTOM
+              attributes = {
+                stroke: '#000000',
+                fill: '#FFFFFF',
+                'shaper:cutType': 'inside'
+              }
+              attributes.merge!({ 'shaper:cutDepth': "#{_convert(@drawing_def.bounds.depth, unit_converter)}#{unit_sign}" }) if @drawing_def.bounds.depth > 0
+            else
+              attributes = {
+                fill: ColorUtils.color_to_hex(Sketchup::Color.new('#7F7F7F').blend(Sketchup::Color.new('#AAAAAA'), @drawing_def.bounds.depth > 0 ? layer_def.depth / @drawing_def.bounds.depth : 1.0)),
+                'shaper:cutType': 'pocket',
+                'shaper:cutDepth': "#{_convert(layer_def.depth, unit_converter)}#{unit_sign}"
+              }
+            end
+
+            data = []
+
+            layer_def.polygon_defs.each do |polygon_def|
 
               if @curves && polygon_def.loop_def
 
                 # Extract loop points from ordered edges and arc curves
-                data = "#{polygon_def.loop_def.portions.map.with_index { |portion, index|
+                data << "#{polygon_def.loop_def.portions.map.with_index { |portion, index|
 
-                  data = []
+                  polygon_data = []
                   start_point = portion.start_point
                   end_point = portion.end_point
-                  data << "M #{_convert(start_point.x, unit_converter)},#{_convert(-start_point.y, unit_converter)}" if index == 0
+                  polygon_data << "M #{_convert(start_point.x, unit_converter)},#{_convert(-start_point.y, unit_converter)}" if index == 0
 
                   if portion.is_a?(Geometrix::ArcLoopPortionDef)
 
@@ -273,30 +274,33 @@ module Ladb::OpenCutList
                     x2 = _convert(end_point.x, unit_converter)
                     y2 = _convert(-end_point.y, unit_converter)
 
-                    data << "A #{rx},#{ry} #{xrot} #{lflag},#{sflag} #{x1},#{y1}"
-                    data << "A #{rx},#{ry} #{xrot} #{lflag},#{sflag} #{x2},#{y2}"
+                    polygon_data << "A #{rx},#{ry} #{xrot} #{lflag},#{sflag} #{x1},#{y1}"
+                    polygon_data << "A #{rx},#{ry} #{xrot} #{lflag},#{sflag} #{x2},#{y2}"
 
                   else
 
-                    data << "L #{_convert(end_point.x, unit_converter)},#{_convert(-end_point.y, unit_converter)}"
+                    polygon_data << "L #{_convert(end_point.x, unit_converter)},#{_convert(-end_point.y, unit_converter)}"
 
                   end
 
-                  data
+                  polygon_data
                 }.join(' ')} Z"
 
               else
 
                 # Extract loop points from vertices (quicker)
-                data = "M #{polygon_def.points.map { |point| "#{_convert(point.x, unit_converter)},#{_convert(-point.y, unit_converter)}" }.join(' L ')} Z"
+                data << "M #{polygon_def.points.map { |point| "#{_convert(point.x, unit_converter)},#{_convert(-point.y, unit_converter)}" }.join(' L ')} Z"
 
               end
 
-              _svg_write_tag(file, 'path', attributes.merge(
-                d: data
-              ))
-
             end
+
+            unless data.empty?
+              _svg_write_tag(file, 'path', attributes.merge(
+                d: data.join(' ')
+              ))
+            end
+
           end
 
           _svg_write_group_end(file)
