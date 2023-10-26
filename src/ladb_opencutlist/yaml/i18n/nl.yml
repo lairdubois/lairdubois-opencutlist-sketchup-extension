@@ -879,26 +879,26 @@ tab:
       option_pins_hidden: Weergave
       option_pins_hidden_0: Met pinnen
       option_pins_hidden_1: Zonder pinnen
-      option_pins_hidden_help: Toont of verbergt de pinnen die naar onderdelen wijzen om hun nummer of aanduiding aan te geven.
+      option_pins_hidden_help: Toont of verbergt de labels die naar onderdelen wijzen om hun nummer of aanduiding aan te geven.
       option_pins_colored: Kleur
       option_pins_colored_0: Zonder kleur
       option_pins_colored_1: stuk kleur
-      option_pins_colored_help: Hiermee kunt u de kleur van de pin dots kiezen.
+      option_pins_colored_help: Hiermee kunt u de kleur van de label dots kiezen.
       option_pins_formula: Formule
-      option_pins_formula_help: Hiermee kunt u *Ruby*-code schrijven om de tekst van de pin-dots aan te passen.
+      option_pins_formula_help: Hiermee kunt u *Ruby*-code schrijven om de tekst van de label dots aan te passen.
       option_pins_length: Lengte
       option_pins_length_0: Zonder pijl
       option_pins_length_1: Klein
       option_pins_length_2: Medium
       option_pins_length_3: Lang
-      option_pins_length_help: Hiermee kunt u de lengte van de pinpijl kiezen.
+      option_pins_length_help: Hiermee kunt u de lengte van de labelpijl kiezen.
       option_pins_direction: Richting
       option_pins_direction_0: Langs de Rode as
       option_pins_direction_1: Langs de Groene as
       option_pins_direction_2: Langs de Blauwe as
       option_pins_direction_3: Wijst naar het midden van de bovenliggende groep
       option_pins_direction_4: Wijst naar het midden van de selectie
-      option_pins_direction_help: Hiermee kunt u de richting van de pinnen kiezen om hun leesbaarheid aan te passen aan de tekening.
+      option_pins_direction_help: Hiermee kunt u de richting van de labels kiezen om hun leesbaarheid aan te passen aan de tekening.
       option_page: Papier
       option_page_format: Formaat
       option_page_format_portrait: Portret
