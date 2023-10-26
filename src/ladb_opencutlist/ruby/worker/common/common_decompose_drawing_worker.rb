@@ -82,7 +82,7 @@ module Ladb::OpenCutList
 
         else
 
-          input_inner_transformation = PathUtils::get_transformation(@input_face_path - @path)
+          input_inner_transformation = PathUtils::get_transformation(@input_face_path - @path, Geom::Transformation.new)
           input_inner_face_manipulator = FaceManipulator.new(input_face, input_inner_transformation)
 
           if input_inner_face_manipulator.normal.parallel?(Z_AXIS) || input_inner_face_manipulator.normal.parallel?(Y_AXIS)

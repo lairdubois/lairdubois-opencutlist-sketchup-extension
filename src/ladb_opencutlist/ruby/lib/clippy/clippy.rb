@@ -29,7 +29,8 @@ module Ladb::OpenCutList
     extern 'size_t c_get_solution_cpath_len_at(int index)'
     extern 'int64_t* c_get_solution_cpath_at(int index)'
 
-    extern 'int c_is_ccw_cpath(int64_t *cpath, size_t len)'
+    extern 'int c_is_cpath_positive(int64_t *cpath, size_t len)'
+    extern 'double c_get_cpath_area(int64_t *cpath, size_t len)'
 
     extern 'void c_free_cpath(int64_t *cpath)'
 
@@ -60,12 +61,12 @@ module Ladb::OpenCutList
       solution
     end
 
-    def self.ccw_path?(path)
-      return c_is_ccw_cpath(Fiddle::Pointer[path.pack('q*')], path.length) == 1
+    def self.is_path_positive?(path)
+      return c_is_cpath_positive(_pack_path(path), path.length) == 1
     end
 
-    def self.ccw_points?(points)
-      return ccw_path?(points_to_path(points))
+    def self.get_path_area(path)
+      return c_get_cpath_area(_pack_path(path), path.length) / (FLOAT_TO_INT64_CONVERTER**2)
     end
 
     # -- Utils --
@@ -84,6 +85,10 @@ module Ladb::OpenCutList
 
     private
 
+    def self._pack_path(path)
+      Fiddle::Pointer[path.pack('q*')]
+    end
+
     def self._clear
       c_clear_subjects
       c_clear_clips
@@ -91,7 +96,7 @@ module Ladb::OpenCutList
     end
 
     def self._append_subject(path)
-      c_append_subject(Fiddle::Pointer[path.pack('q*')], path.length)
+      c_append_subject(_pack_path(path), path.length)
     end
 
     def self._append_subjects(paths)
@@ -101,7 +106,7 @@ module Ladb::OpenCutList
     end
 
     def self._append_clip(path)
-      c_append_clip(Fiddle::Pointer[path.pack('q*')], path.length)
+      c_append_clip(_pack_path(path), path.length)
     end
 
     def self._append_clips(paths)

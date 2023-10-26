@@ -67,6 +67,14 @@ module Ladb::OpenCutList
           ACTION_OPTION_FACE => [ ACTION_OPTION_FACE_ONE, ACTION_OPTION_FACE_ALL ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_ANCHOR, ACTION_OPTION_OPTIONS_CURVES, ACTION_OPTION_OPTIONS_GUIDES ]
         }
+      },
+      {
+        :action => ACTION_EXPORT_FACE,
+        :options => {
+          ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_DXF, ACTION_OPTION_FILE_FORMAT_SVG ],
+          ACTION_OPTION_UNIT => [ ACTION_OPTION_UNIT_MM, ACTION_OPTION_UNIT_CM, ACTION_OPTION_UNIT_IN ],
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CURVES ]
+        }
       }
     ].freeze
 
@@ -327,10 +335,6 @@ module Ladb::OpenCutList
 
         notify_infos("#{part.saved_number ? "[#{part.saved_number}] " : ''}#{part.name}", infos)
 
-        transformation = PathUtils::get_transformation(@active_part_entity_path)
-
-        inch_offset = Sketchup.active_model.active_view.pixels_to_model(15, Geom::Point3d.new.transform(transformation))
-
         if is_action_export_part_2d?
 
           @active_drawing_def = CommonDecomposeDrawingWorker.new(@active_part_entity_path, {
@@ -342,6 +346,8 @@ module Ladb::OpenCutList
             'edge_validator' => CommonDecomposeDrawingWorker::EDGE_VALIDATOR_STRAY_COPLANAR
           }).run
           if @active_drawing_def.is_a?(DrawingDef)
+
+            inch_offset = Sketchup.active_model.active_view.pixels_to_model(15, Geom::Point3d.new.transform(@active_drawing_def.transformation))
 
             projection_def = CommonProjectionWorker.new(@active_drawing_def, {
               'down_to_up_union' => false,
@@ -538,13 +544,13 @@ module Ladb::OpenCutList
 
         else
 
-          settings = {
+          @active_drawing_def = CommonDecomposeDrawingWorker.new(@active_part_entity_path, {
             'use_bounds_min_as_origin' => !fetch_action_option(ACTION_EXPORT_PART_3D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR),
             'ignore_edges' => true
-          }
-
-          @active_drawing_def = CommonDecomposeDrawingWorker.new(@active_part_entity_path, settings).run
+          }).run
           if @active_drawing_def.is_a?(DrawingDef)
+
+            inch_offset = Sketchup.active_model.active_view.pixels_to_model(15, Geom::Point3d.new.transform(@active_drawing_def.transformation))
 
             preview = Kuix::Group.new
             preview.transformation = @active_drawing_def.transformation
@@ -608,61 +614,84 @@ module Ladb::OpenCutList
 
       if face
 
-        transformation = PathUtils::get_transformation(face_path)
+        @active_drawing_def = CommonDecomposeDrawingWorker.new(@input_face_path, {
+          'use_bounds_min_as_origin' => true,
+          'input_face_path' => @input_face_path,
+          'input_edge_path' => @input_edge.nil? ? nil : @input_face_path + [ @input_edge ],
+        }).run
+        if @active_drawing_def.is_a?(DrawingDef)
 
-        origin, x_axis, y_axis, z_axis, @active_edge = _get_input_axes
+          projection_def = CommonProjectionWorker.new(@active_drawing_def).run
 
-        # Change axis transformation
-        t = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
-        ti = t.inverse
+          inch_offset = Sketchup.active_model.active_view.pixels_to_model(15, Geom::Point3d.new.transform(@active_drawing_def.transformation))
 
-        # Compute new bounds
-        bounds = Geom::BoundingBox.new
-        bounds.add(_compute_children_faces_triangles([ @active_face ], ti))
+          preview = Kuix::Group.new
+          preview.transformation = @active_drawing_def.transformation
+          @space.append(preview)
 
-        # Translate to 0,0 transformation
-        to = Geom::Transformation.translation(bounds.min)
+          projection_def.layer_defs.reverse.each do |layer_def| # reverse layer order to present from Bottom to Top
+            layer_def.polygon_defs.each do |polygon_def|
 
-        # Combine
-        tto = t * to
-        export_transformation = tto.inverse
+              segments = Kuix::Segments.new
+              segments.add_segments(polygon_def.segments)
+              segments.color = Kuix::COLOR_BLUE
+              segments.line_width = 2
+              segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES unless polygon_def.outer?
+              segments.on_top = true
+              preview.append(segments)
 
-        @active_face_infos = [ FaceInfo.new(@active_face, export_transformation) ]
+              # Highlight arcs (if activated)
+              if fetch_action_option(ACTION_EXPORT_FACE, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_CURVES)
+                polygon_def.loop_def.portions.grep(Geometrix::ArcLoopPortionDef).each do |portion|
 
-        face_helper = Kuix::Group.new
-        face_helper.transformation = transformation * tto
-        @space.append(face_helper)
+                  segments = Kuix::Segments.new
+                  segments.add_segments(portion.segments)
+                  segments.color = COLOR_BRAND
+                  segments.line_width = 3
+                  segments.on_top = true
+                  preview.append(segments)
 
-          # Highlight input face
-          mesh = Kuix::Mesh.new
-          mesh.add_triangles(_compute_children_faces_triangles([ @active_face ], export_transformation))
-          mesh.background_color = highlighted ? COLOR_MESH_HIGHLIGHTED : COLOR_MESH
-          face_helper.append(mesh)
+                end
+              end
 
-          inch_offset = Sketchup.active_model.active_view.pixels_to_model(5, Geom::Point3d.new.transform(transformation))
+              bounds = Geom::BoundingBox.new
+              bounds.add(Geom::Point3d.new(@active_drawing_def.bounds.min.x, @active_drawing_def.bounds.min.y, @active_drawing_def.bounds.max.z))
+              bounds.add(@active_drawing_def.bounds.max)
+              bounds.add(Geom::Point3d.new(0, 0, @active_drawing_def.bounds.max.z))
 
-          # Box helper
-          box_helper = Kuix::BoxMotif.new
-          box_helper.bounds.size.copy!(bounds)
-          box_helper.bounds.apply_offset(inch_offset, inch_offset, 0)
-          box_helper.color = Kuix::COLOR_BLACK
-          box_helper.line_width = 2
-          box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-          face_helper.append(box_helper)
+              # Box helper
+              box_helper = Kuix::RectangleMotif.new
+              box_helper.bounds.origin.copy!(bounds.min)
+              box_helper.bounds.size.copy!(bounds)
+              box_helper.bounds.apply_offset(inch_offset, inch_offset, 0)
+              box_helper.color = Kuix::COLOR_BLACK
+              box_helper.line_width = 1
+              box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+              preview.append(box_helper)
 
-          # Axes helper
-          axes_helper = Kuix::AxesHelper.new
-          axes_helper.box_0.visible = false
-          axes_helper.box_z.visible = false
-          face_helper.append(axes_helper)
+              if @active_drawing_def.input_edge_manipulator
 
-          # Highlight input edge
-          segments = Kuix::Segments.new
-          segments.add_segments(_compute_children_edge_segments(@active_face.edges, export_transformation,[ @active_edge ]))
-          segments.color = COLOR_ACTION
-          segments.line_width = 3
-          segments.on_top = true
-          face_helper.append(segments)
+                # Highlight input edge
+                segments = Kuix::Segments.new
+                segments.add_segments(@active_drawing_def.input_edge_manipulator.segment)
+                segments.color = COLOR_ACTION
+                segments.line_width = 3
+                segments.on_top = true
+                preview.append(segments)
+
+              end
+
+              # Axes helper
+              axes_helper = Kuix::AxesHelper.new
+              axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(0, 0, @active_drawing_def.bounds.max.z))
+              axes_helper.box_0.visible = false
+              axes_helper.box_z.visible = false
+              preview.append(axes_helper)
+
+            end
+          end
+
+        end
 
       else
 
@@ -773,7 +802,7 @@ module Ladb::OpenCutList
           # TODO
           puts Plugin.instance.get_i18n_string('tab.cutlist.success.exported_to', { :export_path => response[:export_path] })
 
-        elsif is_action_export_part_2d? || is_action_export_face?
+        elsif is_action_export_part_2d?
 
           if @active_drawing_def.nil?
             UI.beep
@@ -803,6 +832,41 @@ module Ladb::OpenCutList
             'file_format' => file_format,
             'unit' => unit,
             'anchor' => anchor,
+            'curves' => curves
+          })
+          response = worker.run
+
+          # TODO
+          puts Plugin.instance.get_i18n_string('tab.cutlist.success.exported_to', { :export_path => response[:export_path] })
+
+        elsif is_action_export_face?
+
+          if @active_drawing_def.nil?
+            UI.beep
+            return
+          end
+
+          file_name = 'FACE'
+          file_format = nil
+          if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
+            file_format = FILE_FORMAT_DXF
+          elsif fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_SVG)
+            file_format = FILE_FORMAT_SVG
+          end
+          unit = nil
+          if fetch_action_option(fetch_action, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_IN)
+            unit = DimensionUtils::INCHES
+          elsif fetch_action_option(fetch_action, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_MM)
+            unit = DimensionUtils::MILLIMETER
+          elsif fetch_action_option(fetch_action, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_CM)
+            unit = DimensionUtils::CENTIMETER
+          end
+          curves = fetch_action_option(fetch_action, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_CURVES)
+
+          worker = CommonExportDrawing2dWorker.new(@active_drawing_def, {
+            'file_name' => file_name,
+            'file_format' => file_format,
+            'unit' => unit,
             'curves' => curves
           })
           response = worker.run
