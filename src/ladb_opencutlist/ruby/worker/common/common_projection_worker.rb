@@ -6,6 +6,10 @@ module Ladb::OpenCutList
 
   class CommonProjectionWorker
 
+    LAYER_POSITION_TOP = 0
+    LAYER_POSITION_INSIDE = 1
+    LAYER_POSITION_BOTTOM = 2
+
     def initialize(drawing_def, settings = {})
 
       @drawing_def = drawing_def
@@ -54,12 +58,14 @@ module Ladb::OpenCutList
       end
 
       top_layer_def = {
+        :position => LAYER_POSITION_TOP,
         :depth => z_min,
-        :coords => []
+        :paths => []
       }
       bottom_layer_def = {
+        :position => LAYER_POSITION_BOTTOM,
         :depth => z_max,
-        :coords => []
+        :paths => []
       }
 
       layer_defs = {}
@@ -68,22 +74,18 @@ module Ladb::OpenCutList
 
       face_defs.each do |face_def|
 
-        f_coords = face_def[:loops].map { |points| Clippy.points_to_coords(points) }
+        f_paths = face_def[:loops].map { |points| Clippy.points_to_path(points) }
 
         layer_def = layer_defs[face_def[:depth]]
         if layer_def.nil?
           layer_def = {
+            :position => LAYER_POSITION_INSIDE,
             :depth => face_def[:depth],
-            :coords => f_coords
+            :paths => f_paths
           }
           layer_defs[face_def[:depth]] = layer_def
         else
-
-          Clippy.clear
-          Clippy.append_subjects(layer_def[:coords])
-          Clippy.append_clips(f_coords)
-
-          layer_def[:coords] = Clippy.compute_union
+          layer_def[:paths] = Clippy.union(layer_def[:paths], f_paths)
         end
 
       end
@@ -93,68 +95,54 @@ module Ladb::OpenCutList
 
       # Up to Down difference
       ld.each_with_index do |layer_def, index|
-        next if layer_def[:coords].empty?
+        next if layer_def[:paths].empty?
         ld[(index + 1)..-1].each do |lower_layer_def|
-          next if lower_layer_def[:coords].empty?
-
-          Clippy.clear
-          Clippy.append_subjects(lower_layer_def[:coords])
-          Clippy.append_clips(layer_def[:coords])
-
-          lower_layer_def[:coords] = Clippy.compute_difference
-
+          next if lower_layer_def[:paths].empty?
+          lower_layer_def[:paths] = Clippy.difference(lower_layer_def[:paths], layer_def[:paths])
         end
       end
-
 
       if @option_down_to_up_union
 
         # Down to Up union
         ld.each_with_index do |layer_def, index|
-          next if layer_def[:coords].empty?
+          next if layer_def[:paths].empty?
           ld[(index + 1)..-1].reverse.each do |lower_layer_def|
-            next if lower_layer_def[:coords].empty?
-
-            Clippy.clear
-            Clippy.append_subjects(ld[index][:coords])
-            Clippy.append_clips(lower_layer_def[:coords])
-
-            ld[index][:coords] = Clippy.compute_union
-
+            next if lower_layer_def[:paths].empty?
+            ld[index][:paths] = Clippy.union(ld[index][:paths], lower_layer_def[:paths])
           end
         end
 
       end
 
-
       if @option_passthrough_holes
 
         # Add top holes as bottom plain
-        top_layer_def[:coords].each do |coords|
-
-          points = Clippy.coords_to_points(coords)
-          unless Clippy.ccw?(points)
-            bottom_layer_def[:coords] << coords
+        top_layer_def[:paths].each do |path|
+          unless Clippy.ccw_path?(path)
+            bottom_layer_def[:paths] << path
           end
-
         end
-        unless bottom_layer_def[:coords].empty?
+        unless bottom_layer_def[:paths].empty?
 
           # Down to Up union
           ld.each_with_index do |layer_def, index|
-            next if layer_def[:coords].empty?
+            next if layer_def[:paths].empty?
             ld[(index + 1)..-1].reverse.each do |lower_layer_def|
-              next if lower_layer_def[:coords].empty?
-
-              Clippy.clear
-              Clippy.append_subjects(ld[index][:coords])
-              Clippy.append_clips(lower_layer_def[:coords])
-
-              ld[index][:coords] = Clippy.compute_union
-
+              next if lower_layer_def[:paths].empty?
+              ld[index][:paths] = Clippy.union(ld[index][:paths], lower_layer_def[:paths])
             end
           end
 
+        end
+
+      end
+
+      if @option_down_to_up_union
+
+        # Cleanup
+        ld.reverse.each_cons(2) do |layer_def_a, layer_def_b|
+          layer_def_b[:paths].delete_if { |path| layer_def_a[:paths].include?(path) }
         end
 
       end
@@ -164,11 +152,12 @@ module Ladb::OpenCutList
       projection_def = ProjectionDef.new
 
       ld.each do |layer_def|
-        next if layer_def[:coords].empty?
+        next if layer_def[:paths].empty?
 
         projection_layer_def = ProjectionLayerDef.new(
+          layer_def[:position],
           layer_def[:depth],
-          layer_def[:coords].map { |coords| ProjectionPolygonDef.new(Clippy.coords_to_points(coords, z_max - layer_def[:depth])) }
+          layer_def[:paths].map { |path| ProjectionPolygonDef.new(Clippy.path_to_points(path, z_max - layer_def[:depth])) }
         )
         projection_def.layer_defs << projection_layer_def
 
@@ -193,9 +182,10 @@ module Ladb::OpenCutList
 
   class ProjectionLayerDef
 
-    attr_reader :depth, :polygon_defs
+    attr_reader :depth, :position, :polygon_defs
 
-    def initialize(depth, polygon_defs)
+    def initialize(position, depth, polygon_defs)
+      @position = position
       @depth = depth
       @polygon_defs = polygon_defs
     end
@@ -212,7 +202,7 @@ module Ladb::OpenCutList
 
     def outer?
       if @is_outer.nil?
-        @is_outer = Clippy.ccw?(@points)
+        @is_outer = Clippy.ccw_points?(@points)
       end
       @is_outer
     end

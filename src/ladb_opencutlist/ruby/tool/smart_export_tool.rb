@@ -73,7 +73,7 @@ module Ladb::OpenCutList
     COLOR_MESH = Sketchup::Color.new(200, 200, 0, 150).freeze
     COLOR_MESH_HIGHLIGHTED = Sketchup::Color.new(200, 200, 0, 200).freeze
     COLOR_MESH_DEEP = Sketchup::Color.new(50, 50, 0, 150).freeze
-    COLOR_GUIDE = Sketchup::Color.new(0, 104, 255).freeze
+    COLOR_GUIDE = Kuix::COLOR_CYAN #Sketchup::Color.new(0, 104, 255).freeze
     COLOR_ACTION = Kuix::COLOR_MAGENTA
     COLOR_ACTION_FILL = Sketchup::Color.new(255, 0, 255, 51).freeze
     COLOR_ACTION_FILL_HIGHLIGHTED = Sketchup::Color.new(255, 0, 255, 102).freeze
@@ -329,7 +329,7 @@ module Ladb::OpenCutList
 
         transformation = PathUtils::get_transformation(@active_part_entity_path)
 
-        inch_offset = Sketchup.active_model.active_view.pixels_to_model(5, Geom::Point3d.new.transform(transformation))
+        inch_offset = Sketchup.active_model.active_view.pixels_to_model(15, Geom::Point3d.new.transform(transformation))
 
         if is_action_export_part_2d?
 
@@ -343,7 +343,10 @@ module Ladb::OpenCutList
           }).run
           if @active_drawing_def.is_a?(DrawingDef)
 
-            projection_def = CommonProjectionWorker.new(@active_drawing_def).run
+            projection_def = CommonProjectionWorker.new(@active_drawing_def, {
+              'down_to_up_union' => false,
+              'passthrough_holes' => false
+            }).run
 
             preview = Kuix::Group.new
             preview.transformation = @active_drawing_def.transformation
@@ -354,8 +357,16 @@ module Ladb::OpenCutList
 
                 segments = Kuix::Segments.new
                 segments.add_segments(polygon_def.segments)
-                segments.color = layer_def.depth > 0 ? Kuix::COLOR_CYAN : Kuix::COLOR_BLUE
-                segments.line_width = 3
+                case layer_def.position
+                when CommonProjectionWorker::LAYER_POSITION_TOP
+                  segments.color = Kuix::COLOR_BLUE
+                when CommonProjectionWorker::LAYER_POSITION_BOTTOM
+                  segments.color = Kuix::COLOR_RED
+                else
+                  segments.color = Kuix::COLOR_BLUE.blend(Kuix::COLOR_WHITE, 0.5)
+                end
+                segments.line_width = 2
+                segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES unless polygon_def.outer?
                 segments.on_top = true
                 preview.append(segments)
 
@@ -500,7 +511,7 @@ module Ladb::OpenCutList
             box_helper.bounds.size.copy!(bounds)
             box_helper.bounds.apply_offset(inch_offset, inch_offset, 0)
             box_helper.color = Kuix::COLOR_BLACK
-            box_helper.line_width = 1
+            box_helper.line_width = 2
             box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
             preview.append(box_helper)
 

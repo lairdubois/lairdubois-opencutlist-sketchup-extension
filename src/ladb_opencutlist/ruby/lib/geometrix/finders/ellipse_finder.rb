@@ -57,7 +57,7 @@ module Ladb::OpenCutList::Geometrix
       center = Geom::Point3d.new(
         (b * e - 2.0 * c * d) / discr,
         (b * d - 2.0 * a * e) / discr,
-        points[0].z
+        points[0].z # Suppose that all points are in the same Z plane
       )
 
       # Radius
@@ -70,8 +70,6 @@ module Ladb::OpenCutList::Geometrix
       rmin = Math.sqrt(rmax**2 - s**2)
 
       # Angle
-
-      # angle = 0.5 * Math.atan2(2 * b, a - c)
 
       qaqc = q * a - q * c
       qb = q * b
@@ -104,7 +102,11 @@ module Ladb::OpenCutList::Geometrix
       xaxis.length = rmax
 
       yaxis = normal.cross(xaxis)
-      yaxis.length = rmin
+      begin
+        yaxis.length = rmin
+      rescue Exception => e
+        puts "EllipseFinder.find_ellipse_def : #{e.message}"
+      end
 
       EllipseDef.new(
         center,
@@ -211,7 +213,7 @@ module Ladb::OpenCutList::Geometrix
       @c - other.c +
       @d - other.d +
       @e - other.e +
-      @f - other.f < 1e-12
+      @f - other.f < 1e-10
     end
 
   end
