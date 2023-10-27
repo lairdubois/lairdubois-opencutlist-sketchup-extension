@@ -16,8 +16,8 @@ module Ladb::OpenCutList
 
       @drawing_def = drawing_def
 
-      @option_down_to_up_union = settings.fetch('down_to_up_union', false)
-      @option_passthrough_holes = settings.fetch('passthrough_holes', false)
+      @option_down_to_top_union = settings.fetch('down_to_top_union', false)  # All down layers are merged to top layer
+      @option_passthrough_holes = settings.fetch('passthrough_holes', false)  # All hole polygons detected in top layer are moved to bottom layer and merged to top layer
 
     end
 
@@ -29,7 +29,9 @@ module Ladb::OpenCutList
       bounds_depth = @drawing_def.bounds.depth
       bounds_max = @drawing_def.bounds.max
 
-      z_min = 0.0
+      depth_top = 0.0
+      depth_bottom = bounds_depth
+
       z_max = bounds_max.z
 
       # Filter only exposed faces
@@ -45,7 +47,7 @@ module Ladb::OpenCutList
           depth = bounds_max.distance_to_plane(face_manipulator.plane).round(6)
         else
           if face_manipulator.surface_manipulator
-            depth = (z_max - face_manipulator.surface_manipulator.z_max).round(6)
+            depth = (z_max - face_manipulator.surface_manipulator.z_max).round(6) # Faces sharing the same "surface" are considered as a unique "box"
           else
             depth = (z_max - face_manipulator.z_max).round(6)
           end
@@ -61,18 +63,18 @@ module Ladb::OpenCutList
 
       top_layer_def = {
         :position => LAYER_POSITION_TOP,
-        :depth => z_min,
+        :depth => depth_top,
         :paths => []
       }
       bottom_layer_def = {
         :position => LAYER_POSITION_BOTTOM,
-        :depth => z_max,
+        :depth => depth_bottom,
         :paths => []
       }
 
       layer_defs = {}
-      layer_defs[z_min] = top_layer_def
-      layer_defs[z_max] = bottom_layer_def
+      layer_defs[depth_top] = top_layer_def
+      layer_defs[depth_bottom] = bottom_layer_def
 
       face_defs.each do |face_def|
 
@@ -104,15 +106,12 @@ module Ladb::OpenCutList
         end
       end
 
-      if @option_down_to_up_union
+      if @option_down_to_top_union
 
-        # Down to Up union
-        ld.each_with_index do |layer_def, index|
-          next if layer_def[:paths].empty?
-          ld[(index + 1)..-1].reverse.each do |lower_layer_def|
-            next if lower_layer_def[:paths].empty?
-            ld[index][:paths] = Clippy.union(ld[index][:paths], lower_layer_def[:paths])
-          end
+        # Down to Top union
+        ld[1..-1].each do |lower_layer_def|
+          next if lower_layer_def[:paths].empty?
+          top_layer_def[:paths] = Clippy.union(top_layer_def[:paths], lower_layer_def[:paths])
         end
 
       end
@@ -125,31 +124,14 @@ module Ladb::OpenCutList
             bottom_layer_def[:paths] << path
           end
         end
-        unless bottom_layer_def[:paths].empty? && @option_down_to_up_union
+        unless bottom_layer_def[:paths].empty?
 
-          # Down to Up union
-          ld.each_with_index do |layer_def, index|
-            next if layer_def[:paths].empty?
-            ld[(index + 1)..-1].reverse.each do |lower_layer_def|
-              next if lower_layer_def[:paths].empty?
-              ld[index][:paths] = Clippy.union(ld[index][:paths], lower_layer_def[:paths])
-            end
-          end
+          # Bottom to Top union
+          top_layer_def[:paths] = Clippy.union(top_layer_def[:paths], bottom_layer_def[:paths])
 
         end
 
       end
-
-
-      # TODO : find a best way to cleanup unnecessary path on intermediate layers
-      # if @option_down_to_up_union
-      #
-      #   # Cleanup
-      #   ld.reverse.each_cons(2) do |layer_def_a, layer_def_b|
-      #     layer_def_b[:paths].delete_if { |path| layer_def_a[:paths].include?(path) }
-      #   end
-      #
-      # end
 
       # Output
 
@@ -202,17 +184,20 @@ module Ladb::OpenCutList
 
     attr_reader :points
 
-    def initialize(points, is_ccw)
+    def initialize(points, is_outer)
       @points = points
-      @is_ccw = is_ccw
+      @is_outer = is_outer
     end
 
     def outer?
-      @is_ccw
+      @is_outer
     end
 
     def segments
-      (@points + [ @points.first ]).each_cons(2).to_a.flatten
+      if @segments.nil?
+        @segments = (@points + [ @points.first ]).each_cons(2).to_a.flatten # Append first point at the end to clos loop
+      end
+      @segments
     end
 
     def loop_def

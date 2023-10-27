@@ -1532,10 +1532,6 @@ tool:
     action_option_1_2_status: $t(default.unit_2)
     action_option_1_3_status: $t(default.unit_3)
     action_option_1_4_status: $t(default.unit_4)
-    action_option_2_0_status: Export target face only
-    action_option_2_1_status: Export all faces in the part that are coplanar with the target face
-    action_option_2_2_status: Export all faces parallel to the target face contained in the part
-    action_option_2_3_status: Export all exposed faces
     action_option_3_0_status: Project part origin
     action_option_3_1_status: Smooth out circles and arcs
     action_option_3_2_status: Export as guides the floating and coplanar edges of the target face contained in the part

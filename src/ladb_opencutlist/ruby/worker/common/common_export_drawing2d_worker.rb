@@ -89,7 +89,7 @@ module Ladb::OpenCutList
 
       # Compute projection
       projection_def = CommonProjectionWorker.new(@drawing_def, {
-        'down_to_up_union' => true,
+        'down_to_top_union' => true,
         'passthrough_holes' => true
       }).run
 
@@ -225,7 +225,6 @@ module Ladb::OpenCutList
 
             if layer_def.position == CommonProjectionWorker::LAYER_POSITION_TOP
               attributes = {
-                stroke: '#000000',
                 fill: '#000000',
                 'shaper:cutType': 'outside'
               }
@@ -233,13 +232,14 @@ module Ladb::OpenCutList
             elsif layer_def.position == CommonProjectionWorker::LAYER_POSITION_BOTTOM
               attributes = {
                 stroke: '#000000',
+                'stroke-with': '0.1mm',
                 fill: '#FFFFFF',
                 'shaper:cutType': 'inside'
               }
               attributes.merge!({ 'shaper:cutDepth': "#{_convert(@drawing_def.bounds.depth, unit_converter)}#{unit_sign}" }) if @drawing_def.bounds.depth > 0
             else
               attributes = {
-                fill: ColorUtils.color_to_hex(Sketchup::Color.new('#7F7F7F').blend(Sketchup::Color.new('#AAAAAA'), @drawing_def.bounds.depth > 0 ? layer_def.depth / @drawing_def.bounds.depth : 1.0)),
+                fill: ColorUtils.color_to_hex(Sketchup::Color.new('#AAAAAA').blend(Sketchup::Color.new('#7F7F7F'), @drawing_def.bounds.depth > 0 ? layer_def.depth / @drawing_def.bounds.depth : 1.0)),
                 'shaper:cutType': 'pocket',
                 'shaper:cutDepth': "#{_convert(layer_def.depth, unit_converter)}#{unit_sign}"
               }
