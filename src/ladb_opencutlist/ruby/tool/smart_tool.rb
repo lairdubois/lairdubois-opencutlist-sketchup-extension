@@ -466,7 +466,7 @@ module Ladb::OpenCutList
       @infos_panel.visible = false
     end
 
-    def flying_message(text, type = MESSAGE_TYPE_DEFAULT)
+    def flying_message(text, type = MESSAGE_TYPE_DEFAULT, delay = 4, btn_text = nil, &btn_block)
       return unless @flying_panel && text.is_a?(String)
 
       unit = get_unit
@@ -506,25 +506,29 @@ module Ladb::OpenCutList
         end
         box.append(lbl)
 
-        btn = Kuix::Button.new
-        btn.layout = Kuix::BorderLayout.new
-        btn.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
-        btn.padding.set_all!(unit)
-        btn.border.set_all!(unit / 4)
-        btn.append_static_label('Ouvrir', unit * 3 * get_text_unit_factor)
-        btn.set_style_attribute(:background_color, Kuix::COLOR_LIGHT_GREY)
-        btn.set_style_attribute(:background_color, Kuix::COLOR_MEDIUM_GREY, :hover)
-        btn.set_style_attribute(:border_color, Kuix::COLOR_DARK_GREY)
-        btn.on(:click) { |button|
-          puts 'Bisous'
-          box.remove
-        }
-        box.append(btn)
+        unless btn_text.nil?
+
+          btn = Kuix::Button.new
+          btn.layout = Kuix::BorderLayout.new
+          btn.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
+          btn.padding.set_all!(unit)
+          btn.border.set_all!(unit / 4)
+          btn.append_static_label(btn_text, unit * 3 * get_text_unit_factor)
+          btn.set_style_attribute(:background_color, Kuix::COLOR_LIGHT_GREY)
+          btn.set_style_attribute(:background_color, Kuix::COLOR_MEDIUM_GREY, :hover)
+          btn.set_style_attribute(:border_color, Kuix::COLOR_DARK_GREY)
+          btn.on(:click) { |button|
+            btn_block.call unless btn_block.nil?
+            box.remove
+          }
+          box.append(btn)
+
+        end
 
       @flying_panel.append(box)
       @flying_panel.visible = !text.empty?
 
-      UI.start_timer(4, false) { box.remove }
+      UI.start_timer(delay, false) { box.remove }
 
     end
 

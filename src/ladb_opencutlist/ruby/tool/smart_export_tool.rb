@@ -286,9 +286,6 @@ module Ladb::OpenCutList
     end
 
     def onKeyDown(key, repeat, flags, view)
-
-      flying_message((0...(rand(26) + 8)).map { (65 + rand(26)).chr }.join, rand(4))
-
       return true if super
     end
 
@@ -706,7 +703,16 @@ module Ladb::OpenCutList
           response = worker.run
 
           # TODO
-          puts Plugin.instance.get_i18n_string('tab.cutlist.success.exported_to', { :export_path => response[:export_path] })
+
+          flying_message(
+            Plugin.instance.get_i18n_string('tool.smart_export.success.exported_to', { :export_path => response[:export_path] }),
+            SmartTool::MESSAGE_TYPE_SUCCESS,
+            5,
+            Plugin.instance.get_i18n_string('default.open')) do
+            Plugin.instance.execute_command('core_open_external_file', {
+              'path' => response[:export_path]
+            })
+          end
 
         elsif is_action_export_part_2d?
 
@@ -743,7 +749,16 @@ module Ladb::OpenCutList
           response = worker.run
 
           # TODO
-          puts Plugin.instance.get_i18n_string('tab.cutlist.success.exported_to', { :export_path => response[:export_path] })
+
+          flying_message(
+            Plugin.instance.get_i18n_string('tool.smart_export.success.exported_to', { :export_path => response[:export_path] }),
+            SmartTool::MESSAGE_TYPE_SUCCESS,
+            5,
+            Plugin.instance.get_i18n_string('default.open')) do
+            Plugin.instance.execute_command('core_open_external_file', {
+              'path' => response[:export_path]
+            })
+          end
 
         elsif is_action_export_face?
 
@@ -754,9 +769,9 @@ module Ladb::OpenCutList
 
           file_name = 'FACE'
           file_format = nil
-          if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
+          if fetch_action_option(ACTION_EXPORT_FACE, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
             file_format = FILE_FORMAT_DXF
-          elsif fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_SVG)
+          elsif fetch_action_option(ACTION_EXPORT_FACE, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_SVG)
             file_format = FILE_FORMAT_SVG
           end
           unit = nil
@@ -778,7 +793,16 @@ module Ladb::OpenCutList
           response = worker.run
 
           # TODO
-          puts Plugin.instance.get_i18n_string('tab.cutlist.success.exported_to', { :export_path => response[:export_path] })
+
+          flying_message(
+            Plugin.instance.get_i18n_string('tool.smart_export.success.exported_to', { :export_path => response[:export_path] }),
+            SmartTool::MESSAGE_TYPE_SUCCESS,
+            5,
+            Plugin.instance.get_i18n_string('default.open')) do
+            Plugin.instance.execute_command('core_open_external_file', {
+              'path' => response[:export_path]
+            })
+          end
 
         end
 
