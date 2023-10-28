@@ -1,5 +1,6 @@
 module Ladb::OpenCutList
 
+  require 'timeout'
   require_relative '../lib/kuix/kuix'
   require_relative '../helper/layer_visibility_helper'
   require_relative '../helper/face_triangles_helper'
@@ -172,6 +173,12 @@ module Ladb::OpenCutList
                 actions_modifier_btn.on(:click) { |button|
                   set_root_action(action, modifier)
                 }
+                actions_modifier_btn.on(:enter) { |button|
+                  notify_message(get_action_modifier_status(action, modifier))
+                }
+                actions_modifier_btn.on(:leave) { |button|
+                  hide_message
+                }
                 actions_modifiers.append(actions_modifier_btn)
 
                 child = get_action_modifier_btn_child(action, modifier)
@@ -248,7 +255,7 @@ module Ladb::OpenCutList
                     end
                   }
                   btn.on(:enter) { |button|
-                    notify_message(Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_option_#{option_group}_#{option}_status"))
+                    notify_message(get_action_option_status(action, option_group, option))
                   }
                   btn.on(:leave) { |button|
                     hide_message
@@ -338,6 +345,22 @@ module Ladb::OpenCutList
       @canvas.append(@minitool_panel)
 
         setup_minitools_btns(view)
+
+      # -- FLYING
+
+      @flying_panel = Kuix::Panel.new
+      @flying_panel.layout_data = Kuix::StaticLayoutData.new(0.5, 1.0, -1, -1, Kuix::Anchor.new(Kuix::Anchor::BOTTOM_CENTER))
+      @flying_panel.layout = Kuix::InlineLayout.new(false, unit)
+      @flying_panel.margin.bottom = unit * 2
+      @flying_panel.visible = false
+      @canvas.append(@flying_panel)
+
+        @flying_lbl = Kuix::Label.new
+        @flying_lbl.border.set_all!(unit / 4)
+        @flying_lbl.padding.set!(unit * 1.5, unit * 2, unit, unit * 2)
+        @flying_lbl.text_size = unit * 3 * get_text_unit_factor
+        # @flying_lbl.text = 'COUCOU'
+        @flying_panel.append(@flying_lbl)
 
     end
 
@@ -443,6 +466,68 @@ module Ladb::OpenCutList
       @infos_panel.visible = false
     end
 
+    def flying_message(text, type = MESSAGE_TYPE_DEFAULT)
+      return unless @flying_panel && text.is_a?(String)
+
+      unit = get_unit
+
+      box = Kuix::Panel.new
+      box.layout = Kuix::BorderLayout.new(unit * 2)
+      box.border.set_all!(unit / 4)
+      box.padding.set_all!(unit * 2)
+      case type
+      when MESSAGE_TYPE_ERROR
+        box.set_style_attribute(:background_color, COLOR_MESSAGE_BACKGROUND_ERROR)
+        box.set_style_attribute(:border_color, COLOR_MESSAGE_TEXT_ERROR)
+      when MESSAGE_TYPE_WARNING
+        box.set_style_attribute(:background_color, COLOR_MESSAGE_BACKGROUND_WARNING)
+        box.set_style_attribute(:border_color, COLOR_MESSAGE_TEXT_WARNING)
+      when MESSAGE_TYPE_SUCCESS
+        box.set_style_attribute(:background_color, COLOR_MESSAGE_BACKGROUND_SUCCESS)
+        box.set_style_attribute(:border_color, COLOR_MESSAGE_TEXT_SUCCESS)
+      else
+        box.set_style_attribute(:background_color, COLOR_MESSAGE_BACKGROUND)
+        box.set_style_attribute(:border_color, Sketchup::Color.new)
+      end
+
+        lbl = Kuix::Label.new
+        lbl.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::WEST)
+        lbl.text_size = unit * 3 * get_text_unit_factor
+        lbl.text = text
+        case type
+        when MESSAGE_TYPE_ERROR
+          lbl.set_style_attribute(:color, COLOR_MESSAGE_TEXT_ERROR)
+        when MESSAGE_TYPE_WARNING
+          lbl.set_style_attribute(:color, COLOR_MESSAGE_TEXT_WARNING)
+        when MESSAGE_TYPE_SUCCESS
+          lbl.set_style_attribute(:color, COLOR_MESSAGE_TEXT_SUCCESS)
+        else
+          lbl.set_style_attribute(:color, nil)
+        end
+        box.append(lbl)
+
+        btn = Kuix::Button.new
+        btn.layout = Kuix::BorderLayout.new
+        btn.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
+        btn.padding.set_all!(unit)
+        btn.border.set_all!(unit / 4)
+        btn.append_static_label('Ouvrir', unit * 3 * get_text_unit_factor)
+        btn.set_style_attribute(:background_color, Kuix::COLOR_LIGHT_GREY)
+        btn.set_style_attribute(:background_color, Kuix::COLOR_MEDIUM_GREY, :hover)
+        btn.set_style_attribute(:border_color, Kuix::COLOR_DARK_GREY)
+        btn.on(:click) { |button|
+          puts 'Bisous'
+          box.remove
+        }
+        box.append(btn)
+
+      @flying_panel.append(box)
+      @flying_panel.visible = !text.empty?
+
+      UI.start_timer(4, false) { box.remove }
+
+    end
+
     # -- Actions --
 
     def get_action_defs  # Array<{ :action => THE_ACTION, :modifiers => [ MODIFIER_1, MODIFIER_2, ... ], :options => { OPTION_GROUP_1 => [ OPTION_1, OPTION_2 ] } }>
@@ -451,12 +536,17 @@ module Ladb::OpenCutList
 
     def get_action_status(action)
       return '' if action.nil?
-      Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}_status") + '.'
+      Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}_status")
+    end
+
+    def get_action_modifier_status(action, modifier)
+      return '' if action.nil? || modifier.nil?
+      Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}_status")
     end
 
     def get_action_option_status(action, option_group, option)
-      return '' if action.nil?
-      Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}_status") + '.'
+      return '' if action.nil? || option_group.nil? || option.nil?
+      Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_option_#{option_group}_#{option}_status")
     end
 
     def get_action_cursor(action, modifier)

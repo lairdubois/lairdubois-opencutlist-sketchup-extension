@@ -286,6 +286,9 @@ module Ladb::OpenCutList
     end
 
     def onKeyDown(key, repeat, flags, view)
+
+      flying_message((0...(rand(26) + 8)).map { (65 + rand(26)).chr }.join, rand(4))
+
       return true if super
     end
 
