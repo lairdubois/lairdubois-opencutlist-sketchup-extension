@@ -9,6 +9,12 @@ module Ladb::OpenCutList::Kuix
       @view = view
     end
 
+    # -- DOM --
+
+    def in_dom?
+      true
+    end
+
     # -- LAYOUT --
 
     def invalidate

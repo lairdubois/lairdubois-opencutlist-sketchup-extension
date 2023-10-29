@@ -27,6 +27,10 @@ module Ladb::OpenCutList::Kuix
 
     # -- DOM --
 
+    def in_dom?
+      @parent && @parent.in_dom?
+    end
+
     # Append given widget to self and returns self
     def append(entity)
       throw 'Entity.append only supports Entity' unless entity.is_a?(Entity)

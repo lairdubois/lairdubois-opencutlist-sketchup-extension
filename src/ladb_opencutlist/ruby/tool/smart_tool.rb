@@ -464,10 +464,12 @@ module Ladb::OpenCutList
 
       unit = get_unit
 
-      box = Kuix::Panel.new
-      box.layout = Kuix::BorderLayout.new(unit * 2)
+      # Box
+
+      box = Kuix::Button.new
+      box.layout = Kuix::BorderLayout.new(unit * 2, unit * 2)
       box.border.set_all!(unit / 4)
-      box.padding.set_all!(unit * 2)
+      box.padding.top = unit * 3
       case type
       when MESSAGE_TYPE_ERROR
         box.set_style_attribute(:background_color, COLOR_MESSAGE_BACKGROUND_ERROR)
@@ -483,9 +485,12 @@ module Ladb::OpenCutList
         box.set_style_attribute(:border_color, Sketchup::Color.new)
       end
 
+        # Label
+
         lbl = Kuix::Label.new
         lbl.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::WEST)
-        lbl.text_size = unit * 3 * get_text_unit_factor
+        lbl.margin.left = unit * 4
+        lbl.text_size = unit * 4 * get_text_unit_factor
         lbl.text = text
         case type
         when MESSAGE_TYPE_ERROR
@@ -499,27 +504,83 @@ module Ladb::OpenCutList
         end
         box.append(lbl)
 
+        # Progress
+
+        progress = Kuix::Progress.new(0, timeout)
+        progress.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
+        progress.min_size.height = unit
+        progress.set_style_attribute(:color, Sketchup::Color.new(0, 0, 0, 30))
+        progress.value = timeout
+        box.append(progress)
+
+        # Timer
+
+        progress_timer_seconds = 0.1
+        progress_timer_id = 0
+        close_lambda = lambda {
+
+          # Stop animation timer
+          UI.stop_timer(progress_timer_id)
+
+          # Remove message box
+          box.remove
+
+          # Hide notification panel if no more child
+          @notification_panel.visible = false if @notification_panel.last_child.nil?
+
+        }
+        advance_lambda = lambda {
+          if box.in_dom?
+
+            # Decrment progress
+            progress.value -= progress_timer_seconds
+
+            # Check completed
+            if progress.value <= 0
+              close_lambda.call
+            end
+
+          else
+            close_lambda.call
+          end
+        }
+        start_lambda = lambda {
+          progress_timer_id = UI.start_timer(progress_timer_seconds, true, &advance_lambda)
+        }
+        pause_lambda = lambda {
+          UI.stop_timer(progress_timer_id)
+          progress.value = timeout
+        }
+
+        box.on(:click) { close_lambda.call }
+        box.on(:enter) { pause_lambda.call }
+        box.on(:leave) { start_lambda.call }
+
+        # Buttons
+
         if button_defs.is_a?(Array) && !button_defs.empty?
 
           btn_panel = Kuix::Panel.new
           btn_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
           btn_panel.layout = Kuix::GridLayout.new(button_defs.count, 1, unit * 2)
+          btn_panel.margin.right = unit * 3
 
             button_defs.each do |button_def|
 
               btn = Kuix::Button.new
               btn.layout = Kuix::BorderLayout.new
-              btn.padding.set_all!(unit)
+              btn.padding.set_all!(unit * 2)
               btn.border.set_all!(unit / 4)
-              btn.append_static_label(button_def[:label], unit * 3 * get_text_unit_factor)
+              btn.append_static_label(button_def[:label], unit * 4 * get_text_unit_factor)
               btn.set_style_attribute(:background_color, Kuix::COLOR_LIGHT_GREY)
               btn.set_style_attribute(:background_color, Kuix::COLOR_MEDIUM_GREY, :hover)
               btn.set_style_attribute(:border_color, Kuix::COLOR_DARK_GREY)
               btn.on(:click) { |button|
                 button_def[:block].call unless button_def[:block].nil?
-                box.remove
-                @notification_panel.visible = false if @notification_panel.last_child.nil?
+                close_lambda.call
               }
+              btn.on(:enter) { pause_lambda.call }
+              btn.on(:leave) { start_lambda.call }
               btn_panel.append(btn)
 
             end
@@ -531,10 +592,7 @@ module Ladb::OpenCutList
       @notification_panel.append(box)
       @notification_panel.visible = !@notification_panel.last_child.nil?
 
-      UI.start_timer(timeout, false) do
-        box.remove
-        @notification_panel.visible = false if @notification_panel.last_child.nil?
-      end
+      start_lambda.call
 
     end
 

@@ -82,6 +82,7 @@ module Ladb::OpenCutList
     require_relative 'entity/2d/label'
     require_relative 'entity/2d/motif2d'
     require_relative 'entity/2d/button'
+    require_relative 'entity/2d/progress'
     require_relative 'entity/3d/entity3d'
     require_relative 'entity/3d/space'
     require_relative 'entity/3d/group'
@@ -259,6 +260,8 @@ module Ladb::OpenCutList
       end
 
       def onDeactivate(view)
+        @canvas.remove_all
+        @space.remove_all
         view.invalidate
       end
 
@@ -331,7 +334,7 @@ module Ladb::OpenCutList
         hit_widget = @canvas.hit_widget(x, y)
         if hit_widget
           if hit_widget != @mouse_hover_widget
-            if @mouse_hover_widget
+            if @mouse_hover_widget && @mouse_hover_widget.in_dom?
               @mouse_hover_widget.onMouseLeave
               pop_cursor
             end
@@ -341,7 +344,7 @@ module Ladb::OpenCutList
           end
           return true
         else
-          if @mouse_hover_widget
+          if @mouse_hover_widget && @mouse_hover_widget.in_dom?
             @mouse_hover_widget.onMouseLeave
             pop_cursor
           end
@@ -351,7 +354,7 @@ module Ladb::OpenCutList
       end
 
       def onMouseLeave(view)
-        if @mouse_hover_widget
+        if @mouse_hover_widget && @mouse_hover_widget.in_dom?
           @mouse_hover_widget.onMouseLeave
           pop_cursor
         end
