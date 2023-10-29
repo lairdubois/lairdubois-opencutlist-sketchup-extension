@@ -315,12 +315,6 @@ module Ladb::OpenCutList
 
   class DrawingDef
 
-    FACE_FILTER_ALL = 0
-    FACE_FILTER_SINGLE = 1
-    FACE_FILTER_COPLANAR = 2
-    FACE_FILTER_PARALLEL = 3
-    FACE_FILTER_EXPOSED = 4
-
     attr_reader :bounds, :face_manipulators, :edge_manipulators
     attr_accessor :transformation, :input_face_manipulator, :input_edge_manipulator
 
