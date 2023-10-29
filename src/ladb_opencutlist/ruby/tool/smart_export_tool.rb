@@ -710,11 +710,7 @@ module Ladb::OpenCutList
               [
                 {
                   :label => Plugin.instance.get_i18n_string('default.open'),
-                  :block => lambda {
-                    Plugin.instance.execute_command('core_open_external_file', {
-                      'path' => response[:export_path]
-                    })
-                  }
+                  :block => lambda { Plugin.instance.execute_command('core_open_external_file', { 'path' => response[:export_path] }) }
                 }
               ]
             )
@@ -762,11 +758,7 @@ module Ladb::OpenCutList
               [
                 {
                   :label => Plugin.instance.get_i18n_string('default.open'),
-                  :block => lambda {
-                    Plugin.instance.execute_command('core_open_external_file', {
-                      'path' => response[:export_path]
-                    })
-                  }
+                  :block => lambda { Plugin.instance.execute_command('core_open_external_file', { 'path' => response[:export_path] }) }
                 }
               ]
             )
@@ -812,11 +804,7 @@ module Ladb::OpenCutList
               [
                 {
                   :label => Plugin.instance.get_i18n_string('default.open'),
-                  :block => lambda {
-                    Plugin.instance.execute_command('core_open_external_file', {
-                      'path' => response[:export_path]
-                    })
-                  }
+                  :block => lambda { Plugin.instance.execute_command('core_open_external_file', { 'path' => response[:export_path] }) }
                 }
               ]
             )

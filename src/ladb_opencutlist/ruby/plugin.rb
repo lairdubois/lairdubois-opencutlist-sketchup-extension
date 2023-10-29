@@ -714,6 +714,7 @@ module Ladb::OpenCutList
     end
 
     def execute_command(command, params = nil)
+      start unless @started
       if @commands.has_key?(command)
         block = @commands[command]
         return block.call(params)
