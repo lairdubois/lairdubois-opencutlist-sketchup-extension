@@ -118,6 +118,7 @@ core:
       Um einen Fehler zu melden: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
   error:
     feature_unavailable: "Diese Funktion erfordert SketchUp {{ version }} oder höher"
+    failed_export_to_file: "Beim Exportieren in die Datei, {{ file_format }}, ist ein Fehler aufgetreten. **{{ error }}**"
   event:
     model_change: Das aktive Modell wurde verändert.
     options_change: Die Optionen des Modells wurden verändert.
@@ -1532,9 +1533,13 @@ tool:
     action_option_1_2_status: $t(default.unit_2)
     action_option_1_3_status: $t(default.unit_3)
     action_option_1_4_status: $t(default.unit_4)
+    action_option_2_0_status: Nur die Zielfläche verwenden
+    action_option_2_1_status: Alle Flächen des Teils verwenden
     action_option_3_0_status: Ursprung des Teils projizieren
     action_option_3_1_status: Bögen und Kreise glätten
     action_option_3_2_status: Exportieren der im Teil enthaltenen schwebenden und mit der Zielfläche koplanaren Kanten als Hilfslinien
+    success:
+      exported_to: "Erfolgreicher Export nach {{ export_path }}."
     error:
       not_part: Das Zielobjekt ist kein Teil
       not_flat_face: Die Zielfläche ist nicht eben
