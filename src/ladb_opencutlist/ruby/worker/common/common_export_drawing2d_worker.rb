@@ -69,12 +69,12 @@ module Ladb::OpenCutList
 
           success = _write_2d(path, @drawing_def.face_manipulators, @drawing_def.edge_manipulators, unit_converter) && File.exist?(path)
 
-          return { :errors => [ [ 'tab.cutlist.error.failed_export_to_3d_file', { :file_format => @file_format, :error => e.message } ] ] } unless success
+          return { :errors => [ [ 'core.error.failed_export_to_file', { :file_format => @file_format, :error => '' } ] ] } unless success
           return { :export_path => path }
         rescue => e
           puts e.inspect
           puts e.backtrace
-          return { :errors => [ [ 'tab.cutlist.error.failed_export_to_3d_file', { :file_format => @file_format, :error => e.message } ] ] }
+          return { :errors => [ [ 'core.error.failed_export_to_file', { :file_format => @file_format, :error => e.message } ] ] }
         end
       end
 

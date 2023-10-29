@@ -144,7 +144,7 @@ module Ladb::OpenCutList
               set_root_action(action)
             }
             actions_btn.on(:enter) { |button|
-              notify_message(Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}_status"))
+              show_message(Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}_status"))
             }
             actions_btn.on(:leave) { |button|
               hide_message
@@ -174,7 +174,7 @@ module Ladb::OpenCutList
                   set_root_action(action, modifier)
                 }
                 actions_modifier_btn.on(:enter) { |button|
-                  notify_message(get_action_modifier_status(action, modifier))
+                  show_message(get_action_modifier_status(action, modifier))
                 }
                 actions_modifier_btn.on(:leave) { |button|
                   hide_message
@@ -255,7 +255,7 @@ module Ladb::OpenCutList
                     end
                   }
                   btn.on(:enter) { |button|
-                    notify_message(get_action_option_status(action, option_group, option))
+                    show_message(get_action_option_status(action, option_group, option))
                   }
                   btn.on(:leave) { |button|
                     hide_message
@@ -346,21 +346,14 @@ module Ladb::OpenCutList
 
         setup_minitools_btns(view)
 
-      # -- FLYING
+      # -- NOTIFICATION
 
-      @flying_panel = Kuix::Panel.new
-      @flying_panel.layout_data = Kuix::StaticLayoutData.new(0.5, 1.0, -1, -1, Kuix::Anchor.new(Kuix::Anchor::BOTTOM_CENTER))
-      @flying_panel.layout = Kuix::InlineLayout.new(false, unit)
-      @flying_panel.margin.bottom = unit * 2
-      @flying_panel.visible = false
-      @canvas.append(@flying_panel)
-
-        @flying_lbl = Kuix::Label.new
-        @flying_lbl.border.set_all!(unit / 4)
-        @flying_lbl.padding.set!(unit * 1.5, unit * 2, unit, unit * 2)
-        @flying_lbl.text_size = unit * 3 * get_text_unit_factor
-        # @flying_lbl.text = 'COUCOU'
-        @flying_panel.append(@flying_lbl)
+      @notification_panel = Kuix::Panel.new
+      @notification_panel.layout_data = Kuix::StaticLayoutData.new(0.5, 1.0, -1, -1, Kuix::Anchor.new(Kuix::Anchor::BOTTOM_CENTER))
+      @notification_panel.layout = Kuix::InlineLayout.new(false, unit)
+      @notification_panel.margin.bottom = unit * 2
+      @notification_panel.visible = false
+      @canvas.append(@notification_panel)
 
     end
 
@@ -406,7 +399,7 @@ module Ladb::OpenCutList
 
     # -- Show --
 
-    def notify_message(text, type = MESSAGE_TYPE_DEFAULT)
+    def show_message(text, type = MESSAGE_TYPE_DEFAULT)
       return unless @message_panel && text.is_a?(String)
       @message_lbl.text = text
       @message_panel.visible = !text.empty?
@@ -434,7 +427,7 @@ module Ladb::OpenCutList
       @message_panel.visible = false
     end
 
-    def notify_infos(text_1, infos = [])
+    def show_infos(text_1, infos = [])
       return unless @infos_panel && text_1.is_a?(String) && infos.is_a?(Array)
       @infos_panel.remove_all
       unless text_1.empty?
@@ -466,8 +459,8 @@ module Ladb::OpenCutList
       @infos_panel.visible = false
     end
 
-    def flying_message(text, type = MESSAGE_TYPE_DEFAULT, delay = 4, btn_text = nil, &btn_block)
-      return unless @flying_panel && text.is_a?(String)
+    def notify(text, type = MESSAGE_TYPE_DEFAULT, button_defs = [], timeout = 5) # buttons = [ { :label => BTN_TEXT, :block => BTN_BLOCK } ]
+      return unless @notification_panel && text.is_a?(String)
 
       unit = get_unit
 
@@ -506,30 +499,59 @@ module Ladb::OpenCutList
         end
         box.append(lbl)
 
-        unless btn_text.nil?
+        if button_defs.is_a?(Array) && !button_defs.empty?
 
-          btn = Kuix::Button.new
-          btn.layout = Kuix::BorderLayout.new
-          btn.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
-          btn.padding.set_all!(unit)
-          btn.border.set_all!(unit / 4)
-          btn.append_static_label(btn_text, unit * 3 * get_text_unit_factor)
-          btn.set_style_attribute(:background_color, Kuix::COLOR_LIGHT_GREY)
-          btn.set_style_attribute(:background_color, Kuix::COLOR_MEDIUM_GREY, :hover)
-          btn.set_style_attribute(:border_color, Kuix::COLOR_DARK_GREY)
-          btn.on(:click) { |button|
-            btn_block.call unless btn_block.nil?
-            box.remove
-          }
-          box.append(btn)
+          btn_panel = Kuix::Panel.new
+          btn_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
+          btn_panel.layout = Kuix::GridLayout.new(button_defs.count, 1, unit * 2)
+
+            button_defs.each do |button_def|
+
+              btn = Kuix::Button.new
+              btn.layout = Kuix::BorderLayout.new
+              btn.padding.set_all!(unit)
+              btn.border.set_all!(unit / 4)
+              btn.append_static_label(button_def[:label], unit * 3 * get_text_unit_factor)
+              btn.set_style_attribute(:background_color, Kuix::COLOR_LIGHT_GREY)
+              btn.set_style_attribute(:background_color, Kuix::COLOR_MEDIUM_GREY, :hover)
+              btn.set_style_attribute(:border_color, Kuix::COLOR_DARK_GREY)
+              btn.on(:click) { |button|
+                button_def[:block].call unless button_def[:block].nil?
+                box.remove
+                @notification_panel.visible = false if @notification_panel.last_child.nil?
+              }
+              btn_panel.append(btn)
+
+            end
+
+          box.append(btn_panel)
 
         end
 
-      @flying_panel.append(box)
-      @flying_panel.visible = !text.empty?
+      @notification_panel.append(box)
+      @notification_panel.visible = !@notification_panel.last_child.nil?
 
-      UI.start_timer(delay, false) { box.remove }
+      UI.start_timer(timeout, false) do
+        box.remove
+        @notification_panel.visible = false if @notification_panel.last_child.nil?
+      end
 
+    end
+
+    def notify_success(text, button_defs = [])
+      notify('✔ ' + text, MESSAGE_TYPE_SUCCESS, button_defs)
+    end
+
+    def notify_errors(errors) # errors = [ [ I18N_KEY, [ OPTION1, OPTION2, ...] ], ... ]
+      errors.each do |error|
+        if error.is_a?(Array)
+          key = error[0]
+          options = error[1]
+        else
+          key = error
+        end
+        notify('⚠ ' + Plugin.instance.get_i18n_string(key, options), MESSAGE_TYPE_ERROR)
+      end
     end
 
     # -- Actions --

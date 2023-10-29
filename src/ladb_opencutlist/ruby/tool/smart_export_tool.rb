@@ -336,7 +336,7 @@ module Ladb::OpenCutList
         infos << Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.5,0L0.5,0.2 M0.5,0.4L0.5,0.6 M0.5,0.8L0.5,1 M0,0.2L0.3,0.5L0,0.8L0,0.2 M1,0.2L0.7,0.5L1,0.8L1,0.2')) if part.flipped
         infos << Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.6,0L0.4,0 M0.6,0.4L0.8,0.2L0.5,0.2 M0.8,0.2L0.8,0.5 M0.8,0L1,0L1,0.2 M1,0.4L1,0.6 M1,0.8L1,1L0.8,1 M0.2,0L0,0L0,0.2 M0,1L0,0.4L0.6,0.4L0.6,1L0,1')) if part.resized
 
-        notify_infos("#{part.saved_number ? "[#{part.saved_number}] " : ''}#{part.name}", infos)
+        show_infos("#{part.saved_number ? "[#{part.saved_number}] " : ''}#{part.name}", infos)
 
         if is_action_export_part_2d?
 
@@ -616,7 +616,7 @@ module Ladb::OpenCutList
           # Check if face is not curved
           if (is_action_export_part_2d? || is_action_export_face?) && @input_face.edges.index { |edge| edge.soft? }
             _reset_ui
-            notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_export.error.not_flat_face')}", MESSAGE_TYPE_ERROR)
+            show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_export.error.not_flat_face')}", MESSAGE_TYPE_ERROR)
             push_cursor(@cursor_select_error)
             return
           end
@@ -631,14 +631,14 @@ module Ladb::OpenCutList
                 _set_active_part(input_part_entity_path, part)
               else
                 _reset_active_part
-                notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_export.error.not_part')}", MESSAGE_TYPE_ERROR)
+                show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_export.error.not_part')}", MESSAGE_TYPE_ERROR)
                 push_cursor(@cursor_select_error)
               end
               return
 
             else
               _reset_active_part
-              notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_export.error.not_part')}", MESSAGE_TYPE_ERROR)
+              show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_export.error.not_part')}", MESSAGE_TYPE_ERROR)
               push_cursor(@cursor_select_error)
               return
             end
@@ -702,16 +702,22 @@ module Ladb::OpenCutList
           })
           response = worker.run
 
-          # TODO
-
-          flying_message(
-            Plugin.instance.get_i18n_string('tool.smart_export.success.exported_to', { :export_path => response[:export_path] }),
-            SmartTool::MESSAGE_TYPE_SUCCESS,
-            5,
-            Plugin.instance.get_i18n_string('default.open')) do
-            Plugin.instance.execute_command('core_open_external_file', {
-              'path' => response[:export_path]
-            })
+          if response[:errors]
+            notify_errors(response[:errors])
+          elsif response[:export_path]
+            notify_success(
+              Plugin.instance.get_i18n_string('tool.smart_export.success.exported_to', { :export_path => response[:export_path] }),
+              [
+                {
+                  :label => Plugin.instance.get_i18n_string('default.open'),
+                  :block => lambda {
+                    Plugin.instance.execute_command('core_open_external_file', {
+                      'path' => response[:export_path]
+                    })
+                  }
+                }
+              ]
+            )
           end
 
         elsif is_action_export_part_2d?
@@ -748,16 +754,22 @@ module Ladb::OpenCutList
           })
           response = worker.run
 
-          # TODO
-
-          flying_message(
-            Plugin.instance.get_i18n_string('tool.smart_export.success.exported_to', { :export_path => response[:export_path] }),
-            SmartTool::MESSAGE_TYPE_SUCCESS,
-            5,
-            Plugin.instance.get_i18n_string('default.open')) do
-            Plugin.instance.execute_command('core_open_external_file', {
-              'path' => response[:export_path]
-            })
+          if response[:errors]
+            notify_errors(response[:errors])
+          elsif response[:export_path]
+            notify_success(
+              Plugin.instance.get_i18n_string('tool.smart_export.success.exported_to', { :export_path => response[:export_path] }),
+              [
+                {
+                  :label => Plugin.instance.get_i18n_string('default.open'),
+                  :block => lambda {
+                    Plugin.instance.execute_command('core_open_external_file', {
+                      'path' => response[:export_path]
+                    })
+                  }
+                }
+              ]
+            )
           end
 
         elsif is_action_export_face?
@@ -792,39 +804,28 @@ module Ladb::OpenCutList
           })
           response = worker.run
 
-          # TODO
-
-          flying_message(
-            Plugin.instance.get_i18n_string('tool.smart_export.success.exported_to', { :export_path => response[:export_path] }),
-            SmartTool::MESSAGE_TYPE_SUCCESS,
-            5,
-            Plugin.instance.get_i18n_string('default.open')) do
-            Plugin.instance.execute_command('core_open_external_file', {
-              'path' => response[:export_path]
-            })
+          if response[:errors]
+            notify_errors(response[:errors])
+          elsif response[:export_path]
+            notify_success(
+              Plugin.instance.get_i18n_string('tool.smart_export.success.exported_to', { :export_path => response[:export_path] }),
+              [
+                {
+                  :label => Plugin.instance.get_i18n_string('default.open'),
+                  :block => lambda {
+                    Plugin.instance.execute_command('core_open_external_file', {
+                      'path' => response[:export_path]
+                    })
+                  }
+                }
+              ]
+            )
           end
 
         end
 
       end
 
-    end
-
-    def _get_input_axes(transformation = nil)
-
-      input_edge = @input_edge
-      if input_edge.nil? || !input_edge.used_by?(@input_face)
-        input_edge = _find_longest_outer_edge(@input_face, transformation)
-      end
-
-      z_axis = @input_face.normal
-      z_axis.transform!(transformation).normalize! unless transformation.nil?
-      x_axis = input_edge.line[1]
-      x_axis.transform!(transformation).normalize! unless transformation.nil?
-      x_axis.reverse! if input_edge.reversed_in?(@input_face)
-      y_axis = z_axis.cross(x_axis)
-
-      [ ORIGIN, x_axis, y_axis, z_axis, input_edge, input_edge != @input_edge ]
     end
 
   end

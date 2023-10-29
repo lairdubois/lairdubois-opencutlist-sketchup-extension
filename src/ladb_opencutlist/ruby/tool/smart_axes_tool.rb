@@ -341,7 +341,7 @@ module Ladb::OpenCutList
         infos << Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.5,0L0.5,0.2 M0.5,0.4L0.5,0.6 M0.5,0.8L0.5,1 M0,0.2L0.3,0.5L0,0.8L0,0.2 M1,0.2L0.7,0.5L1,0.8L1,0.2')) if part.flipped
         infos << Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.6,0L0.4,0 M0.6,0.4L0.8,0.2L0.5,0.2 M0.8,0.2L0.8,0.5 M0.8,0L1,0L1,0.2 M1,0.4L1,0.6 M1,0.8L1,1L0.8,1 M0.2,0L0,0L0,0.2 M0,1L0,0.4L0.6,0.4L0.6,1L0,1')) if part.resized
 
-        notify_infos(part.name, infos)
+        show_infos(part.name, infos)
 
         # Create drawing helpers
 
@@ -548,7 +548,7 @@ module Ladb::OpenCutList
         # Status
 
         if !is_action_flip? && part.group.material_type == MaterialAttributes::TYPE_HARDWARE
-          notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_orientable')}", MESSAGE_TYPE_ERROR)
+          show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_orientable')}", MESSAGE_TYPE_ERROR)
           push_cursor(@cursor_select_error)
           return
         end
@@ -556,7 +556,7 @@ module Ladb::OpenCutList
         if !is_action_flip?
           definition = model.definitions[part.def.definition_id]
           if definition && definition.count_used_instances > 1
-            notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
+            show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
           end
         end
 
@@ -584,14 +584,14 @@ module Ladb::OpenCutList
               _set_active_part(input_part_entity_path, part)
             else
               _reset_active_part
-              notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
+              show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
               push_cursor(@cursor_select_error)
             end
             return
 
           else
             _reset_active_part
-            notify_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
+            show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
             push_cursor(@cursor_select_error)
             return
           end
