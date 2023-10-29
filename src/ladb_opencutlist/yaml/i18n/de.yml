@@ -1539,7 +1539,7 @@ tool:
     action_option_3_1_status: Bögen und Kreise glätten
     action_option_3_2_status: Exportieren der im Teil enthaltenen schwebenden und mit der Zielfläche koplanaren Kanten als Hilfslinien
     success:
-      exported_to: "Erfolgreicher Export nach {{ export_path }}".
+      exported_to: "Erfolgreicher Export nach {{ export_path }}."
     error:
       not_part: Das Zielobjekt ist kein Teil
       not_flat_face: Die Zielfläche ist nicht eben
