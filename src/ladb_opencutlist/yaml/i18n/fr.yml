@@ -1537,7 +1537,7 @@ tool:
     action_option_2_0_status: Utiliser uniquement la face ciblée
     action_option_2_1_status: Utiliser toutes les faces de la pièce
     action_option_3_0_status: Projeter l'origine de la pièce
-    action_option_3_1_status: Arrondir les cercles et arcs
+    action_option_3_1_status: Détecter les cercles et arcs (Expérimental)
     action_option_3_2_status: Exporter comme guides les arrêtes flottantes et coplanaires à la face ciblée contenues dans la pièce
     success:
       exported_to: "Export réussi vers {{ export_path }}."
