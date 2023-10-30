@@ -550,7 +550,7 @@ module Ladb::OpenCutList
                   segments = Kuix::Segments.new
                   segments.add_segments(portion.segments)
                   segments.color = COLOR_BRAND
-                  segments.line_width = 3
+                  segments.line_width = 2
                   segments.on_top = true
                   preview.append(segments)
 

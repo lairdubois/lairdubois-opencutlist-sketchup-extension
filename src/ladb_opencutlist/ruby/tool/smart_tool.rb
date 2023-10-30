@@ -91,12 +91,12 @@ module Ladb::OpenCutList
 
         # Actions panel
 
-        actions = Kuix::Panel.new
-        actions.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
-        actions.layout = Kuix::BorderLayout.new
-        actions.set_style_attribute(:background_color, COLOR_BRAND_DARK)
-        @actions_panel = actions
-        @top_panel.append(actions)
+        actions_panel = Kuix::Panel.new
+        actions_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
+        actions_panel.layout = Kuix::BorderLayout.new
+        actions_panel.set_style_attribute(:background_color, COLOR_BRAND_DARK)
+        @actions_panel = actions_panel
+        @top_panel.append(actions_panel)
 
           actions_lbl = Kuix::Label.new
           actions_lbl.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::WEST)
@@ -105,12 +105,12 @@ module Ladb::OpenCutList
           actions_lbl.text = Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.title").upcase
           actions_lbl.text_size = unit * 3 * get_text_unit_factor
           actions_lbl.text_bold = true
-          actions.append(actions_lbl)
+          actions_panel.append(actions_lbl)
 
           actions_btns_panel = Kuix::Panel.new
           actions_btns_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
           actions_btns_panel.layout = Kuix::InlineLayout.new(true, 0, Kuix::Anchor.new(Kuix::Anchor::CENTER))
-          actions.append(actions_btns_panel)
+          actions_panel.append(actions_btns_panel)
 
           @action_buttons = []
           @actions_options_panels = []
@@ -154,11 +154,11 @@ module Ladb::OpenCutList
 
             if modifiers.is_a?(Array)
 
-              actions_modifiers = Kuix::Panel.new
-              actions_modifiers.layout = Kuix::GridLayout.new(modifiers.length, 0)
-              actions_modifiers.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
-              actions_modifiers.padding.set_all!(unit)
-              actions_btn.append(actions_modifiers)
+              actions_modifiers_panel = Kuix::Panel.new
+              actions_modifiers_panel.layout = Kuix::GridLayout.new(modifiers.length, 0)
+              actions_modifiers_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
+              actions_modifiers_panel.padding.set_all!(unit)
+              actions_btn.append(actions_modifiers_panel)
 
               modifiers.each { |modifier|
 
@@ -179,7 +179,7 @@ module Ladb::OpenCutList
                 actions_modifier_btn.on(:leave) { |button|
                   hide_message
                 }
-                actions_modifiers.append(actions_modifier_btn)
+                actions_modifiers_panel.append(actions_modifier_btn)
 
                 child = get_action_modifier_btn_child(action, modifier)
                 if child
@@ -301,7 +301,7 @@ module Ladb::OpenCutList
           help_btn.on(:click) { |button|
             Plugin.instance.open_docs_page("tool.smart-#{get_stripped_name}")
           }
-          actions.append(help_btn)
+          actions_panel.append(help_btn)
 
         # Infos panel
 
@@ -490,7 +490,7 @@ module Ladb::OpenCutList
         lbl = Kuix::Label.new
         lbl.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::WEST)
         lbl.margin.left = unit * 4
-        lbl.text_size = unit * 4 * get_text_unit_factor
+        lbl.text_size = unit * 3.5 * get_text_unit_factor
         lbl.text = text
         case type
         when MESSAGE_TYPE_ERROR
@@ -571,7 +571,7 @@ module Ladb::OpenCutList
               btn.layout = Kuix::BorderLayout.new
               btn.padding.set_all!(unit * 2)
               btn.border.set_all!(unit / 4)
-              btn.append_static_label(button_def[:label], unit * 4 * get_text_unit_factor)
+              btn.append_static_label(button_def[:label], unit * 3.5 * get_text_unit_factor)
               btn.set_style_attribute(:background_color, Kuix::COLOR_LIGHT_GREY)
               btn.set_style_attribute(:background_color, Kuix::COLOR_MEDIUM_GREY, :hover)
               btn.set_style_attribute(:border_color, Kuix::COLOR_DARK_GREY)
