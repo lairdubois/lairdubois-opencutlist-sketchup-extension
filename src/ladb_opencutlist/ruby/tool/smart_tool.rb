@@ -249,6 +249,7 @@ module Ladb::OpenCutList
                       end
                       button.selected = true
                       store_action_option(action, option_group, option, true)
+                      set_root_cursor(get_action_cursor(action, fetch_action_modifier(action)))
                     else
                       button.selected = !button.selected?
                       store_action_option(action, option_group, option, button.selected?)
@@ -569,7 +570,7 @@ module Ladb::OpenCutList
 
               btn = Kuix::Button.new
               btn.layout = Kuix::BorderLayout.new
-              btn.padding.set_all!(unit * 2)
+              btn.padding.set!(unit * 2, unit * 4, unit * 2, unit * 4)
               btn.border.set_all!(unit / 4)
               btn.append_static_label(button_def[:label], unit * 3.5 * get_text_unit_factor)
               btn.set_style_attribute(:background_color, Kuix::COLOR_LIGHT_GREY)
@@ -600,15 +601,16 @@ module Ladb::OpenCutList
       notify('✔ ' + text, MESSAGE_TYPE_SUCCESS, button_defs)
     end
 
-    def notify_errors(errors) # errors = [ [ I18N_KEY, [ OPTION1, OPTION2, ...] ], ... ]
+    def notify_errors(errors) # errors = [ [ I18N_PATH_KEY, { :VAR1 => value1, :VAR2 => value2, ... } ], ... ]
       errors.each do |error|
         if error.is_a?(Array)
-          key = error[0]
-          options = error[1]
+          path_key = error[0]
+          vars = error[1]
         else
-          key = error
+          path_key = error
+          vars = nil
         end
-        notify('⚠ ' + Plugin.instance.get_i18n_string(key, options), MESSAGE_TYPE_ERROR)
+        notify('⚠ ' + Plugin.instance.get_i18n_string(path_key, vars), MESSAGE_TYPE_ERROR)
       end
     end
 

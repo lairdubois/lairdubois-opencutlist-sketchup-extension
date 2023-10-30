@@ -18,11 +18,11 @@ module Ladb::OpenCutList
 
     SUPPORTED_FILE_FORMATS = [ FILE_FORMAT_DXF, FILE_FORMAT_STL, FILE_FORMAT_OBJ ]
 
-    def initialize(drawing_def, settings)
+    def initialize(drawing_def, settings = {})
 
       @drawing_def = drawing_def
 
-      @file_name = _sanitize_filename(settings.fetch('file_name', 'FACE'))
+      @file_name = _sanitize_filename(settings.fetch('file_name', 'PART'))
       @file_format = settings.fetch('file_format', nil)
       @unit = settings.fetch('unit', nil)
 

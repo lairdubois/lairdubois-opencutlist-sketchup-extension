@@ -78,13 +78,10 @@ module Ladb::OpenCutList
       }
     ].freeze
 
-    COLOR_MESH = Sketchup::Color.new(0, 0, 255, 100).freeze # Sketchup::Color.new(200, 200, 0, 150).freeze
-    COLOR_MESH_HIGHLIGHTED = Sketchup::Color.new(200, 200, 0, 200).freeze
-    COLOR_MESH_DEEP = Sketchup::Color.new(50, 50, 0, 150).freeze
+    COLOR_MESH = Sketchup::Color.new(0, 0, 255, 100).freeze
+    COLOR_MESH_HIGHLIGHTED = Sketchup::Color.new(0, 0, 255, 200).freeze
     COLOR_GUIDE = Kuix::COLOR_CYAN #Sketchup::Color.new(0, 104, 255).freeze
     COLOR_ACTION = Kuix::COLOR_MAGENTA
-    COLOR_ACTION_FILL = Sketchup::Color.new(255, 0, 255, 51).freeze
-    COLOR_ACTION_FILL_HIGHLIGHTED = Sketchup::Color.new(255, 0, 255, 102).freeze
 
     @@action = nil
     @@action_modifiers = {} # { action => MODIFIER }
@@ -94,10 +91,6 @@ module Ladb::OpenCutList
       super(true, false)
 
       # Create cursors
-      @cursor_export_part_3d = create_cursor('export-part-3d', 0, 0)
-      @cursor_export_part_2d = create_cursor('export-part-2d', 0, 0)
-      @cursor_export_face = create_cursor('export-part-2d', 0, 0)
-
       @cursor_export_skp = create_cursor('export-skp', 0, 0)
       @cursor_export_stl = create_cursor('export-stl', 0, 0)
       @cursor_export_obj = create_cursor('export-obj', 0, 0)
@@ -112,7 +105,6 @@ module Ladb::OpenCutList
 
     def setup_entities(view)
       super
-
     end
 
     # -- Actions --
@@ -121,21 +113,29 @@ module Ladb::OpenCutList
       ACTIONS
     end
 
-    def get_action_status(action)
-
-
-      super
-    end
-
     def get_action_cursor(action, modifier)
 
       case action
       when ACTION_EXPORT_PART_3D
-        return @cursor_export_part_3d
+        if fetch_action_option(ACTION_EXPORT_PART_3D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_STL)
+          return @cursor_export_stl
+        elsif fetch_action_option(ACTION_EXPORT_PART_3D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_OBJ)
+          return @cursor_export_obj
+        elsif fetch_action_option(ACTION_EXPORT_PART_3D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
+          return @cursor_export_dxf
+        end
       when ACTION_EXPORT_PART_2D
-        return @cursor_export_part_2d
+        if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_SVG)
+          return @cursor_export_svg
+        elsif fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
+          return @cursor_export_dxf
+        end
       when ACTION_EXPORT_FACE
-        return @cursor_export_face
+        if fetch_action_option(ACTION_EXPORT_FACE, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_SVG)
+          return @cursor_export_svg
+        elsif fetch_action_option(ACTION_EXPORT_FACE, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
+          return @cursor_export_dxf
+        end
       end
 
       super
@@ -340,6 +340,8 @@ module Ladb::OpenCutList
 
         if is_action_export_part_2d?
 
+          # Part 2D
+
           @active_drawing_def = CommonDecomposeDrawingWorker.new(@active_part_entity_path, {
             'input_face_path' => @input_face_path,
             'input_edge_path' => @input_edge.nil? ? nil : @input_face_path + [ @input_edge ],
@@ -374,7 +376,7 @@ module Ladb::OpenCutList
                 else
                   segments.color = Kuix::COLOR_BLUE.blend(Kuix::COLOR_WHITE, 0.5)
                 end
-                segments.line_width = 2
+                segments.line_width = highlighted ? 3 : 2
                 segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES unless polygon_def.outer?
                 segments.on_top = true
                 preview.append(segments)
@@ -386,7 +388,7 @@ module Ladb::OpenCutList
                     segments = Kuix::Segments.new
                     segments.add_segments(portion.segments)
                     segments.color = COLOR_BRAND
-                    segments.line_width = 2
+                    segments.line_width = highlighted ? 3 : 2
                     segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES unless polygon_def.outer?
                     segments.on_top = true
                     preview.append(segments)
@@ -403,7 +405,7 @@ module Ladb::OpenCutList
               segments = Kuix::Segments.new
               segments.add_segments(edge_manipulator.segment)
               segments.color = COLOR_GUIDE
-              segments.line_width = 2
+              segments.line_width = highlighted ? 3 : 2
               segments.on_top = true
               preview.append(segments)
 
@@ -447,6 +449,8 @@ module Ladb::OpenCutList
 
         else
 
+          # Part 3D
+
           @active_drawing_def = CommonDecomposeDrawingWorker.new(@active_part_entity_path, {
             'use_bounds_min_as_origin' => !fetch_action_option(ACTION_EXPORT_PART_3D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR),
             'ignore_edges' => true
@@ -464,7 +468,7 @@ module Ladb::OpenCutList
               # Highlight face
               mesh = Kuix::Mesh.new
               mesh.add_triangles(FaceManipulator.new(face_info.face, face_info.transformation).triangles)
-              mesh.background_color = COLOR_MESH
+              mesh.background_color = highlighted ? COLOR_MESH_HIGHLIGHTED : COLOR_MESH
               preview.append(mesh)
 
             end
@@ -538,7 +542,7 @@ module Ladb::OpenCutList
               segments = Kuix::Segments.new
               segments.add_segments(polygon_def.segments)
               segments.color = Kuix::COLOR_BLUE
-              segments.line_width = 2
+              segments.line_width = highlighted ? 3 : 2
               segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES unless polygon_def.outer?
               segments.on_top = true
               preview.append(segments)
@@ -550,7 +554,7 @@ module Ladb::OpenCutList
                   segments = Kuix::Segments.new
                   segments.add_segments(portion.segments)
                   segments.color = COLOR_BRAND
-                  segments.line_width = 2
+                  segments.line_width = highlighted ? 3 : 2
                   segments.on_top = true
                   preview.append(segments)
 
