@@ -10,8 +10,8 @@ module Ladb::OpenCutList
   require_relative '../manipulator/loop_manipulator'
   require_relative '../worker/common/common_export_drawing2d_worker'
   require_relative '../worker/common/common_export_drawing3d_worker'
-  require_relative '../worker/common/common_decompose_drawing_worker'
-  require_relative '../worker/common/common_projection_worker'
+  require_relative '../worker/common/common_drawing_flatten_worker'
+  require_relative '../worker/common/common_drawing_projection_worker'
 
   require 'benchmark'
 
@@ -189,7 +189,7 @@ module Ladb::OpenCutList
         when ACTION_OPTION_OPTIONS_ANCHOR
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.273,0L0.273,0.727L1,0.727 M0.091,0.545L0.455,0.545L0.455,0.909L0.091,0.909L0.091,0.545 M0.091,0.182L0.273,0L0.455,0.182 M0.818,0.545L1,0.727L0.818,0.909'))
         when ACTION_OPTION_OPTIONS_CURVES
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M1,0.5L0.97,0.329L0.883,0.179L0.75,0.067L0.587,0.008L0.413,0.008L0.25,0.067L0.117,0.179L0.03,0.329L0,0.5'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M1,0.719L0.97,0.548L0.883,0.398L0.75,0.286L0.587,0.227L0.413,0.227L0.25,0.286L0.117,0.398L0.03,0.548L0,0.719'))
         when ACTION_OPTION_OPTIONS_GUIDES
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.167,0L0.167,1 M0,0.167L1,0.167 M0,0.833L1,0.833 M0.833,0L0.833,1'))
         end
@@ -300,19 +300,19 @@ module Ladb::OpenCutList
 
           # Part 2D
 
-          @active_drawing_def = CommonDecomposeDrawingWorker.new(@active_part_entity_path, {
+          @active_drawing_def = CommonDrawingFlattenWorker.new(@active_part_entity_path, {
             'input_face_path' => @input_face_path,
             'input_edge_path' => @input_edge.nil? ? nil : @input_face_path + [ @input_edge ],
             'use_bounds_min_as_origin' => !fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR),
-            'face_validator' => fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACE, ACTION_OPTION_FACE_ONE) ? CommonDecomposeDrawingWorker::FACE_VALIDATOR_ONE : CommonDecomposeDrawingWorker::FACE_VALIDATOR_ALL,
+            'face_validator' => fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACE, ACTION_OPTION_FACE_ONE) ? CommonDrawingFlattenWorker::FACE_VALIDATOR_ONE : CommonDrawingFlattenWorker::FACE_VALIDATOR_ALL,
             'ignore_edges' => !fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_GUIDES),
-            'edge_validator' => CommonDecomposeDrawingWorker::EDGE_VALIDATOR_STRAY_COPLANAR
+            'edge_validator' => CommonDrawingFlattenWorker::EDGE_VALIDATOR_STRAY_COPLANAR
           }).run
           if @active_drawing_def.is_a?(DrawingDef)
 
             inch_offset = Sketchup.active_model.active_view.pixels_to_model(15, Geom::Point3d.new.transform(@active_drawing_def.transformation))
 
-            projection_def = CommonProjectionWorker.new(@active_drawing_def, {
+            projection_def = CommonDrawingProjectionWorker.new(@active_drawing_def, {
               'down_to_top_union' => false,
               'passthrough_holes' => false
             }).run
@@ -327,9 +327,9 @@ module Ladb::OpenCutList
                 segments = Kuix::Segments.new
                 segments.add_segments(polygon_def.segments)
                 case layer_def.position
-                when CommonProjectionWorker::LAYER_POSITION_TOP
+                when CommonDrawingProjectionWorker::LAYER_POSITION_TOP
                   segments.color = Kuix::COLOR_BLUE
-                when CommonProjectionWorker::LAYER_POSITION_BOTTOM
+                when CommonDrawingProjectionWorker::LAYER_POSITION_BOTTOM
                   segments.color = Kuix::COLOR_RED
                 else
                   segments.color = Kuix::COLOR_BLUE.blend(Kuix::COLOR_WHITE, 0.5)
@@ -409,7 +409,7 @@ module Ladb::OpenCutList
 
           # Part 3D
 
-          @active_drawing_def = CommonDecomposeDrawingWorker.new(@active_part_entity_path, {
+          @active_drawing_def = CommonDrawingFlattenWorker.new(@active_part_entity_path, {
             'use_bounds_min_as_origin' => !fetch_action_option(ACTION_EXPORT_PART_3D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR),
             'ignore_edges' => true
           }).run
@@ -479,14 +479,14 @@ module Ladb::OpenCutList
 
       if face
 
-        @active_drawing_def = CommonDecomposeDrawingWorker.new(@input_face_path, {
+        @active_drawing_def = CommonDrawingFlattenWorker.new(@input_face_path, {
           'use_bounds_min_as_origin' => true,
           'input_face_path' => @input_face_path,
           'input_edge_path' => @input_edge.nil? ? nil : @input_face_path + [ @input_edge ],
         }).run
         if @active_drawing_def.is_a?(DrawingDef)
 
-          projection_def = CommonProjectionWorker.new(@active_drawing_def).run
+          projection_def = CommonDrawingProjectionWorker.new(@active_drawing_def).run
 
           inch_offset = Sketchup.active_model.active_view.pixels_to_model(15, Geom::Point3d.new.transform(@active_drawing_def.transformation))
 

@@ -7,8 +7,9 @@ module Ladb::OpenCutList
   require_relative '../../manipulator/face_manipulator'
   require_relative '../../manipulator/edge_manipulator'
   require_relative '../../manipulator/surface_manipulator'
+  require_relative '../../model/drawing/drawing_def'
 
-  class CommonDecomposeDrawingWorker
+  class CommonDrawingFlattenWorker
 
     include LayerVisibilityHelper
 
@@ -43,6 +44,7 @@ module Ladb::OpenCutList
     def run
       return { :errors => [ 'default.error' ] } unless @path.is_a?(Array)
       return { :errors => [ 'default.error' ] } if @path.empty?
+      return { :errors => [ 'default.error' ] } if Sketchup.active_model.nil?
 
       # Extract drawing element
       drawing_element = @path.last
@@ -307,29 +309,6 @@ module Ladb::OpenCutList
         return surface_manipulator if surface_manipulator.include?(face)
       end
       nil
-    end
-
-  end
-
-  # -----
-
-  class DrawingDef
-
-    attr_reader :bounds, :face_manipulators, :edge_manipulators
-    attr_accessor :transformation, :input_face_manipulator, :input_edge_manipulator
-
-    def initialize
-
-      @transformation = Geom::Transformation.new
-
-      @bounds = Geom::BoundingBox.new
-
-      @face_manipulators = []
-      @edge_manipulators = []
-
-      @input_face_manipulator = nil
-      @input_edge_manipulator = nil
-
     end
 
   end

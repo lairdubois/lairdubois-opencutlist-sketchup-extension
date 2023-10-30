@@ -63,11 +63,18 @@ module Ladb::OpenCutList::Geometrix
       # Radius
       # https://math.stackexchange.com/questions/616645/determining-the-major-minor-axes-of-an-ellipse-from-general-form
 
-      q = 64.0 * (f * discr - a * e**2 + b * d * e - c * d**2) / discr**2
-      s = 0.25 * Math.sqrt(q.abs * Math.sqrt(b**2 + (a - c)**2))
+      begin
 
-      rmax = 0.125 * Math.sqrt(2 * q.abs * Math.sqrt(b**2 + (a - c)**2) - 2 * q * (a + c))
-      rmin = Math.sqrt(rmax**2 - s**2)
+        q = 64.0 * (f * discr - a * e**2 + b * d * e - c * d**2) / discr**2
+        s = 0.25 * Math.sqrt(q.abs * Math.sqrt(b**2 + (a - c)**2))
+
+        rmax = 0.125 * Math.sqrt(2 * q.abs * Math.sqrt(b**2 + (a - c)**2) - 2 * q * (a + c))
+        rmin = Math.sqrt(rmax**2 - s**2)
+
+      rescue Exception => e
+        puts "EllipseFinder.find_ellipse_def : #{e.message}"
+        return nil
+      end
 
       # Angle
 

@@ -1,15 +1,13 @@
 module Ladb::OpenCutList
 
   require_relative '../../constants'
-  require_relative '../../helper/face_triangles_helper'
   require_relative '../../helper/dxf_writer_helper'
   require_relative '../../helper/sanitizer_helper'
   require_relative '../../utils/color_utils'
-  require_relative '../../worker/common/common_decompose_drawing_worker'
+  require_relative '../../model/drawing/drawing_def'
 
   class CommonExportDrawing3dWorker
 
-    include FaceTrianglesHelper
     include DxfWriterHelper
     include SanitizerHelper
 
@@ -69,7 +67,7 @@ module Ladb::OpenCutList
         rescue => e
           puts e.inspect
           puts e.backtrace
-          return { :errors => [ [ 'core.failed_export_to_file', { :file_format => @file_format, :error => e.message } ] ] }
+          return { :errors => [ [ 'core.error.failed_export_to_file', { :file_format => @file_format, :error => e.message } ] ] }
         end
       end
 

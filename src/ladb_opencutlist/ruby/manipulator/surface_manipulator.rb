@@ -1,11 +1,13 @@
 module Ladb::OpenCutList
 
+  require_relative 'manipulator'
+
   class SurfaceManipulator < TransformationManipulator
 
     attr_reader :faces
 
     def initialize(transformation = Geom::Transformation.new)
-      super(transformation)
+      super
       @faces = []
     end
 

@@ -1,16 +1,15 @@
 module Ladb::OpenCutList
 
   require_relative '../../constants'
-  require_relative '../../helper/face_triangles_helper'
   require_relative '../../helper/dxf_writer_helper'
   require_relative '../../helper/svg_writer_helper'
   require_relative '../../helper/sanitizer_helper'
   require_relative '../../utils/color_utils'
-  require_relative '../../worker/common/common_decompose_drawing_worker'
+  require_relative '../../model/drawing/drawing_def'
+  require_relative '../../worker/common/common_drawing_projection_worker'
 
   class CommonExportDrawing2dWorker
 
-    include FaceTrianglesHelper
     include DxfWriterHelper
     include SvgWriterHelper
     include SanitizerHelper
@@ -88,7 +87,7 @@ module Ladb::OpenCutList
     def _write_2d(path, face_manipulators, edge_manipulators, unit_converter)
 
       # Compute projection
-      projection_def = CommonProjectionWorker.new(@drawing_def, {
+      projection_def = CommonDrawingProjectionWorker.new(@drawing_def, {
         'down_to_top_union' => true,
         'passthrough_holes' => true
       }).run
@@ -223,13 +222,13 @@ module Ladb::OpenCutList
 
           projection_def.layer_defs.each do |layer_def|
 
-            if layer_def.position == CommonProjectionWorker::LAYER_POSITION_TOP
+            if layer_def.position == CommonDrawingProjectionWorker::LAYER_POSITION_TOP
               attributes = {
                 fill: '#000000',
                 'shaper:cutType': 'outside'
               }
               attributes.merge!({ 'shaper:cutDepth': "#{_convert(@drawing_def.bounds.depth, unit_converter)}#{unit_sign}" }) if @drawing_def.bounds.depth > 0
-            elsif layer_def.position == CommonProjectionWorker::LAYER_POSITION_BOTTOM
+            elsif layer_def.position == CommonDrawingProjectionWorker::LAYER_POSITION_BOTTOM
               attributes = {
                 stroke: '#000000',
                 'stroke-with': '0.1mm',
