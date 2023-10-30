@@ -668,20 +668,20 @@ module Ladb::OpenCutList
     end
 
     def store_action_option(action, option_group, option, enabled)
-      # Implemented in derived class : @@action_options[action][option_group][option] = enabled
+      dictionary = "tool_smart_#{get_stripped_name}_options"
+      preset = Plugin.instance.get_global_preset(dictionary, nil, action)
+      preset.store("#{option_group}_#{option}", enabled)
+      Plugin.instance.set_global_preset(dictionary, preset, nil, action)
     end
 
     def fetch_action_option(action, option_group, option)
-      # Implemented in derived class : @@action_options[action][option_group][option]
+      preset = Plugin.instance.get_global_preset("tool_smart_#{get_stripped_name}_options", nil, action)
+      return preset.fetch("#{option_group}_#{option}", false) unless preset.nil?
       false
     end
 
     def get_startup_action
       fetch_action.nil? ? get_action_defs.first[:action] : fetch_action
-    end
-
-    def get_startup_action_option(action, option_group, option)
-      false
     end
 
     def set_action(action, modifier = nil)

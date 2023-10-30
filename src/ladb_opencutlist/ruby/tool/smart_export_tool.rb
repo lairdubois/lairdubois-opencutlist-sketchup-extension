@@ -78,14 +78,13 @@ module Ladb::OpenCutList
       }
     ].freeze
 
-    COLOR_MESH = Sketchup::Color.new(0, 0, 255, 100).freeze
-    COLOR_MESH_HIGHLIGHTED = Sketchup::Color.new(0, 0, 255, 200).freeze
+    COLOR_MESH = Kuix::COLOR_BLUE.blend(Kuix::COLOR_WHITE, 0.5).freeze #Sketchup::Color.new(0, 0, 255, 100).freeze
+    COLOR_MESH_HIGHLIGHTED = Kuix::COLOR_BLUE.blend(Kuix::COLOR_WHITE, 0.8).freeze
     COLOR_GUIDE = Kuix::COLOR_CYAN #Sketchup::Color.new(0, 104, 255).freeze
     COLOR_ACTION = Kuix::COLOR_MAGENTA
 
     @@action = nil
     @@action_modifiers = {} # { action => MODIFIER }
-    @@action_options = {} # { action => { OPTION_GROUP => { OPTION => bool } } }
 
     def initialize(material = nil)
       super(true, false)
@@ -213,47 +212,6 @@ module Ladb::OpenCutList
 
     def fetch_action_modifier(action)
       @@action_modifiers[action]
-    end
-
-    def store_action_option(action, option_group, option, enabled)
-      @@action_options[action] = {} if @@action_options[action].nil?
-      @@action_options[action][option_group] = {} if @@action_options[action][option_group].nil?
-      @@action_options[action][option_group][option] = enabled
-    end
-
-    def fetch_action_option(action, option_group, option)
-      return get_startup_action_option(action, option_group, option) if @@action_options[action].nil? || @@action_options[action][option_group].nil? || @@action_options[action][option_group][option].nil?
-      @@action_options[action][option_group][option]
-    end
-
-    def get_startup_action_option(action, option_group, option)
-
-      case option_group
-      when ACTION_OPTION_FILE_FORMAT
-        case option
-        when ACTION_OPTION_FILE_FORMAT_DXF
-          return true
-        end
-      when ACTION_OPTION_UNIT
-        case option
-        when ACTION_OPTION_UNIT_IN
-          return !DimensionUtils.instance.model_unit_is_metric
-        when ACTION_OPTION_UNIT_MM
-          return DimensionUtils.instance.model_unit_is_metric
-        end
-      when ACTION_OPTION_FACE
-        case option
-        when ACTION_OPTION_FACE_ALL
-          return true
-        end
-      when ACTION_OPTION_OPTIONS
-        case option
-        when ACTION_OPTION_OPTIONS_ANCHOR
-          return true
-        end
-      end
-
-      false
     end
 
     def is_action_export_part_3d?
