@@ -185,6 +185,7 @@ core:
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       settings_model: $t(tab.settings.label) / Model
+      tool_smart_export_options: $t(core.toolbar.command.smart_export)
   progress:
     please_wait: Calculating a world of peace
   component:
@@ -1536,7 +1537,7 @@ tool:
     action_option_2_0_status: Use target face only
     action_option_2_1_status: Use all faces of the part
     action_option_3_0_status: Project part origin
-    action_option_3_1_status: Smooth out circles and arcs
+    action_option_3_1_status: Detect circles and arcs (Experimental)
     action_option_3_2_status: Export as guides the floating and coplanar edges of the target face contained in the part
     success:
       exported_to: "Successful export to {{ export_path }}."
