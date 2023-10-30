@@ -185,6 +185,7 @@ core:
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       settings_model: $t(tab.settings.label) / Modell
+      tool_smart_export_options: $t(core.toolbar.command.smart_export)
   progress:
     please_wait: Berechnung einer Welt des Friedens
   component:
@@ -1536,7 +1537,7 @@ tool:
     action_option_2_0_status: Nur die Zielfläche verwenden
     action_option_2_1_status: Alle Flächen des Teils verwenden
     action_option_3_0_status: Ursprung des Teils projizieren
-    action_option_3_1_status: Bögen und Kreise glätten
+    action_option_3_1_status: Kreise und Bögen erkennen (Experimentell)
     action_option_3_2_status: Exportieren der im Teil enthaltenen schwebenden und mit der Zielfläche koplanaren Kanten als Hilfslinien
     success:
       exported_to: "Erfolgreicher Export nach {{ export_path }}."
