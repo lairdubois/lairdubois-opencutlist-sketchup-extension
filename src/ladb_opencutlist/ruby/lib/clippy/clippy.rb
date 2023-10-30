@@ -7,6 +7,8 @@ module Ladb::OpenCutList
 
     FLOAT_TO_INT64_CONVERTER = 1e16
 
+    # TODO : Catch loading exception
+
     case Sketchup.platform
     when :platform_osx
       dlload File.join(__dir__, '../../../bin/osx/lib/libClippy.dylib')
@@ -14,25 +16,27 @@ module Ladb::OpenCutList
       dlload File.join(__dir__, '../../../bin/x86/lib/Clippy.dll')
     end
 
-    extern 'void c_clear_subjects(void)'
-    extern 'void c_append_subject(int64_t* cpath, size_t len)'
+    # Keep simple C syntax (without var names and void in args) to stay compatible with SketchUp 2017
 
-    extern 'void c_clear_clips(void)'
-    extern 'void c_append_clip(int64_t* cpath, size_t len)'
+    extern 'void c_clear_subjects()'
+    extern 'void c_append_subject(int64_t*, size_t)'
 
-    extern 'size_t c_compute_union(void)'
-    extern 'size_t c_compute_difference(void)'
-    extern 'size_t c_compute_intersection(void)'
+    extern 'void c_clear_clips()'
+    extern 'void c_append_clip(int64_t*, size_t)'
 
-    extern 'void c_clear_solution(void)'
-    extern 'size_t c_get_solution_len(void)'
-    extern 'size_t c_get_solution_cpath_len_at(int index)'
-    extern 'int64_t* c_get_solution_cpath_at(int index)'
+    extern 'size_t c_compute_union()'
+    extern 'size_t c_compute_difference()'
+    extern 'size_t c_compute_intersection()'
 
-    extern 'int c_is_cpath_positive(int64_t *cpath, size_t len)'
-    extern 'double c_get_cpath_area(int64_t *cpath, size_t len)'
+    extern 'void c_clear_solution()'
+    extern 'size_t c_get_solution_len()'
+    extern 'size_t c_get_solution_cpath_len_at(int)'
+    extern 'int64_t* c_get_solution_cpath_at(int)'
 
-    extern 'void c_free_cpath(int64_t *cpath)'
+    extern 'int c_is_cpath_positive(int64_t*, size_t)'
+    extern 'double c_get_cpath_area(int64_t*, size_t)'
+
+    extern 'void c_free_cpath(int64_t*)'
 
     def self.union(subjects, clips)
       _clear
