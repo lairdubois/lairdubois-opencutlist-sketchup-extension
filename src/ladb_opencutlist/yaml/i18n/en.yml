@@ -185,6 +185,7 @@ core:
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       settings_model: $t(tab.settings.label) / Model
+      tool_smart_export_options: $t(core.toolbar.command.smart_export)
   progress:
     please_wait: Calculating a world of peace
   component:
