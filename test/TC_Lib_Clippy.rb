@@ -16,10 +16,10 @@ class TC_Lib_Clippy < TestUp::TestCase
 
     group = Sketchup.active_model.entities.add_group
 
-    solution.each do |path|
-      points = Ladb::OpenCutList::Clippy.rpath_to_points(path)
+    solution.each do |rpath|
+      points = Ladb::OpenCutList::Clippy.rpath_to_points(rpath)
       face = group.entities.add_face(points)
-      group.entities.erase_entities(face) unless Ladb::OpenCutList::Clippy.ccw?(points)
+      group.entities.erase_entities(face) unless Ladb::OpenCutList::Clippy.is_rpath_positive?(rpath)
     end
 
   end

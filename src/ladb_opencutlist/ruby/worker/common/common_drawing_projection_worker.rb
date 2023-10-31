@@ -36,12 +36,8 @@ module Ladb::OpenCutList
       z_max = bounds_max.z
 
       # Filter only exposed faces
-      if @drawing_def.input_face_manipulator
-        exposed_face_manipulators = @drawing_def.face_manipulators.select do |face_manipulator|
-          !face_manipulator.perpendicular?(@drawing_def.input_face_manipulator) && @drawing_def.input_face_manipulator.angle_between(face_manipulator) < Math::PI / 2.0
-        end
-      else
-        exposed_face_manipulators = @drawing_def.face_manipulators
+      exposed_face_manipulators = @drawing_def.face_manipulators.select do |face_manipulator|
+        !face_manipulator.perpendicular?(@drawing_def.input_face_manipulator) && @drawing_def.input_face_manipulator.angle_between(face_manipulator) < Math::PI / 2.0
       end
 
       # Populate face def (loops and depth)

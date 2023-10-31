@@ -26,11 +26,9 @@ module Ladb::OpenCutList
     ACTION_SWAP_FRONT_BACK = 2
     ACTION_ADAPT_AXES = 3
 
-    ACTION_MODIFIER_CLOCKWISE = 0
-    ACTION_MODIFIER_ANTICLOCKWIZE = 1
-    ACTION_MODIFIER_LENGTH = 2
-    ACTION_MODIFIER_WIDTH = 3
-    ACTION_MODIFIER_THICKNESS = 4
+    ACTION_MODIFIER_LENGTH = 0
+    ACTION_MODIFIER_WIDTH = 1
+    ACTION_MODIFIER_THICKNESS = 2
 
     ACTIONS = [
       {
@@ -39,9 +37,7 @@ module Ladb::OpenCutList
         :startup_modifier => ACTION_MODIFIER_THICKNESS
       },
       {
-        :action => ACTION_SWAP_LENGTH_WIDTH,
-        :modifiers => [ ACTION_MODIFIER_ANTICLOCKWIZE, ACTION_MODIFIER_CLOCKWISE ],
-        :startup_modifier => ACTION_MODIFIER_CLOCKWISE
+        :action => ACTION_SWAP_LENGTH_WIDTH
       },
       {
         :action => ACTION_SWAP_FRONT_BACK
@@ -111,7 +107,7 @@ module Ladb::OpenCutList
 
       case action
       when ACTION_SWAP_LENGTH_WIDTH
-        return is_action_modifier_anticlockwise? ? @cursor_swap_length_width_anticlockwise : @cursor_swap_length_width_clockwise
+        return @cursor_swap_length_width_clockwise
       when ACTION_SWAP_FRONT_BACK
         return @cursor_swap_front_back
       when ACTION_FLIP
@@ -126,18 +122,6 @@ module Ladb::OpenCutList
     def get_action_modifier_btn_child(action, modifier)
 
       case action
-      when ACTION_SWAP_LENGTH_WIDTH
-        case modifier
-        when ACTION_MODIFIER_CLOCKWISE
-          motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0,0.8333L0.1667,0.5L0.5,0.3333L0.8333,0.3333L0.6667,0L1,0.3333L0.6667,0.6667L0.8333,0.3333'))
-          motif.line_width = @unit <= 4 ? 0.5 : 1
-          return motif
-        when ACTION_MODIFIER_ANTICLOCKWIZE
-          motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0,0.8333L0.1667,0.5L0.5,0.3333L0.8333,0.3333L0.6667,0L1,0.3333L0.6667,0.6667L0.8333,0.3333'))
-          motif.patterns_transformation = Geom::Transformation.translation(Geom::Vector3d.new(1, 0, 0)) * Geom::Transformation.scaling(-1, 1, 1)
-          motif.line_width = @unit <= 4 ? 0.5 : 1
-          return motif
-        end
       when ACTION_FLIP
         case modifier
         when ACTION_MODIFIER_LENGTH
@@ -200,14 +184,6 @@ module Ladb::OpenCutList
 
     def is_action_modifier_thickness?
       fetch_action_modifier(fetch_action) == ACTION_MODIFIER_THICKNESS
-    end
-
-    def is_action_modifier_clockwise?
-      fetch_action_modifier(fetch_action) == ACTION_MODIFIER_CLOCKWISE
-    end
-
-    def is_action_modifier_anticlockwise?
-      fetch_action_modifier(fetch_action) == ACTION_MODIFIER_ANTICLOCKWIZE
     end
 
     # -- Menu --
@@ -646,21 +622,12 @@ module Ladb::OpenCutList
 
             elsif is_action_swap_length_width?
 
-              if is_action_modifier_anticlockwise?
-                ti = Geom::Transformation.axes(
-                  ORIGIN,
-                  size.axes[1],
-                  AxisUtils.flipped?(size.axes[1], size.axes[0], size.axes[2]) ? size.axes[0].reverse : size.axes[0],
-                  size.axes[2]
-                )
-              else
-                ti = Geom::Transformation.axes(
-                  ORIGIN,
-                  AxisUtils.flipped?(size.axes[1], size.axes[0], size.axes[2]) ? size.axes[1].reverse : size.axes[1],
-                  size.axes[0],
-                  size.axes[2]
-                )
-              end
+              ti = Geom::Transformation.axes(
+                ORIGIN,
+                AxisUtils.flipped?(size.axes[1], size.axes[0], size.axes[2]) ? size.axes[1].reverse : size.axes[1],
+                size.axes[0],
+                size.axes[2]
+              )
 
             elsif is_action_swap_front_back?
 

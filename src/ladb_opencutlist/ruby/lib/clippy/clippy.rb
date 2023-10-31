@@ -5,7 +5,7 @@ module Ladb::OpenCutList
   module Clippy
     extend Fiddle::Importer
 
-    FLOAT_TO_INT64_CONVERTER = 1e16
+    FLOAT_TO_INT64_CONVERTER = 1e12
 
     # TODO : Catch loading exception
 
@@ -26,9 +26,9 @@ module Ladb::OpenCutList
       extern 'void c_clear_clips()'
       extern 'void c_append_clip(int64_t*, size_t)'
 
-      extern 'size_t c_compute_union()'
-      extern 'size_t c_compute_difference()'
-      extern 'size_t c_compute_intersection()'
+      extern 'void c_compute_union()'
+      extern 'void c_compute_difference()'
+      extern 'void c_compute_intersection()'
 
       extern 'void c_clear_solution()'
       extern 'size_t c_get_solution_len()'
