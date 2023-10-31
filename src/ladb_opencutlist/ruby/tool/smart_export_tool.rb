@@ -10,7 +10,7 @@ module Ladb::OpenCutList
   require_relative '../manipulator/loop_manipulator'
   require_relative '../worker/common/common_export_drawing2d_worker'
   require_relative '../worker/common/common_export_drawing3d_worker'
-  require_relative '../worker/common/common_drawing_flatten_worker'
+  require_relative '../worker/common/common_drawing_decomposition_worker'
   require_relative '../worker/common/common_drawing_projection_worker'
 
   require 'benchmark'
@@ -300,13 +300,13 @@ module Ladb::OpenCutList
 
           # Part 2D
 
-          @active_drawing_def = CommonDrawingFlattenWorker.new(@active_part_entity_path, {
+          @active_drawing_def = CommonDrawingDecompositionWorker.new(@active_part_entity_path, {
             'input_face_path' => @input_face_path,
             'input_edge_path' => @input_edge.nil? ? nil : @input_face_path + [ @input_edge ],
             'use_bounds_min_as_origin' => !fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR),
-            'face_validator' => fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACE, ACTION_OPTION_FACE_ONE) ? CommonDrawingFlattenWorker::FACE_VALIDATOR_ONE : CommonDrawingFlattenWorker::FACE_VALIDATOR_ALL,
+            'face_validator' => fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACE, ACTION_OPTION_FACE_ONE) ? CommonDrawingDecompositionWorker::FACE_VALIDATOR_ONE : CommonDrawingDecompositionWorker::FACE_VALIDATOR_ALL,
             'ignore_edges' => !fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_GUIDES),
-            'edge_validator' => CommonDrawingFlattenWorker::EDGE_VALIDATOR_STRAY_COPLANAR
+            'edge_validator' => CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY_COPLANAR
           }).run
           if @active_drawing_def.is_a?(DrawingDef)
 
@@ -409,7 +409,7 @@ module Ladb::OpenCutList
 
           # Part 3D
 
-          @active_drawing_def = CommonDrawingFlattenWorker.new(@active_part_entity_path, {
+          @active_drawing_def = CommonDrawingDecompositionWorker.new(@active_part_entity_path, {
             'use_bounds_min_as_origin' => !fetch_action_option(ACTION_EXPORT_PART_3D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR),
             'ignore_edges' => true
           }).run
@@ -479,7 +479,7 @@ module Ladb::OpenCutList
 
       if face
 
-        @active_drawing_def = CommonDrawingFlattenWorker.new(@input_face_path, {
+        @active_drawing_def = CommonDrawingDecompositionWorker.new(@input_face_path, {
           'use_bounds_min_as_origin' => true,
           'input_face_path' => @input_face_path,
           'input_edge_path' => @input_edge.nil? ? nil : @input_face_path + [ @input_edge ],

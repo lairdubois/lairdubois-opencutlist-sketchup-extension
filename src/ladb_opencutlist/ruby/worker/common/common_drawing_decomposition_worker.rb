@@ -9,7 +9,7 @@ module Ladb::OpenCutList
   require_relative '../../manipulator/surface_manipulator'
   require_relative '../../model/drawing/drawing_def'
 
-  class CommonDrawingFlattenWorker
+  class CommonDrawingDecompositionWorker
 
     include LayerVisibilityHelper
 
