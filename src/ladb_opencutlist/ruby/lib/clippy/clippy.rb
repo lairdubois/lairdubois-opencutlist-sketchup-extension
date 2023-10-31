@@ -9,40 +9,53 @@ module Ladb::OpenCutList
 
     # TODO : Catch loading exception
 
-    case Sketchup.platform
-    when :platform_osx
-      dlload File.join(__dir__, '../../../bin/osx/lib/libClippy.dylib')
-    when :platform_win
-      dlload File.join(__dir__, '../../../bin/x86/lib/Clippy.dll')
+    begin
+
+      case Sketchup.platform
+      when :platform_osx
+        dlload File.join(__dir__, '../../../bin/osx/lib/libClippy.dylib')
+      when :platform_win
+        dlload File.join(__dir__, '../../../bin/x86/lib/Clippy.dll')
+      end
+
+      # Keep simple C syntax (without var names and void in args) to stay compatible with SketchUp 2017
+
+      extern 'void c_clear_subjects()'
+      extern 'void c_append_subject(int64_t*, size_t)'
+
+      extern 'void c_clear_clips()'
+      extern 'void c_append_clip(int64_t*, size_t)'
+
+      extern 'size_t c_compute_union()'
+      extern 'size_t c_compute_difference()'
+      extern 'size_t c_compute_intersection()'
+
+      extern 'void c_clear_solution()'
+      extern 'size_t c_get_solution_len()'
+      extern 'size_t c_get_solution_cpath_len_at(int)'
+      extern 'int64_t* c_get_solution_cpath_at(int)'
+
+      extern 'int c_is_cpath_positive(int64_t*, size_t)'
+      extern 'double c_get_cpath_area(int64_t*, size_t)'
+
+      extern 'void c_free_cpath(int64_t*)'
+
+      @loaded = true
+
+    rescue Exception => e
+      @loaded = false
     end
 
-    # Keep simple C syntax (without var names and void in args) to stay compatible with SketchUp 2017
-
-    extern 'void c_clear_subjects()'
-    extern 'void c_append_subject(int64_t*, size_t)'
-
-    extern 'void c_clear_clips()'
-    extern 'void c_append_clip(int64_t*, size_t)'
-
-    extern 'size_t c_compute_union()'
-    extern 'size_t c_compute_difference()'
-    extern 'size_t c_compute_intersection()'
-
-    extern 'void c_clear_solution()'
-    extern 'size_t c_get_solution_len()'
-    extern 'size_t c_get_solution_cpath_len_at(int)'
-    extern 'int64_t* c_get_solution_cpath_at(int)'
-
-    extern 'int c_is_cpath_positive(int64_t*, size_t)'
-    extern 'double c_get_cpath_area(int64_t*, size_t)'
-
-    extern 'void c_free_cpath(int64_t*)'
+    def self.loaded?
+      @loaded
+    end
 
     def self.union(subjects, clips)
       _clear
       _append_subjects(subjects)
       _append_clips(clips)
-      solution = _compute_union
+      _compute_union
+      solution = _unpack_solution
       _clear
       solution
     end
@@ -51,46 +64,54 @@ module Ladb::OpenCutList
       _clear
       _append_subjects(subjects)
       _append_clips(clips)
-      solution = _compute_difference
+      _compute_difference
+      solution = _unpack_solution
       _clear
       solution
     end
 
-    def self.intersaction(subjects, clips)
+    def self.intersection(subjects, clips)
       _clear
       _append_subjects(subjects)
       _append_clips(clips)
-      solution = _compute_intersection
+      _compute_intersection
+      solution = _unpack_solution
       _clear
       solution
     end
 
-    def self.is_path_positive?(path)
-      return c_is_cpath_positive(_pack_path(path), path.length) == 1
+    def self.is_rpath_positive?(rpath)
+      return c_is_cpath_positive(_rpath_to_cpath(rpath), rpath.length) == 1
     end
 
-    def self.get_path_area(path)
-      return c_get_cpath_area(_pack_path(path), path.length) / (FLOAT_TO_INT64_CONVERTER**2)
+    def self.get_rpath_area(rpath)
+      return c_get_cpath_area(_rpath_to_cpath(rpath), rpath.length) / (FLOAT_TO_INT64_CONVERTER**2)
     end
 
     # -- Utils --
 
     # Convert Array<Geom::Point3d> to Array<Integer>
-    def self.points_to_path(points)
+    def self.points_to_rpath(points)
       points.map { |point| [(point.x * FLOAT_TO_INT64_CONVERTER).to_i, (point.y * FLOAT_TO_INT64_CONVERTER).to_i ] }.flatten
     end
 
     # Convert Array<Integer> to Array<Geom::Point3d>
-    def self.path_to_points(path, z = 0.0)
+    def self.rpath_to_points(rpath, z = 0.0)
       points = []
-      path.each_slice(2) { |coord_a, coord_b| points << Geom::Point3d.new(coord_a / FLOAT_TO_INT64_CONVERTER, coord_b / FLOAT_TO_INT64_CONVERTER, z) }
+      rpath.each_slice(2) { |coord_x, coord_y| points << Geom::Point3d.new(coord_x / FLOAT_TO_INT64_CONVERTER, coord_y / FLOAT_TO_INT64_CONVERTER, z) }
       points
     end
 
     private
 
-    def self._pack_path(path)
-      Fiddle::Pointer[path.pack('q*')]
+    # Returns Fiddle::Pointer
+    def self._rpath_to_cpath(rpath)
+      Fiddle::Pointer[rpath.pack('q*')]  # q* to read 64bits integers
+    end
+
+    # Returns Array<Integer>
+    def self._cpath_to_rpath(cpath, len)
+      cpath.to_str(len * Fiddle::SIZEOF_LONG_LONG * 2).unpack('q*')  # Fiddle::SIZEOF_LONG_LONG = sizeof(int64_t), q* to read 64bits integers
     end
 
     def self._clear
@@ -99,39 +120,36 @@ module Ladb::OpenCutList
       c_clear_solution
     end
 
-    def self._append_subject(path)
-      c_append_subject(_pack_path(path), path.length)
+    def self._append_subject(rpath)
+      c_append_subject(_rpath_to_cpath(rpath), rpath.length)
     end
 
-    def self._append_subjects(paths)
-      paths.each do |path|
-        _append_subject(path)
+    def self._append_subjects(rpaths)
+      rpaths.each do |rpath|
+        _append_subject(rpath)
       end
     end
 
-    def self._append_clip(path)
-      c_append_clip(_pack_path(path), path.length)
+    def self._append_clip(rpath)
+      c_append_clip(_rpath_to_cpath(rpath), rpath.length)
     end
 
-    def self._append_clips(paths)
-      paths.each do |path|
-        _append_clip(path)
+    def self._append_clips(rpaths)
+      rpaths.each do |rpath|
+        _append_clip(rpath)
       end
     end
 
     def self._compute_union
       c_compute_union
-      _unpack_solution
     end
 
     def self._compute_difference
       c_compute_difference
-      _unpack_solution
     end
 
     def self._compute_intersection
       c_compute_intersection
-      _unpack_solution
     end
 
     def self._unpack_solution
@@ -139,16 +157,16 @@ module Ladb::OpenCutList
       (0...c_get_solution_len).each do |index|
 
         # Retrieve the solution length (= number of cpath)
-        path_len = c_get_solution_cpath_len_at(index)
+        cpath_len = c_get_solution_cpath_len_at(index)
 
         # Retrieve solution array pointer
-        path_ptr = c_get_solution_cpath_at(index)
+        cpath = c_get_solution_cpath_at(index)
 
-        # Unpack pointer data to Ruby Array<Integer> (q* to read 64bits integers)
-        solution << path_ptr.to_str(path_len * Fiddle::SIZEOF_LONG_LONG * 2).unpack('q*')  # Fiddle::SIZEOF_LONG_LONG = sizeof(int64_t)
+        # Unpack pointer data to Ruby Array<Integer>
+        solution << _cpath_to_rpath(cpath, cpath_len)
 
         # Free pointer
-        c_free_cpath(path_ptr)
+        c_free_cpath(cpath)
 
       end
       solution

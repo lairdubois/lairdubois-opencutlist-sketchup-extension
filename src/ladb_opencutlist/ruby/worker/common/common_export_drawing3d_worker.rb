@@ -3,7 +3,6 @@ module Ladb::OpenCutList
   require_relative '../../constants'
   require_relative '../../helper/dxf_writer_helper'
   require_relative '../../helper/sanitizer_helper'
-  require_relative '../../utils/color_utils'
   require_relative '../../model/drawing/drawing_def'
 
   class CommonExportDrawing3dWorker

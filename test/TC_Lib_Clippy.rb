@@ -9,15 +9,15 @@ class TC_Lib_Clippy < TestUp::TestCase
     selection = Sketchup.active_model.selection
     faces = selection.grep(Sketchup::Face)
 
-    subjects = faces.first.loops.map { |loop| Ladb::OpenCutList::Clippy.points_to_path(loop.vertices.map { |vertex| vertex.position }) }
-    clips = faces.last.loops.map { |loop| Ladb::OpenCutList::Clippy.points_to_path(loop.vertices.map { |vertex| vertex.position }) }
+    subjects = faces.first.loops.map { |loop| Ladb::OpenCutList::Clippy.points_to_rpath(loop.vertices.map { |vertex| vertex.position }) }
+    clips = faces.last.loops.map { |loop| Ladb::OpenCutList::Clippy.points_to_rpath(loop.vertices.map { |vertex| vertex.position }) }
 
     solution = Ladb::OpenCutList::Clippy.union(subjects, clips)
 
     group = Sketchup.active_model.entities.add_group
 
     solution.each do |path|
-      points = Ladb::OpenCutList::Clippy.path_to_points(path)
+      points = Ladb::OpenCutList::Clippy.rpath_to_points(path)
       face = group.entities.add_face(points)
       group.entities.erase_entities(face) unless Ladb::OpenCutList::Clippy.ccw?(points)
     end
