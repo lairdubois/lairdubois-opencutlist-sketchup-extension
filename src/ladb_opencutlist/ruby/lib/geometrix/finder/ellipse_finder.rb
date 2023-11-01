@@ -15,55 +15,50 @@ module Ladb::OpenCutList::Geometrix
       return nil unless points.is_a?(Array)
       return nil unless points.length >= 5
 
-      # Create a matrix A and a vector B to solve the system of equations
-      m_a = []
-      v_b = []
-
-      # Fill
-      # - matrix A with x^2, xy, y^2, x, y for 5 first points
-      # - matrix B with -1
-      points[0, 5].each do |point|
-        m_a << [ point.x**2, point.x * point.y, point.y**2, point.x, point.y ]
-        v_b << [ -1 ]
-      end
-
-      matrix_a = Matrix[*m_a]
-      vector_b = Matrix[*v_b]
-
-      # Check if matrix is inversible
-      return nil if matrix_a.det.abs < Float::EPSILON  # TODO check if this "zero" value is not too low.
-
-      # Solve the system of equations to find the coefficients of the ellipse
       begin
+
+        # Create a matrix A and a vector B to solve the system of equations
+        m_a = []
+        v_b = []
+
+        # Fill
+        # - matrix A with x^2, xy, y^2, x, y for 5 first points
+        # - matrix B with -1
+        points[0, 5].each do |point|
+          m_a << [ point.x**2, point.x * point.y, point.y**2, point.x, point.y ]
+          v_b << [ -1 ]
+        end
+
+        matrix_a = Matrix[*m_a]
+        vector_b = Matrix[*v_b]
+
+        # Check if matrix is inversible
+        return nil if matrix_a.det.abs < Float::EPSILON  # TODO check if this "zero" value is not too low.
+
+        # Solve the system of equations to find the coefficients of the ellipse
         sol = matrix_a.inverse * vector_b
-      rescue Exception => e
-        puts "EllipseFinder.find_ellipse_def : #{e.message}"
-        return nil
-      end
 
-      # Extract the coefficients from the ellipse
-      # ax^2 + bxy + cy^2 + dx + ey + f = 0
-      a, b, c, d, e = sol.to_a.flatten
-      f = 1.0
+        # Extract the coefficients from the ellipse
+        # ax^2 + bxy + cy^2 + dx + ey + f = 0
+        a, b, c, d, e = sol.to_a.flatten
+        f = 1.0
 
-      # Compute the discriminant
-      discr = 4.0 * a * c - b**2
+        # Compute the discriminant
+        discr = 4.0 * a * c - b**2
 
-      # Check if it's an ellipse
-      return nil unless discr > 0
+        # Check if it's an ellipse
+        return nil unless discr > 0
 
-      # Center
+        # Center
 
-      center = Geom::Point3d.new(
-        (b * e - 2.0 * c * d) / discr,
-        (b * d - 2.0 * a * e) / discr,
-        points[0].z # Suppose that all points are in the same Z plane
-      )
+        center = Geom::Point3d.new(
+          (b * e - 2.0 * c * d) / discr,
+          (b * d - 2.0 * a * e) / discr,
+          points[0].z # Suppose that all points are in the same Z plane
+        )
 
-      # Radius
-      # https://math.stackexchange.com/questions/616645/determining-the-major-minor-axes-of-an-ellipse-from-general-form
-
-      begin
+        # Radius
+        # https://math.stackexchange.com/questions/616645/determining-the-major-minor-axes-of-an-ellipse-from-general-form
 
         q = 64.0 * (f * discr - a * e**2 + b * d * e - c * d**2) / discr**2
         s = 0.25 * Math.sqrt(q.abs * Math.sqrt(b**2 + (a - c)**2))
@@ -71,48 +66,44 @@ module Ladb::OpenCutList::Geometrix
         rmax = 0.125 * Math.sqrt(2 * q.abs * Math.sqrt(b**2 + (a - c)**2) - 2 * q * (a + c))
         rmin = Math.sqrt(rmax**2 - s**2)
 
-      rescue Exception => e
-        puts "EllipseFinder.find_ellipse_def : #{e.message}"
-        return nil
-      end
+        # Angle
 
-      # Angle
+        qaqc = q * a - q * c
+        qb = q * b
 
-      qaqc = q * a - q * c
-      qb = q * b
-
-      if qaqc.abs < Float::EPSILON
-        if qb.abs < Float::EPSILON
-          angle = 0.0
-        elsif qb > 0
-          angle = 0.25 * Math::PI
+        if qaqc.abs < Float::EPSILON
+          if qb.abs < Float::EPSILON
+            angle = 0.0
+          elsif qb > 0
+            angle = 0.25 * Math::PI
+          else
+            angle = 0.75 * Math::PI
+          end
+        elsif qaqc > 0
+          # if qb >= 0
+            angle = 0.5 * Math.atan(b / (a - c))
+          # else
+          #   angle = 0.5 * Math.atan(b / (a - c)) + Math::PI
+          # end
         else
-          angle = 0.75 * Math::PI
+          angle = 0.5 * (Math.atan(b / (a - c)) + Math::PI)
         end
-      elsif qaqc > 0
-        # if qb >= 0
-          angle = 0.5 * Math.atan(b / (a - c))
-        # else
-        #   angle = 0.5 * Math.atan(b / (a - c)) + Math::PI
-        # end
-      else
-        angle = 0.5 * (Math.atan(b / (a - c)) + Math::PI)
-      end
 
-      # Axes
+        # Axes
 
-      v1 = points[0] - center
-      v2 = points[1] - center
-      normal = v1.cross(v2)
+        v1 = points[0] - center
+        v2 = points[1] - center
+        normal = v1.cross(v2)
 
-      xaxis = X_AXIS.transform(Geom::Transformation.rotation(ORIGIN, Z_AXIS, angle))
-      xaxis.length = rmax
+        xaxis = X_AXIS.transform(Geom::Transformation.rotation(ORIGIN, Z_AXIS, angle))
+        xaxis.length = rmax
 
-      yaxis = normal.cross(xaxis)
-      begin
+        yaxis = normal.cross(xaxis)
         yaxis.length = rmin
+
       rescue Exception => e
-        puts "EllipseFinder.find_ellipse_def : #{e.message}"
+        puts "[#{File.basename(__FILE__)}:#{__LINE__}] : #{e.message}"
+        return nil
       end
 
       EllipseDef.new(
@@ -137,8 +128,8 @@ module Ladb::OpenCutList::Geometrix
     # @return [Boolean]
     #
     def self.ellipse_include_point?(ellipse_def, point)
-      # (x - cx)^2 / xradius^2 + (y - cy)^2 / yradius^2 = 1
-      ((point.x - ellipse_def.center.x)**2 / ellipse_def.xradius**2 + (point.y - ellipse_def.center.y)**2 / ellipse_def.yradius**2 - 1).abs < 1e-6
+      # ax^2 + bxy + cy^2 + dx + ey + f = 0
+      (ellipse_def.a * point.x**2 + ellipse_def.b * point.x * point.y + ellipse_def.c * point.y**2 + ellipse_def.d * point.x + ellipse_def.e * point.y + ellipse_def.f).abs < 1e-6
     end
 
     # Get ellipse CCW angle at point
@@ -215,12 +206,12 @@ module Ladb::OpenCutList::Geometrix
     end
 
     def ==(other)
-      @a - other.a +
-      @b - other.b +
-      @c - other.c +
-      @d - other.d +
-      @e - other.e +
-      @f - other.f < 1e-10
+      (@a - other.a).abs < 1e-8 &&
+      (@b - other.b).abs < 1e-8 &&
+      (@c - other.c).abs < 1e-8 &&
+      (@d - other.d).abs < 1e-8 &&
+      (@e - other.e).abs < 1e-8 &&
+      (@f - other.f).abs < 1e-8
     end
 
   end

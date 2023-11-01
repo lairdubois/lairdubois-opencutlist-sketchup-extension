@@ -65,6 +65,14 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
     assert_in_epsilon(10, ellipse_def.yradius, EPSI, 'yradius')
     assert_equal(true, ellipse_def.circular?, 'circular?')
     assert_angles(ellipse_def, @circle_x0_y0_r10, 'angles (circle_x0_y0_r10)')
+    assert_ellipse_include_points(ellipse_def, @circle_x0_y0_r10, 'ellipse_include_point (circle_x0_y0_r10)')
+
+    loop_def = Ladb::OpenCutList::Geometrix::LoopFinder.find_loop_def(@circle_x0_y0_r10)
+
+    assert_equal(1, loop_def.portions.count, 'loop_def.portions.count')
+    assert_instance_of(Ladb::OpenCutList::Geometrix::ArcLoopPortionDef, loop_def.portions.first, 'is_arc?')
+
+
 
 
     ellipse_def = Ladb::OpenCutList::Geometrix::EllipseFinder.find_ellipse_def(@ellipse_x0_y0_xr20_yr20_a0)
@@ -75,6 +83,7 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
     assert_in_delta(0.degrees, ellipse_def.angle, EPSI, 'angle')
     assert_equal(false, ellipse_def.circular?, 'circular?')
     assert_angles(ellipse_def, @ellipse_x0_y0_xr20_yr20_a0, 'angles (ellipse_x0_y0_xr20_yr20_a0)')
+    assert_ellipse_include_points(ellipse_def, @ellipse_x0_y0_xr20_yr20_a0, 'ellipse_include_point (ellipse_x0_y0_xr20_yr20_a0)')
 
 
     ellipse_def = Ladb::OpenCutList::Geometrix::EllipseFinder.find_ellipse_def(@ellipse_x0_y0_xr20_yr20_a45)
@@ -85,6 +94,7 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
     assert_in_delta(45.degrees, ellipse_def.angle, EPSI, 'angle')
     assert_equal(false, ellipse_def.circular?, 'circular?')
     assert_angles(ellipse_def, @ellipse_x0_y0_xr20_yr20_a45, 'angles (ellipse_x0_y0_xr20_yr20_a45)')
+    assert_ellipse_include_points(ellipse_def, @ellipse_x0_y0_xr20_yr20_a45, 'ellipse_include_point (ellipse_x0_y0_xr20_yr20_a45)')
 
 
     ellipse_def = Ladb::OpenCutList::Geometrix::EllipseFinder.find_ellipse_def(@ellipse_x0_y0_xr20_yr20_a90)
@@ -95,6 +105,7 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
     assert_in_delta(90.degrees, ellipse_def.angle, EPSI, 'angle')
     assert_equal(false, ellipse_def.circular?, 'circular?')
     assert_angles(ellipse_def, @ellipse_x0_y0_xr20_yr20_a90, 'angles (ellipse_x0_y0_xr20_yr20_a90)')
+    assert_ellipse_include_points(ellipse_def, @ellipse_x0_y0_xr20_yr20_a90, 'ellipse_include_point (ellipse_x0_y0_xr20_yr20_a90)')
 
 
     ellipse_def = Ladb::OpenCutList::Geometrix::EllipseFinder.find_ellipse_def(@ellipse_x0_y0_xr20mm_yr20mm_a45)
@@ -105,13 +116,7 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
     assert_in_delta(45.degrees, ellipse_def.angle, EPSI, 'angle')
     assert_equal(false, ellipse_def.circular?, 'circular?')
     assert_angles(ellipse_def, @ellipse_x0_y0_xr20mm_yr20mm_a45, 'angles (ellipse_x0_y0_xr20mm_yr20mm_a45)')
-
-    loop_def = Ladb::OpenCutList::Geometrix::LoopFinder.find_loop_def(@ellipse_x0_y0_xr20mm_yr20mm_a45)
-
-    puts "portions.count = #{loop_def.portions.count}"
-    loop_def.portions.each_with_index do |portion, index|
-      puts "portion[#{index}].count = #{portion.edge_count}"
-    end
+    assert_ellipse_include_points(ellipse_def, @ellipse_x0_y0_xr20mm_yr20mm_a45, 'ellipse_include_point (ellipse_x0_y0_xr20mm_yr20mm_a45)')
 
   end
 
@@ -122,6 +127,12 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
       angle_at_point = Ladb::OpenCutList::Geometrix::EllipseFinder.ellipse_angle_at_point(ellipse_def, point)
       point_at_angle = Ladb::OpenCutList::Geometrix::EllipseFinder.ellipse_point_at_angle(ellipse_def, angle_at_point)
       assert_equal(point, point_at_angle, msg + " index=#{index} angle=#{angle_at_point.radians.round(6)}°")
+    end
+  end
+
+  def assert_ellipse_include_points(ellipse_def, points, msg = "")
+    points.each_with_index do |point, index|
+      assert_equal(true, Ladb::OpenCutList::Geometrix::EllipseFinder.ellipse_include_point?(ellipse_def, point), [ msg, "index=#{index}" ].join(' ') )
     end
   end
 
