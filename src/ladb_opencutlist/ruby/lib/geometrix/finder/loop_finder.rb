@@ -45,7 +45,7 @@ module Ladb::OpenCutList::Geometrix
               vaa = ellipse_def.xaxis.transform(Geom::Transformation.rotation(ellipse_def.center, Z_AXIS, EllipseFinder.ellipse_angle_at_point(ellipse_def, p)))
 
               # Break if angle between previous point > MIN_DELTA_ANGLE
-              break if va.angle_between(vaa) > MIN_DELTA_ANGLE
+              break if va.angle_between(vaa).round(6) > MIN_DELTA_ANGLE
 
               va = vaa
 

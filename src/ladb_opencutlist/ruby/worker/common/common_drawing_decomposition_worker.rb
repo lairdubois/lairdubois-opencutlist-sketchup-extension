@@ -200,26 +200,30 @@ module Ladb::OpenCutList
       if @use_bounds_min_as_origin
 
         to = Geom::Transformation.translation(Geom::Vector3d.new(drawing_def.bounds.min.to_a))
-        toi = to.inverse
+        unless to.identity?
 
-        drawing_def.transformation *= to
-        drawing_def.input_face_manipulator.transformation = toi * drawing_def.input_face_manipulator.transformation unless drawing_def.input_face_manipulator.nil?
-        drawing_def.input_edge_manipulator.transformation = toi * drawing_def.input_edge_manipulator.transformation unless drawing_def.input_edge_manipulator.nil?
+          toi = to.inverse
 
-        min = drawing_def.bounds.min.transform(toi)
-        max = drawing_def.bounds.max.transform(toi)
-        drawing_def.bounds.clear
-        drawing_def.bounds.add([ min, max ])
+          drawing_def.transformation *= to
+          drawing_def.input_face_manipulator.transformation = toi * drawing_def.input_face_manipulator.transformation unless drawing_def.input_face_manipulator.nil?
+          drawing_def.input_edge_manipulator.transformation = toi * drawing_def.input_edge_manipulator.transformation unless drawing_def.input_edge_manipulator.nil?
 
-        unless @ignore_faces
-          drawing_def.face_manipulators.each do |face_manipulator|
-            face_manipulator.transformation = toi * face_manipulator.transformation
+          min = drawing_def.bounds.min.transform(toi)
+          max = drawing_def.bounds.max.transform(toi)
+          drawing_def.bounds.clear
+          drawing_def.bounds.add([ min, max ])
+
+          unless @ignore_faces
+            drawing_def.face_manipulators.each do |face_manipulator|
+              face_manipulator.transformation = toi * face_manipulator.transformation
+            end
           end
-        end
-        unless @ignore_edges
-          drawing_def.edge_manipulators.each do |edge_manipulator|
-            edge_manipulator.transformation = toi * edge_manipulator.transformation
+          unless @ignore_edges
+            drawing_def.edge_manipulators.each do |edge_manipulator|
+              edge_manipulator.transformation = toi * edge_manipulator.transformation
+            end
           end
+
         end
 
       end

@@ -136,7 +136,7 @@ module Ladb::OpenCutList
                   cy = _convert(center.y, unit_converter)
                   vx = _convert(xaxis.x, unit_converter)
                   vy = _convert(xaxis.y, unit_converter)
-                  vr = portion.ellipse_def.yradius / portion.ellipse_def.xradius
+                  vr = portion.ellipse_def.yradius.round(6) / portion.ellipse_def.xradius.round(6)
                   as = start_angle
                   ae = end_angle
 
@@ -189,7 +189,7 @@ module Ladb::OpenCutList
       when FILE_FORMAT_SVG
 
         if @anchor
-          # Recompute bounding box to be sur to extends to anchor triangle
+          # Recompute bounding box to be sure to extends to anchor triangle
           bounds = Geom::BoundingBox.new
           bounds.add(@drawing_def.bounds.min)
           bounds.add(@drawing_def.bounds.max)
