@@ -154,9 +154,7 @@ module Ladb::OpenCutList
           end
         end
 
-        @surface_manipulators = []
-
-        _populate_face_manipulators(drawing_def.face_manipulators, entities, ttai, &validator)
+        _populate_face_manipulators(drawing_def, entities, ttai, &validator)
 
       end
 
@@ -178,7 +176,7 @@ module Ladb::OpenCutList
           end
         end
 
-        _populate_edge_manipulators(drawing_def.edge_manipulators, entities, ttai, &validator)
+        _populate_edge_manipulators(drawing_def, entities, ttai, &validator)
 
       end
 
@@ -217,6 +215,9 @@ module Ladb::OpenCutList
             drawing_def.face_manipulators.each do |face_manipulator|
               face_manipulator.transformation = toi * face_manipulator.transformation
             end
+            drawing_def.surface_manipulators.each do |surface_manipulator|
+              surface_manipulator.transformation = toi * surface_manipulator.transformation
+            end
           end
           unless @ignore_edges
             drawing_def.edge_manipulators.each do |edge_manipulator|
@@ -249,7 +250,7 @@ module Ladb::OpenCutList
       [ x_axis, y_axis, z_axis, input_edge_manipulator ]
     end
 
-    def _populate_face_manipulators(face_manipulators, entities, transformation = Geom::Transformation.new, &validator)
+    def _populate_face_manipulators(drawing_def, entities, transformation = Geom::Transformation.new, &validator)
       entities.each do |entity|
         if entity.visible? && _layer_visible?(entity.layer)
           if entity.is_a?(Sketchup::Face)
@@ -259,7 +260,7 @@ module Ladb::OpenCutList
 
               # TODO : Quite slow
               if manipulator.belongs_to_a_surface?
-                surface_manipulator = _get_surface_manipulator_by_face(entity)
+                surface_manipulator = _get_surface_manipulator_by_face(drawing_def, entity)
                 if surface_manipulator.nil?
                   surface_manipulator = SurfaceManipulator.new(transformation)
                   _populate_surface_manipulator(surface_manipulator, entity)
@@ -268,29 +269,29 @@ module Ladb::OpenCutList
               end
               # TODO : Quite slow
 
-              face_manipulators.push(manipulator)
+              drawing_def.face_manipulators.push(manipulator)
 
             end
 
           elsif entity.is_a?(Sketchup::Group)
-            _populate_face_manipulators(face_manipulators, entity.entities, transformation * entity.transformation, &validator)
+            _populate_face_manipulators(drawing_def, entity.entities, transformation * entity.transformation, &validator)
           elsif entity.is_a?(Sketchup::ComponentInstance) && (entity.definition.behavior.cuts_opening? || entity.definition.behavior.always_face_camera?)
-            _populate_face_manipulators(face_manipulators, entity.definition.entities, transformation * entity.transformation, &validator)
+            _populate_face_manipulators(drawing_def, entity.definition.entities, transformation * entity.transformation, &validator)
           end
         end
       end
     end
 
-    def _populate_edge_manipulators(edge_manipulators, entities, transformation = Geom::Transformation.new, &validator)
+    def _populate_edge_manipulators(drawing_def, entities, transformation = Geom::Transformation.new, &validator)
       entities.each do |entity|
         if entity.visible? && _layer_visible?(entity.layer)
           if entity.is_a?(Sketchup::Edge)
             manipulator = EdgeManipulator.new(entity, transformation)
-            edge_manipulators.push(manipulator) if !block_given? || yield(manipulator)
+            drawing_def.edge_manipulators.push(manipulator) if !block_given? || yield(manipulator)
           elsif entity.is_a?(Sketchup::Group)
-            _populate_edge_manipulators(edge_manipulators, entity.entities, transformation * entity.transformation, &validator)
+            _populate_edge_manipulators(drawing_def, entity.entities, transformation * entity.transformation, &validator)
           elsif entity.is_a?(Sketchup::ComponentInstance) && (entity.definition.behavior.cuts_opening? || entity.definition.behavior.always_face_camera?)
-            _populate_edge_manipulators(edge_manipulators, entity.definition.entities, transformation * entity.transformation, &validator)
+            _populate_edge_manipulators(drawing_def, entity.definition.entities, transformation * entity.transformation, &validator)
           end
         end
       end
@@ -308,8 +309,8 @@ module Ladb::OpenCutList
       end
     end
 
-    def _get_surface_manipulator_by_face(face)
-      @surface_manipulators.each do |surface_manipulator|
+    def _get_surface_manipulator_by_face(drawing_def, face)
+      drawing_def.surface_manipulators.each do |surface_manipulator|
         return surface_manipulator if surface_manipulator.include?(face)
       end
       nil
