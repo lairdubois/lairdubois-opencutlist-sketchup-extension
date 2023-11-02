@@ -264,6 +264,7 @@ module Ladb::OpenCutList
                 if surface_manipulator.nil?
                   surface_manipulator = SurfaceManipulator.new(transformation)
                   _populate_surface_manipulator(surface_manipulator, entity)
+                  drawing_def.surface_manipulators.push(surface_manipulator)
                 end
                 manipulator.surface_manipulator = surface_manipulator
               end
@@ -304,6 +305,7 @@ module Ladb::OpenCutList
         surface_manipulator.faces.push(face)
         edge.faces.each do |f|
           next if f == face
+          next unless f.visible? && _layer_visible?(f.layer)
           _populate_surface_manipulator(surface_manipulator, f)
         end
       end
