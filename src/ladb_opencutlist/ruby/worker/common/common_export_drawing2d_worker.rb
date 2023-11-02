@@ -120,11 +120,10 @@ module Ladb::OpenCutList
                   center = portion.ellipse_def.center
                   xaxis = portion.ellipse_def.xaxis
 
-                  # DXF ellipse angles must be counter clockwise
                   if portion.loop_def.ellipse?
                     start_angle = 0.0
                     end_angle = 2.0 * Math::PI
-                  elsif portion.normal.samedirection?(Z_AXIS)
+                  elsif portion.ccw?  # DXF ellipse angles must be counter clockwise
                     start_angle = portion.start_angle
                     end_angle = portion.end_angle
                   else
@@ -256,7 +255,7 @@ module Ladb::OpenCutList
 
                   portion = polygon_def.loop_def.portions.first
                   center = portion.ellipse_def.center
-                  radius = portion.ellipse_def.xradius.round(6)
+                  radius = portion.ellipse_def.xradius
 
                   x0 = _convert(center.x - radius, unit_converter)
                   x1 = _convert(center.x + radius, unit_converter)

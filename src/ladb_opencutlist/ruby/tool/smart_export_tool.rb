@@ -513,6 +513,7 @@ module Ladb::OpenCutList
                   segments.add_segments(portion.segments)
                   segments.color = COLOR_BRAND
                   segments.line_width = highlighted ? 3 : 2
+                  segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES unless polygon_def.outer?
                   segments.on_top = true
                   preview.append(segments)
 
