@@ -1,6 +1,5 @@
 module Ladb::OpenCutList
 
-  require_relative '../lib/geometrix/geometrix'
   require_relative 'transformation_manipulator'
 
   class LoopManipulator < TransformationManipulator
@@ -46,15 +45,6 @@ module Ladb::OpenCutList
         end
       end
       @segments
-    end
-
-    # -----
-
-    def loop_def
-      if @loop_def.nil?
-        @loop_def = Geometrix::LoopFinder.find_loop_def(points)
-      end
-      @loop_def
     end
 
     # -----

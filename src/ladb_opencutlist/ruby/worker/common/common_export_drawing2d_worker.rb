@@ -250,40 +250,59 @@ module Ladb::OpenCutList
 
               if @curves && polygon_def.loop_def
 
-                # Extract loop points from ordered edges and arc curves
-                data << "#{polygon_def.loop_def.portions.map.with_index { |portion, index|
+                if polygon_def.loop_def.circle?
 
-                  polygon_data = []
-                  start_point = portion.start_point
-                  end_point = portion.end_point
-                  polygon_data << "M #{_convert(start_point.x, unit_converter)},#{_convert(-start_point.y, unit_converter)}" if index == 0
+                  # Simplify circle drawing by using only xradius
 
-                  if portion.is_a?(Geometrix::ArcLoopPortionDef)
+                  portion = polygon_def.loop_def.portions.first
+                  center = portion.ellipse_def.center
+                  radius = portion.ellipse_def.xradius.round(6)
 
-                    center = portion.ellipse_def.center
-                    middle = portion.mid_point
+                  x0 = _convert(center.x - radius, unit_converter)
+                  x1 = _convert(center.x + radius, unit_converter)
+                  y = _convert(-center.y, unit_converter)
+                  r = _convert(radius, unit_converter)
 
-                    rx = _convert(portion.ellipse_def.xradius, unit_converter)
-                    ry = _convert(portion.ellipse_def.yradius, unit_converter)
-                    xrot = -portion.ellipse_def.angle.radians.round(6)
-                    lflag = 0
-                    sflag = (middle - center).dot(_cw_normal(start_point - center)) > 0 ? 0 : 1
-                    x1 = _convert(middle.x, unit_converter)
-                    y1 = _convert(-middle.y, unit_converter)
-                    x2 = _convert(end_point.x, unit_converter)
-                    y2 = _convert(-end_point.y, unit_converter)
+                  data << "M #{x0},#{y} A #{r},#{r} 0 0,0 #{x1},#{y} A #{r},#{r} 0 0,0 #{x0},#{y} Z"
 
-                    polygon_data << "A #{rx},#{ry} #{xrot} #{lflag},#{sflag} #{x1},#{y1}"
-                    polygon_data << "A #{rx},#{ry} #{xrot} #{lflag},#{sflag} #{x2},#{y2}"
+                else
 
-                  else
+                  # Extract loop points from ordered edges and arc curves
+                  data << "#{polygon_def.loop_def.portions.map.with_index { |portion, index|
 
-                    polygon_data << "L #{_convert(end_point.x, unit_converter)},#{_convert(-end_point.y, unit_converter)}"
+                    portion_data = []
+                    start_point = portion.start_point
+                    end_point = portion.end_point
+                    portion_data << "M #{_convert(start_point.x, unit_converter)},#{_convert(-start_point.y, unit_converter)}" if index == 0
 
-                  end
+                    if portion.is_a?(Geometrix::ArcLoopPortionDef)
 
-                  polygon_data
-                }.join(' ')} Z"
+                      center = portion.ellipse_def.center
+                      middle = portion.mid_point
+
+                      rx = _convert(portion.ellipse_def.xradius, unit_converter)
+                      ry = _convert(portion.ellipse_def.yradius, unit_converter)
+                      xrot = -portion.ellipse_def.angle.radians.round(3)
+                      lflag = 0
+                      sflag = (middle - center).dot(_cw_normal(start_point - center)) > 0 ? 0 : 1
+                      x1 = _convert(middle.x, unit_converter)
+                      y1 = _convert(-middle.y, unit_converter)
+                      x2 = _convert(end_point.x, unit_converter)
+                      y2 = _convert(-end_point.y, unit_converter)
+
+                      portion_data << "A #{rx},#{ry} #{xrot} #{lflag},#{sflag} #{x1},#{y1}"
+                      portion_data << "A #{rx},#{ry} #{xrot} #{lflag},#{sflag} #{x2},#{y2}"
+
+                    else
+
+                      portion_data << "L #{_convert(end_point.x, unit_converter)},#{_convert(-end_point.y, unit_converter)}"
+
+                    end
+
+                    portion_data
+                  }.join(' ')} Z"
+
+                end
 
               else
 
@@ -356,11 +375,11 @@ module Ladb::OpenCutList
       true
     end
 
-    def _convert(value, unit_converter, precision = 6)
+    def _convert(value, unit_converter, precision = 3)
       (value.to_f * unit_converter).round(precision)
     end
 
-    def _convert_point(point, unit_converter, precision = 6)
+    def _convert_point(point, unit_converter, precision = 3)
       point = point.clone
       point.x = _convert(point.x, unit_converter, precision)
       point.y = _convert(point.y, unit_converter, precision)

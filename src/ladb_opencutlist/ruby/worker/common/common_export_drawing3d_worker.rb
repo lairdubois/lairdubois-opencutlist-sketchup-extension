@@ -229,11 +229,11 @@ module Ladb::OpenCutList
       true
     end
 
-    def _convert(value, unit_converter, precision = 6)
+    def _convert(value, unit_converter, precision = 3)
       (value.to_f * unit_converter).round(precision)
     end
 
-    def _convert_point(point, unit_converter, precision = 6)
+    def _convert_point(point, unit_converter, precision = 3)
       point.x = _convert(point.x, unit_converter, precision)
       point.y = _convert(point.y, unit_converter, precision)
       point.z = _convert(point.z, unit_converter, precision)

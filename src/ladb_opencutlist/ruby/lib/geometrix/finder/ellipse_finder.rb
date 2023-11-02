@@ -68,25 +68,34 @@ module Ladb::OpenCutList::Geometrix
 
         # Angle
 
-        qaqc = q * a - q * c
-        qb = q * b
+        if rmax.round(6) == rmin.round(6)
 
-        if qaqc.abs < Float::EPSILON
-          if qb.abs < Float::EPSILON
-            angle = 0.0
-          elsif qb > 0
-            angle = 0.25 * Math::PI
-          else
-            angle = 0.75 * Math::PI
-          end
-        elsif qaqc > 0
-          # if qb >= 0
-            angle = 0.5 * Math.atan(b / (a - c))
-          # else
-          #   angle = 0.5 * Math.atan(b / (a - c)) + Math::PI
-          # end
+          # It's a circle
+          angle = 0.0
+
         else
-          angle = 0.5 * (Math.atan(b / (a - c)) + Math::PI)
+
+          qaqc = q * a - q * c
+          qb = q * b
+
+          if qaqc.abs < Float::EPSILON
+            if qb.abs < Float::EPSILON
+              angle = 0.0
+            elsif qb > 0
+              angle = 0.25 * Math::PI
+            else
+              angle = 0.75 * Math::PI
+            end
+          elsif qaqc > 0
+            # if qb >= 0
+              angle = 0.5 * Math.atan(b / (a - c))
+            # else
+            #   angle = 0.5 * Math.atan(b / (a - c)) + Math::PI
+            # end
+          else
+            angle = 0.5 * (Math.atan(b / (a - c)) + Math::PI)
+          end
+
         end
 
         # Axes
@@ -194,7 +203,7 @@ module Ladb::OpenCutList::Geometrix
     end
 
     def circular?
-      (xradius - yradius).abs < 1e-12
+      (xradius.round(6) - yradius.round(6)).abs < 1e-6
     end
 
     def xradius

@@ -63,6 +63,7 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
     assert_instance_of(Ladb::OpenCutList::Geometrix::EllipseDef, ellipse_def)
     assert_in_epsilon(10, ellipse_def.xradius, EPSI, 'xradius')
     assert_in_epsilon(10, ellipse_def.yradius, EPSI, 'yradius')
+    assert_in_delta(0.degrees, ellipse_def.angle, EPSI, 'angle')
     assert_equal(true, ellipse_def.circular?, 'circular?')
     assert_angles(ellipse_def, @circle_x0_y0_r10, 'angles (circle_x0_y0_r10)')
     assert_ellipse_include_points(ellipse_def, @circle_x0_y0_r10, 'ellipse_include_point (circle_x0_y0_r10)')
@@ -71,7 +72,6 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
 
     assert_equal(1, loop_def.portions.count, 'loop_def.portions.count')
     assert_instance_of(Ladb::OpenCutList::Geometrix::ArcLoopPortionDef, loop_def.portions.first, 'is_arc?')
-
 
 
 
