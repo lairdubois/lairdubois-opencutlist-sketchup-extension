@@ -262,8 +262,9 @@ module Ladb::OpenCutList
                   x1 = _convert(center.x + radius, unit_converter)
                   y = _convert(-center.y, unit_converter)
                   r = _convert(radius, unit_converter)
+                  sflag = portion.ccw? ? 0 : 1
 
-                  data << "M #{x0},#{y} A #{r},#{r} 0 0,0 #{x1},#{y} A #{r},#{r} 0 0,0 #{x0},#{y} Z"
+                  data << "M #{x0},#{y} A #{r},#{r} 0 0,#{sflag} #{x1},#{y} A #{r},#{r} 0 0,#{sflag} #{x0},#{y} Z"
 
                 else
 
@@ -277,14 +278,13 @@ module Ladb::OpenCutList
 
                     if portion.is_a?(Geometrix::ArcLoopPortionDef)
 
-                      center = portion.ellipse_def.center
                       middle = portion.mid_point
 
                       rx = _convert(portion.ellipse_def.xradius, unit_converter)
                       ry = _convert(portion.ellipse_def.yradius, unit_converter)
                       xrot = -portion.ellipse_def.angle.radians.round(3)
                       lflag = 0
-                      sflag = (middle - center).dot(_cw_normal(start_point - center)) > 0 ? 0 : 1
+                      sflag = portion.ccw? ? 0 : 1
                       x1 = _convert(middle.x, unit_converter)
                       y1 = _convert(-middle.y, unit_converter)
                       x2 = _convert(end_point.x, unit_converter)
@@ -385,10 +385,6 @@ module Ladb::OpenCutList
       point.y = _convert(point.y, unit_converter, precision)
       point.z = _convert(point.z, unit_converter, precision)
       point
-    end
-
-    def _cw_normal(v)
-      Geom::Vector3d.new(-v.y, v.x, 0)
     end
 
   end

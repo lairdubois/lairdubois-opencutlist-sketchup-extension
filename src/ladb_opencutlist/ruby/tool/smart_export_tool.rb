@@ -78,8 +78,8 @@ module Ladb::OpenCutList
       }
     ].freeze
 
-    COLOR_MESH = Kuix::COLOR_BLUE.blend(Kuix::COLOR_WHITE, 0.5).freeze #Sketchup::Color.new(0, 0, 255, 100).freeze
-    COLOR_MESH_HIGHLIGHTED = Kuix::COLOR_BLUE.blend(Kuix::COLOR_WHITE, 0.8).freeze
+    COLOR_MESH = Sketchup::Color.new(0, 0, 255, 100).freeze
+    COLOR_MESH_HIGHLIGHTED = Sketchup::Color.new(0, 0, 255, 200).freeze
     COLOR_GUIDE = Kuix::COLOR_CYAN #Sketchup::Color.new(0, 104, 255).freeze
     COLOR_ACTION = Kuix::COLOR_MAGENTA
 

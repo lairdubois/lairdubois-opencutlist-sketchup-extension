@@ -199,6 +199,10 @@ module Ladb::OpenCutList::Geometrix
       @ellipse_def.xaxis.cross(@ellipse_def.yaxis).normalize
     end
 
+    def ccw?
+      Z_AXIS.samedirection?(normal)
+    end
+
     def start_angle
       EllipseFinder.ellipse_angle_at_point(@ellipse_def, start_point)
     end
