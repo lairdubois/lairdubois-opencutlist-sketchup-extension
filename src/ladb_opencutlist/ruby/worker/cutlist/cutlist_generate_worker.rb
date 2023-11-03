@@ -629,13 +629,9 @@ module Ladb::OpenCutList
         part_def.add_entity_name(entity.name, instance_info.named_path)
         part_def.store_instance_info(instance_info)
 
-        if group_def.material_type != MaterialAttributes::TYPE_UNKNOWN
-          if group_def.material_type == MaterialAttributes::TYPE_SOLID_WOOD || group_def.material_type == MaterialAttributes::TYPE_DIMENSIONAL
-            group_def.total_cutting_length += part_def.cutting_size.length
-          end
-          if group_def.material_type == MaterialAttributes::TYPE_SOLID_WOOD || group_def.material_type == MaterialAttributes::TYPE_SHEET_GOOD
-            group_def.total_cutting_area += part_def.cutting_size.area * definition_attributes.thickness_layer_count
-          end
+        if group_def.material_type != MaterialAttributes::TYPE_UNKNOWN && group_def.material_type != MaterialAttributes::TYPE_HARDWARE
+          group_def.total_cutting_length += part_def.cutting_size.length
+          group_def.total_cutting_area += part_def.cutting_size.area * definition_attributes.thickness_layer_count
           if group_def.material_type == MaterialAttributes::TYPE_SHEET_GOOD
             if part_def.final_area.nil?
               group_def.invalid_final_area_part_count += definition_attributes.thickness_layer_count
@@ -692,6 +688,7 @@ module Ladb::OpenCutList
                   end
                   veneer_cutting_length = veneer_length + veneer_material_attributes.l_length_increase
                   veneer_cutting_width = veneer_width + veneer_material_attributes.l_width_increase
+                  veneer_group_def.total_cutting_length += veneer_cutting_length
                   veneer_group_def.total_cutting_area += veneer_cutting_length * veneer_cutting_width
                   veneer_group_def.total_cutting_volume += veneer_cutting_length * veneer_group_def.std_thickness
                   _populate_veneer_part_def(part_def, veneer, veneer_group_def, veneer_length, veneer_width, veneer_cutting_length.to_l, veneer_cutting_width.to_l, veneer_group_def.std_thickness)
