@@ -669,7 +669,7 @@ module Ladb::OpenCutList
             notify_errors(response[:errors])
           elsif response[:export_path]
             notify_success(
-              Plugin.instance.get_i18n_string('tool.smart_export.success.exported_to', { :export_path => response[:export_path] }),
+              Plugin.instance.get_i18n_string('tool.smart_export.success.exported_to', { :export_path => File.basename(response[:export_path]) }),
               [
                 {
                   :label => Plugin.instance.get_i18n_string('default.open'),
@@ -717,7 +717,7 @@ module Ladb::OpenCutList
             notify_errors(response[:errors])
           elsif response[:export_path]
             notify_success(
-              Plugin.instance.get_i18n_string('tool.smart_export.success.exported_to', { :export_path => response[:export_path] }),
+              Plugin.instance.get_i18n_string('tool.smart_export.success.exported_to', { :export_path => File.basename(response[:export_path]) }),
               [
                 {
                   :label => Plugin.instance.get_i18n_string('default.open'),
@@ -763,7 +763,7 @@ module Ladb::OpenCutList
             notify_errors(response[:errors])
           elsif response[:export_path]
             notify_success(
-              Plugin.instance.get_i18n_string('tool.smart_export.success.exported_to', { :export_path => response[:export_path] }),
+              Plugin.instance.get_i18n_string('tool.smart_export.success.exported_to', { :export_path => File.basename(response[:export_path]) }),
               [
                 {
                   :label => Plugin.instance.get_i18n_string('default.open'),
