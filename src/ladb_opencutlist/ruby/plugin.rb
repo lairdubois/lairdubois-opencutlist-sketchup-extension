@@ -841,8 +841,13 @@ module Ladb::OpenCutList
       toolbar = toolbar.add_item(cmd)
 
       cmd = UI::Command.new(get_i18n_string('core.toolbar.command.smart_paint')) {
-        Sketchup.active_model.select_tool(SmartPaintTool.new) if Sketchup.active_model
-      }
+        if Sketchup.active_model
+          if Sketchup.active_model.tools.active_tool.is_a?(SmartPaintTool)
+            Sketchup.active_model.select_tool(nil)
+          else
+            Sketchup.active_model.select_tool(SmartPaintTool.new)
+          end
+        end      }
       cmd.small_icon = '../img/icon-smart-paint-72x72.png'
       cmd.large_icon = '../img/icon-smart-paint-114x114.png'
       cmd.tooltip = get_i18n_string('core.toolbar.command.smart_paint')
@@ -851,8 +856,13 @@ module Ladb::OpenCutList
       toolbar = toolbar.add_item(cmd)
 
       cmd = UI::Command.new(get_i18n_string('core.toolbar.command.smart_axes')) {
-        Sketchup.active_model.select_tool(SmartAxesTool.new) if Sketchup.active_model
-      }
+        if Sketchup.active_model
+          if Sketchup.active_model.tools.active_tool.is_a?(SmartAxesTool)
+            Sketchup.active_model.select_tool(nil)
+          else
+            Sketchup.active_model.select_tool(SmartAxesTool.new)
+          end
+        end      }
       cmd.small_icon = '../img/icon-smart-axes-72x72.png'
       cmd.large_icon = '../img/icon-smart-axes-114x114.png'
       cmd.tooltip = get_i18n_string('core.toolbar.command.smart_axes')
@@ -861,8 +871,13 @@ module Ladb::OpenCutList
       toolbar = toolbar.add_item(cmd)
 
       cmd = UI::Command.new(get_i18n_string('core.toolbar.command.smart_export')) {
-        Sketchup.active_model.select_tool(SmartExportTool.new) if Sketchup.active_model
-      }
+        if Sketchup.active_model
+          if Sketchup.active_model.tools.active_tool.is_a?(SmartExportTool)
+            Sketchup.active_model.select_tool(nil)
+          else
+            Sketchup.active_model.select_tool(SmartExportTool.new)
+          end
+        end      }
       cmd.small_icon = '../img/icon-smart-export-72x72.png'
       cmd.large_icon = '../img/icon-smart-export-114x114.png'
       cmd.tooltip = get_i18n_string('core.toolbar.command.smart_export')
