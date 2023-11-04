@@ -31,7 +31,7 @@
             {% endif %}
             <div>
                 <span class="ladb-outliner-node-type">{% include 'tabs/outliner/_node-icon.twig' %}</span>{% if node.name is not empty %}<span class="ladb-outliner-node-name">{{ node.name|escape('html') }}</span>{% endif %}{% if node.type != 1 or node.name is empty %}<span class="ladb-outliner-node-definition-name">{{ node.default_name|escape('html') }}</span>{% endif %}
-                {% if node.description is defined %}
+                {% if node.description is defined and node.description is not empty %}
                     <div class="ladb-outliner-node-description">{{ node.description }}</div>
                 {% endif %}
             </div>

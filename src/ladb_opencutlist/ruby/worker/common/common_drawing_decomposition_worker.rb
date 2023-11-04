@@ -41,10 +41,26 @@ module Ladb::OpenCutList
 
     # -----
 
+    def tr(group = nil, level = 0)
+      if group.nil?
+        SKETCHUP_CONSOLE.clear
+        group = Sketchup.active_model
+      end
+      puts "#{''.rjust(level, ' ')}#{''.rjust(group.name.length, '-')}"
+      puts "#{''.rjust(level, ' ')}#{group.name}#{Sketchup.active_model.active_path.is_a?(Array) && Sketchup.active_model.active_path.last == group ? ' (active)' : ''}"
+      group.edit_transform.to_a.each_slice(4) { |row| puts "#{''.rjust(level + 1, ' ')}#{row.map { |v| v.to_mm.round(6) }.join(' ')}" } if group.respond_to?(:edit_transform)
+      group.transformation.to_a.each_slice(4) { |row| puts "#{''.rjust(level + 1, ' ')}#{row.map { |v| v.to_mm.round(6) }.join(' ')}" } if group.respond_to?(:transformation)
+      group.entities.grep(Sketchup::Edge).each { |edge| puts "#{''.rjust(level, ' ')}edge.x = #{edge.start.position.x}" }
+      group.entities.grep(Sketchup::Edge).each { |edge| puts "#{''.rjust(level, ' ')}edge.x(t) = #{edge.start.position.transform(Sketchup.active_model.edit_transform.inverse).x}" } if Sketchup.active_model.edit_transform
+      group.entities.grep(Sketchup::Group).each { |sub_group| tr(sub_group, level + 1) }
+    end
+
     def run
       return { :errors => [ 'default.error' ] } unless @path.is_a?(Array)
       return { :errors => [ 'default.error' ] } if @path.empty?
       return { :errors => [ 'default.error' ] } if Sketchup.active_model.nil?
+
+      active_entity = Sketchup.active_model.active_path.is_a?(Array) ? Sketchup.active_model.active_path.last : nil
 
       # Extract drawing element
       drawing_element = @path.last

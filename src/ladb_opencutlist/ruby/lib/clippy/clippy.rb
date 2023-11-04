@@ -2,55 +2,18 @@ require 'fiddle'
 require 'fiddle/import'
 
 module Ladb::OpenCutList
+
   module Clippy
     extend Fiddle::Importer
 
     FLOAT_TO_INT64_CONVERTER = 1e12
 
-    # TODO : Catch loading exception
+    @lib_loaded = false
 
-    begin
-
-      case Sketchup.platform
-      when :platform_osx
-        dlload File.join(__dir__, '../../../bin/osx/lib/libClippy.dylib')
-      when :platform_win
-        dlload File.join(__dir__, '../../../bin/x86/lib/Clippy.dll')
-      end
-
-      # Keep simple C syntax (without var names and void in args) to stay compatible with SketchUp 2017
-
-      extern 'void c_clear_subjects()'
-      extern 'void c_append_subject(int64_t*, size_t)'
-
-      extern 'void c_clear_clips()'
-      extern 'void c_append_clip(int64_t*, size_t)'
-
-      extern 'void c_compute_union()'
-      extern 'void c_compute_difference()'
-      extern 'void c_compute_intersection()'
-
-      extern 'void c_clear_solution()'
-      extern 'size_t c_get_solution_len()'
-      extern 'size_t c_get_solution_cpath_len_at(int)'
-      extern 'int64_t* c_get_solution_cpath_at(int)'
-
-      extern 'int c_is_cpath_positive(int64_t*, size_t)'
-      extern 'double c_get_cpath_area(int64_t*, size_t)'
-
-      extern 'void c_free_cpath(int64_t*)'
-
-      @loaded = true
-
-    rescue Exception => e
-      @loaded = false
-    end
-
-    def self.loaded?
-      @loaded
-    end
+    # -----
 
     def self.union(subjects, clips)
+      _load_lib
       _clear
       _append_subjects(subjects)
       _append_clips(clips)
@@ -61,6 +24,7 @@ module Ladb::OpenCutList
     end
 
     def self.difference(subjects, clips)
+      _load_lib
       _clear
       _append_subjects(subjects)
       _append_clips(clips)
@@ -71,6 +35,7 @@ module Ladb::OpenCutList
     end
 
     def self.intersection(subjects, clips)
+      _load_lib
       _clear
       _append_subjects(subjects)
       _append_clips(clips)
@@ -81,11 +46,13 @@ module Ladb::OpenCutList
     end
 
     def self.is_rpath_positive?(rpath)
+      _load_lib
       return c_is_cpath_positive(_rpath_to_cpath(rpath), rpath.length) == 1
     end
 
     def self.get_rpath_area(rpath)
-      return c_get_cpath_area(_rpath_to_cpath(rpath), rpath.length) / (FLOAT_TO_INT64_CONVERTER**2)
+      _load_lib
+      return c_get_cpath_area(_rpath_to_cpath(rpath), rpath.length) / FLOAT_TO_INT64_CONVERTER / FLOAT_TO_INT64_CONVERTER
     end
 
     # -- Utils --
@@ -103,6 +70,48 @@ module Ladb::OpenCutList
     end
 
     private
+
+    def self._load_lib
+      return if @lib_loaded
+
+      begin
+
+        case Sketchup.platform
+        when :platform_osx
+          dlload File.join(__dir__, '../../../bin/osx/lib/libClippy.dylib')
+        when :platform_win
+          dlload File.join(__dir__, '../../../bin/x86/lib/Clippy.dll')
+        end
+
+        # Keep simple C syntax (without var names and void in args) to stay compatible with SketchUp 2017
+
+        extern 'void c_clear_subjects()'
+        extern 'void c_append_subject(int64_t*, size_t)'
+
+        extern 'void c_clear_clips()'
+        extern 'void c_append_clip(int64_t*, size_t)'
+
+        extern 'void c_compute_union()'
+        extern 'void c_compute_difference()'
+        extern 'void c_compute_intersection()'
+
+        extern 'void c_clear_solution()'
+        extern 'size_t c_get_solution_len()'
+        extern 'size_t c_get_solution_cpath_len_at(int)'
+        extern 'int64_t* c_get_solution_cpath_at(int)'
+
+        extern 'int c_is_cpath_positive(int64_t*, size_t)'
+        extern 'double c_get_cpath_area(int64_t*, size_t)'
+
+        extern 'void c_free_cpath(int64_t*)'
+
+        @lib_loaded = true
+
+      rescue Exception => e
+        @lib_loaded = false
+      end
+
+    end
 
     # Returns Fiddle::Pointer
     def self._rpath_to_cpath(rpath)

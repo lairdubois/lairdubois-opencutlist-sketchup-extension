@@ -20,8 +20,9 @@ in 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added item to reset dialog position to default in extensions menu
   * Added Description and URL fields to Material's attributes
   * Added URL field to Part's attributes
-  * Added $/m price unit to sheet good and veneer materials
+  * Added €/m price unit to sheet good and veneer materials
   * Added ∑ rough length, area and volume to all material types except hardware in cutlist summary
+  * Improved dimension default style in Layout document after exporting _Drawing_ to Layout
   * Changed material color bullet from drop to circle
 
 * 5.1.1 (2023-10-30)
