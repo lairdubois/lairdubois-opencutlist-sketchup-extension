@@ -648,6 +648,29 @@ module Ladb::OpenCutList
 
     end
 
+    def _dxf_write_arc(file, cx, cy, r, as = 0, ae = 2 * Math::PI, layer = 0)
+
+      # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-0B14D8F1-0EBA-44BF-9108-57D8CE614BC8
+
+      _dxf_write(file, 0, 'ARC')
+      _dxf_write_id(file)
+      _dxf_write_owner_id(file, @_dxf_model_space_id)
+      _dxf_write_sub_classes(file, [ 'AcDbEntity' ])
+      _dxf_write(file, 8, layer)
+      _dxf_write_sub_classes(file, [ 'AcDbCircle' ])
+      _dxf_write(file, 10, cx)
+      _dxf_write(file, 20, cy)
+      _dxf_write(file, 30, 0.0)
+      _dxf_write(file, 40, r)
+      _dxf_write_sub_classes(file, [ 'AcDbArc' ])
+      _dxf_write(file, 50, as)
+      _dxf_write(file, 51, ae)
+      _dxf_write(file, 210, 0.0)
+      _dxf_write(file, 220, 0.0)
+      _dxf_write(file, 230, 1.0)
+
+    end
+
     def _dxf_write_ellipse(file, cx, cy, vx, vy, vr, as = 0, ae = 2 * Math::PI, layer = 0)
 
       # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-107CB04F-AD4D-4D2F-8EC9-AC90888063AB

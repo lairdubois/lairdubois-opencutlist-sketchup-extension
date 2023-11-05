@@ -7,7 +7,7 @@ module Ladb::OpenCutList
 
   class CommonDrawingProjectionWorker
 
-    MINIMAL_PATH_AREA = 1e-12
+    MINIMAL_PATH_AREA = 1e-6
 
     LAYER_POSITION_TOP = 0
     LAYER_POSITION_INSIDE = 1
