@@ -6,13 +6,13 @@ module Ladb::OpenCutList
   module Clippy
     extend Fiddle::Importer
 
-    FLOAT_TO_INT64_CONVERTER = 1e12
+    FLOAT_TO_INT64_CONVERTER = 1e10
 
     @lib_loaded = false
 
     # -----
 
-    def self.union(subjects, clips)
+    def self.union(subjects, clips = [])
       _load_lib
       _clear
       _append_subjects(subjects)

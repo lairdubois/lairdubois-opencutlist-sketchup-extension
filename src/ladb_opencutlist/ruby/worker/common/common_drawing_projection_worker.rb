@@ -90,13 +90,20 @@ module Ladb::OpenCutList
           }
           layer_defs[face_def[:depth]] = layer_def
         else
-          layer_def[:paths] = Clippy.union(layer_def[:paths], f_paths)
+          layer_def[:paths].concat(f_paths) # Just concat, union will be call later in one unique call
         end
 
       end
 
       # Sort on depth ASC
       ld = layer_defs.values.sort_by { |layer_def| layer_def[:depth] }
+
+      # Union paths on each layer
+      ld.each do |layer_def|
+        next if layer_def[:paths].one?
+        layer_def[:paths] = Clippy.union(layer_def[:paths])
+      end
+
 
       # Up to Down difference
       ld.each_with_index do |layer_def, index|

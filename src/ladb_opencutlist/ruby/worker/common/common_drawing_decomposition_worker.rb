@@ -60,8 +60,6 @@ module Ladb::OpenCutList
       return { :errors => [ 'default.error' ] } if @path.empty?
       return { :errors => [ 'default.error' ] } if Sketchup.active_model.nil?
 
-      active_entity = Sketchup.active_model.active_path.is_a?(Array) ? Sketchup.active_model.active_path.last : nil
-
       # Extract drawing element
       drawing_element = @path.last
 
