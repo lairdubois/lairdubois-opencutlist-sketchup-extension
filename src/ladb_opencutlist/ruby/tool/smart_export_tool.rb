@@ -576,14 +576,6 @@ module Ladb::OpenCutList
 
         if @input_face_path
 
-          # Check if face is not curved
-          if (is_action_export_part_2d? || is_action_export_face?) && @input_face.edges.index { |edge| edge.soft? }
-            _reset_ui
-            show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_export.error.not_flat_face')}", MESSAGE_TYPE_ERROR)
-            push_cursor(@cursor_select_error)
-            return
-          end
-
           if is_action_export_part_3d? || is_action_export_part_2d?
 
             input_part_entity_path = _get_part_entity_path_from_path(@input_face_path)
@@ -594,14 +586,14 @@ module Ladb::OpenCutList
                 _set_active_part(input_part_entity_path, part)
               else
                 _reset_active_part
-                show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_export.error.not_part')}", MESSAGE_TYPE_ERROR)
+                show_tooltip("⚠ #{Plugin.instance.get_i18n_string('tool.smart_export.error.not_part')}", MESSAGE_TYPE_ERROR)
                 push_cursor(@cursor_select_error)
               end
               return
 
             else
               _reset_active_part
-              show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_export.error.not_part')}", MESSAGE_TYPE_ERROR)
+              show_tooltip("⚠ #{Plugin.instance.get_i18n_string('tool.smart_export.error.not_part')}", MESSAGE_TYPE_ERROR)
               push_cursor(@cursor_select_error)
               return
             end

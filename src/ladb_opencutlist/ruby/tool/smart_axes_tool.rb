@@ -524,7 +524,7 @@ module Ladb::OpenCutList
         # Status
 
         if !is_action_flip? && part.group.material_type == MaterialAttributes::TYPE_HARDWARE
-          show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_orientable')}", MESSAGE_TYPE_ERROR)
+          show_tooltip("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_orientable')}", MESSAGE_TYPE_ERROR)
           push_cursor(@cursor_select_error)
           return
         end
@@ -560,14 +560,14 @@ module Ladb::OpenCutList
               _set_active_part(input_part_entity_path, part)
             else
               _reset_active_part
-              show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
+              show_tooltip("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
               push_cursor(@cursor_select_error)
             end
             return
 
           else
             _reset_active_part
-            show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
+            show_tooltip("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
             push_cursor(@cursor_select_error)
             return
           end

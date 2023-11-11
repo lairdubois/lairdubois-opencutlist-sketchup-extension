@@ -1542,5 +1542,4 @@ tool:
     success:
       exported_to: "Export réussi vers {{ export_path }}."
     error:
-      not_part: La face ciblée ne fait pas partie d'une pièce
-      not_flat_face: La surface ciblée n'est pas plane
+      not_part: Cette surface ne fait pas partie d'une pièce

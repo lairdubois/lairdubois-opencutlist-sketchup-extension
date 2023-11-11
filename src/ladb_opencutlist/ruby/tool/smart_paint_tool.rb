@@ -819,7 +819,7 @@ module Ladb::OpenCutList
         elsif is_action_paint_edges?
 
           if part.group.material_type != MaterialAttributes::TYPE_SHEET_GOOD
-            show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.wrong_material_type', { :type => Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_SHEET_GOOD}") })}", MESSAGE_TYPE_ERROR)
+            show_tooltip("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.wrong_material_type', { :type => Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_SHEET_GOOD}") })}", MESSAGE_TYPE_ERROR)
             push_cursor(@cursor_paint_error_id)
           else
 
@@ -864,7 +864,7 @@ module Ladb::OpenCutList
             faces = faces.flatten
 
             if faces.empty?
-              show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_edge')}", MESSAGE_TYPE_ERROR)
+              show_tooltip("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_edge')}", MESSAGE_TYPE_ERROR)
               push_cursor(@cursor_paint_error_id)
             else
 
@@ -907,7 +907,7 @@ module Ladb::OpenCutList
         elsif is_action_paint_faces?
 
           if part.group.material_type != MaterialAttributes::TYPE_SHEET_GOOD
-            show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.wrong_material_type', { :type => Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_SHEET_GOOD}") })}", MESSAGE_TYPE_ERROR)
+            show_tooltip("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.wrong_material_type', { :type => Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_SHEET_GOOD}") })}", MESSAGE_TYPE_ERROR)
             push_cursor(@cursor_paint_error_id)
           else
 
@@ -944,7 +944,7 @@ module Ladb::OpenCutList
             faces = faces.flatten
 
             if faces.empty?
-              show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_face')}", MESSAGE_TYPE_ERROR)
+              show_tooltip("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_face')}", MESSAGE_TYPE_ERROR)
               push_cursor(@cursor_paint_error_id)
             else
 
@@ -1189,14 +1189,14 @@ module Ladb::OpenCutList
                 _set_active_part(input_part_entity_path, part, event == :l_button_down)
               else
                 _reset_active_part
-                show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_part')}", MESSAGE_TYPE_ERROR)
+                show_tooltip("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_part')}", MESSAGE_TYPE_ERROR)
                 push_cursor(@cursor_paint_error_id)
               end
               return
 
             else
               _reset_active_part
-              show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_part')}", MESSAGE_TYPE_ERROR)
+              show_tooltip("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_part')}", MESSAGE_TYPE_ERROR)
               push_cursor(@cursor_paint_error_id)
               return
             end
