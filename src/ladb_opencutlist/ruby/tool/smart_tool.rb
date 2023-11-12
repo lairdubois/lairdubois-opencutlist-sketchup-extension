@@ -855,9 +855,60 @@ module Ladb::OpenCutList
     end
 
     def populate_menu(menu)
-      menu.add_item(Plugin.instance.get_i18n_string('default.close')) {
-        quit
-      }
+      if @active_part
+        active_part_id = @active_part.id
+        active_part_material_type = @active_part.group.material_type
+        item = menu.add_item(_get_active_part_name) {}
+        menu.set_validation_proc(item) { MF_GRAYED }
+        menu.add_separator
+        menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_properties')) {
+          _select_active_part_entity
+          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'general', dontGenerate: false }")
+        }
+        menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_axes_properties')) {
+          _select_active_part_entity
+          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'axes', dontGenerate: false }")
+        }
+        item = menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_size_increase_properties')) {
+          _select_active_part_entity
+          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'size_increase', dontGenerate: false }")
+        }
+        menu.set_validation_proc(item) {
+          if active_part_material_type == MaterialAttributes::TYPE_SOLID_WOOD ||
+            active_part_material_type == MaterialAttributes::TYPE_SHEET_GOOD ||
+            active_part_material_type == MaterialAttributes::TYPE_DIMENSIONAL
+            MF_ENABLED
+          else
+            MF_GRAYED
+          end
+        }
+        item = menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_edges_properties')) {
+          _select_active_part_entity
+          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'edges', dontGenerate: false }")
+        }
+        menu.set_validation_proc(item) {
+          if active_part_material_type == MaterialAttributes::TYPE_SHEET_GOOD
+            MF_ENABLED
+          else
+            MF_GRAYED
+          end
+        }
+        item = menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_faces_properties')) {
+          _select_active_part_entity
+          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'faces', dontGenerate: false }")
+        }
+        menu.set_validation_proc(item) {
+          if active_part_material_type == MaterialAttributes::TYPE_SHEET_GOOD
+            MF_ENABLED
+          else
+            MF_GRAYED
+          end
+        }
+      else
+        menu.add_item(Plugin.instance.get_i18n_string('default.close')) {
+          quit
+        }
+      end
     end
 
     # -- Events --
@@ -958,27 +1009,21 @@ module Ladb::OpenCutList
         # SKETCHUP_CONSOLE.clear
         # puts "# INPUT"
         # puts "  Face = #{@input_point.face}"
-        # puts "  Edge = #{@input_point.edge} -> onface? = #{@input_point.edge ? @input_point.edge.used_by?(@input_point.face) : ''}"
-        # puts "  Vertex = #{@input_point.vertex} -> onface? = #{@input_point.vertex ? @input_point.vertex.used_by?(@input_point.face) : ''}"
-        # puts "  InstancePath = #{@input_point.instance_path.to_a.join(' -> ')}"
+        # puts "  Edge = #{@input_point.edge} -> onface? = #{@input_point.edge && @input_point.face ? @input_point.edge.used_by?(@input_point.face) : ''}"
+        # puts "  Vertex = #{@input_point.vertex} -> onface? = #{@input_point.vertex && @input_point.face ? @input_point.vertex.used_by?(@input_point.face) : ''}"
+        # puts "  InstancePath = #{@input_point.instance_path.to_a}"
         # puts "  Transformation = #{@input_point.transformation}"
 
-        unless @input_point.face.nil?
+        if !@input_point.face.nil?
 
+          input_context_path = nil
           input_face_path = nil
           input_face = @input_point.face
-          input_edge = @input_point.vertex ? @input_edge : @input_point.edge  # Try to keep previous edge when vertex is picked
+          input_edge = @input_point.edge
           input_vertex = @input_point.vertex
 
-          # @input_face_path = nil
-          # @input_face = @input_point.face
-          # @input_edge = @input_point.edge unless @input_point.vertex  # Try to keep previous edge when vertex is picked
-          # @input_vertex = @input_point.vertex
-
-          if @input_point.instance_path.leaf == input_face
-            input_face_path = @input_point.instance_path.to_a
-          elsif @input_point.instance_path.leaf.respond_to?(:used_by?) && @input_point.instance_path.leaf.used_by?(input_face)
-            input_face_path = @input_point.instance_path.to_a[0...-1] + [ input_face ]
+          if @input_point.instance_path.leaf == input_face || @input_point.instance_path.leaf.respond_to?(:used_by?) && @input_point.instance_path.leaf.used_by?(input_face)
+            input_context_path = @input_point.instance_path.to_a[0...-1]
           else
 
             if @pick_helper.do_pick(x, y)
@@ -987,7 +1032,7 @@ module Ladb::OpenCutList
               # Let's try to use pick helper to pick the face path
               @pick_helper.count.times do |index|
                 if @pick_helper.leaf_at(index) == input_face
-                  input_face_path = @pick_helper.path_at(index)
+                  input_context_path = @pick_helper.path_at(index)[0...-1]
                   break
                 end
               end
@@ -1009,26 +1054,110 @@ module Ladb::OpenCutList
 
           end
 
-          # Exit if picked elements are the same
-          return true if input_face_path == @input_face_path && input_face == @input_face && input_edge == @input_edge && input_vertex == @input_vertex
+          # Exit if picked elements are the same as previous
+          return true if input_context_path == @input_context_path && input_face == @input_face && input_edge == @input_edge && input_vertex == @input_vertex
 
-          @input_face_path = input_face_path
+          @input_context_path = input_context_path
+          @input_face_path = input_context_path && input_face ? input_context_path + [ input_face ] : nil
           @input_face = input_face
+          @input_edge_path = input_context_path && input_edge ? input_context_path + [ input_edge ] : nil
+          @input_edge = input_edge
+          @input_vertex = input_vertex
+
+        elsif !@input_point.edge.nil?
+
+          input_context_path = nil
+          input_edge = @input_point.edge
+
+          if @input_point.instance_path.leaf == input_edge || @input_point.instance_path.leaf.respond_to?(:used_by?) && @input_point.instance_path.leaf.used_by?(input_edge)
+            input_context_path = @input_point.instance_path.to_a[0...-1]
+          else
+
+            if @pick_helper.do_pick(x, y)
+
+              # Input point gives a face without instance path
+              # Let's try to use pick helper to pick the face path
+              @pick_helper.count.times do |index|
+                if @pick_helper.leaf_at(index) == input_edge
+                  input_context_path = @pick_helper.path_at(index)[0...-1]
+                  break
+                end
+              end
+
+            end
+
+          end
+
+          # Exit if picked edge is the same as previous
+          return true if input_context_path == @input_context_path && input_edge == @input_edge
+
+          @input_context_path = input_context_path
+          @input_face_path = nil
+          @input_face = nil
+          @input_edge_path = input_context_path && input_edge ? input_context_path + [ input_edge ] : nil
+          @input_edge = input_edge
+          @input_vertex = nil
+
+        elsif !@input_point.vertex.nil?
+
+          input_context_path = nil
+          input_face = nil
+          input_edge = nil
+          input_vertex = @input_point.vertex
+
+          if @input_point.instance_path.leaf == input_vertex
+            input_context_path = @input_point.instance_path.to_a[0...-1]
+          else
+
+            if @pick_helper.do_pick(x, y)
+
+              # Input point gives a vertex without instance path
+              # Let's try to use pick helper to pick the face path
+              @pick_helper.count.times do |index|
+                if @pick_helper.leaf_at(index).respond_to?(:used_by?) && @pick_helper.leaf_at(index).used_by?(input_vertex)
+                  input_context_path = @pick_helper.path_at(index)[0...-1]
+                  break
+                end
+              end
+
+            end
+
+          end
+
+          input_face = @input_face if input_vertex.faces.include?(@input_face)
+          input_face = input_vertex.faces.first if input_face.nil?
+
+          input_edge = @input_edge if input_vertex.edges.include?(@input_edge)
+          input_edge = input_vertex.edges.first if input_edge.nil?
+
+          # Exit if picked vertex is the same as previous
+          return true if input_context_path == @input_context_path && input_face == @input_face && input_edge == @input_edge && input_vertex == @input_vertex
+
+          @input_context_path = input_context_path
+          @input_face_path = input_context_path && input_face ? input_context_path + [ input_face ] : nil
+          @input_face = input_face
+          @input_edge_path = input_context_path && input_edge ? input_context_path + [ input_edge ] : nil
           @input_edge = input_edge
           @input_vertex = input_vertex
 
         else
+
+          @input_context_path = nil
           @input_face_path = nil
           @input_face = nil
+          @input_edge_path = nil
           @input_edge = nil
           @input_vertex = nil
+
         end
 
         # puts "# OUTPUT"
         # puts "  Face = #{@input_face}"
-        # puts "  Edge = #{@input_edge} -> onface? = #{@input_edge ? @input_edge.used_by?(@input_face) : ''}"
-        # puts "  Vertex = #{@input_vertex} -> onface? = #{@input_vertex ? @input_vertex.used_by?(@input_face) : ''}"
-        # puts "  FacePath = #{@input_face_path ? @input_face_path.join(' -> ') : ''}"
+        # puts "  Edge = #{@input_edge} -> onface? = #{@input_edge && @input_face ?  @input_edge.used_by?(@input_face) : ''}"
+        # puts "  Vertex = #{@input_vertex} -> onface? = #{@input_vertex && @input_face ? @input_vertex.used_by?(@input_face) : ''}"
+        # puts "  ContextPath = #{@input_context_path}"
+        # puts "  FacePath = #{@input_face_path}"
+        # puts "  EdgePath = #{@input_edge_path}"
 
       end
       false
@@ -1053,6 +1182,22 @@ module Ladb::OpenCutList
     # -----
 
     protected
+
+    def _refresh_active_edge(highlighted = false)
+      _set_active_context(@active_context_path, highlighted)
+    end
+
+    def _reset_active_edge
+      _set_active_context(nil)
+    end
+
+    def _set_active_context(context_path, highlighted = false)
+
+      @active_context_path = context_path
+
+      _reset_ui
+
+    end
 
     def _refresh_active_face(highlighted = false)
       _set_active_face(@input_face_path, @input_face, highlighted)
@@ -1086,6 +1231,11 @@ module Ladb::OpenCutList
 
       _reset_ui
 
+    end
+
+    def _get_active_part_name
+      return nil unless @active_part.is_a?(Part)
+      "#{@active_part.saved_number ? "[#{@active_part.saved_number}] " : ''}#{@active_part.name}"
     end
 
     def _select_active_part_entity

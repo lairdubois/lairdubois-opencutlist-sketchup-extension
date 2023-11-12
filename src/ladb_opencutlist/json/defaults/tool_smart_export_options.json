@@ -30,5 +30,13 @@
     "1_2": { "metric": true, "imperial": false },    /* ACTION_OPTION_UNIT_MM */
     "1_3": false,   /* ACTION_OPTION_UNIT_CM */
     "3_1": false    /* ACTION_OPTION_OPTIONS_CURVES */
+  },
+  "3": {   /* ACTION_EXPORT_EDGES */
+    "0_0": true,    /* ACTION_OPTION_FILE_FORMAT_DXF */
+    "0_3": false,   /* ACTION_OPTION_FILE_FORMAT_SVG */
+    "1_0": { "metric": false, "imperial": true },    /* ACTION_OPTION_UNIT_IN */
+    "1_2": { "metric": true, "imperial": false },    /* ACTION_OPTION_UNIT_MM */
+    "1_3": false,   /* ACTION_OPTION_UNIT_CM */
+    "3_1": false    /* ACTION_OPTION_OPTIONS_CURVES */
   }
 }

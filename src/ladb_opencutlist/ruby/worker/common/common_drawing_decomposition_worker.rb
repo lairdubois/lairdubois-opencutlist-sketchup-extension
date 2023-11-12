@@ -20,7 +20,8 @@ module Ladb::OpenCutList
     FACE_VALIDATOR_EXPOSED = 4
 
     EDGE_VALIDATOR_ALL = 0
-    EDGE_VALIDATOR_STRAY_COPLANAR = 1
+    EDGE_VALIDATOR_COPLANAR = 1
+    EDGE_VALIDATOR_STRAY_COPLANAR = 2
 
     def initialize(path, settings = {})
 
@@ -57,19 +58,19 @@ module Ladb::OpenCutList
 
     def run
       return { :errors => [ 'default.error' ] } unless @path.is_a?(Array)
-      return { :errors => [ 'default.error' ] } if @path.empty?
       return { :errors => [ 'default.error' ] } if Sketchup.active_model.nil?
 
       # Extract drawing element
       drawing_element = @path.last
+      drawing_element = Sketchup.active_model if drawing_element.nil?
 
-      return { :errors => [ 'default.error' ] } unless drawing_element.is_a?(Sketchup::Drawingelement)
+      return { :errors => [ 'default.error' ] } unless drawing_element.is_a?(Sketchup::Drawingelement) || drawing_element.is_a?(Sketchup::Model)
 
       # Compute transformation to drawing element
-      transformation = PathUtils::get_transformation(@path)
+      transformation = PathUtils::get_transformation(@path, IDENTITY)
 
       # Extract first level of child entities
-      if drawing_element.is_a?(Sketchup::Group)
+      if drawing_element.is_a?(Sketchup::Model) || drawing_element.is_a?(Sketchup::Group)
         entities = drawing_element.entities
       elsif drawing_element.is_a?(Sketchup::ComponentInstance)
         entities = drawing_element.definition.entities
@@ -118,6 +119,11 @@ module Ladb::OpenCutList
         end
 
       else
+
+        input_edge = @input_edge_path.nil? ? nil : @input_edge_path.last
+        input_transformation = PathUtils::get_transformation(@input_edge_path)
+
+        drawing_def.input_edge_manipulator = input_edge.is_a?(Sketchup::Edge) ? EdgeManipulator.new(input_edge, input_transformation) : nil
 
         # Get transformed X axis and reverse it if transformation is flipped to keep a right hand oriented system
         x_axis = X_AXIS.transform(transformation).normalize
@@ -178,6 +184,11 @@ module Ladb::OpenCutList
         validator = nil
         if drawing_def.input_face_manipulator
           case @edge_validator
+          when EDGE_VALIDATOR_COPLANAR
+            validator = lambda { |edge_manipulator|
+              point, vector = edge_manipulator.line
+              vector.perpendicular?(drawing_def.input_face_manipulator.normal) && point.on_plane?(drawing_def.input_face_manipulator.plane)
+            }
           when EDGE_VALIDATOR_STRAY_COPLANAR
             validator = lambda { |edge_manipulator|
               if edge_manipulator.edge.faces.empty?

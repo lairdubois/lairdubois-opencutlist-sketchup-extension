@@ -26,6 +26,7 @@ module Ladb::OpenCutList
     ACTION_EXPORT_PART_3D = 0
     ACTION_EXPORT_PART_2D = 1
     ACTION_EXPORT_FACE = 2
+    ACTION_EXPORT_EDGES = 3
 
     ACTION_OPTION_FILE_FORMAT = 0
     ACTION_OPTION_UNIT = 1
@@ -74,6 +75,13 @@ module Ladb::OpenCutList
           ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_DXF, ACTION_OPTION_FILE_FORMAT_SVG ],
           ACTION_OPTION_UNIT => [ ACTION_OPTION_UNIT_MM, ACTION_OPTION_UNIT_CM, ACTION_OPTION_UNIT_IN ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CURVES ]
+        }
+      },
+      {
+        :action => ACTION_EXPORT_EDGES,
+        :options => {
+          ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_DXF, ACTION_OPTION_FILE_FORMAT_SVG ],
+          ACTION_OPTION_UNIT => [ ACTION_OPTION_UNIT_MM, ACTION_OPTION_UNIT_CM, ACTION_OPTION_UNIT_IN ],
         }
       }
     ].freeze
@@ -133,6 +141,12 @@ module Ladb::OpenCutList
         if fetch_action_option(ACTION_EXPORT_FACE, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_SVG)
           return @cursor_export_svg
         elsif fetch_action_option(ACTION_EXPORT_FACE, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
+          return @cursor_export_dxf
+        end
+      when ACTION_EXPORT_EDGES
+        if fetch_action_option(ACTION_EXPORT_EDGES, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_SVG)
+          return @cursor_export_svg
+        elsif fetch_action_option(ACTION_EXPORT_EDGES, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
           return @cursor_export_dxf
         end
       end
@@ -226,6 +240,16 @@ module Ladb::OpenCutList
       fetch_action == ACTION_EXPORT_FACE
     end
 
+    def is_action_export_edges?
+      fetch_action == ACTION_EXPORT_EDGES
+    end
+
+    # -- Pickers --
+
+    # def pick_face?
+    #   !is_action_export_edges?
+    # end
+
     # -- Events --
 
     def onActivate(view)
@@ -294,7 +318,7 @@ module Ladb::OpenCutList
         infos << Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.5,0L0.5,0.2 M0.5,0.4L0.5,0.6 M0.5,0.8L0.5,1 M0,0.2L0.3,0.5L0,0.8L0,0.2 M1,0.2L0.7,0.5L1,0.8L1,0.2')) if part.flipped
         infos << Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.6,0L0.4,0 M0.6,0.4L0.8,0.2L0.5,0.2 M0.8,0.2L0.8,0.5 M0.8,0L1,0L1,0.2 M1,0.4L1,0.6 M1,0.8L1,1L0.8,1 M0.2,0L0,0L0,0.2 M0,1L0,0.4L0.6,0.4L0.6,1L0,1')) if part.resized
 
-        show_infos("#{part.saved_number ? "[#{part.saved_number}] " : ''}#{part.name}", infos)
+        show_infos(_get_active_part_name, infos)
 
         if is_action_export_part_2d?
 
@@ -567,6 +591,78 @@ module Ladb::OpenCutList
 
     end
 
+    def _set_active_context(context_path, highlighted = false)
+      super
+
+      if context_path
+
+        @active_drawing_def = CommonDrawingDecompositionWorker.new(context_path, {
+          'ignore_faces' => true,
+          'use_bounds_min_as_origin' => true,
+          'input_face_path' => @input_face_path,
+          'input_edge_path' => @input_face_path ? @input_edge_path : nil,
+          'edge_validator' => CommonDrawingDecompositionWorker::EDGE_VALIDATOR_COPLANAR
+        }).run
+        if @active_drawing_def.is_a?(DrawingDef)
+
+          inch_offset = Sketchup.active_model.active_view.pixels_to_model(15, Geom::Point3d.new.transform(@active_drawing_def.transformation))
+
+          preview = Kuix::Group.new
+          preview.transformation = @active_drawing_def.transformation
+          @space.append(preview)
+
+            @active_drawing_def.edge_manipulators.each do |edge_info|
+
+              # Highlight edge
+              segments = Kuix::Segments.new
+              segments.add_segments(EdgeManipulator.new(edge_info.edge, edge_info.transformation).segment)
+              segments.color = COLOR_GUIDE
+              segments.line_width = highlighted ? 3 : 2
+              segments.on_top = true
+              preview.append(segments)
+
+            end
+
+            bounds = Geom::BoundingBox.new
+            bounds.add(Geom::Point3d.new(@active_drawing_def.bounds.min.x, @active_drawing_def.bounds.min.y, @active_drawing_def.bounds.max.z))
+            bounds.add(@active_drawing_def.bounds.max)
+            bounds.add(Geom::Point3d.new(0, 0, @active_drawing_def.bounds.max.z))
+
+            # Box helper
+            box_helper = Kuix::RectangleMotif.new
+            box_helper.bounds.origin.copy!(bounds.min)
+            box_helper.bounds.size.copy!(bounds)
+            box_helper.bounds.apply_offset(inch_offset, inch_offset, 0)
+            box_helper.color = Kuix::COLOR_BLACK
+            box_helper.line_width = 1
+            box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+            preview.append(box_helper)
+
+            if @active_drawing_def.input_edge_manipulator
+
+              # Highlight input edge
+              segments = Kuix::Segments.new
+              segments.add_segments(@active_drawing_def.input_edge_manipulator.segment)
+              segments.color = COLOR_ACTION
+              segments.line_width = 3
+              segments.on_top = true
+              preview.append(segments)
+
+            end
+
+            # Axes helper
+            axes_helper = Kuix::AxesHelper.new
+            axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(0, 0, @active_drawing_def.bounds.max.z))
+            axes_helper.box_0.visible = false
+            axes_helper.box_z.visible = false
+            preview.append(axes_helper)
+
+        end
+
+      end
+
+    end
+
     # -----
 
     private
@@ -576,6 +672,14 @@ module Ladb::OpenCutList
 
         if @input_face_path
 
+          # Check if face is not curved
+          if (is_action_export_part_2d? || is_action_export_face?) && @input_face.edges.index { |edge| edge.soft? }
+            _reset_active_part
+            show_tooltip("⚠ #{Plugin.instance.get_i18n_string('tool.smart_export.error.not_flat_face')}", MESSAGE_TYPE_ERROR)
+            push_cursor(@cursor_select_error)
+            return
+          end
+
           if is_action_export_part_3d? || is_action_export_part_2d?
 
             input_part_entity_path = _get_part_entity_path_from_path(@input_face_path)
@@ -584,6 +688,7 @@ module Ladb::OpenCutList
               part = _generate_part_from_path(input_part_entity_path)
               if part
                 _set_active_part(input_part_entity_path, part)
+                show_tooltip(_get_active_part_name)
               else
                 _reset_active_part
                 show_tooltip("⚠ #{Plugin.instance.get_i18n_string('tool.smart_export.error.not_part')}", MESSAGE_TYPE_ERROR)
@@ -603,6 +708,19 @@ module Ladb::OpenCutList
             _set_active_face(@input_face_path, @input_face)
             return
 
+          elsif is_action_export_edges?
+
+            _set_active_context(@input_context_path)
+            return
+
+          end
+
+        elsif @input_edge_path
+
+          if is_action_export_edges?
+            _set_active_context(@input_context_path)
+            return
+
           end
 
         end
@@ -617,6 +735,8 @@ module Ladb::OpenCutList
           _refresh_active_part(true)
         elsif is_action_export_face?
           _refresh_active_face(true)
+        elsif is_action_export_edges?
+          _refresh_active_edge(true)
         end
 
       elsif event == :l_button_up || event == :l_button_dblclick
@@ -686,15 +806,15 @@ module Ladb::OpenCutList
             file_format = FILE_FORMAT_SVG
           end
           unit = nil
-          if fetch_action_option(fetch_action, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_IN)
+          if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_IN)
             unit = DimensionUtils::INCHES
-          elsif fetch_action_option(fetch_action, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_MM)
+          elsif fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_MM)
             unit = DimensionUtils::MILLIMETER
-          elsif fetch_action_option(fetch_action, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_CM)
+          elsif fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_CM)
             unit = DimensionUtils::CENTIMETER
           end
-          anchor = fetch_action_option(fetch_action, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) && (@active_drawing_def.bounds.min.x != 0 || @active_drawing_def.bounds.min.y != 0)    # No anchor if = (0, 0, z)
-          curves = fetch_action_option(fetch_action, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_CURVES)
+          anchor = fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) && (@active_drawing_def.bounds.min.x != 0 || @active_drawing_def.bounds.min.y != 0)    # No anchor if = (0, 0, z)
+          curves = fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_CURVES)
 
           worker = CommonExportDrawing2dWorker.new(@active_drawing_def, {
             'file_name' => file_name,
@@ -734,14 +854,60 @@ module Ladb::OpenCutList
             file_format = FILE_FORMAT_SVG
           end
           unit = nil
-          if fetch_action_option(fetch_action, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_IN)
+          if fetch_action_option(ACTION_EXPORT_FACE, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_IN)
             unit = DimensionUtils::INCHES
-          elsif fetch_action_option(fetch_action, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_MM)
+          elsif fetch_action_option(ACTION_EXPORT_FACE, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_MM)
             unit = DimensionUtils::MILLIMETER
-          elsif fetch_action_option(fetch_action, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_CM)
+          elsif fetch_action_option(ACTION_EXPORT_FACE, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_CM)
             unit = DimensionUtils::CENTIMETER
           end
-          curves = fetch_action_option(fetch_action, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_CURVES)
+          curves = fetch_action_option(ACTION_EXPORT_FACE, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_CURVES)
+
+          worker = CommonExportDrawing2dWorker.new(@active_drawing_def, {
+            'file_name' => file_name,
+            'file_format' => file_format,
+            'unit' => unit,
+            'curves' => curves
+          })
+          response = worker.run
+
+          if response[:errors]
+            notify_errors(response[:errors])
+          elsif response[:export_path]
+            notify_success(
+              Plugin.instance.get_i18n_string('tool.smart_export.success.exported_to', { :export_path => File.basename(response[:export_path]) }),
+              [
+                {
+                  :label => Plugin.instance.get_i18n_string('default.open'),
+                  :block => lambda { Plugin.instance.execute_command('core_open_external_file', { 'path' => response[:export_path] }) }
+                }
+              ]
+            )
+          end
+
+        elsif is_action_export_edges?
+
+          if @active_drawing_def.nil?
+            UI.beep
+            return
+          end
+
+          file_name = 'EDGES'
+          file_format = nil
+          if fetch_action_option(ACTION_EXPORT_EDGES, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
+            file_format = FILE_FORMAT_DXF
+          elsif fetch_action_option(ACTION_EXPORT_EDGES, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_SVG)
+            file_format = FILE_FORMAT_SVG
+          end
+          unit = nil
+          if fetch_action_option(ACTION_EXPORT_EDGES, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_IN)
+            unit = DimensionUtils::INCHES
+          elsif fetch_action_option(ACTION_EXPORT_EDGES, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_MM)
+            unit = DimensionUtils::MILLIMETER
+          elsif fetch_action_option(ACTION_EXPORT_EDGES, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_CM)
+            unit = DimensionUtils::CENTIMETER
+          end
+          curves = fetch_action_option(ACTION_EXPORT_EDGES, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_CURVES)
 
           worker = CommonExportDrawing2dWorker.new(@active_drawing_def, {
             'file_name' => file_name,

@@ -783,8 +783,8 @@ module Ladb::OpenCutList
 
         if is_action_paint_parts?
 
-          # Show part infos
-          show_infos(part.name)
+          # Show part name
+          show_tooltip(_get_active_part_name)
 
           @active_material = get_current_material
           color = @active_material ? @active_material.color : MaterialUtils::get_color_from_path(@active_part_entity_path[0...-1]) # [0...-1] returns array without last element

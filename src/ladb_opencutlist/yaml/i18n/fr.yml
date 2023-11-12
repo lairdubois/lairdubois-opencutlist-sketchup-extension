@@ -1521,6 +1521,8 @@ tool:
     action_1_status: Cliquez sur la face d'une pièce
     action_2: Exporter une face
     action_2_status: Cliquez sur une face
+    action_3: Exporter un tracé
+    action_3_status: Cliquez sur une arrête
     action_option_group_0: Format
     action_option_group_1: Unité
     action_option_group_2: Faces
@@ -1543,3 +1545,4 @@ tool:
       exported_to: "Export réussi vers {{ export_path }}."
     error:
       not_part: Cette surface ne fait pas partie d'une pièce
+      not_flat_face: Cette surface n'est pas plane

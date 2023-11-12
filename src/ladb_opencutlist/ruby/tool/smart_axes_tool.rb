@@ -51,7 +51,7 @@ module Ladb::OpenCutList
     COLOR_MESH_HIGHLIGHTED = Sketchup::Color.new(200, 200, 0, 200).freeze
     COLOR_ARROW = Kuix::COLOR_WHITE
     COLOR_ARROW_AUTO_ORIENTED = Sketchup::Color.new(123, 213, 239).freeze
-    COLOR_BOX = Kuix::COLOR_BLUE
+    COLOR_BOX = Kuix::COLOR_BLACK # Kuix::COLOR_BLUE
     COLOR_ACTION = Kuix::COLOR_MAGENTA
     COLOR_ACTION_FILL = Sketchup::Color.new(255, 0, 255, 0.2).freeze
 
@@ -186,63 +186,6 @@ module Ladb::OpenCutList
       fetch_action_modifier(fetch_action) == ACTION_MODIFIER_THICKNESS
     end
 
-    # -- Menu --
-
-    def populate_menu(menu)
-      if @active_part
-        active_part_id = @active_part.id
-        active_part_material_type = @active_part.group.material_type
-        item = menu.add_item("#{@active_part.saved_number ? "[#{@active_part.saved_number}] " : ''} #{@active_part.name}") {}
-        menu.set_validation_proc(item) { MF_GRAYED }
-        menu.add_separator
-        menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_properties')) {
-          _select_active_part_entity
-          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'general', dontGenerate: false }")
-        }
-        menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_axes_properties')) {
-          _select_active_part_entity
-          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'axes', dontGenerate: false }")
-        }
-        item = menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_size_increase_properties')) {
-          _select_active_part_entity
-          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'size_increase', dontGenerate: false }")
-        }
-        menu.set_validation_proc(item) {
-          if active_part_material_type == MaterialAttributes::TYPE_SOLID_WOOD ||
-            active_part_material_type == MaterialAttributes::TYPE_SHEET_GOOD ||
-            active_part_material_type == MaterialAttributes::TYPE_DIMENSIONAL
-            MF_ENABLED
-          else
-            MF_GRAYED
-          end
-        }
-        item = menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_edges_properties')) {
-          _select_active_part_entity
-          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'edges', dontGenerate: false }")
-        }
-        menu.set_validation_proc(item) {
-          if active_part_material_type == MaterialAttributes::TYPE_SHEET_GOOD
-            MF_ENABLED
-          else
-            MF_GRAYED
-          end
-        }
-        item = menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_faces_properties')) {
-          _select_active_part_entity
-          Plugin.instance.execute_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'faces', dontGenerate: false }")
-        }
-        menu.set_validation_proc(item) {
-          if active_part_material_type == MaterialAttributes::TYPE_SHEET_GOOD
-            MF_ENABLED
-          else
-            MF_GRAYED
-          end
-        }
-      else
-        super
-      end
-    end
-
     # -- Events --
 
     def onActivate(view)
@@ -317,7 +260,7 @@ module Ladb::OpenCutList
         infos << Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.5,0L0.5,0.2 M0.5,0.4L0.5,0.6 M0.5,0.8L0.5,1 M0,0.2L0.3,0.5L0,0.8L0,0.2 M1,0.2L0.7,0.5L1,0.8L1,0.2')) if part.flipped
         infos << Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.6,0L0.4,0 M0.6,0.4L0.8,0.2L0.5,0.2 M0.8,0.2L0.8,0.5 M0.8,0L1,0L1,0.2 M1,0.4L1,0.6 M1,0.8L1,1L0.8,1 M0.2,0L0,0L0,0.2 M0,1L0,0.4L0.6,0.4L0.6,1L0,1')) if part.resized
 
-        show_infos(part.name, infos)
+        show_infos(_get_active_part_name, infos)
 
         # Create drawing helpers
 
@@ -479,7 +422,7 @@ module Ladb::OpenCutList
           box_helper.bounds.size.height += increases[1] / part.def.scale.y
           box_helper.bounds.size.depth += increases[2] / part.def.scale.z
           box_helper.color = COLOR_BOX
-          box_helper.line_width = 2
+          box_helper.line_width = 1
           box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
           part_helper.append(box_helper)
 
