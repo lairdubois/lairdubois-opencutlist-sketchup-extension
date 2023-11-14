@@ -4,7 +4,7 @@ module Ladb::OpenCutList
 
   class Cuttingdiagram2dDef
 
-    attr_accessor :group, :errors, :warnings, :tips, :unplaced_part_defs, :options_def, :summary_def, :sheet_defs
+    attr_accessor :group, :errors, :warnings, :tips, :unplaced_part_defs, :options_def, :summary_def, :sheet_defs, :px_length_increase, :px_width_increase, :projection_defs
 
     def initialize(group, errors = [])
       @group = group
@@ -17,6 +17,11 @@ module Ladb::OpenCutList
       @options_def = Cuttingdiagram2dOptionsDef.new
       @summary_def = Cuttingdiagram2dSummaryDef.new
       @sheet_defs = {}
+
+      @px_length_increase = 0
+      @px_width_increase = 0
+
+      @projection_defs = {} # Key = part ID
 
     end
 
@@ -32,7 +37,7 @@ module Ladb::OpenCutList
 
   class Cuttingdiagram2dOptionsDef
 
-    attr_accessor :grained, :px_saw_kerf, :saw_kerf, :trimming, :optimization, :stacking, :sheet_folding, :hide_part_list, :use_names, :full_width_diagram, :hide_cross, :origin_corner, :highlight_primary_cuts, :hide_edges_preview
+    attr_accessor :grained, :px_saw_kerf, :saw_kerf, :trimming, :optimization, :stacking, :sheet_folding, :hide_part_list, :use_names, :full_width_diagram, :hide_cross, :origin_corner, :highlight_primary_cuts, :hide_edges_preview, :hide_parts_preview
 
     def initialize
 
@@ -50,6 +55,7 @@ module Ladb::OpenCutList
       @origin_corner = 0
       @highlight_primary_cuts = false
       @hide_edges_preview = true
+      @hide_parts_preview = true
 
     end
 

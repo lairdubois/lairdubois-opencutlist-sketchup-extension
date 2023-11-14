@@ -472,7 +472,7 @@ module Ladb::OpenCutList
       hide_tooltip
 
       box = Kuix::Panel.new
-      box.layout_data = Kuix::StaticLayoutData.new(0, 0, -1, -1, Kuix::Anchor.new(Kuix::Anchor::TOP_CENTER))
+      box.layout_data = Kuix::StaticLayoutData.new(0, 0, -1, -1, Kuix::Anchor.new(Kuix::Anchor::TOP_LEFT))
       box.layout = Kuix::InlineLayout.new(false, unit * 2)
       box.border.set_all!(unit / 4)
       box.padding.set!(unit * 1.5, unit * 2, unit, unit * 2)
@@ -527,8 +527,8 @@ module Ladb::OpenCutList
 
     def move_tooltip(mouse_x, mouse_y)
       unless @tooltip_box.nil?
-        @tooltip_box.layout_data.x = mouse_x
-        @tooltip_box.layout_data.y = mouse_y + 40 * UI.scale_factor
+        @tooltip_box.layout_data.x = mouse_x + 10 * UI.scale_factor
+        @tooltip_box.layout_data.y = mouse_y + (32 + 4) * UI.scale_factor
         @tooltip_box.invalidate
       end
     end

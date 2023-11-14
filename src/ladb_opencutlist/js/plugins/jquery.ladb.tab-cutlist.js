@@ -3429,6 +3429,7 @@
                 var $selectOriginCorner = $('#ladb_select_origin_corner', $modal);
                 var $selectHighlightPrimaryCuts = $('#ladb_select_highlight_primary_cuts', $modal);
                 var $selectHideEdgesPreview = $('#ladb_select_hide_edges_preview', $modal);
+                var $selectHidePartsPreview = $('#ladb_select_hide_parts_preview', $modal);
                 var $btnEditMaterial = $('#ladb_btn_edit_material', $modal);
                 var $btnGenerate = $('#ladb_btn_generate', $modal);
 
@@ -3447,6 +3448,7 @@
                     options.origin_corner = parseInt($selectOriginCorner.val());
                     options.highlight_primary_cuts = $selectHighlightPrimaryCuts.val() === '1';
                     options.hide_edges_preview = $selectHideEdgesPreview.val() === '1';
+                    options.hide_parts_preview = $selectHidePartsPreview.val() === '1';
                 }
                 var fnFillInputs = function (options) {
                     $inputSawKerf.val(options.saw_kerf);
@@ -3461,6 +3463,7 @@
                     $selectOriginCorner.selectpicker('val', options.origin_corner);
                     $selectHighlightPrimaryCuts.selectpicker('val', options.highlight_primary_cuts ? '1' : '0');
                     $selectHideEdgesPreview.selectpicker('val', options.hide_edges_preview ? '1' : '0');
+                    $selectHidePartsPreview.selectpicker('val', options.hide_parts_preview ? '1' : '0');
                 }
                 var fnEditMaterial = function (callback) {
 
@@ -3508,6 +3511,7 @@
                 $selectOriginCorner.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectHighlightPrimaryCuts.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectHideEdgesPreview.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectHidePartsPreview.selectpicker(SELECT_PICKER_OPTIONS);
 
                 fnFillInputs(cuttingdiagram2dOptions);
 

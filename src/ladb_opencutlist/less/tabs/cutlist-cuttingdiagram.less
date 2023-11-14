@@ -46,6 +46,14 @@
           fill: lighten(@ladb-brand-primary, 40%);
           filter: none;
         }
+        .part-shape {
+          fill: lighten(@ladb-brand-primary, 10%);
+          filter: none;
+        }
+        .part-groove {
+          fill: lighten(@ladb-brand-primary, 25%);
+          filter: none;
+        }
 
       }
 
@@ -54,6 +62,12 @@
       }
       .part-inner {
         fill: #eee;
+      }
+      .part-shape {
+        fill: darken(#eee, 4%);
+      }
+      .part-groove {
+        fill: darken(#eee, 2%);
       }
       .part-edge {
         //fill: @ladb-material-type-4;
@@ -204,11 +218,12 @@
     }
 
     .part {
-      .part-outer {
+      .part-outer, .part-inner {
         fill: #fff;
       }
-      .part-inner {
-        fill: #fff;
+      .part-shape, .part-groove {
+        fill: none;
+        stroke: #ccc;
       }
     }
 

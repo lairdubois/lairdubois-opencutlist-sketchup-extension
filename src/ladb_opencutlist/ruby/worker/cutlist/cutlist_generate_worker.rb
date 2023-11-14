@@ -885,7 +885,7 @@ module Ladb::OpenCutList
     end
 
     def _get_instance_info(serialized_path)
-      if @instance_infos_cache.has_key? serialized_path
+      if @instance_infos_cache.has_key?(serialized_path)
         return @instance_infos_cache[serialized_path]
       end
       nil
@@ -898,7 +898,7 @@ module Ladb::OpenCutList
     end
 
     def _get_group_def(id)
-      if @group_defs_cache.has_key? id
+      if @group_defs_cache.has_key?(id)
         return @group_defs_cache[id]
       end
       nil
@@ -920,7 +920,7 @@ module Ladb::OpenCutList
     end
 
     def _get_material_usage(name)
-      if @material_usages_cache.has_key? name
+      if @material_usages_cache.has_key?(name)
         return @material_usages_cache[name]
       end
       nil
@@ -930,7 +930,7 @@ module Ladb::OpenCutList
 
     def _get_material_attributes(material)
       key = material ? material.name : '$EMPTY$'
-      unless @material_attributes_cache.has_key? key
+      unless @material_attributes_cache.has_key?(key)
         @material_attributes_cache[key] = MaterialAttributes.new(material, true)
       end
       @material_attributes_cache[key]
@@ -940,7 +940,7 @@ module Ladb::OpenCutList
 
     def _get_definition_attributes(definition)
       key = definition ? definition.name : '$EMPTY$'
-      unless @definition_attributes_cache.has_key? key
+      unless @definition_attributes_cache.has_key?(key)
         @definition_attributes_cache[key] = DefinitionAttributes.new(definition, true)
       end
       @definition_attributes_cache[key]
@@ -1241,7 +1241,7 @@ module Ladb::OpenCutList
         entities.each { |child_entity|
           child_material = _get_dominant_child_material(child_entity, level + 1, no_virtual)
           if child_material
-            unless materials.has_key? child_material.name
+            unless materials.has_key?(child_material.name)
               materials[child_material.name] = {
                   :material => child_material,
                   :count => 0

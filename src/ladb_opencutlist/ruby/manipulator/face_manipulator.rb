@@ -45,18 +45,21 @@ module Ladb::OpenCutList
     end
 
     def parallel?(other)
-      return false unless other.is_a?(FaceManipulator)
-      normal.samedirection?(other.normal)
+      return normal.samedirection?(other.normal) if other.is_a?(FaceManipulator)
+      return normal.samedirection?(other) if other.is_a?(Geom::Vector3d)
+      false
     end
 
     def perpendicular?(other)
-      return false unless other.is_a?(FaceManipulator)
-      normal.perpendicular?(other.normal)
+      return normal.perpendicular?(other.normal) if other.is_a?(FaceManipulator)
+      return normal.perpendicular?(other) if other.is_a?(Geom::Vector3d)
+      false
     end
 
     def angle_between(other)
-      return false unless other.is_a?(FaceManipulator)
-      normal.angle_between(other.normal)
+      return normal.angle_between(other.normal) if other.is_a?(FaceManipulator)
+      return normal.angle_between(other) if other.is_a?(Geom::Vector3d)
+      nil
     end
 
     def belongs_to_a_surface?

@@ -32,6 +32,7 @@ module Ladb::OpenCutList
       @origin_corner = settings.fetch('origin_corner')
       @highlight_primary_cuts = settings.fetch('highlight_primary_cuts')
       @hide_edges_preview = settings.fetch('hide_edges_preview')
+      @hide_parts_preview = settings.fetch('hide_parts_preview')
 
       @cutlist = cutlist
 
@@ -83,7 +84,7 @@ module Ladb::OpenCutList
         }
 
         # Add boxes from parts
-        add_boxes_proc = Proc.new { |part|
+        add_boxes_fn = lambda { |part|
           for i in 1..part.count
             @pack_engine.add_box(part.cutting_length.to_l.to_f, part.cutting_width.to_l.to_f, options.rotatable || part.ignore_grain_direction, part.number, part)   # "to_l.to_f" Reconvert string representation of length to float to take advantage Sketchup precision
           end
@@ -91,10 +92,10 @@ module Ladb::OpenCutList
         parts.each { |part|
           if part.instance_of?(FolderPart)
             part.children.each { |child_part|
-              add_boxes_proc.call(child_part)
+              add_boxes_fn.call(child_part)
             }
           else
-            add_boxes_proc.call(part)
+            add_boxes_fn.call(part)
           end
         }
 
@@ -166,6 +167,7 @@ module Ladb::OpenCutList
       cuttingdiagram2d_def.options_def.origin_corner = @origin_corner
       cuttingdiagram2d_def.options_def.highlight_primary_cuts = @highlight_primary_cuts
       cuttingdiagram2d_def.options_def.hide_edges_preview = @hide_edges_preview
+      cuttingdiagram2d_def.options_def.hide_parts_preview = @hide_parts_preview
 
       cuttingdiagram2d_def.errors += errors
 
@@ -190,6 +192,10 @@ module Ladb::OpenCutList
       if group.edge_decremented
         cuttingdiagram2d_def.warnings << 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions_edge_decrement'
       end
+
+      # Material oversizes
+      cuttingdiagram2d_def.px_length_increase = _to_px(material_attributes.l_length_increase)
+      cuttingdiagram2d_def.px_width_increase = _to_px(material_attributes.l_width_increase)
 
       # Unplaced boxes
       result.unplaced_boxes.each { |box|
@@ -265,6 +271,10 @@ module Ladb::OpenCutList
             end
             grouped_part_def.count += 1
           end
+
+          # Part is used : compute its projection if enabled
+          _compute_part_projection_def(cuttingdiagram2d_def, box.data) unless @hide_parts_preview
+
         }
 
         # Leftovers
@@ -354,6 +364,35 @@ module Ladb::OpenCutList
     # Convert inch float value to pixel
     def _to_px(inch_value)
       inch_value * 7 # 840px = 120" ~ 3m
+    end
+
+    def _compute_part_projection_def(cuttingdiagram2d_def, cutlist_part)
+
+      projection_def = cuttingdiagram2d_def.projection_defs[cutlist_part.id]
+      if projection_def.nil?
+
+        instance_info = cutlist_part.def.get_one_instance_info
+        unless instance_info.nil?
+
+          drawing_def = CommonDrawingDecompositionWorker.new(instance_info.path, {
+            'use_bounds_min_as_origin' => true,
+            'ignore_edges' => true
+          }).run
+          if drawing_def.is_a?(DrawingDef)
+
+            projection_def = CommonDrawingProjectionWorker.new(drawing_def, {}).run
+            if projection_def.is_a?(DrawingProjectionDef)
+
+              cuttingdiagram2d_def.projection_defs[cutlist_part.id] = projection_def
+
+            end
+
+          end
+
+        end
+
+      end
+
     end
 
   end

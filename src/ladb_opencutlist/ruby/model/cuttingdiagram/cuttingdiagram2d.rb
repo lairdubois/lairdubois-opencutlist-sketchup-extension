@@ -8,7 +8,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :errors, :warnings, :tips, :unplaced_parts, :options, :summary, :sheets
+    attr_reader :errors, :warnings, :tips, :unplaced_parts, :options, :summary, :sheets, :px_length_increase, :px_width_increase, :projections
 
     def initialize(_def)
       @_def = _def
@@ -22,6 +22,11 @@ module Ladb::OpenCutList
       @summary = _def.summary_def.create_summary
       @sheets = _def.sheet_defs.values.map { |sheet_def| sheet_def.create_sheet }.sort_by { |sheet| [ -sheet.type, -sheet.efficiency, -sheet.count ] }
 
+      @px_length_increase = _def.px_length_increase
+      @px_width_increase = _def.px_width_increase
+
+      @projections = _def.projection_defs.map { |part_id, projection_def| [ part_id, projection_def.layer_defs.map { |layer_def| "#{layer_def.polygon_defs.map { |polygon_def| "M #{polygon_def.points.map { |point| "#{point.x.to_f * 7},#{-point.y.to_f * 7}" }.join(' L ')} Z" }.join(' ')}" } ] }.to_h
+
     end
 
   end
@@ -33,7 +38,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :px_saw_kerf, :saw_kerf, :trimming, :sheet_folding, :hide_part_list, :use_names, :full_width_diagram, :hide_cross, :origin_corner, :highlight_primary_cuts, :hide_edges_preview
+    attr_reader :px_saw_kerf, :saw_kerf, :trimming, :sheet_folding, :hide_part_list, :use_names, :full_width_diagram, :hide_cross, :origin_corner, :highlight_primary_cuts, :hide_edges_preview, :hide_parts_preview
 
     def initialize(_def)
       @_def = _def
@@ -51,6 +56,7 @@ module Ladb::OpenCutList
       @origin_corner = _def.origin_corner
       @highlight_primary_cuts = _def.highlight_primary_cuts
       @hide_edges_preview = _def.hide_edges_preview
+      @hide_parts_preview = _def.hide_parts_preview
 
     end
 

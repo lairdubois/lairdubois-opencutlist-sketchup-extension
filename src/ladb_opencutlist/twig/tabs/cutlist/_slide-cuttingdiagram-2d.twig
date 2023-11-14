@@ -17,6 +17,8 @@
 {% set partOutlineWidth = 2 %}
 {% set cutOutlineWidth = 2 %}
 {% set edgeWidth = 2 %}
+{% set shapeOffsetX = px_length_increase / 2 %}
+{% set shapeOffsetY = px_width_increase / 2 %}
 
 {% set showCuttingDimensions = group.show_cutting_dimensions %}
 {% set showEdges = group.show_edges and not generateOptions.hide_edges %}
@@ -326,6 +328,13 @@
                                 <g class="part" data-part-id="{{ part.id }}" data-toggle="tooltip" data-html="true" title="{{ fn.part_tooltip(part) }}">
                                     <rect class="part-outer" x="{{ part.px_x }}" y="{{ part.px_y }}" width="{{ part.px_length }}" height="{{ part.px_width }}"></rect>
                                     <rect class="part-inner" x="{{ part.px_x + partOutlineWidth }}" y="{{ part.px_y + partOutlineWidth }}" width="{{ part.px_length - partOutlineWidth * 2 }}" height="{{ part.px_width - partOutlineWidth * 2 }}"></rect>
+                                    {% if projections[part.id] %}
+                                        <g transform="{% if part.rotated %}translate({{ part.px_x - shapeOffsetY + part.px_length }} {{ part.px_y - shapeOffsetX + part.px_width }}) rotate(-90 0 0){% else %}translate({{ part.px_x + shapeOffsetX }} {{ part.px_y - shapeOffsetY + part.px_width }}){% endif %}">
+                                            {% for layer in projections[part.id] %}
+                                                <path class="part-{% if loop.first %}shape{% else %}groove{% endif %}" d="{{ layer }}" />
+                                            {% endfor %}
+                                        </g>
+                                    {% endif %}
                                     {% if not options.hide_edges_preview %}
                                         {% if part.rotated and part.edge_material_names.xmax or not part.rotated and part.edge_material_names.ymax %}
                                             <rect class="part-edge" x="{{ part.px_x + partOutlineWidth }}" y="{{ part.px_y + partOutlineWidth }}" width="{{ part.px_length - partOutlineWidth * 2 }}" height="{{ edgeWidth }}" fill="{{ generateOptions.hide_material_colors ? '#668eee': (part.rotated ? part.edge_material_colors.xmax : part.edge_material_colors.ymax) }}"></rect>

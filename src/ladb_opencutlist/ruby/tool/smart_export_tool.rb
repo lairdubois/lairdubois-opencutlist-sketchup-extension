@@ -55,7 +55,7 @@ module Ladb::OpenCutList
       {
         :action => ACTION_EXPORT_PART_3D,
         :options => {
-          ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_DXF, ACTION_OPTION_FILE_FORMAT_STL, ACTION_OPTION_FILE_FORMAT_OBJ ],
+          ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_STL, ACTION_OPTION_FILE_FORMAT_OBJ, ACTION_OPTION_FILE_FORMAT_DXF ],
           ACTION_OPTION_UNIT => [ACTION_OPTION_UNIT_MM, ACTION_OPTION_UNIT_CM, ACTION_OPTION_UNIT_M, ACTION_OPTION_UNIT_IN, ACTION_OPTION_UNIT_FT ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_ANCHOR ]
         }
@@ -63,7 +63,7 @@ module Ladb::OpenCutList
       {
         :action => ACTION_EXPORT_PART_2D,
         :options => {
-          ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_DXF, ACTION_OPTION_FILE_FORMAT_SVG ],
+          ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_SVG, ACTION_OPTION_FILE_FORMAT_DXF ],
           ACTION_OPTION_UNIT => [ ACTION_OPTION_UNIT_MM, ACTION_OPTION_UNIT_CM, ACTION_OPTION_UNIT_IN ],
           ACTION_OPTION_FACE => [ ACTION_OPTION_FACE_ONE, ACTION_OPTION_FACE_ALL ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_ANCHOR, ACTION_OPTION_OPTIONS_CURVES, ACTION_OPTION_OPTIONS_GUIDES ]
@@ -72,7 +72,7 @@ module Ladb::OpenCutList
       {
         :action => ACTION_EXPORT_FACE,
         :options => {
-          ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_DXF, ACTION_OPTION_FILE_FORMAT_SVG ],
+          ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_SVG, ACTION_OPTION_FILE_FORMAT_DXF ],
           ACTION_OPTION_UNIT => [ ACTION_OPTION_UNIT_MM, ACTION_OPTION_UNIT_CM, ACTION_OPTION_UNIT_IN ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CURVES ]
         }
@@ -685,6 +685,18 @@ module Ladb::OpenCutList
             input_part_entity_path = _get_part_entity_path_from_path(@input_face_path)
             if input_part_entity_path
 
+              if Sketchup.active_model.active_path
+
+                diff = Sketchup.active_model.active_path - input_part_entity_path
+                unless diff.empty?
+                  _reset_active_part
+                  show_tooltip("⚠ Pas exportable", MESSAGE_TYPE_ERROR)
+                  push_cursor(@cursor_select_error)
+                  return
+                end
+
+              end
+
               part = _generate_part_from_path(input_part_entity_path)
               if part
                 _set_active_part(input_part_entity_path, part)
@@ -791,6 +803,9 @@ module Ladb::OpenCutList
             )
           end
 
+          # Focus SketchUp
+          Sketchup.focus if Sketchup.respond_to?(:focus)
+
         elsif is_action_export_part_2d?
 
           if @active_drawing_def.nil?
@@ -839,6 +854,9 @@ module Ladb::OpenCutList
             )
           end
 
+          # Focus SketchUp
+          Sketchup.focus if Sketchup.respond_to?(:focus)
+
         elsif is_action_export_face?
 
           if @active_drawing_def.nil?
@@ -885,6 +903,9 @@ module Ladb::OpenCutList
             )
           end
 
+          # Focus SketchUp
+          Sketchup.focus if Sketchup.respond_to?(:focus)
+
         elsif is_action_export_edges?
 
           if @active_drawing_def.nil?
@@ -930,6 +951,9 @@ module Ladb::OpenCutList
               ]
             )
           end
+
+          # Focus SketchUp
+          Sketchup.focus if Sketchup.respond_to?(:focus)
 
         end
 

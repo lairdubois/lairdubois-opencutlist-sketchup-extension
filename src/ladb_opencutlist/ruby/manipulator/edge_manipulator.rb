@@ -9,7 +9,7 @@ module Ladb::OpenCutList
 
     attr_reader :edge
 
-    def initialize(edge, transformation = Geom::Transformation.new)
+    def initialize(edge, transformation = IDENTITY)
       super(transformation)
       @edge = edge
     end

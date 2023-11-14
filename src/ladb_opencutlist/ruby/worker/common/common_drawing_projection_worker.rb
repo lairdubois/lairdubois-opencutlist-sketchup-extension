@@ -37,14 +37,14 @@ module Ladb::OpenCutList
 
       # Filter only exposed faces
       exposed_face_manipulators = @drawing_def.face_manipulators.select do |face_manipulator|
-        !face_manipulator.perpendicular?(@drawing_def.input_face_manipulator) && @drawing_def.input_face_manipulator.angle_between(face_manipulator) < Math::PI / 2.0
+        !face_manipulator.perpendicular?(@drawing_def.input_normal) && face_manipulator.angle_between(@drawing_def.input_normal) < Math::PI / 2.0
       end
 
       # Populate face def (loops and depth)
       face_defs = []
       exposed_face_manipulators.each do |face_manipulator|
 
-        if face_manipulator.parallel?(@drawing_def.input_face_manipulator) && bounds_depth > 0
+        if face_manipulator.parallel?(@drawing_def.input_normal) && bounds_depth > 0
           depth = bounds_max.distance_to_plane(face_manipulator.plane).round(6)
         else
           if face_manipulator.surface_manipulator

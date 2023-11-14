@@ -475,7 +475,7 @@ module Ladb::OpenCutList
     def _get_material_attributes(material_name)
       material = Sketchup.active_model.materials[material_name]
       key = material ? material.name : '$EMPTY$'
-      unless @material_attributes_cache.has_key? key
+      unless @material_attributes_cache.has_key?(key)
         @material_attributes_cache[key] = MaterialAttributes.new(material)
       end
       @material_attributes_cache[key]
@@ -486,7 +486,7 @@ module Ladb::OpenCutList
     def _get_definition_attributes(definition_name)
       definition = Sketchup.active_model.definitions[definition_name]
       key = definition ? definition.name : '$EMPTY$'
-      unless @definition_attributes_cache.has_key? key
+      unless @definition_attributes_cache.has_key?(key)
         @definition_attributes_cache[key] = DefinitionAttributes.new(definition, true)
       end
       @definition_attributes_cache[key]

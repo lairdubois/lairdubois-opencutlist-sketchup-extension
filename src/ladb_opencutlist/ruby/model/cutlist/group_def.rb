@@ -52,7 +52,7 @@ module Ladb::OpenCutList
     end
 
     def get_part_def(id)
-      if @part_defs.has_key? id
+      if @part_defs.has_key?(id)
         return @part_defs[id]
       end
       nil

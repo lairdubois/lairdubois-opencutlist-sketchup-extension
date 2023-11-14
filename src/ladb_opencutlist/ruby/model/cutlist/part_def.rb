@@ -190,6 +190,10 @@ module Ladb::OpenCutList
       nil
     end
 
+    def get_one_instance_info
+      @instance_infos.values.first
+    end
+
     # ---
 
     def cutting_length

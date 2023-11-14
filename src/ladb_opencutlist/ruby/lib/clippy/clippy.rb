@@ -6,7 +6,7 @@ module Ladb::OpenCutList
   module Clippy
     extend Fiddle::Importer
 
-    FLOAT_TO_INT64_CONVERTER = 1e6   # Clipper2 can have difficulties to union non squared polygon if > 1e6
+    FLOAT_TO_INT64_CONVERTER = 1e10   # Clipper2 can have difficulties to union non squared polygon if > 1e6
 
     @lib_loaded = false
 

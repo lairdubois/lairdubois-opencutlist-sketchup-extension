@@ -286,14 +286,14 @@ module Ladb::OpenCutList
         model_unit_is_metric = DimensionUtils.instance.model_unit_is_metric
 
         defaults = {}
-        if data.has_key? section
+        if data.has_key?(section)
           data = data[section]
           data.each do |key, value|
             if value.is_a? Hash
               if model_unit_is_metric
-                value = value['metric'] if value.has_key? 'metric'
+                value = value['metric'] if value.has_key?('metric')
               else
-                value = value['imperial'] if value.has_key? 'imperial'
+                value = value['imperial'] if value.has_key?('imperial')
               end
             end
             defaults.store(key, value)

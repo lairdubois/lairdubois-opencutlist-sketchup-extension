@@ -21,7 +21,8 @@ module Ladb::OpenCutList
 
     EDGE_VALIDATOR_ALL = 0
     EDGE_VALIDATOR_COPLANAR = 1
-    EDGE_VALIDATOR_STRAY_COPLANAR = 2
+    EDGE_VALIDATOR_STRAY = 2
+    EDGE_VALIDATOR_STRAY_COPLANAR = 3
 
     def initialize(path, settings = {})
 
@@ -42,19 +43,19 @@ module Ladb::OpenCutList
 
     # -----
 
-    def tr(group = nil, level = 0)
-      if group.nil?
-        SKETCHUP_CONSOLE.clear
-        group = Sketchup.active_model
-      end
-      puts "#{''.rjust(level, ' ')}#{''.rjust(group.name.length, '-')}"
-      puts "#{''.rjust(level, ' ')}#{group.name}#{Sketchup.active_model.active_path.is_a?(Array) && Sketchup.active_model.active_path.last == group ? ' (active)' : ''}"
-      group.edit_transform.to_a.each_slice(4) { |row| puts "#{''.rjust(level + 1, ' ')}#{row.map { |v| v.to_mm.round(6) }.join(' ')}" } if group.respond_to?(:edit_transform)
-      group.transformation.to_a.each_slice(4) { |row| puts "#{''.rjust(level + 1, ' ')}#{row.map { |v| v.to_mm.round(6) }.join(' ')}" } if group.respond_to?(:transformation)
-      group.entities.grep(Sketchup::Edge).each { |edge| puts "#{''.rjust(level, ' ')}edge.x = #{edge.start.position.x}" }
-      group.entities.grep(Sketchup::Edge).each { |edge| puts "#{''.rjust(level, ' ')}edge.x(t) = #{edge.start.position.transform(Sketchup.active_model.edit_transform.inverse).x}" } if Sketchup.active_model.edit_transform
-      group.entities.grep(Sketchup::Group).each { |sub_group| tr(sub_group, level + 1) }
-    end
+    # def tr(group = nil, level = 0)
+    #   if group.nil?
+    #     SKETCHUP_CONSOLE.clear
+    #     group = Sketchup.active_model
+    #   end
+    #   puts "#{''.rjust(level, ' ')}#{''.rjust(group.name.length, '-')}"
+    #   puts "#{''.rjust(level, ' ')}#{group.name}#{Sketchup.active_model.active_path.is_a?(Array) && Sketchup.active_model.active_path.last == group ? ' (active)' : ''}"
+    #   group.edit_transform.to_a.each_slice(4) { |row| puts "#{''.rjust(level + 1, ' ')}#{row.map { |v| v.to_mm.round(6) }.join(' ')}" } if group.respond_to?(:edit_transform)
+    #   group.transformation.to_a.each_slice(4) { |row| puts "#{''.rjust(level + 1, ' ')}#{row.map { |v| v.to_mm.round(6) }.join(' ')}" } if group.respond_to?(:transformation)
+    #   group.entities.grep(Sketchup::Edge).each { |edge| puts "#{''.rjust(level, ' ')}edge.x = #{edge.start.position.x}" }
+    #   group.entities.grep(Sketchup::Edge).each { |edge| puts "#{''.rjust(level, ' ')}edge.x(t) = #{edge.start.position.transform(Sketchup.active_model.edit_transform.inverse).x}" } if Sketchup.active_model.edit_transform
+    #   group.entities.grep(Sketchup::Group).each { |sub_group| tr(sub_group, level + 1) }
+    # end
 
     def run
       return { :errors => [ 'default.error' ] } unless @path.is_a?(Array)
@@ -121,9 +122,8 @@ module Ladb::OpenCutList
       else
 
         input_edge = @input_edge_path.nil? ? nil : @input_edge_path.last
-        input_transformation = PathUtils::get_transformation(@input_edge_path)
 
-        drawing_def.input_edge_manipulator = input_edge.is_a?(Sketchup::Edge) ? EdgeManipulator.new(input_edge, input_transformation) : nil
+        drawing_def.input_edge_manipulator = input_edge.is_a?(Sketchup::Edge) ? EdgeManipulator.new(input_edge, PathUtils::get_transformation(@input_edge_path)) : nil
 
         # Get transformed X axis and reverse it if transformation is flipped to keep a right hand oriented system
         x_axis = X_AXIS.transform(transformation).normalize
@@ -189,6 +189,10 @@ module Ladb::OpenCutList
               point, vector = edge_manipulator.line
               vector.perpendicular?(drawing_def.input_face_manipulator.normal) && point.on_plane?(drawing_def.input_face_manipulator.plane)
             }
+          when EDGE_VALIDATOR_STRAY
+            validator = lambda { |edge_manipulator|
+              edge_manipulator.edge.faces.empty?
+            }
           when EDGE_VALIDATOR_STRAY_COPLANAR
             validator = lambda { |edge_manipulator|
               if edge_manipulator.edge.faces.empty?
@@ -220,7 +224,7 @@ module Ladb::OpenCutList
 
       # STEP 4 : Customize origin
 
-      if @use_bounds_min_as_origin
+      if @use_bounds_min_as_origin 
 
         to = Geom::Transformation.translation(Geom::Vector3d.new(drawing_def.bounds.min.to_a))
         unless to.identity?
@@ -252,7 +256,37 @@ module Ladb::OpenCutList
 
         end
 
+      # elsif !Sketchup.active_model.edit_transform.identity? && Sketchup.active_model.active_path.last == drawing_element
+      #
+      #   te = Sketchup.active_model.edit_transform
+      #   tei = te.inverse
+      #
+      #   drawing_def.transformation *= te
+      #   drawing_def.input_face_manipulator.transformation = tei * drawing_def.input_face_manipulator.transformation unless drawing_def.input_face_manipulator.nil?
+      #   drawing_def.input_edge_manipulator.transformation = tei * drawing_def.input_edge_manipulator.transformation unless drawing_def.input_edge_manipulator.nil?
+      #
+      #   min = drawing_def.bounds.min.transform(tei)
+      #   max = drawing_def.bounds.max.transform(tei)
+      #   drawing_def.bounds.clear
+      #   drawing_def.bounds.add([ min, max ])
+      #
+      #   unless @ignore_faces
+      #     drawing_def.face_manipulators.each do |face_manipulator|
+      #       face_manipulator.transformation = tei * face_manipulator.transformation
+      #     end
+      #     drawing_def.surface_manipulators.each do |surface_manipulator|
+      #       surface_manipulator.transformation = tei * surface_manipulator.transformation
+      #     end
+      #   end
+      #   unless @ignore_edges
+      #     drawing_def.edge_manipulators.each do |edge_manipulator|
+      #       edge_manipulator.transformation = tei * edge_manipulator.transformation
+      #     end
+      #   end
+
       end
+
+      drawing_def.input_normal = drawing_def.input_face_manipulator.normal if drawing_def.input_face_manipulator
 
       drawing_def
     end
