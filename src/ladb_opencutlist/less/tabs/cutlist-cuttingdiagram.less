@@ -46,11 +46,11 @@
           fill: lighten(@ladb-brand-primary, 40%);
           filter: none;
         }
-        .part-shape {
+        .part-projection-shape {
           fill: lighten(@ladb-brand-primary, 10%);
           filter: none;
         }
-        .part-groove {
+        .part-projection-machining {
           fill: lighten(@ladb-brand-primary, 25%);
           filter: none;
         }
@@ -63,14 +63,16 @@
       .part-inner {
         fill: #eee;
       }
-      .part-shape {
-        fill: darken(#eee, 4%);
+      .part-projection-outer {
+        fill: #fff;
       }
-      .part-groove {
-        fill: darken(#eee, 2%);
+      .part-projection-shape {
+        fill: #eee;
+      }
+      .part-projection-machining {
+        fill: lighten(#eee, 3%);
       }
       .part-edge {
-        //fill: @ladb-material-type-4;
       }
       .part-number {
         fill: #000;
@@ -221,7 +223,7 @@
       .part-outer, .part-inner {
         fill: #fff;
       }
-      .part-shape, .part-groove {
+      .part-projection-shape, .part-projection-machining {
         fill: none;
         stroke: #ccc;
       }

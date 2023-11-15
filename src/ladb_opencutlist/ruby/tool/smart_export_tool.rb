@@ -80,7 +80,7 @@ module Ladb::OpenCutList
       {
         :action => ACTION_EXPORT_EDGES,
         :options => {
-          ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_DXF, ACTION_OPTION_FILE_FORMAT_SVG ],
+          ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_SVG, ACTION_OPTION_FILE_FORMAT_DXF ],
           ACTION_OPTION_UNIT => [ ACTION_OPTION_UNIT_MM, ACTION_OPTION_UNIT_CM, ACTION_OPTION_UNIT_IN ],
         }
       }
@@ -324,7 +324,14 @@ module Ladb::OpenCutList
 
           # Part 2D
 
+          local_x_axis = part.def.size.oriented_axis(X_AXIS)
+          local_y_axis = part.def.size.oriented_axis(Y_AXIS)
+          local_z_axis = part.def.size.oriented_axis(Z_AXIS)
+
           @active_drawing_def = CommonDrawingDecompositionWorker.new(@active_part_entity_path, {
+            'input_local_x_axis' => local_x_axis,
+            'input_local_y_axis' => local_y_axis,
+            'input_local_z_axis' => local_z_axis,
             'input_face_path' => @input_face_path,
             'input_edge_path' => @input_edge.nil? ? nil : @input_face_path + [ @input_edge ],
             'use_bounds_min_as_origin' => !fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR),

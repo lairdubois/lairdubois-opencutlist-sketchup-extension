@@ -12,27 +12,31 @@ module Ladb::OpenCutList
     ORIGIN_CORNER_TOP_RIGHT = 2
     ORIGIN_CORNER_BOTTOM_RIGHT = 3
 
+    PART_PROJECTION_NONE = 0
+    PART_PROJECTION_FRONT = 1
+    PART_PROJECTION_BACK = 2
+
     def initialize(settings, cutlist)
 
-      @group_id = settings.fetch('group_id')
+      @group_id = settings.fetch('group_id', nil)
       @part_ids = settings.fetch('part_ids', nil)
-      s_length, s_width = StringUtils.split_dxd(settings.fetch('std_sheet'))
+      s_length, s_width = StringUtils.split_dxd(settings.fetch('std_sheet', ''))
       @std_sheet_length = DimensionUtils.instance.str_to_ifloat(s_length).to_l.to_f
       @std_sheet_width = DimensionUtils.instance.str_to_ifloat(s_width).to_l.to_f
-      @scrap_sheet_sizes = DimensionUtils.instance.dxdxq_to_ifloats(settings.fetch('scrap_sheet_sizes'))
-      @saw_kerf = DimensionUtils.instance.str_to_ifloat(settings.fetch('saw_kerf')).to_l.to_f
-      @trimming = DimensionUtils.instance.str_to_ifloat(settings.fetch('trimming')).to_l.to_f
-      @optimization = settings.fetch('optimization')
-      @stacking = settings.fetch('stacking')
-      @sheet_folding = settings.fetch('sheet_folding')
-      @use_names = settings.fetch('use_names')
-      @full_width_diagram = settings.fetch('full_width_diagram')
-      @hide_part_list = settings.fetch('hide_part_list')
-      @hide_cross = settings.fetch('hide_cross')
-      @origin_corner = settings.fetch('origin_corner')
-      @highlight_primary_cuts = settings.fetch('highlight_primary_cuts')
-      @hide_edges_preview = settings.fetch('hide_edges_preview')
-      @hide_parts_preview = settings.fetch('hide_parts_preview')
+      @scrap_sheet_sizes = DimensionUtils.instance.dxdxq_to_ifloats(settings.fetch('scrap_sheet_sizes', ''))
+      @saw_kerf = DimensionUtils.instance.str_to_ifloat(settings.fetch('saw_kerf', 0)).to_l.to_f
+      @trimming = DimensionUtils.instance.str_to_ifloat(settings.fetch('trimming', 0)).to_l.to_f
+      @optimization = settings.fetch('optimization', BinPacking2D::OPT_MEDIUM)
+      @stacking = settings.fetch('stacking', BinPacking2D::STACKING_ALL)
+      @sheet_folding = settings.fetch('sheet_folding', true)
+      @use_names = settings.fetch('use_names', false)
+      @full_width_diagram = settings.fetch('full_width_diagram', false)
+      @hide_part_list = settings.fetch('hide_part_list', false)
+      @hide_cross = settings.fetch('hide_cross', false)
+      @origin_corner = settings.fetch('origin_corner', ORIGIN_CORNER_TOP_LEFT)
+      @highlight_primary_cuts = settings.fetch('highlight_primary_cuts', false)
+      @hide_edges_preview = settings.fetch('hide_edges_preview', true)
+      @part_projection = settings.fetch('part_projection', PART_PROJECTION_NONE)
 
       @cutlist = cutlist
 
@@ -167,7 +171,7 @@ module Ladb::OpenCutList
       cuttingdiagram2d_def.options_def.origin_corner = @origin_corner
       cuttingdiagram2d_def.options_def.highlight_primary_cuts = @highlight_primary_cuts
       cuttingdiagram2d_def.options_def.hide_edges_preview = @hide_edges_preview
-      cuttingdiagram2d_def.options_def.hide_parts_preview = @hide_parts_preview
+      cuttingdiagram2d_def.options_def.part_projection = @part_projection
 
       cuttingdiagram2d_def.errors += errors
 
@@ -273,7 +277,7 @@ module Ladb::OpenCutList
           end
 
           # Part is used : compute its projection if enabled
-          _compute_part_projection_def(cuttingdiagram2d_def, box.data) unless @hide_parts_preview
+          _compute_part_projection_def(cuttingdiagram2d_def, box.data) unless @part_projection == PART_PROJECTION_NONE
 
         }
 
@@ -374,7 +378,19 @@ module Ladb::OpenCutList
         instance_info = cutlist_part.def.get_one_instance_info
         unless instance_info.nil?
 
+          local_x_axis = cutlist_part.def.size.oriented_axis(X_AXIS)
+          local_y_axis = cutlist_part.def.size.oriented_axis(Y_AXIS)
+          local_z_axis = cutlist_part.def.size.oriented_axis(Z_AXIS)
+
+          if @part_projection == PART_PROJECTION_BACK
+            local_x_axis = local_x_axis.reverse
+            local_z_axis = local_z_axis.reverse
+          end
+
           drawing_def = CommonDrawingDecompositionWorker.new(instance_info.path, {
+            'input_local_x_axis' => local_x_axis,
+            'input_local_y_axis' => local_y_axis,
+            'input_local_z_axis' => local_z_axis,
             'use_bounds_min_as_origin' => true,
             'ignore_edges' => true
           }).run

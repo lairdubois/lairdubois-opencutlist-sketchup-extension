@@ -38,7 +38,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :px_saw_kerf, :saw_kerf, :trimming, :sheet_folding, :hide_part_list, :use_names, :full_width_diagram, :hide_cross, :origin_corner, :highlight_primary_cuts, :hide_edges_preview, :hide_parts_preview
+    attr_reader :px_saw_kerf, :saw_kerf, :trimming, :sheet_folding, :hide_part_list, :use_names, :full_width_diagram, :hide_cross, :origin_corner, :highlight_primary_cuts, :hide_edges_preview, :part_projection
 
     def initialize(_def)
       @_def = _def
@@ -56,7 +56,7 @@ module Ladb::OpenCutList
       @origin_corner = _def.origin_corner
       @highlight_primary_cuts = _def.highlight_primary_cuts
       @hide_edges_preview = _def.hide_edges_preview
-      @hide_parts_preview = _def.hide_parts_preview
+      @part_projection = _def.part_projection
 
     end
 

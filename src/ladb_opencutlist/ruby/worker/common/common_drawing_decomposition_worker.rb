@@ -28,6 +28,10 @@ module Ladb::OpenCutList
 
       @path = path
 
+      @input_local_x_axis = settings.fetch('input_local_x_axis', X_AXIS)
+      @input_local_y_axis = settings.fetch('input_local_y_axis', Y_AXIS)
+      @input_local_z_axis = settings.fetch('input_local_z_axis', Z_AXIS)
+
       @input_face_path = settings.fetch('input_face_path', nil)
       @input_edge_path = settings.fetch('input_edge_path', nil)
 
@@ -100,19 +104,19 @@ module Ladb::OpenCutList
 
         else
 
-          input_inner_transformation = PathUtils::get_transformation(@input_face_path - @path, Geom::Transformation.new)
+          input_inner_transformation = PathUtils::get_transformation(@input_face_path - @path, IDENTITY)
           input_inner_face_manipulator = FaceManipulator.new(input_face, input_inner_transformation)
 
-          if input_inner_face_manipulator.normal.parallel?(Z_AXIS) || input_inner_face_manipulator.normal.parallel?(Y_AXIS)
+          if input_inner_face_manipulator.normal.parallel?(@input_local_z_axis) || input_inner_face_manipulator.normal.parallel?(@input_local_y_axis)
             z_axis = drawing_def.input_face_manipulator.normal
-            x_axis = X_AXIS.transform(transformation)
+            x_axis = @input_local_x_axis.transform(transformation)
             x_axis.reverse! if TransformationUtils.flipped?(transformation)
-            y_axis = z_axis.cross(x_axis)
-          elsif input_inner_face_manipulator.normal.parallel?(X_AXIS)
+            y_axis = z_axis * x_axis
+          elsif input_inner_face_manipulator.normal.parallel?(@input_local_x_axis)
             z_axis = drawing_def.input_face_manipulator.normal
-            x_axis = Y_AXIS.transform(transformation)
+            x_axis = @input_local_y_axis.transform(transformation)
             x_axis.reverse! if TransformationUtils.flipped?(transformation)
-            y_axis = z_axis.cross(x_axis)
+            y_axis = z_axis * x_axis
           else
             x_axis, y_axis, z_axis, drawing_def.input_edge_manipulator = _get_input_axes(drawing_def.input_face_manipulator, nil)
           end
@@ -121,20 +125,19 @@ module Ladb::OpenCutList
 
       else
 
-        input_edge = @input_edge_path.nil? ? nil : @input_edge_path.last
+        # input_edge = @input_edge_path.nil? ? nil : @input_edge_path.last
+        #
+        # drawing_def.input_edge_manipulator = input_edge.is_a?(Sketchup::Edge) ? EdgeManipulator.new(input_edge, PathUtils::get_transformation(@input_edge_path)) : nil
 
-        drawing_def.input_edge_manipulator = input_edge.is_a?(Sketchup::Edge) ? EdgeManipulator.new(input_edge, PathUtils::get_transformation(@input_edge_path)) : nil
+        # Get transformed Z axis
+        z_axis = @input_local_z_axis.transform(transformation).normalize
 
-        # Get transformed X axis and reverse it if transformation is flipped to keep a right hand oriented system
-        x_axis = X_AXIS.transform(transformation).normalize
-        x_axis.reverse! if TransformationUtils.flipped?(transformation)
+        # Use transformed Y axis to determine YZ plane and compute X as perpendicular to this plane
+        y_axis = @input_local_y_axis.transform(transformation).normalize
+        yz_plane = Geom.fit_plane_to_points(ORIGIN, Geom::Point3d.new(y_axis.to_a), Geom::Point3d.new(z_axis.to_a))
+        x_axis = Geom::Vector3d.new(yz_plane[0..2])
 
-        # Use transformed Y axis to determine XY plane and compute Z as perpendicular to this plane
-        y_axis = Y_AXIS.transform(transformation).normalize
-        xy_plane = Geom.fit_plane_to_points(ORIGIN, Geom::Point3d.new(x_axis.to_a), Geom::Point3d.new(y_axis.to_a))
-        z_axis = Geom::Vector3d.new(xy_plane[0..2])
-
-        # Reset Y axis as cross product Z * X
+        # Reset Y axis as cross product Z * X and keep a real orthonormal system
         y_axis = z_axis * x_axis
 
       end

@@ -23,6 +23,6 @@
     "origin_corner": 0,       /* ORIGIN_CORNER_TOP_LEFT */
     "highlight_primary_cuts": false,
     "hide_edges_preview": true,
-    "hide_parts_preview": true
+    "part_projection": 0    /* PART_PROJECTION_NONE */
   }
 }

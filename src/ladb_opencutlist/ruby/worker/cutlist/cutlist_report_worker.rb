@@ -82,6 +82,7 @@ module Ladb::OpenCutList
           settings['group_id'] = cutlist_group.id
           settings['sheet_folding'] = false   # Remove unneeded computations
           settings['hide_part_list'] = true   # Remove unneeded computations
+          settings['part_projection'] = 0     # Remove unneeded computations
 
           std_sizes = material_attributes.std_sizes.split(';')
           if settings['std_sheet'] == '' || !std_sizes.include?(settings['std_sheet'])
