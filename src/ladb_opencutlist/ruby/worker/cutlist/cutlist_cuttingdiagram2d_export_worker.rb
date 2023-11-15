@@ -4,6 +4,7 @@ module Ladb::OpenCutList
   require_relative '../../helper/sanitizer_helper'
   require_relative '../../helper/dxf_writer_helper'
   require_relative '../../helper/svg_writer_helper'
+  require_relative '../../helper/pixel_converter_helper'
   require_relative '../../utils/color_utils'
 
   class CutlistCuttingdiagram2dExportWorker
@@ -11,6 +12,7 @@ module Ladb::OpenCutList
     include SanitizerHelper
     include DxfWriterHelper
     include SvgWriterHelper
+    include PixelConverterHelper
 
     LAYER_SHEET = 'OCL_SHEET'.freeze
     LAYER_PARTS = 'OCL_PARTS'.freeze
@@ -118,20 +120,23 @@ module Ladb::OpenCutList
         unless @parts_hidden
           sheet.parts.each do |part|
 
-            part_x = _convert(_to_inch(part.px_x), unit_converter)
-            part_y = _convert(_to_inch(sheet.px_width - part.px_y - part.px_width), unit_converter)
-            part_width = _convert(_to_inch(part.px_length), unit_converter)
-            part_height = _convert(_to_inch(part.px_width), unit_converter)
-
             projection_def = @cuttingdiagram2d.def.projection_defs[part.id]
             if projection_def.nil?
+
+              part_x = _convert(_to_inch(part.px_x), unit_converter)
+              part_y = _convert(_to_inch(sheet.px_width - part.px_y - part.px_width), unit_converter)
+              part_width = _convert(_to_inch(part.px_length), unit_converter)
+              part_height = _convert(_to_inch(part.px_width), unit_converter)
 
               _dxf_write_rect(file, part_x, part_y, part_width, part_height, LAYER_PARTS)
 
             else
 
-              part_x_offset = _convert(_to_inch(part.px_x_offset), unit_converter)
-              part_y_offset = _convert(_to_inch(part.px_y_offset), unit_converter)
+              part_x = _to_inch(part.px_x)
+              part_y = _to_inch(sheet.px_width - part.px_y - part.px_width)
+              part_x_offset = _to_inch(part.px_x_offset)
+              part_y_offset = _to_inch(part.px_y_offset)
+              part_width = _to_inch(part.px_length)
 
               if part.rotated
                 transformation = Geom::Transformation.translation(Geom::Vector3d.new(part_x + part_width - part_x_offset, part_y + part_y_offset))
@@ -143,7 +148,7 @@ module Ladb::OpenCutList
               projection_def.layer_defs.each do |layer_def|
 
                 layer_def.polygon_defs.each do |polygon_def|
-                  _dxf_write_polygon(file, polygon_def.points.map { |point| _convert_point(point, unit_converter).transform!(transformation) }, LAYER_PARTS)
+                  _dxf_write_polygon(file, polygon_def.points.map { |point| _convert_point(point.transform(transformation), unit_converter) }, LAYER_PARTS)
                 end
 
               end
@@ -227,20 +232,14 @@ module Ladb::OpenCutList
 
             id = @use_names ? part.name : part.number
 
-            part_x = _convert(_to_inch(part.px_x), unit_converter)
-            part_width = _convert(_to_inch(part.px_length), unit_converter)
-            part_height = _convert(_to_inch(part.px_width), unit_converter)
-
             projection_def = @cuttingdiagram2d.def.projection_defs[part.id]
             if projection_def.nil?
 
-              part_y = _convert(_to_inch(sheet.px_width - part.px_y - part.px_width), unit_converter)
-
               _svg_write_tag(file, 'rect', {
-                x: part_x,
-                y: part_y,
-                width: part_width,
-                height: part_height,
+                x: _convert(_to_inch(part.px_x), unit_converter),
+                y: _convert(_to_inch(sheet.px_width - part.px_y - part.px_width), unit_converter),
+                width: _convert(_to_inch(part.px_length), unit_converter),
+                height: _convert(_to_inch(part.px_width), unit_converter),
                 stroke: _svg_stroke_color(@parts_stroke_color, @parts_fill_color),
                 fill: _svg_fill_color(@parts_fill_color),
                 id: _svg_sanitize_id(id),
@@ -249,14 +248,15 @@ module Ladb::OpenCutList
 
             else
 
-              part_y = _convert(_to_inch(-part.px_y - part.px_width), unit_converter)
-
-              part_x_offset = _convert(_to_inch(part.px_x_offset), unit_converter)
-              part_y_offset = _convert(_to_inch(part.px_y_offset), unit_converter)
+              part_x = _to_inch(part.px_x)
+              part_y = _to_inch(-part.px_y - part.px_width)
+              part_x_offset = _to_inch(part.px_x_offset)
+              part_y_offset = _to_inch(part.px_y_offset)
+              part_length = _to_inch(part.px_length)
 
               transformation = Geom::Transformation.scaling(1,-1, 1)
               if part.rotated
-                transformation *= Geom::Transformation.translation(Geom::Vector3d.new(part_x + part_width - part_x_offset, part_y + part_y_offset))
+                transformation *= Geom::Transformation.translation(Geom::Vector3d.new(part_x + part_length - part_x_offset, part_y + part_y_offset))
                 transformation *= Geom::Transformation.rotation(ORIGIN, Z_AXIS , 90.degrees)
               else
                 transformation *= Geom::Transformation.translation(Geom::Vector3d.new(part_x + part_x_offset, part_y + part_y_offset))
@@ -270,10 +270,10 @@ module Ladb::OpenCutList
               projection_def.layer_defs.each do |layer_def|
 
                 fill_color = @parts_fill_color
-                fill_color = ColorUtils.color_to_hex(ColorUtils.color_lighten(Sketchup::Color.new(fill_color), 0.3)) if fill_color && layer_def.position != DrawingProjectionLayerDef::LAYER_POSITION_TOP
+                fill_color = ColorUtils.color_to_hex(ColorUtils.color_lighten(Sketchup::Color.new(fill_color), projection_def.max_depth > 0 ? (layer_def.depth / projection_def.max_depth) * 0.6 + 0.2 : 0.3)) if fill_color && layer_def.position != DrawingProjectionLayerDef::LAYER_POSITION_TOP
 
                 _svg_write_tag(file, 'path', {
-                  d: layer_def.polygon_defs.map { |polygon_def| "M #{polygon_def.points.map { |point| "#{_convert_point(point, unit_converter).transform(transformation).to_a[0..1].join(',')}" }.join(' L ')} Z" }.join(' '),
+                  d: layer_def.polygon_defs.map { |polygon_def| "M #{polygon_def.points.map { |point| "#{_convert_point(point.transform(transformation), unit_converter).to_a[0..1].join(',')}" }.join(' L ')} Z" }.join(' '),
                   stroke: _svg_stroke_color(@parts_stroke_color, fill_color),
                   fill: _svg_fill_color(fill_color),
                 })
@@ -342,7 +342,7 @@ module Ladb::OpenCutList
 
     end
 
-    def _convert(value, unit_converter, precision = 6)
+    def _convert(value, unit_converter, precision = 3)
       (value.to_f * unit_converter).round(precision)
     end
 
@@ -352,11 +352,6 @@ module Ladb::OpenCutList
       point.y = _convert(point.y, unit_converter, precision)
       point.z = _convert(point.z, unit_converter, precision)
       point
-    end
-
-    # Convert pixel float value to inch
-    def _to_inch(pixel_value)
-      pixel_value / 7 # 840px = 120" ~ 3m
     end
 
   end

@@ -2,11 +2,13 @@ module Ladb::OpenCutList
 
   require_relative '../../helper/def_helper'
   require_relative '../../helper/hashable_helper'
+  require_relative '../../helper/pixel_converter_helper'
 
   class Cuttingdiagram2d
 
     include DefHelper
     include HashableHelper
+    include PixelConverterHelper
 
     attr_reader :errors, :warnings, :tips, :unplaced_parts, :options, :summary, :sheets, :projections
 
@@ -22,7 +24,7 @@ module Ladb::OpenCutList
       @summary = _def.summary_def.create_summary
       @sheets = _def.sheet_defs.values.map { |sheet_def| sheet_def.create_sheet }.sort_by { |sheet| [ -sheet.type, -sheet.efficiency, -sheet.count ] }
 
-      @projections = _def.projection_defs.map { |part_id, projection_def| [ part_id, projection_def.layer_defs.map { |layer_def| "#{layer_def.polygon_defs.map { |polygon_def| "M #{polygon_def.points.map { |point| "#{point.x.to_f * 7},#{-point.y.to_f * 7}" }.join(' L ')} Z" }.join(' ')}" } ] }.to_h
+      @projections = _def.projection_defs.map { |part_id, projection_def| [ part_id, projection_def.layer_defs.map { |layer_def| "#{layer_def.polygon_defs.map { |polygon_def| "M #{polygon_def.points.map { |point| "#{_to_px(point.x)},#{-_to_px(point.y)}" }.join(' L ')} Z" }.join(' ')}" } ] }.to_h
 
     end
 

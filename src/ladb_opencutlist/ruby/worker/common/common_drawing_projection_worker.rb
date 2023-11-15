@@ -139,7 +139,7 @@ module Ladb::OpenCutList
 
       # Output
 
-      projection_def = DrawingProjectionDef.new
+      projection_def = DrawingProjectionDef.new(z_max)
 
       ld.each do |layer_def|
         next if layer_def[:paths].empty?

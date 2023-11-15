@@ -710,8 +710,8 @@ tab:
       option_hide_edges_preview_help: Permet d'afficher ou masquer l'indication visuel des chants à plaquer pour chaque pièce du diagramme.
       option_part_projection: Formes des pièces
       option_part_projection_0: Masquées
-      option_part_projection_1: Affichées en Vue Face
-      option_part_projection_2: Affichées en Vue Contre-Face
+      option_part_projection_1: Dessinées en Vue Face
+      option_part_projection_2: Dessinées en Vue Contre-Face
       option_part_projection_help: Permet d'afficher ou masquer la forme des pièces et leurs usinages sur le diagramme.
       option_saw_kerf: Épaisseur de lame de scie
       option_saw_kerf_help: Largeur de matière perdue par le trait de scie.

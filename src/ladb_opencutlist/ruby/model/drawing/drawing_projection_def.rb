@@ -2,9 +2,10 @@ module Ladb::OpenCutList
 
   class DrawingProjectionDef
 
-    attr_reader :layer_defs
+    attr_reader :max_depth, :layer_defs
 
-    def initialize
+    def initialize(max_depth = 0)
+      @max_depth = max_depth
       @layer_defs = []
     end
 

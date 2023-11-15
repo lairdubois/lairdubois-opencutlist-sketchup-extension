@@ -89,7 +89,7 @@ module Ladb::OpenCutList
       # Compute projection
       projection_def = CommonDrawingProjectionWorker.new(@drawing_def, {
         'down_to_top_union' => true,
-        'passthrough_holes' => true
+        'passthrough_holes' => false
       }).run
 
       # Open output file

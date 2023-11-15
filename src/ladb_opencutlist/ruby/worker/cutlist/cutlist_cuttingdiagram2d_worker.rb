@@ -4,8 +4,11 @@ module Ladb::OpenCutList
   require_relative '../../utils/dimension_utils'
   require_relative '../../model/geom/size2d'
   require_relative '../../model/cuttingdiagram/cuttingdiagram2d_def'
+  require_relative '../../helper/pixel_converter_helper'
 
   class CutlistCuttingdiagram2dWorker
+
+    include PixelConverterHelper
 
     ORIGIN_CORNER_TOP_LEFT = 0
     ORIGIN_CORNER_BOTTOM_LEFT = 1
@@ -365,11 +368,6 @@ module Ladb::OpenCutList
         else
           y
       end
-    end
-
-    # Convert inch float value to pixel
-    def _to_px(inch_value)
-      inch_value * 7 # 840px = 120" ~ 3m
     end
 
     def _compute_part_projection_def(cuttingdiagram2d_def, cutlist_part)
