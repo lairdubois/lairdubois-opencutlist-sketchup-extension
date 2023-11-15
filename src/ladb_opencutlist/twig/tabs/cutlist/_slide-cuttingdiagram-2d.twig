@@ -329,7 +329,7 @@
                                         <rect class="part-projection-outer" x="{{ part.px_x }}" y="{{ part.px_y }}" width="{{ part.px_length }}" height="{{ part.px_width }}"></rect>
                                         <g class="part-projection" transform="{% if part.rotated %}translate({{ part.px_x - part.px_x_offset + part.px_length }} {{ part.px_y - part.px_y_offset + part.px_width }}) rotate(-90 0 0){% else %}translate({{ part.px_x + part.px_x_offset }} {{ part.px_y - part.px_y_offset + part.px_width }}){% endif %}">
                                             {% for layer in projections[part.id] %}
-                                                <path class="part-projection-{% if loop.first %}shape{% else %}machining{% endif %}" d="{{ layer }}" />
+                                                <path class="part-projection-{% if loop.first %}shape{% else %}machining{% endif %}" d="{{ layer.path }}" />
                                             {% endfor %}
                                         </g>
                                     {% else %}

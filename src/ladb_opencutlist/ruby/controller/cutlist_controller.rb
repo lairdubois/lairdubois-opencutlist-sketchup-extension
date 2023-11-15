@@ -282,8 +282,6 @@ module Ladb::OpenCutList
     end
 
     def cuttingdiagram2d_export_command(settings)
-      return { :errors => [ 'default.error' ] } unless @cuttingdiagram2d
-
       require_relative '../worker/cutlist/cutlist_cuttingdiagram2d_export_worker'
 
       # Setup worker

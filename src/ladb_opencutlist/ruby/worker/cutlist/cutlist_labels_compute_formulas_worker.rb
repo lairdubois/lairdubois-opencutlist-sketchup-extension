@@ -6,8 +6,8 @@ module Ladb::OpenCutList
 
     def initialize(settings, cutlist)
 
-      @part_infos = settings.fetch('part_infos', nil)
-      @layout = settings.fetch('layout', nil)
+      @part_infos = settings.fetch('part_infos', [])
+      @layout = settings.fetch('layout', [])
 
       @cutlist = cutlist
 
