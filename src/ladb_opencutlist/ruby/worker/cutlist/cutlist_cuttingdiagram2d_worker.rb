@@ -198,8 +198,8 @@ module Ladb::OpenCutList
       end
 
       # Material oversizes
-      cuttingdiagram2d_def.px_length_increase = _to_px(material_attributes.l_length_increase)
-      cuttingdiagram2d_def.px_width_increase = _to_px(material_attributes.l_width_increase)
+      part_x_offset = material_attributes.l_length_increase / 2
+      part_y_offset = material_attributes.l_width_increase / 2
 
       # Unplaced boxes
       result.unplaced_boxes.each { |box|
@@ -260,6 +260,8 @@ module Ladb::OpenCutList
           part_def = Cuttingdiagram2dPartDef.new(box.data)
           part_def.px_x = _to_px(_compute_x_with_origin_corner(@origin_corner, box.x_pos, box.length, bin.length))
           part_def.px_y = _to_px(_compute_y_with_origin_corner(@origin_corner, box.y_pos, box.width, bin.width))
+          part_def.px_x_offset = _to_px(box.rotated ? part_y_offset : part_x_offset)
+          part_def.px_y_offset = _to_px(box.rotated ? part_x_offset : part_y_offset)
           part_def.px_length = _to_px(box.length)
           part_def.px_width = _to_px(box.width)
           part_def.rotated = box.rotated
@@ -396,7 +398,9 @@ module Ladb::OpenCutList
           }).run
           if drawing_def.is_a?(DrawingDef)
 
-            projection_def = CommonDrawingProjectionWorker.new(drawing_def, {}).run
+            projection_def = CommonDrawingProjectionWorker.new(drawing_def, {
+              'down_to_top_union' => true
+            }).run
             if projection_def.is_a?(DrawingProjectionDef)
 
               cuttingdiagram2d_def.projection_defs[cutlist_part.id] = projection_def

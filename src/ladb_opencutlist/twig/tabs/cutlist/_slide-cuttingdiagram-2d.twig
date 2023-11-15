@@ -17,8 +17,6 @@
 {% set partOutlineWidth = 2 %}
 {% set cutOutlineWidth = 2 %}
 {% set edgeWidth = 2 %}
-{% set shapeOffsetX = px_length_increase / 2 %}
-{% set shapeOffsetY = px_width_increase / 2 %}
 
 {% set showCuttingDimensions = group.show_cutting_dimensions %}
 {% set showEdges = group.show_edges and not generateOptions.hide_edges %}
@@ -328,7 +326,7 @@
                                 <g class="part" data-part-id="{{ part.id }}" data-toggle="tooltip" data-html="true" title="{{ fn.part_tooltip(part) }}">
                                     {% if projections[part.id] %}
                                         <rect class="part-projection-outer" x="{{ part.px_x }}" y="{{ part.px_y }}" width="{{ part.px_length }}" height="{{ part.px_width }}"></rect>
-                                        <g class="part-projection" transform="{% if part.rotated %}translate({{ part.px_x - shapeOffsetY + part.px_length }} {{ part.px_y - shapeOffsetX + part.px_width }}) rotate(-90 0 0){% else %}translate({{ part.px_x + shapeOffsetX }} {{ part.px_y - shapeOffsetY + part.px_width }}){% endif %}">
+                                        <g class="part-projection" transform="{% if part.rotated %}translate({{ part.px_x - part.px_x_offset + part.px_length }} {{ part.px_y - part.px_y_offset + part.px_width }}) rotate(-90 0 0){% else %}translate({{ part.px_x + part.px_x_offset }} {{ part.px_y - part.px_y_offset + part.px_width }}){% endif %}">
                                             {% for layer in projections[part.id] %}
                                                 <path class="part-projection-{% if loop.first %}shape{% else %}machining{% endif %}" d="{{ layer }}" />
                                             {% endfor %}

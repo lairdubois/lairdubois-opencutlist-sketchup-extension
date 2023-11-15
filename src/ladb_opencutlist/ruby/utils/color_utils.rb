@@ -3,6 +3,7 @@ module Ladb::OpenCutList
   class ColorUtils
 
     COLOR_BLACK = Sketchup::Color.new.freeze
+    COLOR_WHITE = Sketchup::Color.new(255, 255, 255).freeze
 
     def self.color_relative_luminance(color)
       return 0 unless color.is_a?(Sketchup::Color)
@@ -17,6 +18,12 @@ module Ladb::OpenCutList
       return color unless color.is_a?(Sketchup::Color)
       return color unless amount.is_a?(Float)
       color.blend(COLOR_BLACK, 1.0 - [ 1, [ 0, amount ].max ].min)
+    end
+
+    def self.color_lighten(color, amount = 0.2)
+      return color unless color.is_a?(Sketchup::Color)
+      return color unless amount.is_a?(Float)
+      color.blend(COLOR_WHITE, 1.0 - [ 1, [ 0, amount ].max ].min)
     end
 
     def self.color_visible_over_white(color, luminance_threshold = 0.6, dark_amount = 0.2)

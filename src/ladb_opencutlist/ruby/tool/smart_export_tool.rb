@@ -358,9 +358,9 @@ module Ladb::OpenCutList
                 segments = Kuix::Segments.new
                 segments.add_segments(polygon_def.segments)
                 case layer_def.position
-                when CommonDrawingProjectionWorker::LAYER_POSITION_TOP
+                when DrawingProjectionLayerDef::LAYER_POSITION_TOP
                   segments.color = Kuix::COLOR_BLUE
-                when CommonDrawingProjectionWorker::LAYER_POSITION_BOTTOM
+                when DrawingProjectionLayerDef::LAYER_POSITION_BOTTOM
                   segments.color = Kuix::COLOR_RED
                 else
                   segments.color = Kuix::COLOR_BLUE.blend(Kuix::COLOR_WHITE, 0.5)

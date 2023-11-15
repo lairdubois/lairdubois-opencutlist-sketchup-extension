@@ -12,6 +12,10 @@ module Ladb::OpenCutList
 
   class DrawingProjectionLayerDef
 
+    LAYER_POSITION_TOP = 0
+    LAYER_POSITION_INSIDE = 1
+    LAYER_POSITION_BOTTOM = 2
+
     attr_reader :depth, :position, :polygon_defs
 
     def initialize(position, depth, polygon_defs)

@@ -8,7 +8,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :errors, :warnings, :tips, :unplaced_parts, :options, :summary, :sheets, :px_length_increase, :px_width_increase, :projections
+    attr_reader :errors, :warnings, :tips, :unplaced_parts, :options, :summary, :sheets, :projections
 
     def initialize(_def)
       @_def = _def
@@ -21,9 +21,6 @@ module Ladb::OpenCutList
       @options = _def.options_def.create_options
       @summary = _def.summary_def.create_summary
       @sheets = _def.sheet_defs.values.map { |sheet_def| sheet_def.create_sheet }.sort_by { |sheet| [ -sheet.type, -sheet.efficiency, -sheet.count ] }
-
-      @px_length_increase = _def.px_length_increase
-      @px_width_increase = _def.px_width_increase
 
       @projections = _def.projection_defs.map { |part_id, projection_def| [ part_id, projection_def.layer_defs.map { |layer_def| "#{layer_def.polygon_defs.map { |polygon_def| "M #{polygon_def.points.map { |point| "#{point.x.to_f * 7},#{-point.y.to_f * 7}" }.join(' L ')} Z" }.join(' ')}" } ] }.to_h
 
@@ -150,7 +147,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :id, :number, :name, :cutting_length, :cutting_width, :edge_count, :edge_material_names, :edge_material_colors, :edge_std_dimensions, :face_count, :face_material_names, :face_material_colors, :face_std_dimensions, :px_x, :px_y, :px_length, :px_width, :rotated
+    attr_reader :id, :number, :name, :cutting_length, :cutting_width, :edge_count, :edge_material_names, :edge_material_colors, :edge_std_dimensions, :face_count, :face_material_names, :face_material_colors, :face_std_dimensions, :px_x, :px_y, :px_x_offset, :px_y_offset, :px_length, :px_width, :rotated
 
     def initialize(_def)
       @_def = _def
@@ -171,6 +168,8 @@ module Ladb::OpenCutList
 
       @px_x = _def.px_x
       @px_y = _def.px_y
+      @px_x_offset = _def.px_x_offset
+      @px_y_offset = _def.px_y_offset
       @px_length = _def.px_length
       @px_width = _def.px_width
       @rotated = _def.rotated

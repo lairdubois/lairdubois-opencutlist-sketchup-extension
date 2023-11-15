@@ -4,7 +4,7 @@ module Ladb::OpenCutList
 
   class Cuttingdiagram2dDef
 
-    attr_accessor :group, :errors, :warnings, :tips, :unplaced_part_defs, :options_def, :summary_def, :sheet_defs, :px_length_increase, :px_width_increase, :projection_defs
+    attr_accessor :group, :errors, :warnings, :tips, :unplaced_part_defs, :options_def, :summary_def, :sheet_defs, :projection_defs
 
     def initialize(group, errors = [])
       @group = group
@@ -17,9 +17,6 @@ module Ladb::OpenCutList
       @options_def = Cuttingdiagram2dOptionsDef.new
       @summary_def = Cuttingdiagram2dSummaryDef.new
       @sheet_defs = {}
-
-      @px_length_increase = 0
-      @px_width_increase = 0
 
       @projection_defs = {} # Key = part ID
 
@@ -160,7 +157,7 @@ module Ladb::OpenCutList
 
   class Cuttingdiagram2dPartDef
 
-    attr_accessor :px_x, :px_y, :px_length, :px_width, :rotated
+    attr_accessor :px_x, :px_y, :px_x_offset, :px_y_offset, :px_length, :px_width, :rotated
     attr_reader :cutlist_part
 
     def initialize(cutlist_part)
@@ -168,6 +165,8 @@ module Ladb::OpenCutList
 
       @px_x = 0
       @px_y = 0
+      @px_x_offset = 0
+      @px_y_offset = 0
       @px_length = 0
       @px_width = 0
       @rotated = false

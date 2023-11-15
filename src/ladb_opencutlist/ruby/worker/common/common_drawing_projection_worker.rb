@@ -9,10 +9,6 @@ module Ladb::OpenCutList
 
     MINIMAL_PATH_AREA = 1e-6
 
-    LAYER_POSITION_TOP = 0
-    LAYER_POSITION_INSIDE = 1
-    LAYER_POSITION_BOTTOM = 2
-
     def initialize(drawing_def, settings = {})
 
       @drawing_def = drawing_def
@@ -63,12 +59,12 @@ module Ladb::OpenCutList
       end
 
       top_layer_def = {
-        :position => LAYER_POSITION_TOP,
+        :position => DrawingProjectionLayerDef::LAYER_POSITION_TOP,
         :depth => depth_top,
         :paths => []
       }
       bottom_layer_def = {
-        :position => LAYER_POSITION_BOTTOM,
+        :position => DrawingProjectionLayerDef::LAYER_POSITION_BOTTOM,
         :depth => depth_bottom,
         :paths => []
       }
@@ -84,7 +80,7 @@ module Ladb::OpenCutList
         layer_def = layer_defs[face_def[:depth]]
         if layer_def.nil?
           layer_def = {
-            :position => LAYER_POSITION_INSIDE,
+            :position => DrawingProjectionLayerDef::LAYER_POSITION_INSIDE,
             :depth => face_def[:depth],
             :paths => f_paths
           }

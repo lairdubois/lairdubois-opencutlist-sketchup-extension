@@ -221,13 +221,13 @@ module Ladb::OpenCutList
 
           projection_def.layer_defs.each do |layer_def|
 
-            if layer_def.position == CommonDrawingProjectionWorker::LAYER_POSITION_TOP
+            if layer_def.position == DrawingProjectionLayerDef::LAYER_POSITION_TOP
               attributes = {
                 fill: '#000000',
                 'shaper:cutType': 'outside'
               }
               attributes.merge!({ 'shaper:cutDepth': "#{_convert(@drawing_def.bounds.depth, unit_converter)}#{unit_sign}" }) if @drawing_def.bounds.depth > 0
-            elsif layer_def.position == CommonDrawingProjectionWorker::LAYER_POSITION_BOTTOM
+            elsif layer_def.position == DrawingProjectionLayerDef::LAYER_POSITION_BOTTOM
               attributes = {
                 stroke: '#000000',
                 'stroke-with': '0.1mm',
