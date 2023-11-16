@@ -714,7 +714,7 @@ tab:
       option_part_projection_2: Dessinées en Vue Contre-Face
       option_part_projection_help: |
         Permet d'afficher ou masquer la forme réelle des pièces ainsi que leurs usinages sur le diagramme.
-        
+
         *Cette option doit être activée pour que les formes puissent être exportées.*
       option_saw_kerf: Épaisseur de lame de scie
       option_saw_kerf_help: Largeur de matière perdue par le trait de scie.
@@ -1530,7 +1530,7 @@ tool:
     action_2: Exporter une face
     action_2_status: Cliquez sur une face
     action_3: Exporter un tracé
-    action_3_status: Cliquez sur une arrête
+    action_3_status: Cliquez sur une arête
     action_option_group_0: Format
     action_option_group_1: Unité
     action_option_group_2: Faces
