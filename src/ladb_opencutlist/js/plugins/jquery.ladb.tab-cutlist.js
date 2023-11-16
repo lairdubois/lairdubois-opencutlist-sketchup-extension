@@ -3165,7 +3165,11 @@
                                         $btnExport.on('click', function () {
 
                                             // Show Objective modal
-                                            that.dialog.executeCommandOnTab('sponsor', 'show_objective_modal', { objectiveStrippedName: 'cuttingdiagram_export', objectiveIcon: 'cuttingdiagram2d' }, null, true);
+                                            that.dialog.executeCommandOnTab('sponsor', 'show_objective_modal', {
+                                                objectiveStrippedName: 'cuttingdiagram_export',
+                                                objectiveIcon: 'cuttingdiagram1d',
+                                                objectiveImage: 'sponsor-objective-layout.png',
+                                            }, null, true);
 
                                         });
                                         $btnLabels.on('click', function () {
@@ -3496,7 +3500,11 @@
                                         $btnExport.on('click', function () {
 
                                             // Show Objective modal
-                                            that.dialog.executeCommandOnTab('sponsor', 'show_objective_modal', { objectiveStrippedName: 'cuttingdiagram_export', objectiveIcon: 'cuttingdiagram2d' }, null, true);
+                                            that.dialog.executeCommandOnTab('sponsor', 'show_objective_modal', {
+                                                objectiveStrippedName: 'cuttingdiagram_export',
+                                                objectiveIcon: 'cuttingdiagram2d',
+                                                objectiveImage: 'sponsor-objective-layout.png',
+                                            }, null, true);
 
                                         });
                                         $btnLabels.on('click', function () {
