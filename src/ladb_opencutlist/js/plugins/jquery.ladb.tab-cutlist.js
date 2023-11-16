@@ -3168,7 +3168,7 @@
                                             that.dialog.executeCommandOnTab('sponsor', 'show_objective_modal', {
                                                 objectiveStrippedName: 'cuttingdiagram_export',
                                                 objectiveIcon: 'cuttingdiagram1d',
-                                                objectiveImage: 'sponsor-objective-layout.png',
+                                                objectiveImage: 'sponsor-objective-export.png',
                                             }, null, true);
 
                                         });
@@ -3503,7 +3503,7 @@
                                             that.dialog.executeCommandOnTab('sponsor', 'show_objective_modal', {
                                                 objectiveStrippedName: 'cuttingdiagram_export',
                                                 objectiveIcon: 'cuttingdiagram2d',
-                                                objectiveImage: 'sponsor-objective-layout.png',
+                                                objectiveImage: 'sponsor-objective-export.png',
                                             }, null, true);
 
                                         });
