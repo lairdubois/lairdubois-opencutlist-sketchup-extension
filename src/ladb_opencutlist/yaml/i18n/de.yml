@@ -1523,14 +1523,14 @@ tool:
       not_orientable: Der Typ dieses Teils lässt keine Orientierung zu
   smart_export:
     title: Export
-    action_0: 3D Teil exportieren
-    action_0_status: Auf Teil klicken
-    action_1: 2D Teil exportieren
-    action_1_status: Auf Fläche eines Teils klicken
-    action_2: Fläche exportieren
-    action_2_status: Auf Fläche klicken
-    action_3: Pfad exportieren
-    action_3_status: Auf Kante klicken
+    action_1: 3D Teil exportieren
+    action_1_status: Auf Teil klicken
+    action_2: 2D Teil exportieren
+    action_2_status: Auf Fläche eines Teils klicken
+    action_3: Fläche exportieren
+    action_3_status: Auf Fläche klicken
+    action_4: Pfad exportieren
+    action_4_status: Auf Kante klicken
     action_option_group_0: Format
     action_option_group_1: Einheit
     action_option_group_2: Flächen

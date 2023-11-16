@@ -23,10 +23,10 @@ module Ladb::OpenCutList
     include EdgeSegmentsHelper
     include EntitiesHelper
 
-    ACTION_EXPORT_PART_3D = 0
-    ACTION_EXPORT_PART_2D = 1
-    ACTION_EXPORT_FACE = 2
-    ACTION_EXPORT_EDGES = 3
+    ACTION_EXPORT_PART_3D = 1
+    ACTION_EXPORT_PART_2D = 2
+    ACTION_EXPORT_FACE = 3
+    ACTION_EXPORT_EDGES = 4
 
     ACTION_OPTION_FILE_FORMAT = 0
     ACTION_OPTION_UNIT = 1

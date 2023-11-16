@@ -16,7 +16,15 @@
             <tr><th class="ladb-preset-dictionary-row">{{ ('core.preset.dictionary.'~dictionary)|i18next }}</th></tr>
             {% for section in presets[dictionary]|keys|sort %}
                 {% if section != 0 %}
-                    <tr><th class="ladb-preset-section-row">{% if dictionary == 'materials_material_attributes' %}{{ ('tab.materials.type_'~section)|i18next }}{% else %}{{ section }}{% endif %}</th></tr>
+                    <tr><th class="ladb-preset-section-row">
+                        {% if dictionary == 'materials_material_attributes' %}
+                            {{ ('tab.materials.type_'~section)|i18next }}
+                        {% elseif dictionary == 'tool_smart_export_options' %}
+                            {{ ('tool.smart_export.action_'~section)|i18next }}
+                        {% else %}
+                            {{ section }}
+                        {% endif %}
+                    </th></tr>
                 {% endif %}
                 {% for name in presets[dictionary][section]|keys|sort %}
                     <tr><td class="ladb-preset-row selected " data-path="{{ dictionary }}|{{ section }}|{{ name|escape('html') }}">
