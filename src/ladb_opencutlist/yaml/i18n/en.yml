@@ -708,6 +708,14 @@ tab:
       option_hide_edges_preview_0: Displayed in the cutting diagram
       option_hide_edges_preview_1: Hidden in the cutting diagram
       option_hide_edges_preview_help: Allows you to show or hide the visual display of the edge bands for each part in the cutting diagram.
+      option_part_projection: Shape of parts
+      option_part_projection_0: Hidden
+      option_part_projection_1: Displaying front face
+      option_part_projection_2: Displaying back face
+      option_part_projection_help: |
+        Shows or hides the actual shape of parts and their machining on the diagram.
+
+        **This option must be enabled for shapes to be exported.*
       option_saw_kerf: Blade Thickness
       option_saw_kerf_help: The width of material removed by the sawblade cut.
       option_trimming: Trimming Size
@@ -1521,6 +1529,8 @@ tool:
     action_1_status: Click on the face of a part
     action_2: Export a face
     action_2_status: Click on a face
+    action_3: Export a path
+    action_3_status: Click on an edge
     action_option_group_0: Format
     action_option_group_1: Unit
     action_option_group_2: Faces
@@ -1542,5 +1552,5 @@ tool:
     success:
       exported_to: "Successful export to {{ export_path }}."
     error:
-      not_part: The target object is not a part
-      not_flat_face: The target surface is not planar
+      not_part: This surface does not belong to a part
+      not_flat_face: This surface is not planar

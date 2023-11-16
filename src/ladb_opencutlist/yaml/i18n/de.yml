@@ -708,6 +708,14 @@ tab:
       option_hide_edges_preview_0: Im Schnittplan angezeigt
       option_hide_edges_preview_1: Im Schnittplan ausgeblendet
       option_hide_edges_preview_help: Ermöglicht das Ein- oder Ausblenden der visuellen Anzeige der Kantenbänder für jedes Teil im Schnittplan.
+      option_part_projection: Formen der Teile
+      option_part_projection_0: Ausgeblendet
+      option_part_projection_1: Vorderansicht
+      option_part_projection_2: Rückseite
+      option_part_projection_help: |
+        Ermöglicht es, die tatsächliche Form der Teile sowie ihre Bearbeitungen im Diagramm ein- oder auszublenden.
+
+        *Diese Option muss aktiviert sein, damit die Formen exportiert werden können.*
       option_saw_kerf: Sägeblattdicke
       option_saw_kerf_help: Breite des Materialverlustes durch die Sägeschnittfuge.
       option_trimming: Randabfallbreite
@@ -1521,6 +1529,8 @@ tool:
     action_1_status: Auf Fläche eines Teils klicken
     action_2: Fläche exportieren
     action_2_status: Auf Fläche klicken
+    action_3: Pfad exportieren
+    action_3_status: Auf Kante klicken
     action_option_group_0: Format
     action_option_group_1: Einheit
     action_option_group_2: Flächen
@@ -1542,5 +1552,5 @@ tool:
     success:
       exported_to: "Erfolgreicher Export nach {{ export_path }}."
     error:
-      not_part: Das Zielobjekt ist kein Teil
-      not_flat_face: Die Zielfläche ist nicht eben
+      not_part: Diese Fläche gehört nicht zu einem Teil
+      not_flat_face: Diese Fläche ist nicht eben
