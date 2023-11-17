@@ -24,6 +24,7 @@ module Ladb::OpenCutList
     def initialize(settings, cutlist, cuttingdiagram2d)
 
       @file_format = settings.fetch('file_format', nil)
+      @smoothing = settings.fetch('smoothing', false)
       @sheet_hidden = settings.fetch('sheet_hidden', false)
       @sheet_stroke_color = settings.fetch('sheet_stroke_color', nil)
       @sheet_fill_color = settings.fetch('sheet_fill_color', nil)
@@ -97,10 +98,15 @@ module Ladb::OpenCutList
       case @file_format
       when FILE_FORMAT_DXF
 
-        unit_converter = DimensionUtils.instance.length_to_model_unit_float(1.0.to_l)
+        unit_transformation = _dxf_get_unit_transformation(DimensionUtils.instance.length_unit)
 
-        sheet_width = _convert(_to_inch(sheet.px_length), unit_converter)
-        sheet_height = _convert(_to_inch(sheet.px_width), unit_converter)
+        sheet_size = Geom::Point3d.new(
+          _to_inch(sheet.px_length),
+          _to_inch(sheet.px_width)
+        ).transform(unit_transformation)
+
+        sheet_width = sheet_size.x.to_f
+        sheet_height = sheet_size.y.to_f
 
         layer_defs = []
         layer_defs.push({ :name => LAYER_SHEET, :color => 150 }) unless @sheet_hidden
@@ -123,10 +129,19 @@ module Ladb::OpenCutList
             projection_def = @cuttingdiagram2d.def.projection_defs[part.id]
             if projection_def.nil?
 
-              part_x = _convert(_to_inch(part.px_x), unit_converter)
-              part_y = _convert(_to_inch(sheet.px_width - part.px_y - part.px_width), unit_converter)
-              part_width = _convert(_to_inch(part.px_length), unit_converter)
-              part_height = _convert(_to_inch(part.px_width), unit_converter)
+              position = Geom::Point3d.new(
+                _to_inch(part.px_x),
+                _to_inch(sheet.px_width - part.px_y - part.px_width)
+              ).transform(unit_transformation)
+              size = Geom::Point3d.new(
+                _to_inch(part.px_length),
+                _to_inch(part.px_width)
+              ).transform(unit_transformation)
+
+              part_x = position.x.to_f
+              part_y = position.y.to_f
+              part_width = size.x.to_f
+              part_height = size.y.to_f
 
               _dxf_write_rect(file, part_x, part_y, part_width, part_height, LAYER_PARTS)
 
@@ -138,20 +153,15 @@ module Ladb::OpenCutList
               part_y_offset = _to_inch(part.px_y_offset)
               part_width = _to_inch(part.px_length)
 
+              transformation = unit_transformation
               if part.rotated
-                transformation = Geom::Transformation.translation(Geom::Vector3d.new(part_x + part_width - part_x_offset, part_y + part_y_offset))
+                transformation *= Geom::Transformation.translation(Geom::Vector3d.new(part_x + part_width - part_x_offset, part_y + part_y_offset))
                 transformation *= Geom::Transformation.rotation(ORIGIN, Z_AXIS , 90.degrees)
               else
-                transformation = Geom::Transformation.translation(Geom::Vector3d.new(part_x + part_x_offset, part_y + part_y_offset))
+                transformation *= Geom::Transformation.translation(Geom::Vector3d.new(part_x + part_x_offset, part_y + part_y_offset))
               end
 
-              projection_def.layer_defs.each do |layer_def|
-
-                layer_def.polygon_defs.each do |polygon_def|
-                  _dxf_write_polygon(file, polygon_def.points.map { |point| _convert_point(point.transform(transformation), unit_converter) }, LAYER_PARTS)
-                end
-
-              end
+              _dxf_write_projection_def(file, projection_def, @smoothing, transformation, LAYER_PARTS)
 
             end
           end
@@ -160,10 +170,19 @@ module Ladb::OpenCutList
         unless @leftovers_hidden
           sheet.leftovers.each do |leftover|
 
-            leftover_x = _convert(_to_inch(leftover.px_x), unit_converter)
-            leftover_y = _convert(_to_inch(sheet.px_width - leftover.px_y - leftover.px_width), unit_converter)
-            leftover_width = _convert(_to_inch(leftover.px_length), unit_converter)
-            leftover_height = _convert(_to_inch(leftover.px_width), unit_converter)
+            position = Geom::Point3d.new(
+              _to_inch(leftover.px_x),
+              _to_inch(sheet.px_width - leftover.px_y - leftover.px_width)
+            ).transform(unit_transformation)
+            size = Geom::Point3d.new(
+              _to_inch(leftover.px_length),
+              _to_inch(leftover.px_width)
+            ).transform(unit_transformation)
+
+            leftover_x = position.x.to_f
+            leftover_y = position.y.to_f
+            leftover_width = size.x.to_f
+            leftover_height = size.y.to_f
 
             _dxf_write_rect(file, leftover_x, leftover_y, leftover_width, leftover_height, LAYER_LEFTOVERS)
 
@@ -173,10 +192,19 @@ module Ladb::OpenCutList
         unless @cuts_hidden
           sheet.cuts.each do |cut|
 
-            cut_x1 = _convert(_to_inch(cut.px_x), unit_converter)
-            cut_y1 = _convert(_to_inch(sheet.px_width - cut.px_y), unit_converter)
-            cut_x2 = _convert(_to_inch(cut.px_x + (cut.is_horizontal ? cut.px_length : 0)), unit_converter)
-            cut_y2 = _convert(_to_inch(sheet.px_width - cut.px_y - (!cut.is_horizontal ? cut.px_length : 0)), unit_converter)
+            position1 = Geom::Point3d.new(
+              _to_inch(cut.px_x),
+              _to_inch(sheet.px_width - cut.px_y)
+            ).transform(unit_transformation)
+            position2 = Geom::Point3d.new(
+              _to_inch(cut.px_x + (cut.is_horizontal ? cut.px_length : 0)),
+              _to_inch(sheet.px_width - cut.px_y - (!cut.is_horizontal ? cut.px_length : 0))
+            ).transform(unit_transformation)
+
+            cut_x1 = position1.x.to_f
+            cut_y1 = position1.y.to_f
+            cut_x2 = position2.x.to_f
+            cut_y2 = position2.y.to_f
 
             _dxf_write_line(file, cut_x1, cut_y1, cut_x2, cut_y2, LAYER_CUTS)
 
@@ -189,21 +217,15 @@ module Ladb::OpenCutList
 
       when FILE_FORMAT_SVG
 
-        # Tweak unit converter to restrict to SVG compatible units (in, mm, cm)
-        case DimensionUtils.instance.length_unit
-        when DimensionUtils::INCHES
-          unit_converter = 1.0
-          unit_sign = 'in'
-        when DimensionUtils::CENTIMETER
-          unit_converter = 1.0.to_cm
-          unit_sign = 'cm'
-        else
-          unit_converter = 1.0.to_mm
-          unit_sign = 'mm'
-        end
+        unit_sign, unit_transformation = _svg_get_unit_sign_and_transformation(DimensionUtils.instance.length_unit)
 
-        sheet_width = _convert(_to_inch(sheet.px_length), unit_converter)
-        sheet_height = _convert(_to_inch(sheet.px_width), unit_converter)
+        size = Geom::Point3d.new(
+          _to_inch(sheet.px_length),
+          _to_inch(sheet.px_width)
+        ).transform(unit_transformation)
+
+        sheet_width = _svg_value(size.x)
+        sheet_height = _svg_value(size.y)
 
         _svg_write_start(file, 0, 0, sheet_width, sheet_height, unit_sign)
 
@@ -235,11 +257,20 @@ module Ladb::OpenCutList
             projection_def = @cuttingdiagram2d.def.projection_defs[part.id]
             if projection_def.nil?
 
+              position = Geom::Point3d.new(
+                _to_inch(part.px_x),
+                _to_inch(part.px_y)
+              ).transform(unit_transformation)
+              size = Geom::Point3d.new(
+                _to_inch(part.px_length),
+                _to_inch(part.px_width)
+              ).transform(unit_transformation)
+
               _svg_write_tag(file, 'rect', {
-                x: _convert(_to_inch(part.px_x), unit_converter),
-                y: _convert(_to_inch(sheet.px_width - part.px_y - part.px_width), unit_converter),
-                width: _convert(_to_inch(part.px_length), unit_converter),
-                height: _convert(_to_inch(part.px_width), unit_converter),
+                x: _svg_value(position.x),
+                y: _svg_value(position.y),
+                width: _svg_value(size.x),
+                height: _svg_value(size.y),
                 stroke: _svg_stroke_color(@parts_stroke_color, @parts_fill_color),
                 fill: _svg_fill_color(@parts_fill_color),
                 id: _svg_sanitize_id(id),
@@ -254,7 +285,7 @@ module Ladb::OpenCutList
               part_y_offset = _to_inch(part.px_y_offset)
               part_length = _to_inch(part.px_length)
 
-              transformation = Geom::Transformation.scaling(1,-1, 1)
+              transformation = unit_transformation
               if part.rotated
                 transformation *= Geom::Transformation.translation(Geom::Vector3d.new(part_x + part_length - part_x_offset, part_y + part_y_offset))
                 transformation *= Geom::Transformation.rotation(ORIGIN, Z_AXIS , 90.degrees)
@@ -267,18 +298,7 @@ module Ladb::OpenCutList
                 'serif:id': id
               })
 
-              projection_def.layer_defs.each do |layer_def|
-
-                fill_color = @parts_fill_color
-                fill_color = ColorUtils.color_to_hex(ColorUtils.color_lighten(Sketchup::Color.new(fill_color), projection_def.max_depth > 0 ? (layer_def.depth / projection_def.max_depth) * 0.6 + 0.2 : 0.3)) if fill_color && layer_def.position != DrawingProjectionLayerDef::LAYER_POSITION_TOP
-
-                _svg_write_tag(file, 'path', {
-                  d: layer_def.polygon_defs.map { |polygon_def| "M #{polygon_def.points.map { |point| "#{_convert_point(point.transform(transformation), unit_converter).to_a[0..1].join(',')}" }.join(' L ')} Z" }.join(' '),
-                  stroke: _svg_stroke_color(@parts_stroke_color, fill_color),
-                  fill: _svg_fill_color(fill_color),
-                })
-
-              end
+              _svg_write_projection_def(file, projection_def, @smoothing, transformation, unit_transformation, unit_sign, @parts_stroke_color, @parts_fill_color)
 
               _svg_write_group_end(file)
 
@@ -294,11 +314,21 @@ module Ladb::OpenCutList
 
             id = "#{leftover.length} x #{leftover.width}"
 
+            position = Geom::Point3d.new(
+              _to_inch(leftover.px_x),
+              _to_inch(leftover.px_y)
+            ).transform(unit_transformation)
+            size = Geom::Point3d.new(
+              _to_inch(leftover.px_length),
+              _to_inch(leftover.px_width)
+            ).transform(unit_transformation)
+
+
             _svg_write_tag(file, 'rect', {
-              x: _convert(_to_inch(leftover.px_x), unit_converter),
-              y: _convert(_to_inch(leftover.px_y), unit_converter),
-              width: _convert(_to_inch(leftover.px_length), unit_converter),
-              height: _convert(_to_inch(leftover.px_width), unit_converter),
+              x: _svg_value(position.x),
+              y: _svg_value(position.y),
+              width: _svg_value(size.x),
+              height: _svg_value(size.y),
               stroke: _svg_stroke_color(@leftovers_stroke_color, @leftovers_fill_color),
               fill: _svg_fill_color(@leftovers_fill_color),
               id: _svg_sanitize_id(id),
@@ -313,17 +343,26 @@ module Ladb::OpenCutList
           _svg_write_group_start(file, id: LAYER_CUTS)
           sheet.cuts.each do |cut|
 
+            position1 = Geom::Point3d.new(
+              _to_inch(cut.px_x),
+              _to_inch(cut.px_y)
+            ).transform(unit_transformation)
+            position2 = Geom::Point3d.new(
+              _to_inch(cut.px_x + (cut.is_horizontal ? cut.px_length : 0)),
+              _to_inch(cut.px_y + (!cut.is_horizontal ? cut.px_length : 0))
+            ).transform(unit_transformation)
+
             if cut.is_horizontal
-              id = "y = #{_convert(_to_inch(cut.px_y), unit_converter)}"
+              id = "y = #{cut.y}"
             else
-              id = "x = #{_convert(_to_inch(cut.px_x), unit_converter)}"
+              id = "x = #{cut.x}"
             end
 
             _svg_write_tag(file, 'line', {
-              x1: _convert(_to_inch(cut.px_x), unit_converter),
-              y1: _convert(_to_inch(cut.px_y), unit_converter),
-              x2: _convert(_to_inch(cut.px_x + (cut.is_horizontal ? cut.px_length : 0)), unit_converter),
-              y2: _convert(_to_inch(cut.px_y + (!cut.is_horizontal ? cut.px_length : 0)), unit_converter),
+              x1: _svg_value(position1.x),
+              y1: _svg_value(position1.y),
+              x2: _svg_value(position2.x),
+              y2: _svg_value(position2.y),
               stroke: _svg_stroke_color(@cuts_stroke_color),
               id: _svg_sanitize_id(id),
               'serif:id': id
@@ -340,18 +379,6 @@ module Ladb::OpenCutList
       # Close output file
       file.close
 
-    end
-
-    def _convert(value, unit_converter, precision = 3)
-      (value.to_f * unit_converter).round(precision)
-    end
-
-    def _convert_point(point, unit_converter, precision = 3)
-      point = point.clone
-      point.x = _convert(point.x, unit_converter, precision)
-      point.y = _convert(point.y, unit_converter, precision)
-      point.z = _convert(point.z, unit_converter, precision)
-      point
     end
 
   end

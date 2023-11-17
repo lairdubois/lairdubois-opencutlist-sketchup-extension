@@ -4,6 +4,30 @@ module Ladb::OpenCutList
 
   module DxfWriterHelper
 
+    def _dxf_get_unit_transformation(unit)
+
+      require_relative '../utils/dimension_utils'
+
+      case unit
+      when DimensionUtils::INCHES
+        unit_factor = 1.0
+      when DimensionUtils::FEET
+        unit_factor = 1.0.to_l.to_feet
+      when DimensionUtils::YARD
+        unit_factor = 1.0.to_l.to_yard
+      when DimensionUtils::MILLIMETER
+        unit_factor = 1.0.to_l.to_mm
+      when DimensionUtils::CENTIMETER
+        unit_factor = 1.0.to_l.to_cm
+      when DimensionUtils::METER
+        unit_factor = 1.0.to_l.to_m
+      else
+        unit_factor = DimensionUtils.instance.length_to_model_unit_float(1.0.to_l)
+      end
+
+      Geom::Transformation.scaling(ORIGIN, unit_factor, unit_factor, 1.0)
+    end
+
     def _dxf_generate_id
       @_dxf_current_id = 0xfff if @_dxf_current_id.nil?
       @_dxf_current_id += 1
@@ -728,6 +752,76 @@ module Ladb::OpenCutList
       ]
 
       _dxf_write_polygon(file, points, layer)
+
+    end
+
+    # -----
+
+    def _dxf_write_projection_def(file, projection_def, smoothing = false, transformation = IDENTITY, layer = 0)
+
+      require_relative '../model/drawing/drawing_projection_def'
+
+      return unless projection_def.is_a?(DrawingProjectionDef)
+
+      projection_def.layer_defs.each do |layer_def|
+        layer_def.polygon_defs.each do |polygon_def|
+
+          if smoothing && polygon_def.loop_def
+
+            # Extract loop points from ordered edges and arc curves
+            polygon_def.loop_def.portions.each { |portion|
+
+              if portion.is_a?(Geometrix::ArcLoopPortionDef)
+
+                center = portion.ellipse_def.center.transform(transformation)
+                xaxis = portion.ellipse_def.xaxis.transform(transformation)
+
+                if portion.loop_def.ellipse?
+                  start_angle = 0.0
+                  end_angle = 2.0 * Math::PI
+                elsif portion.ccw?  # DXF ellipse angles must be counter clockwise
+                  start_angle = portion.start_angle
+                  end_angle = portion.end_angle
+                else
+                  start_angle = portion.end_angle
+                  end_angle = portion.start_angle
+                end
+
+                cx = center.x.to_f
+                cy = center.y.to_f
+                vx = xaxis.x.to_f
+                vy = xaxis.y.to_f
+                vr = portion.ellipse_def.yradius.round(6) / portion.ellipse_def.xradius.round(6)
+                as = start_angle
+                ae = end_angle
+
+                _dxf_write_ellipse(file, cx, cy, vx, vy, vr, as, ae, layer)
+
+              else
+
+                start_point = portion.start_point.transform(transformation)
+                end_point = portion.end_point.transform(transformation)
+
+                x1 = start_point.x.to_f
+                y1 = start_point.y.to_f
+                x2 = end_point.x.to_f
+                y2 = end_point.y.to_f
+
+                _dxf_write_line(file, x1, y1, x2, y2, layer)
+
+              end
+
+            }
+
+          else
+
+            # Extract loop points from vertices (quicker)
+            _dxf_write_polygon(file, polygon_def.points.map { |point| Geom::Point3d.new(point.transform(transformation).to_a.map { |v| v.to_f }) }, layer)
+
+          end
+
+        end
+      end
 
     end
 

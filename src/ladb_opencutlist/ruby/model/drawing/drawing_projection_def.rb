@@ -49,7 +49,11 @@ module Ladb::OpenCutList
 
     def loop_def
       if @loop_def.nil?
+
+        require_relative '../../lib/geometrix/finder/loop_finder'
+
         @loop_def = Geometrix::LoopFinder.find_loop_def(points)
+
       end
       @loop_def
     end

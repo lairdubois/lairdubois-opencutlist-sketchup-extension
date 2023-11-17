@@ -28,7 +28,7 @@ module Ladb::OpenCutList
       @file_format = settings.fetch('file_format', nil)
       @unit = settings.fetch('unit', nil)
       @anchor = settings.fetch('anchor', false)
-      @curves = settings.fetch('curves', false)
+      @smoothing = settings.fetch('smoothing', false)
 
     end
 
@@ -49,24 +49,7 @@ module Ladb::OpenCutList
 
         begin
 
-          case @unit
-          when DimensionUtils::INCHES
-            unit_converter = 1.0
-          when DimensionUtils::FEET
-            unit_converter = 1.0.to_l.to_feet
-          when DimensionUtils::YARD
-            unit_converter = 1.0.to_l.to_yard
-          when DimensionUtils::MILLIMETER
-            unit_converter = 1.0.to_l.to_mm
-          when DimensionUtils::CENTIMETER
-            unit_converter = 1.0.to_l.to_cm
-          when DimensionUtils::METER
-            unit_converter = 1.0.to_l.to_m
-          else
-            unit_converter = DimensionUtils.instance.length_to_model_unit_float(1.0.to_l)
-          end
-
-          success = _write_2d(path, @drawing_def.face_manipulators, @drawing_def.edge_manipulators, unit_converter) && File.exist?(path)
+          success = _write_2d(path, @drawing_def.face_manipulators, @drawing_def.edge_manipulators) && File.exist?(path)
 
           return { :errors => [ [ 'core.error.failed_export_to_file', { :file_format => @file_format, :error => '' } ] ] } unless success
           return { :export_path => path }
@@ -84,7 +67,7 @@ module Ladb::OpenCutList
 
     private
 
-    def _write_2d(path, face_manipulators, edge_manipulators, unit_converter)
+    def _write_2d(path, face_manipulators, edge_manipulators)
 
       # Compute projection
       projection_def = CommonDrawingProjectionWorker.new(@drawing_def, {
@@ -98,84 +81,31 @@ module Ladb::OpenCutList
       case @file_format
       when FILE_FORMAT_DXF
 
+        unit_transformation = _dxf_get_unit_transformation(@unit)
+
         layer_defs = []
         layer_defs.push({ :name => LAYER_DRAWING, :color => 7 }) unless face_manipulators.empty?
         layer_defs.push({ :name => LAYER_GUIDES, :color => 150 }) unless edge_manipulators.empty?
 
-        _dxf_write_header(file, _convert_point(@drawing_def.bounds.min, unit_converter), _convert_point(@drawing_def.bounds.max, unit_converter), layer_defs)
+        min = @drawing_def.bounds.min.transform(unit_transformation)
+        max = @drawing_def.bounds.max.transform(unit_transformation)
+
+        _dxf_write_header(file, min, max, layer_defs)
 
         _dxf_write(file, 0, 'SECTION')
         _dxf_write(file, 2, 'ENTITIES')
 
-        projection_def.layer_defs.each do |layer_def|
-          layer_def.polygon_defs.each do |polygon_def|
-
-            if @curves && polygon_def.loop_def
-
-              # Extract loop points from ordered edges and arc curves
-              polygon_def.loop_def.portions.each { |portion|
-
-                if portion.is_a?(Geometrix::ArcLoopPortionDef)
-
-                  center = portion.ellipse_def.center
-                  xaxis = portion.ellipse_def.xaxis
-
-                  if portion.loop_def.ellipse?
-                    start_angle = 0.0
-                    end_angle = 2.0 * Math::PI
-                  elsif portion.ccw?  # DXF ellipse angles must be counter clockwise
-                    start_angle = portion.start_angle
-                    end_angle = portion.end_angle
-                  else
-                    start_angle = portion.end_angle
-                    end_angle = portion.start_angle
-                  end
-
-                  cx = _convert(center.x, unit_converter)
-                  cy = _convert(center.y, unit_converter)
-                  vx = _convert(xaxis.x, unit_converter)
-                  vy = _convert(xaxis.y, unit_converter)
-                  vr = portion.ellipse_def.yradius.round(6) / portion.ellipse_def.xradius.round(6)
-                  as = start_angle
-                  ae = end_angle
-
-                  _dxf_write_ellipse(file, cx, cy, vx, vy, vr, as, ae, LAYER_DRAWING)
-
-                else
-
-                  start_point = portion.start_point
-                  end_point = portion.end_point
-
-                  x1 = _convert(start_point.x, unit_converter)
-                  y1 = _convert(start_point.y, unit_converter)
-                  x2 = _convert(end_point.x, unit_converter)
-                  y2 = _convert(end_point.y, unit_converter)
-
-                  _dxf_write_line(file, x1, y1, x2, y2, LAYER_DRAWING)
-
-                end
-
-              }
-
-            else
-
-              # Extract loop points from vertices (quicker)
-              _dxf_write_polygon(file, polygon_def.points.map { |point| _convert_point(point, unit_converter) }, LAYER_DRAWING)
-
-            end
-
-          end
-        end
+        _dxf_write_projection_def(file, projection_def, @smoothing, unit_transformation, LAYER_DRAWING)
 
         edge_manipulators.each do |edge_manipulator|
 
-          start_point = edge_manipulator.start_point
-          end_point = edge_manipulator.end_point
+          start_point = edge_manipulator.start_point.transform(unit_transformation)
+          end_point = edge_manipulator.end_point.transform(unit_transformation)
 
-          x1 = _convert(start_point.x, unit_converter)
-          y1 = _convert(start_point.y, unit_converter)
-          x2 = _convert(end_point.x, unit_converter)
-          y2 = _convert(end_point.y, unit_converter)
+          x1 = start_point.x
+          y1 = start_point.y
+          x2 = end_point.x
+          y2 = end_point.y
 
           _dxf_write_line(file, x1, y1, x2, y2, LAYER_GUIDES)
 
@@ -197,21 +127,21 @@ module Ladb::OpenCutList
           bounds = @drawing_def.bounds
         end
 
-        # Tweak unit converter to restrict to SVG compatible units (in, mm, cm)
-        case @unit
-        when DimensionUtils::INCHES
-          unit_sign = 'in'
-        when DimensionUtils::CENTIMETER
-          unit_sign = 'cm'
-        else
-          unit_converter = 1.0.to_mm
-          unit_sign = 'mm'
-        end
+        unit_sign, unit_transformation = _svg_get_unit_sign_and_transformation(@unit)
 
-        x = _convert(bounds.min.x, unit_converter)
-        y = _convert(-(bounds.height + bounds.min.y), unit_converter)
-        width = _convert(bounds.width, unit_converter)
-        height = _convert(bounds.height, unit_converter)
+        origin = Geom::Point3d.new(
+          bounds.min.x,
+          -(bounds.height + bounds.min.y)
+        ).transform(unit_transformation)
+        size = Geom::Point3d.new(
+          bounds.width,
+          bounds.height
+        ).transform(unit_transformation)
+
+        x = origin.x.to_f
+        y = origin.y.to_f
+        width = size.x.to_f
+        height = size.y.to_f
 
         _svg_write_start(file, x, y, width, height, unit_sign)
 
@@ -219,106 +149,7 @@ module Ladb::OpenCutList
 
           _svg_write_group_start(file, id: LAYER_DRAWING)
 
-          projection_def.layer_defs.each do |layer_def|
-
-            if layer_def.position == DrawingProjectionLayerDef::LAYER_POSITION_TOP
-              attributes = {
-                fill: '#000000',
-                'shaper:cutType': 'outside'
-              }
-              attributes.merge!({ 'shaper:cutDepth': "#{_convert(@drawing_def.bounds.depth, unit_converter)}#{unit_sign}" }) if @drawing_def.bounds.depth > 0
-            elsif layer_def.position == DrawingProjectionLayerDef::LAYER_POSITION_BOTTOM
-              attributes = {
-                stroke: '#000000',
-                'stroke-with': '0.1mm',
-                fill: '#FFFFFF',
-                'shaper:cutType': 'inside'
-              }
-              attributes.merge!({ 'shaper:cutDepth': "#{_convert(@drawing_def.bounds.depth, unit_converter)}#{unit_sign}" }) if @drawing_def.bounds.depth > 0
-            else
-              attributes = {
-                fill: ColorUtils.color_to_hex(Sketchup::Color.new('#AAAAAA').blend(Sketchup::Color.new('#7F7F7F'), @drawing_def.bounds.depth > 0 ? layer_def.depth / @drawing_def.bounds.depth : 1.0)),
-                'shaper:cutType': 'pocket',
-                'shaper:cutDepth': "#{_convert(layer_def.depth, unit_converter)}#{unit_sign}"
-              }
-            end
-
-            data = []
-
-            layer_def.polygon_defs.each do |polygon_def|
-
-              if @curves && polygon_def.loop_def
-
-                if polygon_def.loop_def.circle?
-
-                  # Simplify circle drawing by using only xradius
-
-                  portion = polygon_def.loop_def.portions.first
-                  center = portion.ellipse_def.center
-                  radius = portion.ellipse_def.xradius
-
-                  x0 = _convert(center.x - radius, unit_converter)
-                  x1 = _convert(center.x + radius, unit_converter)
-                  y = _convert(-center.y, unit_converter)
-                  r = _convert(radius, unit_converter)
-                  sflag = portion.ccw? ? 0 : 1
-
-                  data << "M #{x0},#{y} A #{r},#{r} 0 0,#{sflag} #{x1},#{y} A #{r},#{r} 0 0,#{sflag} #{x0},#{y} Z"
-
-                else
-
-                  # Extract loop points from ordered edges and arc curves
-                  data << "#{polygon_def.loop_def.portions.map.with_index { |portion, index|
-
-                    portion_data = []
-                    start_point = portion.start_point
-                    end_point = portion.end_point
-                    portion_data << "M #{_convert(start_point.x, unit_converter)},#{_convert(-start_point.y, unit_converter)}" if index == 0
-
-                    if portion.is_a?(Geometrix::ArcLoopPortionDef)
-
-                      middle = portion.mid_point
-
-                      rx = _convert(portion.ellipse_def.xradius, unit_converter)
-                      ry = _convert(portion.ellipse_def.yradius, unit_converter)
-                      xrot = -portion.ellipse_def.angle.radians.round(3)
-                      lflag = 0
-                      sflag = portion.ccw? ? 0 : 1
-                      x1 = _convert(middle.x, unit_converter)
-                      y1 = _convert(-middle.y, unit_converter)
-                      x2 = _convert(end_point.x, unit_converter)
-                      y2 = _convert(-end_point.y, unit_converter)
-
-                      portion_data << "A #{rx},#{ry} #{xrot} #{lflag},#{sflag} #{x1},#{y1}"
-                      portion_data << "A #{rx},#{ry} #{xrot} #{lflag},#{sflag} #{x2},#{y2}"
-
-                    else
-
-                      portion_data << "L #{_convert(end_point.x, unit_converter)},#{_convert(-end_point.y, unit_converter)}"
-
-                    end
-
-                    portion_data
-                  }.join(' ')} Z"
-
-                end
-
-              else
-
-                # Extract loop points from vertices (quicker)
-                data << "M #{polygon_def.points.map { |point| "#{_convert(point.x, unit_converter)},#{_convert(-point.y, unit_converter)}" }.join(' L ')} Z"
-
-              end
-
-            end
-
-            unless data.empty?
-              _svg_write_tag(file, 'path', attributes.merge(
-                d: data.join(' ')
-              ))
-            end
-
-          end
+          _svg_write_projection_def(file, projection_def, @smoothing, unit_transformation, unit_transformation, unit_sign, nil, '#000000')
 
           _svg_write_group_end(file)
 
@@ -331,7 +162,7 @@ module Ladb::OpenCutList
           data = ''
           edge_manipulators.each do |edge_manipulator|
 
-            data += "M #{edge_manipulator.points.each.map { |point| "#{_convert(point.x, unit_converter)},#{_convert(-point.y, unit_converter)}" }.join(' L')}"
+            data += "M #{edge_manipulator.points.each.map { |point| "#{point.transform(unit_transformation).to_a[0..1].join(',')}" }.join(' L')}"
 
           end
 
@@ -348,11 +179,16 @@ module Ladb::OpenCutList
 
         if @anchor
 
+          size = Geom::Point3d.new(
+            5.mm,
+            10.mm
+          ).transform(unit_transformation)
+
           x1 = 0
           y1 = 0
           x2 = 0
-          y2 = _convert(-10.mm, unit_converter)
-          x3 = _convert(5.mm, unit_converter)
+          y2 = -size.y.to_f
+          x3 = size.x.to_f
           y3 = 0
 
           _svg_write_group_start(file, id: LAYER_ANCHOR)
@@ -372,18 +208,6 @@ module Ladb::OpenCutList
       file.close
 
       true
-    end
-
-    def _convert(value, unit_converter, precision = 3)
-      (value.to_f * unit_converter).round(precision)
-    end
-
-    def _convert_point(point, unit_converter, precision = 3)
-      point = point.clone
-      point.x = _convert(point.x, unit_converter, precision)
-      point.y = _convert(point.y, unit_converter, precision)
-      point.z = _convert(point.z, unit_converter, precision)
-      point
     end
 
   end

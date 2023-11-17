@@ -48,7 +48,7 @@ module Ladb::OpenCutList
     ACTION_OPTION_FACE_ALL = 1
 
     ACTION_OPTION_OPTIONS_ANCHOR = 0
-    ACTION_OPTION_OPTIONS_CURVES = 1
+    ACTION_OPTION_OPTIONS_SMOOTHING = 1
     ACTION_OPTION_OPTIONS_GUIDES = 2
 
     ACTIONS = [
@@ -66,7 +66,7 @@ module Ladb::OpenCutList
           ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_SVG, ACTION_OPTION_FILE_FORMAT_DXF ],
           ACTION_OPTION_UNIT => [ ACTION_OPTION_UNIT_MM, ACTION_OPTION_UNIT_CM, ACTION_OPTION_UNIT_IN ],
           ACTION_OPTION_FACE => [ ACTION_OPTION_FACE_ONE, ACTION_OPTION_FACE_ALL ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_ANCHOR, ACTION_OPTION_OPTIONS_CURVES, ACTION_OPTION_OPTIONS_GUIDES ]
+          ACTION_OPTION_OPTIONS => [ACTION_OPTION_OPTIONS_ANCHOR, ACTION_OPTION_OPTIONS_SMOOTHING, ACTION_OPTION_OPTIONS_GUIDES ]
         }
       },
       {
@@ -74,7 +74,7 @@ module Ladb::OpenCutList
         :options => {
           ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_SVG, ACTION_OPTION_FILE_FORMAT_DXF ],
           ACTION_OPTION_UNIT => [ ACTION_OPTION_UNIT_MM, ACTION_OPTION_UNIT_CM, ACTION_OPTION_UNIT_IN ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CURVES ]
+          ACTION_OPTION_OPTIONS => [ACTION_OPTION_OPTIONS_SMOOTHING ]
         }
       },
       {
@@ -202,7 +202,7 @@ module Ladb::OpenCutList
         case option
         when ACTION_OPTION_OPTIONS_ANCHOR
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.273,0L0.273,0.727L1,0.727 M0.091,0.545L0.455,0.545L0.455,0.909L0.091,0.909L0.091,0.545 M0.091,0.182L0.273,0L0.455,0.182 M0.818,0.545L1,0.727L0.818,0.909'))
-        when ACTION_OPTION_OPTIONS_CURVES
+        when ACTION_OPTION_OPTIONS_SMOOTHING
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M1,0.719L0.97,0.548L0.883,0.398L0.75,0.286L0.587,0.227L0.413,0.227L0.25,0.286L0.117,0.398L0.03,0.548L0,0.719'))
         when ACTION_OPTION_OPTIONS_GUIDES
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.167,0L0.167,1 M0,0.167L1,0.167 M0,0.833L1,0.833 M0.833,0L0.833,1'))
@@ -371,7 +371,7 @@ module Ladb::OpenCutList
                 preview.append(segments)
 
                 # Highlight arcs (if activated)
-                if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_CURVES)
+                if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
                   polygon_def.loop_def.portions.grep(Geometrix::ArcLoopPortionDef).each do |portion|
 
                     segments = Kuix::Segments.new
@@ -537,7 +537,7 @@ module Ladb::OpenCutList
               preview.append(segments)
 
               # Highlight arcs (if activated)
-              if fetch_action_option(ACTION_EXPORT_FACE, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_CURVES)
+              if fetch_action_option(ACTION_EXPORT_FACE, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
                 polygon_def.loop_def.portions.grep(Geometrix::ArcLoopPortionDef).each do |portion|
 
                   segments = Kuix::Segments.new
@@ -836,14 +836,14 @@ module Ladb::OpenCutList
             unit = DimensionUtils::CENTIMETER
           end
           anchor = fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) && (@active_drawing_def.bounds.min.x != 0 || @active_drawing_def.bounds.min.y != 0)    # No anchor if = (0, 0, z)
-          curves = fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_CURVES)
+          smoothing = fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
 
           worker = CommonExportDrawing2dWorker.new(@active_drawing_def, {
             'file_name' => file_name,
             'file_format' => file_format,
             'unit' => unit,
             'anchor' => anchor,
-            'curves' => curves
+            'smoothing' => smoothing
           })
           response = worker.run
 
@@ -886,13 +886,13 @@ module Ladb::OpenCutList
           elsif fetch_action_option(ACTION_EXPORT_FACE, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_CM)
             unit = DimensionUtils::CENTIMETER
           end
-          curves = fetch_action_option(ACTION_EXPORT_FACE, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_CURVES)
+          smoothing = fetch_action_option(ACTION_EXPORT_FACE, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
 
           worker = CommonExportDrawing2dWorker.new(@active_drawing_def, {
             'file_name' => file_name,
             'file_format' => file_format,
             'unit' => unit,
-            'curves' => curves
+            'smoothing' => smoothing
           })
           response = worker.run
 
@@ -935,13 +935,13 @@ module Ladb::OpenCutList
           elsif fetch_action_option(ACTION_EXPORT_EDGES, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_CM)
             unit = DimensionUtils::CENTIMETER
           end
-          curves = fetch_action_option(ACTION_EXPORT_EDGES, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_CURVES)
+          smoothing = fetch_action_option(ACTION_EXPORT_EDGES, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
 
           worker = CommonExportDrawing2dWorker.new(@active_drawing_def, {
             'file_name' => file_name,
             'file_format' => file_format,
             'unit' => unit,
-            'curves' => curves
+            'smoothing' => smoothing
           })
           response = worker.run
 

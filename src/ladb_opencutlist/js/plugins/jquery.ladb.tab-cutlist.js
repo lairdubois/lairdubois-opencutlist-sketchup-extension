@@ -3614,6 +3614,7 @@
                                                 // Fetch UI elements
                                                 var $widgetPreset = $('.ladb-widget-preset', $modal);
                                                 var $selectFileFormat = $('#ladb_select_file_format', $modal);
+                                                var $selectSmoothing = $('#ladb_select_smoothing', $modal);
                                                 var $inputSheetHidden = $('#ladb_input_sheet_hidden', $modal);
                                                 var $inputSheetStrokeColor = $('#ladb_input_sheet_stroke_color', $modal);
                                                 var $inputSheetFillColor = $('#ladb_input_sheet_fill_color', $modal);
@@ -3629,6 +3630,7 @@
 
                                                 var fnFetchOptions = function (options) {
                                                     options.file_format = $selectFileFormat.val();
+                                                    options.smoothing = $selectSmoothing.val() === '1';
                                                     options.sheet_hidden = !$inputSheetHidden.is(':checked');
                                                     options.sheet_stroke_color = $inputSheetStrokeColor.ladbTextinputColor('val');
                                                     options.sheet_fill_color = $inputSheetFillColor.ladbTextinputColor('val');
@@ -3643,6 +3645,7 @@
                                                 };
                                                 var fnFillInputs = function (options) {
                                                     $selectFileFormat.selectpicker('val', options.file_format);
+                                                    $selectSmoothing.selectpicker('val', options.smoothing ? '1' : '0');
                                                     $inputSheetHidden.prop('checked', !options.sheet_hidden);
                                                     $inputSheetStrokeColor.ladbTextinputColor('val', options.sheet_stroke_color);
                                                     $inputSheetFillColor.ladbTextinputColor('val', options.sheet_fill_color);
@@ -3694,6 +3697,7 @@
                                                         fnUpdateColorsVisibility();
                                                     })
                                                 ;
+                                                $selectSmoothing.selectpicker(SELECT_PICKER_OPTIONS);
                                                 $inputSheetStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputSheetFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputPartsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);

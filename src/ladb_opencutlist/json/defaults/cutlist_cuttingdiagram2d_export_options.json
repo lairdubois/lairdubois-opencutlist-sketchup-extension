@@ -1,12 +1,13 @@
 {
   "0": {
     "file_format": "svg",
+    "smoothing": false,
     "sheet_hidden": false,
     "sheet_stroke_color": "#0068FF",
     "sheet_fill_color": null,
     "parts_hidden": false,
     "parts_stroke_color": null,
-    "parts_fill_color": null,
+    "parts_fill_color": "#000000",
     "leftovers_hidden": true,
     "leftovers_stroke_color": "#aaaaaa",
     "leftovers_fill_color": null,
