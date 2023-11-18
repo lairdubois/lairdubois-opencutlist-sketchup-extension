@@ -224,10 +224,10 @@ module Ladb::OpenCutList
           _to_inch(sheet.px_width)
         ).transform(unit_transformation)
 
-        sheet_width = _svg_value(size.x)
-        sheet_height = _svg_value(size.y)
+        width = _svg_value(size.x)
+        height = _svg_value(size.y)
 
-        _svg_write_start(file, 0, 0, sheet_width, sheet_height, unit_sign)
+        _svg_write_start(file, 0, 0, width, height, unit_sign)
 
         unless @sheet_hidden
 
@@ -237,8 +237,8 @@ module Ladb::OpenCutList
           _svg_write_tag(file, 'rect', {
             x: 0,
             y: 0,
-            width: sheet_width,
-            height: sheet_height,
+            width: width,
+            height: height,
             stroke: _svg_stroke_color(@sheet_stroke_color, @sheet_fill_color),
             fill: _svg_fill_color(@sheet_fill_color),
             id: _svg_sanitize_id(id),

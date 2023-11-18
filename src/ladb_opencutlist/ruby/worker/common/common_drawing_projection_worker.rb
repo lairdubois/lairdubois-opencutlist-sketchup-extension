@@ -97,7 +97,7 @@ module Ladb::OpenCutList
       # Union paths on each layer
       ld.each do |layer_def|
         next if layer_def[:paths].one?
-        layer_def[:paths] = Clippy.union(layer_def[:paths])
+        layer_def[:paths] = Clippy.compute_union(layer_def[:paths])
       end
 
 
@@ -106,7 +106,7 @@ module Ladb::OpenCutList
         next if layer_def[:paths].empty?
         ld[(index + 1)..-1].each do |lower_layer_def|
           next if lower_layer_def[:paths].empty?
-          lower_layer_def[:paths] = Clippy.difference(lower_layer_def[:paths], layer_def[:paths])
+          lower_layer_def[:paths] = Clippy.compute_difference(lower_layer_def[:paths], layer_def[:paths])
         end
       end
 
@@ -115,7 +115,7 @@ module Ladb::OpenCutList
         # Down to Top union
         ld[1..-1].each do |lower_layer_def|
           next if lower_layer_def[:paths].empty?
-          top_layer_def[:paths] = Clippy.union(top_layer_def[:paths], lower_layer_def[:paths])
+          top_layer_def[:paths] = Clippy.compute_union(top_layer_def[:paths] + lower_layer_def[:paths])
         end
 
       end
@@ -131,7 +131,7 @@ module Ladb::OpenCutList
         unless bottom_layer_def[:paths].empty?
 
           # Bottom to Top union
-          top_layer_def[:paths] = Clippy.union(top_layer_def[:paths], bottom_layer_def[:paths])
+          top_layer_def[:paths] = Clippy.compute_union(top_layer_def[:paths] + bottom_layer_def[:paths])
 
         end
 

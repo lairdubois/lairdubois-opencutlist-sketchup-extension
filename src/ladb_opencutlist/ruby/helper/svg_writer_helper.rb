@@ -87,7 +87,7 @@ module Ladb::OpenCutList
         elsif layer_def.position == DrawingProjectionLayerDef::LAYER_POSITION_BOTTOM
           attributes = {
             stroke: '#000000',
-            'stroke-with': '0.1mm',
+            'stroke-width': '0.1mm',
             fill: '#FFFFFF',
             'shaper:cutType': 'inside'
           }

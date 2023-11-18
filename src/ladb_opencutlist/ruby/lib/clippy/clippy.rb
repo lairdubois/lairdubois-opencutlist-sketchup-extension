@@ -12,7 +12,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def self.union(subjects, clips = [])
+    def self.compute_union(subjects, clips = [])
       _load_lib
       _clear
       _append_subjects(subjects)
@@ -23,7 +23,7 @@ module Ladb::OpenCutList
       solution
     end
 
-    def self.difference(subjects, clips)
+    def self.compute_difference(subjects, clips)
       _load_lib
       _clear
       _append_subjects(subjects)
@@ -34,7 +34,7 @@ module Ladb::OpenCutList
       solution
     end
 
-    def self.intersection(subjects, clips)
+    def self.compute_intersection(subjects, clips)
       _load_lib
       _clear
       _append_subjects(subjects)

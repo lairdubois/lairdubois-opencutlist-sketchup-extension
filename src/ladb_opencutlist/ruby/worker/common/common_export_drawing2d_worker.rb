@@ -71,7 +71,7 @@ module Ladb::OpenCutList
 
       # Compute projection
       projection_def = CommonDrawingProjectionWorker.new(@drawing_def, {
-        'down_to_top_union' => true,
+        'down_to_top_union' => false,
         'passthrough_holes' => false
       }).run
 
@@ -138,10 +138,10 @@ module Ladb::OpenCutList
           bounds.height
         ).transform(unit_transformation)
 
-        x = origin.x.to_f
-        y = origin.y.to_f
-        width = size.x.to_f
-        height = size.y.to_f
+        x = _svg_value(origin.x)
+        y = _svg_value(origin.y)
+        width = _svg_value(size.x)
+        height = _svg_value(size.y)
 
         _svg_write_start(file, x, y, width, height, unit_sign)
 

@@ -244,12 +244,6 @@ module Ladb::OpenCutList
       fetch_action == ACTION_EXPORT_EDGES
     end
 
-    # -- Pickers --
-
-    # def pick_face?
-    #   !is_action_export_edges?
-    # end
-
     # -- Events --
 
     def onActivate(view)
