@@ -813,7 +813,7 @@ tab:
         option_smoothing: Smoothing
         option_smoothing_0: None
         option_smoothing_1: Detect circles and arcs (Experimental)
-        option_curves_help: TBD
+        option_smoothing_help: TBD
         option_sheet: Panel
         option_sheet_help: TBD
         option_parts: Parts

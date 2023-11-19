@@ -1,19 +1,23 @@
 module Ladb::OpenCutList
 
   require_relative '../../constants'
+  require_relative '../../helper/stl_writer_helper'
+  require_relative '../../helper/obj_writer_helper'
   require_relative '../../helper/dxf_writer_helper'
   require_relative '../../helper/sanitizer_helper'
   require_relative '../../model/drawing/drawing_def'
 
   class CommonExportDrawing3dWorker
 
+    include StlWriterHelper
+    include ObjWriterHelper
     include DxfWriterHelper
     include SanitizerHelper
 
     LAYER_DRAWING = 'OCL_DRAWING'.freeze
     LAYER_GUIDES = 'OCL_GUIDES'.freeze
 
-    SUPPORTED_FILE_FORMATS = [ FILE_FORMAT_DXF, FILE_FORMAT_STL, FILE_FORMAT_OBJ ]
+    SUPPORTED_FILE_FORMATS = [ FILE_FORMAT_STL, FILE_FORMAT_OBJ, FILE_FORMAT_DXF ]
 
     def initialize(drawing_def, settings = {})
 
@@ -42,24 +46,7 @@ module Ladb::OpenCutList
 
         begin
 
-          case @unit
-          when DimensionUtils::INCHES
-            unit_converter = 1.0
-          when DimensionUtils::FEET
-            unit_converter = 1.0.to_l.to_feet
-          when DimensionUtils::YARD
-            unit_converter = 1.0.to_l.to_yard
-          when DimensionUtils::MILLIMETER
-            unit_converter = 1.0.to_l.to_mm
-          when DimensionUtils::CENTIMETER
-            unit_converter = 1.0.to_l.to_cm
-          when DimensionUtils::METER
-            unit_converter = 1.0.to_l.to_m
-          else
-            unit_converter = DimensionUtils.instance.length_to_model_unit_float(1.0.to_l)
-          end
-
-          success = _write_3d(path, @drawing_def.face_manipulators, @drawing_def.edge_manipulators, unit_converter) && File.exist?(path)
+          success = _write_to_path(path) && File.exist?(path)
 
           return { :errors => [ [ 'core.error.failed_export_to_file', { :file_format => @file_format, :error => '' } ] ] } unless success
           return { :export_path => path }
@@ -77,150 +64,18 @@ module Ladb::OpenCutList
 
     private
 
-    def _write_3d(path, face_manipulators, edge_manipulators, unit_converter)
+    def _write_to_path(path)
 
       # Open output file
       file = File.new(path , 'w')
 
       case @file_format
-      when FILE_FORMAT_DXF
-
-        layer_defs = []
-        layer_defs.push({ :name => LAYER_DRAWING, :color => 7 }) unless face_manipulators.empty?
-        layer_defs.push({ :name => LAYER_GUIDES, :color => 150 }) unless edge_manipulators.empty?
-
-        _dxf_write_header(file, _convert_point(@drawing_def.bounds.min, unit_converter), _convert_point(@drawing_def.bounds.max, unit_converter), layer_defs)
-
-        _dxf_write(file, 0, 'SECTION')
-        _dxf_write(file, 2, 'ENTITIES')
-
-        face_manipulators.each do |face_manipulator|
-
-          # Export face to POLYFACE
-
-          mesh = face_manipulator.mesh
-
-          polygons = mesh.polygons
-          points = mesh.points
-
-          # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-ABF6B778-BE20-4B49-9B58-A94E64CEFFF3
-
-          _dxf_write(file, 0, 'POLYLINE')
-          id = _dxf_write_id(file)
-          _dxf_write_owner_id(file, @_dxf_model_space_id)
-          _dxf_write_sub_classes(file, [ 'AcDbEntity' ])
-          _dxf_write(file, 8, LAYER_DRAWING) # Layer
-          _dxf_write_sub_classes(file, [ 'AcDbPolygonMesh' ])
-          _dxf_write(file, 66, 1) # Deprecated
-          _dxf_write(file, 10, 0.0)
-          _dxf_write(file, 20, 0.0)
-          _dxf_write(file, 30, 0.0)
-          _dxf_write(file, 70, 64) # 64 = The polyline is a polyface mesh
-          _dxf_write(file, 71, points.length) # Polygon mesh M vertex count
-          _dxf_write(file, 72, 1) # Polygon mesh N vertex count
-
-          points.each do |point|
-
-            _dxf_write(file, 0, 'VERTEX')
-            _dxf_write_id(file)
-            _dxf_write_owner_id(file, id)
-            _dxf_write_sub_classes(file, [ 'AcDbEntity' ])
-            _dxf_write(file, 8, LAYER_DRAWING) # Layer
-            _dxf_write_sub_classes(file, [ 'AcDbVertex', 'AcDbPolygonMeshVertex' ])
-            _dxf_write(file, 10, _convert(point.x, unit_converter))
-            _dxf_write(file, 20, _convert(point.y, unit_converter))
-            _dxf_write(file, 30, _convert(point.z, unit_converter))
-            _dxf_write(file, 70, 64 ^ 128) # 64 = 3D polygon mesh, 128 = Polyface mesh vertex
-
-          end
-
-          polygons.each do |polygon|
-
-            _dxf_write(file, 0, 'VERTEX')
-            _dxf_write_id(file)
-            _dxf_write_owner_id(file, id)
-            _dxf_write_sub_classes(file, [ 'AcDbVertex', 'AcDbPolygonMeshVertex' ])
-            _dxf_write(file, 8, LAYER_DRAWING)
-            _dxf_write(file, 10, 0.0)
-            _dxf_write(file, 20, 0.0)
-            _dxf_write(file, 30, 0.0)
-            _dxf_write(file, 70, 128) # 128 = Polyface mesh vertex
-            _dxf_write(file, 71, polygon[0]) # 71 = Polyface mesh vertex index
-            _dxf_write(file, 72, polygon[1]) # 72 = Polyface mesh vertex index
-            _dxf_write(file, 73, polygon[2]) # 73 = Polyface mesh vertex index
-
-          end
-
-          _dxf_write(file, 0, 'SEQEND')
-
-        end
-
-        edge_manipulators.each do |edge_manipulator|
-
-          point1 = edge_manipulator.start_point
-          point2 = edge_manipulator.end_point
-
-          x1 = _convert(point1.x, unit_converter)
-          y1 = _convert(point1.y, unit_converter)
-          x2 = _convert(point2.x, unit_converter)
-          y2 = _convert(point2.y, unit_converter)
-
-          _dxf_write_line(file, x1, y1, x2, y2, LAYER_GUIDES)
-
-        end
-
-        _dxf_write(file, 0, 'ENDSEC')
-
-        _dxf_write_footer(file)
-
       when FILE_FORMAT_STL
-
-        file.puts("solid #{@file_name}")
-
-        face_manipulators.each do |face_manipulator|
-
-          mesh = face_manipulator.mesh
-          polygons = mesh.polygons
-          polygons.each do |polygon|
-            if polygon.length == 3
-              normal = mesh.normal_at(polygon[0].abs)
-              file.puts(" facet normal #{normal.x} #{normal.y} #{normal.z}")
-              file.puts("  outer loop")
-              3.times do |index|
-                point = mesh.point_at(polygon[index].abs)
-                file.puts("   vertex #{_convert(point.x, unit_converter)} #{_convert(point.y, unit_converter)} #{_convert(point.z, unit_converter)}")
-              end
-              file.puts("  endloop")
-              file.puts(" endfacet")
-            end
-          end
-
-        end
-
-        file.puts("endsolid #{@file_name}")
-
+        _write_to_stl_file(file)
       when FILE_FORMAT_OBJ
-
-        file.puts("g #{@file_name}")
-
-        face_manipulators.each do |face_manipulator|
-
-          mesh = face_manipulator.mesh
-          polygons = mesh.polygons
-          polygons.each do |polygon|
-            if polygon.length == 3
-              normal = mesh.normal_at(polygon[0].abs)
-              file.puts("vn #{normal.x} #{normal.y} #{normal.z}")
-              3.times do |index|
-                point = mesh.point_at(polygon[index].abs)
-                file.puts("v #{_convert(point.x, unit_converter)} #{_convert(point.y, unit_converter)} #{_convert(point.z, unit_converter)}")
-              end
-              file.puts("f -3//-1 -2//-1 -1//-1")
-            end
-          end
-
-        end
-
+        _write_to_obj_file(file)
+      when FILE_FORMAT_DXF
+        _write_to_dxf_file(file)
       end
 
       # Close output file
@@ -229,15 +84,159 @@ module Ladb::OpenCutList
       true
     end
 
-    def _convert(value, unit_converter, precision = 3)
-      (value.to_f * unit_converter).round(precision)
+    def _write_to_stl_file(file)
+
+      unit_transformation = _stl_get_unit_transformation(@unit)
+
+      _stl_write_solid_start(file, @file_name)
+
+      @drawing_def.face_manipulators.each do |face_manipulator|
+
+        mesh = face_manipulator.mesh
+        polygons = mesh.polygons
+        polygons.each do |polygon|
+          if polygon.length == 3
+            normal = mesh.normal_at(polygon[0].abs)
+            _stl_write_facet_start(file, normal.x, normal.y, normal.z)
+            _stl_write_loop_start(file)
+            3.times do |index|
+              point = mesh.point_at(polygon[index].abs).transform(unit_transformation)
+              _stl_write_vertex(file, point.x, point.y, point.z)
+            end
+            _stl_write_loop_end(file)
+            _stl_write_facet_end(file)
+          end
+        end
+
+      end
+
+      _stl_write_solid_end(file, @file_name)
+
     end
 
-    def _convert_point(point, unit_converter, precision = 3)
-      point.x = _convert(point.x, unit_converter, precision)
-      point.y = _convert(point.y, unit_converter, precision)
-      point.z = _convert(point.z, unit_converter, precision)
-      point
+    def _write_to_obj_file(file)
+
+      unit_transformation = _obj_get_unit_transformation(@unit)
+
+      _obj_write_group(file, @file_name)
+
+      @drawing_def.face_manipulators.each do |face_manipulator|
+
+        mesh = face_manipulator.mesh
+        polygons = mesh.polygons
+        polygons.each do |polygon|
+          if polygon.length == 3
+            normal = mesh.normal_at(polygon[0].abs)
+            _obj_write_normal(file, normal.x, normal.y, normal.z)
+            3.times do |index|
+              point = mesh.point_at(polygon[index].abs).transform(unit_transformation)
+              _obj_write_vertex(file, point.x, point.y, point.z)
+            end
+            _obj_write(file, 'f', '-3//-1 -2//-1 -1//-1')
+          end
+        end
+
+      end
+
+    end
+
+    def _write_to_dxf_file(file)
+
+      unit_transformation = _dxf_get_unit_transformation(@unit, true)
+
+      layer_defs = []
+      layer_defs.push({ :name => LAYER_DRAWING, :color => 7 }) unless @drawing_def.face_manipulators.empty?
+      layer_defs.push({ :name => LAYER_GUIDES, :color => 150 }) unless @drawing_def.edge_manipulators.empty?
+
+      min = @drawing_def.bounds.min.transform(unit_transformation)
+      max = @drawing_def.bounds.max.transform(unit_transformation)
+
+      _dxf_write_header(file, min, max, layer_defs)
+
+      _dxf_write(file, 0, 'SECTION')
+      _dxf_write(file, 2, 'ENTITIES')
+
+      @drawing_def.face_manipulators.each do |face_manipulator|
+
+        # Export face to POLYFACE
+
+        mesh = face_manipulator.mesh
+
+        polygons = mesh.polygons
+        points = mesh.points
+
+        # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-ABF6B778-BE20-4B49-9B58-A94E64CEFFF3
+
+        _dxf_write(file, 0, 'POLYLINE')
+        id = _dxf_write_id(file)
+        _dxf_write_owner_id(file, @_dxf_model_space_id)
+        _dxf_write_sub_classes(file, [ 'AcDbEntity' ])
+        _dxf_write(file, 8, LAYER_DRAWING) # Layer
+        _dxf_write_sub_classes(file, [ 'AcDbPolygonMesh' ])
+        _dxf_write(file, 66, 1) # Deprecated
+        _dxf_write(file, 10, 0.0)
+        _dxf_write(file, 20, 0.0)
+        _dxf_write(file, 30, 0.0)
+        _dxf_write(file, 70, 64) # 64 = The polyline is a polyface mesh
+        _dxf_write(file, 71, points.length) # Polygon mesh M vertex count
+        _dxf_write(file, 72, 1) # Polygon mesh N vertex count
+
+        points.each do |point|
+
+          point = point.transform(unit_transformation)
+
+          _dxf_write(file, 0, 'VERTEX')
+          _dxf_write_id(file)
+          _dxf_write_owner_id(file, id)
+          _dxf_write_sub_classes(file, [ 'AcDbEntity' ])
+          _dxf_write(file, 8, LAYER_DRAWING) # Layer
+          _dxf_write_sub_classes(file, [ 'AcDbVertex', 'AcDbPolygonMeshVertex' ])
+          _dxf_write(file, 10, point.x)
+          _dxf_write(file, 20, point.y)
+          _dxf_write(file, 30, point.z)
+          _dxf_write(file, 70, 64 ^ 128) # 64 = 3D polygon mesh, 128 = Polyface mesh vertex
+
+        end
+
+        polygons.each do |polygon|
+
+          _dxf_write(file, 0, 'VERTEX')
+          _dxf_write_id(file)
+          _dxf_write_owner_id(file, id)
+          _dxf_write_sub_classes(file, [ 'AcDbVertex', 'AcDbPolygonMeshVertex' ])
+          _dxf_write(file, 8, LAYER_DRAWING)
+          _dxf_write(file, 10, 0.0)
+          _dxf_write(file, 20, 0.0)
+          _dxf_write(file, 30, 0.0)
+          _dxf_write(file, 70, 128) # 128 = Polyface mesh vertex
+          _dxf_write(file, 71, polygon[0]) # 71 = Polyface mesh vertex index
+          _dxf_write(file, 72, polygon[1]) # 72 = Polyface mesh vertex index
+          _dxf_write(file, 73, polygon[2]) # 73 = Polyface mesh vertex index
+
+        end
+
+        _dxf_write(file, 0, 'SEQEND')
+
+      end
+
+      @drawing_def.edge_manipulators.each do |edge_manipulator|
+
+        point1 = edge_manipulator.start_point.transform(unit_transformation)
+        point2 = edge_manipulator.end_point.transform(unit_transformation)
+
+        x1 = point1.x
+        y1 = point1.y
+        x2 = point2.x
+        y2 = point2.y
+
+        _dxf_write_line(file, x1, y1, x2, y2, LAYER_GUIDES)
+
+      end
+
+      _dxf_write(file, 0, 'ENDSEC')
+
+      _dxf_write_footer(file)
+
     end
 
   end

@@ -4,7 +4,7 @@ module Ladb::OpenCutList
 
   module DxfWriterHelper
 
-    def _dxf_get_unit_transformation(unit)
+    def _dxf_get_unit_transformation(unit, is_3d = false)
 
       require_relative '../utils/dimension_utils'
 
@@ -25,7 +25,7 @@ module Ladb::OpenCutList
         unit_factor = DimensionUtils.instance.length_to_model_unit_float(1.0.to_l)
       end
 
-      Geom::Transformation.scaling(ORIGIN, unit_factor, unit_factor, 1.0)
+      Geom::Transformation.scaling(ORIGIN, unit_factor, unit_factor, is_3d ? unit_factor : 1.0)
     end
 
     def _dxf_generate_id

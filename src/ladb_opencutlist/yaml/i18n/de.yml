@@ -813,7 +813,7 @@ tab:
         option_smoothing: Glättung
         option_smoothing_0: Keine
         option_smoothing_1: Kreise und Bögen erkennen (experimentell)
-        option_curves_help: TBD
+        option_smoothing_help: TBD
         option_sheet: Platte
         option_sheet_help: TBD
         option_parts: Teile

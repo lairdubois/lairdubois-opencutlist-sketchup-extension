@@ -813,7 +813,7 @@ tab:
         option_smoothing: Lissage
         option_smoothing_0: Aucun
         option_smoothing_1: Détecter les cercles et arcs (Expérimental)
-        option_curves_help: TBD
+        option_smoothing_help: TBD
         option_sheet: Panneau
         option_sheet_help: TBD
         option_parts: Pièces
