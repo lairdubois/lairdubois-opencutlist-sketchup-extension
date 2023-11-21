@@ -4,7 +4,7 @@ module Ladb::OpenCutList
 
   class Cuttingdiagram1dDef
 
-    attr_accessor :errors, :warnings, :tips, :unplaced_part_defs, :options_def, :summary_def, :bar_defs
+    attr_accessor :group, :errors, :warnings, :tips, :unplaced_part_defs, :options_def, :summary_def, :bar_defs, :projection_defs
 
     def initialize(group, errors = [])
       @group = group
@@ -17,6 +17,8 @@ module Ladb::OpenCutList
       @options_def = Cuttingdiagram1dOptionsDef.new
       @summary_def = Cuttingdiagram1dSummaryDef.new
       @bar_defs = {}
+
+      @projection_defs = {} # Key = part ID
 
     end
 
@@ -32,7 +34,7 @@ module Ladb::OpenCutList
 
   class Cuttingdiagram1dOptionsDef
 
-    attr_accessor :px_saw_kerf, :saw_kerf, :trimming, :bar_folding, :hide_part_list, :use_names, :full_width_diagram, :hide_cross, :origin_corner, :wrap_length
+    attr_accessor :px_saw_kerf, :saw_kerf, :trimming, :bar_folding, :hide_part_list, :use_names, :full_width_diagram, :hide_cross, :origin_corner, :wrap_length, :part_projection
 
     def initialize
 
@@ -46,6 +48,7 @@ module Ladb::OpenCutList
       @hide_cross = false
       @origin_corner = 0
       @wrap_length = false
+      @part_projection = 0
 
     end
 
@@ -171,10 +174,15 @@ module Ladb::OpenCutList
 
   class Cuttingdiagram1dPartDef
 
+    attr_accessor :px_x, :px_x_offset, :px_length
     attr_reader :cutlist_part, :slice_defs
 
     def initialize(cutlist_part)
       @cutlist_part = cutlist_part
+
+      @px_x = 0
+      @px_x_offset = 0
+      @px_length = 0
 
       @slice_defs = []
 
@@ -214,12 +222,13 @@ module Ladb::OpenCutList
 
   class Cuttingdiagram1dLeftoverDef
 
-    attr_accessor :x, :length
+    attr_accessor :px_x, :px_length, :length
     attr_reader :slice_defs
 
     def initialize
 
-      @x = 0
+      @px_x = 0
+      @px_length = 0
       @length = 0
 
       @slice_defs = []
@@ -238,11 +247,12 @@ module Ladb::OpenCutList
 
   class Cuttingdiagram1dCutDef
 
-    attr_accessor :x
+    attr_accessor :px_x, :x
     attr_reader :slice_defs
 
     def initialize
 
+      @px_x = 0
       @x = 0
 
       @slice_defs = []

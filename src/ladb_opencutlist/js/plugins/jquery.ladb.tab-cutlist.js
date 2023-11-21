@@ -3114,6 +3114,7 @@
                 var $selectHideCross = $('#ladb_select_hide_cross', $modal);
                 var $selectOriginCorner = $('#ladb_select_origin_corner', $modal);
                 var $inputWrapLength = $('#ladb_input_wrap_length', $modal);
+                var $selectPartProjection = $('#ladb_select_part_projection', $modal);
                 var $btnEditMaterial = $('#ladb_btn_edit_material', $modal);
                 var $btnGenerate = $('#ladb_btn_generate', $modal);
 
@@ -3129,6 +3130,7 @@
                     options.hide_cross = $selectHideCross.val() === '1';
                     options.origin_corner = parseInt($selectOriginCorner.val());
                     options.wrap_length = $inputWrapLength.val();
+                    options.part_projection = parseInt($selectPartProjection.val());
                 }
                 var fnFillInputs = function (options) {
                     $inputSawKerf.val(options.saw_kerf);
@@ -3140,6 +3142,7 @@
                     $selectHideCross.selectpicker('val', options.hide_cross ? '1' : '0');
                     $selectOriginCorner.selectpicker('val', options.origin_corner);
                     $inputWrapLength.val(options.wrap_length);
+                    $selectPartProjection.selectpicker('val', options.part_projection);
                 }
                 var fnEditMaterial = function (callback) {
 
@@ -3184,6 +3187,7 @@
                 $selectHideCross.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectOriginCorner.selectpicker(SELECT_PICKER_OPTIONS);
                 $inputWrapLength.ladbTextinputDimension();
+                $selectPartProjection.selectpicker(SELECT_PICKER_OPTIONS);
 
                 fnFillInputs(cuttingdiagram1dOptions);
 
@@ -3222,6 +3226,8 @@
                             window.requestAnimationFrame(function () {
                                 rubyCallCommand('cutlist_group_cuttingdiagram1d_advance', null, function (response) {
 
+                                    var barCount = response.bars.length;
+
                                     if (response.errors && response.errors.length > 0 || response.bars && response.bars.length > 0) {
 
                                         var $slide = that.pushNewSlide('ladb_cutlist_slide_cuttingdiagram_1d', 'tabs/cutlist/_slide-cuttingdiagram-1d.twig', $.extend({
@@ -3245,6 +3251,7 @@
                                         // Fetch UI elements
                                         var $btnCuttingDiagram = $('#ladb_btn_cuttingdiagram', $slide);
                                         var $btnPrint = $('#ladb_btn_print', $slide);
+                                        var $btnExport = $('#ladb_btn_export', $slide);
                                         var $btnLabels = $('#ladb_btn_labels', $slide);
                                         var $btnClose = $('#ladb_btn_close', $slide);
 
@@ -3255,6 +3262,169 @@
                                         $btnPrint.on('click', function () {
                                             $(this).blur();
                                             that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.cuttingdiagram.title'));
+                                        });
+                                        $btnExport.on('click', function () {
+                                            $(this).blur();
+
+                                            // Count hidden groups
+                                            var hiddenBarIndices = [];
+                                            $('.ladb-cutlist-cuttingdiagram-group', $slide).each(function () {
+                                                if ($(this).hasClass('no-print')) {
+                                                    hiddenBarIndices.push($(this).data('bar-index'));
+                                                }
+                                            });
+                                            var isBarSelection = hiddenBarIndices.length > 0
+
+                                            // Retrieve cutting diagram options
+                                            rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_cuttingdiagram1d_export_options', section: groupId }, function (response) {
+
+                                                var exportOptions = response.preset;
+
+                                                var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_1d_export', 'tabs/cutlist/_modal-cuttingdiagram-1d-export.twig', {
+                                                    material_attributes: response,
+                                                    group: group,
+                                                    isBarSelection: isBarSelection,
+                                                    tab: 'general',
+                                                });
+
+                                                // Fetch UI elements
+                                                var $widgetPreset = $('.ladb-widget-preset', $modal);
+                                                var $selectFileFormat = $('#ladb_select_file_format', $modal);
+                                                var $selectSmoothing = $('#ladb_select_smoothing', $modal);
+                                                var $inputBarHidden = $('#ladb_input_bar_hidden', $modal);
+                                                var $inputBarStrokeColor = $('#ladb_input_bar_stroke_color', $modal);
+                                                var $inputBarFillColor = $('#ladb_input_bar_fill_color', $modal);
+                                                var $inputPartsHidden = $('#ladb_input_parts_hidden', $modal);
+                                                var $inputPartsStrokeColor = $('#ladb_input_parts_stroke_color', $modal);
+                                                var $inputPartsFillColor = $('#ladb_input_parts_fill_color', $modal);
+                                                var $inputLeftoversHidden = $('#ladb_input_leftovers_hidden', $modal);
+                                                var $inputLeftoversStrokeColor = $('#ladb_input_leftovers_stroke_color', $modal);
+                                                var $inputLeftoversFillColor = $('#ladb_input_leftovers_fill_color', $modal);
+                                                var $inputCutsHidden = $('#ladb_input_cuts_hidden', $modal);
+                                                var $inputCutsStrokeColor = $('#ladb_input_cuts_stroke_color', $modal);
+                                                var $btnExport = $('#ladb_btn_export', $modal);
+
+                                                var fnFetchOptions = function (options) {
+                                                    options.file_format = $selectFileFormat.val();
+                                                    options.smoothing = $selectSmoothing.val() === '1';
+                                                    options.bar_hidden = !$inputBarHidden.is(':checked');
+                                                    options.bar_stroke_color = $inputBarStrokeColor.ladbTextinputColor('val');
+                                                    options.bar_fill_color = $inputBarFillColor.ladbTextinputColor('val');
+                                                    options.parts_hidden = !$inputPartsHidden.is(':checked');
+                                                    options.parts_stroke_color = $inputPartsStrokeColor.ladbTextinputColor('val');
+                                                    options.parts_fill_color = $inputPartsFillColor.ladbTextinputColor('val');
+                                                    options.leftovers_hidden = !$inputLeftoversHidden.is(':checked');
+                                                    options.leftovers_stroke_color = $inputLeftoversStrokeColor.ladbTextinputColor('val');
+                                                    options.leftovers_fill_color = $inputLeftoversFillColor.ladbTextinputColor('val');
+                                                    options.cuts_hidden = !$inputCutsHidden.is(':checked');
+                                                    options.cuts_stroke_color = $inputCutsStrokeColor.ladbTextinputColor('val');
+                                                };
+                                                var fnFillInputs = function (options) {
+                                                    $selectFileFormat.selectpicker('val', options.file_format);
+                                                    $selectSmoothing.selectpicker('val', options.smoothing ? '1' : '0');
+                                                    $inputBarHidden.prop('checked', !options.bar_hidden);
+                                                    $inputBarStrokeColor.ladbTextinputColor('val', options.bar_stroke_color);
+                                                    $inputBarFillColor.ladbTextinputColor('val', options.bar_fill_color);
+                                                    $inputPartsHidden.prop('checked', !options.parts_hidden);
+                                                    $inputPartsStrokeColor.ladbTextinputColor('val', options.parts_stroke_color);
+                                                    $inputPartsFillColor.ladbTextinputColor('val', options.parts_fill_color);
+                                                    $inputLeftoversHidden.prop('checked', !options.leftovers_hidden);
+                                                    $inputLeftoversStrokeColor.ladbTextinputColor('val', options.leftovers_stroke_color);
+                                                    $inputLeftoversFillColor.ladbTextinputColor('val', options.leftovers_fill_color);
+                                                    $inputCutsHidden.prop('checked', !options.cuts_hidden);
+                                                    $inputCutsStrokeColor.ladbTextinputColor('val', options.cuts_stroke_color);
+                                                };
+                                                var fnUpdateColorsVisibility = function () {
+                                                    var disableStroke = $selectFileFormat.val() === 'dxf';
+                                                    var disableFill = $selectFileFormat.val() === 'dxf';
+                                                    if (disableStroke) {
+                                                        $inputBarStrokeColor.ladbTextinputColor('disable');
+                                                        $inputPartsStrokeColor.ladbTextinputColor('disable');
+                                                        $inputLeftoversStrokeColor.ladbTextinputColor('disable');
+                                                        $inputCutsStrokeColor.ladbTextinputColor('disable');
+                                                    } else {
+                                                        $inputBarStrokeColor.ladbTextinputColor('enable');
+                                                        $inputPartsStrokeColor.ladbTextinputColor('enable');
+                                                        $inputLeftoversStrokeColor.ladbTextinputColor('enable');
+                                                        $inputCutsStrokeColor.ladbTextinputColor('enable');
+                                                    }
+                                                    if (disableFill) {
+                                                        $inputBarFillColor.ladbTextinputColor('disable');
+                                                        $inputPartsFillColor.ladbTextinputColor('disable');
+                                                        $inputLeftoversFillColor.ladbTextinputColor('disable');
+                                                    } else {
+                                                        $inputBarFillColor.ladbTextinputColor('enable');
+                                                        $inputPartsFillColor.ladbTextinputColor('enable');
+                                                        $inputLeftoversFillColor.ladbTextinputColor('enable');
+                                                    }
+                                                };
+
+                                                $widgetPreset.ladbWidgetPreset({
+                                                    dialog: that.dialog,
+                                                    dictionary: 'cutlist_cuttingdiagram1d_export_options',
+                                                    fnFetchOptions: fnFetchOptions,
+                                                    fnFillInputs: fnFillInputs
+                                                });
+                                                $selectFileFormat
+                                                    .selectpicker(SELECT_PICKER_OPTIONS)
+                                                    .on('changed.bs.select', function () {
+                                                        var fileCount = barCount - hiddenBarIndices.length;
+                                                        $('#ladb_btn_export_file_format', $btnExport).html($(this).val().toUpperCase() + ' <small>( ' + fileCount + ' ' + i18next.t('default.file', { count: fileCount }).toLowerCase() + ' )</small>');
+                                                        fnUpdateColorsVisibility();
+                                                    })
+                                                ;
+                                                $selectSmoothing.selectpicker(SELECT_PICKER_OPTIONS);
+                                                $inputBarStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+                                                $inputBarFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+                                                $inputPartsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+                                                $inputPartsFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+                                                $inputLeftoversStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+                                                $inputLeftoversFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+                                                $inputCutsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+
+                                                fnFillInputs(exportOptions);
+
+                                                // Bind buttons
+                                                $btnExport.on('click', function () {
+
+                                                    // Fetch options
+                                                    fnFetchOptions(exportOptions);
+
+                                                    // Store options
+                                                    rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_cuttingdiagram1d_export_options', values: exportOptions, section: groupId });
+
+                                                    rubyCallCommand('cutlist_cuttingdiagram1d_export', $.extend(exportOptions, { hidden_bar_indices: hiddenBarIndices }, cuttingdiagram1dOptions), function (response) {
+
+                                                        if (response.errors) {
+                                                            that.dialog.notifyErrors(response.errors);
+                                                        }
+                                                        if (response.export_path) {
+                                                            that.dialog.notifySuccess(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }), [
+                                                                Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
+
+                                                                    rubyCallCommand('core_open_external_file', {
+                                                                        path: response.export_path
+                                                                    });
+
+                                                                })
+                                                            ]);
+                                                        }
+
+                                                    });
+
+                                                    // Hide modal
+                                                    $modal.modal('hide');
+
+                                                });
+
+                                                // Show modal
+                                                $modal.modal('show');
+
+                                                // Setup popovers
+                                                that.dialog.setupPopovers();
+
+                                            });
+
                                         });
                                         $btnLabels.on('click', function () {
 

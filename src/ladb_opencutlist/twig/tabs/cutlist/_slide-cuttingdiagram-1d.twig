@@ -56,7 +56,7 @@
 {% block headerToolsInner %}
     <button id="ladb_btn_cuttingdiagram" class="btn btn-primary"><i class="ladb-opencutlist-icon-refresh"></i> {{ 'tab.cutlist.menu.group_cuttingdiagram'|i18next }}...</button>
     <button id="ladb_btn_print" class="btn btn-default"{% if bars|length == 0 %} disabled{% endif %}><i class="ladb-opencutlist-icon-print"></i> {{ 'default.print'|i18next }}</button>
-    <button id="ladb_btn_export" class="btn btn-default btn-sponsored"><i class="ladb-opencutlist-icon-export"></i> {{ 'default.export'|i18next }}</button>
+    <button id="ladb_btn_export" class="btn btn-default"><i class="ladb-opencutlist-icon-export"></i> {{ 'default.export'|i18next }}</button>
     &nbsp;
     <button id="ladb_btn_labels" class="btn btn-default"><i class="ladb-opencutlist-icon-labels"></i> {{ 'tab.cutlist.labels.title'|i18next }}...</button>
     &nbsp;
@@ -149,6 +149,7 @@
                                     <ul>
                                         <li><strong>{{ 'tab.cutlist.cuttingdiagram.option_saw_kerf'|i18next }} : </strong>{{ options.saw_kerf }}</li>
                                         <li><strong>{{ 'tab.cutlist.cuttingdiagram.option_trimming'|i18next }} : </strong>{{ options.trimming }}</li>
+                                        <li><strong>{{ 'tab.cutlist.cuttingdiagram.option_part_projection'|i18next }} : </strong>{{ ('tab.cutlist.cuttingdiagram.option_part_projection_'~options.part_projection)|i18next }}</li>
                                     </ul>
                                 </div>
                                 <div class="col-xs-6">
@@ -290,14 +291,31 @@
                                 {% endfor %}
                             </g>
                             {% for part in bar.parts|reverse %}
+                                {% set partIndex = loop.index0 %}
                                 {% set numberText = options.use_names ? part.name : part.number %}
                                 {% set numberTextLength = numberText|length %}
                                 <g class="part" data-part-id="{{ part.id }}" data-toggle="tooltip" data-html="true" title="{{ fn.part_tooltip(part) }}">
                                     {% set displayedDimension = false %}
+                                    {% set projectionXOffset = 0 %}
+                                    {% set sliced = part.slices|length > 1 %}
                                     {% for slice in part.slices %}
                                         {% set yOffset = slice.index * sliceHeight %}
-                                        <rect class="part-outer" x="{{ slice.px_x }}" y="{{ yOffset }}" width="{{ slice.px_length }}" height="{{ bar.px_width }}"></rect>
-                                        <rect class="part-inner" x="{{ slice.px_x + (loop.first and originCornerIsLeft or loop.last and originCornerIsRight ? partOutlineWidth : 0) }}" y="{{ yOffset + partOutlineWidth }}" width="{{ slice.px_length - partOutlineWidth * (loop.last ? (loop.first ? 2 : 1) : (loop.first ? 1 : 0)) }}" height="{{ bar.px_width - partOutlineWidth * 2 }}"></rect>
+                                        {% if projections[part.id] %}
+                                            <rect class="part-projection-outer" x="{{ slice.px_x }}" y="{{ yOffset }}" width="{{ slice.px_length }}" height="{{ bar.px_width }}" />
+                                            {% if sliced %}
+                                                <clipPath id="clip_{{ barIndex }}_{{ partIndex }}_{{ slice.index }}">
+                                                    <rect x="{{ projectionXOffset }}" y="-{{ bar.px_width }}" width="{{ slice.px_length }}" height="{{ bar.px_width }}" fill="#ffffff" />
+                                                </clipPath>
+                                            {% endif %}
+                                            <g class="part-projection" transform="translate({{ slice.px_x + part.px_x_offset - projectionXOffset }} {{ bar.px_width + yOffset }})"{% if sliced %} clip-path="url(#clip_{{ barIndex }}_{{ partIndex }}_{{ slice.index }})"{% endif %}>
+                                                {% for layer in projections[part.id] %}
+                                                    <path class="part-projection-{% if loop.first %}shape{% else %}machining{% endif %}" d="{{ layer.path }}" />
+                                                {% endfor %}
+                                            </g>
+                                        {% else %}
+                                            <rect class="part-outer" x="{{ slice.px_x }}" y="{{ yOffset }}" width="{{ slice.px_length }}" height="{{ bar.px_width }}"></rect>
+                                            <rect class="part-inner" x="{{ slice.px_x + (loop.first and originCornerIsLeft or loop.last and originCornerIsRight ? partOutlineWidth : 0) }}" y="{{ yOffset + partOutlineWidth }}" width="{{ slice.px_length - partOutlineWidth * (loop.last ? (loop.first ? 2 : 1) : (loop.first ? 1 : 0)) }}" height="{{ bar.px_width - partOutlineWidth * 2 }}"></rect>
+                                        {% endif %}
                                         {% set hideNumber = slice.px_length < (numberFontSize * (numberTextLength + (loop.first and loop.last ? 0 : 1)) * textFontWidthFactor) %}
                                         {% if not hideNumber %}
                                             <text class="part-number" x="{{ slice.px_x + slice.px_length / 2 }}" y="{{ yOffset + bar.px_width / 2 }}" font-size="{{ max(8, min(numberFontSize, (slice.px_length - partOutlineWidth * 2) / numberTextLength, (bar.px_width - partOutlineWidth * 2))) }}px" text-anchor="middle" dominant-baseline="central">{% if (not loop.first and originCornerIsLeft) or (not loop.last and originCornerIsRight) %}&hellip;{% endif %}{{ numberText|escape }}{% if (not loop.last and originCornerIsLeft) or (not loop.first and originCornerIsRight) %}&hellip;{% endif %}</text>
@@ -309,6 +327,7 @@
                                             <text class="part-dimension" x="{{ slice.px_x + slice.px_length / 2 }}" y="{{ yOffset + bar.px_width + dimensionOffset + dimensionFontSize }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic"{% if showCuttingDimensions %} style="fill: red;"{% endif %}>{{ value }}</text>
                                             {% set displayedDimension = true %}
                                         {% endif %}
+                                        {% set projectionXOffset = projectionXOffset + slice.px_length %}
                                     {% endfor %}
                                 </g>
                             {% endfor %}

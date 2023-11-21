@@ -816,6 +816,8 @@ tab:
         option_smoothing_help: TBD
         option_sheet: Panneau
         option_sheet_help: TBD
+        option_bar: Barre
+        option_bar_help: TBD
         option_parts: Pièces
         option_parts_help: TBD
         option_leftovers: Chutes

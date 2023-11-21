@@ -2,13 +2,15 @@ module Ladb::OpenCutList
 
   require_relative '../../helper/def_helper'
   require_relative '../../helper/hashable_helper'
+  require_relative '../../helper/pixel_converter_helper'
 
   class Cuttingdiagram1d
 
     include DefHelper
     include HashableHelper
+    include PixelConverterHelper
 
-    attr_reader :errors, :warnings, :tips, :unplaced_parts, :options, :summary, :bars
+    attr_reader :errors, :warnings, :tips, :unplaced_parts, :options, :summary, :bars, :projections
 
     def initialize(_def)
       @_def = _def
@@ -22,6 +24,8 @@ module Ladb::OpenCutList
       @summary = _def.summary_def.create_summary
       @bars = _def.bar_defs.values.map { |bar_def| bar_def.create_bar }.sort_by { |bar| [ -bar.type, -bar.efficiency, -bar.count ] }
 
+      @projections = _def.projection_defs.map { |part_id, projection_def| [ part_id, projection_def.layer_defs.map { |layer_def| { :depth => layer_def.depth, :path => "#{layer_def.polygon_defs.map { |polygon_def| "M #{polygon_def.points.map { |point| "#{_to_px(point.x)},#{-_to_px(point.y)}" }.join(' L ')} Z" }.join(' ')}" } } ] }.to_h
+
     end
 
   end
@@ -33,7 +37,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :px_saw_kerf, :saw_kerf, :trimming, :bar_folding, :hide_part_list, :use_names, :full_width_diagram, :hide_cross, :origin_corner, :wrap_length
+    attr_reader :px_saw_kerf, :saw_kerf, :trimming, :bar_folding, :hide_part_list, :use_names, :full_width_diagram, :hide_cross, :origin_corner, :wrap_length, :part_projection
 
     def initialize(_def)
       @_def = _def
@@ -48,6 +52,7 @@ module Ladb::OpenCutList
       @hide_cross = _def.hide_cross
       @origin_corner = _def.origin_corner
       @wrap_length = _def.wrap_length
+      @part_projection = _def.part_projection
 
     end
 
@@ -162,7 +167,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :id, :number, :saved_number, :name, :cutting_length, :slices
+    attr_reader :id, :number, :saved_number, :name, :cutting_length, :px_x, :px_x_offset, :px_length, :slices
 
     def initialize(_def)
       @_def = _def
@@ -171,6 +176,10 @@ module Ladb::OpenCutList
       @number = _def.cutlist_part.number
       @name = _def.cutlist_part.name
       @cutting_length = _def.cutlist_part.cutting_length
+
+      @px_x = _def.px_x
+      @px_x_offset = _def.px_x_offset
+      @px_length = _def.px_length
 
       @slices = _def.slice_defs.map { |slide_def| slide_def.create_slice }
 
@@ -212,12 +221,13 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :x, :length, :slices
+    attr_reader :px_x, :px_length, :length, :slices
 
     def initialize(_def)
       @_def = _def
 
-      @x = _def.x
+      @px_x = _def.px_x
+      @px_length = _def.px_length
       @length = _def.length.to_l.to_s
 
       @slices = _def.slice_defs.map { |slide_def| slide_def.create_slice }
@@ -233,11 +243,12 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :x, :slices
+    attr_reader :px_x, :x, :slices
 
     def initialize(_def)
       @_def = _def
 
+      @px_x = _def.px_x
       @x = _def.x
 
       @slices = _def.slice_defs.map { |slide_def| slide_def.create_slice }

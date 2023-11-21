@@ -9,6 +9,10 @@ module Ladb::OpenCutList
     ORIGIN_CORNER_LEFT = 0
     ORIGIN_CORNER_RIGHT = 1
 
+    PART_PROJECTION_NONE = 0
+    PART_PROJECTION_FRONT = 1
+    PART_PROJECTION_BACK = 2
+
     def initialize(settings, cutlist)
 
       @group_id = settings.fetch('group_id')
@@ -24,6 +28,7 @@ module Ladb::OpenCutList
       @hide_cross = settings.fetch('hide_cross')
       @origin_corner = settings.fetch('origin_corner')
       @wrap_length = DimensionUtils.instance.str_to_ifloat(settings.fetch('wrap_length')).to_l.to_f
+      @part_projection = settings.fetch('part_projection', PART_PROJECTION_NONE)
 
       @cutlist = cutlist
 
@@ -144,6 +149,7 @@ module Ladb::OpenCutList
       cuttingdiagram1d_def.options_def.hide_cross = @hide_cross
       cuttingdiagram1d_def.options_def.origin_corner = @origin_corner
       cuttingdiagram1d_def.options_def.wrap_length = @wrap_length
+      cuttingdiagram1d_def.options_def.part_projection = @part_projection
 
       cuttingdiagram1d_def.errors += errors
 
@@ -165,6 +171,9 @@ module Ladb::OpenCutList
       if material_attributes.l_length_increase > 0 || material_attributes.l_width_increase > 0
         cuttingdiagram1d_def.warnings << [ 'tab.cutlist.cuttingdiagram.warning.cutting_dimensions_increase_1d', { :material_name => group.material_name, :length_increase => material_attributes.length_increase, :width_increase => material_attributes.width_increase } ]
       end
+
+      # Material oversizes
+      part_x_offset = material_attributes.l_length_increase / 2
 
       # Unplaced boxes
       result.unplaced_boxes.each { |box|
@@ -239,6 +248,9 @@ module Ladb::OpenCutList
         bin.boxes.each { |box|
 
           part_def = Cuttingdiagram1dPartDef.new(box.data)
+          part_def.px_x = _to_px(_compute_x_with_origin_corner(@origin_corner, box.x_pos, box.length, bin.length))
+          part_def.px_x_offset = _to_px(part_x_offset)
+          part_def.px_length = _to_px(box.length)
           part_def.slice_defs.concat(_to_slice_defs(box.x_pos, box.length, wrap_length))
           bar_def.part_defs.push(part_def)
 
@@ -250,11 +262,16 @@ module Ladb::OpenCutList
             end
             grouped_part_def.count += 1
           end
+
+          # Part is used : compute its projection if enabled
+          _compute_part_projection_def(cuttingdiagram1d_def, box.data) unless @part_projection == PART_PROJECTION_NONE
+
         }
 
         # Leftover
         lefover_def = Cuttingdiagram1dLeftoverDef.new
-        lefover_def.x = bin.current_position
+        lefover_def.px_x = _to_px(bin.current_position)
+        lefover_def.px_length = _to_px(bin.current_leftover)
         lefover_def.length = bin.current_leftover
         lefover_def.slice_defs.concat(_to_slice_defs(bin.current_position, bin.current_leftover, wrap_length))
         bar_def.leftover_def = lefover_def
@@ -262,6 +279,7 @@ module Ladb::OpenCutList
         # Cuts
         bin.cuts.each { |cut|
           cut_def = Cuttingdiagram1dCutDef.new
+          cut_def.px_x = _to_px(cut.to_l)
           cut_def.x = cut.to_l
           cut_def.slice_defs.concat(_to_slice_defs(cut, @saw_kerf, wrap_length))
           bar_def.cut_defs.push(cut_def)
@@ -353,6 +371,49 @@ module Ladb::OpenCutList
       end
 
       slice_defs
+    end
+
+    def _compute_part_projection_def(cuttingdiagram1d_def, cutlist_part)
+
+      projection_def = cuttingdiagram1d_def.projection_defs[cutlist_part.id]
+      if projection_def.nil?
+
+        instance_info = cutlist_part.def.get_one_instance_info
+        unless instance_info.nil?
+
+          local_x_axis = cutlist_part.def.size.oriented_axis(X_AXIS)
+          local_y_axis = cutlist_part.def.size.oriented_axis(Y_AXIS)
+          local_z_axis = cutlist_part.def.size.oriented_axis(Z_AXIS)
+
+          if @part_projection == PART_PROJECTION_BACK
+            local_x_axis = local_x_axis.reverse
+            local_z_axis = local_z_axis.reverse
+          end
+
+          drawing_def = CommonDrawingDecompositionWorker.new(instance_info.path, {
+            'input_local_x_axis' => local_x_axis,
+            'input_local_y_axis' => local_y_axis,
+            'input_local_z_axis' => local_z_axis,
+            'use_bounds_min_as_origin' => true,
+            'ignore_edges' => true
+          }).run
+          if drawing_def.is_a?(DrawingDef)
+
+            projection_def = CommonDrawingProjectionWorker.new(drawing_def, {
+              'down_to_top_union' => true
+            }).run
+            if projection_def.is_a?(DrawingProjectionDef)
+
+              cuttingdiagram1d_def.projection_defs[cutlist_part.id] = projection_def
+
+            end
+
+          end
+
+        end
+
+      end
+
     end
 
   end
