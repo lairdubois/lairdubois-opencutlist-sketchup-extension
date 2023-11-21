@@ -362,18 +362,21 @@ module Ladb::OpenCutList
     end
 
     def _populate_surface_manipulator(surface_manipulator, face)
-      return if surface_manipulator.include?(face)
-      face.edges.each do |edge|
-        next unless edge.soft?
-        surface_manipulator.faces.push(face)
-        edge.faces.each do |f|
-          next if f == face
-          next unless f.visible? && _layer_visible?(f.layer)
-          _populate_surface_manipulator(surface_manipulator, f)
-
-          # TODO : Find a best way to achieve this. It can raise stack level too deep error.
-
+      explored_faces = Set.new
+      faces_to_explore = [ face ]
+      until faces_to_explore.empty?
+        current_face = faces_to_explore.pop
+        current_face.edges.each do |edge|
+          next unless edge.soft?
+          surface_manipulator.faces.push(current_face)
+          edge.faces.each do |f|
+            next if f == current_face
+            next unless f.visible? && _layer_visible?(f.layer)
+            next if explored_faces.include?(f)
+            faces_to_explore.push(f)
+          end
         end
+        explored_faces.add(current_face)
       end
     end
 
