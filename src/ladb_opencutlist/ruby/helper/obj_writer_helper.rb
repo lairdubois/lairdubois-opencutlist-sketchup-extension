@@ -2,6 +2,8 @@ module Ladb::OpenCutList
 
   module ObjWriterHelper
 
+    # Unit
+
     def _obj_get_unit_transformation(unit)
 
       require_relative '../utils/dimension_utils'
@@ -25,6 +27,8 @@ module Ladb::OpenCutList
 
       Geom::Transformation.scaling(ORIGIN, unit_factor, unit_factor, unit_factor)
     end
+
+    # -----
 
     def _obj_write(file, key, value)
       file.puts("#{key} #{value}")

@@ -38,6 +38,7 @@ module Ladb::OpenCutList
       @use_bounds_min_as_origin = settings.fetch('use_bounds_min_as_origin', false)
 
       @ignore_faces = settings.fetch('ignore_faces', false)
+      @ignore_surfaces = settings.fetch('ignore_surfaces', false)
       @face_validator = settings.fetch('face_validator', FACE_VALIDATOR_ALL)
 
       @ignore_edges = settings.fetch('ignore_edges', false)
@@ -124,10 +125,6 @@ module Ladb::OpenCutList
         end
 
       else
-
-        # input_edge = @input_edge_path.nil? ? nil : @input_edge_path.last
-        #
-        # drawing_def.input_edge_manipulator = input_edge.is_a?(Sketchup::Edge) ? EdgeManipulator.new(input_edge, PathUtils::get_transformation(@input_edge_path)) : nil
 
         # Get transformed Z axis
         z_axis = @input_local_z_axis.transform(transformation).normalize
@@ -320,17 +317,21 @@ module Ladb::OpenCutList
 
             if !block_given? || yield(manipulator)
 
-              # TODO : Quite slow
-              if manipulator.belongs_to_a_surface?
-                surface_manipulator = _get_surface_manipulator_by_face(drawing_def, entity)
-                if surface_manipulator.nil?
-                  surface_manipulator = SurfaceManipulator.new(transformation)
-                  _populate_surface_manipulator(surface_manipulator, entity)
-                  drawing_def.surface_manipulators.push(surface_manipulator)
+              unless @ignore_surfaces
+
+                # TODO : Quite slow
+                if manipulator.belongs_to_a_surface?
+                  surface_manipulator = _get_surface_manipulator_by_face(drawing_def, entity)
+                  if surface_manipulator.nil?
+                    surface_manipulator = SurfaceManipulator.new(transformation)
+                    _populate_surface_manipulator(surface_manipulator, entity)
+                    drawing_def.surface_manipulators.push(surface_manipulator)
+                  end
+                  manipulator.surface_manipulator = surface_manipulator
                 end
-                manipulator.surface_manipulator = surface_manipulator
+                # TODO : Quite slow
+
               end
-              # TODO : Quite slow
 
               drawing_def.face_manipulators.push(manipulator)
 
@@ -369,6 +370,9 @@ module Ladb::OpenCutList
           next if f == face
           next unless f.visible? && _layer_visible?(f.layer)
           _populate_surface_manipulator(surface_manipulator, f)
+
+          # TODO : Find a best way to achieve this. It can raise stack level too deep error.
+
         end
       end
     end

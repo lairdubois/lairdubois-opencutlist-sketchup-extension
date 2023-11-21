@@ -4,6 +4,8 @@ module Ladb::OpenCutList
 
   module SvgWriterHelper
 
+    # Unit
+
     def _svg_get_unit_sign_and_transformation(unit)
 
       require_relative '../utils/dimension_utils'
@@ -23,6 +25,8 @@ module Ladb::OpenCutList
       return unit_sign, Geom::Transformation.scaling(ORIGIN, unit_factor, unit_factor, 1.0)
     end
 
+    # Ident
+
     def _svg_indent(inc = 1)
       if @_svg_indent.nil?
         @_svg_indent = inc
@@ -35,10 +39,39 @@ module Ladb::OpenCutList
       ''.ljust([ @_svg_indent.to_i, 0 ].max)
     end
 
+    # Attributes
+
     def _svg_append_attributes(attributes = {})
       return unless attributes.is_a?(Hash)
       "#{attributes.empty? ? '' : ' '}#{attributes.map { |key, value| "#{key}=\"#{value.to_s.gsub(/["']/, '')}\"" }.join(' ')}"
     end
+
+    # Colors
+
+    def _svg_stroke_color(stroke_color, fill_color = nil)
+      return stroke_color unless stroke_color.nil?
+      return '#000000' if fill_color.nil?
+      'none'
+    end
+
+    def _svg_fill_color(fill_color)
+      return fill_color unless fill_color.nil?
+      'none'
+    end
+
+    # ID
+
+    def _svg_sanitize_id(id)
+      id.to_s.gsub(/[\s]/, '_')
+    end
+
+    # Value
+
+    def _svg_value(value)
+      value.to_f.round(3)
+    end
+
+    # -----
 
     def _svg_write_start(file, x, y, width, height, unit_sign)
       file.puts('<?xml version="1.0" encoding="UTF-8" standalone="no"?>')
@@ -197,31 +230,6 @@ module Ladb::OpenCutList
 
       end
 
-    end
-
-    # Colors
-
-    def _svg_stroke_color(stroke_color, fill_color = nil)
-      return stroke_color unless stroke_color.nil?
-      return '#000000' if fill_color.nil?
-      'none'
-    end
-
-    def _svg_fill_color(fill_color)
-      return fill_color unless fill_color.nil?
-      'none'
-    end
-
-    # ID
-
-    def _svg_sanitize_id(id)
-      id.to_s.gsub(/[\s]/, '_')
-    end
-
-    # Value (round)
-
-    def _svg_value(value)
-      value.to_f.round(3)
     end
 
   end

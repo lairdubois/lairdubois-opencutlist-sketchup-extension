@@ -436,6 +436,7 @@ module Ladb::OpenCutList
 
           @active_drawing_def = CommonDrawingDecompositionWorker.new(@active_part_entity_path, {
             'use_bounds_min_as_origin' => !fetch_action_option(ACTION_EXPORT_PART_3D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR),
+            'ignore_surfaces' => true,
             'ignore_edges' => true
           }).run
           if @active_drawing_def.is_a?(DrawingDef)

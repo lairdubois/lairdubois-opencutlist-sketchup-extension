@@ -2,6 +2,8 @@ module Ladb::OpenCutList
 
   module StlWriterHelper
 
+    # Unit
+
     def _stl_get_unit_transformation(unit)
 
       require_relative '../utils/dimension_utils'
@@ -26,6 +28,8 @@ module Ladb::OpenCutList
       Geom::Transformation.scaling(ORIGIN, unit_factor, unit_factor, unit_factor)
     end
 
+    # Indent
+
     def _stl_indent(inc = 1)
       if @_stl_indent.nil?
         @_stl_indent = inc
@@ -38,6 +42,7 @@ module Ladb::OpenCutList
       ''.ljust([ @_stl_indent.to_i, 0 ].max)
     end
 
+    # -----
 
     def _stl_write_solid_start(file, name)
       file.puts("solid #{name}")

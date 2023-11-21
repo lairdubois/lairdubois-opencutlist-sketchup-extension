@@ -34,6 +34,8 @@ module Ladb::OpenCutList
       @_dxf_current_id.to_s(16).upcase
     end
 
+    # -----
+
     def _dxf_write(file, code, value)
       file.puts(code.to_s.rjust(3))
       file.puts(value.is_a?(Integer) ? value.to_s.rjust(code >= 90 && code <= 99 ? 9 : 6) : value.to_s)
