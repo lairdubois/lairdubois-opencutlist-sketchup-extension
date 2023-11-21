@@ -304,7 +304,7 @@
                                             <rect class="part-projection-outer" x="{{ slice.px_x }}" y="{{ yOffset }}" width="{{ slice.px_length }}" height="{{ bar.px_width }}" />
                                             {% if sliced %}
                                                 <clipPath id="clip_{{ barIndex }}_{{ partIndex }}_{{ slice.index }}">
-                                                    <rect x="{{ projectionXOffset }}" y="-{{ bar.px_width }}" width="{{ slice.px_length }}" height="{{ bar.px_width }}" fill="#ffffff" />
+                                                    <rect x="{{ projectionXOffset - part.px_x_offset }}" y="-{{ bar.px_width }}" width="{{ slice.px_length }}" height="{{ bar.px_width }}" fill="#ffffff" />
                                                 </clipPath>
                                             {% endif %}
                                             <g class="part-projection" transform="translate({{ slice.px_x + part.px_x_offset - projectionXOffset }} {{ bar.px_width + yOffset }})"{% if sliced %} clip-path="url(#clip_{{ barIndex }}_{{ partIndex }}_{{ slice.index }})"{% endif %}>
