@@ -261,6 +261,7 @@
         var $btnLeftDown = $('#ladb_btn_left_down', this.$element);
         var $btnTopUp = $('#ladb_btn_top_up', this.$element);
         var $btnTopDown = $('#ladb_btn_top_down', this.$element);
+        var $btnLeftTopReset = $('#ladb_btn_left_top_reset', this.$element);
 
         var fnGlobalUpdate = function () {
 
@@ -372,6 +373,11 @@
                 inc_left: 0,
                 inc_top: -20,
             });
+            return false;
+        });
+        $btnLeftTopReset.on('click', function () {
+            $(this).blur();
+            rubyCallCommand('settings_dialog_reset_position');
             return false;
         });
 

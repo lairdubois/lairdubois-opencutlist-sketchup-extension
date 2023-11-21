@@ -17,6 +17,9 @@ module Ladb::OpenCutList
       Plugin.instance.register_command("settings_dialog_inc_size") do |params|
         dialog_inc_size_command(params)
       end
+      Plugin.instance.register_command("settings_dialog_reset_position") do |params|
+        dialog_reset_position_command
+      end
       Plugin.instance.register_command("settings_dialog_inc_position") do |params|
         dialog_inc_position_command(params)
       end
@@ -81,6 +84,10 @@ module Ladb::OpenCutList
 
       Plugin.instance.dialog_inc_position(inc_left, inc_top)
 
+    end
+
+    def dialog_reset_position_command
+      Plugin.instance.dialog_reset_position
     end
 
     def set_length_settings_command(params)
