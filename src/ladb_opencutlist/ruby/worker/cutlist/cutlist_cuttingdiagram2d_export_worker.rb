@@ -319,7 +319,7 @@ module Ladb::OpenCutList
         end
 
         unless @leftovers_hidden
-          sheet.leftovers.each do |leftover|
+          sheet.leftovers.uniq { |leftover| [ leftover.length, leftover.width ] }.each do |leftover|
             _dxf_write_section_tables_block_record(file, fn_leftover_block_name.call(leftover), owner_id)
           end
         end
@@ -384,7 +384,7 @@ module Ladb::OpenCutList
         end
 
         unless @leftovers_hidden
-          sheet.leftovers.each do |leftover|
+          sheet.leftovers.uniq { |leftover| [ leftover.length, leftover.width ] }.each do |leftover|
 
             size = Geom::Point3d.new(
               _to_inch(leftover.px_length),
