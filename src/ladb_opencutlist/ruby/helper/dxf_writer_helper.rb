@@ -1,6 +1,7 @@
 module Ladb::OpenCutList
 
   require_relative '../constants'
+  require_relative '../model/drawing/drawing_projection_def'
 
   module DxfWriterHelper
 
@@ -64,32 +65,45 @@ module Ladb::OpenCutList
       end
     end
 
-    def _dxf_write_header(file, min = Geom::Point3d.new, max = Geom::Point3d.new(1000.0, 1000.0, 1000.0), layer_defs = [])  # layer_defs = [ { :name => NAME, :color => COLOR }, ... ]
-
-      layer_defs = [ { :name => '0'} ] + layer_defs
-
-      _dxf_write(file, 999, "Generator: SketchUp, #{EXTENSION_NAME} Extension, Version #{EXTENSION_VERSION}")
-
-      # HEADER and base blocks
-
+    def _dxf_write_section(file, name)
       _dxf_write(file, 0, 'SECTION')
-      _dxf_write(file, 2, 'HEADER')
+      _dxf_write(file, 2, name)
+      yield if block_given?
+      _dxf_write(file, 0, 'ENDSEC')
+    end
+
+    def _dxf_write_start(file)
+      _dxf_write(file, 999, "Generator: SketchUp, #{EXTENSION_NAME} Extension, Version #{EXTENSION_VERSION}")
+    end
+
+    def _dxf_write_end(file)
+      _dxf_write(file, 0, 'EOF')
+    end
+
+    # -- SECTIONS
+
+    # HEADER
+
+    def _dxf_write_section_header(file, min = Geom::Point3d.new, max = Geom::Point3d.new(1000.0, 1000.0, 1000.0))
+
+      _dxf_write_section(file, 'HEADER') do
+
         _dxf_write_header_value(file, '$ACADVER', 1, 'AC1014')
         _dxf_write_header_value(file, '$ACADMAINTVER', 70, 9)
         _dxf_write_header_value(file, '$DWGCODEPAGE', 3, 'CNT')
         _dxf_write_header_value(file, '$INSBASE', 10, 0.0,
-                                                    20, 0.0,
-                                                    30, 0.0)
+                                20, 0.0,
+                                30, 0.0)
         _dxf_write_header_value(file, '$EXTMIN', 10, min.x.to_f,
-                                                    20, min.y.to_f,
-                                                    30, min.z.to_f)
+                                20, min.y.to_f,
+                                30, min.z.to_f)
         _dxf_write_header_value(file, '$EXTMAX', 10, max.x.to_f,
-                                                    20, max.y.to_f,
-                                                    30, max.z.to_f)
+                                20, max.y.to_f,
+                                30, max.z.to_f)
         _dxf_write_header_value(file, '$LIMMIN', 10, min.x.to_f,
-                                                    20, min.y.to_f)
+                                20, min.y.to_f)
         _dxf_write_header_value(file, '$LIMMAX', 10, max.x.to_f,
-                                                    20, max.y.to_f)
+                                20, max.y.to_f)
         _dxf_write_header_value(file, '$ORTHOMODE', 70, 0)
         _dxf_write_header_value(file, '$REGENMODE', 70, 1)
         _dxf_write_header_value(file, '$FILLMODE', 70, 1)
@@ -207,24 +221,24 @@ module Ladb::OpenCutList
         _dxf_write_header_value(file, '$SURFV', 70, 6)
         _dxf_write_header_value(file, '$UCSNAME', 2, '')
         _dxf_write_header_value(file, '$UCSORG', 10, 0.0,
-                                                    20, 0.0,
-                                                    30, 0.0)
+                                20, 0.0,
+                                30, 0.0)
         _dxf_write_header_value(file, '$UCSXDIR', 10, 1.0,
-                                                    20, 0.0,
-                                                    30, 0.0)
+                                20, 0.0,
+                                30, 0.0)
         _dxf_write_header_value(file, '$UCSYDIR', 10, 0.0,
-                                                    20, 1.0,
-                                                    30, 0.0)
+                                20, 1.0,
+                                30, 0.0)
         _dxf_write_header_value(file, '$PUCSNAME', 2, '')
         _dxf_write_header_value(file, '$PUCSORG', 10, 0.0,
-                                                    20, 0.0,
-                                                    30, 0.0)
+                                20, 0.0,
+                                30, 0.0)
         _dxf_write_header_value(file, '$PUCSXDIR', 10, 1.0,
-                                                    20, 0.0,
-                                                    30, 0.0)
+                                20, 0.0,
+                                30, 0.0)
         _dxf_write_header_value(file, '$PUCSYDIR', 10, 0.0,
-                                                    20, 1.0,
-                                                    30, 0.0)
+                                20, 1.0,
+                                30, 0.0)
         _dxf_write_header_value(file, '$USERI1', 70, 0)
         _dxf_write_header_value(file, '$USERI2', 70, 0)
         _dxf_write_header_value(file, '$USERI3', 70, 0)
@@ -241,19 +255,19 @@ module Ladb::OpenCutList
         _dxf_write_header_value(file, '$TILEMODE', 70, 1)
         _dxf_write_header_value(file, '$MAXACTVP', 70, 64)
         _dxf_write_header_value(file, '$PINSBASE', 10, 0.0,
-                                                    20, 0.0,
-                                                    30, 0.0)
+                                20, 0.0,
+                                30, 0.0)
         _dxf_write_header_value(file, '$PLIMCHECK', 70, 0)
         _dxf_write_header_value(file, '$PEXTMIN', 10, '1.000000000000000E+20',
-                                                    20, '1.000000000000000E+20',
-                                                    30, '1.000000000000000E+20')
+                                20, '1.000000000000000E+20',
+                                30, '1.000000000000000E+20')
         _dxf_write_header_value(file, '$PEXTMAX', 10, '-1.000000000000000E+20',
-                                                    20, '-1.000000000000000E+20',
-                                                    30, '-1.000000000000000E+20')
+                                20, '-1.000000000000000E+20',
+                                30, '-1.000000000000000E+20')
         _dxf_write_header_value(file, '$PLIMMIN', 10, 0.0,
-                                                    20, 0.0)
+                                20, 0.0)
         _dxf_write_header_value(file, '$PLIMMAX', 10, 12.0,
-                                                    20, 9.0)
+                                20, 9.0)
         _dxf_write_header_value(file, '$UNITMODE', 70, 0)
         _dxf_write_header_value(file, '$VISRETAIN', 70, 1)
         _dxf_write_header_value(file, '$PLINEGEN', 70, 0)
@@ -265,20 +279,30 @@ module Ladb::OpenCutList
         _dxf_write_header_value(file, '$CMLSCALE', 40, 1.0)
         _dxf_write_header_value(file, '$PROXYGRAPHICS', 70, 1)
         _dxf_write_header_value(file, '$MEASUREMENT', 70, 0)
-      _dxf_write(file, 0, 'ENDSEC')
 
-      # CLASSES
+      end
 
-      _dxf_write(file, 0, 'SECTION')
-      _dxf_write(file, 2, 'CLASSES')
+    end
 
-      _dxf_write(file, 0, 'ENDSEC')
+    # CLASSES
 
-      # TABLES
+    def _dxf_write_section_classes(file)
 
-      _dxf_write(file, 0, 'SECTION')
-      _dxf_write(file, 2, 'TABLES')
+      _dxf_write_section(file, 'CLASSES')
 
+    end
+
+    # TABLES
+
+    def _dxf_write_section_tables(file, vport_min = Geom::Point3d.new, vport_max = Geom::Point3d.new(1000.0, 1000.0, 1000.0), layer_defs = [])  # layer_defs = [ { :name => NAME, :color => COLOR }, ... ]
+
+      layer_defs = [ { :name => '0'} ] + layer_defs
+
+      _dxf_write_section(file, 'TABLES') do
+
+        # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-8CE7CC87-27BD-4490-89DA-C21F516415A9
+
+        vport_center = Geom::Point3d.new((vport_max - vport_min).to_a)
 
         _dxf_write(file, 0, 'TABLE')
         _dxf_write(file, 2, 'VPORT')
@@ -293,12 +317,12 @@ module Ladb::OpenCutList
           _dxf_write_sub_classes(file, [ 'AcDbSymbolTableRecord', 'AcDbViewportTableRecord' ])
           _dxf_write(file, 2, '*ACTIVE')
           _dxf_write(file, 70, 0)
-          _dxf_write(file, 10, 0.0)
-          _dxf_write(file, 20, 0.0)
-          _dxf_write(file, 11, 1.0)
-          _dxf_write(file, 21, 1.0)
-          _dxf_write(file, 12, 10.42990654205607)
-          _dxf_write(file, 22, 4.5)
+          _dxf_write(file, 10, vport_min.x.to_f)
+          _dxf_write(file, 20, vport_min.y.to_f)
+          _dxf_write(file, 11, vport_max.x.to_f)
+          _dxf_write(file, 21, vport_max.y.to_f)
+          _dxf_write(file, 12, vport_center.x.to_f)
+          _dxf_write(file, 22, vport_center.y.to_f)
           _dxf_write(file, 13, 0.0)
           _dxf_write(file, 23, 0.0)
           _dxf_write(file, 14, 0.5)
@@ -443,12 +467,12 @@ module Ladb::OpenCutList
         _dxf_write_sub_classes(file, [ 'AcDbSymbolTable' ])
         _dxf_write(file, 70, 2)
 
-          _dxf_write(file, 0, 'APPID')
-          _dxf_write_id(file)
-          _dxf_write_owner_id(file, id)
-          _dxf_write_sub_classes(file, [ 'AcDbSymbolTableRecord', 'AcDbRegAppTableRecord' ])
-          _dxf_write(file, 2, 'ACAD')
-          _dxf_write(file, 70, 0)
+        _dxf_write(file, 0, 'APPID')
+        _dxf_write_id(file)
+        _dxf_write_owner_id(file, id)
+        _dxf_write_sub_classes(file, [ 'AcDbSymbolTableRecord', 'AcDbRegAppTableRecord' ])
+        _dxf_write(file, 2, 'ACAD')
+        _dxf_write(file, 70, 0)
 
           _dxf_write(file, 0, 'APPID')
           _dxf_write_id(file)
@@ -539,80 +563,89 @@ module Ladb::OpenCutList
         _dxf_write_sub_classes(file, [ 'AcDbSymbolTable' ])
         _dxf_write(file, 70, 2)
 
-          _dxf_write(file, 0, 'BLOCK_RECORD')
-          @_dxf_model_space_id = _dxf_write_id(file)
-          _dxf_write_owner_id(file, id)
-          _dxf_write_sub_classes(file, [ 'AcDbSymbolTableRecord', 'AcDbBlockTableRecord' ])
-          _dxf_write(file, 2, '*MODEL_SPACE')
+          @_dxf_model_space_id = _dxf_write_section_tables_block_record(file, '*MODEL_SPACE', id)
+          @_dxf_paper_space_id = _dxf_write_section_tables_block_record(file, '*PAPER_SPACE', id)
 
-          _dxf_write(file, 0, 'BLOCK_RECORD')
-          paper_space_id = _dxf_write_id(file)
-          _dxf_write_owner_id(file, id)
-          _dxf_write_sub_classes(file, [ 'AcDbSymbolTableRecord', 'AcDbBlockTableRecord' ])
-          _dxf_write(file, 2, '*PAPER_SPACE')
+          yield(id) if block_given?
 
         _dxf_write(file, 0, 'ENDTAB')
 
-
-      _dxf_write(file, 0, 'ENDSEC')
-
-      # BLOCKS
-
-      _dxf_write(file, 0, 'SECTION')
-      _dxf_write(file, 2, 'BLOCKS')
-
-        _dxf_write(file, 0, 'BLOCK')
-        id = _dxf_write_id(file)
-        _dxf_write_owner_id(file, @_dxf_model_space_id)
-        _dxf_write_sub_classes(file, [ 'AcDbEntity' ])
-        _dxf_write(file, 8, '0')
-        _dxf_write_sub_classes(file, [ 'AcDbBlockBegin' ])
-        _dxf_write(file, 2, '*MODEL_SPACE')
-        _dxf_write(file, 70, 0)
-        _dxf_write(file, 10, 0.0)
-        _dxf_write(file, 20, 0.0)
-        _dxf_write(file, 30, 0.0)
-        _dxf_write(file, 3, '*MODEL_SPACE')
-        _dxf_write(file, 1, '')
-        _dxf_write(file, 0, 'ENDBLK')
-        _dxf_write_id(file)
-        _dxf_write_owner_id(file, @_dxf_model_space_id)
-        _dxf_write_sub_classes(file, [ 'AcDbEntity' ])
-        _dxf_write(file, 8, '0')
-        _dxf_write_sub_classes(file, [ 'AcDbBlockEnd' ])
-
-        _dxf_write(file, 0, 'BLOCK')
-        id = _dxf_write_id(file)
-        _dxf_write_owner_id(file, paper_space_id)
-        _dxf_write_sub_classes(file, [ 'AcDbEntity' ])
-        _dxf_write(file, 67, 1)
-        _dxf_write(file, 8, '0')
-        _dxf_write_sub_classes(file, [ 'AcDbBlockBegin' ])
-        _dxf_write(file, 2, '*PAPER_SPACE')
-        _dxf_write(file, 70, 0)
-        _dxf_write(file, 10, 0.0)
-        _dxf_write(file, 20, 0.0)
-        _dxf_write(file, 30, 0.0)
-        _dxf_write(file, 3, '*PAPER_SPACE')
-        _dxf_write(file, 1, '')
-        _dxf_write(file, 0, 'ENDBLK')
-        _dxf_write_id(file)
-        _dxf_write_owner_id(file, paper_space_id)
-        _dxf_write_sub_classes(file, [ 'AcDbEntity' ])
-        _dxf_write(file, 67, 1)
-        _dxf_write(file, 8, '0')
-        _dxf_write_sub_classes(file, [ 'AcDbBlockEnd' ])
-
-      _dxf_write(file, 0, 'ENDSEC')
+      end
 
     end
 
-    def _dxf_write_footer(file)
+    def _dxf_write_section_tables_block_record(file, name, owner_id)
 
-      # OBJECTS
+      # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-A1FD1934-7EF5-4D35-A4B0-F8AE54A9A20A
 
-      _dxf_write(file, 0, 'SECTION')
-      _dxf_write(file, 2, 'OBJECTS')
+      _dxf_write(file, 0, 'BLOCK_RECORD')
+      id = _dxf_write_id(file)
+      _dxf_write_owner_id(file, owner_id)
+      _dxf_write_sub_classes(file, [ 'AcDbSymbolTableRecord', 'AcDbBlockTableRecord' ])
+      _dxf_write(file, 2, name)
+
+      id
+    end
+
+    # BLOCKS
+
+    def _dxf_write_section_blocks(file)
+
+      _dxf_write_section(file, 'BLOCKS') do
+
+        _dxf_write_section_blocks_block(file, '*MODEL_SPACE', @_dxf_model_space_id)
+        _dxf_write_section_blocks_block(file, '*PAPER_SPACE', @_dxf_paper_space_id)
+
+        yield if block_given?
+
+      end
+
+    end
+
+    def _dxf_write_section_blocks_block(file, name, owner_id, layer = '0')
+
+      # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-66D32572-005A-4E23-8B8B-8726E8C14302
+
+      _dxf_write(file, 0, 'BLOCK')
+      _dxf_write_id(file)
+      _dxf_write_owner_id(file, owner_id)
+      _dxf_write_sub_classes(file, [ 'AcDbEntity' ])
+      _dxf_write(file, 8, layer)
+      _dxf_write_sub_classes(file, [ 'AcDbBlockBegin' ])
+      _dxf_write(file, 2, name)
+      _dxf_write(file, 70, 0)
+      _dxf_write(file, 10, 0.0)
+      _dxf_write(file, 20, 0.0)
+      _dxf_write(file, 30, 0.0)
+      _dxf_write(file, 3, name)
+      _dxf_write(file, 1, '')
+      yield if block_given?
+      _dxf_write(file, 0, 'ENDBLK')
+      _dxf_write_id(file)
+      _dxf_write_owner_id(file, owner_id)
+      _dxf_write_sub_classes(file, [ 'AcDbEntity' ])
+      _dxf_write(file, 8, layer)
+      _dxf_write_sub_classes(file, [ 'AcDbBlockEnd' ])
+
+    end
+
+    # ENTITIES
+
+    def _dxf_write_section_entities(file)
+
+      _dxf_write_section(file, 'ENTITIES') do
+
+        yield if block_given?
+
+      end
+
+    end
+
+    # OBJECTS
+
+    def _dxf_write_section_objects(file)
+
+      _dxf_write_section(file, 'OBJECTS') do
 
         id_dic1 = _dxf_generate_id
         id_dic2 = _dxf_generate_id
@@ -630,16 +663,13 @@ module Ladb::OpenCutList
         _dxf_write_sub_classes(file, [ 'AcDbDictionary' ])
         _dxf_write(file, 281, 1)
 
-      _dxf_write(file, 0, 'ENDSEC')
-
-
-      _dxf_write(file, 0, 'EOF')
+      end
 
     end
 
-    # -----
+    # -- BASE GEOMETRY
 
-    def _dxf_write_point(file, x, y, layer = 0)
+    def _dxf_write_point(file, x, y, layer = '0')
 
       # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-FCEF5726-53AE-4C43-B4EA-C84EB8686A66
 
@@ -655,7 +685,7 @@ module Ladb::OpenCutList
 
     end
 
-    def _dxf_write_line(file, x1, y1, x2, y2, layer = 0)
+    def _dxf_write_line(file, x1, y1, x2, y2, layer = '0')
 
       # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-FCEF5726-53AE-4C43-B4EA-C84EB8686A66
 
@@ -674,7 +704,7 @@ module Ladb::OpenCutList
 
     end
 
-    def _dxf_write_arc(file, cx, cy, r, as = 0, ae = 2 * Math::PI, layer = 0)
+    def _dxf_write_arc(file, cx, cy, r, as = 0, ae = 2 * Math::PI, layer = '0')
 
       # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-0B14D8F1-0EBA-44BF-9108-57D8CE614BC8
 
@@ -697,7 +727,7 @@ module Ladb::OpenCutList
 
     end
 
-    def _dxf_write_ellipse(file, cx, cy, vx, vy, vr, as = 0, ae = 2 * Math::PI, layer = 0)
+    def _dxf_write_ellipse(file, cx, cy, vx, vy, vr, as = 0, ae = 2 * Math::PI, layer = '0')
 
       # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-107CB04F-AD4D-4D2F-8EC9-AC90888063AB
 
@@ -722,7 +752,7 @@ module Ladb::OpenCutList
 
     end
 
-    def _dxf_write_polygon(file, points, layer = 0)
+    def _dxf_write_polygon(file, points, layer = '0')
 
       # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-748FC305-F3F2-4F74-825A-61F04D757A50
 
@@ -744,7 +774,7 @@ module Ladb::OpenCutList
 
     end
 
-    def _dxf_write_rect(file, x, y, width, height, layer = 0)
+    def _dxf_write_rect(file, x, y, width, height, layer = '0')
 
       points = [
         Geom::Point3d.new(x, y),
@@ -757,68 +787,102 @@ module Ladb::OpenCutList
 
     end
 
-    # -----
+    # -- INSERT GEOMETRY
 
-    def _dxf_write_projection_def(file, projection_def, smoothing = false, transformation = IDENTITY, layer = 0)
+    def _dxf_write_insert(file, name, x = 0.0, y = 0.0, z = 0.0, layer = '0')
 
-      require_relative '../model/drawing/drawing_projection_def'
+      # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-28FA4CFB-9D5E-4880-9F11-36C97578252F
 
+      _dxf_write(file, 0, 'INSERT')
+      _dxf_write_id(file)
+      _dxf_write_sub_classes(file, [ 'AcDbEntity' ])
+      _dxf_write(file, 8, layer)
+      _dxf_write_sub_classes(file, [ 'AcDbBlockReference' ])
+      _dxf_write(file, 2, name)
+      _dxf_write(file, 10, x)
+      _dxf_write(file, 20, y)
+      _dxf_write(file, 30, z)
+
+    end
+
+    # -- CUSTOM GEOMETRY
+
+    def _dxf_get_projection_layer_def_bloc_name(layer_def, prefix = nil)
+      return '' unless layer_def.is_a?(DrawingProjectionLayerDef)
+
+      [ prefix, 'DEPTH', ("%0.04f" % [ layer_def.depth.to_mm ]).rjust(9, '_') ].compact.join('_')
+    end
+
+    def _dxf_write_projection_def_block_records(file, projection_def, owner_id, layer_prefix = nil)
       return unless projection_def.is_a?(DrawingProjectionDef)
 
       projection_def.layer_defs.each do |layer_def|
-        layer_def.polygon_defs.each do |polygon_def|
+        _dxf_write_section_tables_block_record(file, _dxf_get_projection_layer_def_bloc_name(layer_def, layer_prefix), owner_id)
+      end
 
-          if smoothing && polygon_def.loop_def
+    end
 
-            # Extract loop points from ordered edges and arc curves
-            polygon_def.loop_def.portions.each { |portion|
+    def _dxf_write_projection_def_blocks(file, projection_def, smoothing = false, transformation = IDENTITY, layer = '0', layer_prefix = nil)
+      return unless projection_def.is_a?(DrawingProjectionDef)
 
-              if portion.is_a?(Geometrix::ArcLoopPortionDef)
+      projection_def.layer_defs.each do |layer_def|
+        _dxf_write_section_blocks_block(file, _dxf_get_projection_layer_def_bloc_name(layer_def, layer_prefix), @_dxf_model_space_id) do
 
-                center = portion.ellipse_def.center.transform(transformation)
-                xaxis = portion.ellipse_def.xaxis.transform(transformation)
+          layer_def.polygon_defs.each do |polygon_def|
 
-                if portion.loop_def.ellipse?
-                  start_angle = 0.0
-                  end_angle = 2.0 * Math::PI
-                elsif portion.ccw?  # DXF ellipse angles must be counter clockwise
-                  start_angle = portion.start_angle
-                  end_angle = portion.end_angle
+            if smoothing && polygon_def.loop_def
+
+              # Extract loop points from ordered edges and arc curves
+              polygon_def.loop_def.portions.each { |portion|
+
+                if portion.is_a?(Geometrix::ArcLoopPortionDef)
+
+                  center = portion.ellipse_def.center.transform(transformation)
+                  xaxis = portion.ellipse_def.xaxis.transform(transformation)
+
+                  if portion.loop_def.ellipse?
+                    start_angle = 0.0
+                    end_angle = 2.0 * Math::PI
+                  elsif portion.ccw?  # DXF ellipse angles must be counter clockwise
+                    start_angle = portion.start_angle
+                    end_angle = portion.end_angle
+                  else
+                    start_angle = portion.end_angle
+                    end_angle = portion.start_angle
+                  end
+
+                  cx = center.x.to_f
+                  cy = center.y.to_f
+                  vx = xaxis.x.to_f
+                  vy = xaxis.y.to_f
+                  vr = portion.ellipse_def.yradius.round(6) / portion.ellipse_def.xradius.round(6)
+                  as = start_angle
+                  ae = end_angle
+
+                  _dxf_write_ellipse(file, cx, cy, vx, vy, vr, as, ae, layer)
+
                 else
-                  start_angle = portion.end_angle
-                  end_angle = portion.start_angle
+
+                  start_point = portion.start_point.transform(transformation)
+                  end_point = portion.end_point.transform(transformation)
+
+                  x1 = start_point.x.to_f
+                  y1 = start_point.y.to_f
+                  x2 = end_point.x.to_f
+                  y2 = end_point.y.to_f
+
+                  _dxf_write_line(file, x1, y1, x2, y2, layer)
+
                 end
 
-                cx = center.x.to_f
-                cy = center.y.to_f
-                vx = xaxis.x.to_f
-                vy = xaxis.y.to_f
-                vr = portion.ellipse_def.yradius.round(6) / portion.ellipse_def.xradius.round(6)
-                as = start_angle
-                ae = end_angle
+              }
 
-                _dxf_write_ellipse(file, cx, cy, vx, vy, vr, as, ae, layer)
+            else
 
-              else
+              # Extract loop points from vertices (quicker)
+              _dxf_write_polygon(file, polygon_def.points.map { |point| Geom::Point3d.new(point.transform(transformation).to_a.map { |v| v.to_f }) }, layer)
 
-                start_point = portion.start_point.transform(transformation)
-                end_point = portion.end_point.transform(transformation)
-
-                x1 = start_point.x.to_f
-                y1 = start_point.y.to_f
-                x2 = end_point.x.to_f
-                y2 = end_point.y.to_f
-
-                _dxf_write_line(file, x1, y1, x2, y2, layer)
-
-              end
-
-            }
-
-          else
-
-            # Extract loop points from vertices (quicker)
-            _dxf_write_polygon(file, polygon_def.points.map { |point| Geom::Point3d.new(point.transform(transformation).to_a.map { |v| v.to_f }) }, layer)
+            end
 
           end
 

@@ -190,31 +190,50 @@ module Ladb::OpenCutList
 
       min = @drawing_def.bounds.min.transform(unit_transformation)
       max = @drawing_def.bounds.max.transform(unit_transformation)
+      block_name = 'PART'
 
-      _dxf_write_header(file, min, max, layer_defs)
+      _dxf_write_start(file)
+      _dxf_write_section_header(file, min, max)
+      _dxf_write_section_classes(file)
+      _dxf_write_section_tables(file, min, max, layer_defs) do |owner_id|
 
-      _dxf_write(file, 0, 'SECTION')
-      _dxf_write(file, 2, 'ENTITIES')
-
-      _dxf_write_projection_def(file, projection_def, @smoothing, unit_transformation, LAYER_DRAWING)
-
-      edge_manipulators.each do |edge_manipulator|
-
-        start_point = edge_manipulator.start_point.transform(unit_transformation)
-        end_point = edge_manipulator.end_point.transform(unit_transformation)
-
-        x1 = start_point.x
-        y1 = start_point.y
-        x2 = end_point.x
-        y2 = end_point.y
-
-        _dxf_write_line(file, x1, y1, x2, y2, LAYER_GUIDES)
+        _dxf_write_projection_def_block_records(file, projection_def, owner_id, block_name)
+        _dxf_write_section_tables_block_record(file, block_name, owner_id)
 
       end
+      _dxf_write_section_blocks(file) do
 
-      _dxf_write(file, 0, 'ENDSEC')
+        _dxf_write_projection_def_blocks(file, projection_def, @smoothing, unit_transformation, LAYER_DRAWING, block_name)
+        _dxf_write_section_blocks_block(file, block_name, @_dxf_model_space_id) do
 
-      _dxf_write_footer(file)
+          projection_def.layer_defs.each do |layer_def|
+            _dxf_write_insert(file, _dxf_get_projection_layer_def_bloc_name(layer_def, block_name), 0.0, 0.0, 0.0, LAYER_DRAWING)
+          end
+
+          edge_manipulators.each do |edge_manipulator|
+
+            start_point = edge_manipulator.start_point.transform(unit_transformation)
+            end_point = edge_manipulator.end_point.transform(unit_transformation)
+
+            x1 = start_point.x
+            y1 = start_point.y
+            x2 = end_point.x
+            y2 = end_point.y
+
+            _dxf_write_line(file, x1, y1, x2, y2, LAYER_GUIDES)
+
+          end
+
+        end
+
+      end
+      _dxf_write_section_entities(file) do
+
+        _dxf_write_insert(file, block_name)
+
+      end
+      _dxf_write_section_objects(file)
+      _dxf_write_end(file)
 
     end
 

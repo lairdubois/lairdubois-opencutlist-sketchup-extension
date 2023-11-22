@@ -27,7 +27,7 @@ module Ladb::OpenCutList
       bounds_max = @drawing_def.bounds.max
 
       depth_top = 0.0
-      depth_bottom = bounds_depth
+      depth_bottom = bounds_depth.round(6)
 
       z_max = bounds_max.z
 

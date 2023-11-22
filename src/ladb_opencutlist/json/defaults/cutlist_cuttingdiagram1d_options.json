@@ -21,6 +21,6 @@
     "hide_cross": false,
     "origin_corner": 0,       /* ORIGIN_CORNER_LEFT */
     "wrap_length": { "metric": "3000mm", "imperial": "12'" },
-    "part_projection": 0    /* PART_PROJECTION_NONE */
+    "part_projection": 1    /* PART_PROJECTION_FRONT */
   }
 }
