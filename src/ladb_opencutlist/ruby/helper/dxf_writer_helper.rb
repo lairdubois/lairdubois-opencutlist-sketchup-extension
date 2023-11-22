@@ -807,7 +807,7 @@ module Ladb::OpenCutList
 
     # -- CUSTOM GEOMETRY
 
-    def _dxf_get_projection_layer_def_bloc_name(layer_def, prefix = nil)
+    def _dxf_get_projection_layer_def_block_name(layer_def, prefix = nil)
       return '' unless layer_def.is_a?(DrawingProjectionLayerDef)
 
       [ prefix, 'DEPTH', ("%0.04f" % [ layer_def.depth.to_mm ]).rjust(9, '_') ].compact.join('_')
@@ -817,7 +817,7 @@ module Ladb::OpenCutList
       return unless projection_def.is_a?(DrawingProjectionDef)
 
       projection_def.layer_defs.each do |layer_def|
-        _dxf_write_section_tables_block_record(file, _dxf_get_projection_layer_def_bloc_name(layer_def, layer_prefix), owner_id)
+        _dxf_write_section_tables_block_record(file, _dxf_get_projection_layer_def_block_name(layer_def, layer_prefix), owner_id)
       end
 
     end
@@ -826,7 +826,7 @@ module Ladb::OpenCutList
       return unless projection_def.is_a?(DrawingProjectionDef)
 
       projection_def.layer_defs.each do |layer_def|
-        _dxf_write_section_blocks_block(file, _dxf_get_projection_layer_def_bloc_name(layer_def, layer_prefix), @_dxf_model_space_id) do
+        _dxf_write_section_blocks_block(file, _dxf_get_projection_layer_def_block_name(layer_def, layer_prefix), @_dxf_model_space_id) do
 
           layer_def.polygon_defs.each do |polygon_def|
 

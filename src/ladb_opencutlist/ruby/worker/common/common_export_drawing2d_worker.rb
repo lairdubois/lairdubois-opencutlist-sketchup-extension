@@ -207,7 +207,7 @@ module Ladb::OpenCutList
         _dxf_write_section_blocks_block(file, block_name, @_dxf_model_space_id) do
 
           projection_def.layer_defs.each do |layer_def|
-            _dxf_write_insert(file, _dxf_get_projection_layer_def_bloc_name(layer_def, block_name), 0.0, 0.0, 0.0, LAYER_DRAWING)
+            _dxf_write_insert(file, _dxf_get_projection_layer_def_block_name(layer_def, block_name), 0.0, 0.0, 0.0, LAYER_DRAWING)
           end
 
           edge_manipulators.each do |edge_manipulator|

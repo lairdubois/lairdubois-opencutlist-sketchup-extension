@@ -374,7 +374,7 @@ module Ladb::OpenCutList
               _dxf_write_projection_def_blocks(file, projection_def, @smoothing, transformation, LAYER_PARTS, fn_part_block_name.call(part))
               _dxf_write_section_blocks_block(file, fn_part_block_name.call(part), @_dxf_model_space_id) do
                 projection_def.layer_defs.each do |layer_def|
-                  _dxf_write_insert(file, _dxf_get_projection_layer_def_bloc_name(layer_def, fn_part_block_name.call(part)), 0.0, 0.0, 0.0, LAYER_PARTS)
+                  _dxf_write_insert(file, _dxf_get_projection_layer_def_block_name(layer_def, fn_part_block_name.call(part)), 0.0, 0.0, 0.0, LAYER_PARTS)
                 end
               end
 
