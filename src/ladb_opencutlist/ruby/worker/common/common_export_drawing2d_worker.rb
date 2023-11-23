@@ -14,8 +14,8 @@ module Ladb::OpenCutList
     include SvgWriterHelper
     include SanitizerHelper
 
-    LAYER_DRAWING = 'OCL_DRAWING'.freeze
-    LAYER_GUIDES = 'OCL_GUIDES'.freeze
+    LAYER_PART = 'OCL_PART'.freeze
+    LAYER_GUIDE = 'OCL_GUIDE'.freeze
     LAYER_ANCHOR = 'OCL_ANCHOR'.freeze
 
     SUPPORTED_FILE_FORMATS = [ FILE_FORMAT_SVG, FILE_FORMAT_DXF ]
@@ -49,7 +49,7 @@ module Ladb::OpenCutList
 
         begin
 
-          _write_to_path(path) && File.exist?(path)
+          _write_to_path(path)
 
           return { :export_path => path }
         rescue => e
@@ -121,7 +121,7 @@ module Ladb::OpenCutList
 
       unless projection_def.layer_defs.empty?
 
-        _svg_write_group_start(file, id: LAYER_DRAWING)
+        _svg_write_group_start(file, id: LAYER_PART)
 
         _svg_write_projection_def(file, projection_def, @smoothing, unit_transformation, unit_transformation, unit_sign, nil, '#000000')
 
@@ -131,7 +131,7 @@ module Ladb::OpenCutList
 
       unless edge_manipulators.empty?
 
-        _svg_write_group_start(file, id: LAYER_GUIDES)
+        _svg_write_group_start(file, id: LAYER_GUIDE)
 
         data = ''
         edge_manipulators.each do |edge_manipulator|
@@ -183,15 +183,15 @@ module Ladb::OpenCutList
       unit_transformation = _dxf_get_unit_transformation(@unit)
 
       layer_defs = []
-      layer_defs.push({ :name => LAYER_DRAWING, :color => 7 }) unless projection_def.layer_defs.empty?
-      layer_defs.push({ :name => LAYER_GUIDES, :color => 150 }) unless edge_manipulators.empty?
+      layer_defs.push({ :name => LAYER_PART, :color => 7 }) unless projection_def.layer_defs.empty?
+      layer_defs.push({ :name => LAYER_GUIDE, :color => 150 }) unless edge_manipulators.empty?
 
       min = @drawing_def.bounds.min.transform(unit_transformation)
       max = @drawing_def.bounds.max.transform(unit_transformation)
       block_name = 'PART'
 
       _dxf_write_start(file)
-      _dxf_write_section_header(file, min, max)
+      _dxf_write_section_header(file, @unit, min, max)
       _dxf_write_section_classes(file)
       _dxf_write_section_tables(file, min, max, layer_defs) do |owner_id|
 
@@ -200,7 +200,7 @@ module Ladb::OpenCutList
       end
       _dxf_write_section_blocks(file) do
 
-        _dxf_write_projection_def_block(file, projection_def, block_name, @smoothing, unit_transformation, LAYER_DRAWING) do
+        _dxf_write_projection_def_block(file, projection_def, block_name, @smoothing, unit_transformation, LAYER_PART) do
 
           edge_manipulators.each do |edge_manipulator|
 
@@ -212,7 +212,7 @@ module Ladb::OpenCutList
             x2 = end_point.x
             y2 = end_point.y
 
-            _dxf_write_line(file, x1, y1, x2, y2, LAYER_GUIDES)
+            _dxf_write_line(file, x1, y1, x2, y2, LAYER_GUIDE)
 
           end
 

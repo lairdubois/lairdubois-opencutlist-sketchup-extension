@@ -1,15 +1,14 @@
 module Ladb::OpenCutList
 
   require_relative '../constants'
+  require_relative '../utils/dimension_utils'
   require_relative '../model/drawing/drawing_projection_def'
 
   module DxfWriterHelper
 
-    def _dxf_get_unit_transformation(unit, is_3d = false)
+    def _dxf_get_unit_transformation(su_unit, is_3d = false)
 
-      require_relative '../utils/dimension_utils'
-
-      case unit
+      case su_unit
       when DimensionUtils::INCHES
         unit_factor = 1.0
       when DimensionUtils::FEET
@@ -27,6 +26,28 @@ module Ladb::OpenCutList
       end
 
       Geom::Transformation.scaling(ORIGIN, unit_factor, unit_factor, is_3d ? unit_factor : 1.0)
+    end
+
+    def _dxf_convert_unit(su_unit)
+
+      case su_unit
+      when DimensionUtils::INCHES
+        dxf_unit = 1
+      when DimensionUtils::FEET
+        dxf_unit = 2
+      when DimensionUtils::YARD
+        dxf_unit = 10
+      when DimensionUtils::MILLIMETER
+        dxf_unit = 4
+      when DimensionUtils::CENTIMETER
+        dxf_unit = 5
+      when DimensionUtils::METER
+        dxf_unit = 6
+      else
+        dxf_unit = 0
+      end
+
+      dxf_unit
     end
 
     def _dxf_generate_id
@@ -84,7 +105,7 @@ module Ladb::OpenCutList
 
     # HEADER
 
-    def _dxf_write_section_header(file, min = Geom::Point3d.new, max = Geom::Point3d.new(1000.0, 1000.0, 1000.0))
+    def _dxf_write_section_header(file, su_unit, min = Geom::Point3d.new, max = Geom::Point3d.new(1000.0, 1000.0, 1000.0))
 
       _dxf_write_section(file, 'HEADER') do
 
@@ -94,6 +115,7 @@ module Ladb::OpenCutList
         _dxf_write_header_value(file, '$INSBASE', 10, 0.0,
                                 20, 0.0,
                                 30, 0.0)
+        _dxf_write_header_value(file, '$INSUNITS', 70, _dxf_convert_unit(su_unit))
         _dxf_write_header_value(file, '$EXTMIN', 10, min.x.to_f,
                                 20, min.y.to_f,
                                 30, min.z.to_f)

@@ -15,9 +15,9 @@ module Ladb::OpenCutList
     include PixelConverterHelper
 
     LAYER_SHEET = 'OCL_SHEET'.freeze
-    LAYER_PARTS = 'OCL_PARTS'.freeze
-    LAYER_LEFTOVERS = 'OCL_LEFTOVERS'.freeze
-    LAYER_CUTS = 'OCL_CUTS'.freeze
+    LAYER_PART = 'OCL_PART'.freeze
+    LAYER_LEFTOVER = 'OCL_LEFTOVER'.freeze
+    LAYER_CUT = 'OCL_CUT'.freeze
 
     SUPPORTED_FILE_FORMATS = [ FILE_FORMAT_SVG, FILE_FORMAT_DXF ]
 
@@ -143,7 +143,7 @@ module Ladb::OpenCutList
       end
 
       unless @parts_hidden
-        _svg_write_group_start(file, id: LAYER_PARTS)
+        _svg_write_group_start(file, id: LAYER_PART)
         sheet.parts.each do |part|
 
           id = @use_names ? part.name : part.number
@@ -203,7 +203,7 @@ module Ladb::OpenCutList
       end
 
       unless @leftovers_hidden
-        _svg_write_group_start(file, id: LAYER_LEFTOVERS)
+        _svg_write_group_start(file, id: LAYER_LEFTOVER)
         sheet.leftovers.each do |leftover|
 
           id = "#{leftover.length} x #{leftover.width}"
@@ -234,7 +234,7 @@ module Ladb::OpenCutList
       end
 
       unless @cuts_hidden
-        _svg_write_group_start(file, id: LAYER_CUTS)
+        _svg_write_group_start(file, id: LAYER_CUT)
         sheet.cuts.each do |cut|
 
           position1 = Geom::Point3d.new(
@@ -297,12 +297,12 @@ module Ladb::OpenCutList
 
       layer_defs = []
       layer_defs.push({ :name => LAYER_SHEET, :color => 150 }) unless @sheet_hidden
-      layer_defs.push({ :name => LAYER_PARTS, :color => 7 }) unless @parts_hidden
-      layer_defs.push({ :name => LAYER_LEFTOVERS, :color => 8 }) unless @leftovers_hidden
-      layer_defs.push({ :name => LAYER_CUTS, :color => 6 }) unless @cuts_hidden
+      layer_defs.push({ :name => LAYER_PART, :color => 7 }) unless @parts_hidden
+      layer_defs.push({ :name => LAYER_LEFTOVER, :color => 8 }) unless @leftovers_hidden
+      layer_defs.push({ :name => LAYER_CUT, :color => 6 }) unless @cuts_hidden
 
       _dxf_write_start(file)
-      _dxf_write_section_header(file, min, max)
+      _dxf_write_section_header(file, DimensionUtils.instance.length_unit, min, max)
       _dxf_write_section_classes(file)
       _dxf_write_section_tables(file, min, max, layer_defs) do |owner_id|
 
@@ -357,7 +357,7 @@ module Ladb::OpenCutList
               part_height = size.y.to_f
 
               _dxf_write_section_blocks_block(file, fn_part_block_name.call(part), @_dxf_model_space_id) do
-                _dxf_write_rect(file, 0, 0, width, part_height, LAYER_PARTS)
+                _dxf_write_rect(file, 0, 0, width, part_height, LAYER_PART)
               end
 
             else
@@ -374,7 +374,7 @@ module Ladb::OpenCutList
                 transformation *= Geom::Transformation.translation(Geom::Vector3d.new(x_offset, y_offset))
               end
 
-              _dxf_write_projection_def_block(file, projection_def, fn_part_block_name.call(part), @smoothing, transformation, LAYER_PARTS)
+              _dxf_write_projection_def_block(file, projection_def, fn_part_block_name.call(part), @smoothing, transformation, LAYER_PART)
 
             end
 
@@ -393,7 +393,7 @@ module Ladb::OpenCutList
             height = size.y.to_f
 
             _dxf_write_section_blocks_block(file, fn_leftover_block_name.call(leftover), @_dxf_model_space_id) do
-              _dxf_write_rect(file, 0, 0, width, height, LAYER_LEFTOVERS)
+              _dxf_write_rect(file, 0, 0, width, height, LAYER_LEFTOVER)
             end
 
           end
@@ -417,7 +417,7 @@ module Ladb::OpenCutList
             cut_y2 = position2.y.to_f
 
             _dxf_write_section_blocks_block(file, fn_cut_block_name.call(cut), @_dxf_model_space_id) do
-              _dxf_write_line(file, cut_x1, cut_y1, cut_x2, cut_y2, LAYER_CUTS)
+              _dxf_write_line(file, cut_x1, cut_y1, cut_x2, cut_y2, LAYER_CUT)
             end
 
           end
@@ -441,7 +441,7 @@ module Ladb::OpenCutList
             x = position.x.to_f
             y = position.y.to_f
 
-            _dxf_write_insert(file, fn_part_block_name.call(part), x, y, 0, LAYER_PARTS)
+            _dxf_write_insert(file, fn_part_block_name.call(part), x, y, 0, LAYER_PART)
 
           end
         end
@@ -457,7 +457,7 @@ module Ladb::OpenCutList
             x = position.x.to_f
             y = position.y.to_f
 
-            _dxf_write_insert(file, fn_leftover_block_name.call(leftover), x, y, 0, LAYER_LEFTOVERS)
+            _dxf_write_insert(file, fn_leftover_block_name.call(leftover), x, y, 0, LAYER_LEFTOVER)
 
           end
         end
@@ -473,7 +473,7 @@ module Ladb::OpenCutList
             x = position.x.to_f
             y = position.y.to_f
 
-            _dxf_write_insert(file, fn_cut_block_name.call(cut), x, y, 0, LAYER_CUTS)
+            _dxf_write_insert(file, fn_cut_block_name.call(cut), x, y, 0, LAYER_CUT)
 
           end
         end

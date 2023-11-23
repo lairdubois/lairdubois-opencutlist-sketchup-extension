@@ -14,8 +14,8 @@ module Ladb::OpenCutList
     include DxfWriterHelper
     include SanitizerHelper
 
-    LAYER_DRAWING = 'OCL_DRAWING'.freeze
-    LAYER_GUIDES = 'OCL_GUIDES'.freeze
+    LAYER_PART = 'OCL_PART'.freeze
+    LAYER_GUIDE = 'OCL_GUIDE'.freeze
 
     SUPPORTED_FILE_FORMATS = [ FILE_FORMAT_STL, FILE_FORMAT_OBJ, FILE_FORMAT_DXF ]
 
@@ -46,7 +46,7 @@ module Ladb::OpenCutList
 
         begin
 
-          _write_to_path(path) && File.exist?(path)
+          _write_to_path(path)
 
           return { :export_path => path }
         rescue => e
@@ -143,14 +143,14 @@ module Ladb::OpenCutList
       unit_transformation = _dxf_get_unit_transformation(@unit, true)
 
       layer_defs = []
-      layer_defs.push({ :name => LAYER_DRAWING, :color => 7 }) unless @drawing_def.face_manipulators.empty?
-      layer_defs.push({ :name => LAYER_GUIDES, :color => 150 }) unless @drawing_def.edge_manipulators.empty?
+      layer_defs.push({ :name => LAYER_PART, :color => 7 }) unless @drawing_def.face_manipulators.empty?
+      layer_defs.push({ :name => LAYER_GUIDE, :color => 150 }) unless @drawing_def.edge_manipulators.empty?
 
       min = @drawing_def.bounds.min.transform(unit_transformation)
       max = @drawing_def.bounds.max.transform(unit_transformation)
 
       _dxf_write_start(file)
-      _dxf_write_section_header(file, min, max)
+      _dxf_write_section_header(file, @unit, min, max)
       _dxf_write_section_classes(file)
       _dxf_write_section_tables(file, min, max, layer_defs)
       _dxf_write_section_blocks(file)
@@ -171,7 +171,7 @@ module Ladb::OpenCutList
           id = _dxf_write_id(file)
           _dxf_write_owner_id(file, @_dxf_model_space_id)
           _dxf_write_sub_classes(file, [ 'AcDbEntity' ])
-          _dxf_write(file, 8, LAYER_DRAWING) # Layer
+          _dxf_write(file, 8, LAYER_PART) # Layer
           _dxf_write_sub_classes(file, [ 'AcDbPolyFaceMesh' ])
           _dxf_write(file, 66, 1) # Deprecated
           _dxf_write(file, 10, 0.0)
@@ -189,7 +189,7 @@ module Ladb::OpenCutList
             _dxf_write_id(file)
             _dxf_write_owner_id(file, id)
             _dxf_write_sub_classes(file, [ 'AcDbEntity' ])
-            _dxf_write(file, 8, LAYER_DRAWING) # Layer
+            _dxf_write(file, 8, LAYER_PART) # Layer
             _dxf_write_sub_classes(file, [ 'AcDbVertex', 'AcDbPolyFaceMeshVertex' ])
             _dxf_write(file, 10, point.x)
             _dxf_write(file, 20, point.y)
@@ -204,7 +204,7 @@ module Ladb::OpenCutList
             _dxf_write_id(file)
             _dxf_write_owner_id(file, id)
             _dxf_write_sub_classes(file, [ 'AcDbEntity' ])
-            _dxf_write(file, 8, LAYER_DRAWING)
+            _dxf_write(file, 8, LAYER_PART)
             _dxf_write_sub_classes(file, [ 'AcDbFaceRecord' ])
             _dxf_write(file, 10, 0.0)
             _dxf_write(file, 20, 0.0)
@@ -230,7 +230,7 @@ module Ladb::OpenCutList
           x2 = point2.x
           y2 = point2.y
 
-          _dxf_write_line(file, x1, y1, x2, y2, LAYER_GUIDES)
+          _dxf_write_line(file, x1, y1, x2, y2, LAYER_GUIDE)
 
         end
 
