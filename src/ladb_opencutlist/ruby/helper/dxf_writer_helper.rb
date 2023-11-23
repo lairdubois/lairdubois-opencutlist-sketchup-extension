@@ -807,86 +807,103 @@ module Ladb::OpenCutList
 
     # -- CUSTOM GEOMETRY
 
-    def _dxf_get_projection_layer_def_block_name(layer_def, prefix = nil)
+    def _dxf_get_projection_layer_def_depth_name(layer_def, prefix = nil)
       return '' unless layer_def.is_a?(DrawingProjectionLayerDef)
 
-      [ prefix, 'DEPTH', ("%0.04f" % [ layer_def.depth.to_mm ]).rjust(9, '_') ].compact.join('_')
+      [ prefix, 'DEPTH', ('%0.04f' % [ layer_def.depth.to_mm ]).rjust(9, '_') ].compact.join('_')
     end
 
-    def _dxf_write_projection_def_block_records(file, projection_def, owner_id, layer_prefix = nil)
+    def _dxf_write_projection_def_block_record(file, projection_def, name, owner_id)
       return unless projection_def.is_a?(DrawingProjectionDef)
 
-      projection_def.layer_defs.each do |layer_def|
-        _dxf_write_section_tables_block_record(file, _dxf_get_projection_layer_def_block_name(layer_def, layer_prefix), owner_id)
+      projection_def.layer_defs[1..-1].each do |layer_def|
+        _dxf_write_section_tables_block_record(file, _dxf_get_projection_layer_def_depth_name(layer_def, name), owner_id)
+      end
+      _dxf_write_section_tables_block_record(file, name, owner_id)
+
+    end
+
+    def _dxf_write_projection_def_block(file, projection_def, name, smoothing = false, transformation = IDENTITY, layer = '0')
+      return unless projection_def.is_a?(DrawingProjectionDef)
+
+      # Sub blocks
+      projection_def.layer_defs[1..-1].each do |layer_def|
+        _dxf_write_section_blocks_block(file, _dxf_get_projection_layer_def_depth_name(layer_def, name), @_dxf_model_space_id) do
+          _dxf_write_projection_layer_def_geometry(file, layer_def, smoothing, transformation, _dxf_get_projection_layer_def_depth_name(layer_def, 'OCL'))
+        end
       end
 
+      # Main block
+      _dxf_write_section_blocks_block(file, name, @_dxf_model_space_id) do
+        _dxf_write_projection_layer_def_geometry(file, projection_def.layer_defs.first, smoothing, transformation, layer)
+        projection_def.layer_defs[1..-1].each do |layer_def|
+          _dxf_write_insert(file, _dxf_get_projection_layer_def_depth_name(layer_def, name), 0.0, 0.0, 0.0, layer)
+        end
+      end
+
+      yield if block_given?
+
     end
 
-    def _dxf_write_projection_def_blocks(file, projection_def, smoothing = false, transformation = IDENTITY, layer = '0', layer_prefix = nil)
-      return unless projection_def.is_a?(DrawingProjectionDef)
+    def _dxf_write_projection_layer_def_geometry(file, layer_def, smoothing = false, transformation = IDENTITY, layer = '0')
+      return unless layer_def.is_a?(DrawingProjectionLayerDef)
 
-      projection_def.layer_defs.each do |layer_def|
-        _dxf_write_section_blocks_block(file, _dxf_get_projection_layer_def_block_name(layer_def, layer_prefix), @_dxf_model_space_id) do
+      layer_def.polygon_defs.each do |polygon_def|
 
-          layer_def.polygon_defs.each do |polygon_def|
+        if smoothing && polygon_def.loop_def
 
-            if smoothing && polygon_def.loop_def
+          # Extract loop points from ordered edges and arc curves
+          polygon_def.loop_def.portions.each { |portion|
 
-              # Extract loop points from ordered edges and arc curves
-              polygon_def.loop_def.portions.each { |portion|
+            if portion.is_a?(Geometrix::ArcLoopPortionDef)
 
-                if portion.is_a?(Geometrix::ArcLoopPortionDef)
+              center = portion.ellipse_def.center.transform(transformation)
+              xaxis = portion.ellipse_def.xaxis.transform(transformation)
 
-                  center = portion.ellipse_def.center.transform(transformation)
-                  xaxis = portion.ellipse_def.xaxis.transform(transformation)
+              if portion.loop_def.ellipse?
+                start_angle = 0.0
+                end_angle = 2.0 * Math::PI
+              elsif portion.ccw?  # DXF ellipse angles must be counter clockwise
+                start_angle = portion.start_angle
+                end_angle = portion.end_angle
+              else
+                start_angle = portion.end_angle
+                end_angle = portion.start_angle
+              end
 
-                  if portion.loop_def.ellipse?
-                    start_angle = 0.0
-                    end_angle = 2.0 * Math::PI
-                  elsif portion.ccw?  # DXF ellipse angles must be counter clockwise
-                    start_angle = portion.start_angle
-                    end_angle = portion.end_angle
-                  else
-                    start_angle = portion.end_angle
-                    end_angle = portion.start_angle
-                  end
+              cx = center.x.to_f
+              cy = center.y.to_f
+              vx = xaxis.x.to_f
+              vy = xaxis.y.to_f
+              vr = portion.ellipse_def.yradius.round(6) / portion.ellipse_def.xradius.round(6)
+              as = start_angle
+              ae = end_angle
 
-                  cx = center.x.to_f
-                  cy = center.y.to_f
-                  vx = xaxis.x.to_f
-                  vy = xaxis.y.to_f
-                  vr = portion.ellipse_def.yradius.round(6) / portion.ellipse_def.xradius.round(6)
-                  as = start_angle
-                  ae = end_angle
-
-                  _dxf_write_ellipse(file, cx, cy, vx, vy, vr, as, ae, layer)
-
-                else
-
-                  start_point = portion.start_point.transform(transformation)
-                  end_point = portion.end_point.transform(transformation)
-
-                  x1 = start_point.x.to_f
-                  y1 = start_point.y.to_f
-                  x2 = end_point.x.to_f
-                  y2 = end_point.y.to_f
-
-                  _dxf_write_line(file, x1, y1, x2, y2, layer)
-
-                end
-
-              }
+              _dxf_write_ellipse(file, cx, cy, vx, vy, vr, as, ae, layer)
 
             else
 
-              # Extract loop points from vertices (quicker)
-              _dxf_write_polygon(file, polygon_def.points.map { |point| Geom::Point3d.new(point.transform(transformation).to_a.map { |v| v.to_f }) }, layer)
+              start_point = portion.start_point.transform(transformation)
+              end_point = portion.end_point.transform(transformation)
+
+              x1 = start_point.x.to_f
+              y1 = start_point.y.to_f
+              x2 = end_point.x.to_f
+              y2 = end_point.y.to_f
+
+              _dxf_write_line(file, x1, y1, x2, y2, layer)
 
             end
 
-          end
+          }
+
+        else
+
+          # Extract loop points from vertices (quicker)
+          _dxf_write_polygon(file, polygon_def.points.map { |point| Geom::Point3d.new(point.transform(transformation).to_a.map { |v| v.to_f }) }, layer)
 
         end
+
       end
 
     end

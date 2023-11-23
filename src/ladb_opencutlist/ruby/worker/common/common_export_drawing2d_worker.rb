@@ -195,18 +195,12 @@ module Ladb::OpenCutList
       _dxf_write_section_classes(file)
       _dxf_write_section_tables(file, min, max, layer_defs) do |owner_id|
 
-        _dxf_write_projection_def_block_records(file, projection_def, owner_id, block_name)
-        _dxf_write_section_tables_block_record(file, block_name, owner_id)
+        _dxf_write_projection_def_block_record(file, projection_def, block_name, owner_id)
 
       end
       _dxf_write_section_blocks(file) do
 
-        _dxf_write_projection_def_blocks(file, projection_def, @smoothing, unit_transformation, LAYER_DRAWING, block_name)
-        _dxf_write_section_blocks_block(file, block_name, @_dxf_model_space_id) do
-
-          projection_def.layer_defs.each do |layer_def|
-            _dxf_write_insert(file, _dxf_get_projection_layer_def_block_name(layer_def, block_name), 0.0, 0.0, 0.0, LAYER_DRAWING)
-          end
+        _dxf_write_projection_def_block(file, projection_def, block_name, @smoothing, unit_transformation, LAYER_DRAWING) do
 
           edge_manipulators.each do |edge_manipulator|
 

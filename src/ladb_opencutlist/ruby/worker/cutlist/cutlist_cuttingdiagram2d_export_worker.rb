@@ -73,8 +73,7 @@ module Ladb::OpenCutList
 
           sheet_index = 1
           @cuttingdiagram2d.sheets.each do |sheet|
-            next if @hidden_sheet_indices.include?(sheet_index)
-            _write_to_path(path, sheet, sheet_index)
+            _write_to_path(path, sheet, sheet_index) unless @hidden_sheet_indices.include?(sheet_index)
             sheet_index += sheet.count
           end
 
@@ -314,10 +313,11 @@ module Ladb::OpenCutList
         unless @parts_hidden
           sheet.parts.uniq { |part| part.id }.each do |part|
             projection_def = @cuttingdiagram2d.def.projection_defs[part.id]
-            unless projection_def.nil?
-              _dxf_write_projection_def_block_records(file, projection_def, owner_id, fn_part_block_name.call(part))
+            if projection_def.nil?
+              _dxf_write_section_tables_block_record(file, fn_part_block_name.call(part), owner_id)
+            else
+              _dxf_write_projection_def_block_record(file, projection_def, fn_part_block_name.call(part), owner_id)
             end
-            _dxf_write_section_tables_block_record(file, fn_part_block_name.call(part), owner_id)
           end
         end
 
@@ -374,12 +374,7 @@ module Ladb::OpenCutList
                 transformation *= Geom::Transformation.translation(Geom::Vector3d.new(x_offset, y_offset))
               end
 
-              _dxf_write_projection_def_blocks(file, projection_def, @smoothing, transformation, LAYER_PARTS, fn_part_block_name.call(part))
-              _dxf_write_section_blocks_block(file, fn_part_block_name.call(part), @_dxf_model_space_id) do
-                projection_def.layer_defs.each do |layer_def|
-                  _dxf_write_insert(file, _dxf_get_projection_layer_def_block_name(layer_def, fn_part_block_name.call(part)), 0.0, 0.0, 0.0, LAYER_PARTS)
-                end
-              end
+              _dxf_write_projection_def_block(file, projection_def, fn_part_block_name.call(part), @smoothing, transformation, LAYER_PARTS)
 
             end
 

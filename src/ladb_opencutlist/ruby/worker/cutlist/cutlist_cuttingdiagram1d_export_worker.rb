@@ -73,8 +73,7 @@ module Ladb::OpenCutList
 
           bar_index = 1
           @cuttingdiagram1d.bars.each do |bar|
-            next if @hidden_bar_indices.include?(bar_index)
-            _write_to_path(path, bar, bar_index)
+            _write_to_path(path, bar, bar_index) unless @hidden_bar_indices.include?(bar_index)
             bar_index += bar.count
           end
 
@@ -301,10 +300,11 @@ module Ladb::OpenCutList
         unless @parts_hidden
           bar.parts.uniq { |part| part.id }.each do |part|
             projection_def = @cuttingdiagram1d.def.projection_defs[part.id]
-            unless projection_def.nil?
-              _dxf_write_projection_def_block_records(file, projection_def, owner_id, fn_part_block_name.call(part))
+            if projection_def.nil?
+              _dxf_write_section_tables_block_record(file, fn_part_block_name.call(part), owner_id)
+            else
+              _dxf_write_projection_def_block_record(file, projection_def, fn_part_block_name.call(part), owner_id)
             end
-            _dxf_write_section_tables_block_record(file, fn_part_block_name.call(part), owner_id)
           end
         end
 
@@ -352,12 +352,7 @@ module Ladb::OpenCutList
               transformation = unit_transformation
               transformation *= Geom::Transformation.translation(Geom::Vector3d.new(x_offset, 0))
 
-              _dxf_write_projection_def_blocks(file, projection_def, @smoothing, transformation, LAYER_PARTS, fn_part_block_name.call(part))
-              _dxf_write_section_blocks_block(file, fn_part_block_name.call(part), @_dxf_model_space_id) do
-                projection_def.layer_defs.each do |layer_def|
-                  _dxf_write_insert(file, _dxf_get_projection_layer_def_block_name(layer_def, fn_part_block_name.call(part)), 0.0, 0.0, 0.0, LAYER_PARTS)
-                end
-              end
+              _dxf_write_projection_def_block(file, projection_def, fn_part_block_name.call(part), @smoothing, transformation, LAYER_PARTS)
 
             end
           end
