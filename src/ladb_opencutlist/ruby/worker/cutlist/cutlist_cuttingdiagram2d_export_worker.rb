@@ -58,32 +58,35 @@ module Ladb::OpenCutList
 
         group = @cuttingdiagram2d.def.group
         folder = _sanitize_filename("#{group.material_display_name} - #{group.std_dimension}")
-        export_path = File.join(dir, folder)
+        path = File.join(dir, folder)
 
-        if File.exists?(export_path)
-          if UI.messagebox(Plugin.instance.get_i18n_string('core.messagebox.dir_override', { :target => folder, :parent => File.basename(dir) }), MB_YESNO) == IDYES
-            FileUtils.remove_dir(export_path, true)
-          else
-            return { :cancelled => true }
+        begin
+
+          if File.exists?(path)
+            if UI.messagebox(Plugin.instance.get_i18n_string('core.messagebox.dir_override', { :target => folder, :parent => File.basename(dir) }), MB_YESNO) == IDYES
+              FileUtils.remove_dir(path, true)
+            else
+              return { :cancelled => true }
+            end
           end
-        end
-        Dir.mkdir(export_path)
+          Dir.mkdir(path)
 
-        sheet_index = 1
-        @cuttingdiagram2d.sheets.each do |sheet|
-          next if @hidden_sheet_indices.include?(sheet_index)
-          _write_to_path(export_path, sheet, sheet_index)
-          sheet_index += sheet.count
-        end
+          sheet_index = 1
+          @cuttingdiagram2d.sheets.each do |sheet|
+            next if @hidden_sheet_indices.include?(sheet_index)
+            _write_to_path(path, sheet, sheet_index)
+            sheet_index += sheet.count
+          end
 
-        return {
-          :export_path => export_path
-        }
+          return { :export_path => path }
+        rescue => e
+          puts e.inspect
+          puts e.backtrace
+          return { :errors => [ [ 'core.error.failed_export_to', { :path => path, :error => e.message } ] ] }
+        end
       end
 
-      {
-        :cancelled => true
-      }
+      { :cancelled => true }
     end
 
     # -----

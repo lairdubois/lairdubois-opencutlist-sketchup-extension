@@ -118,7 +118,9 @@ core:
       Pour signaler un bug : <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
   error:
     feature_unavailable: "Cette fonctionnalité nécessite SketchUp {{ version }} ou plus"
-    failed_export_to_file: "Une erreur s'est produite lors de l'exportation vers le fichier {{ file_format }}. **{{ error }}**"
+    failed_export_to: | 
+      Une erreur s'est produite lors de l'exportation vers *{{ path }}*.
+      **{{ error }}**
   event:
     model_change: Le modèle actif a changé.
     options_change: Les options du modèle ont été modifiées.
@@ -1022,7 +1024,6 @@ tab:
       no_component_in_model: Aucune instance de composant visible n'a été détectée sur votre scène.
       failed_to_write_export_file: "Echec de l'écriture du fichier d'export. **{{ error }}**"
       failed_export_skp_file: "Une erreur s'est produite lors de l'exportation du fichier .skp. **{{ error }}**"
-      failed_export_to_3d_file: "Une erreur s'est produite lors de l'exportation du fichier .{{ file_format }}. **{{ error }}**"
       unknow_part: La pièce sélectionnée n'existe pas dans la fiche de débit.
       obsolete_cutlist: "Impossible, la fiche de débit générée est obsolète. Re-générez là."
     warning:

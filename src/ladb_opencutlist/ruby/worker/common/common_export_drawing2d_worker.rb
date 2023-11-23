@@ -49,14 +49,13 @@ module Ladb::OpenCutList
 
         begin
 
-          success = _write_to_path(path) && File.exist?(path)
+          _write_to_path(path) && File.exist?(path)
 
-          return { :errors => [ [ 'core.error.failed_export_to_file', { :file_format => @file_format, :error => '' } ] ] } unless success
           return { :export_path => path }
         rescue => e
           puts e.inspect
           puts e.backtrace
-          return { :errors => [ [ 'core.error.failed_export_to_file', { :file_format => @file_format, :error => e.message } ] ] }
+          return { :errors => [ [ 'core.error.failed_export_to', { :path => path, :error => e.message } ] ] }
         end
       end
 
@@ -88,7 +87,6 @@ module Ladb::OpenCutList
       # Close output file
       file.close
 
-      true
     end
 
     def _write_to_svg_file(file, projection_def, edge_manipulators)

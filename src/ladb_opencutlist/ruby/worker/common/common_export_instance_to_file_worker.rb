@@ -56,14 +56,13 @@ module Ladb::OpenCutList
             unit_converter = DimensionUtils.instance.length_to_model_unit_float(1.0.to_l)
           end
 
-          success = _write_instance(path, @instance_info, unit_converter) && File.exist?(path)
+          _write_instance(path, @instance_info, unit_converter) && File.exist?(path)
 
-          return { :errors => [ [ 'tab.cutlist.error.failed_export_to_3d_file', { :file_format => @file_format, :error => e.message } ] ] } unless success
           return { :export_path => path }
         rescue => e
           puts e.inspect
           puts e.backtrace
-          return { :errors => [ [ 'tab.cutlist.error.failed_export_to_3d_file', { :file_format => @file_format, :error => e.message } ] ] }
+          return { :errors => [ [ 'core.error.failed_export_to', { :path => path, :error => e.message } ] ] }
         end
       end
 
@@ -115,7 +114,6 @@ module Ladb::OpenCutList
       # Close output file
       file.close
 
-      true
     end
 
     def _write_entities(file, entities, transformation, unit_converter)

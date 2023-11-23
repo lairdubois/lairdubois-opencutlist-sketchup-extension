@@ -118,7 +118,9 @@ core:
       Um einen Fehler zu melden: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
   error:
     feature_unavailable: "Diese Funktion erfordert SketchUp {{ version }} oder höher"
-    failed_export_to_file: "Beim Exportieren in die Datei, {{ file_format }}, ist ein Fehler aufgetreten. **{{ error }}**"
+    failed_export_to: |
+      Beim Exportieren in die Datei, *{{ path }}*, ist ein Fehler aufgetreten.
+      **{{ error }}**
   event:
     model_change: Das aktive Modell wurde verändert.
     options_change: Die Optionen des Modells wurden verändert.
@@ -1020,7 +1022,6 @@ tab:
       no_component_in_model: Es wurden keine sichtbaren Komponenteninstanzen in Ihrer Szene gefunden.
       failed_to_write_export_file: "Das Schreiben der Exportdatei ist fehlgeschlagen. **{{ error }}**"
       failed_export_skp_file: "Beim Exportieren der .skp Datei ist ein Fehler aufgetreten. **{{ error }}**"
-      failed_export_to_3d_file: "Beim Exportieren der .{{ file_format }} Datei ist ein Fehler aufgetreten. **{{ error }}**"
       unknow_part: Das ausgewählte Teil existiert nicht in der Holzliste.
       obsolete_cutlist: "Unmöglich, die Holzliste ist nicht mehr aktuell. Bitte, aktualisieren Sie sie."
     warning:
