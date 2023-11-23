@@ -733,6 +733,8 @@ tab:
       option_stacking_1: Der Länge nach
       option_stacking_2: Der Breite nach
       option_stacking_3: Alle Möglichkeiten
+      option_keep: Mindestgröße der Reste
+      option_keep_help: Reste, die größer als die Mindestgröße sind, werden mit **zur Aufbewahrung** gekennzeichnet.
       option_std_bar_dimensional: Standard-Stange
       option_std_bar_edge: Standard-Kantenband
       option_std_bar_help: |
@@ -787,6 +789,9 @@ tab:
         overall_efficiency: Gesamteffizienz
         efficiency: Effizienz
         leftover: Verschnitt
+        leftover_to_keep: Verschnitt zur Aufbewahrung
+        leftover_to_keep_plural: Verschnitte zur Aufbewahrung
+        leftover_to_throw_away: Wegwerfbare Verschnitte
         cut: Schnitt
         cut_plural: Schnitte
         cut_trimming: Säuberungsschnitt
@@ -822,7 +827,7 @@ tab:
         option_bar_help: TBD
         option_parts: Teile
         option_parts_help: TBD
-        option_leftovers: Reste
+        option_leftovers: Verschnitte
         option_leftovers_help: TBD
         option_cuts: Schnitte
         option_cuts_help: TBD
