@@ -733,6 +733,8 @@ tab:
       option_stacking_1: Sur la longueur
       option_stacking_2: Sur la largeur
       option_stacking_3: Toutes les possibilités
+      option_keep: Taille minimale des chutes
+      option_keep_help: Les chutes ayant les deux dimensions supérieures à la taille minimale seront marquées **à conserver**.
       option_std_bar_dimensional: Barre standard
       option_std_bar_edge: Bande standard
       option_std_bar_help: |

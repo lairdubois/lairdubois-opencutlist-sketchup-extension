@@ -31,6 +31,8 @@ module Ladb::OpenCutList
       @trimming = DimensionUtils.instance.str_to_ifloat(settings.fetch('trimming', 0)).to_l.to_f
       @optimization = settings.fetch('optimization', BinPacking2D::OPT_MEDIUM)
       @stacking = settings.fetch('stacking', BinPacking2D::STACKING_ALL)
+      @keep_length = DimensionUtils.instance.str_to_ifloat(settings.fetch('keep_length', 0)).to_l.to_f
+      @keep_width = DimensionUtils.instance.str_to_ifloat(settings.fetch('keep_width', 0)).to_l.to_f
       @sheet_folding = settings.fetch('sheet_folding', true)
       @use_names = settings.fetch('use_names', false)
       @full_width_diagram = settings.fetch('full_width_diagram', false)
@@ -72,7 +74,7 @@ module Ladb::OpenCutList
         options.set_stacking_pref(@stacking)
         # all leftovers smaller than either length or width will be marked with
         # the attribute @keep = true, part is larger in at least one dimension.
-        options.set_keep(@saw_kerf * 20, @saw_kerf * 20)
+        options.set_keep(@keep_length, @keep_width)
 
         # Create the bin packing engine with given bins and boxes
         @pack_engine = BinPacking2D::PackEngine.new(options)
@@ -166,6 +168,8 @@ module Ladb::OpenCutList
       cuttingdiagram2d_def.options_def.trimming = @trimming
       cuttingdiagram2d_def.options_def.optimization = @optimization
       cuttingdiagram2d_def.options_def.stacking = @stacking
+      cuttingdiagram2d_def.options_def.keep_length = @keep_length
+      cuttingdiagram2d_def.options_def.keep_width = @keep_width
       cuttingdiagram2d_def.options_def.sheet_folding = @sheet_folding
       cuttingdiagram2d_def.options_def.use_names = @use_names
       cuttingdiagram2d_def.options_def.hide_part_list = @hide_part_list

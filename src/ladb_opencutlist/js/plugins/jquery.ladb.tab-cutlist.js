@@ -3591,6 +3591,8 @@
                 var $inputTrimming = $('#ladb_input_trimming', $modal);
                 var $selectOptimization = $('#ladb_select_optimization', $modal);
                 var $selectStacking = $('#ladb_select_stacking', $modal);
+                var $inputKeepLength = $('#ladb_input_keep_length', $modal);
+                var $inputKeepWidth = $('#ladb_input_keep_width', $modal);
                 var $selectSheetFolding = $('#ladb_select_sheet_folding', $modal);
                 var $selectHidePartList = $('#ladb_select_hide_part_list', $modal);
                 var $selectUseNames = $('#ladb_select_use_names', $modal);
@@ -3610,6 +3612,8 @@
                     options.trimming = $inputTrimming.val();
                     options.optimization = parseInt($selectOptimization.val());
                     options.stacking = parseInt($selectStacking.val());
+                    options.keep_length = $inputKeepLength.val();
+                    options.keep_width = $inputKeepWidth.val();
                     options.sheet_folding = $selectSheetFolding.val() === '1';
                     options.hide_part_list = $selectHidePartList.val() === '1';
                     options.use_names = $selectUseNames.val() === '1';
@@ -3625,6 +3629,8 @@
                     $inputTrimming.val(options.trimming);
                     $selectOptimization.selectpicker('val', options.optimization);
                     $selectStacking.selectpicker('val', options.stacking);
+                    $inputKeepLength.val(options.keep_length);
+                    $inputKeepWidth.val(options.keep_width);
                     $selectSheetFolding.selectpicker('val', options.sheet_folding ? '1' : '0');
                     $selectHidePartList.selectpicker('val', options.hide_part_list ? '1' : '0');
                     $selectUseNames.selectpicker('val', options.use_names ? '1' : '0');
@@ -3673,6 +3679,8 @@
                 $inputTrimming.ladbTextinputDimension();
                 $selectOptimization.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectStacking.selectpicker(SELECT_PICKER_OPTIONS);
+                $inputKeepLength.ladbTextinputDimension();
+                $inputKeepWidth.ladbTextinputDimension();
                 $selectSheetFolding.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectHidePartList.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectUseNames.selectpicker(SELECT_PICKER_OPTIONS);

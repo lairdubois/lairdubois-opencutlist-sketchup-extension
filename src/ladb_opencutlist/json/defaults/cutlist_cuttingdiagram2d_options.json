@@ -6,7 +6,9 @@
   "_preprocessors": {
     "scrap_sheet_sizes": 4, /* PRESETS_PREPROCESSOR_DXDXQ */
     "saw_kerf": 1, /* PRESETS_PREPROCESSOR_D */
-    "trimming": 1 /* PRESETS_PREPROCESSOR_D */
+    "trimming": 1, /* PRESETS_PREPROCESSOR_D */
+    "keep_length": 1, /* PRESETS_PREPROCESSOR_D */
+    "keep_width": 1 /* PRESETS_PREPROCESSOR_D */
   },
   "0": {
     "std_sheet": "",
@@ -15,6 +17,8 @@
     "trimming": { "metric": "10mm", "imperial": "1/2\"" },
     "optimization": 0,        /* OPT_MEDIUM */
     "stacking": 3,            /* STACKING_ALL */
+    "keep_length": { "metric": "50mm", "imperial": "2\"" },
+    "keep_width": { "metric": "50mm", "imperial": "2\"" },
     "sheet_folding": true,
     "hide_part_list": false,
     "use_names": false,

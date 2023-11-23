@@ -187,6 +187,7 @@
                                         <li><strong>{{ 'tab.cutlist.cuttingdiagram.list.total_cut_count'|i18next }} : </strong>{{ summary.total_cut_count }}</li>
                                         <li><strong>{{ 'tab.cutlist.cuttingdiagram.list.total_cut_length'|i18next }} : </strong>{{ summary.total_cut_length }}</li>
                                         <li><strong>{{ 'tab.cutlist.cuttingdiagram.list.overall_efficiency'|i18next }} : </strong>{{ summary.overall_efficiency|number_format(2, capabilities.decimal_separator, ' ') }}%</li>
+                                        <li><strong>{{ 'tab.cutlist.cuttingdiagram.list.leftover_to_keep_plural'|i18next }} : </strong>{{ to_keep_leftovers|length }} <small>(> {{ options.keep_length }} x {{ options.keep_width }})</small></li>
                                     </ul>
                                 </div>
                             </div>
@@ -540,5 +541,5 @@
             {% endif %}
             </tbody>
         </table>
-    </div>
+    </table>
 {% endblock %}
