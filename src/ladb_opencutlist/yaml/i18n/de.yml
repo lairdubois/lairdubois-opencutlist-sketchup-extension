@@ -816,6 +816,8 @@ tab:
         option_smoothing_help: TBD
         option_sheet: Platte
         option_sheet_help: TBD
+        option_bar: Stange
+        option_bar_help: TBD
         option_parts: Teile
         option_parts_help: TBD
         option_leftovers: Reste

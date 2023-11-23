@@ -816,6 +816,8 @@ tab:
         option_smoothing_help: TBD
         option_sheet: Panel
         option_sheet_help: TBD
+        option_bar: Dimensional
+        option_bar_help: TBD
         option_parts: Parts
         option_parts_help: TBD
         option_leftovers: Leftovers
