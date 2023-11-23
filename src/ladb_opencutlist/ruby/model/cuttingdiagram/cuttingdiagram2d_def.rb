@@ -4,7 +4,7 @@ module Ladb::OpenCutList
 
   class Cuttingdiagram2dDef
 
-    attr_accessor :group, :errors, :warnings, :tips, :unplaced_part_defs, :options_def, :summary_def, :sheet_defs, :projection_defs
+    attr_accessor :group, :errors, :warnings, :tips, :unplaced_part_defs, :options_def, :summary_def, :sheet_defs, :to_keep_leftover_defs, :projection_defs
 
     def initialize(group, errors = [])
       @group = group
@@ -17,6 +17,7 @@ module Ladb::OpenCutList
       @options_def = Cuttingdiagram2dOptionsDef.new
       @summary_def = Cuttingdiagram2dSummaryDef.new
       @sheet_defs = {}
+      @to_keep_leftover_defs = {}
 
       @projection_defs = {} # Key = part ID
 
@@ -207,7 +208,7 @@ module Ladb::OpenCutList
 
   class Cuttingdiagram2dLeftoverDef
 
-    attr_accessor :px_x, :px_y, :px_length, :px_width, :length, :width
+    attr_accessor :px_x, :px_y, :px_length, :px_width, :length, :width, :to_keep
 
     def initialize
 
@@ -217,6 +218,7 @@ module Ladb::OpenCutList
       @px_width = 0
       @length = 0
       @width = 0
+      @to_keep = false
 
     end
 
@@ -224,6 +226,41 @@ module Ladb::OpenCutList
 
     def create_leftover
       Cuttingdiagram2dLeftover.new(self)
+    end
+
+  end
+
+  # -----
+
+  class Cuttingdiagram2dListedLeftoverDef
+
+    attr_accessor :leftover_def, :sheet_def, :count
+
+    def initialize
+
+      @leftover_def = leftover_def
+      @sheet_def = sheet_def
+
+      @count = 0
+
+    end
+
+    def length
+      @leftover_def.length
+    end
+
+    def width
+      @leftover_def.width
+    end
+
+    def area
+      length * width
+    end
+
+    # ---
+
+    def create_listed_leftover
+      Cuttingdiagram2dListedLeftover.new(self)
     end
 
   end

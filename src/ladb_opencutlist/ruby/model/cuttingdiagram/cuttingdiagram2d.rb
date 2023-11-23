@@ -10,7 +10,7 @@ module Ladb::OpenCutList
     include HashableHelper
     include PixelConverterHelper
 
-    attr_reader :errors, :warnings, :tips, :unplaced_parts, :options, :summary, :sheets, :projections
+    attr_reader :errors, :warnings, :tips, :unplaced_parts, :options, :summary, :sheets, :to_keep_leftovers, :projections
 
     def initialize(_def)
       @_def = _def
@@ -19,10 +19,11 @@ module Ladb::OpenCutList
       @warnings = _def.warnings
       @tips = _def.tips
 
-      @unplaced_parts = _def.unplaced_part_defs.values.map { |sheet_def| sheet_def.create_listed_part }.sort_by { |part| [ part.def._sorter ] }
+      @unplaced_parts = _def.unplaced_part_defs.values.map { |part_def| part_def.create_listed_part }.sort_by { |part| [ part.def._sorter ] }
       @options = _def.options_def.create_options
       @summary = _def.summary_def.create_summary
       @sheets = _def.sheet_defs.values.map { |sheet_def| sheet_def.create_sheet }.sort_by { |sheet| [ -sheet.type, -sheet.efficiency, -sheet.count ] }
+      @to_keep_leftovers = _def.to_keep_leftover_defs.values.map { |leftover_def| leftover_def.create_listed_leftover }.sort_by { |leftover| [ -leftover.def.area, -leftover.length ] }
 
       @projections = _def.projection_defs.map { |part_id, projection_def| [ part_id, projection_def.layer_defs.map { |layer_def| { :depth => layer_def.depth, :path => "#{layer_def.polygon_defs.map { |polygon_def| "M #{polygon_def.points.map { |point| "#{_to_px(point.x)},#{-_to_px(point.y)}" }.join(' L ')} Z" }.join(' ')}" } } ] }.to_h
 
@@ -235,7 +236,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :px_x, :px_y, :px_length, :px_width, :length, :width
+    attr_reader :px_x, :px_y, :px_length, :px_width, :length, :width, :to_keep
 
     def initialize(_def)
       @_def = _def
@@ -246,6 +247,29 @@ module Ladb::OpenCutList
       @px_width = _def.px_width
       @length = _def.length.to_l.to_s
       @width = _def.width.to_l.to_s
+      @to_keep = _def.to_keep
+
+    end
+
+  end
+
+  # -----
+
+  class Cuttingdiagram2dListedLeftover
+
+    include DefHelper
+    include HashableHelper
+
+    attr_reader :length, :width, :area, :count
+
+    def initialize(_def)
+      @_def = _def
+
+      @length = _def.length.to_l.to_s
+      @width = _def.width.to_l.to_s
+      @area = DimensionUtils.instance.format_to_readable_area(_def.area)
+
+      @count = _def.count * _def.sheet_def.count
 
     end
 

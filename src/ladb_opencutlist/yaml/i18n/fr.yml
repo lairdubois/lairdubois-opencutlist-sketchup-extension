@@ -787,6 +787,9 @@ tab:
         overall_efficiency: Efficacité globale
         efficiency: Efficacité
         leftover: Chute
+        leftover_to_keep: Chute à conserver
+        leftover_to_keep_plural: Chutes à conserver
+        leftover_to_throw_away: Chute à jeter
         cut: Coupe
         cut_plural: Coupes
         cut_trimming: Coupe de propreté

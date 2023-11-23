@@ -287,16 +287,33 @@ module Ladb::OpenCutList
         }
 
         # Leftovers
-        bin.leftovers.each { |box|
+        bin.leftovers.each { |leftover|
 
           leftover_def = Cuttingdiagram2dLeftoverDef.new
-          leftover_def.px_x = _to_px(_compute_x_with_origin_corner(@origin_corner, box.x_pos, box.length, bin.length))
-          leftover_def.px_y = _to_px(_compute_y_with_origin_corner(@origin_corner, box.y_pos, box.width, bin.width))
-          leftover_def.px_length = _to_px(box.length)
-          leftover_def.px_width = _to_px(box.width)
-          leftover_def.length = box.length
-          leftover_def.width = box.width
+          leftover_def.px_x = _to_px(_compute_x_with_origin_corner(@origin_corner, leftover.x_pos, leftover.length, bin.length))
+          leftover_def.px_y = _to_px(_compute_y_with_origin_corner(@origin_corner, leftover.y_pos, leftover.width, bin.width))
+          leftover_def.px_length = _to_px(leftover.length)
+          leftover_def.px_width = _to_px(leftover.width)
+          leftover_def.length = leftover.length
+          leftover_def.width = leftover.width
+          leftover_def.to_keep = leftover.keep
           sheet_def.leftover_defs.push(leftover_def)
+
+          if leftover.keep
+
+            leftover_key = "#{leftover.length}x#{leftover.width}"
+            to_keep_leftover_def = cuttingdiagram2d_def.to_keep_leftover_defs[leftover_key]
+            if to_keep_leftover_def.nil?
+
+              to_keep_leftover_def = Cuttingdiagram2dListedLeftoverDef.new
+              to_keep_leftover_def.sheet_def = sheet_def
+              to_keep_leftover_def.leftover_def = leftover_def
+              cuttingdiagram2d_def.to_keep_leftover_defs[leftover_key] = to_keep_leftover_def
+
+            end
+            to_keep_leftover_def.count += 1
+
+          end
 
         }
 
