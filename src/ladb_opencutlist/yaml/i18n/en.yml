@@ -733,6 +733,8 @@ tab:
       option_stacking_1: Lengthwise
       option_stacking_2: Widthwise
       option_stacking_3: All Possibilities
+      option_keep: Minimum size of leftovers
+      option_keep_help: Leftovers that are both larger than the minimum size will be marked **to be kept**.
       option_std_bar_dimensional: Standard Dimensional
       option_std_bar_edge: Standard Edge Band
       option_std_bar_help: |
@@ -787,6 +789,9 @@ tab:
         overall_efficiency: Overall efficiency
         efficiency: Efficiency
         leftover: Leftover
+        leftover_to_keep: Leftover to keep
+        leftover_to_keep_plural: Leftovers to keep
+        leftover_to_throw_away: Disposable leftover
         cut: Cut
         cut_plural: Cuts
         cut_trimming: Trimming cut
