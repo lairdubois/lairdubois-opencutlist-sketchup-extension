@@ -12,6 +12,7 @@
 
 {% set dimensionOffset = 1 %}
 {% set sheetDimensionOffset = 10 %}
+{% set leftoverBulletOffset = 10 %}
 
 {% set sheetOutlineWidth = 1 %}
 {% set partOutlineWidth = 2 %}
@@ -297,16 +298,16 @@
                             <text class="sheet-dimension" x="{{ sheet.px_length / 2 }}" y="-{{ sheetOutlineWidth + sheetDimensionOffset }}" font-size="{{ sheetDimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic">{{ sheet.length }}</text>
                             <text class="sheet-dimension" x="-{{ sheetOutlineWidth + sheetDimensionOffset }}" y="{{ sheet.px_width / 2 }}" font-size="{{ sheetDimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic" transform="rotate(-90 -{{ sheetOutlineWidth + sheetDimensionOffset }},{{ sheet.px_width / 2 }})">{{ sheet.width }}</text>
                             <g class="sheet" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ 'tab.cutlist.cuttingdiagram.list.trimming'|i18next }}</span>&nbsp;{{ options.trimming|escape('html') }}">
-                                <rect class="sheet-outer" x="-1" y="-1" width="{{ sheet.px_length + 2 }}" height="{{ sheet.px_width + 2 }}"></rect>
-                                <rect class="sheet-inner" x="0" y="0" width="{{ sheet.px_length }}" height="{{ sheet.px_width }}"></rect>
+                                <rect class="sheet-outer" x="-1" y="-1" width="{{ sheet.px_length + 2 }}" height="{{ sheet.px_width + 2 }}" />
+                                <rect class="sheet-inner" x="0" y="0" width="{{ sheet.px_length }}" height="{{ sheet.px_width }}" />
                             </g>
                             {% for leftover in sheet.leftovers %}
                                 <g class="leftover" data-toggle="tooltip" data-html="true" title="{{ fn.leftover_tooltip(leftover) }}">
-                                    <rect class="leftover-inner" x="{{ leftover.px_x }}" y="{{ leftover.px_y }}" width="{{ leftover.px_length }}" height="{{ leftover.px_width }}"></rect>
+                                    <rect class="leftover-inner" x="{{ leftover.px_x }}" y="{{ leftover.px_y }}" width="{{ leftover.px_length }}" height="{{ leftover.px_width }}" />
                                     {% set _hideCross = options.hide_cross or leftover.px_length < dimensionFontSize or leftover.px_width < dimensionFontSize %}
                                     {% if not _hideCross %}
-                                        <line class="leftover-cross" x1="{{ leftover.px_x + leftover.px_length }}" y1="{{ leftover.px_y }}" x2="{{ leftover.px_x }}" y2="{{ leftover.px_y + leftover.px_width }}"></line>
-                                        <line class="leftover-cross" x1="{{ leftover.px_x }}" y1="{{ leftover.px_y }}" x2="{{ leftover.px_x + leftover.px_length }}" y2="{{ leftover.px_y + leftover.px_width }}"></line>
+                                        <line class="leftover-cross" x1="{{ leftover.px_x + leftover.px_length }}" y1="{{ leftover.px_y }}" x2="{{ leftover.px_x }}" y2="{{ leftover.px_y + leftover.px_width }}" />
+                                        <line class="leftover-cross" x1="{{ leftover.px_x }}" y1="{{ leftover.px_y }}" x2="{{ leftover.px_x + leftover.px_length }}" y2="{{ leftover.px_y + leftover.px_width }}" />
                                     {% endif %}
                                     {% set _hideLength = leftover.px_width < (dimensionFontSize + dimensionOffset * 2) or leftover.px_length <= leftover.length|length * dimensionFontSize * textFontWidthFactor %}
                                     {% if not _hideLength %}
@@ -322,33 +323,34 @@
                                         {% set _y = leftover.px_y + leftover.px_width / 2 %}
                                         <text class="leftover-dimension" x="{{ _x }}" y="{{ _y }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle"{% if _xCenteredValue %} dominant-baseline="central"{% endif %} transform="rotate(-90 {{ _x }},{{ _y }})">{{ leftover.width }}</text>
                                     {% endif %}
+                                    {% if leftover.to_keep %}<circle class="leftover-bullet" cx="{{ leftover.px_x + leftover.px_length / 2 }}" cy="{{ leftover.px_y + leftover.px_width / 2 }}" r="3" />{% endif %}
                                 </g>
                             {% endfor %}
                             {% for part in sheet.parts|reverse %}
                                 <g class="part" data-part-id="{{ part.id }}" data-toggle="tooltip" data-html="true" title="{{ fn.part_tooltip(part) }}">
                                     {% if projections[part.id] %}
-                                        <rect class="part-projection-outer" x="{{ part.px_x }}" y="{{ part.px_y }}" width="{{ part.px_length }}" height="{{ part.px_width }}"></rect>
+                                        <rect class="part-projection-outer" x="{{ part.px_x }}" y="{{ part.px_y }}" width="{{ part.px_length }}" height="{{ part.px_width }}" />
                                         <g class="part-projection" transform="{% if part.rotated %}translate({{ part.px_x - part.px_x_offset + part.px_length }} {{ part.px_y - part.px_y_offset + part.px_width }}) rotate(-90 0 0){% else %}translate({{ part.px_x + part.px_x_offset }} {{ part.px_y - part.px_y_offset + part.px_width }}){% endif %}">
                                             {% for layer in projections[part.id] %}
                                                 <path class="part-projection-{% if loop.first %}shape{% else %}machining{% endif %}" d="{{ layer.path }}" />
                                             {% endfor %}
                                         </g>
                                     {% else %}
-                                        <rect class="part-outer" x="{{ part.px_x }}" y="{{ part.px_y }}" width="{{ part.px_length }}" height="{{ part.px_width }}"></rect>
-                                        <rect class="part-inner" x="{{ part.px_x + partOutlineWidth }}" y="{{ part.px_y + partOutlineWidth }}" width="{{ part.px_length - partOutlineWidth * 2 }}" height="{{ part.px_width - partOutlineWidth * 2 }}"></rect>
+                                        <rect class="part-outer" x="{{ part.px_x }}" y="{{ part.px_y }}" width="{{ part.px_length }}" height="{{ part.px_width }}" />
+                                        <rect class="part-inner" x="{{ part.px_x + partOutlineWidth }}" y="{{ part.px_y + partOutlineWidth }}" width="{{ part.px_length - partOutlineWidth * 2 }}" height="{{ part.px_width - partOutlineWidth * 2 }}" />
                                     {% endif %}
                                     {% if not options.hide_edges_preview %}
                                         {% if part.rotated and part.edge_material_names.xmax or not part.rotated and part.edge_material_names.ymax %}
-                                            <rect class="part-edge" x="{{ part.px_x + partOutlineWidth }}" y="{{ part.px_y + partOutlineWidth }}" width="{{ part.px_length - partOutlineWidth * 2 }}" height="{{ edgeWidth }}" fill="{{ generateOptions.hide_material_colors ? '#668eee': (part.rotated ? part.edge_material_colors.xmax : part.edge_material_colors.ymax) }}"></rect>
+                                            <rect class="part-edge" x="{{ part.px_x + partOutlineWidth }}" y="{{ part.px_y + partOutlineWidth }}" width="{{ part.px_length - partOutlineWidth * 2 }}" height="{{ edgeWidth }}" fill="{{ generateOptions.hide_material_colors ? '#668eee': (part.rotated ? part.edge_material_colors.xmax : part.edge_material_colors.ymax) }}" />
                                         {% endif %}
                                         {% if part.rotated and part.edge_material_names.xmin or not part.rotated and part.edge_material_names.ymin %}
-                                            <rect class="part-edge" x="{{ part.px_x + partOutlineWidth }}" y="{{ part.px_y + part.px_width - edgeWidth - partOutlineWidth }}" width="{{ part.px_length - partOutlineWidth * 2 }}" height="{{ edgeWidth }}" fill="{{ generateOptions.hide_material_colors ? '#668eee': (part.rotated ? part.edge_material_colors.xmin : part.edge_material_colors.ymin) }}"></rect>
+                                            <rect class="part-edge" x="{{ part.px_x + partOutlineWidth }}" y="{{ part.px_y + part.px_width - edgeWidth - partOutlineWidth }}" width="{{ part.px_length - partOutlineWidth * 2 }}" height="{{ edgeWidth }}" fill="{{ generateOptions.hide_material_colors ? '#668eee': (part.rotated ? part.edge_material_colors.xmin : part.edge_material_colors.ymin) }}" />
                                         {% endif %}
                                         {% if part.rotated and part.edge_material_names.ymax or not part.rotated and part.edge_material_names.xmin %}
-                                            <rect class="part-edge" x="{{ part.px_x + partOutlineWidth }}" y="{{ part.px_y + partOutlineWidth }}" width="{{ edgeWidth }}" height="{{ part.px_width - partOutlineWidth * 2 }}" fill="{{ generateOptions.hide_material_colors ? '#668eee': (part.rotated ? part.edge_material_colors.ymax : part.edge_material_colors.xmin) }}"></rect>
+                                            <rect class="part-edge" x="{{ part.px_x + partOutlineWidth }}" y="{{ part.px_y + partOutlineWidth }}" width="{{ edgeWidth }}" height="{{ part.px_width - partOutlineWidth * 2 }}" fill="{{ generateOptions.hide_material_colors ? '#668eee': (part.rotated ? part.edge_material_colors.ymax : part.edge_material_colors.xmin) }}" />
                                         {% endif %}
                                         {% if part.rotated and part.edge_material_names.ymin or not part.rotated and part.edge_material_names.xmax %}
-                                            <rect class="part-edge" x="{{ part.px_x + part.px_length - edgeWidth - partOutlineWidth }}" y="{{ part.px_y + partOutlineWidth }}" width="{{ edgeWidth }}" height="{{ part.px_width - partOutlineWidth * 2 }}" fill="{{ generateOptions.hide_material_colors ? '#668eee': (part.rotated ? part.edge_material_colors.ymin : part.edge_material_colors.xmax) }}"></rect>
+                                            <rect class="part-edge" x="{{ part.px_x + part.px_length - edgeWidth - partOutlineWidth }}" y="{{ part.px_y + partOutlineWidth }}" width="{{ edgeWidth }}" height="{{ part.px_width - partOutlineWidth * 2 }}" fill="{{ generateOptions.hide_material_colors ? '#668eee': (part.rotated ? part.edge_material_colors.ymin : part.edge_material_colors.xmax) }}" />
                                         {% endif %}
                                     {% endif %}
                                     {% set _dimHText = (part.rotated ? part.cutting_width : part.cutting_length)|trim_tilde %}
@@ -383,8 +385,8 @@
                             {% endfor %}
                             {% for cut in sheet.cuts %}
                                 <g class="cut{% if options.highlight_primary_cuts %} cut-highlighted{% endif %}{% if cut.is_trimming %} cut-trimming{% elseif cut.is_bounding %} cut-bounding{% elseif cut.is_internal_through %} cut-internal-through{% endif %}" data-toggle="tooltip" data-html="true" title="{{ fn.cut_tooltip(cut, options) }}">
-                                    <rect class="cut-outer" x="{{ cut.px_x - cutOutlineWidth }}" y="{{ cut.px_y - cutOutlineWidth }}" width="{{ (cut.is_horizontal ? cut.px_length : options.px_saw_kerf) + cutOutlineWidth * 2 }}" height="{{ (cut.is_horizontal ? options.px_saw_kerf : cut.px_length) + cutOutlineWidth * 2 }}"></rect>
-                                    <rect class="cut-inner" x="{{ cut.px_x }}" y="{{ cut.px_y }}" width="{{ cut.is_horizontal ? cut.px_length : options.px_saw_kerf }}" height="{{ cut.is_horizontal ? options.px_saw_kerf : cut.px_length }}"></rect>
+                                    <rect class="cut-outer" x="{{ cut.px_x - cutOutlineWidth }}" y="{{ cut.px_y - cutOutlineWidth }}" width="{{ (cut.is_horizontal ? cut.px_length : options.px_saw_kerf) + cutOutlineWidth * 2 }}" height="{{ (cut.is_horizontal ? options.px_saw_kerf : cut.px_length) + cutOutlineWidth * 2 }}" />
+                                    <rect class="cut-inner" x="{{ cut.px_x }}" y="{{ cut.px_y }}" width="{{ cut.is_horizontal ? cut.px_length : options.px_saw_kerf }}" height="{{ cut.is_horizontal ? options.px_saw_kerf : cut.px_length }}" />
                                 </g>
                             {% endfor %}
                             {% if group.material_grained %}

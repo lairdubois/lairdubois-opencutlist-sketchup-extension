@@ -261,8 +261,8 @@
                             <g class="bar" data-toggle="tooltip" data-html="true" title="<span style='font-size: 120%;'>{{ 'tab.cutlist.cuttingdiagram.list.trimming'|i18next }}</span>&nbsp;{{ options.trimming|escape('html') }}">
                                 {% for slice in bar.slices %}
                                     {% set yOffset = sliceHeight * loop.index0 %}
-                                    <rect class="bar-outer" x="{{ slice.px_x - (loop.first or (loop.last and originCornerIsRight) ? 1 : 0) }}" y="{{ yOffset - 1 }}" width="{{ slice.px_length + (loop.last ? (loop.first ? 2 : 1) : (loop.first ? 1 : 0)) }}" height="{{ bar.px_width + 2 }}"></rect>
-                                    <rect class="bar-inner" x="{{ slice.px_x }}" y="{{ yOffset }}" width="{{ slice.px_length }}" height="{{ bar.px_width }}"></rect>
+                                    <rect class="bar-outer" x="{{ slice.px_x - (loop.first or (loop.last and originCornerIsRight) ? 1 : 0) }}" y="{{ yOffset - 1 }}" width="{{ slice.px_length + (loop.last ? (loop.first ? 2 : 1) : (loop.first ? 1 : 0)) }}" height="{{ bar.px_width + 2 }}" />
+                                    <rect class="bar-inner" x="{{ slice.px_x }}" y="{{ yOffset }}" width="{{ slice.px_length }}" height="{{ bar.px_width }}" />
                                     {% if not (loop.first and originCornerIsLeft) and not (loop.last and originCornerIsRight) %}
                                         <text class="bar-dimension" x="-{{ barOutlineWidth + barDimensionOffset }}" y="{{ yOffset + bar.px_width / 2 }}" font-size="{{ barDimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic">&hellip;</text>
                                     {% endif %}
@@ -279,10 +279,10 @@
                                     {% set dim = bar.leftover.length|trim_tilde %}
                                     {% set dimPxWidth = dim|length * dimensionFontSize * textFontWidthFactor %}
                                     {% set hideDimension = displayedDimension or slice.px_length <= dimPxWidth %}
-                                    <rect class="leftover-inner" x="{{ slice.px_x }}" y="{{ yOffset }}" width="{{ slice.px_length }}" height="{{ bar.px_width }}"></rect>
+                                    <rect class="leftover-inner" x="{{ slice.px_x }}" y="{{ yOffset }}" width="{{ slice.px_length }}" height="{{ bar.px_width }}" />
                                     {% if not hideCross %}
-                                        <line class="leftover-cross" x1="{{ slice.px_x + slice.px_length }}" y1="{{ yOffset }}" x2="{{ slice.px_x }}" y2="{{ yOffset + bar.px_width }}"></line>
-                                        <line class="leftover-cross" x1="{{ slice.px_x }}" y1="{{ yOffset }}" x2="{{ slice.px_x + slice.px_length }}" y2="{{ yOffset + bar.px_width }}"></line>
+                                        <line class="leftover-cross" x1="{{ slice.px_x + slice.px_length }}" y1="{{ yOffset }}" x2="{{ slice.px_x }}" y2="{{ yOffset + bar.px_width }}" />
+                                        <line class="leftover-cross" x1="{{ slice.px_x }}" y1="{{ yOffset }}" x2="{{ slice.px_x + slice.px_length }}" y2="{{ yOffset + bar.px_width }}" />
                                     {% endif %}
                                     {% if not hideDimension %}
                                         <text class="leftover-dimension" x="{{ slice.px_x + slice.px_length / 2 }}" y="{{ yOffset + bar.px_width + dimensionOffset + dimensionFontSize }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic">{{ dim }}</text>
@@ -313,8 +313,8 @@
                                                 {% endfor %}
                                             </g>
                                         {% else %}
-                                            <rect class="part-outer" x="{{ slice.px_x }}" y="{{ yOffset }}" width="{{ slice.px_length }}" height="{{ bar.px_width }}"></rect>
-                                            <rect class="part-inner" x="{{ slice.px_x + (loop.first and originCornerIsLeft or loop.last and originCornerIsRight ? partOutlineWidth : 0) }}" y="{{ yOffset + partOutlineWidth }}" width="{{ slice.px_length - partOutlineWidth * (loop.last ? (loop.first ? 2 : 1) : (loop.first ? 1 : 0)) }}" height="{{ bar.px_width - partOutlineWidth * 2 }}"></rect>
+                                            <rect class="part-outer" x="{{ slice.px_x }}" y="{{ yOffset }}" width="{{ slice.px_length }}" height="{{ bar.px_width }}" />
+                                            <rect class="part-inner" x="{{ slice.px_x + (loop.first and originCornerIsLeft or loop.last and originCornerIsRight ? partOutlineWidth : 0) }}" y="{{ yOffset + partOutlineWidth }}" width="{{ slice.px_length - partOutlineWidth * (loop.last ? (loop.first ? 2 : 1) : (loop.first ? 1 : 0)) }}" height="{{ bar.px_width - partOutlineWidth * 2 }}" />
                                         {% endif %}
                                         {% set hideNumber = slice.px_length < (numberFontSize * (numberTextLength + (loop.first and loop.last ? 0 : 1)) * textFontWidthFactor) %}
                                         {% if not hideNumber %}
@@ -335,8 +335,8 @@
                                 <g class="cut" data-toggle="tooltip" data-html="true" title="{{ fn.cut_tooltip(cut, options) }}">
                                     {% for slice in cut.slices %}
                                         {% set yOffset = slice.index * sliceHeight %}
-                                        <rect class="cut-outer" x="{{ slice.px_x - cutOutlineWidth }}" y="{{ yOffset - cutOutlineWidth }}" width="{{ options.px_saw_kerf + cutOutlineWidth * 2 }}" height="{{ bar.px_width + cutOutlineWidth * 2 }}"></rect>
-                                        <rect class="cut-inner" x="{{ slice.px_x }}" y="{{ yOffset }}" width="{{ options.px_saw_kerf }}" height="{{ bar.px_width }}"></rect>
+                                        <rect class="cut-outer" x="{{ slice.px_x - cutOutlineWidth }}" y="{{ yOffset - cutOutlineWidth }}" width="{{ options.px_saw_kerf + cutOutlineWidth * 2 }}" height="{{ bar.px_width + cutOutlineWidth * 2 }}" />
+                                        <rect class="cut-inner" x="{{ slice.px_x }}" y="{{ yOffset }}" width="{{ options.px_saw_kerf }}" height="{{ bar.px_width }}" />
                                     {% endfor %}
                                 </g>
                             {% endfor %}
