@@ -1,6 +1,7 @@
 {
   "0": {
     "file_format": "svg",
+    "dxf_structure": 2,
     "smoothing": false,
     "bar_hidden": false,
     "bar_stroke_color": "#0068FF",

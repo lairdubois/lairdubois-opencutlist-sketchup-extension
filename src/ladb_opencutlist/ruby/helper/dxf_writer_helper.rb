@@ -6,7 +6,10 @@ module Ladb::OpenCutList
 
   module DxfWriterHelper
 
-    ACI_COLORS = [
+    DXF_STRUCTURE_LAYER = 1
+    DXF_STRUCTURE_LAYER_AND_BLOCK = 2
+
+    DXF_ACI_COLORS = [
       [ 0, 0, 0 ],
       [ 255, 0, 0 ],
       [ 255, 255, 0 ],
@@ -312,7 +315,7 @@ module Ladb::OpenCutList
     def _dxf_convert_color_to_aci(color)
       match_index = 0
       match_dist = 195076 # Max dist 255**2 + 255**2 + 255**2 + 1
-      ACI_COLORS.each_with_index do |aci_color, index|
+      DXF_ACI_COLORS.each_with_index do |aci_color, index|
         dist = (aci_color[0] - color.red)**2 + (aci_color[1] - color.green)**2 + (aci_color[2] - color.blue)**2
         if dist < match_dist
           match_index = index
@@ -1137,7 +1140,7 @@ module Ladb::OpenCutList
       # Sub blocks
       projection_def.layer_defs[1..-1].each do |layer_def|
         _dxf_write_section_blocks_block(file, _dxf_get_projection_layer_def_depth_name(layer_def, name), @_dxf_model_space_id) do
-          _dxf_write_projection_layer_def_geometry(file, layer_def, smoothing, transformation, _dxf_get_projection_layer_def_depth_name(layer_def, 'OCL_PART'))
+          _dxf_write_projection_layer_def_geometry(file, layer_def, smoothing, transformation, _dxf_get_projection_layer_def_depth_name(layer_def, layer))
         end
       end
 

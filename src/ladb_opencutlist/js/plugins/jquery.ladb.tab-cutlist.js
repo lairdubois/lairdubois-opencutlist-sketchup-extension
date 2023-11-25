@@ -3290,6 +3290,8 @@
                                                 // Fetch UI elements
                                                 var $widgetPreset = $('.ladb-widget-preset', $modal);
                                                 var $selectFileFormat = $('#ladb_select_file_format', $modal);
+                                                var $formGroupDxfStructure = $('#ladb_form_group_dxf_structure', $modal);
+                                                var $selectDxfStructure = $('#ladb_select_dxf_structure', $modal);
                                                 var $selectSmoothing = $('#ladb_select_smoothing', $modal);
                                                 var $inputBarHidden = $('#ladb_input_bar_hidden', $modal);
                                                 var $inputBarStrokeColor = $('#ladb_input_bar_stroke_color', $modal);
@@ -3306,6 +3308,7 @@
 
                                                 var fnFetchOptions = function (options) {
                                                     options.file_format = $selectFileFormat.val();
+                                                    options.dxf_structure = parseInt($selectDxfStructure.val());
                                                     options.smoothing = $selectSmoothing.val() === '1';
                                                     options.bar_hidden = !$inputBarHidden.is(':checked');
                                                     options.bar_stroke_color = $inputBarStrokeColor.ladbTextinputColor('val');
@@ -3321,6 +3324,7 @@
                                                 };
                                                 var fnFillInputs = function (options) {
                                                     $selectFileFormat.selectpicker('val', options.file_format);
+                                                    $selectDxfStructure.selectpicker('val', options.dxf_structure);
                                                     $selectSmoothing.selectpicker('val', options.smoothing ? '1' : '0');
                                                     $inputBarHidden.prop('checked', !options.bar_hidden);
                                                     $inputBarStrokeColor.ladbTextinputColor('val', options.bar_stroke_color);
@@ -3334,18 +3338,19 @@
                                                     $inputCutsHidden.prop('checked', !options.cuts_hidden);
                                                     $inputCutsStrokeColor.ladbTextinputColor('val', options.cuts_stroke_color);
                                                 };
-                                                var fnUpdateColorsVisibility = function () {
-                                                    var disableFill = $selectFileFormat.val() === 'dxf';
+                                                var fnUpdateFieldsVisibility = function () {
+                                                    var isDxf = $selectFileFormat.val() === 'dxf';
                                                     var disableBarColors = !$inputBarHidden.is(':checked');
                                                     var disablePartsColors = !$inputPartsHidden.is(':checked');
                                                     var disableLeftoversColors = !$inputLeftoversHidden.is(':checked');
                                                     var disableCutsColors = !$inputCutsHidden.is(':checked');
+                                                    if (isDxf) $formGroupDxfStructure.show(); else $formGroupDxfStructure.hide();
                                                     $inputBarStrokeColor.ladbTextinputColor(disableBarColors ? 'disable' : 'enable');
-                                                    $inputBarFillColor.ladbTextinputColor(disableBarColors || disableFill ? 'disable' : 'enable');
+                                                    $inputBarFillColor.ladbTextinputColor(disableBarColors || isDxf ? 'disable' : 'enable');
                                                     $inputPartsStrokeColor.ladbTextinputColor(disablePartsColors ? 'disable' : 'enable');
-                                                    $inputPartsFillColor.ladbTextinputColor(disablePartsColors || disableFill ? 'disable' : 'enable');
+                                                    $inputPartsFillColor.ladbTextinputColor(disablePartsColors || isDxf ? 'disable' : 'enable');
                                                     $inputLeftoversStrokeColor.ladbTextinputColor(disableLeftoversColors ? 'disable' : 'enable');
-                                                    $inputLeftoversFillColor.ladbTextinputColor(disableLeftoversColors || disableFill ? 'disable' : 'enable');
+                                                    $inputLeftoversFillColor.ladbTextinputColor(disableLeftoversColors || isDxf ? 'disable' : 'enable');
                                                     $inputCutsStrokeColor.ladbTextinputColor(disableCutsColors ? 'disable' : 'enable');
                                                 };
 
@@ -3360,7 +3365,7 @@
                                                     .on('changed.bs.select', function () {
                                                         var fileCount = barCount - hiddenBarIndices.length;
                                                         $('#ladb_btn_export_file_format', $btnExport).html($(this).val().toUpperCase() + ' <small>( ' + fileCount + ' ' + i18next.t('default.file', { count: fileCount }).toLowerCase() + ' )</small>');
-                                                        fnUpdateColorsVisibility();
+                                                        fnUpdateFieldsVisibility();
                                                     })
                                                 ;
                                                 $selectSmoothing.selectpicker(SELECT_PICKER_OPTIONS);
@@ -3373,13 +3378,13 @@
                                                 $inputCutsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
 
                                                 fnFillInputs(exportOptions);
-                                                fnUpdateColorsVisibility();
+                                                fnUpdateFieldsVisibility();
 
                                                 // Bind inputs
-                                                $inputBarHidden.on('change', fnUpdateColorsVisibility);
-                                                $inputPartsHidden.on('change', fnUpdateColorsVisibility);
-                                                $inputLeftoversHidden.on('change', fnUpdateColorsVisibility);
-                                                $inputCutsHidden.on('change', fnUpdateColorsVisibility);
+                                                $inputBarHidden.on('change', fnUpdateFieldsVisibility);
+                                                $inputPartsHidden.on('change', fnUpdateFieldsVisibility);
+                                                $inputLeftoversHidden.on('change', fnUpdateFieldsVisibility);
+                                                $inputCutsHidden.on('change', fnUpdateFieldsVisibility);
 
                                                 // Bind buttons
                                                 $btnExport.on('click', function () {
@@ -3789,6 +3794,8 @@
                                                 // Fetch UI elements
                                                 var $widgetPreset = $('.ladb-widget-preset', $modal);
                                                 var $selectFileFormat = $('#ladb_select_file_format', $modal);
+                                                var $formGroupDxfStructure = $('#ladb_form_group_dxf_structure', $modal);
+                                                var $selectDxfStructure = $('#ladb_select_dxf_structure', $modal);
                                                 var $selectSmoothing = $('#ladb_select_smoothing', $modal);
                                                 var $inputSheetHidden = $('#ladb_input_sheet_hidden', $modal);
                                                 var $inputSheetStrokeColor = $('#ladb_input_sheet_stroke_color', $modal);
@@ -3805,6 +3812,7 @@
 
                                                 var fnFetchOptions = function (options) {
                                                     options.file_format = $selectFileFormat.val();
+                                                    options.dxf_structure = parseInt($selectDxfStructure.val());
                                                     options.smoothing = $selectSmoothing.val() === '1';
                                                     options.sheet_hidden = !$inputSheetHidden.is(':checked');
                                                     options.sheet_stroke_color = $inputSheetStrokeColor.ladbTextinputColor('val');
@@ -3820,6 +3828,7 @@
                                                 };
                                                 var fnFillInputs = function (options) {
                                                     $selectFileFormat.selectpicker('val', options.file_format);
+                                                    $selectDxfStructure.selectpicker('val', options.dxf_structure);
                                                     $selectSmoothing.selectpicker('val', options.smoothing ? '1' : '0');
                                                     $inputSheetHidden.prop('checked', !options.sheet_hidden);
                                                     $inputSheetStrokeColor.ladbTextinputColor('val', options.sheet_stroke_color);
@@ -3833,18 +3842,19 @@
                                                     $inputCutsHidden.prop('checked', !options.cuts_hidden);
                                                     $inputCutsStrokeColor.ladbTextinputColor('val', options.cuts_stroke_color);
                                                 };
-                                                var fnUpdateColorsVisibility = function () {
-                                                    var disableFill = $selectFileFormat.val() === 'dxf';
+                                                var fnUpdateFieldsVisibility = function () {
+                                                    var isDxf = $selectFileFormat.val() === 'dxf';
                                                     var disableSheetColors = !$inputSheetHidden.is(':checked');
                                                     var disablePartsColors = !$inputPartsHidden.is(':checked');
                                                     var disableLeftoversColors = !$inputLeftoversHidden.is(':checked');
                                                     var disableCutsColors = !$inputCutsHidden.is(':checked');
+                                                    if (isDxf) $formGroupDxfStructure.show(); else $formGroupDxfStructure.hide();
                                                     $inputSheetStrokeColor.ladbTextinputColor(disableSheetColors ? 'disable' : 'enable');
-                                                    $inputSheetFillColor.ladbTextinputColor(disableSheetColors || disableFill ? 'disable' : 'enable');
+                                                    $inputSheetFillColor.ladbTextinputColor(disableSheetColors || isDxf ? 'disable' : 'enable');
                                                     $inputPartsStrokeColor.ladbTextinputColor(disablePartsColors ? 'disable' : 'enable');
-                                                    $inputPartsFillColor.ladbTextinputColor(disablePartsColors || disableFill ? 'disable' : 'enable');
+                                                    $inputPartsFillColor.ladbTextinputColor(disablePartsColors || isDxf ? 'disable' : 'enable');
                                                     $inputLeftoversStrokeColor.ladbTextinputColor(disableLeftoversColors ? 'disable' : 'enable');
-                                                    $inputLeftoversFillColor.ladbTextinputColor(disableLeftoversColors || disableFill ? 'disable' : 'enable');
+                                                    $inputLeftoversFillColor.ladbTextinputColor(disableLeftoversColors || isDxf ? 'disable' : 'enable');
                                                     $inputCutsStrokeColor.ladbTextinputColor(disableCutsColors ? 'disable' : 'enable');
                                                 };
 
@@ -3859,9 +3869,10 @@
                                                     .on('changed.bs.select', function () {
                                                         var fileCount = sheetCount - hiddenSheetIndices.length;
                                                         $('#ladb_btn_export_file_format', $btnExport).html($(this).val().toUpperCase() + ' <small>( ' + fileCount + ' ' + i18next.t('default.file', { count: fileCount }).toLowerCase() + ' )</small>');
-                                                        fnUpdateColorsVisibility();
+                                                        fnUpdateFieldsVisibility();
                                                     })
                                                 ;
+                                                $selectDxfStructure.selectpicker(SELECT_PICKER_OPTIONS);
                                                 $selectSmoothing.selectpicker(SELECT_PICKER_OPTIONS);
                                                 $inputSheetStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputSheetFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
@@ -3872,13 +3883,13 @@
                                                 $inputCutsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
 
                                                 fnFillInputs(exportOptions);
-                                                fnUpdateColorsVisibility();
+                                                fnUpdateFieldsVisibility();
 
                                                 // Bind inputs
-                                                $inputSheetHidden.on('change', fnUpdateColorsVisibility);
-                                                $inputPartsHidden.on('change', fnUpdateColorsVisibility);
-                                                $inputLeftoversHidden.on('change', fnUpdateColorsVisibility);
-                                                $inputCutsHidden.on('change', fnUpdateColorsVisibility);
+                                                $inputSheetHidden.on('change', fnUpdateFieldsVisibility);
+                                                $inputPartsHidden.on('change', fnUpdateFieldsVisibility);
+                                                $inputLeftoversHidden.on('change', fnUpdateFieldsVisibility);
+                                                $inputCutsHidden.on('change', fnUpdateFieldsVisibility);
 
                                                 // Bind buttons
                                                 $btnExport.on('click', function () {

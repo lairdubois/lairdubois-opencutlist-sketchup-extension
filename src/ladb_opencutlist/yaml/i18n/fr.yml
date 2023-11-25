@@ -817,6 +817,10 @@ tab:
         options_general: General
         option_file_format: Format
         option_file_format_help: TBD
+        option_dxf_structure: Structure DXF
+        option_dxf_structure_1: Plat (Calques)
+        option_dxf_structure_2: Hiérarchique (Calques + Blocs)
+        option_dxf_structure_help: TBD
         option_smoothing: Lissage
         option_smoothing_0: Aucun
         option_smoothing_1: Détecter les cercles et arcs (Expérimental)

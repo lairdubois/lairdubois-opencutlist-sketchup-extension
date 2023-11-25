@@ -1,6 +1,7 @@
 {
   "0": {
     "file_format": "svg",
+    "dxf_structure": 2,
     "smoothing": false,
     "sheet_hidden": false,
     "sheet_stroke_color": "#0068FF",

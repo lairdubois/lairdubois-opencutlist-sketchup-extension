@@ -123,7 +123,7 @@ module Ladb::OpenCutList
 
         _svg_write_group_start(file, id: LAYER_PART)
 
-        _svg_write_projection_def(file, projection_def, @smoothing, unit_transformation, unit_transformation, unit_sign, nil, '#000000')
+        _svg_write_projection_def(file, projection_def, @smoothing, unit_transformation, unit_transformation, unit_sign, nil, ColorUtils::COLOR_BLACK)
 
         _svg_write_group_end(file)
 
