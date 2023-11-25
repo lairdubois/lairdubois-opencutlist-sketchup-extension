@@ -26,16 +26,16 @@ module Ladb::OpenCutList
       @file_format = settings.fetch('file_format', nil)
       @smoothing = settings.fetch('smoothing', false)
       @sheet_hidden = settings.fetch('sheet_hidden', false)
-      @sheet_stroke_color = settings.fetch('sheet_stroke_color', nil)
-      @sheet_fill_color = settings.fetch('sheet_fill_color', nil)
+      @sheet_stroke_color = ColorUtils.color_create(settings.fetch('sheet_stroke_color', nil))
+      @sheet_fill_color = ColorUtils.color_create(settings.fetch('sheet_fill_color', nil))
       @parts_hidden = settings.fetch('parts_hidden', false)
-      @parts_stroke_color = settings.fetch('parts_stroke_color', nil)
-      @parts_fill_color = settings.fetch('parts_fill_color', nil)
+      @parts_stroke_color = ColorUtils.color_create(settings.fetch('parts_stroke_color', nil))
+      @parts_fill_color = ColorUtils.color_create(settings.fetch('parts_fill_color', nil))
       @leftovers_hidden = settings.fetch('leftovers_hidden', true)
-      @leftovers_stroke_color = settings.fetch('leftovers_stroke_color', nil)
-      @leftovers_fill_color = settings.fetch('leftovers_fill_color', nil)
+      @leftovers_stroke_color = ColorUtils.color_create(settings.fetch('leftovers_stroke_color', nil))
+      @leftovers_fill_color = ColorUtils.color_create(settings.fetch('leftovers_fill_color', nil))
       @cuts_hidden = settings.fetch('cuts_hidden', true)
-      @cuts_stroke_color = settings.fetch('cuts_stroke_color', nil)
+      @cuts_stroke_color = ColorUtils.color_create(settings.fetch('cuts_stroke_color', nil))
       @hidden_sheet_indices = settings.fetch('hidden_sheet_indices', [])
       @use_names = settings.fetch('use_names', false)
 
@@ -133,8 +133,8 @@ module Ladb::OpenCutList
           y: 0,
           width: width,
           height: height,
-          stroke: _svg_stroke_color(@sheet_stroke_color, @sheet_fill_color),
-          fill: _svg_fill_color(@sheet_fill_color),
+          stroke: _svg_stroke_color_hex(@sheet_stroke_color, @sheet_fill_color),
+          fill: _svg_fill_color_hex(@sheet_fill_color),
           id: _svg_sanitize_id(id),
           'serif:id': id
         })
@@ -165,8 +165,8 @@ module Ladb::OpenCutList
               y: _svg_value(position.y),
               width: _svg_value(size.x),
               height: _svg_value(size.y),
-              stroke: _svg_stroke_color(@parts_stroke_color, @parts_fill_color),
-              fill: _svg_fill_color(@parts_fill_color),
+              stroke: _svg_stroke_color_hex(@parts_stroke_color, @parts_fill_color),
+              fill: _svg_fill_color_hex(@parts_fill_color),
               id: _svg_sanitize_id(id),
               'serif:id': id
             })
@@ -223,8 +223,8 @@ module Ladb::OpenCutList
             y: _svg_value(position.y),
             width: _svg_value(size.x),
             height: _svg_value(size.y),
-            stroke: _svg_stroke_color(@leftovers_stroke_color, @leftovers_fill_color),
-            fill: _svg_fill_color(@leftovers_fill_color),
+            stroke: _svg_stroke_color_hex(@leftovers_stroke_color, @leftovers_fill_color),
+            fill: _svg_fill_color_hex(@leftovers_fill_color),
             id: _svg_sanitize_id(id),
             'serif:id': id
           })
@@ -257,7 +257,7 @@ module Ladb::OpenCutList
             y1: _svg_value(position1.y),
             x2: _svg_value(position2.x),
             y2: _svg_value(position2.y),
-            stroke: _svg_stroke_color(@cuts_stroke_color),
+            stroke: _svg_stroke_color_hex(@cuts_stroke_color),
             id: _svg_sanitize_id(id),
             'serif:id': id
           })
@@ -295,16 +295,11 @@ module Ladb::OpenCutList
       min = Geom::Point3d.new
       max = Geom::Point3d.new(sheet_width, sheet_height)
 
-      sheet_stroke_color = @sheet_stroke_color ? Sketchup::Color.new(@sheet_stroke_color) : nil
-      parts_stroke_color = @parts_stroke_color ? Sketchup::Color.new(@parts_stroke_color) : nil
-      leftovers_stroke_color = @leftovers_stroke_color ? Sketchup::Color.new(@leftovers_stroke_color) : nil
-      cuts_stroke_color = @cuts_stroke_color ? Sketchup::Color.new(@cuts_stroke_color) : nil
-
       layer_defs = []
-      layer_defs.push({ :name => LAYER_SHEET, :color => sheet_stroke_color }) unless @sheet_hidden
-      layer_defs.push({ :name => LAYER_PART, :color => parts_stroke_color }) unless @parts_hidden
-      layer_defs.push({ :name => LAYER_LEFTOVER, :color => leftovers_stroke_color }) unless @leftovers_hidden
-      layer_defs.push({ :name => LAYER_CUT, :color => cuts_stroke_color }) unless @cuts_hidden
+      layer_defs.push({ :name => LAYER_SHEET, :color => @sheet_stroke_color }) unless @sheet_hidden
+      layer_defs.push({ :name => LAYER_PART, :color => @parts_stroke_color }) unless @parts_hidden
+      layer_defs.push({ :name => LAYER_LEFTOVER, :color => @leftovers_stroke_color }) unless @leftovers_hidden
+      layer_defs.push({ :name => LAYER_CUT, :color => @cuts_stroke_color }) unless @cuts_hidden
 
       unless @parts_hidden
         depth_layer_defs = []

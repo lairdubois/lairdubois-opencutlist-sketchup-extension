@@ -5,6 +5,15 @@ module Ladb::OpenCutList
     COLOR_BLACK = Sketchup::Color.new.freeze
     COLOR_WHITE = Sketchup::Color.new(255, 255, 255).freeze
 
+    def self.color_create(value, default = nil)
+      return value if value.is_a?(Sketchup::Color)
+      begin
+        return Sketchup::Color.new(value)
+      rescue => e
+        return default
+      end
+    end
+
     def self.color_relative_luminance(color)
       return 0 unless color.is_a?(Sketchup::Color)
       (0.2126 * color.red + 0.7152 * color.green + 0.0722 * color.blue) / 255.0
@@ -33,13 +42,13 @@ module Ladb::OpenCutList
       color_darken(color, amount)
     end
 
-    def self.color_to_hex(color)
-      return nil unless color.is_a?(Sketchup::Color)
+    def self.color_to_hex(color, default = nil)
+      return default unless color.is_a?(Sketchup::Color)
       "#%02x%02x%02x" % [ color.red, color.green, color.blue ]
     end
 
-    def self.color_to_256(color)
-      return nil unless color.is_a?(Sketchup::Color)
+    def self.color_to_256(color, default = nil)
+      return default unless color.is_a?(Sketchup::Color)
       (color.red * 6 / 256) * 36 + (color.green * 6 / 256) * 6 + (color.blue * 6 / 256)
     end
 

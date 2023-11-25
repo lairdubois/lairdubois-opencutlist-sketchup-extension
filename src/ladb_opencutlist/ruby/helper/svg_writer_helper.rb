@@ -48,15 +48,13 @@ module Ladb::OpenCutList
 
     # Colors
 
-    def _svg_stroke_color(stroke_color, fill_color = nil)
-      return stroke_color unless stroke_color.nil?
-      return '#000000' if fill_color.nil?
-      'none'
+    def _svg_stroke_color_hex(stroke_color, fill_color = nil)
+      return '#000000' if stroke_color.nil? && fill_color.nil?
+      ColorUtils.color_to_hex(stroke_color, 'none')
     end
 
-    def _svg_fill_color(fill_color)
-      return fill_color unless fill_color.nil?
-      'none'
+    def _svg_fill_color_hex(fill_color)
+      ColorUtils.color_to_hex(fill_color, 'none')
     end
 
     # ID
@@ -112,8 +110,8 @@ module Ladb::OpenCutList
 
         if layer_def.position == DrawingProjectionLayerDef::LAYER_POSITION_TOP
           attributes = {
-            stroke: _svg_stroke_color(stroke_color, fill_color),
-            fill: _svg_fill_color(fill_color),
+            stroke: _svg_stroke_color_hex(stroke_color, fill_color),
+            fill: _svg_fill_color_hex(fill_color),
             'shaper:cutType': 'outside'
           }
           attributes.merge!({ 'shaper:cutDepth': "#{_svg_value(Geom::Point3d.new(projection_def.max_depth, 0).transform(unit_transformation).x)}#{unit_sign}" }) if projection_def.max_depth > 0
@@ -127,7 +125,7 @@ module Ladb::OpenCutList
           attributes.merge!({ 'shaper:cutDepth': "#{_svg_value(Geom::Point3d.new(projection_def.max_depth, 0).transform(unit_transformation).x)}#{unit_sign}" }) if projection_def.max_depth > 0
         else
           attributes = {
-            stroke: _svg_stroke_color(stroke_color, fill_color),
+            stroke: _svg_stroke_color_hex(stroke_color, fill_color),
             fill: fill_color ? ColorUtils.color_to_hex(ColorUtils.color_lighten(Sketchup::Color.new(fill_color), projection_def.max_depth > 0 ? (layer_def.depth / projection_def.max_depth) * 0.6 + 0.2 : 0.3)) : 'none',
             'shaper:cutType': 'pocket',
             'shaper:cutDepth': "#{_svg_value(Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x)}#{unit_sign}"

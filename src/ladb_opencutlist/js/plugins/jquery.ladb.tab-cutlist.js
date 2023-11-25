@@ -3336,15 +3336,17 @@
                                                 };
                                                 var fnUpdateColorsVisibility = function () {
                                                     var disableFill = $selectFileFormat.val() === 'dxf';
-                                                    if (disableFill) {
-                                                        $inputBarFillColor.ladbTextinputColor('disable');
-                                                        $inputPartsFillColor.ladbTextinputColor('disable');
-                                                        $inputLeftoversFillColor.ladbTextinputColor('disable');
-                                                    } else {
-                                                        $inputBarFillColor.ladbTextinputColor('enable');
-                                                        $inputPartsFillColor.ladbTextinputColor('enable');
-                                                        $inputLeftoversFillColor.ladbTextinputColor('enable');
-                                                    }
+                                                    var disableBarColors = !$inputBarHidden.is(':checked');
+                                                    var disablePartsColors = !$inputPartsHidden.is(':checked');
+                                                    var disableLeftoversColors = !$inputLeftoversHidden.is(':checked');
+                                                    var disableCutsColors = !$inputCutsHidden.is(':checked');
+                                                    $inputBarStrokeColor.ladbTextinputColor(disableBarColors ? 'disable' : 'enable');
+                                                    $inputBarFillColor.ladbTextinputColor(disableBarColors || disableFill ? 'disable' : 'enable');
+                                                    $inputPartsStrokeColor.ladbTextinputColor(disablePartsColors ? 'disable' : 'enable');
+                                                    $inputPartsFillColor.ladbTextinputColor(disablePartsColors || disableFill ? 'disable' : 'enable');
+                                                    $inputLeftoversStrokeColor.ladbTextinputColor(disableLeftoversColors ? 'disable' : 'enable');
+                                                    $inputLeftoversFillColor.ladbTextinputColor(disableLeftoversColors || disableFill ? 'disable' : 'enable');
+                                                    $inputCutsStrokeColor.ladbTextinputColor(disableCutsColors ? 'disable' : 'enable');
                                                 };
 
                                                 $widgetPreset.ladbWidgetPreset({
@@ -3371,6 +3373,13 @@
                                                 $inputCutsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
 
                                                 fnFillInputs(exportOptions);
+                                                fnUpdateColorsVisibility();
+
+                                                // Bind inputs
+                                                $inputBarHidden.on('change', fnUpdateColorsVisibility);
+                                                $inputPartsHidden.on('change', fnUpdateColorsVisibility);
+                                                $inputLeftoversHidden.on('change', fnUpdateColorsVisibility);
+                                                $inputCutsHidden.on('change', fnUpdateColorsVisibility);
 
                                                 // Bind buttons
                                                 $btnExport.on('click', function () {
@@ -3826,15 +3835,17 @@
                                                 };
                                                 var fnUpdateColorsVisibility = function () {
                                                     var disableFill = $selectFileFormat.val() === 'dxf';
-                                                    if (disableFill) {
-                                                        $inputSheetFillColor.ladbTextinputColor('disable');
-                                                        $inputPartsFillColor.ladbTextinputColor('disable');
-                                                        $inputLeftoversFillColor.ladbTextinputColor('disable');
-                                                    } else {
-                                                        $inputSheetFillColor.ladbTextinputColor('enable');
-                                                        $inputPartsFillColor.ladbTextinputColor('enable');
-                                                        $inputLeftoversFillColor.ladbTextinputColor('enable');
-                                                    }
+                                                    var disableSheetColors = !$inputSheetHidden.is(':checked');
+                                                    var disablePartsColors = !$inputPartsHidden.is(':checked');
+                                                    var disableLeftoversColors = !$inputLeftoversHidden.is(':checked');
+                                                    var disableCutsColors = !$inputCutsHidden.is(':checked');
+                                                    $inputSheetStrokeColor.ladbTextinputColor(disableSheetColors ? 'disable' : 'enable');
+                                                    $inputSheetFillColor.ladbTextinputColor(disableSheetColors || disableFill ? 'disable' : 'enable');
+                                                    $inputPartsStrokeColor.ladbTextinputColor(disablePartsColors ? 'disable' : 'enable');
+                                                    $inputPartsFillColor.ladbTextinputColor(disablePartsColors || disableFill ? 'disable' : 'enable');
+                                                    $inputLeftoversStrokeColor.ladbTextinputColor(disableLeftoversColors ? 'disable' : 'enable');
+                                                    $inputLeftoversFillColor.ladbTextinputColor(disableLeftoversColors || disableFill ? 'disable' : 'enable');
+                                                    $inputCutsStrokeColor.ladbTextinputColor(disableCutsColors ? 'disable' : 'enable');
                                                 };
 
                                                 $widgetPreset.ladbWidgetPreset({
@@ -3861,6 +3872,13 @@
                                                 $inputCutsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
 
                                                 fnFillInputs(exportOptions);
+                                                fnUpdateColorsVisibility();
+
+                                                // Bind inputs
+                                                $inputSheetHidden.on('change', fnUpdateColorsVisibility);
+                                                $inputPartsHidden.on('change', fnUpdateColorsVisibility);
+                                                $inputLeftoversHidden.on('change', fnUpdateColorsVisibility);
+                                                $inputCutsHidden.on('change', fnUpdateColorsVisibility);
 
                                                 // Bind buttons
                                                 $btnExport.on('click', function () {
