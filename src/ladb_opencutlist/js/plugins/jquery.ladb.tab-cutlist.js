@@ -3335,19 +3335,7 @@
                                                     $inputCutsStrokeColor.ladbTextinputColor('val', options.cuts_stroke_color);
                                                 };
                                                 var fnUpdateColorsVisibility = function () {
-                                                    var disableStroke = $selectFileFormat.val() === 'dxf';
                                                     var disableFill = $selectFileFormat.val() === 'dxf';
-                                                    if (disableStroke) {
-                                                        $inputBarStrokeColor.ladbTextinputColor('disable');
-                                                        $inputPartsStrokeColor.ladbTextinputColor('disable');
-                                                        $inputLeftoversStrokeColor.ladbTextinputColor('disable');
-                                                        $inputCutsStrokeColor.ladbTextinputColor('disable');
-                                                    } else {
-                                                        $inputBarStrokeColor.ladbTextinputColor('enable');
-                                                        $inputPartsStrokeColor.ladbTextinputColor('enable');
-                                                        $inputLeftoversStrokeColor.ladbTextinputColor('enable');
-                                                        $inputCutsStrokeColor.ladbTextinputColor('enable');
-                                                    }
                                                     if (disableFill) {
                                                         $inputBarFillColor.ladbTextinputColor('disable');
                                                         $inputPartsFillColor.ladbTextinputColor('disable');
@@ -3837,19 +3825,7 @@
                                                     $inputCutsStrokeColor.ladbTextinputColor('val', options.cuts_stroke_color);
                                                 };
                                                 var fnUpdateColorsVisibility = function () {
-                                                    var disableStroke = $selectFileFormat.val() === 'dxf';
                                                     var disableFill = $selectFileFormat.val() === 'dxf';
-                                                    if (disableStroke) {
-                                                        $inputSheetStrokeColor.ladbTextinputColor('disable');
-                                                        $inputPartsStrokeColor.ladbTextinputColor('disable');
-                                                        $inputLeftoversStrokeColor.ladbTextinputColor('disable');
-                                                        $inputCutsStrokeColor.ladbTextinputColor('disable');
-                                                    } else {
-                                                        $inputSheetStrokeColor.ladbTextinputColor('enable');
-                                                        $inputPartsStrokeColor.ladbTextinputColor('enable');
-                                                        $inputLeftoversStrokeColor.ladbTextinputColor('enable');
-                                                        $inputCutsStrokeColor.ladbTextinputColor('enable');
-                                                    }
                                                     if (disableFill) {
                                                         $inputSheetFillColor.ladbTextinputColor('disable');
                                                         $inputPartsFillColor.ladbTextinputColor('disable');

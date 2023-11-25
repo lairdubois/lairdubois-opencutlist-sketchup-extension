@@ -38,6 +38,11 @@ module Ladb::OpenCutList
       "#%02x%02x%02x" % [ color.red, color.green, color.blue ]
     end
 
+    def self.color_to_256(color)
+      return nil unless color.is_a?(Sketchup::Color)
+      (color.red * 6 / 256) * 36 + (color.green * 6 / 256) * 6 + (color.blue * 6 / 256)
+    end
+
   end
 
 end

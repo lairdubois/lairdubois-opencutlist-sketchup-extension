@@ -295,11 +295,27 @@ module Ladb::OpenCutList
       min = Geom::Point3d.new
       max = Geom::Point3d.new(sheet_width, sheet_height)
 
+      sheet_stroke_color = @sheet_stroke_color ? Sketchup::Color.new(@sheet_stroke_color) : nil
+      parts_stroke_color = @parts_stroke_color ? Sketchup::Color.new(@parts_stroke_color) : nil
+      leftovers_stroke_color = @leftovers_stroke_color ? Sketchup::Color.new(@leftovers_stroke_color) : nil
+      cuts_stroke_color = @cuts_stroke_color ? Sketchup::Color.new(@cuts_stroke_color) : nil
+
       layer_defs = []
-      layer_defs.push({ :name => LAYER_SHEET, :color => 150 }) unless @sheet_hidden
-      layer_defs.push({ :name => LAYER_PART, :color => 7 }) unless @parts_hidden
-      layer_defs.push({ :name => LAYER_LEFTOVER, :color => 8 }) unless @leftovers_hidden
-      layer_defs.push({ :name => LAYER_CUT, :color => 6 }) unless @cuts_hidden
+      layer_defs.push({ :name => LAYER_SHEET, :color => sheet_stroke_color }) unless @sheet_hidden
+      layer_defs.push({ :name => LAYER_PART, :color => parts_stroke_color }) unless @parts_hidden
+      layer_defs.push({ :name => LAYER_LEFTOVER, :color => leftovers_stroke_color }) unless @leftovers_hidden
+      layer_defs.push({ :name => LAYER_CUT, :color => cuts_stroke_color }) unless @cuts_hidden
+
+      unless @parts_hidden
+        depth_layer_defs = []
+        sheet.parts.uniq { |part| part.id }.each do |part|
+          projection_def = @cuttingdiagram2d.def.projection_defs[part.id]
+          unless projection_def.nil?
+            depth_layer_defs.concat(_dxf_get_projection_def_depth_layer_defs(projection_def, parts_stroke_color))
+          end
+        end
+        layer_defs.concat(depth_layer_defs.uniq { |layer_def| layer_def[:name] })
+      end
 
       _dxf_write_start(file)
       _dxf_write_section_header(file, DimensionUtils.instance.length_unit, min, max)
