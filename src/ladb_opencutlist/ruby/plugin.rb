@@ -847,7 +847,9 @@ module Ladb::OpenCutList
           else
             Sketchup.active_model.select_tool(SmartPaintTool.new)
           end
-        end      }
+          Sketchup.focus if Sketchup.respond_to?(:focus)
+        end
+      }
       cmd.small_icon = '../img/icon-smart-paint-72x72.png'
       cmd.large_icon = '../img/icon-smart-paint-114x114.png'
       cmd.tooltip = get_i18n_string('core.toolbar.command.smart_paint')
@@ -862,7 +864,9 @@ module Ladb::OpenCutList
           else
             Sketchup.active_model.select_tool(SmartAxesTool.new)
           end
-        end      }
+          Sketchup.focus if Sketchup.respond_to?(:focus)
+        end
+      }
       cmd.small_icon = '../img/icon-smart-axes-72x72.png'
       cmd.large_icon = '../img/icon-smart-axes-114x114.png'
       cmd.tooltip = get_i18n_string('core.toolbar.command.smart_axes')
@@ -877,7 +881,9 @@ module Ladb::OpenCutList
           else
             Sketchup.active_model.select_tool(SmartExportTool.new)
           end
-        end      }
+          Sketchup.focus if Sketchup.respond_to?(:focus)
+        end
+      }
       cmd.small_icon = '../img/icon-smart-export-72x72.png'
       cmd.large_icon = '../img/icon-smart-export-114x114.png'
       cmd.tooltip = get_i18n_string('core.toolbar.command.smart_export')
