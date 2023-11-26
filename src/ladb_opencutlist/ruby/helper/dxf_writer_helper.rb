@@ -335,7 +335,13 @@ module Ladb::OpenCutList
 
     def _dxf_write(file, code, value)
       file.puts(code.to_s.rjust(3))
-      file.puts(value.is_a?(Integer) ? value.to_s.rjust(code >= 90 && code <= 99 ? 9 : 6) : value.to_s)
+      if value.is_a?(Integer)
+        file.puts(value.to_s.rjust(code >= 90 && code <= 99 ? 9 : 6))
+      elsif value.is_a?(Float)
+        file.puts(value.round(11).to_s)
+      else
+        file.puts(value.to_s)
+      end
     end
 
     def _dxf_write_header_value(file, key, code, value, code2 = nil, value2 = nil, code3 = nil, value3 = nil)
@@ -921,6 +927,7 @@ module Ladb::OpenCutList
       _dxf_write_id(file)
       _dxf_write_owner_id(file, owner_id)
       _dxf_write_sub_classes(file, [ 'AcDbEntity' ])
+      _dxf_write(file, 67, 1)
       _dxf_write(file, 8, layer)
       _dxf_write_sub_classes(file, [ 'AcDbBlockEnd' ])
 
@@ -1028,6 +1035,10 @@ module Ladb::OpenCutList
 
       # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-107CB04F-AD4D-4D2F-8EC9-AC90888063AB
 
+      if as > ae && ae < 0
+        ae = ae + 2 * Math::PI  # Force end angle to be greater than start angle. Some DXF readers prefer that.
+      end
+
       _dxf_write(file, 0, 'ELLIPSE')
       _dxf_write_id(file)
       _dxf_write_owner_id(file, @_dxf_model_space_id)
@@ -1107,7 +1118,7 @@ module Ladb::OpenCutList
     def _dxf_get_projection_layer_def_depth_name(layer_def, prefix = nil)
       return '' unless layer_def.is_a?(DrawingProjectionLayerDef)
 
-      [ prefix, 'DEPTH', ('%0.04f' % [ layer_def.depth.to_mm ]).rjust(9, '_') ].compact.join('_')
+      [ prefix, 'DEPTH', ('%0.04f' % [ layer_def.depth.to_mm ]).rjust(9, '_').split('.') ].compact.join('_')
     end
 
     def _dxf_get_projection_def_depth_layer_defs(projection_def, color)
