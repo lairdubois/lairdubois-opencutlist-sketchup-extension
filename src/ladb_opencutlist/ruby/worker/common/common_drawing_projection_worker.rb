@@ -100,12 +100,11 @@ module Ladb::OpenCutList
         layer_def[:paths] = Clippy.compute_union(layer_def[:paths])
       end
 
-
       # Up to Down difference
       ld.each_with_index do |layer_def, index|
         next if layer_def[:paths].empty?
         ld[(index + 1)..-1].each do |lower_layer_def|
-          next if lower_layer_def[:paths].empty?
+          next if lower_layer_def.nil? || lower_layer_def[:paths].empty?
           lower_layer_def[:paths] = Clippy.compute_difference(lower_layer_def[:paths], layer_def[:paths])
         end
       end

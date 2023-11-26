@@ -268,6 +268,15 @@ module Ladb::OpenCutList
       [ 255, 255, 255 ]
     ]
 
+    DXF_TEXT_HALIGN_LEFT = 0
+    DXF_TEXT_HALIGN_CENTER = 1
+    DXF_TEXT_HALIGN_RIGHT = 2
+
+    DXF_TEXT_VALIGN_BASE_LINE = 0
+    DXF_TEXT_VALIGN_BOTTOM = 1
+    DXF_TEXT_VALIGN_MIDDLE = 2
+    DXF_TEXT_VALIGN_TOP = 3
+
     def _dxf_get_unit_transformation(su_unit, is_3d = false)
 
       case su_unit
@@ -1095,6 +1104,29 @@ module Ladb::OpenCutList
 
     end
 
+    def _dxf_write_text(file, x, y, height, text, halign = DXF_TEXT_HALIGN_LEFT, valign = DXF_TEXT_VALIGN_BASE_LINE, layer = '0')
+
+      # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-62E5383D-8A14-47B4-BFC4-35824CAE8363
+
+      _dxf_write(file, 0, 'TEXT')
+      _dxf_write_id(file)
+      _dxf_write_sub_classes(file, [ 'AcDbEntity' ])
+      _dxf_write(file, 8, layer)
+      _dxf_write_sub_classes(file, [ 'AcDbText' ])
+      _dxf_write(file, 10, x)
+      _dxf_write(file, 20, y)
+      _dxf_write(file, 30, 0.0)
+      _dxf_write(file, 40, height)
+      _dxf_write(file, 1, text)
+      _dxf_write(file, 72, halign)
+      _dxf_write(file, 11, x)
+      _dxf_write(file, 21, y)
+      _dxf_write(file, 31, 0.0)
+      _dxf_write_sub_classes(file, [ 'AcDbText' ])
+      _dxf_write(file, 73, valign)
+
+    end
+
     # -- INSERT GEOMETRY
 
     def _dxf_write_insert(file, name, x = 0.0, y = 0.0, z = 0.0, layer = '0')
@@ -1152,6 +1184,7 @@ module Ladb::OpenCutList
 
       _dxf_write_section_blocks_block(file, name, @_dxf_model_space_id) do
         _dxf_write_projection_def_geometry(file, projection_def, smoothing, transformation, layer)
+        yield if block_given?
       end
 
     end

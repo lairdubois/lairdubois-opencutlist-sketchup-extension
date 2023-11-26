@@ -18,6 +18,7 @@ module Ladb::OpenCutList
     LAYER_PART = 'OCL_PART'.freeze
     LAYER_LEFTOVER = 'OCL_LEFTOVER'.freeze
     LAYER_CUT = 'OCL_CUT'.freeze
+    LAYER_TEXT = 'OCL_TEXT'.freeze
 
     SUPPORTED_FILE_FORMATS = [ FILE_FORMAT_SVG, FILE_FORMAT_DXF ]
 
@@ -290,6 +291,7 @@ module Ladb::OpenCutList
       layer_defs.push({ :name => LAYER_PART, :color => @parts_stroke_color }) unless @parts_hidden || @dxf_structure == DXF_STRUCTURE_LAYER
       layer_defs.push({ :name => LAYER_LEFTOVER, :color => @leftovers_stroke_color }) unless @leftovers_hidden
       layer_defs.push({ :name => LAYER_CUT, :color => @cuts_stroke_color }) unless @cuts_hidden
+      layer_defs.push({ :name => LAYER_TEXT, :color => nil }) unless @parts_hidden
 
       unless @parts_hidden
         depth_layer_defs = []
@@ -358,7 +360,19 @@ module Ladb::OpenCutList
                 transformation = unit_transformation
                 transformation *= Geom::Transformation.translation(Geom::Vector3d.new(x_offset, 0))
 
-                _dxf_write_projection_def_block(file, fn_part_block_name.call(part), projection_def, @smoothing, transformation, LAYER_PART)
+                _dxf_write_projection_def_block(file, fn_part_block_name.call(part), projection_def, @smoothing, transformation, LAYER_PART) do
+
+                  position = Geom::Point3d.new(
+                    _to_inch(part.px_length) / 2,
+                    _to_inch(bar.px_width) / 2
+                  ).transform(unit_transformation)
+
+                  x = position.x.to_f
+                  y = position.y.to_f
+
+                  _dxf_write_text(file, x, y, 20, part.number, DXF_TEXT_HALIGN_CENTER, DXF_TEXT_VALIGN_MIDDLE, LAYER_TEXT)
+
+                end
 
               else
 
@@ -372,6 +386,7 @@ module Ladb::OpenCutList
 
                 _dxf_write_section_blocks_block(file, fn_part_block_name.call(part), @_dxf_model_space_id) do
                   _dxf_write_rect(file, 0, 0, width, height, LAYER_PART)
+                  _dxf_write_text(file, width / 2, height / 2, 20, part.number, DXF_TEXT_HALIGN_CENTER, DXF_TEXT_VALIGN_MIDDLE, LAYER_TEXT)
                 end
 
               end
@@ -460,6 +475,16 @@ module Ladb::OpenCutList
 
                 _dxf_write_projection_def_geometry(file, projection_def, @smoothing, transformation, LAYER_PART)
 
+                position = Geom::Point3d.new(
+                  x + _to_inch(part.px_length) / 2.0,
+                  _to_inch(bar.px_width) / 2.0
+                ).transform(unit_transformation)
+
+                x = position.x.to_f
+                y = position.y.to_f
+
+                _dxf_write_text(file, x, y, 20.0, part.number, DXF_TEXT_HALIGN_CENTER, DXF_TEXT_VALIGN_MIDDLE, LAYER_TEXT)
+
               else
 
                 position = Geom::Point3d.new(
@@ -477,6 +502,7 @@ module Ladb::OpenCutList
                 height = size.y.to_f
 
                 _dxf_write_rect(file, x, y, width, height, LAYER_PART)
+                _dxf_write_text(file, x + width / 2, y + height / 2, 20.0, part.number, DXF_TEXT_HALIGN_CENTER, DXF_TEXT_VALIGN_MIDDLE, LAYER_TEXT)
 
               end
 
