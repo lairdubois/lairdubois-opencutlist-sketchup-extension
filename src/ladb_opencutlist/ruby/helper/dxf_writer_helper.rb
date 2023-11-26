@@ -1118,16 +1118,21 @@ module Ladb::OpenCutList
     def _dxf_get_projection_layer_def_depth_name(layer_def, prefix = nil)
       return '' unless layer_def.is_a?(DrawingProjectionLayerDef)
 
-      [ prefix, 'DEPTH', ('%0.04f' % [ layer_def.depth.to_mm ]).rjust(9, '_').split('.') ].compact.join('_')
+      if layer_def.is_top?
+        a = [ prefix, 'OUTER' ]
+      else
+        a = [ prefix, 'DEPTH', ('%0.04f' % [ layer_def.depth.to_mm ]).rjust(9, '_').split('.') ]
+      end
+      a.compact.join('_')
     end
 
-    def _dxf_get_projection_def_depth_layer_defs(projection_def, color)
+    def _dxf_get_projection_def_depth_layer_defs(projection_def, color, prefix = nil)
       return unless projection_def.is_a?(DrawingProjectionDef)
 
       layer_defs = []
-      projection_def.layer_defs[1..-1].each do |layer_def|
+      projection_def.layer_defs.each do |layer_def|
         layer_defs.push({
-          :name => _dxf_get_projection_layer_def_depth_name(layer_def, 'OCL_PART'),
+          :name => _dxf_get_projection_layer_def_depth_name(layer_def, prefix),
           :color => color ? ColorUtils.color_lighten(color, projection_def.max_depth > 0 ? (layer_def.depth / projection_def.max_depth) * 0.6 + 0.2 : 0.3) : nil
         })
       end
@@ -1138,32 +1143,25 @@ module Ladb::OpenCutList
     def _dxf_write_projection_def_block_record(file, projection_def, name, owner_id)
       return unless projection_def.is_a?(DrawingProjectionDef)
 
-      projection_def.layer_defs[1..-1].each do |layer_def|
-        _dxf_write_section_tables_block_record(file, _dxf_get_projection_layer_def_depth_name(layer_def, name), owner_id)
-      end
       _dxf_write_section_tables_block_record(file, name, owner_id)
 
     end
 
-    def _dxf_write_projection_def_block(file, projection_def, name, smoothing = false, transformation = IDENTITY, layer = '0')
+    def _dxf_write_projection_def_block(file, name, projection_def, smoothing = false, transformation = IDENTITY, layer = '0')
       return unless projection_def.is_a?(DrawingProjectionDef)
 
-      # Sub blocks
-      projection_def.layer_defs[1..-1].each do |layer_def|
-        _dxf_write_section_blocks_block(file, _dxf_get_projection_layer_def_depth_name(layer_def, name), @_dxf_model_space_id) do
-          _dxf_write_projection_layer_def_geometry(file, layer_def, smoothing, transformation, _dxf_get_projection_layer_def_depth_name(layer_def, layer))
-        end
-      end
-
-      # Main block
       _dxf_write_section_blocks_block(file, name, @_dxf_model_space_id) do
-        _dxf_write_projection_layer_def_geometry(file, projection_def.layer_defs.first, smoothing, transformation, layer)
-        projection_def.layer_defs[1..-1].each do |layer_def|
-          _dxf_write_insert(file, _dxf_get_projection_layer_def_depth_name(layer_def, name), 0.0, 0.0, 0.0, layer)
-        end
+        _dxf_write_projection_def_geometry(file, projection_def, smoothing, transformation, layer)
       end
 
-      yield if block_given?
+    end
+
+    def _dxf_write_projection_def_geometry(file, projection_def, smoothing = false, transformation = IDENTITY, layer = '0')
+      return unless projection_def.is_a?(DrawingProjectionDef)
+
+      projection_def.layer_defs.each do |layer_def|
+        _dxf_write_projection_layer_def_geometry(file, layer_def, smoothing, transformation, _dxf_get_projection_layer_def_depth_name(layer_def, layer))
+      end
 
     end
 

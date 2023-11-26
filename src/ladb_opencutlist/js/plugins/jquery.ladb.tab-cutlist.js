@@ -3281,10 +3281,8 @@
                                                 var exportOptions = response.preset;
 
                                                 var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_1d_export', 'tabs/cutlist/_modal-cuttingdiagram-1d-export.twig', {
-                                                    material_attributes: response,
                                                     group: group,
                                                     isBarSelection: isBarSelection,
-                                                    tab: 'general',
                                                 });
 
                                                 // Fetch UI elements
@@ -3337,6 +3335,7 @@
                                                     $inputLeftoversFillColor.ladbTextinputColor('val', options.leftovers_fill_color);
                                                     $inputCutsHidden.prop('checked', !options.cuts_hidden);
                                                     $inputCutsStrokeColor.ladbTextinputColor('val', options.cuts_stroke_color);
+                                                    fnUpdateFieldsVisibility();
                                                 };
                                                 var fnUpdateFieldsVisibility = function () {
                                                     var isDxf = $selectFileFormat.val() === 'dxf';
@@ -3378,7 +3377,6 @@
                                                 $inputCutsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
 
                                                 fnFillInputs(exportOptions);
-                                                fnUpdateFieldsVisibility();
 
                                                 // Bind inputs
                                                 $inputBarHidden.on('change', fnUpdateFieldsVisibility);
@@ -3785,10 +3783,8 @@
                                                 var exportOptions = response.preset;
 
                                                 var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_2d_export', 'tabs/cutlist/_modal-cuttingdiagram-2d-export.twig', {
-                                                    material_attributes: response,
                                                     group: group,
                                                     isSheetSelection: isSheetSelection,
-                                                    tab: 'general',
                                                 });
 
                                                 // Fetch UI elements
@@ -3841,6 +3837,7 @@
                                                     $inputLeftoversFillColor.ladbTextinputColor('val', options.leftovers_fill_color);
                                                     $inputCutsHidden.prop('checked', !options.cuts_hidden);
                                                     $inputCutsStrokeColor.ladbTextinputColor('val', options.cuts_stroke_color);
+                                                    fnUpdateFieldsVisibility();
                                                 };
                                                 var fnUpdateFieldsVisibility = function () {
                                                     var isDxf = $selectFileFormat.val() === 'dxf';
@@ -3883,7 +3880,6 @@
                                                 $inputCutsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
 
                                                 fnFillInputs(exportOptions);
-                                                fnUpdateFieldsVisibility();
 
                                                 // Bind inputs
                                                 $inputSheetHidden.on('change', fnUpdateFieldsVisibility);

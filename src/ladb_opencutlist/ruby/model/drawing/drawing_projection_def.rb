@@ -25,6 +25,18 @@ module Ladb::OpenCutList
       @polygon_defs = polygon_defs
     end
 
+    def is_top?
+      @position == LAYER_POSITION_TOP
+    end
+
+    def is_inside?
+      return @position == LAYER_POSITION_INSIDE
+    end
+
+    def is_bottom?
+      return @position == LAYER_POSITION_BOTTOM
+    end
+
   end
 
   class DrawingProjectionPolygonDef

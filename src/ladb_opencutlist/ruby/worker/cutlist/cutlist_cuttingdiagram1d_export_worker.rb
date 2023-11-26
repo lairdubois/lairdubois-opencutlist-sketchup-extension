@@ -285,7 +285,7 @@ module Ladb::OpenCutList
 
       layer_defs = []
       layer_defs.push({ :name => LAYER_BAR, :color => @bar_stroke_color }) unless @sheet_hidden
-      layer_defs.push({ :name => LAYER_PART, :color => @parts_stroke_color }) unless @parts_hidden
+      layer_defs.push({ :name => LAYER_PART, :color => @parts_stroke_color }) unless @parts_hidden || @dxf_structure == DXF_STRUCTURE_LAYER
       layer_defs.push({ :name => LAYER_LEFTOVER, :color => @leftovers_stroke_color }) unless @leftovers_hidden
       layer_defs.push({ :name => LAYER_CUT, :color => @cuts_stroke_color }) unless @cuts_hidden
 
@@ -294,7 +294,7 @@ module Ladb::OpenCutList
         bar.parts.uniq { |part| part.id }.each do |part|
           projection_def = @cuttingdiagram1d.def.projection_defs[part.id]
           unless projection_def.nil?
-            depth_layer_defs.concat(_dxf_get_projection_def_depth_layer_defs(projection_def, @parts_stroke_color))
+            depth_layer_defs.concat(_dxf_get_projection_def_depth_layer_defs(projection_def, @parts_stroke_color, LAYER_PART))
           end
         end
         layer_defs.concat(depth_layer_defs.uniq { |layer_def| layer_def[:name] })
@@ -370,7 +370,7 @@ module Ladb::OpenCutList
                 transformation = unit_transformation
                 transformation *= Geom::Transformation.translation(Geom::Vector3d.new(x_offset, 0))
 
-                _dxf_write_projection_def_block(file, projection_def, fn_part_block_name.call(part), @smoothing, transformation, LAYER_PART)
+                _dxf_write_projection_def_block(file, fn_part_block_name.call(part), projection_def, @smoothing, transformation, LAYER_PART)
 
               end
 
@@ -474,10 +474,7 @@ module Ladb::OpenCutList
                 transformation = unit_transformation
                 transformation *= Geom::Transformation.translation(Geom::Vector3d.new(x + x_offset, 0))
 
-                _dxf_write_projection_layer_def_geometry(file, projection_def.layer_defs.first, @smoothing, transformation, LAYER_PART)
-                projection_def.layer_defs[1..-1].each do |layer_def|
-                  _dxf_write_projection_layer_def_geometry(file, layer_def, @smoothing, transformation, _dxf_get_projection_layer_def_depth_name(layer_def, LAYER_PART))
-                end
+                _dxf_write_projection_def_geometry(file, projection_def, @smoothing, transformation, LAYER_PART)
 
               end
 

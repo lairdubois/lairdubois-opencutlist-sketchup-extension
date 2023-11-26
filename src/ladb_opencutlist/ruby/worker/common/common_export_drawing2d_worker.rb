@@ -30,6 +30,10 @@ module Ladb::OpenCutList
       @anchor = settings.fetch('anchor', false)
       @smoothing = settings.fetch('smoothing', false)
 
+      @part_stroke_color = Sketchup::Color.new('green')
+      @part_fill_color = nil
+      @guide_stroke_color = Sketchup::Color.new('#0068FF')
+
     end
 
     # -----
@@ -182,46 +186,35 @@ module Ladb::OpenCutList
 
       unit_transformation = _dxf_get_unit_transformation(@unit)
 
-      layer_defs = []
-      layer_defs.push({ :name => LAYER_PART, :color => 7 }) unless projection_def.layer_defs.empty?
-      layer_defs.push({ :name => LAYER_GUIDE, :color => 150 }) unless edge_manipulators.empty?
-
       min = @drawing_def.bounds.min.transform(unit_transformation)
       max = @drawing_def.bounds.max.transform(unit_transformation)
-      block_name = 'PART'
+
+      layer_defs = []
+      layer_defs.concat(_dxf_get_projection_def_depth_layer_defs(projection_def, @part_stroke_color, LAYER_PART).uniq { |layer_def| layer_def[:name] })
+      layer_defs.push({ :name => LAYER_GUIDE, :color => @guide_stroke_color }) unless edge_manipulators.empty?
 
       _dxf_write_start(file)
       _dxf_write_section_header(file, @unit, min, max)
       _dxf_write_section_classes(file)
-      _dxf_write_section_tables(file, min, max, layer_defs) do |owner_id|
-
-        _dxf_write_projection_def_block_record(file, projection_def, block_name, owner_id)
-
-      end
-      _dxf_write_section_blocks(file) do
-
-        _dxf_write_projection_def_block(file, projection_def, block_name, @smoothing, unit_transformation, LAYER_PART) do
-
-          edge_manipulators.each do |edge_manipulator|
-
-            start_point = edge_manipulator.start_point.transform(unit_transformation)
-            end_point = edge_manipulator.end_point.transform(unit_transformation)
-
-            x1 = start_point.x
-            y1 = start_point.y
-            x2 = end_point.x
-            y2 = end_point.y
-
-            _dxf_write_line(file, x1, y1, x2, y2, LAYER_GUIDE)
-
-          end
-
-        end
-
-      end
+      _dxf_write_section_tables(file, min, max, layer_defs)
+      _dxf_write_section_blocks(file)
       _dxf_write_section_entities(file) do
 
-        _dxf_write_insert(file, block_name)
+        _dxf_write_projection_def_geometry(file, projection_def, @smoothing, unit_transformation, LAYER_PART)
+
+        edge_manipulators.each do |edge_manipulator|
+
+          start_point = edge_manipulator.start_point.transform(unit_transformation)
+          end_point = edge_manipulator.end_point.transform(unit_transformation)
+
+          x1 = start_point.x
+          y1 = start_point.y
+          x2 = end_point.x
+          y2 = end_point.y
+
+          _dxf_write_line(file, x1, y1, x2, y2, LAYER_GUIDE)
+
+        end
 
       end
       _dxf_write_section_objects(file)
