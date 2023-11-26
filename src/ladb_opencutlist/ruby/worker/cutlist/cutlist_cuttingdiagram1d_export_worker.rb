@@ -43,6 +43,8 @@ module Ladb::OpenCutList
       @cutlist = cutlist
       @cuttingdiagram1d = cuttingdiagram1d
 
+      @_projection_defs = {}
+
     end
 
     # -----
@@ -149,8 +151,26 @@ module Ladb::OpenCutList
 
           id = @use_names ? part.name : part.number
 
-          projection_def = @cuttingdiagram1d.def.projection_defs[part.id]
-          if projection_def.nil?
+          projection_def = _get_part_projection_def(part)
+          if projection_def.is_a?(DrawingProjectionDef)
+
+            part_x = _to_inch(part.px_x)
+            part_y = _to_inch(-bar.px_width)
+            part_x_offset = _to_inch(part.px_x_offset)
+
+            transformation = unit_transformation
+            transformation *= Geom::Transformation.translation(Geom::Vector3d.new(part_x + part_x_offset, part_y))
+
+            _svg_write_group_start(file, {
+              id: _svg_sanitize_id(id),
+              'serif:id': id
+            })
+
+            _svg_write_projection_def(file, projection_def, @smoothing, transformation, unit_transformation, unit_sign, @parts_stroke_color, @parts_fill_color)
+
+            _svg_write_group_end(file)
+
+          else
 
             position = Geom::Point3d.new(
               _to_inch(part.px_x),
@@ -171,24 +191,6 @@ module Ladb::OpenCutList
               id: _svg_sanitize_id(id),
               'serif:id': id
             })
-
-          else
-
-            part_x = _to_inch(part.px_x)
-            part_y = _to_inch(-bar.px_width)
-            part_x_offset = _to_inch(part.px_x_offset)
-
-            transformation = unit_transformation
-            transformation *= Geom::Transformation.translation(Geom::Vector3d.new(part_x + part_x_offset, part_y))
-
-            _svg_write_group_start(file, {
-              id: _svg_sanitize_id(id),
-              'serif:id': id
-            })
-
-            _svg_write_projection_def(file, projection_def, @smoothing, transformation, unit_transformation, unit_sign, @parts_stroke_color, @parts_fill_color)
-
-            _svg_write_group_end(file)
 
           end
 
@@ -292,8 +294,8 @@ module Ladb::OpenCutList
       unless @parts_hidden
         depth_layer_defs = []
         bar.parts.uniq { |part| part.id }.each do |part|
-          projection_def = @cuttingdiagram1d.def.projection_defs[part.id]
-          unless projection_def.nil?
+          projection_def = _get_part_projection_def(part)
+          if projection_def.is_a?(DrawingProjectionDef)
             depth_layer_defs.concat(_dxf_get_projection_def_depth_layer_defs(projection_def, @parts_stroke_color, LAYER_PART))
           end
         end
@@ -313,11 +315,11 @@ module Ladb::OpenCutList
 
           unless @parts_hidden
             bar.parts.uniq { |part| part.id }.each do |part|
-              projection_def = @cuttingdiagram1d.def.projection_defs[part.id]
-              if projection_def.nil?
-                _dxf_write_section_tables_block_record(file, fn_part_block_name.call(part), owner_id)
-              else
+              projection_def = _get_part_projection_def(part)
+              if projection_def.is_a?(DrawingProjectionDef)
                 _dxf_write_projection_def_block_record(file, projection_def, fn_part_block_name.call(part), owner_id)
+              else
+                _dxf_write_section_tables_block_record(file, fn_part_block_name.call(part), owner_id)
               end
             end
           end
@@ -348,8 +350,17 @@ module Ladb::OpenCutList
           unless @parts_hidden
             bar.parts.uniq { |part| part.id }.each do |part|
 
-              projection_def = @cuttingdiagram1d.def.projection_defs[part.id]
-              if projection_def.nil?
+              projection_def = _get_part_projection_def(part)
+              if projection_def.is_a?(DrawingProjectionDef)
+
+                x_offset = _to_inch(part.px_x_offset)
+
+                transformation = unit_transformation
+                transformation *= Geom::Transformation.translation(Geom::Vector3d.new(x_offset, 0))
+
+                _dxf_write_projection_def_block(file, fn_part_block_name.call(part), projection_def, @smoothing, transformation, LAYER_PART)
+
+              else
 
                 size = Geom::Point3d.new(
                   _to_inch(part.px_length),
@@ -362,15 +373,6 @@ module Ladb::OpenCutList
                 _dxf_write_section_blocks_block(file, fn_part_block_name.call(part), @_dxf_model_space_id) do
                   _dxf_write_rect(file, 0, 0, width, height, LAYER_PART)
                 end
-
-              else
-
-                x_offset = _to_inch(part.px_x_offset)
-
-                transformation = unit_transformation
-                transformation *= Geom::Transformation.translation(Geom::Vector3d.new(x_offset, 0))
-
-                _dxf_write_projection_def_block(file, fn_part_block_name.call(part), projection_def, @smoothing, transformation, LAYER_PART)
 
               end
 
@@ -447,8 +449,18 @@ module Ladb::OpenCutList
 
             else
 
-              projection_def = @cuttingdiagram1d.def.projection_defs[part.id]
-              if projection_def.nil?
+              projection_def = _get_part_projection_def(part)
+              if projection_def.is_a?(DrawingProjectionDef)
+
+                x = _to_inch(part.px_x)
+                x_offset = _to_inch(part.px_x_offset)
+
+                transformation = unit_transformation
+                transformation *= Geom::Transformation.translation(Geom::Vector3d.new(x + x_offset, 0))
+
+                _dxf_write_projection_def_geometry(file, projection_def, @smoothing, transformation, LAYER_PART)
+
+              else
 
                 position = Geom::Point3d.new(
                   _to_inch(part.px_x),
@@ -465,16 +477,6 @@ module Ladb::OpenCutList
                 height = size.y.to_f
 
                 _dxf_write_rect(file, x, y, width, height, LAYER_PART)
-
-              else
-
-                x = _to_inch(part.px_x)
-                x_offset = _to_inch(part.px_x_offset)
-
-                transformation = unit_transformation
-                transformation *= Geom::Transformation.translation(Geom::Vector3d.new(x + x_offset, 0))
-
-                _dxf_write_projection_def_geometry(file, projection_def, @smoothing, transformation, LAYER_PART)
 
               end
 
@@ -561,6 +563,24 @@ module Ladb::OpenCutList
       _dxf_write_section_objects(file)
       _dxf_write_end(file)
 
+    end
+
+    def _get_part_projection_def(part)
+      projection_def = @_projection_defs[part.id]
+      if projection_def.nil?
+
+        # Compute new projection def from drawing def
+        drawing_def = @cuttingdiagram1d.def.drawing_defs[part.id]
+        if drawing_def.is_a?(DrawingDef)
+          projection_def = CommonDrawingProjectionWorker.new(drawing_def, {
+            'down_to_top_union' => true,
+            'passthrough_holes' => true
+          }).run
+          @_projection_defs[part.id] = projection_def
+        end
+
+      end
+      projection_def
     end
 
   end

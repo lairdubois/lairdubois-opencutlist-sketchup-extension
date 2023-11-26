@@ -1127,7 +1127,7 @@ module Ladb::OpenCutList
     end
 
     def _dxf_get_projection_def_depth_layer_defs(projection_def, color, prefix = nil)
-      return unless projection_def.is_a?(DrawingProjectionDef)
+      return [] unless projection_def.is_a?(DrawingProjectionDef)
 
       layer_defs = []
       projection_def.layer_defs.each do |layer_def|

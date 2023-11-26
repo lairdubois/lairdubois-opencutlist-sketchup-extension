@@ -417,6 +417,8 @@ module Ladb::OpenCutList
           }).run
           if drawing_def.is_a?(DrawingDef)
 
+            cuttingdiagram2d_def.drawing_defs[cutlist_part.id] = drawing_def
+
             projection_def = CommonDrawingProjectionWorker.new(drawing_def, {
               'down_to_top_union' => true
             }).run

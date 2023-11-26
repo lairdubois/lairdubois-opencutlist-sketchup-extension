@@ -17,8 +17,8 @@
     "trimming": { "metric": "10mm", "imperial": "1/2\"" },
     "optimization": 0,        /* OPT_MEDIUM */
     "stacking": 3,            /* STACKING_ALL */
-    "keep_length": { "metric": "50mm", "imperial": "2\"" },
-    "keep_width": { "metric": "50mm", "imperial": "2\"" },
+    "keep_length": { "metric": "100mm", "imperial": "4\"" },
+    "keep_width": { "metric": "100mm", "imperial": "4\"" },
     "sheet_folding": true,
     "hide_part_list": false,
     "use_names": false,

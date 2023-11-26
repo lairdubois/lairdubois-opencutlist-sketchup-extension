@@ -30,11 +30,11 @@ module Ladb::OpenCutList
     end
 
     def is_inside?
-      return @position == LAYER_POSITION_INSIDE
+      @position == LAYER_POSITION_INSIDE
     end
 
     def is_bottom?
-      return @position == LAYER_POSITION_BOTTOM
+      @position == LAYER_POSITION_BOTTOM
     end
 
   end
