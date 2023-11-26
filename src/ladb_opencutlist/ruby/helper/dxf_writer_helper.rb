@@ -1104,7 +1104,7 @@ module Ladb::OpenCutList
 
     end
 
-    def _dxf_write_text(file, x, y, height, text, halign = DXF_TEXT_HALIGN_LEFT, valign = DXF_TEXT_VALIGN_BASE_LINE, layer = '0')
+    def _dxf_write_text(file, x, y, height, text, ar = 0, halign = DXF_TEXT_HALIGN_LEFT, valign = DXF_TEXT_VALIGN_BASE_LINE, layer = '0')
 
       # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-62E5383D-8A14-47B4-BFC4-35824CAE8363
 
@@ -1117,6 +1117,7 @@ module Ladb::OpenCutList
       _dxf_write(file, 20, y)
       _dxf_write(file, 30, 0.0)
       _dxf_write(file, 40, height)
+      _dxf_write(file, 50, ar)
       _dxf_write(file, 1, text)
       _dxf_write(file, 72, halign)
       _dxf_write(file, 11, x)

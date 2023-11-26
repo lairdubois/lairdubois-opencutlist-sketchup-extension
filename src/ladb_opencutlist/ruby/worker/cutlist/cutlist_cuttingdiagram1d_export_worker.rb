@@ -370,7 +370,7 @@ module Ladb::OpenCutList
                   x = position.x.to_f
                   y = position.y.to_f
 
-                  _dxf_write_text(file, x, y, 20, part.number, DXF_TEXT_HALIGN_CENTER, DXF_TEXT_VALIGN_MIDDLE, LAYER_TEXT)
+                  _dxf_write_text(file, x, y, 20, part.number, 0, DXF_TEXT_HALIGN_CENTER, DXF_TEXT_VALIGN_MIDDLE, LAYER_TEXT)
 
                 end
 
@@ -386,7 +386,7 @@ module Ladb::OpenCutList
 
                 _dxf_write_section_blocks_block(file, fn_part_block_name.call(part), @_dxf_model_space_id) do
                   _dxf_write_rect(file, 0, 0, width, height, LAYER_PART)
-                  _dxf_write_text(file, width / 2, height / 2, 20, part.number, DXF_TEXT_HALIGN_CENTER, DXF_TEXT_VALIGN_MIDDLE, LAYER_TEXT)
+                  _dxf_write_text(file, width / 2, height / 2, 20, part.number, 0, DXF_TEXT_HALIGN_CENTER, DXF_TEXT_VALIGN_MIDDLE, LAYER_TEXT)
                 end
 
               end
@@ -483,7 +483,7 @@ module Ladb::OpenCutList
                 x = position.x.to_f
                 y = position.y.to_f
 
-                _dxf_write_text(file, x, y, 20.0, part.number, DXF_TEXT_HALIGN_CENTER, DXF_TEXT_VALIGN_MIDDLE, LAYER_TEXT)
+                _dxf_write_text(file, x, y, 20.0, part.number, 0, DXF_TEXT_HALIGN_CENTER, DXF_TEXT_VALIGN_MIDDLE, LAYER_TEXT)
 
               else
 
@@ -502,7 +502,7 @@ module Ladb::OpenCutList
                 height = size.y.to_f
 
                 _dxf_write_rect(file, x, y, width, height, LAYER_PART)
-                _dxf_write_text(file, x + width / 2, y + height / 2, 20.0, part.number, DXF_TEXT_HALIGN_CENTER, DXF_TEXT_VALIGN_MIDDLE, LAYER_TEXT)
+                _dxf_write_text(file, x + width / 2, y + height / 2, 20.0, part.number, 0, DXF_TEXT_HALIGN_CENTER, DXF_TEXT_VALIGN_MIDDLE, LAYER_TEXT)
 
               end
 
