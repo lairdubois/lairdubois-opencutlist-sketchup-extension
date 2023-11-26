@@ -352,6 +352,14 @@ module Ladb::OpenCutList
           unless @parts_hidden
             bar.parts.uniq { |part| part.id }.each do |part|
 
+              size = Geom::Point3d.new(
+                _to_inch(part.px_length),
+                _to_inch(bar.px_width)
+              ).transform(unit_transformation)
+
+              width = size.x.to_f
+              height = size.y.to_f
+
               projection_def = _get_part_projection_def(part)
               if projection_def.is_a?(DrawingProjectionDef)
 
@@ -361,32 +369,14 @@ module Ladb::OpenCutList
                 transformation *= Geom::Transformation.translation(Geom::Vector3d.new(x_offset, 0))
 
                 _dxf_write_projection_def_block(file, fn_part_block_name.call(part), projection_def, @smoothing, transformation, LAYER_PART) do
-
-                  position = Geom::Point3d.new(
-                    _to_inch(part.px_length) / 2,
-                    _to_inch(bar.px_width) / 2
-                  ).transform(unit_transformation)
-
-                  x = position.x.to_f
-                  y = position.y.to_f
-
-                  _dxf_write_text(file, x, y, 20, part.number, 0, DXF_TEXT_HALIGN_CENTER, DXF_TEXT_VALIGN_MIDDLE, LAYER_TEXT)
-
+                  _dxf_write_label(file, 0, 0, width, height, @use_names ? part.name : part.number, false, LAYER_TEXT)
                 end
 
               else
 
-                size = Geom::Point3d.new(
-                  _to_inch(part.px_length),
-                  _to_inch(bar.px_width)
-                ).transform(unit_transformation)
-
-                width = size.x.to_f
-                height = size.y.to_f
-
                 _dxf_write_section_blocks_block(file, fn_part_block_name.call(part), @_dxf_model_space_id) do
                   _dxf_write_rect(file, 0, 0, width, height, LAYER_PART)
-                  _dxf_write_text(file, width / 2, height / 2, 20, part.number, 0, DXF_TEXT_HALIGN_CENTER, DXF_TEXT_VALIGN_MIDDLE, LAYER_TEXT)
+                  _dxf_write_label(file, 0, 0, width, height, @use_names ? part.name : part.number, false, LAYER_TEXT)
                 end
 
               end
@@ -464,47 +454,35 @@ module Ladb::OpenCutList
 
             else
 
+              position = Geom::Point3d.new(
+                _to_inch(part.px_x),
+                0
+              ).transform(unit_transformation)
+              size = Geom::Point3d.new(
+                _to_inch(part.px_length),
+                _to_inch(bar.px_width)
+              ).transform(unit_transformation)
+
+              x = position.x.to_f
+              y = position.y.to_f
+              width = size.x.to_f
+              height = size.y.to_f
+
               projection_def = _get_part_projection_def(part)
               if projection_def.is_a?(DrawingProjectionDef)
 
-                x = _to_inch(part.px_x)
-                x_offset = _to_inch(part.px_x_offset)
-
                 transformation = unit_transformation
-                transformation *= Geom::Transformation.translation(Geom::Vector3d.new(x + x_offset, 0))
+                transformation *= Geom::Transformation.translation(Geom::Vector3d.new(_to_inch(part.px_x) + _to_inch(part.px_x_offset), 0))
 
                 _dxf_write_projection_def_geometry(file, projection_def, @smoothing, transformation, LAYER_PART)
 
-                position = Geom::Point3d.new(
-                  x + _to_inch(part.px_length) / 2.0,
-                  _to_inch(bar.px_width) / 2.0
-                ).transform(unit_transformation)
-
-                x = position.x.to_f
-                y = position.y.to_f
-
-                _dxf_write_text(file, x, y, 20.0, part.number, 0, DXF_TEXT_HALIGN_CENTER, DXF_TEXT_VALIGN_MIDDLE, LAYER_TEXT)
-
               else
 
-                position = Geom::Point3d.new(
-                  _to_inch(part.px_x),
-                  0
-                ).transform(unit_transformation)
-                size = Geom::Point3d.new(
-                  _to_inch(part.px_length),
-                  _to_inch(bar.px_width)
-                ).transform(unit_transformation)
-
-                x = position.x.to_f
-                y = position.y.to_f
-                width = size.x.to_f
-                height = size.y.to_f
-
                 _dxf_write_rect(file, x, y, width, height, LAYER_PART)
-                _dxf_write_text(file, x + width / 2, y + height / 2, 20.0, part.number, 0, DXF_TEXT_HALIGN_CENTER, DXF_TEXT_VALIGN_MIDDLE, LAYER_TEXT)
 
               end
+
+              _dxf_write_label(file, x, y, width, height, @use_names ? part.name : part.number, false, LAYER_TEXT)
 
             end
 

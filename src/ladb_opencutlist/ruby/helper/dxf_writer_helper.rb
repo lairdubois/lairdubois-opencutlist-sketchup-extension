@@ -1128,6 +1128,18 @@ module Ladb::OpenCutList
 
     end
 
+    def _dxf_write_label(file, x, y, width, height, text, is_vertical = false, layer = '0')
+      return unless text.is_a?(String) && text.length > 0
+
+      tx = x + width / 2
+      ty = y + height / 2
+      theight = [ 60.0, (is_vertical ? width : height) / 2, (is_vertical ? height : width) / text.length ].min
+      tar = is_vertical ? 90 : 0
+
+      _dxf_write_text(file, tx , ty, theight, text, tar, DXF_TEXT_HALIGN_CENTER, DXF_TEXT_VALIGN_MIDDLE, layer)
+
+    end
+
     # -- INSERT GEOMETRY
 
     def _dxf_write_insert(file, name, x = 0.0, y = 0.0, z = 0.0, layer = '0')
