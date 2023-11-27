@@ -12,6 +12,7 @@ in 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added edge material color display in part list, cutting diagram and labels
   * Added edit material for edge and veneer virtual parts
   * Added labels formulas
+  * Added labels part preview element
   * Added labels remove all elements button
   * Added export remove all columns button
   * Added table row size options

@@ -1,8 +1,11 @@
 module Ladb::OpenCutList
 
+  require_relative '../../helper/part_drawing_helper'
   require_relative '../../model/export/wrappers'
 
   class CutlistLabelsComputeFormulasWorker
+
+    include PartDrawingHelper
 
     def initialize(settings, cutlist)
 
@@ -100,6 +103,21 @@ module Ladb::OpenCutList
               StringWrapper.new(@cutlist.page_description)
             )
             custom_values.push(_evaluate_text(element_def['custom_formula'], data))
+
+          elsif element_def['formula'] == 'thumbnail.proportional.drawing'
+
+            scale = 1 / [ part.def.size.length, part.def.size.width ].max
+            transformation = Geom::Transformation.scaling(scale, -scale, 1.0)
+
+            projection_def = _compute_part_projection_def(PART_DRAWING_TYPE_2D_TOP, part)
+            if projection_def.is_a?(DrawingProjectionDef)
+              custom_values.push(projection_def.layer_defs.map { |layer_def|
+                {
+                  :depth => layer_def.depth,
+                  :path => "#{layer_def.polygon_defs.map { |polygon_def| "M #{polygon_def.points.map { |point| point.transform(transformation).to_a[0..1].map { |v| v.to_f.round(6) }.join(',') }.join(' L ')} Z" }.join(' ')}"
+                }
+              })
+            end
 
           else
 

@@ -2888,7 +2888,7 @@
 
             // Change event
             $('input, select', $modal).on('change', function () {
-                $btnExportToSkp.prop('disabled', true);
+                $btnExportToFile.prop('disabled', true);
             });
 
         } else {
