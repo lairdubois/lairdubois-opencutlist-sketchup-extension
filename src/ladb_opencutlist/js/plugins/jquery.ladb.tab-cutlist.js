@@ -2735,7 +2735,7 @@
             });
             $btnExportToFile.on('click', function () {
                 this.blur();
-                that.exportPartToFile(part.id, $(this).data('file-format'), $(this).data('drawing-type'));
+                that.exportPartToFile(part.id, $(this).data('file-format'), parseInt($(this).data('part-drawing-type')));
             });
             $btnUpdate.on('click', function () {
 
@@ -2901,13 +2901,13 @@
         }
     };
 
-    LadbTabCutlist.prototype.exportPartToFile = function (id, fileFormat, drawingType) {
+    LadbTabCutlist.prototype.exportPartToFile = function (id, fileFormat, partDrawingType) {
         var that = this;
 
         rubyCallCommand('cutlist_part_export_to_file', {
             part_id: id,
             file_format: fileFormat,
-            drawing_type: drawingType
+            drawing_type: partDrawingType
         }, function (response) {
 
             if (response.errors) {

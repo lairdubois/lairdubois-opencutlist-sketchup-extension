@@ -15,17 +15,17 @@
     "scrap_sheet_sizes": "",
     "saw_kerf": { "metric": "3mm", "imperial": "1/8\"" },
     "trimming": { "metric": "10mm", "imperial": "1/2\"" },
-    "optimization": 0,        /* OPT_MEDIUM */
-    "stacking": 3,            /* STACKING_ALL */
+    "optimization": 0, /* OPT_MEDIUM */
+    "stacking": 3, /* STACKING_ALL */
     "keep_length": { "metric": "100mm", "imperial": "4\"" },
     "keep_width": { "metric": "100mm", "imperial": "4\"" },
     "sheet_folding": true,
     "hide_part_list": false,
-    "part_drawing_type": 1,    /* PART_DRAWING_TYPE_TOP */
+    "part_drawing_type": 1, /* PART_DRAWING_TYPE_2D_TOP */
     "use_names": false,
     "full_width_diagram": false,
     "hide_cross": false,
-    "origin_corner": 0,       /* ORIGIN_CORNER_TOP_LEFT */
+    "origin_corner": 0, /* ORIGIN_CORNER_TOP_LEFT */
     "highlight_primary_cuts": false,
     "hide_edges_preview": true
   }

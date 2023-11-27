@@ -3,15 +3,16 @@ module Ladb::OpenCutList
   require_relative '../../lib/bin_packing_1d/packengine'
   require_relative '../../utils/dimension_utils'
   require_relative '../../model/cuttingdiagram/cuttingdiagram1d_def'
+  require_relative '../../helper/part_drawing_helper'
+  require_relative '../../helper/pixel_converter_helper'
 
   class CutlistCuttingdiagram1dWorker
 
+    include PartDrawingHelper
+    include PixelConverterHelper
+
     ORIGIN_CORNER_LEFT = 0
     ORIGIN_CORNER_RIGHT = 1
-
-    PART_DRAWING_TYPE_NONE = 0
-    PART_DRAWING_TYPE_TOP = 1
-    PART_DRAWING_TYPE_BOTTOM = 2
 
     def initialize(settings, cutlist)
 
@@ -23,12 +24,12 @@ module Ladb::OpenCutList
       @trimming = DimensionUtils.instance.str_to_ifloat(settings.fetch('trimming')).to_l.to_f
       @bar_folding = settings.fetch('bar_folding')
       @hide_part_list = settings.fetch('hide_part_list')
+      @part_drawing_type = settings.fetch('part_drawing_type', PART_DRAWING_TYPE_NONE).to_i
       @use_names = settings.fetch('use_names')
       @full_width_diagram = settings.fetch('full_width_diagram')
       @hide_cross = settings.fetch('hide_cross')
       @origin_corner = settings.fetch('origin_corner')
       @wrap_length = DimensionUtils.instance.str_to_ifloat(settings.fetch('wrap_length')).to_l.to_f
-      @part_drawing_type = settings.fetch('part_drawing_type', PART_DRAWING_TYPE_NONE)
 
       @cutlist = cutlist
 
@@ -264,7 +265,7 @@ module Ladb::OpenCutList
           end
 
           # Part is used : compute its projection if enabled
-          _compute_part_projection_def(cuttingdiagram1d_def, box.data) unless @part_drawing_type == PART_DRAWING_TYPE_NONE
+          _compute_part_projection_def(@part_drawing_type, box.data, cuttingdiagram1d_def.projection_defs, cuttingdiagram1d_def.drawing_defs) unless @part_drawing_type == PART_DRAWING_TYPE_NONE
 
         }
 
@@ -296,12 +297,6 @@ module Ladb::OpenCutList
 
     private
 
-    def _assert(condition, error)
-      unless condition
-        cuttingdiagram1d_def
-      end
-    end
-
     def _compute_bin_type_id(bin, group, used)
       Digest::MD5.hexdigest("#{bin.length.to_l.to_s}x#{group.def.std_width.to_s}_#{bin.type}_#{used ? 1 : 0}")
     end
@@ -331,11 +326,6 @@ module Ladb::OpenCutList
       else
         x
       end
-    end
-
-    # Convert inch float value to pixel
-    def _to_px(inch_value)
-      inch_value * 7 # 840px = 120" ~ 3m
     end
 
     # Convert inch float value to slice index
@@ -371,51 +361,6 @@ module Ladb::OpenCutList
       end
 
       slice_defs
-    end
-
-    def _compute_part_projection_def(cuttingdiagram1d_def, cutlist_part)
-
-      projection_def = cuttingdiagram1d_def.projection_defs[cutlist_part.id]
-      if projection_def.nil?
-
-        instance_info = cutlist_part.def.get_one_instance_info
-        unless instance_info.nil?
-
-          local_x_axis = cutlist_part.def.size.oriented_axis(X_AXIS)
-          local_y_axis = cutlist_part.def.size.oriented_axis(Y_AXIS)
-          local_z_axis = cutlist_part.def.size.oriented_axis(Z_AXIS)
-
-          if @part_drawing_type == PART_DRAWING_TYPE_BOTTOM
-            local_x_axis = local_x_axis.reverse
-            local_z_axis = local_z_axis.reverse
-          end
-
-          drawing_def = CommonDrawingDecompositionWorker.new(instance_info.path, {
-            'input_local_x_axis' => local_x_axis,
-            'input_local_y_axis' => local_y_axis,
-            'input_local_z_axis' => local_z_axis,
-            'use_bounds_min_as_origin' => true,
-            'ignore_edges' => true
-          }).run
-          if drawing_def.is_a?(DrawingDef)
-
-            cuttingdiagram1d_def.drawing_defs[cutlist_part.id] = drawing_def
-
-            projection_def = CommonDrawingProjectionWorker.new(drawing_def, {
-              'down_to_top_union' => true
-            }).run
-            if projection_def.is_a?(DrawingProjectionDef)
-
-              cuttingdiagram1d_def.projection_defs[cutlist_part.id] = projection_def
-
-            end
-
-          end
-
-        end
-
-      end
-
     end
 
   end

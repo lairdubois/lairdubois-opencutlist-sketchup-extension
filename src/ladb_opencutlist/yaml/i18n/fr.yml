@@ -237,6 +237,9 @@ tab:
     edit_part_size_increase_properties: Éditer les propriétés (surcotes) de la pièce
     edit_part_edges_properties: Éditer les propriétés (chants) de la pièce
     edit_part_faces_properties: Éditer les propriétés (faces) de la pièce
+    part_drawing_type_1: 2D Vue Face
+    part_drawing_type_2: 2D Vue Contre-face
+    part_drawing_type_3: 3D
     tooltip:
       show_hide_block: Afficher / Masquer ce groupe
       scroll_to_block: Défiler vers le groupe
@@ -439,10 +442,6 @@ tab:
       face_disabled_help: Cette face n'est pas configurable parce qu'aucune face dessinée pouvant porter une matière n'a été détectée sur ce côté de la pièce dans le modèle.
       multiple_values: Valeurs multiples
       loading_preview: Chargement de l'aperçu
-    export_to_skp:
-      title: Exporter vers un fichier .skp
-    export_to_3d:
-      title: Exporter vers un fichier .{{ file_format }}
     option:
       auto_orient: Orientation automatique des pièces
       auto_orient_help: |
@@ -712,8 +711,8 @@ tab:
       option_hide_edges_preview_help: Permet d'afficher ou masquer l'indication visuel des chants à plaquer pour chaque pièce du diagramme.
       option_part_drawing_type: Formes des pièces
       option_part_drawing_type_0: Masquées
-      option_part_drawing_type_1: Dessinées en Vue Face
-      option_part_drawing_type_2: Dessinées en Vue Contre-face
+      option_part_drawing_type_1: Dessinées Vue Face
+      option_part_drawing_type_2: Dessinées Vue Contre-face
       option_part_drawing_type_help: |
         Permet d'afficher ou masquer la forme réelle des pièces ainsi que leurs usinages sur le diagramme.
 
@@ -1044,8 +1043,6 @@ tab:
       no_entities: Votre modèle est vide. Il va falloir m'en donner un peu plus ;)
       no_component_in_selection: Aucune instance de composant visible n'a été détectée dans votre sélection.
       no_component_in_model: Aucune instance de composant visible n'a été détectée sur votre scène.
-      failed_to_write_export_file: "Echec de l'écriture du fichier d'export. **{{ error }}**"
-      failed_export_skp_file: "Une erreur s'est produite lors de l'exportation du fichier .skp. **{{ error }}**"
       unknow_part: La pièce sélectionnée n'existe pas dans la fiche de débit.
       obsolete_cutlist: "Impossible, la fiche de débit générée est obsolète. Re-générez là."
     warning:

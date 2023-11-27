@@ -45,7 +45,7 @@ module Ladb::OpenCutList
       dir = dir.gsub(/ /, '%20') if Plugin.instance.platform_is_mac
 
       # Open save panel
-      path = UI.savepanel(Plugin.instance.get_i18n_string('tab.cutlist.export_to_skp.title'), dir, @definition_id + '.skp')
+      path = UI.savepanel(Plugin.instance.get_i18n_string('core.savepanel.export_to_file', { :file_format => 'SKP' }), dir, "#{@definition_id}.skp")
       if path
 
         # Save last dir
@@ -58,16 +58,14 @@ module Ladb::OpenCutList
 
         begin
           success = definition.save_as(path) && File.exist?(path)
-          return { :errors => [ [ 'tab.cutlist.error.failed_export_skp_file', { :error => '' } ] ] } unless success
+          return { :errors => [ [ 'core.error.failed_export_to', { :error => '' } ] ] } unless success
           return { :export_path => path }
         rescue => e
-          return { :errors => [ [ 'tab.cutlist.error.failed_export_skp_file', { :error => e.message } ] ] }
+          return { :errors => [ [ 'core.error.failed_export_to', { :error => e.message } ] ] }
         end
       end
 
-      {
-          :cancelled => true
-      }
+      { :cancelled => true }
     end
 
     # -----

@@ -663,19 +663,19 @@
                     <i class="ladb-opencutlist-icon ladb-opencutlist-icon-export"></i> {{ 'default.export'|i18next }} <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
-                    <li class="dropdown-header">2D Vue Face</li>
-                    <li><a href="#" class="ladb_cutlist_part_export_to_file" data-file-format="svg" data-drawing-type="2d-top">SVG...</a></li>
-                    <li><a href="#" class="ladb_cutlist_part_export_to_file" data-file-format="dxf" data-drawing-type="2d-top">DXF...</a></li>
+                    <li class="dropdown-header">{{ 'tab.cutlist.part_drawing_type_1'|i18next }}</li>
+                    <li><a href="#" class="ladb_cutlist_part_export_to_file" data-file-format="svg" data-part-drawing-type="1">SVG...</a></li>
+                    <li><a href="#" class="ladb_cutlist_part_export_to_file" data-file-format="dxf" data-part-drawing-type="1">DXF...</a></li>
                     <li role="separator" class="divider"></li>
-                    <li class="dropdown-header">2D Vue Contre-Face</li>
-                    <li><a href="#" class="ladb_cutlist_part_export_to_file" data-file-format="svg" data-drawing-type="2d-bottom">SVG...</a></li>
-                    <li><a href="#" class="ladb_cutlist_part_export_to_file" data-file-format="dxf" data-drawing-type="2d-bottom">DXF...</a></li>
+                    <li class="dropdown-header">{{ 'tab.cutlist.part_drawing_type_2'|i18next }}</li>
+                    <li><a href="#" class="ladb_cutlist_part_export_to_file" data-file-format="svg" data-part-drawing-type="2">SVG...</a></li>
+                    <li><a href="#" class="ladb_cutlist_part_export_to_file" data-file-format="dxf" data-part-drawing-type="2">DXF...</a></li>
                     <li role="separator" class="divider"></li>
-                    <li class="dropdown-header">3D</li>
-                    <li><a href="#" class="ladb_cutlist_part_export_to_file" data-file-format="stl" data-drawing-type="3d">STL...</a></li>
-                    <li><a href="#" class="ladb_cutlist_part_export_to_file" data-file-format="obj" data-drawing-type="3d">OBJ...</a></li>
-                    <li><a href="#" class="ladb_cutlist_part_export_to_file" data-file-format="dxf" data-drawing-type="3d">DXF...</a></li>
-                    <li><a href="#" class="ladb_cutlist_part_export_to_file" data-file-format="skp" data-drawing-type="3d">SKP...</a></li>
+                    <li class="dropdown-header">{{ 'tab.cutlist.part_drawing_type_3'|i18next }}</li>
+                    <li><a href="#" class="ladb_cutlist_part_export_to_file" data-file-format="stl" data-part-drawing-type="3">STL...</a></li>
+                    <li><a href="#" class="ladb_cutlist_part_export_to_file" data-file-format="obj" data-part-drawing-type="3">OBJ...</a></li>
+                    <li><a href="#" class="ladb_cutlist_part_export_to_file" data-file-format="dxf" data-part-drawing-type="3">DXF...</a></li>
+                    <li><a href="#" class="ladb_cutlist_part_export_to_file" data-file-format="skp" data-part-drawing-type="3">SKP...</a></li>
                 </ul>
             </div>
         {% endif %}

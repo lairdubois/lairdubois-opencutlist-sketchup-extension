@@ -4,20 +4,18 @@ module Ladb::OpenCutList
   require_relative '../../utils/dimension_utils'
   require_relative '../../model/geom/size2d'
   require_relative '../../model/cuttingdiagram/cuttingdiagram2d_def'
+  require_relative '../../helper/part_drawing_helper'
   require_relative '../../helper/pixel_converter_helper'
 
   class CutlistCuttingdiagram2dWorker
 
+    include PartDrawingHelper
     include PixelConverterHelper
 
     ORIGIN_CORNER_TOP_LEFT = 0
     ORIGIN_CORNER_BOTTOM_LEFT = 1
     ORIGIN_CORNER_TOP_RIGHT = 2
     ORIGIN_CORNER_BOTTOM_RIGHT = 3
-
-    PART_DRAWING_TYPE_NONE = 0
-    PART_DRAWING_TYPE_TOP = 1
-    PART_DRAWING_TYPE_BOTTOM = 2
 
     def initialize(settings, cutlist)
 
@@ -34,6 +32,7 @@ module Ladb::OpenCutList
       @keep_length = DimensionUtils.instance.str_to_ifloat(settings.fetch('keep_length', 0)).to_l.to_f
       @keep_width = DimensionUtils.instance.str_to_ifloat(settings.fetch('keep_width', 0)).to_l.to_f
       @sheet_folding = settings.fetch('sheet_folding', true)
+      @part_drawing_type = settings.fetch('part_drawing_type', PART_DRAWING_TYPE_NONE).to_i
       @use_names = settings.fetch('use_names', false)
       @full_width_diagram = settings.fetch('full_width_diagram', false)
       @hide_part_list = settings.fetch('hide_part_list', false)
@@ -41,7 +40,6 @@ module Ladb::OpenCutList
       @origin_corner = settings.fetch('origin_corner', ORIGIN_CORNER_TOP_LEFT)
       @highlight_primary_cuts = settings.fetch('highlight_primary_cuts', false)
       @hide_edges_preview = settings.fetch('hide_edges_preview', true)
-      @part_drawing_type = settings.fetch('part_drawing_type', PART_DRAWING_TYPE_NONE)
 
       @cutlist = cutlist
 
@@ -286,7 +284,7 @@ module Ladb::OpenCutList
           end
 
           # Part is used : compute its projection if enabled
-          _compute_part_projection_def(cuttingdiagram2d_def, box.data) unless @part_drawing_type == PART_DRAWING_TYPE_NONE
+          _compute_part_projection_def(@part_drawing_type, box.data, cuttingdiagram2d_def.projection_defs, cuttingdiagram2d_def.drawing_defs) unless @part_drawing_type == PART_DRAWING_TYPE_NONE
 
         }
 
@@ -389,51 +387,6 @@ module Ladb::OpenCutList
         else
           y
       end
-    end
-
-    def _compute_part_projection_def(cuttingdiagram2d_def, cutlist_part)
-
-      projection_def = cuttingdiagram2d_def.projection_defs[cutlist_part.id]
-      if projection_def.nil?
-
-        instance_info = cutlist_part.def.get_one_instance_info
-        unless instance_info.nil?
-
-          local_x_axis = cutlist_part.def.size.oriented_axis(X_AXIS)
-          local_y_axis = cutlist_part.def.size.oriented_axis(Y_AXIS)
-          local_z_axis = cutlist_part.def.size.oriented_axis(Z_AXIS)
-
-          if @part_drawing_type == PART_DRAWING_TYPE_BOTTOM
-            local_x_axis = local_x_axis.reverse
-            local_z_axis = local_z_axis.reverse
-          end
-
-          drawing_def = CommonDrawingDecompositionWorker.new(instance_info.path, {
-            'input_local_x_axis' => local_x_axis,
-            'input_local_y_axis' => local_y_axis,
-            'input_local_z_axis' => local_z_axis,
-            'use_bounds_min_as_origin' => true,
-            'ignore_edges' => true
-          }).run
-          if drawing_def.is_a?(DrawingDef)
-
-            cuttingdiagram2d_def.drawing_defs[cutlist_part.id] = drawing_def
-
-            projection_def = CommonDrawingProjectionWorker.new(drawing_def, {
-              'down_to_top_union' => true
-            }).run
-            if projection_def.is_a?(DrawingProjectionDef)
-
-              cuttingdiagram2d_def.projection_defs[cutlist_part.id] = projection_def
-
-            end
-
-          end
-
-        end
-
-      end
-
     end
 
   end

@@ -113,9 +113,7 @@ module Ladb::OpenCutList
 
       end
 
-      {
-        :part_infos => @part_infos
-      }
+      { :part_infos => @part_infos }
     end
 
     # -----

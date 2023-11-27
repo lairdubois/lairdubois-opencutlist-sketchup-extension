@@ -64,12 +64,12 @@ module Ladb::OpenCutList
       when 'csv'
 
         # Ask for export file path
-        export_path = UI.savepanel(Plugin.instance.get_i18n_string('tab.cutlist.export.title'), @cutlist.dir, File.basename(@cutlist.filename, '.skp') + '.csv')
-        if export_path
+        path = UI.savepanel(Plugin.instance.get_i18n_string('tab.cutlist.export.title'), @cutlist.dir, File.basename(@cutlist.filename, '.skp') + '.csv')
+        if path
 
           # Force "csv" file extension
-          unless export_path.end_with?('.csv')
-            export_path = export_path + '.csv'
+          unless path.end_with?('.csv')
+            path = path + '.csv'
           end
 
           begin
@@ -98,7 +98,7 @@ module Ladb::OpenCutList
             end
 
             # Write CSV file
-            File.open(export_path, "wb+:#{encoding}") do |f|
+            File.open(path, "wb+:#{encoding}") do |f|
               options = { :col_sep => col_sep }
               content = CSV.generate(**options) do |csv|
 
@@ -113,14 +113,14 @@ module Ladb::OpenCutList
               f.write(content)
 
               # Populate response
-              response[:export_path] = export_path.tr("\\", '/')  # Standardize path by replacing \ by /
+              response[:export_path] = path.tr("\\", '/')  # Standardize path by replacing \ by /
 
             end
 
           rescue => e
             puts e.message
             puts e.backtrace
-            response[:errors] << [ 'tab.cutlist.error.failed_to_write_export_file', { :error => e.message } ]
+            response[:errors] << [ 'core.error.failed_export_to', { path => path, :error => e.message } ]
           end
 
         end
