@@ -4,7 +4,7 @@ module Ladb::OpenCutList
 
   class Cuttingdiagram2dDef
 
-    attr_accessor :group, :errors, :warnings, :tips, :unplaced_part_defs, :options_def, :summary_def, :sheet_defs, :to_keep_leftover_defs, :drawing_defs, :projection_defs
+    attr_accessor :group, :errors, :warnings, :tips, :unplaced_part_defs, :options_def, :summary_def, :sheet_defs, :to_keep_leftover_defs, :projection_defs
 
     def initialize(group, errors = [])
       @group = group
@@ -19,7 +19,6 @@ module Ladb::OpenCutList
       @sheet_defs = {}
       @to_keep_leftover_defs = {}
 
-      @drawing_defs = {} # Key = part ID
       @projection_defs = {} # Key = part ID
 
     end

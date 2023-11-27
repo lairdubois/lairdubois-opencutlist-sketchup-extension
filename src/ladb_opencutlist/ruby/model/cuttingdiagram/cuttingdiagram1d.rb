@@ -24,7 +24,7 @@ module Ladb::OpenCutList
       @summary = _def.summary_def.create_summary
       @bars = _def.bar_defs.values.map { |bar_def| bar_def.create_bar }.sort_by { |bar| [ -bar.type, -bar.efficiency, -bar.count ] }
 
-      @projections = _def.projection_defs.map { |part_id, projection_def| [ part_id, projection_def.layer_defs.map { |layer_def| { :depth => layer_def.depth, :path => "#{layer_def.polygon_defs.map { |polygon_def| "M #{polygon_def.points.map { |point| "#{_to_px(point.x)},#{-_to_px(point.y)}" }.join(' L ')} Z" }.join(' ')}" } } ] }.to_h
+      @projections = _def.projection_defs.map { |part_id, projection_def| [ part_id, projection_def.layer_defs.map { |layer_def| { :depth => layer_def.depth, :path => "#{layer_def.polygon_defs.map { |polygon_def| "M #{polygon_def.points.map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y.round(2))}" }.join(' L ')} Z" }.join(' ')}" } } ] }.to_h
 
     end
 

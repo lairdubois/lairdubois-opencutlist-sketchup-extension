@@ -4,6 +4,7 @@ module Ladb::OpenCutList
   require_relative '../../helper/sanitizer_helper'
   require_relative '../../helper/dxf_writer_helper'
   require_relative '../../helper/svg_writer_helper'
+  require_relative '../../helper/part_drawing_helper'
   require_relative '../../helper/pixel_converter_helper'
   require_relative '../../utils/color_utils'
   require_relative '../../worker/common/common_drawing_projection_worker'
@@ -13,6 +14,7 @@ module Ladb::OpenCutList
     include SanitizerHelper
     include DxfWriterHelper
     include SvgWriterHelper
+    include PartDrawingHelper
     include PixelConverterHelper
 
     LAYER_SHEET = 'OCL_SHEET'.freeze
@@ -40,6 +42,7 @@ module Ladb::OpenCutList
       @cuts_hidden = settings.fetch('cuts_hidden', true)
       @cuts_stroke_color = ColorUtils.color_create(settings.fetch('cuts_stroke_color', nil))
       @hidden_sheet_indices = settings.fetch('hidden_sheet_indices', [])
+      @part_drawing_type = settings.fetch('part_drawing_type', PART_DRAWING_TYPE_2D_TOP).to_i
       @use_names = settings.fetch('use_names', false)
 
       @cutlist = cutlist
@@ -607,21 +610,10 @@ module Ladb::OpenCutList
     end
 
     def _get_part_projection_def(part)
-      projection_def = @_projection_defs[part.id]
-      if projection_def.nil?
-
-        # Compute new projection def from drawing def
-        drawing_def = @cuttingdiagram2d.def.drawing_defs[part.id]
-        if drawing_def.is_a?(DrawingDef)
-          projection_def = CommonDrawingProjectionWorker.new(drawing_def, {
-            'down_to_top_union' => true,
-            'passthrough_holes' => true
-          }).run
-          @_projection_defs[part.id] = projection_def
-        end
-
-      end
-      projection_def
+      _compute_part_projection_def(@part_drawing_type, part.def.cutlist_part, {
+        'down_to_top_union' => true,
+        'passthrough_holes' => true
+      }, @_projection_defs)
     end
 
   end

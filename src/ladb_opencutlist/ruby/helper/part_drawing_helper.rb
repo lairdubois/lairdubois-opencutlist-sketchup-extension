@@ -11,8 +11,11 @@ module Ladb::OpenCutList
     PART_DRAWING_TYPE_2D_BOTTOM = 2
     PART_DRAWING_TYPE_3D = 3
 
-    def _compute_part_drawing_def(part_drawing_type, part, drawing_defs_cache = {})
+    def _compute_part_drawing_def(part_drawing_type, part)
       return nil unless part.is_a?(Part)
+
+      drawing_def = part.def.drawing_defs[part_drawing_type]
+      return drawing_def unless drawing_def.nil?
 
       instance_info = part.def.get_one_instance_info
       return nil if instance_info.nil?
@@ -34,32 +37,26 @@ module Ladb::OpenCutList
         'ignore_edges' => true
       }).run
       if drawing_def.is_a?(DrawingDef)
-        drawing_defs_cache[part.id] = drawing_def
+        part.def.drawing_defs[part_drawing_type] = drawing_def
         return drawing_def
       end
 
       nil
     end
 
-    def _compute_part_projection_def(part_drawing_type, part, projection_defs_cache = {}, drawing_defs_cache = {})
+    def _compute_part_projection_def(part_drawing_type, part, settings = {}, projection_defs_cache = {})
       return nil unless part.is_a?(Part)
 
       projection_def = projection_defs_cache[part.id]
-      if projection_def.nil?
+      return projection_def unless projection_def.nil?
 
-        drawing_def = _compute_part_drawing_def(part_drawing_type, part, drawing_defs_cache)
-        if drawing_def.is_a?(DrawingDef)
+      drawing_def = _compute_part_drawing_def(part_drawing_type, part)
+      return nil unless drawing_def.is_a?(DrawingDef)
 
-          projection_def = CommonDrawingProjectionWorker.new(drawing_def, {
-            'down_to_top_union' => true
-          }).run
-          if projection_def.is_a?(DrawingProjectionDef)
-            projection_defs_cache[part.id] = projection_def
-            return projection_def
-          end
-
-        end
-
+      projection_def = CommonDrawingProjectionWorker.new(drawing_def, settings).run
+      if projection_def.is_a?(DrawingProjectionDef)
+        projection_defs_cache[part.id] = projection_def
+        return projection_def
       end
 
       nil

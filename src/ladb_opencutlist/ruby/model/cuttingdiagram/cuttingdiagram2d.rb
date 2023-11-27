@@ -25,7 +25,7 @@ module Ladb::OpenCutList
       @sheets = _def.sheet_defs.values.map { |sheet_def| sheet_def.create_sheet }.sort_by { |sheet| [ -sheet.type, -sheet.efficiency, -sheet.count ] }
       @to_keep_leftovers = _def.to_keep_leftover_defs.values.map { |leftover_def| leftover_def.create_listed_leftover }.sort_by { |leftover| [ -leftover.def.area, -leftover.length ] }
 
-      @projections = _def.projection_defs.map { |part_id, projection_def| [ part_id, projection_def.layer_defs.map { |layer_def| { :depth => layer_def.depth, :path => "#{layer_def.polygon_defs.map { |polygon_def| "M #{polygon_def.points.map { |point| "#{_to_px(point.x)},#{-_to_px(point.y)}" }.join(' L ')} Z" }.join(' ')}" } } ] }.to_h
+      @projections = _def.projection_defs.map { |part_id, projection_def| [ part_id, projection_def.layer_defs.map { |layer_def| { :depth => layer_def.depth, :path => "#{layer_def.polygon_defs.map { |polygon_def| "M #{polygon_def.points.map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y).round(2)}" }.join(' L ')} Z" }.join(' ')}" } } ] }.to_h
 
     end
 
