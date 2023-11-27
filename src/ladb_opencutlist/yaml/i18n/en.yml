@@ -237,6 +237,9 @@ tab:
     edit_part_size_increase_properties: Edit the properties (oversizes) of the part
     edit_part_edges_properties: Edit the properties (edges) of the part
     edit_part_faces_properties: Edit the properties (faces) of the part
+    part_drawing_type_1: 2D Front View
+    part_drawing_type_2: 2D Back View
+    part_drawing_type_3: 3D
     tooltip:
       show_hide_block: Show / Hide group
       scroll_to_block: Scroll to group
@@ -439,10 +442,6 @@ tab:
       face_disabled_help: This surface is not configurable because no material-carrying face has been detected on this edge of the part in the model.
       multiple_values: Multiple values
       loading_preview: Loading Preview
-    export_to_skp:
-      title: Export to .skp file
-    export_to_3d:
-      title: Export to a .{{ file_format }} file
     option:
       auto_orient: Automatic orientation of parts
       auto_orient_help: |
@@ -702,18 +701,18 @@ tab:
       option_hide_cross_0: Dimensions and Cross
       option_hide_cross_1: Dimensions Only
       option_hide_cross_help: Shows or hides the cross indicating the parts defined as offcuts on the diagram.
-      option_highlight_primary_cuts: Primary cuts
+      option_highlight_primary_cuts: Primary Cuts
       option_highlight_primary_cuts_0: Flyover only
       option_highlight_primary_cuts_1: Always visible
       option_highlight_primary_cuts_help: Allows you to always highlight primary cuts.
-      option_hide_edges_preview: Display of edge bands
+      option_hide_edges_preview: Display of Edge Bands
       option_hide_edges_preview_0: Displayed in the cutting diagram
       option_hide_edges_preview_1: Hidden in the cutting diagram
       option_hide_edges_preview_help: Allows you to show or hide the visual display of the edge bands for each part in the cutting diagram.
-      option_part_drawing_type: Shape of parts
+      option_part_drawing_type: Shape of Parts
       option_part_drawing_type_0: Hidden
-      option_part_drawing_type_1: Displaying front face
-      option_part_drawing_type_2: Displaying back face
+      option_part_drawing_type_1: Displaying Front Face
+      option_part_drawing_type_2: Displaying Back Face
       option_part_drawing_type_help: |
         Shows or hides the actual shape of parts and their machining on the diagram.
 
@@ -733,8 +732,8 @@ tab:
       option_stacking_1: Lengthwise
       option_stacking_2: Widthwise
       option_stacking_3: All Possibilities
-      option_keep: Minimum size of leftovers
-      option_keep_help: Leftovers that are both larger than the minimum size will be marked **to be kept**.
+      option_keep: Leftovers min. Size
+      option_keep_help: Leftovers that are larger in both sized than the minimum size will be marked **to be kept**.
       option_std_bar_dimensional: Standard Dimensional
       option_std_bar_edge: Standard Edge Band
       option_std_bar_help: |
@@ -784,9 +783,9 @@ tab:
         total_used: Total used
         trimming: Trimming
         stats: Statistics
-        total_cut_count: Number of cuts
-        total_cut_length: Length of cuts
-        overall_efficiency: Overall efficiency
+        total_cut_count: Number of Cuts
+        total_cut_length: Length of Cuts
+        overall_efficiency: Overall Efficiency
         efficiency: Efficiency
         leftover: Leftover
         leftover_to_keep: Leftover to keep
@@ -816,21 +815,38 @@ tab:
         title: Export cutting diagram
         options_general: General
         option_file_format: Format
-        option_file_format_help: TBD
+        option_file_format_svg: SVG
+        option_file_format_dxf: DXF
+        option_file_format_help: |
+          Select the file format to be exported.
+        option_dxf_structure: DXF Structure
+        option_dxf_structure_1: Layers
+        option_dxf_structure_2: Layers + Blocks
+        option_dxf_structure_help: |
+          Select DXF file structure.
+
+          - The **Layers** structure draws all lines flat, distinguishing between different line types using layers only. *This structure offers greater compatibility with third-party software.*
+          - The **Layers + Blocks** structure creates one block per element (parts, cut, etc.) and inserts these blocks as many times as they are repeated. *This structure offers more details for modifying the file.*
         option_smoothing: Smoothing
         option_smoothing_0: None
-        option_smoothing_1: Detect circles and arcs (Experimental)
-        option_smoothing_help: TBD
+        option_smoothing_1: Detect circles and arcs *(Experimental)*
+        option_smoothing_help: |
+          Select the smoothing mode.
         option_sheet: Panel
-        option_sheet_help: TBD
+        option_sheet_help: |
+          Select whether the panel is drawn, and select its color.
         option_bar: Dimensional
-        option_bar_help: TBD
+        option_bar_help: |
+          Select whether the dimensional is drawn, and select its color.
         option_parts: Parts
-        option_parts_help: TBD
+        option_parts_help: |
+          Select whether or not parts are drawn, and select their color.
         option_leftovers: Leftovers
-        option_leftovers_help: TBD
+        option_leftovers_help: |
+          Select whether leftovers are drawn, and select their color.
         option_cuts: Cuts
-        option_cuts_help: TBD
+        option_cuts_help: |
+          Select whether cuts are drawn, and select their color.
         option_stroke_color: Stroke color
         option_fill_color: Fill color
         warning:
@@ -927,6 +943,7 @@ tab:
         part_edge_xmax: Edge width 2
         part_face_zmin: Veneer backside
         part_face_zmax: Veneer front
+        thumbnail_proportional_drawing: Thumbnail
         thumbnail_proportional: Proportional thumbnail
         thumbnail_square: Square thumbnail
         group_material: Material / Thickness
@@ -1027,8 +1044,6 @@ tab:
       no_entities: Your model is empty. You will need to give me more information ;)
       no_component_in_selection: No instance of a visible component was detected in your selection.
       no_component_in_model: No instance of a visible component was detected in your scene.
-      failed_to_write_export_file: "Failed to write the export file. **{{ error }}**"
-      failed_export_skp_file: "An error occurred while exporting to .skp file. **{{ error }}**"
       unknow_part: The selected part does not exist in the parts list.
       obsolete_cutlist: "Impossible, the parts list is obsolete. Please, regenerate it."
     warning:
@@ -1121,7 +1136,7 @@ tab:
       std_widths_placeholder: width ; ...
       std_widths_help: |
         Standard widths of edge bandings.
-        *Widths without units are considered to be in model units.*
+        *Sizes without units are considered to be in model units.*
       std_thicknesses: Standard Thickness
       std_thicknesses_placeholder: thickness ; ...
       std_thicknesses_help: |

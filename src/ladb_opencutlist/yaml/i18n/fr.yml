@@ -118,7 +118,7 @@ core:
       Pour signaler un bug : <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
   error:
     feature_unavailable: "Cette fonctionnalité nécessite SketchUp {{ version }} ou plus"
-    failed_export_to: | 
+    failed_export_to: |
       Une erreur s'est produite lors de l'exportation vers *{{ path }}*.
       **{{ error }}**
   event:
@@ -824,7 +824,7 @@ tab:
         option_dxf_structure_2: Calques + Blocs
         option_dxf_structure_help: |
           Permet de choisir la structure du fichier DXF.
-          
+
           - la structure **Calques** dessine tous les tracés à plat en distinguant les différents types de trait uniquement par des calques. *Cette structure offre une meilleure compatibilité avec les logiciels tiers.*
           - La structure **Calques + Blocs** crée un bloc par élément (pièces, coupe, etc) et insère ces blocs autant de fois qu'ils sont répétés. *Cette structure offre plus de détails pour modifier le fichier.*
         option_smoothing: Lissage
@@ -834,19 +834,19 @@ tab:
           Permet de choisir le mode de lissage.
         option_sheet: Panneau
         option_sheet_help: |
-          Permet de choisir le panneau est dessiné ainsi que de choisir sa couleur.
+          Permet de choisir si le panneau est dessiné ainsi que de choisir sa couleur.
         option_bar: Barre
         option_bar_help:  |
-          Permet de choisir la barre est dessinée ainsi que de choisir sa couleur.
+          Permet de choisir si la barre est dessinée ainsi que de choisir sa couleur.
         option_parts: Pièces
         option_parts_help:  |
-          Permet de choisir les pièces sont dessinées ainsi que de choisir leur couleur.
+          Permet de choisir si les pièces sont dessinées ainsi que de choisir leur couleur.
         option_leftovers: Chutes
         option_leftovers_help:  |
-          Permet de choisir les chutes sont dessinées que de choisir leur couleur.
+          Permet de choisir si les chutes sont dessinées que de choisir leur couleur.
         option_cuts: Coupes
         option_cuts_help:  |
-          Permet de choisir les coupes sont dessinées que de choisir leur couleur.
+          Permet de choisir si les coupes sont dessinées que de choisir leur couleur.
         option_stroke_color: Couleur de trait
         option_fill_color: Couleur de remplissage
         warning:
@@ -1557,7 +1557,7 @@ tool:
     action_3: Exporter une face
     action_3_status: Cliquez sur une face
     action_4: Exporter un tracé
-    action_4_status: Cliquez sur une arrête
+    action_4_status: Cliquez sur une arête
     action_option_group_0: Format
     action_option_group_1: Unité
     action_option_group_2: Faces
@@ -1575,7 +1575,7 @@ tool:
     action_option_2_1_status: Utiliser toutes les faces de la pièce
     action_option_3_0_status: Projeter l'origine de la pièce
     action_option_3_1_status: Détecter les cercles et arcs (Expérimental)
-    action_option_3_2_status: Exporter comme guides les arrêtes flottantes et coplanaires à la face ciblée contenues dans la pièce
+    action_option_3_2_status: Exporter comme guides les arêtes flottantes et coplanaires à la face ciblée contenues dans la pièce
     success:
       exported_to: "Export réussi vers {{ export_path }}."
     error:
