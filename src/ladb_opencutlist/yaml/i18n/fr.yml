@@ -818,25 +818,36 @@ tab:
         option_file_format: Format
         option_file_format_svg: SVG
         option_file_format_dxf: DXF
-        option_file_format_help: TBD
+        option_file_format_help: |
+          Permet de choisir le format de fichier à exporter.
         option_dxf_structure: Structure DXF
         option_dxf_structure_1: Calques
         option_dxf_structure_2: Calques + Blocs
-        option_dxf_structure_help: TBD
+        option_dxf_structure_help: |
+          Permet de choisir la structure du fichier DXF.
+          
+          - la structure **Calques** dessine tous les tracés à plat en distinguant les différents types de trait uniquement par des calques. *Cette structure offre une meilleure compatibilité avec les logiciels tiers.*
+          - La structure **Calques + Blocs** crée un bloc par élément (pièces, coupe, etc) et insère ces blocs autant de fois qu'ils sont répétés. *Cette structure offre plus de détails pour modifier le fichier.*
         option_smoothing: Lissage
         option_smoothing_0: Aucun
         option_smoothing_1: Détecter les cercles et arcs *(Expérimental)*
-        option_smoothing_help: TBD
+        option_smoothing_help: |
+          Permet de choisir le mode de lissage.
         option_sheet: Panneau
-        option_sheet_help: TBD
+        option_sheet_help: |
+          Permet de choisir le panneau est dessiné ainsi que de choisir sa couleur.
         option_bar: Barre
-        option_bar_help: TBD
+        option_bar_help:  |
+          Permet de choisir la barre est dessinée ainsi que de choisir sa couleur.
         option_parts: Pièces
-        option_parts_help: TBD
+        option_parts_help:  |
+          Permet de choisir les pièces sont dessinées ainsi que de choisir leur couleur.
         option_leftovers: Chutes
-        option_leftovers_help: TBD
+        option_leftovers_help:  |
+          Permet de choisir les chutes sont dessinées que de choisir leur couleur.
         option_cuts: Coupes
-        option_cuts_help: TBD
+        option_cuts_help:  |
+          Permet de choisir les coupes sont dessinées que de choisir leur couleur.
         option_stroke_color: Couleur de trait
         option_fill_color: Couleur de remplissage
         warning:
