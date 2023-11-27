@@ -9,9 +9,9 @@ module Ladb::OpenCutList
     ORIGIN_CORNER_LEFT = 0
     ORIGIN_CORNER_RIGHT = 1
 
-    PART_PROJECTION_NONE = 0
-    PART_PROJECTION_FRONT = 1
-    PART_PROJECTION_BACK = 2
+    PART_DRAWING_TYPE_NONE = 0
+    PART_DRAWING_TYPE_TOP = 1
+    PART_DRAWING_TYPE_BOTTOM = 2
 
     def initialize(settings, cutlist)
 
@@ -28,7 +28,7 @@ module Ladb::OpenCutList
       @hide_cross = settings.fetch('hide_cross')
       @origin_corner = settings.fetch('origin_corner')
       @wrap_length = DimensionUtils.instance.str_to_ifloat(settings.fetch('wrap_length')).to_l.to_f
-      @part_projection = settings.fetch('part_projection', PART_PROJECTION_NONE)
+      @part_drawing_type = settings.fetch('part_drawing_type', PART_DRAWING_TYPE_NONE)
 
       @cutlist = cutlist
 
@@ -149,7 +149,7 @@ module Ladb::OpenCutList
       cuttingdiagram1d_def.options_def.hide_cross = @hide_cross
       cuttingdiagram1d_def.options_def.origin_corner = @origin_corner
       cuttingdiagram1d_def.options_def.wrap_length = @wrap_length
-      cuttingdiagram1d_def.options_def.part_projection = @part_projection
+      cuttingdiagram1d_def.options_def.part_drawing_type = @part_drawing_type
 
       cuttingdiagram1d_def.errors += errors
 
@@ -264,7 +264,7 @@ module Ladb::OpenCutList
           end
 
           # Part is used : compute its projection if enabled
-          _compute_part_projection_def(cuttingdiagram1d_def, box.data) unless @part_projection == PART_PROJECTION_NONE
+          _compute_part_projection_def(cuttingdiagram1d_def, box.data) unless @part_drawing_type == PART_DRAWING_TYPE_NONE
 
         }
 
@@ -385,7 +385,7 @@ module Ladb::OpenCutList
           local_y_axis = cutlist_part.def.size.oriented_axis(Y_AXIS)
           local_z_axis = cutlist_part.def.size.oriented_axis(Z_AXIS)
 
-          if @part_projection == PART_PROJECTION_BACK
+          if @part_drawing_type == PART_DRAWING_TYPE_BOTTOM
             local_x_axis = local_x_axis.reverse
             local_z_axis = local_z_axis.reverse
           end

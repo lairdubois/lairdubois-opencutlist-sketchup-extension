@@ -710,11 +710,11 @@ tab:
       option_hide_edges_preview_0: Displayed in the cutting diagram
       option_hide_edges_preview_1: Hidden in the cutting diagram
       option_hide_edges_preview_help: Allows you to show or hide the visual display of the edge bands for each part in the cutting diagram.
-      option_part_projection: Shape of parts
-      option_part_projection_0: Hidden
-      option_part_projection_1: Displaying front face
-      option_part_projection_2: Displaying back face
-      option_part_projection_help: |
+      option_part_drawing_type: Shape of parts
+      option_part_drawing_type_0: Hidden
+      option_part_drawing_type_1: Displaying front face
+      option_part_drawing_type_2: Displaying back face
+      option_part_drawing_type_help: |
         Shows or hides the actual shape of parts and their machining on the diagram.
 
         **This option must be enabled for shapes to be exported.*

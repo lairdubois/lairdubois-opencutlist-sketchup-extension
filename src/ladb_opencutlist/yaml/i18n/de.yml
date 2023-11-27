@@ -710,11 +710,11 @@ tab:
       option_hide_edges_preview_0: Im Schnittplan angezeigt
       option_hide_edges_preview_1: Im Schnittplan ausgeblendet
       option_hide_edges_preview_help: Ermöglicht das Ein- oder Ausblenden der visuellen Anzeige der Kantenbänder für jedes Teil im Schnittplan.
-      option_part_projection: Formen der Teile
-      option_part_projection_0: Ausgeblendet
-      option_part_projection_1: Vorderansicht
-      option_part_projection_2: Rückseite
-      option_part_projection_help: |
+      option_part_drawing_type: Formen der Teile
+      option_part_drawing_type_0: Ausgeblendet
+      option_part_drawing_type_1: Vorderansicht
+      option_part_drawing_type_2: Rückseite
+      option_part_drawing_type_help: |
         Ermöglicht es, die tatsächliche Form der Teile sowie ihre Bearbeitungen im Diagramm ein- oder auszublenden.
 
         *Diese Option muss aktiviert sein, damit die Formen exportiert werden können.*

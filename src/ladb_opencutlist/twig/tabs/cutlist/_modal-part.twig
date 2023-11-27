@@ -658,18 +658,27 @@
             <button class="btn btn-default" id="ladb_cutlist_part_highlight"><i class="ladb-opencutlist-icon-magnifier-multiple"></i> {{ 'tab.cutlist.highlight_parts'|i18next }}</button>
         {% else %}
             <button class="btn btn-default" id="ladb_cutlist_part_highlight"><i class="ladb-opencutlist-icon-magnifier"></i> {{ 'tab.cutlist.highlight_part'|i18next }}</button>
+            <div class="btn-group dropup">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="ladb-opencutlist-icon ladb-opencutlist-icon-export"></i> {{ 'default.export'|i18next }} <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li class="dropdown-header">2D Vue Face</li>
+                    <li><a href="#" class="ladb_cutlist_part_export_to_file" data-file-format="svg" data-drawing-type="2d-top">SVG...</a></li>
+                    <li><a href="#" class="ladb_cutlist_part_export_to_file" data-file-format="dxf" data-drawing-type="2d-top">DXF...</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li class="dropdown-header">2D Vue Contre-Face</li>
+                    <li><a href="#" class="ladb_cutlist_part_export_to_file" data-file-format="svg" data-drawing-type="2d-bottom">SVG...</a></li>
+                    <li><a href="#" class="ladb_cutlist_part_export_to_file" data-file-format="dxf" data-drawing-type="2d-bottom">DXF...</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li class="dropdown-header">3D</li>
+                    <li><a href="#" class="ladb_cutlist_part_export_to_file" data-file-format="stl" data-drawing-type="3d">STL...</a></li>
+                    <li><a href="#" class="ladb_cutlist_part_export_to_file" data-file-format="obj" data-drawing-type="3d">OBJ...</a></li>
+                    <li><a href="#" class="ladb_cutlist_part_export_to_file" data-file-format="dxf" data-drawing-type="3d">DXF...</a></li>
+                    <li><a href="#" class="ladb_cutlist_part_export_to_file" data-file-format="skp" data-drawing-type="3d">SKP...</a></li>
+                </ul>
+            </div>
         {% endif %}
-        <div class="btn-group">
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="ladb-opencutlist-icon ladb-opencutlist-icon-export"></i> {{ 'default.export'|i18next }} <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu">
-                <li><a href="#" id="ladb_cutlist_part_export_to_skp">SKP...</a></li>
-                <li><a href="#" id="ladb_cutlist_part_export_to_stl">STL...</a></li>
-                <li><a href="#" id="ladb_cutlist_part_export_to_obj">OBJ...</a></li>
-                <li><a href="#" id="ladb_cutlist_part_export_to_dxf">DXF...</a></li>
-            </ul>
-        </div>
     {% endif %}
 {% endblock %}
 

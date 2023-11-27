@@ -137,13 +137,13 @@
                 <hr>
                 {% if group.material_type != 6 %}   {# 6 = TYPE_VENEER #}
                     <div class="form-group">
-                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_part_projection_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                        <label for="ladb_select_part_projection" class="control-label col-xs-5">{{ 'tab.cutlist.cuttingdiagram.option_part_projection'|i18next }}</label>
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_part_drawing_type_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                        <label for="ladb_select_part_drawing_type" class="control-label col-xs-5">{{ 'tab.cutlist.cuttingdiagram.option_part_drawing_type'|i18next }}</label>
                         <div class="col-xs-6">
-                            <select class="form-control" id="ladb_select_part_projection"{% if group.material_type == 6 %} disabled{% endif %}>
-                                <option value="0" data-content="{{ 'tab.cutlist.cuttingdiagram.option_part_projection_0'|i18next }}"></option>
-                                <option value="1" data-content="<i class='ladb-opencutlist-icon-face-10'></i> {{ 'tab.cutlist.cuttingdiagram.option_part_projection_1'|i18next }}"></option>
-                                <option value="2" data-content="<i class='ladb-opencutlist-icon-face-01'></i> {{ 'tab.cutlist.cuttingdiagram.option_part_projection_2'|i18next }}"></option>
+                            <select class="form-control" id="ladb_select_part_drawing_type"{% if group.material_type == 6 %} disabled{% endif %}>
+                                <option value="0" data-content="{{ 'tab.cutlist.cuttingdiagram.option_part_drawing_type_0'|i18next }}"></option>
+                                <option value="1" data-content="<i class='ladb-opencutlist-icon-face-10'></i> {{ 'tab.cutlist.cuttingdiagram.option_part_drawing_type_1'|i18next }}"></option>
+                                <option value="2" data-content="<i class='ladb-opencutlist-icon-face-01'></i> {{ 'tab.cutlist.cuttingdiagram.option_part_drawing_type_2'|i18next }}"></option>
                             </select>
                         </div>
                     </div>

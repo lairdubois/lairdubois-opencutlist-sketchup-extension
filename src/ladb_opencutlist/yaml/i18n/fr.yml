@@ -710,11 +710,11 @@ tab:
       option_hide_edges_preview_0: Affichés sur le diagramme
       option_hide_edges_preview_1: Masqués sur le diagramme
       option_hide_edges_preview_help: Permet d'afficher ou masquer l'indication visuel des chants à plaquer pour chaque pièce du diagramme.
-      option_part_projection: Formes des pièces
-      option_part_projection_0: Masquées
-      option_part_projection_1: Dessinées en Vue Face
-      option_part_projection_2: Dessinées en Vue Contre-Face
-      option_part_projection_help: |
+      option_part_drawing_type: Formes des pièces
+      option_part_drawing_type_0: Masquées
+      option_part_drawing_type_1: Dessinées en Vue Face
+      option_part_drawing_type_2: Dessinées en Vue Contre-face
+      option_part_drawing_type_help: |
         Permet d'afficher ou masquer la forme réelle des pièces ainsi que leurs usinages sur le diagramme.
 
         *Cette option doit être activée pour que les formes puissent être exportées.*

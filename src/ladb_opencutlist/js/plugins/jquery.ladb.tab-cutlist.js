@@ -2286,10 +2286,7 @@
             var $labelFaceZminTextureAngle = $('#ladb_cutlist_part_label_face_zmin_texture_angle', $modal);
             var $labelFaceZmaxTextureAngle = $('#ladb_cutlist_part_label_face_zmax_texture_angle', $modal);
             var $btnHighlight = $('#ladb_cutlist_part_highlight', $modal);
-            var $btnExportToSkp = $('#ladb_cutlist_part_export_to_skp', $modal);
-            var $btnExportToStl = $('#ladb_cutlist_part_export_to_stl', $modal);
-            var $btnExportToObj = $('#ladb_cutlist_part_export_to_obj', $modal);
-            var $btnExportToDxf = $('#ladb_cutlist_part_export_to_dxf', $modal);
+            var $btnExportToFile = $('a.ladb_cutlist_part_export_to_file', $modal);
             var $btnUpdate = $('#ladb_cutlist_part_update', $modal);
 
             var thumbnailLoaded = false;
@@ -2736,21 +2733,9 @@
                 that.highlightPart(part.id);
                 return false;
             });
-            $btnExportToSkp.on('click', function () {
+            $btnExportToFile.on('click', function () {
                 this.blur();
-                that.exportPartTo3d(part.id, 'skp');
-            });
-            $btnExportToStl.on('click', function () {
-                this.blur();
-                that.exportPartTo3d(part.id, 'stl');
-            });
-            $btnExportToObj.on('click', function () {
-                this.blur();
-                that.exportPartTo3d(part.id, 'obj');
-            });
-            $btnExportToDxf.on('click', function () {
-                this.blur();
-                that.exportPartTo3d(part.id, 'dxf');
+                that.exportPartToFile(part.id, $(this).data('file-format'), $(this).data('drawing-type'));
             });
             $btnUpdate.on('click', function () {
 
@@ -2916,12 +2901,13 @@
         }
     };
 
-    LadbTabCutlist.prototype.exportPartTo3d = function (id, fileFormat) {
+    LadbTabCutlist.prototype.exportPartToFile = function (id, fileFormat, drawingType) {
         var that = this;
 
         rubyCallCommand('cutlist_part_export_to_file', {
             part_id: id,
-            file_format: fileFormat
+            file_format: fileFormat,
+            drawing_type: drawingType
         }, function (response) {
 
             if (response.errors) {
@@ -3114,7 +3100,7 @@
                 var $selectHideCross = $('#ladb_select_hide_cross', $modal);
                 var $selectOriginCorner = $('#ladb_select_origin_corner', $modal);
                 var $inputWrapLength = $('#ladb_input_wrap_length', $modal);
-                var $selectPartProjection = $('#ladb_select_part_projection', $modal);
+                var $selectPartDrawingType = $('#ladb_select_part_drawing_type', $modal);
                 var $btnEditMaterial = $('#ladb_btn_edit_material', $modal);
                 var $btnGenerate = $('#ladb_btn_generate', $modal);
 
@@ -3130,7 +3116,7 @@
                     options.hide_cross = $selectHideCross.val() === '1';
                     options.origin_corner = parseInt($selectOriginCorner.val());
                     options.wrap_length = $inputWrapLength.val();
-                    options.part_projection = parseInt($selectPartProjection.val());
+                    options.part_drawing_type = parseInt($selectPartDrawingType.val());
                 }
                 var fnFillInputs = function (options) {
                     $inputSawKerf.val(options.saw_kerf);
@@ -3142,7 +3128,7 @@
                     $selectHideCross.selectpicker('val', options.hide_cross ? '1' : '0');
                     $selectOriginCorner.selectpicker('val', options.origin_corner);
                     $inputWrapLength.val(options.wrap_length);
-                    $selectPartProjection.selectpicker('val', options.part_projection);
+                    $selectPartDrawingType.selectpicker('val', options.part_drawing_type);
                 }
                 var fnEditMaterial = function (callback) {
 
@@ -3187,7 +3173,7 @@
                 $selectHideCross.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectOriginCorner.selectpicker(SELECT_PICKER_OPTIONS);
                 $inputWrapLength.ladbTextinputDimension();
-                $selectPartProjection.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectPartDrawingType.selectpicker(SELECT_PICKER_OPTIONS);
 
                 fnFillInputs(cuttingdiagram1dOptions);
 
@@ -3351,6 +3337,7 @@
                                                     $inputLeftoversStrokeColor.ladbTextinputColor(disableLeftoversColors ? 'disable' : 'enable');
                                                     $inputLeftoversFillColor.ladbTextinputColor(disableLeftoversColors || isDxf ? 'disable' : 'enable');
                                                     $inputCutsStrokeColor.ladbTextinputColor(disableCutsColors ? 'disable' : 'enable');
+                                                    $('.ladb-form-fill-color').css('opacity', isDxf ? 0.3 : 1);
                                                 };
 
                                                 $widgetPreset.ladbWidgetPreset({
@@ -3601,7 +3588,7 @@
                 var $selectOriginCorner = $('#ladb_select_origin_corner', $modal);
                 var $selectHighlightPrimaryCuts = $('#ladb_select_highlight_primary_cuts', $modal);
                 var $selectHideEdgesPreview = $('#ladb_select_hide_edges_preview', $modal);
-                var $selectPartProjection = $('#ladb_select_part_projection', $modal);
+                var $selectPartDrawingType = $('#ladb_select_part_drawing_type', $modal);
                 var $btnEditMaterial = $('#ladb_btn_edit_material', $modal);
                 var $btnGenerate = $('#ladb_btn_generate', $modal);
 
@@ -3622,7 +3609,7 @@
                     options.origin_corner = parseInt($selectOriginCorner.val());
                     options.highlight_primary_cuts = $selectHighlightPrimaryCuts.val() === '1';
                     options.hide_edges_preview = $selectHideEdgesPreview.val() === '1';
-                    options.part_projection = parseInt($selectPartProjection.val());
+                    options.part_drawing_type = parseInt($selectPartDrawingType.val());
                 }
                 var fnFillInputs = function (options) {
                     $inputSawKerf.val(options.saw_kerf);
@@ -3639,7 +3626,7 @@
                     $selectOriginCorner.selectpicker('val', options.origin_corner);
                     $selectHighlightPrimaryCuts.selectpicker('val', options.highlight_primary_cuts ? '1' : '0');
                     $selectHideEdgesPreview.selectpicker('val', options.hide_edges_preview ? '1' : '0');
-                    $selectPartProjection.selectpicker('val', options.part_projection);
+                    $selectPartDrawingType.selectpicker('val', options.part_drawing_type);
                 }
                 var fnEditMaterial = function (callback) {
 
@@ -3689,7 +3676,7 @@
                 $selectOriginCorner.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectHighlightPrimaryCuts.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectHideEdgesPreview.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectPartProjection.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectPartDrawingType.selectpicker(SELECT_PICKER_OPTIONS);
 
                 fnFillInputs(cuttingdiagram2dOptions);
 
@@ -3853,6 +3840,7 @@
                                                     $inputLeftoversStrokeColor.ladbTextinputColor(disableLeftoversColors ? 'disable' : 'enable');
                                                     $inputLeftoversFillColor.ladbTextinputColor(disableLeftoversColors || isDxf ? 'disable' : 'enable');
                                                     $inputCutsStrokeColor.ladbTextinputColor(disableCutsColors ? 'disable' : 'enable');
+                                                    $('.ladb-form-fill-color').css('opacity', isDxf ? 0.3 : 1);
                                                 };
 
                                                 $widgetPreset.ladbWidgetPreset({

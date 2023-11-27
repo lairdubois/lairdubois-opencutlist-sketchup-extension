@@ -21,12 +21,12 @@
     "keep_width": { "metric": "100mm", "imperial": "4\"" },
     "sheet_folding": true,
     "hide_part_list": false,
+    "part_drawing_type": 1,    /* PART_DRAWING_TYPE_TOP */
     "use_names": false,
     "full_width_diagram": false,
     "hide_cross": false,
     "origin_corner": 0,       /* ORIGIN_CORNER_TOP_LEFT */
     "highlight_primary_cuts": false,
-    "hide_edges_preview": true,
-    "part_projection": 1    /* PART_PROJECTION_FRONT */
+    "hide_edges_preview": true
   }
 }
