@@ -237,6 +237,9 @@ tab:
     edit_part_size_increase_properties: Eigenschaften (Übermaße) des Teils bearbeiten
     edit_part_edges_properties: Eigenschaften (Kanten) des Teils bearbeiten
     edit_part_faces_properties: Eigenschaften (Flächen) des Teils bearbeiten
+    part_drawing_type_1: 2D Vorderansicht
+    part_drawing_type_2: 2D Rückansicht
+    part_drawing_type_3: 3D
     tooltip:
       show_hide_block: Gruppe anzeigen / ausblenden
       scroll_to_block: Zur Gruppe blättern
@@ -439,10 +442,6 @@ tab:
       face_disabled_help: "Diese Fläche ist nicht konfigurierbar, da an dieser Seite des Teils im Modell keine materialtragende Fläche erkannt wurde."
       multiple_values: mehrfache Werte
       loading_preview: Vorschau laden
-    export_to_skp:
-      title: In .skp Datei exportieren
-    export_to_3d:
-      title: In .{{ file_format }} Datei exportieren
     option:
       auto_orient: Automatische Orientierung der Teile
       auto_orient_help: |
@@ -713,7 +712,7 @@ tab:
       option_part_drawing_type: Formen der Teile
       option_part_drawing_type_0: Ausgeblendet
       option_part_drawing_type_1: Vorderansicht
-      option_part_drawing_type_2: Rückseite
+      option_part_drawing_type_2: Rückansicht
       option_part_drawing_type_help: |
         Ermöglicht es, die tatsächliche Form der Teile sowie ihre Bearbeitungen im Diagramm ein- oder auszublenden.
 
@@ -816,21 +815,38 @@ tab:
         title: Schnittplan exportieren
         options_general: Allgemein
         option_file_format: Format
-        option_file_format_help: TBD
+        option_file_format_svg: SVG
+        option_file_format_dxf: DXF
+        option_file_format_help: |
+          Auswahl des zu exportierenden Dateiformats.
+        option_dxf_structure: DXF Struktur
+        option_dxf_structure_1: Layers
+        option_dxf_structure_2: Layers + Blöcke
+        option_dxf_structure_help: |
+          Auswahl der DXF-Dateistruktur.
+
+          - Die Struktur **Layers** zeichnet alle Linien flach und unterscheidet zwischen verschiedenen Linientypen nur durch Layer. *Diese Struktur bietet eine bessere Kompatibilität mit Software von Drittanbietern.*
+          - Die Struktur **Layers + Blocks** erstellt einen Block pro Element (Teile, Schnitte, etc.) und fügt diese Blöcke so oft ein, wie sie wiederholt werden. *Diese Struktur bietet mehr Details zum Ändern der Datei.*
         option_smoothing: Glättung
         option_smoothing_0: Keine
         option_smoothing_1: Kreise und Bögen erkennen (experimentell)
-        option_smoothing_help: TBD
+        option_smoothing_help: |
+          Auswahl des Glättungsmodus
         option_sheet: Platte
-        option_sheet_help: TBD
+        option_sheet_help: |
+          Wahl ob die Platte gezeichnet wird und ihre Farbe.
         option_bar: Stange
-        option_bar_help: TBD
+        option_bar_help: |
+          Wahl ob die Stange gezeichnet wird und ihre Farbe.
         option_parts: Teile
-        option_parts_help: TBD
+        option_parts_help: |
+          Wahl ob die Teile gezeichnet werden und ihre Farbe.
         option_leftovers: Verschnitte
-        option_leftovers_help: TBD
+        option_leftovers_help: |
+          Wahl ob die Verschnitte gezeichet werden und ihre Farbe.
         option_cuts: Schnitte
-        option_cuts_help: TBD
+        option_cuts_help: |
+          Wahl ob die Schnitte gezeichnet werden und ihre Farbe.
         option_stroke_color: Strichfarbe
         option_fill_color: Füllfarbe
         warning:
@@ -927,6 +943,7 @@ tab:
         part_edge_xmax: Kantenband Breite 2
         part_face_zmin: Furnier Rückseite
         part_face_zmax: Furnier Vorderseite
+        thumbnail_proportional_drawing: Vignette
         thumbnail_proportional: Proportionale Vignette
         thumbnail_square: Quadratische Vignette
         group_material: Material / Dicke
@@ -1027,8 +1044,6 @@ tab:
       no_entities: Ihr Modell ist leer. Sie müssen mir schon etwas mehr geben ;)
       no_component_in_selection: Es wurden keine sichtbaren Komponenteninstanzen in Ihrer Auswahl gefunden.
       no_component_in_model: Es wurden keine sichtbaren Komponenteninstanzen in Ihrer Szene gefunden.
-      failed_to_write_export_file: "Das Schreiben der Exportdatei ist fehlgeschlagen. **{{ error }}**"
-      failed_export_skp_file: "Beim Exportieren der .skp Datei ist ein Fehler aufgetreten. **{{ error }}**"
       unknow_part: Das ausgewählte Teil existiert nicht in der Holzliste.
       obsolete_cutlist: "Unmöglich, die Holzliste ist nicht mehr aktuell. Bitte, aktualisieren Sie sie."
     warning:
