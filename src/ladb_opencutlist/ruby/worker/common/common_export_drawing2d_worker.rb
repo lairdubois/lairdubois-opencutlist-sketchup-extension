@@ -128,7 +128,7 @@ module Ladb::OpenCutList
 
         _svg_write_group_start(file, id: LAYER_PART)
 
-        _svg_write_projection_def(file, projection_def, @smoothing, unit_transformation, unit_transformation, unit_sign, nil, ColorUtils::COLOR_BLACK)
+        _svg_write_projection_def(file, projection_def, @smoothing, unit_transformation, unit_transformation, unit_sign, nil, ColorUtils::COLOR_BLACK, LAYER_PART)
 
         _svg_write_group_end(file)
 
@@ -202,7 +202,7 @@ module Ladb::OpenCutList
       _dxf_write_section_blocks(file)
       _dxf_write_section_entities(file) do
 
-        _dxf_write_projection_def_geometry(file, projection_def, unit_factor, @smoothing, unit_transformation, LAYER_PART)
+        _dxf_write_projection_def_geometry(file, projection_def, @smoothing, unit_transformation, unit_transformation, LAYER_PART)
 
         edge_manipulators.each do |edge_manipulator|
 

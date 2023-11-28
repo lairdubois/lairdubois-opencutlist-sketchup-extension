@@ -134,8 +134,6 @@ module Ladb::OpenCutList
 
       unless @sheet_hidden
 
-        id = "#{sheet.length} x #{sheet.width}"
-
         _svg_write_group_start(file, id: LAYER_SHEET)
         _svg_write_tag(file, 'rect', {
           x: 0,
@@ -144,8 +142,6 @@ module Ladb::OpenCutList
           height: height,
           stroke: _svg_stroke_color_hex(@sheet_stroke_color, @sheet_fill_color),
           fill: _svg_fill_color_hex(@sheet_fill_color),
-          id: _svg_sanitize_id(id),
-          'serif:id': id
         })
         _svg_write_group_end(file)
 
@@ -155,7 +151,7 @@ module Ladb::OpenCutList
         _svg_write_group_start(file, id: LAYER_PART)
         sheet.parts.each do |part|
 
-          id = @use_names ? part.name : part.number
+          id = _svg_sanitize_id("#{LAYER_PART}_#{part.number.to_s.rjust(3, '_')}#{@use_names ? "_#{part.name}" : ''}")
 
           projection_def = _get_part_projection_def(part)
           if projection_def.nil?
@@ -176,7 +172,7 @@ module Ladb::OpenCutList
               height: _svg_value(size.y),
               stroke: _svg_stroke_color_hex(@parts_stroke_color, @parts_fill_color),
               fill: _svg_fill_color_hex(@parts_fill_color),
-              id: _svg_sanitize_id(id),
+              id: id,
               'serif:id': id
             })
 
@@ -201,7 +197,7 @@ module Ladb::OpenCutList
               'serif:id': id
             })
 
-            _svg_write_projection_def(file, projection_def, @smoothing, transformation, unit_transformation, unit_sign, @parts_stroke_color, @parts_fill_color)
+            _svg_write_projection_def(file, projection_def, @smoothing, transformation, unit_transformation, unit_sign, @parts_stroke_color, @parts_fill_color, LAYER_PART)
 
             _svg_write_group_end(file)
 
@@ -214,8 +210,6 @@ module Ladb::OpenCutList
       unless @leftovers_hidden
         _svg_write_group_start(file, id: LAYER_LEFTOVER)
         sheet.leftovers.each do |leftover|
-
-          id = "#{leftover.length} x #{leftover.width}"
 
           position = Geom::Point3d.new(
             _to_inch(leftover.px_x),
@@ -234,8 +228,6 @@ module Ladb::OpenCutList
             height: _svg_value(size.y),
             stroke: _svg_stroke_color_hex(@leftovers_stroke_color, @leftovers_fill_color),
             fill: _svg_fill_color_hex(@leftovers_fill_color),
-            id: _svg_sanitize_id(id),
-            'serif:id': id
           })
 
         end
@@ -255,20 +247,12 @@ module Ladb::OpenCutList
             _to_inch(cut.px_y + (!cut.is_horizontal ? cut.px_length : 0))
           ).transform(unit_transformation)
 
-          if cut.is_horizontal
-            id = "y = #{cut.y}"
-          else
-            id = "x = #{cut.x}"
-          end
-
           _svg_write_tag(file, 'line', {
             x1: _svg_value(position1.x),
             y1: _svg_value(position1.y),
             x2: _svg_value(position2.x),
             y2: _svg_value(position2.y),
             stroke: _svg_stroke_color_hex(@cuts_stroke_color),
-            id: _svg_sanitize_id(id),
-            'serif:id': id
           })
 
         end
@@ -307,14 +291,14 @@ module Ladb::OpenCutList
         sheet.parts.uniq { |part| part.id }.each do |part|
           projection_def = _get_part_projection_def(part)
           if projection_def.is_a?(DrawingProjectionDef)
-            depth_layer_defs.concat(_dxf_get_projection_def_depth_layer_defs(projection_def, @parts_stroke_color, unit_factor, LAYER_PART))
+            depth_layer_defs.concat(_dxf_get_projection_def_depth_layer_defs(projection_def, @parts_stroke_color, unit_transformation, LAYER_PART))
           end
         end
         layer_defs.concat(depth_layer_defs.uniq { |layer_def| layer_def[:name] })
       end
 
       fn_part_block_name = lambda do |part|
-        _svg_sanitize_name("PART_#{part.number.to_s.rjust(3, '_')}#{@use_names ? "_#{part.name}" : ''}")
+        _dxf_sanitize_name("#{LAYER_PART}_#{part.number.to_s.rjust(3, '_')}#{@use_names ? "_#{part.name}" : ''}")
       end
 
       _dxf_write_start(file)
@@ -368,7 +352,7 @@ module Ladb::OpenCutList
                   transformation *= Geom::Transformation.translation(Geom::Vector3d.new(i_x_offset, i_y_offset))
                 end
 
-                _dxf_write_projection_def_block(file, fn_part_block_name.call(part), projection_def, unit_factor, @smoothing, transformation, LAYER_PART) do
+                _dxf_write_projection_def_block(file, fn_part_block_name.call(part), projection_def, @smoothing, transformation, unit_transformation, LAYER_PART) do
                   _dxf_write_label(file, 0, 0, width, height, @use_names ? part.name : part.number, part.rotated, LAYER_TEXT)
                 end
 
@@ -441,7 +425,7 @@ module Ladb::OpenCutList
                   transformation *= Geom::Transformation.translation(Geom::Vector3d.new(i_x + i_x_offset, i_y + i_y_offset))
                 end
 
-                _dxf_write_projection_def_geometry(file, projection_def, unit_factor, @smoothing, transformation, LAYER_PART)
+                _dxf_write_projection_def_geometry(file, projection_def, @smoothing, transformation, unit_transformation, LAYER_PART)
 
               else
 

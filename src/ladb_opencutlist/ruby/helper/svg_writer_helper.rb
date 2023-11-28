@@ -60,7 +60,7 @@ module Ladb::OpenCutList
     # ID
 
     def _svg_sanitize_id(id)
-      id.to_s.gsub(/[\s]/, '_')
+      id.to_s.gsub(/[\s<>\/\\“:;?*|=‘.-]/, '_').upcase
     end
 
     # Value
@@ -100,7 +100,18 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _svg_write_projection_def(file, projection_def, smoothing = false, transformation = IDENTITY, unit_transformation = IDENTITY, unit_sign = '', stroke_color = nil, fill_color = nil)
+    def _dxf_get_projection_layer_def_depth_name(layer_def, unit_transformation, prefix = nil)
+      return '' unless layer_def.is_a?(DrawingProjectionLayerDef)
+
+      if layer_def.is_top?
+        a = [ prefix, 'OUTER' ]
+      else
+        a = [ prefix, 'DEPTH', ('%0.04f' % [ Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x ]).rjust(9, '_') ]
+      end
+      _svg_sanitize_id(a.compact.join('_'))
+    end
+
+    def _svg_write_projection_def(file, projection_def, smoothing = false, transformation = IDENTITY, unit_transformation = IDENTITY, unit_sign = '', stroke_color = nil, fill_color = nil, prefix = '')
 
       require_relative '../model/drawing/drawing_projection_def'
 
@@ -108,25 +119,33 @@ module Ladb::OpenCutList
 
       projection_def.layer_defs.each do |layer_def|
 
-        if layer_def.position == DrawingProjectionLayerDef::LAYER_POSITION_TOP
+        id = _dxf_get_projection_layer_def_depth_name(layer_def, unit_transformation,prefix)
+
+        if layer_def.is_top?
           attributes = {
             stroke: _svg_stroke_color_hex(stroke_color, fill_color),
             fill: _svg_fill_color_hex(fill_color),
+            id: id,
+            'serif:id': id,
             'shaper:cutType': 'outside'
           }
           attributes.merge!({ 'shaper:cutDepth': "#{_svg_value(Geom::Point3d.new(projection_def.max_depth, 0).transform(unit_transformation).x)}#{unit_sign}" }) if projection_def.max_depth > 0
-        elsif layer_def.position == DrawingProjectionLayerDef::LAYER_POSITION_BOTTOM
+        elsif layer_def.is_bottom?
           attributes = {
             stroke: '#000000',
             'stroke-width': '0.1mm',
             fill: '#FFFFFF',
+            id: id,
+            'serif:id': id,
             'shaper:cutType': 'inside'
           }
-          attributes.merge!({ 'shaper:cutDepth': "#{_svg_value(Geom::Point3d.new(projection_def.max_depth, 0).transform(unit_transformation).x)}#{unit_sign}" }) if projection_def.max_depth > 0
+          attributes.merge!({ 'shaper:cutDepth': "#{_svg_value(Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x)}#{unit_sign}" }) if projection_def.max_depth > 0
         else
           attributes = {
             stroke: _svg_stroke_color_hex(stroke_color, fill_color),
             fill: fill_color ? ColorUtils.color_to_hex(ColorUtils.color_lighten(Sketchup::Color.new(fill_color), projection_def.max_depth > 0 ? (layer_def.depth / projection_def.max_depth) * 0.6 + 0.2 : 0.3)) : 'none',
+            id: id,
+            'serif:id': id,
             'shaper:cutType': 'pocket',
             'shaper:cutDepth': "#{_svg_value(Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x)}#{unit_sign}"
           }

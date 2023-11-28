@@ -111,30 +111,68 @@ module Ladb::OpenCutList
 
       if @option_down_to_top_union
 
-        # Down to Top union
-        ld[1..-1].each do |lower_layer_def|
-          next if lower_layer_def[:paths].empty?
-          top_layer_def[:paths] = Clippy.compute_union(top_layer_def[:paths] + lower_layer_def[:paths])
-        end
+        # Copy top paths
+        min_top_paths = top_layer_def[:paths]
 
-      end
+        # Union top paths with lower paths
+        mid_top_paths = Clippy.compute_union(min_top_paths + ld[1..-1].map { |layer_def| layer_def[:paths] }.flatten(1).compact)
 
-      if @option_passthrough_holes
+        # Extract passthrough holes and reverse them to plain path
+        passthrough_paths = mid_top_paths.select { |path| !Clippy.is_rpath_positive?(path) }.each_slice(2).to_a.reverse.flatten(1)
 
-        # Move top holes to bottom layer
-        top_layer_def[:paths].each do |path|
-          unless Clippy.is_rpath_positive?(path)
-            bottom_layer_def[:paths] << path
+        # Union top paths with lower paths
+        max_top_paths = Clippy.compute_union(mid_top_paths + passthrough_paths)
+
+        # Difference with max and min to extract holes to propagate
+        mask_paths = Clippy.compute_difference(max_top_paths, min_top_paths)
+
+        # Replace bottom layer paths
+        bottom_layer_def[:paths] = passthrough_paths
+
+        # Propagate down to up
+        ldr = ld.reverse[0..-2] # Exclude top layer
+        mask_paths.each do |mask_path|
+          lower_paths = []
+          ldr.each do |layer_def|
+            next if layer_def[:paths].empty?
+            next if Clippy.compute_intersection(layer_def[:paths], [ mask_path ]).empty?
+            layer_def[:paths] = Clippy.compute_union(lower_paths + layer_def[:paths]) unless lower_paths.empty?
+            lower_paths = Clippy.compute_intersection(layer_def[:paths], [ mask_path ])
           end
         end
-        unless bottom_layer_def[:paths].empty?
 
-          # Bottom to Top union
-          top_layer_def[:paths] = Clippy.compute_union(top_layer_def[:paths] + bottom_layer_def[:paths])
-
-        end
+        # Replace top layer paths
+        top_layer_def[:paths] = max_top_paths
 
       end
+
+
+      # if @option_down_to_top_union
+      #
+      #   # Down to Top union
+      #   ld[1..-1].each do |lower_layer_def|
+      #     next if lower_layer_def[:paths].empty?
+      #     top_layer_def[:paths] = Clippy.compute_union(top_layer_def[:paths] + lower_layer_def[:paths])
+      #   end
+      #
+      # end
+      #
+      # if @option_passthrough_holes
+      #
+      #   # Move top holes to bottom layer
+      #   top_layer_def[:paths].each do |path|
+      #     unless Clippy.is_rpath_positive?(path)
+      #       bottom_layer_def[:paths] << path
+      #     end
+      #   end
+      #   unless bottom_layer_def[:paths].empty?
+      #
+      #     # Bottom to Top union
+      #     top_layer_def[:paths] = Clippy.compute_union(top_layer_def[:paths] + bottom_layer_def[:paths])
+      #
+      #   end
+      #
+      # end
 
       # Output
 

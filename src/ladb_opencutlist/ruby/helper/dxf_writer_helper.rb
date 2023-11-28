@@ -340,7 +340,7 @@ module Ladb::OpenCutList
       @_dxf_current_id.to_s(16).upcase
     end
 
-    def _svg_sanitize_name(name)
+    def _dxf_sanitize_name(name)
       name.to_s.gsub(/[\s<>\/\\“:;?*|=‘.-]/, '_').upcase
     end
 
@@ -1164,24 +1164,24 @@ module Ladb::OpenCutList
 
     # -- CUSTOM GEOMETRY
 
-    def _dxf_get_projection_layer_def_depth_name(layer_def, unit_factor, prefix = nil)
+    def _dxf_get_projection_layer_def_depth_name(layer_def, unit_transformation, prefix = nil)
       return '' unless layer_def.is_a?(DrawingProjectionLayerDef)
 
       if layer_def.is_top?
         a = [ prefix, 'OUTER' ]
       else
-        a = [ prefix, 'DEPTH', ('%0.04f' % [ layer_def.depth.to_f * unit_factor ]).rjust(9, '_') ]
+        a = [ prefix, 'DEPTH', ('%0.04f' % [ Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x ]).rjust(9, '_') ]
       end
-      _svg_sanitize_name(a.compact.join('_'))
+      _dxf_sanitize_name(a.compact.join('_'))
     end
 
-    def _dxf_get_projection_def_depth_layer_defs(projection_def, color, unit_factor, prefix = nil)
+    def _dxf_get_projection_def_depth_layer_defs(projection_def, color, unit_transformation, prefix = nil)
       return [] unless projection_def.is_a?(DrawingProjectionDef)
 
       layer_defs = []
       projection_def.layer_defs.each do |layer_def|
         layer_defs.push({
-          :name => _dxf_get_projection_layer_def_depth_name(layer_def, unit_factor, prefix),
+          :name => _dxf_get_projection_layer_def_depth_name(layer_def, unit_transformation, prefix),
           :color => color ? ColorUtils.color_lighten(color, projection_def.max_depth > 0 ? (layer_def.depth / projection_def.max_depth) * 0.6 + 0.2 : 0.3) : nil
         })
       end
@@ -1196,21 +1196,21 @@ module Ladb::OpenCutList
 
     end
 
-    def _dxf_write_projection_def_block(file, name, projection_def, unit_factor, smoothing = false, transformation = IDENTITY, layer = '0')
+    def _dxf_write_projection_def_block(file, name, projection_def, smoothing = false, transformation = IDENTITY, unit_transformation = IDENTITY, layer = '0')
       return unless projection_def.is_a?(DrawingProjectionDef)
 
       _dxf_write_section_blocks_block(file, name, @_dxf_model_space_id) do
-        _dxf_write_projection_def_geometry(file, projection_def, unit_factor, smoothing, transformation, layer)
+        _dxf_write_projection_def_geometry(file, projection_def, smoothing, transformation, unit_transformation, layer)
         yield if block_given?
       end
 
     end
 
-    def _dxf_write_projection_def_geometry(file, projection_def, unit_factor, smoothing = false, transformation = IDENTITY, layer = '0')
+    def _dxf_write_projection_def_geometry(file, projection_def, smoothing = false, transformation = IDENTITY, unit_transformation = IDENTITY, layer = '0')
       return unless projection_def.is_a?(DrawingProjectionDef)
 
       projection_def.layer_defs.each do |layer_def|
-        _dxf_write_projection_layer_def_geometry(file, layer_def, smoothing, transformation, _dxf_get_projection_layer_def_depth_name(layer_def, unit_factor, layer))
+        _dxf_write_projection_layer_def_geometry(file, layer_def, smoothing, transformation, _dxf_get_projection_layer_def_depth_name(layer_def, unit_transformation, layer))
       end
 
     end
