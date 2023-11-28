@@ -6,7 +6,7 @@ module Ladb::OpenCutList
 
     # Unit
 
-    def _svg_get_unit_sign_and_transformation(unit)
+    def _svg_get_unit_sign_and_factor(unit)
 
       require_relative '../utils/dimension_utils'
 
@@ -22,7 +22,7 @@ module Ladb::OpenCutList
         unit_sign = 'mm'
       end
 
-      return unit_sign, Geom::Transformation.scaling(ORIGIN, unit_factor, unit_factor, 1.0)
+      return unit_sign, unit_factor
     end
 
     # Ident

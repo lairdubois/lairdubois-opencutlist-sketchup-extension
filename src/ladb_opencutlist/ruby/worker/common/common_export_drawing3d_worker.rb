@@ -140,7 +140,8 @@ module Ladb::OpenCutList
 
     def _write_to_dxf_file(file)
 
-      unit_transformation = _dxf_get_unit_transformation(@unit, true)
+      unit_factor = _dxf_get_unit_factor(@unit)
+      unit_transformation = Geom::Transformation.scaling(ORIGIN, unit_factor, unit_factor, unit_factor)
 
       layer_defs = []
       layer_defs.push({ :name => LAYER_PART, :color => 7 }) unless @drawing_def.face_manipulators.empty?

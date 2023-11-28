@@ -277,7 +277,7 @@ module Ladb::OpenCutList
     DXF_TEXT_VALIGN_MIDDLE = 2
     DXF_TEXT_VALIGN_TOP = 3
 
-    def _dxf_get_unit_transformation(su_unit, is_3d = false)
+    def _dxf_get_unit_factor(su_unit)
 
       case su_unit
       when DimensionUtils::INCHES
@@ -296,7 +296,7 @@ module Ladb::OpenCutList
         unit_factor = DimensionUtils.instance.length_to_model_unit_float(1.0.to_l)
       end
 
-      Geom::Transformation.scaling(ORIGIN, unit_factor, unit_factor, is_3d ? unit_factor : 1.0)
+      unit_factor
     end
 
     def _dxf_convert_unit(su_unit)
@@ -338,6 +338,10 @@ module Ladb::OpenCutList
       @_dxf_current_id = 0xfff if @_dxf_current_id.nil?
       @_dxf_current_id += 1
       @_dxf_current_id.to_s(16).upcase
+    end
+
+    def _svg_sanitize_name(name)
+      name.to_s.gsub(/[\s<>\/\\“:;?*|=‘.-]/, '_').upcase
     end
 
     # -----
@@ -1160,24 +1164,24 @@ module Ladb::OpenCutList
 
     # -- CUSTOM GEOMETRY
 
-    def _dxf_get_projection_layer_def_depth_name(layer_def, prefix = nil)
+    def _dxf_get_projection_layer_def_depth_name(layer_def, unit_factor, prefix = nil)
       return '' unless layer_def.is_a?(DrawingProjectionLayerDef)
 
       if layer_def.is_top?
         a = [ prefix, 'OUTER' ]
       else
-        a = [ prefix, 'DEPTH', ('%0.04f' % [ layer_def.depth.to_mm ]).rjust(9, '_').split('.') ]
+        a = [ prefix, 'DEPTH', ('%0.04f' % [ layer_def.depth.to_f * unit_factor ]).rjust(9, '_') ]
       end
-      a.compact.join('_')
+      _svg_sanitize_name(a.compact.join('_'))
     end
 
-    def _dxf_get_projection_def_depth_layer_defs(projection_def, color, prefix = nil)
+    def _dxf_get_projection_def_depth_layer_defs(projection_def, color, unit_factor, prefix = nil)
       return [] unless projection_def.is_a?(DrawingProjectionDef)
 
       layer_defs = []
       projection_def.layer_defs.each do |layer_def|
         layer_defs.push({
-          :name => _dxf_get_projection_layer_def_depth_name(layer_def, prefix),
+          :name => _dxf_get_projection_layer_def_depth_name(layer_def, unit_factor, prefix),
           :color => color ? ColorUtils.color_lighten(color, projection_def.max_depth > 0 ? (layer_def.depth / projection_def.max_depth) * 0.6 + 0.2 : 0.3) : nil
         })
       end
@@ -1192,21 +1196,21 @@ module Ladb::OpenCutList
 
     end
 
-    def _dxf_write_projection_def_block(file, name, projection_def, smoothing = false, transformation = IDENTITY, layer = '0')
+    def _dxf_write_projection_def_block(file, name, projection_def, unit_factor, smoothing = false, transformation = IDENTITY, layer = '0')
       return unless projection_def.is_a?(DrawingProjectionDef)
 
       _dxf_write_section_blocks_block(file, name, @_dxf_model_space_id) do
-        _dxf_write_projection_def_geometry(file, projection_def, smoothing, transformation, layer)
+        _dxf_write_projection_def_geometry(file, projection_def, unit_factor, smoothing, transformation, layer)
         yield if block_given?
       end
 
     end
 
-    def _dxf_write_projection_def_geometry(file, projection_def, smoothing = false, transformation = IDENTITY, layer = '0')
+    def _dxf_write_projection_def_geometry(file, projection_def, unit_factor, smoothing = false, transformation = IDENTITY, layer = '0')
       return unless projection_def.is_a?(DrawingProjectionDef)
 
       projection_def.layer_defs.each do |layer_def|
-        _dxf_write_projection_layer_def_geometry(file, layer_def, smoothing, transformation, _dxf_get_projection_layer_def_depth_name(layer_def, layer))
+        _dxf_write_projection_layer_def_geometry(file, layer_def, smoothing, transformation, _dxf_get_projection_layer_def_depth_name(layer_def, unit_factor, layer))
       end
 
     end

@@ -119,7 +119,8 @@ module Ladb::OpenCutList
 
     def _write_to_svg_file(file, sheet)
 
-      unit_sign, unit_transformation = _svg_get_unit_sign_and_transformation(DimensionUtils.instance.length_unit)
+      unit_sign, unit_factor = _svg_get_unit_sign_and_factor(DimensionUtils.instance.length_unit)
+      unit_transformation = Geom::Transformation.scaling(unit_factor, unit_factor, 1.0)
 
       size = Geom::Point3d.new(
         _to_inch(sheet.px_length),
@@ -280,17 +281,8 @@ module Ladb::OpenCutList
 
     def _write_to_dxf_file(file, sheet)
 
-      fn_part_block_name = lambda do |part|
-        "PART_#{part.number.to_s.rjust(3, '_')}"
-      end
-      fn_leftover_block_name = lambda do |leftover|
-        "LEFTOVER_#{leftover.length.to_s.rjust(5, '_')}#{leftover.width.to_s.rjust(5, '_')}"
-      end
-      fn_cut_block_name = lambda do |cut|
-        "CUT_#{cut.is_horizontal ? "Y_#{cut.y.to_s.rjust(5, '_')}" : "X_#{cut.x.to_s.rjust(5, '_')}"}"
-      end
-
-      unit_transformation = _dxf_get_unit_transformation(DimensionUtils.instance.length_unit)
+      unit_factor = _dxf_get_unit_factor(DimensionUtils.instance.length_unit)
+      unit_transformation = Geom::Transformation.scaling(ORIGIN, unit_factor, unit_factor, 1.0)
 
       sheet_size = Geom::Point3d.new(
         _to_inch(sheet.px_length),
@@ -315,10 +307,14 @@ module Ladb::OpenCutList
         sheet.parts.uniq { |part| part.id }.each do |part|
           projection_def = _get_part_projection_def(part)
           if projection_def.is_a?(DrawingProjectionDef)
-            depth_layer_defs.concat(_dxf_get_projection_def_depth_layer_defs(projection_def, @parts_stroke_color, LAYER_PART))
+            depth_layer_defs.concat(_dxf_get_projection_def_depth_layer_defs(projection_def, @parts_stroke_color, unit_factor, LAYER_PART))
           end
         end
         layer_defs.concat(depth_layer_defs.uniq { |layer_def| layer_def[:name] })
+      end
+
+      fn_part_block_name = lambda do |part|
+        _svg_sanitize_name("PART_#{part.number.to_s.rjust(3, '_')}#{@use_names ? "_#{part.name}" : ''}")
       end
 
       _dxf_write_start(file)
@@ -327,10 +323,6 @@ module Ladb::OpenCutList
       _dxf_write_section_tables(file, min, max, layer_defs) do |owner_id|
 
         if @dxf_structure == DXF_STRUCTURE_LAYER_AND_BLOCK
-
-          unless @sheet_hidden
-            _dxf_write_section_tables_block_record(file, 'SHEET', owner_id)
-          end
 
           unless @parts_hidden
             sheet.parts.uniq { |part| part.id }.each do |part|
@@ -343,30 +335,12 @@ module Ladb::OpenCutList
             end
           end
 
-          unless @leftovers_hidden
-            sheet.leftovers.uniq { |leftover| [ leftover.length, leftover.width ] }.each do |leftover|
-              _dxf_write_section_tables_block_record(file, fn_leftover_block_name.call(leftover), owner_id)
-            end
-          end
-
-          unless @cuts_hidden
-          sheet.cuts.each do |cut|
-            _dxf_write_section_tables_block_record(file, fn_cut_block_name.call(cut), owner_id)
-          end
-        end
-
         end
 
       end
       _dxf_write_section_blocks(file) do
 
         if @dxf_structure == DXF_STRUCTURE_LAYER_AND_BLOCK
-
-          unless @sheet_hidden
-            _dxf_write_section_blocks_block(file, 'SHEET', @_dxf_model_space_id) do
-              _dxf_write_rect(file, 0, 0, sheet_width, sheet_height, LAYER_SHEET)
-            end
-          end
 
           unless @parts_hidden
             sheet.parts.uniq { |part| part.id }.each do |part|
@@ -394,7 +368,7 @@ module Ladb::OpenCutList
                   transformation *= Geom::Transformation.translation(Geom::Vector3d.new(i_x_offset, i_y_offset))
                 end
 
-                _dxf_write_projection_def_block(file, fn_part_block_name.call(part), projection_def, @smoothing, transformation, LAYER_PART) do
+                _dxf_write_projection_def_block(file, fn_part_block_name.call(part), projection_def, unit_factor, @smoothing, transformation, LAYER_PART) do
                   _dxf_write_label(file, 0, 0, width, height, @use_names ? part.name : part.number, part.rotated, LAYER_TEXT)
                 end
 
@@ -410,59 +384,13 @@ module Ladb::OpenCutList
             end
           end
 
-          unless @leftovers_hidden
-            sheet.leftovers.uniq { |leftover| [ leftover.length, leftover.width ] }.each do |leftover|
-
-              size = Geom::Point3d.new(
-                _to_inch(leftover.px_length),
-                _to_inch(leftover.px_width)
-              ).transform(unit_transformation)
-
-              width = size.x.to_f
-              height = size.y.to_f
-
-              _dxf_write_section_blocks_block(file, fn_leftover_block_name.call(leftover), @_dxf_model_space_id) do
-                _dxf_write_rect(file, 0, 0, width, height, LAYER_LEFTOVER)
-              end
-
-            end
-          end
-
-          unless @cuts_hidden
-            sheet.cuts.each do |cut|
-
-              position1 = Geom::Point3d.new(
-                0,
-                0
-              )
-              position2 = Geom::Point3d.new(
-                _to_inch(cut.is_horizontal ? cut.px_length : 0),
-                _to_inch(cut.is_horizontal ? 0 : cut.px_length)
-              ).transform(unit_transformation)
-
-              cut_x1 = position1.x.to_f
-              cut_y1 = position1.y.to_f
-              cut_x2 = position2.x.to_f
-              cut_y2 = position2.y.to_f
-
-              _dxf_write_section_blocks_block(file, fn_cut_block_name.call(cut), @_dxf_model_space_id) do
-                _dxf_write_line(file, cut_x1, cut_y1, cut_x2, cut_y2, LAYER_CUT)
-              end
-
-            end
-          end
-
         end
 
       end
       _dxf_write_section_entities(file) do
 
         unless @sheet_hidden
-          if @dxf_structure == DXF_STRUCTURE_LAYER_AND_BLOCK
-            _dxf_write_insert(file, 'SHEET', 0, 0, 0, LAYER_SHEET)
-          else
-            _dxf_write_rect(file, 0, 0, sheet_width, sheet_height, LAYER_SHEET)
-          end
+          _dxf_write_rect(file, 0, 0, sheet_width, sheet_height, LAYER_SHEET)
         end
 
         unless @parts_hidden
@@ -513,7 +441,7 @@ module Ladb::OpenCutList
                   transformation *= Geom::Transformation.translation(Geom::Vector3d.new(i_x + i_x_offset, i_y + i_y_offset))
                 end
 
-                _dxf_write_projection_def_geometry(file, projection_def, @smoothing, transformation, LAYER_PART)
+                _dxf_write_projection_def_geometry(file, projection_def, unit_factor, @smoothing, transformation, LAYER_PART)
 
               else
 
@@ -531,36 +459,21 @@ module Ladb::OpenCutList
         unless @leftovers_hidden
           sheet.leftovers.each do |leftover|
 
-            if @dxf_structure == DXF_STRUCTURE_LAYER_AND_BLOCK
+            position = Geom::Point3d.new(
+              _to_inch(leftover.px_x),
+              _to_inch(sheet.px_width - leftover.px_y - leftover.px_width)
+            ).transform(unit_transformation)
+            size = Geom::Point3d.new(
+              _to_inch(leftover.px_length),
+              _to_inch(leftover.px_width)
+            ).transform(unit_transformation)
 
-              position = Geom::Point3d.new(
-                _to_inch(leftover.px_x),
-                _to_inch(sheet.px_width - leftover.px_y - leftover.px_width)
-              ).transform(unit_transformation)
+            x = position.x.to_f
+            y = position.y.to_f
+            width = size.x.to_f
+            height = size.y.to_f
 
-              x = position.x.to_f
-              y = position.y.to_f
-
-              _dxf_write_insert(file, fn_leftover_block_name.call(leftover), x, y, 0, LAYER_LEFTOVER)
-
-            else
-
-              position = Geom::Point3d.new(
-                _to_inch(leftover.px_x),
-                _to_inch(sheet.px_width - leftover.px_y - leftover.px_width)
-              ).transform(unit_transformation)
-              size = Geom::Point3d.new(
-                _to_inch(leftover.px_length),
-                _to_inch(leftover.px_width)
-              ).transform(unit_transformation)
-
-              x = position.x.to_f
-              y = position.y.to_f
-              width = size.x.to_f
-              height = size.y.to_f
-
-              _dxf_write_rect(file, x, y, width, height, LAYER_LEFTOVER)
-            end
+            _dxf_write_rect(file, x, y, width, height, LAYER_LEFTOVER)
 
           end
         end
@@ -568,37 +481,21 @@ module Ladb::OpenCutList
         unless @cuts_hidden
           sheet.cuts.each do |cut|
 
-            if @dxf_structure == DXF_STRUCTURE_LAYER_AND_BLOCK
+            position1 = Geom::Point3d.new(
+              _to_inch(cut.px_x),
+              _to_inch(sheet.px_width - cut.px_y - (cut.is_horizontal ? 0 : cut.px_length))
+            ).transform(unit_transformation)
+            position2 = Geom::Point3d.new(
+              _to_inch(cut.px_x + (cut.is_horizontal ? cut.px_length : 0)),
+              _to_inch(sheet.px_width - cut.px_y)
+            ).transform(unit_transformation)
 
-              position = Geom::Point3d.new(
-                _to_inch(cut.px_x),
-                _to_inch(sheet.px_width - cut.px_y - (cut.is_horizontal ? 0 : cut.px_length))
-              ).transform(unit_transformation)
+            x1 = position1.x.to_f
+            y1 = position1.y.to_f
+            x2 = position2.x.to_f
+            y2 = position2.y.to_f
 
-              x = position.x.to_f
-              y = position.y.to_f
-
-              _dxf_write_insert(file, fn_cut_block_name.call(cut), x, y, 0, LAYER_CUT)
-
-            else
-
-              position1 = Geom::Point3d.new(
-                _to_inch(cut.px_x),
-                _to_inch(sheet.px_width - cut.px_y - (cut.is_horizontal ? 0 : cut.px_length))
-              ).transform(unit_transformation)
-              position2 = Geom::Point3d.new(
-                _to_inch(cut.px_x + (cut.is_horizontal ? cut.px_length : 0)),
-                _to_inch(sheet.px_width - cut.px_y)
-              ).transform(unit_transformation)
-
-              x1 = position1.x.to_f
-              y1 = position1.y.to_f
-              x2 = position2.x.to_f
-              y2 = position2.y.to_f
-
-              _dxf_write_line(file, x1, y1, x2, y2, LAYER_CUT)
-
-            end
+            _dxf_write_line(file, x1, y1, x2, y2, LAYER_CUT)
 
           end
         end

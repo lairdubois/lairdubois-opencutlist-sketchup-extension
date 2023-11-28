@@ -105,7 +105,8 @@ module Ladb::OpenCutList
         bounds = @drawing_def.bounds
       end
 
-      unit_sign, unit_transformation = _svg_get_unit_sign_and_transformation(@unit)
+      unit_sign, unit_factor = _svg_get_unit_sign_and_factor(@unit)
+      unit_transformation = Geom::Transformation.scaling(unit_factor, unit_factor, 1.0)
 
       origin = Geom::Point3d.new(
         bounds.min.x,
@@ -184,13 +185,14 @@ module Ladb::OpenCutList
 
     def _write_to_dxf_file(file, projection_def, edge_manipulators)
 
-      unit_transformation = _dxf_get_unit_transformation(@unit)
+      unit_factor = _dxf_get_unit_factor(@unit)
+      unit_transformation = Geom::Transformation.scaling(ORIGIN, unit_factor, unit_factor, 1.0)
 
       min = @drawing_def.bounds.min.transform(unit_transformation)
       max = @drawing_def.bounds.max.transform(unit_transformation)
 
       layer_defs = []
-      layer_defs.concat(_dxf_get_projection_def_depth_layer_defs(projection_def, @part_stroke_color, LAYER_PART).uniq { |layer_def| layer_def[:name] })
+      layer_defs.concat(_dxf_get_projection_def_depth_layer_defs(projection_def, @part_stroke_color, unit_factor, LAYER_PART).uniq { |layer_def| layer_def[:name] })
       layer_defs.push({ :name => LAYER_GUIDE, :color => @guide_stroke_color }) unless edge_manipulators.empty?
 
       _dxf_write_start(file)
@@ -200,7 +202,7 @@ module Ladb::OpenCutList
       _dxf_write_section_blocks(file)
       _dxf_write_section_entities(file) do
 
-        _dxf_write_projection_def_geometry(file, projection_def, @smoothing, unit_transformation, LAYER_PART)
+        _dxf_write_projection_def_geometry(file, projection_def, unit_factor, @smoothing, unit_transformation, LAYER_PART)
 
         edge_manipulators.each do |edge_manipulator|
 

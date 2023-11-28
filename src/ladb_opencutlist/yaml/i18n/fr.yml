@@ -826,7 +826,7 @@ tab:
           Permet de choisir la structure du fichier DXF.
 
           - la structure **Calques** dessine tous les tracés à plat en distinguant les différents types de trait uniquement par des calques. *Cette structure offre une meilleure compatibilité avec les logiciels tiers.*
-          - La structure **Calques + Blocs** crée un bloc par élément (pièces, coupe, etc) et insère ces blocs autant de fois qu'ils sont répétés. *Cette structure offre plus de détails pour modifier le fichier.*
+          - La structure **Calques + Blocs** crée un bloc par pièces et insère ces blocs autant de fois que les pièces sont répétées. *Cette structure offre plus de flexibilité pour modifier le fichier.*
         option_smoothing: Lissage
         option_smoothing_0: Aucun
         option_smoothing_1: Détecter les cercles et arcs *(Expérimental)*
