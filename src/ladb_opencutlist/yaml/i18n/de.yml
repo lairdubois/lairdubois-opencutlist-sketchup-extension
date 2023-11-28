@@ -826,7 +826,7 @@ tab:
           Auswahl der DXF-Dateistruktur.
 
           - Die Struktur **Layers** zeichnet alle Linien flach und unterscheidet zwischen verschiedenen Linientypen nur durch Layer. *Diese Struktur bietet eine bessere Kompatibilität mit Software von Drittanbietern.*
-          - Die Struktur **Ebenen + Blöcke** erstellt einen Block pro Teil und fügt diese Blöcke so oft ein, wie die Teile wiederholt werden. *Diese Struktur bietet mehr Flexibilität beim Bearbeiten der Datei.*
+          - Die Struktur **Layers + Blöcke** erstellt einen Block pro Teil und fügt diese Blöcke so oft ein, wie die Teile wiederholt werden. *Diese Struktur bietet mehr Flexibilität beim Bearbeiten der Datei.*
         option_smoothing: Glättung
         option_smoothing_0: Keine
         option_smoothing_1: Kreise und Bögen erkennen (experimentell)

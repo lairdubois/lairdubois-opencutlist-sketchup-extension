@@ -826,7 +826,7 @@ tab:
           Select DXF file structure.
 
           - The **Layers** structure draws all lines flat, distinguishing between different line types using layers only. *This structure offers greater compatibility with third-party software.*
-          - The **Layers + Blocks** structure creates one block per piece and inserts these blocks as many times as the pieces are repeated. *This structure provides more flexibility for editing the file.*
+          - The **Layers + Blocks** structure creates one block per part and inserts these blocks as many times as the parts are repeated. *This structure offers more flexibility for editing the file.*
         option_smoothing: Smoothing
         option_smoothing_0: None
         option_smoothing_1: Detect circles and arcs *(Experimental)*
