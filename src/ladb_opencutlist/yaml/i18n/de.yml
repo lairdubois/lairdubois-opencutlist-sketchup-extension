@@ -813,6 +813,8 @@ tab:
         settings: Einstellungen
       export:
         title: Schnittplan exportieren
+        info_0: |
+           Mit diesem Modul können Sie die **Geometrie** des *Schnittplans* als Datei im Format [SVG] (https://de.wikipedia.org/wiki/Scalable_Vector_Graphics) oder [DXF] (https://de.wikipedia.org/wiki/DXF) exportieren.
         options_general: Allgemein
         option_file_format: Format
         option_file_format_svg: SVG
@@ -841,6 +843,9 @@ tab:
         option_parts: Teile
         option_parts_help: |
           Wahl ob die Teile gezeichnet werden und ihre Farbe.
+        option_texts: Bezeichner
+        option_texts_help:  |
+          Wahl ob die Bezeicher gezeichnet werden und ihre Farbe.
         option_leftovers: Verschnitte
         option_leftovers_help: |
           Wahl ob die Verschnitte gezeichet werden und ihre Farbe.

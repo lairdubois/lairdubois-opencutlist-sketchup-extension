@@ -813,6 +813,8 @@ tab:
         settings: Settings
       export:
         title: Export cutting diagram
+        info_0: |
+          This module lets you export the **geometry** of the *cutting diagram* as a file in [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) or [DXF](https://en.wikipedia.org/wiki/AutoCAD_DXF) format.
         options_general: General
         option_file_format: Format
         option_file_format_svg: SVG
@@ -841,6 +843,9 @@ tab:
         option_parts: Parts
         option_parts_help: |
           Select whether or not parts are drawn, and select their color.
+        option_texts: Identifiers
+        option_texts_help:  |
+          Select whether or not identifier labels are drawn, and select their color.
         option_leftovers: Leftovers
         option_leftovers_help: |
           Select whether leftovers are drawn, and select their color.
