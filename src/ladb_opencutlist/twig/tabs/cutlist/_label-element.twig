@@ -18,8 +18,8 @@
     <rect class="ladb-label-element" x="{{ transX }}" y="{{ transY }}" width="{{ areaSize }}" height="{{ areaSize }}" fill="{% if noEmptyValue %}rgba(0,0,0,0.03){% else %}none{% endif %}" stroke="none" />
     {% set dashedStrokeWidth = minUnit / 10 %}
     {% set plainStrokeWidth = minUnit / 5 %}
-    {% set rectPartWidth = areaSize * (proportional ? partInfo.part.l_ratio : 1) - plainStrokeWidth %}
-    {% set rectPartHeight = areaSize * (proportional ? partInfo.part.w_ratio : 1) - plainStrokeWidth %}
+    {% set rectPartWidth = (areaSize - plainStrokeWidth) * (proportional ? partInfo.part.l_ratio : 1) %}
+    {% set rectPartHeight = (areaSize - plainStrokeWidth) * (proportional ? partInfo.part.w_ratio : 1) %}
     <g transform="translate({{ transX + (areaSize - rectPartWidth) / 2 }} {{ transY + (areaSize - rectPartHeight) / 2 }})">
         {% if drawing %}
             {% set scale = max(rectPartWidth, rectPartHeight) %}
