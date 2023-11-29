@@ -2,7 +2,7 @@
 
 {% set id = 'ladb_cutlist_modal_cuttingdiagram_1d_export' %}
 {% set title = ('tab.cutlist.cuttingdiagram.export.title'|i18next)~'<small class="ladb-horizontal-left-separator">'~group.material_name|escape('html')~' / '~group.std_dimension~'</small>' %}
-{% set sheetStrippedname = group.material_type == 4 ? 'bar' : 'band' %}  {# 4 = TYPE_EDGE #}
+{% set barStrippedname = group.material_type == 4 ? 'band' : 'dimensional' %}  {# 4 = TYPE_EDGE #}
 
 {% block headerToolsInner %}
     {% include 'components/_widget-preset.twig' %}
@@ -58,11 +58,11 @@
                 <label class="col-xs-4 text-center ladb-form-fill-color">{{ 'tab.cutlist.cuttingdiagram.export.option_fill_color'|i18next }}</label>
             </div>
             <div class="form-group">
-                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.export.option_bar_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ ('tab.cutlist.cuttingdiagram.export.option_bar_'~barStrippedname~'_help')|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                 <div class="col-xs-3">
                     <div class="checkbox">
                         <label>
-                            <input type="checkbox" id="ladb_input_bar_hidden">{{ 'tab.cutlist.cuttingdiagram.export.option_bar'|i18next }}
+                            <input type="checkbox" id="ladb_input_bar_hidden">{{ ('tab.cutlist.cuttingdiagram.export.option_bar_'~barStrippedname)|i18next }}
                         </label>
                     </div>
                 </div>

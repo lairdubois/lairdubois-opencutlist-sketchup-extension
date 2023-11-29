@@ -834,12 +834,18 @@ tab:
         option_smoothing_1: Détecter les cercles et arcs *(Expérimental)*
         option_smoothing_help: |
           Permet de choisir le mode de lissage.
-        option_sheet: Panneau
-        option_sheet_help: |
+        option_sheet_good: Panneau
+        option_sheet_good_help: |
           Permet de choisir si le panneau est dessiné ainsi que de choisir sa couleur.
-        option_bar: Barre
-        option_bar_help:  |
+        option_sheet_veneer: Feuille
+        option_sheet_veneer_help: |
+          Permet de choisir si la fuille est dessinée ainsi que de choisir sa couleur.
+        option_bar_dimensional: Barre
+        option_bar_dimensional_help:  |
           Permet de choisir si la barre est dessinée ainsi que de choisir sa couleur.
+        option_bar_band: Bande
+        option_bar_band_help:  |
+          Permet de choisir si la bande est dessinée ainsi que de choisir sa couleur.
         option_parts: Pièces
         option_parts_help:  |
           Permet de choisir si les pièces sont dessinées ainsi que de choisir leur couleur.

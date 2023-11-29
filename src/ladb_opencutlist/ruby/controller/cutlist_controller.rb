@@ -88,8 +88,8 @@ module Ladb::OpenCutList
         cuttingdiagram2d_export_command(settings)
       end
 
-      Plugin.instance.register_command("cutlist_labels_compute_formulas") do |settings|
-        labels_compute_formulas_command(settings)
+      Plugin.instance.register_command("cutlist_labels_compute_elements") do |settings|
+        labels_compute_elements_command(settings)
       end
 
       Plugin.instance.register_command("cutlist_reset_prices") do |settings|
@@ -305,11 +305,11 @@ module Ladb::OpenCutList
       worker.run
     end
 
-    def labels_compute_formulas_command(settings)
-      require_relative '../worker/cutlist/cutlist_labels_compute_formulas_worker'
+    def labels_compute_elements_command(settings)
+      require_relative '../worker/cutlist/cutlist_labels_compute_elements_worker'
 
       # Setup worker
-      worker = CutlistLabelsComputeFormulasWorker.new(settings, @cutlist)
+      worker = CutlistLabelsComputeElementsWorker.new(settings, @cutlist)
 
       # Run !
       worker.run

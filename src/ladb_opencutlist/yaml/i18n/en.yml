@@ -834,11 +834,11 @@ tab:
         option_smoothing_1: Detect circles and arcs *(Experimental)*
         option_smoothing_help: |
           Select the smoothing mode.
-        option_sheet: Panel
-        option_sheet_help: |
+        option_sheet_good: Panel
+        option_sheet_good_help: |
           Select whether the panel is drawn, and select its color.
-        option_bar: Dimensional
-        option_bar_help: |
+        option_bar_dimensional: Dimensional
+        option_bar_dimensional_help: |
           Select whether the dimensional is drawn, and select its color.
         option_parts: Parts
         option_parts_help: |

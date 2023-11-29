@@ -467,8 +467,19 @@
                     elementDef.custom_formula = '';
                     $textareaCustomFormula.ladbTextinputCode('val', '');
                 }
-                that.appendFormula(svgContentGroup, elementDef);
-                fnUpdateCustomFormulaVisibility();
+                rubyCallCommand('cutlist_labels_compute_elements', { part_infos: [ that.options.partInfo ], layout: [ elementDef ] }, function (response) {
+
+                    if (response.errors) {
+                        console.log(response.errors);
+                    }
+                    if (response.part_infos) {
+                        var index = that.elementDefs.indexOf(elementDef);
+                        that.options.partInfo.custom_values[index] = response.part_infos[0].custom_values[0];
+                        that.appendFormula(svgContentGroup, elementDef);
+                        fnUpdateCustomFormulaVisibility();
+                    }
+
+                });
             })
         ;
         $selectSize
@@ -532,7 +543,7 @@
             })
             .on('change', function () {
                 elementDef.custom_formula = $(this).val();
-                rubyCallCommand('cutlist_labels_compute_formulas', { part_infos: [ that.options.partInfo ], layout: [ elementDef ] }, function (response) {
+                rubyCallCommand('cutlist_labels_compute_elements', { part_infos: [ that.options.partInfo ], layout: [ elementDef ] }, function (response) {
 
                     if (response.errors) {
                         console.log(response.errors);
@@ -588,7 +599,7 @@
 
         this.elementDefs = elementDefs;
 
-        rubyCallCommand('cutlist_labels_compute_formulas', { part_infos: [ this.options.partInfo ], layout: elementDefs }, function (response) {
+        rubyCallCommand('cutlist_labels_compute_elements', { part_infos: [ this.options.partInfo ], layout: elementDefs }, function (response) {
 
             if (response.errors) {
                 console.log(response.errors);

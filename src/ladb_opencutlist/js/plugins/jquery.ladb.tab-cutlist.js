@@ -4470,7 +4470,7 @@
                         partInfos.sort(fnFieldSorter(labelsOptions.part_order_strategy.split('>')));
 
                         // Compute custom formulas
-                        rubyCallCommand('cutlist_labels_compute_formulas', { part_infos: partInfos, layout: labelsOptions.layout }, function (response) {
+                        rubyCallCommand('cutlist_labels_compute_elements', { part_infos: partInfos, layout: labelsOptions.layout }, function (response) {
 
                             if (response.errors) {
                                 errors.push(response.errors);

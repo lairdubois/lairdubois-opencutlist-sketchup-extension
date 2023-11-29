@@ -102,7 +102,7 @@ module Ladb::OpenCutList
       end
     end
 
-    def _svg_write_label(file, x, y, width, height, text, is_vertical = false, color = nil)
+    def _svg_write_label(file, x, y, width, height, text, is_vertical = false, hex_color = nil)
 
       theight = [ 60.0, (is_vertical ? width : height) / 2, (is_vertical ? height : width) / text.length ].min
       tx = x + width / 2.0
@@ -110,7 +110,7 @@ module Ladb::OpenCutList
       attributes = {
         x: _svg_value(tx),
         y: _svg_value(ty),
-        fill: color,
+        fill: hex_color,
         'font-family': 'monospace',
         'font-size': _svg_value(theight),
         'text-anchor': 'middle',

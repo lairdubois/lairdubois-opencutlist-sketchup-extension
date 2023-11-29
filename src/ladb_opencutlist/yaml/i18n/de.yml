@@ -834,11 +834,11 @@ tab:
         option_smoothing_1: Kreise und Bögen erkennen (experimentell)
         option_smoothing_help: |
           Auswahl des Glättungsmodus
-        option_sheet: Platte
-        option_sheet_help: |
+        option_sheet_good: Platte
+        option_sheet_good_help: |
           Wahl ob die Platte gezeichnet wird und ihre Farbe.
-        option_bar: Stange
-        option_bar_help: |
+        option_bar_dimensional: Stange
+        option_bar_dimensional_help: |
           Wahl ob die Stange gezeichnet wird und ihre Farbe.
         option_parts: Teile
         option_parts_help: |
