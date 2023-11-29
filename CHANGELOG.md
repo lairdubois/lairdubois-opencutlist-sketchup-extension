@@ -4,7 +4,7 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
-* 5.1.2 (2023-11-XX)
+* 5.1.2 (2023-11-29)
 
   * Added teaser cutting diagram "Export" button
   
