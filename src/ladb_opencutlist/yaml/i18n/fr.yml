@@ -841,6 +841,9 @@ tab:
         option_parts: Pièces
         option_parts_help:  |
           Permet de choisir si les pièces sont dessinées ainsi que de choisir leur couleur.
+        option_texts: Identifications
+        option_texts_help:  |
+          Permet de choisir si les textes d'identification des pièces sont dessinés ainsi que de choisir leur couleur.
         option_leftovers: Chutes
         option_leftovers_help:  |
           Permet de choisir si les chutes sont dessinées que de choisir leur couleur.

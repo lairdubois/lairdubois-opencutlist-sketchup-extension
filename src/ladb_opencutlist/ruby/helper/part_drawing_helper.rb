@@ -13,6 +13,7 @@ module Ladb::OpenCutList
 
     def _compute_part_drawing_def(part_drawing_type, part)
       return nil unless part.is_a?(Part)
+      return nil if part_drawing_type == PART_DRAWING_TYPE_NONE
 
       drawing_def = part.def.drawing_defs[part_drawing_type]
       return drawing_def unless drawing_def.nil?

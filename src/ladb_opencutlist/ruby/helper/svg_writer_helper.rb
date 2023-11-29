@@ -75,7 +75,7 @@ module Ladb::OpenCutList
       file.puts('<?xml version="1.0" encoding="UTF-8" standalone="no"?>')
       file.puts('<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">')
       file.puts("<!-- Generator: SketchUp, #{EXTENSION_NAME} Extension, Version #{EXTENSION_VERSION} -->")
-      file.puts("<svg width=\"#{width}#{unit_sign}\" height=\"#{height}#{unit_sign}\" viewBox=\"#{x} #{y} #{width} #{height}\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:serif=\"http://www.serif.com/\" xmlns:shaper=\"http://www.shapertools.com/namespaces/shaper\">")
+      file.puts("<svg width=\"#{width}#{unit_sign}\" height=\"#{height}#{unit_sign}\" viewBox=\"#{x} #{y} #{width} #{height}\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:serif=\"http://www.serif.com/\" xmlns:inkscape=\"http://www.inkscape.org/namespaces/inkscape\" xmlns:shaper=\"http://www.shapertools.com/namespaces/shaper\">")
       _svg_indent
     end
 
@@ -94,8 +94,32 @@ module Ladb::OpenCutList
       file.puts("#{_svg_append_indent}</g>")
     end
 
-    def _svg_write_tag(file, tag, attributes = {})
-      file.puts("#{_svg_append_indent}<#{tag}#{_svg_append_attributes(attributes)} />")
+    def _svg_write_tag(file, tag, attributes = {}, cdata = nil)
+      if cdata.is_a?(String)
+        file.puts("#{_svg_append_indent}<#{tag}#{_svg_append_attributes(attributes)}>#{cdata}</#{tag}>")
+      else
+        file.puts("#{_svg_append_indent}<#{tag}#{_svg_append_attributes(attributes)} />")
+      end
+    end
+
+    def _svg_write_label(file, x, y, width, height, text, is_vertical = false, color = nil)
+
+      theight = [ 60.0, (is_vertical ? width : height) / 2, (is_vertical ? height : width) / text.length ].min
+      tx = x + width / 2.0
+      ty = y + height / 2.0
+      attributes = {
+        x: _svg_value(tx),
+        y: _svg_value(ty),
+        fill: color,
+        'font-family': 'monospace',
+        'font-size': _svg_value(theight),
+        'text-anchor': 'middle',
+        'alignment-baseline': 'middle'
+      }
+      attributes.merge!({ transform: "rotate(-90 #{_svg_value(tx)} #{_svg_value(ty)})"}) if is_vertical
+
+      _svg_write_tag(file, 'text', attributes, text)
+
     end
 
     # -----
@@ -119,7 +143,7 @@ module Ladb::OpenCutList
 
       projection_def.layer_defs.each do |layer_def|
 
-        id = _dxf_get_projection_layer_def_depth_name(layer_def, unit_transformation,prefix)
+        id = _dxf_get_projection_layer_def_depth_name(layer_def, unit_transformation, prefix)
 
         if layer_def.is_top?
           attributes = {
@@ -127,16 +151,17 @@ module Ladb::OpenCutList
             fill: _svg_fill_color_hex(fill_color),
             id: id,
             'serif:id': id,
+            'inkscape:label': id,
             'shaper:cutType': 'outside'
           }
           attributes.merge!({ 'shaper:cutDepth': "#{_svg_value(Geom::Point3d.new(projection_def.max_depth, 0).transform(unit_transformation).x)}#{unit_sign}" }) if projection_def.max_depth > 0
         elsif layer_def.is_bottom?
           attributes = {
-            stroke: '#000000',
-            'stroke-width': '0.1mm',
-            fill: '#FFFFFF',
+            stroke: fill_color ? '#000000' : _svg_stroke_color_hex(stroke_color, fill_color),
+            fill: fill_color ? '#FFFFFF' : 'none',
             id: id,
             'serif:id': id,
+            'inkscape:label': id,
             'shaper:cutType': 'inside'
           }
           attributes.merge!({ 'shaper:cutDepth': "#{_svg_value(Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x)}#{unit_sign}" }) if projection_def.max_depth > 0
@@ -146,6 +171,7 @@ module Ladb::OpenCutList
             fill: fill_color ? ColorUtils.color_to_hex(ColorUtils.color_lighten(Sketchup::Color.new(fill_color), projection_def.max_depth > 0 ? (layer_def.depth / projection_def.max_depth) * 0.6 + 0.2 : 0.3)) : 'none',
             id: id,
             'serif:id': id,
+            'inkscape:label': id,
             'shaper:cutType': 'pocket',
             'shaper:cutDepth': "#{_svg_value(Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x)}#{unit_sign}"
           }

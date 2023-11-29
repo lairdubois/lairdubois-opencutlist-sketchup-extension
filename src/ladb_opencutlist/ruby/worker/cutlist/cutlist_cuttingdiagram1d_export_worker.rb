@@ -35,6 +35,8 @@ module Ladb::OpenCutList
       @parts_hidden = settings.fetch('parts_hidden', false)
       @parts_stroke_color = ColorUtils.color_create(settings.fetch('parts_stroke_color', nil))
       @parts_fill_color = ColorUtils.color_create(settings.fetch('parts_fill_color', nil))
+      @texts_hidden = settings.fetch('texts_hidden', false)
+      @texts_stroke_color = ColorUtils.color_create(settings.fetch('texts_stroke_color', nil))
       @leftovers_hidden = settings.fetch('leftovers_hidden', true)
       @leftovers_stroke_color = ColorUtils.color_create(settings.fetch('leftovers_stroke_color', nil))
       @leftovers_fill_color = ColorUtils.color_create(settings.fetch('leftovers_fill_color', nil))
@@ -133,8 +135,6 @@ module Ladb::OpenCutList
 
       unless @bar_hidden
 
-        id = "#{bar.length} x #{bar.width}"
-
         _svg_write_group_start(file, id: LAYER_BAR)
         _svg_write_tag(file, 'rect', {
           x: 0,
@@ -143,8 +143,6 @@ module Ladb::OpenCutList
           height: height,
           stroke: _svg_stroke_color_hex(@bar_stroke_color, @bar_fill_color),
           fill: _svg_fill_color_hex(@bar_fill_color),
-          id: _svg_sanitize_id(id),
-          'serif:id': id
         })
         _svg_write_group_end(file)
 
@@ -155,6 +153,15 @@ module Ladb::OpenCutList
         bar.parts.each do |part|
 
           id = _svg_sanitize_id("#{LAYER_PART}_#{part.number.to_s.rjust(3, '_')}#{@use_names ? "_#{part.name}" : ''}")
+
+          position = Geom::Point3d.new(
+            _to_inch(part.px_x),
+            0
+          ).transform(unit_transformation)
+          size = Geom::Point3d.new(
+            _to_inch(part.px_length),
+            _to_inch(bar.px_width)
+          ).transform(unit_transformation)
 
           projection_def = _get_part_projection_def(part)
           if projection_def.is_a?(DrawingProjectionDef)
@@ -168,23 +175,16 @@ module Ladb::OpenCutList
 
             _svg_write_group_start(file, {
               id: id,
-              'serif:id': id
+              'serif:id': id,
+              'inkscape:label': id
             })
 
             _svg_write_projection_def(file, projection_def, @smoothing, transformation, unit_transformation, unit_sign, @parts_stroke_color, @parts_fill_color, LAYER_PART)
+            _svg_write_label(file, position.x, position.y, size.x, size.y, @use_names ? part.name: part.number, false, _svg_stroke_color_hex(@texts_stroke_color)) unless @texts_hidden
 
             _svg_write_group_end(file)
 
           else
-
-            position = Geom::Point3d.new(
-              _to_inch(part.px_x),
-              0
-            ).transform(unit_transformation)
-            size = Geom::Point3d.new(
-              _to_inch(part.px_length),
-              _to_inch(bar.px_width)
-            ).transform(unit_transformation)
 
             _svg_write_tag(file, 'rect', {
               x: _svg_value(position.x),
@@ -193,9 +193,11 @@ module Ladb::OpenCutList
               height: _svg_value(size.y),
               stroke: _svg_stroke_color_hex(@parts_stroke_color, @parts_fill_color),
               fill: _svg_fill_color_hex(@parts_fill_color),
-              id: _svg_sanitize_id(id),
-              'serif:id': id
+              id: id,
+              'serif:id': id,
+              'inkscape:label': id
             })
+            _svg_write_label(file, position.x, position.y, size.x, size.y, @use_names ? part.name: part.number, false, _svg_stroke_color_hex(@texts_stroke_color)) unless @texts_hidden
 
           end
 
@@ -206,8 +208,6 @@ module Ladb::OpenCutList
       unless @leftovers_hidden
         _svg_write_group_start(file, id: LAYER_LEFTOVER)
 
-        id = "#{bar.leftover.length}"
-
         position = Geom::Point3d.new(
           _to_inch(bar.leftover.px_x),
           _to_inch(0)
@@ -217,7 +217,6 @@ module Ladb::OpenCutList
           _to_inch(bar.px_width)
         ).transform(unit_transformation)
 
-
         _svg_write_tag(file, 'rect', {
           x: _svg_value(position.x),
           y: _svg_value(position.y),
@@ -225,8 +224,6 @@ module Ladb::OpenCutList
           height: _svg_value(size.y),
           stroke: _svg_stroke_color_hex(@leftovers_stroke_color, @leftovers_fill_color),
           fill: _svg_fill_color_hex(@leftovers_fill_color),
-          id: _svg_sanitize_id(id),
-          'serif:id': id
         })
 
         _svg_write_group_end(file)
@@ -245,16 +242,12 @@ module Ladb::OpenCutList
             _to_inch(bar.px_width)
           ).transform(unit_transformation)
 
-          id = "x = #{cut.x}"
-
           _svg_write_tag(file, 'line', {
             x1: _svg_value(position1.x),
             y1: _svg_value(position1.y),
             x2: _svg_value(position2.x),
             y2: _svg_value(position2.y),
             stroke: _svg_stroke_color_hex(@cuts_stroke_color),
-            id: _svg_sanitize_id(id),
-            'serif:id': id
           })
 
         end
@@ -286,7 +279,7 @@ module Ladb::OpenCutList
       layer_defs.push({ :name => LAYER_PART, :color => @parts_stroke_color }) unless @parts_hidden || @dxf_structure == DXF_STRUCTURE_LAYER
       layer_defs.push({ :name => LAYER_LEFTOVER, :color => @leftovers_stroke_color }) unless @leftovers_hidden
       layer_defs.push({ :name => LAYER_CUT, :color => @cuts_stroke_color }) unless @cuts_hidden
-      layer_defs.push({ :name => LAYER_TEXT, :color => nil }) unless @parts_hidden
+      layer_defs.push({ :name => LAYER_TEXT, :color => @texts_stroke_color }) unless @parts_hidden || @texts_hidden
 
       unless @parts_hidden
         depth_layer_defs = []
@@ -348,14 +341,14 @@ module Ladb::OpenCutList
                 transformation *= Geom::Transformation.translation(Geom::Vector3d.new(x_offset, 0))
 
                 _dxf_write_projection_def_block(file, fn_part_block_name.call(part), projection_def, @smoothing, transformation, unit_transformation, LAYER_PART) do
-                  _dxf_write_label(file, 0, 0, width, height, @use_names ? part.name : part.number, false, LAYER_TEXT)
+                  _dxf_write_label(file, 0, 0, width, height, @use_names ? part.name : part.number, false, LAYER_TEXT) unless @texts_hidden
                 end
 
               else
 
                 _dxf_write_section_blocks_block(file, fn_part_block_name.call(part), @_dxf_model_space_id) do
                   _dxf_write_rect(file, 0, 0, width, height, LAYER_PART)
-                  _dxf_write_label(file, 0, 0, width, height, @use_names ? part.name : part.number, false, LAYER_TEXT)
+                  _dxf_write_label(file, 0, 0, width, height, @use_names ? part.name : part.number, false, LAYER_TEXT) unless @texts_hidden
                 end
 
               end
@@ -417,7 +410,7 @@ module Ladb::OpenCutList
 
               end
 
-              _dxf_write_label(file, x, y, width, height, @use_names ? part.name : part.number, false, LAYER_TEXT)
+              _dxf_write_label(file, x, y, width, height, @use_names ? part.name : part.number, false, LAYER_TEXT) unless @texts_hidden
 
             end
 
