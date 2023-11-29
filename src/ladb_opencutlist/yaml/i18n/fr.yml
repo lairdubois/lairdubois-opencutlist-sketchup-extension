@@ -813,6 +813,8 @@ tab:
         settings: Paramètres
       export:
         title: Exporter le calepinage
+        info_0: |
+          Ce module vous permet d'exporter la **géométrie** du *calepinage* sous forme d'un fichier au format [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) ou [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
         options_general: General
         option_file_format: Format
         option_file_format_svg: SVG

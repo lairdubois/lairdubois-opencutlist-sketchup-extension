@@ -36,12 +36,12 @@ module Ladb::OpenCutList
       @parts_stroke_color = ColorUtils.color_create(settings.fetch('parts_stroke_color', nil))
       @parts_fill_color = ColorUtils.color_create(settings.fetch('parts_fill_color', nil))
       @texts_hidden = settings.fetch('texts_hidden', false)
-      @texts_stroke_color = ColorUtils.color_create(settings.fetch('texts_stroke_color', nil))
+      @texts_color = ColorUtils.color_create(settings.fetch('texts_stroke_color', nil))
       @leftovers_hidden = settings.fetch('leftovers_hidden', true)
       @leftovers_stroke_color = ColorUtils.color_create(settings.fetch('leftovers_stroke_color', nil))
       @leftovers_fill_color = ColorUtils.color_create(settings.fetch('leftovers_fill_color', nil))
       @cuts_hidden = settings.fetch('cuts_hidden', true)
-      @cuts_stroke_color = ColorUtils.color_create(settings.fetch('cuts_stroke_color', nil))
+      @cuts_color = ColorUtils.color_create(settings.fetch('cuts_color', nil))
       @hidden_bar_indices = settings.fetch('hidden_bar_indices', [])
       @part_drawing_type = settings.fetch('part_drawing_type', PART_DRAWING_TYPE_2D_TOP).to_i
       @use_names = settings.fetch('use_names', false)
@@ -180,7 +180,7 @@ module Ladb::OpenCutList
             })
 
             _svg_write_projection_def(file, projection_def, @smoothing, transformation, unit_transformation, unit_sign, @parts_stroke_color, @parts_fill_color, LAYER_PART)
-            _svg_write_label(file, position.x, position.y, size.x, size.y, @use_names ? part.name: part.number, false, _svg_stroke_color_hex(@texts_stroke_color)) unless @texts_hidden
+            _svg_write_label(file, position.x, position.y, size.x, size.y, @use_names ? part.name: part.number, false, _svg_stroke_color_hex(@texts_color)) unless @texts_hidden
 
             _svg_write_group_end(file)
 
@@ -197,7 +197,7 @@ module Ladb::OpenCutList
               'serif:id': id,
               'inkscape:label': id
             })
-            _svg_write_label(file, position.x, position.y, size.x, size.y, @use_names ? part.name: part.number, false, _svg_stroke_color_hex(@texts_stroke_color)) unless @texts_hidden
+            _svg_write_label(file, position.x, position.y, size.x, size.y, @use_names ? part.name: part.number, false, _svg_stroke_color_hex(@texts_color)) unless @texts_hidden
 
           end
 
@@ -247,7 +247,7 @@ module Ladb::OpenCutList
             y1: _svg_value(position1.y),
             x2: _svg_value(position2.x),
             y2: _svg_value(position2.y),
-            stroke: _svg_stroke_color_hex(@cuts_stroke_color),
+            stroke: _svg_stroke_color_hex(@cuts_color),
           })
 
         end
@@ -278,8 +278,8 @@ module Ladb::OpenCutList
       layer_defs.push({ :name => LAYER_BAR, :color => @bar_stroke_color }) unless @sheet_hidden
       layer_defs.push({ :name => LAYER_PART, :color => @parts_stroke_color }) unless @parts_hidden || @dxf_structure == DXF_STRUCTURE_LAYER
       layer_defs.push({ :name => LAYER_LEFTOVER, :color => @leftovers_stroke_color }) unless @leftovers_hidden
-      layer_defs.push({ :name => LAYER_CUT, :color => @cuts_stroke_color }) unless @cuts_hidden
-      layer_defs.push({ :name => LAYER_TEXT, :color => @texts_stroke_color }) unless @parts_hidden || @texts_hidden
+      layer_defs.push({ :name => LAYER_CUT, :color => @cuts_color }) unless @cuts_hidden
+      layer_defs.push({ :name => LAYER_TEXT, :color => @texts_color }) unless @parts_hidden || @texts_hidden
 
       unless @parts_hidden
         depth_layer_defs = []
