@@ -498,8 +498,7 @@ module Ladb::OpenCutList
 
     def _get_part_projection_def(part)
       _compute_part_projection_def(@part_drawing_type, part.def.cutlist_part, {
-        'down_to_top_union' => true,
-        'passthrough_holes' => true
+        'merge_holes' => true
       }, @_projection_defs)
     end
 

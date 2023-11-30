@@ -168,7 +168,7 @@ module Ladb::OpenCutList
         else
           attributes = {
             stroke: _svg_stroke_color_hex(stroke_color, fill_color),
-            fill: fill_color ? ColorUtils.color_to_hex(ColorUtils.color_lighten(Sketchup::Color.new(fill_color), projection_def.max_depth > 0 ? (layer_def.depth / projection_def.max_depth) * 0.6 + 0.2 : 0.3)) : 'none',
+            fill: fill_color ? ColorUtils.color_to_hex(ColorUtils.color_lighten(fill_color, projection_def.max_depth > 0 ? (layer_def.depth / projection_def.max_depth) * 0.6 + 0.2 : 0.3)) : 'none',
             id: id,
             'serif:id': id,
             'inkscape:label': id,

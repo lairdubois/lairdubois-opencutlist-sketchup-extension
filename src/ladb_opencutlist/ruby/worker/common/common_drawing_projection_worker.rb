@@ -13,8 +13,7 @@ module Ladb::OpenCutList
 
       @drawing_def = drawing_def
 
-      @option_down_to_top_union = settings.fetch('down_to_top_union', false)  # All down layers are merged to top layer
-      @option_passthrough_holes = settings.fetch('passthrough_holes', false)  # All hole polygons detected in top layer are moved to bottom layer and merged to top layer
+      @option_merge_holes = settings.fetch('merge_holes', false)  # Passthrough holes are moved to bottom layer and all down layers holes are merged to up layer
 
     end
 
@@ -31,33 +30,6 @@ module Ladb::OpenCutList
 
       z_max = bounds_max.z
 
-      # Filter only exposed faces
-      exposed_face_manipulators = @drawing_def.face_manipulators.select do |face_manipulator|
-        !face_manipulator.perpendicular?(@drawing_def.input_normal) && face_manipulator.angle_between(@drawing_def.input_normal) < Math::PI / 2.0
-      end
-
-      # Populate face def (loops and depth)
-      face_defs = []
-      exposed_face_manipulators.each do |face_manipulator|
-
-        if face_manipulator.parallel?(@drawing_def.input_normal) && bounds_depth > 0
-          depth = bounds_max.distance_to_plane(face_manipulator.plane).round(6)
-        else
-          if face_manipulator.surface_manipulator
-            depth = (z_max - face_manipulator.surface_manipulator.z_max).round(6) # Faces sharing the same "surface" are considered as a unique "box"
-          else
-            depth = (z_max - face_manipulator.z_max).round(6)
-          end
-        end
-
-        face_def = {
-          :depth => depth,
-          :loops => face_manipulator.loop_manipulators.map { |loop_manipulator| loop_manipulator.points }
-        }
-        face_defs << face_def
-
-      end
-
       top_layer_def = {
         :position => DrawingProjectionLayerDef::LAYER_POSITION_TOP,
         :depth => depth_top,
@@ -71,20 +43,33 @@ module Ladb::OpenCutList
 
       layer_defs = {}
       layer_defs[depth_top] = top_layer_def
-      layer_defs[depth_bottom] = bottom_layer_def
+      layer_defs[depth_bottom] = bottom_layer_def if depth_bottom != depth_top   # Added after sort if same depth as top
 
-      face_defs.each do |face_def|
+      @drawing_def.face_manipulators.each do |face_manipulator|
 
-        f_paths = face_def[:loops].map { |points| Clippy.points_to_rpath(points) }
+        # Filter only exposed faces
+        next unless !face_manipulator.perpendicular?(@drawing_def.input_normal) && face_manipulator.angle_between(@drawing_def.input_normal) < Math::PI / 2.0
 
-        layer_def = layer_defs[face_def[:depth]]
+        if face_manipulator.parallel?(@drawing_def.input_normal) && bounds_depth > 0
+          f_depth = bounds_max.distance_to_plane(face_manipulator.plane).round(6)
+        else
+          if face_manipulator.surface_manipulator
+            f_depth = (z_max - face_manipulator.surface_manipulator.z_max).round(6) # Faces sharing the same "surface" are considered as a unique "box"
+          else
+            f_depth = (z_max - face_manipulator.z_max).round(6)
+          end
+        end
+
+        f_paths = face_manipulator.loop_manipulators.map { |loop_manipulator| loop_manipulator.points }.map { |points| Clippy.points_to_rpath(points) }
+
+        layer_def = layer_defs[f_depth]
         if layer_def.nil?
           layer_def = {
             :position => DrawingProjectionLayerDef::LAYER_POSITION_INSIDE,
-            :depth => face_def[:depth],
+            :depth => f_depth,
             :paths => f_paths
           }
-          layer_defs[face_def[:depth]] = layer_def
+          layer_defs[f_depth] = layer_def
         else
           layer_def[:paths].concat(f_paths) # Just concat, union will be call later in one unique call
         end
@@ -93,6 +78,9 @@ module Ladb::OpenCutList
 
       # Sort on depth ASC
       ld = layer_defs.values.sort_by { |layer_def| layer_def[:depth] }
+
+      # Append bottom layer if top and bottom share the same depth
+      ld.push(bottom_layer_def) if depth_bottom == depth_top
 
       # Union paths on each layer
       ld.each do |layer_def|
@@ -109,7 +97,7 @@ module Ladb::OpenCutList
         end
       end
 
-      if @option_down_to_top_union
+      if @option_merge_holes
 
         # Copy top paths
         min_top_paths = top_layer_def[:paths]
@@ -127,7 +115,7 @@ module Ladb::OpenCutList
         mask_paths = Clippy.compute_difference(max_top_paths, min_top_paths)
 
         # Replace bottom layer paths
-        bottom_layer_def[:paths] = passthrough_paths
+        bottom_layer_def[:paths] = Clippy.compute_union(bottom_layer_def[:paths] + passthrough_paths)
 
         # Propagate down to up
         ldr = ld.reverse[0..-2] # Exclude top layer
@@ -146,37 +134,9 @@ module Ladb::OpenCutList
 
       end
 
-
-      # if @option_down_to_top_union
-      #
-      #   # Down to Top union
-      #   ld[1..-1].each do |lower_layer_def|
-      #     next if lower_layer_def[:paths].empty?
-      #     top_layer_def[:paths] = Clippy.compute_union(top_layer_def[:paths] + lower_layer_def[:paths])
-      #   end
-      #
-      # end
-      #
-      # if @option_passthrough_holes
-      #
-      #   # Move top holes to bottom layer
-      #   top_layer_def[:paths].each do |path|
-      #     unless Clippy.is_rpath_positive?(path)
-      #       bottom_layer_def[:paths] << path
-      #     end
-      #   end
-      #   unless bottom_layer_def[:paths].empty?
-      #
-      #     # Bottom to Top union
-      #     top_layer_def[:paths] = Clippy.compute_union(top_layer_def[:paths] + bottom_layer_def[:paths])
-      #
-      #   end
-      #
-      # end
-
       # Output
 
-      projection_def = DrawingProjectionDef.new(z_max)
+      projection_def = DrawingProjectionDef.new(bounds_depth)
 
       ld.each do |layer_def|
         next if layer_def[:paths].empty?

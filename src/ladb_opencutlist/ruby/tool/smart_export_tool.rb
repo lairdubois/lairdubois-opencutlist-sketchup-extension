@@ -338,8 +338,7 @@ module Ladb::OpenCutList
             inch_offset = Sketchup.active_model.active_view.pixels_to_model(15, Geom::Point3d.new.transform(@active_drawing_def.transformation))
 
             projection_def = CommonDrawingProjectionWorker.new(@active_drawing_def, {
-              'down_to_top_union' => false,
-              'passthrough_holes' => false
+              'merge_holes' => false
             }).run
 
             preview = Kuix::Group.new

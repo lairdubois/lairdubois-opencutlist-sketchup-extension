@@ -842,7 +842,7 @@ module Ladb::OpenCutList
 
       cmd = UI::Command.new(get_i18n_string('core.toolbar.command.smart_paint')) {
         if Sketchup.active_model
-          if Sketchup.active_model.tools.active_tool.is_a?(SmartPaintTool)
+          if Sketchup.active_model.tools.respond_to?(:active_tool) && Sketchup.active_model.tools.active_tool.is_a?(SmartPaintTool)
             Sketchup.active_model.select_tool(nil)
           else
             Sketchup.active_model.select_tool(SmartPaintTool.new)
@@ -859,7 +859,7 @@ module Ladb::OpenCutList
 
       cmd = UI::Command.new(get_i18n_string('core.toolbar.command.smart_axes')) {
         if Sketchup.active_model
-          if Sketchup.active_model.tools.active_tool.is_a?(SmartAxesTool)
+          if Sketchup.active_model.tools.respond_to?(:active_tool) && Sketchup.active_model.tools.active_tool.is_a?(SmartAxesTool)
             Sketchup.active_model.select_tool(nil)
           else
             Sketchup.active_model.select_tool(SmartAxesTool.new)
@@ -876,7 +876,7 @@ module Ladb::OpenCutList
 
       cmd = UI::Command.new(get_i18n_string('core.toolbar.command.smart_export')) {
         if Sketchup.active_model
-          if Sketchup.active_model.tools.active_tool.is_a?(SmartExportTool)
+          if Sketchup.active_model.tools.respond_to?(:active_tool) && Sketchup.active_model.tools.active_tool.is_a?(SmartExportTool)
             Sketchup.active_model.select_tool(nil)
           else
             Sketchup.active_model.select_tool(SmartExportTool.new)
