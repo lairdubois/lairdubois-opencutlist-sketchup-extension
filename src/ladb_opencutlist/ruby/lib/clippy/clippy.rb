@@ -57,16 +57,23 @@ module Ladb::OpenCutList
 
     # -- Utils --
 
-    # Convert Array<Geom::Point3d> to Array<Integer>
+    # Convert Array<Geom::Point3d> to Array<Integer> (x1, y1, x2, y2, ...)
     def self.points_to_rpath(points)
-      points.map { |point| [(point.x * FLOAT_TO_INT64_CONVERTER).to_i, (point.y * FLOAT_TO_INT64_CONVERTER).to_i ] }.flatten
+      points.map { |point| [ (point.x * FLOAT_TO_INT64_CONVERTER).to_i, (point.y * FLOAT_TO_INT64_CONVERTER).to_i ] }.flatten
     end
 
-    # Convert Array<Integer> to Array<Geom::Point3d>
+    # Convert Array<Integer> (x1, y1, x2, y2, ...) to Array<Geom::Point3d>
     def self.rpath_to_points(rpath, z = 0.0)
       points = []
       rpath.each_slice(2) { |coord_x, coord_y| points << Geom::Point3d.new(coord_x / FLOAT_TO_INT64_CONVERTER, coord_y / FLOAT_TO_INT64_CONVERTER, z) }
       points
+    end
+
+    # -- Debug --
+
+    def self.version
+      _load_lib
+      c_version.to_s
     end
 
     private
@@ -105,6 +112,8 @@ module Ladb::OpenCutList
 
         extern 'void c_free_cpath(int64_t*)'
 
+        extern 'char* c_version()'
+
         @lib_loaded = true
 
       rescue Exception => e
@@ -115,12 +124,12 @@ module Ladb::OpenCutList
 
     # Returns Fiddle::Pointer
     def self._rpath_to_cpath(rpath)
-      Fiddle::Pointer[rpath.pack('q*')]  # q* to read 64bits integers
+      Fiddle::Pointer[rpath.pack('q*')]  # q* to write 64-bit signed, native endian (int64_t)
     end
 
     # Returns Array<Integer>
     def self._cpath_to_rpath(cpath, len)
-      cpath.to_str(len * Fiddle::SIZEOF_LONG_LONG * 2).unpack('q*')  # Fiddle::SIZEOF_LONG_LONG = sizeof(int64_t), q* to read 64bits integers
+      cpath.to_str(len * Fiddle::SIZEOF_LONG_LONG * 2).unpack('q*')  # Fiddle::SIZEOF_LONG_LONG = sizeof(int64_t), q* to read 64-bit signed, native endian (int64_t)
     end
 
     def self._clear

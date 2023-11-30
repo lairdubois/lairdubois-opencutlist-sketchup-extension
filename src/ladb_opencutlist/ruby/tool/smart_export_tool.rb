@@ -314,7 +314,67 @@ module Ladb::OpenCutList
 
         show_infos(_get_active_part_name, infos)
 
-        if is_action_export_part_2d?
+        if is_action_export_part_3d?
+
+          # Part 3D
+
+          @active_drawing_def = CommonDrawingDecompositionWorker.new(@active_part_entity_path, {
+            'use_bounds_min_as_origin' => !fetch_action_option(ACTION_EXPORT_PART_3D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR),
+            'ignore_surfaces' => true,
+            'ignore_edges' => true
+          }).run
+          if @active_drawing_def.is_a?(DrawingDef)
+
+            inch_offset = Sketchup.active_model.active_view.pixels_to_model(15, Geom::Point3d.new.transform(@active_drawing_def.transformation))
+
+            preview = Kuix::Group.new
+            preview.transformation = @active_drawing_def.transformation
+            @space.append(preview)
+
+            @active_drawing_def.face_manipulators.each do |face_info|
+
+              # Highlight face
+              mesh = Kuix::Mesh.new
+              mesh.add_triangles(FaceManipulator.new(face_info.face, face_info.transformation).triangles)
+              mesh.background_color = highlighted ? COLOR_MESH_HIGHLIGHTED : COLOR_MESH
+              preview.append(mesh)
+
+            end
+
+            @active_drawing_def.edge_manipulators.each do |edge_info|
+
+              # Highlight edge
+              segments = Kuix::Segments.new
+              segments.add_segments(EdgeManipulator.new(edge_info.edge, edge_info.transformation).segment)
+              segments.color = COLOR_GUIDE
+              segments.line_width = 2
+              segments.on_top = true
+              preview.append(segments)
+
+            end
+
+            bounds = Geom::BoundingBox.new
+            bounds.add(@active_drawing_def.bounds.min)
+            bounds.add(@active_drawing_def.bounds.max)
+            bounds.add(ORIGIN)
+
+            # Box helper
+            box_helper = Kuix::BoxMotif.new
+            box_helper.bounds.origin.copy!(bounds.min)
+            box_helper.bounds.size.copy!(bounds)
+            box_helper.bounds.apply_offset(inch_offset, inch_offset, inch_offset)
+            box_helper.color = Kuix::COLOR_BLACK
+            box_helper.line_width = 1
+            box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+            preview.append(box_helper)
+
+            # Axes helper
+            axes_helper = Kuix::AxesHelper.new
+            preview.append(axes_helper)
+
+          end
+
+        elsif is_action_export_part_2d?
 
           # Part 2D
 
@@ -354,7 +414,7 @@ module Ladb::OpenCutList
                 when DrawingProjectionLayerDef::LAYER_POSITION_TOP
                   segments.color = Kuix::COLOR_BLUE
                 when DrawingProjectionLayerDef::LAYER_POSITION_BOTTOM
-                  segments.color = Kuix::COLOR_RED
+                  segments.color = Sketchup::Color.new('#7F00FF')
                 else
                   segments.color = Kuix::COLOR_BLUE.blend(Kuix::COLOR_WHITE, 0.5)
                 end
@@ -425,66 +485,6 @@ module Ladb::OpenCutList
             axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(0, 0, @active_drawing_def.bounds.max.z))
             axes_helper.box_0.visible = false
             axes_helper.box_z.visible = false
-            preview.append(axes_helper)
-
-          end
-
-        else
-
-          # Part 3D
-
-          @active_drawing_def = CommonDrawingDecompositionWorker.new(@active_part_entity_path, {
-            'use_bounds_min_as_origin' => !fetch_action_option(ACTION_EXPORT_PART_3D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR),
-            'ignore_surfaces' => true,
-            'ignore_edges' => true
-          }).run
-          if @active_drawing_def.is_a?(DrawingDef)
-
-            inch_offset = Sketchup.active_model.active_view.pixels_to_model(15, Geom::Point3d.new.transform(@active_drawing_def.transformation))
-
-            preview = Kuix::Group.new
-            preview.transformation = @active_drawing_def.transformation
-            @space.append(preview)
-
-            @active_drawing_def.face_manipulators.each do |face_info|
-
-              # Highlight face
-              mesh = Kuix::Mesh.new
-              mesh.add_triangles(FaceManipulator.new(face_info.face, face_info.transformation).triangles)
-              mesh.background_color = highlighted ? COLOR_MESH_HIGHLIGHTED : COLOR_MESH
-              preview.append(mesh)
-
-            end
-
-            @active_drawing_def.edge_manipulators.each do |edge_info|
-
-              # Highlight edge
-              segments = Kuix::Segments.new
-              segments.add_segments(EdgeManipulator.new(edge_info.edge, edge_info.transformation).segment)
-              segments.color = COLOR_GUIDE
-              segments.line_width = 2
-              segments.on_top = true
-              preview.append(segments)
-
-            end
-
-            bounds = Geom::BoundingBox.new
-            bounds.add(@active_drawing_def.bounds.min)
-            bounds.add(@active_drawing_def.bounds.max)
-            bounds.add(ORIGIN)
-
-            # Box helper
-            box_helper = Kuix::BoxMotif.new
-            box_helper.bounds.origin.copy!(bounds.min)
-            box_helper.bounds.size.copy!(bounds)
-            box_helper.bounds.apply_offset(inch_offset, inch_offset, inch_offset)
-            box_helper.color = Kuix::COLOR_BLACK
-            box_helper.line_width = 1
-            box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-            preview.append(box_helper)
-
-            # Axes helper
-            axes_helper = Kuix::AxesHelper.new
             preview.append(axes_helper)
 
           end
