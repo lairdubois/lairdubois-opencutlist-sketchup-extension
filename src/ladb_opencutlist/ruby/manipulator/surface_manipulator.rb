@@ -6,7 +6,7 @@ module Ladb::OpenCutList
 
     attr_reader :faces
 
-    def initialize(transformation = Geom::Transformation.new)
+    def initialize(transformation = IDENTITY)
       super
       @faces = []
     end

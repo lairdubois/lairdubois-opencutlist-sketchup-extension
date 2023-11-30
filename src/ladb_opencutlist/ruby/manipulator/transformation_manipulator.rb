@@ -7,7 +7,7 @@ module Ladb::OpenCutList
 
     attr_accessor :transformation
 
-    def initialize(transformation = Geom::Transformation.new)
+    def initialize(transformation = IDENTITY)
       @transformation = transformation
       super()
     end

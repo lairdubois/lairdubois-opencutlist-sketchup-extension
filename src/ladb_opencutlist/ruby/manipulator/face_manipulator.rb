@@ -13,7 +13,7 @@ module Ladb::OpenCutList
     attr_reader :face
     attr_accessor :surface_manipulator
 
-    def initialize(face, transformation = Geom::Transformation.new)
+    def initialize(face, transformation = IDENTITY)
       super(transformation)
       @face = face
       @surface_manipulator = nil
@@ -70,8 +70,7 @@ module Ladb::OpenCutList
 
     def outer_loop_points
       if @outer_loop_points.nil?
-        @outer_loop_points = @face.outer_loop.vertices.map { |vertex| vertex.position.transform(@transformation) }
-        @outer_loop_points.reverse! if flipped?
+        @outer_loop_points = LoopManipulator.new(@face.outer_loop, @transformation).points
       end
       @outer_loop_points
     end

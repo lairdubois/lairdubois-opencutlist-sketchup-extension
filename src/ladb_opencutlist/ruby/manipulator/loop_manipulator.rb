@@ -6,7 +6,7 @@ module Ladb::OpenCutList
 
     attr_reader :loop
 
-    def initialize(loop, transformation = Geom::Transformation.new)
+    def initialize(loop, transformation = IDENTITY)
       super(transformation)
       @loop = loop
     end
@@ -17,7 +17,6 @@ module Ladb::OpenCutList
       super
       @points = nil
       @segments = nil
-      @edge_and_arc_portions = nil
     end
 
     # -----
@@ -39,10 +38,7 @@ module Ladb::OpenCutList
 
     def segments
       if @segments.nil?
-        @segments = []
-        @loop.edges.each do |edge|
-          @segments.concat(EdgeManipulator.new(edge, @transformation).segment)
-        end
+        @segments = @loop.edges.map { |edge| EdgeManipulator.new(edge, @transformation).segment }.flatten(1)
       end
       @segments
     end
