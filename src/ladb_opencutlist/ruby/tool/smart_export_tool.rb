@@ -414,7 +414,7 @@ module Ladb::OpenCutList
                 when DrawingProjectionLayerDef::LAYER_POSITION_TOP
                   segments.color = Kuix::COLOR_BLUE
                 when DrawingProjectionLayerDef::LAYER_POSITION_BOTTOM
-                  segments.color = Sketchup::Color.new('#7F00FF')
+                  segments.color = Sketchup::Color.new('#D783FF')
                 else
                   segments.color = Kuix::COLOR_BLUE.blend(Kuix::COLOR_WHITE, 0.5)
                 end

@@ -1307,9 +1307,9 @@ module Ladb::OpenCutList
 
             # Display material infos
             if material
-              show_infos(material.name, [Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes.new(material).type}") ])
+              show_tooltip(material.name, [Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes.new(material).type}") ])
             else
-              show_infos(Plugin.instance.get_i18n_string('tool.smart_paint.default_material'))
+              show_tooltip(Plugin.instance.get_i18n_string('tool.smart_paint.default_material'))
             end
 
           elsif event == :l_button_up
