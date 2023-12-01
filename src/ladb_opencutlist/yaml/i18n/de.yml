@@ -83,7 +83,7 @@ core:
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
-      reset_dialog_position: Rücksetzen der Fensterposition
+      reset_dialog_position: Zurücksetzen der Fensterposition
   toolbar:
     name: OpenCutList
     command:
@@ -733,7 +733,7 @@ tab:
       option_stacking_2: Der Breite nach
       option_stacking_3: Alle Möglichkeiten
       option_keep: Mindestgröße der Reste
-      option_keep_help: Reste, die größer als die Mindestgröße sind, werden mit **zur Aufbewahrung** gekennzeichnet.
+      option_keep_help: Reste, die größer als die Mindestlänge und -breite sind, werden mit **zur Aufbewahrung** gekennzeichnet.
       option_std_bar_dimensional: Standard-Stange
       option_std_bar_edge: Standard-Kantenband
       option_std_bar_help: |
@@ -836,22 +836,28 @@ tab:
           Auswahl des Glättungsmodus
         option_sheet_good: Platte
         option_sheet_good_help: |
-          Wahl ob die Platte gezeichnet wird und ihre Farbe.
+          Auswahl, ob die Platte gezeichnet werden soll und ihre Farbe.
+        option_sheet_veneer: Furnier
+        option_sheet_veneer_help: |
+          Auswahl, ob die Furniere gezeichnet werden sollen und ihre Farbe.
         option_bar_dimensional: Stange
         option_bar_dimensional_help: |
-          Wahl ob die Stange gezeichnet wird und ihre Farbe.
+          Auswahl, ob die Stange gezeichnet werden soll und ihre Farbe.
+        option_bar_band: Kante
+        option_bar_band_help:  |
+          Auswahl, ob die Kanten gezeichnet werden sollen und ihre Farbe.
         option_parts: Teile
         option_parts_help: |
-          Wahl ob die Teile gezeichnet werden und ihre Farbe.
+          Auswahl, ob die Teile gezeichnet werden sollen und ihre Farbe.
         option_texts: Bezeichner
         option_texts_help:  |
-          Wahl ob die Bezeicher gezeichnet werden und ihre Farbe.
+          Auswahl, ob die Bezeicher gezeichnet werden sollen und ihre Farbe.
         option_leftovers: Verschnitte
         option_leftovers_help: |
-          Wahl ob die Verschnitte gezeichet werden und ihre Farbe.
+          Auswahl, ob die Verschnitte gezeichnet werden sollent und ihre Farbe.
         option_cuts: Schnitte
         option_cuts_help: |
-          Wahl ob die Schnitte gezeichnet werden und ihre Farbe.
+          Auswahl, ob die Schnitte gezeichnet werden sollen und ihre Farbe.
         option_stroke_color: Strichfarbe
         option_fill_color: Füllfarbe
         warning:

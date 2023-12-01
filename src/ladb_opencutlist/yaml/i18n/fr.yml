@@ -839,7 +839,7 @@ tab:
           Permet de choisir si le panneau est dessiné ainsi que de choisir sa couleur.
         option_sheet_veneer: Feuille
         option_sheet_veneer_help: |
-          Permet de choisir si la fuille est dessinée ainsi que de choisir sa couleur.
+          Permet de choisir si la feuille est dessinée ainsi que de choisir sa couleur.
         option_bar_dimensional: Barre
         option_bar_dimensional_help:  |
           Permet de choisir si la barre est dessinée ainsi que de choisir sa couleur.
@@ -854,10 +854,10 @@ tab:
           Permet de choisir si les textes d'identification des pièces sont dessinés ainsi que de choisir leur couleur.
         option_leftovers: Chutes
         option_leftovers_help:  |
-          Permet de choisir si les chutes sont dessinées que de choisir leur couleur.
+          Permet de choisir si les chutes sont dessinées ainsi que de choisir leur couleur.
         option_cuts: Coupes
         option_cuts_help:  |
-          Permet de choisir si les coupes sont dessinées que de choisir leur couleur.
+          Permet de choisir si les coupes sont dessinées ainsi que de choisir leur couleur.
         option_stroke_color: Couleur de trait
         option_fill_color: Couleur de remplissage
         warning:

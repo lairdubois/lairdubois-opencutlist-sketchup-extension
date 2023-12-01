@@ -83,7 +83,7 @@ core:
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
-      reset_dialog_position: Reset the window position
+      reset_dialog_position: Reset the Window Position
   toolbar:
     name: OpenCutList
     command:
@@ -671,10 +671,10 @@ tab:
       option_sheet_folding_1: Yes
       option_sheet_folding_help: Group panels or sheets having the same parts and cuts.
       option_hide_part_list: Parts List
-      option_hide_part_list_1d_dimensional_0: Displayed for each Board
-      option_hide_part_list_1d_edge_0: Displayed for each Edge Banding
-      option_hide_part_list_2d_good_0: Displayed for each Panel
-      option_hide_part_list_2d_veneer_0: Displayed for each Veneer Sheet
+      option_hide_part_list_1d_dimensional_0: Displayed for each board
+      option_hide_part_list_1d_edge_0: Displayed for each edge banding
+      option_hide_part_list_2d_good_0: Displayed for each panel
+      option_hide_part_list_2d_veneer_0: Displayed for each veneer sheet
       option_hide_part_list_1: Hidden
       option_hide_part_list_1d_help: Display or hide the list of parts for each board or edge banding.
       option_hide_part_list_2d_help: Display or hide the list of parts for each panel or veneer sheet.
@@ -698,8 +698,8 @@ tab:
       option_wrap_length: Wrap Board Length
       option_wrap_length_help: Maximal length after which a board or edge banding will be wrapped over multiple lines.
       option_hide_cross: Offcuts
-      option_hide_cross_0: Dimensions and Cross
-      option_hide_cross_1: Dimensions Only
+      option_hide_cross_0: Dimensions and cross
+      option_hide_cross_1: Dimensions only
       option_hide_cross_help: Shows or hides the cross indicating the parts defined as offcuts on the diagram.
       option_highlight_primary_cuts: Primary Cuts
       option_highlight_primary_cuts_0: Flyover only
@@ -711,8 +711,8 @@ tab:
       option_hide_edges_preview_help: Allows you to show or hide the visual display of the edge bands for each part in the cutting diagram.
       option_part_drawing_type: Shape of Parts
       option_part_drawing_type_0: Hidden
-      option_part_drawing_type_1: Displaying Front Face
-      option_part_drawing_type_2: Displaying Back Face
+      option_part_drawing_type_1: Displaying front face
+      option_part_drawing_type_2: Displaying back face
       option_part_drawing_type_help: |
         Shows or hides the actual shape of parts and their machining on the diagram.
 
@@ -728,12 +728,12 @@ tab:
       option_optimization_1: Advanced
       option_stacking: Preferred Direction
       option_stacking_help: "Stacking direction of parts that have a common length or width, per panel if more than one required."
-      option_stacking_0: No Preference
+      option_stacking_0: No preference
       option_stacking_1: Lengthwise
       option_stacking_2: Widthwise
-      option_stacking_3: All Possibilities
+      option_stacking_3: All possibilities
       option_keep: Leftovers min. Size
-      option_keep_help: Leftovers that are larger in both sized than the minimum size will be marked **to be kept**.
+      option_keep_help: Leftovers that are larger than the minimum length and width are marked **to be kept**.
       option_std_bar_dimensional: Standard Dimensional
       option_std_bar_edge: Standard Edge Band
       option_std_bar_help: |
@@ -837,9 +837,15 @@ tab:
         option_sheet_good: Panel
         option_sheet_good_help: |
           Select whether the panel is drawn, and select its color.
+        option_sheet_veneer: Veneer
+        option_sheet_veneer_help: |
+          Select whether the veneer is drawn, and select its color.
         option_bar_dimensional: Dimensional
         option_bar_dimensional_help: |
           Select whether the dimensional is drawn, and select its color.
+        option_bar_band: Edge
+        option_bar_band_help:  |
+          Select whether the edge is drawn, and select its color.
         option_parts: Parts
         option_parts_help: |
           Select whether or not parts are drawn, and select their color.
