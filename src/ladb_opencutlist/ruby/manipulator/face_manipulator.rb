@@ -105,7 +105,7 @@ module Ladb::OpenCutList
 
     def normal
       if @normal.nil?
-        @normal = Geom::Vector3d.new(plane[0..2])
+        @normal = Geom::Vector3d.new(plane[0..2]).normalize
       end
       @normal
     end

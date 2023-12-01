@@ -302,9 +302,9 @@ module Ladb::OpenCutList
       end
 
       z_axis = input_face_manipulator.normal
-      x_axis = input_edge_manipulator.line[1]
+      x_axis = input_edge_manipulator.line[1].normalize
       x_axis.reverse! if input_edge_manipulator.reversed_in?(input_face_manipulator.face)
-      y_axis = z_axis.cross(x_axis)
+      y_axis = z_axis.cross(x_axis).normalize
 
       [ x_axis, y_axis, z_axis, input_edge_manipulator ]
     end
