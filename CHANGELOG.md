@@ -27,6 +27,10 @@ in 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Improved dimension default style in Layout document after exporting _Drawing_ to Layout
   * Changed material color bullet from drop to circle
 
+* 5.1.2 (2023-11-29)
+
+  * Added teaser cutting diagram "Export" button
+  
 * 5.1.1 (2023-10-30)
 
   * Avoid negative dimensions input
