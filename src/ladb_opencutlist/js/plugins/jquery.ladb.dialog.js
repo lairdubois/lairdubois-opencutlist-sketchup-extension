@@ -80,12 +80,12 @@
                 icon: 'ladb-opencutlist-icon-materials',
                 sponsorAd: false
             },
-            {
-                name: 'outliner',
-                bar: 'leftbar',
-                icon: 'ladb-opencutlist-icon-outliner',
-                sponsorAd: false
-            },
+            // {
+            //     name: 'outliner',
+            //     bar: 'leftbar',
+            //     icon: 'ladb-opencutlist-icon-outliner',
+            //     sponsorAd: false
+            // },
             {
                 name: 'cutlist',
                 bar: 'leftbar',

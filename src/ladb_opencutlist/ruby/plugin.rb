@@ -63,7 +63,7 @@ module Ladb::OpenCutList
     SETTINGS_KEY_MATERIALS_LAST_DIR = 'settings.materials_last_dir'
 
     DIALOG_MINIMIZED_WIDTH = 90
-    DIALOG_MINIMIZED_HEIGHT = 30 + 80 + 80 * 4     # = 4 Tab buttons
+    DIALOG_MINIMIZED_HEIGHT = 30 + 80 + 80 * 3     # = 3 Tab buttons
     DIALOG_DEFAULT_MAXIMIZED_WIDTH = 1150
     DIALOG_DEFAULT_MAXIMIZED_HEIGHT = 640
     DIALOG_DEFAULT_LEFT = 60

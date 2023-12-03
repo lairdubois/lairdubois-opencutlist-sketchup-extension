@@ -105,17 +105,20 @@ module Ladb::OpenCutList
         # Union top paths with lower paths
         mid_top_paths = Clippy.compute_union(min_top_paths + ld[1..-1].map { |layer_def| layer_def[:paths] }.flatten(1).compact)
 
-        # Extract passthrough holes and reverse them to plain path
-        passthrough_paths = mid_top_paths.select { |path| !Clippy.is_rpath_positive?(path) }.each_slice(2).to_a.reverse.flatten(1)
+        # SKETCHUP_CONSOLE.clear
+        # mask_tree = Clippy.compute_tree(mid_top_paths)
 
-        # Union top paths with lower paths
-        max_top_paths = Clippy.compute_union(mid_top_paths + passthrough_paths)
+        # Extract top outer paths
+        out_top_paths = Clippy.compute_outers(mid_top_paths)
 
-        # Difference with max and min to extract holes to propagate
-        mask_paths = Clippy.compute_difference(max_top_paths, min_top_paths)
+        # Extract passthrough paths and reverse them to plain paths
+        passthrough_paths = Clippy.reverse_rpaths(Clippy.delete_rpaths_in(mid_top_paths, out_top_paths))
 
         # Replace bottom layer paths
         bottom_layer_def[:paths] = Clippy.compute_union(bottom_layer_def[:paths] + passthrough_paths)
+
+        # Difference with out and min to extract holes to propagate
+        mask_paths = Clippy.compute_difference(out_top_paths, min_top_paths)
 
         # Propagate down to up
         ldr = ld.reverse[0..-2] # Exclude top layer
@@ -130,7 +133,11 @@ module Ladb::OpenCutList
         end
 
         # Replace top layer paths
-        top_layer_def[:paths] = max_top_paths
+        top_layer_def[:paths] = out_top_paths
+
+        # [
+        #   mask_paths
+        # ].each_with_index { |paths, index| ld << { :depth => z_max + 5 + 2 * index, :paths => paths } }
 
       end
 
