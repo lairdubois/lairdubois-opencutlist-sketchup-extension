@@ -62,14 +62,14 @@ module Ladb::OpenCutList::Kuix
 
       # Anchor
       if @anchor
-        if @anchor.is_right?
+        if @anchor.right?
           content_bounds.origin.x = available_width - content_bounds.size.width
-        elsif @anchor.is_vertical_center?
+        elsif @anchor.vertical_center?
           content_bounds.origin.x = (available_width - content_bounds.size.width) / 2
         end
-        if @anchor.is_bottom?
+        if @anchor.bottom?
           content_bounds.origin.y = available_height - content_bounds.size.height
-        elsif @anchor.is_horizontal_center?
+        elsif @anchor.horizontal_center?
           content_bounds.origin.y = (available_height - content_bounds.size.height) / 2
         end
       end

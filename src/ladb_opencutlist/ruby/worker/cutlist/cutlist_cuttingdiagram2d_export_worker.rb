@@ -154,7 +154,7 @@ module Ladb::OpenCutList
         _svg_write_group_start(file, id: LAYER_PART)
         sheet.parts.each do |part|
 
-          id = _svg_sanitize_id("#{LAYER_PART}_#{part.number.to_s.rjust(3, '_')}#{@use_names ? "_#{part.name}" : ''}")
+          id = _svg_sanitize_identifier("#{LAYER_PART}_#{part.number.to_s.rjust(3, '_')}#{@use_names ? "_#{part.name}" : ''}")
 
           position = Geom::Point3d.new(
             _to_inch(part.px_x),
@@ -287,11 +287,11 @@ module Ladb::OpenCutList
       max = Geom::Point3d.new(sheet_width, sheet_height)
 
       layer_defs = []
-      layer_defs.push({ :name => LAYER_SHEET, :color => @sheet_stroke_color }) unless @sheet_hidden
-      layer_defs.push({ :name => LAYER_PART, :color => @parts_stroke_color }) unless @parts_hidden || @dxf_structure == DXF_STRUCTURE_LAYER
-      layer_defs.push({ :name => LAYER_LEFTOVER, :color => @leftovers_stroke_color }) unless @leftovers_hidden
-      layer_defs.push({ :name => LAYER_CUT, :color => @cuts_color }) unless @cuts_hidden
-      layer_defs.push({ :name => LAYER_TEXT, :color => @texts_color }) unless @parts_hidden || @texts_hidden
+      layer_defs << DxfLayerDef.new(LAYER_SHEET, :@sheet_stroke_color) unless @sheet_hidden
+      layer_defs << DxfLayerDef.new(LAYER_PART, :@parts_stroke_color) unless @parts_hidden || @dxf_structure == DXF_STRUCTURE_LAYER
+      layer_defs << DxfLayerDef.new(LAYER_LEFTOVER, :@leftovers_stroke_color) unless @leftovers_hidden
+      layer_defs << DxfLayerDef.new(LAYER_CUT, :@cuts_color) unless @cuts_hidden
+      layer_defs << DxfLayerDef.new(LAYER_TEXT, :@texts_color) unless @parts_hidden || @texts_hidden
 
       unless @parts_hidden
         depth_layer_defs = []
@@ -301,11 +301,11 @@ module Ladb::OpenCutList
             depth_layer_defs.concat(_dxf_get_projection_def_depth_layer_defs(projection_def, @parts_stroke_color, unit_transformation, LAYER_PART))
           end
         end
-        layer_defs.concat(depth_layer_defs.uniq { |layer_def| layer_def[:name] })
+        layer_defs.concat(depth_layer_defs.uniq { |layer_def| layer_def.name })
       end
 
       fn_part_block_name = lambda do |part|
-        _dxf_sanitize_name("#{LAYER_PART}_#{part.number.to_s.rjust(3, '_')}#{@use_names ? "_#{part.name}" : ''}")
+        _dxf_sanitize_identifier("#{LAYER_PART}_#{part.number.to_s.rjust(3, '_')}#{@use_names ? "_#{part.name}" : ''}")
       end
 
       _dxf_write_start(file)

@@ -192,8 +192,8 @@ module Ladb::OpenCutList
       max = @drawing_def.bounds.max.transform(unit_transformation)
 
       layer_defs = []
-      layer_defs.concat(_dxf_get_projection_def_depth_layer_defs(projection_def, @part_stroke_color, unit_factor, LAYER_PART).uniq { |layer_def| layer_def[:name] })
-      layer_defs.push({ :name => LAYER_GUIDE, :color => @guide_stroke_color }) unless edge_manipulators.empty?
+      layer_defs.concat(_dxf_get_projection_def_depth_layer_defs(projection_def, @part_stroke_color, unit_factor, LAYER_PART).uniq { |layer_def| layer_def.name })
+      layer_defs.push(DxfLayerDef.new(LAYER_GUIDE, @guide_stroke_color)) unless edge_manipulators.empty?
 
       _dxf_write_start(file)
       _dxf_write_section_header(file, @unit, min, max)

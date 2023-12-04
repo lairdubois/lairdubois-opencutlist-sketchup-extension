@@ -35,6 +35,11 @@ module Ladb::OpenCutList
       color.blend(COLOR_WHITE, 1.0 - [ 1, [ 0, amount ].max ].min)
     end
 
+    def self.color_invert(color)
+      return color unless color.is_a?(Sketchup::Color)
+      Sketchup::Color.new(255 - color.red, 255 - color.green, 255 - color.blue)
+    end
+
     def self.color_visible_over_white(color, luminance_threshold = 0.6, dark_amount = 0.2)
       l = color_relative_luminance(color)
       return color if l < luminance_threshold

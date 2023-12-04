@@ -27,6 +27,8 @@ module Ladb::OpenCutList
       @file_format = settings.fetch('file_format', nil)
       @unit = settings.fetch('unit', nil)
 
+      @guide_stroke_color = Sketchup::Color.new('#0068FF')
+
     end
 
     # -----
@@ -144,8 +146,8 @@ module Ladb::OpenCutList
       unit_transformation = Geom::Transformation.scaling(ORIGIN, unit_factor, unit_factor, unit_factor)
 
       layer_defs = []
-      layer_defs.push({ :name => LAYER_PART, :color => 7 }) unless @drawing_def.face_manipulators.empty?
-      layer_defs.push({ :name => LAYER_GUIDE, :color => 150 }) unless @drawing_def.edge_manipulators.empty?
+      layer_defs << DxfLayerDef.new(LAYER_PART, nil) unless @drawing_def.face_manipulators.empty?
+      layer_defs << DxfLayerDef.new(LAYER_GUIDE, @guide_stroke_color) unless @drawing_def.edge_manipulators.empty?
 
       min = @drawing_def.bounds.min.transform(unit_transformation)
       max = @drawing_def.bounds.max.transform(unit_transformation)

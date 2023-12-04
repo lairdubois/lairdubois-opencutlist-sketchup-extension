@@ -89,7 +89,10 @@ module Ladb::OpenCutList
 
     COLOR_MESH = Sketchup::Color.new(0, 0, 255, 100).freeze
     COLOR_MESH_HIGHLIGHTED = Sketchup::Color.new(0, 0, 255, 200).freeze
-    COLOR_GUIDE = Kuix::COLOR_CYAN #Sketchup::Color.new(0, 104, 255).freeze
+    COLOR_PART_OUTER = Kuix::COLOR_BLUE
+    COLOR_PART_HOLE = Sketchup::Color.new('#D783FF').freeze
+    COLOR_PART_POCKET = COLOR_PART_OUTER.blend(Kuix::COLOR_WHITE, 0.5).freeze
+    COLOR_GUIDE = Kuix::COLOR_CYAN
     COLOR_ACTION = Kuix::COLOR_MAGENTA
 
     @@action = nil
@@ -414,11 +417,11 @@ module Ladb::OpenCutList
               segments.add_segments(segs)
               case layer_def.position
               when DrawingProjectionLayerDef::LAYER_POSITION_TOP
-                segments.color = Kuix::COLOR_BLUE
+                segments.color = COLOR_PART_OUTER
               when DrawingProjectionLayerDef::LAYER_POSITION_BOTTOM
-                segments.color = Sketchup::Color.new('#D783FF')
+                segments.color = COLOR_PART_HOLE
               else
-                segments.color = Kuix::COLOR_BLUE.blend(Kuix::COLOR_WHITE, 0.5)
+                segments.color = COLOR_PART_POCKET
               end
               segments.line_width = highlighted ? line_width + 1 : line_width
               segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES unless polygon_def.outer?
@@ -519,68 +522,72 @@ module Ladb::OpenCutList
           preview.transformation = @active_drawing_def.transformation
           @space.append(preview)
 
+          fn_append_segments = lambda do |layer_def, polygon_def, segs, line_width|
+
+            segments = Kuix::Segments.new
+            segments.add_segments(segs)
+            case layer_def.position
+            when DrawingProjectionLayerDef::LAYER_POSITION_TOP
+              segments.color = COLOR_PART_OUTER
+            when DrawingProjectionLayerDef::LAYER_POSITION_BOTTOM
+              segments.color = COLOR_PART_HOLE
+            else
+              segments.color = COLOR_PART_POCKET
+            end
+            segments.line_width = highlighted ? line_width + 1 : line_width
+            segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES unless polygon_def.outer?
+            segments.on_top = true
+            preview.append(segments)
+
+          end
+
           projection_def.layer_defs.reverse.each do |layer_def| # reverse layer order to present from Bottom to Top
             layer_def.polygon_defs.each do |polygon_def|
 
-              segments = Kuix::Segments.new
-              segments.add_segments(polygon_def.segments)
-              segments.color = Kuix::COLOR_BLUE
-              segments.line_width = highlighted ? 3 : 2
-              segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES unless polygon_def.outer?
-              segments.on_top = true
-              preview.append(segments)
-
-              # Highlight arcs (if activated)
-              if fetch_action_option(ACTION_EXPORT_FACE, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
-                polygon_def.loop_def.portions.grep(Geometrix::ArcLoopPortionDef).each do |portion|
-
-                  segments = Kuix::Segments.new
-                  segments.add_segments(portion.segments)
-                  segments.color = COLOR_BRAND
-                  segments.line_width = highlighted ? 3 : 2
-                  segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES unless polygon_def.outer?
-                  segments.on_top = true
-                  preview.append(segments)
-
+              if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
+                polygon_def.loop_def.portions.each do |portion|
+                  fn_append_segments.call(layer_def, polygon_def, portion.segments, portion.is_a?(Geometrix::ArcLoopPortionDef) ? 4 : 2)
                 end
+              else
+                fn_append_segments.call(layer_def, polygon_def, polygon_def.segments, 2)
               end
-
-              bounds = Geom::BoundingBox.new
-              bounds.add(Geom::Point3d.new(@active_drawing_def.bounds.min.x, @active_drawing_def.bounds.min.y, @active_drawing_def.bounds.max.z))
-              bounds.add(@active_drawing_def.bounds.max)
-              bounds.add(Geom::Point3d.new(0, 0, @active_drawing_def.bounds.max.z))
-
-              # Box helper
-              box_helper = Kuix::RectangleMotif.new
-              box_helper.bounds.origin.copy!(bounds.min)
-              box_helper.bounds.size.copy!(bounds)
-              box_helper.bounds.apply_offset(inch_offset, inch_offset, 0)
-              box_helper.color = Kuix::COLOR_BLACK
-              box_helper.line_width = 1
-              box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-              preview.append(box_helper)
-
-              if @active_drawing_def.input_edge_manipulator
-
-                # Highlight input edge
-                segments = Kuix::Segments.new
-                segments.add_segments(@active_drawing_def.input_edge_manipulator.segment)
-                segments.color = COLOR_ACTION
-                segments.line_width = 3
-                segments.on_top = true
-                preview.append(segments)
-
-              end
-
-              # Axes helper
-              axes_helper = Kuix::AxesHelper.new
-              axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(0, 0, @active_drawing_def.bounds.max.z))
-              axes_helper.box_0.visible = false
-              axes_helper.box_z.visible = false
-              preview.append(axes_helper)
 
             end
           end
+
+          bounds = Geom::BoundingBox.new
+          bounds.add(Geom::Point3d.new(@active_drawing_def.bounds.min.x, @active_drawing_def.bounds.min.y, @active_drawing_def.bounds.max.z))
+          bounds.add(@active_drawing_def.bounds.max)
+          bounds.add(Geom::Point3d.new(0, 0, @active_drawing_def.bounds.max.z))
+
+          # Box helper
+          box_helper = Kuix::RectangleMotif.new
+          box_helper.bounds.origin.copy!(bounds.min)
+          box_helper.bounds.size.copy!(bounds)
+          box_helper.bounds.apply_offset(inch_offset, inch_offset, 0)
+          box_helper.color = Kuix::COLOR_BLACK
+          box_helper.line_width = 1
+          box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+          preview.append(box_helper)
+
+          if @active_drawing_def.input_edge_manipulator
+
+            # Highlight input edge
+            segments = Kuix::Segments.new
+            segments.add_segments(@active_drawing_def.input_edge_manipulator.segment)
+            segments.color = COLOR_ACTION
+            segments.line_width = 3
+            segments.on_top = true
+            preview.append(segments)
+
+          end
+
+          # Axes helper
+          axes_helper = Kuix::AxesHelper.new
+          axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(0, 0, @active_drawing_def.bounds.max.z))
+          axes_helper.box_0.visible = false
+          axes_helper.box_z.visible = false
+          preview.append(axes_helper)
 
         end
 

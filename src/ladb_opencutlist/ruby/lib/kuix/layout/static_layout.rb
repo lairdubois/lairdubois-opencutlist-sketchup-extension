@@ -84,14 +84,14 @@ module Ladb::OpenCutList::Kuix
 
             # Anchor
             if entity.layout_data.anchor
-              if entity.layout_data.anchor.is_right?
+              if entity.layout_data.anchor.right?
                 entity_bounds.origin.x -= entity_bounds.size.width
-              elsif entity.layout_data.anchor.is_vertical_center?
+              elsif entity.layout_data.anchor.vertical_center?
                 entity_bounds.origin.x -= entity_bounds.size.width / 2
               end
-              if entity.layout_data.anchor.is_bottom?
+              if entity.layout_data.anchor.bottom?
                 entity_bounds.origin.y -= entity_bounds.size.height
-              elsif entity.layout_data.anchor.is_horizontal_center?
+              elsif entity.layout_data.anchor.horizontal_center?
                 entity_bounds.origin.y -= entity_bounds.size.height / 2
               end
             end

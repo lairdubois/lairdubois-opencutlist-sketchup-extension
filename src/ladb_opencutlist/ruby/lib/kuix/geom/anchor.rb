@@ -28,27 +28,27 @@ module Ladb::OpenCutList::Kuix
 
     # -- Properties --
 
-    def is_top?
+    def top?
       @position == TOP_LEFT || @position == TOP_CENTER || @position == TOP_RIGHT
     end
 
-    def is_right?
+    def right?
       @position == TOP_RIGHT || @position == CENTER_RIGHT || @position == BOTTOM_RIGHT
     end
 
-    def is_bottom?
+    def bottom?
       @position == BOTTOM_LEFT || @position == BOTTOM_CENTER || @position == BOTTOM_RIGHT
     end
 
-    def is_left?
+    def left?
       @position == TOP_RIGHT || @position == CENTER_LEFT || @position == BOTTOM_LEFT
     end
 
-    def is_horizontal_center?
+    def horizontal_center?
       @position == CENTER_LEFT || @position == CENTER || @position == CENTER_RIGHT
     end
 
-    def is_vertical_center?
+    def vertical_center?
       @position == TOP_CENTER || @position == CENTER || @position == BOTTOM_CENTER
     end
 

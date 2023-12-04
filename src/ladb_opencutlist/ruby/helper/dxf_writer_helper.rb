@@ -321,7 +321,9 @@ module Ladb::OpenCutList
       dxf_unit
     end
 
-    def _dxf_convert_color_to_aci(color)
+    def _dxf_convert_color_to_aci(color, default = 7)
+      return color if color.is_a?(Integer) && color >= 0 && color <= 255
+      return default unless color.is_a?(Sketchup::Color)
       match_index = 0
       match_dist = 195076 # Max dist 255**2 + 255**2 + 255**2 + 1
       DXF_ACI_COLORS.each_with_index do |aci_color, index|
@@ -340,7 +342,7 @@ module Ladb::OpenCutList
       @_dxf_current_id.to_s(16).upcase
     end
 
-    def _dxf_sanitize_name(name)
+    def _dxf_sanitize_identifier(name)
       name.to_s.gsub(/[\s<>\/\\“:;?*|=‘.-]/, '_').upcase
     end
 
@@ -610,9 +612,9 @@ module Ladb::OpenCutList
 
     # TABLES
 
-    def _dxf_write_section_tables(file, vport_min = Geom::Point3d.new, vport_max = Geom::Point3d.new(1000.0, 1000.0, 1000.0), layer_defs = [])  # layer_defs = [ { :name => NAME, :color => COLOR }, ... ]
+    def _dxf_write_section_tables(file, vport_min = Geom::Point3d.new, vport_max = Geom::Point3d.new(1000.0, 1000.0, 1000.0), layer_defs = [])  # layer_defs = [ DxfLayerDef, ... ]
 
-      layer_defs = [ { :name => '0'} ] + layer_defs
+      layer_defs = [ DxfLayerDef.new('0', nil) ] + layer_defs
 
       _dxf_write_section(file, 'TABLES') do
 
@@ -725,9 +727,9 @@ module Ladb::OpenCutList
             _dxf_write_id(file)
             _dxf_write_owner_id(file, id)
             _dxf_write_sub_classes(file, [ 'AcDbSymbolTableRecord', 'AcDbLayerTableRecord' ])
-            _dxf_write(file, 2, layer_def[:name])
+            _dxf_write(file, 2, layer_def.name)
             _dxf_write(file, 70, 0)
-            _dxf_write(file, 62, layer_def[:color] ? (layer_def[:color].is_a?(Sketchup::Color) ? _dxf_convert_color_to_aci(layer_def[:color]) : layer_def[:color]) : 7 )  # Docs : https://ezdxf.mozman.at/docs/concepts/aci.html
+            _dxf_write(file, 62, _dxf_convert_color_to_aci(layer_def.color))  # Docs : https://ezdxf.mozman.at/docs/concepts/aci.html
             _dxf_write(file, 6, 'CONTINUOUS')
           end
 
@@ -1167,26 +1169,26 @@ module Ladb::OpenCutList
     def _dxf_get_projection_layer_def_depth_name(layer_def, unit_transformation, prefix = nil)
       return '' unless layer_def.is_a?(DrawingProjectionLayerDef)
 
-      if layer_def.is_top?
+      if layer_def.top?
         a = [ prefix, 'OUTER' ]
       else
-        a = [ prefix, 'DEPTH', ('%0.04f' % [ Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x ]).rjust(9, '_') ]
+        a = [ prefix, layer_def.bottom? ? 'HOLE' : 'POCKET', ('%0.04f' % [ Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x ]).rjust(9, '_') ]
       end
-      _dxf_sanitize_name(a.compact.join('_'))
+      _dxf_sanitize_identifier(a.compact.join('_'))
     end
 
     def _dxf_get_projection_def_depth_layer_defs(projection_def, color, unit_transformation, prefix = nil)
       return [] unless projection_def.is_a?(DrawingProjectionDef)
 
-      layer_defs = []
+      dxf_layer_defs = []
       projection_def.layer_defs.each do |layer_def|
-        layer_defs.push({
-          :name => _dxf_get_projection_layer_def_depth_name(layer_def, unit_transformation, prefix),
-          :color => color ? ColorUtils.color_lighten(color, projection_def.max_depth > 0 ? (layer_def.depth / projection_def.max_depth) * 0.6 + 0.2 : 0.3) : nil
-        })
+        dxf_layer_defs.push(DxfLayerDef.new(
+          _dxf_get_projection_layer_def_depth_name(layer_def, unit_transformation, prefix),
+          color ? ColorUtils.color_lighten(color, projection_def.max_depth > 0 ? (layer_def.depth / projection_def.max_depth) * 0.6 + 0.2 : 0.3) : nil
+        ))
       end
 
-      layer_defs
+      dxf_layer_defs
     end
 
     def _dxf_write_projection_def_block_record(file, projection_def, name, owner_id)
@@ -1277,6 +1279,10 @@ module Ladb::OpenCutList
       end
 
     end
+
+    # -----
+
+    DxfLayerDef = Struct.new(:name, :color)
 
   end
 

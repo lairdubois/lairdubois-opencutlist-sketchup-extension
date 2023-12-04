@@ -25,15 +25,15 @@ module Ladb::OpenCutList
       @polygon_defs = polygon_defs
     end
 
-    def is_top?
+    def top?
       @position == LAYER_POSITION_TOP
     end
 
-    def is_inside?
+    def inside?
       @position == LAYER_POSITION_INSIDE
     end
 
-    def is_bottom?
+    def bottom?
       @position == LAYER_POSITION_BOTTOM
     end
 
