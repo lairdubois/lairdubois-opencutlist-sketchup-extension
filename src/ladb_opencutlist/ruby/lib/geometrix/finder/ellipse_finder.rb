@@ -215,12 +215,14 @@ module Ladb::OpenCutList::Geometrix
     end
 
     def ==(other)
-      (@a - other.a).abs < 1e-6 &&
-      (@b - other.b).abs < 1e-6 &&
-      (@c - other.c).abs < 1e-6 &&
-      (@d - other.d).abs < 1e-6 &&
-      (@e - other.e).abs < 1e-6 &&
-      (@f - other.f).abs < 1e-6
+      [
+        @a - other.a,
+        @b - other.b,
+        @c - other.c,
+        @d - other.d,
+        @e - other.e,
+        @f - other.f
+      ].all? { |d| d.abs < 1e-6 }
     end
 
   end
