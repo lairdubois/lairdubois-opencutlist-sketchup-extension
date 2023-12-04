@@ -121,6 +121,8 @@ core:
     failed_export_to: |
       Beim Exportieren in die Datei, *{{ path }}*, ist ein Fehler aufgetreten.
       **{{ error }}**
+  success:
+    exported_to: "Erfolgreicher Export nach {{ path }}."
   event:
     model_change: Das aktive Modell wurde verändert.
     options_change: Die Optionen des Modells wurden verändert.
@@ -1062,8 +1064,6 @@ tab:
       no_typed_materials_in_model: "Ihr Modell verwendet kein definiertes Material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** oder **$t(tab.materials.type_5)**)."
       no_typed_materials_in_selection: "Ihre Auswahl verwendet kein definiertes Material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** oder **$t(tab.materials.type_5)**)."
       export_empty: Ihre Exportauswahl enthält keine Teile.
-    success:
-      exported_to: "Erfolgreicher Export nach {{ export_path }}."
     tip:
       no_component: |
         Zur Berücksichtigung in der *Holzliste* müssen die Teile Instanzen einer **Komponente** sein.
@@ -1209,8 +1209,6 @@ tab:
       failed_removing_material: "Beim Löschen des Materials ist ein Fehler aufgetreten. **{{ error }}**"
       failed_duplicating_material: "Beim Duplizieren des Materials ist ein Fehler aufgetreten. **{{ error }}**"
       invalid_image_file: Ungültiges Bild
-    success:
-      exported_to: "Erfolgreicher Export nach {{ export_path }}."
     obsolete_base: "Um synchron zu bleiben, müssen Sie die Materialliste aktualisieren."
   outliner:
     label: Struktur
@@ -1586,9 +1584,7 @@ tool:
     action_option_2_1_status: Alle Flächen des Teils verwenden
     action_option_3_0_status: Ursprung des Teils projizieren
     action_option_3_1_status: Kreise und Bögen erkennen (Experimentell)
-    action_option_3_2_status: Exportieren der im Teil enthaltenen schwebenden und mit der Zielfläche koplanaren Kanten als Hilfslinien
-    success:
-      exported_to: "Erfolgreicher Export nach {{ export_path }}."
+    action_option_3_3_status: Exportieren der im Teil enthaltenen schwebenden und mit der Zielfläche koplanaren Kanten als Hilfslinien
     error:
       not_part: Diese Fläche gehört nicht zu einem Teil
       not_flat_face: Diese Fläche ist nicht eben

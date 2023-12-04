@@ -12,7 +12,7 @@ class TC_Lib_Clippy < TestUp::TestCase
     subjects = faces.first.loops.map { |loop| Ladb::OpenCutList::Clippy.points_to_rpath(loop.vertices.map { |vertex| vertex.position }) }
     clips = faces.last.loops.map { |loop| Ladb::OpenCutList::Clippy.points_to_rpath(loop.vertices.map { |vertex| vertex.position }) }
 
-    solution = Ladb::OpenCutList::Clippy.compute_union(subjects, clips)
+    solution = Ladb::OpenCutList::Clippy.execute_union(subjects, clips)
 
     group = Sketchup.active_model.entities.add_group
 

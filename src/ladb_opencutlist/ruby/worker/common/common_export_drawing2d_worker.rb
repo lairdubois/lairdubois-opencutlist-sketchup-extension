@@ -29,6 +29,7 @@ module Ladb::OpenCutList
       @unit = settings.fetch('unit', nil)
       @anchor = settings.fetch('anchor', false)
       @smoothing = settings.fetch('smoothing', false)
+      @merge_holes = settings.fetch('merge_holes', false)
 
       @part_stroke_color = Sketchup::Color.new('green')
       @part_fill_color = nil
@@ -74,7 +75,7 @@ module Ladb::OpenCutList
 
       # Compute projection
       projection_def = CommonDrawingProjectionWorker.new(@drawing_def, {
-        'merge_holes' => true
+        'merge_holes' => @merge_holes
       }).run
 
       # Open output file

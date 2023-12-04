@@ -49,7 +49,8 @@ module Ladb::OpenCutList
 
     ACTION_OPTION_OPTIONS_ANCHOR = 0
     ACTION_OPTION_OPTIONS_SMOOTHING = 1
-    ACTION_OPTION_OPTIONS_GUIDES = 2
+    ACTION_OPTION_OPTIONS_MERGE_HOLES = 2
+    ACTION_OPTION_OPTIONS_GUIDES = 3
 
     ACTIONS = [
       {
@@ -66,7 +67,7 @@ module Ladb::OpenCutList
           ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_SVG, ACTION_OPTION_FILE_FORMAT_DXF ],
           ACTION_OPTION_UNIT => [ ACTION_OPTION_UNIT_MM, ACTION_OPTION_UNIT_CM, ACTION_OPTION_UNIT_IN ],
           ACTION_OPTION_FACE => [ ACTION_OPTION_FACE_ONE, ACTION_OPTION_FACE_ALL ],
-          ACTION_OPTION_OPTIONS => [ACTION_OPTION_OPTIONS_ANCHOR, ACTION_OPTION_OPTIONS_SMOOTHING, ACTION_OPTION_OPTIONS_GUIDES ]
+          ACTION_OPTION_OPTIONS => [ACTION_OPTION_OPTIONS_ANCHOR, ACTION_OPTION_OPTIONS_SMOOTHING, ACTION_OPTION_OPTIONS_MERGE_HOLES, ACTION_OPTION_OPTIONS_GUIDES ]
         }
       },
       {
@@ -204,6 +205,8 @@ module Ladb::OpenCutList
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.273,0L0.273,0.727L1,0.727 M0.091,0.545L0.455,0.545L0.455,0.909L0.091,0.909L0.091,0.545 M0.091,0.182L0.273,0L0.455,0.182 M0.818,0.545L1,0.727L0.818,0.909'))
         when ACTION_OPTION_OPTIONS_SMOOTHING
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M1,0.719L0.97,0.548L0.883,0.398L0.75,0.286L0.587,0.227L0.413,0.227L0.25,0.286L0.117,0.398L0.03,0.548L0,0.719'))
+        when ACTION_OPTION_OPTIONS_MERGE_HOLES
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.167L0.5,0L1,0.167L0.75,0.25L0.5,0.167L0.25,0.25L0,0.167 M0.25,0.833L0.5,0.75L0.75,0.833L0.5,0.917L0.25,0.833 M0.5,0.333L0.5,0.667 M0.667,0.5L0.333,0.5'))
         when ACTION_OPTION_OPTIONS_GUIDES
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.167,0L0.167,1 M0,0.167L1,0.167 M0,0.833L1,0.833 M0.833,0L0.833,1'))
         end
@@ -398,44 +401,41 @@ module Ladb::OpenCutList
             inch_offset = Sketchup.active_model.active_view.pixels_to_model(15, Geom::Point3d.new.transform(@active_drawing_def.transformation))
 
             projection_def = CommonDrawingProjectionWorker.new(@active_drawing_def, {
-              'merge_holes' => false
+              'merge_holes' => fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES)
             }).run
 
             preview = Kuix::Group.new
             preview.transformation = @active_drawing_def.transformation
             @space.append(preview)
 
+            fn_append_segments = lambda do |layer_def, polygon_def, segs, line_width|
+
+              segments = Kuix::Segments.new
+              segments.add_segments(segs)
+              case layer_def.position
+              when DrawingProjectionLayerDef::LAYER_POSITION_TOP
+                segments.color = Kuix::COLOR_BLUE
+              when DrawingProjectionLayerDef::LAYER_POSITION_BOTTOM
+                segments.color = Sketchup::Color.new('#D783FF')
+              else
+                segments.color = Kuix::COLOR_BLUE.blend(Kuix::COLOR_WHITE, 0.5)
+              end
+              segments.line_width = highlighted ? line_width + 1 : line_width
+              segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES unless polygon_def.outer?
+              segments.on_top = true
+              preview.append(segments)
+
+            end
+
             projection_def.layer_defs.reverse.each do |layer_def| # reverse layer order to present from Bottom to Top
               layer_def.polygon_defs.each do |polygon_def|
 
-                segments = Kuix::Segments.new
-                segments.add_segments(polygon_def.segments)
-                case layer_def.position
-                when DrawingProjectionLayerDef::LAYER_POSITION_TOP
-                  segments.color = Kuix::COLOR_BLUE
-                when DrawingProjectionLayerDef::LAYER_POSITION_BOTTOM
-                  segments.color = Sketchup::Color.new('#D783FF')
-                else
-                  segments.color = Kuix::COLOR_BLUE.blend(Kuix::COLOR_WHITE, 0.5)
-                end
-                segments.line_width = highlighted ? 3 : 2
-                segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES unless polygon_def.outer?
-                segments.on_top = true
-                preview.append(segments)
-
-                # Highlight arcs (if activated)
                 if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
-                  polygon_def.loop_def.portions.grep(Geometrix::ArcLoopPortionDef).each do |portion|
-
-                    segments = Kuix::Segments.new
-                    segments.add_segments(portion.segments)
-                    segments.color = COLOR_BRAND
-                    segments.line_width = highlighted ? 3 : 2
-                    segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES unless polygon_def.outer?
-                    segments.on_top = true
-                    preview.append(segments)
-
+                  polygon_def.loop_def.portions.each do |portion|
+                    fn_append_segments.call(layer_def, polygon_def, portion.segments, portion.is_a?(Geometrix::ArcLoopPortionDef) ? 4 : 2)
                   end
+                else
+                  fn_append_segments.call(layer_def, polygon_def, polygon_def.segments, 2)
                 end
 
               end
@@ -794,7 +794,7 @@ module Ladb::OpenCutList
             notify_errors(response[:errors])
           elsif response[:export_path]
             notify_success(
-              Plugin.instance.get_i18n_string('tool.smart_export.success.exported_to', { :export_path => File.basename(response[:export_path]) }),
+              Plugin.instance.get_i18n_string('core.success.exported_to', { :path => File.basename(response[:export_path]) }),
               [
                 {
                   :label => Plugin.instance.get_i18n_string('default.open'),
@@ -831,13 +831,15 @@ module Ladb::OpenCutList
           end
           anchor = fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) && (@active_drawing_def.bounds.min.x != 0 || @active_drawing_def.bounds.min.y != 0)    # No anchor if = (0, 0, z)
           smoothing = fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
+          merge_holes = fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES)
 
           worker = CommonExportDrawing2dWorker.new(@active_drawing_def, {
             'file_name' => file_name,
             'file_format' => file_format,
             'unit' => unit,
             'anchor' => anchor,
-            'smoothing' => smoothing
+            'smoothing' => smoothing,
+            'merge_holes' => merge_holes
           })
           response = worker.run
 
@@ -845,7 +847,7 @@ module Ladb::OpenCutList
             notify_errors(response[:errors])
           elsif response[:export_path]
             notify_success(
-              Plugin.instance.get_i18n_string('tool.smart_export.success.exported_to', { :export_path => File.basename(response[:export_path]) }),
+              Plugin.instance.get_i18n_string('core.success.exported_to', { :path => File.basename(response[:export_path]) }),
               [
                 {
                   :label => Plugin.instance.get_i18n_string('default.open'),
@@ -894,7 +896,7 @@ module Ladb::OpenCutList
             notify_errors(response[:errors])
           elsif response[:export_path]
             notify_success(
-              Plugin.instance.get_i18n_string('tool.smart_export.success.exported_to', { :export_path => File.basename(response[:export_path]) }),
+              Plugin.instance.get_i18n_string('core.success.exported_to', { :path => File.basename(response[:export_path]) }),
               [
                 {
                   :label => Plugin.instance.get_i18n_string('default.open'),
@@ -943,7 +945,7 @@ module Ladb::OpenCutList
             notify_errors(response[:errors])
           elsif response[:export_path]
             notify_success(
-              Plugin.instance.get_i18n_string('tool.smart_export.success.exported_to', { :export_path => File.basename(response[:export_path]) }),
+              Plugin.instance.get_i18n_string('core.success.exported_to', { :path => File.basename(response[:export_path]) }),
               [
                 {
                   :label => Plugin.instance.get_i18n_string('default.open'),

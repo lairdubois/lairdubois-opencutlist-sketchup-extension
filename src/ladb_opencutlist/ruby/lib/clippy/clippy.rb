@@ -12,57 +12,66 @@ module Ladb::OpenCutList
 
     # -----
 
-    def self.compute_union(subjects, clips = [])
+    def self.execute_union(subjects, clips = [])
       _load_lib
       _clear
       _append_subjects(subjects)
       _append_clips(clips)
-      _compute_union
-      solution = _unpack_solution
+      _execute_union
+      solution = _unpack_paths_solution
       _clear
       solution
     end
 
-    def self.compute_difference(subjects, clips)
+    def self.execute_difference(subjects, clips)
       _load_lib
       _clear
       _append_subjects(subjects)
       _append_clips(clips)
-      _compute_difference
-      solution = _unpack_solution
+      _execute_difference
+      solution = _unpack_paths_solution
       _clear
       solution
     end
 
-    def self.compute_intersection(subjects, clips)
+    def self.execute_intersection(subjects, clips)
       _load_lib
       _clear
       _append_subjects(subjects)
       _append_clips(clips)
-      _compute_intersection
-      solution = _unpack_solution
+      _execute_intersection
+      solution = _unpack_paths_solution
       _clear
       solution
     end
 
-    def self.compute_outers(subjects)
+    def self.execute_polytree(subjects)
       _load_lib
       _clear
       _append_subjects(subjects)
-      _compute_outers
-      solution = _unpack_solution
+      _execute_polytree
+      solution = _unpack_polytree_solution
       _clear
       solution
     end
 
-    def self.compute_tree(subjects)
-      _load_lib
-      _clear
-      _append_subjects(subjects)
-      _compute_tree
-      solution = _unpack_tree_solution
-      _clear
-      solution
+    def self.polytree_to_polyshapes(polytree)
+      polyshapes = []
+      stack = [ polytree ]
+      until stack.empty?
+        current = stack.pop
+        current.children.each { |child| stack.push(child) }
+        if current.is_a?(PolyPath)
+          if current.hole?
+            if polyshapes.last && !polyshapes.last.paths.empty?
+              polyshapes.last.paths << current.path
+            end
+          else
+            polyshapes << PolyShape.new([ current.path ])
+          end
+        end
+      end
+      polyshapes
     end
 
     def self.is_rpath_positive?(rpath)
@@ -139,16 +148,15 @@ module Ladb::OpenCutList
         extern 'void c_clear_clips()'
         extern 'void c_append_clip(int64_t*)'
 
-        extern 'void c_compute_union()'
-        extern 'void c_compute_difference()'
-        extern 'void c_compute_intersection()'
-        extern 'void c_compute_outers()'
-        extern 'void c_compute_tree()'
+        extern 'void c_execute_union()'
+        extern 'void c_execute_difference()'
+        extern 'void c_execute_intersection()'
+        extern 'void c_execute_polytree()'
 
-        extern 'void c_clear_solution()'
-        extern 'int64_t* c_get_solution()'
-        extern 'void c_clear_tree_solution()'
-        extern 'int64_t* c_get_tree_solution()'
+        extern 'void c_clear_paths_solution()'
+        extern 'int64_t* c_get_paths_solution()'
+        extern 'void c_clear_polytree_solution()'
+        extern 'int64_t* c_get_polytree_solution()'
 
         extern 'int c_is_cpath_positive(int64_t*)'
         extern 'double c_get_cpath_area(int64_t*)'
@@ -220,9 +228,9 @@ module Ladb::OpenCutList
 
     # Returns Array<Array<Integer>>
     def self._cpaths_to_rpaths(cpaths)
-      len, n = _ptr_int64_to_array(cpaths, 2)
-      rpaths = []
+      l, n = _ptr_int64_to_array(cpaths, 2)
       cur = 2
+      rpaths = []
       n.times do
         rpath = _cpath_to_rpath(_ptr_int64_offset(cpaths, cur))
         rpaths << rpath
@@ -233,32 +241,28 @@ module Ladb::OpenCutList
 
     def self._cpolytree_to_rpolytree(cpolytree)
       l, c = _ptr_int64_to_array(cpolytree, 2)
-      puts "POLYTREE len=#{l}, C=#{c}"
-      rpolypaths = []
       cur = 2
-      c.times do |i|
-        rpolypath, len = _cpolypath_to_rpolypath(_ptr_int64_offset(cpolytree, cur))
+      rpolypaths = []
+      c.times do
+        rpolypath, len = _read_cpolypath_to_rpolypath(_ptr_int64_offset(cpolytree, cur))
         rpolypaths << rpolypath
         cur += len
       end
-      { children: rpolypaths }
+      PolyTree.new(rpolypaths)
     end
 
-    def self._cpolypath_to_rpolypath(cpolypath, level = 1)
+    def self._read_cpolypath_to_rpolypath(cpolypath, level = 0)
       n, c = _ptr_int64_to_array(cpolypath, 2)
-      puts "#{' '.rjust(level)}+ POLYPATH N=#{n}, C=#{c}, level=#{level}"
       cur = 2
       rpath = _ptr_int64_to_array(_ptr_int64_offset(cpolypath, cur), n * 2)
-      puts "#{' '.rjust(level)}   ↳ path #{level.odd? ? '▪' : '▫︎'} = #{rpath[0,4]}..."
-      rpath << rpath
       cur += n * 2
       rpolypaths = []
-      c.times do |i|
-        rpolypath, len = _cpolypath_to_rpolypath(_ptr_int64_offset(cpolypath, cur), level + 1)
+      c.times do
+        rpolypath, len = _read_cpolypath_to_rpolypath(_ptr_int64_offset(cpolypath, cur), level + 1)
         rpolypaths << rpolypath
         cur += len
       end
-      [ { path: rpath, children: rpolypaths }, cur ]
+      [ PolyPath.new(rpath, level, rpolypaths), cur ] # Returns PolyPath and its data length
     end
 
     # ---
@@ -266,8 +270,8 @@ module Ladb::OpenCutList
     def self._clear
       c_clear_subjects
       c_clear_clips
-      c_clear_solution
-      c_clear_tree_solution
+      c_clear_paths_solution
+      c_clear_polytree_solution
     end
 
     def self._append_subject(rpath)
@@ -290,30 +294,26 @@ module Ladb::OpenCutList
       end
     end
 
-    def self._compute_union
-      c_compute_union
+    def self._execute_union
+      c_execute_union
     end
 
-    def self._compute_difference
-      c_compute_difference
+    def self._execute_difference
+      c_execute_difference
     end
 
-    def self._compute_intersection
-      c_compute_intersection
+    def self._execute_intersection
+      c_execute_intersection
     end
 
-    def self._compute_outers
-      c_compute_outers
+    def self._execute_polytree
+      c_execute_polytree
     end
 
-    def self._compute_tree
-      c_compute_tree
-    end
-
-    def self._unpack_solution
+    def self._unpack_paths_solution
 
       # Retrieve solution's pointer
-      cpaths = c_get_solution
+      cpaths = c_get_paths_solution
 
       # Convert to rpath
       rpaths = _cpaths_to_rpaths(cpaths)
@@ -324,10 +324,10 @@ module Ladb::OpenCutList
       rpaths
     end
 
-    def self._unpack_tree_solution
+    def self._unpack_polytree_solution
 
       # Retrieve solution's pointer
-      cpolytree = c_get_tree_solution
+      cpolytree = c_get_polytree_solution
 
       # Convert to rpath
       rpolytree = _cpolytree_to_rpolytree(cpolytree)
@@ -337,6 +337,20 @@ module Ladb::OpenCutList
 
       rpolytree
     end
+
+    # -----
+
+    PolyTree = Struct.new(:children)
+
+    PolyPath = Struct.new(:path, :level, :children) do
+
+      def hole?
+        level.odd? # First level is 0
+      end
+
+    end
+
+    PolyShape = Struct.new(:paths)
 
   end
 end

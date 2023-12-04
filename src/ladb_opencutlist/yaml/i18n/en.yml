@@ -121,6 +121,8 @@ core:
     failed_export_to: |
       An error occurred while exporting to *{{ path }}*.
       **{{ error }}**
+  success:
+    exported_to: "Successful export to {{ path }}."
   event:
     model_change: The active model has changed.
     options_change: Options in the model have changed.
@@ -1062,8 +1064,6 @@ tab:
       no_typed_materials_in_model: "Your model does not use any defined material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** or **$t(tab.materials.type_5)**)."
       no_typed_materials_in_selection: "The selection does not use any defined material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** or **$t(tab.materials.type_5)**)."
       export_empty: Your export selection does not contain any part.
-    success:
-      exported_to: "Successful export to {{ export_path }}."
     tip:
       no_component: |
         The parts to be included in the *parts list* must be instances of a **component**.
@@ -1209,8 +1209,6 @@ tab:
       failed_removing_material: "An error occurred while suppressing this material. **{{ error }}**"
       failed_duplicating_material: "An error occured while duplicating the material. **{{ error }}**"
       invalid_image_file: Invalid image
-    success:
-      exported_to: "Successful export to {{ export_path }}."
     obsolete_base: "To stay in sync, you need to update the material list."
   outliner:
     label: Structure
@@ -1586,9 +1584,7 @@ tool:
     action_option_2_1_status: Use all faces of the part
     action_option_3_0_status: Project part origin
     action_option_3_1_status: Detect circles and arcs (Experimental)
-    action_option_3_2_status: Export as guides the floating and coplanar edges of the target face contained in the part
-    success:
-      exported_to: "Successful export to {{ export_path }}."
+    action_option_3_3_status: Export as guides the floating and coplanar edges of the target face contained in the part
     error:
       not_part: This surface does not belong to a part
       not_flat_face: This surface is not planar

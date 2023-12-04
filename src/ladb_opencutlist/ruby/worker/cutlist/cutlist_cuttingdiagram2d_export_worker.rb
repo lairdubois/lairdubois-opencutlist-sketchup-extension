@@ -30,6 +30,7 @@ module Ladb::OpenCutList
       @file_format = settings.fetch('file_format', nil)
       @dxf_structure = settings.fetch('dxf_structure', DXF_STRUCTURE_LAYER)
       @smoothing = settings.fetch('smoothing', false)
+      @merge_holes = settings.fetch('merge_holes', false)
       @sheet_hidden = settings.fetch('sheet_hidden', false)
       @sheet_stroke_color = ColorUtils.color_create(settings.fetch('sheet_stroke_color', nil))
       @sheet_fill_color = ColorUtils.color_create(settings.fetch('sheet_fill_color', nil))
@@ -498,7 +499,7 @@ module Ladb::OpenCutList
 
     def _get_part_projection_def(part)
       _compute_part_projection_def(@part_drawing_type, part.def.cutlist_part, {
-        'merge_holes' => true
+        'merge_holes' => @merge_holes
       }, @_projection_defs)
     end
 

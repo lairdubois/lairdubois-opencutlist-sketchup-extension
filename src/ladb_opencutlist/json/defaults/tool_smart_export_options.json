@@ -21,7 +21,8 @@
     "2_1": true,    /* ACTION_OPTION_FACE_ALL */
     "3_0": true,    /* ACTION_OPTION_OPTIONS_ANCHOR */
     "3_1": false,   /* ACTION_OPTION_OPTIONS_SMOOTHING */
-    "3_2": false    /* ACTION_OPTION_OPTIONS_GUIDES */
+    "3_2": false,   /* ACTION_OPTION_OPTIONS_MERGE_HOLES */
+    "3_3": false    /* ACTION_OPTION_OPTIONS_GUIDES */
   },
   "3": {   /* ACTION_EXPORT_FACE */
     "0_0": false,    /* ACTION_OPTION_FILE_FORMAT_DXF */

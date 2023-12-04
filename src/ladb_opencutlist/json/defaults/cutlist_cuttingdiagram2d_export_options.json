@@ -3,6 +3,7 @@
     "file_format": "svg",
     "dxf_structure": 1, /* DXF_STRUCTURE_LAYER */
     "smoothing": false,
+    "merge_holes": false,
     "sheet_hidden": false,
     "sheet_stroke_color": "#0068FF",
     "sheet_fill_color": null,

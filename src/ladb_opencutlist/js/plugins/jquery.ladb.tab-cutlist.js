@@ -993,7 +993,7 @@
                         that.dialog.notifyErrors(response.errors);
                     }
                     if (response.export_path) {
-                        that.dialog.notifySuccess(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }), [
+                        that.dialog.notifySuccess(i18next.t('core.success.exported_to', { path: response.export_path }), [
                             Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
 
                                 rubyCallCommand('core_open_external_file', {
@@ -1680,7 +1680,7 @@
                                                 that.dialog.notifyErrors(response.errors);
                                             }
                                             if (response.export_path) {
-                                                that.dialog.notifySuccess(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }), [
+                                                that.dialog.notifySuccess(i18next.t('core.success.exported_to', { path: response.export_path }), [
                                                     Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
 
                                                         rubyCallCommand('core_open_external_file', {
@@ -2907,14 +2907,14 @@
         rubyCallCommand('cutlist_part_export_to_file', {
             part_id: id,
             file_format: fileFormat,
-            drawing_type: partDrawingType
+            part_drawing_type: partDrawingType
         }, function (response) {
 
             if (response.errors) {
                 that.dialog.notifyErrors(response.errors);
             }
             if (response.export_path) {
-                that.dialog.notifySuccess(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }), [
+                that.dialog.notifySuccess(i18next.t('core.success.exported_to', { path: response.export_path }), [
                     Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
 
                         rubyCallCommand('core_open_external_file', {
@@ -3277,6 +3277,7 @@
                                                 var $formGroupDxfStructure = $('#ladb_form_group_dxf_structure', $modal);
                                                 var $selectDxfStructure = $('#ladb_select_dxf_structure', $modal);
                                                 var $selectSmoothing = $('#ladb_select_smoothing', $modal);
+                                                var $selectMergeHoles = $('#ladb_select_merge_holes', $modal);
                                                 var $inputBarHidden = $('#ladb_input_bar_hidden', $modal);
                                                 var $inputBarStrokeColor = $('#ladb_input_bar_stroke_color', $modal);
                                                 var $inputBarFillColor = $('#ladb_input_bar_fill_color', $modal);
@@ -3297,6 +3298,7 @@
                                                     options.file_format = $selectFileFormat.val();
                                                     options.dxf_structure = parseInt($selectDxfStructure.val());
                                                     options.smoothing = $selectSmoothing.val() === '1';
+                                                    options.merge_holes = $selectMergeHoles.val() === '1';
                                                     options.bar_hidden = !$inputBarHidden.is(':checked');
                                                     options.bar_stroke_color = $inputBarStrokeColor.ladbTextinputColor('val');
                                                     options.bar_fill_color = $inputBarFillColor.ladbTextinputColor('val');
@@ -3315,6 +3317,7 @@
                                                     $selectFileFormat.selectpicker('val', options.file_format);
                                                     $selectDxfStructure.selectpicker('val', options.dxf_structure);
                                                     $selectSmoothing.selectpicker('val', options.smoothing ? '1' : '0');
+                                                    $selectMergeHoles.selectpicker('val', options.merge_holes ? '1' : '0');
                                                     $inputBarHidden.prop('checked', !options.bar_hidden);
                                                     $inputBarStrokeColor.ladbTextinputColor('val', options.bar_stroke_color);
                                                     $inputBarFillColor.ladbTextinputColor('val', options.bar_fill_color);
@@ -3365,6 +3368,7 @@
                                                     })
                                                 ;
                                                 $selectSmoothing.selectpicker(SELECT_PICKER_OPTIONS);
+                                                $selectMergeHoles.selectpicker(SELECT_PICKER_OPTIONS);
                                                 $inputBarStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputBarFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputPartsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
@@ -3398,7 +3402,7 @@
                                                             that.dialog.notifyErrors(response.errors);
                                                         }
                                                         if (response.export_path) {
-                                                            that.dialog.notifySuccess(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }), [
+                                                            that.dialog.notifySuccess(i18next.t('core.success.exported_to', { path: response.export_path }), [
                                                                 Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
 
                                                                     rubyCallCommand('core_open_external_file', {
@@ -3792,6 +3796,7 @@
                                                 var $formGroupDxfStructure = $('#ladb_form_group_dxf_structure', $modal);
                                                 var $selectDxfStructure = $('#ladb_select_dxf_structure', $modal);
                                                 var $selectSmoothing = $('#ladb_select_smoothing', $modal);
+                                                var $selectMergeHoles = $('#ladb_select_merge_holes', $modal);
                                                 var $inputSheetHidden = $('#ladb_input_sheet_hidden', $modal);
                                                 var $inputSheetStrokeColor = $('#ladb_input_sheet_stroke_color', $modal);
                                                 var $inputSheetFillColor = $('#ladb_input_sheet_fill_color', $modal);
@@ -3812,6 +3817,7 @@
                                                     options.file_format = $selectFileFormat.val();
                                                     options.dxf_structure = parseInt($selectDxfStructure.val());
                                                     options.smoothing = $selectSmoothing.val() === '1';
+                                                    options.merge_holes = $selectMergeHoles.val() === '1';
                                                     options.sheet_hidden = !$inputSheetHidden.is(':checked');
                                                     options.sheet_stroke_color = $inputSheetStrokeColor.ladbTextinputColor('val');
                                                     options.sheet_fill_color = $inputSheetFillColor.ladbTextinputColor('val');
@@ -3830,6 +3836,7 @@
                                                     $selectFileFormat.selectpicker('val', options.file_format);
                                                     $selectDxfStructure.selectpicker('val', options.dxf_structure);
                                                     $selectSmoothing.selectpicker('val', options.smoothing ? '1' : '0');
+                                                    $selectMergeHoles.selectpicker('val', options.merge_holes ? '1' : '0');
                                                     $inputSheetHidden.prop('checked', !options.sheet_hidden);
                                                     $inputSheetStrokeColor.ladbTextinputColor('val', options.sheet_stroke_color);
                                                     $inputSheetFillColor.ladbTextinputColor('val', options.sheet_fill_color);
@@ -3881,6 +3888,7 @@
                                                 ;
                                                 $selectDxfStructure.selectpicker(SELECT_PICKER_OPTIONS);
                                                 $selectSmoothing.selectpicker(SELECT_PICKER_OPTIONS);
+                                                $selectMergeHoles.selectpicker(SELECT_PICKER_OPTIONS);
                                                 $inputSheetStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputSheetFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputPartsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
@@ -3914,7 +3922,7 @@
                                                             that.dialog.notifyErrors(response.errors);
                                                         }
                                                         if (response.export_path) {
-                                                            that.dialog.notifySuccess(i18next.t('tab.cutlist.success.exported_to', { export_path: response.export_path }), [
+                                                            that.dialog.notifySuccess(i18next.t('core.success.exported_to', { path: response.export_path }), [
                                                                 Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
 
                                                                     rubyCallCommand('core_open_external_file', {

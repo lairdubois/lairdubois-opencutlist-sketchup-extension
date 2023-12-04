@@ -30,16 +30,8 @@ module Ladb::OpenCutList
 
       z_max = bounds_max.z
 
-      top_layer_def = {
-        :position => DrawingProjectionLayerDef::LAYER_POSITION_TOP,
-        :depth => depth_top,
-        :paths => []
-      }
-      bottom_layer_def = {
-        :position => DrawingProjectionLayerDef::LAYER_POSITION_BOTTOM,
-        :depth => depth_bottom,
-        :paths => []
-      }
+      top_layer_def = PathsLayerDef.new(DrawingProjectionLayerDef::LAYER_POSITION_TOP, depth_top, [])
+      bottom_layer_def = PathsLayerDef.new(DrawingProjectionLayerDef::LAYER_POSITION_BOTTOM, depth_bottom, [])
 
       layer_defs = {}
       layer_defs[depth_top] = top_layer_def
@@ -64,80 +56,82 @@ module Ladb::OpenCutList
 
         layer_def = layer_defs[f_depth]
         if layer_def.nil?
-          layer_def = {
-            :position => DrawingProjectionLayerDef::LAYER_POSITION_INSIDE,
-            :depth => f_depth,
-            :paths => f_paths
-          }
+          layer_def = PathsLayerDef.new(DrawingProjectionLayerDef::LAYER_POSITION_INSIDE, f_depth, f_paths)
           layer_defs[f_depth] = layer_def
         else
-          layer_def[:paths].concat(f_paths) # Just concat, union will be call later in one unique call
+          layer_def.paths.concat(f_paths) # Just concat, union will be call later in one unique call
         end
 
       end
 
       # Sort on depth ASC
-      ld = layer_defs.values.sort_by { |layer_def| layer_def[:depth] }
+      ld = layer_defs.values.sort_by { |layer_def| layer_def.depth }
 
       # Append bottom layer if top and bottom share the same depth
       ld.push(bottom_layer_def) if depth_bottom == depth_top
 
       # Union paths on each layer
       ld.each do |layer_def|
-        next if layer_def[:paths].one?
-        layer_def[:paths] = Clippy.compute_union(layer_def[:paths])
+        next if layer_def.paths.one?
+        layer_def.paths = Clippy.execute_union(layer_def.paths)
       end
 
       # Up to Down difference
       ld.each_with_index do |layer_def, index|
-        next if layer_def[:paths].empty?
+        next if layer_def.paths.empty?
         ld[(index + 1)..-1].each do |lower_layer_def|
-          next if lower_layer_def.nil? || lower_layer_def[:paths].empty?
-          lower_layer_def[:paths] = Clippy.compute_difference(lower_layer_def[:paths], layer_def[:paths])
+          next if lower_layer_def.nil? || lower_layer_def.paths.empty?
+          lower_layer_def.paths = Clippy.execute_difference(lower_layer_def.paths, layer_def.paths)
         end
       end
 
       if @option_merge_holes
 
         # Copy top paths
-        min_top_paths = top_layer_def[:paths]
+        min_top_paths = top_layer_def.paths
 
         # Union top paths with lower paths
-        mid_top_paths = Clippy.compute_union(min_top_paths + ld[1..-1].map { |layer_def| layer_def[:paths] }.flatten(1).compact)
-
-        # SKETCHUP_CONSOLE.clear
-        # mask_tree = Clippy.compute_tree(mid_top_paths)
+        mid_top_paths = Clippy.execute_union(min_top_paths + ld[1..-1].map { |layer_def| layer_def.paths }.flatten(1).compact)
+        mid_top_polytree = Clippy.execute_polytree(mid_top_paths)
 
         # Extract top outer paths
-        out_top_paths = Clippy.compute_outers(mid_top_paths)
+        out_top_paths = mid_top_polytree.children.map { |polypath| polypath.path }
 
         # Extract passthrough paths and reverse them to plain paths
         passthrough_paths = Clippy.reverse_rpaths(Clippy.delete_rpaths_in(mid_top_paths, out_top_paths))
 
         # Replace bottom layer paths
-        bottom_layer_def[:paths] = Clippy.compute_union(bottom_layer_def[:paths] + passthrough_paths)
+        bottom_layer_def.paths = Clippy.execute_union(bottom_layer_def.paths + passthrough_paths)
 
         # Difference with out and min to extract holes to propagate
-        mask_paths = Clippy.compute_difference(out_top_paths, min_top_paths)
+        mask_paths = Clippy.execute_difference(out_top_paths, min_top_paths)
+        mask_polytree = Clippy.execute_polytree(mask_paths)
+        mask_polyshapes = Clippy.polytree_to_polyshapes(mask_polytree)
+
+        # _debug_polytree(mask_polytree)
 
         # Propagate down to up
         ldr = ld.reverse[0..-2] # Exclude top layer
-        mask_paths.each do |mask_path|
+        mask_polyshapes.each do |mask_polyshape|
           lower_paths = []
           ldr.each do |layer_def|
-            next if layer_def[:paths].empty?
-            next if Clippy.compute_intersection(layer_def[:paths], [ mask_path ]).empty?
-            layer_def[:paths] = Clippy.compute_union(lower_paths + layer_def[:paths]) unless lower_paths.empty?
-            lower_paths = Clippy.compute_intersection(layer_def[:paths], [ mask_path ])
+            next if layer_def.paths.empty?
+            next if Clippy.execute_intersection(layer_def.paths, mask_polyshape.paths).empty?
+            layer_def.paths = Clippy.execute_union(lower_paths + layer_def.paths) unless lower_paths.empty?
+            lower_paths = Clippy.execute_intersection(layer_def.paths, mask_polyshape.paths)
           end
         end
 
         # Replace top layer paths
-        top_layer_def[:paths] = out_top_paths
+        top_layer_def.paths = out_top_paths
+
+        # mask_polyshapes.map { |polyshape| polyshape.paths }.each_with_index { |paths, index| ld << PathsLayerDef.new(index.even? ? DrawingProjectionLayerDef::LAYER_POSITION_INSIDE : DrawingProjectionLayerDef::LAYER_POSITION_BOTTOM , z_max + 5 + 2 * index, paths) }
 
         # [
+        #   # out_top_paths,
+        #   # min_top_paths,
         #   mask_paths
-        # ].each_with_index { |paths, index| ld << { :depth => z_max + 5 + 2 * index, :paths => paths } }
+        # ].each_with_index { |paths, index| ld << PathsLayerDef.new(DrawingProjectionLayerDef::LAYER_POSITION_INSIDE, z_max + 5 + 2 * index, paths) }
 
       end
 
@@ -146,21 +140,41 @@ module Ladb::OpenCutList
       projection_def = DrawingProjectionDef.new(bounds_depth)
 
       ld.each do |layer_def|
-        next if layer_def[:paths].empty?
+        next if layer_def.paths.empty?
 
-        polygons = layer_def[:paths].map { |path|
+        polygons = layer_def.paths.map { |path|
           next if Clippy.get_rpath_area(path).abs < MINIMAL_PATH_AREA # Ignore "artifact" paths generated by successive transformation / union / differences
-          DrawingProjectionPolygonDef.new(Clippy.rpath_to_points(path, z_max - layer_def[:depth]), Clippy.is_rpath_positive?(path))
+          DrawingProjectionPolygonDef.new(Clippy.rpath_to_points(path, z_max - layer_def.depth), Clippy.is_rpath_positive?(path))
         }.compact
 
         unless polygons.empty?
-          projection_def.layer_defs << DrawingProjectionLayerDef.new(layer_def[:position], layer_def[:depth], polygons)
+          projection_def.layer_defs << DrawingProjectionLayerDef.new(layer_def.position, layer_def.depth, polygons)
         end
 
       end
 
       projection_def
     end
+
+    def _debug_polytree(polytree)
+      SKETCHUP_CONSOLE.clear
+      puts "POLYTREE"
+      polytree.children.each do |child|
+        _debug_polypath(child)
+      end
+    end
+
+    def _debug_polypath(polypath)
+      puts "#{' '.rjust(polypath.level + 1)}POLYPATH #{polypath.hole? ? '▫︎' : '▪︎'}"
+      polypath.children.each do |child|
+        _debug_polypath(child)
+      end
+    end
+
+    # -----
+
+    PathsLayerDef = Struct.new(:position, :depth, :paths)
+
 
   end
 

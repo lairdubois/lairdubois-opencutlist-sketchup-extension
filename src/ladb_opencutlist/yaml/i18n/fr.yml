@@ -121,6 +121,8 @@ core:
     failed_export_to: |
       Une erreur s'est produite lors de l'exportation vers *{{ path }}*.
       **{{ error }}**
+  success:
+    exported_to: "Export réussi vers {{ path }}."
   event:
     model_change: Le modèle actif a changé.
     options_change: Les options du modèle ont été modifiées.
@@ -830,10 +832,15 @@ tab:
           - la structure **Calques** dessine tous les tracés à plat en distinguant les différents types de trait uniquement par des calques. *Cette structure offre une meilleure compatibilité avec les logiciels tiers.*
           - La structure **Calques + Blocs** crée un bloc par pièce et insère ces blocs autant de fois que les pièces sont répétées. *Cette structure offre plus de flexibilité pour modifier le fichier.*
         option_smoothing: Lissage
-        option_smoothing_0: Aucun
-        option_smoothing_1: Détecter les cercles et arcs *(Expérimental)*
+        option_smoothing_0: Auncun
+        option_smoothing_1: Lisser les cercles et arcs *(Expérimental)*
         option_smoothing_help: |
-          Permet de choisir le mode de lissage.
+          Permet d'activer la détection des cercles et arcs.
+        option_merge_holes: Fusion
+        option_merge_holes_0: Désactivée
+        option_merge_holes_1: Percements + Fusion
+        option_merge_holes_help: |
+          Permet d'activer l'inclusion des percements et la fusion des profondeurs pour chaque cavité.
         option_sheet_good: Panneau
         option_sheet_good_help: |
           Permet de choisir si le panneau est dessiné ainsi que de choisir sa couleur.
@@ -1062,8 +1069,6 @@ tab:
       no_typed_materials_in_model: "Votre modèle n'utilise aucune matière ayant un type défini (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**)."
       no_typed_materials_in_selection: "Votre sélection n'utilise aucune matière ayant un type défini (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**)."
       export_empty: Votre export ne contient aucune pièce.
-    success:
-      exported_to: "Export réussi vers {{ export_path }}."
     tip:
       no_component: |
         Les pièces que vous souhaitez voir apparaître dans la *fiche de débit* doivent être des instances de **composant**.
@@ -1209,8 +1214,6 @@ tab:
       failed_removing_material: "Une erreur s'est produite lors de la suppression de la matière. **{{ error }}**"
       failed_duplicating_material: "Une erreur s'est produite lors de duplication de la matière. **{{ error }}**"
       invalid_image_file: Image invalide
-    success:
-      exported_to: "Export réussi vers {{ export_path }}."
     obsolete_base: "Pour rester synchronisé, vous devez rafraîchir la liste de matières."
   outliner:
     label: Structure
@@ -1586,9 +1589,8 @@ tool:
     action_option_2_1_status: Utiliser toutes les faces de la pièce
     action_option_3_0_status: Projeter l'origine de la pièce
     action_option_3_1_status: Détecter les cercles et arcs (Expérimental)
-    action_option_3_2_status: Exporter comme guides les arêtes flottantes et coplanaires à la face ciblée contenues dans la pièce
-    success:
-      exported_to: "Export réussi vers {{ export_path }}."
+    action_option_3_2_status: Inclure les trous traversants et fusionner les profondeurs pour chaque cavité
+    action_option_3_3_status: Exporter comme guides les arêtes flottantes et coplanaires à la face ciblée contenues dans la pièce
     error:
       not_part: Cette surface ne fait pas partie d'une pièce
       not_flat_face: Cette surface n'est pas plane

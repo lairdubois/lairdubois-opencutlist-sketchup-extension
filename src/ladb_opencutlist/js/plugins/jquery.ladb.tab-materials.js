@@ -669,7 +669,7 @@
                 that.dialog.notifyErrors(response.errors);
             }
             if (response.export_path) {
-                that.dialog.notifySuccess(i18next.t('tab.materials.success.exported_to', { export_path: response.export_path }));
+                that.dialog.notifySuccess(i18next.t('core.success.exported_to', { path: response.export_path }));
             }
 
         });
