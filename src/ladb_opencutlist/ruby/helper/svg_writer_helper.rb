@@ -124,14 +124,11 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _svg_get_projection_layer_def_depth_name(layer_def, unit_transformation, prefix = nil)
+    def _svg_get_projection_layer_def_identifier(layer_def, unit_transformation, prefix = nil)
       return '' unless layer_def.is_a?(DrawingProjectionLayerDef)
-
-      if layer_def.top?
-        a = [ prefix, 'OUTER' ]
-      else
-        a = [ prefix, layer_def.bottom? ? 'HOLE' : 'POCKET', ('%0.04f' % [ Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x ]).rjust(9, '_') ]
-      end
+      a = [ prefix, 'DEPTH', ('%0.04f' % [ Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x ]).rjust(9, '_') ]
+      a << 'OUTER' if layer_def.outer?
+      a << 'HOLES' if layer_def.holes?
       _svg_sanitize_identifier(a.compact.join('_'))
     end
 
@@ -143,9 +140,9 @@ module Ladb::OpenCutList
 
       projection_def.layer_defs.each do |layer_def|
 
-        id = _svg_get_projection_layer_def_depth_name(layer_def, unit_transformation, prefix)
+        id = _svg_get_projection_layer_def_identifier(layer_def, unit_transformation, prefix)
 
-        if layer_def.top?
+        if layer_def.outer?
           attributes = {
             stroke: _svg_stroke_color_hex(stroke_color, fill_color),
             fill: _svg_fill_color_hex(fill_color),
@@ -155,7 +152,7 @@ module Ladb::OpenCutList
             'shaper:cutType': 'outside'
           }
           attributes.merge!({ 'shaper:cutDepth': "#{_svg_value(Geom::Point3d.new(projection_def.max_depth, 0).transform(unit_transformation).x)}#{unit_sign}" }) if projection_def.max_depth > 0
-        elsif layer_def.bottom?
+        elsif layer_def.holes?
           attributes = {
             stroke: fill_color ? '#000000' : _svg_stroke_color_hex(stroke_color, fill_color),
             fill: fill_color ? '#FFFFFF' : 'none',

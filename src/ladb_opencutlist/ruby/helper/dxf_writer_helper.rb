@@ -1166,14 +1166,11 @@ module Ladb::OpenCutList
 
     # -- CUSTOM GEOMETRY
 
-    def _dxf_get_projection_layer_def_depth_name(layer_def, unit_transformation, prefix = nil)
+    def _dxf_get_projection_layer_def_identifier(layer_def, unit_transformation, prefix = nil)
       return '' unless layer_def.is_a?(DrawingProjectionLayerDef)
-
-      if layer_def.top?
-        a = [ prefix, 'OUTER' ]
-      else
-        a = [ prefix, layer_def.bottom? ? 'HOLE' : 'POCKET', ('%0.04f' % [ Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x ]).rjust(9, '_') ]
-      end
+      a = [ prefix, 'DEPTH', ('%0.04f' % [ Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x ]).rjust(9, '_') ]
+      a << 'OUTER' if layer_def.outer?
+      a << 'HOLES' if layer_def.holes?
       _dxf_sanitize_identifier(a.compact.join('_'))
     end
 
@@ -1183,8 +1180,8 @@ module Ladb::OpenCutList
       dxf_layer_defs = []
       projection_def.layer_defs.each do |layer_def|
         dxf_layer_defs.push(DxfLayerDef.new(
-          _dxf_get_projection_layer_def_depth_name(layer_def, unit_transformation, prefix),
-          color ? ColorUtils.color_lighten(color, projection_def.max_depth > 0 ? (layer_def.depth / projection_def.max_depth) * 0.6 + 0.2 : 0.3) : nil
+          _dxf_get_projection_layer_def_identifier(layer_def, unit_transformation, prefix),
+          color ? ColorUtils.color_lighten(color, (layer_def.depth / (projection_def.max_depth > 0 ? projection_def.max_depth : 1) * 0.8)) : nil
         ))
       end
 
@@ -1212,7 +1209,7 @@ module Ladb::OpenCutList
       return unless projection_def.is_a?(DrawingProjectionDef)
 
       projection_def.layer_defs.each do |layer_def|
-        _dxf_write_projection_layer_def_geometry(file, layer_def, smoothing, transformation, _dxf_get_projection_layer_def_depth_name(layer_def, unit_transformation, layer))
+        _dxf_write_projection_layer_def_geometry(file, layer_def, smoothing, transformation, _dxf_get_projection_layer_def_identifier(layer_def, unit_transformation, layer))
       end
 
     end

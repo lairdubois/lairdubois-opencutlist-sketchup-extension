@@ -13,28 +13,24 @@ module Ladb::OpenCutList
 
   class DrawingProjectionLayerDef
 
-    LAYER_POSITION_TOP = 0
-    LAYER_POSITION_INSIDE = 1
-    LAYER_POSITION_BOTTOM = 2
+    TYPE_DEFAULT = 0
+    TYPE_OUTER = 1
+    TYPE_HOLES = 2
 
-    attr_reader :depth, :position, :polygon_defs
+    attr_reader :depth, :type, :polygon_defs
 
-    def initialize(position, depth, polygon_defs)
-      @position = position
+    def initialize(depth, type, polygon_defs)
       @depth = depth
+      @type = type
       @polygon_defs = polygon_defs
     end
 
-    def top?
-      @position == LAYER_POSITION_TOP
+    def outer?
+      @type == TYPE_OUTER
     end
 
-    def inside?
-      @position == LAYER_POSITION_INSIDE
-    end
-
-    def bottom?
-      @position == LAYER_POSITION_BOTTOM
+    def holes?
+      @type == TYPE_HOLES
     end
 
   end

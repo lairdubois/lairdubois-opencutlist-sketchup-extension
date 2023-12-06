@@ -90,8 +90,8 @@ module Ladb::OpenCutList
     COLOR_MESH = Sketchup::Color.new(0, 0, 255, 100).freeze
     COLOR_MESH_HIGHLIGHTED = Sketchup::Color.new(0, 0, 255, 200).freeze
     COLOR_PART_OUTER = Kuix::COLOR_BLUE
-    COLOR_PART_HOLE = Sketchup::Color.new('#D783FF').freeze
-    COLOR_PART_POCKET = COLOR_PART_OUTER.blend(Kuix::COLOR_WHITE, 0.5).freeze
+    COLOR_PART_THROUGH = Sketchup::Color.new('#D783FF').freeze
+    COLOR_PART_DEPTH = COLOR_PART_OUTER.blend(Kuix::COLOR_WHITE, 0.5).freeze
     COLOR_GUIDE = Kuix::COLOR_CYAN
     COLOR_ACTION = Kuix::COLOR_MAGENTA
 
@@ -415,13 +415,12 @@ module Ladb::OpenCutList
 
               segments = Kuix::Segments.new
               segments.add_segments(segs)
-              case layer_def.position
-              when DrawingProjectionLayerDef::LAYER_POSITION_TOP
+              if layer_def.outer?
                 segments.color = COLOR_PART_OUTER
-              when DrawingProjectionLayerDef::LAYER_POSITION_BOTTOM
-                segments.color = COLOR_PART_HOLE
+              elsif layer_def.holes?
+                segments.color = COLOR_PART_THROUGH
               else
-                segments.color = COLOR_PART_POCKET
+                segments.color = COLOR_PART_DEPTH
               end
               segments.line_width = highlighted ? line_width + 1 : line_width
               segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES unless polygon_def.outer?
@@ -526,14 +525,7 @@ module Ladb::OpenCutList
 
             segments = Kuix::Segments.new
             segments.add_segments(segs)
-            case layer_def.position
-            when DrawingProjectionLayerDef::LAYER_POSITION_TOP
-              segments.color = COLOR_PART_OUTER
-            when DrawingProjectionLayerDef::LAYER_POSITION_BOTTOM
-              segments.color = COLOR_PART_HOLE
-            else
-              segments.color = COLOR_PART_POCKET
-            end
+            segments.color = COLOR_PART_OUTER
             segments.line_width = highlighted ? line_width + 1 : line_width
             segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES unless polygon_def.outer?
             segments.on_top = true

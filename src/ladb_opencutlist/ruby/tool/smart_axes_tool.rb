@@ -501,6 +501,7 @@ module Ladb::OpenCutList
             part = _generate_part_from_path(input_part_entity_path)
             if part
               _set_active_part(input_part_entity_path, part)
+              show_tooltip(_get_active_part_name)
             else
               _reset_active_part
               show_tooltip("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)

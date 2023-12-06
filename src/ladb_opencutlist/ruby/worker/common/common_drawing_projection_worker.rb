@@ -24,15 +24,15 @@ module Ladb::OpenCutList
       bounds_depth = @drawing_def.bounds.depth
       bounds_max = @drawing_def.bounds.max
 
-      depth_top = 0.0
-      depth_bottom = bounds_depth.round(6)
+      depth_min = 0.0
+      depth_max = bounds_depth.round(6)
 
       z_max = bounds_max.z
 
-      top_layer_def = PathsLayerDef.new(DrawingProjectionLayerDef::LAYER_POSITION_TOP, depth_top, [])
+      upper_layer_def = PathsLayerDef.new(depth_min, [], DrawingProjectionLayerDef::TYPE_DEFAULT)
 
       layer_defs = {}
-      layer_defs[depth_top] = top_layer_def
+      layer_defs[depth_min] = upper_layer_def
 
       @drawing_def.face_manipulators.each do |face_manipulator|
 
@@ -51,29 +51,29 @@ module Ladb::OpenCutList
 
         f_paths = face_manipulator.loop_manipulators.map { |loop_manipulator| loop_manipulator.points }.map { |points| Clippy.points_to_rpath(points) }
 
-        layer_def = layer_defs[f_depth]
-        if layer_def.nil?
-          layer_def = PathsLayerDef.new(DrawingProjectionLayerDef::LAYER_POSITION_INSIDE, f_depth, f_paths)
-          layer_defs[f_depth] = layer_def
+        pld = layer_defs[f_depth]
+        if pld.nil?
+          pld = PathsLayerDef.new(f_depth, f_paths, DrawingProjectionLayerDef::TYPE_DEFAULT)
+          layer_defs[f_depth] = pld
         else
-          layer_def.paths.concat(f_paths) # Just concat, union will be call later in one unique call
+          pld.paths.concat(f_paths) # Just concat, union will be call later in one unique call
         end
 
       end
 
       # Sort on depth ASC
-      ld = layer_defs.values.sort_by { |layer_def| layer_def.depth }
+      plds = layer_defs.values.sort_by { |layer_def| layer_def.depth }
 
       # Union paths on each layer
-      ld.each do |layer_def|
+      plds.each do |layer_def|
         next if layer_def.paths.one?
         layer_def.paths = Clippy.execute_union(layer_def.paths)
       end
 
       # Up to Down difference
-      ld.each_with_index do |layer_def, index|
+      plds.each_with_index do |layer_def, index|
         next if layer_def.paths.empty?
-        ld[(index + 1)..-1].each do |lower_layer_def|
+        plds[(index + 1)..-1].each do |lower_layer_def|
           next if lower_layer_def.nil? || lower_layer_def.paths.empty?
           lower_layer_def.paths = Clippy.execute_difference(lower_layer_def.paths, layer_def.paths)
         end
@@ -81,32 +81,32 @@ module Ladb::OpenCutList
 
       if @option_merge_holes
 
-        # Copy top paths
-        min_top_paths = top_layer_def.paths
+        # Copy upper paths
+        upper_paths = upper_layer_def.paths
 
-        # Union top paths with lower paths
-        mid_top_paths = Clippy.execute_union(min_top_paths + ld[1..-1].map { |layer_def| layer_def.paths }.flatten(1).compact)
-        mid_top_polytree = Clippy.execute_polytree(mid_top_paths)
+        # Union upper paths with lower paths
+        merged_paths = Clippy.execute_union(upper_paths + plds[1..-1].map { |layer_def| layer_def.paths }.flatten(1).compact)
+        merged_polytree = Clippy.execute_polytree(merged_paths)
 
-        # Extract top outer paths
-        out_top_paths = mid_top_polytree.children.map { |polypath| polypath.path }
+        # Extract outer paths (first children of pathtree)
+        outer_paths = merged_polytree.children.map { |polypath| polypath.path }
 
-        # Extract passthrough paths and reverse them to plain paths
-        passthrough_paths = Clippy.reverse_rpaths(Clippy.delete_rpaths_in(mid_top_paths, out_top_paths))
+        # Extract holes paths and reverse them to plain paths
+        through_paths = Clippy.reverse_rpaths(Clippy.delete_rpaths_in(merged_paths, outer_paths))
 
-        # Append passthrough layer def
-        ld << PathsLayerDef.new(DrawingProjectionLayerDef::LAYER_POSITION_BOTTOM, depth_bottom, passthrough_paths)
+        # Append holes layer def
+        plds << PathsLayerDef.new(depth_max, through_paths, DrawingProjectionLayerDef::TYPE_HOLES)
 
-        # Difference with out and min to extract holes to propagate
-        mask_paths = Clippy.execute_difference(out_top_paths, min_top_paths)
+        # Difference with outer and upper to extract holes to propagate
+        mask_paths = Clippy.execute_difference(outer_paths, upper_paths)
         mask_polytree = Clippy.execute_polytree(mask_paths)
         mask_polyshapes = Clippy.polytree_to_polyshapes(mask_polytree)
 
         # Propagate down to up
-        ldr = ld.reverse[0..-2] # Exclude top layer
+        pldsr = plds.reverse[0..-2] # Exclude top layer
         mask_polyshapes.each do |mask_polyshape|
           lower_paths = []
-          ldr.each do |layer_def|
+          pldsr.each do |layer_def|
             next if layer_def.paths.empty?
             next if Clippy.execute_intersection(layer_def.paths, mask_polyshape.paths).empty?
             layer_def.paths = Clippy.execute_union(lower_paths + layer_def.paths) unless lower_paths.empty?
@@ -114,8 +114,9 @@ module Ladb::OpenCutList
           end
         end
 
-        # Replace top layer paths
-        top_layer_def.paths = out_top_paths
+        # Replace upper layer by outer
+        upper_layer_def.type = DrawingProjectionLayerDef::TYPE_OUTER
+        upper_layer_def.paths = outer_paths
 
       end
 
@@ -123,17 +124,15 @@ module Ladb::OpenCutList
 
       projection_def = DrawingProjectionDef.new(bounds_depth)
 
-      ld.each do |layer_def|
-        next if layer_def.paths.empty?
+      plds.each do |paths_layer_def|
+        next if paths_layer_def.paths.empty?
 
-        polygons = layer_def.paths.map { |path|
+        polygons = paths_layer_def.paths.map { |path|
           next if Clippy.get_rpath_area(path).abs < MINIMAL_PATH_AREA # Ignore "artifact" paths generated by successive transformation / union / differences
-          DrawingProjectionPolygonDef.new(Clippy.rpath_to_points(path, z_max - layer_def.depth), Clippy.is_rpath_positive?(path))
+          DrawingProjectionPolygonDef.new(Clippy.rpath_to_points(path, z_max - paths_layer_def.depth), Clippy.is_rpath_positive?(path))
         }.compact
 
-        unless polygons.empty?
-          projection_def.layer_defs << DrawingProjectionLayerDef.new(layer_def.position, layer_def.depth, polygons)
-        end
+        projection_def.layer_defs << DrawingProjectionLayerDef.new(paths_layer_def.depth, paths_layer_def.type, polygons) unless polygons.empty?
 
       end
 
@@ -142,7 +141,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    PathsLayerDef = Struct.new(:position, :depth, :paths)
+    PathsLayerDef = Struct.new(:depth, :paths, :type)
 
 
   end
