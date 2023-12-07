@@ -1,7 +1,7 @@
 {
   "1": {  /* ACTION_EXPORT_PART_3D */
-    "0_0": false,    /* ACTION_OPTION_FILE_FORMAT_DXF */
-    "0_1": true,   /* ACTION_OPTION_FILE_FORMAT_STL */
+    "0_0": false,   /* ACTION_OPTION_FILE_FORMAT_DXF */
+    "0_1": true,    /* ACTION_OPTION_FILE_FORMAT_STL */
     "0_2": false,   /* ACTION_OPTION_FILE_FORMAT_OBJ */
     "1_0": { "metric": false, "imperial": true },    /* ACTION_OPTION_UNIT_IN */
     "1_1": false,   /* ACTION_OPTION_UNIT_FT */
@@ -12,8 +12,8 @@
     "3_1": false    /* ACTION_OPTION_OPTIONS_SMOOTHING */
   },
   "2": {  /* ACTION_EXPORT_PART_2D */
-    "0_0": false,    /* ACTION_OPTION_FILE_FORMAT_DXF */
-    "0_3": true,   /* ACTION_OPTION_FILE_FORMAT_SVG */
+    "0_0": false,   /* ACTION_OPTION_FILE_FORMAT_DXF */
+    "0_3": true,    /* ACTION_OPTION_FILE_FORMAT_SVG */
     "1_0": { "metric": false, "imperial": true },    /* ACTION_OPTION_UNIT_IN */
     "1_2": { "metric": true, "imperial": false },    /* ACTION_OPTION_UNIT_MM */
     "1_3": false,   /* ACTION_OPTION_UNIT_CM */
@@ -25,16 +25,16 @@
     "3_3": false    /* ACTION_OPTION_OPTIONS_GUIDES */
   },
   "3": {   /* ACTION_EXPORT_FACE */
-    "0_0": false,    /* ACTION_OPTION_FILE_FORMAT_DXF */
-    "0_3": true,   /* ACTION_OPTION_FILE_FORMAT_SVG */
+    "0_0": false,   /* ACTION_OPTION_FILE_FORMAT_DXF */
+    "0_3": true,    /* ACTION_OPTION_FILE_FORMAT_SVG */
     "1_0": { "metric": false, "imperial": true },    /* ACTION_OPTION_UNIT_IN */
     "1_2": { "metric": true, "imperial": false },    /* ACTION_OPTION_UNIT_MM */
     "1_3": false,   /* ACTION_OPTION_UNIT_CM */
     "3_1": false    /* ACTION_OPTION_OPTIONS_SMOOTHING */
   },
   "4": {   /* ACTION_EXPORT_EDGES */
-    "0_0": false,    /* ACTION_OPTION_FILE_FORMAT_DXF */
-    "0_3": true,   /* ACTION_OPTION_FILE_FORMAT_SVG */
+    "0_0": false,   /* ACTION_OPTION_FILE_FORMAT_DXF */
+    "0_3": true,    /* ACTION_OPTION_FILE_FORMAT_SVG */
     "1_0": { "metric": false, "imperial": true },    /* ACTION_OPTION_UNIT_IN */
     "1_2": { "metric": true, "imperial": false },    /* ACTION_OPTION_UNIT_MM */
     "1_3": false,   /* ACTION_OPTION_UNIT_CM */

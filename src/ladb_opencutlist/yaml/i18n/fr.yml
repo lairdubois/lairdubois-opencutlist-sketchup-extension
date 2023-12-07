@@ -832,15 +832,17 @@ tab:
           - la structure **Calques** dessine tous les tracés à plat en distinguant les différents types de trait uniquement par des calques. *Cette structure offre une meilleure compatibilité avec les logiciels tiers.*
           - La structure **Calques + Blocs** crée un bloc par pièce et insère ces blocs autant de fois que les pièces sont répétées. *Cette structure offre plus de flexibilité pour modifier le fichier.*
         option_smoothing: Lissage
-        option_smoothing_0: Auncun
+        option_smoothing_0: Aucun
         option_smoothing_1: Lisser les cercles et arcs *(Expérimental)*
         option_smoothing_help: |
           Permet d'activer la détection des cercles et arcs.
-        option_merge_holes: Fusion
-        option_merge_holes_0: Désactivée
-        option_merge_holes_1: Percements + Fusion
+          
+          *Cette option ne permet pas de détecter les autres types de courbes.*
+        option_merge_holes: Mode de fusion
+        option_merge_holes_0: Aucun
+        option_merge_holes_1: Contour + Percements + Fusion
         option_merge_holes_help: |
-          Permet d'activer l'inclusion des percements et la fusion des profondeurs pour chaque cavité.
+          Permet d'activer la séparation du contour extérieur des pièces de leurs percements ainsi que la fusion des profondeurs pour chaque cavité.
         option_sheet_good: Panneau
         option_sheet_good_help: |
           Permet de choisir si le panneau est dessiné ainsi que de choisir sa couleur.

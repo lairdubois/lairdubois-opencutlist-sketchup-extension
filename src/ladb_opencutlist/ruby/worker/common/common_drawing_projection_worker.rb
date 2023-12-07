@@ -12,7 +12,7 @@ module Ladb::OpenCutList
 
       @drawing_def = drawing_def
 
-      @option_merge_holes = settings.fetch('merge_holes', false)  # Passthrough holes are moved to bottom layer and all down layers holes are merged to up layer
+      @option_merge_holes = settings.fetch('merge_holes', false)  # Holes are moved to "hole" layer and all down layers holes are merged to their upper layer
 
     end
 
@@ -29,7 +29,7 @@ module Ladb::OpenCutList
 
       z_max = bounds_max.z
 
-      upper_layer_def = PathsLayerDef.new(depth_min, [], DrawingProjectionLayerDef::TYPE_DEFAULT)
+      upper_layer_def = PathsLayerDef.new(depth_min, [], DrawingProjectionLayerDef::TYPE_UPPER)
 
       layer_defs = {}
       layer_defs[depth_min] = upper_layer_def
@@ -94,7 +94,7 @@ module Ladb::OpenCutList
         # Extract holes paths and reverse them to plain paths
         through_paths = Clippy.reverse_rpaths(Clippy.delete_rpaths_in(merged_paths, outer_paths))
 
-        # Append holes layer def
+        # Append "holes" layer def
         plds << PathsLayerDef.new(depth_max, through_paths, DrawingProjectionLayerDef::TYPE_HOLES)
 
         # Difference with outer and upper to extract holes to propagate
@@ -114,7 +114,7 @@ module Ladb::OpenCutList
           end
         end
 
-        # Replace upper layer by outer
+        # Changed upper layer to "outer"
         upper_layer_def.type = DrawingProjectionLayerDef::TYPE_OUTER
         upper_layer_def.paths = outer_paths
 

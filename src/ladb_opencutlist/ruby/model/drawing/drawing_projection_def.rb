@@ -14,8 +14,9 @@ module Ladb::OpenCutList
   class DrawingProjectionLayerDef
 
     TYPE_DEFAULT = 0
-    TYPE_OUTER = 1
-    TYPE_HOLES = 2
+    TYPE_UPPER = 1
+    TYPE_OUTER = 2
+    TYPE_HOLES = 3
 
     attr_reader :depth, :type, :polygon_defs
 
@@ -23,6 +24,10 @@ module Ladb::OpenCutList
       @depth = depth
       @type = type
       @polygon_defs = polygon_defs
+    end
+
+    def upper?
+      @type == TYPE_UPPER || @type == TYPE_OUTER
     end
 
     def outer?

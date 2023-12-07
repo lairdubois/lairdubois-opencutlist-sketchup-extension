@@ -89,9 +89,9 @@ module Ladb::OpenCutList
 
     COLOR_MESH = Sketchup::Color.new(0, 0, 255, 100).freeze
     COLOR_MESH_HIGHLIGHTED = Sketchup::Color.new(0, 0, 255, 200).freeze
-    COLOR_PART_OUTER = Kuix::COLOR_BLUE
-    COLOR_PART_THROUGH = Sketchup::Color.new('#D783FF').freeze
-    COLOR_PART_DEPTH = COLOR_PART_OUTER.blend(Kuix::COLOR_WHITE, 0.5).freeze
+    COLOR_PART_UPPER = Kuix::COLOR_BLUE
+    COLOR_PART_HOLES = Sketchup::Color.new('#D783FF').freeze
+    COLOR_PART_DEPTH = COLOR_PART_UPPER.blend(Kuix::COLOR_WHITE, 0.5).freeze
     COLOR_GUIDE = Kuix::COLOR_CYAN
     COLOR_ACTION = Kuix::COLOR_MAGENTA
 
@@ -415,10 +415,10 @@ module Ladb::OpenCutList
 
               segments = Kuix::Segments.new
               segments.add_segments(segs)
-              if layer_def.outer?
-                segments.color = COLOR_PART_OUTER
+              if layer_def.upper?
+                segments.color = COLOR_PART_UPPER
               elsif layer_def.holes?
-                segments.color = COLOR_PART_THROUGH
+                segments.color = COLOR_PART_HOLES
               else
                 segments.color = COLOR_PART_DEPTH
               end
@@ -525,7 +525,7 @@ module Ladb::OpenCutList
 
             segments = Kuix::Segments.new
             segments.add_segments(segs)
-            segments.color = COLOR_PART_OUTER
+            segments.color = COLOR_PART_UPPER
             segments.line_width = highlighted ? line_width + 1 : line_width
             segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES unless polygon_def.outer?
             segments.on_top = true
