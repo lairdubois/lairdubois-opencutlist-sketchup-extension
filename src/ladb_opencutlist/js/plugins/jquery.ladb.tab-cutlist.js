@@ -3284,6 +3284,9 @@
                                                 var $inputPartsHidden = $('#ladb_input_parts_hidden', $modal);
                                                 var $inputPartsStrokeColor = $('#ladb_input_parts_stroke_color', $modal);
                                                 var $inputPartsFillColor = $('#ladb_input_parts_fill_color', $modal);
+                                                var $formGroupPartsHoles = $('#ladb_form_group_parts_holes', $modal);
+                                                var $inputPartsHolesStrokeColor = $('#ladb_input_parts_holes_stroke_color', $modal);
+                                                var $inputPartsHolesFillColor = $('#ladb_input_parts_holes_fill_color', $modal);
                                                 var $formGroupTexts = $('#ladb_form_group_texts', $modal);
                                                 var $inputTextsHidden = $('#ladb_input_texts_hidden', $modal);
                                                 var $inputTextsColor = $('#ladb_input_texts_color', $modal);
@@ -3305,6 +3308,8 @@
                                                     options.parts_hidden = !$inputPartsHidden.is(':checked');
                                                     options.parts_stroke_color = $inputPartsStrokeColor.ladbTextinputColor('val');
                                                     options.parts_fill_color = $inputPartsFillColor.ladbTextinputColor('val');
+                                                    options.parts_holes_stroke_color = $inputPartsHolesStrokeColor.ladbTextinputColor('val');
+                                                    options.parts_holes_fill_color = $inputPartsHolesFillColor.ladbTextinputColor('val');
                                                     options.texts_hidden = !$inputTextsHidden.is(':checked');
                                                     options.texts_color = $inputTextsColor.ladbTextinputColor('val');
                                                     options.leftovers_hidden = !$inputLeftoversHidden.is(':checked');
@@ -3324,6 +3329,8 @@
                                                     $inputPartsHidden.prop('checked', !options.parts_hidden);
                                                     $inputPartsStrokeColor.ladbTextinputColor('val', options.parts_stroke_color);
                                                     $inputPartsFillColor.ladbTextinputColor('val', options.parts_fill_color);
+                                                    $inputPartsHolesStrokeColor.ladbTextinputColor('val', options.parts_holes_stroke_color);
+                                                    $inputPartsHolesFillColor.ladbTextinputColor('val', options.parts_holes_fill_color);
                                                     $inputTextsHidden.prop('checked', !options.texts_hidden);
                                                     $inputTextsColor.ladbTextinputColor('val', options.texts_color);
                                                     $inputLeftoversHidden.prop('checked', !options.leftovers_hidden);
@@ -3335,6 +3342,7 @@
                                                 };
                                                 var fnUpdateFieldsVisibility = function () {
                                                     var isDxf = $selectFileFormat.val() === 'dxf';
+                                                    var isMergeHoles = $selectMergeHoles.val() === '1';
                                                     var isBarHidden = !$inputBarHidden.is(':checked');
                                                     var isPartsHidden = !$inputPartsHidden.is(':checked');
                                                     var isTextHidden = !$inputTextsHidden.is(':checked');
@@ -3345,6 +3353,9 @@
                                                     $inputBarFillColor.ladbTextinputColor(isBarHidden || isDxf ? 'disable' : 'enable');
                                                     $inputPartsStrokeColor.ladbTextinputColor(isPartsHidden ? 'disable' : 'enable');
                                                     $inputPartsFillColor.ladbTextinputColor(isPartsHidden || isDxf ? 'disable' : 'enable');
+                                                    if (isPartsHidden || !isMergeHoles) $formGroupPartsHoles.hide(); else $formGroupPartsHoles.show();
+                                                    $inputPartsHolesStrokeColor.ladbTextinputColor(isPartsHidden || !isMergeHoles ? 'disable' : 'enable');
+                                                    $inputPartsHolesFillColor.ladbTextinputColor(isPartsHidden || !isMergeHoles ? 'disable' : 'enable');
                                                     if (isPartsHidden) $formGroupTexts.hide(); else $formGroupTexts.show();
                                                     $inputTextsColor.ladbTextinputColor(isTextHidden ? 'disable' : 'enable');
                                                     $inputLeftoversStrokeColor.ladbTextinputColor(isLeftoversHidden ? 'disable' : 'enable');
@@ -3368,11 +3379,16 @@
                                                     })
                                                 ;
                                                 $selectSmoothing.selectpicker(SELECT_PICKER_OPTIONS);
-                                                $selectMergeHoles.selectpicker(SELECT_PICKER_OPTIONS);
+                                                $selectMergeHoles
+                                                    .selectpicker(SELECT_PICKER_OPTIONS)
+                                                    .on('change', fnUpdateFieldsVisibility)
+                                                ;
                                                 $inputBarStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputBarFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputPartsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputPartsFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+                                                $inputPartsHolesStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+                                                $inputPartsHolesFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputTextsColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputLeftoversStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputLeftoversFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
@@ -3803,6 +3819,9 @@
                                                 var $inputPartsHidden = $('#ladb_input_parts_hidden', $modal);
                                                 var $inputPartsStrokeColor = $('#ladb_input_parts_stroke_color', $modal);
                                                 var $inputPartsFillColor = $('#ladb_input_parts_fill_color', $modal);
+                                                var $formGroupPartsHoles = $('#ladb_form_group_parts_holes', $modal);
+                                                var $inputPartsHolesStrokeColor = $('#ladb_input_parts_holes_stroke_color', $modal);
+                                                var $inputPartsHolesFillColor = $('#ladb_input_parts_holes_fill_color', $modal);
                                                 var $formGroupTexts = $('#ladb_form_group_texts', $modal);
                                                 var $inputTextsHidden = $('#ladb_input_texts_hidden', $modal);
                                                 var $inputTextsColor = $('#ladb_input_texts_color', $modal);
@@ -3824,6 +3843,8 @@
                                                     options.parts_hidden = !$inputPartsHidden.is(':checked');
                                                     options.parts_stroke_color = $inputPartsStrokeColor.ladbTextinputColor('val');
                                                     options.parts_fill_color = $inputPartsFillColor.ladbTextinputColor('val');
+                                                    options.parts_holes_stroke_color = $inputPartsHolesStrokeColor.ladbTextinputColor('val');
+                                                    options.parts_holes_fill_color = $inputPartsHolesFillColor.ladbTextinputColor('val');
                                                     options.texts_hidden = !$inputTextsHidden.is(':checked');
                                                     options.texts_color = $inputTextsColor.ladbTextinputColor('val');
                                                     options.leftovers_hidden = !$inputLeftoversHidden.is(':checked');
@@ -3843,6 +3864,8 @@
                                                     $inputPartsHidden.prop('checked', !options.parts_hidden);
                                                     $inputPartsStrokeColor.ladbTextinputColor('val', options.parts_stroke_color);
                                                     $inputPartsFillColor.ladbTextinputColor('val', options.parts_fill_color);
+                                                    $inputPartsHolesStrokeColor.ladbTextinputColor('val', options.parts_holes_stroke_color);
+                                                    $inputPartsHolesFillColor.ladbTextinputColor('val', options.parts_holes_fill_color);
                                                     $inputTextsHidden.prop('checked', !options.texts_hidden);
                                                     $inputTextsColor.ladbTextinputColor('val', options.texts_color);
                                                     $inputLeftoversHidden.prop('checked', !options.leftovers_hidden);
@@ -3853,7 +3876,11 @@
                                                     fnUpdateFieldsVisibility();
                                                 };
                                                 var fnUpdateFieldsVisibility = function () {
+
+                                                    console.log($selectMergeHoles.val(), $selectMergeHoles.val() === '1', typeof $selectMergeHoles.val())
+
                                                     var isDxf = $selectFileFormat.val() === 'dxf';
+                                                    var isMergeHoles = $selectMergeHoles.val() === '1';
                                                     var isSheetHidden = !$inputSheetHidden.is(':checked');
                                                     var isPartsHidden = !$inputPartsHidden.is(':checked');
                                                     var isTextsHidden = !$inputTextsHidden.is(':checked');
@@ -3864,6 +3891,9 @@
                                                     $inputSheetFillColor.ladbTextinputColor(isSheetHidden || isDxf ? 'disable' : 'enable');
                                                     $inputPartsStrokeColor.ladbTextinputColor(isPartsHidden ? 'disable' : 'enable');
                                                     $inputPartsFillColor.ladbTextinputColor(isPartsHidden || isDxf ? 'disable' : 'enable');
+                                                    if (isPartsHidden || !isMergeHoles) $formGroupPartsHoles.hide(); else $formGroupPartsHoles.show();
+                                                    $inputPartsHolesStrokeColor.ladbTextinputColor(isPartsHidden || !isMergeHoles ? 'disable' : 'enable');
+                                                    $inputPartsHolesFillColor.ladbTextinputColor(isPartsHidden || !isMergeHoles ? 'disable' : 'enable');
                                                     if (isPartsHidden) $formGroupTexts.hide(); else $formGroupTexts.show();
                                                     $inputTextsColor.ladbTextinputColor(isTextsHidden ? 'disable' : 'enable');
                                                     $inputLeftoversStrokeColor.ladbTextinputColor(isLeftoversHidden ? 'disable' : 'enable');
@@ -3888,11 +3918,16 @@
                                                 ;
                                                 $selectDxfStructure.selectpicker(SELECT_PICKER_OPTIONS);
                                                 $selectSmoothing.selectpicker(SELECT_PICKER_OPTIONS);
-                                                $selectMergeHoles.selectpicker(SELECT_PICKER_OPTIONS);
+                                                $selectMergeHoles
+                                                    .selectpicker(SELECT_PICKER_OPTIONS)
+                                                    .on('change', fnUpdateFieldsVisibility)
+                                                ;
                                                 $inputSheetStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputSheetFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputPartsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputPartsFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+                                                $inputPartsHolesStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+                                                $inputPartsHolesFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputTextsColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputLeftoversStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputLeftoversFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);

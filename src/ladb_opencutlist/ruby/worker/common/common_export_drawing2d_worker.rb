@@ -31,8 +31,10 @@ module Ladb::OpenCutList
       @smoothing = settings.fetch('smoothing', false)
       @merge_holes = settings.fetch('merge_holes', false)
 
-      @part_stroke_color = Sketchup::Color.new('green')
-      @part_fill_color = nil
+      @part_stroke_color = nil
+      @part_fill_color = ColorUtils::COLOR_BLACK
+      @part_holes_stroke_color = ColorUtils::COLOR_BLACK
+      @part_holes_fill_color = ColorUtils::COLOR_WHITE
       @guide_stroke_color = Sketchup::Color.new('#0068FF')
 
     end
@@ -128,7 +130,7 @@ module Ladb::OpenCutList
 
         _svg_write_group_start(file, id: LAYER_PART)
 
-        _svg_write_projection_def(file, projection_def, @smoothing, unit_transformation, unit_transformation, unit_sign, nil, ColorUtils::COLOR_BLACK, LAYER_PART)
+        _svg_write_projection_def(file, projection_def, @smoothing, unit_transformation, unit_transformation, unit_sign, @part_stroke_color, @part_fill_color, @part_holes_stroke_color, @part_holes_fill_color, LAYER_PART)
 
         _svg_write_group_end(file)
 
@@ -192,7 +194,7 @@ module Ladb::OpenCutList
       max = @drawing_def.bounds.max.transform(unit_transformation)
 
       layer_defs = []
-      layer_defs.concat(_dxf_get_projection_def_depth_layer_defs(projection_def, @part_stroke_color, unit_factor, LAYER_PART).uniq { |layer_def| layer_def.name })
+      layer_defs.concat(_dxf_get_projection_def_depth_layer_defs(projection_def, @part_stroke_color, @part_holes_stroke_color, unit_factor, LAYER_PART).uniq { |layer_def| layer_def.name })
       layer_defs.push(DxfLayerDef.new(LAYER_GUIDE, @guide_stroke_color)) unless edge_manipulators.empty?
 
       _dxf_write_start(file)

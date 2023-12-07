@@ -1174,15 +1174,21 @@ module Ladb::OpenCutList
       _dxf_sanitize_identifier(a.compact.join('_'))
     end
 
-    def _dxf_get_projection_def_depth_layer_defs(projection_def, color, unit_transformation, prefix = nil)
+    def _dxf_get_projection_def_depth_layer_defs(projection_def, color, holes_color, unit_transformation, prefix = nil)
       return [] unless projection_def.is_a?(DrawingProjectionDef)
 
       dxf_layer_defs = []
       projection_def.layer_defs.each do |layer_def|
-        dxf_layer_defs.push(DxfLayerDef.new(
-          _dxf_get_projection_layer_def_identifier(layer_def, unit_transformation, prefix),
-          color ? ColorUtils.color_lighten(color, (layer_def.depth / (projection_def.max_depth > 0 ? projection_def.max_depth : 1) * 0.8)) : nil
-        ))
+
+        layer_name = _dxf_get_projection_layer_def_identifier(layer_def, unit_transformation, prefix)
+        if layer_def.holes?
+          layer_color = holes_color
+        else
+          layer_color = color ? ColorUtils.color_lighten(color, (layer_def.depth / (projection_def.max_depth > 0 ? projection_def.max_depth : 1) * 0.8)) : nil
+        end
+
+        dxf_layer_defs.push(DxfLayerDef.new(layer_name, layer_color))
+
       end
 
       dxf_layer_defs

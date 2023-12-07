@@ -99,10 +99,26 @@
                     <input id="ladb_input_parts_fill_color" class="form-control"/>
                 </div>
             </div>
+            <div class="form-group" id="ladb_form_group_parts_holes">
+                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.export.option_parts_holes_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                <div class="col-xs-3">
+                    <div class="checkbox" style="margin-left: 10px;">
+                        <label>
+                            <input type="checkbox" checked disabled>{{ 'tab.cutlist.cuttingdiagram.export.option_parts_holes'|i18next }}
+                        </label>
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <input id="ladb_input_parts_holes_stroke_color" class="form-control"/>
+                </div>
+                <div class="col-xs-4 ladb-form-fill-color">
+                    <input id="ladb_input_parts_holes_fill_color" class="form-control"/>
+                </div>
+            </div>
             <div class="form-group" id="ladb_form_group_texts">
                 <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.export.option_texts_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                 <div class="col-xs-3">
-                    <div class="checkbox">
+                    <div class="checkbox" style="margin-left: 10px;">
                         <label>
                             <input type="checkbox" id="ladb_input_texts_hidden">{{ 'tab.cutlist.cuttingdiagram.export.option_texts'|i18next }}
                         </label>

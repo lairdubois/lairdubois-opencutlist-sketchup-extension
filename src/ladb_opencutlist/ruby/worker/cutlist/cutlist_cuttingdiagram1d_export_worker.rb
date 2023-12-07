@@ -36,6 +36,8 @@ module Ladb::OpenCutList
       @parts_hidden = settings.fetch('parts_hidden', false)
       @parts_stroke_color = ColorUtils.color_create(settings.fetch('parts_stroke_color', nil))
       @parts_fill_color = ColorUtils.color_create(settings.fetch('parts_fill_color', nil))
+      @parts_holes_stroke_color = ColorUtils.color_create(settings.fetch('parts_holes_stroke_color', nil))
+      @parts_holes_fill_color = ColorUtils.color_create(settings.fetch('parts_holes_fill_color', nil))
       @texts_hidden = settings.fetch('texts_hidden', false)
       @texts_color = ColorUtils.color_create(settings.fetch('texts_stroke_color', nil))
       @leftovers_hidden = settings.fetch('leftovers_hidden', true)
@@ -180,7 +182,7 @@ module Ladb::OpenCutList
               'inkscape:label': id
             })
 
-            _svg_write_projection_def(file, projection_def, @smoothing, transformation, unit_transformation, unit_sign, @parts_stroke_color, @parts_fill_color, LAYER_PART)
+            _svg_write_projection_def(file, projection_def, @smoothing, transformation, unit_transformation, unit_sign, @parts_stroke_color, @parts_fill_color, @parts_holes_stroke_color, @parts_holes_fill_color, LAYER_PART)
             _svg_write_label(file, position.x, position.y, size.x, size.y, @use_names ? part.name: part.number, false, _svg_stroke_color_hex(@texts_color)) unless @texts_hidden
 
             _svg_write_group_end(file)
@@ -287,7 +289,7 @@ module Ladb::OpenCutList
         bar.parts.uniq { |part| part.id }.each do |part|
           projection_def = _get_part_projection_def(part)
           if projection_def.is_a?(DrawingProjectionDef)
-            depth_layer_defs.concat(_dxf_get_projection_def_depth_layer_defs(projection_def, @parts_stroke_color, unit_transformation, LAYER_PART))
+            depth_layer_defs.concat(_dxf_get_projection_def_depth_layer_defs(projection_def, @parts_stroke_color, @parts_holes_stroke_color, unit_transformation, LAYER_PART))
           end
         end
         layer_defs.concat(depth_layer_defs.uniq { |layer_def| layer_def.name })

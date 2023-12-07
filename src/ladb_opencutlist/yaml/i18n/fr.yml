@@ -816,7 +816,7 @@ tab:
       export:
         title: Exporter le calepinage
         info_0: |
-          Ce module vous permet d'exporter la **géométrie** du *calepinage* sous forme d'un fichier au format [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) ou [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
+          Ce module vous permet d'exporter la **géométrie** du *calepinage* sous forme d'une liste de fichiers au format [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) ou [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
         options_general: General
         option_file_format: Format
         option_file_format_svg: SVG
@@ -845,28 +845,31 @@ tab:
           Permet d'activer la séparation du contour extérieur des pièces de leurs percements ainsi que la fusion des profondeurs pour chaque cavité.
         option_sheet_good: Panneau
         option_sheet_good_help: |
-          Permet de choisir si le panneau est dessiné ainsi que de choisir sa couleur.
+          Permet d'activer l'exportation du panneau ainsi que de choisir sa couleur.
         option_sheet_veneer: Feuille
         option_sheet_veneer_help: |
-          Permet de choisir si la feuille est dessinée ainsi que de choisir sa couleur.
+          Permet d'activer l'exportation de la feuille ainsi que de choisir sa couleur.
         option_bar_dimensional: Barre
         option_bar_dimensional_help:  |
-          Permet de choisir si la barre est dessinée ainsi que de choisir sa couleur.
+          Permet d'activer l'exportation da la barre ainsi que de choisir sa couleur.
         option_bar_band: Bande
         option_bar_band_help:  |
-          Permet de choisir si la bande est dessinée ainsi que de choisir sa couleur.
+          Permet d'activer l'exportation de la bande ainsi que de choisir sa couleur.
         option_parts: Pièces
         option_parts_help:  |
-          Permet de choisir si les pièces sont dessinées ainsi que de choisir leur couleur.
+          Permet d'activer l'exportation des pièces ainsi que de choisir leur couleur.
+        option_parts_holes: Percements
+        option_parts_holes_help:  |
+          Permet de choisir la couleur des percements des pièces.
         option_texts: Identifications
         option_texts_help:  |
-          Permet de choisir si les textes d'identification des pièces sont dessinés ainsi que de choisir leur couleur.
+          Permet d'activer l'exportation des textes d'identification des pièces ainsi que de choisir leur couleur.
         option_leftovers: Chutes
         option_leftovers_help:  |
-          Permet de choisir si les chutes sont dessinées ainsi que de choisir leur couleur.
+          Permet d'activer l'exportation des chutes ainsi que de choisir leur couleur.
         option_cuts: Coupes
         option_cuts_help:  |
-          Permet de choisir si les coupes sont dessinées ainsi que de choisir leur couleur.
+          Permet d'activer l'exportation des coupes ainsi que de choisir leur couleur.
         option_stroke_color: Couleur de trait
         option_fill_color: Couleur de remplissage
         warning:

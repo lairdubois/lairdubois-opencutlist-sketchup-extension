@@ -132,7 +132,7 @@ module Ladb::OpenCutList
       _svg_sanitize_identifier(a.compact.join('_'))
     end
 
-    def _svg_write_projection_def(file, projection_def, smoothing = false, transformation = IDENTITY, unit_transformation = IDENTITY, unit_sign = '', stroke_color = nil, fill_color = nil, prefix = '')
+    def _svg_write_projection_def(file, projection_def, smoothing = false, transformation = IDENTITY, unit_transformation = IDENTITY, unit_sign = '', stroke_color = nil, fill_color = nil, holes_stroke_color = nil, holes_fill_color = nil, prefix = '')
 
       require_relative '../model/drawing/drawing_projection_def'
 
@@ -154,8 +154,8 @@ module Ladb::OpenCutList
           attributes.merge!({ 'shaper:cutDepth': "#{_svg_value(Geom::Point3d.new(projection_def.max_depth, 0).transform(unit_transformation).x)}#{unit_sign}" }) if projection_def.max_depth > 0
         elsif layer_def.holes?
           attributes = {
-            stroke: fill_color ? '#000000' : _svg_stroke_color_hex(stroke_color, fill_color),
-            fill: fill_color ? '#FFFFFF' : 'none',
+            stroke: _svg_stroke_color_hex(holes_stroke_color, holes_fill_color),
+            fill: _svg_fill_color_hex(holes_fill_color),
             id: id,
             'serif:id': id,
             'inkscape:label': id,
