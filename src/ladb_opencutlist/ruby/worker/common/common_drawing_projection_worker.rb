@@ -31,30 +31,27 @@ module Ladb::OpenCutList
 
       upper_layer_def = PathsLayerDef.new(depth_min, [], DrawingProjectionLayerDef::TYPE_UPPER)
 
-      layer_defs = {}
-      layer_defs[depth_min] = upper_layer_def
+      plds = {}   # plds = Path Layer DefS
+      plds[depth_min] = upper_layer_def
 
       @drawing_def.face_manipulators.each do |face_manipulator|
 
         # Filter only exposed faces
         next unless !face_manipulator.perpendicular?(@drawing_def.input_normal) && face_manipulator.angle_between(@drawing_def.input_normal) < Math::PI / 2.0
 
-        if face_manipulator.parallel?(@drawing_def.input_normal) && bounds_depth > 0
-          f_depth = bounds_max.distance_to_plane(face_manipulator.plane).round(6)
+        if face_manipulator.surface_manipulator
+          f_depth = (z_max - face_manipulator.surface_manipulator.z_max) # Faces sharing the same "surface" are considered as a unique "box"
         else
-          if face_manipulator.surface_manipulator
-            f_depth = (z_max - face_manipulator.surface_manipulator.z_max).round(6) # Faces sharing the same "surface" are considered as a unique "box"
-          else
-            f_depth = (z_max - face_manipulator.z_max).round(6)
-          end
+          f_depth = (z_max - face_manipulator.z_max)
         end
+        f_depth = f_depth.round(6)
 
         f_paths = face_manipulator.loop_manipulators.map { |loop_manipulator| loop_manipulator.points }.map { |points| Clippy.points_to_rpath(points) }
 
-        pld = layer_defs[f_depth]
+        pld = plds[f_depth]
         if pld.nil?
           pld = PathsLayerDef.new(f_depth, f_paths, DrawingProjectionLayerDef::TYPE_DEFAULT)
-          layer_defs[f_depth] = pld
+          plds[f_depth] = pld
         else
           pld.paths.concat(f_paths) # Just concat, union will be call later in one unique call
         end
@@ -62,18 +59,18 @@ module Ladb::OpenCutList
       end
 
       # Sort on depth ASC
-      plds = layer_defs.values.sort_by { |layer_def| layer_def.depth }
+      splds = plds.values.sort_by { |layer_def| layer_def.depth }
 
       # Union paths on each layer
-      plds.each do |layer_def|
+      splds.each do |layer_def|
         next if layer_def.paths.one?
         layer_def.paths = Clippy.execute_union(layer_def.paths)
       end
 
       # Up to Down difference
-      plds.each_with_index do |layer_def, index|
+      splds.each_with_index do |layer_def, index|
         next if layer_def.paths.empty?
-        plds[(index + 1)..-1].each do |lower_layer_def|
+        splds[(index + 1)..-1].each do |lower_layer_def|
           next if lower_layer_def.nil? || lower_layer_def.paths.empty?
           lower_layer_def.paths = Clippy.execute_difference(lower_layer_def.paths, layer_def.paths)
         end
@@ -85,7 +82,7 @@ module Ladb::OpenCutList
         upper_paths = upper_layer_def.paths
 
         # Union upper paths with lower paths
-        merged_paths = Clippy.execute_union(upper_paths + plds[1..-1].map { |layer_def| layer_def.paths }.flatten(1).compact)
+        merged_paths = Clippy.execute_union(upper_paths + splds[1..-1].map { |layer_def| layer_def.paths }.flatten(1).compact)
         merged_polytree = Clippy.execute_polytree(merged_paths)
 
         # Extract outer paths (first children of pathtree)
@@ -95,7 +92,7 @@ module Ladb::OpenCutList
         through_paths = Clippy.reverse_rpaths(Clippy.delete_rpaths_in(merged_paths, outer_paths))
 
         # Append "holes" layer def
-        plds << PathsLayerDef.new(depth_max, through_paths, DrawingProjectionLayerDef::TYPE_HOLES)
+        splds << PathsLayerDef.new(depth_max, through_paths, DrawingProjectionLayerDef::TYPE_HOLES)
 
         # Difference with outer and upper to extract holes to propagate
         mask_paths = Clippy.execute_difference(outer_paths, upper_paths)
@@ -103,7 +100,7 @@ module Ladb::OpenCutList
         mask_polyshapes = Clippy.polytree_to_polyshapes(mask_polytree)
 
         # Propagate down to up
-        pldsr = plds.reverse[0..-2] # Exclude top layer
+        pldsr = splds.reverse[0..-2] # Exclude top layer
         mask_polyshapes.each do |mask_polyshape|
           lower_paths = []
           pldsr.each do |layer_def|
@@ -124,7 +121,7 @@ module Ladb::OpenCutList
 
       projection_def = DrawingProjectionDef.new(bounds_depth)
 
-      plds.each do |paths_layer_def|
+      splds.each do |paths_layer_def|
         next if paths_layer_def.paths.empty?
 
         polygons = paths_layer_def.paths.map { |path|
