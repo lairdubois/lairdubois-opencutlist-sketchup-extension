@@ -31,11 +31,16 @@ module Ladb::OpenCutList
       @smoothing = settings.fetch('smoothing', false)
       @merge_holes = settings.fetch('merge_holes', false)
 
-      @part_stroke_color = nil
-      @part_fill_color = ColorUtils::COLOR_BLACK
-      @part_holes_stroke_color = ColorUtils::COLOR_BLACK
-      @part_holes_fill_color = ColorUtils::COLOR_WHITE
+      @part_stroke_color = ColorUtils.color_create('#008000')
+      @part_fill_color = nil
+      @part_holes_stroke_color = ColorUtils.color_create('yellow')
+      @part_holes_fill_color = nil
       @guide_stroke_color = Sketchup::Color.new('#0068FF')
+      # @part_stroke_color = nil
+      # @part_fill_color = ColorUtils::COLOR_BLACK
+      # @part_holes_stroke_color = ColorUtils::COLOR_BLACK
+      # @part_holes_fill_color = ColorUtils::COLOR_WHITE
+      # @guide_stroke_color = Sketchup::Color.new('#0068FF')
 
     end
 
