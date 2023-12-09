@@ -833,9 +833,16 @@ tab:
           - Die Struktur **Layers + Blöcke** erstellt einen Block pro Teil und fügt diese Blöcke so oft ein, wie die Teile wiederholt werden. *Diese Struktur bietet mehr Flexibilität beim Bearbeiten der Datei.*
         option_smoothing: Glättung
         option_smoothing_0: Keine
-        option_smoothing_1: Kreise und Bögen erkennen (experimentell)
+        option_smoothing_1: Glättung von Kreisen und Bögen *(Experimentell)*
         option_smoothing_help: |
-          Auswahl des Glättungsmodus
+          Auswahl des Glättungsmodus.
+
+          *Diese Option erkennt keine anderen Kurventypen.*
+        option_merge_holes: Mode de fusion
+        option_merge_holes_0: Keine
+        option_merge_holes_1: Umrisse + Bohrungen + Vereinigung
+        option_merge_holes_help: |
+          Ermöglicht es, die Trennung der Außenkontur von Teilen von ihren Bohrungen sowie die Vereinigung der Tiefen für jeden Hohlraum zu aktivieren.
         option_sheet_good: Platte
         option_sheet_good_help: |
           Auswahl, ob die Platte gezeichnet werden soll und ihre Farbe.
@@ -851,12 +858,15 @@ tab:
         option_parts: Teile
         option_parts_help: |
           Auswahl, ob die Teile gezeichnet werden sollen und ihre Farbe.
+        option_parts_holes: Bohrungen
+        option_parts_holes_help:  |
+          Auswahl der Farbe von Bohrungen.
         option_texts: Bezeichner
         option_texts_help:  |
           Auswahl, ob die Bezeicher gezeichnet werden sollen und ihre Farbe.
         option_leftovers: Verschnitte
         option_leftovers_help: |
-          Auswahl, ob die Verschnitte gezeichnet werden sollent und ihre Farbe.
+          Auswahl, ob die Verschnitte gezeichnet werden sollen und ihre Farbe.
         option_cuts: Schnitte
         option_cuts_help: |
           Auswahl, ob die Schnitte gezeichnet werden sollen und ihre Farbe.
@@ -1584,6 +1594,7 @@ tool:
     action_option_2_1_status: Alle Flächen des Teils verwenden
     action_option_3_0_status: Ursprung des Teils projizieren
     action_option_3_1_status: Kreise und Bögen erkennen (Experimentell)
+    action_option_3_2_status: Isolieren von durchgehenden Bohrungen und Zusammenführen der Tiefen für jeden Hohlraum
     action_option_3_3_status: Exportieren der im Teil enthaltenen schwebenden und mit der Zielfläche koplanaren Kanten als Hilfslinien
     error:
       not_part: Diese Fläche gehört nicht zu einem Teil

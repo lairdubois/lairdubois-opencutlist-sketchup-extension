@@ -833,9 +833,16 @@ tab:
           - The **Layers + Blocks** structure creates one block per part and inserts these blocks as many times as the parts are repeated. *This structure offers more flexibility for editing the file.*
         option_smoothing: Smoothing
         option_smoothing_0: None
-        option_smoothing_1: Detect circles and arcs *(Experimental)*
+        option_smoothing_1: Smooth circles and arcs *(Experimental)*
         option_smoothing_help: |
-          Select the smoothing mode.
+          Select whether circles and arcs should be detected.
+
+          *This option does detect other types of curves.*
+        option_merge_holes: Merging mode
+        option_merge_holes_0: None
+        option_merge_holes_1: Outline + Drillings + Merge
+        option_merge_holes_help: |
+          Enables the separation of the outlines of parts from their holes, as well as the merging of depths for each cavity.
         option_sheet_good: Panel
         option_sheet_good_help: |
           Select whether the panel is drawn, and select its color.
@@ -851,6 +858,9 @@ tab:
         option_parts: Parts
         option_parts_help: |
           Select whether or not parts are drawn, and select their color.
+        option_parts_holes: Drillings
+        option_parts_holes_help:  |
+          Select the color for drillings.
         option_texts: Identifiers
         option_texts_help:  |
           Select whether or not identifier labels are drawn, and select their color.
@@ -1584,6 +1594,7 @@ tool:
     action_option_2_1_status: Use all faces of the part
     action_option_3_0_status: Project part origin
     action_option_3_1_status: Detect circles and arcs (Experimental)
+    action_option_3_2_status: Isolate through-holes and merge depths for each cavity
     action_option_3_3_status: Export as guides the floating and coplanar edges of the target face contained in the part
     error:
       not_part: This surface does not belong to a part
