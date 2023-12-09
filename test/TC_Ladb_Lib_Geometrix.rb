@@ -54,6 +54,16 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
       Geom::Point3d.new(0.5567769930602741, 0.5567769930602743, 0.0),Geom::Point3d.new(0.4657530322410317, 0.6098575219199448, 0.0),Geom::Point3d.new(0.3429887719678407, 0.6213772684979774, 0.0),Geom::Point3d.new(0.19685039370078738, 0.5905511811023623, 0.0),Geom::Point3d.new(0.03729698641368287, 0.5194800066465914, 0.0),Geom::Point3d.new(-0.12479814886133055, 0.4130071282191567, 0.0),Geom::Point3d.new(-0.27838849653013653, 0.2783884965301365, 0.0),Geom::Point3d.new(-0.4130071282191565, 0.12479814886133059, 0.0),Geom::Point3d.new(-0.5194800066465913, -0.03729698641368294, 0.0),Geom::Point3d.new(-0.5905511811023619, -0.19685039370078752, 0.0),Geom::Point3d.new(-0.6213772684979773, -0.3429887719678407, 0.0),Geom::Point3d.new(-0.6098575219199446, -0.46575303224103193, 0.0),Geom::Point3d.new(-0.5567769930602742, -0.5567769930602743, 0.0),Geom::Point3d.new(-0.4657530322410319, -0.6098575219199447, 0.0),Geom::Point3d.new(-0.3429887719678407, -0.6213772684979775, 0.0),Geom::Point3d.new(-0.19685039370078775, -0.590551181102362, 0.0),Geom::Point3d.new(-0.037296986413683036, -0.5194800066465917, 0.0),Geom::Point3d.new(0.12479814886133006, -0.41300712821915686, 0.0),Geom::Point3d.new(0.2783884965301364, -0.27838849653013653, 0.0),Geom::Point3d.new(0.41300712821915625, -0.12479814886133071, 0.0),Geom::Point3d.new(0.5194800066465911, 0.03729698641368251, 0.0),Geom::Point3d.new(0.5905511811023618, 0.1968503937007875, 0.0),Geom::Point3d.new(0.6213772684979771, 0.3429887719678405, 0.0),Geom::Point3d.new(0.6098575219199447, 0.46575303224103176, 0.0),Geom::Point3d.new(0.5567769930602741, 0.5567769930602743, 0.0)
     ]
 
+    # -----
+
+    @loop_a = [
+      Geom::Point3d.new(0.5391629164487989, 0.2002185585142479, 0.0),Geom::Point3d.new(0.5905511811023626, 0.19685039370078744, 0.0),Geom::Point3d.new(0.5905511811023625, 0.5905511811023625, 0.0),Geom::Point3d.new(0.1968503937007875, 0.5905511811023625, 0.0),Geom::Point3d.new(0.20021855851424797, 0.5391629164487989, 0.0),Geom::Point3d.new(0.21026542272083937, 0.4886539192509763, 0.0),Geom::Point3d.new(0.22681908168846993, 0.43988841245468924, 0.0),Geom::Point3d.new(0.24959629772266206, 0.393700787401575, 0.0),Geom::Point3d.new(0.2782073463420335, 0.3508813271619212, 0.0),Geom::Point3d.new(0.3121626845722255, 0.3121626845722255, 0.0),Geom::Point3d.new(0.3508813271619211, 0.27820734634203353, 0.0),Geom::Point3d.new(0.39370078740157494, 0.24959629772266206, 0.0),Geom::Point3d.new(0.43988841245468924, 0.22681908168846987, 0.0),Geom::Point3d.new(0.48865391925097634, 0.2102654227208393, 0.0)
+    ]
+
+    @loop_b = [
+      Geom::Point3d.new(0.5391629164, 0.2002185585, 0.0),Geom::Point3d.new(0.4886539192, 0.2102654227, 0.0),Geom::Point3d.new(0.4398884124, 0.2268190816, 0.0),Geom::Point3d.new(0.3937007874, 0.2495962977, 0.0),Geom::Point3d.new(0.3508813271, 0.2782073463, 0.0),Geom::Point3d.new(0.3121626845, 0.3121626845, 0.0),Geom::Point3d.new(0.2782073463, 0.3508813271, 0.0),Geom::Point3d.new(0.2495962977, 0.3937007874, 0.0),Geom::Point3d.new(0.2268190816, 0.4398884124, 0.0),Geom::Point3d.new(0.2102654227, 0.4886539192, 0.0),Geom::Point3d.new(0.2002185585, 0.5391629164, 0.0),Geom::Point3d.new(0.1968503937, 0.5905511811, 0.0),Geom::Point3d.new(0.5905511811, 0.5905511811, 0.0),Geom::Point3d.new(0.5905511811, 0.1968503937, 0.0)
+    ]
+
   end
 
   def test_ellipse_finder
@@ -117,6 +127,56 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
     assert_equal(false, ellipse_def.circular?, 'circular?')
     assert_angles(ellipse_def, @ellipse_x0_y0_xr20mm_yr20mm_a45, 'angles (ellipse_x0_y0_xr20mm_yr20mm_a45)')
     assert_ellipse_include_points(ellipse_def, @ellipse_x0_y0_xr20mm_yr20mm_a45, 'ellipse_include_point (ellipse_x0_y0_xr20mm_yr20mm_a45)')
+
+  end
+
+  def test_loop_finder
+
+    loop_def = Ladb::OpenCutList::Geometrix::LoopFinder.find_loop_def(@circle_x0_y0_r10)
+
+    assert_instance_of(Ladb::OpenCutList::Geometrix::LoopDef, loop_def)
+    assert_equal(1, loop_def.portions.count)
+    assert_equal(true, loop_def.ellipse?, 'ellipse?')
+    assert_equal(true, loop_def.circle?, 'circle?')
+
+
+    loop_def = Ladb::OpenCutList::Geometrix::LoopFinder.find_loop_def(@ellipse_x0_y0_xr20mm_yr20mm_a45)
+
+    assert_instance_of(Ladb::OpenCutList::Geometrix::LoopDef, loop_def)
+    assert_equal(1, loop_def.portions.count)
+    assert_equal(true, loop_def.ellipse?, 'ellipse?')
+    assert_equal(false, loop_def.circle?, 'circle?')
+
+
+    loop_def = Ladb::OpenCutList::Geometrix::LoopFinder.find_loop_def(@loop_a)
+
+    assert_instance_of(Ladb::OpenCutList::Geometrix::LoopDef, loop_def)
+    assert_equal(3, loop_def.portions.count)
+    assert_equal(false, loop_def.ellipse?, 'ellipse?')
+    assert_equal(false, loop_def.circle?, 'circle?')
+
+
+    loop_def = Ladb::OpenCutList::Geometrix::LoopFinder.find_loop_def(@loop_a.reverse)
+
+    assert_instance_of(Ladb::OpenCutList::Geometrix::LoopDef, loop_def)
+    assert_equal(3, loop_def.portions.count)
+    assert_equal(false, loop_def.ellipse?, 'ellipse?')
+    assert_equal(false, loop_def.circle?, 'circle?')
+
+
+    loop_def = Ladb::OpenCutList::Geometrix::LoopFinder.find_loop_def(@loop_b)
+
+    assert_instance_of(Ladb::OpenCutList::Geometrix::LoopDef, loop_def)
+    assert_equal(3, loop_def.portions.count)
+    assert_equal(false, loop_def.ellipse?, 'ellipse?')
+    assert_equal(false, loop_def.circle?, 'circle?')
+
+    loop_def = Ladb::OpenCutList::Geometrix::LoopFinder.find_loop_def(@loop_b.reverse)
+
+    assert_instance_of(Ladb::OpenCutList::Geometrix::LoopDef, loop_def)
+    assert_equal(3, loop_def.portions.count)
+    assert_equal(false, loop_def.ellipse?, 'ellipse?')
+    assert_equal(false, loop_def.circle?, 'circle?')
 
   end
 

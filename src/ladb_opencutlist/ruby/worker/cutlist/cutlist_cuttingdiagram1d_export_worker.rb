@@ -74,7 +74,7 @@ module Ladb::OpenCutList
 
         begin
 
-          if File.exists?(path)
+          if File.exist?(path)
             if UI.messagebox(Plugin.instance.get_i18n_string('core.messagebox.dir_override', { :target => folder, :parent => File.basename(dir) }), MB_YESNO) == IDYES
               FileUtils.remove_dir(path, true)
             else

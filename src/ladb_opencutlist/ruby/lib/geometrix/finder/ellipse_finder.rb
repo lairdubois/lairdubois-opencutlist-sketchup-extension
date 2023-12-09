@@ -25,7 +25,9 @@ module Ladb::OpenCutList::Geometrix
         # - matrix A with x^2, xy, y^2, x, y for 5 first points
         # - matrix B with -1
         points[0, 5].each do |point|
-          m_a << [ point.x**2, point.x * point.y, point.y**2, point.x, point.y ]
+          px = point.x
+          py = point.y
+          m_a << [ px**2, px * py, py**2, px, py ]
           v_b << [ -1 ]
         end
 

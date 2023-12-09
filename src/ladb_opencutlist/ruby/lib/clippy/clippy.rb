@@ -6,7 +6,8 @@ module Ladb::OpenCutList
   module Clippy
     extend Fiddle::Importer
 
-    FLOAT_TO_INT64_CONVERTER = 1e10   # Clipper2 can have difficulties to union non squared polygon if > 1e6
+    FLOAT_TO_INT64_DIGITS = 8
+    FLOAT_TO_INT64_CONVERTER = 1e8   # Clipper2 can have difficulties to union non squared polygon if > 1e6
 
     @lib_loaded = false
 
@@ -109,7 +110,7 @@ module Ladb::OpenCutList
 
     # Convert Array<Geom::Point3d> to Array<Integer> (x1, y1, x2, y2, ...)
     def self.points_to_rpath(points)
-      points.map { |point| [ (point.x * FLOAT_TO_INT64_CONVERTER).to_i, (point.y * FLOAT_TO_INT64_CONVERTER).to_i ] }.flatten
+      points.map { |point| [ (point.x * FLOAT_TO_INT64_CONVERTER).round(FLOAT_TO_INT64_DIGITS).to_i, (point.y * FLOAT_TO_INT64_CONVERTER).round(FLOAT_TO_INT64_DIGITS).to_i ] }.flatten
     end
 
     # Convert Array<Integer> (x1, y1, x2, y2, ...) to Array<Geom::Point3d>
