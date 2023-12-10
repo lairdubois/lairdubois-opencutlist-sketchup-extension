@@ -21,11 +21,16 @@ module Ladb::OpenCutList::Geometrix
         m_a = []
         v_b = []
 
+        points = points[0, 5]
+
+        # Compute a positive translation along X to translate points to be sure we don't check 0,0
+        tx = points.map { |point| point.x < 0 ? -point.x : 0 }.min + 1
+
         # Fill
         # - matrix A with x^2, xy, y^2, x, y for 5 first points
         # - matrix B with -1
-        points[0, 5].each do |point|
-          px = point.x
+        points.each do |point|
+          px = point.x + tx
           py = point.y
           m_a << [ px**2, px * py, py**2, px, py ]
           v_b << [ -1 ]
@@ -54,7 +59,7 @@ module Ladb::OpenCutList::Geometrix
         # Center
 
         center = Geom::Point3d.new(
-          (b * e - 2.0 * c * d) / discr,
+          (b * e - 2.0 * c * d) / discr - tx,
           (b * d - 2.0 * a * e) / discr,
           points[0].z # Suppose that all points are in the same Z plane
         )
@@ -119,15 +124,9 @@ module Ladb::OpenCutList::Geometrix
 
       EllipseDef.new(
         center,
-        angle,
         xaxis,
         yaxis,
-        a,
-        b,
-        c,
-        d,
-        e,
-        f
+        angle,
       )
     end
 
@@ -140,6 +139,7 @@ module Ladb::OpenCutList::Geometrix
     # @return [Boolean]
     #
     def self.ellipse_include_point?(ellipse_def, point, epsilon = 1e-6)
+      # Check distance between point and ellipse edge
       ellipse_point_at_angle(ellipse_def, ellipse_angle_at_point(ellipse_def, point)).distance(point) <= epsilon
     end
 
@@ -169,7 +169,6 @@ module Ladb::OpenCutList::Geometrix
     #
     # @param [EllipseDef] ellipse_def
     # @param [Float] angle in radians
-    # @param [Boolean] absolute
     #
     # @return [Geom::Point3d]
     #
@@ -189,23 +188,17 @@ module Ladb::OpenCutList::Geometrix
 
   class EllipseDef
 
-    attr_reader :center, :angle, :xaxis, :yaxis, :a, :b, :c, :d, :e, :f
+    attr_reader :center, :xaxis, :yaxis, :angle
 
-    def initialize(center, angle, xaxis, yaxis, a, b, c, d, e, f)
+    def initialize(center, xaxis, yaxis, angle)
       @center = center
-      @angle = angle
       @xaxis = xaxis
       @yaxis = yaxis
-      @a = a
-      @b = b
-      @c = c
-      @d = d
-      @e = e
-      @f = f
+      @angle = angle
     end
 
     def circular?
-      (xradius.round(6) - yradius.round(6)).abs < 1e-6
+      (xradius - yradius).abs <= 1e-6
     end
 
     def xradius
@@ -214,17 +207,6 @@ module Ladb::OpenCutList::Geometrix
 
     def yradius
       @yaxis.length
-    end
-
-    def ==(other)
-      [
-        @a - other.a,
-        @b - other.b,
-        @c - other.c,
-        @d - other.d,
-        @e - other.e,
-        @f - other.f
-      ].all? { |d| d.abs < 1e-6 }
     end
 
   end
