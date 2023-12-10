@@ -188,7 +188,7 @@
                                         <li><strong>{{ 'tab.cutlist.cuttingdiagram.list.total_cut_count'|i18next }} : </strong>{{ summary.total_cut_count }}</li>
                                         <li><strong>{{ 'tab.cutlist.cuttingdiagram.list.total_cut_length'|i18next }} : </strong>{{ summary.total_cut_length }}</li>
                                         <li><strong>{{ 'tab.cutlist.cuttingdiagram.list.overall_efficiency'|i18next }} : </strong>{{ summary.overall_efficiency|number_format(2, capabilities.decimal_separator, ' ') }}%</li>
-                                        <li><strong>{{ 'tab.cutlist.cuttingdiagram.list.leftover_to_keep_plural'|i18next }} : </strong>{{ to_keep_leftovers|length }} <small>(> {{ options.keep_length }} x {{ options.keep_width }})</small></li>
+                                        <li><strong>{{ 'tab.cutlist.cuttingdiagram.list.leftover_to_keep_plural'|i18next }} : </strong>{{ to_keep_leftovers|length }} <em>({{ 'tab.cutlist.list.length_short'|i18next }} x {{ 'tab.cutlist.list.width_short'|i18next }} > {{ options.keep_length }} x {{ options.keep_width }})</em></li>
                                     </ul>
                                 </div>
                             </div>
@@ -244,6 +244,38 @@
                 </tbody>
             </table>
         {% endif %}
+        <table id="ladb_cuttingdiagram_group_leftovers" class="no-print table table-bordered ladb-cutlist-group">
+            <thead>
+            <tr class="table-heading">
+                <td colspan="6">
+                    <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-open"></i></button>
+                    <div class="ladb-heading">{{ to_keep_leftovers|length }} {{ 'tab.cutlist.cuttingdiagram.list.leftover_to_keep'|i18next({ 'count':(to_keep_leftovers|length) }) }}</div>
+                </td>
+            </tr>
+            </thead>
+            <tbody>
+            {% if to_keep_leftovers|length > 0 %}
+                <tr class="table-column-heading">
+                    <td>{{ 'tab.cutlist.list.name'|i18next }}</td>
+                    <td width="8%">{{ 'tab.cutlist.list.count'|i18next }}</td>
+                    {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
+                        <td width="8%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
+                    {% endfor %}
+                    <td width="8%">{{ 'tab.cutlist.list.area'|i18next }}</td>
+                </tr>
+                {% for leftover in to_keep_leftovers %}
+                    <tr class="ladb-cutlist-row ladb-minitools-holder">
+                        <td><span class="ladb-cutlist-part-name">{{ 'tab.cutlist.cuttingdiagram.list.leftover_to_keep'|i18next }}</span></td>
+                        <td class="text-center">{{ leftover.count }}</td>
+                        {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
+                            {% include 'tabs/cutlist/_list-row-col-box-dimension.twig' with { 'part':leftover } %}
+                        {% endfor %}
+                        <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ leftover.area }}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            </tbody>
+        </table>
         {% if options.hide_part_list %}
             {% set colspan = 1 %}
         {% else %}
@@ -511,37 +543,5 @@
                 </tbody>
             </table>
         {% endfor %}
-        <table id="ladb_cuttingdiagram_group_leftovers" class="table table-bordered ladb-cutlist-group ladb-cutlist-cuttingdiagram-group">
-            <thead>
-            <tr class="table-heading">
-                <td colspan="6">
-                    <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-close"></i></button>
-                    <div class="ladb-heading">{{ to_keep_leftovers|length }} {{ 'tab.cutlist.cuttingdiagram.list.leftover_to_keep'|i18next({ 'count':(to_keep_leftovers|length) }) }}</div>
-                </td>
-            </tr>
-            </thead>
-            <tbody>
-            {% if to_keep_leftovers|length > 0 %}
-                <tr class="table-column-heading">
-                    <td>{{ 'tab.cutlist.list.name'|i18next }}</td>
-                    <td width="8%">{{ 'tab.cutlist.list.count'|i18next }}</td>
-                    {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
-                        <td width="8%">{{ ('tab.cutlist.list.'~property~'_short')|i18next }}</td>
-                    {% endfor %}
-                    <td width="8%">{{ 'tab.cutlist.list.area'|i18next }}</td>
-                </tr>
-                {% for leftover in to_keep_leftovers %}
-                    <tr class="ladb-cutlist-row ladb-minitools-holder">
-                        <td><span class="ladb-cutlist-part-name">{{ 'tab.cutlist.cuttingdiagram.list.leftover_to_keep'|i18next }}</span></td>
-                        <td class="text-center">{{ leftover.count }}</td>
-                        {% for property in dimensionColumnOrderStrategy if property != 'thickness' %}
-                            {% include 'tabs/cutlist/_list-row-col-box-dimension.twig' with { 'part':leftover } %}
-                        {% endfor %}
-                        <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ leftover.area }}</td>
-                    </tr>
-                {% endfor %}
-            {% endif %}
-            </tbody>
-        </table>
     </table>
 {% endblock %}

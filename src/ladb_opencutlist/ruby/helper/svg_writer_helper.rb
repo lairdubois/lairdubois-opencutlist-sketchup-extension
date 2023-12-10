@@ -142,7 +142,7 @@ module Ladb::OpenCutList
 
         id = _svg_get_projection_layer_def_identifier(layer_def, unit_transformation, prefix)
 
-        if layer_def.outer?
+        if layer_def.outer? || layer_def.depth == 0
           attributes = {
             stroke: _svg_stroke_color_hex(stroke_color, fill_color),
             fill: _svg_fill_color_hex(fill_color),
