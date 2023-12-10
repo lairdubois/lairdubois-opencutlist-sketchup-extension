@@ -135,12 +135,12 @@ module Ladb::OpenCutList::Geometrix
     #
     # @param [EllipseDef] ellipse_def
     # @param [Geom::Point3d] point
+    # @param [Float] epsilon Minimal distance to ellipse edge
     #
     # @return [Boolean]
     #
     def self.ellipse_include_point?(ellipse_def, point, epsilon = 1e-6)
-      # ax^2 + bxy + cy^2 + dx + ey + f = 0
-      (ellipse_def.a * point.x**2 + ellipse_def.b * point.x * point.y + ellipse_def.c * point.y**2 + ellipse_def.d * point.x + ellipse_def.e * point.y + ellipse_def.f).abs < epsilon
+      ellipse_point_at_angle(ellipse_def, ellipse_angle_at_point(ellipse_def, point)).distance(point) <= epsilon
     end
 
     # Get ellipse CCW angle at point
