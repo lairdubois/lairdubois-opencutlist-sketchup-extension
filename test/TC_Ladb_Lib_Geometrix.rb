@@ -88,6 +88,10 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
       Geom::Point3d.new(26.132672152841984, -0.0003907759169052838, 1.6671440117299596e-08),Geom::Point3d.new(26.131360473960314, 0.0, 2.55351295663786e-15),Geom::Point3d.new(0.0, 0.0, 0.0),Geom::Point3d.new(-1.9410880019776755e-05, -1.2741444460977114, 6.805429186851342e-08),Geom::Point3d.new(34.222029201035234, -5.120675667034186, 1.7077875902327122e-07),Geom::Point3d.new(34.33251941468384, -4.802595152950198, 1.6129617719240485e-07),Geom::Point3d.new(34.42209590488205, -4.525618288978791, 1.5303883038608745e-07),Geom::Point3d.new(34.50640716774462, -4.246983227304566, 1.4473200671272224e-07),Geom::Point3d.new(34.5854227299801, -3.9667906772178747, 1.3637867446458785e-07),Geom::Point3d.new(34.65911403236431, -3.6851419109444152, 1.27981878317307e-07),Geom::Point3d.new(34.72745444006262, -3.4021387270419523, 1.1954466294650246e-07),Geom::Point3d.new(34.790419252257045, -3.1178834136060423, 1.1106996467002972e-07),Geom::Point3d.new(34.84798571107381, -2.832478711299387, 1.0256097382477236e-07),Geom::Point3d.new(34.90013300980903, -2.5460277762175587, 9.402073508635311e-08),Geom::Point3d.new(34.946842300449056, -2.258634142604329, 8.54523197757473e-08),Geom::Point3d.new(34.98809670048281, -1.9704016854304918, 7.685882585928283e-08),Geom::Point3d.new(35.02388129900378, -1.681434582849544, 6.824335307964446e-08),Geom::Point3d.new(35.054183162083156, -1.3918383653735624, 5.9159298682054384e-08),Geom::Point3d.new(35.07899133750964, -1.1017155308190567, 5.0700157738781115e-08),Geom::Point3d.new(35.09829685866675, -0.8111709405483598, 4.2296289914922625e-08),Geom::Point3d.new(35.11209274777365, -0.520311781719835, 3.362412115404112e-08),Geom::Point3d.new(35.12037401848844, -0.2292420950317311, 2.4945614351956635e-08),Geom::Point3d.new(35.122544866402, -0.0005252063238430082, 1.8126171563714877e-08)
     ]
 
+    @loop_d = [
+      Geom::Point3d.new(10.46633426, 6.77366297, 0.25000315672548057),Geom::Point3d.new(10.48173769, 6.77450272, 0.25000315672548057),Geom::Point3d.new(10.49216981, 6.77791658, 0.25000315672548057),Geom::Point3d.new(10.49724427, 6.77957718, 0.25000315672548057),Geom::Point3d.new(10.51090911, 6.78849214, 0.25000315672548057),Geom::Point3d.new(10.52180098, 6.80064005, 0.25000315672548057),Geom::Point3d.new(10.5291776, 6.81519305, 0.25000315672548057),Geom::Point3d.new(10.53253628, 6.83115938, 0.25000315672548057),Geom::Point3d.new(10.53164813, 6.84745096, 0.25000315672548057),Geom::Point3d.new(10.52657366, 6.86295755, 0.25000315672548057),Geom::Point3d.new(10.5176587, 6.8766224, 0.25000315672548057),Geom::Point3d.new(10.50551079, 6.88751426, 0.25000315672548057),Geom::Point3d.new(10.49095779, 6.89489089, 0.25000315672548057),Geom::Point3d.new(10.47499146, 6.89824957, 0.25000315672548057),Geom::Point3d.new(10.45869988, 6.89736141, 0.25000315672548057),Geom::Point3d.new(10.44319329, 6.89228694, 0.25000315672548057),Geom::Point3d.new(10.42952844, 6.88337199, 0.25000315672548057),Geom::Point3d.new(10.41863657, 6.87122408, 0.25000315672548057),Geom::Point3d.new(10.41125995, 6.85667107, 0.25000315672548057),Geom::Point3d.new(10.40790127, 6.84070474, 0.25000315672548057),Geom::Point3d.new(10.40878943, 6.82441316, 0.25000315672548057),Geom::Point3d.new(10.41386389, 6.80890657, 0.25000315672548057),Geom::Point3d.new(10.42277885, 6.79524173, 0.25000315672548057),Geom::Point3d.new(10.43492676, 6.78434986, 0.25000315672548057),Geom::Point3d.new(10.44947976, 6.77697323, 0.25000315672548057),Geom::Point3d.new(10.4654461, 6.77361456, 0.25000315672548057)
+    ]
+
   end
 
   def test_ellipse_finder
@@ -113,6 +117,7 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
     assert_loop(@loop_b, 3, false, false, 'loop_b')
     assert_loop(@loop_b.reverse, 3, false, false, 'loop_b.reverse')
     assert_loop(@loop_c, 7, false, false, 'loop_c')
+    assert_loop(@loop_d, nil, nil, nil, 'loop_d')  # This loop doesn't returns unique arc portion if starts at index 22
 
   end
 
@@ -179,8 +184,6 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
 
     points.count.times do |index|
 
-      SKETCHUP_CONSOLE.clear
-
       prefix = "#{msg} index=#{index} point=#{points[index]}"
       pts = points.rotate(index)
 
@@ -188,10 +191,10 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
 
       assert_instance_of(Ladb::OpenCutList::Geometrix::LoopDef, loop_def)
 
-      assert_equal(portion_count, loop_def.portions.count, "#{prefix} portions.count")
+      assert_equal(portion_count, loop_def.portions.count, "#{prefix} portions.count") unless portion_count.nil?
 
-      assert_equal(is_ellipse, loop_def.ellipse?, "#{prefix} ellipse?")
-      assert_equal(is_circle, loop_def.circle?, "#{prefix} circle?")
+      assert_equal(is_ellipse, loop_def.ellipse?, "#{prefix} ellipse?") unless is_ellipse.nil?
+      assert_equal(is_circle, loop_def.circle?, "#{prefix} circle?") unless is_circle.nil?
 
     end
 

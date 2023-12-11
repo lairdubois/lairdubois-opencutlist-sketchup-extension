@@ -93,7 +93,15 @@ module Ladb::OpenCutList::Geometrix
 
           overlap_portions = loop_def.portions.select { |potion| potion.start_index < max_overlap_index }
           last_overlap_portion = overlap_portions.last
-          if last_overlap_portion.is_a?(ArcLoopPortionDef)
+          if last_portion == last_overlap_portion
+
+            # Only one arc : just subtract overlap
+            last_portion.edge_count = points.length
+
+            # Keep portion
+            overlap_portions.delete(last_overlap_portion)
+
+          elsif last_overlap_portion.is_a?(ArcLoopPortionDef)
 
             # Check ellipses similarity by checking if last arc includes last overlap arc end point
             if EllipseFinder.ellipse_include_point?(last_portion.ellipse_def, last_overlap_portion.end_point)

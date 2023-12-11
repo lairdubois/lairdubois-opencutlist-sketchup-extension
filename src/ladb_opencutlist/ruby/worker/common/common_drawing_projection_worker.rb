@@ -25,7 +25,7 @@ module Ladb::OpenCutList
       bounds_max = @drawing_def.bounds.max
 
       depth_min = 0.0
-      depth_max = bounds_depth.round(6)
+      depth_max = bounds_depth.round(3)
 
       z_max = bounds_max.z
 
@@ -37,7 +37,7 @@ module Ladb::OpenCutList
       @drawing_def.face_manipulators.each do |face_manipulator|
 
         # Filter only exposed faces
-        next unless !face_manipulator.perpendicular?(@drawing_def.input_normal) && face_manipulator.angle_between(@drawing_def.input_normal) < Math::PI / 2.0
+        next unless !face_manipulator.perpendicular?(Z_AXIS) && face_manipulator.angle_between(@drawing_def.input_normal) < Math::PI / 2.0
 
         if face_manipulator.surface_manipulator
           f_depth = (z_max - face_manipulator.surface_manipulator.z_max) # Faces sharing the same "surface" are considered as a unique "box"

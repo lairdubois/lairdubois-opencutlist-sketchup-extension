@@ -430,8 +430,8 @@ module Ladb::OpenCutList
             end
 
             projection_def.layer_defs.reverse.each do |layer_def| # reverse layer order to present from Bottom to Top
-              layer_def.polygon_defs.each do |polygon_def|
 
+              layer_def.polygon_defs.each do |polygon_def|
                 if fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
                   polygon_def.loop_def.portions.each do |portion|
                     fn_append_segments.call(layer_def, polygon_def, portion.segments, portion.is_a?(Geometrix::ArcLoopPortionDef) ? 4 : 2)
