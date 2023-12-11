@@ -4,9 +4,10 @@ module Ladb::OpenCutList::Geometrix
 
   class LoopFinder
 
-    MIN_DELTA_ANGLE = 0.25 * Math::PI
+    MIN_ARC_DELTA_ANGLE = 0.25 * Math::PI
+    MIN_ARC_POINT_COUNT = 5
 
-    # @param [Array<Geom::Point3d>] points
+    # @param [Array<Geom::Point3d>] points (the last must not be equal to the first)
     #
     # @return [LoopDef|nil]
     #
@@ -19,11 +20,12 @@ module Ladb::OpenCutList::Geometrix
       twice_points = points + points
 
       index = 0
-      while index < points.length
+      max_index = points.length - 1
+      while index <= max_index
 
-        if points.length > 5
+        if points.length > MIN_ARC_POINT_COUNT
 
-          ellipse_def = EllipseFinder.find_ellipse_def(twice_points[index, 5])
+          ellipse_def = EllipseFinder.find_ellipse_def(twice_points[index, MIN_ARC_POINT_COUNT])
           if ellipse_def
 
             ellipse_start_index = index
@@ -35,7 +37,7 @@ module Ladb::OpenCutList::Geometrix
               i = index + ellipse_edge_count + 1
 
               # Break if end reached
-              break unless i <= points.length + 5
+              break unless i <= points.length + MIN_ARC_POINT_COUNT
 
               p = twice_points[i]
 
@@ -45,7 +47,7 @@ module Ladb::OpenCutList::Geometrix
               vaa = ellipse_def.xaxis.transform(Geom::Transformation.rotation(ellipse_def.center, Z_AXIS, EllipseFinder.ellipse_angle_at_point(ellipse_def, p)))
 
               # Break if angle between previous point > MIN_DELTA_ANGLE
-              break if va.angle_between(vaa).round(6) > MIN_DELTA_ANGLE
+              break if va.angle_between(vaa).round(6) > MIN_ARC_DELTA_ANGLE
 
               va = vaa
 
@@ -53,7 +55,7 @@ module Ladb::OpenCutList::Geometrix
 
             end
 
-            if ellipse_edge_count >= 5
+            if ellipse_edge_count >= MIN_ARC_POINT_COUNT
 
               # Append Arc portion
               loop_def.portions << ArcLoopPortionDef.new(loop_def, ellipse_start_index, ellipse_edge_count, ellipse_def)
@@ -93,7 +95,8 @@ module Ladb::OpenCutList::Geometrix
           last_overlap_portion = overlap_portions.last
           if last_overlap_portion.is_a?(ArcLoopPortionDef)
 
-            if EllipseFinder.ellipse_include_point?(last_overlap_portion.ellipse_def, last_overlap_portion.end_point)
+            # Check ellipses similarity by checking if last arc includes last overlap arc end point
+            if EllipseFinder.ellipse_include_point?(last_portion.ellipse_def, last_overlap_portion.end_point)
 
               # Combine first ellipse to last
               last_portion.edge_count = last_portion.edge_count + last_overlap_portion.edge_count - overlap

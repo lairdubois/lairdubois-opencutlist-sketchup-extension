@@ -17,9 +17,6 @@ module Ladb::OpenCutList
         definitions.each { |definition|
 
           definition_attributes = DefinitionAttributes.new(definition)
-
-          puts "definition_attributes.price = #{definition_attributes.price}"
-
           definition_attributes.price = nil
           definition_attributes.write_to_attributes
 
