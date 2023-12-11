@@ -44,7 +44,7 @@ module Ladb::OpenCutList
         else
           f_depth = (z_max - face_manipulator.z_max)
         end
-        f_depth = f_depth.round(6)
+        f_depth = f_depth.round(3)  # TODO adapt to model precision ??
 
         f_paths = face_manipulator.loop_manipulators.map { |loop_manipulator| loop_manipulator.points }.map { |points| Clippy.points_to_rpath(points) }
 

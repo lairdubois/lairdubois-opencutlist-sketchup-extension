@@ -1334,6 +1334,7 @@ module Ladb::OpenCutList
         next if entity.is_a?(Sketchup::ComponentInstance) && !entity.definition.behavior.cuts_opening? && !entity.definition.behavior.always_face_camera?
         if entity.is_a?(Sketchup::Drawingelement)
           entity.material = material
+          entity.back_material = material if entity.respond_to?(:back_material)
           if material.nil? && entity.respond_to?(:clear_texture_position)
             entity.clear_texture_position(true) # Clear texture position is possible (entity is a Face and SU 2022+)
           end
