@@ -162,6 +162,7 @@ module Ladb::OpenCutList
           settings['group_id'] = cutlist_group.id
           settings['bar_folding'] = false     # Remove unneeded computations
           settings['hide_part_list'] = true   # Remove unneeded computations
+          settings['part_drawing_type'] = 0   # Remove unneeded computations
 
           std_sizes = material_attributes.std_lengths.split(';')
           if settings['std_bar'] == '' || !std_sizes.include?(settings['std_bar'])
@@ -241,6 +242,7 @@ module Ladb::OpenCutList
           settings['group_id'] = cutlist_group.id
           settings['bar_folding'] = false     # Remove unneeded computations
           settings['hide_part_list'] = true   # Remove unneeded computations
+          settings['part_drawing_type'] = 0   # Remove unneeded computations
 
           if settings['std_bar'] == ''
             std_sizes = material_attributes.std_lengths.split(';')
@@ -342,6 +344,7 @@ module Ladb::OpenCutList
           settings['group_id'] = cutlist_group.id
           settings['sheet_folding'] = false   # Remove unneeded computations
           settings['hide_part_list'] = true   # Remove unneeded computations
+          settings['part_drawing_type'] = 0   # Remove unneeded computations
 
           if settings['std_sheet'] == ''
             std_sizes = material_attributes.std_sizes.split(';')
@@ -360,7 +363,7 @@ module Ladb::OpenCutList
           cuttingdiagram2d.sheets.each do |cuttingdiagram2d_sheet|
 
             # Only standard sheet uses dim prices
-            std_price = _get_std_price(cuttingdiagram2d_sheet.type == BinPacking2D::BIN_TYPE_AUTO_GENERATED ? [ cutlist_group.def.std_thickness, Size2d.new(cuttingdiagram2d_sheet.def.length, cuttingdiagram2d_sheet.def.width) ] : nil, material_attributes)
+            std_price = _get_std_price(cuttingdiagram2d_sheet.type == BinPacking2D::BIN_TYPE_AUTO_GENERATED ? [ Size2d.new(cuttingdiagram2d_sheet.def.length, cuttingdiagram2d_sheet.def.width) ] : nil, material_attributes)
             price_per_inch3 = std_price[:val] == 0 ? 0 : _uv_to_inch3(std_price[:unit], std_price[:val], cutlist_group.def.std_thickness, cuttingdiagram2d_sheet.def.width, cuttingdiagram2d_sheet.def.length)
 
             report_entry_sheet_def = report_entry_def.sheet_defs[cuttingdiagram2d_sheet.type_id]
