@@ -1323,6 +1323,8 @@ module Ladb::OpenCutList
         group_def.material_display_name = material.display_name
         group_def.material_type = MaterialAttributes::TYPE_EDGE
         group_def.material_color = material.color if material
+        group_def.material_description = material_attributes.description
+        group_def.material_url = material_attributes.url
         group_def.std_available = std_info[:available]
         group_def.std_dimension_stipped_name = std_info[:dimension_stipped_name]
         group_def.std_dimension = std_info[:dimension]
@@ -1394,6 +1396,8 @@ module Ladb::OpenCutList
         group_def.material_display_name = material.display_name
         group_def.material_type = MaterialAttributes::TYPE_VENEER
         group_def.material_color = material.color if material
+        group_def.material_description = material_attributes.description
+        group_def.material_url = material_attributes.url
         group_def.material_grained = material_attributes.grained
         group_def.std_available = std_info[:available]
         group_def.std_dimension_stipped_name = std_info[:dimension_stipped_name]

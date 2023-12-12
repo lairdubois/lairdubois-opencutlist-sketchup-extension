@@ -24,7 +24,7 @@ module Ladb::OpenCutList
 
   class AbstractReportEntry < AbstractReportItem
 
-    attr_reader :errors, :id, :material_id, :material_name, :material_display_name, :material_color, :material_type, :std_available, :std_dimension_stipped_name, :std_dimension, :std_thickness
+    attr_reader :errors, :id, :material_id, :material_name, :material_display_name, :material_type, :material_color, :material_description, :material_url, :std_available, :std_dimension_stipped_name, :std_dimension, :std_thickness
 
     def initialize(_def)
       super(_def)
@@ -35,8 +35,10 @@ module Ladb::OpenCutList
       @material_id = _def.cutlist_group.material_id
       @material_name = _def.cutlist_group.material_name
       @material_display_name = _def.cutlist_group.material_display_name
-      @material_color = _def.cutlist_group.material_color
       @material_type = _def.cutlist_group.material_type
+      @material_color = _def.cutlist_group.material_color
+      @material_description = _def.cutlist_group.material_description
+      @material_url = _def.cutlist_group.material_url
       @std_available = _def.cutlist_group.std_available
       @std_dimension_stipped_name = _def.cutlist_group.std_dimension_stipped_name
       @std_dimension = _def.cutlist_group.std_dimension

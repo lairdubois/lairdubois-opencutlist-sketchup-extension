@@ -191,6 +191,9 @@
                                     {% if foldableRow %}
                                         <a href="#" class="ladb-btn-folding-toggle-row ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.folding_part'|i18next }}"><i class="ladb-opencutlist-icon-arrow-{% if entry.errors|length > 0 %}up{% else %}down{% endif %}"></i></a>
                                     {% endif %}
+                                    {% if entry.material_url is not empty %}
+                                        <a href="{{ entry.material_url }}" class="ladb-btn-open-material-url" data-toggle="tooltip" title="{{ 'tab.materials.tooltip.open_url'|i18next }}"><i class="ladb-opencutlist-icon-link"></i></a>
+                                    {% endif %}
                                     {% if group.material_type == 2 or group.material_type == 6 %} {# 2 = TYPE_SOLID_WOOD, 6 = TYPE_VENEER #}
                                         <a href="#" class="ladb-btn-cuttingdiagram-2d" data-group-id="{{ entry.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.setup_group_cuttingdiagram'|i18next({ 'material_name':entry.material_display_name, 'std_dimension':entry.std_dimension }) }}..."><i class="ladb-opencutlist-icon-cuttingdiagram2d"></i></a>
                                     {% endif %}
@@ -202,6 +205,9 @@
                                     {% endif %}
                                 </div>
                                 {% include 'tabs/cutlist/_group-label.twig' with { 'group':entry } %}
+                                {% if not generateOptions.hide_descriptions and entry.material_description is not empty %}
+                                    <div class="ladb-material-description">{{ entry.material_description|nl2br }}</div>
+                                {% endif %}
                             </td>
                             {% if group.material_type == 1 %} {# 1 = TYPE_SOLID_WOOD #}
                                 <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ entry.total_used_volume }}</td>
