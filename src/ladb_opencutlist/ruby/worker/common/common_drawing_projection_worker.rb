@@ -12,7 +12,7 @@ module Ladb::OpenCutList
 
       @drawing_def = drawing_def
 
-      @option_merge_holes = settings.fetch('merge_holes', false)  # Holes are moved to "hole" layer and all down layers holes are merged to their upper layer
+      @merge_holes = settings.fetch('merge_holes', false)  # Holes are moved to "hole" layer and all down layers holes are merged to their upper layer
 
     end
 
@@ -25,7 +25,7 @@ module Ladb::OpenCutList
       bounds_max = @drawing_def.bounds.max
 
       depth_min = 0.0
-      depth_max = bounds_depth.round(3)
+      depth_max = bounds_depth.round(6)
 
       z_max = bounds_max.z
 
@@ -44,7 +44,7 @@ module Ladb::OpenCutList
         else
           f_depth = (z_max - face_manipulator.z_max)
         end
-        f_depth = f_depth.round(3)  # TODO adapt to model precision ??
+        f_depth = f_depth.round(6)  # TODO adapt to model unit ??
 
         f_paths = face_manipulator.loop_manipulators.map { |loop_manipulator| loop_manipulator.points }.map { |points| Clippy.points_to_rpath(points) }
 
@@ -76,7 +76,7 @@ module Ladb::OpenCutList
         end
       end
 
-      if @option_merge_holes
+      if @merge_holes
 
         # Copy upper paths
         upper_paths = upper_layer_def.paths

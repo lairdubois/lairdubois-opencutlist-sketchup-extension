@@ -1,6 +1,5 @@
 {
   "1": {  /* ACTION_EXPORT_PART_3D */
-    "0_0": false,   /* ACTION_OPTION_FILE_FORMAT_DXF */
     "0_1": true,    /* ACTION_OPTION_FILE_FORMAT_STL */
     "0_2": false,   /* ACTION_OPTION_FILE_FORMAT_OBJ */
     "1_0": { "metric": false, "imperial": true },    /* ACTION_OPTION_UNIT_IN */

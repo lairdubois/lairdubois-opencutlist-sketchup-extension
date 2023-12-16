@@ -57,7 +57,7 @@ module Ladb::OpenCutList
         :action => ACTION_EXPORT_PART_3D,
         :options => {
           ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_STL, ACTION_OPTION_FILE_FORMAT_OBJ ],
-          ACTION_OPTION_UNIT => [ACTION_OPTION_UNIT_MM, ACTION_OPTION_UNIT_CM, ACTION_OPTION_UNIT_M, ACTION_OPTION_UNIT_IN, ACTION_OPTION_UNIT_FT ],
+          ACTION_OPTION_UNIT => [ ACTION_OPTION_UNIT_MM, ACTION_OPTION_UNIT_CM, ACTION_OPTION_UNIT_M, ACTION_OPTION_UNIT_IN, ACTION_OPTION_UNIT_FT ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_ANCHOR ]
         }
       },
@@ -92,7 +92,7 @@ module Ladb::OpenCutList
     COLOR_PART_UPPER = Kuix::COLOR_BLUE
     COLOR_PART_HOLES = Sketchup::Color.new('#D783FF').freeze
     COLOR_PART_DEPTH = COLOR_PART_UPPER.blend(Kuix::COLOR_WHITE, 0.5).freeze
-    COLOR_GUIDE = Kuix::COLOR_CYAN
+    COLOR_EDGE = Kuix::COLOR_CYAN
     COLOR_ACTION = Kuix::COLOR_MAGENTA
 
     @@action = nil
@@ -102,7 +102,6 @@ module Ladb::OpenCutList
       super(true, false)
 
       # Create cursors
-      @cursor_export_skp = create_cursor('export-skp', 0, 0)
       @cursor_export_stl = create_cursor('export-stl', 0, 0)
       @cursor_export_obj = create_cursor('export-obj', 0, 0)
       @cursor_export_dxf = create_cursor('export-dxf', 0, 0)
@@ -352,7 +351,7 @@ module Ladb::OpenCutList
               # Highlight edge
               segments = Kuix::Segments.new
               segments.add_segments(EdgeManipulator.new(edge_info.edge, edge_info.transformation).segment)
-              segments.color = COLOR_GUIDE
+              segments.color = COLOR_EDGE
               segments.line_width = 2
               segments.on_top = true
               preview.append(segments)
@@ -448,7 +447,7 @@ module Ladb::OpenCutList
               # Highlight edge
               segments = Kuix::Segments.new
               segments.add_segments(edge_manipulator.segment)
-              segments.color = COLOR_GUIDE
+              segments.color = COLOR_EDGE
               segments.line_width = highlighted ? 3 : 2
               segments.on_top = true
               preview.append(segments)
@@ -616,7 +615,7 @@ module Ladb::OpenCutList
               # Highlight edge
               segments = Kuix::Segments.new
               segments.add_segments(EdgeManipulator.new(edge_info.edge, edge_info.transformation).segment)
-              segments.color = COLOR_GUIDE
+              segments.color = COLOR_EDGE
               segments.line_width = highlighted ? 3 : 2
               segments.on_top = true
               preview.append(segments)

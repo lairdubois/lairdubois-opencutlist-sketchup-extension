@@ -15,7 +15,7 @@ module Ladb::OpenCutList
     include SanitizerHelper
 
     LAYER_PART = 'OCL_PART'.freeze
-    LAYER_GUIDE = 'OCL_GUIDE'.freeze
+    LAYER_EDGE = 'OCL_EDGE'.freeze
 
     SUPPORTED_FILE_FORMATS = [ FILE_FORMAT_STL, FILE_FORMAT_OBJ, FILE_FORMAT_DXF ]
 
@@ -147,7 +147,7 @@ module Ladb::OpenCutList
 
       layer_defs = []
       layer_defs << DxfLayerDef.new(LAYER_PART, nil) unless @drawing_def.face_manipulators.empty?
-      layer_defs << DxfLayerDef.new(LAYER_GUIDE, @guide_stroke_color) unless @drawing_def.edge_manipulators.empty?
+      layer_defs << DxfLayerDef.new(LAYER_EDGE, @guide_stroke_color) unless @drawing_def.edge_manipulators.empty?
 
       min = @drawing_def.bounds.min.transform(unit_transformation)
       max = @drawing_def.bounds.max.transform(unit_transformation)
@@ -233,7 +233,7 @@ module Ladb::OpenCutList
           x2 = point2.x
           y2 = point2.y
 
-          _dxf_write_line(file, x1, y1, x2, y2, LAYER_GUIDE)
+          _dxf_write_line(file, x1, y1, x2, y2, LAYER_EDGE)
 
         end
 

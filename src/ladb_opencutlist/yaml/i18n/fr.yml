@@ -1545,7 +1545,7 @@ tool:
       no_material: Aucune matière
       no_material_type: "Aucune matière de type '{{ type }}'"
     error:
-      not_part: L'objet ciblé n'est pas une pièce
+      not_part: L'objet ciblé n'est pas une pièce (composant)
       not_edge: La face ciblée n'est pas un chant de panneau
       not_face: La face ciblée n'est pas une face de panneau
       wrong_material_type: "La pièce ciblée doit être du type '{{ type }}'"
@@ -1565,7 +1565,7 @@ tool:
     warning:
       more_entities: "{{ count_used }} instances partageant la même définition seront modifiées"
     error:
-      not_part: L'objet ciblé n'est pas une pièce
+      not_part: L'objet ciblé n'est pas une pièce (composant)
       not_orientable: Le type de cette pièce ne permet pas de l'orienter
   smart_export:
     title: Exporter
@@ -1597,5 +1597,5 @@ tool:
     action_option_3_2_status: Isoler les trous traversants et fusionner les profondeurs pour chaque cavité
     action_option_3_3_status: Exporter comme guides les arêtes flottantes et coplanaires à la face ciblée contenues dans la pièce
     error:
-      not_part: Cette surface ne fait pas partie d'une pièce
+      not_part: Cette face ne fait pas partie d'une pièce (composant)
       not_flat_face: Cette surface n'est pas plane

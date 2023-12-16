@@ -15,7 +15,7 @@ module Ladb::OpenCutList
     include SanitizerHelper
 
     LAYER_PART = 'OCL_PART'.freeze
-    LAYER_GUIDE = 'OCL_GUIDE'.freeze
+    LAYER_EDGE = 'OCL_EDGE'.freeze
     LAYER_ANCHOR = 'OCL_ANCHOR'.freeze
 
     SUPPORTED_FILE_FORMATS = [ FILE_FORMAT_SVG, FILE_FORMAT_DXF ]
@@ -134,31 +134,20 @@ module Ladb::OpenCutList
       unless projection_def.layer_defs.empty?
 
         _svg_write_group_start(file, id: LAYER_PART)
-
         _svg_write_projection_def(file, projection_def, @smoothing, unit_transformation, unit_transformation, unit_sign, @part_stroke_color, @part_fill_color, @part_holes_stroke_color, @part_holes_fill_color, LAYER_PART)
-
         _svg_write_group_end(file)
 
       end
 
       unless edge_manipulators.empty?
 
-        _svg_write_group_start(file, id: LAYER_GUIDE)
-
-        data = ''
-        edge_manipulators.each do |edge_manipulator|
-
-          data += "M #{edge_manipulator.points.each.map { |point| "#{point.transform(unit_transformation).to_a[0..1].join(',')}" }.join(' L')}"
-
-        end
-
+        _svg_write_group_start(file, id: LAYER_EDGE)
         _svg_write_tag(file, 'path', {
-          d: data,
+          d: edge_manipulators.map { |edge_manipulator| "M #{edge_manipulator.points.each.map { |point| "#{point.transform(unit_transformation).to_a[0..1].map.with_index { |v, i| _svg_value(v) * (i == 1 ? -1 : 1) }.join(',')}" }.join(' L')}" }.join(' '),
           stroke: '#0068FF',
           fill: 'none',
           'shaper:cutType': 'guide'
         })
-
         _svg_write_group_end(file)
 
       end
@@ -200,7 +189,7 @@ module Ladb::OpenCutList
 
       layer_defs = []
       layer_defs.concat(_dxf_get_projection_def_depth_layer_defs(projection_def, @part_stroke_color, @part_holes_stroke_color, unit_factor, LAYER_PART).uniq { |layer_def| layer_def.name })
-      layer_defs.push(DxfLayerDef.new(LAYER_GUIDE, @guide_stroke_color)) unless edge_manipulators.empty?
+      layer_defs.push(DxfLayerDef.new(LAYER_EDGE, @guide_stroke_color)) unless edge_manipulators.empty?
 
       _dxf_write_start(file)
       _dxf_write_section_header(file, @unit, min, max)
@@ -221,7 +210,7 @@ module Ladb::OpenCutList
           x2 = end_point.x
           y2 = end_point.y
 
-          _dxf_write_line(file, x1, y1, x2, y2, LAYER_GUIDE)
+          _dxf_write_line(file, x1, y1, x2, y2, LAYER_EDGE)
 
         end
 
