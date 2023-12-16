@@ -56,6 +56,8 @@
         this.$btnReport = $('#ladb_btn_report', this.$header);
         this.$btnOptions = $('#ladb_btn_options', this.$header);
         this.$itemHighlightAllParts = $('#ladb_item_highlight_all_parts', this.$header);
+        this.$itemExport2dAllParts = $('#ladb_item_export_2d_all_parts', this.$header);
+        this.$itemExport3dAllParts = $('#ladb_item_export_3d_all_parts', this.$header);
         this.$itemShowAllGroups = $('#ladb_item_show_all_groups', this.$header);
         this.$itemNumbersSave = $('#ladb_item_numbers_save', this.$header);
         this.$itemNumbersReset = $('#ladb_item_numbers_reset', this.$header);
@@ -176,6 +178,8 @@
                 that.$btnLayout.prop('disabled', groups.length === 0);
                 that.$btnReport.prop('disabled', solidWoodMaterialCount + sheetGoodMaterialCount + dimensionalMaterialCount + edgeMaterialCount + hardwareMaterialCount === 0);
                 that.$itemHighlightAllParts.parents('li').toggleClass('disabled', groups.length === 0);
+                that.$itemExport2dAllParts.parents('li').toggleClass('disabled', groups.length === 0);
+                that.$itemExport3dAllParts.parents('li').toggleClass('disabled', groups.length === 0);
                 that.$itemShowAllGroups.parents('li').toggleClass('disabled', groups.length === 0);
                 that.$itemNumbersSave.parents('li').toggleClass('disabled', groups.length === 0);
                 that.$itemNumbersReset.parents('li').toggleClass('disabled', groups.length === 0);
@@ -529,6 +533,18 @@
                     var $group = $(this).parents('.ladb-cutlist-group');
                     var groupId = $group.data('group-id');
                     that.highlightGroupParts(groupId);
+                    $(this).blur();
+                });
+                $('a.ladb-item-export-2d-group-parts', that.$page).on('click', function () {
+                    var $group = $(this).parents('.ladb-cutlist-group');
+                    var groupId = $group.data('group-id');
+                    that.writeGroupParts(groupId, true);
+                    $(this).blur();
+                });
+                $('a.ladb-item-export-3d-group-parts', that.$page).on('click', function () {
+                    var $group = $(this).parents('.ladb-cutlist-group');
+                    var groupId = $group.data('group-id');
+                    that.writeGroupParts(groupId, false);
                     $(this).blur();
                 });
                 $('a.ladb-item-hide-all-other-groups', that.$page).on('click', function () {
@@ -1364,7 +1380,7 @@
 
         var section = context && context.targetGroup ? context.targetGroup.id : null;
 
-        // Retrieve label options
+        // Retrieve layout options
         rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_layout_options', section: section }, function (response) {
 
             var layoutOptions = response.preset;
@@ -1854,6 +1870,253 @@
 
     }
 
+    // Write /////
+
+    LadbTabCutlist.prototype.writeAllParts = function (is2d) {
+        let partIdsWithContext = this.grabVisiblePartIdsWithContext(null, REAL_MATERIALS_FILTER);
+        this.writeParts(partIdsWithContext.partIds, partIdsWithContext.context, is2d);
+    };
+
+    LadbTabCutlist.prototype.writeGroupParts = function (groupId, is2d) {
+        let partIdsWithContext = this.grabVisiblePartIdsWithContext(groupId, REAL_MATERIALS_FILTER);
+        this.writeParts(partIdsWithContext.partIds, partIdsWithContext.context, is2d);
+    };
+
+    LadbTabCutlist.prototype.writeParts = function (partIds, context, is2d) {
+        var that = this;
+
+        var section = context && context.targetGroup ? context.targetGroup.id : null;
+
+        if (is2d) {
+
+            // Retrieve layout options
+            rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_write2d_options', section: section }, function (response) {
+
+                var write2dOptions = response.preset;
+
+                var $modal = that.appendModalInside('ladb_cutlist_modal_write_2d', 'tabs/cutlist/_modal-write-2d.twig', {
+                    group: context ? context.targetGroup : null,
+                    isGroupSelection: context ? context.isGroupSelection : false,
+                    isPartSelection: context ? context.isPartSelection : false,
+                });
+
+                // Fetch UI elements
+                var $widgetPreset = $('.ladb-widget-preset', $modal);
+                var $selectPartDrawingType = $('#ladb_select_part_drawing_type', $modal);
+                var $selectFileFormat = $('#ladb_select_file_format', $modal);
+                var $selectAnchor = $('#ladb_select_anchor', $modal);
+                var $selectSmoothing = $('#ladb_select_smoothing', $modal);
+                var $selectMergeHoles = $('#ladb_select_merge_holes', $modal);
+                var $inputPartsStrokeColor = $('#ladb_input_parts_stroke_color', $modal);
+                var $inputPartsFillColor = $('#ladb_input_parts_fill_color', $modal);
+                var $formGroupPartsHoles = $('#ladb_form_group_parts_holes', $modal);
+                var $inputPartsHolesStrokeColor = $('#ladb_input_parts_holes_stroke_color', $modal);
+                var $inputPartsHolesFillColor = $('#ladb_input_parts_holes_fill_color', $modal);
+                var $btnExport = $('#ladb_btn_export', $modal);
+
+                var fnFetchOptions = function (options) {
+                    options.part_drawing_type = $selectPartDrawingType.val();
+                    options.file_format = $selectFileFormat.val();
+                    options.anchor = $selectAnchor.val() === '1';
+                    options.smoothing = $selectSmoothing.val() === '1';
+                    options.merge_holes = $selectMergeHoles.val() === '1';
+                    options.parts_stroke_color = $inputPartsStrokeColor.ladbTextinputColor('val');
+                    options.parts_fill_color = $inputPartsFillColor.ladbTextinputColor('val');
+                    options.parts_holes_stroke_color = $inputPartsHolesStrokeColor.ladbTextinputColor('val');
+                    options.parts_holes_fill_color = $inputPartsHolesFillColor.ladbTextinputColor('val');
+                };
+                var fnFillInputs = function (options) {
+                    $selectPartDrawingType.selectpicker('val', options.part_drawing_type);
+                    $selectFileFormat.selectpicker('val', options.file_format);
+                    $selectAnchor.selectpicker('val', options.anchor ? '1' : '0');
+                    $selectSmoothing.selectpicker('val', options.smoothing ? '1' : '0');
+                    $selectMergeHoles.selectpicker('val', options.merge_holes ? '1' : '0');
+                    $inputPartsStrokeColor.ladbTextinputColor('val', options.parts_stroke_color);
+                    $inputPartsFillColor.ladbTextinputColor('val', options.parts_fill_color);
+                    $inputPartsHolesStrokeColor.ladbTextinputColor('val', options.parts_holes_stroke_color);
+                    $inputPartsHolesFillColor.ladbTextinputColor('val', options.parts_holes_fill_color);
+                    fnUpdateFieldsVisibility();
+                };
+                var fnUpdateFieldsVisibility = function () {
+                    var isDxf = $selectFileFormat.val() === 'dxf';
+                    var isMergeHoles = $selectMergeHoles.val() === '1';
+                    if (!isMergeHoles) $formGroupPartsHoles.hide(); else $formGroupPartsHoles.show();
+                    $inputPartsHolesStrokeColor.ladbTextinputColor(!isMergeHoles ? 'disable' : 'enable');
+                    $inputPartsHolesFillColor.ladbTextinputColor(!isMergeHoles ? 'disable' : 'enable');
+                    $('.ladb-form-fill-color').css('opacity', isDxf ? 0.3 : 1);
+                };
+
+                $widgetPreset.ladbWidgetPreset({
+                    dialog: that.dialog,
+                    dictionary: 'cutlist_write2d_options',
+                    fnFetchOptions: fnFetchOptions,
+                    fnFillInputs: fnFillInputs
+                });
+                $selectPartDrawingType.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectFileFormat
+                    .selectpicker(SELECT_PICKER_OPTIONS)
+                    .on('changed.bs.select', function () {
+                        var fileCount = partIds.length;
+                        $('#ladb_btn_export_file_format', $btnExport).html($(this).val().toUpperCase() + ' <small>( ' + fileCount + ' ' + i18next.t('default.file', {count: fileCount}).toLowerCase() + ' )</small>');
+                        fnUpdateFieldsVisibility();
+                    })
+                ;
+                $selectAnchor.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectSmoothing.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectMergeHoles
+                    .selectpicker(SELECT_PICKER_OPTIONS)
+                    .on('change', fnUpdateFieldsVisibility)
+                ;
+                $inputPartsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+                $inputPartsFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+                $inputPartsHolesStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+                $inputPartsHolesFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+
+                fnFillInputs(write2dOptions);
+
+                // Bind buttons
+                $btnExport.on('click', function () {
+
+                    // Fetch options
+                    fnFetchOptions(write2dOptions);
+
+                    // Store options
+                    rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_write2d_options', values: write2dOptions, section: section });
+
+                    rubyCallCommand('cutlist_write_parts', $.extend(write2dOptions, {
+                        part_ids: partIds,
+                    }), function (response) {
+
+                        if (response.errors) {
+                            that.dialog.notifyErrors(response.errors);
+                        }
+                        if (response.export_path) {
+                            that.dialog.notifySuccess(i18next.t('core.success.exported_to', {path: response.export_path}), [
+                                Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
+
+                                    rubyCallCommand('core_open_external_file', {
+                                        path: response.export_path
+                                    });
+
+                                })
+                            ]);
+                        }
+
+                    });
+
+                    // Hide modal
+                    $modal.modal('hide');
+
+                });
+
+                // Show modal
+                $modal.modal('show');
+
+                // Setup popovers
+                that.dialog.setupPopovers();
+
+            });
+
+        } else {
+
+            // Retrieve layout options
+            rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_write3d_options', section: section }, function (response) {
+
+                var write3dOptions = response.preset;
+
+                var $modal = that.appendModalInside('ladb_cutlist_modal_write_3d', 'tabs/cutlist/_modal-write-3d.twig', {
+                    group: context ? context.targetGroup : null,
+                    isGroupSelection: context ? context.isGroupSelection : false,
+                    isPartSelection: context ? context.isPartSelection : false,
+                });
+
+                // Fetch UI elements
+                var $widgetPreset = $('.ladb-widget-preset', $modal);
+                var $selectFileFormat = $('#ladb_select_file_format', $modal);
+                var $formGroupAnchor = $('#ladb_form_group_anchor', $modal);
+                var $selectAnchor = $('#ladb_select_anchor', $modal);
+                var $btnExport = $('#ladb_btn_export', $modal);
+
+                var fnFetchOptions = function (options) {
+                    options.file_format = $selectFileFormat.val();
+                    options.anchor = $selectAnchor.val() === '1';
+                };
+                var fnFillInputs = function (options) {
+                    $selectFileFormat.selectpicker('val', options.file_format);
+                    $selectAnchor.selectpicker('val', options.anchor ? '1' : '0');
+                    fnUpdateFieldsVisibility();
+                };
+                var fnUpdateFieldsVisibility = function () {
+                    var isSkp = $selectFileFormat.val() === 'skp';
+                    if (isSkp) $formGroupAnchor.hide(); else $formGroupAnchor.show();
+                };
+
+                $widgetPreset.ladbWidgetPreset({
+                    dialog: that.dialog,
+                    dictionary: 'cutlist_write3d_options',
+                    fnFetchOptions: fnFetchOptions,
+                    fnFillInputs: fnFillInputs
+                });
+                $selectFileFormat
+                    .selectpicker(SELECT_PICKER_OPTIONS)
+                    .on('changed.bs.select', function () {
+                        var fileCount = partIds.length;
+                        $('#ladb_btn_export_file_format', $btnExport).html($(this).val().toUpperCase() + ' <small>( ' + fileCount + ' ' + i18next.t('default.file', {count: fileCount}).toLowerCase() + ' )</small>');
+                        fnUpdateFieldsVisibility();
+                    })
+                ;
+                $selectAnchor.selectpicker(SELECT_PICKER_OPTIONS);
+
+                fnFillInputs(write3dOptions);
+
+                // Bind buttons
+                $btnExport.on('click', function () {
+
+                    // Fetch options
+                    fnFetchOptions(write3dOptions);
+
+                    // Store options
+                    rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_write3d_options', values: write3dOptions, section: section });
+
+                    rubyCallCommand('cutlist_write_parts', $.extend(write3dOptions, {
+                        part_ids: partIds,
+                        part_drawing_type: 3 // PART_DRAWING_TYPE_3D
+                    }), function (response) {
+
+                        if (response.errors) {
+                            that.dialog.notifyErrors(response.errors);
+                        }
+                        if (response.export_path) {
+                            that.dialog.notifySuccess(i18next.t('core.success.exported_to', {path: response.export_path}), [
+                                Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
+
+                                    rubyCallCommand('core_open_external_file', {
+                                        path: response.export_path
+                                    });
+
+                                })
+                            ]);
+                        }
+
+                    });
+
+                    // Hide modal
+                    $modal.modal('hide');
+
+                });
+
+                // Show modal
+                $modal.modal('show');
+
+                // Setup popovers
+                that.dialog.setupPopovers();
+
+            });
+
+        }
+
+    };
+
     // Parts /////
 
     LadbTabCutlist.prototype.grabVisiblePartIdsWithContext = function (groupId, materialFilter) {
@@ -2136,16 +2399,16 @@
                         ownedMaterialCount++;
                     }
                 }
-                var material_name = null;
+                var materialName = null;
                 if (ownedMaterialCount === editedParts[i].material_origins.length) {
-                    material_name = editedPart.material_name;
+                    materialName = editedPart.material_name;
                 } else if (ownedMaterialCount > 0) {
-                    material_name = MULTIPLE_VALUE;
+                    materialName = MULTIPLE_VALUE;
                 }
                 if (i === 0) {
-                    editedPart.material_name = material_name;
+                    editedPart.material_name = materialName;
                 } else {
-                    if (editedPart.material_name !== material_name) {
+                    if (editedPart.material_name !== materialName) {
                         editedPart.material_name = MULTIPLE_VALUE;
                     }
                 }
@@ -2286,7 +2549,7 @@
             var $labelFaceZminTextureAngle = $('#ladb_cutlist_part_label_face_zmin_texture_angle', $modal);
             var $labelFaceZmaxTextureAngle = $('#ladb_cutlist_part_label_face_zmax_texture_angle', $modal);
             var $btnHighlight = $('#ladb_cutlist_part_highlight', $modal);
-            var $btnExportToFile = $('a.ladb_cutlist_part_export_to_file', $modal);
+            var $btnExportToFile = $('a.ladb-cutlist-write-parts', $modal);
             var $btnUpdate = $('#ladb_cutlist_part_update', $modal);
 
             var thumbnailLoaded = false;
@@ -2735,7 +2998,8 @@
             });
             $btnExportToFile.on('click', function () {
                 this.blur();
-                that.exportPartToFile(part.id, $(this).data('file-format'), parseInt($(this).data('part-drawing-type')));
+                that.writeParts([ part.id ], null, $(this).data('is-2d'));
+                // that.exportPartToFile(part.id, $(this).data('file-format'), parseInt($(this).data('part-drawing-type')));
             });
             $btnUpdate.on('click', function () {
 
@@ -2900,34 +3164,6 @@
 
         }
     };
-
-    LadbTabCutlist.prototype.exportPartToFile = function (id, fileFormat, partDrawingType) {
-        var that = this;
-
-        rubyCallCommand('cutlist_part_export_to_file', {
-            part_id: id,
-            file_format: fileFormat,
-            part_drawing_type: partDrawingType
-        }, function (response) {
-
-            if (response.errors) {
-                that.dialog.notifyErrors(response.errors);
-            }
-            if (response.export_path) {
-                that.dialog.notifySuccess(i18next.t('core.success.exported_to', { path: response.export_path }), [
-                    Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
-
-                        rubyCallCommand('core_open_external_file', {
-                            path: response.export_path
-                        });
-
-                    })
-                ]);
-            }
-
-        });
-
-    }
 
     LadbTabCutlist.prototype.toggleFoldingRow = function ($row, dataKey) {
         var $btn = $('.ladb-btn-folding-toggle-row', $row);
@@ -3876,9 +4112,6 @@
                                                     fnUpdateFieldsVisibility();
                                                 };
                                                 var fnUpdateFieldsVisibility = function () {
-
-                                                    console.log($selectMergeHoles.val(), $selectMergeHoles.val() === '1', typeof $selectMergeHoles.val())
-
                                                     var isDxf = $selectFileFormat.val() === 'dxf';
                                                     var isMergeHoles = $selectMergeHoles.val() === '1';
                                                     var isSheetHidden = !$inputSheetHidden.is(':checked');
@@ -4958,6 +5191,18 @@
         this.$itemHighlightAllParts.on('click', function () {
             if (!$(this).parents('li').hasClass('disabled')) {
                 that.highlightAllParts();
+            }
+            this.blur();
+        });
+        this.$itemExport2dAllParts.on('click', function () {
+            if (!$(this).parents('li').hasClass('disabled')) {
+                that.writeAllParts(true);
+            }
+            this.blur();
+        });
+        this.$itemExport3dAllParts.on('click', function () {
+            if (!$(this).parents('li').hasClass('disabled')) {
+                that.writeAllParts(false);
             }
             this.blur();
         });

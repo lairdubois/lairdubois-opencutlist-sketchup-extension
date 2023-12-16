@@ -8,7 +8,7 @@ module Ladb::OpenCutList
   require_relative '../../model/drawing/drawing_def'
   require_relative '../../worker/common/common_drawing_projection_worker'
 
-  class CommonExportDrawing2dWorker
+  class CommonWriteDrawing2dWorker
 
     include DxfWriterHelper
     include SvgWriterHelper
@@ -24,23 +24,18 @@ module Ladb::OpenCutList
 
       @drawing_def = drawing_def
 
+      @folder_path = settings.fetch('folder_path', nil)
       @file_name = _sanitize_filename(settings.fetch('file_name', 'FACE'))
       @file_format = settings.fetch('file_format', nil)
       @unit = settings.fetch('unit', nil)
       @anchor = settings.fetch('anchor', false)
       @smoothing = settings.fetch('smoothing', false)
       @merge_holes = settings.fetch('merge_holes', false)
-
-      @part_stroke_color = ColorUtils.color_create('#008000')
-      @part_fill_color = nil
-      @part_holes_stroke_color = ColorUtils.color_create('yellow')
-      @part_holes_fill_color = nil
-      @guide_stroke_color = Sketchup::Color.new('#0068FF')
-      # @part_stroke_color = nil
-      # @part_fill_color = ColorUtils::COLOR_BLACK
-      # @part_holes_stroke_color = ColorUtils::COLOR_BLACK
-      # @part_holes_fill_color = ColorUtils::COLOR_WHITE
-      # @guide_stroke_color = Sketchup::Color.new('#0068FF')
+      @parts_stroke_color = ColorUtils.color_create(settings.fetch('parts_stroke_color', nil))
+      @parts_fill_color = ColorUtils.color_create(settings.fetch('parts_fill_color', nil))
+      @parts_holes_stroke_color = ColorUtils.color_create(settings.fetch('parts_holes_stroke_color', nil))
+      @parts_holes_fill_color = ColorUtils.color_create(settings.fetch('parts_holes_fill_color', nil))
+      @edges_stroke_color = ColorUtils.color_create(settings.fetch('edges_stroke_color', nil))
 
     end
 
@@ -50,8 +45,16 @@ module Ladb::OpenCutList
       return { :errors => [ 'default.error' ] } unless SUPPORTED_FILE_FORMATS.include?(@file_format)
       return { :errors => [ 'default.error' ] } unless @drawing_def.is_a?(DrawingDef)
 
-      # Open save panel
-      path = UI.savepanel(Plugin.instance.get_i18n_string('core.savepanel.export_to_file', { :file_format => @file_format.upcase }), '', "#{@file_name}.#{@file_format}")
+      if @folder_path.nil? || !File.exist?(@folder_path)
+
+        # Open save panel
+        path = UI.savepanel(Plugin.instance.get_i18n_string('core.savepanel.export_to_file', { :file_format => @file_format.upcase }), '', "#{@file_name}.#{@file_format}")
+
+      else
+
+        path = File.join(@folder_path, "#{@file_name}.#{@file_format}")
+
+      end
       if path
 
         # Force "file_format" file extension
@@ -134,7 +137,7 @@ module Ladb::OpenCutList
       unless projection_def.layer_defs.empty?
 
         _svg_write_group_start(file, id: LAYER_PART)
-        _svg_write_projection_def(file, projection_def, @smoothing, unit_transformation, unit_transformation, unit_sign, @part_stroke_color, @part_fill_color, @part_holes_stroke_color, @part_holes_fill_color, LAYER_PART)
+        _svg_write_projection_def(file, projection_def, @smoothing, unit_transformation, unit_transformation, unit_sign, @parts_stroke_color, @parts_fill_color, @parts_holes_stroke_color, @parts_holes_fill_color, LAYER_PART)
         _svg_write_group_end(file)
 
       end
@@ -144,7 +147,7 @@ module Ladb::OpenCutList
         _svg_write_group_start(file, id: LAYER_EDGE)
         _svg_write_tag(file, 'path', {
           d: edge_manipulators.map { |edge_manipulator| "M #{edge_manipulator.points.each.map { |point| "#{point.transform(unit_transformation).to_a[0..1].map.with_index { |v, i| _svg_value(v) * (i == 1 ? -1 : 1) }.join(',')}" }.join(' L')}" }.join(' '),
-          stroke: '#0068FF',
+          stroke: _svg_stroke_color_hex(@edges_stroke_color, nil),
           fill: 'none',
           'shaper:cutType': 'guide'
         })
@@ -188,8 +191,8 @@ module Ladb::OpenCutList
       max = @drawing_def.bounds.max.transform(unit_transformation)
 
       layer_defs = []
-      layer_defs.concat(_dxf_get_projection_def_depth_layer_defs(projection_def, @part_stroke_color, @part_holes_stroke_color, unit_factor, LAYER_PART).uniq { |layer_def| layer_def.name })
-      layer_defs.push(DxfLayerDef.new(LAYER_EDGE, @guide_stroke_color)) unless edge_manipulators.empty?
+      layer_defs.concat(_dxf_get_projection_def_depth_layer_defs(projection_def, @parts_stroke_color, @parts_holes_stroke_color, unit_factor, LAYER_PART).uniq { |layer_def| layer_def.name })
+      layer_defs.push(DxfLayerDef.new(LAYER_EDGE, @edges_stroke_color)) unless edge_manipulators.empty?
 
       _dxf_write_start(file)
       _dxf_write_section_header(file, @unit, min, max)

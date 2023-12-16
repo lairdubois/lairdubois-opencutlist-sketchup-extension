@@ -1,25 +1,22 @@
 module Ladb::OpenCutList
 
-  class CutlistPartExportToSkpWorker
+  require_relative '../../helper/sanitizer_helper'
+
+  class CommonWriteDefinitionWorker
+
+    include SanitizerHelper
 
     def initialize(settings)
 
-      @definition_id = settings.fetch('definition_id')
+      @file_name = _sanitize_filename(settings.fetch('file_name', nil))
+      @definition = settings.fetch('definition', nil)
 
     end
 
     # -----
 
     def run
-
-      model = Sketchup.active_model
-      return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
-
-      # Fetch definition
-      definitions = model.definitions
-      definition = definitions[@definition_id]
-
-      return { :errors => [ 'tab.cutlist.error.definition_not_found' ] } unless definition
+      return { :errors => [ 'default.error' ] } unless @definition.is_a?(Sketchup::ComponentDefinition)
 
       last_dir = Plugin.instance.read_default(Plugin::SETTINGS_KEY_COMPONENTS_LAST_DIR, nil)
       if last_dir && File.directory?(last_dir) && File.exist?(last_dir)
@@ -45,7 +42,7 @@ module Ladb::OpenCutList
       dir = dir.gsub(/ /, '%20') if Plugin.instance.platform_is_mac
 
       # Open save panel
-      path = UI.savepanel(Plugin.instance.get_i18n_string('core.savepanel.export_to_file', { :file_format => 'SKP' }), dir, "#{@definition_id}.skp")
+      path = UI.savepanel(Plugin.instance.get_i18n_string('core.savepanel.export_to_file', { :file_format => 'SKP' }), dir, "#{@file_name}.skp")
       if path
 
         # Save last dir
@@ -57,7 +54,7 @@ module Ladb::OpenCutList
         end
 
         begin
-          success = definition.save_as(path) && File.exist?(path)
+          success = @definition.save_as(path) && File.exist?(path)
           return { :errors => [ [ 'core.error.failed_export_to', { :error => '' } ] ] } unless success
           return { :export_path => path }
         rescue => e

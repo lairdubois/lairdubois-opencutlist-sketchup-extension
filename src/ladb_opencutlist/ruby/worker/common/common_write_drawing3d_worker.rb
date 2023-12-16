@@ -7,7 +7,7 @@ module Ladb::OpenCutList
   require_relative '../../helper/sanitizer_helper'
   require_relative '../../model/drawing/drawing_def'
 
-  class CommonExportDrawing3dWorker
+  class CommonWriteDrawing3dWorker
 
     include StlWriterHelper
     include ObjWriterHelper
@@ -23,6 +23,7 @@ module Ladb::OpenCutList
 
       @drawing_def = drawing_def
 
+      @folder_path = settings.fetch('folder_path', nil)
       @file_name = _sanitize_filename(settings.fetch('file_name', 'PART'))
       @file_format = settings.fetch('file_format', nil)
       @unit = settings.fetch('unit', nil)
@@ -37,8 +38,16 @@ module Ladb::OpenCutList
       return { :errors => [ 'default.error' ] } unless SUPPORTED_FILE_FORMATS.include?(@file_format)
       return { :errors => [ 'default.error' ] } unless @drawing_def.is_a?(DrawingDef)
 
-      # Open save panel
-      path = UI.savepanel(Plugin.instance.get_i18n_string('core.savepanel.export_to_file', { :file_format => @file_format.upcase }), '', "#{@file_name}.#{@file_format}")
+      if @folder_path.nil? || !File.exist?(@folder_path)
+
+        # Open save panel
+        path = UI.savepanel(Plugin.instance.get_i18n_string('core.savepanel.export_to_file', { :file_format => @file_format.upcase }), '', "#{@file_name}.#{@file_format}")
+
+      else
+
+        path = File.join(@folder_path, "#{@file_name}.#{@file_format}")
+
+      end
       if path
 
         # Force "file_format" file extension

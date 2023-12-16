@@ -1,0 +1,109 @@
+{% extends 'core/_modal.twig' %}
+
+{% set id = 'ladb_cutlist_modal_write_2d' %}
+{% set title = ('tab.cutlist.write.title'|i18next)~'<small class="ladb-horizontal-left-separator">2D</small>' %}
+
+{% block headerToolsInner %}
+    {% include 'components/_widget-preset.twig' %}
+    <button class="btn btn-default btn-xs" data-help-page="cutlist.export2d"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
+{% endblock %}
+
+{% block bodyInner %}
+    <div class="tab-content">
+        {% if isGroupSelection %}
+            <div class="alert alert-info text-center">{{ 'tab.cutlist.write.warning.is_group_selection'|i18next }}</div>
+        {% endif %}
+        {% if isPartSelection %}
+            <div class="alert alert-info text-center">{{ 'tab.cutlist.write.warning.is_part_selection'|i18next }}</div>
+        {% endif %}
+        <div class="row">
+            <div class="col-xs-push-1 col-xs-10">
+                {{ 'tab.cutlist.write.info_2d'|i18next }}
+            </div>
+        </div>
+        <hr>
+        <div class="form form-horizontal" style="margin-top: 15px;">
+            <div class="form-group">
+                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.write.option_file_format_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                <label for="ladb_select_file_format" class="control-label col-xs-3">{{ ('tab.cutlist.write.option_file_format')|i18next }}</label>
+                <div class="col-xs-8">
+                    <select class="form-control" id="ladb_select_file_format">
+                        <option value="svg" data-content="SVG"></option>
+                        <option value="dxf" data-content="DXF"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.write.option_part_drawing_type_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                <label for="ladb_select_file_format" class="control-label col-xs-3">{{ ('tab.cutlist.write.option_part_drawing_type')|i18next }}</label>
+                <div class="col-xs-8">
+                    <select class="form-control" id="ladb_select_part_drawing_type">
+                        <option value="1" data-content="{{ ('tab.cutlist.part_drawing_type_1')|i18next }}"></option>
+                        <option value="2" data-content="{{ ('tab.cutlist.part_drawing_type_2')|i18next }}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.write.option_anchor_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                <label for="ladb_select_smoothing" class="control-label col-xs-3">{{ ('tab.cutlist.write.option_anchor')|i18next }}</label>
+                <div class="col-xs-8">
+                    <select class="form-control" id="ladb_select_anchor">
+                        <option value="0" data-content="{{ 'tab.cutlist.write.option_anchor_0'|i18next }}"></option>
+                        <option value="1" data-content="{{ 'tab.cutlist.write.option_anchor_1'|i18next }}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.write.option_smoothing_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                <label for="ladb_select_smoothing" class="control-label col-xs-3">{{ ('tab.cutlist.write.option_smoothing')|i18next }}</label>
+                <div class="col-xs-8">
+                    <select class="form-control" id="ladb_select_smoothing">
+                        <option value="0" data-content="{{ 'tab.cutlist.write.option_smoothing_0'|i18next }}"></option>
+                        <option value="1" data-content="{{ 'tab.cutlist.write.option_smoothing_1'|i18next }}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.write.option_merge_holes_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                <label for="ladb_select_merge_holes" class="control-label col-xs-3">{{ ('tab.cutlist.write.option_merge_holes')|i18next }}</label>
+                <div class="col-xs-8">
+                    <select class="form-control" id="ladb_select_merge_holes">
+                        <option value="0" data-content="{{ 'tab.cutlist.write.option_merge_holes_0'|i18next }}"></option>
+                        <option value="1" data-content="{{ 'tab.cutlist.write.option_merge_holes_1'|i18next }}"></option>
+                    </select>
+                </div>
+            </div>
+            <hr>
+            <div class="form-group">
+                <div class="col-xs-3"></div>
+                <label class="col-xs-4 text-center"><i class="ladb-opencutlist-icon-stroke"></i> {{ 'tab.cutlist.write.option_stroke_color'|i18next }}</label>
+                <label class="col-xs-4 text-center ladb-form-fill-color"><i class="ladb-opencutlist-icon-fill"></i> {{ 'tab.cutlist.write.option_fill_color'|i18next }}</label>
+            </div>
+            <div class="form-group">
+                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.write.option_parts_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                <label class="control-label col-xs-3">{{ 'tab.cutlist.write.option_parts'|i18next }}</label>
+                <div class="col-xs-4">
+                    <input id="ladb_input_parts_stroke_color" class="form-control"/>
+                </div>
+                <div class="col-xs-4 ladb-form-fill-color">
+                    <input id="ladb_input_parts_fill_color" class="form-control"/>
+                </div>
+            </div>
+            <div class="form-group" id="ladb_form_group_parts_holes">
+                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.write.option_parts_holes_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                <label class="control-label col-xs-3">{{ 'tab.cutlist.write.option_parts_holes'|i18next }}</label>
+                <div class="col-xs-4">
+                    <input id="ladb_input_parts_holes_stroke_color" class="form-control"/>
+                </div>
+                <div class="col-xs-4 ladb-form-fill-color">
+                    <input id="ladb_input_parts_holes_fill_color" class="form-control"/>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footerRightInner %}
+    <button class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
+    <button class="btn btn-primary btn-validate-modal" id="ladb_btn_export">{{ 'default.export'|i18next }} <i class="ladb-opencutlist-icon-arrow-right"></i> <span id="ladb_btn_export_file_format"></span></button>
+{% endblock %}

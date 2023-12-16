@@ -8,8 +8,8 @@ module Ladb::OpenCutList
   require_relative '../manipulator/face_manipulator'
   require_relative '../manipulator/edge_manipulator'
   require_relative '../manipulator/loop_manipulator'
-  require_relative '../worker/common/common_export_drawing2d_worker'
-  require_relative '../worker/common/common_export_drawing3d_worker'
+  require_relative '../worker/common/common_write_drawing2d_worker'
+  require_relative '../worker/common/common_write_drawing3d_worker'
   require_relative '../worker/common/common_drawing_decomposition_worker'
   require_relative '../worker/common/common_drawing_projection_worker'
 
@@ -781,7 +781,7 @@ module Ladb::OpenCutList
             unit = DimensionUtils::METER
           end
 
-          worker = CommonExportDrawing3dWorker.new(@active_drawing_def, {
+          worker = CommonWriteDrawing3dWorker.new(@active_drawing_def, {
             'file_name' => file_name,
             'file_format' => file_format,
             'unit' => unit
@@ -831,7 +831,7 @@ module Ladb::OpenCutList
           smoothing = fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
           merge_holes = fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES)
 
-          worker = CommonExportDrawing2dWorker.new(@active_drawing_def, {
+          worker = CommonWriteDrawing2dWorker.new(@active_drawing_def, {
             'file_name' => file_name,
             'file_format' => file_format,
             'unit' => unit,
@@ -882,7 +882,7 @@ module Ladb::OpenCutList
           end
           smoothing = fetch_action_option(ACTION_EXPORT_FACE, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
 
-          worker = CommonExportDrawing2dWorker.new(@active_drawing_def, {
+          worker = CommonWriteDrawing2dWorker.new(@active_drawing_def, {
             'file_name' => file_name,
             'file_format' => file_format,
             'unit' => unit,
@@ -931,7 +931,7 @@ module Ladb::OpenCutList
           end
           smoothing = fetch_action_option(ACTION_EXPORT_EDGES, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
 
-          worker = CommonExportDrawing2dWorker.new(@active_drawing_def, {
+          worker = CommonWriteDrawing2dWorker.new(@active_drawing_def, {
             'file_name' => file_name,
             'file_format' => file_format,
             'unit' => unit,

@@ -663,18 +663,8 @@
                     <i class="ladb-opencutlist-icon ladb-opencutlist-icon-export"></i> {{ 'default.export'|i18next }} <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
-                    <li class="dropdown-header">{{ 'tab.cutlist.part_drawing_type_1'|i18next }}</li>
-                    <li><a href="#" class="ladb_cutlist_part_export_to_file" data-file-format="svg" data-part-drawing-type="1">SVG...</a></li>
-                    <li><a href="#" class="ladb_cutlist_part_export_to_file" data-file-format="dxf" data-part-drawing-type="1">DXF...</a></li>
-                    <li role="separator" class="divider"></li>
-                    <li class="dropdown-header">{{ 'tab.cutlist.part_drawing_type_2'|i18next }}</li>
-                    <li><a href="#" class="ladb_cutlist_part_export_to_file" data-file-format="svg" data-part-drawing-type="2">SVG...</a></li>
-                    <li><a href="#" class="ladb_cutlist_part_export_to_file" data-file-format="dxf" data-part-drawing-type="2">DXF...</a></li>
-                    <li role="separator" class="divider"></li>
-                    <li class="dropdown-header">{{ 'tab.cutlist.part_drawing_type_3'|i18next }}</li>
-                    <li><a href="#" class="ladb_cutlist_part_export_to_file" data-file-format="stl" data-part-drawing-type="3">STL...</a></li>
-                    <li><a href="#" class="ladb_cutlist_part_export_to_file" data-file-format="obj" data-part-drawing-type="3">OBJ...</a></li>
-                    <li><a href="#" class="ladb_cutlist_part_export_to_file" data-file-format="skp" data-part-drawing-type="3">SKP...</a></li>
+                    <li><a href="#" class="ladb-cutlist-write-parts" data-is-2d="true"><i class="ladb-opencutlist-icon-2d"></i> Projection 2D...</a></li>
+                    <li><a href="#" class="ladb-cutlist-write-parts" data-is-2d="false"><i class="ladb-opencutlist-icon-3d"></i> Géométrie 3D...</a></li>
                 </ul>
             </div>
         {% endif %}

@@ -60,8 +60,8 @@ module Ladb::OpenCutList
         part_update_command(settings)
       end
 
-      Plugin.instance.register_command("cutlist_part_export_to_file") do |settings|
-        part_export_to_file_command(settings)
+      Plugin.instance.register_command("cutlist_write_parts") do |settings|
+        write_parts_command(settings)
       end
 
       Plugin.instance.register_command("cutlist_group_cuttingdiagram1d_start") do |settings|
@@ -223,11 +223,11 @@ module Ladb::OpenCutList
       worker.run
     end
 
-    def part_export_to_file_command(settings)
-      require_relative '../worker/cutlist/cutlist_part_export_to_file_worker'
+    def write_parts_command(settings)
+      require_relative '../worker/cutlist/cutlist_write_parts_worker'
 
       # Setup worker
-      worker = CutlistPartExportToFileWorker.new(settings, @cutlist)
+      worker = CutlistWritePartsWorker.new(settings, @cutlist)
 
       # Run !
       worker.run

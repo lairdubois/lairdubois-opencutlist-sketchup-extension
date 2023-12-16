@@ -177,6 +177,7 @@ core:
     dictionary:
       component_textinput_color: Palette de couleurs
       cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
+      cutlist_cuttingdiagram1d_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 1D
       cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
       cutlist_cuttingdiagram2d_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 2D
       cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
@@ -184,6 +185,8 @@ core:
       cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
       cutlist_options: $t(tab.cutlist.label) / $t(default.options)
       cutlist_report_options: $t(tab.cutlist.label) / $t(tab.cutlist.report.title)
+      cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
+      cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
       importer_import_options: $t(tab.importer.label) / $t(default.import)
       importer_load_options: $t(tab.importer.label) / $t(default.open)
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
@@ -340,6 +343,10 @@ tab:
       numbers_save: Mémoriser les numéros de pièces
       numbers_reset: Réinitialiser les numéros de pièces
       highlight_parts: $t(tab.cutlist.highlight_parts)
+      write_2d_parts: Exporter la projection 2D des pièces
+      write_3d_parts: Exporter la géométrie 3D des pièces
+      group_write_2d_parts: Exporter la projection 2D des pièces du groupe
+      group_write_3d_parts: Exporter la géométrie 3D des pièces du groupe
       group_layout_parts: Imprimer le dessin d'ensemble des pièces du groupe
       group_numbers_save: Mémoriser les numéros de pièces du groupe
       group_numbers_reset: Réinitialiser les numéros de pièces du groupe
@@ -817,12 +824,8 @@ tab:
         title: Exporter le calepinage
         info_0: |
           Ce module vous permet d'exporter la **géométrie** du *calepinage* sous forme d'une liste de fichiers au format [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) ou [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
-        options_general: General
-        option_file_format: Format
-        option_file_format_svg: SVG
-        option_file_format_dxf: DXF
-        option_file_format_help: |
-          Permet de choisir le format de fichier à exporter.
+        option_file_format: $t(tab.cutlist.write.option_file_format)
+        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
         option_dxf_structure: Structure DXF
         option_dxf_structure_1: Calques
         option_dxf_structure_2: Calques + Blocs
@@ -831,18 +834,14 @@ tab:
 
           - la structure **Calques** dessine tous les tracés à plat en distinguant les différents types de trait uniquement par des calques. *Cette structure offre une meilleure compatibilité avec les logiciels tiers.*
           - La structure **Calques + Blocs** crée un bloc par pièce et insère ces blocs autant de fois que les pièces sont répétées. *Cette structure offre plus de flexibilité pour modifier le fichier.*
-        option_smoothing: Lissage
-        option_smoothing_0: Aucun
-        option_smoothing_1: Lisser les cercles et arcs *(Expérimental)*
-        option_smoothing_help: |
-          Permet d'activer la détection des cercles et arcs.
-          
-          *Cette option ne permet pas de détecter les autres types de courbes.*
-        option_merge_holes: Mode de fusion
-        option_merge_holes_0: Aucun
-        option_merge_holes_1: Contour + Percements + Fusion
-        option_merge_holes_help: |
-          Permet d'activer la séparation du contour extérieur des pièces de leurs percements ainsi que la fusion des profondeurs pour chaque cavité.
+        option_smoothing: $t(tab.cutlist.write.option_smoothing)
+        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
+        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
+        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
+        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
+        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
+        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
+        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
         option_sheet_good: Panneau
         option_sheet_good_help: |
           Permet d'activer l'exportation du panneau ainsi que de choisir sa couleur.
@@ -1053,6 +1052,46 @@ tab:
       warning:
         is_group_selection: Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas dessinées.
         is_part_selection: Ce dessin d'ensemble se limite aux **pièces sélectionnées**.
+    write:
+      title: Exporter la géométrie des pièces
+      info_2d: |
+        Ce module vous permet d'exporter la **projection 2D** des pièces sous forme de fichiers au format [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) ou [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
+      info_3d: |
+        Ce module vous permet d'exporter la **géométrie 3D** des pièces sous forme de fichiers au format [STL](https://wikipedia.org/wiki/STL_(file_format)) ou [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file).
+      option_file_format: Format
+      option_file_format_help: |
+        Permet de choisir le format de fichier à exporter.
+      option_part_drawing_type: Projection
+      option_part_drawing_type_help: |
+        Permet de choisir la vue exportée
+      option_anchor: Point d'ancrage
+      option_anchor_0: Par défaut
+      option_anchor_1: Projeter l'origine de la pièce
+      option_anchor_help: |
+        Permet d'activer la projection de l'origine des axes de la pièce comme point d'ancrage.
+      option_smoothing: Lissage
+      option_smoothing_0: Aucun
+      option_smoothing_1: Lisser les cercles et arcs *(Expérimental)*
+      option_smoothing_help: |
+        Permet d'activer la détection des cercles et arcs.
+        
+        *Cette option ne permet pas de détecter les autres types de courbes.*
+      option_merge_holes: Décomposition
+      option_merge_holes_0: Par défaut
+      option_merge_holes_1: Contour + Percements + Fusion
+      option_merge_holes_help: |
+        Permet d'activer la séparation du contour extérieur des pièces de leurs percements ainsi que la fusion des profondeurs pour chaque cavité.
+      option_parts: Pièces
+      option_parts_help:  |
+        Permet de choisir la couleur des pièces.
+      option_parts_holes: Percements
+      option_parts_holes_help:  |
+        Permet de choisir la couleur des percements des pièces.
+      option_stroke_color: Couleur de trait
+      option_fill_color: Couleur de remplissage
+      warning:
+        is_group_selection: Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas exportées.
+        is_part_selection: L'exportation se limitent aux **pièces sélectionnées**.
     snippet:
       hello: Bonjour
       number: Numéro
