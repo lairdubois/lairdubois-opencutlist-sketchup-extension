@@ -177,6 +177,7 @@ core:
     dictionary:
       component_textinput_color: Farbpalette
       cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
+      cutlist_cuttingdiagram1d_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 1D
       cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
       cutlist_cuttingdiagram2d_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 2D
       cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
@@ -184,6 +185,8 @@ core:
       cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
       cutlist_options: $t(tab.cutlist.label) / $t(default.options)
       cutlist_report_options: $t(tab.cutlist.label) / $t(tab.cutlist.report.title)
+      cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
+      cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
       importer_import_options: $t(tab.importer.label) / $t(default.import)
       importer_load_options: $t(tab.importer.label) / $t(default.open)
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
@@ -340,6 +343,12 @@ tab:
       numbers_save: Nummern der Teile speichern
       numbers_reset: Nummern der Teile neu zuweisen
       highlight_parts: $t(tab.cutlist.highlight_parts)
+      write_2d: 2D-Projektion
+      write_3d: 3D-Geometrie
+      write_2d_parts: 2D-Teileprojektion exportieren
+      write_3d_parts: 3D-Teilegeometrie exportieren
+      group_write_2d_parts: 2D-Projektion der Teile in der Gruppe exportieren
+      group_write_3d_parts: 3D-Geometrie der Teile in der Gruppe exportieren
       group_layout_parts: Gruppenübersicht zeichnen
       group_numbers_save: Nummern der Gruppenteile speichern
       group_numbers_reset: Nummern der Gruppenteile neu zuweisen
@@ -816,13 +825,9 @@ tab:
       export:
         title: Schnittplan exportieren
         info_0: |
-           Mit diesem Modul können Sie die **Geometrie** des *Schnittplans* als Datei im Format [SVG] (https://de.wikipedia.org/wiki/Scalable_Vector_Graphics) oder [DXF] (https://de.wikipedia.org/wiki/DXF) exportieren.
-        options_general: Allgemein
-        option_file_format: Format
-        option_file_format_svg: SVG
-        option_file_format_dxf: DXF
-        option_file_format_help: |
-          Auswahl des zu exportierenden Dateiformats.
+           Mit diesem Modul können Sie die **Geometrie** des *Schnittplans* als Datei im Format [SVG](https://de.wikipedia.org/wiki/Scalable_Vector_Graphics) oder [DXF](https://de.wikipedia.org/wiki/DXF) exportieren.
+        options_general: $t(tab.cutlist.write.option_file_format)
+        option_file_format: $t(tab.cutlist.write.option_file_format_help)
         option_dxf_structure: DXF Struktur
         option_dxf_structure_1: Layers
         option_dxf_structure_2: Layers + Blöcke
@@ -831,18 +836,16 @@ tab:
 
           - Die Struktur **Layers** zeichnet alle Linien flach und unterscheidet zwischen verschiedenen Linientypen nur durch Layer. *Diese Struktur bietet eine bessere Kompatibilität mit Software von Drittanbietern.*
           - Die Struktur **Layers + Blöcke** erstellt einen Block pro Teil und fügt diese Blöcke so oft ein, wie die Teile wiederholt werden. *Diese Struktur bietet mehr Flexibilität beim Bearbeiten der Datei.*
-        option_smoothing: Glättung
-        option_smoothing_0: Keine
-        option_smoothing_1: Glättung von Kreisen und Bögen *(Experimentell)*
-        option_smoothing_help: |
-          Auswahl des Glättungsmodus.
-
-          *Diese Option erkennt keine anderen Kurventypen.*
-        option_merge_holes: Mode de fusion
-        option_merge_holes_0: Keine
-        option_merge_holes_1: Umrisse + Bohrungen + Vereinigung
-        option_merge_holes_help: |
-          Ermöglicht es, die Trennung der Außenkontur von Teilen von ihren Bohrungen sowie die Vereinigung der Tiefen für jeden Hohlraum zu aktivieren.
+        option_unit: $t(tab.cutlist.write.option_unit)
+        option_unit_help: $t(tab.cutlist.write.option_unit_help)
+        option_smoothing: $t(tab.cutlist.write.option_smoothing)
+        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
+        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
+        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
+        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
+        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
+        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
+        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
         option_sheet_good: Platte
         option_sheet_good_help: |
           Auswahl, ob die Platte gezeichnet werden soll und ihre Farbe.
@@ -1053,8 +1056,53 @@ tab:
       warning:
         is_group_selection: Die Teile innerhalb der **maskierten Gruppen** Ihrer Teileliste werden nicht gezeichnet.
         is_part_selection: Diese Übersichtszeichnung ist auf die **ausgewählten Teile** beschränkt.
+    write:
+      title: Teile-Export
+      info_2d: |
+        Mit diesem Modul können Sie die **2D-Projektion** von Teilen als Dateien im Format [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) oder [DXF](https://wikipedia.org/wiki/AutoCAD_DXF) exportieren.
+      info_3d: |
+        Mit diesem Modul können Sie die **3D-Geometrie** von Teilen als Dateien im Format [STL](https://wikipedia.org/wiki/STL_(file_format)) oder [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file) exportieren.
+      option_file_format: Format
+      option_file_format_help: |
+        Auswahl des Dateiformats für die exportierte Datei.
+      option_unit: Einheit
+      option_unit_help: |
+        Auswahl der in der exportierten Datei verwendeten Einheit.
+      option_part_drawing_type: Projektion
+      option_part_drawing_type_help: |
+        Auswahl der Ansicht, die exportiert werden soll.
+      option_anchor: Ankerpunkt
+      option_anchor_0: Standard
+      option_anchor_1: Projektion des Ursprungs des Teils
+      option_anchor_help: |
+        Aktivierung der Projektion des Achsenursprungs des Teils als Ankerpunkt.
+      option_smoothing: Glättung
+      option_smoothing_0: Keine
+      option_smoothing_1: Glättung von Kreisen und Bögen *(Experimentell)*
+      option_smoothing_help: |
+        Auswahl des Glättungsmodus.
+
+        *Diese Option erkennt keine anderen Kurventypen.*
+      option_merge_holes: Zusammenführungsmodus
+      option_merge_holes_0: Standard
+      option_merge_holes_1: Umrisse + Bohrungen + Vereinigung
+      option_merge_holes_help: |
+          Ermöglicht es, die Trennung der Außenkontur von Teilen von ihren Bohrungen sowie die Vereinigung der Tiefen für jeden Hohlraum zu aktivieren.
+      option_parts: Teile
+      option_parts_help:  |
+        Auswahl der Farbe der Teile.
+      option_parts_holes: Bohrungen
+      option_parts_holes_help:  |
+        Auswahl der Farbe von Bohrungen.
+      option_stroke_color: Strichfarbe
+      option_fill_color: Füllfarbe
+      error:
+        no_part: Kein Teil zum Exportieren.
+      warning:
+        is_group_selection: Teile, die in den **versteckten Gruppen** der Teileliste enthalten sind, werden nicht exportiert.
+        is_part_selection: Der Export beschränkt sich auf die **ausgewählten Teile**.
     snippet:
-      hello: TBD
+      hello: Hallo
       number: Nummer
       name: Bezeichnung
       number_and_name: Nummer und Bezeichnung
@@ -1597,5 +1645,5 @@ tool:
     action_option_3_2_status: Isolieren von durchgehenden Bohrungen und Zusammenführen der Tiefen für jeden Hohlraum
     action_option_3_3_status: Exportieren der im Teil enthaltenen schwebenden und mit der Zielfläche koplanaren Kanten als Hilfslinien
     error:
-      not_part: Diese Fläche gehört nicht zu einem Teil
+      not_part: Diese Fläche gehört nicht zu einem Teil (Komponente)
       not_flat_face: Diese Fläche ist nicht eben

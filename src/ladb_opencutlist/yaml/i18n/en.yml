@@ -177,6 +177,7 @@ core:
     dictionary:
       component_textinput_color: Color Palette
       cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
+      cutlist_cuttingdiagram1d_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 1D
       cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
       cutlist_cuttingdiagram2d_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 2D
       cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
@@ -184,6 +185,8 @@ core:
       cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
       cutlist_options: $t(tab.cutlist.label) / $t(default.options)
       cutlist_report_options: $t(tab.cutlist.label) / $t(tab.cutlist.report.title)
+      cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
+      cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
       importer_import_options: $t(tab.importer.label) / $t(default.import)
       importer_load_options: $t(tab.importer.label) / $t(default.open)
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
@@ -340,6 +343,12 @@ tab:
       numbers_save: Save the part numbers
       numbers_reset: Reinitialize the part numbers
       highlight_parts: $t(tab.cutlist.highlight_parts)
+      write_2d: 2D Projection
+      write_3d: 3D Geometry
+      write_2d_parts: Export 2D part projection
+      write_3d_parts: Export 3D part geometry
+      group_write_2d_parts: Export 2D projection of parts in group
+      group_write_3d_parts: Export 3D geometry of parts in group
       group_layout_parts: Draw overview of parts in group
       group_numbers_save: Save the part numbers of this group
       group_numbers_reset: Reinitialize the part numbers of this group
@@ -814,15 +823,11 @@ tab:
         parts_plural: "{{ count }} parts"
         settings: Settings
       export:
-        title: Export cutting diagram
+        title: Cutting Diagram Export
         info_0: |
           This module lets you export the **geometry** of the *cutting diagram* as a file in [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) or [DXF](https://en.wikipedia.org/wiki/AutoCAD_DXF) format.
-        options_general: General
-        option_file_format: Format
-        option_file_format_svg: SVG
-        option_file_format_dxf: DXF
-        option_file_format_help: |
-          Select the file format to be exported.
+        option_file_format: $t(tab.cutlist.write.option_file_format)
+        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
         option_dxf_structure: DXF Structure
         option_dxf_structure_1: Layers
         option_dxf_structure_2: Layers + Blocks
@@ -831,18 +836,16 @@ tab:
 
           - The **Layers** structure draws all lines flat, distinguishing between different line types using layers only. *This structure offers greater compatibility with third-party software.*
           - The **Layers + Blocks** structure creates one block per part and inserts these blocks as many times as the parts are repeated. *This structure offers more flexibility for editing the file.*
-        option_smoothing: Smoothing
-        option_smoothing_0: None
-        option_smoothing_1: Smooth circles and arcs *(Experimental)*
-        option_smoothing_help: |
-          Select whether circles and arcs should be detected.
-
-          *This option does detect other types of curves.*
-        option_merge_holes: Merging mode
-        option_merge_holes_0: None
-        option_merge_holes_1: Outline + Drillings + Merge
-        option_merge_holes_help: |
-          Enables the separation of the outlines of parts from their holes, as well as the merging of depths for each cavity.
+        option_unit: $t(tab.cutlist.write.option_unit)
+        option_unit_help: $t(tab.cutlist.write.option_unit_help)
+        option_smoothing: $t(tab.cutlist.write.option_smoothing)
+        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
+        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
+        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
+        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
+        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
+        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
+        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
         option_sheet_good: Panel
         option_sheet_good_help: |
           Select whether the panel is drawn, and select its color.
@@ -1053,8 +1056,53 @@ tab:
       warning:
         is_group_selection: The parts inside of **hidden groups** of your parts list will not be drawn.
         is_part_selection: This overview drawing is limited to the **selected parts**.
+    write:
+      title: Parts Export
+      info_2d: |
+        This module allows you to export the 2D **projection** of parts as files in [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) or [DXF](https://wikipedia.org/wiki/AutoCAD_DXF) format.
+      info_3d: |
+        This module lets you export the **3D geometry** of parts as files in [STL](https://wikipedia.org/wiki/STL_(file_format)) or [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file) format.
+      option_file_format: Format
+      option_file_format_help: |
+        Select the file format of the exported file.
+      option_unit: Unit
+      option_unit_help: |
+        Select the unit used in the exported file.
+      option_part_drawing_type: Projection
+      option_part_drawing_type_help: |
+        Select the view to be exported.
+      option_anchor: Anchor point
+      option_anchor_0: Default
+      option_anchor_1: Project the part's origin
+      option_anchor_help: |
+        Enable the projection of the part's axis origin as anchor point.
+      option_smoothing: Smoothing
+      option_smoothing_0: None
+      option_smoothing_1: Smooth circles and arcs *(Experimental)*
+      option_smoothing_help: |
+        Select whether circles and arcs should be detected.
+
+        *This option does detect other types of curves.*
+      option_merge_holes: Merging Mode
+      option_merge_holes_0: Default
+      option_merge_holes_1: Outline + Drillings + Merge
+      option_merge_holes_help: |
+        Enable the separation of the outlines of parts from their holes, as well as the merging of depths for each cavity.
+      option_parts: Parts
+      option_parts_help:  |
+        Select the color of parts.
+      option_parts_holes: Drillings
+      option_parts_holes_help:  |
+        Select the color of drillings.
+      option_stroke_color: Stroke Color
+      option_fill_color: Fill Color
+      error:
+        no_part: No part to export.
+      warning:
+        is_group_selection: Parts contained in the **hidden groups** of parts list will not be exported.
+        is_part_selection: The export is limited to the **selected parts**.
     snippet:
-      hello: TBD
+      hello: Hello
       number: Number
       name: Designation
       number_and_name: Number and Designation
@@ -1545,7 +1593,7 @@ tool:
       no_material: No material
       no_material_type: "No material of type '{{ type }}'"
     error:
-      not_part: The target object is not a part
+      not_part: The target object is not a part (component)
       not_edge: The target face is not a panel edge
       not_face: The target face is not a panel face
       wrong_material_type: "The target part must be of type '{{ type }}'"
@@ -1565,7 +1613,7 @@ tool:
     warning:
       more_entities: "{{ count_used }} instances sharing the same definition will be modified"
     error:
-      not_part: The target object is not a part
+      not_part: The target object is not a part (component)
       not_orientable: The type of this part does not allow orienting it
   smart_export:
     title: Export
@@ -1592,10 +1640,10 @@ tool:
     action_option_1_4_status: $t(default.unit_4)
     action_option_2_0_status: Use target face only
     action_option_2_1_status: Use all faces of the part
-    action_option_3_0_status: Project part origin
+    action_option_3_0_status: Project part's origin
     action_option_3_1_status: Detect circles and arcs (Experimental)
     action_option_3_2_status: Isolate through-holes and merge depths for each cavity
-    action_option_3_3_status: Export as guides the floating and coplanar edges of the target face contained in the part
+    action_option_3_3_status: Export the floating and coplanar edges of the target face contained in the part as guides
     error:
-      not_part: This surface does not belong to a part
+      not_part: This face does not belong to a part (component)
       not_flat_face: This surface is not planar
