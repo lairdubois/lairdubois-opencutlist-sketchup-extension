@@ -73,6 +73,22 @@ module Ladb::OpenCutList
               folders << folder
             end
 
+            # Forward to specific worker for SKP export
+            if @file_format == FILE_FORMAT_SKP
+
+              instance_info = part.def.get_one_instance_info
+              return { :errors => [ 'tab.cutlist.error.unknow_part' ] } if instance_info.nil?
+
+              response = CommonWriteDefinitionWorker.new({
+                'folder_path' => folder_path,
+                'file_name' => file_name,
+                'definition' => instance_info.definition
+              }).run
+              return response if !response[:errors].nil? || response[:cancelled]
+
+              next
+            end
+
             drawing_def = _compute_part_drawing_def(@part_drawing_type, part)
             return { :errors => [ 'tab.cutlist.error.unknow_part' ] } unless drawing_def.is_a?(DrawingDef)
 
@@ -82,6 +98,7 @@ module Ladb::OpenCutList
                   'folder_path' => folder_path,
                   'file_name' => file_name,
                   'file_format' => @file_format,
+                  'unit' => @unit,
                   'anchor' => @anchor,
                   'smoothing' => @smoothing,
                   'merge_holes' => @merge_holes,
@@ -96,6 +113,7 @@ module Ladb::OpenCutList
                   'folder_path' => folder_path,
                   'file_name' => file_name,
                   'file_format' => @file_format,
+                  'unit' => @unit,
                   'anchor' => @anchor,
                 }).run
                 return response if !response[:errors].nil? || response[:cancelled]

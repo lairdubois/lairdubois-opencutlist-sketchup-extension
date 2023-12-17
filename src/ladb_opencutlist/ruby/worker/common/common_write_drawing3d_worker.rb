@@ -38,15 +38,11 @@ module Ladb::OpenCutList
       return { :errors => [ 'default.error' ] } unless SUPPORTED_FILE_FORMATS.include?(@file_format)
       return { :errors => [ 'default.error' ] } unless @drawing_def.is_a?(DrawingDef)
 
+      # Open save panel if needed
       if @folder_path.nil? || !File.exist?(@folder_path)
-
-        # Open save panel
         path = UI.savepanel(Plugin.instance.get_i18n_string('core.savepanel.export_to_file', { :file_format => @file_format.upcase }), '', "#{@file_name}.#{@file_format}")
-
       else
-
         path = File.join(@folder_path, "#{@file_name}.#{@file_format}")
-
       end
       if path
 

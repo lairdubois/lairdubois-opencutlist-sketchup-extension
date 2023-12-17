@@ -1,6 +1,7 @@
 {
   "0": {
     "file_format": "stl",
+    "unit": { "metric": 2, "imperial": 0 }, /* Length::Millimeter , Length::Inches*/
     "anchor": false
   }
 }

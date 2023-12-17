@@ -2,6 +2,7 @@
   "0": {
     "part_drawing_type": 1, /* PART_DRAWING_TYPE_2D_TOP */
     "file_format": "svg",
+    "unit": { "metric": 2, "imperial": 0 }, /* Length::Millimeter , Length::Inches*/
     "anchor": false,
     "smoothing": false,
     "merge_holes": false,

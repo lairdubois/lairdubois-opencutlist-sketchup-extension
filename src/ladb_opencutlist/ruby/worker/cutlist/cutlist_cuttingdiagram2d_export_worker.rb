@@ -29,6 +29,7 @@ module Ladb::OpenCutList
 
       @file_format = settings.fetch('file_format', nil)
       @dxf_structure = settings.fetch('dxf_structure', DXF_STRUCTURE_LAYER)
+      @unit = settings.fetch('unit', false)
       @smoothing = settings.fetch('smoothing', false)
       @merge_holes = settings.fetch('merge_holes', false)
       @sheet_hidden = settings.fetch('sheet_hidden', false)
@@ -124,7 +125,7 @@ module Ladb::OpenCutList
 
     def _write_to_svg_file(file, sheet)
 
-      unit_sign, unit_factor = _svg_get_unit_sign_and_factor(DimensionUtils.instance.length_unit)
+      unit_sign, unit_factor = _svg_get_unit_sign_and_factor(@unit)
       unit_transformation = Geom::Transformation.scaling(unit_factor, unit_factor, 1.0)
 
       size = Geom::Point3d.new(
@@ -274,7 +275,7 @@ module Ladb::OpenCutList
 
     def _write_to_dxf_file(file, sheet)
 
-      unit_factor = _dxf_get_unit_factor(DimensionUtils.instance.length_unit)
+      unit_factor = _dxf_get_unit_factor(@unit)
       unit_transformation = Geom::Transformation.scaling(ORIGIN, unit_factor, unit_factor, 1.0)
 
       sheet_size = Geom::Point3d.new(

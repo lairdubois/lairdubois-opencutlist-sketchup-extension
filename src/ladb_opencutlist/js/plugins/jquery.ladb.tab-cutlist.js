@@ -1904,6 +1904,7 @@
                 var $widgetPreset = $('.ladb-widget-preset', $modal);
                 var $selectPartDrawingType = $('#ladb_select_part_drawing_type', $modal);
                 var $selectFileFormat = $('#ladb_select_file_format', $modal);
+                var $selectUnit = $('#ladb_select_unit', $modal);
                 var $selectAnchor = $('#ladb_select_anchor', $modal);
                 var $selectSmoothing = $('#ladb_select_smoothing', $modal);
                 var $selectMergeHoles = $('#ladb_select_merge_holes', $modal);
@@ -1917,6 +1918,7 @@
                 var fnFetchOptions = function (options) {
                     options.part_drawing_type = $selectPartDrawingType.val();
                     options.file_format = $selectFileFormat.val();
+                    options.unit = parseInt($selectUnit.val());
                     options.anchor = $selectAnchor.val() === '1';
                     options.smoothing = $selectSmoothing.val() === '1';
                     options.merge_holes = $selectMergeHoles.val() === '1';
@@ -1928,6 +1930,7 @@
                 var fnFillInputs = function (options) {
                     $selectPartDrawingType.selectpicker('val', options.part_drawing_type);
                     $selectFileFormat.selectpicker('val', options.file_format);
+                    $selectUnit.selectpicker('val', options.unit);
                     $selectAnchor.selectpicker('val', options.anchor ? '1' : '0');
                     $selectSmoothing.selectpicker('val', options.smoothing ? '1' : '0');
                     $selectMergeHoles.selectpicker('val', options.merge_holes ? '1' : '0');
@@ -1961,6 +1964,7 @@
                         fnUpdateFieldsVisibility();
                     })
                 ;
+                $selectUnit.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectAnchor.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectSmoothing.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectMergeHoles
@@ -2033,21 +2037,26 @@
                 // Fetch UI elements
                 var $widgetPreset = $('.ladb-widget-preset', $modal);
                 var $selectFileFormat = $('#ladb_select_file_format', $modal);
+                var $formGroupUnit = $('#ladb_form_group_unit', $modal);
+                var $selectUnit = $('#ladb_select_unit', $modal);
                 var $formGroupAnchor = $('#ladb_form_group_anchor', $modal);
                 var $selectAnchor = $('#ladb_select_anchor', $modal);
                 var $btnExport = $('#ladb_btn_export', $modal);
 
                 var fnFetchOptions = function (options) {
                     options.file_format = $selectFileFormat.val();
+                    options.unit = parseInt($selectUnit.val());
                     options.anchor = $selectAnchor.val() === '1';
                 };
                 var fnFillInputs = function (options) {
                     $selectFileFormat.selectpicker('val', options.file_format);
+                    $selectUnit.selectpicker('val', options.unit);
                     $selectAnchor.selectpicker('val', options.anchor ? '1' : '0');
                     fnUpdateFieldsVisibility();
                 };
                 var fnUpdateFieldsVisibility = function () {
                     var isSkp = $selectFileFormat.val() === 'skp';
+                    if (isSkp) $formGroupUnit.hide(); else $formGroupUnit.show();
                     if (isSkp) $formGroupAnchor.hide(); else $formGroupAnchor.show();
                 };
 
@@ -2065,6 +2074,7 @@
                         fnUpdateFieldsVisibility();
                     })
                 ;
+                $selectUnit.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectAnchor.selectpicker(SELECT_PICKER_OPTIONS);
 
                 fnFillInputs(write3dOptions);
@@ -3512,6 +3522,7 @@
                                                 var $selectFileFormat = $('#ladb_select_file_format', $modal);
                                                 var $formGroupDxfStructure = $('#ladb_form_group_dxf_structure', $modal);
                                                 var $selectDxfStructure = $('#ladb_select_dxf_structure', $modal);
+                                                var $selectUnit = $('#ladb_select_unit', $modal);
                                                 var $selectSmoothing = $('#ladb_select_smoothing', $modal);
                                                 var $selectMergeHoles = $('#ladb_select_merge_holes', $modal);
                                                 var $inputBarHidden = $('#ladb_input_bar_hidden', $modal);
@@ -3536,6 +3547,7 @@
                                                 var fnFetchOptions = function (options) {
                                                     options.file_format = $selectFileFormat.val();
                                                     options.dxf_structure = parseInt($selectDxfStructure.val());
+                                                    options.unit = parseInt($selectUnit.val());
                                                     options.smoothing = $selectSmoothing.val() === '1';
                                                     options.merge_holes = $selectMergeHoles.val() === '1';
                                                     options.bar_hidden = !$inputBarHidden.is(':checked');
@@ -3557,6 +3569,7 @@
                                                 var fnFillInputs = function (options) {
                                                     $selectFileFormat.selectpicker('val', options.file_format);
                                                     $selectDxfStructure.selectpicker('val', options.dxf_structure);
+                                                    $selectUnit.selectpicker('val', options.unit);
                                                     $selectSmoothing.selectpicker('val', options.smoothing ? '1' : '0');
                                                     $selectMergeHoles.selectpicker('val', options.merge_holes ? '1' : '0');
                                                     $inputBarHidden.prop('checked', !options.bar_hidden);
@@ -3614,6 +3627,8 @@
                                                         fnUpdateFieldsVisibility();
                                                     })
                                                 ;
+                                                $selectDxfStructure.selectpicker(SELECT_PICKER_OPTIONS);
+                                                $selectUnit.selectpicker(SELECT_PICKER_OPTIONS);
                                                 $selectSmoothing.selectpicker(SELECT_PICKER_OPTIONS);
                                                 $selectMergeHoles
                                                     .selectpicker(SELECT_PICKER_OPTIONS)
@@ -4047,6 +4062,7 @@
                                                 var $selectFileFormat = $('#ladb_select_file_format', $modal);
                                                 var $formGroupDxfStructure = $('#ladb_form_group_dxf_structure', $modal);
                                                 var $selectDxfStructure = $('#ladb_select_dxf_structure', $modal);
+                                                var $selectUnit = $('#ladb_select_unit', $modal);
                                                 var $selectSmoothing = $('#ladb_select_smoothing', $modal);
                                                 var $selectMergeHoles = $('#ladb_select_merge_holes', $modal);
                                                 var $inputSheetHidden = $('#ladb_input_sheet_hidden', $modal);
@@ -4071,6 +4087,7 @@
                                                 var fnFetchOptions = function (options) {
                                                     options.file_format = $selectFileFormat.val();
                                                     options.dxf_structure = parseInt($selectDxfStructure.val());
+                                                    options.unit = parseInt($selectUnit.val());
                                                     options.smoothing = $selectSmoothing.val() === '1';
                                                     options.merge_holes = $selectMergeHoles.val() === '1';
                                                     options.sheet_hidden = !$inputSheetHidden.is(':checked');
@@ -4092,6 +4109,7 @@
                                                 var fnFillInputs = function (options) {
                                                     $selectFileFormat.selectpicker('val', options.file_format);
                                                     $selectDxfStructure.selectpicker('val', options.dxf_structure);
+                                                    $selectUnit.selectpicker('val', options.unit);
                                                     $selectSmoothing.selectpicker('val', options.smoothing ? '1' : '0');
                                                     $selectMergeHoles.selectpicker('val', options.merge_holes ? '1' : '0');
                                                     $inputSheetHidden.prop('checked', !options.sheet_hidden);
@@ -4150,6 +4168,7 @@
                                                     })
                                                 ;
                                                 $selectDxfStructure.selectpicker(SELECT_PICKER_OPTIONS);
+                                                $selectUnit.selectpicker(SELECT_PICKER_OPTIONS);
                                                 $selectSmoothing.selectpicker(SELECT_PICKER_OPTIONS);
                                                 $selectMergeHoles
                                                     .selectpicker(SELECT_PICKER_OPTIONS)

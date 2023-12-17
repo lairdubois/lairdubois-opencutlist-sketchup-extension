@@ -834,6 +834,8 @@ tab:
 
           - la structure **Calques** dessine tous les tracés à plat en distinguant les différents types de trait uniquement par des calques. *Cette structure offre une meilleure compatibilité avec les logiciels tiers.*
           - La structure **Calques + Blocs** crée un bloc par pièce et insère ces blocs autant de fois que les pièces sont répétées. *Cette structure offre plus de flexibilité pour modifier le fichier.*
+        option_unit: $t(tab.cutlist.write.option_unit)
+        option_unit_help: $t(tab.cutlist.write.option_unit_help)
         option_smoothing: $t(tab.cutlist.write.option_smoothing)
         option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
         option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
@@ -1061,6 +1063,9 @@ tab:
       option_file_format: Format
       option_file_format_help: |
         Permet de choisir le format de fichier à exporter.
+      option_unit: Unité
+      option_unit_help: |
+        Permet de choisir l'unité utilisée dans le fichier exporté.
       option_part_drawing_type: Projection
       option_part_drawing_type_help: |
         Permet de choisir la vue exportée
