@@ -343,6 +343,8 @@ tab:
       numbers_save: Mémoriser les numéros de pièces
       numbers_reset: Réinitialiser les numéros de pièces
       highlight_parts: $t(tab.cutlist.highlight_parts)
+      write_2d: Projection 2D
+      write_3d: Géométrie 3D
       write_2d_parts: Exporter la projection 2D des pièces
       write_3d_parts: Exporter la géométrie 3D des pièces
       group_write_2d_parts: Exporter la projection 2D des pièces du groupe
@@ -821,7 +823,7 @@ tab:
         parts_plural: "{{ count }} pièces"
         settings: Paramètres
       export:
-        title: Exporter le calepinage
+        title: Exportation du calepinage
         info_0: |
           Ce module vous permet d'exporter la **géométrie** du *calepinage* sous forme d'une liste de fichiers au format [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) ou [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
         option_file_format: $t(tab.cutlist.write.option_file_format)
@@ -1055,7 +1057,7 @@ tab:
         is_group_selection: Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas dessinées.
         is_part_selection: Ce dessin d'ensemble se limite aux **pièces sélectionnées**.
     write:
-      title: Exporter la géométrie des pièces
+      title: Exportation de pièces
       info_2d: |
         Ce module vous permet d'exporter la **projection 2D** des pièces sous forme de fichiers au format [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) ou [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
       info_3d: |
