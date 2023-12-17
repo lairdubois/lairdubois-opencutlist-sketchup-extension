@@ -1885,6 +1885,23 @@
     LadbTabCutlist.prototype.writeParts = function (partIds, context, is2d) {
         var that = this;
 
+        var fileCount = 0;
+        for (var i = 0 ; i < partIds.length; i++) {
+            var groupAndPart = this.findGroupAndPartById(partIds[i]);
+            if (groupAndPart) {
+                if (groupAndPart.part.children) {
+                    fileCount += groupAndPart.part.children.length;
+                } else {
+                    fileCount += 1;
+                }
+            }
+        }
+
+        if (fileCount === 0) {
+            this.dialog.alert(i18next.t('tab.cutlist.write.title'), i18next.t('tab.cutlist.write.error.no_part'));
+            return;
+        }
+
         var section = context && context.targetGroup ? context.targetGroup.id : null;
 
         if (is2d) {
@@ -1959,7 +1976,6 @@
                 $selectFileFormat
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function () {
-                        var fileCount = partIds.length;
                         $('#ladb_btn_export_file_format', $btnExport).html($(this).val().toUpperCase() + ' <small>( ' + fileCount + ' ' + i18next.t('default.file', {count: fileCount}).toLowerCase() + ' )</small>');
                         fnUpdateFieldsVisibility();
                     })
@@ -2069,7 +2085,6 @@
                 $selectFileFormat
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function () {
-                        var fileCount = partIds.length;
                         $('#ladb_btn_export_file_format', $btnExport).html($(this).val().toUpperCase() + ' <small>( ' + fileCount + ' ' + i18next.t('default.file', {count: fileCount}).toLowerCase() + ' )</small>');
                         fnUpdateFieldsVisibility();
                     })

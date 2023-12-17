@@ -1096,6 +1096,8 @@ tab:
         Permet de choisir la couleur des percements des pièces.
       option_stroke_color: Couleur de trait
       option_fill_color: Couleur de remplissage
+      error:
+        no_part: Aucune pièce à exporter.
       warning:
         is_group_selection: Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas exportées.
         is_part_selection: L'exportation se limitent aux **pièces sélectionnées**.
