@@ -6,8 +6,7 @@ in 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 * 6.0.0 (WIP)
 
-  * Added **Outliner** tab
-  * Added **Smart Export Tool** to export parts to 3D (STL, OBJ, DXF) or 2D (SVG, DXF)
+  * Added **Smart Export** Tool and Module to export parts to 3D (STL, OBJ) or 2D (SVG, DXF) files
   * Added _Hide material colors_ cutlist option
   * Added edge material color display in part list, cutting diagram and labels
   * Added edit material for edge and veneer virtual parts
