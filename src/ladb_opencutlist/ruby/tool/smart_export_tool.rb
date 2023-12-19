@@ -830,6 +830,7 @@ module Ladb::OpenCutList
           anchor = fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) && (@active_drawing_def.bounds.min.x != 0 || @active_drawing_def.bounds.min.y != 0)    # No anchor if = (0, 0, z)
           smoothing = fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
           merge_holes = fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES)
+          write2d_options = Plugin.instance.get_model_preset('cutlist_write2d_options')
 
           worker = CommonWriteDrawing2dWorker.new(@active_drawing_def, {
             'file_name' => file_name,
@@ -837,7 +838,11 @@ module Ladb::OpenCutList
             'unit' => unit,
             'anchor' => anchor,
             'smoothing' => smoothing,
-            'merge_holes' => merge_holes
+            'merge_holes' => merge_holes,
+            'parts_stroke_color' => write2d_options['parts_stroke_color'],
+            'parts_fill_color' => write2d_options['parts_fill_color'],
+            'parts_holes_fill_color' => write2d_options['parts_holes_stroke_color'],
+            'edges_stroke_color' => write2d_options['edges_stroke_color']
           })
           response = worker.run
 
@@ -881,12 +886,15 @@ module Ladb::OpenCutList
             unit = DimensionUtils::CENTIMETER
           end
           smoothing = fetch_action_option(ACTION_EXPORT_FACE, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
+          write2d_options = Plugin.instance.get_model_preset('cutlist_write2d_options')
 
           worker = CommonWriteDrawing2dWorker.new(@active_drawing_def, {
             'file_name' => file_name,
             'file_format' => file_format,
             'unit' => unit,
-            'smoothing' => smoothing
+            'smoothing' => smoothing,
+            'parts_stroke_color' => write2d_options['parts_stroke_color'],
+            'parts_fill_color' => write2d_options['parts_fill_color']
           })
           response = worker.run
 
@@ -930,12 +938,14 @@ module Ladb::OpenCutList
             unit = DimensionUtils::CENTIMETER
           end
           smoothing = fetch_action_option(ACTION_EXPORT_EDGES, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
+          write2d_options = Plugin.instance.get_model_preset('cutlist_write2d_options')
 
           worker = CommonWriteDrawing2dWorker.new(@active_drawing_def, {
             'file_name' => file_name,
             'file_format' => file_format,
             'unit' => unit,
-            'smoothing' => smoothing
+            'smoothing' => smoothing,
+            'edges_stroke_color' => write2d_options['edges_stroke_color']
           })
           response = worker.run
 

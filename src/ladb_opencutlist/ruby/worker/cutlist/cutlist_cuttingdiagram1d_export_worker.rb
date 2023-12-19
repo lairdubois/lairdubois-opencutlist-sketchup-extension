@@ -301,7 +301,7 @@ module Ladb::OpenCutList
       end
 
       _dxf_write_start(file)
-      _dxf_write_section_header(file, DimensionUtils.instance.length_unit, min, max)
+      _dxf_write_section_header(file, @unit, min, max)
       _dxf_write_section_classes(file)
       _dxf_write_section_tables(file, min, max, layer_defs) do |owner_id|
 
