@@ -25,7 +25,7 @@ module Ladb::OpenCutList
       bounds_max = @drawing_def.bounds.max
 
       depth_min = 0.0
-      depth_max = bounds_depth.round(6)
+      depth_max = bounds_depth
 
       z_max = bounds_max.z
 
@@ -44,14 +44,12 @@ module Ladb::OpenCutList
         else
           f_depth = (z_max - face_manipulator.z_max)
         end
-        f_depth = f_depth.round(6)  # TODO adapt to model unit ??
-
         f_paths = face_manipulator.loop_manipulators.map { |loop_manipulator| loop_manipulator.points }.map { |points| Clippy.points_to_rpath(points) }
 
-        pld = plds[f_depth]
+        pld = plds[f_depth.round(3)]
         if pld.nil?
           pld = PathsLayerDef.new(f_depth, f_paths, DrawingProjectionLayerDef::TYPE_DEFAULT)
-          plds[f_depth] = pld
+          plds[f_depth.round(3)] = pld
         else
           pld.paths.concat(f_paths) # Just concat, union will be call later in one unique call
         end

@@ -353,7 +353,9 @@ module Ladb::OpenCutList
       if value.is_a?(Integer)
         file.puts(value.to_s.rjust(code >= 90 && code <= 99 ? 9 : 6))
       elsif value.is_a?(Float)
-        file.puts(value.round(11).to_s)
+        value = value.round(11)
+        value = 0.0 if value == 0 # Avoid -0.0
+        file.puts(value.to_s)
       else
         file.puts(value.to_s)
       end
