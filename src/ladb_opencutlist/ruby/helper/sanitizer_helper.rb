@@ -6,7 +6,7 @@ module Ladb::OpenCutList
       filename = filename
                    .gsub("\\", "/")
                    .gsub(/\//, '∕')
-                   .gsub(/꞉/, '꞉')
+                   .gsub(/꞉/, '')
                    .gsub(/\./, '_')
       filename
     end
