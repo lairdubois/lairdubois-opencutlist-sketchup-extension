@@ -90,7 +90,6 @@ module Ladb::OpenCutList::Geometrix
         else
 
           max_overlap_index = last_portion.end_index % points.length
-
           overlap_portions = loop_def.portions.select { |potion| potion.start_index < max_overlap_index }
           last_overlap_portion = overlap_portions.last
           if last_portion == last_overlap_portion
@@ -107,7 +106,7 @@ module Ladb::OpenCutList::Geometrix
             if EllipseFinder.ellipse_include_point?(last_portion.ellipse_def, last_overlap_portion.end_point)
 
               # Combine first ellipse to last
-              last_portion.edge_count = last_portion.edge_count + last_overlap_portion.edge_count - overlap
+              last_portion.edge_count = last_portion.edge_count + overlap_portions.sum { |portion| portion.edge_count } - overlap
 
             else
 

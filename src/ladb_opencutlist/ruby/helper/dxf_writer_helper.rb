@@ -1048,6 +1048,23 @@ module Ladb::OpenCutList
 
     end
 
+    def _dxf_write_circle(file, cx, cy, r, layer = '0')
+
+      # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-8663262B-222C-414D-B133-4A8506A27C18
+
+      _dxf_write(file, 0, 'CIRCLE')
+      _dxf_write_id(file)
+      _dxf_write_owner_id(file, @_dxf_model_space_id)
+      _dxf_write_sub_classes(file, [ 'AcDbEntity' ])
+      _dxf_write(file, 8, layer)
+      _dxf_write_sub_classes(file, [ 'AcDbCircle' ])
+      _dxf_write(file, 10, cx)
+      _dxf_write(file, 20, cy)
+      _dxf_write(file, 30, 0.0)
+      _dxf_write(file, 40, r)
+
+    end
+
     def _dxf_write_ellipse(file, cx, cy, vx, vy, vr, as = 0, ae = 2 * Math::PI, layer = '0')
 
       # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-107CB04F-AD4D-4D2F-8EC9-AC90888063AB
@@ -1229,50 +1246,68 @@ module Ladb::OpenCutList
 
         if smoothing && polygon_def.loop_def
 
-          # Extract loop points from ordered edges and arc curves
-          polygon_def.loop_def.portions.each { |portion|
+          if polygon_def.loop_def.circle?
 
-            if portion.is_a?(Geometrix::ArcLoopPortionDef)
+            # Simplify circle drawing
 
-              center = portion.ellipse_def.center.transform(transformation)
-              xaxis = portion.ellipse_def.xaxis.transform(transformation)
+            portion = polygon_def.loop_def.portions.first
+            center = portion.ellipse_def.center.transform(transformation)
+            radius = Geom::Vector3d.new(portion.ellipse_def.xradius, 0, 0).transform(transformation).length
 
-              if portion.loop_def.ellipse?
-                start_angle = 0.0
-                end_angle = 2.0 * Math::PI
-              elsif portion.ccw?  # DXF ellipse angles must be counter clockwise
-                start_angle = portion.start_angle
-                end_angle = portion.end_angle
+            cx = center.x.to_f
+            cy = center.y.to_f
+            r = radius.to_f
+
+            _dxf_write_circle(file, cx, cy, r, layer)
+
+          else
+
+            # Extract loop portions
+            polygon_def.loop_def.portions.each { |portion|
+
+              if portion.is_a?(Geometrix::ArcLoopPortionDef)
+
+                center = portion.ellipse_def.center.transform(transformation)
+                xaxis = portion.ellipse_def.xaxis.transform(transformation)
+
+                if portion.loop_def.ellipse?
+                  start_angle = 0.0
+                  end_angle = 2.0 * Math::PI
+                elsif portion.ccw?  # DXF ellipse angles must be counter clockwise
+                  start_angle = portion.start_angle
+                  end_angle = portion.end_angle
+                else
+                  start_angle = portion.end_angle
+                  end_angle = portion.start_angle
+                end
+
+                cx = center.x.to_f
+                cy = center.y.to_f
+                vx = xaxis.x.to_f
+                vy = xaxis.y.to_f
+                vr = portion.ellipse_def.yradius / portion.ellipse_def.xradius
+                as = start_angle
+                ae = end_angle
+
+                _dxf_write_ellipse(file, cx, cy, vx, vy, vr, as, ae, layer)
+
               else
-                start_angle = portion.end_angle
-                end_angle = portion.start_angle
+
+                start_point = portion.start_point.transform(transformation)
+                end_point = portion.end_point.transform(transformation)
+
+                x1 = start_point.x.to_f
+                y1 = start_point.y.to_f
+                x2 = end_point.x.to_f
+                y2 = end_point.y.to_f
+
+                _dxf_write_line(file, x1, y1, x2, y2, layer)
+
               end
 
-              cx = center.x.to_f
-              cy = center.y.to_f
-              vx = xaxis.x.to_f
-              vy = xaxis.y.to_f
-              vr = portion.ellipse_def.yradius.round(6) / portion.ellipse_def.xradius.round(6)
-              as = start_angle
-              ae = end_angle
+            }
 
-              _dxf_write_ellipse(file, cx, cy, vx, vy, vr, as, ae, layer)
-
-            else
-
-              start_point = portion.start_point.transform(transformation)
-              end_point = portion.end_point.transform(transformation)
-
-              x1 = start_point.x.to_f
-              y1 = start_point.y.to_f
-              x2 = end_point.x.to_f
-              y2 = end_point.y.to_f
-
-              _dxf_write_line(file, x1, y1, x2, y2, layer)
-
-            end
-
-          }
+          end
 
         else
 

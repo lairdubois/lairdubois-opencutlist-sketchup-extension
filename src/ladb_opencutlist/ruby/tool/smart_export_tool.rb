@@ -78,13 +78,13 @@ module Ladb::OpenCutList
           ACTION_OPTION_OPTIONS => [ACTION_OPTION_OPTIONS_SMOOTHING ]
         }
       },
-      {
-        :action => ACTION_EXPORT_EDGES,
-        :options => {
-          ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_SVG, ACTION_OPTION_FILE_FORMAT_DXF ],
-          ACTION_OPTION_UNIT => [ ACTION_OPTION_UNIT_MM, ACTION_OPTION_UNIT_CM, ACTION_OPTION_UNIT_IN ],
-        }
-      }
+      # {
+      #   :action => ACTION_EXPORT_EDGES,
+      #   :options => {
+      #     ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_SVG, ACTION_OPTION_FILE_FORMAT_DXF ],
+      #     ACTION_OPTION_UNIT => [ ACTION_OPTION_UNIT_MM, ACTION_OPTION_UNIT_CM, ACTION_OPTION_UNIT_IN ],
+      #   }
+      # }
     ].freeze
 
     COLOR_MESH = Sketchup::Color.new(0, 0, 255, 100).freeze

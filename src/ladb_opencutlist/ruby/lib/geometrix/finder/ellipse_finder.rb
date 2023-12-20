@@ -138,9 +138,9 @@ module Ladb::OpenCutList::Geometrix
     #
     # @return [Boolean]
     #
-    def self.ellipse_include_point?(ellipse_def, point, epsilon = 1e-6)
+    def self.ellipse_include_point?(ellipse_def, point, epsilon = 1e-3)
       # Check distance between point and ellipse edge
-      ellipse_point_at_angle(ellipse_def, ellipse_angle_at_point(ellipse_def, point)).distance(point) <= epsilon
+      ellipse_point_at_angle(ellipse_def, ellipse_angle_at_point(ellipse_def, point)).distance(point).to_f <= epsilon
     end
 
     # Get ellipse CCW angle at point
@@ -198,7 +198,7 @@ module Ladb::OpenCutList::Geometrix
     end
 
     def circular?
-      (xradius - yradius).abs <= 1e-6
+      xradius == yradius
     end
 
     def xradius
