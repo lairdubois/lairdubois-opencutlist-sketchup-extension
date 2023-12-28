@@ -121,7 +121,7 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
     assert_loop(@loop_a.reverse, 3, false, false, 'loop_a.reverse')
     assert_loop(@loop_b, 3, false, false, 'loop_b')
     assert_loop(@loop_b.reverse, 3, false, false, 'loop_b.reverse')
-    assert_loop(@loop_c, 7, false, false, 'loop_c')
+    assert_loop(@loop_c, 8, false, false, 'loop_c')
     assert_loop(@loop_d, nil, nil, nil, 'loop_d')  # This loop doesn't returns unique arc portion if starts at index 22
     assert_loop(@loop_e, nil, nil, nil, 'loop_e')
 

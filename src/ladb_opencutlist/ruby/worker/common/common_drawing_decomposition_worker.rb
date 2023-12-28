@@ -23,6 +23,7 @@ module Ladb::OpenCutList
     EDGE_VALIDATOR_COPLANAR = 1
     EDGE_VALIDATOR_STRAY = 2
     EDGE_VALIDATOR_STRAY_COPLANAR = 3
+    EDGE_VALIDATOR_LAYER = 4
 
     def initialize(path, settings = {})
 
@@ -201,6 +202,10 @@ module Ladb::OpenCutList
               else
                 false
               end
+            }
+          when EDGE_VALIDATOR_LAYER
+            validator = lambda { |edge_manipulator|
+              !edge_manipulator.edge.layer.line_style.nil? && edge_manipulator.edge.layer.line_style.name != 'Solid Basic'
             }
           end
         end

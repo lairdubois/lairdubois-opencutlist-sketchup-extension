@@ -1094,6 +1094,29 @@ module Ladb::OpenCutList
 
     end
 
+    def _dxf_write_polyline(file, vertices, closed = false, layer = '0')  # vertices = Array of DxfVertexDef
+
+      # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-748FC305-F3F2-4F74-825A-61F04D757A50
+
+      _dxf_write(file, 0, 'LWPOLYLINE')
+      _dxf_write_id(file)
+      _dxf_write_owner_id(file, @_dxf_model_space_id)
+      _dxf_write_sub_classes(file, [ 'AcDbEntity' ])
+      _dxf_write(file, 8, layer)
+      _dxf_write_sub_classes(file, [ 'AcDbPolyline' ])
+      _dxf_write(file, 90, vertices.length) # Vertex count
+      _dxf_write(file, 70, closed ? 1 : 0) # 1 = Closed
+
+      vertices.each do |vertex|
+
+        _dxf_write(file, 10, vertex.x)
+        _dxf_write(file, 20, vertex.y)
+        _dxf_write(file, 42, vertex.bulge)
+
+      end
+
+    end
+
     def _dxf_write_polygon(file, points, layer = '0')
 
       # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-748FC305-F3F2-4F74-825A-61F04D757A50
@@ -1260,52 +1283,135 @@ module Ladb::OpenCutList
 
             _dxf_write_circle(file, cx, cy, r, layer)
 
+          elsif polygon_def.loop_def.ellipse?
+
+            # Simplify ellipse drawing
+
+            portion = polygon_def.loop_def.portions.first
+            center = portion.ellipse_def.center.transform(transformation)
+            xaxis = portion.ellipse_def.xaxis.transform(transformation)
+
+            cx = center.x.to_f
+            cy = center.y.to_f
+            vx = xaxis.x.to_f
+            vy = xaxis.y.to_f
+            vr = portion.ellipse_def.yradius / portion.ellipse_def.xradius
+            as = 0.0
+            ae = 2.0 * Math::PI
+
+            _dxf_write_ellipse(file, cx, cy, vx, vy, vr, as, ae, layer)
+
           else
+
+            vertices = []
 
             # Extract loop portions
             polygon_def.loop_def.portions.each { |portion|
 
+              start_point = portion.start_point.transform(transformation)
+
+              x = start_point.x.to_f
+              y = start_point.y.to_f
+
               if portion.is_a?(Geometrix::ArcLoopPortionDef)
 
-                center = portion.ellipse_def.center.transform(transformation)
-                xaxis = portion.ellipse_def.xaxis.transform(transformation)
+                start_angle = portion.start_angle + portion.ellipse_def.angle
+                end_angle = portion.end_angle + portion.ellipse_def.angle
 
-                if portion.loop_def.ellipse?
-                  start_angle = 0.0
-                  end_angle = 2.0 * Math::PI
-                elsif portion.ccw?  # DXF ellipse angles must be counter clockwise
-                  start_angle = portion.start_angle
-                  end_angle = portion.end_angle
+                start_angle -= 2 * Math::PI if start_angle > end_angle && portion.ccw?
+                start_angle += 2 * Math::PI if start_angle < end_angle && !portion.ccw?
+
+                arc_angle = end_angle - start_angle
+
+                if portion.ellipse_def.circular?
+
+                  # Circular arc
+
+                  bulge = Math.tan(arc_angle / 4.0)
+
+                  vertices << DxfVertexDef.new(x, y, bulge)
+
                 else
-                  start_angle = portion.end_angle
-                  end_angle = portion.start_angle
+
+                  # Elliptical arc
+
+                  ccw = portion.ccw?
+
+                  step_angle = Math::PI / 32.0
+                  step_count = (arc_angle / step_angle).abs.ceil
+
+                  step_angle *= -1 unless ccw
+
+                  (1..step_count).each do |i|
+
+                    angle = start_angle + step_angle * i
+                    if i == step_count
+                      step_point = portion.end_point.transform(transformation)  # Force last step to match portion end point
+                    else
+                      step_point = Geometrix::EllipseFinder.ellipse_point_at_angle(portion.ellipse_def, angle).transform(transformation)
+                    end
+
+                    # _dxf_write_point(file, step_point.x.to_f, step_point.y.to_f, 'STEP_POINT')
+
+                    oc = Geometrix::EllipseFinder.ellipse_oscultating_circle_center_at_angle(portion.ellipse_def, angle).transform(transformation)
+                    ocs = start_point - oc
+                    oce = step_point - oc
+
+                    # _dxf_write_point(file, oc.x.to_f, oc.y.to_f, 'OC_POINT')
+
+                    x = start_point.x.to_f
+                    y = start_point.y.to_f
+                    bulge = Math.tan(ocs.angle_between(oce) / 4.0)
+                    bulge *= -1 unless ccw
+
+                    vertices << DxfVertexDef.new(x, y, bulge)
+
+                    start_point = step_point
+
+                  end
+
                 end
 
-                cx = center.x.to_f
-                cy = center.y.to_f
-                vx = xaxis.x.to_f
-                vy = xaxis.y.to_f
-                vr = portion.ellipse_def.yradius / portion.ellipse_def.xradius
-                as = start_angle
-                ae = end_angle
+                #
+                # DEBUG - original ellipse
+                #
 
-                _dxf_write_ellipse(file, cx, cy, vx, vy, vr, as, ae, layer)
+                # center = portion.ellipse_def.center.transform(transformation)
+                # xaxis = portion.ellipse_def.xaxis.transform(transformation)
+                #
+                # if portion.ccw?  # DXF ellipse angles must be counter clockwise
+                #   start_angle = portion.start_angle
+                #   end_angle = portion.end_angle
+                # else
+                #   start_angle = portion.end_angle
+                #   end_angle = portion.start_angle
+                # end
+                #
+                # cx = center.x.to_f
+                # cy = center.y.to_f
+                # vx = xaxis.x.to_f
+                # vy = xaxis.y.to_f
+                # vr = portion.ellipse_def.yradius / portion.ellipse_def.xradius
+                # as = start_angle
+                # ae = end_angle
+                #
+                # _dxf_write_ellipse(file, cx, cy, vx, vy, vr, as, ae, 'ELLIPSE')
+
+                #
+                # DEBUG
+                #
 
               else
 
-                start_point = portion.start_point.transform(transformation)
-                end_point = portion.end_point.transform(transformation)
+                # Segment
 
-                x1 = start_point.x.to_f
-                y1 = start_point.y.to_f
-                x2 = end_point.x.to_f
-                y2 = end_point.y.to_f
-
-                _dxf_write_line(file, x1, y1, x2, y2, layer)
+                vertices << DxfVertexDef.new(x, y, 0)
 
               end
 
             }
+
+            _dxf_write_polyline(file, vertices, true, layer)
 
           end
 
@@ -1323,6 +1429,7 @@ module Ladb::OpenCutList
     # -----
 
     DxfLayerDef = Struct.new(:name, :color)
+    DxfVertexDef = Struct.new(:x, :y, :bulge)
 
   end
 

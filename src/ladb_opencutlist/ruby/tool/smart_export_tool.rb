@@ -396,7 +396,7 @@ module Ladb::OpenCutList
             'use_bounds_min_as_origin' => !fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR),
             'face_validator' => fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACE, ACTION_OPTION_FACE_ONE) ? CommonDrawingDecompositionWorker::FACE_VALIDATOR_ONE : CommonDrawingDecompositionWorker::FACE_VALIDATOR_ALL,
             'ignore_edges' => !fetch_action_option(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_GUIDES),
-            'edge_validator' => CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY_COPLANAR
+            'edge_validator' => CommonDrawingDecompositionWorker::EDGE_VALIDATOR_LAYER
           }).run
           if @active_drawing_def.is_a?(DrawingDef)
 

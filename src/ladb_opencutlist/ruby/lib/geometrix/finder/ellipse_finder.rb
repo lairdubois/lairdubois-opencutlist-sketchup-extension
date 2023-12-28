@@ -138,7 +138,7 @@ module Ladb::OpenCutList::Geometrix
     #
     # @return [Boolean]
     #
-    def self.ellipse_include_point?(ellipse_def, point, epsilon = 1e-3)
+    def self.ellipse_include_point?(ellipse_def, point, epsilon = 1e-4)
       # Check distance between point and ellipse edge
       ellipse_point_at_angle(ellipse_def, ellipse_angle_at_point(ellipse_def, point)).distance(point).to_f <= epsilon
     end
@@ -180,6 +180,40 @@ module Ladb::OpenCutList::Geometrix
         ellipse_def.center.z
       )
 
+    end
+
+    # Get ellipse oscultating circle center at angle
+    #
+    # @param [EllipseDef] ellipse_def
+    # @param [Float] angle in radians
+    #
+    # @return [Geom::Point3d]
+    #
+    def self.ellipse_oscultating_circle_center_at_angle(ellipse_def, angle)
+
+      sina = Math.sin(angle)
+      cosa = Math.cos(angle)
+
+      # Calculate the coordinates of the point on the ellipse
+      x = ellipse_def.xradius * cosa
+      y = ellipse_def.yradius * sina
+
+      # Calculate the first derivative and second derivative of the ellipse
+      dx = -ellipse_def.xradius * sina
+      dy = ellipse_def.yradius * cosa
+      ddx = -ellipse_def.xradius * cosa
+      ddy = -ellipse_def.yradius * sina
+
+      # Calculate the numerator and denominator of the center of curvature formula
+      num = dx**2 + dy**2
+      den = dx * ddy - dy * ddx
+
+      Geom::Point3d.new(
+        x - dy * num / den,
+        y + dx * num / den
+      )
+        .transform(Geom::Transformation.translation(Geom::Vector3d.new(ellipse_def.center.to_a)))
+        .transform(Geom::Transformation.rotation(ORIGIN, Z_AXIS, ellipse_def.angle))
     end
 
   end
