@@ -168,7 +168,7 @@ module Ladb::OpenCutList::Geometrix
     # Get ellipse point at angle
     #
     # @param [EllipseDef] ellipse_def
-    # @param [Float] angle in radians
+    # @param [Float] angle polar angle in radians
     #
     # @return [Geom::Point3d]
     #
@@ -185,7 +185,7 @@ module Ladb::OpenCutList::Geometrix
     # Get ellipse oscultating circle center at angle
     #
     # @param [EllipseDef] ellipse_def
-    # @param [Float] angle in radians
+    # @param [Float] angle polar angle in radians
     #
     # @return [Geom::Point3d]
     #

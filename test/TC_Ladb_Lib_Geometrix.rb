@@ -16,6 +16,11 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
 
     @tx10_ty_5 = Geom::Transformation.translation(Geom::Vector3d.new(10, 5))
 
+    # Line
+    @line = [
+      Geom::Point3d.new(0.0, 0.0, 0.0),Geom::Point3d.new(10.0, 0.0, 0.0),Geom::Point3d.new(20.0, 0.0, 0.0),
+    ]
+
     # Triangle
     @triangle = [
       Geom::Point3d.new(0.0, 0.0, 0.0),Geom::Point3d.new(10.0, 0.0, 0.0),Geom::Point3d.new(0.0, 20.0, 0.0),
@@ -74,6 +79,24 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
       Geom::Point3d.new(10.500000000000002, 0.0, 0.0),Geom::Point3d.new(10.142221176035218, 2.5881904510252074, 0.0),Geom::Point3d.new(9.093266739736611, 4.999999999999997, 0.0),Geom::Point3d.new(7.424621202458746, 7.0710678118654755, 0.0),Geom::Point3d.new(5.250000000000003, 8.660254037844382, 0.0),Geom::Point3d.new(2.717599973576471, 9.659258262890678, 0.0),Geom::Point3d.new(6.429395695523606e-16, 9.999999999999996, 0.0),Geom::Point3d.new(-2.7175999735764673, 9.65925826289068, 0.0),Geom::Point3d.new(-5.249999999999998, 8.660254037844384, 0.0),Geom::Point3d.new(-7.424621202458745, 7.071067811865476, 0.0),Geom::Point3d.new(-9.09326673973661, 5.0000000000000036, 0.0),Geom::Point3d.new(-10.142221176035218, 2.58819045102521, 0.0),Geom::Point3d.new(-10.500000000000002, 1.2246467991473533e-15, 0.0),Geom::Point3d.new(-10.14222117603522, -2.5881904510252034, 0.0),Geom::Point3d.new(-9.093266739736613, -4.9999999999999964, 0.0),Geom::Point3d.new(-7.424621202458751, -7.071067811865472, 0.0),Geom::Point3d.new(-5.250000000000006, -8.66025403784438, 0.0),Geom::Point3d.new(-2.7175999735764766, -9.659258262890678, 0.0),Geom::Point3d.new(-1.928818708657082e-15, -9.999999999999996, 0.0),Geom::Point3d.new(2.7175999735764638, -9.659258262890681, 0.0),Geom::Point3d.new(5.249999999999994, -8.660254037844387, 0.0),Geom::Point3d.new(7.424621202458745, -7.071067811865478, 0.0),Geom::Point3d.new(9.093266739736606, -5.000000000000004, 0.0),Geom::Point3d.new(10.142221176035218, -2.588190451025216, 0.0)
     ]
 
+    # Ellipse
+    # - center = 50mm,20mm
+    # - xradius = 100m
+    # - yradius = 50mm
+    # - angle = 10°
+    @ellipse_x50mm_y20mm_xr100mm_yr50mm_a10 = [
+      Geom::Point3d.new(5.845699815008693, 1.4710558175863406, 0.0),Geom::Point3d.new(5.625116200001669, 1.9495069315693314, 0.0),Geom::Point3d.new(5.155340502109098, 2.3487624859586114, 0.0),Geom::Point3d.new(4.468387158801308, 2.641613874523552, 0.0),Geom::Point3d.new(3.6110709051806555, 2.808103759093255, 0.0),Geom::Point3d.new(2.6418164271492857, 2.8368861291718375, 0.0),Geom::Point3d.new(1.6266768156162792, 2.7259995138035595, 0.0),Geom::Point3d.new(0.6348321575100833, 2.4830006525769743, 0.0),Geom::Point3d.new(-0.266124972820164, 2.1244495163100643, 0.0),Geom::Point3d.new(-1.0147958358445082, 1.674780772405656, 0.0),Geom::Point3d.new(-1.5601597494849444, 1.1646386026480977, 0.0),Geom::Point3d.new(-1.865051064283353, 0.6287883528565703, 0.0),Geom::Point3d.new(-1.908691940992946, 0.10374733201995978, 0.0),Geom::Point3d.new(-1.6881083259859224, -0.37470378196303056, 0.0),Geom::Point3d.new(-1.2183326280933504, -0.7739593363523105, 0.0),Geom::Point3d.new(-0.5313792847855621, -1.066810724917251, 0.0),Geom::Point3d.new(0.32593696883509105, -1.2333006094869554, 0.0),Geom::Point3d.new(1.2951914468664603, -1.262082979565538, 0.0),Geom::Point3d.new(2.3103310583994685, -1.15119636419726, 0.0),Geom::Point3d.new(3.3021757165056633, -0.9081975029706739, 0.0),Geom::Point3d.new(4.20313284683591, -0.5496463667037661, 0.0),Geom::Point3d.new(4.951803709860256, -0.09997762279935563, 0.0),Geom::Point3d.new(5.497167623500692, 0.41016454695820204, 0.0),Geom::Point3d.new(5.8020589382990995, 0.9460147967497283, 0.0)
+    ]
+
+    # Ellipse
+    # - center = 105mm,126mm
+    # - xradius = 100m
+    # - yradius = 99mm
+    # - angle = 100,11°
+    @ellipse_zarby = [
+      Geom::Point3d.new(1.9092856338131643, 1.7361792256994963, 0.0),Geom::Point3d.new(2.8138068070720137, 1.261929813507534, 0.0),Geom::Point3d.new(3.808287305885605, 1.0397407012679567, 0.0),Geom::Point3d.new(4.8249549277165205, 1.0847537097950295, 0.0),Geom::Point3d.new(5.794525454259663, 1.3939012769451362, 0.0),Geom::Point3d.new(6.650924256422181, 1.9461155069075184, 0.0),Geom::Point3d.new(7.335789171102629, 2.7037639124873944, 0.0),Geom::Point3d.new(7.80244778615832, 3.6152140069176912, 0.0),Geom::Point3d.new(8.019098088163032, 4.618351972505479, 0.0),Geom::Point3d.new(7.970975717066702, 5.6448156146598265, 0.0),Geom::Point3d.new(7.661360132933561, 6.6246531324792794, 0.0),Geom::Point3d.new(7.111351126158338, 7.491090218382505, 0.0),Geom::Point3d.new(6.358430901619906, 8.185080616820189, 0.0),Geom::Point3d.new(5.453909728361056, 8.65933002901215, 0.0),Geom::Point3d.new(4.459429229547469, 8.88151914125173, 0.0),Geom::Point3d.new(3.44276160771655, 8.836506132724654, 0.0),Geom::Point3d.new(2.4731910811734057, 8.527358565574547, 0.0),Geom::Point3d.new(1.616792279010888, 7.975144335612166, 0.0),Geom::Point3d.new(0.9319273643304395, 7.217495930032289, 0.0),Geom::Point3d.new(0.4652687492747476, 6.306045835601992, 0.0),Geom::Point3d.new(0.24861844727003612, 5.302907870014204, 0.0),Geom::Point3d.new(0.29674081836636734, 4.276444227859859, 0.0),Geom::Point3d.new(0.6063564024995092, 3.2966067100404035, 0.0),Geom::Point3d.new(1.1563654092747333, 2.4301696241371777, 0.0)
+    ]
+
     # -----
 
     @loop_a = [
@@ -99,6 +122,16 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
 
   end
 
+  def test_circle_finder
+
+    assert_not_circle([])
+    assert_not_circle(@line)
+
+    assert_circle(@circle_x0_y0_r10, 0, 0, 10, 'circle_x0_y0_r10')
+    assert_circle(@circle_x10_y5_r10, 10, 5, 10, 'circle_x10_y5_r10')
+
+  end
+
   def test_ellipse_finder
 
     assert_not_ellipse(@triangle, 'triangle')
@@ -106,9 +139,11 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
     assert_ellipse(@circle_x0_y0_r10, 0, 0, 10, 10, 0, true, 'circle_x0_y0_r10')
     assert_ellipse(@circle_x10_y5_r10, 10, 5, 10, 10, 0, true, 'circle_x10_y5_r10')
     assert_ellipse(@ellipse_x0_y0_xr20_yr10_a0, 0, 0, 20, 10, 0, false, 'ellipse_x0_y0_xr20_yr20_a0')
-    assert_ellipse(@ellipse_x0_y0_xr20_yr10_a45, 0, 0, 20, 10, 45, false, 'ellipse_x0_y0_xr20_yr20_a45')
-    assert_ellipse(@ellipse_x0_y0_xr20mm_yr10mm_a45, 0, 0, 20.mm, 10.mm, 45, false, 'ellipse_x0_y0_xr20mm_yr10mm_a45')
+    assert_ellipse(@ellipse_x0_y0_xr20_yr10_a45, 0, 0, 20, 10, 45.degrees, false, 'ellipse_x0_y0_xr20_yr20_a45')
+    assert_ellipse(@ellipse_x0_y0_xr20mm_yr10mm_a45, 0, 0, 20.mm, 10.mm, 45.degrees, false, 'ellipse_x0_y0_xr20mm_yr10mm_a45')
     assert_ellipse(@ellipse_x0_y0_xr10_5_yr10_a0, 0, 0, 10.5, 10, 0, false, 'ellipse_x0_y0_xr10_5_yr10_a0')
+    assert_ellipse(@ellipse_x50mm_y20mm_xr100mm_yr50mm_a10, 50.mm, 20.mm, 100.mm, 50.mm, 10.degrees, false, 'ellipse_x50mm_y20mm_xr100mm_yr50mm_a10')
+    assert_ellipse(@ellipse_zarby, 105.mm, 126.mm, 100.mm, 99.mm, 100.11.degrees, false, 'ellipse_zarby')
 
   end
 
@@ -129,7 +164,61 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
 
   private
 
-  def assert_angles(ellipse_def, points, msg = nil)
+  def assert_circle_angles(circle_def, points, msg = nil)
+    points.each_with_index do |point, index|
+      angle_at_point = Ladb::OpenCutList::Geometrix::CircleFinder.circle_angle_at_point(circle_def, point)
+      point_at_angle = Ladb::OpenCutList::Geometrix::CircleFinder.circle_point_at_angle(circle_def, angle_at_point)
+      assert_equal(point, point_at_angle, msg + " index=#{index} angle=#{angle_at_point.radians.round(6)}°")
+    end
+  end
+
+  def assert_circle_include_points(circle_def, points, msg = '')
+    points.each_with_index do |point, index|
+      assert_equal(true, Ladb::OpenCutList::Geometrix::CircleFinder.circle_include_point?(circle_def, point), [ msg, "index=#{index}" ].join(' ') )
+    end
+  end
+
+  def assert_not_circle(points, msg = '')
+
+    points.count.times do |index|
+
+      prefix = "#{msg} index=#{index}"
+      pts = points.rotate(index)
+
+      circle_def = Ladb::OpenCutList::Geometrix::CircleFinder.find_circle_def_by_3_points(pts)
+
+      assert_nil(circle_def, prefix)
+
+    end
+
+  end
+
+  def assert_circle(points, center_x, center_y, radius, msg = '')
+
+    points.count.times do |index|
+
+      prefix = "#{msg} index=#{index}"
+      pts = points.rotate(index)
+
+      cirlce_def = Ladb::OpenCutList::Geometrix::CircleFinder.find_circle_def_by_3_points(pts)
+
+      assert_instance_of(Ladb::OpenCutList::Geometrix::CircleDef, cirlce_def)
+
+      assert_in_delta(center_x, cirlce_def.center.x, DELTA, "#{prefix} center.x")
+      assert_in_delta(center_y, cirlce_def.center.y, DELTA, "#{prefix} center.y")
+
+      assert_in_delta(radius, cirlce_def.radius, DELTA, "#{prefix} xradius")
+
+      assert_circle_angles(cirlce_def, pts, "#{prefix} circle_angles")
+      assert_circle_include_points(cirlce_def, pts, "#{prefix} circle_include_point")
+
+    end
+
+  end
+
+  #####
+
+  def assert_ellipse_angles(ellipse_def, points, msg = nil)
     points.each_with_index do |point, index|
       angle_at_point = Ladb::OpenCutList::Geometrix::EllipseFinder.ellipse_angle_at_point(ellipse_def, point)
       point_at_angle = Ladb::OpenCutList::Geometrix::EllipseFinder.ellipse_point_at_angle(ellipse_def, angle_at_point)
@@ -175,11 +264,11 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
       assert_in_delta(xradius, ellipse_def.xradius, DELTA, "#{prefix} xradius")
       assert_in_delta(yradius, ellipse_def.yradius, DELTA, "#{prefix} yradius")
 
-      assert_in_delta(angle.degrees, ellipse_def.angle, DELTA, "#{prefix} angle")
+      assert_in_delta(angle, ellipse_def.angle, DELTA, "#{prefix} angle")
 
       assert_equal(is_circular, ellipse_def.circular?, "#{prefix} circular?")
 
-      assert_angles(ellipse_def, pts, "#{prefix} angles")
+      assert_ellipse_angles(ellipse_def, pts, "#{prefix} ellipse_angles")
       assert_ellipse_include_points(ellipse_def, pts, "#{prefix} ellipse_include_point")
 
     end

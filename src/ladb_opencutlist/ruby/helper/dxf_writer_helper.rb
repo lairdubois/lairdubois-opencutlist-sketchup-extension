@@ -3,6 +3,7 @@ module Ladb::OpenCutList
   require_relative '../constants'
   require_relative '../utils/dimension_utils'
   require_relative '../model/drawing/drawing_projection_def'
+  require_relative '../lib/geometrix/geometrix'
 
   module DxfWriterHelper
 
@@ -1315,11 +1316,19 @@ module Ladb::OpenCutList
 
               if portion.is_a?(Geometrix::ArcLoopPortionDef)
 
-                start_angle = portion.start_angle + portion.ellipse_def.angle
-                end_angle = portion.end_angle + portion.ellipse_def.angle
+                start_angle = portion.start_angle
+                end_angle = portion.end_angle
 
-                start_angle -= 2 * Math::PI if start_angle > end_angle && portion.ccw?
-                start_angle += 2 * Math::PI if start_angle < end_angle && !portion.ccw?
+                if portion.ccw?
+                  start_angle -= 2 * Math::PI if start_angle > end_angle
+                else
+                  start_angle += 2 * Math::PI if start_angle < end_angle
+                end
+
+                if start_angle < 0 && end_angle < 0
+                  start_angle += 2 * Math::PI
+                  end_angle += 2 * Math::PI
+                end
 
                 arc_angle = end_angle - start_angle
 
@@ -1333,40 +1342,61 @@ module Ladb::OpenCutList
 
                 else
 
-                  # Elliptical arc
+                  # Elliptical arc -> convert to circular arcs
 
                   ccw = portion.ccw?
 
-                  step_angle = Math::PI / 32.0
+                  step_angle = 1.degrees
+                  step_angle *= -1 unless ccw
                   step_count = (arc_angle / step_angle).abs.ceil
 
-                  step_angle *= -1 unless ccw
-
+                  step_points = []
                   (1..step_count).each do |i|
 
-                    angle = start_angle + step_angle * i
                     if i == step_count
-                      step_point = portion.end_point.transform(transformation)  # Force last step to match portion end point
+                      step_points << portion.end_point.transform(transformation)  # Force last step to match portion end point
                     else
-                      step_point = Geometrix::EllipseFinder.ellipse_point_at_angle(portion.ellipse_def, angle).transform(transformation)
+                      angle = start_angle + step_angle * i
+                      step_points << Geometrix::EllipseFinder.ellipse_point_at_angle(portion.ellipse_def, angle).transform(transformation)
                     end
 
-                    # _dxf_write_point(file, step_point.x.to_f, step_point.y.to_f, 'STEP_POINT')
+                  end
 
-                    oc = Geometrix::EllipseFinder.ellipse_oscultating_circle_center_at_angle(portion.ellipse_def, angle).transform(transformation)
-                    ocs = start_point - oc
-                    oce = step_point - oc
+                  i = 0
+                  while i < step_points.length - 1
 
-                    # _dxf_write_point(file, oc.x.to_f, oc.y.to_f, 'OC_POINT')
+                    circle_def = Geometrix::CircleFinder.find_circle_def_by_3_points(step_points[i, 3])
+                    if circle_def.is_a?(Geometrix::CircleDef)
 
-                    x = start_point.x.to_f
-                    y = start_point.y.to_f
-                    bulge = Math.tan(ocs.angle_between(oce) / 4.0)
-                    bulge *= -1 unless ccw
+                      i = i + 2
 
-                    vertices << DxfVertexDef.new(x, y, bulge)
+                      while i < step_points.length - 1
+                        break unless Geometrix::CircleFinder.circle_include_point?(circle_def, step_points[i + 1], 1e-1)
+                        i = i + 1
+                      end
 
-                    start_point = step_point
+                      x = start_point.x.to_f
+                      y = start_point.y.to_f
+                      bulge = Math.tan((start_point - circle_def.center).angle_between(step_points[i] - circle_def.center) / 4.0)
+                      bulge *= -1 unless ccw
+
+                      # _dxf_write_point(file, x, y, 'STEP_POINT')
+
+                      vertices << DxfVertexDef.new(x, y, bulge)
+
+                      start_point = step_points[i]
+
+                      i = i + 1
+
+                    else
+
+                      if step_points.length > 3 && (step_points.length - i) < 3
+                        i = step_points.length - 4
+                        next
+                      end
+
+                      raise "ERROR"
+                    end
 
                   end
 
