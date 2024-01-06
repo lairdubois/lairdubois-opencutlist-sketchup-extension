@@ -841,7 +841,8 @@ module Ladb::OpenCutList
             'merge_holes' => merge_holes,
             'parts_stroke_color' => write2d_options['parts_stroke_color'],
             'parts_fill_color' => write2d_options['parts_fill_color'],
-            'parts_holes_fill_color' => write2d_options['parts_holes_stroke_color'],
+            'parts_holes_fill_color' => write2d_options['parts_holes_fill_color'],
+            'parts_holes_stroke_color' => write2d_options['parts_holes_stroke_color'],
             'edges_stroke_color' => write2d_options['edges_stroke_color']
           })
           response = worker.run
