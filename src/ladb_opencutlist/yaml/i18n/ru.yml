@@ -192,6 +192,8 @@ core:
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       settings_model: $t(tab.settings.label) / Шаблон
+      tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
+      tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
   progress:
     please_wait: Глобальный расчет
@@ -1081,6 +1083,7 @@ tab:
       option_smoothing_1: Сглаживание окружностей и дуг *(Экспериментальный)*.
       option_smoothing_help: |
         Позволяет включить обнаружение окружностей и дуг.
+
         *Эта опция нет позволяет определить другие типы кривых.*
       option_merge_holes: Разбивка
       option_merge_holes_0: По умолчанию
@@ -1578,6 +1581,16 @@ tool:
     action_3_status: "Кликните на сторону, чтобы взять образец материала"
     action_4: Очистить
     action_4_status: "Кликните на деталь, чтобы удалить все материалы из ее параметров, в том числе и у всех ее экземпляров"
+    action_option_group_instances: Количество экземпляров
+    action_option_group_edges: Количество кромок
+    action_option_group_faces: Количество сторон
+    action_option_instances_0_status: Раскрасить только экземпляр целевой детали
+    action_option_instances_1_status: Окрасить все экземпляры целевой детали
+    action_option_edges_0_status: Окрасить только целевую композицию
+    action_option_edges_1_status: Окрасить лицевую и тыльную сторону в детали
+    action_option_edges_2_status: Раскрасить все 4 стороны в выделенной детали
+    action_option_faces_0_status: Раскрасить только лицевую часть
+    action_option_faces_1_status: Раскрасить 2 стороны выделенной детали
     edges: "{{ count }} торец"
     edges_plural: "{{ count }} торцов"
     edge_ymin: Длина 1
@@ -1606,9 +1619,13 @@ tool:
     action_2_status: "Кликните на деталь, чтобы перевернуть отображение лицевой стороны на тыльную сторону"
     action_3: Адаптировать оси
     action_3_status: Кликните по торцу или ребру детали для адаптации ее осей
-    action_modifier_length: Дл
-    action_modifier_width: Шр
-    action_modifier_thickness: Тл
+    action_option_group_direction: Направление
+    action_option_direction_0: Дл
+    action_option_direction_1: Шр
+    action_option_direction_2: Тл
+    action_option_direction_0_status: Развернуть деталь по длине
+    action_option_direction_1_status: Развернуть деталь по ширине
+    action_option_direction_2_status: Развернуть деталь по толщине
     warning:
       more_entities: "{{ count_used }} экземпляры, имеющие одинаковое определение, будут изменены"
     error:
@@ -1616,33 +1633,33 @@ tool:
       not_orientable: Тип этой детали не позволяет сориентировать ее по осям
   smart_export:
     title: Экспорт
-    action_1: Экспорт 3D-детали
-    action_1_status: Кликните на деталь
-    action_2: Экспорт 2D-детали
-    action_2_status: Кликните на лицевую сторону детали
-    action_3: Экспорт лица
-    action_3_status: Кликните на лицо
-    action_4: Экспорт маршрута
-    action_4_status: Кликните на край
-    action_option_group_0: Формат
-    action_option_group_1: Единицы
-    action_option_group_2: Лицевые
-    action_option_group_3: Опции
-    action_option_0_0_status: Экспорт в DFX
-    action_option_0_1_status: Экспорт в STL
-    action_option_0_2_status: Экспорт в OBJ
-    action_option_0_3_status: Экспорт в SVG
-    action_option_1_0_status: $t(default.unit_0)
-    action_option_1_1_status: $t(default.unit_1)
-    action_option_1_2_status: $t(default.unit_2)
-    action_option_1_3_status: $t(default.unit_3)
-    action_option_1_4_status: $t(default.unit_4)
-    action_option_2_0_status: Используйте только выбранную сторону
-    action_option_2_1_status: Используйте все стороны детали
-    action_option_3_0_status: Проецирование происхождения детали
-    action_option_3_1_status: Определение окружностей и дуг (Экспериментально)
-    action_option_3_2_status: Определите сквозные отверстия и размеры слияния для каждой полости
-    action_option_3_3_status: "Экспортируйте направляющие и контурные линии выделенной грани, содержащейся в детали, в виде направляющих"
+    action_0: Экспорт 3D-детали
+    action_0_status: Кликните на деталь
+    action_1: Экспорт 2D-детали
+    action_1_status: Кликните на лицевую сторону детали
+    action_2: Экспорт лица
+    action_2_status: Кликните на лицо
+    action_3: Экспорт маршрута
+    action_3_status: Кликните на край
+    action_option_group_file_format: Формат
+    action_option_group_unit: Единицы
+    action_option_group_faces: Лицевые
+    action_option_group_options: Опции
+    action_option_file_format_dxf_status: Экспорт в DFX
+    action_option_file_format_stl_status: Экспорт в STL
+    action_option_file_format_obj_status: Экспорт в OBJ
+    action_option_file_format_svg_status: Экспорт в SVG
+    action_option_unit_0_status: $t(default.unit_0)
+    action_option_unit_1_status: $t(default.unit_1)
+    action_option_unit_2_status: $t(default.unit_2)
+    action_option_unit_3_status: $t(default.unit_3)
+    action_option_unit_4_status: $t(default.unit_4)
+    action_option_faces_0_status: Используйте только выбранную сторону
+    action_option_faces_1_status: Используйте все стороны детали
+    action_option_options_anchor_status: Проецирование происхождения детали
+    action_option_options_smoothing_status: Определение окружностей и дуг (Экспериментально)
+    action_option_options_merge_holes_status: Определите сквозные отверстия и размеры слияния для каждой полости
+    action_option_options_guides_status: "Экспортируйте направляющие и контурные линии выделенной грани, содержащейся в детали, в виде направляющих"
     error:
       not_part: Эта грань не является частью детали (компонента)
       not_flat_face: Эта поверхность не является плоской
