@@ -807,6 +807,9 @@ module Ladb::OpenCutList
             push_cursor(@cursor_paint_error_id)
           else
 
+            # Show part name
+            show_tooltip(_get_active_part_name)
+
             edge_faces = {}
             part.def.edge_entity_ids.each { |k, v| edge_faces[k] = model.find_entity_by_id(v) if v.is_a?(Array) && !v.empty? }
 
@@ -895,6 +898,9 @@ module Ladb::OpenCutList
             push_cursor(@cursor_paint_error_id)
           else
 
+            # Show part name
+            show_tooltip(_get_active_part_name)
+
             face_faces = {}
             part.def.face_entity_ids.each { |k, v| face_faces[k] = model.find_entity_by_id(v) if v.is_a?(Array) && !v.empty? }
 
@@ -970,8 +976,8 @@ module Ladb::OpenCutList
 
         elsif is_action_paint_clean?
 
-          # Show part infos
-          show_infos(part.name)
+          # Show part name
+          show_tooltip(_get_active_part_name)
 
           color = MaterialUtils::get_color_from_path(@active_part_entity_path[0...-1]) # [0...-1] returns array without last element
           color.alpha = highlighted ? 255 : 200
@@ -1170,7 +1176,7 @@ module Ladb::OpenCutList
 
               part = _generate_part_from_path(input_part_entity_path)
               if part
-                _set_active_part(input_part_entity_path, part, event == :l_button_down)
+                _set_active_part(input_part_entity_path, part)
               else
                 _reset_active_part
                 show_tooltip("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_part')}", MESSAGE_TYPE_ERROR)
@@ -1291,7 +1297,7 @@ module Ladb::OpenCutList
 
             # Display material infos
             if material
-              show_tooltip(material.name, [Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes.new(material).type}") ])
+              show_tooltip("#{material.name} (#{Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes.new(material).type}")})")
             else
               show_tooltip(Plugin.instance.get_i18n_string('tool.smart_paint.default_material'))
             end
