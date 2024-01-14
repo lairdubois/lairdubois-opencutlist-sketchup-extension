@@ -28,15 +28,15 @@ module Ladb::OpenCutList
     ACTION_EXPORT_FACE = 2
     ACTION_EXPORT_EDGES = 3
 
-    ACTION_OPTION_FILE_FORMAT = 0
-    ACTION_OPTION_UNIT = 1
-    ACTION_OPTION_FACES = 2
-    ACTION_OPTION_OPTIONS = 3
+    ACTION_OPTION_FILE_FORMAT = 'file_format'
+    ACTION_OPTION_UNIT = 'unit'
+    ACTION_OPTION_FACES = 'faces'
+    ACTION_OPTION_OPTIONS = 'options'
 
-    ACTION_OPTION_FILE_FORMAT_DXF = 0
-    ACTION_OPTION_FILE_FORMAT_STL = 1
-    ACTION_OPTION_FILE_FORMAT_OBJ = 2
-    ACTION_OPTION_FILE_FORMAT_SVG = 3
+    ACTION_OPTION_FILE_FORMAT_DXF = FILE_FORMAT_DXF
+    ACTION_OPTION_FILE_FORMAT_STL = FILE_FORMAT_STL
+    ACTION_OPTION_FILE_FORMAT_OBJ = FILE_FORMAT_OBJ
+    ACTION_OPTION_FILE_FORMAT_SVG = FILE_FORMAT_SVG
 
     ACTION_OPTION_UNIT_IN = DimensionUtils::INCHES
     ACTION_OPTION_UNIT_FT = DimensionUtils::FEET
@@ -47,10 +47,10 @@ module Ladb::OpenCutList
     ACTION_OPTION_FACES_ONE = 0
     ACTION_OPTION_FACES_ALL = 1
 
-    ACTION_OPTION_OPTIONS_ANCHOR = 0
-    ACTION_OPTION_OPTIONS_SMOOTHING = 1
-    ACTION_OPTION_OPTIONS_MERGE_HOLES = 2
-    ACTION_OPTION_OPTIONS_GUIDES = 3
+    ACTION_OPTION_OPTIONS_ANCHOR = 'anchor'
+    ACTION_OPTION_OPTIONS_SMOOTHING = 'smoothing'
+    ACTION_OPTION_OPTIONS_MERGE_HOLES = 'merge_holes'
+    ACTION_OPTION_OPTIONS_GUIDES = 'guides'
 
     ACTIONS = [
       {
@@ -751,26 +751,8 @@ module Ladb::OpenCutList
           end
 
           file_name = _get_active_part_name(true)
-          file_format = nil
-          if fetch_action_option_enabled(ACTION_EXPORT_PART_3D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_STL)
-            file_format = FILE_FORMAT_STL
-          elsif fetch_action_option_enabled(ACTION_EXPORT_PART_3D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_OBJ)
-            file_format = FILE_FORMAT_OBJ
-          elsif fetch_action_option_enabled(ACTION_EXPORT_PART_3D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
-            file_format = FILE_FORMAT_DXF
-          end
-          unit = nil
-          if fetch_action_option_enabled(ACTION_EXPORT_PART_3D, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_IN)
-            unit = DimensionUtils::INCHES
-          elsif fetch_action_option_enabled(ACTION_EXPORT_PART_3D, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_FT)
-            unit = DimensionUtils::FEET
-          elsif fetch_action_option_enabled(ACTION_EXPORT_PART_3D, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_MM)
-            unit = DimensionUtils::MILLIMETER
-          elsif fetch_action_option_enabled(ACTION_EXPORT_PART_3D, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_CM)
-            unit = DimensionUtils::CENTIMETER
-          elsif fetch_action_option_enabled(ACTION_EXPORT_PART_3D, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_M)
-            unit = DimensionUtils::METER
-          end
+          file_format = fetch_action_option_value(ACTION_EXPORT_PART_3D, ACTION_OPTION_FILE_FORMAT)
+          unit = fetch_action_option_value(ACTION_EXPORT_PART_3D, ACTION_OPTION_UNIT)
 
           worker = CommonWriteDrawing3dWorker.new(@active_drawing_def, {
             'file_name' => file_name,
@@ -804,24 +786,16 @@ module Ladb::OpenCutList
           end
 
           file_name = _get_active_part_name(true)
-          file_format = nil
-          if fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
-            file_format = FILE_FORMAT_DXF
-          elsif fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_SVG)
-            file_format = FILE_FORMAT_SVG
-          end
-          unit = nil
-          if fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_IN)
-            unit = DimensionUtils::INCHES
-          elsif fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_MM)
-            unit = DimensionUtils::MILLIMETER
-          elsif fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_CM)
-            unit = DimensionUtils::CENTIMETER
-          end
-          anchor = fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) && (@active_drawing_def.bounds.min.x != 0 || @active_drawing_def.bounds.min.y != 0)    # No anchor if = (0, 0, z)
-          smoothing = fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
-          merge_holes = fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES)
-          write2d_options = Plugin.instance.get_model_preset('cutlist_write2d_options')
+          file_format = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_FILE_FORMAT)
+          unit = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_UNIT)
+          anchor = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) && (@active_drawing_def.bounds.min.x != 0 || @active_drawing_def.bounds.min.y != 0)    # No anchor if = (0, 0, z)
+          smoothing = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
+          merge_holes = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES)
+          parts_stroke_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_stroke_color')
+          parts_fill_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_fill_color')
+          parts_holes_fill_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_holes_fill_color')
+          parts_holes_stroke_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_holes_stroke_color')
+          edges_stroke_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'edges_stroke_color')
 
           worker = CommonWriteDrawing2dWorker.new(@active_drawing_def, {
             'file_name' => file_name,
@@ -830,11 +804,11 @@ module Ladb::OpenCutList
             'anchor' => anchor,
             'smoothing' => smoothing,
             'merge_holes' => merge_holes,
-            'parts_stroke_color' => write2d_options['parts_stroke_color'],
-            'parts_fill_color' => write2d_options['parts_fill_color'],
-            'parts_holes_fill_color' => write2d_options['parts_holes_fill_color'],
-            'parts_holes_stroke_color' => write2d_options['parts_holes_stroke_color'],
-            'edges_stroke_color' => write2d_options['edges_stroke_color']
+            'parts_stroke_color' => parts_stroke_color,
+            'parts_fill_color' => parts_fill_color,
+            'parts_holes_fill_color' => parts_holes_fill_color,
+            'parts_holes_stroke_color' => parts_holes_stroke_color,
+            'edges_stroke_color' => edges_stroke_color
           })
           response = worker.run
 
@@ -863,30 +837,19 @@ module Ladb::OpenCutList
           end
 
           file_name = 'FACE'
-          file_format = nil
-          if fetch_action_option_enabled(ACTION_EXPORT_FACE, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
-            file_format = FILE_FORMAT_DXF
-          elsif fetch_action_option_enabled(ACTION_EXPORT_FACE, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_SVG)
-            file_format = FILE_FORMAT_SVG
-          end
-          unit = nil
-          if fetch_action_option_enabled(ACTION_EXPORT_FACE, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_IN)
-            unit = DimensionUtils::INCHES
-          elsif fetch_action_option_enabled(ACTION_EXPORT_FACE, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_MM)
-            unit = DimensionUtils::MILLIMETER
-          elsif fetch_action_option_enabled(ACTION_EXPORT_FACE, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_CM)
-            unit = DimensionUtils::CENTIMETER
-          end
-          smoothing = fetch_action_option_enabled(ACTION_EXPORT_FACE, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
-          write2d_options = Plugin.instance.get_model_preset('cutlist_write2d_options')
+          file_format = fetch_action_option_value(ACTION_EXPORT_FACE, ACTION_OPTION_FILE_FORMAT)
+          unit = fetch_action_option_value(ACTION_EXPORT_FACE, ACTION_OPTION_UNIT)
+          smoothing = fetch_action_option_value(ACTION_EXPORT_FACE, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
+          parts_stroke_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_stroke_color')
+          parts_fill_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_fill_color')
 
           worker = CommonWriteDrawing2dWorker.new(@active_drawing_def, {
             'file_name' => file_name,
             'file_format' => file_format,
             'unit' => unit,
             'smoothing' => smoothing,
-            'parts_stroke_color' => write2d_options['parts_stroke_color'],
-            'parts_fill_color' => write2d_options['parts_fill_color']
+            'parts_stroke_color' => parts_stroke_color,
+            'parts_fill_color' => parts_fill_color
           })
           response = worker.run
 
@@ -915,29 +878,17 @@ module Ladb::OpenCutList
           end
 
           file_name = 'EDGES'
-          file_format = nil
-          if fetch_action_option_enabled(ACTION_EXPORT_EDGES, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
-            file_format = FILE_FORMAT_DXF
-          elsif fetch_action_option_enabled(ACTION_EXPORT_EDGES, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_SVG)
-            file_format = FILE_FORMAT_SVG
-          end
-          unit = nil
-          if fetch_action_option_enabled(ACTION_EXPORT_EDGES, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_IN)
-            unit = DimensionUtils::INCHES
-          elsif fetch_action_option_enabled(ACTION_EXPORT_EDGES, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_MM)
-            unit = DimensionUtils::MILLIMETER
-          elsif fetch_action_option_enabled(ACTION_EXPORT_EDGES, ACTION_OPTION_UNIT, ACTION_OPTION_UNIT_CM)
-            unit = DimensionUtils::CENTIMETER
-          end
-          smoothing = fetch_action_option_enabled(ACTION_EXPORT_EDGES, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
-          write2d_options = Plugin.instance.get_model_preset('cutlist_write2d_options')
+          file_format = fetch_action_option_value(ACTION_EXPORT_EDGES, ACTION_OPTION_FILE_FORMAT)
+          unit = fetch_action_option_value(ACTION_EXPORT_EDGES, ACTION_OPTION_UNIT)
+          smoothing = fetch_action_option_value(ACTION_EXPORT_EDGES, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
+          edges_stroke_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'edges_stroke_color')
 
           worker = CommonWriteDrawing2dWorker.new(@active_drawing_def, {
             'file_name' => file_name,
             'file_format' => file_format,
             'unit' => unit,
             'smoothing' => smoothing,
-            'edges_stroke_color' => write2d_options['edges_stroke_color']
+            'edges_stroke_color' => edges_stroke_color
           })
           response = worker.run
 

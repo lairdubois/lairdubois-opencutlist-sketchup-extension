@@ -1581,16 +1581,16 @@ tool:
     action_3_status: Cliquez sur une face pour prélever un échantillon de la matière
     action_4: Nettoyer
     action_4_status: Cliquez sur une pièce pour supprimer toutes les matières de sa définition et de toutes ses instances
-    action_option_group_0: Nombre d'instances
-    action_option_group_1: Nombre de chants
-    action_option_group_2: Nombre de faces
-    action_option_0_0_status: Colorier seulement l'instance de la pièce ciblée
-    action_option_0_1_status: Colorier toutes les instances de la pièce ciblée
-    action_option_1_0_status: Colorier seulement le chant ciblé
-    action_option_1_1_status: Colorier le chant ciblé et le chant opposé de la pièce
-    action_option_1_2_status: Colorier les 4 chants de la pièce ciblée
-    action_option_2_0_status: Colorier seulement la face ciblée
-    action_option_2_1_status: Colorier les 2 faces de la pièce ciblée
+    action_option_group_instances: Nombre d'instances
+    action_option_group_edges: Nombre de chants
+    action_option_group_faces: Nombre de faces
+    action_option_instances_0_status: Colorier seulement l'instance de la pièce ciblée
+    action_option_instances_1_status: Colorier toutes les instances de la pièce ciblée
+    action_option_edges_0_status: Colorier seulement le chant ciblé
+    action_option_edges_1_status: Colorier le chant ciblé et le chant opposé de la pièce
+    action_option_edges_2_status: Colorier les 4 chants de la pièce ciblée
+    action_option_faces_0_status: Colorier seulement la face ciblée
+    action_option_faces_1_status: Colorier les 2 faces de la pièce ciblée
     edges: "{{ count }} chant"
     edges_plural: "{{ count }} chants"
     edge_ymin: Longueur 1
@@ -1619,13 +1619,13 @@ tool:
     action_2_status: Cliquez sur une pièce pour permuter la lecture de sa Face avec sa Contre-face
     action_3: Adapter les axes
     action_3_status: Cliquez sur la face ou une arête d'une pièce pour y adapter ses axes
-    action_option_group_0: Direction
-    action_option_0_0: Lo
-    action_option_0_1: La
-    action_option_0_2: Ep
-    action_option_0_0_status: Retourner la pièce dans sa longueur
-    action_option_0_1_status: Retourner la pièce dans sa largeur
-    action_option_0_2_status: Retourner la pièce dans son épaisseur
+    action_option_group_direction: Direction
+    action_option_direction_0: Lo
+    action_option_direction_1: La
+    action_option_direction_2: Ep
+    action_option_direction_0_status: Retourner la pièce dans sa longueur
+    action_option_direction_1_status: Retourner la pièce dans sa largeur
+    action_option_direction_2_status: Retourner la pièce dans son épaisseur
     warning:
       more_entities: "{{ count_used }} instances partageant la même définition seront modifiées"
     error:
@@ -1641,25 +1641,25 @@ tool:
     action_2_status: Cliquez sur une face
     action_3: Exporter un tracé
     action_3_status: Cliquez sur une arête
-    action_option_group_0: Format
-    action_option_group_1: Unité
-    action_option_group_2: Faces
-    action_option_group_3: Options
-    action_option_0_0_status: Exporter vers un fichier DXF
-    action_option_0_1_status: Exporter vers un fichier STL
-    action_option_0_2_status: Exporter vers un fichier OBJ
-    action_option_0_3_status: Exporter vers un fichier SVG
-    action_option_1_0_status: $t(default.unit_0)
-    action_option_1_1_status: $t(default.unit_1)
-    action_option_1_2_status: $t(default.unit_2)
-    action_option_1_3_status: $t(default.unit_3)
-    action_option_1_4_status: $t(default.unit_4)
-    action_option_2_0_status: Utiliser uniquement la face ciblée
-    action_option_2_1_status: Utiliser toutes les faces de la pièce
-    action_option_3_0_status: Projeter l'origine de la pièce
-    action_option_3_1_status: Détecter les cercles et arcs (Expérimental)
-    action_option_3_2_status: Isoler les trous traversants et fusionner les profondeurs pour chaque cavité
-    action_option_3_3_status: Exporter comme guides les arêtes flottantes et coplanaires à la face ciblée contenues dans la pièce
+    action_option_group_file_format: Format
+    action_option_group_unit: Unité
+    action_option_group_faces: Faces
+    action_option_group_options: Options
+    action_option_file_format_dxf_status: Exporter vers un fichier DXF
+    action_option_file_format_stl_status: Exporter vers un fichier STL
+    action_option_file_format_obj_status: Exporter vers un fichier OBJ
+    action_option_file_format_svg_status: Exporter vers un fichier SVG
+    action_option_unit_0_status: $t(default.unit_0)
+    action_option_unit_1_status: $t(default.unit_1)
+    action_option_unit_2_status: $t(default.unit_2)
+    action_option_unit_3_status: $t(default.unit_3)
+    action_option_unit_4_status: $t(default.unit_4)
+    action_option_faces_0_status: Utiliser uniquement la face ciblée
+    action_option_faces_1_status: Utiliser toutes les faces de la pièce
+    action_option_options_anchor_status: Projeter l'origine de la pièce
+    action_option_options_smoothing_status: Détecter les cercles et arcs (Expérimental)
+    action_option_options_merge_holes_status: Isoler les trous traversants et fusionner les profondeurs pour chaque cavité
+    action_option_options_guides_status: Exporter comme guides les arêtes flottantes et coplanaires à la face ciblée contenues dans la pièce
     error:
       not_part: Cette face ne fait pas partie d'une pièce (composant)
       not_flat_face: Cette surface n'est pas plane

@@ -1,15 +1,11 @@
 {
   "action_0": {  /* ACTION_OPTION_INSTANCES */
-    "0_0": true,    /* ACTION_OPTION_INSTANCES_1 */
-    "0_1": false   /* ACTION_OPTION_INSTANCES_ALL */
+    "instances": 0 /* ACTION_OPTION_INSTANCES_ONE */
   },
   "action_1": {  /* ACTION_OPTION_EDGES */
-    "1_0": true,    /* ACTION_OPTION_EDGES_1 */
-    "1_1": false,   /* ACTION_OPTION_EDGES_2 */
-    "1_2": false   /* ACTION_OPTION_EDGES_4 */
+    "edges": 0 /* ACTION_OPTION_EDGES_ONE */
   },
   "action_2": {  /* ACTION_OPTION_FACES */
-    "2_0": true,    /* ACTION_OPTION_FACES_1 */
-    "2_1": false   /* ACTION_OPTION_FACES_2 */
+    "faces": 0 /* ACTION_OPTION_FACES_ONE */
   }
 }

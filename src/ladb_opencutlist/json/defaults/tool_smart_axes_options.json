@@ -1,7 +1,5 @@
 {
   "action_0": {  /* ACTION_OPTION_DIRECTION */
-    "0_0": false,   /* ACTION_OPTION_DIRECTION_LENGTH */
-    "0_1": false,   /* ACTION_OPTION_DIRECTION_WIDTH */
-    "0_2": true   /* ACTION_OPTION_DIRECTION_THICKNESS */
+    "direction": 0 /* ACTION_OPTION_DIRECTION_LENGTH */
   }
 }

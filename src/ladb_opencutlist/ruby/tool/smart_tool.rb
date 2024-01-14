@@ -202,16 +202,15 @@ module Ladb::OpenCutList
                       until b.nil? do
                         if b.is_a?(Kuix::Button) && b.data[:option_group] == option_group
                           b.selected = false
-                          store_action_option_enabled(action, option_group, b.data[:option], false)
                         end
                         b = b.next
                       end
                       button.selected = true
-                      store_action_option_enabled(action, option_group, option, true)
+                      store_action_option_value(action, option_group, option)
                       set_root_action(fetch_action)
                     else
                       button.selected = !button.selected?
-                      store_action_option_enabled(action, option_group, option, button.selected?)
+                      store_action_option_value(action, option_group, option, button.selected?)
                     end
                   }
                   btn.on(:enter) { |button|
@@ -679,16 +678,33 @@ module Ladb::OpenCutList
       # Implemented in derived class : @@action
     end
 
-    def store_action_option_enabled(action, option_group, option, enabled)
+    def store_action_option_value(action, option_group, option, value = nil)
       dictionary = "tool_smart_#{get_stripped_name}_options"
-      preset = Plugin.instance.get_global_preset(dictionary, nil, "action_#{action}")
-      preset.store("#{option_group}_#{option}", enabled)
-      Plugin.instance.set_global_preset(dictionary, preset, nil, "action_#{action}")
+      section = "action_#{action}"
+      preset = Plugin.instance.get_global_preset(dictionary, nil, section)
+      if get_action_option_group_unique?(action, option_group)
+        preset.store(option_group.to_s, option)
+      else
+        preset.store(option.to_s, value)
+      end
+      Plugin.instance.set_global_preset(dictionary, preset, nil, section)
+    end
+
+    def fetch_action_option_value(action, option_group, option = nil)
+      dictionary = "tool_smart_#{get_stripped_name}_options"
+      section = "action_#{action}"
+      preset = Plugin.instance.get_global_preset(dictionary, nil, section)
+      return nil if preset.nil?
+      return preset.fetch(option_group.to_s, nil) if get_action_option_group_unique?(action, option_group)
+      return preset.fetch(option.to_s, nil) unless option.nil?
+      nil
     end
 
     def fetch_action_option_enabled(action, option_group, option)
-      preset = Plugin.instance.get_global_preset("tool_smart_#{get_stripped_name}_options", nil, "action_#{action}")
-      return preset.fetch("#{option_group}_#{option}", false) unless preset.nil?
+      value = fetch_action_option_value(action, option_group, option)
+      return false if value.nil?
+      return option == value if get_action_option_group_unique?(action, option_group)
+      return value if value.is_a?(TrueClass)
       false
     end
 
