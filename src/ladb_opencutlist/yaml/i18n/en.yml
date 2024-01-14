@@ -92,12 +92,12 @@ core:
       smart_axes: Orient Parts
       smart_export: Export Parts
   messagebox:
-      dir_override: |
-        « {{ target }} » already exists. Would you like to replace it?
+    dir_override: |
+      « {{ target }} » already exists. Would you like to replace it?
 
-        A folder with the same name is already present in the folder {{ parent }}. If you replace it, the original content will be lost.
+      A folder with the same name is already present in the folder {{ parent }}. If you replace it, the original content will be lost.
   savepanel:
-    export_to_file: Export to {{ file_format }} file
+    export_to_file: "Export to {{ file_format }} file"
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
@@ -602,10 +602,10 @@ tab:
       count: Quantity
       part_count: Parts quantity
       material_type: Type
-      material_thickness: Material / Thickness
       material_name: Material
       material_description: Material description
       material_url: URL of the material
+      material_std_dimension: Standard dimensions
       entity_names: Instance names
       description: Description
       url: URL
@@ -853,13 +853,13 @@ tab:
         option_sheet_veneer_help: |
           Select whether the veneer is drawn, and select its color.
         option_bar_dimensional: Dimensional
-        option_bar_dimensional_help: |
+        option_bar_dimensional_help:  |
           Select whether the dimensional is drawn, and select its color.
         option_bar_band: Edge
         option_bar_band_help:  |
           Select whether the edge is drawn, and select its color.
         option_parts: Parts
-        option_parts_help: |
+        option_parts_help:  |
           Select whether or not parts are drawn, and select their color.
         option_parts_holes: Drillings
         option_parts_holes_help:  |
@@ -868,10 +868,10 @@ tab:
         option_texts_help:  |
           Select whether or not identifier labels are drawn, and select their color.
         option_leftovers: Leftovers
-        option_leftovers_help: |
+        option_leftovers_help:  |
           Select whether leftovers are drawn, and select their color.
         option_cuts: Cuts
-        option_cuts_help: |
+        option_cuts_help:  |
           Select whether cuts are drawn, and select their color.
         option_stroke_color: Stroke color
         option_fill_color: Fill color
@@ -1078,7 +1078,7 @@ tab:
         Enable the projection of the part's axis origin as anchor point.
       option_smoothing: Smoothing
       option_smoothing_0: None
-      option_smoothing_1: Smooth circles and arcs *(Experimental)*
+      option_smoothing_1: Smooth circles and arcs *(Experimental)*.
       option_smoothing_help: |
         Select whether circles and arcs should be detected.
 
@@ -1292,7 +1292,7 @@ tab:
       url: URL
       layer_name: Tag
       explode: Explode
-      explode_message: Do you confirm the explosion of instance **{{ name }}**?
+      explode_message: "Do you confirm the explosion of instance **{{ name }}**?"
     error:
       no_model: No model is open. You will need to give me more information ;)
       no_entities: Your model is empty!

@@ -7,7 +7,7 @@ default:
   minimize: Minimieren
   maximize: Maximieren
   cancel: Abbrechen
-  validate: OK
+  validate: Validieren
   confirm: Bestätigen
   ok: Ok
   open: Öffnen
@@ -30,15 +30,15 @@ default:
   download: Herunterladen
   upgrade: Aktualisieren
   copy: Kopieren
-  select_all: Alles selektieren
-  unselect_all: Nichts selektieren
+  select_all: Alles auswählen
+  unselect_all: Nichts auswählen
   draw: Zeichnen
   estimate: Schätzen
   empty_filename: Unbenannt.skp
   help: Hilfe
   error: Verflixt!
   warning: Achtung
-  tip: Hinweis
+  tip: Tipp
   good: Gut
   bad: Schlecht
   by: von
@@ -97,7 +97,7 @@ core:
 
       Ein Verzeichnis mit diesem Namen befindet sich schon im Verzeichnis {{ parent }}. Wenn Sie ihn ersetzen, geht der ursprüngliche Inhalt verloren.
   savepanel:
-    export_to_file: In {{ file_format }} Datei exportieren
+    export_to_file: "In {{ file_format }} Datei exportieren"
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
@@ -602,10 +602,10 @@ tab:
       count: Anzahl
       part_count: Anzahl der Teile
       material_type: Typ
-      material_thickness: Material / Dicke
       material_name: Material
       material_description: Materialbeschreibung
       material_url: URL des Materials
+      material_std_dimension: Standarddimensionen
       entity_names: Instanzbezeichnungen
       description: Beschreibung
       url: URL
@@ -744,7 +744,7 @@ tab:
       option_stacking_2: Der Breite nach
       option_stacking_3: Alle Möglichkeiten
       option_keep: Mindestgröße der Reste
-      option_keep_help: Reste, die größer als die Mindestlänge und -breite sind, werden mit **zur Aufbewahrung** gekennzeichnet.
+      option_keep_help: "Reste, die größer als die Mindestlänge und -breite sind, werden mit **zur Aufbewahrung** gekennzeichnet."
       option_std_bar_dimensional: Standard-Stange
       option_std_bar_edge: Standard-Kantenband
       option_std_bar_help: |
@@ -825,9 +825,9 @@ tab:
       export:
         title: Schnittplan exportieren
         info_0: |
-           Mit diesem Modul können Sie die **Geometrie** des *Schnittplans* als Datei im Format [SVG](https://de.wikipedia.org/wiki/Scalable_Vector_Graphics) oder [DXF](https://de.wikipedia.org/wiki/DXF) exportieren.
-        options_general: $t(tab.cutlist.write.option_file_format)
+          Mit diesem Modul können Sie die **Geometrie** des *Schnittplans* als Datei im Format [SVG](https://de.wikipedia.org/wiki/Scalable_Vector_Graphics) oder [DXF](https://de.wikipedia.org/wiki/DXF) exportieren.
         option_file_format: $t(tab.cutlist.write.option_file_format_help)
+        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
         option_dxf_structure: DXF Struktur
         option_dxf_structure_1: Layers
         option_dxf_structure_2: Layers + Blöcke
@@ -853,13 +853,13 @@ tab:
         option_sheet_veneer_help: |
           Auswahl, ob die Furniere gezeichnet werden sollen und ihre Farbe.
         option_bar_dimensional: Stange
-        option_bar_dimensional_help: |
+        option_bar_dimensional_help:  |
           Auswahl, ob die Stange gezeichnet werden soll und ihre Farbe.
         option_bar_band: Kante
         option_bar_band_help:  |
           Auswahl, ob die Kanten gezeichnet werden sollen und ihre Farbe.
         option_parts: Teile
-        option_parts_help: |
+        option_parts_help:  |
           Auswahl, ob die Teile gezeichnet werden sollen und ihre Farbe.
         option_parts_holes: Bohrungen
         option_parts_holes_help:  |
@@ -868,10 +868,10 @@ tab:
         option_texts_help:  |
           Auswahl, ob die Bezeicher gezeichnet werden sollen und ihre Farbe.
         option_leftovers: Verschnitte
-        option_leftovers_help: |
+        option_leftovers_help:  |
           Auswahl, ob die Verschnitte gezeichnet werden sollen und ihre Farbe.
         option_cuts: Schnitte
-        option_cuts_help: |
+        option_cuts_help:  |
           Auswahl, ob die Schnitte gezeichnet werden sollen und ihre Farbe.
         option_stroke_color: Strichfarbe
         option_fill_color: Füllfarbe
@@ -1078,7 +1078,7 @@ tab:
         Aktivierung der Projektion des Achsenursprungs des Teils als Ankerpunkt.
       option_smoothing: Glättung
       option_smoothing_0: Keine
-      option_smoothing_1: Glättung von Kreisen und Bögen *(Experimentell)*
+      option_smoothing_1: Glättung von Kreisen und Bögen *(Experimentell)*.
       option_smoothing_help: |
         Auswahl des Glättungsmodus.
 
@@ -1087,7 +1087,7 @@ tab:
       option_merge_holes_0: Standard
       option_merge_holes_1: Umrisse + Bohrungen + Vereinigung
       option_merge_holes_help: |
-          Ermöglicht es, die Trennung der Außenkontur von Teilen von ihren Bohrungen sowie die Vereinigung der Tiefen für jeden Hohlraum zu aktivieren.
+        Ermöglicht es, die Trennung der Außenkontur von Teilen von ihren Bohrungen sowie die Vereinigung der Tiefen für jeden Hohlraum zu aktivieren.
       option_parts: Teile
       option_parts_help:  |
         Auswahl der Farbe der Teile.
@@ -1099,7 +1099,7 @@ tab:
       error:
         no_part: Kein Teil zum Exportieren.
       warning:
-        is_group_selection: Teile, die in den **versteckten Gruppen** der Teileliste enthalten sind, werden nicht exportiert.
+        is_group_selection: "Teile, die in den **versteckten Gruppen** der Teileliste enthalten sind, werden nicht exportiert."
         is_part_selection: Der Export beschränkt sich auf die **ausgewählten Teile**.
     snippet:
       hello: Hallo
@@ -1292,7 +1292,7 @@ tab:
       url: URL
       layer_name: Tag
       explode: Explodieren
-      explode_message: Bestätigen Sie die Explosion der Instanz **{{ name }}**?
+      explode_message: "Bestätigen Sie die Explosion der Instanz **{{ name }}**?"
     error:
       no_model: Kein Modell ist offen. Sie müssen mir mehr Information geben ;)
       no_entities: Ihr Modell ist leer!
