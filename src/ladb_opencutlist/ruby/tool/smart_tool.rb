@@ -200,7 +200,7 @@ module Ladb::OpenCutList
                     if get_action_option_group_unique?(action, option_group)
                       b = button.parent.child
                       until b.nil? do
-                        if b.is_a?(Kuix::Button) && b.data[:option_group] == option_group
+                        if b.is_a?(Kuix::Button)&& !b.data.nil? && b.data[:option_group] == option_group
                           b.selected = false
                         end
                         b = b.next
@@ -239,6 +239,29 @@ module Ladb::OpenCutList
                     end
 
                 end
+
+              end
+
+              if get_action_options_modal?(action)
+
+                btn = Kuix::Button.new
+                btn.layout = Kuix::GridLayout.new
+                btn.set_style_attribute(:background_color, Sketchup::Color.new(240, 240, 240))
+                btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
+                btn.set_style_attribute(:background_color, COLOR_BRAND, :active)
+                btn.set_style_attribute(:border_color, COLOR_BRAND, :hover)
+                btn.border.set_all!(unit * 0.5)
+                btn.on(:click) { |button|
+                  Plugin.instance.show_modal_dialog("smart_#{get_stripped_name}_tool_action_#{action}", { :action => action })
+                }
+                actions_options_panel.append(btn)
+
+                  child = Kuix::Label.new("#{Plugin.instance.get_i18n_string('tool.default.more')}...")
+                  child.text_size = unit * 3 * get_text_unit_factor
+                  child.padding.set!(unit, unit * 2, unit, unit * 2)
+                  child.set_style_attribute(:color, Kuix::COLOR_BLACK)
+                  child.set_style_attribute(:color, Kuix::COLOR_WHITE, :active)
+                  btn.append(child)
 
               end
 
@@ -662,6 +685,10 @@ module Ladb::OpenCutList
       @cursor_select_error
     end
 
+    def get_action_options_modal?(action)
+      false
+    end
+
     def get_action_option_group_unique?(action, option_group)
       false
     end
@@ -713,6 +740,9 @@ module Ladb::OpenCutList
     end
 
     def set_action(action)
+
+      # Hide possible modal
+      Plugin.instance.hide_modal_dialog
 
       # Store settings in class variable
       store_action(action)
@@ -847,6 +877,24 @@ module Ladb::OpenCutList
       # Observe rendering options events
       view.model.rendering_options.add_observer(self)
 
+      # Add event callbacks
+      @event_callback = Plugin.instance.add_event_callback(PluginObserver::ON_GLOBAL_PRESET_CHANGED) do |params|
+        if params[:dictionary] == "tool_smart_#{get_stripped_name}_options" && params[:section] == "action_#{fetch_action}"
+          @actions_options_panels.each do |actions_options_panel|
+
+            action = actions_options_panel.data[:action]
+            b = actions_options_panel.child
+            until b.nil? do
+              if b.is_a?(Kuix::Button) && !b.data.nil?
+                b.selected = fetch_action_option_enabled(action, b.data[:option_group], b.data[:option])
+              end
+              b = b.next
+            end
+
+          end
+        end
+      end
+
     end
 
     def onDeactivate(view)
@@ -854,6 +902,12 @@ module Ladb::OpenCutList
 
       # Stop observing rendering options events
       view.model.rendering_options.remove_observer(self)
+
+      # Hide possible modal
+      Plugin.instance.hide_modal_dialog
+
+      # Remove event callbacks
+      Plugin.instance.remove_event_callback(PluginObserver::ON_GLOBAL_PRESET_CHANGED, @event_callback)
 
     end
 

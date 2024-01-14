@@ -7,7 +7,6 @@ var commandId = 0;
 var commandCallbacks = {};
 var commandCallStack = [];
 var commandRunning = false;
-var maxCommandCallLength = Number.MAX_SAFE_INTEGER;
 
 function rubyCallCommand(command, params, callback) {
     var call = {
@@ -42,6 +41,32 @@ function shiftCommandCallStack() {
             window.location.href = "skp:ladb_opencutlist_command@" + encoded_call_json;
         }
     }
+}
+
+function setDialogContext(type, encodedParams) {
+
+    console.log('HOHO');
+    console.log(encodedParams);
+
+    var params = encodedParams ? JSON.parse(Base64.decode(encodedParams)) : {};
+    var webglAvailable;
+    try {
+        var canvas = document.createElement('canvas');
+        var context = canvas.getContext('webgl');
+        webglAvailable = context && context instanceof WebGLRenderingContext;
+    } catch (e) {
+        webglAvailable = false;
+    }
+
+    rubyCallCommand('core_dialog_loaded', {
+        dialog_type: type,
+        dialog_params: params,
+        webgl_available: webglAvailable
+    }, function (response) {
+        $('body')['ladbDialog' + type.capitalize()](response);
+        rubyCallCommand('core_dialog_ready');
+    });
+
 }
 
 // -- Events
@@ -100,19 +125,5 @@ function triggerEvent(event, encodedParams) {
 // Ready !
 
 $(document).ready(function () {
-
-    var webglAvailable;
-    try {
-        var canvas = document.createElement('canvas');
-        var context = canvas.getContext('webgl');
-        webglAvailable = context && context instanceof WebGLRenderingContext;
-    } catch (e) {
-        webglAvailable = false;
-    }
-
-    rubyCallCommand('core_dialog_loaded', { webgl_available: webglAvailable }, function (response) {
-        $('body').ladbDialog(response);
-        rubyCallCommand('core_dialog_ready');
-    });
-
+    window.location.href = "skp:ladb_opencutlist_setup_dialog_context";
 });

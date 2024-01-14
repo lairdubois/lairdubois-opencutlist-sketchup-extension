@@ -9,13 +9,13 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbTabNews = function (element, options, opencutlist) {
-        LadbAbstractTab.call(this, element, options, opencutlist);
+    var LadbTabNews = function (element, options, dialog) {
+        LadbAbstractTab.call(this, element, options, dialog);
 
         this.$page = $('.ladb-page', this.$element);
 
     };
-    LadbTabNews.prototype = new LadbAbstractTab;
+    LadbTabNews.prototype = Object.create(LadbAbstractTab.prototype);
 
     LadbTabNews.DEFAULTS = {};
 

@@ -4,8 +4,8 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbTabImporter = function (element, options, opencutlist) {
-        LadbAbstractTab.call(this, element, options, opencutlist);
+    var LadbTabImporter = function (element, options, dialog) {
+        LadbAbstractTab.call(this, element, options, dialog);
 
         this.loadOptions = null;
         this.importablePartCount = 0;
@@ -20,7 +20,7 @@
         this.$page = $('.ladb-page', this.$element);
 
     };
-    LadbTabImporter.prototype = new LadbAbstractTab;
+    LadbTabImporter.prototype = Object.create(LadbAbstractTab.prototype);
 
     LadbTabImporter.DEFAULTS = {};
 

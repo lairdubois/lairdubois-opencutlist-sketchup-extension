@@ -4,6 +4,32 @@
 
 .modal {
 
+  &.modal-full {
+    display: block;
+
+    > .modal-dialog {
+      margin: 0;
+      height: 100%;
+      width: 100%;
+
+      > .modal-content {
+        border: none;
+        height: 100%;
+        box-shadow: none;
+        display: flex;
+        flex-direction: column;
+
+        > .modal-body {
+          flex-grow: 1;
+          overflow-y: scroll;
+        }
+
+      }
+
+    }
+
+  }
+
   .modal-header {
     background-color: #f9f9f9;
 

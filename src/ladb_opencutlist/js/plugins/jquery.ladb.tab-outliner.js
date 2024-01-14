@@ -4,8 +4,8 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbTabOutliner = function (element, options, opencutlist) {
-        LadbAbstractTab.call(this, element, options, opencutlist);
+    var LadbTabOutliner = function (element, options, dialog) {
+        LadbAbstractTab.call(this, element, options, dialog);
 
         this.editedNode = null;
         this.ignoreNextSelectionEvents = false;
@@ -18,7 +18,7 @@
         this.$page = $('.ladb-page', this.$element);
 
     };
-    LadbTabOutliner.prototype = new LadbAbstractTab;
+    LadbTabOutliner.prototype = Object.create(LadbAbstractTab.prototype);
 
     LadbTabOutliner.DEFAULTS = {};
 

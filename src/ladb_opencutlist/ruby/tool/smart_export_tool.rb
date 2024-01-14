@@ -12,12 +12,9 @@ module Ladb::OpenCutList
   require_relative '../worker/common/common_write_drawing3d_worker'
   require_relative '../worker/common/common_drawing_decomposition_worker'
   require_relative '../worker/common/common_drawing_projection_worker'
-
-  require 'benchmark'
+  require_relative '../observer/plugin_observer'
 
   class SmartExportTool < SmartTool
-
-    include Benchmark
 
     include LayerVisibilityHelper
     include EdgeSegmentsHelper
@@ -38,12 +35,6 @@ module Ladb::OpenCutList
     ACTION_OPTION_FILE_FORMAT_OBJ = FILE_FORMAT_OBJ
     ACTION_OPTION_FILE_FORMAT_SVG = FILE_FORMAT_SVG
 
-    ACTION_OPTION_UNIT_IN = DimensionUtils::INCHES
-    ACTION_OPTION_UNIT_FT = DimensionUtils::FEET
-    ACTION_OPTION_UNIT_MM = DimensionUtils::MILLIMETER
-    ACTION_OPTION_UNIT_CM = DimensionUtils::CENTIMETER
-    ACTION_OPTION_UNIT_M = DimensionUtils::METER
-
     ACTION_OPTION_FACES_ONE = 0
     ACTION_OPTION_FACES_ALL = 1
 
@@ -57,7 +48,6 @@ module Ladb::OpenCutList
         :action => ACTION_EXPORT_PART_3D,
         :options => {
           ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_STL, ACTION_OPTION_FILE_FORMAT_OBJ ],
-          ACTION_OPTION_UNIT => [ ACTION_OPTION_UNIT_MM, ACTION_OPTION_UNIT_CM, ACTION_OPTION_UNIT_M, ACTION_OPTION_UNIT_IN, ACTION_OPTION_UNIT_FT ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_ANCHOR ]
         }
       },
@@ -65,7 +55,6 @@ module Ladb::OpenCutList
         :action => ACTION_EXPORT_PART_2D,
         :options => {
           ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_SVG, ACTION_OPTION_FILE_FORMAT_DXF ],
-          ACTION_OPTION_UNIT => [ ACTION_OPTION_UNIT_MM, ACTION_OPTION_UNIT_CM, ACTION_OPTION_UNIT_IN ],
           ACTION_OPTION_FACES => [ ACTION_OPTION_FACES_ONE, ACTION_OPTION_FACES_ALL ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_ANCHOR, ACTION_OPTION_OPTIONS_SMOOTHING, ACTION_OPTION_OPTIONS_MERGE_HOLES, ACTION_OPTION_OPTIONS_GUIDES ]
         }
@@ -74,7 +63,6 @@ module Ladb::OpenCutList
         :action => ACTION_EXPORT_FACE,
         :options => {
           ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_SVG, ACTION_OPTION_FILE_FORMAT_DXF ],
-          ACTION_OPTION_UNIT => [ ACTION_OPTION_UNIT_MM, ACTION_OPTION_UNIT_CM, ACTION_OPTION_UNIT_IN ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_SMOOTHING ]
         }
       },
@@ -82,7 +70,6 @@ module Ladb::OpenCutList
       #   :action => ACTION_EXPORT_EDGES,
       #   :options => {
       #     ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_SVG, ACTION_OPTION_FILE_FORMAT_DXF ],
-      #     ACTION_OPTION_UNIT => [ ACTION_OPTION_UNIT_MM, ACTION_OPTION_UNIT_CM, ACTION_OPTION_UNIT_IN ],
       #   }
       # }
     ].freeze
@@ -110,10 +97,6 @@ module Ladb::OpenCutList
 
     def get_stripped_name
       'export'
-    end
-
-    def setup_entities(view)
-      super
     end
 
     # -- Actions --
@@ -156,6 +139,16 @@ module Ladb::OpenCutList
       super
     end
 
+    def get_action_options_modal?(action)
+
+      case action
+      when ACTION_EXPORT_PART_3D, ACTION_EXPORT_PART_2D, ACTION_EXPORT_FACE
+        return true
+      end
+
+      super
+    end
+
     def get_action_option_group_unique?(action, option_group)
 
       case option_group
@@ -179,19 +172,6 @@ module Ladb::OpenCutList
           return Kuix::Label.new('DXF')
         when ACTION_OPTION_FILE_FORMAT_SVG
           return Kuix::Label.new('SVG')
-        end
-      when ACTION_OPTION_UNIT
-        case option
-        when ACTION_OPTION_UNIT_IN
-          return Kuix::Label.new(DimensionUtils::UNIT_STRIPPEDNAME_INCHES)
-        when ACTION_OPTION_UNIT_FT
-          return Kuix::Label.new(DimensionUtils::UNIT_STRIPPEDNAME_FEET)
-        when ACTION_OPTION_UNIT_MM
-          return Kuix::Label.new(DimensionUtils::UNIT_STRIPPEDNAME_MILLIMETER)
-        when ACTION_OPTION_UNIT_CM
-          return Kuix::Label.new(DimensionUtils::UNIT_STRIPPEDNAME_CENTIMETER)
-        when ACTION_OPTION_UNIT_M
-          return Kuix::Label.new(DimensionUtils::UNIT_STRIPPEDNAME_METER)
         end
       when ACTION_OPTION_FACES
         case option
@@ -840,8 +820,8 @@ module Ladb::OpenCutList
           file_format = fetch_action_option_value(ACTION_EXPORT_FACE, ACTION_OPTION_FILE_FORMAT)
           unit = fetch_action_option_value(ACTION_EXPORT_FACE, ACTION_OPTION_UNIT)
           smoothing = fetch_action_option_value(ACTION_EXPORT_FACE, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
-          parts_stroke_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_stroke_color')
-          parts_fill_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_fill_color')
+          parts_stroke_color = fetch_action_option_value(ACTION_EXPORT_FACE, ACTION_OPTION_OPTIONS, 'parts_stroke_color')
+          parts_fill_color = fetch_action_option_value(ACTION_EXPORT_FACE, ACTION_OPTION_OPTIONS, 'parts_fill_color')
 
           worker = CommonWriteDrawing2dWorker.new(@active_drawing_def, {
             'file_name' => file_name,

@@ -9,8 +9,8 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbTabForum = function (element, options, opencutlist) {
-        LadbAbstractTab.call(this, element, options, opencutlist);
+    var LadbTabForum = function (element, options, dialog) {
+        LadbAbstractTab.call(this, element, options, dialog);
 
         this.$btnCreateConversation = $('#ladb_btn_create_conversation', this.$element);
 
@@ -19,7 +19,7 @@
         this.conversations = {};
 
     };
-    LadbTabForum.prototype = new LadbAbstractTab;
+    LadbTabForum.prototype = Object.create(LadbAbstractTab.prototype);
 
     LadbTabForum.DEFAULTS = {};
 

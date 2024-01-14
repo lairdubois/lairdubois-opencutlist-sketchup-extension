@@ -7,6 +7,7 @@
   "action_1": {  /* ACTION_EXPORT_PART_2D */
     "file_format": "svg",
     "unit": { "metric": 2, "imperial": 0 }, /* Length::Millimeter , Length::Inches*/
+    "faces": 0, /* ACTION_OPTION_FACES_ONE */
     "anchor": false,
     "smoothing": false,
     "merge_holes": false,

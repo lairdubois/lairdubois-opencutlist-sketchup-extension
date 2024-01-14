@@ -10,8 +10,8 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbTabTutorials = function (element, options, opencutlist) {
-        LadbAbstractTab.call(this, element, options, opencutlist);
+    var LadbTabTutorials = function (element, options, dialog) {
+        LadbAbstractTab.call(this, element, options, dialog);
 
         this.$btnSubmit = $('#ladb_btn_submit', this.$element);
 
@@ -20,7 +20,7 @@
         this.tutorials = null;
 
     };
-    LadbTabTutorials.prototype = new LadbAbstractTab;
+    LadbTabTutorials.prototype = Object.create(LadbAbstractTab.prototype);
 
     LadbTabTutorials.DEFAULTS = {};
 

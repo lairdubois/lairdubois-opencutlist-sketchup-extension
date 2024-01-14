@@ -725,7 +725,7 @@ module Ladb::OpenCutList
     # -----
 
     def add_event_callback(event, &block)
-      if event.is_a? Array
+      if event.is_a?(Array)
         events = event
       else
         events = [ event ]
@@ -735,6 +735,19 @@ module Ladb::OpenCutList
           @event_callbacks[e] = []
         end
         @event_callbacks[e].push(block)
+      end
+      block
+    end
+
+    def remove_event_callback(event, block)
+      if event.is_a?(Array)
+        events = event
+      else
+        events = [ event ]
+      end
+      events.each do |e|
+        next unless @event_callbacks.has_key?(e)
+        @event_callbacks[e].delete(block)
       end
     end
 
@@ -968,6 +981,9 @@ module Ladb::OpenCutList
         register_command('core_dialog_hide') do |params|
           dialog_hide_command
         end
+        register_command('core_modal_dialog_hide') do |params|
+          modal_dialog_hide_command
+        end
         register_command('core_open_external_file') do |params|
           open_external_file_command(params)
         end
@@ -1037,11 +1053,10 @@ module Ladb::OpenCutList
       # Setup dialog page
       @dialog.set_file(File.join(root_dir, 'html', "dialog-#{language}.html"))
 
-      # Set dialog size and position
-      # dialog_set_size(DIALOG_MINIMIZED_WIDTH, DIALOG_MINIMIZED_HEIGHT)
-      # dialog_set_position(@dialog_left, @dialog_top)
-
       # Setup dialog actions
+      @dialog.add_action_callback('ladb_opencutlist_setup_dialog_context') do |action_context, call_json|
+        @dialog.execute_script("setDialogContext('tabs');")
+      end
       @dialog.add_action_callback('ladb_opencutlist_command') do |action_context, call_json|
         call = JSON.parse(call_json)
         response = execute_command(call['command'], call['params'])
@@ -1199,6 +1214,70 @@ module Ladb::OpenCutList
         end
       end
 
+    end
+
+    def create_modal_dialog(modal_name, params = nil)
+
+      @modal_dialog = UI::HtmlDialog.new(
+        {
+          :dialog_title => ' ',
+          :preferences_key => 'DIALOG_PREF_KEY',
+          :scrollable => true,
+          :resizable => true,
+          :width => 700,
+          :height => 640,
+          :style => UI::HtmlDialog::STYLE_UTILITY
+        }
+      )
+      @modal_dialog.set_on_closed {
+        @modal_dialog = nil
+      }
+
+      # Setup dialog page
+      @modal_dialog.set_file(File.join(root_dir, 'html', "dialog-#{language}.html"))
+
+      # Setup dialog actions
+      @modal_dialog.add_action_callback('ladb_opencutlist_setup_dialog_context') do |action_context, call_json|
+        @modal_dialog.execute_script("setDialogContext('modal', '#{Base64.strict_encode64(JSON.generate({ :startup_modal_name => modal_name, :params => params }))}');")
+      end
+      @modal_dialog.add_action_callback('ladb_opencutlist_command') do |action_context, call_json|
+        call = JSON.parse(call_json)
+        response = execute_command(call['command'], call['params'])
+        script = "rubyCommandCallback(#{call['id']}, '#{response.is_a?(Hash) ? Base64.strict_encode64(JSON.generate(response)) : ''}');"
+        @modal_dialog.execute_script(script) if @modal_dialog
+      end
+
+    end
+
+    def show_modal_dialog(modal_name = nil, params = nil)
+
+      unless @modal_dialog
+        create_modal_dialog(modal_name, params)
+      end
+
+      unless @modal_dialog.visible?
+
+        # Show dialog
+        @modal_dialog.show
+        @modal_dialog.center
+
+      end
+
+    end
+
+    def hide_modal_dialog
+      if @modal_dialog
+        @modal_dialog.close
+        true
+      else
+        false
+      end
+    end
+
+    def toggle_modal_dialog
+      unless hide_modal_dialog
+        show_modal_dialog
+      end
     end
 
     # -- Devtool ---
@@ -1447,7 +1526,7 @@ module Ladb::OpenCutList
 
       @webgl_available = params['webgl_available'] == true
 
-      {
+      base_capabilities = {
           :version => EXTENSION_VERSION,
           :build => EXTENSION_BUILD,
           :is_rbz => IS_RBZ,
@@ -1463,15 +1542,25 @@ module Ladb::OpenCutList
           :language => Plugin.instance.language,
           :available_languages => Plugin.instance.get_available_languages,
           :decimal_separator => DimensionUtils.instance.decimal_separator,
-          :webgl_available => @webgl_available,
-          :manifest => @manifest,
-          :update_available => @update_available,
-          :update_muted => @update_muted,
-          :last_news_timestamp => @last_news_timestamp,
-          :dialog_print_margin => @dialog_print_margin,
-          :dialog_table_row_size => @dialog_table_row_size,
-          :dialog_startup_tab_name => @dialog_startup_tab_name  # nil if none
       }
+
+      case params['dialog_type']
+      when 'tabs'
+        return base_capabilities.merge(
+          {
+            :manifest => @manifest,
+            :update_available => @update_available,
+            :update_muted => @update_muted,
+            :last_news_timestamp => @last_news_timestamp,
+            :dialog_print_margin => @dialog_print_margin,
+            :dialog_table_row_size => @dialog_table_row_size,
+            :dialog_startup_tab_name => @dialog_startup_tab_name  # nil if none
+          }
+        ).merge(params)
+      when 'modal'
+        return base_capabilities.merge(params)
+      end
+
     end
 
     def dialog_ready_command
@@ -1504,6 +1593,10 @@ module Ladb::OpenCutList
 
     def dialog_hide_command
       hide_dialog
+    end
+
+    def modal_dialog_hide_command
+      hide_modal_dialog
     end
 
     def open_external_file_command(params)    # Expected params = { path: PATH_TO_FILE }

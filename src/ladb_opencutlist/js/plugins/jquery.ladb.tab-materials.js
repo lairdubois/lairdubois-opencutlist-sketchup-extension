@@ -4,8 +4,8 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbTabMaterials = function (element, options, opencutlist) {
-        LadbAbstractTab.call(this, element, options, opencutlist);
+    var LadbTabMaterials = function (element, options, dialog) {
+        LadbAbstractTab.call(this, element, options, dialog);
 
         this.currency_symbol = '';
         this.massUnitStrippedname = '';
@@ -28,7 +28,7 @@
         this.$page = $('.ladb-page', this.$element);
 
     };
-    LadbTabMaterials.prototype = new LadbAbstractTab;
+    LadbTabMaterials.prototype = Object.create(LadbAbstractTab.prototype);
 
     LadbTabMaterials.DEFAULTS = {};
 

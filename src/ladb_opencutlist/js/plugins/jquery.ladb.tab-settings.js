@@ -4,8 +4,8 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbTabSettings = function (element, options, opencutlist) {
-        LadbAbstractTab.call(this, element, options, opencutlist);
+    var LadbTabSettings = function (element, options, dialog) {
+        LadbAbstractTab.call(this, element, options, dialog);
 
         this.initialLanguage = this.dialog.capabilities.language;
 
@@ -13,7 +13,7 @@
         this.$panelModel = $('#ladb_settings_panel_modal', this.$element);
 
     };
-    LadbTabSettings.prototype = new LadbAbstractTab;
+    LadbTabSettings.prototype = Object.create(LadbAbstractTab.prototype);
 
     LadbTabSettings.DEFAULTS = {};
 

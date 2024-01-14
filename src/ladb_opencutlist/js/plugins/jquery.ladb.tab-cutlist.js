@@ -11,8 +11,8 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbTabCutlist = function (element, options, opencutlist) {
-        LadbAbstractTab.call(this, element, options, opencutlist);
+    var LadbTabCutlist = function (element, options, dialog) {
+        LadbAbstractTab.call(this, element, options, dialog);
 
         this.generateFilters = {
           tags_filter: [],
@@ -69,7 +69,7 @@
         this.$page = $('.ladb-page', this.$element);
 
     };
-    LadbTabCutlist.prototype = new LadbAbstractTab;
+    LadbTabCutlist.prototype = Object.create(LadbAbstractTab.prototype);
 
     LadbTabCutlist.DEFAULTS = {};
 
@@ -1906,7 +1906,7 @@
 
         if (is2d) {
 
-            // Retrieve layout options
+            // Retrieve write2d options
             rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_write2d_options', section: section }, function (response) {
 
                 var write2dOptions = response.preset;
@@ -1985,7 +1985,7 @@
                 $selectSmoothing.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectMergeHoles
                     .selectpicker(SELECT_PICKER_OPTIONS)
-                    .on('change', fnUpdateFieldsVisibility)
+                    .on('changed.bs.select', fnUpdateFieldsVisibility)
                 ;
                 $inputPartsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                 $inputPartsFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
@@ -2039,7 +2039,7 @@
 
         } else {
 
-            // Retrieve layout options
+            // Retrieve write3d options
             rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_write3d_options', section: section }, function (response) {
 
                 var write3dOptions = response.preset;

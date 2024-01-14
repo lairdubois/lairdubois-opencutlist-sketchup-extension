@@ -1080,7 +1080,7 @@ tab:
         Permet d'activer la projection de l'origine des axes de la pièce comme point d'ancrage.
       option_smoothing: Lissage
       option_smoothing_0: Aucun
-      option_smoothing_1: Lisser les cercles et arcs *(Expérimental)*.
+      option_smoothing_1: Lisser les cercles et arcs *(Expérimental)*
       option_smoothing_help: |
         Permet d'activer la détection des cercles et arcs.
 
@@ -1557,6 +1557,7 @@ tool:
     transparency: Transparence
     zoom_extents: Zoom étendu
     toggle_depth: Pièces en arrière plan
+    more: Plus
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)

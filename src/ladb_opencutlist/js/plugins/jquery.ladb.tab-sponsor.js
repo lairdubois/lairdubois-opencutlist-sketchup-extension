@@ -9,14 +9,14 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbTabSponsor = function (element, options, opencutlist) {
-        LadbAbstractTab.call(this, element, options, opencutlist);
+    var LadbTabSponsor = function (element, options, dialog) {
+        LadbAbstractTab.call(this, element, options, dialog);
 
         this.$widgetObjective = $('.ladb-sponsor-objective-widget', this.$element);
         this.$widgetBackers = $('#ladb_sponsor_backers_widget', this.$element);
 
     };
-    LadbTabSponsor.prototype = new LadbAbstractTab;
+    LadbTabSponsor.prototype = Object.create(LadbAbstractTab.prototype);
 
     LadbTabSponsor.DEFAULTS = {};
 
