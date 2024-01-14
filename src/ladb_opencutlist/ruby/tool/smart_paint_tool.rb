@@ -19,11 +19,6 @@ module Ladb::OpenCutList
     ACTION_PICK = 3
     ACTION_PAINT_CLEAN = 4
 
-    ACTION_MODIFIER_1 = 0
-    ACTION_MODIFIER_2 = 1
-    ACTION_MODIFIER_4 = 2
-    ACTION_MODIFIER_ALL = 4
-
     ACTION_OPTION_INSTANCES = 0
     ACTION_OPTION_EDGES = 1
     ACTION_OPTION_FACES = 2
@@ -41,21 +36,18 @@ module Ladb::OpenCutList
     ACTIONS = [
       {
         :action => ACTION_PAINT_PARTS,
-        # :modifiers => [ ACTION_MODIFIER_1, ACTION_MODIFIER_ALL ],
         :options => {
           ACTION_OPTION_INSTANCES => [ ACTION_OPTION_INSTANCES_1, ACTION_OPTION_INSTANCES_ALL ]
         }
       },
       {
         :action => ACTION_PAINT_EDGES,
-        # :modifiers => [ ACTION_MODIFIER_1, ACTION_MODIFIER_2, ACTION_MODIFIER_4 ],
         :options => {
           ACTION_OPTION_EDGES => [ ACTION_OPTION_EDGES_1, ACTION_OPTION_EDGES_2, ACTION_OPTION_EDGES_4 ]
         }
       },
       {
         :action => ACTION_PAINT_FACES,
-        # :modifiers => [ ACTION_MODIFIER_1, ACTION_MODIFIER_2 ],
         :options => {
           ACTION_OPTION_FACES => [ ACTION_OPTION_FACES_1, ACTION_OPTION_FACES_2 ]
         }
@@ -79,7 +71,6 @@ module Ladb::OpenCutList
     }
 
     @@action = nil
-    @@action_modifiers = {} # { action => MODIFIER }
 
     @@action_materials = {} # { action => Sketchup::Material }
     @@action_filters = {}   # { action => Array<MaterialAttributes:TYPE> }
@@ -321,7 +312,7 @@ module Ladb::OpenCutList
 
     # -- Actions --
 
-    def get_action_defs  # Array<{ :action => THE_ACTION, :modifiers => [ MODIFIER_1, MODIFIER_2, ... ] }>
+    def get_action_defs
       ACTIONS
     end
 
@@ -354,7 +345,7 @@ module Ladb::OpenCutList
       super
     end
 
-    def get_action_cursor(action, modifier)
+    def get_action_cursor(action)
 
       # Update status text and root cursor
       case action
@@ -426,65 +417,12 @@ module Ladb::OpenCutList
       super
     end
 
-    def get_action_modifier_btn_child(action, modifier)
-
-      case action
-      when ACTION_PAINT_PARTS
-        case modifier
-        when ACTION_MODIFIER_1
-          lbl = Kuix::Label.new
-          lbl.text = '1'
-          return lbl
-        when ACTION_MODIFIER_ALL
-          lbl = Kuix::Label.new
-          lbl.text = '∞'
-          return lbl
-        end
-      when ACTION_PAINT_EDGES
-        case modifier
-        when ACTION_MODIFIER_1
-          lbl = Kuix::Label.new
-          lbl.text = '1'
-          return lbl
-        when ACTION_MODIFIER_2
-          lbl = Kuix::Label.new
-          lbl.text = '2'
-          return lbl
-        when ACTION_MODIFIER_4
-          lbl = Kuix::Label.new
-          lbl.text = '4'
-          return lbl
-        end
-      when ACTION_PAINT_FACES
-        case modifier
-        when ACTION_MODIFIER_1
-          lbl = Kuix::Label.new
-          lbl.text = '1'
-          return lbl
-        when ACTION_MODIFIER_2
-          lbl = Kuix::Label.new
-          lbl.text = '2'
-          return lbl
-        end
-      end
-
-      super
-    end
-
     def store_action(action)
       @@action = action
     end
 
     def fetch_action
       @@action
-    end
-
-    def store_action_modifier(action, modifier)
-      @@action_modifiers[action] = modifier
-    end
-
-    def fetch_action_modifier(action)
-      @@action_modifiers[action]
     end
 
     def store_action_material(action, material)
@@ -541,22 +479,6 @@ module Ladb::OpenCutList
 
     def is_action_paint_clean?
       fetch_action == ACTION_PAINT_CLEAN
-    end
-
-    def is_action_modifier_1?
-      fetch_action_modifier(fetch_action) == ACTION_MODIFIER_1
-    end
-
-    def is_action_modifier_2?
-      fetch_action_modifier(fetch_action) == ACTION_MODIFIER_2
-    end
-
-    def is_action_modifier_4?
-      fetch_action_modifier(fetch_action) == ACTION_MODIFIER_4
-    end
-
-    def is_action_modifier_all?
-      fetch_action_modifier(fetch_action) == ACTION_MODIFIER_ALL
     end
 
     # -- Filters --
@@ -706,7 +628,7 @@ module Ladb::OpenCutList
 
     end
 
-    def onActionChange(action, modifier)
+    def onActionChange(action)
 
       if is_action_pick? || is_action_paint_clean?
 

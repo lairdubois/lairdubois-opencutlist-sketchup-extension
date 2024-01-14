@@ -96,7 +96,6 @@ module Ladb::OpenCutList
     COLOR_ACTION = Kuix::COLOR_MAGENTA
 
     @@action = nil
-    @@action_modifiers = {} # { action => MODIFIER }
 
     def initialize(material = nil)
       super(true, false)
@@ -119,11 +118,11 @@ module Ladb::OpenCutList
 
     # -- Actions --
 
-    def get_action_defs  # Array<{ :action => THE_ACTION, :modifiers => [ MODIFIER_1, MODIFIER_2, ... ] }>
+    def get_action_defs
       ACTIONS
     end
 
-    def get_action_cursor(action, modifier)
+    def get_action_cursor(action)
 
       case action
       when ACTION_EXPORT_PART_3D
@@ -225,14 +224,6 @@ module Ladb::OpenCutList
       @@action
     end
 
-    def store_action_modifier(action, modifier)
-      @@action_modifiers[action] = modifier
-    end
-
-    def fetch_action_modifier(action)
-      @@action_modifiers[action]
-    end
-
     def is_action_export_part_3d?
       fetch_action == ACTION_EXPORT_PART_3D
     end
@@ -259,7 +250,7 @@ module Ladb::OpenCutList
 
     end
 
-    def onActionChange(action, modifier)
+    def onActionChange(action)
 
       # Simulate mouse move event
       _handle_mouse_event(:move)

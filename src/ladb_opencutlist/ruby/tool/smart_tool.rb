@@ -123,11 +123,9 @@ module Ladb::OpenCutList
           get_action_defs.each do |action_def|
 
             action = action_def[:action]
-            modifiers = action_def[:modifiers]
 
             data = {
-              :action => action,
-              :modifier_buttons => [],
+              :action => action
             }
 
             actions_btn = Kuix::Button.new
@@ -141,7 +139,7 @@ module Ladb::OpenCutList
             actions_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
             actions_btn.set_style_attribute(:background_color, COLOR_BRAND, :selected)
             lbl = actions_btn.append_static_label(Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}"), unit * 3 * get_text_unit_factor)
-            lbl.padding.set!(0, unit * (modifiers.is_a?(Array) ? 1 : 4), 0, unit * 4)
+            lbl.padding.set!(0, unit * 4, 0, unit * 4)
             lbl.set_style_attribute(:color, COLOR_BRAND_LIGHT)
             lbl.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
             lbl.set_style_attribute(:color, Kuix::COLOR_WHITE, :selected)
@@ -157,51 +155,6 @@ module Ladb::OpenCutList
             }
             actions_btns_panel.append(actions_btn)
             @action_buttons.push(actions_btn)
-
-            if modifiers.is_a?(Array)
-
-              actions_modifiers_panel = Kuix::Panel.new
-              actions_modifiers_panel.layout = Kuix::GridLayout.new(modifiers.length, 0)
-              actions_modifiers_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
-              actions_modifiers_panel.padding.set_all!(unit)
-              actions_btn.append(actions_modifiers_panel)
-
-              modifiers.each { |modifier|
-
-                actions_modifier_btn = Kuix::Button.new
-                actions_modifier_btn.layout = Kuix::StaticLayout.new
-                actions_modifier_btn.border.set_all!(unit / 2)
-                actions_modifier_btn.padding.set_all!(unit * 2)
-                actions_modifier_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT)
-                actions_modifier_btn.set_style_attribute(:background_color, Kuix::COLOR_WHITE, :hover)
-                actions_modifier_btn.set_style_attribute(:background_color, Kuix::COLOR_WHITE, :selected)
-                actions_modifier_btn.data = { :modifier => modifier }
-                actions_modifier_btn.on(:click) { |button|
-                  set_root_action(action, modifier)
-                }
-                actions_modifier_btn.on(:enter) { |button|
-                  show_message(get_action_modifier_status(action, modifier))
-                }
-                actions_modifier_btn.on(:leave) { |button|
-                  hide_message
-                }
-                actions_modifiers_panel.append(actions_modifier_btn)
-
-                child = get_action_modifier_btn_child(action, modifier)
-                if child
-                  child.layout_data = Kuix::StaticLayoutData.new(0.5, 0.5, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER))
-                  child.text_size = @unit * 3 if child.respond_to?(:text_size=)
-                  child.min_size.width = @unit * 3 unless child.is_a?(Kuix::Label)
-                  child.min_size.height = @unit * 3
-                  child.set_style_attribute(:color, COLOR_BRAND_DARK)
-                  actions_modifier_btn.append(child)
-                end
-
-                data[:modifier_buttons].push(actions_modifier_btn)
-
-              }
-
-            end
 
             # Options Panels
 
@@ -692,7 +645,7 @@ module Ladb::OpenCutList
 
     # -- Actions --
 
-    def get_action_defs  # Array<{ :action => THE_ACTION, :modifiers => [ MODIFIER_1, MODIFIER_2, ... ], :options => { OPTION_GROUP_1 => [ OPTION_1, OPTION_2 ] } }>
+    def get_action_defs  # Array<{ :action => THE_ACTION, :options => { OPTION_GROUP_1 => [ OPTION_1, OPTION_2 ] } }>
       []
     end
 
@@ -701,22 +654,13 @@ module Ladb::OpenCutList
       Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}_status")
     end
 
-    def get_action_modifier_status(action, modifier)
-      return '' if action.nil? || modifier.nil?
-      Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}_status")
-    end
-
     def get_action_option_status(action, option_group, option)
       return '' if action.nil? || option_group.nil? || option.nil?
       Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_option_#{option_group}_#{option}_status")
     end
 
-    def get_action_cursor(action, modifier)
+    def get_action_cursor(action)
       @cursor_select_error
-    end
-
-    def get_action_modifier_btn_child(action, modifier)
-      nil
     end
 
     def get_action_option_group_unique?(action, option_group)
@@ -733,14 +677,6 @@ module Ladb::OpenCutList
 
     def fetch_action
       # Implemented in derived class : @@action
-    end
-
-    def store_action_modifier(action, modifier)
-      # Implemented in derived class : @@action_modifiers[action] = modifier
-    end
-
-    def fetch_action_modifier(action)
-      # Implemented in derived class : @@action_modifiers[action]
     end
 
     def store_action_option_enabled(action, option_group, option, enabled)
@@ -760,19 +696,15 @@ module Ladb::OpenCutList
       fetch_action.nil? ? get_action_defs.first[:action] : fetch_action
     end
 
-    def set_action(action, modifier = nil)
+    def set_action(action)
 
       # Store settings in class variable
       store_action(action)
-      store_action_modifier(action, modifier)
 
       # Update buttons
       if @action_buttons
         @action_buttons.each do |button|
           button.selected = button.data[:action] == action
-          button.data[:modifier_buttons].each do |modifier_button|
-            modifier_button.selected = button.data[:action] == action && modifier_button.data[:modifier] == modifier
-          end
         end
       end
 
@@ -787,15 +719,15 @@ module Ladb::OpenCutList
 
       # Update status text and root cursor
       Sketchup.set_status_text(get_action_status(action), SB_PROMPT)
-      set_root_cursor(get_action_cursor(action, modifier))
+      set_root_cursor(get_action_cursor(action))
       pop_to_root_cursor
 
       # Fire event
-      onActionChange(action, modifier) if self.respond_to?(:onActionChange)
+      onActionChange(action) if self.respond_to?(:onActionChange)
 
     end
 
-    def set_root_action(action, modifier = nil)
+    def set_root_action(action)
       @action_stack.clear
 
       # Select a default action
@@ -803,47 +735,17 @@ module Ladb::OpenCutList
         action = get_action_defs.first[:action]
       end
 
-      # Select a default modifier if exists
-      if modifier.nil?
-        modifier = fetch_action_modifier(action)
-        if modifier.nil?
-          action_def = get_action_defs.select { |action_def| action_def[:action] == action }.first
-          unless action_def.nil?
-            modifier = action_def[:startup_modifier]
-            if modifier.nil?
-              modifiers = action_def[:modifiers]
-              modifier = modifiers.first if modifiers.is_a?(Array)
-            end
-          end
-        end
-      end
-
-      push_action(action, modifier)
+      push_action(action)
     end
 
-    def push_action(action, modifier = nil)
-      @action_stack.push({
-                           :action => action,
-                           :modifier_stack => modifier ? [ modifier ] : []
-                         })
-      set_action(action, modifier)
+    def push_action(action)
+      @action_stack.push({ :action => action })
+      set_action(action)
     end
 
     def pop_action
       @action_stack.pop if @action_stack.length > 1
-      set_action(@action_stack.last[:action], @action_stack.last[:modifier_stack].last)
-    end
-
-    def push_action_modifier(modifier)
-      return if @action_stack.empty?
-      @action_stack.last[:modifier_stack].push(modifier)
-      set_action(@action_stack.last[:action], modifier)
-    end
-
-    def pop_action_modifier
-      return if @action_stack.empty?
-      @action_stack.last[:modifier_stack].pop
-      set_action(@action_stack.last[:action], @action_stack.last[:modifier_stack].last)
+      set_action(@action_stack.last[:action])
     end
 
     def is_action_none?
@@ -941,7 +843,7 @@ module Ladb::OpenCutList
 
     def onResume(view)
       super
-      set_root_action(fetch_action, fetch_action_modifier(fetch_action))  # Force SU status text
+      set_root_action(fetch_action)  # Force SU status text
     end
 
     def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
@@ -954,6 +856,8 @@ module Ladb::OpenCutList
         unless action_index.nil?
 
           if is_key_down?(COPY_MODIFIER_KEY)
+
+            # Select next "modifier" if exists
 
             unless action_defs[action_index][:options].nil? || action_defs[action_index][:options].empty?
 
@@ -987,30 +891,13 @@ module Ladb::OpenCutList
 
             end
 
-            # Select next modifier if exists
-
-            modifier = fetch_action_modifier(action)
-            unless modifier.nil? || action_defs[action_index][:modifiers].nil?
-
-              modifier_index = action_defs[action_index][:modifiers].index(modifier)
-              unless modifier_index.nil?
-
-                next_modifier_index = (modifier_index + (is_key_down?(CONSTRAIN_MODIFIER_KEY) ? -1 : 1)) % action_defs[action_index][:modifiers].length
-                next_modifier = action_defs[action_index][:modifiers][next_modifier_index]
-                set_root_action(action, next_modifier)
-
-                return true
-              end
-
-            end
-
           else
 
             # Select next action
 
             next_action_index = (action_index + (is_key_down?(CONSTRAIN_MODIFIER_KEY) ? -1 : 1)) % action_defs.length
             next_action = action_defs[next_action_index][:action]
-            set_root_action(next_action, fetch_action_modifier(next_action))
+            set_root_action(next_action)
 
             return true
           end

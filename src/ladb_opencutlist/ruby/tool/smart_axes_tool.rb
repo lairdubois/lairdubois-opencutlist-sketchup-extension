@@ -26,10 +26,6 @@ module Ladb::OpenCutList
     ACTION_SWAP_FRONT_BACK = 2
     ACTION_ADAPT_AXES = 3
 
-    ACTION_MODIFIER_LENGTH = 0
-    ACTION_MODIFIER_WIDTH = 1
-    ACTION_MODIFIER_THICKNESS = 2
-
     ACTION_OPTION_DIRECTION = 0
 
     ACTION_OPTION_DIRECTION_LENGTH = 0
@@ -39,8 +35,6 @@ module Ladb::OpenCutList
     ACTIONS = [
       {
         :action => ACTION_FLIP,
-        # :modifiers => [ ACTION_MODIFIER_LENGTH, ACTION_MODIFIER_WIDTH, ACTION_MODIFIER_THICKNESS ],
-        # :startup_modifier => ACTION_MODIFIER_THICKNESS,
         :options => {
           ACTION_OPTION_DIRECTION => [ ACTION_OPTION_DIRECTION_LENGTH, ACTION_OPTION_DIRECTION_WIDTH, ACTION_OPTION_DIRECTION_THICKNESS ]
         }
@@ -65,7 +59,6 @@ module Ladb::OpenCutList
     COLOR_ACTION_FILL = Sketchup::Color.new(255, 0, 255, 0.2).freeze
 
     @@action = nil
-    @@action_modifiers = {}
 
     def initialize
       super(true, false)
@@ -85,7 +78,7 @@ module Ladb::OpenCutList
 
     # -- Actions --
 
-    def get_action_defs  # Array<{ :action => THE_ACTION, :modifiers => [ MODIFIER_1, MODIFIER_2, ... ] }>
+    def get_action_defs
       ACTIONS
     end
 
@@ -112,7 +105,7 @@ module Ladb::OpenCutList
       super
     end
 
-    def get_action_cursor(action, modifier)
+    def get_action_cursor(action)
 
       case action
       when ACTION_SWAP_LENGTH_WIDTH
@@ -149,43 +142,12 @@ module Ladb::OpenCutList
     end
 
 
-    def get_action_modifier_btn_child(action, modifier)
-
-      case action
-      when ACTION_FLIP
-        case modifier
-        when ACTION_MODIFIER_LENGTH
-          lbl = Kuix::Label.new
-          lbl.text = Plugin.instance.get_i18n_string('tool.smart_axes.action_modifier_length')
-          return lbl
-        when ACTION_MODIFIER_WIDTH
-          lbl = Kuix::Label.new
-          lbl.text = Plugin.instance.get_i18n_string('tool.smart_axes.action_modifier_width')
-          return lbl
-        when ACTION_MODIFIER_THICKNESS
-          lbl = Kuix::Label.new
-          lbl.text = Plugin.instance.get_i18n_string('tool.smart_axes.action_modifier_thickness')
-          return lbl
-        end
-      end
-
-      super
-    end
-
     def store_action(action)
       @@action = action
     end
 
     def fetch_action
       @@action
-    end
-
-    def store_action_modifier(action, modifier)
-      @@action_modifiers[action] = modifier
-    end
-
-    def fetch_action_modifier(action)
-      @@action_modifiers[action]
     end
 
     def is_action_flip?
@@ -202,18 +164,6 @@ module Ladb::OpenCutList
 
     def is_action_adapt_axes?
       fetch_action == ACTION_ADAPT_AXES
-    end
-
-    def is_action_modifier_length?
-      fetch_action_modifier(fetch_action) == ACTION_MODIFIER_LENGTH
-    end
-
-    def is_action_modifier_width?
-      fetch_action_modifier(fetch_action) == ACTION_MODIFIER_WIDTH
-    end
-
-    def is_action_modifier_thickness?
-      fetch_action_modifier(fetch_action) == ACTION_MODIFIER_THICKNESS
     end
 
     # -- Events --
@@ -268,7 +218,7 @@ module Ladb::OpenCutList
       _refresh_active_part
     end
 
-    def onActionChange(action, modifier)
+    def onActionChange(action)
       _refresh_active_part
     end
 
