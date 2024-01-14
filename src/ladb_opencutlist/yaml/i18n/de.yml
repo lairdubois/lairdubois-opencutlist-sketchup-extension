@@ -192,6 +192,8 @@ core:
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       settings_model: $t(tab.settings.label) / Modell
+      tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
+      tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
   progress:
     please_wait: Berechnung einer Welt des Friedens
@@ -1579,6 +1581,16 @@ tool:
     action_3_status: "Klicken Sie auf eine Fläche, um eine Probe des Materials zu entnehmen"
     action_4: Säubern
     action_4_status: "Klicken Sie auf ein Teil, um alle Materialien aus seiner Definition und aus allen Instanzen zu entfernen"
+    action_option_group_instances: Anzahl der Instanzen
+    action_option_group_edges: Anzahl Kantenbänder
+    action_option_group_faces: Anzahl der Flächen
+    action_option_instances_0_status: Nur die Instanz des ausgewählten Teils einfärben
+    action_option_instances_1_status: Alle Instanzen des ausgewählten Teils einfärben
+    action_option_edges_0_status: Nur die ausgewählte Kante einfärben
+    action_option_edges_1_status: Einfärben der Zielkante und der gegenüberliegenden Kante
+    action_option_edges_2_status: Einfärben der 4 Kanten des Zielteils
+    action_option_faces_0_status: Nur die Zielfläche einfärben
+    action_option_faces_1_status: Einfärben der 2 Zielflächen
     edges: "{{ count }} Kante"
     edges_plural: "{{ count }} Kanten"
     edge_ymin: Länge 1
@@ -1607,9 +1619,13 @@ tool:
     action_2_status: "Klicken Sie auf ein Teil, um seine Vorderseite mit seiner Rückseite zu vertauschen"
     action_3: Achsen ausrichten
     action_3_status: "Klicken Sie auf die Fläche oder Kante eines Teils, um die Achsenausrichtung anzupassen"
-    action_modifier_length: L
-    action_modifier_width: B
-    action_modifier_thickness: D
+    action_option_group_direction: Ausrichtung
+    action_option_direction_0: L
+    action_option_direction_1: B
+    action_option_direction_2: D
+    action_option_direction_0_status: Teil der Länge nach wenden
+    action_option_direction_1_status: Teil der Breite nach wenden
+    action_option_direction_2_status: Teil der Dicke nach wenden
     warning:
       more_entities: "{{ count_used }} Instanzen mit derselben Definition werden geändert"
     error:
@@ -1617,33 +1633,33 @@ tool:
       not_orientable: Der Typ dieses Teils lässt keine Orientierung zu
   smart_export:
     title: Export
-    action_1: 3D Teil exportieren
-    action_1_status: Auf Teil klicken
-    action_2: 2D Teil exportieren
-    action_2_status: Auf Fläche eines Teils klicken
-    action_3: Fläche exportieren
-    action_3_status: Auf Fläche klicken
-    action_4: Pfad exportieren
-    action_4_status: Auf Kante klicken
-    action_option_group_0: Format
-    action_option_group_1: Einheit
-    action_option_group_2: Flächen
-    action_option_group_3: Optionen
-    action_option_0_0_status: In DXF-Datei exportieren
-    action_option_0_1_status: In STL-Datei exportieren
-    action_option_0_2_status: In OBJ-Datei exportieren
-    action_option_0_3_status: In SVG-Datei exportieren
-    action_option_1_0_status: $t(default.unit_0)
-    action_option_1_1_status: $t(default.unit_1)
-    action_option_1_2_status: $t(default.unit_2)
-    action_option_1_3_status: $t(default.unit_3)
-    action_option_1_4_status: $t(default.unit_4)
-    action_option_2_0_status: Nur die Zielfläche verwenden
-    action_option_2_1_status: Alle Flächen des Teils verwenden
-    action_option_3_0_status: Ursprung des Teils projizieren
-    action_option_3_1_status: Kreise und Bögen erkennen (Experimentell)
-    action_option_3_2_status: Isolieren von durchgehenden Bohrungen und Zusammenführen der Tiefen für jeden Hohlraum
-    action_option_3_3_status: Exportieren der im Teil enthaltenen schwebenden und mit der Zielfläche koplanaren Kanten als Hilfslinien
+    action_0: 3D Teil exportieren
+    action_0_status: Auf Teil klicken
+    action_1: 2D Teil exportieren
+    action_1_status: Auf Fläche eines Teils klicken
+    action_2: Fläche exportieren
+    action_2_status: Auf Fläche klicken
+    action_3: Pfad exportieren
+    action_3_status: Auf Kante klicken
+    action_option_group_file_format: Format
+    action_option_group_unit: Einheit
+    action_option_group_faces: Flächen
+    action_option_group_options: Optionen
+    action_option_file_format_dxf_status: In DXF-Datei exportieren
+    action_option_file_format_stl_status: In STL-Datei exportieren
+    action_option_file_format_obj_status: In OBJ-Datei exportieren
+    action_option_file_format_svg_status: In SVG-Datei exportieren
+    action_option_unit_0_status: $t(default.unit_0)
+    action_option_unit_1_status: $t(default.unit_1)
+    action_option_unit_2_status: $t(default.unit_2)
+    action_option_unit_3_status: $t(default.unit_3)
+    action_option_unit_4_status: $t(default.unit_4)
+    action_option_faces_0_status: Nur die Zielfläche verwenden
+    action_option_faces_1_status: Alle Flächen des Teils verwenden
+    action_option_options_anchor_status: Ursprung des Teils projizieren
+    action_option_options_smoothing_status: Kreise und Bögen erkennen (Experimentell)
+    action_option_options_merge_holes_status: Isolieren von durchgehenden Bohrungen und Zusammenführen der Tiefen für jeden Hohlraum
+    action_option_options_guides_status: Exportieren der im Teil enthaltenen schwebenden und mit der Zielfläche koplanaren Kanten als Hilfslinien
     error:
       not_part: Diese Fläche gehört nicht zu einem Teil (Komponente)
       not_flat_face: Diese Fläche ist nicht eben
