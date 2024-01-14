@@ -192,6 +192,8 @@ core:
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       settings_model: $t(tab.settings.label) / Model
+      tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
+      tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
   progress:
     please_wait: Calculating a world of peace
@@ -1579,6 +1581,16 @@ tool:
     action_3_status: Click on a face to sample its material
     action_4: Clean
     action_4_status: Click on a part to remove all materials from its definition and from all its instances
+    action_option_group_instances: Number of instances
+    action_option_group_edges: Number of edge bandings
+    action_option_group_faces: Number of faces
+    action_option_instances_0_status: Color only the instance of the targeted part
+    action_option_instances_1_status: Color all instances of the targeted part
+    action_option_edges_0_status: Color only the targeted edge
+    action_option_edges_1_status: Color the target edge and the opposite edge of the part
+    action_option_edges_2_status: Color the 4 edges of the target part
+    action_option_faces_0_status: Color only the targeted face
+    action_option_faces_1_status: Color the 2 faces of the target part
     edges: "{{ count }} edge"
     edges_plural: "{{ count }} edges"
     edge_ymin: Length 1
@@ -1607,9 +1619,13 @@ tool:
     action_2_status: Click on a part to swap its front with its backside
     action_3: Adapt axes
     action_3_status: Click on the face or edge of a part to adapt its axes
-    action_modifier_length: L
-    action_modifier_width: W
-    action_modifier_thickness: T
+    action_option_group_direction: Direction
+    action_option_direction_0: L
+    action_option_direction_1: W
+    action_option_direction_2: T
+    action_option_direction_0_status: Turn the part over lengthwise
+    action_option_direction_1_status: Turn the part over widthwise
+    action_option_direction_2_status: Turn the part over in its thickness
     warning:
       more_entities: "{{ count_used }} instances sharing the same definition will be modified"
     error:
@@ -1617,33 +1633,33 @@ tool:
       not_orientable: The type of this part does not allow orienting it
   smart_export:
     title: Export
-    action_1: Export a 3D part
-    action_1_status: Click on a part
-    action_2: Export a 2D part
-    action_2_status: Click on the face of a part
-    action_3: Export a face
-    action_3_status: Click on a face
-    action_4: Export a path
-    action_4_status: Click on an edge
-    action_option_group_0: Format
-    action_option_group_1: Unit
-    action_option_group_2: Faces
-    action_option_group_3: Options
-    action_option_0_0_status: Export to DXF file
-    action_option_0_1_status: Export to STL file
-    action_option_0_2_status: Export to OBJ file
-    action_option_0_3_status: Export to SVG file
-    action_option_1_0_status: $t(default.unit_0)
-    action_option_1_1_status: $t(default.unit_1)
-    action_option_1_2_status: $t(default.unit_2)
-    action_option_1_3_status: $t(default.unit_3)
-    action_option_1_4_status: $t(default.unit_4)
-    action_option_2_0_status: Use target face only
-    action_option_2_1_status: Use all faces of the part
-    action_option_3_0_status: Project part's origin
-    action_option_3_1_status: Detect circles and arcs (Experimental)
-    action_option_3_2_status: Isolate through-holes and merge depths for each cavity
-    action_option_3_3_status: Export the floating and coplanar edges of the target face contained in the part as guides
+    action_0: Export a 3D part
+    action_0_status: Click on a part
+    action_1: Export a 2D part
+    action_1_status: Click on the face of a part
+    action_2: Export a face
+    action_2_status: Click on a face
+    action_3: Export a path
+    action_3_status: Click on an edge
+    action_option_group_file_format: Format
+    action_option_group_unit: Unit
+    action_option_group_faces: Faces
+    action_option_group_options: Options
+    action_option_file_format_dxf_status: Export to DXF file
+    action_option_file_format_stl_status: Export to STL file
+    action_option_file_format_obj_status: Export to OBJ file
+    action_option_file_format_svg_status: Export to SVG file
+    action_option_unit_0_status: $t(default.unit_0)
+    action_option_unit_1_status: $t(default.unit_1)
+    action_option_unit_2_status: $t(default.unit_2)
+    action_option_unit_3_status: $t(default.unit_3)
+    action_option_unit_4_status: $t(default.unit_4)
+    action_option_faces_0_status: Use target face only
+    action_option_faces_1_status: Use all faces of the part
+    action_option_options_anchor_status: Project the part's origin
+    action_option_options_smoothing_status: Detect circles and arcs (Experimental)
+    action_option_options_merge_holes_status: Isolate through-holes and merge depths for each cavity
+    action_option_options_guides_status: Export the floating and coplanar edges of the target face contained in the part as guides
     error:
       not_part: This face does not belong to a part (component)
       not_flat_face: This surface is not planar
