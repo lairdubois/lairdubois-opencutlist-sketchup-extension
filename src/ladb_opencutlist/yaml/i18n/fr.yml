@@ -1070,7 +1070,7 @@ tab:
         Permet de choisir l'unité utilisée dans le fichier exporté.
       option_part_drawing_type: Projection
       option_part_drawing_type_help: |
-        Permet de choisir la vue exportée
+        Permet de choisir la vue exportée.
       option_anchor: Point d'ancrage
       option_anchor_0: Par défaut
       option_anchor_1: Projeter l'origine de la pièce
@@ -1078,10 +1078,10 @@ tab:
         Permet d'activer la projection de l'origine des axes de la pièce comme point d'ancrage.
       option_smoothing: Lissage
       option_smoothing_0: Aucun
-      option_smoothing_1: Lisser les cercles et arcs *(Expérimental)*
+      option_smoothing_1: Lisser les cercles et arcs *(Expérimental)*.
       option_smoothing_help: |
         Permet d'activer la détection des cercles et arcs.
-        
+
         *Cette option ne permet pas de détecter les autres types de courbes.*
       option_merge_holes: Décomposition
       option_merge_holes_0: Par défaut
