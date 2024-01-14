@@ -57,7 +57,7 @@ module Ladb::OpenCutList
           folder_name += " - #{group.std_dimension}" unless group.std_dimension.empty?
           folder = _sanitize_filename(folder_name)
           folder_path = File.join(dir, folder)
-          file_name = "#{part.number} - #{part.name}"
+          file_name = "#{part.number} - #{_sanitize_filename(part.name)}"
 
           begin
 

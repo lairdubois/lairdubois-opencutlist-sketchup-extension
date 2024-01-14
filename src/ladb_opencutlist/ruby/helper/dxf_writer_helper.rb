@@ -1346,6 +1346,7 @@ module Ladb::OpenCutList
 
                   ccw = portion.ccw?
 
+                  epsilon = 1e-1
                   step_angle = 1.degrees
                   step_angle *= -1 unless ccw
                   step_count = (arc_angle / step_angle).abs.ceil
@@ -1371,7 +1372,7 @@ module Ladb::OpenCutList
                       i = i + 2
 
                       while i < step_points.length - 1
-                        break unless Geometrix::CircleFinder.circle_include_point?(circle_def, step_points[i + 1], 1e-1)
+                        break unless Geometrix::CircleFinder.circle_include_point?(circle_def, step_points[i + 1], epsilon)
                         i = i + 1
                       end
 
@@ -1380,7 +1381,8 @@ module Ladb::OpenCutList
                       bulge = Math.tan((start_point - circle_def.center).angle_between(step_points[i] - circle_def.center) / 4.0)
                       bulge *= -1 unless ccw
 
-                      # _dxf_write_point(file, x, y, 'STEP_POINT')
+                      # _dxf_write_line(file, x, y, circle_def.center.x.to_f, circle_def.center.y.to_f, 'RADIUS')
+                      # _dxf_write_point(file, circle_def.center.x.to_f, circle_def.center.y.to_f, 'STEP_POINT')
 
                       vertices << DxfVertexDef.new(x, y, bulge)
 

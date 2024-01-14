@@ -19,8 +19,12 @@
                     <tr><th class="ladb-preset-section-row">
                         {% if dictionary == 'materials_material_attributes' %}
                             {{ ('tab.materials.type_'~section)|i18next }}
+                        {% elseif dictionary == 'tool_smart_paint_options' %}
+                            {{ ('tool.smart_paint.'~section)|i18next }}
+                        {% elseif dictionary == 'tool_smart_axes_options' %}
+                            {{ ('tool.smart_axes.'~section)|i18next }}
                         {% elseif dictionary == 'tool_smart_export_options' %}
-                            {{ ('tool.smart_export.action_'~section)|i18next }}
+                            {{ ('tool.smart_export.'~section)|i18next }}
                         {% else %}
                             {{ section }}
                         {% endif %}

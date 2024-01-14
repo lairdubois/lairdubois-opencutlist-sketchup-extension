@@ -30,11 +30,20 @@ module Ladb::OpenCutList
     ACTION_MODIFIER_WIDTH = 1
     ACTION_MODIFIER_THICKNESS = 2
 
+    ACTION_OPTION_DIRECTION = 0
+
+    ACTION_OPTION_DIRECTION_LENGTH = 0
+    ACTION_OPTION_DIRECTION_WIDTH = 1
+    ACTION_OPTION_DIRECTION_THICKNESS = 2
+
     ACTIONS = [
       {
         :action => ACTION_FLIP,
-        :modifiers => [ ACTION_MODIFIER_LENGTH, ACTION_MODIFIER_WIDTH, ACTION_MODIFIER_THICKNESS ],
-        :startup_modifier => ACTION_MODIFIER_THICKNESS
+        # :modifiers => [ ACTION_MODIFIER_LENGTH, ACTION_MODIFIER_WIDTH, ACTION_MODIFIER_THICKNESS ],
+        # :startup_modifier => ACTION_MODIFIER_THICKNESS,
+        :options => {
+          ACTION_OPTION_DIRECTION => [ ACTION_OPTION_DIRECTION_LENGTH, ACTION_OPTION_DIRECTION_WIDTH, ACTION_OPTION_DIRECTION_THICKNESS ]
+        }
       },
       {
         :action => ACTION_SWAP_LENGTH_WIDTH
@@ -118,6 +127,27 @@ module Ladb::OpenCutList
 
       super
     end
+
+    def get_action_option_group_unique?(action, option_group)
+
+      case option_group
+      when ACTION_OPTION_DIRECTION
+        return true
+      end
+
+      super
+    end
+
+    def get_action_option_btn_child(action, option_group, option)
+
+      case option_group
+      when ACTION_OPTION_DIRECTION
+        return Kuix::Label.new(Plugin.instance.get_i18n_string("tool.smart_axes.action_option_#{option_group}_#{option}"))
+      end
+
+      super
+    end
+
 
     def get_action_modifier_btn_child(action, modifier)
 
@@ -324,7 +354,7 @@ module Ladb::OpenCutList
             box_helper.bounds.size.height += increases[1] / part.def.scale.y
             box_helper.bounds.size.depth += increases[2] / part.def.scale.z
             box_helper.color = COLOR_ACTION
-            box_helper.line_width = 2
+            box_helper.line_width = 1
             box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
             box_helper.transformation = t
             part_helper.append(box_helper)
@@ -360,15 +390,15 @@ module Ladb::OpenCutList
           r_t = Geom::Transformation.translation(instance_info.definition_bounds.center)
           r_t *= instance_info.size.oriented_transformation
 
-          if is_action_modifier_length?
+          if fetch_action_option_enabled(ACTION_FLIP, ACTION_OPTION_DIRECTION, ACTION_OPTION_DIRECTION_LENGTH)
             r_width += _get_bounds_dim_along_axis(instance_info, instance_info.definition_bounds, Y_AXIS) + _get_bounds_dim_along_axis(instance_info, rect_offset_bounds, Y_AXIS) * 2
             r_height += _get_bounds_dim_along_axis(instance_info, instance_info.definition_bounds, Z_AXIS) + _get_bounds_dim_along_axis(instance_info, rect_offset_bounds, Z_AXIS) * 2
             r_t *= Geom::Transformation.rotation(ORIGIN, Z_AXIS, 90.degrees) * Geom::Transformation.rotation(ORIGIN, X_AXIS, 90.degrees)
-          elsif is_action_modifier_width?
+          elsif fetch_action_option_enabled(ACTION_FLIP, ACTION_OPTION_DIRECTION, ACTION_OPTION_DIRECTION_WIDTH)
             r_width += _get_bounds_dim_along_axis(instance_info, instance_info.definition_bounds, X_AXIS) + _get_bounds_dim_along_axis(instance_info, rect_offset_bounds, X_AXIS) * 2
             r_height += _get_bounds_dim_along_axis(instance_info, instance_info.definition_bounds, Z_AXIS) + _get_bounds_dim_along_axis(instance_info, rect_offset_bounds, Z_AXIS) * 2
             r_t *= Geom::Transformation.rotation(ORIGIN, X_AXIS, 90.degrees)
-          elsif is_action_modifier_thickness?
+          elsif fetch_action_option_enabled(ACTION_FLIP, ACTION_OPTION_DIRECTION, ACTION_OPTION_DIRECTION_THICKNESS)
             r_width += _get_bounds_dim_along_axis(instance_info, instance_info.definition_bounds, X_AXIS) + _get_bounds_dim_along_axis(instance_info, rect_offset_bounds, X_AXIS) * 2
             r_height += _get_bounds_dim_along_axis(instance_info, instance_info.definition_bounds, Y_AXIS) + _get_bounds_dim_along_axis(instance_info, rect_offset_bounds, Y_AXIS) * 2
           end
@@ -543,11 +573,11 @@ module Ladb::OpenCutList
                 Y_AXIS => 1,
                 Z_AXIS => 1,
               }
-              if is_action_modifier_length?
+              if fetch_action_option_enabled(ACTION_FLIP, ACTION_OPTION_DIRECTION, ACTION_OPTION_DIRECTION_LENGTH)
                 scaling[size.oriented_axis(X_AXIS)] = -1
-              elsif is_action_modifier_width?
+              elsif fetch_action_option_enabled(ACTION_FLIP, ACTION_OPTION_DIRECTION, ACTION_OPTION_DIRECTION_WIDTH)
                 scaling[size.oriented_axis(Y_AXIS)] = -1
-              elsif is_action_modifier_thickness?
+              elsif fetch_action_option_enabled(ACTION_FLIP, ACTION_OPTION_DIRECTION, ACTION_OPTION_DIRECTION_THICKNESS)
                 scaling[size.oriented_axis(Z_AXIS)] = -1
               end
 

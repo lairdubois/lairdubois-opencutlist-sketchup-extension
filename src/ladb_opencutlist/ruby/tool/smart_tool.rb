@@ -4,6 +4,7 @@ module Ladb::OpenCutList
   require_relative '../lib/kuix/kuix'
   require_relative '../helper/layer_visibility_helper'
   require_relative '../helper/face_triangles_helper'
+  require_relative '../helper/sanitizer_helper'
   require_relative '../worker/cutlist/cutlist_generate_worker'
   require_relative '../utils/axis_utils'
   require_relative '../utils/transformation_utils'
@@ -13,6 +14,7 @@ module Ladb::OpenCutList
 
     include LayerVisibilityHelper
     include FaceTrianglesHelper
+    include SanitizerHelper
     include CutlistObserverHelper
 
     MESSAGE_TYPE_DEFAULT = 0
@@ -240,23 +242,23 @@ module Ladb::OpenCutList
                   btn.set_style_attribute(:border_color, COLOR_BRAND, :selected)
                   btn.border.set_all!(unit * 0.5)
                   btn.data = { :option_group => option_group, :option => option }
-                  btn.selected = fetch_action_option(action, option_group, option)
+                  btn.selected = fetch_action_option_enabled(action, option_group, option)
                   btn.on(:click) { |button|
                     if get_action_option_group_unique?(action, option_group)
                       b = button.parent.child
                       until b.nil? do
                         if b.is_a?(Kuix::Button) && b.data[:option_group] == option_group
                           b.selected = false
-                          store_action_option(action, option_group, b.data[:option], false)
+                          store_action_option_enabled(action, option_group, b.data[:option], false)
                         end
                         b = b.next
                       end
                       button.selected = true
-                      store_action_option(action, option_group, option, true)
-                      set_root_cursor(get_action_cursor(action, fetch_action_modifier(action)))
+                      store_action_option_enabled(action, option_group, option, true)
+                      set_root_action(fetch_action)
                     else
                       button.selected = !button.selected?
-                      store_action_option(action, option_group, option, button.selected?)
+                      store_action_option_enabled(action, option_group, option, button.selected?)
                     end
                   }
                   btn.on(:enter) { |button|
@@ -464,7 +466,7 @@ module Ladb::OpenCutList
       @infos_panel.visible = false
     end
 
-    def show_tooltip (text, type = MESSAGE_TYPE_DEFAULT)
+    def show_tooltip(text, type = MESSAGE_TYPE_DEFAULT)
 
       unit = get_unit
       text_lines = text.split("\n")
@@ -496,6 +498,7 @@ module Ladb::OpenCutList
           lbl = Kuix::Label.new
           lbl.text = text_line
           lbl.text_size = unit * 3 * get_text_unit_factor
+          lbl.text_align = TextAlignLeft
           case type
           when MESSAGE_TYPE_ERROR
             lbl.set_style_attribute(:color, COLOR_MESSAGE_TEXT_ERROR)
@@ -559,33 +562,33 @@ module Ladb::OpenCutList
         box.set_style_attribute(:border_color, Sketchup::Color.new)
       end
 
-      # Label
+        # Label
 
-      lbl = Kuix::Label.new
-      lbl.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::WEST)
-      lbl.margin.left = unit * 4
-      lbl.text_size = unit * 3.5 * get_text_unit_factor
-      lbl.text = text
-      case type
-      when MESSAGE_TYPE_ERROR
-        lbl.set_style_attribute(:color, COLOR_MESSAGE_TEXT_ERROR)
-      when MESSAGE_TYPE_WARNING
-        lbl.set_style_attribute(:color, COLOR_MESSAGE_TEXT_WARNING)
-      when MESSAGE_TYPE_SUCCESS
-        lbl.set_style_attribute(:color, COLOR_MESSAGE_TEXT_SUCCESS)
-      else
-        lbl.set_style_attribute(:color, nil)
-      end
-      box.append(lbl)
+        lbl = Kuix::Label.new
+        lbl.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::WEST)
+        lbl.margin.left = unit * 4
+        lbl.text_size = unit * 3.5 * get_text_unit_factor
+        lbl.text = text
+        case type
+        when MESSAGE_TYPE_ERROR
+          lbl.set_style_attribute(:color, COLOR_MESSAGE_TEXT_ERROR)
+        when MESSAGE_TYPE_WARNING
+          lbl.set_style_attribute(:color, COLOR_MESSAGE_TEXT_WARNING)
+        when MESSAGE_TYPE_SUCCESS
+          lbl.set_style_attribute(:color, COLOR_MESSAGE_TEXT_SUCCESS)
+        else
+          lbl.set_style_attribute(:color, nil)
+        end
+        box.append(lbl)
 
-      # Progress
+        # Progress
 
-      progress = Kuix::Progress.new(0, timeout)
-      progress.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
-      progress.min_size.height = unit
-      progress.set_style_attribute(:color, Sketchup::Color.new(0, 0, 0, 30))
-      progress.value = timeout
-      box.append(progress)
+        progress = Kuix::Progress.new(0, timeout)
+        progress.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
+        progress.min_size.height = unit
+        progress.set_style_attribute(:color, Sketchup::Color.new(0, 0, 0, 30))
+        progress.value = timeout
+        box.append(progress)
 
       # Timer
 
@@ -740,15 +743,15 @@ module Ladb::OpenCutList
       # Implemented in derived class : @@action_modifiers[action]
     end
 
-    def store_action_option(action, option_group, option, enabled)
+    def store_action_option_enabled(action, option_group, option, enabled)
       dictionary = "tool_smart_#{get_stripped_name}_options"
-      preset = Plugin.instance.get_global_preset(dictionary, nil, action)
+      preset = Plugin.instance.get_global_preset(dictionary, nil, "action_#{action}")
       preset.store("#{option_group}_#{option}", enabled)
-      Plugin.instance.set_global_preset(dictionary, preset, nil, action)
+      Plugin.instance.set_global_preset(dictionary, preset, nil, "action_#{action}")
     end
 
-    def fetch_action_option(action, option_group, option)
-      preset = Plugin.instance.get_global_preset("tool_smart_#{get_stripped_name}_options", nil, action)
+    def fetch_action_option_enabled(action, option_group, option)
+      preset = Plugin.instance.get_global_preset("tool_smart_#{get_stripped_name}_options", nil, "action_#{action}")
       return preset.fetch("#{option_group}_#{option}", false) unless preset.nil?
       false
     end
@@ -951,6 +954,38 @@ module Ladb::OpenCutList
         unless action_index.nil?
 
           if is_key_down?(COPY_MODIFIER_KEY)
+
+            unless action_defs[action_index][:options].nil? || action_defs[action_index][:options].empty?
+
+              modifier_option_group = action_defs[action_index][:options].keys.first
+              modifier_options = action_defs[action_index][:options][modifier_option_group]
+
+              modifier_option = modifier_options.detect { |option| fetch_action_option_enabled(action, modifier_option_group, option) }
+              modifier_option_index = modifier_options.index(modifier_option)
+              unless modifier_option_index.nil?
+
+                next_modifier_option_index = (modifier_option_index + (is_key_down?(CONSTRAIN_MODIFIER_KEY) ? -1 : 1)) % modifier_options.length
+                next_modifier_option = modifier_options[next_modifier_option_index]
+
+                @actions_options_panels.each do |actions_options_panel|
+                  if actions_options_panel.data[:action] == action
+
+                    b = actions_options_panel.child
+                    until b.nil? do
+                      if b.is_a?(Kuix::Button) && b.data[:option_group] == modifier_option_group && b.data[:option] == next_modifier_option
+                        b.fire(:click, flags)
+                        break
+                      end
+                      b = b.next
+                    end
+
+                  end
+                end
+
+                return true
+              end
+
+            end
 
             # Select next modifier if exists
 
@@ -1233,9 +1268,9 @@ module Ladb::OpenCutList
 
     end
 
-    def _get_active_part_name
+    def _get_active_part_name(sanitize_for_filename = false)
       return nil unless @active_part.is_a?(Part)
-      "#{@active_part.saved_number ? "[#{@active_part.saved_number}] " : ''}#{@active_part.name}"
+      "#{@active_part.saved_number && @active_part.number == @active_part.saved_number ? "#{@active_part.number} - " : ''}#{sanitize_for_filename ? _sanitize_filename(@active_part.name) : @active_part.name}"
     end
 
     def _select_active_part_entity
