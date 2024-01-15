@@ -72,6 +72,10 @@ module Ladb::OpenCutList
     DIALOG_DEFAULT_TABLE_ROW_SIZE = 0   # 0 = Normal, 1 = Compact
     DIALOG_PREF_KEY = 'fr.lairdubois.opencutlist'
 
+    DIALOG_MODAL_DEFAULT_WIDTH = 700
+    DIALOG_MODAL_DEFAULT_HEIGHT = 600
+    DIALOG_MODAL_PREF_KEY = 'fr.lairdubois.opencutlist.modal'
+
     DOCS_URL = 'https://www.lairdubois.fr/opencutlist/docs'
     DOCS_DEV_URL = 'https://www.lairdubois.fr/opencutlist/docs-dev'
 
@@ -1079,7 +1083,7 @@ module Ladb::OpenCutList
         if tab_name
           # Startup tab name is defined call JS to select it
           @dialog.bring_to_front
-          @dialog.execute_script("$('body').ladbDialog('selectTab', '#{tab_name}');")
+          @dialog.execute_script("$('body').ladbDialogTabs('selectTab', '#{tab_name}');")
         end
 
         if ready_block
@@ -1210,7 +1214,7 @@ module Ladb::OpenCutList
         # parameters and callback must be formatted as JS code
         if tab_name and command
           @dialog.bring_to_front
-          @dialog.execute_script("$('body').ladbDialog('executeCommandOnTab', [ '#{tab_name}', '#{command}', #{parameters}, #{callback} ]);")
+          @dialog.execute_script("$('body').ladbDialogTabs('executeCommandOnTab', [ '#{tab_name}', '#{command}', #{parameters}, #{callback} ]);")
         end
       end
 
@@ -1218,14 +1222,19 @@ module Ladb::OpenCutList
 
     def create_modal_dialog(modal_name, params = nil)
 
+      # Start
+      start
+
       @modal_dialog = UI::HtmlDialog.new(
         {
           :dialog_title => ' ',
-          :preferences_key => 'DIALOG_PREF_KEY',
+          :preferences_key => DIALOG_MODAL_PREF_KEY,
           :scrollable => true,
           :resizable => true,
-          :width => 700,
-          :height => 640,
+          :width => DIALOG_MODAL_DEFAULT_WIDTH,
+          :height => DIALOG_MODAL_DEFAULT_HEIGHT,
+          :min_width => DIALOG_MODAL_DEFAULT_WIDTH,
+          :min_height => DIALOG_MODAL_DEFAULT_HEIGHT,
           :style => UI::HtmlDialog::STYLE_UTILITY
         }
       )

@@ -45,9 +45,6 @@ function shiftCommandCallStack() {
 
 function setDialogContext(type, encodedParams) {
 
-    console.log('HOHO');
-    console.log(encodedParams);
-
     var params = encodedParams ? JSON.parse(Base64.decode(encodedParams)) : {};
     var webglAvailable;
     try {

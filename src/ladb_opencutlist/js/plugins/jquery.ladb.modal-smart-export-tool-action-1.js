@@ -31,44 +31,57 @@
             var $widgetPreset = $('.ladb-widget-preset', that.$element);
             var $selectFileFormat = $('#ladb_select_file_format', that.$element);
             var $selectUnit = $('#ladb_select_unit', that.$element);
+            var $selectFaces = $('#ladb_select_faces', that.$element);
             var $selectAnchor = $('#ladb_select_anchor', that.$element);
             var $selectSmoothing = $('#ladb_select_smoothing', that.$element);
             var $selectMergeHoles = $('#ladb_select_merge_holes', that.$element);
+            var $selectGuides = $('#ladb_select_guides', that.$element);
             var $inputPartsStrokeColor = $('#ladb_input_parts_stroke_color', that.$element);
             var $inputPartsFillColor = $('#ladb_input_parts_fill_color', that.$element);
             var $formGroupPartsHoles = $('#ladb_form_group_parts_holes', that.$element);
             var $inputPartsHolesStrokeColor = $('#ladb_input_parts_holes_stroke_color', that.$element);
             var $inputPartsHolesFillColor = $('#ladb_input_parts_holes_fill_color', that.$element);
+            var $formGroupEdges = $('#ladb_form_group_edges', that.$element);
+            var $inputEdgesStrokeColor = $('#ladb_input_edges_stroke_color', that.$element);
             var $btnValidate = $('#ladb_btn_validate', that.$element);
 
             var fnFetchOptions = function (options) {
                 options.file_format = $selectFileFormat.val();
                 options.unit = parseInt($selectUnit.val());
+                options.faces = parseInt($selectFaces.val());
                 options.anchor = $selectAnchor.val() === '1';
                 options.smoothing = $selectSmoothing.val() === '1';
                 options.merge_holes = $selectMergeHoles.val() === '1';
+                options.guides = $selectGuides.val() === '1';
                 options.parts_stroke_color = $inputPartsStrokeColor.ladbTextinputColor('val');
                 options.parts_fill_color = $inputPartsFillColor.ladbTextinputColor('val');
                 options.parts_holes_stroke_color = $inputPartsHolesStrokeColor.ladbTextinputColor('val');
                 options.parts_holes_fill_color = $inputPartsHolesFillColor.ladbTextinputColor('val');
+                options.edges_stroke_color = $inputEdgesStrokeColor.ladbTextinputColor('val');
             };
             var fnFillInputs = function (options) {
                 $selectFileFormat.selectpicker('val', options.file_format);
                 $selectUnit.selectpicker('val', options.unit);
+                $selectFaces.selectpicker('val', options.faces);
                 $selectAnchor.selectpicker('val', options.anchor ? '1' : '0');
                 $selectSmoothing.selectpicker('val', options.smoothing ? '1' : '0');
                 $selectMergeHoles.selectpicker('val', options.merge_holes ? '1' : '0');
+                $selectGuides.selectpicker('val', options.guides ? '1' : '0');
                 $inputPartsStrokeColor.ladbTextinputColor('val', options.parts_stroke_color);
                 $inputPartsFillColor.ladbTextinputColor('val', options.parts_fill_color);
                 $inputPartsHolesStrokeColor.ladbTextinputColor('val', options.parts_holes_stroke_color);
                 $inputPartsHolesFillColor.ladbTextinputColor('val', options.parts_holes_fill_color);
+                $inputEdgesStrokeColor.ladbTextinputColor('val', options.edges_stroke_color);
             };
             var fnUpdateFieldsVisibility = function () {
                 var isDxf = $selectFileFormat.val() === 'dxf';
                 var isMergeHoles = $selectMergeHoles.val() === '1';
+                var isGuides = $selectGuides.val() === '1';
                 if (!isMergeHoles) $formGroupPartsHoles.hide(); else $formGroupPartsHoles.show();
+                if (!isGuides) $formGroupEdges.hide(); else $formGroupEdges.show();
                 $inputPartsHolesStrokeColor.ladbTextinputColor(!isMergeHoles ? 'disable' : 'enable');
                 $inputPartsHolesFillColor.ladbTextinputColor(!isMergeHoles ? 'disable' : 'enable');
+                $inputEdgesStrokeColor.ladbTextinputColor(!isGuides ? 'disable' : 'enable');
                 $('.ladb-form-fill-color').css('opacity', isDxf ? 0.3 : 1);
             };
 
@@ -84,9 +97,14 @@
                 .on('changed.bs.select', fnUpdateFieldsVisibility)
             ;
             $selectUnit.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectFaces.selectpicker(SELECT_PICKER_OPTIONS);
             $selectAnchor.selectpicker(SELECT_PICKER_OPTIONS);
             $selectSmoothing.selectpicker(SELECT_PICKER_OPTIONS);
             $selectMergeHoles
+                .selectpicker(SELECT_PICKER_OPTIONS)
+                .on('changed.bs.select', fnUpdateFieldsVisibility)
+            ;
+            $selectGuides
                 .selectpicker(SELECT_PICKER_OPTIONS)
                 .on('changed.bs.select', fnUpdateFieldsVisibility)
             ;
@@ -94,6 +112,7 @@
             $inputPartsFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
             $inputPartsHolesStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
             $inputPartsHolesFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+            $inputEdgesStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
 
             fnFillInputs(options);
 

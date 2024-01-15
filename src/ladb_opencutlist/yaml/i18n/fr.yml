@@ -1073,6 +1073,11 @@ tab:
       option_part_drawing_type: Projection
       option_part_drawing_type_help: |
         Permet de choisir la vue exportée.
+      option_faces: Faces
+      option_faces_0: Utiliser uniquement la face ciblée
+      option_faces_1: Utiliser toutes les faces de la pièce
+      option_faces_help: |
+        TODO
       option_anchor: Point d'ancrage
       option_anchor_0: Par défaut
       option_anchor_1: Projeter l'origine de la pièce
@@ -1090,6 +1095,11 @@ tab:
       option_merge_holes_1: Contour + Percements + Fusion
       option_merge_holes_help: |
         Permet d'activer la séparation du contour extérieur des pièces de leurs percements ainsi que la fusion des profondeurs pour chaque cavité.
+      option_edges: Tracés
+      option_edges_0: Ne pas détecter
+      option_edges_1: Détecter les lignes flottantes
+      option_edges_help: |
+        TODO
       option_parts: Pièces
       option_parts_help:  |
         Permet de choisir la couleur des pièces.

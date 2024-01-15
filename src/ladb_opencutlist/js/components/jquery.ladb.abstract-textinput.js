@@ -22,12 +22,16 @@ LadbTextinputAbstract.prototype.focus = function () {
 
 LadbTextinputAbstract.prototype.disable = function () {
     this.$element.prop('disabled', true);
-    this.$resetBtn.hide();
+    if (this.$resetBtn) {
+        this.$resetBtn.hide();
+    }
 };
 
 LadbTextinputAbstract.prototype.enable = function () {
     this.$element.prop('disabled', false);
-    this.$resetBtn.show();
+    if (this.$resetBtn) {
+        this.$resetBtn.show();
+    }
 };
 
 LadbTextinputAbstract.prototype.reset = function () {
