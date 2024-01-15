@@ -1089,7 +1089,7 @@ tab:
         Permet d'activer la projection de l'origine des axes de la pièce comme point d'ancrage.
       option_smoothing: Lissage
       option_smoothing_0: Aucun
-      option_smoothing_1: Lisser les cercles et arcs *(Expérimental)*
+      option_smoothing_1: Lisser les cercles et arcs (Expérimental)
       option_smoothing_help: |
         Permet d'activer la détection des cercles et arcs.
 
@@ -1672,12 +1672,12 @@ tool:
     action_option_unit_2_status: $t(default.unit_2)
     action_option_unit_3_status: $t(default.unit_3)
     action_option_unit_4_status: $t(default.unit_4)
-    action_option_faces_0_status: Utiliser uniquement la face ciblée
-    action_option_faces_1_status: Utiliser toutes les faces de la pièce
-    action_option_options_anchor_status: Projeter l'origine de la pièce
-    action_option_options_smoothing_status: Détecter les cercles et arcs (Expérimental)
+    action_option_faces_0_status: $t(tab.cutlist.write.option_faces_0)
+    action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
+    action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
+    action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: Isoler les trous traversants et fusionner les profondeurs pour chaque cavité
-    action_option_options_guides_status: Exporter comme guides les arêtes flottantes et coplanaires à la face ciblée contenues dans la pièce
+    action_option_options_edges_status: Exporter comme tracé les arêtes flottantes et coplanaires à la face ciblée contenues dans la pièce
     error:
       not_part: Cette face ne fait pas partie d'une pièce (composant)
       not_flat_face: Cette surface n'est pas plane
