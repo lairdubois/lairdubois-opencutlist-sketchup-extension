@@ -1081,7 +1081,7 @@ tab:
       option_faces_0: Utiliser uniquement la face ciblée
       option_faces_1: Utiliser toutes les faces de la pièce
       option_faces_help: |
-        Permet de choisir si le recherche de la forme de la pièce se fait sur toutes ses faces ou seulement sur la face ciblée.
+        Permet de choisir si la recherche de la forme de la pièce se fait sur toutes ses faces ou seulement sur la face ciblée.
       option_anchor: Point d'ancrage
       option_anchor_0: Par défaut
       option_anchor_1: Projeter l'origine de la pièce
@@ -1100,14 +1100,14 @@ tab:
       option_merge_holes_help: |
         **Par defaut**
         La forme de la pièce est exportée avec une couche par profondeur.
-        
+
         **Contour + Percements + Fusion**
         Active la séparation du contour extérieur des pièces de leurs percements ainsi que la fusion des profondeurs pour chaque cavité.
       option_edges: Tracés
       option_edges_0: Aucun
       option_edges_1: Utiliser les lignes flottantes
       option_edges_help: |
-        Permet d'activé l'utilisation des lignes flottantes (non ratachées à une face) et coplanaires à la face ciblée contenues dans la pièce, pour les exporter comme tracé.
+        Permet d'activer l'utilisation des lignes flottantes (non rattachées à une face) et coplanaires à la face ciblée, contenues dans la pièce, pour les exporter comme tracé.
       option_parts: Pièces
       option_parts_help: |
         Permet de choisir les couleurs des pièces.
