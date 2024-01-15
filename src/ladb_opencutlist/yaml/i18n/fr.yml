@@ -70,6 +70,8 @@ default:
   tab_key: Tab
   file: Fichier
   file_plural: Fichiers
+  stroke_color: Couleur de trait
+  fill_color: Couleur de remplissage
 core:
   menu:
     submenu: OpenCutList
@@ -854,33 +856,31 @@ tab:
         option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
         option_sheet_good: Panneau
         option_sheet_good_help: |
-          Permet d'activer l'exportation du panneau ainsi que de choisir sa couleur.
+          Permet d'activer l'exportation du panneau ainsi que de choisir ses couleurs.
         option_sheet_veneer: Feuille
         option_sheet_veneer_help: |
-          Permet d'activer l'exportation de la feuille ainsi que de choisir sa couleur.
+          Permet d'activer l'exportation de la feuille ainsi que de choisir ses couleurs.
         option_bar_dimensional: Barre
         option_bar_dimensional_help:  |
-          Permet d'activer l'exportation da la barre ainsi que de choisir sa couleur.
+          Permet d'activer l'exportation da la barre ainsi que de choisir ses couleurs.
         option_bar_band: Bande
         option_bar_band_help:  |
-          Permet d'activer l'exportation de la bande ainsi que de choisir sa couleur.
+          Permet d'activer l'exportation de la bande ainsi que de choisir ses couleurs.
         option_parts: Pièces
         option_parts_help:  |
-          Permet d'activer l'exportation des pièces ainsi que de choisir leur couleur.
+          Permet d'activer l'exportation des pièces ainsi que de choisir leurs couleurs.
         option_parts_holes: Percements
         option_parts_holes_help:  |
           Permet de choisir la couleur des percements des pièces.
         option_texts: Identifications
         option_texts_help:  |
-          Permet d'activer l'exportation des textes d'identification des pièces ainsi que de choisir leur couleur.
+          Permet d'activer l'exportation des textes d'identification des pièces ainsi que de choisir leurs couleurs.
         option_leftovers: Chutes
         option_leftovers_help:  |
-          Permet d'activer l'exportation des chutes ainsi que de choisir leur couleur.
+          Permet d'activer l'exportation des chutes ainsi que de choisir leurs couleurs.
         option_cuts: Coupes
         option_cuts_help:  |
           Permet d'activer l'exportation des coupes ainsi que de choisir leur couleur.
-        option_stroke_color: Couleur de trait
-        option_fill_color: Couleur de remplissage
         warning:
           is_sheet_selection: Les **panneaux masqués** ne seront pas exportés.
       error:
@@ -1081,7 +1081,7 @@ tab:
       option_faces_0: Utiliser uniquement la face ciblée
       option_faces_1: Utiliser toutes les faces de la pièce
       option_faces_help: |
-        TODO
+        Permet de choisir si le recherche de la forme de la pièce se fait sur toutes ses faces ou seulement sur la face ciblée.
       option_anchor: Point d'ancrage
       option_anchor_0: Par défaut
       option_anchor_1: Projeter l'origine de la pièce
@@ -1098,20 +1098,24 @@ tab:
       option_merge_holes_0: Par défaut
       option_merge_holes_1: Contour + Percements + Fusion
       option_merge_holes_help: |
-        Permet d'activer la séparation du contour extérieur des pièces de leurs percements ainsi que la fusion des profondeurs pour chaque cavité.
+        **Par defaut**
+        La forme de la pièce est exportée avec une couche par profondeur.
+        
+        **Contour + Percements + Fusion**
+        Active la séparation du contour extérieur des pièces de leurs percements ainsi que la fusion des profondeurs pour chaque cavité.
       option_edges: Tracés
-      option_edges_0: Ne pas détecter
-      option_edges_1: Détecter les lignes flottantes
+      option_edges_0: Aucun
+      option_edges_1: Utiliser les lignes flottantes
       option_edges_help: |
-        TODO
+        Permet d'activé l'utilisation des lignes flottantes (non ratachées à une face) et coplanaires à la face ciblée contenues dans la pièce, pour les exporter comme tracé.
       option_parts: Pièces
-      option_parts_help:  |
-        Permet de choisir la couleur des pièces.
+      option_parts_help: |
+        Permet de choisir les couleurs des pièces.
       option_parts_holes: Percements
-      option_parts_holes_help:  |
-        Permet de choisir la couleur des percements des pièces.
-      option_stroke_color: Couleur de trait
-      option_fill_color: Couleur de remplissage
+      option_parts_holes_help: |
+        Permet de choisir les couleurs des percements des pièces.
+      option_edges_color_help: |
+        Permet de choisir la couleur des tracés.
       error:
         no_part: Aucune pièce à exporter.
       warning:

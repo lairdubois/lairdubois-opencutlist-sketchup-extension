@@ -79,8 +79,9 @@
                 var isGuides = $selectGuides.val() === '1';
                 if (!isMergeHoles) $formGroupPartsHoles.hide(); else $formGroupPartsHoles.show();
                 if (!isGuides) $formGroupEdges.hide(); else $formGroupEdges.show();
+                $inputPartsFillColor.ladbTextinputColor(isDxf ? 'disable' : 'enable');
                 $inputPartsHolesStrokeColor.ladbTextinputColor(!isMergeHoles ? 'disable' : 'enable');
-                $inputPartsHolesFillColor.ladbTextinputColor(!isMergeHoles ? 'disable' : 'enable');
+                $inputPartsHolesFillColor.ladbTextinputColor(!isMergeHoles || isDxf ? 'disable' : 'enable');
                 $inputEdgesStrokeColor.ladbTextinputColor(!isGuides ? 'disable' : 'enable');
                 $('.ladb-form-fill-color').css('opacity', isDxf ? 0.3 : 1);
             };
