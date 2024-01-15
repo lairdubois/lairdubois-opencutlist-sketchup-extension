@@ -105,6 +105,9 @@
                 <tr class="table-heading">
                     <td colspan="{{ colspan }}">
                         <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-close"></i></button>
+                        <div class="btn-group pull-right">
+                            <button class="no-print btn btn-default btn-sm" id="ladb_btn_select_unplaced_parts" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.select_parts_in_cutlist'|i18next({ 'count':unplaced_parts|length }) }}"><i class="ladb-opencutlist-icon-check-box-with-check-sign"></i> {{ 'tab.cutlist.select_part'|i18next({ 'count':unplaced_parts|length }) }}</button>
+                        </div>
                         <div class="ladb-heading text-danger"><i class="ladb-opencutlist-icon-warning"></i> {{ 'tab.cutlist.cuttingdiagram.list.unplaced_parts'|i18next }}</div>
                     </td>
                 </tr>

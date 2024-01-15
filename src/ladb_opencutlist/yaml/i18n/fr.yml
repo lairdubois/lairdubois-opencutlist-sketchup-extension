@@ -233,6 +233,8 @@ tab:
       Sélectionnez, sur votre scène, le composant racine de votre fiche de débit. Puis cliquez sur le bouton **Générer**.
       Si aucun composant n'est sélectionné, tous les composants visibles sur la scène seront considérés.
     is_selection: Sélection seulement
+    select_part: Sélectionner la pièce
+    select_part_plural: Sélectionner les pièces
     material_undefined: Sans matière
     not_available_std_width: Largeur non standard
     not_available_std_thickness: Épaisseur non standard
@@ -337,6 +339,8 @@ tab:
       dblclick_to_sort_axes: Double-cliquez ici pour réordonner automatiquement les axes suivant les dimensions de la pièce
       part_axes: Axes internes de la pièce
       select_unselect_all_parts: Sélectionner / Désélectionner toutes les pièces du groupe
+      select_parts_in_cutlist: Sélectionner la pièce dans la fiche de débit
+      select_parts_in_cutlist_plural: Sélectionner les {{count }} pièces dans la fiche de débit
       setup_group_cuttingdiagram: "Configurer le calepinage de '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
       open_part_url: Ouvrir l'URL de la pièce
     menu:
@@ -1134,6 +1138,9 @@ tab:
       no_typed_materials_in_model: "Votre modèle n'utilise aucune matière ayant un type défini (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**)."
       no_typed_materials_in_selection: "Votre sélection n'utilise aucune matière ayant un type défini (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**)."
       export_empty: Votre export ne contient aucune pièce.
+    success:
+      part_selected: "{{ count }} pièce sélectionnée dans la fiche de débit."
+      part_selected_plural: "{{ count }} pièces sélectionnées dans la fiche de débit."
     tip:
       no_component: |
         Les pièces que vous souhaitez voir apparaître dans la *fiche de débit* doivent être des instances de **composant**.

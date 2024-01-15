@@ -23,6 +23,7 @@ in 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added €/m price unit to sheet good and veneer materials
   * Added ∑ rough length, area and volume to all material types except hardware in cutlist summary
   * Added list of leftover to keep at the end of 2D cutting diagrams
+  * Added a button to select all unplaced parts in parts list from cutting diagrams
   * Improved dimension default style in Layout document after exporting _Drawing_ to Layout
   * Changed material color bullet from drop to circle
 

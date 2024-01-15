@@ -3789,6 +3789,17 @@
                                             $(this).blur();
                                             return false;
                                         });
+                                        $('#ladb_btn_select_unplaced_parts', $slide).on('click', function () {
+                                            that.cleanupSelection();
+                                            $.each(response.unplaced_parts, function (index, part) {
+                                                that.selectPart(part.id, true);
+                                            });
+                                            that.dialog.notifySuccess(i18next.t('tab.cutlist.success.part_selected', { count: response.unplaced_parts.length }), [
+                                                Noty.button(i18next.t('default.see'), 'btn btn-default', function () {
+                                                    $btnClose.click();
+                                                })
+                                            ]);
+                                        });
 
                                         // SVG
                                         $('SVG .part', $slide).on('click', function () {
@@ -4322,6 +4333,17 @@
                                             $('.ladb-click-tool', $(this)).click();
                                             $(this).blur();
                                             return false;
+                                        });
+                                        $('#ladb_btn_select_unplaced_parts', $slide).on('click', function () {
+                                            that.cleanupSelection();
+                                            $.each(response.unplaced_parts, function (index, part) {
+                                                that.selectPart(part.id, true);
+                                            });
+                                            that.dialog.notifySuccess(i18next.t('tab.cutlist.success.part_selected', { count: response.unplaced_parts.length }), [
+                                                Noty.button(i18next.t('default.see'), 'btn btn-default', function () {
+                                                    $btnClose.click();
+                                                })
+                                            ]);
                                         });
 
                                         // SVG
