@@ -52,7 +52,7 @@
                 options.anchor = $selectAnchor.val() === '1';
                 options.smoothing = $selectSmoothing.val() === '1';
                 options.merge_holes = $selectMergeHoles.val() === '1';
-                options.guides = $selectGuides.val() === '1';
+                options.edges = $selectGuides.val() === '1';
                 options.parts_stroke_color = $inputPartsStrokeColor.ladbTextinputColor('val');
                 options.parts_fill_color = $inputPartsFillColor.ladbTextinputColor('val');
                 options.parts_holes_stroke_color = $inputPartsHolesStrokeColor.ladbTextinputColor('val');
@@ -66,7 +66,7 @@
                 $selectAnchor.selectpicker('val', options.anchor ? '1' : '0');
                 $selectSmoothing.selectpicker('val', options.smoothing ? '1' : '0');
                 $selectMergeHoles.selectpicker('val', options.merge_holes ? '1' : '0');
-                $selectGuides.selectpicker('val', options.guides ? '1' : '0');
+                $selectGuides.selectpicker('val', options.edges ? '1' : '0');
                 $inputPartsStrokeColor.ladbTextinputColor('val', options.parts_stroke_color);
                 $inputPartsFillColor.ladbTextinputColor('val', options.parts_fill_color);
                 $inputPartsHolesStrokeColor.ladbTextinputColor('val', options.parts_holes_stroke_color);
