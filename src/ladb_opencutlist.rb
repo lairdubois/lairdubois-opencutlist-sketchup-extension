@@ -79,8 +79,6 @@ module Ladb
         ex.description = '3 - Danh sách cắt và Trình tạo sơ đồ cắt cho thợ mộc. Mã nguồn mở, được huy động vốn từ cộng đồng và dễ sử dụng;)'
       when 'zz_zh'
         ex.description = '3 - 木工的切割清单和切割图生成器。 开源，众筹且易于使用 ;)'
-      when 'zz'
-        ex.description = '3 - Générateur de fiche de débit et calepinage de panneaux et barres pour les boiseux. Open Source, financé par les utilisateurs et facile à utiliser ;)'
       else
         ex.description = 'Cutlist and Cutting Diagram Generator for Woodworkers. Open Source, crowdfunded and easy to use ;)'
       ## DESCRIPTION_END ##
