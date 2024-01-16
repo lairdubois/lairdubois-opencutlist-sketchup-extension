@@ -20,7 +20,7 @@ default:
   export: Export
   import: Import
   load: Load
-  preview: Preview
+  preview: Overview
   options: Options
   caution: Caution
   remove: Remove
@@ -70,6 +70,8 @@ default:
   tab_key: Tab
   file: File
   file_plural: Files
+  stroke_color: Stroke color
+  fill_color: Fill Color
 core:
   menu:
     submenu: OpenCutList
@@ -123,6 +125,7 @@ core:
       **{{ error }}**
   success:
     exported_to: "Successful export to {{ path }}."
+    copied_to_clipboard: Copied to clipboard
   event:
     model_change: The active model has changed.
     options_change: Options in the model have changed.
@@ -211,7 +214,7 @@ core:
       view_isometric: Isometric
       view_top: Top
       view_bottom: Bottom
-      view_front: Front
+      view_front: Frontside
       view_back: Back
       view_left: Left
       view_right: Right
@@ -227,12 +230,14 @@ core:
         Make sure you are connected to the Internet.
 tab:
   cutlist:
-    label: Parts
+    label: Rough
     title: Parts List
     help: |
       Select the parts to be used for the parts list in the current scene and click **Generate**.
       If the selection is empty, all visible components of the scene will be used to compute the list.
     is_selection: Selection only
+    select_part: Select part
+    select_part_plural: Select parts
     material_undefined: No material defined
     not_available_std_width: Width undefined
     not_available_std_thickness: Thickness undefined
@@ -331,12 +336,14 @@ tab:
       edge_xmin: Edge width 1
       edge_xmax: Edge width 2
       face_zmin: Backside
-      face_zmax: Front
+      face_zmax: Frontside
       dblclick_to_copy_all_edges: Double-click here to duplicate this value to the other edges
       dblclick_to_copy_all_faces: Double-click here to duplicate this value to the other face
       dblclick_to_sort_axes: Double-click here to automatically reorder the axes according to the dimensions of the part
       part_axes: Internal axes of the part
       select_unselect_all_parts: Select / Deselect all parts of the group
+      select_parts_in_cutlist: Select part in the Parts List
+      select_parts_in_cutlist_plural: "Select {{ count }} parts in the Parts List"
       setup_group_cuttingdiagram: "Configure the cutting diagram of '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
       open_part_url: Open part URL
     menu:
@@ -596,7 +603,7 @@ tab:
       cutting_width: Width - raw
       cutting_thickness: Thickness - raw
       edge_cutting_length: Length edges - raw
-      edge_cutting_width: Width edges - raw
+      edge_cutting_width: Width edges - rough
       bbox_length: Length
       bbox_width: Width
       bbox_thickness: Thickness
@@ -632,9 +639,7 @@ tab:
         no_column_formula_native: "Native value of column '{{ col_name }}'"
         no_column_formula: Enter a formula
       warning:
-        is_group_selection: Parts inside **hidden groups** of the parts list will not be exported.
-      success:
-        copied: Copied to clipboard.
+        is_group_selection: Parts contained in the **hidden groups** of parts list will not be exported.
     report:
       title: Estimate
       info_0: |
@@ -647,7 +652,7 @@ tab:
       coefficient: Coefficient
       total: Total
       total_used: Used
-      total_unused: Not Used
+      total_unused: Unused
       total_mass: Σ Weight
       total_cost: Σ Cost
       total_count: Qty.
@@ -710,7 +715,7 @@ tab:
       option_full_width_diagram_help: "If this option is selected, the cutting diagrams are displayed using the available width. Otherwise, their width is defined by a scaling factor depending on all diagrams."
       option_wrap_length: Wrap Board Length
       option_wrap_length_help: Maximal length after which a board or edge banding will be wrapped over multiple lines.
-      option_hide_cross: Offcuts
+      option_hide_cross: Leftovers
       option_hide_cross_0: Dimensions and cross
       option_hide_cross_1: Dimensions only
       option_hide_cross_help: Shows or hides the cross indicating the parts defined as offcuts on the diagram.
@@ -732,7 +737,7 @@ tab:
         **This option must be enabled for shapes to be exported.*
       option_saw_kerf: Blade Thickness
       option_saw_kerf_help: The width of material removed by the sawblade cut.
-      option_trimming: Trimming Size
+      option_trimming: Trimming
       option_trimming_help_1d: The amount of material at each end of the board or edge banding to be treated as waste.
       option_trimming_help_2d: The amount of material around the raw panel to be treated as waste.
       option_optimization: Optimization Level
@@ -742,8 +747,8 @@ tab:
       option_stacking: Preferred Direction
       option_stacking_help: "Stacking direction of parts that have a common length or width, per panel if more than one required."
       option_stacking_0: No preference
-      option_stacking_1: Lengthwise
-      option_stacking_2: Widthwise
+      option_stacking_1: Across the length
+      option_stacking_2: Across the width
       option_stacking_3: All possibilities
       option_keep: Leftovers min. Size
       option_keep_help: Leftovers that are larger than the minimum length and width are marked **to be kept**.
@@ -769,7 +774,7 @@ tab:
         Select the standard panel or veneer sheet which will be duplicated to calculate the best possible placement.
         This list is defined by the **$t(tab.materials.edit_material.std_sizes)** field of the material.
         Edit the material '{{ material_name }}' to complete this list.
-      option_std_sheet_add: Add a panel size
+      option_std_sheet_add: Add a length
       option_std_sheet_none: None
       option_scrap_sheet_good_sizes: Panel Offcuts
       option_scrap_sheet_veneer_sizes: Veneer Offcuts
@@ -782,11 +787,12 @@ tab:
       tooltip:
         scroll_to_block_1d: Scroll to first board or edge banding
         scroll_to_block_2d: Scroll to first panel
+        copy_leftovers_to_clipboard: Copy off-cuts to clipboard
       list:
         unplaced_parts: Unplaced Parts
         summary: Summary
         count: Qty.
-        bar: Board
+        bar: Dimensional
         sheet: Panel
         length: Length
         width: Width
@@ -814,11 +820,11 @@ tab:
         cut_none: None
         bar_dimensional_type_0: Standard Dimensional
         bar_dimensional_type_1: Offcut Board
-        bar_edge_type_0: Standard Edge Banding
+        bar_edge_type_0: Standard Edge Band
         bar_edge_type_1: Offcut Edge Banding
         sheet_good_type_0: Standard Panel
         sheet_good_type_1: Panel Offcut
-        sheet_veneer_type_0: Standard Veneer Sheet
+        sheet_veneer_type_0: Standard Veneer
         sheet_veneer_type_1: Veneer Offcut
         unused: Unused
         parts: "{{ count }} part"
@@ -848,35 +854,33 @@ tab:
         option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
         option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
         option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
-        option_sheet_good: Panel
+        option_sheet_good: Sheet Good
         option_sheet_good_help: |
-          Select whether the panel is drawn, and select its color.
+          Enables sheet good export and color selection.
         option_sheet_veneer: Veneer
         option_sheet_veneer_help: |
-          Select whether the veneer is drawn, and select its color.
+          Enables veneer sheet export and color selection.
         option_bar_dimensional: Dimensional
         option_bar_dimensional_help:  |
-          Select whether the dimensional is drawn, and select its color.
+          Enables dimensional export and color selection.
         option_bar_band: Edge
         option_bar_band_help:  |
-          Select whether the edge is drawn, and select its color.
+          Enables edgebanding export and color selection.
         option_parts: Parts
         option_parts_help:  |
-          Select whether or not parts are drawn, and select their color.
+          Enables part export and color selection.
         option_parts_holes: Drillings
         option_parts_holes_help:  |
-          Select the color for drillings.
+          Select the color of drillings.
         option_texts: Identifiers
         option_texts_help:  |
-          Select whether or not identifier labels are drawn, and select their color.
+          Enables export of part identification texts and color selection.
         option_leftovers: Leftovers
         option_leftovers_help:  |
-          Select whether leftovers are drawn, and select their color.
+          Enables export of off-cuts and color selection.
         option_cuts: Cuts
         option_cuts_help:  |
           Select whether cuts are drawn, and select their color.
-        option_stroke_color: Stroke color
-        option_fill_color: Fill color
         warning:
           is_sheet_selection: The **masked panels** are not exported.
       error:
@@ -951,13 +955,13 @@ tab:
         part_description: Description
         part_entity_named_path: Instance path
         part_entity_name: Instance name
-        part_bin: Bin
+        part_bin: Container
         part_cutting_size: Rough dimensions
         part_cutting_length: Length - rough
         part_cutting_width: Width - rough
         part_cutting_thickness: Thickness - rough
         part_edge_cutting_size: Edge dimensions
-        part_edge_cutting_length: Length edges - rough
+        part_edge_cutting_length: Length edges - raw
         part_edge_cutting_width: Width edges - rough
         part_size: Dimension
         part_length: Length
@@ -990,7 +994,7 @@ tab:
     layout:
       title: Drawing
       to_layout: Export to Layout
-      options_layout: Composition
+      options_layout: Layout
       options_settings: Configuration
       option_parts: Parts
       option_parts_colored: Color
@@ -1012,9 +1016,9 @@ tab:
       option_pins_colored_help: Select the color of the labels.
       option_pins_formula: Formula
       option_pins_formula_help: Allows you to write *Ruby* code to customize the label text.
-      option_pins_length: Leader Line
+      option_pins_length: Length
       option_pins_length_0: Without leader line
-      option_pins_length_1: Short
+      option_pins_length_1: Small
       option_pins_length_2: Medium
       option_pins_length_3: Long
       option_pins_length_help: Select the length of the leader line.
@@ -1025,7 +1029,7 @@ tab:
       option_pins_direction_3: Pointing towards the center of the parent group
       option_pins_direction_4: Pointing towards the center of the selection
       option_pins_direction_help: Select the direction of the leader lines to labels for better readability.
-      option_page: Paper
+      option_page: Paper Size
       option_page_format: Format
       option_page_format_portrait: Portrait
       option_page_format_landscape: Landscape
@@ -1073,6 +1077,11 @@ tab:
       option_part_drawing_type: Projection
       option_part_drawing_type_help: |
         Select the view to be exported.
+      option_faces: Faces
+      option_faces_0: Use target face only
+      option_faces_1: Use all faces of the part
+      option_faces_help: |
+        Allows you to choose whether the search for the shape of the part is to be carried out on all its faces or only on the targeted face.
       option_anchor: Anchor point
       option_anchor_0: Default
       option_anchor_1: Project the part's origin
@@ -1080,7 +1089,7 @@ tab:
         Enable the projection of the part's axis origin as anchor point.
       option_smoothing: Smoothing
       option_smoothing_0: None
-      option_smoothing_1: Smooth circles and arcs *(Experimental)*.
+      option_smoothing_1: Smooth circles and arcs *(Experimental)*
       option_smoothing_help: |
         Select whether circles and arcs should be detected.
 
@@ -1089,15 +1098,24 @@ tab:
       option_merge_holes_0: Default
       option_merge_holes_1: Outline + Drillings + Merge
       option_merge_holes_help: |
-        Enable the separation of the outlines of parts from their holes, as well as the merging of depths for each cavity.
+        **Default**
+        The part shape is exported with one layer per depth.
+
+        **Contour + Holes + Merge**
+        Activates the separation of the outer contour of parts from their holes, as well as the merging of depths for each cavity.
+      option_edges: Paths
+      option_edges_0: None
+      option_edges_1: Use stray edges
+      option_edges_help: |
+        Enables the use of stray edges (not attached to a face), coplanar with the target face, contained in the part, to export them as path.
       option_parts: Parts
-      option_parts_help:  |
+      option_parts_help: |
         Select the color of parts.
       option_parts_holes: Drillings
-      option_parts_holes_help:  |
+      option_parts_holes_help: |
         Select the color of drillings.
-      option_stroke_color: Stroke Color
-      option_fill_color: Fill Color
+      option_edges_color_help: |
+        Selects the color of paths.
       error:
         no_part: No part to export.
       warning:
@@ -1109,7 +1127,7 @@ tab:
       name: Designation
       number_and_name: Number and Designation
       number_without_hardware: Number (without accessories)
-      size: Size
+      size: Dimension
       area: Area
       volume: Volume
     error:
@@ -1124,6 +1142,9 @@ tab:
       no_typed_materials_in_model: "Your model does not use any defined material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** or **$t(tab.materials.type_5)**)."
       no_typed_materials_in_selection: "The selection does not use any defined material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** or **$t(tab.materials.type_5)**)."
       export_empty: Your export selection does not contain any part.
+    success:
+      part_selected: "{{ count }} part selected in the Parts List."
+      part_selected_plural: "{{ count }} parts selected in the Parts List."
     tip:
       no_component: |
         The parts to be included in the *parts list* must be instances of a **component**.
@@ -1137,7 +1158,7 @@ tab:
     new: New Material
     type_0: Undefined
     type_1: Solid Wood
-    type_2: Sheet Goods
+    type_2: Panel
     type_3: Dimensional
     type_4: Edge Banding
     type_5: Hardware
@@ -1557,13 +1578,14 @@ tool:
     transparency: Transparency
     zoom_extents: Zoom Extents
     toggle_depth: Background parts
+    more: More
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_paint:
     title: Paint
-    default_material: No material
-    filters: Filters
+    default_material: No material defined
+    filters: Filter
     filter_0: Without type
     filter_1: $t(tab.materials.type_1)
     filter_2: $t(tab.materials.type_2)
@@ -1600,7 +1622,7 @@ tool:
     faces: "{{ count }} face"
     faces_plural: "{{ count }} faces"
     face_zmin: Backside
-    face_zmax: Front
+    face_zmax: Frontside
     warning:
       no_material: No material
       no_material_type: "No material of type '{{ type }}'"
@@ -1654,12 +1676,12 @@ tool:
     action_option_unit_2_status: $t(default.unit_2)
     action_option_unit_3_status: $t(default.unit_3)
     action_option_unit_4_status: $t(default.unit_4)
-    action_option_faces_0_status: Use target face only
-    action_option_faces_1_status: Use all faces of the part
-    action_option_options_anchor_status: Project the part's origin
-    action_option_options_smoothing_status: Detect circles and arcs (Experimental)
+    action_option_faces_0_status: $t(tab.cutlist.write.option_faces_0)
+    action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
+    action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
+    action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: Isolate through-holes and merge depths for each cavity
-    action_option_options_guides_status: Export the floating and coplanar edges of the target face contained in the part as guides
+    action_option_options_edges_status: Export the stray and coplanar edges of the target face contained in the part as path.
     error:
       not_part: This face does not belong to a part (component)
       not_flat_face: This surface is not planar
