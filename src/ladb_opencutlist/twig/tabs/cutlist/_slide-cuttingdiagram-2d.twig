@@ -251,9 +251,11 @@
                 <tr class="table-heading">
                     <td colspan="6">
                         <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-open"></i></button>
-                        <div class="btn-group pull-right">
-                            <button class="no-print btn btn-default btn-sm ladb-btn-hiddable" id="ladb_btn_copy_leftovers_to_clipboard" data-toggle="tooltip" title="{{ 'tab.cutlist.cuttingdiagram.tooltip.copy_leftovers_to_clipboard'|i18next }}"><i class="ladb-opencutlist-icon-copy"></i> {{ 'default.copy'|i18next }}</button>
-                        </div>
+                        {% if to_keep_leftovers|length > 0 %}
+                            <div class="btn-group pull-right">
+                                <button class="no-print btn btn-default btn-sm ladb-btn-hiddable" id="ladb_btn_copy_leftovers_to_clipboard" data-toggle="tooltip" title="{{ 'tab.cutlist.cuttingdiagram.tooltip.copy_leftovers_to_clipboard'|i18next }}"><i class="ladb-opencutlist-icon-copy"></i> {{ 'default.copy'|i18next }}</button>
+                            </div>
+                        {% endif %}
                         <div class="ladb-heading">{{ to_keep_leftovers|length }} {{ 'tab.cutlist.cuttingdiagram.list.leftover_to_keep'|i18next({ 'count':(to_keep_leftovers|length) }) }}</div>
                     </td>
                 </tr>
