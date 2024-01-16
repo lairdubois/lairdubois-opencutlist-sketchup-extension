@@ -70,6 +70,8 @@ default:
   tab_key: Tab
   file: Файл
   file_plural: Файли
+  stroke_color: Колір лінії
+  fill_color: Колір заливки
 core:
   menu:
     submenu: OpenCutList
@@ -123,6 +125,7 @@ core:
       **{{ error }}**
   success:
     exported_to: "Експорт успішно виконано до {{ path }}."
+    copied_to_clipboard: ""
   event:
     model_change: Активна модель була змінена.
     options_change: Параметри моделі змінено.
@@ -233,6 +236,8 @@ tab:
       Виберіть у своїй сцені компонент для створення списку елементів. Потім натисніть кнопку **Розрахувати**.
       Якщо жоден компонент не вибрано, будуть розглянуті всі компоненти, видимі на сцені.
     is_selection: Вибірка
+    select_part: Вибрати деталь
+    select_part_plural: Вибрати деталі
     material_undefined: Матеріал не заданий
     not_available_std_width: Ширина не задана
     not_available_std_thickness: Товщина не задана
@@ -337,6 +342,8 @@ tab:
       dblclick_to_sort_axes: "Двічі клацніть тут, щоб автоматично орієнтувати осі відповідно до розмірів деталі"
       part_axes: Внутрішні осі деталі
       select_unselect_all_parts: Виділити/Зняти виділення з усіх деталей у групі
+      select_parts_in_cutlist: Виберіть деталь у списку деталей
+      select_parts_in_cutlist_plural: "Виберіть {{ count }} деталей у списку деталей"
       setup_group_cuttingdiagram: "Налаштування розкрою '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
       open_part_url: Відкрити URL деталі
     menu:
@@ -633,8 +640,6 @@ tab:
         no_column_formula: Введіть формулу
       warning:
         is_group_selection: "Деталі, що містяться в **прихованих групах** вашої карти розкрою, не будуть експортовані."
-      success:
-        copied: Скопійовано в буфер обміну.
     report:
       title: Кошторис
       info_0: |
@@ -710,10 +715,10 @@ tab:
       option_full_width_diagram_help: "Якщо цю опцію активовано, карти відображаються на повну доступну ширину. В іншому випадку їх ширина визначається фіксованим масштабним коефіцієнтом їх фактичного розміру."
       option_wrap_length: Довжина розбивки
       option_wrap_length_help: "Максимальна довжина, при якій дошка або крайка відображатиметься на кількох відрізках."
-      option_hide_cross: Обрізки
+      option_hide_cross: Залишки
       option_hide_cross_0: Розміри та перехрестя
       option_hide_cross_1: Тільки розміри
-      option_hide_cross_help: "Показує або приховує діагональне перехрестя на карті розкрою, що позначає деталі, визначені на схемі як обрізки."
+      option_hide_cross_help: "Показує або приховує діагональне перехрестя на карті розкрою, що позначає деталі, визначені на схемі як залишки."
       option_highlight_primary_cuts: Основні різи
       option_highlight_primary_cuts_0: Тільки огляд
       option_highlight_primary_cuts_1: Завжди видимий
@@ -745,8 +750,8 @@ tab:
       option_stacking_1: По довжині
       option_stacking_2: По ширині
       option_stacking_3: Всі можливості
-      option_keep: Розмір мінімальних перепадів
-      option_keep_help: "Перепади, які мають обидва розміри більші за мінімальний розмір, будуть позначені **зберегти**."
+      option_keep: Розмір мінімальних залишків
+      option_keep_help: "Залишки, які мають обидва розміри більші за мінімальний розмір, будуть позначені **зберегти**."
       option_std_bar_dimensional: Стандартний розмір дошки
       option_std_bar_edge: Стандартний розмір крайки
       option_std_bar_help: |
@@ -782,6 +787,7 @@ tab:
       tooltip:
         scroll_to_block_1d: Прокрутка до першої дошки або крайки
         scroll_to_block_2d: Прокрутка до першої панелі
+        copy_leftovers_to_clipboard: ""
       list:
         unplaced_parts: Нерозміщені деталі
         summary: Звіт
@@ -802,7 +808,7 @@ tab:
         efficiency: Ефективність
         leftover: Залишок
         leftover_to_keep: Зберегти перепад
-        leftover_to_keep_plural: Зберегти перепади
+        leftover_to_keep_plural: Зберегти залишки
         leftover_to_throw_away: Скинути перепади
         cut: Розріз
         cut_plural: Розрізи
@@ -850,33 +856,31 @@ tab:
         option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
         option_sheet_good: Листовий
         option_sheet_good_help: |
-          Дозволяє активувати експорт панелі та вибрати її колір.
+          Дозволяє експорт панелі та вибір кольору.
         option_sheet_veneer: Шпон
         option_sheet_veneer_help: |
-          Дозволяє активувати експорт шпону та вибрати його колір.
+          Дозволяє активувати експорт листа та вибрати його кольори.
         option_bar_dimensional: Погонаж
         option_bar_dimensional_help:  |
-          Дозволяє активувати експорт дошки та вибрати її колір.
+          Дозволяє активувати експорт дошки та вибрати її кольори.
         option_bar_band: Крайка
         option_bar_band_help:  |
-          Дозволяє активувати експорт крайки та вибрати її колір.
+          Дозволяє активувати експорт крайки та вибрати її кольори.
         option_parts: Деталі
         option_parts_help:  |
-          Дозволяє активувати експорт деталей та вибрати їх колір.
+          Дозволяє активувати експорт деталей та вибрати їх кольори.
         option_parts_holes: Свердління
         option_parts_holes_help:  |
           Дозволяє вибрати колір отворів деталей.
         option_texts: Ідентифікації
         option_texts_help:  |
-          Дозволяє активувати експорт текстів ідентифікації деталей та вибрати їх колір.
-        option_leftovers: Обрізки
+          Дозволяє активувати експорт текстів ідентифікації деталей та вибрати їх кольори.
+        option_leftovers: Залишки
         option_leftovers_help:  |
-          Дозволяє активувати експорт виїмок та вибрати їх колір.
+          Дозволяє активувати експорт залишків та вибрати їхні кольори.
         option_cuts: Розрізи
         option_cuts_help:  |
           Дозволяє активувати експорт розрізів та вибрати їх колір.
-        option_stroke_color: Колір лінії
-        option_fill_color: Колір заливки
         warning:
           is_sheet_selection: Приховані **панелі** не будуть експортовані.
       error:
@@ -957,8 +961,8 @@ tab:
         part_cutting_width: Ширина елемента
         part_cutting_thickness: Товщина елемента
         part_edge_cutting_size: Розмір крайки
-        part_edge_cutting_length: Довжина крайки
-        part_edge_cutting_width: Ширина крайки
+        part_edge_cutting_length: Довжина крайки - пильна
+        part_edge_cutting_width: Ширина крайки - пильна
         part_size: Доступний розмір
         part_length: Довжина - фактична
         part_width: Ширина - фактична
@@ -1073,6 +1077,11 @@ tab:
       option_part_drawing_type: Проекція
       option_part_drawing_type_help: |
         Дозволяє вибрати експортований вид.
+      option_faces: Поверхні
+      option_faces_0: Використовуйте лише цільову грань
+      option_faces_1: Використовуйте всі грані деталі
+      option_faces_help: |
+        Дозволяє вибрати, чи проводити пошук форми деталі на всіх її гранях, чи тільки на цільовій грані.
       option_anchor: Точка прив’язки
       option_anchor_0: За замовчуванням
       option_anchor_1: Проектувати походження деталі
@@ -1080,7 +1089,7 @@ tab:
         Дозволяє активувати проекцію початку координат деталі як точку прив’язки.
       option_smoothing: Згладжування
       option_smoothing_0: Ні
-      option_smoothing_1: Згладити кола та дуги *(Експериментально)*.
+      option_smoothing_1: Згладити кола та дуги (Експериментально)
       option_smoothing_help: |
         Дозволяє активувати виявлення кола і дуги.
 
@@ -1089,15 +1098,24 @@ tab:
       option_merge_holes_0: За замовчуванням
       option_merge_holes_1: Контур + Свердління + Злиття
       option_merge_holes_help: |
-        Дозволяє активувати розділення зовнішнього контуру деталей від їх отворів, а також злиття глибин для кожної виїмки.
+        **За замовчуванням**
+        Форма деталі експортується з одним шаром на глибину.
+
+        **Контур + Отвори + Злиття**
+        Активує розділення зовнішнього контуру деталей від їх отворів, а також злиття глибин для кожної виїмки.
+      option_edges: Траєкторії
+      option_edges_0: Ні
+      option_edges_1: Використовувати плаваючі лінії
+      option_edges_help: |
+        Дозволяє активувати використання плаваючих ліній (не пов'язаних з обличчям) та співпланарних з цільовим обличчям, що містяться в деталі, для експорту як траєкторії.
       option_parts: Деталі
-      option_parts_help:  |
-        Дозволяє вибрати колір деталей.
+      option_parts_help: |
+        Дозволяє вибрати кольори деталей.
       option_parts_holes: Свердління
-      option_parts_holes_help:  |
-        Дозволяє вибрати колір отворів деталей.
-      option_stroke_color: Колір лінії
-      option_fill_color: Колір заливки
+      option_parts_holes_help: |
+        Дозволяє вибрати кольори отворів деталей.
+      option_edges_color_help: |
+        Дозволяє вибрати колір ліній-траєкторій.
       error:
         no_part: Немає жодної деталі для експорту.
       warning:
@@ -1124,6 +1142,9 @@ tab:
       no_typed_materials_in_model: "У вашій моделі відсутні матеріали з визначеним типом (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** або **$t(tab.materials.type_5)**)."
       no_typed_materials_in_selection: "У вашому виборі відсутні матеріали з визначеним типом (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** або **$t(tab.materials.type_5)**)."
       export_empty: Ваш експорт не містить деталей.
+    success:
+      part_selected: "{{ count }} деталь вибрана в списку деталей"
+      part_selected_plural: "{{ count }} деталей вибрано в списку деталей"
     tip:
       no_component: |
         Деталі, які ви хочете відобразити на *карті розкрою*, мають бути екземплярами **компонента**.
@@ -1557,6 +1578,7 @@ tool:
     transparency: Прозорість
     zoom_extents: Наблизити
     toggle_depth: Деталі на задньому плані
+    more: Ще
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -1654,12 +1676,12 @@ tool:
     action_option_unit_2_status: $t(default.unit_2)
     action_option_unit_3_status: $t(default.unit_3)
     action_option_unit_4_status: $t(default.unit_4)
-    action_option_faces_0_status: Використовуйте лише цільову грань
-    action_option_faces_1_status: Використовуйте всі грані деталі
-    action_option_options_anchor_status: Проектувати походження деталі
-    action_option_options_smoothing_status: Виявлення кола та дуг (Експериментально)
+    action_option_faces_0_status: $t(tab.cutlist.write.option_faces_0)
+    action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
+    action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
+    action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: "Виокремити отвори, що проходять крізь і злити глибини для кожної порожнини"
-    action_option_options_guides_status: "Експортувати як направляючі плаваючі та співпадаючі ребра на цільову поверхню, що містяться в деталі"
+    action_option_options_edges_status: "Експортувати як шляхи плаваючих і співпадаючих ребер на цільову грань, що містяться в деталі."
     error:
       not_part: Ця площина не є частиною деталі (компонента)
       not_flat_face: Ця поверхня не є плоскою.

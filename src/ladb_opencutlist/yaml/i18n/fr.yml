@@ -343,7 +343,7 @@ tab:
       part_axes: Axes internes de la pièce
       select_unselect_all_parts: Sélectionner / Désélectionner toutes les pièces du groupe
       select_parts_in_cutlist: Sélectionner la pièce dans la fiche de débit
-      select_parts_in_cutlist_plural: Sélectionner les {{count }} pièces dans la fiche de débit
+      select_parts_in_cutlist_plural: Sélectionner les {{ count }} pièces dans la fiche de débit
       setup_group_cuttingdiagram: "Configurer le calepinage de '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
       open_part_url: Ouvrir l'URL de la pièce
     menu:

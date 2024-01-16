@@ -19,7 +19,7 @@ default:
   print: In
   export: Xuất
   import: Nhập
-  load: Tải lên
+  load: Tải
   preview: Xem trước
   options: Tùy chọn
   caution: Chú ý
@@ -68,6 +68,10 @@ default:
   alt_key_win: Alt
   alt_key_mac: Yêu cầu
   tab_key: Tab
+  file: ""
+  file_plural: ""
+  stroke_color: ""
+  fill_color: ""
 core:
   menu:
     submenu: OpenCutList
@@ -80,12 +84,19 @@ core:
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
+      smart_export: $t(core.toolbar.command.smart_export)
+      reset_dialog_position: ""
   toolbar:
     name: OpenCutList
     command:
       dialog: OpenCutList
       smart_paint: Màu các bộ phận
       smart_axes: Định hướng các bộ phận
+      smart_export: ""
+  messagebox:
+    dir_override: |
+  savepanel:
+    export_to_file: ""
   dialog:
     title: OpenCutList tạo bởi L'Air du Bois
   leftbar:
@@ -106,11 +117,16 @@ core:
       Để báo cáo lỗi: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
   error:
     feature_unavailable: "Chức năng này yêu cầu Sketchup phiên bản {{ version }} hoặc cao hơn"
+    failed_export_to: |
+  success:
+    exported_to: ""
+    copied_to_clipboard: ""
   event:
     model_change: Mô hình hoạt động đã được thay đổi.
     options_change: Các tùy chọn trong mô hình đã được thay đổi.
     material_change: Ít nhất một vật liệu đã được thay đổi.
     selection_change: Lựa chọn trong mô hình hoạt động đã được thay đổi.
+    layers_change: ""
   upgrade:
     unavailable: Không thể tìm thấy phiên bản mới nhất của *OpenCutList*.
     available: |
@@ -159,17 +175,24 @@ core:
     dictionary:
       component_textinput_color: Bảng màu
       cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
+      cutlist_cuttingdiagram1d_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 1D
       cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
+      cutlist_cuttingdiagram2d_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 2D
       cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
       cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
       cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
       cutlist_options: $t(tab.cutlist.label) / $t(default.options)
       cutlist_report_options: $t(tab.cutlist.label) / $t(tab.cutlist.report.title)
+      cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
+      cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
       importer_import_options: $t(tab.importer.label) / $t(default.import)
       importer_load_options: $t(tab.importer.label) / $t(default.open)
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       settings_model: $t(tab.settings.label) / Model
+      tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
+      tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
+      tool_smart_export_options: $t(core.toolbar.command.smart_export)
   progress:
     please_wait: Đang tính toán trong một thế giới hòa bình
   component:
@@ -202,13 +225,15 @@ core:
         Đảm bảo rằng bạn đã kết nối với Internet.
 tab:
   cutlist:
-    label: Các bộ phận
+    label: Thô
     title: Danh sách các bộ phận
     help: |
       Chọn các bộ phận sẽ được sử dụng cho danh sách các bộ phận trong cảnh hiện tại và nhấp vào **Tạo mới**
       Nếu vùng chọn trống, tất cả các bộ phận hiển thị của cảnh sẽ được sử dụng để tính toán danh sách.
     is_selection: Chỉ lựa chọn
-    material_undefined: Không có vật liệu xác định
+    select_part: ""
+    select_part_plural: ""
+    material_undefined: Không có vật liệu
     not_available_std_width: Chiều rộng không xác định
     not_available_std_thickness: Độ dày không xác định
     not_available_std_section: Mặt cắt không xác định
@@ -219,6 +244,9 @@ tab:
     edit_part_size_increase_properties: Chỉnh sửa các thuộc tính (ngoại cỡ) của bộ phận
     edit_part_edges_properties: Chỉnh sửa các thuộc tính (dải cạnh) của bộ phận
     edit_part_faces_properties: Chỉnh sửa các thuộc tính (các mặt) của bộ phận
+    part_drawing_type_1: ""
+    part_drawing_type_2: ""
+    part_drawing_type_3: ""
     tooltip:
       show_hide_block: Hiện / Ẩn nhóm
       scroll_to_block: Di chuyển đến nhóm
@@ -268,6 +296,7 @@ tab:
       symmetrical: Tính năng phát hiện bộ phận được nhân đôi bị tắt trên bộ phận này
       ignore_grain_direction: Hướng thớ gỗ được bỏ qua trên bộ phận này
       auto_oriented: Bộ phận này đã được định hướng lại tự động
+      oko_label_filter: ""
       add_label_filter: "Đang lọc trên '{{ label }}'"
       remove_label_filter: "Xóa bộ lọc trên '{{ label }}'"
       add_edge_material_name_filter: "Lọc trên '{{ material_name }}'"
@@ -301,20 +330,29 @@ tab:
       edge_ymax: Chiều dài cạnh 2
       edge_xmin: Chiều rộng cạnh 1
       edge_xmax: Chiều rộng cạnh 2
-      face_zmin: Phía sau
+      face_zmin: Mặt sau
       face_zmax: Mặt trước
       dblclick_to_copy_all_edges: Nhấp đúp vào đây để nhân đôi giá trị này sang các cạnh khác
       dblclick_to_copy_all_faces: Click đúp vào đây để nhân đôi giá trị này sang mặt khác
       dblclick_to_sort_axes: Nhấp đúp vào đây để tự động sắp xếp lại các trục theo kích thước của bộ phận
       part_axes: Các trục bên trong của bộ phận
       select_unselect_all_parts: Chọn / bỏ chọn tất cả các bộ phận trong nhóm
+      select_parts_in_cutlist: ""
+      select_parts_in_cutlist_plural: ""
       setup_group_cuttingdiagram: "Cấu hình sơ đồ cắt của '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
+      open_part_url: ""
     menu:
       show_all_groups: Hiển thị tất cả các nhóm
       hide_all_other_groups: Ẩn tất cả các nhóm khác
       numbers_save: Lưu số bộ phận
       numbers_reset: Khởi tạo lại số bộ phận
       highlight_parts: $t(tab.cutlist.highlight_parts)
+      write_2d: ""
+      write_3d: ""
+      write_2d_parts: ""
+      write_3d_parts: ""
+      group_write_2d_parts: ""
+      group_write_3d_parts: ""
       group_layout_parts: Vẽ tổng quan các bộ phận trong nhóm
       group_numbers_save: Lưu số bộ phận của nhóm này
       group_numbers_reset: Tạo lại số bộ phận của nhóm này
@@ -367,6 +405,8 @@ tab:
       description: Mô tả
       description_help: |
         *Mô tả* cho phép bạn cung cấp thông tin được cá nhân hóa về từng định nghĩa bộ phận.
+      url: ""
+      url_help: |
       tags: Nhãn hiệu
       tags_help: |
         *Nhãn hiệu* là các từ khóa tùy chỉnh có thể được thêm vào định nghĩa từng bộ phận.
@@ -415,10 +455,7 @@ tab:
       edge_disabled_help: Dải cạnh này không thể định cấu hình được vì không có mặt áp vật liệu nào được phát hiện trên cạnh này của bộ phận trong mô hình.
       face_disabled_help: Bề mặt này không thể định cấu hình vì không có bề mặt mang vật liệu nào được phát hiện trên cạnh này của bộ phận trong mô hình.
       multiple_values: Nhiều giá trị
-      export_to_skp: Xuất (.skm)
       loading_preview: Đang tải bảng xem trước
-    export_to_skp:
-      title: Xuất tệp .skm
     option:
       auto_orient: Tự động định hướng các bộ phận
       auto_orient_help: |
@@ -463,6 +500,8 @@ tab:
       hide_edges_help: "Nếu tùy chọn này được chọn, **cột dải cạnh** của các bộ phận thuộc loại *Hàng dạng tấm* sẽ bị ẩn."
       hide_faces: Ẩn các cột của bề mặt
       hide_faces_help: "Nếu tùy chọn này được chọn, **Cột bề mặt** của các bộ phận thuộc loại *Hàng dạng tấm* sẽ bị ẩn."
+      hide_material_colors: ""
+      hide_material_colors_help: ""
       minimize_on_highlight: Thu nhỏ sau *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Nếu tùy chọn này được chọn, cửa sổ OpenCutList sẽ được thu nhỏ khi chức năng *'$t(tab.cutlist.highlight_part)'* được sử dụng."
       general: Chung
@@ -474,7 +513,7 @@ tab:
       dimension_column_order_strategy_help: |
         Sắp xếp lại các thuộc tính kích thước sau để xác định thứ tự hiển thị của các cột.
       property_thickness: Độ dày
-      property_length: Chiều dài
+      property_length: Dòng chính
       property_width: Chiều rộng
       property_name: Tên gọi
       property_count: Số lượng
@@ -508,7 +547,7 @@ tab:
       final: Thực tế
       total_cutting: Σ Thô
       total_final: Σ Thực tế
-      length: Chiều dài
+      length: Dòng chính
       length_short: L
       width: Chiều rộng
       width_short: W
@@ -525,6 +564,7 @@ tab:
       add_column: Thêm một cột
       add_native_columns: Thêm một cột gốc
       remove_column: Xóa bỏ
+      remove_all_columns: ""
       columns: Cột
       column_title: Tiêu đề
       column_title_help: |
@@ -539,7 +579,7 @@ tab:
       option_source_cutlist: $t(tab.cutlist.title)
       option_source_instances_list: Danh sách các đối tượng
       option_col_sep: Dấu phân cách
-      option_col_sep_tab: Lập bảng
+      option_col_sep_tab: Người lập
       option_col_sep_comma: Dấu phẩy
       option_col_sep_semicolon: Dấu chấm phẩy
       option_encoding: Mã hóa
@@ -556,6 +596,8 @@ tab:
       cutting_length: Chiều dài - thô
       cutting_width: Chiều rộng - thô
       cutting_thickness: Độ dày - thô
+      edge_cutting_length: ""
+      edge_cutting_width: ""
       bbox_length: Chiều dài
       bbox_width: Chiều rộng
       bbox_thickness: Độ dày
@@ -563,10 +605,13 @@ tab:
       count: Số lượng
       part_count: Số lượng các bộ phận
       material_type: Loại
-      material_thickness: Vật liệu / Độ dày
       material_name: Vật liệu
+      material_description: ""
+      material_url: ""
+      material_std_dimension: Kích thước tiêu chuản
       entity_names: Tên đối tượng
       description: Mô tả
+      url: ""
       tags: Nhãn hiệu
       edge_ymin: Chiều dài cạnh 1
       edge_ymax: Chiều dài cạnh 2
@@ -576,14 +621,19 @@ tab:
       face_zmax: Mặt trước
       layer: Thẻ
       layers: Thẻ
+      batch: Lô hàng
+      bin: Thùng
+      filename: ""
+      model_name: Tên mô hình
+      model_description: ""
+      page_name: Tên cảnh
+      page_description: ""
       placeholder:
         no_column_title: Nhập tiêu đề
         no_column_formula_native: "Giá trị gốc của cột '{{ col_name }}'"
         no_column_formula: Nhập công thức
       warning:
         is_group_selection: Các bộ phận bên trong **nhóm ẩn** của danh sách các bộ phận sẽ không được xuất.
-      success:
-        copied: Sao chép vào clipboard.
     report:
       title: Ước tính
       info_0: |
@@ -671,9 +721,14 @@ tab:
       option_hide_edges_preview_0: Hiển thị trong sơ đồ cắt
       option_hide_edges_preview_1: Ẩn trong sơ đồ cắt
       option_hide_edges_preview_help: Cho phép bạn hiển thị hoặc ẩn hiển thị trực quan của các dải cạnh cho từng bộ phận trong sơ đồ cắt.
+      option_part_drawing_type: ""
+      option_part_drawing_type_0: ""
+      option_part_drawing_type_1: ""
+      option_part_drawing_type_2: ""
+      option_part_drawing_type_help: |
       option_saw_kerf: Độ dày của lưỡi cắt
       option_saw_kerf_help: Chiều rộng của vật liệu được loại bỏ bởi lưỡi cưa cắt.
-      option_trimming: Kích thước cắt tỉa
+      option_trimming: Cắt tỉa
       option_trimming_help_1d: Lượng vật liệu ở mỗi đầu của bảng hoặc dải cạnh được xử lý như chất thải.
       option_trimming_help_2d: Lượng vật liệu bao quanh biên tấm thô được xử lý như chất thải.
       option_optimization: Mức độ tối ưu hóa
@@ -686,13 +741,15 @@ tab:
       option_stacking_1: Trên suốt chiều dài
       option_stacking_2: Trên suốt chiều rộng
       option_stacking_3: Tất cả các khả năng
+      option_keep: ""
+      option_keep_help: ""
       option_std_bar_dimensional: Kích thước tiêu chuẩn
       option_std_bar_edge: Dải cạnh tiêu chuẩn
       option_std_bar_help: |
         Chọn bảng tiêu chuẩn hoặc dải cạnh, bảng này sẽ được sao chép để chứa tất cả các bộ phận.
         Danh sách này được xác định trong trường **$t(tab.materials.edit_material.std_lengths)** của vật liệu.
         Chỉnh sửa vật liệu '{{ material_name }}' để cập nhật danh sách này.
-      option_std_bar_add: Thêm chiều dài
+      option_std_bar_add: Thêm kích thước tấm
       option_std_bar_none: Không có
       option_scrap_bar_dimensional_lengths: Bảng cắt thừa
       option_scrap_bar_edge_lengths: Dải cạnh cắt thừa
@@ -703,7 +760,7 @@ tab:
         Số lượng là tùy chọn.
         *Kích thước không có đơn vị được coi là đơn vị của mô hình.*
       option_std_sheet_good: Tấm tiêu chuẩn
-      option_std_sheet_veneer: Veneer tiêu chuẩn
+      option_std_sheet_veneer: Tấm Veneer tiêu chuẩn
       option_std_sheet_help: |
         Chọn tấm tiêu chuẩn hoặc tấm veneer sẽ được sao chép để tính toán vị trí tốt nhất có thể.
         Danh sách này được định nghĩa trong trường **$t(tab.materials.edit_material.std_sizes)** của vật liệu.
@@ -721,13 +778,14 @@ tab:
       tooltip:
         scroll_to_block_1d: Cuộn đến bảng đầu tiên hoặc dải cạnh
         scroll_to_block_2d: Cuộn đến tấm đầu tiên
+        copy_leftovers_to_clipboard: ""
       list:
         unplaced_parts: Các bộ phận không có chỗ
         summary: Bảng tóm tắt
         count: Số lượng
-        bar: Bảng
-        sheet: Tấm
-        length: Chiều dài
+        bar: Kích thước
+        sheet: Hàng dạng tấm
+        length: Dòng chính
         width: Chiều rộng
         total_length: Σ Chiều dài
         total_area: Σ Diện tích
@@ -740,6 +798,9 @@ tab:
         overall_efficiency: Hiệu quả tổng thể
         efficiency: Hiệu quả
         leftover: Phần thừa
+        leftover_to_keep: ""
+        leftover_to_keep_plural: ""
+        leftover_to_throw_away: ""
         cut: Đường cắt
         cut_plural: Đường cắt
         cut_trimming: Cắt tỉa
@@ -760,6 +821,45 @@ tab:
         parts: "{{ count }} bộ phận"
         parts_plural: "{{ count }} bộ phận"
         settings: Cài đặt
+      export:
+        title: ""
+        info_0: |
+        option_file_format: $t(tab.cutlist.write.option_file_format)
+        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
+        option_dxf_structure: ""
+        option_dxf_structure_1: ""
+        option_dxf_structure_2: ""
+        option_dxf_structure_help: |
+        option_unit: $t(tab.cutlist.write.option_unit)
+        option_unit_help: $t(tab.cutlist.write.option_unit_help)
+        option_smoothing: $t(tab.cutlist.write.option_smoothing)
+        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
+        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
+        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
+        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
+        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
+        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
+        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
+        option_sheet_good: Hàng dạng tấm
+        option_sheet_good_help: |
+        option_sheet_veneer: ""
+        option_sheet_veneer_help: |
+        option_bar_dimensional: Kích thước
+        option_bar_dimensional_help:  |
+        option_bar_band: ""
+        option_bar_band_help:  |
+        option_parts: Các bộ phận
+        option_parts_help:  |
+        option_parts_holes: ""
+        option_parts_holes_help:  |
+        option_texts: ""
+        option_texts_help:  |
+        option_leftovers: Phần cắt thừa
+        option_leftovers_help:  |
+        option_cuts: Đường cắt
+        option_cuts_help:  |
+        warning:
+          is_sheet_selection: ""
       error:
         no_bar_dimensional: Bảng tiêu chuẩn không được định cấu hình chính xác và không có vết cắt nào được xác định.
         no_bar_edge: Dải cạnh tiêu chuẩn không được định cấu hình chính xác và không có vết cắt nào được xác định.
@@ -786,6 +886,7 @@ tab:
       size: Kích thước thật của nhãn
       add_element: Thêm một yếu tố
       remove_element: Xóa bỏ
+      remove_all_elements: ""
       part_order_strategy_help: |
         Sắp xếp lại các ô xếp để xác định thứ tự sắp xếp của nhãn.
         Thuộc tính có thể được sắp xếp theo thứ tự <i class="ladb-opencutlist-icon-sort-asc"></i> *tăng dần* hoặc <i class="ladb-opencutlist-icon-sort-desc"></i> *giảm dần*.
@@ -815,6 +916,7 @@ tab:
       option_cutting_marks_1: In
       option_formula: Tên trường
       option_size: Kích thước
+      option_custom_formula: Công thức
       option_anchor: Neo
       option_anchor_start: Bắt đầu - Phía dưới
       option_anchor_middle: Ở giữa - Phía dưới
@@ -824,6 +926,7 @@ tab:
       option_anchor_end_top: Kết thúc - Phía trên
       option_color: Màu sắc
       formula:
+        custom: Công thức
         part_number: Số
         part_name: Tên gọi
         part_description: Mô tả
@@ -834,6 +937,9 @@ tab:
         part_cutting_length: Chiều dài - thô
         part_cutting_width: Chiều rộng - thô
         part_cutting_thickness: Độ dày - thô
+        part_edge_cutting_size: ""
+        part_edge_cutting_length: ""
+        part_edge_cutting_width: ""
         part_size: Kích thước
         part_length: Chiều dài
         part_width: Chiều rộng
@@ -846,6 +952,7 @@ tab:
         part_edge_xmax: Chiều rộng cạnh 2
         part_face_zmin: Mặt sau Veneer
         part_face_zmax: Mặt trước Veneer
+        thumbnail_proportional_drawing: ""
         thumbnail_proportional: Hình thu nhỏ theo tỷ lệ
         thumbnail_square: Hình thu nhỏ theo hình vuông
         group_material: Vật liệu / Độ dày
@@ -932,7 +1039,48 @@ tab:
       warning:
         is_group_selection: Các bộ phận bên trong **nhóm ẩn** trong danh sách bộ phận của bạn sẽ không được vẽ.
         is_part_selection: Bản vẽ tổng quan này được giới hạn ở **các phần được chọn**.
+    write:
+      title: ""
+      info_2d: |
+      info_3d: |
+      option_file_format: Định dạng
+      option_file_format_help: |
+      option_unit: Đơn vị
+      option_unit_help: |
+      option_part_drawing_type: ""
+      option_part_drawing_type_help: |
+      option_faces: Các mặt
+      option_faces_0: ""
+      option_faces_1: ""
+      option_faces_help: |
+      option_anchor: ""
+      option_anchor_0: ""
+      option_anchor_1: ""
+      option_anchor_help: |
+      option_smoothing: ""
+      option_smoothing_0: Không có
+      option_smoothing_1: ""
+      option_smoothing_help: |
+      option_merge_holes: ""
+      option_merge_holes_0: ""
+      option_merge_holes_1: ""
+      option_merge_holes_help: |
+      option_edges: ""
+      option_edges_0: Không có
+      option_edges_1: ""
+      option_edges_help: |
+      option_parts: Các bộ phận
+      option_parts_help: |
+      option_parts_holes: ""
+      option_parts_holes_help: |
+      option_edges_color_help: |
+      error:
+        no_part: ""
+      warning:
+        is_group_selection: Các bộ phận bên trong **nhóm ẩn** của danh sách các bộ phận sẽ không được xuất.
+        is_part_selection: ""
     snippet:
+      hello: ""
       number: Số
       name: Tên gọi
       number_and_name: Số lượng và chỉ định
@@ -945,8 +1093,6 @@ tab:
       no_entities: Mô hình của bạn rỗng. Bạn sẽ cần phải cung cấp cho tôi thêm thông tin ;)
       no_component_in_selection: Không có đối tượng nào của component hiển thị được phát hiện trong lựa chọn của bạn.
       no_component_in_model: Không có đối tượng nào của component hiển thị được phát hiện trong cảnh của bạn.
-      failed_to_write_export_file: "Không ghi được tệp xuất. **{{ error }}**"
-      failed_export_skp_file: "Đã xảy ra lỗi khi xuất sang tệp .skp. **{{ error }}**"
       unknow_part: Bộ phận đã chọn không tồn tại trong danh sách bộ phận.
       obsolete_cutlist: "Không thể, danh sách các bộ phận đã lỗi thời. Xin vui lòng, tạo lại nó."
     warning:
@@ -955,7 +1101,8 @@ tab:
       no_typed_materials_in_selection: "Lựa chọn không sử dụng bất kỳ vật liệu xác định nào (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** hoặc **$t(tab.materials.type_5)**)."
       export_empty: Lựa chọn xuất của bạn không chứa bất kỳ bộ phận nào.
     success:
-      exported_to: "Xuất thành công sang {{ export_path }}."
+      part_selected: ""
+      part_selected_plural: ""
     tip:
       no_component: |
         Các bộ phận được bao gồm trong *danh sách bộ phận* phải là đối tượng của một  **component**.
@@ -992,6 +1139,7 @@ tab:
       set_current: |
         Tô các bộ phận bằng '{{ name }}'
         *Nhấp đúp chuột để thu nhỏ*
+      open_url: ""
     menu:
       import_from_skm: Nhập vật liệu (.skm)
       purge_unused: Dọn dẹp vật liệu không sử dụng
@@ -1015,6 +1163,8 @@ tab:
       no_texture: Không có texture
       name: Tên
       type: Loại
+      description: Mô tả
+      url: ""
       cut_options: Thông số cắt
       attributes: Thuộc tính
       thickness: Độ dày
@@ -1098,9 +1248,41 @@ tab:
       failed_removing_material: "Đã xảy ra lỗi khi chặn vật liệu này. **{{ error }}**"
       failed_duplicating_material: "Đã xảy ra lỗi khi sao chép vật liệu. **{{ error }}**"
       invalid_image_file: Hình ảnh không hợp lệ
-    success:
-      exported_to: "Xuất thành công sang {{ export_path }}."
     obsolete_base: "Để luôn đồng bộ, bạn cần cập nhật danh sách vật liệu."
+  outliner:
+    label: ""
+    title: ""
+    list: ""
+    nodes: ""
+    part_count: ""
+    type_0: ""
+    type_1: ""
+    type_2: ""
+    type_3: ""
+    tooltip:
+      open_node_url: ""
+    edit_node:
+      title_model: ""
+      title_instance: ""
+      general: Chung
+      preview: Xem trước
+      name: Tên
+      instance_name: Đối tượng
+      definition_name: ""
+      description: Mô tả
+      url: ""
+      layer_name: Thẻ
+      explode: ""
+      explode_message: ""
+    error:
+      no_model: Không có mô hình nào được mở. Bạn sẽ cần phải cung cấp cho tôi thêm thông tin;)
+      no_entities: ""
+      node_not_found: ""
+      entity_not_found: ""
+      obsolete_outliner: ""
+    tip:
+      no_node: |
+    obsolete_base: ""
   importer:
     label: Nhập
     title: Nhập các bộ phận
@@ -1207,7 +1389,7 @@ tab:
       Bảng tin này cho phép bạn trao đổi với cộng đồng người dùng và nhóm *OpenCutList*.
     create_conversation: Bắt đầu một chủ đề
     reply: Trả lời
-    tags: Thẻ
+    tags: Các thẻ
     redirection: |
       Bạn sẽ được chuyển hướng đến nền tảng **Open Collective** lưu trữ diễn đàn thảo luận này.
       Để *bắt đầu thảo luận* hoặc *trả lời*, bạn cần tạo một tài khoản và đăng nhập.
@@ -1253,11 +1435,14 @@ tab:
     language_auto: Tự động
     zoom: Cỡ chữ
     zoom_normal: Bình thường
-    zoom_small: Nhỏ
+    zoom_small: Ngắn
     zoom_tiny: Bé xíu
     print_margin: Lề in
     print_margin_normal: Bình thường
     print_margin_small: Nhỏ
+    table_row_size: ""
+    table_row_size_normal: Bình thường
+    table_row_size_compact: ""
     size_and_position: Cỡ và vị trí của cửa sổ
     model_settings: Cấu hình mô hình
     length_unit: Đơn vị của chiều dài
@@ -1269,7 +1454,9 @@ tab:
     length_precision: Độ chính xác
     suppress_units_display: Hiển thị đơn vị chiều dài cho mỗi giá trị
     mass_unit: Đơn vị trọng lượng
+    mass_precision: Độ chính xác
     currency_symbol: Ký hiệu tiền tệ
+    currency_precision: Độ chính xác
     presets:
       export_global_presets: Xuất mẫu cài đặt trước
       export_global_presets_help: |
@@ -1347,6 +1534,7 @@ tool:
     transparency: Nhìn trong suốt
     zoom_extents: Thu phóng vừa khung nhìn
     toggle_depth: Nền bộ phận
+    more: Nhiều hơn
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -1371,6 +1559,16 @@ tool:
     action_3_status: Nhấp vào một mặt để lấy mẫu vật liệu của nó
     action_4: Dọn dẹp
     action_4_status: Nhấp vào một bộ phận để xóa tất cả các vật liệu từ định nghĩa của nó và tất cả các đối tượng
+    action_option_group_instances: ""
+    action_option_group_edges: Số dải cạnh
+    action_option_group_faces: ""
+    action_option_instances_0_status: ""
+    action_option_instances_1_status: ""
+    action_option_edges_0_status: ""
+    action_option_edges_1_status: ""
+    action_option_edges_2_status: ""
+    action_option_faces_0_status: ""
+    action_option_faces_1_status: ""
     edges: "{{ count }} cạnh"
     edges_plural: "{{ count }} cạnh"
     edge_ymin: Chiều dài 1
@@ -1385,7 +1583,7 @@ tool:
       no_material: Không có vật liệu
       no_material_type: "Không có vật liệu của loại '{{ type }}'"
     error:
-      not_part: Đối tượng mục tiêu không phải là một bộ phận
+      not_part: ""
       not_edge: Mặt mục tiêu không phải là cạnh bảng
       not_face: Mặt mục tiêu không phải là mặt bảng
       wrong_material_type: "Bộ phận mục tiêu phải là của loại '{{ type }}'"
@@ -1399,11 +1597,47 @@ tool:
     action_2_status: Nhấp vào một bộ phận để hoán đổi mặt trước với mặt sau của nó
     action_3: Điều chỉnh trục
     action_3_status: Nhấp vào mặt hoặc cạnh của một bộ phận để điều chỉnh hướng của các trục
-    action_modifier_length: L
-    action_modifier_width: W
-    action_modifier_thickness: T
+    action_option_group_direction: Hướng
+    action_option_direction_0: L
+    action_option_direction_1: W
+    action_option_direction_2: T
+    action_option_direction_0_status: ""
+    action_option_direction_1_status: ""
+    action_option_direction_2_status: ""
     warning:
       more_entities: "{{ count_used }} các đối tượng chia sẻ cùng một định nghĩa sẽ được sửa đổi"
     error:
-      not_part: Đối tượng mục tiêu không phải là một bộ phận
+      not_part: ""
       not_orientable: Loại bộ phận này không cho phép định hướng nó
+  smart_export:
+    title: Xuất
+    action_0: ""
+    action_0_status: ""
+    action_1: ""
+    action_1_status: ""
+    action_2: ""
+    action_2_status: ""
+    action_3: ""
+    action_3_status: ""
+    action_option_group_file_format: Định dạng
+    action_option_group_unit: Đơn vị
+    action_option_group_faces: Các mặt
+    action_option_group_options: Tùy chọn
+    action_option_file_format_dxf_status: ""
+    action_option_file_format_stl_status: ""
+    action_option_file_format_obj_status: ""
+    action_option_file_format_svg_status: ""
+    action_option_unit_0_status: $t(default.unit_0)
+    action_option_unit_1_status: $t(default.unit_1)
+    action_option_unit_2_status: $t(default.unit_2)
+    action_option_unit_3_status: $t(default.unit_3)
+    action_option_unit_4_status: $t(default.unit_4)
+    action_option_faces_0_status: $t(tab.cutlist.write.option_faces_0)
+    action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
+    action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
+    action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
+    action_option_options_merge_holes_status: ""
+    action_option_options_edges_status: ""
+    error:
+      not_part: ""
+      not_flat_face: ""
