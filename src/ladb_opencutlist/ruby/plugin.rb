@@ -151,7 +151,7 @@ module Ladb::OpenCutList
         language = Sketchup.get_locale.split('-')[0].downcase  # Retrieve SU language
       end
       available_languages = self.get_available_languages
-      if available_languages.include? language
+      if available_languages.include?(language)
         @language = language   # Uses language only if translation is available
       else
         @language = 'en'

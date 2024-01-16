@@ -366,7 +366,7 @@ LadbAbstractDialog.prototype.bindHelpButtonsInParent = function ($parent) {
     });
 }
 
-LadbAbstractDialog.prototype.copyToClipboard = function (text) {
+LadbAbstractDialog.prototype.copyToClipboard = function (text, notifySuccess) {
     // Create new element
     var el = document.createElement('textarea');
     // Set value (string to be copied)
@@ -381,6 +381,10 @@ LadbAbstractDialog.prototype.copyToClipboard = function (text) {
     document.execCommand('copy');
     // Remove temporary element
     document.body.removeChild(el);
+    // Notify success
+    if (notifySuccess !== false) {
+        this.notifySuccess(i18next.t('core.success.copied_to_clipboard'));
+    }
 }
 
 // Init /////

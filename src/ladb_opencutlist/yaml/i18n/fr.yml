@@ -125,6 +125,7 @@ core:
       **{{ error }}**
   success:
     exported_to: "Export réussi vers {{ path }}."
+    copied_to_clipboard: Copié dans le presse-papier
   event:
     model_change: Le modèle actif a changé.
     options_change: Les options du modèle ont été modifiées.
@@ -639,8 +640,6 @@ tab:
         no_column_formula: Saisissez une formule
       warning:
         is_group_selection: Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas exportées.
-      success:
-        copied: Copié dans le presse papier.
     report:
       title: Estimation
       info_0: |
@@ -788,6 +787,7 @@ tab:
       tooltip:
         scroll_to_block_1d: Défiler vers la première barre ou bande
         scroll_to_block_2d: Défiler vers le premier panneau
+        copy_leftovers_to_clipboard: Copier les chutes dans le presse-papier
       list:
         unplaced_parts: Pièces non placées
         summary: Récapitulatif

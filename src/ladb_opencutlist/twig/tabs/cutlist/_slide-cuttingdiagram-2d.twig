@@ -106,7 +106,7 @@
                     <td colspan="{{ colspan }}">
                         <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-close"></i></button>
                         <div class="btn-group pull-right">
-                            <button class="no-print btn btn-default btn-sm" id="ladb_btn_select_unplaced_parts" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.select_parts_in_cutlist'|i18next({ 'count':unplaced_parts|length }) }}"><i class="ladb-opencutlist-icon-check-box-with-check-sign"></i> {{ 'tab.cutlist.select_part'|i18next({ 'count':unplaced_parts|length }) }}</button>
+                            <button class="no-print btn btn-default btn-sm ladb-btn-hiddable" id="ladb_btn_select_unplaced_parts" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.select_parts_in_cutlist'|i18next({ 'count':unplaced_parts|length }) }}"><i class="ladb-opencutlist-icon-check-box-with-check-sign"></i> {{ 'tab.cutlist.select_part'|i18next({ 'count':unplaced_parts|length }) }}</button>
                         </div>
                         <div class="ladb-heading text-danger"><i class="ladb-opencutlist-icon-warning"></i> {{ 'tab.cutlist.cuttingdiagram.list.unplaced_parts'|i18next }}</div>
                     </td>
@@ -251,6 +251,9 @@
                 <tr class="table-heading">
                     <td colspan="6">
                         <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-open"></i></button>
+                        <div class="btn-group pull-right">
+                            <button class="no-print btn btn-default btn-sm ladb-btn-hiddable" id="ladb_btn_copy_leftovers_to_clipboard" data-toggle="tooltip" title="{{ 'tab.cutlist.cuttingdiagram.tooltip.copy_leftovers_to_clipboard'|i18next }}"><i class="ladb-opencutlist-icon-copy"></i> {{ 'default.copy'|i18next }}</button>
+                        </div>
                         <div class="ladb-heading">{{ to_keep_leftovers|length }} {{ 'tab.cutlist.cuttingdiagram.list.leftover_to_keep'|i18next({ 'count':(to_keep_leftovers|length) }) }}</div>
                     </td>
                 </tr>

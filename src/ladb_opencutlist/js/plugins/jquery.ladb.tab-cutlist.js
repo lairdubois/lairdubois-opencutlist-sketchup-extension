@@ -955,7 +955,6 @@
                                 }
                                 if (response.pasteable) {
                                     that.dialog.copyToClipboard(response.pasteable);
-                                    that.dialog.notifySuccess(i18next.t('tab.cutlist.export.success.copied'));
                                 }
                             });
                         }
@@ -4344,6 +4343,13 @@
                                                     $btnClose.click();
                                                 })
                                             ]);
+                                        });
+                                        $('#ladb_btn_copy_leftovers_to_clipboard', $slide).on('click', function () {
+                                            var items = [];
+                                            $.each(response.to_keep_leftovers, function (index, leftover) {
+                                                items.push(leftover.length + 'x' + leftover.width + 'x' + leftover.count);
+                                            });
+                                            that.dialog.copyToClipboard(items.join(';'));
                                         });
 
                                         // SVG
