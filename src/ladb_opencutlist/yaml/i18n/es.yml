@@ -68,10 +68,10 @@ default:
   alt_key_win: Alt
   alt_key_mac: Command
   tab_key: Tab
-  file: ""
-  file_plural: ""
-  stroke_color: ""
-  fill_color: ""
+  file: Archivo
+  file_plural: Archivos
+  stroke_color: Color de trazo
+  fill_color: Color de relleno
 core:
   menu:
     submenu: OpenCutList
@@ -85,18 +85,21 @@ core:
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
-      reset_dialog_position: ""
+      reset_dialog_position: Reiniciar la posición de la ventana
   toolbar:
     name: OpenCutList
     command:
       dialog: OpenCutList
       smart_paint: Colorear piezas
       smart_axes: Orientar piezas
-      smart_export: ""
+      smart_export: Exportar piezas
   messagebox:
     dir_override: |
+      « {{ target }} » ya existe. ¿Desea reemplazarlo?
+
+      Un archivo con el mismo nombre se encuentra en la carpeta {{ parent }}. si desea reemplazarlo, el contenido de origen se perderá.
   savepanel:
-    export_to_file: ""
+    export_to_file: "Exportar a un fichero {{ file_format }}"
   dialog:
     title: OpenCutList por L'Air du Bois
   leftbar:
@@ -118,15 +121,16 @@ core:
   error:
     feature_unavailable: "Esta función requiere SketchUp {{ version }} o superior"
     failed_export_to: |
+      Se ha producido un error durante la exportación a *{{ path }}*.**{{ error }}**
   success:
-    exported_to: ""
-    copied_to_clipboard: ""
+    exported_to: "Exportación lograda {{ ruta}}."
+    copied_to_clipboard: Copiado al portapapeles
   event:
     model_change: Se ha cambiado el modelo activo.
     options_change: Las opciones en el modelo han cambiado.
     material_change: Se ha cambiado al menos un material.
     selection_change: Se ha modificado la selección en el modelo activo.
-    layers_change: ""
+    layers_change: Las balizas en el modelo activo han cambiado.
   upgrade:
     unavailable: Imposible encontrar la última versión de *OpenCutList*.
     available: |
@@ -231,8 +235,8 @@ tab:
       Seleccione las partes de la escena actual que le gustaría incluir en la lista de partes y luego haga clic en el botón **Generar**.
       Si la selección está vacía, todos los componentes visibles de la escena se incluirán en la lista de piezas.
     is_selection: Sólo selección
-    select_part: ""
-    select_part_plural: ""
+    select_part: Seleccionar la pieza
+    select_part_plural: Seleccionar las piezas
     material_undefined: Ningún material definido
     not_available_std_width: Ancho no definido
     not_available_std_thickness: Ancho no definido
@@ -244,9 +248,9 @@ tab:
     edit_part_size_increase_properties: Edita las propiedades (sobredimensionados) de la pieza
     edit_part_edges_properties: Edita las propiedades (tiras de los cantos) de la pieza
     edit_part_faces_properties: Edita las propiedades (chapas de madera) de la pieza
-    part_drawing_type_1: ""
-    part_drawing_type_2: ""
-    part_drawing_type_3: ""
+    part_drawing_type_1: 2D Vista frontal
+    part_drawing_type_2: 2D Vista trasera
+    part_drawing_type_3: 3D
     tooltip:
       show_hide_block: Mostrar / Ocultar
       scroll_to_block: Desplaza al grupo
@@ -296,7 +300,7 @@ tab:
       symmetrical: La detección de piezas reflejadas está desactivada en esta pieza
       ignore_grain_direction: La dirección de la fibra se ignora en esta parte
       auto_oriented: Esta parte se ha reorientado automáticamente
-      oko_label_filter: ""
+      oko_label_filter: "Incluir / Excluir esta etiqueta"
       add_label_filter: "Filtrar por '{{ label }}'"
       remove_label_filter: "No filtrar por '{{ label }}'"
       add_edge_material_name_filter: "Filtrar por '{{ material_name }}'"
@@ -337,22 +341,22 @@ tab:
       dblclick_to_sort_axes: Haga doble clic aquí para reordenar automáticamente los ejes según las dimensiones de la pieza
       part_axes: Ejes internos de la pieza
       select_unselect_all_parts: Selecciona/Deselecciona todas las partes del grupo
-      select_parts_in_cutlist: ""
-      select_parts_in_cutlist_plural: ""
+      select_parts_in_cutlist: Seleccionar la pieza en la tabla de despiece
+      select_parts_in_cutlist_plural: "Seleccionar las {{ recuento }} piezas en la tabla de despiece"
       setup_group_cuttingdiagram: "Configure el diagrama de corte de '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
-      open_part_url: ""
+      open_part_url: Abrir la URL de la pieza
     menu:
       show_all_groups: Mostrar todos los grupos
       hide_all_other_groups: Ocultar todos los demás grupos
       numbers_save: Guarde los números de pieza
       numbers_reset: Reinicializar los números de pieza
       highlight_parts: $t(tab.cutlist.highlight_parts)
-      write_2d: ""
-      write_3d: ""
-      write_2d_parts: ""
-      write_3d_parts: ""
-      group_write_2d_parts: ""
-      group_write_3d_parts: ""
+      write_2d: Proyección 2D
+      write_3d: Geometría 3D
+      write_2d_parts: Exportar la proyección 2D de las piezas
+      write_3d_parts: Exportar la geometría 3D de las piezas
+      group_write_2d_parts: Exportar la proyección 2D de las piezas del grupo
+      group_write_3d_parts: Exportar la geometría 3D de las piezas del grupo
       group_layout_parts: Imprimir el dibujo general de las piezas del grupo
       group_numbers_save: Guarde los números de pieza de este grupo
       group_numbers_reset: Reinicializar los números de pieza de este grupo
@@ -405,8 +409,9 @@ tab:
       description: Descripción
       description_help: |
         La *Descripción* le permite proporcionar información personalizada sobre la definición de cada pieza.
-      url: ""
+      url: URL
       url_help: |
+        La *URL* permite proporcionar un vínculo personalizado a una página exterior de cada definición de pieza.
       tags: Etiquetas
       tags_help: |
         Con las *Etiquetas*, puede agregar palabras claves para personalizar las definiciones de las piezas.
@@ -500,8 +505,8 @@ tab:
       hide_edges_help: "Si se selecciona esta opción, las **columnas de Tiras de Cantos** de las partes del tipo *Tableros* se ocultarán."
       hide_faces: Ocultar las columnas de chapas
       hide_faces_help: "Si se selecciona esta opción, las **columnas de Chapas de Madera** de las partes del tipo *Tableros* se ocultarán."
-      hide_material_colors: ""
-      hide_material_colors_help: ""
+      hide_material_colors: Ocultar los colores de los materiales
+      hide_material_colors_help: "Si esta opción está activada, los colores de los materiales no se incluirán."
       minimize_on_highlight: Minimizar después *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Si se selecciona esta opción, la ventana OpenCutList se minimizará *'$t(tab.cutlist.highlight_part)'* cuando se aplique la función."
       general: General
@@ -558,13 +563,13 @@ tab:
     export:
       title: Exportación
       info_0: |
-        Con esta función puede exportar la *lista de piezas* a un archivo [CSV](https://es.wikipedia.org/wiki/Valores_separados_por_comas).
+        Esta función permite exportar la tabla de despiece como una *lista de piezas* a un fichero con formato [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
       customize_help: |
         Reordenar, Ocultar, Añadir, Eliminar o Seleccionar una columna de la lista para personalizar su **título** y la **fórmula** que genera el valor mostrado para cada fila exportada.
       add_column: Añadir una columna
       add_native_columns: Añadir una columna nativa
       remove_column: Eliminar
-      remove_all_columns: ""
+      remove_all_columns: Retirar todo
       columns: Columnas
       column_title: Título
       column_title_help: |
@@ -606,12 +611,12 @@ tab:
       part_count: Cantidad
       material_type: Tipo
       material_name: Material
-      material_description: ""
-      material_url: ""
+      material_description: Descripción del material
+      material_url: URL del material
       material_std_dimension: Dimensiones estándar
       entity_names: Nombres de instancias
       description: Descripción
-      url: ""
+      url: URL
       tags: Etiquetas
       edge_ymin: Longitud del borde 1
       edge_ymax: Longitud de borde 2
@@ -623,11 +628,11 @@ tab:
       layers: Etiquetas
       batch: Lote
       bin: Contenedor
-      filename: ""
+      filename: Nombre de archivo
       model_name: Nombre del modelo
-      model_description: ""
+      model_description: Descripción del modelo
       page_name: Nombre de la escena
-      page_description: ""
+      page_description: Descripción de la escena
       placeholder:
         no_column_title: Introduzca un título
         no_column_formula_native: "Valor nativo de la columna '{{ col_name }}'"
@@ -721,11 +726,12 @@ tab:
       option_hide_edges_preview_0: Visualizado en el diagrama
       option_hide_edges_preview_1: Enmascarado en el diagrama
       option_hide_edges_preview_help: Permite mostrar u ocultar la indicación visual de los cantos para cada parte del diagrama.
-      option_part_drawing_type: ""
-      option_part_drawing_type_0: ""
-      option_part_drawing_type_1: ""
-      option_part_drawing_type_2: ""
+      option_part_drawing_type: Forma de las piezas
+      option_part_drawing_type_0: Ocultas
+      option_part_drawing_type_1: Planos vista frontal
+      option_part_drawing_type_2: Planos vista trasera
       option_part_drawing_type_help: |
+        Permite mostrar u ocultar la forma real de las piezas, así como su mecanizado en el diagrama. *Esta opción debe activarse para que las formas puedan ser exportadas.*
       option_saw_kerf: Espesor de la hoja
       option_saw_kerf_help: El ancho del material eliminado por el corte de la hoja de sierra.
       option_trimming: Margen
@@ -741,8 +747,8 @@ tab:
       option_stacking_1: A lo largo
       option_stacking_2: A lo ancho
       option_stacking_3: Todas las posibilidades
-      option_keep: ""
-      option_keep_help: ""
+      option_keep: Tamaño mínimo de recorte
+      option_keep_help: Los recortes cuyas dos dimensiones sean mayores que el tamaño mínimo se marcarán con **conservar**.
       option_std_bar_dimensional: Dimensiones estándar
       option_std_bar_edge: Canto estándar
       option_std_bar_help: |
@@ -778,7 +784,7 @@ tab:
       tooltip:
         scroll_to_block_1d: Desplazate al primer tabla o tiro de canto
         scroll_to_block_2d: Desplazate al primer tablero
-        copy_leftovers_to_clipboard: ""
+        copy_leftovers_to_clipboard: Copiar los recortes al porta-papeles
       list:
         unplaced_parts: Piezas no colocadas
         summary: Resumen
@@ -798,9 +804,9 @@ tab:
         overall_efficiency: Eficacia general
         efficiency: Eficiencia
         leftover: Sobrante
-        leftover_to_keep: ""
-        leftover_to_keep_plural: ""
-        leftover_to_throw_away: ""
+        leftover_to_keep: Recorte para conservar
+        leftover_to_keep_plural: Recortes para conservar
+        leftover_to_throw_away: Recorte para desechar
         cut: Cortar
         cut_plural: Cortes
         cut_trimming: Corte de limpieza
@@ -822,14 +828,18 @@ tab:
         parts_plural: "{{ count }} partes"
         settings: Configuraciones
       export:
-        title: ""
+        title: Exportación del diseño
         info_0: |
+          Este módulo le permite exportar la **geometría** del *diseño* en forma de lista de archivos en formato [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) o [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
         option_file_format: $t(tab.cutlist.write.option_file_format)
         option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
-        option_dxf_structure: ""
-        option_dxf_structure_1: ""
-        option_dxf_structure_2: ""
+        option_dxf_structure: Estructura DXF
+        option_dxf_structure_1: Calcos
+        option_dxf_structure_2: Calcos + bloques
         option_dxf_structure_help: |
+          Permite elegir la estructura del archivo DXF:
+          - La estructura **Calcos** dibuja todos los trazos en plano distinguiendo los diferentes tipos de trazo únicamente por los calcos. *Esta estructura ofrece una mejor compatibilidad con los programas de terceros."
+          - La estructura **Calcos + Bloques** crea un bloque por pieza e inserta estos bloques tantas veces como se repiten las piezas. *Esta estructura ofrece mayor flexibilidad para modificar el archivo.*
         option_unit: $t(tab.cutlist.write.option_unit)
         option_unit_help: $t(tab.cutlist.write.option_unit_help)
         option_smoothing: $t(tab.cutlist.write.option_smoothing)
@@ -842,24 +852,33 @@ tab:
         option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
         option_sheet_good: Tablero
         option_sheet_good_help: |
-        option_sheet_veneer: ""
+          Permite activar la exportación del panel, así como elegir su color.
+        option_sheet_veneer: Hoja
         option_sheet_veneer_help: |
+          Permite activar la exportación de la hoja, así como elegir su color.
         option_bar_dimensional: Liston
         option_bar_dimensional_help:  |
-        option_bar_band: ""
+          Permite activar la exportación de la barra, así como elegir su color.
+        option_bar_band: Placa
         option_bar_band_help:  |
+          Permite activar la exportación de la placa, así como elegir su color.
         option_parts: Piezas
         option_parts_help:  |
-        option_parts_holes: ""
+          Permite activar la exportación de piezas, así como elegir su color.
+        option_parts_holes: Perforaciones
         option_parts_holes_help:  |
-        option_texts: ""
+          Permite elegir el color de las perforaciones de las piezas.
+        option_texts: Identificaciones
         option_texts_help:  |
+          Permite activar la exportación de textos de identificación de las piezas, así como elegir su color.
         option_leftovers: Desperdicios
         option_leftovers_help:  |
+          Permite activar la exportación de los recortes, así como elegir su color.
         option_cuts: Cortes
         option_cuts_help:  |
+          Permite activar la exportación de los cortes, así como elegir su color.
         warning:
-          is_sheet_selection: ""
+          is_sheet_selection: Los **paneles ocultos** no se exportarán.
       error:
         no_bar_dimensional: La tabla estándar no se configuró correctamente y no se definieron cortes.
         no_bar_edge: La tira de canto estándar no se configuró correctamente y no se definieron cortes.
@@ -886,7 +905,7 @@ tab:
       size: Tamaño real de la etiqueta
       add_element: Añadir un elemento
       remove_element: Eliminar
-      remove_all_elements: ""
+      remove_all_elements: Retirar todo
       part_order_strategy_help: |
         Reorganice las siguientes propiedades para definir el orden de clasificación de etiquetas.
         Las propiedades se pueden clasificar en orden <i class="ladb-opencutlist-icon-sort-asc"></i> *ascendente* o <i class="ladb-opencutlist-icon-sort-desc"></i> *desascendente*.
@@ -952,7 +971,7 @@ tab:
         part_edge_xmax: Ancho de borde 2
         part_face_zmin: Chapa de madera dorso
         part_face_zmax: Chapa de madera frente
-        thumbnail_proportional_drawing: ""
+        thumbnail_proportional_drawing: Detectada miniatura
         thumbnail_proportional: Miniatura proporcional
         thumbnail_square: Miniatura cuadrada
         group_material: Espesor / Material
@@ -1040,47 +1059,66 @@ tab:
         is_group_selection: Las piezas dentro de **grupos enmascarados** de su lista de piezas no se dibujarán.
         is_part_selection: Este plano de conjunto se limita a las **piezas seleccionadas**.
     write:
-      title: ""
+      title: Exportación de piezas
       info_2d: |
+        Este módulo permite exportar la **proyección 2D** de las piezas como archivos de formato [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) o [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
       info_3d: |
+        Este módulo permite exportar la **geometría 3D** de las piezas en ficheros de formato [STL](https://wikipedia.org/wiki/STL_(file_format)) o [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file).
       option_file_format: Formato
       option_file_format_help: |
+        Permite elegir el formato de exportación del archivo.
       option_unit: Unidad
       option_unit_help: |
-      option_part_drawing_type: ""
+        Permite elegir la unidad empleada en el archivo exportado.
+      option_part_drawing_type: Proyección
       option_part_drawing_type_help: |
+        Permite elegir la vista exportada.
       option_faces: Chapa de madera
-      option_faces_0: ""
-      option_faces_1: ""
+      option_faces_0: Utilizar únicamente la cara seleccionada
+      option_faces_1: Utilizar todas las caras de la pieza
       option_faces_help: |
-      option_anchor: ""
-      option_anchor_0: ""
-      option_anchor_1: ""
+        Permite elegir si la búsqueda de la forma de la pieza se realiza en todas sus caras o únicamente en la seleccionada.
+      option_anchor: Punto de anclaje
+      option_anchor_0: Por defecto
+      option_anchor_1: Proyectar el origen de la pieza
       option_anchor_help: |
-      option_smoothing: ""
+        Permite activar la proyección del origen de los ejes de la pieza como punto de anclaje.
+      option_smoothing: Regularizado
       option_smoothing_0: No
-      option_smoothing_1: ""
+      option_smoothing_1: Alisar los círculos y arcos (Experimental)
       option_smoothing_help: |
-      option_merge_holes: ""
-      option_merge_holes_0: ""
-      option_merge_holes_1: ""
+        Permite activar la detección de círculos y arcos.
+
+        *Esta opción no permite detectar otros tipos de curva.*
+      option_merge_holes: Descomposición
+      option_merge_holes_0: Por defecto
+      option_merge_holes_1: Contorno + Perforaciones + Fusión
       option_merge_holes_help: |
-      option_edges: ""
+        **Por defecto**
+        La forma de la pieza exportada con una capa por profundidad.
+
+        **Contorno + Perforaciones + Fusión**
+        Activa la separación del contorno exterior de las piezas de sus perforaciones, así como la fusión de las profundidades de cada oquedad.
+      option_edges: Trazados
       option_edges_0: No
-      option_edges_1: ""
+      option_edges_1: Utilizarlas líneas flotantes
       option_edges_help: |
+        Permite activar el uso de líneas flotantes (no asociadas a una cara) y coplanares a la cara designada, contenidas en la pieza, para exportarlas como trazado.
       option_parts: Piezas
       option_parts_help: |
-      option_parts_holes: ""
+        Permite elegir el color de las piezas.
+      option_parts_holes: Perforaciones
       option_parts_holes_help: |
+        Permite elegir el color de las perforaciones de las piezas.
       option_edges_color_help: |
+        Permite elegir el color de los trazados.
       error:
-        no_part: ""
+        no_part: No hay piezas para exportar.
       warning:
         is_group_selection: Las piezas dentro de los **grupos ocultos** de su listado de partes no se exportarán.
-        is_part_selection: ""
+        is_part_selection: La exportación se limita a las **piezas seleccionadas**.
     snippet:
-      hello: ""
+      hello: Hola
       number: Número
       name: Designación
       number_and_name: Número y designación
@@ -1101,8 +1139,8 @@ tab:
       no_typed_materials_in_selection: "Su selección no utiliza ningún material con un tipo definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** o **$t(tab.materials.type_5)**)."
       export_empty: Su exportación no contiene ninguna parte.
     success:
-      part_selected: ""
-      part_selected_plural: ""
+      part_selected: "{{recuento}} pieza seleccionada en la tabla de despiece."
+      part_selected_plural: "{{recuento}} piezas seleccionadas en la tabla de desglose."
     tip:
       no_component: |
         Las partes que se incluirán en la *lista de partes* deben ser instancias de un **componente**.
@@ -1139,7 +1177,7 @@ tab:
       set_current: |
         Colorear partes con '{{ name }}'.
         *Doble clic para colapsar*
-      open_url: ""
+      open_url: Abrir la URL del material
     menu:
       import_from_skm: Importar material (.skm)
       purge_unused: Limpiar los materiales no utilizados
@@ -1164,7 +1202,7 @@ tab:
       name: Nombre
       type: Tipo
       description: Descripción
-      url: ""
+      url: URL
       cut_options: Parámetros de corte
       attributes: Atributos
       thickness: Espesor
@@ -1250,39 +1288,41 @@ tab:
       invalid_image_file: Imagen inválida
     obsolete_base: "Para permanecer sincronizado, debe actualizar la lista de materiales."
   outliner:
-    label: ""
-    title: ""
-    list: ""
-    nodes: ""
-    part_count: ""
-    type_0: ""
-    type_1: ""
-    type_2: ""
-    type_3: ""
+    label: Estructura
+    title: Estructura
+    list: Estructura en árbol de los elementos
+    nodes: Elemento
+    part_count: Número de piezas
+    type_0: Modelo
+    type_1: Grupo
+    type_2: Componente
+    type_3: Pieza
     tooltip:
-      open_node_url: ""
+      open_node_url: Abrir la URL del elemento
     edit_node:
-      title_model: ""
-      title_instance: ""
+      title_model: "Propiedades del modelo"
+      title_instance: "Propiedades del elemento **{{nombre}}**"
       general: General
       preview: Vista previa
       name: Nombre
       instance_name: Instancia
-      definition_name: ""
+      definition_name: Definición
       description: Descripción
-      url: ""
+      url: URL
       layer_name: Etiqueta
-      explode: ""
-      explode_message: ""
+      explode: Desmontar
+      explode_message: "¿Confirma el desmontaje del elemento **{{nombre}}**?"
     error:
       no_model: Ningún modelo está abierto. Necesitarás darme más información ;)
-      no_entities: ""
-      node_not_found: ""
-      entity_not_found: ""
-      obsolete_outliner: ""
+      no_entities: Su modelo se encuentra vacío
+      node_not_found: Nudo no encontrado
+      entity_not_found: Elemento no encontrado
+      obsolete_outliner: "Imposible, la estructura generada ha quedado obsoleta. Regenérela."
     tip:
       no_node: |
-    obsolete_base: ""
+        El modelo no dispone de momento de ningún elemento que listar aquí.
+        Un elemento es un **grupo** o un **componente** situado en la escena.
+    obsolete_base: "Para mantener la sincronización debe regenerar la estructura."
   importer:
     label: Importar
     title: Importar partes
@@ -1440,9 +1480,9 @@ tab:
     print_margin: Márgenes de impresión
     print_margin_normal: Normales
     print_margin_small: Pequeños
-    table_row_size: ""
+    table_row_size: Tamaño de las líneas de la tabla
     table_row_size_normal: Normal
-    table_row_size_compact: ""
+    table_row_size_compact: Compacto
     size_and_position: Tamaño y posición de la ventana
     model_settings: Preferencias del modelo
     length_unit: Unidad de longitud
@@ -1559,16 +1599,16 @@ tool:
     action_3_status: Haga clic en una cara para tomar una muestra del material
     action_4: Limpiar
     action_4_status: Haga clic en una pieza para eliminar todos los materiales de su definición y de todas sus instancias
-    action_option_group_instances: ""
+    action_option_group_instances: Número de elementos
     action_option_group_edges: Número de tiras de cantos
-    action_option_group_faces: ""
-    action_option_instances_0_status: ""
-    action_option_instances_1_status: ""
-    action_option_edges_0_status: ""
-    action_option_edges_1_status: ""
-    action_option_edges_2_status: ""
-    action_option_faces_0_status: ""
-    action_option_faces_1_status: ""
+    action_option_group_faces: Número de caras
+    action_option_instances_0_status: Colorear solamente el elemento de la pieza seleccionada
+    action_option_instances_1_status: Colorear todos los elementos de la pieza seleccionada
+    action_option_edges_0_status: Colorear solamente el canto seleccionado
+    action_option_edges_1_status: Colorear el canto seleccionado y el opuesto de la pieza
+    action_option_edges_2_status: Colorear los 4 cantos de la pieza seleccionada
+    action_option_faces_0_status: Colorear solamente la cara seleccionada
+    action_option_faces_1_status: Colorear las 2 caras de la pieza seleccionada
     edges: "{{ count }} canto"
     edges_plural: "{{ count }} cantos"
     edge_ymin: Longitud 1
@@ -1583,7 +1623,7 @@ tool:
       no_material: Su modelo no contiene ningún material!
       no_material_type: "No hay material '{{ type }}"
     error:
-      not_part: ""
+      not_part: El objeto seleccionado no es una pieza (componente)
       not_edge: La cara objetivo no es un borde de panel
       not_face: La cara objetivo no es una cara de panel
       wrong_material_type: "La pieza seleccionada debe ser del tipo '{{ type }}'"
@@ -1601,32 +1641,32 @@ tool:
     action_option_direction_0: L
     action_option_direction_1: A
     action_option_direction_2: E
-    action_option_direction_0_status: ""
-    action_option_direction_1_status: ""
-    action_option_direction_2_status: ""
+    action_option_direction_0_status: Volver la pieza a su longitud
+    action_option_direction_1_status: Volver la pieza a su anchura
+    action_option_direction_2_status: Volver la pieza a su espesor
     warning:
       more_entities: "{{ count_used }} se modificarán las instancias que compartan la misma definición"
     error:
-      not_part: ""
+      not_part: El objeto seleccionado no es una pieza (componente)
       not_orientable: El tipo de esta pieza no permite orientarla
   smart_export:
     title: Exportar
-    action_0: ""
-    action_0_status: ""
-    action_1: ""
-    action_1_status: ""
-    action_2: ""
-    action_2_status: ""
-    action_3: ""
-    action_3_status: ""
+    action_0: Exportar una pieza 3D
+    action_0_status: Hacer click sobre una pieza
+    action_1: Exporar una pieza 2D
+    action_1_status: Haga click sobre la cara de una pieza
+    action_2: Exportar una cara
+    action_2_status: Hacer click sobre una cara
+    action_3: Exportar un trazado
+    action_3_status: Haga click sobre una arista
     action_option_group_file_format: Formato
     action_option_group_unit: Unidad
     action_option_group_faces: Chapa de madera
     action_option_group_options: Opciones
-    action_option_file_format_dxf_status: ""
-    action_option_file_format_stl_status: ""
-    action_option_file_format_obj_status: ""
-    action_option_file_format_svg_status: ""
+    action_option_file_format_dxf_status: Exportar a archivo DXF
+    action_option_file_format_stl_status: Exportar a archivo STL
+    action_option_file_format_obj_status: Exportar a archivo OBJ
+    action_option_file_format_svg_status: Exportar a archivo SVG
     action_option_unit_0_status: $t(default.unit_0)
     action_option_unit_1_status: $t(default.unit_1)
     action_option_unit_2_status: $t(default.unit_2)
@@ -1636,8 +1676,8 @@ tool:
     action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
-    action_option_options_merge_holes_status: ""
-    action_option_options_edges_status: ""
+    action_option_options_merge_holes_status: Aislar los huecos pasantes y fusionar las profundidades de cada oquedad
+    action_option_options_edges_status: Exportar como trazado las aristas flotantes y coplanares de la cara seleccionada contenidas en la pieza
     error:
-      not_part: ""
-      not_flat_face: ""
+      not_part: Esta cara no forma parte de una pieza (componente)
+      not_flat_face: Esta superficie no es plana

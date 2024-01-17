@@ -125,7 +125,7 @@ core:
       **{{ error }}**
   success:
     exported_to: "Экспортировано в {{ path }} успешно."
-    copied_to_clipboard: ""
+    copied_to_clipboard: Скопировано в буфер обмена
   event:
     model_change: Активная модель была изменена.
     options_change: Опции данной модели измены.
@@ -236,8 +236,8 @@ tab:
       Для частичного расчета раскроя, выделите в сцене необходимые детали нажмите кнопку **Рассчитать**.
       Если ничего не выделять, то все видимые компоненты сцены будут включены в расчет.
     is_selection: Выборка
-    select_part: ""
-    select_part_plural: ""
+    select_part: Выделите деталь
+    select_part_plural: Выделите детали
     material_undefined: Материал не задан
     not_available_std_width: Ширина не задана
     not_available_std_thickness: Толщина не задана
@@ -342,8 +342,8 @@ tab:
       dblclick_to_sort_axes: "Дважды щелкните здесь, чтобы автоматически ориентировать оси в соответствии с размерами детали"
       part_axes: Внутренние оси детали
       select_unselect_all_parts: Выделение/отмена выделения всех деталей в группе
-      select_parts_in_cutlist: ""
-      select_parts_in_cutlist_plural: ""
+      select_parts_in_cutlist: Выделите деталь на карте раскроя
+      select_parts_in_cutlist_plural: "Выделено {{ count }} детали на карте раскроя"
       setup_group_cuttingdiagram: "Настройка раскроя '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
       open_part_url: Открыть URL-адрес детали
     menu:
@@ -787,7 +787,7 @@ tab:
       tooltip:
         scroll_to_block_1d: Прокрутка до первой доски или кромочной полосы
         scroll_to_block_2d: Прокрутка до первой панели
-        copy_leftovers_to_clipboard: ""
+        copy_leftovers_to_clipboard: Скопируйте обрезки в буфер обмена
       list:
         unplaced_parts: Неразмещенные детали
         summary: Спецификация
@@ -856,21 +856,28 @@ tab:
         option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
         option_sheet_good: Панель
         option_sheet_good_help: |
+          Позволяет активировать экспорт панели и выбрать ее цвета.
         option_sheet_veneer: Лист
         option_sheet_veneer_help: |
+          Позволяет активировать экспорт листа и выбрать его цвета.
         option_bar_dimensional: Доска
         option_bar_dimensional_help:  |
+          Позволяет активировать экспорт погонажа и выбрать его цвета.
         option_bar_band: Кромка
         option_bar_band_help:  |
+          Позволяет активировать экспорт кромки и выбрать ее цвета.
         option_parts: Детали
         option_parts_help:  |
+          Позволяет активировать экспорт деталей и выбирать их цвета.
         option_parts_holes: Отверстия
         option_parts_holes_help:  |
           Позволяет задать цвет отверстий в деталях.
         option_texts: Идентификации
         option_texts_help:  |
+          Позволяет активировать экспорт текстов идентификации деталей, а также выбрать их цвета.
         option_leftovers: Обрезки
         option_leftovers_help:  |
+          Позволяет активировать экспорт перепадов и выбирать их цвета.
         option_cuts: Распилы
         option_cuts_help:  |
           Позволяет активировать экспорт разрезов, а также выбрать их цвет.
@@ -1074,6 +1081,7 @@ tab:
       option_faces_0: Используйте только выбранную сторону
       option_faces_1: Используйте все стороны детали
       option_faces_help: |
+        Позволяет выбрать, выполнять ли поиск формы детали на всех ее гранях или только на лицевой грани.
       option_anchor: Точка привязки
       option_anchor_0: По умолчанию
       option_anchor_1: Проецирование происхождения детали
@@ -1090,15 +1098,24 @@ tab:
       option_merge_holes_0: По умолчанию
       option_merge_holes_1: Контур + Отверстия + Слияние
       option_merge_holes_help: |
-      option_edges: ""
+        **По умолчанию**
+        Форма детали экспортируется с одним слоем на глубину.
+
+        **Контур + Отверстия + Слияние**
+        Активирует разделение внешнего контура деталей от их отверстий, а также слияние расстояний для каждой полости.
+      option_edges: Трассы
       option_edges_0: Нет
-      option_edges_1: ""
+      option_edges_1: Использовать плавающие строки
       option_edges_help: |
+        Позволяет активировать использование плавающих линий (не привязанных к поверхности) которые совпадают с лицевой поверхностью, содержащихся в детали, для экспорта в виде трассировки.
       option_parts: Детали
       option_parts_help: |
+        Позволяет выбрать цвета деталей.
       option_parts_holes: Отверстия
       option_parts_holes_help: |
+        Позволяет выбрать цвета отверстий деталей.
       option_edges_color_help: |
+        Позволяет выбрать цвет трассировки.
       error:
         no_part: Нет деталей для экспорта.
       warning:
@@ -1126,8 +1143,8 @@ tab:
       no_typed_materials_in_selection: "В выделении не задан материал (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** или **$t(tab.materials.type_5)**)."
       export_empty: Ваш экспорт не содержит ни одной детали.
     success:
-      part_selected: ""
-      part_selected_plural: ""
+      part_selected: "{{ count }} детали выделено в карте раскроя."
+      part_selected_plural: "{{ count }} деталей выделено в карте раскроя."
     tip:
       no_component: |
         Детали, которые могут быть включены в *карту раскроя*, должны быть в формате **компонента**.
@@ -1664,7 +1681,7 @@ tool:
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: Определите сквозные отверстия и размеры слияния для каждой полости
-    action_option_options_edges_status: ""
+    action_option_options_edges_status: "Экспортировать как трассировку плавающих и совпадающих граней на целевую грань, содержащуюся в детали"
     error:
       not_part: Эта грань не является частью детали (компонента)
       not_flat_face: Эта поверхность не является плоской

@@ -120,7 +120,7 @@ core:
       **{{ error }}**
   success:
     exported_to: 101 - Экспортировано в {{ path }} успешно.
-    copied_to_clipboard: '102 - '
+    copied_to_clipboard: 102 - Скопировано в буфер обмена
   event:
     model_change: 103 - Активная модель была изменена.
     options_change: 104 - Опции данной модели измены.
@@ -231,8 +231,8 @@ tab:
       180 - Для частичного расчета раскроя, выделите в сцене необходимые детали нажмите кнопку **Рассчитать**.
       Если ничего не выделять, то все видимые компоненты сцены будут включены в расчет.
     is_selection: 181 - Выборка
-    select_part: '182 - '
-    select_part_plural: '183 - '
+    select_part: 182 - Выделите деталь
+    select_part_plural: 183 - Выделите детали
     material_undefined: 184 - Материал не задан
     not_available_std_width: 185 - Ширина не задана
     not_available_std_thickness: 186 - Толщина не задана
@@ -337,8 +337,8 @@ tab:
       dblclick_to_sort_axes: 266 - Дважды щелкните здесь, чтобы автоматически ориентировать оси в соответствии с размерами детали
       part_axes: 267 - Внутренние оси детали
       select_unselect_all_parts: 268 - Выделение/отмена выделения всех деталей в группе
-      select_parts_in_cutlist: '269 - '
-      select_parts_in_cutlist_plural: '270 - '
+      select_parts_in_cutlist: 269 - Выделите деталь на карте раскроя
+      select_parts_in_cutlist_plural: 270 - Выделено {{ count }} детали на карте раскроя
       setup_group_cuttingdiagram: 271 - Настройка раскроя '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'
       open_part_url: 272 - Открыть URL-адрес детали
     menu:
@@ -794,7 +794,7 @@ tab:
       tooltip:
         scroll_to_block_1d: 626 - Прокрутка до первой доски или кромочной полосы
         scroll_to_block_2d: 627 - Прокрутка до первой панели
-        copy_leftovers_to_clipboard: '628 - '
+        copy_leftovers_to_clipboard: 628 - Скопируйте обрезки в буфер обмена
       list:
         unplaced_parts: 629 - Неразмещенные детали
         summary: 630 - Спецификация
@@ -863,23 +863,37 @@ tab:
         option_merge_holes_1: "$t(tab.cutlist.write.option_merge_holes_1)"
         option_merge_holes_help: "$t(tab.cutlist.write.option_merge_holes_help)"
         option_sheet_good: 688 - Панель
-        option_sheet_good_help: '689 - '
+        option_sheet_good_help: '689 - Позволяет активировать экспорт панели и выбрать ее цвета.
+
+          '
         option_sheet_veneer: 690 - Лист
-        option_sheet_veneer_help: '691 - '
+        option_sheet_veneer_help: '691 - Позволяет активировать экспорт листа и выбрать его цвета.
+
+          '
         option_bar_dimensional: 692 - Доска
-        option_bar_dimensional_help: '693 - '
+        option_bar_dimensional_help: '693 - Позволяет активировать экспорт погонажа и выбрать его цвета.
+
+          '
         option_bar_band: 694 - Кромка
-        option_bar_band_help: '695 - '
+        option_bar_band_help: '695 - Позволяет активировать экспорт кромки и выбрать ее цвета.
+
+          '
         option_parts: 696 - Детали
-        option_parts_help: '697 - '
+        option_parts_help: '697 - Позволяет активировать экспорт деталей и выбирать их цвета.
+
+          '
         option_parts_holes: 698 - Отверстия
         option_parts_holes_help: '699 - Позволяет задать цвет отверстий в деталях.
 
           '
         option_texts: 700 - Идентификации
-        option_texts_help: '701 - '
+        option_texts_help: '701 - Позволяет активировать экспорт текстов идентификации деталей, а также выбрать их цвета.
+
+          '
         option_leftovers: 702 - Обрезки
-        option_leftovers_help: '703 - '
+        option_leftovers_help: '703 - Позволяет активировать экспорт перепадов и выбирать их цвета.
+
+          '
         option_cuts: 704 - Распилы
         option_cuts_help: '705 - Позволяет активировать экспорт разрезов, а также выбрать их цвет.
 
@@ -1088,7 +1102,9 @@ tab:
       option_faces: 877 - Лицевые
       option_faces_0: 878 - Используйте только выбранную сторону
       option_faces_1: 879 - Используйте все стороны детали
-      option_faces_help: '880 - '
+      option_faces_help: '880 - Позволяет выбрать, выполнять ли поиск формы детали на всех ее гранях или только на лицевой грани.
+
+        '
       option_anchor: 881 - Точка привязки
       option_anchor_0: 882 - По умолчанию
       option_anchor_1: 883 - Проецирование происхождения детали
@@ -1105,16 +1121,29 @@ tab:
       option_merge_holes: 889 - Разбивка
       option_merge_holes_0: 890 - По умолчанию
       option_merge_holes_1: 891 - Контур + Отверстия + Слияние
-      option_merge_holes_help: '892 - '
-      option_edges: '893 - '
+      option_merge_holes_help: |
+        892 - **По умолчанию**
+        Форма детали экспортируется с одним слоем на глубину.
+
+        **Контур + Отверстия + Слияние**
+        Активирует разделение внешнего контура деталей от их отверстий, а также слияние расстояний для каждой полости.
+      option_edges: 893 - Трассы
       option_edges_0: 894 - Нет
-      option_edges_1: '895 - '
-      option_edges_help: '896 - '
+      option_edges_1: 895 - Использовать плавающие строки
+      option_edges_help: '896 - Позволяет активировать использование плавающих линий (не привязанных к поверхности) которые совпадают с лицевой поверхностью, содержащихся в детали, для экспорта в виде трассировки.
+
+        '
       option_parts: 897 - Детали
-      option_parts_help: '898 - '
+      option_parts_help: '898 - Позволяет выбрать цвета деталей.
+
+        '
       option_parts_holes: 899 - Отверстия
-      option_parts_holes_help: '900 - '
-      option_edges_color_help: '901 - '
+      option_parts_holes_help: '900 - Позволяет выбрать цвета отверстий деталей.
+
+        '
+      option_edges_color_help: '901 - Позволяет выбрать цвет трассировки.
+
+        '
       error:
         no_part: 902 - Нет деталей для экспорта.
       warning:
@@ -1142,8 +1171,8 @@ tab:
       no_typed_materials_in_selection: 921 - В выделении не задан материал (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** или **$t(tab.materials.type_5)**).
       export_empty: 922 - Ваш экспорт не содержит ни одной детали.
     success:
-      part_selected: '923 - '
-      part_selected_plural: '924 - '
+      part_selected: 923 - {{ count }} детали выделено в карте раскроя.
+      part_selected_plural: 924 - {{ count }} деталей выделено в карте раскроя.
     tip:
       no_component: |
         925 - Детали, которые могут быть включены в *карту раскроя*, должны быть в формате **компонента**.
@@ -1690,7 +1719,7 @@ tool:
     action_option_options_anchor_status: "$t(tab.cutlist.write.option_anchor_1)"
     action_option_options_smoothing_status: "$t(tab.cutlist.write.option_smoothing_1)"
     action_option_options_merge_holes_status: 1310 - Определите сквозные отверстия и размеры слияния для каждой полости
-    action_option_options_edges_status: '1311 - '
+    action_option_options_edges_status: 1311 - Экспортировать как трассировку плавающих и совпадающих граней на целевую грань, содержащуюся в детали
     error:
       not_part: 1312 - Эта грань не является частью детали (компонента)
       not_flat_face: 1313 - Эта поверхность не является плоской
