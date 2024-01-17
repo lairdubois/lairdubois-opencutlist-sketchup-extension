@@ -125,7 +125,7 @@ core:
       **{{ error }}**
   success:
     exported_to: "Експорт успішно виконано до {{ path }}."
-    copied_to_clipboard: ""
+    copied_to_clipboard: Скопійовано в буфер обміну
   event:
     model_change: Активна модель була змінена.
     options_change: Параметри моделі змінено.
@@ -787,7 +787,7 @@ tab:
       tooltip:
         scroll_to_block_1d: Прокрутка до першої дошки або крайки
         scroll_to_block_2d: Прокрутка до першої панелі
-        copy_leftovers_to_clipboard: ""
+        copy_leftovers_to_clipboard: Копіювати залишки в буфер обміну
       list:
         unplaced_parts: Нерозміщені деталі
         summary: Звіт
@@ -1143,8 +1143,8 @@ tab:
       no_typed_materials_in_selection: "У вашому виборі відсутні матеріали з визначеним типом (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** або **$t(tab.materials.type_5)**)."
       export_empty: Ваш експорт не містить деталей.
     success:
-      part_selected: "{{ count }} деталь вибрана в списку деталей"
-      part_selected_plural: "{{ count }} деталей вибрано в списку деталей"
+      part_selected: "{{ count }} деталь вибрана в списку деталей."
+      part_selected_plural: "{{ count }} деталей вибрано в списку деталей."
     tip:
       no_component: |
         Деталі, які ви хочете відобразити на *карті розкрою*, мають бути екземплярами **компонента**.
@@ -1681,7 +1681,7 @@ tool:
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: "Виокремити отвори, що проходять крізь і злити глибини для кожної порожнини"
-    action_option_options_edges_status: "Експортувати як шляхи плаваючих і співпадаючих ребер на цільову грань, що містяться в деталі."
+    action_option_options_edges_status: "Експортувати як шляхи плаваючих і співпадаючих ребер на цільову грань, що містяться в деталі"
     error:
       not_part: Ця площина не є частиною деталі (компонента)
-      not_flat_face: Ця поверхня не є плоскою.
+      not_flat_face: Ця поверхня не є плоскою

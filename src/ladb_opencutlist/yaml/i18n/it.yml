@@ -68,10 +68,10 @@ default:
   alt_key_win: Alt
   alt_key_mac: Comando
   tab_key: Tab
-  file: ""
-  file_plural: ""
-  stroke_color: ""
-  fill_color: ""
+  file: File
+  file_plural: Files
+  stroke_color: Colore del bordo
+  fill_color: Colore di riempimento
 core:
   menu:
     submenu: OpenCutList
@@ -85,18 +85,21 @@ core:
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
-      reset_dialog_position: ""
+      reset_dialog_position: Ripristina la Posizione della Finestra
   toolbar:
     name: OpenCutList
     command:
       dialog: OpenCutList
       smart_paint: Colorare parti
       smart_axes: Orienta gli elementi
-      smart_export: ""
+      smart_export: Esporta elementi
   messagebox:
     dir_override: |
+      « {{ target }} » esistente. Desideri sostituire?
+
+      Una cartella con lo stesso nome è già presente nella cartella {{ parent}}. Se si sostituisce, il contenuto originale della cartella verra perso.
   savepanel:
-    export_to_file: ""
+    export_to_file: "Esporta file in formato {{ file_format }}"
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
@@ -118,9 +121,11 @@ core:
   error:
     feature_unavailable: "Questa funzione richiede SketchUp {{ version }} o superiore"
     failed_export_to: |
+      Errore durante l'esportazione in *{{ path}}*.
+      **{{ error }}
   success:
-    exported_to: ""
-    copied_to_clipboard: ""
+    exported_to: "Esportazione in {{ path}} completata."
+    copied_to_clipboard: Copiato negli appunti
   event:
     model_change: Il modello attivo è stato cambiato.
     options_change: Le opzioni del modello sono state cambiate.
@@ -231,8 +236,8 @@ tab:
       Seleziona le parti della scena corrente da includere nella distinta e clicca sul bottone **Genera**
       Se non si seleziona alcuna parte, tutti i componenti visibili della scena saranno inclusi nella distinta.
     is_selection: Solo gli elementi selezionati
-    select_part: ""
-    select_part_plural: ""
+    select_part: Seleziona una elemento
+    select_part_plural: Seleziona elementi
     material_undefined: Nessun materiale definito
     not_available_std_width: Larghezza non specificata
     not_available_std_thickness: Spessore non specificata
@@ -244,9 +249,9 @@ tab:
     edit_part_size_increase_properties: Modifica le proprietà (sovramateriale) della parte
     edit_part_edges_properties: Modifica le proprietà (finitura bordi) della parte
     edit_part_faces_properties: Modifica delle proprietà (impiallacciature) della parte
-    part_drawing_type_1: ""
-    part_drawing_type_2: ""
-    part_drawing_type_3: ""
+    part_drawing_type_1: Vista 2D anteriore
+    part_drawing_type_2: Vista 2D posteriore
+    part_drawing_type_3: 3D
     tooltip:
       show_hide_block: Mostra / Nascondi
       scroll_to_block: Scorri fino al gruppo
@@ -296,7 +301,7 @@ tab:
       symmetrical: Il rilevamento della parte specchiata è disabilitato su questa parte
       ignore_grain_direction: La direzione della venatura è ignorata su questa parte
       auto_oriented: Questa parte è stata automaticamente re-orientata
-      oko_label_filter: ""
+      oko_label_filter: "Includi / Escludi questo cartellino"
       add_label_filter: "Filtro su '{{ label }}'"
       remove_label_filter: "Rimuovi filtro su '{{ label }}'"
       add_edge_material_name_filter: "Filtro su '{{ material_name }}'"
@@ -337,22 +342,22 @@ tab:
       dblclick_to_sort_axes: Fare doppio-click qui per riordinare automaticamente gli assi secondo le dimensioni del pezzo
       part_axes: Assi interni della parte
       select_unselect_all_parts: Seleziona/deseleziona tutte le parti del gruppo
-      select_parts_in_cutlist: ""
-      select_parts_in_cutlist_plural: ""
+      select_parts_in_cutlist: Seleziona un elemento nella Lista Parti
+      select_parts_in_cutlist_plural: "Seleziona {{ count }} elementi nella Lista Parti"
       setup_group_cuttingdiagram: "Configura lo schema di taglio per '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
-      open_part_url: ""
+      open_part_url: Apri l'URL dell'elemento
     menu:
       show_all_groups: Mostra tutti i gruppi
       hide_all_other_groups: Nascondi gli altri gruppi
       numbers_save: Salva la numerazione delle parti
       numbers_reset: Ricomincia la numerazione delle parti
       highlight_parts: $t(tab.cutlist.highlight_parts)
-      write_2d: ""
-      write_3d: ""
-      write_2d_parts: ""
-      write_3d_parts: ""
-      group_write_2d_parts: ""
-      group_write_3d_parts: ""
+      write_2d: Proiezione 2D
+      write_3d: Geometria 3D
+      write_2d_parts: Esporta la proiezione 2D dell'elemento
+      write_3d_parts: Esporta la geometria 3D dell'elemento
+      group_write_2d_parts: Esporta la proiezione 2D degli elementi di un gruppo
+      group_write_3d_parts: Esporta la geometria 3D degli elementi di un gruppo
       group_layout_parts: Stampa i disegni complessivi delle parti di questa sezione
       group_numbers_save: Salva la numerazione delle parti di questo gruppo
       group_numbers_reset: Ricomincia la numerazione delle parti di questo gruppo
@@ -405,8 +410,9 @@ tab:
       description: Descrizione
       description_help: |
         La *Descrizione* permette di fornire informazioni personalizzate su ogni definizione di parte.
-      url: ""
+      url: URL
       url_help: |
+        L' *URL* indica, per ogni elemento, un link personalizzato a una pagina esterna.
       tags: Cartellini
       tags_help: |
         I *Cartellini* sono espressioni personalizzate che si possono aggiungere ai singoli elementi del progetto.
@@ -500,8 +506,8 @@ tab:
       hide_edges_help: "Selezionando questa opzione, verranno nascosta la colonne **Bordature** delle parti di tipo *Pannelli*."
       hide_faces: Nascondere le colonne di impiallacciatura
       hide_faces_help: "Selezionando questa opzione, verranno nascoste le colonne **Impiallacciatura** delle parti di tipo *Pannelli*."
-      hide_material_colors: ""
-      hide_material_colors_help: ""
+      hide_material_colors: Nascondi il colore dei materiali
+      hide_material_colors_help: "Questa opzione nasconde il colore dei materiali."
       minimize_on_highlight: Minimizza dopo *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Selezionando questa opzione, la finestra di OpenCutList verrà minimizzata dopo aver opzionato *'$t(tab.cutlist.highlight_part)'* ."
       general: Generale
@@ -564,7 +570,7 @@ tab:
       add_column: Aggiungi colonna
       add_native_columns: Aggiungi una colonna predefinita
       remove_column: Elimina
-      remove_all_columns: ""
+      remove_all_columns: Elimina tutto
       columns: Colonne
       column_title: Nome
       column_title_help: |
@@ -596,8 +602,8 @@ tab:
       cutting_length: Lunghezza - grezzo
       cutting_width: Larghezza - grezzo
       cutting_thickness: Spessore - grezzo
-      edge_cutting_length: ""
-      edge_cutting_width: ""
+      edge_cutting_length: Larghezza bordi - grezza -
+      edge_cutting_width: Bordi larghezza - grezzi
       bbox_length: Lunghezza
       bbox_width: Larghezza
       bbox_thickness: Spessore
@@ -606,12 +612,12 @@ tab:
       part_count: Quantità
       material_type: Tipo
       material_name: Materiale
-      material_description: ""
-      material_url: ""
+      material_description: Descrizione del materiale
+      material_url: URL del materiale
       material_std_dimension: Dimensioni standard
       entity_names: Nomi delle occorrenze
       description: Descrizione
-      url: ""
+      url: URL
       tags: Cartellini
       edge_ymin: Lunghezza bordo 1
       edge_ymax: Lunghezza bordo 2
@@ -623,11 +629,11 @@ tab:
       layers: Tag
       batch: Lotto
       bin: Cestino
-      filename: ""
+      filename: Nome del file
       model_name: Personalizzazione
-      model_description: ""
+      model_description: Descrizione del modello
       page_name: Nome della scena
-      page_description: ""
+      page_description: Descizione della Scena
       placeholder:
         no_column_title: Digitare il nome
         no_column_formula_native: "Valore predefinito della colonna '{{ col_name }}'"
@@ -722,11 +728,14 @@ tab:
       option_hide_edges_preview_0: Visualizzato sul schema di taglio
       option_hide_edges_preview_1: Mascherato sul schema di taglio
       option_hide_edges_preview_help: Consente di mostrare o nascondere l'indicazione visiva dei bordi da placcare per ogni parte del schema di taglio.
-      option_part_drawing_type: ""
-      option_part_drawing_type_0: ""
-      option_part_drawing_type_1: ""
-      option_part_drawing_type_2: ""
+      option_part_drawing_type: Forma degli elementi
+      option_part_drawing_type_0: Nascosto
+      option_part_drawing_type_1: Vista della faccia anteriore
+      option_part_drawing_type_2: Vista della faccia posteriore
       option_part_drawing_type_help: |
+        Mostra o nasconde la l'effettiva forma degli elementi e la loro lavorazione sul diagramma.
+
+        **Questa opzione deve essere abilitata per poermettere l'esportazione delle forme.*
       option_saw_kerf: Spessore della lama
       option_saw_kerf_help: La larghezza del materiale asportato dalla lama di taglio.
       option_trimming: Scarto perimetro
@@ -742,8 +751,8 @@ tab:
       option_stacking_1: Per lunghezza
       option_stacking_2: Per larghezza
       option_stacking_3: Tutte le possibilità
-      option_keep: ""
-      option_keep_help: ""
+      option_keep: Minima dimensione scarto
+      option_keep_help: Ritagli che sono piu grandi della lunghezza e larghezza minima vengono contrassegnati **da tenere**.
       option_std_bar_dimensional: Dimensioni Standard Barre
       option_std_bar_edge: Bordatura Standard
       option_std_bar_help: |
@@ -779,7 +788,7 @@ tab:
       tooltip:
         scroll_to_block_1d: Scorri alla prima tavola o bordo
         scroll_to_block_2d: Scorri al primo pannello
-        copy_leftovers_to_clipboard: ""
+        copy_leftovers_to_clipboard: Copia i ritagli negli appunti
       list:
         unplaced_parts: Parti non inserite
         summary: Sommario
@@ -799,9 +808,9 @@ tab:
         overall_efficiency: Efficienza globale
         efficiency: Efficienza
         leftover: Rimanente
-        leftover_to_keep: ""
-        leftover_to_keep_plural: ""
-        leftover_to_throw_away: ""
+        leftover_to_keep: Scarto da tenere
+        leftover_to_keep_plural: Scarti da tenere
+        leftover_to_throw_away: Scarti da eliminare
         cut: Taglio
         cut_plural: Tagli
         cut_trimming: Sezionatura
@@ -823,13 +832,14 @@ tab:
         parts_plural: "{{ count }} parti"
         settings: Impostazioni
       export:
-        title: ""
+        title: Esporta diagramma di taglio
         info_0: |
+          Questo modulo permette di esportare la **geometria** del *diagramma di taglio* in un file in formato [SVG](https://it.wikipedia.org/wiki/Scalable_Vector_Graphics) oppure [DXF](https://it.wikipedia.org/wiki/AutoCAD_DXF).
         option_file_format: $t(tab.cutlist.write.option_file_format)
         option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
-        option_dxf_structure: ""
-        option_dxf_structure_1: ""
-        option_dxf_structure_2: ""
+        option_dxf_structure: Struttura DXF
+        option_dxf_structure_1: Livelli
+        option_dxf_structure_2: Livelli + Blocchi
         option_dxf_structure_help: |
         option_unit: $t(tab.cutlist.write.option_unit)
         option_unit_help: $t(tab.cutlist.write.option_unit_help)
@@ -843,24 +853,32 @@ tab:
         option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
         option_sheet_good: Pannello
         option_sheet_good_help: |
-        option_sheet_veneer: ""
+        option_sheet_veneer: Impiallacciatura
         option_sheet_veneer_help: |
+          Abilita l'esportazione dei fogli di piallacci e la selezione del colore.
         option_bar_dimensional: Barre
         option_bar_dimensional_help:  |
-        option_bar_band: ""
+          Abilita l'esportazione delle dimensioni e del colore.
+        option_bar_band: Bordo
         option_bar_band_help:  |
+          Abilita l'esportazione dei bordi e dei colori.
         option_parts: Parti
         option_parts_help:  |
-        option_parts_holes: ""
+          Abilita l'esportazione degli elementi e il colore.
+        option_parts_holes: Forature
         option_parts_holes_help:  |
-        option_texts: ""
+          Seleziona il colore delle forature.
+        option_texts: Identificativo
         option_texts_help:  |
+          Abilita lesportazione del testo identificativo degli elementi e il colore.
         option_leftovers: Rimanente
         option_leftovers_help:  |
+          Abilita l'esportazione dei ritagli e il loro colore.
         option_cuts: Tagli
         option_cuts_help:  |
+          Seleziona se i tagli devono essere disegnati e con che colore.
         warning:
-          is_sheet_selection: ""
+          is_sheet_selection: I pannelli **mascherati** non vengono esportati.
       error:
         no_bar_dimensional: La tavola predefinita non è stata correttamente configurata e non ci sono squadrature impostate.
         no_bar_edge: La tavola predefinita non è stata correttamente configurata e non ci sono squadrature impostate.
@@ -887,7 +905,7 @@ tab:
       size: Dimensioni reali etichetta
       add_element: Aggiungi elemento
       remove_element: Elimina
-      remove_all_elements: ""
+      remove_all_elements: Elimina tutto
       part_order_strategy_help: |
         Modifica le seguenti proprietà per cambiare i criteri di ordinamenti delle etichette.
         Le proprietà possono essere ordinate in modo <i class="ladb-opencutlist-icon-sort-asc"></i> *ascendente* o <i class="ladb-opencutlist-icon-sort-desc"></i> *discendente*.
@@ -938,9 +956,9 @@ tab:
         part_cutting_length: Lunghezza grezza
         part_cutting_width: Larghezza grezza
         part_cutting_thickness: Spessore grezzo
-        part_edge_cutting_size: ""
-        part_edge_cutting_length: ""
-        part_edge_cutting_width: ""
+        part_edge_cutting_size: Dimensioni del bordo
+        part_edge_cutting_length: Lunghezza bordi - grezza -
+        part_edge_cutting_width: Bordi larghezza - grezzi
         part_size: Dimensione
         part_length: Lunghezza
         part_width: Larghezza
@@ -1041,47 +1059,66 @@ tab:
         is_group_selection: Le parti contenute nei **gruppi nascosti** della distinta non verranno inserite nei disegni.
         is_part_selection: Il disegno complessivo mostra solo le **parti selezionate**.
     write:
-      title: ""
+      title: Esportazione elementi
       info_2d: |
+        Questo modulo permette di esportare la **proiezione 2D** degli elementi in un file in formato [SVG](https://it.wikipedia.org/wiki/Scalable_Vector_Graphics) oppure [DXF](https://it.wikipedia.org/wiki/AutoCAD_DXF).
       info_3d: |
+        Questo modulo permette di esportare la **geometria 3D** degli elementi in un file in formato [STL](https://en.wikipedia.org/wiki/STL_(file_format)) oppure [OBJ](https://en.wikipedia.org/wiki/Wavefront_.obj_file).
       option_file_format: Formato
       option_file_format_help: |
+        Seleziona il formato del file da esportare.
       option_unit: Unità
       option_unit_help: |
-      option_part_drawing_type: ""
+        Seleziona l'unità di misura utilizzata nel file esportato.
+      option_part_drawing_type: Proiezione
       option_part_drawing_type_help: |
+        Seleziona la vista da esportare.
       option_faces: Impiallacciatura
-      option_faces_0: ""
-      option_faces_1: ""
+      option_faces_0: Utilizza solo la faccia di destinazione
+      option_faces_1: Utilizza tutte le facce dell'elemento
       option_faces_help: |
-      option_anchor: ""
-      option_anchor_0: ""
-      option_anchor_1: ""
+        Consente di scegliere se la ricerca della forma degli elementi usa tutte le facce o solo la faccia di destinazione.
+      option_anchor: Punto di aggancio
+      option_anchor_0: Predefinito
+      option_anchor_1: Proietta l'origine dell'elemento
       option_anchor_help: |
-      option_smoothing: ""
+        L'origine degli assi dell'elemento viene utilizzata come punto di aggancio della proiezione.
+      option_smoothing: Levigatezza
       option_smoothing_0: Nessuna
-      option_smoothing_1: ""
+      option_smoothing_1: Levigatezza di archi e cerchi *(Valutazione)*
       option_smoothing_help: |
-      option_merge_holes: ""
-      option_merge_holes_0: ""
-      option_merge_holes_1: ""
+        Abilita l'individuazione degli archi e dei cerchi
+
+        Questa opzione non rileva altri tipi di curve.*
+      option_merge_holes: Modo Unione
+      option_merge_holes_0: Predefinito
+      option_merge_holes_1: Profilo + forature + Unione
       option_merge_holes_help: |
-      option_edges: ""
+        **Predefinito**
+        La forma dell'elemento viene esportatat su un layer per ogni profondità
+
+        **Profilo + Forature + Unione**
+        Attiva la separazione del profilo esterno degli elementi dalla foratura e unisce le profondità di ogni recesso.
+      option_edges: Percorsi
       option_edges_0: Nessuna
-      option_edges_1: ""
+      option_edges_1: Usa bordi singoli
       option_edges_help: |
+        Abilita l'esportazione di bordi singoli (non connessi alla faccia), coplanari alla faccia di destinazione, ad uso percorso utensile.
       option_parts: Parti
       option_parts_help: |
-      option_parts_holes: ""
+        Seleziona il colore degli elementi.
+      option_parts_holes: Forature
       option_parts_holes_help: |
+        Seleziona il colore dele forature.
       option_edges_color_help: |
+        Seleziona il colore del profilo.
       error:
-        no_part: ""
+        no_part: Nessuna parte da esportare.
       warning:
         is_group_selection: Le parti contenute nei **gruppi nascosti** del elenco parti non saranno esportate.
-        is_part_selection: ""
+        is_part_selection: Esportazione limitatata agli **elementi selezionati**.
     snippet:
-      hello: ""
+      hello: Ciao
       number: Numero
       name: Designazione
       number_and_name: Numero e Descrizione
@@ -1102,8 +1139,8 @@ tab:
       no_typed_materials_in_selection: "La selezione non utilizza un materiale definito come (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** o **$t(tab.materials.type_5)**)."
       export_empty: Nessuna parte da esportare.
     success:
-      part_selected: ""
-      part_selected_plural: ""
+      part_selected: "{{ count }} elemento selezionato nella Lista Parti."
+      part_selected_plural: "{{ count }} elementi selezionati nella Lista Parti."
     tip:
       no_component: |
         Le parti da inserire nella *distinta* devono essere di tipo **componenti**.
@@ -1140,7 +1177,7 @@ tab:
       set_current: |
         Assegna il materiale '{{ name }}'
         *Doppio-click per minimizzare*
-      open_url: ""
+      open_url: Apri l'URL del materiale
     menu:
       import_from_skm: Importa materiale (.skm)
       purge_unused: Elimina materiali inutilizzati
@@ -1165,7 +1202,7 @@ tab:
       name: Descrizione
       type: Tipo
       description: Descrizione
-      url: ""
+      url: URL
       cut_options: Impostazioni del taglio
       attributes: Attributi
       thickness: Spessore
@@ -1251,39 +1288,41 @@ tab:
       invalid_image_file: Immagine non valida
     obsolete_base: "Per essere sincronizzato, è necessario aggiornare l'elenco dei materiali."
   outliner:
-    label: ""
-    title: ""
-    list: ""
-    nodes: ""
-    part_count: ""
-    type_0: ""
-    type_1: ""
-    type_2: ""
-    type_3: ""
+    label: Struttura
+    title: Struttura
+    list: Struttura ad albero delle Entità
+    nodes: Occorrenze
+    part_count: Nb elementi
+    type_0: Modello
+    type_1: Gruppo
+    type_2: Componente
+    type_3: Elemento
     tooltip:
-      open_node_url: ""
+      open_node_url: Apri l'URL dell'occorrenza
     edit_node:
-      title_model: ""
-      title_instance: ""
+      title_model: "Proprietà del modello"
+      title_instance: "Proprietà dell'occorrenza **{{ name }}"
       general: Generale
       preview: Panoramica della funzionalità
       name: Descrizione
       instance_name: Occorrenza
-      definition_name: ""
+      definition_name: Definizione
       description: Descrizione
-      url: ""
+      url: URL
       layer_name: Tag
-      explode: ""
-      explode_message: ""
+      explode: Esplodi
+      explode_message: "Confermi l'esplosione dell'occorrenza **{{ name }} ?"
     error:
       no_model: Nessun modello aperto. Sono necessarie più informazioni per procedere ;)
-      no_entities: ""
-      node_not_found: ""
-      entity_not_found: ""
-      obsolete_outliner: ""
+      no_entities: Il modello è vuoto!
+      node_not_found: Nodo non trovato
+      entity_not_found: Occorrenza non trovata
+      obsolete_outliner: "Non consentito, la struttura è obsoleta. Si prega di rigenerarla."
     tip:
       no_node: |
-    obsolete_base: ""
+        Il modello non contiene alcuna occorrenza da visualizzare qui
+        un'occorrenza è un **gruppo** oppure un **componente** presente nella scena.
+    obsolete_base: "La stuttura deve essere rigenerata per rimanere aggiornata."
   importer:
     label: Importa
     title: Importa Parti
@@ -1443,7 +1482,7 @@ tab:
     print_margin_small: Piccoli
     table_row_size: ""
     table_row_size_normal: Normale
-    table_row_size_compact: ""
+    table_row_size_compact: Compatta
     size_and_position: Dimensione e posizione della finestra
     model_settings: Preferenze del modello
     length_unit: Unità di lunghezza
@@ -1559,16 +1598,16 @@ tool:
     action_3_status: Seleziona una faccia del pannello da cui copiare il materiale
     action_4: Pulire
     action_4_status: Seleziona un elemento per rimuovere tutti i materiali dalla sua definizione e da tutte le sue istanze
-    action_option_group_instances: ""
+    action_option_group_instances: Numero di occorrenze
     action_option_group_edges: Numero delle bordature
-    action_option_group_faces: ""
-    action_option_instances_0_status: ""
-    action_option_instances_1_status: ""
-    action_option_edges_0_status: ""
-    action_option_edges_1_status: ""
-    action_option_edges_2_status: ""
-    action_option_faces_0_status: ""
-    action_option_faces_1_status: ""
+    action_option_group_faces: Numero delle facce
+    action_option_instances_0_status: Colora solo l'istanza dell'elemento destinazione
+    action_option_instances_1_status: Colora tutte le occorrenze dell'elemento destinazione
+    action_option_edges_0_status: Colora solo il bordo dell'elemento destinazione
+    action_option_edges_1_status: Colora il bordo e il bordo opposto dell'elemento destinazione
+    action_option_edges_2_status: Colora i 4 bordi dell'elemento destinazione
+    action_option_faces_0_status: Colora solo la faccia destinazione
+    action_option_faces_1_status: Colora le 2 facce dell'elemento destinazione
     edges: "{{ count }} bordo"
     edges_plural: "{{ count }} bordi"
     edge_ymin: Lunghezza 1
@@ -1583,7 +1622,7 @@ tool:
       no_material: Il modello non contiene alcun materiale!
       no_material_type: "Nessun materiale di tipo '{{ type }}'"
     error:
-      not_part: ""
+      not_part: La destinazione non è un elemento (componente)
       not_edge: La faccia di destinazione non è un bordo
       not_face: La faccia di destinazione non è una faccia
       wrong_material_type: "L'elemento di destinazione deve essere di tipo '{{ type }}'"
@@ -1601,32 +1640,32 @@ tool:
     action_option_direction_0: L
     action_option_direction_1: La
     action_option_direction_2: Sp
-    action_option_direction_0_status: ""
-    action_option_direction_1_status: ""
-    action_option_direction_2_status: ""
+    action_option_direction_0_status: Ruota l'elemento sulla lunghezza
+    action_option_direction_1_status: Ruota l'elemento sulla larghezza
+    action_option_direction_2_status: Ruota l'elemento sullo spessore
     warning:
       more_entities: "saranno modificate {{ count_used }} occorrenze che condividono la stessa definizione"
     error:
-      not_part: ""
+      not_part: La destinazione non è un elemento (componente)
       not_orientable: Questo elemento non consente di cambiarne l'orientamento
   smart_export:
     title: Esporta
-    action_0: ""
-    action_0_status: ""
-    action_1: ""
-    action_1_status: ""
-    action_2: ""
-    action_2_status: ""
-    action_3: ""
-    action_3_status: ""
+    action_0: Esporta un elemento 3D
+    action_0_status: Seleziona un elemento
+    action_1: Esporta un elemento 2D
+    action_1_status: Seleziona la faccia di un elemento
+    action_2: Esporta una faccia
+    action_2_status: Seleziona una faccia
+    action_3: Esporta un percorso
+    action_3_status: Seleziona un bordo
     action_option_group_file_format: Formato
     action_option_group_unit: Unità
     action_option_group_faces: Impiallacciatura
     action_option_group_options: Opzioni
-    action_option_file_format_dxf_status: ""
-    action_option_file_format_stl_status: ""
-    action_option_file_format_obj_status: ""
-    action_option_file_format_svg_status: ""
+    action_option_file_format_dxf_status: Esporta un file DXF
+    action_option_file_format_stl_status: Esporta un file STL
+    action_option_file_format_obj_status: Esporta un file OBJ
+    action_option_file_format_svg_status: Esporta un file SVG
     action_option_unit_0_status: $t(default.unit_0)
     action_option_unit_1_status: $t(default.unit_1)
     action_option_unit_2_status: $t(default.unit_2)
@@ -1636,8 +1675,8 @@ tool:
     action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
-    action_option_options_merge_holes_status: ""
-    action_option_options_edges_status: ""
+    action_option_options_merge_holes_status: Isola i fori passanti e unisci le profondità di ogni recesso
+    action_option_options_edges_status: File
     error:
-      not_part: ""
-      not_flat_face: ""
+      not_part: Questa faccia non appartiene ad un elemento (componente)
+      not_flat_face: Superficie non planare
