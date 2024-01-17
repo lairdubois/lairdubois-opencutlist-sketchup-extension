@@ -113,12 +113,7 @@
     # -----
 
     def initialize
-      begin
-        '1.0'.to_l
-        @decimal_separator = '.'
-      rescue
-        @decimal_separator = ','
-      end
+      @decimal_separator = Sketchup::RegionalSettings.decimal_separator
       fetch_options
     end
 

@@ -23,7 +23,7 @@
     LadbDialogModal.prototype.loadModal = function (modalName, params) {
 
         // Render and append tab
-        this.$wrapper.append(Twig.twig({ref: "modals/modal-" + modalName.replaceAll('_', '-') + ".twig"}).render($.extend({
+        this.$wrapper.append(Twig.twig({ref: "modals/modal-" + modalName.replace(/[_]/g, '-') + ".twig"}).render($.extend({
             modalName: modalName,
             capabilities: this.capabilities,
             classes: 'modal-full'
