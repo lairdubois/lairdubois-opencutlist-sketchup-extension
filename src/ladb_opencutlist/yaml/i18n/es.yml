@@ -121,7 +121,8 @@ core:
   error:
     feature_unavailable: "Esta función requiere SketchUp {{ version }} o superior"
     failed_export_to: |
-      Se ha producido un error durante la exportación a *{{ path }}*.**{{ error }}**
+      Se ha producido un error durante la exportación a *{{ path }}*.
+      **{{ error }}**
   success:
     exported_to: "Exportación lograda {{ ruta}}."
     copied_to_clipboard: Copiado al portapapeles
@@ -601,8 +602,8 @@ tab:
       cutting_length: Longitud - cruda
       cutting_width: Ancho - crudo
       cutting_thickness: Espesor - crudo
-      edge_cutting_length: ""
-      edge_cutting_width: ""
+      edge_cutting_length: Longitud cruda cantos
+      edge_cutting_width: Ancho crudo cantos
       bbox_length: Longitud
       bbox_width: Anchura
       bbox_thickness: Grosor
@@ -731,7 +732,9 @@ tab:
       option_part_drawing_type_1: Planos vista frontal
       option_part_drawing_type_2: Planos vista trasera
       option_part_drawing_type_help: |
-        Permite mostrar u ocultar la forma real de las piezas, así como su mecanizado en el diagrama. *Esta opción debe activarse para que las formas puedan ser exportadas.*
+        Permite mostrar u ocultar la forma real de las piezas, así como su mecanizado en el diagrama.
+
+        *Esta opción debe activarse para que las formas puedan ser exportadas.*
       option_saw_kerf: Espesor de la hoja
       option_saw_kerf_help: El ancho del material eliminado por el corte de la hoja de sierra.
       option_trimming: Margen
@@ -838,6 +841,7 @@ tab:
         option_dxf_structure_2: Calcos + bloques
         option_dxf_structure_help: |
           Permite elegir la estructura del archivo DXF:
+
           - La estructura **Calcos** dibuja todos los trazos en plano distinguiendo los diferentes tipos de trazo únicamente por los calcos. *Esta estructura ofrece una mejor compatibilidad con los programas de terceros."
           - La estructura **Calcos + Bloques** crea un bloque por pieza e inserta estos bloques tantas veces como se repiten las piezas. *Esta estructura ofrece mayor flexibilidad para modificar el archivo.*
         option_unit: $t(tab.cutlist.write.option_unit)
@@ -956,9 +960,9 @@ tab:
         part_cutting_length: Longitud - cruda
         part_cutting_width: Ancho - crudo
         part_cutting_thickness: Espesor crudo
-        part_edge_cutting_size: ""
-        part_edge_cutting_length: ""
-        part_edge_cutting_width: ""
+        part_edge_cutting_size: Tamaño crudo cantos
+        part_edge_cutting_length: Longitud cruda cantos
+        part_edge_cutting_width: Ancho crudo cantos
         part_size: Dimensiones
         part_length: Longitud
         part_width: Anchura

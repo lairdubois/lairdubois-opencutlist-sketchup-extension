@@ -230,7 +230,7 @@ core:
         Убедитесь, что есть подключение к Интернету.
 tab:
   cutlist:
-    label: Пильный
+    label: Раскрой
     title: Список элементов
     help: |
       Для частичного расчета раскроя, выделите в сцене необходимые детали нажмите кнопку **Рассчитать**.
@@ -760,7 +760,7 @@ tab:
         Отредактируйте материал '{{ material_name }}' и обновите список.
       option_std_bar_add: Добавить размер панели
       option_std_bar_none: Нет
-      option_scrap_bar_dimensional_lengths: Остатки доски
+      option_scrap_bar_dimensional_lengths: Остатки погонажа
       option_scrap_bar_edge_lengths: Остатки кромки
       option_scrap_bar_lengths_placeholder: длина x количество ; ...
       option_scrap_bar_lengths_help: |
@@ -776,7 +776,7 @@ tab:
         Отредактируйте материал '{{ material_name }}', чтобы обновить этот список.
       option_std_sheet_add: Добавить размер панели
       option_std_sheet_none: Нет
-      option_scrap_sheet_good_sizes: Листовые обрезки
+      option_scrap_sheet_good_sizes: Обрезки панели
       option_scrap_sheet_veneer_sizes: Остатки листа
       option_scrap_sheet_sizes_placeholder: длина x ширина x количество ; ...
       option_scrap_sheet_sizes_help: |
@@ -792,7 +792,7 @@ tab:
         unplaced_parts: Неразмещенные детали
         summary: Спецификация
         count: К-во
-        bar: Доска
+        bar: Погонаж
         sheet: Панель
         length: Длина
         width: Ширина
@@ -808,7 +808,7 @@ tab:
         efficiency: Эффективность
         leftover: Остаток
         leftover_to_keep: Перепад сохранить
-        leftover_to_keep_plural: Перепады сохранить
+        leftover_to_keep_plural: Деловые остатки
         leftover_to_throw_away: Сброс перепадов
         cut: Пропил
         cut_plural: Распилы
@@ -819,11 +819,11 @@ tab:
         cut_internal_through_plural: Первичные разрезы (уровень 2)
         cut_none: Нет
         bar_dimensional_type_0: Стандартный размер
-        bar_dimensional_type_1: Обрезок
+        bar_dimensional_type_1: Обрезок погонажа
         bar_edge_type_0: Стандартный диапазон
         bar_edge_type_1: Остаток кромки
         sheet_good_type_0: Стандартная панель
-        sheet_good_type_1: Обрезок
+        sheet_good_type_1: Обрезок панели
         sheet_veneer_type_0: Стандартный лист
         sheet_veneer_type_1: Остаток листа
         unused: Неиспользованный
@@ -860,7 +860,7 @@ tab:
         option_sheet_veneer: Лист
         option_sheet_veneer_help: |
           Позволяет активировать экспорт листа и выбрать его цвета.
-        option_bar_dimensional: Доска
+        option_bar_dimensional: Погонаж
         option_bar_dimensional_help:  |
           Позволяет активировать экспорт погонажа и выбрать его цвета.
         option_bar_band: Кромка
@@ -1081,7 +1081,7 @@ tab:
       option_faces_0: Используйте только выбранную сторону
       option_faces_1: Используйте все стороны детали
       option_faces_help: |
-        Позволяет выбрать, выполнять ли поиск формы детали на всех ее гранях или только на лицевой грани.
+        Позволяет задать, выполнять ли поиск формы детали на всех ее гранях или только на лицевой грани.
       option_anchor: Точка привязки
       option_anchor_0: По умолчанию
       option_anchor_1: Проецирование происхождения детали
@@ -1093,7 +1093,7 @@ tab:
       option_smoothing_help: |
         Позволяет включить обнаружение окружностей и дуг.
 
-        *Эта опция нет позволяет определить другие типы кривых.*
+        *Эта опция не позволяет определить другие типы кривых.*
       option_merge_holes: Разбивка
       option_merge_holes_0: По умолчанию
       option_merge_holes_1: Контур + Отверстия + Слияние
@@ -1159,7 +1159,7 @@ tab:
     type_0: Не определён
     type_1: Массив дерева
     type_2: Панель
-    type_3: Доска
+    type_3: Погонаж
     type_4: Кромочный
     type_5: Фурнитура
     type_6: Лист шпона

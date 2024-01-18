@@ -118,9 +118,9 @@ core:
       Para informar de un error: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
   error:
     feature_unavailable: 99 - Esta función requiere SketchUp {{ version }} o superior
-    failed_export_to: '100 - Se ha producido un error durante la exportación a *{{ path }}*.**{{ error }}**
-
-      '
+    failed_export_to: |
+      100 - Se ha producido un error durante la exportación a *{{ path }}*.
+      **{{ error }}**
   success:
     exported_to: 101 - Exportación lograda {{ ruta}}.
     copied_to_clipboard: 102 - Copiado al portapapeles
@@ -611,8 +611,8 @@ tab:
       cutting_length: 469 - Longitud - cruda
       cutting_width: 470 - Ancho - crudo
       cutting_thickness: 471 - Espesor - crudo
-      edge_cutting_length: '472 - '
-      edge_cutting_width: '473 - '
+      edge_cutting_length: 472 - Longitud cruda cantos
+      edge_cutting_width: 473 - Ancho crudo cantos
       bbox_length: 474 - Longitud
       bbox_width: 475 - Anchura
       bbox_thickness: 476 - Grosor
@@ -741,9 +741,10 @@ tab:
       option_part_drawing_type_0: 587 - Ocultas
       option_part_drawing_type_1: 588 - Planos vista frontal
       option_part_drawing_type_2: 589 - Planos vista trasera
-      option_part_drawing_type_help: '590 - Permite mostrar u ocultar la forma real de las piezas, así como su mecanizado en el diagrama. *Esta opción debe activarse para que las formas puedan ser exportadas.*
+      option_part_drawing_type_help: |
+        590 - Permite mostrar u ocultar la forma real de las piezas, así como su mecanizado en el diagrama.
 
-        '
+        *Esta opción debe activarse para que las formas puedan ser exportadas.*
       option_saw_kerf: 591 - Espesor de la hoja
       option_saw_kerf_help: 592 - El ancho del material eliminado por el corte de la hoja de sierra.
       option_trimming: 593 - Margen
@@ -851,6 +852,7 @@ tab:
         option_dxf_structure_2: 676 - Calcos + bloques
         option_dxf_structure_help: |
           677 - Permite elegir la estructura del archivo DXF:
+
           - La estructura **Calcos** dibuja todos los trazos en plano distinguiendo los diferentes tipos de trazo únicamente por los calcos. *Esta estructura ofrece una mejor compatibilidad con los programas de terceros."
           - La estructura **Calcos + Bloques** crea un bloque por pieza e inserta estos bloques tantas veces como se repiten las piezas. *Esta estructura ofrece mayor flexibilidad para modificar el archivo.*
         option_unit: "$t(tab.cutlist.write.option_unit)"
@@ -978,9 +980,9 @@ tab:
         part_cutting_length: 773 - Longitud - cruda
         part_cutting_width: 774 - Ancho - crudo
         part_cutting_thickness: 775 - Espesor crudo
-        part_edge_cutting_size: '776 - '
-        part_edge_cutting_length: '777 - '
-        part_edge_cutting_width: '778 - '
+        part_edge_cutting_size: 776 - Tamaño crudo cantos
+        part_edge_cutting_length: 777 - Longitud cruda cantos
+        part_edge_cutting_width: 778 - Ancho crudo cantos
         part_size: 779 - Dimensiones
         part_length: 780 - Longitud
         part_width: 781 - Anchura

@@ -679,8 +679,7 @@ tab:
       tip:
         not_enough_data: |
           530 - Per calcolare correttamente il preventivo:
-          - i materiali utilizzati devono aver impostato la densita
-           e il prezzo.
+          - i materiali utilizzati devono aver impostato la densita e il prezzo.
           - gli accessori devono avere definito la massa e prezzo.
     cuttingdiagram:
       title: 531 - Schema di taglio
@@ -863,7 +862,9 @@ tab:
         option_merge_holes_1: "$t(tab.cutlist.write.option_merge_holes_1)"
         option_merge_holes_help: "$t(tab.cutlist.write.option_merge_holes_help)"
         option_sheet_good: 688 - Pannello
-        option_sheet_good_help: '689 - '
+        option_sheet_good_help: '689 - Abilita l''esportazione dei fogli del pannello e la selezione del colore.
+
+          '
         option_sheet_veneer: 690 - Impiallacciatura
         option_sheet_veneer_help: '691 - Abilita l''esportazione dei fogli di piallacci e la selezione del colore.
 
@@ -1518,7 +1519,7 @@ tab:
     print_margin: 1162 - Margini di stampa
     print_margin_normal: 1163 - Normali
     print_margin_small: 1164 - Piccoli
-    table_row_size: '1165 - '
+    table_row_size: 1165 - Altezza delle righe della tabella
     table_row_size_normal: 1166 - Normale
     table_row_size_compact: 1167 - Compatta
     size_and_position: 1168 - Dimensione e posizione della finestra
@@ -1545,9 +1546,9 @@ tab:
       import_global_presets_help: |
         1186 - Seleziona il file **.json** contenente la configurazione da importare.
         Se esiste una configurazione con lo stesso nome verrà sostituita con quella importata.
-      import_global_presets_success: '1187 - La configurazione di *OpenCutList* è stata importata correttamente. Per rendere effettivi i cambiamenti, **chiudere** e **riaprire** la finestra di OpenCutList.
-
-        '
+      import_global_presets_success: |
+        1187 - La configurazione di *OpenCutList* è stata importata correttamente.
+        Per rendere effettivi i cambiamenti, **chiudere** e **riaprire** la finestra di OpenCutList.
       dump_global_presets: 1188 - Scarica le impostazioni del modello
       dump_model_presets: 1189 - Scaricamento delle impostazioni del modello
       reset_global_presets: 1190 - Azzerare le preimpostazioni
