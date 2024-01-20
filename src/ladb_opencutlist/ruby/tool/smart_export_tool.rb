@@ -41,7 +41,7 @@ module Ladb::OpenCutList
     ACTION_OPTION_OPTIONS_ANCHOR = 'anchor'
     ACTION_OPTION_OPTIONS_SMOOTHING = 'smoothing'
     ACTION_OPTION_OPTIONS_MERGE_HOLES = 'merge_holes'
-    ACTION_OPTION_OPTIONS_EDGES = 'edges'
+    ACTION_OPTION_OPTIONS_PATHS = 'paths'
 
     ACTIONS = [
       {
@@ -56,7 +56,7 @@ module Ladb::OpenCutList
         :options => {
           ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_SVG, ACTION_OPTION_FILE_FORMAT_DXF ],
           ACTION_OPTION_FACES => [ ACTION_OPTION_FACES_ONE, ACTION_OPTION_FACES_ALL ],
-          ACTION_OPTION_OPTIONS => [ACTION_OPTION_OPTIONS_ANCHOR, ACTION_OPTION_OPTIONS_SMOOTHING, ACTION_OPTION_OPTIONS_MERGE_HOLES, ACTION_OPTION_OPTIONS_EDGES ]
+          ACTION_OPTION_OPTIONS => [ACTION_OPTION_OPTIONS_ANCHOR, ACTION_OPTION_OPTIONS_SMOOTHING, ACTION_OPTION_OPTIONS_MERGE_HOLES, ACTION_OPTION_OPTIONS_PATHS ]
         }
       },
       {
@@ -188,7 +188,7 @@ module Ladb::OpenCutList
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M1,0.719L0.97,0.548L0.883,0.398L0.75,0.286L0.587,0.227L0.413,0.227L0.25,0.286L0.117,0.398L0.03,0.548L0,0.719'))
         when ACTION_OPTION_OPTIONS_MERGE_HOLES
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.167L0.5,0L1,0.167L0.75,0.25L0.5,0.167L0.25,0.25L0,0.167 M0.25,0.833L0.5,0.75L0.75,0.833L0.5,0.917L0.25,0.833 M0.5,0.333L0.5,0.667 M0.667,0.5L0.333,0.5'))
-        when ACTION_OPTION_OPTIONS_EDGES
+        when ACTION_OPTION_OPTIONS_PATHS
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.167,0L0.167,1 M0,0.167L1,0.167 M0,0.833L1,0.833 M0.833,0L0.833,1'))
         end
       end
@@ -366,7 +366,7 @@ module Ladb::OpenCutList
             'input_edge_path' => @input_edge.nil? ? nil : @input_face_path + [ @input_edge ],
             'use_bounds_min_as_origin' => !fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR),
             'face_validator' => fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACES, ACTION_OPTION_FACES_ONE) ? CommonDrawingDecompositionWorker::FACE_VALIDATOR_ONE : CommonDrawingDecompositionWorker::FACE_VALIDATOR_ALL,
-            'ignore_edges' => !fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_EDGES),
+            'ignore_edges' => !fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_PATHS),
             'edge_validator' => CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY
           }).run
           if @active_drawing_def.is_a?(DrawingDef)
@@ -753,7 +753,7 @@ module Ladb::OpenCutList
           parts_fill_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_fill_color')
           parts_holes_fill_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_holes_fill_color')
           parts_holes_stroke_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_holes_stroke_color')
-          edges_stroke_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'edges_stroke_color')
+          paths_stroke_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'paths_stroke_color')
 
           worker = CommonWriteDrawing2dWorker.new(@active_drawing_def, {
             'file_name' => file_name,
@@ -766,7 +766,7 @@ module Ladb::OpenCutList
             'parts_fill_color' => parts_fill_color,
             'parts_holes_fill_color' => parts_holes_fill_color,
             'parts_holes_stroke_color' => parts_holes_stroke_color,
-            'edges_stroke_color' => edges_stroke_color
+            'paths_stroke_color' => paths_stroke_color
           })
           response = worker.run
 
@@ -839,14 +839,14 @@ module Ladb::OpenCutList
           file_format = fetch_action_option_value(ACTION_EXPORT_EDGES, ACTION_OPTION_FILE_FORMAT)
           unit = fetch_action_option_value(ACTION_EXPORT_EDGES, ACTION_OPTION_UNIT)
           smoothing = fetch_action_option_value(ACTION_EXPORT_EDGES, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
-          edges_stroke_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'edges_stroke_color')
+          paths_stroke_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'paths_stroke_color')
 
           worker = CommonWriteDrawing2dWorker.new(@active_drawing_def, {
             'file_name' => file_name,
             'file_format' => file_format,
             'unit' => unit,
             'smoothing' => smoothing,
-            'edges_stroke_color' => edges_stroke_color
+            'paths_stroke_color' => paths_stroke_color
           })
           response = worker.run
 

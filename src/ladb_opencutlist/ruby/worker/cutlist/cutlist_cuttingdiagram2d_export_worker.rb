@@ -301,7 +301,7 @@ module Ladb::OpenCutList
         sheet.parts.uniq { |part| part.id }.each do |part|
           projection_def = _get_part_projection_def(part)
           if projection_def.is_a?(DrawingProjectionDef)
-            depth_layer_defs.concat(_dxf_get_projection_def_depth_layer_defs(projection_def, @parts_stroke_color, @parts_holes_stroke_color, unit_transformation, LAYER_PART))
+            depth_layer_defs.concat(_dxf_get_projection_def_depth_layer_defs(projection_def, @parts_stroke_color, @parts_holes_stroke_color, nil, unit_transformation, LAYER_PART))
           end
         end
         layer_defs.concat(depth_layer_defs.uniq { |layer_def| layer_def.name })
@@ -501,7 +501,7 @@ module Ladb::OpenCutList
     end
 
     def _get_part_projection_def(part)
-      _compute_part_projection_def(@part_drawing_type, part.def.cutlist_part, {
+      _compute_part_projection_def(@part_drawing_type, part.def.cutlist_part, true, {
         'merge_holes' => @merge_holes
       }, @_projection_defs)
     end

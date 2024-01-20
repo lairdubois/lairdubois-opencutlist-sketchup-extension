@@ -35,7 +35,7 @@ module Ladb::OpenCutList
       @parts_fill_color = ColorUtils.color_create(settings.fetch('parts_fill_color', nil))
       @parts_holes_stroke_color = ColorUtils.color_create(settings.fetch('parts_holes_stroke_color', nil))
       @parts_holes_fill_color = ColorUtils.color_create(settings.fetch('parts_holes_fill_color', nil))
-      @edges_stroke_color = ColorUtils.color_create(settings.fetch('edges_stroke_color', nil))
+      @paths_stroke_color = ColorUtils.color_create(settings.fetch('paths_stroke_color', nil))
 
     end
 
@@ -89,9 +89,9 @@ module Ladb::OpenCutList
 
       case @file_format
       when FILE_FORMAT_SVG
-        _write_to_svg_file(file, projection_def, @drawing_def.edge_manipulators)
+        _write_to_svg_file(file, projection_def)
       when FILE_FORMAT_DXF
-        _write_to_dxf_file(file, projection_def, @drawing_def.edge_manipulators)
+        _write_to_dxf_file(file, projection_def)
       end
 
       # Close output file
@@ -99,7 +99,7 @@ module Ladb::OpenCutList
 
     end
 
-    def _write_to_svg_file(file, projection_def, edge_manipulators)
+    def _write_to_svg_file(file, projection_def)
 
       if @anchor
         # Recompute bounding box to be sure to extends to anchor triangle
@@ -165,7 +165,7 @@ module Ladb::OpenCutList
 
     end
 
-    def _write_to_dxf_file(file, projection_def, edge_manipulators)
+    def _write_to_dxf_file(file, projection_def)
 
       unit_factor = _dxf_get_unit_factor(@unit)
       unit_transformation = Geom::Transformation.scaling(ORIGIN, unit_factor, unit_factor, 1.0)
@@ -174,8 +174,7 @@ module Ladb::OpenCutList
       max = @drawing_def.bounds.max.transform(unit_transformation)
 
       layer_defs = []
-      layer_defs.concat(_dxf_get_projection_def_depth_layer_defs(projection_def, @parts_stroke_color, @parts_holes_stroke_color, unit_factor, LAYER_PART).uniq { |layer_def| layer_def.name })
-      layer_defs.push(DxfLayerDef.new(LAYER_EDGE, @edges_stroke_color)) unless edge_manipulators.empty?
+      layer_defs.concat(_dxf_get_projection_def_depth_layer_defs(projection_def, @parts_stroke_color, @parts_holes_stroke_color, @paths_stroke_color, unit_factor, LAYER_PART).uniq { |layer_def| layer_def.name })
 
       _dxf_write_start(file)
       _dxf_write_section_header(file, @unit, min, max)
@@ -185,20 +184,6 @@ module Ladb::OpenCutList
       _dxf_write_section_entities(file) do
 
         _dxf_write_projection_def_geometry(file, projection_def, @smoothing, unit_transformation, unit_transformation, LAYER_PART)
-
-        edge_manipulators.each do |edge_manipulator|
-
-          start_point = edge_manipulator.start_point.transform(unit_transformation)
-          end_point = edge_manipulator.end_point.transform(unit_transformation)
-
-          x1 = start_point.x
-          y1 = start_point.y
-          x2 = end_point.x
-          y2 = end_point.y
-
-          _dxf_write_line(file, x1, y1, x2, y2, LAYER_EDGE)
-
-        end
 
       end
       _dxf_write_section_objects(file)

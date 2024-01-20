@@ -11,7 +11,7 @@ module Ladb::OpenCutList
     PART_DRAWING_TYPE_2D_BOTTOM = 2
     PART_DRAWING_TYPE_3D = 3
 
-    def _compute_part_drawing_def(part_drawing_type, part)
+    def _compute_part_drawing_def(part_drawing_type, part, ignore_edges = true)
       return nil unless part.is_a?(Part)
       return nil if part_drawing_type == PART_DRAWING_TYPE_NONE
 
@@ -35,7 +35,8 @@ module Ladb::OpenCutList
         'input_local_y_axis' => local_y_axis,
         'input_local_z_axis' => local_z_axis,
         'use_bounds_min_as_origin' => true,
-        'ignore_edges' => true
+        'ignore_edges' => ignore_edges,
+        'edge_validator' => ignore_edges ? nil : CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY
       }).run
       if drawing_def.is_a?(DrawingDef)
         part.def.drawing_defs[part_drawing_type] = drawing_def
@@ -45,13 +46,13 @@ module Ladb::OpenCutList
       nil
     end
 
-    def _compute_part_projection_def(part_drawing_type, part, settings = {}, projection_defs_cache = {})
+    def _compute_part_projection_def(part_drawing_type, part, ignore_edges = true, settings = {}, projection_defs_cache = {})
       return nil unless part.is_a?(Part)
 
       projection_def = projection_defs_cache[part.id]
       return projection_def unless projection_def.nil?
 
-      drawing_def = _compute_part_drawing_def(part_drawing_type, part)
+      drawing_def = _compute_part_drawing_def(part_drawing_type, part, ignore_edges)
       return nil unless drawing_def.is_a?(DrawingDef)
 
       projection_def = CommonDrawingProjectionWorker.new(drawing_def, settings).run

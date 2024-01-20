@@ -1103,10 +1103,10 @@ tab:
 
         **Contour + Percements + Fusion**
         Active la séparation du contour extérieur des pièces de leurs percements ainsi que la fusion des profondeurs pour chaque cavité.
-      option_edges: Tracés
-      option_edges_0: Aucun
-      option_edges_1: Utiliser les lignes flottantes
-      option_edges_help: |
+      option_paths: Tracés
+      option_paths_0: Aucun
+      option_paths_1: Utiliser les lignes flottantes
+      option_paths_help: |
         Permet d'activer l'utilisation des lignes flottantes (non rattachées à une face) et coplanaires à la face ciblée, contenues dans la pièce, pour les exporter comme tracé.
       option_parts: Pièces
       option_parts_help: |
@@ -1114,7 +1114,7 @@ tab:
       option_parts_holes: Percements
       option_parts_holes_help: |
         Permet de choisir les couleurs des percements des pièces.
-      option_edges_color_help: |
+      option_paths_color_help: |
         Permet de choisir la couleur des tracés.
       error:
         no_part: Aucune pièce à exporter.

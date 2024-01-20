@@ -11,12 +11,12 @@
     "anchor": false,
     "smoothing": false,
     "merge_holes": false,
-    "edges": false,
+    "paths": false,
     "parts_stroke_color": null,
     "parts_fill_color": "#000000",
     "parts_holes_stroke_color": "#000000",
     "parts_holes_fill_color": "#FFFFFF",
-    "edges_stroke_color": "#0068FF"
+    "paths_stroke_color": "#0068FF"
   },
   "action_2": {   /* ACTION_EXPORT_FACE */
     "file_format": "svg",
@@ -29,6 +29,6 @@
     "file_format": "svg",
     "unit": { "metric": 2, "imperial": 0 }, /* Length::Millimeter , Length::Inches*/
     "smoothing": false,
-    "edges_stroke_color": "#0068FF"
+    "paths_stroke_color": "#0068FF"
   }
 }

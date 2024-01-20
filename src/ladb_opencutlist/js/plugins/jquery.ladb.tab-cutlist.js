@@ -1924,11 +1924,14 @@
                 var $selectAnchor = $('#ladb_select_anchor', $modal);
                 var $selectSmoothing = $('#ladb_select_smoothing', $modal);
                 var $selectMergeHoles = $('#ladb_select_merge_holes', $modal);
+                var $selectPaths = $('#ladb_select_paths', $modal);
                 var $inputPartsStrokeColor = $('#ladb_input_parts_stroke_color', $modal);
                 var $inputPartsFillColor = $('#ladb_input_parts_fill_color', $modal);
                 var $formGroupPartsHoles = $('#ladb_form_group_parts_holes', $modal);
                 var $inputPartsHolesStrokeColor = $('#ladb_input_parts_holes_stroke_color', $modal);
                 var $inputPartsHolesFillColor = $('#ladb_input_parts_holes_fill_color', $modal);
+                var $formGroupPaths = $('#ladb_form_group_paths', that.$element);
+                var $inputPathsStrokeColor = $('#ladb_input_paths_stroke_color', that.$element);
                 var $btnExport = $('#ladb_btn_export', $modal);
 
                 var fnFetchOptions = function (options) {
@@ -1938,10 +1941,12 @@
                     options.anchor = $selectAnchor.val() === '1';
                     options.smoothing = $selectSmoothing.val() === '1';
                     options.merge_holes = $selectMergeHoles.val() === '1';
+                    options.paths = $selectPaths.val() === '1';
                     options.parts_stroke_color = $inputPartsStrokeColor.ladbTextinputColor('val');
                     options.parts_fill_color = $inputPartsFillColor.ladbTextinputColor('val');
                     options.parts_holes_stroke_color = $inputPartsHolesStrokeColor.ladbTextinputColor('val');
                     options.parts_holes_fill_color = $inputPartsHolesFillColor.ladbTextinputColor('val');
+                    options.paths_stroke_color = $inputPathsStrokeColor.ladbTextinputColor('val');
                 };
                 var fnFillInputs = function (options) {
                     $selectPartDrawingType.selectpicker('val', options.part_drawing_type);
@@ -1950,18 +1955,23 @@
                     $selectAnchor.selectpicker('val', options.anchor ? '1' : '0');
                     $selectSmoothing.selectpicker('val', options.smoothing ? '1' : '0');
                     $selectMergeHoles.selectpicker('val', options.merge_holes ? '1' : '0');
+                    $selectPaths.selectpicker('val', options.paths ? '1' : '0');
                     $inputPartsStrokeColor.ladbTextinputColor('val', options.parts_stroke_color);
                     $inputPartsFillColor.ladbTextinputColor('val', options.parts_fill_color);
                     $inputPartsHolesStrokeColor.ladbTextinputColor('val', options.parts_holes_stroke_color);
                     $inputPartsHolesFillColor.ladbTextinputColor('val', options.parts_holes_fill_color);
+                    $inputPathsStrokeColor.ladbTextinputColor('val', options.paths_stroke_color);
                     fnUpdateFieldsVisibility();
                 };
                 var fnUpdateFieldsVisibility = function () {
                     var isDxf = $selectFileFormat.val() === 'dxf';
                     var isMergeHoles = $selectMergeHoles.val() === '1';
+                    var isPaths = $selectPaths.val() === '1';
                     if (!isMergeHoles) $formGroupPartsHoles.hide(); else $formGroupPartsHoles.show();
+                    if (!isPaths) $formGroupPaths.hide(); else $formGroupPaths.show();
                     $inputPartsHolesStrokeColor.ladbTextinputColor(!isMergeHoles ? 'disable' : 'enable');
                     $inputPartsHolesFillColor.ladbTextinputColor(!isMergeHoles ? 'disable' : 'enable');
+                    $inputPathsStrokeColor.ladbTextinputColor(!isPaths ? 'disable' : 'enable');
                     $('.ladb-form-fill-color').css('opacity', isDxf ? 0.3 : 1);
                 };
 
@@ -1986,10 +1996,15 @@
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', fnUpdateFieldsVisibility)
                 ;
+                $selectPaths
+                    .selectpicker(SELECT_PICKER_OPTIONS)
+                    .on('changed.bs.select', fnUpdateFieldsVisibility)
+                ;
                 $inputPartsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                 $inputPartsFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                 $inputPartsHolesStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                 $inputPartsHolesFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+                $inputPathsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
 
                 fnFillInputs(write2dOptions);
 

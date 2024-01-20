@@ -1218,14 +1218,16 @@ module Ladb::OpenCutList
       _dxf_sanitize_identifier(a.compact.join('_'))
     end
 
-    def _dxf_get_projection_def_depth_layer_defs(projection_def, color, holes_color, unit_transformation, prefix = nil)
+    def _dxf_get_projection_def_depth_layer_defs(projection_def, color, holes_color, paths_color, unit_transformation, prefix = nil)
       return [] unless projection_def.is_a?(DrawingProjectionDef)
 
       dxf_layer_defs = []
       projection_def.layer_defs.each do |layer_def|
 
         layer_name = _dxf_get_projection_layer_def_identifier(layer_def, unit_transformation, prefix)
-        if layer_def.holes?
+        if layer_def.path?
+          layer_color = paths_color
+        elsif layer_def.holes?
           layer_color = holes_color
         else
           layer_color = color ? ColorUtils.color_lighten(color, (layer_def.depth / (projection_def.max_depth > 0 ? projection_def.max_depth : 1) * 0.8)) : nil
@@ -1462,7 +1464,7 @@ module Ladb::OpenCutList
         else
 
           # Extract loop points from vertices (quicker)
-          _dxf_write_polygon(file, poly_def.points.map { |point| Geom::Point3d.new(point.transform(transformation).to_a.map { |v| v.to_f }) }, layer)
+          _dxf_write_polyline(file, poly_def.points.map { |point| point.transform(transformation) }.map { |point| DxfVertexDef.new(point.x.to_f, point.y.to_f, 0) }, poly_def.curve_def.closed?, layer)
 
         end
 

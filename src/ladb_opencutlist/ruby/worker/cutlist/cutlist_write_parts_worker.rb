@@ -21,11 +21,13 @@ module Ladb::OpenCutList
       @anchor = settings.fetch('anchor', false)
       @smoothing = settings.fetch('smoothing', false)
       @merge_holes = settings.fetch('merge_holes', false)
+      @paths = settings.fetch('paths', false)
 
       @parts_stroke_color = settings.fetch('parts_stroke_color', nil)
       @parts_fill_color = settings.fetch('parts_fill_color', nil)
       @parts_holes_stroke_color = settings.fetch('parts_holes_stroke_color', nil)
       @parts_holes_fill_color = settings.fetch('parts_holes_fill_color', nil)
+      @paths_stroke_color = settings.fetch('paths_stroke_color', nil)
 
       @cutlist = cutlist
 
@@ -89,7 +91,7 @@ module Ladb::OpenCutList
               next
             end
 
-            drawing_def = _compute_part_drawing_def(@part_drawing_type, part)
+            drawing_def = _compute_part_drawing_def(@part_drawing_type, part, !@paths)
             return { :errors => [ 'tab.cutlist.error.unknow_part' ] } unless drawing_def.is_a?(DrawingDef)
 
             case @part_drawing_type
@@ -106,6 +108,7 @@ module Ladb::OpenCutList
                   'parts_fill_color' => @parts_fill_color,
                   'parts_holes_stroke_color' => @parts_holes_stroke_color,
                   'parts_holes_fill_color' => @parts_holes_fill_color,
+                  'paths_stroke_color' => @paths_stroke_color,
                 }).run
                 return response if !response[:errors].nil? || response[:cancelled]
               when PART_DRAWING_TYPE_3D
@@ -130,49 +133,6 @@ module Ladb::OpenCutList
         return { :export_path => dir }
       end
 
-
-      #
-      # part = parts.first  # TODO loop on all parts
-      #
-      # instance_info = part.def.get_one_instance_info
-      # return { :errors => [ 'tab.cutlist.error.unknow_part' ] } if instance_info.nil?
-      #
-      # # Forward to specific worker for SKP export
-      # if @file_format == FILE_FORMAT_SKP
-      #
-      #   return CommonWriteDefinitionWorker.new({
-      #     'file_name' => part.name,
-      #     'definition' => instance_info.definition
-      #   }).run
-      #
-      # end
-      #
-      # drawing_def = _compute_part_drawing_def(@part_drawing_type, part)
-      # return { :errors => [ 'tab.cutlist.error.unknow_part' ] } unless drawing_def.is_a?(DrawingDef)
-      #
-      # case @part_drawing_type
-      #
-      # when PART_DRAWING_TYPE_2D_TOP, PART_DRAWING_TYPE_2D_BOTTOM
-      #   response = CommonWriteDrawing2dWorker.new(drawing_def, {
-      #     'file_name' => part.name,
-      #     'file_format' => @file_format,
-      #     'anchor' => @anchor,
-      #     'smoothing' => @smoothing,
-      #     'merge_holes' => @merge_holes,
-      #     'parts_stroke_color' => @parts_stroke_color,
-      #     'parts_fill_color' => @parts_fill_color,
-      #     'parts_holes_stroke_color' => @parts_holes_stroke_color,
-      #     'parts_holes_fill_color' => @parts_holes_fill_color,
-      #   }).run
-      # when PART_DRAWING_TYPE_3D
-      #   response = CommonWriteDrawing3dWorker.new(drawing_def, {
-      #     'file_name' => part.name,
-      #     'file_format' => @file_format,
-      #     'anchor' => @anchor,
-      #   }).run
-      # end
-      #
-      # response
     end
 
   end
