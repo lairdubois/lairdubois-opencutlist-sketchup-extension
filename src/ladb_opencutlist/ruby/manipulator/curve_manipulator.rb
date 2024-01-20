@@ -2,13 +2,13 @@ module Ladb::OpenCutList
 
   require_relative 'transformation_manipulator'
 
-  class LoopManipulator < TransformationManipulator
+  class CurveManipulator < TransformationManipulator
 
-    attr_reader :loop
+    attr_reader :curve
 
-    def initialize(loop, transformation = IDENTITY)
+    def initialize(curve, transformation = IDENTITY)
       super(transformation)
-      @loop = loop
+      @curve = curve
     end
 
     # -----
@@ -21,16 +21,16 @@ module Ladb::OpenCutList
 
     # -----
 
-    def ==(other)
-      return false unless other.is_a?(LoopManipulator)
-      @loop == other.loop && super
+    def closed?
+      @curve.last_edge.end == @curve.first_edge.start
     end
 
     # -----
 
     def points
       if @points.nil?
-        @points = @loop.vertices.map { |vertex| vertex.position.transform(@transformation) }
+        @points = @curve.vertices.map { |vertex| vertex.position.transform(@transformation) }
+        @points.reverse! if flipped?
       end
       @points
     end
@@ -46,8 +46,8 @@ module Ladb::OpenCutList
 
     def to_s
       [
-        "LOOP",
-        "- #{@loop.count_edges} edges",
+        "CURVE",
+        "- #{@curve.count_edges} edges",
       ].join("\n")
     end
 

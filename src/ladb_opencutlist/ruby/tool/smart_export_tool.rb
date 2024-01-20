@@ -367,7 +367,7 @@ module Ladb::OpenCutList
             'use_bounds_min_as_origin' => !fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR),
             'face_validator' => fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACES, ACTION_OPTION_FACES_ONE) ? CommonDrawingDecompositionWorker::FACE_VALIDATOR_ONE : CommonDrawingDecompositionWorker::FACE_VALIDATOR_ALL,
             'ignore_edges' => !fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_EDGES),
-            'edge_validator' => CommonDrawingDecompositionWorker::EDGE_VALIDATOR_LAYER
+            'edge_validator' => CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY
           }).run
           if @active_drawing_def.is_a?(DrawingDef)
 
@@ -381,7 +381,7 @@ module Ladb::OpenCutList
             preview.transformation = @active_drawing_def.transformation
             @space.append(preview)
 
-            fn_append_segments = lambda do |layer_def, polygon_def, segs, line_width|
+            fn_append_segments = lambda do |layer_def, poly_def, segs, line_width|
 
               segments = Kuix::Segments.new
               segments.add_segments(segs)
@@ -389,11 +389,13 @@ module Ladb::OpenCutList
                 segments.color = COLOR_PART_UPPER
               elsif layer_def.holes?
                 segments.color = COLOR_PART_HOLES
+              elsif layer_def.path?
+                segments.color = COLOR_EDGE
               else
                 segments.color = COLOR_PART_DEPTH
               end
               segments.line_width = highlighted ? line_width + 1 : line_width
-              segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES unless polygon_def.outer?
+              segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if poly_def.is_a?(DrawingProjectionPolygonDef) && !poly_def.outer?
               segments.on_top = true
               preview.append(segments)
 
@@ -401,28 +403,16 @@ module Ladb::OpenCutList
 
             projection_def.layer_defs.reverse.each do |layer_def| # reverse layer order to present from Bottom to Top
 
-              layer_def.polygon_defs.each do |polygon_def|
+              layer_def.poly_defs.each do |poly_def|
                 if fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
-                  polygon_def.loop_def.portions.each do |portion|
-                    fn_append_segments.call(layer_def, polygon_def, portion.segments, portion.is_a?(Geometrix::ArcLoopPortionDef) ? 4 : 2)
+                  poly_def.curve_def.portions.each do |portion|
+                    fn_append_segments.call(layer_def, poly_def, portion.segments, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2)
                   end
                 else
-                  fn_append_segments.call(layer_def, polygon_def, polygon_def.segments, 2)
+                  fn_append_segments.call(layer_def, poly_def, poly_def.segments, 2)
                 end
 
               end
-            end
-
-            @active_drawing_def.edge_manipulators.each do |edge_manipulator|
-
-              # Highlight edge
-              segments = Kuix::Segments.new
-              segments.add_segments(edge_manipulator.segment)
-              segments.color = COLOR_EDGE
-              segments.line_width = highlighted ? 3 : 2
-              segments.on_top = true
-              preview.append(segments)
-
             end
 
             bounds = Geom::BoundingBox.new
@@ -439,18 +429,6 @@ module Ladb::OpenCutList
             box_helper.line_width = 1
             box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
             preview.append(box_helper)
-
-            if @active_drawing_def.input_edge_manipulator
-
-              # Highlight input edge
-              segments = Kuix::Segments.new
-              segments.add_segments(@active_drawing_def.input_edge_manipulator.segment)
-              segments.color = COLOR_ACTION
-              segments.line_width = 3
-              segments.on_top = true
-              preview.append(segments)
-
-            end
 
             # Axes helper
             axes_helper = Kuix::AxesHelper.new
@@ -491,27 +469,27 @@ module Ladb::OpenCutList
           preview.transformation = @active_drawing_def.transformation
           @space.append(preview)
 
-          fn_append_segments = lambda do |layer_def, polygon_def, segs, line_width|
+          fn_append_segments = lambda do |layer_def, poly_def, segs, line_width|
 
             segments = Kuix::Segments.new
             segments.add_segments(segs)
             segments.color = COLOR_PART_UPPER
             segments.line_width = highlighted ? line_width + 1 : line_width
-            segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES unless polygon_def.outer?
+            segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES unless poly_def.outer?
             segments.on_top = true
             preview.append(segments)
 
           end
 
           projection_def.layer_defs.reverse.each do |layer_def| # reverse layer order to present from Bottom to Top
-            layer_def.polygon_defs.each do |polygon_def|
+            layer_def.poly_defs.each do |poly_def|
 
               if fetch_action_option_enabled(ACTION_EXPORT_FACE, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
-                polygon_def.loop_def.portions.each do |portion|
-                  fn_append_segments.call(layer_def, polygon_def, portion.segments, portion.is_a?(Geometrix::ArcLoopPortionDef) ? 4 : 2)
+                poly_def.curve_def.portions.each do |portion|
+                  fn_append_segments.call(layer_def, poly_def, portion.segments, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2)
                 end
               else
-                fn_append_segments.call(layer_def, polygon_def, polygon_def.segments, 2)
+                fn_append_segments.call(layer_def, poly_def, poly_def.segments, 2)
               end
 
             end

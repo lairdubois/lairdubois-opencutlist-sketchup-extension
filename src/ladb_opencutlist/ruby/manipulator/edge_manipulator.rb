@@ -1,11 +1,8 @@
 module Ladb::OpenCutList
 
   require_relative 'transformation_manipulator'
-  require_relative '../helper/edge_segments_helper'
 
   class EdgeManipulator < TransformationManipulator
-
-    include EdgeSegmentsHelper
 
     attr_reader :edge
 
@@ -26,7 +23,7 @@ module Ladb::OpenCutList
     # -----
 
     def ==(other)
-      return false unless other.is_a?(EdgeSegmentsHelper)
+      return false unless other.is_a?(EdgeManipulator)
       @edge == other.edge && super
     end
 
@@ -61,7 +58,7 @@ module Ladb::OpenCutList
 
     def segment
       if @segment.nil?
-        @segment = _compute_edge_segment(@edge, @transformation)
+        @segment = points
       end
       @segment
     end

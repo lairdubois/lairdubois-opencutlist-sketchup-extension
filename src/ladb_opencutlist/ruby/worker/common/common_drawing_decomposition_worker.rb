@@ -7,6 +7,7 @@ module Ladb::OpenCutList
   require_relative '../../manipulator/face_manipulator'
   require_relative '../../manipulator/edge_manipulator'
   require_relative '../../manipulator/surface_manipulator'
+  require_relative '../../manipulator/curve_manipulator'
   require_relative '../../model/drawing/drawing_def'
 
   class CommonDrawingDecompositionWorker
@@ -225,6 +226,9 @@ module Ladb::OpenCutList
         drawing_def.edge_manipulators.each do |edge_manipulator|
           drawing_def.bounds.add(edge_manipulator.points)
         end
+        drawing_def.curve_manipulators.each do |curve_manipulator|
+          drawing_def.bounds.add(curve_manipulator.points)
+        end
       end
 
       # STEP 4 : Customize origin
@@ -256,6 +260,9 @@ module Ladb::OpenCutList
           unless @ignore_edges
             drawing_def.edge_manipulators.each do |edge_manipulator|
               edge_manipulator.transformation = toi * edge_manipulator.transformation
+            end
+            drawing_def.curve_manipulators.each do |curve_manipulator|
+              curve_manipulator.transformation = toi * curve_manipulator.transformation
             end
           end
 
@@ -314,7 +321,7 @@ module Ladb::OpenCutList
       [ x_axis, y_axis, z_axis, input_edge_manipulator ]
     end
 
-    def _populate_face_manipulators(drawing_def, entities, transformation = Geom::Transformation.new, &validator)
+    def _populate_face_manipulators(drawing_def, entities, transformation = IDENTITY, &validator)
       entities.each do |entity|
         if entity.visible? && _layer_visible?(entity.layer)
           if entity.is_a?(Sketchup::Face)
@@ -351,12 +358,22 @@ module Ladb::OpenCutList
       end
     end
 
-    def _populate_edge_manipulators(drawing_def, entities, transformation = Geom::Transformation.new, &validator)
+    def _populate_edge_manipulators(drawing_def, entities, transformation = IDENTITY, &validator)
       entities.each do |entity|
         if entity.visible? && _layer_visible?(entity.layer)
           if entity.is_a?(Sketchup::Edge)
             manipulator = EdgeManipulator.new(entity, transformation)
-            drawing_def.edge_manipulators.push(manipulator) if !block_given? || yield(manipulator)
+            if !block_given? || yield(manipulator)
+              if entity.curve.nil?
+                drawing_def.edge_manipulators.push(manipulator)
+              else
+                curve_manipulator = _get_curve_manipulator_by_edge(drawing_def, entity)
+                if curve_manipulator.nil?
+                  curve_manipulator = CurveManipulator.new(entity.curve, transformation)
+                  drawing_def.curve_manipulators.push(curve_manipulator)
+                end
+              end
+            end
           elsif entity.is_a?(Sketchup::Group)
             _populate_edge_manipulators(drawing_def, entity.entities, transformation * entity.transformation, &validator)
           elsif entity.is_a?(Sketchup::ComponentInstance) && (entity.definition.behavior.cuts_opening? || entity.definition.behavior.always_face_camera?)
@@ -388,6 +405,13 @@ module Ladb::OpenCutList
     def _get_surface_manipulator_by_face(drawing_def, face)
       drawing_def.surface_manipulators.each do |surface_manipulator|
         return surface_manipulator if surface_manipulator.include?(face)
+      end
+      nil
+    end
+
+    def _get_curve_manipulator_by_edge(drawing_def, edge)
+      drawing_def.curve_manipulators.each do |curve_manipulator|
+        return curve_manipulator if curve_manipulator.curve == edge.curve
       end
       nil
     end

@@ -282,9 +282,9 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
       prefix = "#{msg} index=#{index} point=#{points[index]}"
       pts = points.rotate(index)
 
-      loop_def = Ladb::OpenCutList::Geometrix::LoopFinder.find_loop_def(pts)
+      loop_def = Ladb::OpenCutList::Geometrix::CurveFinder.find_curve_def(pts, true)
 
-      assert_instance_of(Ladb::OpenCutList::Geometrix::LoopDef, loop_def)
+      assert_instance_of(Ladb::OpenCutList::Geometrix::CurveDef, loop_def)
       assert_equal(loop_def.portions.first.start_point, loop_def.portions.last.end_point, "#{prefix} start == end ?")
 
       assert_equal(portion_count, loop_def.portions.count, "#{prefix} portions.count") unless portion_count.nil?

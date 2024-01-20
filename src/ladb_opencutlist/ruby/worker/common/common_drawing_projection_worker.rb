@@ -119,6 +119,19 @@ module Ladb::OpenCutList
 
       projection_def = DrawingProjectionDef.new(bounds_depth)
 
+      @drawing_def.edge_manipulators.each do |edge_manipulator|
+        projection_def.layer_defs << DrawingProjectionLayerDef.new(0, DrawingProjectionLayerDef::TYPE_PATH, [ DrawingProjectionPolylineDef.new(edge_manipulator.points.map { |point| Geom::Point3d.new(point.x, point.y, z_max) }) ])
+      end
+
+      @drawing_def.curve_manipulators.each do |curve_manipulator|
+        if curve_manipulator.closed?
+          poly_def = DrawingProjectionPolygonDef.new(curve_manipulator.points.map { |point| Geom::Point3d.new(point.x, point.y, z_max) }, true)
+        else
+          poly_def = DrawingProjectionPolylineDef.new(curve_manipulator.points.map { |point| Geom::Point3d.new(point.x, point.y, z_max) })
+        end
+        projection_def.layer_defs << DrawingProjectionLayerDef.new(0, DrawingProjectionLayerDef::TYPE_PATH, [ poly_def ])
+      end
+
       splds.each do |paths_layer_def|
         next if paths_layer_def.paths.empty?
 
@@ -137,7 +150,6 @@ module Ladb::OpenCutList
     # -----
 
     PathsLayerDef = Struct.new(:depth, :paths, :type)
-
 
   end
 

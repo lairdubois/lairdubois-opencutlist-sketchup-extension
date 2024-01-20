@@ -138,19 +138,6 @@ module Ladb::OpenCutList
 
       end
 
-      unless edge_manipulators.empty?
-
-        _svg_write_group_start(file, id: LAYER_EDGE)
-        _svg_write_tag(file, 'path', {
-          d: edge_manipulators.map { |edge_manipulator| "M #{edge_manipulator.points.each.map { |point| "#{point.transform(unit_transformation).to_a[0..1].map.with_index { |v, i| _svg_value(v) * (i == 1 ? -1 : 1) }.join(',')}" }.join(' L')}" }.join(' '),
-          stroke: _svg_stroke_color_hex(@edges_stroke_color, nil),
-          fill: 'none',
-          'shaper:cutType': 'guide'
-        })
-        _svg_write_group_end(file)
-
-      end
-
       if @anchor
 
         size = Geom::Point3d.new(

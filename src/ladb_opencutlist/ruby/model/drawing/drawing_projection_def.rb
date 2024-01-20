@@ -1,12 +1,15 @@
 module Ladb::OpenCutList
 
+  require_relative '../../lib/geometrix/finder/curve_finder'
+
   class DrawingProjectionDef
 
-    attr_reader :max_depth, :layer_defs
+    attr_reader :max_depth, :layer_defs, :polyline_defs
 
     def initialize(max_depth = 0)
       @max_depth = max_depth
       @layer_defs = []
+      @polyline_defs = []
     end
 
   end
@@ -17,13 +20,14 @@ module Ladb::OpenCutList
     TYPE_UPPER = 1
     TYPE_OUTER = 2
     TYPE_HOLES = 3
+    TYPE_PATH = 4
 
-    attr_reader :depth, :type, :polygon_defs
+    attr_reader :depth, :type, :poly_defs
 
-    def initialize(depth, type, polygon_defs)
+    def initialize(depth, type, poly_defs)
       @depth = depth
       @type = type
-      @polygon_defs = polygon_defs
+      @poly_defs = poly_defs
     end
 
     def upper?
@@ -38,15 +42,57 @@ module Ladb::OpenCutList
       @type == TYPE_HOLES
     end
 
+    def path?
+      @type == TYPE_PATH
+    end
+
   end
 
-  class DrawingProjectionPolygonDef
+  class DrawingProjectionPolyDef
 
     attr_reader :points
 
-    def initialize(points, is_outer)
+    def initialize(points)
       @points = points
+    end
+
+    def closed?
+      false
+    end
+
+    def curve_def
+      if @curve_def.nil?
+        @curve_def = Geometrix::CurveFinder.find_curve_def(points, closed?)
+      end
+      @curve_def
+    end
+
+  end
+
+  class DrawingProjectionPolylineDef < DrawingProjectionPolyDef
+
+    def initialize(points)
+      super
+    end
+
+    def segments
+      if @segments.nil?
+        @segments = @points.each_cons(2).to_a.flatten
+      end
+      @segments
+    end
+
+  end
+
+  class DrawingProjectionPolygonDef < DrawingProjectionPolyDef
+
+    def initialize(points, is_outer)
+      super(points)
       @is_outer = is_outer
+    end
+
+    def closed?
+      true
     end
 
     def outer?
@@ -58,17 +104,6 @@ module Ladb::OpenCutList
         @segments = (@points + [ @points.first ]).each_cons(2).to_a.flatten # Append first point at the end to close loop
       end
       @segments
-    end
-
-    def loop_def
-      if @loop_def.nil?
-
-        require_relative '../../lib/geometrix/finder/loop_finder'
-
-        @loop_def = Geometrix::LoopFinder.find_loop_def(points)
-
-      end
-      @loop_def
     end
 
   end

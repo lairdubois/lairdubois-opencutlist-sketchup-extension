@@ -4,7 +4,7 @@ module Ladb::OpenCutList
 
     require_relative 'finder/circle_finder'
     require_relative 'finder/ellipse_finder'
-    require_relative 'finder/loop_finder'
+    require_relative 'finder/curve_finder'
 
   end
 

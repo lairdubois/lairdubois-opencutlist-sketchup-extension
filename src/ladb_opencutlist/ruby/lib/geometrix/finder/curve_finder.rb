@@ -2,25 +2,26 @@ module Ladb::OpenCutList::Geometrix
 
   require_relative 'ellipse_finder'
 
-  class LoopFinder
+  class CurveFinder
 
     MIN_ARC_DELTA_ANGLE = 0.25 * Math::PI
     MIN_ARC_POINT_COUNT = 5
 
     # @param [Array<Geom::Point3d>] points (the last must not be equal to the first)
+    # @param [Boolean] closed
     #
-    # @return [LoopDef|nil]
+    # @return [CurveDef|nil]
     #
-    def self.find_loop_def(points)
+    def self.find_curve_def(points, closed = false)
       return nil unless points.is_a?(Array)
-      return nil unless points.length >= 3
 
-      loop_def = LoopDef.new(points)
+      curve_def = CurveDef.new(points, closed)
 
       twice_points = points + points
 
       index = 0
       max_index = points.length - 1
+      max_search_index = closed ? points.length + MIN_ARC_POINT_COUNT : max_index
       while index <= max_index
 
         if points.length > MIN_ARC_POINT_COUNT
@@ -37,7 +38,7 @@ module Ladb::OpenCutList::Geometrix
               i = index + ellipse_edge_count + 1
 
               # Break if end reached
-              break unless i <= points.length + MIN_ARC_POINT_COUNT
+              break unless i <= max_search_index
 
               p = twice_points[i]
 
@@ -58,7 +59,7 @@ module Ladb::OpenCutList::Geometrix
             if ellipse_edge_count >= MIN_ARC_POINT_COUNT
 
               # Append Arc portion
-              loop_def.portions << ArcLoopPortionDef.new(loop_def, ellipse_start_index, ellipse_edge_count, ellipse_def)
+              curve_def.portions << ArcCurvePortionDef.new(curve_def, ellipse_start_index, ellipse_edge_count, ellipse_def)
 
               index = ellipse_start_index + ellipse_edge_count
 
@@ -69,20 +70,24 @@ module Ladb::OpenCutList::Geometrix
 
         end
 
+        break if index == max_index && !closed
+
         # Append Edge portion
-        loop_def.portions << LineLoopPortionDef.new(loop_def, index)
+        curve_def.portions << LineCurvePortionDef.new(curve_def, index)
 
         index += 1
 
       end
 
-      # Check overlap
-      last_portion = loop_def.portions.last
-      if last_portion.is_a?(ArcLoopPortionDef)
+      if closed
+
+        # Check overlap
+        last_portion = curve_def.portions.last
+        if last_portion.is_a?(ArcCurvePortionDef)
 
         overlap = last_portion.end_index - points.length
 
-        if last_portion == loop_def.portions.first
+        if last_portion == curve_def.portions.first
 
           # Only one arc : just subtract overlap
           last_portion.edge_count -= overlap
@@ -90,7 +95,7 @@ module Ladb::OpenCutList::Geometrix
         else
 
           max_overlap_index = last_portion.end_index % points.length
-          overlap_portions = loop_def.portions.select { |potion| potion.start_index < max_overlap_index }
+          overlap_portions = curve_def.portions.select { |potion| potion.start_index < max_overlap_index }
           last_overlap_portion = overlap_portions.last
           if last_portion == last_overlap_portion
 
@@ -100,7 +105,7 @@ module Ladb::OpenCutList::Geometrix
             # Keep portion
             overlap_portions.delete(last_overlap_portion)
 
-          elsif last_overlap_portion.is_a?(ArcLoopPortionDef)
+          elsif last_overlap_portion.is_a?(ArcCurvePortionDef)
 
             # Check ellipses similarity by checking if last arc includes last overlap arc end point
             if EllipseFinder.ellipse_include_point?(last_portion.ellipse_def, last_overlap_portion.end_point)
@@ -119,27 +124,34 @@ module Ladb::OpenCutList::Geometrix
           end
 
           # Remove overlap portions
-          loop_def.portions -= overlap_portions
+          curve_def.portions -= overlap_portions
+
+        end
 
         end
 
       end
 
-      loop_def
+      curve_def
     end
 
   end
 
   # -----
 
-  class LoopDef
+  class CurveDef
 
     attr_reader :points
     attr_accessor :portions
 
-    def initialize(points)
+    def initialize(points, closed = false)
       @points = points
+      @closed = closed
       @portions = []
+    end
+
+    def closed?
+      @closed
     end
 
     def length
@@ -158,21 +170,21 @@ module Ladb::OpenCutList::Geometrix
     end
 
     def ellipse?
-      @portions.length == 1 && @portions.first.is_a?(ArcLoopPortionDef)
+      closed? && @portions.length == 1 && @portions.first.is_a?(ArcCurvePortionDef)
     end
 
     def circle?
-      ellipse? && @portions.first.ellipse_def.circular?
+      closed? && ellipse? && @portions.first.ellipse_def.circular?
     end
 
   end
 
-  class LoopPortionDef
+  class CurvePortionDef
 
-    attr_accessor :loop_def, :start_index, :edge_count
+    attr_accessor :curve_def, :start_index, :edge_count
 
-    def initialize(loop_def, start_index, edge_count)
-      @loop_def = loop_def
+    def initialize(curve_def, start_index, edge_count)
+      @curve_def = curve_def
       @start_index = start_index
       @edge_count = edge_count
     end
@@ -182,33 +194,33 @@ module Ladb::OpenCutList::Geometrix
     end
 
     def start_point
-      @loop_def.point_at_index(start_index)
+      @curve_def.point_at_index(start_index)
     end
 
     def end_point
-      @loop_def.point_at_index(end_index)
+      @curve_def.point_at_index(end_index)
     end
 
     def segments
-      @loop_def.points_between_indices(@start_index, end_index).each_cons(2).to_a.flatten
+      @curve_def.points_between_indices(@start_index, end_index).each_cons(2).to_a.flatten
     end
 
   end
 
-  class LineLoopPortionDef < LoopPortionDef
+  class LineCurvePortionDef < CurvePortionDef
 
-    def initialize(loop_def, start_index)
-      super(loop_def, start_index, 1)
+    def initialize(curve_def, start_index)
+      super(curve_def, start_index, 1)
     end
 
   end
 
-  class ArcLoopPortionDef < LoopPortionDef
+  class ArcCurvePortionDef < CurvePortionDef
 
     attr_reader :ellipse_def
 
-    def initialize(loop_def, start_index, edge_count, ellipse_def)
-      super(loop_def, start_index, edge_count)
+    def initialize(curve_def, start_index, edge_count, ellipse_def)
+      super(curve_def, start_index, edge_count)
       @ellipse_def = ellipse_def
     end
 

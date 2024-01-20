@@ -127,6 +127,7 @@ module Ladb::OpenCutList
     def _svg_get_projection_layer_def_identifier(layer_def, unit_transformation, prefix = nil)
       return '' unless layer_def.is_a?(DrawingProjectionLayerDef)
       a = [ prefix, 'DEPTH', ('%0.04f' % [ Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x ]).rjust(9, '_') ]
+      a << 'PATH' if layer_def.path?
       a << 'OUTER' if layer_def.outer?
       a << 'HOLES' if layer_def.holes?
       _svg_sanitize_identifier(a.compact.join('_'))
@@ -142,7 +143,16 @@ module Ladb::OpenCutList
 
         id = _svg_get_projection_layer_def_identifier(layer_def, unit_transformation, prefix)
 
-        if layer_def.outer? || layer_def.depth == 0
+        if layer_def.path?
+          attributes = {
+            stroke: _svg_stroke_color_hex(Sketchup::Color.new('blue')),
+            fill: 'none',
+            id: id,
+            'serif:id': id,
+            'inkscape:label': id,
+            'shaper:cutType': 'online'
+          }
+        elsif layer_def.outer? || layer_def.depth == 0
           attributes = {
             stroke: _svg_stroke_color_hex(stroke_color, fill_color),
             fill: _svg_fill_color_hex(fill_color),
@@ -176,15 +186,15 @@ module Ladb::OpenCutList
 
         data = []
 
-        layer_def.polygon_defs.each do |polygon_def|
+        layer_def.poly_defs.each do |poly_def|
 
-          if smoothing && polygon_def.loop_def
+          if smoothing && poly_def.curve_def
 
-            if polygon_def.loop_def.circle?
+            if poly_def.curve_def.circle?
 
               # Simplify circle drawing by using only xradius
 
-              portion = polygon_def.loop_def.portions.first
+              portion = poly_def.curve_def.portions.first
               center = portion.ellipse_def.center
               radius = portion.ellipse_def.xradius
 
@@ -210,14 +220,14 @@ module Ladb::OpenCutList
             else
 
               # Extract loop points from ordered edges and arc curves
-              data << "#{polygon_def.loop_def.portions.map.with_index { |portion, index|
+              data << "#{poly_def.curve_def.portions.map.with_index { |portion, index|
 
                 portion_data = []
                 start_point = portion.start_point.transform(transformation)
                 end_point = portion.end_point.transform(transformation)
                 portion_data << "M #{_svg_value(start_point.x)},#{_svg_value(-start_point.y)}" if index == 0
 
-                if portion.is_a?(Geometrix::ArcLoopPortionDef)
+                if portion.is_a?(Geometrix::ArcCurvePortionDef)
 
                   radius = Geom::Point3d.new(
                     portion.ellipse_def.xradius,
@@ -245,18 +255,18 @@ module Ladb::OpenCutList
                 end
 
                 portion_data
-              }.join(' ')} Z"
+              }.join(' ')} #{poly_def.curve_def.closed? ? 'Z' : ''}"
 
             end
 
           else
 
             # Extract loop points from vertices (quicker)
-            data << "M #{polygon_def.points.map { |point|
+            data << "M #{poly_def.points.map { |point|
               point = point.transform(transformation)
               point.y *= -1
               "#{_svg_value(point.x)},#{_svg_value(point.y)}"
-            }.join(' L ')} Z"
+            }.join(' L ')}#{poly_def.curve_def.closed? ? 'Z' : ''}"
 
           end
 

@@ -1212,6 +1212,7 @@ module Ladb::OpenCutList
     def _dxf_get_projection_layer_def_identifier(layer_def, unit_transformation, prefix = nil)
       return '' unless layer_def.is_a?(DrawingProjectionLayerDef)
       a = [ prefix, 'DEPTH', ('%0.03f' % [ Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x ]).rjust(8, '_') ]
+      a << 'PATH' if layer_def.path?
       a << 'OUTER' if layer_def.outer?
       a << 'HOLES' if layer_def.holes?
       _dxf_sanitize_identifier(a.compact.join('_'))
@@ -1266,15 +1267,15 @@ module Ladb::OpenCutList
     def _dxf_write_projection_layer_def_geometry(file, layer_def, smoothing = false, transformation = IDENTITY, layer = '0')
       return unless layer_def.is_a?(DrawingProjectionLayerDef)
 
-      layer_def.polygon_defs.each do |polygon_def|
+      layer_def.poly_defs.each do |poly_def|
 
-        if smoothing && polygon_def.loop_def
+        if smoothing && poly_def.curve_def
 
-          if polygon_def.loop_def.circle?
+          if poly_def.curve_def.circle?
 
             # Simplify circle drawing
 
-            portion = polygon_def.loop_def.portions.first
+            portion = poly_def.curve_def.portions.first
             center = portion.ellipse_def.center.transform(transformation)
             radius = Geom::Vector3d.new(portion.ellipse_def.xradius, 0, 0).transform(transformation).length
 
@@ -1284,11 +1285,11 @@ module Ladb::OpenCutList
 
             _dxf_write_circle(file, cx, cy, r, layer)
 
-          elsif polygon_def.loop_def.ellipse?
+          elsif poly_def.curve_def.ellipse?
 
             # Simplify ellipse drawing
 
-            portion = polygon_def.loop_def.portions.first
+            portion = poly_def.curve_def.portions.first
             center = portion.ellipse_def.center.transform(transformation)
             xaxis = portion.ellipse_def.xaxis.transform(transformation)
 
@@ -1307,14 +1308,14 @@ module Ladb::OpenCutList
             vertices = []
 
             # Extract loop portions
-            polygon_def.loop_def.portions.each { |portion|
+            poly_def.curve_def.portions.each { |portion|
 
               start_point = portion.start_point.transform(transformation)
 
               x = start_point.x.to_f
               y = start_point.y.to_f
 
-              if portion.is_a?(Geometrix::ArcLoopPortionDef)
+              if portion.is_a?(Geometrix::ArcCurvePortionDef)
 
                 start_angle = portion.start_angle
                 end_angle = portion.end_angle
@@ -1443,14 +1444,25 @@ module Ladb::OpenCutList
 
             }
 
-            _dxf_write_polyline(file, vertices, true, layer)
+            unless poly_def.curve_def.closed?
+
+              end_point = poly_def.curve_def.portions.last.end_point.transform(transformation)
+
+              x = end_point.x.to_f
+              y = end_point.y.to_f
+
+              vertices << DxfVertexDef.new(x, y, 0)
+
+            end
+
+            _dxf_write_polyline(file, vertices, poly_def.curve_def.closed?, layer)
 
           end
 
         else
 
           # Extract loop points from vertices (quicker)
-          _dxf_write_polygon(file, polygon_def.points.map { |point| Geom::Point3d.new(point.transform(transformation).to_a.map { |v| v.to_f }) }, layer)
+          _dxf_write_polygon(file, poly_def.points.map { |point| Geom::Point3d.new(point.transform(transformation).to_a.map { |v| v.to_f }) }, layer)
 
         end
 
