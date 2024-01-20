@@ -1681,7 +1681,7 @@ tool:
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: Isolate through-holes and merge depths for each cavity
-    action_option_options_edges_status: Export the stray and coplanar edges of the target face contained in the part as path.
+    action_option_options_edges_status: Export the stray and coplanar edges of the target face contained in the part as path
     error:
       not_part: This face does not belong to a part (component)
       not_flat_face: This surface is not planar

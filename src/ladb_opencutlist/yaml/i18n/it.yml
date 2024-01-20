@@ -669,8 +669,7 @@ tab:
       tip:
         not_enough_data: |
           Per calcolare correttamente il preventivo:
-          - i materiali utilizzati devono aver impostato la densita
-           e il prezzo.
+          - i materiali utilizzati devono aver impostato la densita e il prezzo.
           - gli accessori devono avere definito la massa e prezzo.
     cuttingdiagram:
       title: Schema di taglio
@@ -853,6 +852,7 @@ tab:
         option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
         option_sheet_good: Pannello
         option_sheet_good_help: |
+          Abilita l'esportazione dei fogli del pannello e la selezione del colore.
         option_sheet_veneer: Impiallacciatura
         option_sheet_veneer_help: |
           Abilita l'esportazione dei fogli di piallacci e la selezione del colore.
@@ -1480,7 +1480,7 @@ tab:
     print_margin: Margini di stampa
     print_margin_normal: Normali
     print_margin_small: Piccoli
-    table_row_size: ""
+    table_row_size: Altezza delle righe della tabella
     table_row_size_normal: Normale
     table_row_size_compact: Compatta
     size_and_position: Dimensione e posizione della finestra
@@ -1508,7 +1508,8 @@ tab:
         Seleziona il file **.json** contenente la configurazione da importare.
         Se esiste una configurazione con lo stesso nome verrà sostituita con quella importata.
       import_global_presets_success: |
-        La configurazione di *OpenCutList* è stata importata correttamente. Per rendere effettivi i cambiamenti, **chiudere** e **riaprire** la finestra di OpenCutList.
+        La configurazione di *OpenCutList* è stata importata correttamente.
+        Per rendere effettivi i cambiamenti, **chiudere** e **riaprire** la finestra di OpenCutList.
       dump_global_presets: Scarica le impostazioni del modello
       dump_model_presets: Scaricamento delle impostazioni del modello
       reset_global_presets: Azzerare le preimpostazioni
