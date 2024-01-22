@@ -230,7 +230,7 @@ core:
         Make sure you are connected to the Internet.
 tab:
   cutlist:
-    label: Rough
+    label: Parts
     title: Parts List
     help: |
       Select the parts to be used for the parts list in the current scene and click **Generate**.
