@@ -15,7 +15,7 @@ default:
   close: לסגור
   clear: לנקות
   refresh: לרענן
-  generate: חשב
+  generate: לחשב
   print: הדפסה
   export: ייצוא
   import: ייבוא
@@ -31,8 +31,8 @@ default:
   upgrade: עדכון
   copy: להעתיק
   select_all: בחר הכל
-  unselect_all: בטל בחירת הכל
-  draw: צייר
+  unselect_all: בטל בחירה
+  draw: שרטוט
   estimate: להעריך
   empty_filename: ללא שם.skp
   help: עזרה
@@ -44,17 +44,17 @@ default:
   by: ע"י
   date_format: "d/m/Y G:i"
   date_format_short: d/m/Y
-  unit_0: אינצים
+  unit_0: אינצ'ים
   unit_1: רגליים
-  unit_2: מילימטרים
-  unit_3: סנטימטרים
-  unit_4: מטרים
+  unit_2: מילימטר
+  unit_3: סנטימטר
+  unit_4: מטר
   unit_5: יארד
   unit_mass_0: קילוגרם
   unit_mass_1: לירה
   unit_angle_0: רמה
-  instance_single: פריט
-  instance_plural: פריטים
+  instance_single: יחידה
+  instance_plural: יחידות
   part_single: חלק
   part_plural: חלקים
   thickness_layer_single: שכבה
@@ -62,7 +62,7 @@ default:
   setup_model_units: הגדרת יחידות במודל
   load_more: טען עוד
   reset_to_app_defaults: לשחזר ערכים מקוריים
-  constrain_key: Shift
+  constrain_key: הסטה
   copy_key_win: Ctrl
   copy_key_mac: אופציה
   alt_key_win: Alt
@@ -76,7 +76,7 @@ core:
   menu:
     submenu: OpenCutList
     item:
-      generate_cutlist:  צור רשימת חלקים
+      generate_cutlist:  צור תוכנית חיתוך
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
@@ -110,14 +110,14 @@ core:
     more_extensions: תוספים
     more_update: עדכונים
   bottombar:
-    report_a_bug: דווח על באג
+    report_a_bug: דווח על שגיאה
   warning:
     dev: |
       אתה משתמש בגרסת **פיתוח** של *OpenCutList*.
       גרסה זו זמינה רק לבדיקה.
       לא מומלץ להשתמש בה בייצור.
 
-      לדיווח על באג: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
+      לדיווח על שגיאה: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
   error:
     feature_unavailable: "תכונה זו דורשת גרסת SketchUp {{ version }} ומעלה"
     failed_export_to: |
@@ -1143,8 +1143,8 @@ tab:
       no_typed_materials_in_selection: "הבחירה אינה משתמשת בשום חומר עם סוג מוגדר (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** או **$t(tab.materials.type_5)**)."
       export_empty: הייצוא אינו מכיל חלקים כלשהם.
     success:
-      part_selected: ""
-      part_selected_plural: ""
+      part_selected: "בתוכנית חיתוך נבחר חלק {{ count }}."
+      part_selected_plural: "בתוכנית חיתוך נבחרו {{ count }} חלקים."
     tip:
       no_component: |
         החלקים שברצונך להופיע בתוכנית חיתוך *חייבים להיות כ-**רכיב**.
@@ -1181,7 +1181,7 @@ tab:
       set_current: |
         צבע חלקים עם '{{ name }}'
         *לחץ פעמיים כדי לכווץ*
-      open_url: ""
+      open_url: פתח את הקישור של החומר
     menu:
       import_from_skm: ייבוא חומר (skm.)
       purge_unused: נקה חומרים שאינם בשימוש
@@ -1206,7 +1206,7 @@ tab:
       name: תיאור
       type: סוג
       description: תיאור
-      url: URL
+      url: קישור
       cut_options: הגדרות חיתוך
       attributes: תכונות
       thickness: עובי
@@ -1292,39 +1292,41 @@ tab:
       invalid_image_file: תמונה לא חוקית
     obsolete_base: "כדי לתמוך בסנכרון, עליך לרענן את רשימת החומרים."
   outliner:
-    label: ""
-    title: ""
-    list: ""
-    nodes: ""
-    part_count: ""
-    type_0: ""
-    type_1: ""
-    type_2: ""
-    type_3: ""
+    label: מבנה
+    title: מבנה
+    list: מבנה עץ של ישויות
+    nodes: פריטים
+    part_count: כמות חלקים
+    type_0: דגם
+    type_1: קבוצה
+    type_2: רכיב
+    type_3: חלק
     tooltip:
-      open_node_url: ""
+      open_node_url: פתח קישור של פריט
     edit_node:
-      title_model: ""
-      title_instance: ""
+      title_model: "מאפייני דגם"
+      title_instance: "מאפייני דגם **{{ name }}**"
       general: כללי
       preview: סקירה כללית
       name: תיאור
       instance_name: אדגם
-      definition_name: ""
+      definition_name: הגדרה
       description: תיאור
-      url: URL
+      url: קישור
       layer_name: תג
-      explode: ""
-      explode_message: ""
+      explode: פיצול
+      explode_message: "האם אתה מאשר את הפיצול של הפריט **{{ name }}**?"
     error:
       no_model: אין מודל פתוח. אתה תצטרך לתת לי קצת יותר מידע ;)
-      no_entities: ""
-      node_not_found: ""
-      entity_not_found: ""
-      obsolete_outliner: ""
+      no_entities: הדגם שלך ריק!
+      node_not_found: הצומת לא נמצא
+      entity_not_found: פריט לא נמצא
+      obsolete_outliner: "בלתי אפשרי, המבנה שנוצר מיושן. תחשב מחדש."
     tip:
       no_node: |
-    obsolete_base: ""
+        לדגם שלך אין כרגע פריטים להצגה.
+        פריט הוא **קבוצה** או **רכיב** המוצב בסצנה.
+    obsolete_base: "כדי להישאר מסונכרן, עליך ליצור מחדש את המבנה."
   importer:
     label: ייבוא
     title: ייבוא חלקים
@@ -1482,9 +1484,9 @@ tab:
     print_margin: שוליים להדפסה
     print_margin_normal: נורמלי
     print_margin_small: קטן
-    table_row_size: ""
+    table_row_size: גודל שורות הטבלה
     table_row_size_normal: רגיל
-    table_row_size_compact: ""
+    table_row_size_compact: קומפקטי
     size_and_position: גודל ומיקום חלון
     model_settings: הגדרות מודל
     length_unit: יחידת אורך
@@ -1601,16 +1603,16 @@ tool:
     action_3_status: לחץ על החזית כדי לקחת דוגמה מהחומר
     action_4: לנקות
     action_4_status: לחץ על חלק כדי להסיר את כל החומרים מההגדרה שלו ומכל הפריטים
-    action_option_group_instances: ""
+    action_option_group_instances: כמות פריטים
     action_option_group_edges: כמות קאנטים
-    action_option_group_faces: ""
-    action_option_instances_0_status: ""
-    action_option_instances_1_status: ""
-    action_option_edges_0_status: ""
-    action_option_edges_1_status: ""
-    action_option_edges_2_status: ""
-    action_option_faces_0_status: ""
-    action_option_faces_1_status: ""
+    action_option_group_faces: כמות צדדים
+    action_option_instances_0_status: צבע רק את פריט החלק הממוקד
+    action_option_instances_1_status: צבע את כל הפריטים של החלק הממוקד
+    action_option_edges_0_status: צבע רק את ההרכב הממוקד
+    action_option_edges_1_status: צבעו את החזית וגב של החלק
+    action_option_edges_2_status: צבע 4 צדדים של ההחלק הממוקד
+    action_option_faces_0_status: צבע רק את החזית הממוקדת
+    action_option_faces_1_status: צבע את 2 הצדדים של ההחלק הממוקד
     edges: "קאנט {{ count }}"
     edges_plural: "{{ count }} קאנטים"
     edge_ymin: אורך 1
@@ -1625,7 +1627,7 @@ tool:
       no_material: הדגם שלך אינו מכיל חומרים!
       no_material_type: "אין חומר מסוג '{{ type }}'"
     error:
-      not_part: ""
+      not_part: אובייקט היעד אינו חלק (רכיב)
       not_edge: משטח היעד אינו קאנט הלוח
       not_face: משטח היעד אינה חזית הלוח
       wrong_material_type: "חלק היעד חייב להיות מסוג '{{ type }}'"
@@ -1643,32 +1645,32 @@ tool:
     action_option_direction_0: א'
     action_option_direction_1: ר'
     action_option_direction_2: ע'
-    action_option_direction_0_status: ""
-    action_option_direction_1_status: ""
-    action_option_direction_2_status: ""
+    action_option_direction_0_status: הפוך את החלק לאורך
+    action_option_direction_1_status: הפוך את החלק לרוחב
+    action_option_direction_2_status: הופכים את החלק לעובי
     warning:
       more_entities: "{{ count_used }} פריטים החולקים את אותה הגדרה ישונו"
     error:
-      not_part: ""
+      not_part: אובייקט היעד אינו חלק (רכיב)
       not_orientable: סוג החלק אינו מאפשר לכוון אותו
   smart_export:
     title: ייצוא
-    action_0: ""
-    action_0_status: ""
-    action_1: ""
-    action_1_status: ""
-    action_2: ""
-    action_2_status: ""
-    action_3: ""
-    action_3_status: ""
+    action_0: ייצא חלק 3D
+    action_0_status: לחץ על חלק
+    action_1: ייצא חלק 2D
+    action_1_status: לחץ על חזית החלק
+    action_2: ייצא חזית
+    action_2_status: לחץ על חזית
+    action_3: ייצא מסלול
+    action_3_status: לחץ על קצה
     action_option_group_file_format: פורמט
     action_option_group_unit: יחידות
     action_option_group_faces: פורנירים
     action_option_group_options: אפשרויות
-    action_option_file_format_dxf_status: ""
-    action_option_file_format_stl_status: ""
-    action_option_file_format_obj_status: ""
-    action_option_file_format_svg_status: ""
+    action_option_file_format_dxf_status: ייצוא לקובץ DXF
+    action_option_file_format_stl_status: ייצוא לקובץ STL
+    action_option_file_format_obj_status: ייצוא לקובץ OBJ
+    action_option_file_format_svg_status: ייצוא לקובץ SVG
     action_option_unit_0_status: $t(default.unit_0)
     action_option_unit_1_status: $t(default.unit_1)
     action_option_unit_2_status: $t(default.unit_2)
@@ -1678,8 +1680,8 @@ tool:
     action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
-    action_option_options_merge_holes_status: ""
-    action_option_options_edges_status: ""
+    action_option_options_merge_holes_status: לבודד קדחים עוברים ולמזג עומקים עבור כל חלל
+    action_option_options_edges_status: ייצא כמסלול של קצוות צפים ומתלקדים אל חזית ממוקדת הכלולה בחלק
     error:
-      not_part: ""
-      not_flat_face: ""
+      not_part: חזית הזאת אינה שייכת לחלק (רכיב)
+      not_flat_face: משטח זה אינו שטוח
