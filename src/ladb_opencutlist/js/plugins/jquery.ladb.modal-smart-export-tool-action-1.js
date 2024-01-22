@@ -41,8 +41,8 @@
             var $formGroupPartsHoles = $('#ladb_form_group_parts_holes', that.$element);
             var $inputPartsHolesStrokeColor = $('#ladb_input_parts_holes_stroke_color', that.$element);
             var $inputPartsHolesFillColor = $('#ladb_input_parts_holes_fill_color', that.$element);
-            var $formGroupPaths = $('#ladb_form_group_paths', that.$element);
-            var $inputPathsStrokeColor = $('#ladb_input_paths_stroke_color', that.$element);
+            var $formGroupPartsPaths = $('#ladb_form_group_parts_paths', that.$element);
+            var $inputPartsPathsStrokeColor = $('#ladb_input_parts_paths_stroke_color', that.$element);
             var $btnValidate = $('#ladb_btn_validate', that.$element);
 
             var fnFetchOptions = function (options) {
@@ -57,7 +57,7 @@
                 options.parts_fill_color = $inputPartsFillColor.ladbTextinputColor('val');
                 options.parts_holes_stroke_color = $inputPartsHolesStrokeColor.ladbTextinputColor('val');
                 options.parts_holes_fill_color = $inputPartsHolesFillColor.ladbTextinputColor('val');
-                options.paths_stroke_color = $inputPathsStrokeColor.ladbTextinputColor('val');
+                options.parts_paths_stroke_color = $inputPartsPathsStrokeColor.ladbTextinputColor('val');
             };
             var fnFillInputs = function (options) {
                 $selectFileFormat.selectpicker('val', options.file_format);
@@ -71,7 +71,7 @@
                 $inputPartsFillColor.ladbTextinputColor('val', options.parts_fill_color);
                 $inputPartsHolesStrokeColor.ladbTextinputColor('val', options.parts_holes_stroke_color);
                 $inputPartsHolesFillColor.ladbTextinputColor('val', options.parts_holes_fill_color);
-                $inputPathsStrokeColor.ladbTextinputColor('val', options.paths_stroke_color);
+                $inputPartsPathsStrokeColor.ladbTextinputColor('val', options.parts_paths_stroke_color);
                 fnUpdateFieldsVisibility();
             };
             var fnUpdateFieldsVisibility = function () {
@@ -79,11 +79,11 @@
                 var isMergeHoles = $selectMergeHoles.val() === '1';
                 var isPaths = $selectPaths.val() === '1';
                 if (!isMergeHoles) $formGroupPartsHoles.hide(); else $formGroupPartsHoles.show();
-                if (!isPaths) $formGroupPaths.hide(); else $formGroupPaths.show();
+                if (!isPaths) $formGroupPartsPaths.hide(); else $formGroupPartsPaths.show();
                 $inputPartsFillColor.ladbTextinputColor(isDxf ? 'disable' : 'enable');
                 $inputPartsHolesStrokeColor.ladbTextinputColor(!isMergeHoles ? 'disable' : 'enable');
                 $inputPartsHolesFillColor.ladbTextinputColor(!isMergeHoles || isDxf ? 'disable' : 'enable');
-                $inputPathsStrokeColor.ladbTextinputColor(!isPaths ? 'disable' : 'enable');
+                $inputPartsPathsStrokeColor.ladbTextinputColor(!isPaths ? 'disable' : 'enable');
                 $('.ladb-form-fill-color').css('opacity', isDxf ? 0.3 : 1);
             };
 
@@ -114,7 +114,7 @@
             $inputPartsFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
             $inputPartsHolesStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
             $inputPartsHolesFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
-            $inputPathsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+            $inputPartsPathsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
 
             fnFillInputs(options);
 

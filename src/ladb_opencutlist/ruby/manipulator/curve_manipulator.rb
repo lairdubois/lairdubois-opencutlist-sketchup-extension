@@ -22,7 +22,7 @@ module Ladb::OpenCutList
     # -----
 
     def closed?
-      @curve.last_edge.end == @curve.first_edge.start
+      @curve.vertices.first == @curve.vertices.last
     end
 
     # -----

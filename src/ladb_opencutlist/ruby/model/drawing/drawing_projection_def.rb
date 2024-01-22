@@ -22,23 +22,24 @@ module Ladb::OpenCutList
     TYPE_HOLES = 3
     TYPE_PATH = 4
 
-    attr_reader :depth, :type, :poly_defs
+    attr_reader :depth, :type, :name, :poly_defs
 
-    def initialize(depth, type, poly_defs)
+    def initialize(depth, type, name, poly_defs)
       @depth = depth
       @type = type
+      @name = name
       @poly_defs = poly_defs
     end
 
-    def upper?
+    def part_upper?
       @type == TYPE_UPPER || @type == TYPE_OUTER
     end
 
-    def outer?
+    def part_outer?
       @type == TYPE_OUTER
     end
 
-    def holes?
+    def part_holes?
       @type == TYPE_HOLES
     end
 

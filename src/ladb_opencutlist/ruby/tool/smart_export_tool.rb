@@ -367,7 +367,7 @@ module Ladb::OpenCutList
             'use_bounds_min_as_origin' => !fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR),
             'face_validator' => fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACES, ACTION_OPTION_FACES_ONE) ? CommonDrawingDecompositionWorker::FACE_VALIDATOR_ONE : CommonDrawingDecompositionWorker::FACE_VALIDATOR_ALL,
             'ignore_edges' => !fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_PATHS),
-            'edge_validator' => CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY
+            'edge_validator' => fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACES, ACTION_OPTION_FACES_ONE) ? CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY_COPLANAR : CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY
           }).run
           if @active_drawing_def.is_a?(DrawingDef)
 
@@ -385,9 +385,9 @@ module Ladb::OpenCutList
 
               segments = Kuix::Segments.new
               segments.add_segments(segs)
-              if layer_def.upper?
+              if layer_def.part_upper?
                 segments.color = COLOR_PART_UPPER
-              elsif layer_def.holes?
+              elsif layer_def.part_holes?
                 segments.color = COLOR_PART_HOLES
               elsif layer_def.path?
                 segments.color = COLOR_EDGE
@@ -753,7 +753,7 @@ module Ladb::OpenCutList
           parts_fill_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_fill_color')
           parts_holes_fill_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_holes_fill_color')
           parts_holes_stroke_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_holes_stroke_color')
-          paths_stroke_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'paths_stroke_color')
+          parts_paths_stroke_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_paths_stroke_color')
 
           worker = CommonWriteDrawing2dWorker.new(@active_drawing_def, {
             'file_name' => file_name,
@@ -766,7 +766,7 @@ module Ladb::OpenCutList
             'parts_fill_color' => parts_fill_color,
             'parts_holes_fill_color' => parts_holes_fill_color,
             'parts_holes_stroke_color' => parts_holes_stroke_color,
-            'paths_stroke_color' => paths_stroke_color
+            'parts_paths_stroke_color' => parts_paths_stroke_color
           })
           response = worker.run
 
@@ -839,14 +839,14 @@ module Ladb::OpenCutList
           file_format = fetch_action_option_value(ACTION_EXPORT_EDGES, ACTION_OPTION_FILE_FORMAT)
           unit = fetch_action_option_value(ACTION_EXPORT_EDGES, ACTION_OPTION_UNIT)
           smoothing = fetch_action_option_value(ACTION_EXPORT_EDGES, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
-          paths_stroke_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'paths_stroke_color')
+          parts_paths_stroke_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_paths_stroke_color')
 
           worker = CommonWriteDrawing2dWorker.new(@active_drawing_def, {
             'file_name' => file_name,
             'file_format' => file_format,
             'unit' => unit,
             'smoothing' => smoothing,
-            'paths_stroke_color' => paths_stroke_color
+            'parts_paths_stroke_color' => parts_paths_stroke_color
           })
           response = worker.run
 

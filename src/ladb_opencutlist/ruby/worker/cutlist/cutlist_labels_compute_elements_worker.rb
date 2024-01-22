@@ -114,7 +114,7 @@ module Ladb::OpenCutList
               custom_values.push(projection_def.layer_defs.map { |layer_def|
                 {
                   :depth => layer_def.depth,
-                  :path => "#{layer_def.polygon_defs.map { |polygon_def| "M #{polygon_def.points.map { |point| point.transform(transformation).to_a[0..1].map { |v| v.to_f.round(6) }.join(',') }.join(' L ')} Z" }.join(' ')}",
+                  :path => "#{layer_def.poly_defs.map { |poly_def| "M #{poly_def.points.map { |point| point.transform(transformation).to_a[0..1].map { |v| v.to_f.round(6) }.join(',') }.join(' L ')} Z" }.join(' ')}",
                 }
               })
             end

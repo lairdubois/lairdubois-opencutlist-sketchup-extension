@@ -191,7 +191,7 @@ module Ladb::OpenCutList
               'inkscape:label': id
             })
 
-            _svg_write_projection_def(file, projection_def, @smoothing, transformation, unit_transformation, unit_sign, @parts_stroke_color, @parts_fill_color, @parts_holes_stroke_color, @parts_holes_fill_color, LAYER_PART)
+            _svg_write_projection_def(file, projection_def, @smoothing, transformation, unit_transformation, unit_sign, @parts_stroke_color, @parts_fill_color, @parts_holes_stroke_color, @parts_holes_fill_color, nil, LAYER_PART)
             _svg_write_label(file, position.x, position.y, size.x, size.y, @use_names ? part.name: part.number, part.rotated, _svg_stroke_color_hex(@texts_color)) unless @texts_hidden
 
             _svg_write_group_end(file)

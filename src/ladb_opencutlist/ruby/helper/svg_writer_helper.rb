@@ -126,50 +126,50 @@ module Ladb::OpenCutList
 
     def _svg_get_projection_layer_def_identifier(layer_def, unit_transformation, prefix = nil)
       return '' unless layer_def.is_a?(DrawingProjectionLayerDef)
-      a = [ prefix, 'DEPTH', ('%0.04f' % [ Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x ]).rjust(9, '_') ]
-      a << 'PATH' if layer_def.path?
-      a << 'OUTER' if layer_def.outer?
-      a << 'HOLES' if layer_def.holes?
+      if layer_def.path?
+        a = [ prefix, 'PATH', layer_def.name.rjust(3, '_') ]
+      else
+        a = [ prefix, 'DEPTH', ('%0.04f' % [ Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x ]).rjust(9, '_') ]
+        a << 'OUTER' if layer_def.part_outer?
+        a << 'HOLES' if layer_def.part_holes?
+      end
       _svg_sanitize_identifier(a.compact.join('_'))
     end
 
-    def _svg_write_projection_def(file, projection_def, smoothing = false, transformation = IDENTITY, unit_transformation = IDENTITY, unit_sign = '', stroke_color = nil, fill_color = nil, holes_stroke_color = nil, holes_fill_color = nil, prefix = '')
+    def _svg_write_projection_def(file, projection_def, smoothing = false, transformation = IDENTITY, unit_transformation = IDENTITY, unit_sign = '', stroke_color = nil, fill_color = nil, holes_stroke_color = nil, holes_fill_color = nil, paths_stroke_color = nil, prefix = '')
 
       require_relative '../model/drawing/drawing_projection_def'
 
       return unless projection_def.is_a?(DrawingProjectionDef)
 
-      projection_def.layer_defs.each do |layer_def|
+      projection_def.layer_defs.sort_by { |v| [ v.path? ? 1 : 0, -v.depth ] }.each do |layer_def|   # Path's layers always on top
 
         id = _svg_get_projection_layer_def_identifier(layer_def, unit_transformation, prefix)
 
         if layer_def.path?
           attributes = {
-            stroke: _svg_stroke_color_hex(Sketchup::Color.new('blue')),
+            stroke: _svg_stroke_color_hex(paths_stroke_color),
             fill: 'none',
             id: id,
             'serif:id': id,
-            'inkscape:label': id,
-            'shaper:cutType': 'online'
+            'inkscape:label': id
           }
-        elsif layer_def.outer? || layer_def.depth == 0
+        elsif layer_def.part_outer? || layer_def.depth == 0
           attributes = {
             stroke: _svg_stroke_color_hex(stroke_color, fill_color),
             fill: _svg_fill_color_hex(fill_color),
             id: id,
             'serif:id': id,
-            'inkscape:label': id,
-            'shaper:cutType': 'outside'
+            'inkscape:label': id
           }
           attributes.merge!({ 'shaper:cutDepth': "#{_svg_value(Geom::Point3d.new(projection_def.max_depth, 0).transform(unit_transformation).x)}#{unit_sign}" }) if projection_def.max_depth > 0
-        elsif layer_def.holes?
+        elsif layer_def.part_holes?
           attributes = {
             stroke: _svg_stroke_color_hex(holes_stroke_color, holes_fill_color),
             fill: _svg_fill_color_hex(holes_fill_color),
             id: id,
             'serif:id': id,
-            'inkscape:label': id,
-            'shaper:cutType': 'inside'
+            'inkscape:label': id
           }
           attributes.merge!({ 'shaper:cutDepth': "#{_svg_value(Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x)}#{unit_sign}" }) if projection_def.max_depth > 0
         else
@@ -179,7 +179,6 @@ module Ladb::OpenCutList
             id: id,
             'serif:id': id,
             'inkscape:label': id,
-            'shaper:cutType': 'pocket',
             'shaper:cutDepth': "#{_svg_value(Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x)}#{unit_sign}"
           }
         end

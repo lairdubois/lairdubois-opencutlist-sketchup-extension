@@ -119,17 +119,19 @@ module Ladb::OpenCutList
 
       projection_def = DrawingProjectionDef.new(bounds_depth)
 
+      path_index = 1
       @drawing_def.edge_manipulators.each do |edge_manipulator|
-        projection_def.layer_defs << DrawingProjectionLayerDef.new(0, DrawingProjectionLayerDef::TYPE_PATH, [ DrawingProjectionPolylineDef.new(edge_manipulator.points.map { |point| Geom::Point3d.new(point.x, point.y, z_max) }) ])
+        projection_def.layer_defs << DrawingProjectionLayerDef.new(0, DrawingProjectionLayerDef::TYPE_PATH, "#{path_index}", [ DrawingProjectionPolylineDef.new(edge_manipulator.points.map { |point| Geom::Point3d.new(point.x, point.y, z_max) }) ])
+        path_index += 1
       end
-
       @drawing_def.curve_manipulators.each do |curve_manipulator|
         if curve_manipulator.closed?
           poly_def = DrawingProjectionPolygonDef.new(curve_manipulator.points.map { |point| Geom::Point3d.new(point.x, point.y, z_max) }, true)
         else
           poly_def = DrawingProjectionPolylineDef.new(curve_manipulator.points.map { |point| Geom::Point3d.new(point.x, point.y, z_max) })
         end
-        projection_def.layer_defs << DrawingProjectionLayerDef.new(0, DrawingProjectionLayerDef::TYPE_PATH, [ poly_def ])
+        projection_def.layer_defs << DrawingProjectionLayerDef.new(0, DrawingProjectionLayerDef::TYPE_PATH, "#{path_index}", [ poly_def ])
+        path_index += 1
       end
 
       splds.each do |paths_layer_def|
@@ -140,7 +142,7 @@ module Ladb::OpenCutList
           DrawingProjectionPolygonDef.new(Clippy.rpath_to_points(path, z_max - paths_layer_def.depth), Clippy.is_rpath_positive?(path))
         }.compact
 
-        projection_def.layer_defs << DrawingProjectionLayerDef.new(paths_layer_def.depth, paths_layer_def.type, polygons) unless polygons.empty?
+        projection_def.layer_defs << DrawingProjectionLayerDef.new(paths_layer_def.depth, paths_layer_def.type, '', polygons) unless polygons.empty?
 
       end
 

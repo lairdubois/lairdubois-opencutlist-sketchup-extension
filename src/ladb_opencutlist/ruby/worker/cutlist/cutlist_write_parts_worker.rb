@@ -27,7 +27,7 @@ module Ladb::OpenCutList
       @parts_fill_color = settings.fetch('parts_fill_color', nil)
       @parts_holes_stroke_color = settings.fetch('parts_holes_stroke_color', nil)
       @parts_holes_fill_color = settings.fetch('parts_holes_fill_color', nil)
-      @paths_stroke_color = settings.fetch('paths_stroke_color', nil)
+      @parts_paths_stroke_color = settings.fetch('parts_paths_stroke_color', nil)
 
       @cutlist = cutlist
 
@@ -108,7 +108,7 @@ module Ladb::OpenCutList
                   'parts_fill_color' => @parts_fill_color,
                   'parts_holes_stroke_color' => @parts_holes_stroke_color,
                   'parts_holes_fill_color' => @parts_holes_fill_color,
-                  'paths_stroke_color' => @paths_stroke_color,
+                  'parts_paths_stroke_color' => @parts_paths_stroke_color,
                 }).run
                 return response if !response[:errors].nil? || response[:cancelled]
               when PART_DRAWING_TYPE_3D
