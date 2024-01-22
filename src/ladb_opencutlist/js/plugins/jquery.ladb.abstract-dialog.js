@@ -391,6 +391,8 @@ LadbAbstractDialog.prototype.copyToClipboard = function (text, notifySuccess) {
 
 LadbAbstractDialog.prototype.init = function () {
 
+    var that = this;
+
     // Add compatible_with twig function
     Twig.extendFunction('compatible_with', function(value) {
         switch (value) {
