@@ -1256,7 +1256,7 @@ tab:
       std_attributes_dim_placeholder: Choisissez une taille
       std_volumic_masses: Masse volumique
       std_volumic_masses_help: Permet de définir la masse volumique toutes tailles ainsi que pour chaque taille standard de la matière.
-      std_volumic_masses_add: Ajouter une masse
+      std_volumic_masses_add: Ajouter une masse volumique
       std_prices: Prix
       std_prices_help: Permet de définir le prix toutes tailles ainsi que pour chaque taille standard de la matière.
       std_prices_add: Ajouter un prix
