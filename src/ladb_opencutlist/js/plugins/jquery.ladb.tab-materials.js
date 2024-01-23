@@ -1080,7 +1080,7 @@
                 {
                     lb_ft3: 'lb / ft³',
                     lb_m3: 'lb / m³',
-                    lb_fbm: 'kg / fbm',
+                    lb_fbm: 'lb / fbm',
                     lb_i: 'lb / ' + i18next.t('default.instance_single'),
                 }
             ],
