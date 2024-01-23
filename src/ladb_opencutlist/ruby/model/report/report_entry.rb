@@ -20,6 +20,14 @@ module Ladb::OpenCutList
 
     end
 
+    def format_std_volumic_mass(std_volumic_mass)
+      std_volumic_mass[:val].nil? || std_volumic_mass[:val] == 0 ? nil : UnitUtils.format_readable(std_volumic_mass[:val], std_volumic_mass[:unit])
+    end
+
+    def format_std_price(std_price)
+      std_price.nil? || std_price[:val] == 0 ? nil : UnitUtils.format_readable(std_price[:val], std_price[:unit], 2, 2)
+    end
+
   end
 
   class AbstractReportEntry < AbstractReportItem
@@ -57,8 +65,8 @@ module Ladb::OpenCutList
     def initialize(_def)
       super(_def)
 
-      @std_volumic_mass = _def.std_volumic_mass.nil? || _def.std_volumic_mass[:val] == 0 ? nil : UnitUtils.format_readable(_def.std_volumic_mass[:val], _def.std_volumic_mass[:unit])
-      @std_price = _def.std_price.nil? || _def.std_price[:val] == 0 ? nil : UnitUtils.format_readable(_def.std_price[:val], _def.std_price[:unit], 2, 2)
+      @std_volumic_mass = format_std_volumic_mass(_def.std_volumic_mass)
+      @std_price = format_std_price(_def.std_price)
 
       @total_volume = _def.total_volume == 0 ? nil : DimensionUtils.instance.format_to_readable_volume(_def.total_volume, @material_type)
       @total_used_volume = _def.total_used_volume == 0 ? nil : DimensionUtils.instance.format_to_readable_volume(_def.total_used_volume, @material_type)
@@ -82,8 +90,8 @@ module Ladb::OpenCutList
 
       @sheets = _def.sheet_defs.values.map { |sheet_def| sheet_def.create_sheet }
 
-      @std_volumic_mass = @sheets.map { |sheet| sheet.std_volumic_mass }.select { |volumic_mass| !volumic_mass.nil? }.uniq.join(', ')
-      @std_price = @sheets.map { |sheet| sheet.std_price }.select { |std_price| !std_price.nil? }.uniq.join(', ')
+      @std_volumic_mass = _def.std_volumic_mass.nil? ? @sheets.map { |sheet| sheet.std_volumic_mass }.select { |volumic_mass| !volumic_mass.nil? }.uniq.join(', ') : format_std_volumic_mass(_def.std_volumic_mass)
+      @std_price = _def.std_price.nil? ? @sheets.map { |sheet| sheet.std_price }.select { |std_price| !std_price.nil? }.uniq.join(', ') : format_std_price(_def.std_price)
 
     end
 
@@ -96,8 +104,8 @@ module Ladb::OpenCutList
     def initialize(_def)
       super(_def)
 
-      @std_volumic_mass = _def.std_volumic_mass.nil? || _def.std_volumic_mass[:val] == 0 ? nil : UnitUtils.format_readable(_def.std_volumic_mass[:val], _def.std_volumic_mass[:unit])
-      @std_price = _def.std_price.nil? || _def.std_price[:val] == 0 ? nil : UnitUtils.format_readable(_def.std_price[:val], _def.std_price[:unit], 2, 2)
+      @std_volumic_mass = format_std_volumic_mass(_def.std_volumic_mass)
+      @std_price = format_std_price(_def.std_price)
 
       @type = _def.type
       @length = _def.length.to_l.to_s
@@ -126,8 +134,8 @@ module Ladb::OpenCutList
 
       @bars = _def.bar_defs.values.map { |bar_def| bar_def.create_bar }
 
-      @std_volumic_mass = @bars.map { |bar| bar.std_volumic_mass }.select { |volumic_mass| !volumic_mass.nil? }.uniq.join(', ')
-      @std_price = @bars.map { |bar| bar.std_price }.select { |std_price| !std_price.nil? }.uniq.join(', ')
+      @std_volumic_mass = _def.std_volumic_mass.nil? ? @bars.map { |bar| bar.std_volumic_mass }.select { |volumic_mass| !volumic_mass.nil? }.uniq.join(', ') : format_std_volumic_mass(_def.std_volumic_mass)
+      @std_price = _def.std_price.nil? ? @bars.map { |bar| bar.std_price }.select { |std_price| !std_price.nil? }.uniq.join(', ') : format_std_price(_def.std_price)
 
     end
 
@@ -140,8 +148,8 @@ module Ladb::OpenCutList
     def initialize(_def)
       super(_def)
 
-      @std_volumic_mass = _def.std_volumic_mass.nil? || _def.std_volumic_mass[:val] == 0 ? nil : UnitUtils.format_readable(_def.std_volumic_mass[:val], _def.std_volumic_mass[:unit])
-      @std_price = _def.std_price.nil? || _def.std_price[:val] == 0 ? nil : UnitUtils.format_readable(_def.std_price[:val], _def.std_price[:unit], 2, 2)
+      @std_volumic_mass = format_std_volumic_mass(_def.std_volumic_mass)
+      @std_price = format_std_price(_def.std_price)
 
       @type = _def.type
       @length = _def.length.to_l.to_s
@@ -169,8 +177,8 @@ module Ladb::OpenCutList
 
       @bars = _def.bar_defs.values.map { |bar_def| bar_def.create_bar }
 
-      @std_volumic_mass = @bars.map { |bar| bar.std_volumic_mass }.select { |volumic_mass| !volumic_mass.nil? }.uniq.join(', ')
-      @std_price = @bars.map { |bar| bar.std_price }.select { |std_price| !std_price.nil? }.uniq.join(', ')
+      @std_volumic_mass = _def.std_volumic_mass.nil? ? @bars.map { |bar| bar.std_volumic_mass }.select { |volumic_mass| !volumic_mass.nil? }.uniq.join(', ') : format_std_volumic_mass(_def.std_volumic_mass)
+      @std_price = _def.std_price.nil? ? @bars.map { |bar| bar.std_price }.select { |std_price| !std_price.nil? }.uniq.join(', ') : format_std_price(_def.std_price)
 
     end
 
@@ -183,8 +191,8 @@ module Ladb::OpenCutList
     def initialize(_def)
       super(_def)
 
-      @std_volumic_mass = _def.std_volumic_mass.nil? || _def.std_volumic_mass[:val] == 0 ? nil : UnitUtils.format_readable(_def.std_volumic_mass[:val], _def.std_volumic_mass[:unit])
-      @std_price = _def.std_price.nil? || _def.std_price[:val] == 0 ? nil : UnitUtils.format_readable(_def.std_price[:val], _def.std_price[:unit], 2, 2)
+      @std_volumic_mass = format_std_volumic_mass(_def.std_volumic_mass)
+      @std_price = format_std_price(_def.std_price)
 
       @type = _def.type
       @length = _def.length.to_l.to_s
@@ -257,8 +265,8 @@ module Ladb::OpenCutList
 
       @sheets = _def.sheet_defs.values.map { |sheet_def| sheet_def.create_sheet }
 
-      @std_volumic_mass = @sheets.map { |sheet| sheet.std_volumic_mass }.select { |volumic_mass| !volumic_mass.nil? }.uniq.join(', ')
-      @std_price = @sheets.map { |sheet| sheet.std_price }.select { |std_price| !std_price.nil? }.uniq.join(', ')
+      @std_volumic_mass = _def.std_volumic_mass.nil? ? @sheets.map { |sheet| sheet.std_volumic_mass }.select { |volumic_mass| !volumic_mass.nil? }.uniq.join(', ') : format_std_volumic_mass(_def.std_volumic_mass)
+      @std_price = _def.std_price.nil? ? @sheets.map { |sheet| sheet.std_price }.select { |std_price| !std_price.nil? }.uniq.join(', ') : format_std_price(_def.std_price)
 
     end
 
@@ -271,8 +279,8 @@ module Ladb::OpenCutList
     def initialize(_def)
       super(_def)
 
-      @std_volumic_mass = _def.std_volumic_mass.nil? || _def.std_volumic_mass[:val] == 0 ? nil : UnitUtils.format_readable(_def.std_volumic_mass[:val], _def.std_volumic_mass[:unit])
-      @std_price = _def.std_price.nil? || _def.std_price[:val] == 0 ? nil : UnitUtils.format_readable(_def.std_price[:val], _def.std_price[:unit], 2, 2)
+      @std_volumic_mass = format_std_volumic_mass(_def.std_volumic_mass)
+      @std_price = format_std_price(_def.std_price)
 
       @type = _def.type
       @length = _def.length.to_l.to_s
