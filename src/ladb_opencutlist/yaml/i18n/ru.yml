@@ -412,7 +412,7 @@ tab:
         Параметр *Описание* дает возможность задать необходимую уточняющую информацию по детали.
       url: URL
       url_help: |
-        '*URL* выдает персональную ссылку на внешнюю страницу для каждого определения детали.
+        *URL* персональная ссылка на внешнюю страницу для более точного определения детали.
       tags: Маркеры
       tags_help: |
         *Маркеры* позволяют добавлять пользовательские слова-идентификаторы к каждому определению детали.
@@ -1103,18 +1103,18 @@ tab:
 
         **Контур + Отверстия + Слияние**
         Активирует разделение внешнего контура деталей от их отверстий, а также слияние расстояний для каждой полости.
-      option_edges: Трассы
-      option_edges_0: Нет
-      option_edges_1: Использовать плавающие строки
-      option_edges_help: |
-        Позволяет активировать использование плавающих линий (не привязанных к поверхности) которые совпадают с лицевой поверхностью, содержащихся в детали, для экспорта в виде трассировки.
+      option_include_paths: Трассы
+      option_include_paths_0: Нет
+      option_include_paths_1: ""
+      option_include_paths_help: |
       option_parts: Детали
       option_parts_help: |
         Позволяет выбрать цвета деталей.
       option_parts_holes: Отверстия
       option_parts_holes_help: |
         Позволяет выбрать цвета отверстий деталей.
-      option_edges_color_help: |
+      option_parts_paths: Трассы
+      option_parts_paths_help: |
         Позволяет выбрать цвет трассировки.
       error:
         no_part: Нет деталей для экспорта.
@@ -1252,11 +1252,12 @@ tab:
       edge_decremented_help: "При активации, настройка учитывает в линейном размере детали толщину кромки."
       edge_decremented_0: Не учитывать
       edge_decremented_1: Вычесть толщину кромок
-      volumic_mass: Плотность
-      volumic_mass_help: Сделайте выбор единиц измерения плотности материала.
+      std_attributes_dim_placeholder: Введите размер
+      std_volumic_masses: Плотность
+      std_volumic_masses_help: ""
+      std_volumic_masses_add: ""
       std_prices: Цена
       std_prices_help: "Позволяет задать стоимость материала в зависимости от расчета цены за единицу: объема, площади, штуки."
-      std_prices_dim_placeholder: Введите размер
       std_prices_add: Добавьте цену
       texture_width: Ширина
       texture_height: Высота
@@ -1681,7 +1682,7 @@ tool:
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: Определите сквозные отверстия и размеры слияния для каждой полости
-    action_option_options_edges_status: "Экспортировать как трассировку плавающих и совпадающих граней на целевую грань, содержащуюся в детали"
+    action_option_options_paths_status: ""
     error:
       not_part: Эта грань не является частью детали (компонента)
       not_flat_face: Эта поверхность не является плоской

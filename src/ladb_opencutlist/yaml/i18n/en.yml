@@ -1103,18 +1103,19 @@ tab:
 
         **Contour + Holes + Merge**
         Activates the separation of the outer contour of parts from their holes, as well as the merging of depths for each cavity.
-      option_edges: Paths
-      option_edges_0: None
-      option_edges_1: Use stray edges
-      option_edges_help: |
-        Enables the use of stray edges (not attached to a face), coplanar with the target face, contained in the part, to export them as path.
+      option_include_paths: Paths
+      option_include_paths_0: None
+      option_include_paths_1: Use edges not associated with a face
+      option_include_paths_help: |
+        Enables the use of edges not associated with a face contained in the part, to export them as a path.
       option_parts: Parts
       option_parts_help: |
         Select the color of parts.
       option_parts_holes: Drillings
       option_parts_holes_help: |
         Select the color of drillings.
-      option_edges_color_help: |
+      option_parts_paths: Paths
+      option_parts_paths_help: |
         Selects the color of paths.
       error:
         no_part: No part to export.
@@ -1252,11 +1253,12 @@ tab:
       edge_decremented_help: Allows you to indicate whether the dimensions of parts should be reduced by the thickness of the edge banding.
       edge_decremented_0: No Reduction
       edge_decremented_1: Reduce by Edge Banding Thickness
-      volumic_mass: Density
-      volumic_mass_help: Allows you to define the density of the material.
+      std_attributes_dim_placeholder: Select a size
+      std_volumic_masses: Density
+      std_volumic_masses_help: Allows to set the density for all sizes as well as for each standard material size.
+      std_volumic_masses_add: Add density
       std_prices: Price
       std_prices_help: Allows you to define the price for all sizes as well as for each standard size of the material.
-      std_prices_dim_placeholder: Select a size
       std_prices_add: Add a price
       texture_width: Width
       texture_height: Height
@@ -1681,7 +1683,7 @@ tool:
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: Isolate through-holes and merge depths for each cavity
-    action_option_options_edges_status: Export the stray and coplanar edges of the target face contained in the part as path
+    action_option_options_paths_status: Export non-face edges contained in the part as a path
     error:
       not_part: This face does not belong to a part (component)
       not_flat_face: This surface is not planar

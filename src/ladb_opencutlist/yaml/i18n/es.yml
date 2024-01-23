@@ -1103,18 +1103,18 @@ tab:
 
         **Contorno + Perforaciones + Fusión**
         Activa la separación del contorno exterior de las piezas de sus perforaciones, así como la fusión de las profundidades de cada oquedad.
-      option_edges: Trazados
-      option_edges_0: No
-      option_edges_1: Utilizarlas líneas flotantes
-      option_edges_help: |
-        Permite activar el uso de líneas flotantes (no asociadas a una cara) y coplanares a la cara designada, contenidas en la pieza, para exportarlas como trazado.
+      option_include_paths: Trazados
+      option_include_paths_0: No
+      option_include_paths_1: ""
+      option_include_paths_help: |
       option_parts: Piezas
       option_parts_help: |
         Permite elegir el color de las piezas.
       option_parts_holes: Perforaciones
       option_parts_holes_help: |
         Permite elegir el color de las perforaciones de las piezas.
-      option_edges_color_help: |
+      option_parts_paths: Trazados
+      option_parts_paths_help: |
         Permite elegir el color de los trazados.
       error:
         no_part: No hay piezas para exportar.
@@ -1252,11 +1252,12 @@ tab:
       edge_decremented_help: Indica si las dimensiones de las piezas deben reducirse por el grosor de las tiras del canto.
       edge_decremented_0: Sin reducción
       edge_decremented_1: Reducir por el grosor de las tiras del canto
-      volumic_mass: Densidad
-      volumic_mass_help: Le permite definir la densidad del material.
+      std_attributes_dim_placeholder: Elige una talla
+      std_volumic_masses: Densidad
+      std_volumic_masses_help: ""
+      std_volumic_masses_add: ""
       std_prices: Precio
       std_prices_help: "Le permite definir el precio para todos los tamaños, así como para cada tamaño estándar del material."
-      std_prices_dim_placeholder: Elige una talla
       std_prices_add: Añade un precio
       texture_width: Anchura
       texture_height: Altura
@@ -1681,7 +1682,7 @@ tool:
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: Aislar los huecos pasantes y fusionar las profundidades de cada oquedad
-    action_option_options_edges_status: Exportar como trazado las aristas flotantes y coplanares de la cara seleccionada contenidas en la pieza
+    action_option_options_paths_status: ""
     error:
       not_part: Esta cara no forma parte de una pieza (componente)
       not_flat_face: Esta superficie no es plana
