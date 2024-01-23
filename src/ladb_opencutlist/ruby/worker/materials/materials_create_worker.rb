@@ -21,7 +21,7 @@ module Ladb::OpenCutList
       @std_sizes = attributes.fetch('std_sizes')
       @grained = attributes.fetch('grained')
       @edge_decremented = attributes.fetch('edge_decremented')
-      @volumic_mass = attributes.fetch('volumic_mass')
+      @std_volumic_masses = attributes.fetch('std_volumic_masses')
       @std_prices = attributes.fetch('std_prices')
 
     end
@@ -56,7 +56,7 @@ module Ladb::OpenCutList
       material_attributes.std_sizes = @std_sizes
       material_attributes.grained = @grained
       material_attributes.edge_decremented = @edge_decremented
-      material_attributes.volumic_mass = @volumic_mass
+      material_attributes.std_volumic_masses = @std_volumic_masses
       material_attributes.std_prices = @std_prices
       material_attributes.write_to_attributes
 

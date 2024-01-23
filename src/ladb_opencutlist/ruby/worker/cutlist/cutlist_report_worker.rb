@@ -47,7 +47,7 @@ module Ladb::OpenCutList
 
           material_attributes = _get_material_attributes(cutlist_group.material_name)
 
-          volumic_mass = material_attributes.h_volumic_mass
+          volumic_mass = _get_std_volumic_mass([ cutlist_group.def.std_thickness ], material_attributes)
           mass_per_inch3 = volumic_mass[:val] == 0 ? 0 : _uv_to_inch3(volumic_mass[:unit], volumic_mass[:val])
 
           std_price = _get_std_price([ cutlist_group.def.std_thickness ], material_attributes)
@@ -75,9 +75,6 @@ module Ladb::OpenCutList
 
           material_attributes = _get_material_attributes(cutlist_group.material_name)
 
-          volumic_mass = material_attributes.h_volumic_mass
-          mass_per_inch3 = volumic_mass[:val] == 0 ? 0 : _uv_to_inch3(volumic_mass[:unit], volumic_mass[:val])
-
           settings = Plugin.instance.get_model_preset('cutlist_cuttingdiagram2d_options', cutlist_group.id)
           settings['group_id'] = cutlist_group.id
           settings['sheet_folding'] = false   # Remove unneeded computations
@@ -94,11 +91,14 @@ module Ladb::OpenCutList
 
           report_entry_def = SheetGoodReportEntryDef.new(cutlist_group)
           report_entry_def.errors += cuttingdiagram2d.errors
-          report_entry_def.volumic_mass = volumic_mass
           report_entry_def.total_count = cuttingdiagram2d.summary.total_used_count
           report_entry_def.total_area = cuttingdiagram2d.summary.def.total_used_area
 
           cuttingdiagram2d.sheets.each do |cuttingdiagram2d_sheet|
+
+            # Only standard sheet uses dim volumic mass
+            volumic_mass = _get_std_volumic_mass(cuttingdiagram2d_sheet.type == BinPacking2D::BIN_TYPE_AUTO_GENERATED ? [ cutlist_group.def.std_thickness, Size2d.new(cuttingdiagram2d_sheet.def.length, cuttingdiagram2d_sheet.def.width) ] : nil, material_attributes)
+            mass_per_inch3 = volumic_mass[:val] == 0 ? 0 : _uv_to_inch3(volumic_mass[:unit], volumic_mass[:val], cutlist_group.def.std_thickness, cuttingdiagram2d_sheet.def.width, cuttingdiagram2d_sheet.def.length)
 
             # Only standard sheet uses dim prices
             std_price = _get_std_price(cuttingdiagram2d_sheet.type == BinPacking2D::BIN_TYPE_AUTO_GENERATED ? [ cutlist_group.def.std_thickness, Size2d.new(cuttingdiagram2d_sheet.def.length, cuttingdiagram2d_sheet.def.width) ] : nil, material_attributes)
@@ -108,6 +108,7 @@ module Ladb::OpenCutList
             if report_entry_sheet_def.nil?
 
               report_entry_sheet_def = SheetGoodReportEntrySheetDef.new(cuttingdiagram2d_sheet)
+              report_entry_sheet_def.volumic_mass = volumic_mass
               report_entry_sheet_def.std_price = std_price
 
               report_entry_def.sheet_defs[cuttingdiagram2d_sheet.type_id] = report_entry_sheet_def
@@ -155,9 +156,6 @@ module Ladb::OpenCutList
 
           material_attributes = _get_material_attributes(cutlist_group.material_name)
 
-          volumic_mass = material_attributes.h_volumic_mass
-          mass_per_inch3 = volumic_mass[:val] == 0 ? 0 : _uv_to_inch3(volumic_mass[:unit], volumic_mass[:val])
-
           settings = Plugin.instance.get_model_preset('cutlist_cuttingdiagram1d_options', cutlist_group.id)
           settings['group_id'] = cutlist_group.id
           settings['bar_folding'] = false     # Remove unneeded computations
@@ -174,11 +172,14 @@ module Ladb::OpenCutList
 
           report_entry_def = DimensionalReportEntryDef.new(cutlist_group)
           report_entry_def.errors += cuttingdiagram1d.errors
-          report_entry_def.volumic_mass = volumic_mass
           report_entry_def.total_count = cuttingdiagram1d.summary.total_used_count
           report_entry_def.total_length = cuttingdiagram1d.summary.def.total_used_length
 
           cuttingdiagram1d.bars.each do |cuttingdiagram1d_bar|
+
+            # Only standard bar uses dim volumic mass
+            volumic_mass = _get_std_volumic_mass(cuttingdiagram1d_bar.type == BinPacking1D::BIN_TYPE_AUTO_GENERATED ? [ Size2d.new(cutlist_group.def.std_dimension), cuttingdiagram1d_bar.def.length ] : nil, material_attributes)
+            mass_per_inch3 = volumic_mass[:val] == 0 ? 0 : _uv_to_inch3(volumic_mass[:unit], volumic_mass[:val], cutlist_group.def.std_thickness, cutlist_group.def.std_width, cuttingdiagram1d_bar.def.length)
 
             # Only standard bar uses dim prices
             std_price = _get_std_price(cuttingdiagram1d_bar.type == BinPacking1D::BIN_TYPE_AUTO_GENERATED ? [ Size2d.new(cutlist_group.def.std_dimension), cuttingdiagram1d_bar.def.length ] : nil, material_attributes)
@@ -235,9 +236,6 @@ module Ladb::OpenCutList
 
           material_attributes = _get_material_attributes(cutlist_group.material_name)
 
-          volumic_mass = material_attributes.h_volumic_mass
-          mass_per_inch3 = volumic_mass[:val] == 0 ? 0 : _uv_to_inch3(volumic_mass[:unit], volumic_mass[:val])
-
           settings = Plugin.instance.get_model_preset('cutlist_cuttingdiagram1d_options', cutlist_group.id)
           settings['group_id'] = cutlist_group.id
           settings['bar_folding'] = false     # Remove unneeded computations
@@ -254,11 +252,14 @@ module Ladb::OpenCutList
 
           report_entry_def = EdgeReportEntryDef.new(cutlist_group)
           report_entry_def.errors += cuttingdiagram1d.errors
-          report_entry_def.volumic_mass = volumic_mass
           report_entry_def.total_count = cuttingdiagram1d.summary.total_used_count
           report_entry_def.total_length = cuttingdiagram1d.summary.def.total_used_length
 
           cuttingdiagram1d.bars.each do |cuttingdiagram1d_bar|
+
+            # Only standard bar uses dim volumic mass
+            volumic_mass = _get_std_volumic_mass([ cutlist_group.def.std_dimension.to_l, cuttingdiagram1d_bar.def.length ], material_attributes)
+            mass_per_inch3 = volumic_mass[:val] == 0 ? 0 : _uv_to_inch3(volumic_mass[:unit], volumic_mass[:val], cutlist_group.def.std_thickness, cutlist_group.def.std_width, cuttingdiagram1d_bar.def.length)
 
             # Only standard bar uses dim prices
             std_price = _get_std_price([ cutlist_group.def.std_dimension.to_l, cuttingdiagram1d_bar.def.length ], material_attributes)
@@ -337,9 +338,6 @@ module Ladb::OpenCutList
 
           material_attributes = _get_material_attributes(cutlist_group.material_name)
 
-          volumic_mass = material_attributes.h_volumic_mass
-          mass_per_inch3 = volumic_mass[:val] == 0 ? 0 : _uv_to_inch3(volumic_mass[:unit], volumic_mass[:val])
-
           settings = Plugin.instance.get_model_preset('cutlist_cuttingdiagram2d_options', cutlist_group.id)
           settings['group_id'] = cutlist_group.id
           settings['sheet_folding'] = false   # Remove unneeded computations
@@ -356,11 +354,14 @@ module Ladb::OpenCutList
 
           report_entry_def = VeneerReportEntryDef.new(cutlist_group)
           report_entry_def.errors += cuttingdiagram2d.errors
-          report_entry_def.volumic_mass = volumic_mass
           report_entry_def.total_count = cuttingdiagram2d.summary.total_used_count
           report_entry_def.total_area = cuttingdiagram2d.summary.def.total_used_area
 
           cuttingdiagram2d.sheets.each do |cuttingdiagram2d_sheet|
+
+            # Only standard sheet uses dim volumic mass
+            volumic_mass = _get_std_volumic_mass(cuttingdiagram2d_sheet.type == BinPacking2D::BIN_TYPE_AUTO_GENERATED ? [ Size2d.new(cuttingdiagram2d_sheet.def.length, cuttingdiagram2d_sheet.def.width) ] : nil, material_attributes)
+            mass_per_inch3 = volumic_mass[:val] == 0 ? 0 : _uv_to_inch3(volumic_mass[:unit], volumic_mass[:val], cutlist_group.def.std_thickness, cuttingdiagram2d_sheet.def.width, cuttingdiagram2d_sheet.def.length)
 
             # Only standard sheet uses dim prices
             std_price = _get_std_price(cuttingdiagram2d_sheet.type == BinPacking2D::BIN_TYPE_AUTO_GENERATED ? [ Size2d.new(cuttingdiagram2d_sheet.def.length, cuttingdiagram2d_sheet.def.width) ] : nil, material_attributes)
@@ -497,6 +498,20 @@ module Ladb::OpenCutList
     end
 
     # -----
+
+    def _get_std_volumic_mass(dim, material_attributes)
+
+      h_std_volumic_masses = material_attributes.h_std_volumic_masses
+      unless  dim.nil?
+        h_std_volumic_masses.each do |std_volumic_masses|
+          if std_volumic_masses[:dim] == dim
+            return std_volumic_masses
+          end
+        end
+      end
+
+      h_std_volumic_masses[0]
+    end
 
     def _get_std_price(dim, material_attributes)
 

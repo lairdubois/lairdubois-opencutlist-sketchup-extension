@@ -4,49 +4,37 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbEditorStdPrices = function (element, options) {
+    var LadbEditorStdAttributes = function (element, options) {
         this.options = options;
         this.$element = $(element);
 
-        this.$rows = $('.ladb-editor-std-prices-rows', this.$element);
+        this.$rows = $('.ladb-editor-std-attributes-rows', this.$element);
 
         this.type = 0;
         this.stds = null;
         this.stdsA = [];
         this.stdsB = [];
         this.defaultUnit = null;
-        this.units = [
-            {
-                $_m: options.currencySymbol + ' / m',
-                $_m2: options.currencySymbol + ' / m²',
-                $_m3: options.currencySymbol + ' / m³',
-            },
-            {
-                $_fbm: options.currencySymbol + ' / fbm',
-                $_ft: options.currencySymbol + ' / ft',
-                $_ft2: options.currencySymbol + ' / ft²',
-                $_ft3: options.currencySymbol + ' / ft³',
-            },
-            {
-                $_i: options.currencySymbol + ' / ' + i18next.t('default.instance_single')
-            }
-        ];
         this.enabledUnits = [];
 
-        this.stdPrices = [];
+        this.stdAttributes = [];
 
     };
 
-    LadbEditorStdPrices.DEFAULTS = {
-        lengthUnitStrippedname: '',
-        currencySymbol: '',
+    LadbEditorStdAttributes.DEFAULTS = {
+        strippedName: '',
+        units: [],
+        defaultUnitByTypeCallback: null,
+        enabledUnitsByTypeCallback: null,
         inputChangeCallback: null
     };
 
-    LadbEditorStdPrices.prototype.prependPriceRow0 = function (stdPrice) {
+    LadbEditorStdAttributes.prototype.prependAttributeRow0 = function (stdAttribute) {
         var that = this;
 
-        var $row = $(Twig.twig({ref: 'components/_editor-std-prices-row-0.twig'}).render());
+        var $row = $(Twig.twig({ref: 'components/_editor-std-attributes-row-0.twig'}).render({
+            strippedName: this.options.strippedName
+        }));
         this.$rows.prepend($row);
 
         // Fetch UI elements
@@ -58,11 +46,11 @@
                 defaultUnit: this.defaultUnit,
                 units: this.enabledUnits,
             })
-            .ladbTextinputNumberWithUnit('val', stdPrice.val)
+            .ladbTextinputNumberWithUnit('val', stdAttribute.val)
         ;
         $input
             .on('change', function () {
-                stdPrice.val = $(this).ladbTextinputNumberWithUnit('val');
+                stdAttribute.val = $(this).ladbTextinputNumberWithUnit('val');
 
                 // Change callback
                 if (that.options.inputChangeCallback) {
@@ -75,10 +63,10 @@
         return $row;
     };
 
-    LadbEditorStdPrices.prototype.appendPriceRowN = function (stdPrice) {
+    LadbEditorStdAttributes.prototype.appendAttributeRowN = function (stdAttribute) {
         var that = this;
 
-        var $row = $(Twig.twig({ref: 'components/_editor-std-prices-row-n.twig'}).render({
+        var $row = $(Twig.twig({ref: 'components/_editor-std-attributes-row-n.twig'}).render({
             stdsA: this.stdsA,
             stdsB: this.stdsB,
         }));
@@ -89,18 +77,18 @@
         var $input = $('input', $row);
 
         // Bind button
-        $('.ladb-editor-std-prices-row-remove', $row).on('click', function () {
+        $('.ladb-editor-std-attributes-row-remove', $row).on('click', function () {
            $row.remove();
-           var index = that.stdPrices.indexOf(stdPrice);
+           var index = that.stdAttributes.indexOf(stdAttribute);
            if (index > -1) {
-               that.stdPrices.splice(index, 1);
+               that.stdAttributes.splice(index, 1);
            }
         });
 
         // Bind
         $select
             .selectpicker(SELECT_PICKER_OPTIONS)
-            .selectpicker('val', stdPrice.dim)
+            .selectpicker('val', stdAttribute.dim)
         ;
         $select
             .on('change', function () {
@@ -112,7 +100,7 @@
                     var $tmpSelect = $(this);
                     $('option', $(this)).each(function () {
                         var $option = $(this);
-                        if ($option.html() === stdPrice.dim) {
+                        if ($option.html() === stdAttribute.dim) {
                             $option.prop('disabled', false);
                         } else if ($option.html() === newDim) {
                             $option.prop('disabled', true);
@@ -120,7 +108,7 @@
                         $tmpSelect.selectpicker('refresh');
                     });
                 });
-                stdPrice.dim = newDim;
+                stdAttribute.dim = newDim;
 
                 // Change callback
                 if (that.options.inputChangeCallback) {
@@ -134,11 +122,11 @@
                 defaultUnit: this.defaultUnit,
                 units: this.enabledUnits,
             })
-            .ladbTextinputNumberWithUnit('val', stdPrice.val)
+            .ladbTextinputNumberWithUnit('val', stdAttribute.val)
         ;
         $input
             .on('change', function () {
-                stdPrice.val = $(this).ladbTextinputNumberWithUnit('val');
+                stdAttribute.val = $(this).ladbTextinputNumberWithUnit('val');
 
                 // Change callback
                 if (that.options.inputChangeCallback) {
@@ -150,12 +138,12 @@
 
         // Disable used options
         var $options = $('option', $select);
-        for (var i = 0; i < this.stdPrices.length; i++) {
-            var tmpStdPrice = this.stdPrices[i];
-            if (tmpStdPrice !== stdPrice) {
+        for (var i = 0; i < this.stdAttributes.length; i++) {
+            var tmpStdAttribute = this.stdAttributes[i];
+            if (tmpStdAttribute !== stdAttribute) {
                 $options.each(function () {
                     var $option = $(this);
-                    if ($option.html() === tmpStdPrice.dim) {
+                    if ($option.html() === tmpStdAttribute.dim) {
                         $option.prop('disabled', true);
                     }
                 });
@@ -166,27 +154,27 @@
         return $row;
     };
 
-    LadbEditorStdPrices.prototype.renderRows = function () {
+    LadbEditorStdAttributes.prototype.renderRows = function () {
 
         // Render rows
         this.$rows.empty();
-        for (var i = 0; i < this.stdPrices.length; i++) {
-            var stdPrice = this.stdPrices[i];
-            if (stdPrice.dim == null) {
-                this.prependPriceRow0(stdPrice);
+        for (var i = 0; i < this.stdAttributes.length; i++) {
+            var stdAttribute = this.stdAttributes[i];
+            if (stdAttribute.dim == null) {
+                this.prependAttributeRow0(stdAttribute);
             } else {
-                this.appendPriceRowN(stdPrice);
+                this.appendAttributeRowN(stdAttribute);
             }
         }
 
     };
 
-    LadbEditorStdPrices.prototype.setTypeAndStds = function (type, stds) {
+    LadbEditorStdAttributes.prototype.setTypeAndStds = function (type, stds) {
         this.type = type;
         this.setStds(stds);
     };
 
-    LadbEditorStdPrices.prototype.setStds = function (stds) {
+    LadbEditorStdAttributes.prototype.setStds = function (stds) {
         var that = this;
 
         this.stds = stds;
@@ -196,15 +184,12 @@
         var stdsA = {};
         var stdsB = {};
         var i;
-        var enabledUnitKeys;
         switch (this.type) {
 
             case 1: /* TYPE_SOLID_WOOD */
                 for (i = 0; i < stds.stdThicknesses.length; i++) {
                     stdsA[stds.stdThicknesses[i]] = stds.stdThicknesses[i];
                 }
-                this.defaultUnit = '$_' + (that.options.lengthUnitStrippedname === 'ft' ? 'fbm' : that.options.lengthUnitStrippedname + '3');
-                enabledUnitKeys = [ '$_m3', '$_ft3', '$_fbm' ];
                 break;
 
             case 2: /* TYPE_SHEET_GOOD */
@@ -214,8 +199,6 @@
                 for (i = 0; i < stds.stdSizes.length; i++) {
                     stdsB[stds.stdSizes[i]] = stds.stdSizes[i];
                 }
-                this.defaultUnit = '$_' + that.options.lengthUnitStrippedname + '2';
-                enabledUnitKeys = [ '$_m', '$_m2', '$_m3', '$_ft', '$_ft2', '$_ft3', '$_ft2', '$_i' ];
                 break;
 
             case 3: /* TYPE_DIMENSIONAL */
@@ -225,8 +208,6 @@
                 for (i = 0; i < stds.stdLengths.length; i++) {
                     stdsB[stds.stdLengths[i]] = stds.stdLengths[i];
                 }
-                this.defaultUnit = '$_' + that.options.lengthUnitStrippedname;
-                enabledUnitKeys = [ '$_m', '$_m2', '$_m3', '$_ft', '$_ft2', '$_ft3', '$_i' ];
                 break;
 
             case 4: /* TYPE_EDGE */
@@ -236,23 +217,25 @@
                 for (i = 0; i < stds.stdLengths.length; i++) {
                     stdsB[stds.stdLengths[i]] = stds.stdLengths[i];
                 }
-                this.defaultUnit = '$_' + that.options.lengthUnitStrippedname;
-                enabledUnitKeys = [ '$_m', '$_ft', '$_i' ];
                 break;
 
             case 6: /* TYPE_VENEER */
                 for (i = 0; i < stds.stdSizes.length; i++) {
                     stdsA[stds.stdSizes[i]] = stds.stdSizes[i];
                 }
-                this.defaultUnit = '$_' + that.options.lengthUnitStrippedname + '2';
-                enabledUnitKeys = [ '$_m', '$_m2', '$_m3', '$_ft', '$_ft2', '$_ft3', '$_ft2', '$_i' ];
                 break;
 
         }
 
+        this.defaultUnit = this.options.defaultUnitByTypeCallback(this.type);
+
+        console.log('defaultUnit = ', this.defaultUnit);
+
         this.enabledUnits = [];
+        var enabledUnitKeys = this.options.enabledUnitsByTypeCallback(this.type);
+        console.log('enabledUnitKeys = ', enabledUnitKeys);
         if (enabledUnitKeys) {
-            $.each(this.units, function (index, unitGroup) {
+            $.each(this.options.units, function (index, unitGroup) {
                 var g = {};
                 $.each(unitGroup, function (key, value) {
                     if (enabledUnitKeys.includes(key)) {
@@ -296,30 +279,30 @@
 
     };
 
-    LadbEditorStdPrices.prototype.setStdPrices = function (stdPrices) {
-        if (!Array.isArray(stdPrices)) {
-            stdPrices = [];
+    LadbEditorStdAttributes.prototype.setStdAttributes = function (stdAttributes) {
+        if (!Array.isArray(stdAttributes)) {
+            stdAttributes = [];
         }
 
         // Cleanup input
-        this.stdPrices = [];
-        var stdPrice;
+        this.stdAttributes = [];
+        var stdAttribute;
         var has0 = false;
-        for (var i = 0; i < stdPrices.length; i++) {
-            stdPrice = stdPrices[i];
-            if (stdPrice != null) {
-                if (stdPrice.dim == null) {
+        for (var i = 0; i < stdAttributes.length; i++) {
+            stdAttribute = stdAttributes[i];
+            if (stdAttribute != null) {
+                if (stdAttribute.dim == null) {
                     if (!has0) {
-                        this.stdPrices.unshift(stdPrice);
+                        this.stdAttributes.unshift(stdAttribute);
                         has0 = true;
                     }
-                } else if (stdPrice.val != null && stdPrice.val.length > 0 && stdPrice.dim.length > 0) {
-                    this.stdPrices.push(stdPrice);
+                } else if (stdAttribute.val != null && stdAttribute.val.length > 0 && stdAttribute.dim.length > 0) {
+                    this.stdAttributes.push(stdAttribute);
                 }
             }
         }
         if (!has0) {
-            this.stdPrices.unshift({
+            this.stdAttributes.unshift({
                 val: '',
                 dim: null
             });
@@ -332,31 +315,31 @@
 
     };
 
-    LadbEditorStdPrices.prototype.getStdPrices = function () {
+    LadbEditorStdAttributes.prototype.getStdAttributes = function () {
 
         // Cleanup input
-        var stdPrices = [];
-        for (var i = 0; i < this.stdPrices.length; i++) {
-            var stdPrice = this.stdPrices[i];
-            if (stdPrice.dim == null || stdPrice.val != null && stdPrice.val.length > 0 && stdPrice.dim.length > 0) {
-                stdPrices.push(stdPrice);
+        var stdAttributes = [];
+        for (var i = 0; i < this.stdAttributes.length; i++) {
+            var stdAttribute = this.stdAttributes[i];
+            if (stdAttribute.dim == null || stdAttribute.val != null && stdAttribute.val.length > 0 && stdAttribute.dim.length > 0) {
+                stdAttributes.push(stdAttribute);
             }
         }
 
-        return stdPrices;
+        return stdAttributes;
     };
 
-    LadbEditorStdPrices.prototype.init = function () {
+    LadbEditorStdAttributes.prototype.init = function () {
         var that = this;
 
         // Bind button
         $('button', this.$element).on('click', function () {
-            var stdPrice = {
+            var stdAttribute = {
                 val: '',
                 dim: ''
             }
-            that.stdPrices.push(stdPrice);
-            var $row = that.appendPriceRowN(stdPrice);
+            that.stdAttributes.push(stdAttribute);
+            var $row = that.appendAttributeRowN(stdAttribute);
             $('input', $row).focus();
             this.blur();
         });
@@ -370,11 +353,11 @@
         var value;
         var elements = this.each(function () {
             var $this = $(this);
-            var data = $this.data('ladb.editorStdPrices');
-            var options = $.extend({}, LadbEditorStdPrices.DEFAULTS, $this.data(), typeof option === 'object' && option);
+            var data = $this.data('ladb.editorStdAttributes');
+            var options = $.extend({}, LadbEditorStdAttributes.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
-                $this.data('ladb.editorStdPrices', (data = new LadbEditorStdPrices(this, options)));
+                $this.data('ladb.editorStdAttributes', (data = new LadbEditorStdAttributes(this, options)));
             }
             if (typeof option === 'string') {
                 value = data[option].apply(data, Array.isArray(params) ? params : [ params ])
@@ -385,17 +368,17 @@
         return typeof value !== 'undefined' ? value : elements;
     }
 
-    var old = $.fn.ladbEditorStdPrices;
+    var old = $.fn.ladbEditorStdAttributes;
 
-    $.fn.ladbEditorStdPrices = Plugin;
-    $.fn.ladbEditorStdPrices.Constructor = LadbEditorStdPrices;
+    $.fn.ladbEditorStdAttributes = Plugin;
+    $.fn.ladbEditorStdAttributes.Constructor = LadbEditorStdAttributes;
 
 
     // NO CONFLICT
     // =================
 
-    $.fn.ladbEditorStdPrices.noConflict = function () {
-        $.fn.ladbEditorStdPrices = old;
+    $.fn.ladbEditorStdAttributes.noConflict = function () {
+        $.fn.ladbEditorStdAttributes = old;
         return this;
     }
 

@@ -1253,11 +1253,12 @@ tab:
       edge_decremented_help: Permet d'indiquer si les dimensions de débit des pièces doivent être réduites de l'épaisseur des chants.
       edge_decremented_0: Pas de réduction
       edge_decremented_1: Réduire le débit de l'épaisseur du chant
-      volumic_mass: Masse volumique
-      volumic_mass_help: Permet de définir la masse volumique de la matière.
+      std_attributes_dim_placeholder: Choisissez une taille
+      std_volumic_masses: Masse volumique
+      std_volumic_masses_help: Permet de définir la masse volumique toutes tailles ainsi que pour chaque taille standard de la matière.
+      std_volumic_masses_add: Ajouter une masse
       std_prices: Prix
       std_prices_help: Permet de définir le prix toutes tailles ainsi que pour chaque taille standard de la matière.
-      std_prices_dim_placeholder: Choisissez une taille
       std_prices_add: Ajouter un prix
       texture_width: Largeur
       texture_height: Hauteur

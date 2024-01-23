@@ -197,8 +197,8 @@
                     std_sizes: $inputs.inputStdSizes.ladbTextinputTokenfield('getValidTokensList'),
                     grained: $inputs.selectGrained.val() === '1',
                     edge_decremented: $inputs.selectEdgeDecremented.val() === '1',
-                    volumic_mass: $inputs.inputVolumicMass.ladbTextinputNumberWithUnit('val'),
-                    std_prices: $inputs.editorStdPrices.ladbEditorStdPrices('getStdPrices')
+                    std_volumic_masses: $inputs.editorStdVolumicMasses.ladbEditorStdAttributes('getStdAttributes'),
+                    std_prices: $inputs.editorStdPrices.ladbEditorStdAttributes('getStdAttributes')
                 }
             }, function (response) {
 
@@ -304,8 +304,8 @@
                 attributes.std_sizes = $inputs.inputStdSizes.ladbTextinputTokenfield('getValidTokensList');
                 attributes.grained = $inputs.selectGrained.val() === '1';
                 attributes.edge_decremented = $inputs.selectEdgeDecremented.val() === '1';
-                attributes.volumic_mass = $inputs.inputVolumicMass.ladbTextinputNumberWithUnit('val');
-                attributes.std_prices = $inputs.editorStdPrices.ladbEditorStdPrices('getStdPrices');
+                attributes.std_volumic_masses = $inputs.editorStdVolumicMasses.ladbEditorStdAttributes('getStdAttributes');
+                attributes.std_prices = $inputs.editorStdPrices.ladbEditorStdAttributes('getStdAttributes');
             };
             var fnResetTextureRotation = function () {
                 var rotation = parseInt($inputTextureRotation.val());
@@ -882,7 +882,7 @@
         var $inputStdSizes = $('#ladb_materials_input_std_sizes', $modal);
         var $selectGrained = $('#ladb_materials_select_grained', $modal);
         var $selectEdgeDecremented = $('#ladb_materials_select_edge_decremented', $modal);
-        var $inputVolumicMass = $('#ladb_materials_input_volumic_mass', $modal);
+        var $editorStdVolumicMasses = $('#ladb_materials_editor_std_volumic_masses', $modal);
         var $editorStdPrices = $('#ladb_materials_editor_std_prices', $modal);
 
         // Define useful functions
@@ -905,8 +905,8 @@
             fnFetchStds(options);
             options.grained = $selectGrained.val() === '1';
             options.edge_decremented = $selectEdgeDecremented.val() === '1';
-            options.volumic_mass = $inputVolumicMass.ladbTextinputNumberWithUnit('val');
-            options.std_prices = $editorStdPrices.ladbEditorStdPrices('getStdPrices');
+            options.std_volumic_masses = $editorStdVolumicMasses.ladbEditorStdAttributes('getStdAttributes');
+            options.std_prices = $editorStdPrices.ladbEditorStdAttributes('getStdAttributes');
         };
         var fnFillInputs = function (options) {
             var fnSetTokens = function ($input, tokens) {
@@ -924,24 +924,23 @@
             fnSetTokens($inputStdSizes, options.std_sizes);
             $selectGrained.selectpicker('val', options.grained ? '1' : '0');
             $selectEdgeDecremented.selectpicker('val', options.edge_decremented ? '1' : '0');
-            $inputVolumicMass.ladbTextinputNumberWithUnit('val', options.volumic_mass);
-            fnSetStdPricesTypeAndStds();
-            $editorStdPrices.ladbEditorStdPrices('setStdPrices', [ options.std_prices ]);
+            fnSetStdAttributesTypeAndStds();
+            $editorStdVolumicMasses.ladbEditorStdAttributes('setStdAttributes', [ options.std_volumic_masses ]);
+            $editorStdPrices.ladbEditorStdAttributes('setStdAttributes', [ options.std_prices ]);
         };
-        var fnSetStdPricesTypeAndStds = function () {
+        var fnSetStdAttributesTypeAndStds = function () {
             var options = {};
             fnFetchType(options);
             fnFetchStds(options);
-            $editorStdPrices.ladbEditorStdPrices('setTypeAndStds', [
-                options.type,
-                {
-                    stdLengths: options.std_lengths ? options.std_lengths.split(';') : [],
-                    stdWidths: options.std_widths ? options.std_widths.split(';') : [],
-                    stdThicknesses: options.std_thicknesses ? options.std_thicknesses.split(';') : [],
-                    stdSections: options.std_sections ? options.std_sections.split(';') : [],
-                    stdSizes: options.std_sizes ? options.std_sizes.split(';') : [],
-                }
-            ]);
+            var stds = {
+                stdLengths: options.std_lengths ? options.std_lengths.split(';') : [],
+                stdWidths: options.std_widths ? options.std_widths.split(';') : [],
+                stdThicknesses: options.std_thicknesses ? options.std_thicknesses.split(';') : [],
+                stdSections: options.std_sections ? options.std_sections.split(';') : [],
+                stdSizes: options.std_sizes ? options.std_sizes.split(';') : [],
+            };
+            $editorStdVolumicMasses.ladbEditorStdAttributes('setTypeAndStds', [ options.type, stds ]);
+            $editorStdPrices.ladbEditorStdAttributes('setTypeAndStds', [ options.type, stds ]);
         };
         var fnComputeFieldsVisibility = function (type) {
             switch (type) {
@@ -961,7 +960,7 @@
                     $inputStdSizes.closest('.form-group').hide();
                     $selectGrained.closest('.form-group').hide();
                     $selectEdgeDecremented.closest('.form-group').hide();
-                    $inputVolumicMass.closest('.form-group').show();
+                    $editorStdVolumicMasses.closest('.form-group').show();
                     $editorStdPrices.closest('.form-group').show();
                     break;
                 case 2:   // TYPE_SHEET_GOOD
@@ -977,7 +976,7 @@
                     $inputStdSizes.closest('.form-group').show();
                     $selectGrained.closest('.form-group').show();
                     $selectEdgeDecremented.closest('.form-group').hide();
-                    $inputVolumicMass.closest('.form-group').show();
+                    $editorStdVolumicMasses.closest('.form-group').show();
                     $editorStdPrices.closest('.form-group').show();
                     break;
                 case 3:   // TYPE_DIMENSIONAL
@@ -993,7 +992,7 @@
                     $inputStdSizes.closest('.form-group').hide();
                     $selectGrained.closest('.form-group').hide();
                     $selectEdgeDecremented.closest('.form-group').hide();
-                    $inputVolumicMass.closest('.form-group').show();
+                    $editorStdVolumicMasses.closest('.form-group').show();
                     $editorStdPrices.closest('.form-group').show();
                     break;
                 case 4:   // TYPE_EDGE
@@ -1009,7 +1008,7 @@
                     $inputStdSizes.closest('.form-group').hide();
                     $selectGrained.closest('.form-group').hide();
                     $selectEdgeDecremented.closest('.form-group').show();
-                    $inputVolumicMass.closest('.form-group').show();
+                    $editorStdVolumicMasses.closest('.form-group').show();
                     $editorStdPrices.closest('.form-group').show();
                     break;
                 case 5:   // TYPE_HARDWARE
@@ -1028,7 +1027,7 @@
                     $inputStdSizes.closest('.form-group').show();
                     $selectGrained.closest('.form-group').show();
                     $selectEdgeDecremented.closest('.form-group').hide();
-                    $inputVolumicMass.closest('.form-group').show();
+                    $editorStdVolumicMasses.closest('.form-group').show();
                     $editorStdPrices.closest('.form-group').show();
                     break;
                 default:
@@ -1069,22 +1068,91 @@
             fnFetchOptions: fnFetchOptions,
             fnFillInputs: fnFillInputs
         });
-        $inputVolumicMass.ladbTextinputNumberWithUnit({
-            defaultUnit: that.massUnitStrippedname + '_' + that.lengthUnitStrippedname + '3',
+        $editorStdVolumicMasses.ladbEditorStdAttributes({
+            strippedName: 'volumic_masses',
             units: [
                 {
                     kg_m3: 'kg / m³',
-                    kg_ft3: 'kg / ft³'
+                    kg_ft3: 'kg / ft³',
+                    kg_fbm: 'kg / fbm',
+                    kg_i: 'kg / ' + i18next.t('default.instance_single'),
                 },
                 {
                     lb_ft3: 'lb / ft³',
-                    lb_m3: 'lb / m³'
-                },
-            ]
-        });
-        $editorStdPrices.ladbEditorStdPrices({
-            currencySymbol: that.currencySymbol,
+                    lb_m3: 'lb / m³',
+                    lb_fbm: 'kg / fbm',
+                    lb_i: 'lb / ' + i18next.t('default.instance_single'),
+                }
+            ],
             lengthUnitStrippedname: that.lengthUnitStrippedname,
+            defaultUnitByTypeCallback: function (type) {
+                switch (type) {
+                    case 1: /* TYPE_SOLID_WOOD */
+                        return that.massUnitStrippedname + '_' + (that.lengthUnitStrippedname === 'ft' ? 'fbm' : that.lengthUnitStrippedname + '3');
+                    case 2: /* TYPE_SHEET_GOOD */
+                    case 3: /* TYPE_DIMENSIONAL */
+                    case 4: /* TYPE_EDGE */
+                    case 6: /* TYPE_VENEER */
+                        return that.massUnitStrippedname + '_' + that.lengthUnitStrippedname + '3';
+                }
+            },
+            enabledUnitsByTypeCallback: function (type) {
+                switch (type) {
+                    case 1: /* TYPE_SOLID_WOOD */
+                        return [ 'kg_m3', 'kg_ft3', 'kg_fbm', 'lb_ft3', 'lb_m3', 'lb_fbm' ];
+                    case 2: /* TYPE_SHEET_GOOD */
+                    case 3: /* TYPE_DIMENSIONAL */
+                    case 4: /* TYPE_EDGE */
+                    case 6: /* TYPE_VENEER */
+                        return [ 'kg_m3', 'kg_ft3', 'kg_i', 'lb_ft3', 'lb_m3', 'lb_i' ];
+                }
+            },
+            inputChangeCallback: inputChangeCallback
+        });
+        $editorStdPrices.ladbEditorStdAttributes({
+            strippedName: 'prices',
+            units: [
+                {
+                    $_m: that.currencySymbol + ' / m',
+                    $_m2: that.currencySymbol + ' / m²',
+                    $_m3: that.currencySymbol + ' / m³',
+                },
+                {
+                    $_fbm: that.currencySymbol + ' / fbm',
+                    $_ft: that.currencySymbol + ' / ft',
+                    $_ft2: that.currencySymbol + ' / ft²',
+                    $_ft3: that.currencySymbol + ' / ft³',
+                },
+                {
+                    $_i: that.currencySymbol + ' / ' + i18next.t('default.instance_single')
+                }
+            ],
+            lengthUnitStrippedname: that.lengthUnitStrippedname,
+            defaultUnitByTypeCallback: function (type) {
+                switch (type) {
+                    case 1: /* TYPE_SOLID_WOOD */
+                        return '$_' + (that.lengthUnitStrippedname === 'ft' ? 'fbm' : that.lengthUnitStrippedname + '3');
+                    case 2: /* TYPE_SHEET_GOOD */
+                    case 6: /* TYPE_VENEER */
+                        return '$_' + that.lengthUnitStrippedname + '2';
+                    case 3: /* TYPE_DIMENSIONAL */
+                    case 4: /* TYPE_EDGE */
+                        return '$_' + that.lengthUnitStrippedname;
+                }
+            },
+            enabledUnitsByTypeCallback: function (type) {
+                switch (type) {
+                    case 1: /* TYPE_SOLID_WOOD */
+                        return [ '$_m3', '$_ft3', '$_fbm' ];
+                    case 2: /* TYPE_SHEET_GOOD */
+                    case 6: /* TYPE_VENEER */
+                        return [ '$_m', '$_m2', '$_m3', '$_ft', '$_ft2', '$_ft3', '$_ft2', '$_i' ];
+                    case 3: /* TYPE_DIMENSIONAL */
+                        return [ '$_m', '$_m2', '$_m3', '$_ft', '$_ft2', '$_ft3', '$_i' ];
+                    case 4: /* TYPE_EDGE */
+                        return [ '$_m', '$_ft', '$_i' ];
+                }
+            },
             inputChangeCallback: inputChangeCallback
         });
 
@@ -1094,7 +1162,7 @@
         })
 
         $btnTabAttributes.on('shown.bs.tab', function () {
-            fnSetStdPricesTypeAndStds();
+            fnSetStdAttributesTypeAndStds();
         });
 
         // Bind select
@@ -1190,7 +1258,7 @@
             inputStdSizes: $inputStdSizes,
             selectGrained: $selectGrained,
             selectEdgeDecremented: $selectEdgeDecremented,
-            inputVolumicMass: $inputVolumicMass,
+            editorStdVolumicMasses: $editorStdVolumicMasses,
             editorStdPrices: $editorStdPrices,
         }
     };

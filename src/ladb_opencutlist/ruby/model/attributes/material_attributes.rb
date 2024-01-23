@@ -19,7 +19,7 @@
 
     DEFAULTS_DICTIONARY = 'materials_material_attributes'.freeze
 
-    attr_accessor :uuid, :type, :description, :url, :thickness, :length_increase, :width_increase, :thickness_increase, :std_lengths, :std_widths, :std_thicknesses, :std_sections, :std_sizes, :grained, :edge_decremented, :volumic_mass, :std_prices
+    attr_accessor :uuid, :type, :description, :url, :thickness, :length_increase, :width_increase, :thickness_increase, :std_lengths, :std_widths, :std_thicknesses, :std_sections, :std_sizes, :grained, :edge_decremented, :volumic_mass, :std_volumic_masses, :std_prices
     attr_reader :material
 
     @@cached_uuids = {}
@@ -321,6 +321,55 @@
       { :unit => unit, :val => val }
     end
 
+    def std_volumic_masses
+      case @type
+      when TYPE_SOLID_WOOD, TYPE_SHEET_GOOD, TYPE_DIMENSIONAL, TYPE_EDGE, TYPE_VENEER
+        @std_volumic_masses
+      else
+        Plugin.instance.get_app_defaults(DEFAULTS_DICTIONARY, @type)['std_volumic_masses']
+      end
+    end
+
+    def h_std_volumic_masses
+
+      # Returns an array like [ { :unit => STRING_UNIT, :val => FLOAT }, { :unit => STRING_UNIT, :val => FLOAT , :dim => [ LENGTH or SIZE, ... ]}, ... ]
+
+      # Setup return array with default value first
+      std_volumic_masses = [ h_volumic_mass ] # h_volumic_mass call for backward compatibility
+
+      if @std_volumic_masses.is_a?(Array)
+        @std_volumic_masses.each do |std_volumic_mass|
+
+          if std_volumic_mass['dim'].nil?
+            unit, val = UnitUtils.split_unit_and_value(std_volumic_mass['val'])
+            std_volumic_masses[0][:unit] = unit
+            std_volumic_masses[0][:val] = val
+          elsif !std_volumic_mass['dim'].is_a?(String)
+            next
+          else
+            dim = []
+            a = std_volumic_mass['dim'].split(';')
+            a.each { |d|
+              unless d.nil?
+                if d.index('x').nil?
+                  dim << d.to_f.to_l
+                else
+                  dim << Size2d.new(d.split('x').map { |l| l.to_f })
+                end
+              end
+            }
+            if dim.length > 0
+              unit, val = UnitUtils.split_unit_and_value(std_volumic_mass['val'])
+              std_volumic_masses << { :unit => unit, :val => val, :dim => dim }
+            end
+          end
+
+        end
+      end
+
+      std_volumic_masses
+    end
+
     def std_prices
       case @type
         when TYPE_SOLID_WOOD, TYPE_SHEET_GOOD, TYPE_DIMENSIONAL, TYPE_EDGE, TYPE_VENEER
@@ -407,7 +456,8 @@
         @std_sizes = Plugin.instance.get_attribute(@material, 'std_sizes', defaults['std_sizes'])
         @grained = Plugin.instance.get_attribute(@material, 'grained', defaults['grained'])
         @edge_decremented = Plugin.instance.get_attribute(@material, 'edge_decremented', defaults['edge_decremented'])
-        @volumic_mass = Plugin.instance.get_attribute(@material, 'volumic_mass', defaults['volumic_mass'])
+        @volumic_mass = Plugin.instance.get_attribute(@material, 'volumic_mass', defaults['volumic_mass'])  # Deprecated
+        @std_volumic_masses = Plugin.instance.get_attribute(@material, 'std_volumic_masses', defaults['std_volumic_masses'])
         @std_prices = Plugin.instance.get_attribute(@material, 'std_prices', defaults['std_prices'])
       else
         @description = ''
@@ -437,7 +487,7 @@
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_sizes', DimensionUtils.instance.dxd_add_units(@std_sizes))
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'grained', @grained)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'edge_decremented', @edge_decremented)
-        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'volumic_mass', @volumic_mass)
+        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_volumic_masses', @std_volumic_masses.to_json)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_prices', @std_prices.to_json)
       end
     end

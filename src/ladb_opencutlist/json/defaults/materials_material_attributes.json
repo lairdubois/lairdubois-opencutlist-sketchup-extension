@@ -22,7 +22,7 @@
     "std_sizes": "",
     "grained": false,
     "edge_decremented": false,
-    "volumic_mass": "",
+    "std_volumic_masses": [],
     "std_prices": []
   },
   "1": {  /* TYPE_SOLID_WOOD */
@@ -37,7 +37,7 @@
     "std_sizes": "",
     "grained": true,
     "edge_decremented": false,
-    "volumic_mass": "",
+    "std_volumic_masses": [],
     "std_prices": []
   },
   "2": {  /* TYPE_SHEET_GOOD */
@@ -52,7 +52,7 @@
     "std_sizes": { "metric": "2800mm x 2070mm;2500mm x 1250mm;2440mm x 1220mm;", "imperial": "96\" x 48\"; 47.75\" x 23.75\"" },
     "grained": true,
     "edge_decremented": false,
-    "volumic_mass": "",
+    "std_volumic_masses": [],
     "std_prices": []
   },
   "3": {  /* TYPE_DIMENSIONAL */
@@ -67,7 +67,7 @@
     "std_sizes": "",
     "grained": false,
     "edge_decremented": false,
-    "volumic_mass": "",
+    "std_volumic_masses": [],
     "std_prices": []
   },
   "4": {  /* TYPE_EDGE */
@@ -82,7 +82,7 @@
     "std_sizes": "",
     "grained": false,
     "edge_decremented": true,
-    "volumic_mass": "",
+    "std_volumic_masses": [],
     "std_prices": []
   },
   "5": {  /* TYPE_HARDWARE */
@@ -97,7 +97,7 @@
     "std_sizes": "",
     "grained": false,
     "edge_decremented": false,
-    "volumic_mass": "",
+    "std_volumic_masses": [],
     "std_prices": []
   },
   "6": {  /* TYPE_VENEER */
@@ -112,7 +112,7 @@
     "std_sizes": { "metric": "2800mm x 2070mm", "imperial": "96\" x 48\"" },
     "grained": true,
     "edge_decremented": true,
-    "volumic_mass": "",
+    "std_volumic_masses": [],
     "std_prices": []
   }
 }

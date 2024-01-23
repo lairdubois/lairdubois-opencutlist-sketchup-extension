@@ -143,15 +143,12 @@
         <div role="tabpanel" class="tab-pane{% if tab == 'attributes' %} active{% endif %}" id="tab_edit_material_general_attributes" style="margin-top: 15px;">
             <div class="form form-horizontal" style="margin-top: 25px;">
                 <div class="form-group">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.materials.edit_material.volumic_mass_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label for="ladb_materials_input_volumic_mass" class="control-label col-xs-6">{{ 'tab.materials.edit_material.volumic_mass'|i18next }}</label>
-                    <div class="col-xs-5">
-                        <input type="text" class="form-control text-right" id="ladb_materials_input_volumic_mass">
-                    </div>
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.materials.edit_material.std_volumic_masses_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    {% include 'components/_editor-std-attributes.twig' with { 'id':'ladb_materials_editor_std_volumic_masses', 'strippedName':'volumic_masses' } %}
                 </div>
                 <div class="form-group">
                     <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.materials.edit_material.std_prices_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    {% include 'components/_editor-std-prices.twig' with { 'id':'ladb_materials_editor_std_prices' } %}
+                    {% include 'components/_editor-std-attributes.twig' with { 'id':'ladb_materials_editor_std_prices', 'strippedName':'prices' } %}
                 </div>
             </div>
         </div>

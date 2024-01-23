@@ -1,8 +1,8 @@
-<div class="ladb-editor-std-prices-row row">
+<div class="ladb-editor-std-attributes-row row">
     <div class="col-xs-6 col-xs-push-6">
         <input type="text" class="form-control text-right">
     </div>
-    <select class="col-xs-6 col-xs-pull-6 ladb-editor-std-prices-select-dim" title="{{ 'tab.materials.edit_material.std_prices_dim_placeholder'|i18next }}">
+    <select class="col-xs-6 col-xs-pull-6 ladb-editor-std-attributes-select-dim" title="{{ 'tab.materials.edit_material.std_attributes_dim_placeholder'|i18next }}">
         {% for stdAK, stdAV in stdsA %}
             {% if stdsB|length > 1 and not loop.first %}<option data-divider="true">{% endif %}
             {% for stdBK, stdBV in stdsB %}
@@ -12,6 +12,6 @@
         {% endfor %}
     </select>
     <div class="ladb-minitools">
-        <a href="#" class="ladb-editor-std-prices-row-remove"><i class="ladb-opencutlist-icon-clear"></i></a>
+        <a href="#" class="ladb-editor-std-attributes-row-remove"><i class="ladb-opencutlist-icon-clear"></i></a>
     </div>
 </div>
