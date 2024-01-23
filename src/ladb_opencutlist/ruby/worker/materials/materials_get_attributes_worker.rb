@@ -30,6 +30,7 @@ module Ladb::OpenCutList
           :std_sizes => [],
           :grained => false,
           :edge_decremented => false,
+          :raw_estimated => true,
       }
 
       # Fetch material
@@ -51,6 +52,7 @@ module Ladb::OpenCutList
         response[:std_sizes] = material_attributes.std_sizes
         response[:grained] = material_attributes.grained
         response[:edge_decremented] = material_attributes.edge_decremented
+        response[:raw_estimated] = material_attributes.raw_estimated
 
       end
 

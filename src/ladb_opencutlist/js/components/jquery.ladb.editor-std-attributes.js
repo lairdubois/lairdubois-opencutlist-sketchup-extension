@@ -229,11 +229,8 @@
 
         this.defaultUnit = this.options.defaultUnitByTypeCallback(this.type);
 
-        console.log('defaultUnit = ', this.defaultUnit);
-
         this.enabledUnits = [];
         var enabledUnitKeys = this.options.enabledUnitsByTypeCallback(this.type);
-        console.log('enabledUnitKeys = ', enabledUnitKeys);
         if (enabledUnitKeys) {
             $.each(this.options.units, function (index, unitGroup) {
                 var g = {};

@@ -106,8 +106,8 @@
 
         {% for group in report.groups %}
 
-            {% set foldableRow = group.material_type == 2 or group.material_type == 3 or group.material_type == 4 or group.material_type == 5 or group.material_type == 6 %}    {# 2 = TYPE_SHEET_GOOD, 3 = TYPE_DIMENSIONAL, 4 = TYPE_EDGE, 5 = TYPE_HARDWARE, 6 = TYPE_VENEER #}
-            {% set editableRow = group.material_type == 1 or group.material_type == 2 or group.material_type == 3 or group.material_type == 4 or group.material_type == 6 %}    {# 1 = TYPE_SOLID_WOOD, 2 = TYPE_SHEET_GOOD, 3 = TYPE_DIMENSIONAL, 4 = TYPE_EDGE, 6 = TYPE_VENEER #}
+            {% set foldableGroup = group.material_type == 2 or group.material_type == 3 or group.material_type == 4 or group.material_type == 5 or group.material_type == 6 %}    {# 2 = TYPE_SHEET_GOOD, 3 = TYPE_DIMENSIONAL, 4 = TYPE_EDGE, 5 = TYPE_HARDWARE, 6 = TYPE_VENEER #}
+            {% set editableGroup = group.material_type == 1 or group.material_type == 2 or group.material_type == 3 or group.material_type == 4 or group.material_type == 6 %}    {# 1 = TYPE_SOLID_WOOD, 2 = TYPE_SHEET_GOOD, 3 = TYPE_DIMENSIONAL, 4 = TYPE_EDGE, 6 = TYPE_VENEER #}
 
             <table data-group-id="{{ group.material_type }}" class="table table-bordered ladb-cutlist-group ladb-material-type-{{ group.material_type }}">
                 <thead>
@@ -181,6 +181,7 @@
                 </thead>
                 <tbody>
                     {% for entry in group.entries %}
+                        {% set foldableRow = foldableGroup and entry.total_count is defined and entry.total_count > 0 %}
                         <tr id="ladb_entry_{{ entry.id }}" class="ladb-cutlist-row ladb-minitools-holder{% if foldableRow %} ladb-cutlist-row-folder{% endif %}" data-entry-id="{{ entry.id }}">
                             <td>
                                 <div class="ladb-minitools ladb-minitools-right no-print">
@@ -194,13 +195,13 @@
                                     {% if entry.material_url is not empty %}
                                         <a href="{{ entry.material_url }}" class="ladb-btn-open-material-url" data-toggle="tooltip" title="{{ 'tab.materials.tooltip.open_url'|i18next }}"><i class="ladb-opencutlist-icon-link"></i></a>
                                     {% endif %}
-                                    {% if group.material_type == 2 or group.material_type == 6 %} {# 2 = TYPE_SOLID_WOOD, 6 = TYPE_VENEER #}
+                                    {% if foldableRow and (group.material_type == 2 or group.material_type == 6) %} {# 2 = TYPE_SOLID_WOOD, 6 = TYPE_VENEER #}
                                         <a href="#" class="ladb-btn-cuttingdiagram-2d" data-group-id="{{ entry.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.setup_group_cuttingdiagram'|i18next({ 'material_name':entry.material_display_name, 'std_dimension':entry.std_dimension }) }}..."><i class="ladb-opencutlist-icon-cuttingdiagram2d"></i></a>
                                     {% endif %}
-                                    {% if group.material_type == 3 or group.material_type == 4 %} {# 3 = TYPE_DIMENSIONAL, 4 = TYPE_EDGE #}
+                                    {% if foldableRow and (group.material_type == 3 or group.material_type == 4) %} {# 3 = TYPE_DIMENSIONAL, 4 = TYPE_EDGE #}
                                         <a href="#" class="ladb-btn-cuttingdiagram-1d" data-group-id="{{ entry.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.setup_group_cuttingdiagram'|i18next({ 'material_name':entry.material_display_name, 'std_dimension':entry.std_dimension }) }}..."><i class="ladb-opencutlist-icon-cuttingdiagram1d"></i></a>
                                     {% endif %}
-                                    {% if editableRow %}
+                                    {% if editableGroup %}
                                         <a href="#" class="ladb-btn-edit-material" data-material-id="{{ entry.material_id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edit_material'|i18next({ 'material_name':entry.material_display_name }) }}..."><i class="ladb-opencutlist-icon-edit"></i></a>
                                     {% endif %}
                                 </div>
@@ -213,15 +214,15 @@
                                 <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ entry.total_used_volume }}</td>
                                 <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ entry.total_volume }}</td>
                             {% elseif group.material_type == 2 %} {# 2 = TYPE_SHEET_GOOD #}
-                                <td class="text-center">{{ entry.total_count }}</td>
+                                <td class="text-center">{{ entry.total_count|default('-') }}</td>
                                 <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ entry.total_used_area|default('-') }}</td>
                                 <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ entry.total_area|default('-') }}</td>
                             {% elseif group.material_type == 3 %} {# 3 = TYPE_DIMENSIONAL #}
-                                <td class="text-center">{{ entry.total_count }}</td>
+                                <td class="text-center">{{ entry.total_count|default('-') }}</td>
                                 <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ entry.total_used_length|default('-') }}</td>
                                 <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ entry.total_length|default('-') }}</td>
                             {% elseif group.material_type == 4 %} {# 4 = TYPE_EDGE #}
-                                <td class="text-center">{{ entry.total_count }}</td>
+                                <td class="text-center">{{ entry.total_count|default('-') }}</td>
                                 <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ entry.total_used_length|default('-') }}</td>
                                 <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ entry.total_length|default('-') }}</td>
                             {% elseif group.material_type == 5 %} {# 5 = TYPE_HARDWARE #}
@@ -229,14 +230,14 @@
                                 <td class="text-center">{{ entry.total_used_instance_count }}</td>
                                 <td class="text-center">{{ entry.total_instance_count }}</td>
                             {% elseif group.material_type == 6 %} {# 6 = TYPE_VENEER #}
-                                <td class="text-center">{{ entry.total_count }}</td>
+                                <td class="text-center">{{ entry.total_count|default('-') }}</td>
                                 <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ entry.total_used_area|default('-') }}</td>
                                 <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ entry.total_area|default('-') }}</td>
                             {% endif %}
-                            <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if entry.volumic_mass is defined %} data-toggle="tooltip" title="{{ entry.volumic_mass }}"{% endif %}>{{ entry.total_used_mass|default('-') }}</td>
-                            <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if entry.volumic_mass is defined %} data-toggle="tooltip" title="{{ entry.volumic_mass }}"{% endif %}>{{ entry.total_mass|default('-') }}</td>
-                            <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if entry.std_price is defined %} data-toggle="tooltip" title="{{ entry.std_price }}"{% endif %}>{{ entry.total_used_cost|default('-') }}</td>
-                            <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if entry.std_price is defined %} data-toggle="tooltip" title="{{ entry.std_price }}"{% endif %}>{{ entry.total_cost|default('-') }}</td>
+                            <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if entry.std_volumic_mass %} data-toggle="tooltip" title="{{ entry.std_volumic_mass }}"{% endif %}>{{ entry.total_used_mass|default('-') }}</td>
+                            <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if entry.std_volumic_mass %} data-toggle="tooltip" title="{{ entry.std_volumic_mass }}"{% endif %}>{{ entry.total_mass|default('-') }}</td>
+                            <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if entry.std_price %} data-toggle="tooltip" title="{{ entry.std_price }}"{% endif %}>{{ entry.total_used_cost|default('-') }}</td>
+                            <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if entry.std_price %} data-toggle="tooltip" title="{{ entry.std_price }}"{% endif %}>{{ entry.total_cost|default('-') }}</td>
                         </tr>
                         {% for error in entry.errors %}
                             <tr class="ladb-cutlist-row ladb-cutlist-row-child ladb-cutlist-row-error" data-folder-id="{{ entry.id }}">
@@ -250,8 +251,8 @@
                                     <td class="text-center">{{ sheet.count }}</td>
                                     <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ sheet.total_used_area }}</td>
                                     <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ sheet.total_area }}</td>
-                                    <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if entry.volumic_mass is defined %} data-toggle="tooltip" title="{{ sheet.volumic_mass }}"{% endif %}>{{ sheet.total_used_mass|default('-') }}</td>
-                                    <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if entry.volumic_mass is defined %} data-toggle="tooltip" title="{{ sheet.volumic_mass }}"{% endif %}>{{ sheet.total_mass|default('-') }}</td>
+                                    <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if sheet.std_volumic_mass %} data-toggle="tooltip" title="{{ sheet.std_volumic_mass }}"{% endif %}>{{ sheet.total_used_mass|default('-') }}</td>
+                                    <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if sheet.std_volumic_mass %} data-toggle="tooltip" title="{{ sheet.std_volumic_mass }}"{% endif %}>{{ sheet.total_mass|default('-') }}</td>
                                     <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if sheet.std_price %} data-toggle="tooltip" title="{{ sheet.std_price }}"{% endif %}>{{ sheet.total_used_cost|default('-') }}</td>
                                     <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if sheet.std_price %} data-toggle="tooltip" title="{{ sheet.std_price }}"{% endif %}>{{ sheet.total_cost|default('-') }}</td>
                                 </tr>
@@ -263,8 +264,8 @@
                                     <td class="text-center">{{ bar.count }}</td>
                                     <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ bar.total_used_length }}</td>
                                     <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ bar.total_length }}</td>
-                                    <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if entry.volumic_mass is defined %} data-toggle="tooltip" title="{{ bar.volumic_mass }}"{% endif %}>{{ bar.total_used_mass|default('-') }}</td>
-                                    <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if entry.volumic_mass is defined %} data-toggle="tooltip" title="{{ bar.volumic_mass }}"{% endif %}>{{ bar.total_mass|default('-') }}</td>
+                                    <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if bar.std_volumic_mass %} data-toggle="tooltip" title="{{ bar.std_volumic_mass }}"{% endif %}>{{ bar.total_used_mass|default('-') }}</td>
+                                    <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if bar.std_volumic_mass %} data-toggle="tooltip" title="{{ bar.std_volumic_mass }}"{% endif %}>{{ bar.total_mass|default('-') }}</td>
                                     <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if bar.std_price %} data-toggle="tooltip" title="{{ bar.std_price }}"{% endif %}>{{ bar.total_used_cost|default('-') }}</td>
                                     <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if bar.std_price %} data-toggle="tooltip" title="{{ bar.std_price }}"{% endif %}>{{ bar.total_cost|default('-') }}</td>
                                 </tr>
@@ -276,8 +277,8 @@
                                     <td class="text-center">{{ bar.count }}</td>
                                     <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ bar.total_used_length }}</td>
                                     <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ bar.total_length }}</td>
-                                    <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if entry.volumic_mass is defined %} data-toggle="tooltip" title="{{ bar.volumic_mass }}"{% endif %}>{{ bar.total_used_mass|default('-') }}</td>
-                                    <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if entry.volumic_mass is defined %} data-toggle="tooltip" title="{{ bar.volumic_mass }}"{% endif %}>{{ bar.total_mass|default('-') }}</td>
+                                    <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if bar.std_volumic_mass %} data-toggle="tooltip" title="{{ bar.std_volumic_mass }}"{% endif %}>{{ bar.total_used_mass|default('-') }}</td>
+                                    <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if bar.std_volumic_mass %} data-toggle="tooltip" title="{{ bar.std_volumic_mass }}"{% endif %}>{{ bar.total_mass|default('-') }}</td>
                                     <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if bar.std_price %} data-toggle="tooltip" title="{{ bar.std_price }}"{% endif %}>{{ bar.total_used_cost|default('-') }}</td>
                                     <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if bar.std_price %} data-toggle="tooltip" title="{{ bar.std_price }}"{% endif %}>{{ bar.total_cost|default('-') }}</td>
                                 </tr>
@@ -313,8 +314,8 @@
                                     <td class="text-center">{{ sheet.count }}</td>
                                     <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ sheet.total_used_area }}</td>
                                     <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ sheet.total_area }}</td>
-                                    <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if entry.volumic_mass is defined %} data-toggle="tooltip" title="{{ sheet.volumic_mass }}"{% endif %}>{{ sheet.total_used_mass|default('-') }}</td>
-                                    <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if entry.volumic_mass is defined %} data-toggle="tooltip" title="{{ sheet.volumic_mass }}"{% endif %}>{{ sheet.total_mass|default('-') }}</td>
+                                    <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if sheet.std_volumic_mass %} data-toggle="tooltip" title="{{ sheet.std_volumic_mass }}"{% endif %}>{{ sheet.total_used_mass|default('-') }}</td>
+                                    <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if sheet.std_volumic_mass %} data-toggle="tooltip" title="{{ sheet.std_volumic_mass }}"{% endif %}>{{ sheet.total_mass|default('-') }}</td>
                                     <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if sheet.std_price %} data-toggle="tooltip" title="{{ sheet.std_price }}"{% endif %}>{{ sheet.total_used_cost|default('-') }}</td>
                                     <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if sheet.std_price %} data-toggle="tooltip" title="{{ sheet.std_price }}"{% endif %}>{{ sheet.total_cost|default('-') }}</td>
                                 </tr>
@@ -327,15 +328,15 @@
                             <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ group.total_used_volume }}</td>
                             <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ group.total_volume }}</td>
                         {% elseif group.material_type == 2 %} {# 2 = TYPE_SHEET_GOOD #}
-                            <td class="text-center">{{ group.total_count }}</td>
+                            <td class="text-center">{{ group.total_count|default('-') }}</td>
                             <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ group.total_used_area }}</td>
                             <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ group.total_area }}</td>
                         {% elseif group.material_type == 3 %} {# 3 = TYPE_DIMENSIONAL #}
-                            <td class="text-center">{{ group.total_count }}</td>
+                            <td class="text-center">{{ group.total_count|default('-') }}</td>
                             <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ group.total_used_length }}</td>
                             <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ group.total_length }}</td>
                         {% elseif group.material_type == 4 %} {# 4 = TYPE_EDGE #}
-                            <td class="text-center">{{ group.total_count }}</td>
+                            <td class="text-center">{{ group.total_count|default('-') }}</td>
                             <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ group.total_used_length }}</td>
                             <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ group.total_length }}</td>
                         {% elseif group.material_type == 5 %} {# 5 = TYPE_HARDWARE #}
@@ -343,7 +344,7 @@
                             <td class="text-center">{{ group.total_used_instance_count }}</td>
                             <td class="text-center">{{ group.total_instance_count }}</td>
                         {% elseif group.material_type == 6 %} {# 6 = TYPE_VENEER #}
-                            <td class="text-center">{{ group.total_count }}</td>
+                            <td class="text-center">{{ group.total_count|default('-') }}</td>
                             <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ group.total_used_area }}</td>
                             <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ group.total_area }}</td>
                         {% endif %}

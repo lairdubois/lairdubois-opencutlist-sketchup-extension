@@ -43,12 +43,12 @@ module Ladb::OpenCutList
 
   class SolidWoodReportEntryDef < AbstractReportEntryDef
 
-    attr_accessor :volumic_mass, :std_price, :total_volume, :total_used_volume
+    attr_accessor :std_volumic_mass, :std_price, :total_volume, :total_used_volume
 
     def initialize(cutlist_group)
       super(cutlist_group)
 
-      @volumic_mass = nil
+      @std_volumic_mass = nil
       @std_price = nil
 
       @total_volume = 0
@@ -92,13 +92,13 @@ module Ladb::OpenCutList
 
   class SheetGoodReportEntrySheetDef < AbstractReportItemDef
 
-    attr_accessor :volumic_mass, :std_price, :count, :total_area, :total_used_area
+    attr_accessor :std_volumic_mass, :std_price, :count, :total_area, :total_used_area
     attr_reader :type, :length, :width
 
     def initialize(cuttingdiagram2d_sheet)
       super()
 
-      @volumic_mass = nil
+      @std_volumic_mass = nil
       @std_price = nil
 
       @type = cuttingdiagram2d_sheet.def.type
@@ -147,13 +147,13 @@ module Ladb::OpenCutList
 
   class DimensionalReportEntryBarDef < AbstractReportItemDef
 
-    attr_accessor :volumic_mass, :std_price, :count, :total_length, :total_used_length
+    attr_accessor :std_volumic_mass, :std_price, :count, :total_length, :total_used_length
     attr_reader :type, :length
 
     def initialize(cuttingdiagram1d_bar)
       super()
 
-      @volumic_mass = nil
+      @std_volumic_mass = nil
       @std_price = nil
 
       @type = cuttingdiagram1d_bar.def.type
@@ -201,13 +201,13 @@ module Ladb::OpenCutList
 
   class EdgeReportEntryBarDef < AbstractReportItemDef
 
-    attr_accessor :volumic_mass, :std_price, :count, :total_length, :total_used_length
+    attr_accessor :std_volumic_mass, :std_price, :count, :total_length, :total_used_length
     attr_reader :type, :length
 
     def initialize(cuttingdiagram1d_bar)
       super()
 
-      @volumic_mass = nil
+      @std_volumic_mass = nil
       @std_price = nil
 
       @type = cuttingdiagram1d_bar.def.type
@@ -308,13 +308,13 @@ module Ladb::OpenCutList
 
   class VeneerReportEntrySheetDef < AbstractReportItemDef
 
-    attr_accessor :volumic_mass, :std_price, :count, :total_area, :total_used_area
+    attr_accessor :std_volumic_mass, :std_price, :count, :total_area, :total_used_area
     attr_reader :type, :length, :width
 
     def initialize(cuttingdiagram2d_sheet)
       super()
 
-      @volumic_mass = nil
+      @std_volumic_mass = nil
       @std_price = nil
 
       @type = cuttingdiagram2d_sheet.def.type

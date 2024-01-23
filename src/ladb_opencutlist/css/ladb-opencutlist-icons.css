@@ -43,6 +43,12 @@ i, span.ladb-opencutlist-icon:before {
 }
 
 
+.ladb-opencutlist-icon-raw-estimated-0:before {
+  content: "\e9ab";
+}
+.ladb-opencutlist-icon-raw-estimated-1:before {
+  content: "\e9ac";
+}
 .ladb-opencutlist-icon-3d:before {
   content: "\e9a9";
 }

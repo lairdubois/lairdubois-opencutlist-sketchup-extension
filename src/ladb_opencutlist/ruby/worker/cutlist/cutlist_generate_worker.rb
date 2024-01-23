@@ -646,7 +646,7 @@ module Ladb::OpenCutList
                   edge_cutting_length = edge_length + edge_material_attributes.l_length_increase
                   edge_group_def.total_cutting_length += edge_cutting_length
                   edge_group_def.total_cutting_area += edge_cutting_length * edge_group_def.std_width
-                  edge_group_def.total_cutting_volume += edge_cutting_length * edge_group_def.std_thickness
+                  edge_group_def.total_cutting_volume += edge_cutting_length * edge_group_def.std_width * edge_group_def.std_thickness
                   _populate_edge_part_def(part_def, edge, edge_group_def, edge_length, edge_cutting_length.to_l, edge_group_def.std_width, edge_group_def.std_thickness)
                 end
               }
@@ -657,7 +657,7 @@ module Ladb::OpenCutList
                   edge_cutting_length = edge_length + edge_material_attributes.l_length_increase
                   edge_group_def.total_cutting_length += edge_cutting_length
                   edge_group_def.total_cutting_area += edge_cutting_length * edge_group_def.std_width
-                  edge_group_def.total_cutting_volume += edge_cutting_length * edge_group_def.std_thickness
+                  edge_group_def.total_cutting_volume += edge_cutting_length * edge_group_def.std_width * edge_group_def.std_thickness
                   _populate_edge_part_def(part_def, edge, edge_group_def, edge_length, edge_cutting_length.to_l, edge_group_def.std_width, edge_group_def.std_thickness)
                 end
               }
@@ -690,7 +690,7 @@ module Ladb::OpenCutList
                   veneer_cutting_width = veneer_width + veneer_material_attributes.l_width_increase
                   veneer_group_def.total_cutting_length += veneer_cutting_length
                   veneer_group_def.total_cutting_area += veneer_cutting_length * veneer_cutting_width
-                  veneer_group_def.total_cutting_volume += veneer_cutting_length * veneer_group_def.std_thickness
+                  veneer_group_def.total_cutting_volume += veneer_cutting_length * veneer_cutting_width * veneer_group_def.std_thickness
                   _populate_veneer_part_def(part_def, veneer, veneer_group_def, veneer_length, veneer_width, veneer_cutting_length.to_l, veneer_cutting_width.to_l, veneer_group_def.std_thickness)
                 end
               }

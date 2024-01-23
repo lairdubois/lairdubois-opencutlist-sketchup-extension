@@ -25,6 +25,9 @@
                         {% elseif material.attributes.type == 4 and material.attributes.edge_decremented %}  {# 2 = TYPE_EDGE #}
                             <i class="ladb-opencutlist-icon-edge-decremented" data-toggle='tooltip' title="{{ 'tab.materials.edit_material.edge_decremented_1'|i18next }}"></i>
                         {% endif %}
+                        {% if not material.attributes.raw_estimated  %}
+                            <i class="ladb-opencutlist-icon-raw-estimated-0" data-toggle='tooltip' title="{{ 'tab.materials.tooltip.raw_estimated_0'|i18next }}"></i>
+                        {% endif %}
                         {{ material.display_name|escape }}
                         {% if material.attributes.description is not empty %}
                             <div class="ladb-tiny">{{ material.attributes.description|nl2br|truncate(25) }}</div>

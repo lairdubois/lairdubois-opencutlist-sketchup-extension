@@ -22,6 +22,7 @@
     "std_sizes": "",
     "grained": false,
     "edge_decremented": false,
+    "raw_estimated": true,
     "std_volumic_masses": [],
     "std_prices": []
   },
@@ -37,6 +38,7 @@
     "std_sizes": "",
     "grained": true,
     "edge_decremented": false,
+    "raw_estimated": true,
     "std_volumic_masses": [],
     "std_prices": []
   },
@@ -52,6 +54,7 @@
     "std_sizes": { "metric": "2800mm x 2070mm;2500mm x 1250mm;2440mm x 1220mm;", "imperial": "96\" x 48\"; 47.75\" x 23.75\"" },
     "grained": true,
     "edge_decremented": false,
+    "raw_estimated": true,
     "std_volumic_masses": [],
     "std_prices": []
   },
@@ -67,6 +70,7 @@
     "std_sizes": "",
     "grained": false,
     "edge_decremented": false,
+    "raw_estimated": true,
     "std_volumic_masses": [],
     "std_prices": []
   },
@@ -82,6 +86,7 @@
     "std_sizes": "",
     "grained": false,
     "edge_decremented": true,
+    "raw_estimated": true,
     "std_volumic_masses": [],
     "std_prices": []
   },
@@ -97,6 +102,7 @@
     "std_sizes": "",
     "grained": false,
     "edge_decremented": false,
+    "raw_estimated": false,
     "std_volumic_masses": [],
     "std_prices": []
   },
@@ -111,7 +117,8 @@
     "std_sections": "",
     "std_sizes": { "metric": "2800mm x 2070mm", "imperial": "96\" x 48\"" },
     "grained": true,
-    "edge_decremented": true,
+    "edge_decremented": false,
+    "raw_estimated": false,
     "std_volumic_masses": [],
     "std_prices": []
   }

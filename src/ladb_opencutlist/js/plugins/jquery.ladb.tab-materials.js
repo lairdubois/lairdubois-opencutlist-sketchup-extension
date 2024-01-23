@@ -197,6 +197,7 @@
                     std_sizes: $inputs.inputStdSizes.ladbTextinputTokenfield('getValidTokensList'),
                     grained: $inputs.selectGrained.val() === '1',
                     edge_decremented: $inputs.selectEdgeDecremented.val() === '1',
+                    raw_estimated: $inputs.selectRawEstimated.val() === '1',
                     std_volumic_masses: $inputs.editorStdVolumicMasses.ladbEditorStdAttributes('getStdAttributes'),
                     std_prices: $inputs.editorStdPrices.ladbEditorStdAttributes('getStdAttributes')
                 }
@@ -304,6 +305,7 @@
                 attributes.std_sizes = $inputs.inputStdSizes.ladbTextinputTokenfield('getValidTokensList');
                 attributes.grained = $inputs.selectGrained.val() === '1';
                 attributes.edge_decremented = $inputs.selectEdgeDecremented.val() === '1';
+                attributes.raw_estimated = $inputs.selectRawEstimated.val() === '1';
                 attributes.std_volumic_masses = $inputs.editorStdVolumicMasses.ladbEditorStdAttributes('getStdAttributes');
                 attributes.std_prices = $inputs.editorStdPrices.ladbEditorStdAttributes('getStdAttributes');
             };
@@ -862,6 +864,7 @@
 
         // Fetch UI elements
         var $tabs = $('section a[data-toggle="tab"]', $modal);
+        var $navTabEstimateOptions = $('#nav_tab_edit_material_general_estimate_options', $modal);
         var $widgetPreset = $('.ladb-widget-preset', $modal);
         var $btnTabAttributes = $('#ladb_materials_btn_tab_general_attributes', $modal);
         var $inputName = $('#ladb_materials_input_name', $modal);
@@ -882,6 +885,7 @@
         var $inputStdSizes = $('#ladb_materials_input_std_sizes', $modal);
         var $selectGrained = $('#ladb_materials_select_grained', $modal);
         var $selectEdgeDecremented = $('#ladb_materials_select_edge_decremented', $modal);
+        var $selectRawEstimated = $('#ladb_materials_select_raw_estimated', $modal);
         var $editorStdVolumicMasses = $('#ladb_materials_editor_std_volumic_masses', $modal);
         var $editorStdPrices = $('#ladb_materials_editor_std_prices', $modal);
 
@@ -905,6 +909,7 @@
             fnFetchStds(options);
             options.grained = $selectGrained.val() === '1';
             options.edge_decremented = $selectEdgeDecremented.val() === '1';
+            options.raw_estimated = $selectRawEstimated.val() === '1';
             options.std_volumic_masses = $editorStdVolumicMasses.ladbEditorStdAttributes('getStdAttributes');
             options.std_prices = $editorStdPrices.ladbEditorStdAttributes('getStdAttributes');
         };
@@ -924,6 +929,7 @@
             fnSetTokens($inputStdSizes, options.std_sizes);
             $selectGrained.selectpicker('val', options.grained ? '1' : '0');
             $selectEdgeDecremented.selectpicker('val', options.edge_decremented ? '1' : '0');
+            $selectRawEstimated.selectpicker('val', options.raw_estimated ? '1' : '0');
             fnSetStdAttributesTypeAndStds();
             $editorStdVolumicMasses.ladbEditorStdAttributes('setStdAttributes', [ options.std_volumic_masses ]);
             $editorStdPrices.ladbEditorStdAttributes('setStdAttributes', [ options.std_prices ]);
@@ -949,6 +955,10 @@
                     break;
                 case 1:   // TYPE_SOLID_WOOD
                     $inputThickness.closest('section').show();
+                    $navTabEstimateOptions.hide();
+                    if (that.lastMaterialPropertiesTab === 'estimate_options') {
+                        $tabs.first().click();
+                    }
                     $inputThickness.closest('.form-group').hide();
                     $inputLengthIncrease.closest('.form-group').show();
                     $inputWidthIncrease.closest('.form-group').show();
@@ -960,11 +970,13 @@
                     $inputStdSizes.closest('.form-group').hide();
                     $selectGrained.closest('.form-group').hide();
                     $selectEdgeDecremented.closest('.form-group').hide();
+                    $selectRawEstimated.closest('.form-group').hide();
                     $editorStdVolumicMasses.closest('.form-group').show();
                     $editorStdPrices.closest('.form-group').show();
                     break;
                 case 2:   // TYPE_SHEET_GOOD
                     $inputThickness.closest('section').show();
+                    $navTabEstimateOptions.show();
                     $inputThickness.closest('.form-group').hide();
                     $inputLengthIncrease.closest('.form-group').show();
                     $inputWidthIncrease.closest('.form-group').show();
@@ -976,11 +988,13 @@
                     $inputStdSizes.closest('.form-group').show();
                     $selectGrained.closest('.form-group').show();
                     $selectEdgeDecremented.closest('.form-group').hide();
+                    $selectRawEstimated.closest('.form-group').show();
                     $editorStdVolumicMasses.closest('.form-group').show();
                     $editorStdPrices.closest('.form-group').show();
                     break;
                 case 3:   // TYPE_DIMENSIONAL
                     $inputThickness.closest('section').show();
+                    $navTabEstimateOptions.show();
                     $inputThickness.closest('.form-group').hide();
                     $inputLengthIncrease.closest('.form-group').show();
                     $inputWidthIncrease.closest('.form-group').hide();
@@ -992,11 +1006,13 @@
                     $inputStdSizes.closest('.form-group').hide();
                     $selectGrained.closest('.form-group').hide();
                     $selectEdgeDecremented.closest('.form-group').hide();
+                    $selectRawEstimated.closest('.form-group').show();
                     $editorStdVolumicMasses.closest('.form-group').show();
                     $editorStdPrices.closest('.form-group').show();
                     break;
                 case 4:   // TYPE_EDGE
                     $inputThickness.closest('section').show();
+                    $navTabEstimateOptions.show();
                     $inputThickness.closest('.form-group').show();
                     $inputLengthIncrease.closest('.form-group').show();
                     $inputWidthIncrease.closest('.form-group').hide();
@@ -1008,6 +1024,7 @@
                     $inputStdSizes.closest('.form-group').hide();
                     $selectGrained.closest('.form-group').hide();
                     $selectEdgeDecremented.closest('.form-group').show();
+                    $selectRawEstimated.closest('.form-group').show();
                     $editorStdVolumicMasses.closest('.form-group').show();
                     $editorStdPrices.closest('.form-group').show();
                     break;
@@ -1016,6 +1033,7 @@
                     break;
                 case 6:   // TYPE_VENEER
                     $inputThickness.closest('section').show();
+                    $navTabEstimateOptions.show();
                     $inputThickness.closest('.form-group').show();
                     $inputLengthIncrease.closest('.form-group').show();
                     $inputWidthIncrease.closest('.form-group').show();
@@ -1027,6 +1045,7 @@
                     $inputStdSizes.closest('.form-group').show();
                     $selectGrained.closest('.form-group').show();
                     $selectEdgeDecremented.closest('.form-group').hide();
+                    $selectRawEstimated.closest('.form-group').show();
                     $editorStdVolumicMasses.closest('.form-group').show();
                     $editorStdPrices.closest('.form-group').show();
                     break;
@@ -1079,8 +1098,8 @@
                 },
                 {
                     lb_ft3: 'lb / ft³',
-                    lb_m3: 'lb / m³',
                     lb_fbm: 'lb / fbm',
+                    lb_m3: 'lb / m³',
                     lb_i: 'lb / ' + i18next.t('default.instance_single'),
                 }
             ],
@@ -1118,10 +1137,10 @@
                     $_m3: that.currencySymbol + ' / m³',
                 },
                 {
-                    $_fbm: that.currencySymbol + ' / fbm',
                     $_ft: that.currencySymbol + ' / ft',
                     $_ft2: that.currencySymbol + ' / ft²',
                     $_ft3: that.currencySymbol + ' / ft³',
+                    $_fbm: that.currencySymbol + ' / fbm',
                 },
                 {
                     $_i: that.currencySymbol + ' / ' + i18next.t('default.instance_single')
@@ -1182,6 +1201,7 @@
         $selectType.selectpicker(SELECT_PICKER_OPTIONS);
         $selectGrained.selectpicker(SELECT_PICKER_OPTIONS);
         $selectEdgeDecremented.selectpicker(SELECT_PICKER_OPTIONS);
+        $selectRawEstimated.selectpicker(SELECT_PICKER_OPTIONS);
 
         // Bind inputs
         $inputName.on('keyup change', function () { fnCheckInputNameValue(true); });
@@ -1258,6 +1278,7 @@
             inputStdSizes: $inputStdSizes,
             selectGrained: $selectGrained,
             selectEdgeDecremented: $selectEdgeDecremented,
+            selectRawEstimated: $selectRawEstimated,
             editorStdVolumicMasses: $editorStdVolumicMasses,
             editorStdPrices: $editorStdPrices,
         }

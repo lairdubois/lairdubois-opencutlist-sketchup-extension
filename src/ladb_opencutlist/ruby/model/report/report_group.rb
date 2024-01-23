@@ -58,7 +58,7 @@ module Ladb::OpenCutList
     def initialize(_def)
       super(_def, MaterialAttributes::TYPE_SHEET_GOOD)
 
-      @total_count = _def.total_count
+      @total_count = _def.total_count == 0 ? nil : _def.total_count
       @total_area = _def.total_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(_def.total_area)
       @total_used_area = _def.total_used_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(_def.total_used_area)
 
@@ -75,7 +75,7 @@ module Ladb::OpenCutList
     def initialize(_def)
       super(_def, MaterialAttributes::TYPE_DIMENSIONAL)
 
-      @total_count = _def.total_count
+      @total_count = _def.total_count == 0 ? nil : _def.total_count
       @total_length = _def.total_length == 0 ? nil : DimensionUtils.instance.format_to_readable_length(_def.total_length)
       @total_used_length = _def.total_used_length == 0 ? nil : DimensionUtils.instance.format_to_readable_length(_def.total_used_length)
 
@@ -92,7 +92,7 @@ module Ladb::OpenCutList
     def initialize(_def)
       super(_def, MaterialAttributes::TYPE_EDGE)
 
-      @total_count = _def.total_count
+      @total_count = _def.total_count == 0 ? nil : _def.total_count
       @total_length = _def.total_length == 0 ? nil : DimensionUtils.instance.format_to_readable_length(_def.total_length)
       @total_used_length = _def.total_used_length == 0 ? nil : DimensionUtils.instance.format_to_readable_length(_def.total_used_length)
 
@@ -127,7 +127,7 @@ module Ladb::OpenCutList
     def initialize(_def)
       super(_def, MaterialAttributes::TYPE_VENEER)
 
-      @total_count = _def.total_count
+      @total_count = _def.total_count == 0 ? nil : _def.total_count
       @total_area = _def.total_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(_def.total_area)
       @total_used_area = _def.total_used_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(_def.total_used_area)
 

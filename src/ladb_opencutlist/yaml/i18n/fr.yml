@@ -1175,6 +1175,7 @@ tab:
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Direction du fil
+      raw_estimated_0: Estimé par le volume débité utile
       colorized: Cette teinte sera appliquée à la texture lors du rendu dans le modèle
       texture_load: Charger une nouvelle texture
       texture_clear: Effacer la texture
@@ -1209,6 +1210,7 @@ tab:
       description: Description
       url: URL
       cut_options: Options de débit
+      estimate_options: Options d'estimation
       attributes: Attributs
       thickness: Épaisseur
       thickness_help: |
@@ -1253,6 +1255,17 @@ tab:
       edge_decremented_help: Permet d'indiquer si les dimensions de débit des pièces doivent être réduites de l'épaisseur des chants.
       edge_decremented_0: Pas de réduction
       edge_decremented_1: Réduire le débit de l'épaisseur du chant
+      raw_estimated: Mode d'estimation
+      raw_estimated_help: | 
+        Permet de définir la mode de calcul pour estimer la masse et le coût total des pièces de cette matière.
+        
+        **Volume débité utile**
+        Le volume total sera la somme des volumes de débit des pièces.
+        
+        **Volume de matière première nécessaire**
+        Le volume total sera la somme des volumes des panneaux, feuilles, barres ou bandes des pièces après calepinage.
+      raw_estimated_0: Volume débité utile
+      raw_estimated_1: Volume de matière première nécessaire
       std_attributes_dim_placeholder: Choisissez une taille
       std_volumic_masses: Masse volumique
       std_volumic_masses_help: Permet de définir la masse volumique toutes tailles ainsi que pour chaque taille standard de la matière.
