@@ -1103,18 +1103,18 @@ tab:
 
         **קונטור + קדחים + מיזוג**
         מפעיל את ההפרדה של קו המתאר החיצוני של החלקים מהקדחים שלהם ואת מיזוג המעמקים עבור כל חלל.
-      option_edges: מסלולים
-      option_edges_0: אין
-      option_edges_1: השתמש בקווים צפים
-      option_edges_help: |
-        מאפשר להפעיל את השימוש בקווים צפים (לא מחוברים למשטח) שמתלקדים עם החזית, הכלולים בחלק, כדי לייצא אותם כמסלול.
+      option_include_paths: מסלולים
+      option_include_paths_0: אין
+      option_include_paths_1: ""
+      option_include_paths_help: |
       option_parts: חלקים
       option_parts_help: |
         מאפשר לבחור את צבעי החלקים.
       option_parts_holes: קידוחים
       option_parts_holes_help: |
         מאפשר לבחור את הצבעים של קדחי החלקים.
-      option_edges_color_help: |
+      option_parts_paths: מסלולים
+      option_parts_paths_help: |
         מאפשר לבחור את צבע המסלולים.
       error:
         no_part: אין חלקים לייצא.
@@ -1252,11 +1252,12 @@ tab:
       edge_decremented_help: משמש כדי לציין אם יש להפחית את מידות החיתוך של החלקים בעובי הקאנט.
       edge_decremented_0: ללא הפחתה
       edge_decremented_1: הפחתת עובי הקאנט
-      volumic_mass: צפיפות
-      volumic_mass_help: מאפשר להגדיר את צפיפות החומר.
+      std_attributes_dim_placeholder: בחר מידה
+      std_volumic_masses: צפיפות
+      std_volumic_masses_help: ""
+      std_volumic_masses_add: ""
       std_prices: מחיר
       std_prices_help: מאפשר להגדיר את המחיר לכל הערכים כמו כן לכל ערך החומר הסטנדרטי.
-      std_prices_dim_placeholder: בחר מידה
       std_prices_add: הוסף מחיר
       texture_width: רוחב
       texture_height: גובה
@@ -1681,7 +1682,7 @@ tool:
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: לבודד קדחים עוברים ולמזג עומקים עבור כל חלל
-    action_option_options_edges_status: ייצא כמסלול של קצוות צפים ומתלקדים אל חזית ממוקדת הכלולה בחלק
+    action_option_options_paths_status: ""
     error:
       not_part: חזית הזאת אינה שייכת לחלק (רכיב)
       not_flat_face: משטח זה אינו שטוח

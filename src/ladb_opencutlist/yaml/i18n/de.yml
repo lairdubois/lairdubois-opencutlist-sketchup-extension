@@ -97,7 +97,7 @@ core:
     dir_override: |
       « {{ target }} » existiert schon. Möchten Sie es ersetzen?
 
-      Ein Verzeichnis mit diesem Namen befindet sich schon im Verzeichnis {{ parent }}. Wenn Sie ihn ersetzen, geht der ursprüngliche Inhalt verloren.
+      Ein Verzeichnis mit diesem Namen befindet sich schon im Verzeichnis {{ parent }}. Wenn Sie es ersetzen, geht der ursprüngliche Inhalt verloren.
   savepanel:
     export_to_file: "In {{ file_format }} Datei exportieren"
   dialog:
@@ -343,7 +343,7 @@ tab:
       part_axes: Interne Achsen des Teils
       select_unselect_all_parts: Alle Teile dieser Gruppe selektieren / deselektieren
       select_parts_in_cutlist: Teil aus der Holzliste auswählen
-      select_parts_in_cutlist_plural: "{{ count }} Teil aus der Holzliste auswählen"
+      select_parts_in_cutlist_plural: "{{ count }} Teile aus der Holzliste auswählen"
       setup_group_cuttingdiagram: "Das Schnittdiagram für '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}' konfigurieren"
       open_part_url: URL des Teils öffnen
     menu:
@@ -1103,18 +1103,19 @@ tab:
 
         **Kontur + Bohrungen + Zusammenführen**
         Aktiviert die Trennung der Außenkontur von Teilen und ihren Bohrungen sowie die Zusammenführung der Tiefen für jede Kavität.
-      option_edges: Pfade
-      option_edges_0: Keine
-      option_edges_1: Überflüssige Kanten verwenden
-      option_edges_help: |
-        Ermöglicht die Verwendung von überflüssigen Kanten (nicht an einer Fläche befestigt), die koplanar mit der Zielfläche und im Teil enthalten sind, um sie als Pfad zu exportieren.
+      option_include_paths: Pfade
+      option_include_paths_0: Keine
+      option_include_paths_1: "Kanten verwenden, die nicht mit einer Fläche verbunden sind"
+      option_include_paths_help: |
+        Aktiviert die Verwendung von im Teil enthaltenen, nicht mit einer Fläche verknüpften Kanten, um sie als Pfad zu exportieren.
       option_parts: Teile
       option_parts_help: |
         Auswahl der Farbe der Teile.
       option_parts_holes: Bohrungen
       option_parts_holes_help: |
         Auswahl der Farbe von Bohrungen.
-      option_edges_color_help: |
+      option_parts_paths: Pfade
+      option_parts_paths_help: |
         Wahl der Pfadfarbe.
       error:
         no_part: Kein Teil zum Exportieren.
@@ -1252,11 +1253,12 @@ tab:
       edge_decremented_help: "Gibt an, ob die Maße der Teile der Holzliste um die Materialstärke der Kantenbänder reduziert werden sollen."
       edge_decremented_0: keine Reduzierung
       edge_decremented_1: Reduzierung um Stärke des Kantenbands
-      volumic_mass: Rohdichte
-      volumic_mass_help: Ermöglicht die Massendichte des Materials festzulegen.
+      std_attributes_dim_placeholder: Wählen Sie eine Größe
+      std_volumic_masses: Rohdichte
+      std_volumic_masses_help: Ermöglicht das Festlegen der Dichte für alle Größen sowie für jede Standardgröße des Materials.
+      std_volumic_masses_add: Dichte hinzufügen
       std_prices: Preis
       std_prices_help: Ermöglicht die Definition des Preises für alle Größen sowie für jede einzelne Standardgröße des Materials.
-      std_prices_dim_placeholder: Wählen Sie eine Größe
       std_prices_add: Preis hinzufügen
       texture_width: Breite
       texture_height: Höhe
@@ -1681,7 +1683,7 @@ tool:
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: Isolieren von durchgehenden Bohrungen und Zusammenführen der Tiefen für jeden Hohlraum
-    action_option_options_edges_status: Ermöglicht den Export von überflüssigen und mit der Zielfläche koplanare Kanten als Pfad
+    action_option_options_paths_status: "Im Teil enthaltene, nicht mit einer Fläche verknüpfte Kanten als Plot exportieren"
     error:
       not_part: Diese Fläche gehört nicht zu einem Teil (Komponente)
       not_flat_face: Diese Fläche ist nicht eben

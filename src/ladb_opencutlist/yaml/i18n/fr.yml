@@ -99,7 +99,7 @@ core:
 
       Un dossier du même nom se trouve déjà dans le dossier {{ parent }}. Si vous le remplacez, le contenu d'origine sera perdu.
   savepanel:
-    export_to_file: Exporter vers un fichier {{ file_format }}
+    export_to_file: "Exporter vers un fichier {{ file_format }}"
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
@@ -343,7 +343,7 @@ tab:
       part_axes: Axes internes de la pièce
       select_unselect_all_parts: Sélectionner / Désélectionner toutes les pièces du groupe
       select_parts_in_cutlist: Sélectionner la pièce dans la fiche de débit
-      select_parts_in_cutlist_plural: Sélectionner les {{ count }} pièces dans la fiche de débit
+      select_parts_in_cutlist_plural: "Sélectionner les {{ count }} pièces dans la fiche de débit"
       setup_group_cuttingdiagram: "Configurer le calepinage de '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
       open_part_url: Ouvrir l'URL de la pièce
     menu:
@@ -1105,9 +1105,9 @@ tab:
         Active la séparation du contour extérieur des pièces de leurs percements ainsi que la fusion des profondeurs pour chaque cavité.
       option_include_paths: Tracés
       option_include_paths_0: Aucun
-      option_include_paths_1: Utiliser les arrêtes non associées à une face
+      option_include_paths_1: Utiliser les arêtes non associées à une face
       option_include_paths_help: |
-        Permet d'activer l'utilisation des arrêtes non associées à une face contenues dans la pièce, pour les exporter comme tracé.
+        Permet d'activer l'utilisation des arêtes non associées à une face contenues dans la pièce, pour les exporter comme tracé.
       option_parts: Pièces
       option_parts_help: |
         Permet de choisir les couleurs des pièces.
@@ -1317,7 +1317,7 @@ tab:
       url: URL
       layer_name: Balise
       explode: Eclater
-      explode_message: Confirmez-vous l'éclatement de l'instance **{{ name }}** ?
+      explode_message: "Confirmez-vous l'éclatement de l'instance **{{ name }}** ?"
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_entities: Votre modèle est vide !

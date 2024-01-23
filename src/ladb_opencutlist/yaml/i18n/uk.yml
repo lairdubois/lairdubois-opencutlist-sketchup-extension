@@ -1103,18 +1103,18 @@ tab:
 
         **Контур + Отвори + Злиття**
         Активує розділення зовнішнього контуру деталей від їх отворів, а також злиття глибин для кожної виїмки.
-      option_edges: Траєкторії
-      option_edges_0: Ні
-      option_edges_1: Використовувати плаваючі лінії
-      option_edges_help: |
-        Дозволяє активувати використання плаваючих ліній (не пов'язаних з обличчям) та співпланарних з цільовим обличчям, що містяться в деталі, для експорту як траєкторії.
+      option_include_paths: Траєкторії
+      option_include_paths_0: Ні
+      option_include_paths_1: ""
+      option_include_paths_help: |
       option_parts: Деталі
       option_parts_help: |
         Дозволяє вибрати кольори деталей.
       option_parts_holes: Свердління
       option_parts_holes_help: |
         Дозволяє вибрати кольори отворів деталей.
-      option_edges_color_help: |
+      option_parts_paths: Траєкторії
+      option_parts_paths_help: |
         Дозволяє вибрати колір ліній-траєкторій.
       error:
         no_part: Немає жодної деталі для експорту.
@@ -1252,11 +1252,12 @@ tab:
       edge_decremented_help: "Дозволяє вказати, чи потрібно зменшити розміри деталей на товщину крайок."
       edge_decremented_0: Не враховувати
       edge_decremented_1: Відняти товщину крайок
-      volumic_mass: Густина
-      volumic_mass_help: Встановіть одиниці густини матеріалу.
+      std_attributes_dim_placeholder: Виберіть розмір
+      std_volumic_masses: Густина
+      std_volumic_masses_help: ""
+      std_volumic_masses_add: ""
       std_prices: Ціна
       std_prices_help: "Дозволяє визначити ціну як для всіх розмірів, так і для кожного типорозміру матеріалу."
-      std_prices_dim_placeholder: Виберіть розмір
       std_prices_add: Додати ціну
       texture_width: Ширина
       texture_height: Висота
@@ -1681,7 +1682,7 @@ tool:
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: "Виокремити отвори, що проходять крізь і злити глибини для кожної порожнини"
-    action_option_options_edges_status: "Експортувати як шляхи плаваючих і співпадаючих ребер на цільову грань, що містяться в деталі"
+    action_option_options_paths_status: ""
     error:
       not_part: Ця площина не є частиною деталі (компонента)
       not_flat_face: Ця поверхня не є плоскою

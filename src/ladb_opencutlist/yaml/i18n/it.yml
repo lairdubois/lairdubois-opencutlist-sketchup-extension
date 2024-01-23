@@ -1099,18 +1099,18 @@ tab:
 
         **Profilo + Forature + Unione**
         Attiva la separazione del profilo esterno degli elementi dalla foratura e unisce le profondità di ogni recesso.
-      option_edges: Percorsi
-      option_edges_0: Nessuna
-      option_edges_1: Usa bordi singoli
-      option_edges_help: |
-        Abilita l'esportazione di bordi singoli (non connessi alla faccia), coplanari alla faccia di destinazione, ad uso percorso utensile.
+      option_include_paths: Percorsi
+      option_include_paths_0: Nessuna
+      option_include_paths_1: ""
+      option_include_paths_help: |
       option_parts: Parti
       option_parts_help: |
         Seleziona il colore degli elementi.
       option_parts_holes: Forature
       option_parts_holes_help: |
         Seleziona il colore dele forature.
-      option_edges_color_help: |
+      option_parts_paths: Percorsi
+      option_parts_paths_help: |
         Seleziona il colore del profilo.
       error:
         no_part: Nessuna parte da esportare.
@@ -1248,11 +1248,12 @@ tab:
       edge_decremented_help: Indica se la dimensione della parte deve essere ridotta dello spessore della bordatura.
       edge_decremented_0: Nessuna riduzione
       edge_decremented_1: Riduci dello spessore della bordatura
-      volumic_mass: Massa volumica
-      volumic_mass_help: Permette di definire la densità (massa volumetrica) del materiale.
+      std_attributes_dim_placeholder: Scegli una taglia
+      std_volumic_masses: Massa volumica
+      std_volumic_masses_help: ""
+      std_volumic_masses_add: ""
       std_prices: Prezzo
       std_prices_help: Permette di definire il prezzo per tutte le taglie così come per ogni misura standard del materiale.
-      std_prices_dim_placeholder: Scegli una taglia
       std_prices_add: Aggiungi prezzo
       texture_width: Larghezza
       texture_height: Altezza
@@ -1677,7 +1678,7 @@ tool:
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: Isola i fori passanti e unisci le profondità di ogni recesso
-    action_option_options_edges_status: File
+    action_option_options_paths_status: ""
     error:
       not_part: Questa faccia non appartiene ad un elemento (componente)
       not_flat_face: Superficie non planare
