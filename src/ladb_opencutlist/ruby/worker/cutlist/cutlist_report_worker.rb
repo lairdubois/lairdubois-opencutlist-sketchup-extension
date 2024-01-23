@@ -271,6 +271,7 @@ module Ladb::OpenCutList
 
       report_entry_def = Object.const_get(entry_def_class_name).new(cutlist_group)
       report_entry_def.errors += cuttingdiagram1d.errors
+      report_entry_def.raw_estimated = material_attributes.raw_estimated
       report_entry_def.total_count = cuttingdiagram1d.summary.total_used_count
       report_entry_def.total_length = cuttingdiagram1d.summary.def.total_used_length
 
@@ -357,6 +358,7 @@ module Ladb::OpenCutList
 
       report_entry_def = Object.const_get(entry_def_class_name).new(cutlist_group)
       report_entry_def.errors += cuttingdiagram2d.errors
+      report_entry_def.raw_estimated = material_attributes.raw_estimated
       report_entry_def.total_count = cuttingdiagram2d.summary.total_used_count
       report_entry_def.total_area = cuttingdiagram2d.summary.def.total_used_area
 
@@ -432,6 +434,7 @@ module Ladb::OpenCutList
       price_per_inch3 = std_price[:val] == 0 ? 0 : _uv_to_inch3(std_price[:unit], std_price[:val], cutlist_group.def.std_thickness, cutlist_group.def.std_width)
 
       report_entry_def = Object.const_get(entry_def_class_name).new(cutlist_group)
+      report_entry_def.raw_estimated = material_attributes.raw_estimated
       report_entry_def.std_volumic_mass = std_volumic_mass if report_entry_def.respond_to?(:std_volumic_mass)
       report_entry_def.std_price = std_price if report_entry_def.respond_to?(:std_price=)
       report_entry_def.total_volume = cutlist_group.def.total_cutting_volume * coefficient if report_entry_def.respond_to?(:total_volume=)

@@ -39,6 +39,8 @@ module Ladb::OpenCutList
 
       @errors = _def.errors
 
+      @raw_estimated = _def.raw_estimated
+
       @id = _def.cutlist_group.id
       @material_id = _def.cutlist_group.material_id
       @material_name = _def.cutlist_group.material_name

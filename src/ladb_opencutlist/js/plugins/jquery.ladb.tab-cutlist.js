@@ -1220,8 +1220,10 @@
                             that.ignoreNextMaterialEvents = true;
 
                             var materialId = $(this).data('material-id');
+                            var propertiesTab = $(this).data('properties-tab');
                             that.dialog.executeCommandOnTab('materials', 'edit_material', {
                                 materialId: materialId,
+                                propertiesTab: propertiesTab,
                                 updatedCallback: function () {
 
                                     // Flag to stop ignoring next material change event

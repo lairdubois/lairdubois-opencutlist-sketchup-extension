@@ -20,7 +20,7 @@ module Ladb::OpenCutList
 
   class AbstractReportEntryDef < AbstractReportItemDef
 
-    attr_accessor :cutlist_group, :errors
+    attr_accessor :cutlist_group, :raw_estimated, :errors
 
     def initialize(cutlist_group)
       super()
@@ -28,6 +28,8 @@ module Ladb::OpenCutList
       @cutlist_group = cutlist_group
 
       @errors = []
+
+      @raw_estimated = true
 
     end
 
@@ -46,7 +48,7 @@ module Ladb::OpenCutList
     attr_accessor :std_volumic_mass, :std_price, :total_volume, :total_used_volume
 
     def initialize(cutlist_group)
-      super(cutlist_group)
+      super
 
       @std_volumic_mass = nil
       @std_price = nil
@@ -72,7 +74,7 @@ module Ladb::OpenCutList
     attr_reader :sheet_defs
 
     def initialize(cutlist_group)
-      super(cutlist_group)
+      super
 
       @std_volumic_mass = nil
       @std_price = nil
@@ -130,7 +132,7 @@ module Ladb::OpenCutList
     attr_reader :bar_defs
 
     def initialize(cutlist_group)
-      super(cutlist_group)
+      super
 
       @std_volumic_mass = nil
       @std_price = nil
@@ -187,7 +189,7 @@ module Ladb::OpenCutList
     attr_reader :bar_defs
 
     def initialize(cutlist_group)
-      super(cutlist_group)
+      super
 
       @std_volumic_mass = nil
       @std_price = nil
@@ -244,7 +246,7 @@ module Ladb::OpenCutList
     attr_reader :part_defs
 
     def initialize(cutlist_group)
-      super(cutlist_group)
+      super
 
       @total_count = 0
 
@@ -297,7 +299,7 @@ module Ladb::OpenCutList
     attr_reader :sheet_defs
 
     def initialize(cutlist_group)
-      super(cutlist_group)
+      super
 
       @std_volumic_mass = nil
       @std_price = nil
