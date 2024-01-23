@@ -257,7 +257,7 @@ module Ladb::OpenCutList
 
       @sheets = _def.sheet_defs.values.map { |sheet_def| sheet_def.create_sheet }
 
-      @volumic_mass = @bars.map { |sheet| sheet.volumic_mass }.select { |volumic_mass| !volumic_mass.nil? }.uniq.join(', ')
+      @volumic_mass = @sheets.map { |sheet| sheet.volumic_mass }.select { |volumic_mass| !volumic_mass.nil? }.uniq.join(', ')
       @std_price = @sheets.map { |sheet| sheet.std_price }.select { |std_price| !std_price.nil? }.uniq.join(', ')
 
     end
