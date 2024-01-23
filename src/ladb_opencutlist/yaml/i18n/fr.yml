@@ -1255,9 +1255,9 @@ tab:
       edge_decremented_help: Permet d'indiquer si les dimensions de débit des pièces doivent être réduites de l'épaisseur des chants.
       edge_decremented_0: Pas de réduction
       edge_decremented_1: Réduire le débit de l'épaisseur du chant
-      raw_estimated: Mode d'estimation
+      raw_estimated: Volume utilisé
       raw_estimated_help: | 
-        Permet de définir la mode de calcul pour estimer la masse et le coût total des pièces de cette matière.
+        Permet de définir le volume utilisé pour estimer la masse et le coût total des pièces de cette matière.
         
         **Volume débité utile**
         Le volume total sera la somme des volumes de débit des pièces.
