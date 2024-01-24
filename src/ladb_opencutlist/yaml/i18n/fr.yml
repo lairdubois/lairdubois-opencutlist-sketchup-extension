@@ -660,6 +660,8 @@ tab:
       total_volume: Σ Volumes
       total_area: Σ Surfaces
       total_length: Σ Longueurs
+      tooltip:
+        incompatible_unit: Unité incompatible avec les options d'estimation de la matière
       error:
         no_typed_material_parts: "Aucune pièce ayant une matière avec type défini (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** ou **$t(tab.materials.type_5)**) n'est fournie pour générer l'estimation."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erreur**."

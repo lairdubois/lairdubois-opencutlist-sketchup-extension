@@ -15,7 +15,8 @@
         this.stdsA = [];
         this.stdsB = [];
         this.defaultUnit = null;
-        this.enabledUnits = [];
+        this.enabledUnitsRow0 = [];
+        this.enabledUnitsRowN = [];
 
         this.stdAttributes = [];
 
@@ -44,7 +45,7 @@
         $input
             .ladbTextinputNumberWithUnit({
                 defaultUnit: this.defaultUnit,
-                units: this.enabledUnits,
+                units: this.enabledUnitsRow0,
             })
             .ladbTextinputNumberWithUnit('val', stdAttribute.val)
         ;
@@ -120,7 +121,7 @@
         $input
             .ladbTextinputNumberWithUnit({
                 defaultUnit: this.defaultUnit,
-                units: this.enabledUnits,
+                units: this.enabledUnitsRowN,
             })
             .ladbTextinputNumberWithUnit('val', stdAttribute.val)
         ;
@@ -229,8 +230,8 @@
 
         this.defaultUnit = this.options.defaultUnitByTypeCallback(this.type);
 
-        this.enabledUnits = [];
-        var enabledUnitKeys = this.options.enabledUnitsByTypeCallback(this.type);
+        this.enabledUnitsRow0 = [];
+        var enabledUnitKeys = this.options.enabledUnitsByTypeCallback(this.type, '0');
         if (enabledUnitKeys) {
             $.each(this.options.units, function (index, unitGroup) {
                 var g = {};
@@ -240,7 +241,22 @@
                     }
                 });
                 if (Object.keys(g).length > 0) {
-                    that.enabledUnits.push(g);
+                    that.enabledUnitsRow0.push(g);
+                }
+            });
+        }
+        this.enabledUnitsRowN = [];
+        var enabledUnitKeys = this.options.enabledUnitsByTypeCallback(this.type, 'N');
+        if (enabledUnitKeys) {
+            $.each(this.options.units, function (index, unitGroup) {
+                var g = {};
+                $.each(unitGroup, function (key, value) {
+                    if (enabledUnitKeys.includes(key)) {
+                        g[key] = value;
+                    }
+                });
+                if (Object.keys(g).length > 0) {
+                    that.enabledUnitsRowN.push(g);
                 }
             });
         }

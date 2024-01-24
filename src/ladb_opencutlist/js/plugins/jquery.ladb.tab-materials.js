@@ -1115,7 +1115,7 @@
                         return that.massUnitStrippedname + '_' + that.lengthUnitStrippedname + '3';
                 }
             },
-            enabledUnitsByTypeCallback: function (type) {
+            enabledUnitsByTypeCallback: function (type, rowPos) {
                 switch (type) {
                     case 1: /* TYPE_SOLID_WOOD */
                         return [ 'kg_m3', 'kg_ft3', 'kg_fbm', 'lb_ft3', 'lb_m3', 'lb_fbm' ];
@@ -1123,7 +1123,12 @@
                     case 3: /* TYPE_DIMENSIONAL */
                     case 4: /* TYPE_EDGE */
                     case 6: /* TYPE_VENEER */
-                        return [ 'kg_m3', 'kg_ft3', 'kg_i', 'lb_ft3', 'lb_m3', 'lb_i' ];
+                        var unitKeys = [ 'kg_m3', 'kg_ft3', 'lb_ft3', 'lb_m3' ];
+                        if (rowPos === 'N') {
+                            unitKeys.push('kg_i');
+                            unitKeys.push('lb_i');
+                        }
+                        return unitKeys;
                 }
             },
             inputChangeCallback: inputChangeCallback
@@ -1159,17 +1164,19 @@
                         return '$_' + that.lengthUnitStrippedname;
                 }
             },
-            enabledUnitsByTypeCallback: function (type) {
+            enabledUnitsByTypeCallback: function (type, rowPos) {
                 switch (type) {
                     case 1: /* TYPE_SOLID_WOOD */
                         return [ '$_m3', '$_ft3', '$_fbm' ];
                     case 2: /* TYPE_SHEET_GOOD */
-                    case 6: /* TYPE_VENEER */
-                        return [ '$_m', '$_m2', '$_m3', '$_ft', '$_ft2', '$_ft3', '$_ft2', '$_i' ];
                     case 3: /* TYPE_DIMENSIONAL */
-                        return [ '$_m', '$_m2', '$_m3', '$_ft', '$_ft2', '$_ft3', '$_i' ];
                     case 4: /* TYPE_EDGE */
-                        return [ '$_m', '$_ft', '$_i' ];
+                    case 6: /* TYPE_VENEER */
+                        var unitKeys = [ '$_m', '$_m2', '$_m3', '$_ft', '$_ft2', '$_ft3' ];
+                        if (rowPos === 'N') {
+                            unitKeys.push('$_i');
+                        }
+                        return unitKeys;
                 }
             },
             inputChangeCallback: inputChangeCallback
