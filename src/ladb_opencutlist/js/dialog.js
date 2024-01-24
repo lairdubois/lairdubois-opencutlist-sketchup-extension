@@ -96,6 +96,8 @@ function triggerEvent(event, encodedParams) {
     }
 }
 
+// -- Startup
+
 function setDialogContext(type, encodedParams) {
 
     var params = encodedParams ? JSON.parse(Base64.decode(encodedParams)) : {};

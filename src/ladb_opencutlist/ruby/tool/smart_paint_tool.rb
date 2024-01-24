@@ -154,7 +154,7 @@ module Ladb::OpenCutList
         else
           type = MaterialAttributes::TYPE_UNKNOWN
         end
-        Plugin.instance.execute_dialog_command_on_tab('materials', 'new_material', "{ type: #{type} }")
+        Plugin.instance.execute_tabs_dialog_command_on_tab('materials', 'new_material', "{ type: #{type} }")
       }
       @materials_panel.append(@materials_add_btn)
 
@@ -1130,7 +1130,7 @@ module Ladb::OpenCutList
         btn.on(:doubleclick) { |button|
 
           # Edit material
-          Plugin.instance.execute_dialog_command_on_tab('materials', 'edit_material', "{ materialId: #{material.entityID} }")
+          Plugin.instance.execute_tabs_dialog_command_on_tab('materials', 'edit_material', "{ materialId: #{material.entityID} }")
 
         }
         btn.on(:enter) { |button|

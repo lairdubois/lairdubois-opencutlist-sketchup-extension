@@ -240,7 +240,7 @@
         if (that.maximized && !that.minimizing) {
             that.minimizing = true;
             that.$element.trigger(jQuery.Event('minimizing.ladb.dialog'));
-            rubyCallCommand('core_dialog_minimize', null, function () {
+            rubyCallCommand('core_tabs_dialog_minimize', null, function () {
                 that.minimizing = false;
                 Noty.closeAll();
                 that.$wrapper.hide();
@@ -255,7 +255,7 @@
         if (!that.maximized && !that.maximizing) {
             that.maximizing = true;
             that.$element.trigger(jQuery.Event('maximizing.ladb.dialog'));
-            rubyCallCommand('core_dialog_maximize', null, function () {
+            rubyCallCommand('core_tabs_dialog_maximize', null, function () {
                 that.maximizing = false;
                 that.$wrapper.show();
                 that.maximized = true;

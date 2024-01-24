@@ -165,7 +165,7 @@
                             }
 
                             that.dialog.alert(null, i18next.t('tab.settings.presets.import_global_presets_success'), function () {
-                                rubyCallCommand('core_dialog_hide');
+                                rubyCallCommand('core_tabs_dialog_hide');
                             }, {
                                 okBtnLabel: i18next.t('default.close')
                             });
@@ -224,7 +224,7 @@
             that.dialog.confirm(i18next.t('default.caution'), i18next.t('tab.settings.presets.reset_global_presets_confirm'), function () {
                 rubyCallCommand('settings_reset_global_presets', null, function () {
                     that.dialog.alert(null, i18next.t('tab.settings.presets.reset_global_presets_success'), function () {
-                        rubyCallCommand('core_dialog_hide');
+                        rubyCallCommand('core_tabs_dialog_hide');
                     }, {
                         okBtnLabel: i18next.t('default.close')
                     });
@@ -237,7 +237,7 @@
             that.dialog.confirm(i18next.t('default.caution'), i18next.t('tab.settings.presets.reset_model_presets_confirm'), function () {
                 rubyCallCommand('settings_reset_model_presets', null, function () {
                     that.dialog.alert(null, i18next.t('tab.settings.presets.reset_model_presets_success'), function () {
-                        rubyCallCommand('core_dialog_hide');
+                        rubyCallCommand('core_tabs_dialog_hide');
                     }, {
                         okBtnLabel: i18next.t('default.close')
                     });

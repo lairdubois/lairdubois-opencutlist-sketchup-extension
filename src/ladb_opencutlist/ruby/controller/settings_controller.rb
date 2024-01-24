@@ -65,8 +65,8 @@ module Ladb::OpenCutList
       table_row_size = settings['table_row_size']
 
       Plugin.instance.set_language(language, true)
-      Plugin.instance.dialog_set_print_margin(print_margin, true)
-      Plugin.instance.dialog_set_table_row_size(table_row_size, true)
+      Plugin.instance.tabs_dialog_set_print_margin(print_margin, true)
+      Plugin.instance.tabs_dialog_set_table_row_size(table_row_size, true)
 
     end
 
@@ -74,7 +74,7 @@ module Ladb::OpenCutList
       inc_width = params['inc_width']
       inc_height = params['inc_height']
 
-      Plugin.instance.dialog_inc_maximized_size(inc_width, inc_height)
+      Plugin.instance.tabs_dialog_inc_maximized_size(inc_width, inc_height)
 
     end
 
@@ -82,12 +82,12 @@ module Ladb::OpenCutList
       inc_left = params['inc_left']
       inc_top = params['inc_top']
 
-      Plugin.instance.dialog_inc_position(inc_left, inc_top)
+      Plugin.instance.tabs_dialog_inc_position(inc_left, inc_top)
 
     end
 
     def dialog_reset_position_command
-      Plugin.instance.dialog_reset_position
+      Plugin.instance.tabs_dialog_reset_position
     end
 
     def set_length_settings_command(params)
