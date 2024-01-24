@@ -262,7 +262,7 @@ module Ladb::OpenCutList
       settings['part_drawing_type'] = 0   # Remove unneeded computations
 
       std_sizes = material_attributes.std_lengths.split(';')
-      if settings['std_bar'] == '' || !std_sizes.include?(settings['std_bar'])
+      if settings['std_bar'] == '' || settings['std_sheet'] != '0x0' && !std_sizes.include?(settings['std_bar'])
         settings['std_bar'] = std_sizes[0] unless std_sizes.empty?
       end
 
@@ -349,7 +349,7 @@ module Ladb::OpenCutList
       settings['part_drawing_type'] = 0   # Remove unneeded computations
 
       std_sizes = material_attributes.std_sizes.split(';')
-      if settings['std_sheet'] == '' || !std_sizes.include?(settings['std_sheet'])
+      if settings['std_sheet'] == '' || settings['std_sheet'] != '0x0' && !std_sizes.include?(settings['std_sheet'])
         settings['std_sheet'] = std_sizes[0] unless std_sizes.empty?
       end
 

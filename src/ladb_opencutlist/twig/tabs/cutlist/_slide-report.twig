@@ -181,7 +181,7 @@
                 </thead>
                 <tbody>
                     {% for entry in group.entries %}
-                        {% set foldableRow = foldableGroup and entry.total_count is defined and entry.total_count > 0 %}
+                        {% set foldableRow = foldableGroup and entry.raw_estimated %}
                         <tr id="ladb_entry_{{ entry.id }}" class="ladb-cutlist-row ladb-minitools-holder{% if foldableRow %} ladb-cutlist-row-folder{% endif %}" data-entry-id="{{ entry.id }}">
                             <td>
                                 <div class="ladb-minitools ladb-minitools-right no-print">
