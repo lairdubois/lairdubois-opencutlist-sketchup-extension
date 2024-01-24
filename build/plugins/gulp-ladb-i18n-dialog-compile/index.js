@@ -27,7 +27,7 @@ module.exports = function (templateSource, opt) {
         }
 
         file.contents = Buffer.from(data);
-        file.path = path.join(file.base, 'dialog-' + language + '.html');
+        file.path = path.join(file.base, templateFile.stem + '-' + language + '.html');
 
         cb(null, file);
     }

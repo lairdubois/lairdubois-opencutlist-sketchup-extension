@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="{{ language }}">
+<head>
+    <meta charset="UTF-8"/>
+    <title>OpenCutList</title>
+    <style> {# Keep this lines before all other styles #}
+        @page { }
+    </style>
+    <link rel="stylesheet" href="../css/lib/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/lib/bootstrap-select.min.css">
+    <link rel="stylesheet" href="../css/lib/bootstrap-slider.min.css">
+    <link rel="stylesheet" href="../css/lib/bootstrap-tokenfield.min.css">
+    <link rel="stylesheet" href="../css/lib/codemirror.min.css">
+    <link rel="stylesheet" href="../css/lib/codemirror-hint-show-hint.min.css">
+    <link rel="stylesheet" href="../css/lib/noty.min.css">
+    <link rel="stylesheet" href="../css/lib/jquery-ui.min.css">
+    <link rel="stylesheet" href="../css/lib/jquery-ui.theme.min.css">
+    <link rel="stylesheet" href="../css/ladb-opencutlist.min.css">
+    <link rel="stylesheet" href="../css/ladb-opencutlist-icons.min.css">
+</head>
+<body>
+<script type="text/javascript">
+    window.onerror = function (errorMsg, url, lineNumber) {
+        alert('Error: ' + errorMsg + '\n Script: ' + url + '\n Line: ' + lineNumber);
+    };
+</script>
+<script src="../js/constants.js"></script>
+<script src="../js/polyfills.js"></script>
+<script src="../js/lib/classList.min.js"></script>
+<script src="../js/lib/jquery-3.7.1.min.js"></script>
+<script src="../js/lib/jquery-ui.min.js"></script>
+<script src="../js/lib/jquery.textcomplete.min.js"></script>
+<script src="../js/lib/bootstrap.min.js"></script>
+<script src="../js/lib/bootstrap-select.min.js"></script>
+<script src="../js/lib/bootstrap-slider.min.js"></script>
+<script src="../js/lib/bootstrap-tokenfield.min.js"></script>
+<script src="../js/lib/twig.min.js"></script>
+<script src="../js/lib/base64.min.js"></script>
+<script src="../js/lib/i18next.min.js"></script>
+<script src="../js/lib/noty.min.js"></script>
+<script src="../js/lib/codemirror.min.js"></script>
+<script src="../js/lib/codemirror-display-autorefresh.min.js"></script>
+<script src="../js/lib/codemirror-display-placeholder.min.js"></script>
+<script src="../js/lib/codemirror-edit-closebrackets.min.js"></script>
+<script src="../js/lib/codemirror-edit-matchbrackets.min.js"></script>
+<script src="../js/lib/codemirror-hint-show-hint.min.js"></script>
+<script src="../js/lib/codemirror-mode-ruby.min.js"></script>
+<script src="../js/lib/codemirror-mode-simple.min.js"></script>
+<script src="../js/components/jquery.ladb.leftbar.js"></script>
+<script src="../js/components/jquery.ladb.abstract-textinput.js"></script>
+<script src="../js/components/jquery.ladb.textinput-area.js"></script>
+<script src="../js/components/jquery.ladb.textinput-code.js"></script>
+<script src="../js/components/jquery.ladb.textinput-color.js"></script>
+<script src="../js/components/jquery.ladb.textinput-dimension.js"></script>
+<script src="../js/components/jquery.ladb.textinput-number-with-unit.js"></script>
+<script src="../js/components/jquery.ladb.textinput-text.js"></script>
+<script src="../js/components/jquery.ladb.textinput-tokenfield.js"></script>
+<script src="../js/components/jquery.ladb.textinput-url.js"></script>
+<script src="../js/components/jquery.ladb.editor-export.js"></script>
+<script src="../js/components/jquery.ladb.editor-label-layout.js"></script>
+<script src="../js/components/jquery.ladb.editor-label-offset.js"></script>
+<script src="../js/components/jquery.ladb.editor-std-attributes.js"></script>
+<script src="../js/components/jquery.ladb.three-viewer.js"></script>
+<script src="../js/components/jquery.ladb.widget-preset.js"></script>
+<script src="../js/plugins/jquery.ladb.abstract-dialog.js"></script>
+<script src="../js/plugins/jquery.ladb.dialog-tabs.js"></script>
+<script src="../js/plugins/jquery.ladb.abstract-tab.js"></script>
+<script src="../js/plugins/jquery.ladb.tab-materials.js"></script>
+<script src="../js/plugins/jquery.ladb.tab-cutlist.js"></script>
+<script src="../js/plugins/jquery.ladb.tab-outliner.js"></script>
+<script src="../js/plugins/jquery.ladb.tab-importer.js"></script>
+<script src="../js/plugins/jquery.ladb.tab-tutorials.js"></script>
+<script src="../js/plugins/jquery.ladb.tab-news.js"></script>
+<script src="../js/plugins/jquery.ladb.tab-forum.js"></script>
+<script src="../js/plugins/jquery.ladb.tab-sponsor.js"></script>
+<script src="../js/plugins/jquery.ladb.tab-settings.js"></script>
+<script src="../js/plugins/jquery.ladb.tab-about.js"></script>
+<script src="../js/templates/components-twig-templates.js"></script>
+<script src="../js/templates/core-twig-templates.js"></script>
+<script src="../js/templates/tabs-twig-templates.js"></script>
+<script src="../js/i18n/{{ language }}.js"></script>
+<script src="../js/main.js"></script>
+<script src="../js/dialog-tabs.js"></script>
+</body>
+</html>

@@ -1024,6 +1024,8 @@ module Ladb::OpenCutList
 
     end
 
+    # -- Dialogs --
+
     def create_dialog
 
       # Start
@@ -1055,7 +1057,7 @@ module Ladb::OpenCutList
       }
 
       # Setup dialog page
-      @dialog.set_file(File.join(root_dir, 'html', "dialog-#{language}.html"))
+      @dialog.set_file(File.join(root_dir, 'html', "dialog-tabs-#{language}.html"))
 
       # Setup dialog actions
       @dialog.add_action_callback('ladb_opencutlist_setup_dialog_context') do |action_context, call_json|
@@ -1243,7 +1245,7 @@ module Ladb::OpenCutList
       }
 
       # Setup dialog page
-      @modal_dialog.set_file(File.join(root_dir, 'html', "dialog-#{language}.html"))
+      @modal_dialog.set_file(File.join(root_dir, 'html', "dialog-modal-#{language}.html"))
 
       # Setup dialog actions
       @modal_dialog.add_action_callback('ladb_opencutlist_setup_dialog_context') do |action_context, call_json|

@@ -51,9 +51,30 @@ gulp.task('js_minify', function () {
 // Convert twig runtime templates to .js precompiled files
 gulp.task('twig_compile', function () {
     'use strict';
-    return gulp.src('../src/ladb_opencutlist/twig/**/!(dialog).twig')   // dialog.twig is used on build time then it is excluded from this task.
-        .pipe(ladb_twig_compile())
-        .pipe(concat('twig-templates.js'))
+
+    // Clean previously generated dialog files
+    del('../src/ladb_opencutlist/js/templates/*twig-templates.js', {
+        force: true
+    });
+
+    gulp.src('../src/ladb_opencutlist/twig/components/**')
+        .pipe(ladb_twig_compile('components/'))
+        .pipe(concat('components-twig-templates.js'))
+        .pipe(gulp.dest('../src/ladb_opencutlist/js/templates'));
+
+    gulp.src('../src/ladb_opencutlist/twig/core/**')
+        .pipe(ladb_twig_compile('core/'))
+        .pipe(concat('core-twig-templates.js'))
+        .pipe(gulp.dest('../src/ladb_opencutlist/js/templates'));
+
+    gulp.src('../src/ladb_opencutlist/twig/modals/**')
+        .pipe(ladb_twig_compile('modals/'))
+        .pipe(concat('modals-twig-templates.js'))
+        .pipe(gulp.dest('../src/ladb_opencutlist/js/templates'));
+
+    return gulp.src('../src/ladb_opencutlist/twig/tabs/**')
+        .pipe(ladb_twig_compile('tabs/'))
+        .pipe(concat('tabs-twig-templates.js'))
         .pipe(gulp.dest('../src/ladb_opencutlist/js/templates'));
 });
 
@@ -110,15 +131,19 @@ gulp.task('i18n_compile', function () {
 });
 
 // Compile dialog.twig to dialog-XX.html files - this permits to avoid dynamic loading on runtime
-gulp.task('i18n_dialog_compile', function () {
+gulp.task('i18n_dialogs_compile', function () {
 
     // Clean previously generated dialog files
     del('../src/ladb_opencutlist/html/dialog-*', {
         force: true
     });
 
+    gulp.src('../src/ladb_opencutlist/yaml/i18n/' + (isProd ? '!(zz)' : '*') + '.yml')
+        .pipe(ladb_i18n_dialog_compile('../src/ladb_opencutlist/twig/dialog-modal.twig', 'modal'))
+        .pipe(gulp.dest('../src/ladb_opencutlist/html'));
+
     return gulp.src('../src/ladb_opencutlist/yaml/i18n/' + (isProd ? '!(zz)' : '*') + '.yml')
-        .pipe(ladb_i18n_dialog_compile('../src/ladb_opencutlist/twig/dialog.twig'))
+        .pipe(ladb_i18n_dialog_compile('../src/ladb_opencutlist/twig/dialog-tabs.twig', 'tabs'))
         .pipe(gulp.dest('../src/ladb_opencutlist/html'));
 });
 
@@ -183,7 +208,7 @@ gulp.task('version', function () {
         .pipe(touch());
 });
 
-gulp.task('compile', gulp.series('less_compile', 'css_minify', 'js_minify', 'twig_compile', 'i18n_compile', 'i18n_dialog_compile'));
+gulp.task('compile', gulp.series('less_compile', 'css_minify', 'js_minify', 'twig_compile', 'i18n_compile', 'i18n_dialogs_compile'));
 gulp.task('build', gulp.series('compile', 'version', 'rbz_create'));
 
 gulp.task('default', gulp.series('build'));
