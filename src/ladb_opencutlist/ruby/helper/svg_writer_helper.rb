@@ -126,13 +126,10 @@ module Ladb::OpenCutList
 
     def _svg_get_projection_layer_def_identifier(layer_def, unit_transformation, prefix = nil)
       return '' unless layer_def.is_a?(DrawingProjectionLayerDef)
-      if layer_def.path?
-        a = [ prefix, 'PATH', layer_def.name.rjust(3, '_') ]
-      else
-        a = [ prefix, 'DEPTH', ('%0.04f' % [ Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x ]).rjust(9, '_') ]
-        a << 'OUTER' if layer_def.part_outer?
-        a << 'HOLES' if layer_def.part_holes?
-      end
+      a = [ prefix, 'DEPTH', ('%0.04f' % [ Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x ]).rjust(9, '_') ]
+      a << 'OUTER' if layer_def.part_outer?
+      a << 'HOLES' if layer_def.part_holes?
+      a << 'PATH' if layer_def.path?
       _svg_sanitize_identifier(a.compact.join('_'))
     end
 
@@ -154,6 +151,7 @@ module Ladb::OpenCutList
             'serif:id': id,
             'inkscape:label': id
           }
+          attributes.merge!({ 'shaper:cutDepth': "#{_svg_value(Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x)}#{unit_sign}" }) if projection_def.max_depth > 0
         elsif layer_def.part_outer? || layer_def.depth == 0
           attributes = {
             stroke: _svg_stroke_color_hex(stroke_color, fill_color),

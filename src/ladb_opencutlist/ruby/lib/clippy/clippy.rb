@@ -12,43 +12,50 @@ module Ladb::OpenCutList
 
     # -----
 
-    def self.execute_union(closed_subjects, clips = [])
+    def self.execute_union(closed_subjects, opened_subjects = [], clips = [])
       _load_lib
       _clear
       _append_closed_subjects(closed_subjects)
+      _append_opened_subjects(opened_subjects)
       _append_clips(clips)
       _execute_union
-      solution = _unpack_closed_paths_solution
+      closed_paths_solution = _unpack_closed_paths_solution
+      opened_paths_solution = _unpack_opened_paths_solution
       _clear
-      solution
+      [ closed_paths_solution, opened_paths_solution ]
     end
 
-    def self.execute_difference(closed_subjects, clips)
+    def self.execute_difference(closed_subjects, opened_subjects, clips)
       _load_lib
       _clear
       _append_closed_subjects(closed_subjects)
+      _append_opened_subjects(opened_subjects)
       _append_clips(clips)
       _execute_difference
-      solution = _unpack_closed_paths_solution
+      closed_paths_solution = _unpack_closed_paths_solution
+      opened_paths_solution = _unpack_opened_paths_solution
       _clear
-      solution
+      [ closed_paths_solution, opened_paths_solution ]
     end
 
-    def self.execute_intersection(closed_subjects, clips)
+    def self.execute_intersection(closed_subjects, opened_subjects, clips)
       _load_lib
       _clear
       _append_closed_subjects(closed_subjects)
+      _append_opened_subjects(opened_subjects)
       _append_clips(clips)
       _execute_intersection
-      solution = _unpack_closed_paths_solution
+      closed_paths_solution = _unpack_closed_paths_solution
+      opened_paths_solution = _unpack_opened_paths_solution
       _clear
-      solution
+      [ closed_paths_solution, opened_paths_solution ]
     end
 
-    def self.execute_polytree(closed_subjects)
+    def self.execute_polytree(closed_subjects, opened_subjects = [])
       _load_lib
       _clear
       _append_closed_subjects(closed_subjects)
+      _append_opened_subjects(opened_subjects)
       _execute_polytree
       solution = _unpack_polytree_solution
       _clear

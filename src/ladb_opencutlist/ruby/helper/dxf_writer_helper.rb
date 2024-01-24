@@ -1211,13 +1211,10 @@ module Ladb::OpenCutList
 
     def _dxf_get_projection_layer_def_identifier(layer_def, unit_transformation, prefix = nil)
       return '' unless layer_def.is_a?(DrawingProjectionLayerDef)
-      if layer_def.path?
-        a = [ prefix, 'PATH', layer_def.name.rjust(3, '_') ]
-      else
-        a = [ prefix, 'DEPTH', ('%0.03f' % [ Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x ]).rjust(8, '_') ]
-        a << 'OUTER' if layer_def.part_outer?
-        a << 'HOLES' if layer_def.part_holes?
-      end
+      a = [ prefix, 'DEPTH', ('%0.03f' % [ Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x ]).rjust(8, '_') ]
+      a << 'OUTER' if layer_def.part_outer?
+      a << 'HOLES' if layer_def.part_holes?
+      a << 'PATH' if layer_def.path?
       _dxf_sanitize_identifier(a.compact.join('_'))
     end
 

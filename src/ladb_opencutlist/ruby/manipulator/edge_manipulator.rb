@@ -16,6 +16,7 @@ module Ladb::OpenCutList
     def reset_cache
       super
       @points = nil
+      @z_max = nil
       @line = nil
       @segment = nil
     end
@@ -43,6 +44,13 @@ module Ladb::OpenCutList
         @points.reverse! if flipped?
       end
       @points
+    end
+
+    def z_max
+      if @z_max.nil?
+        @z_max = points.max { |p1, p2| p1.z <=> p2.z }.z
+      end
+      @z_max
     end
 
     def line
