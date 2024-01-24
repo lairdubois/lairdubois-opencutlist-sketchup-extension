@@ -31,6 +31,7 @@ module Ladb::OpenCutList
     def points
       if @points.nil?
         @points = @loop.vertices.map { |vertex| vertex.position.transform(@transformation) }
+        @points.reverse! if flipped?
       end
       @points
     end
