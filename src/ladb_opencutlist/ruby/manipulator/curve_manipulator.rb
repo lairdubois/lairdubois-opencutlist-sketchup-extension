@@ -17,6 +17,10 @@ module Ladb::OpenCutList
       super
       @points = nil
       @z_max = nil
+      @plane = nil
+      @plane_point = nil
+      @plane_vector = nil
+      @normal = nil
       @segments = nil
     end
 
@@ -41,6 +45,34 @@ module Ladb::OpenCutList
         @z_max = points.max { |p1, p2| p1.z <=> p2.z }.z
       end
       @z_max
+    end
+
+    def plane
+      if @plane.nil?
+        @plane = Geom.fit_plane_to_points(points)
+      end
+      @plane
+    end
+
+    def plane_point
+      if @plane_point.nil?
+        @plane_point = Geom::Point3d.new(plane[0..2].map { |v| v * plane.last })
+      end
+      @plane_point
+    end
+
+    def plane_vector
+      if @plane_vector.nil?
+        @plane_vector = Geom::Vector3d.new(plane[0..2])
+      end
+      @plane_vector
+    end
+
+    def normal
+      if @normal.nil?
+        @normal = plane_vector.normalize
+      end
+      @normal
     end
 
     def segments

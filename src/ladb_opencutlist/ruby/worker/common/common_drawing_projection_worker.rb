@@ -60,6 +60,8 @@ module Ladb::OpenCutList
       # Extract edges and curves
       @drawing_def.edge_manipulators.each do |edge_manipulator|
 
+        next unless edge_manipulator.line_vector.perpendicular?(Z_AXIS)
+
         e_depth = (z_max - edge_manipulator.z_max)
         e_path = Clippy.points_to_rpath(edge_manipulator.points)
 
@@ -73,6 +75,8 @@ module Ladb::OpenCutList
 
       end
       @drawing_def.curve_manipulators.each do |curve_manipulator|
+
+        next unless curve_manipulator.plane_vector.parallel?(Z_AXIS)
 
         c_depth = (z_max - curve_manipulator.z_max)
         c_path = Clippy.points_to_rpath(curve_manipulator.points)

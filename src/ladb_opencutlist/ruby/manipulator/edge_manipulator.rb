@@ -60,6 +60,14 @@ module Ladb::OpenCutList
       @line
     end
 
+    def line_point
+      line[0]
+    end
+
+    def line_vector
+      line[1]
+    end
+
     def length
       (end_point - start_point).length
     end
