@@ -31,19 +31,19 @@ module Ladb::OpenCutList
       @poly_defs = poly_defs
     end
 
-    def part_upper?
+    def type_upper?
       @type == TYPE_UPPER || @type == TYPE_OUTER
     end
 
-    def part_outer?
+    def type_outer?
       @type == TYPE_OUTER
     end
 
-    def part_holes?
+    def type_holes?
       @type == TYPE_HOLES
     end
 
-    def path?
+    def type_path?
       @type == TYPE_PATH
     end
 

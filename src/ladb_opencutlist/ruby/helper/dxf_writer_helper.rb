@@ -1212,9 +1212,9 @@ module Ladb::OpenCutList
     def _dxf_get_projection_layer_def_identifier(layer_def, unit_transformation, prefix = nil)
       return '' unless layer_def.is_a?(DrawingProjectionLayerDef)
       a = [ prefix, 'DEPTH', ('%0.03f' % [ Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x ]).rjust(8, '_') ]
-      a << 'OUTER' if layer_def.part_outer?
-      a << 'HOLES' if layer_def.part_holes?
-      a << 'PATH' if layer_def.path?
+      a << 'OUTER' if layer_def.type_outer?
+      a << 'HOLES' if layer_def.type_holes?
+      a << 'PATH' if layer_def.type_path?
       _dxf_sanitize_identifier(a.compact.join('_'))
     end
 
@@ -1225,9 +1225,9 @@ module Ladb::OpenCutList
       projection_def.layer_defs.each do |layer_def|
 
         layer_name = _dxf_get_projection_layer_def_identifier(layer_def, unit_transformation, prefix)
-        if layer_def.path?
+        if layer_def.type_path?
           layer_color = paths_color
-        elsif layer_def.part_holes?
+        elsif layer_def.type_holes?
           layer_color = holes_color
         else
           layer_color = color ? ColorUtils.color_lighten(color, (layer_def.depth / (projection_def.max_depth > 0 ? projection_def.max_depth : 1) * 0.8)) : nil
@@ -1260,7 +1260,7 @@ module Ladb::OpenCutList
     def _dxf_write_projection_def_geometry(file, projection_def, smoothing = false, transformation = IDENTITY, unit_transformation = IDENTITY, layer = '0')
       return unless projection_def.is_a?(DrawingProjectionDef)
 
-      projection_def.layer_defs.sort_by { |v| [ v.path? ? 1 : 0, -v.depth ] }.each do |layer_def| # Path's layers always on top
+      projection_def.layer_defs.sort_by { |v| [v.type_path? ? 1 : 0, -v.depth ] }.each do |layer_def| # Path's layers always on top
         _dxf_write_projection_layer_def_geometry(file, layer_def, smoothing, transformation, _dxf_get_projection_layer_def_identifier(layer_def, unit_transformation, layer))
       end
 

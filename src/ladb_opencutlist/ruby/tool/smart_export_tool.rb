@@ -385,11 +385,11 @@ module Ladb::OpenCutList
 
               segments = Kuix::Segments.new
               segments.add_segments(segs)
-              if layer_def.part_upper?
+              if layer_def.type_upper?
                 segments.color = COLOR_PART_UPPER
-              elsif layer_def.part_holes?
+              elsif layer_def.type_holes?
                 segments.color = COLOR_PART_HOLES
-              elsif layer_def.path?
+              elsif layer_def.type_path?
                 segments.color = COLOR_EDGE
               else
                 segments.color = COLOR_PART_DEPTH

@@ -127,9 +127,9 @@ module Ladb::OpenCutList
     def _svg_get_projection_layer_def_identifier(layer_def, unit_transformation, prefix = nil)
       return '' unless layer_def.is_a?(DrawingProjectionLayerDef)
       a = [ prefix, 'DEPTH', ('%0.04f' % [ Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x ]).rjust(9, '_') ]
-      a << 'OUTER' if layer_def.part_outer?
-      a << 'HOLES' if layer_def.part_holes?
-      a << 'PATH' if layer_def.path?
+      a << 'OUTER' if layer_def.type_outer?
+      a << 'HOLES' if layer_def.type_holes?
+      a << 'PATH' if layer_def.type_path?
       _svg_sanitize_identifier(a.compact.join('_'))
     end
 
@@ -139,11 +139,11 @@ module Ladb::OpenCutList
 
       return unless projection_def.is_a?(DrawingProjectionDef)
 
-      projection_def.layer_defs.sort_by { |v| [ v.path? ? 1 : 0, -v.depth ] }.each do |layer_def|   # Path's layers always on top
+      projection_def.layer_defs.sort_by { |v| [v.type_path? ? 1 : 0, v.depth ] }.each do |layer_def|   # Path's layers always on top
 
         id = _svg_get_projection_layer_def_identifier(layer_def, unit_transformation, prefix)
 
-        if layer_def.path?
+        if layer_def.type_path?
           attributes = {
             stroke: _svg_stroke_color_hex(paths_stroke_color),
             fill: 'none',
@@ -152,7 +152,7 @@ module Ladb::OpenCutList
             'inkscape:label': id
           }
           attributes.merge!({ 'shaper:cutDepth': "#{_svg_value(Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x)}#{unit_sign}" }) if projection_def.max_depth > 0
-        elsif layer_def.part_outer? || layer_def.depth == 0
+        elsif layer_def.type_outer? || layer_def.depth == 0
           attributes = {
             stroke: _svg_stroke_color_hex(stroke_color, fill_color),
             fill: _svg_fill_color_hex(fill_color),
@@ -161,7 +161,7 @@ module Ladb::OpenCutList
             'inkscape:label': id
           }
           attributes.merge!({ 'shaper:cutDepth': "#{_svg_value(Geom::Point3d.new(projection_def.max_depth, 0).transform(unit_transformation).x)}#{unit_sign}" }) if projection_def.max_depth > 0
-        elsif layer_def.part_holes?
+        elsif layer_def.type_holes?
           attributes = {
             stroke: _svg_stroke_color_hex(holes_stroke_color, holes_fill_color),
             fill: _svg_fill_color_hex(holes_fill_color),
