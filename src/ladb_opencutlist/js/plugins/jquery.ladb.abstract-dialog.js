@@ -267,7 +267,7 @@ LadbAbstractDialog.prototype.notify = function (text, type, buttons, timeout) {
     }
     var n = new Noty({
         type: type,
-        layout: 'bottomRight',
+        layout: 'bottomCenter',
         theme: 'bootstrap-v3',
         text: text,
         timeout: timeout,
