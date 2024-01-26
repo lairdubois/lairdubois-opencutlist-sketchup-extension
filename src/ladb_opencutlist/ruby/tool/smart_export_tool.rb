@@ -403,6 +403,8 @@ module Ladb::OpenCutList
 
             projection_def.layer_defs.reverse.each do |layer_def| # reverse layer order to present from Bottom to Top
 
+              pts = []
+
               layer_def.poly_defs.each do |poly_def|
                 if fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
                   poly_def.curve_def.portions.each do |portion|
@@ -412,7 +414,28 @@ module Ladb::OpenCutList
                   fn_append_segments.call(layer_def, poly_def, poly_def.segments, 2)
                 end
 
+                unless poly_def.closed?
+
+                  points = Kuix::Points.new
+                  points.add_points([ poly_def.points.first ])
+                  points.size = 16
+                  points.style = Kuix::POINT_STYLE_FILLED_SQUARE
+                  points.color = Kuix::COLOR_MEDIUM_GREY
+                  pts << points
+
+                  points = Kuix::Points.new
+                  points.add_points([ poly_def.points.last ])
+                  points.size = 18
+                  points.style = Kuix::POINT_STYLE_OPEN_SQUARE
+                  points.color = Kuix::COLOR_DARK_GREY
+                  pts << points
+
+                end
+
               end
+
+              pts.each { |entity| preview.append(entity) }
+
             end
 
             bounds = Geom::BoundingBox.new

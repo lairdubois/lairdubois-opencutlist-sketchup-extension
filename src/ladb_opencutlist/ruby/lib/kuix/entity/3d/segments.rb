@@ -15,7 +15,7 @@ module Ladb::OpenCutList::Kuix
       @on_top = false
       @segments = [] # Array<Geom::Point3d>
 
-      @points = []
+      @_points = []
 
     end
 
@@ -27,7 +27,7 @@ module Ladb::OpenCutList::Kuix
     # -- LAYOUT --
 
     def do_layout(transformation)
-      @points = @segments.map { |point|
+      @_points = @segments.map { |point|
         point.transform(transformation * @transformation)
       }
       super
@@ -37,16 +37,13 @@ module Ladb::OpenCutList::Kuix
 
     def paint_content(graphics)
       if @on_top
-        points2d = @points.map { |point| graphics.view.screen_coords(point) }
+        points2d = @_points.map { |point| graphics.view.screen_coords(point) }
         graphics.set_drawing_color(@color)
         graphics.set_line_width(@line_width)
         graphics.set_line_stipple(@line_stipple)
         graphics.view.draw2d(GL_LINE_STRIP, points2d)
-        # graphics.set_line_width(1)
-        # graphics.set_line_stipple('')
-        # graphics.view.draw_points(@points, 20, 3, COLOR_RED)
       else
-        graphics.draw_lines(@points, @color, @line_width, @line_stipple)
+        graphics.draw_lines(@_points, @color, @line_width, @line_stipple)
       end
       super
     end

@@ -10,7 +10,7 @@ module Ladb::OpenCutList::Kuix
       @background_color = nil
       @triangles = [] # Array<Geom::Point3d>
 
-      @points = []
+      @_points = []
 
     end
 
@@ -22,7 +22,7 @@ module Ladb::OpenCutList::Kuix
     # -- LAYOUT --
 
     def do_layout(transformation)
-      @points = @triangles.map { |point|
+      @_points = @triangles.map { |point|
         point.transform(transformation * @transformation)
       }
       super
@@ -31,7 +31,7 @@ module Ladb::OpenCutList::Kuix
     # -- RENDER --
 
     def paint_content(graphics)
-      graphics.draw_triangles(@points, @background_color)
+      graphics.draw_triangles(@_points, @background_color)
       super
     end
 

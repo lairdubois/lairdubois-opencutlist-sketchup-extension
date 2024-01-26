@@ -56,6 +56,15 @@ module Ladb::OpenCutList
     LINE_STIPPLE_LONG_DASHES = '-'.freeze
     LINE_STIPPLE_DASH_DOT_DASH = '-.-'.freeze
 
+    # Point style constants
+
+    POINT_STYLE_OPEN_SQUARE = 1
+    POINT_STYLE_FILLED_SQUARE = 2
+    POINT_STYLE_PLUS = 3
+    POINT_STYLE_CROSS = 4
+    POINT_STYLE_STAR = 5
+    POINT_STYLE_OPEN_TRIANGLE = 6
+    POINT_STYLE_FILLED_TRIANGLE = 7
 
     require_relative 'gl/graphics'
     require_relative 'gl/graphics2d'
@@ -90,6 +99,7 @@ module Ladb::OpenCutList
     require_relative 'entity/3d/motif3d'
     require_relative 'entity/3d/mesh'
     require_relative 'entity/3d/segments'
+    require_relative 'entity/3d/points'
 
     class KuixTool
 

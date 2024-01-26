@@ -133,7 +133,7 @@ module Ladb::OpenCutList
         mask_polyshapes = Clippy.polytree_to_polyshapes(mask_polytree)
 
         # Propagate down to up
-        pldsr = splds.reverse[0..-2] # Exclude top layer
+        pldsr = splds.reverse[0...-1] # Exclude top layer
         mask_polyshapes.each do |mask_polyshape|
           lower_paths = []
           pldsr.each do |layer_def|
@@ -157,15 +157,21 @@ module Ladb::OpenCutList
       splds.each do |layer_def|
 
         unless layer_def.opened_paths.empty?
-          polys = layer_def.opened_paths.map { |path|
+
+          polygons = []
+          polylines = []
+          layer_def.opened_paths.each do |path|
             points = Clippy.rpath_to_points(path, z_max - layer_def.depth)
             if points.first == points.last
-              DrawingProjectionPolygonDef.new(points[0...-1], true) # Loop paths are converted to polygon
+              # Closed paths are converted to polygon by removing the 'end point'
+              polygons << DrawingProjectionPolygonDef.new(points[0...-1], true)
             else
-              DrawingProjectionPolylineDef.new(points)
+              polylines << DrawingProjectionPolylineDef.new(points)
             end
-          }.compact
-          projection_def.layer_defs << DrawingProjectionLayerDef.new(layer_def.depth, DrawingProjectionLayerDef::TYPE_PATH, '', polys)
+          end
+          # TODO : Reconnect closed input paths ?
+          projection_def.layer_defs << DrawingProjectionLayerDef.new(layer_def.depth, DrawingProjectionLayerDef::TYPE_PATH, '', polygons + polylines)
+
         end
 
         unless layer_def.closed_paths.empty?

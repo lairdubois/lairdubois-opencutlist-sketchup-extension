@@ -76,6 +76,14 @@ module Ladb::OpenCutList
       super
     end
 
+    def start_point
+      @points.first
+    end
+
+    def end_point
+      @points.last
+    end
+
     def segments
       if @segments.nil?
         @segments = @points.each_cons(2).to_a.flatten

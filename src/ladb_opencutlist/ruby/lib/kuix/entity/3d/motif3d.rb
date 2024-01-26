@@ -18,14 +18,14 @@ module Ladb::OpenCutList::Kuix
       @line_stipple = LINE_STIPPLE_SOLID
       @on_top = false
 
-      @paths = []
+      @_paths = []
 
     end
 
     # -- LAYOUT --
 
     def do_layout(transformation)
-      @paths.clear
+      @_paths.clear
       @patterns.each do |pattern|
         points = []
         pattern.each do |pattern_point|
@@ -35,7 +35,7 @@ module Ladb::OpenCutList::Kuix
           point.transform!(transformation * @transformation)
           points << point
         end
-        @paths << points
+        @_paths << points
       end
       super
     end
@@ -43,7 +43,7 @@ module Ladb::OpenCutList::Kuix
     # -- RENDER --
 
     def paint_content(graphics)
-      @paths.each do |points|
+      @_paths.each do |points|
         if @on_top
           points2d = points.map { |point| graphics.view.screen_coords(point) }
           graphics.set_drawing_color(@color)
@@ -178,7 +178,7 @@ module Ladb::OpenCutList::Kuix
     # -- RENDER --
 
     def paint_content(graphics)
-      @paths.each { |points| graphics.draw_quads(points, @color) }
+      @_paths.each { |points| graphics.draw_quads(points, @color) }
     end
 
   end
