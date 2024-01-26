@@ -122,14 +122,14 @@ core:
       100 - Se ha producido un error durante la exportación a *{{ path }}*.
       **{{ error }}**
   success:
-    exported_to: 101 - Exportación lograda {{ ruta}}.
+    exported_to: 101 - Exportación lograda {{ path }}.
     copied_to_clipboard: 102 - Copiado al portapapeles
   event:
     model_change: 103 - Se ha cambiado el modelo activo.
     options_change: 104 - Las opciones en el modelo han cambiado.
     material_change: 105 - Se ha cambiado al menos un material.
     selection_change: 106 - Se ha modificado la selección en el modelo activo.
-    layers_change: 107 - Las balizas en el modelo activo han cambiado.
+    layers_change: 107 - Las etiquetas en el modelo activo han cambiado.
   upgrade:
     unavailable: 108 - Imposible encontrar la última versión de *OpenCutList*.
     available: |
@@ -228,7 +228,7 @@ core:
         Compruebe que está conectado a Internet.
 tab:
   cutlist:
-    label: 178 - Ajustadas
+    label: 178 - Partes
     title: 179 - Listado de partes
     help: |
       180 - Seleccione las partes de la escena actual que le gustaría incluir en la lista de partes y luego haga clic en el botón **Generar**.
@@ -330,7 +330,7 @@ tab:
       has_faces_plural: 256 - Esta parte contiene {{ count }} superficies chapadas
       edge_decremented: 257 - Reducido por el grosor de las tiras de los cantos ({{ decrement }})
       edge_ymin: 258 - Longitud del borde 1
-      edge_ymax: 259 - Longitud de borde 2
+      edge_ymax: 259 - Longitud del borde 2
       edge_xmin: 260 - Ancho del borde 1
       edge_xmax: 261 - Ancho de borde 2
       face_zmin: 262 - Dorso
@@ -341,7 +341,7 @@ tab:
       part_axes: 267 - Ejes internos de la pieza
       select_unselect_all_parts: 268 - Selecciona/Deselecciona todas las partes del grupo
       select_parts_in_cutlist: 269 - Seleccionar la pieza en la tabla de despiece
-      select_parts_in_cutlist_plural: 270 - Seleccionar las {{ recuento }} piezas en la tabla de despiece
+      select_parts_in_cutlist_plural: 270 - Seleccionar las {{ count }} piezas en la tabla de despiece
       setup_group_cuttingdiagram: 271 - Configure el diagrama de corte de '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'
       open_part_url: 272 - Abrir la URL de la pieza
     menu:
@@ -491,7 +491,7 @@ tab:
       part_number_sequence_by_group_help: 366 - Si esta opción está activada, la numeración de las piezas se restablece a 1 (o A) para cada grupo (lista de piezas del mismo material y grosor bruto).
       part_folding: 367 - Agrupar partes similares
       part_folding_help: |
-        368 - Si esta opción está habilitada, las partes de **mismo tamaño**, con **las mismas etiquetas** y **la misma superficie terminada** *(si la visualización de esta superficie no está oculta)* se agruparán en la misma línea.
+        368 - Si esta opción está habilitada, las partes de **material Madera Maciza, Tablero o Liston** de **mismo tamaño**, con **las mismas etiquetas** y **la misma superficie terminada** *(si la visualización de esta superficie no está oculta)* se agruparán en la misma línea en el *listado de partes*.
 
         Las partes seguirán considerándose diferentes para las etiquetas y el diagrama de corte.
       hide_entity_names: 369 - Ocultar nombres de instancias
@@ -568,7 +568,7 @@ tab:
       faces: 435 - Chapa de madera
     export:
       title: 436 - Exportación
-      info_0: '437 - Esta función permite exportar la tabla de despiece como una *lista de piezas* a un fichero con formato [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
+      info_0: '437 - Esta función permite exportar la *tabla de despiece* como una *lista de piezas* a un fichero con formato [CSV](https://es.wikipedia.org/wiki/Valores_separados_por_comas).
 
         '
       customize_help: '438 - Reordenar, Ocultar, Añadir, Eliminar o Seleccionar una columna de la lista para personalizar su **título** y la **fórmula** que genera el valor mostrado para cada fila exportada.
@@ -629,7 +629,7 @@ tab:
       url: 487 - URL
       tags: 488 - Etiquetas
       edge_ymin: 489 - Longitud del borde 1
-      edge_ymax: 490 - Longitud de borde 2
+      edge_ymax: 490 - Longitud del borde 2
       edge_xmin: 491 - Ancho del borde 1
       edge_xmax: 492 - Ancho de borde 2
       face_zmin: 493 - Dorso
@@ -657,7 +657,7 @@ tab:
       options_general: 510 - General
       options_solid_wood: "$t(tab.materials.type_1)"
       option_solid_wood_coefficient: 512 - Coeficiente para *$t(tab.materials.type_1)*
-      option_solid_wood_coefficient_help: 513 - Permite indicar el factor aplicado al volumen bruto medido para los materiales de tipo "**$t(tab.materiales.tipo_1)**" para tener en cuenta los defectos y los residuos.
+      option_solid_wood_coefficient_help: 513 - Permite indicar el factor aplicado al volumen bruto medido para los materiales de tipo "**$t(tab.materials.type_1)**" para tener en cuenta los defectos y los residuos.
       raw_materials: 514 - Materias primas
       coefficient: 515 - Coeficiente
       total: 516 - Total
@@ -853,7 +853,7 @@ tab:
         option_dxf_structure_help: |
           677 - Permite elegir la estructura del archivo DXF:
 
-          - La estructura **Calcos** dibuja todos los trazos en plano distinguiendo los diferentes tipos de trazo únicamente por los calcos. *Esta estructura ofrece una mejor compatibilidad con los programas de terceros."
+          - La estructura **Calcos** dibuja todos los trazos en plano distinguiendo los diferentes tipos de trazo únicamente por los calcos. *Esta estructura ofrece una mejor compatibilidad con los programas de terceros.*
           - La estructura **Calcos + Bloques** crea un bloque por pieza e inserta estos bloques tantas veces como se repiten las piezas. *Esta estructura ofrece mayor flexibilidad para modificar el archivo.*
         option_unit: "$t(tab.cutlist.write.option_unit)"
         option_unit_help: "$t(tab.cutlist.write.option_unit_help)"
@@ -990,7 +990,7 @@ tab:
         part_tags: 783 - Etiquetas
         part_batch: 784 - Lote
         part_edge_ymin: 785 - Longitud del borde 1
-        part_edge_ymax: 786 - Longitud de borde 2
+        part_edge_ymax: 786 - Longitud del borde 2
         part_edge_xmin: 787 - Ancho de borde 1
         part_edge_xmax: 788 - Ancho de borde 2
         part_face_zmin: 789 - Chapa de madera dorso
@@ -1132,8 +1132,10 @@ tab:
         Activa la separación del contorno exterior de las piezas de sus perforaciones, así como la fusión de las profundidades de cada oquedad.
       option_include_paths: 893 - Trazados
       option_include_paths_0: 894 - No
-      option_include_paths_1: '895 - '
-      option_include_paths_help: '896 - '
+      option_include_paths_1: 895 - Utilizar aristas no asociadas a una cara
+      option_include_paths_help: '896 - Permite utilizar las aristas contenidas en la pieza que no están asociadas a una cara, para exportarlas como trazado.
+
+        '
       option_parts: 897 - Piezas
       option_parts_help: '898 - Permite elegir el color de las piezas.
 
@@ -1173,8 +1175,8 @@ tab:
       no_typed_materials_in_selection: 922 - Su selección no utiliza ningún material con un tipo definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** o **$t(tab.materials.type_5)**).
       export_empty: 923 - Su exportación no contiene ninguna parte.
     success:
-      part_selected: 924 - {{recuento}} pieza seleccionada en la tabla de despiece.
-      part_selected_plural: 925 - {{recuento}} piezas seleccionadas en la tabla de desglose.
+      part_selected: 924 - {{ count }} pieza seleccionada en la tabla de despiece.
+      part_selected_plural: 925 - {{ count }} piezas seleccionadas en la tabla de desglose.
     tip:
       no_component: |
         926 - Las partes que se incluirán en la *lista de partes* deben ser instancias de un **componente**.
@@ -1267,7 +1269,7 @@ tab:
       std_sections: 993 - Secciones transversales estándar
       std_sections_placeholder: 994 - ancho x espesor ; ...
       std_sections_help: |
-        995 - Formato esperado: **W** x **T**, donde **W** y **T** representan el **real** *ancho* y *espesor* de la pieza laminada.
+        995 - Formato esperado: **W** x **T**, donde **W** y **T** representan el real *ancho* y *espesor* de la pieza laminada.
         *Si no se especifica ninguna unidad, se tendrá en cuenta la unidad modelo.*
       std_sizes: 996 - Tamaños de panel estándar
       std_sizes_placeholder: 997 - largo x ancho ; ...
@@ -1284,8 +1286,8 @@ tab:
       edge_decremented_1: 1006 - Reducir por el grosor de las tiras del canto
       std_attributes_dim_placeholder: 1007 - Elige una talla
       std_volumic_masses: 1008 - Densidad
-      std_volumic_masses_help: '1009 - '
-      std_volumic_masses_add: '1010 - '
+      std_volumic_masses_help: 1009 - Le permite definir la densidad para todos los tamaños y para cada tamaño estándar de material.
+      std_volumic_masses_add: 1010 - Añadir densidad
       std_prices: 1011 - Precio
       std_prices_help: 1012 - Le permite definir el precio para todos los tamaños, así como para cada tamaño estándar del material.
       std_prices_add: 1013 - Añade un precio
@@ -1337,7 +1339,7 @@ tab:
       open_node_url: 1044 - Abrir la URL del elemento
     edit_node:
       title_model: 1045 - Propiedades del modelo
-      title_instance: 1046 - Propiedades del elemento **{{nombre}}**
+      title_instance: 1046 - Propiedades del elemento **{{ name }}**
       general: 1047 - General
       preview: 1048 - Vista previa
       name: 1049 - Nombre
@@ -1347,7 +1349,7 @@ tab:
       url: 1053 - URL
       layer_name: 1054 - Etiqueta
       explode: 1055 - Desmontar
-      explode_message: 1056 - ¿Confirma el desmontaje del elemento **{{nombre}}**?
+      explode_message: 1056 - ¿Confirma el desmontaje del elemento **{{ name }}**?
     error:
       no_model: 1057 - Ningún modelo está abierto. Necesitarás darme más información ;)
       no_entities: 1058 - Su modelo se encuentra vacío
@@ -1558,7 +1560,7 @@ tab:
       reset_global_presets: 1192 - Reiniciar los preajustes
       reset_global_presets_confirm: |
         1193 - Está a punto de restablecer todos sus preajustes *OpenCutList* guardados.
-        Esta acción es definitiva. **Todos los preajustes se perderán.
+        Esta acción es definitiva. **Todos los preajustes se perderán.**
         Confirme para continuar.
       reset_global_presets_success: |
         1194 - Los preajustes de *OpenCutList* se han restablecido.
@@ -1722,7 +1724,7 @@ tool:
     action_option_options_anchor_status: "$t(tab.cutlist.write.option_anchor_1)"
     action_option_options_smoothing_status: "$t(tab.cutlist.write.option_smoothing_1)"
     action_option_options_merge_holes_status: 1312 - Aislar los huecos pasantes y fusionar las profundidades de cada oquedad
-    action_option_options_paths_status: '1313 - '
+    action_option_options_paths_status: 1313 - Exportar aristas no asociadas a una cara contenida en la pieza como un trazado
     error:
       not_part: 1314 - Esta cara no forma parte de una pieza (componente)
       not_flat_face: 1315 - Esta superficie no es plana

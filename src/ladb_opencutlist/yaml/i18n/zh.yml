@@ -1065,15 +1065,16 @@ tab:
       option_merge_holes_0: ""
       option_merge_holes_1: ""
       option_merge_holes_help: |
-      option_edges: ""
-      option_edges_0: 无
-      option_edges_1: ""
-      option_edges_help: |
+      option_include_paths: ""
+      option_include_paths_0: 无
+      option_include_paths_1: ""
+      option_include_paths_help: |
       option_parts: 部件
       option_parts_help: |
       option_parts_holes: ""
       option_parts_holes_help: |
-      option_edges_color_help: |
+      option_parts_paths: ""
+      option_parts_paths_help: |
       error:
         no_part: ""
       warning:
@@ -1210,11 +1211,12 @@ tab:
       edge_decremented_help: 允许您指示部件尺寸是否应减少封边厚度.
       edge_decremented_0: 不减少
       edge_decremented_1: 按边条厚度减小
-      volumic_mass: 密度
-      volumic_mass_help: 允许您定义材质的密度.
+      std_attributes_dim_placeholder: 选择一个尺寸
+      std_volumic_masses: 密度
+      std_volumic_masses_help: ""
+      std_volumic_masses_add: ""
       std_prices: 价格
       std_prices_help: 允许您定义所有尺寸以及每个标准尺寸的材质价格.
-      std_prices_dim_placeholder: 选择一个尺寸
       std_prices_add: 添加价格
       texture_width: 宽度
       texture_height: 高度
@@ -1637,7 +1639,7 @@ tool:
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: ""
-    action_option_options_edges_status: ""
+    action_option_options_paths_status: ""
     error:
       not_part: ""
       not_flat_face: ""

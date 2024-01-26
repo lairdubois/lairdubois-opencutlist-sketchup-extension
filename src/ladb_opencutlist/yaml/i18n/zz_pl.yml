@@ -1074,454 +1074,456 @@ tab:
       option_merge_holes_0: '890 - '
       option_merge_holes_1: '891 - '
       option_merge_holes_help: '892 - '
-      option_edges: '893 - '
-      option_edges_0: 894 - Brak
-      option_edges_1: '895 - '
-      option_edges_help: '896 - '
+      option_include_paths: '893 - '
+      option_include_paths_0: 894 - Brak
+      option_include_paths_1: '895 - '
+      option_include_paths_help: '896 - '
       option_parts: 897 - Części
       option_parts_help: '898 - '
       option_parts_holes: '899 - '
       option_parts_holes_help: '900 - '
-      option_edges_color_help: '901 - '
+      option_parts_paths: '901 - '
+      option_parts_paths_help: '902 - '
       error:
-        no_part: '902 - '
+        no_part: '903 - '
       warning:
-        is_group_selection: 903 - Części w **ukrytych grupach** twojej listy części nie będą wyeksportowane.
-        is_part_selection: '904 - '
+        is_group_selection: 904 - Części w **ukrytych grupach** twojej listy części nie będą wyeksportowane.
+        is_part_selection: '905 - '
     snippet:
-      hello: '905 - '
-      number: 906 - Numer
-      name: 907 - Oznaczenie
-      number_and_name: 908 - Numer i oznaczenie
-      number_without_hardware: 909 - Liczba (bez akcesoriów)
-      size: 910 - Wymiar
-      area: 911 - Obszar
-      volume: 912 - Objętość
+      hello: '906 - '
+      number: 907 - Numer
+      name: 908 - Oznaczenie
+      number_and_name: 909 - Numer i oznaczenie
+      number_without_hardware: 910 - Liczba (bez akcesoriów)
+      size: 911 - Wymiar
+      area: 912 - Obszar
+      volume: 913 - Objętość
     error:
-      no_model: 913 - Żaden model nie jest otwarty. Będziesz musiał podać mi więcej informacji;)
-      no_entities: 914 - Twój model jest pusty. Będziesz musiał podać mi więcej informacji;)
-      no_component_in_selection: 915 - W zaznaczeniu nie znaleziono instancji widocznego komponentu.
-      no_component_in_model: 916 - W twojej scenie nie znaleziono instancji widocznego komponentu.
-      unknow_part: 917 - Wybrana część nie istnieje na liście części.
-      obsolete_cutlist: 918 - Niemożliwe, lista części jest nieaktualna. Zaktualizuj ją.
+      no_model: 914 - Żaden model nie jest otwarty. Będziesz musiał podać mi więcej informacji;)
+      no_entities: 915 - Twój model jest pusty. Będziesz musiał podać mi więcej informacji;)
+      no_component_in_selection: 916 - W zaznaczeniu nie znaleziono instancji widocznego komponentu.
+      no_component_in_model: 917 - W twojej scenie nie znaleziono instancji widocznego komponentu.
+      unknow_part: 918 - Wybrana część nie istnieje na liście części.
+      obsolete_cutlist: 919 - Niemożliwe, lista części jest nieaktualna. Zaktualizuj ją.
     warning:
-      is_entity_selection: 919 - Uwzględniono tylko wybrane części w Twoim modelu.
-      no_typed_materials_in_model: 920 - Ten model nie używa żadnego zdefiniowanego materiału (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** lub **$t(tab.materials.type_5)**).
-      no_typed_materials_in_selection: 921 - Wybrane elementy nie używają żadnego zdefiniowanego materiału (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** lub **$t(tab.materials.type_5)**).
-      export_empty: 922 - Twója selekcja do eksportu nie zawiera żadnych części.
+      is_entity_selection: 920 - Uwzględniono tylko wybrane części w Twoim modelu.
+      no_typed_materials_in_model: 921 - Ten model nie używa żadnego zdefiniowanego materiału (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** lub **$t(tab.materials.type_5)**).
+      no_typed_materials_in_selection: 922 - Wybrane elementy nie używają żadnego zdefiniowanego materiału (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** lub **$t(tab.materials.type_5)**).
+      export_empty: 923 - Twója selekcja do eksportu nie zawiera żadnych części.
     success:
-      part_selected: '923 - '
-      part_selected_plural: '924 - '
+      part_selected: '924 - '
+      part_selected_plural: '925 - '
     tip:
       no_component: |
-        925 - Części które mają być na *liście części* muszą być instancjami **komponentu**.
+        926 - Części które mają być na *liście części* muszą być instancjami **komponentu**.
         Jeżeli używasz tylko grup, przekształć je w komponenty.
         Dzięki używaniu komponentów, części mogą być powielane bez duplikowania.
-      no_typed_materials: 926 - Zastosuj materiał do części które mają być na liście części i określ typ tego materiału (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** lub **$t(tab.materials.type_5)**) w zakładce <i class="ladb-opencutlist-icon-materials"></i> **Materiały**.
-    obsolete_base: 927 - Aby zachować synchronizację, należy wygenerować listę części.
+      no_typed_materials: 927 - Zastosuj materiał do części które mają być na liście części i określ typ tego materiału (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** lub **$t(tab.materials.type_5)**) w zakładce <i class="ladb-opencutlist-icon-materials"></i> **Materiały**.
+    obsolete_base: 928 - Aby zachować synchronizację, należy wygenerować listę części.
   materials:
-    label: 928 - Materiały
-    title: 929 - Materiały
-    new: 930 - Nowy materiał
-    type_0: 931 - Niezdefiniowany
-    type_1: 932 - Lite drewno
-    type_2: 933 - Arkusz
-    type_3: 934 - Wymiarowy
-    type_4: 935 - Oklejanie krawędzi
-    type_5: 936 - Dopasowywanie
-    type_6: 937 - Fornir
+    label: 929 - Materiały
+    title: 930 - Materiały
+    new: 931 - Nowy materiał
+    type_0: 932 - Niezdefiniowany
+    type_1: 933 - Lite drewno
+    type_2: 934 - Arkusz
+    type_3: 935 - Wymiarowy
+    type_4: 936 - Oklejanie krawędzi
+    type_5: 937 - Dopasowywanie
+    type_6: 938 - Fornir
     tooltip:
-      type_0: 938 - Typ materiału '$t(tab.materials.type_0)'
-      type_1: 939 - Typ materiału '$t(tab.materials.type_1)'
-      type_2: 940 - Typ materiału '$t(tab.materials.type_2)'
-      type_3: 941 - Typ materiału '$t(tab.materials.type_3)'
-      type_4: 942 - Typ materiału '$t(tab.materials.type_4)'
-      type_5: 943 - Typ materiału '$t(tab.materials.type_5)'
-      type_6: 944 - Typ materiału '$t(tab.materials.type_6)'
+      type_0: 939 - Typ materiału '$t(tab.materials.type_0)'
+      type_1: 940 - Typ materiału '$t(tab.materials.type_1)'
+      type_2: 941 - Typ materiału '$t(tab.materials.type_2)'
+      type_3: 942 - Typ materiału '$t(tab.materials.type_3)'
+      type_4: 943 - Typ materiału '$t(tab.materials.type_4)'
+      type_5: 944 - Typ materiału '$t(tab.materials.type_5)'
+      type_6: 945 - Typ materiału '$t(tab.materials.type_6)'
       grained_0: "$t(tab.materials.edit_material.grained_0)"
       grained_1: "$t(tab.materials.edit_material.grained_1)"
-      grain_direction: 947 - Kierunek wzoru
-      colorized: 948 - Ten odcień zostanie zastosowany do tekstury tego materiału podczas renderowania w modelu
-      texture_load: 949 - Załaduj nową teksturę
-      texture_clear: 950 - Usuń teksturę
-      edit: 951 - Edytuj właściwości '{{ name }}'
+      grain_direction: 948 - Kierunek wzoru
+      colorized: 949 - Ten odcień zostanie zastosowany do tekstury tego materiału podczas renderowania w modelu
+      texture_load: 950 - Załaduj nową teksturę
+      texture_clear: 951 - Usuń teksturę
+      edit: 952 - Edytuj właściwości '{{ name }}'
       set_current: |
-        952 - Kolorowanie części za pomocą '{{ name }}'.
+        953 - Kolorowanie części za pomocą '{{ name }}'.
         *Kliknij dwukrotnie, aby zwinąć*
-      open_url: '953 - '
+      open_url: '954 - '
     menu:
-      import_from_skm: 954 - Importuj materiał (.skm)
-      purge_unused: 955 - Usuń nieużywane materiały
-      reset_prices: 956 - Wyzeruj ceny wszystkich materiałów
+      import_from_skm: 955 - Importuj materiał (.skm)
+      purge_unused: 956 - Usuń nieużywane materiały
+      reset_prices: 957 - Wyzeruj ceny wszystkich materiałów
       reset_prices_confirm: |
-        957 - Właśnie resetujesz ceny wszystkich materiałów w swoim modelu.
-        Ta czynność jest ostateczna. **Wszystkie ceny zostaną wyzerowane.
+        958 - Właśnie resetujesz ceny wszystkich materiałów w swoim modelu.
+        Ta czynność jest ostateczna. **Wszystkie ceny zostaną wyzerowane.**
         Potwierdź, aby kontynuować.
-      reset_prices_success: 958 - Ceny wszystkich materiałów zostały zresetowane.
+      reset_prices_success: 959 - Ceny wszystkich materiałów zostały zresetowane.
     new_material:
-      title: 959 - Utwórz materiał
-      name: 960 - Nazwa
-      name_warning: 961 - Błędna nazwa
-      color: 962 - Kolor
-      color_warning: 963 - Niewłaściwy kolor
-      type: 964 - Rodzaj
+      title: 960 - Utwórz materiał
+      name: 961 - Nazwa
+      name_warning: 962 - Błędna nazwa
+      color: 963 - Kolor
+      color_warning: 964 - Niewłaściwy kolor
+      type: 965 - Rodzaj
     edit_material:
-      title: 965 - Właściwości materiału '{{ name }}'
-      general: 966 - Główne
-      texture: 967 - Tekstura
-      no_texture: 968 - Brak tekstury
-      name: 969 - Nazwa
-      type: 970 - Rodzaj
-      description: 971 - Opis
-      url: '972 - '
-      cut_options: 973 - Parametry cięcia
-      attributes: 974 - Atrybuty
-      thickness: 975 - Grubość
+      title: 966 - Właściwości materiału '{{ name }}'
+      general: 967 - Główne
+      texture: 968 - Tekstura
+      no_texture: 969 - Brak tekstury
+      name: 970 - Nazwa
+      type: 971 - Rodzaj
+      description: 972 - Opis
+      url: '973 - '
+      cut_options: 974 - Parametry cięcia
+      attributes: 975 - Atrybuty
+      thickness: 976 - Grubość
       thickness_help: |
-        976 - Gotowa grubość materiału.
+        977 - Gotowa grubość materiału.
         *Rozmiary bez jednostek są podane w jednostkach modelowych.*
-      length_increase: 977 - Długość ponadwymiarowa
-      length_increase_help: 978 - Nadmiar dodany do długości aby określić **wstępną długość**.
-      width_increase: 979 - Szerokość ponadwymiarowa
-      width_increase_help: 980 - Nadmiar dodany do szerokości aby określić **wstępną szerokość**.
-      thickness_increase: 981 - Grubość ponadwymiarowa
-      thickness_increase_help: 982 - Nadmiar dodany do grubości aby określić **wstępną grubość**.
-      std_lengths: 983 - Standardowe długości
-      std_lengths_placeholder: 984 - długość ; ...
+      length_increase: 978 - Długość ponadwymiarowa
+      length_increase_help: 979 - Nadmiar dodany do długości aby określić **wstępną długość**.
+      width_increase: 980 - Szerokość ponadwymiarowa
+      width_increase_help: 981 - Nadmiar dodany do szerokości aby określić **wstępną szerokość**.
+      thickness_increase: 982 - Grubość ponadwymiarowa
+      thickness_increase_help: 983 - Nadmiar dodany do grubości aby określić **wstępną grubość**.
+      std_lengths: 984 - Standardowe długości
+      std_lengths_placeholder: 985 - długość ; ...
       std_lengths_help: |
-        985 - Standardowe długości desek lub obrzeży.
+        986 - Standardowe długości desek lub obrzeży.
         *Rozmiary bez podanych jednostek są traktowane jak w jednostkach modelu.*
-      std_widths: 986 - Standardowe szerokości
-      std_widths_placeholder: 987 - szerokość ; ...
+      std_widths: 987 - Standardowe szerokości
+      std_widths_placeholder: 988 - szerokość ; ...
       std_widths_help: |
-        988 - Standardowe szerokości obrzeży.
+        989 - Standardowe szerokości obrzeży.
         *Uznaje się, że szerokości bez jednostek są podane w jednostkach modelu.*
-      std_thicknesses: 989 - Standardowe grubości
-      std_thicknesses_placeholder: 990 - grubość ; ...
+      std_thicknesses: 990 - Standardowe grubości
+      std_thicknesses_placeholder: 991 - grubość ; ...
       std_thicknesses_help: |
-        991 - Dostępne **aktualne** przybliżone grubości.
+        992 - Dostępne **aktualne** przybliżone grubości.
         *Wielkości bez jednostek są traktowane jak w jednostkach modelu.*
-      std_sections: 992 - Standardowe Przekroje
-      std_sections_placeholder: 993 - szerokość x grubość ; ...
+      std_sections: 993 - Standardowe Przekroje
+      std_sections_placeholder: 994 - szerokość x grubość ; ...
       std_sections_help: |
-        994 - Oczekiwany format: **Szer**x**Grub**, gdzie **Szer** i **Grub** reprezentują **aktualną** *szerokość* i *grubość* wymiarowanej części.
+        995 - Oczekiwany format: **Szer**x**Grub**, gdzie **Szer** i **Grub** reprezentują aktualną *szerokość* i *grubość* wymiarowanej części.
         *Wielkości bez jednostek są traktowane jak w jednostkach modelu.*
-      std_sizes: 995 - Standardowe rozmiary arkuszy
-      std_sizes_placeholder: 996 - długość x szerokość ; ...
+      std_sizes: 996 - Standardowe rozmiary arkuszy
+      std_sizes_placeholder: 997 - długość x szerokość ; ...
       std_sizes_help: |
-        997 - Oczekiwany format: **długość x szerokość**, gdzie **długość** i **szerokość** reprezentują **rzeczywistą** *długość* i *szerokość* arkusza.
+        998 - Oczekiwany format: **długość x szerokość**, gdzie **długość** i **szerokość** reprezentują **rzeczywistą** *długość* i *szerokość* arkusza.
         *Wielkości bez jednostek są traktowane jak w jednostkach modelu.*
-      grained: 998 - Kierunek wzoru/tekstury
-      grained_help: 999 - Konfiguruje kierunek wzoru lub tekstury na materiale.
-      grained_0: 1000 - Bez wzoru/tekstury
-      grained_1: 1001 - Wzór/tekstura wzdłuż Długości
-      edge_decremented: 1002 - Zmniejszanie
-      edge_decremented_help: 1003 - Wybierz czy wymiary części mają być zmniejszone o grubość obrzeża.
-      edge_decremented_0: 1004 - Brak zmniejszania
-      edge_decremented_1: 1005 - Zmniejsz o grubość obrzeża
-      volumic_mass: 1006 - Gęstość
-      volumic_mass_help: 1007 - Pozwala określić gęstość materiału.
-      std_prices: 1008 - Cena
-      std_prices_help: 1009 - Pozwala określić cenę dla wszystkich rozmiarów, a także dla każdego standardowego rozmiaru materiału.
-      std_prices_dim_placeholder: 1010 - Wybierz rozmiar
-      std_prices_add: 1011 - Dodaj cenę
-      texture_width: 1012 - Szerokość
-      texture_height: 1013 - Wysokość
-      export_to_skm: 1014 - Eksport (.skm)
+      grained: 999 - Kierunek wzoru/tekstury
+      grained_help: 1000 - Konfiguruje kierunek wzoru lub tekstury na materiale.
+      grained_0: 1001 - Bez wzoru/tekstury
+      grained_1: 1002 - Wzór/tekstura wzdłuż Długości
+      edge_decremented: 1003 - Zmniejszanie
+      edge_decremented_help: 1004 - Wybierz czy wymiary części mają być zmniejszone o grubość obrzeża.
+      edge_decremented_0: 1005 - Brak zmniejszania
+      edge_decremented_1: 1006 - Zmniejsz o grubość obrzeża
+      std_attributes_dim_placeholder: 1007 - Wybierz rozmiar
+      std_volumic_masses: 1008 - Gęstość
+      std_volumic_masses_help: '1009 - '
+      std_volumic_masses_add: '1010 - '
+      std_prices: 1011 - Cena
+      std_prices_help: 1012 - Pozwala określić cenę dla wszystkich rozmiarów, a także dla każdego standardowego rozmiaru materiału.
+      std_prices_add: 1013 - Dodaj cenę
+      texture_width: 1014 - Szerokość
+      texture_height: 1015 - Wysokość
+      export_to_skm: 1016 - Eksport (.skm)
     texture_load:
-      title: 1015 - Wczytaj obraz
+      title: 1017 - Wczytaj obraz
     import_from_skm:
-      title: 1016 - Zaimportuj plik .skm
+      title: 1018 - Zaimportuj plik .skm
     export_to_skm:
-      title: 1017 - Eksportuj plik .skm
+      title: 1019 - Eksportuj plik .skm
     option:
-      material_order_strategy: 1018 - Sortowanie materiałów
+      material_order_strategy: 1020 - Sortowanie materiałów
       material_order_strategy_help: |
-        1019 - Aby zdefiniować sortowanie materiałow na liście zmień kolejność następujących właściwości
+        1021 - Aby zdefiniować sortowanie materiałow na liście zmień kolejność następujących właściwości
         Każda właściwość może być sortowana <i class="ladb-opencutlist-icon-sort-asc"></i> *rosnąco* lub <i class="ladb-opencutlist-icon-sort-desc"></i> *malejąco*.
-      property_type: 1020 - Rodzaj
-      property_name: 1021 - Nazwa
+      property_type: 1022 - Rodzaj
+      property_name: 1023 - Nazwa
     remove:
       message: |
-        1022 - Czy usunąć materiał **{{ material_name }}** z modelu?
+        1024 - Czy usunąć materiał **{{ material_name }}** z modelu?
         Potwierdź aby kontynuować.
     duplicate:
-      message: '1023 - Wybierz nazwę nowego materiału do skopiowania z **{{ material_name }}**.
+      message: '1025 - Wybierz nazwę nowego materiału do skopiowania z **{{ material_name }}**.
 
         '
     error:
-      no_model: 1024 - Żaden model nie jest otwarty. Będziesz musiał podać mi więcej informacji;)
-      no_materials: 1025 - Twój model nie zawiera żadnych materiałów.
-      material_not_found: 1026 - Nie znaleziono materiałów.
-      failed_import_skm_file: 1027 - Błąd podczas importu z pliku skm **{{ error }}**
-      failed_export_skm_file: 1028 - Błąd podczas eksportu do pliku skm **{{ error }}**
-      failed_removing_material: 1029 - Błąd podczas usuwania materiału **{{ error }}**
-      failed_duplicating_material: 1030 - Podczas powielania materiału wystąpił błąd. **{{ error }}
-      invalid_image_file: 1031 - Nieprawidłowy obraz
-    obsolete_base: 1032 - Aby zachować synchronizację, musisz zaktualizować listę materiałów.
+      no_model: 1026 - Żaden model nie jest otwarty. Będziesz musiał podać mi więcej informacji;)
+      no_materials: 1027 - Twój model nie zawiera żadnych materiałów.
+      material_not_found: 1028 - Nie znaleziono materiałów.
+      failed_import_skm_file: 1029 - Błąd podczas importu z pliku skm **{{ error }}**
+      failed_export_skm_file: 1030 - Błąd podczas eksportu do pliku skm **{{ error }}**
+      failed_removing_material: 1031 - Błąd podczas usuwania materiału **{{ error }}**
+      failed_duplicating_material: 1032 - Podczas powielania materiału wystąpił błąd. **{{ error }}**
+      invalid_image_file: 1033 - Nieprawidłowy obraz
+    obsolete_base: 1034 - Aby zachować synchronizację, musisz zaktualizować listę materiałów.
   outliner:
-    label: '1033 - '
-    title: '1034 - '
-    list: '1035 - '
-    nodes: '1036 - '
-    part_count: '1037 - '
-    type_0: '1038 - '
-    type_1: '1039 - '
-    type_2: '1040 - '
-    type_3: '1041 - '
+    label: '1035 - '
+    title: '1036 - '
+    list: '1037 - '
+    nodes: '1038 - '
+    part_count: '1039 - '
+    type_0: '1040 - '
+    type_1: '1041 - '
+    type_2: '1042 - '
+    type_3: '1043 - '
     tooltip:
-      open_node_url: '1042 - '
+      open_node_url: '1044 - '
     edit_node:
-      title_model: '1043 - '
-      title_instance: '1044 - '
-      general: 1045 - Główne
-      preview: 1046 - Przegląd
-      name: 1047 - Nazwa
-      instance_name: 1048 - Instancja
-      definition_name: '1049 - '
-      description: 1050 - Opis
-      url: '1051 - '
-      layer_name: 1052 - Etykieta
-      explode: '1053 - '
-      explode_message: '1054 - '
+      title_model: '1045 - '
+      title_instance: '1046 - '
+      general: 1047 - Główne
+      preview: 1048 - Przegląd
+      name: 1049 - Nazwa
+      instance_name: 1050 - Instancja
+      definition_name: '1051 - '
+      description: 1052 - Opis
+      url: '1053 - '
+      layer_name: 1054 - Etykieta
+      explode: '1055 - '
+      explode_message: '1056 - '
     error:
-      no_model: 1055 - Żaden model nie jest otwarty. Będziesz musiał podać mi więcej informacji;)
-      no_entities: '1056 - '
-      node_not_found: '1057 - '
-      entity_not_found: '1058 - '
-      obsolete_outliner: '1059 - '
+      no_model: 1057 - Żaden model nie jest otwarty. Będziesz musiał podać mi więcej informacji;)
+      no_entities: '1058 - '
+      node_not_found: '1059 - '
+      entity_not_found: '1060 - '
+      obsolete_outliner: '1061 - '
     tip:
-      no_node: '1060 - '
-    obsolete_base: '1061 - '
+      no_node: '1062 - '
+    obsolete_base: '1063 - '
   importer:
-    label: 1062 - Importuj
-    title: 1063 - Importuj części
+    label: 1064 - Importuj
+    title: 1065 - Importuj części
     help: |
-      1064 - Ta strona pozwala zaimportować do modelu części (w kształcie równoległościanów) z pliku [CSV](https://pl.wikipedia.org/wiki/CSV_(format_pliku)).
+      1066 - Ta strona pozwala zaimportować do modelu części (w kształcie równoległościanów) z pliku [CSV](https://pl.wikipedia.org/wiki/CSV_(format_pliku)).
       Dzięki temu można użyć *OpenCutList* do części które zostały utworzone w programach innych niż *SketchUp*.
       Naciśnij przycisk **Otwórz plik CSV** aby rozpocząć.
-    open_csv: 1065 - Otwórz plik CSV
-    import_to_model: 1066 - Importuj do modelu
+    open_csv: 1067 - Otwórz plik CSV
+    import_to_model: 1068 - Importuj do modelu
     load:
-      title: 1067 - Ładowanie pliku CSV
+      title: 1069 - Ładowanie pliku CSV
       info_0: |
-        1068 - Wybierz opcje niezbędne do poprawnego odczytu pliku:
+        1070 - Wybierz opcje niezbędne do poprawnego odczytu pliku:
         **{{ filename }}**.
       info_1: |
-        1069 - *Jednostki w modelu to: **{{ unit }}**.
+        1071 - *Jednostki w modelu to: **{{ unit }}**.
         Te jednostki będą używane dla wymiarów bez określonych jednostek*.
-      options: 1070 - Opcje ładowania
-      option_col_sep: 1071 - Separator
-      option_col_sep_tab: 1072 - Tabulator
-      option_col_sep_comma: 1073 - Przecinek
-      option_col_sep_semicolon: 1074 - Średnik
-      option_first_line_headers: 1075 - Linia nagłówka
-      option_first_line_headers_0: 1076 - Data
-      option_first_line_headers_1: 1077 - Nagłówki kolumn
+      options: 1072 - Opcje ładowania
+      option_col_sep: 1073 - Separator
+      option_col_sep_tab: 1074 - Tabulator
+      option_col_sep_comma: 1075 - Przecinek
+      option_col_sep_semicolon: 1076 - Średnik
+      option_first_line_headers: 1077 - Linia nagłówka
+      option_first_line_headers_0: 1078 - Data
+      option_first_line_headers_1: 1079 - Nagłówki kolumn
     import:
-      title: 1078 - Importowanie części do modelu
+      title: 1080 - Importowanie części do modelu
       info_0: |
-        1079 - Importujesz **{{ count }} część** do modelu.
+        1081 - Importujesz **{{ count }} część** do modelu.
         Ta część zostanie umieszczona w scenie głównej, w zerowych współrzędnych.
       info_0_plural: |
-        1080 - Importujesz **{{ count }} części** do modelu.
+        1082 - Importujesz **{{ count }} części** do modelu.
         Te części zostaną umieszczone w scenie głównej, w zerowych współrzędnych.
-      info_1: 1081 - Naciśnij **Import** aby potwierdzić operację.
+      info_1: 1083 - Naciśnij **Import** aby potwierdzić operację.
       options: |
-        1082 - Model zawiera już *części*, *definicje* lub *materiały*.
+        1084 - Model zawiera już *części*, *definicje* lub *materiały*.
         Wybierz odpowiednie opcje importu.
-      option_remove_all_?: 1083 - Co dalej?
-      option_remove_all_false: 1084 - Dodaj części do już istniejących
-      option_remove_all_true: 1085 - Usuń wszystko!
-      option_keep_definitions_settings: 1086 - Zachowaj ustawienia definicji
-      option_keep_materials_settings: 1087 - Zachowaj ustawienia materiałów
+      option_remove_all_?: 1085 - Co dalej?
+      option_remove_all_false: 1086 - Dodaj części do już istniejących
+      option_remove_all_true: 1087 - Usuń wszystko!
+      option_keep_definitions_settings: 1088 - Zachowaj ustawienia definicji
+      option_keep_materials_settings: 1089 - Zachowaj ustawienia materiałów
     column:
-      unused: 1088 - Nieużywane
-      mandatory: 1089 - Pola obowiązkowe
-      optional: 1090 - Pola opcjonalne
-      name: 1091 - Oznaczenie
-      count: 1092 - Ilość
-      bbox_length: 1093 - Długość
-      bbox_width: 1094 - Szerokość
-      bbox_thickness: 1095 - Grubość
-      material: 1096 - Materiał
-      tags: 1097 - Plakietki
+      unused: 1090 - Nieużywane
+      mandatory: 1091 - Pola obowiązkowe
+      optional: 1092 - Pola opcjonalne
+      name: 1093 - Oznaczenie
+      count: 1094 - Ilość
+      bbox_length: 1095 - Długość
+      bbox_width: 1096 - Szerokość
+      bbox_thickness: 1097 - Grubość
+      material: 1098 - Materiał
+      tags: 1099 - Plakietki
     tooltip:
-      errors: 1098 - Ta część nie zostanie zaimportowana ponieważ zawiera następujące błędy
-      warnings: 1099 - Ta część zostanie zaimportowana ale generuje następujące ostrzeżenia
+      errors: 1100 - Ta część nie zostanie zaimportowana ponieważ zawiera następujące błędy
+      warnings: 1101 - Ta część zostanie zaimportowana ale generuje następujące ostrzeżenia
     error:
-      no_model: 1100 - Brak otwartego modelu. Nie da się zaimportować części do próżni ;)
-      file_not_found: '1101 - Nie znaleziono pliku: **{{ filename }}**'
-      bad_extension: 1102 - Plik *{{ filename }}* nie ma rozszerzenia **.CSV** lub **.TSV**.
+      no_model: 1102 - Brak otwartego modelu. Nie da się zaimportować części do próżni ;)
+      file_not_found: '1103 - Nie znaleziono pliku: **{{ filename }}**'
+      bad_extension: 1104 - Plik *{{ filename }}* nie ma rozszerzenia **.CSV** lub **.TSV**.
       failed_to_load_csv_file: |
-        1103 - Nie można załadować pliku CSV: **{{ error }}**
+        1105 - Nie można załadować pliku CSV: **{{ error }}**
         *Sprawdź, czy wybrałeś prawidłowy znak oddzielający pola.*
-      empty_file: 1104 - Plik jest pusty lub nie można go poprawnie odczytać.
-      no_importable_part: 1105 - Nie można zaimportować żadnych części. Przypisz wymagane pola do odpowiednich kolumn.
-      invalid_name: 1106 - Błędny opis
-      invalid_length: 1107 - Błędna długość
-      invalid_width: 1108 - Błędna szerokość
-      invalid_thickness: 1109 - Błędna grubość
-      failed_to_import: 1110 - Import nieudany.
+      empty_file: 1106 - Plik jest pusty lub nie można go poprawnie odczytać.
+      no_importable_part: 1107 - Nie można zaimportować żadnych części. Przypisz wymagane pola do odpowiednich kolumn.
+      invalid_name: 1108 - Błędny opis
+      invalid_length: 1109 - Błędna długość
+      invalid_width: 1110 - Błędna szerokość
+      invalid_thickness: 1111 - Błędna grubość
+      failed_to_import: 1112 - Import nieudany.
     warning:
-      invalid_count: 1111 - Nieprawidłowa ilość
-      invalid_material: 1112 - Niewłaściwy materiał
+      invalid_count: 1113 - Nieprawidłowa ilość
+      invalid_material: 1114 - Niewłaściwy materiał
     success:
-      imported_title: 1113 - Import zakończony
-      imported_body: 1114 - {{ count }} część została pomyślnie zaimportowana!
-      imported_body_plural: 1115 - {{ count }} pomyślnie zaimportowane części!
-    obsolete_base: 1116 - Aby zachować synchronizację, musisz ponownie załadować plik CSV.
+      imported_title: 1115 - Import zakończony
+      imported_body: 1116 - {{ count }} część została pomyślnie zaimportowana!
+      imported_body_plural: 1117 - {{ count }} pomyślnie zaimportowane części!
+    obsolete_base: 1118 - Aby zachować synchronizację, musisz ponownie załadować plik CSV.
   tutorials:
-    label: 1117 - Instrukcje
-    title: 1118 - Instrukcje
-    help: '1119 - Tutaj znajdziesz długą listę filmów stworzonych przez społeczność na temat korzystania z *OpenCutList*.
+    label: 1119 - Instrukcje
+    title: 1120 - Instrukcje
+    help: '1121 - Tutaj znajdziesz długą listę filmów stworzonych przez społeczność na temat korzystania z *OpenCutList*.
 
       '
-    submit: 1120 - Prześlij film
+    submit: 1122 - Prześlij film
     submit_info: |
-      1121 - Nagrałeś film przedstawiający korzystanie z **OpenCutList** i chciałbyś aby pojawił się tutaj?
+      1123 - Nagrałeś film przedstawiający korzystanie z **OpenCutList** i chciałbyś aby pojawił się tutaj?
       Napisz do nas **opencutlist@lairdubois.fr**!
 
       *Film musi być publiczny i znajdować się na YouTube*.
     error:
-      fail_to_load_list: 1122 - Nie można załadować listy filmów.
+      fail_to_load_list: 1124 - Nie można załadować listy filmów.
   news:
-    label: 1123 - Wiadomości
-    title: 1124 - Wiadomości
-    help: '1125 - Najnowsze wiadomości od *OpenCutList*.
+    label: 1125 - Wiadomości
+    title: 1126 - Wiadomości
+    help: '1127 - Najnowsze wiadomości od *OpenCutList*.
 
       '
-    comment: 1126 - Komentarz
+    comment: 1128 - Komentarz
     error:
-      fail_to_load_list: 1127 - Nie można załadować listy wiadomości.
+      fail_to_load_list: 1129 - Nie można załadować listy wiadomości.
   forum:
-    label: 1128 - Forum
-    title: 1129 - Forum
-    help: '1130 - To forum dyskusyjne pozwala wymieniać wiadomości ze społecznością użytkowników i zespołem *OpenCutList*.
+    label: 1130 - Forum
+    title: 1131 - Forum
+    help: '1132 - To forum dyskusyjne pozwala wymieniać wiadomości ze społecznością użytkowników i zespołem *OpenCutList*.
 
       '
-    create_conversation: 1131 - Nowy temat
-    reply: 1132 - Odpowiedz
-    tags: 1133 - Oznaczenia
+    create_conversation: 1133 - Nowy temat
+    reply: 1134 - Odpowiedz
+    tags: 1135 - Oznaczenia
     redirection: |
-      1134 - Zostaniesz przekierowany do platformy **Open Collective** na której znajduje się to forum dyskusyjne.
+      1136 - Zostaniesz przekierowany do platformy **Open Collective** na której znajduje się to forum dyskusyjne.
       Aby *rozpocząć konwersacje* lub *odpowiedzieć* musisz utworzyć konto i zalogować się.
       *To nic nie kosztuje, bez zobowiązań, wystarczy zwykły adres email.*
 
       Zatwierdź, aby kontynuować.
     error:
-      fail_to_load_list: 1135 - Nie można załadować listy tematów.
+      fail_to_load_list: 1137 - Nie można załadować listy tematów.
   sponsor:
-    label: 1136 - Sponsor
-    title: 1137 - Sponsor
+    label: 1138 - Sponsor
+    title: 1139 - Sponsor
     description: |
-      1138 - **OpenCutList** to oprogramowanie *Open Source* które jest finansowane przez użytkowników za pośrednictwem platformy <a href="https://opencollective.com/" target="_blank">Open Collective</a> .
+      1140 - **OpenCutList** to oprogramowanie *Open Source* które jest finansowane przez użytkowników za pośrednictwem platformy <a href="https://opencollective.com/" target="_blank">Open Collective</a> .
       Wesprzyj ten projekt finansowo!
-    contribute: 1139 - Wspomóż nas
-    backers: 1140 - {{ count }} darczyńca
-    backers_plural: 1141 - {{ count }} darczyńcy
-    ad: 1142 - Czy lubisz OpenCutList?
-    objective: 1143 - Cel
-    objective_slogan: 1144 - OpenCutList to my wszyscy
+    contribute: 1141 - Wspomóż nas
+    backers: 1142 - {{ count }} darczyńca
+    backers_plural: 1143 - {{ count }} darczyńcy
+    ad: 1144 - Czy lubisz OpenCutList?
+    objective: 1145 - Cel
+    objective_slogan: 1146 - OpenCutList to my wszyscy
     objective_title:
-      default: 1145 - Cele
-      cuttingdiagram_export: 1146 - Finansowanie wywozu schematów cięcia
+      default: 1147 - Cele
+      cuttingdiagram_export: 1148 - Finansowanie wywozu schematów cięcia
     objective_details:
-      default: '1147 - Ciągłe ulepszanie *OpenCutList* jest dla nas ważne, a projekt nadal potrzebuje Twojej pomocy przy następnej aktualizacji!
+      default: '1149 - Ciągłe ulepszanie *OpenCutList* jest dla nas ważne, a projekt nadal potrzebuje Twojej pomocy przy następnej aktualizacji!
 
         '
       cuttingdiagram_export: |
-        1148 - Ważne jest dla nas, aby *OpenCutList* mógł być dostosowany do bardzo różnych oczekiwań użytkowników w stosunku do funkcji *schematu cięcia*.
+        1150 - Ważne jest dla nas, aby *OpenCutList* mógł być dostosowany do bardzo różnych oczekiwań użytkowników w stosunku do funkcji *schematu cięcia*.
         Aby jeszcze bardziej rozszerzyć możliwości, chcielibyśmy umożliwić eksport diagramów układu w formacie **SVG** i **DXF**.
         Udostępniając nam środki do pracy nad tym eksportem, dajesz nam szansę, aby pomóc Ci w pełni wykorzystać możliwości *OpenCutList*.
-      layout: '1149 - Celem tego modułu jest umożliwienie łatwego wydrukowania podglądu projektu jako **rozstrzelonego widoku** z identyfikacją na podstawie informacji generowanych na liście części.
+      layout: '1151 - Celem tego modułu jest umożliwienie łatwego wydrukowania podglądu projektu jako **rozstrzelonego widoku** z identyfikacją na podstawie informacji generowanych na liście części.
 
         '
-    objective_crowdfunding: '1150 - Nowe funkcje zostaną opracowane przez **Pozyskiwanie funduszy** i rozpoczną się po osiągnięciu **Celu Finansowego**.
+    objective_crowdfunding: '1152 - Nowe funkcje zostaną opracowane przez **Pozyskiwanie funduszy** i rozpoczną się po osiągnięciu **Celu Finansowego**.
 
       '
-    objective_thanks: '1151 - Dziękujemy za Twój wkład!
+    objective_thanks: '1153 - Dziękujemy za Twój wkład!
 
       '
-    objective_funded_progress: 1152 - sfinansowany w {{ progress }}%
+    objective_funded_progress: 1154 - sfinansowany w {{ progress }}%
   settings:
-    label: 1153 - Preferencje
-    title: 1154 - Preferencje
-    global_settings: 1155 - Preferencje globalne
-    language: 1156 - Język
-    language_auto: 1157 - Automatyczny
-    zoom: 1158 - Rozmiar czcionki
-    zoom_normal: 1159 - Normalny
-    zoom_small: 1160 - Mały
-    zoom_tiny: 1161 - Bardzo mały
-    print_margin: 1162 - Marginesy druku
-    print_margin_normal: 1163 - Normalne
-    print_margin_small: 1164 - Małe
-    table_row_size: '1165 - '
-    table_row_size_normal: 1166 - Normalny
-    table_row_size_compact: '1167 - '
-    size_and_position: 1168 - Rozmiar i Położenie Okna
-    model_settings: 1169 - Preferencje modelu
-    length_unit: 1170 - Jednostka długości
-    length_format: 1171 - Format
-    length_format_0: 1172 - Dziesiętny
-    length_format_1: 1173 - Architektoniczny
-    length_format_2: 1174 - Inżynieryjny
-    length_format_3: 1175 - Ułamkowy
-    length_precision: 1176 - Precyzja
-    suppress_units_display: 1177 - Wyświetl jednostkę długości dla każdej wartości
-    mass_unit: 1178 - Jednostka masy
-    mass_precision: 1179 - Precyzja
-    currency_symbol: 1180 - Symbol waluty
-    currency_precision: 1181 - Precyzja
+    label: 1155 - Preferencje
+    title: 1156 - Preferencje
+    global_settings: 1157 - Preferencje globalne
+    language: 1158 - Język
+    language_auto: 1159 - Automatyczny
+    zoom: 1160 - Rozmiar czcionki
+    zoom_normal: 1161 - Normalny
+    zoom_small: 1162 - Mały
+    zoom_tiny: 1163 - Bardzo mały
+    print_margin: 1164 - Marginesy druku
+    print_margin_normal: 1165 - Normalne
+    print_margin_small: 1166 - Małe
+    table_row_size: '1167 - '
+    table_row_size_normal: 1168 - Normalny
+    table_row_size_compact: '1169 - '
+    size_and_position: 1170 - Rozmiar i Położenie Okna
+    model_settings: 1171 - Preferencje modelu
+    length_unit: 1172 - Jednostka długości
+    length_format: 1173 - Format
+    length_format_0: 1174 - Dziesiętny
+    length_format_1: 1175 - Architektoniczny
+    length_format_2: 1176 - Inżynieryjny
+    length_format_3: 1177 - Ułamkowy
+    length_precision: 1178 - Precyzja
+    suppress_units_display: 1179 - Wyświetl jednostkę długości dla każdej wartości
+    mass_unit: 1180 - Jednostka masy
+    mass_precision: 1181 - Precyzja
+    currency_symbol: 1182 - Symbol waluty
+    currency_precision: 1183 - Precyzja
     presets:
-      export_global_presets: 1182 - Eksportuj ustawienia wstępne
+      export_global_presets: 1184 - Eksportuj ustawienia wstępne
       export_global_presets_help: |
-        1183 - Ta funkcja umożliwia wyeksportowanie ustawień wstępnych do pliku **.json**.
+        1185 - Ta funkcja umożliwia wyeksportowanie ustawień wstępnych do pliku **.json**.
         Wybierz ustawienia wstępne, które chcesz do niego wyeksportować.
-      export_global_presets_success: 1184 - Ustawienia wstępne zostały pomyślnie wyeksportowane.
-      import_global_presets: 1185 - Importuj ustawienia wstępne
+      export_global_presets_success: 1186 - Ustawienia wstępne zostały pomyślnie wyeksportowane.
+      import_global_presets: 1187 - Importuj ustawienia wstępne
       import_global_presets_help: |
-        1186 - Wybierz ustawienia wstępne w pliku **.json**, które chcesz zaimportować.
+        1188 - Wybierz ustawienia wstępne w pliku **.json**, które chcesz zaimportować.
         Pamiętaj, że istniejące ustawienie wstępne o identycznej nazwie zostanie zastąpione zaimportowaną wersją.
       import_global_presets_success: |
-        1187 - Ustawienia wstępne *OpenCutList* zostały pomyślnie zaimportowane.
+        1189 - Ustawienia wstępne *OpenCutList* zostały pomyślnie zaimportowane.
         Aby uwzględnić zmiany, należy **zamknąć** i **ponownie otworzyć** okno OpenCutList.
-      dump_global_presets: 1188 - Zrzuć ustawienia wstępne
-      dump_model_presets: 1189 - Zrzuć ustawienia wstępne modelu
-      reset_global_presets: 1190 - Ponownie zainicjuj ustawienia wstępne
+      dump_global_presets: 1190 - Zrzuć ustawienia wstępne
+      dump_model_presets: 1191 - Zrzuć ustawienia wstępne modelu
+      reset_global_presets: 1192 - Ponownie zainicjuj ustawienia wstępne
       reset_global_presets_confirm: |
-        1191 - Masz zamiar zresetować wszystkie zapisane ustawienia *OpenCutList*.
+        1193 - Masz zamiar zresetować wszystkie zapisane ustawienia *OpenCutList*.
         To działanie jest ostateczne. **Wszystkie ustawienia zostaną utracone.**
         Potwierdź, aby kontynuować.
       reset_global_presets_success: |
-        1192 - Ustawienia wstępne *OpenCutList* zostały zresetowane.
+        1194 - Ustawienia wstępne *OpenCutList* zostały zresetowane.
         Aby odzwierciedlić zmiany, musisz **zamknąć** i **ponownie otworzyć** okno OpenCutList.
-      reset_model_presets: 1193 - Ponownie zainicjuj ustawienia modelu
+      reset_model_presets: 1195 - Ponownie zainicjuj ustawienia modelu
       reset_model_presets_confirm: |
-        1194 - Masz zamiar zresetować wszystkie ustawienia wstępne *OpenCutList* dla bieżącego modelu.
+        1196 - Masz zamiar zresetować wszystkie ustawienia wstępne *OpenCutList* dla bieżącego modelu.
         To działanie jest ostateczne. **Wszystkie ustawienia zostaną przywrócone do wartości domyślnych.**
         Potwierdź, aby kontynuować.
       reset_model_presets_success: |
-        1195 - Ustawienia wstępne *OpenCutList* dla bieżącego modelu zostały zresetowane.
+        1197 - Ustawienia wstępne *OpenCutList* dla bieżącego modelu zostały zresetowane.
         Aby odzwierciedlić zmiany, musisz **zamknąć** i **ponownie otworzyć** okno OpenCutList.
       error:
-        no_preset_to_export: 1196 - Brak gotowych ustawień do wyeksportowania.
-        no_preset_to_import: 1197 - Brak gotowych ustawień do zaimportowania.
-        failed_to_import: '1198 - Nie można zaimportować gotowych ustawień: **{{ error }}**.'
-        failed_to_import_invalid_hexdigest: 1199 - Ten plik został zmodyfikowany. Nie można go importować.
-        failed_to_import_bad_file_format: 1200 - Nieprawidłowy format pliku.
+        no_preset_to_export: 1198 - Brak gotowych ustawień do wyeksportowania.
+        no_preset_to_import: 1199 - Brak gotowych ustawień do zaimportowania.
+        failed_to_import: '1200 - Nie można zaimportować gotowych ustawień: **{{ error }}**.'
+        failed_to_import_invalid_hexdigest: 1201 - Ten plik został zmodyfikowany. Nie można go importować.
+        failed_to_import_bad_file_format: 1202 - Nieprawidłowy format pliku.
   about:
-    label: 1201 - O programie
-    title: 1202 - O programie
-    version: 1203 - Wersja
-    credits: 1204 - Zasługi techniczne
-    credits_authors: '1205 - *OpenCutList* jest rozwijany przez [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) and [Martin Müller](https://www.lairdubois.fr/@mobilarte). *[Wszyscy współautorzy](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+    label: 1203 - O programie
+    title: 1204 - O programie
+    version: 1205 - Wersja
+    credits: 1206 - Zasługi techniczne
+    credits_authors: '1207 - *OpenCutList* jest rozwijany przez [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) and [Martin Müller](https://www.lairdubois.fr/@mobilarte). *[Wszyscy współautorzy](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
 
       '
-    credits_translations: 1206 - Tłumaczenia
+    credits_translations: 1208 - Tłumaczenia
     credits_translators: |
-      1207 - - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*Polski*)
+      1209 - - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*Polski*)
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*Angielski*, *Niemiecki*)
       - Gildas Boureau (dokumentacja *francuska*)
       - Vladimir Badulya (*Rosyjski*)
@@ -1536,116 +1538,116 @@ tab:
       - [刘涛](https://www.liutao91.cn) (*chiński uproszczony*)
       - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*holenderski*)
     credits_description: |
-      1208 - Rozwój tego rozszerzenia jest częścią projektu platformy udostępniania [L'Air du Bois](https://www.lairdubois.fr).
+      1210 - Rozwój tego rozszerzenia jest częścią projektu platformy udostępniania [L'Air du Bois](https://www.lairdubois.fr).
       To rozszerzenie jest *Open Source* i jest dostępne na licencji [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) w swoim repozytorium [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
-    credits_runtime: 1209 - Czas działania
-    credits_development: 1210 - Rozwój
-    credits_vendors: '1211 - Przygoda nie byłaby możliwa bez pracy autorów następujących komponentów *Open Source*:
+    credits_runtime: 1211 - Czas działania
+    credits_development: 1212 - Rozwój
+    credits_vendors: '1213 - Przygoda nie byłaby możliwa bez pracy autorów następujących komponentów *Open Source*:
 
       '
     credits_thanks: |
-      1212 - Specjalne podziękowania dla:
+      1214 - Specjalne podziękowania dla:
       - [JetBrains](https://www.jetbrains.com) za ich wsparcie dla tego projektu porzez ich [Darmową Licencję Open Source](https://www.jetbrains.com/buy/opensource/).
       - [Transifex](https://www.transifex.com) za ich wsparcie projektów Open Source.
       - [GitBook](https://www.gitbook.com) za ich wsparcie projektów Open Source.
 tool:
   default:
-    transparency: 1213 - Przezroczystość
-    zoom_extents: 1214 - Zakres powiększenia
-    toggle_depth: 1215 - Części tła
-    more: 1216 - Więcej
+    transparency: 1215 - Przezroczystość
+    zoom_extents: 1216 - Zakres powiększenia
+    toggle_depth: 1217 - Części tła
+    more: 1218 - Więcej
   highlight:
     transparency: "$t(tool.default.transparency)"
     zoom_extents: "$t(tool.default.zoom_extents)"
   smart_paint:
-    title: 1219 - Farba
-    default_material: 1220 - Brak zdefiniowanego materiału
-    filters: 1221 - Filtry
-    filter_0: 1222 - Bez typu
+    title: 1221 - Farba
+    default_material: 1222 - Brak zdefiniowanego materiału
+    filters: 1223 - Filtry
+    filter_0: 1224 - Bez typu
     filter_1: "$t(tab.materials.type_1)"
     filter_2: "$t(tab.materials.type_2)"
     filter_3: "$t(tab.materials.type_3)"
     filter_4: "$t(tab.materials.type_4)"
     filter_5: "$t(tab.materials.type_5)"
     filter_6: "$t(tab.materials.type_6)"
-    action_0: 1229 - Pokoloruj część
-    action_0_status: 1230 - Kliknij część, aby pomalować jej instancję
-    action_1: 1231 - Pokoloruj krawędź
-    action_1_status: 1232 - Kliknij krawędź panelu, aby zastosować '$t(tab.materials.type_4)'
-    action_2: 1233 - Pokoloruj powierzchnię
-    action_2_status: 1234 - Kliknij powierzchnię panelu, aby zastosować '$t(tab.materials.type_6)'
-    action_3: 1235 - Próbka
-    action_3_status: 1236 - Kliknij w powierzchnię, aby pobrać próbkę jej materiału
-    action_4: 1237 - Wyczyść
-    action_4_status: 1238 - Kliknij część, aby usunąć wszystkie materiały z jej definicji i wszystkich wystąpień
-    action_option_group_instances: '1239 - '
-    action_option_group_edges: 1240 - Liczba obrzeży
-    action_option_group_faces: '1241 - '
-    action_option_instances_0_status: '1242 - '
-    action_option_instances_1_status: '1243 - '
-    action_option_edges_0_status: '1244 - '
-    action_option_edges_1_status: '1245 - '
-    action_option_edges_2_status: '1246 - '
-    action_option_faces_0_status: '1247 - '
-    action_option_faces_1_status: '1248 - '
-    edges: 1249 - {{ count }} krawędź
-    edges_plural: 1250 - {{ count }} krawędzi
-    edge_ymin: 1251 - Długość 1
-    edge_ymax: 1252 - Długość 2
-    edge_xmin: 1253 - Szerokość 1
-    edge_xmax: 1254 - Szerokość 2
-    faces: 1255 - {{ count }} powierzchnia
-    faces_plural: 1256 - {{ count }} powierzchnie
-    face_zmin: 1257 - Tył
-    face_zmax: 1258 - Przód
+    action_0: 1231 - Pokoloruj część
+    action_0_status: 1232 - Kliknij część, aby pomalować jej instancję
+    action_1: 1233 - Pokoloruj krawędź
+    action_1_status: 1234 - Kliknij krawędź panelu, aby zastosować '$t(tab.materials.type_4)'
+    action_2: 1235 - Pokoloruj powierzchnię
+    action_2_status: 1236 - Kliknij powierzchnię panelu, aby zastosować '$t(tab.materials.type_6)'
+    action_3: 1237 - Próbka
+    action_3_status: 1238 - Kliknij w powierzchnię, aby pobrać próbkę jej materiału
+    action_4: 1239 - Wyczyść
+    action_4_status: 1240 - Kliknij część, aby usunąć wszystkie materiały z jej definicji i wszystkich wystąpień
+    action_option_group_instances: '1241 - '
+    action_option_group_edges: 1242 - Liczba obrzeży
+    action_option_group_faces: '1243 - '
+    action_option_instances_0_status: '1244 - '
+    action_option_instances_1_status: '1245 - '
+    action_option_edges_0_status: '1246 - '
+    action_option_edges_1_status: '1247 - '
+    action_option_edges_2_status: '1248 - '
+    action_option_faces_0_status: '1249 - '
+    action_option_faces_1_status: '1250 - '
+    edges: 1251 - {{ count }} krawędź
+    edges_plural: 1252 - {{ count }} krawędzi
+    edge_ymin: 1253 - Długość 1
+    edge_ymax: 1254 - Długość 2
+    edge_xmin: 1255 - Szerokość 1
+    edge_xmax: 1256 - Szerokość 2
+    faces: 1257 - {{ count }} powierzchnia
+    faces_plural: 1258 - {{ count }} powierzchnie
+    face_zmin: 1259 - Tył
+    face_zmax: 1260 - Przód
     warning:
-      no_material: 1259 - Brak materiałów
-      no_material_type: 1260 - Brak materiału typu „{{ type }}”
+      no_material: 1261 - Brak materiałów
+      no_material_type: 1262 - Brak materiału typu „{{ type }}”
     error:
-      not_part: '1261 - '
-      not_edge: 1262 - Powierzchnia docelowa nie jest krawędzią panelu
-      not_face: 1263 - Powierzchnia docelowa nie jest powierzchnią panelu
-      wrong_material_type: 1264 - Część docelowa musi być typu „{{ type }}”
+      not_part: '1263 - '
+      not_edge: 1264 - Powierzchnia docelowa nie jest krawędzią panelu
+      not_face: 1265 - Powierzchnia docelowa nie jest powierzchnią panelu
+      wrong_material_type: 1266 - Część docelowa musi być typu „{{ type }}”
   smart_axes:
-    title: 1265 - Orientacja
-    action_0: 1266 - Zamień
-    action_0_status: 1267 - Kliknij część, aby odwrócić jej wystąpienie wzdłuż jednego z wymiarów
-    action_1: 1268 - Zamień długość ↔ szerokość
-    action_1_status: 1269 - Kliknij część, aby zamienić jej długość z szerokością
-    action_2: 1270 - Zamień przód ↔ tył
-    action_2_status: 1271 - Kliknij część, aby zamienić jej przód z tyłem
-    action_3: 1272 - Dopasuj osie
-    action_3_status: 1273 - Kliknij powierzchnię lub krawędź części, aby dostosować orientację osi
-    action_option_group_direction: 1274 - Kierunek
-    action_option_direction_0: 1275 - D
-    action_option_direction_1: 1276 - Sz
-    action_option_direction_2: 1277 - W
-    action_option_direction_0_status: '1278 - '
-    action_option_direction_1_status: '1279 - '
-    action_option_direction_2_status: '1280 - '
+    title: 1267 - Orientacja
+    action_0: 1268 - Zamień
+    action_0_status: 1269 - Kliknij część, aby odwrócić jej wystąpienie wzdłuż jednego z wymiarów
+    action_1: 1270 - Zamień długość ↔ szerokość
+    action_1_status: 1271 - Kliknij część, aby zamienić jej długość z szerokością
+    action_2: 1272 - Zamień przód ↔ tył
+    action_2_status: 1273 - Kliknij część, aby zamienić jej przód z tyłem
+    action_3: 1274 - Dopasuj osie
+    action_3_status: 1275 - Kliknij powierzchnię lub krawędź części, aby dostosować orientację osi
+    action_option_group_direction: 1276 - Kierunek
+    action_option_direction_0: 1277 - D
+    action_option_direction_1: 1278 - Sz
+    action_option_direction_2: 1279 - W
+    action_option_direction_0_status: '1280 - '
+    action_option_direction_1_status: '1281 - '
+    action_option_direction_2_status: '1282 - '
     warning:
-      more_entities: 1281 - {{ count_used }} instancji współdzielących tę samą definicję zostanie zmodyfikowanych
+      more_entities: 1283 - {{ count_used }} instancji współdzielących tę samą definicję zostanie zmodyfikowanych
     error:
-      not_part: '1282 - '
-      not_orientable: 1283 - Typ tej części nie pozwala na jej orientację
+      not_part: '1284 - '
+      not_orientable: 1285 - Typ tej części nie pozwala na jej orientację
   smart_export:
-    title: 1284 - Eksportuj
-    action_0: '1285 - '
-    action_0_status: '1286 - '
-    action_1: '1287 - '
-    action_1_status: '1288 - '
-    action_2: '1289 - '
-    action_2_status: '1290 - '
-    action_3: '1291 - '
-    action_3_status: '1292 - '
-    action_option_group_file_format: 1293 - Format
-    action_option_group_unit: 1294 - Jednostka
-    action_option_group_faces: 1295 - Powierzchnie
-    action_option_group_options: 1296 - Opcje
-    action_option_file_format_dxf_status: '1297 - '
-    action_option_file_format_stl_status: '1298 - '
-    action_option_file_format_obj_status: '1299 - '
-    action_option_file_format_svg_status: '1300 - '
+    title: 1286 - Eksportuj
+    action_0: '1287 - '
+    action_0_status: '1288 - '
+    action_1: '1289 - '
+    action_1_status: '1290 - '
+    action_2: '1291 - '
+    action_2_status: '1292 - '
+    action_3: '1293 - '
+    action_3_status: '1294 - '
+    action_option_group_file_format: 1295 - Format
+    action_option_group_unit: 1296 - Jednostka
+    action_option_group_faces: 1297 - Powierzchnie
+    action_option_group_options: 1298 - Opcje
+    action_option_file_format_dxf_status: '1299 - '
+    action_option_file_format_stl_status: '1300 - '
+    action_option_file_format_obj_status: '1301 - '
+    action_option_file_format_svg_status: '1302 - '
     action_option_unit_0_status: "$t(default.unit_0)"
     action_option_unit_1_status: "$t(default.unit_1)"
     action_option_unit_2_status: "$t(default.unit_2)"
@@ -1655,8 +1657,8 @@ tool:
     action_option_faces_1_status: "$t(tab.cutlist.write.option_faces_1)"
     action_option_options_anchor_status: "$t(tab.cutlist.write.option_anchor_1)"
     action_option_options_smoothing_status: "$t(tab.cutlist.write.option_smoothing_1)"
-    action_option_options_merge_holes_status: '1310 - '
-    action_option_options_edges_status: '1311 - '
+    action_option_options_merge_holes_status: '1312 - '
+    action_option_options_paths_status: '1313 - '
     error:
-      not_part: '1312 - '
-      not_flat_face: '1313 - '
+      not_part: '1314 - '
+      not_flat_face: '1315 - '

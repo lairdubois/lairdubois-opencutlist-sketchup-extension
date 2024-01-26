@@ -17,7 +17,7 @@ default:
   refresh: Aktualisieren
   generate: Generieren
   print: Drucken
-  export: Export
+  export: Exportieren
   import: Importieren
   load: Laden
   preview: Übersicht
@@ -230,7 +230,7 @@ core:
         Vergewissern Sie sich, dass Sie mit dem Internet verbunden sind.
 tab:
   cutlist:
-    label: Rohmaß
+    label: Holzliste
     title: Holzliste
     help: |
       Wählen Sie die Teile für Ihre Holzliste in der Szene aus und klicken Sie auf **Generieren**.
@@ -380,7 +380,7 @@ tab:
       extra_help: "Liste der materialtypspezifischen Eigenschaften \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Kantenbänder
       faces: Flächen
-      name: Bezeichnung
+      name: Name
       material: Material
       cumulable: Summierbar
       cumulable_help: |
@@ -406,7 +406,7 @@ tab:
         Definieren Sie hier die Anzahl der Schichten, die das gezeichnete Teil in seiner Dicke unterteilen.
 
         *Beispiel:* Wenn Sie ein Teil mit einer Dicke von *38mm* gezeichnet haben und es durch Zusammenkleben von zwei *19mm* Platten herstellen wollen, geben Sie **2** in dieses Feld ein.
-        *OpenCutList zählt dann 2 Teil mit 19mm Dicke anstelle statt 1 Teil mit 38mm Dicke
+        *OpenCutList zählt dann 2 Teil mit 19mm Dicke anstelle statt 1 Teil mit 38mm Dicke.*
       description: Beschreibung
       description_help: |
         Die *Beschreibung* ermöglicht es Ihnen, benutzerdefinierte Informationen zu jeder Teildefinition anzugeben.
@@ -487,7 +487,7 @@ tab:
       part_number_sequence_by_group_help: "Ist diese Option aktiv, wird die Teilenummerierung bei jeder Gruppe (Liste von Teilen mit gleichem Material und gleicher Bruttodicke) auf 1 (oder A) zurückgesetzt."
       part_folding: Gleiche Teile zusammenfassen
       part_folding_help: |
-        Ist diese Option aktiv, werden Teile aus dem Material **Massivholz, Platte oder Stange** mit **gleichen Rohmaßen** und mit **gleichen Badges** auf einer Zeile zusammengefasst (sofern die Anzeige dieser Fläche nicht ausgeblendet ist).
+        Ist diese Option aktiv, werden Teile aus dem Material **Massivholz, Platte oder Stange** mit **gleichen Rohmaßen** und mit **gleichen Badges** und **gleicher Fläche** *(sofern die Anzeige dieser Fläche nicht ausgeblendet ist)* in der *Holzliste* auf einer Zeile zusammengefasst .
 
         Die Teile werden bei Etiketten und Schnittplänen weiterhin als unterschiedlich betrachtet.
       hide_entity_names: Instanzbezeichnungen ausblenden
@@ -564,7 +564,7 @@ tab:
     export:
       title: Export
       info_0: |
-        Hiermit kann die *Holzliste* in eine Datei, im [CSV](https://de.wikipedia.org/wiki/CSV_(Dateiformat)) Format, exportiert werden.
+        Mit dieser Funktion können Sie Ihre *Holzliste* als *Stückliste* in eine Datei im Format [CSV](https://de.wikipedia.org/wiki/CSV_(Dateiformat)) exportieren.
       customize_help: |
         Umordnen, Ausblenden, Hinzufügen, Entfernen oder Auswählen einer Spalte in der Liste, um ihren **Titel** und die **Formel** anzupassen, die den angezeigten Wert für jede exportierte Zeile erzeugt.
       add_column: Spalte hinzufügen
@@ -737,7 +737,7 @@ tab:
         *Diese Option muss aktiviert sein, damit die Formen exportiert werden können.*
       option_saw_kerf: Sägeblattdicke
       option_saw_kerf_help: Breite des Materialverlustes durch die Sägeschnittfuge.
-      option_trimming: Seitenrand
+      option_trimming: Randabfallbreite
       option_trimming_help_1d: Breite des Säuberungsschnittes an jedem Ende der Stange oder des Kantenbandes.
       option_trimming_help_2d: Breite des Säuberungsschnittes auf allen vier Seiten der Platte.
       option_optimization: Optimierungsstufe
@@ -800,7 +800,7 @@ tab:
         total_area: Σ Flächen
         total_part_count: "# Teile"
         total_used: Insgesamt verwendet
-        trimming: Seitenrand
+        trimming: Seitenrandbreite
         stats: Statistiken
         total_cut_count: Anzahl Schnitte
         total_cut_length: Schnittlänge
@@ -834,7 +834,7 @@ tab:
         title: Schnittplan exportieren
         info_0: |
           Mit diesem Modul können Sie die **Geometrie** des *Schnittplans* als Datei im Format [SVG](https://de.wikipedia.org/wiki/Scalable_Vector_Graphics) oder [DXF](https://de.wikipedia.org/wiki/DXF) exportieren.
-        option_file_format: $t(tab.cutlist.write.option_file_format_help)
+        option_file_format: $t(tab.cutlist.write.option_file_format)
         option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
         option_dxf_structure: DXF Struktur
         option_dxf_structure_1: Layers
@@ -955,7 +955,7 @@ tab:
         part_description: Beschreibung
         part_entity_named_path: Instanzpfad
         part_entity_name: Instanzbezeichnung
-        part_bin: Conteneur
+        part_bin: Behälter
         part_cutting_size: Rohmaße
         part_cutting_length: Länge - roh
         part_cutting_width: Breite - roh
@@ -978,12 +978,12 @@ tab:
         thumbnail_proportional_drawing: Vignette
         thumbnail_proportional: Proportionale Vignette
         thumbnail_square: Quadratische Vignette
-        group_material: Material / Dicke
+        group_material: Material / Dimensionen
         group_material_name: Materialname
         group_std_dimension: Standarddimensionen
         filename: Dateiname
-        model_name: Nom du modèle
-        page_name: Nom de la scène
+        model_name: Modellname
+        page_name: Name der Szene
         length_unit: Einheit
         generated_at: Datum und Uhrzeit
       error:
@@ -1017,7 +1017,7 @@ tab:
       option_pins_formula: Formel
       option_pins_formula_help: "Ermöglicht das Schreiben von *Ruby*-Code, um den Text der Beschriftung anzupassen."
       option_pins_length: Länge
-      option_pins_length_0: Ohne Führungslinie
+      option_pins_length_0: Ohne Verweislinie
       option_pins_length_1: Klein
       option_pins_length_2: Mittel
       option_pins_length_3: Lang
@@ -1056,7 +1056,7 @@ tab:
         no_part: Es gibt keine Teile zum Zeichnen.
         failed_to_save_as_skp: "Fehler beim Schreiben der SKP Datei, die an Layout gesendet werden soll."
         failed_to_layout: |
-          Fehler beim Schreiben der Layout-Datei: **{{ error }}**
+          Fehler beim Schreiben der Layout-Datei: *{{ error }}*
 
           **Prüfen Sie, dass die Datei nicht in Layout geöffnet ist.**
       warning:
@@ -1194,7 +1194,7 @@ tab:
       reset_prices_success: Die Preise für alle Materialien wurden zurückgesetzt.
     new_material:
       title: Material erstellen
-      name: Bezeichnung
+      name: Name
       name_warning: Ungültiger Name
       color: Farbe
       color_warning: Ungültige Farbe
@@ -1344,7 +1344,7 @@ tab:
         Wählen Sie die Optionen aus, die zum korrekten Lesen der Datei erforderlich sind:
         **{{ filename }}**.
       info_1: |
-        *Die Einheit des Modells ist : **{{ unit }}**.
+        *Die Einheit des Modells ist: **{{ unit }}**.
         Diese Einheit wird für Dimensionen verwendet, bei denen die Einheit nicht angegeben ist*.
       options: Optionen zum Laden
       option_col_sep: Trennzeichen

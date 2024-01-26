@@ -68,10 +68,10 @@ default:
   alt_key_win: Atl
   alt_key_mac: Příkaz
   tab_key: Tab
-  file: ""
-  file_plural: ""
+  file: Soubor
+  file_plural: Soubory
   stroke_color: ""
-  fill_color: ""
+  fill_color: Barva výplně
 core:
   menu:
     submenu: OpenCutList
@@ -311,8 +311,8 @@ tab:
       used_instance_count_plural: "**{{ count }}** použitých položek {{ total }}"
       thickness_layer_count: "Finální část je vytvořena z **{{ count }}** hladin v tloušťce"
       thickness_layered: "Množství zde představuje počet kusů, které se mají nařezat, abychom získaly všechny hladiny."
-      thickness_layered_equation: "**{{ count }}** *část-í* x **{{ layerCount }}** *hladin = **{{ cuttingPartCount }}**"
-      thickness_layered_equation_plural: "**{{ count }}** *část-í* x **{{ layerCount }}** *hladin = **{{ cuttingPartCount }}**"
+      thickness_layered_equation: "**{{ count }}** *část-í* x **{{ layerCount }}** *hladin* = **{{ cuttingPartCount }}**"
+      thickness_layered_equation_plural: "**{{ count }}** *část-í* x **{{ layerCount }}** *hladin* = **{{ cuttingPartCount }}**"
       multiple_content_layers: "Pozor, tato část se skládá z dílčích částí přítomných v {{ count }} různých vrstvách:<br>{{ layers }}"
       children_warnings: "Pozor, v seskupených částech je upozornění {{ count }}"
       children_warnings_plural: "Upozornění, v seskupených částech jsou výstrahy {{ count }}"
@@ -444,7 +444,7 @@ tab:
         Všimněte si, že pokud není tato možnost *Automatická orientace dílců* aktivní nebo je součást *zamknutá na svých osách* pak:
         - **Délka** se čte na <strong style='color:red'>červené</strong> ose,
         - **Šířka** se čte na <strong style='color:green'>zelené</strong> ose a
-        - **Tloušťka* se čte na <strong style='color:blue'>modré</strong> ose
+        - **Tloušťka** se čte na <strong style='color:blue'>modré</strong> ose
       axes_origin_position_none: Neměňte původ
       axes_origin_position_min: Umístěte počátek do rohu
       axes_origin_position_center: Umístěte počátek do středu
@@ -625,9 +625,9 @@ tab:
       bin: Zásobník
       filename: ""
       model_name: Jméno modelu
-      model_description: ""
+      model_description: Popis modelu
       page_name: Název scény
-      page_description: ""
+      page_description: Popis scény
       placeholder:
         no_column_title: Zadejte název sloupce
         no_column_formula_native: "Nativní hodnota sloupce '{{ col_name }}'"
@@ -721,10 +721,10 @@ tab:
       option_hide_edges_preview_0: Zobrazeno ve schématu řezání
       option_hide_edges_preview_1: Skryto ve schématu řezání
       option_hide_edges_preview_help: Umožňuje zobrazit nebo skrýt vizuální zobrazení pásů hran pro každý díl ve schématu řezání.
-      option_part_drawing_type: ""
-      option_part_drawing_type_0: ""
-      option_part_drawing_type_1: ""
-      option_part_drawing_type_2: ""
+      option_part_drawing_type: Tvar dílů
+      option_part_drawing_type_0: Skrytý
+      option_part_drawing_type_1: Zobrazení přední plochy
+      option_part_drawing_type_2: Zobrazení zadní plochy
       option_part_drawing_type_help: |
       option_saw_kerf: Tloušťka pilového kotouče
       option_saw_kerf_help: Šířka materiálu ztraceného ořezáním.
@@ -1065,15 +1065,16 @@ tab:
       option_merge_holes_0: ""
       option_merge_holes_1: ""
       option_merge_holes_help: |
-      option_edges: ""
-      option_edges_0: Žádný
-      option_edges_1: ""
-      option_edges_help: |
+      option_include_paths: ""
+      option_include_paths_0: Žádný
+      option_include_paths_1: ""
+      option_include_paths_help: |
       option_parts: Díly
       option_parts_help: |
       option_parts_holes: ""
       option_parts_holes_help: |
-      option_edges_color_help: |
+      option_parts_paths: ""
+      option_parts_paths_help: |
       error:
         no_part: ""
       warning:
@@ -1146,7 +1147,7 @@ tab:
       reset_prices: Resetování cen všech materiálů
       reset_prices_confirm: |
         Chystáte se resetovat ceny všech materiálů ve vašem modelu.
-        Tato akce je konečná. **Všechny ceny budou vynulovány.
+        Tato akce je konečná. **Všechny ceny budou vynulovány.**
         Potvrďte pro pokračování.
       reset_prices_success: Ceny všech materiálů byly obnoveny.
     new_material:
@@ -1210,11 +1211,12 @@ tab:
       edge_decremented_help: "Umožňuje určit, zda mají být být rozměry dílců zmenšeny o tloušťku olepování hran."
       edge_decremented_0: Bez redukce
       edge_decremented_1: Odečíst tloušťku hrany
-      volumic_mass: Hustota
-      volumic_mass_help: Umožňuje definovat hustotu (objemová hustota) materiálu.
+      std_attributes_dim_placeholder: Vyberte velikost
+      std_volumic_masses: Hustota
+      std_volumic_masses_help: ""
+      std_volumic_masses_add: ""
       std_prices: Cena
       std_prices_help: Umožňuje definovat cenu pro všechny velikosti i pro každou standardní velikost materiálu.
-      std_prices_dim_placeholder: Vyberte velikost
       std_prices_add: Přidat cenu
       texture_width: Šířka papíru
       texture_height: Výška papíru
@@ -1483,7 +1485,7 @@ tab:
       reset_model_presets: Opětovná inicializace nastavení modelu
       reset_model_presets_confirm: |
         Chystáte se resetovat všechna nastavení *OpenCutList* pro aktuální model.
-        Tato operace je konečná. **Všechna nastavení budou obnovena na výchozí hodnoty.
+        Tato operace je konečná. **Všechna nastavení budou obnovena na výchozí hodnoty.**
         Potvrďte pokračování.
       reset_model_presets_success: |
         Nastavení *OpenCutList* pro aktuální model bylo resetováno.
@@ -1495,8 +1497,8 @@ tab:
         failed_to_import_invalid_hexdigest: Tento soubor byl upraven. Nelze jej importovat.
         failed_to_import_bad_file_format: Neplatný formát souboru.
   about:
-    label: O
-    title: O
+    label: O plaginu ...
+    title: O plaginu ...
     version: Verze
     credits: Technické kredity
     credits_authors: |
@@ -1637,7 +1639,7 @@ tool:
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: ""
-    action_option_options_edges_status: ""
+    action_option_options_paths_status: ""
     error:
       not_part: ""
       not_flat_face: ""

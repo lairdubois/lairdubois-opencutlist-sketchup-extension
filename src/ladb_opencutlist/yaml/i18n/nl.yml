@@ -655,7 +655,7 @@ tab:
       total_area: Σ Oppervlaktes
       total_length: Σ Lengtes
       error:
-        no_typed_material_parts: "Geen onderdeel met een gedefinieerde materiaalsoort (**$t(tab.materialen.type_1)**, **$t(tab.materialen.type_2)**, **$t(tab.materialen.type_3)**, **$t(tab.materialen.type_4)**, **$t(tab.materials.type_6)** of **$t(tab.materialen.type_5)**) is verstrekt om het rapport te genereren."
+        no_typed_material_parts: "Geen onderdeel met een gedefinieerde materiaalsoort (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** of **$t(tab.materials.type_5)**) is verstrekt om het rapport te genereren."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} fout**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} fouten**."
       warning:
@@ -1065,15 +1065,16 @@ tab:
       option_merge_holes_0: ""
       option_merge_holes_1: ""
       option_merge_holes_help: |
-      option_edges: ""
-      option_edges_0: Geen enkele
-      option_edges_1: ""
-      option_edges_help: |
+      option_include_paths: ""
+      option_include_paths_0: Geen enkele
+      option_include_paths_1: ""
+      option_include_paths_help: |
       option_parts: Stukken
       option_parts_help: |
       option_parts_holes: ""
       option_parts_holes_help: |
-      option_edges_color_help: |
+      option_parts_paths: ""
+      option_parts_paths_help: |
       error:
         no_part: ""
       warning:
@@ -1210,11 +1211,12 @@ tab:
       edge_decremented_help: Laat toe om aan te geven dat de afmetingen van de stuklijst verminderd moeten worden met de diktes van de kantenband.
       edge_decremented_0: Geen reductie
       edge_decremented_1: Veminder de afmeting met de dikte van de kantenband
-      volumic_mass: Dichtheid
-      volumic_mass_help: Laat toe om de dichtheid van het materiaal aan te duiden.
+      std_attributes_dim_placeholder: Kies een afmeting
+      std_volumic_masses: Dichtheid
+      std_volumic_masses_help: ""
+      std_volumic_masses_add: ""
       std_prices: Prijs
       std_prices_help: Laat toe om de prijs voor alle afmetingen aan te duiden alsook voor elke standaard afmeting van het materiaal.
-      std_prices_dim_placeholder: Kies een afmeting
       std_prices_add: Voeg een prijs toe
       texture_width: Breedte
       texture_height: Hoogte
@@ -1552,7 +1554,7 @@ tool:
     action_0: Kleur stukken
     action_0_status: Klik op een onderdeel om een ​​materiaal op zijn exemplaar toe te passen
     action_1: Kleur het object
-    action_1_status: "Klik op een rand van een paneelonderdeel om er een materiaal '$t(tab.materials.type_4)' op toe te passen\n \n\n "
+    action_1_status: Klik op een rand van een paneelonderdeel om er een materiaal '$t(tab.materials.type_4)' op toe te passen
     action_2: Vlak opschonen
     action_2_status: Klik op een vlak van een paneelonderdeel om er een materiaal '$t(tab.materials.type_6)' op toe te passen
     action_3: Object opschonen
@@ -1637,7 +1639,7 @@ tool:
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: ""
-    action_option_options_edges_status: ""
+    action_option_options_paths_status: ""
     error:
       not_part: ""
       not_flat_face: ""

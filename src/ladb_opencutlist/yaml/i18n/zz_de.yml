@@ -15,7 +15,7 @@ default:
   refresh: 14 - Aktualisieren
   generate: 15 - Generieren
   print: 16 - Drucken
-  export: 17 - Export
+  export: 17 - Exportieren
   import: 18 - Importieren
   load: 19 - Laden
   preview: 20 - Übersicht
@@ -228,7 +228,7 @@ core:
         Vergewissern Sie sich, dass Sie mit dem Internet verbunden sind.
 tab:
   cutlist:
-    label: 178 - Rohmaß
+    label: 178 - Holzliste
     title: 179 - Holzliste
     help: |
       180 - Wählen Sie die Teile für Ihre Holzliste in der Szene aus und klicken Sie auf **Generieren**.
@@ -378,7 +378,7 @@ tab:
       extra_help: 299 - Liste der materialtypspezifischen Eigenschaften "**$t(tab.materials.type_{{ material_type }})**".
       edges: 300 - Kantenbänder
       faces: 301 - Flächen
-      name: 302 - Bezeichnung
+      name: 302 - Name
       material: 303 - Material
       cumulable: 304 - Summierbar
       cumulable_help: '305 - Ist diese Option aktiv, wird die **Länge** oder die **Breite** beim Sortieren der Holzliste als **Einheitslänge** oder **Einheitsbreite** mal Anzahl gerechnet.
@@ -405,7 +405,7 @@ tab:
         318 - Definieren Sie hier die Anzahl der Schichten, die das gezeichnete Teil in seiner Dicke unterteilen.
 
         *Beispiel:* Wenn Sie ein Teil mit einer Dicke von *38mm* gezeichnet haben und es durch Zusammenkleben von zwei *19mm* Platten herstellen wollen, geben Sie **2** in dieses Feld ein.
-        *OpenCutList zählt dann 2 Teil mit 19mm Dicke anstelle statt 1 Teil mit 38mm Dicke
+        *OpenCutList zählt dann 2 Teil mit 19mm Dicke anstelle statt 1 Teil mit 38mm Dicke.*
       description: 319 - Beschreibung
       description_help: '320 - Die *Beschreibung* ermöglicht es Ihnen, benutzerdefinierte Informationen zu jeder Teildefinition anzugeben.
 
@@ -491,7 +491,7 @@ tab:
       part_number_sequence_by_group_help: 366 - Ist diese Option aktiv, wird die Teilenummerierung bei jeder Gruppe (Liste von Teilen mit gleichem Material und gleicher Bruttodicke) auf 1 (oder A) zurückgesetzt.
       part_folding: 367 - Gleiche Teile zusammenfassen
       part_folding_help: |
-        368 - Ist diese Option aktiv, werden Teile aus dem Material **Massivholz, Platte oder Stange** mit **gleichen Rohmaßen** und mit **gleichen Badges** auf einer Zeile zusammengefasst (sofern die Anzeige dieser Fläche nicht ausgeblendet ist).
+        368 - Ist diese Option aktiv, werden Teile aus dem Material **Massivholz, Platte oder Stange** mit **gleichen Rohmaßen** und mit **gleichen Badges** und **gleicher Fläche** *(sofern die Anzeige dieser Fläche nicht ausgeblendet ist)* in der *Holzliste* auf einer Zeile zusammengefasst .
 
         Die Teile werden bei Etiketten und Schnittplänen weiterhin als unterschiedlich betrachtet.
       hide_entity_names: 369 - Instanzbezeichnungen ausblenden
@@ -568,7 +568,7 @@ tab:
       faces: 435 - Flächen
     export:
       title: 436 - Export
-      info_0: '437 - Hiermit kann die *Holzliste* in eine Datei, im [CSV](https://de.wikipedia.org/wiki/CSV_(Dateiformat)) Format, exportiert werden.
+      info_0: '437 - Mit dieser Funktion können Sie Ihre *Holzliste* als *Stückliste* in eine Datei im Format [CSV](https://de.wikipedia.org/wiki/CSV_(Dateiformat)) exportieren.
 
         '
       customize_help: '438 - Umordnen, Ausblenden, Hinzufügen, Entfernen oder Auswählen einer Spalte in der Liste, um ihren **Titel** und die **Formel** anzupassen, die den angezeigten Wert für jede exportierte Zeile erzeugt.
@@ -747,7 +747,7 @@ tab:
         *Diese Option muss aktiviert sein, damit die Formen exportiert werden können.*
       option_saw_kerf: 591 - Sägeblattdicke
       option_saw_kerf_help: 592 - Breite des Materialverlustes durch die Sägeschnittfuge.
-      option_trimming: 593 - Seitenrand
+      option_trimming: 593 - Randabfallbreite
       option_trimming_help_1d: 594 - Breite des Säuberungsschnittes an jedem Ende der Stange oder des Kantenbandes.
       option_trimming_help_2d: 595 - Breite des Säuberungsschnittes auf allen vier Seiten der Platte.
       option_optimization: 596 - Optimierungsstufe
@@ -810,7 +810,7 @@ tab:
         total_area: 637 - Σ Flächen
         total_part_count: '638 - # Teile'
         total_used: 639 - Insgesamt verwendet
-        trimming: 640 - Seitenrand
+        trimming: 640 - Seitenrandbreite
         stats: 641 - Statistiken
         total_cut_count: 642 - Anzahl Schnitte
         total_cut_length: 643 - Schnittlänge
@@ -845,7 +845,7 @@ tab:
         info_0: '671 - Mit diesem Modul können Sie die **Geometrie** des *Schnittplans* als Datei im Format [SVG](https://de.wikipedia.org/wiki/Scalable_Vector_Graphics) oder [DXF](https://de.wikipedia.org/wiki/DXF) exportieren.
 
           '
-        option_file_format: "$t(tab.cutlist.write.option_file_format_help)"
+        option_file_format: "$t(tab.cutlist.write.option_file_format)"
         option_file_format_help: "$t(tab.cutlist.write.option_file_format_help)"
         option_dxf_structure: 674 - DXF Struktur
         option_dxf_structure_1: 675 - Layers
@@ -975,7 +975,7 @@ tab:
         part_description: 768 - Beschreibung
         part_entity_named_path: 769 - Instanzpfad
         part_entity_name: 770 - Instanzbezeichnung
-        part_bin: 771 - Conteneur
+        part_bin: 771 - Behälter
         part_cutting_size: 772 - Rohmaße
         part_cutting_length: 773 - Länge - roh
         part_cutting_width: 774 - Breite - roh
@@ -998,12 +998,12 @@ tab:
         thumbnail_proportional_drawing: 791 - Vignette
         thumbnail_proportional: 792 - Proportionale Vignette
         thumbnail_square: 793 - Quadratische Vignette
-        group_material: 794 - Material / Dicke
+        group_material: 794 - Material / Dimensionen
         group_material_name: 795 - Materialname
         group_std_dimension: 796 - Standarddimensionen
         filename: 797 - Dateiname
-        model_name: 798 - Nom du modèle
-        page_name: 799 - Nom de la scène
+        model_name: 798 - Modellname
+        page_name: 799 - Name der Szene
         length_unit: 800 - Einheit
         generated_at: 801 - Datum und Uhrzeit
       error:
@@ -1037,7 +1037,7 @@ tab:
       option_pins_formula: 827 - Formel
       option_pins_formula_help: 828 - Ermöglicht das Schreiben von *Ruby*-Code, um den Text der Beschriftung anzupassen.
       option_pins_length: 829 - Länge
-      option_pins_length_0: 830 - Ohne Führungslinie
+      option_pins_length_0: 830 - Ohne Verweislinie
       option_pins_length_1: 831 - Klein
       option_pins_length_2: 832 - Mittel
       option_pins_length_3: 833 - Lang
@@ -1076,7 +1076,7 @@ tab:
         no_part: 863 - Es gibt keine Teile zum Zeichnen.
         failed_to_save_as_skp: 864 - Fehler beim Schreiben der SKP Datei, die an Layout gesendet werden soll.
         failed_to_layout: |
-          865 - Fehler beim Schreiben der Layout-Datei: **{{ error }}**
+          865 - Fehler beim Schreiben der Layout-Datei: *{{ error }}*
 
           **Prüfen Sie, dass die Datei nicht in Layout geöffnet ist.**
       warning:
@@ -1225,7 +1225,7 @@ tab:
       reset_prices_success: 959 - Die Preise für alle Materialien wurden zurückgesetzt.
     new_material:
       title: 960 - Material erstellen
-      name: 961 - Bezeichnung
+      name: 961 - Name
       name_warning: 962 - Ungültiger Name
       color: 963 - Farbe
       color_warning: 964 - Ungültige Farbe
@@ -1376,7 +1376,7 @@ tab:
         1070 - Wählen Sie die Optionen aus, die zum korrekten Lesen der Datei erforderlich sind:
         **{{ filename }}**.
       info_1: |
-        1071 - *Die Einheit des Modells ist : **{{ unit }}**.
+        1071 - *Die Einheit des Modells ist: **{{ unit }}**.
         Diese Einheit wird für Dimensionen verwendet, bei denen die Einheit nicht angegeben ist*.
       options: 1072 - Optionen zum Laden
       option_col_sep: 1073 - Trennzeichen

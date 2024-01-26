@@ -511,7 +511,7 @@ tab:
         As propriedades podem ser ordenados en orden <i class="ladb-opencutlist-icon-sort-asc"></i> *ascendente* o <i class="ladb-opencutlist-icon-sort-desc"></i> *descendente*.
       dimension_column_order_strategy: Ordenação de Dimensões
       dimension_column_order_strategy_help: |
-        Reorganize as seguintes propriedades para definir a ordem de exibição das colunas de dimensão..
+        Reorganize as seguintes propriedades para definir a ordem de exibição das colunas de dimensão.
       property_thickness: Espessura
       property_length: Comprimento
       property_width: Largura
@@ -655,7 +655,7 @@ tab:
       total_area: Σ Áreas
       total_length: Σ Comprimentos
       error:
-        no_typed_material_parts: "Nenhuma peça com o tipo de material definido \n (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** ou **$t(tab.materials.type_5)**) foi fornecida para gerar a estimativa."
+        no_typed_material_parts: "Nenhuma peça com o tipo de material definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** ou **$t(tab.materials.type_5)**) foi fornecida para gerar a estimativa."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erro**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erros**."
       warning:
@@ -1065,15 +1065,16 @@ tab:
       option_merge_holes_0: ""
       option_merge_holes_1: ""
       option_merge_holes_help: |
-      option_edges: ""
-      option_edges_0: Nenhum
-      option_edges_1: ""
-      option_edges_help: |
+      option_include_paths: ""
+      option_include_paths_0: Nenhum
+      option_include_paths_1: ""
+      option_include_paths_help: |
       option_parts: Peças
       option_parts_help: |
       option_parts_holes: ""
       option_parts_holes_help: |
-      option_edges_color_help: |
+      option_parts_paths: ""
+      option_parts_paths_help: |
       error:
         no_part: ""
       warning:
@@ -1200,7 +1201,7 @@ tab:
       std_sizes: Tamanhos de painel padrão
       std_sizes_placeholder: comprimento x largura ; ...
       std_sizes_help: |
-        Formato esperado: **C**x**L**, onde **C** e **L** representam o *comprimento* e a *largura* **reais** da chapa.
+        Formato esperado: **C**x**L**, onde **C** e **L** representam o *comprimento* e a *largura* reais da chapa.
         *Se nenhuma unidade for especificada para cada dimensão, a unidade do modelo será levada em consideração.*
       grained: Direção dos veios
       grained_help: Configura a direção dos veios na chapa.
@@ -1210,11 +1211,12 @@ tab:
       edge_decremented_help: Indica se as dimensões das partes devem ser reduzidas pela espessura da faixa da borda.
       edge_decremented_0: Sem redução
       edge_decremented_1: Reduzir de acordo com a espessura da Faixa de Borda
-      volumic_mass: Densidade
-      volumic_mass_help: Permite definir a densidade (massa volumétrica) do material.
+      std_attributes_dim_placeholder: Escolha um tamanho
+      std_volumic_masses: Densidade
+      std_volumic_masses_help: ""
+      std_volumic_masses_add: ""
       std_prices: Preço
       std_prices_help: Permite definir o preço para todos os tamanhos e também para cada tamanho padrão do material.
-      std_prices_dim_placeholder: Escolha um tamanho
       std_prices_add: Adicionar preço
       texture_width: Largura
       texture_height: Altura
@@ -1637,7 +1639,7 @@ tool:
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: ""
-    action_option_options_edges_status: ""
+    action_option_options_paths_status: ""
     error:
       not_part: ""
       not_flat_face: ""
