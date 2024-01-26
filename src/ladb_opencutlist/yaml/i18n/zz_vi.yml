@@ -1042,7 +1042,7 @@ tab:
         no_part: 863 - Không có phần nào để vẽ.
         failed_to_save_as_skp: 864 - Không thể ghi tệp SKP để gửi tới Layout.
         failed_to_layout: |
-          865 - Lỗi khi ghi tệp Layout: **{{ error }}**
+          865 - Lỗi khi ghi tệp Layout: *{{ error }}*
 
           **Đảm bảo tệp không được mở trong Layout.**
       warning:
@@ -1074,454 +1074,456 @@ tab:
       option_merge_holes_0: '890 - '
       option_merge_holes_1: '891 - '
       option_merge_holes_help: '892 - '
-      option_edges: '893 - '
-      option_edges_0: 894 - Không có
-      option_edges_1: '895 - '
-      option_edges_help: '896 - '
+      option_include_paths: '893 - '
+      option_include_paths_0: 894 - Không có
+      option_include_paths_1: '895 - '
+      option_include_paths_help: '896 - '
       option_parts: 897 - Các bộ phận
       option_parts_help: '898 - '
       option_parts_holes: '899 - '
       option_parts_holes_help: '900 - '
-      option_edges_color_help: '901 - '
+      option_parts_paths: '901 - '
+      option_parts_paths_help: '902 - '
       error:
-        no_part: '902 - '
+        no_part: '903 - '
       warning:
-        is_group_selection: 903 - Các bộ phận bên trong **nhóm ẩn** của danh sách các bộ phận sẽ không được xuất.
-        is_part_selection: '904 - '
+        is_group_selection: 904 - Các bộ phận bên trong **nhóm ẩn** của danh sách các bộ phận sẽ không được xuất.
+        is_part_selection: '905 - '
     snippet:
-      hello: '905 - '
-      number: 906 - Số
-      name: 907 - Tên gọi
-      number_and_name: 908 - Số lượng và chỉ định
-      number_without_hardware: 909 - Số lượng (không có phụ kiện)
-      size: 910 - Kích thước
-      area: 911 - Diện tích
-      volume: 912 - Khối lượng
+      hello: '906 - '
+      number: 907 - Số
+      name: 908 - Tên gọi
+      number_and_name: 909 - Số lượng và chỉ định
+      number_without_hardware: 910 - Số lượng (không có phụ kiện)
+      size: 911 - Kích thước
+      area: 912 - Diện tích
+      volume: 913 - Khối lượng
     error:
-      no_model: 913 - Không có mô hình nào được mở. Bạn sẽ cần phải cung cấp cho tôi thêm thông tin;)
-      no_entities: 914 - Mô hình của bạn rỗng. Bạn sẽ cần phải cung cấp cho tôi thêm thông tin ;)
-      no_component_in_selection: 915 - Không có đối tượng nào của component hiển thị được phát hiện trong lựa chọn của bạn.
-      no_component_in_model: 916 - Không có đối tượng nào của component hiển thị được phát hiện trong cảnh của bạn.
-      unknow_part: 917 - Bộ phận đã chọn không tồn tại trong danh sách bộ phận.
-      obsolete_cutlist: 918 - Không thể, danh sách các bộ phận đã lỗi thời. Xin vui lòng, tạo lại nó.
+      no_model: 914 - Không có mô hình nào được mở. Bạn sẽ cần phải cung cấp cho tôi thêm thông tin;)
+      no_entities: 915 - Mô hình của bạn rỗng. Bạn sẽ cần phải cung cấp cho tôi thêm thông tin ;)
+      no_component_in_selection: 916 - Không có đối tượng nào của component hiển thị được phát hiện trong lựa chọn của bạn.
+      no_component_in_model: 917 - Không có đối tượng nào của component hiển thị được phát hiện trong cảnh của bạn.
+      unknow_part: 918 - Bộ phận đã chọn không tồn tại trong danh sách bộ phận.
+      obsolete_cutlist: 919 - Không thể, danh sách các bộ phận đã lỗi thời. Xin vui lòng, tạo lại nó.
     warning:
-      is_entity_selection: 919 - Chỉ những bộ phận được chọn trong mô hình của bạn mới được tính đến.
-      no_typed_materials_in_model: 920 - Mô hình của bạn không sử dụng bất kỳ vật liệu xác định nào (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** hoặc **$t(tab.materials.type_5)**).
-      no_typed_materials_in_selection: 921 - Lựa chọn không sử dụng bất kỳ vật liệu xác định nào (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** hoặc **$t(tab.materials.type_5)**).
-      export_empty: 922 - Lựa chọn xuất của bạn không chứa bất kỳ bộ phận nào.
+      is_entity_selection: 920 - Chỉ những bộ phận được chọn trong mô hình của bạn mới được tính đến.
+      no_typed_materials_in_model: 921 - Mô hình của bạn không sử dụng bất kỳ vật liệu xác định nào (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** hoặc **$t(tab.materials.type_5)**).
+      no_typed_materials_in_selection: 922 - Lựa chọn không sử dụng bất kỳ vật liệu xác định nào (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** hoặc **$t(tab.materials.type_5)**).
+      export_empty: 923 - Lựa chọn xuất của bạn không chứa bất kỳ bộ phận nào.
     success:
-      part_selected: '923 - '
-      part_selected_plural: '924 - '
+      part_selected: '924 - '
+      part_selected_plural: '925 - '
     tip:
       no_component: |
-        925 - Các bộ phận được bao gồm trong *danh sách bộ phận* phải là đối tượng của một  **component**.
+        926 - Các bộ phận được bao gồm trong *danh sách bộ phận* phải là đối tượng của một  **component**.
         Nếu bạn chỉ sử dụng các nhóm, hãy chuyển đổi chúng thành các components.
         Việc sử dụng các component giúp tự sao chép các bộ phận giống hệt nhau mà không cần sao chép chúng.
-      no_typed_materials: 926 - Áp dụng vật liệu cho các bộ phận sẽ được đưa vào danh sách bộ phận và xác định các thuộc tính của vật liệu này (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** hoặc **$t(tab.materials.type_5)**) trên tab <i class="ladb-opencutlist-icon-materials"></i> **Vật liệu**.
-    obsolete_base: 927 - Để luôn đồng bộ, danh sách bộ phận phải được tạo lại.
+      no_typed_materials: 927 - Áp dụng vật liệu cho các bộ phận sẽ được đưa vào danh sách bộ phận và xác định các thuộc tính của vật liệu này (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** hoặc **$t(tab.materials.type_5)**) trên tab <i class="ladb-opencutlist-icon-materials"></i> **Vật liệu**.
+    obsolete_base: 928 - Để luôn đồng bộ, danh sách bộ phận phải được tạo lại.
   materials:
-    label: 928 - Vật liệu
-    title: 929 - Vật liệu
-    new: 930 - Vật liệu mới
-    type_0: 931 - Không xác định
-    type_1: 932 - Gỗ đặc
-    type_2: 933 - Hàng dạng tấm
-    type_3: 934 - Kích thước
-    type_4: 935 - Dải cạnh
-    type_5: 936 - Phụ kiện
-    type_6: 937 - Veneer
+    label: 929 - Vật liệu
+    title: 930 - Vật liệu
+    new: 931 - Vật liệu mới
+    type_0: 932 - Không xác định
+    type_1: 933 - Gỗ đặc
+    type_2: 934 - Hàng dạng tấm
+    type_3: 935 - Kích thước
+    type_4: 936 - Dải cạnh
+    type_5: 937 - Phụ kiện
+    type_6: 938 - Veneer
     tooltip:
-      type_0: 938 - Vật liệu loại '$t(tab.materials.type_0)'
-      type_1: 939 - Vật liệu loại '$t(tab.materials.type_1)'
-      type_2: 940 - Vật liệu loại '$t(tab.materials.type_2)'
-      type_3: 941 - Vật liệu loại '$t(tab.materials.type_3)'
-      type_4: 942 - Vật liệu loại '$t(tab.materials.type_4)'
-      type_5: 943 - Vật liệu loại '$t(tab.materials.type_5)'
-      type_6: 944 - Vật liệu loại '$t(tab.materials.type_6)'
+      type_0: 939 - Vật liệu loại '$t(tab.materials.type_0)'
+      type_1: 940 - Vật liệu loại '$t(tab.materials.type_1)'
+      type_2: 941 - Vật liệu loại '$t(tab.materials.type_2)'
+      type_3: 942 - Vật liệu loại '$t(tab.materials.type_3)'
+      type_4: 943 - Vật liệu loại '$t(tab.materials.type_4)'
+      type_5: 944 - Vật liệu loại '$t(tab.materials.type_5)'
+      type_6: 945 - Vật liệu loại '$t(tab.materials.type_6)'
       grained_0: "$t(tab.materials.edit_material.grained_0)"
       grained_1: "$t(tab.materials.edit_material.grained_1)"
-      grain_direction: 947 - Hướng thớ gỗ
-      colorized: 948 - Tông màu này sẽ được áp dụng cho texture của vật liệu khi nó được hiển thị trong mô hình
-      texture_load: 949 - Tải texture mới
-      texture_clear: 950 - Xóa bỏ texture
-      edit: 951 - Chỉnh sửa thuộc tính của '{{ name }}'
+      grain_direction: 948 - Hướng thớ gỗ
+      colorized: 949 - Tông màu này sẽ được áp dụng cho texture của vật liệu khi nó được hiển thị trong mô hình
+      texture_load: 950 - Tải texture mới
+      texture_clear: 951 - Xóa bỏ texture
+      edit: 952 - Chỉnh sửa thuộc tính của '{{ name }}'
       set_current: |
-        952 - Tô các bộ phận bằng '{{ name }}'
+        953 - Tô các bộ phận bằng '{{ name }}'
         *Nhấp đúp chuột để thu nhỏ*
-      open_url: '953 - '
+      open_url: '954 - '
     menu:
-      import_from_skm: 954 - Nhập vật liệu (.skm)
-      purge_unused: 955 - Dọn dẹp vật liệu không sử dụng
-      reset_prices: 956 - Đặt lại giá của tất cả các vật liệu
+      import_from_skm: 955 - Nhập vật liệu (.skm)
+      purge_unused: 956 - Dọn dẹp vật liệu không sử dụng
+      reset_prices: 957 - Đặt lại giá của tất cả các vật liệu
       reset_prices_confirm: |
-        957 - Bạn sắp đặt lại giá của tất cả các vật liệu trong mô hình của mình.
+        958 - Bạn sắp đặt lại giá của tất cả các vật liệu trong mô hình của mình.
         Sau khi hành động kết thúc. **Tất cả giá sẽ được đặt lại về bằng 0**.
         Xác nhận để tiếp tục.
-      reset_prices_success: 958 - Giá của tất cả các vật liệu đã được thiết lập lại.
+      reset_prices_success: 959 - Giá của tất cả các vật liệu đã được thiết lập lại.
     new_material:
-      title: 959 - Tạo vật liệu
-      name: 960 - Tên
-      name_warning: 961 - Tên không hợp lệ
-      color: 962 - Màu sắc
-      color_warning: 963 - Màu không hợp lệ
-      type: 964 - Loại
+      title: 960 - Tạo vật liệu
+      name: 961 - Tên
+      name_warning: 962 - Tên không hợp lệ
+      color: 963 - Màu sắc
+      color_warning: 964 - Màu không hợp lệ
+      type: 965 - Loại
     edit_material:
-      title: 965 - Thuộc tính của vật liệu '{{ name }}'
-      general: 966 - Chung
-      texture: 967 - Texture
-      no_texture: 968 - Không có texture
-      name: 969 - Tên
-      type: 970 - Loại
-      description: 971 - Mô tả
-      url: '972 - '
-      cut_options: 973 - Thông số cắt
-      attributes: 974 - Thuộc tính
-      thickness: 975 - Độ dày
+      title: 966 - Thuộc tính của vật liệu '{{ name }}'
+      general: 967 - Chung
+      texture: 968 - Texture
+      no_texture: 969 - Không có texture
+      name: 970 - Tên
+      type: 971 - Loại
+      description: 972 - Mô tả
+      url: '973 - '
+      cut_options: 974 - Thông số cắt
+      attributes: 975 - Thuộc tính
+      thickness: 976 - Độ dày
       thickness_help: |
-        976 - Độ dày hoàn thiện của vật liệu.
+        977 - Độ dày hoàn thiện của vật liệu.
         *Kích thước không có đơn vị được coi là đơn vị mô hình.*
-      length_increase: 977 - Chiều dài quá khổ
-      length_increase_help: 978 - Áp dụng kích thước quá khổ cho chiều dài để xác định **chiều dài thô**.
-      width_increase: 979 - Chiều rộng quá khổ
-      width_increase_help: 980 - Áp dụng kích thước quá khổ cho chiều rộng để xác định **chiều rộng thô**.
-      thickness_increase: 981 - Độ dày quá khổ
-      thickness_increase_help: 982 - Áp dụng kích thước quá khổ cho độ dày để xác định **độ dày thô**.
-      std_lengths: 983 - Chiều dài tiêu chuẩn
-      std_lengths_placeholder: 984 - chiều dài ; ...
+      length_increase: 978 - Chiều dài quá khổ
+      length_increase_help: 979 - Áp dụng kích thước quá khổ cho chiều dài để xác định **chiều dài thô**.
+      width_increase: 980 - Chiều rộng quá khổ
+      width_increase_help: 981 - Áp dụng kích thước quá khổ cho chiều rộng để xác định **chiều rộng thô**.
+      thickness_increase: 982 - Độ dày quá khổ
+      thickness_increase_help: 983 - Áp dụng kích thước quá khổ cho độ dày để xác định **độ dày thô**.
+      std_lengths: 984 - Chiều dài tiêu chuẩn
+      std_lengths_placeholder: 985 - chiều dài ; ...
       std_lengths_help: |
-        985 - Chiều dài tiêu chuẩn của bảng hoặc dải cạnh.
+        986 - Chiều dài tiêu chuẩn của bảng hoặc dải cạnh.
         *Kích thước không có đơn vị được coi là đơn vị của mô hình..*
-      std_widths: 986 - Chiều rộng tiêu chuẩn
-      std_widths_placeholder: 987 - chiều rộng ; ...
+      std_widths: 987 - Chiều rộng tiêu chuẩn
+      std_widths_placeholder: 988 - chiều rộng ; ...
       std_widths_help: |
-        988 - Chiều rộng tiêu chuẩn của dải cạnh.
+        989 - Chiều rộng tiêu chuẩn của dải cạnh.
         *Chiều rộng không có đơn vị được coi là theo đơn vị của mô hình.*
-      std_thicknesses: 989 - Độ dày tiêu chuẩn
-      std_thicknesses_placeholder: 990 - độ dày ; ...
+      std_thicknesses: 990 - Độ dày tiêu chuẩn
+      std_thicknesses_placeholder: 991 - độ dày ; ...
       std_thicknesses_help: |
-        991 - Độ dày thô **thực tế** có sẵn
+        992 - Độ dày thô **thực tế** có sẵn
         *Kích thước không có đơn vị được coi là đơn vị của mô hình.*
-      std_sections: 992 - Mặt cắt tiêu chuẩn
-      std_sections_placeholder: 993 - Chiều rộng x độ dày ; ...
+      std_sections: 993 - Mặt cắt tiêu chuẩn
+      std_sections_placeholder: 994 - Chiều rộng x độ dày ; ...
       std_sections_help: |
-        994 - Định dạng dự kiến: **W**x**T**, trong đó **W** và **T** đại diện cho **thực tế** *chiều rộng* và *độ dày* của phần kích thước.
+        995 - Định dạng dự kiến: **W**x**T**, trong đó **W** và **T** đại diện cho thực tế *chiều rộng* và *độ dày* của phần kích thước.
         *Kích thước không có đơn vị được coi là đơn vị của mô hình.*
-      std_sizes: 995 - Kích thước tấm tiêu chuẩn
-      std_sizes_placeholder: 996 - chiều dài x chiều rộng ; ...
+      std_sizes: 996 - Kích thước tấm tiêu chuẩn
+      std_sizes_placeholder: 997 - chiều dài x chiều rộng ; ...
       std_sizes_help: |
-        997 - Định dạng dự kiến: **L**x**W**, trong đó **L** và **W** đại diện cho **thực tế** *chiều dài* và *chiều rộng* của tấm.
+        998 - Định dạng dự kiến: **L**x**W**, trong đó **L** và **W** đại diện cho thực tế *chiều dài* và *chiều rộng* của tấm.
         *Kích thước không có đơn vị được coi là đơn vị của mô hình.*
-      grained: 998 - Hướng thớ gỗ
-      grained_help: 999 - Định cấu hình hướng thớ gỗ của vật liệu.
-      grained_0: 1000 - Không thớ
-      grained_1: 1001 - Thớ dọc theo chiều dài
-      edge_decremented: 1002 - Giảm kích thước
-      edge_decremented_help: 1003 - Cho phép bạn chỉ ra liệu có nên giảm kích thước của các bộ phận theo độ dày của dải cạnh hay không.
-      edge_decremented_0: 1004 - Không cần giảm
-      edge_decremented_1: 1005 - Giảm theo độ dày dải cạnh
-      volumic_mass: 1006 - Tỉ trọng
-      volumic_mass_help: 1007 - Cho phép bạn xác định mật độ của vật liệu.
-      std_prices: 1008 - Giá
-      std_prices_help: 1009 - Cho phép bạn định giá cho tất cả các kích thước cũng như cho từng kích thước tiêu chuẩn của vật liệu.
-      std_prices_dim_placeholder: 1010 - Chọn kích thước
-      std_prices_add: 1011 - Thêm giá
-      texture_width: 1012 - Chiều rộng
-      texture_height: 1013 - Chiều cao
-      export_to_skm: 1014 - Xuất (.skm)
+      grained: 999 - Hướng thớ gỗ
+      grained_help: 1000 - Định cấu hình hướng thớ gỗ của vật liệu.
+      grained_0: 1001 - Không thớ
+      grained_1: 1002 - Thớ dọc theo chiều dài
+      edge_decremented: 1003 - Giảm kích thước
+      edge_decremented_help: 1004 - Cho phép bạn chỉ ra liệu có nên giảm kích thước của các bộ phận theo độ dày của dải cạnh hay không.
+      edge_decremented_0: 1005 - Không cần giảm
+      edge_decremented_1: 1006 - Giảm theo độ dày dải cạnh
+      std_attributes_dim_placeholder: 1007 - Chọn kích thước
+      std_volumic_masses: 1008 - Tỉ trọng
+      std_volumic_masses_help: '1009 - '
+      std_volumic_masses_add: '1010 - '
+      std_prices: 1011 - Giá
+      std_prices_help: 1012 - Cho phép bạn định giá cho tất cả các kích thước cũng như cho từng kích thước tiêu chuẩn của vật liệu.
+      std_prices_add: 1013 - Thêm giá
+      texture_width: 1014 - Chiều rộng
+      texture_height: 1015 - Chiều cao
+      export_to_skm: 1016 - Xuất (.skm)
     texture_load:
-      title: 1015 - Tải hình ảnh
+      title: 1017 - Tải hình ảnh
     import_from_skm:
-      title: 1016 - Nhập tệp .skm
+      title: 1018 - Nhập tệp .skm
     export_to_skm:
-      title: 1017 - Xuất tệp .skm
+      title: 1019 - Xuất tệp .skm
     option:
-      material_order_strategy: 1018 - Sắp xếp vật liệu
+      material_order_strategy: 1020 - Sắp xếp vật liệu
       material_order_strategy_help: |
-        1019 - Sắp xếp lại các ô để xác định chiến lược sắp xếp cho danh sách vật liệu.
+        1021 - Sắp xếp lại các ô để xác định chiến lược sắp xếp cho danh sách vật liệu.
         Thuộc tính có thể được sắp xếp theo thứ tự <i class="ladb-opencutlist-icon-sort-asc"></i> *tăng dần* hoặc <i class="ladb-opencutlist-icon-sort-desc"></i> *giảm dần*.
-      property_type: 1020 - Loại
-      property_name: 1021 - Tên
+      property_type: 1022 - Loại
+      property_name: 1023 - Tên
     remove:
       message: |
-        1022 - Bạn sắp xóa vật liệu **{{ material_name }}** khỏi mô hình.
+        1024 - Bạn sắp xóa vật liệu **{{ material_name }}** khỏi mô hình.
         Xác nhận để tiếp tục.
     duplicate:
-      message: '1023 - Chọn tên của vật liệu mới, sẽ được sao chép từ vật liệu **{{ material_name }}**.
+      message: '1025 - Chọn tên của vật liệu mới, sẽ được sao chép từ vật liệu **{{ material_name }}**.
 
         '
     error:
-      no_model: 1024 - Không có mô hình nào được mở. Bạn sẽ cần phải cung cấp cho tôi thêm thông tin;)
-      no_materials: 1025 - Mô hình của bạn không chứa bất kỳ vật liệu nào.
-      material_not_found: 1026 - Không tìm thấy vật liệu.
-      failed_import_skm_file: 1027 - Đã xảy ra lỗi khi nhập từ tệp .skm. **{{ error }}**
-      failed_export_skm_file: 1028 - Đã xảy ra lỗi khi xuất tệp .skm.**{{ error }}**
-      failed_removing_material: 1029 - Đã xảy ra lỗi khi chặn vật liệu này. **{{ error }}**
-      failed_duplicating_material: 1030 - Đã xảy ra lỗi khi sao chép vật liệu. **{{ error }}**
-      invalid_image_file: 1031 - Hình ảnh không hợp lệ
-    obsolete_base: 1032 - Để luôn đồng bộ, bạn cần cập nhật danh sách vật liệu.
+      no_model: 1026 - Không có mô hình nào được mở. Bạn sẽ cần phải cung cấp cho tôi thêm thông tin;)
+      no_materials: 1027 - Mô hình của bạn không chứa bất kỳ vật liệu nào.
+      material_not_found: 1028 - Không tìm thấy vật liệu.
+      failed_import_skm_file: 1029 - Đã xảy ra lỗi khi nhập từ tệp .skm. **{{ error }}**
+      failed_export_skm_file: 1030 - Đã xảy ra lỗi khi xuất tệp .skm.**{{ error }}**
+      failed_removing_material: 1031 - Đã xảy ra lỗi khi chặn vật liệu này. **{{ error }}**
+      failed_duplicating_material: 1032 - Đã xảy ra lỗi khi sao chép vật liệu. **{{ error }}**
+      invalid_image_file: 1033 - Hình ảnh không hợp lệ
+    obsolete_base: 1034 - Để luôn đồng bộ, bạn cần cập nhật danh sách vật liệu.
   outliner:
-    label: '1033 - '
-    title: '1034 - '
-    list: '1035 - '
-    nodes: '1036 - '
-    part_count: '1037 - '
-    type_0: '1038 - '
-    type_1: '1039 - '
-    type_2: '1040 - '
-    type_3: '1041 - '
+    label: '1035 - '
+    title: '1036 - '
+    list: '1037 - '
+    nodes: '1038 - '
+    part_count: '1039 - '
+    type_0: '1040 - '
+    type_1: '1041 - '
+    type_2: '1042 - '
+    type_3: '1043 - '
     tooltip:
-      open_node_url: '1042 - '
+      open_node_url: '1044 - '
     edit_node:
-      title_model: '1043 - '
-      title_instance: '1044 - '
-      general: 1045 - Chung
-      preview: 1046 - Xem trước
-      name: 1047 - Tên
-      instance_name: 1048 - Đối tượng
-      definition_name: '1049 - '
-      description: 1050 - Mô tả
-      url: '1051 - '
-      layer_name: 1052 - Thẻ
-      explode: '1053 - '
-      explode_message: '1054 - '
+      title_model: '1045 - '
+      title_instance: '1046 - '
+      general: 1047 - Chung
+      preview: 1048 - Xem trước
+      name: 1049 - Tên
+      instance_name: 1050 - Đối tượng
+      definition_name: '1051 - '
+      description: 1052 - Mô tả
+      url: '1053 - '
+      layer_name: 1054 - Thẻ
+      explode: '1055 - '
+      explode_message: '1056 - '
     error:
-      no_model: 1055 - Không có mô hình nào được mở. Bạn sẽ cần phải cung cấp cho tôi thêm thông tin;)
-      no_entities: '1056 - '
-      node_not_found: '1057 - '
-      entity_not_found: '1058 - '
-      obsolete_outliner: '1059 - '
+      no_model: 1057 - Không có mô hình nào được mở. Bạn sẽ cần phải cung cấp cho tôi thêm thông tin;)
+      no_entities: '1058 - '
+      node_not_found: '1059 - '
+      entity_not_found: '1060 - '
+      obsolete_outliner: '1061 - '
     tip:
-      no_node: '1060 - '
-    obsolete_base: '1061 - '
+      no_node: '1062 - '
+    obsolete_base: '1063 - '
   importer:
-    label: 1062 - Nhập
-    title: 1063 - Nhập các bộ phận
+    label: 1064 - Nhập
+    title: 1065 - Nhập các bộ phận
     help: |
-      1064 - Trang này cho phép bạn nhập các bộ phận (được xác định bởi hộp giới hạn hình chữ nhật) vào mô hình của bạn từ tệp [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file.
+      1066 - Trang này cho phép bạn nhập các bộ phận (được xác định bởi hộp giới hạn hình chữ nhật) vào mô hình của bạn từ tệp [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file.
       Sau đó, bạn có thể sử dụng các tính năng của *OpenCutList* cho các bộ phận đã được tạo bởi một phần mềm khác với *SketchUp*.
       Nhấp vào nút **Mở tệp CSV** để bắt đầu.
-    open_csv: 1065 - Mở tệp CSV
-    import_to_model: 1066 - Nhập vào mô hình
+    open_csv: 1067 - Mở tệp CSV
+    import_to_model: 1068 - Nhập vào mô hình
     load:
-      title: 1067 - Đang tải tệp CSV
+      title: 1069 - Đang tải tệp CSV
       info_0: |
-        1068 - Chọn các tùy chọn cần thiết để đọc đúng tệp:
+        1070 - Chọn các tùy chọn cần thiết để đọc đúng tệp:
         **{{ filename }}**.
       info_1: |
-        1069 - *Đơn vị được định cấu hình trong mô hình là: **{{ unit }}**.
+        1071 - *Đơn vị được định cấu hình trong mô hình là: **{{ unit }}**.
         Đơn vị này sẽ được sử dụng cho các kích thước không được chỉ định đơn vị*.
-      options: 1070 - Đang tải tùy chọn
-      option_col_sep: 1071 - Dấu phân cách
-      option_col_sep_tab: 1072 - Người lập
-      option_col_sep_comma: 1073 - Dấu phẩy
-      option_col_sep_semicolon: 1074 - Dấu chấm phẩy
-      option_first_line_headers: 1075 - Dòng tiêu đề
-      option_first_line_headers_0: 1076 - Dữ liệu
-      option_first_line_headers_1: 1077 - Tiêu đề cột
+      options: 1072 - Đang tải tùy chọn
+      option_col_sep: 1073 - Dấu phân cách
+      option_col_sep_tab: 1074 - Người lập
+      option_col_sep_comma: 1075 - Dấu phẩy
+      option_col_sep_semicolon: 1076 - Dấu chấm phẩy
+      option_first_line_headers: 1077 - Dòng tiêu đề
+      option_first_line_headers_0: 1078 - Dữ liệu
+      option_first_line_headers_1: 1079 - Tiêu đề cột
     import:
-      title: 1078 - Nhập các bộ phận vào mô hình
+      title: 1080 - Nhập các bộ phận vào mô hình
       info_0: |
-        1079 - Bạn sắp nhập **{{ count }} bộ phận** vào mô hình.
+        1081 - Bạn sắp nhập **{{ count }} bộ phận** vào mô hình.
         Phần này sẽ được đặt trong một nhóm ở gốc tọa độ của cảnh chính.
       info_0_plural: |
-        1080 - Bạn sắp nhập **{{ count }} bộ phận** vào mô hình.
+        1082 - Bạn sắp nhập **{{ count }} bộ phận** vào mô hình.
         Phần này sẽ được đặt trong một nhóm ở gốc tọa độ của cảnh chính.
-      info_1: 1081 - Click **Nhập** để xác nhận hành động.
+      info_1: 1083 - Click **Nhập** để xác nhận hành động.
       options: |
-        1082 - Mô hình đã chứa *bộ phận*, *định nghĩa* hoặc *vật liệu*.
+        1084 - Mô hình đã chứa *bộ phận*, *định nghĩa* hoặc *vật liệu*.
         Chọn các tùy chọn nhập bạn cần.
-      option_remove_all_?: 1083 - Tiếp theo là gì?
-      option_remove_all_false: 1084 - Thêm các bộ phận vào hiện có
-      option_remove_all_true: 1085 - Xóa hiện có!
-      option_keep_definitions_settings: 1086 - Giữ cài đặt định nghĩa
-      option_keep_materials_settings: 1087 - Giữ cài đặt vật liệu
+      option_remove_all_?: 1085 - Tiếp theo là gì?
+      option_remove_all_false: 1086 - Thêm các bộ phận vào hiện có
+      option_remove_all_true: 1087 - Xóa hiện có!
+      option_keep_definitions_settings: 1088 - Giữ cài đặt định nghĩa
+      option_keep_materials_settings: 1089 - Giữ cài đặt vật liệu
     column:
-      unused: 1088 - Chưa sử dụng
-      mandatory: 1089 - Các trường bắt buộc
-      optional: 1090 - Trường tùy chọn
-      name: 1091 - Tên gọi
-      count: 1092 - Số lượng
-      bbox_length: 1093 - Chiều dài
-      bbox_width: 1094 - Chiều rộng
-      bbox_thickness: 1095 - Độ dày
-      material: 1096 - Vật liệu
-      tags: 1097 - Nhãn hiệu
+      unused: 1090 - Chưa sử dụng
+      mandatory: 1091 - Các trường bắt buộc
+      optional: 1092 - Trường tùy chọn
+      name: 1093 - Tên gọi
+      count: 1094 - Số lượng
+      bbox_length: 1095 - Chiều dài
+      bbox_width: 1096 - Chiều rộng
+      bbox_thickness: 1097 - Độ dày
+      material: 1098 - Vật liệu
+      tags: 1099 - Nhãn hiệu
     tooltip:
-      errors: 1098 - Phần này sẽ không được nhập vì nó tạo ra các lỗi
-      warnings: 1099 - Phần này sẽ được nhập nhưng nó tạo ra các cảnh báo
+      errors: 1100 - Phần này sẽ không được nhập vì nó tạo ra các lỗi
+      warnings: 1101 - Phần này sẽ được nhập nhưng nó tạo ra các cảnh báo
     error:
-      no_model: 1100 - Không có mô hình nào được mở. Không thể nhập các bộ phận vào khoảng trống;)
-      file_not_found: '1101 - Tệp tìm thấy tệp: **{{ filename }}**'
-      bad_extension: 1102 - Tệp *{{ filename }}* không có đuôi mở rộng **.CSV** hoặc **.TSV**.
+      no_model: 1102 - Không có mô hình nào được mở. Không thể nhập các bộ phận vào khoảng trống;)
+      file_not_found: '1103 - Tệp tìm thấy tệp: **{{ filename }}**'
+      bad_extension: 1104 - Tệp *{{ filename }}* không có đuôi mở rộng **.CSV** hoặc **.TSV**.
       failed_to_load_csv_file: |
-        1103 - Không thể tải tệp CSV: **{{ error }}**
+        1105 - Không thể tải tệp CSV: **{{ error }}**
         *Xác minh rằng bạn đã chọn dấu tách trường thích hợp.*
-      empty_file: 1104 - Tệp có vẻ trống hoặc không thể hiểu được.
-      no_importable_part: 1105 - Không có bộ phận nào có thể được nhập. Gán các trường bắt buộc vào các cột tương ứng.
-      invalid_name: 1106 - Đối tượng không hợp lệ
-      invalid_length: 1107 - Chiều dài không hợp lệ
-      invalid_width: 1108 - Chiều rộng không hợp lệ
-      invalid_thickness: 1109 - Độ dày không hợp lệ
-      failed_to_import: 1110 - Nhập không thành công.
+      empty_file: 1106 - Tệp có vẻ trống hoặc không thể hiểu được.
+      no_importable_part: 1107 - Không có bộ phận nào có thể được nhập. Gán các trường bắt buộc vào các cột tương ứng.
+      invalid_name: 1108 - Đối tượng không hợp lệ
+      invalid_length: 1109 - Chiều dài không hợp lệ
+      invalid_width: 1110 - Chiều rộng không hợp lệ
+      invalid_thickness: 1111 - Độ dày không hợp lệ
+      failed_to_import: 1112 - Nhập không thành công.
     warning:
-      invalid_count: 1111 - Số lượng không hợp lệ
-      invalid_material: 1112 - Vật liệu không hợp lệ
+      invalid_count: 1113 - Số lượng không hợp lệ
+      invalid_material: 1114 - Vật liệu không hợp lệ
     success:
-      imported_title: 1113 - Nhập xong
-      imported_body: 1114 - {{ count }} bộ phận đã được nhập thành công!
-      imported_body_plural: 1115 - {{ count }} bộ phận đã được nhập thành công!
-    obsolete_base: 1116 - Để duy trì đồng bộ hóa, bạn phải tải lại tệp CSV.
+      imported_title: 1115 - Nhập xong
+      imported_body: 1116 - {{ count }} bộ phận đã được nhập thành công!
+      imported_body_plural: 1117 - {{ count }} bộ phận đã được nhập thành công!
+    obsolete_base: 1118 - Để duy trì đồng bộ hóa, bạn phải tải lại tệp CSV.
   tutorials:
-    label: 1117 - Hướng dẫn
-    title: 1118 - Hướng dẫn
-    help: '1119 - Tìm ở đây một danh sách không đầy đủ các video do cộng đồng tạo ra xung quanh việc sử dụng *OpenCutList*.
+    label: 1119 - Hướng dẫn
+    title: 1120 - Hướng dẫn
+    help: '1121 - Tìm ở đây một danh sách không đầy đủ các video do cộng đồng tạo ra xung quanh việc sử dụng *OpenCutList*.
 
       '
-    submit: 1120 - Gửi video
+    submit: 1122 - Gửi video
     submit_info: |
-      1121 - Bạn đã tạo một video trình bày việc sử dụng **OpenCutList** và bạn muốn thấy nó xuất hiện ở đây?
+      1123 - Bạn đã tạo một video trình bày việc sử dụng **OpenCutList** và bạn muốn thấy nó xuất hiện ở đây?
       Hãy cho chúng tôi biết bằng cách viết thư cho chúng tôi tại **opencutlist@lairdubois.fr**!
 
       *Video phải ở chế độ công khai và được lưu trữ trên YouTube*.
     error:
-      fail_to_load_list: 1122 - Không thể tải danh sách video.
+      fail_to_load_list: 1124 - Không thể tải danh sách video.
   news:
-    label: 1123 - Tin tức
-    title: 1124 - Tin tức
-    help: '1125 - Tin tức mới nhất từ  *OpenCutList*.
+    label: 1125 - Tin tức
+    title: 1126 - Tin tức
+    help: '1127 - Tin tức mới nhất từ  *OpenCutList*.
 
       '
-    comment: 1126 - Bình luận
+    comment: 1128 - Bình luận
     error:
-      fail_to_load_list: 1127 - Không thể tải danh sách tin tức.
+      fail_to_load_list: 1129 - Không thể tải danh sách tin tức.
   forum:
-    label: 1128 - Diễn đàn
-    title: 1129 - Diễn đàn
-    help: '1130 - Bảng tin này cho phép bạn trao đổi với cộng đồng người dùng và nhóm *OpenCutList*.
+    label: 1130 - Diễn đàn
+    title: 1131 - Diễn đàn
+    help: '1132 - Bảng tin này cho phép bạn trao đổi với cộng đồng người dùng và nhóm *OpenCutList*.
 
       '
-    create_conversation: 1131 - Bắt đầu một chủ đề
-    reply: 1132 - Trả lời
-    tags: 1133 - Các thẻ
+    create_conversation: 1133 - Bắt đầu một chủ đề
+    reply: 1134 - Trả lời
+    tags: 1135 - Các thẻ
     redirection: |
-      1134 - Bạn sẽ được chuyển hướng đến nền tảng **Open Collective** lưu trữ diễn đàn thảo luận này.
+      1136 - Bạn sẽ được chuyển hướng đến nền tảng **Open Collective** lưu trữ diễn đàn thảo luận này.
       Để *bắt đầu thảo luận* hoặc *trả lời*, bạn cần tạo một tài khoản và đăng nhập.
       *Miễn phí, không bắt buộc và chỉ cần một địa chỉ email đơn giản.*
 
       Áp dụng để tiếp tục.
     error:
-      fail_to_load_list: 1135 - Không thể tải danh sách chủ đề.
+      fail_to_load_list: 1137 - Không thể tải danh sách chủ đề.
   sponsor:
-    label: 1136 - Nhà tài trợ
-    title: 1137 - Nhà tài trợ
+    label: 1138 - Nhà tài trợ
+    title: 1139 - Nhà tài trợ
     description: |
-      1138 - **OpenCutList** là phần mềm *Nguồn mở* được người dùng hỗ trợ thông qua nền tảng <a href="https://opencollective.com/" target="_blank">Open Collective</a>.
+      1140 - **OpenCutList** là phần mềm *Nguồn mở* được người dùng hỗ trợ thông qua nền tảng <a href="https://opencollective.com/" target="_blank">Open Collective</a>.
       Hỗ trợ dự án này bằng cách đóng góp tài chính!
-    contribute: 1139 - Đóng góp
-    backers: 1140 - {{ count }} người đóng góp tài chính
-    backers_plural: 1141 - {{ count }} người đóng góp tài chính
-    ad: 1142 - Bạn có thích OpenCutList?
-    objective: 1143 - Đối tượng
-    objective_slogan: 1144 - OpenCutList là tất cả của chúng ta
+    contribute: 1141 - Đóng góp
+    backers: 1142 - {{ count }} người đóng góp tài chính
+    backers_plural: 1143 - {{ count }} người đóng góp tài chính
+    ad: 1144 - Bạn có thích OpenCutList?
+    objective: 1145 - Đối tượng
+    objective_slogan: 1146 - OpenCutList là tất cả của chúng ta
     objective_title:
-      default: 1145 - Mục tiêu
-      cuttingdiagram_export: 1146 - Kinh phí của sơ đồ cắt được xuất
+      default: 1147 - Mục tiêu
+      cuttingdiagram_export: 1148 - Kinh phí của sơ đồ cắt được xuất
     objective_details:
-      default: '1147 - Sự cải tiến liên tục của *OpenCutList* rất quan trọng đối với chúng tôi và dự án tiếp tục cần sự trợ giúp của bạn cho bản cập nhật tiếp theo!
+      default: '1149 - Sự cải tiến liên tục của *OpenCutList* rất quan trọng đối với chúng tôi và dự án tiếp tục cần sự trợ giúp của bạn cho bản cập nhật tiếp theo!
 
         '
       cuttingdiagram_export: |
-        1148 - Điều quan trọng đối với chúng tôi là *OpenCutList* có thể được điều chỉnh cho phù hợp với những kỳ vọng rất khác nhau của người dùng đối với chức năng *Sơ đồ cắt*.
+        1150 - Điều quan trọng đối với chúng tôi là *OpenCutList* có thể được điều chỉnh cho phù hợp với những kỳ vọng rất khác nhau của người dùng đối với chức năng *Sơ đồ cắt*.
         Để tiếp tục mở rộng các chức năng, chúng tôi muốn cho phép xuất sơ đồ cắt ở định dạng **SVG** và **DXF**.
         Bằng cách cung cấp cho chúng tôi phương tiện để xử lý các bản xuất này, bạn đang cho chúng tôi cơ hội giúp bạn tận dụng tối đa *OpenCutList*.
-      layout: '1149 - Mục tiêu của mô-đun này là cho phép bạn dễ dàng in bản xem trước của dự án dưới dạng **chế độ xem bùng nổ** với nhận dạng từ thông tin được tạo trong danh sách các bộ phận.
+      layout: '1151 - Mục tiêu của mô-đun này là cho phép bạn dễ dàng in bản xem trước của dự án dưới dạng **chế độ xem bùng nổ** với nhận dạng từ thông tin được tạo trong danh sách các bộ phận.
 
         '
-    objective_crowdfunding: '1150 - Việc phát triển các tính năng mới sẽ được thực hiện thông qua **Gây quỹ** và sẽ bắt đầu khi đạt được **Mục tiêu tài chính**.
+    objective_crowdfunding: '1152 - Việc phát triển các tính năng mới sẽ được thực hiện thông qua **Gây quỹ** và sẽ bắt đầu khi đạt được **Mục tiêu tài chính**.
 
       '
-    objective_thanks: '1151 - Cảm ơn sự đóng góp của bạn!
+    objective_thanks: '1153 - Cảm ơn sự đóng góp của bạn!
 
       '
-    objective_funded_progress: 1152 - Được tài trợ ở mức {{ progress }}%
+    objective_funded_progress: 1154 - Được tài trợ ở mức {{ progress }}%
   settings:
-    label: 1153 - Cấu hình
-    title: 1154 - Cấu hình
-    global_settings: 1155 - Cấu hình chung
-    language: 1156 - Ngôn ngữ
-    language_auto: 1157 - Tự động
-    zoom: 1158 - Cỡ chữ
-    zoom_normal: 1159 - Bình thường
-    zoom_small: 1160 - Ngắn
-    zoom_tiny: 1161 - Bé xíu
-    print_margin: 1162 - Lề in
-    print_margin_normal: 1163 - Bình thường
-    print_margin_small: 1164 - Nhỏ
-    table_row_size: '1165 - '
-    table_row_size_normal: 1166 - Bình thường
-    table_row_size_compact: '1167 - '
-    size_and_position: 1168 - Cỡ và vị trí của cửa sổ
-    model_settings: 1169 - Cấu hình mô hình
-    length_unit: 1170 - Đơn vị của chiều dài
-    length_format: 1171 - Định dạng
-    length_format_0: 1172 - Số thập phân
-    length_format_1: 1173 - Kiến trúc
-    length_format_2: 1174 - Kỹ thuật
-    length_format_3: 1175 - Phân số
-    length_precision: 1176 - Độ chính xác
-    suppress_units_display: 1177 - Hiển thị đơn vị chiều dài cho mỗi giá trị
-    mass_unit: 1178 - Đơn vị trọng lượng
-    mass_precision: 1179 - Độ chính xác
-    currency_symbol: 1180 - Ký hiệu tiền tệ
-    currency_precision: 1181 - Độ chính xác
+    label: 1155 - Cấu hình
+    title: 1156 - Cấu hình
+    global_settings: 1157 - Cấu hình chung
+    language: 1158 - Ngôn ngữ
+    language_auto: 1159 - Tự động
+    zoom: 1160 - Cỡ chữ
+    zoom_normal: 1161 - Bình thường
+    zoom_small: 1162 - Ngắn
+    zoom_tiny: 1163 - Bé xíu
+    print_margin: 1164 - Lề in
+    print_margin_normal: 1165 - Bình thường
+    print_margin_small: 1166 - Nhỏ
+    table_row_size: '1167 - '
+    table_row_size_normal: 1168 - Bình thường
+    table_row_size_compact: '1169 - '
+    size_and_position: 1170 - Cỡ và vị trí của cửa sổ
+    model_settings: 1171 - Cấu hình mô hình
+    length_unit: 1172 - Đơn vị của chiều dài
+    length_format: 1173 - Định dạng
+    length_format_0: 1174 - Số thập phân
+    length_format_1: 1175 - Kiến trúc
+    length_format_2: 1176 - Kỹ thuật
+    length_format_3: 1177 - Phân số
+    length_precision: 1178 - Độ chính xác
+    suppress_units_display: 1179 - Hiển thị đơn vị chiều dài cho mỗi giá trị
+    mass_unit: 1180 - Đơn vị trọng lượng
+    mass_precision: 1181 - Độ chính xác
+    currency_symbol: 1182 - Ký hiệu tiền tệ
+    currency_precision: 1183 - Độ chính xác
     presets:
-      export_global_presets: 1182 - Xuất mẫu cài đặt trước
+      export_global_presets: 1184 - Xuất mẫu cài đặt trước
       export_global_presets_help: |
-        1183 - Tính năng này cho phép bạn xuất các giá trị đặt trước của mình sang tệp **.json**.
+        1185 - Tính năng này cho phép bạn xuất các giá trị đặt trước của mình sang tệp **.json**.
         Chọn các mẫu cài đặt trước bạn muốn xuất sang nó.
-      export_global_presets_success: 1184 - Các mẫu cài đặt trước đã được xuất thành công.
-      import_global_presets: 1185 - Nhập mẫu cài đặt trước
+      export_global_presets_success: 1186 - Các mẫu cài đặt trước đã được xuất thành công.
+      import_global_presets: 1187 - Nhập mẫu cài đặt trước
       import_global_presets_help: |
-        1186 - Chọn các giá trị đặt trước trong tệp **.json** mà bạn muốn nhập.
+        1188 - Chọn các giá trị đặt trước trong tệp **.json** mà bạn muốn nhập.
         Xin lưu ý rằng giá trị đặt trước có cùng tên đã tồn tại sẽ được thay thế bằng phiên bản đã nhập.
       import_global_presets_success: |
-        1187 - *OpenCutList* mẫu cài đặt trước đã được nhập thành công.
+        1189 - *OpenCutList* mẫu cài đặt trước đã được nhập thành công.
         Để nhìn thấy các thay đổi, bạn phải **đóng** và **mở lại** cửa sổ OpenCutList.
-      dump_global_presets: 1188 - Kết xuất mẫu cài đặt trước
-      dump_model_presets: 1189 - Kết xuất cài đặt mô hình
-      reset_global_presets: 1190 - Cài đặt lại các mẫu cài đặt trước
+      dump_global_presets: 1190 - Kết xuất mẫu cài đặt trước
+      dump_model_presets: 1191 - Kết xuất cài đặt mô hình
+      reset_global_presets: 1192 - Cài đặt lại các mẫu cài đặt trước
       reset_global_presets_confirm: |
-        1191 - Bạn sắp đặt lại tất cả các mẫu cài đặt trước *OpenCutList* đã lưu của mình
+        1193 - Bạn sắp đặt lại tất cả các mẫu cài đặt trước *OpenCutList* đã lưu của mình
          Sau khi hành động kết thúc: **Tất cả các mẫu cài đặt trước sẽ bị mất.**
         Xác nhận để tiếp tục.
       reset_global_presets_success: |
-        1192 - Mẫu cài đặt trước *OpenCutList* đã được đặt lại
+        1194 - Mẫu cài đặt trước *OpenCutList* đã được đặt lại
         Để thấy các thay đổi, bạn phải **đóng** và **mở lại** cửa sổ OpenCutList.
-      reset_model_presets: 1193 - Cài đặt lại các cài đặt của mô hình
+      reset_model_presets: 1195 - Cài đặt lại các cài đặt của mô hình
       reset_model_presets_confirm: |
-        1194 - Bạn sắp cài đặt lại tất cả các cài đặt *OpenCutList* cho mô hình hiện tại.
+        1196 - Bạn sắp cài đặt lại tất cả các cài đặt *OpenCutList* cho mô hình hiện tại.
         Sau khi hành động này kết thúc. **Tất cả cài đặt sẽ được khôi phục về giá trị mặc định.**
         Xác nhận để tiếp tục.
       reset_model_presets_success: |
-        1195 - Cáì đặt *OpenCutList* cho mô hình hiện tại đã được đặt lại.
+        1197 - Cáì đặt *OpenCutList* cho mô hình hiện tại đã được đặt lại.
         Để thấy các thay đổi, bạn phải **đóng** và **mở lại** cửa sổ OpenCutList.
       error:
-        no_preset_to_export: 1196 - Không có mẫu cài đặt trước nào để xuất.
-        no_preset_to_import: 1197 - Không có mẫu cài đặt trước nào để nhập.
-        failed_to_import: '1198 - Không thể nhập các mẫu cài đặt trước: **{{ error }}**.'
-        failed_to_import_invalid_hexdigest: 1199 - Tập tin này đã được sửa đổi. Nó không thể được nhập.
-        failed_to_import_bad_file_format: 1200 - Định dạng tập tin không hợp lệ.
+        no_preset_to_export: 1198 - Không có mẫu cài đặt trước nào để xuất.
+        no_preset_to_import: 1199 - Không có mẫu cài đặt trước nào để nhập.
+        failed_to_import: '1200 - Không thể nhập các mẫu cài đặt trước: **{{ error }}**.'
+        failed_to_import_invalid_hexdigest: 1201 - Tập tin này đã được sửa đổi. Nó không thể được nhập.
+        failed_to_import_bad_file_format: 1202 - Định dạng tập tin không hợp lệ.
   about:
-    label: 1201 - Giới thiệu
-    title: 1202 - Giới thiệu
-    version: 1203 - Phiên bản
-    credits: 1204 - Thông tin kỹ thuật
-    credits_authors: '1205 - *OpenCutList* được phát triển bởi [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) và [Martin Müller](https://www.lairdubois.fr/@mobilarte). Liệt kê tất cả [người đóng góp](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+    label: 1203 - Giới thiệu
+    title: 1204 - Giới thiệu
+    version: 1205 - Phiên bản
+    credits: 1206 - Thông tin kỹ thuật
+    credits_authors: '1207 - *OpenCutList* được phát triển bởi [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) và [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Liệt kê tất cả [người đóng góp](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
 
       '
-    credits_translations: 1206 - Bản dịch
+    credits_translations: 1208 - Bản dịch
     credits_translators: |
-      1207 - - Nguyễn Ngọc Tân (*Tiếng Việt*)
+      1209 - - Nguyễn Ngọc Tân (*Tiếng Việt*)
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*Tiếng Anh*, *Tiếng Đức*)
       - Gildas Boureau (tài liệu *tiếng Pháp*)
       - Vladimir Badulya (*Tiếng Nga*)
@@ -1536,116 +1538,116 @@ tab:
       - [刘涛](https://www.liutao91.cn) (*tiếng Trung giản thể*)
       - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*tiếng Hà Lan*)
     credits_description: |
-      1208 - Việc phát triển phần mở rộng này được liên kết với dự án chia sẻ [L'Air du Bois](https://www.lairdubois.fr).
+      1210 - Việc phát triển phần mở rộng này được liên kết với dự án chia sẻ [L'Air du Bois](https://www.lairdubois.fr).
       Tiện ích mở rộng này cũng là *Nguồn mở* và có sẵn theo giấy phép [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) giấy phép trên [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
-    credits_runtime: 1209 - Thời gian chạy
-    credits_development: 1210 - Môi trương phát triển
-    credits_vendors: '1211 - Cuộc phiêu lưu sẽ không thể thực hiện được nếu không có tác phẩm của các tác giả của các thành phần *Nguồn mở* sau:
+    credits_runtime: 1211 - Thời gian chạy
+    credits_development: 1212 - Môi trương phát triển
+    credits_vendors: '1213 - Cuộc phiêu lưu sẽ không thể thực hiện được nếu không có tác phẩm của các tác giả của các thành phần *Nguồn mở* sau:
 
       '
     credits_thanks: |
-      1212 - Một lời cảm ơn đặc biệt đến:
+      1214 - Một lời cảm ơn đặc biệt đến:
       - [JetBrains](https://www.jetbrains.com) vì đã hỗ trợ dự án này bằng [Giấy phép nguồn mở miễn phí](https://www.jetbrains.com/buy/opensource/).
       - [Transifex](https://www.transifex.com) vì đã hỗ trợ các dự án Nguồn mở.
       - [GitBook](https://www.gitbook.com)vì đã hỗ trợ các dự án Nguồn mở.
 tool:
   default:
-    transparency: 1213 - Nhìn trong suốt
-    zoom_extents: 1214 - Thu phóng vừa khung nhìn
-    toggle_depth: 1215 - Nền bộ phận
-    more: 1216 - Nhiều hơn
+    transparency: 1215 - Nhìn trong suốt
+    zoom_extents: 1216 - Thu phóng vừa khung nhìn
+    toggle_depth: 1217 - Nền bộ phận
+    more: 1218 - Nhiều hơn
   highlight:
     transparency: "$t(tool.default.transparency)"
     zoom_extents: "$t(tool.default.zoom_extents)"
   smart_paint:
-    title: 1219 - Sơn
-    default_material: 1220 - Không có vật liệu
-    filters: 1221 - Lọc
-    filter_0: 1222 - Không có loại
+    title: 1221 - Sơn
+    default_material: 1222 - Không có vật liệu
+    filters: 1223 - Lọc
+    filter_0: 1224 - Không có loại
     filter_1: "$t(tab.materials.type_1)"
     filter_2: "$t(tab.materials.type_2)"
     filter_3: "$t(tab.materials.type_3)"
     filter_4: "$t(tab.materials.type_4)"
     filter_5: "$t(tab.materials.type_5)"
     filter_6: "$t(tab.materials.type_6)"
-    action_0: 1229 - Sơn các bộ phận
-    action_0_status: 1230 - Click vào bộ phận để thể hiện sơn
-    action_1: 1231 - Sơn các cạnh
-    action_1_status: 1232 - Click vào một cạnh của bảng để áp dụng '$t(tab.materials.type_4)'
-    action_2: 1233 - Sơn các bề mặt
-    action_2_status: 1234 - Click vào một mặt của bảng để áp dụng '$t(tab.materials.type_6)'
-    action_3: 1235 - Vật mẫu
-    action_3_status: 1236 - Nhấp vào một mặt để lấy mẫu vật liệu của nó
-    action_4: 1237 - Dọn dẹp
-    action_4_status: 1238 - Nhấp vào một bộ phận để xóa tất cả các vật liệu từ định nghĩa của nó và tất cả các đối tượng
-    action_option_group_instances: '1239 - '
-    action_option_group_edges: 1240 - Số dải cạnh
-    action_option_group_faces: '1241 - '
-    action_option_instances_0_status: '1242 - '
-    action_option_instances_1_status: '1243 - '
-    action_option_edges_0_status: '1244 - '
-    action_option_edges_1_status: '1245 - '
-    action_option_edges_2_status: '1246 - '
-    action_option_faces_0_status: '1247 - '
-    action_option_faces_1_status: '1248 - '
-    edges: 1249 - {{ count }} cạnh
-    edges_plural: 1250 - {{ count }} cạnh
-    edge_ymin: 1251 - Chiều dài 1
-    edge_ymax: 1252 - Chiều dài 2
-    edge_xmin: 1253 - Chiều rộng 1
-    edge_xmax: 1254 - Chiều rộng 2
-    faces: 1255 - {{ count }} mặt
-    faces_plural: 1256 - {{ count }} mặt
-    face_zmin: 1257 - Mặt sau
-    face_zmax: 1258 - Mặt trước
+    action_0: 1231 - Sơn các bộ phận
+    action_0_status: 1232 - Click vào bộ phận để thể hiện sơn
+    action_1: 1233 - Sơn các cạnh
+    action_1_status: 1234 - Click vào một cạnh của bảng để áp dụng '$t(tab.materials.type_4)'
+    action_2: 1235 - Sơn các bề mặt
+    action_2_status: 1236 - Click vào một mặt của bảng để áp dụng '$t(tab.materials.type_6)'
+    action_3: 1237 - Vật mẫu
+    action_3_status: 1238 - Nhấp vào một mặt để lấy mẫu vật liệu của nó
+    action_4: 1239 - Dọn dẹp
+    action_4_status: 1240 - Nhấp vào một bộ phận để xóa tất cả các vật liệu từ định nghĩa của nó và tất cả các đối tượng
+    action_option_group_instances: '1241 - '
+    action_option_group_edges: 1242 - Số dải cạnh
+    action_option_group_faces: '1243 - '
+    action_option_instances_0_status: '1244 - '
+    action_option_instances_1_status: '1245 - '
+    action_option_edges_0_status: '1246 - '
+    action_option_edges_1_status: '1247 - '
+    action_option_edges_2_status: '1248 - '
+    action_option_faces_0_status: '1249 - '
+    action_option_faces_1_status: '1250 - '
+    edges: 1251 - {{ count }} cạnh
+    edges_plural: 1252 - {{ count }} cạnh
+    edge_ymin: 1253 - Chiều dài 1
+    edge_ymax: 1254 - Chiều dài 2
+    edge_xmin: 1255 - Chiều rộng 1
+    edge_xmax: 1256 - Chiều rộng 2
+    faces: 1257 - {{ count }} mặt
+    faces_plural: 1258 - {{ count }} mặt
+    face_zmin: 1259 - Mặt sau
+    face_zmax: 1260 - Mặt trước
     warning:
-      no_material: 1259 - Không có vật liệu
-      no_material_type: 1260 - Không có vật liệu của loại '{{ type }}'
+      no_material: 1261 - Không có vật liệu
+      no_material_type: 1262 - Không có vật liệu của loại '{{ type }}'
     error:
-      not_part: '1261 - '
-      not_edge: 1262 - Mặt mục tiêu không phải là cạnh bảng
-      not_face: 1263 - Mặt mục tiêu không phải là mặt bảng
-      wrong_material_type: 1264 - Bộ phận mục tiêu phải là của loại '{{ type }}'
+      not_part: '1263 - '
+      not_edge: 1264 - Mặt mục tiêu không phải là cạnh bảng
+      not_face: 1265 - Mặt mục tiêu không phải là mặt bảng
+      wrong_material_type: 1266 - Bộ phận mục tiêu phải là của loại '{{ type }}'
   smart_axes:
-    title: 1265 - Định hướng
-    action_0: 1266 - Lật
-    action_0_status: 1267 - Nhấp vào một bộ phận để lật nó trường hợp dọc theo một trong các kích thước của nó
-    action_1: 1268 - Hoán đổi chiều dài ↔ chiều rộng
-    action_1_status: 1269 - Nhấp vào một bộ phận để hoán đổi chiều dài của nó với chiều rộng của nó
-    action_2: 1270 - Hoán đổi mặt trước ↔ mặt sau
-    action_2_status: 1271 - Nhấp vào một bộ phận để hoán đổi mặt trước với mặt sau của nó
-    action_3: 1272 - Điều chỉnh trục
-    action_3_status: 1273 - Nhấp vào mặt hoặc cạnh của một bộ phận để điều chỉnh hướng của các trục
-    action_option_group_direction: 1274 - Hướng
-    action_option_direction_0: 1275 - L
-    action_option_direction_1: 1276 - W
-    action_option_direction_2: 1277 - T
-    action_option_direction_0_status: '1278 - '
-    action_option_direction_1_status: '1279 - '
-    action_option_direction_2_status: '1280 - '
+    title: 1267 - Định hướng
+    action_0: 1268 - Lật
+    action_0_status: 1269 - Nhấp vào một bộ phận để lật nó trường hợp dọc theo một trong các kích thước của nó
+    action_1: 1270 - Hoán đổi chiều dài ↔ chiều rộng
+    action_1_status: 1271 - Nhấp vào một bộ phận để hoán đổi chiều dài của nó với chiều rộng của nó
+    action_2: 1272 - Hoán đổi mặt trước ↔ mặt sau
+    action_2_status: 1273 - Nhấp vào một bộ phận để hoán đổi mặt trước với mặt sau của nó
+    action_3: 1274 - Điều chỉnh trục
+    action_3_status: 1275 - Nhấp vào mặt hoặc cạnh của một bộ phận để điều chỉnh hướng của các trục
+    action_option_group_direction: 1276 - Hướng
+    action_option_direction_0: 1277 - L
+    action_option_direction_1: 1278 - W
+    action_option_direction_2: 1279 - T
+    action_option_direction_0_status: '1280 - '
+    action_option_direction_1_status: '1281 - '
+    action_option_direction_2_status: '1282 - '
     warning:
-      more_entities: 1281 - {{ count_used }} các đối tượng chia sẻ cùng một định nghĩa sẽ được sửa đổi
+      more_entities: 1283 - {{ count_used }} các đối tượng chia sẻ cùng một định nghĩa sẽ được sửa đổi
     error:
-      not_part: '1282 - '
-      not_orientable: 1283 - Loại bộ phận này không cho phép định hướng nó
+      not_part: '1284 - '
+      not_orientable: 1285 - Loại bộ phận này không cho phép định hướng nó
   smart_export:
-    title: 1284 - Xuất
-    action_0: '1285 - '
-    action_0_status: '1286 - '
-    action_1: '1287 - '
-    action_1_status: '1288 - '
-    action_2: '1289 - '
-    action_2_status: '1290 - '
-    action_3: '1291 - '
-    action_3_status: '1292 - '
-    action_option_group_file_format: 1293 - Định dạng
-    action_option_group_unit: 1294 - Đơn vị
-    action_option_group_faces: 1295 - Các mặt
-    action_option_group_options: 1296 - Tùy chọn
-    action_option_file_format_dxf_status: '1297 - '
-    action_option_file_format_stl_status: '1298 - '
-    action_option_file_format_obj_status: '1299 - '
-    action_option_file_format_svg_status: '1300 - '
+    title: 1286 - Xuất
+    action_0: '1287 - '
+    action_0_status: '1288 - '
+    action_1: '1289 - '
+    action_1_status: '1290 - '
+    action_2: '1291 - '
+    action_2_status: '1292 - '
+    action_3: '1293 - '
+    action_3_status: '1294 - '
+    action_option_group_file_format: 1295 - Định dạng
+    action_option_group_unit: 1296 - Đơn vị
+    action_option_group_faces: 1297 - Các mặt
+    action_option_group_options: 1298 - Tùy chọn
+    action_option_file_format_dxf_status: '1299 - '
+    action_option_file_format_stl_status: '1300 - '
+    action_option_file_format_obj_status: '1301 - '
+    action_option_file_format_svg_status: '1302 - '
     action_option_unit_0_status: "$t(default.unit_0)"
     action_option_unit_1_status: "$t(default.unit_1)"
     action_option_unit_2_status: "$t(default.unit_2)"
@@ -1655,8 +1657,8 @@ tool:
     action_option_faces_1_status: "$t(tab.cutlist.write.option_faces_1)"
     action_option_options_anchor_status: "$t(tab.cutlist.write.option_anchor_1)"
     action_option_options_smoothing_status: "$t(tab.cutlist.write.option_smoothing_1)"
-    action_option_options_merge_holes_status: '1310 - '
-    action_option_options_edges_status: '1311 - '
+    action_option_options_merge_holes_status: '1312 - '
+    action_option_options_paths_status: '1313 - '
     error:
-      not_part: '1312 - '
-      not_flat_face: '1313 - '
+      not_part: '1314 - '
+      not_flat_face: '1315 - '

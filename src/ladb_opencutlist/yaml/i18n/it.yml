@@ -97,7 +97,7 @@ core:
     dir_override: |
       « {{ target }} » esistente. Desideri sostituire?
 
-      Una cartella con lo stesso nome è già presente nella cartella {{ parent}}. Se si sostituisce, il contenuto originale della cartella verra perso.
+      Una cartella con lo stesso nome è già presente nella cartella {{ parent }}. Se si sostituisce, il contenuto originale della cartella verra perso.
   savepanel:
     export_to_file: "Esporta file in formato {{ file_format }}"
   dialog:
@@ -121,17 +121,17 @@ core:
   error:
     feature_unavailable: "Questa funzione richiede SketchUp {{ version }} o superiore"
     failed_export_to: |
-      Errore durante l'esportazione in *{{ path}}*.
-      **{{ error }}
+      Errore durante l'esportazione in *{{ path }}*.
+      **{{ error }}**
   success:
-    exported_to: "Esportazione in {{ path}} completata."
+    exported_to: "Esportazione in {{ path }} completata."
     copied_to_clipboard: Copiato negli appunti
   event:
     model_change: Il modello attivo è stato cambiato.
     options_change: Le opzioni del modello sono state cambiate.
     material_change: Almeno un materiale è stato cambiato.
     selection_change: La selezione nel modello attivo è stata cambiata.
-    layers_change: ""
+    layers_change: I tag nel modello attivo sono cambiati.
   upgrade:
     unavailable: Impossibile trovare l'ultima versione di *OpenCutList*.
     available: |
@@ -176,7 +176,7 @@ core:
     delete_success: "Configurazione **\"{{ name }}\"** eliminata"
     tooltip:
       save_to: "Configurazione '{{ name }}' aggiornata"
-      delete: "Elimina la configurazione **\"{{ name }}\"**"
+      delete: "Elimina la configurazione '{{ name }}'"
     dictionary:
       component_textinput_color: Tavolozza colori
       cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
@@ -406,7 +406,7 @@ tab:
         Definire qui il numero di strati che compongono lo spessore totale dell'elemento disegnato.
 
         *Esempio:* Per un elemento disegnato di spessore *38mm* che si desideri realizzare incollando insieme due pannelli da *19mm*, inserire **2** in questo campo.
-        *OpenCutList conterà 2 pezzi da 19 mm di spessore anzichè uno da 38 mm
+        *OpenCutList conterà 2 pezzi da 19 mm di spessore anzichè uno da 38 mm.*
       description: Descrizione
       description_help: |
         La *Descrizione* permette di fornire informazioni personalizzate su ogni definizione di parte.
@@ -436,7 +436,7 @@ tab:
         Selezionando questa opzione, viene ignorata la direzione della venatura solo su questa parte.
       size_increase: Sovramateriale
       size_increase_help: |
-        "Sovramateriale" consente di incrementare la dimensione delle singole parti.
+        Sovramateriale consente di incrementare la dimensione delle singole parti.
         (*Esempio : Sovramateriale per uno zoccolo o una dima che deve essere aggiustata durante la posa in opera.*)
       length_increase: Sovramateriale sulla lunghezza
       length_increase_help: Il sovramateriale viene applicato alla lunghezza reale per definire la **lunghezza semilavorata**.
@@ -458,7 +458,7 @@ tab:
       axes_origin_position_front_center: Posizionare l'origine al centro del frontale
       over_length: Per lunghezza
       over_width: Per larghezza
-      edge_disabled_help: La bordatura non è configurabile perchè nel modello non è stata trovata alcuna faccia che può ospitare un materiale di tipo *bordatura*.
+      edge_disabled_help: La bordatura non è configurabile perchè nel modello non è stata trovata alcuna faccia che può ospitare un materiale di tipo bordatura.
       face_disabled_help: Questa superficie non è configurabile perché non è stata rilevata alcuna faccia portatrice di materiale su questo bordo della parte nel modello.
       multiple_values: Valori multipli
       loading_preview: Preparazione dell'anteprima
@@ -487,7 +487,7 @@ tab:
       part_number_sequence_by_group_help: "Selezionando questa opzione, la classificazione delle parti viene fatta ripartire 1 (o A) per ogni gruppo (parti con materiale e spessore identico)."
       part_folding: Raggruppa parti uguali
       part_folding_help: |
-        Selezionando questa opzione, gli elementi di tipo "Tavole", "Pannello" o "Barre", che hanno la **stessa dimensione grezza**, gli **stessi cartellini e la **stessa finitura della superficie" *(se la visualizzazione di queste superfici è attiva) vengono raggruppati sulla stessa linea nella distinta
+        Selezionando questa opzione, gli elementi di tipo **Tavole, Pannello o Barre**, che hanno la **stessa dimensione grezza**, gli **stessi cartellini** e la **stessa finitura della superficie** *(se la visualizzazione di queste superfici è attiva)* vengono raggruppati sulla stessa linea nella *distinta*.
 
         Gli elementi vengono comunque considerarti differenti per l'etichettatura e la lista di taglio.
       hide_entity_names: Nascondi i nomi delle occorrenze
@@ -502,8 +502,8 @@ tab:
       hide_bbox_dimensions_help: "Selezionando questa opzione, verranno nascoste le dimensioni **finite** delle parti."
       hide_final_areas: Nascondi il valore dell'area delle parti di tipo *Pannelli*
       hide_final_areas_help: "Selezionando questa opzione, verrà nascosta **l'area** delle parti di tipo *Pannelli*."
-      hide_edges: Nascondi la colonna "Bordature"
-      hide_edges_help: "Selezionando questa opzione, verranno nascosta la colonne **Bordature** delle parti di tipo *Pannelli*."
+      hide_edges: Nascondi la colonna Bordature
+      hide_edges_help: "Selezionando questa opzione, verranno nascosta la **colonne bordature** delle parti di tipo *Pannelli*."
       hide_faces: Nascondere le colonne di impiallacciatura
       hide_faces_help: "Selezionando questa opzione, verranno nascoste le colonne **Impiallacciatura** delle parti di tipo *Pannelli*."
       hide_material_colors: Nascondi il colore dei materiali
@@ -519,7 +519,7 @@ tab:
       dimension_column_order_strategy_help: |
         Modifica le proprietà seguenti per cambiare i criteri di ordinamento delle colonne.
       property_thickness: Spessore
-      property_length: Linea guida
+      property_length: Lunghezza
       property_width: Larghezza
       property_name: Designazione
       property_count: Quantità
@@ -553,7 +553,7 @@ tab:
       final: Effettiva
       total_cutting: Σ Grezzo
       total_final: Σ Effettiva
-      length: Linea guida
+      length: Lunghezza
       length_short: L
       width: Larghezza
       width_short: W
@@ -643,7 +643,7 @@ tab:
     report:
       title: Preventivo
       info_0: |
-        Genera una stima del **peso** e del **costo** dei materiali grezzi necessari per la realizzazione delle parti inserite nella distinta.
+        Genera una stima del **peso** e del **costo** dei **materiali grezzi** necessari per la realizzazione delle parti inserite nella *distinta*.
       options_general: Generale
       options_solid_wood: $t(tab.materials.type_1)
       option_solid_wood_coefficient: Coefficiente per *$t(tab.materials.type_1)*
@@ -734,7 +734,7 @@ tab:
       option_part_drawing_type_help: |
         Mostra o nasconde la l'effettiva forma degli elementi e la loro lavorazione sul diagramma.
 
-        **Questa opzione deve essere abilitata per poermettere l'esportazione delle forme.*
+        *Questa opzione deve essere abilitata per poermettere l'esportazione delle forme.*
       option_saw_kerf: Spessore della lama
       option_saw_kerf_help: La larghezza del materiale asportato dalla lama di taglio.
       option_trimming: Scarto perimetro
@@ -794,7 +794,7 @@ tab:
         count: Qtà
         bar: Barre
         sheet: Pannello
-        length: Linea guida
+        length: Lunghezza
         width: Larghezza
         total_length: Σ Lunghezze
         total_area: Σ Aree
@@ -1012,7 +1012,7 @@ tab:
       option_pins_colored_help: Seleziona il colore delle etichette residue.
       option_pins_formula: Formula
       option_pins_formula_help: Permette di scrivere codice *Ruby* per personalizzare il contenuto dell'etichetta.
-      option_pins_length: Linea guida
+      option_pins_length: Lunghezza
       option_pins_length_0: Nessun
       option_pins_length_1: Corto
       option_pins_length_2: Medio
@@ -1085,11 +1085,11 @@ tab:
         L'origine degli assi dell'elemento viene utilizzata come punto di aggancio della proiezione.
       option_smoothing: Levigatezza
       option_smoothing_0: Nessuna
-      option_smoothing_1: Levigatezza di archi e cerchi *(Valutazione)*
+      option_smoothing_1: Levigatezza di archi e cerchi (Valutazione)
       option_smoothing_help: |
         Abilita l'individuazione degli archi e dei cerchi
 
-        Questa opzione non rileva altri tipi di curve.*
+        *Questa opzione non rileva altri tipi di curve.*
       option_merge_holes: Modo Unione
       option_merge_holes_0: Predefinito
       option_merge_holes_1: Profilo + forature + Unione
@@ -1101,8 +1101,9 @@ tab:
         Attiva la separazione del profilo esterno degli elementi dalla foratura e unisce le profondità di ogni recesso.
       option_include_paths: Percorsi
       option_include_paths_0: Nessuna
-      option_include_paths_1: ""
+      option_include_paths_1: Utilizzare bordi non associati a una faccia
       option_include_paths_help: |
+        Consente di esportare come tracciato i bordi non associati a una faccia contenuta nella parte.
       option_parts: Parti
       option_parts_help: |
         Seleziona il colore degli elementi.
@@ -1144,8 +1145,8 @@ tab:
     tip:
       no_component: |
         Le parti da inserire nella *distinta* devono essere di tipo **componenti**.
-        Se ci sono solo "gruppi", gli stessi devono essere convertiti in **componenti**.
-        Usando **componenti** per le parti, gli stessi possono essere replicati senza inutili duplicazioni.
+        Se ci sono solo gruppi, gli stessi devono essere convertiti in componenti.
+        Usando componenti per le parti, gli stessi possono essere replicati senza inutili duplicazioni.
       no_typed_materials: "Applica il materiale alle parti che devono essere incluse nella distinta e definisci le proprietà del materiale come (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, o **$t(tab.materials.type_5)**) nella scheda <i class=\"ladb-opencutlist-icon-materials\"></i> **Materiali**."
     obsolete_base: "Per rimanere aggiornata, la distinta parti va rigenerata."
   materials:
@@ -1233,7 +1234,7 @@ tab:
       std_sections: Sezioni disponibili
       std_sections_placeholder: Altezza x spessore ; ...
       std_sections_help: |
-        Formato: **W**x**T**, in cui **W** and **T** rappresentano la *larghezza* e lo *spessore* della barra (*dimensioni effettive e non nominali*).
+        Formato: **W**x**T**, in cui **W** and **T** rappresentano la *larghezza* e lo *spessore* della barra (dimensioni effettive e non nominali).
         *Dimensioni senza unità si intendono in unità del modello.*
       std_sizes: Dimensioni standard
       std_sizes_placeholder: lunghezza x larghezza ; ...
@@ -1250,8 +1251,8 @@ tab:
       edge_decremented_1: Riduci dello spessore della bordatura
       std_attributes_dim_placeholder: Scegli una taglia
       std_volumic_masses: Massa volumica
-      std_volumic_masses_help: ""
-      std_volumic_masses_add: ""
+      std_volumic_masses_help: Si usa per definire la densità per tutte le dimensioni e per ogni dimensione standard del materiale.
+      std_volumic_masses_add: Aggiungere densità
       std_prices: Prezzo
       std_prices_help: Permette di definire il prezzo per tutte le taglie così come per ogni misura standard del materiale.
       std_prices_add: Aggiungi prezzo
@@ -1302,7 +1303,7 @@ tab:
       open_node_url: Apri l'URL dell'occorrenza
     edit_node:
       title_model: "Proprietà del modello"
-      title_instance: "Proprietà dell'occorrenza **{{ name }}"
+      title_instance: "Proprietà dell'occorrenza **{{ name }}**"
       general: Generale
       preview: Panoramica della funzionalità
       name: Descrizione
@@ -1312,7 +1313,7 @@ tab:
       url: URL
       layer_name: Tag
       explode: Esplodi
-      explode_message: "Confermi l'esplosione dell'occorrenza **{{ name }} ?"
+      explode_message: "Confermi l'esplosione dell'occorrenza **{{ name }}** ?"
     error:
       no_model: Nessun modello aperto. Sono necessarie più informazioni per procedere ;)
       no_entities: Il modello è vuoto!
@@ -1328,7 +1329,7 @@ tab:
     label: Importa
     title: Importa Parti
     help: |
-      Questa sezione serve per per importare **parti** (a forma di parallelepipedo) da un file [CSV](https://it.wikipedia.org/wiki/Comma-separated_values) all'interno del modello corrente.
+      Questa sezione serve per per importare parti (a forma di parallelepipedo) da un file [CSV](https://it.wikipedia.org/wiki/Comma-separated_values) all'interno del modello corrente.
       Successivamente si possono utilizzare le funzionalità di *OpenCutList* per elaborare parti create con un software diverso da *SketchUp*.
       Seleziona il pulsante **Apri file CSV** per caricarlo.
     open_csv: Apri file CSV
@@ -1339,8 +1340,8 @@ tab:
         Scegliere le opzioni necessarie per la lettura corretta del file:
         **{{ filename }}**.
       info_1: |
-        L' unità di misura configurata nel modello è: **{{ unit }}**.
-        Questa verrà utilizzata per le dimensioni senza unità di misura.
+        *L' unità di misura configurata nel modello è: **{{ unit }}**.
+        Questa verrà utilizzata per le dimensioni senza unità di misura.*
       options: Opzioni di caricamento
       option_col_sep: Separatore
       option_col_sep_tab: Tabulatore
@@ -1458,9 +1459,9 @@ tab:
       default: |
         Per noi il continuo miglioramento di *OpenCutList* è importante e il progetto continua ad avere bisogno del tuo aiuto per il prossimo aggiornamento!
       cuttingdiagram_export: |
-        Riteniamo importante che l'opzione "schema di taglio" di OpenCutList possa soddisfare le esigenze del maggior numero di utenti e per farlo vorremmo aggiungere la possibilità di esportare lo schema in formato **SVG** e **DXF**.
+        Riteniamo importante che l'opzione *schema di taglio* di *OpenCutList* possa soddisfare le esigenze del maggior numero di utenti e per farlo vorremmo aggiungere la possibilità di esportare lo schema in formato **SVG** e **DXF**.
         Tale formato permette di riutilizzare gli schemi di taglio OCL da parte di altri sofware.
-        Finanziando la realizzazione di questa interoperabilità si crea un'opportunità per un ulteriore miglioramento di OpenCutList.
+        Finanziando la realizzazione di questa interoperabilità si crea un'opportunità per un ulteriore miglioramento di *OpenCutList*.
       layout: |
         Questo modulo consente di stampare un'anteprima del progetto in **vista esplosa** con la numerazione generata nell' Elenco Parti.
     objective_crowdfunding: |
@@ -1516,7 +1517,7 @@ tab:
       reset_global_presets: Azzerare le preimpostazioni
       reset_global_presets_confirm: |
         Stai per reinizzializzare la configurazione di *OpenCutList* precedentemente salvata.
-        Questa azione è definitiva. **Tutte le impostazioni saranno perse.
+        Questa azione è definitiva. **Tutte le impostazioni saranno perse.**
         Confermare per continuare.
       reset_global_presets_success: |
         La configurazione di *OpenCutList* è stata riportata ai valori iniziali.
@@ -1678,7 +1679,7 @@ tool:
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: Isola i fori passanti e unisci le profondità di ogni recesso
-    action_option_options_paths_status: ""
+    action_option_options_paths_status: Esportazione di bordi non associati a una faccia contenuta nella parte come tracciato
     error:
       not_part: Questa faccia non appartiene ad un elemento (componente)
       not_flat_face: Superficie non planare

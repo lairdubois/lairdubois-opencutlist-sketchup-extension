@@ -1065,15 +1065,16 @@ tab:
       option_merge_holes_0: ""
       option_merge_holes_1: ""
       option_merge_holes_help: |
-      option_edges: ""
-      option_edges_0: Brak
-      option_edges_1: ""
-      option_edges_help: |
+      option_include_paths: ""
+      option_include_paths_0: Brak
+      option_include_paths_1: ""
+      option_include_paths_help: |
       option_parts: Części
       option_parts_help: |
       option_parts_holes: ""
       option_parts_holes_help: |
-      option_edges_color_help: |
+      option_parts_paths: ""
+      option_parts_paths_help: |
       error:
         no_part: ""
       warning:
@@ -1146,7 +1147,7 @@ tab:
       reset_prices: Wyzeruj ceny wszystkich materiałów
       reset_prices_confirm: |
         Właśnie resetujesz ceny wszystkich materiałów w swoim modelu.
-        Ta czynność jest ostateczna. **Wszystkie ceny zostaną wyzerowane.
+        Ta czynność jest ostateczna. **Wszystkie ceny zostaną wyzerowane.**
         Potwierdź, aby kontynuować.
       reset_prices_success: Ceny wszystkich materiałów zostały zresetowane.
     new_material:
@@ -1195,7 +1196,7 @@ tab:
       std_sections: Standardowe Przekroje
       std_sections_placeholder: szerokość x grubość ; ...
       std_sections_help: |
-        Oczekiwany format: **Szer**x**Grub**, gdzie **Szer** i **Grub** reprezentują **aktualną** *szerokość* i *grubość* wymiarowanej części.
+        Oczekiwany format: **Szer**x**Grub**, gdzie **Szer** i **Grub** reprezentują aktualną *szerokość* i *grubość* wymiarowanej części.
         *Wielkości bez jednostek są traktowane jak w jednostkach modelu.*
       std_sizes: Standardowe rozmiary arkuszy
       std_sizes_placeholder: długość x szerokość ; ...
@@ -1210,11 +1211,12 @@ tab:
       edge_decremented_help: Wybierz czy wymiary części mają być zmniejszone o grubość obrzeża.
       edge_decremented_0: Brak zmniejszania
       edge_decremented_1: Zmniejsz o grubość obrzeża
-      volumic_mass: Gęstość
-      volumic_mass_help: Pozwala określić gęstość materiału.
+      std_attributes_dim_placeholder: Wybierz rozmiar
+      std_volumic_masses: Gęstość
+      std_volumic_masses_help: ""
+      std_volumic_masses_add: ""
       std_prices: Cena
       std_prices_help: "Pozwala określić cenę dla wszystkich rozmiarów, a także dla każdego standardowego rozmiaru materiału."
-      std_prices_dim_placeholder: Wybierz rozmiar
       std_prices_add: Dodaj cenę
       texture_width: Szerokość
       texture_height: Wysokość
@@ -1246,7 +1248,7 @@ tab:
       failed_import_skm_file: "Błąd podczas importu z pliku skm **{{ error }}**"
       failed_export_skm_file: "Błąd podczas eksportu do pliku skm **{{ error }}**"
       failed_removing_material: "Błąd podczas usuwania materiału **{{ error }}**"
-      failed_duplicating_material: "Podczas powielania materiału wystąpił błąd. **{{ error }}"
+      failed_duplicating_material: "Podczas powielania materiału wystąpił błąd. **{{ error }}**"
       invalid_image_file: Nieprawidłowy obraz
     obsolete_base: "Aby zachować synchronizację, musisz zaktualizować listę materiałów."
   outliner:
@@ -1637,7 +1639,7 @@ tool:
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: ""
-    action_option_options_edges_status: ""
+    action_option_options_paths_status: ""
     error:
       not_part: ""
       not_flat_face: ""

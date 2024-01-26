@@ -1033,7 +1033,7 @@ tab:
         no_part: Không có phần nào để vẽ.
         failed_to_save_as_skp: Không thể ghi tệp SKP để gửi tới Layout.
         failed_to_layout: |
-          Lỗi khi ghi tệp Layout: **{{ error }}**
+          Lỗi khi ghi tệp Layout: *{{ error }}*
 
           **Đảm bảo tệp không được mở trong Layout.**
       warning:
@@ -1065,15 +1065,16 @@ tab:
       option_merge_holes_0: ""
       option_merge_holes_1: ""
       option_merge_holes_help: |
-      option_edges: ""
-      option_edges_0: Không có
-      option_edges_1: ""
-      option_edges_help: |
+      option_include_paths: ""
+      option_include_paths_0: Không có
+      option_include_paths_1: ""
+      option_include_paths_help: |
       option_parts: Các bộ phận
       option_parts_help: |
       option_parts_holes: ""
       option_parts_holes_help: |
-      option_edges_color_help: |
+      option_parts_paths: ""
+      option_parts_paths_help: |
       error:
         no_part: ""
       warning:
@@ -1195,12 +1196,12 @@ tab:
       std_sections: Mặt cắt tiêu chuẩn
       std_sections_placeholder: Chiều rộng x độ dày ; ...
       std_sections_help: |
-        Định dạng dự kiến: **W**x**T**, trong đó **W** và **T** đại diện cho **thực tế** *chiều rộng* và *độ dày* của phần kích thước.
+        Định dạng dự kiến: **W**x**T**, trong đó **W** và **T** đại diện cho thực tế *chiều rộng* và *độ dày* của phần kích thước.
         *Kích thước không có đơn vị được coi là đơn vị của mô hình.*
       std_sizes: Kích thước tấm tiêu chuẩn
       std_sizes_placeholder: chiều dài x chiều rộng ; ...
       std_sizes_help: |
-        Định dạng dự kiến: **L**x**W**, trong đó **L** và **W** đại diện cho **thực tế** *chiều dài* và *chiều rộng* của tấm.
+        Định dạng dự kiến: **L**x**W**, trong đó **L** và **W** đại diện cho thực tế *chiều dài* và *chiều rộng* của tấm.
         *Kích thước không có đơn vị được coi là đơn vị của mô hình.*
       grained: Hướng thớ gỗ
       grained_help: Định cấu hình hướng thớ gỗ của vật liệu.
@@ -1210,11 +1211,12 @@ tab:
       edge_decremented_help: Cho phép bạn chỉ ra liệu có nên giảm kích thước của các bộ phận theo độ dày của dải cạnh hay không.
       edge_decremented_0: Không cần giảm
       edge_decremented_1: Giảm theo độ dày dải cạnh
-      volumic_mass: Tỉ trọng
-      volumic_mass_help: Cho phép bạn xác định mật độ của vật liệu.
+      std_attributes_dim_placeholder: Chọn kích thước
+      std_volumic_masses: Tỉ trọng
+      std_volumic_masses_help: ""
+      std_volumic_masses_add: ""
       std_prices: Giá
       std_prices_help: Cho phép bạn định giá cho tất cả các kích thước cũng như cho từng kích thước tiêu chuẩn của vật liệu.
-      std_prices_dim_placeholder: Chọn kích thước
       std_prices_add: Thêm giá
       texture_width: Chiều rộng
       texture_height: Chiều cao
@@ -1500,7 +1502,7 @@ tab:
     version: Phiên bản
     credits: Thông tin kỹ thuật
     credits_authors: |
-      *OpenCutList* được phát triển bởi [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) và [Martin Müller](https://www.lairdubois.fr/@mobilarte). Liệt kê tất cả [người đóng góp](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+      *OpenCutList* được phát triển bởi [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) và [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Liệt kê tất cả [người đóng góp](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: Bản dịch
     credits_translators: |
       - Nguyễn Ngọc Tân (*Tiếng Việt*)
@@ -1637,7 +1639,7 @@ tool:
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: ""
-    action_option_options_edges_status: ""
+    action_option_options_paths_status: ""
     error:
       not_part: ""
       not_flat_face: ""
