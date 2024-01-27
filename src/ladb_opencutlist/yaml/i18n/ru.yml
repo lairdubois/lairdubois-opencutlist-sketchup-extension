@@ -820,7 +820,7 @@ tab:
         cut_none: Нет
         bar_dimensional_type_0: Стандартный размер
         bar_dimensional_type_1: Обрезок погонажа
-        bar_edge_type_0: Стандартный диапазон
+        bar_edge_type_0: Стандартный размер
         bar_edge_type_1: Остаток кромки
         sheet_good_type_0: Стандартная панель
         sheet_good_type_1: Обрезок панели
