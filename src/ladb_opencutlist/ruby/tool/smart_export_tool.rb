@@ -353,21 +353,13 @@ module Ladb::OpenCutList
             preview.transformation = @active_drawing_def.transformation
             @space.append(preview)
 
-            fn_append_segments = lambda do |layer_def, poly_def, line_width|
+            fn_append_segments = lambda do |segments, color, line_width, line_stipple|
 
               entity = Kuix::Segments.new
-              entity.add_segments(poly_def.segments)
-              if layer_def.type_upper?
-                entity.color = COLOR_PART_UPPER
-              elsif layer_def.type_holes?
-                entity.color = COLOR_PART_HOLES
-              elsif layer_def.type_path?
-                entity.color = COLOR_PART_PATH
-              else
-                entity.color = COLOR_PART_DEPTH
-              end
+              entity.add_segments(segments)
+              entity.color = color
               entity.line_width = highlighted ? line_width + 1 : line_width
-              entity.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if poly_def.is_a?(DrawingProjectionPolygonDef) && !poly_def.ccw?
+              entity.line_stipple = line_stipple
               entity.on_top = true
               preview.append(entity)
 
@@ -377,14 +369,26 @@ module Ladb::OpenCutList
 
               points_entities = []
 
+              if layer_def.type_upper?
+                color = COLOR_PART_UPPER
+              elsif layer_def.type_holes?
+                color = COLOR_PART_HOLES
+              elsif layer_def.type_path?
+                color = COLOR_PART_PATH
+              else
+                color = COLOR_PART_DEPTH
+              end
+
               layer_def.poly_defs.each do |poly_def|
+
+                line_stipple = poly_def.is_a?(DrawingProjectionPolygonDef) && !poly_def.ccw? ? Kuix::LINE_STIPPLE_SHORT_DASHES : Kuix::LINE_STIPPLE_SOLID
 
                 if fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
                   poly_def.curve_def.portions.each do |portion|
-                    fn_append_segments.call(layer_def, poly_def, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2)
+                    fn_append_segments.call(portion.segments, color, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, line_stipple)
                   end
                 else
-                  fn_append_segments.call(layer_def, poly_def, 2)
+                  fn_append_segments.call(poly_def.segments, color, 2, line_stipple)
                 end
 
                 unless poly_def.closed?
@@ -468,27 +472,29 @@ module Ladb::OpenCutList
           preview.transformation = @active_drawing_def.transformation
           @space.append(preview)
 
-          fn_append_segments = lambda do |layer_def, poly_def, segs, line_width|
+          fn_append_segments = lambda do |segments, line_width, line_stipple|
 
-            segments = Kuix::Segments.new
-            segments.add_segments(segs)
-            segments.color = COLOR_PART_UPPER
-            segments.line_width = highlighted ? line_width + 1 : line_width
-            segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES unless poly_def.ccw?
-            segments.on_top = true
-            preview.append(segments)
+            entity = Kuix::Segments.new
+            entity.add_segments(segments)
+            entity.color = COLOR_PART_UPPER
+            entity.line_width = highlighted ? line_width + 1 : line_width
+            entity.line_stipple = line_stipple
+            entity.on_top = true
+            preview.append(entity)
 
           end
 
           projection_def.layer_defs.reverse.each do |layer_def| # reverse layer order to present from Bottom to Top
             layer_def.poly_defs.each do |poly_def|
 
+              line_stipple = poly_def.ccw? ? Kuix::LINE_STIPPLE_SOLID : Kuix::LINE_STIPPLE_SHORT_DASHES
+
               if fetch_action_option_enabled(ACTION_EXPORT_FACE, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
                 poly_def.curve_def.portions.each do |portion|
-                  fn_append_segments.call(layer_def, poly_def, portion.segments, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2)
+                  fn_append_segments.call(portion.segments, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, line_stipple)
                 end
               else
-                fn_append_segments.call(layer_def, poly_def, poly_def.segments, 2)
+                fn_append_segments.call(poly_def.segments, 2, line_stipple)
               end
 
             end
