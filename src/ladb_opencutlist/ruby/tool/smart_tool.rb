@@ -451,7 +451,7 @@ module Ladb::OpenCutList
             lbl = Kuix::Label.new
             lbl.text = item
             lbl.text_bold = true if is_title
-            lbl.text_size = unit * (is_title ? 3 : 2.5) * get_text_unit_factor
+            lbl.text_size = unit * (is_title || items.one? ? 3 : 2.5) * get_text_unit_factor
             lbl.text_align = TextAlignLeft
             lbl.set_style_attribute(:color, text_color)
 

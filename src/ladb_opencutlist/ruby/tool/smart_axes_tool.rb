@@ -223,7 +223,7 @@ module Ladb::OpenCutList
         model = Sketchup.active_model
 
         # Show part infos
-        show_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name, _get_active_part_size, _get_active_part_icons ])
+        show_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name, '-', _get_active_part_size, _get_active_part_icons ])
 
         # Create drawing helpers
 
