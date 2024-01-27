@@ -827,7 +827,7 @@ tab:
         cut_none: 657 - Нет
         bar_dimensional_type_0: 658 - Стандартный размер
         bar_dimensional_type_1: 659 - Обрезок погонажа
-        bar_edge_type_0: 660 - Стандартный диапазон
+        bar_edge_type_0: 660 - Стандартный размер
         bar_edge_type_1: 661 - Остаток кромки
         sheet_good_type_0: 662 - Стандартная панель
         sheet_good_type_1: 663 - Обрезок панели

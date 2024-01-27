@@ -840,6 +840,10 @@ tab:
         option_dxf_structure_1: Livelli
         option_dxf_structure_2: Livelli + Blocchi
         option_dxf_structure_help: |
+          Permette di scegliere la struttura del file DXF.
+
+          - La struttura **Layer** disegna tutti i tracciati in piano distinguendo i diversi tipi di tratto solo tramite i calques. *Questa struttura offre una migliore compatibilità con i software di terze parti.*
+          - La struttura **Layer + Blocks** crea un blocco per ogni pezzo e inserisce questi blocchi tante volte quanti sono i pezzi ripetuti. *Questa struttura offre maggiore flessibilità per modificare il file.*
         option_unit: $t(tab.cutlist.write.option_unit)
         option_unit_help: $t(tab.cutlist.write.option_unit_help)
         option_smoothing: $t(tab.cutlist.write.option_smoothing)

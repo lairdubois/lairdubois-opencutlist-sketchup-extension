@@ -660,6 +660,8 @@ tab:
       total_volume: Σ Volume
       total_area: Σ Area
       total_length: Σ Length
+      tooltip:
+        incompatible_unit: Incompatible unit with material estimation options
       error:
         no_typed_material_parts: "No part with a defined material type (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** or **$t(tab.materials.type_5)**) has been provided to generate the estimate."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**."
@@ -1175,6 +1177,7 @@ tab:
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Grain orientation
+      raw_estimated_0: Estimated by the effective volume
       colorized: This tone will be applied to the texture when it is rendered in the model
       texture_load: Load a new texture
       texture_clear: Remove texture
@@ -1209,6 +1212,7 @@ tab:
       description: Description
       url: URL
       cut_options: Cutting Parameters
+      estimate_options: Estimation options
       attributes: Attributes
       thickness: Thickness
       thickness_help: |
@@ -1253,6 +1257,17 @@ tab:
       edge_decremented_help: Allows you to indicate whether the dimensions of parts should be reduced by the thickness of the edge banding.
       edge_decremented_0: No Reduction
       edge_decremented_1: Reduce by Edge Banding Thickness
+      raw_estimated: Used volume
+      raw_estimated_help: |
+        Allows to define the volume used to estimate the weight and total cost of parts made from this material.
+
+        **Effective volume**
+        The total volume will be the sum of the effective volumes of the parts.
+
+        **Volume of raw material required**
+        The total volume will be the sum of the volumes of the panels, sheets, boards or edgebandings of the parts after cutting.
+      raw_estimated_0: Effective volume
+      raw_estimated_1: Volume of raw material required
       std_attributes_dim_placeholder: Select a size
       std_volumic_masses: Density
       std_volumic_masses_help: Allows to set the density for all sizes as well as for each standard material size.
