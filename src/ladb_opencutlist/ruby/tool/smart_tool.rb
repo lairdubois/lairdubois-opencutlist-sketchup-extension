@@ -31,7 +31,7 @@ module Ladb::OpenCutList
     COLOR_MESSAGE_TEXT_ERROR = Sketchup::Color.new('#d9534f').freeze
     COLOR_MESSAGE_TEXT_WARNING = Sketchup::Color.new('#997404').freeze
     COLOR_MESSAGE_TEXT_SUCCESS = Sketchup::Color.new('#569553').freeze
-    COLOR_MESSAGE_BACKGROUND = Sketchup::Color.new(255, 255, 255, 200).freeze
+    COLOR_MESSAGE_BACKGROUND = Sketchup::Color.new(255, 255, 255, 230).freeze
     COLOR_MESSAGE_BACKGROUND_ERROR = COLOR_MESSAGE_TEXT_ERROR.blend(Kuix::COLOR_WHITE, 0.2).freeze
     COLOR_MESSAGE_BACKGROUND_WARNING = Sketchup::Color.new('#ffe69c').freeze
     COLOR_MESSAGE_BACKGROUND_SUCCESS = COLOR_MESSAGE_TEXT_SUCCESS.blend(Kuix::COLOR_WHITE, 0.2).freeze
@@ -285,23 +285,6 @@ module Ladb::OpenCutList
           }
           actions_panel.append(help_btn)
 
-        # Infos panel
-
-        @infos_panel = Kuix::Panel.new
-        @infos_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
-        @infos_panel.layout = Kuix::InlineLayout.new(true, @unit * 3, Kuix::Anchor.new(Kuix::Anchor::CENTER))
-        @infos_panel.min_size.set_all!(@unit * 4)
-        @infos_panel.padding.set_all!(@unit * 2)
-        @infos_panel.hittable = false
-        @infos_panel.visible = false
-        @infos_panel.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255, 85))
-        @top_panel.append(@infos_panel)
-
-          @infos_lbl_1 = Kuix::Label.new
-          @infos_lbl_1.text_size = @unit * 3 * get_text_unit_factor
-          @infos_lbl_1.text_bold = true
-          @infos_panel.append(@infos_lbl_1)
-
         # Message panel
 
         @message_panel = Kuix::Panel.new
@@ -409,83 +392,79 @@ module Ladb::OpenCutList
       @message_panel.visible = false
     end
 
-    def show_infos(text_1, infos = [])
-      return unless @infos_panel && text_1.is_a?(String) && infos.is_a?(Array)
-      @infos_panel.remove_all
-      unless text_1.empty?
-        @infos_lbl_1.text = text_1
-        @infos_panel.append(@infos_lbl_1)
-      end
-      infos.each do |info|
-        if info.is_a?(String)
-          entity = Kuix::Label.new
-          entity.text_size = @unit * 3 * get_text_unit_factor
-          entity.text = info
-        elsif info.is_a?(Kuix::Entity2d)
-          entity = info
-          entity.min_size.set_all!(@unit * get_text_unit_factor * 4)
-          entity.line_width = @unit <= 4 ? 0.5 : 1
-          entity.set_style_attribute(:color, Kuix::COLOR_BLACK)
-        else
-          next
-        end
-        entity.border.set!(0, 0, 0, @unit / 4)
-        entity.padding.set!(0, 0, 0, @unit * 3)
-        entity.set_style_attribute(:border_color, Kuix::COLOR_DARK_GREY)
-        @infos_panel.append(entity)
-      end
-      @infos_panel.visible = !text_1.empty? || !infos.empty?
-    end
-
-    def hide_infos
-      @infos_panel.visible = false
-    end
-
-    def show_tooltip(text, type = MESSAGE_TYPE_DEFAULT)
-
-      unit = get_unit
-      text_lines = text.split("\n")
+    def show_tooltip(items, type = MESSAGE_TYPE_DEFAULT)
 
       hide_tooltip
 
-      box = Kuix::Panel.new
-      box.layout_data = Kuix::StaticLayoutData.new(0, 0, -1, -1, Kuix::Anchor.new(Kuix::Anchor::TOP_LEFT))
-      box.layout = Kuix::InlineLayout.new(false, unit * 2)
-      box.border.set_all!(unit / 4)
-      box.padding.set!(unit * 1.5, unit * 2, unit, unit * 2)
+      unit = get_unit
       case type
       when MESSAGE_TYPE_ERROR
-        box.set_style_attribute(:background_color, COLOR_MESSAGE_BACKGROUND_ERROR)
-        box.set_style_attribute(:border_color, COLOR_MESSAGE_TEXT_ERROR)
+        background_color = COLOR_MESSAGE_BACKGROUND_ERROR
+        border_color = COLOR_MESSAGE_TEXT_ERROR
+        text_color = COLOR_MESSAGE_TEXT_ERROR
       when MESSAGE_TYPE_WARNING
-        box.set_style_attribute(:background_color, COLOR_MESSAGE_BACKGROUND_WARNING)
-        box.set_style_attribute(:border_color, COLOR_MESSAGE_TEXT_WARNING)
+        background_color = COLOR_MESSAGE_BACKGROUND_WARNING
+        border_color = COLOR_MESSAGE_TEXT_WARNING
+        text_color = COLOR_MESSAGE_TEXT_WARNING
       when MESSAGE_TYPE_SUCCESS
-        box.set_style_attribute(:background_color, COLOR_MESSAGE_BACKGROUND_SUCCESS)
-        box.set_style_attribute(:border_color, COLOR_MESSAGE_TEXT_SUCCESS)
+        background_color = COLOR_MESSAGE_BACKGROUND_SUCCESS
+        border_color = COLOR_MESSAGE_TEXT_SUCCESS
+        text_color = COLOR_MESSAGE_TEXT_SUCCESS
       else
-        box.set_style_attribute(:background_color, COLOR_MESSAGE_BACKGROUND)
-        box.set_style_attribute(:border_color, Sketchup::Color.new)
+        background_color = COLOR_MESSAGE_BACKGROUND
+        border_color = Kuix::COLOR_BLACK
+        text_color = Kuix::COLOR_BLACK
       end
 
-        text_lines.each do |text_line|
+      box = Kuix::Panel.new
+      box.layout_data = Kuix::StaticLayoutData.new(0, 0, -1, -1, Kuix::Anchor.new(Kuix::Anchor::TOP_LEFT))
+      box.layout = Kuix::InlineLayout.new(false, unit)
+      box.border.set_all!(unit / 4)
+      box.padding.set_all!(unit * 1.5)
+      box.hittable = false
+      box.set_style_attribute(:background_color, background_color)
+      box.set_style_attribute(:border_color, border_color)
 
-          lbl = Kuix::Label.new
-          lbl.text = text_line
-          lbl.text_size = unit * 3 * get_text_unit_factor
-          lbl.text_align = TextAlignLeft
-          case type
-          when MESSAGE_TYPE_ERROR
-            lbl.set_style_attribute(:color, COLOR_MESSAGE_TEXT_ERROR)
-          when MESSAGE_TYPE_WARNING
-            lbl.set_style_attribute(:color, COLOR_MESSAGE_TEXT_WARNING)
-          when MESSAGE_TYPE_SUCCESS
-            lbl.set_style_attribute(:color, COLOR_MESSAGE_TEXT_SUCCESS)
-          else
-            lbl.set_style_attribute(:color, nil)
+        items = [ items ] if items.is_a?(String)
+        items.each_with_index do |item, i|
+
+          if item.is_a?(String)
+
+            lbl = Kuix::Label.new
+            lbl.text = item
+            lbl.text_bold = true if i == 0
+            lbl.text_size = unit * (i == 0 ? 3 : 2.5) * get_text_unit_factor
+            lbl.text_align = TextAlignLeft
+            lbl.set_style_attribute(:color, text_color)
+
+            box.append(lbl)
+
+          elsif item.is_a?(Array)
+
+            panel = Kuix::Panel.new
+            panel.layout = Kuix::InlineLayout.new(true, @unit * 2)
+
+            item.each do |sub_item|
+
+              if sub_item.is_a?(Kuix::Motif2d)
+                sub_item.min_size.set_all!(@unit * get_text_unit_factor * 3)
+                sub_item.line_width = @unit <= 4 ? 0.5 : 1
+                sub_item.set_style_attribute(:color, text_color)
+                panel.append(sub_item)
+              end
+
+            end
+
+            box.append(panel)
+
+          elsif item.is_a?(Kuix::Entity2d)
+
+            item.min_size.set_all!(@unit * get_text_unit_factor * 4)
+            item.set_style_attribute(:color, text_color)
+
+            box.append(item)
+
           end
-
-          box.append(lbl)
 
         end
 
@@ -506,7 +485,7 @@ module Ladb::OpenCutList
     def move_tooltip(mouse_x, mouse_y)
       unless @tooltip_box.nil?
         @tooltip_box.layout_data.x = mouse_x + 10 * UI.scale_factor
-        @tooltip_box.layout_data.y = mouse_y + (32 + 4) * UI.scale_factor
+        @tooltip_box.layout_data.y = mouse_y + (32 + 10) * UI.scale_factor
         @tooltip_box.invalidate
       end
     end
@@ -1286,7 +1265,6 @@ module Ladb::OpenCutList
 
       # Hide previous overlays
       hide_message
-      hide_infos
       hide_tooltip
 
     end

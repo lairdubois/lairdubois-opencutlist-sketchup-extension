@@ -79,7 +79,7 @@ module Ladb::OpenCutList
     COLOR_PART_UPPER = Kuix::COLOR_BLUE
     COLOR_PART_HOLES = Sketchup::Color.new('#D783FF').freeze
     COLOR_PART_DEPTH = COLOR_PART_UPPER.blend(Kuix::COLOR_WHITE, 0.5).freeze
-    COLOR_EDGE = Kuix::COLOR_CYAN
+    COLOR_PART_PATH = Kuix::COLOR_CYAN
     COLOR_ACTION = Kuix::COLOR_MAGENTA
 
     @@action = nil
@@ -283,12 +283,16 @@ module Ladb::OpenCutList
 
         # Show part infos
 
-        infos = [ "#{part.length} x #{part.width} x #{part.thickness}" ]
+        infos = [ _get_active_part_name, "#{part.length} x #{part.width} x #{part.thickness}" ]
         infos << "#{part.material_name} (#{Plugin.instance.get_i18n_string("tab.materials.type_#{part.group.material_type}")})" unless part.material_name.empty?
-        infos << Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.5,0L0.5,0.2 M0.5,0.4L0.5,0.6 M0.5,0.8L0.5,1 M0,0.2L0.3,0.5L0,0.8L0,0.2 M1,0.2L0.7,0.5L1,0.8L1,0.2')) if part.flipped
-        infos << Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.6,0L0.4,0 M0.6,0.4L0.8,0.2L0.5,0.2 M0.8,0.2L0.8,0.5 M0.8,0L1,0L1,0.2 M1,0.4L1,0.6 M1,0.8L1,1L0.8,1 M0.2,0L0,0L0,0.2 M0,1L0,0.4L0.6,0.4L0.6,1L0,1')) if part.resized
+        if part.flipped || part.resized
+          icons = []
+          icons << Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.5,0L0.5,0.2 M0.5,0.4L0.5,0.6 M0.5,0.8L0.5,1 M0,0.2L0.3,0.5L0,0.8L0,0.2 M1,0.2L0.7,0.5L1,0.8L1,0.2')) if part.flipped
+          icons << Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.6,0L0.4,0 M0.6,0.4L0.8,0.2L0.5,0.2 M0.8,0.2L0.8,0.5 M0.8,0L1,0L1,0.2 M1,0.4L1,0.6 M1,0.8L1,1L0.8,1 M0.2,0L0,0L0,0.2 M0,1L0,0.4L0.6,0.4L0.6,1L0,1')) if part.resized
+          infos << icons
+        end
 
-        show_infos(_get_active_part_name, infos)
+        show_tooltip(infos)
 
         if is_action_export_part_3d?
 
@@ -314,18 +318,6 @@ module Ladb::OpenCutList
               mesh.add_triangles(FaceManipulator.new(face_info.face, face_info.transformation).triangles)
               mesh.background_color = highlighted ? COLOR_MESH_HIGHLIGHTED : COLOR_MESH
               preview.append(mesh)
-
-            end
-
-            @active_drawing_def.edge_manipulators.each do |edge_info|
-
-              # Highlight edge
-              segments = Kuix::Segments.new
-              segments.add_segments(EdgeManipulator.new(edge_info.edge, edge_info.transformation).segment)
-              segments.color = COLOR_EDGE
-              segments.line_width = 2
-              segments.on_top = true
-              preview.append(segments)
 
             end
 
@@ -381,60 +373,64 @@ module Ladb::OpenCutList
             preview.transformation = @active_drawing_def.transformation
             @space.append(preview)
 
-            fn_append_segments = lambda do |layer_def, poly_def, segs, line_width|
+            fn_append_segments = lambda do |layer_def, poly_def, line_width|
 
-              segments = Kuix::Segments.new
-              segments.add_segments(segs)
+              entity = Kuix::Segments.new
+              entity.add_segments(poly_def.segments)
               if layer_def.type_upper?
-                segments.color = COLOR_PART_UPPER
+                entity.color = COLOR_PART_UPPER
               elsif layer_def.type_holes?
-                segments.color = COLOR_PART_HOLES
+                entity.color = COLOR_PART_HOLES
               elsif layer_def.type_path?
-                segments.color = COLOR_EDGE
+                entity.color = COLOR_PART_PATH
               else
-                segments.color = COLOR_PART_DEPTH
+                entity.color = COLOR_PART_DEPTH
               end
-              segments.line_width = highlighted ? line_width + 1 : line_width
-              segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if poly_def.is_a?(DrawingProjectionPolygonDef) && !poly_def.ccw?
-              segments.on_top = true
-              preview.append(segments)
+              entity.line_width = highlighted ? line_width + 1 : line_width
+              entity.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if poly_def.is_a?(DrawingProjectionPolygonDef) && !poly_def.ccw?
+              entity.on_top = true
+              preview.append(entity)
 
             end
 
             projection_def.layer_defs.reverse.each do |layer_def| # reverse layer order to present from Bottom to Top
 
-              pts = []
+              points_entities = []
 
               layer_def.poly_defs.each do |poly_def|
+
                 if fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
                   poly_def.curve_def.portions.each do |portion|
-                    fn_append_segments.call(layer_def, poly_def, portion.segments, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2)
+                    fn_append_segments.call(layer_def, poly_def, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2)
                   end
                 else
-                  fn_append_segments.call(layer_def, poly_def, poly_def.segments, 2)
+                  fn_append_segments.call(layer_def, poly_def, 2)
                 end
 
                 unless poly_def.closed?
 
-                  points = Kuix::Points.new
-                  points.add_points([ poly_def.points.first ])
-                  points.size = 16
-                  points.style = Kuix::POINT_STYLE_FILLED_SQUARE
-                  points.color = Kuix::COLOR_MEDIUM_GREY
-                  pts << points
+                  # It's a polyline, create 'start' and 'end' points entities
 
-                  points = Kuix::Points.new
-                  points.add_points([ poly_def.points.last ])
-                  points.size = 18
-                  points.style = Kuix::POINT_STYLE_OPEN_SQUARE
-                  points.color = Kuix::COLOR_DARK_GREY
-                  pts << points
+                  entity = Kuix::Points.new
+                  entity.add_points([ poly_def.points.first ])
+                  entity.size = 16
+                  entity.style = Kuix::POINT_STYLE_FILLED_SQUARE
+                  entity.color = Kuix::COLOR_MEDIUM_GREY
+                  points_entities << entity
+
+                  entity = Kuix::Points.new
+                  entity.add_points([ poly_def.points.last ])
+                  entity.size = 18
+                  entity.style = Kuix::POINT_STYLE_OPEN_SQUARE
+                  entity.color = Kuix::COLOR_DARK_GREY
+                  points_entities << entity
 
                 end
 
               end
 
-              pts.each { |entity| preview.append(entity) }
+              # Append points after to be on top of segments
+              points_entities.each { |entity| preview.append(entity) }
 
             end
 
@@ -587,7 +583,7 @@ module Ladb::OpenCutList
               # Highlight edge
               segments = Kuix::Segments.new
               segments.add_segments(EdgeManipulator.new(edge_info.edge, edge_info.transformation).segment)
-              segments.color = COLOR_EDGE
+              segments.color = COLOR_PART_PATH
               segments.line_width = highlighted ? 3 : 2
               segments.on_top = true
               preview.append(segments)
@@ -671,7 +667,7 @@ module Ladb::OpenCutList
               part = _generate_part_from_path(input_part_entity_path)
               if part
                 _set_active_part(input_part_entity_path, part)
-                show_tooltip(_get_active_part_name)
+                # show_tooltip(_get_active_part_name)
               else
                 _reset_active_part
                 show_tooltip("⚠ #{Plugin.instance.get_i18n_string('tool.smart_export.error.not_part')}", MESSAGE_TYPE_ERROR)

@@ -767,12 +767,14 @@ module Ladb::OpenCutList
 
         if is_action_paint_parts?
 
-          # Show part name
-          show_tooltip(_get_active_part_name)
-
           @active_material = get_current_material
           color = @active_material ? @active_material.color : MaterialUtils::get_color_from_path(@active_part_entity_path[0...-1]) # [0...-1] returns array without last element
           color.alpha = highlighted ? 255 : 200
+
+          # Show part infos
+          infos = [ _get_active_part_name ]
+          infos << "#{part.material_name} (#{Plugin.instance.get_i18n_string("tab.materials.type_#{part.group.material_type}")})" unless part.material_name.empty?
+          show_tooltip(infos, @active_material && @active_material.name == part.material_name ? MESSAGE_TYPE_SUCCESS : MESSAGE_TYPE_DEFAULT)
 
           active_instance = @active_part_entity_path.last
           instances = fetch_action_option_enabled(ACTION_PAINT_PARTS, ACTION_OPTION_INSTANCES, ACTION_OPTION_INSTANCES_ALL) ? active_instance.definition.instances : [active_instance ]
@@ -856,7 +858,10 @@ module Ladb::OpenCutList
             else
 
               # Show edges infos
-              show_infos(part.name, [Plugin.instance.get_i18n_string('tool.smart_paint.edges', { :count => sides.length }) + (sides.length < 4 ? " → #{sides.map { |side| Plugin.instance.get_i18n_string("tool.smart_paint.edge_#{side}") }.join(' + ')}" : '') ])
+              show_tooltip([
+                             part.name,
+                             Plugin.instance.get_i18n_string('tool.smart_paint.edges', { :count => sides.length }) + (sides.length < 4 ? " → #{sides.map { |side| Plugin.instance.get_i18n_string("tool.smart_paint.edge_#{side}") }.join(' + ')}" : '')
+                           ])
 
               @active_material = get_current_material
               color = @active_material ? @active_material.color : MaterialUtils::get_color_from_path(@active_part_entity_path)
@@ -939,7 +944,10 @@ module Ladb::OpenCutList
             else
 
               # Show faces infos
-              show_infos(part.name, ["#{Plugin.instance.get_i18n_string('tool.smart_paint.faces', { :count => sides.length })} → #{sides.map { |side| Plugin.instance.get_i18n_string("tool.smart_paint.face_#{side}") }.join(' + ')}" ])
+              show_tooltip([
+                             part.name,
+                             "#{Plugin.instance.get_i18n_string('tool.smart_paint.faces', { :count => sides.length })} → #{sides.map { |side| Plugin.instance.get_i18n_string("tool.smart_paint.face_#{side}") }.join(' + ')}"
+                           ])
 
               @active_material = get_current_material
               color = @active_material ? @active_material.color : MaterialUtils::get_color_from_path(@active_part_entity_path)
@@ -976,8 +984,10 @@ module Ladb::OpenCutList
 
         elsif is_action_paint_clean?
 
-          # Show part name
-          show_tooltip(_get_active_part_name)
+          # Show part infos
+          infos = [ _get_active_part_name ]
+          infos << "#{part.material_name} (#{Plugin.instance.get_i18n_string("tab.materials.type_#{part.group.material_type}")})" unless part.material_name.empty?
+          show_tooltip(infos)
 
           color = MaterialUtils::get_color_from_path(@active_part_entity_path[0...-1]) # [0...-1] returns array without last element
           color.alpha = highlighted ? 255 : 200

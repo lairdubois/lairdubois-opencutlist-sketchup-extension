@@ -5,6 +5,7 @@ module Ladb::OpenCutList::Kuix
     attr_accessor :size
     attr_accessor :style
     attr_accessor :color
+    attr_accessor :line_width, :line_stipple
 
     def initialize(id = nil)
       super(id)
