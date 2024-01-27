@@ -660,6 +660,8 @@ tab:
       total_volume: Σ Volumen
       total_area: Σ Flächen
       total_length: Σ Längen
+      tooltip:
+        incompatible_unit: Einheit nicht kompatibel mit den Schätzoptionen des Materials
       error:
         no_typed_material_parts: "Kein Teil mit einem definierten Materialtyp (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** oder **$t(tab.materials.type_5)**) wurde ausgewählt um die Kalkulation zu generieren."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} Fehler**."
@@ -1175,6 +1177,7 @@ tab:
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Faserrichtung
+      raw_estimated_0: Geschätzt nach effektivem Volumen
       colorized: Diese Farbton wird beim Rendern im Modell auf die Textur des Material angewendet
       texture_load: Neue Textur laden
       texture_clear: Textur löschen
@@ -1209,6 +1212,7 @@ tab:
       description: Beschreibung
       url: URL
       cut_options: Schnittparameter
+      estimate_options: Schätzoptionen
       attributes: Attribute
       thickness: Dicke
       thickness_help: |
@@ -1253,6 +1257,17 @@ tab:
       edge_decremented_help: "Gibt an, ob die Maße der Teile der Holzliste um die Materialstärke der Kantenbänder reduziert werden sollen."
       edge_decremented_0: keine Reduzierung
       edge_decremented_1: Reduzierung um Stärke des Kantenbands
+      raw_estimated: Verwendetes Volumen
+      raw_estimated_help: |
+        Ermöglicht die Festlegung des Volumens, das zur Schätzung der Masse und der Gesamtkosten von Teilen aus diesem Material verwendet wird.
+
+        **Nutzvolumen**
+        Das Gesamtvolumen ist die Summe der Volumen der Teile.
+
+        **Volumen des benötigten Rohmaterials**
+        Das Gesamtvolumen ist die Summe der Volumen der Platten, Furnierblätter, Stangen oder Bänder der Teile nach dem Zuschnitt.
+      raw_estimated_0: Nutzvolumen der Teile
+      raw_estimated_1: Volumen des benötigten Rohmaterials
       std_attributes_dim_placeholder: Wählen Sie eine Größe
       std_volumic_masses: Rohdichte
       std_volumic_masses_help: Ermöglicht das Festlegen der Dichte für alle Größen sowie für jede Standardgröße des Materials.
