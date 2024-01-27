@@ -427,6 +427,7 @@ module Ladb::OpenCutList
 
         items = [ items ] if items.is_a?(String)
         items.each_with_index do |item, i|
+          next if item.nil?
 
           if item.is_a?(String)
 
@@ -1207,6 +1208,27 @@ module Ladb::OpenCutList
     def _get_active_part_name(sanitize_for_filename = false)
       return nil unless @active_part.is_a?(Part)
       "#{@active_part.saved_number && @active_part.number == @active_part.saved_number ? "#{@active_part.number} - " : ''}#{sanitize_for_filename ? _sanitize_filename(@active_part.name) : @active_part.name}"
+    end
+
+    def _get_active_part_size
+      return nil unless @active_part.is_a?(Part)
+      "#{@active_part.length} x #{@active_part.width} x #{@active_part.thickness}"
+    end
+
+    def _get_active_part_material_name
+      return nil unless @active_part.is_a?(Part) && !@active_part.material_name.empty?
+      "#{@active_part.material_name} (#{Plugin.instance.get_i18n_string("tab.materials.type_#{@active_part.group.material_type}")})"
+    end
+
+    def _get_active_part_icons
+      return nil unless @active_part.is_a?(Part)
+      if @active_part.flipped || @active_part.resized
+        icons = []
+        icons << Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.5,0L0.5,0.2 M0.5,0.4L0.5,0.6 M0.5,0.8L0.5,1 M0,0.2L0.3,0.5L0,0.8L0,0.2 M1,0.2L0.7,0.5L1,0.8L1,0.2')) if @active_part.flipped
+        icons << Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.6,0L0.4,0 M0.6,0.4L0.8,0.2L0.5,0.2 M0.8,0.2L0.8,0.5 M0.8,0L1,0L1,0.2 M1,0.4L1,0.6 M1,0.8L1,1L0.8,1 M0.2,0L0,0L0,0.2 M0,1L0,0.4L0.6,0.4L0.6,1L0,1')) if @active_part.resized
+        return icons
+      end
+      nil
     end
 
     def _select_active_part_entity

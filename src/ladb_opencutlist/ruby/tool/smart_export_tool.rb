@@ -282,17 +282,7 @@ module Ladb::OpenCutList
       if part
 
         # Show part infos
-
-        infos = [ _get_active_part_name, "#{part.length} x #{part.width} x #{part.thickness}" ]
-        infos << "#{part.material_name} (#{Plugin.instance.get_i18n_string("tab.materials.type_#{part.group.material_type}")})" unless part.material_name.empty?
-        if part.flipped || part.resized
-          icons = []
-          icons << Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.5,0L0.5,0.2 M0.5,0.4L0.5,0.6 M0.5,0.8L0.5,1 M0,0.2L0.3,0.5L0,0.8L0,0.2 M1,0.2L0.7,0.5L1,0.8L1,0.2')) if part.flipped
-          icons << Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.6,0L0.4,0 M0.6,0.4L0.8,0.2L0.5,0.2 M0.8,0.2L0.8,0.5 M0.8,0L1,0L1,0.2 M1,0.4L1,0.6 M1,0.8L1,1L0.8,1 M0.2,0L0,0L0,0.2 M0,1L0,0.4L0.6,0.4L0.6,1L0,1')) if part.resized
-          infos << icons
-        end
-
-        show_tooltip(infos)
+        show_tooltip([ _get_active_part_name, _get_active_part_size, _get_active_part_material_name, _get_active_part_icons ])
 
         if is_action_export_part_3d?
 
@@ -667,7 +657,6 @@ module Ladb::OpenCutList
               part = _generate_part_from_path(input_part_entity_path)
               if part
                 _set_active_part(input_part_entity_path, part)
-                # show_tooltip(_get_active_part_name)
               else
                 _reset_active_part
                 show_tooltip("⚠ #{Plugin.instance.get_i18n_string('tool.smart_export.error.not_part')}", MESSAGE_TYPE_ERROR)

@@ -772,9 +772,7 @@ module Ladb::OpenCutList
           color.alpha = highlighted ? 255 : 200
 
           # Show part infos
-          infos = [ _get_active_part_name ]
-          infos << "#{part.material_name} (#{Plugin.instance.get_i18n_string("tab.materials.type_#{part.group.material_type}")})" unless part.material_name.empty?
-          show_tooltip(infos, @active_material && @active_material.name == part.material_name ? MESSAGE_TYPE_SUCCESS : MESSAGE_TYPE_DEFAULT)
+          show_tooltip([ _get_active_part_name, _get_active_part_material_name ], @active_material && @active_material.name == part.material_name ? MESSAGE_TYPE_SUCCESS : MESSAGE_TYPE_DEFAULT)
 
           active_instance = @active_part_entity_path.last
           instances = fetch_action_option_enabled(ACTION_PAINT_PARTS, ACTION_OPTION_INSTANCES, ACTION_OPTION_INSTANCES_ALL) ? active_instance.definition.instances : [active_instance ]
@@ -808,9 +806,6 @@ module Ladb::OpenCutList
             show_tooltip("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.wrong_material_type', { :type => Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_SHEET_GOOD}") })}", MESSAGE_TYPE_ERROR)
             push_cursor(@cursor_paint_error_id)
           else
-
-            # Show part name
-            show_tooltip(_get_active_part_name)
 
             edge_faces = {}
             part.def.edge_entity_ids.each { |k, v| edge_faces[k] = model.find_entity_by_id(v) if v.is_a?(Array) && !v.empty? }
@@ -859,7 +854,7 @@ module Ladb::OpenCutList
 
               # Show edges infos
               show_tooltip([
-                             part.name,
+                             _get_active_part_name,
                              Plugin.instance.get_i18n_string('tool.smart_paint.edges', { :count => sides.length }) + (sides.length < 4 ? " → #{sides.map { |side| Plugin.instance.get_i18n_string("tool.smart_paint.edge_#{side}") }.join(' + ')}" : '')
                            ])
 
@@ -903,9 +898,6 @@ module Ladb::OpenCutList
             push_cursor(@cursor_paint_error_id)
           else
 
-            # Show part name
-            show_tooltip(_get_active_part_name)
-
             face_faces = {}
             part.def.face_entity_ids.each { |k, v| face_faces[k] = model.find_entity_by_id(v) if v.is_a?(Array) && !v.empty? }
 
@@ -945,7 +937,7 @@ module Ladb::OpenCutList
 
               # Show faces infos
               show_tooltip([
-                             part.name,
+                             _get_active_part_name,
                              "#{Plugin.instance.get_i18n_string('tool.smart_paint.faces', { :count => sides.length })} → #{sides.map { |side| Plugin.instance.get_i18n_string("tool.smart_paint.face_#{side}") }.join(' + ')}"
                            ])
 
@@ -985,9 +977,7 @@ module Ladb::OpenCutList
         elsif is_action_paint_clean?
 
           # Show part infos
-          infos = [ _get_active_part_name ]
-          infos << "#{part.material_name} (#{Plugin.instance.get_i18n_string("tab.materials.type_#{part.group.material_type}")})" unless part.material_name.empty?
-          show_tooltip(infos)
+          show_tooltip([ _get_active_part_name, _get_active_part_material_name ])
 
           color = MaterialUtils::get_color_from_path(@active_part_entity_path[0...-1]) # [0...-1] returns array without last element
           color.alpha = highlighted ? 255 : 200
