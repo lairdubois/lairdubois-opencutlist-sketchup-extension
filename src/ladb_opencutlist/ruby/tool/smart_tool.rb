@@ -39,6 +39,9 @@ module Ladb::OpenCutList
     def initialize(quit_on_esc = true, quit_on_undo = false)
       super
 
+      # Action
+      @current_action = nil
+
       # Setup action stack
       @action_stack = []
 
@@ -678,11 +681,15 @@ module Ladb::OpenCutList
     end
 
     def store_action(action)
-      # Implemented in derived class : @@action = action
+      Plugin.instance.write_default("settings.smart_#{get_stripped_name}_last_action", action)
+      @current_action = action
     end
 
     def fetch_action
-      # Implemented in derived class : @@action
+      return @current_action unless @current_action.nil?
+      @current_action = Plugin.instance.read_default("settings.smart_#{get_stripped_name}_last_action")
+      @current_action = get_action_defs.first[:action] if get_action_defs.find { |action_def| action_def[:action] == @current_action }.nil?
+      @current_action
     end
 
     def store_action_option_value(action, option_group, option, value = nil)

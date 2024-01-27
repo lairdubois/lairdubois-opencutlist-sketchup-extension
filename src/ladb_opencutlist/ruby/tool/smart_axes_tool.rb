@@ -58,8 +58,6 @@ module Ladb::OpenCutList
     COLOR_ACTION = Kuix::COLOR_MAGENTA
     COLOR_ACTION_FILL = Sketchup::Color.new(255, 0, 255, 0.2).freeze
 
-    @@action = nil
-
     def initialize
       super(true, false)
 
@@ -139,15 +137,6 @@ module Ladb::OpenCutList
       end
 
       super
-    end
-
-
-    def store_action(action)
-      @@action = action
-    end
-
-    def fetch_action
-      @@action
     end
 
     def is_action_flip?

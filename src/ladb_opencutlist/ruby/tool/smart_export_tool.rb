@@ -82,8 +82,6 @@ module Ladb::OpenCutList
     COLOR_PART_PATH = Kuix::COLOR_CYAN
     COLOR_ACTION = Kuix::COLOR_MAGENTA
 
-    @@action = nil
-
     def initialize(material = nil)
       super(true, false)
 
@@ -194,14 +192,6 @@ module Ladb::OpenCutList
       end
 
       super
-    end
-
-    def store_action(action)
-      @@action = action
-    end
-
-    def fetch_action
-      @@action
     end
 
     def is_action_export_part_3d?

@@ -70,8 +70,6 @@ module Ladb::OpenCutList
       MaterialAttributes::TYPE_VENEER => Sketchup::Color.new(131, 56, 236).freeze
     }
 
-    @@action = nil
-
     @@action_materials = {} # { action => Sketchup::Material }
     @@action_filters = {}   # { action => Array<MaterialAttributes:TYPE> }
 
@@ -415,14 +413,6 @@ module Ladb::OpenCutList
       end
 
       super
-    end
-
-    def store_action(action)
-      @@action = action
-    end
-
-    def fetch_action
-      @@action
     end
 
     def store_action_material(action, material)
