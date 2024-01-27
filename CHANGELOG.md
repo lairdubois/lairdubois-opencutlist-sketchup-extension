@@ -26,6 +26,7 @@ in 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added a button to select all unplaced parts in parts list from cutting diagrams
   * Added ability to configure material weight per raw instance
   * Added ability to estimate parts weight and corst by cut volume only
+  * Improved smart tool last used action now stored globally to keep it on new SketchUp session
   * Improved dimension default style in Layout document after exporting _Drawing_ to Layout
   * Changed material color bullet from drop to circle
 
