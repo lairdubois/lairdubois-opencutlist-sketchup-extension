@@ -429,15 +429,29 @@ module Ladb::OpenCutList
       box.set_style_attribute(:border_color, border_color)
 
         items = [ items ] if items.is_a?(String)
-        items.each_with_index do |item, i|
+        items.each do |item|
           next if item.nil?
 
           if item.is_a?(String)
 
+            if item == '-'
+
+              sep = Kuix::Panel.new
+              sep.border.top = unit / 4
+              sep.set_style_attribute(:border_color, text_color)
+
+              box.append(sep)
+
+              next
+            end
+
+            is_title = item.start_with?('#')
+            item = item[1..-1] if is_title
+
             lbl = Kuix::Label.new
             lbl.text = item
-            lbl.text_bold = true if i == 0
-            lbl.text_size = unit * (i == 0 ? 3 : 2.5) * get_text_unit_factor
+            lbl.text_bold = true if is_title
+            lbl.text_size = unit * (is_title ? 3 : 2.5) * get_text_unit_factor
             lbl.text_align = TextAlignLeft
             lbl.set_style_attribute(:color, text_color)
 

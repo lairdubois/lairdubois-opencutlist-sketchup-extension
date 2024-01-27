@@ -272,7 +272,7 @@ module Ladb::OpenCutList
       if part
 
         # Show part infos
-        show_tooltip([ _get_active_part_name, _get_active_part_size, _get_active_part_material_name, _get_active_part_icons ])
+        show_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name, '-', _get_active_part_size, _get_active_part_icons ])
 
         if is_action_export_part_3d?
 

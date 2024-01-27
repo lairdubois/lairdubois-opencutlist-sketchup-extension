@@ -762,7 +762,7 @@ module Ladb::OpenCutList
           color.alpha = highlighted ? 255 : 200
 
           # Show part infos
-          show_tooltip([ _get_active_part_name, _get_active_part_material_name ], @active_material && @active_material.name == part.material_name ? MESSAGE_TYPE_SUCCESS : MESSAGE_TYPE_DEFAULT)
+          show_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name ], @active_material && @active_material.name == part.material_name ? MESSAGE_TYPE_SUCCESS : MESSAGE_TYPE_DEFAULT)
 
           active_instance = @active_part_entity_path.last
           instances = fetch_action_option_enabled(ACTION_PAINT_PARTS, ACTION_OPTION_INSTANCES, ACTION_OPTION_INSTANCES_ALL) ? active_instance.definition.instances : [active_instance ]
@@ -844,7 +844,8 @@ module Ladb::OpenCutList
 
               # Show edges infos
               show_tooltip([
-                             _get_active_part_name,
+                             "##{_get_active_part_name}",
+                             '-',
                              Plugin.instance.get_i18n_string('tool.smart_paint.edges', { :count => sides.length }) + (sides.length < 4 ? " → #{sides.map { |side| Plugin.instance.get_i18n_string("tool.smart_paint.edge_#{side}") }.join(' + ')}" : '')
                            ])
 
@@ -927,7 +928,8 @@ module Ladb::OpenCutList
 
               # Show faces infos
               show_tooltip([
-                             _get_active_part_name,
+                             "##{_get_active_part_name}",
+                             '-',
                              "#{Plugin.instance.get_i18n_string('tool.smart_paint.faces', { :count => sides.length })} → #{sides.map { |side| Plugin.instance.get_i18n_string("tool.smart_paint.face_#{side}") }.join(' + ')}"
                            ])
 
@@ -967,7 +969,7 @@ module Ladb::OpenCutList
         elsif is_action_paint_clean?
 
           # Show part infos
-          show_tooltip([ _get_active_part_name, _get_active_part_material_name ])
+          show_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name ])
 
           color = MaterialUtils::get_color_from_path(@active_part_entity_path[0...-1]) # [0...-1] returns array without last element
           color.alpha = highlighted ? 255 : 200
@@ -1287,9 +1289,9 @@ module Ladb::OpenCutList
 
             # Display material infos
             if material
-              show_tooltip("#{material.name} (#{Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes.new(material).type}")})")
+              show_tooltip("##{material.name} (#{Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes.new(material).type}")})")
             else
-              show_tooltip(Plugin.instance.get_i18n_string('tool.smart_paint.default_material'))
+              show_tooltip("##{Plugin.instance.get_i18n_string('tool.smart_paint.default_material')}")
             end
 
           elsif event == :l_button_up
