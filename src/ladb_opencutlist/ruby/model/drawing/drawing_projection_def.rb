@@ -95,17 +95,17 @@ module Ladb::OpenCutList
 
   class DrawingProjectionPolygonDef < DrawingProjectionPolyDef
 
-    def initialize(points, is_outer)
+    def initialize(points, ccw)
       super(points)
-      @is_outer = is_outer
+      @ccw = ccw
     end
 
     def closed?
       true
     end
 
-    def outer?
-      @is_outer
+    def ccw?
+      @ccw
     end
 
     def segments

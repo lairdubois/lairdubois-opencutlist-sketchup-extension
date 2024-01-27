@@ -395,7 +395,7 @@ module Ladb::OpenCutList
                 segments.color = COLOR_PART_DEPTH
               end
               segments.line_width = highlighted ? line_width + 1 : line_width
-              segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if poly_def.is_a?(DrawingProjectionPolygonDef) && !poly_def.outer?
+              segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if poly_def.is_a?(DrawingProjectionPolygonDef) && !poly_def.ccw?
               segments.on_top = true
               preview.append(segments)
 
@@ -498,7 +498,7 @@ module Ladb::OpenCutList
             segments.add_segments(segs)
             segments.color = COLOR_PART_UPPER
             segments.line_width = highlighted ? line_width + 1 : line_width
-            segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES unless poly_def.outer?
+            segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES unless poly_def.ccw?
             segments.on_top = true
             preview.append(segments)
 

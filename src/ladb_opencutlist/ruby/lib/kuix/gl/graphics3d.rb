@@ -8,7 +8,9 @@ module Ladb::OpenCutList::Kuix
 
     # -- Drawing --
 
-    def draw_points(points, size = 6, style = POINT_STYLE_PLUS, color = 'black')
+    def draw_points(points, size = 6, style = POINT_STYLE_PLUS, color = 'black', line_width = 1, line_stipple = LINE_STIPPLE_SOLID)
+      set_line_width(line_width) if line_width
+      set_line_stipple(line_stipple) if line_stipple
       @view.draw_points(points, size, style, color)
     end
 

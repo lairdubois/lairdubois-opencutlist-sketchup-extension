@@ -12,6 +12,8 @@ module Ladb::OpenCutList::Kuix
       @size = 6
       @style = POINT_STYLE_PLUS
       @color = nil
+      @line_width = 2
+      @line_stipple = LINE_STIPPLE_SOLID
       @points = [] # Array<Geom::Point3d>
 
       @_points = []
@@ -34,7 +36,7 @@ module Ladb::OpenCutList::Kuix
     # -- RENDER --
 
     def paint_content(graphics)
-      graphics.draw_points(@_points, @size, @style, @color)
+      graphics.draw_points(@_points, @size, @style, @color, @line_width, @line_stipple)
       super
     end
 

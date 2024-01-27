@@ -163,8 +163,8 @@ module Ladb::OpenCutList
           layer_def.opened_paths.each do |path|
             points = Clippy.rpath_to_points(path, z_max - layer_def.depth)
             if points.first == points.last
-              # Closed paths are converted to polygon by removing the 'end point'
-              polygons << DrawingProjectionPolygonDef.new(points[0...-1], true)
+              points.reverse! unless Clippy.is_rpath_positive?(path)  # Force CCW
+              polygons << DrawingProjectionPolygonDef.new(points[0...-1], true) # Closed paths are converted to polygon by removing the 'end point'
             else
               polylines << DrawingProjectionPolylineDef.new(points)
             end
