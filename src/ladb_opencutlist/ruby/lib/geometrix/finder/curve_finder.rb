@@ -4,7 +4,7 @@ module Ladb::OpenCutList::Geometrix
 
   class CurveFinder
 
-    MIN_ARC_DELTA_ANGLE = 0.25 * Math::PI
+    MIN_ARC_DELTA_ANGLE = (0.25 * Math::PI).round(2)
     MIN_ARC_POINT_COUNT = 5
 
     # @param [Array<Geom::Point3d>] points (the last must not be equal to the first)
@@ -48,7 +48,7 @@ module Ladb::OpenCutList::Geometrix
               vaa = ellipse_def.xaxis.transform(Geom::Transformation.rotation(ellipse_def.center, Z_AXIS, EllipseFinder.ellipse_angle_at_point(ellipse_def, p)))
 
               # Break if angle between previous point > MIN_DELTA_ANGLE
-              break if va.angle_between(vaa).round(6) > MIN_ARC_DELTA_ANGLE
+              break if va.angle_between(vaa).round(2) > MIN_ARC_DELTA_ANGLE
 
               va = vaa
 
@@ -85,48 +85,48 @@ module Ladb::OpenCutList::Geometrix
         last_portion = curve_def.portions.last
         if last_portion.is_a?(ArcCurvePortionDef)
 
-        overlap = last_portion.end_index - points.length
+          overlap = last_portion.end_index - points.length
 
-        if last_portion == curve_def.portions.first
-
-          # Only one arc : just subtract overlap
-          last_portion.edge_count -= overlap
-
-        else
-
-          max_overlap_index = last_portion.end_index % points.length
-          overlap_portions = curve_def.portions.select { |potion| potion.start_index < max_overlap_index }
-          last_overlap_portion = overlap_portions.last
-          if last_portion == last_overlap_portion
+          if last_portion == curve_def.portions.first
 
             # Only one arc : just subtract overlap
-            last_portion.edge_count = points.length
+            last_portion.edge_count -= overlap
 
-            # Keep portion
-            overlap_portions.delete(last_overlap_portion)
+          else
 
-          elsif last_overlap_portion.is_a?(ArcCurvePortionDef)
+            max_overlap_index = last_portion.end_index % points.length
+            overlap_portions = curve_def.portions.select { |potion| potion.start_index < max_overlap_index }
+            last_overlap_portion = overlap_portions.last
+            if last_portion == last_overlap_portion
 
-            # Check ellipses similarity by checking if last arc includes last overlap arc end point
-            if EllipseFinder.ellipse_include_point?(last_portion.ellipse_def, last_overlap_portion.end_point)
+              # Only one arc : just subtract overlap
+              last_portion.edge_count = points.length
 
-              # Combine first ellipse to last
-              last_portion.edge_count = last_portion.edge_count + overlap_portions.sum { |portion| portion.edge_count } - overlap
-
-            else
-
-              last_overlap_portion.edge_count -= max_overlap_index - last_overlap_portion.start_index
-              last_overlap_portion.start_index = max_overlap_index
+              # Keep portion
               overlap_portions.delete(last_overlap_portion)
+
+            elsif last_overlap_portion.is_a?(ArcCurvePortionDef)
+
+              # Check ellipses similarity by checking if last arc includes last overlap arc end point
+              if EllipseFinder.ellipse_include_point?(last_portion.ellipse_def, last_overlap_portion.end_point)
+
+                # Combine first ellipse to last
+                last_portion.edge_count = last_portion.edge_count + overlap_portions.sum { |portion| portion.edge_count } - overlap
+
+              else
+
+                last_overlap_portion.edge_count -= max_overlap_index - last_overlap_portion.start_index
+                last_overlap_portion.start_index = max_overlap_index
+                overlap_portions.delete(last_overlap_portion)
+
+              end
 
             end
 
+            # Remove overlap portions
+            curve_def.portions -= overlap_portions
+
           end
-
-          # Remove overlap portions
-          curve_def.portions -= overlap_portions
-
-        end
 
         end
 
