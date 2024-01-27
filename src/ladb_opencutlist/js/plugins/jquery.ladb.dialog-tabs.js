@@ -16,7 +16,9 @@
     // ======================
 
     var LadbDialogTabs = function (element, options) {
-        LadbAbstractDialog.call(this, element, options);
+        LadbAbstractDialog.call(this, element, $.extend({
+            noty_layout: 'dialogTabs'
+        }, options));
 
         this.zzz = false;
 

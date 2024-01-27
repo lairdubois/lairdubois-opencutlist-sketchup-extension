@@ -1,84 +1,21 @@
-#noty_layout__bottom, #noty_layout__bottomCenter, #noty_layout__bottomLeft, #noty_layout__bottomRight, #noty_layout__center, #noty_layout__centerLeft, #noty_layout__centerRight, #noty_layout__top, #noty_layout__topCenter, #noty_layout__topLeft, #noty_layout__topRight, .noty_layout_mixin {
+#noty_layout__dialogTabs, #noty_layout__dialogModal {
     position: fixed;
     margin: 0;
     padding: 0;
     z-index: 9999999;
-    -webkit-backface-visibility: hidden;
-    transform: translate(0, 0) scale(1, 1);
-    -webkit-font-smoothing: subpixel-antialiased;
-}
-
-#noty_layout__top {
-    top: 0;
-    left: 5%;
-    width: 90%;
-}
-
-#noty_layout__topLeft {
-    top: 20px;
-    left: 20px;
-    width: 325px;
-}
-
-#noty_layout__topCenter {
-    top: 5%;
+    backface-visibility: hidden;
     left: 50%;
-    width: 325px;
-    transform: translate(-50%) translateZ(0) scale(1, 1);
-}
-
-#noty_layout__topRight {
-    top: 20px;
-    right: 20px;
-    width: 325px;
-}
-
-#noty_layout__bottom {
-    bottom: 0;
-    left: 5%;
-    width: 90%;
-}
-
-#noty_layout__bottomLeft {
-    bottom: 20px;
-    left: 20px;
-    width: 325px;
-}
-
-#noty_layout__bottomCenter {
-    bottom: 5%;
-    left: 50%;
-    width: 50%;
     min-width: 325px;
-    max-width: 625px;
+    max-width: 600px;
     transform: translate(-50%) translateZ(0) scale(1, 1);
 }
 
-#noty_layout__bottomRight {
-    bottom: 20px;
-    right: 20px;
-    width: 325px;
+#noty_layout__dialogTabs {
+    bottom: 40px;
 }
 
-#noty_layout__center {
-    top: 50%;
-    left: 50%;
-    width: 325px;
-    transform: translate(-50%, -50%) translateZ(0) scale(1, 1);
-}
-
-#noty_layout__centerLeft {
-    top: 50%;
-    left: 20px;
-    width: 325px;
-    transform: translate(0, -50%) translateZ(0) scale(1, 1);
-}
-
-#noty_layout__centerRight {
-    top: 50%;
-    right: 20px;
-    width: 325px;
-    transform: translate(0, -50%) translateZ(0) scale(1, 1);
+#noty_layout__dialogModal {
+    bottom: 70px;
 }
 
 .noty_progressbar {
@@ -92,11 +29,11 @@
 }
 
 .noty_bar {
-    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
     transform: translate(0, 0) scale(1, 1);
-    -webkit-font-smoothing: subpixel-antialiased;
     overflow: hidden;
     display: flex;
+    margin: 5px 0;
 }
 
 .noty_body {

@@ -5,7 +5,9 @@
     // ======================
 
     var LadbDialogModal = function (element, options) {
-        LadbAbstractDialog.call(this, element, options);
+        LadbAbstractDialog.call(this, element, $.extend({
+            noty_layout: 'dialogModal'
+        }, options));
 
         this.$modal = null;
 
