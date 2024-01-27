@@ -433,6 +433,18 @@ module Ladb::OpenCutList
             box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
             preview.append(box_helper)
 
+            if @active_drawing_def.input_edge_manipulator
+
+              # Highlight input edge
+              segments = Kuix::Segments.new
+              segments.add_segments(@active_drawing_def.input_edge_manipulator.segment)
+              segments.color = COLOR_ACTION
+              segments.line_width = 3
+              segments.on_top = true
+              preview.append(segments)
+
+            end
+
             # Axes helper
             axes_helper = Kuix::AxesHelper.new
             axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(0, 0, @active_drawing_def.bounds.max.z))
