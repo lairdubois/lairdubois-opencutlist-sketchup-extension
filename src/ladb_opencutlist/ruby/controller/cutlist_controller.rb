@@ -72,8 +72,8 @@ module Ladb::OpenCutList
         group_cuttingdiagram1d_advance_command
       end
 
-      Plugin.instance.register_command("cutlist_cuttingdiagram1d_export") do |settings|
-        cuttingdiagram1d_export_command(settings)
+      Plugin.instance.register_command("cutlist_cuttingdiagram1d_write") do |settings|
+        cuttingdiagram1d_write_command(settings)
       end
 
       Plugin.instance.register_command("cutlist_group_cuttingdiagram2d_start") do |settings|
@@ -84,8 +84,8 @@ module Ladb::OpenCutList
         group_cuttingdiagram2d_advance_command
       end
 
-      Plugin.instance.register_command("cutlist_cuttingdiagram2d_export") do |settings|
-        cuttingdiagram2d_export_command(settings)
+      Plugin.instance.register_command("cutlist_cuttingdiagram2d_write") do |settings|
+        cuttingdiagram2d_write_command(settings)
       end
 
       Plugin.instance.register_command("cutlist_labels_compute_elements") do |settings|
@@ -259,11 +259,11 @@ module Ladb::OpenCutList
       cuttingdiagram1d.to_hash
     end
 
-    def cuttingdiagram1d_export_command(settings)
-      require_relative '../worker/cutlist/cutlist_cuttingdiagram1d_export_worker'
+    def cuttingdiagram1d_write_command(settings)
+      require_relative '../worker/cutlist/cutlist_cuttingdiagram1d_write_worker'
 
       # Setup worker
-      worker = CutlistCuttingdiagram1dExportWorker.new(settings, @cutlist, @cuttingdiagram1d)
+      worker = CutlistCuttingdiagram1dWriteWorker.new(settings, @cutlist, @cuttingdiagram1d)
 
       # Run !
       worker.run
@@ -295,11 +295,11 @@ module Ladb::OpenCutList
       cuttingdiagram2d.to_hash
     end
 
-    def cuttingdiagram2d_export_command(settings)
-      require_relative '../worker/cutlist/cutlist_cuttingdiagram2d_export_worker'
+    def cuttingdiagram2d_write_command(settings)
+      require_relative '../worker/cutlist/cutlist_cuttingdiagram2d_write_worker'
 
       # Setup worker
-      worker = CutlistCuttingdiagram2dExportWorker.new(settings, @cutlist, @cuttingdiagram2d)
+      worker = CutlistCuttingdiagram2dWriteWorker.new(settings, @cutlist, @cuttingdiagram2d)
 
       # Run !
       worker.run
