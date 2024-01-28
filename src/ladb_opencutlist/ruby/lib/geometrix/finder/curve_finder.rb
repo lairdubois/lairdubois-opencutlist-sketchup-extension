@@ -7,6 +7,8 @@ module Ladb::OpenCutList::Geometrix
     MIN_ARC_DELTA_ANGLE = (0.25 * Math::PI).round(2)
     MIN_ARC_POINT_COUNT = 5
 
+    # This function try to split an array of ordered points to line or arc portions
+    #
     # @param [Array<Geom::Point3d>] points (the last must not be equal to the first)
     # @param [Boolean] closed
     #
@@ -15,16 +17,24 @@ module Ladb::OpenCutList::Geometrix
     def self.find_curve_def(points, closed = false)
       return nil unless points.is_a?(Array)
 
+      # Closed curve cannot have equal “start” and “end” points. Removing the "end" point.
+      points = points[0...-1] if closed && points.last == points.first
+
+      return nil unless points.length > 1
+
+      # Create output def
       curve_def = CurveDef.new(points, closed)
 
-      twice_points = points + points
+      # Glue 2 sets of points if closed
+      twice_points = closed ? points + points : points
 
       index = 0
       max_index = points.length - 1
       max_search_index = closed ? points.length + MIN_ARC_POINT_COUNT : max_index
+      arcs_detectable = points.length > MIN_ARC_POINT_COUNT
       while index <= max_index
 
-        if points.length > MIN_ARC_POINT_COUNT
+        if arcs_detectable
 
           ellipse_def = EllipseFinder.find_ellipse_def(twice_points[index, MIN_ARC_POINT_COUNT])
           if ellipse_def

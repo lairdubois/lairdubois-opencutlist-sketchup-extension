@@ -11,6 +11,9 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
     # Code to use in console to retrieve points from selected loop in SketchUp
     # Sketchup.active_model.selection.first.outer_loop.vertices.map { |vertex| "Geom::Point3d.new(#{vertex.position.to_a.join(', ')})" }.join(',')
 
+    # Code to use in console to retrieve points from selected curve in SketchUp
+    # Sketchup.active_model.selection.first.curve.vertices.map { |vertex| "Geom::Point3d.new(#{vertex.position.to_a.join(', ')})" }.join(',')
+
     # Code to use in console to draw points
     # Sketchup.active_model.entities.add_edges(POINTS)
 
@@ -33,6 +36,13 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
       Geom::Point3d.new(10.0, 0.0, 0.0),Geom::Point3d.new(9.659258262890683, 2.5881904510252074, 0.0),Geom::Point3d.new(8.660254037844387, 4.999999999999999, 0.0),Geom::Point3d.new(7.0710678118654755, 7.071067811865475, 0.0),Geom::Point3d.new(5.000000000000001, 8.660254037844386, 0.0),Geom::Point3d.new(2.5881904510252096, 9.659258262890681, 0.0),Geom::Point3d.new(6.123233995736766e-16, 10.0, 0.0),Geom::Point3d.new(-2.5881904510252065, 9.659258262890683, 0.0),Geom::Point3d.new(-4.999999999999998, 8.660254037844387, 0.0),Geom::Point3d.new(-7.071067811865475, 7.0710678118654755, 0.0),Geom::Point3d.new(-8.660254037844386, 5.0000000000000036, 0.0),Geom::Point3d.new(-9.659258262890681, 2.58819045102521, 0.0),Geom::Point3d.new(-10.0, 1.2246467991473533e-15, 0.0),Geom::Point3d.new(-9.659258262890685, -2.5881904510252034, 0.0),Geom::Point3d.new(-8.660254037844389, -4.999999999999998, 0.0),Geom::Point3d.new(-7.071067811865479, -7.071067811865471, 0.0),Geom::Point3d.new(-5.000000000000004, -8.660254037844384, 0.0),Geom::Point3d.new(-2.5881904510252154, -9.659258262890681, 0.0),Geom::Point3d.new(-1.8369701987210296e-15, -10.0, 0.0),Geom::Point3d.new(2.588190451025203, -9.659258262890685, 0.0),Geom::Point3d.new(4.999999999999993, -8.66025403784439, 0.0),Geom::Point3d.new(7.071067811865474, -7.071067811865477, 0.0),Geom::Point3d.new(8.660254037844384, -5.000000000000004, 0.0),Geom::Point3d.new(9.659258262890681, -2.588190451025216, 0.0)
     ]
     @circle_x10_y5_r10 = @circle_x0_y0_r10.map { |point| point.transform(@tx10_ty_5) }
+
+    # Circle
+    # - center = 0,0
+    # - radius = 2.5mm
+    @circle_x0_y0_r25mm = [
+      Geom::Point3d.new(0.06959712413253419, 0.06959712413253419, 0.0),Geom::Point3d.new(6.026805113914139e-18, 0.09842519685039369, 0.0),Geom::Point3d.new(-0.06959712413253417, 0.0695971241325342, 0.0),Geom::Point3d.new(-0.09842519685039368, 1.2053610227828279e-17, 0.0),Geom::Point3d.new(-0.0695971241325342, -0.06959712413253419, 0.0),Geom::Point3d.new(-1.8080415341742413e-17, -0.09842519685039369, 0.0),Geom::Point3d.new(0.06959712413253417, -0.06959712413253422, 0.0),Geom::Point3d.new(0.09842519685039368, 0.0, 0.0)
+    ]
 
     # Ellipse
     # - center = 0,0
@@ -125,6 +135,23 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
       Geom::Point3d.new(0.0, 0.04921259842501513, 0.0),Geom::Point3d.new(0.014409448818838658, 0.08401574803116318, 4.336808689942018e-18),Geom::Point3d.new(0.049212598424997374, 0.09842519685000184, 6.938893903907228e-18),Geom::Point3d.new(0.08401574803115962, 0.08401574803116318, 1.3877787807814457e-17),Geom::Point3d.new(0.09842519684999827, 0.04921259842501513, -3.8163916471489756e-17),Geom::Point3d.new(0.08401574803115962, 0.014409448818867077, 1.3877787807814457e-17),Geom::Point3d.new(0.049212598424997374, 0.0, 6.938893903907228e-18),Geom::Point3d.new(0.014409448818838658, 0.014409448818867077, 4.336808689942018e-18)
     ]
 
+    # -----
+
+    # Curve 2 segs - opened
+    @curve_a = [
+      Geom::Point3d.new(0.3937007874015748, 0.3937007874015748, 0.0),Geom::Point3d.new(0.3937007874015748, 0.0, 0.0),Geom::Point3d.new(0.0, 0.0, 0.0)
+    ]
+
+    # Curve seg + arc + seg - opened
+    @curve_b = [
+      Geom::Point3d.new(0.0, 10.0, 0.0),Geom::Point3d.new(10.0, 10.0, 0.0),Geom::Point3d.new(11.294095225512603, 9.82962913144534, 0.0),Geom::Point3d.new(12.5, 9.330127018922195, 0.0),Geom::Point3d.new(13.535533905932738, 8.535533905932738, 0.0),Geom::Point3d.new(14.330127018922193, 7.5, 0.0),Geom::Point3d.new(14.82962913144534, 6.294095225512605, 0.0),Geom::Point3d.new(15.0, 5.000000000000002, 0.0),Geom::Point3d.new(14.829629131445342, 3.705904774487398, 0.0),Geom::Point3d.new(14.330127018922195, 2.500000000000001, 0.0),Geom::Point3d.new(13.535533905932738, 1.4644660940672627, 0.0),Geom::Point3d.new(12.5, 0.6698729810778064, 0.0),Geom::Point3d.new(11.294095225512603, 0.17037086855465855, 0.0),Geom::Point3d.new(10.0, 0.0, 0.0),Geom::Point3d.new(0.0, 0.0, 0.0)
+    ]
+
+    # Curve seg + arc + seg + arc - closed
+    @curve_c = [
+      Geom::Point3d.new(-2.4999999999999996, 0.6698729810778064, 0.0),Geom::Point3d.new(-3.5355339059327378, 1.4644660940672627, 0.0),Geom::Point3d.new(-4.330127018922194, 2.500000000000001, 0.0),Geom::Point3d.new(-4.829629131445342, 3.705904774487398, 0.0),Geom::Point3d.new(-5.0, 5.000000000000002, 0.0),Geom::Point3d.new(-4.829629131445341, 6.294095225512605, 0.0),Geom::Point3d.new(-4.330127018922193, 7.5, 0.0),Geom::Point3d.new(-3.5355339059327373, 8.535533905932738, 0.0),Geom::Point3d.new(-2.4999999999999996, 9.330127018922195, 0.0),Geom::Point3d.new(-1.2940952255126037, 9.82962913144534, 0.0),Geom::Point3d.new(0.0, 10.0, 0.0),Geom::Point3d.new(10.0, 10.0, 0.0),Geom::Point3d.new(11.294095225512603, 9.82962913144534, 0.0),Geom::Point3d.new(12.5, 9.330127018922195, 0.0),Geom::Point3d.new(13.535533905932738, 8.535533905932738, 0.0),Geom::Point3d.new(14.330127018922193, 7.5, 0.0),Geom::Point3d.new(14.82962913144534, 6.294095225512605, 0.0),Geom::Point3d.new(15.0, 5.000000000000002, 0.0),Geom::Point3d.new(14.829629131445342, 3.705904774487398, 0.0),Geom::Point3d.new(14.330127018922195, 2.500000000000001, 0.0),Geom::Point3d.new(13.535533905932738, 1.4644660940672627, 0.0),Geom::Point3d.new(12.5, 0.6698729810778064, 0.0),Geom::Point3d.new(11.294095225512603, 0.17037086855465855, 0.0),Geom::Point3d.new(10.0, 0.0, 0.0),Geom::Point3d.new(0.0, 0.0, 0.0),Geom::Point3d.new(-1.2940952255126028, 0.17037086855465855, 0.0),Geom::Point3d.new(-2.4999999999999996, 0.6698729810778064, 0.0)
+    ]
+
   end
 
   def test_circle_finder
@@ -134,6 +161,7 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
 
     assert_circle(@circle_x0_y0_r10, 0, 0, 10, 'circle_x0_y0_r10')
     assert_circle(@circle_x10_y5_r10, 10, 5, 10, 'circle_x10_y5_r10')
+    assert_circle(@circle_x0_y0_r25mm, 0, 0, 2.5.mm, 'circle_x0_y0_r25')
 
   end
 
@@ -143,6 +171,7 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
 
     assert_ellipse(@circle_x0_y0_r10, 0, 0, 10, 10, 0, true, 'circle_x0_y0_r10')
     assert_ellipse(@circle_x10_y5_r10, 10, 5, 10, 10, 0, true, 'circle_x10_y5_r10')
+    assert_ellipse(@circle_x0_y0_r25mm, 0, 0, 2.5.mm, 2.5.mm, 0, true, 'circle_x0_y0_r25mm')
     assert_ellipse(@ellipse_x0_y0_xr20_yr10_a0, 0, 0, 20, 10, 0, false, 'ellipse_x0_y0_xr20_yr20_a0')
     assert_ellipse(@ellipse_x0_y0_xr20_yr10_a45, 0, 0, 20, 10, 45.degrees, false, 'ellipse_x0_y0_xr20_yr20_a45')
     assert_ellipse(@ellipse_x0_y0_xr20mm_yr10mm_a45, 0, 0, 20.mm, 10.mm, 45.degrees, false, 'ellipse_x0_y0_xr20mm_yr10mm_a45')
@@ -154,17 +183,23 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
 
   def test_curve_finder
 
-    assert_loop(@triangle, 3, false, false, 'triangle')
-    assert_loop(@circle_x0_y0_r10, 1, true, true, 'circle_x0_y0_r10')
-    assert_loop(@ellipse_x0_y0_xr20mm_yr10mm_a45, 1, true, false, 'ellipse_x0_y0_xr20mm_yr20mm_a45')
-    assert_loop(@loop_a, 3, false, false, 'loop_a')
-    assert_loop(@loop_a.reverse, 3, false, false, 'loop_a.reverse')
-    assert_loop(@loop_b, 3, false, false, 'loop_b')
-    assert_loop(@loop_b.reverse, 3, false, false, 'loop_b.reverse')
-    assert_loop(@loop_c, 8, false, false, 'loop_c')
-    assert_loop(@loop_d, nil, nil, nil, 'loop_d')  # This loop doesn't returns unique arc portion if starts at index 22
-    assert_loop(@loop_e, nil, nil, nil, 'loop_e')
-    assert_loop(@loop_f, 1, true, true, 'loop_f')
+    assert_curve(@triangle, true, true, 3,false, false, 'triangle')
+    assert_curve(@circle_x0_y0_r10, true, true, 1, true, true, 'circle_x0_y0_r10')
+    assert_curve(@circle_x0_y0_r25mm, true, true, 1, true, true, '@circle_x0_y0_r25mm')
+    assert_curve(@ellipse_x0_y0_xr20mm_yr10mm_a45, true, true, 1, true, false, 'ellipse_x0_y0_xr20mm_yr20mm_a45')
+
+    assert_curve(@loop_a, true, true, 3, false, false, 'loop_a')
+    assert_curve(@loop_a.reverse, true, true, 3, false, false, 'loop_a.reverse')
+    assert_curve(@loop_b, true, true, 3, false, false, 'loop_b')
+    assert_curve(@loop_b.reverse, true, true, 3, false, false, 'loop_b.reverse')
+    assert_curve(@loop_c, true, true, 8, false, false, 'loop_c')
+    assert_curve(@loop_d, true, true, nil, nil, nil, 'loop_d')  # This loop doesn't returns unique arc portion if starts at index 22
+    assert_curve(@loop_e, true, true, nil, nil, nil, 'loop_e')
+    assert_curve(@loop_f, true, true, 1, true, true, 'loop_f')
+
+    assert_curve(@curve_a, false, false, 2, false, false, 'curve_a')
+    assert_curve(@curve_b, false, false, 3, false, false, 'curve_b')
+    assert_curve(@curve_c, true, false, 4, false, false, 'loop_g')
 
   end
 
@@ -281,22 +316,28 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
 
   end
 
-  def assert_loop(points, portion_count, is_ellipse, is_circle, msg = '')
+  def assert_curve(points, closed, rotatable, portion_count, is_ellipse, is_circle, msg = '')
 
-    points.count.times do |index|
+    times = rotatable && closed ? points.count : 1
+    times.times do |index|
 
       prefix = "#{msg} index=#{index} point=#{points[index]}"
       pts = points.rotate(index)
 
-      loop_def = Ladb::OpenCutList::Geometrix::CurveFinder.find_curve_def(pts, true)
+      curve_def = Ladb::OpenCutList::Geometrix::CurveFinder.find_curve_def(pts, closed)
 
-      assert_instance_of(Ladb::OpenCutList::Geometrix::CurveDef, loop_def)
-      assert_equal(loop_def.portions.first.start_point, loop_def.portions.last.end_point, "#{prefix} start == end ?")
+      assert_instance_of(Ladb::OpenCutList::Geometrix::CurveDef, curve_def)
+      if closed
+        assert_equal(curve_def.portions.first.start_point, curve_def.portions.last.end_point, "#{prefix} start == end ?")
+        assert_equal(curve_def.closed?, true, "#{prefix} closed ?")
+      else
+        assert_equal(curve_def.closed?, false, "#{prefix} !closed ?")
+      end
 
-      assert_equal(portion_count, loop_def.portions.count, "#{prefix} portions.count") unless portion_count.nil?
+      assert_equal(portion_count, curve_def.portions.count, "#{prefix} portions.count") unless portion_count.nil?
 
-      assert_equal(is_ellipse, loop_def.ellipse?, "#{prefix} ellipse?") unless is_ellipse.nil?
-      assert_equal(is_circle, loop_def.circle?, "#{prefix} circle?") unless is_circle.nil?
+      assert_equal(is_ellipse, curve_def.ellipse?, "#{prefix} ellipse?") unless is_ellipse.nil?
+      assert_equal(is_circle, curve_def.circle?, "#{prefix} circle?") unless is_circle.nil?
 
     end
 
