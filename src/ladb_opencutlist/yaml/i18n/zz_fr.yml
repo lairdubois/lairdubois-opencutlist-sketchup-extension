@@ -1135,7 +1135,7 @@ tab:
       option_include_paths: 894 - Tracés
       option_include_paths_0: 895 - Aucun
       option_include_paths_1: 896 - Utiliser les arêtes non associées à une face
-      option_include_paths_help: '897 - Permet d''activer l''utilisation des arêtes non associées à une face contenues dans la pièce, pour les exporter comme tracé.
+      option_include_paths_help: '897 - Permet d''activer l''utilisation des arêtes non associées à une face et contenues dans la pièce, pour les exporter comme tracé.
 
         '
       option_parts: 898 - Pièces

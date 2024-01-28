@@ -660,6 +660,8 @@ tab:
       total_volume: Σ Об’ємів
       total_area: Σ Площь
       total_length: Σ Довжин
+      tooltip:
+        incompatible_unit: Одиниця несумісна з параметрами оцінки матеріалу
       error:
         no_typed_material_parts: "Для складання кошторису деталі повинні мати певний тип матеріалу (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** , **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** або **$t(tab.materials.type_5)**)."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} помилка**."
@@ -1175,6 +1177,7 @@ tab:
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Напрямок фактури
+      raw_estimated_0: Розрахунок корисного обсягу
       colorized: Цей відтінок буде застосовано до текстури цього матеріалу під час візуалізації в моделі
       texture_load: Завантажити нову текстуру
       texture_clear: Видалити текстуру
@@ -1209,6 +1212,7 @@ tab:
       description: Опис
       url: URL
       cut_options: Параметри розкрою
+      estimate_options: Опції оцінки
       attributes: Атрибути
       thickness: Товщина
       thickness_help: |
@@ -1253,6 +1257,17 @@ tab:
       edge_decremented_help: "Дозволяє вказати, чи потрібно зменшити розміри деталей на товщину крайок."
       edge_decremented_0: Не враховувати
       edge_decremented_1: Відняти товщину крайок
+      raw_estimated: Загальний обсяг
+      raw_estimated_help: |
+        Дозволяє розрахувати об'єм для оцінки маси та вартості деталей з цього матеріалу. , погонажу або кромок після розкрою.
+
+        **Корисний обсяг матеріалу**
+        Розрахунок загального обсягу із суми обсягів деталей картки розкрою.
+
+        **Обсяг використаного матеріалу
+        **Сума обсягів деталей з панелей, листів, погонажу або кромок після розкрою.
+      raw_estimated_0: Корисний обсяг матеріалу
+      raw_estimated_1: Об'єм використаного матеріалу
       std_attributes_dim_placeholder: Виберіть розмір
       std_volumic_masses: Густина
       std_volumic_masses_help: "Дозволяє визначити масу об'єму для всіх розмірів, а також для кожного типорозміру матеріалу."

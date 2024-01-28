@@ -1243,7 +1243,7 @@ tab:
       description: 974 - Beschreibung
       url: 975 - URL
       cut_options: 976 - Schnittparameter
-      estimate_options: 977 - Optionen für die Schätzung
+      estimate_options: 977 - Schätzoptionen
       attributes: 978 - Attribute
       thickness: 979 - Dicke
       thickness_help: |
@@ -1297,7 +1297,7 @@ tab:
 
         **Volumen des benötigten Rohmaterials**
         Das Gesamtvolumen ist die Summe der Volumen der Platten, Furnierblätter, Stangen oder Bänder der Teile nach dem Zuschnitt.
-      raw_estimated_0: 1012 - Nutzvolumen
+      raw_estimated_0: 1012 - Nutzvolumen der Teile
       raw_estimated_1: 1013 - Volumen des benötigten Rohmaterials
       std_attributes_dim_placeholder: 1014 - Wählen Sie eine Größe
       std_volumic_masses: 1015 - Rohdichte

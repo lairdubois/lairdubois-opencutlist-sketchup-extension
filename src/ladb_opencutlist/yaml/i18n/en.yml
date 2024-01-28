@@ -1257,7 +1257,7 @@ tab:
       edge_decremented_help: Allows you to indicate whether the dimensions of parts should be reduced by the thickness of the edge banding.
       edge_decremented_0: No Reduction
       edge_decremented_1: Reduce by Edge Banding Thickness
-      raw_estimated: Used volume
+      raw_estimated: Used Volume
       raw_estimated_help: |
         Allows to define the volume used to estimate the weight and total cost of parts made from this material.
 
