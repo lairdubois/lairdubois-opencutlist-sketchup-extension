@@ -988,9 +988,9 @@ tab:
         thumbnail_square: Квадратная
         group_material: Материал / Толщина
         group_material_name: Название материала
-        group_std_dimension: Измерительный стандарт
+        group_std_dimension: Стандартный размер
         filename: Имя файла
-        model_name: Название модели
+        model_name: Имя модели
         page_name: Имя сцены
         length_unit: Единицы
         generated_at: Дата и время

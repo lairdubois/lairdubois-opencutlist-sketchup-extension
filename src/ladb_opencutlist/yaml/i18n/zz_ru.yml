@@ -1005,9 +1005,9 @@ tab:
         thumbnail_square: 800 - Квадратная
         group_material: 801 - Материал / Толщина
         group_material_name: 802 - Название материала
-        group_std_dimension: 803 - Измерительный стандарт
+        group_std_dimension: 803 - Стандартный размер
         filename: 804 - Имя файла
-        model_name: 805 - Название модели
+        model_name: 805 - Имя модели
         page_name: 806 - Имя сцены
         length_unit: 807 - Единицы
         generated_at: 808 - Дата и время
