@@ -512,6 +512,24 @@ module Ladb::OpenCutList
             end
           end
 
+          # if fetch_action_option_enabled(ACTION_EXPORT_FACE, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING) && projection_def.layer_defs.one?
+          #   layer_def = projection_def.layer_defs.first
+          #   if layer_def.poly_defs.one?
+          #     poly_def = layer_def.poly_defs.first
+          #     curve_def = poly_def.curve_def
+          #     if curve_def.ellipse?
+          #       portion_def = curve_def.portions.first
+          #       if curve_def.circle?
+          #         show_tooltip([ '#CIRCLE', "Radius = #{portion_def.ellipse_def.xradius.to_mm.round(3)} mm" ])
+          #       else
+          #         show_tooltip([ '#ELLIPSE', "Radius 1 = #{portion_def.ellipse_def.xradius.to_mm.round(3)} mm", "Radius 2 = #{portion_def.ellipse_def.yradius.to_mm.round(3)} mm", "Angle = #{portion_def.ellipse_def.angle.radians.round(3)}°" ])
+          #       end
+          #     else
+          #       show_tooltip('#POLYGON')
+          #     end
+          #   end
+          # end
+
           bounds = Geom::BoundingBox.new
           bounds.add(Geom::Point3d.new(@active_drawing_def.bounds.min.x, @active_drawing_def.bounds.min.y, @active_drawing_def.bounds.max.z))
           bounds.add(@active_drawing_def.bounds.max)
