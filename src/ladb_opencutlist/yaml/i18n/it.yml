@@ -660,6 +660,8 @@ tab:
       total_volume: Σ Volumi
       total_area: Σ Aree
       total_length: Σ Lunghezze
+      tooltip:
+        incompatible_unit: ""
       error:
         no_typed_material_parts: "Nessuna parte con un materiale di tipo (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** o **$t(tab.materials.type_5)**) è disponibile per generare il preventivo."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errore**."
@@ -854,6 +856,10 @@ tab:
         option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
         option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
         option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
+        option_include_paths: $t(tab.cutlist.write.option_include_paths)
+        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
+        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
+        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
         option_sheet_good: Pannello
         option_sheet_good_help: |
           Abilita l'esportazione dei fogli del pannello e la selezione del colore.
@@ -861,25 +867,27 @@ tab:
         option_sheet_veneer_help: |
           Abilita l'esportazione dei fogli di piallacci e la selezione del colore.
         option_bar_dimensional: Barre
-        option_bar_dimensional_help:  |
+        option_bar_dimensional_help: |
           Abilita l'esportazione delle dimensioni e del colore.
         option_bar_band: Bordo
-        option_bar_band_help:  |
+        option_bar_band_help: |
           Abilita l'esportazione dei bordi e dei colori.
         option_parts: Parti
-        option_parts_help:  |
+        option_parts_help: |
           Abilita l'esportazione degli elementi e il colore.
         option_parts_holes: Forature
-        option_parts_holes_help:  |
+        option_parts_holes_help: |
           Seleziona il colore delle forature.
+        option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
+        option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
         option_texts: Identificativo
-        option_texts_help:  |
+        option_texts_help: |
           Abilita lesportazione del testo identificativo degli elementi e il colore.
         option_leftovers: Rimanente
-        option_leftovers_help:  |
+        option_leftovers_help: |
           Abilita l'esportazione dei ritagli e il loro colore.
         option_cuts: Tagli
-        option_cuts_help:  |
+        option_cuts_help: |
           Seleziona se i tagli devono essere disegnati e con che colore.
         warning:
           is_sheet_selection: I pannelli **mascherati** non vengono esportati.
@@ -1175,6 +1183,7 @@ tab:
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Direzione della venatura
+      raw_estimated_0: ""
       colorized: Questa tonalità di colore sarà applicata alla struttura del materiale al momento della resa visiva del modello
       texture_load: Carica una nuova texture
       texture_clear: Rimuovi texture
@@ -1209,6 +1218,7 @@ tab:
       description: Descrizione
       url: URL
       cut_options: Impostazioni del taglio
+      estimate_options: ""
       attributes: Attributi
       thickness: Spessore
       thickness_help: |-
@@ -1253,6 +1263,10 @@ tab:
       edge_decremented_help: Indica se la dimensione della parte deve essere ridotta dello spessore della bordatura.
       edge_decremented_0: Nessuna riduzione
       edge_decremented_1: Riduci dello spessore della bordatura
+      raw_estimated: ""
+      raw_estimated_help: |
+      raw_estimated_0: ""
+      raw_estimated_1: ""
       std_attributes_dim_placeholder: Scegli una taglia
       std_volumic_masses: Massa volumica
       std_volumic_masses_help: Si usa per definire la densità per tutte le dimensioni e per ogni dimensione standard del materiale.
@@ -1683,7 +1697,7 @@ tool:
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: Isola i fori passanti e unisci le profondità di ogni recesso
-    action_option_options_paths_status: Esportazione di bordi non associati a una faccia contenuta nella parte come tracciato
+    action_option_options_include_paths_status: Esportazione di bordi non associati a una faccia contenuta nella parte come tracciato
     error:
       not_part: Questa faccia non appartiene ad un elemento (componente)
       not_flat_face: Superficie non planare

@@ -856,6 +856,10 @@ tab:
         option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
         option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
         option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
+        option_include_paths: $t(tab.cutlist.write.option_include_paths)
+        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
+        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
+        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
         option_sheet_good: Sheet Good
         option_sheet_good_help: |
           Enables sheet good export and color selection.
@@ -863,25 +867,27 @@ tab:
         option_sheet_veneer_help: |
           Enables veneer sheet export and color selection.
         option_bar_dimensional: Dimensional
-        option_bar_dimensional_help:  |
+        option_bar_dimensional_help: |
           Enables dimensional export and color selection.
         option_bar_band: Edge
-        option_bar_band_help:  |
+        option_bar_band_help: |
           Enables edgebanding export and color selection.
         option_parts: Parts
-        option_parts_help:  |
+        option_parts_help: |
           Enables part export and color selection.
         option_parts_holes: Drillings
-        option_parts_holes_help:  |
+        option_parts_holes_help: |
           Select the color of drillings.
+        option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
+        option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
         option_texts: Identifiers
-        option_texts_help:  |
+        option_texts_help: |
           Enables export of part identification texts and color selection.
         option_leftovers: Leftovers
-        option_leftovers_help:  |
+        option_leftovers_help: |
           Enables export of off-cuts and color selection.
         option_cuts: Cuts
-        option_cuts_help:  |
+        option_cuts_help: |
           Select whether cuts are drawn, and select their color.
         warning:
           is_sheet_selection: The **masked panels** are not exported.
@@ -1698,7 +1704,7 @@ tool:
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: Isolate through-holes and merge depths for each cavity
-    action_option_options_paths_status: Export non-face edges contained in the part as a path
+    action_option_options_include_paths_status: Export non-face edges contained in the part as a path
     error:
       not_part: This face does not belong to a part (component)
       not_flat_face: This surface is not flat

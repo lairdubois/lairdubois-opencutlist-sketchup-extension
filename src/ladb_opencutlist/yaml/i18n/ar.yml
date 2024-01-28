@@ -639,11 +639,11 @@ tab:
     report:
       title: تثمين
       info_0: |
-        تتيح لك هذه الوظيفة إنشاء تثمين **للكتل** و **التكاليف** و **الخامات** اللازمة لإنتاج القطع المتضمَّنة في قائمة القطع *.
+        تتيح لك هذه الوظيفة إنشاء تثمين **للكتل** و **التكاليف** و **الخامات** اللازمة لإنتاج القطع* المتضمَّنة في قائمة القطع*.
       options_general: عام
       options_solid_wood: $t(tab.materials.type_1)
       option_solid_wood_coefficient: "*$t(tab.materials.type_1)* معامل الهدر"
-      option_solid_wood_coefficient_help: تُستخدم للدلالة على معامل الضرب المطبق على الحجم الإجمالي المُقاس للخامات من نوع "**t(tab.materials.type_1)$**" لحساب المهدور.
+      option_solid_wood_coefficient_help: تُستخدم للدلالة على معامل الضرب المطبق على الحجم الإجمالي المُقاس للخامات من نوع "**$t(tab.materials.type_1)**" لحساب المهدور.
       raw_materials: المواد الأولية
       coefficient: المعامل
       total: الإجمالي
@@ -656,8 +656,10 @@ tab:
       total_volume: مجموع الأحجام
       total_area: مجموع المساحات
       total_length: مجموع الأطوال
+      tooltip:
+        incompatible_unit: ""
       error:
-        no_typed_material_parts: "لا تتوفر أي قطعة ذات خامة محددة (**t(tab.materials.type_1)$** أو **t(tab.materials.type_2)$** أو **t(tab.materials.type_3)$** أو **t(tab.materials.type_4)$** أو **t(tab.materials.type_5)$** أو **t(tab.materials.type_6)$**) لإنشاء التثمين"
+        no_typed_material_parts: "لا تتوفر أي قطعة ذات خامة محددة (**$t(tab.materials.type_1)** أو **$t(tab.materials.type_2)** أو **$t(tab.materials.type_3)** أو **$t(tab.materials.type_4)** أو **$t(tab.materials.type_5)** أو **$t(tab.materials.type_6)**) لإنشاء التثمين"
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errors**."
       warning:
@@ -729,6 +731,7 @@ tab:
       option_part_drawing_type_2: عرض الوجه الخلفي
       option_part_drawing_type_help: |
         يتيح هذا الخيار إبراز أو إخفاء الشكل الحقيقي للقِطع داخل رسم التقطيع التخطيطي
+
         *ينبغي أن يكون الخيار مفعلا ليتم تصدير الأشكال*
       option_saw_kerf: سُمك الشَفرة
       option_saw_kerf_help: عرض المادة المزالة بفعل شفرة المنشار
@@ -746,12 +749,12 @@ tab:
       option_stacking_2: على العرض
       option_stacking_3: كل الاحتمالات
       option_keep: القياس الأدنى لبواقي التقطيع
-      option_keep_help: "ستُعلَّم بواقي التقطيع التي يزيد طولها و عرضها عن الحد الأدنى بـ ** تُحفظ **  "
+      option_keep_help: ستُعلَّم بواقي التقطيع التي يزيد طولها و عرضها عن الحد الأدنى بـ **تُحفظ**.
       option_std_bar_dimensional: قضيب نظامي
       option_std_bar_edge: شريط حاشية نظامي
       option_std_bar_help: |
         حدد القضيب النظامي الذي سيُنسخ لاحتواء جميع القِطع
-        هذه القائمة محددة وفقا لحقل الخامة **t(tab.materials.edit_material.std_lengths)$**
+        هذه القائمة محددة وفقا لحقل الخامة **$t(tab.materials.edit_material.std_lengths)**
         لتحديث هذه القائمة، عدّل الخامة '{{ material_name }}'
       option_std_bar_add: أضف طولا
       option_std_bar_none: لا شيء
@@ -767,7 +770,7 @@ tab:
       option_std_sheet_veneer: قشرة خشب قياسية
       option_std_sheet_help: |
         حدد ورقة قشرة الخشب أو اللوح النظامي الذي سيُنسخ لحساب أفضل احتواء ممكن للقِطع
-        هذه القائمة محددة وفقا لحقل الخامة **t(tab.materials.edit_material.std_sizes)$**
+        هذه القائمة محددة وفقا لحقل الخامة **$t(tab.materials.edit_material.std_sizes)**
         لتحديث هذه القائمة ، عدل الخامة '{{ material_name }}'
       option_std_sheet_add: أضف طولا
       option_std_sheet_none: لا شيء
@@ -830,10 +833,14 @@ tab:
         info_0: |
         option_file_format: $t(tab.cutlist.write.option_file_format)
         option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
-        option_dxf_structure: ""
-        option_dxf_structure_1: ""
-        option_dxf_structure_2: ""
+        option_dxf_structure: بُنية DXF
+        option_dxf_structure_1: الطبقات
+        option_dxf_structure_2: الطبقات + الكتل
         option_dxf_structure_help: |
+          يساعد الخيار على تحديد بُنية ملف الـ DXF
+
+          - بُنية **الطبقات** تُسطِّح كل الخطوط، و تميز بين أنواع الخطوط المختلفة باستعمال الطبقات فقط. *توفر هذه البُنية توافقا أكبر مع البرامج المُساعِدة* 
+          - بُنية ** الطبقات + الكتل ** تنشئ كتلة واحدة لكل قِطعة، و تضيف هذه الكتل عدة مرات حسب تكرار القِطع. *توفر هذه البنية مرونة أكبر لتعديل الملف*
         option_unit: $t(tab.cutlist.write.option_unit)
         option_unit_help: $t(tab.cutlist.write.option_unit_help)
         option_smoothing: $t(tab.cutlist.write.option_smoothing)
@@ -844,6 +851,10 @@ tab:
         option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
         option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
         option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
+        option_include_paths: $t(tab.cutlist.write.option_include_paths)
+        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
+        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
+        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
         option_sheet_good: لوح
         option_sheet_good_help: |
           يتيح هذا الخيار تصدير اللوح و اختيار ألوانه
@@ -851,24 +862,26 @@ tab:
         option_sheet_veneer_help: |
           يتيح هذا الخيار تصدير ورقة قشر الخشب و اختيار اللون
         option_bar_dimensional: قضيب خشبي
-        option_bar_dimensional_help:  |
+        option_bar_dimensional_help: |
           يتيح هذا الخيار تصدير القضيب و اختيار ألوانه
         option_bar_band: شريط الحاشية
-        option_bar_band_help:  |
+        option_bar_band_help: |
           يتيح هذا الخيار تصدير شريط الحاشية و اختيار ألوانه
         option_parts: القِطع
-        option_parts_help:  |
+        option_parts_help: |
           يتيح هذا الخيار تصدير القِطع و اختيار ألوانها
         option_parts_holes: التثقيب
-        option_parts_holes_help:  |
+        option_parts_holes_help: |
           حدد لون التثقيب
+        option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
+        option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
         option_texts: ""
-        option_texts_help:  |
+        option_texts_help: |
         option_leftovers: بواقي التقطيع
-        option_leftovers_help:  |
+        option_leftovers_help: |
           يتيح هذا الخيار تصدير بواقي التقطيع و اختيار ألوانها
         option_cuts: قطع
-        option_cuts_help:  |
+        option_cuts_help: |
         warning:
           is_sheet_selection: لم تُصدَّر ** الألواح المخفية **
       error:
@@ -1114,8 +1127,8 @@ tab:
       obsolete_cutlist: "مستحيل، قائمة القطع قديمة. أعد استحداثها."
     warning:
       is_entity_selection: وحدها القطع المحددة في نموذجك من أُخذت بالحسبان.
-      no_typed_materials_in_model: "لا يستعمل نموذجك أي خامة محددة (**t(tab.materials.type_1)$** أو **t(tab.materials.type_2)$** أو **t(tab.materials.type_3)$** أو **t(tab.materials.type_5)$**)"
-      no_typed_materials_in_selection: "لا تستعمل في تحديدك أي خامة محددة (**t(tab.materials.type_1)$** أو **t(tab.materials.type_2)$** أو **t(tab.materials.type_3)$** أو **t(tab.materials.type_5)$**)"
+      no_typed_materials_in_model: "لا يستعمل نموذجك أي خامة محددة (**$t(tab.materials.type_1)** أو **$t(tab.materials.type_2)** أو **$t(tab.materials.type_3)** أو **$t(tab.materials.type_5)**)"
+      no_typed_materials_in_selection: "لا تستعمل في تحديدك أي خامة محددة (**$t(tab.materials.type_1)** أو **$t(tab.materials.type_2)** أو **$t(tab.materials.type_3)** أو **$t(tab.materials.type_5)**)"
       export_empty: تصديرك لا يحتوي أي قطعة.
     success:
       part_selected: ""
@@ -1125,7 +1138,7 @@ tab:
         يجب أن تكون القِطع المتضمَّمة في *قائمة القِطع* مثيلات**عنصر**.
         إن كنت تستعمل المجموعات groups فحسب فعليك تحويلها إلى عناصر components.
         استخدام العناصر لإنتاج القِطع، يتيح إعادة إنتاجها بطريقة مماثلة دون نسخها نسخا مطابقا.
-      no_typed_materials: "طبّق خامة على القِطع التي ستُدرج في قائمة القطع و حدد خصائصها (**t(tab.materials.type_1)$** أو **t(tab.materials.type_2)$** أو **t(tab.materials.type_3)$** أو **t(tab.materials.type_5)$**) في التبويب<i class=\"ladb-opencutlist-icon-materials\"></i> **الخامات**"
+      no_typed_materials: "طبّق خامة على القِطع التي ستُدرج في قائمة القطع و حدد خصائصها (**$t(tab.materials.type_1)** أو **$t(tab.materials.type_2)** أو **$t(tab.materials.type_3)** أو **$t(tab.materials.type_5)**) في التبويب<i class=\"ladb-opencutlist-icon-materials\"></i> **الخامات**"
     obsolete_base: "للبقاء في وضعية مزامنة، ينبغي أن تعيد استحداث قائمة القِطع."
   materials:
     label: الخامات
@@ -1149,6 +1162,7 @@ tab:
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: اتجاه تعرّق الألياف
+      raw_estimated_0: ""
       colorized: سيضاف هذا اللون إلى الهيئة السطحية -تكستشر- لهذه الخامة عندما يجري تصييرها -رندرتها- في النموذج
       texture_load: حمّل هيئة سطحية - تكستشر جديدة
       texture_clear: أزل الهيئة السطحية - التكستشر
@@ -1183,6 +1197,7 @@ tab:
       description: تعليق وصفيّ
       url: رابط
       cut_options: خيارات التقطيع
+      estimate_options: ""
       attributes: السِّمات
       thickness: السُمك
       thickness_help: |
@@ -1191,7 +1206,7 @@ tab:
       length_increase: تمديد الطول
       length_increase_help: طُبق تمديد على الطول لتحديد **الطول الأولي**.
       width_increase: تمديد العرض
-      width_increase_help: طُبق تمديد على العرض لتحديد *العرض الأولي**.
+      width_increase_help: طُبق تمديد على العرض لتحديد **العرض الأولي**.
       thickness_increase: تمديد السُمك
       thickness_increase_help: طُبق تمديد على السُّمك لتحديد **السمك الأولي**.
       std_lengths: الأطوال النظامية
@@ -1227,6 +1242,10 @@ tab:
       edge_decremented_help: تسمح بتحديد ما إذا كان يجب إنقاص الأبعاد وفقا لسُمك الحاشية.
       edge_decremented_0: لا إنقاص
       edge_decremented_1: إنقاص بقدر سمك الحاشية
+      raw_estimated: ""
+      raw_estimated_help: |
+      raw_estimated_0: ""
+      raw_estimated_1: ""
       std_attributes_dim_placeholder: حدد مقاسا
       std_volumic_masses: الكثافة
       std_volumic_masses_help: ""
@@ -1657,7 +1676,7 @@ tool:
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: ""
-    action_option_options_paths_status: ""
+    action_option_options_include_paths_status: ""
     error:
       not_part: هذا الوجه لا ينتمي إلى قِطعة (عنصر)
       not_flat_face: هذا الوجه ليس مُسطَّحا

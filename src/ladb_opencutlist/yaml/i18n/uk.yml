@@ -856,6 +856,10 @@ tab:
         option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
         option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
         option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
+        option_include_paths: $t(tab.cutlist.write.option_include_paths)
+        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
+        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
+        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
         option_sheet_good: Листовий
         option_sheet_good_help: |
           Дозволяє експорт панелі та вибір кольору.
@@ -863,25 +867,27 @@ tab:
         option_sheet_veneer_help: |
           Дозволяє активувати експорт листа та вибрати його кольори.
         option_bar_dimensional: Погонаж
-        option_bar_dimensional_help:  |
+        option_bar_dimensional_help: |
           Дозволяє активувати експорт дошки та вибрати її кольори.
         option_bar_band: Крайка
-        option_bar_band_help:  |
+        option_bar_band_help: |
           Дозволяє активувати експорт крайки та вибрати її кольори.
         option_parts: Деталі
-        option_parts_help:  |
+        option_parts_help: |
           Дозволяє активувати експорт деталей та вибрати їх кольори.
         option_parts_holes: Свердління
-        option_parts_holes_help:  |
+        option_parts_holes_help: |
           Дозволяє вибрати колір отворів деталей.
+        option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
+        option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
         option_texts: Ідентифікації
-        option_texts_help:  |
+        option_texts_help: |
           Дозволяє активувати експорт текстів ідентифікації деталей та вибрати їх кольори.
         option_leftovers: Залишки
-        option_leftovers_help:  |
+        option_leftovers_help: |
           Дозволяє активувати експорт залишків та вибрати їхні кольори.
         option_cuts: Розрізи
-        option_cuts_help:  |
+        option_cuts_help: |
           Дозволяє активувати експорт розрізів та вибрати їх колір.
         warning:
           is_sheet_selection: Приховані **панелі** не будуть експортовані.
@@ -1698,7 +1704,7 @@ tool:
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: "Виокремити отвори, що проходять крізь і злити глибини для кожної порожнини"
-    action_option_options_paths_status: "Експортувати як шляхи непов'язаних з гранню ребер, що містяться в деталі"
+    action_option_options_include_paths_status: "Експортувати як шляхи непов'язаних з гранню ребер, що містяться в деталі"
     error:
       not_part: Ця площина не є частиною деталі (компонента)
       not_flat_face: Ця поверхня не є плоскою

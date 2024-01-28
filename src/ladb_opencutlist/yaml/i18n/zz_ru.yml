@@ -864,744 +864,750 @@ tab:
         option_merge_holes_0: "$t(tab.cutlist.write.option_merge_holes_0)"
         option_merge_holes_1: "$t(tab.cutlist.write.option_merge_holes_1)"
         option_merge_holes_help: "$t(tab.cutlist.write.option_merge_holes_help)"
-        option_sheet_good: 689 - Панель
-        option_sheet_good_help: '690 - Позволяет активировать экспорт панели и выбрать ее цвета.
+        option_include_paths: "$t(tab.cutlist.write.option_include_paths)"
+        option_include_paths_0: "$t(tab.cutlist.write.option_include_paths_0)"
+        option_include_paths_1: "$t(tab.cutlist.write.option_include_paths_1)"
+        option_include_paths_help: "$t(tab.cutlist.write.option_include_paths_help)"
+        option_sheet_good: 693 - Панель
+        option_sheet_good_help: '694 - Позволяет активировать экспорт панели и выбрать ее цвета.
 
           '
-        option_sheet_veneer: 691 - Лист
-        option_sheet_veneer_help: '692 - Позволяет активировать экспорт листа и выбрать его цвета.
+        option_sheet_veneer: 695 - Лист
+        option_sheet_veneer_help: '696 - Позволяет активировать экспорт листа и выбрать его цвета.
 
           '
-        option_bar_dimensional: 693 - Погонаж
-        option_bar_dimensional_help: '694 - Позволяет активировать экспорт погонажа и выбрать его цвета.
+        option_bar_dimensional: 697 - Погонаж
+        option_bar_dimensional_help: '698 - Позволяет активировать экспорт погонажа и выбрать его цвета.
 
           '
-        option_bar_band: 695 - Кромка
-        option_bar_band_help: '696 - Позволяет активировать экспорт кромки и выбрать ее цвета.
+        option_bar_band: 699 - Кромка
+        option_bar_band_help: '700 - Позволяет активировать экспорт кромки и выбрать ее цвета.
 
           '
-        option_parts: 697 - Детали
-        option_parts_help: '698 - Позволяет активировать экспорт деталей и выбирать их цвета.
+        option_parts: 701 - Детали
+        option_parts_help: '702 - Позволяет активировать экспорт деталей и выбирать их цвета.
 
           '
-        option_parts_holes: 699 - Отверстия
-        option_parts_holes_help: '700 - Позволяет задать цвет отверстий в деталях.
+        option_parts_holes: 703 - Отверстия
+        option_parts_holes_help: '704 - Позволяет задать цвет отверстий в деталях.
 
           '
-        option_texts: 701 - Идентификации
-        option_texts_help: '702 - Позволяет активировать экспорт текстов идентификации деталей, а также выбрать их цвета.
+        option_parts_paths: "$t(tab.cutlist.write.option_parts_paths)"
+        option_parts_paths_help: "$t(tab.cutlist.write.option_parts_paths_help)"
+        option_texts: 707 - Идентификации
+        option_texts_help: '708 - Позволяет активировать экспорт текстов идентификации деталей, а также выбрать их цвета.
 
           '
-        option_leftovers: 703 - Обрезки
-        option_leftovers_help: '704 - Позволяет активировать экспорт деловых обрезков и выбирать их цвета.
+        option_leftovers: 709 - Обрезки
+        option_leftovers_help: '710 - Позволяет активировать экспорт деловых обрезков и выбирать их цвета.
 
           '
-        option_cuts: 705 - Распилы
-        option_cuts_help: '706 - Позволяет активировать экспорт разрезов, а также выбрать их цвет.
+        option_cuts: 711 - Распилы
+        option_cuts_help: '712 - Позволяет активировать экспорт разрезов, а также выбрать их цвет.
 
           '
         warning:
-          is_sheet_selection: 707 - **Скрытые панели** не будут экспортированы.
+          is_sheet_selection: 713 - **Скрытые панели** не будут экспортированы.
       error:
-        no_bar_dimensional: 708 - Стандартная панель настроена неправильно, поэтому не определа в раскрое.
-        no_bar_edge: 709 - Стандартные размеры кромочной полосы введены неверно, поэтому она не определена в раскрое.
-        parameters: 710 - Параметры неверны. Размер обрезки более чем на 25% превышает самую длинную деталь раскройки кромочной полосы.
-        no_parts: 711 - Нет детали.
-        no_sheet: 712 - Стандартные размеры панели неправильно введены, поэтому она не определена в раскрое.
-        no_placement_possible_1d: 713 - Размещение детали на карте раскроя не возможно из-за заданных нестандартных параметров (стандартный погонаж слишком мал, запас под обрезку слишком велик, пильный диск слишком толстый, и т.д, ...).
-        no_placement_possible_2d: 714 - Некоторые размеры слишком велики или малы, чтобы рассчитать раскрой (обрезка велика, стандартная панель мала, ширина пропила велика,...).
-        bad_error: 715 - Сбой расчета, пожалуйста, свяжитесь с разработчиками, у вас интересный случай.
-        unplaced_parts: 716 - **1 деталь** не возможно разместить, так как она слишком велика для размещения.
-        unplaced_parts_plural: 717 - Есть **{{ count }} детали** которые не могут быть размещены, потому что они превышают размеры панели.
+        no_bar_dimensional: 714 - Стандартная панель настроена неправильно, поэтому не определа в раскрое.
+        no_bar_edge: 715 - Стандартные размеры кромочной полосы введены неверно, поэтому она не определена в раскрое.
+        parameters: 716 - Параметры неверны. Размер обрезки более чем на 25% превышает самую длинную деталь раскройки кромочной полосы.
+        no_parts: 717 - Нет детали.
+        no_sheet: 718 - Стандартные размеры панели неправильно введены, поэтому она не определена в раскрое.
+        no_placement_possible_1d: 719 - Размещение детали на карте раскроя не возможно из-за заданных нестандартных параметров (стандартный погонаж слишком мал, запас под обрезку слишком велик, пильный диск слишком толстый, и т.д, ...).
+        no_placement_possible_2d: 720 - Некоторые размеры слишком велики или малы, чтобы рассчитать раскрой (обрезка велика, стандартная панель мала, ширина пропила велика,...).
+        bad_error: 721 - Сбой расчета, пожалуйста, свяжитесь с разработчиками, у вас интересный случай.
+        unplaced_parts: 722 - **1 деталь** не возможно разместить, так как она слишком велика для размещения.
+        unplaced_parts_plural: 723 - Есть **{{ count }} детали** которые не могут быть размещены, потому что они превышают размеры панели.
       warning:
-        is_part_selection: 718 - Данный отчет ограничен **выделенными деталями**.
-        cutting_dimensions: 719 - Эта карта раскроя отображает детали с их **пильными** размерами.
-        cutting_dimensions_increase_1d: '720 - Эти пильные размеры сконфигурированы для материала ''{{ material_name }}'': Припуск к длине (**{{ length_increase }}**).'
-        cutting_dimensions_increase_2d: '721 - Эти пильные размеры сконфигурированы для материала ''{{ material_name }}'': Припуск к длине (**{{ length_increase }}**) и Припуск к ширине (**{{ width_increase }}**).'
-        cutting_dimensions_edge_decrement: 722 - Размеры уменьшены на толщину кромки. <i class='ladb-opencutlist-icon-edge-decremented'></i>
+        is_part_selection: 724 - Данный отчет ограничен **выделенными деталями**.
+        cutting_dimensions: 725 - Эта карта раскроя отображает детали с их **пильными** размерами.
+        cutting_dimensions_increase_1d: '726 - Эти пильные размеры сконфигурированы для материала ''{{ material_name }}'': Припуск к длине (**{{ length_increase }}**).'
+        cutting_dimensions_increase_2d: '727 - Эти пильные размеры сконфигурированы для материала ''{{ material_name }}'': Припуск к длине (**{{ length_increase }}**) и Припуск к ширине (**{{ width_increase }}**).'
+        cutting_dimensions_edge_decrement: 728 - Размеры уменьшены на толщину кромки. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
-      title: 723 - Этикетки
-      options_layout: 724 - Состав
-      options_settings: 725 - Конфигурация
-      options_part_order_strategy: 726 - Сортировка
-      options_offset: 727 - Смещение
-      size: 728 - Фактический размер этикетки
-      add_element: 729 - Добавить элемент
-      remove_element: 730 - Удалить
-      remove_all_elements: 731 - Удалить все
+      title: 729 - Этикетки
+      options_layout: 730 - Состав
+      options_settings: 731 - Конфигурация
+      options_part_order_strategy: 732 - Сортировка
+      options_offset: 733 - Смещение
+      size: 734 - Фактический размер этикетки
+      add_element: 735 - Добавить элемент
+      remove_element: 736 - Удалить
+      remove_all_elements: 737 - Удалить все
       part_order_strategy_help: |
-        732 - Измените следующие свойства, чтобы задать порядок сортировки этикеток.
+        738 - Измените следующие свойства, чтобы задать порядок сортировки этикеток.
         Каждое свойство может быть отсортировано <i class="ladb-opencutlist-icon-sort-asc"></i> *по возрастанию* или <i class="ladb-opencutlist-icon-sort-desc"></i> *по убыванию*.
       offset_help: |
-        733 - *Смещение* позволяет вам задать положение **первой этикетки** на **первой странице**.
+        739 - *Смещение* позволяет вам задать положение **первой этикетки** на **первой странице**.
         Выделите или снимите выделение с позиций, соответствующих вашему выбору.
-      option_page: 734 - Бумага
-      option_page_format: 735 - Формат
-      option_page_format_portrait: 736 - Книжный
-      option_page_format_landscape: 737 - Альбомный
-      option_page_format_custom: 738 - Пользовательский
-      option_page_width: 739 - Ширина
-      option_page_height: 740 - Высота
-      option_margin: 741 - Поля
-      option_margin_top: 742 - Сверху
-      option_margin_right: 743 - Справа
-      option_margin_bottom: 744 - Снизу
-      option_margin_left: 745 - Слева
-      option_spacing: 746 - Интервалы
-      option_spacing_h: 747 - По горизонтали
-      option_spacing_v: 748 - По вертикали
-      option_grid: 749 - Этикеток на странице
-      option_col_count: 750 - Столбцы
-      option_row_count: 751 - Строк
-      option_cutting_marks: 752 - Маркеры
-      option_cutting_marks_0: 753 - Нет
-      option_cutting_marks_1: 754 - Распечатать
-      option_formula: 755 - Тип маркировки
-      option_size: 756 - Размер
-      option_custom_formula: 757 - Формула
-      option_anchor: 758 - Позиция привязки
-      option_anchor_start: 759 - От левого нижнего края
-      option_anchor_middle: 760 - От середины нижнего края
-      option_anchor_end: 761 - От правого нижнего края
-      option_anchor_start_top: 762 - От верхнего левого края
-      option_anchor_middle_top: 763 - От середины верхнего края
-      option_anchor_end_top: 764 - От правого верхнего края
-      option_color: 765 - Цвет
+      option_page: 740 - Бумага
+      option_page_format: 741 - Формат
+      option_page_format_portrait: 742 - Книжный
+      option_page_format_landscape: 743 - Альбомный
+      option_page_format_custom: 744 - Пользовательский
+      option_page_width: 745 - Ширина
+      option_page_height: 746 - Высота
+      option_margin: 747 - Поля
+      option_margin_top: 748 - Сверху
+      option_margin_right: 749 - Справа
+      option_margin_bottom: 750 - Снизу
+      option_margin_left: 751 - Слева
+      option_spacing: 752 - Интервалы
+      option_spacing_h: 753 - По горизонтали
+      option_spacing_v: 754 - По вертикали
+      option_grid: 755 - Этикеток на странице
+      option_col_count: 756 - Столбцы
+      option_row_count: 757 - Строк
+      option_cutting_marks: 758 - Маркеры
+      option_cutting_marks_0: 759 - Нет
+      option_cutting_marks_1: 760 - Распечатать
+      option_formula: 761 - Тип маркировки
+      option_size: 762 - Размер
+      option_custom_formula: 763 - Формула
+      option_anchor: 764 - Позиция привязки
+      option_anchor_start: 765 - От левого нижнего края
+      option_anchor_middle: 766 - От середины нижнего края
+      option_anchor_end: 767 - От правого нижнего края
+      option_anchor_start_top: 768 - От верхнего левого края
+      option_anchor_middle_top: 769 - От середины верхнего края
+      option_anchor_end_top: 770 - От правого верхнего края
+      option_color: 771 - Цвет
       formula:
-        custom: 766 - Формула
-        part_number: 767 - Номер
-        part_name: 768 - Определение
-        part_description: 769 - Описание
-        part_entity_named_path: 770 - Путь к объекту
-        part_entity_name: 771 - Имя экземпляра
-        part_bin: 772 - Грубый размер
-        part_cutting_size: 773 - Размеры элемента
-        part_cutting_length: 774 - Длина элемента
-        part_cutting_width: 775 - Ширина элемента
-        part_cutting_thickness: 776 - Толщина раскроя
-        part_edge_cutting_size: 777 - Высота кромки
-        part_edge_cutting_length: 778 - Длина кромки - пильная
-        part_edge_cutting_width: 779 - Ширина кромки - пильная
-        part_size: 780 - Доступный размер
-        part_length: 781 - Пильная длина
-        part_width: 782 - Ширина
-        part_thickness: 783 - Толщина
-        part_tags: 784 - Маркеры
-        part_batch: 785 - Деталей в раскрое
-        part_edge_ymin: 786 - Кромка по длине 1
-        part_edge_ymax: 787 - Кромка по длине 2
-        part_edge_xmin: 788 - Кромка по ширине 1
-        part_edge_xmax: 789 - Кромка по ширине 2
-        part_face_zmin: 790 - Тыльный шпон
-        part_face_zmax: 791 - Лицевой шпон
-        thumbnail_proportional_drawing: 792 - Обзор миниатюр
-        thumbnail_proportional: 793 - Пропорциональная
-        thumbnail_square: 794 - Квадратная
-        group_material: 795 - Материал / Толщина
-        group_material_name: 796 - Название материала
-        group_std_dimension: 797 - Измерительный стандарт
-        filename: 798 - Имя файла
-        model_name: 799 - Название модели
-        page_name: 800 - Имя сцены
-        length_unit: 801 - Единицы
-        generated_at: 802 - Дата и время
+        custom: 772 - Формула
+        part_number: 773 - Номер
+        part_name: 774 - Определение
+        part_description: 775 - Описание
+        part_entity_named_path: 776 - Путь к объекту
+        part_entity_name: 777 - Имя экземпляра
+        part_bin: 778 - Грубый размер
+        part_cutting_size: 779 - Размеры элемента
+        part_cutting_length: 780 - Длина элемента
+        part_cutting_width: 781 - Ширина элемента
+        part_cutting_thickness: 782 - Толщина раскроя
+        part_edge_cutting_size: 783 - Высота кромки
+        part_edge_cutting_length: 784 - Длина кромки - пильная
+        part_edge_cutting_width: 785 - Ширина кромки - пильная
+        part_size: 786 - Доступный размер
+        part_length: 787 - Пильная длина
+        part_width: 788 - Ширина
+        part_thickness: 789 - Толщина
+        part_tags: 790 - Маркеры
+        part_batch: 791 - Деталей в раскрое
+        part_edge_ymin: 792 - Кромка по длине 1
+        part_edge_ymax: 793 - Кромка по длине 2
+        part_edge_xmin: 794 - Кромка по ширине 1
+        part_edge_xmax: 795 - Кромка по ширине 2
+        part_face_zmin: 796 - Тыльный шпон
+        part_face_zmax: 797 - Лицевой шпон
+        thumbnail_proportional_drawing: 798 - Обзор миниатюр
+        thumbnail_proportional: 799 - Пропорциональная
+        thumbnail_square: 800 - Квадратная
+        group_material: 801 - Материал / Толщина
+        group_material_name: 802 - Название материала
+        group_std_dimension: 803 - Измерительный стандарт
+        filename: 804 - Имя файла
+        model_name: 805 - Название модели
+        page_name: 806 - Имя сцены
+        length_unit: 807 - Единицы
+        generated_at: 808 - Дата и время
       error:
-        invalid_size: 803 - Введенные параметры конфигурации не позволяют определить действительный размер этикетки.
+        invalid_size: 809 - Введенные параметры конфигурации не позволяют определить действительный размер этикетки.
       warning:
-        is_part_selection: 804 - Эти этикетки соответствуют **выделенным деталям**.
-        formula_not_available: 805 - Недоступно в данном контексте
+        is_part_selection: 810 - Эти этикетки соответствуют **выделенным деталям**.
+        formula_not_available: 811 - Недоступно в данном контексте
     layout:
-      title: 806 - Чертеж
-      to_layout: 807 - Экспорт в Layout
-      options_layout: 808 - Состав
-      options_settings: 809 - Конфигурация
-      option_parts: 810 - Детали
-      option_parts_colored: 811 - Цвет
-      option_parts_colored_0: 812 - Без цвета
-      option_parts_colored_1: 813 - Цвет материала
-      option_parts_colored_help: 814 - Позволяет выбрать внешний вид деталей.
-      option_parts_opacity: 815 - Прозрачность
-      option_parts_opacity_0: 816 - Прозрачный
-      option_parts_opacity_1: 817 - Матовый
-      option_parts_opacity_help: 818 - Позволяет выбрать уровень прозрачности деталей на чертеже.
-      option_pins: 819 - Булавки
-      option_pins_hidden: 820 - Просмотр
-      option_pins_hidden_0: 821 - С булавками
-      option_pins_hidden_1: 822 - Без булавок
-      option_pins_hidden_help: 823 - Настройка показывает или скрывает на чертеже идентификационные булавки, прикрепленные на детали. На булавке может быть указан номер детали или буквенное обозначение, соответствующие карте раскроя.
-      option_pins_colored: 824 - Цвет
-      option_pins_colored_0: 825 - Без цвета
-      option_pins_colored_1: 826 - Цвет детали
-      option_pins_colored_help: 827 - Позволяет выбрать цвет головки булавок.
-      option_pins_formula: 828 - Формула
-      option_pins_formula_help: 829 - Позволяет вам писать код *Ruby* для настройки текста на булавках.
-      option_pins_length: 830 - Длина
-      option_pins_length_0: 831 - Без стрелки
-      option_pins_length_1: 832 - Малая
-      option_pins_length_2: 833 - Средняя
-      option_pins_length_3: 834 - Большая
-      option_pins_length_help: 835 - Позволяет задать длину стрелки булавки.
-      option_pins_direction: 836 - Направление
-      option_pins_direction_0: 837 - По красной оси
-      option_pins_direction_1: 838 - По зеленой оси
-      option_pins_direction_2: 839 - По синей оси
-      option_pins_direction_3: 840 - Указывает на центр исходной группы
-      option_pins_direction_4: 841 - Указывает на центр выделения
-      option_pins_direction_help: 842 - Позволяет задать направление булавок, чтобы адаптировать их читаемость на чертеже.
-      option_page: 843 - Бумага
-      option_page_format: 844 - Формат
-      option_page_format_portrait: 845 - Книжный
-      option_page_format_landscape: 846 - Альбомный
-      option_page_format_custom: 847 - Пользовательский
-      option_page_width: 848 - Ширина
-      option_page_height: 849 - Высота
-      option_page_header: 850 - Заголовок
-      option_page_header_0: 851 - Без
-      option_page_header_1: 852 - С
+      title: 812 - Чертеж
+      to_layout: 813 - Экспорт в Layout
+      options_layout: 814 - Состав
+      options_settings: 815 - Конфигурация
+      option_parts: 816 - Детали
+      option_parts_colored: 817 - Цвет
+      option_parts_colored_0: 818 - Без цвета
+      option_parts_colored_1: 819 - Цвет материала
+      option_parts_colored_help: 820 - Позволяет выбрать внешний вид деталей.
+      option_parts_opacity: 821 - Прозрачность
+      option_parts_opacity_0: 822 - Прозрачный
+      option_parts_opacity_1: 823 - Матовый
+      option_parts_opacity_help: 824 - Позволяет выбрать уровень прозрачности деталей на чертеже.
+      option_pins: 825 - Булавки
+      option_pins_hidden: 826 - Просмотр
+      option_pins_hidden_0: 827 - С булавками
+      option_pins_hidden_1: 828 - Без булавок
+      option_pins_hidden_help: 829 - Настройка показывает или скрывает на чертеже идентификационные булавки, прикрепленные на детали. На булавке может быть указан номер детали или буквенное обозначение, соответствующие карте раскроя.
+      option_pins_colored: 830 - Цвет
+      option_pins_colored_0: 831 - Без цвета
+      option_pins_colored_1: 832 - Цвет детали
+      option_pins_colored_help: 833 - Позволяет выбрать цвет головки булавок.
+      option_pins_formula: 834 - Формула
+      option_pins_formula_help: 835 - Позволяет вам писать код *Ruby* для настройки текста на булавках.
+      option_pins_length: 836 - Длина
+      option_pins_length_0: 837 - Без стрелки
+      option_pins_length_1: 838 - Малая
+      option_pins_length_2: 839 - Средняя
+      option_pins_length_3: 840 - Большая
+      option_pins_length_help: 841 - Позволяет задать длину стрелки булавки.
+      option_pins_direction: 842 - Направление
+      option_pins_direction_0: 843 - По красной оси
+      option_pins_direction_1: 844 - По зеленой оси
+      option_pins_direction_2: 845 - По синей оси
+      option_pins_direction_3: 846 - Указывает на центр исходной группы
+      option_pins_direction_4: 847 - Указывает на центр выделения
+      option_pins_direction_help: 848 - Позволяет задать направление булавок, чтобы адаптировать их читаемость на чертеже.
+      option_page: 849 - Бумага
+      option_page_format: 850 - Формат
+      option_page_format_portrait: 851 - Книжный
+      option_page_format_landscape: 852 - Альбомный
+      option_page_format_custom: 853 - Пользовательский
+      option_page_width: 854 - Ширина
+      option_page_height: 855 - Высота
+      option_page_header: 856 - Заголовок
+      option_page_header_0: 857 - Без
+      option_page_header_1: 858 - С
       option_page_header_help: |
-        853 - Позволяет выбрать, будет ли печатаемая страница содержать заголовок с названием документа, его описанием, датой, единицей измерения и масштабом.
+        859 - Позволяет выбрать, будет ли печатаемая страница содержать заголовок с названием документа, его описанием, датой, единицей измерения и масштабом.
         Без заголовка проект займет всю страницу.
-      option_camera: 854 - Камера
-      option_camera_view: 855 - Обзор
-      option_camera_view_custom: 856 - Индивидуально
-      option_camera_zoom: 857 - Масштаб
-      option_camera_zoom_auto: 858 - Автоматический
-      option_camera_zoom_custom: 859 - Индивидуально
-      option_camera_target: 860 - Положение
-      option_camera_target_auto: 861 - Автоматический
-      option_camera_target_custom: 862 - Индивидуально
-      option_explode: 863 - Разброс
+      option_camera: 860 - Камера
+      option_camera_view: 861 - Обзор
+      option_camera_view_custom: 862 - Индивидуально
+      option_camera_zoom: 863 - Масштаб
+      option_camera_zoom_auto: 864 - Автоматический
+      option_camera_zoom_custom: 865 - Индивидуально
+      option_camera_target: 866 - Положение
+      option_camera_target_auto: 867 - Автоматический
+      option_camera_target_custom: 868 - Индивидуально
+      option_explode: 869 - Разброс
       error:
-        no_part: 864 - Нет деталей для отрисовки.
-        failed_to_save_as_skp: 865 - Не удалось записать файл с расширением SKP для отправки в Layout.
+        no_part: 870 - Нет деталей для отрисовки.
+        failed_to_save_as_skp: 871 - Не удалось записать файл с расширением SKP для отправки в Layout.
         failed_to_layout: |
-          866 - Ошибка записи файла Layout: *{{ error }}*
+          872 - Ошибка записи файла Layout: *{{ error }}*
 
           **Убедитесь, что файл не открыт в Layout.**
       warning:
-        is_group_selection: 867 - Детали, содержащиеся в **скрытых группах** вашей карты раскроя, не будут нарисованы.
-        is_part_selection: 868 - Этот сборочный чертеж ограничен **выделенными деталями**.
+        is_group_selection: 873 - Детали, содержащиеся в **скрытых группах** вашей карты раскроя, не будут нарисованы.
+        is_part_selection: 874 - Этот сборочный чертеж ограничен **выделенными деталями**.
     write:
-      title: 869 - Экспорт деталей
-      info_2d: '870 - Этот модуль позволяет экспортировать **2D-проекцию** деталей в виде файлов в формате [SVG](https://ru.wikipedia.org/wiki/SVG) или [DXF](https://ru.wikipedia.org/wiki/DXF).
+      title: 875 - Экспорт деталей
+      info_2d: '876 - Этот модуль позволяет экспортировать **2D-проекцию** деталей в виде файлов в формате [SVG](https://ru.wikipedia.org/wiki/SVG) или [DXF](https://ru.wikipedia.org/wiki/DXF).
 
         '
-      info_3d: '871 - Этот модуль позволяет экспортировать **3D-чертежи** деталей в виде файлов в формате [STL](https://ru.wikipedia.org/wiki/STL_(%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%82_%D1%84%D0%B0%D0%B9%D0%BB%D0%B0)) или [OBJ](https://ru.wikipedia.org/wiki/Obj).
+      info_3d: '877 - Этот модуль позволяет экспортировать **3D-чертежи** деталей в виде файлов в формате [STL](https://ru.wikipedia.org/wiki/STL_(%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%82_%D1%84%D0%B0%D0%B9%D0%BB%D0%B0)) или [OBJ](https://ru.wikipedia.org/wiki/Obj).
 
         '
-      option_file_format: 872 - Формат
-      option_file_format_help: '873 - Позволяет выбрать формат файла для экспорта.
+      option_file_format: 878 - Формат
+      option_file_format_help: '879 - Позволяет выбрать формат файла для экспорта.
 
         '
-      option_unit: 874 - Единицы
-      option_unit_help: '875 - Позволяет выбрать единицы измерения, используемые в экспортируемом файле.
+      option_unit: 880 - Единицы
+      option_unit_help: '881 - Позволяет выбрать единицы измерения, используемые в экспортируемом файле.
 
         '
-      option_part_drawing_type: 876 - Проекция
-      option_part_drawing_type_help: '877 - Позволяет выбрать экспортируемый вид.
+      option_part_drawing_type: 882 - Проекция
+      option_part_drawing_type_help: '883 - Позволяет выбрать экспортируемый вид.
 
         '
-      option_faces: 878 - Лицевые
-      option_faces_0: 879 - Используйте только выбранную сторону
-      option_faces_1: 880 - Используйте все стороны детали
-      option_faces_help: '881 - Позволяет задать, выполнять ли поиск формы детали на всех ее гранях или только на лицевой грани.
+      option_faces: 884 - Лицевые
+      option_faces_0: 885 - Используйте только выбранную сторону
+      option_faces_1: 886 - Используйте все стороны детали
+      option_faces_help: '887 - Позволяет задать, выполнять ли поиск формы детали на всех ее гранях или только на лицевой грани.
 
         '
-      option_anchor: 882 - Точка привязки
-      option_anchor_0: 883 - По умолчанию
-      option_anchor_1: 884 - Проецирование происхождения детали
-      option_anchor_help: '885 - Позволяет включить проекцию начала координат детали в качестве точки привязки.
+      option_anchor: 888 - Точка привязки
+      option_anchor_0: 889 - По умолчанию
+      option_anchor_1: 890 - Проецирование происхождения детали
+      option_anchor_help: '891 - Позволяет включить проекцию начала координат детали в качестве точки привязки.
 
         '
-      option_smoothing: 886 - Сглаживание
-      option_smoothing_0: 887 - Нет
-      option_smoothing_1: 888 - Сглаживание окружностей и дуг (Экспериментальный)
+      option_smoothing: 892 - Сглаживание
+      option_smoothing_0: 893 - Нет
+      option_smoothing_1: 894 - Сглаживание окружностей и дуг (Экспериментальный)
       option_smoothing_help: |
-        889 - Позволяет включить обнаружение окружностей и дуг.
+        895 - Позволяет включить обнаружение окружностей и дуг.
 
         *Эта опция не позволяет определить другие типы кривых.*
-      option_merge_holes: 890 - Разбивка
-      option_merge_holes_0: 891 - По умолчанию
-      option_merge_holes_1: 892 - Контур + Отверстия + Слияние
+      option_merge_holes: 896 - Разбивка
+      option_merge_holes_0: 897 - По умолчанию
+      option_merge_holes_1: 898 - Контур + Отверстия + Слияние
       option_merge_holes_help: |
-        893 - **По умолчанию**
+        899 - **По умолчанию**
         Форма детали экспортируется с одним слоем на глубину.
 
         **Контур + Отверстия + Слияние**
         Активирует разделение внешнего контура деталей от их отверстий, а также слияние расстояний для каждой полости.
-      option_include_paths: 894 - Трассы
-      option_include_paths_0: 895 - Нет
-      option_include_paths_1: 896 - Использовать ребра, не связанные с гранью
-      option_include_paths_help: '897 - Позволяет активировать использование ребер, не связанных с гранями, содержащимися в детали, для экспорта в виде контура.
+      option_include_paths: 900 - Трассы
+      option_include_paths_0: 901 - Нет
+      option_include_paths_1: 902 - Использовать ребра, не связанные с гранью
+      option_include_paths_help: '903 - Позволяет активировать использование ребер, не связанных с гранями, содержащимися в детали, для экспорта в виде контура.
 
         '
-      option_parts: 898 - Детали
-      option_parts_help: '899 - Позволяет выбрать цвета деталей.
+      option_parts: 904 - Детали
+      option_parts_help: '905 - Позволяет выбрать цвета деталей.
 
         '
-      option_parts_holes: 900 - Отверстия
-      option_parts_holes_help: '901 - Позволяет выбрать цвета отверстий деталей.
+      option_parts_holes: 906 - Отверстия
+      option_parts_holes_help: '907 - Позволяет выбрать цвета отверстий деталей.
 
         '
-      option_parts_paths: 902 - Трассы
-      option_parts_paths_help: '903 - Позволяет выбрать цвет трассировки.
+      option_parts_paths: 908 - Трассы
+      option_parts_paths_help: '909 - Позволяет выбрать цвет трассировки.
 
         '
       error:
-        no_part: 904 - Нет деталей для экспорта.
+        no_part: 910 - Нет деталей для экспорта.
       warning:
-        is_group_selection: 905 - Детали, содержащиеся в **скрытых группах** вашей карты раскроя, не будут экспортированы.
-        is_part_selection: 906 - Экспорт ограничен **выделенными деталями**.
+        is_group_selection: 911 - Детали, содержащиеся в **скрытых группах** вашей карты раскроя, не будут экспортированы.
+        is_part_selection: 912 - Экспорт ограничен **выделенными деталями**.
     snippet:
-      hello: 907 - Привет
-      number: 908 - Номер
-      name: 909 - Определение
-      number_and_name: 910 - Номер детали
-      number_without_hardware: 911 - Количество (без аксессуаров)
-      size: 912 - Доступный размер
-      area: 913 - Расчетная площадь
-      volume: 914 - Расчетный объем
+      hello: 913 - Привет
+      number: 914 - Номер
+      name: 915 - Определение
+      number_and_name: 916 - Номер детали
+      number_without_hardware: 917 - Количество (без аксессуаров)
+      size: 918 - Доступный размер
+      area: 919 - Расчетная площадь
+      volume: 920 - Расчетный объем
     error:
-      no_model: 915 - Ни одна модель не открыта. Вам необходимо дать мне больше информации ;)
-      no_entities: 916 - Ваша модель пуста. Вам нужно дать мне больше информации ;)
-      no_component_in_selection: 917 - В выделении нет ни одного видимого компонента.
-      no_component_in_model: 918 - Не обнаружено ни одного компонента для раскроя. Откройте в SketchUp файл проекта.
-      unknow_part: 919 - Выделенной детали нет в списке деталей.
-      obsolete_cutlist: 920 - Невозможно, список раскроя не актуален. Рассчитать снова.
+      no_model: 921 - Ни одна модель не открыта. Вам необходимо дать мне больше информации ;)
+      no_entities: 922 - Ваша модель пуста. Вам нужно дать мне больше информации ;)
+      no_component_in_selection: 923 - В выделении нет ни одного видимого компонента.
+      no_component_in_model: 924 - Не обнаружено ни одного компонента для раскроя. Откройте в SketchUp файл проекта.
+      unknow_part: 925 - Выделенной детали нет в списке деталей.
+      obsolete_cutlist: 926 - Невозможно, список раскроя не актуален. Рассчитать снова.
     warning:
-      is_entity_selection: 921 - При расчете учитывались только детали, выделенные в модели.
-      no_typed_materials_in_model: 922 - В данной модели не задан материал (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** или **$t(tab.materials.type_5)**).
-      no_typed_materials_in_selection: 923 - В выделении не задан материал (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** или **$t(tab.materials.type_5)**).
-      export_empty: 924 - Ваш экспорт не содержит ни одной детали.
+      is_entity_selection: 927 - При расчете учитывались только детали, выделенные в модели.
+      no_typed_materials_in_model: 928 - В данной модели не задан материал (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** или **$t(tab.materials.type_5)**).
+      no_typed_materials_in_selection: 929 - В выделении не задан материал (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** или **$t(tab.materials.type_5)**).
+      export_empty: 930 - Ваш экспорт не содержит ни одной детали.
     success:
-      part_selected: 925 - {{ count }} детали выделено в карте раскроя.
-      part_selected_plural: 926 - {{ count }} деталей выделено в карте раскроя.
+      part_selected: 931 - {{ count }} детали выделено в карте раскроя.
+      part_selected_plural: 932 - {{ count }} деталей выделено в карте раскроя.
     tip:
       no_component: |
-        927 - Детали, которые могут быть включены в *карту раскроя*, должны быть в формате **компонента**.
+        933 - Детали, которые могут быть включены в *карту раскроя*, должны быть в формате **компонента**.
         Если в модели для деталей использован формат группы, перед расчетом преобразуйте их в компоненты.
         Детали в формате компоненты, могут быть скопированы без их дублирования.
-      no_typed_materials: 928 - Применить материал к деталям, подлежащим включению в список деталей, и задать свойства этого материала (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** или **$t(tab.materials.type_5)**) можно на вкладке <i class="ladb-opencutlist-icon-materials"></i> **Материалы**.
-    obsolete_base: 929 - Чтобы синхронизировать изменения, необходимо заново рассчитать карту раскроя.
+      no_typed_materials: 934 - Применить материал к деталям, подлежащим включению в список деталей, и задать свойства этого материала (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** или **$t(tab.materials.type_5)**) можно на вкладке <i class="ladb-opencutlist-icon-materials"></i> **Материалы**.
+    obsolete_base: 935 - Чтобы синхронизировать изменения, необходимо заново рассчитать карту раскроя.
   materials:
-    label: 930 - Материалы
-    title: 931 - Материалы
-    new: 932 - Новый материал
-    type_0: 933 - Не определён
-    type_1: 934 - Массив дерева
-    type_2: 935 - Панель
-    type_3: 936 - Погонаж
-    type_4: 937 - Кромочный
-    type_5: 938 - Фурнитура
-    type_6: 939 - Лист шпона
+    label: 936 - Материалы
+    title: 937 - Материалы
+    new: 938 - Новый материал
+    type_0: 939 - Не определён
+    type_1: 940 - Массив дерева
+    type_2: 941 - Панель
+    type_3: 942 - Погонаж
+    type_4: 943 - Кромочный
+    type_5: 944 - Фурнитура
+    type_6: 945 - Лист шпона
     tooltip:
-      type_0: 940 - Тип материала '$t(tab.materials.type_0)'
-      type_1: 941 - Тип материала '$t(tab.materials.type_1)'
-      type_2: 942 - Тип материала '$t(tab.materials.type_2)'
-      type_3: 943 - Тип материала '$t(tab.materials.type_3)'
-      type_4: 944 - Тип материала '$t(tab.materials.type_4)'
-      type_5: 945 - Тип материала '$t(tab.materials.type_5)'
-      type_6: 946 - Тип материала '$t(tab.materials.type_6)'
+      type_0: 946 - Тип материала '$t(tab.materials.type_0)'
+      type_1: 947 - Тип материала '$t(tab.materials.type_1)'
+      type_2: 948 - Тип материала '$t(tab.materials.type_2)'
+      type_3: 949 - Тип материала '$t(tab.materials.type_3)'
+      type_4: 950 - Тип материала '$t(tab.materials.type_4)'
+      type_5: 951 - Тип материала '$t(tab.materials.type_5)'
+      type_6: 952 - Тип материала '$t(tab.materials.type_6)'
       grained_0: "$t(tab.materials.edit_material.grained_0)"
       grained_1: "$t(tab.materials.edit_material.grained_1)"
-      grain_direction: 949 - Направление волокон
-      raw_estimated_0: 950 - Расчет полезного объема
-      colorized: 951 - Этот рисунок фактуры будет применен к текстуре этого материала, когда он будет отображен в модели
-      texture_load: 952 - Загрузить новую текстуру
-      texture_clear: 953 - Очистить текстуру
-      edit: 954 - Редактирование свойств '{{ name }}'
+      grain_direction: 955 - Направление волокон
+      raw_estimated_0: 956 - Расчет полезного объема
+      colorized: 957 - Этот рисунок фактуры будет применен к текстуре этого материала, когда он будет отображен в модели
+      texture_load: 958 - Загрузить новую текстуру
+      texture_clear: 959 - Очистить текстуру
+      edit: 960 - Редактирование свойств '{{ name }}'
       set_current: |
-        955 - Раскрашивайте части с помощью '{{ name }}'
+        961 - Раскрашивайте части с помощью '{{ name }}'
         *Двойной клик, чтобы свернуть*
-      open_url: 956 - Открыть URL-адрес материала
+      open_url: 962 - Открыть URL-адрес материала
     menu:
-      import_from_skm: 957 - Импортировать материал (.skm)
-      purge_unused: 958 - Очистить неиспользуемые материалы
-      reset_prices: 959 - Сброс параметра цены у всех материалов
+      import_from_skm: 963 - Импортировать материал (.skm)
+      purge_unused: 964 - Очистить неиспользуемые материалы
+      reset_prices: 965 - Сброс параметра цены у всех материалов
       reset_prices_confirm: |
-        960 - Вы собираетесь сбросить ранее заданный атрибут стоимости в свойствах материала во всех материалах модели.
+        966 - Вы собираетесь сбросить ранее заданный атрибут стоимости в свойствах материала во всех материалах модели.
         Это действие является необратимым. **Установленная стоимость материалов будет обнулена.**
         Подтвердите, чтобы продолжить.
-      reset_prices_success: 961 - Параметр цены для всех материалов был сброшен.
+      reset_prices_success: 967 - Параметр цены для всех материалов был сброшен.
     new_material:
-      title: 962 - Создать новый материал
-      name: 963 - Определение
-      name_warning: 964 - Недопустимое имя
-      color: 965 - Цвет
-      color_warning: 966 - Недопустимый цвет
-      type: 967 - Тип
-    edit_material:
-      title: 968 - Свойства материала '{{ name }}'
-      general: 969 - Общие
-      texture: 970 - Текстура
-      no_texture: 971 - Нет текстуры
-      name: 972 - Определение
+      title: 968 - Создать новый материал
+      name: 969 - Определение
+      name_warning: 970 - Недопустимое имя
+      color: 971 - Цвет
+      color_warning: 972 - Недопустимый цвет
       type: 973 - Тип
-      description: 974 - Описание
-      url: 975 - URL
-      cut_options: 976 - Параметры раскроя
-      estimate_options: 977 - Параметры расчета
-      attributes: 978 - Атрибуты
-      thickness: 979 - Толщина
+    edit_material:
+      title: 974 - Свойства материала '{{ name }}'
+      general: 975 - Общие
+      texture: 976 - Текстура
+      no_texture: 977 - Нет текстуры
+      name: 978 - Определение
+      type: 979 - Тип
+      description: 980 - Описание
+      url: 981 - URL
+      cut_options: 982 - Параметры раскроя
+      estimate_options: 983 - Параметры расчета
+      attributes: 984 - Атрибуты
+      thickness: 985 - Толщина
       thickness_help: |
-        980 - Готовая толщина материала.
+        986 - Готовая толщина материала.
         *Если единицы измерения не указаны, будет использована единица измерения модели проекта.*
-      length_increase: 981 - Припуск к длине
-      length_increase_help: 982 - Припуск под подгонку прибавляется к фактической длине для расчета **пильной длины**.
-      width_increase: 983 - Припуск к ширине
-      width_increase_help: 984 - Припуск под подгонку прибавляется к фактической ширине для расчета **пильной ширины**.
-      thickness_increase: 985 - Припуск к толщине
-      thickness_increase_help: 986 - Припуск под подгонку к толщине прибавляется к фактической толщине для расчета **пильной толщины**.
-      std_lengths: 987 - Стандартная длина
-      std_lengths_placeholder: 988 - Длина ; ...
+      length_increase: 987 - Припуск к длине
+      length_increase_help: 988 - Припуск под подгонку прибавляется к фактической длине для расчета **пильной длины**.
+      width_increase: 989 - Припуск к ширине
+      width_increase_help: 990 - Припуск под подгонку прибавляется к фактической ширине для расчета **пильной ширины**.
+      thickness_increase: 991 - Припуск к толщине
+      thickness_increase_help: 992 - Припуск под подгонку к толщине прибавляется к фактической толщине для расчета **пильной толщины**.
+      std_lengths: 993 - Стандартная длина
+      std_lengths_placeholder: 994 - Длина ; ...
       std_lengths_help: |
-        989 - Стандартные длины досок или кромочных лент.
+        995 - Стандартные длины досок или кромочных лент.
         *Если единицы измерения не указаны, будет использована единица измерения модели проекта.*
-      std_widths: 990 - Стандартная ширина
-      std_widths_placeholder: 991 - ширина ; ...
+      std_widths: 996 - Стандартная ширина
+      std_widths_placeholder: 997 - ширина ; ...
       std_widths_help: |
-        992 - Стандартная ширина кромок.
+        998 - Стандартная ширина кромок.
         *Размеры без единиц считаются в единицах измерения проекта модели.*
-      std_thicknesses: 993 - Стандартные толщины
-      std_thicknesses_placeholder: 994 - толщина ; ...
+      std_thicknesses: 999 - Стандартные толщины
+      std_thicknesses_placeholder: 1000 - толщина ; ...
       std_thicknesses_help: |
-        995 - Доступная **пильная** толщина.
+        1001 - Доступная **пильная** толщина.
         *Размеры без единиц считаются в единицах измерения проекта модели.*
-      std_sections: 996 - Стандартные сечения
-      std_sections_placeholder: 997 - ширина x толщина ; ...
+      std_sections: 1002 - Стандартные сечения
+      std_sections_placeholder: 1003 - ширина x толщина ; ...
       std_sections_help: |
-        998 - Формат ввода: **Ш**x**T**, где **Ш** и **T** обозначают *ширину* и *толщину* размеров сечения (фактические не номинальные размеры).
+        1004 - Формат ввода: **Ш**x**T**, где **Ш** и **T** обозначают *ширину* и *толщину* размеров сечения (фактические не номинальные размеры).
         *Размеры без единиц считаются в единицах измерения проекта модели.*
-      std_sizes: 999 - Стандартные размеры панели
-      std_sizes_placeholder: 1000 - длина x ширина ; ...
+      std_sizes: 1005 - Стандартные размеры панели
+      std_sizes_placeholder: 1006 - длина x ширина ; ...
       std_sizes_help: |
-        1001 - Формат ввода: **Д**x**Ш**, где **Д** и **Ш** обазначают *длину* и *ширину* панели.
+        1007 - Формат ввода: **Д**x**Ш**, где **Д** и **Ш** обазначают *длину* и *ширину* панели.
         *Размеры без единиц считаются в единицах измерения проекта модели.*
-      grained: 1002 - Направление волокон
-      grained_help: 1003 - Конфигурирует направление изображения фактуры материала (волокон).
-      grained_0: 1004 - Без фактуры
-      grained_1: 1005 - Вдоль волокон
-      edge_decremented: 1006 - Учёт кромки
-      edge_decremented_help: 1007 - При активации, настройка учитывает в линейном размере детали толщину кромки.
-      edge_decremented_0: 1008 - Не учитывать
-      edge_decremented_1: 1009 - Вычесть толщину кромок
-      raw_estimated: 1010 - Общий объем
+      grained: 1008 - Направление волокон
+      grained_help: 1009 - Конфигурирует направление изображения фактуры материала (волокон).
+      grained_0: 1010 - Без фактуры
+      grained_1: 1011 - Вдоль волокон
+      edge_decremented: 1012 - Учёт кромки
+      edge_decremented_help: 1013 - При активации, настройка учитывает в линейном размере детали толщину кромки.
+      edge_decremented_0: 1014 - Не учитывать
+      edge_decremented_1: 1015 - Вычесть толщину кромок
+      raw_estimated: 1016 - Общий объем
       raw_estimated_help: |
-        1011 - Позволяет рассчитать объем для оценки массы и стоимости деталей из этого материала.
+        1017 - Позволяет рассчитать объем для оценки массы и стоимости деталей из этого материала.
 
         **Полезный объем материала**
         Расчет общего объема из суммы объемов деталей карты раскроя.
 
-        **Объем использованного  материала**
+        **Объем использованного материала**
         Сумма объемов деталей из панелей, листов, погонажа или кромок после раскроя.
-      raw_estimated_0: 1012 - Полезный объем материала
-      raw_estimated_1: 1013 - Объем использованного материала
-      std_attributes_dim_placeholder: 1014 - Введите размер
-      std_volumic_masses: 1015 - Плотность
-      std_volumic_masses_help: 1016 - Позволяет определить плотность для всех размеров, а также для каждого стандартного размера материала.
-      std_volumic_masses_add: 1017 - Добавить плотность
-      std_prices: 1018 - Цена
-      std_prices_help: '1019 - Позволяет задать стоимость материала в зависимости от расчета цены за единицу: объема, площади, штуки.'
-      std_prices_add: 1020 - Добавьте цену
-      texture_width: 1021 - Ширина
-      texture_height: 1022 - Высота
-      export_to_skm: 1023 - Экспорт (.skm)
+      raw_estimated_0: 1018 - Полезный объем материала
+      raw_estimated_1: 1019 - Объем использованного материала
+      std_attributes_dim_placeholder: 1020 - Введите размер
+      std_volumic_masses: 1021 - Плотность
+      std_volumic_masses_help: 1022 - Позволяет определить плотность для всех размеров, а также для каждого стандартного размера материала.
+      std_volumic_masses_add: 1023 - Добавить плотность
+      std_prices: 1024 - Цена
+      std_prices_help: '1025 - Позволяет задать стоимость материала в зависимости от расчета цены за единицу: объема, площади, штуки.'
+      std_prices_add: 1026 - Добавьте цену
+      texture_width: 1027 - Ширина
+      texture_height: 1028 - Высота
+      export_to_skm: 1029 - Экспорт (.skm)
     texture_load:
-      title: 1024 - Загрузить изображение
+      title: 1030 - Загрузить изображение
     import_from_skm:
-      title: 1025 - Импорт .skm фала
+      title: 1031 - Импорт .skm фала
     export_to_skm:
-      title: 1026 - Экспорт в .skm файл
+      title: 1032 - Экспорт в .skm файл
     option:
-      material_order_strategy: 1027 - Сортировка материала
+      material_order_strategy: 1033 - Сортировка материала
       material_order_strategy_help: |
-        1028 - Упорядочить следующие свойства для определения порядка сортировки внутри каждой группы.
+        1034 - Упорядочить следующие свойства для определения порядка сортировки внутри каждой группы.
         Свойства могут быть отсортированы в <i class="ladb-opencutlist-icon-sort-asc"></i> *по возрастанию* или <i class="ladb-opencutlist-icon-sort-desc"></i> *по убыванию*.
-      property_type: 1029 - Тип
-      property_name: 1030 - Определение
+      property_type: 1035 - Тип
+      property_name: 1036 - Определение
     remove:
       message: |
-        1031 - Вы собираетесь удалить материал **{{ material_name }}** из вашей модели.
+        1037 - Вы собираетесь удалить материал **{{ material_name }}** из вашей модели.
         Подтвердите для продолжения.
     duplicate:
-      message: '1032 - Выберите имя новой копии материала **{{ material_name }}**.
+      message: '1038 - Выберите имя новой копии материала **{{ material_name }}**.
 
         '
     error:
-      no_model: 1033 - Ни одна модель не открыта. Вам необходимо дать мне больше информации ;)
-      no_materials: 1034 - Модель не содержит материалов.
-      material_not_found: 1035 - Материал не найден.
-      failed_import_skm_file: 1036 - Ошибка произошла при импорте из .skm файла. **{{ error }}**
-      failed_export_skm_file: 1037 - Ошибка произошла при экспорте в .skm файл. **{{ error }}**
-      failed_removing_material: 1038 - При скрытии этого материала произошла ошибка. **{{ error }}**
-      failed_duplicating_material: 1039 - Произошла ошибка при дублировании материала. **{{ error }}**
-      invalid_image_file: 1040 - Недопустимое изображение
-    obsolete_base: 1041 - Чтобы поддерживать синхронизацию, необходимо обновить список материалов.
+      no_model: 1039 - Ни одна модель не открыта. Вам необходимо дать мне больше информации ;)
+      no_materials: 1040 - Модель не содержит материалов.
+      material_not_found: 1041 - Материал не найден.
+      failed_import_skm_file: 1042 - Ошибка произошла при импорте из .skm файла. **{{ error }}**
+      failed_export_skm_file: 1043 - Ошибка произошла при экспорте в .skm файл. **{{ error }}**
+      failed_removing_material: 1044 - При скрытии этого материала произошла ошибка. **{{ error }}**
+      failed_duplicating_material: 1045 - Произошла ошибка при дублировании материала. **{{ error }}**
+      invalid_image_file: 1046 - Недопустимое изображение
+    obsolete_base: 1047 - Чтобы поддерживать синхронизацию, необходимо обновить список материалов.
   outliner:
-    label: 1042 - Структура
-    title: 1043 - Структура
-    list: 1044 - Древовидная структура
-    nodes: 1045 - Экземпляры
-    part_count: 1046 - Количество
-    type_0: 1047 - Модель
-    type_1: 1048 - Группа
-    type_2: 1049 - Компонент
-    type_3: 1050 - Деталь
+    label: 1048 - Структура
+    title: 1049 - Структура
+    list: 1050 - Древовидная структура
+    nodes: 1051 - Экземпляры
+    part_count: 1052 - Количество
+    type_0: 1053 - Модель
+    type_1: 1054 - Группа
+    type_2: 1055 - Компонент
+    type_3: 1056 - Деталь
     tooltip:
-      open_node_url: 1051 - Открыть URL-адрес экземпляра
+      open_node_url: 1057 - Открыть URL-адрес экземпляра
     edit_node:
-      title_model: 1052 - Свойства модели
-      title_instance: 1053 - Свойства экземпляра **{{ name }}**
-      general: 1054 - Общие
-      preview: 1055 - Обзор
-      name: 1056 - Определение
-      instance_name: 1057 - Экземпляр
-      definition_name: 1058 - Содержание
-      description: 1059 - Описание
-      url: 1060 - URL
-      layer_name: 1061 - Маяк
-      explode: 1062 - Разброс
-      explode_message: 1063 - Вы подтверждаете разделение экземпляров **{{ name }}** ?
+      title_model: 1058 - Свойства модели
+      title_instance: 1059 - Свойства экземпляра **{{ name }}**
+      general: 1060 - Общие
+      preview: 1061 - Обзор
+      name: 1062 - Определение
+      instance_name: 1063 - Экземпляр
+      definition_name: 1064 - Содержание
+      description: 1065 - Описание
+      url: 1066 - URL
+      layer_name: 1067 - Маяк
+      explode: 1068 - Разброс
+      explode_message: 1069 - Вы подтверждаете разделение экземпляров **{{ name }}** ?
     error:
-      no_model: 1064 - Ни одна модель не открыта. Вам необходимо дать мне больше информации ;)
-      no_entities: 1065 - Ваша модель пуста!
-      node_not_found: 1066 - Узел не найден
-      entity_not_found: 1067 - Экземпляр не найден
-      obsolete_outliner: 1068 - Невозможно, сгенерированная структура устарела. Рассчитать снова.
+      no_model: 1070 - Ни одна модель не открыта. Вам необходимо дать мне больше информации ;)
+      no_entities: 1071 - Ваша модель пуста!
+      node_not_found: 1072 - Узел не найден
+      entity_not_found: 1073 - Экземпляр не найден
+      obsolete_outliner: 1074 - Невозможно, сгенерированная структура устарела. Рассчитать снова.
     tip:
       no_node: |
-        1069 - В настоящее время у модели нет экземпляров для отображения.
+        1075 - В настоящее время у модели нет экземпляров для отображения.
         Экземпляр - это **группа** или **компонент**, помещенная в сцену.
-    obsolete_base: 1070 - Чтобы синхронизировать изменения, вам необходимо заново создать структуру.
+    obsolete_base: 1076 - Чтобы синхронизировать изменения, вам необходимо заново создать структуру.
   importer:
-    label: 1071 - Импорт
-    title: 1072 - Импорт деталей
+    label: 1077 - Импорт
+    title: 1078 - Импорт деталей
     help: |
-      1073 - Этот раздел поможет вам импортировать детали (только в форме параллелепипеда) из [CSV](https://ru.wikipedia.org/wiki/CSV) файла в модель.
+      1079 - Этот раздел поможет вам импортировать детали (только в форме параллелепипеда) из [CSV](https://ru.wikipedia.org/wiki/CSV) файла в модель.
       Затем вы можете использовать возможности *OpenCutList* для работы с импортированными деталями.
       Кликните по клавише **Открыть CSV файл** для начала импорта.
-    open_csv: 1074 - Открыть CSV файл
-    import_to_model: 1075 - Импорт в модель
+    open_csv: 1080 - Открыть CSV файл
+    import_to_model: 1081 - Импорт в модель
     load:
-      title: 1076 - Загрузить CSV файл
+      title: 1082 - Загрузить CSV файл
       info_0: |
-        1077 - Выберите опции, необходимые для хорошего чтения файла:
+        1083 - Выберите опции, необходимые для хорошего чтения файла:
         **{{ filename }}**.
       info_1: |
-        1078 - *Единицей измерения, заданной в шаблоне, является: **{{ unit }}**.
+        1084 - *Единицей измерения, заданной в шаблоне, является: **{{ unit }}**.
         Данная единица будет применена для размеров, в которых единица измерения не указана*.
-      options: 1079 - Опции загрузки
-      option_col_sep: 1080 - Разделитель
-      option_col_sep_tab: 1081 - Табулятор
-      option_col_sep_comma: 1082 - Запятая
-      option_col_sep_semicolon: 1083 - Точка с запятой
-      option_first_line_headers: 1084 - Заголовок строки
-      option_first_line_headers_0: 1085 - Дата
-      option_first_line_headers_1: 1086 - Столбец заголовков
+      options: 1085 - Опции загрузки
+      option_col_sep: 1086 - Разделитель
+      option_col_sep_tab: 1087 - Табулятор
+      option_col_sep_comma: 1088 - Запятая
+      option_col_sep_semicolon: 1089 - Точка с запятой
+      option_first_line_headers: 1090 - Заголовок строки
+      option_first_line_headers_0: 1091 - Дата
+      option_first_line_headers_1: 1092 - Столбец заголовков
     import:
-      title: 1087 - Импорт деталей в модель
+      title: 1093 - Импорт деталей в модель
       info_0: |
-        1088 - Вы собираетесь импортировать **{{ count }} деталь** в модель.
+        1094 - Вы собираетесь импортировать **{{ count }} деталь** в модель.
         Эта часть будет помещена в начало основной сцены.
       info_0_plural: |
-        1089 - Вы собираетесь импортировать **{{ count }} деталей** в модель.
+        1095 - Вы собираетесь импортировать **{{ count }} деталей** в модель.
         Эти части будут загружены в пакет, начиная с начала основной сцены.
-      info_1: 1090 - Нажмите на **Импорт**, чтобы подтвердить действие.
+      info_1: 1096 - Нажмите на **Импорт**, чтобы подтвердить действие.
       options: |
-        1091 - Модель уже содержит *детали*, *определения* или *материалы*.
+        1097 - Модель уже содержит *детали*, *определения* или *материалы*.
         Выберите необходимые опции импорта.
-      option_remove_all_?: 1092 - Что дальше?
-      option_remove_all_false: 1093 - Добавить детали к существующим
-      option_remove_all_true: 1094 - Удалить существующий!
-      option_keep_definitions_settings: 1095 - Сохранить настройки определения
-      option_keep_materials_settings: 1096 - Сохранять настройки материалов
+      option_remove_all_?: 1098 - Что дальше?
+      option_remove_all_false: 1099 - Добавить детали к существующим
+      option_remove_all_true: 1100 - Удалить существующий!
+      option_keep_definitions_settings: 1101 - Сохранить настройки определения
+      option_keep_materials_settings: 1102 - Сохранять настройки материалов
     column:
-      unused: 1097 - Неиспользуемый
-      mandatory: 1098 - Обязательные поля
-      optional: 1099 - Дополнительные поля
-      name: 1100 - Определение
-      count: 1101 - Количество
-      bbox_length: 1102 - Пильная длина
-      bbox_width: 1103 - Ширина
-      bbox_thickness: 1104 - Толщина
-      material: 1105 - Материал
-      tags: 1106 - Маркеры
+      unused: 1103 - Неиспользуемый
+      mandatory: 1104 - Обязательные поля
+      optional: 1105 - Дополнительные поля
+      name: 1106 - Определение
+      count: 1107 - Количество
+      bbox_length: 1108 - Пильная длина
+      bbox_width: 1109 - Ширина
+      bbox_thickness: 1110 - Толщина
+      material: 1111 - Материал
+      tags: 1112 - Маркеры
     tooltip:
-      errors: 1107 - Эта часть не будет импортирована, так как она привела к следующим ошибкам
-      warnings: 1108 - Эта часть будет импортирована, но она выдает следующие предупреждения
+      errors: 1113 - Эта часть не будет импортирована, так как она привела к следующим ошибкам
+      warnings: 1114 - Эта часть будет импортирована, но она выдает следующие предупреждения
     error:
-      no_model: 1109 - Ни один проект модели не открыт. Импорт частей из пустоты невозможен ;)
-      file_not_found: '1110 - Файл не найден : **{{ filename }}**'
-      bad_extension: 1111 - Файл *{{ filename }}* не имеет расширения **.CSV** или **.TSV**.
+      no_model: 1115 - Ни один проект модели не открыт. Импорт частей из пустоты невозможен ;)
+      file_not_found: '1116 - Файл не найден : **{{ filename }}**'
+      bad_extension: 1117 - Файл *{{ filename }}* не имеет расширения **.CSV** или **.TSV**.
       failed_to_load_csv_file: |
-        1112 - Невозможно загрузить CSV файл : **{{ error }}**
+        1118 - Невозможно загрузить CSV файл : **{{ error }}**
         *Убедитесь, что вы выбрали правильный разделитель полей.*
-      empty_file: 1113 - Файл возможно пустой или имеет не читаемый формат.
-      no_importable_part: 1114 - Ни одна из деталей не может быть импортирована. Назначьте обязательные поля соответствующим столбцам.
-      invalid_name: 1115 - Неверное описание
-      invalid_length: 1116 - Недопустимая длина
-      invalid_width: 1117 - Недопустимая ширина
-      invalid_thickness: 1118 - Недопустимая толщина
-      failed_to_import: 1119 - Процесс импорта не удался.
+      empty_file: 1119 - Файл возможно пустой или имеет не читаемый формат.
+      no_importable_part: 1120 - Ни одна из деталей не может быть импортирована. Назначьте обязательные поля соответствующим столбцам.
+      invalid_name: 1121 - Неверное описание
+      invalid_length: 1122 - Недопустимая длина
+      invalid_width: 1123 - Недопустимая ширина
+      invalid_thickness: 1124 - Недопустимая толщина
+      failed_to_import: 1125 - Процесс импорта не удался.
     warning:
-      invalid_count: 1120 - Неверный подсчёт
-      invalid_material: 1121 - Недопустимый материал
+      invalid_count: 1126 - Неверный подсчёт
+      invalid_material: 1127 - Недопустимый материал
     success:
-      imported_title: 1122 - Импорт завершен
-      imported_body: 1123 - {{ count }} деталь была успешно импортирована!
-      imported_body_plural: 1124 - {{ count }} деталей успешно импортированы!
-    obsolete_base: 1125 - Чтобы сохранить синхронизацию, вы должны перезагрузить CSV файл.
+      imported_title: 1128 - Импорт завершен
+      imported_body: 1129 - {{ count }} деталь была успешно импортирована!
+      imported_body_plural: 1130 - {{ count }} деталей успешно импортированы!
+    obsolete_base: 1131 - Чтобы сохранить синхронизацию, вы должны перезагрузить CSV файл.
   tutorials:
-    label: 1126 - Инструкции
-    title: 1127 - Инструкции
-    help: '1128 - Вот пополняемый список видео, просмотр которых поможет научиться использовать возможности *OpenCutList*.
+    label: 1132 - Инструкции
+    title: 1133 - Инструкции
+    help: '1134 - Вот пополняемый список видео, просмотр которых поможет научиться использовать возможности *OpenCutList*.
 
       '
-    submit: 1129 - Отправить видео
+    submit: 1135 - Отправить видео
     submit_info: |
-      1130 - Вы создали видео, которое поможет эффективно использовать **OpenCutList**, и хотите, чтобы оно появилось здесь.
+      1136 - Вы создали видео, которое поможет эффективно использовать **OpenCutList**, и хотите, чтобы оно появилось здесь.
       Дайте нам знать, написав нам по адресу **opencutlist@lairdubois.fr**!
 
       *Видео должно быть публичным и размещено на YouTube*.
     error:
-      fail_to_load_list: 1131 - Список видеозаписей не может быть загружен.
+      fail_to_load_list: 1137 - Список видеозаписей не может быть загружен.
   news:
-    label: 1132 - Новости
-    title: 1133 - Новости
-    help: '1134 - Последние новости из *OpenCutList*.
+    label: 1138 - Новости
+    title: 1139 - Новости
+    help: '1140 - Последние новости из *OpenCutList*.
 
       '
-    comment: 1135 - Комментарий
+    comment: 1141 - Комментарий
     error:
-      fail_to_load_list: 1136 - Список новостей нельзя скачать.
+      fail_to_load_list: 1142 - Список новостей нельзя скачать.
   forum:
-    label: 1137 - Форум
-    title: 1138 - Форум
-    help: '1139 - Эта платформа позволяет обмениваться информацией с сообществом пользователей и командой *OpenCutList*.
+    label: 1143 - Форум
+    title: 1144 - Форум
+    help: '1145 - Эта платформа позволяет обмениваться информацией с сообществом пользователей и командой *OpenCutList*.
 
       '
-    create_conversation: 1140 - Начать тему
-    reply: 1141 - Ответить на
-    tags: 1142 - Теги
+    create_conversation: 1146 - Начать тему
+    reply: 1147 - Ответить на
+    tags: 1148 - Теги
     redirection: |
-      1143 - Вы будете перенаправлены на платформу **Open Collective**, на которой расположен этот дискуссионный форум.
+      1149 - Вы будете перенаправлены на платформу **Open Collective**, на которой расположен этот дискуссионный форум.
       Для *создания темы* или *ответа* вам необходимо создать аккаунт и войти в систему.
       *Это бесплатно, без обязательств и достаточно простого адреса электронной почты*.
 
       Подайте заявку, чтобы продолжить.
     error:
-      fail_to_load_list: 1144 - Невозможно загрузить список тем.
+      fail_to_load_list: 1150 - Невозможно загрузить список тем.
   sponsor:
-    label: 1145 - Спонсоры
-    title: 1146 - Спонсоры
+    label: 1151 - Спонсоры
+    title: 1152 - Спонсоры
     description: |
-      1147 - **OpenCutList** - это *Открытое исходное программное обеспечение*, поддерживаемое его пользователями посредством <a href="https://opencollective.com/" target="_blank">Open Collective</a> платформы.
+      1153 - **OpenCutList** - это *Открытое исходное программное обеспечение*, поддерживаемое его пользователями посредством <a href="https://opencollective.com/" target="_blank">Open Collective</a> платформы.
       Поддержите этот проект, сделав финансовый взнос!
-    contribute: 1148 - Поддержи проект
-    backers: 1149 - {{ count }} финансовый спонсор
-    backers_plural: 1150 - {{ count }} финансовые спонсоры
-    ad: 1151 - Вам нравится OpenCutList ?
-    objective: 1152 - Цель
-    objective_slogan: 1153 - OpenCutList - это все мы
+    contribute: 1154 - Поддержи проект
+    backers: 1155 - {{ count }} финансовый спонсор
+    backers_plural: 1156 - {{ count }} финансовые спонсоры
+    ad: 1157 - Вам нравится OpenCutList ?
+    objective: 1158 - Цель
+    objective_slogan: 1159 - OpenCutList - это все мы
     objective_title:
-      default: 1154 - Цель
-      cuttingdiagram_export: 1155 - Финансирование разработки новой функции
+      default: 1160 - Цель
+      cuttingdiagram_export: 1161 - Финансирование разработки новой функции
     objective_details:
-      default: '1156 - Постоянное совершенствование *OpenCutList* очень важно для всех нас и Ваша финансовая помощь, по-прежнему, станет основой для следующего обновления !
+      default: '1162 - Постоянное совершенствование *OpenCutList* очень важно для всех нас и Ваша финансовая помощь, по-прежнему, станет основой для следующего обновления !
 
         '
       cuttingdiagram_export: |
-        1157 - Для нас важно, чтобы *OpenCutList* соответствовал ожиданиям пользователей, использующих расчет *карт раскроя*.
+        1163 - Для нас важно, чтобы *OpenCutList* соответствовал ожиданиям пользователей, использующих расчет *карт раскроя*.
         Для расширения возможностей плагина мы хотели бы сделать возможным экспорт карт раскроя в формате **SVG** и **DXF**.
         Помогая нам финансово, вы даете нам возможность расширить функционал плагина, чтобы в итоге получить максимальную отдачу от *OpenCutList*.
-      layout: '1158 - Этот модуль позволит вам продемонстрировать ваш проект в **разнесённом виде** и идентифицировать детали в проекте с их номерами, сгенерированными в карте раскроя при ее расчете.
+      layout: '1164 - Этот модуль позволит вам продемонстрировать ваш проект в **разнесённом виде** и идентифицировать детали в проекте с их номерами, сгенерированными в карте раскроя при ее расчете.
 
         '
-    objective_crowdfunding: '1159 - Разработка новых опций будет осуществляться за счет собранных средств через **краудфандинг** и начнется, когда будет достигнута **финансовая цель**.
+    objective_crowdfunding: '1165 - Разработка новых опций будет осуществляться за счет собранных средств через **краудфандинг** и начнется, когда будет достигнута **финансовая цель**.
 
       '
-    objective_thanks: '1160 - Благодарю за Ваш посильный вклад !
+    objective_thanks: '1166 - Благодарю за Ваш посильный вклад !
 
       '
-    objective_funded_progress: 1161 - накоплено {{ progress }}%
+    objective_funded_progress: 1167 - накоплено {{ progress }}%
   settings:
-    label: 1162 - Параметры
-    title: 1163 - Параметры
-    global_settings: 1164 - Общие настройки
-    language: 1165 - Язык
-    language_auto: 1166 - Автоматический
-    zoom: 1167 - Размер текста
-    zoom_normal: 1168 - Нормальный
-    zoom_small: 1169 - Малая
-    zoom_tiny: 1170 - Маленький
-    print_margin: 1171 - Поля печати
-    print_margin_normal: 1172 - Обычные
-    print_margin_small: 1173 - Малые
-    table_row_size: 1174 - Размер строки таблицы
-    table_row_size_normal: 1175 - Нормальный
-    table_row_size_compact: 1176 - Компактный
-    size_and_position: 1177 - Размер и позиция окна
-    model_settings: 1178 - Параметры модели
-    length_unit: 1179 - Единица длины
-    length_format: 1180 - Формат
-    length_format_0: 1181 - Десятичный
-    length_format_1: 1182 - Архитектурный
-    length_format_2: 1183 - Инженерный
-    length_format_3: 1184 - Дробный
-    length_precision: 1185 - Точность
-    suppress_units_display: 1186 - Отображать единицу длины для каждого значения
-    mass_unit: 1187 - Единица массы
-    mass_precision: 1188 - Точность
-    currency_symbol: 1189 - Символ валюты
-    currency_precision: 1190 - Точность
+    label: 1168 - Параметры
+    title: 1169 - Параметры
+    global_settings: 1170 - Общие настройки
+    language: 1171 - Язык
+    language_auto: 1172 - Автоматический
+    zoom: 1173 - Размер текста
+    zoom_normal: 1174 - Нормальный
+    zoom_small: 1175 - Малая
+    zoom_tiny: 1176 - Маленький
+    print_margin: 1177 - Поля печати
+    print_margin_normal: 1178 - Обычные
+    print_margin_small: 1179 - Малые
+    table_row_size: 1180 - Размер строки таблицы
+    table_row_size_normal: 1181 - Нормальный
+    table_row_size_compact: 1182 - Компактный
+    size_and_position: 1183 - Размер и позиция окна
+    model_settings: 1184 - Параметры модели
+    length_unit: 1185 - Единица длины
+    length_format: 1186 - Формат
+    length_format_0: 1187 - Десятичный
+    length_format_1: 1188 - Архитектурный
+    length_format_2: 1189 - Инженерный
+    length_format_3: 1190 - Дробный
+    length_precision: 1191 - Точность
+    suppress_units_display: 1192 - Отображать единицу длины для каждого значения
+    mass_unit: 1193 - Единица массы
+    mass_precision: 1194 - Точность
+    currency_symbol: 1195 - Символ валюты
+    currency_precision: 1196 - Точность
     presets:
-      export_global_presets: 1191 - Экспорт пресетов
+      export_global_presets: 1197 - Экспорт пресетов
       export_global_presets_help: |
-        1192 - Эта функция позволяет экспортировать пресеты в файл формата **.json**.
+        1198 - Эта функция позволяет экспортировать пресеты в файл формата **.json**.
         Выберите пресеты, которые вы хотите экспортировать в этот формат.
-      export_global_presets_success: 1193 - Пресеты успешно экспортированы.
-      import_global_presets: 1194 - Импорт пресетов
+      export_global_presets_success: 1199 - Пресеты успешно экспортированы.
+      import_global_presets: 1200 - Импорт пресетов
       import_global_presets_help: |
-        1195 - Выберите файл пресета формата **.json**, который вы хотите импортировать.
+        1201 - Выберите файл пресета формата **.json**, который вы хотите импортировать.
         Внимание, импортируемая версия заменит существующий пресет, если они имеют одинаковое название.
       import_global_presets_success: |
-        1196 - Пресеты *OpenCutList* успешно импортированы.
+        1202 - Пресеты *OpenCutList* успешно импортированы.
         Чтобы изменения вступили в силу, вы должны **закрыть** и снова **открыть** окно OpenCutList.
-      dump_global_presets: 1197 - Дамп пресетов
-      dump_model_presets: 1198 - Дамп настроек модели
-      reset_global_presets: 1199 - Сбросить пресеты
+      dump_global_presets: 1203 - Дамп пресетов
+      dump_model_presets: 1204 - Дамп настроек модели
+      reset_global_presets: 1205 - Сбросить пресеты
       reset_global_presets_confirm: |
-        1200 - Вы собираетесь удалить все свои сохраненные пресеты *OpenCutList*.
+        1206 - Вы собираетесь удалить все свои сохраненные пресеты *OpenCutList*.
         Это действие необратимо. **Все пресеты будут потеряны.**
         Подтвердите, чтобы продолжить.
       reset_global_presets_success: |
-        1201 - Пресеты *OpenCutList* были удалены.
+        1207 - Пресеты *OpenCutList* были удалены.
         Чтобы применить изменения, вы должны **закрыть** и **снова открыть** окно OpenCutList.
-      reset_model_presets: 1202 - Сбросить настройки модели
+      reset_model_presets: 1208 - Сбросить настройки модели
       reset_model_presets_confirm: |
-        1203 - Вы собираетесь сбросить все настройки *OpenCutList* для текущей модели.
+        1209 - Вы собираетесь сбросить все настройки *OpenCutList* для текущей модели.
         Это действие необратимо. **Все настройки будут восстановлены до значений по умолчанию.**
         Подтвердите, чтобы продолжить.
       reset_model_presets_success: |
-        1204 - Настройки *OpenCutList* текущей модели были сброшены.
+        1210 - Настройки *OpenCutList* текущей модели были сброшены.
         Чтобы применить изменения, вы должны **закрыть** и **снова открыть** окно OpenCutList.
       error:
-        no_preset_to_export: 1205 - Нет пресетов для экспорта.
-        no_preset_to_import: 1206 - Нет пресетов для импорта.
-        failed_to_import: '1207 - Не удалось импортировать пресеты: **{{ error }}**.'
-        failed_to_import_invalid_hexdigest: 1208 - Этот файл был изменен. Он не может быть импортирован.
-        failed_to_import_bad_file_format: 1209 - Недопустимый формат файла.
+        no_preset_to_export: 1211 - Нет пресетов для экспорта.
+        no_preset_to_import: 1212 - Нет пресетов для импорта.
+        failed_to_import: '1213 - Не удалось импортировать пресеты: **{{ error }}**.'
+        failed_to_import_invalid_hexdigest: 1214 - Этот файл был изменен. Он не может быть импортирован.
+        failed_to_import_bad_file_format: 1215 - Недопустимый формат файла.
   about:
-    label: 1210 - О программе
-    title: 1211 - О программе
-    version: 1212 - Версия
-    credits: 1213 - Технические характеристики
-    credits_authors: '1214 - *OpenCutList* разработал [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) и [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Весь список [соавторов](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+    label: 1216 - О программе
+    title: 1217 - О программе
+    version: 1218 - Версия
+    credits: 1219 - Технические характеристики
+    credits_authors: '1220 - *OpenCutList* разработал [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) и [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Весь список [соавторов](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
 
       '
-    credits_translations: 1215 - Переводы
+    credits_translations: 1221 - Переводы
     credits_translators: |
-      1216 - - Владимир Бадюля (*Русский*)
+      1222 - - Владимир Бадюля (*Русский*)
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*Английский*, *Немецкий язык*)
       - Gildas Boureau (*французская* документация)
       - Pierluigi Colombo (*Итальянский*)
@@ -1616,116 +1622,116 @@ tab:
       - [刘涛](https://www.liutao91.cn) (*упрощенный китайский*)
       - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*голландский*)
     credits_description: |
-      1217 - Разработка этого расширения связана с проектом совместной платформы [L'Air du Bois](https://www.lairdubois.fr).
+      1223 - Разработка этого расширения связана с проектом совместной платформы [L'Air du Bois](https://www.lairdubois.fr).
       Это расширение является *Open Source*, а также доступно в разделе [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) с лицензией [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
-    credits_runtime: 1218 - Исполнение
-    credits_development: 1219 - Разработка
-    credits_vendors: '1220 - Приключение не было бы возможно без работы авторов следующих компонентов *Open Source*:
+    credits_runtime: 1224 - Исполнение
+    credits_development: 1225 - Разработка
+    credits_vendors: '1226 - Приключение не было бы возможно без работы авторов следующих компонентов *Open Source*:
 
       '
     credits_thanks: |
-      1221 - Отдельная благодарность:
+      1227 - Отдельная благодарность:
       - [JetBrains](https://www.jetbrains.com) за их поддержку для этого проекта [Free Open Source License](https://www.jetbrains.com/buy/opensource/).
       - [Transifex](https://www.transifex.com) за их поддержку проекта Open Source.
       - [GitBook](https://www.gitbook.com) за их поддержку проекта Open Source.
 tool:
   default:
-    transparency: 1222 - Прозрачность
-    zoom_extents: 1223 - Зум
-    toggle_depth: 1224 - Детали на заднем плане
-    more: 1225 - Ещё
+    transparency: 1228 - Прозрачность
+    zoom_extents: 1229 - Зум
+    toggle_depth: 1230 - Детали на заднем плане
+    more: 1231 - Ещё
   highlight:
     transparency: "$t(tool.default.transparency)"
     zoom_extents: "$t(tool.default.zoom_extents)"
   smart_paint:
-    title: 1228 - Раскраска
-    default_material: 1229 - Материал не задан
-    filters: 1230 - Фильтры
-    filter_0: 1231 - Не определён
+    title: 1234 - Раскраска
+    default_material: 1235 - Материал не задан
+    filters: 1236 - Фильтры
+    filter_0: 1237 - Не определён
     filter_1: "$t(tab.materials.type_1)"
     filter_2: "$t(tab.materials.type_2)"
     filter_3: "$t(tab.materials.type_3)"
     filter_4: "$t(tab.materials.type_4)"
     filter_5: "$t(tab.materials.type_5)"
     filter_6: "$t(tab.materials.type_6)"
-    action_0: 1238 - Раскраска деталей
-    action_0_status: 1239 - Кликните на цветном окошке материала, которые есть внизу окна, затем кликните по детали которой требуется придать свойство выбранного материала
-    action_1: 1240 - Раскраска торцов
-    action_1_status: 1241 - Кликните на торец панели, чтобы применить к ней материал '$t(tab.materials.type_4)'
-    action_2: 1242 - Облицовка шпоном
-    action_2_status: 1243 - Кликните на лицевой стороне детали, чтобы применить к ней материал '$t(tab.materials.type_6)'
-    action_3: 1244 - Образец
-    action_3_status: 1245 - Кликните на сторону, чтобы взять образец материала
-    action_4: 1246 - Очистить
-    action_4_status: 1247 - Кликните на деталь, чтобы удалить все материалы из ее параметров, в том числе и у всех ее экземпляров
-    action_option_group_instances: 1248 - Количество экземпляров
-    action_option_group_edges: 1249 - Количество кромок
-    action_option_group_faces: 1250 - Количество сторон
-    action_option_instances_0_status: 1251 - Раскрасить только экземпляр целевой детали
-    action_option_instances_1_status: 1252 - Окрасить все экземпляры целевой детали
-    action_option_edges_0_status: 1253 - Окрасить только целевую композицию
-    action_option_edges_1_status: 1254 - Окрасить лицевую и тыльную сторону в детали
-    action_option_edges_2_status: 1255 - Раскрасить все 4 стороны в выделенной детали
-    action_option_faces_0_status: 1256 - Раскрасить только лицевую часть
-    action_option_faces_1_status: 1257 - Раскрасить 2 стороны выделенной детали
-    edges: 1258 - {{ count }} торец
-    edges_plural: 1259 - {{ count }} торцов
-    edge_ymin: 1260 - Длина 1
-    edge_ymax: 1261 - Длина 2
-    edge_xmin: 1262 - Ширина 1
-    edge_xmax: 1263 - Ширина 2
-    faces: 1264 - {{ count }} лицевая
-    faces_plural: 1265 - {{ count }} лицевых
-    face_zmin: 1266 - Тыльная
-    face_zmax: 1267 - Лицевая
+    action_0: 1244 - Раскраска деталей
+    action_0_status: 1245 - Кликните на цветном окошке материала, которые есть внизу окна, затем кликните по детали которой требуется придать свойство выбранного материала
+    action_1: 1246 - Раскраска торцов
+    action_1_status: 1247 - Кликните на торец панели, чтобы применить к ней материал '$t(tab.materials.type_4)'
+    action_2: 1248 - Облицовка шпоном
+    action_2_status: 1249 - Кликните на лицевой стороне детали, чтобы применить к ней материал '$t(tab.materials.type_6)'
+    action_3: 1250 - Образец
+    action_3_status: 1251 - Кликните на сторону, чтобы взять образец материала
+    action_4: 1252 - Очистить
+    action_4_status: 1253 - Кликните на деталь, чтобы удалить все материалы из ее параметров, в том числе и у всех ее экземпляров
+    action_option_group_instances: 1254 - Количество экземпляров
+    action_option_group_edges: 1255 - Количество кромок
+    action_option_group_faces: 1256 - Количество сторон
+    action_option_instances_0_status: 1257 - Раскрасить только экземпляр целевой детали
+    action_option_instances_1_status: 1258 - Окрасить все экземпляры целевой детали
+    action_option_edges_0_status: 1259 - Окрасить только целевую композицию
+    action_option_edges_1_status: 1260 - Окрасить лицевую и тыльную сторону в детали
+    action_option_edges_2_status: 1261 - Раскрасить все 4 стороны в выделенной детали
+    action_option_faces_0_status: 1262 - Раскрасить только лицевую часть
+    action_option_faces_1_status: 1263 - Раскрасить 2 стороны выделенной детали
+    edges: 1264 - {{ count }} торец
+    edges_plural: 1265 - {{ count }} торцов
+    edge_ymin: 1266 - Длина 1
+    edge_ymax: 1267 - Длина 2
+    edge_xmin: 1268 - Ширина 1
+    edge_xmax: 1269 - Ширина 2
+    faces: 1270 - {{ count }} лицевая
+    faces_plural: 1271 - {{ count }} лицевых
+    face_zmin: 1272 - Тыльная
+    face_zmax: 1273 - Лицевая
     warning:
-      no_material: 1268 - Ваша модель не содержит материалов!
-      no_material_type: 1269 - Нет материала типа '{{ type }}'
+      no_material: 1274 - Ваша модель не содержит материалов!
+      no_material_type: 1275 - Нет материала типа '{{ type }}'
     error:
-      not_part: 1270 - Целевой объект не является частью (компонентом)
-      not_edge: 1271 - Целевая поверхность не является торцом панели
-      not_face: 1272 - Целевая поверхность не является лицевой
-      wrong_material_type: 1273 - Целевая деталь должна быть типа '{{ type }}'
+      not_part: 1276 - Целевой объект не является частью (компонентом)
+      not_edge: 1277 - Целевая поверхность не является торцом панели
+      not_face: 1278 - Целевая поверхность не является лицевой
+      wrong_material_type: 1279 - Целевая деталь должна быть типа '{{ type }}'
   smart_axes:
-    title: 1274 - Ориентация осей
-    action_0: 1275 - Отменить
-    action_0_status: 1276 - Кликните на деталь, чтобы сориентировать ее экземпляр вдоль одного из размеров
-    action_1: 1277 - Переключить Длина ↔ Ширина
-    action_1_status: 1278 - Кликните на детали, чтобы поменять ее длину на ширину
-    action_2: 1279 - Переключить Лицевая ↔ Обратная
-    action_2_status: 1280 - Кликните на деталь, чтобы перевернуть отображение лицевой стороны на тыльную сторону
-    action_3: 1281 - Адаптировать оси
-    action_3_status: 1282 - Кликните по торцу или ребру детали для адаптации ее осей
-    action_option_group_direction: 1283 - Направление
-    action_option_direction_0: 1284 - Дл
-    action_option_direction_1: 1285 - Шр
-    action_option_direction_2: 1286 - Тл
-    action_option_direction_0_status: 1287 - Развернуть деталь по длине
-    action_option_direction_1_status: 1288 - Развернуть деталь по ширине
-    action_option_direction_2_status: 1289 - Развернуть деталь по толщине
+    title: 1280 - Ориентация осей
+    action_0: 1281 - Отменить
+    action_0_status: 1282 - Кликните на деталь, чтобы сориентировать ее экземпляр вдоль одного из размеров
+    action_1: 1283 - Переключить Длина ↔ Ширина
+    action_1_status: 1284 - Кликните на детали, чтобы поменять ее длину на ширину
+    action_2: 1285 - Переключить Лицевая ↔ Обратная
+    action_2_status: 1286 - Кликните на деталь, чтобы перевернуть отображение лицевой стороны на тыльную сторону
+    action_3: 1287 - Адаптировать оси
+    action_3_status: 1288 - Кликните по торцу или ребру детали для адаптации ее осей
+    action_option_group_direction: 1289 - Направление
+    action_option_direction_0: 1290 - Дл
+    action_option_direction_1: 1291 - Шр
+    action_option_direction_2: 1292 - Тл
+    action_option_direction_0_status: 1293 - Развернуть деталь по длине
+    action_option_direction_1_status: 1294 - Развернуть деталь по ширине
+    action_option_direction_2_status: 1295 - Развернуть деталь по толщине
     warning:
-      more_entities: 1290 - {{ count_used }} экземпляры, имеющие одинаковое определение, будут изменены
+      more_entities: 1296 - {{ count_used }} экземпляры, имеющие одинаковое определение, будут изменены
     error:
-      not_part: 1291 - Целевой объект не является частью (компонентом)
-      not_orientable: 1292 - Тип этой детали не позволяет сориентировать ее по осям
+      not_part: 1297 - Целевой объект не является частью (компонентом)
+      not_orientable: 1298 - Тип этой детали не позволяет сориентировать ее по осям
   smart_export:
-    title: 1293 - Экспорт
-    action_0: 1294 - Экспорт 3D-детали
-    action_0_status: 1295 - Кликните на деталь
-    action_1: 1296 - Экспорт 2D-детали
-    action_1_status: 1297 - Кликните на лицевую сторону детали
-    action_2: 1298 - Экспорт лица
-    action_2_status: 1299 - Кликните на лицо
-    action_3: 1300 - Экспорт маршрута
-    action_3_status: 1301 - Кликните на край
-    action_option_group_file_format: 1302 - Формат
-    action_option_group_unit: 1303 - Единицы
-    action_option_group_faces: 1304 - Лицевые
-    action_option_group_options: 1305 - Опции
-    action_option_file_format_dxf_status: 1306 - Экспорт в DFX
-    action_option_file_format_stl_status: 1307 - Экспорт в STL
-    action_option_file_format_obj_status: 1308 - Экспорт в OBJ
-    action_option_file_format_svg_status: 1309 - Экспорт в SVG
+    title: 1299 - Экспорт
+    action_0: 1300 - Экспорт 3D-детали
+    action_0_status: 1301 - Кликните на деталь
+    action_1: 1302 - Экспорт 2D-детали
+    action_1_status: 1303 - Кликните на лицевую сторону детали
+    action_2: 1304 - Экспорт лица
+    action_2_status: 1305 - Кликните на лицо
+    action_3: 1306 - Экспорт маршрута
+    action_3_status: 1307 - Кликните на край
+    action_option_group_file_format: 1308 - Формат
+    action_option_group_unit: 1309 - Единицы
+    action_option_group_faces: 1310 - Лицевые
+    action_option_group_options: 1311 - Опции
+    action_option_file_format_dxf_status: 1312 - Экспорт в DFX
+    action_option_file_format_stl_status: 1313 - Экспорт в STL
+    action_option_file_format_obj_status: 1314 - Экспорт в OBJ
+    action_option_file_format_svg_status: 1315 - Экспорт в SVG
     action_option_unit_0_status: "$t(default.unit_0)"
     action_option_unit_1_status: "$t(default.unit_1)"
     action_option_unit_2_status: "$t(default.unit_2)"
@@ -1735,8 +1741,8 @@ tool:
     action_option_faces_1_status: "$t(tab.cutlist.write.option_faces_1)"
     action_option_options_anchor_status: "$t(tab.cutlist.write.option_anchor_1)"
     action_option_options_smoothing_status: "$t(tab.cutlist.write.option_smoothing_1)"
-    action_option_options_merge_holes_status: 1319 - Определите сквозные отверстия и размеры слияния для каждой полости
-    action_option_options_paths_status: 1320 - Экспортировать как контур ребра, не связанные с гранью, содержащиеся в детали
+    action_option_options_merge_holes_status: 1325 - Определите сквозные отверстия и размеры слияния для каждой полости
+    action_option_options_include_paths_status: 1326 - Экспортировать как контур ребра, не связанные с гранью, содержащиеся в детали
     error:
-      not_part: 1321 - Эта грань не является частью детали (компонента)
-      not_flat_face: 1322 - Эта поверхность не является плоской
+      not_part: 1327 - Эта грань не является частью детали (компонента)
+      not_flat_face: 1328 - Эта поверхность не является плоской
