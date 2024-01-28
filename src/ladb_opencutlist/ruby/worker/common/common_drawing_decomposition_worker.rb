@@ -333,7 +333,7 @@ module Ladb::OpenCutList
 
                 # TODO : Quite slow
                 if manipulator.belongs_to_a_surface?
-                  surface_manipulator = _get_surface_manipulator_by_face(drawing_def, entity)
+                  surface_manipulator = _get_surface_manipulator_by_face(drawing_def, entity, transformation)
                   if surface_manipulator.nil?
                     surface_manipulator = SurfaceManipulator.new(transformation)
                     _populate_surface_manipulator(surface_manipulator, entity)
@@ -367,7 +367,7 @@ module Ladb::OpenCutList
               if entity.curve.nil? || entity.curve.count_edges < 2  # Exclude curve that contains only one edge.
                 drawing_def.edge_manipulators.push(manipulator)
               else
-                curve_manipulator = _get_curve_manipulator_by_edge(drawing_def, entity)
+                curve_manipulator = _get_curve_manipulator_by_edge(drawing_def, entity, transformation)
                 if curve_manipulator.nil?
                   curve_manipulator = CurveManipulator.new(entity.curve, transformation)
                   drawing_def.curve_manipulators.push(curve_manipulator)
@@ -402,16 +402,18 @@ module Ladb::OpenCutList
       end
     end
 
-    def _get_surface_manipulator_by_face(drawing_def, face)
+    def _get_surface_manipulator_by_face(drawing_def, face, transformation)
       drawing_def.surface_manipulators.each do |surface_manipulator|
+        next unless surface_manipulator.transformation.equal?(transformation) # Check if same context
         return surface_manipulator if surface_manipulator.include?(face)
       end
       nil
     end
 
-    def _get_curve_manipulator_by_edge(drawing_def, edge)
+    def _get_curve_manipulator_by_edge(drawing_def, edge, transformation)
       drawing_def.curve_manipulators.each do |curve_manipulator|
-        return curve_manipulator if curve_manipulator.curve == edge.curve
+        next unless curve_manipulator.transformation.equal?(transformation) # Check if same context
+        return curve_manipulator if curve_manipulator.curve.equal?(edge.curve)
       end
       nil
     end
