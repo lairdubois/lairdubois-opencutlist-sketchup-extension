@@ -11,12 +11,14 @@ module Ladb::OpenCutList
     PART_DRAWING_TYPE_2D_BOTTOM = 2
     PART_DRAWING_TYPE_3D = 3
 
-    def _compute_part_drawing_def(part_drawing_type, part, ignore_edges = true, use_bounds_min_as_origin = true)
+    def _compute_part_drawing_def(part_drawing_type, part, ignore_edges = true, use_bounds_min_as_origin = true, use_cache = true)
       return nil unless part.is_a?(Part)
       return nil if part_drawing_type == PART_DRAWING_TYPE_NONE
 
-      drawing_def = part.def.drawing_defs[part_drawing_type]
-      return drawing_def unless drawing_def.nil?
+      if use_cache
+        drawing_def = part.def.drawing_defs[part_drawing_type]
+        return drawing_def unless drawing_def.nil?
+      end
 
       instance_info = part.def.get_one_instance_info
       return nil if instance_info.nil?
@@ -46,13 +48,15 @@ module Ladb::OpenCutList
       nil
     end
 
-    def _compute_part_projection_def(part_drawing_type, part, ignore_edges = true, settings = {}, projection_defs_cache = {})
+    def _compute_part_projection_def(part_drawing_type, part, ignore_edges = true, use_bounds_min_as_origin = true, settings = {}, projection_defs_cache = {}, use_cache = true)
       return nil unless part.is_a?(Part)
 
-      projection_def = projection_defs_cache[part.id]
-      return projection_def unless projection_def.nil?
+      if use_cache
+        projection_def = projection_defs_cache[part.id]
+        return projection_def unless projection_def.nil?
+      end
 
-      drawing_def = _compute_part_drawing_def(part_drawing_type, part, ignore_edges)
+      drawing_def = _compute_part_drawing_def(part_drawing_type, part, ignore_edges, use_bounds_min_as_origin, use_cache)
       return nil unless drawing_def.is_a?(DrawingDef)
 
       projection_def = CommonDrawingProjectionWorker.new(drawing_def, settings).run

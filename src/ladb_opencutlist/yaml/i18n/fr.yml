@@ -856,6 +856,10 @@ tab:
         option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
         option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
         option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
+        option_include_paths: $t(tab.cutlist.write.option_include_paths)
+        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
+        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
+        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
         option_sheet_good: Panneau
         option_sheet_good_help: |
           Permet d'activer l'exportation du panneau ainsi que de choisir ses couleurs.
@@ -863,25 +867,27 @@ tab:
         option_sheet_veneer_help: |
           Permet d'activer l'exportation de la feuille ainsi que de choisir ses couleurs.
         option_bar_dimensional: Barre
-        option_bar_dimensional_help:  |
+        option_bar_dimensional_help: |
           Permet d'activer l'exportation da la barre ainsi que de choisir ses couleurs.
         option_bar_band: Bande
-        option_bar_band_help:  |
+        option_bar_band_help: |
           Permet d'activer l'exportation de la bande ainsi que de choisir ses couleurs.
         option_parts: Pièces
-        option_parts_help:  |
+        option_parts_help: |
           Permet d'activer l'exportation des pièces ainsi que de choisir leurs couleurs.
         option_parts_holes: Percements
-        option_parts_holes_help:  |
+        option_parts_holes_help: |
           Permet de choisir la couleur des percements des pièces.
+        option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
+        option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
         option_texts: Identifications
-        option_texts_help:  |
+        option_texts_help: |
           Permet d'activer l'exportation des textes d'identification des pièces ainsi que de choisir leurs couleurs.
         option_leftovers: Chutes
-        option_leftovers_help:  |
+        option_leftovers_help: |
           Permet d'activer l'exportation des chutes ainsi que de choisir leurs couleurs.
         option_cuts: Coupes
-        option_cuts_help:  |
+        option_cuts_help: |
           Permet d'activer l'exportation des coupes ainsi que de choisir leur couleur.
         warning:
           is_sheet_selection: Les **panneaux masqués** ne seront pas exportés.
@@ -1698,7 +1704,7 @@ tool:
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: Isoler les trous traversants et fusionner les profondeurs pour chaque cavité
-    action_option_options_paths_status: Exporter comme tracé les arêtes non associées à une face contenues dans la pièce
+    action_option_options_include_paths_status: Exporter comme tracé les arêtes non associées à une face contenues dans la pièce
     error:
       not_part: Cette face ne fait pas partie d'une pièce (composant)
       not_flat_face: Cette surface n'est pas plane

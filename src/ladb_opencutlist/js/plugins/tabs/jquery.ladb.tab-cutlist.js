@@ -1925,7 +1925,7 @@
                 var $selectAnchor = $('#ladb_select_anchor', $modal);
                 var $selectSmoothing = $('#ladb_select_smoothing', $modal);
                 var $selectMergeHoles = $('#ladb_select_merge_holes', $modal);
-                var $selectPaths = $('#ladb_select_paths', $modal);
+                var $selectIncludePaths = $('#ladb_select_include_paths', $modal);
                 var $inputPartsStrokeColor = $('#ladb_input_parts_stroke_color', $modal);
                 var $inputPartsFillColor = $('#ladb_input_parts_fill_color', $modal);
                 var $formGroupPartsHoles = $('#ladb_form_group_parts_holes', $modal);
@@ -1942,7 +1942,7 @@
                     options.anchor = $selectAnchor.val() === '1';
                     options.smoothing = $selectSmoothing.val() === '1';
                     options.merge_holes = $selectMergeHoles.val() === '1';
-                    options.paths = $selectPaths.val() === '1';
+                    options.include_paths = $selectIncludePaths.val() === '1';
                     options.parts_stroke_color = $inputPartsStrokeColor.ladbTextinputColor('val');
                     options.parts_fill_color = $inputPartsFillColor.ladbTextinputColor('val');
                     options.parts_holes_stroke_color = $inputPartsHolesStrokeColor.ladbTextinputColor('val');
@@ -1956,7 +1956,7 @@
                     $selectAnchor.selectpicker('val', options.anchor ? '1' : '0');
                     $selectSmoothing.selectpicker('val', options.smoothing ? '1' : '0');
                     $selectMergeHoles.selectpicker('val', options.merge_holes ? '1' : '0');
-                    $selectPaths.selectpicker('val', options.paths ? '1' : '0');
+                    $selectIncludePaths.selectpicker('val', options.include_paths ? '1' : '0');
                     $inputPartsStrokeColor.ladbTextinputColor('val', options.parts_stroke_color);
                     $inputPartsFillColor.ladbTextinputColor('val', options.parts_fill_color);
                     $inputPartsHolesStrokeColor.ladbTextinputColor('val', options.parts_holes_stroke_color);
@@ -1967,12 +1967,12 @@
                 var fnUpdateFieldsVisibility = function () {
                     var isDxf = $selectFileFormat.val() === 'dxf';
                     var isMergeHoles = $selectMergeHoles.val() === '1';
-                    var isPaths = $selectPaths.val() === '1';
+                    var isIncludePaths = $selectIncludePaths.val() === '1';
                     if (!isMergeHoles) $formGroupPartsHoles.hide(); else $formGroupPartsHoles.show();
-                    if (!isPaths) $formGroupPartsPaths.hide(); else $formGroupPartsPaths.show();
                     $inputPartsHolesStrokeColor.ladbTextinputColor(!isMergeHoles ? 'disable' : 'enable');
                     $inputPartsHolesFillColor.ladbTextinputColor(!isMergeHoles ? 'disable' : 'enable');
-                    $inputPartsPathsStrokeColor.ladbTextinputColor(!isPaths ? 'disable' : 'enable');
+                    if (!isIncludePaths) $formGroupPartsPaths.hide(); else $formGroupPartsPaths.show();
+                    $inputPartsPathsStrokeColor.ladbTextinputColor(!isIncludePaths ? 'disable' : 'enable');
                     $('.ladb-form-fill-color').css('opacity', isDxf ? 0.3 : 1);
                 };
 
@@ -1986,21 +1986,15 @@
                 $selectFileFormat
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function () {
-                        $('#ladb_btn_export_file_format', $btnExport).html($(this).val().toUpperCase() + ' <small>( ' + fileCount + ' ' + i18next.t('default.file', {count: fileCount}).toLowerCase() + ' )</small>');
+                        $('#ladb_btn_export_file_format', $btnExport).html($(this).val().toUpperCase() + ' <small>( ' + fileCount + ' ' + i18next.t('default.file', { count: fileCount }).toLowerCase() + ' )</small>');
                         fnUpdateFieldsVisibility();
                     })
                 ;
                 $selectUnit.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectAnchor.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectSmoothing.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectMergeHoles
-                    .selectpicker(SELECT_PICKER_OPTIONS)
-                    .on('changed.bs.select', fnUpdateFieldsVisibility)
-                ;
-                $selectPaths
-                    .selectpicker(SELECT_PICKER_OPTIONS)
-                    .on('changed.bs.select', fnUpdateFieldsVisibility)
-                ;
+                $selectMergeHoles.selectpicker(SELECT_PICKER_OPTIONS).on('changed.bs.select', fnUpdateFieldsVisibility);
+                $selectIncludePaths.selectpicker(SELECT_PICKER_OPTIONS).on('changed.bs.select', fnUpdateFieldsVisibility);
                 $inputPartsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                 $inputPartsFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                 $inputPartsHolesStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
@@ -3538,11 +3532,11 @@
                                             var isBarSelection = hiddenBarIndices.length > 0
 
                                             // Retrieve cutting diagram options
-                                            rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_cuttingdiagram1d_export_options', section: groupId }, function (response) {
+                                            rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_cuttingdiagram1d_write_options', section: groupId }, function (response) {
 
                                                 var exportOptions = response.preset;
 
-                                                var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_1d_export', 'tabs/cutlist/_modal-cuttingdiagram-1d-export.twig', {
+                                                var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_1d_export', 'tabs/cutlist/_modal-cuttingdiagram-1d-write.twig', {
                                                     group: group,
                                                     isBarSelection: isBarSelection,
                                                 });
@@ -3555,6 +3549,7 @@
                                                 var $selectUnit = $('#ladb_select_unit', $modal);
                                                 var $selectSmoothing = $('#ladb_select_smoothing', $modal);
                                                 var $selectMergeHoles = $('#ladb_select_merge_holes', $modal);
+                                                var $selectIncludePaths = $('#ladb_select_include_paths', $modal);
                                                 var $inputBarHidden = $('#ladb_input_bar_hidden', $modal);
                                                 var $inputBarStrokeColor = $('#ladb_input_bar_stroke_color', $modal);
                                                 var $inputBarFillColor = $('#ladb_input_bar_fill_color', $modal);
@@ -3564,6 +3559,8 @@
                                                 var $formGroupPartsHoles = $('#ladb_form_group_parts_holes', $modal);
                                                 var $inputPartsHolesStrokeColor = $('#ladb_input_parts_holes_stroke_color', $modal);
                                                 var $inputPartsHolesFillColor = $('#ladb_input_parts_holes_fill_color', $modal);
+                                                var $formGroupPartsPaths = $('#ladb_form_group_parts_paths', $modal);
+                                                var $inputPartsPathsStrokeColor = $('#ladb_input_parts_paths_stroke_color', $modal);
                                                 var $formGroupTexts = $('#ladb_form_group_texts', $modal);
                                                 var $inputTextsHidden = $('#ladb_input_texts_hidden', $modal);
                                                 var $inputTextsColor = $('#ladb_input_texts_color', $modal);
@@ -3580,6 +3577,7 @@
                                                     options.unit = parseInt($selectUnit.val());
                                                     options.smoothing = $selectSmoothing.val() === '1';
                                                     options.merge_holes = $selectMergeHoles.val() === '1';
+                                                    options.include_paths = $selectIncludePaths.val() === '1';
                                                     options.bar_hidden = !$inputBarHidden.is(':checked');
                                                     options.bar_stroke_color = $inputBarStrokeColor.ladbTextinputColor('val');
                                                     options.bar_fill_color = $inputBarFillColor.ladbTextinputColor('val');
@@ -3588,6 +3586,7 @@
                                                     options.parts_fill_color = $inputPartsFillColor.ladbTextinputColor('val');
                                                     options.parts_holes_stroke_color = $inputPartsHolesStrokeColor.ladbTextinputColor('val');
                                                     options.parts_holes_fill_color = $inputPartsHolesFillColor.ladbTextinputColor('val');
+                                                    options.parts_paths_stroke_color = $inputPartsPathsStrokeColor.ladbTextinputColor('val');
                                                     options.texts_hidden = !$inputTextsHidden.is(':checked');
                                                     options.texts_color = $inputTextsColor.ladbTextinputColor('val');
                                                     options.leftovers_hidden = !$inputLeftoversHidden.is(':checked');
@@ -3602,6 +3601,7 @@
                                                     $selectUnit.selectpicker('val', options.unit);
                                                     $selectSmoothing.selectpicker('val', options.smoothing ? '1' : '0');
                                                     $selectMergeHoles.selectpicker('val', options.merge_holes ? '1' : '0');
+                                                    $selectIncludePaths.selectpicker('val', options.include_paths ? '1' : '0');
                                                     $inputBarHidden.prop('checked', !options.bar_hidden);
                                                     $inputBarStrokeColor.ladbTextinputColor('val', options.bar_stroke_color);
                                                     $inputBarFillColor.ladbTextinputColor('val', options.bar_fill_color);
@@ -3610,6 +3610,7 @@
                                                     $inputPartsFillColor.ladbTextinputColor('val', options.parts_fill_color);
                                                     $inputPartsHolesStrokeColor.ladbTextinputColor('val', options.parts_holes_stroke_color);
                                                     $inputPartsHolesFillColor.ladbTextinputColor('val', options.parts_holes_fill_color);
+                                                    $inputPartsPathsStrokeColor.ladbTextinputColor('val', options.parts_paths_stroke_color);
                                                     $inputTextsHidden.prop('checked', !options.texts_hidden);
                                                     $inputTextsColor.ladbTextinputColor('val', options.texts_color);
                                                     $inputLeftoversHidden.prop('checked', !options.leftovers_hidden);
@@ -3622,6 +3623,7 @@
                                                 var fnUpdateFieldsVisibility = function () {
                                                     var isDxf = $selectFileFormat.val() === 'dxf';
                                                     var isMergeHoles = $selectMergeHoles.val() === '1';
+                                                    var isIncludePaths = $selectIncludePaths.val() === '1';
                                                     var isBarHidden = !$inputBarHidden.is(':checked');
                                                     var isPartsHidden = !$inputPartsHidden.is(':checked');
                                                     var isTextHidden = !$inputTextsHidden.is(':checked');
@@ -3635,6 +3637,8 @@
                                                     if (isPartsHidden || !isMergeHoles) $formGroupPartsHoles.hide(); else $formGroupPartsHoles.show();
                                                     $inputPartsHolesStrokeColor.ladbTextinputColor(isPartsHidden || !isMergeHoles ? 'disable' : 'enable');
                                                     $inputPartsHolesFillColor.ladbTextinputColor(isPartsHidden || !isMergeHoles ? 'disable' : 'enable');
+                                                    if (isPartsHidden || !isIncludePaths) $formGroupPartsPaths.hide(); else $formGroupPartsPaths.show();
+                                                    $inputPartsPathsStrokeColor.ladbTextinputColor(!isIncludePaths ? 'disable' : 'enable');
                                                     if (isPartsHidden) $formGroupTexts.hide(); else $formGroupTexts.show();
                                                     $inputTextsColor.ladbTextinputColor(isTextHidden ? 'disable' : 'enable');
                                                     $inputLeftoversStrokeColor.ladbTextinputColor(isLeftoversHidden ? 'disable' : 'enable');
@@ -3645,7 +3649,7 @@
 
                                                 $widgetPreset.ladbWidgetPreset({
                                                     dialog: that.dialog,
-                                                    dictionary: 'cutlist_cuttingdiagram1d_export_options',
+                                                    dictionary: 'cutlist_cuttingdiagram1d_write_options',
                                                     fnFetchOptions: fnFetchOptions,
                                                     fnFillInputs: fnFillInputs
                                                 });
@@ -3660,16 +3664,15 @@
                                                 $selectDxfStructure.selectpicker(SELECT_PICKER_OPTIONS);
                                                 $selectUnit.selectpicker(SELECT_PICKER_OPTIONS);
                                                 $selectSmoothing.selectpicker(SELECT_PICKER_OPTIONS);
-                                                $selectMergeHoles
-                                                    .selectpicker(SELECT_PICKER_OPTIONS)
-                                                    .on('change', fnUpdateFieldsVisibility)
-                                                ;
+                                                $selectMergeHoles.selectpicker(SELECT_PICKER_OPTIONS).on('change', fnUpdateFieldsVisibility);
+                                                $selectIncludePaths.selectpicker(SELECT_PICKER_OPTIONS).on('change', fnUpdateFieldsVisibility);
                                                 $inputBarStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputBarFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputPartsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputPartsFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputPartsHolesStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputPartsHolesFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+                                                $inputPartsPathsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputTextsColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputLeftoversStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputLeftoversFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
@@ -3691,9 +3694,9 @@
                                                     fnFetchOptions(exportOptions);
 
                                                     // Store options
-                                                    rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_cuttingdiagram1d_export_options', values: exportOptions, section: groupId });
+                                                    rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_cuttingdiagram1d_write_options', values: exportOptions, section: groupId });
 
-                                                    rubyCallCommand('cutlist_cuttingdiagram1d_export', $.extend(exportOptions, { hidden_bar_indices: hiddenBarIndices }, cuttingdiagram1dOptions), function (response) {
+                                                    rubyCallCommand('cutlist_cuttingdiagram1d_write', $.extend(exportOptions, { hidden_bar_indices: hiddenBarIndices }, cuttingdiagram1dOptions), function (response) {
 
                                                         if (response.errors) {
                                                             that.dialog.notifyErrors(response.errors);
@@ -4089,11 +4092,11 @@
                                             var isSheetSelection = hiddenSheetIndices.length > 0
 
                                             // Retrieve cutting diagram options
-                                            rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_cuttingdiagram2d_export_options', section: groupId }, function (response) {
+                                            rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_cuttingdiagram2d_write_options', section: groupId }, function (response) {
 
                                                 var exportOptions = response.preset;
 
-                                                var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_2d_export', 'tabs/cutlist/_modal-cuttingdiagram-2d-export.twig', {
+                                                var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_2d_export', 'tabs/cutlist/_modal-cuttingdiagram-2d-write.twig', {
                                                     group: group,
                                                     isSheetSelection: isSheetSelection,
                                                 });
@@ -4106,6 +4109,7 @@
                                                 var $selectUnit = $('#ladb_select_unit', $modal);
                                                 var $selectSmoothing = $('#ladb_select_smoothing', $modal);
                                                 var $selectMergeHoles = $('#ladb_select_merge_holes', $modal);
+                                                var $selectIncludePaths = $('#ladb_select_include_paths', $modal);
                                                 var $inputSheetHidden = $('#ladb_input_sheet_hidden', $modal);
                                                 var $inputSheetStrokeColor = $('#ladb_input_sheet_stroke_color', $modal);
                                                 var $inputSheetFillColor = $('#ladb_input_sheet_fill_color', $modal);
@@ -4115,6 +4119,8 @@
                                                 var $formGroupPartsHoles = $('#ladb_form_group_parts_holes', $modal);
                                                 var $inputPartsHolesStrokeColor = $('#ladb_input_parts_holes_stroke_color', $modal);
                                                 var $inputPartsHolesFillColor = $('#ladb_input_parts_holes_fill_color', $modal);
+                                                var $formGroupPartsPaths = $('#ladb_form_group_parts_paths', $modal);
+                                                var $inputPartsPathsStrokeColor = $('#ladb_input_parts_paths_stroke_color', $modal);
                                                 var $formGroupTexts = $('#ladb_form_group_texts', $modal);
                                                 var $inputTextsHidden = $('#ladb_input_texts_hidden', $modal);
                                                 var $inputTextsColor = $('#ladb_input_texts_color', $modal);
@@ -4131,6 +4137,7 @@
                                                     options.unit = parseInt($selectUnit.val());
                                                     options.smoothing = $selectSmoothing.val() === '1';
                                                     options.merge_holes = $selectMergeHoles.val() === '1';
+                                                    options.include_paths = $selectIncludePaths.val() === '1';
                                                     options.sheet_hidden = !$inputSheetHidden.is(':checked');
                                                     options.sheet_stroke_color = $inputSheetStrokeColor.ladbTextinputColor('val');
                                                     options.sheet_fill_color = $inputSheetFillColor.ladbTextinputColor('val');
@@ -4139,6 +4146,7 @@
                                                     options.parts_fill_color = $inputPartsFillColor.ladbTextinputColor('val');
                                                     options.parts_holes_stroke_color = $inputPartsHolesStrokeColor.ladbTextinputColor('val');
                                                     options.parts_holes_fill_color = $inputPartsHolesFillColor.ladbTextinputColor('val');
+                                                    options.parts_paths_stroke_color = $inputPartsPathsStrokeColor.ladbTextinputColor('val');
                                                     options.texts_hidden = !$inputTextsHidden.is(':checked');
                                                     options.texts_color = $inputTextsColor.ladbTextinputColor('val');
                                                     options.leftovers_hidden = !$inputLeftoversHidden.is(':checked');
@@ -4153,6 +4161,7 @@
                                                     $selectUnit.selectpicker('val', options.unit);
                                                     $selectSmoothing.selectpicker('val', options.smoothing ? '1' : '0');
                                                     $selectMergeHoles.selectpicker('val', options.merge_holes ? '1' : '0');
+                                                    $selectIncludePaths.selectpicker('val', options.include_paths ? '1' : '0');
                                                     $inputSheetHidden.prop('checked', !options.sheet_hidden);
                                                     $inputSheetStrokeColor.ladbTextinputColor('val', options.sheet_stroke_color);
                                                     $inputSheetFillColor.ladbTextinputColor('val', options.sheet_fill_color);
@@ -4161,6 +4170,7 @@
                                                     $inputPartsFillColor.ladbTextinputColor('val', options.parts_fill_color);
                                                     $inputPartsHolesStrokeColor.ladbTextinputColor('val', options.parts_holes_stroke_color);
                                                     $inputPartsHolesFillColor.ladbTextinputColor('val', options.parts_holes_fill_color);
+                                                    $inputPartsPathsStrokeColor.ladbTextinputColor('val', options.parts_paths_stroke_color);
                                                     $inputTextsHidden.prop('checked', !options.texts_hidden);
                                                     $inputTextsColor.ladbTextinputColor('val', options.texts_color);
                                                     $inputLeftoversHidden.prop('checked', !options.leftovers_hidden);
@@ -4173,7 +4183,7 @@
                                                 var fnUpdateFieldsVisibility = function () {
                                                     var isDxf = $selectFileFormat.val() === 'dxf';
                                                     var isMergeHoles = $selectMergeHoles.val() === '1';
-                                                    var isSheetHidden = !$inputSheetHidden.is(':checked');
+                                                    var isIncludePaths = $selectIncludePaths.val() === '1';                                                    var isSheetHidden = !$inputSheetHidden.is(':checked');
                                                     var isPartsHidden = !$inputPartsHidden.is(':checked');
                                                     var isTextsHidden = !$inputTextsHidden.is(':checked');
                                                     var isLeftoversHidden = !$inputLeftoversHidden.is(':checked');
@@ -4186,6 +4196,8 @@
                                                     if (isPartsHidden || !isMergeHoles) $formGroupPartsHoles.hide(); else $formGroupPartsHoles.show();
                                                     $inputPartsHolesStrokeColor.ladbTextinputColor(isPartsHidden || !isMergeHoles ? 'disable' : 'enable');
                                                     $inputPartsHolesFillColor.ladbTextinputColor(isPartsHidden || !isMergeHoles ? 'disable' : 'enable');
+                                                    if (isPartsHidden || !isIncludePaths) $formGroupPartsPaths.hide(); else $formGroupPartsPaths.show();
+                                                    $inputPartsPathsStrokeColor.ladbTextinputColor(!isIncludePaths ? 'disable' : 'enable');
                                                     if (isPartsHidden) $formGroupTexts.hide(); else $formGroupTexts.show();
                                                     $inputTextsColor.ladbTextinputColor(isTextsHidden ? 'disable' : 'enable');
                                                     $inputLeftoversStrokeColor.ladbTextinputColor(isLeftoversHidden ? 'disable' : 'enable');
@@ -4196,7 +4208,7 @@
 
                                                 $widgetPreset.ladbWidgetPreset({
                                                     dialog: that.dialog,
-                                                    dictionary: 'cutlist_cuttingdiagram2d_export_options',
+                                                    dictionary: 'cutlist_cuttingdiagram2d_write_options',
                                                     fnFetchOptions: fnFetchOptions,
                                                     fnFillInputs: fnFillInputs
                                                 });
@@ -4211,16 +4223,15 @@
                                                 $selectDxfStructure.selectpicker(SELECT_PICKER_OPTIONS);
                                                 $selectUnit.selectpicker(SELECT_PICKER_OPTIONS);
                                                 $selectSmoothing.selectpicker(SELECT_PICKER_OPTIONS);
-                                                $selectMergeHoles
-                                                    .selectpicker(SELECT_PICKER_OPTIONS)
-                                                    .on('change', fnUpdateFieldsVisibility)
-                                                ;
+                                                $selectMergeHoles.selectpicker(SELECT_PICKER_OPTIONS).on('change', fnUpdateFieldsVisibility);
+                                                $selectIncludePaths.selectpicker(SELECT_PICKER_OPTIONS).on('change', fnUpdateFieldsVisibility);
                                                 $inputSheetStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputSheetFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputPartsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputPartsFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputPartsHolesStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputPartsHolesFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+                                                $inputPartsPathsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputTextsColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputLeftoversStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputLeftoversFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
@@ -4242,9 +4253,9 @@
                                                     fnFetchOptions(exportOptions);
 
                                                     // Store options
-                                                    rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_cuttingdiagram2d_export_options', values: exportOptions, section: groupId });
+                                                    rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_cuttingdiagram2d_write_options', values: exportOptions, section: groupId });
 
-                                                    rubyCallCommand('cutlist_cuttingdiagram2d_export', $.extend(exportOptions, { hidden_sheet_indices: hiddenSheetIndices }, cuttingdiagram2dOptions), function (response) {
+                                                    rubyCallCommand('cutlist_cuttingdiagram2d_write', $.extend(exportOptions, { hidden_sheet_indices: hiddenSheetIndices }, cuttingdiagram2dOptions), function (response) {
 
                                                         if (response.errors) {
                                                             that.dialog.notifyErrors(response.errors);

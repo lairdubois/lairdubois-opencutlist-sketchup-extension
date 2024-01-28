@@ -35,7 +35,7 @@
             var $selectAnchor = $('#ladb_select_anchor', that.$element);
             var $selectSmoothing = $('#ladb_select_smoothing', that.$element);
             var $selectMergeHoles = $('#ladb_select_merge_holes', that.$element);
-            var $selectPaths = $('#ladb_select_paths', that.$element);
+            var $selectIncludePaths = $('#ladb_select_include_paths', that.$element);
             var $inputPartsStrokeColor = $('#ladb_input_parts_stroke_color', that.$element);
             var $inputPartsFillColor = $('#ladb_input_parts_fill_color', that.$element);
             var $formGroupPartsHoles = $('#ladb_form_group_parts_holes', that.$element);
@@ -52,7 +52,7 @@
                 options.anchor = $selectAnchor.val() === '1';
                 options.smoothing = $selectSmoothing.val() === '1';
                 options.merge_holes = $selectMergeHoles.val() === '1';
-                options.paths = $selectPaths.val() === '1';
+                options.include_paths = $selectIncludePaths.val() === '1';
                 options.parts_stroke_color = $inputPartsStrokeColor.ladbTextinputColor('val');
                 options.parts_fill_color = $inputPartsFillColor.ladbTextinputColor('val');
                 options.parts_holes_stroke_color = $inputPartsHolesStrokeColor.ladbTextinputColor('val');
@@ -66,7 +66,7 @@
                 $selectAnchor.selectpicker('val', options.anchor ? '1' : '0');
                 $selectSmoothing.selectpicker('val', options.smoothing ? '1' : '0');
                 $selectMergeHoles.selectpicker('val', options.merge_holes ? '1' : '0');
-                $selectPaths.selectpicker('val', options.paths ? '1' : '0');
+                $selectIncludePaths.selectpicker('val', options.include_paths ? '1' : '0');
                 $inputPartsStrokeColor.ladbTextinputColor('val', options.parts_stroke_color);
                 $inputPartsFillColor.ladbTextinputColor('val', options.parts_fill_color);
                 $inputPartsHolesStrokeColor.ladbTextinputColor('val', options.parts_holes_stroke_color);
@@ -77,7 +77,7 @@
             var fnUpdateFieldsVisibility = function () {
                 var isDxf = $selectFileFormat.val() === 'dxf';
                 var isMergeHoles = $selectMergeHoles.val() === '1';
-                var isPaths = $selectPaths.val() === '1';
+                var isPaths = $selectIncludePaths.val() === '1';
                 if (!isMergeHoles) $formGroupPartsHoles.hide(); else $formGroupPartsHoles.show();
                 if (!isPaths) $formGroupPartsPaths.hide(); else $formGroupPartsPaths.show();
                 $inputPartsFillColor.ladbTextinputColor(isDxf ? 'disable' : 'enable');
@@ -106,7 +106,7 @@
                 .selectpicker(SELECT_PICKER_OPTIONS)
                 .on('changed.bs.select', fnUpdateFieldsVisibility)
             ;
-            $selectPaths
+            $selectIncludePaths
                 .selectpicker(SELECT_PICKER_OPTIONS)
                 .on('changed.bs.select', fnUpdateFieldsVisibility)
             ;

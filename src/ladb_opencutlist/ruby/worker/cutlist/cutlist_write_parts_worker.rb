@@ -21,7 +21,7 @@ module Ladb::OpenCutList
       @anchor = settings.fetch('anchor', false)
       @smoothing = settings.fetch('smoothing', false)
       @merge_holes = settings.fetch('merge_holes', false)
-      @paths = settings.fetch('paths', false)
+      @include_paths = settings.fetch('include_paths', false)
 
       @parts_stroke_color = settings.fetch('parts_stroke_color', nil)
       @parts_fill_color = settings.fetch('parts_fill_color', nil)
@@ -91,7 +91,7 @@ module Ladb::OpenCutList
               next
             end
 
-            drawing_def = _compute_part_drawing_def(@part_drawing_type, part, !@paths, !@anchor)
+            drawing_def = _compute_part_drawing_def(@part_drawing_type, part, !@include_paths, !@anchor, !@include_paths)
             return { :errors => [ 'tab.cutlist.error.unknow_part' ] } unless drawing_def.is_a?(DrawingDef)
 
             case @part_drawing_type
