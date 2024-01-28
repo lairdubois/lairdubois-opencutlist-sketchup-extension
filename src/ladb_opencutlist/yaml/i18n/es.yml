@@ -660,6 +660,8 @@ tab:
       total_volume: Σ Volúmenes
       total_area: Σ Areas
       total_length: Σ Longitudes
+      tooltip:
+        incompatible_unit: ""
       error:
         no_typed_material_parts: "No hay piezas con un tipo de material definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** o **$t(tab.materials.type_5)**) para generar la estimación."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**."
@@ -854,6 +856,10 @@ tab:
         option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
         option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
         option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
+        option_include_paths: $t(tab.cutlist.write.option_include_paths)
+        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
+        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
+        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
         option_sheet_good: Tablero
         option_sheet_good_help: |
           Permite activar la exportación del panel, así como elegir su color.
@@ -861,25 +867,27 @@ tab:
         option_sheet_veneer_help: |
           Permite activar la exportación de la hoja, así como elegir su color.
         option_bar_dimensional: Liston
-        option_bar_dimensional_help:  |
+        option_bar_dimensional_help: |
           Permite activar la exportación de la barra, así como elegir su color.
         option_bar_band: Placa
-        option_bar_band_help:  |
+        option_bar_band_help: |
           Permite activar la exportación de la placa, así como elegir su color.
         option_parts: Piezas
-        option_parts_help:  |
+        option_parts_help: |
           Permite activar la exportación de piezas, así como elegir su color.
         option_parts_holes: Perforaciones
-        option_parts_holes_help:  |
+        option_parts_holes_help: |
           Permite elegir el color de las perforaciones de las piezas.
+        option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
+        option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
         option_texts: Identificaciones
-        option_texts_help:  |
+        option_texts_help: |
           Permite activar la exportación de textos de identificación de las piezas, así como elegir su color.
         option_leftovers: Desperdicios
-        option_leftovers_help:  |
+        option_leftovers_help: |
           Permite activar la exportación de los recortes, así como elegir su color.
         option_cuts: Cortes
-        option_cuts_help:  |
+        option_cuts_help: |
           Permite activar la exportación de los cortes, así como elegir su color.
         warning:
           is_sheet_selection: Los **paneles ocultos** no se exportarán.
@@ -1175,6 +1183,7 @@ tab:
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Dirección de fibra
+      raw_estimated_0: ""
       colorized: Este tono se aplicará a la textura de este material cuando se renderice en el modelo
       texture_load: Cargar una nueva textura
       texture_clear: Borrar la textura
@@ -1209,6 +1218,7 @@ tab:
       description: Descripción
       url: URL
       cut_options: Parámetros de corte
+      estimate_options: ""
       attributes: Atributos
       thickness: Espesor
       thickness_help: |
@@ -1253,6 +1263,10 @@ tab:
       edge_decremented_help: Indica si las dimensiones de las piezas deben reducirse por el grosor de las tiras del canto.
       edge_decremented_0: Sin reducción
       edge_decremented_1: Reducir por el grosor de las tiras del canto
+      raw_estimated: ""
+      raw_estimated_help: |
+      raw_estimated_0: ""
+      raw_estimated_1: ""
       std_attributes_dim_placeholder: Elige una talla
       std_volumic_masses: Densidad
       std_volumic_masses_help: Le permite definir la densidad para todos los tamaños y para cada tamaño estándar de material.
@@ -1683,7 +1697,7 @@ tool:
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: Aislar los huecos pasantes y fusionar las profundidades de cada oquedad
-    action_option_options_paths_status: Exportar aristas no asociadas a una cara contenida en la pieza como un trazado
+    action_option_options_include_paths_status: Exportar aristas no asociadas a una cara contenida en la pieza como un trazado
     error:
       not_part: Esta cara no forma parte de una pieza (componente)
       not_flat_face: Esta superficie no es plana

@@ -660,6 +660,8 @@ tab:
       total_volume: Σ Объемов
       total_area: Σ Площадей
       total_length: Σ Длин
+      tooltip:
+        incompatible_unit: Единица несовместима с вариантами расчета материала
       error:
         no_typed_material_parts: "Для составления сметы детали должны иметь определенный тип материала (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** или **$t(tab.materials.type_5)**)."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} ошибка**."
@@ -854,6 +856,10 @@ tab:
         option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
         option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
         option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
+        option_include_paths: $t(tab.cutlist.write.option_include_paths)
+        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
+        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
+        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
         option_sheet_good: Панель
         option_sheet_good_help: |
           Позволяет активировать экспорт панели и выбрать ее цвета.
@@ -861,25 +867,27 @@ tab:
         option_sheet_veneer_help: |
           Позволяет активировать экспорт листа и выбрать его цвета.
         option_bar_dimensional: Погонаж
-        option_bar_dimensional_help:  |
+        option_bar_dimensional_help: |
           Позволяет активировать экспорт погонажа и выбрать его цвета.
         option_bar_band: Кромка
-        option_bar_band_help:  |
+        option_bar_band_help: |
           Позволяет активировать экспорт кромки и выбрать ее цвета.
         option_parts: Детали
-        option_parts_help:  |
+        option_parts_help: |
           Позволяет активировать экспорт деталей и выбирать их цвета.
         option_parts_holes: Отверстия
-        option_parts_holes_help:  |
+        option_parts_holes_help: |
           Позволяет задать цвет отверстий в деталях.
+        option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
+        option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
         option_texts: Идентификации
-        option_texts_help:  |
+        option_texts_help: |
           Позволяет активировать экспорт текстов идентификации деталей, а также выбрать их цвета.
         option_leftovers: Обрезки
-        option_leftovers_help:  |
+        option_leftovers_help: |
           Позволяет активировать экспорт деловых обрезков и выбирать их цвета.
         option_cuts: Распилы
-        option_cuts_help:  |
+        option_cuts_help: |
           Позволяет активировать экспорт разрезов, а также выбрать их цвет.
         warning:
           is_sheet_selection: "**Скрытые панели** не будут экспортированы."
@@ -1175,6 +1183,7 @@ tab:
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Направление волокон
+      raw_estimated_0: Расчет полезного объема
       colorized: "Этот рисунок фактуры будет применен к текстуре этого материала, когда он будет отображен в модели"
       texture_load: Загрузить новую текстуру
       texture_clear: Очистить текстуру
@@ -1209,6 +1218,7 @@ tab:
       description: Описание
       url: URL
       cut_options: Параметры раскроя
+      estimate_options: Параметры расчета
       attributes: Атрибуты
       thickness: Толщина
       thickness_help: |
@@ -1253,6 +1263,17 @@ tab:
       edge_decremented_help: "При активации, настройка учитывает в линейном размере детали толщину кромки."
       edge_decremented_0: Не учитывать
       edge_decremented_1: Вычесть толщину кромок
+      raw_estimated: Общий объем
+      raw_estimated_help: |
+        Позволяет рассчитать объем для оценки массы и стоимости деталей из этого материала.
+
+        **Полезный объем материала**
+        Расчет общего объема из суммы объемов деталей карты раскроя.
+
+        **Объем использованного материала**
+        Сумма объемов деталей из панелей, листов, погонажа или кромок после раскроя.
+      raw_estimated_0: Полезный объем материала
+      raw_estimated_1: Объем использованного материала
       std_attributes_dim_placeholder: Введите размер
       std_volumic_masses: Плотность
       std_volumic_masses_help: "Позволяет определить плотность для всех размеров, а также для каждого стандартного размера материала."
@@ -1683,7 +1704,7 @@ tool:
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: Определите сквозные отверстия и размеры слияния для каждой полости
-    action_option_options_paths_status: "Экспортировать как контур ребра, не связанные с гранью, содержащиеся в детали"
+    action_option_options_include_paths_status: "Экспортировать как контур ребра, не связанные с гранью, содержащиеся в детали"
     error:
       not_part: Эта грань не является частью детали (компонента)
       not_flat_face: Эта поверхность не является плоской

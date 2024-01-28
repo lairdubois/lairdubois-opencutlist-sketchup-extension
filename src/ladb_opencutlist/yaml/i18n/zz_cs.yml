@@ -68,7 +68,7 @@ default:
   tab_key: 67 - Tab
   file: 68 - Soubor
   file_plural: 69 - Soubory
-  stroke_color: '70 - '
+  stroke_color: 70 - Barva čáry
   fill_color: 71 - Barva výplně
 core:
   menu:
@@ -83,18 +83,21 @@ core:
       smart_paint: "$t(core.toolbar.command.smart_paint)"
       smart_axes: "$t(core.toolbar.command.smart_axes)"
       smart_export: "$t(core.toolbar.command.smart_export)"
-      reset_dialog_position: '82 - '
+      reset_dialog_position: 82 - Resetujte polohu okna
   toolbar:
     name: 83 - OpenCutList
     command:
       dialog: 84 - OpenCutList
       smart_paint: 85 - Materiály dílů
       smart_axes: 86 - Orientace dílů
-      smart_export: '87 - '
+      smart_export: 87 - Export dílů
   messagebox:
-    dir_override: '88 - '
+    dir_override: |
+      88 - « {{ target }} » již existuje. Chcete ho vyměnit?
+
+      Složka se stejným názvem se již nachází ve složce {{ parent }}. Pokud ji nahradíte, původní obsah bude ztracen.
   savepanel:
-    export_to_file: '89 - '
+    export_to_file: 89 - Export do souboru {{ file_format }}
   dialog:
     title: 90 - OpenCutList by L'Air du Bois
   leftbar:
@@ -115,16 +118,18 @@ core:
       Chcete-li nahlásit chybu:<a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
   error:
     feature_unavailable: 99 - Tato funkce vyžaduje aplikaci SketchUp {{ version }} nebo vyšší
-    failed_export_to: '100 - '
+    failed_export_to: |
+      100 - Při exportu došlo k chybě *{{ path }}*.
+      **{{ error }}**
   success:
-    exported_to: '101 - '
-    copied_to_clipboard: '102 - '
+    exported_to: 101 - Úspěšný export do {{ path }}.
+    copied_to_clipboard: 102 - Zkopírováno do schránky
   event:
     model_change: 103 - Aktivní model byl změněn.
     options_change: 104 - Nastavení v modelu se změnilo.
     material_change: 105 - Alespoň jeden materiál byl změněn.
     selection_change: 106 - Výběr v aktivním modelu byl změněn.
-    layers_change: '107 - '
+    layers_change: 107 - Značky v aktivním modelu se změnily.
   upgrade:
     unavailable: 108 - Nelze najít nejnovější verzi *OpenCutList*.
     available: |
@@ -229,8 +234,8 @@ tab:
       180 - Vyberte části v aktuální scéně, které chcete zahrnout do kusovníku, a poté klikněte na tlačítko **Generovat**.
       Pokud je výběr prázdný, budou do kusovníku zahrnuty všechny viditelné součásti scény.
     is_selection: 181 - Pouze výběr
-    select_part: '182 - '
-    select_part_plural: '183 - '
+    select_part: 182 - Vyberte díl
+    select_part_plural: 183 - Vyberte díly
     material_undefined: 184 - Není definován žádný materiál
     not_available_std_width: 185 - Šířka není definovaná
     not_available_std_thickness: 186 - Tloušťka není definovaná
@@ -242,9 +247,9 @@ tab:
     edit_part_size_increase_properties: 192 - Upravte vlastnosti (nadměrné velikosti) součásti
     edit_part_edges_properties: 193 - Upravte vlastnosti (lemování okrajů) součásti
     edit_part_faces_properties: 194 - Upravte vlastnosti (dýhy) této součásti
-    part_drawing_type_1: '195 - '
-    part_drawing_type_2: '196 - '
-    part_drawing_type_3: '197 - '
+    part_drawing_type_1: 195 - 2D čelní pohled
+    part_drawing_type_2: 196 - 2D zadní pohled
+    part_drawing_type_3: 197 - 3D
     tooltip:
       show_hide_block: 198 - Zobrazit / Skrýt
       scroll_to_block: 199 - Přejděte na skupinu
@@ -294,7 +299,7 @@ tab:
       symmetrical: 225 - Detekce zrcadleného dílu je u této součásti zakázána
       ignore_grain_direction: 226 - Směr let je v této části ignorován
       auto_oriented: 227 - Tato část byla automaticky přeorientována
-      oko_label_filter: '228 - '
+      oko_label_filter: 228 - Zahrnout / Vyloučit tento symbol
       add_label_filter: 229 - Filtrování zapnuto '{{ label }}'
       remove_label_filter: 230 - Odstranit filtrování '{{ label }}'
       add_edge_material_name_filter: 231 - Filtr zapnutý '{{ material_name }}'
@@ -335,22 +340,22 @@ tab:
       dblclick_to_sort_axes: 266 - Dvojklikem zde automaticky změníte pořadí os podle rozměrů dílu
       part_axes: 267 - Vnitřní osy dílu
       select_unselect_all_parts: 268 - Výberte/zruště výběr dílců ve skupině
-      select_parts_in_cutlist: '269 - '
-      select_parts_in_cutlist_plural: '270 - '
+      select_parts_in_cutlist: 269 - Vyberte díl v seznamu dílů
+      select_parts_in_cutlist_plural: 270 - Vyberte díly {{ count }} v seznamu dílů
       setup_group_cuttingdiagram: 271 - Nakonfigurujte nářezový plán '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'
-      open_part_url: '272 - '
+      open_part_url: 272 - Otevřít URL adresu dílu
     menu:
       show_all_groups: 273 - Zobrazit všechny skupiny
       hide_all_other_groups: 274 - Skrýt všechny ostatní skupiny
       numbers_save: 275 - Uložit čísla dílců
       numbers_reset: 276 - Přeuložit čísla dílců
       highlight_parts: "$t(tab.cutlist.highlight_parts)"
-      write_2d: '278 - '
-      write_3d: '279 - '
-      write_2d_parts: '280 - '
-      write_3d_parts: '281 - '
-      group_write_2d_parts: '282 - '
-      group_write_3d_parts: '283 - '
+      write_2d: 278 - 2D Projekce
+      write_3d: 279 - 3D Geometrie
+      write_2d_parts: 280 - Export 2D dílu projekce
+      write_3d_parts: 281 - Export 3D dílu geometrie
+      group_write_2d_parts: 282 - Export 2D dílů ve skupině
+      group_write_3d_parts: 283 - Export 3D dílů ve skupině
       group_layout_parts: 284 - Tisk přehledového výkresu dílů ve skupině
       group_numbers_save: 285 - Uložit čísla dílců této skupiny
       group_numbers_reset: 286 - Znovu inicializujte čísla dílců této skupiny
@@ -405,8 +410,10 @@ tab:
       description_help: '320 - *Popis* vám umožňuje poskytnout personalizované informace o každé definované části.
 
         '
-      url: '321 - '
-      url_help: '322 - '
+      url: 321 - URL
+      url_help: '322 - *URL* poskytuje odkaz na externí stránku pro každý definovaný díl.
+
+        '
       tags: 323 - Znaky
       tags_help: |
         324 - *Znaky* jsou vlastní klíčová slova, která lze přidat ke každé definici součásti.
@@ -503,8 +510,8 @@ tab:
       hide_edges_help: 382 - Pokud je vybrána tato možnost, budou **sloupce pro hranování** u dílců typu *Tabule* skryty.
       hide_faces: 383 - Skryjte sloupce dýh
       hide_faces_help: 384 - Pokud je vybrána tato možnost, skryjí se **sloupce dýhy** dílů typu *Tabule*.
-      hide_material_colors: '385 - '
-      hide_material_colors_help: '386 - '
+      hide_material_colors: 385 - Skrýt barvy materiálu
+      hide_material_colors_help: 386 - Pokud je vybrána tato možnost, barvy materiálu se nezobrazí.
       minimize_on_highlight: 387 - Minimalizovat po *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: 388 - Pokud je vybrána tato možnost, okno OpenCutList bude minimalizováno při použití funkce *'$t(tab.cutlist.highlight_part)'*.
       general: 389 - Všeobecné
@@ -570,7 +577,7 @@ tab:
       add_column: 439 - Přidejte sloupec
       add_native_columns: 440 - Přidejte nativní sloupec
       remove_column: 441 - Odstranit
-      remove_all_columns: '442 - '
+      remove_all_columns: 442 - Odstranit všechny
       columns: 443 - Sloupce
       column_title: 444 - Nadpis
       column_title_help: '445 - Pole **Nadpis** vám umožňuje upravit název sloupce.
@@ -604,8 +611,8 @@ tab:
       cutting_length: 469 - Hrubá délka
       cutting_width: 470 - Hrubá šířka
       cutting_thickness: 471 - Hrubá tloušťka
-      edge_cutting_length: '472 - '
-      edge_cutting_width: '473 - '
+      edge_cutting_length: 472 - Délkové okraje - neopracované
+      edge_cutting_width: 473 - Šířkové okraje - hrubé
       bbox_length: 474 - Délka
       bbox_width: 475 - Šířka
       bbox_thickness: 476 - Tloušťka
@@ -614,12 +621,12 @@ tab:
       part_count: 479 - Počet kusů
       material_type: 480 - Typ
       material_name: 481 - Materiál
-      material_description: '482 - '
-      material_url: '483 - '
+      material_description: 482 - Popis materiálu
+      material_url: 483 - URL materiálu
       material_std_dimension: 484 - Standardní rozměry
       entity_names: 485 - Názvy instancí
       description: 486 - Popis
-      url: '487 - '
+      url: 487 - URL
       tags: 488 - Znaky
       edge_ymin: 489 - Hrana podél 1
       edge_ymax: 490 - Hrana podél 2
@@ -631,7 +638,7 @@ tab:
       layers: 496 - Štítky
       batch: 497 - Šarže
       bin: 498 - Zásobník
-      filename: '499 - '
+      filename: 499 - Název souboru
       model_name: 500 - Jméno modelu
       model_description: 501 - Popis modelu
       page_name: 502 - Název scény
@@ -663,182 +670,189 @@ tab:
       total_volume: 523 - Σ Objem
       total_area: 524 - Σ Oblasti
       total_length: 525 - Σ Délka
+      tooltip:
+        incompatible_unit: 526 - Nekompatibilní jednotky s možnostmi odhadu materiálu
       error:
-        no_typed_material_parts: 526 - Žádná součást s definovaným typem materiálu (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** nebo **$t(tab.materials.type_5)**) pro vygenerování odhadu bylo poskytnuto.
-        entry_error: '527 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} chyba**.'
-        entry_error_plural: '528 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} chyby**.'
+        no_typed_material_parts: 527 - Žádná součást s definovaným typem materiálu (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** nebo **$t(tab.materials.type_5)**) pro vygenerování odhadu bylo poskytnuto.
+        entry_error: '528 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} chyba**.'
+        entry_error_plural: '529 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} chyby**.'
       warning:
-        is_group_selection: 529 - Díly, které jsou ve **skrytých skupinách** kusovníku, se nezapočítávají.
+        is_group_selection: 530 - Díly, které jsou ve **skrytých skupinách** kusovníku, se nezapočítávají.
       tip:
         not_enough_data: |
-          530 - Aby byl tento odhad správně vypočítán:
+          531 - Aby byl tento odhad správně vypočítán:
           - použité materiály musí mít minimálně hustotu a cenu.
           - použité příslušenství musí mít alespoň hustotu a cenu.
     cuttingdiagram:
-      title: 531 - Nářezový plán
-      start_msg: 532 - Probíhá optimalizace
-      end_msg: 533 - Optimalizace dokončena
-      options_material: 534 - Materiál
-      options_config: 535 - Konfigurace
-      options_display: 536 - Zobrazit
-      option_bar_folding_dimensional: 537 - Seskupit podobné desky
-      option_bar_folding_edge: 538 - Seskupte podobné hrany
-      option_bar_folding_0: 539 - Ne
-      option_bar_folding_1: 540 - Ano
-      option_bar_folding_help: 541 - Seskupte desky nebo hrany obsahující stejné části a řezy.
-      option_sheet_folding_good: 542 - Seskupte podobné panely
-      option_sheet_folding_veneer: 543 - Skupina podobných dýhovaných listů
-      option_sheet_folding_0: 544 - Ne
-      option_sheet_folding_1: 545 - Ano
-      option_sheet_folding_help: 546 - Seskupte panely nebo listy se stejnými díly a řezy.
-      option_hide_part_list: 547 - Kusovník
-      option_hide_part_list_1d_dimensional_0: 548 - Zobrazit všechny desky
-      option_hide_part_list_1d_edge_0: 549 - Zobrazit všechno hranování
-      option_hide_part_list_2d_good_0: 550 - Zobrazit pro všechny panely
-      option_hide_part_list_2d_veneer_0: 551 - Zobrazeno pro každý list dýhy
-      option_hide_part_list_1: 552 - Skrytý
-      option_hide_part_list_1d_help: 553 - Zobrazit nebo skrýt seznam dílů pro každou desku nebo olepování hran.
-      option_hide_part_list_2d_help: 554 - Zobrazte nebo zamaskujte seznam dílů pro každý panel.
-      option_use_names: 555 - Identifikace dílu
-      option_use_names_0: 556 - Použijte číslo
-      option_use_names_1: 557 - Použijte označení
-      option_use_names_help: 558 - Umožňuje vám vybrat si mezi **číslem** a **označením** pro identifikaci dílů na nářezovém plánu.
-      option_origin_corner: 559 - Původní pozice
-      option_origin_corner_1d_0: 560 - Zleva
-      option_origin_corner_1d_1: 561 - Zprava
-      option_origin_corner_2d_0: 562 - Levý horní roh
-      option_origin_corner_2d_1: 563 - Levý dolní roh
-      option_origin_corner_2d_2: 564 - Pravý horní roh
-      option_origin_corner_2d_3: 565 - Pravý dolní roh
-      option_origin_corner_1d_help: 566 - Určuje počáteční polohu souřadnicového systému pro zobrazení částí přířezů nebo olepování hran.
-      option_origin_corner_2d_help: 567 - Určuje polohu počátku souřadnic pro zobrazení dílů v panelech.
-      option_full_width_diagram: 568 - Zobrazení na celou šířku
-      option_full_width_diagram_0: 569 - Ne
-      option_full_width_diagram_1: 570 - Ano
-      option_full_width_diagram_help: 571 - Pokud je tato možnost aktivována, zobrazí se řezné diagramy s dostupnou šířkou. Jinak je jejich šířka definována měřítkem v závislosti na všech diagramech.
-      option_wrap_length: 572 - Délka balení
-      option_wrap_length_help: 573 - Maximální délka, po které bude dílec nebo ořezání zabaleno do více řádků.
-      option_hide_cross: 574 - Odřezky
-      option_hide_cross_0: 575 - Rozměry a kříž
-      option_hide_cross_1: 576 - Pouze rozměry
-      option_hide_cross_help: 577 - Zobrazí nebo skryje kříž označující díly definované jako odřezky v diagramu.
-      option_highlight_primary_cuts: 578 - Primární řezy
-      option_highlight_primary_cuts_0: 579 - Pouze nadjezd
-      option_highlight_primary_cuts_1: 580 - Vždy viditelné
-      option_highlight_primary_cuts_help: 581 - Umožňuje zvýraznit primární řezy.
-      option_hide_edges_preview: 582 - Zobrazení okrajových pásů
-      option_hide_edges_preview_0: 583 - Zobrazeno ve schématu řezání
-      option_hide_edges_preview_1: 584 - Skryto ve schématu řezání
-      option_hide_edges_preview_help: 585 - Umožňuje zobrazit nebo skrýt vizuální zobrazení pásů hran pro každý díl ve schématu řezání.
-      option_part_drawing_type: 586 - Tvar dílů
-      option_part_drawing_type_0: 587 - Skrytý
-      option_part_drawing_type_1: 588 - Zobrazení přední plochy
-      option_part_drawing_type_2: 589 - Zobrazení zadní plochy
-      option_part_drawing_type_help: '590 - '
-      option_saw_kerf: 591 - Tloušťka pilového kotouče
-      option_saw_kerf_help: 592 - Šířka materiálu ztraceného ořezáním.
-      option_trimming: 593 - Okraj
-      option_trimming_help_1d: 594 - Množství materiálu na každém konci desky nebo olepování hran, které má být zpracováno jako odpad.
-      option_trimming_help_2d: 595 - Množství materiálu kolem hrubého panelu, které má být zpracován jako odpad.
-      option_optimization: 596 - Úroveň optimalizace
-      option_optimization_help: 597 - Úroveň optimalizace definuje počet vypočítaných možností, a tedy i dobu výpočtu.
-      option_optimization_0: 598 - Střední
-      option_optimization_1: 599 - Pokročilý
-      option_stacking: 600 - Skládej stejné díly
-      option_stacking_help: 601 - Díly skládat stejným směrem po délce nebo šířce.
-      option_stacking_0: 602 - Žádná preference
-      option_stacking_1: 603 - Po délce
-      option_stacking_2: 604 - Po šířce
-      option_stacking_3: 605 - Všechny možnosti
-      option_keep: '606 - '
-      option_keep_help: '607 - '
-      option_std_bar_dimensional: 608 - Standardní rozměry
-      option_std_bar_edge: 609 - Standardní hrana
+      title: 532 - Nářezový plán
+      start_msg: 533 - Probíhá optimalizace
+      end_msg: 534 - Optimalizace dokončena
+      options_material: 535 - Materiál
+      options_config: 536 - Konfigurace
+      options_display: 537 - Zobrazit
+      option_bar_folding_dimensional: 538 - Seskupit podobné desky
+      option_bar_folding_edge: 539 - Seskupte podobné hrany
+      option_bar_folding_0: 540 - Ne
+      option_bar_folding_1: 541 - Ano
+      option_bar_folding_help: 542 - Seskupte desky nebo hrany obsahující stejné části a řezy.
+      option_sheet_folding_good: 543 - Seskupte podobné panely
+      option_sheet_folding_veneer: 544 - Skupina podobných dýhovaných listů
+      option_sheet_folding_0: 545 - Ne
+      option_sheet_folding_1: 546 - Ano
+      option_sheet_folding_help: 547 - Seskupte panely nebo listy se stejnými díly a řezy.
+      option_hide_part_list: 548 - Kusovník
+      option_hide_part_list_1d_dimensional_0: 549 - Zobrazit všechny desky
+      option_hide_part_list_1d_edge_0: 550 - Zobrazit všechno hranování
+      option_hide_part_list_2d_good_0: 551 - Zobrazit pro všechny panely
+      option_hide_part_list_2d_veneer_0: 552 - Zobrazeno pro každý list dýhy
+      option_hide_part_list_1: 553 - Skrytý
+      option_hide_part_list_1d_help: 554 - Zobrazit nebo skrýt seznam dílů pro každou desku nebo olepování hran.
+      option_hide_part_list_2d_help: 555 - Zobrazte nebo zamaskujte seznam dílů pro každý panel.
+      option_use_names: 556 - Identifikace dílu
+      option_use_names_0: 557 - Použijte číslo
+      option_use_names_1: 558 - Použijte označení
+      option_use_names_help: 559 - Umožňuje vám vybrat si mezi **číslem** a **označením** pro identifikaci dílů na nářezovém plánu.
+      option_origin_corner: 560 - Původní pozice
+      option_origin_corner_1d_0: 561 - Zleva
+      option_origin_corner_1d_1: 562 - Zprava
+      option_origin_corner_2d_0: 563 - Levý horní roh
+      option_origin_corner_2d_1: 564 - Levý dolní roh
+      option_origin_corner_2d_2: 565 - Pravý horní roh
+      option_origin_corner_2d_3: 566 - Pravý dolní roh
+      option_origin_corner_1d_help: 567 - Určuje počáteční polohu souřadnicového systému pro zobrazení částí přířezů nebo olepování hran.
+      option_origin_corner_2d_help: 568 - Určuje polohu počátku souřadnic pro zobrazení dílů v panelech.
+      option_full_width_diagram: 569 - Zobrazení na celou šířku
+      option_full_width_diagram_0: 570 - Ne
+      option_full_width_diagram_1: 571 - Ano
+      option_full_width_diagram_help: 572 - Pokud je tato možnost aktivována, zobrazí se řezné diagramy s dostupnou šířkou. Jinak je jejich šířka definována měřítkem v závislosti na všech diagramech.
+      option_wrap_length: 573 - Délka balení
+      option_wrap_length_help: 574 - Maximální délka, po které bude dílec nebo ořezání zabaleno do více řádků.
+      option_hide_cross: 575 - Odřezky
+      option_hide_cross_0: 576 - Rozměry a kříž
+      option_hide_cross_1: 577 - Pouze rozměry
+      option_hide_cross_help: 578 - Zobrazí nebo skryje kříž označující díly definované jako odřezky v diagramu.
+      option_highlight_primary_cuts: 579 - Primární řezy
+      option_highlight_primary_cuts_0: 580 - Pouze nadjezd
+      option_highlight_primary_cuts_1: 581 - Vždy viditelné
+      option_highlight_primary_cuts_help: 582 - Umožňuje zvýraznit primární řezy.
+      option_hide_edges_preview: 583 - Zobrazení okrajových pásů
+      option_hide_edges_preview_0: 584 - Zobrazeno ve schématu řezání
+      option_hide_edges_preview_1: 585 - Skryto ve schématu řezání
+      option_hide_edges_preview_help: 586 - Umožňuje zobrazit nebo skrýt vizuální zobrazení pásů hran pro každý díl ve schématu řezání.
+      option_part_drawing_type: 587 - Tvar dílů
+      option_part_drawing_type_0: 588 - Skrytý
+      option_part_drawing_type_1: 589 - Zobrazení přední plochy
+      option_part_drawing_type_2: 590 - Zobrazení zadní plochy
+      option_part_drawing_type_help: |
+        591 - Zobrazí nebo skryje skutečný tvar dílů a jejich opracování na diagramu.
+
+        *Pro export tvarů musí být tato možnost povolena.*
+      option_saw_kerf: 592 - Tloušťka pilového kotouče
+      option_saw_kerf_help: 593 - Šířka materiálu ztraceného ořezáním.
+      option_trimming: 594 - Okraj
+      option_trimming_help_1d: 595 - Množství materiálu na každém konci desky nebo olepování hran, které má být zpracováno jako odpad.
+      option_trimming_help_2d: 596 - Množství materiálu kolem hrubého panelu, které má být zpracován jako odpad.
+      option_optimization: 597 - Úroveň optimalizace
+      option_optimization_help: 598 - Úroveň optimalizace definuje počet vypočítaných možností, a tedy i dobu výpočtu.
+      option_optimization_0: 599 - Střední
+      option_optimization_1: 600 - Pokročilý
+      option_stacking: 601 - Skládej stejné díly
+      option_stacking_help: 602 - Díly skládat stejným směrem po délce nebo šířce.
+      option_stacking_0: 603 - Žádná preference
+      option_stacking_1: 604 - Po délce
+      option_stacking_2: 605 - Po šířce
+      option_stacking_3: 606 - Všechny možnosti
+      option_keep: '607 - '
+      option_keep_help: '608 - '
+      option_std_bar_dimensional: 609 - Standardní rozměry
+      option_std_bar_edge: 610 - Standardní hrana
       option_std_bar_help: |
-        610 - Vyberte standardní desku nebo hranu, které budou duplikovány, aby obsahovaly všechny části.
+        611 - Vyberte standardní desku nebo hranu, které budou duplikovány, aby obsahovaly všechny části.
         Tento seznam je definován v poli **$t(tab.materials.edit_material.std_lengths)** materiálu.
         Upravte materiál '{{ material_name }}' a aktualizujte tento seznam.
-      option_std_bar_add: 611 - Přidat velikost tabule
-      option_std_bar_none: 612 - Ne skládat
-      option_scrap_bar_dimensional_lengths: 613 - Zbytky
-      option_scrap_bar_edge_lengths: 614 - Odříznuté okrajové pásy
-      option_scrap_bar_lengths_placeholder: 615 - délka x množství ; ...
+      option_std_bar_add: 612 - Přidat velikost tabule
+      option_std_bar_none: 613 - Ne skládat
+      option_scrap_bar_dimensional_lengths: 614 - Zbytky
+      option_scrap_bar_edge_lengths: 615 - Odříznuté okrajové pásy
+      option_scrap_bar_lengths_placeholder: 616 - délka x množství ; ...
       option_scrap_bar_lengths_help: |
-        616 - Seznam řezaných desek nebo okrajových pásků, které je třeba vzít v úvahu jako první v řezacím diagramu.
+        617 - Seznam řezaných desek nebo okrajových pásků, které je třeba vzít v úvahu jako první v řezacím diagramu.
         Očekávaný formát: **D** x **M**, kde **D** je *délka* odřezku a **M** množství.
         Množství je volitelné.
         *Velikosti bez jednotek se považují za velikosti v modelových jednotkách.*
-      option_std_sheet_good: 617 - Standardní velikost tabule
-      option_std_sheet_veneer: 618 - Standardní dýha
+      option_std_sheet_good: 618 - Standardní velikost tabule
+      option_std_sheet_veneer: 619 - Standardní dýha
       option_std_sheet_help: |
-        619 - Vyberte standardní panel nebo dýhu, které budou duplikovány pro výpočet nejlepšího možného umístění.
+        620 - Vyberte standardní panel nebo dýhu, které budou duplikovány pro výpočet nejlepšího možného umístění.
         Tento seznam je definován v poli **$t(tab.materials.edit_material.std_sizes)** materiálu.
         Upravte materiál '{{ material_name }}', abyste dokončili tento seznam.
-      option_std_sheet_add: 620 - Přidat velikost tabule
-      option_std_sheet_none: 621 - Žádný
-      option_scrap_sheet_good_sizes: 622 - Ořez tabule
-      option_scrap_sheet_veneer_sizes: 623 - Dýhované odřezky
-      option_scrap_sheet_sizes_placeholder: 624 - délka x šířka x množství ; ...
+      option_std_sheet_add: 621 - Přidat velikost tabule
+      option_std_sheet_none: 622 - Žádný
+      option_scrap_sheet_good_sizes: 623 - Ořez tabule
+      option_scrap_sheet_veneer_sizes: 624 - Dýhované odřezky
+      option_scrap_sheet_sizes_placeholder: 625 - délka x šířka x množství ; ...
       option_scrap_sheet_sizes_help: |
-        625 - Vypište veškeré zboží nebo dýhy, které chcete mít přednostně v nářezovém diagramu.
+        626 - Vypište veškeré zboží nebo dýhy, které chcete mít přednostně v nářezovém diagramu.
         Očekávaný formát: **D**x**Š**x**Q**, kde **L** a **W** představují *délku* a *šířku* panelu a **Q** množství.
         Množství je volitelné.
         *Velikosti bez jednotek jsou považovány za modelové jednotky.*
       tooltip:
-        scroll_to_block_1d: 626 - Přejděte na první dílec nebo hranu
-        scroll_to_block_2d: 627 - Přejít na první panel
-        copy_leftovers_to_clipboard: '628 - '
+        scroll_to_block_1d: 627 - Přejděte na první dílec nebo hranu
+        scroll_to_block_2d: 628 - Přejít na první panel
+        copy_leftovers_to_clipboard: '629 - '
       list:
-        unplaced_parts: 629 - Neumístěné dílce
-        summary: 630 - Shrnutí
-        count: 631 - Množství
-        bar: 632 - Délkový
-        sheet: 633 - Tabule
-        length: 634 - Délka
-        width: 635 - Šířka papíru
-        total_length: 636 - Σ Délka
-        total_area: 637 - Σ Oblasti
-        total_part_count: 638 - Σ Dílů
-        total_used: 639 - Celkem použito
-        trimming: 640 - Okraj
-        stats: 641 - Statistiky
-        total_cut_count: 642 - Počet řezů
-        total_cut_length: 643 - Délka řezů
-        overall_efficiency: 644 - Celková účinnost
-        efficiency: 645 - Účinnost
-        leftover: 646 - Zbytek
-        leftover_to_keep: '647 - '
-        leftover_to_keep_plural: '648 - '
-        leftover_to_throw_away: '649 - '
-        cut: 650 - Řez
-        cut_plural: 651 - Řezy
-        cut_trimming: 652 - Ořezávací střih
-        cut_bounding: 653 - Primární řez (úroveň 1)
-        cut_bounding_plural: 654 - primárních řezů (úroveň 1)
-        cut_internal_through: 655 - Primární řez (úroveň 2)
-        cut_internal_through_plural: 656 - primárních řezů (úroveň 2)
-        cut_none: 657 - Ne skládat
-        bar_dimensional_type_0: 658 - Standardní rozměry
-        bar_dimensional_type_1: 659 - Odřezky
-        bar_edge_type_0: 660 - Standardní hrana
-        bar_edge_type_1: 661 - Odříznutý okrajový pás
-        sheet_good_type_0: 662 - Standardní velikost tabule
-        sheet_good_type_1: 663 - Zbytky
-        sheet_veneer_type_0: 664 - Standardní dýha
-        sheet_veneer_type_1: 665 - Dýhovaný odřezek
-        unused: 666 - Nepoužitý
-        parts: 667 - {{ count }} díl
-        parts_plural: 668 - {{ count }} dílců
-        settings: 669 - Nastavení
+        unplaced_parts: 630 - Neumístěné dílce
+        summary: 631 - Shrnutí
+        count: 632 - Množství
+        bar: 633 - Délkový
+        sheet: 634 - Tabule
+        length: 635 - Délka
+        width: 636 - Šířka papíru
+        total_length: 637 - Σ Délka
+        total_area: 638 - Σ Oblasti
+        total_part_count: 639 - Σ Dílů
+        total_used: 640 - Celkem použito
+        trimming: 641 - Okraj
+        stats: 642 - Statistiky
+        total_cut_count: 643 - Počet řezů
+        total_cut_length: 644 - Délka řezů
+        overall_efficiency: 645 - Celková účinnost
+        efficiency: 646 - Účinnost
+        leftover: 647 - Zbytek
+        leftover_to_keep: 648 - Držíme zbytek
+        leftover_to_keep_plural: 649 - Držíme zbytky
+        leftover_to_throw_away: 650 - Jednorázové zbytky
+        cut: 651 - Řez
+        cut_plural: 652 - Řezy
+        cut_trimming: 653 - Ořezávací střih
+        cut_bounding: 654 - Primární řez (úroveň 1)
+        cut_bounding_plural: 655 - primárních řezů (úroveň 1)
+        cut_internal_through: 656 - Primární řez (úroveň 2)
+        cut_internal_through_plural: 657 - primárních řezů (úroveň 2)
+        cut_none: 658 - Ne skládat
+        bar_dimensional_type_0: 659 - Standardní rozměry
+        bar_dimensional_type_1: 660 - Odřezky
+        bar_edge_type_0: 661 - Standardní hrana
+        bar_edge_type_1: 662 - Odříznutý okrajový pás
+        sheet_good_type_0: 663 - Standardní velikost tabule
+        sheet_good_type_1: 664 - Zbytky
+        sheet_veneer_type_0: 665 - Standardní dýha
+        sheet_veneer_type_1: 666 - Dýhovaný odřezek
+        unused: 667 - Nepoužitý
+        parts: 668 - {{ count }} díl
+        parts_plural: 669 - {{ count }} dílců
+        settings: 670 - Nastavení
       export:
-        title: '670 - '
-        info_0: '671 - '
+        title: 671 - Export diagramu řezání
+        info_0: '672 - Tento modul umožňuje exportovat **geometrii** *diagramu řezání* jako soubor v [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) nebo [DXF](https://en. wikipedia.org/wiki/AutoCAD_DXF).
+
+          '
         option_file_format: "$t(tab.cutlist.write.option_file_format)"
         option_file_format_help: "$t(tab.cutlist.write.option_file_format_help)"
-        option_dxf_structure: '674 - '
-        option_dxf_structure_1: '675 - '
-        option_dxf_structure_2: '676 - '
-        option_dxf_structure_help: '677 - '
+        option_dxf_structure: 675 - DXF Struktura
+        option_dxf_structure_1: 676 - Vrstvy
+        option_dxf_structure_2: 677 - Vrstvy + bloky
+        option_dxf_structure_help: '678 - '
         option_unit: "$t(tab.cutlist.write.option_unit)"
         option_unit_help: "$t(tab.cutlist.write.option_unit_help)"
         option_smoothing: "$t(tab.cutlist.write.option_smoothing)"
@@ -849,681 +863,699 @@ tab:
         option_merge_holes_0: "$t(tab.cutlist.write.option_merge_holes_0)"
         option_merge_holes_1: "$t(tab.cutlist.write.option_merge_holes_1)"
         option_merge_holes_help: "$t(tab.cutlist.write.option_merge_holes_help)"
-        option_sheet_good: 688 - Tabule
-        option_sheet_good_help: '689 - '
-        option_sheet_veneer: '690 - '
-        option_sheet_veneer_help: '691 - '
-        option_bar_dimensional: 692 - Délkový
-        option_bar_dimensional_help: '693 - '
-        option_bar_band: '694 - '
-        option_bar_band_help: '695 - '
-        option_parts: 696 - Díly
-        option_parts_help: '697 - '
-        option_parts_holes: '698 - '
-        option_parts_holes_help: '699 - '
-        option_texts: '700 - '
-        option_texts_help: '701 - '
-        option_leftovers: 702 - Odřezky
-        option_leftovers_help: '703 - '
-        option_cuts: 704 - Řezy
-        option_cuts_help: '705 - '
+        option_sheet_good: 689 - Tabule
+        option_sheet_good_help: '690 - '
+        option_sheet_veneer: 691 - Dýha
+        option_sheet_veneer_help: '692 - '
+        option_bar_dimensional: 693 - Délkový
+        option_bar_dimensional_help: '694 - '
+        option_bar_band: 695 - Hrana
+        option_bar_band_help: '696 - '
+        option_parts: 697 - Díly
+        option_parts_help: '698 - '
+        option_parts_holes: 699 - Vrtání
+        option_parts_holes_help: '700 - Vyberte barvu vrtání.
+
+          '
+        option_texts: 701 - Identifikátory
+        option_texts_help: '702 - '
+        option_leftovers: 703 - Odřezky
+        option_leftovers_help: '704 - '
+        option_cuts: 705 - Řezy
+        option_cuts_help: '706 - '
         warning:
-          is_sheet_selection: '706 - '
+          is_sheet_selection: '707 - '
       error:
-        no_bar_dimensional: 707 - Standardní deska nebyla správně nakonfigurována a nebyly definovány žádné ořezy.
-        no_bar_edge: 708 - Standardní olepování hran nebylo správně nakonfigurováno a nebyly definovány žádné zbytky.
-        parameters: 709 - Parametry jsou nesprávné. Velikost ořezu je větší než 25% nejdelší desky nebo hrany.
-        no_parts: 710 - Žádný dílec.
-        no_sheet: 711 - Standardní velikosti panelů je špatně nakonfigurována a nejsou k dispozici žádné zbytky.
-        no_placement_possible_1d: 712 - Není možné umístění (standardní deska je příliš malá, velikost ořezu příliš velká, řezná spára příliš velká, ...).
-        no_placement_possible_2d: 713 - Není možné žádné umístění (příliš velká velikost ořezu, příliš malý standardní panel, příliš velká šířka řezu, ...).
-        bad_error: 714 - Chyba v algoritmu, prosím kontaktujte vývojáře, máte zajímavý případ.
-        unplaced_parts: 715 - **1 část** nelze umístit, protože je příliš velká, nevleze se.
-        unplaced_parts_plural: 716 - Existují části **{{ count }}** nelze umístit, protože je příliš velká, nevleze se.
+        no_bar_dimensional: 708 - Standardní deska nebyla správně nakonfigurována a nebyly definovány žádné ořezy.
+        no_bar_edge: 709 - Standardní olepování hran nebylo správně nakonfigurováno a nebyly definovány žádné zbytky.
+        parameters: 710 - Parametry jsou nesprávné. Velikost ořezu je větší než 25% nejdelší desky nebo hrany.
+        no_parts: 711 - Žádný dílec.
+        no_sheet: 712 - Standardní velikosti panelů je špatně nakonfigurována a nejsou k dispozici žádné zbytky.
+        no_placement_possible_1d: 713 - Není možné umístění (standardní deska je příliš malá, velikost ořezu příliš velká, řezná spára příliš velká, ...).
+        no_placement_possible_2d: 714 - Není možné žádné umístění (příliš velká velikost ořezu, příliš malý standardní panel, příliš velká šířka řezu, ...).
+        bad_error: 715 - Chyba v algoritmu, prosím kontaktujte vývojáře, máte zajímavý případ.
+        unplaced_parts: 716 - **1 část** nelze umístit, protože je příliš velká, nevleze se.
+        unplaced_parts_plural: 717 - Existují části **{{ count }}** nelze umístit, protože je příliš velká, nevleze se.
       warning:
-        is_part_selection: 717 - Tento nářezový plán je omezen na **vybrané části**.
-        cutting_dimensions: 718 - Tento nářezový plán používá **hrubé** rozměry dílů.
-        cutting_dimensions_increase_1d: '719 - Tyto hrubé rozměry byly nakonfigurovány na materiálu ''{{ material_name }}'': hrubé délky (**{{ length_increase }}**).'
-        cutting_dimensions_increase_2d: '720 - Tyto hrubé rozměry byly nakonfigurovány na materiálu ''{{ material_name }}'': hrubé délky (**{{ length_increase }}**) a hrubé šířky (**{{ width_increase }}**).'
-        cutting_dimensions_edge_decrement: 721 - Rozměry zmenšené o tloušťku hrany. <i class='ladb-opencutlist-icon-edge-decremented'></i>
+        is_part_selection: 718 - Tento nářezový plán je omezen na **vybrané části**.
+        cutting_dimensions: 719 - Tento nářezový plán používá **hrubé** rozměry dílů.
+        cutting_dimensions_increase_1d: '720 - Tyto hrubé rozměry byly nakonfigurovány na materiálu ''{{ material_name }}'': hrubé délky (**{{ length_increase }}**).'
+        cutting_dimensions_increase_2d: '721 - Tyto hrubé rozměry byly nakonfigurovány na materiálu ''{{ material_name }}'': hrubé délky (**{{ length_increase }}**) a hrubé šířky (**{{ width_increase }}**).'
+        cutting_dimensions_edge_decrement: 722 - Rozměry zmenšené o tloušťku hrany. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
-      title: 722 - Štítky
-      options_layout: 723 - Rozložení
-      options_settings: 724 - Konfigurace
-      options_part_order_strategy: 725 - Třídění
-      options_offset: 726 - Offset
-      size: 727 - Skutečná velikost štítku
-      add_element: 728 - Přidejte prvek
-      remove_element: 729 - Odstranit
-      remove_all_elements: '730 - '
+      title: 723 - Štítky
+      options_layout: 724 - Rozložení
+      options_settings: 725 - Konfigurace
+      options_part_order_strategy: 726 - Třídění
+      options_offset: 727 - Offset
+      size: 728 - Skutečná velikost štítku
+      add_element: 729 - Přidejte prvek
+      remove_element: 730 - Odstranit
+      remove_all_elements: 731 - Odstranit všechny
       part_order_strategy_help: |
-        731 - Reorganizujte následující vlastnosti a definujte pořadí řazení štítků.
+        732 - Reorganizujte následující vlastnosti a definujte pořadí řazení štítků.
         Vlastnosti lze řadit ve <i class="ladb-opencutlist-icon-sort-asc"></i> *vzestupném* nebo <i class="ladb-opencutlist-icon-sort-desc"></i> *sestupném* pořadí.
       offset_help: |
-        732 - *Offset* umožňuje definovat pozici **prvního štítku** na **první stránce**.
+        733 - *Offset* umožňuje definovat pozici **prvního štítku** na **první stránce**.
         Zaškrtněte políčko, které odpovídá vašemu výběru.
-      option_page: 733 - Velikost papíru
-      option_page_format: 734 - Formát
-      option_page_format_portrait: 735 - Na výšku
-      option_page_format_landscape: 736 - Na šířku
-      option_page_format_custom: 737 - Uživatelsky
-      option_page_width: 738 - Šířka papíru
-      option_page_height: 739 - Výška papíru
-      option_margin: 740 - Okraje
-      option_margin_top: 741 - Horní
-      option_margin_right: 742 - Vpravo
-      option_margin_bottom: 743 - Dno
-      option_margin_left: 744 - Vlevo
-      option_spacing: 745 - Velikost mezery
-      option_spacing_h: 746 - Horizontální
-      option_spacing_v: 747 - Vertikální
-      option_grid: 748 - Štítky na stránku
-      option_col_count: 749 - Sloupce
-      option_row_count: 750 - Řádky
-      option_cutting_marks: 751 - Řezané značky
-      option_cutting_marks_0: 752 - Žádný
-      option_cutting_marks_1: 753 - Vytištěno
-      option_formula: 754 - Název pole
-      option_size: 755 - Rozměry
-      option_custom_formula: 756 - Vzorec
-      option_anchor: 757 - Kotva
-      option_anchor_start: 758 - Začátek - Dole
-      option_anchor_middle: 759 - Uprostřed - Dole
-      option_anchor_end: 760 - Konec - Dole
-      option_anchor_start_top: 761 - Začátek – Nahoře
-      option_anchor_middle_top: 762 - Uprostřed - Nahoře
-      option_anchor_end_top: 763 - Konec - Nahoře
-      option_color: 764 - Barva
+      option_page: 734 - Velikost papíru
+      option_page_format: 735 - Formát
+      option_page_format_portrait: 736 - Na výšku
+      option_page_format_landscape: 737 - Na šířku
+      option_page_format_custom: 738 - Uživatelsky
+      option_page_width: 739 - Šířka papíru
+      option_page_height: 740 - Výška papíru
+      option_margin: 741 - Okraje
+      option_margin_top: 742 - Horní
+      option_margin_right: 743 - Vpravo
+      option_margin_bottom: 744 - Dno
+      option_margin_left: 745 - Vlevo
+      option_spacing: 746 - Velikost mezery
+      option_spacing_h: 747 - Horizontální
+      option_spacing_v: 748 - Vertikální
+      option_grid: 749 - Štítky na stránku
+      option_col_count: 750 - Sloupce
+      option_row_count: 751 - Řádky
+      option_cutting_marks: 752 - Řezané značky
+      option_cutting_marks_0: 753 - Žádný
+      option_cutting_marks_1: 754 - Vytištěno
+      option_formula: 755 - Název pole
+      option_size: 756 - Rozměry
+      option_custom_formula: 757 - Vzorec
+      option_anchor: 758 - Kotva
+      option_anchor_start: 759 - Začátek - Dole
+      option_anchor_middle: 760 - Uprostřed - Dole
+      option_anchor_end: 761 - Konec - Dole
+      option_anchor_start_top: 762 - Začátek – Nahoře
+      option_anchor_middle_top: 763 - Uprostřed - Nahoře
+      option_anchor_end_top: 764 - Konec - Nahoře
+      option_color: 765 - Barva
       formula:
-        custom: 765 - Vzorec
-        part_number: 766 - Číslo
-        part_name: 767 - Označení
-        part_description: 768 - Popis
-        part_entity_named_path: 769 - Cesta instance
-        part_entity_name: 770 - Název instance
-        part_bin: 771 - Zásobník
-        part_cutting_size: 772 - Hrubé rozměry
-        part_cutting_length: 773 - Hrubá délka
-        part_cutting_width: 774 - Hrubá šířka
-        part_cutting_thickness: 775 - Hrubá tloušťka
-        part_edge_cutting_size: '776 - '
-        part_edge_cutting_length: '777 - '
-        part_edge_cutting_width: '778 - '
-        part_size: 779 - Rozměry
-        part_length: 780 - Délka
-        part_width: 781 - Šířka
-        part_thickness: 782 - Tloušťka
-        part_tags: 783 - Znaky
-        part_batch: 784 - Šarže
-        part_edge_ymin: 785 - Hrana podél 1
-        part_edge_ymax: 786 - Hrana podél 2
-        part_edge_xmin: 787 - Hrana napříč 1
-        part_edge_xmax: 788 - Hrana napříč 2
-        part_face_zmin: 789 - Zadní strana z dýhy
-        part_face_zmax: 790 - Přední strana z dýhy
-        thumbnail_proportional_drawing: '791 - '
-        thumbnail_proportional: 792 - Proporcionální miniatura
-        thumbnail_square: 793 - Čtvercová miniatura
-        group_material: 794 - Materíál / Tloušťka
-        group_material_name: 795 - Název materiálu
-        group_std_dimension: 796 - Standardní rozměry
-        filename: 797 - Název souboru
-        model_name: 798 - Jméno modelu
-        page_name: 799 - Název scény
-        length_unit: 800 - Jednotka
-        generated_at: 801 - Datum a čas
+        custom: 766 - Vzorec
+        part_number: 767 - Číslo
+        part_name: 768 - Označení
+        part_description: 769 - Popis
+        part_entity_named_path: 770 - Cesta instance
+        part_entity_name: 771 - Název instance
+        part_bin: 772 - Zásobník
+        part_cutting_size: 773 - Hrubé rozměry
+        part_cutting_length: 774 - Hrubá délka
+        part_cutting_width: 775 - Hrubá šířka
+        part_cutting_thickness: 776 - Hrubá tloušťka
+        part_edge_cutting_size: '777 - '
+        part_edge_cutting_length: 778 - Délkové okraje - neopracované
+        part_edge_cutting_width: 779 - Šířkové okraje - hrubé
+        part_size: 780 - Rozměry
+        part_length: 781 - Délka
+        part_width: 782 - Šířka
+        part_thickness: 783 - Tloušťka
+        part_tags: 784 - Znaky
+        part_batch: 785 - Šarže
+        part_edge_ymin: 786 - Hrana podél 1
+        part_edge_ymax: 787 - Hrana podél 2
+        part_edge_xmin: 788 - Hrana napříč 1
+        part_edge_xmax: 789 - Hrana napříč 2
+        part_face_zmin: 790 - Zadní strana z dýhy
+        part_face_zmax: 791 - Přední strana z dýhy
+        thumbnail_proportional_drawing: 792 - Náhled
+        thumbnail_proportional: 793 - Proporcionální miniatura
+        thumbnail_square: 794 - Čtvercová miniatura
+        group_material: 795 - Materíál / Tloušťka
+        group_material_name: 796 - Název materiálu
+        group_std_dimension: 797 - Standardní rozměry
+        filename: 798 - Název souboru
+        model_name: 799 - Jméno modelu
+        page_name: 800 - Název scény
+        length_unit: 801 - Jednotka
+        generated_at: 802 - Datum a čas
       error:
-        invalid_size: 802 - Zadané konfigurační parametry neumožňují nastavení platné velikosti štítku.
+        invalid_size: 803 - Zadané konfigurační parametry neumožňují nastavení platné velikosti štítku.
       warning:
-        is_part_selection: 803 - Tyto štítky jsou omezeny pouze na **vybrané části**.
-        formula_not_available: 804 - Vzorec není v tomto kontextu k dispozici
+        is_part_selection: 804 - Tyto štítky jsou omezeny pouze na **vybrané části**.
+        formula_not_available: 805 - Vzorec není v tomto kontextu k dispozici
     layout:
-      title: 805 - Kreslení
-      to_layout: 806 - Export do Layout
-      options_layout: 807 - Rozložení
-      options_settings: 808 - Konfigurace
-      option_parts: 809 - Díly
-      option_parts_colored: 810 - Barva
-      option_parts_colored_0: 811 - Bez barvy
-      option_parts_colored_1: 812 - Barva materiálu
-      option_parts_colored_help: 813 - Vyberte vzhled dílů.
-      option_parts_opacity: 814 - Neprůhlednost
-      option_parts_opacity_0: 815 - Průhledný
-      option_parts_opacity_1: 816 - Neprůhledný
-      option_parts_opacity_help: 817 - Vyberte neprůhlednost dílů.
-      option_pins: 818 - Štítky
-      option_pins_hidden: 819 - Zobrazit
-      option_pins_hidden_0: 820 - Se štítky
-      option_pins_hidden_1: 821 - Bez štítků
-      option_pins_hidden_help: 822 - Zobrazit nebo skrýt štítky dílů s číslem nebo označením.
-      option_pins_colored: 823 - Barva
-      option_pins_colored_0: 824 - Bez barvy
-      option_pins_colored_1: 825 - Barva dílu
-      option_pins_colored_help: 826 - Vyberte barvu štítků.
-      option_pins_formula: 827 - Vzorec
-      option_pins_formula_help: 828 - Umožňuje napsat kód *Ruby* pro přizpůsobení textu štítku.
-      option_pins_length: 829 - Délka
-      option_pins_length_0: 830 - Bez vodící čáry
-      option_pins_length_1: 831 - Malý
-      option_pins_length_2: 832 - Střední
-      option_pins_length_3: 833 - Dlouhý
-      option_pins_length_help: 834 - Vyberte délku odkazové čáry.
-      option_pins_direction: 835 - Směr
-      option_pins_direction_0: 836 - Po červené ose
-      option_pins_direction_1: 837 - Po zelené ose
-      option_pins_direction_2: 838 - Po modré ose
-      option_pins_direction_3: 839 - Směrem ke středu nadřazené skupiny
-      option_pins_direction_4: 840 - Směrem ke středu výběru
-      option_pins_direction_help: 841 - Pro lepší čitelnost vyberte směr odkazových čar k štítkům.
-      option_page: 842 - Velikost papíru
-      option_page_format: 843 - Formát
-      option_page_format_portrait: 844 - Na výšku
-      option_page_format_landscape: 845 - Na šířku
-      option_page_format_custom: 846 - Uživatelsky
-      option_page_width: 847 - Šířka papíru
-      option_page_height: 848 - Výška papíru
-      option_page_header: 849 - Záhlaví
-      option_page_header_0: 850 - Žádný
-      option_page_header_1: 851 - S
+      title: 806 - Kreslení
+      to_layout: 807 - Export do Layout
+      options_layout: 808 - Rozložení
+      options_settings: 809 - Konfigurace
+      option_parts: 810 - Díly
+      option_parts_colored: 811 - Barva
+      option_parts_colored_0: 812 - Bez barvy
+      option_parts_colored_1: 813 - Barva materiálu
+      option_parts_colored_help: 814 - Vyberte vzhled dílů.
+      option_parts_opacity: 815 - Neprůhlednost
+      option_parts_opacity_0: 816 - Průhledný
+      option_parts_opacity_1: 817 - Neprůhledný
+      option_parts_opacity_help: 818 - Vyberte neprůhlednost dílů.
+      option_pins: 819 - Štítky
+      option_pins_hidden: 820 - Zobrazit
+      option_pins_hidden_0: 821 - Se štítky
+      option_pins_hidden_1: 822 - Bez štítků
+      option_pins_hidden_help: 823 - Zobrazit nebo skrýt štítky dílů s číslem nebo označením.
+      option_pins_colored: 824 - Barva
+      option_pins_colored_0: 825 - Bez barvy
+      option_pins_colored_1: 826 - Barva dílu
+      option_pins_colored_help: 827 - Vyberte barvu štítků.
+      option_pins_formula: 828 - Vzorec
+      option_pins_formula_help: 829 - Umožňuje napsat kód *Ruby* pro přizpůsobení textu štítku.
+      option_pins_length: 830 - Délka
+      option_pins_length_0: 831 - Bez vodící čáry
+      option_pins_length_1: 832 - Malý
+      option_pins_length_2: 833 - Střední
+      option_pins_length_3: 834 - Dlouhý
+      option_pins_length_help: 835 - Vyberte délku odkazové čáry.
+      option_pins_direction: 836 - Směr
+      option_pins_direction_0: 837 - Po červené ose
+      option_pins_direction_1: 838 - Po zelené ose
+      option_pins_direction_2: 839 - Po modré ose
+      option_pins_direction_3: 840 - Směrem ke středu nadřazené skupiny
+      option_pins_direction_4: 841 - Směrem ke středu výběru
+      option_pins_direction_help: 842 - Pro lepší čitelnost vyberte směr odkazových čar k štítkům.
+      option_page: 843 - Velikost papíru
+      option_page_format: 844 - Formát
+      option_page_format_portrait: 845 - Na výšku
+      option_page_format_landscape: 846 - Na šířku
+      option_page_format_custom: 847 - Uživatelsky
+      option_page_width: 848 - Šířka papíru
+      option_page_height: 849 - Výška papíru
+      option_page_header: 850 - Záhlaví
+      option_page_header_0: 851 - Žádný
+      option_page_header_1: 852 - S
       option_page_header_help: |
-        852 - Vyberte, zda stránka k tisku obsahuje záhlaví s názvem dokumentu, jeho popisem a datumem.
+        853 - Vyberte, zda stránka k tisku obsahuje záhlaví s názvem dokumentu, jeho popisem a datumem.
         Bez záhlaví zabírá přehledový výkres celou stránku.
-      option_camera: 853 - Kamera
-      option_camera_view: 854 - Zobrazit
-      option_camera_view_custom: 855 - Zákazník
-      option_camera_zoom: 856 - Měřítko
-      option_camera_zoom_auto: 857 - Automatický
-      option_camera_zoom_custom: 858 - Zákazník
-      option_camera_target: 859 - Pozice
-      option_camera_target_auto: 860 - Automatický
-      option_camera_target_custom: 861 - Zákazník
-      option_explode: 862 - Rozložený pohled
+      option_camera: 854 - Kamera
+      option_camera_view: 855 - Zobrazit
+      option_camera_view_custom: 856 - Zákazník
+      option_camera_zoom: 857 - Měřítko
+      option_camera_zoom_auto: 858 - Automatický
+      option_camera_zoom_custom: 859 - Zákazník
+      option_camera_target: 860 - Pozice
+      option_camera_target_auto: 861 - Automatický
+      option_camera_target_custom: 862 - Zákazník
+      option_explode: 863 - Rozložený pohled
       error:
-        no_part: 863 - Není zde žádná část ke kreslení.
-        failed_to_save_as_skp: 864 - Nepodařilo se zapsat soubor SKP pro odeslání do modulu Layout.
+        no_part: 864 - Není zde žádná část ke kreslení.
+        failed_to_save_as_skp: 865 - Nepodařilo se zapsat soubor SKP pro odeslání do modulu Layout.
         failed_to_layout: |
-          865 - Chyba při zápisu souboru Layout: *{{ error }}*
+          866 - Chyba při zápisu souboru Layout: *{{ error }}*
 
           **Ujistěte se, že soubor není otevřen v Rozložení.**
       warning:
-        is_group_selection: 866 - Součásti uvnitř **maskovaných skupin** vašeho kusovníku nebudou vykresleny.
-        is_part_selection: 867 - Tento přehledový výkres je omezen na **vybrané díly**.
+        is_group_selection: 867 - Součásti uvnitř **maskovaných skupin** vašeho kusovníku nebudou vykresleny.
+        is_part_selection: 868 - Tento přehledový výkres je omezen na **vybrané díly**.
     write:
-      title: '868 - '
-      info_2d: '869 - '
-      info_3d: '870 - '
-      option_file_format: 871 - Formát
-      option_file_format_help: '872 - '
-      option_unit: 873 - Jednotka
-      option_unit_help: '874 - '
-      option_part_drawing_type: '875 - '
-      option_part_drawing_type_help: '876 - '
-      option_faces: 877 - Dýhy
-      option_faces_0: '878 - '
-      option_faces_1: '879 - '
-      option_faces_help: '880 - '
-      option_anchor: '881 - '
-      option_anchor_0: '882 - '
-      option_anchor_1: '883 - '
-      option_anchor_help: '884 - '
-      option_smoothing: '885 - '
-      option_smoothing_0: 886 - Žádný
-      option_smoothing_1: '887 - '
-      option_smoothing_help: '888 - '
-      option_merge_holes: '889 - '
-      option_merge_holes_0: '890 - '
-      option_merge_holes_1: '891 - '
-      option_merge_holes_help: '892 - '
-      option_include_paths: '893 - '
-      option_include_paths_0: 894 - Žádný
-      option_include_paths_1: '895 - '
-      option_include_paths_help: '896 - '
-      option_parts: 897 - Díly
-      option_parts_help: '898 - '
-      option_parts_holes: '899 - '
-      option_parts_holes_help: '900 - '
-      option_parts_paths: '901 - '
-      option_parts_paths_help: '902 - '
+      title: 869 - Export dílů
+      info_2d: '870 - '
+      info_3d: '871 - '
+      option_file_format: 872 - Formát
+      option_file_format_help: '873 - Vyberte formát exportovaného souboru.
+
+        '
+      option_unit: 874 - Jednotka
+      option_unit_help: '875 - Vyberte jednotky použité u exportovaného souboru.
+
+        '
+      option_part_drawing_type: 876 - Projekce
+      option_part_drawing_type_help: '877 - Vyberte pohled, který chcete exportovat.
+
+        '
+      option_faces: 878 - Dýhy
+      option_faces_0: 879 - Používejte pouze označenou plochu
+      option_faces_1: 880 - Použijte všechny plochy dílu
+      option_faces_help: '881 - Umožňuje zvolit, zda se má hledání tvaru dílu provádět na všech jejích plochách nebo pouze na označené ploše.
+
+        '
+      option_anchor: 882 - Kotevní bod
+      option_anchor_0: 883 - Výchozí
+      option_anchor_1: 884 - Promítnout počátek dílu
+      option_anchor_help: '885 - Umožnit počátek osy dílu jako kotevní bod.
+
+        '
+      option_smoothing: 886 - Vyhlazování
+      option_smoothing_0: 887 - Žádný
+      option_smoothing_1: '888 - '
+      option_smoothing_help: '889 - '
+      option_merge_holes: '890 - '
+      option_merge_holes_0: 891 - Výchozí
+      option_merge_holes_1: '892 - '
+      option_merge_holes_help: '893 - '
+      option_include_paths: '894 - '
+      option_include_paths_0: 895 - Žádný
+      option_include_paths_1: '896 - '
+      option_include_paths_help: '897 - '
+      option_parts: 898 - Díly
+      option_parts_help: '899 - '
+      option_parts_holes: 900 - Vrtání
+      option_parts_holes_help: '901 - '
+      option_parts_paths: '902 - '
+      option_parts_paths_help: '903 - '
       error:
-        no_part: '903 - '
+        no_part: '904 - '
       warning:
-        is_group_selection: 904 - Díly, které jsou ve **skrytých skupinách** kusovníku, se neexportují.
-        is_part_selection: '905 - '
+        is_group_selection: 905 - Díly, které jsou ve **skrytých skupinách** kusovníku, se neexportují.
+        is_part_selection: '906 - '
     snippet:
-      hello: '906 - '
-      number: 907 - Číslo
-      name: 908 - Označení
-      number_and_name: 909 - Číslo označení
-      number_without_hardware: 910 - Číslo (bez příslušenství)
-      size: 911 - Rozměry
-      area: 912 - Plocha
-      volume: 913 - objem
+      hello: '907 - '
+      number: 908 - Číslo
+      name: 909 - Označení
+      number_and_name: 910 - Číslo označení
+      number_without_hardware: 911 - Číslo (bez příslušenství)
+      size: 912 - Rozměry
+      area: 913 - Plocha
+      volume: 914 - objem
     error:
-      no_model: 914 - Model není otevřen. Potřebujeme více informací ;)
-      no_entities: 915 - Váš model je prázdný. Potřebujeme více informací ;)
-      no_component_in_selection: 916 - Ve vašem výběru nebyla zjištěna žádná viditelná komponenty.
-      no_component_in_model: 917 - Ve vaší scéně nebyla zjištěna žádná viditelná komponenty.
-      unknow_part: 918 - Vybraný dílec neexistuje v kusovníku.
-      obsolete_cutlist: 919 - Je možné, že kusovník je zastaralý. Vygenerujte ho znovu.
+      no_model: 915 - Model není otevřen. Potřebujeme více informací ;)
+      no_entities: 916 - Váš model je prázdný. Potřebujeme více informací ;)
+      no_component_in_selection: 917 - Ve vašem výběru nebyla zjištěna žádná viditelná komponenty.
+      no_component_in_model: 918 - Ve vaší scéně nebyla zjištěna žádná viditelná komponenty.
+      unknow_part: 919 - Vybraný dílec neexistuje v kusovníku.
+      obsolete_cutlist: 920 - Je možné, že kusovník je zastaralý. Vygenerujte ho znovu.
     warning:
-      is_entity_selection: 920 - Tento kusovník je vytvořen pouze z vybraných dílců.
-      no_typed_materials_in_model: 921 - Váš model nepoužívá žádný definovaný materiál (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**).
-      no_typed_materials_in_selection: 922 - Výběr nepoužívá žádný definovaný materiál (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**).
-      export_empty: 923 - Váš export neobsahuje žádné dílce.
+      is_entity_selection: 921 - Tento kusovník je vytvořen pouze z vybraných dílců.
+      no_typed_materials_in_model: 922 - Váš model nepoužívá žádný definovaný materiál (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**).
+      no_typed_materials_in_selection: 923 - Výběr nepoužívá žádný definovaný materiál (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**).
+      export_empty: 924 - Váš export neobsahuje žádné dílce.
     success:
-      part_selected: '924 - '
-      part_selected_plural: '925 - '
+      part_selected: '925 - '
+      part_selected_plural: '926 - '
     tip:
       no_component: |
-        926 - Dílce, které mají být zahrnuty do *kusovníku*, musí být instancemi **komponenty**.
+        927 - Dílce, které mají být zahrnuty do *kusovníku*, musí být instancemi **komponenty**.
         Pokud používáte pouze skupiny, převeďte je na komponenty.
         Použitím komponent u skupiny dílců je lze replikovat, aniž by byly duplikovány.
-      no_typed_materials: 927 - Použijte materiál na díly, které mají být zahrnuty do seznamu dílů, a definujte vlastnosti tohoto materiálu (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** nebo **$t(tab.materials.type_5)**) na kartě <i class="ladb-opencutlist-icon-materials"></i> **Materials**.
-    obsolete_base: 928 - Chcete-li zůstat v synchronizaci, musíte znovu vygenerovat seznam dílů.
+      no_typed_materials: 928 - Použijte materiál na díly, které mají být zahrnuty do seznamu dílů, a definujte vlastnosti tohoto materiálu (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** nebo **$t(tab.materials.type_5)**) na kartě <i class="ladb-opencutlist-icon-materials"></i> **Materials**.
+    obsolete_base: 929 - Chcete-li zůstat v synchronizaci, musíte znovu vygenerovat seznam dílů.
   materials:
-    label: 929 - Materiály
-    title: 930 - Materiály
-    new: 931 - Nový materiál
-    type_0: 932 - Nedefinovaný
-    type_1: 933 - Masiv
-    type_2: 934 - Tabule
-    type_3: 935 - Délkový
-    type_4: 936 - Hrana
-    type_5: 937 - Kování
-    type_6: 938 - Dýha
+    label: 930 - Materiály
+    title: 931 - Materiály
+    new: 932 - Nový materiál
+    type_0: 933 - Nedefinovaný
+    type_1: 934 - Masiv
+    type_2: 935 - Tabule
+    type_3: 936 - Délkový
+    type_4: 937 - Hrana
+    type_5: 938 - Kování
+    type_6: 939 - Dýha
     tooltip:
-      type_0: 939 - Typ materiálu '$t(tab.materials.type_0)'
-      type_1: 940 - Typ materiálu '$t(tab.materials.type_1)'
-      type_2: 941 - Typ materiálu '$t(tab.materials.type_2)'
-      type_3: 942 - Typ materiálu '$t(tab.materials.type_3)'
-      type_4: 943 - Typ materiálu '$t(tab.materials.type_4)'
-      type_5: 944 - Typ materiálu '$t(tab.materials.type_5)'
-      type_6: 945 - Typ materiálu '$t(tab.materials.type_6)'
+      type_0: 940 - Typ materiálu '$t(tab.materials.type_0)'
+      type_1: 941 - Typ materiálu '$t(tab.materials.type_1)'
+      type_2: 942 - Typ materiálu '$t(tab.materials.type_2)'
+      type_3: 943 - Typ materiálu '$t(tab.materials.type_3)'
+      type_4: 944 - Typ materiálu '$t(tab.materials.type_4)'
+      type_5: 945 - Typ materiálu '$t(tab.materials.type_5)'
+      type_6: 946 - Typ materiálu '$t(tab.materials.type_6)'
       grained_0: "$t(tab.materials.edit_material.grained_0)"
       grained_1: "$t(tab.materials.edit_material.grained_1)"
-      grain_direction: 948 - Směr let
-      colorized: 949 - Tento barevný odstín bude aplikován na texturu tohoto materiálu, když je vykreslen v modelu
-      texture_load: 950 - Načtěte novou texturu
-      texture_clear: 951 - Odstraňte texturu
-      edit: 952 - Upravit vlastnosti pro '{{ name }}'
+      grain_direction: 949 - Směr let
+      raw_estimated_0: '950 - '
+      colorized: 951 - Tento barevný odstín bude aplikován na texturu tohoto materiálu, když je vykreslen v modelu
+      texture_load: 952 - Načtěte novou texturu
+      texture_clear: 953 - Odstraňte texturu
+      edit: 954 - Upravit vlastnosti pro '{{ name }}'
       set_current: |
-        953 - Malovat části s '{{ name }}'
+        955 - Malovat části s '{{ name }}'
         *Dvojitým kliknutím minimalizujete*
-      open_url: '954 - '
+      open_url: '956 - '
     menu:
-      import_from_skm: 955 - Import materiálu (.skm)
-      purge_unused: 956 - Smazat nepoužité materiály
-      reset_prices: 957 - Resetování cen všech materiálů
+      import_from_skm: 957 - Import materiálu (.skm)
+      purge_unused: 958 - Smazat nepoužité materiály
+      reset_prices: 959 - Resetování cen všech materiálů
       reset_prices_confirm: |
-        958 - Chystáte se resetovat ceny všech materiálů ve vašem modelu.
+        960 - Chystáte se resetovat ceny všech materiálů ve vašem modelu.
         Tato akce je konečná. **Všechny ceny budou vynulovány.**
         Potvrďte pro pokračování.
-      reset_prices_success: 959 - Ceny všech materiálů byly obnoveny.
+      reset_prices_success: 961 - Ceny všech materiálů byly obnoveny.
     new_material:
-      title: 960 - Vytvořit nový materiál
-      name: 961 - Název
-      name_warning: 962 - Neplatné jméno
-      color: 963 - Barva
-      color_warning: 964 - Neplatná barva
-      type: 965 - Typ
+      title: 962 - Vytvořit nový materiál
+      name: 963 - Název
+      name_warning: 964 - Neplatné jméno
+      color: 965 - Barva
+      color_warning: 966 - Neplatná barva
+      type: 967 - Typ
     edit_material:
-      title: 966 - Vlastnosti materiálu pro '{{ name }}'
-      general: 967 - Všeobecné
-      texture: 968 - Textura
-      no_texture: 969 - Žádná textura
-      name: 970 - Název
-      type: 971 - Typ
-      description: 972 - Popis
-      url: '973 - '
-      cut_options: 974 - Parametry řezání
-      attributes: 975 - Atributy
-      thickness: 976 - Tloušťka
+      title: 968 - Vlastnosti materiálu pro '{{ name }}'
+      general: 969 - Všeobecné
+      texture: 970 - Textura
+      no_texture: 971 - Žádná textura
+      name: 972 - Název
+      type: 973 - Typ
+      description: 974 - Popis
+      url: 975 - URL
+      cut_options: 976 - Parametry řezání
+      estimate_options: '977 - '
+      attributes: 978 - Atributy
+      thickness: 979 - Tloušťka
       thickness_help: |
-        977 - Hotová tloušťka materiálu.
+        980 - Hotová tloušťka materiálu.
         *Velikosti bez jednotek jsou považovány za modelové jednotky.*
-      length_increase: 978 - Nadmíra pro délku
-      length_increase_help: 979 - Nadmíra použitá na délku k nastavení **hrubé délky**.
-      width_increase: 980 - Nadmíra pro šířku
-      width_increase_help: 981 - Nadmíra použitá na šířku k nastavení **hrubé šířky**.
-      thickness_increase: 982 - Nadmíra pro tloušťku
-      thickness_increase_help: 983 - Nadmíra použitá na tloušťku k nastavení **hrubé tloušťky**.
-      std_lengths: 984 - Standardní délky
-      std_lengths_placeholder: 985 - délka ; ...
+      length_increase: 981 - Nadmíra pro délku
+      length_increase_help: 982 - Nadmíra použitá na délku k nastavení **hrubé délky**.
+      width_increase: 983 - Nadmíra pro šířku
+      width_increase_help: 984 - Nadmíra použitá na šířku k nastavení **hrubé šířky**.
+      thickness_increase: 985 - Nadmíra pro tloušťku
+      thickness_increase_help: 986 - Nadmíra použitá na tloušťku k nastavení **hrubé tloušťky**.
+      std_lengths: 987 - Standardní délky
+      std_lengths_placeholder: 988 - délka ; ...
       std_lengths_help: |
-        986 - Standardní délky desek nebo okrajových pásů.
+        989 - Standardní délky desek nebo okrajových pásů.
         *Velikosti bez jednotek považují velikost z modelových jednotek.*
-      std_widths: 987 - Standardní šířky
-      std_widths_placeholder: 988 - šířka ; ...
+      std_widths: 990 - Standardní šířky
+      std_widths_placeholder: 991 - šířka ; ...
       std_widths_help: |
-        989 - Standardní šířky hranování.
+        992 - Standardní šířky hranování.
         *Šířka bez jednotek použije šířku z modelových jednotek.*
-      std_thicknesses: 990 - Standardní tloušťky
-      std_thicknesses_placeholder: 991 - tloušťka ; ...
+      std_thicknesses: 993 - Standardní tloušťky
+      std_thicknesses_placeholder: 994 - tloušťka ; ...
       std_thicknesses_help: |
-        992 - K dispozici **aktuální** hrubá tloušťka.
+        995 - K dispozici **aktuální** hrubá tloušťka.
         *Velikosti bez jednotek považují velikost z modelových jednotek*
-      std_sections: 993 - Standardní průřezy
-      std_sections_placeholder: 994 - šířka x tloušťka ; ...
+      std_sections: 996 - Standardní průřezy
+      std_sections_placeholder: 997 - šířka x tloušťka ; ...
       std_sections_help: |
-        995 - Očekávaný formát: **Š** x **T**, kde **Š** a **T** představuje skutečnou *šířku* a *tloušťku* rozměrového kusu.
+        998 - Očekávaný formát: **Š** x **T**, kde **Š** a **T** představuje skutečnou *šířku* a *tloušťku* rozměrového kusu.
         *Velikosti bez jednotek použijí jednoty z modelových jednotek.*
-      std_sizes: 996 - Standardní velikosti panelů
-      std_sizes_placeholder: 997 - délka x šířka ; ...
+      std_sizes: 999 - Standardní velikosti panelů
+      std_sizes_placeholder: 1000 - délka x šířka ; ...
       std_sizes_help: |
-        998 - Očekávaný formát: **D** x **Š**, kde **D** a **Š** představují skutečnou *délku* a *šířku* panelu.
+        1001 - Očekávaný formát: **D** x **Š**, kde **D** a **Š** představují skutečnou *délku* a *šířku* panelu.
         *Velikosti bez jednotek použijí jednoty z modelových jednotek.*
-      grained: 999 - Směr let
-      grained_help: 1000 - Konfiguruje směr let materiálu.
-      grained_0: 1001 - Bez let
-      grained_1: 1002 - Leta po délce
-      edge_decremented: 1003 - Redukce
-      edge_decremented_help: 1004 - Umožňuje určit, zda mají být být rozměry dílců zmenšeny o tloušťku olepování hran.
-      edge_decremented_0: 1005 - Bez redukce
-      edge_decremented_1: 1006 - Odečíst tloušťku hrany
-      std_attributes_dim_placeholder: 1007 - Vyberte velikost
-      std_volumic_masses: 1008 - Hustota
-      std_volumic_masses_help: '1009 - '
-      std_volumic_masses_add: '1010 - '
-      std_prices: 1011 - Cena
-      std_prices_help: 1012 - Umožňuje definovat cenu pro všechny velikosti i pro každou standardní velikost materiálu.
-      std_prices_add: 1013 - Přidat cenu
-      texture_width: 1014 - Šířka papíru
-      texture_height: 1015 - Výška papíru
-      export_to_skm: 1016 - Export (.skm)
+      grained: 1002 - Směr let
+      grained_help: 1003 - Konfiguruje směr let materiálu.
+      grained_0: 1004 - Bez let
+      grained_1: 1005 - Leta po délce
+      edge_decremented: 1006 - Redukce
+      edge_decremented_help: 1007 - Umožňuje určit, zda mají být být rozměry dílců zmenšeny o tloušťku olepování hran.
+      edge_decremented_0: 1008 - Bez redukce
+      edge_decremented_1: 1009 - Odečíst tloušťku hrany
+      raw_estimated: '1010 - '
+      raw_estimated_help: '1011 - '
+      raw_estimated_0: '1012 - '
+      raw_estimated_1: '1013 - '
+      std_attributes_dim_placeholder: 1014 - Vyberte velikost
+      std_volumic_masses: 1015 - Hustota
+      std_volumic_masses_help: '1016 - '
+      std_volumic_masses_add: '1017 - '
+      std_prices: 1018 - Cena
+      std_prices_help: 1019 - Umožňuje definovat cenu pro všechny velikosti i pro každou standardní velikost materiálu.
+      std_prices_add: 1020 - Přidat cenu
+      texture_width: 1021 - Šířka papíru
+      texture_height: 1022 - Výška papíru
+      export_to_skm: 1023 - Export (.skm)
     texture_load:
-      title: 1017 - Načíst obrázek
+      title: 1024 - Načíst obrázek
     import_from_skm:
-      title: 1018 - Importujte soubor .skm
+      title: 1025 - Importujte soubor .skm
     export_to_skm:
-      title: 1019 - Export do souboru .skm
+      title: 1026 - Export do souboru .skm
     option:
-      material_order_strategy: 1020 - Třídění materiálu
+      material_order_strategy: 1027 - Třídění materiálu
       material_order_strategy_help: |
-        1021 - Změňte pořadí následujících vlastností a definujte strategii třídění pro materiály v seznamu.
+        1028 - Změňte pořadí následujících vlastností a definujte strategii třídění pro materiály v seznamu.
         Každou vlastnost lze řadit v <i class="ladb-opencutlist-icon-sort-asc"></i>*vzestupném* nebo <i class="ladb-opencutlist-icon-sort-desc"></i>*sestupném* pořadí.
-      property_type: 1022 - Typ
-      property_name: 1023 - Název
+      property_type: 1029 - Typ
+      property_name: 1030 - Název
     remove:
       message: |
-        1024 - Chystáte se odebrat materiál **{{ material_name }}** ze svého modelu.
+        1031 - Chystáte se odebrat materiál **{{ material_name }}** ze svého modelu.
         Pokračujte potvrzením.
     duplicate:
-      message: '1025 - Vyberte název nového materiálu, který bude zkopírován z **{{ material_name }}**.
+      message: '1032 - Vyberte název nového materiálu, který bude zkopírován z **{{ material_name }}**.
 
         '
     error:
-      no_model: 1026 - Model není otevřen. Potřebujeme více informací ;)
-      no_materials: 1027 - Váš model neobsahuje žádný materiál.
-      material_not_found: 1028 - Nebyl nalezen žádný materiál.
-      failed_import_skm_file: 1029 - Při importu souboru .skm došlo k chybě. **{{ error }}**
-      failed_export_skm_file: 1030 - Při exportu souboru .skm došlo k chybě. **{{ error }}**
-      failed_removing_material: 1031 - Při úpravě tohoto materiálu došlo k chybě. **{{ error }}**
-      failed_duplicating_material: 1032 - Při kopírování materiálu došlo k chybě. **{{ error }}**
-      invalid_image_file: 1033 - Neplatný obrázek
-    obsolete_base: 1034 - Chcete-li zůstat v synchronizaci, musíte aktualizovat seznam materiálů.
+      no_model: 1033 - Model není otevřen. Potřebujeme více informací ;)
+      no_materials: 1034 - Váš model neobsahuje žádný materiál.
+      material_not_found: 1035 - Nebyl nalezen žádný materiál.
+      failed_import_skm_file: 1036 - Při importu souboru .skm došlo k chybě. **{{ error }}**
+      failed_export_skm_file: 1037 - Při exportu souboru .skm došlo k chybě. **{{ error }}**
+      failed_removing_material: 1038 - Při úpravě tohoto materiálu došlo k chybě. **{{ error }}**
+      failed_duplicating_material: 1039 - Při kopírování materiálu došlo k chybě. **{{ error }}**
+      invalid_image_file: 1040 - Neplatný obrázek
+    obsolete_base: 1041 - Chcete-li zůstat v synchronizaci, musíte aktualizovat seznam materiálů.
   outliner:
-    label: '1035 - '
-    title: '1036 - '
-    list: '1037 - '
-    nodes: '1038 - '
-    part_count: '1039 - '
-    type_0: '1040 - '
-    type_1: '1041 - '
-    type_2: '1042 - '
-    type_3: '1043 - '
+    label: '1042 - '
+    title: '1043 - '
+    list: '1044 - '
+    nodes: '1045 - '
+    part_count: '1046 - '
+    type_0: '1047 - '
+    type_1: '1048 - '
+    type_2: '1049 - '
+    type_3: '1050 - '
     tooltip:
-      open_node_url: '1044 - '
+      open_node_url: '1051 - '
     edit_node:
-      title_model: '1045 - '
-      title_instance: '1046 - '
-      general: 1047 - Všeobecné
-      preview: 1048 - Přehled
-      name: 1049 - Název
-      instance_name: 1050 - Instance
-      definition_name: '1051 - '
-      description: 1052 - Popis
-      url: '1053 - '
-      layer_name: 1054 - Štítek
-      explode: '1055 - '
-      explode_message: '1056 - '
+      title_model: '1052 - '
+      title_instance: '1053 - '
+      general: 1054 - Všeobecné
+      preview: 1055 - Přehled
+      name: 1056 - Název
+      instance_name: 1057 - Instance
+      definition_name: '1058 - '
+      description: 1059 - Popis
+      url: 1060 - URL
+      layer_name: 1061 - Štítek
+      explode: '1062 - '
+      explode_message: '1063 - '
     error:
-      no_model: 1057 - Model není otevřen. Potřebujeme více informací ;)
-      no_entities: '1058 - '
-      node_not_found: '1059 - '
-      entity_not_found: '1060 - '
-      obsolete_outliner: '1061 - '
+      no_model: 1064 - Model není otevřen. Potřebujeme více informací ;)
+      no_entities: '1065 - '
+      node_not_found: '1066 - '
+      entity_not_found: '1067 - '
+      obsolete_outliner: '1068 - '
     tip:
-      no_node: '1062 - '
-    obsolete_base: '1063 - '
+      no_node: '1069 - '
+    obsolete_base: '1070 - '
   importer:
-    label: 1064 - Import
-    title: 1065 - Importovat dílce
+    label: 1071 - Import
+    title: 1072 - Importovat dílce
     help: |
-      1066 - Tato stránka umožňuje importovat dílce (definované obdélníkovým ohraničovacím rámečkem) do vašeho modelu ze souboru [CSV](https://cs.wikipedia.org/wiki/CSV).
+      1073 - Tato stránka umožňuje importovat dílce (definované obdélníkovým ohraničovacím rámečkem) do vašeho modelu ze souboru [CSV](https://cs.wikipedia.org/wiki/CSV).
       Potom můžete použít funkce *OpenCutList* pro dílce, které byly generovány jiným softwarem než *SketchUp*.
       Začněte kliknutím na tlačítko **Otevřít soubor CSV**.
-    open_csv: 1067 - Otevřete soubor CSV
-    import_to_model: 1068 - Import do modelu
+    open_csv: 1074 - Otevřete soubor CSV
+    import_to_model: 1075 - Import do modelu
     load:
-      title: 1069 - Načítání souboru CSV
+      title: 1076 - Načítání souboru CSV
       info_0: |
-        1070 - Vyberte možnosti nezbytné pro správné načtení souboru:
+        1077 - Vyberte možnosti nezbytné pro správné načtení souboru:
         **{{ filename }}**.
       info_1: |
-        1071 - *Jednotky konfigurované v modelu: **{{ unit }}**.
+        1078 - *Jednotky konfigurované v modelu: **{{ unit }}**.
         Tyto jednotky budou použity pro rozměry, kde nejsou nastavené*.
-      options: 1072 - Možnosti načítání
-      option_col_sep: 1073 - Oddělovač
-      option_col_sep_tab: 1074 - Tabulátor
-      option_col_sep_comma: 1075 - Čárka
-      option_col_sep_semicolon: 1076 - Středník
-      option_first_line_headers: 1077 - Záhlaví
-      option_first_line_headers_0: 1078 - Data
-      option_first_line_headers_1: 1079 - Názvy sloupců
+      options: 1079 - Možnosti načítání
+      option_col_sep: 1080 - Oddělovač
+      option_col_sep_tab: 1081 - Tabulátor
+      option_col_sep_comma: 1082 - Čárka
+      option_col_sep_semicolon: 1083 - Středník
+      option_first_line_headers: 1084 - Záhlaví
+      option_first_line_headers_0: 1085 - Data
+      option_first_line_headers_1: 1086 - Názvy sloupců
     import:
-      title: 1080 - Importujte součásti do modelu
+      title: 1087 - Importujte součásti do modelu
       info_0: |
-        1081 - Chystáte se importovat **{{ count }} dílce** do modelu.
+        1088 - Chystáte se importovat **{{ count }} dílce** do modelu.
         Tyto dílce budou umístěny na počátek hlavní scény.
       info_0_plural: |
-        1082 - Chystáte se importovat **{{ count }} součást** do modelu.
+        1089 - Chystáte se importovat **{{ count }} součást** do modelu.
         Tato součást budou umístěna na počátek hlavní scény.
-      info_1: 1083 - Kliknutím na **Importovat** akci potvrďte.
+      info_1: 1090 - Kliknutím na **Importovat** akci potvrďte.
       options: |
-        1084 - Model již obsahuje *dílce*, *definice* nebo *materiály*.
+        1091 - Model již obsahuje *dílce*, *definice* nebo *materiály*.
         Vyberte požadované možnosti importu.
-      option_remove_all_?: 1085 - Co dál?
-      option_remove_all_false: 1086 - Přidejte součásti k existujícím
-      option_remove_all_true: 1087 - Odebrat existující!
-      option_keep_definitions_settings: 1088 - Ponechat definované nastavení
-      option_keep_materials_settings: 1089 - Ponechat nastavení materiálu
+      option_remove_all_?: 1092 - Co dál?
+      option_remove_all_false: 1093 - Přidejte součásti k existujícím
+      option_remove_all_true: 1094 - Odebrat existující!
+      option_keep_definitions_settings: 1095 - Ponechat definované nastavení
+      option_keep_materials_settings: 1096 - Ponechat nastavení materiálu
     column:
-      unused: 1090 - Nepoužitý
-      mandatory: 1091 - Povinná pole
-      optional: 1092 - Nepovinná pole
-      name: 1093 - Označení
-      count: 1094 - Počet
-      bbox_length: 1095 - Délka
-      bbox_width: 1096 - Šířka
-      bbox_thickness: 1097 - Tloušťka
-      material: 1098 - Materiál
-      tags: 1099 - Znaky
+      unused: 1097 - Nepoužitý
+      mandatory: 1098 - Povinná pole
+      optional: 1099 - Nepovinná pole
+      name: 1100 - Označení
+      count: 1101 - Počet
+      bbox_length: 1102 - Délka
+      bbox_width: 1103 - Šířka
+      bbox_thickness: 1104 - Tloušťka
+      material: 1105 - Materiál
+      tags: 1106 - Znaky
     tooltip:
-      errors: 1100 - Tato část nebude importována, protože způsobila následující chyby
-      warnings: 1101 - Tato část bude importována, ale pouze s tímto varováním
+      errors: 1107 - Tato část nebude importována, protože způsobila následující chyby
+      warnings: 1108 - Tato část bude importována, ale pouze s tímto varováním
     error:
-      no_model: 1102 - Model není otevřený, proto není možné importovat dílce :)
-      file_not_found: '1103 - Soubor nebyl nalezen: **{{ filename }}**'
-      bad_extension: 1104 - Soubor *{{ filename }}* nemá příponu **.CSV** nebo **.TSV**.
+      no_model: 1109 - Model není otevřený, proto není možné importovat dílce :)
+      file_not_found: '1110 - Soubor nebyl nalezen: **{{ filename }}**'
+      bad_extension: 1111 - Soubor *{{ filename }}* nemá příponu **.CSV** nebo **.TSV**.
       failed_to_load_csv_file: |
-        1105 - Nelze načíst soubor CSV: **{{ error }}**
+        1112 - Nelze načíst soubor CSV: **{{ error }}**
         *Ověřte, že jste vybrali správný oddělovač polí.*
-      empty_file: 1106 - Soubor se zdá být prázdný nebo jej nelze interpretovat.
-      no_importable_part: 1107 - Nelze importovat žádnou část. Přiřaďte povinná pole k odpovídajícím sloupcům.
-      invalid_name: 1108 - Neplatné označení
-      invalid_length: 1109 - Neplatná délka
-      invalid_width: 1110 - Neplatná šířka
-      invalid_thickness: 1111 - Neplatná tloušťka
-      failed_to_import: 1112 - Import se nezdařil.
+      empty_file: 1113 - Soubor se zdá být prázdný nebo jej nelze interpretovat.
+      no_importable_part: 1114 - Nelze importovat žádnou část. Přiřaďte povinná pole k odpovídajícím sloupcům.
+      invalid_name: 1115 - Neplatné označení
+      invalid_length: 1116 - Neplatná délka
+      invalid_width: 1117 - Neplatná šířka
+      invalid_thickness: 1118 - Neplatná tloušťka
+      failed_to_import: 1119 - Import se nezdařil.
     warning:
-      invalid_count: 1113 - Neplatné množství
-      invalid_material: 1114 - Neplatný materiál
+      invalid_count: 1120 - Neplatné množství
+      invalid_material: 1121 - Neplatný materiál
     success:
-      imported_title: 1115 - Import hotový
-      imported_body: 1116 - Část {{ count }} byla úspěšně importována!
-      imported_body_plural: 1117 - {{ count }} dílů bylo úspěšně importováno!
-    obsolete_base: 1118 - Chcete-li zůstat v synchronizaci, musíte znovu načíst soubor CSV.
+      imported_title: 1122 - Import hotový
+      imported_body: 1123 - Část {{ count }} byla úspěšně importována!
+      imported_body_plural: 1124 - {{ count }} dílů bylo úspěšně importováno!
+    obsolete_base: 1125 - Chcete-li zůstat v synchronizaci, musíte znovu načíst soubor CSV.
   tutorials:
-    label: 1119 - Návody
-    title: 1120 - Návody
-    help: '1121 - Zde najdete neúplný seznam videí vytvořených komunitou, která používá plugin *OpenCutList*.
+    label: 1126 - Návody
+    title: 1127 - Návody
+    help: '1128 - Zde najdete neúplný seznam videí vytvořených komunitou, která používá plugin *OpenCutList*.
 
       '
-    submit: 1122 - Odeslat video
+    submit: 1129 - Odeslat video
     submit_info: |
-      1123 - Natočili jste video představující použití **OpenCutList** a chtěli byste, aby se zde zobrazilo?
+      1130 - Natočili jste video představující použití **OpenCutList** a chtěli byste, aby se zde zobrazilo?
       Dejte nám vědět a napište nám na **opencutlist@lairdubois.fr**!
 
       *Video musí být veřejné a hostované na YouTube*.
     error:
-      fail_to_load_list: 1124 - Nelze načíst seznam videí.
+      fail_to_load_list: 1131 - Nelze načíst seznam videí.
   news:
-    label: 1125 - Zprávy
-    title: 1126 - Zprávy
-    help: '1127 - Nejnovější zprávy z *OpenCutList*.
+    label: 1132 - Zprávy
+    title: 1133 - Zprávy
+    help: '1134 - Nejnovější zprávy z *OpenCutList*.
 
       '
-    comment: 1128 - Komentář
+    comment: 1135 - Komentář
     error:
-      fail_to_load_list: 1129 - Nelze načíst seznam zpráv.
+      fail_to_load_list: 1136 - Nelze načíst seznam zpráv.
   forum:
-    label: 1130 - Fórum
-    title: 1131 - Fórum
-    help: '1132 - Tato nástěnka umožnuje výměnu zpráv s komunitou uživatelů a týmem *OpenCutList*.
+    label: 1137 - Fórum
+    title: 1138 - Fórum
+    help: '1139 - Tato nástěnka umožnuje výměnu zpráv s komunitou uživatelů a týmem *OpenCutList*.
 
       '
-    create_conversation: 1133 - Založte téma
-    reply: 1134 - Odpověď
-    tags: 1135 - Štítky
+    create_conversation: 1140 - Založte téma
+    reply: 1141 - Odpověď
+    tags: 1142 - Štítky
     redirection: |
-      1136 - Budete přesměrováni na platformu **Open Collective**, která hostí toto diskusní fórum.
+      1143 - Budete přesměrováni na platformu **Open Collective**, která hostí toto diskusní fórum.
       Chcete-li *zahájit konverzaci* nebo *odpovědět*, budete si muset vytvořit účet a přihlásit se.
       *Je to zdarma, bez závazků a vše, co potřebujete je e-mailová adresa.*
 
       Aplikovat a pokračovat.
     error:
-      fail_to_load_list: 1137 - Seznam témat nelze načíst.
+      fail_to_load_list: 1144 - Seznam témat nelze načíst.
   sponsor:
-    label: 1138 - Sponzor
-    title: 1139 - Sponzor
+    label: 1145 - Sponzor
+    title: 1146 - Sponzor
     description: |
-      1140 - **OpenCutList** je *Open Source* software podporovaný uživateli prostřednictvím <a href="https://opencollective.com/" target="_blank">Open Collective</a> platformy.
+      1147 - **OpenCutList** je *Open Source* software podporovaný uživateli prostřednictvím <a href="https://opencollective.com/" target="_blank">Open Collective</a> platformy.
       Podpořte tento projekt finančním příspěvkem!
-    contribute: 1141 - Přispět
-    backers: '1142 - Finanční přispěvatel: {{ count }}'
-    backers_plural: '1143 - Finanční přispěvatelé: {{ count }}'
-    ad: 1144 - Líbí se vám software OpenCutList?
-    objective: 1145 - Objektivní
-    objective_slogan: 1146 - OpenCutList je pro všechny
+    contribute: 1148 - Přispět
+    backers: '1149 - Finanční přispěvatel: {{ count }}'
+    backers_plural: '1150 - Finanční přispěvatelé: {{ count }}'
+    ad: 1151 - Líbí se vám software OpenCutList?
+    objective: 1152 - Objektivní
+    objective_slogan: 1153 - OpenCutList je pro všechny
     objective_title:
-      default: 1147 - Objekty
-      cuttingdiagram_export: 1148 - Financování vývozu řezných diagramů
+      default: 1154 - Objekty
+      cuttingdiagram_export: 1155 - Financování vývozu řezných diagramů
     objective_details:
-      default: '1149 - Neustálé zlepšování *OpenCutList* je pro nás důležité, a proto projekt stále potřebuje vaši pomoc pro další aktualizaci!
+      default: '1156 - Neustálé zlepšování *OpenCutList* je pro nás důležité, a proto projekt stále potřebuje vaši pomoc pro další aktualizaci!
 
         '
       cuttingdiagram_export: |
-        1150 - Je pro nás důležité, aby *OpenCutList* bylo možné přizpůsobit velmi rozdílným očekáváním uživatelů od funkce *řezový diagram*.
+        1157 - Je pro nás důležité, aby *OpenCutList* bylo možné přizpůsobit velmi rozdílným očekáváním uživatelů od funkce *řezový diagram*.
         Pro další rozšíření možností bychom rádi umožnili export rozvrhových diagramů ve formátu **SVG** a **DXF**.
         Tím, že nám poskytnete prostředky pro práci na těchto exportech, nám dáte příležitost pomoci vám co nejlépe využít *OpenCutList*.
-      layout: '1151 - Cílem tohoto modulu je umožnit vám snadno vytisknout náhled vašeho projektu jako **rozložený pohled** s identifikací a popisem vygenerovaných do kusovníku.
+      layout: '1158 - Cílem tohoto modulu je umožnit vám snadno vytisknout náhled vašeho projektu jako **rozložený pohled** s identifikací a popisem vygenerovaných do kusovníku.
 
         '
-    objective_crowdfunding: '1152 - Vývoj nových funkcí bude probíhat prostřednictvím **Investičního financování** a může být zahájen po dosažení **Finančního cíle**.
+    objective_crowdfunding: '1159 - Vývoj nových funkcí bude probíhat prostřednictvím **Investičního financování** a může být zahájen po dosažení **Finančního cíle**.
 
       '
-    objective_thanks: '1153 - Děkujeme za váš příspěvek!
+    objective_thanks: '1160 - Děkujeme za váš příspěvek!
 
       '
-    objective_funded_progress: 1154 - financováno na {{ progress }}%
+    objective_funded_progress: 1161 - financováno na {{ progress }}%
   settings:
-    label: 1155 - Předvolby
-    title: 1156 - Předvolby
-    global_settings: 1157 - Globální preference
-    language: 1158 - Jazyk
-    language_auto: 1159 - Automatický
-    zoom: 1160 - Velikost písma
-    zoom_normal: 1161 - Normální
-    zoom_small: 1162 - Malý
-    zoom_tiny: 1163 - Drobný
-    print_margin: 1164 - Tisk okrajů
-    print_margin_normal: 1165 - Normální
-    print_margin_small: 1166 - Malé
-    table_row_size: '1167 - '
-    table_row_size_normal: 1168 - Normální
-    table_row_size_compact: '1169 - '
-    size_and_position: 1170 - Velikost a umístění okna
-    model_settings: 1171 - Předvolby modelu
-    length_unit: 1172 - Jednotka délky
-    length_format: 1173 - Formát
-    length_format_0: 1174 - Desetinný
-    length_format_1: 1175 - Architektonický
-    length_format_2: 1176 - Inženýrství
-    length_format_3: 1177 - Frakční
-    length_precision: 1178 - Přesnost
-    suppress_units_display: 1179 - Zobrazit jednotku délky pro každou hodnotu
-    mass_unit: 1180 - Jednotka hmotnosti
-    mass_precision: 1181 - Přesnost
-    currency_symbol: 1182 - Symbol měny
-    currency_precision: 1183 - Přesnost
+    label: 1162 - Předvolby
+    title: 1163 - Předvolby
+    global_settings: 1164 - Globální preference
+    language: 1165 - Jazyk
+    language_auto: 1166 - Automatický
+    zoom: 1167 - Velikost písma
+    zoom_normal: 1168 - Normální
+    zoom_small: 1169 - Malý
+    zoom_tiny: 1170 - Drobný
+    print_margin: 1171 - Tisk okrajů
+    print_margin_normal: 1172 - Normální
+    print_margin_small: 1173 - Malé
+    table_row_size: '1174 - '
+    table_row_size_normal: 1175 - Normální
+    table_row_size_compact: '1176 - '
+    size_and_position: 1177 - Velikost a umístění okna
+    model_settings: 1178 - Předvolby modelu
+    length_unit: 1179 - Jednotka délky
+    length_format: 1180 - Formát
+    length_format_0: 1181 - Desetinný
+    length_format_1: 1182 - Architektonický
+    length_format_2: 1183 - Inženýrství
+    length_format_3: 1184 - Frakční
+    length_precision: 1185 - Přesnost
+    suppress_units_display: 1186 - Zobrazit jednotku délky pro každou hodnotu
+    mass_unit: 1187 - Jednotka hmotnosti
+    mass_precision: 1188 - Přesnost
+    currency_symbol: 1189 - Symbol měny
+    currency_precision: 1190 - Přesnost
     presets:
-      export_global_presets: 1184 - Export předvoleb
+      export_global_presets: 1191 - Export předvoleb
       export_global_presets_help: |
-        1185 - Tato funkce umožňuje exportovat vaše předvolby do souboru **.json**.
+        1192 - Tato funkce umožňuje exportovat vaše předvolby do souboru **.json**.
         Vyberte předvolby, které do něj chcete exportovat.
-      export_global_presets_success: 1186 - Předvolby byly úspěšně exportovány.
-      import_global_presets: 1187 - Import předvoleb
+      export_global_presets_success: 1193 - Předvolby byly úspěšně exportovány.
+      import_global_presets: 1194 - Import předvoleb
       import_global_presets_help: |
-        1188 - Vyberte předvolby ze souboru **.json**, které chcete importovat.
+        1195 - Vyberte předvolby ze souboru **.json**, které chcete importovat.
         Vezměte prosím na vědomí, že přednastavení se stejným názvem, které již existuje, bude nahrazeno importovanou verzí.
       import_global_presets_success: |
-        1189 - Předvolby *OpenCutList* byly úspěšně importovány.
+        1196 - Předvolby *OpenCutList* byly úspěšně importovány.
         Aby se změny projevily, musíte **zavřít** a **znovu otevřít** okno OpenCutList.
-      dump_global_presets: 1190 - Výpis výchozího nastavení
-      dump_model_presets: 1191 - Výpis nastavení modelu
-      reset_global_presets: 1192 - Opětovná reinicializace výchozího nastavení
+      dump_global_presets: 1197 - Výpis výchozího nastavení
+      dump_model_presets: 1198 - Výpis nastavení modelu
+      reset_global_presets: 1199 - Opětovná reinicializace výchozího nastavení
       reset_global_presets_confirm: |
-        1193 - Chystáte se resetovat všechny uložené předvolby *OpenCutList*.
+        1200 - Chystáte se resetovat všechny uložené předvolby *OpenCutList*.
         Tato operace je konečná. **Všechny předvolby budou ztraceny**.
         Potvrďte pokračování.
       reset_global_presets_success: |
-        1194 - Předvolby *OpenCutList* byly resetovány.
+        1201 - Předvolby *OpenCutList* byly resetovány.
         Aby se změny projevily, je třeba okno OpenCutList **zavřít** a **znovu otevřít**.
-      reset_model_presets: 1195 - Opětovná inicializace nastavení modelu
+      reset_model_presets: 1202 - Opětovná inicializace nastavení modelu
       reset_model_presets_confirm: |
-        1196 - Chystáte se resetovat všechna nastavení *OpenCutList* pro aktuální model.
+        1203 - Chystáte se resetovat všechna nastavení *OpenCutList* pro aktuální model.
         Tato operace je konečná. **Všechna nastavení budou obnovena na výchozí hodnoty.**
         Potvrďte pokračování.
       reset_model_presets_success: |
-        1197 - Nastavení *OpenCutList* pro aktuální model bylo resetováno.
+        1204 - Nastavení *OpenCutList* pro aktuální model bylo resetováno.
         Aby se změny projevily, je třeba okno OpenCutList **zavřít** a **znovu otevřít**.
       error:
-        no_preset_to_export: 1198 - Žádné předvolby k exportu.
-        no_preset_to_import: 1199 - Žádné předvolby k importu.
-        failed_to_import: '1200 - Nelze importovat předvolby: **{{ error }}**.'
-        failed_to_import_invalid_hexdigest: 1201 - Tento soubor byl upraven. Nelze jej importovat.
-        failed_to_import_bad_file_format: 1202 - Neplatný formát souboru.
+        no_preset_to_export: 1205 - Žádné předvolby k exportu.
+        no_preset_to_import: 1206 - Žádné předvolby k importu.
+        failed_to_import: '1207 - Nelze importovat předvolby: **{{ error }}**.'
+        failed_to_import_invalid_hexdigest: 1208 - Tento soubor byl upraven. Nelze jej importovat.
+        failed_to_import_bad_file_format: 1209 - Neplatný formát souboru.
   about:
-    label: 1203 - O plaginu ...
-    title: 1204 - O plaginu ...
-    version: 1205 - Verze
-    credits: 1206 - Technické kredity
-    credits_authors: '1207 - *OpenCutList* vyvíjejí [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) a [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Seznam všech [přispěvatelů](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+    label: 1210 - O plaginu ...
+    title: 1211 - O plaginu ...
+    version: 1212 - Verze
+    credits: 1213 - Technické kredity
+    credits_authors: '1214 - *OpenCutList* vyvíjejí [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) a [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Seznam všech [přispěvatelů](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
 
       '
-    credits_translations: 1208 - Překlady
+    credits_translations: 1215 - Překlady
     credits_translators: |
-      1209 - - [Radek Rýznar](https://onlinesketchup.cz) (*česky*)
+      1216 - - [Radek Rýznar](https://onlinesketchup.cz) (*česky*)
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*anglicky*, *německy*)
       - Gildas Boureau (*francouzská* dokumentace)
       - Vladimir Badulya (*ruský*)
@@ -1538,116 +1570,116 @@ tab:
       - [刘涛](https://www.liutao91.cn) (*zjednodušená čínština*)
       - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*holandský*)
     credits_description: |
-      1210 - Vývoj tohoto rozšíření souvisí s projektem sdílení platforem [L'Air du Bois](https://www.lairdubois.fr).
+      1217 - Vývoj tohoto rozšíření souvisí s projektem sdílení platforem [L'Air du Bois](https://www.lairdubois.fr).
       Toto rozšíření je také *Open Source* a je k dispozici pod licencí [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) na [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
-    credits_runtime: 1211 - Spustit
-    credits_development: 1212 - Vývoj
-    credits_vendors: '1213 - Dobrodružství by nebylo možné bez práce autorů následujících komponent *Open Source*:
+    credits_runtime: 1218 - Spustit
+    credits_development: 1219 - Vývoj
+    credits_vendors: '1220 - Dobrodružství by nebylo možné bez práce autorů následujících komponent *Open Source*:
 
       '
     credits_thanks: |
-      1214 - Zvláštní poděkování patří:
+      1221 - Zvláštní poděkování patří:
       - [JetBrains](https://www.jetbrains.com) za podporu tohoto projektu prostřednictvím jejich [Free Open Source License](https://www.jetbrains.com/buy/opensource/).
       - [Transifex](https://www.transifex.com) za jejich podporu projektů Open Source.
       - [GitBook](https://www.gitbook.com) za jejich podporu projektů Open Source.
 tool:
   default:
-    transparency: 1215 - Průhlednost
-    zoom_extents: 1216 - Rozsahy zvětšení
-    toggle_depth: 1217 - Zadní část
-    more: 1218 - Více
+    transparency: 1222 - Průhlednost
+    zoom_extents: 1223 - Rozsahy zvětšení
+    toggle_depth: 1224 - Zadní část
+    more: 1225 - Více
   highlight:
     transparency: "$t(tool.default.transparency)"
     zoom_extents: "$t(tool.default.zoom_extents)"
   smart_paint:
-    title: 1221 - Přiřazení materiálů
-    default_material: 1222 - Není definován žádný materiál
-    filters: 1223 - Filtr
-    filter_0: 1224 - Bez typu
+    title: 1228 - Přiřazení materiálů
+    default_material: 1229 - Není definován žádný materiál
+    filters: 1230 - Filtr
+    filter_0: 1231 - Bez typu
     filter_1: "$t(tab.materials.type_1)"
     filter_2: "$t(tab.materials.type_2)"
     filter_3: "$t(tab.materials.type_3)"
     filter_4: "$t(tab.materials.type_4)"
     filter_5: "$t(tab.materials.type_5)"
     filter_6: "$t(tab.materials.type_6)"
-    action_0: 1231 - Materiál dílů
-    action_0_status: 1232 - Kliknutím na díl přiřadíme materiál
-    action_1: 1233 - Materiál hran
-    action_1_status: 1234 - Kliknutím na hranu dílce přiřadíme '$t(tab.materials.type_4)'
-    action_2: 1235 - Materiál dýh
-    action_2_status: 1236 - Kliknutím na plochu dílce přiřadíme '$t(tab.materials.type_6)'
-    action_3: 1237 - Vzorek materiálu - kapátko
-    action_3_status: 1238 - Kliknutím na plochu naberete její materiál
-    action_4: 1239 - Vyčistit díl
-    action_4_status: 1240 - Kliknutím na díl odstraníte všechny materiály z tohoto dílu
-    action_option_group_instances: '1241 - '
-    action_option_group_edges: 1242 - Počet hranování
-    action_option_group_faces: '1243 - '
-    action_option_instances_0_status: '1244 - '
-    action_option_instances_1_status: '1245 - '
-    action_option_edges_0_status: '1246 - '
-    action_option_edges_1_status: '1247 - '
-    action_option_edges_2_status: '1248 - '
-    action_option_faces_0_status: '1249 - '
-    action_option_faces_1_status: '1250 - '
-    edges: 1251 - {{ count }} hrana
-    edges_plural: 1252 - {{ count }} hran
-    edge_ymin: 1253 - Délka 1
-    edge_ymax: 1254 - Délka 2
-    edge_xmin: 1255 - Šířka 1
-    edge_xmax: 1256 - Šířka 2
-    faces: 1257 - {{ count }} plocha
-    faces_plural: 1258 - {{ count }} plochy
-    face_zmin: 1259 - Zadní
-    face_zmax: 1260 - Přední strana z dýhy
+    action_0: 1238 - Materiál dílů
+    action_0_status: 1239 - Kliknutím na díl přiřadíme materiál
+    action_1: 1240 - Materiál hran
+    action_1_status: 1241 - Kliknutím na hranu dílce přiřadíme '$t(tab.materials.type_4)'
+    action_2: 1242 - Materiál dýh
+    action_2_status: 1243 - Kliknutím na plochu dílce přiřadíme '$t(tab.materials.type_6)'
+    action_3: 1244 - Vzorek materiálu - kapátko
+    action_3_status: 1245 - Kliknutím na plochu naberete její materiál
+    action_4: 1246 - Vyčistit díl
+    action_4_status: 1247 - Kliknutím na díl odstraníte všechny materiály z tohoto dílu
+    action_option_group_instances: '1248 - '
+    action_option_group_edges: 1249 - Počet hranování
+    action_option_group_faces: '1250 - '
+    action_option_instances_0_status: '1251 - '
+    action_option_instances_1_status: '1252 - '
+    action_option_edges_0_status: '1253 - '
+    action_option_edges_1_status: '1254 - '
+    action_option_edges_2_status: '1255 - '
+    action_option_faces_0_status: '1256 - '
+    action_option_faces_1_status: '1257 - '
+    edges: 1258 - {{ count }} hrana
+    edges_plural: 1259 - {{ count }} hran
+    edge_ymin: 1260 - Délka 1
+    edge_ymax: 1261 - Délka 2
+    edge_xmin: 1262 - Šířka 1
+    edge_xmax: 1263 - Šířka 2
+    faces: 1264 - {{ count }} plocha
+    faces_plural: 1265 - {{ count }} plochy
+    face_zmin: 1266 - Zadní
+    face_zmax: 1267 - Přední strana z dýhy
     warning:
-      no_material: 1261 - Váš model neobsahuje žádný materiál!
-      no_material_type: 1262 - Žádný materiál typu '{{ type }}'
+      no_material: 1268 - Váš model neobsahuje žádný materiál!
+      no_material_type: 1269 - Žádný materiál typu '{{ type }}'
     error:
-      not_part: '1263 - '
-      not_edge: 1264 - Cílová plocha není hrana dílce
-      not_face: 1265 - Cílová plocha není plocha dílce
-      wrong_material_type: 1266 - Celková část musí být typu '{{ type }}'
+      not_part: '1270 - '
+      not_edge: 1271 - Cílová plocha není hrana dílce
+      not_face: 1272 - Cílová plocha není plocha dílce
+      wrong_material_type: 1273 - Celková část musí být typu '{{ type }}'
   smart_axes:
-    title: 1267 - Orientace
-    action_0: 1268 - Překlopit
-    action_0_status: 1269 - Kliknutím na díl otočíte jeho osy podél jednoho z jeho rozměrů
-    action_1: 1270 - Výměna délka ↔ šířka DÍLCE
-    action_1_status: 1271 - Kliknutím na dílec zaměníte jeho délku za šířku
-    action_2: 1272 - Vyměna přední hrana ↔ zadní hrana DÍLCE
-    action_2_status: 1273 - Kliknutím na dílec zaměníte jeho přední hranu se zadní hranou
-    action_3: 1274 - Přizpůsobte osy
-    action_3_status: 1275 - Kliknutím na plochu nebo hranu dílce upravíte orientaci os
-    action_option_group_direction: 1276 - Směr
-    action_option_direction_0: 1277 - D
-    action_option_direction_1: 1278 - Š
-    action_option_direction_2: 1279 - T
-    action_option_direction_0_status: '1280 - '
-    action_option_direction_1_status: '1281 - '
-    action_option_direction_2_status: '1282 - '
+    title: 1274 - Orientace
+    action_0: 1275 - Překlopit
+    action_0_status: 1276 - Kliknutím na díl otočíte jeho osy podél jednoho z jeho rozměrů
+    action_1: 1277 - Výměna délka ↔ šířka DÍLCE
+    action_1_status: 1278 - Kliknutím na dílec zaměníte jeho délku za šířku
+    action_2: 1279 - Vyměna přední hrana ↔ zadní hrana DÍLCE
+    action_2_status: 1280 - Kliknutím na dílec zaměníte jeho přední hranu se zadní hranou
+    action_3: 1281 - Přizpůsobte osy
+    action_3_status: 1282 - Kliknutím na plochu nebo hranu dílce upravíte orientaci os
+    action_option_group_direction: 1283 - Směr
+    action_option_direction_0: 1284 - D
+    action_option_direction_1: 1285 - Š
+    action_option_direction_2: 1286 - T
+    action_option_direction_0_status: '1287 - '
+    action_option_direction_1_status: '1288 - '
+    action_option_direction_2_status: '1289 - '
     warning:
-      more_entities: 1283 - {{ count_used }} instancí sdílejících stejnou definici bude upraveno
+      more_entities: 1290 - {{ count_used }} instancí sdílejících stejnou definici bude upraveno
     error:
-      not_part: '1284 - '
-      not_orientable: 1285 - Typ tohoto dílce neumožňuje orientaci
+      not_part: '1291 - '
+      not_orientable: 1292 - Typ tohoto dílce neumožňuje orientaci
   smart_export:
-    title: 1286 - Export
-    action_0: '1287 - '
-    action_0_status: '1288 - '
-    action_1: '1289 - '
-    action_1_status: '1290 - '
-    action_2: '1291 - '
-    action_2_status: '1292 - '
-    action_3: '1293 - '
-    action_3_status: '1294 - '
-    action_option_group_file_format: 1295 - Formát
-    action_option_group_unit: 1296 - Jednotka
-    action_option_group_faces: 1297 - Dýhy
-    action_option_group_options: 1298 - Nastavení
-    action_option_file_format_dxf_status: '1299 - '
-    action_option_file_format_stl_status: '1300 - '
-    action_option_file_format_obj_status: '1301 - '
-    action_option_file_format_svg_status: '1302 - '
+    title: 1293 - Export
+    action_0: '1294 - '
+    action_0_status: '1295 - '
+    action_1: '1296 - '
+    action_1_status: '1297 - '
+    action_2: '1298 - '
+    action_2_status: '1299 - '
+    action_3: '1300 - '
+    action_3_status: '1301 - '
+    action_option_group_file_format: 1302 - Formát
+    action_option_group_unit: 1303 - Jednotka
+    action_option_group_faces: 1304 - Dýhy
+    action_option_group_options: 1305 - Nastavení
+    action_option_file_format_dxf_status: '1306 - '
+    action_option_file_format_stl_status: '1307 - '
+    action_option_file_format_obj_status: '1308 - '
+    action_option_file_format_svg_status: '1309 - '
     action_option_unit_0_status: "$t(default.unit_0)"
     action_option_unit_1_status: "$t(default.unit_1)"
     action_option_unit_2_status: "$t(default.unit_2)"
@@ -1657,8 +1689,8 @@ tool:
     action_option_faces_1_status: "$t(tab.cutlist.write.option_faces_1)"
     action_option_options_anchor_status: "$t(tab.cutlist.write.option_anchor_1)"
     action_option_options_smoothing_status: "$t(tab.cutlist.write.option_smoothing_1)"
-    action_option_options_merge_holes_status: '1312 - '
-    action_option_options_paths_status: '1313 - '
+    action_option_options_merge_holes_status: '1319 - '
+    action_option_options_paths_status: '1320 - '
     error:
-      not_part: '1314 - '
-      not_flat_face: '1315 - '
+      not_part: '1321 - '
+      not_flat_face: '1322 - '

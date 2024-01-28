@@ -856,6 +856,10 @@ tab:
         option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
         option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
         option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
+        option_include_paths: $t(tab.cutlist.write.option_include_paths)
+        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
+        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
+        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
         option_sheet_good: Platte
         option_sheet_good_help: |
           Ermöglicht den Export von Platten zu aktivieren und deren Farbe anzugeben.
@@ -863,25 +867,27 @@ tab:
         option_sheet_veneer_help: |
           Ermöglicht den Export von Furnierblätter zu aktivieren und deren Farbe anzugeben.
         option_bar_dimensional: Stangenware
-        option_bar_dimensional_help:  |
+        option_bar_dimensional_help: |
           Ermöglicht den Export von Stangen zu aktiviren und deren Farbe anzugeben.
         option_bar_band: Kante
-        option_bar_band_help:  |
+        option_bar_band_help: |
           Ermöglicht den Export von Kanten zu aktiveren und deren Farbe anzugeben.
         option_parts: Teile
-        option_parts_help:  |
+        option_parts_help: |
           Ermöglicht den Export von Teilen zu aktivieren und deren Farbe anzugeben.
         option_parts_holes: Bohrungen
-        option_parts_holes_help:  |
+        option_parts_holes_help: |
           Auswahl der Farbe von Bohrungen.
+        option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
+        option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
         option_texts: Bezeichner
-        option_texts_help:  |
+        option_texts_help: |
           Ermöglicht den Export von Texten zur Identifizierung von Teilen zu aktivieren sowie deren Farben anzugeben.
         option_leftovers: Verschnitte
-        option_leftovers_help:  |
+        option_leftovers_help: |
           Ermöglicht den Export von Verschnitten zu aktivieren und deren Farbe anzugeben.
         option_cuts: Schnitte
-        option_cuts_help:  |
+        option_cuts_help: |
           Auswahl, ob die Schnitte gezeichnet werden sollen und ihre Farbe.
         warning:
           is_sheet_selection: "**Ausgeblendete Platten** werden nicht exportiert."
@@ -1698,7 +1704,7 @@ tool:
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: Isolieren von durchgehenden Bohrungen und Zusammenführen der Tiefen für jeden Hohlraum
-    action_option_options_paths_status: "Im Teil enthaltene, nicht mit einer Fläche verknüpfte Kanten als Plot exportieren"
+    action_option_options_include_paths_status: "Im Teil enthaltene, nicht mit einer Fläche verknüpfte Kanten als Plot exportieren"
     error:
       not_part: Diese Fläche gehört nicht zu einem Teil (Komponente)
       not_flat_face: Diese Fläche ist nicht eben
