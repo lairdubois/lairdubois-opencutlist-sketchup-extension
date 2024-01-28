@@ -24,7 +24,6 @@ module Ladb::OpenCutList
     EDGE_VALIDATOR_COPLANAR = 1
     EDGE_VALIDATOR_STRAY = 2
     EDGE_VALIDATOR_STRAY_COPLANAR = 3
-    EDGE_VALIDATOR_LAYER = 4
 
     def initialize(path, settings = {})
 
@@ -184,31 +183,28 @@ module Ladb::OpenCutList
       unless @ignore_edges
 
         validator = nil
-        if drawing_def.input_face_manipulator
-          case @edge_validator
-          when EDGE_VALIDATOR_COPLANAR
-            validator = lambda { |edge_manipulator|
+
+        case @edge_validator
+        when EDGE_VALIDATOR_COPLANAR
+          validator = lambda { |edge_manipulator|
+            return false if drawing_def.input_face_manipulator.nil?
+            point, vector = edge_manipulator.line
+            vector.perpendicular?(drawing_def.input_face_manipulator.normal) && point.on_plane?(drawing_def.input_face_manipulator.plane)
+          }
+        when EDGE_VALIDATOR_STRAY
+          validator = lambda { |edge_manipulator|
+            edge_manipulator.edge.faces.empty?
+          }
+        when EDGE_VALIDATOR_STRAY_COPLANAR
+          validator = lambda { |edge_manipulator|
+            return false if drawing_def.input_face_manipulator.nil?
+            if edge_manipulator.edge.faces.empty?
               point, vector = edge_manipulator.line
               vector.perpendicular?(drawing_def.input_face_manipulator.normal) && point.on_plane?(drawing_def.input_face_manipulator.plane)
-            }
-          when EDGE_VALIDATOR_STRAY
-            validator = lambda { |edge_manipulator|
-              edge_manipulator.edge.faces.empty?
-            }
-          when EDGE_VALIDATOR_STRAY_COPLANAR
-            validator = lambda { |edge_manipulator|
-              if edge_manipulator.edge.faces.empty?
-                point, vector = edge_manipulator.line
-                vector.perpendicular?(drawing_def.input_face_manipulator.normal) && point.on_plane?(drawing_def.input_face_manipulator.plane)
-              else
-                false
-              end
-            }
-          when EDGE_VALIDATOR_LAYER
-            validator = lambda { |edge_manipulator|
-              !edge_manipulator.edge.layer.line_style.nil? && edge_manipulator.edge.layer.line_style.name != 'Solid Basic'
-            }
-          end
+            else
+              false
+            end
+          }
         end
 
         _populate_edge_manipulators(drawing_def, entities, ttai, &validator)

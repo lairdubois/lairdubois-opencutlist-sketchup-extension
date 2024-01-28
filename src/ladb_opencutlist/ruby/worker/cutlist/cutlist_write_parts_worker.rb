@@ -91,7 +91,7 @@ module Ladb::OpenCutList
               next
             end
 
-            drawing_def = _compute_part_drawing_def(@part_drawing_type, part, !@paths)
+            drawing_def = _compute_part_drawing_def(@part_drawing_type, part, !@paths, !@anchor)
             return { :errors => [ 'tab.cutlist.error.unknow_part' ] } unless drawing_def.is_a?(DrawingDef)
 
             case @part_drawing_type

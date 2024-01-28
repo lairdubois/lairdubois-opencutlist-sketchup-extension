@@ -4,18 +4,21 @@
     padding: 0;
     z-index: 9999999;
     backface-visibility: hidden;
-    left: 50%;
     min-width: 325px;
     max-width: 600px;
-    transform: translate(-50%) translateZ(0) scale(1, 1);
 }
 
 #noty_layout__dialogTabs {
     bottom: 40px;
+    left: 50%;
+    margin-left: 45px;
+    transform: translate(-50%) translateZ(0) scale(1, 1);
 }
 
 #noty_layout__dialogModal {
     bottom: 70px;
+    left: 40%;
+    transform: translate(-40%) translateZ(0) scale(1, 1);
 }
 
 .noty_progressbar {

@@ -11,7 +11,7 @@ module Ladb::OpenCutList
     PART_DRAWING_TYPE_2D_BOTTOM = 2
     PART_DRAWING_TYPE_3D = 3
 
-    def _compute_part_drawing_def(part_drawing_type, part, ignore_edges = true)
+    def _compute_part_drawing_def(part_drawing_type, part, ignore_edges = true, use_bounds_min_as_origin = true)
       return nil unless part.is_a?(Part)
       return nil if part_drawing_type == PART_DRAWING_TYPE_NONE
 
@@ -34,7 +34,7 @@ module Ladb::OpenCutList
         'input_local_x_axis' => local_x_axis,
         'input_local_y_axis' => local_y_axis,
         'input_local_z_axis' => local_z_axis,
-        'use_bounds_min_as_origin' => true,
+        'use_bounds_min_as_origin' => use_bounds_min_as_origin,
         'ignore_edges' => ignore_edges,
         'edge_validator' => ignore_edges ? nil : CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY
       }).run
