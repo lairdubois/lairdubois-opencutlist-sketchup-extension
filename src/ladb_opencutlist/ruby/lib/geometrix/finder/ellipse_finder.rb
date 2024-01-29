@@ -89,18 +89,18 @@ module Ladb::OpenCutList::Geometrix
             if qb.abs < Float::EPSILON
               angle = 0.0
             elsif qb > 0
-              angle = 0.25 * Math::PI
+              angle = QUARTER_PI
             else
-              angle = 0.75 * Math::PI
+              angle = THREE_QUARTER_PI
             end
           elsif qaqc > 0
             # if qb >= 0
               angle = 0.5 * Math.atan(b / (a - c))
             # else
-            #   angle = 0.5 * Math.atan(b / (a - c)) + Math::PI
+            #   angle = 0.5 * Math.atan(b / (a - c)) + ONE_PI
             # end
           else
-            angle = 0.5 * (Math.atan(b / (a - c)) + Math::PI)
+            angle = 0.5 * (Math.atan(b / (a - c)) + ONE_PI)
           end
 
         end

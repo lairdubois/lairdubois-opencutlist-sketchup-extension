@@ -460,14 +460,16 @@ module Ladb::OpenCutList
           elsif item.is_a?(Array)
 
             panel = Kuix::Panel.new
-            panel.layout = Kuix::InlineLayout.new(true, @unit * 2)
+            panel.layout = Kuix::InlineLayout.new(true, @unit * 1.5)
 
             item.each do |sub_item|
 
               if sub_item.is_a?(Kuix::Motif2d)
+                sub_item.padding.set_all!(@unit)
                 sub_item.min_size.set_all!(@unit * get_text_unit_factor * 3)
                 sub_item.line_width = @unit <= 4 ? 0.5 : 1
-                sub_item.set_style_attribute(:color, text_color)
+                sub_item.set_style_attribute(:background_color, text_color)
+                sub_item.set_style_attribute(:color, Kuix::COLOR_WHITE)
                 panel.append(sub_item)
               end
 

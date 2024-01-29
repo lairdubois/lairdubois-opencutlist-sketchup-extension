@@ -4,7 +4,7 @@ module Ladb::OpenCutList::Geometrix
 
   class CurveFinder
 
-    MIN_ARC_DELTA_ANGLE = (0.25 * Math::PI).round(2)
+    MIN_ARC_DELTA_ANGLE = QUARTER_PI.round(2)
     MIN_ARC_POINT_COUNT = 5
 
     # This function try to split an array of ordered points to line or arc portions
@@ -258,9 +258,9 @@ module Ladb::OpenCutList::Geometrix
 
       diff = ae - as
       if diff == 0
-        diff = 2.0 * Math::PI
+        diff = TWO_PI
       elsif diff < 0 && n.samedirection?(Z_AXIS) || diff > 0 && !n.samedirection?(Z_AXIS)
-        diff = diff - 2.0 * Math::PI
+        diff = diff - TWO_PI
       end
 
       as + (diff / 2.0)
