@@ -30,19 +30,6 @@ module Ladb::OpenCutList::Geometrix
       CircleDef.new(center, radius)
     end
 
-    # @param [EllipseDef|nil] ellipse_def
-    # @param [Float] angle polar angle in radians
-    #
-    # @return [CircleDef|nil]
-    #
-    def self.find_oscultating_circle_def_by_ellipse_def_at_point(ellipse_def, point)
-      return nil unless ellipse_def.is_a?(EllipseDef)
-
-      angle = EllipseFinder.ellipse_angle_at_point(ellipse_def, point)
-
-      self.find_oscultating_circle_def_by_ellipse_def_at_angle(ellipse_def, angle)
-    end
-
     # @param [EllipseDef] ellipse_def
     # @param [Float] angle polar angle in radians
     #
@@ -57,6 +44,19 @@ module Ladb::OpenCutList::Geometrix
       radius = (p - center).length
 
       CircleDef.new(center, radius)
+    end
+
+    # @param [EllipseDef] ellipse_def
+    # @param [Float] angle polar angle in radians
+    #
+    # @return [CircleDef|nil]
+    #
+    def self.find_oscultating_circle_def_by_ellipse_def_at_point(ellipse_def, point)
+      return nil unless ellipse_def.is_a?(EllipseDef)
+
+      angle = EllipseFinder.ellipse_angle_at_point(ellipse_def, point)
+
+      self.find_oscultating_circle_def_by_ellipse_def_at_angle(ellipse_def, angle)
     end
 
     # Checks if the given ellipse includes the given point

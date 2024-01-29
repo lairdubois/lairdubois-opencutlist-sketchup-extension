@@ -1358,11 +1358,14 @@ module Ladb::OpenCutList
                   (1..step_count).each do |i|
 
                     if i == step_count
-                      step_points << portion.end_point.transform(transformation)  # Force last step to match portion end point
+                      step_point = portion.end_point.transform(transformation)  # Force last step to match portion end point
                     else
                       angle = start_angle + step_angle * i
-                      step_points << Geometrix::EllipseFinder.ellipse_point_at_angle(portion.ellipse_def, angle).transform(transformation)
+                      step_point = Geometrix::EllipseFinder.ellipse_point_at_angle(portion.ellipse_def, angle).transform(transformation)
                     end
+
+                    step_point.z = 0  # z must be 0 to keep it in 2D
+                    step_points << step_point
 
                   end
 
@@ -1384,24 +1387,13 @@ module Ladb::OpenCutList
                       bulge = Math.tan((start_point - circle_def.center).angle_between(step_points[i] - circle_def.center) / 4.0)
                       bulge *= -1 unless ccw
 
-                      # _dxf_write_line(file, x, y, circle_def.center.x.to_f, circle_def.center.y.to_f, 'RADIUS')
-                      # _dxf_write_point(file, circle_def.center.x.to_f, circle_def.center.y.to_f, 'STEP_POINT')
-
                       vertices << DxfVertexDef.new(x, y, bulge)
 
                       start_point = step_points[i]
 
-                      i = i + 1
-
-                    else
-
-                      if step_points.length > 3 && (step_points.length - i) < 3
-                        i = step_points.length - 4
-                        next
-                      end
-
-                      raise "ERROR"
                     end
+
+                    i = i + 1
 
                   end
 
