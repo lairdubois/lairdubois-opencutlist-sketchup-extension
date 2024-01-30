@@ -68,7 +68,7 @@ default:
   tab_key: 67 - Tab
   file: 68 - ملف
   file_plural: 69 - ملفات
-  stroke_color: 70 - لون الخط
+  stroke_color: 70 - لون الخط المحيط
   fill_color: 71 - لون التعبئة
 core:
   menu:
@@ -92,7 +92,9 @@ core:
       smart_axes: 86 - وجِّه القطع
       smart_export: 87 - تصدير القِطع
   messagebox:
-    dir_override: '88 - '
+    dir_override: |
+      88 - « {{ target }} » موجود مسبقا. هل ترغب في استبداله؟
+      هناك مجلد بنفس الاسم في المجلد {{ parent }}. إن استبدلته، ستفقد المحتوى الأصلي
   savepanel:
     export_to_file: 89 - التصدير إلى ملف {{ file_format }}
   dialog:
@@ -348,7 +350,7 @@ tab:
       numbers_reset: 276 - أعد تهيئة أرقام القطع
       highlight_parts: "$t(tab.cutlist.highlight_parts)"
       write_2d: 278 - إسقاط ثنائي الأبعاد
-      write_3d: '279 - '
+      write_3d: 279 - الشكل ثلاثي الأبعاد
       write_2d_parts: 280 - صدر الإسقاط ثنائي البعد للقِطَع
       write_3d_parts: 281 - صدّر الشكل ثلاثي البعد للقِطَع
       group_write_2d_parts: 282 - صدر الإسقاط ثنائي البعد لقِطَع المجموعة
@@ -408,7 +410,9 @@ tab:
 
         '
       url: 321 - رابط
-      url_help: '322 - '
+      url_help: '322 - الـ URL يسمح بتوفير رابط مخصص إلى صفحة خارجية على كل تعريف لقطعة
+
+        '
       tags: 323 - الوسوم
       tags_help: |
         324 - تمكنك *الوسوم* من إضافة كلمات مفتاحية مخصصة لتعريف كل قطعة.
@@ -666,7 +670,7 @@ tab:
       total_area: 524 - مجموع المساحات
       total_length: 525 - مجموع الأطوال
       tooltip:
-        incompatible_unit: '526 - '
+        incompatible_unit: 526 - الوحدة غير متوافقة مع خيارات تثمين الخامة
       error:
         no_typed_material_parts: 527 - لا تتوفر أي قطعة ذات خامة محددة (**$t(tab.materials.type_1)** أو **$t(tab.materials.type_2)** أو **$t(tab.materials.type_3)** أو **$t(tab.materials.type_4)** أو **$t(tab.materials.type_5)** أو **$t(tab.materials.type_6)**) لإنشاء التثمين
         entry_error: '528 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**.'
@@ -839,7 +843,9 @@ tab:
         settings: 670 - الإعدادات
       export:
         title: 671 - تصدير مخطط التقطيع
-        info_0: '672 - '
+        info_0: '672 - تسمح لك هذه الوحدة بتصدير **شكل** *رسم التقطيع التخطيطي* في هيئة قائمة من الملفات بتنسيق [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) أو [DXF](https://wikipedia.org/wiki/AutoCAD_DXF)
+
+          '
         option_file_format: "$t(tab.cutlist.write.option_file_format)"
         option_file_format_help: "$t(tab.cutlist.write.option_file_format_help)"
         option_dxf_structure: 675 - بُنية DXF
@@ -988,7 +994,7 @@ tab:
         part_edge_xmax: 795 - عرض الحاشية 2
         part_face_zmin: 796 - ظهر قشرة الخشب
         part_face_zmax: 797 - وجه قشرة الخشب
-        thumbnail_proportional_drawing: '798 - '
+        thumbnail_proportional_drawing: 798 - صورة مصغّرة
         thumbnail_proportional: 799 - ملصق متناسب
         thumbnail_square: 800 - ملصق مربع
         group_material: 801 - الخامة / السُمك
@@ -1077,8 +1083,12 @@ tab:
         is_part_selection: 874 - معاينة هذا الرسم محدودة بـ **القطع المحددة**
     write:
       title: 875 - تصدير القِطع
-      info_2d: '876 - '
-      info_3d: '877 - '
+      info_2d: '876 - تسمح لك هذه الوحدة بتصدير **الإسقاط ثنائي الأبعاد** للقِطع في هيئة ملفات بتنسيق [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) أو [DXF](https://wikipedia.org/wiki/AutoCAD_DXF)
+
+        '
+      info_3d: '877 - تسمح لك هذه الوحدة بتصدير **الشكل ثلاثي الأبعاد** للقِطع في هيئة ملفات بتنسيق [STL](https://wikipedia.org/wiki/STL_(file_format)) أو [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file)
+
+        '
       option_file_format: 878 - المقاس
       option_file_format_help: '879 - حدد صيغة الملف المُصدَّر
 
@@ -1094,22 +1104,26 @@ tab:
       option_faces: 884 - الوجوه
       option_faces_0: 885 - استعمل الوجه المستهدف فقط
       option_faces_1: 886 - استعمل كل وجوه القِطعة
-      option_faces_help: '887 - '
+      option_faces_help: "887 - يتيح لك اختيار ما إذا كان البحث عن شكل القِطعة يتم على جميع وجوهها أم على الوجه المستهدف فقط \n"
       option_anchor: 888 - نقطة الارتساء
       option_anchor_0: 889 - افتراضي
       option_anchor_1: 890 - صدر مبدأ القِطعة
-      option_anchor_help: '891 - '
+      option_anchor_help: '891 - يتيح تفعيل إسقاط مبدإ محاور القِطعة كنقطة ارتساء
+
+        '
       option_smoothing: 892 - تمليس
       option_smoothing_0: 893 - لا شيء
       option_smoothing_1: 894 - تمليس الدوائر و الأقواس (تجريبي)
-      option_smoothing_help: '895 - '
+      option_smoothing_help: |
+        895 - يتيح تفعيل اكتشاف الدوائر والأقواس.
+        *لا يتيح هذا الخيار اكتشاف أنواع أخرى من المنحنيات*
       option_merge_holes: '896 - '
       option_merge_holes_0: 897 - افتراضي
       option_merge_holes_1: '898 - '
       option_merge_holes_help: '899 - '
       option_include_paths: '900 - '
       option_include_paths_0: 901 - لا شيء
-      option_include_paths_1: '902 - '
+      option_include_paths_1: 902 - استخدم الحواشي غير المرتبطة بوجه
       option_include_paths_help: '903 - '
       option_parts: 904 - القِطع
       option_parts_help: '905 - حدد ألوان القِطع
@@ -1148,8 +1162,8 @@ tab:
       no_typed_materials_in_selection: 929 - لا تستعمل في تحديدك أي خامة محددة (**$t(tab.materials.type_1)** أو **$t(tab.materials.type_2)** أو **$t(tab.materials.type_3)** أو **$t(tab.materials.type_5)**)
       export_empty: 930 - تصديرك لا يحتوي أي قطعة.
     success:
-      part_selected: '931 - '
-      part_selected_plural: '932 - '
+      part_selected: 931 - {{ count }} قطعة محددة في قائمة القِطع
+      part_selected_plural: 932 - {{ count }} قِطع / قِطعة محددة في قائمة القِطع
     tip:
       no_component: |
         933 - يجب أن تكون القِطع المتضمَّمة في *قائمة القِطع* مثيلات**عنصر**.
@@ -1179,7 +1193,7 @@ tab:
       grained_0: "$t(tab.materials.edit_material.grained_0)"
       grained_1: "$t(tab.materials.edit_material.grained_1)"
       grain_direction: 955 - اتجاه تعرّق الألياف
-      raw_estimated_0: '956 - '
+      raw_estimated_0: 956 - تم التثمين استنادا إلى الحجم الفعلي المعمول به
       colorized: 957 - سيضاف هذا اللون إلى الهيئة السطحية -تكستشر- لهذه الخامة عندما يجري تصييرها -رندرتها- في النموذج
       texture_load: 958 - حمّل هيئة سطحية - تكستشر جديدة
       texture_clear: 959 - أزل الهيئة السطحية - التكستشر
@@ -1214,7 +1228,7 @@ tab:
       description: 980 - تعليق وصفيّ
       url: 981 - رابط
       cut_options: 982 - خيارات التقطيع
-      estimate_options: '983 - '
+      estimate_options: 983 - خصائص التثمين
       attributes: 984 - السِّمات
       thickness: 985 - السُمك
       thickness_help: |
@@ -1259,10 +1273,17 @@ tab:
       edge_decremented_help: 1013 - تسمح بتحديد ما إذا كان يجب إنقاص الأبعاد وفقا لسُمك الحاشية.
       edge_decremented_0: 1014 - لا إنقاص
       edge_decremented_1: 1015 - إنقاص بقدر سمك الحاشية
-      raw_estimated: '1016 - '
-      raw_estimated_help: '1017 - '
-      raw_estimated_0: '1018 - '
-      raw_estimated_1: '1019 - '
+      raw_estimated: 1016 - الحجم المستعمل
+      raw_estimated_help: |
+        1017 - يتيح الخيار تحديد الحجم المستخدم لتثمين الوزن والتكلفة الإجمالية للقِطع المصنوعة من هذا الخامة
+
+        **الحجم المعمول به**
+        سيكون الحجم الإجمالي مجموعَ الحجوم المعمول بها للقِطع
+
+        **حجم المادة الخام اللازمة**
+        سيكون الحجم الإجمالي مجموعَ حجوم الألواح، الأوراق، القضبان أو أشرطة الحواشي للقِطع بعد التقطيع
+      raw_estimated_0: 1018 - الحجم المعمول به
+      raw_estimated_1: 1019 - حجم المادة الخام اللازمة
       std_attributes_dim_placeholder: 1020 - حدد مقاسا
       std_volumic_masses: 1021 - الكثافة
       std_volumic_masses_help: '1022 - '
@@ -1339,7 +1360,7 @@ tab:
       no_node: |
         1075 - لا يحتوي نموذجك على أي مثيل ليتم عرضه هنا
         المثيل هو **مجموعة** أو **عنصر** داخل المشهد
-    obsolete_base: '1076 - '
+    obsolete_base: 1076 - للبقاء في وضعية مزامنة، ينبغي عليك إعادة تحديث البُنية
   importer:
     label: 1077 - استيراد
     title: 1078 - استيراد القطع
@@ -1667,9 +1688,9 @@ tool:
     action_option_direction_0: 1290 - ط
     action_option_direction_1: 1291 - ع
     action_option_direction_2: 1292 - س
-    action_option_direction_0_status: '1293 - '
-    action_option_direction_1_status: '1294 - '
-    action_option_direction_2_status: '1295 - '
+    action_option_direction_0_status: 1293 - أدر القِطعة تبعا للطول
+    action_option_direction_1_status: 1294 - أدر القِطعة تبعا للعرض
+    action_option_direction_2_status: 1295 - أدر القِطعة تبعا لسمكها
     warning:
       more_entities: 1296 - {{ count_used }} مثيلات تشترك في التعريف ذاته ستُعدّل
     error:

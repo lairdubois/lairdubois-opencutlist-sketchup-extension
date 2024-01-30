@@ -753,7 +753,7 @@ tab:
       option_stacking_2: Po šířce
       option_stacking_3: Všechny možnosti
       option_keep: ""
-      option_keep_help: ""
+      option_keep_help: "Zbytky, které jsou větší než minimální délka a šířka, jsou označeny **uchovat**."
       option_std_bar_dimensional: Standardní rozměry
       option_std_bar_edge: Standardní hrana
       option_std_bar_help: |
@@ -789,7 +789,7 @@ tab:
       tooltip:
         scroll_to_block_1d: Přejděte na první dílec nebo hranu
         scroll_to_block_2d: Přejít na první panel
-        copy_leftovers_to_clipboard: ""
+        copy_leftovers_to_clipboard: Zkopírujte zbytky do schránky
       list:
         unplaced_parts: Neumístěné dílce
         summary: Shrnutí
@@ -852,27 +852,41 @@ tab:
         option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
         option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
         option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
+        option_include_paths: ""
+        option_include_paths_0: ""
+        option_include_paths_1: ""
+        option_include_paths_help: ""
         option_sheet_good: Tabule
         option_sheet_good_help: |
+          Umožňuje export tabule podle výběru barev.
         option_sheet_veneer: Dýha
         option_sheet_veneer_help: |
+          Umožňuje export dýh podle výběru barvy.
         option_bar_dimensional: Délkový
-        option_bar_dimensional_help:  |
+        option_bar_dimensional_help: |
+          Umožňuje export rozměrů podle výběru barev.
         option_bar_band: Hrana
-        option_bar_band_help:  |
+        option_bar_band_help: |
+          Umožňuje export okrajů podle výběru barev.
         option_parts: Díly
-        option_parts_help:  |
+        option_parts_help: |
+          Umožňuje export dílu podle výběru barvy.
         option_parts_holes: Vrtání
-        option_parts_holes_help:  |
+        option_parts_holes_help: |
           Vyberte barvu vrtání.
+        option_parts_paths: ""
+        option_parts_paths_help: ""
         option_texts: Identifikátory
-        option_texts_help:  |
+        option_texts_help: |
+          Umožňuje export identifikačních textů dílů a výběr barev.
         option_leftovers: Odřezky
-        option_leftovers_help:  |
+        option_leftovers_help: |
+          Umožňuje export zbytků a výběr barev.
         option_cuts: Řezy
-        option_cuts_help:  |
+        option_cuts_help: |
+          Vyberte, zda kreslit řezy, a vyberte jejich barvu.
         warning:
-          is_sheet_selection: ""
+          is_sheet_selection: "**Maskované panely** se neexportují."
       error:
         no_bar_dimensional: Standardní deska nebyla správně nakonfigurována a nebyly definovány žádné ořezy.
         no_bar_edge: Standardní olepování hran nebylo správně nakonfigurováno a nebyly definovány žádné zbytky.
@@ -950,7 +964,7 @@ tab:
         part_cutting_length: Hrubá délka
         part_cutting_width: Hrubá šířka
         part_cutting_thickness: Hrubá tloušťka
-        part_edge_cutting_size: ""
+        part_edge_cutting_size: Rozměry hrany
         part_edge_cutting_length: Délkové okraje - neopracované
         part_edge_cutting_width: Šířkové okraje - hrubé
         part_size: Rozměry
@@ -1077,21 +1091,24 @@ tab:
         Umožnit počátek osy dílu jako kotevní bod.
       option_smoothing: Vyhlazování
       option_smoothing_0: Žádný
-      option_smoothing_1: ""
+      option_smoothing_1: Hladké kruhy a oblouky (Experimentální)
       option_smoothing_help: |
-      option_merge_holes: ""
+      option_merge_holes: Režim sloučení
       option_merge_holes_0: Výchozí
-      option_merge_holes_1: ""
+      option_merge_holes_1: Obrys + Vrtání + Sloučit
       option_merge_holes_help: |
-      option_include_paths: ""
+      option_include_paths: Cesty
       option_include_paths_0: Žádný
-      option_include_paths_1: ""
+      option_include_paths_1: "Použijte hrany, které nejsou spojeny s plochou"
       option_include_paths_help: |
+        Umožňuje použití hran, které nejsou spojeny s plochou dílu, k jejich exportu jako cesty.
       option_parts: Díly
       option_parts_help: |
+        Vyberte barvu dílů.
       option_parts_holes: Vrtání
       option_parts_holes_help: |
-      option_parts_paths: ""
+        Vyberte barvu vrtání.
+      option_parts_paths: Cesty
       option_parts_paths_help: |
       error:
         no_part: ""
@@ -1663,7 +1680,7 @@ tool:
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: ""
-    action_option_options_paths_status: ""
+    action_option_options_include_paths_status: ""
     error:
       not_part: ""
       not_flat_face: ""

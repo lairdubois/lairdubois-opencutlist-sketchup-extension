@@ -1249,7 +1249,7 @@ tab:
       description: 980 - Description
       url: 981 - URL
       cut_options: 982 - Cutting Parameters
-      estimate_options: 983 - Estimation options
+      estimate_options: 983 - Estimation Options
       attributes: 984 - Attributes
       thickness: 985 - Thickness
       thickness_help: |
@@ -1296,10 +1296,10 @@ tab:
       edge_decremented_1: 1015 - Reduce by Edge Banding Thickness
       raw_estimated: 1016 - Used Volume
       raw_estimated_help: |
-        1017 - Allows to define the volume used to estimate the weight and total cost of parts made from this material.
+        1017 - Defines the volume used to estimate the weight and total cost of parts made from this material.
 
         **Effective volume**
-        The total volume will be the sum of the effective volumes of the parts.
+        The total volume will be the sum of the effective volumes of the parts, which is the bounding box including oversizes.
 
         **Volume of raw material required**
         The total volume will be the sum of the volumes of the panels, sheets, boards or edgebandings of the parts after cutting.
@@ -1595,7 +1595,7 @@ tab:
         1210 - The *OpenCutList* settings for the current model have been reset.
         In order to reflect the changes, you must **close** and **reopen** the OpenCutList window.
       error:
-        no_preset_to_export: 1211 - No presets to export.
+        no_preset_to_export: 1211 - No preset to export.
         no_preset_to_import: 1212 - No presets to import.
         failed_to_import: '1213 - Impossible to import the presets: **{{ error }}**.'
         failed_to_import_invalid_hexdigest: 1214 - This file was modified. It cannot be imported.
@@ -1719,11 +1719,11 @@ tool:
       not_orientable: 1298 - The type of this part does not allow orienting it
   smart_export:
     title: 1299 - Export
-    action_0: 1300 - Export a 3D part
+    action_0: 1300 - Export 3D part
     action_0_status: 1301 - Click on a part
-    action_1: 1302 - Export a 2D part
+    action_1: 1302 - Export 2D part
     action_1_status: 1303 - Click on the face of a part
-    action_2: 1304 - Export a face
+    action_2: 1304 - Export face
     action_2_status: 1305 - Click on a face
     action_3: 1306 - Export a path
     action_3_status: 1307 - Click on an edge
