@@ -5,7 +5,10 @@ module Ladb::OpenCutList::Geometrix
 
   class EllipseApproximator
 
-    # @param [ellipse_def] ellipse_def
+    # This function try to split an 'EllipseDef' to a list of circular arcs.
+    # Result is CCW.
+    #
+    # @param [EllipseDef] ellipse_def
     # @param [Float|nil] epsilon
     #
     # @return [ApproximatedEllipseDef|nil]
@@ -13,6 +16,19 @@ module Ladb::OpenCutList::Geometrix
     def self.approximate_ellipse_def(ellipse_def, from_angle = 0, to_angle = TWO_PI, epsilon = 1e-3)
       return nil unless ellipse_def.is_a?(EllipseDef)
       return nil if from_angle == to_angle
+
+      angle_precision = 12  # Force angle precision. To be sure 0 is 0
+
+      # 0 - Sanitize angles
+
+      safe_from_angle = (from_angle % TWO_PI)
+      safe_to_angle = to_angle < 0 ? to_angle % TWO_PI : to_angle % FOUR_PI
+      safe_to_angle += TWO_PI if safe_to_angle <= safe_from_angle # Force 'to_angle' to be greater then 'from_angle'
+
+      safe_from_angle = safe_from_angle.round(angle_precision)
+      safe_to_angle = safe_to_angle.round(angle_precision)
+
+      # 1 - Create a set of sample points
 
       sample_count = 90
       sample_angle = HALF_PI / sample_count
@@ -23,7 +39,8 @@ module Ladb::OpenCutList::Geometrix
         sample_points << sample_point
       end
 
-      # Compute quarter portions
+      # 2 - Compute 0 to Pi/4 quarter portions
+
       quarter_portions = []
       end_angle = HALF_PI
       max_index = sample_points.length - 1
@@ -56,10 +73,11 @@ module Ladb::OpenCutList::Geometrix
 
       end
 
+      # 3 - Transform quarter portion to cover 2 or 4 PI
+
       toi = Geom::Transformation.rotation(ORIGIN, Z_AXIS, -ellipse_def.angle) * Geom::Transformation.translation(Geom::Vector3d.new(ellipse_def.center.to_a).reverse)
       to = toi.inverse
 
-      angle_precision = 12
       portions = []
       portions += quarter_portions.each { |portion|
         portion.start_angle = portion.start_angle.round(angle_precision)
@@ -77,23 +95,22 @@ module Ladb::OpenCutList::Geometrix
       portions += quarter_portions.reverse.map { |portion|
         ApproximateEllipsePortionDef.new(ellipse_def, (TWO_PI - portion.end_angle).round(angle_precision), (TWO_PI - portion.start_angle).round(angle_precision), CircleDef.new(portion.circle_def.center.transform(t), portion.circle_def.radius))
       }
-      portions = portions + portions.map { |portion|
-        ApproximateEllipsePortionDef.new(ellipse_def, (portion.start_angle + TWO_PI).round(angle_precision), (portion.end_angle + TWO_PI).round(angle_precision), portion.circle_def)
-      }
+      if safe_to_angle > TWO_PI
+        portions = portions + portions.map { |portion|
+          ApproximateEllipsePortionDef.new(ellipse_def, (portion.start_angle + TWO_PI).round(angle_precision), (portion.end_angle + TWO_PI).round(angle_precision), portion.circle_def)
+        }
+      end
 
-      safe_from_angle = (from_angle % TWO_PI)
-      safe_to_angle = to_angle < 0 ? to_angle % TWO_PI : to_angle % FOUR_PI
-      safe_to_angle += TWO_PI if safe_to_angle <= safe_from_angle
-
-      safe_from_angle = safe_from_angle.round(angle_precision)
-      safe_to_angle = safe_to_angle.round(angle_precision)
+      # 4 - Extract portions covered from 'from_angle' to 'to_angle'
 
       from_index = portions.find_index { |portion| portion.start_angle <= safe_from_angle && safe_from_angle < portion.end_angle }
       to_index = portions.find_index { |portion| portion.start_angle < safe_to_angle && safe_to_angle <= portion.end_angle }
 
-      approximated_ellipse_def = ApproximatedEllipseDef.new(ellipse_def)
-      approximated_ellipse_def.portions.concat(portions[from_index..to_index])
+      # 5 - Create the ouput object and populate it
 
+      approximated_ellipse_def = ApproximatedEllipseDef.new(ellipse_def)
+
+      approximated_ellipse_def.portions.concat(portions[from_index..to_index])
       start_portion = approximated_ellipse_def.portions.first
       end_portion = approximated_ellipse_def.portions.last
       start_portion.start_angle = safe_from_angle
