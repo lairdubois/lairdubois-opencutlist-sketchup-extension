@@ -5,10 +5,12 @@ module Ladb::OpenCutList::Geometrix
 
   class EllipseApproximator
 
-    # This function try to split an 'EllipseDef' to a list of circular arcs.
+    # This function try to approximate an 'EllipseDef' to a list of circular arcs.
     # Result is CCW.
     #
     # @param [EllipseDef] ellipse_def
+    # @param [Float] from_angle
+    # @param [Float] to_angle
     # @param [Float|nil] epsilon
     #
     # @return [ApproximatedEllipseDef|nil]
@@ -17,7 +19,7 @@ module Ladb::OpenCutList::Geometrix
       return nil unless ellipse_def.is_a?(EllipseDef)
       return nil if from_angle == to_angle
 
-      angle_precision = 12  # Force angle precision. To be sure 0 is 0
+      angle_precision = 12  # Force angle precision. Better for comparisons.
 
       # 0 - Sanitize angles
 
@@ -39,7 +41,7 @@ module Ladb::OpenCutList::Geometrix
         sample_points << sample_point
       end
 
-      # 2 - Compute 0 to Pi/4 quarter portions
+      # 2 - Compute 0 to PI/4 quarter portions
 
       quarter_portions = []
       end_angle = HALF_PI
@@ -57,10 +59,11 @@ module Ladb::OpenCutList::Geometrix
             i = i + 1
           end
 
-        end
+        else
 
-        if circle_def.nil?
+          # Three points strategy failed, compute oscultating circle
           circle_def = CircleFinder.find_oscultating_circle_def_by_ellipse_def_at_point(ellipse_def, sample_points[i])
+
         end
 
         # Create the portion
@@ -73,7 +76,7 @@ module Ladb::OpenCutList::Geometrix
 
       end
 
-      # 3 - Transform quarter portion to cover 2 or 4 PI
+      # 3 - Transform quarter portions to cover 2 or 4 PI
 
       toi = Geom::Transformation.rotation(ORIGIN, Z_AXIS, -ellipse_def.angle) * Geom::Transformation.translation(Geom::Vector3d.new(ellipse_def.center.to_a).reverse)
       to = toi.inverse
@@ -83,22 +86,28 @@ module Ladb::OpenCutList::Geometrix
         portion.start_angle = portion.start_angle.round(angle_precision)
         portion.end_angle = portion.end_angle.round(angle_precision)
       }
-      t = to * Geom::Transformation.scaling(-1, 1, 1) * toi
-      portions += quarter_portions.reverse.map { |portion|
-        ApproximateEllipsePortionDef.new(ellipse_def, (ONE_PI - portion.end_angle).round(angle_precision), (ONE_PI - portion.start_angle).round(angle_precision), CircleDef.new(portion.circle_def.center.transform(t), portion.circle_def.radius))
-      }
-      t = Geom::Transformation.rotation(ellipse_def.center, Z_AXIS, ONE_PI)
-      portions += quarter_portions.map { |portion|
-        ApproximateEllipsePortionDef.new(ellipse_def, (ONE_PI + portion.start_angle).round(angle_precision), (ONE_PI + portion.end_angle).round(angle_precision), CircleDef.new(portion.circle_def.center.transform(t), portion.circle_def.radius))
-      }
-      t = to * Geom::Transformation.scaling(1, -1, 1) * toi
-      portions += quarter_portions.reverse.map { |portion|
-        ApproximateEllipsePortionDef.new(ellipse_def, (TWO_PI - portion.end_angle).round(angle_precision), (TWO_PI - portion.start_angle).round(angle_precision), CircleDef.new(portion.circle_def.center.transform(t), portion.circle_def.radius))
-      }
-      if safe_to_angle > TWO_PI
-        portions = portions + portions.map { |portion|
-          ApproximateEllipsePortionDef.new(ellipse_def, (portion.start_angle + TWO_PI).round(angle_precision), (portion.end_angle + TWO_PI).round(angle_precision), portion.circle_def)
+      if safe_from_angle > HALF_PI || safe_to_angle > HALF_PI
+        t = to * Geom::Transformation.scaling(-1, 1, 1) * toi
+        portions += quarter_portions.reverse.map { |portion|
+          ApproximateEllipsePortionDef.new(ellipse_def, (ONE_PI - portion.end_angle).round(angle_precision), (ONE_PI - portion.start_angle).round(angle_precision), CircleDef.new(portion.circle_def.center.transform(t), portion.circle_def.radius))
         }
+        if safe_from_angle > ONE_PI || safe_to_angle > ONE_PI
+          t = Geom::Transformation.rotation(ellipse_def.center, Z_AXIS, ONE_PI)
+          portions += quarter_portions.map { |portion|
+            ApproximateEllipsePortionDef.new(ellipse_def, (ONE_PI + portion.start_angle).round(angle_precision), (ONE_PI + portion.end_angle).round(angle_precision), CircleDef.new(portion.circle_def.center.transform(t), portion.circle_def.radius))
+          }
+          if safe_from_angle > THREE_QUARTER_PI || safe_to_angle > THREE_QUARTER_PI
+            t = to * Geom::Transformation.scaling(1, -1, 1) * toi
+            portions += quarter_portions.reverse.map { |portion|
+              ApproximateEllipsePortionDef.new(ellipse_def, (TWO_PI - portion.end_angle).round(angle_precision), (TWO_PI - portion.start_angle).round(angle_precision), CircleDef.new(portion.circle_def.center.transform(t), portion.circle_def.radius))
+            }
+            if safe_to_angle > TWO_PI
+              portions = portions + portions.map { |portion|
+                ApproximateEllipsePortionDef.new(ellipse_def, (portion.start_angle + TWO_PI).round(angle_precision), (portion.end_angle + TWO_PI).round(angle_precision), portion.circle_def)
+              }
+            end
+          end
+        end
       end
 
       # 4 - Extract portions covered from 'from_angle' to 'to_angle'

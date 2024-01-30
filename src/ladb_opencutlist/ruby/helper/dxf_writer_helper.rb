@@ -1369,12 +1369,14 @@ module Ladb::OpenCutList
                       end
                       apx_circle_center = apx_portion.circle_def.center.transform(transformation)
 
-                      x = apx_start_point.x.to_f
-                      y = apx_start_point.y.to_f
                       bulge = Math.tan((apx_start_point - apx_circle_center).angle_between(apx_end_point - apx_circle_center) / 4.0)
                       bulge *= -1 unless portion.ccw?
 
                       vertices << DxfVertexDef.new(x, y, bulge)
+
+                      # Prepare for the next vertex
+                      x = apx_end_point.x.to_f
+                      y = apx_end_point.y.to_f
 
                     end
 
