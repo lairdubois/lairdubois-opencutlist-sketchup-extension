@@ -1026,7 +1026,7 @@ module Ladb::OpenCutList
 
     end
 
-    def _dxf_write_arc(file, cx, cy, r, as = 0, ae = 2 * Math::PI, layer = '0')
+    def _dxf_write_arc(file, cx, cy, r, as = 0, ae = Geometrix::TWO_PI, layer = '0')
 
       # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-0B14D8F1-0EBA-44BF-9108-57D8CE614BC8
 
@@ -1066,12 +1066,12 @@ module Ladb::OpenCutList
 
     end
 
-    def _dxf_write_ellipse(file, cx, cy, vx, vy, vr, as = 0, ae = 2 * Math::PI, layer = '0')
+    def _dxf_write_ellipse(file, cx, cy, vx, vy, vr, as = 0, ae = Geometrix::TWO_PI, layer = '0')
 
       # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-107CB04F-AD4D-4D2F-8EC9-AC90888063AB
 
       if as > ae && ae < 0
-        ae = ae + 2 * Math::PI  # Force end angle to be greater than start angle. Some DXF readers prefer that.
+        ae = ae + Geometrix::TWO_PI  # Force end angle to be greater than start angle. Some DXF readers prefer that.
       end
 
       _dxf_write(file, 0, 'ELLIPSE')
@@ -1319,27 +1319,25 @@ module Ladb::OpenCutList
 
               if portion.is_a?(Geometrix::ArcCurvePortionDef)
 
-                start_angle = portion.start_angle
-                end_angle = portion.end_angle
-
-                if portion.ccw?
-                  start_angle -= 2 * Math::PI if start_angle > end_angle
-                else
-                  start_angle += 2 * Math::PI if start_angle < end_angle
-                end
-
-                if start_angle < 0 && end_angle < 0
-                  start_angle += 2 * Math::PI
-                  end_angle += 2 * Math::PI
-                end
-
-                arc_angle = end_angle - start_angle
-
                 if portion.ellipse_def.circular?
 
                   # Circular arc
 
-                  bulge = Math.tan(arc_angle / 4.0)
+                  start_angle = portion.start_angle
+                  end_angle = portion.end_angle
+
+                  if portion.ccw?
+                    start_angle -= Geometrix::TWO_PI if start_angle > end_angle
+                  else
+                    start_angle += Geometrix::TWO_PI if start_angle < end_angle
+                  end
+
+                  if start_angle < 0 && end_angle < 0
+                    start_angle += Geometrix::TWO_PI
+                    end_angle += Geometrix::TWO_PI
+                  end
+
+                  bulge = Math.tan((end_angle - start_angle) / 4.0)
 
                   vertices << DxfVertexDef.new(x, y, bulge)
 
@@ -1347,86 +1345,42 @@ module Ladb::OpenCutList
 
                   # Elliptical arc -> convert to circular arcs
 
-                  ccw = portion.ccw?
-
-                  epsilon = 1e-1
-                  step_angle = 1.degrees
-                  step_angle *= -1 unless ccw
-                  step_count = (arc_angle / step_angle).abs.ceil
-
-                  step_points = []
-                  (1..step_count).each do |i|
-
-                    if i == step_count
-                      step_point = portion.end_point.transform(transformation)  # Force last step to match portion end point
-                    else
-                      angle = start_angle + step_angle * i
-                      step_point = Geometrix::EllipseFinder.ellipse_point_at_angle(portion.ellipse_def, angle).transform(transformation)
-                    end
-
-                    step_point.z = 0  # z must be 0 to keep it in 2D
-                    step_points << step_point
-
+                  if portion.ccw?
+                    start_angle = portion.start_angle
+                    end_angle = portion.end_angle
+                  else
+                    start_angle = portion.end_angle
+                    end_angle = portion.start_angle
                   end
 
-                  i = 0
-                  while i < step_points.length - 1
+                  approximated_ellipse_def = Geometrix::EllipseApproximator.approximate_ellipse_def(portion.ellipse_def, start_angle, end_angle)
+                  if approximated_ellipse_def
 
-                    circle_def = Geometrix::CircleFinder.find_circle_def_by_3_points(step_points[i, 3])
-                    if circle_def.is_a?(Geometrix::CircleDef)
+                    apx_portions = approximated_ellipse_def.portions
+                    apx_portions = apx_portions.reverse unless portion.ccw?
+                    apx_portions.each do |apx_portion|
 
-                      i = i + 2
-
-                      while i < step_points.length - 1
-                        break unless Geometrix::CircleFinder.circle_include_point?(circle_def, step_points[i + 1], epsilon)
-                        i = i + 1
+                      if portion.ccw?
+                        apx_start_point = apx_portion.start_point.transform(transformation)
+                        apx_end_point = apx_portion.end_point.transform(transformation)
+                      else
+                        apx_start_point = apx_portion.end_point.transform(transformation)
+                        apx_end_point = apx_portion.start_point.transform(transformation)
                       end
+                      apx_circle_center = apx_portion.circle_def.center.transform(transformation)
 
-                      x = start_point.x.to_f
-                      y = start_point.y.to_f
-                      bulge = Math.tan((start_point - circle_def.center).angle_between(step_points[i] - circle_def.center) / 4.0)
-                      bulge *= -1 unless ccw
+                      x = apx_start_point.x.to_f
+                      y = apx_start_point.y.to_f
+                      bulge = Math.tan((apx_start_point - apx_circle_center).angle_between(apx_end_point - apx_circle_center) / 4.0)
+                      bulge *= -1 unless portion.ccw?
 
                       vertices << DxfVertexDef.new(x, y, bulge)
 
-                      start_point = step_points[i]
-
                     end
-
-                    i = i + 1
 
                   end
 
                 end
-
-                #
-                # DEBUG - original ellipse
-                #
-
-                # center = portion.ellipse_def.center.transform(transformation)
-                # xaxis = portion.ellipse_def.xaxis.transform(transformation)
-                #
-                # if portion.ccw?  # DXF ellipse angles must be counter clockwise
-                #   start_angle = portion.start_angle
-                #   end_angle = portion.end_angle
-                # else
-                #   start_angle = portion.end_angle
-                #   end_angle = portion.start_angle
-                # end
-                #
-                # cx = center.x.to_f
-                # cy = center.y.to_f
-                # vx = xaxis.x.to_f
-                # vy = xaxis.y.to_f
-                # vr = portion.ellipse_def.yradius / portion.ellipse_def.xradius
-                # as = start_angle
-                # ae = end_angle
-                #
-                # _dxf_write_ellipse(file, cx, cy, vx, vy, vr, as, ae, 'ELLIPSE')
-
-                #
-                # DEBUG
-                #
 
               else
 

@@ -105,7 +105,7 @@ module Ladb::OpenCutList::Geometrix
           else
 
             max_overlap_index = last_portion.end_index % points.length
-            overlap_portions = curve_def.portions.select { |potion| potion.start_index < max_overlap_index }
+            overlap_portions = curve_def.portions.select { |portion| portion.start_index < max_overlap_index }
             last_overlap_portion = overlap_portions.last
             if last_portion == last_overlap_portion
 

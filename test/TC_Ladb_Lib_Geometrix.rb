@@ -107,6 +107,16 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
       Geom::Point3d.new(1.9092856338131643, 1.7361792256994963, 0.0),Geom::Point3d.new(2.8138068070720137, 1.261929813507534, 0.0),Geom::Point3d.new(3.808287305885605, 1.0397407012679567, 0.0),Geom::Point3d.new(4.8249549277165205, 1.0847537097950295, 0.0),Geom::Point3d.new(5.794525454259663, 1.3939012769451362, 0.0),Geom::Point3d.new(6.650924256422181, 1.9461155069075184, 0.0),Geom::Point3d.new(7.335789171102629, 2.7037639124873944, 0.0),Geom::Point3d.new(7.80244778615832, 3.6152140069176912, 0.0),Geom::Point3d.new(8.019098088163032, 4.618351972505479, 0.0),Geom::Point3d.new(7.970975717066702, 5.6448156146598265, 0.0),Geom::Point3d.new(7.661360132933561, 6.6246531324792794, 0.0),Geom::Point3d.new(7.111351126158338, 7.491090218382505, 0.0),Geom::Point3d.new(6.358430901619906, 8.185080616820189, 0.0),Geom::Point3d.new(5.453909728361056, 8.65933002901215, 0.0),Geom::Point3d.new(4.459429229547469, 8.88151914125173, 0.0),Geom::Point3d.new(3.44276160771655, 8.836506132724654, 0.0),Geom::Point3d.new(2.4731910811734057, 8.527358565574547, 0.0),Geom::Point3d.new(1.616792279010888, 7.975144335612166, 0.0),Geom::Point3d.new(0.9319273643304395, 7.217495930032289, 0.0),Geom::Point3d.new(0.4652687492747476, 6.306045835601992, 0.0),Geom::Point3d.new(0.24861844727003612, 5.302907870014204, 0.0),Geom::Point3d.new(0.29674081836636734, 4.276444227859859, 0.0),Geom::Point3d.new(0.6063564024995092, 3.2966067100404035, 0.0),Geom::Point3d.new(1.1563654092747333, 2.4301696241371777, 0.0)
     ]
 
+    # Ellipse
+    @ellipse_zarby_2 = [
+      Geom::Point3d.new(2.3176940244674835, -3.9976702901543164, 1.4210854715202004e-14),Geom::Point3d.new(2.282117367506306, -4.395069611374723, 1.4210854715202004e-14),Geom::Point3d.new(2.3176940244674835, -4.792468932595144, 1.4210854715202004e-14),Geom::Point3d.new(2.421999504972314, -5.162786146807809, 1.4210854715202004e-14),Geom::Point3d.new(2.5879255628973574, -5.48078474784227, 1.4210854715202004e-14),Geom::Point3d.new(2.804164611600794, -5.724793656555567, 1.4210854715202004e-14),Geom::Point3d.new(3.055980317265405, -5.878184069062676, 1.4210854715202004e-14),Geom::Point3d.new(3.326211855695284, -5.930502682240882, 1.4210854715202004e-14),Geom::Point3d.new(3.5964433941251635, -5.878184069062676, 1.4210854715202004e-14),Geom::Point3d.new(3.8482590997897743, -5.724793656555567, 1.4210854715202004e-14),Geom::Point3d.new(4.064498148493211, -5.48078474784227, 1.4210854715202004e-14),Geom::Point3d.new(4.230424206418254, -5.162786146807809, 1.4210854715202004e-14),Geom::Point3d.new(4.334729686923085, -4.792468932595144, 1.4210854715202004e-14),Geom::Point3d.new(4.370306343884263, -4.395069611374723, 1.4210854715202004e-14),Geom::Point3d.new(4.334729686923085, -3.9976702901543164, 1.4210854715202004e-14),Geom::Point3d.new(4.230424206418254, -3.6273530759416506, 1.4210854715202004e-14),Geom::Point3d.new(4.064498148493211, -3.30935447490719, 1.4210854715202004e-14),Geom::Point3d.new(3.8482590997897743, -3.0653455661938924, 1.4210854715202004e-14),Geom::Point3d.new(3.5964433941251635, -2.911955153686784, 1.4210854715202004e-14),Geom::Point3d.new(3.326211855695284, -2.8596365405085775, 1.4210854715202004e-14),Geom::Point3d.new(3.055980317265405, -2.911955153686784, 1.4210854715202004e-14),Geom::Point3d.new(2.804164611600794, -3.0653455661938924, 1.4210854715202004e-14),Geom::Point3d.new(2.5879255628973574, -3.30935447490719, 1.4210854715202004e-14),Geom::Point3d.new(2.421999504972314, -3.6273530759416506, 1.4210854715202004e-14)
+    ]
+
+    # Ellipse
+    @ellipse_zarby_3 = [
+      Geom::Point3d.new(4.247495072091034, 5.306032412922503, 0.0),Geom::Point3d.new(4.30988296117993, 5.620710396661979, 0.0),Geom::Point3d.new(4.241470177332716, 5.934133709709341, 0.0),Geom::Point3d.new(4.054313991229364, 6.225014006312818, 0.0),Geom::Point3d.new(3.7611687876625974, 6.4735282749613, 0.0),Geom::Point3d.new(3.382011927810137, 6.662740678935639, 0.0),Geom::Point3d.new(2.94268232508459, 6.779756705593268, 0.0),Geom::Point3d.new(2.4731195658852085, 6.816601906095596, 0.0),Geom::Point3d.new(2.00532357626228, 6.770765340917962, 0.0),Geom::Point3d.new(1.5711738798391806, 6.645370696228716, 0.0),Geom::Point3d.new(1.2002570609608503, 6.448963409838981, 0.0),Geom::Point3d.new(0.9178504878648205, 6.194928313737833, 0.0),Geom::Point3d.new(0.7431997018086579, 5.900577479911718, 0.0),Geom::Point3d.new(0.6882068652380195, 5.585970431248132, 0.0),Geom::Point3d.new(0.749224596566976, 5.27247618312488, 0.0),Geom::Point3d.new(0.9294896907602869, 4.981529785553709, 0.0),Geom::Point3d.new(1.2167173795508313, 4.7329587547174405, 0.0),Geom::Point3d.new(1.591333570613731, 4.5437027955845135, 0.0),Geom::Point3d.new(2.027808789610579, 4.426659389009579, 0.0),Geom::Point3d.new(2.4963979716761413, 4.389804849727344, 0.0),Geom::Point3d.new(2.965167538432889, 4.435650753684886, 0.0),Geom::Point3d.new(3.4021716185846875, 4.561072778291438, 0.0),Geom::Point3d.new(3.777629106252578, 4.757523619839756, 0.0),Geom::Point3d.new(4.06595319412483, 5.011615478128692, 0.0)
+    ]
+
     # -----
 
     @loop_a = [
@@ -165,22 +175,6 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
 
   end
 
-  def test_ellipse_finder
-
-    assert_not_ellipse(@triangle, 'triangle')
-
-    assert_ellipse(@circle_x0_y0_r10, 0, 0, 10, 10, 0, true, 'circle_x0_y0_r10')
-    assert_ellipse(@circle_x10_y5_r10, 10, 5, 10, 10, 0, true, 'circle_x10_y5_r10')
-    assert_ellipse(@circle_x0_y0_r25mm, 0, 0, 2.5.mm, 2.5.mm, 0, true, 'circle_x0_y0_r25mm')
-    assert_ellipse(@ellipse_x0_y0_xr20_yr10_a0, 0, 0, 20, 10, 0, false, 'ellipse_x0_y0_xr20_yr20_a0')
-    assert_ellipse(@ellipse_x0_y0_xr20_yr10_a45, 0, 0, 20, 10, 45.degrees, false, 'ellipse_x0_y0_xr20_yr20_a45')
-    assert_ellipse(@ellipse_x0_y0_xr20mm_yr10mm_a45, 0, 0, 20.mm, 10.mm, 45.degrees, false, 'ellipse_x0_y0_xr20mm_yr10mm_a45')
-    assert_ellipse(@ellipse_x0_y0_xr10_5_yr10_a0, 0, 0, 10.5, 10, 0, false, 'ellipse_x0_y0_xr10_5_yr10_a0')
-    assert_ellipse(@ellipse_x50mm_y20mm_xr100mm_yr50mm_a10, 50.mm, 20.mm, 100.mm, 50.mm, 10.degrees, false, 'ellipse_x50mm_y20mm_xr100mm_yr50mm_a10')
-    assert_ellipse(@ellipse_zarby, 105.mm, 126.mm, 100.mm, 99.mm, 100.11.degrees, false, 'ellipse_zarby')
-
-  end
-
   def test_curve_finder
 
     assert_curve(@triangle, true, true, 3,false, false, 'triangle')
@@ -200,6 +194,39 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
     assert_curve(@curve_a, false, false, 2, false, false, 'curve_a')
     assert_curve(@curve_b, false, false, 3, false, false, 'curve_b')
     assert_curve(@curve_c, true, false, 4, false, false, 'loop_g')
+
+  end
+
+  def test_ellipse_finder
+
+    assert_not_ellipse(@triangle, 'triangle')
+
+    assert_ellipse(@circle_x0_y0_r10, 0, 0, 10, 10, 0, true, 'circle_x0_y0_r10')
+    assert_ellipse(@circle_x10_y5_r10, 10, 5, 10, 10, 0, true, 'circle_x10_y5_r10')
+    assert_ellipse(@circle_x0_y0_r25mm, 0, 0, 2.5.mm, 2.5.mm, 0, true, 'circle_x0_y0_r25mm')
+    assert_ellipse(@ellipse_x0_y0_xr20_yr10_a0, 0, 0, 20, 10, 0, false, 'ellipse_x0_y0_xr20_yr20_a0')
+    assert_ellipse(@ellipse_x0_y0_xr20_yr10_a45, 0, 0, 20, 10, 45.degrees, false, 'ellipse_x0_y0_xr20_yr20_a45')
+    assert_ellipse(@ellipse_x0_y0_xr20mm_yr10mm_a45, 0, 0, 20.mm, 10.mm, 45.degrees, false, 'ellipse_x0_y0_xr20mm_yr10mm_a45')
+    assert_ellipse(@ellipse_x0_y0_xr10_5_yr10_a0, 0, 0, 10.5, 10, 0, false, 'ellipse_x0_y0_xr10_5_yr10_a0')
+    assert_ellipse(@ellipse_x50mm_y20mm_xr100mm_yr50mm_a10, 50.mm, 20.mm, 100.mm, 50.mm, 10.degrees, false, 'ellipse_x50mm_y20mm_xr100mm_yr50mm_a10')
+    assert_ellipse(@ellipse_zarby, 105.mm, 126.mm, 100.mm, 99.mm, 100.11.degrees, false, 'ellipse_zarby')
+
+  end
+
+  def test_ellipse_approximator
+
+    assert_approximate_ellipse(@ellipse_x0_y0_xr20_yr10_a0, 0.degrees, 360.degrees,"ellipse_x0_y0_xr20_yr10_a0")
+    assert_approximate_ellipse(@ellipse_x50mm_y20mm_xr100mm_yr50mm_a10, 30.degrees, 190.degrees,"ellipse_x50mm_y20mm_xr100mm_yr50mm_a10 30 -> 190")
+    assert_approximate_ellipse(@circle_x0_y0_r10, 0, 360.degrees, "circle_x0_y0_r10")
+    assert_approximate_ellipse(@circle_x0_y0_r10, 10.degrees, 20.degrees, "circle_x0_y0_r10 10 -> 20")
+    assert_approximate_ellipse(@circle_x0_y0_r10, 100.degrees, -10.degrees, "circle_x0_y0_r10 10 -> 20")
+    assert_approximate_ellipse(@circle_x0_y0_r10, -10.degrees, 20.degrees, "circle_x0_y0_r10 -10 -> 20")
+    assert_approximate_ellipse(@circle_x0_y0_r10, -10.degrees, -20.degrees, "circle_x0_y0_r10 -10 -> -20")
+    assert_approximate_ellipse(@circle_x0_y0_r10, -20.degrees, -10.degrees, "circle_x0_y0_r10 -20 -> -10")
+    assert_approximate_ellipse(@circle_x0_y0_r10, -20.degrees, -190.degrees, "circle_x0_y0_r10 -20 -> -190")
+    assert_approximate_ellipse(@circle_x0_y0_r10, -20.degrees, -180.degrees, "circle_x0_y0_r10 -20 -> -100")
+    assert_approximate_ellipse(@ellipse_zarby_2, -10.degrees, 200.degrees, "ellipse_zarby_2 0 -> 90")
+    assert_approximate_ellipse(@ellipse_zarby_3, 0.degrees, 360.degrees, "ellipse_zarby_3 0 -> 90")
 
   end
 
@@ -252,6 +279,35 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
 
       assert_circle_angles(cirlce_def, pts, "#{prefix} circle_angles")
       assert_circle_include_points(cirlce_def, pts, "#{prefix} circle_include_point")
+
+    end
+
+  end
+
+  #####
+
+  def assert_curve(points, closed, rotatable, portion_count, is_ellipse, is_circle, msg = '')
+
+    times = rotatable && closed ? points.count : 1
+    times.times do |index|
+
+      prefix = "#{msg} index=#{index} point=#{points[index]}"
+      pts = points.rotate(index)
+
+      curve_def = Ladb::OpenCutList::Geometrix::CurveFinder.find_curve_def(pts, closed)
+
+      assert_instance_of(Ladb::OpenCutList::Geometrix::CurveDef, curve_def)
+      if closed
+        assert_equal(curve_def.portions.first.start_point, curve_def.portions.last.end_point, "#{prefix} start == end ?")
+        assert_equal(curve_def.closed?, true, "#{prefix} closed ?")
+      else
+        assert_equal(curve_def.closed?, false, "#{prefix} !closed ?")
+      end
+
+      assert_equal(portion_count, curve_def.portions.count, "#{prefix} portions.count") unless portion_count.nil?
+
+      assert_equal(is_ellipse, curve_def.ellipse?, "#{prefix} ellipse?") unless is_ellipse.nil?
+      assert_equal(is_circle, curve_def.circle?, "#{prefix} circle?") unless is_circle.nil?
 
     end
 
@@ -316,30 +372,26 @@ class TC_Ladb_Lib_Geometrix < TestUp::TestCase
 
   end
 
-  def assert_curve(points, closed, rotatable, portion_count, is_ellipse, is_circle, msg = '')
+  #####
 
-    times = rotatable && closed ? points.count : 1
-    times.times do |index|
+  def assert_approximate_ellipse(points, from_angle, to_angle, msg = nil)
 
-      prefix = "#{msg} index=#{index} point=#{points[index]}"
-      pts = points.rotate(index)
+    ellipse_def = Ladb::OpenCutList::Geometrix::EllipseFinder.find_ellipse_def(points)
+    assert_instance_of(Ladb::OpenCutList::Geometrix::EllipseDef, ellipse_def, msg)
 
-      curve_def = Ladb::OpenCutList::Geometrix::CurveFinder.find_curve_def(pts, closed)
+    approximated_ellipse_def = Ladb::OpenCutList::Geometrix::EllipseApproximator.approximate_ellipse_def(ellipse_def, from_angle, to_angle)
+    assert_instance_of(Ladb::OpenCutList::Geometrix::ApproximatedEllipseDef, approximated_ellipse_def, msg)
 
-      assert_instance_of(Ladb::OpenCutList::Geometrix::CurveDef, curve_def)
-      if closed
-        assert_equal(curve_def.portions.first.start_point, curve_def.portions.last.end_point, "#{prefix} start == end ?")
-        assert_equal(curve_def.closed?, true, "#{prefix} closed ?")
-      else
-        assert_equal(curve_def.closed?, false, "#{prefix} !closed ?")
-      end
-
-      assert_equal(portion_count, curve_def.portions.count, "#{prefix} portions.count") unless portion_count.nil?
-
-      assert_equal(is_ellipse, curve_def.ellipse?, "#{prefix} ellipse?") unless is_ellipse.nil?
-      assert_equal(is_circle, curve_def.circle?, "#{prefix} circle?") unless is_circle.nil?
-
-    end
+    # puts "### #{msg}"
+    # puts approximated_ellipse_def.portions.map { |portion| (portion.end_angle - portion.start_angle).radians.round(6) }
+    #
+    # g = Sketchup.active_model.entities.add_group
+    # approximated_ellipse_def.portions.each do |portion|
+    #   g.entities.add_edges([ portion.start_point, portion.end_point ])
+    #   g.entities.add_cpoint(portion.circle_def.center)
+    #   g.entities.add_cline(portion.circle_def.center, portion.start_point, '.')
+    #   g.entities.add_cline(portion.circle_def.center, portion.end_point, '.')
+    # end
 
   end
 

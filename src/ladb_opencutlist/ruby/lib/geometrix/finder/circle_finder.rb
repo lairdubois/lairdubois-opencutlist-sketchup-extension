@@ -23,7 +23,7 @@ module Ladb::OpenCutList::Geometrix
 
       cx = -((p3.x**2 - p2.x**2 + p3.y**2 - p2.y**2) / (2 * (p3.y - p2.y)) - (p2.x**2 - p1.x**2 + p2.y**2 - p1.y**2) / (2 * (p2.y - p1.y))) / ((p2.x - p1.x) / (p2.y - p1.y) - (p3.x - p2.x) / (p3.y - p2.y))
       cy = -(p2.x - p1.x) / (p2.y - p1.y) * cx + (p2.x**2 - p1.x**2 + p2.y**2 - p1.y**2) / (2 * (p2.y - p1.y))
-      center = Geom::Point3d.new(cx, cy)
+      center = Geom::Point3d.new(cx, cy, p2.z)
 
       radius = (p1 - center).length
 
