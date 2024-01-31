@@ -1245,9 +1245,10 @@ module Ladb::OpenCutList
 
     def _get_active_part_icons
       return nil unless @active_part.is_a?(Part)
-      if @active_part.flipped || @active_part.resized
+      if @active_part.flipped || @active_part.auto_oriented || @active_part.resized
         icons = []
         icons << Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.5,0L0.5,0.2 M0.5,0.4L0.5,0.6 M0.5,0.8L0.5,1 M0,0.2L0.3,0.5L0,0.8L0,0.2 M1,0.2L0.7,0.5L1,0.8L1,0.2')) if @active_part.flipped
+        icons << Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.642,0.349L0.642,0.752 M0.541,0.45L0.642,0.349L0.743,0.45 M0.292,0.954L0.642,0.752 M0.43,0.991L0.292,0.954L0.329,0.816 M0.991,0.954L0.642,0.752 M0.853,0.991L0.991,0.954L0.954,0.816 M0.477,0.001L0.584,0.091L0.494,0.198 M0.001,0.477L0.091,0.584L0.198,0.494 M0.091,0.584L0.108,0.456L0.157,0.338L0.235,0.235L0.338,0.157L0.456,0.108L0.584,0.091')) if @active_part.auto_oriented
         icons << Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.6,0L0.4,0 M0.6,0.4L0.8,0.2L0.5,0.2 M0.8,0.2L0.8,0.5 M0.8,0L1,0L1,0.2 M1,0.4L1,0.6 M1,0.8L1,1L0.8,1 M0.2,0L0,0L0,0.2 M0,1L0,0.4L0.6,0.4L0.6,1L0,1')) if @active_part.resized
         return icons
       end
