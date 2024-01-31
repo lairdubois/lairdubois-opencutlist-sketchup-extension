@@ -2,7 +2,7 @@ module Ladb::OpenCutList
 
     EXTENSION_NAME = 'OpenCutList'.freeze
     EXTENSION_VERSION = '6.0.0-dev'.freeze
-    EXTENSION_BUILD = '202401281832'.freeze
+    EXTENSION_BUILD = '202401310831'.freeze
 
     FILE_FORMAT_SKP = 'skp'.freeze
     FILE_FORMAT_STL = 'stl'.freeze
