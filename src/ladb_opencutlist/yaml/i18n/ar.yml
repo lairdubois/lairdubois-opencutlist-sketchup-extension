@@ -70,7 +70,7 @@ default:
   tab_key: Tab
   file: ملف
   file_plural: ملفات
-  stroke_color: لون الخط
+  stroke_color: لون الخط المحيط
   fill_color: لون التعبئة
 core:
   menu:
@@ -95,6 +95,8 @@ core:
       smart_export: تصدير القِطع
   messagebox:
     dir_override: |
+      « {{ target }} » موجود مسبقا. هل ترغب في استبداله؟
+      هناك مجلد بنفس الاسم في المجلد {{ parent }}. إن استبدلته، ستفقد المحتوى الأصلي
   savepanel:
     export_to_file: "التصدير إلى ملف {{ file_format }}"
   dialog:
@@ -350,7 +352,7 @@ tab:
       numbers_reset: أعد تهيئة أرقام القطع
       highlight_parts: $t(tab.cutlist.highlight_parts)
       write_2d: إسقاط ثنائي الأبعاد
-      write_3d: ""
+      write_3d: الشكل ثلاثي الأبعاد
       write_2d_parts: صدر الإسقاط ثنائي البعد للقِطَع
       write_3d_parts: صدّر الشكل ثلاثي البعد للقِطَع
       group_write_2d_parts: صدر الإسقاط ثنائي البعد لقِطَع المجموعة
@@ -409,6 +411,7 @@ tab:
         يتيح لك *الوصف* معلومات معلومات مخصصة عن تعريف كل قطعة.
       url: رابط
       url_help: |
+        الـ URL يسمح بتوفير رابط مخصص إلى صفحة خارجية على كل تعريف لقطعة
       tags: الوسوم
       tags_help: |
         تمكنك *الوسوم* من إضافة كلمات مفتاحية مخصصة لتعريف كل قطعة.
@@ -657,7 +660,7 @@ tab:
       total_area: مجموع المساحات
       total_length: مجموع الأطوال
       tooltip:
-        incompatible_unit: ""
+        incompatible_unit: الوحدة غير متوافقة مع خيارات تثمين الخامة
       error:
         no_typed_material_parts: "لا تتوفر أي قطعة ذات خامة محددة (**$t(tab.materials.type_1)** أو **$t(tab.materials.type_2)** أو **$t(tab.materials.type_3)** أو **$t(tab.materials.type_4)** أو **$t(tab.materials.type_5)** أو **$t(tab.materials.type_6)**) لإنشاء التثمين"
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**."
@@ -831,6 +834,7 @@ tab:
       export:
         title: تصدير مخطط التقطيع
         info_0: |
+          تسمح لك هذه الوحدة بتصدير **شكل** *رسم التقطيع التخطيطي* في هيئة قائمة من الملفات بتنسيق [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) أو [DXF](https://wikipedia.org/wiki/AutoCAD_DXF)
         option_file_format: $t(tab.cutlist.write.option_file_format)
         option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
         option_dxf_structure: بُنية DXF
@@ -976,7 +980,7 @@ tab:
         part_edge_xmax: عرض الحاشية 2
         part_face_zmin: ظهر قشرة الخشب
         part_face_zmax: وجه قشرة الخشب
-        thumbnail_proportional_drawing: ""
+        thumbnail_proportional_drawing: صورة مصغّرة
         thumbnail_proportional: ملصق متناسب
         thumbnail_square: ملصق مربع
         group_material: الخامة / السُمك
@@ -1066,7 +1070,9 @@ tab:
     write:
       title: تصدير القِطع
       info_2d: |
+        تسمح لك هذه الوحدة بتصدير **الإسقاط ثنائي الأبعاد** للقِطع في هيئة ملفات بتنسيق [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) أو [DXF](https://wikipedia.org/wiki/AutoCAD_DXF)
       info_3d: |
+        تسمح لك هذه الوحدة بتصدير **الشكل ثلاثي الأبعاد** للقِطع في هيئة ملفات بتنسيق [STL](https://wikipedia.org/wiki/STL_(file_format)) أو [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file)
       option_file_format: المقاس
       option_file_format_help: |
         حدد صيغة الملف المُصدَّر
@@ -1080,21 +1086,25 @@ tab:
       option_faces_0: استعمل الوجه المستهدف فقط
       option_faces_1: استعمل كل وجوه القِطعة
       option_faces_help: |
+        يتيح لك اختيار ما إذا كان البحث عن شكل القِطعة يتم على جميع وجوهها أم على الوجه المستهدف فقط 
       option_anchor: نقطة الارتساء
       option_anchor_0: افتراضي
       option_anchor_1: صدر مبدأ القِطعة
       option_anchor_help: |
+        يتيح تفعيل إسقاط مبدإ محاور القِطعة كنقطة ارتساء
       option_smoothing: تمليس
       option_smoothing_0: لا شيء
       option_smoothing_1: تمليس الدوائر و الأقواس (تجريبي)
       option_smoothing_help: |
+        يتيح تفعيل اكتشاف الدوائر والأقواس.
+        *لا يتيح هذا الخيار اكتشاف أنواع أخرى من المنحنيات*
       option_merge_holes: ""
       option_merge_holes_0: افتراضي
       option_merge_holes_1: ""
       option_merge_holes_help: |
       option_include_paths: ""
       option_include_paths_0: لا شيء
-      option_include_paths_1: ""
+      option_include_paths_1: استخدم الحواشي غير المرتبطة بوجه
       option_include_paths_help: |
       option_parts: القِطع
       option_parts_help: |
@@ -1131,8 +1141,8 @@ tab:
       no_typed_materials_in_selection: "لا تستعمل في تحديدك أي خامة محددة (**$t(tab.materials.type_1)** أو **$t(tab.materials.type_2)** أو **$t(tab.materials.type_3)** أو **$t(tab.materials.type_5)**)"
       export_empty: تصديرك لا يحتوي أي قطعة.
     success:
-      part_selected: ""
-      part_selected_plural: ""
+      part_selected: "{{ count }} قطعة محددة في قائمة القِطع"
+      part_selected_plural: "{{ count }} قِطع / قِطعة محددة في قائمة القِطع"
     tip:
       no_component: |
         يجب أن تكون القِطع المتضمَّمة في *قائمة القِطع* مثيلات**عنصر**.
@@ -1162,7 +1172,7 @@ tab:
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: اتجاه تعرّق الألياف
-      raw_estimated_0: ""
+      raw_estimated_0: تم التثمين استنادا إلى الحجم الفعلي المعمول به
       colorized: سيضاف هذا اللون إلى الهيئة السطحية -تكستشر- لهذه الخامة عندما يجري تصييرها -رندرتها- في النموذج
       texture_load: حمّل هيئة سطحية - تكستشر جديدة
       texture_clear: أزل الهيئة السطحية - التكستشر
@@ -1197,7 +1207,7 @@ tab:
       description: تعليق وصفيّ
       url: رابط
       cut_options: خيارات التقطيع
-      estimate_options: ""
+      estimate_options: خصائص التثمين
       attributes: السِّمات
       thickness: السُمك
       thickness_help: |
@@ -1242,10 +1252,17 @@ tab:
       edge_decremented_help: تسمح بتحديد ما إذا كان يجب إنقاص الأبعاد وفقا لسُمك الحاشية.
       edge_decremented_0: لا إنقاص
       edge_decremented_1: إنقاص بقدر سمك الحاشية
-      raw_estimated: ""
+      raw_estimated: الحجم المستعمل
       raw_estimated_help: |
-      raw_estimated_0: ""
-      raw_estimated_1: ""
+        يتيح الخيار تحديد الحجم المستخدم لتثمين الوزن والتكلفة الإجمالية للقِطع المصنوعة من هذا الخامة
+
+        **الحجم المعمول به**
+        سيكون الحجم الإجمالي مجموعَ الحجوم المعمول بها للقِطع
+
+        **حجم المادة الخام اللازمة**
+        سيكون الحجم الإجمالي مجموعَ حجوم الألواح، الأوراق، القضبان أو أشرطة الحواشي للقِطع بعد التقطيع
+      raw_estimated_0: الحجم المعمول به
+      raw_estimated_1: حجم المادة الخام اللازمة
       std_attributes_dim_placeholder: حدد مقاسا
       std_volumic_masses: الكثافة
       std_volumic_masses_help: ""
@@ -1321,7 +1338,7 @@ tab:
       no_node: |
         لا يحتوي نموذجك على أي مثيل ليتم عرضه هنا
         المثيل هو **مجموعة** أو **عنصر** داخل المشهد
-    obsolete_base: ""
+    obsolete_base: "للبقاء في وضعية مزامنة، ينبغي عليك إعادة تحديث البُنية"
   importer:
     label: استيراد
     title: استيراد القطع
@@ -1640,9 +1657,9 @@ tool:
     action_option_direction_0: ط
     action_option_direction_1: ع
     action_option_direction_2: س
-    action_option_direction_0_status: ""
-    action_option_direction_1_status: ""
-    action_option_direction_2_status: ""
+    action_option_direction_0_status: أدر القِطعة تبعا للطول
+    action_option_direction_1_status: أدر القِطعة تبعا للعرض
+    action_option_direction_2_status: أدر القِطعة تبعا لسمكها
     warning:
       more_entities: "{{ count_used }} مثيلات تشترك في التعريف ذاته ستُعدّل"
     error:

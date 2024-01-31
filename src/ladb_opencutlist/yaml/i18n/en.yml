@@ -1218,7 +1218,7 @@ tab:
       description: Description
       url: URL
       cut_options: Cutting Parameters
-      estimate_options: Estimation options
+      estimate_options: Estimation Options
       attributes: Attributes
       thickness: Thickness
       thickness_help: |
@@ -1265,10 +1265,10 @@ tab:
       edge_decremented_1: Reduce by Edge Banding Thickness
       raw_estimated: Used Volume
       raw_estimated_help: |
-        Allows to define the volume used to estimate the weight and total cost of parts made from this material.
+        Defines the volume used to estimate the weight and total cost of parts made from this material.
 
         **Effective volume**
-        The total volume will be the sum of the effective volumes of the parts.
+        The total volume will be the sum of the effective volumes of the parts, which is the bounding box including oversizes.
 
         **Volume of raw material required**
         The total volume will be the sum of the volumes of the panels, sheets, boards or edgebandings of the parts after cutting.
@@ -1556,7 +1556,7 @@ tab:
         The *OpenCutList* settings for the current model have been reset.
         In order to reflect the changes, you must **close** and **reopen** the OpenCutList window.
       error:
-        no_preset_to_export: No presets to export.
+        no_preset_to_export: No preset to export.
         no_preset_to_import: No presets to import.
         failed_to_import: "Impossible to import the presets: **{{ error }}**."
         failed_to_import_invalid_hexdigest: This file was modified. It cannot be imported.
@@ -1678,11 +1678,11 @@ tool:
       not_orientable: The type of this part does not allow orienting it
   smart_export:
     title: Export
-    action_0: Export a 3D part
+    action_0: Export 3D part
     action_0_status: Click on a part
-    action_1: Export a 2D part
+    action_1: Export 2D part
     action_1_status: Click on the face of a part
-    action_2: Export a face
+    action_2: Export face
     action_2_status: Click on a face
     action_3: Export a path
     action_3_status: Click on an edge
