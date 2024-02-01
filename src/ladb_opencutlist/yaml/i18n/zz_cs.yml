@@ -228,8 +228,8 @@ core:
         Ujistěte se, že jste připojeni k internetu.
 tab:
   cutlist:
-    label: 178 - Zhruba
-    title: 179 - Kusovník
+    label: 178 - Kusovník
+    title: 179 - Kusovník - seznam dílů
     help: |
       180 - Vyberte části v aktuální scéně, které chcete zahrnout do kusovníku, a poté klikněte na tlačítko **Generovat**.
       Pokud je výběr prázdný, budou do kusovníku zahrnuty všechny viditelné součásti scény.
@@ -863,10 +863,10 @@ tab:
         option_merge_holes_0: "$t(tab.cutlist.write.option_merge_holes_0)"
         option_merge_holes_1: "$t(tab.cutlist.write.option_merge_holes_1)"
         option_merge_holes_help: "$t(tab.cutlist.write.option_merge_holes_help)"
-        option_include_paths: '689 - '
-        option_include_paths_0: '690 - '
-        option_include_paths_1: '691 - '
-        option_include_paths_help: '692 - '
+        option_include_paths: "$t(tab.cutlist.write.option_include_paths)"
+        option_include_paths_0: "$t(tab.cutlist.write.option_include_paths_0)"
+        option_include_paths_1: "$t(tab.cutlist.write.option_include_paths_1)"
+        option_include_paths_help: "$t(tab.cutlist.write.option_include_paths_help)"
         option_sheet_good: 693 - Tabule
         option_sheet_good_help: '694 - Umožňuje export tabule podle výběru barev.
 
@@ -891,8 +891,8 @@ tab:
         option_parts_holes_help: '704 - Vyberte barvu vrtání.
 
           '
-        option_parts_paths: '705 - '
-        option_parts_paths_help: '706 - '
+        option_parts_paths: "$t(tab.cutlist.write.option_parts_paths)"
+        option_parts_paths_help: "$t(tab.cutlist.write.option_parts_paths_help)"
         option_texts: 707 - Identifikátory
         option_texts_help: '708 - Umožňuje export identifikačních textů dílů a výběr barev.
 

@@ -654,6 +654,8 @@ tab:
       total_volume: Σ Volumes
       total_area: Σ Áreas
       total_length: Σ Comprimentos
+      tooltip:
+        incompatible_unit: ""
       error:
         no_typed_material_parts: "Nenhuma peça com o tipo de material definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** ou **$t(tab.materials.type_5)**) foi fornecida para gerar a estimativa."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erro**."
@@ -840,24 +842,30 @@ tab:
         option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
         option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
         option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
+        option_include_paths: $t(tab.cutlist.write.option_include_paths)
+        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
+        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
+        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
         option_sheet_good: Chapa
         option_sheet_good_help: |
         option_sheet_veneer: ""
         option_sheet_veneer_help: |
         option_bar_dimensional: Prancha
-        option_bar_dimensional_help:  |
+        option_bar_dimensional_help: |
         option_bar_band: ""
-        option_bar_band_help:  |
+        option_bar_band_help: |
         option_parts: Peças
-        option_parts_help:  |
+        option_parts_help: |
         option_parts_holes: ""
-        option_parts_holes_help:  |
+        option_parts_holes_help: |
+        option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
+        option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
         option_texts: ""
-        option_texts_help:  |
+        option_texts_help: |
         option_leftovers: Sobra
-        option_leftovers_help:  |
+        option_leftovers_help: |
         option_cuts: Cortes
-        option_cuts_help:  |
+        option_cuts_help: |
         warning:
           is_sheet_selection: ""
       error:
@@ -1133,6 +1141,7 @@ tab:
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Direção dos veios
+      raw_estimated_0: ""
       colorized: Este tom será aplicado à textura deste material quando for renderizado no modelo
       texture_load: Carrega uma nova textura
       texture_clear: Remover textura
@@ -1167,6 +1176,7 @@ tab:
       description: Descrição
       url: ""
       cut_options: Parâmetros de corte
+      estimate_options: ""
       attributes: Atributos
       thickness: Espessura
       thickness_help: |
@@ -1211,6 +1221,10 @@ tab:
       edge_decremented_help: Indica se as dimensões das partes devem ser reduzidas pela espessura da faixa da borda.
       edge_decremented_0: Sem redução
       edge_decremented_1: Reduzir de acordo com a espessura da Faixa de Borda
+      raw_estimated: ""
+      raw_estimated_help: |
+      raw_estimated_0: ""
+      raw_estimated_1: ""
       std_attributes_dim_placeholder: Escolha um tamanho
       std_volumic_masses: Densidade
       std_volumic_masses_help: ""
@@ -1639,7 +1653,7 @@ tool:
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: ""
-    action_option_options_paths_status: ""
+    action_option_options_include_paths_status: ""
     error:
       not_part: ""
       not_flat_face: ""

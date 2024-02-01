@@ -671,7 +671,7 @@ tab:
       total_area: 524 - Σ Areas
       total_length: 525 - Σ Longitudes
       tooltip:
-        incompatible_unit: '526 - '
+        incompatible_unit: 526 - Unidad incompatible con las opciones de estimación de la materia
       error:
         no_typed_material_parts: 527 - No hay piezas con un tipo de material definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** o **$t(tab.materials.type_5)**) para generar la estimación.
         entry_error: '528 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**.'
@@ -730,7 +730,7 @@ tab:
       option_hide_cross: 575 - Desperdicios
       option_hide_cross_0: 576 - Dimensiones y Cruz
       option_hide_cross_1: 577 - Solo dimensiones
-      option_hide_cross_help: 578 - Affiche ou masque la croix indiquant les parties définies comme chutes sur le diagramme.
+      option_hide_cross_help: 578 - Muestra u oculta la cruz que indica las partes definidas como caídas en el diagrama de corte.
       option_highlight_primary_cuts: 579 - Cortes primarios
       option_highlight_primary_cuts_0: 580 - Sólo en vista general
       option_highlight_primary_cuts_1: 581 - Siempre visible
@@ -1249,7 +1249,7 @@ tab:
       description: 980 - Descripción
       url: 981 - URL
       cut_options: 982 - Parámetros de corte
-      estimate_options: '983 - '
+      estimate_options: 983 - Opciones de estimación
       attributes: 984 - Atributos
       thickness: 985 - Espesor
       thickness_help: |
@@ -1294,10 +1294,10 @@ tab:
       edge_decremented_help: 1013 - Indica si las dimensiones de las piezas deben reducirse por el grosor de las tiras del canto.
       edge_decremented_0: 1014 - Sin reducción
       edge_decremented_1: 1015 - Reducir por el grosor de las tiras del canto
-      raw_estimated: '1016 - '
+      raw_estimated: 1016 - Volumen utilizado
       raw_estimated_help: '1017 - '
       raw_estimated_0: '1018 - '
-      raw_estimated_1: '1019 - '
+      raw_estimated_1: 1019 - Volumen de materia prima necesaria
       std_attributes_dim_placeholder: 1020 - Elige una talla
       std_volumic_masses: 1021 - Densidad
       std_volumic_masses_help: 1022 - Le permite definir la densidad para todos los tamaños y para cada tamaño estándar de material.
