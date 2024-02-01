@@ -12,50 +12,50 @@ module Ladb::OpenCutList
 
     # -----
 
-    def self.execute_union(closed_subjects, opened_subjects = [], clips = [])
+    def self.execute_union(closed_subjects, open_subjects = [], clips = [])
       _load_lib
       _clear
       _append_closed_subjects(closed_subjects)
-      _append_opened_subjects(opened_subjects)
+      _append_open_subjects(open_subjects)
       _append_clips(clips)
       _execute_union
       closed_paths_solution = _unpack_closed_paths_solution
-      opened_paths_solution = _unpack_opened_paths_solution
+      open_paths_solution = _unpack_open_paths_solution
       _clear
-      [ closed_paths_solution, opened_paths_solution ]
+      [ closed_paths_solution, open_paths_solution ]
     end
 
-    def self.execute_difference(closed_subjects, opened_subjects, clips)
+    def self.execute_difference(closed_subjects, open_subjects, clips)
       _load_lib
       _clear
       _append_closed_subjects(closed_subjects)
-      _append_opened_subjects(opened_subjects)
+      _append_open_subjects(open_subjects)
       _append_clips(clips)
       _execute_difference
       closed_paths_solution = _unpack_closed_paths_solution
-      opened_paths_solution = _unpack_opened_paths_solution
+      open_paths_solution = _unpack_open_paths_solution
       _clear
-      [ closed_paths_solution, opened_paths_solution ]
+      [ closed_paths_solution, open_paths_solution ]
     end
 
-    def self.execute_intersection(closed_subjects, opened_subjects, clips)
+    def self.execute_intersection(closed_subjects, open_subjects, clips)
       _load_lib
       _clear
       _append_closed_subjects(closed_subjects)
-      _append_opened_subjects(opened_subjects)
+      _append_open_subjects(open_subjects)
       _append_clips(clips)
       _execute_intersection
       closed_paths_solution = _unpack_closed_paths_solution
-      opened_paths_solution = _unpack_opened_paths_solution
+      open_paths_solution = _unpack_open_paths_solution
       _clear
-      [ closed_paths_solution, opened_paths_solution ]
+      [ closed_paths_solution, open_paths_solution ]
     end
 
-    def self.execute_polytree(closed_subjects, opened_subjects = [])
+    def self.execute_polytree(closed_subjects, open_subjects = [])
       _load_lib
       _clear
       _append_closed_subjects(closed_subjects)
-      _append_opened_subjects(opened_subjects)
+      _append_open_subjects(open_subjects)
       _execute_polytree
       solution = _unpack_polytree_solution
       _clear
@@ -150,7 +150,7 @@ module Ladb::OpenCutList
         # Keep simple C syntax (without var names and void in args) to stay compatible with SketchUp 2017
 
         extern 'void c_clear_subjects()'
-        extern 'void c_append_opened_subject(int64_t*)'
+        extern 'void c_append_open_subject(int64_t*)'
         extern 'void c_append_closed_subject(int64_t*)'
 
         extern 'void c_clear_clips()'
@@ -163,7 +163,7 @@ module Ladb::OpenCutList
 
         extern 'void c_clear_paths_solution()'
         extern 'int64_t* c_get_closed_paths_solution()'
-        extern 'int64_t* c_get_opened_paths_solution()'
+        extern 'int64_t* c_get_open_paths_solution()'
         extern 'void c_clear_polytree_solution()'
         extern 'int64_t* c_get_polytree_solution()'
 
@@ -293,13 +293,13 @@ module Ladb::OpenCutList
       end
     end
 
-    def self._append_opened_subject(rpath)
-      c_append_opened_subject(_rpath_to_cpath(rpath))
+    def self._append_open_subject(rpath)
+      c_append_open_subject(_rpath_to_cpath(rpath))
     end
 
-    def self._append_opened_subjects(rpaths)
+    def self._append_open_subjects(rpaths)
       rpaths.each do |rpath|
-        _append_opened_subject(rpath)
+        _append_open_subject(rpath)
       end
     end
 
@@ -343,10 +343,10 @@ module Ladb::OpenCutList
       rpaths
     end
 
-    def self._unpack_opened_paths_solution
+    def self._unpack_open_paths_solution
 
       # Retrieve solution's pointer
-      cpaths = c_get_opened_paths_solution
+      cpaths = c_get_open_paths_solution
 
       # Convert to rpath
       rpaths = _cpaths_to_rpaths(cpaths)
