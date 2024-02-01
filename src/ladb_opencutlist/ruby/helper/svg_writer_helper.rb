@@ -60,7 +60,7 @@ module Ladb::OpenCutList
     # ID
 
     def _svg_sanitize_identifier(id)
-      id.to_s.gsub(/[\s<>\/\\“:;?*|=‘.-]/, '_').upcase
+      id.to_s.gsub(/[\s<>\/\\“:;?*|=‘.]/, '_').upcase
     end
 
     # Value
@@ -151,7 +151,7 @@ module Ladb::OpenCutList
             'serif:id': id,
             'inkscape:label': id
           }
-          attributes.merge!({ 'shaper:cutDepth': "#{_svg_value(Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x)}#{unit_sign}" }) if layer_def.depth > 0
+          attributes.merge!({ 'shaper:cutDepth': "#{_svg_value(Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x)}#{unit_sign}" }) if layer_def.depth != 0
         elsif layer_def.type_outer? || layer_def.depth == 0
           attributes = {
             stroke: _svg_stroke_color_hex(stroke_color, fill_color),

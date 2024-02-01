@@ -58,7 +58,7 @@ module Ladb::OpenCutList
       depth_min = 0.0
       depth_max = @drawing_def.faces_bounds.depth
 
-      z_max = bounds.max.z
+      z_max = faces_bounds.max.z
 
       upper_layer_def = PathsLayerDef.new(depth_min, [], [], DrawingProjectionLayerDef::TYPE_UPPER)
 
@@ -216,15 +216,15 @@ module Ladb::OpenCutList
       when ORIGIN_POSITION_EDGES_BOUNDS_MIN
         origin = Geom::Point3d.new(edges_bounds.min.x, edges_bounds.min.y, edges_bounds.max.z)
       when ORIGIN_POSITION_BOUNDS_MIN
-        origin = Geom::Point3d.new(bounds.min.x, bounds.min.y, bounds.max.z)
+        origin = Geom::Point3d.new(bounds.min.x, bounds.min.y, faces_bounds.max.z)
       else
-        origin = Geom::Point3d.new(0, 0, bounds.max.z)
+        origin = Geom::Point3d.new(0, 0, faces_bounds.max.z)
       end
 
       projection_def.bounds.clear
       projection_def.bounds.add(
-        Geom::Point3d.new(bounds.min.x, bounds.min.y, bounds.max.z),
-        Geom::Point3d.new(bounds.max),
+        Geom::Point3d.new(bounds.min.x, bounds.min.y, origin.z),
+        Geom::Point3d.new(bounds.max.x, bounds.max.y, origin.z),
         origin
       )
 

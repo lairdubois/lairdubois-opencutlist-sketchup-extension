@@ -16,7 +16,7 @@
 
     # -----
 
-    def read_from_attributes()
+    def read_from_attributes
       if @instance
         @outliner_expanded = Plugin.instance.get_attribute(@instance, 'outliner.expanded', false)
       end
