@@ -8,10 +8,16 @@ module Ladb::OpenCutList
 
     MINIMAL_PATH_AREA = 1e-6
 
+    ORIGIN_POSITION_DEFAULT = 0
+    ORIGIN_POSITION_FACES_BOUNDS_MIN = 1
+    ORIGIN_POSITION_EDGES_BOUNDS_MIN = 2
+    ORIGIN_POSITION_BOUNDS_MIN = 3
+
     def initialize(drawing_def, settings = {})
 
       @drawing_def = drawing_def
 
+      @origin_position = settings.fetch('origin_position', ORIGIN_POSITION_DEFAULT)
       @merge_holes = settings.fetch('merge_holes', false)  # Holes are moved to "hole" layer and all down layers holes are merged to their upper layer
 
     end
@@ -21,13 +27,38 @@ module Ladb::OpenCutList
     def run
       return { :errors => [ 'default.error' ] } unless @drawing_def.is_a?(DrawingDef)
 
-      bounds_depth = @drawing_def.bounds.depth
-      bounds_max = @drawing_def.bounds.max
+      bounds = Geom::BoundingBox.new
+
+      faces_bounds = Geom::BoundingBox.new
+      edges_bounds = Geom::BoundingBox.new
+
+      face_manipulators = []
+      edge_manipulators = []
+      curve_manipulators = []
+
+      @drawing_def.face_manipulators.each do |face_manipulator|
+        next unless !face_manipulator.perpendicular?(Z_AXIS) && face_manipulator.angle_between(@drawing_def.input_normal) < Math::PI / 2.0  # Filter only exposed faces
+        face_manipulators << face_manipulator
+        faces_bounds.add(face_manipulator.outer_loop_points)
+      end
+      @drawing_def.edge_manipulators.each do |edge_manipulator|
+        next unless edge_manipulator.line_vector.perpendicular?(Z_AXIS)
+        edge_manipulators << edge_manipulator
+        edges_bounds.add(edge_manipulator.points)
+      end
+      @drawing_def.curve_manipulators.each do |curve_manipulator|
+        next unless curve_manipulator.plane_vector.parallel?(Z_AXIS)
+        curve_manipulators << curve_manipulator
+        edges_bounds.add(curve_manipulator.points)
+      end
+
+      bounds.add(faces_bounds.min, faces_bounds.max) unless  faces_bounds.empty?
+      bounds.add(edges_bounds.min, edges_bounds.max) unless  edges_bounds.empty?
 
       depth_min = 0.0
-      depth_max = bounds_depth
+      depth_max = @drawing_def.faces_bounds.depth
 
-      z_max = bounds_max.z
+      z_max = bounds.max.z
 
       upper_layer_def = PathsLayerDef.new(depth_min, [], [], DrawingProjectionLayerDef::TYPE_UPPER)
 
@@ -35,10 +66,7 @@ module Ladb::OpenCutList
       plds[depth_min] = upper_layer_def
 
       # Extract faces loops
-      @drawing_def.face_manipulators.each do |face_manipulator|
-
-        # Filter only exposed faces
-        next unless !face_manipulator.perpendicular?(Z_AXIS) && face_manipulator.angle_between(@drawing_def.input_normal) < Math::PI / 2.0
+      face_manipulators.each do |face_manipulator|
 
         if face_manipulator.surface_manipulator
           f_depth = (z_max - face_manipulator.surface_manipulator.z_max) # Faces sharing the same "surface" are considered as a unique "box"
@@ -58,9 +86,7 @@ module Ladb::OpenCutList
       end
 
       # Extract edges and curves
-      @drawing_def.edge_manipulators.each do |edge_manipulator|
-
-        next unless edge_manipulator.line_vector.perpendicular?(Z_AXIS)
+      edge_manipulators.each do |edge_manipulator|
 
         e_depth = (z_max - edge_manipulator.z_max)
         e_path = Clippy.points_to_rpath(edge_manipulator.points)
@@ -74,9 +100,7 @@ module Ladb::OpenCutList
         end
 
       end
-      @drawing_def.curve_manipulators.each do |curve_manipulator|
-
-        next unless curve_manipulator.plane_vector.parallel?(Z_AXIS)
+      curve_manipulators.each do |curve_manipulator|
 
         c_depth = (z_max - curve_manipulator.z_max)
         c_path = Clippy.points_to_rpath(curve_manipulator.points)
@@ -152,7 +176,7 @@ module Ladb::OpenCutList
 
       # Output
 
-      projection_def = DrawingProjectionDef.new(bounds_depth)
+      projection_def = DrawingProjectionDef.new(depth_max)
 
       splds.each do |layer_def|
 
@@ -185,6 +209,26 @@ module Ladb::OpenCutList
         end
 
       end
+
+      case @origin_position
+      when ORIGIN_POSITION_FACES_BOUNDS_MIN
+        origin = Geom::Point3d.new(faces_bounds.min.x, faces_bounds.min.y, faces_bounds.max.z)
+      when ORIGIN_POSITION_EDGES_BOUNDS_MIN
+        origin = Geom::Point3d.new(edges_bounds.min.x, edges_bounds.min.y, edges_bounds.max.z)
+      when ORIGIN_POSITION_BOUNDS_MIN
+        origin = Geom::Point3d.new(bounds.min.x, bounds.min.y, bounds.max.z)
+      else
+        origin = Geom::Point3d.new(0, 0, bounds.max.z)
+      end
+
+      projection_def.bounds.clear
+      projection_def.bounds.add(
+        Geom::Point3d.new(bounds.min.x, bounds.min.y, bounds.max.z),
+        Geom::Point3d.new(bounds.max),
+        origin
+      )
+
+      projection_def.translate_to!(origin)
 
       projection_def
     end

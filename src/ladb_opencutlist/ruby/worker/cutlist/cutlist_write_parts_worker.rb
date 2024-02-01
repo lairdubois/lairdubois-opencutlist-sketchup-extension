@@ -91,35 +91,47 @@ module Ladb::OpenCutList
               next
             end
 
-            drawing_def = _compute_part_drawing_def(@part_drawing_type, part, ignore_edges: !@include_paths, use_bounds_min_as_origin: !@anchor, use_cache: !@include_paths)
-            return { :errors => [ 'tab.cutlist.error.unknow_part' ] } unless drawing_def.is_a?(DrawingDef)
-
             case @part_drawing_type
-              when PART_DRAWING_TYPE_2D_TOP, PART_DRAWING_TYPE_2D_BOTTOM
-                response = CommonWriteDrawing2dWorker.new(drawing_def, {
-                  'folder_path' => folder_path,
-                  'file_name' => file_name,
-                  'file_format' => @file_format,
-                  'unit' => @unit,
-                  'anchor' => @anchor,
-                  'smoothing' => @smoothing,
-                  'merge_holes' => @merge_holes,
-                  'parts_stroke_color' => @parts_stroke_color,
-                  'parts_fill_color' => @parts_fill_color,
-                  'parts_holes_stroke_color' => @parts_holes_stroke_color,
-                  'parts_holes_fill_color' => @parts_holes_fill_color,
-                  'parts_paths_stroke_color' => @parts_paths_stroke_color,
-                }).run
-                return response if !response[:errors].nil? || response[:cancelled]
-              when PART_DRAWING_TYPE_3D
-                response = CommonWriteDrawing3dWorker.new(drawing_def, {
-                  'folder_path' => folder_path,
-                  'file_name' => file_name,
-                  'file_format' => @file_format,
-                  'unit' => @unit,
-                  'anchor' => @anchor,
-                }).run
-                return response if !response[:errors].nil? || response[:cancelled]
+            when PART_DRAWING_TYPE_2D_TOP, PART_DRAWING_TYPE_2D_BOTTOM
+
+              drawing_def = _compute_part_drawing_def(@part_drawing_type, part,
+                                                      ignore_edges: !@include_paths,
+                                                      origin_position: CommonDrawingDecompositionWorker::ORIGIN_POSITION_DEFAULT,
+                                                      use_cache: !@include_paths
+              )
+              return { :errors => [ 'tab.cutlist.error.unknow_part' ] } unless drawing_def.is_a?(DrawingDef)
+
+              response = CommonWriteDrawing2dWorker.new(drawing_def, {
+                'folder_path' => folder_path,
+                'file_name' => file_name,
+                'file_format' => @file_format,
+                'unit' => @unit,
+                'anchor' => @anchor,
+                'smoothing' => @smoothing,
+                'merge_holes' => @merge_holes,
+                'parts_stroke_color' => @parts_stroke_color,
+                'parts_fill_color' => @parts_fill_color,
+                'parts_holes_stroke_color' => @parts_holes_stroke_color,
+                'parts_holes_fill_color' => @parts_holes_fill_color,
+                'parts_paths_stroke_color' => @parts_paths_stroke_color,
+              }).run
+              return response if !response[:errors].nil? || response[:cancelled]
+            when PART_DRAWING_TYPE_3D
+
+              drawing_def = _compute_part_drawing_def(@part_drawing_type, part,
+                                                      origin_position: @anchor ? CommonDrawingDecompositionWorker::ORIGIN_POSITION_DEFAULT : CommonDrawingDecompositionWorker::ORIGIN_POSITION_FACES_BOUNDS_MIN,
+                                                      use_cache: false
+              )
+              return { :errors => [ 'tab.cutlist.error.unknow_part' ] } unless drawing_def.is_a?(DrawingDef)
+
+              response = CommonWriteDrawing3dWorker.new(drawing_def, {
+                'folder_path' => folder_path,
+                'file_name' => file_name,
+                'file_format' => @file_format,
+                'unit' => @unit,
+                'anchor' => @anchor,
+              }).run
+              return response if !response[:errors].nil? || response[:cancelled]
             end
 
           rescue => e

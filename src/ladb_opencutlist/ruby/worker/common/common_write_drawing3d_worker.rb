@@ -17,7 +17,7 @@ module Ladb::OpenCutList
     LAYER_PART = 'OCL_PART'.freeze
     LAYER_EDGE = 'OCL_EDGE'.freeze
 
-    SUPPORTED_FILE_FORMATS = [ FILE_FORMAT_STL, FILE_FORMAT_OBJ, FILE_FORMAT_DXF ]
+    SUPPORTED_FILE_FORMATS = [ FILE_FORMAT_STL, FILE_FORMAT_OBJ ]
 
     def initialize(drawing_def, settings = {})
 
@@ -80,8 +80,6 @@ module Ladb::OpenCutList
         _write_to_stl_file(file)
       when FILE_FORMAT_OBJ
         _write_to_obj_file(file)
-      when FILE_FORMAT_DXF
-        _write_to_dxf_file(file)
       end
 
       # Close output file
@@ -142,109 +140,6 @@ module Ladb::OpenCutList
         end
 
       end
-
-    end
-
-    def _write_to_dxf_file(file)
-
-      unit_factor = _dxf_get_unit_factor(@unit)
-      unit_transformation = Geom::Transformation.scaling(ORIGIN, unit_factor, unit_factor, unit_factor)
-
-      layer_defs = []
-      layer_defs << DxfLayerDef.new(LAYER_PART, nil) unless @drawing_def.face_manipulators.empty?
-      layer_defs << DxfLayerDef.new(LAYER_EDGE, @guide_stroke_color) unless @drawing_def.edge_manipulators.empty?
-
-      min = @drawing_def.bounds.min.transform(unit_transformation)
-      max = @drawing_def.bounds.max.transform(unit_transformation)
-
-      _dxf_write_start(file)
-      _dxf_write_section_header(file, @unit, min, max)
-      _dxf_write_section_classes(file)
-      _dxf_write_section_tables(file, min, max, layer_defs)
-      _dxf_write_section_blocks(file)
-      _dxf_write_section_entities(file) do
-
-        @drawing_def.face_manipulators.each do |face_manipulator|
-
-          # Export face to POLYFACE
-
-          mesh = face_manipulator.mesh
-
-          polygons = mesh.polygons
-          points = mesh.points
-
-          # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-ABF6B778-BE20-4B49-9B58-A94E64CEFFF3
-
-          _dxf_write(file, 0, 'POLYLINE')
-          id = _dxf_write_id(file)
-          _dxf_write_owner_id(file, @_dxf_model_space_id)
-          _dxf_write_sub_classes(file, [ 'AcDbEntity' ])
-          _dxf_write(file, 8, LAYER_PART) # Layer
-          _dxf_write_sub_classes(file, [ 'AcDbPolyFaceMesh' ])
-          _dxf_write(file, 66, 1) # Deprecated
-          _dxf_write(file, 10, 0.0)
-          _dxf_write(file, 20, 0.0)
-          _dxf_write(file, 30, 0.0)
-          _dxf_write(file, 70, 64) # 64 = The polyline is a polyface mesh
-          _dxf_write(file, 71, points.length) # Polygon mesh M vertex count
-          _dxf_write(file, 72, polygons.length) # Polygon mesh N vertex count
-
-          points.each do |point|
-
-            point = point.transform(unit_transformation)
-
-            _dxf_write(file, 0, 'VERTEX')
-            _dxf_write_id(file)
-            _dxf_write_owner_id(file, id)
-            _dxf_write_sub_classes(file, [ 'AcDbEntity' ])
-            _dxf_write(file, 8, LAYER_PART) # Layer
-            _dxf_write_sub_classes(file, [ 'AcDbVertex', 'AcDbPolyFaceMeshVertex' ])
-            _dxf_write(file, 10, point.x)
-            _dxf_write(file, 20, point.y)
-            _dxf_write(file, 30, point.z)
-            _dxf_write(file, 70, 64 ^ 128) # 64 = 3D polygon mesh, 128 = Polyface mesh vertex
-
-          end
-
-          polygons.each do |polygon|
-
-            _dxf_write(file, 0, 'VERTEX')
-            _dxf_write_id(file)
-            _dxf_write_owner_id(file, id)
-            _dxf_write_sub_classes(file, [ 'AcDbEntity' ])
-            _dxf_write(file, 8, LAYER_PART)
-            _dxf_write_sub_classes(file, [ 'AcDbFaceRecord' ])
-            _dxf_write(file, 10, 0.0)
-            _dxf_write(file, 20, 0.0)
-            _dxf_write(file, 30, 0.0)
-            _dxf_write(file, 70, 128) # 128 = Polyface mesh vertex
-            _dxf_write(file, 71, polygon[0]) # 71 = Polyface mesh vertex index
-            _dxf_write(file, 72, polygon[1]) # 72 = Polyface mesh vertex index
-            _dxf_write(file, 73, polygon[2]) # 73 = Polyface mesh vertex index
-
-          end
-
-          _dxf_write(file, 0, 'SEQEND')
-
-        end
-
-        @drawing_def.edge_manipulators.each do |edge_manipulator|
-
-          point1 = edge_manipulator.start_point.transform(unit_transformation)
-          point2 = edge_manipulator.end_point.transform(unit_transformation)
-
-          x1 = point1.x
-          y1 = point1.y
-          x2 = point2.x
-          y2 = point2.y
-
-          _dxf_write_line(file, x1, y1, x2, y2, LAYER_EDGE)
-
-        end
-
-      end
-      _dxf_write_section_objects(file)
-      _dxf_write_end(file)
 
     end
 

@@ -81,6 +81,7 @@ module Ladb::OpenCutList
 
       # Compute projection
       projection_def = CommonDrawingProjectionWorker.new(@drawing_def, {
+        'origin_position' => @anchor ? CommonDrawingProjectionWorker::ORIGIN_POSITION_DEFAULT : CommonDrawingProjectionWorker::ORIGIN_POSITION_BOUNDS_MIN,
         'merge_holes' => @merge_holes
       }).run
 
@@ -104,11 +105,11 @@ module Ladb::OpenCutList
       if @anchor
         # Recompute bounding box to be sure to extends to anchor triangle
         bounds = Geom::BoundingBox.new
-        bounds.add(@drawing_def.bounds.min)
-        bounds.add(@drawing_def.bounds.max)
+        bounds.add(projection_def.bounds.min)
+        bounds.add(projection_def.bounds.max)
         bounds.add([ Geom::Point3d.new, Geom::Point3d.new(0, 10.mm), Geom::Point3d.new(5.mm, 0) ])
       else
-        bounds = @drawing_def.bounds
+        bounds = projection_def.bounds
       end
 
       unit_sign, unit_factor = _svg_get_unit_sign_and_factor(@unit)
@@ -170,8 +171,8 @@ module Ladb::OpenCutList
       unit_factor = _dxf_get_unit_factor(@unit)
       unit_transformation = Geom::Transformation.scaling(ORIGIN, unit_factor, unit_factor, 1.0)
 
-      min = @drawing_def.bounds.min.transform(unit_transformation)
-      max = @drawing_def.bounds.max.transform(unit_transformation)
+      min = projection_def.bounds.min.transform(unit_transformation)
+      max = projection_def.bounds.max.transform(unit_transformation)
 
       layer_defs = []
       layer_defs.concat(_dxf_get_projection_def_depth_layer_defs(projection_def, @parts_stroke_color, @parts_holes_stroke_color, @parts_paths_stroke_color, unit_factor, LAYER_PART).uniq { |layer_def| layer_def.name })

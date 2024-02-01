@@ -4,12 +4,46 @@ module Ladb::OpenCutList
 
   class DrawingProjectionDef
 
-    attr_reader :max_depth, :layer_defs, :polyline_defs
+    attr_reader :transformation, :bounds, :max_depth, :layer_defs
 
     def initialize(max_depth = 0)
+
+      @transformation = IDENTITY
+      @bounds = Geom::BoundingBox.new
+
       @max_depth = max_depth
+
       @layer_defs = []
-      @polyline_defs = []
+
+    end
+
+    # -----
+
+    def translate_to!(point)
+      t = Geom::Transformation.translation(Geom::Vector3d.new(point.to_a))
+      unless t.identity?
+
+        ti = t.inverse
+
+        @transformation *= t
+
+        unless @bounds.empty?
+          min = @bounds.min.transform(ti)
+          max = @bounds.max.transform(ti)
+          @bounds.clear
+          @bounds.add(min, max)
+        end
+
+        @layer_defs.each do |layer_def|
+          layer_def.poly_defs.each do |poly_def|
+            poly_def.points.each do |point|
+              point.transform!(ti)
+            end
+          end
+        end
+
+      end
+
     end
 
   end

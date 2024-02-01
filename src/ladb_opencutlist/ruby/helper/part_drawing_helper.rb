@@ -11,7 +11,7 @@ module Ladb::OpenCutList
     PART_DRAWING_TYPE_2D_BOTTOM = 2
     PART_DRAWING_TYPE_3D = 3
 
-    def _compute_part_drawing_def(part_drawing_type, part, ignore_edges: true, use_bounds_min_as_origin: true, use_cache: true)
+    def _compute_part_drawing_def(part_drawing_type, part, ignore_edges: true, origin_position: CommonDrawingDecompositionWorker::ORIGIN_POSITION_FACES_BOUNDS_MIN, use_cache: true)
       return nil unless part.is_a?(Part)
       return nil if part_drawing_type == PART_DRAWING_TYPE_NONE
 
@@ -36,7 +36,7 @@ module Ladb::OpenCutList
         'input_local_x_axis' => local_x_axis,
         'input_local_y_axis' => local_y_axis,
         'input_local_z_axis' => local_z_axis,
-        'use_bounds_min_as_origin' => use_bounds_min_as_origin,
+        'origin_position' => origin_position,
         'ignore_edges' => ignore_edges,
         'edge_validator' => ignore_edges ? nil : CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY
       }).run
@@ -48,7 +48,7 @@ module Ladb::OpenCutList
       nil
     end
 
-    def _compute_part_projection_def(part_drawing_type, part, projection_settings = {}, projection_defs_cache = {}, ignore_edges: true, use_bounds_min_as_origin: true, use_cache: true)
+    def _compute_part_projection_def(part_drawing_type, part, projection_defs_cache = {}, ignore_edges: true, merge_holes: false, origin_position: CommonDrawingProjectionWorker::ORIGIN_POSITION_FACES_BOUNDS_MIN, use_cache: true)
       return nil unless part.is_a?(Part)
 
       if use_cache
@@ -56,10 +56,13 @@ module Ladb::OpenCutList
         return projection_def unless projection_def.nil?
       end
 
-      drawing_def = _compute_part_drawing_def(part_drawing_type, part, ignore_edges: ignore_edges, use_bounds_min_as_origin: use_bounds_min_as_origin, use_cache: use_cache)
+      drawing_def = _compute_part_drawing_def(part_drawing_type, part, ignore_edges: ignore_edges, origin_position: CommonDrawingDecompositionWorker::ORIGIN_POSITION_DEFAULT, use_cache: use_cache)
       return nil unless drawing_def.is_a?(DrawingDef)
 
-      projection_def = CommonDrawingProjectionWorker.new(drawing_def, projection_settings).run
+      projection_def = CommonDrawingProjectionWorker.new(drawing_def, {
+        'origin_position' => origin_position,
+        'merge_holes' => merge_holes
+      }).run
       if projection_def.is_a?(DrawingProjectionDef)
         projection_defs_cache[part.id] = projection_def
         return projection_def

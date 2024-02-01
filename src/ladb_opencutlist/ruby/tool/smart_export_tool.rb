@@ -279,7 +279,7 @@ module Ladb::OpenCutList
           # Part 3D
 
           @active_drawing_def = CommonDrawingDecompositionWorker.new(@active_part_entity_path, {
-            'use_bounds_min_as_origin' => !fetch_action_option_enabled(ACTION_EXPORT_PART_3D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR),
+            'origin_position' => fetch_action_option_enabled(ACTION_EXPORT_PART_3D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) ? CommonDrawingDecompositionWorker::ORIGIN_POSITION_DEFAULT : CommonDrawingProjectionWorker::ORIGIN_POSITION_FACES_BOUNDS_MIN,
             'ignore_surfaces' => true,
             'ignore_edges' => true
           }).run
@@ -336,7 +336,6 @@ module Ladb::OpenCutList
             'input_local_z_axis' => local_z_axis,
             'input_face_path' => @input_face_path,
             'input_edge_path' => @input_edge.nil? ? nil : @input_face_path + [ @input_edge ],
-            'use_bounds_min_as_origin' => !fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR),
             'face_validator' => fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACES, ACTION_OPTION_FACES_ONE) ? CommonDrawingDecompositionWorker::FACE_VALIDATOR_ONE : CommonDrawingDecompositionWorker::FACE_VALIDATOR_ALL,
             'ignore_edges' => !fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_INCLUDE_PATHS),
             'edge_validator' => fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACES, ACTION_OPTION_FACES_ONE) ? CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY_COPLANAR : CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY
@@ -346,11 +345,12 @@ module Ladb::OpenCutList
             inch_offset = Sketchup.active_model.active_view.pixels_to_model(15, Geom::Point3d.new.transform(@active_drawing_def.transformation))
 
             projection_def = CommonDrawingProjectionWorker.new(@active_drawing_def, {
+              'origin_position' => fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) ? CommonDrawingProjectionWorker::ORIGIN_POSITION_DEFAULT : CommonDrawingProjectionWorker::ORIGIN_POSITION_BOUNDS_MIN,
               'merge_holes' => fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES)
             }).run
 
             preview = Kuix::Group.new
-            preview.transformation = @active_drawing_def.transformation
+            preview.transformation = @active_drawing_def.transformation * projection_def.transformation
             @space.append(preview)
 
             fn_append_segments = lambda do |segments, color, line_width, line_stipple|
@@ -418,15 +418,10 @@ module Ladb::OpenCutList
 
             end
 
-            bounds = Geom::BoundingBox.new
-            bounds.add(Geom::Point3d.new(@active_drawing_def.bounds.min.x, @active_drawing_def.bounds.min.y, @active_drawing_def.bounds.max.z))
-            bounds.add(@active_drawing_def.bounds.max)
-            bounds.add(Geom::Point3d.new(0, 0, @active_drawing_def.bounds.max.z))
-
             # Box helper
             box_helper = Kuix::RectangleMotif.new
-            box_helper.bounds.origin.copy!(bounds.min)
-            box_helper.bounds.size.copy!(bounds)
+            box_helper.bounds.origin.copy!(projection_def.bounds.min)
+            box_helper.bounds.size.copy!(projection_def.bounds)
             box_helper.bounds.apply_offset(inch_offset, inch_offset, 0)
             box_helper.color = Kuix::COLOR_BLACK
             box_helper.line_width = 1
@@ -437,6 +432,7 @@ module Ladb::OpenCutList
 
               # Highlight input edge
               segments = Kuix::Segments.new
+              segments.transformation = projection_def.transformation.inverse
               segments.add_segments(@active_drawing_def.input_edge_manipulator.segment)
               segments.color = COLOR_ACTION
               segments.line_width = 3
@@ -447,7 +443,7 @@ module Ladb::OpenCutList
 
             # Axes helper
             axes_helper = Kuix::AxesHelper.new
-            axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(0, 0, @active_drawing_def.bounds.max.z))
+            # axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(0, 0, 0))
             axes_helper.box_0.visible = false
             axes_helper.box_z.visible = false
             preview.append(axes_helper)
@@ -470,18 +466,20 @@ module Ladb::OpenCutList
       if face
 
         @active_drawing_def = CommonDrawingDecompositionWorker.new(@input_face_path, {
-          'use_bounds_min_as_origin' => true,
+          'use_bounds_min_as_origin' => false,
           'input_face_path' => @input_face_path,
           'input_edge_path' => @input_edge.nil? ? nil : @input_face_path + [ @input_edge ],
         }).run
         if @active_drawing_def.is_a?(DrawingDef)
 
-          projection_def = CommonDrawingProjectionWorker.new(@active_drawing_def).run
+          projection_def = CommonDrawingProjectionWorker.new(@active_drawing_def, {
+            'origin_position' => CommonDrawingProjectionWorker::ORIGIN_POSITION_FACES_BOUNDS_MIN
+          }).run
 
           inch_offset = Sketchup.active_model.active_view.pixels_to_model(15, Geom::Point3d.new.transform(@active_drawing_def.transformation))
 
           preview = Kuix::Group.new
-          preview.transformation = @active_drawing_def.transformation
+          preview.transformation = @active_drawing_def.transformation * projection_def.transformation
           @space.append(preview)
 
           fn_append_segments = lambda do |segments, line_width, line_stipple|
@@ -530,15 +528,10 @@ module Ladb::OpenCutList
           #   end
           # end
 
-          bounds = Geom::BoundingBox.new
-          bounds.add(Geom::Point3d.new(@active_drawing_def.bounds.min.x, @active_drawing_def.bounds.min.y, @active_drawing_def.bounds.max.z))
-          bounds.add(@active_drawing_def.bounds.max)
-          bounds.add(Geom::Point3d.new(0, 0, @active_drawing_def.bounds.max.z))
-
           # Box helper
           box_helper = Kuix::RectangleMotif.new
-          box_helper.bounds.origin.copy!(bounds.min)
-          box_helper.bounds.size.copy!(bounds)
+          box_helper.bounds.origin.copy!(projection_def.bounds.min)
+          box_helper.bounds.size.copy!(projection_def.bounds)
           box_helper.bounds.apply_offset(inch_offset, inch_offset, 0)
           box_helper.color = Kuix::COLOR_BLACK
           box_helper.line_width = 1
@@ -549,6 +542,7 @@ module Ladb::OpenCutList
 
             # Highlight input edge
             segments = Kuix::Segments.new
+            segments.transformation = projection_def.transformation.inverse
             segments.add_segments(@active_drawing_def.input_edge_manipulator.segment)
             segments.color = COLOR_ACTION
             segments.line_width = 3
@@ -559,7 +553,7 @@ module Ladb::OpenCutList
 
           # Axes helper
           axes_helper = Kuix::AxesHelper.new
-          axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(0, 0, @active_drawing_def.bounds.max.z))
+          # axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(0, 0, @active_drawing_def.bounds.max.z))
           axes_helper.box_0.visible = false
           axes_helper.box_z.visible = false
           preview.append(axes_helper)

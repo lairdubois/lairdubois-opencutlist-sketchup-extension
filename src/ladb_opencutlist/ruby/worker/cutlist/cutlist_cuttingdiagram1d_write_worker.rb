@@ -472,9 +472,11 @@ module Ladb::OpenCutList
     end
 
     def _get_part_projection_def(part)
-      _compute_part_projection_def(@part_drawing_type, part.def.cutlist_part, {
-        'merge_holes' => @merge_holes
-      }, @_projection_defs, ignore_edges: !@include_paths, use_cache: false)
+      _compute_part_projection_def(@part_drawing_type, part.def.cutlist_part, @_projection_defs,
+                                   ignore_edges: !@include_paths,
+                                   merge_holes: @merge_holes,
+                                   use_cache: false
+      )
     end
 
   end

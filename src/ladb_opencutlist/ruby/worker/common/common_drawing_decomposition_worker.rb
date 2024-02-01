@@ -14,6 +14,11 @@ module Ladb::OpenCutList
 
     include LayerVisibilityHelper
 
+    ORIGIN_POSITION_DEFAULT = 0
+    ORIGIN_POSITION_FACES_BOUNDS_MIN = 1
+    ORIGIN_POSITION_EDGES_BOUNDS_MIN = 2
+    ORIGIN_POSITION_BOUNDS_MIN = 3
+
     FACE_VALIDATOR_ALL = 0
     FACE_VALIDATOR_ONE = 1
     FACE_VALIDATOR_COPLANAR = 2
@@ -36,7 +41,7 @@ module Ladb::OpenCutList
       @input_face_path = settings.fetch('input_face_path', nil)
       @input_edge_path = settings.fetch('input_edge_path', nil)
 
-      @use_bounds_min_as_origin = settings.fetch('use_bounds_min_as_origin', false)
+      @origin_position = settings.fetch('origin_position', ORIGIN_POSITION_DEFAULT)
 
       @ignore_faces = settings.fetch('ignore_faces', false)
       @ignore_surfaces = settings.fetch('ignore_surfaces', false)
@@ -213,85 +218,34 @@ module Ladb::OpenCutList
 
       # STEP 3 : Compute bounds
 
+      drawing_def.bounds.clear
       unless @ignore_faces
         drawing_def.face_manipulators.each do |face_manipulator|
-          drawing_def.bounds.add(face_manipulator.outer_loop_points)
+          drawing_def.faces_bounds.add(face_manipulator.outer_loop_points)
         end
+        drawing_def.bounds.add(drawing_def.faces_bounds.min, drawing_def.faces_bounds.max)
       end
       unless @ignore_edges
         drawing_def.edge_manipulators.each do |edge_manipulator|
-          drawing_def.bounds.add(edge_manipulator.points)
+          drawing_def.edges_bounds.add(edge_manipulator.points)
         end
         drawing_def.curve_manipulators.each do |curve_manipulator|
-          drawing_def.bounds.add(curve_manipulator.points)
+          drawing_def.edges_bounds.add(curve_manipulator.points)
         end
+        drawing_def.bounds.add(drawing_def.edges_bounds.min, drawing_def.edges_bounds.max)
       end
 
       # STEP 4 : Customize origin
 
-      if @use_bounds_min_as_origin 
-
-        to = Geom::Transformation.translation(Geom::Vector3d.new(drawing_def.bounds.min.to_a))
-        unless to.identity?
-
-          toi = to.inverse
-
-          drawing_def.transformation *= to
-          drawing_def.input_face_manipulator.transformation = toi * drawing_def.input_face_manipulator.transformation unless drawing_def.input_face_manipulator.nil?
-          drawing_def.input_edge_manipulator.transformation = toi * drawing_def.input_edge_manipulator.transformation unless drawing_def.input_edge_manipulator.nil?
-
-          min = drawing_def.bounds.min.transform(toi)
-          max = drawing_def.bounds.max.transform(toi)
-          drawing_def.bounds.clear
-          drawing_def.bounds.add([ min, max ])
-
-          unless @ignore_faces
-            drawing_def.face_manipulators.each do |face_manipulator|
-              face_manipulator.transformation = toi * face_manipulator.transformation
-            end
-            drawing_def.surface_manipulators.each do |surface_manipulator|
-              surface_manipulator.transformation = toi * surface_manipulator.transformation
-            end
-          end
-          unless @ignore_edges
-            drawing_def.edge_manipulators.each do |edge_manipulator|
-              edge_manipulator.transformation = toi * edge_manipulator.transformation
-            end
-            drawing_def.curve_manipulators.each do |curve_manipulator|
-              curve_manipulator.transformation = toi * curve_manipulator.transformation
-            end
-          end
-
+      if @origin_position != ORIGIN_POSITION_DEFAULT
+        case @origin_position
+        when ORIGIN_POSITION_FACES_BOUNDS_MIN
+          drawing_def.translate_to!(drawing_def.faces_bounds.min)
+        when ORIGIN_POSITION_EDGES_BOUNDS_MIN
+          drawing_def.translate_to!(drawing_def.edges_bounds.min)
+        when ORIGIN_POSITION_BOUNDS_MIN
+          drawing_def.translate_to!(drawing_def.bounds.min)
         end
-
-      # elsif !Sketchup.active_model.edit_transform.identity? && Sketchup.active_model.active_path.last == drawing_element
-      #
-      #   te = Sketchup.active_model.edit_transform
-      #   tei = te.inverse
-      #
-      #   drawing_def.transformation *= te
-      #   drawing_def.input_face_manipulator.transformation = tei * drawing_def.input_face_manipulator.transformation unless drawing_def.input_face_manipulator.nil?
-      #   drawing_def.input_edge_manipulator.transformation = tei * drawing_def.input_edge_manipulator.transformation unless drawing_def.input_edge_manipulator.nil?
-      #
-      #   min = drawing_def.bounds.min.transform(tei)
-      #   max = drawing_def.bounds.max.transform(tei)
-      #   drawing_def.bounds.clear
-      #   drawing_def.bounds.add([ min, max ])
-      #
-      #   unless @ignore_faces
-      #     drawing_def.face_manipulators.each do |face_manipulator|
-      #       face_manipulator.transformation = tei * face_manipulator.transformation
-      #     end
-      #     drawing_def.surface_manipulators.each do |surface_manipulator|
-      #       surface_manipulator.transformation = tei * surface_manipulator.transformation
-      #     end
-      #   end
-      #   unless @ignore_edges
-      #     drawing_def.edge_manipulators.each do |edge_manipulator|
-      #       edge_manipulator.transformation = tei * edge_manipulator.transformation
-      #     end
-      #   end
-
       end
 
       drawing_def.input_normal = drawing_def.input_face_manipulator.normal if drawing_def.input_face_manipulator
