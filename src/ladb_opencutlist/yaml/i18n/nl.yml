@@ -68,10 +68,10 @@ default:
   alt_key_win: Alt
   alt_key_mac: Opdracht
   tab_key: Tab
-  file: ""
-  file_plural: ""
-  stroke_color: ""
-  fill_color: ""
+  file: bestand
+  file_plural: bestanden
+  stroke_color: lijnkleur
+  fill_color: opvulkeur
 core:
   menu:
     submenu: OpenCutList
@@ -85,18 +85,21 @@ core:
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
-      reset_dialog_position: ""
+      reset_dialog_position: Raampositie opnieuw instellen
   toolbar:
     name: OpenCutList
     command:
       dialog: OpenCutList
       smart_paint: Kleur de onderdelen
       smart_axes: Oriënt Onderdelen
-      smart_export: ""
+      smart_export: Onderdelen exporteren
   messagebox:
     dir_override: |
+      “{{ target }}” bestaat al. Wil je deze vervangen?
+
+      Er staat al een map met dezelfde naam in de map {{ parent }}. Als u deze vervangt, gaat de originele inhoud verloren.
   savepanel:
-    export_to_file: ""
+    export_to_file: "Exporteren naar bestand {{ file_format }}"
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
@@ -118,15 +121,17 @@ core:
   error:
     feature_unavailable: "Deze functie vereist SketchUp {{ version }} of hoger"
     failed_export_to: |
+      Er is een fout opgetreden tijdens het exporteren naar *{{ path }}*.
+      **{{ error }}**
   success:
-    exported_to: ""
-    copied_to_clipboard: ""
+    exported_to: "Succesvolle export naar {{ path }}."
+    copied_to_clipboard: Gekopieerd naar het klembord
   event:
     model_change: Er zijn veranderingen aangebracht.
     options_change: Er zijn opties aangepast.
     material_change: Ten minste een materiaal is aangepast.
     selection_change: De selectie is veranderd.
-    layers_change: ""
+    layers_change: De tags in het actieve model zijn gewijzigd.
   upgrade:
     unavailable: De laatste versie van *OpenCutList* kan niet gevonden worden.
     available: |
@@ -135,7 +140,7 @@ core:
     up_to_date: |
       Je hebt al de laatste versie van *OpenCutList*
 
-      Wordt sponsor om ons te helpen nog meer functies toe te voegen,
+      *Wordt sponsor om ons te helpen nog meer functies toe te voegen!*
     downloading: Download is bezig
     changelog: "Wat is er nieuw?"
     ignore_update: Sla deze update over
@@ -143,7 +148,7 @@ core:
     manual_download: Handmatig downloaden
     zzz: "Er is een update geweest en Sketchup moet opnieuw gestart worden."
     success: |
-      De update van *OpenCutList* is klaar.
+      De update van OpenCutList is klaar.
 
       START SketchUp opnieuw op.
     error:
@@ -231,8 +236,8 @@ tab:
       Selecteer, in uw scene, de broncomponenten van uw onderdelenlijst. Klik dan op **Generate**.
       Wanneer niets geselecteerd is worden alle zichtbare onderdelen van de scene gebruikt om de onderdelenlijst te genereren.
     is_selection: Selectie alleen
-    select_part: ""
-    select_part_plural: ""
+    select_part: Selecteer het stuk
+    select_part_plural: Selecteer de stukken
     material_undefined: Geen materiaal gedefinieerd
     not_available_std_width: Breedte niet gedefinieerd
     not_available_std_thickness: Dikte niet gedefinieerd
@@ -244,9 +249,9 @@ tab:
     edit_part_size_increase_properties: Bewerk de eigenschappen (overmaat) van het onderdeel
     edit_part_edges_properties: Bewerk de eigenschappen (randbanden) van het onderdeel
     edit_part_faces_properties: Bewerk de eigenschappen (fineren) van het onderdeel
-    part_drawing_type_1: ""
-    part_drawing_type_2: ""
-    part_drawing_type_3: ""
+    part_drawing_type_1: 2D aanzicht
+    part_drawing_type_2: 2D aanzicht omgekeerd
+    part_drawing_type_3: 3D
     tooltip:
       show_hide_block: Toon / verberg groep
       scroll_to_block: Scroll naar groep
@@ -296,7 +301,7 @@ tab:
       symmetrical: Gespiegelde herkenning staat uit voor dit onderdeel
       ignore_grain_direction: De nerfrichting wordt op dit onderdeel genegeerd
       auto_oriented: De oriëntatie van dit component is automatisch aangepast
-      oko_label_filter: ""
+      oko_label_filter: "Deze badge opnemen/uitsluiten"
       add_label_filter: "Filter op '{{ label }}'"
       remove_label_filter: "verwijder filter '{{ label }}'"
       add_edge_material_name_filter: "Filter op '{{ material_name }}'"
@@ -337,22 +342,22 @@ tab:
       dblclick_to_sort_axes: Dubbelklik hier om de volgorde van de assen automatisch aan te passen aan de afmetingen van het onderdeel
       part_axes: Interne assen van het onderdeel
       select_unselect_all_parts: Selecteer / De-selecteer alle onderdelen van de groep
-      select_parts_in_cutlist: ""
-      select_parts_in_cutlist_plural: ""
+      select_parts_in_cutlist: Selecteer het deel op het debetblad
+      select_parts_in_cutlist_plural: "Selecteer de {{ count }} delen op het debetblad"
       setup_group_cuttingdiagram: "Configureer het zaagplan van '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
-      open_part_url: ""
+      open_part_url: Open onderdeel-URL
     menu:
       show_all_groups: Toon alle groepen
       hide_all_other_groups: Verberg alle andere groepen
       numbers_save: Bewaar de onderdeel nummers
       numbers_reset: Stel de onderdeel nummers opnieuw in
       highlight_parts: $t(tab.cutlist.highlight_parts)
-      write_2d: ""
-      write_3d: ""
-      write_2d_parts: ""
-      write_3d_parts: ""
-      group_write_2d_parts: ""
-      group_write_3d_parts: ""
+      write_2d: 2D projectie
+      write_3d: 3D projectie
+      write_2d_parts: Exporteer de 2D-projectie van de onderdelen
+      write_3d_parts: Exporteer de 3D-onderdeelgeometrie
+      group_write_2d_parts: Exporteer de 2D-projectie van de groepsonderdelen
+      group_write_3d_parts: Exporteer 3D-geometrie van groepsonderdelen
       group_layout_parts: Overzicht van onderdelen in groep tekenen
       group_numbers_save: Bewaar de onderdeel nummers van deze groep
       group_numbers_reset: Stel de onderdeel nummers van deze groep opnieuw in
@@ -364,7 +369,7 @@ tab:
       reset_prices: Reset de prijzen van alle onderdelen
       reset_prices_confirm: |
         U staat op het punt om de prijzen van alle onderdelen van uw model opnieuw in te stellen.
-        Deze actie is definitief. **Alle prijzen worden op nul gezet.
+        Deze actie is definitief. **Alle prijzen worden op nul gezet.**
         Bevestig om door te gaan.
       reset_prices_success: De prijzen van alle onderdelen zijn opnieuw vastgesteld.
     edit_part:
@@ -401,12 +406,13 @@ tab:
         Definieer hier het aantal lagen dat de dikte van het getekende stuk verdeelt.
 
         *Voorbeeld:* Als u een stuk met een dikte van *38mm* hebt getekend en het wilt maken door twee *19mm* platen aan elkaar te lijmen, vult u **2** in dit veld in.
-        *OpenCutList zal dan 2 stukken van 19mm dikte tellen in plaats van 1 stuk van 38mm dikte
+        *OpenCutList zal dan 2 stukken van 19mm dikte tellen in plaats van 1 stuk van 38mm dikte.*
       description: Beschrijving
       description_help: |
         In de *Beschrijving* kunt u persoonlijke informatie invoeren voor elke sub-definitie.
       url: URL
       url_help: |
+        Met de *URL* kunt u bij elke onderdeeldefinitie een gepersonaliseerde link naar een externe pagina plaatsen.
       tags: Badges
       tags_help: |
         Met *Badges* kunt u aangepaste trefwoorden toevoegen aan elke definitie van een onderdeel.
@@ -441,7 +447,7 @@ tab:
       axes: Assen
       axes_help: Herschik de afmetingen zodat ze overeenkomen met de gewenste askleuren in uw onderdeel.
       axes_tip: |
-        Als dit vakje is aangevinkt, heeft de optie *Automatische oriëntatie onderdeel* geen effect op dit onderdeel. En dus,
+        Het is belangrijk op te merken dat als de optie *Automatische oriëntatie* niet is geactiveerd of als het onderdeel is *Vergrendeld op zijn assen*:
         - de **lengte** komt op de <span style='color:red'>rode</span> as
         - de **breedte** op de <span style='color:green'>groene</span> as
         - de **dikte** op de <span style='color:blue'>blauwe</span> as
@@ -459,7 +465,7 @@ tab:
     option:
       auto_orient: Automatische oriëntatie van de onderdelen
       auto_orient_help: |
-        Als dit vakje is aangevinkt, heeft de optie *Automatische oriëntatie onderdeel* geen effect op dit onderdeel.
+        Als dit vakje is aangevinkt, worden de drie afmetingen van de onderdelen gesorteerd zodat de grootste de *lengte* en de kleinste de *dikte* vertegenwoordigt.
 
         En dus,
         - de *lengte* komt op de <span style='color:red'>rode</span> as
@@ -500,8 +506,8 @@ tab:
       hide_edges_help: "Wanneer deze optie ingeschakeld is, dan zullen de **kantenbanden kolommen** van het type *Paneel* niet weergegeven worden."
       hide_faces: Verberg de kolommen met fineer
       hide_faces_help: "Wanneer deze optie ingeschakeld is, dan zullen de **fineer kolommen** van het type *Paneel* niet weergegeven worden."
-      hide_material_colors: ""
-      hide_material_colors_help: ""
+      hide_material_colors: Materiaalkleuren verbergen
+      hide_material_colors_help: "Als deze optie is ingeschakeld, worden materiaalkleuren niet weergegeven."
       minimize_on_highlight: Minimaliseer na *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Wanneer deze optie ingeschakeld is, dan zal het venster OpenCutList geminimaliseerd worden wanneer de functie *'$t(tab.cutlist.highlight_part)'* gebruikt wordt."
       general: Algemeen
@@ -558,13 +564,13 @@ tab:
     export:
       title: Exporteren
       info_0: |
-        Deze functionaliteit laat u toe om uw *stuklijst* te exporteren naar een bestand van het type [CSV](https://nl.wikipedia.org/wiki/Kommagescheiden_bestand).
+        Deze functionaliteit laat u toe om uw *stuklijst* te exporteren naar een *bestand* van het type [CSV](https://nl.wikipedia.org/wiki/Kommagescheiden_bestand).
       customize_help: |
         Een kolom in de lijst opnieuw ordenen, verbergen, toevoegen, verwijderen of selecteren om de **titel** en de **formule** aan te passen die de weergegeven waarde voor elke geëxporteerde rij genereert.
       add_column: Voeg een afmeting toe
       add_native_columns: Voeg een kolom toe
       remove_column: Verwijder
-      remove_all_columns: ""
+      remove_all_columns: Verwijder alles
       columns: Kolommen
       column_title: Titel
       column_title_help: |
@@ -596,8 +602,8 @@ tab:
       cutting_length: Lengte - onbewerkt
       cutting_width: Breedte - onbewerkt
       cutting_thickness: Dikte - onbewerkt
-      edge_cutting_length: ""
-      edge_cutting_width: ""
+      edge_cutting_length: Lengte van de randstroom
+      edge_cutting_width: Randstroombreedte
       bbox_length: Lengte
       bbox_width: Breedte
       bbox_thickness: Dikte
@@ -606,8 +612,8 @@ tab:
       part_count: Aantal onderdelen
       material_type: Type
       material_name: Materiaal
-      material_description: ""
-      material_url: ""
+      material_description: Beschrijving van het materiaal
+      material_url: Materiaal-URL
       material_std_dimension: Standaard afmetingen
       entity_names: Naam instance
       description: Beschrijving
@@ -623,9 +629,9 @@ tab:
       layers: Tags
       batch: Lot
       bin: Container
-      filename: ""
+      filename: Bestandsnaam
       model_name: Naam van het model
-      model_description: ""
+      model_description: Model Beschrijving
       page_name: Naam van de scène
       page_description: ""
       placeholder:
@@ -637,7 +643,7 @@ tab:
     report:
       title: Schatting
       info_0: |
-        Deze functionaliteit laat u toe om een schatting te genereren van de **massa's** en **kosten** van het **basis materiaal**, nodig voor de productie van de onderdelen in de stuklijst.
+        Deze functionaliteit laat u toe om een schatting te genereren van de **massa's** en **kosten** van het **basis materiaal**, nodig voor de productie van de onderdelen in de *stuklijst*.
       options_general: Algemeen
       options_solid_wood: $t(tab.materials.type_1)
       option_solid_wood_coefficient: "*$t(tab.materials.type_1)* coëfficient"
@@ -894,7 +900,7 @@ tab:
       size: Ware grootte van het etiket
       add_element: Voeg een element toe
       remove_element: Verwijder
-      remove_all_elements: ""
+      remove_all_elements: Verwijder alles
       part_order_strategy_help: |
         Rangschik de volgende eigenschappen om de sorteervolgorde van de etiketten te bepalen.
         Elke eigenschap kan <i class="ladb-opencutlist-icon-sort-asc"></i> *oplopend* of <i class="ladb-opencutlist-icon-sort-desc"></i> *aflopend* gesorteerd worden.
@@ -946,8 +952,8 @@ tab:
         part_cutting_width: Ruwe breedte
         part_cutting_thickness: Ruwe dikte
         part_edge_cutting_size: ""
-        part_edge_cutting_length: ""
-        part_edge_cutting_width: ""
+        part_edge_cutting_length: Lengte van de randstroom
+        part_edge_cutting_width: Randstroombreedte
         part_size: Afmeting
         part_length: Lengte
         part_width: Breedte
@@ -1156,7 +1162,7 @@ tab:
       reset_prices: Reset de prijzen van alle materialen
       reset_prices_confirm: |
         U staat op het punt om de prijzen van alle materialen in uw model opnieuw in te stellen.
-        Deze actie is definitief. **Alle prijzen worden op nul gezet.
+        Deze actie is definitief. **Alle prijzen worden op nul gezet.**
         Bevestig om door te gaan.
       reset_prices_success: De prijzen van alle materialen zijn opnieuw vastgesteld.
     new_material:
@@ -1387,7 +1393,7 @@ tab:
       Heeft u een video gemaakt waarin u het gebruik van **OpenCutList** laat zien en wilt u die hier laten zien?
       Laat het ons weten door te schrijven naar **opencutlist@lairdubois.fr**!
 
-      *De video moet openbaar zijn en op YouTube staan.
+      *De video moet openbaar zijn en op YouTube staan.*
     error:
       fail_to_load_list: Videolijst kan niet worden geladen.
   news:
@@ -1499,7 +1505,7 @@ tab:
       reset_model_presets: Reset modelvoorinstellingen
       reset_model_presets_confirm: |
         U staat op het punt om alle *OpenCutList* instellingen voor het huidige model te resetten.
-        Deze actie is definitief. **Alle instellingen worden teruggezet naar de standaardwaarden.
+        Deze actie is definitief. **Alle instellingen worden teruggezet naar de standaardwaarden.**
         Bevestig om door te gaan.
       reset_model_presets_success: |
         De instellingen van *OpenCutList* voor het huidige model zijn gereset.

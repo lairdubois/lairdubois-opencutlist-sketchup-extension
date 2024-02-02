@@ -66,10 +66,10 @@ default:
   alt_key_win: 65 - Alt
   alt_key_mac: 66 - Opdracht
   tab_key: 67 - Tab
-  file: '68 - '
-  file_plural: '69 - '
-  stroke_color: '70 - '
-  fill_color: '71 - '
+  file: 68 - bestand
+  file_plural: 69 - bestanden
+  stroke_color: 70 - lijnkleur
+  fill_color: 71 - opvulkeur
 core:
   menu:
     submenu: 72 - OpenCutList
@@ -83,18 +83,21 @@ core:
       smart_paint: "$t(core.toolbar.command.smart_paint)"
       smart_axes: "$t(core.toolbar.command.smart_axes)"
       smart_export: "$t(core.toolbar.command.smart_export)"
-      reset_dialog_position: '82 - '
+      reset_dialog_position: 82 - Raampositie opnieuw instellen
   toolbar:
     name: 83 - OpenCutList
     command:
       dialog: 84 - OpenCutList
       smart_paint: 85 - Kleur de onderdelen
       smart_axes: 86 - Oriënt Onderdelen
-      smart_export: '87 - '
+      smart_export: 87 - Onderdelen exporteren
   messagebox:
-    dir_override: '88 - '
+    dir_override: |
+      88 - “{{ target }}” bestaat al. Wil je deze vervangen?
+
+      Er staat al een map met dezelfde naam in de map {{ parent }}. Als u deze vervangt, gaat de originele inhoud verloren.
   savepanel:
-    export_to_file: '89 - '
+    export_to_file: 89 - Exporteren naar bestand {{ file_format }}
   dialog:
     title: 90 - OpenCutList by L'Air du Bois
   leftbar:
@@ -115,16 +118,18 @@ core:
       Om een ​​bug te rapporteren: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
   error:
     feature_unavailable: 99 - Deze functie vereist SketchUp {{ version }} of hoger
-    failed_export_to: '100 - '
+    failed_export_to: |
+      100 - Er is een fout opgetreden tijdens het exporteren naar *{{ path }}*.
+      **{{ error }}**
   success:
-    exported_to: '101 - '
-    copied_to_clipboard: '102 - '
+    exported_to: 101 - Succesvolle export naar {{ path }}.
+    copied_to_clipboard: 102 - Gekopieerd naar het klembord
   event:
     model_change: 103 - Er zijn veranderingen aangebracht.
     options_change: 104 - Er zijn opties aangepast.
     material_change: 105 - Ten minste een materiaal is aangepast.
     selection_change: 106 - De selectie is veranderd.
-    layers_change: '107 - '
+    layers_change: 107 - De tags in het actieve model zijn gewijzigd.
   upgrade:
     unavailable: 108 - De laatste versie van *OpenCutList* kan niet gevonden worden.
     available: |
@@ -133,7 +138,7 @@ core:
     up_to_date: |
       110 - Je hebt al de laatste versie van *OpenCutList*
 
-      Wordt sponsor om ons te helpen nog meer functies toe te voegen,
+      *Wordt sponsor om ons te helpen nog meer functies toe te voegen!*
     downloading: 111 - Download is bezig
     changelog: 112 - Wat is er nieuw?
     ignore_update: 113 - Sla deze update over
@@ -141,7 +146,7 @@ core:
     manual_download: 115 - Handmatig downloaden
     zzz: 116 - Er is een update geweest en Sketchup moet opnieuw gestart worden.
     success: |
-      117 - De update van *OpenCutList* is klaar.
+      117 - De update van OpenCutList is klaar.
 
       START SketchUp opnieuw op.
     error:
@@ -229,8 +234,8 @@ tab:
       180 - Selecteer, in uw scene, de broncomponenten van uw onderdelenlijst. Klik dan op **Generate**.
       Wanneer niets geselecteerd is worden alle zichtbare onderdelen van de scene gebruikt om de onderdelenlijst te genereren.
     is_selection: 181 - Selectie alleen
-    select_part: '182 - '
-    select_part_plural: '183 - '
+    select_part: 182 - Selecteer het stuk
+    select_part_plural: 183 - Selecteer de stukken
     material_undefined: 184 - Geen materiaal gedefinieerd
     not_available_std_width: 185 - Breedte niet gedefinieerd
     not_available_std_thickness: 186 - Dikte niet gedefinieerd
@@ -242,9 +247,9 @@ tab:
     edit_part_size_increase_properties: 192 - Bewerk de eigenschappen (overmaat) van het onderdeel
     edit_part_edges_properties: 193 - Bewerk de eigenschappen (randbanden) van het onderdeel
     edit_part_faces_properties: 194 - Bewerk de eigenschappen (fineren) van het onderdeel
-    part_drawing_type_1: '195 - '
-    part_drawing_type_2: '196 - '
-    part_drawing_type_3: '197 - '
+    part_drawing_type_1: 195 - 2D aanzicht
+    part_drawing_type_2: 196 - 2D aanzicht omgekeerd
+    part_drawing_type_3: 197 - 3D
     tooltip:
       show_hide_block: 198 - Toon / verberg groep
       scroll_to_block: 199 - Scroll naar groep
@@ -294,7 +299,7 @@ tab:
       symmetrical: 225 - Gespiegelde herkenning staat uit voor dit onderdeel
       ignore_grain_direction: 226 - De nerfrichting wordt op dit onderdeel genegeerd
       auto_oriented: 227 - De oriëntatie van dit component is automatisch aangepast
-      oko_label_filter: '228 - '
+      oko_label_filter: 228 - Deze badge opnemen/uitsluiten
       add_label_filter: 229 - Filter op '{{ label }}'
       remove_label_filter: 230 - verwijder filter '{{ label }}'
       add_edge_material_name_filter: 231 - Filter op '{{ material_name }}'
@@ -335,22 +340,22 @@ tab:
       dblclick_to_sort_axes: 266 - Dubbelklik hier om de volgorde van de assen automatisch aan te passen aan de afmetingen van het onderdeel
       part_axes: 267 - Interne assen van het onderdeel
       select_unselect_all_parts: 268 - Selecteer / De-selecteer alle onderdelen van de groep
-      select_parts_in_cutlist: '269 - '
-      select_parts_in_cutlist_plural: '270 - '
+      select_parts_in_cutlist: 269 - Selecteer het deel op het debetblad
+      select_parts_in_cutlist_plural: 270 - Selecteer de {{ count }} delen op het debetblad
       setup_group_cuttingdiagram: 271 - Configureer het zaagplan van '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'
-      open_part_url: '272 - '
+      open_part_url: 272 - Open onderdeel-URL
     menu:
       show_all_groups: 273 - Toon alle groepen
       hide_all_other_groups: 274 - Verberg alle andere groepen
       numbers_save: 275 - Bewaar de onderdeel nummers
       numbers_reset: 276 - Stel de onderdeel nummers opnieuw in
       highlight_parts: "$t(tab.cutlist.highlight_parts)"
-      write_2d: '278 - '
-      write_3d: '279 - '
-      write_2d_parts: '280 - '
-      write_3d_parts: '281 - '
-      group_write_2d_parts: '282 - '
-      group_write_3d_parts: '283 - '
+      write_2d: 278 - 2D projectie
+      write_3d: 279 - 3D projectie
+      write_2d_parts: 280 - Exporteer de 2D-projectie van de onderdelen
+      write_3d_parts: 281 - Exporteer de 3D-onderdeelgeometrie
+      group_write_2d_parts: 282 - Exporteer de 2D-projectie van de groepsonderdelen
+      group_write_3d_parts: 283 - Exporteer 3D-geometrie van groepsonderdelen
       group_layout_parts: 284 - Overzicht van onderdelen in groep tekenen
       group_numbers_save: 285 - Bewaar de onderdeel nummers van deze groep
       group_numbers_reset: 286 - Stel de onderdeel nummers van deze groep opnieuw in
@@ -362,7 +367,7 @@ tab:
       reset_prices: 292 - Reset de prijzen van alle onderdelen
       reset_prices_confirm: |
         293 - U staat op het punt om de prijzen van alle onderdelen van uw model opnieuw in te stellen.
-        Deze actie is definitief. **Alle prijzen worden op nul gezet.
+        Deze actie is definitief. **Alle prijzen worden op nul gezet.**
         Bevestig om door te gaan.
       reset_prices_success: 294 - De prijzen van alle onderdelen zijn opnieuw vastgesteld.
     edit_part:
@@ -400,13 +405,15 @@ tab:
         318 - Definieer hier het aantal lagen dat de dikte van het getekende stuk verdeelt.
 
         *Voorbeeld:* Als u een stuk met een dikte van *38mm* hebt getekend en het wilt maken door twee *19mm* platen aan elkaar te lijmen, vult u **2** in dit veld in.
-        *OpenCutList zal dan 2 stukken van 19mm dikte tellen in plaats van 1 stuk van 38mm dikte
+        *OpenCutList zal dan 2 stukken van 19mm dikte tellen in plaats van 1 stuk van 38mm dikte.*
       description: 319 - Beschrijving
       description_help: '320 - In de *Beschrijving* kunt u persoonlijke informatie invoeren voor elke sub-definitie.
 
         '
       url: 321 - URL
-      url_help: '322 - '
+      url_help: '322 - Met de *URL* kunt u bij elke onderdeeldefinitie een gepersonaliseerde link naar een externe pagina plaatsen.
+
+        '
       tags: 323 - Badges
       tags_help: |
         324 - Met *Badges* kunt u aangepaste trefwoorden toevoegen aan elke definitie van een onderdeel.
@@ -443,7 +450,7 @@ tab:
       axes: 341 - Assen
       axes_help: 342 - Herschik de afmetingen zodat ze overeenkomen met de gewenste askleuren in uw onderdeel.
       axes_tip: |
-        343 - Als dit vakje is aangevinkt, heeft de optie *Automatische oriëntatie onderdeel* geen effect op dit onderdeel. En dus,
+        343 - Het is belangrijk op te merken dat als de optie *Automatische oriëntatie* niet is geactiveerd of als het onderdeel is *Vergrendeld op zijn assen*:
         - de **lengte** komt op de <span style='color:red'>rode</span> as
         - de **breedte** op de <span style='color:green'>groene</span> as
         - de **dikte** op de <span style='color:blue'>blauwe</span> as
@@ -461,7 +468,7 @@ tab:
     option:
       auto_orient: 355 - Automatische oriëntatie van de onderdelen
       auto_orient_help: |
-        356 - Als dit vakje is aangevinkt, heeft de optie *Automatische oriëntatie onderdeel* geen effect op dit onderdeel.
+        356 - Als dit vakje is aangevinkt, worden de drie afmetingen van de onderdelen gesorteerd zodat de grootste de *lengte* en de kleinste de *dikte* vertegenwoordigt.
 
         En dus,
         - de *lengte* komt op de <span style='color:red'>rode</span> as
@@ -503,8 +510,8 @@ tab:
       hide_edges_help: 382 - Wanneer deze optie ingeschakeld is, dan zullen de **kantenbanden kolommen** van het type *Paneel* niet weergegeven worden.
       hide_faces: 383 - Verberg de kolommen met fineer
       hide_faces_help: 384 - Wanneer deze optie ingeschakeld is, dan zullen de **fineer kolommen** van het type *Paneel* niet weergegeven worden.
-      hide_material_colors: '385 - '
-      hide_material_colors_help: '386 - '
+      hide_material_colors: 385 - Materiaalkleuren verbergen
+      hide_material_colors_help: 386 - Als deze optie is ingeschakeld, worden materiaalkleuren niet weergegeven.
       minimize_on_highlight: 387 - Minimaliseer na *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: 388 - Wanneer deze optie ingeschakeld is, dan zal het venster OpenCutList geminimaliseerd worden wanneer de functie *'$t(tab.cutlist.highlight_part)'* gebruikt wordt.
       general: 389 - Algemeen
@@ -561,7 +568,7 @@ tab:
       faces: 435 - Fineren
     export:
       title: 436 - Exporteren
-      info_0: '437 - Deze functionaliteit laat u toe om uw *stuklijst* te exporteren naar een bestand van het type [CSV](https://nl.wikipedia.org/wiki/Kommagescheiden_bestand).
+      info_0: '437 - Deze functionaliteit laat u toe om uw *stuklijst* te exporteren naar een *bestand* van het type [CSV](https://nl.wikipedia.org/wiki/Kommagescheiden_bestand).
 
         '
       customize_help: '438 - Een kolom in de lijst opnieuw ordenen, verbergen, toevoegen, verwijderen of selecteren om de **titel** en de **formule** aan te passen die de weergegeven waarde voor elke geëxporteerde rij genereert.
@@ -570,7 +577,7 @@ tab:
       add_column: 439 - Voeg een afmeting toe
       add_native_columns: 440 - Voeg een kolom toe
       remove_column: 441 - Verwijder
-      remove_all_columns: '442 - '
+      remove_all_columns: 442 - Verwijder alles
       columns: 443 - Kolommen
       column_title: 444 - Titel
       column_title_help: '445 - In het veld **Titel** kunt u de kolomtitel aanpassen.
@@ -604,8 +611,8 @@ tab:
       cutting_length: 469 - Lengte - onbewerkt
       cutting_width: 470 - Breedte - onbewerkt
       cutting_thickness: 471 - Dikte - onbewerkt
-      edge_cutting_length: '472 - '
-      edge_cutting_width: '473 - '
+      edge_cutting_length: 472 - Lengte van de randstroom
+      edge_cutting_width: 473 - Randstroombreedte
       bbox_length: 474 - Lengte
       bbox_width: 475 - Breedte
       bbox_thickness: 476 - Dikte
@@ -614,8 +621,8 @@ tab:
       part_count: 479 - Aantal onderdelen
       material_type: 480 - Type
       material_name: 481 - Materiaal
-      material_description: '482 - '
-      material_url: '483 - '
+      material_description: 482 - Beschrijving van het materiaal
+      material_url: 483 - Materiaal-URL
       material_std_dimension: 484 - Standaard afmetingen
       entity_names: 485 - Naam instance
       description: 486 - Beschrijving
@@ -631,9 +638,9 @@ tab:
       layers: 496 - Tags
       batch: 497 - Lot
       bin: 498 - Container
-      filename: '499 - '
+      filename: 499 - Bestandsnaam
       model_name: 500 - Naam van het model
-      model_description: '501 - '
+      model_description: 501 - Model Beschrijving
       page_name: 502 - Naam van de scène
       page_description: '503 - '
       placeholder:
@@ -644,7 +651,7 @@ tab:
         is_group_selection: 507 - Onderdelen in de **gemaskeerde groepen** van uw stuklijst worden niet geëxporteerd.
     report:
       title: 508 - Schatting
-      info_0: '509 - Deze functionaliteit laat u toe om een schatting te genereren van de **massa''s** en **kosten** van het **basis materiaal**, nodig voor de productie van de onderdelen in de stuklijst.
+      info_0: '509 - Deze functionaliteit laat u toe om een schatting te genereren van de **massa''s** en **kosten** van het **basis materiaal**, nodig voor de productie van de onderdelen in de *stuklijst*.
 
         '
       options_general: 510 - Algemeen
@@ -903,7 +910,7 @@ tab:
       size: 734 - Ware grootte van het etiket
       add_element: 735 - Voeg een element toe
       remove_element: 736 - Verwijder
-      remove_all_elements: '737 - '
+      remove_all_elements: 737 - Verwijder alles
       part_order_strategy_help: |
         738 - Rangschik de volgende eigenschappen om de sorteervolgorde van de etiketten te bepalen.
         Elke eigenschap kan <i class="ladb-opencutlist-icon-sort-asc"></i> *oplopend* of <i class="ladb-opencutlist-icon-sort-desc"></i> *aflopend* gesorteerd worden.
@@ -955,8 +962,8 @@ tab:
         part_cutting_width: 781 - Ruwe breedte
         part_cutting_thickness: 782 - Ruwe dikte
         part_edge_cutting_size: '783 - '
-        part_edge_cutting_length: '784 - '
-        part_edge_cutting_width: '785 - '
+        part_edge_cutting_length: 784 - Lengte van de randstroom
+        part_edge_cutting_width: 785 - Randstroombreedte
         part_size: 786 - Afmeting
         part_length: 787 - Lengte
         part_width: 788 - Breedte
@@ -1165,7 +1172,7 @@ tab:
       reset_prices: 965 - Reset de prijzen van alle materialen
       reset_prices_confirm: |
         966 - U staat op het punt om de prijzen van alle materialen in uw model opnieuw in te stellen.
-        Deze actie is definitief. **Alle prijzen worden op nul gezet.
+        Deze actie is definitief. **Alle prijzen worden op nul gezet.**
         Bevestig om door te gaan.
       reset_prices_success: 967 - De prijzen van alle materialen zijn opnieuw vastgesteld.
     new_material:
@@ -1398,7 +1405,7 @@ tab:
       1136 - Heeft u een video gemaakt waarin u het gebruik van **OpenCutList** laat zien en wilt u die hier laten zien?
       Laat het ons weten door te schrijven naar **opencutlist@lairdubois.fr**!
 
-      *De video moet openbaar zijn en op YouTube staan.
+      *De video moet openbaar zijn en op YouTube staan.*
     error:
       fail_to_load_list: 1137 - Videolijst kan niet worden geladen.
   news:
@@ -1516,7 +1523,7 @@ tab:
       reset_model_presets: 1208 - Reset modelvoorinstellingen
       reset_model_presets_confirm: |
         1209 - U staat op het punt om alle *OpenCutList* instellingen voor het huidige model te resetten.
-        Deze actie is definitief. **Alle instellingen worden teruggezet naar de standaardwaarden.
+        Deze actie is definitief. **Alle instellingen worden teruggezet naar de standaardwaarden.**
         Bevestig om door te gaan.
       reset_model_presets_success: |
         1210 - De instellingen van *OpenCutList* voor het huidige model zijn gereset.
