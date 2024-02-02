@@ -1240,7 +1240,7 @@ module Ladb::OpenCutList
 
     def _get_active_part_material_name
       return nil unless @active_part.is_a?(Part) && !@active_part.material_name.empty?
-      "#{@active_part.material_name} (#{Plugin.instance.get_i18n_string("tab.materials.type_#{@active_part.group.material_type}")})"
+      "#{@active_part.material_name.strip} (#{Plugin.instance.get_i18n_string("tab.materials.type_#{@active_part.group.material_type}")})"
     end
 
     def _get_active_part_icons

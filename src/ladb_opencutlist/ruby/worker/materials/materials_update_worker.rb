@@ -54,6 +54,9 @@ module Ladb::OpenCutList
 
       trigger_change_event = true
 
+      # Sanitize display_name by removing tabs and line breaks
+      @display_name = @display_name.delete("\t\r\n").strip
+
       # Update properties
       if @display_name != material.name
 

@@ -293,7 +293,7 @@ module Ladb::OpenCutList
     def show_material_infos(material, material_attributes)
       return if material.nil? || material_attributes.nil?
 
-      text_1 = material.display_name
+      text_1 = material.display_name.strip
       text_2 = material_attributes.type > MaterialAttributes::TYPE_UNKNOWN ? "(#{Plugin.instance.get_i18n_string("tab.materials.type_#{material_attributes.type}")})" : ''
 
       return unless @material_infos_panel && text_1.is_a?(String) && text_2.is_a?(String)
@@ -1110,7 +1110,7 @@ module Ladb::OpenCutList
         btn.set_style_attribute(:border_color, material_color)
         btn.set_style_attribute(:border_color, material_color.blend(material_color_is_dark ? Kuix::COLOR_WHITE : Kuix::COLOR_BLACK, 0.7), :hover)
         btn.set_style_attribute(:border_color, COLOR_BRAND, :selected)
-        btn.append_static_label(material.display_name, @unit * 3 * get_text_unit_factor, material_color_is_dark ? Kuix::COLOR_WHITE : nil)
+        btn.append_static_label(material.display_name.strip, @unit * 3 * get_text_unit_factor, material_color_is_dark ? Kuix::COLOR_WHITE : nil)
         btn.data = material
         btn.selected = material == get_current_material
         btn.on(:click) { |button|
