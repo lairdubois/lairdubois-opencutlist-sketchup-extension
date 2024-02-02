@@ -637,12 +637,12 @@ tab:
       layer: 495 - Tag
       layers: 496 - Tags
       batch: 497 - Los
-      bin: 498 - Conteneur
-      filename: 499 - Nom de fichier
-      model_name: 500 - Nom du modèle
-      model_description: 501 - Description du modèle
-      page_name: 502 - Nom de la scène
-      page_description: 503 - Description de la scène
+      bin: 498 - Behälter
+      filename: 499 - Dateiname
+      model_name: 500 - Modellname
+      model_description: 501 - Modellbeschreibung
+      page_name: 502 - Szenenname
+      page_description: 503 - Szenenbeschreibung
       placeholder:
         no_column_title: 504 - Überschrift eingeben
         no_column_formula_native: 505 - Nativer Wert der Spalte '{{ col_name }}'

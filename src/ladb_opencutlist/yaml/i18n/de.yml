@@ -628,12 +628,12 @@ tab:
       layer: Tag
       layers: Tags
       batch: Los
-      bin: Conteneur
-      filename: Nom de fichier
-      model_name: Nom du modèle
-      model_description: Description du modèle
-      page_name: Nom de la scène
-      page_description: Description de la scène
+      bin: Behälter
+      filename: Dateiname
+      model_name: Modellname
+      model_description: Modellbeschreibung
+      page_name: Szenenname
+      page_description: Szenenbeschreibung
       placeholder:
         no_column_title: Überschrift eingeben
         no_column_formula_native: "Nativer Wert der Spalte '{{ col_name }}'"

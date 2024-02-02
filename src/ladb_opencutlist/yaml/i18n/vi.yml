@@ -654,6 +654,8 @@ tab:
       total_volume: Σ Thể tích
       total_area: Σ Diện tích
       total_length: Σ Chiều dài
+      tooltip:
+        incompatible_unit: ""
       error:
         no_typed_material_parts: "Không có bộ phận nào có loại vật liệu xác định (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_5)** hoặc **$t(tab.materials.type_6)**) đã được cung cấp để tạo ước tính."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} lỗi**."
@@ -840,24 +842,30 @@ tab:
         option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
         option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
         option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
+        option_include_paths: $t(tab.cutlist.write.option_include_paths)
+        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
+        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
+        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
         option_sheet_good: Hàng dạng tấm
         option_sheet_good_help: |
         option_sheet_veneer: ""
         option_sheet_veneer_help: |
         option_bar_dimensional: Kích thước
-        option_bar_dimensional_help:  |
+        option_bar_dimensional_help: |
         option_bar_band: ""
-        option_bar_band_help:  |
+        option_bar_band_help: |
         option_parts: Các bộ phận
-        option_parts_help:  |
+        option_parts_help: |
         option_parts_holes: ""
-        option_parts_holes_help:  |
+        option_parts_holes_help: |
+        option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
+        option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
         option_texts: ""
-        option_texts_help:  |
+        option_texts_help: |
         option_leftovers: Phần cắt thừa
-        option_leftovers_help:  |
+        option_leftovers_help: |
         option_cuts: Đường cắt
-        option_cuts_help:  |
+        option_cuts_help: |
         warning:
           is_sheet_selection: ""
       error:
@@ -1133,6 +1141,7 @@ tab:
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Hướng thớ gỗ
+      raw_estimated_0: ""
       colorized: Tông màu này sẽ được áp dụng cho texture của vật liệu khi nó được hiển thị trong mô hình
       texture_load: Tải texture mới
       texture_clear: Xóa bỏ texture
@@ -1167,6 +1176,7 @@ tab:
       description: Mô tả
       url: ""
       cut_options: Thông số cắt
+      estimate_options: ""
       attributes: Thuộc tính
       thickness: Độ dày
       thickness_help: |
@@ -1211,6 +1221,10 @@ tab:
       edge_decremented_help: Cho phép bạn chỉ ra liệu có nên giảm kích thước của các bộ phận theo độ dày của dải cạnh hay không.
       edge_decremented_0: Không cần giảm
       edge_decremented_1: Giảm theo độ dày dải cạnh
+      raw_estimated: ""
+      raw_estimated_help: |
+      raw_estimated_0: ""
+      raw_estimated_1: ""
       std_attributes_dim_placeholder: Chọn kích thước
       std_volumic_masses: Tỉ trọng
       std_volumic_masses_help: ""
@@ -1639,7 +1653,7 @@ tool:
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: ""
-    action_option_options_paths_status: ""
+    action_option_options_include_paths_status: ""
     error:
       not_part: ""
       not_flat_face: ""

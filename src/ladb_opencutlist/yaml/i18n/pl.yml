@@ -68,10 +68,10 @@ default:
   alt_key_win: Alt
   alt_key_mac: Cmd
   tab_key: Tab
-  file: ""
-  file_plural: ""
-  stroke_color: ""
-  fill_color: ""
+  file: Plik
+  file_plural: Pliki
+  stroke_color: Kolor linii
+  fill_color: Kolor wypełnienia
 core:
   menu:
     submenu: OpenCutList
@@ -85,18 +85,18 @@ core:
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
-      reset_dialog_position: ""
+      reset_dialog_position: Zresetuj pozycję okna
   toolbar:
     name: OpenCutList
     command:
       dialog: OpenCutList
       smart_paint: Malowanie części
       smart_axes: Orientuj części
-      smart_export: ""
+      smart_export: Eksportuj części
   messagebox:
     dir_override: |
   savepanel:
-    export_to_file: ""
+    export_to_file: "Eksportuj do pliku {{ file_format }}"
   dialog:
     title: OpenCutList by L'Air du Bois
   leftbar:
@@ -120,7 +120,7 @@ core:
     failed_export_to: |
   success:
     exported_to: ""
-    copied_to_clipboard: ""
+    copied_to_clipboard: Skopiowane do schowka
   event:
     model_change: Aktywny model został zmieniony.
     options_change: Opcje w modelu zostały zmienione.
@@ -231,8 +231,8 @@ tab:
       Wybierz części z listy w bieżącej scenie i wciśnij klawisz **Generuj**.
       Jeśli wybór jest pusty, wszystkie widoczne komponenty sceny zostaną użyte do obliczenia listy części.
     is_selection: Tylko selekcja
-    select_part: ""
-    select_part_plural: ""
+    select_part: Wybierz część
+    select_part_plural: Wybór części
     material_undefined: Brak zdefiniowanego materiału
     not_available_std_width: Niezdefiniowana szerokość
     not_available_std_thickness: Niezdefiniowana grubość
@@ -246,7 +246,7 @@ tab:
     edit_part_faces_properties: Edytuj właściwości (powierzchnie) części
     part_drawing_type_1: ""
     part_drawing_type_2: ""
-    part_drawing_type_3: ""
+    part_drawing_type_3: 3D
     tooltip:
       show_hide_block: Pokaż / ukryj grupę
       scroll_to_block: Przewiń do grupy
@@ -340,17 +340,17 @@ tab:
       select_parts_in_cutlist: ""
       select_parts_in_cutlist_plural: ""
       setup_group_cuttingdiagram: "Skonfiguruj schemat cięcia '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
-      open_part_url: ""
+      open_part_url: Otwórz adres URL części
     menu:
       show_all_groups: Pokaż wszystkie grupy
       hide_all_other_groups: Ukryj wszystkie inne grupy
       numbers_save: Zachowaj numery części
       numbers_reset: Zresetuj numery części
       highlight_parts: $t(tab.cutlist.highlight_parts)
-      write_2d: ""
-      write_3d: ""
-      write_2d_parts: ""
-      write_3d_parts: ""
+      write_2d: Projekcja 2D
+      write_3d: Geometria 3D
+      write_2d_parts: Eksportuj 2D projekcję części.
+      write_3d_parts: Eksportuj geometrię 3D części
       group_write_2d_parts: ""
       group_write_3d_parts: ""
       group_layout_parts: Narysuj przegląd części w grupie
@@ -405,7 +405,7 @@ tab:
       description: Opis
       description_help: |
         Opcja *Opis* umożliwia podanie spersonalizowanych informacji na temat każdej definicji części.
-      url: ""
+      url: URL
       url_help: |
       tags: Plakietki
       tags_help: |
@@ -564,7 +564,7 @@ tab:
       add_column: Dodaj kolumnę
       add_native_columns: Dodaj kolumnę natywną
       remove_column: Usuń
-      remove_all_columns: ""
+      remove_all_columns: Usuń wszystko
       columns: Kolumny
       column_title: Tytuł
       column_title_help: |
@@ -607,11 +607,11 @@ tab:
       material_type: Rodzaj
       material_name: Materiał
       material_description: ""
-      material_url: ""
+      material_url: URL materiału
       material_std_dimension: Rozmiary standardowe
       entity_names: Nazwy instancji
       description: Opis
-      url: ""
+      url: URL
       tags: Plakietki
       edge_ymin: Długość krawędzi 1
       edge_ymax: Długość krawędzi 2
@@ -654,6 +654,8 @@ tab:
       total_volume: Σ Objętości
       total_area: Σ Powierzchni
       total_length: Σ Długości
+      tooltip:
+        incompatible_unit: ""
       error:
         no_typed_material_parts: "Brak części o zdefiniowanym typie materiału (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** ou **$t(tab.materials.type_5)**) została użyta do wygenerowania szacunku."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} błąd**."
@@ -840,24 +842,30 @@ tab:
         option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
         option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
         option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
+        option_include_paths: $t(tab.cutlist.write.option_include_paths)
+        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
+        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
+        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
         option_sheet_good: Arkusz
         option_sheet_good_help: |
         option_sheet_veneer: ""
         option_sheet_veneer_help: |
         option_bar_dimensional: Wymiarowy
-        option_bar_dimensional_help:  |
+        option_bar_dimensional_help: |
         option_bar_band: ""
-        option_bar_band_help:  |
+        option_bar_band_help: |
         option_parts: Części
-        option_parts_help:  |
+        option_parts_help: |
         option_parts_holes: ""
-        option_parts_holes_help:  |
+        option_parts_holes_help: |
+        option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
+        option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
         option_texts: ""
-        option_texts_help:  |
+        option_texts_help: |
         option_leftovers: Ścinki
-        option_leftovers_help:  |
+        option_leftovers_help: |
         option_cuts: Cięcia
-        option_cuts_help:  |
+        option_cuts_help: |
         warning:
           is_sheet_selection: ""
       error:
@@ -886,7 +894,7 @@ tab:
       size: Rzeczywisty rozmiar etykiety
       add_element: Dodaj element
       remove_element: Usuń
-      remove_all_elements: ""
+      remove_all_elements: Usuń wszystko
       part_order_strategy_help: |
         Przeorganizuj następujące właściwości, aby określić kolejność sortowania etykiet.
         Właściwości można sortować w porządku <i class="ladb-opencutlist-icon-sort-asc"></i> *rosnącym* lub <i class="ladb-opencutlist-icon-sort-desc"></i> *malejącym*.
@@ -1081,7 +1089,7 @@ tab:
         is_group_selection: Części w **ukrytych grupach** twojej listy części nie będą wyeksportowane.
         is_part_selection: ""
     snippet:
-      hello: ""
+      hello: Cześć
       number: Numer
       name: Oznaczenie
       number_and_name: Numer i oznaczenie
@@ -1133,6 +1141,7 @@ tab:
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Kierunek wzoru
+      raw_estimated_0: ""
       colorized: Ten odcień zostanie zastosowany do tekstury tego materiału podczas renderowania w modelu
       texture_load: Załaduj nową teksturę
       texture_clear: Usuń teksturę
@@ -1140,7 +1149,7 @@ tab:
       set_current: |
         Kolorowanie części za pomocą '{{ name }}'.
         *Kliknij dwukrotnie, aby zwinąć*
-      open_url: ""
+      open_url: Otwórz adres URL materiału
     menu:
       import_from_skm: Importuj materiał (.skm)
       purge_unused: Usuń nieużywane materiały
@@ -1165,8 +1174,9 @@ tab:
       name: Nazwa
       type: Rodzaj
       description: Opis
-      url: ""
+      url: URL
       cut_options: Parametry cięcia
+      estimate_options: Opcje szacowania
       attributes: Atrybuty
       thickness: Grubość
       thickness_help: |
@@ -1211,6 +1221,10 @@ tab:
       edge_decremented_help: Wybierz czy wymiary części mają być zmniejszone o grubość obrzeża.
       edge_decremented_0: Brak zmniejszania
       edge_decremented_1: Zmniejsz o grubość obrzeża
+      raw_estimated: ""
+      raw_estimated_help: |
+      raw_estimated_0: ""
+      raw_estimated_1: ""
       std_attributes_dim_placeholder: Wybierz rozmiar
       std_volumic_masses: Gęstość
       std_volumic_masses_help: ""
@@ -1272,7 +1286,7 @@ tab:
       instance_name: Instancja
       definition_name: ""
       description: Opis
-      url: ""
+      url: URL
       layer_name: Etykieta
       explode: ""
       explode_message: ""
@@ -1639,7 +1653,7 @@ tool:
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: ""
-    action_option_options_paths_status: ""
+    action_option_options_include_paths_status: ""
     error:
       not_part: ""
       not_flat_face: ""

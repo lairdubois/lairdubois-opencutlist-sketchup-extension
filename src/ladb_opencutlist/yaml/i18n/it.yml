@@ -661,7 +661,7 @@ tab:
       total_area: Σ Aree
       total_length: Σ Lunghezze
       tooltip:
-        incompatible_unit: ""
+        incompatible_unit: Unità incompatibile con le opzioni di stima del materiale
       error:
         no_typed_material_parts: "Nessuna parte con un materiale di tipo (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** o **$t(tab.materials.type_5)**) è disponibile per generare il preventivo."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errore**."
@@ -1218,7 +1218,7 @@ tab:
       description: Descrizione
       url: URL
       cut_options: Impostazioni del taglio
-      estimate_options: ""
+      estimate_options: Opzioni di stima
       attributes: Attributi
       thickness: Spessore
       thickness_help: |-
@@ -1266,7 +1266,7 @@ tab:
       raw_estimated: ""
       raw_estimated_help: |
       raw_estimated_0: ""
-      raw_estimated_1: ""
+      raw_estimated_1: Volume di materia prima necessario
       std_attributes_dim_placeholder: Scegli una taglia
       std_volumic_masses: Massa volumica
       std_volumic_masses_help: Si usa per definire la densità per tutte le dimensioni e per ogni dimensione standard del materiale.

@@ -661,7 +661,7 @@ tab:
       total_area: Σ Areas
       total_length: Σ Longitudes
       tooltip:
-        incompatible_unit: ""
+        incompatible_unit: Unidad incompatible con las opciones de estimación de la materia
       error:
         no_typed_material_parts: "No hay piezas con un tipo de material definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** o **$t(tab.materials.type_5)**) para generar la estimación."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**."
@@ -720,7 +720,7 @@ tab:
       option_hide_cross: Desperdicios
       option_hide_cross_0: Dimensiones y Cruz
       option_hide_cross_1: Solo dimensiones
-      option_hide_cross_help: Affiche ou masque la croix indiquant les parties définies comme chutes sur le diagramme.
+      option_hide_cross_help: Muestra u oculta la cruz que indica las partes definidas como caídas en el diagrama de corte.
       option_highlight_primary_cuts: Cortes primarios
       option_highlight_primary_cuts_0: Sólo en vista general
       option_highlight_primary_cuts_1: Siempre visible
@@ -1218,7 +1218,7 @@ tab:
       description: Descripción
       url: URL
       cut_options: Parámetros de corte
-      estimate_options: ""
+      estimate_options: Opciones de estimación
       attributes: Atributos
       thickness: Espesor
       thickness_help: |
@@ -1263,10 +1263,10 @@ tab:
       edge_decremented_help: Indica si las dimensiones de las piezas deben reducirse por el grosor de las tiras del canto.
       edge_decremented_0: Sin reducción
       edge_decremented_1: Reducir por el grosor de las tiras del canto
-      raw_estimated: ""
+      raw_estimated: Volumen utilizado
       raw_estimated_help: |
       raw_estimated_0: ""
-      raw_estimated_1: ""
+      raw_estimated_1: Volumen de materia prima necesaria
       std_attributes_dim_placeholder: Elige una talla
       std_volumic_masses: Densidad
       std_volumic_masses_help: Le permite definir la densidad para todos los tamaños y para cada tamaño estándar de material.

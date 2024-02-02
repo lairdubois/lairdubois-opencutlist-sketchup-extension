@@ -654,6 +654,8 @@ tab:
       total_volume: Σ 体积
       total_area: Σ 面积
       total_length: Σ 长度
+      tooltip:
+        incompatible_unit: ""
       error:
         no_typed_material_parts: "未提供具有定义的材质类型 (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** 或 **$t(tab.materials.type_5)**) 以生成估算."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} 错误**."
@@ -840,24 +842,30 @@ tab:
         option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
         option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
         option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
+        option_include_paths: $t(tab.cutlist.write.option_include_paths)
+        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
+        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
+        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
         option_sheet_good: 面板
         option_sheet_good_help: |
         option_sheet_veneer: ""
         option_sheet_veneer_help: |
         option_bar_dimensional: 尺寸
-        option_bar_dimensional_help:  |
+        option_bar_dimensional_help: |
         option_bar_band: ""
-        option_bar_band_help:  |
+        option_bar_band_help: |
         option_parts: 部件
-        option_parts_help:  |
+        option_parts_help: |
         option_parts_holes: ""
-        option_parts_holes_help:  |
+        option_parts_holes_help: |
+        option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
+        option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
         option_texts: ""
-        option_texts_help:  |
+        option_texts_help: |
         option_leftovers: 边角料
-        option_leftovers_help:  |
+        option_leftovers_help: |
         option_cuts: 切割
-        option_cuts_help:  |
+        option_cuts_help: |
         warning:
           is_sheet_selection: ""
       error:
@@ -1133,6 +1141,7 @@ tab:
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: 纹理方向
+      raw_estimated_0: ""
       colorized: 此色调将在模型中渲染纹理时应用
       texture_load: 加载新纹理
       texture_clear: 删除纹理
@@ -1167,6 +1176,7 @@ tab:
       description: 描述
       url: ""
       cut_options: 切割参数
+      estimate_options: ""
       attributes: 属性
       thickness: 厚度
       thickness_help: |
@@ -1211,6 +1221,10 @@ tab:
       edge_decremented_help: 允许您指示部件尺寸是否应减少封边厚度.
       edge_decremented_0: 不减少
       edge_decremented_1: 按边条厚度减小
+      raw_estimated: ""
+      raw_estimated_help: |
+      raw_estimated_0: ""
+      raw_estimated_1: ""
       std_attributes_dim_placeholder: 选择一个尺寸
       std_volumic_masses: 密度
       std_volumic_masses_help: ""
@@ -1639,7 +1653,7 @@ tool:
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: ""
-    action_option_options_paths_status: ""
+    action_option_options_include_paths_status: ""
     error:
       not_part: ""
       not_flat_face: ""
