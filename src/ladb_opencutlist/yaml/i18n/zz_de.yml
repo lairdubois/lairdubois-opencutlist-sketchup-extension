@@ -83,7 +83,7 @@ core:
       smart_paint: "$t(core.toolbar.command.smart_paint)"
       smart_axes: "$t(core.toolbar.command.smart_axes)"
       smart_export: "$t(core.toolbar.command.smart_export)"
-      reset_dialog_position: 82 - Zurücksetzen der Fensterposition
+      reset_dialog_position: 82 - Fensterposition zurücksetzen
   toolbar:
     name: 83 - OpenCutList
     command:
@@ -106,7 +106,7 @@ core:
     more_reviews: 93 - Meinungen
     more_plans: 94 - Pläne
     more_extensions: 95 - Plugins
-    more_update: 96 - Update
+    more_update: 96 - Aktualisieren
   bottombar:
     report_a_bug: 97 - Fehler melden
   warning:
@@ -141,10 +141,10 @@ core:
       *Beteiligen Sie sich finanziell am Projekt, damit wir noch mehr Verbesserungen für Sie einbauen können!*
     downloading: 111 - Ladevorgang läuft
     changelog: 112 - Was gibt's Neues?
-    ignore_update: 113 - Diese Aktualisierung ignorieren
-    download_rescue: 114 - Problem beim Herunterladen?
+    ignore_update: 113 - Diese Aktualisierung überspringen
+    download_rescue: 114 - Probleme beim Herunterladen?
     manual_download: 115 - Manuelles Herunterladen
-    zzz: 116 - Ich ruhe mich nach meinem Update aus. Um mich wieder in Topform zu bringen, müssen Sie SketchUp neu starten.
+    zzz: 116 - Ich ruhe mich nach meiner Aktualisierung aus. Um mich wieder in Topform zu bringen, müssen Sie SketchUp neu starten.
     success: |
       117 - Die Aktualisierung von OpenCutList ist abgeschlossen!
 
