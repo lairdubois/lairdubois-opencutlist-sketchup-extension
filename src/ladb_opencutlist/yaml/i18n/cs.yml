@@ -335,7 +335,7 @@ tab:
       edge_ymax: Hrana podél 2
       edge_xmin: Hrana napříč 1
       edge_xmax: Hrana napříč 2
-      face_zmin: Zadní
+      face_zmin: Zadní strana z dýhy
       face_zmax: Přední strana z dýhy
       dblclick_to_copy_all_edges: Dvojklikem zde duplikujete tuto hodnotu na ostatní hrany
       dblclick_to_copy_all_faces: Dvojitým kliknutím duplikujete tuto hodnotu na druhou plochu
@@ -379,7 +379,7 @@ tab:
       general: Všeobecné
       extra_help: "Seznam vlastností specifických pro typ materiálu \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Hranování
-      faces: Dýhy
+      faces: Dýha
       name: Název
       material: Materiál
       cumulable: Shrnutí
@@ -498,13 +498,13 @@ tab:
       hide_tags_help: "Pokud je vybrána tato možnost, **znaky** se nezobrazí."
       hide_cutting_dimensions: Skrýt hrubé rozměry
       hide_cutting_dimensions_help: "Pokud je vybrána tato možnost, budou **hrubé** rozměry dílců skryty."
-      hide_bbox_dimensions: Skrýt hotové rozměry
+      hide_bbox_dimensions: Skrýt čisté rozměry
       hide_bbox_dimensions_help: "Pokud je vybrána tato možnost, budou **konečné** rozměry dílců skryty."
       hide_final_areas: Skrýt aktuální dílce typu *Tabule*
       hide_final_areas_help: "Pokud je vybraná tato možnost, budou skryty **skutečné oblasti** dílců typu *Tabule*."
       hide_edges: Skrýt sloupce pro hranování
       hide_edges_help: "Pokud je vybrána tato možnost, budou **sloupce pro hranování** u dílců typu *Tabule* skryty."
-      hide_faces: Skryjte sloupce dýh
+      hide_faces: Skrýt sloupce dýh
       hide_faces_help: "Pokud je vybrána tato možnost, skryjí se **sloupce dýhy** dílů typu *Tabule*."
       hide_material_colors: Skrýt barvy materiálu
       hide_material_colors_help: "Pokud je vybrána tato možnost, barvy materiálu se nezobrazí."
@@ -549,9 +549,9 @@ tab:
       name: Označení
       count: Množství
       cutting: Zhruba
-      bbox: Hotový
+      bbox: Čisté rozměry
       final: Aktuální
-      total_cutting: Σ Hrubý
+      total_cutting: Σ Hrubý souhrn
       total_final: Σ Aktuální
       length: Délka
       length_short: D

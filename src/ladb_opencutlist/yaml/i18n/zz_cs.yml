@@ -333,7 +333,7 @@ tab:
       edge_ymax: 259 - Hrana podél 2
       edge_xmin: 260 - Hrana napříč 1
       edge_xmax: 261 - Hrana napříč 2
-      face_zmin: 262 - Zadní
+      face_zmin: 262 - Zadní strana z dýhy
       face_zmax: 263 - Přední strana z dýhy
       dblclick_to_copy_all_edges: 264 - Dvojklikem zde duplikujete tuto hodnotu na ostatní hrany
       dblclick_to_copy_all_faces: 265 - Dvojitým kliknutím duplikujete tuto hodnotu na druhou plochu
@@ -377,7 +377,7 @@ tab:
       general: 298 - Všeobecné
       extra_help: 299 - Seznam vlastností specifických pro typ materiálu "**$t(tab.materials.type_{{ material_type }})**".
       edges: 300 - Hranování
-      faces: 301 - Dýhy
+      faces: 301 - Dýha
       name: 302 - Název
       material: 303 - Materiál
       cumulable: 304 - Shrnutí
@@ -502,13 +502,13 @@ tab:
       hide_tags_help: 374 - Pokud je vybrána tato možnost, **znaky** se nezobrazí.
       hide_cutting_dimensions: 375 - Skrýt hrubé rozměry
       hide_cutting_dimensions_help: 376 - Pokud je vybrána tato možnost, budou **hrubé** rozměry dílců skryty.
-      hide_bbox_dimensions: 377 - Skrýt hotové rozměry
+      hide_bbox_dimensions: 377 - Skrýt čisté rozměry
       hide_bbox_dimensions_help: 378 - Pokud je vybrána tato možnost, budou **konečné** rozměry dílců skryty.
       hide_final_areas: 379 - Skrýt aktuální dílce typu *Tabule*
       hide_final_areas_help: 380 - Pokud je vybraná tato možnost, budou skryty **skutečné oblasti** dílců typu *Tabule*.
       hide_edges: 381 - Skrýt sloupce pro hranování
       hide_edges_help: 382 - Pokud je vybrána tato možnost, budou **sloupce pro hranování** u dílců typu *Tabule* skryty.
-      hide_faces: 383 - Skryjte sloupce dýh
+      hide_faces: 383 - Skrýt sloupce dýh
       hide_faces_help: 384 - Pokud je vybrána tato možnost, skryjí se **sloupce dýhy** dílů typu *Tabule*.
       hide_material_colors: 385 - Skrýt barvy materiálu
       hide_material_colors_help: 386 - Pokud je vybrána tato možnost, barvy materiálu se nezobrazí.
@@ -554,9 +554,9 @@ tab:
       name: 421 - Označení
       count: 422 - Množství
       cutting: 423 - Zhruba
-      bbox: 424 - Hotový
+      bbox: 424 - Čisté rozměry
       final: 425 - Aktuální
-      total_cutting: 426 - Σ Hrubý
+      total_cutting: 426 - Σ Hrubý souhrn
       total_final: 427 - Σ Aktuální
       length: 428 - Délka
       length_short: 429 - D
