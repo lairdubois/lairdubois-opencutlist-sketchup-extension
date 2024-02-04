@@ -231,7 +231,7 @@ core:
 tab:
   cutlist:
     label: Kusovník
-    title: Kusovník - seznam dílů
+    title: Kusovník
     help: |
       Vyberte části v aktuální scéně, které chcete zahrnout do kusovníku, a poté klikněte na tlačítko **Generovat**.
       Pokud je výběr prázdný, budou do kusovníku zahrnuty všechny viditelné součásti scény.
@@ -515,12 +515,12 @@ tab:
       part_order_strategy_help: |
         Reorganizujte následující vlastnosti a definujte pořadí řazení v každé skupině.
         Vlastnosti lze řadit ve <i class="ladb-opencutlist-icon-sort-asc"></i> *vzestupném* nebo <i class="ladb-opencutlist-icon-sort-desc"></i> *sestupném* pořadí.
-      dimension_column_order_strategy: Objednané rozměry
+      dimension_column_order_strategy: Pořadí rozměrů
       dimension_column_order_strategy_help: |
         Uspořádáním následujících rozměrů nastavíte pořadí zobrazených sloupců.
       property_thickness: Tloušťka
       property_length: Délka
-      property_width: Šířka papíru
+      property_width: Šířka
       property_name: Označení
       property_count: Počet
       property_edge_pattern: Počet hranování
@@ -541,17 +541,17 @@ tab:
       summary: Shrnutí
       material_type: Typ
       material_thickness: Materíál / Tloušťka
-      part_count: Počet
+      part_count: Množství
       area: Plocha
       area_short: Plocha
-      volume: Hodnota
+      volume: Objem
       number: Číslo
       name: Označení
       count: Množství
       cutting: Zhruba
       bbox: Čisté rozměry
       final: Aktuální
-      total_cutting: Σ Hrubý souhrn
+      total_cutting: Σ Hrubý odhad
       total_final: Σ Aktuální
       length: Délka
       length_short: D
@@ -797,9 +797,9 @@ tab:
         bar: Délkový
         sheet: Tabule
         length: Délka
-        width: Šířka papíru
+        width: Šířka
         total_length: Σ Délka
-        total_area: Σ Oblasti
+        total_area: Σ Souhrn
         total_part_count: Σ Dílů
         total_used: Celkem použito
         trimming: Okraj
@@ -810,7 +810,7 @@ tab:
         efficiency: Účinnost
         leftover: Zbytek
         leftover_to_keep: Držíme zbytek
-        leftover_to_keep_plural: Držíme zbytky
+        leftover_to_keep_plural: Zbytek
         leftover_to_throw_away: Jednorázové zbytky
         cut: Řez
         cut_plural: Řezy
@@ -835,7 +835,7 @@ tab:
       export:
         title: Export diagramu řezání
         info_0: |
-          Tento modul umožňuje exportovat **geometrii** *diagramu řezání* jako soubor v [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) nebo [DXF](https://en. wikipedia.org/wiki/AutoCAD_DXF).
+          Tento modul umožňuje exportovat **geometrii** *diagramu řezání* jako soubor v [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) nebo [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
         option_file_format: $t(tab.cutlist.write.option_file_format)
         option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
         option_dxf_structure: DXF Struktura
@@ -1079,7 +1079,7 @@ tab:
       option_file_format: Formát
       option_file_format_help: |
         Vyberte formát exportovaného souboru.
-      option_unit: Jednotka
+      option_unit: Jednotky
       option_unit_help: |
         Vyberte jednotky použité u exportovaného souboru.
       option_part_drawing_type: Projekce
@@ -1095,7 +1095,7 @@ tab:
       option_anchor_1: Promítnout počátek dílu
       option_anchor_help: |
         Umožnit počátek osy dílu jako kotevní bod.
-      option_smoothing: Vyhlazování
+      option_smoothing: Vyhlazení
       option_smoothing_0: Žádný
       option_smoothing_1: Hladké kruhy a oblouky (Experimentální)
       option_smoothing_help: |
@@ -1113,7 +1113,7 @@ tab:
         Aktivuje oddělení vnějšího obrysu dílů od jejich otvorů a také sloučení hloubek pro každou dutinu.
       option_include_paths: Cesty
       option_include_paths_0: Žádný
-      option_include_paths_1: "Použijte hrany, které nejsou spojeny s plochou"
+      option_include_paths_1: "Použij hrany, které nejsou spojeny s plochou"
       option_include_paths_help: |
         Umožňuje použití hran, které nejsou spojeny s plochou dílu, k jejich exportu jako cesty.
       option_parts: Díly
@@ -1681,7 +1681,7 @@ tool:
     action_0: Export 3D dílu
     action_0_status: Klikněte na díl
     action_1: Export 2D dílu
-    action_1_status: Clikněte na plochu dílu
+    action_1_status: Klikněte na plochu dílu
     action_2: Export plochy
     action_2_status: Klikněte na plochu
     action_3: Export dílu
@@ -1703,7 +1703,7 @@ tool:
     action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
-    action_option_options_merge_holes_status: Izoluj průchozí otvory a spojte hloubky pro každou dutinu
+    action_option_options_merge_holes_status: Izoluj průchozí otvory a spoj hloubky každé dutinu
     action_option_options_include_paths_status: Exportuj hrany bez plochy obsažené v součásti jako cestu
     error:
       not_part: Tato plocha nepatří k dílu (komponentě)

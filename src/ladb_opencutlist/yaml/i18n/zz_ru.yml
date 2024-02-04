@@ -99,7 +99,7 @@ core:
     title: 90 - OpenCutList от L'Air du Bois
   leftbar:
     more: 91 - Ещё
-    more_docs: 92 - Док
+    more_docs: 92 - База
     more_reviews: 93 - Обзоры
     more_plans: 94 - Проекты
     more_extensions: 95 - Расширения
@@ -240,9 +240,9 @@ tab:
     highlight_part: 188 - Просмотр детали в модели
     highlight_parts: 189 - Просмотр деталей в модели
     edit_part_properties: 190 - Редактировать свойства детали
-    edit_part_axes_properties: 191 - Отредактируйте свойства (осей) детали
-    edit_part_size_increase_properties: 192 - Отредактируйте свойства (размеры) детали
-    edit_part_edges_properties: 193 - Отредактируйте свойства (кромки) детали
+    edit_part_axes_properties: 191 - Редактировать свойства (осей) детали
+    edit_part_size_increase_properties: 192 - Редактировать свойства (размеры) детали
+    edit_part_edges_properties: 193 - Редактировать свойства (кромки) детали
     edit_part_faces_properties: 194 - Редактировать свойства детали (Шпон)
     part_drawing_type_1: 195 - 2D Вид спереди
     part_drawing_type_2: 196 - 2D Вид сзади
@@ -1720,8 +1720,8 @@ tool:
     action_0_status: 1301 - Кликните на деталь
     action_1: 1302 - Экспорт 2D-детали
     action_1_status: 1303 - Кликните на лицевую сторону детали
-    action_2: 1304 - Экспорт лица
-    action_2_status: 1305 - Кликните на лицо
+    action_2: 1304 - Экспорт облицовки
+    action_2_status: '1305 - Кликните облицовку '
     action_3: 1306 - Экспорт маршрута
     action_3_status: 1307 - Кликните на край
     action_option_group_file_format: 1308 - Формат

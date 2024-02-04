@@ -229,7 +229,7 @@ core:
 tab:
   cutlist:
     label: 178 - Kusovník
-    title: 179 - Kusovník - seznam dílů
+    title: 179 - Kusovník
     help: |
       180 - Vyberte části v aktuální scéně, které chcete zahrnout do kusovníku, a poté klikněte na tlačítko **Generovat**.
       Pokud je výběr prázdný, budou do kusovníku zahrnuty všechny viditelné součásti scény.
@@ -519,13 +519,13 @@ tab:
       part_order_strategy_help: |
         391 - Reorganizujte následující vlastnosti a definujte pořadí řazení v každé skupině.
         Vlastnosti lze řadit ve <i class="ladb-opencutlist-icon-sort-asc"></i> *vzestupném* nebo <i class="ladb-opencutlist-icon-sort-desc"></i> *sestupném* pořadí.
-      dimension_column_order_strategy: 392 - Objednané rozměry
+      dimension_column_order_strategy: 392 - Pořadí rozměrů
       dimension_column_order_strategy_help: '393 - Uspořádáním následujících rozměrů nastavíte pořadí zobrazených sloupců.
 
         '
       property_thickness: 394 - Tloušťka
       property_length: 395 - Délka
-      property_width: 396 - Šířka papíru
+      property_width: 396 - Šířka
       property_name: 397 - Označení
       property_count: 398 - Počet
       property_edge_pattern: 399 - Počet hranování
@@ -546,17 +546,17 @@ tab:
       summary: 413 - Shrnutí
       material_type: 414 - Typ
       material_thickness: 415 - Materíál / Tloušťka
-      part_count: 416 - Počet
+      part_count: 416 - Množství
       area: 417 - Plocha
       area_short: 418 - Plocha
-      volume: 419 - Hodnota
+      volume: 419 - Objem
       number: 420 - Číslo
       name: 421 - Označení
       count: 422 - Množství
       cutting: 423 - Zhruba
       bbox: 424 - Čisté rozměry
       final: 425 - Aktuální
-      total_cutting: 426 - Σ Hrubý souhrn
+      total_cutting: 426 - Σ Hrubý odhad
       total_final: 427 - Σ Aktuální
       length: 428 - Délka
       length_short: 429 - D
@@ -807,9 +807,9 @@ tab:
         bar: 633 - Délkový
         sheet: 634 - Tabule
         length: 635 - Délka
-        width: 636 - Šířka papíru
+        width: 636 - Šířka
         total_length: 637 - Σ Délka
-        total_area: 638 - Σ Oblasti
+        total_area: 638 - Σ Souhrn
         total_part_count: 639 - Σ Dílů
         total_used: 640 - Celkem použito
         trimming: 641 - Okraj
@@ -820,7 +820,7 @@ tab:
         efficiency: 646 - Účinnost
         leftover: 647 - Zbytek
         leftover_to_keep: 648 - Držíme zbytek
-        leftover_to_keep_plural: 649 - Držíme zbytky
+        leftover_to_keep_plural: 649 - Zbytek
         leftover_to_throw_away: 650 - Jednorázové zbytky
         cut: 651 - Řez
         cut_plural: 652 - Řezy
@@ -844,7 +844,7 @@ tab:
         settings: 670 - Nastavení
       export:
         title: 671 - Export diagramu řezání
-        info_0: '672 - Tento modul umožňuje exportovat **geometrii** *diagramu řezání* jako soubor v [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) nebo [DXF](https://en. wikipedia.org/wiki/AutoCAD_DXF).
+        info_0: '672 - Tento modul umožňuje exportovat **geometrii** *diagramu řezání* jako soubor v [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) nebo [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
 
           '
         option_file_format: "$t(tab.cutlist.write.option_file_format)"
@@ -1102,7 +1102,7 @@ tab:
       option_file_format_help: '879 - Vyberte formát exportovaného souboru.
 
         '
-      option_unit: 880 - Jednotka
+      option_unit: 880 - Jednotky
       option_unit_help: '881 - Vyberte jednotky použité u exportovaného souboru.
 
         '
@@ -1122,7 +1122,7 @@ tab:
       option_anchor_help: '891 - Umožnit počátek osy dílu jako kotevní bod.
 
         '
-      option_smoothing: 892 - Vyhlazování
+      option_smoothing: 892 - Vyhlazení
       option_smoothing_0: 893 - Žádný
       option_smoothing_1: 894 - Hladké kruhy a oblouky (Experimentální)
       option_smoothing_help: |
@@ -1135,7 +1135,7 @@ tab:
       option_merge_holes_help: "899 - **Výchozí** \nTvar dílu se exportuje s jednou vrstvou na hloubku.\n\n **Obrys + Otvory + Sloučt** \nAktivuje oddělení vnějšího obrysu dílů od jejich otvorů a také sloučení hloubek pro každou dutinu.\n"
       option_include_paths: 900 - Cesty
       option_include_paths_0: 901 - Žádný
-      option_include_paths_1: 902 - Použijte hrany, které nejsou spojeny s plochou
+      option_include_paths_1: 902 - Použij hrany, které nejsou spojeny s plochou
       option_include_paths_help: '903 - Umožňuje použití hran, které nejsou spojeny s plochou dílu, k jejich exportu jako cesty.
 
         '
@@ -1717,7 +1717,7 @@ tool:
     action_0: 1300 - Export 3D dílu
     action_0_status: 1301 - Klikněte na díl
     action_1: 1302 - Export 2D dílu
-    action_1_status: 1303 - Clikněte na plochu dílu
+    action_1_status: 1303 - Klikněte na plochu dílu
     action_2: 1304 - Export plochy
     action_2_status: 1305 - Klikněte na plochu
     action_3: 1306 - Export dílu
@@ -1739,7 +1739,7 @@ tool:
     action_option_faces_1_status: "$t(tab.cutlist.write.option_faces_1)"
     action_option_options_anchor_status: "$t(tab.cutlist.write.option_anchor_1)"
     action_option_options_smoothing_status: "$t(tab.cutlist.write.option_smoothing_1)"
-    action_option_options_merge_holes_status: 1325 - Izoluj průchozí otvory a spojte hloubky pro každou dutinu
+    action_option_options_merge_holes_status: 1325 - Izoluj průchozí otvory a spoj hloubky každé dutinu
     action_option_options_include_paths_status: 1326 - Exportuj hrany bez plochy obsažené v součásti jako cestu
     error:
       not_part: 1327 - Tato plocha nepatří k dílu (komponentě)
