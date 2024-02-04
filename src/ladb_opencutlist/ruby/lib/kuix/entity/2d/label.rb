@@ -36,7 +36,7 @@ module Ladb::OpenCutList::Kuix
     end
 
     def text_size=(value)
-      size = Sketchup.platform == :platform_win ? value * 0.75 : value  # Windows workaround -> 0.75 = 96 / 72
+      size = Sketchup.platform == :platform_win ? value * 0.75 : value  # Windows workaround -> 0.75 = 72 / 96
       return if @text_options[:size] == size
       @text_options[:size] = size
       compute_min_size
