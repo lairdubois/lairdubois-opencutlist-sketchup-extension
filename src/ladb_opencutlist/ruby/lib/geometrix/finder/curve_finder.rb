@@ -121,7 +121,7 @@ module Ladb::OpenCutList::Geometrix
               if EllipseFinder.ellipse_include_point?(last_portion.ellipse_def, last_overlap_portion.end_point)
 
                 # Combine first ellipse to last
-                last_portion.edge_count = last_portion.edge_count + overlap_portions.sum { |portion| portion.edge_count } - overlap
+                last_portion.edge_count = last_portion.edge_count + overlap_portions.map(&:edge_count).inject(0, :+) - overlap  # .map(&:edge_count).inject(0, :+) == .sum { |portion| portion.edge_count } compatible with ruby < 2.4
 
               else
 
