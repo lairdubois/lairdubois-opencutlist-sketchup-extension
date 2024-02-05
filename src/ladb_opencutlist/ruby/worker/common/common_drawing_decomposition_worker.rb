@@ -14,7 +14,7 @@ module Ladb::OpenCutList
 
     include LayerVisibilityHelper
 
-    ORIGIN_POSITION_DEFAULT = 0
+    ORIGIN_POSITION_DEFAULT = 0 # = Path Origin
     ORIGIN_POSITION_FACES_BOUNDS_MIN = 1
     ORIGIN_POSITION_EDGES_BOUNDS_MIN = 2
     ORIGIN_POSITION_BOUNDS_MIN = 3

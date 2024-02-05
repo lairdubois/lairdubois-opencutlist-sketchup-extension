@@ -52,13 +52,13 @@ module Ladb::OpenCutList
         edges_bounds.add(curve_manipulator.points)
       end
 
-      bounds.add(faces_bounds.min, faces_bounds.max) unless  faces_bounds.empty?
-      bounds.add(edges_bounds.min, edges_bounds.max) unless  edges_bounds.empty?
+      bounds.add(faces_bounds.min, faces_bounds.max) unless faces_bounds.empty?
+      bounds.add(edges_bounds.min, edges_bounds.max) unless edges_bounds.empty?
 
       depth_min = 0.0
       depth_max = @drawing_def.faces_bounds.depth
 
-      z_max = faces_bounds.max.z
+      z_max = faces_bounds.empty? ? bounds.max.z : faces_bounds.max.z
 
       upper_layer_def = PathsLayerDef.new(depth_min, [], [], DrawingProjectionLayerDef::TYPE_UPPER)
 

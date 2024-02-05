@@ -56,7 +56,7 @@ module Ladb::OpenCutList
         :options => {
           ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_SVG, ACTION_OPTION_FILE_FORMAT_DXF ],
           ACTION_OPTION_FACES => [ ACTION_OPTION_FACES_ONE, ACTION_OPTION_FACES_ALL ],
-          ACTION_OPTION_OPTIONS => [ACTION_OPTION_OPTIONS_ANCHOR, ACTION_OPTION_OPTIONS_SMOOTHING, ACTION_OPTION_OPTIONS_MERGE_HOLES, ACTION_OPTION_OPTIONS_INCLUDE_PATHS ]
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_ANCHOR, ACTION_OPTION_OPTIONS_SMOOTHING, ACTION_OPTION_OPTIONS_MERGE_HOLES, ACTION_OPTION_OPTIONS_INCLUDE_PATHS ]
         }
       },
       {
@@ -70,6 +70,7 @@ module Ladb::OpenCutList
       #   :action => ACTION_EXPORT_EDGES,
       #   :options => {
       #     ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_SVG, ACTION_OPTION_FILE_FORMAT_DXF ],
+      #     ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_SMOOTHING ]
       #   }
       # }
     ].freeze
@@ -140,7 +141,7 @@ module Ladb::OpenCutList
     def get_action_options_modal?(action)
 
       case action
-      when ACTION_EXPORT_PART_3D, ACTION_EXPORT_PART_2D, ACTION_EXPORT_FACE
+      when ACTION_EXPORT_PART_3D, ACTION_EXPORT_PART_2D, ACTION_EXPORT_FACE, ACTION_EXPORT_EDGES
         return true
       end
 
@@ -335,7 +336,7 @@ module Ladb::OpenCutList
             'input_local_y_axis' => local_y_axis,
             'input_local_z_axis' => local_z_axis,
             'input_face_path' => @input_face_path,
-            'input_edge_path' => @input_edge.nil? ? nil : @input_face_path + [ @input_edge ],
+            'input_edge_path' => @input_edge_path,
             'face_validator' => fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACES, ACTION_OPTION_FACES_ONE) ? CommonDrawingDecompositionWorker::FACE_VALIDATOR_ONE : CommonDrawingDecompositionWorker::FACE_VALIDATOR_ALL,
             'ignore_edges' => !fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_INCLUDE_PATHS),
             'edge_validator' => fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACES, ACTION_OPTION_FACES_ONE) ? CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY_COPLANAR : CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY
@@ -391,7 +392,7 @@ module Ladb::OpenCutList
                   fn_append_segments.call(poly_def.segments, color, 2, line_stipple)
                 end
 
-                unless poly_def.closed?
+                if poly_def.is_a?(DrawingProjectionPolylineDef)
 
                   # It's a polyline, create 'start' and 'end' points entities
 
@@ -466,9 +467,9 @@ module Ladb::OpenCutList
       if face
 
         @active_drawing_def = CommonDrawingDecompositionWorker.new(@input_face_path, {
-          'use_bounds_min_as_origin' => false,
           'input_face_path' => @input_face_path,
-          'input_edge_path' => @input_edge.nil? ? nil : @input_face_path + [ @input_edge ],
+          'input_edge_path' => @input_edge_path, # @input_edge.nil? ? nil : @input_face_path + [ @input_edge ],
+          'ignore_edges' => true
         }).run
         if @active_drawing_def.is_a?(DrawingDef)
 
@@ -553,7 +554,6 @@ module Ladb::OpenCutList
 
           # Axes helper
           axes_helper = Kuix::AxesHelper.new
-          # axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(0, 0, @active_drawing_def.bounds.max.z))
           axes_helper.box_0.visible = false
           axes_helper.box_z.visible = false
           preview.append(axes_helper)
@@ -575,40 +575,81 @@ module Ladb::OpenCutList
 
         @active_drawing_def = CommonDrawingDecompositionWorker.new(context_path, {
           'ignore_faces' => true,
-          'use_bounds_min_as_origin' => true,
           'input_face_path' => @input_face_path,
-          'input_edge_path' => @input_face_path ? @input_edge_path : nil,
+          'input_edge_path' => @input_edge_path,
           'edge_validator' => CommonDrawingDecompositionWorker::EDGE_VALIDATOR_COPLANAR
         }).run
         if @active_drawing_def.is_a?(DrawingDef)
 
+          projection_def = CommonDrawingProjectionWorker.new(@active_drawing_def, {
+            'origin_position' => CommonDrawingProjectionWorker::ORIGIN_POSITION_EDGES_BOUNDS_MIN
+          }).run
+
           inch_offset = Sketchup.active_model.active_view.pixels_to_model(15, Geom::Point3d.new.transform(@active_drawing_def.transformation))
 
           preview = Kuix::Group.new
-          preview.transformation = @active_drawing_def.transformation
+          preview.transformation = @active_drawing_def.transformation * projection_def.transformation
           @space.append(preview)
 
-            @active_drawing_def.edge_manipulators.each do |edge_info|
+          fn_append_segments = lambda do |segments, line_width, line_stipple|
 
-              # Highlight edge
-              segments = Kuix::Segments.new
-              segments.add_segments(EdgeManipulator.new(edge_info.edge, edge_info.transformation).segment)
-              segments.color = COLOR_PART_PATH
-              segments.line_width = highlighted ? 3 : 2
-              segments.on_top = true
-              preview.append(segments)
+            entity = Kuix::Segments.new
+            entity.add_segments(segments)
+            entity.color = COLOR_PART_PATH
+            entity.line_width = highlighted ? line_width + 1 : line_width
+            entity.line_stipple = line_stipple
+            entity.on_top = true
+            preview.append(entity)
+
+          end
+
+          projection_def.layer_defs.reverse.each do |layer_def| # reverse layer order to present from Bottom to Top
+
+            points_entities = []
+
+            layer_def.poly_defs.each do |poly_def|
+
+              line_stipple = Kuix::LINE_STIPPLE_SOLID
+
+              if fetch_action_option_enabled(ACTION_EXPORT_EDGES, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
+                poly_def.curve_def.portions.each do |portion|
+                  fn_append_segments.call(portion.segments, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, line_stipple)
+                end
+              else
+                fn_append_segments.call(poly_def.segments, 2, line_stipple)
+              end
+
+              if poly_def.is_a?(DrawingProjectionPolylineDef)
+
+                # It's a polyline, create 'start' and 'end' points entities
+
+                entity = Kuix::Points.new
+                entity.add_points([ poly_def.points.first ])
+                entity.size = 16
+                entity.style = Kuix::POINT_STYLE_FILLED_SQUARE
+                entity.color = Kuix::COLOR_MEDIUM_GREY
+                points_entities << entity
+
+                entity = Kuix::Points.new
+                entity.add_points([ poly_def.points.last ])
+                entity.size = 18
+                entity.style = Kuix::POINT_STYLE_OPEN_SQUARE
+                entity.color = Kuix::COLOR_DARK_GREY
+                points_entities << entity
+
+              end
 
             end
 
-            bounds = Geom::BoundingBox.new
-            bounds.add(Geom::Point3d.new(@active_drawing_def.bounds.min.x, @active_drawing_def.bounds.min.y, @active_drawing_def.bounds.max.z))
-            bounds.add(@active_drawing_def.bounds.max)
-            bounds.add(Geom::Point3d.new(0, 0, @active_drawing_def.bounds.max.z))
+            # Append points after to be on top of segments
+            points_entities.each { |entity| preview.append(entity) }
+
+          end
 
             # Box helper
             box_helper = Kuix::RectangleMotif.new
-            box_helper.bounds.origin.copy!(bounds.min)
-            box_helper.bounds.size.copy!(bounds)
+            box_helper.bounds.origin.copy!(projection_def.bounds.min)
+            box_helper.bounds.size.copy!(projection_def.bounds)
             box_helper.bounds.apply_offset(inch_offset, inch_offset, 0)
             box_helper.color = Kuix::COLOR_BLACK
             box_helper.line_width = 1
@@ -619,6 +660,7 @@ module Ladb::OpenCutList
 
               # Highlight input edge
               segments = Kuix::Segments.new
+              segments.transformation = projection_def.transformation.inverse
               segments.add_segments(@active_drawing_def.input_edge_manipulator.segment)
               segments.color = COLOR_ACTION
               segments.line_width = 3
@@ -629,7 +671,6 @@ module Ladb::OpenCutList
 
             # Axes helper
             axes_helper = Kuix::AxesHelper.new
-            axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(0, 0, @active_drawing_def.bounds.max.z))
             axes_helper.box_0.visible = false
             axes_helper.box_z.visible = false
             preview.append(axes_helper)

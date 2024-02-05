@@ -24,5 +24,11 @@
     "smoothing": false,
     "parts_stroke_color": null,
     "parts_fill_color": "#000000"
+  },
+  "action_3": {   /* ACTION_EXPORT_EDGES */
+    "file_format": "svg",
+    "unit": { "metric": 2, "imperial": 0 }, /* Length::Millimeter , Length::Inches*/
+    "smoothing": false,
+    "parts_paths_stroke_color": "#0068FF"
   }
 }

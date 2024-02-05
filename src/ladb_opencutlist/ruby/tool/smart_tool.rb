@@ -369,26 +369,32 @@ module Ladb::OpenCutList
 
     def show_message(text, type = MESSAGE_TYPE_DEFAULT)
       return unless @message_panel && text.is_a?(String)
-      @message_lbl.text = text
-      @message_panel.visible = !text.empty?
+
       case type
       when MESSAGE_TYPE_ERROR
-        @message_lbl.set_style_attribute(:color, COLOR_MESSAGE_TEXT_ERROR)
-        @message_lbl.set_style_attribute(:background_color, COLOR_MESSAGE_BACKGROUND_ERROR)
-        @message_lbl.set_style_attribute(:border_color, COLOR_MESSAGE_TEXT_ERROR)
+        background_color = COLOR_MESSAGE_BACKGROUND_ERROR
+        border_color = COLOR_MESSAGE_TEXT_ERROR
+        text_color = COLOR_MESSAGE_TEXT_ERROR
       when MESSAGE_TYPE_WARNING
-        @message_lbl.set_style_attribute(:color, COLOR_MESSAGE_TEXT_WARNING)
-        @message_lbl.set_style_attribute(:background_color, COLOR_MESSAGE_BACKGROUND_WARNING)
-        @message_lbl.set_style_attribute(:border_color, COLOR_MESSAGE_TEXT_WARNING)
+        background_color = COLOR_MESSAGE_BACKGROUND_WARNING
+        border_color = COLOR_MESSAGE_TEXT_WARNING
+        text_color = COLOR_MESSAGE_TEXT_WARNING
       when MESSAGE_TYPE_SUCCESS
-        @message_lbl.set_style_attribute(:color, COLOR_MESSAGE_TEXT_SUCCESS)
-        @message_lbl.set_style_attribute(:background_color, COLOR_MESSAGE_BACKGROUND_SUCCESS)
-        @message_lbl.set_style_attribute(:border_color, COLOR_MESSAGE_TEXT_SUCCESS)
+        background_color = COLOR_MESSAGE_BACKGROUND_SUCCESS
+        border_color = COLOR_MESSAGE_TEXT_SUCCESS
+        text_color = COLOR_MESSAGE_TEXT_SUCCESS
       else
-        @message_lbl.set_style_attribute(:color, nil)
-        @message_lbl.set_style_attribute(:background_color, COLOR_MESSAGE_BACKGROUND)
-        @message_lbl.set_style_attribute(:border_color, Sketchup::Color.new)
+        background_color = COLOR_MESSAGE_BACKGROUND
+        border_color = Kuix::COLOR_BLACK
+        text_color = Kuix::COLOR_BLACK
       end
+
+      @message_lbl.text = text
+      @message_panel.visible = !text.empty?
+      @message_lbl.set_style_attribute(:color, text_color)
+      @message_lbl.set_style_attribute(:background_color, background_color)
+      @message_lbl.set_style_attribute(:border_color, border_color)
+
     end
 
     def hide_message
