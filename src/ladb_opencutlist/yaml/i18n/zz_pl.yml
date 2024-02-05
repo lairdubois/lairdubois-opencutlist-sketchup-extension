@@ -92,7 +92,7 @@ core:
       smart_axes: 86 - Orientuj części
       smart_export: 87 - Eksportuj części
   messagebox:
-    dir_override: '88 - '
+    dir_override: "88 - « {{ target }} » już istnieje. Czy chcesz go zamienić?\n \nFolder o tej samej nazwie znajduje się już w folderze {{ parent }}. Jeśli go zastąpisz, oryginalna zawartość zostanie utracona.\n"
   savepanel:
     export_to_file: 89 - Eksportuj do pliku {{ file_format }}
   dialog:
@@ -115,16 +115,18 @@ core:
       Aby zgłosić błąd: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
   error:
     feature_unavailable: 99 - Ta funkcja wymaga programu SketchUp {{ version }} lub nowszego
-    failed_export_to: '100 - '
+    failed_export_to: |
+      100 - Wystąpił błąd podczas eksportowania do *{{ path }}*.
+      **{{ error }}**
   success:
-    exported_to: '101 - '
+    exported_to: 101 - Pomyślnie wyeksportowano do {{ path }}
     copied_to_clipboard: 102 - Skopiowane do schowka
   event:
     model_change: 103 - Aktywny model został zmieniony.
     options_change: 104 - Opcje w modelu zostały zmienione.
     material_change: 105 - Co najmniej jeden materiał został zmieniony.
     selection_change: 106 - Wybór/zaznaczenie w aktywnym modelu zostało zmienione.
-    layers_change: '107 - '
+    layers_change: 107 - Tagi w aktywnym modelu uległy zmianie.
   upgrade:
     unavailable: 108 - Nie można znaleźć najnowszej wersji *OpenCutList*.
     available: |
@@ -242,8 +244,8 @@ tab:
     edit_part_size_increase_properties: 192 - Edytuj właściwości (nadwymiary) części
     edit_part_edges_properties: 193 - Edytuj właściwości (obrzeża) części
     edit_part_faces_properties: 194 - Edytuj właściwości (powierzchnie) części
-    part_drawing_type_1: '195 - '
-    part_drawing_type_2: '196 - '
+    part_drawing_type_1: 195 - 2D Widok z przodu
+    part_drawing_type_2: 196 - 2D Widok odwrócony
     part_drawing_type_3: 197 - 3D
     tooltip:
       show_hide_block: 198 - Pokaż / ukryj grupę
@@ -294,7 +296,7 @@ tab:
       symmetrical: 225 - Wykrywanie lustrzanej części jest nieaktywne dla tej części
       ignore_grain_direction: 226 - Kierunek wzoru jest ignorowany na tej części
       auto_oriented: 227 - Ta część została automatycznie obrócona
-      oko_label_filter: '228 - '
+      oko_label_filter: 228 - Uwzględnij / Wyłącz ten identyfikator
       add_label_filter: 229 - Filtrowanie według '{{ label }}'
       remove_label_filter: 230 - Usuń filtrowanie '{{ label }}'
       add_edge_material_name_filter: 231 - Filtruj według '{{ material_name }}'
@@ -349,8 +351,8 @@ tab:
       write_3d: 279 - Geometria 3D
       write_2d_parts: 280 - Eksportuj 2D projekcję części.
       write_3d_parts: 281 - Eksportuj geometrię 3D części
-      group_write_2d_parts: '282 - '
-      group_write_3d_parts: '283 - '
+      group_write_2d_parts: 282 - Eksportuj rzut 2D części grupy
+      group_write_3d_parts: 283 - Eksportuj geometrię 3D części grupy
       group_layout_parts: 284 - Narysuj przegląd części w grupie
       group_numbers_save: 285 - Zachowaj numery części grupy
       group_numbers_reset: 286 - Zresetuj numery części grupy
@@ -503,7 +505,7 @@ tab:
       hide_edges_help: 382 - Jeśli ta opcja jest zaznaczona, **kolumny obrzeża** części typu *Płyty* będą ukryte.
       hide_faces: 383 - Ukryj kolumny powierzchni
       hide_faces_help: 384 - Jeśli ta opcja jest zaznaczona, **kolumny powierzchni** części typu *płyty* zostaną ukryte.
-      hide_material_colors: '385 - '
+      hide_material_colors: 385 - Ukryj kolory materiału
       hide_material_colors_help: '386 - '
       minimize_on_highlight: 387 - Minimalizuj po *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: 388 - Jeśli ta opcja jest zaznaczona, okno OpenCutList zostanie zminimalizowane, gdy zostanie użyta funkcja *'$t(tab.cutlist.highlight_part)'*.
@@ -604,8 +606,8 @@ tab:
       cutting_length: 469 - Długość - wstępna
       cutting_width: 470 - Szerokość - wstępna
       cutting_thickness: 471 - Grubość - wstępna
-      edge_cutting_length: '472 - '
-      edge_cutting_width: '473 - '
+      edge_cutting_length: 472 - Długość linii cięcia
+      edge_cutting_width: 473 - Grubość linii cięcia
       bbox_length: 474 - Długość
       bbox_width: 475 - Szerokość
       bbox_thickness: 476 - Grubość
@@ -955,8 +957,8 @@ tab:
         part_cutting_width: 781 - Szerokość - wstępna
         part_cutting_thickness: 782 - Grubość - wstępna
         part_edge_cutting_size: '783 - '
-        part_edge_cutting_length: '784 - '
-        part_edge_cutting_width: '785 - '
+        part_edge_cutting_length: 784 - Długość linii cięcia
+        part_edge_cutting_width: 785 - Grubość linii cięcia
         part_size: 786 - Wymiar
         part_length: 787 - Długość
         part_width: 788 - Szerokość
