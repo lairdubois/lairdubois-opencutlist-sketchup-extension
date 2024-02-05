@@ -601,8 +601,8 @@ tab:
       cutting_length: الطول - أولي
       cutting_width: العرض - أولي
       cutting_thickness: السُمك - أولي
-      edge_cutting_length: ""
-      edge_cutting_width: ""
+      edge_cutting_length: طول الحاشية - أولي
+      edge_cutting_width: عرض الحواشي - أولي
       bbox_length: الطول
       bbox_width: العرض
       bbox_thickness: السمك
@@ -879,13 +879,15 @@ tab:
           حدد لون التثقيب
         option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
         option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
-        option_texts: ""
+        option_texts: المعرفات
         option_texts_help: |
+          يتيح تمكين تصدير النصوص الخاصة بالقِطع واختيار ألوانها
         option_leftovers: بواقي التقطيع
         option_leftovers_help: |
           يتيح هذا الخيار تصدير بواقي التقطيع و اختيار ألوانها
         option_cuts: قطع
         option_cuts_help: |
+          يتيح هذا الخيار تصدير رسومات القَطع واختيار لونها
         warning:
           is_sheet_selection: لم تُصدَّر ** الألواح المخفية **
       error:
@@ -965,9 +967,9 @@ tab:
         part_cutting_length: الطول الأولي
         part_cutting_width: العرض الأولي
         part_cutting_thickness: السُمك - أولي
-        part_edge_cutting_size: ""
-        part_edge_cutting_length: ""
-        part_edge_cutting_width: ""
+        part_edge_cutting_size: أبعاد الحاشية
+        part_edge_cutting_length: طول الحواشي - أولي
+        part_edge_cutting_width: عرض الحواشي - أولي
         part_size: البعد النهائي
         part_length: الطول
         part_width: العرض
@@ -1097,6 +1099,7 @@ tab:
       option_smoothing_1: تمليس الدوائر و الأقواس (تجريبي)
       option_smoothing_help: |
         يتيح تفعيل اكتشاف الدوائر والأقواس.
+
         *لا يتيح هذا الخيار اكتشاف أنواع أخرى من المنحنيات*
       option_merge_holes: ""
       option_merge_holes_0: افتراضي

@@ -95,6 +95,9 @@ core:
       smart_export: Eksportuj części
   messagebox:
     dir_override: |
+      « {{ target }} » już istnieje. Czy chcesz go zamienić?
+       
+      Folder o tej samej nazwie znajduje się już w folderze {{ parent }}. Jeśli go zastąpisz, oryginalna zawartość zostanie utracona.
   savepanel:
     export_to_file: "Eksportuj do pliku {{ file_format }}"
   dialog:
@@ -118,15 +121,17 @@ core:
   error:
     feature_unavailable: "Ta funkcja wymaga programu SketchUp {{ version }} lub nowszego"
     failed_export_to: |
+      Wystąpił błąd podczas eksportowania do *{{ path }}*.
+      **{{ error }}**
   success:
-    exported_to: ""
+    exported_to: "Pomyślnie wyeksportowano do {{ path }}"
     copied_to_clipboard: Skopiowane do schowka
   event:
     model_change: Aktywny model został zmieniony.
     options_change: Opcje w modelu zostały zmienione.
     material_change: Co najmniej jeden materiał został zmieniony.
     selection_change: Wybór/zaznaczenie w aktywnym modelu zostało zmienione.
-    layers_change: ""
+    layers_change: Tagi w aktywnym modelu uległy zmianie.
   upgrade:
     unavailable: Nie można znaleźć najnowszej wersji *OpenCutList*.
     available: |
@@ -244,8 +249,8 @@ tab:
     edit_part_size_increase_properties: Edytuj właściwości (nadwymiary) części
     edit_part_edges_properties: Edytuj właściwości (obrzeża) części
     edit_part_faces_properties: Edytuj właściwości (powierzchnie) części
-    part_drawing_type_1: ""
-    part_drawing_type_2: ""
+    part_drawing_type_1: 2D Widok z przodu
+    part_drawing_type_2: 2D Widok odwrócony
     part_drawing_type_3: 3D
     tooltip:
       show_hide_block: Pokaż / ukryj grupę
@@ -296,7 +301,7 @@ tab:
       symmetrical: Wykrywanie lustrzanej części jest nieaktywne dla tej części
       ignore_grain_direction: Kierunek wzoru jest ignorowany na tej części
       auto_oriented: Ta część została automatycznie obrócona
-      oko_label_filter: ""
+      oko_label_filter: "Uwzględnij / Wyłącz ten identyfikator"
       add_label_filter: "Filtrowanie według '{{ label }}'"
       remove_label_filter: "Usuń filtrowanie '{{ label }}'"
       add_edge_material_name_filter: "Filtruj według '{{ material_name }}'"
@@ -351,8 +356,8 @@ tab:
       write_3d: Geometria 3D
       write_2d_parts: Eksportuj 2D projekcję części.
       write_3d_parts: Eksportuj geometrię 3D części
-      group_write_2d_parts: ""
-      group_write_3d_parts: ""
+      group_write_2d_parts: Eksportuj rzut 2D części grupy
+      group_write_3d_parts: Eksportuj geometrię 3D części grupy
       group_layout_parts: Narysuj przegląd części w grupie
       group_numbers_save: Zachowaj numery części grupy
       group_numbers_reset: Zresetuj numery części grupy
@@ -500,7 +505,7 @@ tab:
       hide_edges_help: "Jeśli ta opcja jest zaznaczona, **kolumny obrzeża** części typu *Płyty* będą ukryte."
       hide_faces: Ukryj kolumny powierzchni
       hide_faces_help: "Jeśli ta opcja jest zaznaczona, **kolumny powierzchni** części typu *płyty* zostaną ukryte."
-      hide_material_colors: ""
+      hide_material_colors: Ukryj kolory materiału
       hide_material_colors_help: ""
       minimize_on_highlight: Minimalizuj po *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Jeśli ta opcja jest zaznaczona, okno OpenCutList zostanie zminimalizowane, gdy zostanie użyta funkcja *'$t(tab.cutlist.highlight_part)'*."
@@ -596,8 +601,8 @@ tab:
       cutting_length: Długość - wstępna
       cutting_width: Szerokość - wstępna
       cutting_thickness: Grubość - wstępna
-      edge_cutting_length: ""
-      edge_cutting_width: ""
+      edge_cutting_length: Długość linii cięcia
+      edge_cutting_width: Grubość linii cięcia
       bbox_length: Długość
       bbox_width: Szerokość
       bbox_thickness: Grubość
@@ -946,8 +951,8 @@ tab:
         part_cutting_width: Szerokość - wstępna
         part_cutting_thickness: Grubość - wstępna
         part_edge_cutting_size: ""
-        part_edge_cutting_length: ""
-        part_edge_cutting_width: ""
+        part_edge_cutting_length: Długość linii cięcia
+        part_edge_cutting_width: Grubość linii cięcia
         part_size: Wymiar
         part_length: Długość
         part_width: Szerokość

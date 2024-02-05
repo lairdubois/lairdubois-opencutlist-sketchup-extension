@@ -610,8 +610,8 @@ tab:
       cutting_length: 469 - الطول - أولي
       cutting_width: 470 - العرض - أولي
       cutting_thickness: 471 - السُمك - أولي
-      edge_cutting_length: '472 - '
-      edge_cutting_width: '473 - '
+      edge_cutting_length: 472 - طول الحاشية - أولي
+      edge_cutting_width: 473 - عرض الحواشي - أولي
       bbox_length: 474 - الطول
       bbox_width: 475 - العرض
       bbox_thickness: 476 - السمك
@@ -892,14 +892,18 @@ tab:
           '
         option_parts_paths: "$t(tab.cutlist.write.option_parts_paths)"
         option_parts_paths_help: "$t(tab.cutlist.write.option_parts_paths_help)"
-        option_texts: '707 - '
-        option_texts_help: '708 - '
+        option_texts: 707 - المعرفات
+        option_texts_help: '708 - يتيح تمكين تصدير النصوص الخاصة بالقِطع واختيار ألوانها
+
+          '
         option_leftovers: 709 - بواقي التقطيع
         option_leftovers_help: '710 - يتيح هذا الخيار تصدير بواقي التقطيع و اختيار ألوانها
 
           '
         option_cuts: 711 - قطع
-        option_cuts_help: '712 - '
+        option_cuts_help: '712 - يتيح هذا الخيار تصدير رسومات القَطع واختيار لونها
+
+          '
         warning:
           is_sheet_selection: 713 - لم تُصدَّر ** الألواح المخفية **
       error:
@@ -979,9 +983,9 @@ tab:
         part_cutting_length: 780 - الطول الأولي
         part_cutting_width: 781 - العرض الأولي
         part_cutting_thickness: 782 - السُمك - أولي
-        part_edge_cutting_size: '783 - '
-        part_edge_cutting_length: '784 - '
-        part_edge_cutting_width: '785 - '
+        part_edge_cutting_size: 783 - أبعاد الحاشية
+        part_edge_cutting_length: 784 - طول الحواشي - أولي
+        part_edge_cutting_width: 785 - عرض الحواشي - أولي
         part_size: 786 - البعد النهائي
         part_length: 787 - الطول
         part_width: 788 - العرض
@@ -1116,6 +1120,7 @@ tab:
       option_smoothing_1: 894 - تمليس الدوائر و الأقواس (تجريبي)
       option_smoothing_help: |
         895 - يتيح تفعيل اكتشاف الدوائر والأقواس.
+
         *لا يتيح هذا الخيار اكتشاف أنواع أخرى من المنحنيات*
       option_merge_holes: '896 - '
       option_merge_holes_0: 897 - افتراضي
