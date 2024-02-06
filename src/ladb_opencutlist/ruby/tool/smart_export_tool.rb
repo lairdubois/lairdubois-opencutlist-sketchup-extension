@@ -468,7 +468,7 @@ module Ladb::OpenCutList
 
         @active_drawing_def = CommonDrawingDecompositionWorker.new(@input_face_path, {
           'input_face_path' => @input_face_path,
-          'input_edge_path' => @input_edge_path, # @input_edge.nil? ? nil : @input_face_path + [ @input_edge ],
+          'input_edge_path' => @input_edge_path,
           'ignore_edges' => true
         }).run
         if @active_drawing_def.is_a?(DrawingDef)
