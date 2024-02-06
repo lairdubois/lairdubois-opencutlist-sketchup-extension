@@ -564,7 +564,7 @@ tab:
     export:
       title: Esportazione
       info_0: |
-        Con questa funzione si può esportare il *resoconto* in un file formato [CSV](https://it.wikipedia.org/wiki/Comma-separated_values).
+        Con questa funzione si può esportare la *resoconto* sotto forma di *elenco di parti* in un file in formato [CSV](https://it.wikipedia.org/wiki/Comma-separated_values).
       customize_help: |
         Riordina, Nascondi, Aggiungi, Rimuovi o Seleziona una colonna per personalizzare il **titolo** e la **formula** che verranno utilizzati per generare titolo e valore di ogni colonna esportata.
       add_column: Aggiungi colonna
@@ -1183,7 +1183,7 @@ tab:
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Direzione della venatura
-      raw_estimated_0: ""
+      raw_estimated_0: Stimato dal volume effettivo
       colorized: Questa tonalità di colore sarà applicata alla struttura del materiale al momento della resa visiva del modello
       texture_load: Carica una nuova texture
       texture_clear: Rimuovi texture
@@ -1263,9 +1263,16 @@ tab:
       edge_decremented_help: Indica se la dimensione della parte deve essere ridotta dello spessore della bordatura.
       edge_decremented_0: Nessuna riduzione
       edge_decremented_1: Riduci dello spessore della bordatura
-      raw_estimated: ""
+      raw_estimated: Volume usato
       raw_estimated_help: |
-      raw_estimated_0: ""
+        Permette di definire il volume utilizzato per stimare la massa e il costo totale delle parti di questo materiale.
+
+        **Volume debitato utile**
+        Il volume totale sarà la somma dei volumi debitati delle parti.
+
+        **Volume di materia prima necessario**
+        Il volume totale sarà la somma dei volumi dei pannelli, laminati, barre o strisce delle parti dopo il posizionamento.
+      raw_estimated_0: Volume debitato utile
       raw_estimated_1: Volume di materia prima necessario
       std_attributes_dim_placeholder: Scegli una taglia
       std_volumic_masses: Massa volumica
