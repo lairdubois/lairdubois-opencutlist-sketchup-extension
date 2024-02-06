@@ -1183,7 +1183,7 @@ tab:
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Dirección de fibra
-      raw_estimated_0: ""
+      raw_estimated_0: Estimado por el volumen debitado útil
       colorized: Este tono se aplicará a la textura de este material cuando se renderice en el modelo
       texture_load: Cargar una nueva textura
       texture_clear: Borrar la textura
@@ -1265,7 +1265,14 @@ tab:
       edge_decremented_1: Reducir por el grosor de las tiras del canto
       raw_estimated: Volumen utilizado
       raw_estimated_help: |
-      raw_estimated_0: ""
+        Permite definir el volumen utilizado para estimar la masa y el costo total de las piezas de este material.
+
+        **Volumen útil debitado**
+        El volumen total será la suma de los volúmenes debitados de las piezas.
+
+        **Volumen de materia prima necesario**
+        El volumen total será la suma de los volúmenes de los paneles, hojas, barras o bandas de las piezas después del diagrama de corte.
+      raw_estimated_0: Volumen útil debitado
       raw_estimated_1: Volumen de materia prima necesaria
       std_attributes_dim_placeholder: Elige una talla
       std_volumic_masses: Densidad
