@@ -342,7 +342,7 @@ tab:
       part_axes: محاور القطعةِ الداخليةُ
       select_unselect_all_parts: حدد / أزل التحديد عن كل القطع في المجموعة
       select_parts_in_cutlist: حدد القِطعة داخل قائمة القِطع
-      select_parts_in_cutlist_plural: ""
+      select_parts_in_cutlist_plural: "حدد {{ count }} قطعة / قِطع في قائمة القِطع"
       setup_group_cuttingdiagram: "تكوين رسم التقطيع التخطيطي لـ '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
       open_part_url: افتح رابط القِطعة
     menu:
@@ -1101,22 +1101,29 @@ tab:
         يتيح تفعيل اكتشاف الدوائر والأقواس.
 
         *لا يتيح هذا الخيار اكتشاف أنواع أخرى من المنحنيات*
-      option_merge_holes: ""
+      option_merge_holes: نمط الدمج
       option_merge_holes_0: افتراضي
-      option_merge_holes_1: ""
+      option_merge_holes_1: الخط الخارجي + التثقيب + الدمج
       option_merge_holes_help: |
-      option_include_paths: ""
+        **افتراضيًا**
+        يتم تصدير شكل القِطعة بطبقة واحدة لكل عمق
+
+        **الخط الخارجي + التثقيب + الدمج**
+        تفعيل فصل الحاشية الخارجية للقِطع عن الثقوب الخاصة بها بالإضافة إلى دمج الأعماق لكل تثقيب
+      option_include_paths: المسارات
       option_include_paths_0: لا شيء
       option_include_paths_1: استخدم الحواشي غير المرتبطة بوجه
       option_include_paths_help: |
+        تسمح الخاصية بتمكين استخدام الحواف غير المرتبطة بوجهٍ والموجودة في القِطعة لتصديرها كمسار
       option_parts: القِطع
       option_parts_help: |
         حدد ألوان القِطع
       option_parts_holes: التثقيب
       option_parts_holes_help: |
         حدد ألوان تثقيب القِطع
-      option_parts_paths: ""
+      option_parts_paths: المسارات
       option_parts_paths_help: |
+        حدد لون المسارات
       error:
         no_part: لا توجد قِطعة للتصدير
       warning:
@@ -1268,8 +1275,8 @@ tab:
       raw_estimated_1: حجم المادة الخام اللازمة
       std_attributes_dim_placeholder: حدد مقاسا
       std_volumic_masses: الكثافة
-      std_volumic_masses_help: ""
-      std_volumic_masses_add: ""
+      std_volumic_masses_help: يتيح لك الخيار تعيين كثافة لجميع الأحجام و أيضًا لكل حجم خامة اعتيادي
+      std_volumic_masses_add: أضف كثافةً
       std_prices: السعر
       std_prices_help: تتيح لك تعيين السعر لكل القياسات و أيضا لكل قياس نظامي من الخامة.
       std_prices_add: أضف سعرا
@@ -1309,7 +1316,7 @@ tab:
   outliner:
     label: البُنية
     title: البُنية
-    list: ""
+    list: شجرة بُنية الوحدات
     nodes: المثيلات
     part_count: عدد القِطع
     type_0: النموذج
@@ -1334,9 +1341,9 @@ tab:
     error:
       no_model: لا يوجد نموذج مفتوح. عليك أن تزودني بمعلومات أكثر ;)
       no_entities: نموذجك فارغ!
-      node_not_found: ""
+      node_not_found: نقطة التقاطع غير موجودة
       entity_not_found: لم يُعثر على أي مثيل
-      obsolete_outliner: ""
+      obsolete_outliner: "غير ممكن، البُنية المولّدة قديمة. أعد استحداثها"
     tip:
       no_node: |
         لا يحتوي نموذجك على أي مثيل ليتم عرضه هنا
@@ -1499,9 +1506,9 @@ tab:
     print_margin: هوامش الطباعة
     print_margin_normal: العادية
     print_margin_small: صغيرة
-    table_row_size: ""
+    table_row_size: حجم صفوف الجدول
     table_row_size_normal: عادي
-    table_row_size_compact: ""
+    table_row_size_compact: مدمج
     size_and_position: حجم و موضع النافذة
     model_settings: تفضيلات النموذج
     length_unit: وحدة الطول
@@ -1676,7 +1683,7 @@ tool:
     action_1_status: انقر على وجهِ قطعةٍ
     action_2: تصدير وجهٍ
     action_2_status: انقر على وجهٍ
-    action_3: ""
+    action_3: صدر مسارًا
     action_3_status: انقر على حاشية
     action_option_group_file_format: الصيغة
     action_option_group_unit: الوحدة
@@ -1695,8 +1702,8 @@ tool:
     action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
-    action_option_options_merge_holes_status: ""
-    action_option_options_include_paths_status: ""
+    action_option_options_merge_holes_status: اعزل الثقوب النافذة و ادمج العمق لكل تثقيب
+    action_option_options_include_paths_status: "تصدير الحواشي الموجودة في القِطعة و غير المرتبطة بوجه "
     error:
       not_part: هذا الوجه لا ينتمي إلى قِطعة (عنصر)
       not_flat_face: هذا الوجه ليس مُسطَّحا
