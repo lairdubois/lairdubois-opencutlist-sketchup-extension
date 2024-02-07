@@ -94,6 +94,7 @@ core:
   messagebox:
     dir_override: |
       88 - « {{ target }} » موجود مسبقا. هل ترغب في استبداله؟
+
       هناك مجلد بنفس الاسم في المجلد {{ parent }}. إن استبدلته، ستفقد المحتوى الأصلي
   savepanel:
     export_to_file: 89 - التصدير إلى ملف {{ file_format }}
@@ -340,7 +341,7 @@ tab:
       part_axes: 267 - محاور القطعةِ الداخليةُ
       select_unselect_all_parts: 268 - حدد / أزل التحديد عن كل القطع في المجموعة
       select_parts_in_cutlist: 269 - حدد القِطعة داخل قائمة القِطع
-      select_parts_in_cutlist_plural: '270 - '
+      select_parts_in_cutlist_plural: 270 - حدد {{ count }} قطعة / قِطع في قائمة القِطع
       setup_group_cuttingdiagram: 271 - تكوين رسم التقطيع التخطيطي لـ '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'
       open_part_url: 272 - افتح رابط القِطعة
     menu:
@@ -1122,14 +1123,21 @@ tab:
         895 - يتيح تفعيل اكتشاف الدوائر والأقواس.
 
         *لا يتيح هذا الخيار اكتشاف أنواع أخرى من المنحنيات*
-      option_merge_holes: '896 - '
+      option_merge_holes: 896 - نمط الدمج
       option_merge_holes_0: 897 - افتراضي
-      option_merge_holes_1: '898 - '
-      option_merge_holes_help: '899 - '
-      option_include_paths: '900 - '
+      option_merge_holes_1: 898 - الخط الخارجي + التثقيب + الدمج
+      option_merge_holes_help: |
+        899 - **افتراضيًا**
+        يتم تصدير شكل القِطعة بطبقة واحدة لكل عمق
+
+        **الخط الخارجي + التثقيب + الدمج**
+        تفعيل فصل الحاشية الخارجية للقِطع عن الثقوب الخاصة بها بالإضافة إلى دمج الأعماق لكل تثقيب
+      option_include_paths: 900 - المسارات
       option_include_paths_0: 901 - لا شيء
       option_include_paths_1: 902 - استخدم الحواشي غير المرتبطة بوجه
-      option_include_paths_help: '903 - '
+      option_include_paths_help: '903 - تسمح الخاصية بتمكين استخدام الحواف غير المرتبطة بوجهٍ والموجودة في القِطعة لتصديرها كمسار
+
+        '
       option_parts: 904 - القِطع
       option_parts_help: '905 - حدد ألوان القِطع
 
@@ -1138,8 +1146,10 @@ tab:
       option_parts_holes_help: '907 - حدد ألوان تثقيب القِطع
 
         '
-      option_parts_paths: '908 - '
-      option_parts_paths_help: '909 - '
+      option_parts_paths: 908 - المسارات
+      option_parts_paths_help: '909 - حدد لون المسارات
+
+        '
       error:
         no_part: 910 - لا توجد قِطعة للتصدير
       warning:
@@ -1291,8 +1301,8 @@ tab:
       raw_estimated_1: 1019 - حجم المادة الخام اللازمة
       std_attributes_dim_placeholder: 1020 - حدد مقاسا
       std_volumic_masses: 1021 - الكثافة
-      std_volumic_masses_help: '1022 - '
-      std_volumic_masses_add: '1023 - '
+      std_volumic_masses_help: 1022 - يتيح لك الخيار تعيين كثافة لجميع الأحجام و أيضًا لكل حجم خامة اعتيادي
+      std_volumic_masses_add: 1023 - أضف كثافةً
       std_prices: 1024 - السعر
       std_prices_help: 1025 - تتيح لك تعيين السعر لكل القياسات و أيضا لكل قياس نظامي من الخامة.
       std_prices_add: 1026 - أضف سعرا
@@ -1333,7 +1343,7 @@ tab:
   outliner:
     label: 1048 - البُنية
     title: 1049 - البُنية
-    list: '1050 - '
+    list: 1050 - شجرة بُنية الوحدات
     nodes: 1051 - المثيلات
     part_count: 1052 - عدد القِطع
     type_0: 1053 - النموذج
@@ -1358,9 +1368,9 @@ tab:
     error:
       no_model: 1070 - لا يوجد نموذج مفتوح. عليك أن تزودني بمعلومات أكثر ;)
       no_entities: 1071 - نموذجك فارغ!
-      node_not_found: '1072 - '
+      node_not_found: 1072 - نقطة التقاطع غير موجودة
       entity_not_found: 1073 - لم يُعثر على أي مثيل
-      obsolete_outliner: '1074 - '
+      obsolete_outliner: 1074 - غير ممكن، البُنية المولّدة قديمة. أعد استحداثها
     tip:
       no_node: |
         1075 - لا يحتوي نموذجك على أي مثيل ليتم عرضه هنا
@@ -1530,9 +1540,9 @@ tab:
     print_margin: 1177 - هوامش الطباعة
     print_margin_normal: 1178 - العادية
     print_margin_small: 1179 - صغيرة
-    table_row_size: '1180 - '
+    table_row_size: 1180 - حجم صفوف الجدول
     table_row_size_normal: 1181 - عادي
-    table_row_size_compact: '1182 - '
+    table_row_size_compact: 1182 - مدمج
     size_and_position: 1183 - حجم و موضع النافذة
     model_settings: 1184 - تفضيلات النموذج
     length_unit: 1185 - وحدة الطول
@@ -1709,7 +1719,7 @@ tool:
     action_1_status: 1303 - انقر على وجهِ قطعةٍ
     action_2: 1304 - تصدير وجهٍ
     action_2_status: 1305 - انقر على وجهٍ
-    action_3: '1306 - '
+    action_3: 1306 - صدر مسارًا
     action_3_status: 1307 - انقر على حاشية
     action_option_group_file_format: 1308 - الصيغة
     action_option_group_unit: 1309 - الوحدة
@@ -1728,8 +1738,8 @@ tool:
     action_option_faces_1_status: "$t(tab.cutlist.write.option_faces_1)"
     action_option_options_anchor_status: "$t(tab.cutlist.write.option_anchor_1)"
     action_option_options_smoothing_status: "$t(tab.cutlist.write.option_smoothing_1)"
-    action_option_options_merge_holes_status: '1325 - '
-    action_option_options_include_paths_status: '1326 - '
+    action_option_options_merge_holes_status: 1325 - اعزل الثقوب النافذة و ادمج العمق لكل تثقيب
+    action_option_options_include_paths_status: '1326 - تصدير الحواشي الموجودة في القِطعة و غير المرتبطة بوجه '
     error:
       not_part: 1327 - هذا الوجه لا ينتمي إلى قِطعة (عنصر)
       not_flat_face: 1328 - هذا الوجه ليس مُسطَّحا

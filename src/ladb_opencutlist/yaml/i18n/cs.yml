@@ -1668,9 +1668,9 @@ tool:
     action_option_direction_0: D
     action_option_direction_1: Š
     action_option_direction_2: T
-    action_option_direction_0_status: Otočte díl podélně
-    action_option_direction_1_status: Otočte díl příčně
-    action_option_direction_2_status: Otočte díl v jeho tloušťce - na ruby
+    action_option_direction_0_status: Překlopit díl podélně
+    action_option_direction_1_status: Překlopit díl příčně
+    action_option_direction_2_status: Překlopit díl v jeho tloušťce - na ruby
     warning:
       more_entities: "{{ count_used }} instancí sdílejících stejnou definici bude upraveno"
     error:

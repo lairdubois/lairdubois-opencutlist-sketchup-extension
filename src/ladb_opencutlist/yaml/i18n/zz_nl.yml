@@ -743,7 +743,10 @@ tab:
       option_part_drawing_type_0: '588 - '
       option_part_drawing_type_1: '589 - '
       option_part_drawing_type_2: '590 - '
-      option_part_drawing_type_help: '591 - '
+      option_part_drawing_type_help: |
+        591 - Hiermee kunt u de werkelijke vorm van onderdelen en hun bewerking op het diagram weergeven of verbergen.
+
+         *Deze optie moet ingeschakeld zijn om vormen te kunnen exporteren.*
       option_saw_kerf: 592 - Dikte van het zaagblad
       option_saw_kerf_help: 593 - Breedte van verwijderd materiaal door het zaagblad.
       option_trimming: 594 - Marge

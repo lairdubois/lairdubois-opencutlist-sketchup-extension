@@ -1704,9 +1704,9 @@ tool:
     action_option_direction_0: 1290 - D
     action_option_direction_1: 1291 - Š
     action_option_direction_2: 1292 - T
-    action_option_direction_0_status: 1293 - Otočte díl podélně
-    action_option_direction_1_status: 1294 - Otočte díl příčně
-    action_option_direction_2_status: 1295 - Otočte díl v jeho tloušťce - na ruby
+    action_option_direction_0_status: 1293 - Překlopit díl podélně
+    action_option_direction_1_status: 1294 - Překlopit díl příčně
+    action_option_direction_2_status: 1295 - Překlopit díl v jeho tloušťce - na ruby
     warning:
       more_entities: 1296 - {{ count_used }} instancí sdílejících stejnou definici bude upraveno
     error:
