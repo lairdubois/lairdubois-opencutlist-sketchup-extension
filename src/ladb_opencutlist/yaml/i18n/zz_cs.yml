@@ -553,7 +553,7 @@ tab:
       number: 420 - Číslo
       name: 421 - Označení
       count: 422 - Množství
-      cutting: 423 - Zhruba
+      cutting: 423 - Hrubé rozměry
       bbox: 424 - Čisté rozměry
       final: 425 - Aktuální
       total_cutting: 426 - Σ Hrubý odhad
@@ -1662,16 +1662,16 @@ tool:
     action_3_status: 1251 - Kliknutím na plochu naberete její materiál
     action_4: 1252 - Vyčistit díl
     action_4_status: 1253 - Kliknutím na díl odstraníte všechny materiály z tohoto dílu
-    action_option_group_instances: 1254 - Počet instancí
+    action_option_group_instances: 1254 - Počet dílů
     action_option_group_edges: 1255 - Počet hranování
     action_option_group_faces: 1256 - Počet ploch
-    action_option_instances_0_status: 1257 - Vybarvy pouze instanci označeného dílu
+    action_option_instances_0_status: 1257 - Vybarví pouze označený dílec
     action_option_instances_1_status: 1258 - Vybarví pouze instanci označeného dílu
     action_option_edges_0_status: 1259 - Vybarví pouze označenou hranu
     action_option_edges_1_status: 1260 - Vybarví označenou hranu a protilehlou hranu dílu
-    action_option_edges_2_status: 1261 - Vybarvěte 4 hrany označeného dílu
-    action_option_faces_0_status: 1262 - Vybarvěte pouze označenou plochu
-    action_option_faces_1_status: 1263 - Vybarvěte 2 plochy označeného dílu
+    action_option_edges_2_status: 1261 - Vybarví 4 hrany označeného dílu
+    action_option_faces_0_status: 1262 - Vybarví pouze označenou plochu
+    action_option_faces_1_status: 1263 - Vybarví 2 plochy označeného dílu
     edges: 1264 - {{ count }} hrana
     edges_plural: 1265 - {{ count }} hran
     edge_ymin: 1266 - Délka 1
@@ -1704,9 +1704,9 @@ tool:
     action_option_direction_0: 1290 - D
     action_option_direction_1: 1291 - Š
     action_option_direction_2: 1292 - T
-    action_option_direction_0_status: 1293 - Otočte díl podélně
-    action_option_direction_1_status: 1294 - Otočte díl na šířku
-    action_option_direction_2_status: 1295 - Otočte díl v jeho tloušťce - na ruby
+    action_option_direction_0_status: 1293 - Překlopit díl podélně
+    action_option_direction_1_status: 1294 - Překlopit díl příčně
+    action_option_direction_2_status: 1295 - Překlopit díl v jeho tloušťce - na ruby
     warning:
       more_entities: 1296 - {{ count_used }} instancí sdílejících stejnou definici bude upraveno
     error:

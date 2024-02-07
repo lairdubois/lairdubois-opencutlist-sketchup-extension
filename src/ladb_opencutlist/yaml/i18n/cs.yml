@@ -548,7 +548,7 @@ tab:
       number: Číslo
       name: Označení
       count: Množství
-      cutting: Zhruba
+      cutting: Hrubé rozměry
       bbox: Čisté rozměry
       final: Aktuální
       total_cutting: Σ Hrubý odhad
@@ -1626,16 +1626,16 @@ tool:
     action_3_status: Kliknutím na plochu naberete její materiál
     action_4: Vyčistit díl
     action_4_status: Kliknutím na díl odstraníte všechny materiály z tohoto dílu
-    action_option_group_instances: Počet instancí
+    action_option_group_instances: Počet dílů
     action_option_group_edges: Počet hranování
     action_option_group_faces: Počet ploch
-    action_option_instances_0_status: Vybarvy pouze instanci označeného dílu
+    action_option_instances_0_status: Vybarví pouze označený dílec
     action_option_instances_1_status: Vybarví pouze instanci označeného dílu
     action_option_edges_0_status: Vybarví pouze označenou hranu
     action_option_edges_1_status: Vybarví označenou hranu a protilehlou hranu dílu
-    action_option_edges_2_status: Vybarvěte 4 hrany označeného dílu
-    action_option_faces_0_status: Vybarvěte pouze označenou plochu
-    action_option_faces_1_status: Vybarvěte 2 plochy označeného dílu
+    action_option_edges_2_status: Vybarví 4 hrany označeného dílu
+    action_option_faces_0_status: Vybarví pouze označenou plochu
+    action_option_faces_1_status: Vybarví 2 plochy označeného dílu
     edges: "{{ count }} hrana"
     edges_plural: "{{ count }} hran"
     edge_ymin: Délka 1
@@ -1668,9 +1668,9 @@ tool:
     action_option_direction_0: D
     action_option_direction_1: Š
     action_option_direction_2: T
-    action_option_direction_0_status: Otočte díl podélně
-    action_option_direction_1_status: Otočte díl na šířku
-    action_option_direction_2_status: Otočte díl v jeho tloušťce - na ruby
+    action_option_direction_0_status: Překlopit díl podélně
+    action_option_direction_1_status: Překlopit díl příčně
+    action_option_direction_2_status: Překlopit díl v jeho tloušťce - na ruby
     warning:
       more_entities: "{{ count_used }} instancí sdílejících stejnou definici bude upraveno"
     error:
