@@ -472,7 +472,8 @@ module Ladb::OpenCutList
     end
 
     def _get_part_projection_def(part)
-      _compute_part_projection_def(@part_drawing_type, part.def.cutlist_part, @_projection_defs,
+      _compute_part_projection_def(@part_drawing_type, part.def.cutlist_part,
+                                   projection_defs_cache: @_projection_defs,
                                    ignore_edges: !@include_paths,
                                    merge_holes: @merge_holes,
                                    use_cache: false

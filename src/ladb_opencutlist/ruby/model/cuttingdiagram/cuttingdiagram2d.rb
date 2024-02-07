@@ -26,7 +26,7 @@ module Ladb::OpenCutList
       @to_keep_leftovers = _def.to_keep_leftover_defs.values.map { |leftover_def| leftover_def.create_listed_leftover }.sort_by { |leftover| [ -leftover.def.area, -leftover.def.length ] }
 
       @projections = _def.projection_defs.map { |part_id, projection_def| [ part_id, projection_def.layer_defs.map { |layer_def| { :depth => layer_def.depth, :path => "#{layer_def.poly_defs.map { |poly_def| "M #{poly_def.points.map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y).round(2)}" }.join(' L ')} Z" }.join(' ')}" } } ] }.to_h
-
+      
     end
 
   end
