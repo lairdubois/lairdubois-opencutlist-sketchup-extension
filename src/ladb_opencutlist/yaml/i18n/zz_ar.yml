@@ -94,6 +94,7 @@ core:
   messagebox:
     dir_override: |
       88 - « {{ target }} » موجود مسبقا. هل ترغب في استبداله؟
+
       هناك مجلد بنفس الاسم في المجلد {{ parent }}. إن استبدلته، ستفقد المحتوى الأصلي
   savepanel:
     export_to_file: 89 - التصدير إلى ملف {{ file_format }}
