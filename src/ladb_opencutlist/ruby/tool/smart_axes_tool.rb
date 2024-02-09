@@ -245,8 +245,7 @@ module Ladb::OpenCutList
 
         model = Sketchup.active_model
 
-        # Show part infos
-        show_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name, '-', _get_active_part_size, _get_active_part_icons ])
+        tooltip_type = MESSAGE_TYPE_DEFAULT
 
         # Create drawing helpers
 
@@ -285,7 +284,12 @@ module Ladb::OpenCutList
           part_helper.append(mesh)
 
           t = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
-          unless (t * part.def.size.oriented_transformation).identity?
+          if (t * part.def.size.oriented_transformation).identity?
+
+            # Already adapted
+            tooltip_type = MESSAGE_TYPE_SUCCESS
+
+          else
 
             show_axes = false
 
@@ -449,6 +453,9 @@ module Ladb::OpenCutList
           @space.append(mesh)
 
         end
+
+        # Show part infos
+        show_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name, '-', _get_active_part_size, _get_active_part_icons ], tooltip_type)
 
         # Status
 
