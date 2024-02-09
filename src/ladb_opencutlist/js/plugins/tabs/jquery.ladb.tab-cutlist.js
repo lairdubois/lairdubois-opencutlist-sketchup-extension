@@ -1256,7 +1256,7 @@
                             });
                             return false;
                         });
-                        $('a.ladb-btn-open-part-url', $slide).on('click', function () {
+                        $('a.ladb-btn-open-part-url, a.ladb-btn-open-material-url', $slide).on('click', function () {
                             $(this).blur();
                             rubyCallCommand('core_open_url', { url: $(this).attr('href') });
                             return false;
