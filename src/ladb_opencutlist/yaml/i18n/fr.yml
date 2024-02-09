@@ -292,7 +292,7 @@ tab:
       material_origin_1: La matière prise en compte pour cette pièce est définie sur ses instances
       material_origin_2: La matière prise en compte pour cette pièce est actuellement héritée de l'un de ses éléments parents
       material_origin_3: La matière prise en compte pour cette pièce est actuellement extraite de ses éléments enfants
-      orientation_locked_on_axis: L'orientation de cette pièce est vérouillée sur ses axes
+      orientation_locked_on_axis: L'orientation de cette pièce est verrouillée sur ses axes
       number_saved: Le numéro de cette pièce est enregistré
       number_hidden: "Le numéro '{{ number }}' enregistré sur cette pièce ne peut être utilisé car il est déjà attribué"
       number_generated: Le numéro de cette pièce est généré automatiquement
@@ -566,7 +566,7 @@ tab:
       info_0: |
         Cette fonctionnalité vous permet d'exporter votre *fiche de débit* sous forme d'une *liste de pièces* dans un fichier au format [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
       customize_help: |
-        Réordonnez, Masquez, Ajoutez, Retirer ou Sélectionnez un colonne dans la liste pour personnaliser son **titre** et la **formule** générant la valeur affichée pour chaque ligne exportée.
+        Réordonnez, Masquez, Ajoutez, Retirez ou Sélectionnez une colonne dans la liste pour personnaliser son **titre** et la **formule** générant la valeur affichée pour chaque ligne exportée.
       add_column: Ajouter une colonne
       add_native_columns: Ajouter une colonne native
       remove_column: Retirer
@@ -748,7 +748,7 @@ tab:
       option_optimization_1: Avancé
       option_stacking: Empiler les pièces identiques
       option_stacking_help: Direction d'empilement des pièces ayant une longueur ou une largeur commune.
-      option_stacking_0: Aucune préference
+      option_stacking_0: Aucune préférence
       option_stacking_1: Sur la longueur
       option_stacking_2: Sur la largeur
       option_stacking_3: Toutes les possibilités
@@ -868,7 +868,7 @@ tab:
           Permet d'activer l'exportation de la feuille ainsi que de choisir ses couleurs.
         option_bar_dimensional: Barre
         option_bar_dimensional_help: |
-          Permet d'activer l'exportation da la barre ainsi que de choisir ses couleurs.
+          Permet d'activer l'exportation de la barre ainsi que de choisir ses couleurs.
         option_bar_band: Bande
         option_bar_band_help: |
           Permet d'activer l'exportation de la bande ainsi que de choisir ses couleurs.
@@ -967,14 +967,14 @@ tab:
         part_cutting_size: Taille de débit
         part_cutting_length: Longueur de débit
         part_cutting_width: Largeur de débit
-        part_cutting_thickness: Epaisseur de débit
+        part_cutting_thickness: Épaisseur de débit
         part_edge_cutting_size: Taille débit chants
         part_edge_cutting_length: Longueur débit chants
         part_edge_cutting_width: Largeur débit chants
         part_size: Taille capable
         part_length: Longueur capable
         part_width: Largeur capable
-        part_thickness: Epaisseur capable
+        part_thickness: Épaisseur capable
         part_tags: Badges
         part_batch: Lot
         part_edge_ymin: Chant longueur 1
@@ -995,7 +995,7 @@ tab:
         length_unit: Unité
         generated_at: Date et heure
       error:
-        invalid_size: Les paramètres de configuration saisient ne permettent pas de définir une taille de d'étiquette valide.
+        invalid_size: Les paramètres de configuration saisis ne permettent pas de définir une taille d'étiquette valide.
       warning:
         is_part_selection: Ces étiquettes se limitent aux **pièces sélectionnées**.
         formula_not_available: Non disponible dans ce context
@@ -1059,9 +1059,9 @@ tab:
       option_camera_target: Position
       option_camera_target_auto: Automatique
       option_camera_target_custom: Personnalisée
-      option_explode: Eclaté
+      option_explode: Éclaté
       error:
-        no_part: Il y a aucune pièce à dessiner.
+        no_part: Il n'y a aucune pièce à dessiner.
         failed_to_save_as_skp: Echec de l'écriture du fichier SKP à envoyer à Layout.
         failed_to_layout: |
           Erreur lors de l'écriture du fichier Layout : *{{ error }}*
@@ -1222,7 +1222,7 @@ tab:
       attributes: Attributs
       thickness: Épaisseur
       thickness_help: |
-        Epaisseur finie de la matière.
+        Épaisseur finie de la matière.
         *Si aucune unité n'est spécifiée, l'unité du modèle sera prise en compte.*
       length_increase: Surcote de longueur
       length_increase_help: Surcote appliquée sur la longueur capable pour définir la **longueur de débit**.
@@ -1259,17 +1259,17 @@ tab:
       grained_help: Permet d'indiquer l'orientation du fil de surface par rapport à la longueur du panneau.
       grained_0: Pas de fil
       grained_1: Le fil suit la longueur
-      edge_decremented: Reduction
+      edge_decremented: Réduction
       edge_decremented_help: Permet d'indiquer si les dimensions de débit des pièces doivent être réduites de l'épaisseur des chants.
       edge_decremented_0: Pas de réduction
       edge_decremented_1: Réduire le débit de l'épaisseur du chant
       raw_estimated: Volume utilisé
-      raw_estimated_help: | 
+      raw_estimated_help: |
         Permet de définir le volume utilisé pour estimer la masse et le coût total des pièces de cette matière.
-        
+
         **Volume débité utile**
         Le volume total sera la somme des volumes de débit des pièces.
-        
+
         **Volume de matière première nécessaire**
         Le volume total sera la somme des volumes des panneaux, feuilles, barres ou bandes des pièces après calepinage.
       raw_estimated_0: Volume débité utile
@@ -1333,7 +1333,7 @@ tab:
       preview: Aperçu
       name: Nom
       instance_name: Instance
-      definition_name: Definition
+      definition_name: Définition
       description: Description
       url: URL
       layer_name: Balise
@@ -1432,7 +1432,7 @@ tab:
     label: Tutoriels
     title: Tutoriels
     help: |
-      Retrouvez ici une liste non exhautive de vidéos réalisées par la communauté autour de l'utilisation d'*OpenCutList*.
+      Retrouvez ici une liste non exhaustive de vidéos réalisées par la communauté autour de l'utilisation d'*OpenCutList*.
     submit: Proposer une vidéo
     submit_info: |
       Vous avez réalisé une vidéo de présentation de l'utilisation d'**OpenCutList** et vous souhaitez la voir apparaitre ici ?

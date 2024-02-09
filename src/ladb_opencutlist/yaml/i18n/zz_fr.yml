@@ -290,7 +290,7 @@ tab:
       material_origin_1: 216 - La matière prise en compte pour cette pièce est définie sur ses instances
       material_origin_2: 217 - La matière prise en compte pour cette pièce est actuellement héritée de l'un de ses éléments parents
       material_origin_3: 218 - La matière prise en compte pour cette pièce est actuellement extraite de ses éléments enfants
-      orientation_locked_on_axis: 219 - L'orientation de cette pièce est vérouillée sur ses axes
+      orientation_locked_on_axis: 219 - L'orientation de cette pièce est verrouillée sur ses axes
       number_saved: 220 - Le numéro de cette pièce est enregistré
       number_hidden: 221 - Le numéro '{{ number }}' enregistré sur cette pièce ne peut être utilisé car il est déjà attribué
       number_generated: 222 - Le numéro de cette pièce est généré automatiquement
@@ -571,7 +571,7 @@ tab:
       info_0: '437 - Cette fonctionnalité vous permet d''exporter votre *fiche de débit* sous forme d''une *liste de pièces* dans un fichier au format [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
 
         '
-      customize_help: '438 - Réordonnez, Masquez, Ajoutez, Retirer ou Sélectionnez un colonne dans la liste pour personnaliser son **titre** et la **formule** générant la valeur affichée pour chaque ligne exportée.
+      customize_help: '438 - Réordonnez, Masquez, Ajoutez, Retirez ou Sélectionnez une colonne dans la liste pour personnaliser son **titre** et la **formule** générant la valeur affichée pour chaque ligne exportée.
 
         '
       add_column: 439 - Ajouter une colonne
@@ -758,7 +758,7 @@ tab:
       option_optimization_1: 600 - Avancé
       option_stacking: 601 - Empiler les pièces identiques
       option_stacking_help: 602 - Direction d'empilement des pièces ayant une longueur ou une largeur commune.
-      option_stacking_0: 603 - Aucune préference
+      option_stacking_0: 603 - Aucune préférence
       option_stacking_1: 604 - Sur la longueur
       option_stacking_2: 605 - Sur la largeur
       option_stacking_3: 606 - Toutes les possibilités
@@ -880,7 +880,7 @@ tab:
 
           '
         option_bar_dimensional: 697 - Barre
-        option_bar_dimensional_help: '698 - Permet d''activer l''exportation da la barre ainsi que de choisir ses couleurs.
+        option_bar_dimensional_help: '698 - Permet d''activer l''exportation de la barre ainsi que de choisir ses couleurs.
 
           '
         option_bar_band: 699 - Bande
@@ -987,14 +987,14 @@ tab:
         part_cutting_size: 779 - Taille de débit
         part_cutting_length: 780 - Longueur de débit
         part_cutting_width: 781 - Largeur de débit
-        part_cutting_thickness: 782 - Epaisseur de débit
+        part_cutting_thickness: 782 - Épaisseur de débit
         part_edge_cutting_size: 783 - Taille débit chants
         part_edge_cutting_length: 784 - Longueur débit chants
         part_edge_cutting_width: 785 - Largeur débit chants
         part_size: 786 - Taille capable
         part_length: 787 - Longueur capable
         part_width: 788 - Largeur capable
-        part_thickness: 789 - Epaisseur capable
+        part_thickness: 789 - Épaisseur capable
         part_tags: 790 - Badges
         part_batch: 791 - Lot
         part_edge_ymin: 792 - Chant longueur 1
@@ -1015,7 +1015,7 @@ tab:
         length_unit: 807 - Unité
         generated_at: 808 - Date et heure
       error:
-        invalid_size: 809 - Les paramètres de configuration saisient ne permettent pas de définir une taille de d'étiquette valide.
+        invalid_size: 809 - Les paramètres de configuration saisis ne permettent pas de définir une taille d'étiquette valide.
       warning:
         is_part_selection: 810 - Ces étiquettes se limitent aux **pièces sélectionnées**.
         formula_not_available: 811 - Non disponible dans ce context
@@ -1079,9 +1079,9 @@ tab:
       option_camera_target: 866 - Position
       option_camera_target_auto: 867 - Automatique
       option_camera_target_custom: 868 - Personnalisée
-      option_explode: 869 - Eclaté
+      option_explode: 869 - Éclaté
       error:
-        no_part: 870 - Il y a aucune pièce à dessiner.
+        no_part: 870 - Il n'y a aucune pièce à dessiner.
         failed_to_save_as_skp: 871 - Echec de l'écriture du fichier SKP à envoyer à Layout.
         failed_to_layout: |
           872 - Erreur lors de l'écriture du fichier Layout : *{{ error }}*
@@ -1253,7 +1253,7 @@ tab:
       attributes: 984 - Attributs
       thickness: 985 - Épaisseur
       thickness_help: |
-        986 - Epaisseur finie de la matière.
+        986 - Épaisseur finie de la matière.
         *Si aucune unité n'est spécifiée, l'unité du modèle sera prise en compte.*
       length_increase: 987 - Surcote de longueur
       length_increase_help: 988 - Surcote appliquée sur la longueur capable pour définir la **longueur de débit**.
@@ -1290,7 +1290,7 @@ tab:
       grained_help: 1009 - Permet d'indiquer l'orientation du fil de surface par rapport à la longueur du panneau.
       grained_0: 1010 - Pas de fil
       grained_1: 1011 - Le fil suit la longueur
-      edge_decremented: 1012 - Reduction
+      edge_decremented: 1012 - Réduction
       edge_decremented_help: 1013 - Permet d'indiquer si les dimensions de débit des pièces doivent être réduites de l'épaisseur des chants.
       edge_decremented_0: 1014 - Pas de réduction
       edge_decremented_1: 1015 - Réduire le débit de l'épaisseur du chant
@@ -1365,7 +1365,7 @@ tab:
       preview: 1061 - Aperçu
       name: 1062 - Nom
       instance_name: 1063 - Instance
-      definition_name: 1064 - Definition
+      definition_name: 1064 - Définition
       description: 1065 - Description
       url: 1066 - URL
       layer_name: 1067 - Balise
@@ -1463,7 +1463,7 @@ tab:
   tutorials:
     label: 1132 - Tutoriels
     title: 1133 - Tutoriels
-    help: '1134 - Retrouvez ici une liste non exhautive de vidéos réalisées par la communauté autour de l''utilisation d''*OpenCutList*.
+    help: '1134 - Retrouvez ici une liste non exhaustive de vidéos réalisées par la communauté autour de l''utilisation d''*OpenCutList*.
 
       '
     submit: 1135 - Proposer une vidéo
