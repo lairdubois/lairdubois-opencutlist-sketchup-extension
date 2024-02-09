@@ -4,10 +4,18 @@ module Ladb::OpenCutList
 
     def _sanitize_filename(filename)
       filename = filename
-                   .gsub("\\", "/")
                    .gsub(/\//, '∕')
-                   .gsub(/꞉/, '')
                    .gsub(/\./, '_')
+                   .gsub("\\", ' ')
+                   .gsub(/</, ' ')
+                   .gsub(/>/, ' ')
+                   .gsub(/:/, ' ')
+                   .gsub(/"/, ' ')
+                   .gsub(/\|/, ' ')
+                   .gsub(/\?/, ' ')
+                   .gsub(/\*/, ' ')
+                   .gsub(/\s+/, ' ')
+                   .strip
       filename
     end
 
