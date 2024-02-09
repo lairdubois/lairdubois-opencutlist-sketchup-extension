@@ -439,7 +439,7 @@ tab:
         '
       size_increase: 333 - Oversizes
       size_increase_help: |
-        334 - Oversizes increase the dimensions of a single part.
+        334 - Oversizes increase the raw dimensions of a single part.
         (*Example: Oversize for a baseboard or a scribe molding that should be adjusted at assembly.*)
       length_increase: 335 - Length Oversize
       length_increase_help: 336 - Oversize is applied to the final length to define the **raw length**.
@@ -468,14 +468,14 @@ tab:
     option:
       auto_orient: 355 - Automatic orientation of parts
       auto_orient_help: |
-        356 - If this option is selected, the 3 dimensions of the parts are sorted so that the largest value represents the *length* and the smallest the *thickness*.
+        356 - If this option is selected, the three dimensions of parts are sorted so that the largest represents *length* and the smallest *thickness*.
 
         Otherwise,
          - the *length* is read on the <span style='color:red'>red</span> axis,
          - the *width* on the <span style='color:green'>green</span> axis and
          - the *thickness* on the <span style='color:blue'>blue</span> axis
       flipped_detection: 357 - Detection of mirrored parts
-      flipped_detection_help: '358 - If this option is selected, mirrored parts will be detected and displayed as a distinct part.
+      flipped_detection_help: '358 - If this option is selected, mirrored parts will be detected and displayed as distinct parts.
 
         '
       smart_material: 359 - *Smart* assignment of material
@@ -484,7 +484,7 @@ tab:
       dynamic_attributes_name_help: |
         362 - If this option is selected, the designation of parts will be extracted from the attribute *Name*, if defined.
 
-        <i class='ladb-opencutlist-icon-warning'></i> Instances of parts with the same definition will be separated if the attribute *Name* does not have the same value.
+        <i class='ladb-opencutlist-icon-warning'></i> Part instances with the same component definition will be separated if the attribute *Name* does not have the same value.
       part_number_with_letters: 363 - Use letters to enumerate parts
       part_number_with_letters_help: 364 - If this option is selected, parts are enumerated using letters (A, B, C, ... Z, AA, AB, ...).
       part_number_sequence_by_group: 365 - Reset the enumeration of parts for each group
@@ -612,7 +612,7 @@ tab:
       cutting_width: 470 - Width - raw
       cutting_thickness: 471 - Thickness - raw
       edge_cutting_length: 472 - Length edges - raw
-      edge_cutting_width: 473 - Width edges - rough
+      edge_cutting_width: 473 - Width edges - raw
       bbox_length: 474 - Length
       bbox_width: 475 - Width
       bbox_thickness: 476 - Thickness
@@ -682,7 +682,7 @@ tab:
         not_enough_data: |
           531 - For this estimate to be calculated correctly:
           - the used materials must have at least a density and a price.
-          - the used accessories must have at least a density and a price.
+          - the used accessories must have at least a weight and a price.
     cuttingdiagram:
       title: 532 - Cutting Diagram
       start_msg: 533 - Optimization running

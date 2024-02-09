@@ -682,7 +682,7 @@ tab:
         not_enough_data: |
           531 - Damit sich diese Kalkulation richtig berechnen lässt, müssen:
           - die verwendeten Materialien mindestens eine Dichte und einen Preis haben.
-          - die verwendeten Zubehöre mindestens eine Dichte und einen Preis haben.
+          - die verwendeten Zubehöre mindestens ein Gewicht und einen Preis haben.
     cuttingdiagram:
       title: 532 - Schnittplan
       start_msg: 533 - Optimierung läuft

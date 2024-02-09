@@ -436,7 +436,7 @@ tab:
         If this option is selected, the grain orientation of the material will be ignored for this part.
       size_increase: Oversizes
       size_increase_help: |
-        Oversizes increase the dimensions of a single part.
+        Oversizes increase the raw dimensions of a single part.
         (*Example: Oversize for a baseboard or a scribe molding that should be adjusted at assembly.*)
       length_increase: Length Oversize
       length_increase_help: Oversize is applied to the final length to define the **raw length**.
@@ -465,7 +465,7 @@ tab:
     option:
       auto_orient: Automatic orientation of parts
       auto_orient_help: |
-        If this option is selected, the 3 dimensions of the parts are sorted so that the largest value represents the *length* and the smallest the *thickness*.
+        If this option is selected, the three dimensions of parts are sorted so that the largest represents *length* and the smallest *thickness*.
 
         Otherwise,
          - the *length* is read on the <span style='color:red'>red</span> axis,
@@ -473,14 +473,14 @@ tab:
          - the *thickness* on the <span style='color:blue'>blue</span> axis
       flipped_detection: Detection of mirrored parts
       flipped_detection_help: |
-        If this option is selected, mirrored parts will be detected and displayed as a distinct part.
+        If this option is selected, mirrored parts will be detected and displayed as distinct parts.
       smart_material: "*Smart* assignment of material"
       smart_material_help: "If this option is selected, parts without defined material may be assigned the material assigned to one of their parent or child."
       dynamic_attributes_name: Use the attribute *Name* of dynamic components
       dynamic_attributes_name_help: |
         If this option is selected, the designation of parts will be extracted from the attribute *Name*, if defined.
 
-        <i class='ladb-opencutlist-icon-warning'></i> Instances of parts with the same definition will be separated if the attribute *Name* does not have the same value.
+        <i class='ladb-opencutlist-icon-warning'></i> Part instances with the same component definition will be separated if the attribute *Name* does not have the same value.
       part_number_with_letters: Use letters to enumerate parts
       part_number_with_letters_help: "If this option is selected, parts are enumerated using letters (A, B, C, ... Z, AA, AB, ...)."
       part_number_sequence_by_group: Reset the enumeration of parts for each group
@@ -603,7 +603,7 @@ tab:
       cutting_width: Width - raw
       cutting_thickness: Thickness - raw
       edge_cutting_length: Length edges - raw
-      edge_cutting_width: Width edges - rough
+      edge_cutting_width: Width edges - raw
       bbox_length: Length
       bbox_width: Width
       bbox_thickness: Thickness
@@ -672,7 +672,7 @@ tab:
         not_enough_data: |
           For this estimate to be calculated correctly:
           - the used materials must have at least a density and a price.
-          - the used accessories must have at least a density and a price.
+          - the used accessories must have at least a weight and a price.
     cuttingdiagram:
       title: Cutting Diagram
       start_msg: Optimization running
