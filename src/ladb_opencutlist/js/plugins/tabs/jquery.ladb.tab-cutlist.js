@@ -4183,7 +4183,8 @@
                                                 var fnUpdateFieldsVisibility = function () {
                                                     var isDxf = $selectFileFormat.val() === 'dxf';
                                                     var isMergeHoles = $selectMergeHoles.val() === '1';
-                                                    var isIncludePaths = $selectIncludePaths.val() === '1';                                                    var isSheetHidden = !$inputSheetHidden.is(':checked');
+                                                    var isIncludePaths = $selectIncludePaths.val() === '1';
+                                                    var isSheetHidden = !$inputSheetHidden.is(':checked');
                                                     var isPartsHidden = !$inputPartsHidden.is(':checked');
                                                     var isTextsHidden = !$inputTextsHidden.is(':checked');
                                                     var isLeftoversHidden = !$inputLeftoversHidden.is(':checked');
