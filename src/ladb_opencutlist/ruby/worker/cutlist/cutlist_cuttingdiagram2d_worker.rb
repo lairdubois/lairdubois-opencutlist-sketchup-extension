@@ -43,6 +43,12 @@ module Ladb::OpenCutList
 
       @cutlist = cutlist
 
+      # Workaround to hide part preview if group is edge decremented
+      group = @cutlist.get_group(@group_id)
+      if group && group.edge_decremented
+        @part_drawing_type = PART_DRAWING_TYPE_NONE
+      end
+
     end
 
     # -----
