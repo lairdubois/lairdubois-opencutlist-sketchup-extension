@@ -650,7 +650,7 @@ tab:
       warning:
         is_group_selection: 507 - Díly, které jsou ve **skrytých skupinách** kusovníku, se neexportují.
     report:
-      title: 508 - Odhad
+      title: 508 - Kalkulace
       info_0: '509 - Vygenerujte odhad **hmotnosti** a **ceny** **surovin** potřebných k výrobě dílů ze *seznamu dílů*.
 
         '
@@ -1665,7 +1665,7 @@ tool:
     action_option_group_instances: 1254 - Počet dílů
     action_option_group_edges: 1255 - Počet hranování
     action_option_group_faces: 1256 - Počet ploch
-    action_option_instances_0_status: 1257 - Vybarví pouze označený dílec
+    action_option_instances_0_status: 1257 - Vybarví pouze označený díl
     action_option_instances_1_status: 1258 - Vybarví pouze instanci označeného dílu
     action_option_edges_0_status: 1259 - Vybarví pouze označenou hranu
     action_option_edges_1_status: 1260 - Vybarví označenou hranu a protilehlou hranu dílu

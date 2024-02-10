@@ -88,9 +88,9 @@ core:
     name: 83 - OpenCutList
     command:
       dialog: 84 - OpenCutList
-      smart_paint: 85 - صباغة القِطع
+      smart_paint: 85 - اصبغ القِطع
       smart_axes: 86 - وجِّه القطع
-      smart_export: 87 - تصدير القِطع
+      smart_export: 87 - صدّر القِطع
   messagebox:
     dir_override: |
       88 - « {{ target }} » موجود مسبقا. هل ترغب في استبداله؟
@@ -135,10 +135,7 @@ core:
     available: |
       109 - هناك نسخة جديدة من *OpenCutList* متوفرة الآن.
       حدّث للحصول إلى آخر الميزات!
-    up_to_date: |
-      110 - لديك حاليا آخر نسخة من *OpenCutList*.
-
-      *ضع في اعتبارك رعاية هذا المشروع لمساعدتنا في إضافة المزيد من الميزات!*
+    up_to_date: "110 - *OpenCutList* لديك حاليا آخر نسخة من \n\n*ضع في اعتبارك رعاية هذا المشروع لمساعدتنا في إضافة المزيد من الميزات!*\n"
     downloading: 111 - التحميل جارٍ
     changelog: 112 - ما الجديد؟
     ignore_update: 113 - تجاوز هذا التحديث
@@ -1725,10 +1722,10 @@ tool:
     action_option_group_unit: 1309 - الوحدة
     action_option_group_faces: 1310 - الوجوه
     action_option_group_options: 1311 - الخيارات
-    action_option_file_format_dxf_status: 1312 - تصدير إلى ملف DXF
-    action_option_file_format_stl_status: 1313 - تصدير إلى ملف STL
-    action_option_file_format_obj_status: 1314 - تصدير إلى ملف OBJ
-    action_option_file_format_svg_status: 1315 - تصدير إلى ملف SVG
+    action_option_file_format_dxf_status: 1312 -  DXF تصدير إلى ملف
+    action_option_file_format_stl_status: '1313 - STL تصدير إلى ملف '
+    action_option_file_format_obj_status: '1314 - OBJ تصدير إلى ملف '
+    action_option_file_format_svg_status: '1315 - SVG تصدير إلى ملف '
     action_option_unit_0_status: "$t(default.unit_0)"
     action_option_unit_1_status: "$t(default.unit_1)"
     action_option_unit_2_status: "$t(default.unit_2)"
