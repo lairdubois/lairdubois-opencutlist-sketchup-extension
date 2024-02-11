@@ -491,7 +491,7 @@ tab:
       part_number_sequence_by_group_help: 366 - Wanneer deze optie ingeschakeld is, dan wordt de nummering van de onderdelen hernomen van 1 (of A) voor elke groep (lijst van onderdelen van hetzelfde materiaal en dezelfde bruto dikte).
       part_folding: 367 - Groepeer identieke onderdelen
       part_folding_help: |
-        368 - Wanneer deze optie geselecteerd is, dan zullen onderdelen van **dezelfde geschikte grootte**, met **dezelfde badges** en **hetzelfde afgewerkte oppervlak** *(als de weergave van dit oppervlak niet verborgen is)* gegroepeerd worden op éénzelfde lijn.
+        368 - Wanneer deze optie geselecteerd is, dan zullen onderdelen van **dezelfde geschikte grootte**, met **dezelfde afmetingen**, met **dezelfde badges** en **hetzelfde afgewerkte oppervlak** *(als de weergave van dit oppervlak niet verborgen is)* gegroepeerd worden op éénzelfde lijn in het *snijblad*.
 
         De onderdelen worden nog steeds als verschillend beschouwd voor labels en zaagplannen.
       hide_entity_names: 369 - Verberg instantie namen
@@ -642,7 +642,7 @@ tab:
       model_name: 500 - Naam van het model
       model_description: 501 - Model Beschrijving
       page_name: 502 - Naam van de scène
-      page_description: '503 - '
+      page_description: 503 - Beschrijving van de scène
       placeholder:
         no_column_title: 504 - Voer een titel in
         no_column_formula_native: 505 - Beginwaarde van kolom '{{ col_name }}'
@@ -671,7 +671,7 @@ tab:
       total_area: 524 - Σ Oppervlaktes
       total_length: 525 - Σ Lengtes
       tooltip:
-        incompatible_unit: '526 - '
+        incompatible_unit: 526 - Eenheid incompatibel met materiaalschattingsopties
       error:
         no_typed_material_parts: 527 - Geen onderdeel met een gedefinieerde materiaalsoort (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** of **$t(tab.materials.type_5)**) is verstrekt om het rapport te genereren.
         entry_error: '528 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} fout**.'
@@ -739,10 +739,10 @@ tab:
       option_hide_edges_preview_0: 584 - Weergegeven in het zaagschema
       option_hide_edges_preview_1: 585 - Verborgen in het zaagschema
       option_hide_edges_preview_help: 586 - Hiermee kunt u de visuele weergave van de kantenbanden voor elk onderdeel in het zaagschema tonen of verbergen.
-      option_part_drawing_type: '587 - '
-      option_part_drawing_type_0: '588 - '
-      option_part_drawing_type_1: '589 - '
-      option_part_drawing_type_2: '590 - '
+      option_part_drawing_type: 587 - Vormen van onderdelen
+      option_part_drawing_type_0: 588 - Gemaskeerd
+      option_part_drawing_type_1: 589 - Getekend vooraanzicht
+      option_part_drawing_type_2: 590 - Getekende weergave Achterkant
       option_part_drawing_type_help: |
         591 - Hiermee kunt u de werkelijke vorm van onderdelen en hun bewerking op het diagram weergeven of verbergen.
 
@@ -762,8 +762,8 @@ tab:
       option_stacking_1: 604 - Over de lengte
       option_stacking_2: 605 - Over de breedte
       option_stacking_3: 606 - Alle mogelijkheden
-      option_keep: '607 - '
-      option_keep_help: '608 - '
+      option_keep: 607 - Minimale valgrootte
+      option_keep_help: 608 - Rest met twee afmetingen groter dan de minimumgrootte worden gemarkeerd met **om te bewaren**.
       option_std_bar_dimensional: 609 - Standaard plank
       option_std_bar_edge: 610 - Standaard kantenband
       option_std_bar_help: |
@@ -799,7 +799,7 @@ tab:
       tooltip:
         scroll_to_block_1d: 627 - Scroll naar de eerste plank of kantenband
         scroll_to_block_2d: 628 - Scroll naar eerste paneel
-        copy_leftovers_to_clipboard: '629 - '
+        copy_leftovers_to_clipboard: 629 - Kopieer klad naar het klembord
       list:
         unplaced_parts: 630 - Ongeplaatste onderdelen
         summary: 631 - Overzicht
@@ -819,9 +819,9 @@ tab:
         overall_efficiency: 645 - Algehele efficiëntie
         efficiency: 646 - Efficiëntie
         leftover: 647 - Overschot
-        leftover_to_keep: '648 - '
-        leftover_to_keep_plural: '649 - '
-        leftover_to_throw_away: '650 - '
+        leftover_to_keep: 648 - Vallen om te houden
+        leftover_to_keep_plural: 649 - Rest om te bewaren
+        leftover_to_throw_away: 650 - Schroot om weg te gooien
         cut: 651 - Snede
         cut_plural: 652 - Sneden
         cut_trimming: 653 - Zuivere snit
@@ -843,14 +843,20 @@ tab:
         parts_plural: 669 - {{ count }} onderdelen
         settings: 670 - Instellingen
       export:
-        title: '671 - '
-        info_0: '672 - '
+        title: 671 - De lay-out exporteren
+        info_0: '672 - Met deze module kunt u de **geometrie** van de *lay-out* exporteren als een lijst met bestanden in [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) of [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
+
+          '
         option_file_format: "$t(tab.cutlist.write.option_file_format)"
         option_file_format_help: "$t(tab.cutlist.write.option_file_format_help)"
-        option_dxf_structure: '675 - '
-        option_dxf_structure_1: '676 - '
-        option_dxf_structure_2: '677 - '
-        option_dxf_structure_help: '678 - '
+        option_dxf_structure: 675 - DXF-structuur
+        option_dxf_structure_1: 676 - Lagen
+        option_dxf_structure_2: 677 - Lagen + Blokken
+        option_dxf_structure_help: |
+          678 - Hiermee kunt u de structuur van het DXF-bestand kiezen.
+
+          - De **Lagen**-structuur tekent alle lijnen plat, waarbij de verschillende soorten lijnen alleen in lagen worden onderscheiden. *Deze structuur biedt betere compatibiliteit met software van derden.*
+          - De structuur **Lagen + Blokken** maakt één blok per stuk en voegt deze blokken net zo vaak in als de stukken worden herhaald. *Deze structuur biedt meer flexibiliteit bij het bewerken van het bestand.*
         option_unit: "$t(tab.cutlist.write.option_unit)"
         option_unit_help: "$t(tab.cutlist.write.option_unit_help)"
         option_smoothing: "$t(tab.cutlist.write.option_smoothing)"
@@ -866,27 +872,45 @@ tab:
         option_include_paths_1: "$t(tab.cutlist.write.option_include_paths_1)"
         option_include_paths_help: "$t(tab.cutlist.write.option_include_paths_help)"
         option_sheet_good: 693 - Paneel
-        option_sheet_good_help: '694 - '
-        option_sheet_veneer: '695 - '
-        option_sheet_veneer_help: '696 - '
+        option_sheet_good_help: '694 - Hiermee kunt u de export van het paneel activeren en de kleuren ervan kiezen.
+
+          '
+        option_sheet_veneer: 695 - Blad
+        option_sheet_veneer_help: '696 - Hiermee kunt u de export van het blad activeren en de kleuren ervan kiezen.
+
+          '
         option_bar_dimensional: 697 - Plank
-        option_bar_dimensional_help: '698 - '
-        option_bar_band: '699 - '
-        option_bar_band_help: '700 - '
+        option_bar_dimensional_help: '698 - Hiermee kunt u de export van de balk activeren en de kleuren ervan kiezen.
+
+          '
+        option_bar_band: 699 - Band
+        option_bar_band_help: '700 - Hiermee kunt u de export van de band activeren en de kleuren ervan kiezen.
+
+          '
         option_parts: 701 - Stukken
-        option_parts_help: '702 - '
-        option_parts_holes: '703 - '
-        option_parts_holes_help: '704 - '
+        option_parts_help: '702 - Hiermee kunt u de export van onderdelen activeren en hun kleuren kiezen.
+
+          '
+        option_parts_holes: 703 - Boringen
+        option_parts_holes_help: '704 - Hiermee kunt u de kleur van de gaten van de onderdelen kiezen.
+
+          '
         option_parts_paths: "$t(tab.cutlist.write.option_parts_paths)"
         option_parts_paths_help: "$t(tab.cutlist.write.option_parts_paths_help)"
-        option_texts: '707 - '
-        option_texts_help: '708 - '
+        option_texts: 707 - Identificaties
+        option_texts_help: '708 - Hiermee kunt u de export van onderdeelidentificatieteksten activeren en de kleuren ervan kiezen.
+
+          '
         option_leftovers: 709 - Overschot
-        option_leftovers_help: '710 - '
+        option_leftovers_help: '710 - Hiermee kunt u de export van klad activeren en de kleuren ervan kiezen.
+
+          '
         option_cuts: 711 - Sneden
-        option_cuts_help: '712 - '
+        option_cuts_help: '712 - Hiermee kunt u de export van uitsneden activeren en de kleur ervan kiezen.
+
+          '
         warning:
-          is_sheet_selection: '713 - '
+          is_sheet_selection: 713 - **Verborgen panelen** worden niet geëxporteerd.
       error:
         no_bar_dimensional: 714 - De standaard plank is niet correct geconfigureerd en er zijn geen overschotten gedefinieerd.
         no_bar_edge: 715 - De standaard kantenband is niet correct geconfigureerd en er zijn geen overschotten gedefinieerd.
@@ -964,7 +988,7 @@ tab:
         part_cutting_length: 780 - Ruwe lengte
         part_cutting_width: 781 - Ruwe breedte
         part_cutting_thickness: 782 - Ruwe dikte
-        part_edge_cutting_size: '783 - '
+        part_edge_cutting_size: 783 - Randstroomgrootte
         part_edge_cutting_length: 784 - Lengte van de randstroom
         part_edge_cutting_width: 785 - Randstroombreedte
         part_size: 786 - Afmeting
@@ -979,7 +1003,7 @@ tab:
         part_edge_xmax: 795 - Kantenband breedte 2
         part_face_zmin: 796 - Fineer achterkant
         part_face_zmax: 797 - Fineer voorzijde
-        thumbnail_proportional_drawing: '798 - '
+        thumbnail_proportional_drawing: 798 - Miniatuurvoorbeeld
         thumbnail_proportional: 799 - Proportionele voorvertoning
         thumbnail_square: 800 - Vierkante voorvertoning
         group_material: 801 - Materiaal / Afmeting
@@ -1060,55 +1084,75 @@ tab:
         no_part: 870 - Er is geen ruimte om te tekenen.
         failed_to_save_as_skp: 871 - Kan het SKP-bestand niet schrijven om naar Layout te verzenden.
         failed_to_layout: |
-          872 - Fout bij het schrijven van het lay-outbestand: *{{ error }}*
+          872 - Fout bij het schrijven van het Layout-bestand *{{ error }}*
 
           **Controleer of het bestand niet geopend is in Layout.**
       warning:
         is_group_selection: 873 - De documenten in de **verborgen groepen** van uw debetblad worden niet getekend.
         is_part_selection: 874 - Deze totaaltekening is beperkt tot **geselecteerde onderdelen**.
     write:
-      title: '875 - '
-      info_2d: '876 - '
-      info_3d: '877 - '
+      title: 875 - Miniatuurvoorbeeld Onderdelen exporteren
+      info_2d: '876 - Miniatuurvoorbeeld Onderdelen exporteren Met deze module kunt u de **2D-projectie** van de onderdelen exporteren als bestanden in(https://wikipedia.org/wiki/Scalable_Vector_Graphics) o [DXF](https://wikipedia.org/wiki/AutoCAD_DXF). [SVG]-formaat
+
+        '
+      info_3d: '877 - Met deze module kunt u de **3D-geometrie** van onderdelen exporteren als bestanden [STL](https://wikipedia.org/wiki/STL_(file_format)) of [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file).
+
+        '
       option_file_format: 878 - Formaat
-      option_file_format_help: '879 - '
+      option_file_format_help: '879 - Hiermee kunt u het bestandsformaat kiezen dat u wilt exporteren.
+
+        '
       option_unit: 880 - Eenheid
-      option_unit_help: '881 - '
-      option_part_drawing_type: '882 - '
-      option_part_drawing_type_help: '883 - '
+      option_unit_help: '881 - Hiermee kunt u de eenheid kiezen die in het geëxporteerde bestand wordt gebruikt.
+
+        '
+      option_part_drawing_type: 882 - Projectie
+      option_part_drawing_type_help: '883 - Hiermee kunt u de geëxporteerde weergave kiezen.
+
+        '
       option_faces: 884 - Fineren
-      option_faces_0: '885 - '
-      option_faces_1: '886 - '
-      option_faces_help: '887 - '
-      option_anchor: '888 - '
-      option_anchor_0: '889 - '
-      option_anchor_1: '890 - '
-      option_anchor_help: '891 - '
-      option_smoothing: '892 - '
+      option_faces_0: 885 - Gebruik alleen het beoogde gezicht.
+      option_faces_1: 886 - Gebruik alle zijden van het onderdeel
+      option_faces_help: "887 - Hiermee kunt u kiezen of er naar de vorm van het onderdeel wordt gezocht op alle vlakken of alleen op het beoogde vlak.\n\n"
+      option_anchor: 888 - Anker
+      option_anchor_0: 889 - Standaard
+      option_anchor_1: 890 - Projecteer de oorsprong van het onderdeel
+      option_anchor_help: '891 - Hiermee kunt u de projectie van de oorsprong van de assen van het onderdeel als ankerpunt activeren.
+
+        '
+      option_smoothing: 892 - Gladmaken
       option_smoothing_0: 893 - Geen enkele
-      option_smoothing_1: '894 - '
-      option_smoothing_help: '895 - '
-      option_merge_holes: '896 - '
-      option_merge_holes_0: '897 - '
-      option_merge_holes_1: '898 - '
-      option_merge_holes_help: '899 - '
-      option_include_paths: '900 - '
+      option_smoothing_1: 894 - Gladde cirkels en bogen (experimenteel)
+      option_smoothing_help: |
+        895 - Hiermee kunt u de detectie van cirkels en bogen activeren.
+
+        *Deze optie detecteert geen andere soorten curven.*
+      option_merge_holes: 896 - Ontleding
+      option_merge_holes_0: 897 - Standaard
+      option_merge_holes_1: 898 - Contour + Piercings + Fusion
+      option_merge_holes_help: |
+        899 - **Standaard**
+        De vorm van het onderdeel wordt geëxporteerd met één laag per diepte.
+
+        **Contour + Gaten + Samenvoegen**
+        Activeert de scheiding van de buitencontour van de onderdelen van hun gaten, evenals de versmelting van de diepten van elke holte.
+      option_include_paths: 900 - Sporen
       option_include_paths_0: 901 - Geen enkele
-      option_include_paths_1: '902 - '
-      option_include_paths_help: '903 - '
+      option_include_paths_1: 902 - Gebruik randen die niet aan een gezicht zijn gekoppeld
+      option_include_paths_help: "903 - Hiermee kunt u het gebruik activeren van randen die niet aan een vlak zijn gekoppeld en wel in het onderdeel zijn opgenomen, en deze als plot exporteren.\n\n"
       option_parts: 904 - Stukken
-      option_parts_help: '905 - '
-      option_parts_holes: '906 - '
-      option_parts_holes_help: '907 - '
-      option_parts_paths: '908 - '
-      option_parts_paths_help: '909 - '
+      option_parts_help: "905 - Hiermee kunt u de kleuren van de onderdelen kiezen.\n\n"
+      option_parts_holes: 906 - Boringen
+      option_parts_holes_help: "907 - Hiermee kunt u de kleuren van de onderdeelgaten kiezen.\n\n"
+      option_parts_paths: 908 - Sporen
+      option_parts_paths_help: "909 - Hiermee kunt u de kleur van de lijnen kiezen.\n\n"
       error:
-        no_part: '910 - '
+        no_part: 910 - Geen onderdelen om te exporteren.
       warning:
         is_group_selection: 911 - Onderdelen in de **gemaskeerde groepen** van uw stuklijst worden niet geëxporteerd.
-        is_part_selection: '912 - '
+        is_part_selection: 912 - Exporteren is beperkt tot **geselecteerde onderdelen**.
     snippet:
-      hello: '913 - '
+      hello: 913 - Hallo
       number: 914 - Nummer
       name: 915 - Beschrijving
       number_and_name: 916 - Nummer en aanduiding
@@ -1129,8 +1173,8 @@ tab:
       no_typed_materials_in_selection: 929 - Uw selectie bevat geen enkel materiaal van het type (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** of **$t(tab.materials.type_5)**).
       export_empty: 930 - Uw export bevat geen enkel onderdeel.
     success:
-      part_selected: '931 - '
-      part_selected_plural: '932 - '
+      part_selected: 931 - {{ count }} deel geselecteerd op het debietblad.
+      part_selected_plural: 932 - {{ count }} munten geselecteerd op de debietblad.
     tip:
       no_component: |
         933 - De onderdelen die u wil weergeven in de *stuklijst* moeten **component** instances zijn.
@@ -1160,7 +1204,7 @@ tab:
       grained_0: "$t(tab.materials.edit_material.grained_0)"
       grained_1: "$t(tab.materials.edit_material.grained_1)"
       grain_direction: 955 - Nerf richting
-      raw_estimated_0: '956 - '
+      raw_estimated_0: 956 - Geschat op basis van het nuttige debiet volume.
       colorized: 957 - Deze tint zal toegepast worden op de textuur van dit materiaal wanneer het in het model toegepast wordt
       texture_load: 958 - Laad een nieuwe textuur
       texture_clear: 959 - Heldere textuur
@@ -1168,7 +1212,7 @@ tab:
       set_current: |
         961 - Kleur delen met '{{ name }}'
          *Dubbelklikken om samen te vouwen*
-      open_url: '962 - '
+      open_url: 962 - Materiaal-URL openen
     menu:
       import_from_skm: 963 - Importeer een materiaal (.skm)
       purge_unused: 964 - Verwijder ongebruikte materialen
@@ -1195,7 +1239,7 @@ tab:
       description: 980 - Beschrijving
       url: 981 - URL
       cut_options: 982 - Onderdelen opties
-      estimate_options: '983 - '
+      estimate_options: 983 - Schattingsopties
       attributes: 984 - Attributen
       thickness: 985 - Dikte
       thickness_help: |
@@ -1240,14 +1284,21 @@ tab:
       edge_decremented_help: 1013 - Laat toe om aan te geven dat de afmetingen van de stuklijst verminderd moeten worden met de diktes van de kantenband.
       edge_decremented_0: 1014 - Geen reductie
       edge_decremented_1: 1015 - Veminder de afmeting met de dikte van de kantenband
-      raw_estimated: '1016 - '
-      raw_estimated_help: '1017 - '
-      raw_estimated_0: '1018 - '
-      raw_estimated_1: '1019 - '
+      raw_estimated: 1016 - Gebruikt volume
+      raw_estimated_help: |
+        1017 - Hiermee kunt u het volume definiëren dat wordt gebruikt om de massa en de totale kosten van de onderdelen van dit materiaal te schatten.
+
+        **Bruikbaar doorvoervolume**
+        Het totale volume is de som van de doorvoervolumes van de onderdelen.
+
+        ** Eerst materiaalvolume nodig**
+        Het totale volume is de som van de volumes van de panelen, platen, staven of strips van de onderdelen na lay-out.
+      raw_estimated_0: 1018 - Nuttige debiet volume.
+      raw_estimated_1: 1019 - Benodigd grondstof volume
       std_attributes_dim_placeholder: 1020 - Kies een afmeting
       std_volumic_masses: 1021 - Dichtheid
-      std_volumic_masses_help: '1022 - '
-      std_volumic_masses_add: '1023 - '
+      std_volumic_masses_help: 1022 - Hiermee kunt u de dichtheid voor alle maten en voor elke standaardmaat van het materiaal definiëren.
+      std_volumic_masses_add: 1023 - Voeg een dichtheid toe
       std_prices: 1024 - Prijs
       std_prices_help: 1025 - Laat toe om de prijs voor alle afmetingen aan te duiden alsook voor elke standaard afmeting van het materiaal.
       std_prices_add: 1026 - Voeg een prijs toe
@@ -1286,39 +1337,41 @@ tab:
       invalid_image_file: 1046 - Ongeldige afbeelding
     obsolete_base: 1047 - Om gesynchroniseerd te blijven moet u de materialen lijst verversen.
   outliner:
-    label: '1048 - '
-    title: '1049 - '
-    list: '1050 - '
-    nodes: '1051 - '
-    part_count: '1052 - '
-    type_0: '1053 - '
-    type_1: '1054 - '
-    type_2: '1055 - '
-    type_3: '1056 - '
+    label: 1048 - Structuur
+    title: 1049 - Structuur
+    list: 1050 - Boomstructuur entiteiten.
+    nodes: 1051 - Instanties
+    part_count: 1052 - Aantal stukken
+    type_0: 1053 - Model
+    type_1: 1054 - Groep
+    type_2: 1055 - Onderdeel
+    type_3: 1056 - Stuk
     tooltip:
-      open_node_url: '1057 - '
+      open_node_url: 1057 - Open instantie-URL
     edit_node:
-      title_model: '1058 - '
-      title_instance: '1059 - '
+      title_model: 1058 - Modeleigenschappen
+      title_instance: 1059 - **{{ name }}** instantie-eigenschappen
       general: 1060 - Algemeen
       preview: 1061 - In zicht
       name: 1062 - Beschrijving
       instance_name: 1063 - Instantie
-      definition_name: '1064 - '
+      definition_name: 1064 - Definitie
       description: 1065 - Beschrijving
       url: 1066 - URL
       layer_name: 1067 - Tag
-      explode: '1068 - '
-      explode_message: '1069 - '
+      explode: 1068 - Uitbarsten/ splitsing 
+      explode_message: 1069 - Bevestigt u de splitsing van de **{{ name }}** instantie?
     error:
       no_model: 1070 - Er is geen enkel model open. U moet me wat meer informatie geven ;)
-      no_entities: '1071 - '
-      node_not_found: '1072 - '
-      entity_not_found: '1073 - '
-      obsolete_outliner: '1074 - '
+      no_entities: 1071 - Je model is leeg!
+      node_not_found: 1072 - Knooppunt niet gevonden
+      entity_not_found: 1073 - Instantie niet gevonden
+      obsolete_outliner: 1074 - Onmogelijk, de gegenereerde structuur is verouderd. Regenereer daar.
     tip:
-      no_node: '1075 - '
-    obsolete_base: '1076 - '
+      no_node: |
+        1075 - Uw model heeft momenteel geen instanties om hier weer te geven.
+        Een instantie is een **groep** of **component** die in de scène is geplaatst.
+    obsolete_base: 1076 - Om gesynchroniseerd te blijven, moet u de structuur opnieuw genereren.
   importer:
     label: 1077 - Importeren
     title: 1078 - Onderdelen importeren
@@ -1483,9 +1536,9 @@ tab:
     print_margin: 1177 - Marges afdrukken
     print_margin_normal: 1178 - Normale
     print_margin_small: 1179 - Kleine
-    table_row_size: '1180 - '
+    table_row_size: 1180 - Grootte van tabelrijen
     table_row_size_normal: 1181 - Normaal
-    table_row_size_compact: '1182 - '
+    table_row_size_compact: 1182 - Compact
     size_and_position: 1183 - Grootte en positie van het venster
     model_settings: 1184 - Modelinstellingen
     length_unit: 1185 - Lengte-eenheid
@@ -1604,16 +1657,16 @@ tool:
     action_3_status: 1251 - Klik op een gezicht om een ​​monster van het materiaal te nemen
     action_4: 1252 - Schoonmaken
     action_4_status: 1253 - Klik op een onderdeel om alle materialen en alle instanties ervan uit de definitie te verwijderen
-    action_option_group_instances: '1254 - '
+    action_option_group_instances: 1254 - Aantal exemplaren
     action_option_group_edges: 1255 - Aantal kantenbanden
-    action_option_group_faces: '1256 - '
-    action_option_instances_0_status: '1257 - '
-    action_option_instances_1_status: '1258 - '
-    action_option_edges_0_status: '1259 - '
-    action_option_edges_1_status: '1260 - '
-    action_option_edges_2_status: '1261 - '
-    action_option_faces_0_status: '1262 - '
-    action_option_faces_1_status: '1263 - '
+    action_option_group_faces: 1256 - Aantal aanzichten
+    action_option_instances_0_status: 1257 - Kleur alleen de beoogde onderdeelinstantie
+    action_option_instances_1_status: 1258 - Kleur alle exemplaren van het beoogde onderdeel
+    action_option_edges_0_status: 1259 - Kleur alleen het beoogde nummer
+    action_option_edges_1_status: 1260 - Kleur het doelnummer en het tegenovergestelde nummer van het stuk
+    action_option_edges_2_status: 1261 - Kleur de 4 nummers van het beoogde stuk
+    action_option_faces_0_status: 1262 - Kleur alleen het beoogde aanzicht
+    action_option_faces_1_status: 1263 - Kleur 2 zijden van het beoogde stuk
     edges: 1264 - {{ count }} nummer
     edges_plural: 1265 - {{ count }} nummers
     edge_ymin: 1266 - Lengte 1
@@ -1628,7 +1681,7 @@ tool:
       no_material: 1274 - Uw model bevat geen materialen!
       no_material_type: 1275 - Geen materiaal van type '{{ type }}'
     error:
-      not_part: '1276 - '
+      not_part: 1276 - Het beoogde object is geen onderdeel (component)
       not_edge: 1277 - Het doelvlak is geen paneelrand
       not_face: 1278 - Het doelvlak is geen paneelvlak
       wrong_material_type: 1279 - Het beoogde deel moet van het type '{{ type }}' zijn
@@ -1646,32 +1699,32 @@ tool:
     action_option_direction_0: 1290 - LO
     action_option_direction_1: 1291 - La
     action_option_direction_2: 1292 - Ep
-    action_option_direction_0_status: '1293 - '
-    action_option_direction_1_status: '1294 - '
-    action_option_direction_2_status: '1295 - '
+    action_option_direction_0_status: 1293 - Draai het stuk in de lengte om
+    action_option_direction_1_status: 1294 - Draai het stuk naar de breedte
+    action_option_direction_2_status: 1295 - Draai het stuk om in zijn dikte
     warning:
       more_entities: 1296 - {{ count_used }} instanties die dezelfde definitie delen, worden aangepast
     error:
-      not_part: '1297 - '
+      not_part: 1297 - Het beoogde object is geen onderdeel (component)
       not_orientable: 1298 - Het type van dit onderdeel maakt het niet mogelijk om het te oriënteren
   smart_export:
     title: 1299 - Exporteren
-    action_0: '1300 - '
-    action_0_status: '1301 - '
-    action_1: '1302 - '
-    action_1_status: '1303 - '
-    action_2: '1304 - '
-    action_2_status: '1305 - '
-    action_3: '1306 - '
-    action_3_status: '1307 - '
+    action_0: 1300 - Exporteer een 3D-onderdeel
+    action_0_status: 1301 - Klik op een onderdeel
+    action_1: 1302 - Exporteer een 2D-onderdeel
+    action_1_status: 1303 - Klik op de voorkant van een stuk
+    action_2: 1304 - Een aanzicht exporteren
+    action_2_status: 1305 - Klik op een aanzicht
+    action_3: 1306 - Een deel exporteren
+    action_3_status: 1307 - Klik op een rand
     action_option_group_file_format: 1308 - Formaat
     action_option_group_unit: 1309 - Eenheid
     action_option_group_faces: 1310 - Fineren
     action_option_group_options: 1311 - Opties
-    action_option_file_format_dxf_status: '1312 - '
-    action_option_file_format_stl_status: '1313 - '
-    action_option_file_format_obj_status: '1314 - '
-    action_option_file_format_svg_status: '1315 - '
+    action_option_file_format_dxf_status: 1312 - Exporteren naar DXF-bestand
+    action_option_file_format_stl_status: 1313 - Exporteren naar STL-bestand
+    action_option_file_format_obj_status: 1314 - Exporteren naar OBJ-bestand
+    action_option_file_format_svg_status: 1315 - Exporteren naar SVG-bestand
     action_option_unit_0_status: "$t(default.unit_0)"
     action_option_unit_1_status: "$t(default.unit_1)"
     action_option_unit_2_status: "$t(default.unit_2)"
@@ -1681,8 +1734,8 @@ tool:
     action_option_faces_1_status: "$t(tab.cutlist.write.option_faces_1)"
     action_option_options_anchor_status: "$t(tab.cutlist.write.option_anchor_1)"
     action_option_options_smoothing_status: "$t(tab.cutlist.write.option_smoothing_1)"
-    action_option_options_merge_holes_status: '1325 - '
-    action_option_options_include_paths_status: '1326 - '
+    action_option_options_merge_holes_status: 1325 - Isoleer doorlopende gaten en voeg de diepten voor elke holte samen
+    action_option_options_include_paths_status: 1326 - Exporteer de randen die niet zijn gekoppeld aan een vlak in het onderdeel
     error:
-      not_part: '1327 - '
-      not_flat_face: '1328 - '
+      not_part: 1327 - Dit vlak maakt geen deel uit van een onderdeel (component)
+      not_flat_face: 1328 - Dit oppervlak is niet vlak
