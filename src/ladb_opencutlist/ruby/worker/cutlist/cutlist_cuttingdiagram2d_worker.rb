@@ -43,9 +43,9 @@ module Ladb::OpenCutList
 
       @cutlist = cutlist
 
-      # Workaround to hide part preview if group is edge decremented
+      # Workaround to hide part drawing if group is edge decremented with out material oversize
       group = @cutlist.get_group(@group_id)
-      if group && group.edge_decremented
+      if group && group.edge_decremented && (!group.material_length_increased || !group.material_width_increased)
         @part_drawing_type = PART_DRAWING_TYPE_NONE
       end
 

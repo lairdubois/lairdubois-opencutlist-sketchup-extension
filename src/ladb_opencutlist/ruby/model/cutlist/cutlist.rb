@@ -106,7 +106,7 @@ module Ladb::OpenCutList
     def get_real_parts(ids = nil, material_types_filter = nil)
       parts = []
       @groups.each do |group|
-        next if material_types_filter && !material_types_filter.include?(group.def.material_type)
+        next if material_types_filter && !material_types_filter.include?(group.def.material_attributes.type)
         parts = parts + group.get_real_parts(ids)
       end
       parts

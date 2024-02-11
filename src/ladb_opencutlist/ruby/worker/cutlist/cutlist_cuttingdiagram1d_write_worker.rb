@@ -49,7 +49,7 @@ module Ladb::OpenCutList
       @cuts_hidden = settings.fetch('cuts_hidden', true)
       @cuts_color = ColorUtils.color_create(settings.fetch('cuts_color', nil))
       @hidden_bar_indices = settings.fetch('hidden_bar_indices', [])
-      @part_drawing_type = settings.fetch('part_drawing_type', PART_DRAWING_TYPE_2D_TOP).to_i
+      @part_drawing_type = settings.fetch('part_drawing_type', PART_DRAWING_TYPE_NONE).to_i
       @use_names = settings.fetch('use_names', false)
 
       @cutlist = cutlist

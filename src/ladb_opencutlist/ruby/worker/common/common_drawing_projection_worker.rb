@@ -27,10 +27,9 @@ module Ladb::OpenCutList
     def run
       return { :errors => [ 'default.error' ] } unless @drawing_def.is_a?(DrawingDef)
 
-      bounds = Geom::BoundingBox.new
-
       faces_bounds = Geom::BoundingBox.new
       edges_bounds = Geom::BoundingBox.new
+      bounds = Geom::BoundingBox.new
 
       face_manipulators = []
       edge_manipulators = []
@@ -55,15 +54,15 @@ module Ladb::OpenCutList
       bounds.add(faces_bounds.min, faces_bounds.max) unless faces_bounds.empty?
       bounds.add(edges_bounds.min, edges_bounds.max) unless edges_bounds.empty?
 
-      depth_min = 0.0
-      depth_max = @drawing_def.faces_bounds.depth
+      root_depth = 0.0
+      max_depth = @drawing_def.faces_bounds.depth
 
       z_max = faces_bounds.empty? ? bounds.max.z : faces_bounds.max.z
 
-      upper_layer_def = PathsLayerDef.new(depth_min, [], [], DrawingProjectionLayerDef::TYPE_UPPER)
+      upper_layer_def = PathsLayerDef.new(root_depth, [], [], DrawingProjectionLayerDef::TYPE_UPPER)
 
       plds = {}   # plds = Path Layer DefS
-      plds[depth_min] = upper_layer_def
+      plds[root_depth] = upper_layer_def
 
       # Extract faces loops
       face_manipulators.each do |face_manipulator|
@@ -149,7 +148,7 @@ module Ladb::OpenCutList
         through_paths = Clippy.reverse_rpaths(Clippy.delete_rpaths_in(merged_paths, outer_paths))
 
         # Append "holes" layer def
-        splds << PathsLayerDef.new(depth_max, through_paths, [], DrawingProjectionLayerDef::TYPE_HOLES)
+        splds << PathsLayerDef.new(max_depth, through_paths, [], DrawingProjectionLayerDef::TYPE_HOLES)
 
         # Difference with outer and upper to extract holes to propagate
         mask_paths, op = Clippy.execute_difference(outer_paths, [], upper_paths)
@@ -176,7 +175,7 @@ module Ladb::OpenCutList
 
       # Output
 
-      projection_def = DrawingProjectionDef.new(depth_max)
+      projection_def = DrawingProjectionDef.new(max_depth)
 
       splds.each do |layer_def|
 

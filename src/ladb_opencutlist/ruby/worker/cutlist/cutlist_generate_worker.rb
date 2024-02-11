@@ -435,11 +435,8 @@ module Ladb::OpenCutList
           group_def.material_id = material_id
           group_def.material_name = material_name
           group_def.material_display_name = material_display_name
-          group_def.material_type = material_attributes.type
           group_def.material_color = material.color if material
-          group_def.material_description = material_attributes.description
-          group_def.material_url = material_attributes.url
-          group_def.material_grained = material_attributes.grained
+          group_def.material_attributes = material_attributes
           group_def.std_available = std_info[:available]
           group_def.std_dimension_stipped_name = std_info[:dimension_stipped_name]
           group_def.std_dimension = std_info[:dimension]
@@ -519,7 +516,7 @@ module Ladb::OpenCutList
           end
 
           # Compute axes alignment, final area, layers, edges and veneers
-          case group_def.material_type
+          case group_def.material_attributes.type
 
             when MaterialAttributes::TYPE_SOLID_WOOD
 
@@ -629,10 +626,10 @@ module Ladb::OpenCutList
         part_def.add_entity_name(entity.name, instance_info.named_path)
         part_def.store_instance_info(instance_info)
 
-        if group_def.material_type != MaterialAttributes::TYPE_UNKNOWN && group_def.material_type != MaterialAttributes::TYPE_HARDWARE
+        if group_def.material_attributes.type != MaterialAttributes::TYPE_UNKNOWN && group_def.material_attributes.type != MaterialAttributes::TYPE_HARDWARE
           group_def.total_cutting_length += part_def.cutting_size.length
           group_def.total_cutting_area += part_def.cutting_size.area * definition_attributes.thickness_layer_count
-          if group_def.material_type == MaterialAttributes::TYPE_SHEET_GOOD
+          if group_def.material_attributes.type == MaterialAttributes::TYPE_SHEET_GOOD
             if part_def.final_area.nil?
               group_def.invalid_final_area_part_count += definition_attributes.thickness_layer_count
             else
@@ -696,7 +693,7 @@ module Ladb::OpenCutList
               }
             end
           end
-          if group_def.material_type == MaterialAttributes::TYPE_SOLID_WOOD || group_def.material_type == MaterialAttributes::TYPE_SHEET_GOOD || group_def.material_type == MaterialAttributes::TYPE_DIMENSIONAL
+          if group_def.material_attributes.type == MaterialAttributes::TYPE_SOLID_WOOD || group_def.material_attributes.type == MaterialAttributes::TYPE_SHEET_GOOD || group_def.material_attributes.type == MaterialAttributes::TYPE_DIMENSIONAL
             group_def.total_cutting_volume += part_def.cutting_size.volume * definition_attributes.thickness_layer_count
           end
         end
@@ -749,7 +746,7 @@ module Ladb::OpenCutList
 
       # Sort and browse groups
 
-      @group_defs_cache.sort_by { |k, v| [ MaterialAttributes.type_order(v.material_type), v.material_name.empty? ? '~' : v.material_name.downcase, -v.std_width, -v.std_thickness ] }.each do |key, group_def|
+      @group_defs_cache.sort_by { |k, v| [ MaterialAttributes.type_order(v.material_attributes.type), v.material_name.empty? ? '~' : v.material_name.downcase, -v.std_width, -v.std_thickness ] }.each do |key, group_def|
 
         # Exclude empty groupDef
         next if group_def.part_count == 0
@@ -766,7 +763,7 @@ module Ladb::OpenCutList
           part_defs = []
           group_def.part_defs.values.sort_by { |v| [ v.size.thickness, v.size.length, v.size.width, v.tags, v.final_area.nil? ? 0 : v.final_area, v.cumulable ] }.each do |part_def|
             if !(folder_part_def = part_defs.last).nil? &&
-                ((folder_part_def.definition_id == part_def.definition_id && group_def.material_type == MaterialAttributes::TYPE_UNKNOWN) || group_def.material_type > MaterialAttributes::TYPE_UNKNOWN && group_def.material_type != MaterialAttributes::TYPE_HARDWARE) && # Part with TYPE_UNKNOWN materiel are folded only if they have the same definition | Part with TYPE_HARDWARE doesn't fold
+                ((folder_part_def.definition_id == part_def.definition_id && group_def.material_attributes.type == MaterialAttributes::TYPE_UNKNOWN) || group_def.material_attributes.type > MaterialAttributes::TYPE_UNKNOWN && group_def.material_attributes.type != MaterialAttributes::TYPE_HARDWARE) && # Part with TYPE_UNKNOWN materiel are folded only if they have the same definition | Part with TYPE_HARDWARE doesn't fold
                 folder_part_def.size == part_def.size &&
                 folder_part_def.cutting_size == part_def.cutting_size &&
                 (@hide_descriptions || folder_part_def.description == part_def.description) &&
@@ -1321,10 +1318,8 @@ module Ladb::OpenCutList
         group_def.material_id = material ? material.entityID : ''
         group_def.material_name = material.name
         group_def.material_display_name = material.display_name
-        group_def.material_type = MaterialAttributes::TYPE_EDGE
         group_def.material_color = material.color if material
-        group_def.material_description = material_attributes.description
-        group_def.material_url = material_attributes.url
+        group_def.material_attributes = material_attributes
         group_def.std_available = std_info[:available]
         group_def.std_dimension_stipped_name = std_info[:dimension_stipped_name]
         group_def.std_dimension = std_info[:dimension]
@@ -1394,11 +1389,8 @@ module Ladb::OpenCutList
         group_def.material_id = material ? material.entityID : ''
         group_def.material_name = material.name
         group_def.material_display_name = material.display_name
-        group_def.material_type = MaterialAttributes::TYPE_VENEER
         group_def.material_color = material.color if material
-        group_def.material_description = material_attributes.description
-        group_def.material_url = material_attributes.url
-        group_def.material_grained = material_attributes.grained
+        group_def.material_attributes = material_attributes
         group_def.std_available = std_info[:available]
         group_def.std_dimension_stipped_name = std_info[:dimension_stipped_name]
         group_def.std_dimension = std_info[:dimension]

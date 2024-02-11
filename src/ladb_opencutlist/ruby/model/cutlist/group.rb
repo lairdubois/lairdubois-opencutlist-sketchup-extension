@@ -12,7 +12,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :id, :material_id, :material_name, :material_display_name, :material_type, :material_color, :material_description, :material_url, :material_grained, :part_count, :std_available, :std_dimension_stipped_name, :std_dimension, :std_dimension_real, :std_dimension_rounded, :std_width, :std_thickness, :total_cutting_length, :total_cutting_area, :total_cutting_volume, :total_final_area, :invalid_final_area_part_count, :show_cutting_dimensions, :show_edges, :edge_decremented, :show_faces, :face_decremented, :parts
+    attr_reader :id, :material_id, :material_name, :material_display_name, :material_color, :material_type, :material_description, :material_url, :material_grained, :material_length_increased, :material_width_increased, :material_thickness_increased, :part_count, :std_available, :std_dimension_stipped_name, :std_dimension, :std_dimension_real, :std_dimension_rounded, :std_width, :std_thickness, :total_cutting_length, :total_cutting_area, :total_cutting_volume, :total_final_area, :invalid_final_area_part_count, :show_cutting_dimensions, :show_edges, :edge_decremented, :show_faces, :face_decremented, :parts
 
     def initialize(group_def, cutlist)
       @_def = group_def
@@ -22,11 +22,14 @@ module Ladb::OpenCutList
       @material_id = group_def.material_id
       @material_name = group_def.material_name
       @material_display_name = group_def.material_display_name
-      @material_type = group_def.material_type
       @material_color = ColorUtils.color_to_hex(group_def.material_color)
-      @material_description = group_def.material_description
-      @material_url = group_def.material_url
-      @material_grained = group_def.material_grained
+      @material_type = group_def.material_attributes.type
+      @material_description = group_def.material_attributes.description
+      @material_url = group_def.material_attributes.url
+      @material_grained = group_def.material_attributes.grained
+      @material_length_increased = group_def.material_attributes.l_length_increase > 0
+      @material_width_increased = group_def.material_attributes.l_width_increase > 0
+      @material_thickness_increased = group_def.material_attributes.l_thickness_increase > 0
       @part_count = group_def.part_count
       @std_available = group_def.std_available
       @std_dimension_stipped_name = group_def.std_dimension_stipped_name
@@ -37,7 +40,7 @@ module Ladb::OpenCutList
       @std_thickness = group_def.std_thickness.to_s.gsub(/~ /, ''), # Remove ~ if it exists
       @total_cutting_length = group_def.total_cutting_length == 0 ? nil : DimensionUtils.instance.format_to_readable_length(group_def.total_cutting_length)
       @total_cutting_area = group_def.total_cutting_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(group_def.total_cutting_area)
-      @total_cutting_volume = group_def.total_cutting_volume == 0 ? nil : DimensionUtils.instance.format_to_readable_volume(group_def.total_cutting_volume, group_def.material_type)
+      @total_cutting_volume = group_def.total_cutting_volume == 0 ? nil : DimensionUtils.instance.format_to_readable_volume(group_def.total_cutting_volume, group_def.material_attributes.type)
       @total_final_area = group_def.total_final_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(group_def.total_final_area)
       @invalid_final_area_part_count = group_def.invalid_final_area_part_count
       @show_cutting_dimensions = group_def.show_cutting_dimensions

@@ -50,13 +50,18 @@ module Ladb::OpenCutList
       @cuts_hidden = settings.fetch('cuts_hidden', true)
       @cuts_color = ColorUtils.color_create(settings.fetch('cuts_color', nil))
       @hidden_sheet_indices = settings.fetch('hidden_sheet_indices', [])
-      @part_drawing_type = settings.fetch('part_drawing_type', PART_DRAWING_TYPE_2D_TOP).to_i
+      @part_drawing_type = settings.fetch('part_drawing_type', PART_DRAWING_TYPE_NONE).to_i
       @use_names = settings.fetch('use_names', false)
 
       @cutlist = cutlist
       @cuttingdiagram2d = cuttingdiagram2d
 
       @_projection_defs = {}
+
+      # Workaround to hide part drawing if group is edge decremented with out material oversize
+      if cuttingdiagram2d.def.group.edge_decremented && (!cuttingdiagram2d.def.group.material_length_increased || !cuttingdiagram2d.def.group.material_width_increased)
+        @part_drawing_type = PART_DRAWING_TYPE_NONE
+      end
 
     end
 

@@ -136,11 +136,18 @@
                 </div>
                 <hr>
                 {% if group.material_type != 6 %}   {# 6 = TYPE_VENEER #}
+                    {% set partDrawingTypeDisabled = group.edge_decremented and (not group.material_length_increased or not group.material_width_increased) %}
                     <div class="form-group">
-                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_part_drawing_type_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw">
+                            {% if partDrawingTypeDisabled %}
+                                <a tabindex="-1" data-toggle="tooltip" title="{{ 'tab.cutlist.labels.warning.formula_not_available'|i18next }}"><i class="ladb-opencutlist-icon-warning ladb-color-warning"></i></a>
+                            {% else %}
+                                <a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_part_drawing_type_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a>
+                            {% endif %}
+                        </div>
                         <label class="control-label col-xs-5">{{ 'tab.cutlist.cuttingdiagram.option_part_drawing_type'|i18next }}</label>
                         <div class="col-xs-6">
-                            <select class="form-control" id="ladb_select_part_drawing_type"{% if group.material_type == 6 %} disabled{% endif %}>
+                            <select class="form-control" id="ladb_select_part_drawing_type"{% if partDrawingTypeDisabled %} disabled{% endif %}>
                                 <option value="0" data-content="{{ 'tab.cutlist.cuttingdiagram.option_part_drawing_type_0'|i18next }}"></option>
                                 <option value="1" data-content="<i class='ladb-opencutlist-icon-face-10'></i> {{ 'tab.cutlist.cuttingdiagram.option_part_drawing_type_1'|i18next }}"></option>
                                 <option value="2" data-content="<i class='ladb-opencutlist-icon-face-01'></i> {{ 'tab.cutlist.cuttingdiagram.option_part_drawing_type_2'|i18next }}"></option>
