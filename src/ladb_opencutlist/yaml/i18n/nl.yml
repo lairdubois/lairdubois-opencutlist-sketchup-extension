@@ -1073,7 +1073,7 @@ tab:
     write:
       title: Miniatuurvoorbeeld Onderdelen exporteren
       info_2d: |
-        Miniatuurvoorbeeld Onderdelen exporteren Met deze module kunt u de **2D-projectie** van de onderdelen exporteren als bestanden in(https://wikipedia.org/wiki/Scalable_Vector_Graphics) o [DXF](https://wikipedia.org/wiki/AutoCAD_DXF). [SVG]-formaat
+        Miniatuurvoorbeeld Onderdelen exporteren Met deze module kunt u de **2D-projectie** van de onderdelen exporteren als bestanden in [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) of [DXF](https://wikipedia.org/wiki/AutoCAD_DXF) formaat.
       info_3d: |
         Met deze module kunt u de **3D-geometrie** van onderdelen exporteren als bestanden [STL](https://wikipedia.org/wiki/STL_(file_format)) of [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file).
       option_file_format: Formaat
@@ -1086,7 +1086,7 @@ tab:
       option_part_drawing_type_help: |
         Hiermee kunt u de geëxporteerde weergave kiezen.
       option_faces: Fineren
-      option_faces_0: Gebruik alleen het beoogde gezicht.
+      option_faces_0: Gebruik alleen het beoogde gezicht
       option_faces_1: Gebruik alle zijden van het onderdeel
       option_faces_help: |+
         Hiermee kunt u kiezen of er naar de vorm van het onderdeel wordt gezocht op alle vlakken of alleen op het beoogde vlak.
@@ -1188,7 +1188,7 @@ tab:
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Nerf richting
-      raw_estimated_0: Geschat op basis van het nuttige debiet volume.
+      raw_estimated_0: Geschat op basis van het nuttige debiet volume
       colorized: Deze tint zal toegepast worden op de textuur van dit materiaal wanneer het in het model toegepast wordt
       texture_load: Laad een nieuwe textuur
       texture_clear: Heldere textuur
@@ -1277,7 +1277,7 @@ tab:
 
         ** Eerst materiaalvolume nodig**
         Het totale volume is de som van de volumes van de panelen, platen, staven of strips van de onderdelen na lay-out.
-      raw_estimated_0: Nuttige debiet volume.
+      raw_estimated_0: Nuttige debiet volume
       raw_estimated_1: Benodigd grondstof volume
       std_attributes_dim_placeholder: Kies een afmeting
       std_volumic_masses: Dichtheid
@@ -1322,7 +1322,7 @@ tab:
   outliner:
     label: Structuur
     title: Structuur
-    list: Boomstructuur entiteiten.
+    list: Boomstructuur entiteiten
     nodes: Instanties
     part_count: Aantal stukken
     type_0: Model
@@ -1443,7 +1443,7 @@ tab:
       Heeft u een video gemaakt waarin u het gebruik van **OpenCutList** laat zien en wilt u die hier laten zien?
       Laat het ons weten door te schrijven naar **opencutlist@lairdubois.fr**!
 
-      *De video moet openbaar zijn en op YouTube staan.*
+      *De video moet openbaar zijn en op YouTube staan*.
     error:
       fail_to_load_list: Videolijst kan niet worden geladen.
   news:
