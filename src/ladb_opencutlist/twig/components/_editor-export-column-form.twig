@@ -5,7 +5,7 @@
             <div class="col-xs-10 col-xs-push-1">
                 <input id="ladb_input_title" class="form-control" value="{{ title|escape }}" placeholder="{% if name %}{{ ('tab.cutlist.export.'~name)|i18next }}{% else %}{{ 'tab.cutlist.export.placeholder.no_column_title'|i18next }}{% endif %}">
             </div>
-            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.export.column_title_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.export.column_title_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
         </div>
     </div>
     <div class="form-group col-xs-12">
@@ -14,7 +14,7 @@
             <div class="col-xs-10 col-xs-push-1">
                 <textarea id="ladb_textarea_formula" class="form-control" placeholder="{% if name %}{% set col_name = (('tab.cutlist.export.'~name)|i18next) %}{{ 'tab.cutlist.export.placeholder.no_column_formula_native'|i18next({ 'col_name':col_name }) }}{% else %}{{ 'tab.cutlist.export.placeholder.no_column_formula'|i18next }}{% endif %}">{{ formula }}</textarea>
             </div>
-            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.export.column_formula_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lg"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.export.column_formula_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
         </div>
     </div>
 </div>

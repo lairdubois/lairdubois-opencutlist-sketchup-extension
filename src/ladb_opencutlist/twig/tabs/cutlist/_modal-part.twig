@@ -47,7 +47,7 @@
                 {% if not multiple and not part.virtual %}
                     <div class="form-group">
                         {% if part.is_dynamic_attributes_name %}
-                            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.cutlist.tooltip.is_dynamic_attributes_name'|i18next }}"><i class="ladb-opencutlist-icon-dynamic-component"></i></a></div>
+                            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.cutlist.tooltip.is_dynamic_attributes_name'|i18next }}"><i class="ladb-opencutlist-icon-dynamic-component"></i></a></div>
                         {% endif %}
                         <label class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.name'|i18next }}</label>
                         <div class="col-xs-7">
@@ -67,21 +67,21 @@
                 </div>
                 {% if not part.virtual %}
                     <div class="form-group">
-                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.description_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.description_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                         <label class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.description'|i18next }}</label>
                         <div class="col-xs-7">
                             <textarea class="form-control" id="ladb_cutlist_part_input_description"{% if part.description == -1 %}data-multiple="true"{% endif %}>{% if part.description != -1 %}{{ part.description }}{% endif %}</textarea>
                         </div>
                     </div>
                     <div class="form-group">
-                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.url_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.url_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                         <label class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.url'|i18next }}</label>
                         <div class="col-xs-7">
                             <input type="text" class="form-control" id="ladb_cutlist_part_input_url"{% if part.url == -1 %}data-multiple="true"{% endif %} value="{% if part.url != -1 %}{{ part.url|escape }}{% endif %}">
                         </div>
                     </div>
                     <div class="form-group">
-                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.tags_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.tags_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                         <label class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.tags'|i18next }}</label>
                         <div class="col-xs-7">
                             <input type="text" class="form-control" id="ladb_cutlist_part_input_tags" value="{{ part.tags|join(';')|escape }}">
@@ -99,7 +99,7 @@
                 <div class="form form-horizontal">
                     {% if group.material_type > 0 and group.material_type != 5 %}   {# 5 = TYPE_HARDWARE #}
                         <div class="form-group">
-                            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.cumulable_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.cumulable_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                             <label class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.cumulable'|i18next }}</label>
                             <div class="col-xs-7">
                                 <select class="form-control" id="ladb_cutlist_part_select_cumulable">
@@ -116,7 +116,7 @@
                     {% endif %}
                     {% if group.material_type == 2 %}   {# 2 = TYPE_SHEET_GOOD #}
                         <div class="form-group">
-                            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.thickness_layer_count_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.thickness_layer_count_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                             <label class="control-label col-xs-3"><i class="ladb-opencutlist-icon-thickness-layers"></i>&nbsp;{{ 'tab.cutlist.edit_part.thickness_layer_count'|i18next }}</label>
                             <div class="col-xs-7">
                                 <input type="text" class="form-control text-right" id="ladb_cutlist_part_input_thickness_layer_count" {% if part.thickness_layer_count == -1 %}data-multiple="true"{% else %}value="{{ part.thickness_layer_count }}"{% endif %}>
@@ -125,21 +125,21 @@
                     {% endif %}
                     {% if group.material_type == 5 %}   {# 5 = TYPE_HARDWARE #}
                         <div class="form-group">
-                            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.instance_count_by_part_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.instance_count_by_part_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                             <label class="control-label col-xs-3"><i class="ladb-opencutlist-icon-instance-count-by-part"></i> {{ 'tab.cutlist.edit_part.instance_count_by_part'|i18next }}</label>
                             <div class="col-xs-7">
                                 <input type="text" class="form-control text-right" id="ladb_cutlist_part_input_instance_count_by_part" {% if part.instance_count_by_part == -1 %}data-multiple="true"{% else %}value="{{ part.instance_count_by_part }}"{% endif %}>
                             </div>
                         </div>
                         <div class="form-group">
-                            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.mass_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.mass_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                             <label class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.mass'|i18next }}</label>
                             <div class="col-xs-7">
                                 <input type="text" class="form-control text-right" id="ladb_cutlist_part_input_mass" {% if part.mass == -1 %}data-multiple="true"{% else %}value="{{ part.mass }}"{% endif %}>
                             </div>
                         </div>
                         <div class="form-group">
-                            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.price_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.price_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                             <label class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.price'|i18next }}</label>
                             <div class="col-xs-7">
                                 <input type="text" class="form-control text-right" id="ladb_cutlist_part_input_price" {% if part.price == -1 %}data-multiple="true"{% else %}value="{{ part.price }}"{% endif %}>
@@ -188,20 +188,20 @@
                             <option value="front-center" data-content="<i class='ladb-opencutlist-icon-origin-front-center ladb-opencutlist-icon-lg'></i> {{ 'tab.cutlist.edit_part.axes_origin_position_front_center'|i18next }}"></option>
                         </select>
                         <div class="checkbox">
-                            <div class="ladb-minitools ladb-minitools-right"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.orientation_locked_on_axis_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                            <div class="ladb-minitools ladb-minitools-right"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.orientation_locked_on_axis_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                             <label>
                                 <input type="checkbox" id="ladb_cutlist_part_input_orientation_locked_on_axis"{% if part.orientation_locked_on_axis %} checked{% endif %}> <i class="ladb-opencutlist-icon-orientation-locked-on-axis"></i> {{ 'tab.cutlist.edit_part.orientation_locked_on_axis'|i18next }}
                             </label>
                         </div>
                         <div class="checkbox">
-                            <div class="ladb-minitools ladb-minitools-right"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.symmetrical_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                            <div class="ladb-minitools ladb-minitools-right"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.symmetrical_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                             <label>
                                 <input type="checkbox" id="ladb_cutlist_part_input_symmetrical"{% if part.symmetrical %} checked{% endif %}> <i class="ladb-opencutlist-icon-symmetrical"></i> {{ 'tab.cutlist.edit_part.symmetrical'|i18next }}
                             </label>
                         </div>
                         {% if group.material_type == 2 and group.material_grained %} {# 2 = TYPE_SHEET_GOOD #}
                             <div class="checkbox">
-                                <div class="ladb-minitools ladb-minitools-right"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.ignore_grain_direction_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                                <div class="ladb-minitools ladb-minitools-right"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.ignore_grain_direction_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                                 <label>
                                     <input type="checkbox" id="ladb_cutlist_part_input_ignore_grain_direction"{% if part.ignore_grain_direction %} checked{% endif %}> <i class="ladb-opencutlist-icon-grained-0"></i> {{ 'tab.cutlist.edit_part.ignore_grain_direction'|i18next }}
                                 </label>
@@ -268,7 +268,7 @@
                 {% endif %}
                 <div class="form form-horizontal">
                     <div class="form-group">
-                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.length_increase_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.length_increase_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                         <label class="control-label col-xs-4">{{ 'tab.cutlist.edit_part.length_increase'|i18next }}</label>
                         <div class="col-xs-6">
                             <input type="text" class="form-control" id="ladb_cutlist_part_input_length_increase" {% if part.length_increase == -1 %}data-multiple="true"{% else %}value="{{ part.length_increase }}"{% endif %}>
@@ -276,7 +276,7 @@
                     </div>
                     {% if group.material_type == 1 or group.material_type == 2 %} {# 1 = TYPE_SOLID_WOOD, 2 = TYPE_SHEET_GOOD #}
                         <div class="form-group">
-                            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.width_increase_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.width_increase_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                             <label class="control-label col-xs-4">{{ 'tab.cutlist.edit_part.width_increase'|i18next }}</label>
                             <div class="col-xs-6">
                                 <input type="text" class="form-control" id="ladb_cutlist_part_input_width_increase" {% if part.width_increase == -1 %}data-multiple="true"{% else %}value="{{ part.width_increase }}"{% endif %}>
@@ -285,7 +285,7 @@
                     {% endif %}
                     {% if group.material_type == 1 %} {# 1 = TYPE_SOLID_WOOD #}
                         <div class="form-group">
-                            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.thickness_increase_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.thickness_increase_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                             <label class="control-label col-xs-4">{{ 'tab.cutlist.edit_part.thickness_increase'|i18next }}</label>
                             <div class="col-xs-6">
                                 <input type="text" class="form-control" id="ladb_cutlist_part_input_thickness_increase" {% if part.thickness_increase == -1 %}data-multiple="true"{% else %}value="{{ part.thickness_increase }}"{% endif %}>
@@ -340,7 +340,7 @@
                         <h5 class="text-center">{{ 'tab.cutlist.edit_part.over_length'|i18next }}</h5>
                         <div class="form-group">
                             {% if part.edge_entity_ids.ymax is empty %}
-                                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a class="ladb-tool-warning" tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.edge_disabled_help'|i18next }}"><i class="ladb-opencutlist-icon-warning"></i></a></div>
+                                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a class="ladb-tool-warning" tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.edge_disabled_help'|i18next }}"><i class="ladb-opencutlist-icon-warning"></i></a></div>
                             {% endif %}
                             <label id="ladb_cutlist_part_label_edge_ymax" class="control-label col-xs-2" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.dblclick_to_copy_all_edges'|i18next }}"><i class="ladb-opencutlist-icon-edge-1000 ladb-opencutlist-icon-lg"></i></label>
                             <div class="col-xs-{% if part.edge_entity_ids.ymax is empty %}8{% else %}10{% endif %}">
@@ -351,7 +351,7 @@
                         </div>
                         <div class="form-group">
                             {% if part.edge_entity_ids.ymin is empty %}
-                                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a class="ladb-tool-warning" tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.edge_disabled_help'|i18next }}"><i class="ladb-opencutlist-icon-warning"></i></a></div>
+                                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a class="ladb-tool-warning" tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.edge_disabled_help'|i18next }}"><i class="ladb-opencutlist-icon-warning"></i></a></div>
                             {% endif %}
                             <label id="ladb_cutlist_part_label_edge_ymin" class="control-label col-xs-2" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.dblclick_to_copy_all_edges'|i18next }}"><i class="ladb-opencutlist-icon-edge-0010 ladb-opencutlist-icon-lg"></i></label>
                             <div class="col-xs-{% if part.edge_entity_ids.ymin is empty %}8{% else %}10{% endif %}">
@@ -365,7 +365,7 @@
                         <h5 class="text-center">{{ 'tab.cutlist.edit_part.over_width'|i18next }}</h5>
                         <div class="form-group">
                             {% if part.edge_entity_ids.xmin is empty %}
-                                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a class="ladb-tool-warning" tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.edge_disabled_help'|i18next }}"><i class="ladb-opencutlist-icon-warning"></i></a></div>
+                                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a class="ladb-tool-warning" tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.edge_disabled_help'|i18next }}"><i class="ladb-opencutlist-icon-warning"></i></a></div>
                             {% endif %}
                             <label id="ladb_cutlist_part_label_edge_xmin" class="control-label col-xs-2" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.dblclick_to_copy_all_edges'|i18next }}"><i class="ladb-opencutlist-icon-edge-0001 ladb-opencutlist-icon-lg"></i></label>
                             <div class="col-xs-{% if part.edge_entity_ids.xmin is empty %}8{% else %}10{% endif %}">
@@ -376,7 +376,7 @@
                         </div>
                         <div class="form-group">
                             {% if part.edge_entity_ids.xmax is empty %}
-                                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a class="ladb-tool-warning" tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.edge_disabled_help'|i18next }}"><i class="ladb-opencutlist-icon-warning"></i></a></div>
+                                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a class="ladb-tool-warning" tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.edge_disabled_help'|i18next }}"><i class="ladb-opencutlist-icon-warning"></i></a></div>
                             {% endif %}
                             <label id="ladb_cutlist_part_label_edge_xmax" class="control-label col-xs-2" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.dblclick_to_copy_all_edges'|i18next }}"><i class="ladb-opencutlist-icon-edge-0100 ladb-opencutlist-icon-lg"></i></label>
                             <div class="col-xs-{% if part.edge_entity_ids.xmax is empty %}8{% else %}10{% endif %}">
@@ -441,7 +441,7 @@
                         <h5 class="text-center">{{ 'tab.cutlist.tooltip.face_zmax'|i18next }}</h5>
                         <div class="form-group">
                             {% if part.face_entity_ids.zmax is empty %}
-                                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a class="ladb-tool-warning" tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.face_disabled_help'|i18next }}"><i class="ladb-opencutlist-icon-warning"></i></a></div>
+                                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a class="ladb-tool-warning" tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.face_disabled_help'|i18next }}"><i class="ladb-opencutlist-icon-warning"></i></a></div>
                             {% endif %}
                             <label id="ladb_cutlist_part_label_face_zmax" class="control-label col-xs-2" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.dblclick_to_copy_all_faces'|i18next }}"><i class="ladb-opencutlist-icon-face-10 ladb-opencutlist-icon-lg"></i></label>
                             <div class="col-xs-{% if part.face_entity_ids.zmax is empty %}8{% else %}10{% endif %}">
@@ -461,7 +461,7 @@
                         <h5 class="text-center">{{ 'tab.cutlist.tooltip.face_zmin'|i18next }}</h5>
                         <div class="form-group">
                             {% if part.face_entity_ids.zmin is empty %}
-                                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a class="ladb-tool-warning" tabindex="-1" role="button" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.face_disabled_help'|i18next }}"><i class="ladb-opencutlist-icon-warning"></i></a></div>
+                                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a class="ladb-tool-warning" tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.face_disabled_help'|i18next }}"><i class="ladb-opencutlist-icon-warning"></i></a></div>
                             {% endif %}
                             <label id="ladb_cutlist_part_label_face_zmin" class="control-label col-xs-2" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.dblclick_to_copy_all_faces'|i18next }}"><i class="ladb-opencutlist-icon-face-01 ladb-opencutlist-icon-lg"></i></label>
                             <div class="col-xs-{% if part.face_entity_ids.zmin is empty %}8{% else %}10{% endif %}">
