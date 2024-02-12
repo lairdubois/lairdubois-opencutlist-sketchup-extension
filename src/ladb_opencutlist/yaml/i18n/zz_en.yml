@@ -1116,7 +1116,7 @@ tab:
       option_faces_help: '887 - Allows you to choose whether the search for the shape of the part is to be carried out on all its faces or only on the targeted face.
 
         '
-      option_anchor: 888 - Anchor point
+      option_anchor: 888 - Anchor Point
       option_anchor_0: 889 - Default
       option_anchor_1: 890 - Project the part's origin
       option_anchor_help: '891 - Enable the projection of the part''s axis origin as anchor point.

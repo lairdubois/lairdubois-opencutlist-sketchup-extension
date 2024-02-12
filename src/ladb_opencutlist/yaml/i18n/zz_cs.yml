@@ -352,18 +352,18 @@ tab:
       highlight_parts: "$t(tab.cutlist.highlight_parts)"
       write_2d: 278 - 2D Projekce
       write_3d: 279 - 3D Geometrie
-      write_2d_parts: 280 - Export 2D dílu projekce
-      write_3d_parts: 281 - Export 3D dílu geometrie
-      group_write_2d_parts: 282 - Export 2D dílů ve skupině
-      group_write_3d_parts: 283 - Export 3D dílů ve skupině
+      write_2d_parts: 280 - Export 2D dílů z kusovníku
+      write_3d_parts: 281 - Export 3D dílů z kusovníku
+      group_write_2d_parts: 282 - Export 2D dílů ze skupiny
+      group_write_3d_parts: 283 - Export 3D dílů ze skupiny
       group_layout_parts: 284 - Tisk přehledového výkresu dílů ve skupině
       group_numbers_save: 285 - Uložit čísla dílců této skupiny
       group_numbers_reset: 286 - Znovu inicializujte čísla dílců této skupiny
       group_cuttingdiagram: 287 - Nářezový plán
       group_labels: 288 - Tisk štítků dílů ve skupině
       edit_material: 289 - Upravit materiál ‘{{ material_name }}'
-      expand_all: 290 - Rozložení všech řádků
-      collapse_all: 291 - Přeložte všechny řádky
+      expand_all: 290 - Rozbalení všech řádků
+      collapse_all: 291 - Sbalení všech řádků
       reset_prices: 292 - Resetování cen všech dílů
       reset_prices_confirm: |
         293 - Chystáte se resetovat ceny všech částí vašeho modelu.
@@ -819,7 +819,7 @@ tab:
         overall_efficiency: 645 - Celková účinnost
         efficiency: 646 - Účinnost
         leftover: 647 - Zbytek
-        leftover_to_keep: 648 - Držíme zbytek
+        leftover_to_keep: 648 - Zbytek
         leftover_to_keep_plural: 649 - Zbytek
         leftover_to_throw_away: 650 - Jednorázové zbytky
         cut: 651 - Řez

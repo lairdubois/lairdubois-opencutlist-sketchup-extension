@@ -66,10 +66,10 @@ default:
   alt_key_win: 65 - Alt
   alt_key_mac: 66 - Comando
   tab_key: 67 - Tab
-  file: '68 - '
-  file_plural: '69 - '
-  stroke_color: '70 - '
-  fill_color: '71 - '
+  file: 68 - Arquivo
+  file_plural: 69 - Arquivos
+  stroke_color: 70 - Cor da linha
+  fill_color: 71 - Cor de preenchimento
 core:
   menu:
     submenu: 72 - OpenCutList
@@ -83,7 +83,7 @@ core:
       smart_paint: "$t(core.toolbar.command.smart_paint)"
       smart_axes: "$t(core.toolbar.command.smart_axes)"
       smart_export: "$t(core.toolbar.command.smart_export)"
-      reset_dialog_position: '82 - '
+      reset_dialog_position: 82 - Reinicializar a posição da janela
   toolbar:
     name: 83 - OpenCutList
     command:
@@ -92,9 +92,12 @@ core:
       smart_axes: 86 - Orientação das peças
       smart_export: 87 - Exportar as peças
   messagebox:
-    dir_override: '88 - '
+    dir_override: |
+      88 - « {{ target }} » já existe. Deseja substituir ?
+
+      Uma pasta com o mesmo nome já está na pasta {{ parent }}. Se você substituí-lo, o conteúdo original será perdido.
   savepanel:
-    export_to_file: '89 - '
+    export_to_file: 89 - Exportar para o arquivo {{ file_format }}
   dialog:
     title: 90 - OpenCutList por L'Air du Bois
   leftbar:
@@ -115,16 +118,18 @@ core:
       Para relatar um bug: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
   error:
     feature_unavailable: 99 - Este recurso requer SketchUp {{ version }} ou superior
-    failed_export_to: '100 - '
+    failed_export_to: |
+      100 - Ocorreu um erro ao exportar para *{{ path }}*.
+      **{{ error }}**
   success:
-    exported_to: '101 - '
-    copied_to_clipboard: '102 - '
+    exported_to: 101 - Exportação bem-sucedida para {{ path }}.
+    copied_to_clipboard: 102 - Copiado para a área de transferência
   event:
     model_change: 103 - O modelo ativo foi alterado.
     options_change: 104 - As opções do modelo mudaram.
     material_change: 105 - Pelo menos um material foi alterado.
     selection_change: 106 - A seleção no modelo ativo foi alterada.
-    layers_change: '107 - '
+    layers_change: 107 - As tags no modelo ativo foram alteradas.
   upgrade:
     unavailable: 108 - Impossível encontrar a versão mais recente do *OpenCutList*.
     available: |
@@ -229,8 +234,8 @@ tab:
       180 - Selecione as peças na cena atual para incluir na lista e clique no botão **Gerar**.
       Se a seleção estiver vazia, todos os componentes visíveis da cena serão incluídos na Planilha de Produção.
     is_selection: 181 - Somente seleção
-    select_part: '182 - '
-    select_part_plural: '183 - '
+    select_part: 182 - Selecionar a peça
+    select_part_plural: 183 - Selecionar as peças
     material_undefined: 184 - Nenhum material definido
     not_available_std_width: 185 - Largura indefinida
     not_available_std_thickness: 186 - Espessura indefinida
@@ -242,9 +247,9 @@ tab:
     edit_part_size_increase_properties: 192 - Editar as propriedades (tamanho grande) da peça
     edit_part_edges_properties: 193 - Editar as propriedades (bandagens de borda) da peça
     edit_part_faces_properties: 194 - Editar as propriedades (laminados) da peça
-    part_drawing_type_1: '195 - '
-    part_drawing_type_2: '196 - '
-    part_drawing_type_3: '197 - '
+    part_drawing_type_1: 195 - Vista frontal 2D
+    part_drawing_type_2: 196 - Vista 2D reversa
+    part_drawing_type_3: 197 - 3D
     tooltip:
       show_hide_block: 198 - Mostrar / ocultar este grupo
       scroll_to_block: 199 - Role para o grupo
@@ -338,19 +343,19 @@ tab:
       select_parts_in_cutlist: '269 - '
       select_parts_in_cutlist_plural: '270 - '
       setup_group_cuttingdiagram: 271 - Defina o diagrama de corte para '{{ material_name }} & nbsp; / & nbsp; {{ std_dimension }}'
-      open_part_url: '272 - '
+      open_part_url: 272 - Abrir URL da peça
     menu:
       show_all_groups: 273 - Mostrar todos os grupos
       hide_all_other_groups: 274 - Esconder todos os outros grupos
       numbers_save: 275 - Salve os números das peças
       numbers_reset: 276 - Reinicialize os números da peça
       highlight_parts: "$t(tab.cutlist.highlight_parts)"
-      write_2d: '278 - '
-      write_3d: '279 - '
-      write_2d_parts: '280 - '
-      write_3d_parts: '281 - '
-      group_write_2d_parts: '282 - '
-      group_write_3d_parts: '283 - '
+      write_2d: 278 - Projeção 2D
+      write_3d: 279 - Geometria 3D
+      write_2d_parts: 280 - Exportar a projeção 2D das peças
+      write_3d_parts: 281 - Exportar a geometria 3D das peças
+      group_write_2d_parts: 282 - Exportar a projeção 2D das peças do grupo
+      group_write_3d_parts: 283 - Exportar a geometria 3D das peças do grupo
       group_layout_parts: 284 - Imprimir visão geral das peças neste grupo
       group_numbers_save: 285 - Salve os números de peça deste grupo
       group_numbers_reset: 286 - Reinicialize os números de peça deste grupo
@@ -405,7 +410,7 @@ tab:
       description_help: '320 - A *Descrição* permite que você forneça informações personalizadas sobre cada definição de peça.
 
         '
-      url: '321 - '
+      url: 321 - URL
       url_help: '322 - '
       tags: 323 - Identificação
       tags_help: |
@@ -503,8 +508,8 @@ tab:
       hide_edges_help: 382 - Se esta opção for selecionada, as **colunas de Fita de Borda** de peças do tipo *Chapa* serão ocultadas.
       hide_faces: 383 - Ocultar as colunas dos laminados
       hide_faces_help: 384 - Se esta opção for selecionada, as **colunas face** das peças do tipo *Chapas* ficarão ocultas.
-      hide_material_colors: '385 - '
-      hide_material_colors_help: '386 - '
+      hide_material_colors: 385 - Ocultar as cores dos materiais
+      hide_material_colors_help: 386 - Se esta opção estiver habilitada, as cores do material não serão exibidas.
       minimize_on_highlight: 387 - Mimimize após *'$t(tab.cutlist.highlight_part) ...'*
       minimize_on_highlight_help: 388 - Se esta opção for selecionada, a janela OpenCutList será minimizada quando a função *'$t(tab.cutlist.highlight_part)'* for aplicada.
       general: 389 - Geral
@@ -570,7 +575,7 @@ tab:
       add_column: 439 - Acrescentar uma coluna
       add_native_columns: 440 - Acrescentar uma coluna nativa
       remove_column: 441 - Remover
-      remove_all_columns: '442 - '
+      remove_all_columns: 442 - Remover tudo
       columns: 443 - Colunas
       column_title: 444 - Título
       column_title_help: '445 - O campo **Título** permite personalizar o título da coluna.
@@ -614,12 +619,12 @@ tab:
       part_count: 479 - Quantidade
       material_type: 480 - Tipo
       material_name: 481 - Material
-      material_description: '482 - '
-      material_url: '483 - '
+      material_description: 482 - Descrição do material
+      material_url: 483 - URL do material
       material_std_dimension: 484 - Dimensões padrão
       entity_names: 485 - Nomes de instância
       description: 486 - Descrição
-      url: '487 - '
+      url: 487 - URL
       tags: 488 - Identificação
       edge_ymin: 489 - Comprimento da borda 1
       edge_ymax: 490 - Comprimento da borda 2
@@ -633,9 +638,9 @@ tab:
       bin: 498 - Contentor
       filename: 499 - Nome da pasta
       model_name: 500 - Nome do modelo
-      model_description: '501 - '
+      model_description: 501 - Descrição do modelo
       page_name: 502 - Nome da cena
-      page_description: '503 - '
+      page_description: 503 - Descrição da cena
       placeholder:
         no_column_title: 504 - Introduza um título
         no_column_formula_native: 505 - Valor nativo da coluna '{{ col_name }}'
@@ -664,7 +669,7 @@ tab:
       total_area: 524 - Σ Áreas
       total_length: 525 - Σ Comprimentos
       tooltip:
-        incompatible_unit: '526 - '
+        incompatible_unit: 526 - Unidade incompatível com as opções de estimativa de material
       error:
         no_typed_material_parts: 527 - Nenhuma peça com o tipo de material definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** ou **$t(tab.materials.type_5)**) foi fornecida para gerar a estimativa.
         entry_error: '528 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} erro**.'
@@ -833,12 +838,12 @@ tab:
         parts_plural: 669 - {{ count }} peças
         settings: 670 - Configurações
       export:
-        title: '671 - '
+        title: 671 - Exportação do layout
         info_0: '672 - '
         option_file_format: "$t(tab.cutlist.write.option_file_format)"
         option_file_format_help: "$t(tab.cutlist.write.option_file_format_help)"
-        option_dxf_structure: '675 - '
-        option_dxf_structure_1: '676 - '
+        option_dxf_structure: 675 - Estrutura DXF
+        option_dxf_structure_1: 676 - Camadas
         option_dxf_structure_2: '677 - '
         option_dxf_structure_help: '678 - '
         option_unit: "$t(tab.cutlist.write.option_unit)"
@@ -856,20 +861,28 @@ tab:
         option_include_paths_1: "$t(tab.cutlist.write.option_include_paths_1)"
         option_include_paths_help: "$t(tab.cutlist.write.option_include_paths_help)"
         option_sheet_good: 693 - Chapa
-        option_sheet_good_help: '694 - '
-        option_sheet_veneer: '695 - '
-        option_sheet_veneer_help: '696 - '
+        option_sheet_good_help: '694 - Permite habilitar a exportação do painel e escolher suas cores.
+
+          '
+        option_sheet_veneer: 695 - Folha
+        option_sheet_veneer_help: '696 - Permite habilitar a exportação da planilha e escolher suas cores.
+
+          '
         option_bar_dimensional: 697 - Prancha
         option_bar_dimensional_help: '698 - '
         option_bar_band: '699 - '
         option_bar_band_help: '700 - '
         option_parts: 701 - Peças
-        option_parts_help: '702 - '
-        option_parts_holes: '703 - '
-        option_parts_holes_help: '704 - '
+        option_parts_help: '702 - Permite ativar a exportação de peças e escolher suas cores.
+
+          '
+        option_parts_holes: 703 - Perfurações
+        option_parts_holes_help: '704 - Permite escolher a cor dos furos da peça.
+
+          '
         option_parts_paths: "$t(tab.cutlist.write.option_parts_paths)"
         option_parts_paths_help: "$t(tab.cutlist.write.option_parts_paths_help)"
-        option_texts: '707 - '
+        option_texts: 707 - Identificações
         option_texts_help: '708 - '
         option_leftovers: 709 - Sobra
         option_leftovers_help: '710 - '
@@ -903,7 +916,7 @@ tab:
       size: 734 - Tamanho real da etiqueta
       add_element: 735 - Adicionar um elemento
       remove_element: 736 - Remover
-      remove_all_elements: '737 - '
+      remove_all_elements: 737 - Remover tudo
       part_order_strategy_help: |
         738 - Reorganizar os títulos para definir a ordem de classificação das etiquetas.
         Os títulos podem ser classificados em ordem <i class="ladb-opencutlist-icon-sort-asc"></i> *crescente* ou <i class="ladb-opencutlist-icon-sort-desc"></i> *decrescente*.
@@ -1088,17 +1101,17 @@ tab:
       option_include_paths_help: '903 - '
       option_parts: 904 - Peças
       option_parts_help: '905 - '
-      option_parts_holes: '906 - '
+      option_parts_holes: 906 - Perfurações
       option_parts_holes_help: '907 - '
       option_parts_paths: '908 - '
       option_parts_paths_help: '909 - '
       error:
-        no_part: '910 - '
+        no_part: 910 - Nenhuma peça para exportar
       warning:
         is_group_selection: 911 - As partes contidas nos **grupos ocultos** do sua Planilha de Produção não serão exportadas.
         is_part_selection: '912 - '
     snippet:
-      hello: '913 - '
+      hello: 913 - Olá
       number: 914 - Número
       name: 915 - Designação
       number_and_name: 916 - Número e designação
@@ -1158,7 +1171,7 @@ tab:
       set_current: |
         961 - Pinta peças com '{{ name }}'.
         *clique duas vezes para minimizar*
-      open_url: '962 - '
+      open_url: 962 - Abrir a URL do material
     menu:
       import_from_skm: 963 - Importar material (.skm)
       purge_unused: 964 - Eliminar materiais não utilizados
@@ -1183,9 +1196,9 @@ tab:
       name: 978 - Nome
       type: 979 - Tipo
       description: 980 - Descrição
-      url: '981 - '
+      url: 981 - URL
       cut_options: 982 - Parâmetros de corte
-      estimate_options: '983 - '
+      estimate_options: 983 - Opções de estimativa
       attributes: 984 - Atributos
       thickness: 985 - Espessura
       thickness_help: |
@@ -1230,7 +1243,7 @@ tab:
       edge_decremented_help: 1013 - Indica se as dimensões das partes devem ser reduzidas pela espessura da faixa da borda.
       edge_decremented_0: 1014 - Sem redução
       edge_decremented_1: 1015 - Reduzir de acordo com a espessura da Faixa de Borda
-      raw_estimated: '1016 - '
+      raw_estimated: 1016 - Volume utilizado
       raw_estimated_help: '1017 - '
       raw_estimated_0: '1018 - '
       raw_estimated_1: '1019 - '
@@ -1276,35 +1289,35 @@ tab:
       invalid_image_file: 1046 - Imagem inválida
     obsolete_base: 1047 - Para permanecer sincronizado, você deve atualizar a lista de materiais.
   outliner:
-    label: '1048 - '
-    title: '1049 - '
+    label: 1048 - Estrutura
+    title: 1049 - Estrutura
     list: '1050 - '
-    nodes: '1051 - '
-    part_count: '1052 - '
-    type_0: '1053 - '
-    type_1: '1054 - '
+    nodes: 1051 - Instâncias
+    part_count: 1052 - Nb Peças
+    type_0: 1053 - Modelo
+    type_1: 1054 - Grupo
     type_2: '1055 - '
-    type_3: '1056 - '
+    type_3: 1056 - Peça
     tooltip:
-      open_node_url: '1057 - '
+      open_node_url: 1057 - Abrir a URL da instância
     edit_node:
-      title_model: '1058 - '
-      title_instance: '1059 - '
+      title_model: 1058 - Propriedades do modelo
+      title_instance: 1059 - Propriedades da instância **{{ name }}**
       general: 1060 - Geral
       preview: 1061 - Visão geral
       name: 1062 - Nome
       instance_name: 1063 - Instância
-      definition_name: '1064 - '
+      definition_name: 1064 - Definição
       description: 1065 - Descrição
-      url: '1066 - '
+      url: 1066 - URL
       layer_name: 1067 - Etiqueta
       explode: '1068 - '
-      explode_message: '1069 - '
+      explode_message: 1069 - Você confirma a divisão da instância **{{ name }}** ?
     error:
       no_model: 1070 - Nenhum modelo está aberto. Você precisará me fornecer mais informações;)
-      no_entities: '1071 - '
+      no_entities: 1071 - O modelo está vazio!
       node_not_found: '1072 - '
-      entity_not_found: '1073 - '
+      entity_not_found: 1073 - Instância não encontrada
       obsolete_outliner: '1074 - '
     tip:
       no_node: '1075 - '
@@ -1594,7 +1607,7 @@ tool:
     action_3_status: 1251 - Clique em uma face para obter uma amostra do material
     action_4: 1252 - Limpar
     action_4_status: 1253 - Clique em uma peça para remover todos os materiais do desenho e de todas as suas instâncias
-    action_option_group_instances: '1254 - '
+    action_option_group_instances: 1254 - Nome da instância
     action_option_group_edges: 1255 - Número de fitas de borda
     action_option_group_faces: '1256 - '
     action_option_instances_0_status: '1257 - '
@@ -1646,9 +1659,9 @@ tool:
       not_orientable: 1298 - O tipo desta peça não permite que a orientação seja modificada
   smart_export:
     title: 1299 - Exportar
-    action_0: '1300 - '
+    action_0: 1300 - Exportar uma peça 3D
     action_0_status: '1301 - '
-    action_1: '1302 - '
+    action_1: 1302 - Exportar uma peça 2D
     action_1_status: '1303 - '
     action_2: '1304 - '
     action_2_status: '1305 - '
@@ -1658,10 +1671,10 @@ tool:
     action_option_group_unit: 1309 - Unidades
     action_option_group_faces: 1310 - Faces
     action_option_group_options: 1311 - Opções
-    action_option_file_format_dxf_status: '1312 - '
-    action_option_file_format_stl_status: '1313 - '
-    action_option_file_format_obj_status: '1314 - '
-    action_option_file_format_svg_status: '1315 - '
+    action_option_file_format_dxf_status: 1312 - Exportar para arquivo DXF
+    action_option_file_format_stl_status: 1313 - Exportar para arquivo STL
+    action_option_file_format_obj_status: 1314 - Exportar para arquivo OBJ
+    action_option_file_format_svg_status: 1315 - Exportar para arquivo SVG
     action_option_unit_0_status: "$t(default.unit_0)"
     action_option_unit_1_status: "$t(default.unit_1)"
     action_option_unit_2_status: "$t(default.unit_2)"
@@ -1675,4 +1688,4 @@ tool:
     action_option_options_include_paths_status: '1326 - '
     error:
       not_part: '1327 - '
-      not_flat_face: '1328 - '
+      not_flat_face: 1328 - Esta superfície não é plana

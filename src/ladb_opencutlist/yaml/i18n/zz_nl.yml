@@ -1092,7 +1092,7 @@ tab:
         is_part_selection: 874 - Deze totaaltekening is beperkt tot **geselecteerde onderdelen**.
     write:
       title: 875 - Miniatuurvoorbeeld Onderdelen exporteren
-      info_2d: '876 - Miniatuurvoorbeeld Onderdelen exporteren Met deze module kunt u de **2D-projectie** van de onderdelen exporteren als bestanden in(https://wikipedia.org/wiki/Scalable_Vector_Graphics) o [DXF](https://wikipedia.org/wiki/AutoCAD_DXF). [SVG]-formaat
+      info_2d: '876 - Miniatuurvoorbeeld Onderdelen exporteren Met deze module kunt u de **2D-projectie** van de onderdelen exporteren als bestanden in [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) of [DXF](https://wikipedia.org/wiki/AutoCAD_DXF) formaat.
 
         '
       info_3d: '877 - Met deze module kunt u de **3D-geometrie** van onderdelen exporteren als bestanden [STL](https://wikipedia.org/wiki/STL_(file_format)) of [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file).
@@ -1111,7 +1111,7 @@ tab:
 
         '
       option_faces: 884 - Fineren
-      option_faces_0: 885 - Gebruik alleen het beoogde gezicht.
+      option_faces_0: 885 - Gebruik alleen het beoogde gezicht
       option_faces_1: 886 - Gebruik alle zijden van het onderdeel
       option_faces_help: "887 - Hiermee kunt u kiezen of er naar de vorm van het onderdeel wordt gezocht op alle vlakken of alleen op het beoogde vlak.\n\n"
       option_anchor: 888 - Anker
@@ -1204,7 +1204,7 @@ tab:
       grained_0: "$t(tab.materials.edit_material.grained_0)"
       grained_1: "$t(tab.materials.edit_material.grained_1)"
       grain_direction: 955 - Nerf richting
-      raw_estimated_0: 956 - Geschat op basis van het nuttige debiet volume.
+      raw_estimated_0: 956 - Geschat op basis van het nuttige debiet volume
       colorized: 957 - Deze tint zal toegepast worden op de textuur van dit materiaal wanneer het in het model toegepast wordt
       texture_load: 958 - Laad een nieuwe textuur
       texture_clear: 959 - Heldere textuur
@@ -1293,7 +1293,7 @@ tab:
 
         ** Eerst materiaalvolume nodig**
         Het totale volume is de som van de volumes van de panelen, platen, staven of strips van de onderdelen na lay-out.
-      raw_estimated_0: 1018 - Nuttige debiet volume.
+      raw_estimated_0: 1018 - Nuttige debiet volume
       raw_estimated_1: 1019 - Benodigd grondstof volume
       std_attributes_dim_placeholder: 1020 - Kies een afmeting
       std_volumic_masses: 1021 - Dichtheid
@@ -1339,7 +1339,7 @@ tab:
   outliner:
     label: 1048 - Structuur
     title: 1049 - Structuur
-    list: 1050 - Boomstructuur entiteiten.
+    list: 1050 - Boomstructuur entiteiten
     nodes: 1051 - Instanties
     part_count: 1052 - Aantal stukken
     type_0: 1053 - Model
@@ -1461,7 +1461,7 @@ tab:
       1136 - Heeft u een video gemaakt waarin u het gebruik van **OpenCutList** laat zien en wilt u die hier laten zien?
       Laat het ons weten door te schrijven naar **opencutlist@lairdubois.fr**!
 
-      *De video moet openbaar zijn en op YouTube staan.*
+      *De video moet openbaar zijn en op YouTube staan*.
     error:
       fail_to_load_list: 1137 - Videolijst kan niet worden geladen.
   news:
