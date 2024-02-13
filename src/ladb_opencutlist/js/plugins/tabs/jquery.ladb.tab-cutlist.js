@@ -1330,7 +1330,6 @@
 
             var isFolder = part.children && part.children.length > 0;
             var isSelected = this.selectionGroupId === group.id && this.selectionPartIds.includes(partId) && this.selectionPartIds.length > 1;
-            var multiple = isFolder || isSelected;
 
             var partIds;
             if (isFolder) {
@@ -1880,6 +1879,30 @@
     LadbTabCutlist.prototype.writeGroupParts = function (groupId, is2d) {
         let partIdsWithContext = this.grabVisiblePartIdsWithContext(groupId, REAL_MATERIALS_FILTER);
         this.writeParts(partIdsWithContext.partIds, partIdsWithContext.context, is2d);
+    };
+
+    LadbTabCutlist.prototype.writePart = function (partId, is2d) {
+        var groupAndPart = this.findGroupAndPartById(partId);
+        if (groupAndPart) {
+
+            var group = groupAndPart.group;
+            var part = groupAndPart.part;
+
+            var isFolder = part.children && part.children.length > 0;
+            var isSelected = this.selectionGroupId === group.id && this.selectionPartIds.includes(partId) && this.selectionPartIds.length > 1;
+
+            var partIds;
+            if (isFolder) {
+                partIds = [ partId ];
+            } else if (isSelected) {
+                partIds = this.selectionPartIds;
+            } else {
+                partIds = [ partId ];
+            }
+
+            this.writeParts(partIds, null, is2d);
+
+        }
     };
 
     LadbTabCutlist.prototype.writeParts = function (partIds, context, is2d) {
@@ -3032,8 +3055,7 @@
             });
             $btnExportToFile.on('click', function () {
                 this.blur();
-                that.writeParts([ part.id ], null, $(this).data('is-2d'));
-                // that.exportPartToFile(part.id, $(this).data('file-format'), parseInt($(this).data('part-drawing-type')));
+                that.writePart(part.id, $(this).data('is-2d'));
             });
             $btnUpdate.on('click', function () {
 
