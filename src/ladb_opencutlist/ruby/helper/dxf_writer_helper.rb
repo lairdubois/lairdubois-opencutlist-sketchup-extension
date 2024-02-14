@@ -623,7 +623,7 @@ module Ladb::OpenCutList
 
         # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-8CE7CC87-27BD-4490-89DA-C21F516415A9
 
-        vport_center = Geom::Point3d.new((vport_max.x - vport_min.x) / 2, (vport_max.y - vport_min.y) / 2)
+        vport_center = Geom::Point3d.new(vport_min.x + (vport_max.x - vport_min.x) / 2, vport_min.y + (vport_max.y - vport_min.y) / 2)
 
         _dxf_write(file, 0, 'TABLE')
         _dxf_write(file, 2, 'VPORT')
