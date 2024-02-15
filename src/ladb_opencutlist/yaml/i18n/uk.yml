@@ -394,7 +394,7 @@ tab:
         Таким чином, кількість, пов’язана з деталлю в списку, представлятиме кількість цілих партій, необхідних для вмісту кількості одиниць, фактично присутніх у моделі.
 
         *Приклад: щоб підрахувати лише 1 шт. для пари напрямних ящиків:
-        Упаковка = 2 шт.*
+        Комплект = 2 шт.*
       instance_count_by_part_1: 1 одиниця в комплекті
       instance_count_by_part_2: 2 одиниці в комплекті
       mass: Маса
@@ -739,7 +739,7 @@ tab:
         *Цю опцію потрібно активувати, щоб форми могли бути експортовані.*
       option_saw_kerf: Товщина пили
       option_saw_kerf_help: "Ширина матеріалу, втрачена пропилом."
-      option_trimming: Обрізка
+      option_trimming: Обрізка листа
       option_trimming_help_1d: "Розмір обрізки на кінці дошки або крайки, для видалення дефектного краю."
       option_trimming_help_2d: Розмір обрізки листа по периметру для видалення дефектів зовнішнього вигляду листа та його прямокутного вирівнювання.
       option_optimization: Рівень оптимізації
@@ -770,7 +770,7 @@ tab:
         Очікуваний формат: **Д**x**К**. Де **Д** — *довжина* залишку, а **К** — кількість.
         Кількість необов'язкова.
         *Якщо одиниця виміру не вказана, буде врахована модельна одиниця.*
-      option_std_sheet_good: Стандартний розмір панелі
+      option_std_sheet_good: Стандартний розмір листа
       option_std_sheet_veneer: Стандартний лист
       option_std_sheet_help: |
         Оберіть тут стандартну панель або лист, який буде скопійовано, щоб найкраще вмістити всі деталі.
@@ -778,7 +778,7 @@ tab:
         Відредагуйте матеріал '{{ material_name }}', щоб оновити цей список.
       option_std_sheet_add: Додати розмір
       option_std_sheet_none: Ні
-      option_scrap_sheet_good_sizes: Залишки панелі
+      option_scrap_sheet_good_sizes: Залишки
       option_scrap_sheet_veneer_sizes: Залишки листа
       option_scrap_sheet_sizes_placeholder: довжина х ширина х кількість ; ...
       option_scrap_sheet_sizes_help: |
@@ -824,7 +824,7 @@ tab:
         bar_dimensional_type_1: Обрізок
         bar_edge_type_0: Стандартний розмір крайки
         bar_edge_type_1: Обрізок крайки
-        sheet_good_type_0: Стандартний розмір панелі
+        sheet_good_type_0: Стандартний розмір листа
         sheet_good_type_1: Залишок
         sheet_veneer_type_0: Стандартний лист
         sheet_veneer_type_1: Залишок листа
@@ -1045,8 +1045,8 @@ tab:
       option_page_width: Ширина
       option_page_height: Висота
       option_page_header: Заголовок
-      option_page_header_0: Без
-      option_page_header_1: З
+      option_page_header_0: Без заголовку
+      option_page_header_1: Із заголовком
       option_page_header_help: |
         Дозволяє вибрати, чи міститиме сторінка для друку заголовок із назвою документа, його описом, датою, одиницею та масштабом.
         Без заголовка загальний малюнок займе всю сторінку.
@@ -1606,7 +1606,7 @@ tool:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_paint:
-    title: Зафарбувати
+    title: Покриття
     default_material: Матеріал не заданий
     filters: Фільтри
     filter_0: Не визначений
@@ -1616,34 +1616,34 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: Фарбування деталей
+    action_0: Покриття деталей
     action_0_status: "Натисніть на деталь, щоб застосувати матеріал до її екземпляра"
-    action_1: Розфарбувати торці
-    action_1_status: "Натисніть на край деталі, щоб застосувати до неї матеріал«$t(tab.materials.type_4)»"
-    action_2: Розфарбувати площину
-    action_2_status: "Клацніть на площині деталі, щоб застосувати до неї матеріал «$t(tab.materials.type_6)»"
+    action_1: Покриття торців
+    action_1_status: "Натисніть на торець деталі, щоб застосувати до неї матеріал«$t(tab.materials.type_4)»"
+    action_2: Покриття граней
+    action_2_status: "Натисніть на награні деталі, щоб застосувати до неї матеріал «$t(tab.materials.type_6)»"
     action_3: Очистити деталь
-    action_3_status: "Натисніть на площину, щоб взяти зразок матеріалу"
+    action_3_status: "Натисніть на грані, щоб взяти зразок матеріалу"
     action_4: Очистити
     action_4_status: "Натисніть на деталь, щоб видалити всі матеріали з її визначення та всіх екземплярів"
     action_option_group_instances: Кількість екземплярів
     action_option_group_edges: Кількість крайки
     action_option_group_faces: Кількість граней
-    action_option_instances_0_status: Фарбуйте лише екземпляр цільової частини
-    action_option_instances_1_status: Зафарбуйте всі екземпляри цільової частини
-    action_option_edges_0_status: Фарбуйте лише цільову крайку
-    action_option_edges_1_status: Зафарбуйте цільову крайку та протилежну крайку деталі
-    action_option_edges_2_status: "Забарвіть 4 краї деталі, яку ви вибрали"
-    action_option_faces_0_status: Фарбуйте лише цільову грань
-    action_option_faces_1_status: Зафарбуйте 2 грані цільової деталі
+    action_option_instances_0_status: Покриття лише екземпляра цільової деталі
+    action_option_instances_1_status: Покриття всіх екземплярів цільової деталі
+    action_option_edges_0_status: Покриття лише цільової крайки
+    action_option_edges_1_status: Покриття цільової крайки та протилежної крайки у деталі
+    action_option_edges_2_status: "Покриття всіх 4 країв деталі, яку ви вибрали"
+    action_option_faces_0_status: Покриття лише цільової грані
+    action_option_faces_1_status: Покриття 2 граней цільової деталі
     edges: "{{ count }} торець"
     edges_plural: "{{ count }} торців"
     edge_ymin: Довжина 1
     edge_ymax: Довжина 2
     edge_xmin: Ширина 1
     edge_xmax: Ширина 2
-    faces: "{{ count }} площина"
-    faces_plural: "{{ count }} площин"
+    faces: "{{ count }} грань"
+    faces_plural: "{{ count }} граней"
     face_zmin: Тил
     face_zmax: Лице
     warning:
@@ -1651,8 +1651,8 @@ tool:
       no_material_type: "Незалежно від типу '{{ type }}'"
     error:
       not_part: "Об'єкт, на який наведено, не є деталлю (компонентом)"
-      not_edge: Вказана поверхня не є торцем панелі
-      not_face: Вказана поверхня не є площиною панелі
+      not_edge: Вказана грань не є торцем панелі
+      not_face: Вказана грань не є площиною панелі
       wrong_material_type: "Вказана деталь має бути типу '{{ type }}'"
   smart_axes:
     title: Орієнтація
@@ -1688,7 +1688,7 @@ tool:
     action_3_status: Натисніть на ребро
     action_option_group_file_format: Формат
     action_option_group_unit: Одиниці
-    action_option_group_faces: Поверхні
+    action_option_group_faces: Грані
     action_option_group_options: Опції
     action_option_file_format_dxf_status: Експорт до файлу DXF
     action_option_file_format_stl_status: Експортувати в файл STL
@@ -1707,4 +1707,4 @@ tool:
     action_option_options_include_paths_status: "Експортувати як шляхи непов'язаних з гранню ребер, що містяться в деталі"
     error:
       not_part: Ця площина не є частиною деталі (компонента)
-      not_flat_face: Ця поверхня не є плоскою
+      not_flat_face: Ця грань не є плоскою

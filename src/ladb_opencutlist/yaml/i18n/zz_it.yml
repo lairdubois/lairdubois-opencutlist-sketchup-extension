@@ -433,7 +433,7 @@ tab:
       symmetrical_help: '330 - Se questa casella è selezionata, il rilevamento della *parte specchiata* non avrà alcun effetto su questa parte.
 
         '
-      ignore_grain_direction: 331 - Ignorare la direzione della venatura
+      ignore_grain_direction: 331 - Ignora la direzione della venatura
       ignore_grain_direction_help: '332 - Selezionando questa opzione, viene ignorata la direzione della venatura solo su questa parte.
 
         '
