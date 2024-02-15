@@ -1089,7 +1089,7 @@ tab:
       option_faces_0: Use target face only
       option_faces_1: Use all faces of the part
       option_faces_help: |
-        Allows you to choose whether the search for the shape of the part is to be carried out on all its faces or only on the targeted face.
+        Allows you to choose whether the search for the shape of the part is to be carried out on all its faces or only on the target face.
       option_anchor: Anchor Point
       option_anchor_0: Default
       option_anchor_1: Project the part's origin
@@ -1629,12 +1629,12 @@ tool:
     action_option_group_instances: Number of instances
     action_option_group_edges: Number of edge bandings
     action_option_group_faces: Number of faces
-    action_option_instances_0_status: Color only the instance of the targeted part
-    action_option_instances_1_status: Color all instances of the targeted part
-    action_option_edges_0_status: Color only the targeted edge
+    action_option_instances_0_status: Color only the instance of the target part
+    action_option_instances_1_status: Color all instances of the target part
+    action_option_edges_0_status: Color only the target edge
     action_option_edges_1_status: Color the target edge and the opposite edge of the part
     action_option_edges_2_status: Color the 4 edges of the target part
-    action_option_faces_0_status: Color only the targeted face
+    action_option_faces_0_status: Color only the target face
     action_option_faces_1_status: Color the 2 faces of the target part
     edges: "{{ count }} edge"
     edges_plural: "{{ count }} edges"

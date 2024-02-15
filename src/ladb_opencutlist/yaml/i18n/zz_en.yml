@@ -1113,7 +1113,7 @@ tab:
       option_faces: 884 - Faces
       option_faces_0: 885 - Use target face only
       option_faces_1: 886 - Use all faces of the part
-      option_faces_help: '887 - Allows you to choose whether the search for the shape of the part is to be carried out on all its faces or only on the targeted face.
+      option_faces_help: '887 - Allows you to choose whether the search for the shape of the part is to be carried out on all its faces or only on the target face.
 
         '
       option_anchor: 888 - Anchor Point
@@ -1670,12 +1670,12 @@ tool:
     action_option_group_instances: 1254 - Number of instances
     action_option_group_edges: 1255 - Number of edge bandings
     action_option_group_faces: 1256 - Number of faces
-    action_option_instances_0_status: 1257 - Color only the instance of the targeted part
-    action_option_instances_1_status: 1258 - Color all instances of the targeted part
-    action_option_edges_0_status: 1259 - Color only the targeted edge
+    action_option_instances_0_status: 1257 - Color only the instance of the target part
+    action_option_instances_1_status: 1258 - Color all instances of the target part
+    action_option_edges_0_status: 1259 - Color only the target edge
     action_option_edges_1_status: 1260 - Color the target edge and the opposite edge of the part
     action_option_edges_2_status: 1261 - Color the 4 edges of the target part
-    action_option_faces_0_status: 1262 - Color only the targeted face
+    action_option_faces_0_status: 1262 - Color only the target face
     action_option_faces_1_status: 1263 - Color the 2 faces of the target part
     edges: 1264 - {{ count }} edge
     edges_plural: 1265 - {{ count }} edges
