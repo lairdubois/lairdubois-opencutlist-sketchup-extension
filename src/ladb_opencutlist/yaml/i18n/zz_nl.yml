@@ -1113,7 +1113,9 @@ tab:
       option_faces: 884 - Fineren
       option_faces_0: 885 - Gebruik alleen het beoogde gezicht
       option_faces_1: 886 - Gebruik alle zijden van het onderdeel
-      option_faces_help: "887 - Hiermee kunt u kiezen of er naar de vorm van het onderdeel wordt gezocht op alle vlakken of alleen op het beoogde vlak.\n\n"
+      option_faces_help: '887 - Hiermee kunt u kiezen of er naar de vorm van het onderdeel wordt gezocht op alle vlakken of alleen op het beoogde vlak.
+
+        '
       option_anchor: 888 - Anker
       option_anchor_0: 889 - Standaard
       option_anchor_1: 890 - Projecteer de oorsprong van het onderdeel
