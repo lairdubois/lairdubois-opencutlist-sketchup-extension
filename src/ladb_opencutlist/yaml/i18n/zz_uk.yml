@@ -393,7 +393,7 @@ tab:
         Таким чином, кількість, пов’язана з деталлю в списку, представлятиме кількість цілих партій, необхідних для вмісту кількості одиниць, фактично присутніх у моделі.
 
         *Приклад: щоб підрахувати лише 1 шт. для пари напрямних ящиків:
-        Упаковка = 2 шт.*
+        Комплект = 2 шт.*
       instance_count_by_part_1: 311 - 1 одиниця в комплекті
       instance_count_by_part_2: 312 - 2 одиниці в комплекті
       mass: 313 - Маса
@@ -749,7 +749,7 @@ tab:
         *Цю опцію потрібно активувати, щоб форми могли бути експортовані.*
       option_saw_kerf: 592 - Товщина пили
       option_saw_kerf_help: 593 - Ширина матеріалу, втрачена пропилом.
-      option_trimming: 594 - Обрізка
+      option_trimming: 594 - Обрізка листа
       option_trimming_help_1d: 595 - Розмір обрізки на кінці дошки або крайки, для видалення дефектного краю.
       option_trimming_help_2d: 596 - Розмір обрізки листа по периметру для видалення дефектів зовнішнього вигляду листа та його прямокутного вирівнювання.
       option_optimization: 597 - Рівень оптимізації
@@ -780,7 +780,7 @@ tab:
         Очікуваний формат: **Д**x**К**. Де **Д** — *довжина* залишку, а **К** — кількість.
         Кількість необов'язкова.
         *Якщо одиниця виміру не вказана, буде врахована модельна одиниця.*
-      option_std_sheet_good: 618 - Стандартний розмір панелі
+      option_std_sheet_good: 618 - Стандартний розмір листа
       option_std_sheet_veneer: 619 - Стандартний лист
       option_std_sheet_help: |
         620 - Оберіть тут стандартну панель або лист, який буде скопійовано, щоб найкраще вмістити всі деталі.
@@ -788,7 +788,7 @@ tab:
         Відредагуйте матеріал '{{ material_name }}', щоб оновити цей список.
       option_std_sheet_add: 621 - Додати розмір
       option_std_sheet_none: 622 - Ні
-      option_scrap_sheet_good_sizes: 623 - Залишки панелі
+      option_scrap_sheet_good_sizes: 623 - Залишки
       option_scrap_sheet_veneer_sizes: 624 - Залишки листа
       option_scrap_sheet_sizes_placeholder: 625 - довжина х ширина х кількість ; ...
       option_scrap_sheet_sizes_help: |
@@ -834,7 +834,7 @@ tab:
         bar_dimensional_type_1: 660 - Обрізок
         bar_edge_type_0: 661 - Стандартний розмір крайки
         bar_edge_type_1: 662 - Обрізок крайки
-        sheet_good_type_0: 663 - Стандартний розмір панелі
+        sheet_good_type_0: 663 - Стандартний розмір листа
         sheet_good_type_1: 664 - Залишок
         sheet_veneer_type_0: 665 - Стандартний лист
         sheet_veneer_type_1: 666 - Залишок листа
@@ -1065,8 +1065,8 @@ tab:
       option_page_width: 854 - Ширина
       option_page_height: 855 - Висота
       option_page_header: 856 - Заголовок
-      option_page_header_0: 857 - Без
-      option_page_header_1: 858 - З
+      option_page_header_0: 857 - Без заголовку
+      option_page_header_1: 858 - Із заголовком
       option_page_header_help: |
         859 - Дозволяє вибрати, чи міститиме сторінка для друку заголовок із назвою документа, його описом, датою, одиницею та масштабом.
         Без заголовка загальний малюнок займе всю сторінку.
@@ -1647,7 +1647,7 @@ tool:
     transparency: "$t(tool.default.transparency)"
     zoom_extents: "$t(tool.default.zoom_extents)"
   smart_paint:
-    title: 1234 - Зафарбувати
+    title: 1234 - Покриття
     default_material: 1235 - Матеріал не заданий
     filters: 1236 - Фільтри
     filter_0: 1237 - Не визначений
@@ -1657,34 +1657,34 @@ tool:
     filter_4: "$t(tab.materials.type_4)"
     filter_5: "$t(tab.materials.type_5)"
     filter_6: "$t(tab.materials.type_6)"
-    action_0: 1244 - Фарбування деталей
+    action_0: 1244 - Покриття деталей
     action_0_status: 1245 - Натисніть на деталь, щоб застосувати матеріал до її екземпляра
-    action_1: 1246 - Розфарбувати торці
-    action_1_status: 1247 - Натисніть на край деталі, щоб застосувати до неї матеріал«$t(tab.materials.type_4)»
-    action_2: 1248 - Розфарбувати площину
-    action_2_status: 1249 - Клацніть на площині деталі, щоб застосувати до неї матеріал «$t(tab.materials.type_6)»
+    action_1: 1246 - Покриття торців
+    action_1_status: 1247 - Натисніть на торець деталі, щоб застосувати до неї матеріал«$t(tab.materials.type_4)»
+    action_2: 1248 - Покриття граней
+    action_2_status: 1249 - Натисніть на награні деталі, щоб застосувати до неї матеріал «$t(tab.materials.type_6)»
     action_3: 1250 - Очистити деталь
-    action_3_status: 1251 - Натисніть на площину, щоб взяти зразок матеріалу
+    action_3_status: 1251 - Натисніть на грані, щоб взяти зразок матеріалу
     action_4: 1252 - Очистити
     action_4_status: 1253 - Натисніть на деталь, щоб видалити всі матеріали з її визначення та всіх екземплярів
     action_option_group_instances: 1254 - Кількість екземплярів
     action_option_group_edges: 1255 - Кількість крайки
     action_option_group_faces: 1256 - Кількість граней
-    action_option_instances_0_status: 1257 - Фарбуйте лише екземпляр цільової частини
-    action_option_instances_1_status: 1258 - Зафарбуйте всі екземпляри цільової частини
-    action_option_edges_0_status: 1259 - Фарбуйте лише цільову крайку
-    action_option_edges_1_status: 1260 - Зафарбуйте цільову крайку та протилежну крайку деталі
-    action_option_edges_2_status: 1261 - Забарвіть 4 краї деталі, яку ви вибрали
-    action_option_faces_0_status: 1262 - Фарбуйте лише цільову грань
-    action_option_faces_1_status: 1263 - Зафарбуйте 2 грані цільової деталі
+    action_option_instances_0_status: 1257 - Покриття лише екземпляра цільової деталі
+    action_option_instances_1_status: 1258 - Покриття всіх екземплярів цільової деталі
+    action_option_edges_0_status: 1259 - Покриття лише цільової крайки
+    action_option_edges_1_status: 1260 - Покриття цільової крайки та протилежної крайки у деталі
+    action_option_edges_2_status: 1261 - Покриття всіх 4 країв деталі, яку ви вибрали
+    action_option_faces_0_status: 1262 - Покриття лише цільової грані
+    action_option_faces_1_status: 1263 - Покриття 2 граней цільової деталі
     edges: 1264 - {{ count }} торець
     edges_plural: 1265 - {{ count }} торців
     edge_ymin: 1266 - Довжина 1
     edge_ymax: 1267 - Довжина 2
     edge_xmin: 1268 - Ширина 1
     edge_xmax: 1269 - Ширина 2
-    faces: 1270 - {{ count }} площина
-    faces_plural: 1271 - {{ count }} площин
+    faces: 1270 - {{ count }} грань
+    faces_plural: 1271 - {{ count }} граней
     face_zmin: 1272 - Тил
     face_zmax: 1273 - Лице
     warning:
@@ -1692,8 +1692,8 @@ tool:
       no_material_type: 1275 - Незалежно від типу '{{ type }}'
     error:
       not_part: 1276 - Об'єкт, на який наведено, не є деталлю (компонентом)
-      not_edge: 1277 - Вказана поверхня не є торцем панелі
-      not_face: 1278 - Вказана поверхня не є площиною панелі
+      not_edge: 1277 - Вказана грань не є торцем панелі
+      not_face: 1278 - Вказана грань не є площиною панелі
       wrong_material_type: 1279 - Вказана деталь має бути типу '{{ type }}'
   smart_axes:
     title: 1280 - Орієнтація
@@ -1729,7 +1729,7 @@ tool:
     action_3_status: 1307 - Натисніть на ребро
     action_option_group_file_format: 1308 - Формат
     action_option_group_unit: 1309 - Одиниці
-    action_option_group_faces: 1310 - Поверхні
+    action_option_group_faces: 1310 - Грані
     action_option_group_options: 1311 - Опції
     action_option_file_format_dxf_status: 1312 - Експорт до файлу DXF
     action_option_file_format_stl_status: 1313 - Експортувати в файл STL
@@ -1748,4 +1748,4 @@ tool:
     action_option_options_include_paths_status: 1326 - Експортувати як шляхи непов'язаних з гранню ребер, що містяться в деталі
     error:
       not_part: 1327 - Ця площина не є частиною деталі (компонента)
-      not_flat_face: 1328 - Ця поверхня не є плоскою
+      not_flat_face: 1328 - Ця грань не є плоскою
