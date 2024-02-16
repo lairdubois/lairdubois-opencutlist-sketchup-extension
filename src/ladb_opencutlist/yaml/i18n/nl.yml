@@ -1115,21 +1115,17 @@ tab:
       option_include_paths: Sporen
       option_include_paths_0: Geen enkele
       option_include_paths_1: Gebruik randen die niet aan een gezicht zijn gekoppeld
-      option_include_paths_help: |+
+      option_include_paths_help: |
         Hiermee kunt u het gebruik activeren van randen die niet aan een vlak zijn gekoppeld en wel in het onderdeel zijn opgenomen, en deze als plot exporteren.
-
       option_parts: Stukken
-      option_parts_help: |+
+      option_parts_help: |
         Hiermee kunt u de kleuren van de onderdelen kiezen.
-
       option_parts_holes: Boringen
-      option_parts_holes_help: |+
+      option_parts_holes_help: |
         Hiermee kunt u de kleuren van de onderdeelgaten kiezen.
-
       option_parts_paths: Sporen
-      option_parts_paths_help: |+
+      option_parts_paths_help: |
         Hiermee kunt u de kleur van de lijnen kiezen.
-
       error:
         no_part: Geen onderdelen om te exporteren.
       warning:
