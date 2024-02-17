@@ -1113,7 +1113,9 @@ tab:
       option_faces: 884 - Fineren
       option_faces_0: 885 - Gebruik alleen het beoogde gezicht
       option_faces_1: 886 - Gebruik alle zijden van het onderdeel
-      option_faces_help: "887 - Hiermee kunt u kiezen of er naar de vorm van het onderdeel wordt gezocht op alle vlakken of alleen op het beoogde vlak.\n\n"
+      option_faces_help: '887 - Hiermee kunt u kiezen of er naar de vorm van het onderdeel wordt gezocht op alle vlakken of alleen op het beoogde vlak.
+
+        '
       option_anchor: 888 - Anker
       option_anchor_0: 889 - Standaard
       option_anchor_1: 890 - Projecteer de oorsprong van het onderdeel
@@ -1139,13 +1141,21 @@ tab:
       option_include_paths: 900 - Sporen
       option_include_paths_0: 901 - Geen enkele
       option_include_paths_1: 902 - Gebruik randen die niet aan een gezicht zijn gekoppeld
-      option_include_paths_help: "903 - Hiermee kunt u het gebruik activeren van randen die niet aan een vlak zijn gekoppeld en wel in het onderdeel zijn opgenomen, en deze als plot exporteren.\n\n"
+      option_include_paths_help: '903 - Hiermee kunt u het gebruik activeren van randen die niet aan een vlak zijn gekoppeld en wel in het onderdeel zijn opgenomen, en deze als plot exporteren.
+
+        '
       option_parts: 904 - Stukken
-      option_parts_help: "905 - Hiermee kunt u de kleuren van de onderdelen kiezen.\n\n"
+      option_parts_help: '905 - Hiermee kunt u de kleuren van de onderdelen kiezen.
+
+        '
       option_parts_holes: 906 - Boringen
-      option_parts_holes_help: "907 - Hiermee kunt u de kleuren van de onderdeelgaten kiezen.\n\n"
+      option_parts_holes_help: '907 - Hiermee kunt u de kleuren van de onderdeelgaten kiezen.
+
+        '
       option_parts_paths: 908 - Sporen
-      option_parts_paths_help: "909 - Hiermee kunt u de kleur van de lijnen kiezen.\n\n"
+      option_parts_paths_help: '909 - Hiermee kunt u de kleur van de lijnen kiezen.
+
+        '
       error:
         no_part: 910 - Geen onderdelen om te exporteren.
       warning:
