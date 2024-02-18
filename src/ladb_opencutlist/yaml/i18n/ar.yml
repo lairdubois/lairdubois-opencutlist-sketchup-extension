@@ -1708,3 +1708,4 @@ tool:
     error:
       not_part: هذا الوجه لا ينتمي إلى قِطعة (عنصر)
       not_flat_face: هذا الوجه ليس مُسطَّحا
+      incompatible_active_path: المسار النشط لا يسمح بتصدير هذا القطعة

@@ -1708,3 +1708,4 @@ tool:
     error:
       not_part: Esta cara no forma parte de una pieza (componente)
       not_flat_face: Esta superficie no es plana
+      incompatible_active_path: El camino activo no permite exportar esta pieza

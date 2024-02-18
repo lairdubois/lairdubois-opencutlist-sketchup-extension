@@ -1708,3 +1708,4 @@ tool:
     error:
       not_part: חזית הזאת אינה שייכת לחלק (רכיב)
       not_flat_face: משטח זה אינו שטוח
+      incompatible_active_path: הנתיב הפעיל אינו מאפשר לייצא את החלק הזה

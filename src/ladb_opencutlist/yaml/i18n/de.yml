@@ -1708,3 +1708,4 @@ tool:
     error:
       not_part: Diese Fläche gehört nicht zu einem Teil (Komponente)
       not_flat_face: Diese Fläche ist nicht eben
+      incompatible_active_path: "Der aktive Pfad ermöglicht es nicht, dieses Teil zu exportieren."
