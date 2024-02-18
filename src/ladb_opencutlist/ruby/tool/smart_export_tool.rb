@@ -708,7 +708,7 @@ module Ladb::OpenCutList
                 diff = Sketchup.active_model.active_path - input_part_entity_path
                 unless diff.empty?
                   _reset_active_part
-                  show_tooltip("⚠ Pas exportable", MESSAGE_TYPE_ERROR)
+                  show_tooltip("⚠ #{Plugin.instance.get_i18n_string('tool.smart_export.error.incompatible_active_path')}", MESSAGE_TYPE_ERROR)
                   push_cursor(@cursor_select_error)
                   return
                 end
