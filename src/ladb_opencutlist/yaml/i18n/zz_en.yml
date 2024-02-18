@@ -1749,3 +1749,4 @@ tool:
     error:
       not_part: 1327 - This face does not belong to a part (component)
       not_flat_face: 1328 - This surface is not flat
+      incompatible_active_path: 1329 - The active path does not allow exporting this part.

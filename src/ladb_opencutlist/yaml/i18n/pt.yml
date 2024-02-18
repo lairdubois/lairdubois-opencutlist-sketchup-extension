@@ -1666,3 +1666,4 @@ tool:
     error:
       not_part: ""
       not_flat_face: Esta superfície não é plana
+      incompatible_active_path: O caminho ativo não permite exportar esta peça

@@ -1689,3 +1689,4 @@ tool:
     error:
       not_part: '1327 - '
       not_flat_face: 1328 - Esta superfície não é plana
+      incompatible_active_path: 1329 - O caminho ativo não permite exportar esta peça

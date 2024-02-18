@@ -1252,7 +1252,7 @@ tab:
       estimate_options: 983 - Opzioni di stima
       attributes: 984 - Attributi
       thickness: 985 - Spessore
-      thickness_help: |-
+      thickness_help: |
         986 - Spessore finito del materiale.
         *Dimensioni senza unità si intendono in unità di misura del modello.*
       length_increase: 987 - Sovramateriale sulla lunghezza
@@ -1749,3 +1749,4 @@ tool:
     error:
       not_part: 1327 - Questa faccia non appartiene ad un elemento (componente)
       not_flat_face: 1328 - Superficie non planare
+      incompatible_active_path: 1329 - Il percorso attivo non consente di esportare questo pezzo

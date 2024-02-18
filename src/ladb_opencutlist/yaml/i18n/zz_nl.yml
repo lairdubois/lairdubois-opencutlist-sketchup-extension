@@ -1749,3 +1749,4 @@ tool:
     error:
       not_part: 1327 - Dit vlak maakt geen deel uit van een onderdeel (component)
       not_flat_face: 1328 - Dit oppervlak is niet vlak
+      incompatible_active_path: 1329 - Het actieve pad staat niet toe om dit onderdeel te exporteren

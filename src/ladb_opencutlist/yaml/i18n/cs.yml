@@ -1708,3 +1708,4 @@ tool:
     error:
       not_part: Tato plocha nepatří k dílu (komponentě)
       not_flat_face: Tento povrch není rovný
+      incompatible_active_path: Le aktivní cesta neumožňuje exportovat tento kus
