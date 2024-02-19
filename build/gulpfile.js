@@ -84,7 +84,7 @@ gulp.task('i18n_compile', function () {
     var languageLabels = {};
     var languageReloadMsgs = {};
     var descriptions = {};
-    var ymlFiles = glob.sync('../src/ladb_opencutlist/yaml/i18n/' + (isProd ? '!(zz)' : '*') + '.yml');
+    var ymlFiles = glob.sync('../src/ladb_opencutlist/yaml/i18n/' + (isProd ? '!(zz*)' : '*') + '.yml');
     ymlFiles.forEach(function (ymlFile) {
         var contents = fs.readFileSync(ymlFile);
         var ymlDocument = yaml.safeLoad(contents);
@@ -125,7 +125,7 @@ gulp.task('i18n_compile', function () {
         force: true
     });
 
-    return gulp.src('../src/ladb_opencutlist/yaml/i18n/' + (isProd ? '!(zz)' : '*') + '.yml')
+    return gulp.src('../src/ladb_opencutlist/yaml/i18n/' + (isProd ? '!(zz*)' : '*') + '.yml')
         .pipe(ladb_i18n_compile(languageLabels, languageReloadMsgs))
         .pipe(gulp.dest('../src/ladb_opencutlist/js/i18n'));
 });
@@ -138,11 +138,11 @@ gulp.task('i18n_dialogs_compile', function () {
         force: true
     });
 
-    gulp.src('../src/ladb_opencutlist/yaml/i18n/' + (isProd ? '!(zz)' : '*') + '.yml')
+    gulp.src('../src/ladb_opencutlist/yaml/i18n/' + (isProd ? '!(zz*)' : '*') + '.yml')
         .pipe(ladb_i18n_dialog_compile('../src/ladb_opencutlist/twig/dialog-modal.twig', 'modal'))
         .pipe(gulp.dest('../src/ladb_opencutlist/html'));
 
-    return gulp.src('../src/ladb_opencutlist/yaml/i18n/' + (isProd ? '!(zz)' : '*') + '.yml')
+    return gulp.src('../src/ladb_opencutlist/yaml/i18n/' + (isProd ? '!(zz*)' : '*') + '.yml')
         .pipe(ladb_i18n_dialog_compile('../src/ladb_opencutlist/twig/dialog-tabs.twig', 'tabs'))
         .pipe(gulp.dest('../src/ladb_opencutlist/html'));
 });
@@ -158,7 +158,7 @@ gulp.task('rbz_create', function () {
     blob.push('!src/**/js/lib/!(*.min).js');
     if (isProd) {
         // Exclude zz debug language in prod environment
-        blob.push('!src/**/yaml/i18n/zz.yml');
+        blob.push('!src/**/yaml/i18n/zz*.yml');
     }
     return gulp.src(blob, { cwd: '../'})
         .pipe(zip('ladb_opencutlist.rbz'))

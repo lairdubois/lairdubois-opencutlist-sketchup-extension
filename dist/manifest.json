@@ -1,7 +1,7 @@
 {
-  "version": "6.0.0-dev",
-  "build": "202402181102",
-  "url": "https://www.lairdubois.fr/opencutlist/download-dev",
+  "version": "6.0.0",
+  "build": "202402191042",
+  "url": "https://www.lairdubois.fr/opencutlist/download",
   "sponsor": {
     "objectiveName": "7.0",
     "objectiveGoal": 10000,
