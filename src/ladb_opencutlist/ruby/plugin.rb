@@ -73,7 +73,7 @@ module Ladb::OpenCutList
     TABS_DIALOG_PREF_KEY = 'fr.lairdubois.opencutlist'
 
     MODAL_DIALOG_DEFAULT_WIDTH = 700
-    MODAL_DIALOG_DEFAULT_HEIGHT = 600
+    MODAL_DIALOG_DEFAULT_HEIGHT = 700
     MODAL_DIALOG_PREF_KEY = 'fr.lairdubois.opencutlist.modal'
 
     DOCS_URL = 'https://www.lairdubois.fr/opencutlist/docs'
@@ -1616,7 +1616,8 @@ module Ladb::OpenCutList
       path = params['path']
       if path && path.is_a?(String)
         url = "file:///#{path}"
-        UI.openURL(platform_is_mac ? URI::DEFAULT_PARSER.escape(url) : url)
+        url = URI::DEFAULT_PARSER.escape(url) if platform_is_mac && Sketchup.version_number >= 1800000000
+        UI.openURL(url)
       end
     end
 

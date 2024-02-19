@@ -68,7 +68,7 @@ module Ladb::OpenCutList::Geometrix
 
         # Create the portion
         start_angle = EllipseFinder.ellipse_angle_at_point(ellipse_def, sample_points[i])
-        quarter_portions.prepend(ApproximateEllipsePortionDef.new(ellipse_def, start_angle, end_angle, circle_def))
+        quarter_portions.unshift(ApproximateEllipsePortionDef.new(ellipse_def, start_angle, end_angle, circle_def))
 
         end_angle = start_angle
 

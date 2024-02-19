@@ -150,93 +150,93 @@ module Ladb::OpenCutList
 
   end
 
-end
+  # -----
 
-# -----
+  class LabelData
 
-class LabelData
+    def initialize(
 
-  def initialize(
+      number,
+      path,
+      instance_name,
+      name,
+      cutting_length,
+      cutting_width,
+      cutting_thickness,
+      edge_cutting_length,
+      edge_cutting_width,
+      bbox_length,
+      bbox_width,
+      bbox_thickness,
+      final_area,
+      material_type,
+      material_name,
+      material_description,
+      material_url,
+      description,
+      url,
+      tags,
+      edge_ymin,
+      edge_ymax,
+      edge_xmin,
+      edge_xmax,
+      face_zmin,
+      face_zmax,
+      layer,
 
-    number,
-    path,
-    instance_name,
-    name,
-    cutting_length,
-    cutting_width,
-    cutting_thickness,
-    edge_cutting_length,
-    edge_cutting_width,
-    bbox_length,
-    bbox_width,
-    bbox_thickness,
-    final_area,
-    material_type,
-    material_name,
-    material_description,
-    material_url,
-    description,
-    url,
-    tags,
-    edge_ymin,
-    edge_ymax,
-    edge_xmin,
-    edge_xmax,
-    face_zmin,
-    face_zmax,
-    layer,
+      batch,
+      bin,
 
-    batch,
-    bin,
+      filename,
+      model_name,
+      model_description,
+      page_name,
+      page_description
 
-    filename,
-    model_name,
-    model_description,
-    page_name,
-    page_description
+    )
+      @number =  number
+      @path = path
+      @instance_name = instance_name
+      @name = name
+      @cutting_length = cutting_length
+      @cutting_width = cutting_width
+      @cutting_thickness = cutting_thickness
+      @edge_cutting_length = edge_cutting_length
+      @edge_cutting_width = edge_cutting_width
+      @bbox_length = bbox_length
+      @bbox_width = bbox_width
+      @bbox_thickness = bbox_thickness
+      @final_area = final_area
+      @material_type = material_type
+      @material_name = material_name
+      @material_description = material_description
+      @material_url = material_url
+      @description = description
+      @url = url
+      @tags = tags
+      @edge_ymin = edge_ymin
+      @edge_ymax = edge_ymax
+      @edge_xmin = edge_xmin
+      @edge_xmax = edge_xmax
+      @face_zmin = face_zmin
+      @face_zmax = face_zmax
+      @layer = layer
 
-  )
-    @number =  number
-    @path = path
-    @instance_name = instance_name
-    @name = name
-    @cutting_length = cutting_length
-    @cutting_width = cutting_width
-    @cutting_thickness = cutting_thickness
-    @edge_cutting_length = edge_cutting_length
-    @edge_cutting_width = edge_cutting_width
-    @bbox_length = bbox_length
-    @bbox_width = bbox_width
-    @bbox_thickness = bbox_thickness
-    @final_area = final_area
-    @material_type = material_type
-    @material_name = material_name
-    @material_description = material_description
-    @material_url = material_url
-    @description = description
-    @url = url
-    @tags = tags
-    @edge_ymin = edge_ymin
-    @edge_ymax = edge_ymax
-    @edge_xmin = edge_xmin
-    @edge_xmax = edge_xmax
-    @face_zmin = face_zmin
-    @face_zmax = face_zmax
-    @layer = layer
+      @batch = batch
+      @bin = bin
 
-    @batch = batch
-    @bin = bin
+      @filename = filename
+      @model_name = model_name
+      @model_description = model_description
+      @page_name = page_name
+      @page_description = page_description
 
-    @filename = filename
-    @model_name = model_name
-    @model_description = model_description
-    @page_name = page_name
-    @page_description = page_description
+    end
 
-  end
+    def get_binding
+      binding
+    end
 
-  def get_binding
-    binding
   end
 
 end

@@ -23,15 +23,17 @@ module Ladb::OpenCutList
       node = @outline.get_node(@id)
       return { :errors => [ 'tab.outliner.error.node_not_found' ] } unless node
 
-      # Start model modification operation
-      model.start_operation('OCL Outliner Set Active', true, false, true)
+      if model.respond_to?(:active_path)
 
+        # Start model modification operation
+        model.start_operation('OCL Outliner Set Active', true, false, true)
 
-      model.active_path = node.def.path
+        model.active_path = node.def.path
 
+        # Commit model modification operation
+        model.commit_operation
 
-      # Commit model modification operation
-      model.commit_operation
+      end
 
     end
 
