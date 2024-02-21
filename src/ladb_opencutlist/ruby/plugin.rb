@@ -156,7 +156,7 @@ module Ladb::OpenCutList
       if available_languages.include?(language)
         @language = language   # Uses language only if translation is available
       else
-        @language = 'en'
+        @language = DEFAULT_LANGUAGE
       end
       if persist
         write_default(SETTINGS_KEY_LANGUAGE, @language)
@@ -169,6 +169,7 @@ module Ladb::OpenCutList
       Dir[File.join(root_dir, 'js', 'i18n', '*.js')].each { |file|
         available_languages.push(File.basename(file, File.extname(file)))
       }
+      available_languages = ENABLED_LANGUAGES & available_languages
       available_languages.sort
     end
 
