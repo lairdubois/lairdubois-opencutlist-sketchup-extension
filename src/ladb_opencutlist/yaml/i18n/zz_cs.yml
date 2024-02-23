@@ -1744,4 +1744,4 @@ tool:
     error:
       not_part: 1327 - Tato plocha nepatří k dílu (komponentě)
       not_flat_face: 1328 - Tento povrch není rovný
-      incompatible_active_path: 1329 - Le aktivní cesta neumožňuje exportovat tento kus
+      incompatible_active_path: 1329 - Aktivní cesta neumožňuje export tohoto dílu.
