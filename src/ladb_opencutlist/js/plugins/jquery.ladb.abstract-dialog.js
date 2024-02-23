@@ -387,6 +387,16 @@ LadbAbstractDialog.prototype.copyToClipboard = function (text, notifySuccess) {
     }
 }
 
+LadbAbstractDialog.prototype.measureText = function (text, fontSize /* default = 14 */, fontName /* default = 'sans-serif' */) {
+    let canvas = this.canvas || (this.canvas = document.createElement('canvas'));
+    let context = canvas.getContext('2d');
+    if (fontSize === undefined) fontSize = 14
+    if (fontName === undefined) fontName = 'sans-serif'
+    context.font = fontSize + 'pt ' + fontName;
+    let metrics = context.measureText(text);
+    return metrics.width;
+}
+
 // Init /////
 
 LadbAbstractDialog.prototype.init = function () {
@@ -462,6 +472,9 @@ LadbAbstractDialog.prototype.init = function () {
 
         // return hex
         return color3;
+    });
+    Twig.extendFunction('mesure_text', function(text, fontSize, fontName) {
+        return that.measureText(text, fontSize, fontName);
     });
 
     // Add i18next twig filter

@@ -7,8 +7,6 @@
 {% set dimensionFontSize = 12 %}
 {% set numberFontSize = 16 %}
 
-{% set textFontWidthFactor = 0.5 %}
-
 {% set dimensionOffset = 5 %}
 {% set barDimensionOffset = 10 %}
 {% set barSliceGutter = 15 %}
@@ -282,7 +280,7 @@
                                     {% set yOffset = slice.index * sliceHeight %}
                                     {% set hideCross = options.hide_cross or slice.px_length < dimensionFontSize or bar.px_width < dimensionFontSize %}
                                     {% set dim = bar.leftover.length|trim_tilde %}
-                                    {% set dimPxWidth = dim|length * dimensionFontSize * textFontWidthFactor %}
+                                    {% set dimPxWidth = mesure_text(dim, dimensionFontSize) %}
                                     {% set hideDimension = displayedDimension or slice.px_length <= dimPxWidth %}
                                     <rect class="leftover-inner" x="{{ slice.px_x }}" y="{{ yOffset }}" width="{{ slice.px_length }}" height="{{ bar.px_width }}" />
                                     {% if not hideCross %}
@@ -321,12 +319,12 @@
                                             <rect class="part-outer" x="{{ slice.px_x }}" y="{{ yOffset }}" width="{{ slice.px_length }}" height="{{ bar.px_width }}" />
                                             <rect class="part-inner" x="{{ slice.px_x + (loop.first and originCornerIsLeft or loop.last and originCornerIsRight ? partOutlineWidth : 0) }}" y="{{ yOffset + partOutlineWidth }}" width="{{ slice.px_length - partOutlineWidth * (loop.last ? (loop.first ? 2 : 1) : (loop.first ? 1 : 0)) }}" height="{{ bar.px_width - partOutlineWidth * 2 }}" />
                                         {% endif %}
-                                        {% set hideNumber = slice.px_length < (numberFontSize * (numberTextLength + (loop.first and loop.last ? 0 : 1)) * textFontWidthFactor) %}
+                                        {% set hideNumber = slice.px_length < mesure_text(numberText + loop.first and loop.last ? '' : '…', numberFontSize) %}
                                         {% if not hideNumber %}
                                             <text class="part-number" x="{{ slice.px_x + slice.px_length / 2 }}" y="{{ yOffset + bar.px_width / 2 }}" font-size="{{ max(8, min(numberFontSize, (slice.px_length - partOutlineWidth * 2) / numberTextLength, (bar.px_width - partOutlineWidth * 2))) }}px" text-anchor="middle" dominant-baseline="central">{% if (not loop.first and originCornerIsLeft) or (not loop.last and originCornerIsRight) %}&hellip;{% endif %}{{ numberText|escape }}{% if (not loop.last and originCornerIsLeft) or (not loop.first and originCornerIsRight) %}&hellip;{% endif %}</text>
                                         {% endif %}
                                         {% set value = part.cutting_length|trim_tilde %}
-                                        {% set valuePxWidth = value|length * dimensionFontSize * textFontWidthFactor %}
+                                        {% set valuePxWidth = mesure_text(value, dimensionFontSize) %}
                                         {% set hideLength = displayedDimension or slice.px_length <= valuePxWidth %}
                                         {% if not hideLength %}
                                             <text class="part-dimension" x="{{ slice.px_x + slice.px_length / 2 }}" y="{{ yOffset + bar.px_width + dimensionOffset + dimensionFontSize }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle" dominant-baseline="alphabetic"{% if showCuttingDimensions %} style="fill: red;"{% endif %}>{{ value }}</text>
