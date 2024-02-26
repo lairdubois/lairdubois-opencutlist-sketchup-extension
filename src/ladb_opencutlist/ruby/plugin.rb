@@ -164,12 +164,17 @@ module Ladb::OpenCutList
       @i18n_strings_cache = nil # Reset i18n strings cache
     end
 
+    def get_enabled_languages
+      return ENABLED_LANGUAGES unless IS_DEV
+      ENABLED_LANGUAGES.map { |language| [ language, "zz_#{language}" ] }.flatten
+    end
+
     def get_available_languages
       available_languages = []
       Dir[File.join(root_dir, 'js', 'i18n', '*.js')].each { |file|
         available_languages.push(File.basename(file, File.extname(file)))
       }
-      available_languages = ENABLED_LANGUAGES & available_languages
+      available_languages = get_enabled_languages & available_languages
       available_languages.sort
     end
 

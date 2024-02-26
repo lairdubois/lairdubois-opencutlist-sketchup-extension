@@ -157,7 +157,7 @@ gulp.task('rbz_create', function () {
     // Exclude not minified .js libs
     blob.push('!src/**/js/lib/!(*.min).js');
     if (isProd) {
-        // Exclude zz debug language in prod environment
+        // Exclude zz debug languages in prod environment
         blob.push('!src/**/yaml/i18n/zz*.yml');
     }
     return gulp.src(blob, { cwd: '../'})
