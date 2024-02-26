@@ -8,7 +8,7 @@ in 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
   * Improved cutting diagram text measurement
 
-* 6.0.1 (2024-02-21)
+* 6.0.1 (2024-02-26)
 
   * Fixed removed languages selection 
 
