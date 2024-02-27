@@ -147,10 +147,16 @@ module Ladb::OpenCutList
 
         case Sketchup.platform
         when :platform_osx
-          dlload File.join(PLUGIN_DIR, '/bin/osx/lib/libClippy.dylib')
+          lib_path = File.join(PLUGIN_DIR, '/bin/osx/lib/libClippy.dylib')
         when :platform_win
-          dlload File.join(PLUGIN_DIR, '/bin/x86/lib/Clippy.dll')
+          lib_path = File.join(PLUGIN_DIR, '/bin/x86/lib/Clippy.dll')
+        else
+          raise "Invalid platform : #{Sketchup.platform}"
         end
+
+        raise "File not found : #{lib_path}" unless File.exist?(lib_path)
+
+        dlload(lib_path)
 
         # Keep simple C syntax (without var names and void in args) to stay compatible with SketchUp 2017
 
@@ -182,7 +188,7 @@ module Ladb::OpenCutList
         @lib_loaded = true
 
       rescue Exception => e
-        puts "[#{File.basename(__FILE__)}:#{__LINE__}] : #{e.message}"
+        Plugin.instance.dump_exception(e)
         @lib_loaded = false
       end
 

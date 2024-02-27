@@ -256,7 +256,7 @@ module Ladb::OpenCutList
       puts '-' * heading.length
       puts heading
       puts '-' * heading.length
-      puts "OpenCutList #{EXTENSION_VERSION} (build:#{EXTENSION_BUILD})"
+      puts "OpenCutList #{EXTENSION_VERSION} (build:#{EXTENSION_BUILD}) - #{language} - SketchUp #{Sketchup.version} - #{platform_name}"
       puts "#{e.inspect}"
       puts e.backtrace.join("\n")
       puts '-' * heading.length
