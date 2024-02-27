@@ -147,9 +147,9 @@ module Ladb::OpenCutList
 
         case Sketchup.platform
         when :platform_osx
-          dlload File.join(__dir__, '../../../bin/osx/lib/libClippy.dylib')
+          dlload File.join(PLUGIN_DIR, '/bin/osx/lib/libClippy.dylib')
         when :platform_win
-          dlload File.join(__dir__, '../../../bin/x86/lib/Clippy.dll')
+          dlload File.join(PLUGIN_DIR, '/bin/x86/lib/Clippy.dll')
         end
 
         # Keep simple C syntax (without var names and void in args) to stay compatible with SketchUp 2017

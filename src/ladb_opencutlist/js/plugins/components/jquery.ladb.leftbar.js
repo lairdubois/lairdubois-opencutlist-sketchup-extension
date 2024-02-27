@@ -88,7 +88,7 @@
 
         if (isNew && !silent) {
             rubyCallCommand('core_play_sound', {
-                filename: 'wav/notification.wav'
+                filename: 'notification.wav'
             });
         }
 

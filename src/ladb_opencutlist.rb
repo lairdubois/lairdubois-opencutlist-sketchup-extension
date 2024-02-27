@@ -11,8 +11,15 @@ module Ladb
         UI.messagebox("/!\ CAUTION\nOpenCutList requires SketchUp 2017 or above to run correctly.\nDowngrade to version 3.x to run on prior version of SketchUp.", MB_OK)
       end
 
+      # Plugin ID and dir
+      _file_ = __FILE__
+      _file_.force_encoding("UTF-8") if _file_.respond_to?(:force_encoding)
+
+      PLUGIN_ID = File.basename(_file_, ".*")
+      PLUGIN_DIR = File.join(File.dirname(_file_), PLUGIN_ID)
+
       # Create extension
-      ex = SketchupExtension.new('OpenCutList', 'ladb_opencutlist/ruby/main')
+      ex = SketchupExtension.new('OpenCutList', File.join(PLUGIN_DIR, 'ruby', 'main'))
       ex.version     = "6.1.0-dev"  ## /!\ Auto-generated line, do not edit ##
       ex.copyright   = "2016-#{Date.today.year} - GNU GPLv3"  ## /!\ Auto-generated line, do not edit ##
       ex.creator     = 'L\'Air du Bois - www.lairdubois.fr'
@@ -75,7 +82,7 @@ module Ladb
       # Register extension
       Sketchup.register_extension(ex, true)
 
-      file_loaded(__FILE__)
+      file_loaded(_file_)
 
     end
 
