@@ -280,7 +280,7 @@ module Ladb::OpenCutList
           # Part 3D
 
           @active_drawing_def = CommonDrawingDecompositionWorker.new(@active_part_entity_path, {
-            'origin_position' => fetch_action_option_enabled(ACTION_EXPORT_PART_3D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) ? CommonDrawingDecompositionWorker::ORIGIN_POSITION_DEFAULT : CommonDrawingProjectionWorker::ORIGIN_POSITION_FACES_BOUNDS_MIN,
+            'origin_position' => fetch_action_option_enabled(ACTION_EXPORT_PART_3D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) ? CommonDrawingDecompositionWorker::ORIGIN_POSITION_DEFAULT : CommonDrawingDecompositionWorker::ORIGIN_POSITION_FACES_BOUNDS_MIN,
             'ignore_surfaces' => true,
             'ignore_edges' => true
           }).run
@@ -349,16 +349,259 @@ module Ladb::OpenCutList
               'origin_position' => fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) ? CommonDrawingProjectionWorker::ORIGIN_POSITION_DEFAULT : CommonDrawingProjectionWorker::ORIGIN_POSITION_BOUNDS_MIN,
               'merge_holes' => fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES)
             }).run
+            if projection_def.is_a?(DrawingProjectionDef)
+
+              preview = Kuix::Group.new
+              preview.transformation = @active_drawing_def.transformation * projection_def.transformation
+              @space.append(preview)
+
+              fn_append_segments = lambda do |segments, color, line_width, line_stipple|
+
+                entity = Kuix::Segments.new
+                entity.add_segments(segments)
+                entity.color = color
+                entity.line_width = highlighted ? line_width + 1 : line_width
+                entity.line_stipple = line_stipple
+                entity.on_top = true
+                preview.append(entity)
+
+              end
+
+              projection_def.layer_defs.reverse.each do |layer_def| # reverse layer order to present from Bottom to Top
+
+                points_entities = []
+
+                if layer_def.type_upper?
+                  color = COLOR_PART_UPPER
+                elsif layer_def.type_holes?
+                  color = COLOR_PART_HOLES
+                elsif layer_def.type_path?
+                  color = COLOR_PART_PATH
+                else
+                  color = COLOR_PART_DEPTH
+                end
+
+                layer_def.poly_defs.each do |poly_def|
+
+                  line_stipple = poly_def.is_a?(DrawingProjectionPolygonDef) && !poly_def.ccw? ? Kuix::LINE_STIPPLE_SHORT_DASHES : Kuix::LINE_STIPPLE_SOLID
+
+                  if fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
+                    poly_def.curve_def.portions.each do |portion|
+                      fn_append_segments.call(portion.segments, color, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, line_stipple)
+                    end
+                  else
+                    fn_append_segments.call(poly_def.segments, color, 2, line_stipple)
+                  end
+
+                  if poly_def.is_a?(DrawingProjectionPolylineDef)
+
+                    # It's a polyline, create 'start' and 'end' points entities
+
+                    entity = Kuix::Points.new
+                    entity.add_points([ poly_def.points.first ])
+                    entity.size = 16
+                    entity.style = Kuix::POINT_STYLE_FILLED_SQUARE
+                    entity.color = Kuix::COLOR_MEDIUM_GREY
+                    points_entities << entity
+
+                    entity = Kuix::Points.new
+                    entity.add_points([ poly_def.points.last ])
+                    entity.size = 18
+                    entity.style = Kuix::POINT_STYLE_OPEN_SQUARE
+                    entity.color = Kuix::COLOR_DARK_GREY
+                    points_entities << entity
+
+                  end
+
+                end
+
+                # Append points after to be on top of segments
+                points_entities.each { |entity| preview.append(entity) }
+
+              end
+
+              # Box helper
+              box_helper = Kuix::RectangleMotif.new
+              box_helper.bounds.origin.copy!(projection_def.bounds.min)
+              box_helper.bounds.size.copy!(projection_def.bounds)
+              box_helper.bounds.apply_offset(inch_offset, inch_offset, 0)
+              box_helper.color = Kuix::COLOR_BLACK
+              box_helper.line_width = 1
+              box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+              preview.append(box_helper)
+
+              if @active_drawing_def.input_edge_manipulator
+
+                # Highlight input edge
+                segments = Kuix::Segments.new
+                segments.transformation = projection_def.transformation.inverse
+                segments.add_segments(@active_drawing_def.input_edge_manipulator.segment)
+                segments.color = COLOR_ACTION
+                segments.line_width = 3
+                segments.on_top = true
+                preview.append(segments)
+
+              end
+
+              # Axes helper
+              axes_helper = Kuix::AxesHelper.new
+              axes_helper.box_0.visible = false
+              axes_helper.box_z.visible = false
+              preview.append(axes_helper)
+
+            end
+
+          end
+
+        end
+
+      else
+
+        @active_drawing_def = nil
+
+      end
+
+    end
+
+    def _set_active_face(face_path, face, highlighted = false)
+      super
+
+      if face
+
+        @active_drawing_def = CommonDrawingDecompositionWorker.new(@input_face_path, {
+          'input_face_path' => @input_face_path,
+          'input_edge_path' => @input_edge_path,
+          'ignore_edges' => true
+        }).run
+        if @active_drawing_def.is_a?(DrawingDef)
+
+          projection_def = CommonDrawingProjectionWorker.new(@active_drawing_def, {
+            'origin_position' => CommonDrawingProjectionWorker::ORIGIN_POSITION_FACES_BOUNDS_MIN
+          }).run
+          if projection_def.is_a?(DrawingProjectionDef)
+
+            inch_offset = Sketchup.active_model.active_view.pixels_to_model(15, Geom::Point3d.new.transform(@active_drawing_def.transformation))
 
             preview = Kuix::Group.new
             preview.transformation = @active_drawing_def.transformation * projection_def.transformation
             @space.append(preview)
 
-            fn_append_segments = lambda do |segments, color, line_width, line_stipple|
+            fn_append_segments = lambda do |segments, line_width, line_stipple|
 
               entity = Kuix::Segments.new
               entity.add_segments(segments)
-              entity.color = color
+              entity.color = COLOR_PART_UPPER
+              entity.line_width = highlighted ? line_width + 1 : line_width
+              entity.line_stipple = line_stipple
+              entity.on_top = true
+              preview.append(entity)
+
+            end
+
+            projection_def.layer_defs.reverse.each do |layer_def| # reverse layer order to present from Bottom to Top
+              layer_def.poly_defs.each do |poly_def|
+
+                line_stipple = poly_def.ccw? ? Kuix::LINE_STIPPLE_SOLID : Kuix::LINE_STIPPLE_SHORT_DASHES
+
+                if fetch_action_option_enabled(ACTION_EXPORT_FACE, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
+                  poly_def.curve_def.portions.each do |portion|
+                    fn_append_segments.call(portion.segments, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, line_stipple)
+                  end
+                else
+                  fn_append_segments.call(poly_def.segments, 2, line_stipple)
+                end
+
+              end
+            end
+
+            # if fetch_action_option_enabled(ACTION_EXPORT_FACE, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING) && projection_def.layer_defs.one?
+            #   layer_def = projection_def.layer_defs.first
+            #   if layer_def.poly_defs.one?
+            #     poly_def = layer_def.poly_defs.first
+            #     curve_def = poly_def.curve_def
+            #     if curve_def.ellipse?
+            #       portion_def = curve_def.portions.first
+            #       if curve_def.circle?
+            #         show_tooltip([ '#CIRCLE', "Radius = #{portion_def.ellipse_def.xradius.to_mm.round(3)} mm" ])
+            #       else
+            #         show_tooltip([ '#ELLIPSE', "Radius 1 = #{portion_def.ellipse_def.xradius.to_mm.round(3)} mm", "Radius 2 = #{portion_def.ellipse_def.yradius.to_mm.round(3)} mm", "Angle = #{portion_def.ellipse_def.angle.radians.round(3)}°" ])
+            #       end
+            #     else
+            #       show_tooltip('#POLYGON')
+            #     end
+            #   end
+            # end
+
+            # Box helper
+            box_helper = Kuix::RectangleMotif.new
+            box_helper.bounds.origin.copy!(projection_def.bounds.min)
+            box_helper.bounds.size.copy!(projection_def.bounds)
+            box_helper.bounds.apply_offset(inch_offset, inch_offset, 0)
+            box_helper.color = Kuix::COLOR_BLACK
+            box_helper.line_width = 1
+            box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+            preview.append(box_helper)
+
+            if @active_drawing_def.input_edge_manipulator
+
+              # Highlight input edge
+              segments = Kuix::Segments.new
+              segments.transformation = projection_def.transformation.inverse
+              segments.add_segments(@active_drawing_def.input_edge_manipulator.segment)
+              segments.color = COLOR_ACTION
+              segments.line_width = 3
+              segments.on_top = true
+              preview.append(segments)
+
+            end
+
+            # Axes helper
+            axes_helper = Kuix::AxesHelper.new
+            axes_helper.box_0.visible = false
+            axes_helper.box_z.visible = false
+            preview.append(axes_helper)
+
+          end
+
+        end
+
+      else
+
+        @active_edge = nil
+
+      end
+
+    end
+
+    def _set_active_context(context_path, highlighted = false)
+      super
+
+      if context_path
+
+        @active_drawing_def = CommonDrawingDecompositionWorker.new(context_path, {
+          'ignore_faces' => true,
+          'input_face_path' => @input_face_path,
+          'input_edge_path' => @input_edge_path,
+          'edge_validator' => CommonDrawingDecompositionWorker::EDGE_VALIDATOR_COPLANAR
+        }).run
+        if @active_drawing_def.is_a?(DrawingDef)
+
+          projection_def = CommonDrawingProjectionWorker.new(@active_drawing_def, {
+            'origin_position' => CommonDrawingProjectionWorker::ORIGIN_POSITION_EDGES_BOUNDS_MIN
+          }).run
+          if projection_def.is_a?(DrawingProjectionDef)
+
+            inch_offset = Sketchup.active_model.active_view.pixels_to_model(15, Geom::Point3d.new.transform(@active_drawing_def.transformation))
+
+            preview = Kuix::Group.new
+            preview.transformation = @active_drawing_def.transformation * projection_def.transformation
+            @space.append(preview)
+
+            fn_append_segments = lambda do |segments, line_width, line_stipple|
+
+              entity = Kuix::Segments.new
+              entity.add_segments(segments)
+              entity.color = COLOR_PART_PATH
               entity.line_width = highlighted ? line_width + 1 : line_width
               entity.line_stipple = line_stipple
               entity.on_top = true
@@ -370,26 +613,16 @@ module Ladb::OpenCutList
 
               points_entities = []
 
-              if layer_def.type_upper?
-                color = COLOR_PART_UPPER
-              elsif layer_def.type_holes?
-                color = COLOR_PART_HOLES
-              elsif layer_def.type_path?
-                color = COLOR_PART_PATH
-              else
-                color = COLOR_PART_DEPTH
-              end
-
               layer_def.poly_defs.each do |poly_def|
 
-                line_stipple = poly_def.is_a?(DrawingProjectionPolygonDef) && !poly_def.ccw? ? Kuix::LINE_STIPPLE_SHORT_DASHES : Kuix::LINE_STIPPLE_SOLID
+                line_stipple = Kuix::LINE_STIPPLE_SOLID
 
-                if fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
+                if fetch_action_option_enabled(ACTION_EXPORT_EDGES, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
                   poly_def.curve_def.portions.each do |portion|
-                    fn_append_segments.call(portion.segments, color, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, line_stipple)
+                    fn_append_segments.call(portion.segments, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, line_stipple)
                   end
                 else
-                  fn_append_segments.call(poly_def.segments, color, 2, line_stipple)
+                  fn_append_segments.call(poly_def.segments, 2, line_stipple)
                 end
 
                 if poly_def.is_a?(DrawingProjectionPolylineDef)
@@ -444,236 +677,11 @@ module Ladb::OpenCutList
 
             # Axes helper
             axes_helper = Kuix::AxesHelper.new
-            # axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(0, 0, 0))
             axes_helper.box_0.visible = false
             axes_helper.box_z.visible = false
             preview.append(axes_helper)
 
           end
-
-        end
-
-      else
-
-        @active_drawing_def = nil
-
-      end
-
-    end
-
-    def _set_active_face(face_path, face, highlighted = false)
-      super
-
-      if face
-
-        @active_drawing_def = CommonDrawingDecompositionWorker.new(@input_face_path, {
-          'input_face_path' => @input_face_path,
-          'input_edge_path' => @input_edge_path,
-          'ignore_edges' => true
-        }).run
-        if @active_drawing_def.is_a?(DrawingDef)
-
-          projection_def = CommonDrawingProjectionWorker.new(@active_drawing_def, {
-            'origin_position' => CommonDrawingProjectionWorker::ORIGIN_POSITION_FACES_BOUNDS_MIN
-          }).run
-
-          inch_offset = Sketchup.active_model.active_view.pixels_to_model(15, Geom::Point3d.new.transform(@active_drawing_def.transformation))
-
-          preview = Kuix::Group.new
-          preview.transformation = @active_drawing_def.transformation * projection_def.transformation
-          @space.append(preview)
-
-          fn_append_segments = lambda do |segments, line_width, line_stipple|
-
-            entity = Kuix::Segments.new
-            entity.add_segments(segments)
-            entity.color = COLOR_PART_UPPER
-            entity.line_width = highlighted ? line_width + 1 : line_width
-            entity.line_stipple = line_stipple
-            entity.on_top = true
-            preview.append(entity)
-
-          end
-
-          projection_def.layer_defs.reverse.each do |layer_def| # reverse layer order to present from Bottom to Top
-            layer_def.poly_defs.each do |poly_def|
-
-              line_stipple = poly_def.ccw? ? Kuix::LINE_STIPPLE_SOLID : Kuix::LINE_STIPPLE_SHORT_DASHES
-
-              if fetch_action_option_enabled(ACTION_EXPORT_FACE, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
-                poly_def.curve_def.portions.each do |portion|
-                  fn_append_segments.call(portion.segments, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, line_stipple)
-                end
-              else
-                fn_append_segments.call(poly_def.segments, 2, line_stipple)
-              end
-
-            end
-          end
-
-          # if fetch_action_option_enabled(ACTION_EXPORT_FACE, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING) && projection_def.layer_defs.one?
-          #   layer_def = projection_def.layer_defs.first
-          #   if layer_def.poly_defs.one?
-          #     poly_def = layer_def.poly_defs.first
-          #     curve_def = poly_def.curve_def
-          #     if curve_def.ellipse?
-          #       portion_def = curve_def.portions.first
-          #       if curve_def.circle?
-          #         show_tooltip([ '#CIRCLE', "Radius = #{portion_def.ellipse_def.xradius.to_mm.round(3)} mm" ])
-          #       else
-          #         show_tooltip([ '#ELLIPSE', "Radius 1 = #{portion_def.ellipse_def.xradius.to_mm.round(3)} mm", "Radius 2 = #{portion_def.ellipse_def.yradius.to_mm.round(3)} mm", "Angle = #{portion_def.ellipse_def.angle.radians.round(3)}°" ])
-          #       end
-          #     else
-          #       show_tooltip('#POLYGON')
-          #     end
-          #   end
-          # end
-
-          # Box helper
-          box_helper = Kuix::RectangleMotif.new
-          box_helper.bounds.origin.copy!(projection_def.bounds.min)
-          box_helper.bounds.size.copy!(projection_def.bounds)
-          box_helper.bounds.apply_offset(inch_offset, inch_offset, 0)
-          box_helper.color = Kuix::COLOR_BLACK
-          box_helper.line_width = 1
-          box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-          preview.append(box_helper)
-
-          if @active_drawing_def.input_edge_manipulator
-
-            # Highlight input edge
-            segments = Kuix::Segments.new
-            segments.transformation = projection_def.transformation.inverse
-            segments.add_segments(@active_drawing_def.input_edge_manipulator.segment)
-            segments.color = COLOR_ACTION
-            segments.line_width = 3
-            segments.on_top = true
-            preview.append(segments)
-
-          end
-
-          # Axes helper
-          axes_helper = Kuix::AxesHelper.new
-          axes_helper.box_0.visible = false
-          axes_helper.box_z.visible = false
-          preview.append(axes_helper)
-
-        end
-
-      else
-
-        @active_edge = nil
-
-      end
-
-    end
-
-    def _set_active_context(context_path, highlighted = false)
-      super
-
-      if context_path
-
-        @active_drawing_def = CommonDrawingDecompositionWorker.new(context_path, {
-          'ignore_faces' => true,
-          'input_face_path' => @input_face_path,
-          'input_edge_path' => @input_edge_path,
-          'edge_validator' => CommonDrawingDecompositionWorker::EDGE_VALIDATOR_COPLANAR
-        }).run
-        if @active_drawing_def.is_a?(DrawingDef)
-
-          projection_def = CommonDrawingProjectionWorker.new(@active_drawing_def, {
-            'origin_position' => CommonDrawingProjectionWorker::ORIGIN_POSITION_EDGES_BOUNDS_MIN
-          }).run
-
-          inch_offset = Sketchup.active_model.active_view.pixels_to_model(15, Geom::Point3d.new.transform(@active_drawing_def.transformation))
-
-          preview = Kuix::Group.new
-          preview.transformation = @active_drawing_def.transformation * projection_def.transformation
-          @space.append(preview)
-
-          fn_append_segments = lambda do |segments, line_width, line_stipple|
-
-            entity = Kuix::Segments.new
-            entity.add_segments(segments)
-            entity.color = COLOR_PART_PATH
-            entity.line_width = highlighted ? line_width + 1 : line_width
-            entity.line_stipple = line_stipple
-            entity.on_top = true
-            preview.append(entity)
-
-          end
-
-          projection_def.layer_defs.reverse.each do |layer_def| # reverse layer order to present from Bottom to Top
-
-            points_entities = []
-
-            layer_def.poly_defs.each do |poly_def|
-
-              line_stipple = Kuix::LINE_STIPPLE_SOLID
-
-              if fetch_action_option_enabled(ACTION_EXPORT_EDGES, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
-                poly_def.curve_def.portions.each do |portion|
-                  fn_append_segments.call(portion.segments, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, line_stipple)
-                end
-              else
-                fn_append_segments.call(poly_def.segments, 2, line_stipple)
-              end
-
-              if poly_def.is_a?(DrawingProjectionPolylineDef)
-
-                # It's a polyline, create 'start' and 'end' points entities
-
-                entity = Kuix::Points.new
-                entity.add_points([ poly_def.points.first ])
-                entity.size = 16
-                entity.style = Kuix::POINT_STYLE_FILLED_SQUARE
-                entity.color = Kuix::COLOR_MEDIUM_GREY
-                points_entities << entity
-
-                entity = Kuix::Points.new
-                entity.add_points([ poly_def.points.last ])
-                entity.size = 18
-                entity.style = Kuix::POINT_STYLE_OPEN_SQUARE
-                entity.color = Kuix::COLOR_DARK_GREY
-                points_entities << entity
-
-              end
-
-            end
-
-            # Append points after to be on top of segments
-            points_entities.each { |entity| preview.append(entity) }
-
-          end
-
-            # Box helper
-            box_helper = Kuix::RectangleMotif.new
-            box_helper.bounds.origin.copy!(projection_def.bounds.min)
-            box_helper.bounds.size.copy!(projection_def.bounds)
-            box_helper.bounds.apply_offset(inch_offset, inch_offset, 0)
-            box_helper.color = Kuix::COLOR_BLACK
-            box_helper.line_width = 1
-            box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-            preview.append(box_helper)
-
-            if @active_drawing_def.input_edge_manipulator
-
-              # Highlight input edge
-              segments = Kuix::Segments.new
-              segments.transformation = projection_def.transformation.inverse
-              segments.add_segments(@active_drawing_def.input_edge_manipulator.segment)
-              segments.color = COLOR_ACTION
-              segments.line_width = 3
-              segments.on_top = true
-              preview.append(segments)
-
-            end
-
-            # Axes helper
-            axes_helper = Kuix::AxesHelper.new
-            axes_helper.box_0.visible = false
-            axes_helper.box_z.visible = false
-            preview.append(axes_helper)
 
         end
 

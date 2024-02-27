@@ -10,6 +10,18 @@ module Ladb::OpenCutList
 
     @lib_loaded = false
 
+    def self.available?
+      _load_lib
+      @lib_loaded
+    end
+
+    # -- Debug --
+
+    def self.version
+      _load_lib
+      c_version.to_s
+    end
+
     # -----
 
     def self.execute_union(closed_subjects, open_subjects = [], clips = [])
@@ -124,13 +136,6 @@ module Ladb::OpenCutList
       points = []
       rpath.each_slice(2) { |coord_x, coord_y| points << Geom::Point3d.new(coord_x / FLOAT_TO_INT64_CONVERTER, coord_y / FLOAT_TO_INT64_CONVERTER, z) }
       points
-    end
-
-    # -- Debug --
-
-    def self.version
-      _load_lib
-      c_version.to_s
     end
 
     private

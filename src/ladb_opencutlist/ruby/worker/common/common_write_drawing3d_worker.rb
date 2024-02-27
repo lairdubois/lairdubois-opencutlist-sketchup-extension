@@ -53,7 +53,18 @@ module Ladb::OpenCutList
 
         begin
 
-          _write_to_path(path)
+          # Open output file
+          file = File.new(path , 'w')
+
+          case @file_format
+          when FILE_FORMAT_STL
+            _write_to_stl_file(file)
+          when FILE_FORMAT_OBJ
+            _write_to_obj_file(file)
+          end
+
+          # Close output file
+          file.close
 
           return { :export_path => path }
         rescue => e
@@ -69,23 +80,6 @@ module Ladb::OpenCutList
     # -----
 
     private
-
-    def _write_to_path(path)
-
-      # Open output file
-      file = File.new(path , 'w')
-
-      case @file_format
-      when FILE_FORMAT_STL
-        _write_to_stl_file(file)
-      when FILE_FORMAT_OBJ
-        _write_to_obj_file(file)
-      end
-
-      # Close output file
-      file.close
-
-    end
 
     def _write_to_stl_file(file)
 

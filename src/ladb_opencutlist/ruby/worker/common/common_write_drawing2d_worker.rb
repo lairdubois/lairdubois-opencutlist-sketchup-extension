@@ -60,7 +60,27 @@ module Ladb::OpenCutList
 
         begin
 
-          _write_to_path(path)
+          # Compute projection
+          projection_def = CommonDrawingProjectionWorker.new(@drawing_def, {
+            'origin_position' => @anchor ? CommonDrawingProjectionWorker::ORIGIN_POSITION_DEFAULT : CommonDrawingProjectionWorker::ORIGIN_POSITION_BOUNDS_MIN,
+            'merge_holes' => @merge_holes
+          }).run
+          if projection_def.is_a?(DrawingProjectionDef)
+
+            # Open output file
+            file = File.new(path , 'w')
+
+            case @file_format
+            when FILE_FORMAT_SVG
+              _write_to_svg_file(file, projection_def)
+            when FILE_FORMAT_DXF
+              _write_to_dxf_file(file, projection_def)
+            end
+
+            # Close output file
+            file.close
+
+          end
 
           return { :export_path => path }
         rescue => e
@@ -76,29 +96,6 @@ module Ladb::OpenCutList
     # -----
 
     private
-
-    def _write_to_path(path)
-
-      # Compute projection
-      projection_def = CommonDrawingProjectionWorker.new(@drawing_def, {
-        'origin_position' => @anchor ? CommonDrawingProjectionWorker::ORIGIN_POSITION_DEFAULT : CommonDrawingProjectionWorker::ORIGIN_POSITION_BOUNDS_MIN,
-        'merge_holes' => @merge_holes
-      }).run
-
-      # Open output file
-      file = File.new(path , 'w')
-
-      case @file_format
-      when FILE_FORMAT_SVG
-        _write_to_svg_file(file, projection_def)
-      when FILE_FORMAT_DXF
-        _write_to_dxf_file(file, projection_def)
-      end
-
-      # Close output file
-      file.close
-
-    end
 
     def _write_to_svg_file(file, projection_def)
 

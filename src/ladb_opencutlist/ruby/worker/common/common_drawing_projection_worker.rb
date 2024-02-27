@@ -26,6 +26,7 @@ module Ladb::OpenCutList
 
     def run
       return { :errors => [ 'default.error' ] } unless @drawing_def.is_a?(DrawingDef)
+      return { :errors => [ "Can't load Clippy" ] } unless Clippy.available?
 
       faces_bounds = Geom::BoundingBox.new
       edges_bounds = Geom::BoundingBox.new

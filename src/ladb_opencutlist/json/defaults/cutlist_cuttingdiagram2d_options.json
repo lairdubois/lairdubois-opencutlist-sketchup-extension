@@ -21,7 +21,7 @@
     "keep_width": { "metric": "100mm", "imperial": "4\"" },
     "sheet_folding": true,
     "hide_part_list": false,
-    "part_drawing_type": 1, /* PART_DRAWING_TYPE_2D_TOP */
+    "part_drawing_type": 0, /* PART_DRAWING_TYPE_NONE */
     "use_names": false,
     "full_width_diagram": false,
     "hide_cross": false,
