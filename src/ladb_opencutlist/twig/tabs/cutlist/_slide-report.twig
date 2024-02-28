@@ -250,7 +250,7 @@
                         {% if group.material_type == 2 or group.material_type == 6 %} {# 2 = TYPE_SHEET_GOOD, 6 = TYPE_VENEER #}
                             {% set sheetStrippedname = group.material_type == 6 ? 'veneer' : 'good' %}  {# 6 = TYPE_VENEERE #}
                             {% for sheet in entry.sheets %}
-                                <tr class="ladb-cutlist-row ladb-cutlist-row-child hide" data-folder-id="{{ entry.id }}">
+                                <tr class="ladb-cutlist-row ladb-cutlist-row-child{% if entry.errors|length == 0 %} hide{% endif %}" data-folder-id="{{ entry.id }}">
                                     <td style="padding-left: 40px;">{{ sheet.length}} x {{ sheet.width }} - <em>{{ ('tab.cutlist.cuttingdiagram.list.sheet_'~sheetStrippedname~'_type_'~sheet.type)|i18next }}</em></td>
                                     <td class="text-center">{{ sheet.count }}</td>
                                     <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ sheet.total_used_area }}</td>
@@ -264,7 +264,7 @@
                         {% elseif group.material_type == 3 or group.material_type == 4 %} {# 3 = TYPE_DIMENSIONAL, 4 = TYPE_EDGE #}
                             {% set barStrippedname = group.material_type == 4 ? 'edge' : 'dimensional' %}  {# 4 = TYPE_EDGE #}
                             {% for bar in entry.bars %}
-                                <tr class="ladb-cutlist-row ladb-cutlist-row-child hide" data-folder-id="{{ entry.id }}">
+                                <tr class="ladb-cutlist-row ladb-cutlist-row-child{% if entry.errors|length == 0 %} hide{% endif %}" data-folder-id="{{ entry.id }}">
                                     <td style="padding-left: 40px;">{{ bar.length}} - <em>{{ ('tab.cutlist.cuttingdiagram.list.bar_'~barStrippedname~'_type_'~bar.type)|i18next }}</em></td>
                                     <td class="text-center">{{ bar.count }}</td>
                                     <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ bar.total_used_length }}</td>
@@ -277,7 +277,7 @@
                             {% endfor %}
                         {% elseif group.material_type == 5 %} {# 5 = TYPE_HARDWARE #}
                             {% for part in entry.parts %}
-                                <tr class="ladb-cutlist-row ladb-cutlist-row-child hide" data-folder-id="{{ entry.id }}">
+                                <tr class="ladb-cutlist-row ladb-cutlist-row-child{% if entry.errors|length == 0 %} hide{% endif %}" data-folder-id="{{ entry.id }}">
                                     <td style="padding-left: 40px;">
                                         {{ part.name }}
                                         <div class="ladb-minitools ladb-minitools-right no-print">

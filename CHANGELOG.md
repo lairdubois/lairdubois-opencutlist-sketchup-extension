@@ -6,7 +6,7 @@ in 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 * 6.1.0 (WIP)
 
-  * Improved cutting diagram text measurement
+  * Added **Portuguese** language (thanks to Henny Ferreira for joining the translators team) 
 
 * 6.0.1 (2024-02-26)
 
@@ -37,6 +37,10 @@ in 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Improved smart tool last used action now stored globally to keep it on new SketchUp session
   * Improved dimension default style in Layout document after exporting _Drawing_ to Layout
   * Changed material color bullet from drop to circle but present in all lists
+  * Dropped **Polish** language for lack of contributors
+  * Dropped **Portuguese** language for lack of contributors
+  * Dropped **Simplified Chinese** language for lack of contributors
+  * Dropped **Vietnamese** language for lack of contributors
 
 * 5.1.2 (2023-11-29)
 

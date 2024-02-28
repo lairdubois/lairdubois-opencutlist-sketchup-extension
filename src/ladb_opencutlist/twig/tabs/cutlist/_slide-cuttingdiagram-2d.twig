@@ -8,6 +8,8 @@
 {% set numberFontSize = 26 %}
 {% set minNumberFontSize = 8 %}
 
+{% set textFontWidthFactor = 0.6 %}
+
 {% set dimensionOffset = 1 %}
 {% set sheetDimensionOffset = 10 %}
 {% set leftoverBulletOffset = 10 %}
@@ -349,14 +351,14 @@
                                         <line class="leftover-cross" x1="{{ leftover.px_x + leftover.px_length }}" y1="{{ leftover.px_y }}" x2="{{ leftover.px_x }}" y2="{{ leftover.px_y + leftover.px_width }}" />
                                         <line class="leftover-cross" x1="{{ leftover.px_x }}" y1="{{ leftover.px_y }}" x2="{{ leftover.px_x + leftover.px_length }}" y2="{{ leftover.px_y + leftover.px_width }}" />
                                     {% endif %}
-                                    {% set _hideLength = leftover.px_width < (dimensionFontSize + dimensionOffset * 2) or leftover.px_length <= mesure_text(leftover.length, dimensionFontSize) %}
+                                    {% set _hideLength = leftover.px_width < (dimensionFontSize + dimensionOffset * 2) or leftover.px_length <= leftover.length|length * dimensionFontSize * textFontWidthFactor %}
                                     {% if not _hideLength %}
                                         {% set _yCenteredValue = dimensionFontSize + (partOutlineWidth + dimensionOffset) * 2 > leftover.px_width %}
                                         {% set _x = leftover.px_x + leftover.px_length / 2 %}
                                         {% set _y = leftover.px_y + (_yCenteredValue ? leftover.px_width / 2 : dimensionOffset + dimensionFontSize) %}
                                         <text class="leftover-dimension" x="{{ _x }}" y="{{ _y }}" font-size="{{ dimensionFontSize }}px" text-anchor="middle"{% if _yCenteredValue %} dominant-baseline="central"{% endif %}>{{ leftover.length }}</text>
                                     {% endif %}
-                                    {% set _hideWidth = leftover.px_length < (dimensionFontSize + dimensionOffset * 2) or leftover.px_width <= mesure_text(leftover.width, dimensionFontSize) %}
+                                    {% set _hideWidth = leftover.px_length < (dimensionFontSize + dimensionOffset * 2) or leftover.px_width <= leftover.width|length * dimensionFontSize * textFontWidthFactor %}
                                     {% if not _hideWidth %}
                                         {% set _xCenteredValue = dimensionFontSize + (partOutlineWidth + dimensionOffset) * 2 > leftover.px_length %}
                                         {% set _x = leftover.px_x + (_xCenteredValue ? leftover.px_length / 2 : dimensionOffset + dimensionFontSize) %}
@@ -394,14 +396,16 @@
                                         {% endif %}
                                     {% endif %}
                                     {% set _dimHText = (part.rotated ? part.cutting_width : part.cutting_length)|trim_tilde %}
+                                    {% set _dimHTextLength = _dimHText|length %}
                                     {% set _dimVText = (part.rotated ? part.cutting_length : part.cutting_width)|trim_tilde %}
+                                    {% set _dimVTextLength = _dimVText|length %}
                                     {% set _numberText = options.use_names ? part.name : part.number %}
                                     {% set _numberTextLength = _numberText|length %}
-                                    {% set _numberFontSize = max(minNumberFontSize, min(numberFontSize, (part.px_length - dimensionOffset * 2 - edgeWidth * 2 - mesure_text(_dimHText, dimensionFontSize)) / (part.rotated ? 1 : _numberTextLength), (part.px_width - dimensionOffset * 2 - edgeWidth * 2 - mesure_text(_dimVText, dimensionFontSize)) / (part.rotated ? _numberTextLength : 1))) %}
-                                    {% set _numberFontWidth = mesure_text(_numberText, _numberFontSize) %}
+                                    {% set _numberFontSize = max(minNumberFontSize, min(numberFontSize, (part.px_length - dimensionOffset * 2 - edgeWidth * 2 - dimensionFontSize * _dimHTextLength * 0.7) / (part.rotated ? 1 : _numberTextLength), (part.px_width - dimensionOffset * 2 - edgeWidth * 2 - dimensionFontSize * _dimVTextLength * 0.7) / (part.rotated ? _numberTextLength : 1))) %}
+                                    {% set _numberFontWidth = _numberFontSize * _numberTextLength * textFontWidthFactor %}
                                     <text class="part-number" x="{{ part.px_x + part.px_length / 2 }}" y="{{ part.px_y + part.px_width / 2 }}" font-size="{{ _numberFontSize }}px" text-anchor="middle" dominant-baseline="central"{% if part.rotated %} transform="rotate(-90 {{ part.px_x + part.px_length / 2 }},{{ part.px_y + part.px_width / 2 }})"{% endif %}>{{ _numberText|escape }}</text>
                                     {% set _dimFontSize = min(dimensionFontSize, _numberFontSize * 0.8) %}
-                                    {% set _dimPxWidth = mesure_text(_dim_HText, _dimFontSize) %}
+                                    {% set _dimPxWidth = _dimHTextLength * _dimFontSize * textFontWidthFactor %}
                                     {% set _hideDimH = part.px_width < (_numberFontSize + (partOutlineWidth + dimensionOffset + _dimFontSize) * 2) and (part.px_length - _numberFontSize) / 2 < _dimPxWidth or part.px_length < _dimPxWidth %}
                                     {% if not _hideDimH %}
                                         {% set _xCenteredValue = _dimPxWidth + (partOutlineWidth + dimensionOffset + edgeWidth) * 2 > part.px_length %}
@@ -410,7 +414,7 @@
                                         {% set _y = part.px_y + (_yCenteredValue ? part.px_width / 2 : partOutlineWidth + dimensionOffset + _dimFontSize) %}
                                         <text class="part-dimension" data-x="{{ _yCenteredValue }}" x="{{ _x }}" y="{{ _y }}" font-size="{{ _dimFontSize }}px" text-anchor="{% if _xCenteredValue %}middle{% else %}end{% endif %}"{% if _yCenteredValue %} dominant-baseline="central"{% endif %}{% if showCuttingDimensions %} style="fill: red;"{% endif %}>{{ _dimHText }}</text>
                                     {% endif %}
-                                    {% set _dimPxWidth = mesure_text(_dim_VText, _dimFontSize) %}
+                                    {% set _dimPxWidth = _dimVTextLength * _dimFontSize * textFontWidthFactor %}
                                     {% set _hideDimV = part.px_length < (_numberFontWidth + (partOutlineWidth + dimensionOffset + _dimFontSize) * 2) and (part.px_width - _numberFontSize) / 2 < _dimPxWidth or part.px_width < _dimPxWidth %}
                                     {% if not _hideDimV %}
                                         {% set _xCenteredValue = _dimFontSize + (partOutlineWidth + dimensionOffset + edgeWidth) * 2 > part.px_length %}

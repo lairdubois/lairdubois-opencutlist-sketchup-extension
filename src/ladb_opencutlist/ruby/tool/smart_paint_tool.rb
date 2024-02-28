@@ -273,6 +273,8 @@ module Ladb::OpenCutList
               set_filter_by_type(button.data, true)
               update_filters_ratio
 
+              store_action_filters(fetch_action, @@filters.clone)
+
               # Re populate material defs & setup corresponding buttons
               _populate_material_defs(view.model)
               _setup_material_buttons
