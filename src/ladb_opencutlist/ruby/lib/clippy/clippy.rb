@@ -188,7 +188,7 @@ module Ladb::OpenCutList
         @lib_loaded = true
 
       rescue Exception => e
-        Plugin.instance.dump_exception(e)
+        Plugin.instance.dump_exception(e, true, Sketchup.platform == :platform_win ? "To resolve this issue, try installing the Microsoft Visual C++ Redistributable available here :\nhttps://aka.ms/vs/17/release/vc_redist.x64.exe" : nil)
         @lib_loaded = false
       end
 

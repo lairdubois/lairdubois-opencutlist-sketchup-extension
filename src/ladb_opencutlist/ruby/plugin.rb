@@ -248,9 +248,9 @@ module Ladb::OpenCutList
 
     end
 
-    def dump_exception(e)
+    def dump_exception(e, show_console = true, message = nil)
 
-      SKETCHUP_CONSOLE.show
+      SKETCHUP_CONSOLE.show if show_console
 
       heading = "Please email the following error to opencutlist@lairdubois.fr"
       puts '-' * heading.length
@@ -260,6 +260,10 @@ module Ladb::OpenCutList
       puts "#{e.inspect}"
       puts e.backtrace.join("\n")
       puts '-' * heading.length
+      unless message.nil? || message.to_s.empty?
+        puts message.to_s
+        puts '-' * heading.length
+      end
 
     end
 
