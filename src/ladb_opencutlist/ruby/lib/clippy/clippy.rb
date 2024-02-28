@@ -147,14 +147,36 @@ module Ladb::OpenCutList
 
         case Sketchup.platform
         when :platform_osx
-          lib_path = File.join(PLUGIN_DIR, '/bin/osx/lib/libClippy.dylib')
+          lib_file = 'libClippy.dylib'
+          lib_path = File.join(PLUGIN_DIR, '/bin/osx/lib', lib_file)
         when :platform_win
-          lib_path = File.join(PLUGIN_DIR, '/bin/x86/lib/Clippy.dll')
+          lib_file = 'Clippy.dll'
+          lib_path = File.join(PLUGIN_DIR, '/bin/x86/lib', lib_file)
         else
           raise "Invalid platform : #{Sketchup.platform}"
         end
 
         raise "File not found : #{lib_path}" unless File.exist?(lib_path)
+
+        # Fiddle lib loader only accept US-ASCII encoded path
+        begin
+          lib_path.encode!(Encoding::US_ASCII)
+        rescue Encoding::UndefinedConversionError => e
+
+          require 'fileutils'
+
+          # Path can't be converted to US-ASCII
+          # Workaround -> try to copy the lib to temp folder which should be able to be encoded in ascii
+          temp_lib_path = File.join(Plugin.instance.temp_dir, lib_file)
+
+          FileUtils.cp(lib_path, temp_lib_path)
+          if File.exist?(temp_lib_path)
+            lib_path = temp_lib_path
+          else
+            raise "Incompatible lib path : #{lib_path}"
+          end
+
+        end
 
         dlload(lib_path)
 
