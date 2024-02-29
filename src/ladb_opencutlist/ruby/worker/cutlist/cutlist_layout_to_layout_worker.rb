@@ -113,7 +113,7 @@ module Ladb::OpenCutList
 
         # Add style
         selected_style = styles.selected_style
-        styles.add_style(File.join(Plugin.instance.root_dir,'style', "ocl_layout_#{@parts_colored ? 'colored' : 'monochrome'}_#{@parts_opacity == 1 ? 'opaque' : 'translucent'}.style"), true)
+        styles.add_style(File.join(PLUGIN_DIR, 'style', "ocl_layout_#{@parts_colored ? 'colored' : 'monochrome'}_#{@parts_opacity == 1 ? 'opaque' : 'translucent'}.style"), true)
 
         # Save tmp definition in skp file
         skp_success = tmp_definition.save_as(skp_path) && File.exist?(skp_path)

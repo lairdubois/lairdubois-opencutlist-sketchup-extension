@@ -6,13 +6,17 @@ module Ladb::OpenCutList
   module Clippy
     extend Fiddle::Importer
 
-    FLOAT_TO_INT64_CONVERTER = 1e8   # Clipper2 can have difficulties to union non squared polygon if > 1e6
+    FLOAT_TO_INT64_CONVERTER = 1e8
 
     @lib_loaded = false
 
+    def self.loaded?
+      @lib_loaded
+    end
+
     def self.available?
       _load_lib
-      @lib_loaded
+      loaded?
     end
 
     # -- Debug --
@@ -166,10 +170,10 @@ module Ladb::OpenCutList
           require 'fileutils'
 
           # Path can't be converted to US-ASCII
-          # Workaround -> try to copy the lib to temp folder which should be able to be encoded in ascii
+          # Workaround -> try to copy the lib to temp folder which should be ascii path
           temp_lib_path = File.join(Plugin.instance.temp_dir, lib_file)
 
-          FileUtils.cp(lib_path, temp_lib_path)
+          FileUtils.copy_file(lib_path, temp_lib_path)
           if File.exist?(temp_lib_path)
             lib_path = temp_lib_path
           else
@@ -419,4 +423,5 @@ module Ladb::OpenCutList
     PolyShape = Struct.new(:paths)
 
   end
+
 end
