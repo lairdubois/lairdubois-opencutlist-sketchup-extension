@@ -151,53 +151,31 @@ module Ladb::OpenCutList
 
         case Sketchup.platform
         when :platform_osx
+          lib_dir = File.join(PLUGIN_DIR,'bin', 'osx', 'lib')
           lib_file = 'libClippy.dylib'
-          lib_path = File.join(PLUGIN_DIR, '/bin/osx/lib', lib_file)
         when :platform_win
+          lib_dir = File.join(PLUGIN_DIR,'bin', 'win', 'lib')
           lib_file = 'Clippy.dll'
-          lib_path = File.join(PLUGIN_DIR, '/bin/win/lib', lib_file)
         else
           raise "Invalid platform : #{Sketchup.platform}"
         end
 
-        raise "File not found : #{lib_path}" unless File.exist?(lib_path)
-
         # Fiddle lib loader only accept US-ASCII encoded path
-        use_temp_path = false
-        begin
-          lib_path.encode!(Encoding::US_ASCII)
-        rescue Encoding::UndefinedConversionError => e
-          # Path can't be converted to US-ASCII
-          # Workaround -> try to copy the lib to temp folder which should be ascii path
-          use_temp_path = true
-        end
+        # Workaround :
+        # - Change working dir
+        # - Load lib from relative path (that is ASCII compatible)
 
-        if use_temp_path
+        # Keep current working dir
+        wd = Dir.getwd
 
-          require 'fileutils'
+        # Change working dir to lib dir
+        Dir.chdir(lib_dir)
 
-          temp_lib_path = File.join(Dir.tmpdir, lib_file)
+        # Load lib
+        dlload(lib_file)
 
-          # Copy lib to temp folder
-          FileUtils.copy_file(lib_path, temp_lib_path)
-          if File.exist?(temp_lib_path)
-
-            # Load lib from temp path
-            dlload(temp_lib_path)
-
-            # Remove temp file
-            FileUtils.remove_file(temp_lib_path)
-
-          else
-            raise "Incompatible lib path : #{lib_path}"
-          end
-
-        else
-
-          # Load lib from default path
-          dlload(lib_path)
-
-        end
+        # Restore previous working dir
+        Dir.chdir(wd)
 
         # Keep simple C syntax (without var names and void in args) to stay compatible with SketchUp 2017
 
