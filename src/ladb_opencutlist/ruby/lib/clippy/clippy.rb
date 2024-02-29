@@ -200,9 +200,6 @@ module Ladb::OpenCutList
             # Load lib
             dlload(tmp_lib_path)
 
-            # Remove copy
-            FileUtils.remove_file(tmp_lib_path)
-
           else
 
             # Load lib
