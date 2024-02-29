@@ -151,31 +151,62 @@ module Ladb::OpenCutList
 
         case Sketchup.platform
         when :platform_osx
+
           lib_dir = File.join(PLUGIN_DIR,'bin', 'osx', 'lib')
           lib_file = 'libClippy.dylib'
+
+          # Fiddle lib loader only accept US-ASCII encoded path
+          # Workaround :
+          # - Change working dir
+          # - Load lib from relative path (that is ASCII compatible)
+
+          # Keep current working dir
+          wd = Dir.getwd
+
+          # Change working dir to lib dir
+          Dir.chdir(lib_dir)
+
+          # Load lib
+          dlload(lib_file)
+
+          # Restore previous working dir
+          Dir.chdir(wd)
+
         when :platform_win
+
           lib_dir = File.join(PLUGIN_DIR,'bin', 'win', 'lib')
           lib_file = 'Clippy.dll'
+
+          # Fiddle lib loader only accept US-ASCII encoded path
+          # Workaround :
+          # - Add lib dir to ENV['Path']
+          # - Load lib from relative path
+
+          # Retrieve ENV Path
+          env_path = ENV['Path']
+
+          # Split to array of paths
+          if env_path.is_a?(String)
+            tmp_env_paths = env_path.split(';')
+          else
+            tmp_env_paths = []
+          end
+
+          # Append lib dir
+          tmp_env_paths << lib_dir
+
+          # Set tmp env path
+          ENV['Path'] = tmp_env_paths.join(';')
+
+          # Load lib
+          dlload(lib_file)
+
+          # Restore previous ENV Path
+          ENV['Path'] = env_path
+
         else
           raise "Invalid platform : #{Sketchup.platform}"
         end
-
-        # Fiddle lib loader only accept US-ASCII encoded path
-        # Workaround :
-        # - Change working dir
-        # - Load lib from relative path (that is ASCII compatible)
-
-        # Keep current working dir
-        wd = Dir.getwd
-
-        # Change working dir to lib dir
-        Dir.chdir(lib_dir)
-
-        # Load lib
-        dlload(lib_file)
-
-        # Restore previous working dir
-        Dir.chdir(wd)
 
         # Keep simple C syntax (without var names and void in args) to stay compatible with SketchUp 2017
 

@@ -153,7 +153,7 @@ module Ladb::OpenCutList
 
     def get_enabled_languages
       return ENABLED_LANGUAGES unless IS_DEV
-      ENABLED_LANGUAGES.map { |language| [ language, "zz_#{language}" ] }.flatten
+      ENABLED_LANGUAGES.flat_map { |language| [ language, "zz_#{language}" ] }
     end
 
     def get_available_languages
