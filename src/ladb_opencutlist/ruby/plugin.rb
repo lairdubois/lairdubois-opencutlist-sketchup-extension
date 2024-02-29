@@ -119,13 +119,9 @@ module Ladb::OpenCutList
     # -----
 
     def temp_dir
-      if @temp_dir
-        return @temp_dir
-      end
+      return @temp_dir unless @temp_dir.nil?
       dir = File.join(Sketchup.temp_dir, "ladb_opencutlist")
-      if Dir.exist?(dir)
-        FileUtils.remove_dir(dir, true)   # Temp dir exists we clean it
-      end
+      FileUtils.remove_dir(dir, true) if Dir.exist?(dir)  # Temp dir exists we clean it
       Dir.mkdir(dir)
       @temp_dir = dir
     end

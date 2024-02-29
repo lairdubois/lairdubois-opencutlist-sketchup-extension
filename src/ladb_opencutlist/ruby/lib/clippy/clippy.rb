@@ -155,7 +155,7 @@ module Ladb::OpenCutList
           lib_path = File.join(PLUGIN_DIR, '/bin/osx/lib', lib_file)
         when :platform_win
           lib_file = 'Clippy.dll'
-          lib_path = File.join(PLUGIN_DIR, '/bin/x86/lib', lib_file)
+          lib_path = File.join(PLUGIN_DIR, '/bin/win/lib', lib_file)
         else
           raise "Invalid platform : #{Sketchup.platform}"
         end
@@ -163,26 +163,41 @@ module Ladb::OpenCutList
         raise "File not found : #{lib_path}" unless File.exist?(lib_path)
 
         # Fiddle lib loader only accept US-ASCII encoded path
+        use_temp_path = false
         begin
           lib_path.encode!(Encoding::US_ASCII)
         rescue Encoding::UndefinedConversionError => e
+          # Path can't be converted to US-ASCII
+          # Workaround -> try to copy the lib to temp folder which should be ascii path
+          use_temp_path = true
+        end
+
+        if use_temp_path
 
           require 'fileutils'
 
-          # Path can't be converted to US-ASCII
-          # Workaround -> try to copy the lib to temp folder which should be ascii path
-          temp_lib_path = File.join(Plugin.instance.temp_dir, lib_file)
+          temp_lib_path = File.join(Dir.tmpdir, lib_file)
 
+          # Copy lib to temp folder
           FileUtils.copy_file(lib_path, temp_lib_path)
           if File.exist?(temp_lib_path)
-            lib_path = temp_lib_path
+
+            # Load lib from temp path
+            dlload(temp_lib_path)
+
+            # Remove temp file
+            FileUtils.remove_file(temp_lib_path)
+
           else
             raise "Incompatible lib path : #{lib_path}"
           end
 
-        end
+        else
 
-        dlload(lib_path)
+          # Load lib from default path
+          dlload(lib_path)
+
+        end
 
         # Keep simple C syntax (without var names and void in args) to stay compatible with SketchUp 2017
 

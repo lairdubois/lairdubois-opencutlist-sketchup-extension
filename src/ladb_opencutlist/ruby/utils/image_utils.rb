@@ -51,7 +51,7 @@ module Ladb::OpenCutList
 
         when :platform_win
 
-          bin_dir = File.join(bin_dir, 'x86')
+          bin_dir = File.join(bin_dir, 'win')
           convert_path = File.absolute_path(File.join(bin_dir, 'convert.exe'))
 
           cmd = ["\"#{convert_path}\"", "\"#{in_file}\"", options, "\"#{out_file}\""].join(' ')
