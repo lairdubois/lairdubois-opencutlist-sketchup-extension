@@ -176,32 +176,39 @@ module Ladb::OpenCutList
 
           lib_dir = File.join(PLUGIN_DIR,'bin', 'win', 'lib')
           lib_file = 'Clippy.dll'
-          path_key = 'Path'
+          lib_path = File.join(lib_dir, lib_file)
 
           # Fiddle lib loader only accept US-ASCII encoded path
           # Workaround :
-          # - Prepend lib dir to ENV['Path']
-          # - Load lib from file path (that is ASCII compatible)
+          # - Check if ASCII compatible
+          # - Load a copy of lib fil from temp dir
 
-          # Retrieve ENV Path
-          env_path = ENV[path_key]
-
-          # Append lib path
-          tmp_env_path = lib_dir
-          if env_path.is_a?(String)
-            tmp_env_path = tmp_env_path.concat(';', env_path)
-            tmp_env_path = tmp_env_path.unicode_normalize
+          use_tmp_lib_path = false
+          begin
+            lib_path.encode(Encoding::US_ASCII)
+          rescue Encoding::UndefinedConversionError => e
+            use_tmp_lib_path = true
           end
-          tmp_env_path = tmp_env_path.encode(env_path.encoding)
 
-          # Set temp env path
-          ENV[path_key] = tmp_env_path
+          if use_tmp_lib_path
 
-          # Load lib
-          dlload(lib_file)
+            tmp_lib_path = File.join(Dir.tmpdir, lib_file)
 
-          # Restore previous ENV Path
-          ENV[path_key] = env_path
+            # Copy lib
+            FileUtils.copy_file(lib_path, tmp_lib_path)
+
+            # Load lib
+            dlload(lib_file)
+
+            # Remove copy
+            FileUtils.remove_file(tmp_lib_path)
+
+          else
+
+            # Load lib
+            dlload(lib_file)
+
+          end
 
         else
           raise "Invalid platform : #{Sketchup.platform}"
