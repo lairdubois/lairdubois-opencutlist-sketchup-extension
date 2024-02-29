@@ -1197,16 +1197,12 @@ module Ladb::OpenCutList
 
     def tabs_dialog_set_print_margin(print_margin, persist = false)
       @tabs_dialog_print_margin = print_margin
-      if persist
-        write_default(SETTINGS_KEY_DIALOG_PRINT_MARGIN, print_margin)
-      end
+      write_default(SETTINGS_KEY_DIALOG_PRINT_MARGIN, print_margin) if persist
     end
 
     def tabs_dialog_set_table_row_size(table_row_size, persist = false)
       @tabs_dialog_table_row_size = table_row_size
-      if persist
-        write_default(SETTINGS_KEY_DIALOG_TABLE_ROW_SIZE, table_row_size)
-      end
+      write_default(SETTINGS_KEY_DIALOG_TABLE_ROW_SIZE, table_row_size) if persist
     end
 
     def execute_tabs_dialog_command_on_tab(tab_name, command, parameters = nil, callback = nil)

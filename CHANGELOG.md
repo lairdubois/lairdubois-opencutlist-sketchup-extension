@@ -7,7 +7,9 @@ in 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 * 6.1.0 (WIP)
 
   * Added **Portuguese** language (thanks to Henny Ferreira for joining the translators team)
-  * Fixed _Clippy_ loading when OpenCutList installed under non ASCII path
+  * Fixed _Clippy_ loading when OpenCutList installed under a non-ASCII path
+  * Fixed table row size reload on startup
+  * Fixed veneer default material attributes
 
 * 6.0.1 (2024-02-26)
 

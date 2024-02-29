@@ -118,7 +118,7 @@
     "std_sizes": { "metric": "2800mm x 2070mm", "imperial": "96\" x 48\"" },
     "grained": true,
     "edge_decremented": false,
-    "raw_estimated": false,
+    "raw_estimated": true,
     "std_volumic_masses": [],
     "std_prices": []
   }

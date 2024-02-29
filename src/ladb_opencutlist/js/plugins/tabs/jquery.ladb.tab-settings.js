@@ -268,17 +268,20 @@
             // Send to ruby
             rubyCallCommand('settings_dialog_settings', {
                 language: that.dialog.capabilities.language,
-                print_margin: that.dialog.capabilities.dialog_print_margin,
-                table_row_size: that.dialog.capabilities.dialog_table_row_size
+                print_margin: that.dialog.capabilities.tabs_dialog_print_margin,
+                table_row_size: that.dialog.capabilities.tabs_dialog_table_row_size
             });
 
-            that.dialog.setCompact(that.dialog.capabilities.dialog_table_row_size === 1);
+            that.dialog.setCompact(that.dialog.capabilities.tabs_dialog_table_row_size === 1);
 
         };
         var fnGlobalFillInputs = function () {
             $selectLanguage.selectpicker('val', that.dialog.capabilities.language);
-            $selectPrintMargin.selectpicker('val', that.dialog.capabilities.dialog_print_margin);
-            $selectTableRowSize.selectpicker('val', that.dialog.capabilities.dialog_table_row_size);
+            $selectPrintMargin.selectpicker('val', that.dialog.capabilities.tabs_dialog_print_margin);
+            $selectTableRowSize.selectpicker('val', that.dialog.capabilities.tabs_dialog_table_row_size);
+
+            console.log(that.dialog.capabilities);
+
         }
 
         $selectLanguage.selectpicker($.extend(SELECT_PICKER_OPTIONS, { size: that.dialog.capabilities.available_languages.length + 1 }));
@@ -294,18 +297,18 @@
             that.showReloadAlert();
         });
         $selectPrintMargin.on('change', function () {
-            that.dialog.capabilities.dialog_print_margin = parseInt($selectPrintMargin.val());
+            that.dialog.capabilities.tabs_dialog_print_margin = parseInt($selectPrintMargin.val());
             fnGlobalUpdate();
         });
         $selectTableRowSize.on('change', function () {
-            that.dialog.capabilities.dialog_table_row_size = parseInt($selectTableRowSize.val());
+            that.dialog.capabilities.tabs_dialog_table_row_size = parseInt($selectTableRowSize.val());
             fnGlobalUpdate();
         });
         $btnReset.on('click', function () {
             $(this).blur();
             that.dialog.capabilities.language = 'auto';
-            that.dialog.capabilities.dialog_print_margin = 0;
-            that.dialog.capabilities.dialog_table_row_size = 0;
+            that.dialog.capabilities.tabs_dialog_print_margin = 0;
+            that.dialog.capabilities.tabs_dialog_table_row_size = 0;
             fnGlobalUpdate();
             fnGlobalFillInputs();
             that.showReloadAlert();

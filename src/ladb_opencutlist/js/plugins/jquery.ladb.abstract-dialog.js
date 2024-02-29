@@ -35,8 +35,8 @@ function LadbAbstractDialog(element, options) {
         update_available: options.update_available,
         update_muted: options.update_muted,
         last_news_timestamp: options.last_news_timestamp,
-        dialog_print_margin: options.dialog_print_margin,
-        dialog_table_row_size: options.dialog_table_row_size,
+        tabs_dialog_print_margin: options.tabs_dialog_print_margin,
+        tabs_dialog_table_row_size: options.tabs_dialog_table_row_size,
     };
 
     this.settings = {};

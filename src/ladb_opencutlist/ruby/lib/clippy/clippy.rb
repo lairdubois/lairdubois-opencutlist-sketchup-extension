@@ -180,24 +180,22 @@ module Ladb::OpenCutList
 
           # Fiddle lib loader only accept US-ASCII encoded path
           # Workaround :
-          # - Add lib dir to ENV['Path']
+          # - Prepend lib dir to ENV['Path']
           # - Load lib from file path (that is ASCII compatible)
 
           # Retrieve ENV Path
           env_path = ENV[path_key]
 
-          # Split to array of paths
+          # Append lib path
+          tmp_env_path = lib_dir
           if env_path.is_a?(String)
-            tmp_env_paths = env_path.split(';')
-          else
-            tmp_env_paths = []
+            tmp_env_path = tmp_env_path.concat(';', env_path)
+            tmp_env_path = tmp_env_path.unicode_normalize
           end
+          tmp_env_path = tmp_env_path.encode(env_path.encoding)
 
-          # Prepend lib dir
-          tmp_env_paths.unshift(lib_dir)
-
-          # Set tmp env path
-          ENV[path_key] = tmp_env_paths.join(';')
+          # Set temp env path
+          ENV[path_key] = tmp_env_path
 
           # Load lib
           dlload(lib_file)

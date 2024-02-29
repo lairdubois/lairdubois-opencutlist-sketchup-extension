@@ -740,7 +740,7 @@
 
                     that.bind();
 
-                    if (that.options.dialog_table_row_size) {
+                    if (that.options.tabs_dialog_table_row_size) {
                         that.setCompact(true);
                     }
 
