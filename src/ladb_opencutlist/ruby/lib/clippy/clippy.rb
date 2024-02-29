@@ -192,8 +192,8 @@ module Ladb::OpenCutList
             tmp_env_paths = []
           end
 
-          # Append lib dir
-          tmp_env_paths << lib_dir
+          # Prepend lib dir
+          tmp_env_paths.unshift(lib_dir)
 
           # Set tmp env path
           ENV['Path'] = tmp_env_paths.join(';')
