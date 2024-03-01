@@ -155,7 +155,7 @@ module Ladb::OpenCutList
           lib_dir = File.join(PLUGIN_DIR,'bin', 'osx', 'lib')
           lib_file = 'libClippy.dylib'
 
-          # Fiddle lib loader only accept US-ASCII encoded path
+          # Fiddle lib loader only accept US-ASCII encoded path :(
           # Workaround :
           # - Change working dir
           # - Load lib from file path (that is ASCII compatible)
@@ -178,10 +178,10 @@ module Ladb::OpenCutList
           lib_file = 'Clippy.dll'
           lib_path = File.join(lib_dir, lib_file)
 
-          # Fiddle lib loader only accept US-ASCII encoded path
+          # Fiddle lib loader only accept US-ASCII encoded path :(
           # Workaround :
           # - Check if ASCII compatible
-          # - Load a copy of lib fil from temp dir
+          # - Load a copy of lib fil from temp dir if incompatible
 
           use_tmp_lib_path = false
           begin
