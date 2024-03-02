@@ -172,7 +172,7 @@ module Ladb::OpenCutList
         rescue Fiddle::DLError => e
 
           # Fiddle lib loader seems to have troubles with non-ASCII encoded path :(
-          # Workaround : Try to copy and load lib file from temp folder for safer path
+          # Workaround : Try to copy and load lib file from temp folder
 
           tmp_lib_path = File.join(Dir.tmpdir, lib_file)
 
