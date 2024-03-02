@@ -151,64 +151,37 @@ module Ladb::OpenCutList
 
         case Sketchup.platform
         when :platform_osx
-
           lib_dir = File.join(PLUGIN_DIR,'bin', 'osx', 'lib')
           lib_file = 'libClippy.dylib'
-
-          # Fiddle lib loader only accept US-ASCII encoded path :(
-          # Workaround :
-          # - Change working dir
-          # - Load lib from file path (that is ASCII compatible)
-
-          # Keep current working dir
-          wd = Dir.getwd
-
-          # Change working dir to lib dir
-          Dir.chdir(lib_dir)
-
-          # Load lib
-          dlload(lib_file)
-
-          # Restore previous working dir
-          Dir.chdir(wd)
-
         when :platform_win
-
           lib_dir = File.join(PLUGIN_DIR,'bin', 'win', 'lib')
           lib_file = 'Clippy.dll'
-          lib_path = File.join(lib_dir, lib_file)
-
-          # Fiddle lib loader only accept US-ASCII encoded path :(
-          # Workaround :
-          # - Check if ASCII compatible
-          # - Load a copy of lib fil from temp dir if incompatible
-
-          use_tmp_lib_path = false
-          begin
-            lib_path.encode(Encoding::US_ASCII)
-          rescue Encoding::UndefinedConversionError => e
-            use_tmp_lib_path = true
-          end
-
-          if use_tmp_lib_path
-
-            tmp_lib_path = File.join(Dir.tmpdir, lib_file)
-
-            # Copy lib
-            FileUtils.copy_file(lib_path, tmp_lib_path)
-
-            # Load lib
-            dlload(tmp_lib_path)
-
-          else
-
-            # Load lib
-            dlload(lib_file)
-
-          end
-
         else
           raise "Invalid platform : #{Sketchup.platform}"
+        end
+
+        lib_path = File.join(lib_dir, lib_file)
+
+        raise "Lib not found : #{lib_path}" unless File.exist?(lib_path)
+
+        begin
+
+          # Load lib (from default extension path)
+          dlload(lib_path)
+
+        rescue Fiddle::DLError => e
+
+          # Fiddle lib loader seems to have troubles with non-ASCII encoded path :(
+          # Workaround : Try to copy and load lib file from temp folder for safer path
+
+          tmp_lib_path = File.join(Dir.tmpdir, lib_file)
+
+          # Copy lib
+          FileUtils.copy_file(lib_path, tmp_lib_path)
+
+          # Load lib
+          dlload(tmp_lib_path)
+
         end
 
         # Keep simple C syntax (without var names and void in args) to stay compatible with SketchUp 2017
