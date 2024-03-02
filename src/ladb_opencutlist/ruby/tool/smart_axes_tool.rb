@@ -346,7 +346,7 @@ module Ladb::OpenCutList
 
           transformation_inverse = instance_info.transformation.inverse
 
-          rect_offset = model.active_view.pixels_to_model(20, model.active_view.guess_target)
+          rect_offset = model.active_view.pixels_to_model(30, model.active_view.guess_target)
           rect_offset_bounds = Geom::BoundingBox.new
           rect_offset_bounds.add(Geom::Point3d.new.transform!(transformation_inverse))
           rect_offset_bounds.add(Geom::Point3d.new(rect_offset, rect_offset, rect_offset).transform!(transformation_inverse))

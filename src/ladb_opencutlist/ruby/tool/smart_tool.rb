@@ -403,7 +403,7 @@ module Ladb::OpenCutList
 
     def show_tooltip(items, type = MESSAGE_TYPE_DEFAULT)
 
-      hide_tooltip
+      remove_tooltip
 
       unit = get_unit
       case type
@@ -502,16 +502,22 @@ module Ladb::OpenCutList
 
     end
 
-    def hide_tooltip
+    def remove_tooltip
       return if @tooltip_box.nil?
       @tooltip_box.remove
       @tooltip_box = nil
+    end
+
+    def hide_tooltip
+      return if @tooltip_box.nil?
+      @tooltip_box.visible = false
     end
 
     def move_tooltip(mouse_x, mouse_y)
       unless @tooltip_box.nil?
         @tooltip_box.layout_data.x = mouse_x + 10 * UI.scale_factor
         @tooltip_box.layout_data.y = mouse_y + (32 + 10) * UI.scale_factor
+        @tooltip_box.visible = true
         @tooltip_box.invalidate
       end
     end
@@ -997,7 +1003,10 @@ module Ladb::OpenCutList
       @last_mouse_x = x
       @last_mouse_y = y
 
-      return true if super
+      if super
+        hide_tooltip
+        return true
+      end
 
       # Tooltip
       move_tooltip(x, y)
@@ -1161,6 +1170,7 @@ module Ladb::OpenCutList
         # puts "  EdgePath = #{@input_edge_path}"
 
       end
+
       false
     end
 
@@ -1317,7 +1327,7 @@ module Ladb::OpenCutList
 
       # Hide previous overlays
       hide_message
-      hide_tooltip
+      remove_tooltip
 
     end
 
