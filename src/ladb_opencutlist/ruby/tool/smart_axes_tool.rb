@@ -57,6 +57,12 @@ module Ladb::OpenCutList
     COLOR_BOX = Kuix::COLOR_BLACK # Kuix::COLOR_BLUE
     COLOR_ACTION = Kuix::COLOR_MAGENTA
     COLOR_ACTION_FILL = Sketchup::Color.new(255, 0, 255, 0.2).freeze
+    COLOR_LENGTH = Kuix::COLOR_RED
+    COLOR_LENGTH_FILL = Sketchup::Color.new(255, 0, 0, 0.2).freeze
+    COLOR_WIDTH = Kuix::COLOR_GREEN
+    COLOR_WIDTH_FILL = Sketchup::Color.new(0, 255, 0, 0.2).freeze
+    COLOR_THICKNESS = Kuix::COLOR_BLUE
+    COLOR_THICKNESS_FILL = Sketchup::Color.new(0, 0, 255, 0.2).freeze
 
     def initialize
       super(true, false)
@@ -349,18 +355,26 @@ module Ladb::OpenCutList
           r_height = 0
           r_t = Geom::Transformation.translation(instance_info.definition_bounds.center)
           r_t *= instance_info.size.oriented_transformation
+          r_color = COLOR_ACTION
+          f_color = COLOR_ACTION_FILL
 
           if fetch_action_option_enabled(ACTION_FLIP, ACTION_OPTION_DIRECTION, ACTION_OPTION_DIRECTION_LENGTH)
             r_width += _get_bounds_dim_along_axis(instance_info, instance_info.definition_bounds, Y_AXIS) + _get_bounds_dim_along_axis(instance_info, rect_offset_bounds, Y_AXIS) * 2
             r_height += _get_bounds_dim_along_axis(instance_info, instance_info.definition_bounds, Z_AXIS) + _get_bounds_dim_along_axis(instance_info, rect_offset_bounds, Z_AXIS) * 2
             r_t *= Geom::Transformation.rotation(ORIGIN, Z_AXIS, 90.degrees) * Geom::Transformation.rotation(ORIGIN, X_AXIS, 90.degrees)
+            r_color = COLOR_LENGTH
+            f_color = COLOR_LENGTH_FILL
           elsif fetch_action_option_enabled(ACTION_FLIP, ACTION_OPTION_DIRECTION, ACTION_OPTION_DIRECTION_WIDTH)
             r_width += _get_bounds_dim_along_axis(instance_info, instance_info.definition_bounds, X_AXIS) + _get_bounds_dim_along_axis(instance_info, rect_offset_bounds, X_AXIS) * 2
             r_height += _get_bounds_dim_along_axis(instance_info, instance_info.definition_bounds, Z_AXIS) + _get_bounds_dim_along_axis(instance_info, rect_offset_bounds, Z_AXIS) * 2
             r_t *= Geom::Transformation.rotation(ORIGIN, X_AXIS, 90.degrees)
+            r_color = COLOR_WIDTH
+            f_color = COLOR_WIDTH_FILL
           elsif fetch_action_option_enabled(ACTION_FLIP, ACTION_OPTION_DIRECTION, ACTION_OPTION_DIRECTION_THICKNESS)
             r_width += _get_bounds_dim_along_axis(instance_info, instance_info.definition_bounds, X_AXIS) + _get_bounds_dim_along_axis(instance_info, rect_offset_bounds, X_AXIS) * 2
             r_height += _get_bounds_dim_along_axis(instance_info, instance_info.definition_bounds, Y_AXIS) + _get_bounds_dim_along_axis(instance_info, rect_offset_bounds, Y_AXIS) * 2
+            r_color = COLOR_THICKNESS
+            f_color = COLOR_THICKNESS_FILL
           end
           r_t *= Geom::Transformation.translation(Geom::Vector3d.new(r_width / -2.0, r_height / -2.0, 0))
           r_t *= Geom::Transformation.scaling(ORIGIN, r_width, r_height, 0)
@@ -368,7 +382,7 @@ module Ladb::OpenCutList
           rect = Kuix::RectangleMotif.new
           rect.bounds.size.set!(1, 1, 0)
           rect.transformation = r_t
-          rect.color = COLOR_ACTION
+          rect.color = r_color
           rect.line_width = 2
           part_helper.append(rect)
 
@@ -377,7 +391,7 @@ module Ladb::OpenCutList
                                  Geom::Point3d.new(0, 0, 0), Geom::Point3d.new(1, 0, 0), Geom::Point3d.new(1, 1, 0),
                                  Geom::Point3d.new(0, 0, 0), Geom::Point3d.new(0, 1, 0), Geom::Point3d.new(1, 1, 0)
                                ])
-            fill.background_color = COLOR_ACTION_FILL
+            fill.background_color = f_color
             rect.append(fill)
 
         end
