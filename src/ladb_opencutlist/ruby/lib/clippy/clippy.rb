@@ -160,33 +160,29 @@ module Ladb::OpenCutList
           raise "Invalid platform : #{Sketchup.platform}"
         end
 
-        # lib_path = File.join(lib_dir, lib_file)
+        lib_path = File.join(lib_dir, lib_file)
 
-        Dir.chdir(lib_dir) do
-          dlload(lib_file)
+        raise "Lib not found : #{lib_path}" unless File.exist?(lib_path)
+
+        begin
+
+          # Load lib (from default extension path)
+          dlload(lib_path)
+
+        rescue Fiddle::DLError => e
+
+          # Fiddle lib loader seems to have troubles with non-ASCII encoded path :(
+          # Workaround : Try to copy and load lib file from temp folder
+
+          tmp_lib_path = File.join(Dir.tmpdir, lib_file)
+
+          # Copy lib
+          FileUtils.copy_file(lib_path, tmp_lib_path)
+
+          # Load lib
+          dlload(tmp_lib_path)
+
         end
-
-        # raise "Lib not found : #{lib_path}" unless File.exist?(lib_path)
-        #
-        # begin
-        #
-        #   # Load lib (from default extension path)
-        #   dlload(lib_path)
-        #
-        # rescue Fiddle::DLError => e
-        #
-        #   # Fiddle lib loader seems to have troubles with non-ASCII encoded path :(
-        #   # Workaround : Try to copy and load lib file from temp folder
-        #
-        #   tmp_lib_path = File.join(Dir.tmpdir, lib_file)
-        #
-        #   # Copy lib
-        #   FileUtils.copy_file(lib_path, tmp_lib_path)
-        #
-        #   # Load lib
-        #   dlload(tmp_lib_path)
-        #
-        # end
 
         # Keep simple C syntax (without var names and void in args) to stay compatible with SketchUp 2017
 
