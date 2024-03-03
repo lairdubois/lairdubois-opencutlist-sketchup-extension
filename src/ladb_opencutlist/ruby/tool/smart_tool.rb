@@ -513,11 +513,16 @@ module Ladb::OpenCutList
       @tooltip_box.visible = false
     end
 
+    def reveal_tooltip
+      return if @tooltip_box.nil?
+      @tooltip_box.visible = true
+    end
+
     def move_tooltip(mouse_x, mouse_y)
       unless @tooltip_box.nil?
+        @tooltip_box.visible = true
         @tooltip_box.layout_data.x = mouse_x + 10 * UI.scale_factor
         @tooltip_box.layout_data.y = mouse_y + (32 + 10) * UI.scale_factor
-        @tooltip_box.visible = true
         @tooltip_box.invalidate
       end
     end

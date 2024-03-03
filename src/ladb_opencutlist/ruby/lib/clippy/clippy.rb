@@ -162,7 +162,7 @@ module Ladb::OpenCutList
 
         lib_path = File.join(lib_dir, lib_file)
 
-        raise "Lib not found : #{lib_path}" unless File.exist?(lib_path)
+        raise "CLippy lib not found : #{lib_path}" unless File.exist?(lib_path)
 
         begin
 

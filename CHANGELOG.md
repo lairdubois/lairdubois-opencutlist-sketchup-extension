@@ -10,7 +10,8 @@ in 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Fixed _Clippy_ loading when OpenCutList installed under a non-ASCII path
   * Fixed table row size reload on startup
   * Fixed veneer default material attributes
-  * Improved Smart Tool tooltip behavior
+  * Improved Smart Tools tooltip behavior
+  * Improved Smart Axes Tools flip action planes color
 
 * 6.0.1 (2024-02-26)
 
