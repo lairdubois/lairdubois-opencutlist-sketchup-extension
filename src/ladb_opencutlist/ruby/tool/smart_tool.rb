@@ -28,6 +28,7 @@ module Ladb::OpenCutList
     COLOR_BRAND_DARK = Sketchup::Color.new(62, 59, 51).freeze
     COLOR_BRAND_LIGHT = Sketchup::Color.new(214, 212, 205).freeze
 
+    COLOR_MESSAGE_TEXT = Kuix::COLOR_BLACK
     COLOR_MESSAGE_TEXT_ERROR = Sketchup::Color.new('#d9534f').freeze
     COLOR_MESSAGE_TEXT_WARNING = Sketchup::Color.new('#997404').freeze
     COLOR_MESSAGE_TEXT_SUCCESS = Sketchup::Color.new('#569553').freeze
@@ -385,8 +386,8 @@ module Ladb::OpenCutList
         text_color = COLOR_MESSAGE_TEXT_SUCCESS
       else
         background_color = COLOR_MESSAGE_BACKGROUND
-        border_color = Kuix::COLOR_BLACK
-        text_color = Kuix::COLOR_BLACK
+        border_color = COLOR_MESSAGE_TEXT
+        text_color = COLOR_MESSAGE_TEXT
       end
 
       @message_lbl.text = text

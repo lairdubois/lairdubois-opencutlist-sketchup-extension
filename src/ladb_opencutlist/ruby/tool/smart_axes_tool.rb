@@ -54,7 +54,7 @@ module Ladb::OpenCutList
     COLOR_MESH_HIGHLIGHTED = Sketchup::Color.new(200, 200, 0, 200).freeze
     COLOR_ARROW = Kuix::COLOR_WHITE
     COLOR_ARROW_AUTO_ORIENTED = Sketchup::Color.new(123, 213, 239).freeze
-    COLOR_BOX = Kuix::COLOR_BLACK # Kuix::COLOR_BLUE
+    COLOR_BOX = Kuix::COLOR_BLACK
     COLOR_ACTION = Kuix::COLOR_MAGENTA
     COLOR_ACTION_FILL = Sketchup::Color.new(255, 0, 255, 0.2).freeze
     COLOR_LENGTH = Kuix::COLOR_RED
