@@ -23,7 +23,7 @@ module Ladb::OpenCutList
     ACTION_EXPORT_PART_3D = 0
     ACTION_EXPORT_PART_2D = 1
     ACTION_EXPORT_FACE = 2
-    ACTION_EXPORT_EDGES = 3
+    ACTION_EXPORT_PATHS = 3
 
     ACTION_OPTION_FILE_FORMAT = 'file_format'
     ACTION_OPTION_UNIT = 'unit'
@@ -66,13 +66,13 @@ module Ladb::OpenCutList
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_SMOOTHING ]
         }
       },
-      # {
-      #   :action => ACTION_EXPORT_EDGES,
-      #   :options => {
-      #     ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_SVG, ACTION_OPTION_FILE_FORMAT_DXF ],
-      #     ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_SMOOTHING ]
-      #   }
-      # }
+      {
+        :action => ACTION_EXPORT_PATHS,
+        :options => {
+          ACTION_OPTION_FILE_FORMAT => [ ACTION_OPTION_FILE_FORMAT_SVG, ACTION_OPTION_FILE_FORMAT_DXF ],
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_SMOOTHING ]
+        }
+      }
     ].freeze
 
     COLOR_MESH = Sketchup::Color.new(0, 0, 255, 100).freeze
@@ -127,10 +127,10 @@ module Ladb::OpenCutList
         elsif fetch_action_option_enabled(ACTION_EXPORT_FACE, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
           return @cursor_export_dxf
         end
-      when ACTION_EXPORT_EDGES
-        if fetch_action_option_enabled(ACTION_EXPORT_EDGES, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_SVG)
+      when ACTION_EXPORT_PATHS
+        if fetch_action_option_enabled(ACTION_EXPORT_PATHS, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_SVG)
           return @cursor_export_svg
-        elsif fetch_action_option_enabled(ACTION_EXPORT_EDGES, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
+        elsif fetch_action_option_enabled(ACTION_EXPORT_PATHS, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
           return @cursor_export_dxf
         end
       end
@@ -141,7 +141,7 @@ module Ladb::OpenCutList
     def get_action_options_modal?(action)
 
       case action
-      when ACTION_EXPORT_PART_3D, ACTION_EXPORT_PART_2D, ACTION_EXPORT_FACE, ACTION_EXPORT_EDGES
+      when ACTION_EXPORT_PART_3D, ACTION_EXPORT_PART_2D, ACTION_EXPORT_FACE, ACTION_EXPORT_PATHS
         return true
       end
 
@@ -207,8 +207,8 @@ module Ladb::OpenCutList
       fetch_action == ACTION_EXPORT_FACE
     end
 
-    def is_action_export_edges?
-      fetch_action == ACTION_EXPORT_EDGES
+    def is_action_export_paths?
+      fetch_action == ACTION_EXPORT_PATHS
     end
 
     # -- Events --
@@ -617,7 +617,7 @@ module Ladb::OpenCutList
 
                 line_stipple = Kuix::LINE_STIPPLE_SOLID
 
-                if fetch_action_option_enabled(ACTION_EXPORT_EDGES, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
+                if fetch_action_option_enabled(ACTION_EXPORT_PATHS, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
                   poly_def.curve_def.portions.each do |portion|
                     fn_append_segments.call(portion.segments, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, line_stipple)
                   end
@@ -699,7 +699,7 @@ module Ladb::OpenCutList
         if @input_face_path
 
           # Check if face is not curved
-          if (is_action_export_part_2d? || is_action_export_face?) && @input_face.edges.index { |edge| edge.soft? } && !SurfaceManipulator.new.populate_from_face(@input_face).flat?
+          if (is_action_export_part_2d? || is_action_export_face? || is_action_export_paths?) && @input_face.edges.index { |edge| edge.soft? } && !SurfaceManipulator.new.populate_from_face(@input_face).flat?
             _reset_active_part
             show_tooltip("⚠ #{Plugin.instance.get_i18n_string('tool.smart_export.error.not_flat_face')}", MESSAGE_TYPE_ERROR)
             push_cursor(@cursor_select_error)
@@ -745,7 +745,7 @@ module Ladb::OpenCutList
             _set_active_face(@input_face_path, @input_face)
             return
 
-          elsif is_action_export_edges?
+          elsif is_action_export_paths?
 
             _set_active_context(@input_context_path)
             return
@@ -754,10 +754,9 @@ module Ladb::OpenCutList
 
         elsif @input_edge_path
 
-          if is_action_export_edges?
+          if is_action_export_paths?
             _set_active_context(@input_context_path)
             return
-
           end
 
         end
@@ -772,7 +771,7 @@ module Ladb::OpenCutList
           _refresh_active_part(true)
         elsif is_action_export_face?
           _refresh_active_face(true)
-        elsif is_action_export_edges?
+        elsif is_action_export_paths?
           _refresh_active_edge(true)
         end
 
@@ -905,18 +904,18 @@ module Ladb::OpenCutList
           # Focus SketchUp
           Sketchup.focus if Sketchup.respond_to?(:focus)
 
-        elsif is_action_export_edges?
+        elsif is_action_export_paths?
 
           if @active_drawing_def.nil?
             UI.beep
             return
           end
 
-          file_name = 'EDGES'
-          file_format = fetch_action_option_value(ACTION_EXPORT_EDGES, ACTION_OPTION_FILE_FORMAT)
-          unit = fetch_action_option_value(ACTION_EXPORT_EDGES, ACTION_OPTION_UNIT)
-          smoothing = fetch_action_option_value(ACTION_EXPORT_EDGES, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
-          parts_paths_stroke_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_paths_stroke_color')
+          file_name = 'PATHS'
+          file_format = fetch_action_option_value(ACTION_EXPORT_PATHS, ACTION_OPTION_FILE_FORMAT)
+          unit = fetch_action_option_value(ACTION_EXPORT_PATHS, ACTION_OPTION_UNIT)
+          smoothing = fetch_action_option_value(ACTION_EXPORT_PATHS, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
+          parts_paths_stroke_color = fetch_action_option_value(ACTION_EXPORT_PATHS, ACTION_OPTION_OPTIONS, 'parts_paths_stroke_color')
 
           worker = CommonWriteDrawing2dWorker.new(@active_drawing_def, {
             'file_name' => file_name,

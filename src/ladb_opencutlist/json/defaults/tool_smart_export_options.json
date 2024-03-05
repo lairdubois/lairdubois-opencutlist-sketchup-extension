@@ -25,7 +25,7 @@
     "parts_stroke_color": null,
     "parts_fill_color": "#000000"
   },
-  "action_3": {   /* ACTION_EXPORT_EDGES */
+  "action_3": {   /* ACTION_EXPORT_PATHS */
     "file_format": "svg",
     "unit": { "metric": 2, "imperial": 0 }, /* Length::Millimeter , Length::Inches*/
     "smoothing": false,

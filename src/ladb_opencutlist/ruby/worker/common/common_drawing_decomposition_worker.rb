@@ -276,11 +276,8 @@ module Ladb::OpenCutList
         if entity.visible? && _layer_visible?(entity.layer)
           if entity.is_a?(Sketchup::Face)
             manipulator = FaceManipulator.new(entity, transformation)
-
             if !block_given? || yield(manipulator)
-
               unless @ignore_surfaces
-
                 if manipulator.belongs_to_a_surface?
                   surface_manipulator = _get_surface_manipulator_by_face(drawing_def, entity, transformation)
                   if surface_manipulator.nil?
@@ -289,13 +286,9 @@ module Ladb::OpenCutList
                   end
                   manipulator.surface_manipulator = surface_manipulator
                 end
-
               end
-
               drawing_def.face_manipulators.push(manipulator)
-
             end
-
           elsif entity.is_a?(Sketchup::Group)
             _populate_face_manipulators(drawing_def, entity.entities, transformation * entity.transformation, &validator)
           elsif entity.is_a?(Sketchup::ComponentInstance) && (entity.definition.behavior.cuts_opening? || entity.definition.behavior.always_face_camera?)
@@ -309,9 +302,10 @@ module Ladb::OpenCutList
       entities.each do |entity|
         if entity.visible? && _layer_visible?(entity.layer)
           if entity.is_a?(Sketchup::Edge)
+            next if entity.soft?
             manipulator = EdgeManipulator.new(entity, transformation)
             if !block_given? || yield(manipulator)
-              if entity.curve.nil? || entity.curve.count_edges < 2  # Exclude curve that contains only one edge.
+              if entity.curve.nil? || entity.curve.edges.length < 2  # Exclude curve that contains only one edge.
                 drawing_def.edge_manipulators.push(manipulator)
               else
                 curve_manipulator = _get_curve_manipulator_by_edge(drawing_def, entity, transformation)
