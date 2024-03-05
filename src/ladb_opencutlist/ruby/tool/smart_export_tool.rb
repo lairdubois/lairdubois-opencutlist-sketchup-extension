@@ -582,7 +582,8 @@ module Ladb::OpenCutList
           'ignore_faces' => true,
           'input_face_path' => @input_face_path,
           'input_edge_path' => @input_edge_path,
-          'edge_validator' => CommonDrawingDecompositionWorker::EDGE_VALIDATOR_COPLANAR
+          'edge_validator' => CommonDrawingDecompositionWorker::EDGE_VALIDATOR_COPLANAR,
+          'edge_recursive' => false
         }).run
         if @active_drawing_def.is_a?(DrawingDef)
 

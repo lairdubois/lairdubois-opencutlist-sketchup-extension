@@ -46,9 +46,11 @@ module Ladb::OpenCutList
       @ignore_faces = settings.fetch('ignore_faces', false)
       @ignore_surfaces = settings.fetch('ignore_surfaces', false)
       @face_validator = settings.fetch('face_validator', FACE_VALIDATOR_ALL)
+      @face_recursive = settings.fetch('face_recursive', true)
 
       @ignore_edges = settings.fetch('ignore_edges', false)
       @edge_validator = settings.fetch('edge_validator', EDGE_VALIDATOR_ALL)
+      @edge_recursive = settings.fetch('edge_recursive', true)
 
     end
 
@@ -180,7 +182,7 @@ module Ladb::OpenCutList
           end
         end
 
-        _populate_face_manipulators(drawing_def, entities, ttai, &validator)
+        _populate_face_manipulators(drawing_def, entities, ttai, @face_recursive, &validator)
 
       end
 
@@ -212,7 +214,7 @@ module Ladb::OpenCutList
           }
         end
 
-        _populate_edge_manipulators(drawing_def, entities, ttai, &validator)
+        _populate_edge_manipulators(drawing_def, entities, ttai, @edge_recursive, &validator)
 
       end
 
@@ -271,7 +273,7 @@ module Ladb::OpenCutList
       [ x_axis, y_axis, z_axis, input_edge_manipulator ]
     end
 
-    def _populate_face_manipulators(drawing_def, entities, transformation = IDENTITY, &validator)
+    def _populate_face_manipulators(drawing_def, entities, transformation = IDENTITY, recursive = true, &validator)
       entities.each do |entity|
         if entity.visible? && _layer_visible?(entity.layer)
           if entity.is_a?(Sketchup::Face)
@@ -289,16 +291,18 @@ module Ladb::OpenCutList
               end
               drawing_def.face_manipulators.push(manipulator)
             end
-          elsif entity.is_a?(Sketchup::Group)
-            _populate_face_manipulators(drawing_def, entity.entities, transformation * entity.transformation, &validator)
-          elsif entity.is_a?(Sketchup::ComponentInstance) && (entity.definition.behavior.cuts_opening? || entity.definition.behavior.always_face_camera?)
-            _populate_face_manipulators(drawing_def, entity.definition.entities, transformation * entity.transformation, &validator)
+          elsif recursive
+            if entity.is_a?(Sketchup::Group)
+              _populate_face_manipulators(drawing_def, entity.entities, transformation * entity.transformation, recursive, &validator)
+            elsif entity.is_a?(Sketchup::ComponentInstance) && (entity.definition.behavior.cuts_opening? || entity.definition.behavior.always_face_camera?)
+              _populate_face_manipulators(drawing_def, entity.definition.entities, transformation * entity.transformation, recursive, &validator)
+            end
           end
         end
       end
     end
 
-    def _populate_edge_manipulators(drawing_def, entities, transformation = IDENTITY, &validator)
+    def _populate_edge_manipulators(drawing_def, entities, transformation = IDENTITY, recursive = true, &validator)
       entities.each do |entity|
         if entity.visible? && _layer_visible?(entity.layer)
           if entity.is_a?(Sketchup::Edge)
@@ -315,10 +319,12 @@ module Ladb::OpenCutList
                 end
               end
             end
-          elsif entity.is_a?(Sketchup::Group)
-            _populate_edge_manipulators(drawing_def, entity.entities, transformation * entity.transformation, &validator)
-          elsif entity.is_a?(Sketchup::ComponentInstance) && (entity.definition.behavior.cuts_opening? || entity.definition.behavior.always_face_camera?)
-            _populate_edge_manipulators(drawing_def, entity.definition.entities, transformation * entity.transformation, &validator)
+          elsif recursive
+            if entity.is_a?(Sketchup::Group)
+              _populate_edge_manipulators(drawing_def, entity.entities, transformation * entity.transformation, recursive, &validator)
+            elsif entity.is_a?(Sketchup::ComponentInstance) && (entity.definition.behavior.cuts_opening? || entity.definition.behavior.always_face_camera?)
+              _populate_edge_manipulators(drawing_def, entity.definition.entities, transformation * entity.transformation, recursive, &validator)
+            end
           end
         end
       end

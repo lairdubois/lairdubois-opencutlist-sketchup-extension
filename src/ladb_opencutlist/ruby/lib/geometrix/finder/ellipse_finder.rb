@@ -138,7 +138,7 @@ module Ladb::OpenCutList::Geometrix
     #
     # @return [Boolean]
     #
-    def self.ellipse_include_point?(ellipse_def, point, epsilon = 1e-4)
+    def self.ellipse_include_point?(ellipse_def, point, epsilon = 1e-3)
       # Check distance between point and ellipse edge
       ellipse_point_at_angle(ellipse_def, ellipse_angle_at_point(ellipse_def, point)).distance(point).to_f <= epsilon
     end
