@@ -699,7 +699,7 @@ module Ladb::OpenCutList
         if @input_face_path
 
           # Check if face is not curved
-          if (is_action_export_part_2d? || is_action_export_face?) && @input_face.edges.index { |edge| edge.soft? }
+          if (is_action_export_part_2d? || is_action_export_face?) && @input_face.edges.index { |edge| edge.soft? } && !SurfaceManipulator.new.populate_from_face(@input_face).flat?
             _reset_active_part
             show_tooltip("⚠ #{Plugin.instance.get_i18n_string('tool.smart_export.error.not_flat_face')}", MESSAGE_TYPE_ERROR)
             push_cursor(@cursor_select_error)

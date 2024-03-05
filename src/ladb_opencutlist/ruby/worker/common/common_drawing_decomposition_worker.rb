@@ -281,17 +281,14 @@ module Ladb::OpenCutList
 
               unless @ignore_surfaces
 
-                # TODO : Quite slow
                 if manipulator.belongs_to_a_surface?
                   surface_manipulator = _get_surface_manipulator_by_face(drawing_def, entity, transformation)
                   if surface_manipulator.nil?
-                    surface_manipulator = SurfaceManipulator.new(transformation)
-                    _populate_surface_manipulator(surface_manipulator, entity)
+                    surface_manipulator = SurfaceManipulator.new(transformation).populate_from_face(entity)
                     drawing_def.surface_manipulators.push(surface_manipulator)
                   end
                   manipulator.surface_manipulator = surface_manipulator
                 end
-                # TODO : Quite slow
 
               end
 
@@ -330,25 +327,6 @@ module Ladb::OpenCutList
             _populate_edge_manipulators(drawing_def, entity.definition.entities, transformation * entity.transformation, &validator)
           end
         end
-      end
-    end
-
-    def _populate_surface_manipulator(surface_manipulator, face)
-      explored_faces = Set.new
-      faces_to_explore = [ face ]
-      until faces_to_explore.empty?
-        current_face = faces_to_explore.pop
-        current_face.edges.each do |edge|
-          next unless edge.soft?
-          surface_manipulator.faces.push(current_face)
-          edge.faces.each do |f|
-            next if f == current_face
-            next unless f.visible? && _layer_visible?(f.layer)
-            next if explored_faces.include?(f)
-            faces_to_explore.push(f)
-          end
-        end
-        explored_faces.add(current_face)
       end
     end
 

@@ -66,6 +66,10 @@ module Ladb::OpenCutList
       @face.edges.index { |edge| edge.soft? }
     end
 
+    def face_camera?
+      @face.normal.angle_between(Sketchup.active_model.active_view.camera.direction) > Math::PI / 2
+    end
+
     # -----
 
     def outer_loop_points

@@ -39,11 +39,11 @@ module Ladb::OpenCutList::Kuix
 
     def do_layout(transformation)
       inch_size = Sketchup.active_model.active_view.pixels_to_model(@pixel_size, Geom::Point3d.new.transform(transformation))
-      line_transformation = Geom::Transformation.scaling(inch_size, inch_size, inch_size)
-      @box_0.transformation = line_transformation
-      @box_x.transformation = line_transformation
-      @box_y.transformation = line_transformation
-      @box_z.transformation = line_transformation
+      size_transformation = Geom::Transformation.scaling(inch_size, inch_size, inch_size)
+      @box_0.transformation = size_transformation
+      @box_x.transformation = size_transformation
+      @box_y.transformation = size_transformation
+      @box_z.transformation = size_transformation
       super
     end
 
