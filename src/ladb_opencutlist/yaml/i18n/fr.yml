@@ -1664,6 +1664,8 @@ tool:
     action_2_status: Cliquez sur une pièce pour permuter la lecture de sa Face avec sa Contre-face
     action_3: Adapter les axes
     action_3_status: Cliquez sur la face ou une arête d'une pièce pour y adapter ses axes
+    action_4: Déplacer l'origine
+    action_4_status: Cliquez sur un sommet d'une pièce pour y placer son origine
     action_option_group_direction: Direction
     action_option_direction_0: Lo
     action_option_direction_1: La

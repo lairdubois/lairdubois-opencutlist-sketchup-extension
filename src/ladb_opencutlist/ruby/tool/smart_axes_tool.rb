@@ -25,6 +25,7 @@ module Ladb::OpenCutList
     ACTION_SWAP_LENGTH_WIDTH = 1
     ACTION_SWAP_FRONT_BACK = 2
     ACTION_ADAPT_AXES = 3
+    ACTION_MOVE_AXES = 4
 
     ACTION_OPTION_DIRECTION = 'direction'
 
@@ -47,6 +48,9 @@ module Ladb::OpenCutList
       },
       {
         :action => ACTION_ADAPT_AXES
+      },
+      {
+        :action => ACTION_MOVE_AXES
       }
     ].freeze
 
@@ -106,6 +110,9 @@ module Ladb::OpenCutList
           ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_3') + '.'
       when ACTION_ADAPT_AXES
         return super +
+          ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_4') + '.'
+      when ACTION_MOVE_AXES
+        return super +
           ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_0') + '.'
       end
 
@@ -122,6 +129,8 @@ module Ladb::OpenCutList
       when ACTION_FLIP
         return @cursor_flip
       when ACTION_ADAPT_AXES
+        return @cursor_adapt_axes
+      when ACTION_MOVE_AXES
         return @cursor_adapt_axes
       end
 
@@ -162,6 +171,10 @@ module Ladb::OpenCutList
 
     def is_action_adapt_axes?
       fetch_action == ACTION_ADAPT_AXES
+    end
+
+    def is_action_move_axes?
+      fetch_action == ACTION_MOVE_AXES
     end
 
     # -- Events --
@@ -255,7 +268,7 @@ module Ladb::OpenCutList
 
         # Create drawing helpers
 
-        instance_info = part.def.instance_infos.values.first
+        instance_info = part.def.get_one_instance_info
 
         arrow_color = part.auto_oriented ? COLOR_ARROW_AUTO_ORIENTED : COLOR_ARROW
         arrow_line_width = 2
@@ -393,6 +406,27 @@ module Ladb::OpenCutList
                                ])
             fill.background_color = f_color
             rect.append(fill)
+
+        end
+
+        if is_action_move_axes?
+
+          if @input_vertex
+
+            axes_helper = Kuix::AxesHelper.new
+            axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(@input_vertex.position.to_a))
+            part_helper.append(axes_helper)
+
+          elsif @input_edge
+
+            mid = (@input_edge.end.position - @input_edge.start.position)
+            mid.length = mid.length / 2
+
+            axes_helper = Kuix::AxesHelper.new
+            axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new((@input_edge.start.position + mid).to_a))
+            part_helper.append(axes_helper)
+
+          end
 
         end
 
@@ -590,9 +624,24 @@ module Ladb::OpenCutList
 
             elsif is_action_adapt_axes?
 
-              instance_info = @active_part.def.instance_infos.values.first
+              instance_info = @active_part.def.get_one_instance_info
               origin, x_axis, y_axis, z_axis = _get_input_axes(instance_info)
               ti = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
+
+            elsif is_action_move_axes?
+
+              if @input_vertex
+
+                ti = Geom::Transformation.translation(Geom::Vector3d.new(@input_vertex.position.to_a))
+
+              elsif @input_edge
+
+                mid = (@input_edge.end.position - @input_edge.start.position)
+                mid.length = mid.length / 2
+
+                ti = Geom::Transformation.translation(Geom::Vector3d.new((@input_edge.start.position + mid).to_a))
+
+              end
 
             end
             unless ti.nil?

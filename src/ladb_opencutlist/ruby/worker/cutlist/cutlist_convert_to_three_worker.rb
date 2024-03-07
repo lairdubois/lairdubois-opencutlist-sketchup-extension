@@ -119,7 +119,7 @@ module Ladb::OpenCutList
         else
 
           # Extract first instance
-          instance_info = part.def.instance_infos.values.first
+          instance_info = part.def.get_one_instance_info
 
           # Populate part definitions
           _create_three_part_def(three_model_def, part, instance_info.entity.definition, materials[part.material_name])
