@@ -397,6 +397,7 @@ module Ladb::OpenCutList
           rect.transformation = r_t
           rect.color = r_color
           rect.line_width = 2
+          rect.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if instance_info.size.auto_oriented?
           part_helper.append(rect)
 
             fill = Kuix::Mesh.new
@@ -411,19 +412,11 @@ module Ladb::OpenCutList
 
         if is_action_move_axes?
 
-          if @input_vertex
+          input_point = _get_input_point(instance_info)
+          if input_point
 
             axes_helper = Kuix::AxesHelper.new
-            axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(@input_vertex.position.to_a))
-            part_helper.append(axes_helper)
-
-          elsif @input_edge
-
-            mid = (@input_edge.end.position - @input_edge.start.position)
-            mid.length = mid.length / 2
-
-            axes_helper = Kuix::AxesHelper.new
-            axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new((@input_edge.start.position + mid).to_a))
+            axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(input_point.to_a))
             part_helper.append(axes_helper)
 
           end
@@ -630,16 +623,11 @@ module Ladb::OpenCutList
 
             elsif is_action_move_axes?
 
-              if @input_vertex
+              instance_info = @active_part.def.get_one_instance_info
+              input_point = _get_input_point(instance_info)
+              if input_point
 
-                ti = Geom::Transformation.translation(Geom::Vector3d.new(@input_vertex.position.to_a))
-
-              elsif @input_edge
-
-                mid = (@input_edge.end.position - @input_edge.start.position)
-                mid.length = mid.length / 2
-
-                ti = Geom::Transformation.translation(Geom::Vector3d.new((@input_edge.start.position + mid).to_a))
+                ti = Geom::Transformation.translation(Geom::Vector3d.new(input_point.to_a))
 
               end
 
@@ -709,6 +697,41 @@ module Ladb::OpenCutList
       y_axis = z_axis.cross(x_axis)
 
       [ ORIGIN, x_axis, y_axis, z_axis, input_face, input_edge ]
+    end
+
+    def _get_input_point(instance_info)
+
+      if @input_vertex
+
+        inner_path = @input_vertex_path - instance_info.path
+        inner_transformation = PathUtils.get_transformation(inner_path)
+
+        return @input_vertex.position.transform(inner_transformation)
+      end
+
+      if @input_edge
+
+        inner_path = @input_edge_path - instance_info.path
+        inner_transformation = PathUtils.get_transformation(inner_path)
+
+        mid = (@input_edge.end.position - @input_edge.start.position)
+        mid.length = mid.length / 2
+
+        return (@input_edge.start.position + mid).transform(inner_transformation)
+      end
+
+      if @input_face
+
+        inner_path = @input_face_path - instance_info.path
+        inner_transformation = PathUtils.get_transformation(inner_path)
+
+        bounds = Geom::BoundingBox.new
+        bounds.add(@input_face.vertices.map { |vertex| vertex.position })
+
+        return bounds.center.transform(inner_transformation)
+      end
+
+      nil
     end
 
     def _get_bounds_dim_along_axis(instance_info, bounds, axis)

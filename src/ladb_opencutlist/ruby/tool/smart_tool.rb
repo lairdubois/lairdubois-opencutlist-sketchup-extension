@@ -883,6 +883,15 @@ module Ladb::OpenCutList
       end
     end
 
+    # -- Tool stuff --
+
+    def draw(view)
+      super
+
+      # @input_point.draw(view) if @input_point && @input_point.display?
+
+    end
+
     # -- Events --
 
     def onActivate(view)
@@ -1022,18 +1031,160 @@ module Ladb::OpenCutList
 
         @input_point.pick(view, x, y)
 
+        # view.invalidate if @input_point.display?
+        #
         # SKETCHUP_CONSOLE.clear
+        #
+        # puts "inference_locked? = #{view.inference_locked?}"
+        #
         # puts "# INPUT"
+        # puts "  valid? = #{@input_point.valid?}"
         # puts "  Face = #{@input_point.face}"
         # puts "  Edge = #{@input_point.edge} -> onface? = #{@input_point.edge && @input_point.face ? @input_point.edge.used_by?(@input_point.face) : ''}"
         # puts "  Vertex = #{@input_point.vertex} -> onface? = #{@input_point.vertex && @input_point.face ? @input_point.vertex.used_by?(@input_point.face) : ''}"
         # puts "  InstancePath = #{@input_point.instance_path.to_a}"
         # puts "  Transformation = #{@input_point.transformation}"
+        # puts "  Degrees of Freedom = #{@input_point.degrees_of_freedom}"
+        # puts "  Depth = #{@input_point.depth}"
+
+
+
+        # @pick_helper.do_pick(x, y, 0)
+        #
+        # puts "@pick_helper1 "
+        # puts " count = #{@pick_helper.count}"
+        # puts " best_picked = #{@pick_helper.best_picked}"
+        # puts " picked_face = #{@pick_helper.picked_face}"
+        # puts " picked_edge = #{@pick_helper.picked_edge}"
+        # puts " picked_element = #{@pick_helper.picked_element}"
+        # puts " all_picked = #{@pick_helper.all_picked.join("\n -> ")}"
+        #
+        # path = nil
+        # face = nil
+        # @pick_helper.count.times do |index|
+        #   leaf = @pick_helper.leaf_at(index)
+        #   if leaf.is_a?(Sketchup::Face)
+        #     face = leaf
+        #     path = @pick_helper.path_at(index)
+        #   end
+        # end
+        #
+        # puts " PATH = #{path}"
+        # puts " FACE = #{face}"
+        #
+        # if path.nil?
+        #
+        #   @input_context_path = nil
+        #   @input_face_path = nil
+        #   @input_face = nil
+        #   @input_edge_path = nil
+        #   @input_edge = nil
+        #   @input_vertex_path = nil
+        #   @input_vertex = nil
+        #
+        #   return
+        # end
+        #
+        # @input_context_path = path - [ face ]
+        # @input_face_path = path
+        # @input_face = face
+        # @input_edge_path = nil
+        # @input_edge = nil
+        # @input_vertex_path = nil
+        # @input_vertex = nil
+        #
+        # return
+
+
+
+        #
+        # if @pick_helper.count == 0
+        #
+        #   @input_context_path = nil
+        #   @input_face_path = nil
+        #   @input_face = nil
+        #   @input_edge_path = nil
+        #   @input_edge = nil
+        #   @input_vertex_path = nil
+        #   @input_vertex = nil
+        #
+        #   return
+        # end
+        #
+        # input_context_path = nil
+        # @pick_helper.count.times do |index|
+        #   if @pick_helper.leaf_at(index) == @pick_helper.picked_face
+        #     input_context_path = @pick_helper.path_at(index)[0...-1]
+        #     break
+        #   end
+        # end
+        #
+        # if input_context_path == nil
+        #
+        #   @input_context_path = nil
+        #   @input_face_path = nil
+        #   @input_face = nil
+        #   @input_edge_path = nil
+        #   @input_edge = nil
+        #   @input_vertex_path = nil
+        #   @input_vertex = nil
+        #
+        #   return
+        # end
+        #
+        # input_face = @pick_helper.picked_face
+        # input_edge = nil
+        # input_vertex = nil
+        #
+        # # if !input_face.nil?
+        # #
+        # #   @pick_helper.do_pick(x, y, 50)
+        # #   puts "@pick_helper 2"
+        # #   puts " count = #{@pick_helper.count}"
+        # #
+        # #   edges = []
+        # #   @pick_helper.count.times do |index|
+        # #     leaf = @pick_helper.leaf_at(index)
+        # #     if leaf.is_a?(Sketchup::Edge) && leaf.visible? && leaf.used_by?(input_face)
+        # #       edges << leaf
+        # #     end
+        # #   end
+        # #
+        # #   puts " edges.count = #{edges.count}"
+        # #
+        # #   ray = view.pickray(x, y)
+        # #   face_transform = PathUtils.get_transformation(input_context_path, IDENTITY)
+        # #   plane = [ input_face.vertices.first.position.transform(face_transform), input_face.normal.transform(face_transform) ]
+        # #
+        # #   face_point = Geom.intersect_line_plane(ray, plane)
+        # #
+        # #   Sketchup.active_model.entities.add_cpoint(face_point)
+        # #
+        # #   input_edge = edges.min { |edge_a, edge_b| face_point.distance_to_line(edge_a.line) <=> face_point.distance_to_line(edge_b.line) }
+        # #
+        # #   puts " edges.min = #{input_edge}"
+        # #
+        # # end
+        #
+        # # Exit if picked elements are the same as previous
+        # return true if input_context_path == @input_context_path && input_face == @input_face && input_edge == @input_edge && input_vertex == @input_vertex
+        #
+        # @input_context_path = input_context_path
+        # @input_face_path = input_context_path && input_face ? input_context_path + [ input_face ] : nil
+        # @input_face = input_face
+        # @input_edge_path = input_context_path && input_edge ? input_context_path + [ input_edge ] : nil
+        # @input_edge = input_edge
+        # @input_vertex_path = input_context_path && input_vertex ? input_context_path + [ input_vertex ] : nil
+        # @input_vertex = input_vertex
+        #
+        # return
+
+
+
 
         if !@input_point.face.nil?
 
           input_context_path = nil
-          input_face_path = nil
           input_face = @input_point.face
           input_edge = @input_point.edge
           input_vertex = @input_point.vertex
@@ -1078,6 +1229,7 @@ module Ladb::OpenCutList
           @input_face = input_face
           @input_edge_path = input_context_path && input_edge ? input_context_path + [ input_edge ] : nil
           @input_edge = input_edge
+          @input_vertex_path = input_context_path && input_vertex ? input_context_path + [ input_vertex ] : nil
           @input_vertex = input_vertex
 
         elsif !@input_point.edge.nil?
@@ -1112,6 +1264,7 @@ module Ladb::OpenCutList
           @input_face = nil
           @input_edge_path = input_context_path && input_edge ? input_context_path + [ input_edge ] : nil
           @input_edge = input_edge
+          @input_vertex_path = input_context_path && input_vertex ? input_context_path + [ input_vertex ] : nil
           @input_vertex = nil
 
         elsif !@input_point.vertex.nil?
@@ -1154,6 +1307,7 @@ module Ladb::OpenCutList
           @input_face = input_face
           @input_edge_path = input_context_path && input_edge ? input_context_path + [ input_edge ] : nil
           @input_edge = input_edge
+          @input_vertex_path = input_context_path && input_vertex ? input_context_path + [ input_vertex ] : nil
           @input_vertex = input_vertex
 
         else
@@ -1163,6 +1317,7 @@ module Ladb::OpenCutList
           @input_face = nil
           @input_edge_path = nil
           @input_edge = nil
+          @input_vertex_path = nil
           @input_vertex = nil
 
         end

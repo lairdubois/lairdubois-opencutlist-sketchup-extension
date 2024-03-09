@@ -12,7 +12,7 @@ module Ladb::OpenCutList::Kuix
 
       @size = 6
       @style = POINT_STYLE_PLUS
-      @color = nil
+      @color = COLOR_BLACK
       @line_width = 2
       @line_stipple = LINE_STIPPLE_SOLID
       @points = [] # Array<Geom::Point3d>
