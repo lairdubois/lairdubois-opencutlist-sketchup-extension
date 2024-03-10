@@ -24,7 +24,7 @@ module Ladb::OpenCutList
 
       return { :errors => [ 'tab.materials.error.material_not_found' ] } unless src_material
 
-      temp_dir = Plugin.instance.temp_dir
+      temp_dir = PLUGIN.temp_dir
       material_copy_dir = File.join(temp_dir, 'material_copy')
       unless Dir.exist?(material_copy_dir)
         Dir.mkdir(material_copy_dir)

@@ -1,6 +1,5 @@
 module Ladb::OpenCutList
 
-  require 'singleton'
   require 'fileutils'
   require 'json'
   require 'yaml'
@@ -26,8 +25,6 @@ module Ladb::OpenCutList
 
   class Plugin
     
-    include Singleton
-
     IS_RBZ = PLUGIN_DIR.start_with?(Sketchup.find_support_file('Plugins', ''))
     IS_DEV = EXTENSION_VERSION.end_with?('-dev')
 
@@ -120,16 +117,14 @@ module Ladb::OpenCutList
 
     def temp_dir
       return @temp_dir unless @temp_dir.nil?
-      dir = File.join(Sketchup.temp_dir, "ladb_opencutlist")
+      dir = File.join(Sketchup.temp_dir, PLUGIN_ID)
       FileUtils.remove_dir(dir, true) if Dir.exist?(dir)  # Temp dir exists we clean it
       Dir.mkdir(dir)
       @temp_dir = dir
     end
 
     def language
-      if @language
-        return @language
-      end
+      return @language unless @language.nil?
       # Try to retrieve and set language from defaults
       set_language(read_default(SETTINGS_KEY_LANGUAGE))
       @language
@@ -1545,8 +1540,8 @@ module Ladb::OpenCutList
           :platform_name => platform_name,
           :is_64bit => Sketchup.respond_to?(:is_64bit?) && Sketchup.is_64bit?,
           :locale => Sketchup.get_locale,
-          :language => Plugin.instance.language,
-          :available_languages => Plugin.instance.get_available_languages,
+          :language => PLUGIN.language,
+          :available_languages => PLUGIN.get_available_languages,
           :decimal_separator => DimensionUtils.instance.decimal_separator,
       }
 

@@ -53,7 +53,7 @@ module Ladb::OpenCutList
       doc_name = "#{@cutlist.model_name.empty? ? File.basename(@cutlist.filename, '.skp') : @cutlist.model_name}#{@cutlist.page_name.empty? ? '' : " - #{@cutlist.page_name}"}#{@cutlist.model_active_path.nil? || @cutlist.model_active_path.empty? ? '' : " - #{@cutlist.model_active_path.join('/')}"}#{target_group && target_group.material_type != MaterialAttributes::TYPE_UNKNOWN ? " - #{target_group.material_name} #{target_group.std_dimension}" : ''}"
 
       # Ask for layout file path
-      layout_path = UI.savepanel(Plugin.instance.get_i18n_string('tab.cutlist.export.title'), @cutlist.dir, "#{_sanitize_filename(doc_name)}.layout")
+      layout_path = UI.savepanel(PLUGIN.get_i18n_string('tab.cutlist.export.title'), @cutlist.dir, "#{_sanitize_filename(doc_name)}.layout")
       if layout_path
 
         # Force "layout" file extension
@@ -72,7 +72,7 @@ module Ladb::OpenCutList
 
         tmp_definition = definitions.add("export-#{Time.new.to_i}")
 
-        skp_dir = File.join(Plugin.instance.temp_dir, 'skp')
+        skp_dir = File.join(PLUGIN.temp_dir, 'skp')
         Dir.mkdir(skp_dir) unless Dir.exist?(skp_dir)
         skp_path = File.join(skp_dir, "#{tmp_definition.guid}.skp")
         File.delete(skp_path) if File.exist?(skp_path)
@@ -185,7 +185,7 @@ module Ladb::OpenCutList
 
           # Set auto text definitions
           doc.auto_text_definitions.add('OpenCutListGeneratedAt', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = @generated_at
-          doc.auto_text_definitions.add('OpenCutListLengthUnit', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = Plugin.instance.get_i18n_string("default.unit_#{DimensionUtils.instance.length_unit}")
+          doc.auto_text_definitions.add('OpenCutListLengthUnit', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = PLUGIN.get_i18n_string("default.unit_#{DimensionUtils.instance.length_unit}")
           doc.auto_text_definitions.add('OpenCutListScale', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = _camera_zoom_to_scale(@camera_zoom)
           doc.auto_text_definitions.add('OpenCutListModelDescription', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = @cutlist.model_description
           doc.auto_text_definitions.add('OpenCutListPageDescription', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = @cutlist.page_description
@@ -197,7 +197,7 @@ module Ladb::OpenCutList
             gutter = 0.1
             font_family = 'Verdana'
 
-            draw_text = _add_formated_text(doc, layer, page, Plugin.instance.get_i18n_string('tab.cutlist.layout.title'), Geom::Point2d.new(page_left_margin, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_LEFT, { :font_family => font_family, :font_size => 18, :text_alignment => Layout::Style::ALIGN_LEFT })
+            draw_text = _add_formated_text(doc, layer, page, PLUGIN.get_i18n_string('tab.cutlist.layout.title'), Geom::Point2d.new(page_left_margin, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_LEFT, { :font_family => font_family, :font_size => 18, :text_alignment => Layout::Style::ALIGN_LEFT })
             current_y = draw_text.drawing_bounds.lower_left.y
 
             _add_formated_text(doc, layer, page, '<OpenCutListGeneratedAt>  |  <OpenCutListLengthUnit>  |  <OpenCutListScale>', Geom::Point2d.new(page_width - page_right_margin, current_y), Layout::FormattedText::ANCHOR_TYPE_BOTTOM_RIGHT, { :font_family => font_family, :font_size => 10, :text_alignment => Layout::Style::ALIGN_RIGHT })
@@ -262,7 +262,7 @@ module Ladb::OpenCutList
           end
 
         rescue StandardError => e
-          Plugin.instance.dump_exception(e)
+          PLUGIN.dump_exception(e)
           return { :errors => [ 'default.error' ] }
         ensure
           # Delete Skp file

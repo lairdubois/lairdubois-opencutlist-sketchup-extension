@@ -702,7 +702,7 @@ module Ladb::OpenCutList
           # Check if face is not curved
           if (is_action_export_part_2d? || is_action_export_face? || is_action_export_paths?) && @input_face.edges.index { |edge| edge.soft? } && !SurfaceManipulator.new.populate_from_face(@input_face).flat?
             _reset_active_part
-            show_tooltip("⚠ #{Plugin.instance.get_i18n_string('tool.smart_export.error.not_flat_face')}", MESSAGE_TYPE_ERROR)
+            show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_export.error.not_flat_face')}", MESSAGE_TYPE_ERROR)
             push_cursor(@cursor_select_error)
             return
           end
@@ -717,7 +717,7 @@ module Ladb::OpenCutList
                 diff = Sketchup.active_model.active_path - input_part_entity_path
                 unless diff.empty?
                   _reset_active_part
-                  show_tooltip("⚠ #{Plugin.instance.get_i18n_string('tool.smart_export.error.incompatible_active_path')}", MESSAGE_TYPE_ERROR)
+                  show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_export.error.incompatible_active_path')}", MESSAGE_TYPE_ERROR)
                   push_cursor(@cursor_select_error)
                   return
                 end
@@ -729,14 +729,14 @@ module Ladb::OpenCutList
                 _set_active_part(input_part_entity_path, part)
               else
                 _reset_active_part
-                show_tooltip("⚠ #{Plugin.instance.get_i18n_string('tool.smart_export.error.not_part')}", MESSAGE_TYPE_ERROR)
+                show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_export.error.not_part')}", MESSAGE_TYPE_ERROR)
                 push_cursor(@cursor_select_error)
               end
               return
 
             else
               _reset_active_part
-              show_tooltip("⚠ #{Plugin.instance.get_i18n_string('tool.smart_export.error.not_part')}", MESSAGE_TYPE_ERROR)
+              show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_export.error.not_part')}", MESSAGE_TYPE_ERROR)
               push_cursor(@cursor_select_error)
               return
             end
@@ -800,11 +800,11 @@ module Ladb::OpenCutList
             notify_errors(response[:errors])
           elsif response[:export_path]
             notify_success(
-              Plugin.instance.get_i18n_string('core.success.exported_to', { :path => File.basename(response[:export_path]) }),
+              PLUGIN.get_i18n_string('core.success.exported_to', { :path => File.basename(response[:export_path]) }),
               [
                 {
-                  :label => Plugin.instance.get_i18n_string('default.open'),
-                  :block => lambda { Plugin.instance.execute_command('core_open_external_file', { 'path' => response[:export_path] }) }
+                  :label => PLUGIN.get_i18n_string('default.open'),
+                  :block => lambda { PLUGIN.execute_command('core_open_external_file', { 'path' => response[:export_path] }) }
                 }
               ]
             )
@@ -851,11 +851,11 @@ module Ladb::OpenCutList
             notify_errors(response[:errors])
           elsif response[:export_path]
             notify_success(
-              Plugin.instance.get_i18n_string('core.success.exported_to', { :path => File.basename(response[:export_path]) }),
+              PLUGIN.get_i18n_string('core.success.exported_to', { :path => File.basename(response[:export_path]) }),
               [
                 {
-                  :label => Plugin.instance.get_i18n_string('default.open'),
-                  :block => lambda { Plugin.instance.execute_command('core_open_external_file', { 'path' => response[:export_path] }) }
+                  :label => PLUGIN.get_i18n_string('default.open'),
+                  :block => lambda { PLUGIN.execute_command('core_open_external_file', { 'path' => response[:export_path] }) }
                 }
               ]
             )
@@ -892,11 +892,11 @@ module Ladb::OpenCutList
             notify_errors(response[:errors])
           elsif response[:export_path]
             notify_success(
-              Plugin.instance.get_i18n_string('core.success.exported_to', { :path => File.basename(response[:export_path]) }),
+              PLUGIN.get_i18n_string('core.success.exported_to', { :path => File.basename(response[:export_path]) }),
               [
                 {
-                  :label => Plugin.instance.get_i18n_string('default.open'),
-                  :block => lambda { Plugin.instance.execute_command('core_open_external_file', { 'path' => response[:export_path] }) }
+                  :label => PLUGIN.get_i18n_string('default.open'),
+                  :block => lambda { PLUGIN.execute_command('core_open_external_file', { 'path' => response[:export_path] }) }
                 }
               ]
             )
@@ -931,11 +931,11 @@ module Ladb::OpenCutList
             notify_errors(response[:errors])
           elsif response[:export_path]
             notify_success(
-              Plugin.instance.get_i18n_string('core.success.exported_to', { :path => File.basename(response[:export_path]) }),
+              PLUGIN.get_i18n_string('core.success.exported_to', { :path => File.basename(response[:export_path]) }),
               [
                 {
-                  :label => Plugin.instance.get_i18n_string('default.open'),
-                  :block => lambda { Plugin.instance.execute_command('core_open_external_file', { 'path' => response[:export_path] }) }
+                  :label => PLUGIN.get_i18n_string('default.open'),
+                  :block => lambda { PLUGIN.execute_command('core_open_external_file', { 'path' => response[:export_path] }) }
                 }
               ]
             )

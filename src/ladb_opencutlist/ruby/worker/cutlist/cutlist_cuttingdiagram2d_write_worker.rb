@@ -74,7 +74,7 @@ module Ladb::OpenCutList
       return { :errors => [ 'default.error' ] } unless SUPPORTED_FILE_FORMATS.include?(@file_format)
 
       # Ask for output dir
-      dir = UI.select_directory(title: Plugin.instance.get_i18n_string('tab.cutlist.cuttingdiagram.export.title'), directory: '')
+      dir = UI.select_directory(title: PLUGIN.get_i18n_string('tab.cutlist.cuttingdiagram.export.title'), directory: '')
       if dir
 
         group = @cuttingdiagram2d.def.group
@@ -84,7 +84,7 @@ module Ladb::OpenCutList
         begin
 
           if File.exist?(folder_path)
-            if UI.messagebox(Plugin.instance.get_i18n_string('core.messagebox.dir_override', { :target => folder_name, :parent => File.basename(dir) }), MB_YESNO) == IDYES
+            if UI.messagebox(PLUGIN.get_i18n_string('core.messagebox.dir_override', { :target => folder_name, :parent => File.basename(dir) }), MB_YESNO) == IDYES
               FileUtils.remove_dir(folder_path, true)
             else
               return { :cancelled => true }

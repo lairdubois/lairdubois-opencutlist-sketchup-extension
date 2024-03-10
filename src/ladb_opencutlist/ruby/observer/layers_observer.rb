@@ -16,7 +16,7 @@ module Ladb::OpenCutList
       # puts "onLayerChanged: #{layer.name}"
 
       # Trigger event to JS
-      Plugin.instance.trigger_event(ON_LAYER_CHANGED, nil)
+      PLUGIN.trigger_event(ON_LAYER_CHANGED, nil)
 
     end
 
@@ -24,7 +24,7 @@ module Ladb::OpenCutList
       # puts "onLayerRemoved"
 
       # Trigger event to JS
-      Plugin.instance.trigger_event(ON_LAYER_REMOVED, nil)
+      PLUGIN.trigger_event(ON_LAYER_REMOVED, nil)
 
     end
 
@@ -32,7 +32,7 @@ module Ladb::OpenCutList
       # puts "onLayerFolderChanged: #{layer_folder.name}"
 
       # Trigger event to JS
-      Plugin.instance.trigger_event(ON_LAYERS_FOLDER_CHANGED, nil)
+      PLUGIN.trigger_event(ON_LAYERS_FOLDER_CHANGED, nil)
 
     end
 
@@ -40,7 +40,7 @@ module Ladb::OpenCutList
       # puts "onLayerFolderRemoved"
 
       # Trigger event to JS
-      Plugin.instance.trigger_event(ON_LAYERS_FOLDER_REMOVED, nil)
+      PLUGIN.trigger_event(ON_LAYERS_FOLDER_REMOVED, nil)
 
     end
 
@@ -48,7 +48,7 @@ module Ladb::OpenCutList
       # puts "onRemoveAllLayers: #{layers}"
 
       # Trigger event to JS
-      Plugin.instance.trigger_event(ON_REMOVE_ALL_LAYERS, nil)
+      PLUGIN.trigger_event(ON_REMOVE_ALL_LAYERS, nil)
 
     end
 

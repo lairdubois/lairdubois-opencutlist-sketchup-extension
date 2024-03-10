@@ -11,43 +11,43 @@ module Ladb::OpenCutList
     def setup_commands()
 
       # Setup opencutlist dialog actions
-      Plugin.instance.register_command("settings_dialog_settings") do |settings|
+      PLUGIN.register_command("settings_dialog_settings") do |settings|
         dialog_settings_command(settings)
       end
-      Plugin.instance.register_command("settings_dialog_inc_size") do |params|
+      PLUGIN.register_command("settings_dialog_inc_size") do |params|
         dialog_inc_size_command(params)
       end
-      Plugin.instance.register_command("settings_dialog_reset_position") do |params|
+      PLUGIN.register_command("settings_dialog_reset_position") do |params|
         dialog_reset_position_command
       end
-      Plugin.instance.register_command("settings_dialog_inc_position") do |params|
+      PLUGIN.register_command("settings_dialog_inc_position") do |params|
         dialog_inc_position_command(params)
       end
-      Plugin.instance.register_command('settings_set_length_settings') do |params|
+      PLUGIN.register_command('settings_set_length_settings') do |params|
         set_length_settings_command(params)
       end
-      Plugin.instance.register_command('settings_get_length_settings') do |params|
+      PLUGIN.register_command('settings_get_length_settings') do |params|
         get_length_settings_command
       end
-      Plugin.instance.register_command('settings_dump_global_presets') do |params|
+      PLUGIN.register_command('settings_dump_global_presets') do |params|
         dump_global_presets_command
       end
-      Plugin.instance.register_command('settings_dump_model_presets') do |params|
+      PLUGIN.register_command('settings_dump_model_presets') do |params|
         dump_model_presets_command
       end
-      Plugin.instance.register_command('settings_reset_global_presets') do |params|
+      PLUGIN.register_command('settings_reset_global_presets') do |params|
         reset_global_presets_command
       end
-      Plugin.instance.register_command('settings_reset_model_presets') do |params|
+      PLUGIN.register_command('settings_reset_model_presets') do |params|
         reset_model_presets_command
       end
-      Plugin.instance.register_command('settings_get_global_presets') do |params|
+      PLUGIN.register_command('settings_get_global_presets') do |params|
         get_global_presets_command
       end
-      Plugin.instance.register_command('settings_export_global_presets_to_json') do |settings|
+      PLUGIN.register_command('settings_export_global_presets_to_json') do |settings|
         export_global_presets_to_json_command(settings)
       end
-      Plugin.instance.register_command('settings_load_global_presets_from_json') do |params|
+      PLUGIN.register_command('settings_load_global_presets_from_json') do |params|
         load_global_presets_from_json_command
       end
 
@@ -64,9 +64,9 @@ module Ladb::OpenCutList
       print_margin = settings['print_margin']
       table_row_size = settings['table_row_size']
 
-      Plugin.instance.set_language(language, true)
-      Plugin.instance.tabs_dialog_set_print_margin(print_margin, true)
-      Plugin.instance.tabs_dialog_set_table_row_size(table_row_size, true)
+      PLUGIN.set_language(language, true)
+      PLUGIN.tabs_dialog_set_print_margin(print_margin, true)
+      PLUGIN.tabs_dialog_set_table_row_size(table_row_size, true)
 
     end
 
@@ -74,7 +74,7 @@ module Ladb::OpenCutList
       inc_width = params['inc_width']
       inc_height = params['inc_height']
 
-      Plugin.instance.tabs_dialog_inc_maximized_size(inc_width, inc_height)
+      PLUGIN.tabs_dialog_inc_maximized_size(inc_width, inc_height)
 
     end
 
@@ -82,12 +82,12 @@ module Ladb::OpenCutList
       inc_left = params['inc_left']
       inc_top = params['inc_top']
 
-      Plugin.instance.tabs_dialog_inc_position(inc_left, inc_top)
+      PLUGIN.tabs_dialog_inc_position(inc_left, inc_top)
 
     end
 
     def dialog_reset_position_command
-      Plugin.instance.tabs_dialog_reset_position
+      PLUGIN.tabs_dialog_reset_position
     end
 
     def set_length_settings_command(params)
@@ -134,24 +134,24 @@ module Ladb::OpenCutList
 
     def dump_global_presets_command
       SKETCHUP_CONSOLE.show
-      Plugin.instance.dump_global_presets
+      PLUGIN.dump_global_presets
     end
 
     def dump_model_presets_command
       SKETCHUP_CONSOLE.show
-      Plugin.instance.dump_model_presets
+      PLUGIN.dump_model_presets
     end
 
     def reset_global_presets_command
-      Plugin.instance.reset_global_presets
+      PLUGIN.reset_global_presets
     end
 
     def reset_model_presets_command
-      Plugin.instance.reset_model_presets
+      PLUGIN.reset_model_presets
     end
 
     def get_global_presets_command
-      Plugin.instance.get_global_presets
+      PLUGIN.get_global_presets
     end
 
     def export_global_presets_to_json_command(settings)

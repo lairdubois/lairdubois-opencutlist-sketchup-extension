@@ -16,83 +16,83 @@ module Ladb::OpenCutList
     def setup_commands()
 
       # Setup opencutlist dialog actions
-      Plugin.instance.register_command("cutlist_generate") do |settings|
+      PLUGIN.register_command("cutlist_generate") do |settings|
         generate_command(settings)
       end
 
-      Plugin.instance.register_command("cutlist_export") do |settings|
+      PLUGIN.register_command("cutlist_export") do |settings|
         export_command(settings)
       end
 
-      Plugin.instance.register_command("cutlist_report_start") do |settings|
+      PLUGIN.register_command("cutlist_report_start") do |settings|
         report_start_command(settings)
       end
 
-      Plugin.instance.register_command("cutlist_report_advance") do |settings|
+      PLUGIN.register_command("cutlist_report_advance") do |settings|
         report_advance_command
       end
 
-      Plugin.instance.register_command("cutlist_numbers_save") do |settings|
+      PLUGIN.register_command("cutlist_numbers_save") do |settings|
         numbers_command(settings, false)
       end
 
-      Plugin.instance.register_command("cutlist_numbers_reset") do |settings|
+      PLUGIN.register_command("cutlist_numbers_reset") do |settings|
         numbers_command(settings, true)
       end
 
-      Plugin.instance.register_command("cutlist_highlight_parts") do |settings|
+      PLUGIN.register_command("cutlist_highlight_parts") do |settings|
         highlight_parts_command(settings)
       end
 
-      Plugin.instance.register_command("cutlist_layout_parts") do |settings|
+      PLUGIN.register_command("cutlist_layout_parts") do |settings|
         layout_parts_command(settings)
       end
 
-      Plugin.instance.register_command("cutlist_layout_to_layout") do |settings|
+      PLUGIN.register_command("cutlist_layout_to_layout") do |settings|
         layout_to_layout_command(settings)
       end
 
-      Plugin.instance.register_command("cutlist_part_get_thumbnail") do |part_data|
+      PLUGIN.register_command("cutlist_part_get_thumbnail") do |part_data|
         part_get_thumbnail_command(part_data)
       end
 
-      Plugin.instance.register_command("cutlist_part_update") do |settings|
+      PLUGIN.register_command("cutlist_part_update") do |settings|
         part_update_command(settings)
       end
 
-      Plugin.instance.register_command("cutlist_write_parts") do |settings|
+      PLUGIN.register_command("cutlist_write_parts") do |settings|
         write_parts_command(settings)
       end
 
-      Plugin.instance.register_command("cutlist_group_cuttingdiagram1d_start") do |settings|
+      PLUGIN.register_command("cutlist_group_cuttingdiagram1d_start") do |settings|
         group_cuttingdiagram1d_start_command(settings)
       end
 
-      Plugin.instance.register_command("cutlist_group_cuttingdiagram1d_advance") do |settings|
+      PLUGIN.register_command("cutlist_group_cuttingdiagram1d_advance") do |settings|
         group_cuttingdiagram1d_advance_command
       end
 
-      Plugin.instance.register_command("cutlist_cuttingdiagram1d_write") do |settings|
+      PLUGIN.register_command("cutlist_cuttingdiagram1d_write") do |settings|
         cuttingdiagram1d_write_command(settings)
       end
 
-      Plugin.instance.register_command("cutlist_group_cuttingdiagram2d_start") do |settings|
+      PLUGIN.register_command("cutlist_group_cuttingdiagram2d_start") do |settings|
         group_cuttingdiagram2d_start_command(settings)
       end
 
-      Plugin.instance.register_command("cutlist_group_cuttingdiagram2d_advance") do |settings|
+      PLUGIN.register_command("cutlist_group_cuttingdiagram2d_advance") do |settings|
         group_cuttingdiagram2d_advance_command
       end
 
-      Plugin.instance.register_command("cutlist_cuttingdiagram2d_write") do |settings|
+      PLUGIN.register_command("cutlist_cuttingdiagram2d_write") do |settings|
         cuttingdiagram2d_write_command(settings)
       end
 
-      Plugin.instance.register_command("cutlist_labels_compute_elements") do |settings|
+      PLUGIN.register_command("cutlist_labels_compute_elements") do |settings|
         labels_compute_elements_command(settings)
       end
 
-      Plugin.instance.register_command("cutlist_reset_prices") do |settings|
+      PLUGIN.register_command("cutlist_reset_prices") do |settings|
         reset_prices_command
       end
 
@@ -100,7 +100,7 @@ module Ladb::OpenCutList
 
     def setup_event_callbacks
 
-      Plugin.instance.add_event_callback([
+      PLUGIN.add_event_callback([
                                              AppObserver::ON_NEW_MODEL,
                                              AppObserver::ON_OPEN_MODEL,
                                              AppObserver::ON_ACTIVATE_MODEL,

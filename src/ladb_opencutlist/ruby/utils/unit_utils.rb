@@ -74,9 +74,9 @@ module Ladb::OpenCutList
           DimensionUtils::UNIT_SYMBOL_METER_3
 
         when 'i'
-          Plugin.instance.get_i18n_string('default.instance_single')
+          PLUGIN.get_i18n_string('default.instance_single')
         when 'p'
-          Plugin.instance.get_i18n_string('default.part_single')
+          PLUGIN.get_i18n_string('default.part_single')
 
         else
           unit_strippedname

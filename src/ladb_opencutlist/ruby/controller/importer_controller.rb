@@ -9,13 +9,13 @@ module Ladb::OpenCutList
     def setup_commands()
 
       # Setup opencutlist dialog actions
-      Plugin.instance.register_command("importer_open") do
+      PLUGIN.register_command("importer_open") do
         open_command
       end
-      Plugin.instance.register_command("importer_load") do |settings|
+      PLUGIN.register_command("importer_load") do |settings|
         load_command(settings)
       end
-      Plugin.instance.register_command("importer_import") do |settings|
+      PLUGIN.register_command("importer_import") do |settings|
         import_command(settings)
       end
 

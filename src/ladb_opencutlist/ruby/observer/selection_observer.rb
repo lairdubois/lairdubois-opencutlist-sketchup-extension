@@ -13,7 +13,7 @@ module Ladb::OpenCutList
       # puts "onSelectionBulkChange: #{selection}"
 
       # Trigger event to JS
-      Plugin.instance.trigger_event(ON_SELECTION_BULK_CHANGE, nil)
+      PLUGIN.trigger_event(ON_SELECTION_BULK_CHANGE, nil)
 
     end
 
@@ -21,7 +21,7 @@ module Ladb::OpenCutList
       # puts "onSelectionCleared: #{selection}"
 
       # Trigger event to JS
-      Plugin.instance.trigger_event(ON_SELECTION_CLEARED, nil)
+      PLUGIN.trigger_event(ON_SELECTION_CLEARED, nil)
 
     end
 

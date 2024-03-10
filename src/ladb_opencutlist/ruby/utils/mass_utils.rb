@@ -25,7 +25,7 @@ module Ladb::OpenCutList
     end
 
     def fetch_mass_options
-      settings_model = Plugin.instance.get_model_preset('settings_model')
+      settings_model = PLUGIN.get_model_preset('settings_model')
       @mass_unit = settings_model['mass_unit'].to_i
       @mass_precision = settings_model['mass_precision'].to_i
     end

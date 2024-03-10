@@ -95,25 +95,25 @@ module Ladb::OpenCutList
       case action
       when ACTION_FLIP
         return super +
-          ' | ↑↓ + ' + Plugin.instance.get_i18n_string('tool.default.transparency') + ' = ' + Plugin.instance.get_i18n_string('tool.default.toggle_depth') + '.' +
-          ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_1') + '.' +
-          ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_3') + '.'
+          ' | ↑↓ + ' + PLUGIN.get_i18n_string('tool.default.transparency') + ' = ' + PLUGIN.get_i18n_string('tool.default.toggle_depth') + '.' +
+          ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_1') + '.' +
+          ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_3') + '.'
       when ACTION_SWAP_LENGTH_WIDTH
         return super +
-          ' | ↑↓ + ' + Plugin.instance.get_i18n_string('tool.default.transparency') + ' = ' + Plugin.instance.get_i18n_string('tool.default.toggle_depth') + '.' +
-          ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_2') + '.' +
-          ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_3') + '.'
+          ' | ↑↓ + ' + PLUGIN.get_i18n_string('tool.default.transparency') + ' = ' + PLUGIN.get_i18n_string('tool.default.toggle_depth') + '.' +
+          ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_2') + '.' +
+          ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_3') + '.'
       when ACTION_SWAP_FRONT_BACK
         return super +
-          ' | ↑↓ + ' + Plugin.instance.get_i18n_string('tool.default.transparency') + ' = ' + Plugin.instance.get_i18n_string('tool.default.toggle_depth') + '.' +
-          ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_3') + '.' +
-          ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_3') + '.'
+          ' | ↑↓ + ' + PLUGIN.get_i18n_string('tool.default.transparency') + ' = ' + PLUGIN.get_i18n_string('tool.default.toggle_depth') + '.' +
+          ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_3') + '.' +
+          ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_3') + '.'
       when ACTION_ADAPT_AXES
         return super +
-          ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_4') + '.'
+          ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_4') + '.'
       when ACTION_MOVE_AXES
         return super +
-          ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_axes.action_0') + '.'
+          ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_0') + '.'
       end
 
       super
@@ -151,7 +151,7 @@ module Ladb::OpenCutList
 
       case option_group
       when ACTION_OPTION_DIRECTION
-        return Kuix::Label.new(Plugin.instance.get_i18n_string("tool.smart_axes.action_option_#{option_group}_#{option}"))
+        return Kuix::Label.new(PLUGIN.get_i18n_string("tool.smart_axes.action_option_#{option_group}_#{option}"))
       end
 
       super
@@ -501,7 +501,7 @@ module Ladb::OpenCutList
         # Status
 
         if !is_action_flip? && part.group.material_type == MaterialAttributes::TYPE_HARDWARE
-          show_tooltip("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_orientable')}", MESSAGE_TYPE_ERROR)
+          show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_axes.error.not_orientable')}", MESSAGE_TYPE_ERROR)
           push_cursor(@cursor_select_error)
           return
         end
@@ -509,7 +509,7 @@ module Ladb::OpenCutList
         if !is_action_flip?
           definition = model.definitions[part.def.definition_id]
           if definition && definition.count_used_instances > 1
-            show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
+            show_message("⚠ #{PLUGIN.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
           end
         end
 
@@ -537,14 +537,14 @@ module Ladb::OpenCutList
               _set_active_part(input_part_entity_path, part)
             else
               _reset_active_part
-              show_tooltip("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
+              show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
               push_cursor(@cursor_select_error)
             end
             return
 
           else
             _reset_active_part
-            show_tooltip("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
+            show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
             push_cursor(@cursor_select_error)
             return
           end
@@ -648,7 +648,7 @@ module Ladb::OpenCutList
                 instance.transformation *= ti
               }
 
-              if Plugin.instance.get_model_preset('cutlist_options').fetch('auto_orient')
+              if PLUGIN.get_model_preset('cutlist_options').fetch('auto_orient')
                 definition_attributes = DefinitionAttributes.new(definition)
                 definition_attributes.orientation_locked_on_axis = true
                 definition_attributes.write_to_attributes

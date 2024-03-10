@@ -17,7 +17,7 @@ module Ladb::OpenCutList
       model = Sketchup.active_model
       materials = model ? model.materials : nil
 
-      temp_dir = Plugin.instance.temp_dir
+      temp_dir = PLUGIN.temp_dir
       material_thumbnails_dir = File.join(temp_dir, 'material_thumbnails')
       if Dir.exist?(material_thumbnails_dir)
         FileUtils.remove_dir(material_thumbnails_dir, true)   # Temp dir exists we clean it
@@ -27,7 +27,7 @@ module Ladb::OpenCutList
       response = {
           :errors => [],
           :warnings => [],
-          :filename => model && !model.path.empty? ? File.basename(model.path) : Plugin.instance.get_i18n_string('default.empty_filename'),
+          :filename => model && !model.path.empty? ? File.basename(model.path) : PLUGIN.get_i18n_string('default.empty_filename'),
           :model_name => model ? model.name : '',
           :length_unit_strippedname => DimensionUtils.instance.model_unit_is_metric ? DimensionUtils::UNIT_STRIPPEDNAME_METER : DimensionUtils::UNIT_STRIPPEDNAME_FEET,
           :mass_unit_strippedname => MassUtils.instance.get_symbol,

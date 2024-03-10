@@ -22,7 +22,7 @@ module Ladb::OpenCutList
 
       model = Sketchup.active_model
 
-      filename = model && !model.path.empty? ? File.basename(model.path) : Plugin.instance.get_i18n_string('default.empty_filename')
+      filename = model && !model.path.empty? ? File.basename(model.path) : PLUGIN.get_i18n_string('default.empty_filename')
       model_name = model && model.name
 
       outliner = Outliner.new(filename, model_name)
@@ -61,7 +61,7 @@ module Ladb::OpenCutList
       if entity.is_a?(Sketchup::Model)
 
         dir, filename = File.split(entity.path)
-        filename = Plugin.instance.get_i18n_string('default.empty_filename') if filename.empty?
+        filename = PLUGIN.get_i18n_string('default.empty_filename') if filename.empty?
 
         children = []
         entity.entities.each { |child_entity|
@@ -98,7 +98,7 @@ module Ladb::OpenCutList
         }
 
         node_def = NodeGroupDef.new(path)
-        node_def.default_name = Plugin.instance.get_i18n_string("tab.outliner.type_#{AbstractNodeDef::TYPE_GROUP}")
+        node_def.default_name = PLUGIN.get_i18n_string("tab.outliner.type_#{AbstractNodeDef::TYPE_GROUP}")
         node_def.layer_def = _create_layer_def(entity.layer)
         node_def.expanded = instance_attributes.outliner_expanded
         node_def.part_count = part_count

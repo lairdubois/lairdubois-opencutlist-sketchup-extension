@@ -29,7 +29,7 @@ module Ladb::OpenCutList
       definition = definitions[@definition_id]
       if definition
 
-        if Sketchup.version_number >= 1800000000 && Plugin.instance.webgl_available
+        if Sketchup.version_number >= 1800000000 && PLUGIN.webgl_available
 
           # Convert part drawing to ThreeJS
 
@@ -40,7 +40,7 @@ module Ladb::OpenCutList
           begin
             three_model_def = worker.run
           rescue => e
-            Plugin.instance.dump_exception(e)
+            PLUGIN.dump_exception(e)
             return { :errors => [ 'default.error' ] }
           end
 
@@ -50,7 +50,7 @@ module Ladb::OpenCutList
 
           # Just generate a PNG thumbnail
 
-          temp_dir = Plugin.instance.temp_dir
+          temp_dir = PLUGIN.temp_dir
           component_thumbnails_dir = File.join(temp_dir, 'components_thumbnails')
           unless Dir.exist?(component_thumbnails_dir)
             Dir.mkdir(component_thumbnails_dir)

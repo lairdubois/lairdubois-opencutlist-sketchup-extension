@@ -15,7 +15,7 @@ module Ladb::OpenCutList
       # puts "onGlobalPresetChanged: #{dictonary}, #{section}"
 
       # Trigger event to JS
-      Plugin.instance.trigger_event(ON_GLOBAL_PRESET_CHANGED, { :dictionary => dictonary, :section => section })
+      PLUGIN.trigger_event(ON_GLOBAL_PRESET_CHANGED, { :dictionary => dictonary, :section => section })
 
     end
 
@@ -29,7 +29,7 @@ module Ladb::OpenCutList
       PriceUtils.instance.fetch_currency_options
 
       # Trigger event to JS
-      Plugin.instance.trigger_event(ON_MODEL_PRESET_CHANGED, { :dictionary => dictonary, :section => section })
+      PLUGIN.trigger_event(ON_MODEL_PRESET_CHANGED, { :dictionary => dictonary, :section => section })
 
     end
 

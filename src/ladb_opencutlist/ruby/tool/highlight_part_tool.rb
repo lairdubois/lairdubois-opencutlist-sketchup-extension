@@ -174,7 +174,7 @@ module Ladb::OpenCutList
 
             btn_1_lbl = Kuix::Label.new
             btn_1_lbl.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
-            btn_1_lbl.text = Plugin.instance.get_i18n_string('tool.highlight.transparency')
+            btn_1_lbl.text = PLUGIN.get_i18n_string('tool.highlight.transparency')
             btn_1_lbl.text_size = unit * 3
             btn_1.append(btn_1_lbl)
 
@@ -193,7 +193,7 @@ module Ladb::OpenCutList
 
             btn_2_lbl = Kuix::Label.new
             btn_2_lbl.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
-            btn_2_lbl.text = Plugin.instance.get_i18n_string('tool.highlight.zoom_extents')
+            btn_2_lbl.text = PLUGIN.get_i18n_string('tool.highlight.zoom_extents')
             btn_2_lbl.text_size = unit * 3
             btn_2.append(btn_2_lbl)
 
@@ -272,14 +272,14 @@ module Ladb::OpenCutList
         item = menu.add_item("[#{@hover_part.number}] #{@hover_part.name}") {}
         menu.set_validation_proc(item) { MF_GRAYED }
         menu.add_separator
-        menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_properties')) {
-          Plugin.instance.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{hover_part_id}', tab: 'general', dontGenerate: true }")
+        menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_properties')) {
+          PLUGIN.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{hover_part_id}', tab: 'general', dontGenerate: true }")
         }
-        menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_axes_properties')) {
-          Plugin.instance.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{hover_part_id}', tab: 'axes', dontGenerate: true }")
+        menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_axes_properties')) {
+          PLUGIN.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{hover_part_id}', tab: 'axes', dontGenerate: true }")
         }
-        item = menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_size_increase_properties')) {
-          Plugin.instance.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{hover_part_id}', tab: 'size_increase', dontGenerate: true }")
+        item = menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_size_increase_properties')) {
+          PLUGIN.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{hover_part_id}', tab: 'size_increase', dontGenerate: true }")
         }
         menu.set_validation_proc(item) {
           if hover_part_material_type == MaterialAttributes::TYPE_SOLID_WOOD ||
@@ -290,8 +290,8 @@ module Ladb::OpenCutList
             MF_GRAYED
           end
         }
-        item = menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_edges_properties')) {
-          Plugin.instance.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{hover_part_id}', tab: 'edges', dontGenerate: true }")
+        item = menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_edges_properties')) {
+          PLUGIN.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{hover_part_id}', tab: 'edges', dontGenerate: true }")
         }
         menu.set_validation_proc(item) {
           if hover_part_material_type == MaterialAttributes::TYPE_SHEET_GOOD
@@ -300,8 +300,8 @@ module Ladb::OpenCutList
             MF_GRAYED
           end
         }
-        item = menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_faces_properties')) {
-          Plugin.instance.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{hover_part_id}', tab: 'faces', dontGenerate: true }")
+        item = menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_faces_properties')) {
+          PLUGIN.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{hover_part_id}', tab: 'faces', dontGenerate: true }")
         }
         menu.set_validation_proc(item) {
           if hover_part_material_type == MaterialAttributes::TYPE_SHEET_GOOD
@@ -311,7 +311,7 @@ module Ladb::OpenCutList
           end
         }
       elsif view
-        menu.add_item(Plugin.instance.get_i18n_string('default.close')) {
+        menu.add_item(PLUGIN.get_i18n_string('default.close')) {
           _quit(view)
         }
       end
@@ -374,8 +374,8 @@ module Ladb::OpenCutList
         @lbl_2.text = part.tags.join(' | ')
         @lbl_3.text = "#{ part.length_increased ? '*' : '' }#{part.length.to_s} x #{ part.width_increased ? '*' : '' }#{part.width.to_s} x #{ part.thickness_increased ? '*' : '' }#{part.thickness.to_s}" +
             (part.final_area.nil? ? '' : " (#{part.final_area})") +
-            " | #{instance_count.to_s} #{Plugin.instance.get_i18n_string(instance_count > 1 ? 'default.instance_plural' : 'default.instance_single')}" +
-            " | #{(part.material_name.empty? ? Plugin.instance.get_i18n_string('tab.cutlist.material_undefined') : part.material_name)}"
+            " | #{instance_count.to_s} #{PLUGIN.get_i18n_string(instance_count > 1 ? 'default.instance_plural' : 'default.instance_single')}" +
+            " | #{(part.material_name.empty? ? PLUGIN.get_i18n_string('tab.cutlist.material_undefined') : part.material_name)}"
 
       elsif @group
 
@@ -383,9 +383,9 @@ module Ladb::OpenCutList
         @lbl_2.visible = false
         @lbl_3.visible = true
 
-        @lbl_1.text = (@group.material_name.empty? ? Plugin.instance.get_i18n_string('tab.cutlist.material_undefined') : @group.material_name + (@group.std_dimension.empty? ? '' : ' / ' + @group.std_dimension))
+        @lbl_1.text = (@group.material_name.empty? ? PLUGIN.get_i18n_string('tab.cutlist.material_undefined') : @group.material_name + (@group.std_dimension.empty? ? '' : ' / ' + @group.std_dimension))
         @lbl_2.text = ''
-        @lbl_3.text = @instance_count.to_s + ' ' + Plugin.instance.get_i18n_string(@instance_count > 1 ? 'default.instance_plural' : 'default.instance_single')
+        @lbl_3.text = @instance_count.to_s + ' ' + PLUGIN.get_i18n_string(@instance_count > 1 ? 'default.instance_plural' : 'default.instance_single')
 
       else
 
@@ -395,7 +395,7 @@ module Ladb::OpenCutList
 
         @lbl_1.text = ''
         @lbl_2.text = ''
-        @lbl_3.text = @instance_count.to_s + ' ' + Plugin.instance.get_i18n_string(@instance_count > 1 ? 'default.instance_plural' : 'default.instance_single')
+        @lbl_3.text = @instance_count.to_s + ' ' + PLUGIN.get_i18n_string(@instance_count > 1 ? 'default.instance_plural' : 'default.instance_single')
 
       end
 
@@ -414,7 +414,7 @@ module Ladb::OpenCutList
 
       # Maximize dialog if needed
       if @maximize_on_quit
-        Plugin.instance.show_tabs_dialog('cutlist', false)
+        PLUGIN.show_tabs_dialog('cutlist', false)
       end
 
       # Unselect tool

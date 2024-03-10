@@ -47,7 +47,7 @@ module Ladb::OpenCutList
       return { :errors => [ 'tab.cutlist.error.unknow_part' ] } if parts.empty?
 
       # Ask for output dir
-      dir = UI.select_directory(title: Plugin.instance.get_i18n_string('tab.cutlist.write.title'), directory: '')
+      dir = UI.select_directory(title: PLUGIN.get_i18n_string('tab.cutlist.write.title'), directory: '')
       if dir
 
         folder_names = []
@@ -55,7 +55,7 @@ module Ladb::OpenCutList
 
           group = part.group
           folder_name = group.material_display_name
-          folder_name = Plugin.instance.get_i18n_string('tab.cutlist.material_undefined') if folder_name.nil? || folder_name.empty?
+          folder_name = PLUGIN.get_i18n_string('tab.cutlist.material_undefined') if folder_name.nil? || folder_name.empty?
           folder_name += " - #{group.std_dimension}" unless group.std_dimension.empty?
           folder_name = _sanitize_filename(folder_name)
           folder_path = File.join(dir, folder_name)
@@ -65,7 +65,7 @@ module Ladb::OpenCutList
 
             unless folder_names.include?(folder_name)
               if File.exist?(folder_path)
-                if UI.messagebox(Plugin.instance.get_i18n_string('core.messagebox.dir_override', { :target => folder_name, :parent => File.basename(dir) }), MB_YESNO) == IDYES
+                if UI.messagebox(PLUGIN.get_i18n_string('core.messagebox.dir_override', { :target => folder_name, :parent => File.basename(dir) }), MB_YESNO) == IDYES
                   FileUtils.remove_dir(folder_path, true)
                 else
                   return { :cancelled => true }

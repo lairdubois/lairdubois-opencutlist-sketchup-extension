@@ -28,7 +28,7 @@ module Ladb::OpenCutList
 
     def initialize(settings, active_entity = nil, active_path = nil)
 
-      options = Plugin.instance.get_model_preset('cutlist_options')
+      options = PLUGIN.get_model_preset('cutlist_options')
 
       @auto_orient = settings.fetch('auto_orient', options.fetch('auto_orient'))
       @flipped_detection = settings.fetch('flipped_detection', options.fetch('flipped_detection'))
@@ -102,7 +102,7 @@ module Ladb::OpenCutList
       length_unit = DimensionUtils.instance.length_unit
       mass_unit_strippedname = MassUtils.instance.get_strippedname
       currency_symbol = PriceUtils.instance.get_symbol
-      dir, filename = File.split(model && !model.path.empty? ? model.path : Plugin.instance.get_i18n_string('default.empty_filename'))
+      dir, filename = File.split(model && !model.path.empty? ? model.path : PLUGIN.get_i18n_string('default.empty_filename'))
       model_name = model ? model.name : ''
       model_description = model ? model.description : ''
       model_active_path = model ? PathUtils.get_named_path(model.active_path, true, 0) : nil
@@ -1343,7 +1343,7 @@ module Ladb::OpenCutList
       unless edge_part_def
 
         edge_part_def = PartDef.new(edge_part_id, true)
-        edge_part_def.name = "#{part_def.name}#{part_def.number ? " ( #{part_def.number} ) " : ''} - #{Plugin.instance.get_i18n_string("tab.cutlist.tooltip.edge_#{edge}")}"
+        edge_part_def.name = "#{part_def.name}#{part_def.number ? " ( #{part_def.number} ) " : ''} - #{PLUGIN.get_i18n_string("tab.cutlist.tooltip.edge_#{edge}")}"
         edge_part_def.cutting_size = Size3d.new(cutting_length, width, thickness)
         edge_part_def.size = Size3d.new(length, width, thickness)
         edge_part_def.material_name = edge_group_def.material_name
@@ -1414,7 +1414,7 @@ module Ladb::OpenCutList
       unless veneer_part_def
 
         veneer_part_def = PartDef.new(veneer_part_id, true)
-        veneer_part_def.name = "#{part_def.name}#{part_def.number ? " ( #{part_def.number} ) " : ''} - #{Plugin.instance.get_i18n_string("tab.cutlist.tooltip.face_#{veneer}")}"
+        veneer_part_def.name = "#{part_def.name}#{part_def.number ? " ( #{part_def.number} ) " : ''} - #{PLUGIN.get_i18n_string("tab.cutlist.tooltip.face_#{veneer}")}"
         veneer_part_def.cutting_size = Size3d.new(cutting_length, cutting_width, thickness)
         veneer_part_def.size = Size3d.new(length, width, thickness)
         veneer_part_def.material_name = veneer_group_def.material_name

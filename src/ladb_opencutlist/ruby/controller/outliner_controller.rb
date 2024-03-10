@@ -11,22 +11,22 @@ module Ladb::OpenCutList
     def setup_commands()
 
       # Setup opencutlist dialog actions
-      Plugin.instance.register_command("outliner_generate") do |settings|
+      PLUGIN.register_command("outliner_generate") do |settings|
         generate_command(settings)
       end
-      Plugin.instance.register_command("outliner_update") do |node_data|
+      PLUGIN.register_command("outliner_update") do |node_data|
         update_command(node_data)
       end
-      Plugin.instance.register_command("outliner_set_active") do |node_data|
+      PLUGIN.register_command("outliner_set_active") do |node_data|
         set_active_command(node_data)
       end
-      Plugin.instance.register_command("outliner_set_expanded") do |node_data|
+      PLUGIN.register_command("outliner_set_expanded") do |node_data|
         set_expanded_command(node_data)
       end
-      Plugin.instance.register_command("outliner_toggle_visible") do |node_data|
+      PLUGIN.register_command("outliner_toggle_visible") do |node_data|
         toggle_visible_command(node_data)
       end
-      Plugin.instance.register_command("outliner_explode") do |node_data|
+      PLUGIN.register_command("outliner_explode") do |node_data|
         explode_command(node_data)
       end
 
@@ -34,7 +34,7 @@ module Ladb::OpenCutList
 
     def setup_event_callbacks
 
-      Plugin.instance.add_event_callback([
+      PLUGIN.add_event_callback([
                                              AppObserver::ON_NEW_MODEL,
                                              AppObserver::ON_OPEN_MODEL,
                                              AppObserver::ON_ACTIVATE_MODEL,

@@ -174,9 +174,9 @@ module Ladb::OpenCutList
 
           # Extract bounding box dims
           unless part.group.material_type == MaterialAttributes::TYPE_HARDWARE
-            three_model_def.x_dim = "#{Plugin.instance.get_i18n_string('tab.cutlist.list.length_short')} = #{part.length}"
-            three_model_def.y_dim = "#{Plugin.instance.get_i18n_string('tab.cutlist.list.width_short')} = #{part.width}"
-            three_model_def.z_dim = "#{Plugin.instance.get_i18n_string('tab.cutlist.list.thickness_short')} = #{part.thickness}"
+            three_model_def.x_dim = "#{PLUGIN.get_i18n_string('tab.cutlist.list.length_short')} = #{part.length}"
+            three_model_def.y_dim = "#{PLUGIN.get_i18n_string('tab.cutlist.list.width_short')} = #{part.width}"
+            three_model_def.z_dim = "#{PLUGIN.get_i18n_string('tab.cutlist.list.thickness_short')} = #{part.thickness}"
           end
 
         end

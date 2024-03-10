@@ -78,7 +78,7 @@ module Ladb::OpenCutList
     end
 
     def get_text_unit_factor
-      case Plugin.instance.language
+      case PLUGIN.language
       when 'ar'
         return 1.5
       else
@@ -112,7 +112,7 @@ module Ladb::OpenCutList
           actions_lbl.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::WEST)
           actions_lbl.padding.set!(0, unit * 4, 0, unit * 4)
           actions_lbl.set_style_attribute(:color, COLOR_BRAND_LIGHT)
-          actions_lbl.text = Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.title").upcase
+          actions_lbl.text = PLUGIN.get_i18n_string("tool.smart_#{get_stripped_name}.title").upcase
           actions_lbl.text_size = unit * 3 * get_text_unit_factor
           actions_lbl.text_bold = true
           actions_panel.append(actions_lbl)
@@ -142,7 +142,7 @@ module Ladb::OpenCutList
             actions_btn.set_style_attribute(:background_color, COLOR_BRAND_DARK)
             actions_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
             actions_btn.set_style_attribute(:background_color, COLOR_BRAND, :selected)
-            lbl = actions_btn.append_static_label(Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}"), unit * 3 * get_text_unit_factor)
+            lbl = actions_btn.append_static_label(PLUGIN.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}"), unit * 3 * get_text_unit_factor)
             lbl.padding.set!(0, unit * 4, 0, unit * 4)
             lbl.set_style_attribute(:color, COLOR_BRAND_LIGHT)
             lbl.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
@@ -152,7 +152,7 @@ module Ladb::OpenCutList
               set_root_action(action)
             }
             actions_btn.on(:enter) { |button|
-              show_message(Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}_status"))
+              show_message(PLUGIN.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}_status"))
             }
             actions_btn.on(:leave) { |button|
               hide_message
@@ -176,7 +176,7 @@ module Ladb::OpenCutList
               options.each do |option_group, options|
 
                 lbl = Kuix::Label.new
-                lbl.text = Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_option_group_#{option_group}")
+                lbl.text = PLUGIN.get_i18n_string("tool.smart_#{get_stripped_name}.action_option_group_#{option_group}")
                 lbl.text_bold = true
                 lbl.text_size = unit * 3 * get_text_unit_factor
                 if actions_options_panel.child
@@ -256,11 +256,11 @@ module Ladb::OpenCutList
                 btn.set_style_attribute(:border_color, COLOR_BRAND, :hover)
                 btn.border.set_all!(unit * 0.5)
                 btn.on(:click) { |button|
-                  Plugin.instance.show_modal_dialog("smart_#{get_stripped_name}_tool_action_#{action}", { :action => action })
+                  PLUGIN.show_modal_dialog("smart_#{get_stripped_name}_tool_action_#{action}", { :action => action })
                 }
                 actions_options_panel.append(btn)
 
-                  child = Kuix::Label.new("#{Plugin.instance.get_i18n_string('tool.default.more')}...")
+                  child = Kuix::Label.new("#{PLUGIN.get_i18n_string('tool.default.more')}...")
                   child.text_size = unit * 3 * get_text_unit_factor
                   child.padding.set!(unit, unit * 2, unit, unit * 2)
                   child.set_style_attribute(:color, Kuix::COLOR_BLACK)
@@ -280,12 +280,12 @@ module Ladb::OpenCutList
           help_btn.layout = Kuix::GridLayout.new
           help_btn.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
           help_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
-          lbl = help_btn.append_static_label(Plugin.instance.get_i18n_string("default.help").upcase, unit * 3 * get_text_unit_factor)
+          lbl = help_btn.append_static_label(PLUGIN.get_i18n_string("default.help").upcase, unit * 3 * get_text_unit_factor)
           lbl.min_size.set!(unit * 15, 0)
           lbl.padding.set!(0, unit * 4, 0, unit * 4)
           lbl.set_style_attribute(:color, COLOR_BRAND_DARK)
           help_btn.on(:click) { |button|
-            Plugin.instance.open_docs_page("tool.smart-#{get_stripped_name}")
+            PLUGIN.open_docs_page("tool.smart-#{get_stripped_name}")
           }
           actions_panel.append(help_btn)
 
@@ -678,7 +678,7 @@ module Ladb::OpenCutList
           path_key = error
           vars = nil
         end
-        notify('⚠ ' + Plugin.instance.get_i18n_string(path_key, vars), MESSAGE_TYPE_ERROR)
+        notify('⚠ ' + PLUGIN.get_i18n_string(path_key, vars), MESSAGE_TYPE_ERROR)
       end
     end
 
@@ -690,12 +690,12 @@ module Ladb::OpenCutList
 
     def get_action_status(action)
       return '' if action.nil?
-      Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}_status")
+      PLUGIN.get_i18n_string("tool.smart_#{get_stripped_name}.action_#{action}_status")
     end
 
     def get_action_option_status(action, option_group, option)
       return '' if action.nil? || option_group.nil? || option.nil?
-      Plugin.instance.get_i18n_string("tool.smart_#{get_stripped_name}.action_option_#{option_group}_#{option}_status")
+      PLUGIN.get_i18n_string("tool.smart_#{get_stripped_name}.action_option_#{option_group}_#{option}_status")
     end
 
     def get_action_cursor(action)
@@ -715,13 +715,13 @@ module Ladb::OpenCutList
     end
 
     def store_action(action)
-      Plugin.instance.write_default("settings.smart_#{get_stripped_name}_last_action", action)
+      PLUGIN.write_default("settings.smart_#{get_stripped_name}_last_action", action)
       @current_action = action
     end
 
     def fetch_action
       return @current_action unless @current_action.nil?
-      @current_action = Plugin.instance.read_default("settings.smart_#{get_stripped_name}_last_action")
+      @current_action = PLUGIN.read_default("settings.smart_#{get_stripped_name}_last_action")
       @current_action = get_action_defs.first[:action] if get_action_defs.find { |action_def| action_def[:action] == @current_action }.nil?
       @current_action
     end
@@ -729,19 +729,19 @@ module Ladb::OpenCutList
     def store_action_option_value(action, option_group, option, value = nil)
       dictionary = "tool_smart_#{get_stripped_name}_options"
       section = "action_#{action}"
-      preset = Plugin.instance.get_global_preset(dictionary, nil, section)
+      preset = PLUGIN.get_global_preset(dictionary, nil, section)
       if get_action_option_group_unique?(action, option_group)
         preset.store(option_group.to_s, option)
       else
         preset.store(option.to_s, value)
       end
-      Plugin.instance.set_global_preset(dictionary, preset, nil, section)
+      PLUGIN.set_global_preset(dictionary, preset, nil, section)
     end
 
     def fetch_action_option_value(action, option_group, option = nil)
       dictionary = "tool_smart_#{get_stripped_name}_options"
       section = "action_#{action}"
-      preset = Plugin.instance.get_global_preset(dictionary, nil, section)
+      preset = PLUGIN.get_global_preset(dictionary, nil, section)
       return nil if preset.nil?
       return preset.fetch(option_group.to_s, nil) if get_action_option_group_unique?(action, option_group)
       return preset.fetch(option.to_s, nil) unless option.nil?
@@ -763,7 +763,7 @@ module Ladb::OpenCutList
     def set_action(action)
 
       # Hide possible modal
-      Plugin.instance.hide_modal_dialog
+      PLUGIN.hide_modal_dialog
 
       # Store settings in class variable
       store_action(action)
@@ -833,17 +833,17 @@ module Ladb::OpenCutList
         item = menu.add_item(_get_active_part_name) {}
         menu.set_validation_proc(item) { MF_GRAYED }
         menu.add_separator
-        menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_properties')) {
+        menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_properties')) {
           _select_active_part_entity
-          Plugin.instance.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'general', dontGenerate: false }")
+          PLUGIN.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'general', dontGenerate: false }")
         }
-        menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_axes_properties')) {
+        menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_axes_properties')) {
           _select_active_part_entity
-          Plugin.instance.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'axes', dontGenerate: false }")
+          PLUGIN.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'axes', dontGenerate: false }")
         }
-        item = menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_size_increase_properties')) {
+        item = menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_size_increase_properties')) {
           _select_active_part_entity
-          Plugin.instance.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'size_increase', dontGenerate: false }")
+          PLUGIN.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'size_increase', dontGenerate: false }")
         }
         menu.set_validation_proc(item) {
           if active_part_material_type == MaterialAttributes::TYPE_SOLID_WOOD ||
@@ -854,9 +854,9 @@ module Ladb::OpenCutList
             MF_GRAYED
           end
         }
-        item = menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_edges_properties')) {
+        item = menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_edges_properties')) {
           _select_active_part_entity
-          Plugin.instance.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'edges', dontGenerate: false }")
+          PLUGIN.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'edges', dontGenerate: false }")
         }
         menu.set_validation_proc(item) {
           if active_part_material_type == MaterialAttributes::TYPE_SHEET_GOOD
@@ -865,9 +865,9 @@ module Ladb::OpenCutList
             MF_GRAYED
           end
         }
-        item = menu.add_item(Plugin.instance.get_i18n_string('core.menu.item.edit_part_faces_properties')) {
+        item = menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_faces_properties')) {
           _select_active_part_entity
-          Plugin.instance.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'faces', dontGenerate: false }")
+          PLUGIN.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'faces', dontGenerate: false }")
         }
         menu.set_validation_proc(item) {
           if active_part_material_type == MaterialAttributes::TYPE_SHEET_GOOD
@@ -877,7 +877,7 @@ module Ladb::OpenCutList
           end
         }
       else
-        menu.add_item(Plugin.instance.get_i18n_string('default.close')) {
+        menu.add_item(PLUGIN.get_i18n_string('default.close')) {
           quit
         }
       end
@@ -908,7 +908,7 @@ module Ladb::OpenCutList
       view.model.rendering_options.add_observer(self)
 
       # Add event callbacks
-      @event_callback = Plugin.instance.add_event_callback(PluginObserver::ON_GLOBAL_PRESET_CHANGED) do |params|
+      @event_callback = PLUGIN.add_event_callback(PluginObserver::ON_GLOBAL_PRESET_CHANGED) do |params|
         if params[:dictionary] == "tool_smart_#{get_stripped_name}_options" && params[:section] == "action_#{fetch_action}"
           @actions_options_panels.each do |actions_options_panel|
 
@@ -934,10 +934,10 @@ module Ladb::OpenCutList
       view.model.rendering_options.remove_observer(self)
 
       # Hide possible modal
-      Plugin.instance.hide_modal_dialog
+      PLUGIN.hide_modal_dialog
 
       # Remove event callbacks
-      Plugin.instance.remove_event_callback(PluginObserver::ON_GLOBAL_PRESET_CHANGED, @event_callback)
+      PLUGIN.remove_event_callback(PluginObserver::ON_GLOBAL_PRESET_CHANGED, @event_callback)
 
     end
 
@@ -1417,7 +1417,7 @@ module Ladb::OpenCutList
 
     def _get_active_part_material_name
       return nil unless @active_part.is_a?(Part) && !@active_part.material_name.empty?
-      "#{@active_part.material_name.strip} (#{Plugin.instance.get_i18n_string("tab.materials.type_#{@active_part.group.material_type}")})"
+      "#{@active_part.material_name.strip} (#{PLUGIN.get_i18n_string("tab.materials.type_#{@active_part.group.material_type}")})"
     end
 
     def _get_active_part_icons

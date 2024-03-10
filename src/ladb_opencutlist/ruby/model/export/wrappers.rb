@@ -411,7 +411,7 @@ module Ladb::OpenCutList
     end
 
     def to_s
-      Plugin.instance.get_i18n_string("tab.materials.type_#{@value}")
+      PLUGIN.get_i18n_string("tab.materials.type_#{@value}")
     end
 
     def export

@@ -16,13 +16,13 @@ module Ladb::OpenCutList
       }
 
       # Ask for open file path
-      path = UI.openpanel(Plugin.instance.get_i18n_string('tab.materials.texture_load.title'), '', "Image Files|*.jpg;*.jpeg;*.png;||")
+      path = UI.openpanel(PLUGIN.get_i18n_string('tab.materials.texture_load.title'), '', "Image Files|*.jpg;*.jpeg;*.png;||")
       if path
 
         extname = File.extname(path).downcase
         return { :errors => [ 'tab.materials.error.invalid_image_file' ] } unless extname.match(/^\.(?:jpg|jpeg|png)$/)
 
-        temp_dir = Plugin.instance.temp_dir
+        temp_dir = PLUGIN.temp_dir
         material_textures_dir = File.join(temp_dir, 'material_textures')
         if Dir.exist?(material_textures_dir)
           FileUtils.remove_dir(material_textures_dir, true)   # Temp dir exists we clean it

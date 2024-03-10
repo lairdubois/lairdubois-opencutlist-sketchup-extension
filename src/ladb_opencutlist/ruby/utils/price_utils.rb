@@ -16,7 +16,7 @@ module Ladb::OpenCutList
     end
 
     def fetch_currency_options
-      settings_model = Plugin.instance.get_model_preset('settings_model')
+      settings_model = PLUGIN.get_model_preset('settings_model')
       @currency_symbol = settings_model['currency_symbol']
       @currency_precision = settings_model['currency_precision'].to_i
     end

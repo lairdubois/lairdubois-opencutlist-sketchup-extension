@@ -22,7 +22,7 @@ module Ladb::OpenCutList
 
       return { :errors => [ 'tab.materials.error.material_not_found' ] } unless material
 
-      last_dir = Plugin.instance.read_default(Plugin::SETTINGS_KEY_MATERIALS_LAST_DIR, nil)
+      last_dir = PLUGIN.read_default(Plugin::SETTINGS_KEY_MATERIALS_LAST_DIR, nil)
       if last_dir && File.directory?(last_dir) && File.exist?(last_dir)
         dir = last_dir
       else
@@ -43,14 +43,14 @@ module Ladb::OpenCutList
 
       end
 
-      dir = dir.gsub(/ /, '%20') if Plugin.instance.platform_is_mac
+      dir = dir.gsub(/ /, '%20') if PLUGIN.platform_is_mac
 
       # Open save panel
-      path = UI.savepanel(Plugin.instance.get_i18n_string('tab.materials.export_to_skm.title'), dir, @display_name + '.skm')
+      path = UI.savepanel(PLUGIN.get_i18n_string('tab.materials.export_to_skm.title'), dir, @display_name + '.skm')
       if path
 
         # Save last dir
-        Plugin.instance.write_default(Plugin::SETTINGS_KEY_MATERIALS_LAST_DIR, File.dirname(path))
+        PLUGIN.write_default(Plugin::SETTINGS_KEY_MATERIALS_LAST_DIR, File.dirname(path))
 
         # Force "skm" file extension
         unless path.end_with?('.skm')

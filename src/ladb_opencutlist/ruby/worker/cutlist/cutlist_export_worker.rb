@@ -20,7 +20,7 @@ module Ladb::OpenCutList
 
     def initialize(settings, cutlist)
 
-      options = Plugin.instance.get_model_preset('cutlist_export_options')
+      options = PLUGIN.get_model_preset('cutlist_export_options')
 
       @source = settings.fetch('source', options.fetch('source'))
       @col_sep = settings.fetch('col_sep', options.fetch('col_sep'))
@@ -64,7 +64,7 @@ module Ladb::OpenCutList
       when 'csv'
 
         # Ask for export file path
-        path = UI.savepanel(Plugin.instance.get_i18n_string('tab.cutlist.export.title'), @cutlist.dir, File.basename(@cutlist.filename, '.skp') + '.csv')
+        path = UI.savepanel(PLUGIN.get_i18n_string('tab.cutlist.export.title'), @cutlist.dir, File.basename(@cutlist.filename, '.skp') + '.csv')
         if path
 
           # Force "csv" file extension
@@ -149,7 +149,7 @@ module Ladb::OpenCutList
 
           data = SummaryExportRowData.new(
             MaterialTypeWrapper.new(group.material_type),
-            StringWrapper.new(group.material_name ? group.material_name : Plugin.instance.get_i18n_string('tab.cutlist.material_undefined')),
+            StringWrapper.new(group.material_name ? group.material_name : PLUGIN.get_i18n_string('tab.cutlist.material_undefined')),
             StringWrapper.new(group.std_dimension),
             StringWrapper.new(group.material_description),
             StringWrapper.new(group.material_url),
@@ -331,7 +331,7 @@ module Ladb::OpenCutList
           if col_def['title'].is_a?(String) && !col_def['title'].empty?
             header.push(col_def['title'])
           elsif col_def['name'].is_a?(String) && !col_def['name'].empty?
-            header.push(Plugin.instance.get_i18n_string("tab.cutlist.export.#{col_def['name']}"))
+            header.push(PLUGIN.get_i18n_string("tab.cutlist.export.#{col_def['name']}"))
           else
             header.push('')
           end

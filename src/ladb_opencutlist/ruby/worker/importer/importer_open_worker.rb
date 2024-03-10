@@ -15,7 +15,7 @@ module Ladb::OpenCutList
       }
 
       # Ask for open file path
-      path = UI.openpanel(Plugin.instance.get_i18n_string('tab.importer.load.title'), '', "CSV|*.csv|TSV|*.tsv||")
+      path = UI.openpanel(PLUGIN.get_i18n_string('tab.importer.load.title'), '', "CSV|*.csv|TSV|*.tsv||")
       if path
 
         filename = File.basename(path)

@@ -7,7 +7,8 @@ module Ladb
     unless file_loaded?(__FILE__)
 
       # Setup OpenCutList plugin
-      Plugin.instance.setup
+      PLUGIN = Plugin.new
+      PLUGIN.setup
 
       file_loaded(__FILE__)
     end

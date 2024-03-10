@@ -15,7 +15,7 @@ module Ladb::OpenCutList
       # puts "onMaterialAdd: #{material}"
 
       # Trigger event to JS
-      Plugin.instance.trigger_event(ON_MATERIAL_ADD, { :material_name => material.name })
+      PLUGIN.trigger_event(ON_MATERIAL_ADD, { :material_name => material.name })
 
     end
 
@@ -23,7 +23,7 @@ module Ladb::OpenCutList
       # puts "onMaterialRemove: #{material}"
 
       # Trigger event to JS
-      Plugin.instance.trigger_event(ON_MATERIAL_REMOVE, nil)
+      PLUGIN.trigger_event(ON_MATERIAL_REMOVE, nil)
 
     end
 
@@ -33,7 +33,7 @@ module Ladb::OpenCutList
       return if material.deleted?
 
       # Trigger event to JS
-      Plugin.instance.trigger_event(ON_MATERIAL_CHANGE, { :material_name => material.name })
+      PLUGIN.trigger_event(ON_MATERIAL_CHANGE, { :material_name => material.name })
 
     end
 
@@ -41,7 +41,7 @@ module Ladb::OpenCutList
       # puts "onMaterialSetCurrent: #{material}"
 
       # Trigger event to JS
-      Plugin.instance.trigger_event(ON_MATERIAL_SET_CURRENT, { :material_name => material.nil? ? nil : material.name })
+      PLUGIN.trigger_event(ON_MATERIAL_SET_CURRENT, { :material_name => material.nil? ? nil : material.name })
 
     end
 

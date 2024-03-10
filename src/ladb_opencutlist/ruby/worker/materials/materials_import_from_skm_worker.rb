@@ -20,7 +20,7 @@ module Ladb::OpenCutList
       # Fetch material
       materials = model.materials
 
-      last_dir = Plugin.instance.read_default(Plugin::SETTINGS_KEY_MATERIALS_LAST_DIR, nil)
+      last_dir = PLUGIN.read_default(Plugin::SETTINGS_KEY_MATERIALS_LAST_DIR, nil)
       if last_dir && File.directory?(last_dir) && File.exist?(last_dir)
         dir = last_dir
       else
@@ -41,13 +41,13 @@ module Ladb::OpenCutList
 
       end
 
-      dir = dir.gsub(/ /, '%20') if Plugin.instance.platform_is_mac
+      dir = dir.gsub(/ /, '%20') if PLUGIN.platform_is_mac
 
-      path = UI.openpanel(Plugin.instance.get_i18n_string('tab.materials.import_from_skm.title'), dir, "Material Files|*.skm;||")
+      path = UI.openpanel(PLUGIN.get_i18n_string('tab.materials.import_from_skm.title'), dir, "Material Files|*.skm;||")
       if path
 
         # Save last dir
-        Plugin.instance.write_default(Plugin::SETTINGS_KEY_MATERIALS_LAST_DIR, File.dirname(path))
+        PLUGIN.write_default(Plugin::SETTINGS_KEY_MATERIALS_LAST_DIR, File.dirname(path))
 
         # Zip::File.open(path, create: false) { |zipfile|
         #

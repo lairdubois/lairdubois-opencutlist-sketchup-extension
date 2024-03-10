@@ -14,7 +14,7 @@ module Ladb::OpenCutList
 
     def run
 
-      path = UI.savepanel(Plugin.instance.get_i18n_string('tab.settings.presets.export_global_presets'), '', 'OpenCutListPresets.json')
+      path = UI.savepanel(PLUGIN.get_i18n_string('tab.settings.presets.export_global_presets'), '', 'OpenCutListPresets.json')
       if path
 
         # Force "json" file extension
@@ -24,7 +24,7 @@ module Ladb::OpenCutList
 
         # Filter global presets
         filtred_presets = {}
-        global_presets = Plugin.instance.get_global_presets
+        global_presets = PLUGIN.get_global_presets
         global_presets.each do |dictionary, dh|
           dh.each do |section, sh|
             sh.each do |name, values|

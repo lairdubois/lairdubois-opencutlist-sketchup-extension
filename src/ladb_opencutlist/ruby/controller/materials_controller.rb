@@ -12,46 +12,46 @@ module Ladb::OpenCutList
     def setup_commands()
 
       # Setup opencutlist dialog actions
-      Plugin.instance.register_command("materials_list") do |settings|
+      PLUGIN.register_command("materials_list") do |settings|
         list_command(settings)
       end
-      Plugin.instance.register_command("materials_create") do |material_data|
+      PLUGIN.register_command("materials_create") do |material_data|
         create_command(material_data)
       end
-      Plugin.instance.register_command("materials_update") do |material_data|
+      PLUGIN.register_command("materials_update") do |material_data|
         update_command(material_data)
       end
-      Plugin.instance.register_command("materials_duplicate") do |material_data|
+      PLUGIN.register_command("materials_duplicate") do |material_data|
         duplicate_command(material_data)
       end
-      Plugin.instance.register_command("materials_remove") do |material_data|
+      PLUGIN.register_command("materials_remove") do |material_data|
         remove_command(material_data)
       end
-      Plugin.instance.register_command("materials_import_from_skm") do ||
+      PLUGIN.register_command("materials_import_from_skm") do ||
         import_from_skm_command
       end
-      Plugin.instance.register_command("materials_export_to_skm") do |material_data|
+      PLUGIN.register_command("materials_export_to_skm") do |material_data|
         export_to_skm_command(material_data)
       end
-      Plugin.instance.register_command("materials_get_attributes_command") do |material_data|
+      PLUGIN.register_command("materials_get_attributes_command") do |material_data|
         get_attributes_command(material_data)
       end
-      Plugin.instance.register_command("materials_get_texture_command") do |material_data|
+      PLUGIN.register_command("materials_get_texture_command") do |material_data|
         get_texture_command(material_data)
       end
-      Plugin.instance.register_command("materials_load_texture_command") do ||
+      PLUGIN.register_command("materials_load_texture_command") do ||
         load_texture_command
       end
-      Plugin.instance.register_command("materials_add_std_dimension_command") do |settings|
+      PLUGIN.register_command("materials_add_std_dimension_command") do |settings|
         add_std_dimension_command(settings)
       end
-      Plugin.instance.register_command("materials_smart_paint_command") do |settings|
+      PLUGIN.register_command("materials_smart_paint_command") do |settings|
         smart_paint_command(settings)
       end
-      Plugin.instance.register_command("materials_purge_unused") do ||
+      PLUGIN.register_command("materials_purge_unused") do ||
         purge_unused_command
       end
-      Plugin.instance.register_command("materials_reset_prices") do ||
+      PLUGIN.register_command("materials_reset_prices") do ||
         reset_prices_command
       end
 
@@ -59,7 +59,7 @@ module Ladb::OpenCutList
 
     def setup_event_callbacks
 
-      Plugin.instance.add_event_callback([
+      PLUGIN.add_event_callback([
                                              AppObserver::ON_NEW_MODEL,
                                              AppObserver::ON_OPEN_MODEL,
                                              AppObserver::ON_ACTIVATE_MODEL,

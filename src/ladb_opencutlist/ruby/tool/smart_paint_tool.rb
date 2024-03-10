@@ -152,7 +152,7 @@ module Ladb::OpenCutList
         else
           type = MaterialAttributes::TYPE_UNKNOWN
         end
-        Plugin.instance.execute_tabs_dialog_command_on_tab('materials', 'new_material', "{ type: #{type} }")
+        PLUGIN.execute_tabs_dialog_command_on_tab('materials', 'new_material', "{ type: #{type} }")
       }
       @materials_panel.append(@materials_add_btn)
 
@@ -223,7 +223,7 @@ module Ladb::OpenCutList
         lbl = Kuix::Label.new
         lbl.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::WEST)
         lbl.padding.set!(0, @unit * 3, 0, @unit * 3)
-        lbl.text = Plugin.instance.get_i18n_string('tool.smart_paint.filters').upcase
+        lbl.text = PLUGIN.get_i18n_string('tool.smart_paint.filters').upcase
         lbl.text_size = @unit * 3 * get_text_unit_factor
         lbl.text_bold = true
         @materials_filters_panel.append(lbl)
@@ -247,7 +247,7 @@ module Ladb::OpenCutList
           btn.set_style_attribute(:border_color, color, :selected)
           btn.selected = @@filters[type]
           btn.data = type
-          lbl = btn.append_static_label(Plugin.instance.get_i18n_string("tool.smart_paint.filter_#{type}"), @unit * 3 * get_text_unit_factor)
+          lbl = btn.append_static_label(PLUGIN.get_i18n_string("tool.smart_paint.filter_#{type}"), @unit * 3 * get_text_unit_factor)
           lbl.set_style_attribute(:color, Kuix::COLOR_DARK_GREY, :disabled)
           btn.on(:click) { |button|
 
@@ -296,7 +296,7 @@ module Ladb::OpenCutList
       return if material.nil? || material_attributes.nil?
 
       text_1 = material.display_name.strip
-      text_2 = material_attributes.type > MaterialAttributes::TYPE_UNKNOWN ? "(#{Plugin.instance.get_i18n_string("tab.materials.type_#{material_attributes.type}")})" : ''
+      text_2 = material_attributes.type > MaterialAttributes::TYPE_UNKNOWN ? "(#{PLUGIN.get_i18n_string("tab.materials.type_#{material_attributes.type}")})" : ''
 
       return unless @material_infos_panel && text_1.is_a?(String) && text_2.is_a?(String)
       @material_infos_lbl_1.text = text_1
@@ -321,25 +321,25 @@ module Ladb::OpenCutList
       case action
       when ACTION_PAINT_PARTS
         return super +
-          ' | ↑↓ + ' + Plugin.instance.get_i18n_string('tool.default.transparency') + ' = ' + Plugin.instance.get_i18n_string('tool.default.toggle_depth') + '.' +
-          ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_1') + '.' +
-          ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3') + '.'
+          ' | ↑↓ + ' + PLUGIN.get_i18n_string('tool.default.transparency') + ' = ' + PLUGIN.get_i18n_string('tool.default.toggle_depth') + '.' +
+          ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_paint.action_1') + '.' +
+          ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_paint.action_3') + '.'
       when ACTION_PAINT_EDGES
         return super +
-          ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_2') + '.' +
-          ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3') + '.'
+          ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_paint.action_2') + '.' +
+          ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_paint.action_3') + '.'
       when ACTION_PAINT_FACES
         return super +
-          ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3') + '.' +
-          ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3') + '.'
+          ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_paint.action_3') + '.' +
+          ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_paint.action_3') + '.'
       when ACTION_PICK
         return super +
-          ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_0') + '.'
+          ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_paint.action_0') + '.'
       when ACTION_PAINT_CLEAN
         return super +
-          ' | ↑↓ + ' + Plugin.instance.get_i18n_string('tool.default.transparency') + ' = ' + Plugin.instance.get_i18n_string('tool.default.toggle_depth') + '.' +
-          ' | ' + Plugin.instance.get_i18n_string("default.tab_key") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_0') + '.' +
-          ' | ' + Plugin.instance.get_i18n_string("default.alt_key_#{Plugin.instance.platform_name}") + ' = ' + Plugin.instance.get_i18n_string('tool.smart_paint.action_3') + '.'
+          ' | ↑↓ + ' + PLUGIN.get_i18n_string('tool.default.transparency') + ' = ' + PLUGIN.get_i18n_string('tool.default.toggle_depth') + '.' +
+          ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_paint.action_0') + '.' +
+          ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_paint.action_3') + '.'
       end
 
       super
@@ -786,7 +786,7 @@ module Ladb::OpenCutList
           if fetch_action_option_enabled(ACTION_PAINT_PARTS, ACTION_OPTION_INSTANCES, ACTION_OPTION_INSTANCES_ALL)
             definition = Sketchup.active_model.definitions[part.def.definition_id]
             if definition && definition.count_used_instances > 1
-              show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
+              show_message("⚠ #{PLUGIN.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
             end
           end
 
@@ -795,7 +795,7 @@ module Ladb::OpenCutList
         elsif is_action_paint_edges?
 
           if part.group.material_type != MaterialAttributes::TYPE_SHEET_GOOD
-            show_tooltip("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.wrong_material_type', { :type => Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_SHEET_GOOD}") })}", MESSAGE_TYPE_ERROR)
+            show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_paint.error.wrong_material_type', { :type => PLUGIN.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_SHEET_GOOD}") })}", MESSAGE_TYPE_ERROR)
             push_cursor(@cursor_paint_error_id)
           else
 
@@ -840,7 +840,7 @@ module Ladb::OpenCutList
             faces = faces.flatten
 
             if faces.empty?
-              show_tooltip("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_edge')}", MESSAGE_TYPE_ERROR)
+              show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_paint.error.not_edge')}", MESSAGE_TYPE_ERROR)
               push_cursor(@cursor_paint_error_id)
             else
 
@@ -848,7 +848,7 @@ module Ladb::OpenCutList
               show_tooltip([
                              "##{_get_active_part_name}",
                              '-',
-                             Plugin.instance.get_i18n_string('tool.smart_paint.edges', { :count => sides.length }) + (sides.length < 4 ? " → #{sides.map { |side| Plugin.instance.get_i18n_string("tool.smart_paint.edge_#{side}") }.join(' + ')}" : '')
+                             PLUGIN.get_i18n_string('tool.smart_paint.edges', { :count => sides.length }) + (sides.length < 4 ? " → #{sides.map { |side| PLUGIN.get_i18n_string("tool.smart_paint.edge_#{side}") }.join(' + ')}" : '')
                            ])
 
               @active_material = get_current_material
@@ -874,7 +874,7 @@ module Ladb::OpenCutList
 
               definition = Sketchup.active_model.definitions[part.def.definition_id]
               if definition && definition.count_used_instances > 1
-                show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
+                show_message("⚠ #{PLUGIN.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
               end
 
               @active_instances = instances
@@ -887,7 +887,7 @@ module Ladb::OpenCutList
         elsif is_action_paint_faces?
 
           if part.group.material_type != MaterialAttributes::TYPE_SHEET_GOOD
-            show_tooltip("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.wrong_material_type', { :type => Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_SHEET_GOOD}") })}", MESSAGE_TYPE_ERROR)
+            show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_paint.error.wrong_material_type', { :type => PLUGIN.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_SHEET_GOOD}") })}", MESSAGE_TYPE_ERROR)
             push_cursor(@cursor_paint_error_id)
           else
 
@@ -924,7 +924,7 @@ module Ladb::OpenCutList
             faces = faces.flatten
 
             if faces.empty?
-              show_tooltip("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_face')}", MESSAGE_TYPE_ERROR)
+              show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_paint.error.not_face')}", MESSAGE_TYPE_ERROR)
               push_cursor(@cursor_paint_error_id)
             else
 
@@ -932,7 +932,7 @@ module Ladb::OpenCutList
               show_tooltip([
                              "##{_get_active_part_name}",
                              '-',
-                             "#{Plugin.instance.get_i18n_string('tool.smart_paint.faces', { :count => sides.length })} → #{sides.map { |side| Plugin.instance.get_i18n_string("tool.smart_paint.face_#{side}") }.join(' + ')}"
+                             "#{PLUGIN.get_i18n_string('tool.smart_paint.faces', { :count => sides.length })} → #{sides.map { |side| PLUGIN.get_i18n_string("tool.smart_paint.face_#{side}") }.join(' + ')}"
                            ])
 
               @active_material = get_current_material
@@ -958,7 +958,7 @@ module Ladb::OpenCutList
 
               definition = Sketchup.active_model.definitions[part.def.definition_id]
               if definition && definition.count_used_instances > 1
-                show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
+                show_message("⚠ #{PLUGIN.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
               end
 
               @active_instances = instances
@@ -995,7 +995,7 @@ module Ladb::OpenCutList
 
           definition = model.definitions[part.def.definition_id]
           if definition && definition.count_used_instances > 1
-            show_message("⚠ #{Plugin.instance.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
+            show_message("⚠ #{PLUGIN.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
           end
 
           @active_instances = instances
@@ -1066,7 +1066,7 @@ module Ladb::OpenCutList
       btn.set_style_attribute(:border_color, Kuix::COLOR_WHITE)
       btn.set_style_attribute(:border_color, Kuix::COLOR_WHITE.blend(Kuix::COLOR_BLACK, 0.8), :hover)
       btn.set_style_attribute(:border_color, COLOR_BRAND, :selected)
-      btn.append_static_label(Plugin.instance.get_i18n_string('tool.smart_paint.default_material'), @unit * 3 * get_text_unit_factor)
+      btn.append_static_label(PLUGIN.get_i18n_string('tool.smart_paint.default_material'), @unit * 3 * get_text_unit_factor)
       btn.data = false  # = No material
       btn.selected = get_current_material.nil?
       btn.on(:click) { |button|
@@ -1084,11 +1084,11 @@ module Ladb::OpenCutList
         lbl.layout_data = Kuix::GridLayoutData.new(3)
         lbl.text_size = @unit * 3 * get_text_unit_factor
         if is_action_paint_parts?
-          lbl.text = Plugin.instance.get_i18n_string('tool.smart_paint.warning.no_material')
+          lbl.text = PLUGIN.get_i18n_string('tool.smart_paint.warning.no_material')
         elsif is_action_paint_edges?
-          lbl.text = Plugin.instance.get_i18n_string('tool.smart_paint.warning.no_material_type', { :type => Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_EDGE}") })
+          lbl.text = PLUGIN.get_i18n_string('tool.smart_paint.warning.no_material_type', { :type => PLUGIN.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_EDGE}") })
         elsif is_action_paint_faces?
-          lbl.text = Plugin.instance.get_i18n_string('tool.smart_paint.warning.no_material_type', { :type => Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_VENEER}") })
+          lbl.text = PLUGIN.get_i18n_string('tool.smart_paint.warning.no_material_type', { :type => PLUGIN.get_i18n_string("tab.materials.type_#{MaterialAttributes::TYPE_VENEER}") })
         end
         lbl.set_style_attribute(:color, COLOR_BRAND_LIGHT)
         @materials_btns_panel.append(lbl)
@@ -1124,7 +1124,7 @@ module Ladb::OpenCutList
         btn.on(:doubleclick) { |button|
 
           # Edit material
-          Plugin.instance.execute_tabs_dialog_command_on_tab('materials', 'edit_material', "{ materialId: #{material.entityID} }")
+          PLUGIN.execute_tabs_dialog_command_on_tab('materials', 'edit_material', "{ materialId: #{material.entityID} }")
 
         }
         btn.on(:enter) { |button|
@@ -1173,14 +1173,14 @@ module Ladb::OpenCutList
                 _set_active_part(input_part_entity_path, part)
               else
                 _reset_active_part
-                show_tooltip("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_part')}", MESSAGE_TYPE_ERROR)
+                show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_paint.error.not_part')}", MESSAGE_TYPE_ERROR)
                 push_cursor(@cursor_paint_error_id)
               end
               return
 
             else
               _reset_active_part
-              show_tooltip("⚠ #{Plugin.instance.get_i18n_string('tool.smart_paint.error.not_part')}", MESSAGE_TYPE_ERROR)
+              show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_paint.error.not_part')}", MESSAGE_TYPE_ERROR)
               push_cursor(@cursor_paint_error_id)
               return
             end
@@ -1291,9 +1291,9 @@ module Ladb::OpenCutList
 
             # Display material infos
             if material
-              show_tooltip("##{material.name} (#{Plugin.instance.get_i18n_string("tab.materials.type_#{MaterialAttributes.new(material).type}")})")
+              show_tooltip("##{material.name} (#{PLUGIN.get_i18n_string("tab.materials.type_#{MaterialAttributes.new(material).type}")})")
             else
-              show_tooltip("##{Plugin.instance.get_i18n_string('tool.smart_paint.default_material')}")
+              show_tooltip("##{PLUGIN.get_i18n_string('tool.smart_paint.default_material')}")
             end
 
           elsif event == :l_button_up

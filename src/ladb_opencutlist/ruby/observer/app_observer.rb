@@ -27,7 +27,7 @@ module Ladb::OpenCutList
       add_model_observers(model)
 
       # Clear model presets cache
-      Plugin.instance.clear_model_presets_cache
+      PLUGIN.clear_model_presets_cache
 
       # Fetch new length options
       DimensionUtils.instance.fetch_options
@@ -39,7 +39,7 @@ module Ladb::OpenCutList
       PriceUtils.instance.fetch_currency_options
 
       # Trigger event to JS
-      Plugin.instance.trigger_event(ON_NEW_MODEL, nil)
+      PLUGIN.trigger_event(ON_NEW_MODEL, nil)
 
     end
 
@@ -48,7 +48,7 @@ module Ladb::OpenCutList
       add_model_observers(model)
 
       # Clear model presets cache
-      Plugin.instance.clear_model_presets_cache
+      PLUGIN.clear_model_presets_cache
 
       # Fetch new length options
       DimensionUtils.instance.fetch_options
@@ -60,7 +60,7 @@ module Ladb::OpenCutList
       PriceUtils.instance.fetch_currency_options
 
       # Trigger event to JS
-      Plugin.instance.trigger_event(ON_OPEN_MODEL, { :name => model.name })
+      PLUGIN.trigger_event(ON_OPEN_MODEL, { :name => model.name })
 
     end
 
@@ -68,7 +68,7 @@ module Ladb::OpenCutList
       # puts "onActivateModel: #{model}"
 
       # Clear model presets cache
-      Plugin.instance.clear_model_presets_cache
+      PLUGIN.clear_model_presets_cache
 
       # Fetch new length options
       DimensionUtils.instance.fetch_options
@@ -80,7 +80,7 @@ module Ladb::OpenCutList
       PriceUtils.instance.fetch_currency_options
 
       # Trigger event to JS
-      Plugin.instance.trigger_event(ON_ACTIVATE_MODEL, { :name => model.name })
+      PLUGIN.trigger_event(ON_ACTIVATE_MODEL, { :name => model.name })
 
     end
 

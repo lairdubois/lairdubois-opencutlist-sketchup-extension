@@ -40,7 +40,7 @@ module Ladb::OpenCutList
 
       # Open save panel if needed
       if @folder_path.nil? || !File.exist?(@folder_path)
-        path = UI.savepanel(Plugin.instance.get_i18n_string('core.savepanel.export_to_file', { :file_format => @file_format.upcase }), '', "#{@file_name}.#{@file_format}")
+        path = UI.savepanel(PLUGIN.get_i18n_string('core.savepanel.export_to_file', { :file_format => @file_format.upcase }), '', "#{@file_name}.#{@file_format}")
       else
         path = File.join(@folder_path, "#{@file_name}.#{@file_format}")
       end

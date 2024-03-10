@@ -12,7 +12,7 @@ module Ladb::OpenCutList
     def run
 
       # Open panel
-      path = UI.openpanel(Plugin.instance.get_i18n_string('tab.settings.presets.import_global_presets'), '', 'OpenCutListPresets.json')
+      path = UI.openpanel(PLUGIN.get_i18n_string('tab.settings.presets.import_global_presets'), '', 'OpenCutListPresets.json')
       if path
 
         begin

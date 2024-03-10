@@ -156,7 +156,7 @@
       when TYPE_EDGE, TYPE_VENEER
         @thickness
       else
-        Plugin.instance.get_app_defaults(DEFAULTS_DICTIONARY, @type)['thickness']
+        PLUGIN.get_app_defaults(DEFAULTS_DICTIONARY, @type)['thickness']
       end
     end
 
@@ -169,7 +169,7 @@
         when TYPE_SOLID_WOOD, TYPE_SHEET_GOOD, TYPE_DIMENSIONAL, TYPE_EDGE, TYPE_VENEER
           @length_increase
         else
-          Plugin.instance.get_app_defaults(DEFAULTS_DICTIONARY, @type)['length_increase']
+          PLUGIN.get_app_defaults(DEFAULTS_DICTIONARY, @type)['length_increase']
       end
     end
 
@@ -182,7 +182,7 @@
         when TYPE_SOLID_WOOD, TYPE_SHEET_GOOD, TYPE_VENEER
           @width_increase
         else
-          Plugin.instance.get_app_defaults(DEFAULTS_DICTIONARY, @type)['width_increase']
+          PLUGIN.get_app_defaults(DEFAULTS_DICTIONARY, @type)['width_increase']
       end
     end
 
@@ -195,7 +195,7 @@
         when TYPE_SOLID_WOOD
           @thickness_increase
         else
-          Plugin.instance.get_app_defaults(DEFAULTS_DICTIONARY, @type)['thickness_increase']
+          PLUGIN.get_app_defaults(DEFAULTS_DICTIONARY, @type)['thickness_increase']
       end
     end
 
@@ -208,7 +208,7 @@
       when TYPE_DIMENSIONAL, TYPE_EDGE
         @std_lengths
       else
-        Plugin.instance.get_app_defaults(DEFAULTS_DICTIONARY, @type)['std_lengths']
+        PLUGIN.get_app_defaults(DEFAULTS_DICTIONARY, @type)['std_lengths']
       end
     end
 
@@ -230,7 +230,7 @@
       when TYPE_EDGE
         @std_widths
       else
-        Plugin.instance.get_app_defaults(DEFAULTS_DICTIONARY, @type)['std_widths']
+        PLUGIN.get_app_defaults(DEFAULTS_DICTIONARY, @type)['std_widths']
       end
     end
 
@@ -252,7 +252,7 @@
         when TYPE_SOLID_WOOD, TYPE_SHEET_GOOD
           @std_thicknesses
         else
-          Plugin.instance.get_app_defaults(DEFAULTS_DICTIONARY, @type)['std_thicknesses']
+          PLUGIN.get_app_defaults(DEFAULTS_DICTIONARY, @type)['std_thicknesses']
       end
     end
 
@@ -274,7 +274,7 @@
         when TYPE_DIMENSIONAL
           @std_sections
         else
-          Plugin.instance.get_app_defaults(DEFAULTS_DICTIONARY, @type)['std_sections']
+          PLUGIN.get_app_defaults(DEFAULTS_DICTIONARY, @type)['std_sections']
       end
     end
 
@@ -295,7 +295,7 @@
         when TYPE_SHEET_GOOD, TYPE_VENEER
           @std_sizes
         else
-          Plugin.instance.get_app_defaults(DEFAULTS_DICTIONARY, @type)['std_sizes']
+          PLUGIN.get_app_defaults(DEFAULTS_DICTIONARY, @type)['std_sizes']
       end
     end
 
@@ -312,7 +312,7 @@
       when TYPE_SOLID_WOOD, TYPE_SHEET_GOOD, TYPE_DIMENSIONAL, TYPE_EDGE, TYPE_VENEER
         @std_volumic_masses
       else
-        Plugin.instance.get_app_defaults(DEFAULTS_DICTIONARY, @type)['std_volumic_masses']
+        PLUGIN.get_app_defaults(DEFAULTS_DICTIONARY, @type)['std_volumic_masses']
       end
     end
 
@@ -325,7 +325,7 @@
         when TYPE_SOLID_WOOD, TYPE_SHEET_GOOD, TYPE_DIMENSIONAL, TYPE_EDGE, TYPE_VENEER
           @std_prices
         else
-          Plugin.instance.get_app_defaults(DEFAULTS_DICTIONARY, @type)['std_prices']
+          PLUGIN.get_app_defaults(DEFAULTS_DICTIONARY, @type)['std_prices']
       end
     end
 
@@ -396,26 +396,26 @@
           end
         end
 
-        defaults = Plugin.instance.get_app_defaults(DEFAULTS_DICTIONARY, @type)
+        defaults = PLUGIN.get_app_defaults(DEFAULTS_DICTIONARY, @type)
 
-        @type = MaterialAttributes.valid_type(Plugin.instance.get_attribute(@material, 'type', TYPE_UNKNOWN))
-        @description = Plugin.instance.get_attribute(@material, 'description', nil)
-        @url = Plugin.instance.get_attribute(@material, 'url', nil)
-        @thickness = Plugin.instance.get_attribute(@material, 'thickness', defaults['thickness'])
-        @length_increase = Plugin.instance.get_attribute(@material, 'length_increase', defaults['length_increase'])
-        @width_increase = Plugin.instance.get_attribute(@material, 'width_increase', defaults['width_increase'])
-        @thickness_increase = Plugin.instance.get_attribute(@material, 'thickness_increase', defaults['thickness_increase'])
-        @std_lengths = Plugin.instance.get_attribute(@material, 'std_lengths', defaults['std_lengths'])
-        @std_widths = Plugin.instance.get_attribute(@material, 'std_widths', defaults['std_widths'])
-        @std_thicknesses = Plugin.instance.get_attribute(@material, 'std_thicknesses', defaults['std_thicknesses'])
-        @std_sections = Plugin.instance.get_attribute(@material, 'std_sections', defaults['std_sections'])
-        @std_sizes = Plugin.instance.get_attribute(@material, 'std_sizes', defaults['std_sizes'])
-        @grained = Plugin.instance.get_attribute(@material, 'grained', defaults['grained'])
-        @edge_decremented = Plugin.instance.get_attribute(@material, 'edge_decremented', defaults['edge_decremented'])
-        @raw_estimated = Plugin.instance.get_attribute(@material, 'raw_estimated', defaults['raw_estimated'])
-        volumic_mass = Plugin.instance.get_attribute(@material, 'volumic_mass', nil)  # Deprecated since 6.0
-        @std_volumic_masses = Plugin.instance.get_attribute(@material, 'std_volumic_masses', volumic_mass.nil? ? defaults['std_volumic_masses'] : [ { 'val' => volumic_mass, 'dim' => nil } ])
-        @std_prices = Plugin.instance.get_attribute(@material, 'std_prices', defaults['std_prices'])
+        @type = MaterialAttributes.valid_type(PLUGIN.get_attribute(@material, 'type', TYPE_UNKNOWN))
+        @description = PLUGIN.get_attribute(@material, 'description', nil)
+        @url = PLUGIN.get_attribute(@material, 'url', nil)
+        @thickness = PLUGIN.get_attribute(@material, 'thickness', defaults['thickness'])
+        @length_increase = PLUGIN.get_attribute(@material, 'length_increase', defaults['length_increase'])
+        @width_increase = PLUGIN.get_attribute(@material, 'width_increase', defaults['width_increase'])
+        @thickness_increase = PLUGIN.get_attribute(@material, 'thickness_increase', defaults['thickness_increase'])
+        @std_lengths = PLUGIN.get_attribute(@material, 'std_lengths', defaults['std_lengths'])
+        @std_widths = PLUGIN.get_attribute(@material, 'std_widths', defaults['std_widths'])
+        @std_thicknesses = PLUGIN.get_attribute(@material, 'std_thicknesses', defaults['std_thicknesses'])
+        @std_sections = PLUGIN.get_attribute(@material, 'std_sections', defaults['std_sections'])
+        @std_sizes = PLUGIN.get_attribute(@material, 'std_sizes', defaults['std_sizes'])
+        @grained = PLUGIN.get_attribute(@material, 'grained', defaults['grained'])
+        @edge_decremented = PLUGIN.get_attribute(@material, 'edge_decremented', defaults['edge_decremented'])
+        @raw_estimated = PLUGIN.get_attribute(@material, 'raw_estimated', defaults['raw_estimated'])
+        volumic_mass = PLUGIN.get_attribute(@material, 'volumic_mass', nil)  # Deprecated since 6.0
+        @std_volumic_masses = PLUGIN.get_attribute(@material, 'std_volumic_masses', volumic_mass.nil? ? defaults['std_volumic_masses'] : [ { 'val' => volumic_mass, 'dim' => nil } ])
+        @std_prices = PLUGIN.get_attribute(@material, 'std_prices', defaults['std_prices'])
       else
         @description = ''
         @type = TYPE_UNKNOWN

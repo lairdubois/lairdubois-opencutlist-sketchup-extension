@@ -25,7 +25,7 @@ module Ladb::OpenCutList
 
       if material && material.texture
 
-        temp_dir = Plugin.instance.temp_dir
+        temp_dir = PLUGIN.temp_dir
         material_textures_dir = File.join(temp_dir, 'material_textures')
         if Dir.exist?(material_textures_dir)
           FileUtils.remove_dir(material_textures_dir, true)   # Temp dir exists we clean it

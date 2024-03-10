@@ -255,7 +255,7 @@ module Ladb::OpenCutList
 
       return _compute_3d(cutlist_group, report_group_def, entry_def_class_name) unless material_attributes.raw_estimated
 
-      settings = Plugin.instance.get_model_preset('cutlist_cuttingdiagram1d_options', cutlist_group.id)
+      settings = PLUGIN.get_model_preset('cutlist_cuttingdiagram1d_options', cutlist_group.id)
       settings['group_id'] = cutlist_group.id
       settings['bar_folding'] = false     # Remove unneeded computations
       settings['hide_part_list'] = true   # Remove unneeded computations
@@ -348,7 +348,7 @@ module Ladb::OpenCutList
 
       return _compute_3d(cutlist_group, report_group_def, entry_def_class_name) unless material_attributes.raw_estimated
 
-      settings = Plugin.instance.get_model_preset('cutlist_cuttingdiagram2d_options', cutlist_group.id)
+      settings = PLUGIN.get_model_preset('cutlist_cuttingdiagram2d_options', cutlist_group.id)
       settings['group_id'] = cutlist_group.id
       settings['sheet_folding'] = false   # Remove unneeded computations
       settings['hide_part_list'] = true   # Remove unneeded computations
