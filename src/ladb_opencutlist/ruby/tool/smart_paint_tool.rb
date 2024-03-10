@@ -376,6 +376,17 @@ module Ladb::OpenCutList
       super
     end
 
+
+    def get_action_picker(action)
+
+      case action
+      when ACTION_PAINT_PARTS, ACTION_PAINT_EDGES, ACTION_PAINT_FACES, ACTION_PICK, ACTION_PAINT_CLEAN
+        return SmartPicker.new(self)
+      end
+
+      super
+    end
+
     def get_action_option_group_unique?(action, option_group)
 
       case option_group
@@ -809,7 +820,7 @@ module Ladb::OpenCutList
               picked_side = nil
               edge_faces.each { |k, v|
                 v.each { |face|
-                  if face == @input_face # picked_face
+                  if face == @picker.picked_face # picked_face
                     picked_side = k
                     break
                   end
@@ -901,7 +912,7 @@ module Ladb::OpenCutList
               picked_side = nil
               face_faces.each { |k, v|
                 v.each { |face|
-                  if face == @input_face # picked_face
+                  if face == @picker.picked_face # picked_face
                     picked_side = k
                     break
                   end
@@ -1164,8 +1175,8 @@ module Ladb::OpenCutList
 
         if event == :move
 
-          if @input_face_path
-            input_part_entity_path = _get_part_entity_path_from_path(@input_face_path)
+          if @picker.picked_face_path
+            input_part_entity_path = _get_part_entity_path_from_path(@picker.picked_face_path)
             if input_part_entity_path
 
               part = _generate_part_from_path(input_part_entity_path)
@@ -1282,8 +1293,8 @@ module Ladb::OpenCutList
 
       elsif is_action_pick?
 
-        material = MaterialUtils::get_material_from_path(@input_face_path)
-        if @input_face
+        material = MaterialUtils::get_material_from_path(@picker.picked_face_path)
+        if @picker.picked_face
           if event == :move
 
             # Refresh UI

@@ -137,6 +137,20 @@ module Ladb::OpenCutList
       super
     end
 
+    def get_action_picker(action)
+
+      case action
+      when ACTION_SWAP_LENGTH_WIDTH, ACTION_SWAP_FRONT_BACK, ACTION_FLIP
+        return SmartPicker.new(self)
+      when ACTION_ADAPT_AXES
+        return SmartPicker.new(self, pick_edges: true, pick_clines: true, pick_axes: true)
+      when ACTION_MOVE_AXES
+        return SmartPicker.new(self, pick_point: true)
+      end
+
+      super
+    end
+
     def get_action_option_group_unique?(action, option_group)
 
       case option_group
@@ -528,8 +542,8 @@ module Ladb::OpenCutList
     def _handle_mouse_event(event = nil)
       if event == :move
 
-        if @input_face_path
-          input_part_entity_path = _get_part_entity_path_from_path(@input_face_path)
+        if @picker.picked_face_path
+          input_part_entity_path = _get_part_entity_path_from_path(@picker.picked_face_path)
           if input_part_entity_path
 
             part = _generate_part_from_path(input_part_entity_path)
@@ -673,16 +687,16 @@ module Ladb::OpenCutList
 
     def _get_input_axes(instance_info)
 
-      input_face = @input_face
+      input_face = @picker.picked_face
       if input_face.nil?
         input_face, inner_path = _find_largest_face(instance_info.entity, instance_info.transformation)
       else
-        inner_path = @input_face_path - instance_info.path
+        inner_path = @picker.picked_face_path - instance_info.path
       end
 
       inner_transformation = PathUtils.get_transformation(inner_path)
 
-      input_edge = @input_edge
+      input_edge = @picker.picked_edge
       if input_edge.nil? || !input_edge.used_by?(input_face)
         input_edge = _find_longest_outer_edge(input_face, TransformationUtils.multiply(instance_info.transformation, inner_transformation))
       end
@@ -701,32 +715,28 @@ module Ladb::OpenCutList
 
     def _get_input_point(instance_info)
 
-      if @input_vertex
-
-        inner_path = @input_vertex_path - instance_info.path
-        inner_transformation = PathUtils.get_transformation(inner_path)
-
-        return @input_vertex.position.transform(inner_transformation)
+      if @picker.picked_point
+        return @picker.picked_point.transform(PathUtils.get_transformation(instance_info.path).inverse)
       end
 
-      if @input_edge
+      if @picker.picked_edge
 
-        inner_path = @input_edge_path - instance_info.path
+        inner_path = @picker.picked_edge_path - instance_info.path
         inner_transformation = PathUtils.get_transformation(inner_path)
 
-        mid = (@input_edge.end.position - @input_edge.start.position)
+        mid = (@picker.picked_edge.end.position - @picker.picked_edge.start.position)
         mid.length = mid.length / 2
 
-        return (@input_edge.start.position + mid).transform(inner_transformation)
+        return (@picker.picked_edge.start.position + mid).transform(inner_transformation)
       end
 
-      if @input_face
+      if @picker.picked_face
 
-        inner_path = @input_face_path - instance_info.path
+        inner_path = @picker.picked_face_path - instance_info.path
         inner_transformation = PathUtils.get_transformation(inner_path)
 
         bounds = Geom::BoundingBox.new
-        bounds.add(@input_face.vertices.map { |vertex| vertex.position })
+        bounds.add(@picker.picked_face.vertices.map { |vertex| vertex.position })
 
         return bounds.center.transform(inner_transformation)
       end

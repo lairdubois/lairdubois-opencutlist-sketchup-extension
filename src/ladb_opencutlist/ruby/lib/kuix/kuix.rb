@@ -192,10 +192,8 @@ module Ladb::OpenCutList
 
       def activate
         model = Sketchup.active_model
-        if model
-          onActivate(model.active_view)
-        end
-      end
+        onActivate(model.active_view) unless model.nil?
+       end
 
       def deactivate(view)
         onDeactivate(view)

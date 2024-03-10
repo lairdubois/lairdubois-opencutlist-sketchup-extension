@@ -104,6 +104,26 @@ module Ladb::OpenCutList
       ACTIONS
     end
 
+    def get_action_status(action)
+
+      case action
+      when ACTION_EXPORT_PART_3D
+        return super +
+          ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_export.action_1') + '.'
+      when ACTION_EXPORT_PART_2D
+        return super +
+          ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_export.action_2') + '.'
+      when ACTION_EXPORT_FACE
+        return super +
+          ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_export.action_3') + '.'
+      when ACTION_EXPORT_PATHS
+        return super +
+          ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_export.action_0') + '.'
+      end
+
+      super
+    end
+
     def get_action_cursor(action)
 
       case action
@@ -133,6 +153,20 @@ module Ladb::OpenCutList
         elsif fetch_action_option_enabled(ACTION_EXPORT_PATHS, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
           return @cursor_export_dxf
         end
+      end
+
+      super
+    end
+
+    def get_action_picker(action)
+
+      case action
+      when ACTION_EXPORT_PART_3D
+        return SmartPicker.new(self)
+      when ACTION_EXPORT_PART_2D, ACTION_EXPORT_FACE
+        return SmartPicker.new(self, pick_edges: true)
+      when ACTION_EXPORT_PATHS
+        return SmartPicker.new(self, pick_edges: true)
       end
 
       super
@@ -335,8 +369,8 @@ module Ladb::OpenCutList
             'input_local_x_axis' => local_x_axis,
             'input_local_y_axis' => local_y_axis,
             'input_local_z_axis' => local_z_axis,
-            'input_face_path' => @input_face_path,
-            'input_edge_path' => @input_edge_path,
+            'input_face_path' => @picker.picked_face_path,
+            'input_edge_path' => @picker.picked_edge_path,
             'face_validator' => fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACES, ACTION_OPTION_FACES_ONE) ? CommonDrawingDecompositionWorker::FACE_VALIDATOR_ONE : CommonDrawingDecompositionWorker::FACE_VALIDATOR_ALL,
             'ignore_edges' => !fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_INCLUDE_PATHS),
             'edge_validator' => fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACES, ACTION_OPTION_FACES_ONE) ? CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY_COPLANAR : CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY
@@ -468,9 +502,9 @@ module Ladb::OpenCutList
 
       if face
 
-        @active_drawing_def = CommonDrawingDecompositionWorker.new(@input_face_path, {
-          'input_face_path' => @input_face_path,
-          'input_edge_path' => @input_edge_path,
+        @active_drawing_def = CommonDrawingDecompositionWorker.new(@picker.picked_face_path, {
+          'input_face_path' => @picker.picked_face_path,
+          'input_edge_path' => @picker.picked_edge_path,
           'ignore_edges' => true
         }).run
         if @active_drawing_def.is_a?(DrawingDef)
@@ -580,8 +614,8 @@ module Ladb::OpenCutList
 
         @active_drawing_def = CommonDrawingDecompositionWorker.new(context_path, {
           'ignore_faces' => true,
-          'input_face_path' => @input_face_path,
-          'input_edge_path' => @input_edge_path,
+          'input_face_path' => @picker.picked_face_path,
+          'input_edge_path' => @picker.picked_edge_path,
           'edge_validator' => CommonDrawingDecompositionWorker::EDGE_VALIDATOR_COPLANAR,
           'edge_recursive' => false
         }).run
@@ -697,10 +731,10 @@ module Ladb::OpenCutList
     def _handle_mouse_event(event = nil)
       if event == :move
 
-        if @input_face_path
+        if @picker.picked_face_path
 
           # Check if face is not curved
-          if (is_action_export_part_2d? || is_action_export_face? || is_action_export_paths?) && @input_face.edges.index { |edge| edge.soft? } && !SurfaceManipulator.new.populate_from_face(@input_face).flat?
+          if (is_action_export_part_2d? || is_action_export_face? || is_action_export_paths?) && @picker.picked_face.edges.index { |edge| edge.soft? } && !SurfaceManipulator.new.populate_from_face(@picker.picked_face).flat?
             _reset_active_part
             show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_export.error.not_flat_face')}", MESSAGE_TYPE_ERROR)
             push_cursor(@cursor_select_error)
@@ -709,7 +743,7 @@ module Ladb::OpenCutList
 
           if is_action_export_part_3d? || is_action_export_part_2d?
 
-            input_part_entity_path = _get_part_entity_path_from_path(@input_face_path)
+            input_part_entity_path = _get_part_entity_path_from_path(@picker.picked_face_path)
             if input_part_entity_path
 
               if Sketchup.active_model.active_path
@@ -743,26 +777,27 @@ module Ladb::OpenCutList
 
           elsif is_action_export_face?
 
-            _set_active_face(@input_face_path, @input_face)
+            _set_active_face(@picker.picked_face_path, @picker.picked_face)
             return
 
           elsif is_action_export_paths?
 
-            _set_active_context(@input_context_path)
+            _set_active_context(@picker.picked_context_path)
             return
 
           end
 
-        elsif @input_edge_path
+        elsif @picker.picked_edge_path
 
           if is_action_export_paths?
-            _set_active_context(@input_context_path)
+            _set_active_context(@picker.picked_context_path)
             return
           end
 
         end
-        _reset_active_part  # No input
+        _reset_active_context  # No input
         _reset_active_face  # No input
+        _reset_active_part  # No input
 
       elsif event == :l_button_down
 
@@ -773,7 +808,7 @@ module Ladb::OpenCutList
         elsif is_action_export_face?
           _refresh_active_face(true)
         elsif is_action_export_paths?
-          _refresh_active_edge(true)
+          _refresh_active_context(true)
         end
 
       elsif event == :l_button_up || event == :l_button_dblclick

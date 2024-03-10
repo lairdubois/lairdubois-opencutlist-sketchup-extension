@@ -67,9 +67,7 @@ module Ladb::OpenCutList
     end
 
     def z_max
-      if @z_max.nil?
-        @z_max = outer_loops_points.max { |p1, p2| p1.z <=> p2.z }.z
-      end
+      @z_max = outer_loops_points.max { |p1, p2| p1.z <=> p2.z }.z if @z_max.nil?
       @z_max
     end
 

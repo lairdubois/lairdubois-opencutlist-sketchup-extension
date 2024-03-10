@@ -101,11 +101,12 @@ module Ladb::OpenCutList
       if @input_face_path
 
         input_face = @input_face_path.last
+        input_face_transformation = PathUtils::get_transformation(@input_face_path)
         input_edge = @input_edge_path.nil? ? nil : @input_edge_path.last
-        input_transformation = PathUtils::get_transformation(@input_face_path)
+        input_edge_transformation = @input_edge_path.nil? ? nil : PathUtils::get_transformation(@input_edge_path)
 
-        drawing_def.input_face_manipulator = FaceManipulator.new(input_face, input_transformation)
-        drawing_def.input_edge_manipulator = input_edge.is_a?(Sketchup::Edge) ? EdgeManipulator.new(input_edge, input_transformation) : nil
+        drawing_def.input_face_manipulator = FaceManipulator.new(input_face, input_face_transformation)
+        drawing_def.input_edge_manipulator = input_edge ? EdgeManipulator.new(input_edge, input_edge_transformation) : nil
 
         if input_edge
 
@@ -195,8 +196,7 @@ module Ladb::OpenCutList
         when EDGE_VALIDATOR_COPLANAR
           validator = lambda { |edge_manipulator|
             return false if drawing_def.input_face_manipulator.nil?
-            point, vector = edge_manipulator.line
-            vector.perpendicular?(drawing_def.input_face_manipulator.normal) && point.on_plane?(drawing_def.input_face_manipulator.plane)
+            drawing_def.input_face_manipulator.coplanar?(edge_manipulator)
           }
         when EDGE_VALIDATOR_STRAY
           validator = lambda { |edge_manipulator|
@@ -206,8 +206,7 @@ module Ladb::OpenCutList
           validator = lambda { |edge_manipulator|
             return false if drawing_def.input_face_manipulator.nil?
             if edge_manipulator.edge.faces.empty?
-              point, vector = edge_manipulator.line
-              vector.perpendicular?(drawing_def.input_face_manipulator.normal) && point.on_plane?(drawing_def.input_face_manipulator.plane)
+              drawing_def.input_face_manipulator.coplanar?(edge_manipulator)
             else
               false
             end
@@ -250,8 +249,6 @@ module Ladb::OpenCutList
         end
       end
 
-      drawing_def.input_normal = drawing_def.input_face_manipulator.normal if drawing_def.input_face_manipulator
-
       drawing_def
     end
 
@@ -261,12 +258,12 @@ module Ladb::OpenCutList
 
     def _get_input_axes(input_face_manipulator, input_edge_manipulator = nil)
 
-      if input_edge_manipulator.nil? || !input_edge_manipulator.edge.used_by?(input_face_manipulator.face)
+      if input_edge_manipulator.nil? || !input_face_manipulator.perpendicular?(input_edge_manipulator.direction)
         input_edge_manipulator = EdgeManipulator.new(input_face_manipulator.longest_outer_edge, input_face_manipulator.transformation)
       end
 
       z_axis = input_face_manipulator.normal
-      x_axis = input_edge_manipulator.line[1].normalize
+      x_axis = input_edge_manipulator.direction
       x_axis.reverse! if input_edge_manipulator.reversed_in?(input_face_manipulator.face)
       y_axis = z_axis.cross(x_axis).normalize
 

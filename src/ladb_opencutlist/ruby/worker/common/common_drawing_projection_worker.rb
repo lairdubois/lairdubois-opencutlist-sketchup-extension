@@ -37,17 +37,17 @@ module Ladb::OpenCutList
       curve_manipulators = []
 
       @drawing_def.face_manipulators.each do |face_manipulator|
-        next unless !face_manipulator.perpendicular?(Z_AXIS) && face_manipulator.angle_between(@drawing_def.input_normal) < Math::PI / 2.0  # Filter only exposed faces
+        next unless !face_manipulator.perpendicular?(Z_AXIS) && face_manipulator.angle_between(Z_AXIS) < Math::PI / 2.0  # Filter only exposed faces
         face_manipulators << face_manipulator
         faces_bounds.add(face_manipulator.outer_loop_points)
       end
       @drawing_def.edge_manipulators.each do |edge_manipulator|
-        next unless edge_manipulator.line_vector.perpendicular?(Z_AXIS)
+        next unless edge_manipulator.perpendicular?(Z_AXIS)
         edge_manipulators << edge_manipulator
         edges_bounds.add(edge_manipulator.points)
       end
       @drawing_def.curve_manipulators.each do |curve_manipulator|
-        next unless curve_manipulator.plane_vector.parallel?(Z_AXIS)
+        next unless curve_manipulator.normal.parallel?(Z_AXIS)
         curve_manipulators << curve_manipulator
         edges_bounds.add(curve_manipulator.points)
       end

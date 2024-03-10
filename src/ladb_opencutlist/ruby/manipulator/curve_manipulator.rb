@@ -17,11 +17,8 @@ module Ladb::OpenCutList
       super
       @points = nil
       @z_max = nil
-      @plane = nil
-      @plane_point = nil
-      @plane_vector = nil
-      @normal = nil
       @segments = nil
+      @plane_manipulator = nil
     end
 
     # -----
@@ -41,45 +38,28 @@ module Ladb::OpenCutList
     end
 
     def z_max
-      if @z_max.nil?
-        @z_max = points.max { |p1, p2| p1.z <=> p2.z }.z
-      end
+      @z_max = points.max { |p1, p2| p1.z <=> p2.z }.z if @z_max.nil?
       @z_max
     end
 
     def plane
-      if @plane.nil?
-        @plane = Geom.fit_plane_to_points(points)
-      end
-      @plane
-    end
-
-    def plane_point
-      if @plane_point.nil?
-        @plane_point = Geom::Point3d.new(plane[0..2].map { |v| v * plane.last })
-      end
-      @plane_point
-    end
-
-    def plane_vector
-      if @plane_vector.nil?
-        @plane_vector = Geom::Vector3d.new(plane[0..2])
-      end
-      @plane_vector
+      plane_manipulator.plane
     end
 
     def normal
-      if @normal.nil?
-        @normal = plane_vector.normalize
-      end
-      @normal
+      plane_manipulator.normal
     end
 
     def segments
-      if @segments.nil?
-        @segments = points.each_cons(2).to_a.flatten(1)
-      end
+      @segments = points.each_cons(2).to_a.flatten(1) if @segments.nil?
       @segments
+    end
+
+    # -----
+
+    def plane_manipulator
+      @plane_manipulator = PlaneManipulator.new(Geom.fit_plane_to_points(points)) if @plane_manipulator.nil?
+      @plane_manipulator
     end
 
     # -----

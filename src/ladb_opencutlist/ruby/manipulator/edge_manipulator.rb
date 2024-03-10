@@ -1,13 +1,14 @@
 module Ladb::OpenCutList
 
   require_relative 'transformation_manipulator'
+  require_relative 'line_manipulator'
 
-  class EdgeManipulator < TransformationManipulator
+  class EdgeManipulator < LineManipulator
 
     attr_reader :edge
 
     def initialize(edge, transformation = IDENTITY)
-      super(transformation)
+      super(edge.line, transformation)
       @edge = edge
     end
 
@@ -17,7 +18,6 @@ module Ladb::OpenCutList
       super
       @points = nil
       @z_max = nil
-      @line = nil
       @segment = nil
     end
 
@@ -26,6 +26,18 @@ module Ladb::OpenCutList
     def ==(other)
       return false unless other.is_a?(EdgeManipulator)
       @edge == other.edge && super
+    end
+
+    def perpendicular?(other)
+      return direction.perpendicular?(other.direction) if other.respond_to?(:direction)
+      return direction.perpendicular?(other) if other.is_a?(Geom::Vector3d)
+      false
+    end
+
+    def parallel?(other)
+      return direction.parallel?(other.direction) if other.respond_to?(:direction)
+      return direction.parallel?(other) if other.is_a?(Geom::Vector3d)
+      false
     end
 
     # -----
@@ -47,25 +59,8 @@ module Ladb::OpenCutList
     end
 
     def z_max
-      if @z_max.nil?
-        @z_max = points.max { |p1, p2| p1.z <=> p2.z }.z
-      end
+      @z_max = points.max { |p1, p2| p1.z <=> p2.z }.z if @z_max.nil?
       @z_max
-    end
-
-    def line
-      if @line.nil?
-        @line = [ start_point, end_point - start_point ]
-      end
-      @line
-    end
-
-    def line_point
-      line[0]
-    end
-
-    def line_vector
-      line[1]
     end
 
     def length
@@ -73,9 +68,7 @@ module Ladb::OpenCutList
     end
 
     def segment
-      if @segment.nil?
-        @segment = points
-      end
+      @segment = points if @segment.nil?
       @segment
     end
 
