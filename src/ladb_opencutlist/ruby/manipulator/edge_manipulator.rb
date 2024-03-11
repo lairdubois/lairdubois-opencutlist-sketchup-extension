@@ -28,18 +28,6 @@ module Ladb::OpenCutList
       @edge == other.edge && super
     end
 
-    def perpendicular?(other)
-      return direction.perpendicular?(other.direction) if other.respond_to?(:direction)
-      return direction.perpendicular?(other) if other.is_a?(Geom::Vector3d)
-      false
-    end
-
-    def parallel?(other)
-      return direction.parallel?(other.direction) if other.respond_to?(:direction)
-      return direction.parallel?(other) if other.is_a?(Geom::Vector3d)
-      false
-    end
-
     # -----
 
     def start_point

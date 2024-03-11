@@ -103,10 +103,10 @@ module Ladb::OpenCutList
         input_face = @input_face_path.last
         input_face_transformation = PathUtils::get_transformation(@input_face_path)
         input_edge = @input_edge_path.nil? ? nil : @input_edge_path.last
-        input_edge_transformation = @input_edge_path.nil? ? nil : PathUtils::get_transformation(@input_edge_path)
+        input_edge_transformation = input_edge.nil? ? nil : PathUtils::get_transformation(@input_edge_path)
 
         drawing_def.input_face_manipulator = FaceManipulator.new(input_face, input_face_transformation)
-        drawing_def.input_edge_manipulator = input_edge ? EdgeManipulator.new(input_edge, input_edge_transformation) : nil
+        drawing_def.input_edge_manipulator = input_edge.nil? ? nil : EdgeManipulator.new(input_edge, input_edge_transformation)
 
         if input_edge
 
@@ -196,7 +196,7 @@ module Ladb::OpenCutList
         when EDGE_VALIDATOR_COPLANAR
           validator = lambda { |edge_manipulator|
             return false if drawing_def.input_face_manipulator.nil?
-            drawing_def.input_face_manipulator.coplanar?(edge_manipulator)
+            edge_manipulator.direction.perpendicular?(drawing_def.input_face_manipulator.normal) && edge_manipulator.position.on_plane?(drawing_def.input_face_manipulator.plane)
           }
         when EDGE_VALIDATOR_STRAY
           validator = lambda { |edge_manipulator|
@@ -206,7 +206,7 @@ module Ladb::OpenCutList
           validator = lambda { |edge_manipulator|
             return false if drawing_def.input_face_manipulator.nil?
             if edge_manipulator.edge.faces.empty?
-              drawing_def.input_face_manipulator.coplanar?(edge_manipulator)
+              edge_manipulator.direction.perpendicular?(drawing_def.input_face_manipulator.normal) && edge_manipulator.position.on_plane?(drawing_def.input_face_manipulator.plane)
             else
               false
             end
@@ -258,7 +258,7 @@ module Ladb::OpenCutList
 
     def _get_input_axes(input_face_manipulator, input_edge_manipulator = nil)
 
-      if input_edge_manipulator.nil? || !input_face_manipulator.perpendicular?(input_edge_manipulator.direction)
+      if input_edge_manipulator.nil? || !input_face_manipulator.normal.perpendicular?(input_edge_manipulator.direction)
         input_edge_manipulator = EdgeManipulator.new(input_face_manipulator.longest_outer_edge, input_face_manipulator.transformation)
       end
 

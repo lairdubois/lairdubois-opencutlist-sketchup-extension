@@ -8,9 +8,9 @@ module Ladb::OpenCutList
       super(transformation)
       raise "Bad line data structure. Must be an Array." unless line.is_a?(Array)
       if line.length == 2
-        raise "Bad plane data structure. Must be [ Geom::Point3d, Geom::Vector3d ]." if !line[0].is_a?(Geom::Point3d) || !line[1].is_a?(Geom::Vector3d)
-        @line_position = line[0]
-        @line_direction = line[1]
+        raise "Bad plane data structure. Must be [ Geom::Point3d, Geom::Vector3d ]." unless line[0].is_a?(Geom::Point3d) && line[1].is_a?(Geom::Vector3d)
+        @line_point = line[0]
+        @line_vector = line[1]
       else
         raise "Bad line data structure. Must be [ Geom::Point3d, Geom::Vector3d ]."
       end
@@ -33,12 +33,12 @@ module Ladb::OpenCutList
     end
 
     def position
-      @position = @line_position.transform(@transformation) if @position.nil?
+      @position = @line_point.transform(@transformation) if @position.nil?
       @position
     end
 
     def direction
-      @direction = @line_direction.transform(@transformation).normalize if @direction.nil?
+      @direction = @line_vector.transform(@transformation).normalize if @direction.nil?
       @direction
     end
 
