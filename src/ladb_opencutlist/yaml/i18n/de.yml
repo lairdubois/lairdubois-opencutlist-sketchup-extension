@@ -1664,6 +1664,8 @@ tool:
     action_2_status: "Klicken Sie auf ein Teil, um seine Vorderseite mit seiner Rückseite zu vertauschen"
     action_3: Achsen ausrichten
     action_3_status: "Klicken Sie auf die Fläche oder Kante eines Teils, um die Achsenausrichtung anzupassen"
+    action_4: Ursprung verschieben
+    action_4_status: "Klicken Sie auf einen Eckpunkt des Teils, um seinen Ursprung dort zu platzieren"
     action_option_group_direction: Ausrichtung
     action_option_direction_0: L
     action_option_direction_1: B
@@ -1708,4 +1710,4 @@ tool:
     error:
       not_part: Diese Fläche gehört nicht zu einem Teil (Komponente)
       not_flat_face: Diese Fläche ist nicht eben
-      incompatible_active_path: "Der aktive Pfad ermöglicht es nicht, dieses Teil zu exportieren."
+      incompatible_active_path: "Der aktive Pfad ermöglicht es nicht, dieses Teil zu exportieren"

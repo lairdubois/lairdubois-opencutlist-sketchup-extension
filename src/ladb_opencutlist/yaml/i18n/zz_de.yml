@@ -1705,36 +1705,38 @@ tool:
     action_2_status: 1286 - Klicken Sie auf ein Teil, um seine Vorderseite mit seiner Rückseite zu vertauschen
     action_3: 1287 - Achsen ausrichten
     action_3_status: 1288 - Klicken Sie auf die Fläche oder Kante eines Teils, um die Achsenausrichtung anzupassen
-    action_option_group_direction: 1289 - Ausrichtung
-    action_option_direction_0: 1290 - L
-    action_option_direction_1: 1291 - B
-    action_option_direction_2: 1292 - D
-    action_option_direction_0_status: 1293 - Teil der Länge nach wenden
-    action_option_direction_1_status: 1294 - Teil der Breite nach wenden
-    action_option_direction_2_status: 1295 - Teil der Dicke nach wenden
+    action_4: 1289 - Ursprung verschieben
+    action_4_status: 1290 - Klicken Sie auf einen Eckpunkt des Teils, um seinen Ursprung dort zu platzieren
+    action_option_group_direction: 1291 - Ausrichtung
+    action_option_direction_0: 1292 - L
+    action_option_direction_1: 1293 - B
+    action_option_direction_2: 1294 - D
+    action_option_direction_0_status: 1295 - Teil der Länge nach wenden
+    action_option_direction_1_status: 1296 - Teil der Breite nach wenden
+    action_option_direction_2_status: 1297 - Teil der Dicke nach wenden
     warning:
-      more_entities: 1296 - {{ count_used }} Instanzen mit derselben Definition werden geändert
+      more_entities: 1298 - {{ count_used }} Instanzen mit derselben Definition werden geändert
     error:
-      not_part: 1297 - Das Zielobjekt ist kein Teil
-      not_orientable: 1298 - Der Typ dieses Teils lässt keine Orientierung zu
+      not_part: 1299 - Das Zielobjekt ist kein Teil
+      not_orientable: 1300 - Der Typ dieses Teils lässt keine Orientierung zu
   smart_export:
-    title: 1299 - Export
-    action_0: 1300 - 3D Teil exportieren
-    action_0_status: 1301 - Auf Teil klicken
-    action_1: 1302 - 2D Teil exportieren
-    action_1_status: 1303 - Auf Fläche eines Teils klicken
-    action_2: 1304 - Fläche exportieren
-    action_2_status: 1305 - Auf Fläche klicken
-    action_3: 1306 - Pfad exportieren
-    action_3_status: 1307 - Auf Kante klicken
-    action_option_group_file_format: 1308 - Format
-    action_option_group_unit: 1309 - Einheit
-    action_option_group_faces: 1310 - Flächen
-    action_option_group_options: 1311 - Optionen
-    action_option_file_format_dxf_status: 1312 - In DXF-Datei exportieren
-    action_option_file_format_stl_status: 1313 - In STL-Datei exportieren
-    action_option_file_format_obj_status: 1314 - In OBJ-Datei exportieren
-    action_option_file_format_svg_status: 1315 - In SVG-Datei exportieren
+    title: 1301 - Export
+    action_0: 1302 - 3D Teil exportieren
+    action_0_status: 1303 - Auf Teil klicken
+    action_1: 1304 - 2D Teil exportieren
+    action_1_status: 1305 - Auf Fläche eines Teils klicken
+    action_2: 1306 - Fläche exportieren
+    action_2_status: 1307 - Auf Fläche klicken
+    action_3: 1308 - Pfad exportieren
+    action_3_status: 1309 - Auf Kante klicken
+    action_option_group_file_format: 1310 - Format
+    action_option_group_unit: 1311 - Einheit
+    action_option_group_faces: 1312 - Flächen
+    action_option_group_options: 1313 - Optionen
+    action_option_file_format_dxf_status: 1314 - In DXF-Datei exportieren
+    action_option_file_format_stl_status: 1315 - In STL-Datei exportieren
+    action_option_file_format_obj_status: 1316 - In OBJ-Datei exportieren
+    action_option_file_format_svg_status: 1317 - In SVG-Datei exportieren
     action_option_unit_0_status: "$t(default.unit_0)"
     action_option_unit_1_status: "$t(default.unit_1)"
     action_option_unit_2_status: "$t(default.unit_2)"
@@ -1744,9 +1746,9 @@ tool:
     action_option_faces_1_status: "$t(tab.cutlist.write.option_faces_1)"
     action_option_options_anchor_status: "$t(tab.cutlist.write.option_anchor_1)"
     action_option_options_smoothing_status: "$t(tab.cutlist.write.option_smoothing_1)"
-    action_option_options_merge_holes_status: 1325 - Isolieren von durchgehenden Bohrungen und Zusammenführen der Tiefen für jeden Hohlraum
-    action_option_options_include_paths_status: 1326 - Im Teil enthaltene, nicht mit einer Fläche verknüpfte Kanten als Plot exportieren
+    action_option_options_merge_holes_status: 1327 - Isolieren von durchgehenden Bohrungen und Zusammenführen der Tiefen für jeden Hohlraum
+    action_option_options_include_paths_status: 1328 - Im Teil enthaltene, nicht mit einer Fläche verknüpfte Kanten als Plot exportieren
     error:
-      not_part: 1327 - Diese Fläche gehört nicht zu einem Teil (Komponente)
-      not_flat_face: 1328 - Diese Fläche ist nicht eben
-      incompatible_active_path: 1329 - Der aktive Pfad ermöglicht es nicht, dieses Teil zu exportieren.
+      not_part: 1329 - Diese Fläche gehört nicht zu einem Teil (Komponente)
+      not_flat_face: 1330 - Diese Fläche ist nicht eben
+      incompatible_active_path: 1331 - Der aktive Pfad ermöglicht es nicht, dieses Teil zu exportieren
