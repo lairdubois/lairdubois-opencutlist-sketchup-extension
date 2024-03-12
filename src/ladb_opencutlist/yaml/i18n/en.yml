@@ -1664,6 +1664,8 @@ tool:
     action_2_status: Click on a part to swap its front with its backside
     action_3: Adapt axes
     action_3_status: Click on the face or edge of a part to adapt its axes
+    action_4: Move origin
+    action_4_status: Click on a part vertex to place its origin there
     action_option_group_direction: Direction
     action_option_direction_0: L
     action_option_direction_1: W
@@ -1708,4 +1710,4 @@ tool:
     error:
       not_part: This face does not belong to a part (component)
       not_flat_face: This surface is not flat
-      incompatible_active_path: The active path does not allow exporting this part.
+      incompatible_active_path: The active path does not allow exporting this part
