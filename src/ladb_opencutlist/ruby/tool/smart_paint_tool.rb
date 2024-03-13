@@ -714,16 +714,14 @@ module Ladb::OpenCutList
       end
     end
 
-    def onMouseMove(flags, x, y, view)
-      return true if super
-      unless is_action_none?
-        _handle_mouse_event(:move)
-      end
-    end
-
     def onMouseLeave(view)
       return true if super
       _reset_active_part
+    end
+
+    def onPickerChanged(picker)
+      super
+      _handle_mouse_event(:move)
     end
 
     def onTransactionUndo(model)

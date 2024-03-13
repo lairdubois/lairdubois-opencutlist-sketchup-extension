@@ -955,11 +955,6 @@ module Ladb::OpenCutList
       set_root_action(fetch_action)  # Force SU status text
     end
 
-    def onKeyDown(key, repeat, flags, view)
-      return true if super
-      @picker.onKeyDown(key, repeat, flags, view) unless @picker.nil?
-    end
-
     def onKeyUp(key, repeat, flags, view)
       return true if super
       @picker.onKeyUp(key, repeat, flags, view) unless @picker.nil?
@@ -1047,194 +1042,7 @@ module Ladb::OpenCutList
 
       # Action
       unless is_action_none?
-
         @picker.onMouseMove(flags, x, y, view) if @picker
-
-        if @picker
-
-          @input_context_path = @picker.picked_context_path
-          @input_face_path = @picker.picked_face_path
-          @input_face = @picker.picked_face
-          @input_edge_path = @picker.picked_edge_path
-          @input_edge = @picker.picked_edge
-          @input_vertex_path = nil
-          @input_vertex = nil
-
-        else
-
-          @input_context_path = nil
-          @input_face_path = nil
-          @input_face = nil
-          @input_edge_path = nil
-          @input_edge = nil
-          @input_vertex_path = nil
-          @input_vertex = nil
-
-        end
-
-
-        # @input_point.pick(view, x, y)
-
-        # SKETCHUP_CONSOLE.clear
-        #
-        # puts "# INPUT"
-        # puts "  valid? = #{@input_point.valid?}"
-        # puts "  Face = #{@input_point.face}"
-        # puts "  Edge = #{@input_point.edge} -> onface? = #{@input_point.edge && @input_point.face ? @input_point.edge.used_by?(@input_point.face) : ''}"
-        # puts "  Vertex = #{@input_point.vertex} -> onface? = #{@input_point.vertex && @input_point.face ? @input_point.vertex.used_by?(@input_point.face) : ''}"
-        # puts "  InstancePath = #{@input_point.instance_path.to_a}"
-        # puts "  Transformation = #{@input_point.transformation}"
-        # puts "  Degrees of Freedom = #{@input_point.degrees_of_freedom}"
-        # puts "  Depth = #{@input_point.depth}"
-
-        # if !@input_point.face.nil?
-        #
-        #   input_context_path = nil
-        #   input_face = @input_point.face
-        #   input_edge = @input_point.edge
-        #   input_vertex = @input_point.vertex
-        #
-        #   if @input_point.instance_path.leaf == input_face || @input_point.instance_path.leaf.respond_to?(:used_by?) && @input_point.instance_path.leaf.used_by?(input_face)
-        #     input_context_path = @input_point.instance_path.to_a[0...-1]
-        #   else
-        #
-        #     if @pick_helper.do_pick(x, y)
-        #
-        #       # Input point gives a face without instance path
-        #       # Let's try to use pick helper to pick the face path
-        #       @pick_helper.count.times do |index|
-        #         if @pick_helper.leaf_at(index) == input_face
-        #           input_context_path = @pick_helper.path_at(index)[0...-1]
-        #           break
-        #         end
-        #       end
-        #
-        #       unless input_edge.nil?
-        #
-        #         # Input point give an edge but on an other face
-        #         # Let's try to use pick helper to pick an edge used by the input face
-        #         @pick_helper.count.times do |index|
-        #           if @pick_helper.leaf_at(index).is_a?(Sketchup::Edge) && @pick_helper.leaf_at(index).visible? && @pick_helper.leaf_at(index).used_by?(input_face)
-        #             input_edge = @pick_helper.leaf_at(index)
-        #             break
-        #           end
-        #         end
-        #
-        #       end
-        #
-        #     end
-        #
-        #   end
-        #
-        #   # Exit if picked elements are the same as previous
-        #   return true if input_context_path == @input_context_path && input_face == @input_face && input_edge == @input_edge && input_vertex == @input_vertex
-        #
-        #   @input_context_path = input_context_path
-        #   @input_face_path = input_context_path && input_face ? input_context_path + [ input_face ] : nil
-        #   @input_face = input_face
-        #   @input_edge_path = input_context_path && input_edge ? input_context_path + [ input_edge ] : nil
-        #   @input_edge = input_edge
-        #   @input_vertex_path = input_context_path && input_vertex ? input_context_path + [ input_vertex ] : nil
-        #   @input_vertex = input_vertex
-        #
-        # elsif !@input_point.edge.nil?
-        #
-        #   input_context_path = nil
-        #   input_edge = @input_point.edge
-        #
-        #   if @input_point.instance_path.leaf == input_edge || @input_point.instance_path.leaf.respond_to?(:used_by?) && @input_point.instance_path.leaf.used_by?(input_edge)
-        #     input_context_path = @input_point.instance_path.to_a[0...-1]
-        #   else
-        #
-        #     if @pick_helper.do_pick(x, y)
-        #
-        #       # Input point gives a face without instance path
-        #       # Let's try to use pick helper to pick the face path
-        #       @pick_helper.count.times do |index|
-        #         if @pick_helper.leaf_at(index) == input_edge
-        #           input_context_path = @pick_helper.path_at(index)[0...-1]
-        #           break
-        #         end
-        #       end
-        #
-        #     end
-        #
-        #   end
-        #
-        #   # Exit if picked edge is the same as previous
-        #   return true if input_context_path == @input_context_path && input_edge == @input_edge
-        #
-        #   @input_context_path = input_context_path
-        #   @input_face_path = nil
-        #   @input_face = nil
-        #   @input_edge_path = input_context_path && input_edge ? input_context_path + [ input_edge ] : nil
-        #   @input_edge = input_edge
-        #   @input_vertex_path = input_context_path && input_vertex ? input_context_path + [ input_vertex ] : nil
-        #   @input_vertex = nil
-        #
-        # elsif !@input_point.vertex.nil?
-        #
-        #   input_context_path = nil
-        #   input_face = nil
-        #   input_edge = nil
-        #   input_vertex = @input_point.vertex
-        #
-        #   if @input_point.instance_path.leaf == input_vertex
-        #     input_context_path = @input_point.instance_path.to_a[0...-1]
-        #   else
-        #
-        #     if @pick_helper.do_pick(x, y)
-        #
-        #       # Input point gives a vertex without instance path
-        #       # Let's try to use pick helper to pick the face path
-        #       @pick_helper.count.times do |index|
-        #         if @pick_helper.leaf_at(index).respond_to?(:used_by?) && @pick_helper.leaf_at(index).used_by?(input_vertex)
-        #           input_context_path = @pick_helper.path_at(index)[0...-1]
-        #           break
-        #         end
-        #       end
-        #
-        #     end
-        #
-        #   end
-        #
-        #   input_face = @input_face if input_vertex.faces.include?(@input_face)
-        #   input_face = input_vertex.faces.first if input_face.nil?
-        #
-        #   input_edge = @input_edge if input_vertex.edges.include?(@input_edge)
-        #   input_edge = input_vertex.edges.first if input_edge.nil?
-        #
-        #   # Exit if picked vertex is the same as previous
-        #   return true if input_context_path == @input_context_path && input_face == @input_face && input_edge == @input_edge && input_vertex == @input_vertex
-        #
-        #   @input_context_path = input_context_path
-        #   @input_face_path = input_context_path && input_face ? input_context_path + [ input_face ] : nil
-        #   @input_face = input_face
-        #   @input_edge_path = input_context_path && input_edge ? input_context_path + [ input_edge ] : nil
-        #   @input_edge = input_edge
-        #   @input_vertex_path = input_context_path && input_vertex ? input_context_path + [ input_vertex ] : nil
-        #   @input_vertex = input_vertex
-        #
-        # else
-        #
-        #   @input_context_path = nil
-        #   @input_face_path = nil
-        #   @input_face = nil
-        #   @input_edge_path = nil
-        #   @input_edge = nil
-        #   @input_vertex_path = nil
-        #   @input_vertex = nil
-        #
-        # end
-
-        # puts "# OUTPUT"
-        # puts "  Face = #{@input_face}"
-        # puts "  Edge = #{@input_edge} -> onface? = #{@input_edge && @input_face ?  @input_edge.used_by?(@input_face) : ''}"
-        # puts "  Vertex = #{@input_vertex} -> onface? = #{@input_vertex && @input_face ? @input_vertex.used_by?(@input_face) : ''}"
-        # puts "  ContextPath = #{@input_context_path}"
-        # puts "  FacePath = #{@input_face_path}"
-        # puts "  EdgePath = #{@input_edge_path}"
-
       end
 
       false
@@ -1254,6 +1062,10 @@ module Ladb::OpenCutList
       if type == Sketchup::RenderingOptions::ROPSetModelTransparency && @transparency_minitool_btn
         @transparency_minitool_btn.selected = rendering_options['ModelTransparency']
       end
+    end
+
+    def onPickerChanged(picker)
+      # Implement in subclasses
     end
 
     # -----
@@ -1473,7 +1285,16 @@ module Ladb::OpenCutList
       @pick_clines = pick_clines
       @pick_axes = pick_axes
 
-      _reset_picked
+      @picked_face = nil
+      @picked_face_path = nil
+      @picked_edge = nil
+      @picked_edge_path = nil
+      @picked_point = nil
+      @picked_point_path = nil
+      @picked_cline = nil
+      @picked_cline_path = nil
+      @picked_axes = nil
+      @picked_axes_path = nil
 
     end
 
@@ -1493,10 +1314,8 @@ module Ladb::OpenCutList
       _do_pick
     end
 
-    def onKeyDown(key, repeat, flags, view)
-    end
-
     def onKeyUp(key, repeat, flags, view)
+      _do_pick if key == VK_SHIFT
     end
 
     # -- UI --
@@ -1511,104 +1330,104 @@ module Ladb::OpenCutList
 
       context_locked = @smart_tool.is_key_down?(VK_SHIFT)
 
-      _reset_picked(reset_face: !context_locked)
+      picked_face = context_locked && @pick_context_by_face ? @picked_face : nil
+      picked_face_path = context_locked && @pick_context_by_face ? @picked_face_path : nil
+      picked_point = nil
+      picked_point_path = nil
+      picked_edge = context_locked && @pick_context_by_edge ? @picked_edge : nil
+      picked_edge_path = context_locked && @pick_context_by_edge ? @picked_edge_path : nil
+      picked_cline = nil
+      picked_cline_path = nil
+      picked_axes = nil
+      picked_axes_path = nil
 
       # First stage : pick "context" (aperture = 0)
 
-      if @pick_context_by_face && (@picked_face.nil? || !context_locked) || @pick_context_by_edge
+      if @pick_context_by_face && picked_face.nil? || @pick_context_by_edge && picked_edge.nil?
         @pick_helper.do_pick(@pick_position.x, @pick_position.y)
         @pick_helper.count.times do |index|
 
           if @pick_context_by_face && @pick_helper.leaf_at(index).is_a?(Sketchup::Face)
-            @picked_face = @pick_helper.leaf_at(index)
-            @picked_face_path = @pick_helper.path_at(index)
-            @picked_face_transformation = @pick_helper.transformation_at(index)
+            picked_face = @pick_helper.leaf_at(index)
+            picked_face_path = @pick_helper.path_at(index)
             break
           end
 
           if @pick_context_by_edge && @pick_helper.leaf_at(index).is_a?(Sketchup::Edge)
-            @picked_edge = @pick_helper.leaf_at(index)
-            @picked_edge_path = @pick_helper.path_at(index)
-            @picked_edge_transformation = @pick_helper.transformation_at(index)
+            picked_edge = @pick_helper.left_at(index)
+            picked_edge_path = @pick_helper.path_at(index)
             break
           end
 
         end
       end
 
-      if @picked_face.nil?
+      if picked_face || picked_edge
+
+        # Second stage
+
+        if @pick_point
+
+          # pick "point"
+
+          @pick_ip.pick(@view, @pick_position.x, @pick_position.y)
+
+          picked_point = @pick_ip.position
+          picked_point_path = @pick_ip.instance_path.to_a
+
+        end
+
+        if @pick_edges || @picked_cline || @pick_axes
+
+          # pick "lines" (aperture = 80)
+
+          @pick_helper.do_pick(@pick_position.x, @pick_position.y, 80)
+          @pick_helper.count.times do |index|
+
+            if @pick_edges && picked_edge_path.nil? && @pick_helper.leaf_at(index).is_a?(Sketchup::Edge)
+              picked_edge = @pick_helper.leaf_at(index)
+              picked_edge_path = @pick_helper.path_at(index)
+              break
+            end
+
+            if @pick_clines && picked_cline_path.nil? && @pick_helper.leaf_at(index).is_a?(Sketchup::ConstructionLine)
+              picked_cline = @pick_helper.leaf_at(index)
+              picked_cline_path = @pick_helper.path_at(index)
+              break
+            end
+
+            if @pick_axes && picked_axes_path.nil? && @pick_helper.leaf_at(index).is_a?(Sketchup::Axes)
+              picked_axes = @pick_helper.leaf_at(index)
+              picked_axes_path = @pick_helper.path_at(index)
+              break
+            end
+
+          end
+
+        end
+
+      else
+
         @pick_ip.clear if @pick_ip
-        return
-      end
-
-      if @pick_point
-
-        @pick_ip.pick(@view, @pick_position.x, @pick_position.y)
-
-        @picked_point = @pick_ip.position
-        @picked_point_path = @pick_ip.instance_path.to_a
-        @picked_point_transformation = @pick_ip.transformation
 
       end
 
-      return unless @pick_edges || @picked_cline || @pick_axes
+      changed = @picked_face_path != picked_face_path || @picked_point != picked_point || @picked_edge_path != picked_edge_path || @picked_cline_path != picked_cline_path || @picked_axes_path != picked_axes_path
 
-      # Second stage : pick "lines" (aperture = 80)
+      @picked_face = picked_face
+      @picked_face_path = picked_face_path
+      @picked_point = picked_point
+      @picked_point_path = picked_point_path
+      @picked_edge = picked_edge
+      @picked_edge_path = picked_edge_path
+      @picked_cline = picked_cline
+      @picked_cline_path = picked_cline_path
+      @picked_axes = picked_axes
+      @picked_axes_path = picked_axes_path
 
-      @pick_helper.do_pick(@pick_position.x, @pick_position.y, 80)
-      @pick_helper.count.times do |index|
+      # Fire change event
+      @smart_tool.onPickerChanged(self) if changed
 
-        if @pick_edges && @picked_edge.nil? && @pick_helper.leaf_at(index).is_a?(Sketchup::Edge)
-          @picked_edge = @pick_helper.leaf_at(index)
-          @picked_edge_path = @pick_helper.path_at(index)
-          @picked_edge_transformation = @pick_helper.transformation_at(index)
-          break
-        end
-
-        if @pick_clines && @picked_cline.nil? && @pick_helper.leaf_at(index).is_a?(Sketchup::ConstructionLine)
-          @picked_cline = @pick_helper.leaf_at(index)
-          @picked_cline_path = @pick_helper.path_at(index)
-          @picked_cline_transformation = @pick_helper.transformation_at(index)
-          break
-        end
-
-        if @pick_axes && @picked_axes.nil? && @pick_helper.leaf_at(index).is_a?(Sketchup::Axes)
-          @picked_axes = @pick_helper.leaf_at(index)
-          @picked_axes_path = @pick_helper.path_at(index)
-          @picked_axes_transformation = @pick_helper.transformation_at(index)
-          break
-        end
-
-      end
-
-    end
-
-    def _reset_picked(reset_face: true, reset_point: true, reset_edge: true, reset_cline: true, reset_axes: true)
-      if reset_face
-        @picked_face = nil
-        @picked_face_path = nil
-        @picked_face_transformation = IDENTITY
-      end
-      if reset_point
-        @picked_point = nil
-        @picked_point_path = nil
-        @picked_point_transformation = IDENTITY
-      end
-      if reset_edge
-        @picked_edge = nil
-        @picked_edge_path = nil
-        @picked_edge_transformation = IDENTITY
-      end
-      if reset_cline
-        @picked_cline = nil
-        @picked_cline_path = nil
-        @picked_cline_transformation = IDENTITY
-      end
-      if reset_axes
-        @picked_axes = nil
-        @picked_axes_path = nil
-        @picked_axes_transformation = IDENTITY
-      end
     end
 
   end

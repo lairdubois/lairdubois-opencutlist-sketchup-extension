@@ -284,17 +284,15 @@ module Ladb::OpenCutList
       end
     end
 
-    def onMouseMove(flags, x, y, view)
-      return true if super
-      unless is_action_none?
-        _handle_mouse_event(:move)
-      end
-    end
-
     def onMouseLeave(view)
       return true if super
       _reset_active_part
       _reset_active_face
+    end
+
+    def onPickerChanged(picker)
+      super
+      _handle_mouse_event(:move)
     end
 
     # -----
@@ -743,12 +741,12 @@ module Ladb::OpenCutList
 
           if is_action_export_part_3d? || is_action_export_part_2d?
 
-            input_part_entity_path = _get_part_entity_path_from_path(@picker.picked_face_path)
-            if input_part_entity_path
+            picked_part_entity_path = _get_part_entity_path_from_path(@picker.picked_face_path)
+            if picked_part_entity_path
 
               if Sketchup.active_model.active_path
 
-                diff = Sketchup.active_model.active_path - input_part_entity_path
+                diff = Sketchup.active_model.active_path - picked_part_entity_path
                 unless diff.empty?
                   _reset_active_part
                   show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_export.error.incompatible_active_path')}", MESSAGE_TYPE_ERROR)
@@ -758,9 +756,9 @@ module Ladb::OpenCutList
 
               end
 
-              part = _generate_part_from_path(input_part_entity_path)
+              part = _generate_part_from_path(picked_part_entity_path)
               if part
-                _set_active_part(input_part_entity_path, part)
+                _set_active_part(picked_part_entity_path, part)
               else
                 _reset_active_part
                 show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_export.error.not_part')}", MESSAGE_TYPE_ERROR)

@@ -247,16 +247,14 @@ module Ladb::OpenCutList
       _handle_mouse_event(:l_button_dblclick)
     end
 
-    def onMouseMove(flags, x, y, view)
-      return true if super
-      unless is_action_none?
-        _handle_mouse_event(:move)
-      end
-    end
-
     def onMouseLeave(view)
       return true if super
       _reset_active_part
+    end
+
+    def onPickerChanged(picker)
+      super
+      _handle_mouse_event(:move)
     end
 
     def onTransactionUndo(model)
@@ -543,12 +541,12 @@ module Ladb::OpenCutList
       if event == :move
 
         if @picker.picked_face_path
-          input_part_entity_path = _get_part_entity_path_from_path(@picker.picked_face_path)
-          if input_part_entity_path
+          picked_part_entity_path = _get_part_entity_path_from_path(@picker.picked_face_path)
+          if picked_part_entity_path
 
-            part = _generate_part_from_path(input_part_entity_path)
+            part = _generate_part_from_path(picked_part_entity_path)
             if part
-              _set_active_part(input_part_entity_path, part)
+              _set_active_part(picked_part_entity_path, part)
             else
               _reset_active_part
               show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_axes.error.not_part')}", MESSAGE_TYPE_ERROR)
@@ -702,10 +700,10 @@ module Ladb::OpenCutList
       end
 
       z_axis = input_face.normal
-      z_axis.transform!(inner_transformation).normalize! unless inner_transformation.nil?
+      z_axis = z_axis.transform(inner_transformation).normalize unless inner_transformation.nil?
 
       x_axis = input_edge.line[1]
-      x_axis.transform!(inner_transformation).normalize! unless inner_transformation.nil?
+      x_axis = x_axis.transform(inner_transformation).normalize unless inner_transformation.nil?
       x_axis.reverse! if x_axis.angle_between(instance_info.size.oriented_axis(X_AXIS)) >= Math::PI / 2 # Try to keep part length orientation
 
       y_axis = z_axis.cross(x_axis)
