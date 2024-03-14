@@ -1663,9 +1663,9 @@ tool:
     action_2: Permuter Face ↔ Contre-face
     action_2_status: Cliquez sur une pièce pour permuter la lecture de sa Face avec sa Contre-face
     action_3: Adapter les axes
-    action_3_status: Cliquez sur la face ou une arête d'une pièce pour y adapter ses axes
+    action_3_status: Ciblez une face d'une pièce et cliquez sur une arête pour y adapter ses axes
     action_4: Déplacer l'origine
-    action_4_status: Cliquez sur un sommet d'une pièce pour y placer son origine
+    action_4_status: Ciblez une face d'une pièce et cliquez sur un point pour y placer son origine
     action_option_group_direction: Direction
     action_option_direction_0: Lo
     action_option_direction_1: La

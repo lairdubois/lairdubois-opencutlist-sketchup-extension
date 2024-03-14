@@ -727,28 +727,6 @@ module Ladb::OpenCutList
         return @picker.picked_point.transform(instance_info.transformation.inverse)
       end
 
-      # if @picker.picked_edge
-      #
-      #   inner_path = @picker.picked_edge_path - instance_info.path
-      #   inner_transformation = PathUtils.get_transformation(inner_path)
-      #
-      #   mid = (@picker.picked_edge.end.position - @picker.picked_edge.start.position)
-      #   mid.length = mid.length / 2
-      #
-      #   return (@picker.picked_edge.start.position + mid).transform(inner_transformation)
-      # end
-      #
-      # if @picker.picked_face
-      #
-      #   inner_path = @picker.picked_face_path - instance_info.path
-      #   inner_transformation = PathUtils.get_transformation(inner_path)
-      #
-      #   bounds = Geom::BoundingBox.new
-      #   bounds.add(@picker.picked_face.vertices.map { |vertex| vertex.position })
-      #
-      #   return bounds.center.transform(inner_transformation)
-      # end
-
       nil
     end
 
