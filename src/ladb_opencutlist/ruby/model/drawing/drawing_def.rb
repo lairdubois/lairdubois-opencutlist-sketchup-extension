@@ -3,7 +3,7 @@ module Ladb::OpenCutList
   class DrawingDef
 
     attr_reader :faces_bounds, :edges_bounds, :bounds, :face_manipulators, :surface_manipulators, :edge_manipulators, :curve_manipulators
-    attr_accessor :transformation, :input_face_manipulator, :input_edge_manipulator
+    attr_accessor :transformation, :picked_plane_manipulator, :picked_line_manipulator
 
     def initialize
 
@@ -18,8 +18,8 @@ module Ladb::OpenCutList
       @edge_manipulators = []
       @curve_manipulators = []
 
-      @input_face_manipulator = nil
-      @input_edge_manipulator = nil
+      @picked_plane_manipulator = nil
+      @picked_line_manipulator = nil
 
     end
 
@@ -32,8 +32,8 @@ module Ladb::OpenCutList
         ti = t.inverse
 
         @transformation *= t
-        @input_face_manipulator.transformation = ti * @input_face_manipulator.transformation unless @input_face_manipulator.nil?
-        @input_edge_manipulator.transformation = ti * @input_edge_manipulator.transformation unless @input_edge_manipulator.nil?
+        @picked_plane_manipulator.transformation = ti * @picked_plane_manipulator.transformation unless @picked_plane_manipulator.nil?
+        @picked_line_manipulator.transformation = ti * @picked_line_manipulator.transformation unless @picked_line_manipulator.nil?
 
         unless @faces_bounds.empty?
           min = @faces_bounds.min.transform(ti)

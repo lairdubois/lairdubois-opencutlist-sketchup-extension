@@ -631,7 +631,7 @@ module Ladb::OpenCutList
 
     end
 
-    def onActionChange(action)
+    def onActionChanged(action)
 
       if is_action_pick? || is_action_paint_clean?
 
@@ -658,9 +658,7 @@ module Ladb::OpenCutList
 
       end
 
-      # Simulate mouse move event
-      _handle_mouse_event(:move)
-
+      super
     end
 
     def onKeyDown(key, repeat, flags, view)

@@ -259,13 +259,6 @@ module Ladb::OpenCutList
       _refresh_active_part
     end
 
-    def onActionChange(action)
-
-      # Simulate mouse move event
-      _handle_mouse_event(:move)
-
-    end
-
     # -----
 
     protected
@@ -719,8 +712,10 @@ module Ladb::OpenCutList
         line_manipulator = EdgeManipulator.new(plane_manipulator.longest_outer_edge, plane_manipulator.transformation)
       end
 
-      z_axis = plane_manipulator.normal.transform(instance_info.transformation.inverse)
-      x_axis = line_manipulator.direction.transform(instance_info.transformation.inverse)
+      ti = instance_info.transformation.inverse
+
+      z_axis = plane_manipulator.normal.transform(ti)
+      x_axis = line_manipulator.direction.transform(ti)
       y_axis = z_axis.cross(x_axis)
 
       [ ORIGIN, x_axis, y_axis, z_axis, plane_manipulator, line_manipulator ]

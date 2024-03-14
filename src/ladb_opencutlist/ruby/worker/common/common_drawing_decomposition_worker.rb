@@ -38,8 +38,8 @@ module Ladb::OpenCutList
       @input_local_y_axis = settings.fetch('input_local_y_axis', Y_AXIS)
       @input_local_z_axis = settings.fetch('input_local_z_axis', Z_AXIS)
 
-      @input_face_path = settings.fetch('input_face_path', nil)
-      @input_edge_path = settings.fetch('input_edge_path', nil)
+      @input_plane_manipulator = settings.fetch('input_plane_manipulator', nil)
+      @input_line_manipulator = settings.fetch('input_line_manipulator', nil)
 
       @origin_position = settings.fetch('origin_position', ORIGIN_POSITION_DEFAULT)
 
@@ -98,37 +98,31 @@ module Ladb::OpenCutList
       # STEP 1 : Determine output axes
 
       origin = ORIGIN.transform(transformation)
-      if @input_face_path
+      if @input_plane_manipulator
 
-        input_face = @input_face_path.last
-        input_face_transformation = PathUtils::get_transformation(@input_face_path)
-        input_edge = @input_edge_path.nil? ? nil : @input_edge_path.last
-        input_edge_transformation = input_edge.nil? ? nil : PathUtils::get_transformation(@input_edge_path)
+        drawing_def.picked_plane_manipulator = @input_plane_manipulator
+        drawing_def.picked_line_manipulator = @input_line_manipulator
 
-        drawing_def.input_face_manipulator = FaceManipulator.new(input_face, input_face_transformation)
-        drawing_def.input_edge_manipulator = input_edge.nil? ? nil : EdgeManipulator.new(input_edge, input_edge_transformation)
+        if @input_line_manipulator
 
-        if input_edge
-
-          x_axis, y_axis, z_axis, drawing_def.input_edge_manipulator = _get_input_axes(drawing_def.input_face_manipulator, drawing_def.input_edge_manipulator)
+          x_axis, y_axis, z_axis, drawing_def.picked_line_manipulator = _get_input_axes(drawing_def.picked_plane_manipulator, drawing_def.picked_line_manipulator)
 
         else
 
-          input_inner_transformation = PathUtils::get_transformation(@input_face_path - @path, IDENTITY)
-          input_inner_face_manipulator = FaceManipulator.new(input_face, input_inner_transformation)
+          input_inner_plane_manipulator = PlaneManipulator.new(@input_plane_manipulator.plane, @input_plane_manipulator.transformation * transformation.inverse)
 
-          if input_inner_face_manipulator.normal.parallel?(@input_local_z_axis) || input_inner_face_manipulator.normal.parallel?(@input_local_y_axis)
-            z_axis = drawing_def.input_face_manipulator.normal
+          if input_inner_plane_manipulator.normal.parallel?(@input_local_z_axis) || input_inner_plane_manipulator.normal.parallel?(@input_local_y_axis)
+            z_axis = drawing_def.picked_plane_manipulator.normal
             x_axis = @input_local_x_axis.transform(transformation)
             x_axis.reverse! if TransformationUtils.flipped?(transformation)
             y_axis = z_axis * x_axis
-          elsif input_inner_face_manipulator.normal.parallel?(@input_local_x_axis)
-            z_axis = drawing_def.input_face_manipulator.normal
+          elsif input_inner_plane_manipulator.normal.parallel?(@input_local_x_axis)
+            z_axis = drawing_def.picked_plane_manipulator.normal
             x_axis = @input_local_y_axis.transform(transformation)
             x_axis.reverse! if TransformationUtils.flipped?(transformation)
             y_axis = z_axis * x_axis
           else
-            x_axis, y_axis, z_axis, drawing_def.input_edge_manipulator = _get_input_axes(drawing_def.input_face_manipulator, nil)
+            x_axis, y_axis, z_axis, drawing_def.picked_line_manipulator = _get_input_axes(drawing_def.picked_plane_manipulator, nil)
           end
 
         end
@@ -153,8 +147,8 @@ module Ladb::OpenCutList
       ttai = tai * transformation
 
       drawing_def.transformation = ta
-      drawing_def.input_face_manipulator.transformation = tai * drawing_def.input_face_manipulator.transformation unless drawing_def.input_face_manipulator.nil?
-      drawing_def.input_edge_manipulator.transformation = tai * drawing_def.input_edge_manipulator.transformation unless drawing_def.input_edge_manipulator.nil?
+      drawing_def.picked_plane_manipulator.transformation = tai * drawing_def.picked_plane_manipulator.transformation unless drawing_def.picked_plane_manipulator.nil?
+      drawing_def.picked_line_manipulator.transformation = tai * drawing_def.picked_line_manipulator.transformation unless drawing_def.picked_line_manipulator.nil?
 
       # STEP 2 : Populate faces and edges manipulators
 
@@ -162,23 +156,23 @@ module Ladb::OpenCutList
       unless @ignore_faces
 
         validator = nil
-        if drawing_def.input_face_manipulator
+        if drawing_def.picked_plane_manipulator
           case @face_validator
           when FACE_VALIDATOR_ONE
             validator = lambda { |face_manipulator|
-              face_manipulator == drawing_def.input_face_manipulator
+              face_manipulator == drawing_def.picked_plane_manipulator
             }
           when FACE_VALIDATOR_COPLANAR
             validator = lambda { |face_manipulator|
-              face_manipulator.coplanar?(drawing_def.input_face_manipulator)
+              face_manipulator.coplanar?(drawing_def.picked_plane_manipulator)
             }
           when FACE_VALIDATOR_PARALLEL
             validator = lambda { |face_manipulator|
-              face_manipulator.parallel?(drawing_def.input_face_manipulator)
+              face_manipulator.parallel?(drawing_def.picked_plane_manipulator)
             }
           when FACE_VALIDATOR_EXPOSED
             validator = lambda { |face_manipulator|
-              !face_manipulator.perpendicular?(drawing_def.input_face_manipulator) && drawing_def.input_face_manipulator.angle_between(face_manipulator) < Math::PI / 2.0
+              !face_manipulator.perpendicular?(drawing_def.picked_plane_manipulator) && drawing_def.picked_plane_manipulator.angle_between(face_manipulator) < Math::PI / 2.0
             }
           end
         end
@@ -195,8 +189,8 @@ module Ladb::OpenCutList
         case @edge_validator
         when EDGE_VALIDATOR_COPLANAR
           validator = lambda { |edge_manipulator|
-            return false if drawing_def.input_face_manipulator.nil?
-            edge_manipulator.direction.perpendicular?(drawing_def.input_face_manipulator.normal) && edge_manipulator.position.on_plane?(drawing_def.input_face_manipulator.plane)
+            return false if drawing_def.picked_plane_manipulator.nil?
+            edge_manipulator.direction.perpendicular?(drawing_def.picked_plane_manipulator.normal) && edge_manipulator.position.on_plane?(drawing_def.picked_plane_manipulator.plane)
           }
         when EDGE_VALIDATOR_STRAY
           validator = lambda { |edge_manipulator|
@@ -204,9 +198,9 @@ module Ladb::OpenCutList
           }
         when EDGE_VALIDATOR_STRAY_COPLANAR
           validator = lambda { |edge_manipulator|
-            return false if drawing_def.input_face_manipulator.nil?
+            return false if drawing_def.picked_plane_manipulator.nil?
             if edge_manipulator.edge.faces.empty?
-              edge_manipulator.direction.perpendicular?(drawing_def.input_face_manipulator.normal) && edge_manipulator.position.on_plane?(drawing_def.input_face_manipulator.plane)
+              edge_manipulator.direction.perpendicular?(drawing_def.picked_plane_manipulator.normal) && edge_manipulator.position.on_plane?(drawing_def.picked_plane_manipulator.plane)
             else
               false
             end
@@ -256,18 +250,18 @@ module Ladb::OpenCutList
 
     private
 
-    def _get_input_axes(input_face_manipulator, input_edge_manipulator = nil)
+    def _get_input_axes(picked_plane_manipulator, picked_line_manipulator = nil)
 
-      if input_edge_manipulator.nil? || !input_face_manipulator.normal.perpendicular?(input_edge_manipulator.direction)
-        input_edge_manipulator = EdgeManipulator.new(input_face_manipulator.longest_outer_edge, input_face_manipulator.transformation)
+      if picked_line_manipulator.nil? || !picked_plane_manipulator.normal.perpendicular?(picked_line_manipulator.direction)
+        picked_line_manipulator = EdgeManipulator.new(picked_plane_manipulator.longest_outer_edge, picked_plane_manipulator.transformation)
       end
 
-      z_axis = input_face_manipulator.normal
-      x_axis = input_edge_manipulator.direction
-      x_axis.reverse! if input_edge_manipulator.reversed_in?(input_face_manipulator.face)
+      z_axis = picked_plane_manipulator.normal
+      x_axis = picked_line_manipulator.direction
+      x_axis.reverse! if picked_line_manipulator.respond_to?(:reversed_in?) && picked_line_manipulator.reversed_in?(picked_plane_manipulator.face)
       y_axis = z_axis.cross(x_axis).normalize
 
-      [ x_axis, y_axis, z_axis, input_edge_manipulator ]
+      [ x_axis, y_axis, z_axis, picked_line_manipulator ]
     end
 
     def _populate_face_manipulators(drawing_def, entities, transformation = IDENTITY, recursive = true, &validator)

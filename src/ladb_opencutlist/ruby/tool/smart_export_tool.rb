@@ -156,10 +156,8 @@ module Ladb::OpenCutList
       case action
       when ACTION_EXPORT_PART_3D
         return SmartPicker.new(self)
-      when ACTION_EXPORT_PART_2D, ACTION_EXPORT_FACE
+      when ACTION_EXPORT_PART_2D, ACTION_EXPORT_FACE, ACTION_EXPORT_PATHS
         return SmartPicker.new(self, pick_edges: true, pick_clines: true, pick_axes: true)
-      when ACTION_EXPORT_PATHS
-        return SmartPicker.new(self, pick_edges: true)
       end
 
       super
@@ -245,13 +243,6 @@ module Ladb::OpenCutList
 
       # Clear current selection
       Sketchup.active_model.selection.clear if Sketchup.active_model
-
-    end
-
-    def onActionChange(action)
-
-      # Simulate mouse move event
-      _handle_mouse_event(:move)
 
     end
 
@@ -360,8 +351,8 @@ module Ladb::OpenCutList
             'input_local_x_axis' => local_x_axis,
             'input_local_y_axis' => local_y_axis,
             'input_local_z_axis' => local_z_axis,
-            'input_face_path' => @picker.picked_face_path,
-            'input_edge_path' => @picker.picked_edge_path,
+            'input_plane_manipulator' => @picker.picked_plane_manipulator,
+            'input_line_manipulator' => @picker.picked_line_manipulator,
             'face_validator' => fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACES, ACTION_OPTION_FACES_ONE) ? CommonDrawingDecompositionWorker::FACE_VALIDATOR_ONE : CommonDrawingDecompositionWorker::FACE_VALIDATOR_ALL,
             'ignore_edges' => !fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_INCLUDE_PATHS),
             'edge_validator' => fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACES, ACTION_OPTION_FACES_ONE) ? CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY_COPLANAR : CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY
@@ -455,16 +446,27 @@ module Ladb::OpenCutList
               box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
               preview.append(box_helper)
 
-              if @active_drawing_def.input_edge_manipulator
+              if @active_drawing_def.picked_line_manipulator.is_a?(EdgeManipulator)
 
                 # Highlight input edge
                 segments = Kuix::Segments.new
                 segments.transformation = projection_def.transformation.inverse
-                segments.add_segments(@active_drawing_def.input_edge_manipulator.segment)
+                segments.add_segments(@active_drawing_def.picked_line_manipulator.segment)
                 segments.color = COLOR_ACTION
                 segments.line_width = 3
                 segments.on_top = true
                 preview.append(segments)
+
+              elsif @active_drawing_def.picked_line_manipulator.is_a?(LineManipulator)
+
+                # Highlight input line
+                line = Kuix::Line.new
+                line.transformation = projection_def.transformation.inverse
+                line.position = @active_drawing_def.picked_line_manipulator.position
+                line.direction = @active_drawing_def.picked_line_manipulator.direction
+                line.color = COLOR_ACTION
+                line.line_width = 2
+                preview.append(line)
 
               end
 
@@ -494,8 +496,8 @@ module Ladb::OpenCutList
       if face
 
         @active_drawing_def = CommonDrawingDecompositionWorker.new(@picker.picked_face_path, {
-          'input_face_path' => @picker.picked_face_path,
-          'input_edge_path' => @picker.picked_edge_path,
+          'input_plane_manipulator' => @picker.picked_plane_manipulator,
+          'input_line_manipulator' => @picker.picked_line_manipulator,
           'ignore_edges' => true
         }).run
         if @active_drawing_def.is_a?(DrawingDef)
@@ -567,16 +569,27 @@ module Ladb::OpenCutList
             box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
             preview.append(box_helper)
 
-            if @active_drawing_def.input_edge_manipulator
+            if @active_drawing_def.picked_line_manipulator.is_a?(EdgeManipulator)
 
               # Highlight input edge
               segments = Kuix::Segments.new
               segments.transformation = projection_def.transformation.inverse
-              segments.add_segments(@active_drawing_def.input_edge_manipulator.segment)
+              segments.add_segments(@active_drawing_def.picked_line_manipulator.segment)
               segments.color = COLOR_ACTION
               segments.line_width = 3
               segments.on_top = true
               preview.append(segments)
+
+            elsif @active_drawing_def.picked_line_manipulator.is_a?(LineManipulator)
+
+              # Highlight input line
+              line = Kuix::Line.new
+              line.transformation = projection_def.transformation.inverse
+              line.position = @active_drawing_def.picked_line_manipulator.position
+              line.direction = @active_drawing_def.picked_line_manipulator.direction
+              line.color = COLOR_ACTION
+              line.line_width = 2
+              preview.append(line)
 
             end
 
@@ -605,8 +618,8 @@ module Ladb::OpenCutList
 
         @active_drawing_def = CommonDrawingDecompositionWorker.new(context_path, {
           'ignore_faces' => true,
-          'input_face_path' => @picker.picked_face_path,
-          'input_edge_path' => @picker.picked_edge_path,
+          'input_plane_manipulator' => @picker.picked_plane_manipulator,
+          'input_line_manipulator' => @picker.picked_line_manipulator,
           'edge_validator' => CommonDrawingDecompositionWorker::EDGE_VALIDATOR_COPLANAR,
           'edge_recursive' => false
         }).run
@@ -688,16 +701,27 @@ module Ladb::OpenCutList
             box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
             preview.append(box_helper)
 
-            if @active_drawing_def.input_edge_manipulator
+            if @active_drawing_def.picked_line_manipulator.is_a?(EdgeManipulator)
 
               # Highlight input edge
               segments = Kuix::Segments.new
               segments.transformation = projection_def.transformation.inverse
-              segments.add_segments(@active_drawing_def.input_edge_manipulator.segment)
+              segments.add_segments(@active_drawing_def.picked_line_manipulator.segment)
               segments.color = COLOR_ACTION
               segments.line_width = 3
               segments.on_top = true
               preview.append(segments)
+
+            elsif @active_drawing_def.picked_line_manipulator.is_a?(LineManipulator)
+
+              # Highlight input line
+              line = Kuix::Line.new
+              line.transformation = projection_def.transformation.inverse
+              line.position = @active_drawing_def.picked_line_manipulator.position
+              line.direction = @active_drawing_def.picked_line_manipulator.direction
+              line.color = COLOR_ACTION
+              line.line_width = 2
+              preview.append(line)
 
             end
 

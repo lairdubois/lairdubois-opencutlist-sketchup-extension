@@ -797,10 +797,15 @@ module Ladb::OpenCutList
       pop_to_root_cursor
 
       # Update picker
+      previous_picker = @picker
       @picker = get_action_picker(action)
+      unless @picker.nil? || previous_picker.nil?
+        @picker.pick_position.x = previous_picker.pick_position.x
+        @picker.pick_position.y = previous_picker.pick_position.y
+      end
 
       # Fire event
-      onActionChange(action) if self.respond_to?(:onActionChange)
+      onActionChanged(action)
 
     end
 
@@ -1074,6 +1079,10 @@ module Ladb::OpenCutList
       end
     end
 
+    def onActionChanged(action)
+      @picker.do_pick
+    end
+
     def onPickerChanged(picker)
       # Implement in subclasses
     end
@@ -1099,7 +1108,7 @@ module Ladb::OpenCutList
     end
 
     def _refresh_active_face(highlighted = false)
-      _set_active_face(@input_face_path, @input_face, highlighted)
+      _set_active_face(@active_face_path, @active_face, highlighted)
     end
 
     def _reset_active_face
@@ -1334,11 +1343,11 @@ module Ladb::OpenCutList
     def onMouseMove(flags, x, y, view)
       @pick_position.x = x
       @pick_position.y = y
-      _do_pick
+      do_pick
     end
 
     def onKeyUp(key, repeat, flags, view)
-      _do_pick if key == VK_SHIFT
+      do_pick if key == VK_SHIFT
     end
 
     # -- UI --
@@ -1347,9 +1356,9 @@ module Ladb::OpenCutList
       @pick_ip.draw(view) if @pick_ip && @pick_ip.valid?
     end
 
-    protected
+    # -- Pick --
 
-    def _do_pick
+    def do_pick
 
       context_locked = @smart_tool.is_key_down?(VK_SHIFT)
 
