@@ -716,6 +716,7 @@ module Ladb::OpenCutList
 
       z_axis = plane_manipulator.normal.transform(ti)
       x_axis = line_manipulator.direction.transform(ti)
+      x_axis.reverse! if line_manipulator.respond_to?(:reversed_in?) && plane_manipulator.respond_to?(:face) && line_manipulator.reversed_in?(plane_manipulator.face)
       y_axis = z_axis.cross(x_axis)
 
       [ ORIGIN, x_axis, y_axis, z_axis, plane_manipulator, line_manipulator ]

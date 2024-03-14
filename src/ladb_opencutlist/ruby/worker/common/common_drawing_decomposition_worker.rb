@@ -258,7 +258,7 @@ module Ladb::OpenCutList
 
       z_axis = picked_plane_manipulator.normal
       x_axis = picked_line_manipulator.direction
-      x_axis.reverse! if picked_line_manipulator.respond_to?(:reversed_in?) && picked_line_manipulator.reversed_in?(picked_plane_manipulator.face)
+      x_axis.reverse! if picked_line_manipulator.respond_to?(:reversed_in?) && picked_plane_manipulator.respond_to?(:face) && picked_line_manipulator.reversed_in?(picked_plane_manipulator.face)
       y_axis = z_axis.cross(x_axis).normalize
 
       [ x_axis, y_axis, z_axis, picked_line_manipulator ]
