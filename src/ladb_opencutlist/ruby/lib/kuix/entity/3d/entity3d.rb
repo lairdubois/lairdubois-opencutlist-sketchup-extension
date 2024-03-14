@@ -10,7 +10,7 @@ module Ladb::OpenCutList::Kuix
 
       @bounds = Bounds3d.new
 
-      @transformation = Geom::Transformation.new
+      @transformation = IDENTITY
 
     end
 

@@ -157,7 +157,7 @@ module Ladb::OpenCutList
       when ACTION_EXPORT_PART_3D
         return SmartPicker.new(self)
       when ACTION_EXPORT_PART_2D, ACTION_EXPORT_FACE
-        return SmartPicker.new(self, pick_edges: true)
+        return SmartPicker.new(self, pick_edges: true, pick_clines: true, pick_axes: true)
       when ACTION_EXPORT_PATHS
         return SmartPicker.new(self, pick_edges: true)
       end
@@ -317,11 +317,11 @@ module Ladb::OpenCutList
             preview.transformation = @active_drawing_def.transformation
             @space.append(preview)
 
-            @active_drawing_def.face_manipulators.each do |face_info|
+            @active_drawing_def.face_manipulators.each do |face_manipulator|
 
               # Highlight face
               mesh = Kuix::Mesh.new
-              mesh.add_triangles(FaceManipulator.new(face_info.face, face_info.transformation).triangles)
+              mesh.add_triangles(face_manipulator.triangles)
               mesh.background_color = highlighted ? COLOR_MESH_HIGHLIGHTED : COLOR_MESH
               preview.append(mesh)
 

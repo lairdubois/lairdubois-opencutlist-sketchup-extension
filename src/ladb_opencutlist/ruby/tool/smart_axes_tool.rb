@@ -307,14 +307,18 @@ module Ladb::OpenCutList
         show_axes = true
         if is_action_adapt_axes? && part.group.material_type != MaterialAttributes::TYPE_HARDWARE
 
-          origin, x_axis, y_axis, z_axis, face_manipulator, edge_manipulator = _get_input_axes(instance_info)
+          origin, x_axis, y_axis, z_axis, plane_manipulator, line_manipulator = _get_input_axes(instance_info)
 
-          # Highlight input face
-          mesh = Kuix::Mesh.new
-          mesh.transformation = instance_info.transformation.inverse
-          mesh.add_triangles(face_manipulator.triangles)
-          mesh.background_color = COLOR_ACTION_FILL
-          part_helper.append(mesh)
+          if plane_manipulator.is_a?(FaceManipulator)
+
+            # Highlight picked face
+            mesh = Kuix::Mesh.new
+            mesh.transformation = instance_info.transformation.inverse
+            mesh.add_triangles(plane_manipulator.triangles)
+            mesh.background_color = COLOR_ACTION_FILL
+            part_helper.append(mesh)
+
+          end
 
           t = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
           if (t * part.def.size.oriented_transformation).identity?
@@ -359,14 +363,30 @@ module Ladb::OpenCutList
 
           end
 
-          # Highlight input edge
-          segments = Kuix::Segments.new
-          segments.transformation = instance_info.transformation.inverse
-          segments.add_segments(edge_manipulator.segment)
-          segments.color = COLOR_ACTION
-          segments.line_width = 4
-          segments.on_top = true
-          part_helper.append(segments)
+          if line_manipulator.is_a?(EdgeManipulator)
+
+            # Highlight picked edge
+            segments = Kuix::Segments.new
+            segments.transformation = instance_info.transformation.inverse
+            segments.add_segments(line_manipulator.segment)
+            segments.color = COLOR_ACTION
+            segments.line_width = 4
+            segments.on_top = true
+            part_helper.append(segments)
+
+          elsif line_manipulator.is_a?(LineManipulator)
+
+            # Highlight picked line
+            line = Kuix::Line.new
+            line.transformation = instance_info.transformation.inverse
+            line.position = line_manipulator.position
+            line.direction = line_manipulator.direction
+            line.color = COLOR_ACTION
+            line.line_width = 2
+            part_helper.append(line)
+
+          end
+
 
         end
 
@@ -521,7 +541,7 @@ module Ladb::OpenCutList
           return
         end
 
-        if !is_action_flip?
+        unless is_action_flip?
           definition = model.definitions[part.def.definition_id]
           if definition && definition.count_used_instances > 1
             show_message("⚠ #{PLUGIN.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
@@ -688,22 +708,22 @@ module Ladb::OpenCutList
 
     def _get_input_axes(instance_info)
 
-      face_manipulator = @picker.picked_face_manipulator
-      if face_manipulator.nil?
+      plane_manipulator = @picker.picked_plane_manipulator
+      if plane_manipulator.nil?
         face, inner_path = _find_largest_face(instance_info.entity, instance_info.transformation)
-        face_manipulator = FaceManipulator.new(face, PathUtils.get_transformation(instance_info.path + inner_path, IDENTITY))
+        plane_manipulator = FaceManipulator.new(face, PathUtils.get_transformation(instance_info.path + inner_path, IDENTITY))
       end
 
-      edge_manipulator = @picker.picked_edge_manipulator
-      if edge_manipulator.nil? || !edge_manipulator.direction.perpendicular?(face_manipulator.normal)
-        edge_manipulator = EdgeManipulator.new(face_manipulator.longest_outer_edge, face_manipulator.transformation)
+      line_manipulator = @picker.picked_line_manipulator
+      if line_manipulator.nil? || !line_manipulator.direction.perpendicular?(plane_manipulator.normal)
+        line_manipulator = EdgeManipulator.new(plane_manipulator.longest_outer_edge, plane_manipulator.transformation)
       end
 
-      z_axis = face_manipulator.normal.transform(instance_info.transformation.inverse)
-      x_axis = edge_manipulator.direction.transform(instance_info.transformation.inverse)
+      z_axis = plane_manipulator.normal.transform(instance_info.transformation.inverse)
+      x_axis = line_manipulator.direction.transform(instance_info.transformation.inverse)
       y_axis = z_axis.cross(x_axis)
 
-      [ ORIGIN, x_axis, y_axis, z_axis, face_manipulator, edge_manipulator ]
+      [ ORIGIN, x_axis, y_axis, z_axis, plane_manipulator, line_manipulator ]
     end
 
     def _get_input_point(instance_info)

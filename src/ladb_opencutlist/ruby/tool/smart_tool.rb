@@ -1274,11 +1274,11 @@ module Ladb::OpenCutList
   class SmartPicker
 
     attr_reader :pick_position
-    attr_reader :picked_face, :picked_face_path, :picked_face_transformation
-    attr_reader :picked_point, :picked_point_path, :picked_point_transformation
-    attr_reader :picked_edge, :picked_edge_path, :picked_edge_transformation
-    attr_reader :picked_cline, :picked_cline_path, :picked_cline_transformation
-    attr_reader :picked_axes, :picked_axes_path, :picked_axes_transformation
+    attr_reader :picked_face, :picked_face_path
+    attr_reader :picked_point, :picked_point_path
+    attr_reader :picked_edge, :picked_edge_path
+    attr_reader :picked_cline, :picked_cline_path
+    attr_reader :picked_axes, :picked_axes_line, :picked_axes_path
 
     def initialize(smart_tool, pick_context_by_face: true, pick_context_by_edge: false, pick_point: false, pick_edges: false, pick_clines: false, pick_axes: false)
       @smart_tool = smart_tool
@@ -1304,6 +1304,7 @@ module Ladb::OpenCutList
       @picked_cline = nil
       @picked_cline_path = nil
       @picked_axes = nil
+      @picked_axes_line = nil
       @picked_axes_path = nil
 
     end
@@ -1316,14 +1317,16 @@ module Ladb::OpenCutList
       nil
     end
 
-    def picked_face_manipulator
-      return nil if @picked_face.nil? || @picked_face_path.nil?
-      FaceManipulator.new(@picked_face, Sketchup::InstancePath.new(@picked_face_path).transformation)
+    def picked_plane_manipulator
+      return FaceManipulator.new(@picked_face, Sketchup::InstancePath.new(@picked_face_path).transformation) unless @picked_face.nil? || @picked_face_path.nil?
+      nil
     end
 
-    def picked_edge_manipulator
-      return nil if @picked_edge.nil? || @picked_edge_path.nil?
-      EdgeManipulator.new(@picked_edge, Sketchup::InstancePath.new(@picked_edge_path).transformation)
+    def picked_line_manipulator
+      return EdgeManipulator.new(@picked_edge, Sketchup::InstancePath.new(@picked_edge_path).transformation) unless @picked_edge.nil? || @picked_edge_path.nil?
+      return LineManipulator.new([ @picked_cline.position, @picked_cline.direction ], Sketchup::InstancePath.new(@picked_cline_path).transformation) unless @picked_cline.nil? || @picked_cline_path.nil?
+      return LineManipulator.new(@picked_axes_line, Sketchup::InstancePath.new(@picked_axes_path).transformation) unless @picked_axes_line.nil? || @picked_axes_path.nil?
+      nil
     end
 
     # -- Events --
@@ -1359,6 +1362,7 @@ module Ladb::OpenCutList
       picked_cline = nil
       picked_cline_path = nil
       picked_axes = nil
+      picked_axes_line = nil
       picked_axes_path = nil
 
       # First stage : pick "context" (aperture = 0)
@@ -1417,8 +1421,37 @@ module Ladb::OpenCutList
             end
 
             if @pick_axes && picked_axes_path.nil? && @pick_helper.leaf_at(index).is_a?(Sketchup::Axes)
+
               picked_axes = @pick_helper.leaf_at(index)
               picked_axes_path = @pick_helper.path_at(index)
+              picked_axes_transformation = @pick_helper.transformation_at(index)
+
+              p0 = @view.screen_coords(picked_axes.origin.transform(picked_axes_transformation))
+              p0.z = 0
+              px = @view.screen_coords((picked_axes.origin + picked_axes.xaxis).transform(picked_axes_transformation))
+              px.z = 0
+              py = @view.screen_coords((picked_axes.origin + picked_axes.yaxis).transform(picked_axes_transformation))
+              py.z = 0
+              pz = @view.screen_coords((picked_axes.origin + picked_axes.zaxis).transform(picked_axes_transformation))
+              pz.z = 0
+
+              xline = [ p0, px - p0 ]
+              yline = [ p0, py - p0 ]
+              zline = [ p0, pz - p0 ]
+
+              nearest_line = [ xline, yline, zline ].min { |line_a, line_b| @pick_position.distance_to_line(line_a) <=> @pick_position.distance_to_line(line_b) }
+
+              if nearest_line == xline
+                picked_axes_line = [ picked_axes.origin, picked_axes.xaxis ]
+              elsif nearest_line == yline
+                picked_axes_line = [ picked_axes.origin, picked_axes.yaxis ]
+              elsif nearest_line == zline
+                picked_axes_line = [ picked_axes.origin, picked_axes.zaxis ]
+              else
+                picked_axes = nil
+                picked_axes_path = nil
+              end
+
               break
             end
 
@@ -1432,7 +1465,7 @@ module Ladb::OpenCutList
 
       end
 
-      changed = @picked_face_path != picked_face_path || @picked_point != picked_point || @picked_edge_path != picked_edge_path || @picked_cline_path != picked_cline_path || @picked_axes_path != picked_axes_path
+      changed = @picked_face_path != picked_face_path || @picked_point != picked_point || @picked_edge_path != picked_edge_path || @picked_cline_path != picked_cline_path || @picked_axes_path != picked_axes_path || @picked_axes_line != picked_axes_line
 
       @picked_face = picked_face
       @picked_face_path = picked_face_path
@@ -1443,6 +1476,7 @@ module Ladb::OpenCutList
       @picked_cline = picked_cline
       @picked_cline_path = picked_cline_path
       @picked_axes = picked_axes
+      @picked_axes_line = picked_axes_line
       @picked_axes_path = picked_axes_path
 
       # Fire change event
