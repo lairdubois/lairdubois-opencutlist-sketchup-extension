@@ -2,9 +2,6 @@ module Ladb::OpenCutList
 
   require_relative 'smart_tool'
   require_relative '../lib/geometrix/geometrix'
-  require_relative '../helper/layer_visibility_helper'
-  require_relative '../helper/edge_segments_helper'
-  require_relative '../helper/entities_helper'
   require_relative '../manipulator/face_manipulator'
   require_relative '../manipulator/edge_manipulator'
   require_relative '../manipulator/loop_manipulator'
@@ -15,10 +12,6 @@ module Ladb::OpenCutList
   require_relative '../observer/plugin_observer'
 
   class SmartExportTool < SmartTool
-
-    include LayerVisibilityHelper
-    include EdgeSegmentsHelper
-    include EntitiesHelper
 
     ACTION_EXPORT_PART_3D = 0
     ACTION_EXPORT_PART_2D = 1

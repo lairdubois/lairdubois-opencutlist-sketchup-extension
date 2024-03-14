@@ -522,11 +522,11 @@ module Ladb::OpenCutList
       @tooltip_box.visible = true
     end
 
-    def move_tooltip(mouse_x, mouse_y)
+    def move_tooltip(x, y)
       unless @tooltip_box.nil?
         @tooltip_box.visible = true
-        @tooltip_box.layout_data.x = mouse_x + 10 * UI.scale_factor
-        @tooltip_box.layout_data.y = mouse_y + (32 + 10) * UI.scale_factor
+        @tooltip_box.layout_data.x = x + 10 * UI.scale_factor
+        @tooltip_box.layout_data.y = y + (32 + 10) * UI.scale_factor
         @tooltip_box.invalidate
       end
     end
@@ -913,6 +913,9 @@ module Ladb::OpenCutList
       # Set startup cursor
       set_root_action(get_startup_action)
 
+      # Observe view events
+      view.add_observer(self)
+
       # Observe rendering options events
       view.model.rendering_options.add_observer(self)
 
@@ -938,6 +941,9 @@ module Ladb::OpenCutList
 
     def onDeactivate(view)
       super
+
+      # Stop observing view events
+      view.remove_observer(self)
 
       # Stop observing rendering options events
       view.model.rendering_options.remove_observer(self)
@@ -1056,6 +1062,10 @@ module Ladb::OpenCutList
         end
         return true
       end
+    end
+
+    def onViewChanged(view)
+      # TODO
     end
 
     def onRenderingOptionsChanged(rendering_options, type)
@@ -1306,6 +1316,16 @@ module Ladb::OpenCutList
       nil
     end
 
+    def picked_face_manipulator
+      return nil if @picked_face.nil? || @picked_face_path.nil?
+      FaceManipulator.new(@picked_face, Sketchup::InstancePath.new(@picked_face_path).transformation)
+    end
+
+    def picked_edge_manipulator
+      return nil if @picked_edge.nil? || @picked_edge_path.nil?
+      EdgeManipulator.new(@picked_edge, Sketchup::InstancePath.new(@picked_edge_path).transformation)
+    end
+
     # -- Events --
 
     def onMouseMove(flags, x, y, view)
@@ -1379,9 +1399,9 @@ module Ladb::OpenCutList
 
         if @pick_edges || @picked_cline || @pick_axes
 
-          # pick "lines" (aperture = 80)
+          # pick "lines" (aperture = 50)
 
-          @pick_helper.do_pick(@pick_position.x, @pick_position.y, 80)
+          @pick_helper.do_pick(@pick_position.x, @pick_position.y, 50)
           @pick_helper.count.times do |index|
 
             if @pick_edges && picked_edge_path.nil? && @pick_helper.leaf_at(index).is_a?(Sketchup::Edge)

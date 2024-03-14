@@ -4,7 +4,6 @@ module Ladb::OpenCutList
   require_relative '../lib/kuix/kuix'
   require_relative '../helper/layer_visibility_helper'
   require_relative '../helper/face_triangles_helper'
-  require_relative '../helper/edge_segments_helper'
   require_relative '../helper/bounding_box_helper'
   require_relative '../helper/entities_helper'
   require_relative '../model/attributes/definition_attributes'
@@ -16,7 +15,6 @@ module Ladb::OpenCutList
 
     include LayerVisibilityHelper
     include FaceTrianglesHelper
-    include EdgeSegmentsHelper
     include BoundingBoxHelper
     include EntitiesHelper
     include CutlistObserverHelper
@@ -262,7 +260,10 @@ module Ladb::OpenCutList
     end
 
     def onActionChange(action)
-      _refresh_active_part
+
+      # Simulate mouse move event
+      _handle_mouse_event(:move)
+
     end
 
     # -----
@@ -306,11 +307,12 @@ module Ladb::OpenCutList
         show_axes = true
         if is_action_adapt_axes? && part.group.material_type != MaterialAttributes::TYPE_HARDWARE
 
-          origin, x_axis, y_axis, z_axis, input_face, input_edge = _get_input_axes(instance_info)
+          origin, x_axis, y_axis, z_axis, face_manipulator, edge_manipulator = _get_input_axes(instance_info)
 
           # Highlight input face
           mesh = Kuix::Mesh.new
-          mesh.add_triangles(_compute_children_faces_triangles(instance_info.entity.definition.entities, nil,[ input_face ]))
+          mesh.transformation = instance_info.transformation.inverse
+          mesh.add_triangles(face_manipulator.triangles)
           mesh.background_color = COLOR_ACTION_FILL
           part_helper.append(mesh)
 
@@ -359,7 +361,8 @@ module Ladb::OpenCutList
 
           # Highlight input edge
           segments = Kuix::Segments.new
-          segments.add_segments(_compute_children_edge_segments(instance_info.entity.definition.entities, nil,[ input_edge ]))
+          segments.transformation = instance_info.transformation.inverse
+          segments.add_segments(edge_manipulator.segment)
           segments.color = COLOR_ACTION
           segments.line_width = 4
           segments.on_top = true
@@ -685,59 +688,51 @@ module Ladb::OpenCutList
 
     def _get_input_axes(instance_info)
 
-      input_face = @picker.picked_face
-      if input_face.nil?
-        input_face, inner_path = _find_largest_face(instance_info.entity, instance_info.transformation)
-      else
-        inner_path = @picker.picked_face_path - instance_info.path
+      face_manipulator = @picker.picked_face_manipulator
+      if face_manipulator.nil?
+        face, inner_path = _find_largest_face(instance_info.entity, instance_info.transformation)
+        face_manipulator = FaceManipulator.new(face, PathUtils.get_transformation(instance_info.path + inner_path, IDENTITY))
       end
 
-      inner_transformation = PathUtils.get_transformation(inner_path)
-
-      input_edge = @picker.picked_edge
-      if input_edge.nil? || !input_edge.used_by?(input_face)
-        input_edge = _find_longest_outer_edge(input_face, TransformationUtils.multiply(instance_info.transformation, inner_transformation))
+      edge_manipulator = @picker.picked_edge_manipulator
+      if edge_manipulator.nil? || !edge_manipulator.direction.perpendicular?(face_manipulator.normal)
+        edge_manipulator = EdgeManipulator.new(face_manipulator.longest_outer_edge, face_manipulator.transformation)
       end
 
-      z_axis = input_face.normal
-      z_axis = z_axis.transform(inner_transformation).normalize unless inner_transformation.nil?
-
-      x_axis = input_edge.line[1]
-      x_axis = x_axis.transform(inner_transformation).normalize unless inner_transformation.nil?
-      x_axis.reverse! if x_axis.angle_between(instance_info.size.oriented_axis(X_AXIS)) >= Math::PI / 2 # Try to keep part length orientation
-
+      z_axis = face_manipulator.normal.transform(instance_info.transformation.inverse)
+      x_axis = edge_manipulator.direction.transform(instance_info.transformation.inverse)
       y_axis = z_axis.cross(x_axis)
 
-      [ ORIGIN, x_axis, y_axis, z_axis, input_face, input_edge ]
+      [ ORIGIN, x_axis, y_axis, z_axis, face_manipulator, edge_manipulator ]
     end
 
     def _get_input_point(instance_info)
 
       if @picker.picked_point
-        return @picker.picked_point.transform(PathUtils.get_transformation(instance_info.path).inverse)
+        return @picker.picked_point.transform(instance_info.transformation.inverse)
       end
 
-      if @picker.picked_edge
-
-        inner_path = @picker.picked_edge_path - instance_info.path
-        inner_transformation = PathUtils.get_transformation(inner_path)
-
-        mid = (@picker.picked_edge.end.position - @picker.picked_edge.start.position)
-        mid.length = mid.length / 2
-
-        return (@picker.picked_edge.start.position + mid).transform(inner_transformation)
-      end
-
-      if @picker.picked_face
-
-        inner_path = @picker.picked_face_path - instance_info.path
-        inner_transformation = PathUtils.get_transformation(inner_path)
-
-        bounds = Geom::BoundingBox.new
-        bounds.add(@picker.picked_face.vertices.map { |vertex| vertex.position })
-
-        return bounds.center.transform(inner_transformation)
-      end
+      # if @picker.picked_edge
+      #
+      #   inner_path = @picker.picked_edge_path - instance_info.path
+      #   inner_transformation = PathUtils.get_transformation(inner_path)
+      #
+      #   mid = (@picker.picked_edge.end.position - @picker.picked_edge.start.position)
+      #   mid.length = mid.length / 2
+      #
+      #   return (@picker.picked_edge.start.position + mid).transform(inner_transformation)
+      # end
+      #
+      # if @picker.picked_face
+      #
+      #   inner_path = @picker.picked_face_path - instance_info.path
+      #   inner_transformation = PathUtils.get_transformation(inner_path)
+      #
+      #   bounds = Geom::BoundingBox.new
+      #   bounds.add(@picker.picked_face.vertices.map { |vertex| vertex.position })
+      #
+      #   return bounds.center.transform(inner_transformation)
+      # end
 
       nil
     end
