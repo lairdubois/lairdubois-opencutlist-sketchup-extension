@@ -1702,36 +1702,38 @@ tool:
     action_2_status: 1286 - Кликните на деталь, чтобы перевернуть отображение лицевой стороны на тыльную сторону
     action_3: 1287 - Адаптировать оси
     action_3_status: 1288 - Кликните по торцу или ребру детали для адаптации ее осей
-    action_option_group_direction: 1289 - Направление
-    action_option_direction_0: 1290 - Дл
-    action_option_direction_1: 1291 - Шр
-    action_option_direction_2: 1292 - Тл
-    action_option_direction_0_status: 1293 - Развернуть деталь по длине
-    action_option_direction_1_status: 1294 - Развернуть деталь по ширине
-    action_option_direction_2_status: 1295 - Развернуть деталь по толщине
+    action_4: 1289 - Изменить начало координат
+    action_4_status: 1290 - Кликните по выбранной вершине детали, чтобы переместить туда начало координат
+    action_option_group_direction: 1291 - Направление
+    action_option_direction_0: 1292 - Дл
+    action_option_direction_1: 1293 - Шр
+    action_option_direction_2: 1294 - Тл
+    action_option_direction_0_status: 1295 - Развернуть деталь по длине
+    action_option_direction_1_status: 1296 - Развернуть деталь по ширине
+    action_option_direction_2_status: 1297 - Развернуть деталь по толщине
     warning:
-      more_entities: 1296 - {{ count_used }} экземпляры, имеющие одинаковое определение, будут изменены
+      more_entities: 1298 - {{ count_used }} экземпляры, имеющие одинаковое определение, будут изменены
     error:
-      not_part: 1297 - Целевой объект не является частью (компонентом)
-      not_orientable: 1298 - Тип этой детали не позволяет сориентировать ее по осям
+      not_part: 1299 - Целевой объект не является частью (компонентом)
+      not_orientable: 1300 - Тип этой детали не позволяет сориентировать ее по осям
   smart_export:
-    title: 1299 - Экспорт
-    action_0: 1300 - Экспорт 3D-детали
-    action_0_status: 1301 - Кликните на деталь
-    action_1: 1302 - Экспорт 2D-детали
-    action_1_status: 1303 - Кликните на лицевую сторону детали
-    action_2: 1304 - Экспорт облицовки
-    action_2_status: '1305 - Кликните облицовку '
-    action_3: 1306 - Экспорт маршрута
-    action_3_status: 1307 - Кликните на край
-    action_option_group_file_format: 1308 - Формат
-    action_option_group_unit: 1309 - Единицы
-    action_option_group_faces: 1310 - Лицевые
-    action_option_group_options: 1311 - Опции
-    action_option_file_format_dxf_status: 1312 - Экспорт в DFX
-    action_option_file_format_stl_status: 1313 - Экспорт в STL
-    action_option_file_format_obj_status: 1314 - Экспорт в OBJ
-    action_option_file_format_svg_status: 1315 - Экспорт в SVG
+    title: 1301 - Экспорт
+    action_0: 1302 - Экспорт 3D-детали
+    action_0_status: 1303 - Кликните на деталь
+    action_1: 1304 - Экспорт 2D-детали
+    action_1_status: 1305 - Кликните на лицевую сторону детали
+    action_2: 1306 - Экспорт облицовки
+    action_2_status: '1307 - Кликните облицовку '
+    action_3: 1308 - Экспорт маршрута
+    action_3_status: 1309 - Кликните на край
+    action_option_group_file_format: 1310 - Формат
+    action_option_group_unit: 1311 - Единицы
+    action_option_group_faces: 1312 - Лицевые
+    action_option_group_options: 1313 - Опции
+    action_option_file_format_dxf_status: 1314 - Экспорт в DFX
+    action_option_file_format_stl_status: 1315 - Экспорт в STL
+    action_option_file_format_obj_status: 1316 - Экспорт в OBJ
+    action_option_file_format_svg_status: 1317 - Экспорт в SVG
     action_option_unit_0_status: "$t(default.unit_0)"
     action_option_unit_1_status: "$t(default.unit_1)"
     action_option_unit_2_status: "$t(default.unit_2)"
@@ -1741,9 +1743,9 @@ tool:
     action_option_faces_1_status: "$t(tab.cutlist.write.option_faces_1)"
     action_option_options_anchor_status: "$t(tab.cutlist.write.option_anchor_1)"
     action_option_options_smoothing_status: "$t(tab.cutlist.write.option_smoothing_1)"
-    action_option_options_merge_holes_status: 1325 - Определите сквозные отверстия и размеры слияния для каждой полости
-    action_option_options_include_paths_status: 1326 - Экспортировать как контур ребра, не связанные с гранью, содержащиеся в детали
+    action_option_options_merge_holes_status: 1327 - Определите сквозные отверстия и размеры слияния для каждой полости
+    action_option_options_include_paths_status: 1328 - Экспортировать как контур ребра, не связанные с гранью, содержащиеся в детали
     error:
-      not_part: 1327 - Эта грань не является частью детали (компонента)
-      not_flat_face: 1328 - Эта поверхность не является плоской
-      incompatible_active_path: 1329 - Активный путь не позволяет экспортировать эту часть
+      not_part: 1329 - Эта грань не является частью детали (компонента)
+      not_flat_face: 1330 - Эта поверхность не является плоской
+      incompatible_active_path: 1331 - Активный путь не позволяет экспортировать эту часть
