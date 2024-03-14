@@ -30,7 +30,7 @@
                         {% endif %}
                         {{ material.display_name|escape }}
                         {% if material.attributes.description is not empty %}
-                            <div class="ladb-tiny">{{ material.attributes.description|nl2br|truncate(25) }}</div>
+                            <div class="ladb-tiny">{{ material.attributes.description|truncate(25)|nl2br }}</div>
                         {% endif %}
                     </div>
                     {% if material.colorized %}

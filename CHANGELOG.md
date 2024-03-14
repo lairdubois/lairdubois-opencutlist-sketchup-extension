@@ -6,8 +6,13 @@ in 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 * 6.2.0 (WIP)
 
-  * Added Export Paths action on Smart Export Tool
-  * Improved surface detection
+    * Added Export Paths action on Smart Export Tool
+    * Improved surface detection
+
+* 6.1.1 (WIP)
+
+    * Added **Chinese** language
+    * Fixed multiline material description UI bug
 
 * 6.1.0 (20234-03-05)
 

@@ -735,6 +735,7 @@ tab:
       option_part_drawing_type_2: 反视图绘制
       option_part_drawing_type_help: |
         允许您在图表上显示或隐藏零件的实际形状及其加工情况。
+
         *必须启用此选项才能导出形状*
       option_saw_kerf: 锯片厚度
       option_saw_kerf_help: 锯片切割所去除的材料宽度.
@@ -834,7 +835,7 @@ tab:
       export:
         title: 导出布局
         info_0: |
-          此模块允许您将 *layout* 的 **geometry** 导出为 [SVG]（https://wikipedia.org/wiki/Scalable_Vector_Graphics） 或 [DXF]（https://wikipedia.org/wiki/AutoCAD_DXF） 格式的文件列表。
+          此模块允许您将 *layout* 的 **geometry** 导出为 [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) 或 [DXF](https://wikipedia.org/wiki/AutoCAD_DXF) 格式的文件列表。
         option_file_format: $t(tab.cutlist.write.option_file_format)
         option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
         option_dxf_structure: 结构DXF
@@ -1072,7 +1073,7 @@ tab:
     write:
       title: 部件导出
       info_2d: |
-        此模块允许您将零件的 **2D 投影**导出为 [SVG]（https://wikipedia.org/wiki/Scalable_Vector_Graphics） 或 [DXF]（https://wikipedia.org/wiki/AutoCAD_DXF） 格式的文件。
+        此模块允许您将零件的 **2D 投影**导出为 [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) 或 [DXF](https://wikipedia.org/wiki/AutoCAD_DXF) 格式的文件。
       info_3d: |
         此模块允许您将零件的**3D几何图形**导出为[STL]（https://wikipedia.org/wiki/STL_（file_format））或[OBJ]（https://wikipedia.org/wiki/Wavefront_.obj_file）格式的文件。
       option_file_format: 格式
