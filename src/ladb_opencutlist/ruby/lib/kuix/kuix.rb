@@ -53,7 +53,7 @@ module Ladb::OpenCutList
     LINE_STIPPLE_SOLID = ''.freeze
     LINE_STIPPLE_DOTTED = '.'.freeze
     LINE_STIPPLE_SHORT_DASHES = '-'.freeze
-    LINE_STIPPLE_LONG_DASHES = '-'.freeze
+    LINE_STIPPLE_LONG_DASHES = '_'.freeze
     LINE_STIPPLE_DASH_DOT_DASH = '-.-'.freeze
 
     # Point style constants
