@@ -4,9 +4,13 @@ module Ladb::OpenCutList
 
   class MaterialsGetAttributesWorker
 
-    def initialize(material_data)
+    def initialize(
 
-      @name = material_data.fetch('name')
+                   name:
+
+    )
+
+      @name = name
 
     end
 

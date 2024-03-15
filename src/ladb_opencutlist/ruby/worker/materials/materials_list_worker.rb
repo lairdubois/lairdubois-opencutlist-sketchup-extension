@@ -4,9 +4,13 @@ module Ladb::OpenCutList
 
   class MaterialsListWorker
 
-    def initialize(settings)
+    def initialize(
 
-      @material_order_strategy = settings.fetch('material_order_strategy')
+                   material_order_strategy: 'name>type'
+
+    )
+
+      @material_order_strategy = material_order_strategy
 
     end
 

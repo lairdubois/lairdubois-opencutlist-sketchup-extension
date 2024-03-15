@@ -64,12 +64,10 @@
                 rubyCallCommand('core_get_model_preset', { dictionary: 'importer_load_options' }, function (response) {
 
                     var loadOptions = response.preset;
+                    loadOptions.path = path;
+                    loadOptions.filename = filename;
 
-                    var $modal = that.appendModalInside('ladb_importer_modal_load', 'tabs/importer/_modal-load.twig', $.extend(loadOptions, {
-                        path: path,
-                        filename: filename,
-                        lengthUnit: lengthUnit
-                    }));
+                    var $modal = that.appendModalInside('ladb_importer_modal_load', 'tabs/importer/_modal-load.twig', $.extend({ lengthUnit: lengthUnit }, loadOptions));
 
                     // Fetch UI elements
                     var $widgetPreset = $('.ladb-widget-preset', $modal);
@@ -232,10 +230,10 @@
 
             importOptions.remove_all = false;      // This option is not stored to force user to know the option status
 
-            var $modal = that.appendModalInside('ladb_importer_modal_import', 'tabs/importer/_modal-import.twig', $.extend(importOptions, {
+            var $modal = that.appendModalInside('ladb_importer_modal_import', 'tabs/importer/_modal-import.twig', $.extend({
                 importablePartCount: that.importablePartCount,
                 model_is_empty: that.model_is_empty
-            }));
+            }, importOptions));
 
             // Fetch UI elements
             var $widgetPreset = $('.ladb-widget-preset', $modal);

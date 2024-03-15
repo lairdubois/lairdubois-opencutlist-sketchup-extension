@@ -1,13 +1,21 @@
 module Ladb::OpenCutList
 
+  require_relative '../../utils/color_utils'
+
   class MaterialsCreateWorker
 
-    def initialize(material_data)
+    def initialize(
 
-      @name = material_data.fetch('name')
-      @color = Sketchup::Color.new(material_data.fetch('color'))
-      attributes = material_data.fetch('attributes')
-      @type = MaterialAttributes.valid_type(attributes.fetch('type'))
+                   name: ,
+                   color: ,
+                   attributes: {}
+
+    )
+
+      @name = name
+      @color = ColorUtils.color_create(color)
+
+      @type = MaterialAttributes.valid_type(attributes.fetch('type', MaterialAttributes::TYPE_UNKNOWN))
       @description = attributes.fetch('description', '')
       @url = attributes.fetch('url', '')
       @thickness = attributes.fetch('thickness')

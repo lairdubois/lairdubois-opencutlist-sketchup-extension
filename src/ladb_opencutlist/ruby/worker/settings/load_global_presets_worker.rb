@@ -4,9 +4,6 @@ module Ladb::OpenCutList
 
   class LoadGlobalPresetsWorker
 
-    def initialize
-    end
-
     # -----
 
     def run

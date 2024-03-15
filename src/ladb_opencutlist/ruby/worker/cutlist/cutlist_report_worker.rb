@@ -4,15 +4,21 @@ module Ladb::OpenCutList
   require_relative 'cutlist_cuttingdiagram2d_worker'
   require_relative '../../model/report/report_def'
   require_relative '../../model/report/report_entry_def'
+  require_relative '../../utils/hash_utils'
 
   class CutlistReportWorker
 
-    def initialize(settings, cutlist)
+    def initialize(cutlist,
 
-      @hidden_group_ids = settings.fetch('hidden_group_ids')
-      @solid_wood_coefficient = [ 1.0, "#{settings.fetch('solid_wood_coefficient')}".tr(',', '.').to_f ].max
+                   hidden_group_ids: [],
+                   solid_wood_coefficient: 1.0
+
+    )
 
       @cutlist = cutlist
+
+      @hidden_group_ids = hidden_group_ids
+      @solid_wood_coefficient = [ 1.0, "#{solid_wood_coefficient}".tr(',', '.').to_f ].max
 
       @cutlist_groups = @cutlist.groups.select { |group| group.material_type != MaterialAttributes::TYPE_UNKNOWN && !@hidden_group_ids.include?(group.id) }
       @remaining_step = @cutlist_groups.count
@@ -255,18 +261,18 @@ module Ladb::OpenCutList
 
       return _compute_3d(cutlist_group, report_group_def, entry_def_class_name) unless material_attributes.raw_estimated
 
-      settings = PLUGIN.get_model_preset('cutlist_cuttingdiagram1d_options', cutlist_group.id)
-      settings['group_id'] = cutlist_group.id
-      settings['bar_folding'] = false     # Remove unneeded computations
-      settings['hide_part_list'] = true   # Remove unneeded computations
-      settings['part_drawing_type'] = 0   # Remove unneeded computations
+      settings = HashUtils.symbolize_keys(PLUGIN.get_model_preset('cutlist_cuttingdiagram1d_options', cutlist_group.id))
+      settings[:group_id] = cutlist_group.id
+      settings[:bar_folding] = false     # Remove unneeded computations
+      settings[:hide_part_list] = true   # Remove unneeded computations
+      settings[:part_drawing_type] = 0   # Remove unneeded computations
 
       std_sizes = material_attributes.std_lengths.split(';')
-      if settings['std_bar'] == '' || settings['std_sheet'] != '0x0' && !std_sizes.include?(settings['std_bar'])
-        settings['std_bar'] = std_sizes[0] unless std_sizes.empty?
+      if settings[:std_bar] == '' || settings[:std_sheet] != '0x0' && !std_sizes.include?(settings[:std_bar])
+        settings[:std_bar] = std_sizes[0] unless std_sizes.empty?
       end
 
-      worker = CutlistCuttingdiagram1dWorker.new(settings, @cutlist)
+      worker = CutlistCuttingdiagram1dWorker.new(@cutlist, **settings)
       cuttingdiagram1d = worker.run
 
       report_entry_def = Object.const_get(entry_def_class_name).new(cutlist_group)
@@ -348,18 +354,18 @@ module Ladb::OpenCutList
 
       return _compute_3d(cutlist_group, report_group_def, entry_def_class_name) unless material_attributes.raw_estimated
 
-      settings = PLUGIN.get_model_preset('cutlist_cuttingdiagram2d_options', cutlist_group.id)
-      settings['group_id'] = cutlist_group.id
-      settings['sheet_folding'] = false   # Remove unneeded computations
-      settings['hide_part_list'] = true   # Remove unneeded computations
-      settings['part_drawing_type'] = 0   # Remove unneeded computations
+      settings = HashUtils.symbolize_keys(PLUGIN.get_model_preset('cutlist_cuttingdiagram2d_options', cutlist_group.id))
+      settings[:group_id] = cutlist_group.id
+      settings[:sheet_folding] = false   # Remove unneeded computations
+      settings[:hide_part_list] = true   # Remove unneeded computations
+      settings[:part_drawing_type] = 0   # Remove unneeded computations
 
       std_sizes = material_attributes.std_sizes.split(';')
-      if settings['std_sheet'] == '' || settings['std_sheet'] != '0x0' && !std_sizes.include?(settings['std_sheet'])
-        settings['std_sheet'] = std_sizes[0] unless std_sizes.empty?
+      if settings[:std_sheet] == '' || settings[:std_sheet] != '0x0' && !std_sizes.include?(settings[:std_sheet])
+        settings[:std_sheet] = std_sizes[0] unless std_sizes.empty?
       end
 
-      worker = CutlistCuttingdiagram2dWorker.new(settings, @cutlist)
+      worker = CutlistCuttingdiagram2dWorker.new(@cutlist, **settings)
       cuttingdiagram2d = worker.run
 
       report_entry_def = Object.const_get(entry_def_class_name).new(cutlist_group)

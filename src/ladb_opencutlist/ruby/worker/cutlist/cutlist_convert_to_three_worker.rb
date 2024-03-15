@@ -10,9 +10,16 @@ module Ladb::OpenCutList
 
     include LayerVisibilityHelper
 
-    def initialize(parts, all_instances = false, parts_colored = true, pins_formula = '')
+    def initialize(parts,
+
+                   all_instances: false,
+                   parts_colored: true,
+                   pins_formula: ''
+
+    )
 
       @parts = parts
+
       @all_instances = all_instances
       @parts_colored = parts_colored
       @pins_formula = pins_formula

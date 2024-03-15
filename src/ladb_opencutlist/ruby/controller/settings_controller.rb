@@ -158,7 +158,7 @@ module Ladb::OpenCutList
       require_relative '../worker/settings/export_global_presets_worker'
 
       # Setup worker
-      worker = ExportGlobalPresetsWorker.new(settings)
+      worker = ExportGlobalPresetsWorker.new(**HashUtils.symbolize_keys(settings))
 
       # Run !
       worker.run

@@ -14,24 +14,41 @@ module Ladb::OpenCutList
     ORIGIN_CORNER_LEFT = 0
     ORIGIN_CORNER_RIGHT = 1
 
-    def initialize(settings, cutlist)
+    def initialize(cutlist,
 
-      @group_id = settings.fetch('group_id')
-      @part_ids = settings.fetch('part_ids', nil)
-      @std_bar_length = DimensionUtils.instance.str_to_ifloat(settings.fetch('std_bar')).to_l.to_f
-      @scrap_bar_lengths = DimensionUtils.instance.dxq_to_ifloats(settings.fetch('scrap_bar_lengths'))
-      @saw_kerf = DimensionUtils.instance.str_to_ifloat(settings.fetch('saw_kerf')).to_l.to_f
-      @trimming = DimensionUtils.instance.str_to_ifloat(settings.fetch('trimming')).to_l.to_f
-      @bar_folding = settings.fetch('bar_folding')
-      @hide_part_list = settings.fetch('hide_part_list')
-      @part_drawing_type = settings.fetch('part_drawing_type', PART_DRAWING_TYPE_NONE).to_i
-      @use_names = settings.fetch('use_names')
-      @full_width_diagram = settings.fetch('full_width_diagram')
-      @hide_cross = settings.fetch('hide_cross')
-      @origin_corner = settings.fetch('origin_corner')
-      @wrap_length = DimensionUtils.instance.str_to_ifloat(settings.fetch('wrap_length')).to_l.to_f
+                   group_id: ,
+                   part_ids: nil,
+                   std_bar: '',
+                   scrap_bar_lengths: '',
+                   saw_kerf: '3mm',
+                   trimming: '20mm',
+                   bar_folding: true,
+                   hide_part_list: false,
+                   part_drawing_type: PART_DRAWING_TYPE_NONE,
+                   use_names: false,
+                   full_width_diagram: false,
+                   hide_cross: false,
+                   origin_corner: ORIGIN_CORNER_LEFT,
+                   wrap_length: '3000mm'
+
+    )
 
       @cutlist = cutlist
+
+      @group_id = group_id
+      @part_ids = part_ids
+      @std_bar_length = DimensionUtils.instance.str_to_ifloat(std_bar).to_l.to_f
+      @scrap_bar_lengths = DimensionUtils.instance.dxq_to_ifloats(scrap_bar_lengths)
+      @saw_kerf = DimensionUtils.instance.str_to_ifloat(saw_kerf).to_l.to_f
+      @trimming = DimensionUtils.instance.str_to_ifloat(trimming).to_l.to_f
+      @bar_folding = bar_folding
+      @hide_part_list = hide_part_list
+      @part_drawing_type = part_drawing_type.to_i
+      @use_names = use_names
+      @full_width_diagram = full_width_diagram
+      @hide_cross = hide_cross
+      @origin_corner = origin_corner
+      @wrap_length = DimensionUtils.instance.str_to_ifloat(wrap_length).to_l.to_f
 
     end
 

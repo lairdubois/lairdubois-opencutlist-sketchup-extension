@@ -2,10 +2,15 @@ module Ladb::OpenCutList
 
   class MaterialsAddStdDimensionWorker
 
-    def initialize(settings)
+    def initialize(
 
-      @material_name = settings.fetch('material_name')
-      @std_dimension = settings.fetch('std_dimension')
+                   material_name: ,
+                   std_dimension:
+
+    )
+
+      @material_name = material_name
+      @std_dimension = std_dimension
 
     end
 

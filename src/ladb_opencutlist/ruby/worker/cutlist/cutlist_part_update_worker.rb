@@ -38,12 +38,17 @@ module Ladb::OpenCutList
         :entity_ids
     )
 
-    def initialize(settings, cutlist)
+    def initialize(cutlist,
 
-      @auto_orient = settings.fetch('auto_orient', false)
+                   auto_orient: false,
+                   parts_data: {}
+
+    )
+
+      @cutlist = cutlist
+
+      @auto_orient = auto_orient
       @parts_data = []
-
-      parts_data = settings.fetch('parts_data')
 
       parts_data.each { |part_data|
         @parts_data << PartData.new(
@@ -76,8 +81,6 @@ module Ladb::OpenCutList
             part_data.fetch('entity_ids')
         )
       }
-
-      @cutlist = cutlist
 
     end
 

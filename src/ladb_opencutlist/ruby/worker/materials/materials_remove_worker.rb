@@ -2,9 +2,13 @@ module Ladb::OpenCutList
 
   class MaterialsRemoveWorker
 
-    def initialize(material_data)
+    def initialize(
 
-      @name = material_data.fetch('name')
+                   name:
+
+    )
+
+      @name = name
 
     end
 

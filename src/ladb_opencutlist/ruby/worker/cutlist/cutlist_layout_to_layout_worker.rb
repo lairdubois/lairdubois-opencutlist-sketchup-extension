@@ -11,26 +11,45 @@ module Ladb::OpenCutList
     include LayerVisibilityHelper
     include SanitizerHelper
 
-    def initialize(settings, cutlist)
+    def initialize(cutlist,
 
-      @parts_infos = settings.fetch('parts_infos', nil)
-      @pins_infos = settings.fetch('pins_infos', nil)
-      @target_group_id = settings.fetch('target_group_id', nil)
+                   parts_infos: nil,
+                   pins_infos: nil,
+                   target_group_id: nil,
 
-      @generated_at = settings.fetch('generated_at', '')
+                   generated_at: '',
 
-      @page_width = settings.fetch('page_width', 0).to_l
-      @page_height = settings.fetch('page_height', 0).to_l
-      @page_header = settings.fetch('page_header', false)
-      @parts_colored = settings.fetch('parts_colored', false)
-      @parts_opacity = settings.fetch('parts_opacity', 1)
-      @pins_hidden = settings.fetch('pins_hidden', false)
-      @camera_view = Geom::Vector3d.new(settings.fetch('camera_view', nil))
-      @camera_zoom = settings.fetch('camera_zoom', 1)
-      @camera_target = Geom::Point3d.new(settings.fetch('camera_target', nil))
-      @exploded_model_radius =settings.fetch('exploded_model_radius', 1)
+                   page_width: 0,
+                   page_height: 0,
+                   page_header: false,
+                   parts_colored: false,
+                   parts_opacity: 1,
+                   pins_hidden: false,
+                   camera_view: nil,
+                   camera_zoom: 1,
+                   camera_target: nil,
+                   exploded_model_radius: 1
+
+    )
 
       @cutlist = cutlist
+
+      @parts_infos = parts_infos
+      @pins_infos = pins_infos
+      @target_group_id = target_group_id
+
+      @generated_at = generated_at
+
+      @page_width = page_width.to_l
+      @page_height = page_height.to_l
+      @page_header = page_header
+      @parts_colored = parts_colored
+      @parts_opacity = parts_opacity
+      @pins_hidden = pins_hidden
+      @camera_view = Geom::Vector3d.new(camera_view)
+      @camera_zoom = camera_zoom
+      @camera_target = Geom::Point3d.new(camera_target)
+      @exploded_model_radius = exploded_model_radius
 
     end
 

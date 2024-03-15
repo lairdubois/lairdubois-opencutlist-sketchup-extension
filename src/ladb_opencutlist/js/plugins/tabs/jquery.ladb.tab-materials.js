@@ -502,19 +502,23 @@
             });
             $btnUpdate.on('click', function () {
 
-                that.editedMaterial.display_name = $inputs.inputName.val().trim();
-                that.editedMaterial.color = $inputs.inputColor.val();
-                that.editedMaterial.texture_file = $imgTexture.attr('src') === '' ? null : $imgTexture.attr('src');
-                that.editedMaterial.texture_changed = $inputTextureChanged.val() === 'true';
-                that.editedMaterial.texture_rotation = parseInt($inputTextureRotation.val());
-                that.editedMaterial.texture_width = $inputTextureWidth.val();
-                that.editedMaterial.texture_height = $inputTextureHeight.val();
-                fnFetchAttributes(that.editedMaterial.attributes);
+                var material = {
+                    name: that.editedMaterial.name,
+                    display_name: $inputs.inputName.val().trim(),
+                    color: $inputs.inputColor.val(),
+                    texture_file: $imgTexture.attr('src') === '' ? null : $imgTexture.attr('src'),
+                    texture_changed: $inputTextureChanged.val() === 'true',
+                    texture_rotation: parseInt($inputTextureRotation.val()),
+                    texture_width: $inputTextureWidth.val(),
+                    texture_height: $inputTextureHeight.val(),
+                    attributes: {}
+                }
+                fnFetchAttributes(material.attributes);
 
                 // Flag to ignore next material change event
                 that.ignoreNextMaterialEvents = true;
 
-                rubyCallCommand('materials_update', that.editedMaterial, function (response) {
+                rubyCallCommand('materials_update', material, function (response) {
 
                     // Flag to stop ignoring next material change event
                     that.ignoreNextMaterialEvents = false;

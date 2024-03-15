@@ -2,10 +2,15 @@ module Ladb::OpenCutList
 
   class MaterialsDuplicateWorker
 
-    def initialize(material_data)
+    def initialize(
 
-      @name = material_data.fetch('name')
-      @new_name = material_data.fetch('new_name')
+                   name: ,
+                   new_name:
+
+    )
+
+      @name = name
+      @new_name = new_name
 
     end
 

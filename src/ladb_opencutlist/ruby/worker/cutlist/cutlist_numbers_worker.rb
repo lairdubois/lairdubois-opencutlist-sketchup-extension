@@ -4,11 +4,16 @@ module Ladb::OpenCutList
 
   class CutlistNumbersWorker
 
-    def initialize(settings, cutlist, reset)
+    def initialize(cutlist,
 
-      @group_id = settings.fetch('group_id', nil)
+                   group_id: ,
+                   reset: false
+
+    )
 
       @cutlist = cutlist
+
+      @group_id = group_id
       @reset = reset
 
     end

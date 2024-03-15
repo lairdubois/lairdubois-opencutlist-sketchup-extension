@@ -94,7 +94,7 @@
             // Start progress feedback
             that.dialog.startProgress(1);
 
-            rubyCallCommand('cutlist_generate', $.extend(that.generateOptions, that.generateFilters), function (response) {
+            rubyCallCommand('cutlist_generate', $.extend({}, that.generateOptions, that.generateFilters), function (response) {
 
                 that.generateAt = new Date().getTime() / 1000;
                 that.setObsolete(false);
@@ -291,25 +291,25 @@
                             $okoBtn.append($('<i class="ladb-opencutlist-icon-eye-close"></i>'))
                         }
                     })
-                    .tokenfield($.extend(TOKENFIELD_OPTIONS, {
+                    .tokenfield($.extend({
                         autocomplete: {
                             source: that.usedTags,
                             delay: 100
                         },
                         showAutocompleteOnFocus: false
-                    }))
+                    }, TOKENFIELD_OPTIONS))
                     .on('tokenfield:createdtoken tokenfield:removedtoken', function (e) {
                         fnGenerateWithTagsFilter();
                     })
                 ;
                 $('#ladb_cutlist_edge_material_names_filter', that.$page)
-                    .tokenfield($.extend(TOKENFIELD_OPTIONS, {
+                    .tokenfield($.extend({
                         autocomplete: {
                             source: that.usedEdgeMaterialDisplayNames,
                             delay: 100
                         },
                         showAutocompleteOnFocus: false
-                    }))
+                    }, TOKENFIELD_OPTIONS))
                     .on('tokenfield:createtoken', function (e) {
 
                         // Unique token
@@ -339,13 +339,13 @@
                     })
                 ;
                 $('#ladb_cutlist_veneer_material_names_filter', that.$page)
-                    .tokenfield($.extend(TOKENFIELD_OPTIONS, {
+                    .tokenfield($.extend({
                         autocomplete: {
                             source: that.usedVeneerMaterialDisplayNames,
                             delay: 100
                         },
                         showAutocompleteOnFocus: false
-                    }))
+                    }, TOKENFIELD_OPTIONS))
                     .on('tokenfield:createtoken', function (e) {
 
                         // Unique token
@@ -925,7 +925,7 @@
                 // Store options
                 rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_export_options', values: exportOptions });
 
-                rubyCallCommand('cutlist_export', $.extend(exportOptions, { col_defs: exportOptions.source_col_defs[exportOptions.source], target: 'table' }, that.generateOptions), function (response) {
+                rubyCallCommand('cutlist_export', $.extend({ col_defs: exportOptions.source_col_defs[exportOptions.source], target: 'table' }, exportOptions, that.generateOptions), function (response) {
 
                     if (response.errors) {
                         that.dialog.notifyErrors(response.errors);
@@ -949,7 +949,7 @@
                         });
 
                         var fnCopyToClipboard = function(noHeader) {
-                            rubyCallCommand('cutlist_export', $.extend(exportOptions, { col_defs: exportOptions.source_col_defs[exportOptions.source], target: 'pasteable', no_header: noHeader }, that.generateOptions), function (response) {
+                            rubyCallCommand('cutlist_export', $.extend({ col_defs: exportOptions.source_col_defs[exportOptions.source], target: 'pasteable', no_header: noHeader }, exportOptions, that.generateOptions), function (response) {
                                 if (response.errors) {
                                     that.dialog.notifyErrors(response.errors);
                                 }
@@ -1002,7 +1002,7 @@
                 // Store options
                 rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_export_options', values: exportOptions });
 
-                rubyCallCommand('cutlist_export', $.extend(exportOptions, { col_defs: exportOptions.source_col_defs[exportOptions.source], target: 'csv' }, that.generateOptions), function (response) {
+                rubyCallCommand('cutlist_export', $.extend({ col_defs: exportOptions.source_col_defs[exportOptions.source], target: 'csv' }, exportOptions, that.generateOptions), function (response) {
 
                     if (response.errors) {
                         that.dialog.notifyErrors(response.errors);
@@ -1299,7 +1299,7 @@
         }
 
         window.requestAnimationFrame(function () {
-            rubyCallCommand('cutlist_report_start', $.extend(reportOptions, that.generateOptions), function (response) {
+            rubyCallCommand('cutlist_report_start', $.extend({ hidden_group_ids: that.generateOptions.hidden_group_ids }, reportOptions), function (response) {
                 window.requestAnimationFrame(function () {
                     that.dialog.startProgress(response.remaining_step);
                     fnAdvance();
@@ -2035,9 +2035,9 @@
                     // Store options
                     rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_write2d_options', values: write2dOptions, section: section });
 
-                    rubyCallCommand('cutlist_write_parts', $.extend(write2dOptions, {
+                    rubyCallCommand('cutlist_write_parts', $.extend({
                         part_ids: partIds,
-                    }), function (response) {
+                    }, write2dOptions), function (response) {
 
                         if (response.errors) {
                             that.dialog.notifyErrors(response.errors);
@@ -2141,10 +2141,10 @@
                     // Store options
                     rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_write3d_options', values: write3dOptions, section: section });
 
-                    rubyCallCommand('cutlist_write_parts', $.extend(write3dOptions, {
+                    rubyCallCommand('cutlist_write_parts', $.extend({
                         part_ids: partIds,
                         part_drawing_type: 3 // PART_DRAWING_TYPE_3D
-                    }), function (response) {
+                    }, write3dOptions), function (response) {
 
                         if (response.errors) {
                             that.dialog.notifyErrors(response.errors);
@@ -2779,7 +2779,10 @@
                 if (!thumbnailLoaded && !multiple && !part.virtual) {
 
                     // Generate and Retrieve part thumbnail file
-                    rubyCallCommand('cutlist_part_get_thumbnail', part, function (response) {
+                    rubyCallCommand('cutlist_part_get_thumbnail', {
+                        definition_id: part.definition_id,
+                        id: part.id
+                    }, function (response) {
 
                         var threeModelDef = response['three_model_def'];
                         var thumbnailFile = response['thumbnail_file'];
@@ -3724,7 +3727,7 @@
                                                     // Store options
                                                     rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_cuttingdiagram1d_write_options', values: exportOptions, section: groupId });
 
-                                                    rubyCallCommand('cutlist_cuttingdiagram1d_write', $.extend(exportOptions, { hidden_bar_indices: hiddenBarIndices }, cuttingdiagram1dOptions), function (response) {
+                                                    rubyCallCommand('cutlist_cuttingdiagram1d_write', $.extend({ hidden_bar_indices: hiddenBarIndices }, exportOptions, cuttingdiagram1dOptions), function (response) {
 
                                                         if (response.errors) {
                                                             that.dialog.notifyErrors(response.errors);
@@ -4284,7 +4287,7 @@
                                                     // Store options
                                                     rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_cuttingdiagram2d_write_options', values: exportOptions, section: groupId });
 
-                                                    rubyCallCommand('cutlist_cuttingdiagram2d_write', $.extend(exportOptions, { hidden_sheet_indices: hiddenSheetIndices }, cuttingdiagram2dOptions), function (response) {
+                                                    rubyCallCommand('cutlist_cuttingdiagram2d_write', $.extend({ hidden_sheet_indices: hiddenSheetIndices }, exportOptions, cuttingdiagram2dOptions), function (response) {
 
                                                         if (response.errors) {
                                                             that.dialog.notifyErrors(response.errors);

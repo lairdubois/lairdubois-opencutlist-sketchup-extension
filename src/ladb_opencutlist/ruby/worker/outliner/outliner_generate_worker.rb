@@ -12,8 +12,7 @@ module Ladb::OpenCutList
     include BoundingBoxHelper
     include LayerVisibilityHelper
 
-    def initialize(settings)
-
+    def initialize
     end
 
     # -----

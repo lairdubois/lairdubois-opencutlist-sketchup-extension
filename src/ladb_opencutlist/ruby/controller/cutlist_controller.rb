@@ -128,7 +128,7 @@ module Ladb::OpenCutList
       @cutlist.invalidate if @cutlist
 
       # Setup worker
-      worker = CutlistGenerateWorker.new(settings)
+      worker = CutlistGenerateWorker.new(**HashUtils.symbolize_keys(settings))
 
       # Run !
       @cutlist = worker.run
@@ -140,7 +140,7 @@ module Ladb::OpenCutList
       require_relative '../worker/cutlist/cutlist_export_worker'
 
       # Setup worker
-      worker = CutlistExportWorker.new(settings, @cutlist)
+      worker = CutlistExportWorker.new(@cutlist, settings)
 
       # Run !
       worker.run
@@ -150,7 +150,7 @@ module Ladb::OpenCutList
       require_relative '../worker/cutlist/cutlist_report_worker'
 
       # Setup worker
-      @report_worker = CutlistReportWorker.new(settings, @cutlist)
+      @report_worker = CutlistReportWorker.new(@cutlist, **HashUtils.symbolize_keys(settings))
 
       # Run !
       @report_worker.run
@@ -167,7 +167,7 @@ module Ladb::OpenCutList
       require_relative '../worker/cutlist/cutlist_numbers_worker'
 
       # Setup worker
-      worker = CutlistNumbersWorker.new(settings, @cutlist, reset)
+      worker = CutlistNumbersWorker.new(@cutlist, **HashUtils.symbolize_keys(settings.merge({ :reset => reset })))
 
       # Run !
       worker.run
@@ -177,7 +177,7 @@ module Ladb::OpenCutList
       require_relative '../worker/cutlist/cutlist_highlight_parts_worker'
 
       # Setup worker
-      worker = CutlistHighlightPartsWorker.new(settings, @cutlist)
+      worker = CutlistHighlightPartsWorker.new(@cutlist, **HashUtils.symbolize_keys(settings))
 
       # Run !
       worker.run
@@ -187,7 +187,7 @@ module Ladb::OpenCutList
       require_relative '../worker/cutlist/cutlist_layout_parts_worker'
 
       # Setup worker
-      worker = CutlistLayoutPartsWorker.new(settings, @cutlist)
+      worker = CutlistLayoutPartsWorker.new(@cutlist, **HashUtils.symbolize_keys(settings))
 
       # Run !
       worker.run
@@ -197,7 +197,7 @@ module Ladb::OpenCutList
       require_relative '../worker/cutlist/cutlist_layout_to_layout_worker'
 
       # Setup worker
-      worker = CutlistLayoutToLayoutWorker.new(settings, @cutlist)
+      worker = CutlistLayoutToLayoutWorker.new(@cutlist, **HashUtils.symbolize_keys(settings))
 
       # Run !
       worker.run
@@ -207,7 +207,7 @@ module Ladb::OpenCutList
       require_relative '../worker/cutlist/cutlist_get_thumbnail_worker'
 
       # Setup worker
-      worker = CutlistGetThumbnailWorker.new(part_data, @cutlist)
+      worker = CutlistGetThumbnailWorker.new(@cutlist, **HashUtils.symbolize_keys(part_data))
 
       # Run !
       worker.run
@@ -217,7 +217,7 @@ module Ladb::OpenCutList
       require_relative '../worker/cutlist/cutlist_part_update_worker'
 
       # Setup worker
-      worker = CutlistPartUpdateWorker.new(settings, @cutlist)
+      worker = CutlistPartUpdateWorker.new(@cutlist, **HashUtils.symbolize_keys(settings))
 
       # Run !
       worker.run
@@ -227,7 +227,7 @@ module Ladb::OpenCutList
       require_relative '../worker/cutlist/cutlist_write_parts_worker'
 
       # Setup worker
-      worker = CutlistWritePartsWorker.new(settings, @cutlist)
+      worker = CutlistWritePartsWorker.new(@cutlist, **HashUtils.symbolize_keys(settings))
 
       # Run !
       worker.run
@@ -237,7 +237,7 @@ module Ladb::OpenCutList
       require_relative '../worker/cutlist/cutlist_cuttingdiagram1d_worker'
 
       # Setup worker
-      @cuttingdiagram1d_worker = CutlistCuttingdiagram1dWorker.new(settings, @cutlist)
+      @cuttingdiagram1d_worker = CutlistCuttingdiagram1dWorker.new(@cutlist, **HashUtils.symbolize_keys(settings))
 
       # Run !
       cuttingdiagram1d = @cuttingdiagram1d_worker.run(true)
@@ -263,7 +263,7 @@ module Ladb::OpenCutList
       require_relative '../worker/cutlist/cutlist_cuttingdiagram1d_write_worker'
 
       # Setup worker
-      worker = CutlistCuttingdiagram1dWriteWorker.new(settings, @cutlist, @cuttingdiagram1d)
+      worker = CutlistCuttingdiagram1dWriteWorker.new(@cutlist, @cuttingdiagram1d, **HashUtils.symbolize_keys(settings))
 
       # Run !
       worker.run
@@ -273,7 +273,7 @@ module Ladb::OpenCutList
       require_relative '../worker/cutlist/cutlist_cuttingdiagram2d_worker'
 
       # Setup worker
-      @cuttingdiagram2d_worker = CutlistCuttingdiagram2dWorker.new(settings, @cutlist)
+      @cuttingdiagram2d_worker = CutlistCuttingdiagram2dWorker.new(@cutlist, **HashUtils.symbolize_keys(settings))
 
       # Run !
       cuttingdiagram2d = @cuttingdiagram2d_worker.run(true)
@@ -299,7 +299,7 @@ module Ladb::OpenCutList
       require_relative '../worker/cutlist/cutlist_cuttingdiagram2d_write_worker'
 
       # Setup worker
-      worker = CutlistCuttingdiagram2dWriteWorker.new(settings, @cutlist, @cuttingdiagram2d)
+      worker = CutlistCuttingdiagram2dWriteWorker.new(@cutlist, @cuttingdiagram2d, **HashUtils.symbolize_keys(settings))
 
       # Run !
       worker.run
@@ -309,7 +309,7 @@ module Ladb::OpenCutList
       require_relative '../worker/cutlist/cutlist_labels_compute_elements_worker'
 
       # Setup worker
-      worker = CutlistLabelsComputeElementsWorker.new(settings, @cutlist)
+      worker = CutlistLabelsComputeElementsWorker.new(@cutlist, **HashUtils.symbolize_keys(settings))
 
       # Run !
       worker.run

@@ -4,13 +4,19 @@ module Ladb::OpenCutList
 
   class CutlistHighlightPartsWorker
 
-    def initialize(settings, cutlist)
+    def initialize(cutlist,
 
-      @minimize_on_highlight = settings.fetch('minimize_on_highlight')
-      @part_ids = settings.fetch('part_ids', nil)
-      @group_id = settings.fetch('group_id', nil)
+                   minimize_on_highlight: false,
+                   part_ids: nil,
+                   group_id: nil
+
+    )
 
       @cutlist = cutlist
+
+      @minimize_on_highlight = minimize_on_highlight
+      @part_ids = part_ids
+      @group_id = group_id
 
     end
 

@@ -6,16 +6,25 @@ module Ladb::OpenCutList
 
     include Layer0CachingHelper
 
-    def initialize(node_data, outliner)
+    def initialize(outliner,
 
-      @id = node_data.fetch('id')
-      @name = node_data.fetch('name', nil)
-      @definition_name = node_data.fetch('definition_name', nil)
-      @layer_name = node_data.fetch('layer_name', nil)
-      @description = node_data.fetch('description', nil)
-      @url = node_data.fetch('url', nil)
+                   id: nil,
+                   name: nil,
+                   definition_name: nil,
+                   layer_name: nil,
+                   description: nil,
+                   url: nil
+
+    )
 
       @outline = outliner
+
+      @id = id
+      @name = name
+      @definition_name = definition_name
+      @layer_name = layer_name
+      @description = description
+      @url = url
 
     end
 

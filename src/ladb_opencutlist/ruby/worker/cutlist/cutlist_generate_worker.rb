@@ -26,24 +26,56 @@ module Ladb::OpenCutList
     MATERIAL_ORIGIN_INHERITED = 2
     MATERIAL_ORIGIN_CHILD = 3
 
-    def initialize(settings, active_entity = nil, active_path = nil)
+    def initialize(
 
-      options = PLUGIN.get_model_preset('cutlist_options')
+                   auto_orient: true,
+                   flipped_detection: true,
+                   smart_material: true,
+                   dynamic_attributes_name: false,
+                   part_number_with_letters: true,
+                   part_number_sequence_by_group: true,
+                   part_folding: false,
+                   part_order_strategy: '-thickness>-length>-width>-count>name>-edge_pattern>tags>thickness_layer_count',
+                   hide_descriptions: false,
+                   hide_tags: false,
+                   hide_final_areas: true,
 
-      @auto_orient = settings.fetch('auto_orient', options.fetch('auto_orient'))
-      @flipped_detection = settings.fetch('flipped_detection', options.fetch('flipped_detection'))
-      @smart_material = settings.fetch('smart_material', options.fetch('smart_material'))
-      @dynamic_attributes_name = settings.fetch('dynamic_attributes_name', options.fetch('dynamic_attributes_name'))
-      @part_number_with_letters = settings.fetch('part_number_with_letters', options.fetch('part_number_with_letters'))
-      @part_number_sequence_by_group = settings.fetch('part_number_sequence_by_group', options.fetch('part_number_sequence_by_group'))
-      @part_folding = settings.fetch('part_folding', options.fetch('part_folding'))
-      @part_order_strategy = settings.fetch('part_order_strategy', options.fetch('part_order_strategy'))
-      @hide_descriptions = settings.fetch('hide_descriptions', options.fetch('hide_descriptions'))
-      @hide_tags = settings.fetch('hide_tags', options.fetch('hide_tags'))
-      @hide_final_areas = settings.fetch('hide_final_areas', options.fetch('hide_final_areas'))
-      @tags_filter = settings.fetch('tags_filter', [])
-      @edge_material_names_filter = settings.fetch('edge_material_names_filter', [])
-      @veneer_material_names_filter = settings.fetch('veneer_material_names_filter', [])
+                   tags_filter: [],
+                   edge_material_names_filter: [],
+                   veneer_material_names_filter: [],
+
+                   active_entity: nil,
+                   active_path: nil,
+
+                   # Unused but present for preset compatibility
+                   hide_entity_names: nil,
+                   hide_cutting_dimensions: nil,
+                   hide_bbox_dimensions: nil,
+                   hide_edges: nil,
+                   hide_faces: nil,
+                   hide_material_colors: nil,
+                   minimize_on_highlight: nil,
+                   dimension_column_order_strategy: nil,
+                   tags: nil,
+                   hidden_group_ids: nil
+
+    )
+
+      @auto_orient = auto_orient
+      @flipped_detection = flipped_detection
+      @smart_material = smart_material
+      @dynamic_attributes_name = dynamic_attributes_name
+      @part_number_with_letters = part_number_with_letters
+      @part_number_sequence_by_group = part_number_sequence_by_group
+      @part_folding = part_folding
+      @part_order_strategy = part_order_strategy
+      @hide_descriptions = hide_descriptions
+      @hide_tags = hide_tags
+      @hide_final_areas = hide_final_areas
+
+      @tags_filter = tags_filter
+      @edge_material_names_filter = edge_material_names_filter
+      @veneer_material_names_filter = veneer_material_names_filter
 
       # Retrieve active entity (if defined)
       @active_entity = active_entity

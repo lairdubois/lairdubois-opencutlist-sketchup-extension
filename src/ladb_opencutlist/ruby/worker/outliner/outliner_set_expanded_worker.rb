@@ -4,12 +4,17 @@ module Ladb::OpenCutList
 
   class OutlinerSetExpandedWorker
 
-    def initialize(node_data, outliner)
+    def initialize(outliner,
 
-      @id = node_data.fetch('id')
-      @expanded = node_data.fetch('expanded', false)
+                   id: nil,
+                   expanded: false
+
+    )
 
       @outline = outliner
+
+      @id = id
+      @expanded = expanded
 
     end
 

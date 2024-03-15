@@ -4,9 +4,13 @@ module Ladb::OpenCutList
 
   class ExportGlobalPresetsWorker
 
-    def initialize(settings)
+    def initialize(
 
-      @paths_filter = settings.fetch('paths_filter')
+                   paths_filter: ''
+
+    )
+
+      @paths_filter = paths_filter
 
     end
 

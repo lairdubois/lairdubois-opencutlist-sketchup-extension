@@ -1,21 +1,34 @@
 module Ladb::OpenCutList
 
+  require_relative '../../utils/color_utils'
   require_relative '../../utils/image_utils'
 
   class MaterialsUpdateWorker
 
-    def initialize(material_data)
+    def initialize(
 
-      @name = material_data.fetch('name')
-      @display_name = material_data.fetch('display_name')
-      @color = Sketchup::Color.new(material_data.fetch('color'))
-      @texture_rotation = material_data.fetch('texture_rotation')
-      @texture_file = material_data.fetch('texture_file')
-      @texture_changed = material_data.fetch('texture_changed', false)
-      @texture_width = material_data.fetch('texture_width')
-      @texture_height = material_data.fetch('texture_height')
+                   name: ,
+                   display_name: ,
+                   color: ,
+                   texture_file: nil,
+                   texture_changed: false,
+                   texture_rotation: nil,
+                   texture_width: nil,
+                   texture_height: nil,
 
-      attributes = material_data.fetch('attributes')
+                   attributes: {}
+
+    )
+
+      @name = name
+      @display_name = display_name
+      @color = ColorUtils.color_create(color)
+      @texture_file = texture_file
+      @texture_changed = texture_changed
+      @texture_rotation = texture_rotation
+      @texture_width = texture_width
+      @texture_height = texture_height
+
       @type = MaterialAttributes.valid_type(attributes.fetch('type'))
       @description = attributes.fetch('description', '')
       @url = attributes.fetch('url', '')

@@ -4,13 +4,19 @@ module Ladb::OpenCutList
 
   class CutlistLayoutPartsWorker
 
-    def initialize(settings, cutlist)
+    def initialize(cutlist,
 
-      @part_ids = settings.fetch('part_ids', nil)
-      @parts_colored = settings.fetch('parts_colored', false)
-      @pins_formula = settings.fetch('pins_formula', '')
+                   part_ids: ,
+                   parts_colored: false,
+                   pins_formula: ''
+
+    )
 
       @cutlist = cutlist
+
+      @part_ids = part_ids
+      @parts_colored = parts_colored
+      @pins_formula = pins_formula
 
     end
 
@@ -27,7 +33,11 @@ module Ladb::OpenCutList
       parts = @cutlist.get_real_parts(@part_ids)
       return { :errors => [ 'tab.cutlist.layout.error.no_part' ] } if parts.empty?
 
-      worker = CutlistConvertToThreeWorker.new(parts, true, @parts_colored, @pins_formula)
+      worker = CutlistConvertToThreeWorker.new(parts,
+         all_instances: true,
+         parts_colored: @parts_colored,
+         pins_formula: @pins_formula
+      )
       three_model_def = worker.run
 
       {

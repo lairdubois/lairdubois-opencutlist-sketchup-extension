@@ -45,13 +45,21 @@ module Ladb::OpenCutList
         },
     }
 
-    def initialize(settings)
+    def initialize(
 
-      @path = settings.fetch('path')
-      @filename = settings.fetch('filename')
-      @col_sep = settings.fetch('col_sep')
-      @first_line_headers = settings.fetch('first_line_headers')
-      @column_mapping = settings.fetch('column_mapping')   # { :field_name => COLUMN_INDEX, ... }
+                   path: ,
+                   filename: ,
+                   col_sep: 1,
+                   first_line_headers: true,
+                   column_mapping: {} # { :field_name => COLUMN_INDEX, ... }
+
+    )
+
+      @path = path
+      @filename = filename
+      @col_sep = col_sep
+      @first_line_headers = first_line_headers
+      @column_mapping = column_mapping
 
     end
 

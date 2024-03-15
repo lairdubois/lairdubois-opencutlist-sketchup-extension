@@ -11,26 +11,45 @@ module Ladb::OpenCutList
     include PartDrawingHelper
     include SanitizerHelper
 
-    def initialize(settings, cutlist)
+    def initialize(cutlist,
 
-      @part_ids = settings.fetch('part_ids', nil)
-      @file_format = settings.fetch('file_format', nil)
-      @part_drawing_type = settings.fetch('part_drawing_type', PART_DRAWING_TYPE_2D_TOP).to_i
+                   part_ids: ,
+                   file_format: ,
+                   part_drawing_type: PART_DRAWING_TYPE_2D_TOP,
 
-      @unit = settings.fetch('unit', nil)
-      @anchor = settings.fetch('anchor', false)
-      @switch_yz = settings.fetch('switch_yz', false)
-      @smoothing = settings.fetch('smoothing', false)
-      @merge_holes = settings.fetch('merge_holes', false)
-      @include_paths = settings.fetch('include_paths', false)
+                   unit: Length::Millimeter,
+                   anchor: false,
+                   switch_yz: false,
+                   smoothing: false,
+                   merge_holes: false,
+                   include_paths: false,
 
-      @parts_stroke_color = settings.fetch('parts_stroke_color', nil)
-      @parts_fill_color = settings.fetch('parts_fill_color', nil)
-      @parts_holes_stroke_color = settings.fetch('parts_holes_stroke_color', nil)
-      @parts_holes_fill_color = settings.fetch('parts_holes_fill_color', nil)
-      @parts_paths_stroke_color = settings.fetch('parts_paths_stroke_color', nil)
+                   parts_stroke_color: nil,
+                   parts_fill_color: nil,
+                   parts_holes_stroke_color: nil,
+                   parts_holes_fill_color: nil,
+                   parts_paths_stroke_color: nil
+
+    )
 
       @cutlist = cutlist
+
+      @part_ids = part_ids
+      @file_format = file_format
+      @part_drawing_type = part_drawing_type.to_i
+
+      @unit = unit
+      @anchor = anchor
+      @switch_yz = switch_yz
+      @smoothing = smoothing
+      @merge_holes = merge_holes
+      @include_paths = include_paths
+
+      @parts_stroke_color = parts_stroke_color
+      @parts_fill_color = parts_fill_color
+      @parts_holes_stroke_color = parts_holes_stroke_color
+      @parts_holes_fill_color = parts_holes_fill_color
+      @parts_paths_stroke_color = parts_paths_stroke_color
 
     end
 

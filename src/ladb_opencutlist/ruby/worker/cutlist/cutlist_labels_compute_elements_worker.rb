@@ -7,12 +7,17 @@ module Ladb::OpenCutList
 
     include PartDrawingHelper
 
-    def initialize(settings, cutlist)
+    def initialize(cutlist,
 
-      @part_infos = settings.fetch('part_infos', [])
-      @layout = settings.fetch('layout', [])
+                   part_infos: [],
+                   layout: []
+
+    )
 
       @cutlist = cutlist
+
+      @part_infos = part_infos
+      @layout = layout
 
     end
 

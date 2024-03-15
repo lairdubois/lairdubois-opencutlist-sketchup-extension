@@ -1259,7 +1259,7 @@ module Ladb::OpenCutList
       entity = path.last
       return nil unless entity.is_a?(Sketchup::Drawingelement)
 
-      worker = CutlistGenerateWorker.new({}, entity, path.slice(0...-1))
+      worker = CutlistGenerateWorker.new(**HashUtils.symbolize_keys(PLUGIN.get_model_preset('cutlist_options')).merge({ active_entity: entity, active_path: path.slice(0...-1) }))
       cutlist = worker.run
 
       part = nil

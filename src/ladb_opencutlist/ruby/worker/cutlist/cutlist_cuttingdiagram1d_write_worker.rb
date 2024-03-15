@@ -24,36 +24,67 @@ module Ladb::OpenCutList
 
     SUPPORTED_FILE_FORMATS = [ FILE_FORMAT_SVG, FILE_FORMAT_DXF ]
 
-    def initialize(settings, cutlist, cuttingdiagram1d)
+    def initialize(cutlist, cuttingdiagram1d,
 
-      @file_format = settings.fetch('file_format', nil)
-      @dxf_structure = settings.fetch('dxf_structure', DXF_STRUCTURE_LAYER)
-      @unit = settings.fetch('unit', false)
-      @smoothing = settings.fetch('smoothing', false)
-      @merge_holes = settings.fetch('merge_holes', false)
-      @include_paths = settings.fetch('include_paths', false)
-      @bar_hidden = settings.fetch('bar_hidden', false)
-      @bar_stroke_color = ColorUtils.color_create(settings.fetch('bar_stroke_color', nil))
-      @bar_fill_color = ColorUtils.color_create(settings.fetch('bar_fill_color', nil))
-      @parts_hidden = settings.fetch('parts_hidden', false)
-      @parts_stroke_color = ColorUtils.color_create(settings.fetch('parts_stroke_color', nil))
-      @parts_fill_color = ColorUtils.color_create(settings.fetch('parts_fill_color', nil))
-      @parts_holes_stroke_color = ColorUtils.color_create(settings.fetch('parts_holes_stroke_color', nil))
-      @parts_holes_fill_color = ColorUtils.color_create(settings.fetch('parts_holes_fill_color', nil))
-      @parts_paths_stroke_color = ColorUtils.color_create(settings.fetch('parts_paths_stroke_color', nil))
-      @texts_hidden = settings.fetch('texts_hidden', false)
-      @texts_color = ColorUtils.color_create(settings.fetch('texts_stroke_color', nil))
-      @leftovers_hidden = settings.fetch('leftovers_hidden', true)
-      @leftovers_stroke_color = ColorUtils.color_create(settings.fetch('leftovers_stroke_color', nil))
-      @leftovers_fill_color = ColorUtils.color_create(settings.fetch('leftovers_fill_color', nil))
-      @cuts_hidden = settings.fetch('cuts_hidden', true)
-      @cuts_color = ColorUtils.color_create(settings.fetch('cuts_color', nil))
-      @hidden_bar_indices = settings.fetch('hidden_bar_indices', [])
-      @part_drawing_type = settings.fetch('part_drawing_type', PART_DRAWING_TYPE_NONE).to_i
-      @use_names = settings.fetch('use_names', false)
+                   file_format: FILE_FORMAT_SVG,
+                   dxf_structure: DXF_STRUCTURE_LAYER,
+                   unit: Length::Millimeter,
+                   smoothing: false,
+                   merge_holes: false,
+                   include_paths: false,
+                   bar_hidden: false,
+                   bar_stroke_color: '#0068FF',
+                   bar_fill_color: nil,
+                   parts_hidden: false,
+                   parts_stroke_color: nil,
+                   parts_fill_color: '#000000',
+                   parts_holes_stroke_color: '#000000',
+                   parts_holes_fill_color: '#ffffff',
+                   parts_paths_stroke_color: '#0068FF',
+                   texts_hidden: false,
+                   texts_color: '#00ffff',
+                   leftovers_hidden: true,
+                   leftovers_stroke_color: '#aaaaaa',
+                   leftovers_fill_color: nil,
+                   cuts_hidden: true,
+                   cuts_color: '#ff00ff',
+
+                   hidden_bar_indices: [],
+                   part_drawing_type: PART_DRAWING_TYPE_NONE,
+                   use_names: false
+
+
+    )
 
       @cutlist = cutlist
       @cuttingdiagram1d = cuttingdiagram1d
+
+      @file_format = file_format
+      @dxf_structure = dxf_structure.to_i
+      @unit = unit
+      @smoothing = smoothing
+      @merge_holes = merge_holes
+      @include_paths = include_paths
+      @bar_hidden = bar_hidden
+      @bar_stroke_color = ColorUtils.color_create(bar_stroke_color)
+      @bar_fill_color = ColorUtils.color_create(bar_fill_color)
+      @parts_hidden = parts_hidden
+      @parts_stroke_color = ColorUtils.color_create(parts_stroke_color)
+      @parts_fill_color = ColorUtils.color_create(parts_fill_color)
+      @parts_holes_stroke_color = ColorUtils.color_create(parts_holes_stroke_color)
+      @parts_holes_fill_color = ColorUtils.color_create(parts_holes_fill_color)
+      @parts_paths_stroke_color = ColorUtils.color_create(parts_paths_stroke_color)
+      @texts_hidden = texts_hidden
+      @texts_color = ColorUtils.color_create(texts_color)
+      @leftovers_hidden = leftovers_hidden
+      @leftovers_stroke_color = ColorUtils.color_create(leftovers_stroke_color)
+      @leftovers_fill_color = ColorUtils.color_create(leftovers_fill_color)
+      @cuts_hidden = cuts_hidden
+      @cuts_color = ColorUtils.color_create(cuts_color)
+
+      @hidden_bar_indices = hidden_bar_indices
+      @part_drawing_type = part_drawing_type.to_i
+      @use_names = use_names
 
       @_projection_defs = {}
 

@@ -5,12 +5,17 @@ module Ladb::OpenCutList
 
   class CutlistGetThumbnailWorker
 
-    def initialize(part_data, cutlist)
+    def initialize(cutlist,
 
-      @definition_id = part_data.fetch('definition_id')
-      @id = part_data.fetch('id')
+                   definition_id: ,
+                   id:
+
+    )
 
       @cutlist = cutlist
+
+      @definition_id = definition_id
+      @id = id
 
     end
 

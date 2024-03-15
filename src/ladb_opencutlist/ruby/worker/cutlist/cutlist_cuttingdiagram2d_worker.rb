@@ -17,31 +17,53 @@ module Ladb::OpenCutList
     ORIGIN_CORNER_TOP_RIGHT = 2
     ORIGIN_CORNER_BOTTOM_RIGHT = 3
 
-    def initialize(settings, cutlist)
+    def initialize(cutlist,
 
-      @group_id = settings.fetch('group_id', nil)
-      @part_ids = settings.fetch('part_ids', nil)
-      s_length, s_width = StringUtils.split_dxd(settings.fetch('std_sheet', ''))
-      @std_sheet_length = DimensionUtils.instance.str_to_ifloat(s_length).to_l.to_f
-      @std_sheet_width = DimensionUtils.instance.str_to_ifloat(s_width).to_l.to_f
-      @scrap_sheet_sizes = DimensionUtils.instance.dxdxq_to_ifloats(settings.fetch('scrap_sheet_sizes', ''))
-      @saw_kerf = DimensionUtils.instance.str_to_ifloat(settings.fetch('saw_kerf', 0)).to_l.to_f
-      @trimming = DimensionUtils.instance.str_to_ifloat(settings.fetch('trimming', 0)).to_l.to_f
-      @optimization = settings.fetch('optimization', BinPacking2D::OPT_MEDIUM)
-      @stacking = settings.fetch('stacking', BinPacking2D::STACKING_ALL)
-      @keep_length = DimensionUtils.instance.str_to_ifloat(settings.fetch('keep_length', 0)).to_l.to_f
-      @keep_width = DimensionUtils.instance.str_to_ifloat(settings.fetch('keep_width', 0)).to_l.to_f
-      @sheet_folding = settings.fetch('sheet_folding', true)
-      @part_drawing_type = settings.fetch('part_drawing_type', PART_DRAWING_TYPE_NONE).to_i
-      @use_names = settings.fetch('use_names', false)
-      @full_width_diagram = settings.fetch('full_width_diagram', false)
-      @hide_part_list = settings.fetch('hide_part_list', false)
-      @hide_cross = settings.fetch('hide_cross', false)
-      @origin_corner = settings.fetch('origin_corner', ORIGIN_CORNER_TOP_LEFT)
-      @highlight_primary_cuts = settings.fetch('highlight_primary_cuts', false)
-      @hide_edges_preview = settings.fetch('hide_edges_preview', true)
+                   group_id: ,
+                   part_ids: nil,
+                   std_sheet: '',
+                   scrap_sheet_sizes: '',
+                   saw_kerf: '3mm',
+                   trimming: '10mm',
+                   optimization: BinPacking2D::OPT_MEDIUM,
+                   stacking: BinPacking2D::STACKING_ALL,
+                   keep_length: '100mm',
+                   keep_width: '100mm',
+                   sheet_folding: true,
+                   hide_part_list: false,
+                   part_drawing_type: PART_DRAWING_TYPE_NONE,
+                   use_names: false,
+                   full_width_diagram: false,
+                   hide_cross: false,
+                   origin_corner: ORIGIN_CORNER_TOP_LEFT,
+                   highlight_primary_cuts: false,
+                   hide_edges_preview: true
+
+    )
 
       @cutlist = cutlist
+
+      @group_id = group_id
+      @part_ids = part_ids
+      s_length, s_width = StringUtils.split_dxd(std_sheet)
+      @std_sheet_length = DimensionUtils.instance.str_to_ifloat(s_length).to_l.to_f
+      @std_sheet_width = DimensionUtils.instance.str_to_ifloat(s_width).to_l.to_f
+      @scrap_sheet_sizes = DimensionUtils.instance.dxdxq_to_ifloats(scrap_sheet_sizes)
+      @saw_kerf = DimensionUtils.instance.str_to_ifloat(saw_kerf).to_l.to_f
+      @trimming = DimensionUtils.instance.str_to_ifloat(trimming).to_l.to_f
+      @optimization = optimization
+      @stacking = stacking
+      @keep_length = DimensionUtils.instance.str_to_ifloat(keep_length).to_l.to_f
+      @keep_width = DimensionUtils.instance.str_to_ifloat(keep_width).to_l.to_f
+      @sheet_folding = sheet_folding
+      @hide_part_list = hide_part_list
+      @part_drawing_type = part_drawing_type.to_i
+      @use_names = use_names
+      @full_width_diagram = full_width_diagram
+      @hide_cross = hide_cross
+      @origin_corner = origin_corner.to_i
+      @highlight_primary_cuts = highlight_primary_cuts
+      @hide_edges_preview = hide_edges_preview
 
       # Workaround to hide part drawing if group is edge decremented with out material oversize
       group = @cutlist.get_group(@group_id)
