@@ -2089,23 +2089,28 @@
                 var $selectUnit = $('#ladb_select_unit', $modal);
                 var $formGroupAnchor = $('#ladb_form_group_anchor', $modal);
                 var $selectAnchor = $('#ladb_select_anchor', $modal);
+                var $formGroupSwitchYZ = $('#ladb_form_group_switch_yz', $modal);
+                var $selectSwitchYZ = $('#ladb_select_switch_yz', $modal);
                 var $btnExport = $('#ladb_btn_export', $modal);
 
                 var fnFetchOptions = function (options) {
                     options.file_format = $selectFileFormat.val();
                     options.unit = parseInt($selectUnit.val());
                     options.anchor = $selectAnchor.val() === '1';
+                    options.switch_yz = $selectSwitchYZ.val() === '1';
                 };
                 var fnFillInputs = function (options) {
                     $selectFileFormat.selectpicker('val', options.file_format);
                     $selectUnit.selectpicker('val', options.unit);
                     $selectAnchor.selectpicker('val', options.anchor ? '1' : '0');
+                    $selectSwitchYZ.selectpicker('val', options.switch_yz ? '1' : '0');
                     fnUpdateFieldsVisibility();
                 };
                 var fnUpdateFieldsVisibility = function () {
                     var isSkp = $selectFileFormat.val() === 'skp';
                     if (isSkp) $formGroupUnit.hide(); else $formGroupUnit.show();
                     if (isSkp) $formGroupAnchor.hide(); else $formGroupAnchor.show();
+                    if (isSkp) $formGroupSwitchYZ.hide(); else $formGroupSwitchYZ.show();
                 };
 
                 $widgetPreset.ladbWidgetPreset({
@@ -2123,6 +2128,7 @@
                 ;
                 $selectUnit.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectAnchor.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectSwitchYZ.selectpicker(SELECT_PICKER_OPTIONS);
 
                 fnFillInputs(write3dOptions);
 

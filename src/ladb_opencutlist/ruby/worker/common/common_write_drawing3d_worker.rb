@@ -19,16 +19,24 @@ module Ladb::OpenCutList
 
     SUPPORTED_FILE_FORMATS = [ FILE_FORMAT_STL, FILE_FORMAT_OBJ ]
 
-    def initialize(drawing_def, settings = {})
+    def initialize(drawing_def,
+
+                   folder_path: nil,
+                   file_name: 'PART',
+                   file_format: nil,
+
+                   unit: nil,
+                   switch_yz: false
+
+    )
 
       @drawing_def = drawing_def
 
-      @folder_path = settings.fetch('folder_path', nil)
-      @file_name = _sanitize_filename(settings.fetch('file_name', 'PART'))
-      @file_format = settings.fetch('file_format', nil)
-      @unit = settings.fetch('unit', nil)
-
-      @guide_stroke_color = Sketchup::Color.new('#0068FF')
+      @folder_path = folder_path
+      @file_name = _sanitize_filename(file_name)
+      @file_format = file_format
+      @unit = unit
+      @switch_yz = switch_yz
 
     end
 
@@ -52,6 +60,9 @@ module Ladb::OpenCutList
         end
 
         begin
+
+          # Up axis
+          @drawing_def.transform!(Geom::Transformation.rotation(ORIGIN, X_AXIS, 90.degrees)) if @switch_yz
 
           # Open output file
           file = File.new(path , 'w')

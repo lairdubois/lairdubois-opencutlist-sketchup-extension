@@ -19,6 +19,7 @@ module Ladb::OpenCutList
 
       @unit = settings.fetch('unit', nil)
       @anchor = settings.fetch('anchor', false)
+      @switch_yz = settings.fetch('switch_yz', false)
       @smoothing = settings.fetch('smoothing', false)
       @merge_holes = settings.fetch('merge_holes', false)
       @include_paths = settings.fetch('include_paths', false)
@@ -81,11 +82,10 @@ module Ladb::OpenCutList
               instance_info = part.def.get_one_instance_info
               return { :errors => [ 'tab.cutlist.error.unknow_part' ] } if instance_info.nil?
 
-              response = CommonWriteDefinitionWorker.new({
-                'folder_path' => folder_path,
-                'file_name' => file_name,
-                'definition' => instance_info.definition
-              }).run
+              response = CommonWriteDefinitionWorker.new(instance_info.definition,
+                folder_path: folder_path,
+                file_name: file_name
+              ).run
               return response if !response[:errors].nil? || response[:cancelled]
 
               next
@@ -101,20 +101,20 @@ module Ladb::OpenCutList
               )
               return { :errors => [ 'tab.cutlist.error.unknow_part' ] } unless drawing_def.is_a?(DrawingDef)
 
-              response = CommonWriteDrawing2dWorker.new(drawing_def, {
-                'folder_path' => folder_path,
-                'file_name' => file_name,
-                'file_format' => @file_format,
-                'unit' => @unit,
-                'anchor' => @anchor,
-                'smoothing' => @smoothing,
-                'merge_holes' => @merge_holes,
-                'parts_stroke_color' => @parts_stroke_color,
-                'parts_fill_color' => @parts_fill_color,
-                'parts_holes_stroke_color' => @parts_holes_stroke_color,
-                'parts_holes_fill_color' => @parts_holes_fill_color,
-                'parts_paths_stroke_color' => @parts_paths_stroke_color,
-              }).run
+              response = CommonWriteDrawing2dWorker.new(drawing_def,
+                folder_path: folder_path,
+                file_name: file_name,
+                file_format: @file_format,
+                unit: @unit,
+                anchor: @anchor,
+                smoothing: @smoothing,
+                merge_holes: @merge_holes,
+                parts_stroke_color: @parts_stroke_color,
+                parts_fill_color: @parts_fill_color,
+                parts_holes_stroke_color: @parts_holes_stroke_color,
+                parts_holes_fill_color: @parts_holes_fill_color,
+                parts_paths_stroke_color: @parts_paths_stroke_color,
+              ).run
               return response if !response[:errors].nil? || response[:cancelled]
             when PART_DRAWING_TYPE_3D
 
@@ -124,13 +124,13 @@ module Ladb::OpenCutList
               )
               return { :errors => [ 'tab.cutlist.error.unknow_part' ] } unless drawing_def.is_a?(DrawingDef)
 
-              response = CommonWriteDrawing3dWorker.new(drawing_def, {
-                'folder_path' => folder_path,
-                'file_name' => file_name,
-                'file_format' => @file_format,
-                'unit' => @unit,
-                'anchor' => @anchor,
-              }).run
+              response = CommonWriteDrawing3dWorker.new(drawing_def,
+                folder_path: folder_path,
+                file_name: file_name,
+                file_format: @file_format,
+                unit: @unit,
+                switch_yz: @switch_yz
+              ).run
               return response if !response[:errors].nil? || response[:cancelled]
             end
 

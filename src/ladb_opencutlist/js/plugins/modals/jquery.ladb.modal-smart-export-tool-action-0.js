@@ -32,17 +32,20 @@
             var $selectFileFormat = $('#ladb_select_file_format', that.$element);
             var $selectUnit = $('#ladb_select_unit', that.$element);
             var $selectAnchor = $('#ladb_select_anchor', that.$element);
+            var $selectSwitchYZ = $('#ladb_select_switch_yz', that.$element);
             var $btnValidate = $('#ladb_btn_validate', that.$element);
 
             var fnFetchOptions = function (options) {
                 options.file_format = $selectFileFormat.val();
                 options.unit = parseInt($selectUnit.val());
                 options.anchor = $selectAnchor.val() === '1';
+                options.switch_yz = $selectSwitchYZ.val() === '1';
             };
             var fnFillInputs = function (options) {
                 $selectFileFormat.selectpicker('val', options.file_format);
                 $selectUnit.selectpicker('val', options.unit);
                 $selectAnchor.selectpicker('val', options.anchor ? '1' : '0');
+                $selectSwitchYZ.selectpicker('val', options.switch_yz ? '1' : '0');
             };
 
             $widgetPreset.ladbWidgetPreset({
@@ -55,6 +58,7 @@
             $selectFileFormat.selectpicker(SELECT_PICKER_OPTIONS);
             $selectUnit.selectpicker(SELECT_PICKER_OPTIONS);
             $selectAnchor.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectSwitchYZ.selectpicker(SELECT_PICKER_OPTIONS);
 
             fnFillInputs(options);
 

@@ -13,12 +13,17 @@ module Ladb::OpenCutList
     ORIGIN_POSITION_EDGES_BOUNDS_MIN = 2
     ORIGIN_POSITION_BOUNDS_MIN = 3
 
-    def initialize(drawing_def, settings = {})
+    def initialize(drawing_def,
+
+                   origin_position: ORIGIN_POSITION_DEFAULT,
+                   merge_holes: false
+
+    )
 
       @drawing_def = drawing_def
 
-      @origin_position = settings.fetch('origin_position', ORIGIN_POSITION_DEFAULT)
-      @merge_holes = settings.fetch('merge_holes', false)  # Holes are moved to "hole" layer and all down layers holes are merged to their upper layer
+      @origin_position = origin_position
+      @merge_holes = merge_holes  # Holes are moved to "hole" layer and all down layers holes are merged to their upper layer
 
     end
 

@@ -1095,6 +1095,11 @@ tab:
       option_anchor_1: Projeter l'origine de la pièce
       option_anchor_help: |
         Permet d'activer la projection de l'origine des axes de la pièce comme point d'ancrage.
+      option_switch_yz: Axe vertical
+      option_switch_yz_0: Z vertical
+      option_switch_yz_1: Y vertical
+      option_switch_yz_help: |
+        Permet de permuter les axes Y et Z pour définir l'axe vertical de la pièce.
       option_smoothing: Lissage
       option_smoothing_0: Aucun
       option_smoothing_1: Lisser les cercles et arcs (Expérimental)

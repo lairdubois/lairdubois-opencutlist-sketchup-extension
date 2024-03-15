@@ -6,11 +6,17 @@ module Ladb::OpenCutList
 
     include SanitizerHelper
 
-    def initialize(settings)
+    def initialize(definition,
 
-      @folder_path = settings.fetch('folder_path', nil)
-      @file_name = _sanitize_filename(settings.fetch('file_name', nil))
-      @definition = settings.fetch('definition', nil)
+                   folder_path: nil,
+                   file_name: 'PART'
+
+    )
+
+      @definition = definition
+
+      @folder_path = folder_path
+      @file_name = _sanitize_filename(file_name)
 
     end
 

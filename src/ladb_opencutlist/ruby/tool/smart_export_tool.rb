@@ -32,6 +32,7 @@ module Ladb::OpenCutList
     ACTION_OPTION_FACES_ALL = 1
 
     ACTION_OPTION_OPTIONS_ANCHOR = 'anchor'
+    ACTION_OPTION_OPTIONS_SWITCH_YZ = 'switch_yz'
     ACTION_OPTION_OPTIONS_SMOOTHING = 'smoothing'
     ACTION_OPTION_OPTIONS_MERGE_HOLES = 'merge_holes'
     ACTION_OPTION_OPTIONS_INCLUDE_PATHS = 'include_paths'
@@ -295,11 +296,11 @@ module Ladb::OpenCutList
 
           # Part 3D
 
-          @active_drawing_def = CommonDrawingDecompositionWorker.new(@active_part_entity_path, {
-            'origin_position' => fetch_action_option_enabled(ACTION_EXPORT_PART_3D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) ? CommonDrawingDecompositionWorker::ORIGIN_POSITION_DEFAULT : CommonDrawingDecompositionWorker::ORIGIN_POSITION_FACES_BOUNDS_MIN,
-            'ignore_surfaces' => true,
-            'ignore_edges' => true
-          }).run
+          @active_drawing_def = CommonDrawingDecompositionWorker.new(@active_part_entity_path,
+            origin_position: fetch_action_option_enabled(ACTION_EXPORT_PART_3D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) ? CommonDrawingDecompositionWorker::ORIGIN_POSITION_DEFAULT : CommonDrawingDecompositionWorker::ORIGIN_POSITION_FACES_BOUNDS_MIN,
+            ignore_surfaces: true,
+            ignore_edges: true
+          ).run
           if @active_drawing_def.is_a?(DrawingDef)
 
             inch_offset = Sketchup.active_model.active_view.pixels_to_model(15, Geom::Point3d.new.transform(@active_drawing_def.transformation))
@@ -347,24 +348,24 @@ module Ladb::OpenCutList
           local_y_axis = part.def.size.oriented_axis(Y_AXIS)
           local_z_axis = part.def.size.oriented_axis(Z_AXIS)
 
-          @active_drawing_def = CommonDrawingDecompositionWorker.new(@active_part_entity_path, {
-            'input_local_x_axis' => local_x_axis,
-            'input_local_y_axis' => local_y_axis,
-            'input_local_z_axis' => local_z_axis,
-            'input_plane_manipulator' => @picker.picked_plane_manipulator,
-            'input_line_manipulator' => @picker.picked_line_manipulator,
-            'face_validator' => fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACES, ACTION_OPTION_FACES_ONE) ? CommonDrawingDecompositionWorker::FACE_VALIDATOR_ONE : CommonDrawingDecompositionWorker::FACE_VALIDATOR_ALL,
-            'ignore_edges' => !fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_INCLUDE_PATHS),
-            'edge_validator' => fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACES, ACTION_OPTION_FACES_ONE) ? CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY_COPLANAR : CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY
-          }).run
+          @active_drawing_def = CommonDrawingDecompositionWorker.new(@active_part_entity_path,
+            input_local_x_axis: local_x_axis,
+            input_local_y_axis: local_y_axis,
+            input_local_z_axis: local_z_axis,
+            input_plane_manipulator: @picker.picked_plane_manipulator,
+            input_line_manipulator: @picker.picked_line_manipulator,
+            face_validator: fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACES, ACTION_OPTION_FACES_ONE) ? CommonDrawingDecompositionWorker::FACE_VALIDATOR_ONE : CommonDrawingDecompositionWorker::FACE_VALIDATOR_ALL,
+            ignore_edges: !fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_INCLUDE_PATHS),
+            edge_validator: fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACES, ACTION_OPTION_FACES_ONE) ? CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY_COPLANAR : CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY
+          ).run
           if @active_drawing_def.is_a?(DrawingDef)
 
             inch_offset = Sketchup.active_model.active_view.pixels_to_model(15, Geom::Point3d.new.transform(@active_drawing_def.transformation))
 
-            projection_def = CommonDrawingProjectionWorker.new(@active_drawing_def, {
-              'origin_position' => fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) ? CommonDrawingProjectionWorker::ORIGIN_POSITION_DEFAULT : CommonDrawingProjectionWorker::ORIGIN_POSITION_BOUNDS_MIN,
-              'merge_holes' => fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES)
-            }).run
+            projection_def = CommonDrawingProjectionWorker.new(@active_drawing_def,
+              origin_position: fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) ? CommonDrawingProjectionWorker::ORIGIN_POSITION_DEFAULT : CommonDrawingProjectionWorker::ORIGIN_POSITION_BOUNDS_MIN,
+              merge_holes: fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES)
+            ).run
             if projection_def.is_a?(DrawingProjectionDef)
 
               preview = Kuix::Group.new
@@ -446,24 +447,24 @@ module Ladb::OpenCutList
               box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
               preview.append(box_helper)
 
-              if @active_drawing_def.picked_line_manipulator.is_a?(EdgeManipulator)
+              if @active_drawing_def.input_line_manipulator.is_a?(EdgeManipulator)
 
                 # Highlight input edge
                 segments = Kuix::Segments.new
                 segments.transformation = projection_def.transformation.inverse
-                segments.add_segments(@active_drawing_def.picked_line_manipulator.segment)
+                segments.add_segments(@active_drawing_def.input_line_manipulator.segment)
                 segments.color = COLOR_ACTION
                 segments.line_width = 3
                 segments.on_top = true
                 preview.append(segments)
 
-              elsif @active_drawing_def.picked_line_manipulator.is_a?(LineManipulator)
+              elsif @active_drawing_def.input_line_manipulator.is_a?(LineManipulator)
 
                 # Highlight input line
                 line = Kuix::Line.new
                 line.transformation = projection_def.transformation.inverse
-                line.position = @active_drawing_def.picked_line_manipulator.position
-                line.direction = @active_drawing_def.picked_line_manipulator.direction
+                line.position = @active_drawing_def.input_line_manipulator.position
+                line.direction = @active_drawing_def.input_line_manipulator.direction
                 line.color = COLOR_ACTION
                 line.line_width = 2
                 preview.append(line)
@@ -495,16 +496,16 @@ module Ladb::OpenCutList
 
       if face
 
-        @active_drawing_def = CommonDrawingDecompositionWorker.new(@picker.picked_face_path, {
-          'input_plane_manipulator' => @picker.picked_plane_manipulator,
-          'input_line_manipulator' => @picker.picked_line_manipulator,
-          'ignore_edges' => true
-        }).run
+        @active_drawing_def = CommonDrawingDecompositionWorker.new(@picker.picked_face_path,
+          input_plane_manipulator: @picker.picked_plane_manipulator,
+          input_line_manipulator: @picker.picked_line_manipulator,
+          ignore_edges: true
+        ).run
         if @active_drawing_def.is_a?(DrawingDef)
 
-          projection_def = CommonDrawingProjectionWorker.new(@active_drawing_def, {
-            'origin_position' => CommonDrawingProjectionWorker::ORIGIN_POSITION_FACES_BOUNDS_MIN
-          }).run
+          projection_def = CommonDrawingProjectionWorker.new(@active_drawing_def,
+            origin_position: CommonDrawingProjectionWorker::ORIGIN_POSITION_FACES_BOUNDS_MIN
+          ).run
           if projection_def.is_a?(DrawingProjectionDef)
 
             inch_offset = Sketchup.active_model.active_view.pixels_to_model(15, Geom::Point3d.new.transform(@active_drawing_def.transformation))
@@ -569,24 +570,24 @@ module Ladb::OpenCutList
             box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
             preview.append(box_helper)
 
-            if @active_drawing_def.picked_line_manipulator.is_a?(EdgeManipulator)
+            if @active_drawing_def.input_line_manipulator.is_a?(EdgeManipulator)
 
               # Highlight input edge
               segments = Kuix::Segments.new
               segments.transformation = projection_def.transformation.inverse
-              segments.add_segments(@active_drawing_def.picked_line_manipulator.segment)
+              segments.add_segments(@active_drawing_def.input_line_manipulator.segment)
               segments.color = COLOR_ACTION
               segments.line_width = 3
               segments.on_top = true
               preview.append(segments)
 
-            elsif @active_drawing_def.picked_line_manipulator.is_a?(LineManipulator)
+            elsif @active_drawing_def.input_line_manipulator.is_a?(LineManipulator)
 
               # Highlight input line
               line = Kuix::Line.new
               line.transformation = projection_def.transformation.inverse
-              line.position = @active_drawing_def.picked_line_manipulator.position
-              line.direction = @active_drawing_def.picked_line_manipulator.direction
+              line.position = @active_drawing_def.input_line_manipulator.position
+              line.direction = @active_drawing_def.input_line_manipulator.direction
               line.color = COLOR_ACTION
               line.line_width = 2
               preview.append(line)
@@ -616,18 +617,18 @@ module Ladb::OpenCutList
 
       if context_path
 
-        @active_drawing_def = CommonDrawingDecompositionWorker.new(context_path, {
-          'ignore_faces' => true,
-          'input_plane_manipulator' => @picker.picked_plane_manipulator,
-          'input_line_manipulator' => @picker.picked_line_manipulator,
-          'edge_validator' => CommonDrawingDecompositionWorker::EDGE_VALIDATOR_COPLANAR,
-          'edge_recursive' => false
-        }).run
+        @active_drawing_def = CommonDrawingDecompositionWorker.new(context_path,
+          ignore_faces: true,
+          input_plane_manipulator: @picker.picked_plane_manipulator,
+          input_line_manipulator: @picker.picked_line_manipulator,
+          edge_validator: CommonDrawingDecompositionWorker::EDGE_VALIDATOR_COPLANAR,
+          edge_recursive: false
+        ).run
         if @active_drawing_def.is_a?(DrawingDef)
 
-          projection_def = CommonDrawingProjectionWorker.new(@active_drawing_def, {
-            'origin_position' => CommonDrawingProjectionWorker::ORIGIN_POSITION_EDGES_BOUNDS_MIN
-          }).run
+          projection_def = CommonDrawingProjectionWorker.new(@active_drawing_def,
+            origin_position: CommonDrawingProjectionWorker::ORIGIN_POSITION_EDGES_BOUNDS_MIN
+          ).run
           if projection_def.is_a?(DrawingProjectionDef)
 
             inch_offset = Sketchup.active_model.active_view.pixels_to_model(15, Geom::Point3d.new.transform(@active_drawing_def.transformation))
@@ -701,24 +702,24 @@ module Ladb::OpenCutList
             box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
             preview.append(box_helper)
 
-            if @active_drawing_def.picked_line_manipulator.is_a?(EdgeManipulator)
+            if @active_drawing_def.input_line_manipulator.is_a?(EdgeManipulator)
 
               # Highlight input edge
               segments = Kuix::Segments.new
               segments.transformation = projection_def.transformation.inverse
-              segments.add_segments(@active_drawing_def.picked_line_manipulator.segment)
+              segments.add_segments(@active_drawing_def.input_line_manipulator.segment)
               segments.color = COLOR_ACTION
               segments.line_width = 3
               segments.on_top = true
               preview.append(segments)
 
-            elsif @active_drawing_def.picked_line_manipulator.is_a?(LineManipulator)
+            elsif @active_drawing_def.input_line_manipulator.is_a?(LineManipulator)
 
               # Highlight input line
               line = Kuix::Line.new
               line.transformation = projection_def.transformation.inverse
-              line.position = @active_drawing_def.picked_line_manipulator.position
-              line.direction = @active_drawing_def.picked_line_manipulator.direction
+              line.position = @active_drawing_def.input_line_manipulator.position
+              line.direction = @active_drawing_def.input_line_manipulator.direction
               line.color = COLOR_ACTION
               line.line_width = 2
               preview.append(line)
@@ -838,12 +839,14 @@ module Ladb::OpenCutList
           file_name = _get_active_part_name(true)
           file_format = fetch_action_option_value(ACTION_EXPORT_PART_3D, ACTION_OPTION_FILE_FORMAT)
           unit = fetch_action_option_value(ACTION_EXPORT_PART_3D, ACTION_OPTION_UNIT)
+          switch_yz = fetch_action_option_enabled(ACTION_EXPORT_PART_3D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SWITCH_YZ)
 
-          worker = CommonWriteDrawing3dWorker.new(@active_drawing_def, {
-            'file_name' => file_name,
-            'file_format' => file_format,
-            'unit' => unit
-          })
+          worker = CommonWriteDrawing3dWorker.new(@active_drawing_def,
+            file_name: file_name,
+            file_format: file_format,
+            unit: unit,
+            switch_yz: switch_yz
+          )
           response = worker.run
 
           if response[:errors]
@@ -882,19 +885,19 @@ module Ladb::OpenCutList
           parts_holes_stroke_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_holes_stroke_color')
           parts_paths_stroke_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_paths_stroke_color')
 
-          worker = CommonWriteDrawing2dWorker.new(@active_drawing_def, {
-            'file_name' => file_name,
-            'file_format' => file_format,
-            'unit' => unit,
-            'anchor' => anchor,
-            'smoothing' => smoothing,
-            'merge_holes' => merge_holes,
-            'parts_stroke_color' => parts_stroke_color,
-            'parts_fill_color' => parts_fill_color,
-            'parts_holes_fill_color' => parts_holes_fill_color,
-            'parts_holes_stroke_color' => parts_holes_stroke_color,
-            'parts_paths_stroke_color' => parts_paths_stroke_color
-          })
+          worker = CommonWriteDrawing2dWorker.new(@active_drawing_def,
+            file_name: file_name,
+            file_format: file_format,
+            unit: unit,
+            anchor: anchor,
+            smoothing: smoothing,
+            merge_holes: merge_holes,
+            parts_stroke_color: parts_stroke_color,
+            parts_fill_color: parts_fill_color,
+            parts_holes_fill_color: parts_holes_fill_color,
+            parts_holes_stroke_color: parts_holes_stroke_color,
+            parts_paths_stroke_color: parts_paths_stroke_color
+          )
           response = worker.run
 
           if response[:errors]
@@ -928,14 +931,14 @@ module Ladb::OpenCutList
           parts_stroke_color = fetch_action_option_value(ACTION_EXPORT_FACE, ACTION_OPTION_OPTIONS, 'parts_stroke_color')
           parts_fill_color = fetch_action_option_value(ACTION_EXPORT_FACE, ACTION_OPTION_OPTIONS, 'parts_fill_color')
 
-          worker = CommonWriteDrawing2dWorker.new(@active_drawing_def, {
-            'file_name' => file_name,
-            'file_format' => file_format,
-            'unit' => unit,
-            'smoothing' => smoothing,
-            'parts_stroke_color' => parts_stroke_color,
-            'parts_fill_color' => parts_fill_color
-          })
+          worker = CommonWriteDrawing2dWorker.new(@active_drawing_def,
+            file_name: file_name,
+            file_format: file_format,
+            unit: unit,
+            smoothing: smoothing,
+            parts_stroke_color: parts_stroke_color,
+            parts_fill_color: parts_fill_color
+          )
           response = worker.run
 
           if response[:errors]
@@ -968,13 +971,13 @@ module Ladb::OpenCutList
           smoothing = fetch_action_option_value(ACTION_EXPORT_PATHS, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
           parts_paths_stroke_color = fetch_action_option_value(ACTION_EXPORT_PATHS, ACTION_OPTION_OPTIONS, 'parts_paths_stroke_color')
 
-          worker = CommonWriteDrawing2dWorker.new(@active_drawing_def, {
-            'file_name' => file_name,
-            'file_format' => file_format,
-            'unit' => unit,
-            'smoothing' => smoothing,
-            'parts_paths_stroke_color' => parts_paths_stroke_color
-          })
+          worker = CommonWriteDrawing2dWorker.new(@active_drawing_def,
+            file_name: file_name,
+            file_format: file_format,
+            unit: unit,
+            smoothing: smoothing,
+            parts_paths_stroke_color: parts_paths_stroke_color
+          )
           response = worker.run
 
           if response[:errors]

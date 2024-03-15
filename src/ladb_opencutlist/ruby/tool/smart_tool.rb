@@ -1418,50 +1418,60 @@ module Ladb::OpenCutList
           @pick_helper.count.times do |index|
 
             if @pick_edges && picked_edge_path.nil? && @pick_helper.leaf_at(index).is_a?(Sketchup::Edge)
+              unless context_locked
+                # External edges are considered only if contex is locked
+                next if !@pick_helper.leaf_at(index).used_by?(picked_face) || @pick_helper.path_at(index)[0...-1] != picked_face_path[0...-1]
+              end
               picked_edge = @pick_helper.leaf_at(index)
               picked_edge_path = @pick_helper.path_at(index)
               break
             end
 
-            if @pick_clines && picked_cline_path.nil? && @pick_helper.leaf_at(index).is_a?(Sketchup::ConstructionLine)
-              picked_cline = @pick_helper.leaf_at(index)
-              picked_cline_path = @pick_helper.path_at(index)
-              break
-            end
+            if context_locked
 
-            if @pick_axes && picked_axes_path.nil? && @pick_helper.leaf_at(index).is_a?(Sketchup::Axes)
+              # External lines are considered only if contex is locked
 
-              picked_axes = @pick_helper.leaf_at(index)
-              picked_axes_path = @pick_helper.path_at(index)
-              picked_axes_transformation = @pick_helper.transformation_at(index)
-
-              p0 = @view.screen_coords(picked_axes.origin.transform(picked_axes_transformation))
-              p0.z = 0
-              px = @view.screen_coords((picked_axes.origin + picked_axes.xaxis).transform(picked_axes_transformation))
-              px.z = 0
-              py = @view.screen_coords((picked_axes.origin + picked_axes.yaxis).transform(picked_axes_transformation))
-              py.z = 0
-              pz = @view.screen_coords((picked_axes.origin + picked_axes.zaxis).transform(picked_axes_transformation))
-              pz.z = 0
-
-              xline = [ p0, px - p0 ]
-              yline = [ p0, py - p0 ]
-              zline = [ p0, pz - p0 ]
-
-              nearest_line = [ xline, yline, zline ].min { |line_a, line_b| @pick_position.distance_to_line(line_a) <=> @pick_position.distance_to_line(line_b) }
-
-              if nearest_line == xline
-                picked_axes_line = [ picked_axes.origin, picked_axes.xaxis ]
-              elsif nearest_line == yline
-                picked_axes_line = [ picked_axes.origin, picked_axes.yaxis ]
-              elsif nearest_line == zline
-                picked_axes_line = [ picked_axes.origin, picked_axes.zaxis ]
-              else
-                picked_axes = nil
-                picked_axes_path = nil
+              if @pick_clines && picked_cline_path.nil? && @pick_helper.leaf_at(index).is_a?(Sketchup::ConstructionLine)
+                picked_cline = @pick_helper.leaf_at(index)
+                picked_cline_path = @pick_helper.path_at(index)
+                break
               end
 
-              break
+              if @pick_axes && picked_axes_path.nil? && @pick_helper.leaf_at(index).is_a?(Sketchup::Axes)
+
+                picked_axes = @pick_helper.leaf_at(index)
+                picked_axes_path = @pick_helper.path_at(index)
+                picked_axes_transformation = @pick_helper.transformation_at(index)
+
+                p0 = @view.screen_coords(picked_axes.origin.transform(picked_axes_transformation))
+                p0.z = 0
+                px = @view.screen_coords((picked_axes.origin + picked_axes.xaxis).transform(picked_axes_transformation))
+                px.z = 0
+                py = @view.screen_coords((picked_axes.origin + picked_axes.yaxis).transform(picked_axes_transformation))
+                py.z = 0
+                pz = @view.screen_coords((picked_axes.origin + picked_axes.zaxis).transform(picked_axes_transformation))
+                pz.z = 0
+
+                xline = [ p0, px - p0 ]
+                yline = [ p0, py - p0 ]
+                zline = [ p0, pz - p0 ]
+
+                nearest_line = [ xline, yline, zline ].min { |line_a, line_b| @pick_position.distance_to_line(line_a) <=> @pick_position.distance_to_line(line_b) }
+
+                if nearest_line == xline
+                  picked_axes_line = [ picked_axes.origin, picked_axes.xaxis ]
+                elsif nearest_line == yline
+                  picked_axes_line = [ picked_axes.origin, picked_axes.yaxis ]
+                elsif nearest_line == zline
+                  picked_axes_line = [ picked_axes.origin, picked_axes.zaxis ]
+                else
+                  picked_axes = nil
+                  picked_axes_path = nil
+                end
+
+                break
+              end
+
             end
 
           end

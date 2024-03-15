@@ -20,22 +20,39 @@ module Ladb::OpenCutList
 
     SUPPORTED_FILE_FORMATS = [ FILE_FORMAT_SVG, FILE_FORMAT_DXF ]
 
-    def initialize(drawing_def, settings = {})
+    def initialize(drawing_def,
+
+                   folder_path: nil,
+                   file_name: 'FACE',
+                   file_format: nil,
+
+                   unit: nil,
+                   anchor: false,
+                   smoothing: false,
+                   merge_holes: false,
+
+                   parts_stroke_color: nil,
+                   parts_fill_color: nil,
+                   parts_holes_stroke_color: nil,
+                   parts_holes_fill_color: nil,
+                   parts_paths_stroke_color: nil
+
+    )
 
       @drawing_def = drawing_def
 
-      @folder_path = settings.fetch('folder_path', nil)
-      @file_name = _sanitize_filename(settings.fetch('file_name', 'FACE'))
-      @file_format = settings.fetch('file_format', nil)
-      @unit = settings.fetch('unit', nil)
-      @anchor = settings.fetch('anchor', false)
-      @smoothing = settings.fetch('smoothing', false)
-      @merge_holes = settings.fetch('merge_holes', false)
-      @parts_stroke_color = ColorUtils.color_create(settings.fetch('parts_stroke_color', nil))
-      @parts_fill_color = ColorUtils.color_create(settings.fetch('parts_fill_color', nil))
-      @parts_holes_stroke_color = ColorUtils.color_create(settings.fetch('parts_holes_stroke_color', nil))
-      @parts_holes_fill_color = ColorUtils.color_create(settings.fetch('parts_holes_fill_color', nil))
-      @parts_paths_stroke_color = ColorUtils.color_create(settings.fetch('parts_paths_stroke_color', nil))
+      @folder_path = folder_path
+      @file_name = _sanitize_filename(file_name)
+      @file_format = file_format
+      @unit = unit
+      @anchor = anchor
+      @smoothing = smoothing
+      @merge_holes = merge_holes
+      @parts_stroke_color = ColorUtils.color_create(parts_stroke_color)
+      @parts_fill_color = ColorUtils.color_create(parts_fill_color)
+      @parts_holes_stroke_color = ColorUtils.color_create(parts_holes_stroke_color)
+      @parts_holes_fill_color = ColorUtils.color_create(parts_holes_fill_color)
+      @parts_paths_stroke_color = ColorUtils.color_create(parts_paths_stroke_color)
 
     end
 
@@ -61,10 +78,10 @@ module Ladb::OpenCutList
         begin
 
           # Compute projection
-          projection_def = CommonDrawingProjectionWorker.new(@drawing_def, {
-            'origin_position' => @anchor ? CommonDrawingProjectionWorker::ORIGIN_POSITION_DEFAULT : CommonDrawingProjectionWorker::ORIGIN_POSITION_BOUNDS_MIN,
-            'merge_holes' => @merge_holes
-          }).run
+          projection_def = CommonDrawingProjectionWorker.new(@drawing_def,
+            origin_position: @anchor ? CommonDrawingProjectionWorker::ORIGIN_POSITION_DEFAULT : CommonDrawingProjectionWorker::ORIGIN_POSITION_BOUNDS_MIN,
+            merge_holes: @merge_holes
+          ).run
           if projection_def.is_a?(DrawingProjectionDef)
 
             # Open output file

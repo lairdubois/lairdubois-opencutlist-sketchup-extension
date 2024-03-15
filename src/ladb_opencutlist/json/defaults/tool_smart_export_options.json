@@ -2,7 +2,8 @@
   "action_0": {  /* ACTION_EXPORT_PART_3D */
     "file_format": "stl",
     "unit": { "metric": 2, "imperial": 0 }, /* Length::Millimeter , Length::Inches*/
-    "anchor": false
+    "anchor": false,
+    "switch_yz": true
   },
   "action_1": {  /* ACTION_EXPORT_PART_2D */
     "file_format": "svg",

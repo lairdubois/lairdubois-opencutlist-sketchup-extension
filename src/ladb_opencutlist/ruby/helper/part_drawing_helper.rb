@@ -32,14 +32,14 @@ module Ladb::OpenCutList
         local_z_axis = local_z_axis.reverse
       end
 
-      drawing_def = CommonDrawingDecompositionWorker.new(instance_info.path, {
-        'input_local_x_axis' => local_x_axis,
-        'input_local_y_axis' => local_y_axis,
-        'input_local_z_axis' => local_z_axis,
-        'origin_position' => origin_position,
-        'ignore_edges' => ignore_edges,
-        'edge_validator' => ignore_edges ? nil : CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY
-      }).run
+      drawing_def = CommonDrawingDecompositionWorker.new(instance_info.path,
+        input_local_x_axis: local_x_axis,
+        input_local_y_axis: local_y_axis,
+        input_local_z_axis: local_z_axis,
+        origin_position: origin_position,
+        ignore_edges: ignore_edges,
+        edge_validator: ignore_edges ? nil : CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY
+      ).run
       if drawing_def.is_a?(DrawingDef)
         part.def.drawing_defs[part_drawing_type] = drawing_def
         return drawing_def
@@ -59,10 +59,10 @@ module Ladb::OpenCutList
       drawing_def = _compute_part_drawing_def(part_drawing_type, part, ignore_edges: ignore_edges, origin_position: CommonDrawingDecompositionWorker::ORIGIN_POSITION_DEFAULT, use_cache: use_cache)
       return nil unless drawing_def.is_a?(DrawingDef)
 
-      projection_def = CommonDrawingProjectionWorker.new(drawing_def, {
-        'origin_position' => origin_position,
-        'merge_holes' => merge_holes
-      }).run
+      projection_def = CommonDrawingProjectionWorker.new(drawing_def,
+        origin_position: origin_position,
+        merge_holes: merge_holes
+      ).run
       if projection_def.is_a?(DrawingProjectionDef)
         projection_defs_cache[part.id] = projection_def if use_cache && projection_defs_cache.is_a?(Hash)
         return projection_def
