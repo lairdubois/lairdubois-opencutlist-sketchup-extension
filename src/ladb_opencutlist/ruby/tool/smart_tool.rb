@@ -1170,7 +1170,7 @@ module Ladb::OpenCutList
 
     def _select_active_part_entity
       model = Sketchup.active_model
-      if model && @active_part_entity_path.is_a?(Array) && @active_part_entity_path.length > 0
+      if model && @active_part_entity_path.is_a?(Array) && !@active_part_entity_path.empty?
         selection = model.selection
         selection.clear
         selection.add(@active_part_entity_path.last)
@@ -1259,7 +1259,7 @@ module Ladb::OpenCutList
       entity = path.last
       return nil unless entity.is_a?(Sketchup::Drawingelement)
 
-      worker = CutlistGenerateWorker.new(**HashUtils.symbolize_keys(PLUGIN.get_model_preset('cutlist_options')).merge({ active_entity: entity, active_path: path.slice(0...-1) }))
+      worker = CutlistGenerateWorker.new(**HashUtils.symbolize_keys(PLUGIN.get_model_preset('cutlist_options')).merge({ active_entity: entity, active_path: path[0...-1] }))
       cutlist = worker.run
 
       part = nil
