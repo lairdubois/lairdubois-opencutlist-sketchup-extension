@@ -140,7 +140,7 @@ module Ladb::OpenCutList
       require_relative '../worker/cutlist/cutlist_export_worker'
 
       # Setup worker
-      worker = CutlistExportWorker.new(@cutlist, settings)
+      worker = CutlistExportWorker.new(@cutlist, **HashUtils.symbolize_keys(settings))
 
       # Run !
       worker.run

@@ -925,7 +925,12 @@
                 // Store options
                 rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_export_options', values: exportOptions });
 
-                rubyCallCommand('cutlist_export', $.extend({ col_defs: exportOptions.source_col_defs[exportOptions.source], target: 'table' }, exportOptions, that.generateOptions), function (response) {
+                rubyCallCommand('cutlist_export', {
+                    source: exportOptions.source,
+                    col_defs: exportOptions.source_col_defs[exportOptions.source],
+                    target: 'table',
+                    hidden_group_ids: that.generateOptions.hidden_group_ids
+                }, function (response) {
 
                     if (response.errors) {
                         that.dialog.notifyErrors(response.errors);
@@ -949,7 +954,13 @@
                         });
 
                         var fnCopyToClipboard = function(noHeader) {
-                            rubyCallCommand('cutlist_export', $.extend({ col_defs: exportOptions.source_col_defs[exportOptions.source], target: 'pasteable', no_header: noHeader }, exportOptions, that.generateOptions), function (response) {
+                            rubyCallCommand('cutlist_export', {
+                                source: exportOptions.source,
+                                col_defs: exportOptions.source_col_defs[exportOptions.source],
+                                target: 'pasteable',
+                                hidden_group_ids: that.generateOptions.hidden_group_ids,
+                                no_header: noHeader
+                            }, function (response) {
                                 if (response.errors) {
                                     that.dialog.notifyErrors(response.errors);
                                 }
@@ -1002,7 +1013,14 @@
                 // Store options
                 rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_export_options', values: exportOptions });
 
-                rubyCallCommand('cutlist_export', $.extend({ col_defs: exportOptions.source_col_defs[exportOptions.source], target: 'csv' }, exportOptions, that.generateOptions), function (response) {
+                rubyCallCommand('cutlist_export', {
+                    source: exportOptions.source,
+                    col_sep: exportOptions.col_sep,
+                    encoding: exportOptions.encoding,
+                    col_defs: exportOptions.source_col_defs[exportOptions.source],
+                    target: 'csv',
+                    hidden_group_ids: that.generateOptions.hidden_group_ids,
+                }, function (response) {
 
                     if (response.errors) {
                         that.dialog.notifyErrors(response.errors);

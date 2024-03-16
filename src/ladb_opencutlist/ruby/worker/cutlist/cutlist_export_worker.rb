@@ -18,19 +18,34 @@ module Ladb::OpenCutList
     EXPORT_OPTION_ENCODING_UTF16LE = 1
     EXPORT_OPTION_ENCODING_UTF16BE = 2
 
-    def initialize(settings, cutlist)
+    EXPORT_OPTION_TARGET_TABLE = 'table'.freeze
+    EXPORT_OPTION_TARGET_PASTABLE = 'pasteable'.freeze
+    EXPORT_OPTION_TARGET_CSV = 'csv'.freeze
 
-      options = PLUGIN.get_model_preset('cutlist_export_options')
+    def initialize(cutlist,
 
-      @source = settings.fetch('source', options.fetch('source'))
-      @col_sep = settings.fetch('col_sep', options.fetch('col_sep'))
-      @encoding = settings.fetch('encoding', options.fetch('encoding'))
-      @col_defs = settings.fetch('col_defs')
-      @target = settings.fetch('target')
-      @no_header = settings.fetch('no_header', false)
-      @hidden_group_ids = settings.fetch('hidden_group_ids')
+                   source: EXPORT_OPTION_SOURCE_CUTLIST,
+                   col_sep: EXPORT_OPTION_COL_SEP_SEMICOLON,
+                   encoding: EXPORT_OPTION_ENCODING_UTF8,
+
+                   col_defs: {},
+                   target: EXPORT_OPTION_TARGET_CSV,
+                   no_header: false,
+
+                   hidden_group_ids: []
+
+    )
 
       @cutlist = cutlist
+
+      @source = source
+      @col_sep = col_sep
+      @encoding = encoding
+      @col_defs = col_defs
+      @target = target
+      @no_header = no_header
+
+      @hidden_group_ids = hidden_group_ids
 
     end
 
