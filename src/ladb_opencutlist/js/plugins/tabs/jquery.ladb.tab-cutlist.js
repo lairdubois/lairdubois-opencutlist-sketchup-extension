@@ -1699,12 +1699,22 @@
 
                                     $viewer.ladbThreeViewer('callCommand', ['get_exploded_parts_matrices', null, function (data) {
 
-                                        rubyCallCommand('cutlist_layout_to_layout', $.extend({
+                                        rubyCallCommand('cutlist_layout_to_layout', {
                                             parts_infos: data.parts_infos,
                                             pins_infos: data.pins_infos,
                                             target_group_id: context && context.targetGroup ? context.targetGroup.id : null,
-                                            generated_at: Twig.twig({ data: "{{ generatedAt|date(('default.date_format'|i18next)) }}" }).render({ generatedAt: new Date().getTime() / 1000 })
-                                        }, layoutOptions, controlsData), function (response) {
+                                            generated_at: Twig.twig({ data: "{{ generatedAt|date(('default.date_format'|i18next)) }}" }).render({ generatedAt: new Date().getTime() / 1000 }),
+                                            page_width: layoutOptions.page_width,
+                                            page_height: layoutOptions.page_height,
+                                            page_header: layoutOptions.page_header,
+                                            parts_colored: layoutOptions.parts_colored,
+                                            parts_opacity: layoutOptions.parts_opacity,
+                                            pins_hidden: layoutOptions.pins_hidden,
+                                            camera_view: layoutOptions.camera_view,
+                                            camera_zoom: controlsData.camera_zoom,
+                                            camera_target: controlsData.camera_target,
+                                            exploded_model_radius: controlsData.exploded_model_radius
+                                        }, function (response) {
 
                                             // Finish progress feedback
                                             that.dialog.finishProgress();
