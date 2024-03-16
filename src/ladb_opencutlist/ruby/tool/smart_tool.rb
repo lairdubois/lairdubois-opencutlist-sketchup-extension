@@ -1289,7 +1289,18 @@ module Ladb::OpenCutList
     attr_reader :picked_cline, :picked_cline_path
     attr_reader :picked_axes, :picked_axes_line, :picked_axes_path
 
-    def initialize(smart_tool, pick_context_by_face: true, pick_context_by_edge: false, pick_point: false, pick_edges: false, pick_clines: false, pick_axes: false)
+    def initialize(smart_tool,
+
+                   pick_context_by_face: true,
+                   pick_context_by_edge: false,
+
+                   pick_point: false,
+                   pick_edges: false,
+                   pick_clines: false,
+                   pick_axes: false
+
+    )
+
       @smart_tool = smart_tool
       @view = Sketchup.active_model.active_view
 

@@ -185,17 +185,17 @@ module Ladb::OpenCutList::Kuix
 
   class ArrowMotif < Motif3d
 
-    def initialize(id = nil)
+    def initialize(offset = 0.1, id = nil)
       super([[
 
-               [  0.05 , 1/3.0 , 0 ],
-               [ 1/2.0 , 1/3.0 , 0 ],
-               [ 1/2.0 ,  0.05 , 0 ],
-               [  0.95 , 1/2.0 , 0 ],
-               [ 1/2.0 ,  0.95 , 0 ],
-               [ 1/2.0 , 2/3.0 , 0 ],
-               [  0.05 , 2/3.0 , 0 ],
-               [  0.05 , 1/3.0 , 0 ]
+               [   offset ,     1/3.0 , 0 ],
+               [    1/2.0 ,     1/3.0 , 0 ],
+               [    1/2.0 ,    offset , 0 ],
+               [ 1-offset ,     1/2.0 , 0 ],
+               [    1/2.0 ,  1-offset , 0 ],
+               [    1/2.0 ,     2/3.0 , 0 ],
+               [   offset ,     2/3.0 , 0 ],
+               [   offset ,     1/3.0 , 0 ]
 
              ]], id)
     end

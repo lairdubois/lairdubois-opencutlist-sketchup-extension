@@ -3583,7 +3583,7 @@
                                             // Retrieve cutting diagram options
                                             rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_cuttingdiagram1d_write_options', section: groupId }, function (response) {
 
-                                                var exportOptions = response.preset;
+                                                var writeOptions = response.preset;
 
                                                 var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_1d_export', 'tabs/cutlist/_modal-cuttingdiagram-1d-write.twig', {
                                                     group: group,
@@ -3727,7 +3727,7 @@
                                                 $inputLeftoversFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputCutsColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
 
-                                                fnFillInputs(exportOptions);
+                                                fnFillInputs(writeOptions);
 
                                                 // Bind inputs
                                                 $inputBarHidden.on('change', fnUpdateFieldsVisibility);
@@ -3740,12 +3740,16 @@
                                                 $btnExport.on('click', function () {
 
                                                     // Fetch options
-                                                    fnFetchOptions(exportOptions);
+                                                    fnFetchOptions(writeOptions);
 
                                                     // Store options
-                                                    rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_cuttingdiagram1d_write_options', values: exportOptions, section: groupId });
+                                                    rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_cuttingdiagram1d_write_options', values: writeOptions, section: groupId });
 
-                                                    rubyCallCommand('cutlist_cuttingdiagram1d_write', $.extend({ hidden_bar_indices: hiddenBarIndices }, exportOptions, cuttingdiagram1dOptions), function (response) {
+                                                    rubyCallCommand('cutlist_cuttingdiagram1d_write', $.extend({
+                                                        hidden_bar_indices: hiddenBarIndices,
+                                                        part_drawing_type: cuttingdiagram1dOptions.part_drawing_type,
+                                                        use_names: cuttingdiagram1dOptions.use_names,
+                                                    }, writeOptions), function (response) {
 
                                                         if (response.errors) {
                                                             that.dialog.notifyErrors(response.errors);
@@ -4143,7 +4147,7 @@
                                             // Retrieve cutting diagram options
                                             rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_cuttingdiagram2d_write_options', section: groupId }, function (response) {
 
-                                                var exportOptions = response.preset;
+                                                var writeOptions = response.preset;
 
                                                 var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_2d_export', 'tabs/cutlist/_modal-cuttingdiagram-2d-write.twig', {
                                                     group: group,
@@ -4287,7 +4291,7 @@
                                                 $inputLeftoversFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
                                                 $inputCutsColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
 
-                                                fnFillInputs(exportOptions);
+                                                fnFillInputs(writeOptions);
 
                                                 // Bind inputs
                                                 $inputSheetHidden.on('change', fnUpdateFieldsVisibility);
@@ -4300,12 +4304,16 @@
                                                 $btnExport.on('click', function () {
 
                                                     // Fetch options
-                                                    fnFetchOptions(exportOptions);
+                                                    fnFetchOptions(writeOptions);
 
                                                     // Store options
-                                                    rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_cuttingdiagram2d_write_options', values: exportOptions, section: groupId });
+                                                    rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_cuttingdiagram2d_write_options', values: writeOptions, section: groupId });
 
-                                                    rubyCallCommand('cutlist_cuttingdiagram2d_write', $.extend({ hidden_sheet_indices: hiddenSheetIndices }, exportOptions, cuttingdiagram2dOptions), function (response) {
+                                                    rubyCallCommand('cutlist_cuttingdiagram2d_write', $.extend({
+                                                        hidden_sheet_indices: hiddenSheetIndices,
+                                                        part_drawing_type: cuttingdiagram2dOptions.part_drawing_type,
+                                                        use_names: cuttingdiagram2dOptions.use_names,
+                                                    }, writeOptions), function (response) {
 
                                                         if (response.errors) {
                                                             that.dialog.notifyErrors(response.errors);
