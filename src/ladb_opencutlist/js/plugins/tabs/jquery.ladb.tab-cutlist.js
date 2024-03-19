@@ -810,6 +810,7 @@
             $editorSummary.ladbEditorExport({
                 dialog: that.dialog,
                 vars: [
+                    { name: 'material', type: 'material' },
                     { name: 'material_type', type: 'string' },
                     { name: 'material_name', type: 'string' },
                     { name: 'material_std_dimension', type: 'string' },
@@ -837,6 +838,7 @@
                     { name: 'bbox_width', type: 'length' },
                     { name: 'bbox_thickness', type: 'length' },
                     { name: 'final_area', type: 'area' },
+                    { name: 'material', type: 'material' },
                     { name: 'material_type', type: 'material-type' },
                     { name: 'material_name', type: 'string' },
                     { name: 'material_description', type: 'string' },
@@ -877,6 +879,7 @@
                     { name: 'bbox_width', type: 'length' },
                     { name: 'bbox_thickness', type: 'length' },
                     { name: 'final_area', type: 'area' },
+                    { name: 'material', type: 'material' },
                     { name: 'material_type', type: 'material-type' },
                     { name: 'material_name', type: 'string' },
                     { name: 'material_description', type: 'string' },
@@ -1551,6 +1554,7 @@
                     { name: 'bbox_width', type: 'length' },
                     { name: 'bbox_thickness', type: 'length' },
                     { name: 'final_area', type: 'area' },
+                    { name: 'material', type: 'material' },
                     { name: 'material_type', type: 'material-type' },
                     { name: 'material_name', type: 'string' },
                     { name: 'material_description', type: 'string' },

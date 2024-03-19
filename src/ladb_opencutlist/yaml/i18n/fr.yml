@@ -610,8 +610,9 @@ tab:
       final_area: Surface finie
       count: Quantité
       part_count: Nombre de pièces
-      material_type: Type
-      material_name: Matière
+      material: Matière
+      material_type: Type de matière
+      material_name: Nom de la matière
       material_description: Description de la matière
       material_url: URL de la matière
       material_std_dimension: Dimension standard

@@ -450,7 +450,7 @@ module Ladb::OpenCutList
   class MaterialWrapper < Wrapper
 
     attr_reader :material_name, :material_color, :material_type, :material_description, :material_url
-    attr_reader :std_thickness, :std_width
+    attr_reader :std_dimension, :std_thickness, :std_width
 
     def initialize(material, group_def)
 
@@ -464,6 +464,7 @@ module Ladb::OpenCutList
       @material_description = StringWrapper.new(group_def.nil? ? nil : group_def.material_attributes.description)
       @material_url = StringWrapper.new(group_def.nil? ? nil : group_def.material_attributes.url)
 
+      @std_dimension = StringWrapper.new(group_def ? group_def.std_dimension : nil)
       @std_thickness = LengthWrapper.new(group_def ? group_def.std_thickness : nil)
       @std_width = LengthWrapper.new(group_def ? group_def.std_width : nil)
 
@@ -471,6 +472,11 @@ module Ladb::OpenCutList
 
     def empty?
       @material.nil?
+    end
+
+    def grained?
+      return false if @group_def.nil? || @group_def.material_attributes.nil?
+      @group_def.material_attributes.grained
     end
 
     def to_s

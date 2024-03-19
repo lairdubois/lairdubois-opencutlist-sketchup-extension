@@ -163,11 +163,7 @@ module Ladb::OpenCutList
           next if @hidden_group_ids.include?(group.id)
 
           data = SummaryExportRowData.new(
-            MaterialTypeWrapper.new(group.material_type),
-            StringWrapper.new(group.material_name ? group.material_name : PLUGIN.get_i18n_string('tab.cutlist.material_undefined')),
-            StringWrapper.new(group.std_dimension),
-            StringWrapper.new(group.material_description),
-            StringWrapper.new(group.material_url),
+            MaterialWrapper.new(group.def.material, group.def),
             IntegerWrapper.new(group.part_count),
             LengthWrapper.new(group.def.total_cutting_length, false),
             AreaWrapper.new(group.def.total_cutting_area),
@@ -201,10 +197,7 @@ module Ladb::OpenCutList
               LengthWrapper.new(part.def.size.width),
               LengthWrapper.new(part.def.size.thickness),
               AreaWrapper.new(part.def.final_area),
-              MaterialTypeWrapper.new(group.material_type),
-              StringWrapper.new(group.material_display_name),
-              StringWrapper.new(group.material_description),
-              StringWrapper.new(group.material_url),
+              MaterialWrapper.new(group.def.material, group.def),
               ArrayWrapper.new(part.entity_names.map(&:first)),
               StringWrapper.new(part.description),
               StringWrapper.new(part.url),
@@ -369,22 +362,19 @@ module Ladb::OpenCutList
   class SummaryExportRowData < ExportRowData
 
     def initialize(
-      material_type,
-      material_name,
-      material_std_dimension,
-      material_description,
-      material_url,
+      material,
       part_count,
       total_cutting_length,
       total_cutting_area,
       total_cutting_volume,
       total_final_area
     )
-      @material_type = material_type
-      @material_name = material_name
-      @material_std_dimension = material_std_dimension
-      @material_description = material_description
-      @material_url = material_url
+      @material = material
+      @material_type = material.material_type
+      @material_name = material.material_name
+      @material_description = material.material_description
+      @material_url = material.material_url
+      @material_std_dimension = material.std_dimension
       @part_count = part_count
       @total_cutting_length = total_cutting_length
       @total_cutting_area = total_cutting_area
@@ -409,10 +399,7 @@ module Ladb::OpenCutList
       bbox_width,
       bbox_thickness,
       final_area,
-      material_type,
-      material_name,
-      material_description,
-      material_url,
+      material,
       entity_names,
       description,
       url,
@@ -437,10 +424,11 @@ module Ladb::OpenCutList
       @bbox_width = bbox_width
       @bbox_thickness = bbox_thickness
       @final_area = final_area
-      @material_type = material_type
-      @material_name = material_name
-      @material_description = material_description
-      @material_url = material_url
+      @material = material
+      @material_type = material.material_type
+      @material_name = material.material_name
+      @material_description = material.material_description
+      @material_url = material.material_url
       @entity_names = entity_names
       @description = description
       @url = url
@@ -472,10 +460,7 @@ module Ladb::OpenCutList
       bbox_width,
       bbox_thickness,
       final_area,
-      material_type,
-      material_name,
-      material_description,
-      material_url,
+      material,
       description,
       url,
       tags,
@@ -500,10 +485,11 @@ module Ladb::OpenCutList
       @bbox_width = bbox_width
       @bbox_thickness = bbox_thickness
       @final_area = final_area
-      @material_type = material_type
-      @material_name = material_name
-      @material_description = material_description
-      @material_url = material_url
+      @material = material
+      @material_type = material.material_type
+      @material_name = material.material_name
+      @material_description = material.material_description
+      @material_url = material.material_url
       @description = description
       @url = url
       @tags = tags

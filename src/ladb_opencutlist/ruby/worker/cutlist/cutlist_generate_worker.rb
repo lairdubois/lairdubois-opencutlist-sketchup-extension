@@ -210,7 +210,7 @@ module Ladb::OpenCutList
             material_usage.use_count += 1
           end
 
-          # Edge materials filter -> exclude all non sheet good parts
+          # Edge and veneer materials filter -> exclude all non sheet good parts
           if (!@edge_material_names_filter.empty? || !@veneer_material_names_filter.empty?) && material_attributes.type != MaterialAttributes::TYPE_SHEET_GOOD
             cutlist.ignored_instance_count += 1
             next
@@ -464,10 +464,7 @@ module Ladb::OpenCutList
         unless group_def
 
           group_def = GroupDef.new(group_id)
-          group_def.material_id = material_id
-          group_def.material_name = material_name
-          group_def.material_display_name = material_display_name
-          group_def.material_color = material.color if material
+          group_def.material = material
           group_def.material_attributes = material_attributes
           group_def.std_available = std_info[:available]
           group_def.std_dimension_stipped_name = std_info[:dimension_stipped_name]
@@ -1347,10 +1344,7 @@ module Ladb::OpenCutList
       unless group_def
 
         group_def = GroupDef.new(group_id)
-        group_def.material_id = material ? material.entityID : ''
-        group_def.material_name = material.name
-        group_def.material_display_name = material.display_name
-        group_def.material_color = material.color if material
+        group_def.material = material
         group_def.material_attributes = material_attributes
         group_def.std_available = std_info[:available]
         group_def.std_dimension_stipped_name = std_info[:dimension_stipped_name]
@@ -1418,10 +1412,7 @@ module Ladb::OpenCutList
       unless group_def
 
         group_def = GroupDef.new(group_id)
-        group_def.material_id = material ? material.entityID : ''
-        group_def.material_name = material.name
-        group_def.material_display_name = material.display_name
-        group_def.material_color = material.color if material
+        group_def.material = material
         group_def.material_attributes = material_attributes
         group_def.std_available = std_info[:available]
         group_def.std_dimension_stipped_name = std_info[:dimension_stipped_name]

@@ -69,37 +69,16 @@ module Ladb::OpenCutList
               LengthWrapper.new(part.def.size.width),
               LengthWrapper.new(part.def.size.thickness),
               AreaWrapper.new(part.def.final_area),
-              MaterialTypeWrapper.new(part.group.material_type),
-              StringWrapper.new(part.material_name),
-              StringWrapper.new(part.group.material_description),
-              StringWrapper.new(part.group.material_url),
+              MaterialWrapper.new(part.group.def.material, part.group.def),
               StringWrapper.new(part.description),
               StringWrapper.new(part.url),
               ArrayWrapper.new(part.tags),
-              EdgeWrapper.new(
-                part.def.edge_materials[:ymin],
-                part.def.edge_group_defs[:ymin]
-              ),
-              EdgeWrapper.new(
-                part.def.edge_materials[:ymax],
-                part.def.edge_group_defs[:ymax]
-              ),
-              EdgeWrapper.new(
-                part.def.edge_materials[:xmin],
-                part.def.edge_group_defs[:xmin]
-              ),
-              EdgeWrapper.new(
-                part.def.edge_materials[:xmax],
-                part.def.edge_group_defs[:xmax]
-              ),
-              VeneerWrapper.new(
-                part.def.veneer_materials[:zmin],
-                part.def.veneer_group_defs[:zmin]
-              ),
-              VeneerWrapper.new(
-                part.def.veneer_materials[:zmax],
-                part.def.veneer_group_defs[:zmax]
-              ),
+              EdgeWrapper.new(part.def.edge_materials[:ymin], part.def.edge_group_defs[:ymin]),
+              EdgeWrapper.new(part.def.edge_materials[:ymax], part.def.edge_group_defs[:ymax]),
+              EdgeWrapper.new(part.def.edge_materials[:xmin], part.def.edge_group_defs[:xmin]),
+              EdgeWrapper.new(part.def.edge_materials[:xmax], part.def.edge_group_defs[:xmax]),
+              VeneerWrapper.new(part.def.veneer_materials[:zmin], part.def.veneer_group_defs[:zmin]),
+              VeneerWrapper.new(part.def.veneer_materials[:zmax], part.def.veneer_group_defs[:zmax]),
               StringWrapper.new(instance_info.layer.name),
               )
             )
@@ -596,10 +575,7 @@ module Ladb::OpenCutList
       bbox_width,
       bbox_thickness,
       final_area,
-      material_type,
-      material_name,
-      material_description,
-      material_url,
+      material,
       description,
       url,
       tags,
@@ -624,10 +600,11 @@ module Ladb::OpenCutList
       @bbox_width = bbox_width
       @bbox_thickness = bbox_thickness
       @final_area = final_area
-      @material_type = material_type
-      @material_name = material_name
-      @material_description = material_description
-      @material_url = material_url
+      @material = material
+      @material_type = material.material_type
+      @material_name = material.material_name
+      @material_description = material.material_description
+      @material_url = material.material_url
       @description = description
       @url = url
       @tags = tags
