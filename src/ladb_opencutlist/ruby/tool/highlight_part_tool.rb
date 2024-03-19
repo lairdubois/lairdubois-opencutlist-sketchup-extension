@@ -19,22 +19,22 @@ module Ladb::OpenCutList
     COLOR_DRAWING_AUTO_ORIENTED = Sketchup::Color.new(123, 213, 239, 255).freeze
 
     PATH_OFFSETS_FRONT_ARROW = [
-        [ false ,     0 , 1/3.0 , 1 ],
+        [ false ,   0.1 , 1/3.0 , 1 ],
         [ true  , 1/2.0 , 1/3.0 , 1 ],
-        [ true  , 1/2.0 ,     0 , 1 ],
-        [ true  ,     1 , 1/2.0 , 1 ],
-        [ true  , 1/2.0 ,     1 , 1 ],
+        [ true  , 1/2.0 ,   0.1 , 1 ],
+        [ true  ,   0.9 , 1/2.0 , 1 ],
+        [ true  , 1/2.0 ,   0.9 , 1 ],
         [ true  , 1/2.0 , 2/3.0 , 1 ],
-        [ true  ,     0 , 2/3.0 , 1 ],
+        [ true  ,   0.1 , 2/3.0 , 1 ],
     ]
     PATH_OFFSETS_BACK_ARROW = [
-        [ false ,     0 , 1/3.0 , 0 ],
+        [ false ,    0.1, 1/3.0 , 0 ],
         [ true  , 1/2.0 , 1/3.0 , 0 ],
-        [ true  , 1/2.0 ,     0 , 0 ],
-        [ true  ,     1 , 1/2.0 , 0 ],
-        [ true  , 1/2.0 ,     1 , 0 ],
+        [ true  , 1/2.0 ,   0.1 , 0 ],
+        [ true  ,   0.9 , 1/2.0 , 0 ],
+        [ true  , 1/2.0 ,   0.9 , 0 ],
         [ true  , 1/2.0 , 2/3.0 , 0 ],
-        [ true  ,     0 , 2/3.0 , 0 ],
+        [ true  ,   0.1 , 2/3.0 , 0 ],
     ]
 
     FONT_TEXT = 'Verdana'
