@@ -289,7 +289,7 @@ module Ladb::OpenCutList
       # Compute edge count
       @edge_count = [ edge_ymin_material, edge_ymax_material, edge_xmin_material, edge_xmax_material ].compact.length
 
-      # Bluid edge pattern
+      # Build edge pattern
       @edge_pattern = "#{edge_ymax_material ? 1 : 0}#{edge_xmax_material ? 1 : 0}#{edge_ymin_material ? 1 : 0}#{edge_xmin_material ? 1 : 0}"
 
     end

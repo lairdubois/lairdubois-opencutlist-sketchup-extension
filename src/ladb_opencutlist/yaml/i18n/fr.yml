@@ -832,7 +832,7 @@ tab:
         parts: "{{ count }} pièce"
         parts_plural: "{{ count }} pièces"
         settings: Paramètres
-      export:
+      write:
         title: Exportation du calepinage
         info_0: |
           Ce module vous permet d'exporter la **géométrie** du *calepinage* sous forme d'une liste de fichiers au format [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) ou [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
@@ -1131,7 +1131,7 @@ tab:
       option_parts_paths_help: |
         Permet de choisir les couleurs des tracés.
         
-        *La couleur de remplissage ne sera visible que pour les tracés fermés.*
+        *La couleur de remplissage ne sera utilisée que pour les tracés fermés.*
       error:
         no_part: Aucune pièce à exporter.
       warning:

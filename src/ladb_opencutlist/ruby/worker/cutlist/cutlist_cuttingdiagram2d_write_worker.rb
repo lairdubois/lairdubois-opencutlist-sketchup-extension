@@ -42,7 +42,7 @@ module Ladb::OpenCutList
                    parts_holes_stroke_color: '#000000',
                    parts_holes_fill_color: '#ffffff',
                    parts_paths_stroke_color: '#0068FF',
-                   parts_paths_fill_color: null,
+                   parts_paths_fill_color: nil,
                    texts_hidden: false,
                    texts_color: '#00ffff',
                    leftovers_hidden: true,
@@ -107,7 +107,7 @@ module Ladb::OpenCutList
       return { :errors => [ 'default.error' ] } unless SUPPORTED_FILE_FORMATS.include?(@file_format)
 
       # Ask for output dir
-      dir = UI.select_directory(title: PLUGIN.get_i18n_string('tab.cutlist.cuttingdiagram.export.title'), directory: '')
+      dir = UI.select_directory(title: PLUGIN.get_i18n_string('tab.cutlist.cuttingdiagram.write.title'), directory: '')
       if dir
 
         group = @cuttingdiagram2d.def.group

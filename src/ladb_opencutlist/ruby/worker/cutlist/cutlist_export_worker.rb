@@ -210,38 +210,28 @@ module Ladb::OpenCutList
               StringWrapper.new(part.url),
               ArrayWrapper.new(part.tags),
               EdgeWrapper.new(
-                part.edge_material_names[:ymin],
-                part.edge_material_colors[:ymin],
-                part.def.edge_group_defs[:ymin] ? part.def.edge_group_defs[:ymin].std_thickness : nil,
-                part.def.edge_group_defs[:ymin] ? part.def.edge_group_defs[:ymin].std_width : nil
+                part.def.edge_materials[:ymin],
+                part.def.edge_group_defs[:ymin]
               ),
               EdgeWrapper.new(
-                part.edge_material_names[:ymax],
-                part.edge_material_colors[:ymax],
-                part.def.edge_group_defs[:ymax] ? part.def.edge_group_defs[:ymax].std_thickness : nil,
-                part.def.edge_group_defs[:ymax] ? part.def.edge_group_defs[:ymax].std_width : nil
+                part.def.edge_materials[:ymax],
+                part.def.edge_group_defs[:ymax]
               ),
               EdgeWrapper.new(
-                part.edge_material_names[:xmin],
-                part.edge_material_colors[:xmin],
-                part.def.edge_group_defs[:xmin] ? part.def.edge_group_defs[:xmin].std_thickness : nil,
-                part.def.edge_group_defs[:xmin] ? part.def.edge_group_defs[:xmin].std_width : nil
+                part.def.edge_materials[:xmin],
+                part.def.edge_group_defs[:xmin]
               ),
               EdgeWrapper.new(
-                part.edge_material_names[:xmax],
-                part.edge_material_colors[:xmax],
-                part.def.edge_group_defs[:xmax] ? part.def.edge_group_defs[:xmax].std_thickness : nil,
-                part.def.edge_group_defs[:xmax] ? part.def.edge_group_defs[:xmax].std_width : nil
+                part.def.edge_materials[:xmax],
+                part.def.edge_group_defs[:xmax]
               ),
               VeneerWrapper.new(
-                part.face_material_names[:zmin],
-                part.face_material_colors[:zmin],
-                part.def.veneer_group_defs[:zmin] ? part.def.veneer_group_defs[:zmin].std_thickness : nil
+                part.def.veneer_materials[:zmin],
+                part.def.veneer_group_defs[:zmin]
               ),
               VeneerWrapper.new(
-                part.face_material_names[:zmax],
-                part.face_material_colors[:zmax],
-                part.def.veneer_group_defs[:zmax] ? part.def.veneer_group_defs[:zmax].std_thickness : nil
+                part.def.veneer_materials[:zmax],
+                part.def.veneer_group_defs[:zmax]
               ),
               ArrayWrapper.new(part.def.instance_infos.values.map { |instance_info| instance_info.layer.name }.uniq),
             )
@@ -290,38 +280,28 @@ module Ladb::OpenCutList
                   StringWrapper.new(part.url),
                   ArrayWrapper.new(part.tags),
                   EdgeWrapper.new(
-                    part.edge_material_names[:ymin],
-                    part.edge_material_colors[:ymin],
-                    part.def.edge_group_defs[:ymin] ? part.def.edge_group_defs[:ymin].std_thickness : nil,
-                    part.def.edge_group_defs[:ymin] ? part.def.edge_group_defs[:ymin].std_width : nil
+                    part.def.edge_materials[:ymin],
+                    part.def.edge_group_defs[:ymin]
                   ),
                   EdgeWrapper.new(
-                    part.edge_material_names[:ymax],
-                    part.edge_material_colors[:ymax],
-                    part.def.edge_group_defs[:ymax] ? part.def.edge_group_defs[:ymax].std_thickness : nil,
-                    part.def.edge_group_defs[:ymax] ? part.def.edge_group_defs[:ymax].std_width : nil
+                    part.def.edge_materials[:ymax],
+                    part.def.edge_group_defs[:ymax]
                   ),
                   EdgeWrapper.new(
-                    part.edge_material_names[:xmin],
-                    part.edge_material_colors[:xmin],
-                    part.def.edge_group_defs[:xmin] ? part.def.edge_group_defs[:xmin].std_thickness : nil,
-                    part.def.edge_group_defs[:xmin] ? part.def.edge_group_defs[:xmin].std_width : nil
+                    part.def.edge_materials[:xmin],
+                    part.def.edge_group_defs[:xmin]
                   ),
                   EdgeWrapper.new(
-                    part.edge_material_names[:xmax],
-                    part.edge_material_colors[:xmax],
-                    part.def.edge_group_defs[:xmax] ? part.def.edge_group_defs[:xmax].std_thickness : nil,
-                    part.def.edge_group_defs[:xmax] ? part.def.edge_group_defs[:xmax].std_width : nil
+                    part.def.edge_materials[:xmax],
+                    part.def.edge_group_defs[:xmax]
                   ),
                   VeneerWrapper.new(
-                    part.face_material_names[:zmin],
-                    part.face_material_colors[:zmin],
-                    part.def.veneer_group_defs[:zmin] ? part.def.veneer_group_defs[:zmin].std_thickness : nil
+                    part.def.veneer_materials[:zmin],
+                    part.def.veneer_group_defs[:zmin]
                   ),
                   VeneerWrapper.new(
-                    part.face_material_names[:zmax],
-                    part.face_material_colors[:zmax],
-                    part.def.veneer_group_defs[:zmax] ? part.def.veneer_group_defs[:zmax].std_thickness : nil
+                    part.def.veneer_materials[:zmax],
+                    part.def.veneer_group_defs[:zmax]
                   ),
                   StringWrapper.new(instance_info.layer.name),
                 )

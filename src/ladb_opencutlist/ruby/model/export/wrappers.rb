@@ -376,6 +376,33 @@ module Ladb::OpenCutList
 
   # -----
 
+  class BatchWrapper < Wrapper
+
+    attr_reader :position, :count
+
+    def initialize(position, count)
+      @position = IntegerWrapper.new(position)
+      @count = IntegerWrapper.new(count)
+    end
+
+    def +(value)
+      if value.is_a?(String)
+        self.to_s + value
+      end
+    end
+
+    def to_s
+      "#{@position.to_s }/#{@count.to_s}"
+    end
+
+    def export
+      self.to_s
+    end
+
+  end
+
+  # -----
+
   class MaterialTypeWrapper < ValueWrapper
 
     def initialize(value)
@@ -420,25 +447,35 @@ module Ladb::OpenCutList
 
   end
 
-  # -----
+  class MaterialWrapper < Wrapper
 
-  class BatchWrapper < Wrapper
+    attr_reader :material_name, :material_color, :material_type, :material_description, :material_url
+    attr_reader :std_thickness, :std_width
 
-    attr_reader :position, :count
+    def initialize(material, group_def)
 
-    def initialize(position, count)
-      @position = IntegerWrapper.new(position)
-      @count = IntegerWrapper.new(count)
+      @material = material
+      @group_def = group_def
+
+      @material_name = StringWrapper.new(material.nil? ? nil : material.name)
+      @material_color = ColorWrapper.new(material.nil? ? nil : material.color)
+
+      @material_type = MaterialTypeWrapper.new(group_def.nil? ? MaterialAttributes::TYPE_UNKNOWN : group_def.material_attributes.type)
+      @material_description = StringWrapper.new(group_def.nil? ? nil : group_def.material_attributes.description)
+      @material_url = StringWrapper.new(group_def.nil? ? nil : group_def.material_attributes.url)
+
+      @std_thickness = LengthWrapper.new(group_def ? group_def.std_thickness : nil)
+      @std_width = LengthWrapper.new(group_def ? group_def.std_width : nil)
+
     end
 
-    def +(value)
-      if value.is_a?(String)
-        self.to_s + value
-      end
+    def empty?
+      @material.nil?
     end
 
     def to_s
-      "#{@position.to_s }/#{@count.to_s}"
+      return PLUGIN.get_i18n_string('tab.cutlist.material_undefined') if empty?
+      material_name.to_s
     end
 
     def export
@@ -447,57 +484,20 @@ module Ladb::OpenCutList
 
   end
 
-  # -----
-
-  class EdgeWrapper < Wrapper
-
-    attr_reader :material_name, :material_color, :std_thickness, :std_width
-
-    def initialize(material_name, material_color, std_thickness, std_width)
-      @material_name = StringWrapper.new(material_name)
-      @material_color = ColorWrapper.new(material_color)
-      @std_thickness = LengthWrapper.new(std_thickness)
-      @std_width = LengthWrapper.new(std_width)
-    end
-
-    def empty?
-      @material_name.empty?
-    end
+  class EdgeWrapper < MaterialWrapper
 
     def to_s
-      return '' if @material_name.empty?
-      "#{@material_name.to_s} (#{@std_thickness.to_s} x #{@std_width.to_s})"
-    end
-
-    def export
-      self.to_s
+      return '' if empty?
+      "#{super} (#{std_thickness.to_s} x #{std_width.to_s})"
     end
 
   end
 
-  # -----
-
-  class VeneerWrapper < Wrapper
-
-    attr_reader :material_name, :material_color, :std_thickness
-
-    def initialize(material_name, material_color, std_thickness)
-      @material_name = StringWrapper.new(material_name)
-      @material_color = ColorWrapper.new(material_color)
-      @std_thickness = LengthWrapper.new(std_thickness)
-    end
-
-    def empty?
-      @material_name.empty?
-    end
+  class VeneerWrapper < MaterialWrapper
 
     def to_s
-      return '' if @material_name.empty?
-      "#{@material_name.to_s} (#{@std_thickness.to_s})"
-    end
-
-    def export
-      self.to_s
+      return '' if empty?
+      "#{super} (#{std_thickness.to_s})"
     end
 
   end
