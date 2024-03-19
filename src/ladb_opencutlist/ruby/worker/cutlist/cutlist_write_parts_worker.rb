@@ -28,7 +28,8 @@ module Ladb::OpenCutList
                    parts_fill_color: nil,
                    parts_holes_stroke_color: nil,
                    parts_holes_fill_color: nil,
-                   parts_paths_stroke_color: nil
+                   parts_paths_stroke_color: nil,
+                   parts_paths_fill_color: nil
 
     )
 
@@ -50,6 +51,7 @@ module Ladb::OpenCutList
       @parts_holes_stroke_color = parts_holes_stroke_color
       @parts_holes_fill_color = parts_holes_fill_color
       @parts_paths_stroke_color = parts_paths_stroke_color
+      @parts_paths_fill_color = parts_paths_fill_color
 
     end
 
@@ -133,6 +135,7 @@ module Ladb::OpenCutList
                 parts_holes_stroke_color: @parts_holes_stroke_color,
                 parts_holes_fill_color: @parts_holes_fill_color,
                 parts_paths_stroke_color: @parts_paths_stroke_color,
+                parts_paths_fill_color: @parts_paths_fill_color
               ).run
               return response if !response[:errors].nil? || response[:cancelled]
             when PART_DRAWING_TYPE_3D

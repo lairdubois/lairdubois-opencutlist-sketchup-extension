@@ -15,6 +15,7 @@
     "parts_holes_stroke_color": "#000000",
     "parts_holes_fill_color": "#FFFFFF",
     "parts_paths_stroke_color": "#0068FF",
+    "parts_paths_fill_color": null,
     "texts_hidden": false,
     "texts_color": "#00ffff",
     "leftovers_hidden": true,

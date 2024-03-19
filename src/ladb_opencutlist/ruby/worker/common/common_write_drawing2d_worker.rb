@@ -35,7 +35,8 @@ module Ladb::OpenCutList
                    parts_fill_color: nil,
                    parts_holes_stroke_color: nil,
                    parts_holes_fill_color: nil,
-                   parts_paths_stroke_color: nil
+                   parts_paths_stroke_color: nil,
+                   parts_paths_fill_color: nil
 
     )
 
@@ -53,6 +54,7 @@ module Ladb::OpenCutList
       @parts_holes_stroke_color = ColorUtils.color_create(parts_holes_stroke_color)
       @parts_holes_fill_color = ColorUtils.color_create(parts_holes_fill_color)
       @parts_paths_stroke_color = ColorUtils.color_create(parts_paths_stroke_color)
+      @parts_paths_fill_color = ColorUtils.color_create(parts_paths_fill_color)
 
     end
 
@@ -148,7 +150,18 @@ module Ladb::OpenCutList
       unless projection_def.layer_defs.empty?
 
         _svg_write_group_start(file, id: LAYER_PART)
-        _svg_write_projection_def(file, projection_def, @smoothing, unit_transformation, unit_transformation, unit_sign, @parts_stroke_color, @parts_fill_color, @parts_holes_stroke_color, @parts_holes_fill_color, @parts_paths_stroke_color, LAYER_PART)
+        _svg_write_projection_def(file, projection_def,
+                                  smoothing: @smoothing,
+                                  transformation: unit_transformation,
+                                  unit_transformation: unit_transformation,
+                                  unit_sign: unit_sign,
+                                  stroke_color: @parts_stroke_color,
+                                  fill_color: @parts_fill_color,
+                                  holes_stroke_color: @parts_holes_stroke_color,
+                                  holes_fill_color: @parts_holes_fill_color,
+                                  paths_stroke_color: @parts_paths_stroke_color,
+                                  paths_fill_color: @parts_paths_fill_color,
+                                  prefix: LAYER_PART)
         _svg_write_group_end(file)
 
       end

@@ -33,6 +33,7 @@
             var $selectUnit = $('#ladb_select_unit', that.$element);
             var $selectSmoothing = $('#ladb_select_smoothing', that.$element);
             var $inputPartsPathsStrokeColor = $('#ladb_input_parts_paths_stroke_color', that.$element);
+            var $inputPartsPathsFillColor = $('#ladb_input_parts_paths_fill_color', that.$element);
             var $btnValidate = $('#ladb_btn_validate', that.$element);
 
             var fnFetchOptions = function (options) {
@@ -40,12 +41,14 @@
                 options.unit = parseInt($selectUnit.val());
                 options.smoothing = $selectSmoothing.val() === '1';
                 options.parts_paths_stroke_color = $inputPartsPathsStrokeColor.ladbTextinputColor('val');
+                options.parts_paths_fill_color = $inputPartsPathsFillColor.ladbTextinputColor('val');
             };
             var fnFillInputs = function (options) {
                 $selectFileFormat.selectpicker('val', options.file_format);
                 $selectUnit.selectpicker('val', options.unit);
                 $selectSmoothing.selectpicker('val', options.smoothing ? '1' : '0');
                 $inputPartsPathsStrokeColor.ladbTextinputColor('val', options.parts_paths_stroke_color);
+                $inputPartsPathsFillColor.ladbTextinputColor('val', options.parts_paths_fill_color);
             };
 
             $widgetPreset.ladbWidgetPreset({
@@ -59,6 +62,7 @@
             $selectUnit.selectpicker(SELECT_PICKER_OPTIONS);
             $selectSmoothing.selectpicker(SELECT_PICKER_OPTIONS);
             $inputPartsPathsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+            $inputPartsPathsFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
 
             fnFillInputs(options);
 

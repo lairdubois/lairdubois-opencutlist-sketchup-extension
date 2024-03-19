@@ -41,6 +41,7 @@ module Ladb::OpenCutList
                    parts_holes_stroke_color: '#000000',
                    parts_holes_fill_color: '#ffffff',
                    parts_paths_stroke_color: '#0068FF',
+                   parts_paths_fill_color: null,
                    texts_hidden: false,
                    texts_color: '#00ffff',
                    leftovers_hidden: true,
@@ -74,6 +75,7 @@ module Ladb::OpenCutList
       @parts_holes_stroke_color = ColorUtils.color_create(parts_holes_stroke_color)
       @parts_holes_fill_color = ColorUtils.color_create(parts_holes_fill_color)
       @parts_paths_stroke_color = ColorUtils.color_create(parts_paths_stroke_color)
+      @parts_paths_fill_color = ColorUtils.color_create(parts_paths_fill_color)
       @texts_hidden = texts_hidden
       @texts_color = ColorUtils.color_create(texts_color)
       @leftovers_hidden = leftovers_hidden
@@ -216,7 +218,18 @@ module Ladb::OpenCutList
               'inkscape:label': id
             })
 
-            _svg_write_projection_def(file, projection_def, @smoothing, transformation, unit_transformation, unit_sign, @parts_stroke_color, @parts_fill_color, @parts_holes_stroke_color, @parts_holes_fill_color, @parts_paths_stroke_color, LAYER_PART)
+            _svg_write_projection_def(file, projection_def,
+                                      smoothing: @smoothing,
+                                      transformation: transformation,
+                                      unit_transformation: unit_transformation,
+                                      unit_sign: unit_sign,
+                                      stroke_color: @parts_stroke_color,
+                                      fill_color: @parts_fill_color,
+                                      holes_stroke_color: @parts_holes_stroke_color,
+                                      holes_fill_color: @parts_holes_fill_color,
+                                      paths_stroke_color: @parts_paths_stroke_color,
+                                      paths_fill_color: @parts_paths_fill_color,
+                                      prefix: LAYER_PART)
             _svg_write_label(file, position.x, position.y, size.x, size.y, @use_names ? part.name: part.number, false, _svg_stroke_color_hex(@texts_color)) unless @texts_hidden
 
             _svg_write_group_end(file)

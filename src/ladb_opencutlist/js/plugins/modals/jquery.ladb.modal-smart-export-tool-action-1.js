@@ -43,6 +43,7 @@
             var $inputPartsHolesFillColor = $('#ladb_input_parts_holes_fill_color', that.$element);
             var $formGroupPartsPaths = $('#ladb_form_group_parts_paths', that.$element);
             var $inputPartsPathsStrokeColor = $('#ladb_input_parts_paths_stroke_color', that.$element);
+            var $inputPartsPathsFillColor = $('#ladb_input_parts_paths_fill_color', that.$element);
             var $btnValidate = $('#ladb_btn_validate', that.$element);
 
             var fnFetchOptions = function (options) {
@@ -58,6 +59,7 @@
                 options.parts_holes_stroke_color = $inputPartsHolesStrokeColor.ladbTextinputColor('val');
                 options.parts_holes_fill_color = $inputPartsHolesFillColor.ladbTextinputColor('val');
                 options.parts_paths_stroke_color = $inputPartsPathsStrokeColor.ladbTextinputColor('val');
+                options.parts_paths_fill_color = $inputPartsPathsFillColor.ladbTextinputColor('val');
             };
             var fnFillInputs = function (options) {
                 $selectFileFormat.selectpicker('val', options.file_format);
@@ -72,18 +74,20 @@
                 $inputPartsHolesStrokeColor.ladbTextinputColor('val', options.parts_holes_stroke_color);
                 $inputPartsHolesFillColor.ladbTextinputColor('val', options.parts_holes_fill_color);
                 $inputPartsPathsStrokeColor.ladbTextinputColor('val', options.parts_paths_stroke_color);
+                $inputPartsPathsFillColor.ladbTextinputColor('val', options.parts_paths_fill_color);
                 fnUpdateFieldsVisibility();
             };
             var fnUpdateFieldsVisibility = function () {
                 var isDxf = $selectFileFormat.val() === 'dxf';
                 var isMergeHoles = $selectMergeHoles.val() === '1';
-                var isPaths = $selectIncludePaths.val() === '1';
+                var isIncludePaths = $selectIncludePaths.val() === '1';
                 if (!isMergeHoles) $formGroupPartsHoles.hide(); else $formGroupPartsHoles.show();
-                if (!isPaths) $formGroupPartsPaths.hide(); else $formGroupPartsPaths.show();
+                if (!isIncludePaths) $formGroupPartsPaths.hide(); else $formGroupPartsPaths.show();
                 $inputPartsFillColor.ladbTextinputColor(isDxf ? 'disable' : 'enable');
                 $inputPartsHolesStrokeColor.ladbTextinputColor(!isMergeHoles ? 'disable' : 'enable');
                 $inputPartsHolesFillColor.ladbTextinputColor(!isMergeHoles || isDxf ? 'disable' : 'enable');
-                $inputPartsPathsStrokeColor.ladbTextinputColor(!isPaths ? 'disable' : 'enable');
+                $inputPartsPathsStrokeColor.ladbTextinputColor(!isIncludePaths ? 'disable' : 'enable');
+                $inputPartsPathsFillColor.ladbTextinputColor(!isIncludePaths ? 'disable' : 'enable');
                 $('.ladb-form-fill-color').css('opacity', isDxf ? 0.3 : 1);
             };
 
@@ -115,6 +119,7 @@
             $inputPartsHolesStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
             $inputPartsHolesFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
             $inputPartsPathsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+            $inputPartsPathsFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
 
             fnFillInputs(options);
 

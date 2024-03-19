@@ -133,7 +133,18 @@ module Ladb::OpenCutList
       _svg_sanitize_identifier(a.compact.join('_'))
     end
 
-    def _svg_write_projection_def(file, projection_def, smoothing = false, transformation = IDENTITY, unit_transformation = IDENTITY, unit_sign = '', stroke_color = nil, fill_color = nil, holes_stroke_color = nil, holes_fill_color = nil, paths_stroke_color = nil, prefix = '')
+    def _svg_write_projection_def(file, projection_def,
+                                  smoothing: false,
+                                  transformation: IDENTITY,
+                                  unit_transformation: IDENTITY,
+                                  unit_sign: '',
+                                  stroke_color: nil,
+                                  fill_color: nil,
+                                  holes_stroke_color: nil,
+                                  holes_fill_color: nil,
+                                  paths_stroke_color: nil,
+                                  paths_fill_color: nil,
+                                  prefix: '')
 
       require_relative '../model/drawing/drawing_projection_def'
 
@@ -146,7 +157,7 @@ module Ladb::OpenCutList
         if layer_def.type_path?
           attributes = {
             stroke: _svg_stroke_color_hex(paths_stroke_color),
-            fill: 'none',
+            fill: layer_def.type_closed_path? ? _svg_fill_color_hex(paths_fill_color) : 'none',
             id: id,
             'serif:id': id,
             'inkscape:label': id

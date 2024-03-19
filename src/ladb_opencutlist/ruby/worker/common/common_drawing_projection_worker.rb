@@ -199,7 +199,8 @@ module Ladb::OpenCutList
             end
           end
           # TODO : Reconnect closed input paths ?
-          projection_def.layer_defs << DrawingProjectionLayerDef.new(layer_def.depth, DrawingProjectionLayerDef::TYPE_PATH, '', polygons + polylines)
+          projection_def.layer_defs << DrawingProjectionLayerDef.new(layer_def.depth, DrawingProjectionLayerDef::TYPE_OPEN_PATH, '', polylines) unless polylines.empty?
+          projection_def.layer_defs << DrawingProjectionLayerDef.new(layer_def.depth, DrawingProjectionLayerDef::TYPE_CLOSED_PATH, '', polygons) unless polygons.empty?
 
         end
 

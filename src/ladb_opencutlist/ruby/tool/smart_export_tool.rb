@@ -884,6 +884,7 @@ module Ladb::OpenCutList
           parts_holes_fill_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_holes_fill_color')
           parts_holes_stroke_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_holes_stroke_color')
           parts_paths_stroke_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_paths_stroke_color')
+          parts_paths_fill_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_paths_fill_color')
 
           worker = CommonWriteDrawing2dWorker.new(@active_drawing_def,
             file_name: file_name,
@@ -896,7 +897,8 @@ module Ladb::OpenCutList
             parts_fill_color: parts_fill_color,
             parts_holes_fill_color: parts_holes_fill_color,
             parts_holes_stroke_color: parts_holes_stroke_color,
-            parts_paths_stroke_color: parts_paths_stroke_color
+            parts_paths_stroke_color: parts_paths_stroke_color,
+            parts_paths_fill_color: parts_paths_fill_color
           )
           response = worker.run
 
@@ -970,13 +972,15 @@ module Ladb::OpenCutList
           unit = fetch_action_option_value(ACTION_EXPORT_PATHS, ACTION_OPTION_UNIT)
           smoothing = fetch_action_option_value(ACTION_EXPORT_PATHS, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
           parts_paths_stroke_color = fetch_action_option_value(ACTION_EXPORT_PATHS, ACTION_OPTION_OPTIONS, 'parts_paths_stroke_color')
+          parts_paths_fill_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_paths_fill_color')
 
           worker = CommonWriteDrawing2dWorker.new(@active_drawing_def,
             file_name: file_name,
             file_format: file_format,
             unit: unit,
             smoothing: smoothing,
-            parts_paths_stroke_color: parts_paths_stroke_color
+            parts_paths_stroke_color: parts_paths_stroke_color,
+            parts_paths_fill_color: parts_paths_fill_color
           )
           response = worker.run
 

@@ -1129,7 +1129,9 @@ tab:
         Permet de choisir les couleurs des percements des pièces.
       option_parts_paths: Tracés
       option_parts_paths_help: |
-        Permet de choisir la couleur des tracés.
+        Permet de choisir les couleurs des tracés.
+        
+        *La couleur de remplissage ne sera visible que pour les tracés fermés.*
       error:
         no_part: Aucune pièce à exporter.
       warning:

@@ -54,7 +54,8 @@ module Ladb::OpenCutList
     TYPE_UPPER = 1
     TYPE_OUTER = 2
     TYPE_HOLES = 3
-    TYPE_PATH = 4
+    TYPE_OPEN_PATH = 4
+    TYPE_CLOSED_PATH = 5
 
     attr_reader :depth, :type, :name, :poly_defs
 
@@ -78,7 +79,15 @@ module Ladb::OpenCutList
     end
 
     def type_path?
-      @type == TYPE_PATH
+      type_open_path? || type_closed_path?
+    end
+
+    def type_open_path?
+      @type == TYPE_OPEN_PATH
+    end
+
+    def type_closed_path?
+      @type == TYPE_CLOSED_PATH
     end
 
   end
