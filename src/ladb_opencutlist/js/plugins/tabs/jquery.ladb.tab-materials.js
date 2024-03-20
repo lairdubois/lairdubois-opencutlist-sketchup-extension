@@ -7,7 +7,7 @@
     var LadbTabMaterials = function (element, options, dialog) {
         LadbAbstractTab.call(this, element, options, dialog);
 
-        this.currency_symbol = '';
+        this.currencySymbol = '';
         this.massUnitStrippedname = '';
         this.lengthUnitStrippedname = '';
         this.currentMaterial = null;

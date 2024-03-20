@@ -87,7 +87,6 @@ module Ladb::OpenCutList
       @material_usages_cache = {}
       @material_attributes_cache = {}
       @definition_attributes_cache = {}
-      @definition_face_bounds_cache = {}
 
       # Reset materials and definitions used UUIDS
       MaterialAttributes::reset_used_uuids
@@ -961,17 +960,9 @@ module Ladb::OpenCutList
       @definition_attributes_cache[key]
     end
 
-    # Definition face bounds
-
-    def _get_definition_face_bounds(definition)
-      return nil unless definition.is_a?(Sketchup::ComponentDefinition)
-      @definition_face_bounds_cache[definition.name] = _compute_faces_bounds(definition, nil) unless @definition_face_bounds_cache.has_key?(definition.name)
-      @definition_face_bounds_cache[definition.name]
-    end
-
     # -- Components utils --
 
-    def _fetch_useful_instance_infos(entity, path, auto_orient)
+    def _fetch_useful_instance_infos(entity, path, auto_orient, face_count_cache = {}, face_bounds_cache = {})
       return 0 if entity.is_a?(Sketchup::Edge)   # Minor Speed improvement when there's a lot of edges
       face_count = 0
       if entity.visible? && _layer_visible?(entity.layer, path.empty?)
@@ -980,7 +971,7 @@ module Ladb::OpenCutList
 
           # Entity is a group : check its children
           entity.entities.each { |child_entity|
-            face_count += _fetch_useful_instance_infos(child_entity, path + [ entity ], auto_orient)
+            face_count += _fetch_useful_instance_infos(child_entity, path + [ entity ], auto_orient, face_count_cache, face_bounds_cache)
           }
 
         elsif entity.is_a?(Sketchup::ComponentInstance)
@@ -989,9 +980,14 @@ module Ladb::OpenCutList
           return 0 if entity.definition.behavior.always_face_camera?
 
           # Entity is a component instance : check its children
-          entity.definition.entities.each { |child_entity|
-            face_count += _fetch_useful_instance_infos(child_entity, path + [ entity ], auto_orient)
-          }
+          if face_count_cache.has_key?(entity.definition)
+            # Component definition already identified as non-flat. Use previous face count to avoid counting it again.
+            face_count = face_count_cache[entity.definition]
+          else
+            entity.definition.entities.each { |child_entity|
+              face_count += _fetch_useful_instance_infos(child_entity, path + [ entity ], auto_orient, face_count_cache, face_bounds_cache)
+            }
+          end
 
           # Treat cuts_opening behavior component instances as simple group
           return face_count if entity.definition.behavior.cuts_opening?
@@ -999,7 +995,8 @@ module Ladb::OpenCutList
           # Consider the component instance only if it contains faces
           if face_count > 0
 
-            bounds = _get_definition_face_bounds(entity.definition)
+            face_bounds_cache[entity.definition] = _compute_faces_bounds(entity.definition, nil) unless face_bounds_cache.has_key?(entity.definition)
+            bounds = face_bounds_cache[entity.definition]
             unless bounds.empty? || [ bounds.width, bounds.height, bounds.depth ].min == 0    # Exclude empty or flat bounds
 
               # Create the instance info
@@ -1009,6 +1006,9 @@ module Ladb::OpenCutList
 
               # Add instance info to cache
               _store_instance_info(instance_info)
+
+              # Add component definition face count to local cache
+              face_count_cache[entity.definition] = face_count
 
               return 0
             end

@@ -27,7 +27,7 @@
     LadbTabOutliner.prototype.generateOutliner = function (callback) {
         var that = this;
 
-        this.materials = [];
+        this.rootNode = null;
         this.$page.empty();
         this.$btnGenerate.prop('disabled', true);
         this.setObsolete(false);
@@ -322,7 +322,7 @@
                 $row = $('#ladb_outliner_row_' + node.id, this.$page);
             }
             if (node.expanded) {
-                this.expendNodeRow(node, $row);
+                this.expandNodeRow(node, $row);
             } else {
                 this.collapseNodeRow(node, $row);
             }
@@ -335,7 +335,7 @@
         }
     };
 
-    LadbTabOutliner.prototype.expendNodeRow = function (node, $row) {
+    LadbTabOutliner.prototype.expandNodeRow = function (node, $row) {
         if (node.expanded) {
 
             var $btn = $('.ladb-btn-folding-toggle-row', $row);
@@ -347,7 +347,7 @@
             for (var i = 0; i < node.children.length; i++) {
                 $row = $('#ladb_outliner_row_' + node.children[i].id, this.$page);
                 $row.removeClass('hide');
-                this.expendNodeRow(node.children[i], $row);
+                this.expandNodeRow(node.children[i], $row);
             }
 
         }

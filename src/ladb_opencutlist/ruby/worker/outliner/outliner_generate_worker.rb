@@ -49,7 +49,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _fetch_node_defs(entity, path = [])
+    def _fetch_node_defs(entity, path = [], face_bounds_cache = {})
       return nil, 0, 0 if entity.is_a?(Sketchup::Edge)   # Minor Speed improvement when there's a lot of edges
       node_def = nil
       face_count = 0
@@ -62,7 +62,7 @@ module Ladb::OpenCutList
         children = []
         entity.entities.each { |child_entity|
 
-          child_node_def, child_face_count, child_part_count = _fetch_node_defs(child_entity, path)
+          child_node_def, child_face_count, child_part_count = _fetch_node_defs(child_entity, path, face_bounds_cache)
           children << child_node_def unless child_node_def.nil?
 
           face_count += child_face_count
@@ -85,7 +85,7 @@ module Ladb::OpenCutList
         children = []
         entity.entities.each { |child_entity|
 
-          child_node_def, child_face_count, child_part_count = _fetch_node_defs(child_entity, path)
+          child_node_def, child_face_count, child_part_count = _fetch_node_defs(child_entity, path, face_bounds_cache)
           children << child_node_def unless child_node_def.nil?
 
           face_count += child_face_count
@@ -109,7 +109,7 @@ module Ladb::OpenCutList
         children = []
         entity.definition.entities.each { |child_entity|
 
-          child_node_def, child_face_count, child_part_count = _fetch_node_defs(child_entity, path)
+          child_node_def, child_face_count, child_part_count = _fetch_node_defs(child_entity, path, face_bounds_cache)
           children << child_node_def unless child_node_def.nil?
 
           face_count += child_face_count
@@ -120,7 +120,8 @@ module Ladb::OpenCutList
         node_def = nil
         if face_count > 0
 
-          bounds = _compute_faces_bounds(entity.definition, nil)
+          face_bounds_cache[entity.definition] = _compute_faces_bounds(entity.definition, nil) unless face_bounds_cache.has_key?(entity.definition)
+          bounds = face_bounds_cache[entity.definition]
           unless bounds.empty? || [ bounds.width, bounds.height, bounds.depth ].min == 0    # Exclude empty or flat bounds
 
             # It's a part
