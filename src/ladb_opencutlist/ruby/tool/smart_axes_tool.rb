@@ -593,6 +593,7 @@ module Ladb::OpenCutList
           unless definition.nil?
 
             size = @active_part.def.size
+            lock_orientation_on_axis = true
 
             ti = nil
             if is_action_flip?
@@ -657,6 +658,7 @@ module Ladb::OpenCutList
               if input_point
 
                 ti = Geom::Transformation.translation(Geom::Vector3d.new(input_point.to_a))
+                lock_orientation_on_axis = false
 
               end
 
@@ -677,7 +679,7 @@ module Ladb::OpenCutList
                 instance.transformation *= ti
               }
 
-              if PLUGIN.get_model_preset('cutlist_options').fetch('auto_orient')
+              if lock_orientation_on_axis && PLUGIN.get_model_preset('cutlist_options').fetch('auto_orient')
                 definition_attributes = DefinitionAttributes.new(definition)
                 definition_attributes.orientation_locked_on_axis = true
                 definition_attributes.write_to_attributes
