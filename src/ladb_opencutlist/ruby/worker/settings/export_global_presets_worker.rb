@@ -30,8 +30,11 @@ module Ladb::OpenCutList
         filtred_presets = {}
         global_presets = PLUGIN.get_global_presets
         global_presets.each do |dictionary, dh|
+          dictionary = dictionary.to_s
           dh.each do |section, sh|
+            section = section.to_s
             sh.each do |name, values|
+              name = name.to_s
               if @paths_filter.include?("#{dictionary}|#{section}|#{name}")
                 filtred_presets[dictionary] = {} unless filtred_presets[dictionary]
                 filtred_presets[dictionary][section] = {} unless filtred_presets[dictionary][section]

@@ -470,11 +470,9 @@ module Ladb::OpenCutList
     def set_global_preset(dictionary, values, name = nil, section = nil, fire_event = false)
 
       name = PRESETS_DEFAULT_NAME if name.nil?
+      name = name.to_s unless name.is_a? String
       section = '0' if section.nil?
       section = section.to_s unless section.is_a?(String)
-
-      # Force name to be string
-      name = name.to_s unless name.is_a? String
 
       # Read global presets cache if not previouly cached
       read_global_presets if @global_presets_cache.nil?
@@ -516,6 +514,7 @@ module Ladb::OpenCutList
     def get_global_preset_context(dictionary, name = nil, section = nil)
 
       name = PRESETS_DEFAULT_NAME if name.nil?
+      name = name.to_s unless name.is_a? String
       section = '0' if section.nil?
       section = section.to_s unless section.is_a?(String)
 
