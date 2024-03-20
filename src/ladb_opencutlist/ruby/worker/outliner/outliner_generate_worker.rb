@@ -12,9 +12,6 @@ module Ladb::OpenCutList
     include BoundingBoxHelper
     include LayerVisibilityHelper
 
-    def initialize
-    end
-
     # -----
 
     def run
@@ -83,7 +80,7 @@ module Ladb::OpenCutList
 
         instance_attributes = InstanceAttributes.new(entity)
 
-        path += [ entity]
+        path += [ entity ]
 
         children = []
         entity.entities.each { |child_entity|

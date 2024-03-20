@@ -233,7 +233,7 @@
 
                 that.dialog.confirm(i18next.t('default.caution'), i18next.t('tab.outliner.edit_node.explode_message', { name: names.join(' ') }), function () {
 
-                    rubyCallCommand('outliner_explode', that.editedNode, function (response) {
+                    rubyCallCommand('outliner_explode', { id: that.editedNode.id }, function (response) {
 
                         if (response['errors']) {
                             that.dialog.notifyErrors(response['errors']);
@@ -326,7 +326,10 @@
             } else {
                 this.collapseNodeRow(node, $row);
             }
-            rubyCallCommand('outliner_set_expanded', node, function (response) {
+            rubyCallCommand('outliner_set_expanded', {
+                id: node.id,
+                expanded: node.expanded
+            }, function (response) {
 
             });
         }

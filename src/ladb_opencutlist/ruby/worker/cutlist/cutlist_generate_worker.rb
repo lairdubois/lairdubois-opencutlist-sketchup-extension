@@ -87,6 +87,7 @@ module Ladb::OpenCutList
       @material_usages_cache = {}
       @material_attributes_cache = {}
       @definition_attributes_cache = {}
+      @definition_face_bounds_cache = {}
 
       # Reset materials and definitions used UUIDS
       MaterialAttributes::reset_used_uuids
@@ -911,9 +912,7 @@ module Ladb::OpenCutList
     end
 
     def _get_instance_info(serialized_path)
-      if @instance_infos_cache.has_key?(serialized_path)
-        return @instance_infos_cache[serialized_path]
-      end
+      return @instance_infos_cache[serialized_path] if @instance_infos_cache.has_key?(serialized_path)
       nil
     end
 
@@ -924,17 +923,13 @@ module Ladb::OpenCutList
     end
 
     def _get_group_def(id)
-      if @group_defs_cache.has_key?(id)
-        return @group_defs_cache[id]
-      end
+      return @group_defs_cache[id] if @group_defs_cache.has_key?(id)
       nil
     end
 
     def _group_defs_include_number?(number)
       @group_defs_cache.each { |key, group_def|
-        if group_def.include_number? number
-          return true
-        end
+        return true if group_def.include_number?(number)
       }
       false
     end
@@ -946,9 +941,7 @@ module Ladb::OpenCutList
     end
 
     def _get_material_usage(name)
-      if @material_usages_cache.has_key?(name)
-        return @material_usages_cache[name]
-      end
+      return @material_usages_cache[name] if @material_usages_cache.has_key?(name)
       nil
     end
 
@@ -956,9 +949,7 @@ module Ladb::OpenCutList
 
     def _get_material_attributes(material)
       key = material ? material.name : '$EMPTY$'
-      unless @material_attributes_cache.has_key?(key)
-        @material_attributes_cache[key] = MaterialAttributes.new(material, true)
-      end
+      @material_attributes_cache[key] = MaterialAttributes.new(material, true) unless @material_attributes_cache.has_key?(key)
       @material_attributes_cache[key]
     end
 
@@ -966,10 +957,16 @@ module Ladb::OpenCutList
 
     def _get_definition_attributes(definition)
       key = definition ? definition.name : '$EMPTY$'
-      unless @definition_attributes_cache.has_key?(key)
-        @definition_attributes_cache[key] = DefinitionAttributes.new(definition, true)
-      end
+      @definition_attributes_cache[key] = DefinitionAttributes.new(definition, true) unless @definition_attributes_cache.has_key?(key)
       @definition_attributes_cache[key]
+    end
+
+    # Definition face bounds
+
+    def _get_definition_face_bounds(definition)
+      return nil unless definition.is_a?(Sketchup::ComponentDefinition)
+      @definition_face_bounds_cache[definition.name] = _compute_faces_bounds(definition, nil) unless @definition_face_bounds_cache.has_key?(definition.name)
+      @definition_face_bounds_cache[definition.name]
     end
 
     # -- Components utils --
@@ -989,9 +986,7 @@ module Ladb::OpenCutList
         elsif entity.is_a?(Sketchup::ComponentInstance)
 
           # Exclude special behavior components
-          if entity.definition.behavior.always_face_camera?
-            return 0
-          end
+          return 0 if entity.definition.behavior.always_face_camera?
 
           # Entity is a component instance : check its children
           entity.definition.entities.each { |child_entity|
@@ -999,14 +994,12 @@ module Ladb::OpenCutList
           }
 
           # Treat cuts_opening behavior component instances as simple group
-          if entity.definition.behavior.cuts_opening?
-            return face_count
-          end
+          return face_count if entity.definition.behavior.cuts_opening?
 
-          # Considere component instance only if it contains faces
+          # Consider the component instance only if it contains faces
           if face_count > 0
 
-            bounds = _compute_faces_bounds(entity.definition, nil)
+            bounds = _get_definition_face_bounds(entity.definition)
             unless bounds.empty? || [ bounds.width, bounds.height, bounds.depth ].min == 0    # Exclude empty or flat bounds
 
               # Create the instance info
