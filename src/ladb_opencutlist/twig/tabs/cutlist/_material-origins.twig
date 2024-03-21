@@ -1,18 +1,16 @@
 
 {# set materialOrigin #}
-{# set displayOwned (facultative) #}
 {# set flat (facultative) #}
 {# set noColor (facultative) #}
 {# set noPrint (facultative) #}
 {# set attr (facultative) #}
 
-{% set displayOwned = displayOwned|default(false) %}
 {% set flat = flat|default(false) %}
 {% set noColor = noColor|default(false) %}
 {% set noPrint = noPrint|default(false) %}
 
 {% for materialOrigin in materialOrigins %}
-    {% if materialOrigin > 1 or displayOwned %}  {# OWNED origin are ignored #}
+    {% if materialOrigin > 1 %}  {# OWNED origin are ignored #}
         {% if flat %}
             <div class="media">
                 <div class="media-left" style="width: 40px;"><i class="ladb-opencutlist-icon-material-origin-{{ materialOrigin }} ladb-opencutlist-icon-lg{% if not noColor %} ladb-color-info{% endif %}"></i></div>
