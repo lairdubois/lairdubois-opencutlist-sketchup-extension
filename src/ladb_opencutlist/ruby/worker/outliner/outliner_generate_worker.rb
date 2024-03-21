@@ -106,30 +106,39 @@ module Ladb::OpenCutList
 
         path += [ entity ]
 
-        children = []
-        entity.definition.entities.each { |child_entity|
-
-          child_node_def, child_face_count, child_part_count = _fetch_node_defs(child_entity, path, face_bounds_cache)
-          children << child_node_def unless child_node_def.nil?
-
-          face_count += child_face_count
-          part_count += child_part_count
-
-        }
-
         node_def = nil
-        if face_count > 0
+        children = []
+        unless entity.definition.behavior.always_face_camera?
 
-          face_bounds_cache[entity.definition] = _compute_faces_bounds(entity.definition, nil) unless face_bounds_cache.has_key?(entity.definition)
-          bounds = face_bounds_cache[entity.definition]
-          unless bounds.empty? || [ bounds.width, bounds.height, bounds.depth ].min == 0    # Exclude empty or flat bounds
+          entity.definition.entities.each { |child_entity|
 
-            # It's a part
+            child_node_def, child_face_count, child_part_count = _fetch_node_defs(child_entity, path, face_bounds_cache)
+            children << child_node_def unless child_node_def.nil?
 
-            node_def = NodePartDef.new(path)
+            face_count += child_face_count
+            part_count += child_part_count
 
-            face_count = 0
-            part_count += 1
+          }
+
+          # Treat cuts_opening behavior component instances as simple component
+          unless entity.definition.behavior.cuts_opening?
+
+            if face_count > 0
+
+              face_bounds_cache[entity.definition] = _compute_faces_bounds(entity.definition) unless face_bounds_cache.has_key?(entity.definition)
+              bounds = face_bounds_cache[entity.definition]
+              unless bounds.empty? || [ bounds.width, bounds.height, bounds.depth ].min == 0    # Exclude empty or flat bounds
+
+                # It's a part
+
+                node_def = NodePartDef.new(path)
+
+                face_count = 0
+                part_count += 1
+
+              end
+
+            end
 
           end
 
@@ -141,7 +150,7 @@ module Ladb::OpenCutList
         node_def.layer_def = _create_layer_def(entity.layer)
         node_def.expanded = instance_attributes.outliner_expanded
         node_def.part_count = part_count
-        node_def.children.concat(_sort_children(children))
+        node_def.children.concat(_sort_children(children)) unless children.nil?
 
       elsif entity.is_a?(Sketchup::Face)
 
