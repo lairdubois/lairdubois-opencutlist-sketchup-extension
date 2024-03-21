@@ -11,7 +11,7 @@
         <div class="table-cell-fluid-inner{% if depth > 0 %} table-cell-fluid-inner-padded-left{% endif %}">
             <div class="ladb-minitools ladb-minitools-left">
                 {% if node.children|length > 0 %}
-                    <a href="#" class="ladb-btn-folding-toggle-row"><i class="ladb-opencutlist-icon-arrow-{% if node.expanded %}down{% else %}right{% endif %}"></i></a>
+                    <a href="#" class="ladb-btn-folding-toggle-row ladb-click-tool"><i class="ladb-opencutlist-icon-arrow-{% if node.expanded %}down{% else %}right{% endif %}"></i></a>
                 {% else %}
                     <div style="display: inline-block; width: 20px;"></div>
                 {% endif %}
@@ -22,11 +22,12 @@
                 {% if node.locked %}<a href="#" class="ladb-tool-black"><i class="ladb-opencutlist-icon-lock"></i></a>{% endif %}
                 {% if capabilities.sketchup_version_number >= 2000000000 %}<a href="#" class="ladb-btn-node-set-active"><i class="ladb-opencutlist-icon-cursor"></i></a>{% endif %}
                 {% if node.type != 0 %}{# 0 = TYPE_MODEL #}<a href="#" class="ladb-btn-node-toggle-visible"><i class="ladb-opencutlist-icon-eye-{% if node.visible %}open{% else %}close{% endif %}"></i></a>{% endif %}
-                <a href="#" class="ladb-btn-node-edit ladb-click-tool"><i class="ladb-opencutlist-icon-edit"></i></a>
+                <a href="#" class="ladb-btn-node-edit"><i class="ladb-opencutlist-icon-edit"></i></a>
             </div>
             {% if node.layer %}
                 <ul class="ladb-outliner-node-layers">
                     {{ renderLayer(node.layer) }}
+                    <span style="background-color: {{ node.layer.color }}; color: #ffffff; padding: 3px 4px; border-radius: 5px; width: 26px; height: 26px; display: inline-block;{% if not node.layer.visible %} opacity: 0.5;{% endif %}"><i class="ladb-opencutlist-icon-tag"></i></span>
                 </ul>
             {% endif %}
             <div>

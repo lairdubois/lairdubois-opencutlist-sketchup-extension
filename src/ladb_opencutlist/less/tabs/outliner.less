@@ -140,7 +140,7 @@
       float: right;
 
       > li {
-        display: inline-block;
+        display: none;
 
         > a {
           color: #000;
@@ -166,6 +166,10 @@
 
         }
 
+      }
+
+      &:hover > li {
+        display: inline-block;
       }
 
     }

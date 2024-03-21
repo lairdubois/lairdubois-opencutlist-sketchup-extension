@@ -175,7 +175,8 @@ module Ladb::OpenCutList
             node_def.type == AbstractNodeDef::TYPE_PART ? 1 : 0,
             (node_def.entity.name.nil? || node_def.entity.name.empty?) ? 1 : 0,
             node_def.entity.name,
-            node_def.default_name
+            node_def.default_name,
+            node_def.layer_def.nil? ? '' : node_def.layer_def.layer.name
         ]
       end
     end
