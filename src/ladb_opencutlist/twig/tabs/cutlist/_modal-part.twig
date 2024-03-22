@@ -56,7 +56,7 @@
                     </div>
                 {% endif %}
                 <div class="form-group">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw">{% include 'tabs/cutlist/_material-origins.twig' with { 'materialOrigins':part.material_origins, 'displayOwned':true, 'flat':false, 'noColor':true } %}</div>
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw">{% include 'tabs/cutlist/_material-origins.twig' with { 'materialOrigins':part.material_origins, 'flat':false, 'noColor':true } %}</div>
                     <label class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.material'|i18next }}</label>
                     <div class="col-xs-7">
                         <select class="form-control" id="ladb_cutlist_part_select_material_name">
@@ -483,7 +483,7 @@
         {% if not multiple and not part.virtual %}
             <div role="tabpanel" class="tab-pane row{% if tab == 'infos_warnings' %} active{% endif %}" id="tab_edit_part_infos_warnings">
                 <div class="col-sm-offset-1 col-sm-10">
-                    {% include 'tabs/cutlist/_material-origins.twig' with { 'materialOrigins':part.material_origins, 'displayOwned':true, 'flat':true } %}
+                    {% include 'tabs/cutlist/_material-origins.twig' with { 'materialOrigins':part.material_origins, 'flat':true } %}
                     {% if part.instance_count_by_part > 1 %}
                         <div class="media">
                             <div class="media-left"><i class="ladb-opencutlist-icon-instance-count-by-part ladb-opencutlist-icon-lg ladb-color-info"></i></div>
