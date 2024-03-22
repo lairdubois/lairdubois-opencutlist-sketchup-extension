@@ -172,7 +172,7 @@ module Ladb::OpenCutList
     def _sort_children(children)
       children.sort_by! do |node_def|
         [
-            node_def.type == AbstractNodeDef::TYPE_PART ? 1 : 0,
+            node_def.type,
             (node_def.entity.name.nil? || node_def.entity.name.empty?) ? 1 : 0,
             node_def.entity.name,
             node_def.default_name,

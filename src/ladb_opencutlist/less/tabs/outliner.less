@@ -134,41 +134,68 @@
     }
 
     .ladb-outliner-node-layers {
-      list-style: none;
-      padding: 0;
-      margin: 0;
+      display: flex;
+      flex-direction: row;
       float: right;
+      border-radius: 5px;
+      color: #ffffff;
+      margin-top: -2px;
 
-      > li {
+      > span {
+        display: inline-block;
+        width: 22px;
+        height: 24px;
+        text-align: center;
+      }
+
+      > div {
         display: none;
+        border-radius: 3px;
+        background-color: #ffffff;
+        padding: 0 5px;
+        margin: 2px 0 2px 2px;
+
+        &:hover {
+          background-color: #eeeeee;
+        }
 
         > a {
-          color: #000;
-          padding: 0 3px 1px 3px;
-          margin-right: 4px;
-          border-radius: 3px;
-          font-size: 78%;
-          border: 1px solid #000;
+          color: #000000;
+          font-size: 14px;
 
           &:hover {
             text-decoration: none;
-            background-color: #ccc;
-          }
-
-          &.no-hover:hover {
-            text-decoration: none;
-            background-color: inherit;
-          }
-
-          &.ladb-active {
-            border-width: 2px;
           }
 
         }
 
+        //> a {
+        //  color: #000;
+        //  padding: 0 3px 1px 3px;
+        //  margin-right: 4px;
+        //  border-radius: 3px;
+        //  font-size: 78%;
+        //  border: 1px solid #000;
+        //
+        //  &:hover {
+        //    text-decoration: none;
+        //    background-color: #ccc;
+        //  }
+        //
+        //  &.no-hover:hover {
+        //    text-decoration: none;
+        //    background-color: inherit;
+        //  }
+        //
+        //  &.ladb-active {
+        //    border-width: 2px;
+        //  }
+        //
+        //}
+
       }
 
-      &:hover > li {
+      &:hover > div {
         display: inline-block;
       }
 
