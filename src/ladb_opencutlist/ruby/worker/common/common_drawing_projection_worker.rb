@@ -1,6 +1,6 @@
 module Ladb::OpenCutList
 
-  require_relative '../../lib/clipper/clippy/clippy'
+  require_relative '../../lib/fiddle/clippy/clippy'
   require_relative '../../model/drawing/drawing_def'
   require_relative '../../model/drawing/drawing_projection_def'
 
@@ -12,6 +12,8 @@ module Ladb::OpenCutList
     ORIGIN_POSITION_FACES_BOUNDS_MIN = 1
     ORIGIN_POSITION_EDGES_BOUNDS_MIN = 2
     ORIGIN_POSITION_BOUNDS_MIN = 3
+
+    Clippy = Fiddle::Clippy
 
     def initialize(drawing_def,
 

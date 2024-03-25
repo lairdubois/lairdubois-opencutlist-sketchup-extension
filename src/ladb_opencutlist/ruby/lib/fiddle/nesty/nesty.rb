@@ -1,6 +1,6 @@
 require_relative '../clipper_wrapper'
 
-module Ladb::OpenCutList
+module Ladb::OpenCutList::Fiddle
 
   module Nesty
     extend ClipperWrapper
