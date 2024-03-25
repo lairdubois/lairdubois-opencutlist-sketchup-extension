@@ -1,6 +1,6 @@
 module Ladb::OpenCutList
 
-  require_relative '../../lib/clippy/clippy'
+  require_relative '../../lib/clipper/clippy/clippy'
   require_relative '../../model/drawing/drawing_def'
   require_relative '../../model/drawing/drawing_projection_def'
 
