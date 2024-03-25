@@ -1,6 +1,3 @@
-require 'fiddle'
-require 'fiddle/import'
-
 module Ladb::OpenCutList
 
   module Fiddle
@@ -9,6 +6,9 @@ module Ladb::OpenCutList
 end
 
 module Ladb::OpenCutList::Fiddle
+
+  require 'fiddle'
+  require 'fiddle/import'
 
   module Wrapper
     include Fiddle::Importer

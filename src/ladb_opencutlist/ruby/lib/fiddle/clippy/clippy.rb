@@ -11,6 +11,7 @@ module Ladb::OpenCutList::Fiddle
 
     def self._lib_c_functions
       [
+
         'void c_clear_subjects()',
         'void c_append_open_subject(int64_t*)',
         'void c_append_closed_subject(int64_t*)',
