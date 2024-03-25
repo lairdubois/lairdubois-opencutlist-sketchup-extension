@@ -153,6 +153,7 @@ gulp.task('rbz_create', function () {
         'src/**/!(.DS_store|*.less|*.twig|!(*.min).css)',
         '!src/**/less/**',
         '!src/**/twig/**',
+        '!src/**/c/**',
     ];
     // Exclude not minified .js libs
     blob.push('!src/**/js/lib/!(*.min).js');
@@ -212,3 +213,17 @@ gulp.task('compile', gulp.series('less_compile', 'css_minify', 'js_minify', 'twi
 gulp.task('build', gulp.series('compile', 'version', 'rbz_create'));
 
 gulp.task('default', gulp.series('build'));
+
+// -----
+
+// C/C++ libs
+
+var exec = require('child_process').exec;
+
+gulp.task('c_libs_make', function (cb) {
+    exec('rm -rf cmake-build; mkdir cmake-build; cmake -S .. -B cmake-build -DCMAKE_BUILD_TYPE=Release; make -C cmake-build install', function (error, stdout, stderr) {
+        console.log(stdout);
+        console.log(stderr);
+        cb(stderr);
+    });
+});
