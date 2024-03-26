@@ -218,9 +218,19 @@ gulp.task('default', gulp.series('build'));
 // -----
 
 // C/C++ libs
+// ----------
+// Warning: These scripts build libraries only on the current operating system architecture.
+// Use GitHub action to build Windows and MacOS libs
+
+var cmakeBuildDir = 'cmake-build';
 
 gulp.task('c_libs_prepare', function () {
-    return run('rm -rf cmake-build; mkdir cmake-build; cmake -S .. -B cmake-build', { verbosity: 3 }).exec();
+
+    var rmCmd = 'rm -rf ' + cmakeBuildDir;
+    var mkdirCmd = 'mkdir ' + cmakeBuildDir;
+    var cmakeCmd = 'cmake -S .. -B ' + cmakeBuildDir;
+
+    return run([ rmCmd, mkdirCmd, cmakeCmd ].join(';'), { verbosity: 3 }).exec();
 });
 
 gulp.task('c_libs_build_install', function () {
@@ -230,7 +240,7 @@ gulp.task('c_libs_build_install', function () {
     var buildCmd = 'cmake --build cmake-build --config ' + config;
     var installCmd = 'cmake --install cmake-build --config ' + config;
 
-    return run([ buildCmd, installCmd ].join((';')), { verbosity: 3 }).exec();
+    return run([ buildCmd, installCmd ].join(';'), { verbosity: 3 }).exec();
 });
 
 gulp.task('c_libs', gulp.series('c_libs_prepare', 'c_libs_build_install'));
