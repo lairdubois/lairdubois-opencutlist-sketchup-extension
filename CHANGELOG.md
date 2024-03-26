@@ -2,9 +2,9 @@ CHANGELOG
 =========
 
 This changelog references the relevant changes (bug and security fixes) done
-in 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
+in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
-* 6.2.0 (WIP)
+* 7.0.0 (WIP)
 
     * Added Material wrapper in formulas
     * Added Move Axes action on Smart Axes Tool
@@ -13,12 +13,12 @@ in 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
     * Improved smart tools picker
     * Improved surface detection
 
-* 6.1.1 (WIP)
+* 6.2.0 (2024-03-22)
 
-    * Added **Chinese** language
-    * Fixed multiline material description UI bug
+  * Added **Chinese** language
+  * Fixed multiline material description UI bug
 
-* 6.1.0 (20234-03-05)
+* 6.1.0 (2024-03-05)
 
   * Added **Portuguese** language (thanks to Henny Ferreira for joining the translators team)
   * Fixed _Clippy_ loading when OpenCutList installed under a non-ASCII path
