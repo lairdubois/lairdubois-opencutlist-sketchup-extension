@@ -41,7 +41,7 @@ if(WIN32)
   )
 endif()
 
-target_include_directories(Nesty PUBLIC include/)
+target_include_directories(Nesty PUBLIC include)
 target_link_libraries(Nesty PRIVATE Clipper2Wrapper)
 target_compile_features(Nesty PRIVATE cxx_std_17)
 

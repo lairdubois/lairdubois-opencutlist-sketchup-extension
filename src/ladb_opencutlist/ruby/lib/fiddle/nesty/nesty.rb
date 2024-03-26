@@ -6,7 +6,7 @@ module Ladb::OpenCutList::Fiddle
     extend ClipperWrapper
 
     def self._lib_name
-      "Nesty"
+      'Nesty'
     end
 
     def self._lib_c_functions

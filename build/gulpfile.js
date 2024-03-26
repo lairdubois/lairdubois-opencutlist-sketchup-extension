@@ -16,6 +16,7 @@ var yaml = require('js-yaml');
 var path = require('path');
 var cleanCSS = require('gulp-clean-css');
 var uglify = require('gulp-uglify');
+var run = require('gulp-run');
 
 var knownOptions = {
     string: 'env',
@@ -218,12 +219,18 @@ gulp.task('default', gulp.series('build'));
 
 // C/C++ libs
 
-var exec = require('child_process').exec;
-
-gulp.task('c_libs_make', function (cb) {
-    exec('rm -rf cmake-build; mkdir cmake-build; cmake -S .. -B cmake-build -DCMAKE_BUILD_TYPE=Release; make -C cmake-build install', function (error, stdout, stderr) {
-        console.log(stdout);
-        console.log(stderr);
-        cb(stderr);
-    });
+gulp.task('c_libs_prepare', function () {
+    return run('rm -rf cmake-build; mkdir cmake-build; cmake -S .. -B cmake-build', { verbosity: 3 }).exec();
 });
+
+gulp.task('c_libs_build_install', function () {
+
+    var config = options.config ? options.config : 'Release'
+
+    var buildCmd = 'cmake --build cmake-build --config ' + config;
+    var installCmd = 'cmake --install cmake-build --config ' + config;
+
+    return run([ buildCmd, installCmd ].join((';')), { verbosity: 3 }).exec();
+});
+
+gulp.task('c_libs', gulp.series('c_libs_prepare', 'c_libs_build_install'));

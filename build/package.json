@@ -15,6 +15,7 @@
     "gulp-less": "4.0.1",
     "gulp-rename": "^2.0.0",
     "gulp-replace": "1.0.0",
+    "gulp-run": "^1.7.1",
     "gulp-touch-custom": "1.0.3",
     "gulp-uglify": "^3.0.2",
     "gulp-zip": "4.2.0",
