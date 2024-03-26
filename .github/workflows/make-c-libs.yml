@@ -26,9 +26,11 @@ jobs:
           - os: windows-latest
             c_compiler: cl
             cpp_compiler: cl
+            install_dir: 'src/ladb_opencutlist/bin/win/lib'
           - os: macos-latest
             c_compiler: clang
             cpp_compiler: clang++
+            install_dir: 'src/ladb_opencutlist/bin/osx/lib'
         exclude:
           - os: windows-latest
             c_compiler: clang
@@ -66,4 +68,4 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.os }}-build-artifact
-          path: ${{ github.workspace }}/build/cmake-build
+          path: ${{ github.workspace }}/${{ matrix.install_dir }}
