@@ -65,7 +65,7 @@ jobs:
         # Install your program with the given configuration.
         run: cmake --install ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.os }}-build-artifact
           path: ${{ github.workspace }}/${{ matrix.install_dir }}
