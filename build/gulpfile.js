@@ -230,17 +230,17 @@ gulp.task('c_libs_prepare', function () {
     var mkdirCmd = 'mkdir ' + cmakeBuildDir;
     var cmakeCmd = 'cmake -S .. -B ' + cmakeBuildDir;
 
-    return run([ rmCmd, mkdirCmd, cmakeCmd ].join(';'), { verbosity: 3 }).exec();
+    return run([ rmCmd, mkdirCmd, cmakeCmd ].join(' && '), { verbosity: 3 }).exec();
 });
 
 gulp.task('c_libs_build_install', function () {
 
     var config = options.config ? options.config : 'Release'
 
-    var buildCmd = 'cmake --build cmake-build --config ' + config;
-    var installCmd = 'cmake --install cmake-build --config ' + config;
+    var buildCmd = 'cmake --build ' + cmakeBuildDir + ' --config ' + config;
+    var installCmd = 'cmake --install ' + cmakeBuildDir + ' --config ' + config;
 
-    return run([ buildCmd, installCmd ].join(';'), { verbosity: 3 }).exec();
+    return run([ buildCmd, installCmd ].join(' && '), { verbosity: 3 }).exec();
 });
 
 gulp.task('c_libs', gulp.series('c_libs_prepare', 'c_libs_build_install'));
