@@ -49,4 +49,4 @@ endif()
 target_include_directories(Imagy PUBLIC include)
 target_compile_features(Imagy PRIVATE cxx_std_17)
 
-install(TARGETS Imagy LIBRARY)
+install(TARGETS Imagy LIBRARY DESTINATION lib)
