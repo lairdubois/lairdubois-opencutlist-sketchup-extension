@@ -106,7 +106,7 @@ Image &Image::rotate(RotateType type, int times) {
   if (!is_empty()) {
     for (int t = 0 ; t < (times % 4); ++t) {
 
-      uint8_t tmp_data[size];
+      auto* tmp_data = new uint8_t[size];
       uint8_t *px_s;
       uint8_t *px_d;
       for (int x = 0; x < width; ++x) {
