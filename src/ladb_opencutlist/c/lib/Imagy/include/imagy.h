@@ -16,7 +16,7 @@ extern "C" {
 #define DLL_EXPORTS
 #endif
 
-DLL_EXPORTS int c_read(const char* filename);
+DLL_EXPORTS int c_load(const char* filename);
 DLL_EXPORTS int c_write(const char* filename);
 
 DLL_EXPORTS int c_get_width(void);
@@ -25,8 +25,8 @@ DLL_EXPORTS int c_get_height(void);
 DLL_EXPORTS void c_flip_x(void);
 DLL_EXPORTS void c_flip_y(void);
 
-DLL_EXPORTS void c_rotate_left(void);
-DLL_EXPORTS void c_rotate_right(void);
+DLL_EXPORTS void c_rotate_left(int times);
+DLL_EXPORTS void c_rotate_right(int times);
 
 DLL_EXPORTS char* c_version(void);
 

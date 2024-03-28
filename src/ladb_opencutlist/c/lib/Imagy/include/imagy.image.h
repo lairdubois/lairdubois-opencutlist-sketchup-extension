@@ -10,7 +10,7 @@ enum ImageType {
 
 struct Image {
 
-    uint8_t* data = NULL;
+    uint8_t* data;
     size_t size = 0;
     int width{};
     int height{};
@@ -20,7 +20,7 @@ struct Image {
     Image(const Image& img);
     ~Image();
 
-    bool read(const char* filename, int channel_force = 0);
+    bool load(const char* filename, int channel_force = 0);
     bool write(const char* filename);
     void clear();
 

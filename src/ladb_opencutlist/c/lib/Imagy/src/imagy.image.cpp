@@ -27,7 +27,7 @@ Image::~Image() {
   stbi_image_free(data);
 }
 
-bool Image::read(const char *filename, int channel_force) {
+bool Image::load(const char *filename, int channel_force) {
   data = stbi_load(filename, &width, &height, &channels, channel_force);
   channels = channel_force == 0 ? channels : channel_force;
   size = width * height * channels;
@@ -42,7 +42,7 @@ bool Image::write(const char *filename) {
       success = stbi_write_png(filename, width, height, channels, data, width * channels);
       break;
     case JPG:
-      success = stbi_write_jpg(filename, width, height, channels, data, 80);
+      success = stbi_write_jpg(filename, width, height, channels, data, 90);
       break;
   }
   return success != 0;
