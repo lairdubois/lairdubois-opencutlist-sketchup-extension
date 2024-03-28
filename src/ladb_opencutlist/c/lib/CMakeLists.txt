@@ -14,6 +14,11 @@ add_subdirectory(Clipper2Wrapper)
 add_subdirectory(Clippy)
 
 # -------------------------------------------------------------------
+#                             Imagy
+
+add_subdirectory(Imagy)
+
+# -------------------------------------------------------------------
 #                             Nesty
 
 add_subdirectory(Nesty)

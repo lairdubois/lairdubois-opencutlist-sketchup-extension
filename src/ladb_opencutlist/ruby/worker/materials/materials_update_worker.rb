@@ -25,7 +25,7 @@ module Ladb::OpenCutList
       @color = ColorUtils.color_create(color)
       @texture_file = texture_file
       @texture_changed = texture_changed
-      @texture_rotation = texture_rotation
+      @texture_rotation = texture_rotation.to_i
       @texture_width = texture_width
       @texture_height = texture_height
 
@@ -89,7 +89,19 @@ module Ladb::OpenCutList
       if @texture_changed || @texture_rotation > 0
 
         # Rotate texture
-        ImageUtils.rotate(@texture_file, @texture_rotation) if @texture_rotation > 0 && @texture_file
+        if @texture_rotation > 0 && @texture_file
+
+          require_relative '../../lib/fiddle/imagy/imagy'
+
+          if Fiddle::Imagy.read(@texture_file)
+            times = (@texture_rotation.abs / 90)
+            is_left = @texture_rotation < 0
+            (times).times { is_left ? Fiddle::Imagy.rotate_left! : Fiddle::Imagy.rotate_right! }
+            Fiddle::Imagy.write(@texture_file)
+            Fiddle::Imagy.clear
+          end
+
+        end
 
         # Keep previous material color if colorized material
         if !@texture_changed && material.materialType == 2 # 2 = Sketchup::Material::MATERIAL_COLORIZED_TEXTURED

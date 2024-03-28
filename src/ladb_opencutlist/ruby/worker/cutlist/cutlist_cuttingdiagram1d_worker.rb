@@ -1,10 +1,10 @@
 module Ladb::OpenCutList
 
+  require_relative '../../helper/part_drawing_helper'
+  require_relative '../../helper/pixel_converter_helper'
   require_relative '../../lib/bin_packing_1d/packengine'
   require_relative '../../utils/dimension_utils'
   require_relative '../../model/cuttingdiagram/cuttingdiagram1d_def'
-  require_relative '../../helper/part_drawing_helper'
-  require_relative '../../helper/pixel_converter_helper'
 
   class CutlistCuttingdiagram1dWorker
 

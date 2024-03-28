@@ -10,6 +10,6 @@
 /src/ladb_opencutlist/js/lib/bootstrap-slider.js
 /docs/skp/*~.skp
 /build/node_modules/
+/build/cmake-build/
 /build/package-lock.json
 /Gemfile.lock
-/build/cmake-build/
