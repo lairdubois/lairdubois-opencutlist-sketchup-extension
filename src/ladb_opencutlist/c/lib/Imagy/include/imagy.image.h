@@ -8,6 +8,14 @@ enum ImageType {
     PNG, JPG
 };
 
+enum FlipType {
+    HORIZONTAL, VERTICAL
+};
+
+enum RotateType {
+    LEFT, RIGHT
+};
+
 struct Image {
 
     uint8_t* data = nullptr;
@@ -16,21 +24,19 @@ struct Image {
     int height{};
     int channels{};
 
-    Image(int width, int height, int channels = 3);
-    Image(const Image& img);
+    Image();
     ~Image();
 
-    bool load(const char* filename, int channel_force = 0);
-    bool write(const char* filename);
+    bool load(const char* filename);
+    bool write(const char* filename) const;
     void clear();
 
+    bool is_empty() const;
+
+    Image& flip(FlipType type);
+    Image& rotate(RotateType type, int times = 1);
+
     static ImageType get_file_type(const char* filename);
-
-    Image& flip_x();
-    Image& flip_y();
-
-    Image& rotate_left();
-    Image& rotate_right();
 
 };
 

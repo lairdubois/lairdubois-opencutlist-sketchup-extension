@@ -4,7 +4,7 @@
 extern "C" {
 #endif
 
-Image image(0, 0);
+Image image;
 
 DLL_EXPORTS int c_load(const char* filename) {
   return image.load(filename) ? 1 : 0;
@@ -22,25 +22,24 @@ DLL_EXPORTS int c_get_width(void) {
 DLL_EXPORTS int c_get_height(void) {
   return image.height;
 }
-
-
-DLL_EXPORTS void c_flip_x(void) {
-  image.flip_x();
+DLL_EXPORTS int c_get_channels(void) {
+  return image.channels;
 }
-DLL_EXPORTS void c_flip_y(void) {
-  image.flip_y();
+
+
+DLL_EXPORTS void c_flip_horizontal(void) {
+  image.flip(HORIZONTAL);
+}
+DLL_EXPORTS void c_flip_vertical(void) {
+  image.flip(VERTICAL);
 }
 
 
 DLL_EXPORTS void c_rotate_left(int times) {
-  for (int t = 0 ; t < times; ++t) {
-    image.rotate_left();
-  }
+  image.rotate(LEFT, times);
 }
 DLL_EXPORTS void c_rotate_right(int times) {
-  for (int t = 0 ; t < times; ++t) {
-    image.rotate_right();
-  }
+  image.rotate(RIGHT, times);
 }
 
 

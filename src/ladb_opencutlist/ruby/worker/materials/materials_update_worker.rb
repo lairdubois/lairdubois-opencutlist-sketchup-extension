@@ -99,7 +99,7 @@ module Ladb::OpenCutList
               Fiddle::Imagy.rotate_right!(@texture_rotation.abs / 90)
             end
             Fiddle::Imagy.write(@texture_file)
-            Fiddle::Imagy.clear
+            Fiddle::Imagy.clear!
           end
 
         end

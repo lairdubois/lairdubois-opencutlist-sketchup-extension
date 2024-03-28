@@ -18,12 +18,14 @@ extern "C" {
 
 DLL_EXPORTS int c_load(const char* filename);
 DLL_EXPORTS int c_write(const char* filename);
+DLL_EXPORTS void c_clear(void);
 
 DLL_EXPORTS int c_get_width(void);
 DLL_EXPORTS int c_get_height(void);
+DLL_EXPORTS int c_get_channels(void);
 
-DLL_EXPORTS void c_flip_x(void);
-DLL_EXPORTS void c_flip_y(void);
+DLL_EXPORTS void c_flip_horizontal(void);
+DLL_EXPORTS void c_flip_vertical(void);
 
 DLL_EXPORTS void c_rotate_left(int times);
 DLL_EXPORTS void c_rotate_right(int times);

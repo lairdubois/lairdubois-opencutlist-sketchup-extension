@@ -12,18 +12,19 @@ module Ladb::OpenCutList::Fiddle
     def self._lib_c_functions
       [
 
-        'int c_load(const char* filename)',
-        'int c_write(const char* filename)',
-        'void c_clear(void)',
+        'int c_load(const char*)',
+        'int c_write(const char*)',
+        'void c_clear()',
 
-        'int c_get_width(void)',
-        'int c_get_height(void)',
+        'int c_get_width()',
+        'int c_get_height()',
+        'int c_get_channels()',
 
-        'void c_flip_x(void)',
-        'void c_flip_y(void)',
+        'void c_flip_horizontal()',
+        'void c_flip_vertical()',
 
-        'void c_rotate_left(int times)',
-        'void c_rotate_right(int times)',
+        'void c_rotate_left(int)',
+        'void c_rotate_right(int)',
 
         'char* c_version()'
 
@@ -49,7 +50,7 @@ module Ladb::OpenCutList::Fiddle
       return c_write(filename) == 1
     end
 
-    def self.clear
+    def self.clear!
       _load_lib
       c_clear
     end
@@ -66,14 +67,14 @@ module Ladb::OpenCutList::Fiddle
     end
 
 
-    def self.flip_x!
+    def self.flip_horizontal!
       _load_lib
-      c_flip_x
+      c_flip_horizontal
     end
 
-    def self.flip_y!
+    def self.flip_vertical!
       _load_lib
-      c_flip_y
+      c_flip_vertical
     end
 
 

@@ -14,126 +14,125 @@
 
 #include "imagy.image.h"
 
-Image::Image(int width, int height, int channels) : width(width), height(height), channels(channels) {
-  size = width * height * channels;
-  data = new uint8_t[size];
-}
-
-Image::Image(const Image &img) : Image(img.width, img.height, img.channels) {
-  memcpy(data, img.data, size);
-}
-
-Image::~Image() {
-  stbi_image_free(data);
-}
-
-bool Image::load(const char *filename, int channel_force) {
-  data = stbi_load(filename, &width, &height, &channels, channel_force);
-  channels = channel_force == 0 ? channels : channel_force;
-  size = width * height * channels;
-  return data != nullptr;
-}
-
-bool Image::write(const char *filename) {
-  ImageType type = get_file_type(filename);
-  int success;
-  switch (type) {
-    case PNG:
-      success = stbi_write_png(filename, width, height, channels, data, width * channels);
-      break;
-    case JPG:
-      success = stbi_write_jpg(filename, width, height, channels, data, 90);
-      break;
-  }
-  return success != 0;
-}
-
-void Image::clear() {
-  stbi_image_free(data);
+Image::Image() {
   width = 0;
   height = 0;
   channels = 3;
   size = width * height * channels;
-  data = new uint8_t[size];
+  data = nullptr;
 }
 
-Image &Image::flip_x() {
-  uint8_t tmp[4];
-  uint8_t *px1;
-  uint8_t *px2;
-  for (int y = 0; y < height; ++y) {
-    for (int x = 0; x < width / 2; ++x) {
-
-      px1 = &data[(x + y * width) * channels];
-      px2 = &data[((width - 1 - x) + y * width) * channels];
-
-      memcpy(tmp, px1, channels);
-      memcpy(px1, px2, channels);
-      memcpy(px2, tmp, channels);
-
-    }
+Image::~Image() {
+  if (!is_empty()) {
+    clear();
   }
-  return *this;
 }
 
-Image &Image::flip_y() {
-  uint8_t tmp[4];
-  uint8_t *px1;
-  uint8_t *px2;
-  for (int x = 0; x < width; ++x) {
-    for (int y = 0; y < height / 2; ++y) {
+// -- Load / Write
 
-      px1 = &data[(x + y * width) * channels];
-      px2 = &data[(x + (height - 1 - y) * width) * channels];
-
-      memcpy(tmp, px1, channels);
-      memcpy(px1, px2, channels);
-      memcpy(px2, tmp, channels);
-
-    }
+bool Image::load(const char *filename) {
+  if (!is_empty()) {
+    clear();
   }
-  return *this;
+  data = stbi_load(filename, &width, &height, &channels, 0);
+  size = width * height * channels;
+  return !is_empty();
 }
 
-Image &Image::rotate_left() {
-  uint8_t tmp_data[size];
-  uint8_t *px_s;
-  uint8_t *px_d;
-  for (int x = 0; x < width; ++x) {
+bool Image::write(const char *filename) const {
+  if (!is_empty()) {
+    int success;
+    switch (get_file_type(filename)) {
+      case PNG:
+        success = stbi_write_png(filename, width, height, channels, data, width * channels);
+        break;
+      case JPG:
+        success = stbi_write_jpg(filename, width, height, channels, data, 90);
+        break;
+    }
+    return success != 0;
+  }
+  return false;
+}
+
+// -- State
+
+bool Image::is_empty() const {
+  return data == nullptr;
+}
+
+void Image::clear() {
+  width = 0;
+  height = 0;
+  channels = 3;
+  size = width * height * channels;
+  if (data != nullptr) {
+    stbi_image_free(data);
+  }
+  data = nullptr;
+}
+
+// -- Manipulations
+
+Image &Image::flip(FlipType type) {
+  if (!is_empty()) {
+    uint8_t tmp[4];
+    uint8_t *px1;
+    uint8_t *px2;
     for (int y = 0; y < height; ++y) {
+      for (int x = 0; x < width / 2; ++x) {
 
-      px_s = &data[(x + y * width) * channels];
-      px_d = &tmp_data[((width - 1 - x) * height + y) * channels];
+        px1 = &data[(x + y * width) * channels];
+        switch (type) {
+          case HORIZONTAL:
+            px2 = &data[((width - 1 - x) + y * width) * channels];
+            break;
+          case VERTICAL:
+            px2 = &data[(x + (height - 1 - y) * width) * channels];
+            break;
+        }
 
-      memcpy(px_d, px_s, channels);
+        memcpy(tmp, px1, channels);
+        memcpy(px1, px2, channels);
+        memcpy(px2, tmp, channels);
 
+      }
     }
   }
-  memcpy(data, &tmp_data, size);
-  int tmp_width = width;
-  width = height;
-  height = tmp_width;
   return *this;
 }
 
-Image &Image::rotate_right() {
-  uint8_t tmp_data[size];
-  uint8_t *px_s;
-  uint8_t *px_d;
-  for (int x = 0; x < width; ++x) {
-    for (int y = 0; y < height; ++y) {
+Image &Image::rotate(RotateType type, int times) {
+  if (!is_empty()) {
+    for (int t = 0 ; t < (times % 4); ++t) {
 
-      px_s = &data[(x + y * width) * channels];
-      px_d = &tmp_data[(x * height + (height - 1 - y)) * channels];
+      uint8_t tmp_data[size];
+      uint8_t *px_s;
+      uint8_t *px_d;
+      for (int x = 0; x < width; ++x) {
+        for (int y = 0; y < height; ++y) {
 
-      memcpy(px_d, px_s, channels);
+          px_s = &data[(x + y * width) * channels];
+          switch (type) {
+            case LEFT:
+              px_d = &tmp_data[((width - 1 - x) * height + y) * channels];
+              break;
+            case RIGHT:
+              px_d = &tmp_data[(x * height + (height - 1 - y)) * channels];
+              break;
+          }
+
+          memcpy(px_d, px_s, channels);
+
+        }
+      }
+      memcpy(data, &tmp_data, size);
+      int tmp_width = width;
+      width = height;
+      height = tmp_width;
 
     }
   }
-  memcpy(data, &tmp_data, size);
-  int tmp_width = width;
-  width = height;
-  height = tmp_width;
   return *this;
 }
 
