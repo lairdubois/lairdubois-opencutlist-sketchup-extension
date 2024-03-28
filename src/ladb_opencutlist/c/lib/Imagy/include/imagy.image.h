@@ -1,6 +1,9 @@
 #ifndef IMAGY_IMAGE_H
 #define IMAGY_IMAGE_H
 
+#include <cstddef>
+#include <cstdint>
+
 enum ImageType {
     PNG, JPG
 };
