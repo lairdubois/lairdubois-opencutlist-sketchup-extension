@@ -31,41 +31,37 @@ Image::~Image() {
 // -- Cleaner
 
 void Image::clear() {
+  if (data != nullptr) stbi_image_free(data);
+  data = nullptr;
   width = 0;
   height = 0;
-  channels = 3;
-  size = width * height * channels;
-  if (data != nullptr) {
-    stbi_image_free(data);
-  }
-  data = nullptr;
+  channels = 0;
+  size = 0;
 }
 
 // -- Load / Write
 
 bool Image::load(const char *filename) {
-  if (!is_empty()) {
-    clear();
-  }
+  if (!is_empty()) clear();
   data = stbi_load(filename, &width, &height, &channels, 0);
   size = width * height * channels;
   return !is_empty();
 }
 
 bool Image::write(const char *filename) const {
-  if (!is_empty()) {
-    int success;
-    switch (get_file_type(filename)) {
-      case PNG:
-        success = stbi_write_png(filename, width, height, channels, data, width * channels);
-        break;
-      case JPG:
-        success = stbi_write_jpg(filename, width, height, channels, data, 90);
-        break;
-    }
-    return success != 0;
+  if (is_empty()) return false;
+
+  int success;
+  switch (get_file_type(filename)) {
+    case PNG:
+      success = stbi_write_png(filename, width, height, channels, data, width * channels);
+      break;
+    case JPG:
+      success = stbi_write_jpg(filename, width, height, channels, data, 90);
+      break;
   }
-  return false;
+
+  return success != 0;
 }
 
 // -- State
@@ -77,68 +73,69 @@ bool Image::is_empty() const {
 // -- Manipulations
 
 Image &Image::flip(FlipType type) {
-  if (!is_empty()) {
-    uint8_t tmp[4];
-    uint8_t *px1;
-    uint8_t *px2;
-    for (int y = 0; y < height; ++y) {
-      for (int x = 0; x < width / 2; ++x) {
+  if (is_empty()) return *this;
 
-        px1 = &data[(x + y * width) * channels];
-        switch (type) {
-          case HORIZONTAL:
-            px2 = &data[((width - 1 - x) + y * width) * channels];
-            break;
-          case VERTICAL:
-            px2 = &data[(x + (height - 1 - y) * width) * channels];
-            break;
-        }
+  uint8_t tmp[4];
+  uint8_t *px1;
+  uint8_t *px2;
 
-        memcpy(tmp, px1, channels);
-        memcpy(px1, px2, channels);
-        memcpy(px2, tmp, channels);
+  for (int y = 0; y < height; ++y) {
+    for (int x = 0; x < width / 2; ++x) {
 
+      px1 = &data[(x + y * width) * channels];
+      switch (type) {
+        case HORIZONTAL:
+          px2 = &data[((width - 1 - x) + y * width) * channels];
+          break;
+        case VERTICAL:
+          px2 = &data[(x + (height - 1 - y) * width) * channels];
+          break;
       }
+
+      memcpy(tmp, px1, channels);
+      memcpy(px1, px2, channels);
+      memcpy(px2, tmp, channels);
+
     }
   }
+
   return *this;
 }
 
 Image &Image::rotate(RotateType type, int times) {
-  if (!is_empty()) {
+  if (is_empty()) return *this;
 
-    auto* tmp_data = new uint8_t[size];
-    uint8_t* px_s;
-    uint8_t* px_d;
+  auto* tmp_data = new uint8_t[size];
+  uint8_t* px_s;
+  uint8_t* px_d;
 
-    for (int t = 0 ; t < (times % 4); ++t) {
+  for (int t = 0 ; t < (times % 4); ++t) {
 
-      for (int x = 0; x < width; ++x) {
-        for (int y = 0; y < height; ++y) {
+    for (int x = 0; x < width; ++x) {
+      for (int y = 0; y < height; ++y) {
 
-          px_s = &data[(x + y * width) * channels];
-          switch (type) {
-            case LEFT:
-              px_d = &tmp_data[((width - 1 - x) * height + y) * channels];
-              break;
-            case RIGHT:
-              px_d = &tmp_data[(x * height + (height - 1 - y)) * channels];
-              break;
-          }
-
-          memcpy(px_d, px_s, channels);
-
+        px_s = &data[(x + y * width) * channels];
+        switch (type) {
+          case LEFT:
+            px_d = &tmp_data[((width - 1 - x) * height + y) * channels];
+            break;
+          case RIGHT:
+            px_d = &tmp_data[(x * height + (height - 1 - y)) * channels];
+            break;
         }
+
+        memcpy(px_d, px_s, channels);
+
       }
-
-      memcpy(data, tmp_data, size);
-      int tmp_width = width;
-      width = height;
-      height = tmp_width;
-
     }
 
+    memcpy(data, tmp_data, size);
+    int tmp_width = width;
+    width = height;
+    height = tmp_width;
+
   }
+
   return *this;
 }
 

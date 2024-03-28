@@ -226,21 +226,27 @@ var cmakeBuildDir = 'cmake-build';
 
 gulp.task('c_libs_prepare', function () {
 
-    var rmCmd = 'rm -rf ' + cmakeBuildDir;
-    var mkdirCmd = 'mkdir ' + cmakeBuildDir;
-    var cmakeCmd = 'cmake -S .. -B ' + cmakeBuildDir;
+    if (fs.existsSync(cmakeBuildDir)) {
+        fs.rmdirSync(cmakeBuildDir, { recursive: true });
+    }
+    fs.mkdirSync(cmakeBuildDir);
 
-    return run([ rmCmd, mkdirCmd, cmakeCmd ].join(' && '), { verbosity: 3 }).exec();
+    return run('cmake -S .. -B ' + cmakeBuildDir, { verbosity: 3 }).exec();
 });
 
-gulp.task('c_libs_build_install', function () {
+gulp.task('c_libs_build', function () {
 
     var config = options.config ? options.config : 'Release'
 
-    var buildCmd = 'cmake --build ' + cmakeBuildDir + ' --config ' + config;
-    var installCmd = 'cmake --install ' + cmakeBuildDir + ' --config ' + config;
-
-    return run([ buildCmd, installCmd ].join(' && '), { verbosity: 3 }).exec();
+    return run('cmake --build ' + cmakeBuildDir + ' --config ' + config, { verbosity: 3 }).exec();
 });
 
-gulp.task('c_libs', gulp.series('c_libs_prepare', 'c_libs_build_install'));
+gulp.task('c_libs_install', function () {
+
+    var config = options.config ? options.config : 'Release'
+
+    return run('cmake --install ' + cmakeBuildDir + ' --config ' + config, { verbosity: 3 }).exec();
+});
+
+gulp.task('c_libs_build_install', gulp.series('c_libs_build', 'c_libs_install'));
+gulp.task('c_libs', gulp.series('c_libs_prepare', 'c_libs_build', 'c_libs_install'));
