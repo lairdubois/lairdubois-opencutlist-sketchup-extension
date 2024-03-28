@@ -10,7 +10,7 @@ enum ImageType {
 
 struct Image {
 
-    uint8_t* data;
+    uint8_t* data = nullptr;
     size_t size = 0;
     int width{};
     int height{};
