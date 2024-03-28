@@ -227,7 +227,7 @@ var cmakeBuildDir = 'cmake-build';
 gulp.task('c_libs_prepare', function () {
 
     if (fs.existsSync(cmakeBuildDir)) {
-        fs.rmdirSync(cmakeBuildDir, { recursive: true });
+        fs.rmSync(cmakeBuildDir, { recursive: true });
     }
     fs.mkdirSync(cmakeBuildDir);
 
