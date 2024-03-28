@@ -45,4 +45,4 @@ target_include_directories(Clippy PUBLIC include)
 target_link_libraries(Clippy PRIVATE Clipper2Wrapper)
 target_compile_features(Clippy PRIVATE cxx_std_17)
 
-install(TARGETS Clippy LIBRARY DESTINATION lib)
+install(TARGETS Clippy RUNTIME DESTINATION lib)
