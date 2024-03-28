@@ -1,6 +1,6 @@
-#include <stddef.h>
-#include <stdint.h>
-#include <stdbool.h>
+#include <cstddef>
+#include <cstdint>
+#include <cstdbool>
 
 #include "imagy.image.h"
 
