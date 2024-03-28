@@ -16,9 +16,10 @@ extern "C" {
 #define DLL_EXPORTS
 #endif
 
+DLL_EXPORTS void c_clear(void);
+
 DLL_EXPORTS int c_load(const char* filename);
 DLL_EXPORTS int c_write(const char* filename);
-DLL_EXPORTS void c_clear(void);
 
 DLL_EXPORTS int c_get_width(void);
 DLL_EXPORTS int c_get_height(void);

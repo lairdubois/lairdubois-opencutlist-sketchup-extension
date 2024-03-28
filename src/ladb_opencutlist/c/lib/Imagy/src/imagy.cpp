@@ -6,14 +6,15 @@ extern "C" {
 
 Image image;
 
+DLL_EXPORTS void c_clear(void) {
+  return image.clear();
+}
+
 DLL_EXPORTS int c_load(const char* filename) {
   return image.load(filename) ? 1 : 0;
 }
 DLL_EXPORTS int c_write(const char* filename) {
   return image.write(filename) ? 1 : 0;
-}
-DLL_EXPORTS void c_clear(void) {
-  return image.clear();
 }
 
 DLL_EXPORTS int c_get_width(void) {

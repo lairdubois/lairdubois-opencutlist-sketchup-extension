@@ -27,9 +27,10 @@ struct Image {
     Image();
     ~Image();
 
+    void clear();
+
     bool load(const char* filename);
     bool write(const char* filename) const;
-    void clear();
 
     bool is_empty() const;
 

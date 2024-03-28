@@ -28,6 +28,19 @@ Image::~Image() {
   }
 }
 
+// -- Cleaner
+
+void Image::clear() {
+  width = 0;
+  height = 0;
+  channels = 3;
+  size = width * height * channels;
+  if (data != nullptr) {
+    stbi_image_free(data);
+  }
+  data = nullptr;
+}
+
 // -- Load / Write
 
 bool Image::load(const char *filename) {
@@ -59,17 +72,6 @@ bool Image::write(const char *filename) const {
 
 bool Image::is_empty() const {
   return data == nullptr;
-}
-
-void Image::clear() {
-  width = 0;
-  height = 0;
-  channels = 3;
-  size = width * height * channels;
-  if (data != nullptr) {
-    stbi_image_free(data);
-  }
-  data = nullptr;
 }
 
 // -- Manipulations
@@ -104,11 +106,13 @@ Image &Image::flip(FlipType type) {
 
 Image &Image::rotate(RotateType type, int times) {
   if (!is_empty()) {
+
+    auto* tmp_data = new uint8_t[size];
+    uint8_t* px_s;
+    uint8_t* px_d;
+
     for (int t = 0 ; t < (times % 4); ++t) {
 
-      auto* tmp_data = new uint8_t[size];
-      uint8_t *px_s;
-      uint8_t *px_d;
       for (int x = 0; x < width; ++x) {
         for (int y = 0; y < height; ++y) {
 
@@ -126,12 +130,14 @@ Image &Image::rotate(RotateType type, int times) {
 
         }
       }
-      memcpy(data, &tmp_data, size);
+
+      memcpy(data, tmp_data, size);
       int tmp_width = width;
       width = height;
       height = tmp_width;
 
     }
+
   }
   return *this;
 }
