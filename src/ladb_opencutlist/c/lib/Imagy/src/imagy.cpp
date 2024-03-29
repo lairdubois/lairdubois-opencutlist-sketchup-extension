@@ -29,18 +29,15 @@ DLL_EXPORTS int c_get_channels(void) {
 
 
 DLL_EXPORTS void c_flip_horizontal(void) {
-  image.flip(HORIZONTAL);
+  image.flip(true);
 }
 DLL_EXPORTS void c_flip_vertical(void) {
-  image.flip(VERTICAL);
+  image.flip(false);
 }
 
 
-DLL_EXPORTS void c_rotate_left(int times) {
-  image.rotate(LEFT, times);
-}
-DLL_EXPORTS void c_rotate_right(int times) {
-  image.rotate(RIGHT, times);
+DLL_EXPORTS void c_rotate(int angle) {
+  image.rotate(angle);
 }
 
 

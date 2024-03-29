@@ -93,11 +93,7 @@ module Ladb::OpenCutList
           require_relative '../../lib/fiddle/imagy/imagy'
 
           if Fiddle::Imagy.load(@texture_file)
-            if @texture_rotation < 0
-              Fiddle::Imagy.rotate_left!(@texture_rotation.abs / 90)
-            else
-              Fiddle::Imagy.rotate_right!(@texture_rotation.abs / 90)
-            end
+            Fiddle::Imagy.rotate!(@texture_rotation)
             Fiddle::Imagy.write(@texture_file)
             Fiddle::Imagy.clear!
           end

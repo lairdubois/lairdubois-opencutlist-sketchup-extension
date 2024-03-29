@@ -28,8 +28,7 @@ DLL_EXPORTS int c_get_channels(void);
 DLL_EXPORTS void c_flip_horizontal(void);
 DLL_EXPORTS void c_flip_vertical(void);
 
-DLL_EXPORTS void c_rotate_left(int times);
-DLL_EXPORTS void c_rotate_right(int times);
+DLL_EXPORTS void c_rotate(int angle);
 
 DLL_EXPORTS char* c_version(void);
 

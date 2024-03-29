@@ -23,8 +23,7 @@ module Ladb::OpenCutList::Fiddle
         'void c_flip_horizontal()',
         'void c_flip_vertical()',
 
-        'void c_rotate_left(int)',
-        'void c_rotate_right(int)',
+        'void c_rotate(int)',
 
         'char* c_version()'
 
@@ -78,14 +77,9 @@ module Ladb::OpenCutList::Fiddle
     end
 
 
-    def self.rotate_left!(times = 1)
+    def self.rotate!(angle)
       _load_lib
-      c_rotate_left(times)
-    end
-
-    def self.rotate_right!(times = 1)
-      _load_lib
-      c_rotate_right(times)
+      c_rotate(angle)
     end
 
   end

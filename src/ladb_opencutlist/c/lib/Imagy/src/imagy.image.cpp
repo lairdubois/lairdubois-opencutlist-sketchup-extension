@@ -14,6 +14,8 @@
 
 #include "imagy.image.h"
 
+#include <utility>
+
 Image::Image() {
 }
 
@@ -65,57 +67,87 @@ bool Image::is_empty() const {
 
 // -- Manipulations
 
-Image &Image::flip(FlipType type) {
-  if (is_empty()) return *this;
+inline int fn_data_pos        (int x, int y, Image& image) { return (x + y * image.width) * image.channels; }
+inline int fn_data_pos_rot_90 (int x, int y, Image& image) { return (x * image.height + (image.height - 1 - y)) * image.channels; }
+inline int fn_data_pos_rot_180(int x, int y, Image& image) { return ((image.width - 1 - x) + (image.height - 1 - y) * image.width) * image.channels; }
+inline int fn_data_pos_rot_270(int x, int y, Image& image) { return ((image.width - 1 - x) * image.height + y) * image.channels; }
+inline int fn_data_pos_flip_h (int x, int y, Image& image) { return ((image.width - 1 - x) + y * image.width) * image.channels; }
+inline int fn_data_pos_flip_v (int x, int y, Image& image) { return (x + (image.height - 1 - y) * image.width) * image.channels; }
+
+inline void fn_data_swap(int pos1, int pos2, Image& image) {
 
   uint8_t tmp[4];
   uint8_t *px1;
   uint8_t *px2;
 
-  for (int y = 0; y < height; ++y) {
-    for (int x = 0; x < width / 2; ++x) {
+  px1 = &image.data[pos1];
+  px2 = &image.data[pos2];
 
-      px1 = &data[(x + y * width) * channels];
-      switch (type) {
-        case HORIZONTAL:
-          px2 = &data[((width - 1 - x) + y * width) * channels];
-          break;
-        case VERTICAL:
-          px2 = &data[(x + (height - 1 - y) * width) * channels];
-          break;
-      }
+  memcpy(tmp, px1, image.channels);
+  memcpy(px1, px2, image.channels);
+  memcpy(px2, tmp, image.channels);
 
-      memcpy(tmp, px1, channels);
-      memcpy(px1, px2, channels);
-      memcpy(px2, tmp, channels);
-
-    }
-  }
-
-  return *this;
 }
 
-Image &Image::rotate(RotateType type, int times) {
-  if (is_empty()) return *this;
+bool Image::flip(bool horizontal) {
+  if (is_empty()) return false;
 
-  auto* tmp_data = new uint8_t[size];
-  uint8_t* px_s;
-  uint8_t* px_d;
+  if (horizontal) {
 
-  for (int t = 0 ; t < (times % 4); ++t) {
+    int half_width = width / 2;
+    for (int y = 0; y < height; ++y) {
+      for (int x = 0; x < half_width; ++x) {
+        fn_data_swap(fn_data_pos(x, y, *this), fn_data_pos_flip_h(x, y, *this), *this);
+      }
+    }
+
+  } else {
+
+    int half_height = height / 2;
+    for (int x = 0; x < width; ++x) {
+      for (int y = 0; y < half_height; ++y) {
+        fn_data_swap(fn_data_pos(x, y, *this), fn_data_pos_flip_v(x, y, *this), *this);
+      }
+    }
+
+  }
+
+  return true;
+}
+
+bool Image::rotate(int angle) {
+  if (is_empty()) return false;
+
+  angle = ((angle / 90) * 90) % 360;
+  if (angle == 0) return false;
+
+  if (angle == 180) {
+
+    int half_width = width / 2;
+    for (int y = 0; y < height; ++y) {
+      for (int x = 0; x < half_width; ++x) {
+        fn_data_swap(fn_data_pos(x, y, *this), fn_data_pos_rot_180(x, y, *this), *this);
+      }
+    }
+
+  } else {
+
+    int (*fn_data_pos_rot)(int, int, Image&);
+    if (angle == 90) {
+      fn_data_pos_rot = &fn_data_pos_rot_90;
+    } else if (angle == 270) {
+      fn_data_pos_rot = &fn_data_pos_rot_270;
+    }
+
+    auto* tmp_data = new uint8_t[size];
+    uint8_t* px_s;
+    uint8_t* px_d;
 
     for (int x = 0; x < width; ++x) {
       for (int y = 0; y < height; ++y) {
 
-        px_s = &data[(x + y * width) * channels];
-        switch (type) {
-          case LEFT:
-            px_d = &tmp_data[((width - 1 - x) * height + y) * channels];
-            break;
-          case RIGHT:
-            px_d = &tmp_data[(x * height + (height - 1 - y)) * channels];
-            break;
-        }
+        px_s = &data[fn_data_pos(x, y, *this)];
+        px_d = &tmp_data[fn_data_pos_rot(x, y, *this)];
 
         memcpy(px_d, px_s, channels);
 
@@ -123,14 +155,14 @@ Image &Image::rotate(RotateType type, int times) {
     }
 
     memcpy(data, tmp_data, size);
-    int tmp_width = width;
-    width = height;
-    height = tmp_width;
+    std::swap(width, height);
 
   }
 
-  return *this;
+  return true;
 }
+
+// -- Utils
 
 ImageType Image::get_file_type(const char *filename) {
   const char *ext = strrchr(filename, '.');
