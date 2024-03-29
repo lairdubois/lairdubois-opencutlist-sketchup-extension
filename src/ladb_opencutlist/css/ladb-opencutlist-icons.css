@@ -1,9 +1,6 @@
 @font-face {
   font-family: 'ladb_opencutlist';
-  src:
-    url('../fonts/ladb_opencutlist.ttf?wp1a82') format('truetype'),
-    url('../fonts/ladb_opencutlist.woff?wp1a82') format('woff'),
-    url('../fonts/ladb_opencutlist.svg?wp1a82#ladb_opencutlist') format('svg');
+  src: url('../fonts/ladb_opencutlist.woff?wp1a82') format('woff');
   font-weight: normal;
   font-style: normal;
 }

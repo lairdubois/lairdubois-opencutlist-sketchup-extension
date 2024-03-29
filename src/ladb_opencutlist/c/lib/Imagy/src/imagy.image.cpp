@@ -15,17 +15,10 @@
 #include "imagy.image.h"
 
 Image::Image() {
-  width = 0;
-  height = 0;
-  channels = 3;
-  size = width * height * channels;
-  data = nullptr;
 }
 
 Image::~Image() {
-  if (!is_empty()) {
-    clear();
-  }
+  if (!is_empty()) clear();
 }
 
 // -- Cleaner

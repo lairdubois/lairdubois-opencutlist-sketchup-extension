@@ -20,9 +20,9 @@ struct Image {
 
     uint8_t* data = nullptr;
     size_t size = 0;
-    int width{};
-    int height{};
-    int channels{};
+    int width = 0;
+    int height = 0;
+    int channels = 0;
 
     Image();
     ~Image();
