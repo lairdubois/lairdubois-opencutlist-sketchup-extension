@@ -9,6 +9,16 @@ module Ladb::OpenCutList::Fiddle
 
     # ---
 
+    # Convert Float to Integer
+    def float_to_int64(f)
+      (f * FLOAT_TO_INT64_CONVERTER).to_f
+    end
+
+    # Convert Integer to Float
+    def int64_to_float(i)
+      i / FLOAT_TO_INT64_CONVERTER
+    end
+
     # Convert Array<Geom::Point3d> to Array<Integer> (x1, y1, x2, y2, ...)
     def points_to_rpath(points)
       points.map { |point| [ (point.x * FLOAT_TO_INT64_CONVERTER).to_i, (point.y * FLOAT_TO_INT64_CONVERTER).to_i ] }.flatten

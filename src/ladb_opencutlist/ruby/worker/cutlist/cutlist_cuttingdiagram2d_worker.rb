@@ -120,7 +120,7 @@ module Ladb::OpenCutList
         }
 
         # Add boxes from parts
-        add_boxes_fn = lambda { |part|
+        fn_add_boxes = lambda { |part|
           for i in 1..part.count
             @pack_engine.add_box(part.cutting_length.to_l.to_f, part.cutting_width.to_l.to_f, options.rotatable || part.ignore_grain_direction, part.number, part)   # "to_l.to_f" Reconvert string representation of length to float to take advantage Sketchup precision
           end
@@ -128,10 +128,10 @@ module Ladb::OpenCutList
         parts.each { |part|
           if part.instance_of?(FolderPart)
             part.children.each { |child_part|
-              add_boxes_fn.call(child_part)
+              fn_add_boxes.call(child_part)
             }
           else
-            add_boxes_fn.call(part)
+            fn_add_boxes.call(part)
           end
         }
 

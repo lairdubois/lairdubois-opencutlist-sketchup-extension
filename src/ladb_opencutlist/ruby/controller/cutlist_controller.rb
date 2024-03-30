@@ -96,6 +96,11 @@ module Ladb::OpenCutList
         reset_prices_command
       end
 
+
+      PLUGIN.register_command("cutlist_group_nesting2d") do |settings|
+        group_nesting2d_command(settings)
+      end
+
     end
 
     def setup_event_callbacks
@@ -320,6 +325,17 @@ module Ladb::OpenCutList
 
       # Setup worker
       worker = CutlistResetPricesWorker.new
+
+      # Run !
+      worker.run
+    end
+
+
+    def group_nesting2d_command(settings)
+      require_relative '../worker/cutlist/cutlist_nesting2d_worker'
+
+      # Setup worker
+      worker = CutlistNesting2dWorker.new(@cutlist, **HashUtils.symbolize_keys(settings))
 
       # Run !
       worker.run

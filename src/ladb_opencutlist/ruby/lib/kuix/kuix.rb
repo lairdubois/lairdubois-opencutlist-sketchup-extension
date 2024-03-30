@@ -44,9 +44,9 @@ module Ladb::OpenCutList
     COLOR_LIGHT_GREY = Sketchup::Color.new(220, 220, 220).freeze
     COLOR_MEDIUM_GREY = Sketchup::Color.new(170, 170, 170).freeze
     COLOR_DARK_GREY = Sketchup::Color.new(120, 120, 120).freeze
-    COLOR_X = COLOR_RED
-    COLOR_Y = COLOR_GREEN
-    COLOR_Z = COLOR_BLUE
+    COLOR_X = Sketchup::Color.new(255, 0, 15).freeze
+    COLOR_Y = Sketchup::Color.new(0, 187, 0).freeze
+    COLOR_Z = Sketchup::Color.new(0, 50, 255).freeze
 
     # Line stipple constants
 

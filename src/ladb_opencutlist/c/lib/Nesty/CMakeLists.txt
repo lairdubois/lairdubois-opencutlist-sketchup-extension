@@ -10,6 +10,7 @@ endif()
 # Library headers
 set(LIBRARY_HEADERS
         include/nesty.h
+        include/nesty.structs.h
 )
 source_group("Headers" FILES ${LIBRARY_HEADERS})
 

@@ -16,21 +16,21 @@ extern "C" {
 #define DLL_EXPORTS
 #endif
 
-DLL_EXPORTS void c_clear(void);
+DLL_EXPORTS void c_clear();
 
 DLL_EXPORTS int c_load(const char* filename);
 DLL_EXPORTS int c_write(const char* filename);
 
-DLL_EXPORTS int c_get_width(void);
-DLL_EXPORTS int c_get_height(void);
-DLL_EXPORTS int c_get_channels(void);
+DLL_EXPORTS int c_get_width();
+DLL_EXPORTS int c_get_height();
+DLL_EXPORTS int c_get_channels();
 
-DLL_EXPORTS void c_flip_horizontal(void);
-DLL_EXPORTS void c_flip_vertical(void);
+DLL_EXPORTS void c_flip_horizontal();
+DLL_EXPORTS void c_flip_vertical();
 
 DLL_EXPORTS void c_rotate(int angle);
 
-DLL_EXPORTS char* c_version(void);
+DLL_EXPORTS char* c_version();
 
 #ifdef __cplusplus
 }

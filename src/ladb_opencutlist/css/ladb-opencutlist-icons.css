@@ -373,6 +373,9 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-mini-logo-ladb:before {
   content: "\e951";
 }
+.ladb-opencutlist-icon-nesting2d:before {
+  content: "\e9ad";
+}
 .ladb-opencutlist-icon-material-type-3:before {
   content: "\e94f";
 }

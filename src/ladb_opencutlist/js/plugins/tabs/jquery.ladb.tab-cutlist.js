@@ -594,6 +594,12 @@
                     var groupId = $group.data('group-id');
                     that.cuttingdiagram2dGroup(groupId, true);
                 });
+                $('button.ladb-btn-group-nesting2d', that.$page).on('click', function () {
+                    $(this).blur();
+                    var $group = $(this).parents('.ladb-cutlist-group');
+                    var groupId = $group.data('group-id');
+                    that.nesting2dGroup(groupId, true);
+                });
                 $('button.ladb-btn-group-labels', that.$page).on('click', function () {
                     $(this).blur();
                     var $group = $(this).parents('.ladb-cutlist-group');
@@ -4499,6 +4505,134 @@
                         });
 
                     }
+
+                    // Hide modal
+                    $modal.modal('hide');
+
+                });
+
+                // Bind modal
+                $modal.on('hide.bs.modal', function () {
+                    $inputScrapSheetSizes.ladbTextinputTokenfield('destroy');
+                });
+
+                // Show modal
+                $modal.modal('show');
+
+                // Setup popovers
+                that.dialog.setupPopovers();
+
+            });
+
+        });
+
+    };
+
+    LadbTabCutlist.prototype.nesting2dGroup = function (groupId, forceDefaultTab, generateCallback) {
+        var that = this;
+
+        var group = this.findGroupById(groupId);
+        var isPartSelection = this.selectionGroupId === groupId && this.selectionPartIds.length > 0;
+
+        // Retrieve cutting diagram options
+        rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_nesting2d_options', section: groupId }, function (response) {
+
+            var nesting2dOptions = response.preset;
+
+            rubyCallCommand('materials_get_attributes_command', { name: group.material_name }, function (response) {
+
+                var $modal = that.appendModalInside('ladb_cutlist_modal_nesting_2d', 'tabs/cutlist/_modal-nesting-2d.twig', {
+                    material_attributes: response,
+                    group: group,
+                    isPartSelection: isPartSelection,
+                    tab: 'material'
+                });
+
+                // Fetch UI elements
+                var $widgetPreset = $('.ladb-widget-preset', $modal);
+                var $inputStdSheet = $('#ladb_select_std_sheet', $modal);
+                var $inputScrapSheetSizes = $('#ladb_input_scrap_sheet_sizes', $modal);
+                var $inputSawKerf = $('#ladb_input_saw_kerf', $modal);
+                var $inputTrimming = $('#ladb_input_trimming', $modal);
+                var $btnEditMaterial = $('#ladb_btn_edit_material', $modal);
+                var $btnGenerate = $('#ladb_btn_generate', $modal);
+
+                var fnFetchOptions = function (options) {
+                    options.std_sheet = $inputStdSheet.val();
+                    options.scrap_sheet_sizes = $inputScrapSheetSizes.ladbTextinputTokenfield('getValidTokensList');
+                    options.saw_kerf = $inputSawKerf.val();
+                    options.trimming = $inputTrimming.val();
+                }
+                var fnFillInputs = function (options) {
+                    $inputSawKerf.val(options.saw_kerf);
+                    $inputTrimming.val(options.trimming);
+                }
+                var fnEditMaterial = function (callback) {
+
+                    // Hide modal
+                    $modal.modal('hide');
+
+                    // Edit material and focus std_sizes input field
+                    that.dialog.executeCommandOnTab('materials', 'edit_material', {
+                        materialId: group.material_id,
+                        propertiesTab: 'cut_options',
+                        callback: callback
+                    });
+
+                };
+
+                $widgetPreset.ladbWidgetPreset({
+                    dialog: that.dialog,
+                    dictionary: 'cutlist_nesting2d_options',
+                    fnFetchOptions: fnFetchOptions,
+                    fnFillInputs: fnFillInputs
+                });
+                if (nesting2dOptions.std_sheet) {
+                    var defaultValue = $inputStdSheet.val();
+                    $inputStdSheet.val(nesting2dOptions.std_sheet);
+                    if ($inputStdSheet.val() == null) {
+                        if (response.std_sizes.length === 0) {
+                            $inputStdSheet.val('0x0');  // Special case if the std_sheet is not present anymore in the list and no std size defined. Select "none" by default.
+                        } else {
+                            $inputStdSheet.val(defaultValue);
+                        }
+                    }
+                }
+                $inputStdSheet.selectpicker(SELECT_PICKER_OPTIONS);
+                $inputScrapSheetSizes.ladbTextinputTokenfield({ format: 'dxdxq' });
+                $inputScrapSheetSizes.ladbTextinputTokenfield('setTokens', nesting2dOptions.scrap_sheet_sizes);
+                $inputSawKerf.ladbTextinputDimension();
+                $inputTrimming.ladbTextinputDimension();
+
+                fnFillInputs(nesting2dOptions);
+
+                // Bind select
+                $inputStdSheet.on('changed.bs.select', function () {
+                    var value = $inputStdSheet.val();
+                    if (value === 'add') {
+                        fnEditMaterial(function ($editMaterialModal) {
+                            $('#ladb_materials_input_std_sizes', $editMaterialModal).siblings('.token-input').focus();
+                        });
+                    }
+                });
+
+                // Bind buttons
+                $btnEditMaterial.on('click', function () {
+                    fnEditMaterial();
+                });
+                $btnGenerate.on('click', function () {
+
+                    // Fetch options
+                    fnFetchOptions(nesting2dOptions);
+
+                    // Store options
+                    rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_nesting2d_options', values: nesting2dOptions, section: groupId });
+
+                    rubyCallCommand('cutlist_group_nesting2d', $.extend({ group_id: groupId, part_ids: isPartSelection ? that.selectionPartIds : null }, nesting2dOptions), function (response) {
+
+                        console.log(response);
+
+                    });
 
                     // Hide modal
                     $modal.modal('hide');

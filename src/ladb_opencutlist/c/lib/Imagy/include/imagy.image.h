@@ -4,13 +4,15 @@
 #include <cstddef>
 #include <cstdint>
 
-enum ImageType {
+namespace Imagy {
+
+  enum ImageType {
     PNG, JPG
-};
+  };
 
-struct Image {
+  struct Image {
 
-    uint8_t* data = nullptr;
+    uint8_t *data = nullptr;
     size_t size = 0;
     int width = 0;
     int height = 0;
@@ -21,16 +23,18 @@ struct Image {
 
     void clear();
 
-    bool load(const char* filename);
-    bool write(const char* filename) const;
+    bool load(const char *filename);
+    bool write(const char *filename) const;
 
     bool is_empty() const;
 
     bool flip(bool horizontal = true);
     bool rotate(int angle);
 
-    static ImageType get_file_type(const char* filename);
+    static ImageType get_file_type(const char *filename);
 
-};
+  };
+
+}
 
 #endif // IMAGY_IMAGE_H
