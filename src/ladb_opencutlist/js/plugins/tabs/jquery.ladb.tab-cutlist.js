@@ -4637,9 +4637,8 @@
                             isEntitySelection: that.isEntitySelection,
                             lengthUnit: that.lengthUnit,
                             generatedAt: new Date().getTime() / 1000,
-                            group: group,
-                            svgs: response.svgs
-                        }));
+                            group: group
+                        }, response));
 
                         // Fetch UI elements
                         var $btnNesting = $('#ladb_btn_nesting', $slide);

@@ -21,6 +21,9 @@
 {% block containerInner %}
     {{ parent() }}
     <table class="ladb-page">
+        <div>unused_bins_count = {{ unused_bins_count }}</div>
+        <div>packed_bins_count = {{ packed_bins_count }}</div>
+        <div>unplaced_shapes_count = {{ unplaced_shapes_count }}</div>
         {% for svg in svgs %}
             <div>{{ svg|raw }}</div>
         {% endfor %}

@@ -1,7 +1,9 @@
 #include "clipper2/clipper.wrapper.h"
 
-#include <nesty.h>
+#include "nesty.h"
+#include "nesty.engine.h"
 
+#include <algorithm>
 #include <string>
 
 using namespace Nesty;
@@ -122,10 +124,11 @@ int64_t* ConvertSolutionToCSolution(const Solution &solution) {
 extern "C" {
 #endif
 
-BinDefs bin_defs;
 ShapeDefs shape_defs;
+BinDefs bin_defs;
 
 Solution solution;
+
 std::string message;
 
 DLL_EXPORTS void c_clear() {
@@ -145,46 +148,8 @@ DLL_EXPORTS void c_append_shape_def(int id, int count, const int64_t* cpaths) {
 
 DLL_EXPORTS char* c_execute_nesting(int64_t spacing, int64_t trimming) {
 
-  solution.clear();
-  for (auto &bin_def : bin_defs) {
-    if (bin_def.type == 0) {
-      Bin bin(&bin_def);
-
-      // Just for test : place shapes on a 5x5 grid
-
-      int index = 0;
-      int grid_x = 5;
-      int grid_y = 5;
-      int64_t grid_length = bin_def.length / grid_x;
-      int64_t grid_width = bin_def.width / grid_y;
-
-      for (auto &shape_def: shape_defs) {
-        for (int i = 0; i < shape_def.count; ++i) {
-
-          Shape shape(&shape_def);
-          shape.x = (index % grid_x) * grid_length;
-          shape.y = (index / grid_x) * grid_width;
-
-          index++;
-
-          bin.shapes.push_back(shape);
-        }
-      }
-
-      solution.packed_bins.push_back(bin);
-    } else {
-      for (int i = 0; i < bin_def.count; ++i) {
-        solution.unused_bins.emplace_back(&bin_def);
-      }
-    }
-  }
-  for (auto &shape_def: shape_defs) {
-    for (int i = 0; i < shape_def.count; ++i) {
-      solution.unplaced_shapes.emplace_back(&shape_def);
-    }
-  }
-
-  // Do somthing :)
+  DummyEngine engine;
+  engine.Execute(shape_defs, bin_defs, spacing, trimming, solution);
 
   message.clear();
   message = "-- START NESTY MESSAGE --\n"

@@ -57,9 +57,6 @@ module Ladb::OpenCutList
       bin_id = 0
       shape_id = 0
 
-      # Add bin from std sheet
-      bin_defs << Nesty::BinDef.new(bin_id, 0, Nesty.float_to_int64(@std_sheet_length), Nesty.float_to_int64(@std_sheet_width), 0) # 0 = Standard
-
       # Add bins from scrap sheets
       @scrap_sheet_sizes.split(';').each { |scrap_sheet_size|
         ddq = scrap_sheet_size.split('x')
@@ -68,6 +65,9 @@ module Ladb::OpenCutList
         count = [ 1, (ddq[2].nil? || ddq[2].strip.to_i == 0) ? 1 : ddq[2].strip.to_i ].max
         bin_defs << Nesty::BinDef.new(bin_id += 1, count, Nesty.float_to_int64(length), Nesty.float_to_int64(width), 1) # 1 = user defined
       }
+
+      # Add bin from std sheet
+      bin_defs << Nesty::BinDef.new(bin_id += 1, 1, Nesty.float_to_int64(@std_sheet_length), Nesty.float_to_int64(@std_sheet_width), 0) # 0 = Standard
 
       # Add shapes from parts
       fn_add_shapes = lambda { |part|
@@ -106,6 +106,9 @@ module Ladb::OpenCutList
       svgs += solution.unused_bins.map { |bin| _bin_to_svg(bin, '#d9534f') }
 
       response = {
+        'unused_bins_count' => solution.unused_bins.length,
+        'packed_bins_count' => solution.packed_bins.length,
+        'unplaced_shapes_count' => solution.unplaced_shapes.length,
         'svgs' => svgs
       }
 
