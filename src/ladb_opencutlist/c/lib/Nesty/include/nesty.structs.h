@@ -7,12 +7,8 @@ namespace Nesty {
 
   struct ShapeDef {
 
-    ShapeDef(int id, int count, Clipper2Lib::Paths64 paths) {
-      this->id = id;
-      this->count = count;
-      this->paths = paths;
-    }
-    ~ShapeDef() {};
+    ShapeDef(int id, int count, Clipper2Lib::Paths64 paths);
+    ~ShapeDef() = default;
 
     int id;
     int count;
@@ -23,10 +19,8 @@ namespace Nesty {
 
   struct Shape {
 
-    Shape(ShapeDef* def) {
-      this->def = def;
-    }
-    ~Shape() {};
+    explicit Shape(ShapeDef* def);
+    ~Shape() = default;
 
     ShapeDef* def = nullptr;
 
@@ -41,14 +35,8 @@ namespace Nesty {
 
   struct BinDef {
 
-    BinDef(int id, int count, int64_t length, int64_t width, int type) {
-      this->id = id;
-      this->count = count;
-      this->length = length;
-      this->width = width;
-      this->type = type;
-    }
-    ~BinDef() {};
+    BinDef(int id, int count, int64_t length, int64_t width, int type);
+    ~BinDef() = default;
 
     int id = 0;
     int count = 0;
@@ -62,10 +50,8 @@ namespace Nesty {
 
   struct Bin {
 
-    Bin(BinDef* def) {
-      this->def = def;
-    }
-    ~Bin() {};
+    explicit Bin(BinDef* def);
+    ~Bin() = default;
 
     BinDef* def = nullptr;
 
@@ -78,21 +64,30 @@ namespace Nesty {
 
   struct Solution {
 
-    Solution() {}
-    ~Solution() {};
+    Solution() = default;
+    ~Solution() = default;
 
     Bins unused_bins;
     Bins packed_bins;
 
     Shapes unplaced_shapes;
 
-    void clear() {
-      this->unused_bins.clear();
-      this->packed_bins.clear();
-      this->unplaced_shapes.clear();
-    }
+    void clear();
 
   };
+
+  // -- Converters
+
+  size_t GetCShapeArrayLen();
+  size_t GetCShapesArrayLen(const Shapes &shapes);
+  size_t GetCBinArrayLen(const Bin &bin);
+  size_t GetCBinsArrayLen(const Bins &bins);
+
+  void ConvertShapeToCShape(const Shape &shape, int64_t *&v);
+  void ConvertShapesToCShapes(const Shapes &shapes, int64_t *&v);
+  void ConvertBinToCBin(const Bin &bin, int64_t *&v);
+  void ConvertBinsToCBins(const Bins &bins, int64_t *&v);
+  int64_t* ConvertSolutionToCSolution(const Solution &solution);
 
 }
 

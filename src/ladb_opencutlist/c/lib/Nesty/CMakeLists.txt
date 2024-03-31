@@ -19,12 +19,14 @@ source_group("Headers" FILES ${LIBRARY_HEADERS})
 if(WIN32)
   set(LIBRARY_SOURCES
           src/nesty.cpp
+          src/nesty.structs.cpp
           src/nesty.engine.cpp
           src/dllmain.cpp
   )
 else()
   set(LIBRARY_SOURCES
           src/nesty.cpp
+          src/nesty.structs.cpp
           src/nesty.engine.cpp
   )
 endif()

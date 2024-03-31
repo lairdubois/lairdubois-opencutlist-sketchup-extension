@@ -2,6 +2,8 @@
 
 #include <clippy.h>
 
+using namespace Clipper2Lib;
+
 #ifdef __cplusplus
 extern "C" {
 #endif

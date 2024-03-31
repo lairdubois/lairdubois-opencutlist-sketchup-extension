@@ -1,23 +1,28 @@
 #include "clipper2/clipper.wrapper.h"
 
+#include "nesty.structs.h"
 #include "nesty.engine.h"
 
 #include <algorithm>
 #include <string>
 
+using namespace Clipper2Lib;
+
 namespace Nesty {
 
-  bool shapes_sorter(Shape &shape1, Shape &shape2) {
+
+  inline bool shapes_sorter(Shape &shape1, Shape &shape2) {
     return (GetBounds(shape1.def->paths).Height() > GetBounds(shape2.def->paths).Height());
   }
-  bool bins_sorter(Bin &bin1, Bin &bin2) {
+  inline bool bins_sorter(Bin &bin1, Bin &bin2) {
     if (bin1.def->type == bin2.def->type) {
       return (bin1.def->length * bin1.def->width < bin2.def->length * bin2.def->width);
     }
     return (bin1.def->type > bin2.def->type);
   }
 
-  bool DummyEngine::Execute(ShapeDefs &shape_defs, BinDefs &bin_defs, int64_t spacing, int64_t trimming, Solution &solution) {
+
+  bool DummyEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, int64_t spacing, int64_t trimming, Solution &solution) {
 
     solution.clear();
 

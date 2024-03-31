@@ -2,8 +2,6 @@
 #include <cstdint>
 #include <cstdbool>
 
-#include "nesty.structs.h"
-
 constexpr auto NESTY_VERSION = "1.0.0";
 
 #ifdef __cplusplus

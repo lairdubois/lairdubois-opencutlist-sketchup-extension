@@ -5,9 +5,11 @@
 
 namespace Nesty {
 
-  struct DummyEngine {
+  class DummyEngine {
 
-    bool Execute(ShapeDefs &shape_defs, BinDefs &bin_defs, int64_t spacing, int64_t trimming, Solution &solution);
+  public:
+
+    bool run(ShapeDefs &shape_defs, BinDefs &bin_defs, int64_t spacing, int64_t trimming, Solution &solution);
 
   };
 
