@@ -5,13 +5,14 @@
   },
   "_preprocessors": {
     "scrap_sheet_sizes": 4, /* PRESETS_PREPROCESSOR_DXDXQ */
-    "saw_kerf": 1, /* PRESETS_PREPROCESSOR_D */
+    "spacing": 1, /* PRESETS_PREPROCESSOR_D */
     "trimming": 1 /* PRESETS_PREPROCESSOR_D */
   },
   "0": {
     "std_sheet": "",
     "scrap_sheet_sizes": "",
-    "saw_kerf": { "metric": "20mm", "imperial": "1\"" },
-    "trimming": { "metric": "10mm", "imperial": "1/2\"" }
+    "spacing": { "metric": "20mm", "imperial": "1\"" },
+    "trimming": { "metric": "10mm", "imperial": "1/2\"" },
+    "reload_lib": false
   }
 }

@@ -19,8 +19,9 @@ module Ladb::OpenCutList
                    part_ids: nil,
                    std_sheet: '',
                    scrap_sheet_sizes: '',
-                   saw_kerf: '20mm',
-                   trimming: '10mm'
+                   spacing: '20mm',
+                   trimming: '10mm',
+                   reload_lib: false
 
     )
 
@@ -32,8 +33,9 @@ module Ladb::OpenCutList
       @std_sheet_length = DimensionUtils.instance.str_to_ifloat(s_length).to_l.to_f
       @std_sheet_width = DimensionUtils.instance.str_to_ifloat(s_width).to_l.to_f
       @scrap_sheet_sizes = DimensionUtils.instance.dxdxq_to_ifloats(scrap_sheet_sizes)
-      @spacing = DimensionUtils.instance.str_to_ifloat(saw_kerf).to_l.to_f
+      @spacing = DimensionUtils.instance.str_to_ifloat(spacing).to_l.to_f
       @trimming = DimensionUtils.instance.str_to_ifloat(trimming).to_l.to_f
+      @reload_lib = reload_lib
 
     end
 
@@ -50,6 +52,8 @@ module Ladb::OpenCutList
 
       parts = @part_ids.nil? ? group.parts : group.get_parts(@part_ids)
       return { :errors => [ 'default.error' ] } if parts.empty?
+
+      Nesty.reload if @reload_lib
 
       bin_defs = []
       shape_defs = []

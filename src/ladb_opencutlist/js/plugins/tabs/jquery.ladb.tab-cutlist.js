@@ -4552,20 +4552,23 @@
                 var $widgetPreset = $('.ladb-widget-preset', $modal);
                 var $inputStdSheet = $('#ladb_select_std_sheet', $modal);
                 var $inputScrapSheetSizes = $('#ladb_input_scrap_sheet_sizes', $modal);
-                var $inputSawKerf = $('#ladb_input_saw_kerf', $modal);
+                var $inputSpacing = $('#ladb_input_spacing', $modal);
                 var $inputTrimming = $('#ladb_input_trimming', $modal);
+                var $inputReloadLib = $('#ladb_input_reload_lib', $modal);
                 var $btnEditMaterial = $('#ladb_btn_edit_material', $modal);
                 var $btnGenerate = $('#ladb_btn_generate', $modal);
 
                 var fnFetchOptions = function (options) {
                     options.std_sheet = $inputStdSheet.val();
                     options.scrap_sheet_sizes = $inputScrapSheetSizes.ladbTextinputTokenfield('getValidTokensList');
-                    options.saw_kerf = $inputSawKerf.val();
+                    options.spacing = $inputSpacing.val();
                     options.trimming = $inputTrimming.val();
+                    options.reload_lib = $inputReloadLib.is(':checked');
                 }
                 var fnFillInputs = function (options) {
-                    $inputSawKerf.val(options.saw_kerf);
+                    $inputSpacing.val(options.spacing);
                     $inputTrimming.val(options.trimming);
+                    $inputReloadLib.prop('checked', options.reload_lib);
                 }
                 var fnEditMaterial = function (callback) {
 
@@ -4601,7 +4604,7 @@
                 $inputStdSheet.selectpicker(SELECT_PICKER_OPTIONS);
                 $inputScrapSheetSizes.ladbTextinputTokenfield({ format: 'dxdxq' });
                 $inputScrapSheetSizes.ladbTextinputTokenfield('setTokens', nesting2dOptions.scrap_sheet_sizes);
-                $inputSawKerf.ladbTextinputDimension();
+                $inputSpacing.ladbTextinputDimension();
                 $inputTrimming.ladbTextinputDimension();
 
                 fnFillInputs(nesting2dOptions);
