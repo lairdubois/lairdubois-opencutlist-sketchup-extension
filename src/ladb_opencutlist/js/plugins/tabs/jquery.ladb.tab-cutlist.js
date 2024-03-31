@@ -4630,7 +4630,28 @@
 
                     rubyCallCommand('cutlist_group_nesting2d', $.extend({ group_id: groupId, part_ids: isPartSelection ? that.selectionPartIds : null }, nesting2dOptions), function (response) {
 
-                        console.log(response);
+                        var $slide = that.pushNewSlide('ladb_cutlist_slide_nesting_2d', 'tabs/cutlist/_slide-nesting-2d.twig', $.extend({
+                            filename: that.filename,
+                            modelName: that.modelName,
+                            pageName: that.pageName,
+                            isEntitySelection: that.isEntitySelection,
+                            lengthUnit: that.lengthUnit,
+                            generatedAt: new Date().getTime() / 1000,
+                            group: group,
+                            svgs: response.svgs
+                        }));
+
+                        // Fetch UI elements
+                        var $btnNesting = $('#ladb_btn_nesting', $slide);
+                        var $btnClose = $('#ladb_btn_close', $slide);
+
+                        // Bind buttons
+                        $btnNesting.on('click', function () {
+                            that.nesting2dGroup(groupId);
+                        });
+                        $btnClose.on('click', function () {
+                            that.popSlide();
+                        });
 
                     });
 

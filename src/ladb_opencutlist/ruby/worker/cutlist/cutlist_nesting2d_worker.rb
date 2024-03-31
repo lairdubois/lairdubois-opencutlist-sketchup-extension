@@ -78,11 +78,11 @@ module Ladb::OpenCutList
         projection_def.layer_defs.each do |layer_def|
           next unless layer_def.type_outer? || layer_def.type_holes?
           layer_def.poly_defs.each do |poly_def|
-            rpaths << Nesty.points_to_rpath(poly_def.points)
+            rpaths << Nesty.points_to_rpath(layer_def.type_holes? ? poly_def.points.reverse : poly_def.points)
           end
         end
 
-        shape_defs << Nesty::ShapeDef.new(shape_id += 1, part.count, rpaths, nil)
+        shape_defs << Nesty::ShapeDef.new(shape_id += 1, part.count, rpaths, part)
 
       }
       parts.each { |part|
@@ -100,12 +100,40 @@ module Ladb::OpenCutList
 
       solution, message = Nesty.execute_nesting(bin_defs, shape_defs, Nesty.float_to_int64(@spacing), Nesty.float_to_int64(@trimming))
       puts message.to_s
-      puts solution.inspect
 
+      svgs = []
+      svgs += solution.packed_bins.map { |bin| _bin_to_svg(bin) }
+      svgs += solution.unused_bins.map { |bin| _bin_to_svg(bin, '#d9534f') }
 
-      response = {}
+      response = {
+        'svgs' => svgs
+      }
 
       response
+    end
+
+    private
+
+    def _bin_to_svg(bin, bg_color = '#5cb85c')
+
+      px_bin_length = _to_px(Nesty.int64_to_float(bin.def.length))
+      px_bin_width = _to_px(Nesty.int64_to_float(bin.def.width))
+
+      output = "<svg width='#{px_bin_length}' height='#{px_bin_width}' viewbox='0 -#{px_bin_width} #{px_bin_length} #{px_bin_width}'>"
+      output += "<rect x='0' y='-#{px_bin_width}' width='#{px_bin_length}' height='#{px_bin_width}' fill='#{bg_color}' stroke='none' />"
+      bin.shapes.each do |shape|
+
+        px_shape_x = _to_px(Nesty.int64_to_float(shape.x))
+        px_shape_y = -_to_px(Nesty.int64_to_float(shape.y))
+
+        output += "'<g transform='translate(#{px_shape_x} #{px_shape_y})'>'"
+        output += "<path d='#{shape.def.paths.map { |path| "M #{Nesty.rpath_to_points(path).map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y).round(2)}" }.join(' L ')} Z" }.join(' ')}' fill='rgba(0, 0, 0, 0.5)' stroke='none' />"
+        output += '</g>'
+
+      end
+      output += '</svg>'
+
+      output
     end
 
   end
