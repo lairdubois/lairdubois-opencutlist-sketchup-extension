@@ -191,7 +191,7 @@ module Ladb::OpenCutList::Fiddle
       cpaths = c_get_closed_paths_solution
 
       # Convert to rpath
-      rpaths = _cpaths_to_rpaths(cpaths)
+      rpaths, len = _cpaths_to_rpaths(cpaths)
 
       # Dispose pointer
       c_dispose_array64(cpaths)
@@ -205,7 +205,7 @@ module Ladb::OpenCutList::Fiddle
       cpaths = c_get_open_paths_solution
 
       # Convert to rpath
-      rpaths = _cpaths_to_rpaths(cpaths)
+      rpaths, len = _cpaths_to_rpaths(cpaths)
 
       # Dispose pointer
       c_dispose_array64(cpaths)
@@ -219,7 +219,7 @@ module Ladb::OpenCutList::Fiddle
       cpolytree = c_get_polytree_solution
 
       # Convert to rpath
-      rpolytree = _cpolytree_to_rpolytree(cpolytree)
+      rpolytree, len = _cpolytree_to_rpolytree(cpolytree)
 
       # Dispose pointer
       c_dispose_array64(cpolytree)

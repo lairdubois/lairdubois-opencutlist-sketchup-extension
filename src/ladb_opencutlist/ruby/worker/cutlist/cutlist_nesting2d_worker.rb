@@ -74,15 +74,15 @@ module Ladb::OpenCutList
 
         rpaths = []
 
-        projection_def = _compute_part_projection_def(PART_DRAWING_TYPE_2D_TOP, part)
+        projection_def = _compute_part_projection_def(PART_DRAWING_TYPE_2D_TOP, part, merge_holes: true)
         projection_def.layer_defs.each do |layer_def|
           next unless layer_def.type_outer? || layer_def.type_holes?
           layer_def.poly_defs.each do |poly_def|
-            rpaths += Nesty.points_to_rpath(poly_def.points)
+            rpaths << Nesty.points_to_rpath(poly_def.points)
           end
         end
 
-        shape_defs << Nesty::ShapeDef.new(shape_id += 1, part.count, rpaths, part)
+        shape_defs << Nesty::ShapeDef.new(shape_id += 1, part.count, rpaths, nil)
 
       }
       parts.each { |part|
@@ -100,7 +100,7 @@ module Ladb::OpenCutList
 
       solution, message = Nesty.execute_nesting(bin_defs, shape_defs, Nesty.float_to_int64(@spacing), Nesty.float_to_int64(@trimming))
       puts message.to_s
-      pp solution
+      puts solution.inspect
 
 
       response = {}

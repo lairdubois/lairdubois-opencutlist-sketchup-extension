@@ -89,7 +89,7 @@ module Ladb::OpenCutList::Fiddle
     # Returns Array<Integer>
     def _cpath_to_rpath(cpath)
       n, zero = _ptr_int64_to_array(cpath, 2)
-      _ptr_int64_to_array(_ptr_int64_offset(cpath, 2), n * 2)
+      [ _ptr_int64_to_array(_ptr_int64_offset(cpath, 2), n * 2), 2 + n * 2 ] # Returns RPath and its data length
     end
 
     # Returns Array<Array<Integer>>
@@ -98,11 +98,11 @@ module Ladb::OpenCutList::Fiddle
       cur = 2
       rpaths = []
       n.times do
-        rpath = _cpath_to_rpath(_ptr_int64_offset(cpaths, cur))
+        rpath, len = _cpath_to_rpath(_ptr_int64_offset(cpaths, cur))
         rpaths << rpath
-        cur += 2 + rpath.length
+        cur += len
       end
-      rpaths
+      [ rpaths, cur ] # Returns RPaths and cumulative data length
     end
 
     def _cpolytree_to_rpolytree(cpolytree)
@@ -114,7 +114,7 @@ module Ladb::OpenCutList::Fiddle
         rpolypaths << rpolypath
         cur += len
       end
-      PolyTree.new(rpolypaths)
+      [ PolyTree.new(rpolypaths), cur ] # Returns PolyTree and its data length
     end
 
     def _read_cpolypath_to_rpolypath(cpolypath, level = 0)

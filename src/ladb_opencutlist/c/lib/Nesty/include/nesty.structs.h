@@ -30,8 +30,9 @@ namespace Nesty {
 
     ShapeDef* def = nullptr;
 
-    int64_t x, y;
-    int64_t rotation;
+    int64_t x = 0;
+    int64_t y = 0;
+    int64_t rotation = 0;
 
   };
 

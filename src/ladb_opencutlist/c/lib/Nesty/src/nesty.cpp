@@ -6,22 +6,22 @@
 
 using namespace Nesty;
 
-size_t GetShapeArrayLen() {
+size_t GetCShapeArrayLen() {
   return 4 /* id, x, y, rotation */;
 }
 
-size_t GetShapesArrayLen(const Shapes &shapes) {
-  return 1 /* Number of shapes */ + shapes.size() * GetShapeArrayLen();
+size_t GetCShapesArrayLen(const Shapes &shapes) {
+  return 1 /* Number of shapes */ + shapes.size() * GetCShapeArrayLen();
 }
 
-size_t GetBinArrayLen(const Bin &bin) {
-  return 1 /* id */ + GetShapesArrayLen(bin.shapes);
+size_t GetCBinArrayLen(const Bin &bin) {
+  return 1 /* id */ + GetCShapesArrayLen(bin.shapes);
 }
 
-size_t GetBinsArrayLen(const Bins &bins) {
+size_t GetCBinsArrayLen(const Bins &bins) {
   int array_len = 1 /* Number of bins */;
-  for (auto & bin : bins) {
-    array_len += GetBinArrayLen(bin);
+  for (auto &bin : bins) {
+    array_len += GetCBinArrayLen(bin);
   }
   return array_len;
 }
@@ -30,8 +30,9 @@ void ConvertShapeToCShape(const Shape &shape, int64_t *&v) {
 
   /*
 
-   Shape
-    |id ,x  ,y  ,rotation
+   CShape
+    |attr  |attr  |attr  |attr
+    |id    |x     |y     |rotation
 
    */
 
@@ -46,7 +47,7 @@ void ConvertShapesToCShapes(const Shapes &shapes, int64_t *&v) {
 
   /*
 
-   Shapes
+   CShapes
     |counter|shape1|shape2|...|shapeN
     |N      |      |      |...|
 
@@ -55,7 +56,7 @@ void ConvertShapesToCShapes(const Shapes &shapes, int64_t *&v) {
    */
 
   *v++ = static_cast<int64_t>(shapes.size());
-  for (auto & shape : shapes) {
+  for (auto &shape : shapes) {
     ConvertShapeToCShape(shape, v);
   }
 
@@ -65,8 +66,8 @@ void ConvertBinToCBin(const Bin &bin, int64_t *&v) {
 
   /*
 
-   Bin
-    |counter|shapes
+   CBin
+    |attr   |shapes
     |id     |
 
    */
@@ -80,8 +81,8 @@ void ConvertBinsToCBins(const Bins &bins, int64_t *&v) {
 
   /*
 
-   Bins
-    |counter|bin1|bin2|...|binN
+   CBins
+    |attr   |bin1|bin2|...|binN
     |N      |    |    |...|
 
     N = Number of bins
@@ -89,7 +90,7 @@ void ConvertBinsToCBins(const Bins &bins, int64_t *&v) {
    */
 
   *v++ = static_cast<int64_t>(bins.size());
-  for (auto & bin : bins) {
+  for (auto &bin : bins) {
     ConvertBinToCBin(bin, v);
   }
 
@@ -99,7 +100,7 @@ int64_t* ConvertSolutionToCSolution(const Solution &solution) {
 
   /*
 
-   Solution
+   CSolution
     |counter|unused_bins|packed_bins|unplaced_shapes
     |L      |           |           |
 
@@ -107,7 +108,7 @@ int64_t* ConvertSolutionToCSolution(const Solution &solution) {
 
    */
 
-  size_t array_len = 1 /* Array length */ + GetBinsArrayLen(solution.unused_bins) + GetBinsArrayLen(solution.packed_bins) + GetShapesArrayLen(solution.unplaced_shapes);
+  size_t array_len = 1 /* Array length */ + GetCBinsArrayLen(solution.unused_bins) + GetCBinsArrayLen(solution.packed_bins) + GetCShapesArrayLen(solution.unplaced_shapes);
   int64_t *result = new int64_t[array_len], *v = result;
   *v++ = static_cast<int64_t>(array_len);
   ConvertBinsToCBins(solution.unused_bins, v);
@@ -123,6 +124,7 @@ extern "C" {
 
 BinDefs bin_defs;
 ShapeDefs shape_defs;
+
 Solution solution;
 std::string message;
 
@@ -134,43 +136,39 @@ DLL_EXPORTS void c_clear() {
 }
 
 DLL_EXPORTS void c_append_bin_def(int id, int count, int64_t length, int64_t width, int type) {
-  BinDef bin_def(id, count, length, width, type);
-  bin_defs.push_back(bin_def);
+  bin_defs.emplace_back(id, count, length, width, type);
 }
 
 DLL_EXPORTS void c_append_shape_def(int id, int count, const int64_t* cpaths) {
-  ShapeDef shape_def(id, count, ConvertCPathsToPaths(cpaths));
-  shape_defs.push_back(shape_def);
+  shape_defs.emplace_back(id, count, ConvertCPathsToPaths(cpaths));
 }
 
 DLL_EXPORTS char* c_execute_nesting(int64_t spacing, int64_t trimming) {
 
   solution.clear();
-  for (auto & bin_def : bin_defs) {
+  for (auto &bin_def : bin_defs) {
     for (int i = 0; i < bin_def.count; ++i) {
-      Bin bin(&bin_def);
-      solution.unused_bins.push_back(bin);
+      solution.unused_bins.emplace_back(&bin_def);
     }
   }
-  for (auto & shape_def : shape_defs) {
+  for (auto &shape_def: shape_defs) {
     for (int i = 0; i < shape_def.count; ++i) {
-      Shape shape(&shape_def);
-      shape.x = 5;
-      shape.y = 25;
-      shape.rotation = 90;
-      solution.unplaced_shapes.push_back(shape);
+      solution.unplaced_shapes.emplace_back(&shape_def);
     }
   }
 
+  // Do somthing :)
+
   message.clear();
-  message = "-- NESTY --\n"
+  message = "-- START NESTY MESSAGE --\n"
             "spacing=" + std::to_string(spacing) + "\n"
             "trimming=" + std::to_string(trimming) + "\n"
             "bin_defs.size=" + std::to_string(bin_defs.size()) + "\n"
             "shape_defs.size=" + std::to_string(shape_defs.size()) + "\n"
             "solution.unused_bins.size=" + std::to_string(solution.unused_bins.size()) + "\n"
             "solution.packed_bins.size=" + std::to_string(solution.packed_bins.size()) + "\n"
-            "solution.unplaced_shapes.size=" + std::to_string(solution.unplaced_shapes.size());
+            "solution.unplaced_shapes.size=" + std::to_string(solution.unplaced_shapes.size()) + "\n"
+            "-- END NESTY MESSAGE --\n";
   return (char*)message.c_str();
 }
 

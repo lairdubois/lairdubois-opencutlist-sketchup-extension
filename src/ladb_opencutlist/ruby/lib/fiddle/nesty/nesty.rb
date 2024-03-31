@@ -5,6 +5,9 @@ module Ladb::OpenCutList::Fiddle
   module Nesty
     extend ClipperWrapper
 
+    @bin_defs_cache = {}
+    @shape_defs_cache = {}
+
     def self._lib_name
       'Nesty'
     end
@@ -52,9 +55,12 @@ module Ladb::OpenCutList::Fiddle
 
     def self._clear
       c_clear
+      @bin_defs_cache.clear
+      @shape_defs_cache.clear
     end
 
     def self._append_bin_def(bin_def)
+      @bin_defs_cache[bin_def.id] = bin_def
       c_append_bin_def(bin_def.id, bin_def.count, bin_def.length, bin_def.width, bin_def.type)
     end
 
@@ -63,6 +69,7 @@ module Ladb::OpenCutList::Fiddle
     end
 
     def self._append_shape_def(shape_def)
+      @shape_defs_cache[shape_def.id] = shape_def
       c_append_shape_def(shape_def.id, shape_def.count, _rpaths_to_cpaths(shape_def.paths))
     end
 
@@ -79,8 +86,8 @@ module Ladb::OpenCutList::Fiddle
       # Retrieve solution's pointer
       csolution = c_get_solution
 
-      # Convert to rpath
-      rsolution = _csolution_to_rsolution(csolution)
+      # Convert to rsolution
+      rsolution, len = _csolution_to_rsolution(csolution)
 
       # Dispose pointer
       c_dispose_array64(csolution)
@@ -92,7 +99,7 @@ module Ladb::OpenCutList::Fiddle
 
     def self._cshape_to_rshape(cshape)
       id, x, y, rotation = _ptr_int64_to_array(cshape, 4)
-      [ Shape.new(id, x, y, rotation), 4 ]
+      [ Shape.new(@shape_defs_cache[id], x, y, rotation), 4 ] # Returns RShape and its data length
     end
 
     def self._cshapes_to_rshapes(cshapes)
@@ -100,17 +107,17 @@ module Ladb::OpenCutList::Fiddle
       cur = 1
       rshapes = []
       n.times do
-        rshape, length = _cshape_to_rshape(_ptr_int64_offset(cshapes, cur))
+        rshape, len = _cshape_to_rshape(_ptr_int64_offset(cshapes, cur))
         rshapes << rshape
-        cur += length
+        cur += len
       end
-      [ rshapes, cur ]
+      [ rshapes, cur ] # Returns RShapes and cumulative data length
     end
 
     def self._cbin_to_rbin(cbin)
       id = _ptr_int64_to_array(cbin, 1)[0]
-      shapes, length = _cshapes_to_rshapes(_ptr_int64_offset(cbin, 1))
-      [ Bin.new(id, shapes), 1 + length ]
+      shapes, len = _cshapes_to_rshapes(_ptr_int64_offset(cbin, 1))
+      [ Bin.new(@bin_defs_cache[id], shapes), 1 + len ] # Returns RBin and its data length
     end
 
     def self._cbins_to_rbins(cbins)
@@ -118,32 +125,32 @@ module Ladb::OpenCutList::Fiddle
       cur = 1
       rbins = []
       n.times do
-        rbin, length = _cbin_to_rbin(_ptr_int64_offset(cbins, cur))
+        rbin, len = _cbin_to_rbin(_ptr_int64_offset(cbins, cur))
         rbins << rbin
-        cur += length
+        cur += len
       end
-      [ rbins, cur ]
+      [ rbins, cur ] # Returns RBins and cumulative data length
     end
 
     def self._csolution_to_rsolution(csolution)
       l = _ptr_int64_to_array(csolution, 1)
       cur = 1
-      unused_bins, length = _cbins_to_rbins(_ptr_int64_offset(csolution, cur))
-      cur += length
-      packed_bins, length = _cbins_to_rbins(_ptr_int64_offset(csolution, cur))
-      cur += length
-      unplaced_shapes, length = _cshapes_to_rshapes(_ptr_int64_offset(csolution, cur))
-      Solution.new(unused_bins, packed_bins, unplaced_shapes)
+      unused_bins, len = _cbins_to_rbins(_ptr_int64_offset(csolution, cur))
+      cur += len
+      packed_bins, len = _cbins_to_rbins(_ptr_int64_offset(csolution, cur))
+      cur += len
+      unplaced_shapes, len = _cshapes_to_rshapes(_ptr_int64_offset(csolution, cur))
+      [ Solution.new(unused_bins, packed_bins, unplaced_shapes), len ] # Returns RSolution and its data length
     end
 
     # -----
 
-    BinDef = Struct.new(:id, :count, :length, :width, :type)
+    BinDef = Struct.new(:id, :count, :length, :width, :type)  # length and with must be converted to int64
     ShapeDef = Struct.new(:id, :count, :paths, :data)
 
     Solution = Struct.new(:unused_bins, :packed_bins, :unplaced_shapes)
     Bin = Struct.new(:def, :shapes)
-    Shape = Struct.new(:def, :x, :y, :rotation)
+    Shape = Struct.new(:def, :x, :y, :rotation)  # x and y are int64
 
   end
 
