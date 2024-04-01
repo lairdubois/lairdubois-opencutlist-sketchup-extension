@@ -26,7 +26,7 @@ namespace Nesty {
 
     int64_t x = 0;
     int64_t y = 0;
-    int64_t rotation = 0;
+    int64_t angle = 0;
 
   };
 

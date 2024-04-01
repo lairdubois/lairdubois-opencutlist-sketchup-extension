@@ -34,7 +34,7 @@ namespace Nesty {
   // -- Converters
 
   size_t GetCShapeArrayLen() {
-    return 4 /* id, x, y, rotation */;
+    return 4 /* id, x, y, angle */;
   }
 
   size_t GetCShapesArrayLen(const Shapes &shapes) {
@@ -59,14 +59,14 @@ namespace Nesty {
 
      CShape
       |attr  |attr  |attr  |attr
-      |id    |x     |y     |rotation
+      |id    |x     |y     |angle
 
      */
 
     *v++ = static_cast<int64_t>(shape.def->id);
     *v++ = static_cast<int64_t>(shape.x);
     *v++ = static_cast<int64_t>(shape.y);
-    *v++ = static_cast<int64_t>(shape.rotation);
+    *v++ = static_cast<int64_t>(shape.angle);
 
   }
 

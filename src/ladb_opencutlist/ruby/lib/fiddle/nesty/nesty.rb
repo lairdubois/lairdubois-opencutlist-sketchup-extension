@@ -98,8 +98,8 @@ module Ladb::OpenCutList::Fiddle
     # -----
 
     def self._cshape_to_rshape(cshape)
-      id, x, y, rotation = _ptr_int64_to_array(cshape, 4)
-      [ Shape.new(@shape_defs_cache[id], x, y, rotation), 4 ] # Returns RShape and its data length
+      id, x, y, angle = _ptr_int64_to_array(cshape, 4)
+      [ Shape.new(@shape_defs_cache[id], x, y, angle), 4 ] # Returns RShape and its data length
     end
 
     def self._cshapes_to_rshapes(cshapes)
@@ -150,7 +150,7 @@ module Ladb::OpenCutList::Fiddle
 
     Solution = Struct.new(:unused_bins, :packed_bins, :unplaced_shapes)
     Bin = Struct.new(:def, :shapes)
-    Shape = Struct.new(:def, :x, :y, :rotation)  # x and y are int64
+    Shape = Struct.new(:def, :x, :y, :angle)  # x, y are int64
 
   end
 

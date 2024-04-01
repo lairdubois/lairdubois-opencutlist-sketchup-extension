@@ -73,7 +73,9 @@ module Ladb::OpenCutList
       }
 
       # Add bin from std sheet
-      bin_defs << Nesty::BinDef.new(bin_id += 1, 1, Nesty.float_to_int64(@std_sheet_length), Nesty.float_to_int64(@std_sheet_width), 0) # 0 = Standard
+      if @std_sheet_width > 0 && @std_sheet_length > 0
+        bin_defs << Nesty::BinDef.new(bin_id += 1, 1, Nesty.float_to_int64(@std_sheet_length), Nesty.float_to_int64(@std_sheet_width), 0) # 0 = Standard
+      end
 
       # Add shapes from parts
       fn_add_shapes = lambda { |part|
@@ -115,7 +117,18 @@ module Ladb::OpenCutList
         'unused_bins_count' => solution.unused_bins.length,
         'packed_bins_count' => solution.packed_bins.length,
         'unplaced_shapes_count' => solution.unplaced_shapes.length,
-        'svgs' => svgs
+        'packed_bins' => solution.packed_bins.map { |bin| {
+          length: Nesty.int64_to_float(bin.def.length).to_l.to_s,
+          width: Nesty.int64_to_float(bin.def.width).to_l.to_s,
+          type: bin.def.type,
+          svg: _bin_to_svg(bin)
+        } },
+        'unused_bins' => solution.unused_bins.map { |bin| {
+          length: Nesty.int64_to_float(bin.def.length).to_l.to_s,
+          width: Nesty.int64_to_float(bin.def.width).to_l.to_s,
+          type: bin.def.type,
+          svg: _bin_to_svg(bin)
+        } }
       }
 
       response
@@ -135,7 +148,7 @@ module Ladb::OpenCutList
         px_shape_x = _to_px(Nesty.int64_to_float(shape.x))
         px_shape_y = -_to_px(Nesty.int64_to_float(shape.y))
 
-        output += "'<g transform='translate(#{px_shape_x} #{px_shape_y})'>'"
+        output += "'<g transform='translate(#{px_shape_x} #{px_shape_y}) rotate(-#{shape.angle})'>'"
         output += "<path d='#{shape.def.paths.map { |path| "M #{Nesty.rpath_to_points(path).map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y).round(2)}" }.join(' L ')} Z" }.join(' ')}' fill='rgba(0, 0, 0, 0.5)' stroke='none' />"
         output += '</g>'
 
