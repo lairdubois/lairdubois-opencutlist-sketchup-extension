@@ -20,7 +20,7 @@ module Ladb::OpenCutList::Fiddle
         'void c_append_bin_def(int, int, int64_t, int64_t, int)',
         'void c_append_shape_def(int, int, int64_t*)',
 
-        'char* c_execute_nesting(int64_t, int64_t)',
+        'char* c_execute_nesting(int64_t, int64_t, int)',
 
         'int64_t* c_get_solution()',
 
@@ -40,12 +40,12 @@ module Ladb::OpenCutList::Fiddle
 
     # --
 
-    def self.execute_nesting(bin_defs, shape_defs, spacing, trimming)
+    def self.execute_nesting(bin_defs, shape_defs, spacing, trimming, rotations)
       _load_lib
       _clear
       _append_bin_defs(bin_defs)
       _append_shape_defs(shape_defs)
-      message = _execute_nesting(spacing, trimming).to_s
+      message = _execute_nesting(spacing, trimming, rotations).to_s
       solution = _unpack_solution
       _clear
       [ solution, message ]
@@ -77,8 +77,8 @@ module Ladb::OpenCutList::Fiddle
       shape_defs.each { |shape_def| _append_shape_def(shape_def) }
     end
 
-    def self._execute_nesting(spacing, trimming)
-      c_execute_nesting(spacing, trimming)
+    def self._execute_nesting(spacing, trimming, rotations)
+      c_execute_nesting(spacing, trimming, rotations)
     end
 
     def self._unpack_solution

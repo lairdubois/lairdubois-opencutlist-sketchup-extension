@@ -12,8 +12,8 @@
 {% block headerInner %}
     {{ parent() }}
     <ul class="nav nav-tabs nav-justified" role="tablist">
-        <li role="presentation"{% if tab == 'material' %} class="active"{% endif %}><a href="#tab_cuttingdiagram_options_material" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-material-type-2"></i> {{ 'tab.cutlist.cuttingdiagram.options_material'|i18next }}</a></li>
-        <li role="presentation"{% if tab == 'config' %} class="active"{% endif %}><a href="#tab_cuttingdiagram_options_config" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-settings"></i> {{ 'tab.cutlist.cuttingdiagram.options_config'|i18next }}</a></li>
+        <li role="presentation"{% if tab == 'material' %} class="active"{% endif %}><a href="#tab_nesting_options_material" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-material-type-2"></i> {{ 'tab.cutlist.cuttingdiagram.options_material'|i18next }}</a></li>
+        <li role="presentation"{% if tab == 'config' %} class="active"{% endif %}><a href="#tab_nesting_options_config" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-settings"></i> {{ 'tab.cutlist.cuttingdiagram.options_config'|i18next }}</a></li>
     </ul>
 {% endblock %}
 
@@ -22,7 +22,7 @@
         <div class="alert alert-info text-center">{{ 'tab.cutlist.cuttingdiagram.warning.is_part_selection'|i18next }}</div>
     {% endif %}
     <div class="tab-content">
-        <div role="tabpanel" class="tab-pane{% if tab == 'material' %} active{% endif %}" id="tab_cuttingdiagram_options_material">
+        <div role="tabpanel" class="tab-pane{% if tab == 'material' %} active{% endif %}" id="tab_nesting_options_material">
             <div class="form form-horizontal" style="margin-top: 15px;">
                 <div class="form-group">
                     <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_std_sheet_help'|i18next({ 'material_name':group.material_name }) }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
@@ -53,11 +53,11 @@
                 </div>
             </div>
         </div>
-        <div role="tabpanel" class="tab-pane{% if tab == 'config' %} active{% endif %}" id="tab_cuttingdiagram_options_config">
+        <div role="tabpanel" class="tab-pane{% if tab == 'config' %} active{% endif %}" id="tab_nesting_options_config">
             <div class="form form-horizontal" style="margin-top: 15px;">
                 <div class="form-group">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_saw_kerf_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label class="control-label col-xs-5">{{ 'tab.cutlist.cuttingdiagram.option_saw_kerf'|i18next }}</label>
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_spacing_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label class="control-label col-xs-5">{{ 'tab.cutlist.cuttingdiagram.option_spacing'|i18next }}</label>
                     <div class="col-xs-6">
                         <input type="text" class="form-control" id="ladb_input_spacing">
                     </div>
@@ -67,6 +67,13 @@
                     <label class="control-label col-xs-5">{{ 'tab.cutlist.cuttingdiagram.option_trimming'|i18next }}</label>
                     <div class="col-xs-6">
                         <input type="text" class="form-control" id="ladb_input_trimming">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_rotations_help_2d'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label class="control-label col-xs-5">{{ 'tab.cutlist.cuttingdiagram.option_rotations'|i18next }}</label>
+                    <div class="col-xs-6">
+                        <input type="text" class="form-control" id="ladb_input_rotations">
                     </div>
                 </div>
             </div>

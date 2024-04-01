@@ -21,6 +21,7 @@ module Ladb::OpenCutList
                    scrap_sheet_sizes: '',
                    spacing: '20mm',
                    trimming: '10mm',
+                   rotations: 0,
                    reload_lib: false
 
     )
@@ -35,6 +36,7 @@ module Ladb::OpenCutList
       @scrap_sheet_sizes = DimensionUtils.instance.dxdxq_to_ifloats(scrap_sheet_sizes)
       @spacing = DimensionUtils.instance.str_to_ifloat(spacing).to_l.to_f
       @trimming = DimensionUtils.instance.str_to_ifloat(trimming).to_l.to_f
+      @rotations = rotations.to_i
       @reload_lib = reload_lib
 
     end
@@ -102,7 +104,7 @@ module Ladb::OpenCutList
       SKETCHUP_CONSOLE.clear
       SKETCHUP_CONSOLE.show
 
-      solution, message = Nesty.execute_nesting(bin_defs, shape_defs, Nesty.float_to_int64(@spacing), Nesty.float_to_int64(@trimming))
+      solution, message = Nesty.execute_nesting(bin_defs, shape_defs, Nesty.float_to_int64(@spacing), Nesty.float_to_int64(@trimming), @rotations)
       puts message.to_s
 
       svgs = []

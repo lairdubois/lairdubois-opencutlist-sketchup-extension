@@ -740,9 +740,13 @@ tab:
         *Cette option doit être activée pour que les formes puissent être exportées.*
       option_saw_kerf: Épaisseur de lame de scie
       option_saw_kerf_help: Largeur de matière perdue par le trait de scie.
+      option_spacing: Espacement
+      option_spacing_help: Espacement minimal entre chaque pièce.
       option_trimming: Marge
       option_trimming_help_1d: Marge à chaque extrémité de la barre ou bande à considérer comme chute.
       option_trimming_help_2d: Marge autour du panneau à considérer comme chute.
+      option_rotations: Rotations
+      option_rotations_help_2d: Nombre de rotations possibles pour chaque pièce.
       option_optimization: Niveau d'optimisation
       option_optimization_help: "Le niveau d'optimisation définit le nombre de possibilités calculées, donc aussi le temps de calcul."
       option_optimization_0: Moyen

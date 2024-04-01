@@ -44,6 +44,7 @@
         this.lastReportOptionsTab = null;
         this.lastCuttingdiagram1dOptionsTab = null;
         this.lastCuttingdiagram2dOptionsTab = null;
+        this.lastNesting2dOptionsTab = null;
         this.lastLabelsOptionsTab = null;
         this.lastLayoutOptionsTab = null;
 
@@ -4528,7 +4529,7 @@
 
     };
 
-    LadbTabCutlist.prototype.nesting2dGroup = function (groupId, forceDefaultTab, generateCallback) {
+    LadbTabCutlist.prototype.nesting2dGroup = function (groupId, forceDefaultTab) {
         var that = this;
 
         var group = this.findGroupById(groupId);
@@ -4545,15 +4546,17 @@
                     material_attributes: response,
                     group: group,
                     isPartSelection: isPartSelection,
-                    tab: 'material'
+                    tab: forceDefaultTab || that.lastNesting2dOptionsTab == null ? 'material' : that.lastNesting2dOptionsTab
                 });
 
                 // Fetch UI elements
+                var $tabs = $('a[data-toggle="tab"]', $modal);
                 var $widgetPreset = $('.ladb-widget-preset', $modal);
                 var $inputStdSheet = $('#ladb_select_std_sheet', $modal);
                 var $inputScrapSheetSizes = $('#ladb_input_scrap_sheet_sizes', $modal);
                 var $inputSpacing = $('#ladb_input_spacing', $modal);
                 var $inputTrimming = $('#ladb_input_trimming', $modal);
+                var $inputRotations = $('#ladb_input_rotations', $modal);
                 var $inputReloadLib = $('#ladb_input_reload_lib', $modal);
                 var $btnEditMaterial = $('#ladb_btn_edit_material', $modal);
                 var $btnGenerate = $('#ladb_btn_generate', $modal);
@@ -4563,11 +4566,13 @@
                     options.scrap_sheet_sizes = $inputScrapSheetSizes.ladbTextinputTokenfield('getValidTokensList');
                     options.spacing = $inputSpacing.val();
                     options.trimming = $inputTrimming.val();
+                    options.rotations = $inputRotations.val();
                     options.reload_lib = $inputReloadLib.is(':checked');
                 }
                 var fnFillInputs = function (options) {
                     $inputSpacing.val(options.spacing);
                     $inputTrimming.val(options.trimming);
+                    $inputRotations.val(options.rotations);
                     $inputReloadLib.prop('checked', options.reload_lib);
                 }
                 var fnEditMaterial = function (callback) {
@@ -4606,8 +4611,16 @@
                 $inputScrapSheetSizes.ladbTextinputTokenfield('setTokens', nesting2dOptions.scrap_sheet_sizes);
                 $inputSpacing.ladbTextinputDimension();
                 $inputTrimming.ladbTextinputDimension();
+                $inputRotations.ladbTextinputNumberWithUnit({
+                    resetValue: '0'
+                });
 
                 fnFillInputs(nesting2dOptions);
+
+                // Bind tabs
+                $tabs.on('shown.bs.tab', function (e) {
+                    that.lastNesting2dOptionsTab = $(e.target).attr('href').substring('#tab_nesting_options_'.length);
+                });
 
                 // Bind select
                 $inputStdSheet.on('changed.bs.select', function () {

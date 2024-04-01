@@ -12,7 +12,7 @@ namespace Nesty {
 
 
   inline bool shapes_sorter(Shape &shape1, Shape &shape2) {
-    return (GetBounds(shape1.def->paths).Height() > GetBounds(shape2.def->paths).Height());
+    return (GetBounds(shape1.def->paths).Height() < GetBounds(shape2.def->paths).Height());
   }
   inline bool bins_sorter(Bin &bin1, Bin &bin2) {
     if (bin1.def->type == bin2.def->type) {
@@ -22,7 +22,7 @@ namespace Nesty {
   }
 
 
-  bool DummyEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, int64_t spacing, int64_t trimming, Solution &solution) {
+  bool DummyEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, int64_t spacing, int64_t trimming, int rotations, Solution &solution) {
 
     solution.clear();
 
