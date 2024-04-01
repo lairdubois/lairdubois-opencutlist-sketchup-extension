@@ -127,7 +127,7 @@ module Ladb::OpenCutList
           length: Nesty.int64_to_float(bin.def.length).to_l.to_s,
           width: Nesty.int64_to_float(bin.def.width).to_l.to_s,
           type: bin.def.type,
-          svg: _bin_to_svg(bin)
+          svg: _bin_to_svg(bin, '#d9534f')
         } }
       }
 
