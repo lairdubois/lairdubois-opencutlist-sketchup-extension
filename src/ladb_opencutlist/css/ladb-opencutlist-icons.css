@@ -373,9 +373,6 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-mini-logo-ladb:before {
   content: "\e951";
 }
-.ladb-opencutlist-icon-nesting2d-selection:before {
-  content: "\e9ae";
-}
 .ladb-opencutlist-icon-material-type-3:before {
   content: "\e94f";
 }
@@ -411,6 +408,9 @@ i, span.ladb-opencutlist-icon:before {
 }
 .ladb-opencutlist-icon-nesting2d:before {
   content: "\e9ad";
+}
+.ladb-opencutlist-icon-nesting2d-selection:before {
+  content: "\e9ae";
 }
 .ladb-opencutlist-icon-asterisk:before {
   content: "\e958";
