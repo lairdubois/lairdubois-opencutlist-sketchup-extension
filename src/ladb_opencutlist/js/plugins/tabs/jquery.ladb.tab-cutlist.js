@@ -2339,7 +2339,7 @@
     LadbTabCutlist.prototype.renderSelectionOnGroup = function (id) {
         var that = this;
         var $group = $('#ladb_group_' + id, this.$page);
-        var defs = [ 'cuttingdiagram1d', 'cuttingdiagram2d', 'labels', 'layout' ];
+        var defs = [ 'cuttingdiagram1d', 'cuttingdiagram2d', 'nesting2d', 'labels', 'layout' ];
         $.each(defs, function () {
             var $btn = $('button.ladb-btn-group-' + this, $group);
             var $i = $('i', $btn);
