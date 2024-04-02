@@ -104,16 +104,11 @@ module Ladb::OpenCutList
       }
 
       SKETCHUP_CONSOLE.clear
-      SKETCHUP_CONSOLE.show
 
       solution, message = Nesty.execute_nesting(bin_defs, shape_defs, Nesty.float_to_int64(@spacing), Nesty.float_to_int64(@trimming), @rotations)
       puts message.to_s
 
-      svgs = []
-      svgs += solution.packed_bins.map { |bin| _bin_to_svg(bin) }
-      svgs += solution.unused_bins.map { |bin| _bin_to_svg(bin, '#d9534f') }
-
-      response = {
+      {
         'unused_bins_count' => solution.unused_bins.length,
         'packed_bins_count' => solution.packed_bins.length,
         'unplaced_shapes_count' => solution.unplaced_shapes.length,
@@ -130,8 +125,6 @@ module Ladb::OpenCutList
           svg: _bin_to_svg(bin, '#d9534f')
         } }
       }
-
-      response
     end
 
     private
@@ -141,21 +134,24 @@ module Ladb::OpenCutList
       px_bin_length = _to_px(Nesty.int64_to_float(bin.def.length))
       px_bin_width = _to_px(Nesty.int64_to_float(bin.def.width))
 
-      output = "<svg width='#{px_bin_length}' height='#{px_bin_width}' viewbox='0 -#{px_bin_width} #{px_bin_length} #{px_bin_width}'>"
-      output += "<rect x='0' y='-#{px_bin_width}' width='#{px_bin_length}' height='#{px_bin_width}' fill='#{bg_color}' stroke='none' />"
+      svg = "<svg width='#{px_bin_length}' height='#{px_bin_width}' viewbox='0 -#{px_bin_width} #{px_bin_length} #{px_bin_width}'>"
+      svg += "<rect x='0' y='-#{px_bin_width}' width='#{px_bin_length}' height='#{px_bin_width}' fill='#{bg_color}' stroke='none' />"
       bin.shapes.each do |shape|
 
-        px_shape_x = _to_px(Nesty.int64_to_float(shape.x))
-        px_shape_y = -_to_px(Nesty.int64_to_float(shape.y))
+        l_shape_x = Nesty.int64_to_float(shape.x).to_l
+        l_shape_y = Nesty.int64_to_float(shape.y).to_l
 
-        output += "'<g transform='translate(#{px_shape_x} #{px_shape_y}) rotate(-#{shape.angle})'>'"
-        output += "<path d='#{shape.def.paths.map { |path| "M #{Nesty.rpath_to_points(path).map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y).round(2)}" }.join(' L ')} Z" }.join(' ')}' fill='rgba(0, 0, 0, 0.5)' stroke='none' />"
-        output += '</g>'
+        px_shape_x = _to_px(l_shape_x)
+        px_shape_y = -_to_px(l_shape_y)
+
+        svg += "'<g transform='translate(#{px_shape_x} #{px_shape_y}) rotate(-#{shape.angle})'>'"
+        svg += "<path d='#{shape.def.paths.map { |path| "M #{Nesty.rpath_to_points(path).map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y).round(2)}" }.join(' L ')} Z" }.join(' ')}' fill='rgba(0, 0, 0, 0.5)' stroke='none' data-toggle='tooltip' data-html='true' title='<div>#{shape.def.data.name}</div><div>x = #{l_shape_x}</div><div>y = #{l_shape_y}</div>' />"
+        svg += '</g>'
 
       end
-      output += '</svg>'
+      svg += '</svg>'
 
-      output
+      svg
     end
 
   end

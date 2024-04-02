@@ -4654,7 +4654,9 @@
                             lengthUnit: that.lengthUnit,
                             generatedAt: new Date().getTime() / 1000,
                             group: group
-                        }, response));
+                        }, response), function () {
+                            that.dialog.setupTooltips();
+                        });
 
                         // Fetch UI elements
                         var $btnNesting = $('#ladb_btn_nesting', $slide);
