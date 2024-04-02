@@ -16,8 +16,8 @@ extern "C" {
 
 DLL_EXPORTS void c_clear();
 
+DLL_EXPORTS void c_append_shape_def(int id, int count, const int64_t* cpaths);
 DLL_EXPORTS void c_append_bin_def(int id, int count, int64_t length, int64_t width, int type);
-DLL_EXPORTS void c_append_shape_def(int id, int count, const int64_t *cpaths);
 
 DLL_EXPORTS char* c_execute_nesting(int64_t spacing, int64_t trimming, int rotations);
 

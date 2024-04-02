@@ -12,14 +12,14 @@ namespace Imagy {
 
   struct Image {
 
-    uint8_t *data = nullptr;
-    size_t size = 0;
-    int width = 0;
-    int height = 0;
-    int channels = 0;
-
     Image();
     ~Image();
+
+    uint8_t *data;
+    size_t size;
+    int width;
+    int height;
+    int channels;
 
     void clear();
 

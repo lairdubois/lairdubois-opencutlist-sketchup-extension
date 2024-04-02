@@ -18,8 +18,12 @@
 
 namespace Imagy {
 
-  Image::Image() {
-  }
+  Image::Image() :
+    data(nullptr),
+    width(0),
+    height(0),
+    channels(0),
+    size(0) {}
 
   Image::~Image() {
     if (!is_empty()) clear();
@@ -79,11 +83,8 @@ namespace Imagy {
   inline void fn_data_swap(int pos1, int pos2, Image& image) {
 
     uint8_t tmp[4];
-    uint8_t *px1;
-    uint8_t *px2;
-
-    px1 = &image.data[pos1];
-    px2 = &image.data[pos2];
+    uint8_t *px1 = &image.data[pos1];
+    uint8_t *px2 = &image.data[pos2];
 
     memcpy(tmp, px1, image.channels);
     memcpy(px1, px2, image.channels);

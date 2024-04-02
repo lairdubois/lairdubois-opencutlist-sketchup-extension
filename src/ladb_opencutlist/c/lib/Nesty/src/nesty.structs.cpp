@@ -1,29 +1,51 @@
 #include "nesty.h"
 #include "nesty.structs.h"
 
+#include <utility>
+
 namespace Nesty {
 
-  ShapeDef::ShapeDef(int id, int count, Clipper2Lib::Paths64 paths) {
-    this->id = id;
-    this->count = count;
-    this->paths = paths;
-  }
+  // ShapeDef and Shape
 
-  Shape::Shape(ShapeDef* def) {
-    this->def = def;
-  }
+  ShapeDef::ShapeDef(int id, int count, Clipper2Lib::Paths64 paths) :
+    id(id),
+    count(count),
+    paths(std::move(paths)) {}
 
-  BinDef::BinDef(int id, int count, int64_t length, int64_t width, int type) {
-    this->id = id;
-    this->count = count;
-    this->length = length;
-    this->width = width;
-    this->type = type;
-  }
+  ShapeDef::~ShapeDef() = default;
 
-  Bin::Bin(BinDef* def) {
-    this->def = def;
-  }
+
+  Shape::Shape(ShapeDef* def) :
+    def(def),
+    x(0),
+    y(0),
+    angle(0) {}
+
+  Shape::~Shape() = default;
+
+
+  // BinDef and Bin
+
+  BinDef::BinDef(int id, int count, int64_t length, int64_t width, int type) :
+    id(id),
+    count(count),
+    length(length),
+    width(width),
+    type(type) {}
+
+  BinDef::~BinDef() = default;
+
+
+  Bin::Bin(BinDef* def) :
+    def(def) {}
+
+  Bin::~Bin() = default;
+
+
+  // Solution
+
+  Solution::Solution() = default;
+  Solution::~Solution() = default;
 
   void Solution::clear() {
     this->unused_bins.clear();

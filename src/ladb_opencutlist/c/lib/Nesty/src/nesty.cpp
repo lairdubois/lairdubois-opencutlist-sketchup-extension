@@ -28,12 +28,12 @@ DLL_EXPORTS void c_clear() {
   message.clear();
 }
 
-DLL_EXPORTS void c_append_bin_def(int id, int count, int64_t length, int64_t width, int type) {
-  bin_defs.emplace_back(id, count, length, width, type);
-}
-
 DLL_EXPORTS void c_append_shape_def(int id, int count, const int64_t* cpaths) {
   shape_defs.emplace_back(id, count, ConvertCPathsToPaths(cpaths));
+}
+
+DLL_EXPORTS void c_append_bin_def(int id, int count, int64_t length, int64_t width, int type) {
+  bin_defs.emplace_back(id, count, length, width, type);
 }
 
 DLL_EXPORTS char* c_execute_nesting(int64_t spacing, int64_t trimming, int rotations) {

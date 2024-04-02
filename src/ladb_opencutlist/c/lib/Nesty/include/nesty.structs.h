@@ -5,10 +5,12 @@
 
 namespace Nesty {
 
+  // ShapeDef and Shape
+
   struct ShapeDef {
 
     ShapeDef(int id, int count, Clipper2Lib::Paths64 paths);
-    ~ShapeDef() = default;
+    ~ShapeDef();
 
     int id;
     int count;
@@ -20,40 +22,42 @@ namespace Nesty {
   struct Shape {
 
     explicit Shape(ShapeDef* def);
-    ~Shape() = default;
+    ~Shape();
 
-    ShapeDef* def = nullptr;
+    ShapeDef* def;
 
-    int64_t x = 0;
-    int64_t y = 0;
-    int64_t angle = 0;
+    int64_t x;
+    int64_t y;
+    int64_t angle;
 
   };
 
   using ShapeDefs = std::vector<ShapeDef>;
   using Shapes = std::vector<Shape>;
 
+  // BinDef and Bin
+
   struct BinDef {
 
     BinDef(int id, int count, int64_t length, int64_t width, int type);
-    ~BinDef() = default;
+    ~BinDef();
 
-    int id = 0;
-    int count = 0;
+    int id;
+    int count;
 
-    int64_t length = 0;
-    int64_t width = 0;
+    int64_t length;
+    int64_t width;
 
-    int type = 0;
+    int type;
 
   };
 
   struct Bin {
 
     explicit Bin(BinDef* def);
-    ~Bin() = default;
+    ~Bin();
 
-    BinDef* def = nullptr;
+    BinDef* def;
 
     Shapes shapes;
 
@@ -62,10 +66,12 @@ namespace Nesty {
   using BinDefs = std::vector<BinDef>;
   using Bins = std::vector<Bin>;
 
+  // Solution
+
   struct Solution {
 
-    Solution() = default;
-    ~Solution() = default;
+    Solution();
+    ~Solution();
 
     Bins unused_bins;
     Bins packed_bins;
