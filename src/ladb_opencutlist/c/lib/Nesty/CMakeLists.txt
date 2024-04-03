@@ -52,3 +52,9 @@ target_link_libraries(Nesty PRIVATE Clipper2Wrapper)
 target_compile_features(Nesty PRIVATE cxx_std_17)
 
 install(TARGETS Nesty RUNTIME DESTINATION lib)
+
+# Debug executable
+
+add_executable(NestyMain ${LIBRARY_HEADERS} ${LIBRARY_SOURCES} src/main.cpp)
+target_include_directories(NestyMain PUBLIC include)
+target_link_libraries(NestyMain PRIVATE Clipper2Wrapper)
