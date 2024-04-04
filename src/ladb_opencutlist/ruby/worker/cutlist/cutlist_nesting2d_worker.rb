@@ -55,7 +55,7 @@ module Ladb::OpenCutList
       parts = @part_ids.nil? ? group.parts : group.get_parts(@part_ids)
       return { :errors => [ 'default.error' ] } if parts.empty?
 
-      Nesty.reload if @reload_lib
+      Nesty.unload if @reload_lib
 
       bin_defs = []
       shape_defs = []

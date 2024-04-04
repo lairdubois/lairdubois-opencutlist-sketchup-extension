@@ -10,6 +10,7 @@ using namespace Clipper2Lib;
 
 namespace Nesty {
 
+  // Clipper2 documentation : https://angusj.com/clipper2/Docs/Overview.htm
 
   inline bool shapes_sorter(Shape &shape1, Shape &shape2) {
     return (GetBounds(shape1.def->paths).Height() < GetBounds(shape2.def->paths).Height());

@@ -24,12 +24,11 @@ module Ladb::OpenCutList::Fiddle
       loaded?
     end
 
-    def reload
+    def unload
       return unless @lib_loaded
       @lib_loaded = false
       @handler.handlers.each {|h| h.close unless h.close_enabled? } unless @handler.nil?
       GC.start
-      _load_lib
     end
 
     protected

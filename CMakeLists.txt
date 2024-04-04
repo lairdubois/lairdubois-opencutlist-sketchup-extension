@@ -8,12 +8,14 @@
 
 cmake_minimum_required(VERSION 3.18)
 
-project("OpenCutList Dynamic Libraries" LANGUAGES C CXX)
+project("OpenCutList Dynamic Libraries"
+        DESCRIPTION "CMake configuration to build all OpenCutList Dynamic Libraries"
+        LANGUAGES C CXX)
 
 # CMake options
 set(CMAKE_BUILD_TYPE "Release")
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_VERBOSE_MAKEFILE OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 if(WIN32)
   set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/src/ladb_opencutlist/bin/win/)

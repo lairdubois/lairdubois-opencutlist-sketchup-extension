@@ -13,7 +13,7 @@ namespace Clipper2Lib {
     result.reserve(cnt);
     for (size_t i = 0; i < cnt; ++i) {
       int64_t x = *v++, y = *v++;
-      result.push_back(Point64(x, y));
+      result.emplace_back(x, y);
     }
     return result;
   }
