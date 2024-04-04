@@ -58,7 +58,7 @@ namespace Clipper2Lib {
   }
 
 
-  int64_t *ConvertPathsToCPaths(const Paths64 &paths) {
+  int64_t* ConvertPathsToCPaths(const Paths64 &paths) {
 
     /*
 
@@ -118,7 +118,7 @@ namespace Clipper2Lib {
     }
   }
 
-  int64_t *ConvertPolyTreeToCPolyTree(const PolyTree64 &polytree) {
+  int64_t* ConvertPolyTreeToCPolyTree(const PolyTree64 &polytree) {
 
     /*
 
@@ -145,8 +145,7 @@ namespace Clipper2Lib {
 
   // Boolean Ops
 
-  void ExecuteBooleanOp(ClipType clip_type, Paths64 &closed_subjects, Paths64 &open_subjects, Paths64 &clips,
-                        Paths64 &closed_paths_solution, Paths64 &open_paths_solution, bool preserve_colinear) {
+  void ExecuteBooleanOp(ClipType clip_type, Paths64 &closed_subjects, Paths64 &open_subjects, Paths64 &clips, Paths64 &closed_paths_solution, Paths64 &open_paths_solution, bool preserve_colinear) {
     Clipper64 clipper;
     clipper.PreserveCollinear(preserve_colinear);
     clipper.AddSubject(closed_subjects);
@@ -155,8 +154,7 @@ namespace Clipper2Lib {
     clipper.Execute(clip_type, FillRule::NonZero, closed_paths_solution, open_paths_solution);
   }
 
-  void ExecuteBooleanOp(ClipType clip_type, Paths64 &closed_subjects, Paths64 &open_subjects, Paths64 &clips,
-                        PolyTree64 &polytree_solution, Paths64 &open_paths_solution, bool preserve_colinear) {
+  void ExecuteBooleanOp(ClipType clip_type, Paths64 &closed_subjects, Paths64 &open_subjects, Paths64 &clips, PolyTree64 &polytree_solution, Paths64 &open_paths_solution, bool preserve_colinear) {
     Clipper64 clipper;
     clipper.PreserveCollinear(preserve_colinear);
     clipper.AddSubject(closed_subjects);

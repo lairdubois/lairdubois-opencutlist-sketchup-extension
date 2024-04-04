@@ -4557,8 +4557,8 @@
                 var $inputSpacing = $('#ladb_input_spacing', $modal);
                 var $inputTrimming = $('#ladb_input_trimming', $modal);
                 var $inputRotations = $('#ladb_input_rotations', $modal);
-                var $inputReloadLib = $('#ladb_input_reload_lib', $modal);
                 var $btnEditMaterial = $('#ladb_btn_edit_material', $modal);
+                var $btnUnloadNesty = $('#ladb_btn_unload_nesty', $modal);
                 var $btnGenerate = $('#ladb_btn_generate', $modal);
 
                 var fnFetchOptions = function (options) {
@@ -4567,13 +4567,11 @@
                     options.spacing = $inputSpacing.val();
                     options.trimming = $inputTrimming.val();
                     options.rotations = $inputRotations.val();
-                    options.reload_lib = $inputReloadLib.is(':checked');
                 }
                 var fnFillInputs = function (options) {
                     $inputSpacing.val(options.spacing);
                     $inputTrimming.val(options.trimming);
                     $inputRotations.val(options.rotations);
-                    $inputReloadLib.prop('checked', options.reload_lib);
                 }
                 var fnEditMaterial = function (callback) {
 
@@ -4635,6 +4633,11 @@
                 // Bind buttons
                 $btnEditMaterial.on('click', function () {
                     fnEditMaterial();
+                });
+                $btnUnloadNesty.on('click', function () {
+                    rubyCallCommand('core_unload_nesty', null, function () {
+                        that.dialog.notifySuccess('Nesty unloaded');
+                    });
                 });
                 $btnGenerate.on('click', function () {
 

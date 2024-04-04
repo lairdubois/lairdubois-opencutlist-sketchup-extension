@@ -78,18 +78,12 @@
                 </div>
             </div>
         </div>
-        <div class="form form-horizontal" style="margin-top: 15px;">
-            <div class="checkbox text-center">
-                <label>
-                    <input type="checkbox" id="ladb_input_reload_lib">Recharger la lib
-                </label>
-            </div>
-        </div>
     </div>
 {% endblock %}
 
 {% block footerLeftInner %}
     <button class="btn btn-default" id="ladb_btn_edit_material" style="max-width: 260px;"><i class="ladb-opencutlist-icon-materials"></i> {{ 'tab.cutlist.menu.edit_material'|i18next({ 'material_name':group.material_display_name }) }}...</button>
+    <button class="btn btn-default" id="ladb_btn_unload_nesty">Unload Nesty</button>
 {% endblock %}
 
 {% block footerRightInner %}

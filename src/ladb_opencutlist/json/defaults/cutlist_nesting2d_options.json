@@ -13,7 +13,6 @@
     "scrap_sheet_sizes": "",
     "spacing": { "metric": "20mm", "imperial": "1\"" },
     "trimming": { "metric": "10mm", "imperial": "1/2\"" },
-    "rotations": 0,
-    "reload_lib": false
+    "rotations": 0
   }
 }

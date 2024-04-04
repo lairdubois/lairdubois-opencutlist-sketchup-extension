@@ -1005,6 +1005,18 @@ module Ladb::OpenCutList
         register_command('core_compute_size_aspect_ratio') do |params|
           compute_size_aspect_ratio_command(params)
         end
+        register_command('core_unload_clippy') do |params|
+          require_relative 'lib/fiddle/clippy/clippy'
+          Fiddle::Clippy.unload
+        end
+        register_command('core_unload_imagy') do |params|
+          require_relative 'lib/fiddle/imagy/imagy'
+          Fiddle::Imagy.unload
+        end
+        register_command('core_unload_nesty') do |params|
+          require_relative 'lib/fiddle/nesty/nesty'
+          Fiddle::Nesty.unload
+        end
 
         @controllers.each { |controller|
           controller.setup_commands
