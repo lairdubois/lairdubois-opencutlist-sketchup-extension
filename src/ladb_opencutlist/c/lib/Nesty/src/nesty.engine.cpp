@@ -13,7 +13,7 @@ namespace Nesty {
   // Clipper2 documentation : https://angusj.com/clipper2/Docs/Overview.htm
 
   inline bool shapes_sorter(Shape &shape1, Shape &shape2) {
-    return (GetBounds(shape1.def->paths).Height() < GetBounds(shape2.def->paths).Height());
+    return (GetBounds(shape1.def->paths).Height() > GetBounds(shape2.def->paths).Height());
   }
   inline bool bins_sorter(Bin &bin1, Bin &bin2) {
     if (bin1.def->type == bin2.def->type) {

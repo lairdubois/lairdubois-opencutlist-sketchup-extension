@@ -19,6 +19,7 @@ module Ladb::OpenCutList
   require_relative 'controller/settings_controller'
   require_relative 'utils/dimension_utils'
   require_relative 'utils/path_utils'
+  require_relative 'utils/hash_utils'
   require_relative 'tool/smart_paint_tool'
   require_relative 'tool/smart_axes_tool'
   require_relative 'tool/smart_export_tool'
@@ -714,7 +715,7 @@ module Ladb::OpenCutList
       start unless @started
       if @commands.has_key?(command)
         block = @commands[command]
-        return block.call(params)
+        return block.call(params.is_a?(Hash) ? HashUtils.symbolize_keys(params) : params) # params keys are symbolized to be ready for using as "keyword arguments"
       end
       raise "Command '#{command}' not found"
     end
@@ -931,40 +932,40 @@ module Ladb::OpenCutList
         # -- Commands --
 
         register_command('core_set_update_status') do |params|
-          set_update_status_command(params)
+          set_update_status_command(**params)
         end
         register_command('core_set_news_status') do |params|
-          set_news_status_command(params)
+          set_news_status_command(**params)
         end
         register_command('core_upgrade') do |params|
-          upgrade_command(params)
+          upgrade_command(**params)
         end
         register_command('core_get_app_defaults') do |params|
-          get_app_defaults_command(params)
+          get_app_defaults_command(**params)
         end
         register_command('core_set_global_preset') do |params|
-          set_global_preset_command(params)
+          set_global_preset_command(**params)
         end
         register_command('core_get_global_preset') do |params|
-          get_global_preset_command(params)
+          get_global_preset_command(**params)
         end
         register_command('core_list_global_preset_names') do |params|
-          list_global_preset_names_command(params)
+          list_global_preset_names_command(**params)
         end
         register_command('core_set_model_preset') do |params|
-          set_model_preset_command(params)
+          set_model_preset_command(**params)
         end
         register_command('core_get_model_preset') do |params|
-          get_model_preset_command(params)
+          get_model_preset_command(**params)
         end
         register_command('core_read_settings') do |params|
-          read_settings_command(params)
+          read_settings_command(**params)
         end
         register_command('core_write_settings') do |params|
-          write_settings_command(params)
+          write_settings_command(**params)
         end
         register_command('core_dialog_loaded') do |params|
-          dialog_loaded_command(params)
+          dialog_loaded_command(**params)
         end
         register_command('core_dialog_ready') do |params|
           dialog_ready_command
@@ -982,19 +983,19 @@ module Ladb::OpenCutList
           modal_dialog_hide_command
         end
         register_command('core_open_external_file') do |params|
-          open_external_file_command(params)
+          open_external_file_command(**params)
         end
         register_command('core_open_url') do |params|
-          open_url_command(params)
+          open_url_command(**params)
         end
         register_command('core_zoom_extents') do |params|
           zoom_extents_command
         end
         register_command('core_play_sound') do |params|
-          play_sound_command(params)
+          play_sound_command(**params)
         end
         register_command('core_send_action') do |params|
-          send_action_command(params)
+          send_action_command(**params)
         end
         register_command('core_length_to_float') do |params|
           length_to_float_command(params)
@@ -1003,19 +1004,10 @@ module Ladb::OpenCutList
           float_to_length_command(params)
         end
         register_command('core_compute_size_aspect_ratio') do |params|
-          compute_size_aspect_ratio_command(params)
+          compute_size_aspect_ratio_command(**params)
         end
-        register_command('core_unload_clippy') do |params|
-          require_relative 'lib/fiddle/clippy/clippy'
-          Fiddle::Clippy.unload
-        end
-        register_command('core_unload_imagy') do |params|
-          require_relative 'lib/fiddle/imagy/imagy'
-          Fiddle::Imagy.unload
-        end
-        register_command('core_unload_nesty') do |params|
-          require_relative 'lib/fiddle/nesty/nesty'
-          Fiddle::Nesty.unload
+        register_command('core_unload_c_lib') do |params|
+          unload_c_lib_command(**params)
         end
 
         @controllers.each { |controller|
@@ -1339,24 +1331,22 @@ module Ladb::OpenCutList
 
     # -- Commands ---
 
-    def set_update_status_command(params)    # Expected params = { manifest: MANIFEST, update_available: BOOL, update_muted: BOOL }
-      @manifest = params['manifest']
-      @update_available = params['update_available']
-      @update_muted = params['update_muted']
+    def set_update_status_command(manifest:, update_available:, update_muted:)    # Expected params = { manifest: MANIFEST, update_available: BOOL, update_muted: BOOL }
+      @manifest = manifest
+      @update_available = update_available
+      @update_muted = update_muted
     end
 
-    def set_news_status_command(params)    # Expected params = { last_news_timestamp: TIMESTAMP }
-      @last_news_timestamp = params['last_news_timestamp']
+    def set_news_status_command(last_news_timestamp:)    # Expected params = { last_news_timestamp: TIMESTAMP }
+      @last_news_timestamp = last_news_timestamp
     end
 
-    def upgrade_command(params)    # Expected params = { url: 'RBZ_URL' }
+    def upgrade_command(url:)    # Expected params = { url: 'RBZ_URL' }
       # Just open URL for older Sketchup versions
       if Sketchup.version_number < 1700000000
-        open_url_command(params)
+        open_url_command(url)
         return { :cancelled => true }
       end
-
-      url = params['url']
 
       # Download the RBZ
       begin
@@ -1444,58 +1434,31 @@ module Ladb::OpenCutList
 
     end
 
-    def get_app_defaults_command(params) # Expected params = { dictionary: DICTIONARY, section: SECTION }
-      dictionary = params['dictionary']
-      section = params['section']
-
+    def get_app_defaults_command(dictionary:, section: nil) # Expected params = { dictionary: DICTIONARY, section: SECTION }
       { :defaults => get_app_defaults(dictionary, section) }
     end
 
-    def set_global_preset_command(params) # Expected params = { dictionary: DICTIONARY, values: VALUES, name: NAME, section: SECTION }
-      dictionary = params['dictionary']
-      values = params['values']
-      name = params['name']
-      section = params['section']
-      fire_event = params['fire_event']
-
+    def set_global_preset_command(dictionary:, values:, name: nil, section: nil, fire_event: false) # Expected params = { dictionary: DICTIONARY, values: VALUES, name: NAME, section: SECTION }
       set_global_preset(dictionary, values, name, section, fire_event)
     end
 
-    def get_global_preset_command(params) # Expected params = { dictionary: DICTIONARY, name: NAME, section: SECTION }
-      dictionary = params['dictionary']
-      name = params['name']
-      section = params['section']
-
+    def get_global_preset_command(dictionary:, name: nil, section: nil) # Expected params = { dictionary: DICTIONARY, name: NAME, section: SECTION }
       { :preset => get_global_preset(dictionary, name, section) }
     end
 
-    def list_global_preset_names_command(params) # Expected params = { dictionary: DICTIONARY, section: SECTION }
-      dictionary = params['dictionary']
-      section = params['section']
-
+    def list_global_preset_names_command(dictionary:, section: nil) # Expected params = { dictionary: DICTIONARY, section: SECTION }
       { :names => list_global_preset_names(dictionary, section) }
     end
 
-    def set_model_preset_command(params) # Expected params = { dictionary: DICTIONARY, values: VALUES, section: SECTION, app_default_section: APP_DEFAULT_SECTION }
-      dictionary = params['dictionary']
-      values = params['values']
-      section = params['section']
-      app_default_section = params['app_default_section']
-      fire_event = params['fire_event']
-
+    def set_model_preset_command(dictionary:, values:, section: nil, app_default_section: nil, fire_event: false) # Expected params = { dictionary: DICTIONARY, values: VALUES, section: SECTION, app_default_section: APP_DEFAULT_SECTION }
       set_model_preset(dictionary, values, section, app_default_section, fire_event)
     end
 
-    def get_model_preset_command(params) # Expected params = { dictionary: DICTIONARY, section: SECTION, app_default_section: APP_DEFAULT_SECTION }
-      dictionary = params['dictionary']
-      section = params['section']
-      app_default_section = params['app_default_section']
-
+    def get_model_preset_command(dictionary:, section: nil, app_default_section: nil) # Expected params = { dictionary: DICTIONARY, section: SECTION, app_default_section: APP_DEFAULT_SECTION }
       { :preset => get_model_preset(dictionary, section, app_default_section) }
     end
 
-    def read_settings_command(params)    # Expected params = { keys: [ 'key1', ... ] }
-      keys = params['keys']
+    def read_settings_command(keys:)    # Expected params = { keys: [ 'key1', ... ] }
       values = []
       keys.each { |key|
 
@@ -1516,8 +1479,8 @@ module Ladb::OpenCutList
       { :values => values }
     end
 
-    def write_settings_command(params)    # Expected params = { settings: [ { key => 'key1', value => 'value1' }, ... ] }
-      settings = params['settings']
+    def write_settings_command(settings:)    # Expected params = { settings: [ { key => 'key1', value => 'value1' }, ... ] }
+      return unless settings.is_a?(Array)
 
       settings.each { |setting|
 
@@ -1531,12 +1494,11 @@ module Ladb::OpenCutList
         write_default(key, value)
 
       }
-
     end
 
-    def dialog_loaded_command(params)
+    def dialog_loaded_command(webgl_available:, dialog_type:, dialog_params:)
 
-      @webgl_available = params['webgl_available'] == true
+      @webgl_available = webgl_available == true
 
       base_capabilities = {
           :version => EXTENSION_VERSION,
@@ -1556,7 +1518,7 @@ module Ladb::OpenCutList
           :decimal_separator => DimensionUtils.instance.decimal_separator,
       }
 
-      case params['dialog_type']
+      case dialog_type
       when 'tabs'
         return base_capabilities.merge(
           {
@@ -1568,9 +1530,17 @@ module Ladb::OpenCutList
             :tabs_dialog_table_row_size => @tabs_dialog_table_row_size,
             :tabs_dialog_startup_tab_name => @tabs_dialog_startup_tab_name # nil if none
           }
-        ).merge(params)
+        ).merge({
+                  :webgl_available => webgl_available,
+                  :dialog_type => dialog_type,
+                  :dialog_params => dialog_params
+                })
       when 'modal'
-        return base_capabilities.merge(params)
+        return base_capabilities.merge({
+                                         :webgl_available => webgl_available,
+                                         :dialog_type => dialog_type,
+                                         :dialog_params => dialog_params
+                                       })
       end
 
     end
@@ -1611,21 +1581,17 @@ module Ladb::OpenCutList
       hide_modal_dialog
     end
 
-    def open_external_file_command(params)    # Expected params = { path: PATH_TO_FILE }
-      path = params['path']
-      if path && path.is_a?(String)
-        url = "file:///#{path}"
-        url = URI::DEFAULT_PARSER.escape(url) if platform_is_mac && Sketchup.version_number >= 1800000000
-        UI.openURL(url)
-      end
+    def open_external_file_command(path:)    # Expected params = { path: PATH_TO_FILE }
+      return unless path.is_a?(String)
+      url = "file:///#{path}"
+      url = URI::DEFAULT_PARSER.escape(url) if platform_is_mac && Sketchup.version_number >= 1800000000
+      UI.openURL(url)
     end
 
-    def open_url_command(params)    # Expected params = { url: URL }
-      url = params['url']
-      if url && url.is_a?(String)
-        url = 'https://' + url unless /^https?:\/\//.match(url)  # Force url starts by "https://"
-        UI.openURL(URI::DEFAULT_PARSER.escape(url))
-      end
+    def open_url_command(url:)    # Expected params = { url: URL }
+      return unless url.is_a?(String)
+      url = 'https://' + url unless /^https?:\/\//.match(url)  # Force url starts by "https://"
+      UI.openURL(URI::DEFAULT_PARSER.escape(url))
     end
 
     def zoom_extents_command
@@ -1634,12 +1600,12 @@ module Ladb::OpenCutList
       end
     end
 
-    def play_sound_command(params)    # Expected params = { filename: WAV_FILE_TO_PLAY }
-      UI.play_sound(File.join(PLUGIN_DIR, 'wav', params['filename']))
+    def play_sound_command(filename:)    # Expected params = { filename: WAV_FILE_TO_PLAY }
+      return unless filename.is_a?(String)
+      UI.play_sound(File.join(PLUGIN_DIR, 'wav', filename))
     end
 
-    def send_action_command(params)
-      action = params['action']
+    def send_action_command(action:)
 
       # Send action
       success = Sketchup.send_action(action)
@@ -1672,11 +1638,7 @@ module Ladb::OpenCutList
       string_lengths
     end
 
-    def compute_size_aspect_ratio_command(params)    # Expected params = { width: WIDTH, height: HEIGHT, ratio: W_ON_H_RATIO, is_width_master: BOOL }
-      width = params.fetch('width', '1m')
-      height = params.fetch('height', '1m')
-      ratio = params.fetch('ratio', 1)
-      is_width_master = params.fetch('is_width_master', true)
+    def compute_size_aspect_ratio_command(width: '1m', height: '1m', ratio: 1, is_width_master: true)    # Expected params = { width: WIDTH, height: HEIGHT, ratio: W_ON_H_RATIO, is_width_master: BOOL }
 
       # Convert input values to Length
       w = DimensionUtils.instance.d_to_ifloats(width).to_l
@@ -1692,6 +1654,18 @@ module Ladb::OpenCutList
           :width => w.to_s,
           :height => h.to_s
       }
+    end
+
+    def unload_c_lib_command(lib:)
+      return { :errors => [ "Error : lib param must be a string" ] } unless lib.is_a?(String)
+      begin
+        lib = lib.downcase
+        require_relative "lib/fiddle/#{lib}/#{lib}"
+        Fiddle.const_get(lib.capitalize).unload
+      rescue Exception => e
+        return { :errors => [ "Error unloading #{lib}: #{e.message}" ] }
+      end
+      { :success => true }
     end
 
   end

@@ -92,6 +92,10 @@ namespace Imagy {
 
   }
 
+  /*
+   * Flip the image pixels.
+   * Horizontally if 'horizontal' is true, vertically otherwise.
+   */
   bool Image::flip(bool horizontal) {
     if (is_empty()) return false;
 
@@ -118,6 +122,10 @@ namespace Imagy {
     return true;
   }
 
+  /*
+   * Rotate the image pixels by the given 'angle'.
+   * Angle value can be 0, 90, 180, 270.
+   */
   bool Image::rotate(int angle) {
     if (is_empty()) return false;
 

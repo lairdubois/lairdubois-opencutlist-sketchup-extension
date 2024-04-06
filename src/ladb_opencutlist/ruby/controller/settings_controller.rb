@@ -12,19 +12,19 @@ module Ladb::OpenCutList
 
       # Setup opencutlist dialog actions
       PLUGIN.register_command("settings_dialog_settings") do |settings|
-        dialog_settings_command(settings)
+        dialog_settings_command(**settings)
       end
       PLUGIN.register_command("settings_dialog_inc_size") do |params|
-        dialog_inc_size_command(params)
+        dialog_inc_size_command(**params)
       end
       PLUGIN.register_command("settings_dialog_reset_position") do |params|
         dialog_reset_position_command
       end
       PLUGIN.register_command("settings_dialog_inc_position") do |params|
-        dialog_inc_position_command(params)
+        dialog_inc_position_command(**params)
       end
       PLUGIN.register_command('settings_set_length_settings') do |params|
-        set_length_settings_command(params)
+        set_length_settings_command(**params)
       end
       PLUGIN.register_command('settings_get_length_settings') do |params|
         get_length_settings_command
@@ -57,45 +57,25 @@ module Ladb::OpenCutList
 
     # -- Commands --
 
-    def dialog_settings_command(settings)
-
-      # Check settings
-      language = settings['language']
-      print_margin = settings['print_margin']
-      table_row_size = settings['table_row_size']
-
+    def dialog_settings_command(language: nil, print_margin: Plugin::TABS_DIALOG_DEFAULT_PRINT_MARGIN, table_row_size: Plugin::TABS_DIALOG_DEFAULT_TABLE_ROW_SIZE)
       PLUGIN.set_language(language, true)
       PLUGIN.tabs_dialog_set_print_margin(print_margin, true)
       PLUGIN.tabs_dialog_set_table_row_size(table_row_size, true)
-
     end
 
-    def dialog_inc_size_command(params)
-      inc_width = params['inc_width']
-      inc_height = params['inc_height']
-
+    def dialog_inc_size_command(inc_width: 0, inc_height: 0)
       PLUGIN.tabs_dialog_inc_maximized_size(inc_width, inc_height)
-
     end
 
-    def dialog_inc_position_command(params)
-      inc_left = params['inc_left']
-      inc_top = params['inc_top']
-
+    def dialog_inc_position_command(inc_left: 0, inc_top: 0)
       PLUGIN.tabs_dialog_inc_position(inc_left, inc_top)
-
     end
 
     def dialog_reset_position_command
       PLUGIN.tabs_dialog_reset_position
     end
 
-    def set_length_settings_command(params)
-      length_unit = params['length_unit']
-      length_format = params['length_format']
-      length_precision = params['length_precision']
-      suppress_units_display = params['suppress_units_display']
-
+    def set_length_settings_command(length_unit: nil, length_format: nil, length_precision: nil, suppress_units_display: nil)
       unless length_format.nil?
         case length_format
         when DimensionUtils::FRACTIONAL, DimensionUtils::ARCHITECTURAL
@@ -158,7 +138,7 @@ module Ladb::OpenCutList
       require_relative '../worker/settings/export_global_presets_worker'
 
       # Setup worker
-      worker = ExportGlobalPresetsWorker.new(**HashUtils.symbolize_keys(settings))
+      worker = ExportGlobalPresetsWorker.new(**settings)
 
       # Run !
       worker.run

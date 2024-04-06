@@ -83,7 +83,7 @@ module Ladb::OpenCutList
       require_relative '../worker/materials/materials_list_worker'
 
       # Setup worker
-      worker = MaterialsListWorker.new(**HashUtils.symbolize_keys(settings))
+      worker = MaterialsListWorker.new(**settings)
 
       # Run !
       worker.run
@@ -93,7 +93,7 @@ module Ladb::OpenCutList
       require_relative '../worker/materials/materials_create_worker'
 
       # Setup worker
-      worker = MaterialsCreateWorker.new(**HashUtils.symbolize_keys(material_data))
+      worker = MaterialsCreateWorker.new(**material_data)
 
       # Run !
       worker.run
@@ -103,7 +103,7 @@ module Ladb::OpenCutList
       require_relative '../worker/materials/materials_update_worker'
 
       # Setup worker
-      worker = MaterialsUpdateWorker.new(**HashUtils.symbolize_keys(material_data))
+      worker = MaterialsUpdateWorker.new(**material_data)
 
       # Run !
       worker.run
@@ -113,7 +113,7 @@ module Ladb::OpenCutList
       require_relative '../worker/materials/materials_duplicate_worker'
 
       # Setup worker
-      worker = MaterialsDuplicateWorker.new(**HashUtils.symbolize_keys(material_data))
+      worker = MaterialsDuplicateWorker.new(**material_data)
 
       # Run !
       worker.run
@@ -123,7 +123,7 @@ module Ladb::OpenCutList
       require_relative '../worker/materials/materials_remove_worker'
 
       # Setup worker
-      worker = MaterialsRemoveWorker.new(**HashUtils.symbolize_keys(material_data))
+      worker = MaterialsRemoveWorker.new(**material_data)
 
       # Run !
       worker.run
@@ -143,7 +143,7 @@ module Ladb::OpenCutList
       require_relative '../worker/materials/materials_export_to_skm_worker'
 
       # Setup worker
-      worker = MaterialsExportToSkmWorker.new(**HashUtils.symbolize_keys(material_data))
+      worker = MaterialsExportToSkmWorker.new(**material_data)
 
       # Run !
       worker.run
@@ -153,7 +153,7 @@ module Ladb::OpenCutList
       require_relative '../worker/materials/materials_get_attributes_worker'
 
       # Setup worker
-      worker = MaterialsGetAttributesWorker.new(**HashUtils.symbolize_keys(material_data))
+      worker = MaterialsGetAttributesWorker.new(**material_data)
 
       # Run !
       worker.run
@@ -163,7 +163,7 @@ module Ladb::OpenCutList
       require_relative '../worker/materials/materials_get_texture_worker'
 
       # Setup worker
-      worker = MaterialsGetTextureWorker.new(**HashUtils.symbolize_keys(material_data))
+      worker = MaterialsGetTextureWorker.new(**material_data)
 
       # Run !
       worker.run
@@ -183,7 +183,7 @@ module Ladb::OpenCutList
       require_relative '../worker/materials/materials_add_std_dimension_worker'
 
       # Setup worker
-      worker = MaterialsAddStdDimensionWorker.new(**HashUtils.symbolize_keys(settings))
+      worker = MaterialsAddStdDimensionWorker.new(**settings)
 
       # Run !
       worker.run
@@ -193,7 +193,7 @@ module Ladb::OpenCutList
       require_relative '../worker/materials/materials_smart_paint_worker'
 
       # Setup worker
-      worker = MaterialsSmartPaintWorker.new(**HashUtils.symbolize_keys(settings))
+      worker = MaterialsSmartPaintWorker.new(**settings)
 
       # Run !
       worker.run

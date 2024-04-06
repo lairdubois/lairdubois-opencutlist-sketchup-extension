@@ -7,6 +7,7 @@ module Ladb::OpenCutList
   require_relative '../helper/sanitizer_helper'
   require_relative '../worker/cutlist/cutlist_generate_worker'
   require_relative '../utils/axis_utils'
+  require_relative '../utils/hash_utils'
   require_relative '../utils/transformation_utils'
   require_relative '../model/geom/size3d'
 

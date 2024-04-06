@@ -142,9 +142,6 @@ module Ladb::OpenCutList
             x_axis.reverse! if TransformationUtils.flipped?(transformation)
             y_axis = z_axis * x_axis
           else
-
-            puts 'oula'
-
             x_axis, y_axis, z_axis, drawing_def.input_line_manipulator = _get_input_axes(drawing_def.input_plane_manipulator, nil)
           end
 

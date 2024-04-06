@@ -1,7 +1,5 @@
 module Ladb::OpenCutList
 
-  require_relative '../utils/hash_utils'
-
   class Controller
 
     @tab_name

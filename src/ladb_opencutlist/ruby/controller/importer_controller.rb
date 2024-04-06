@@ -39,7 +39,7 @@ module Ladb::OpenCutList
       require_relative '../worker/importer/importer_load_worker'
 
       # Setup worker
-      worker = ImporterLoadWorker.new(**HashUtils.symbolize_keys(settings))
+      worker = ImporterLoadWorker.new(**settings)
 
       # Run !
       response = worker.run
@@ -54,7 +54,7 @@ module Ladb::OpenCutList
       require_relative '../worker/importer/importer_import_worker'
 
       # Setup worker
-      worker = ImporterImportWorker.new(@parts, **HashUtils.symbolize_keys(settings))
+      worker = ImporterImportWorker.new(@parts, **settings)
 
       # Run !
       worker.run

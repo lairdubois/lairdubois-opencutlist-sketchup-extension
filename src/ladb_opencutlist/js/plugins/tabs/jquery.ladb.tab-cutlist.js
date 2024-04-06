@@ -4635,8 +4635,13 @@
                     fnEditMaterial();
                 });
                 $btnUnloadNesty.on('click', function () {
-                    rubyCallCommand('core_unload_nesty', null, function () {
-                        that.dialog.notifySuccess('Nesty unloaded');
+                    rubyCallCommand('core_unload_c_lib', { lib: 'nesty' }, function (response) {
+                        if (response.errors) {
+                            that.dialog.notifyErrors(response.errors);
+                        }
+                        if (response.success) {
+                            that.dialog.notifySuccess('Nesty unloaded');
+                        }
                     });
                 });
                 $btnGenerate.on('click', function () {

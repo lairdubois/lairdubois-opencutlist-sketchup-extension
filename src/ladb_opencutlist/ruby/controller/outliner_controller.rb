@@ -76,7 +76,7 @@ module Ladb::OpenCutList
       require_relative '../worker/outliner/outliner_update_worker'
 
       # Setup worker
-      worker = OutlinerUpdateWorker.new(@outliner, **HashUtils.symbolize_keys(node_data))
+      worker = OutlinerUpdateWorker.new(@outliner, **node_data)
 
       # Run !
       worker.run
@@ -86,7 +86,7 @@ module Ladb::OpenCutList
       require_relative '../worker/outliner/outliner_set_active_worker'
 
       # Setup worker
-      worker = OutlinerSetActiveWorker.new(@outliner, **HashUtils.symbolize_keys(node_data))
+      worker = OutlinerSetActiveWorker.new(@outliner, **node_data)
 
       # Run !
       worker.run
@@ -96,7 +96,7 @@ module Ladb::OpenCutList
       require_relative '../worker/outliner/outliner_set_expanded_worker'
 
       # Setup worker
-      worker = OutlinerSetExpandedWorker.new(@outliner, **HashUtils.symbolize_keys(node_data))
+      worker = OutlinerSetExpandedWorker.new(@outliner, **node_data)
 
       # Run !
       worker.run
@@ -106,7 +106,7 @@ module Ladb::OpenCutList
       require_relative '../worker/outliner/outliner_toggle_visible_worker'
 
       # Setup worker
-      worker = OutlinerToggleVisibleWorker.new(@outliner, **HashUtils.symbolize_keys(node_data))
+      worker = OutlinerToggleVisibleWorker.new(@outliner, **node_data)
 
       # Run !
       worker.run
@@ -116,7 +116,7 @@ module Ladb::OpenCutList
       require_relative '../worker/outliner/outliner_explode_worker'
 
       # Setup worker
-      worker = OutlinerExplodeWorker.new(@outliner, **HashUtils.symbolize_keys(node_data))
+      worker = OutlinerExplodeWorker.new(@outliner, **node_data)
 
       # Run !
       worker.run
