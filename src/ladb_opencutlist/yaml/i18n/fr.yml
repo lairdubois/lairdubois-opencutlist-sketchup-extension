@@ -1200,9 +1200,7 @@ tab:
       texture_load: Charger une nouvelle texture
       texture_clear: Effacer la texture
       edit: "Éditer les propriétés de '{{ name }}'"
-      set_current: |
-        Colorier des pièces avec '{{ name }}'
-        *Double-clic pour réduire*
+      set_current: Colorier des pièces avec '{{ name }}'
       open_url: Ouvrir l'URL de la matière
     menu:
       import_from_skm: Importer une matière (.skm)
@@ -1303,6 +1301,9 @@ tab:
     export_to_skm:
       title: Exporter un fichier .skm
     option:
+      minimize_on_smart_paint: Réduire après *'Colorier des pièces avec...'*
+      minimize_on_smart_paint_help: "Si cette option est activée, la fenêtre OpenCutList sera réduite lorsque la fonction *'Colorier des pièces avec...'* est utilisée."
+      general: Générales
       material_order_strategy: Tri des matières
       material_order_strategy_help: |
         Réorganiser les propriétés suivantes pour définir la stratégie de tri des matières dans la liste.

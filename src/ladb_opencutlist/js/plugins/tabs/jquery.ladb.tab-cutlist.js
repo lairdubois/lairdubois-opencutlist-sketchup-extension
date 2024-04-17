@@ -1378,7 +1378,7 @@
 
         var groupId = context && context.targetGroup ? context.targetGroup.id : null;
 
-        rubyCallCommand('cutlist_highlight_parts', { minimize_on_highlight: this.generateOptions.minimize_on_highlight, group_id: groupId, part_ids: partIds }, function (response) {
+        rubyCallCommand('cutlist_highlight_parts', { tab_name_to_show_on_quit: this.generateOptions.minimize_on_highlight ? 'cutlist' : null, part_ids: partIds }, function (response) {
 
             if (response['errors']) {
                 that.dialog.notifyErrors(response['errors']);

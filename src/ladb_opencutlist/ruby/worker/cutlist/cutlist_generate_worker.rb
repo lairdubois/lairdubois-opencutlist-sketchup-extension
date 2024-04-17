@@ -14,7 +14,6 @@ module Ladb::OpenCutList
   require_relative '../../model/cutlist/part_def'
   require_relative '../../model/cutlist/part'
   require_relative '../../utils/transformation_utils'
-  require_relative '../../tool/highlight_part_tool'
 
   class CutlistGenerateWorker
 

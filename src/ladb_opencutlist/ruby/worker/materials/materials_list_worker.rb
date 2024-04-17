@@ -6,7 +6,10 @@ module Ladb::OpenCutList
 
     def initialize(
 
-                   material_order_strategy: 'name>type'
+                   material_order_strategy: 'name>type',
+
+                   # Unused but present for preset compatibility
+                   minimize_on_smart_paint: nil
 
     )
 

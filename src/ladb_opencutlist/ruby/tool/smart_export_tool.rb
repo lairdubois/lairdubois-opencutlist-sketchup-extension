@@ -77,8 +77,8 @@ module Ladb::OpenCutList
     COLOR_PART_PATH = Kuix::COLOR_CYAN
     COLOR_ACTION = Kuix::COLOR_MAGENTA
 
-    def initialize(material = nil)
-      super(true, false)
+    def initialize
+      super()
 
       # Create cursors
       @cursor_export_stl = create_cursor('export-stl', 0, 0)
@@ -307,7 +307,7 @@ module Ladb::OpenCutList
 
             preview = Kuix::Group.new
             preview.transformation = @active_drawing_def.transformation
-            @space.append(preview)
+            @overlay_layer.append(preview)
 
             @active_drawing_def.face_manipulators.each do |face_manipulator|
 
@@ -370,7 +370,7 @@ module Ladb::OpenCutList
 
               preview = Kuix::Group.new
               preview.transformation = @active_drawing_def.transformation * projection_def.transformation
-              @space.append(preview)
+              @overlay_layer.append(preview)
 
               fn_append_segments = lambda do |segments, color, line_width, line_stipple|
 
@@ -512,7 +512,7 @@ module Ladb::OpenCutList
 
             preview = Kuix::Group.new
             preview.transformation = @active_drawing_def.transformation * projection_def.transformation
-            @space.append(preview)
+            @overlay_layer.append(preview)
 
             fn_append_segments = lambda do |segments, line_width, line_stipple|
 
@@ -635,7 +635,7 @@ module Ladb::OpenCutList
 
             preview = Kuix::Group.new
             preview.transformation = @active_drawing_def.transformation * projection_def.transformation
-            @space.append(preview)
+            @overlay_layer.append(preview)
 
             fn_append_segments = lambda do |segments, line_width, line_stipple|
 

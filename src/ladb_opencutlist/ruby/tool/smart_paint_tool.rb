@@ -75,8 +75,17 @@ module Ladb::OpenCutList
 
     @@filters = nil
 
-    def initialize(material = nil)
-      super(true, false)
+    def initialize(
+
+                   tab_name_to_show_on_quit: nil,
+
+                   material: nil
+
+    )
+
+      super(
+        tab_name_to_show_on_quit: tab_name_to_show_on_quit
+      )
 
       # Keep the given material
       @startup_material = material
@@ -786,7 +795,7 @@ module Ladb::OpenCutList
             mesh.add_triangles(triangles)
             mesh.background_color = color
             mesh.transformation = PathUtils::get_transformation(path)
-            @space.append(mesh)
+            @overlay_layer.append(mesh)
 
           end
 
@@ -875,7 +884,7 @@ module Ladb::OpenCutList
                 mesh.add_triangles(triangles)
                 mesh.background_color = color
                 mesh.transformation = PathUtils::get_transformation(path)
-                @space.append(mesh)
+                @overlay_layer.append(mesh)
 
               end
 
@@ -959,7 +968,7 @@ module Ladb::OpenCutList
                 mesh.add_triangles(triangles)
                 mesh.background_color = color
                 mesh.transformation = PathUtils::get_transformation(path)
-                @space.append(mesh)
+                @overlay_layer.append(mesh)
 
               end
 
@@ -996,7 +1005,7 @@ module Ladb::OpenCutList
             mesh.add_triangles(triangles)
             mesh.background_color = color
             mesh.transformation = PathUtils::get_transformation(path)
-            @space.append(mesh)
+            @overlay_layer.append(mesh)
 
           end
 

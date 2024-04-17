@@ -52,10 +52,8 @@ module Ladb::OpenCutList
       }
     ].freeze
 
-    COLOR_MESH = Sketchup::Color.new(200, 200, 0, 100).freeze
-    COLOR_MESH_HIGHLIGHTED = Sketchup::Color.new(200, 200, 0, 200).freeze
-    COLOR_ARROW = Kuix::COLOR_WHITE
-    COLOR_ARROW_AUTO_ORIENTED = Sketchup::Color.new(123, 213, 239).freeze
+    COLOR_MESH = Sketchup::Color.new(0, 0, 255, 100).freeze
+    COLOR_MESH_HIGHLIGHTED = Sketchup::Color.new(0, 0, 255, 200).freeze
     COLOR_BOX = Kuix::COLOR_BLACK
     COLOR_ACTION = Kuix::COLOR_MAGENTA
     COLOR_ACTION_FILL = Sketchup::Color.new(255, 0, 255, 0.2).freeze
@@ -66,8 +64,18 @@ module Ladb::OpenCutList
     COLOR_THICKNESS = Kuix::COLOR_BLUE
     COLOR_THICKNESS_FILL = Sketchup::Color.new(0, 0, 255, 0.2).freeze
 
-    def initialize
-      super(true, false)
+    def initialize(
+
+                   tab_name_to_show_on_quit: nil,
+
+                   highlighted_parts: nil
+
+    )
+
+      super(
+        tab_name_to_show_on_quit: tab_name_to_show_on_quit,
+        highlighted_parts: highlighted_parts
+      )
 
       # Create cursors
       @cursor_swap_length_width_clockwise = create_cursor('swap-length-width-clockwise', 0, 0)
@@ -278,7 +286,7 @@ module Ladb::OpenCutList
         instance_info = part.def.get_one_instance_info
 
         arrow_color = part.auto_oriented ? COLOR_ARROW_AUTO_ORIENTED : COLOR_ARROW
-        arrow_line_width = 2
+        arrow_line_width = 3
 
         increases = [ 0, 0, 0 ]
         if part.length_increased || part.width_increased || part.thickness_increased
@@ -296,7 +304,7 @@ module Ladb::OpenCutList
 
         part_helper = Kuix::Group.new
         part_helper.transformation = instance_info.transformation
-        @space.append(part_helper)
+        @overlay_layer.append(part_helper)
 
         show_axes = true
         if is_action_adapt_axes? && part.group.material_type != MaterialAttributes::TYPE_HARDWARE
@@ -520,9 +528,11 @@ module Ladb::OpenCutList
           mesh.add_triangles(_compute_children_faces_triangles(path.last.definition.entities))
           mesh.background_color = highlighted ? COLOR_MESH_HIGHLIGHTED : COLOR_MESH
           mesh.transformation = PathUtils::get_transformation(path)
-          @space.append(mesh)
+          @overlay_layer.append(mesh)
 
         end
+
+        setup_highlighted_part_helper(part, instance_paths) if part.is_a?(Part)
 
         # Show part infos
         show_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name, '-', _get_active_part_size, _get_active_part_icons ], tooltip_type)

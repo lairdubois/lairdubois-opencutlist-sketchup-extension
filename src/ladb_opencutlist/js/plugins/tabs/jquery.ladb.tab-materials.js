@@ -13,6 +13,7 @@
         this.currentMaterial = null;
         this.editedMaterial = null;
         this.ignoreNextMaterialEvents = false;
+        this.lastOptionsTab = null;
         this.lastEditMaterialTab = null;
         this.lastMaterialPropertiesTab = null;
 
@@ -102,11 +103,9 @@
                         $(this).blur();
                         var materialId = $(this).closest('.ladb-material-box').data('material-id');
                         that.setCurrentMaterial(materialId);
-                        return false;
-                    })
-                    .on('dblclick', function () {
-                        $(this).blur();
-                        that.dialog.minimize();
+                        if (that.generateOptions.minimize_on_smart_paint) {
+                            that.dialog.minimize();
+                        }
                         return false;
                     });
                 $('.ladb-btn-open-material-url', that.$page)
@@ -685,6 +684,7 @@
         var material = this.findMaterialById(materialId);
         if (material) {
             rubyCallCommand('materials_smart_paint_command', {
+                tab_name_to_show_on_quit: this.generateOptions.minimize_on_smart_paint ? 'materials' : null,
                 name: material.name
             });
         }
@@ -728,18 +728,32 @@
 
     };
 
-    LadbTabMaterials.prototype.editOptions = function () {
+    LadbTabMaterials.prototype.editOptions = function (tab) {
         var that = this;
 
-        var $modal = that.appendModalInside('ladb_materials_modal_options', 'tabs/materials/_modal-options.twig');
+        if (tab === undefined) {
+            tab = this.lastOptionsTab;
+        }
+        if (tab === null || tab.length === 0) {
+            tab = 'general';
+        }
+        this.lastOptionsTab = tab;
+
+        var $modal = that.appendModalInside('ladb_materials_modal_options', 'tabs/materials/_modal-options.twig', {
+            tab: tab
+        });
 
         // Fetch UI elements
+        var $tabs = $('a[data-toggle="tab"]', $modal);
         var $widgetPreset = $('.ladb-widget-preset', $modal);
+        var $inputMinimizeOnSmartPaint = $('#ladb_input_minimize_on_smart_paint', $modal);
         var $sortableMaterialOrderStrategy = $('#ladb_sortable_material_order_strategy', $modal);
         var $btnUpdate = $('#ladb_materials_options_update', $modal);
 
         // Define useful functions
         var fnFetchOptions = function (options) {
+
+            options.minimize_on_smart_paint = $inputMinimizeOnSmartPaint.is(':checked');
 
             var properties = [];
             $sortableMaterialOrderStrategy.children('li').each(function () {
@@ -749,6 +763,10 @@
 
         };
         var fnFillInputs = function (options) {
+
+            // Checkboxes
+
+            $inputMinimizeOnSmartPaint.prop('checked', options.minimize_on_smart_paint);
 
             // Sortables
 
@@ -793,6 +811,11 @@
             fnFetchOptions: fnFetchOptions,
             fnFillInputs: fnFillInputs
 
+        });
+
+        // Bind tabs
+        $tabs.on('shown.bs.tab', function (e) {
+            that.lastOptionsTab = $(e.target).attr('href').substring('#tab_options_'.length);
         });
 
         // Bind buttons

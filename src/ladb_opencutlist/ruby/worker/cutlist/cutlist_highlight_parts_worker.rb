@@ -1,22 +1,22 @@
 module Ladb::OpenCutList
 
-  require_relative '../../tool/highlight_part_tool'
+  require_relative '../../tool/smart_axes_tool'
 
   class CutlistHighlightPartsWorker
 
     def initialize(cutlist,
 
-                   minimize_on_highlight: false,
-                   part_ids: nil,
-                   group_id: nil
+                   tab_name_to_show_on_quit: nil,
+
+                   part_ids: nil
 
     )
 
       @cutlist = cutlist
 
-      @minimize_on_highlight = minimize_on_highlight
+      @tab_name_to_show_on_quit = tab_name_to_show_on_quit
+
       @part_ids = part_ids
-      @group_id = group_id
 
     end
 
@@ -32,10 +32,6 @@ module Ladb::OpenCutList
       # Retrieve parts
       parts = @cutlist.get_real_parts(@part_ids)
 
-      # Retrieve group (if given)
-      group = nil
-      group = @cutlist.get_group(@group_id) if @group_id
-
       # Compute part count
       instance_count = parts.inject(0) { |sum, part| sum + part.instance_count_by_part * part.count - part.unused_instance_count }
 
@@ -43,8 +39,11 @@ module Ladb::OpenCutList
         return { :errors => [ 'default.error' ] }
       end
 
-      # Create and activate highlight part tool
-      model.select_tool(HighlightPartTool.new(@cutlist, group, parts, instance_count, @minimize_on_highlight))
+      # Create and activate Smart Axes tool
+      model.select_tool(SmartAxesTool.new(
+        tab_name_to_show_on_quit: @tab_name_to_show_on_quit,
+        highlighted_parts: parts
+      ))
 
       # Focus SketchUp
       Sketchup.focus if Sketchup.respond_to?(:focus)

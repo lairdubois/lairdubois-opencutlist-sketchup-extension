@@ -6,9 +6,13 @@ module Ladb::OpenCutList
 
     def initialize(
 
+                   tab_name_to_show_on_quit: nil,
+
                    name:
 
     )
+
+      @tab_name_to_show_on_quit = tab_name_to_show_on_quit
 
       @name = name
 
@@ -28,7 +32,10 @@ module Ladb::OpenCutList
       return { :errors => [ 'tab.materials.error.material_not_found' ] } unless material
 
       # Select Smart Paint Tool
-      model.select_tool(SmartPaintTool.new(material))
+      model.select_tool(SmartPaintTool.new(
+        tab_name_to_show_on_quit: @tab_name_to_show_on_quit,
+        material: material
+      ))
 
       # Focus SketchUp
       Sketchup.focus if Sketchup.respond_to?(:focus)

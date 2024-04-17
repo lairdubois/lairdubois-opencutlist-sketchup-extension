@@ -56,6 +56,31 @@ module Ladb::OpenCutList::Kuix
       self
     end
 
+    # Prepend given widget to self and returns self
+    def prepend(entity)
+      throw 'Entity.append only supports Entity' unless entity.is_a?(Entity)
+      throw 'Entity.append can\'t prepend itself' if entity == self
+      throw 'Entity.append can\'t prepend nil' if entity.nil?
+
+      # Remove widget from previous parent
+      if entity.parent
+        entity.remove
+      end
+
+      # Prepend widget to linked list
+      entity.parent = self
+      @child.previous = entity if @child
+      entity.next = @child
+      @child = entity
+      @last_child = entity unless @last_child
+
+      # Invalidate self
+      invalidate
+
+      # Returns self
+      self
+    end
+
     # Remove self widget from its parent and returns parent
     def remove
       return unless @parent

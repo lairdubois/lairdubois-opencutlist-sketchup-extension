@@ -38,8 +38,31 @@ module Ladb::OpenCutList
     COLOR_MESSAGE_BACKGROUND_WARNING = Sketchup::Color.new('#ffe69c').freeze
     COLOR_MESSAGE_BACKGROUND_SUCCESS = COLOR_MESSAGE_TEXT_SUCCESS.blend(Kuix::COLOR_WHITE, 0.2).freeze
 
-    def initialize(quit_on_esc = true, quit_on_undo = false)
-      super
+    COLOR_HIGHLIGHTED_PART = Sketchup::Color.new(255, 0, 0, 128).freeze
+    COLOR_ARROW = Kuix::COLOR_WHITE
+    COLOR_ARROW_AUTO_ORIENTED = Sketchup::Color.new(123, 213, 239).freeze
+
+    def initialize(
+
+                   quit_on_esc: true,
+                   quit_on_undo: false,
+
+                   tab_name_to_show_on_quit: nil,
+
+                   highlighted_parts: nil
+
+    )
+
+      super(quit_on_esc, quit_on_undo)
+
+      @auto_orient = PLUGIN.get_model_preset('cutlist_options')['auto_orient']
+
+      # Define if OpenCutList dialog must be maximized when tool ends
+      @tab_name_to_show_on_quit = tab_name_to_show_on_quit
+
+      # Highlighted parts
+      @highlighted_parts = highlighted_parts
+      @highlighted_parts_helpers = {}
 
       # Action
       @current_action = nil
@@ -91,6 +114,24 @@ module Ladb::OpenCutList
     end
 
     def setup_entities(view)
+      
+      # 3D
+      # --------
+
+      # -- OVERLAY LAYER
+
+      @overlay_layer = Kuix::Group.new
+      @space.append(@overlay_layer)
+
+      # -- HIGHLIGHTED PARTS LAYER
+
+      @highlighted_parts_layer = Kuix::Group.new
+      @space.append(@highlighted_parts_layer)
+
+      @highlighted_parts.each { |part| setup_highlighted_part_helper(part) } if @highlighted_parts.is_a?(Array)
+
+      # 2D
+      # --------
 
       @canvas.layout = Kuix::StaticLayout.new
 
@@ -328,6 +369,72 @@ module Ladb::OpenCutList
       @notification_panel.visible = false
       @canvas.append(@notification_panel)
 
+    end
+
+    def setup_highlighted_part_helper(part, instance_paths = nil)
+
+      definition = part.def.get_one_instance_info.definition
+      triangles = _compute_children_faces_triangles(definition.entities)
+      bounds = Geom::BoundingBox.new.add(triangles)
+
+      if instance_paths.nil?
+        instance_paths = part.def.instance_infos.values.map { |instance_info| instance_info.path }
+        update_only = false
+      else
+        update_only = true
+      end
+
+      instance_paths.each do |path|
+
+        serialized_path = PathUtils::serialize_path(path)
+
+        next if update_only && !@highlighted_parts_helpers.has_key?(serialized_path)
+
+        transformation = PathUtils::get_transformation(path)
+        scale = Scale3d.create_from_transformation(transformation)
+        size = Size3d.create_from_bounds(bounds, scale, @auto_orient && !part.orientation_locked_on_axis)
+
+        arrow_color = size.auto_oriented? ? COLOR_ARROW_AUTO_ORIENTED : COLOR_ARROW
+        arrow_line_width = 2
+
+        part_helper = Kuix::Group.new
+        part_helper.transformation = transformation
+        @highlighted_parts_layer.append(part_helper)
+
+          mesh = Kuix::Mesh.new
+          mesh.add_triangles(triangles)
+          mesh.background_color = COLOR_HIGHLIGHTED_PART
+          part_helper.append(mesh)
+
+          if part.group.material_type != MaterialAttributes::TYPE_HARDWARE
+
+            # Back arrow
+            arrow = Kuix::ArrowMotif.new
+            arrow.patterns_transformation = size.oriented_transformation
+            arrow.bounds.origin.copy!(bounds.min)
+            arrow.bounds.size.copy!(bounds)
+            arrow.color = arrow_color
+            arrow.line_width = arrow_line_width
+            arrow.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+            part_helper.append(arrow)
+
+            # Front arrow
+            arrow = Kuix::ArrowMotif.new
+            arrow.patterns_transformation = size.oriented_transformation
+            arrow.patterns_transformation *= Geom::Transformation.translation(Z_AXIS)
+            arrow.bounds.origin.copy!(bounds.min)
+            arrow.bounds.size.copy!(bounds)
+            arrow.color = arrow_color
+            arrow.line_width = arrow_line_width
+            part_helper.append(arrow)
+
+          end
+
+        @highlighted_parts_helpers[serialized_path].remove unless @highlighted_parts_helpers[serialized_path].nil?
+
+        @highlighted_parts_helpers[serialized_path] = part_helper
+
+      end
     end
 
     def setup_minitools_btns(view)
@@ -960,6 +1067,9 @@ module Ladb::OpenCutList
       # Remove event callbacks
       PLUGIN.remove_event_callback(PluginObserver::ON_GLOBAL_PRESET_CHANGED, @event_callback)
 
+      # Maximize dialog if needed
+      PLUGIN.show_tabs_dialog(@tab_name_to_show_on_quit, false) unless @tab_name_to_show_on_quit.nil?
+
     end
 
     def onResume(view)
@@ -1217,8 +1327,8 @@ module Ladb::OpenCutList
 
     def _reset_ui
 
-      # Clear Kuix space
-      clear_space
+      # Clear Overlay layer
+      @overlay_layer.remove_all
 
       # Reset cursor
       pop_to_root_cursor
