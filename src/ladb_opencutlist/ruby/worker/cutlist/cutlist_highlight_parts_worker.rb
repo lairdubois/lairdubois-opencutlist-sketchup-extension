@@ -42,7 +42,8 @@ module Ladb::OpenCutList
       # Create and activate Smart Axes tool
       model.select_tool(SmartAxesTool.new(
         tab_name_to_show_on_quit: @tab_name_to_show_on_quit,
-        highlighted_parts: parts
+        highlighted_parts: parts,
+        current_action: SmartAxesTool::ACTION_SWAP_LENGTH_WIDTH
       ))
 
       # Focus SketchUp

@@ -49,12 +49,15 @@ module Ladb::OpenCutList
 
                    tab_name_to_show_on_quit: nil,
 
-                   highlighted_parts: nil
+                   highlighted_parts: nil,
+
+                   current_action: nil
 
     )
 
       super(quit_on_esc, quit_on_undo)
 
+      # Extract auto_orient option
       @auto_orient = PLUGIN.get_model_preset('cutlist_options')['auto_orient']
 
       # Define if OpenCutList dialog must be maximized when tool ends
@@ -65,7 +68,7 @@ module Ladb::OpenCutList
       @highlighted_parts_helpers = {}
 
       # Action
-      @current_action = nil
+      @current_action = current_action
 
       # Setup action stack
       @action_stack = []

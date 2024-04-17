@@ -68,13 +68,16 @@ module Ladb::OpenCutList
 
                    tab_name_to_show_on_quit: nil,
 
-                   highlighted_parts: nil
+                   highlighted_parts: nil,
+
+                   current_action: nil
 
     )
 
       super(
         tab_name_to_show_on_quit: tab_name_to_show_on_quit,
-        highlighted_parts: highlighted_parts
+        highlighted_parts: highlighted_parts,
+        current_action: current_action,
       )
 
       # Create cursors

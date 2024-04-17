@@ -78,7 +78,7 @@ module Ladb::OpenCutList
     COLOR_ACTION = Kuix::COLOR_MAGENTA
 
     def initialize
-      super()
+      super
 
       # Create cursors
       @cursor_export_stl = create_cursor('export-stl', 0, 0)
