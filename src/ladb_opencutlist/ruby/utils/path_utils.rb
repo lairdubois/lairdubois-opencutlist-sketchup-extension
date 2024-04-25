@@ -8,11 +8,7 @@ module Ladb::OpenCutList
 
     def self.serialize_path(path)  # path is Array<ComponentInstance>
       return nil unless path.is_a?(Array)
-      entity_ids = []
-      path.each { |entity|
-        entity_ids.push(entity.entityID)
-      }
-      entity_ids.join(SEPARATOR)
+      path.map { |entity| entity.entityID }.join(SEPARATOR)
     end
 
     def self.unserialize_path(serialized_path)
@@ -50,9 +46,9 @@ module Ladb::OpenCutList
     def self.get_transformation(path, default_transformation = nil)
       return default_transformation if path.nil? || path.empty?
       transformation = Geom::Transformation.new
-      path.each { |entity|
+      path.each do |entity|
         transformation *= entity.transformation if entity.respond_to?(:transformation)
-      }
+      end
       transformation
     end
 

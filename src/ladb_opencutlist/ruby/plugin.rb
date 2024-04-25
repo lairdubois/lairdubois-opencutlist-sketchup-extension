@@ -288,7 +288,7 @@ module Ladb::OpenCutList
         if data.has_key?(section)
           data = data[section]
           data.each do |key, value|
-            if value.is_a? Hash
+            if value.is_a?(Hash)
               if model_unit_is_metric
                 value = value['metric'] if value.has_key?('metric')
               else
@@ -471,7 +471,7 @@ module Ladb::OpenCutList
     def set_global_preset(dictionary, values, name = nil, section = nil, fire_event = false)
 
       name = PRESETS_DEFAULT_NAME if name.nil?
-      name = name.to_s unless name.is_a? String
+      name = name.to_s unless name.is_a?(String)
       section = '0' if section.nil?
       section = section.to_s unless section.is_a?(String)
 
@@ -515,7 +515,7 @@ module Ladb::OpenCutList
     def get_global_preset_context(dictionary, name = nil, section = nil)
 
       name = PRESETS_DEFAULT_NAME if name.nil?
-      name = name.to_s unless name.is_a? String
+      name = name.to_s unless name.is_a?(String)
       section = '0' if section.nil?
       section = section.to_s unless section.is_a?(String)
 
@@ -773,6 +773,9 @@ module Ladb::OpenCutList
       }
       submenu.add_item(get_i18n_string('tab.cutlist.title')) {
         show_tabs_dialog('cutlist')
+      }
+      submenu.add_item(get_i18n_string('tab.outliner.title')) {
+        show_tabs_dialog('outliner')
       }
       submenu.add_item(get_i18n_string('tab.importer.title')) {
         show_tabs_dialog('importer')
@@ -1464,7 +1467,7 @@ module Ladb::OpenCutList
 
         value = read_default(key)
 
-        if value.is_a? String
+        if value.is_a?(String)
           value = value.gsub(/[\\]/, '')      # unescape double quote
         end
 
@@ -1486,10 +1489,7 @@ module Ladb::OpenCutList
 
         key = setting['key']
         value = setting['value']
-
-        if value.is_a? String
-          value = value.gsub(/["]/, '\"')        # escape double quote in string
-        end
+        value = value.gsub(/["]/, '\"') if value.is_a?(String)       # escape double quote in string
 
         write_default(key, value)
 

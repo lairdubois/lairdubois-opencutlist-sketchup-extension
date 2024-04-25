@@ -77,7 +77,7 @@ module Ladb::OpenCutList
     def get_real_parts(ids = nil)
       parts = []
       @parts.each do |part|
-        if part.is_a? FolderPart
+        if part.is_a?(FolderPart)
           part.children.each do |child_part|
             parts << child_part unless ids && !ids.include?(child_part.id) && !ids.include?(part.id)
           end

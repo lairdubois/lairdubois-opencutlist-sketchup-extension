@@ -744,8 +744,8 @@
                         that.setCompact(true);
                     }
 
-                    if (that.options.dialog_startup_tab_name) {
-                        that.selectTab(that.options.dialog_startup_tab_name);
+                    if (that.options.tabs_dialog_startup_tab_name) {
+                        that.selectTab(that.options.tabs_dialog_startup_tab_name);
                     }
 
                     // Dev alert

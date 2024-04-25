@@ -8,7 +8,7 @@ module Ladb::OpenCutList
     attr_accessor :width, :height
 
     def initialize(width = 0, height = 0)
-      if width.is_a? String
+      if width.is_a?(String)
         s_width, s_height = StringUtils.split_dxd(width)
         width = s_width.to_l
         height = s_height.to_l

@@ -5,10 +5,6 @@ module Ladb::OpenCutList
 
   class TransformationUtils
 
-    def self.get_scale3d(transformation, precision = 6)
-      Scale3d.create_from_transformation(transformation, precision)
-    end
-
     def self.flipped?(transformation)
       AxisUtils.flipped?(transformation.xaxis, transformation.yaxis, transformation.zaxis)
     end

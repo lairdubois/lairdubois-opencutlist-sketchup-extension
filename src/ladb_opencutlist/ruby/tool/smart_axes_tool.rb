@@ -56,7 +56,7 @@ module Ladb::OpenCutList
     COLOR_MESH_HIGHLIGHTED = Sketchup::Color.new(0, 0, 255, 200).freeze
     COLOR_BOX = Kuix::COLOR_BLACK
     COLOR_ACTION = Kuix::COLOR_MAGENTA
-    COLOR_ACTION_FILL = Sketchup::Color.new(255, 0, 255, 0.2).freeze
+    COLOR_ACTION_FILL = Sketchup::Color.new(255, 0, 255, 0.2).blend(COLOR_MESH, 0.5).freeze
     COLOR_LENGTH = Kuix::COLOR_RED
     COLOR_LENGTH_FILL = Sketchup::Color.new(255, 0, 0, 0.2).freeze
     COLOR_WIDTH = Kuix::COLOR_GREEN
@@ -289,7 +289,7 @@ module Ladb::OpenCutList
         instance_info = part.def.get_one_instance_info
 
         arrow_color = part.auto_oriented ? COLOR_ARROW_AUTO_ORIENTED : COLOR_ARROW
-        arrow_line_width = 3
+        arrow_line_width = 2
 
         increases = [ 0, 0, 0 ]
         if part.length_increased || part.width_increased || part.thickness_increased
@@ -692,7 +692,7 @@ module Ladb::OpenCutList
                 instance.transformation *= ti
               }
 
-              if lock_orientation_on_axis && PLUGIN.get_model_preset('cutlist_options').fetch('auto_orient')
+              if lock_orientation_on_axis && PLUGIN.get_model_preset('cutlist_options')['auto_orient']
                 definition_attributes = DefinitionAttributes.new(definition)
                 definition_attributes.orientation_locked_on_axis = true
                 definition_attributes.write_to_attributes

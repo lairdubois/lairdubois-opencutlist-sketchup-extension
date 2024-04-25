@@ -7,7 +7,7 @@ module Ladb::OpenCutList
     def self.split_dxd(str)
       value1 = '0'
       value2 = '0'
-      if str.is_a? String
+      if str.is_a?(String)
         a = str.split('x')
         if a.length == 2
           value1 = a[0].strip
