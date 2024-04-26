@@ -8,6 +8,7 @@ module Ladb::OpenCutList
   require_relative '../helper/entities_helper'
   require_relative '../model/attributes/definition_attributes'
   require_relative '../model/geom/size3d'
+  require_relative '../observer/model_observer'
   require_relative '../utils/axis_utils'
   require_relative '../utils/transformation_utils'
 
@@ -637,6 +638,9 @@ module Ladb::OpenCutList
               # Commit model modification operation
               model.commit_operation
 
+              # Fire event
+              ModelObserver.instance.onDrawingChange
+
               # Refresh active
               _refresh_active_part
 
@@ -688,9 +692,9 @@ module Ladb::OpenCutList
               entities.transform_entities(t, entities.to_a)
 
               # Inverse transform definition's instances
-              definition.instances.each { |instance|
+              definition.instances.each do |instance|
                 instance.transformation *= ti
-              }
+              end
 
               if lock_orientation_on_axis && PLUGIN.get_model_preset('cutlist_options')['auto_orient']
                 definition_attributes = DefinitionAttributes.new(definition)
@@ -700,6 +704,9 @@ module Ladb::OpenCutList
 
               # Commit model modification operation
               model.commit_operation
+
+              # Fire event
+              ModelObserver.instance.onDrawingChange
 
               # Refresh active
               _refresh_active_part

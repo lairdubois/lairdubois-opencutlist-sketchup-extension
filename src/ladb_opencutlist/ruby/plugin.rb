@@ -503,7 +503,7 @@ module Ladb::OpenCutList
       write_global_presets
 
       # Fire event
-      trigger_onGlobalPresetChanged(dictionary, section) if fire_event
+      PluginObserver.instance.onGlobalPresetChanged(dictionary, section) if fire_event
 
     end
 
@@ -574,14 +574,6 @@ module Ladb::OpenCutList
       end
     end
 
-    def trigger_onGlobalPresetChanged(dictonary, section)
-      @observers.each do |observer|
-        if observer.respond_to?(:onGlobalPresetChanged)
-          observer.onGlobalPresetChanged(dictonary, section)
-        end
-      end
-    end
-
     # -----
 
     @model_presets_cache = nil
@@ -644,7 +636,7 @@ module Ladb::OpenCutList
       write_model_presets
 
       # Fire event
-      trigger_onModelPresetChanged(dictionary, section) if fire_event
+      PluginObserver.instance.onModelPresetChanged(dictionary, section) if fire_event
 
     end
 
@@ -694,14 +686,6 @@ module Ladb::OpenCutList
       read_model_presets if @model_presets_cache.nil?
       _debug('MODEL PRESETS') do
         pp @model_presets_cache
-      end
-    end
-
-    def trigger_onModelPresetChanged(dictonary, section)
-      @observers.each do |observer|
-        if observer.respond_to?(:onModelPresetChanged)
-          observer.onModelPresetChanged(dictonary, section)
-        end
       end
     end
 

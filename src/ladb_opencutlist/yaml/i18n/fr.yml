@@ -132,6 +132,7 @@ core:
     material_change: Au moins une matière a été modifiée.
     selection_change: La sélection dans le modèle actif a changée.
     layers_change: Les balises dans le modèle actif ont changées.
+    drawing_change: Le dessin du modèle actif a été modifié.
   upgrade:
     unavailable: Impossible de connaitre la dernière version d'*OpenCutList*.
     available: |

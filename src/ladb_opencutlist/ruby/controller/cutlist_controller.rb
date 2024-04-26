@@ -6,6 +6,7 @@ module Ladb::OpenCutList
   require_relative '../observer/app_observer'
   require_relative '../observer/selection_observer'
   require_relative '../observer/materials_observer'
+  require_relative '../observer/model_observer'
 
   class CutlistController < Controller
 
@@ -113,6 +114,7 @@ module Ladb::OpenCutList
                                              SelectionObserver::ON_SELECTION_CLEARED,
                                              MaterialsObserver::ON_MATERIAL_CHANGE,
                                              MaterialsObserver::ON_MATERIAL_REMOVE,
+                                             ModelObserver::ON_DRAWING_CHANGE,
                                          ]) do |params|
 
         # Invalidate Cutlist if it exists

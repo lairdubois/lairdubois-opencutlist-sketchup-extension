@@ -5644,6 +5644,11 @@
                 that.showObsolete('core.event.selection_change');
             }
         });
+        addEventCallback([ 'on_drawing_change' ], function () {
+            if (that.generateAt) {
+                that.showObsolete('core.event.drawing_change');
+            }
+        });
 
     };
 

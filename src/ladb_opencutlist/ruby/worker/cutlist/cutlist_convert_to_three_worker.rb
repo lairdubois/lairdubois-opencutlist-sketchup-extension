@@ -100,9 +100,6 @@ module Ladb::OpenCutList
           # Populate part definitions
           _create_three_part_def(three_model_def, part, instance_info.entity.definition, materials[part.material_name])
 
-          # Retrieve axis order 0 = length axis, 1 = width axis, 2 = thickness axis
-          axes_order = part.def.size.axes
-
           mt = Geom::Transformation.new
           if part.auto_oriented && part.group.material_type != MaterialAttributes::TYPE_HARDWARE
 

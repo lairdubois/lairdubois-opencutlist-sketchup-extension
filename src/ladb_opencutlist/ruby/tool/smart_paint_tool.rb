@@ -1229,6 +1229,9 @@ module Ladb::OpenCutList
             # Commit model modification operation
             model.commit_operation
 
+            # Fire event
+            ModelObserver.instance.onDrawingChange
+
             # Refresh active
             _refresh_active_part
 
@@ -1247,6 +1250,9 @@ module Ladb::OpenCutList
             # Commit model modification operation
             model.commit_operation
 
+            # Fire event
+            ModelObserver.instance.onDrawingChange
+
             # Refresh active
             _refresh_active_part
 
@@ -1264,6 +1270,9 @@ module Ladb::OpenCutList
 
             # Commit model modification operation
             model.commit_operation
+
+            # Fire event
+            ModelObserver.instance.onDrawingChange
 
             # Refresh active
             _refresh_active_part
@@ -1288,6 +1297,9 @@ module Ladb::OpenCutList
 
             # Commit model modification operation
             model.commit_operation
+
+            # Fire event
+            ModelObserver.instance.onDrawingChange
 
             # Refresh active
             _refresh_active_part

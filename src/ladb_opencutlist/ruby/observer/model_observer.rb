@@ -6,6 +6,8 @@ module Ladb::OpenCutList
 
     include Singleton
 
+    ON_DRAWING_CHANGE = 'on_drawing_change'.freeze
+
     def onPreSaveModel(model)
       # puts "onPreSaveModel: #{model}"
 
@@ -18,6 +20,16 @@ module Ladb::OpenCutList
       # (permits to save default 'mass_unit', 'mass_precision', 'currency_symbol' and 'currency_precision' values to file)
       settings_model_values, contains_default_values = PLUGIN.get_model_preset_context('settings_model')
       PLUGIN.set_model_preset('settings_model', settings_model_values) if contains_default_values
+
+    end
+
+    # -- OCL events
+
+    def onDrawingChange
+      # puts "onDrawingChange"
+
+      # Trigger event to JS
+      PLUGIN.trigger_event(ON_DRAWING_CHANGE, nil)
 
     end
 
