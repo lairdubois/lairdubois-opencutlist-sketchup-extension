@@ -291,7 +291,7 @@ LadbAbstractTab.prototype.print = function (title, margin, size) {
     // document.title = title;
 
     if (margin === undefined) {
-        if (this.dialog.capabilities.dialog_print_margin === 1) {     /* 1 = Small */
+        if (this.dialog.capabilities.tabs_dialog_print_margin === 1) {     /* 1 = Small */
             margin = '0.25in 0.25in 0.5in 0.25in';
         } else {
             margin = '';

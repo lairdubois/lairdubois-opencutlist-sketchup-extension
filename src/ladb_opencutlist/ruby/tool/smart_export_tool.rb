@@ -762,7 +762,8 @@ module Ladb::OpenCutList
             picked_part_entity_path = _get_part_entity_path_from_path(@picker.picked_face_path)
             if picked_part_entity_path
 
-              if Sketchup.active_model.active_path
+              # TODO : find a best way to extract part origin when active path is not root
+              if Sketchup.active_model.active_path && fetch_action_option_value(fetch_action, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR)
 
                 diff = Sketchup.active_model.active_path - picked_part_entity_path
                 unless diff.empty?
