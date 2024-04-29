@@ -14,7 +14,7 @@ module Ladb::OpenCutList
 
     include LayerVisibilityHelper
 
-    ORIGIN_POSITION_DEFAULT = 0 # = Path Origin
+    ORIGIN_POSITION_DEFAULT = 0 # = Drawing Element Origin
     ORIGIN_POSITION_FACES_BOUNDS_MIN = 1
     ORIGIN_POSITION_EDGES_BOUNDS_MIN = 2
     ORIGIN_POSITION_BOUNDS_MIN = 3
@@ -76,20 +76,6 @@ module Ladb::OpenCutList
 
     # -----
 
-    # def tr(group = nil, level = 0)
-    #   if group.nil?
-    #     SKETCHUP_CONSOLE.clear
-    #     group = Sketchup.active_model
-    #   end
-    #   puts "#{''.rjust(level, ' ')}#{''.rjust(group.name.length, '-')}"
-    #   puts "#{''.rjust(level, ' ')}#{group.name}#{Sketchup.active_model.active_path.is_a?(Array) && Sketchup.active_model.active_path.last == group ? ' (active)' : ''}"
-    #   group.edit_transform.to_a.each_slice(4) { |row| puts "#{''.rjust(level + 1, ' ')}#{row.map { |v| v.to_mm.round(6) }.join(' ')}" } if group.respond_to?(:edit_transform)
-    #   group.transformation.to_a.each_slice(4) { |row| puts "#{''.rjust(level + 1, ' ')}#{row.map { |v| v.to_mm.round(6) }.join(' ')}" } if group.respond_to?(:transformation)
-    #   group.entities.grep(Sketchup::Edge).each { |edge| puts "#{''.rjust(level, ' ')}edge.x = #{edge.start.position.x}" }
-    #   group.entities.grep(Sketchup::Edge).each { |edge| puts "#{''.rjust(level, ' ')}edge.x(t) = #{edge.start.position.transform(Sketchup.active_model.edit_transform.inverse).x}" } if Sketchup.active_model.edit_transform
-    #   group.entities.grep(Sketchup::Group).each { |sub_group| tr(sub_group, level + 1) }
-    # end
-
     def run
       return { :errors => [ 'default.error' ] } unless @path.is_a?(Array)
       return { :errors => [ 'default.error' ] } if Sketchup.active_model.nil?
@@ -103,19 +89,30 @@ module Ladb::OpenCutList
       # Compute transformation to drawing element
       transformation = origin_transformation = PathUtils::get_transformation(@path, IDENTITY)
 
-      # Adapt local axes if 'model.active_path' is path
-      if Sketchup.active_model.active_path == @path
+      # Adapt local axes if model.active_path is container_path
+      unless Sketchup.active_model.active_path.nil?
 
-        o = ORIGIN.transform(Sketchup.active_model.edit_transform)
-        ox = X_AXIS.transform(Sketchup.active_model.edit_transform).normalize
-        oy = Y_AXIS.transform(Sketchup.active_model.edit_transform).normalize
-        oz = Z_AXIS.transform(Sketchup.active_model.edit_transform).normalize
+        if drawing_element.is_a?(Sketchup::Group) || drawing_element.is_a?(Sketchup::ComponentInstance)
+          container_path = @path
+        elsif drawing_element.is_a?(Sketchup::Face)
+          container_path = @path[0...-1]
+        else
+          container_path = nil
+        end
+        if Sketchup.active_model.active_path == container_path
 
-        origin_transformation *= Geom::Transformation.axes(o, ox, oy, oz)
+          origin_transformation *= Geom::Transformation.axes(
+            ORIGIN.transform(Sketchup.active_model.edit_transform),
+            X_AXIS.transform(Sketchup.active_model.edit_transform).normalize,
+            Y_AXIS.transform(Sketchup.active_model.edit_transform).normalize,
+            Z_AXIS.transform(Sketchup.active_model.edit_transform).normalize
+          )
 
-        @input_local_x_axis = @input_local_x_axis.transform(origin_transformation).normalize unless @input_local_x_axis.nil?
-        @input_local_y_axis = @input_local_y_axis.transform(origin_transformation).normalize unless @input_local_y_axis.nil?
-        @input_local_z_axis = @input_local_z_axis.transform(origin_transformation).normalize unless @input_local_z_axis.nil?
+          @input_local_x_axis = @input_local_x_axis.transform(origin_transformation).normalize
+          @input_local_y_axis = @input_local_y_axis.transform(origin_transformation).normalize
+          @input_local_z_axis = @input_local_z_axis.transform(origin_transformation).normalize
+
+        end
 
       end
 
