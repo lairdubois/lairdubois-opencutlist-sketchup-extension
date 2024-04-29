@@ -132,6 +132,7 @@ core:
     material_change: At least one material has changed.
     selection_change: Selection in the active model has changed.
     layers_change: The tags in the active model have changed.
+    drawing_change: The design of the active model has been modified.
   upgrade:
     unavailable: The latest version of *OpenCutList* could not be found.
     available: |
@@ -180,9 +181,9 @@ core:
     dictionary:
       component_textinput_color: Color Palette
       cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
-      cutlist_cuttingdiagram1d_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 1D
+      cutlist_cuttingdiagram1d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 1D
       cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
-      cutlist_cuttingdiagram2d_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 2D
+      cutlist_cuttingdiagram2d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 2D
       cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
       cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
       cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
@@ -610,8 +611,9 @@ tab:
       final_area: Area - final
       count: Quantity
       part_count: Parts quantity
-      material_type: Type
-      material_name: Material
+      material: Material
+      material_type: Type of Material
+      material_name: Name of Material
       material_description: Material description
       material_url: URL of the material
       material_std_dimension: Standard dimensions
@@ -739,9 +741,13 @@ tab:
         *This option must be enabled for shapes to be exported.*
       option_saw_kerf: Blade Thickness
       option_saw_kerf_help: The width of material removed by the sawblade cut.
+      option_spacing: Spacing
+      option_spacing_help: Minimum spacing between parts.
       option_trimming: Trimming
       option_trimming_help_1d: The amount of material at each end of the board or edge banding to be treated as waste.
       option_trimming_help_2d: The amount of material around the raw panel to be treated as waste.
+      option_rotations: Rotations
+      option_rotations_help_2d: Number of possible rotations for each part.
       option_optimization: Optimization Level
       option_optimization_help: "The optimization level defines the number of computed possibilities, and therefore also the calculation time."
       option_optimization_0: Medium
@@ -832,7 +838,7 @@ tab:
         parts: "{{ count }} part"
         parts_plural: "{{ count }} parts"
         settings: Settings
-      export:
+      write:
         title: Cutting Diagram Export
         info_0: |
           This module lets you export the **geometry** of the *cutting diagram* as a file in [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) or [DXF](https://en.wikipedia.org/wiki/AutoCAD_DXF) format.
@@ -860,7 +866,7 @@ tab:
         option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
         option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
         option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
-        option_sheet_good: Sheet Good
+        option_sheet_good: Sheet Goods
         option_sheet_good_help: |
           Enables sheet good export and color selection.
         option_sheet_veneer: Veneer
@@ -1095,6 +1101,11 @@ tab:
       option_anchor_1: Project the part's origin
       option_anchor_help: |
         Enable the projection of the part's axis origin as anchor point.
+      option_switch_yz: Vertical axis
+      option_switch_yz_0: Z vertical
+      option_switch_yz_1: Y vertical
+      option_switch_yz_help: |
+        Swap the Y and Z axes to define the vertical axis of the part.
       option_smoothing: Smoothing
       option_smoothing_0: None
       option_smoothing_1: Smooth circles and arcs (Experimental)
@@ -1124,7 +1135,9 @@ tab:
         Select the color of drillings.
       option_parts_paths: Paths
       option_parts_paths_help: |
-        Selects the color of paths.
+        Allows you to choose plot colors. 
+
+        *The fill color will only be used for closed paths.*
       error:
         no_part: No part to export.
       warning:
@@ -1188,9 +1201,7 @@ tab:
       texture_load: Load a new texture
       texture_clear: Remove texture
       edit: "Edit the properties of '{{ name }}'"
-      set_current: |
-        Paint parts with '{{ name }}'
-        *Double-click to minimize*
+      set_current: "Color parts with '{{ name }}'."
       open_url: Open material URL
     menu:
       import_from_skm: Import material (.skm)
@@ -1291,6 +1302,9 @@ tab:
     export_to_skm:
       title: Export to .skm file
     option:
+      minimize_on_smart_paint: Reduce after * 'Color parts with...'*
+      minimize_on_smart_paint_help: "If this option is enabled, the OpenCutList window will be minimized when the *'Color parts with...'* function is used."
+      general: General
       material_order_strategy: Material Sorting
       material_order_strategy_help: |
         Reorder the tiles to define the sorting strategy for the list of materials.
@@ -1663,9 +1677,9 @@ tool:
     action_2: Swap front ↔ backside
     action_2_status: Click on a part to swap its front with its backside
     action_3: Adapt axes
-    action_3_status: Click on the face or edge of a part to adapt its axes
+    action_3_status: Target a face of a part and click on an edge to adapt its axes
     action_4: Move origin
-    action_4_status: Click on a part vertex to place its origin there
+    action_4_status: Target a face of a part and click on a point to place its origin there.
     action_option_group_direction: Direction
     action_option_direction_0: L
     action_option_direction_1: W
