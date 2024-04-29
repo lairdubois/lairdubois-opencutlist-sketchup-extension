@@ -1508,12 +1508,14 @@ module Ladb::OpenCutList
           if @pick_context_by_face && @pick_helper.leaf_at(index).is_a?(Sketchup::Face)
             picked_face = @pick_helper.leaf_at(index)
             picked_face_path = @pick_helper.path_at(index)
+            picked_face_path = @view.model.active_path + picked_face_path unless picked_face_path.nil? || @view.model.active_path.nil?  # Picker 'path_at' returns path only in active_path context
             break
           end
 
           if @pick_context_by_edge && @pick_helper.leaf_at(index).is_a?(Sketchup::Edge)
             picked_edge = @pick_helper.left_at(index)
             picked_edge_path = @pick_helper.path_at(index)
+            picked_edge_path = @view.model.active_path + picked_edge_path unless picked_edge_path.nil? || @view.model.active_path.nil?  # Picker 'path_at' returns path only in active_path context
             break
           end
 
