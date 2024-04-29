@@ -132,6 +132,7 @@ core:
     material_change: Mindestens ein Material wurde verändert.
     selection_change: Die Auswahl im aktiven Modell wurde verändert.
     layers_change: Tags im Modell wurden verändert.
+    drawing_change: Die Zeichung des aktiven Modells wurde geändert.
   upgrade:
     unavailable: Die neueste Version von *OpenCutList* wurde nicht gefunden.
     available: |
@@ -180,9 +181,9 @@ core:
     dictionary:
       component_textinput_color: Farbpalette
       cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
-      cutlist_cuttingdiagram1d_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 1D
+      cutlist_cuttingdiagram1d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 1D
       cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
-      cutlist_cuttingdiagram2d_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 2D
+      cutlist_cuttingdiagram2d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 2D
       cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
       cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
       cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
@@ -610,8 +611,9 @@ tab:
       final_area: Fläche - fertig
       count: Anzahl
       part_count: Anzahl der Teile
-      material_type: Typ
-      material_name: Material
+      material: Material
+      material_type: Materialtyp
+      material_name: Materialname
       material_description: Materialbeschreibung
       material_url: URL des Materials
       material_std_dimension: Standarddimensionen
@@ -739,9 +741,13 @@ tab:
         *Diese Option muss aktiviert sein, damit die Formen exportiert werden können.*
       option_saw_kerf: Sägeblattdicke
       option_saw_kerf_help: Breite des Materialverlustes durch die Sägeschnittfuge.
+      option_spacing: Abstand
+      option_spacing_help: Mindestabstand zwischen den einzelnen Teilen.
       option_trimming: Randabfallbreite
       option_trimming_help_1d: Breite des Säuberungsschnittes an jedem Ende der Stange oder des Kantenbandes.
       option_trimming_help_2d: Breite des Säuberungsschnittes auf allen vier Seiten der Platte.
+      option_rotations: Drehungen
+      option_rotations_help_2d: Anzahl der möglichen Drehungen für jedes Teil.
       option_optimization: Optimierungsstufe
       option_optimization_help: "Die Optimierungsstufe definiert die Anzahl der berechneten Möglichkeiten und damit auch die Berechnungszeit."
       option_optimization_0: Mittel
@@ -832,7 +838,7 @@ tab:
         parts: "{{ count }} Teil"
         parts_plural: "{{ count }} Teile"
         settings: Einstellungen
-      export:
+      write:
         title: Schnittplan exportieren
         info_0: |
           Mit diesem Modul können Sie die **Geometrie** des *Schnittplans* als Datei im Format [SVG](https://de.wikipedia.org/wiki/Scalable_Vector_Graphics) oder [DXF](https://de.wikipedia.org/wiki/DXF) exportieren.
@@ -1095,6 +1101,11 @@ tab:
       option_anchor_1: Ursprung des Teils projizieren
       option_anchor_help: |
         Aktivierung der Projektion des Achsenursprungs des Teils als Ankerpunkt.
+      option_switch_yz: Vertikale Achse
+      option_switch_yz_0: Z vertikal
+      option_switch_yz_1: Y vertikal
+      option_switch_yz_help: |
+        Ermöglicht das Vertauschen der Y- und Z-Achse, um die vertikale Achse des Teils zu definieren.
       option_smoothing: Glättung
       option_smoothing_0: Keine
       option_smoothing_1: Glätten von Kreisen und Bögen (Experimentell)
@@ -1124,7 +1135,9 @@ tab:
         Auswahl der Farbe von Bohrungen.
       option_parts_paths: Pfade
       option_parts_paths_help: |
-        Wahl der Pfadfarbe.
+        Auswahl der Pfadfarben.
+
+        *Die Füllfarbe wird nur bei geschlossenen Pfaden verwendet.*
       error:
         no_part: Kein Teil zum Exportieren.
       warning:
@@ -1188,9 +1201,7 @@ tab:
       texture_load: Neue Textur laden
       texture_clear: Textur löschen
       edit: "Eigenschaften von '{{ name }}' bearbeiten"
-      set_current: |
-        Einfärben von Teilen mit '{{ name }}'
-        *Doppelklick zum Minimieren*
+      set_current: "Einfärben von Teilen mit '{{ name }}'"
       open_url: URL des Materials öffnen
     menu:
       import_from_skm: Material importieren (.skm)
@@ -1291,6 +1302,9 @@ tab:
     export_to_skm:
       title: In .skm Datei exportieren
     option:
+      minimize_on_smart_paint: Reduzieren nach *'Teile einfärben mit...'*
+      minimize_on_smart_paint_help: "Wenn diese Option aktiviert ist, wird das OpenCutList-Fenster verkleinert, wenn die Funktion *'Teile einfärben mit...'* verwendet wird."
+      general: Allgemein
       material_order_strategy: Material-Sortierung
       material_order_strategy_help: |
         Die Sortierreihenfolge der Materialien wird durch die Anordnung der folgenden Kacheln definiert.
@@ -1663,9 +1677,9 @@ tool:
     action_2: Vorderseite ↔ Rückseite vertauschen
     action_2_status: "Klicken Sie auf ein Teil, um seine Vorderseite mit seiner Rückseite zu vertauschen"
     action_3: Achsen ausrichten
-    action_3_status: "Klicken Sie auf die Fläche oder Kante eines Teils, um die Achsenausrichtung anzupassen"
+    action_3_status: "Zielen Sie auf die Fläche eines Teils und klicken Sie auf eine Kante, um die Achsen des Teils anzupassen."
     action_4: Ursprung verschieben
-    action_4_status: "Klicken Sie auf einen Eckpunkt des Teils, um seinen Ursprung dort zu platzieren"
+    action_4_status: "Zielen Sie auf die Fläche eines Teils und klicken Sie auf einen Punkt, um den Ursprung dort zu platzieren."
     action_option_group_direction: Ausrichtung
     action_option_direction_0: L
     action_option_direction_1: B
