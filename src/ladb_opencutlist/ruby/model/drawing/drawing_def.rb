@@ -2,10 +2,20 @@ module Ladb::OpenCutList
 
   class DrawingDef
 
+    VIEW_TYPE_CUSTOM = nil
+    VIEW_TYPE_TOP = 'top'.freeze
+    VIEW_TYPE_BOTTOM = 'bottom'.freeze
+    VIEW_TYPE_LEFT = 'left'.freeze
+    VIEW_TYPE_RIGHT = 'right'.freeze
+    VIEW_TYPE_FRONT = 'front'.freeze
+    VIEW_TYPE_BACK = 'back'.freeze
+
     attr_reader :faces_bounds, :edges_bounds, :bounds, :face_manipulators, :surface_manipulators, :edge_manipulators, :curve_manipulators
-    attr_accessor :transformation, :input_plane_manipulator, :input_line_manipulator
+    attr_accessor :transformation, :input_plane_manipulator, :input_line_manipulator, :view_type
 
     def initialize
+
+      @view_type = VIEW_TYPE_CUSTOM
 
       @transformation = Geom::Transformation.new
 

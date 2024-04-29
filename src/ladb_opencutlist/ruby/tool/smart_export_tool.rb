@@ -289,9 +289,6 @@ module Ladb::OpenCutList
 
       if part
 
-        # Show part infos
-        show_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name, '-', _get_active_part_size, _get_active_part_icons ])
-
         if is_action_export_part_3d?
 
           # Part 3D
@@ -482,6 +479,9 @@ module Ladb::OpenCutList
           end
 
         end
+
+        # Show part infos
+        show_tooltip([ [ "##{_get_active_part_name}", @active_drawing_def.nil? || @active_drawing_def.view_type.nil? ? nil : "(#{PLUGIN.get_i18n_string("core.component.three_viewer.view_#{@active_drawing_def.view_type}")})" ], _get_active_part_material_name, '-', _get_active_part_size, _get_active_part_icons ])
 
       else
 
@@ -762,16 +762,15 @@ module Ladb::OpenCutList
             picked_part_entity_path = _get_part_entity_path_from_path(@picker.picked_face_path)
             if picked_part_entity_path
 
-              # TODO : find a best way to extract part origin when active path is not root
-              if Sketchup.active_model.active_path && fetch_action_option_value(fetch_action, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR)
+              if Sketchup.active_model.active_path &&
+                fetch_action_option_value(fetch_action, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) &&
+                Sketchup.active_model.active_path.length > picked_part_entity_path.length &&
+                Sketchup.active_model.active_path.last != picked_part_entity_path.last
 
-                diff = Sketchup.active_model.active_path - picked_part_entity_path
-                unless diff.empty?
-                  _reset_active_part
-                  show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_export.error.incompatible_active_path')}", MESSAGE_TYPE_ERROR)
-                  push_cursor(@cursor_select_error)
-                  return
-                end
+                _reset_active_part
+                show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_export.error.incompatible_active_path')}", MESSAGE_TYPE_ERROR)
+                push_cursor(@cursor_select_error)
+                return
 
               end
 
@@ -875,6 +874,7 @@ module Ladb::OpenCutList
           end
 
           file_name = _get_active_part_name(true)
+          file_name += " - #{PLUGIN.get_i18n_string("core.component.three_viewer.view_#{@active_drawing_def.view_type}").upcase}" unless @active_drawing_def.nil? || @active_drawing_def.view_type.nil?
           file_format = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_FILE_FORMAT)
           unit = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_UNIT)
           anchor = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) && (@active_drawing_def.bounds.min.x != 0 || @active_drawing_def.bounds.min.y != 0)    # No anchor if = (0, 0, z)

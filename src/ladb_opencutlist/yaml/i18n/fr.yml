@@ -215,7 +215,7 @@ core:
       view_isometric: Isométrique
       view_top: Dessus
       view_bottom: Dessous
-      view_front: Face
+      view_front: Avant
       view_back: Arrière
       view_left: Gauche
       view_right: Droite

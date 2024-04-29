@@ -549,6 +549,21 @@ module Ladb::OpenCutList
       box.set_style_attribute(:background_color, background_color)
       box.set_style_attribute(:border_color, border_color)
 
+        fn_create_lbl = lambda do |item|
+
+          is_title = item.start_with?('#')
+          item = item[1..-1] if is_title
+
+          lbl = Kuix::Label.new
+          lbl.text = item
+          lbl.text_bold = true if is_title
+          lbl.text_size = unit * (is_title || items.one? ? 3 : 2.5) * get_text_unit_factor
+          lbl.text_align = TextAlignLeft
+          lbl.set_style_attribute(:color, text_color)
+
+          return lbl
+        end
+
         items = [ items ] if items.is_a?(String)
         items.each do |item|
           next if item.nil?
@@ -566,17 +581,7 @@ module Ladb::OpenCutList
               next
             end
 
-            is_title = item.start_with?('#')
-            item = item[1..-1] if is_title
-
-            lbl = Kuix::Label.new
-            lbl.text = item
-            lbl.text_bold = true if is_title
-            lbl.text_size = unit * (is_title || items.one? ? 3 : 2.5) * get_text_unit_factor
-            lbl.text_align = TextAlignLeft
-            lbl.set_style_attribute(:color, text_color)
-
-            box.append(lbl)
+            box.append(fn_create_lbl.call(item))
 
           elsif item.is_a?(Array)
 
@@ -585,7 +590,9 @@ module Ladb::OpenCutList
 
             item.each do |sub_item|
 
-              if sub_item.is_a?(Kuix::Motif2d)
+              if sub_item.is_a?(String)
+                panel.append(fn_create_lbl.call(sub_item))
+              elsif sub_item.is_a?(Kuix::Motif2d)
                 sub_item.padding.set_all!(@unit)
                 sub_item.min_size.set_all!(@unit * get_text_unit_factor * 3)
                 sub_item.line_width = @unit <= 4 ? 0.5 : 1
@@ -1485,6 +1492,8 @@ module Ladb::OpenCutList
 
     def do_pick
 
+      active_path = @view.model.active_path.nil? ? [] : @view.model.active_path # Picker 'path_at' returns path only in active_path context
+
       context_locked = @smart_tool.is_key_down?(VK_SHIFT)
 
       picked_face = context_locked && @pick_context_by_face ? @picked_face : nil
@@ -1507,15 +1516,13 @@ module Ladb::OpenCutList
 
           if @pick_context_by_face && @pick_helper.leaf_at(index).is_a?(Sketchup::Face)
             picked_face = @pick_helper.leaf_at(index)
-            picked_face_path = @pick_helper.path_at(index)
-            picked_face_path = @view.model.active_path + picked_face_path unless picked_face_path.nil? || @view.model.active_path.nil?  # Picker 'path_at' returns path only in active_path context
+            picked_face_path = active_path + @pick_helper.path_at(index)
             break
           end
 
           if @pick_context_by_edge && @pick_helper.leaf_at(index).is_a?(Sketchup::Edge)
             picked_edge = @pick_helper.left_at(index)
-            picked_edge_path = @pick_helper.path_at(index)
-            picked_edge_path = @view.model.active_path + picked_edge_path unless picked_edge_path.nil? || @view.model.active_path.nil?  # Picker 'path_at' returns path only in active_path context
+            picked_edge_path = active_path + @pick_helper.path_at(index)
             break
           end
 
@@ -1547,10 +1554,10 @@ module Ladb::OpenCutList
             if @pick_edges && picked_edge_path.nil? && @pick_helper.leaf_at(index).is_a?(Sketchup::Edge)
               unless context_locked
                 # External edges are considered only if contex is locked
-                next if !@pick_helper.leaf_at(index).used_by?(picked_face) || @pick_helper.path_at(index)[0...-1] != picked_face_path[0...-1]
+                next if !@pick_helper.leaf_at(index).used_by?(picked_face) || (active_path + @pick_helper.path_at(index))[0...-1] != picked_face_path[0...-1]
               end
               picked_edge = @pick_helper.leaf_at(index)
-              picked_edge_path = @pick_helper.path_at(index)
+              picked_edge_path = active_path + @pick_helper.path_at(index)
               break
             end
 
@@ -1560,14 +1567,14 @@ module Ladb::OpenCutList
 
               if @pick_clines && picked_cline_path.nil? && @pick_helper.leaf_at(index).is_a?(Sketchup::ConstructionLine)
                 picked_cline = @pick_helper.leaf_at(index)
-                picked_cline_path = @pick_helper.path_at(index)
+                picked_cline_path = active_path + @pick_helper.path_at(index)
                 break
               end
 
               if @pick_axes && picked_axes_path.nil? && @pick_helper.leaf_at(index).is_a?(Sketchup::Axes)
 
                 picked_axes = @pick_helper.leaf_at(index)
-                picked_axes_path = @pick_helper.path_at(index)
+                picked_axes_path = active_path + @pick_helper.path_at(index)
                 picked_axes_transformation = @pick_helper.transformation_at(index)
 
                 p0 = @view.screen_coords(picked_axes.origin.transform(picked_axes_transformation))

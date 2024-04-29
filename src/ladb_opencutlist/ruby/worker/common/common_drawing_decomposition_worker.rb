@@ -101,7 +101,23 @@ module Ladb::OpenCutList
       return { :errors => [ 'default.error' ] } unless drawing_element.is_a?(Sketchup::Drawingelement) || drawing_element.is_a?(Sketchup::Model)
 
       # Compute transformation to drawing element
-      transformation = PathUtils::get_transformation(@path, IDENTITY)
+      transformation = origin_transformation = PathUtils::get_transformation(@path, IDENTITY)
+
+      # Adapt local axes if 'model.active_path' is path
+      if Sketchup.active_model.active_path == @path
+
+        o = ORIGIN.transform(Sketchup.active_model.edit_transform)
+        ox = X_AXIS.transform(Sketchup.active_model.edit_transform).normalize
+        oy = Y_AXIS.transform(Sketchup.active_model.edit_transform).normalize
+        oz = Z_AXIS.transform(Sketchup.active_model.edit_transform).normalize
+
+        origin_transformation *= Geom::Transformation.axes(o, ox, oy, oz)
+
+        @input_local_x_axis = @input_local_x_axis.transform(origin_transformation).normalize unless @input_local_x_axis.nil?
+        @input_local_y_axis = @input_local_y_axis.transform(origin_transformation).normalize unless @input_local_y_axis.nil?
+        @input_local_z_axis = @input_local_z_axis.transform(origin_transformation).normalize unless @input_local_z_axis.nil?
+
+      end
 
       # Extract first level of child entities
       if drawing_element.is_a?(Sketchup::Model) || drawing_element.is_a?(Sketchup::Group)
@@ -117,7 +133,7 @@ module Ladb::OpenCutList
 
       # STEP 1 : Determine output axes
 
-      origin = ORIGIN.transform(transformation)
+      origin = ORIGIN.transform(origin_transformation)
       if @input_plane_manipulator
 
         drawing_def.input_plane_manipulator = @input_plane_manipulator
@@ -131,16 +147,33 @@ module Ladb::OpenCutList
 
           input_inner_plane_manipulator = PlaneManipulator.new(@input_plane_manipulator.face.plane, @input_plane_manipulator.transformation * transformation.inverse)
 
-          if input_inner_plane_manipulator.normal.parallel?(@input_local_z_axis) || input_inner_plane_manipulator.normal.parallel?(@input_local_y_axis)
+          if input_inner_plane_manipulator.normal.parallel?(@input_local_z_axis)
+
             z_axis = drawing_def.input_plane_manipulator.normal
             x_axis = @input_local_x_axis.transform(transformation)
             x_axis.reverse! if TransformationUtils.flipped?(transformation)
             y_axis = z_axis * x_axis
+
+            drawing_def.view_type = input_inner_plane_manipulator.normal.samedirection?(@input_local_z_axis) ? DrawingDef::VIEW_TYPE_TOP : DrawingDef::VIEW_TYPE_BOTTOM
+
+          elsif input_inner_plane_manipulator.normal.parallel?(@input_local_y_axis)
+
+            z_axis = drawing_def.input_plane_manipulator.normal
+            x_axis = @input_local_x_axis.transform(transformation)
+            x_axis.reverse! if TransformationUtils.flipped?(transformation)
+            y_axis = z_axis * x_axis
+
+            drawing_def.view_type = input_inner_plane_manipulator.normal.samedirection?(@input_local_y_axis) ? DrawingDef::VIEW_TYPE_BACK : DrawingDef::VIEW_TYPE_FRONT
+
           elsif input_inner_plane_manipulator.normal.parallel?(@input_local_x_axis)
+
             z_axis = drawing_def.input_plane_manipulator.normal
             x_axis = @input_local_y_axis.transform(transformation)
             x_axis.reverse! if TransformationUtils.flipped?(transformation)
             y_axis = z_axis * x_axis
+
+            drawing_def.view_type = input_inner_plane_manipulator.normal.samedirection?(@input_local_x_axis) ? DrawingDef::VIEW_TYPE_RIGHT : DrawingDef::VIEW_TYPE_LEFT
+
           else
             x_axis, y_axis, z_axis, drawing_def.input_line_manipulator = _get_input_axes(drawing_def.input_plane_manipulator, nil)
           end
