@@ -19,7 +19,7 @@ module Ladb::OpenCutList
     # -----
 
     def create_layer
-      raise 'Abstract method : Override it'
+      raise NotImplementedError
     end
 
   end

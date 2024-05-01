@@ -1,16 +1,18 @@
 module Ladb::OpenCutList
 
-  class OutlinerToggleVisibleWorker
+  class OutlinerSetVisibleWorker
 
     def initialize(outliner,
 
-                   id: nil
+                   id: nil,
+                   visible: true
 
     )
 
       @outline = outliner
 
       @id = id
+      @visible = visible
 
     end
 

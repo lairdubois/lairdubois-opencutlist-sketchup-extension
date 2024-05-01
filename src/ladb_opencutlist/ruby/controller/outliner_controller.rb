@@ -23,8 +23,8 @@ module Ladb::OpenCutList
       PLUGIN.register_command("outliner_set_expanded") do |node_data|
         set_expanded_command(node_data)
       end
-      PLUGIN.register_command("outliner_toggle_visible") do |node_data|
-        toggle_visible_command(node_data)
+      PLUGIN.register_command("outliner_set_visible") do |node_data|
+        set_visible_command(node_data)
       end
       PLUGIN.register_command("outliner_explode") do |node_data|
         explode_command(node_data)
@@ -102,11 +102,11 @@ module Ladb::OpenCutList
       worker.run
     end
 
-    def toggle_visible_command(node_data)
-      require_relative '../worker/outliner/outliner_toggle_visible_worker'
+    def set_visible_command(node_data)
+      require_relative '../worker/outliner/outliner_set_visible_worker'
 
       # Setup worker
-      worker = OutlinerToggleVisibleWorker.new(@outliner, **node_data)
+      worker = OutlinerSetVisibleWorker.new(@outliner, **node_data)
 
       # Run !
       worker.run

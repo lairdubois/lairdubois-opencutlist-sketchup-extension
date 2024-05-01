@@ -64,6 +64,14 @@
                         </div>
                     </div>
                 {% endif %}
+                {% if node.tags is defined %}
+                    <div class="form-group">
+                        <label class="control-label col-xs-4">{{ 'tab.outliner.edit_node.tags'|i18next }}</label>
+                        <div class="col-xs-7">
+                            <input type="text" class="form-control" id="ladb_outliner_node_input_tags" value="{{ node.tags|join(';')|escape }}">
+                        </div>
+                    </div>
+                {% endif %}
             </div>
         </div>
         {% if not node.type == 0 %}{# 0 = TYPE_MODEL #}

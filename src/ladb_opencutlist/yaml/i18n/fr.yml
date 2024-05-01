@@ -1350,6 +1350,7 @@ tab:
       definition_name: Définition
       description: Description
       url: URL
+      tags: Badges
       layer_name: Balise
       explode: Eclater
       explode_message: "Confirmez-vous l'éclatement de l'instance **{{ name }}** ?"

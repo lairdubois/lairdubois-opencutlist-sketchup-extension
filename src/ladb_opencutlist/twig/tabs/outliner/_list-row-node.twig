@@ -1,52 +1,66 @@
 {% macro renderLayer(layer, icon = '') %}
     {% import _self as self %}
     {% if layer.folder %}{{ self.renderLayer(layer.folder, 'folder') }}{% endif %}
-    <div><a href="#"{% if not layer.visible %} style="text-decoration: line-through"{% endif %}><i class="ladb-opencutlist-icon-{{ icon }}"></i> {{ layer.name }}</a></div>
+    <div><a href="#"{% if not layer.visible %} style="text-decoration: line-through"{% endif %}>{% if icon is not empty %}<i class="ladb-opencutlist-icon-{{ icon }}"></i> {% endif %}{{ layer.name }}</a></div>
+{% endmacro %}
+
+{% macro renderRowNode(node, parentClasses, parentEntityLocked, parentEntityVisible, parentLayerVisible, capabilities) %}
+    {% import _self as self %}
+
+    {% set entityLocked = node.locked or parentEntityLocked %}
+    {% set entityVisible = node.visible and parentEntityVisible %}
+    {% set layerVisible = (node.layer.visible is not defined or node.layer.visible) and parentLayerVisible %}
+
+    <tr id="ladb_outliner_row_{{ node.id }}" class="ladb-outliner-row ladb-minitools-holder{% if not entityVisible or not layerVisible %} ladb-mute{% endif %} {{ parentClasses }}" data-node-id="{{ node.id }}" data-parent-entity-locked="{{ parentEntityLocked }}" data-parent-entity-visible="{{ parentEntityVisible }}" data-parent-layer-visible="{{ parentLayerVisible }}">
+        <td class="table-cell-fluid" style="padding-left: {{ node.depth * 20 }}px;">
+            <div class="table-cell-fluid-inner{% if node.depth > 0 %} table-cell-fluid-inner-padded-left{% endif %}">
+                <div class="ladb-minitools ladb-minitools-left">
+                    {% if node.children is not empty %}
+                        <a href="#" class="ladb-btn-node-toggle-folding"><i class="ladb-opencutlist-icon-arrow-{% if node.expanded %}down{% else %}right{% endif %}"></i></a>
+                    {% else %}
+                        <div style="display: inline-block; width: 20px;"></div>
+                    {% endif %}
+                </div>
+                <div class="ladb-minitools ladb-minitools-right">
+                    <span class="ladb-separator no-print"></span>
+                    {% if node.url is not empty %}<a href="{{ node.url }}" class="ladb-btn-node-open-url" data-toggle="tooltip" title="{{ 'tab.outliner.tooltip.open_node_url'|i18next }}"><i class="ladb-opencutlist-icon-link"></i></a>{% endif %}
+                    {% if entityLocked %}<a href="#" class="ladb-tool-black"><i class="ladb-opencutlist-icon-lock"></i></a>{% endif %}
+                    {% if capabilities.sketchup_version_number >= 2000000000 %}<a href="#" class="ladb-btn-node-set-active"><i class="ladb-opencutlist-icon-cursor"></i></a>{% endif %}
+                    {% if node.type != 0 %}{# 0 = TYPE_MODEL #}<a href="#" class="ladb-btn-node-toggle-visible"><i class="ladb-opencutlist-icon-eye-{% if node.visible %}open{% else %}close{% endif %}"></i></a>{% endif %}
+                    <a href="#" class="ladb-btn-node-edit ladb-click-tool"><i class="ladb-opencutlist-icon-edit"></i></a>
+                </div>
+                {% if node.layer %}
+                    <div class="ladb-outliner-node-layers{% if not layerVisible %} ladb-mute{% endif %}" style="background-color: {{ node.layer.color }};">
+                        {{ self.renderLayer(node.layer) }}
+                        <span><i class="ladb-opencutlist-icon-tag"></i></span>
+                    </div>
+                {% endif %}
+                <div>
+                    <span class="ladb-outliner-node-type">{% include 'tabs/outliner/_node-icon.twig' %}</span>{% if node.name is not empty %}<span class="ladb-outliner-node-name">{{ node.name|escape('html') }}</span>{% endif %}{% if node.type != 1 or node.name is empty %}<span class="ladb-outliner-node-definition-name">{{ node.default_name|escape('html') }}</span>{% endif %}
+                    {% if node.description is defined and node.description is not empty %}
+                        <div class="ladb-outliner-node-description">{{ node.description }}</div>
+                    {% endif %}
+                    {% if node.type == 3 and node.tags is not empty %}{# 3 = TYPE_PART #}
+                        <ul class="ladb-outliner-node-tags">
+                            {% for tag in node.tags %}
+                                <li><a href="#" class="ladb-btn-label-filter">{{ tag }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+        </td>
+        {#    <td class="ladb-cutlist-value">{% if node.type == 3 and node.part_count > 1 %}#}{# 3 = TYPE_PART #}{#1 + {{ node.part_count - 1 }}{% else %}{{ node.part_count }}{% endif %}</td>#}
+    </tr>
+    {% if node.expanded %}
+        {% set parentClasses = (parentClasses~' f-'~node.id) %}
+        {% for node in node.children %}
+            {{ self.renderRowNode(node, parentClasses, entityLocked, entityVisible, layerVisible, capabilities) }}
+        {% endfor %}
+    {% endif %}
 {% endmacro %}
 
 {% from _self import renderLayer %}
+{% from _self import renderRowNode %}
 
-<tr id="ladb_outliner_row_{{ node.id }}" class="ladb-outliner-row ladb-minitools-holder{% if node.visible is defined and node.visible == false or not parentNodeVisible %} ladb-mute{% endif %}{{ parentClasses }}{% if not parentNodeExpanded %} hide{% endif %}" data-node-id="{{ node.id }}">
-    <td class="table-cell-fluid" style="padding-left: {{ depth * 20 }}px;">
-        <div class="table-cell-fluid-inner{% if depth > 0 %} table-cell-fluid-inner-padded-left{% endif %}">
-            <div class="ladb-minitools ladb-minitools-left">
-                {% if node.children|length > 0 %}
-                    <a href="#" class="ladb-btn-folding-toggle-row"><i class="ladb-opencutlist-icon-arrow-{% if node.expanded %}down{% else %}right{% endif %}"></i></a>
-                {% else %}
-                    <div style="display: inline-block; width: 20px;"></div>
-                {% endif %}
-            </div>
-            <div class="ladb-minitools ladb-minitools-right">
-                <span class="ladb-separator no-print"></span>
-                {% if node.url is not empty %}<a href="{{ node.url }}" class="ladb-btn-open-node-url" data-toggle="tooltip" title="{{ 'tab.outliner.tooltip.open_node_url'|i18next }}"><i class="ladb-opencutlist-icon-link"></i></a>{% endif %}
-                {% if node.locked %}<a href="#" class="ladb-tool-black"><i class="ladb-opencutlist-icon-lock"></i></a>{% endif %}
-                {% if capabilities.sketchup_version_number >= 2000000000 %}<a href="#" class="ladb-btn-node-set-active"><i class="ladb-opencutlist-icon-cursor"></i></a>{% endif %}
-                {% if node.type != 0 %}{# 0 = TYPE_MODEL #}<a href="#" class="ladb-btn-node-toggle-visible"><i class="ladb-opencutlist-icon-eye-{% if node.visible %}open{% else %}close{% endif %}"></i></a>{% endif %}
-                <a href="#" class="ladb-btn-node-edit ladb-click-tool"><i class="ladb-opencutlist-icon-edit"></i></a>
-            </div>
-            {% if node.layer %}
-                <div class="ladb-outliner-node-layers" style="background-color: {{ node.layer.color }};">
-                    {{ renderLayer(node.layer) }}
-                    <span><i class="ladb-opencutlist-icon-tag"></i></span>
-                </div>
-            {% endif %}
-            <div>
-                <span class="ladb-outliner-node-type">{% include 'tabs/outliner/_node-icon.twig' %}</span>{% if node.name is not empty %}<span class="ladb-outliner-node-name">{{ node.name|escape('html') }}</span>{% endif %}{% if node.type != 1 or node.name is empty %}<span class="ladb-outliner-node-definition-name">{{ node.default_name|escape('html') }}</span>{% endif %}
-                {% if node.description is defined and node.description is not empty %}
-                    <div class="ladb-outliner-node-description">{{ node.description }}</div>
-                {% endif %}
-            </div>
-        </div>
-    </td>
-    <td class="ladb-cutlist-value">{% if node.type == 3 and node.part_count > 1 %}{# 3 = TYPE_PART #}1 + {{ node.part_count - 1 }}{% else %}{{ node.part_count }}{% endif %}</td>
-</tr>
-{% if node.children|length > 0 %}
-    {% set parentNode = node %}
-    {% set parentClasses = (parentClasses~' folder-'~node.id) %}
-    {% set parentNodeVisible = node.visible is not defined or node.visible and parentNodeVisible %}
-    {% set parentNodeExpanded = node.expanded and parentNodeExpanded %}
-    {% set depth = depth + 1 %}
-    {% for node in node.children %}
-        {% include 'tabs/outliner/_list-row-node.twig' %}
-    {% endfor %}
-{% endif %}
+{{ renderRowNode(node, parentClasses, parentEntityLocked, parentEntityVisible, parentLayerVisible, capabilities) }}

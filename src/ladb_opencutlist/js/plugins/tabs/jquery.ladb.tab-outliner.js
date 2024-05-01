@@ -17,6 +17,8 @@
 
         this.$page = $('.ladb-page', this.$element);
 
+        this.showHiddenInstances = true;
+
     };
     LadbTabOutliner.prototype = Object.create(LadbAbstractTab.prototype);
 
@@ -66,86 +68,18 @@
                     root_node: root_node
                 }));
 
+                that.updateHidden();
+
                 // Setup tooltips
                 that.dialog.setupTooltips();
 
                 // Bind rows
-                $('.ladb-outliner-row', that.$page).each(function (index) {
-                    var $row = $(this);
-                    $row.on('click', function (e) {
-                        $(this).blur();
-                        $('.ladb-click-tool', $(this)).click();
-                        return false;
-                    });
-                });
-                $('a.ladb-btn-folding-toggle-row', that.$page).on('click', function () {
+                that.bindNodeRows(that.$page);
+
+                // Bind buttons
+                $('#ladb_btn_toggle_hidden').on('click', function () {
                     $(this).blur();
-                    var $row = $(this).parents('.ladb-outliner-row');
-                    var nodeId = $row.data('node-id');
-                    that.toggleFoldingNode(nodeId, $row);
-                    return false;
-                });
-                $('a.ladb-btn-open-node-url', that.$page).on('click', function () {
-                    $(this).blur();
-                    rubyCallCommand('core_open_url', { url: $(this).attr('href') });
-                    return false;
-                });
-                $('a.ladb-btn-node-set-active', that.$page).on('click', function () {
-                    $(this).blur();
-                    var $row = $(this).parents('.ladb-outliner-row');
-                    var nodeId = $row.data('node-id');
-
-                    // Flag to ignore next selection change event
-                    that.ignoreNextSelectionEvents = true;
-
-                    rubyCallCommand('outliner_set_active', { id: nodeId }, function (response) {
-
-                        // Flag to stop ignoring next selection change event
-                        that.ignoreNextSelectionEvents = false;
-
-                        if (response['errors']) {
-                            that.dialog.notifyErrors(response['errors']);
-                        } else {
-
-                        }
-
-                    });
-
-                    return false;
-                });
-                $('a.ladb-btn-node-toggle-visible', that.$page).on('click', function () {
-                    $(this).blur();
-                    var $i = $('i', $(this));
-                    var $row = $(this).parents('.ladb-outliner-row');
-                    var nodeId = $row.data('node-id');
-
-                    rubyCallCommand('outliner_toggle_visible', { id: nodeId }, function (response) {
-
-                        if (response['errors']) {
-                            that.dialog.notifyErrors(response['errors']);
-                        } else {
-
-                            if (response.visible) {
-                                $row.removeClass('ladb-mute');
-                                $i.addClass('ladb-opencutlist-icon-eye-open');
-                                $i.removeClass('ladb-opencutlist-icon-eye-close');
-                            } else {
-                                $row.addClass('ladb-mute');
-                                $i.removeClass('ladb-opencutlist-icon-eye-open');
-                                $i.addClass('ladb-opencutlist-icon-eye-close');
-                            }
-
-                        }
-
-                    });
-
-                    return false;
-                });
-                $('a.ladb-btn-node-edit', that.$page).on('click', function () {
-                    $(this).blur();
-                    var $row = $(this).parents('.ladb-outliner-row');
-                    var nodeId = $row.data('node-id');
-                    that.editNode(nodeId);
+                    that.toggleHidden();
                     return false;
                 });
 
@@ -201,6 +135,7 @@
             var $inputLayerName = $('#ladb_outliner_node_input_layer_name', $modal);
             var $inputDescription = $('#ladb_outliner_node_input_description', $modal);
             var $inputUrl = $('#ladb_outliner_node_input_url', $modal);
+            var $inputTags = $('#ladb_outliner_node_input_tags', $modal);
             var $btnExplode = $('#ladb_outliner_node_explode', $modal);
             var $btnUpdate = $('#ladb_outliner_node_update', $modal);
 
@@ -215,6 +150,9 @@
             $inputLayerName.ladbTextinputText();
             $inputDescription.ladbTextinputArea();
             $inputUrl.ladbTextinputUrl();
+            $inputTags.ladbTextinputTokenfield({
+                unique: true
+            });
 
             // Bind buttons
             $btnExplode.on('click', function () {
@@ -276,6 +214,7 @@
                 if ($inputUrl.length > 0) {
                     data['url'] = $inputUrl.val();
                 }
+                data['tags'] = $inputTags.tokenfield('getTokensList').split(';')
 
                 rubyCallCommand('outliner_update', data, function (response) {
 
@@ -321,56 +260,151 @@
             if ($row === undefined) {
                 $row = $('#ladb_outliner_row_' + node.id, this.$page);
             }
-            if (node.expanded) {
-                this.expandNodeRow(node, $row);
-            } else {
-                this.collapseNodeRow(node, $row);
-            }
+            this.replaceNodeRow(node, $row);
             rubyCallCommand('outliner_set_expanded', {
                 id: node.id,
                 expanded: node.expanded
-            }, function (response) {
-
             });
         }
     };
 
-    LadbTabOutliner.prototype.expandNodeRow = function (node, $row) {
-        if (node.expanded) {
-
-            var $btn = $('.ladb-btn-folding-toggle-row', $row);
-            var $i = $('i', $btn);
-
-            $i.addClass('ladb-opencutlist-icon-arrow-down');
-            $i.removeClass('ladb-opencutlist-icon-arrow-right');
-
-            for (var i = 0; i < node.children.length; i++) {
-                $row = $('#ladb_outliner_row_' + node.children[i].id, this.$page);
-                $row.removeClass('hide');
-                this.expandNodeRow(node.children[i], $row);
+    LadbTabOutliner.prototype.toggleVisibleNode = function (id, $row) {
+        var node = this.findNodeById(id);
+        if (node) {
+            node.visible = !node.visible;
+            if ($row === undefined) {
+                $row = $('#ladb_outliner_row_' + node.id, this.$page);
             }
-
+            this.replaceNodeRow(node, $row);
+            rubyCallCommand('outliner_set_visible', {
+                id: node.id,
+                visible: node.visible
+            });
         }
     };
 
-    LadbTabOutliner.prototype.collapseNodeRow = function (node, $row) {
-        if (!node.expanded) {
+    LadbTabOutliner.prototype.toggleHidden = function () {
+        this.showHiddenInstances = !this.showHiddenInstances;
+        this.updateHidden();
+    };
 
-            var $btn = $('.ladb-btn-folding-toggle-row', $row);
-            var $i = $('i', $btn);
+    LadbTabOutliner.prototype.updateHidden = function () {
+        var that = this;
 
-            $i.addClass('ladb-opencutlist-icon-arrow-right');
-            $i.removeClass('ladb-opencutlist-icon-arrow-down');
+        var $btn = $('#ladb_btn_toggle_hidden');
+        var $i = $('i', $btn);
 
+        if (this.showHiddenInstances) {
+            $i.addClass('ladb-opencutlist-icon-check-box-with-check-sign');
+        } else {
+            $i.removeClass('ladb-opencutlist-icon-check-box-with-check-sign');
         }
-        for (var i = 0; i < node.children.length; i++) {
-            $row = $('#ladb_outliner_row_' + node.children[i].id, this.$page);
-            $row.addClass('hide');
-            this.collapseNodeRow(node.children[i], $row);
-        }
+
+        $('.ladb-outliner-row', this.$page).each(function () {
+            var $row = $(this);
+            if (!that.showHiddenInstances && $row.hasClass('ladb-mute')) {
+                $row.hide();
+            } else {
+                $row.show();
+            }
+        });
+
     };
 
     // Internals /////
+
+    LadbTabOutliner.prototype.bindNodeRows = function ($rowsContext) {
+        var that = this;
+
+        $('.ladb-outliner-row', $rowsContext).each(function () {
+            var $row = $(this);
+            $row.on('click', function (e) {
+                $(this).blur();
+                $('.ladb-click-tool', $(this)).click();
+                return false;
+            });
+        });
+        $('a.ladb-btn-node-toggle-folding', $rowsContext).on('click', function () {
+            $(this).blur();
+            var $row = $(this).parents('.ladb-outliner-row');
+            var nodeId = $row.data('node-id');
+            that.toggleFoldingNode(nodeId, $row);
+            return false;
+        });
+        $('a.ladb-btn-node-open-url', $rowsContext).on('click', function () {
+            $(this).blur();
+            rubyCallCommand('core_open_url', { url: $(this).attr('href') });
+            return false;
+        });
+        $('a.ladb-btn-node-set-active', $rowsContext).on('click', function () {
+            $(this).blur();
+            var $row = $(this).parents('.ladb-outliner-row');
+            var nodeId = $row.data('node-id');
+
+            // Flag to ignore next selection change event
+            that.ignoreNextSelectionEvents = true;
+
+            rubyCallCommand('outliner_set_active', { id: nodeId }, function (response) {
+
+                // Flag to stop ignoring next selection change event
+                that.ignoreNextSelectionEvents = false;
+
+                if (response['errors']) {
+                    that.dialog.notifyErrors(response['errors']);
+                } else {
+
+                }
+
+            });
+
+            return false;
+        });
+        $('a.ladb-btn-node-toggle-visible', $rowsContext).on('click', function () {
+            $(this).blur();
+            var $row = $(this).parents('.ladb-outliner-row');
+            var nodeId = $row.data('node-id');
+            that.toggleVisibleNode(nodeId, $row);
+            return false;
+        });
+        $('a.ladb-btn-node-edit', $rowsContext).on('click', function () {
+            $(this).blur();
+            var $row = $(this).parents('.ladb-outliner-row');
+            var nodeId = $row.data('node-id');
+            that.editNode(nodeId);
+            return false;
+        });
+
+    };
+
+    LadbTabOutliner.prototype.replaceNodeRow = function (node, $row) {
+
+        // Remove sub tree
+        $('.f-' + node.id, this.$page).remove();
+
+        var parentClasses = $row.attr('class').split(' ').filter(function (c) { return c.startsWith('f-'); }).join(' ');
+        var parentEntityLocked = $row.data('parent-entity-locked');
+        var parentEntityVisible = $row.data('parent-entity-visible');
+        var parentLayerVisible = $row.data('parent-layer-visible');
+
+        // Build new rows
+        var $rows = $(Twig.twig({ ref: "tabs/outliner/_list-row-node.twig" }).render({
+            node: node,
+            parentClasses: parentClasses,
+            parentEntityLocked: parentEntityLocked,
+            parentEntityVisible: parentEntityVisible,
+            parentLayerVisible: parentLayerVisible,
+            capabilities: this.dialog.capabilities,
+        }));
+
+        // Bind rows
+        this.bindNodeRows($('<div>').append($rows));
+
+        // Replace row
+        $row.replaceWith($rows);
+
+        this.updateHidden();
+
+    };
 
     LadbTabOutliner.prototype.findNodeById = function (id, parent) {
         if (parent === undefined) {

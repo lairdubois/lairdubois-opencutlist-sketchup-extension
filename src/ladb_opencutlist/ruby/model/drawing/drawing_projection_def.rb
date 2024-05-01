@@ -48,6 +48,8 @@ module Ladb::OpenCutList
 
   end
 
+  # -----
+
   class DrawingProjectionLayerDef
 
     TYPE_DEFAULT = 0

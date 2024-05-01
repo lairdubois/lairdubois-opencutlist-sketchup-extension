@@ -13,10 +13,11 @@ module Ladb::OpenCutList
     TYPE_PART = 3
 
     attr_accessor :default_name, :layer_def, :expanded, :part_count
-    attr_reader :path, :entity, :id, :type, :children
+    attr_reader :path, :depth, :entity, :id, :type, :children
 
     def initialize(path = [])
       @path = path
+      @depth = @path.length
       @entity = @path.empty? ? Sketchup.active_model : path.last
       @id = Digest::MD5.hexdigest("#{@entity.guid}|#{PathUtils.serialize_path(path)}")
 
@@ -36,7 +37,7 @@ module Ladb::OpenCutList
     # -----
 
     def create_node
-      raise 'Abstract method : Override it'
+      raise NotImplementedError
     end
 
   end

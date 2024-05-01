@@ -9,18 +9,20 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_accessor :type, :name, :default_name, :expanded, :part_count
-    attr_reader :id, :children
+    attr_reader :id, :type, :depth, :name, :default_name, :locked, :visible, :expanded, :part_count, :children
 
     def initialize(_def)
       @_def = _def
 
       @id = _def.id
       @type = _def.type
+      @depth = _def.depth
 
       @name = _def.entity.name
       @default_name = _def.default_name
 
+      @locked = false
+      @visible = true
       @expanded = _def.expanded
       @part_count = _def.part_count
 
@@ -45,7 +47,7 @@ module Ladb::OpenCutList
 
   class NodeGroup < AbstractNode
 
-    attr_reader :locked, :visible, :layer
+    attr_reader :layer
 
     def initialize(_def)
       super
@@ -61,14 +63,17 @@ module Ladb::OpenCutList
 
   class NodeComponent < NodeGroup
 
-    attr_reader :definition_name, :description, :url
+    attr_reader :definition_name, :description, :url, :tags
 
     def initialize(_def)
       super
 
       @definition_name = _def.entity.definition.name
       @description = _def.entity.definition.description
-      @url = DefinitionAttributes.new(_def.entity.definition).url
+
+      definition_attributes = DefinitionAttributes.new(_def.entity.definition)
+      @url = definition_attributes.url
+      @tags = definition_attributes.tags
 
     end
 

@@ -53,7 +53,9 @@
     }
 
     &.ladb-mute {
-      opacity: 0.4;
+      .ladb-outliner-node-type, .ladb-outliner-node-name, .ladb-outliner-node-definition-name {
+        color: #ccc;
+      }
     }
 
     td.table-cell-fluid {
@@ -89,31 +91,12 @@
         .hatched();
       }
 
-      &.ladb-cutlist-value-highlighted {
-        color: red;
-      }
-
       &.ladb-cutlist-value-right {
         text-align: right;
       }
 
       span.ladb-opencutlist-icon {
         color: #999;
-      }
-
-      i.ladb-opencutlist-icon-asterisk {
-        color: @ladb-brand-info;
-      }
-
-      hr {
-
-        &:first-child {
-          display: none;
-        }
-
-        margin-top: 3px;
-        margin-bottom: 3px;
-        border-color: @ladb-global-border;
       }
 
     }
@@ -140,6 +123,10 @@
       border-radius: 5px;
       color: #ffffff;
       margin-top: -2px;
+
+      &.ladb-mute {
+        opacity: 0.5;
+      }
 
       > span {
         display: inline-block;
@@ -205,6 +192,43 @@
       font-size: 70%;
       margin-top: 5px;
       padding-left: 50px;
+    }
+
+    .ladb-outliner-node-tags {
+      list-style: none;
+      padding: 0;
+      padding-left: 50px;
+      margin: 0;
+
+      > li {
+        display: inline-block;
+
+        > a {
+          color: #000;
+          padding: 0 3px 1px 3px;
+          margin-right: 4px;
+          border-radius: 3px;
+          font-size: 78%;
+          border: 1px solid #000;
+
+          &:hover {
+            text-decoration: none;
+            background-color: #ccc;
+          }
+
+          &.no-hover:hover {
+            text-decoration: none;
+            background-color: inherit;
+          }
+
+          &.ladb-active {
+            border-width: 2px;
+          }
+
+        }
+
+      }
+
     }
 
   }

@@ -34,8 +34,6 @@ module Ladb::OpenCutList
       model.start_operation('OCL Outliner Set Expanded', true, false, true)
 
 
-      node.expanded = @expanded
-
       instance_attributes = InstanceAttributes.new(node.def.entity)
       instance_attributes.outliner_expanded = @expanded
       instance_attributes.write_to_attributes

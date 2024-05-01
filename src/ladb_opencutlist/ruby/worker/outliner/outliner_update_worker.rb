@@ -1,6 +1,7 @@
 module Ladb::OpenCutList
 
   require_relative '../../helper/layer0_caching_helper'
+  require_relative '../../model/attributes/definition_attributes'
 
   class OutlinerUpdateWorker
 
@@ -13,7 +14,8 @@ module Ladb::OpenCutList
                    definition_name: nil,
                    layer_name: nil,
                    description: nil,
-                   url: nil
+                   url: nil,
+                   tags: nil
 
     )
 
@@ -25,6 +27,7 @@ module Ladb::OpenCutList
       @layer_name = layer_name
       @description = description
       @url = url
+      @tags = DefinitionAttributes.valid_tags(tags)
 
     end
 
@@ -61,10 +64,13 @@ module Ladb::OpenCutList
       if entity.is_a?(Sketchup::ComponentInstance) && @description.is_a?(String) && @description != entity.definition.description
         entity.definition.description = @description.strip
       end
-      if entity.is_a?(Sketchup::ComponentInstance) && @url.is_a?(String)
+      if entity.is_a?(Sketchup::ComponentInstance) && @url.is_a?(String) || @tags.is_a?(Array)
         definition_attributes = DefinitionAttributes.new(entity.definition)
         if @url != definition_attributes.url
           definition_attributes.url = @url.strip
+        end
+        if @tags != definition_attributes.tags
+          definition_attributes.tags = @tags
           definition_attributes.write_to_attributes
         end
       end

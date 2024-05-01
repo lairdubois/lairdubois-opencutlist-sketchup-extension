@@ -151,7 +151,7 @@ module Ladb::OpenCutList
             x_axis.reverse! if TransformationUtils.flipped?(transformation)
             y_axis = z_axis * x_axis
 
-            drawing_def.view_type = input_inner_plane_manipulator.normal.samedirection?(@input_local_z_axis) ? DrawingDef::VIEW_TYPE_TOP : DrawingDef::VIEW_TYPE_BOTTOM
+            drawing_def.input_view = input_inner_plane_manipulator.normal.samedirection?(@input_local_z_axis) ? DrawingDef::INPUT_VIEW_TOP : DrawingDef::INPUT_VIEW_BOTTOM
 
           elsif input_inner_plane_manipulator.normal.parallel?(@input_local_y_axis)
 
@@ -160,7 +160,7 @@ module Ladb::OpenCutList
             x_axis.reverse! if TransformationUtils.flipped?(transformation)
             y_axis = z_axis * x_axis
 
-            drawing_def.view_type = input_inner_plane_manipulator.normal.samedirection?(@input_local_y_axis) ? DrawingDef::VIEW_TYPE_BACK : DrawingDef::VIEW_TYPE_FRONT
+            drawing_def.input_view = input_inner_plane_manipulator.normal.samedirection?(@input_local_y_axis) ? DrawingDef::INPUT_VIEW_BACK : DrawingDef::INPUT_VIEW_FRONT
 
           elsif input_inner_plane_manipulator.normal.parallel?(@input_local_x_axis)
 
@@ -169,7 +169,7 @@ module Ladb::OpenCutList
             x_axis.reverse! if TransformationUtils.flipped?(transformation)
             y_axis = z_axis * x_axis
 
-            drawing_def.view_type = input_inner_plane_manipulator.normal.samedirection?(@input_local_x_axis) ? DrawingDef::VIEW_TYPE_RIGHT : DrawingDef::VIEW_TYPE_LEFT
+            drawing_def.input_view = input_inner_plane_manipulator.normal.samedirection?(@input_local_x_axis) ? DrawingDef::INPUT_VIEW_RIGHT : DrawingDef::INPUT_VIEW_LEFT
 
           else
             x_axis, y_axis, z_axis, drawing_def.input_line_manipulator = _get_input_axes(drawing_def.input_plane_manipulator, nil)
@@ -309,7 +309,7 @@ module Ladb::OpenCutList
       z_axis = input_plane_manipulator.normal
       x_axis = input_line_manipulator.direction
       x_axis.reverse! if input_line_manipulator.respond_to?(:reversed_in?) && input_plane_manipulator.respond_to?(:face) && input_line_manipulator.reversed_in?(input_plane_manipulator.face)
-      y_axis = z_axis.cross(x_axis).normalize
+      y_axis = (z_axis * x_axis).normalize
 
       [ x_axis, y_axis, z_axis, input_line_manipulator ]
     end
