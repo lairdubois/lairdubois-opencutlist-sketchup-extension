@@ -47,9 +47,11 @@
                 var filename = response.filename;
                 var modelName = response.model_name;
                 var root_node = response.root_node;
+                var available_layers = response.available_layers;
 
                 // Keep useful data
                 that.rootNode = root_node;
+                that.availableLayers = available_layers;
 
                 // Update filename
                 that.$fileTabs.empty();
@@ -147,7 +149,20 @@
             // Bind input
             $inputName.ladbTextinputText();
             $inputDefinitionName.ladbTextinputText();
-            $inputLayerName.ladbTextinputText();
+            $inputLayerName.ladbTextinputTokenfield({
+                limit: 1,
+                autocomplete: {
+                    source: that.availableLayers.map(function (layer) { return {
+                        value: layer.name,
+                        category: layer.path.join(' / '),
+                        icon: 'fill',
+                        color: layer.color
+                    } }),
+                    delay: 100,
+                    categoryIcon: 'folder'
+                },
+                showAutocompleteOnFocus: true
+            });
             $inputDescription.ladbTextinputArea();
             $inputUrl.ladbTextinputUrl();
             $inputTags.ladbTextinputTokenfield({
@@ -206,7 +221,7 @@
                     data['definition_name'] = $inputDefinitionName.val();
                 }
                 if ($inputLayerName.length > 0) {
-                    data['layer_name'] = $inputLayerName.val();
+                    data['layer_name'] = $inputLayerName.tokenfield('getTokensList')
                 }
                 if ($inputDescription.length > 0) {
                     data['description'] = $inputDescription.val();
@@ -214,7 +229,9 @@
                 if ($inputUrl.length > 0) {
                     data['url'] = $inputUrl.val();
                 }
-                data['tags'] = $inputTags.tokenfield('getTokensList').split(';')
+                if ($inputTags.length > 0) {
+                    data['tags'] = $inputTags.tokenfield('getTokensList').split(';')
+                }
 
                 rubyCallCommand('outliner_update', data, function (response) {
 

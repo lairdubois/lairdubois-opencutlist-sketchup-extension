@@ -4,23 +4,32 @@ module Ladb::OpenCutList
 
   class Outliner
 
+    include DefHelper
     include HashableHelper
 
-    attr_accessor :root_node
+    attr_accessor :root_node, :available_layers
     attr_reader :errors, :warnings, :tips, :filename, :model_name
 
-    def initialize(filename, model_name)
+    def initialize(_def)
+      @_def = _def
+
       @_obsolete = false
       @_observers = []
 
-      @errors = []
-      @warnings = []
-      @tips = []
+      @errors = _def.errors
+      @warnings = _def.warnings
+      @tips = _def.tips
 
-      @filename = filename
-      @model_name = model_name
+      @filename = _def.filename
+      @model_name = _def.model_name
 
-      @root_node = nil
+      @root_node = _def.root_node_def.create_node
+
+      @available_layers = _def.available_layer_defs.values.map { |layer_def| {
+        :name => layer_def.layer.name,
+        :path => layer_def.folder_defs.map { |folder_def| folder_def.layer_folder.name },
+        :color => ColorUtils.color_to_hex(layer_def.layer.color)
+      } }
 
     end
 
@@ -33,24 +42,6 @@ module Ladb::OpenCutList
 
     def obsolete?
       @_obsolete
-    end
-
-    # Errors
-
-    def add_error(error)
-      @errors.push(error)
-    end
-
-    # Warnings
-
-    def add_warning(warning)
-      @warnings.push(warning)
-    end
-
-    # Tips
-
-    def add_tip(tip)
-      @tips.push(tip)
     end
 
     # Nodes

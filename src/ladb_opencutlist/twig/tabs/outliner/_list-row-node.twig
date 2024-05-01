@@ -1,15 +1,16 @@
-{% macro renderLayer(layer, icon = '') %}
-    {% import _self as self %}
-    {% if layer.folder %}{{ self.renderLayer(layer.folder, 'folder') }}{% endif %}
-    <div><a href="#"{% if not layer.visible %} style="text-decoration: line-through"{% endif %}>{% if icon is not empty %}<i class="ladb-opencutlist-icon-{{ icon }}"></i> {% endif %}{{ layer.name }}</a></div>
-{% endmacro %}
-
 {% macro renderRowNode(node, parentClasses, parentEntityLocked, parentEntityVisible, parentLayerVisible, capabilities) %}
     {% import _self as self %}
 
     {% set entityLocked = node.locked or parentEntityLocked %}
     {% set entityVisible = node.visible and parentEntityVisible %}
-    {% set layerVisible = (node.layer.visible is not defined or node.layer.visible) and parentLayerVisible %}
+    {% if node.layer is defined and node.layer is not empty %}
+        {% set layerVisible = node.layer.visible and parentLayerVisible %}
+        {% for folder in node.layer.folders if layerVisible %}
+            {% set layerVisible = layerVisible and folder.visible %}
+        {% endfor %}
+    {% else %}
+        {% set layerVisible = true %}
+    {% endif %}
 
     <tr id="ladb_outliner_row_{{ node.id }}" class="ladb-outliner-row ladb-minitools-holder{% if not entityVisible or not layerVisible %} ladb-mute{% endif %} {{ parentClasses }}" data-node-id="{{ node.id }}" data-parent-entity-locked="{{ parentEntityLocked }}" data-parent-entity-visible="{{ parentEntityVisible }}" data-parent-layer-visible="{{ parentLayerVisible }}">
         <td class="table-cell-fluid" style="padding-left: {{ node.depth * 20 }}px;">
@@ -31,7 +32,10 @@
                 </div>
                 {% if node.layer %}
                     <div class="ladb-outliner-node-layers{% if not layerVisible %} ladb-mute{% endif %}" style="background-color: {{ node.layer.color }};">
-                        {{ self.renderLayer(node.layer) }}
+                        {% for folder in node.layer.folders %}
+                            <div><a href="#"{% if not folder.visible %} style="text-decoration: line-through"{% endif %}><i class="ladb-opencutlist-icon-folder"></i> {{ folder.name }}</a></div>
+                        {% endfor %}
+                        <div><a href="#"{% if not node.layer.visible %} style="text-decoration: line-through"{% endif %}>{{ node.layer.name }}</a></div>
                         <span><i class="ladb-opencutlist-icon-tag"></i></span>
                     </div>
                 {% endif %}
@@ -60,7 +64,6 @@
     {% endif %}
 {% endmacro %}
 
-{% from _self import renderLayer %}
 {% from _self import renderRowNode %}
 
 {{ renderRowNode(node, parentClasses, parentEntityLocked, parentEntityVisible, parentLayerVisible, capabilities) }}

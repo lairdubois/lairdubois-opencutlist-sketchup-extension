@@ -84,7 +84,7 @@ module Ladb::OpenCutList
             )
 
             # Add to hierarchy
-            parent_three_group_def = _parent_hierarchy(instance_info.path.slice(0, instance_info.path.length - 1), active_entity, group_cache, three_model_def)
+            parent_three_group_def = _parent_hierarchy(instance_info.path[0...-1], active_entity, group_cache, three_model_def)
             parent_three_group_def.add(three_part_instance_def)
 
             # Increment model part instance count

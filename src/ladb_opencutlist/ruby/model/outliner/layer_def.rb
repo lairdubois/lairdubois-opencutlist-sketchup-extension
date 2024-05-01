@@ -1,34 +1,18 @@
 module Ladb::OpenCutList
 
-  require 'digest'
-
   require_relative 'layer'
 
-  class AbstractLayerDef
+  class LayerDef
 
-    attr_accessor :folder
-    attr_reader :layer
+    attr_reader :layer, :folder_defs
 
     def initialize(layer)
       @layer = layer
-
-      @folder = nil
-
-    end
-
-    # -----
-
-    def create_layer
-      raise NotImplementedError
-    end
-
-  end
-
-
-  class LayerDef < AbstractLayerDef
-
-    def initialize(layer)
-      super
+      @folder_defs = layer.respond_to?(:folder) && layer.folder ? [ layer.folder ].flat_map { |folder|
+        folder_defs = [ LayerFolderDef.new(folder) ]
+        folder_defs << LayerFolderDef.new(folder_defs.last.layer_folder.folder) while folder_defs.last.layer_folder.folder
+        folder_defs
+      } : []
     end
 
     # -----
@@ -39,15 +23,17 @@ module Ladb::OpenCutList
 
   end
 
-  class LayerFolderDef < AbstractLayerDef
+  class LayerFolderDef
 
-    def initialize(layer)
-      super
+    attr_reader :layer_folder
+
+    def initialize(layer_folder)
+      @layer_folder = layer_folder
     end
 
     # -----
 
-    def create_layer
+    def create_layer_folder
       LayerFolder.new(self)
     end
 

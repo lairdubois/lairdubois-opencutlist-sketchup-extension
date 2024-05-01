@@ -22,11 +22,11 @@ module Ladb::OpenCutList
       @outline = outliner
 
       @id = id
-      @name = name
-      @definition_name = definition_name
-      @layer_name = layer_name
-      @description = description
-      @url = url
+      @name = name.is_a?(String) ? name.strip : name
+      @definition_name = definition_name.is_a?(String) ? definition_name.strip : definition_name
+      @layer_name = layer_name.is_a?(String) ? layer_name.strip : layer_name
+      @description = description.is_a?(String) ? description.strip : description
+      @url = url.is_a?(String) ? url.strip : url
       @tags = DefinitionAttributes.valid_tags(tags)
 
     end
@@ -51,23 +51,23 @@ module Ladb::OpenCutList
 
 
       if @name.is_a?(String) && @name != entity.name
-        entity.name = @name.strip
+        entity.name = @name
       end
 
       if entity.is_a?(Sketchup::ComponentInstance) && @definition_name.is_a?(String) && @definition_name != entity.definition.name
-        entity.definition.name = @definition_name.strip
+        entity.definition.name = @definition_name
       end
 
       if entity.is_a?(Sketchup::Model) && @description.is_a?(String) && @description != entity.description
-        entity.description = @description.strip
+        entity.description = @description
       end
       if entity.is_a?(Sketchup::ComponentInstance) && @description.is_a?(String) && @description != entity.definition.description
-        entity.definition.description = @description.strip
+        entity.definition.description = @description
       end
       if entity.is_a?(Sketchup::ComponentInstance) && @url.is_a?(String) || @tags.is_a?(Array)
         definition_attributes = DefinitionAttributes.new(entity.definition)
         if @url != definition_attributes.url
-          definition_attributes.url = @url.strip
+          definition_attributes.url = @url
         end
         if @tags != definition_attributes.tags
           definition_attributes.tags = @tags

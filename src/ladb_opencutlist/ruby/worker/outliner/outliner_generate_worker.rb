@@ -2,10 +2,11 @@ module Ladb::OpenCutList
 
   require_relative '../../helper/bounding_box_helper'
   require_relative '../../helper/layer_visibility_helper'
-  require_relative '../../model/outliner/outliner'
+  require_relative '../../model/outliner/outliner_def'
   require_relative '../../model/outliner/node_def'
   require_relative '../../model/outliner/layer_def'
   require_relative '../../model/attributes/instance_attributes'
+  require_relative '../../utils/color_utils'
 
   class OutlinerGenerateWorker
 
@@ -21,35 +22,38 @@ module Ladb::OpenCutList
       filename = model && !model.path.empty? ? File.basename(model.path) : PLUGIN.get_i18n_string('default.empty_filename')
       model_name = model && model.name
 
-      outliner = Outliner.new(filename, model_name)
+      outliner_def = OutlinerDef.new(filename, model_name)
 
       # Errors
       unless model
-        outliner.add_error('tab.outliner.error.no_model') unless model
-        return outliner
+        outliner_def.add_error('tab.outliner.error.no_model') unless model
+        return outliner_def.create_outliner
       end
       if model.entities.length == 0
-        outliner.add_error('tab.outliner.error.no_model')
-        return outliner
+        outliner_def.add_error('tab.outliner.error.no_model')
+        return outliner_def.create_outliner
       end
 
-      # Generate outline
-      root_node_def, = _fetch_node_defs(model)
-      if root_node_def
-        outliner.root_node = root_node_def.create_node
+      # Retrieve available layers
+      model.layers.each do |layer|
+        next if layer == cached_layer0
+        outliner_def.add_layer_def(LayerDef.new(layer))
       end
+
+      # Generate nodes
+      outliner_def.root_node_def, = _fetch_node_defs(outliner_def, model)
 
       # Tips
-      if root_node_def.children.length == 0
-        outliner.add_tip('tab.outliner.tip.no_node')
+      if outliner_def.root_node_def.children.length == 0
+        outliner_def.add_tip('tab.outliner.tip.no_node')
       end
 
-      outliner
+      outliner_def.create_outliner
     end
 
     # -----
 
-    def _fetch_node_defs(entity, path = [], face_bounds_cache = {})
+    def _fetch_node_defs(outliner_def, entity, path = [], face_bounds_cache = {})
       return nil, 0, 0 if entity.is_a?(Sketchup::Edge)   # Minor Speed improvement when there's a lot of edges
       node_def = nil
       face_count = 0
@@ -62,7 +66,7 @@ module Ladb::OpenCutList
         children = []
         entity.entities.each { |child_entity|
 
-          child_node_def, child_face_count, child_part_count = _fetch_node_defs(child_entity, path, face_bounds_cache)
+          child_node_def, child_face_count, child_part_count = _fetch_node_defs(outliner_def, child_entity, path, face_bounds_cache)
           children << child_node_def unless child_node_def.nil?
 
           face_count += child_face_count
@@ -85,7 +89,7 @@ module Ladb::OpenCutList
         children = []
         entity.entities.each { |child_entity|
 
-          child_node_def, child_face_count, child_part_count = _fetch_node_defs(child_entity, path, face_bounds_cache)
+          child_node_def, child_face_count, child_part_count = _fetch_node_defs(outliner_def, child_entity, path, face_bounds_cache)
           children << child_node_def unless child_node_def.nil?
 
           face_count += child_face_count
@@ -95,7 +99,7 @@ module Ladb::OpenCutList
 
         node_def = NodeGroupDef.new(path)
         node_def.default_name = PLUGIN.get_i18n_string("tab.outliner.type_#{AbstractNodeDef::TYPE_GROUP}")
-        node_def.layer_def = _create_layer_def(entity.layer)
+        node_def.layer_def = outliner_def.available_layer_defs[entity.layer]
         node_def.expanded = instance_attributes.outliner_expanded
         node_def.part_count = part_count
         node_def.children.concat(_sort_children(children))
@@ -112,7 +116,7 @@ module Ladb::OpenCutList
 
           entity.definition.entities.each { |child_entity|
 
-            child_node_def, child_face_count, child_part_count = _fetch_node_defs(child_entity, path, face_bounds_cache)
+            child_node_def, child_face_count, child_part_count = _fetch_node_defs(outliner_def, child_entity, path, face_bounds_cache)
             children << child_node_def unless child_node_def.nil?
 
             face_count += child_face_count
@@ -147,7 +151,7 @@ module Ladb::OpenCutList
         node_def = NodeComponentDef.new(path) if node_def.nil?
         node_def.default_name = "<#{entity.definition.name}>"
         node_def.definition_name = entity.definition.name
-        node_def.layer_def = _create_layer_def(entity.layer)
+        node_def.layer_def = outliner_def.available_layer_defs[entity.layer]
         node_def.expanded = instance_attributes.outliner_expanded
         node_def.part_count = part_count
         node_def.children.concat(_sort_children(children)) unless children.nil?
@@ -161,13 +165,6 @@ module Ladb::OpenCutList
     end
 
     private
-
-    def _create_layer_def(layer)
-      return nil if layer == cached_layer0
-      layer_def = layer.is_a?(Sketchup::Layer) ? LayerDef.new(layer) : LayerFolderDef.new(layer)
-      layer_def.folder = _create_layer_def(layer.folder) if layer.respond_to?(:folder) && !layer.folder.nil?
-      layer_def
-    end
 
     def _sort_children(children)
       children.sort_by! do |node_def|
