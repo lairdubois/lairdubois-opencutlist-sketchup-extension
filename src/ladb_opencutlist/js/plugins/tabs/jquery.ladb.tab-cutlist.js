@@ -482,8 +482,8 @@
                             // Flag to stop ignoring next material change event
                             that.ignoreNextMaterialEvents = false;
 
-                            if (response['errors']) {
-                                that.dialog.notifyErrors(response['errors']);
+                            if (response.errors) {
+                                that.dialog.notifyErrors(response.errors);
                             } else {
 
                                 var wTop = $group.offset().top - $(window).scrollTop();
@@ -1380,8 +1380,8 @@
 
         rubyCallCommand('cutlist_highlight_parts', { tab_name_to_show_on_quit: this.generateOptions.minimize_on_highlight ? 'cutlist' : null, part_ids: partIds }, function (response) {
 
-            if (response['errors']) {
-                that.dialog.notifyErrors(response['errors']);
+            if (response.errors) {
+                that.dialog.notifyErrors(response.errors);
             } else if (that.generateOptions.minimize_on_highlight) {
                 that.dialog.minimize();
             }
@@ -2864,8 +2864,8 @@
                                 $divPartThumbnail.html($img);
 
                         } else {
-                            if (response['errors']) {
-                                that.dialog.notifyErrors(response['errors']);
+                            if (response.errors) {
+                                that.dialog.notifyErrors(response.errors);
                             }
                             $divPartThumbnail.hide();
                         }
@@ -3202,9 +3202,9 @@
 
                 rubyCallCommand('cutlist_part_update', { auto_orient: that.generateOptions.auto_orient, parts_data: editedParts }, function (response) {
 
-                    if (response['errors']) {
+                    if (response.errors) {
 
-                        that.dialog.notifyErrors(response['errors']);
+                        that.dialog.notifyErrors(response.errors);
 
                     } else {
 
@@ -5205,8 +5205,8 @@
 
         rubyCallCommand('cutlist_numbers_save', params ? params : {}, function (response) {
 
-            if (response['errors']) {
-                that.dialog.notifyErrors(response['errors']);
+            if (response.errors) {
+                that.dialog.notifyErrors(response.errors);
             } else {
                 that.generateCutlist(callback);
             }
@@ -5220,8 +5220,8 @@
 
         rubyCallCommand('cutlist_numbers_reset', params ? params : {}, function (response) {
 
-            if (response['errors']) {
-                that.dialog.notifyErrors(response['errors']);
+            if (response.errors) {
+                that.dialog.notifyErrors(response.errors);
             } else {
                 that.generateCutlist(callback);
             }

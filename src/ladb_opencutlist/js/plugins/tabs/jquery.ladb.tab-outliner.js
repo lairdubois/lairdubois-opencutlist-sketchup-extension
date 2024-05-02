@@ -149,8 +149,7 @@
             // Bind input
             $inputName.ladbTextinputText();
             $inputDefinitionName.ladbTextinputText();
-            $inputLayerName.ladbTextinputTokenfield({
-                limit: 1,
+            $inputLayerName.ladbTextinputText({
                 autocomplete: {
                     source: that.availableLayers.map(function (layer) { return {
                         value: layer.name,
@@ -158,10 +157,10 @@
                         icon: 'fill',
                         color: layer.color
                     } }),
-                    delay: 100,
+                    delay: 0,
+                    minLength: 0,
                     categoryIcon: 'folder'
-                },
-                showAutocompleteOnFocus: true
+                }
             });
             $inputDescription.ladbTextinputArea();
             $inputUrl.ladbTextinputUrl();
@@ -188,8 +187,8 @@
 
                     rubyCallCommand('outliner_explode', { id: that.editedNode.id }, function (response) {
 
-                        if (response['errors']) {
-                            that.dialog.notifyErrors(response['errors']);
+                        if (response.errors) {
+                            that.dialog.notifyErrors(response.errors);
                         } else {
 
                             // Reload the list
@@ -218,25 +217,25 @@
                     name: $inputName.val()
                 }
                 if ($inputDefinitionName.length > 0) {
-                    data['definition_name'] = $inputDefinitionName.val();
+                    data.definition_name = $inputDefinitionName.val();
                 }
                 if ($inputLayerName.length > 0) {
-                    data['layer_name'] = $inputLayerName.tokenfield('getTokensList')
+                    data.layer_name = $inputLayerName.val();
                 }
                 if ($inputDescription.length > 0) {
-                    data['description'] = $inputDescription.val();
+                    data.description = $inputDescription.val();
                 }
                 if ($inputUrl.length > 0) {
-                    data['url'] = $inputUrl.val();
+                    data.url = $inputUrl.val();
                 }
                 if ($inputTags.length > 0) {
-                    data['tags'] = $inputTags.tokenfield('getTokensList').split(';')
+                    data.tags = $inputTags.tokenfield('getTokensList').split(';')
                 }
 
                 rubyCallCommand('outliner_update', data, function (response) {
 
-                    if (response['errors']) {
-                        that.dialog.notifyErrors(response['errors']);
+                    if (response.errors) {
+                        that.dialog.notifyErrors(response.errors);
                     } else {
 
                         // Reload the list
@@ -366,8 +365,8 @@
                 // Flag to stop ignoring next selection change event
                 that.ignoreNextSelectionEvents = false;
 
-                if (response['errors']) {
-                    that.dialog.notifyErrors(response['errors']);
+                if (response.errors) {
+                    that.dialog.notifyErrors(response.errors);
                 } else {
 
                 }

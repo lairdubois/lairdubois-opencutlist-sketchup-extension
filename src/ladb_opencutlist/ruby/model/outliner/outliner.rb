@@ -23,7 +23,7 @@ module Ladb::OpenCutList
       @filename = _def.filename
       @model_name = _def.model_name
 
-      @root_node = _def.root_node_def.create_node
+      @root_node = _def.root_node_def.nil? ? nil : _def.root_node_def.create_node
 
       @available_layers = _def.available_layer_defs.values.map { |layer_def| {
         :name => layer_def.layer.name,

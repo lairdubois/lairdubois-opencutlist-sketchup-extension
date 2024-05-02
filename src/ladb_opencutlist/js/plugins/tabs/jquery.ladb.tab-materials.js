@@ -522,8 +522,8 @@
                     // Flag to stop ignoring next material change event
                     that.ignoreNextMaterialEvents = false;
 
-                    if (response['errors']) {
-                        that.dialog.notifyErrors(response['errors']);
+                    if (response.errors) {
+                        that.dialog.notifyErrors(response.errors);
                     } else {
 
                         if (typeof updatedCallback === 'function') {
