@@ -122,17 +122,19 @@
       float: right;
       border-radius: 5px;
       color: #ffffff;
-      margin-top: -2px;
+      border-width: 2px;
+      border-style: solid;
 
       &.ladb-mute {
-        opacity: 0.5;
+        border-style: dashed;
+        background-color: #fff !important;
       }
 
       > span {
         display: inline-block;
-        width: 24px;
-        height: 24px;
-        line-height: 24px;
+        width: 1.2em;
+        height: 1.2em;
+        line-height: 1.2em;
         text-align: center;
       }
 
@@ -141,8 +143,9 @@
         border-radius: 3px;
         background-color: #ffffff;
         padding: 0 5px;
-        margin: 2px 0 2px 2px;
-        line-height: 20px;
+        margin-right: 2px;
+        height: 1.2em;
+        line-height: 1.2em;
 
         &:hover {
           background-color: #eeeeee;
@@ -150,7 +153,7 @@
 
         > a {
           color: #000000;
-          font-size: 13px;
+          font-size: 0.9em;
 
           &:hover {
             text-decoration: none;

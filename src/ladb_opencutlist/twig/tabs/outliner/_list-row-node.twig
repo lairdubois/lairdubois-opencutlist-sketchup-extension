@@ -1,18 +1,18 @@
-{% macro renderRowNode(node, parentClasses, parentEntityLocked, parentEntityVisible, parentLayerVisible, capabilities) %}
+{% macro renderRowNode(node, parentClasses, parentLocked, parentVisible, capabilities) %}
     {% import _self as self %}
 
-    {% set entityLocked = node.locked or parentEntityLocked %}
-    {% set entityVisible = node.visible and parentEntityVisible %}
     {% if node.layer is defined and node.layer is not empty %}
-        {% set layerVisible = node.layer.visible and parentLayerVisible %}
+        {% set layerVisible = node.layer.visible %}
         {% for folder in node.layer.folders if layerVisible %}
             {% set layerVisible = layerVisible and folder.visible %}
         {% endfor %}
     {% else %}
         {% set layerVisible = true %}
     {% endif %}
+    {% set locked = node.locked or parentLocked %}
+    {% set visible = node.visible and parentVisible and layerVisible %}
 
-    <tr id="ladb_outliner_row_{{ node.id }}" class="ladb-outliner-row ladb-minitools-holder{% if not entityVisible or not layerVisible %} ladb-mute{% endif %} {{ parentClasses }}" data-node-id="{{ node.id }}" data-parent-entity-locked="{{ parentEntityLocked }}" data-parent-entity-visible="{{ parentEntityVisible }}" data-parent-layer-visible="{{ parentLayerVisible }}">
+    <tr id="ladb_outliner_row_{{ node.id }}" class="ladb-outliner-row ladb-minitools-holder{% if not visible %} ladb-mute{% endif %} {{ parentClasses }}" data-node-id="{{ node.id }}" data-parent-locked="{{ parentLocked }}" data-parent-visible="{{ parentVisible }}">
         <td class="table-cell-fluid" style="padding-left: {{ node.depth * 20 }}px;">
             <div class="table-cell-fluid-inner{% if node.depth > 0 %} table-cell-fluid-inner-padded-left{% endif %}">
                 <div class="ladb-minitools ladb-minitools-left">
@@ -25,18 +25,18 @@
                 <div class="ladb-minitools ladb-minitools-right">
                     <span class="ladb-separator no-print"></span>
                     {% if node.url is not empty %}<a href="{{ node.url }}" class="ladb-btn-node-open-url" data-toggle="tooltip" title="{{ 'tab.outliner.tooltip.open_node_url'|i18next }}"><i class="ladb-opencutlist-icon-link"></i></a>{% endif %}
-                    {% if entityLocked %}<a href="#" class="ladb-tool-black"><i class="ladb-opencutlist-icon-lock"></i></a>{% endif %}
+                    {% if locked %}<a href="#" class="ladb-tool-black"><i class="ladb-opencutlist-icon-lock"></i></a>{% endif %}
                     {% if capabilities.sketchup_version_number >= 2000000000 %}<a href="#" class="ladb-btn-node-set-active"><i class="ladb-opencutlist-icon-cursor"></i></a>{% endif %}
                     {% if node.type != 0 %}{# 0 = TYPE_MODEL #}<a href="#" class="ladb-btn-node-toggle-visible"><i class="ladb-opencutlist-icon-eye-{% if node.visible %}open{% else %}close{% endif %}"></i></a>{% endif %}
                     <a href="#" class="ladb-btn-node-edit ladb-click-tool"><i class="ladb-opencutlist-icon-edit"></i></a>
                 </div>
                 {% if node.layer %}
-                    <div class="ladb-outliner-node-layers{% if not layerVisible %} ladb-mute{% endif %}" style="background-color: {{ node.layer.color }};">
+                    <div class="ladb-outliner-node-layers{% if not layerVisible %} ladb-mute{% endif %}" style="background-color: {{ node.layer.color }}; border-color: {{ node.layer.color }};">
                         {% for folder in node.layer.folders %}
                             <div><a href="#"{% if not folder.visible %} style="text-decoration: line-through"{% endif %}><i class="ladb-opencutlist-icon-folder"></i> {{ folder.name }}</a></div>
                         {% endfor %}
                         <div><a href="#"{% if not node.layer.visible %} style="text-decoration: line-through"{% endif %}>{{ node.layer.name }}</a></div>
-                        <span><i class="ladb-opencutlist-icon-tag"></i></span>
+                        <span{% if not layerVisible %} style="color: {{ node.layer.color }};"{% endif %}><i class="ladb-opencutlist-icon-tag"></i></span>
                     </div>
                 {% endif %}
                 <div>
@@ -59,11 +59,11 @@
     {% if node.expanded %}
         {% set parentClasses = (parentClasses~' f-'~node.id) %}
         {% for node in node.children %}
-            {{ self.renderRowNode(node, parentClasses, entityLocked, entityVisible, layerVisible, capabilities) }}
+            {{ self.renderRowNode(node, parentClasses, locked, visible, capabilities) }}
         {% endfor %}
     {% endif %}
 {% endmacro %}
 
 {% from _self import renderRowNode %}
 
-{{ renderRowNode(node, parentClasses, parentEntityLocked, parentEntityVisible, parentLayerVisible, capabilities) }}
+{{ renderRowNode(node, parentClasses, parentLocked, parentVisible, parentLayerVisible, capabilities) }}

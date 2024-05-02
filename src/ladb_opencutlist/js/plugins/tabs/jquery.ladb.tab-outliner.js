@@ -398,17 +398,15 @@
         $('.f-' + node.id, this.$page).remove();
 
         var parentClasses = $row.attr('class').split(' ').filter(function (c) { return c.startsWith('f-'); }).join(' ');
-        var parentEntityLocked = $row.data('parent-entity-locked');
-        var parentEntityVisible = $row.data('parent-entity-visible');
-        var parentLayerVisible = $row.data('parent-layer-visible');
+        var parentLocked = $row.data('parent-locked');
+        var parentVisible = $row.data('parent-visible');
 
         // Build new rows
         var $rows = $(Twig.twig({ ref: "tabs/outliner/_list-row-node.twig" }).render({
             node: node,
             parentClasses: parentClasses,
-            parentEntityLocked: parentEntityLocked,
-            parentEntityVisible: parentEntityVisible,
-            parentLayerVisible: parentLayerVisible,
+            parentLocked: parentLocked,
+            parentVisible: parentVisible,
             capabilities: this.dialog.capabilities,
         }));
 
