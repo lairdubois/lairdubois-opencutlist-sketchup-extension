@@ -52,7 +52,7 @@ module Ladb::OpenCutList
       @edge_entity_ids = {}
       @edge_errors = []
       @face_count = 0
-      @face_pattern = nil               # A string from 00 to 11
+      @face_pattern = nil                 # A string from 00 to 11
       @face_material_names = {}
       @face_material_colors = {}
       @face_std_dimensions = {}

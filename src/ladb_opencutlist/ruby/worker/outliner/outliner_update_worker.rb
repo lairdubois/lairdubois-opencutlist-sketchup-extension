@@ -49,7 +49,6 @@ module Ladb::OpenCutList
       # Start model modification operation
       model.start_operation('OCL Outliner Update', true, false, true)
 
-
       if @name.is_a?(String) && @name != entity.name
         entity.name = @name
       end
@@ -64,12 +63,12 @@ module Ladb::OpenCutList
       if entity.is_a?(Sketchup::ComponentInstance) && @description.is_a?(String) && @description != entity.definition.description
         entity.definition.description = @description
       end
-      if entity.is_a?(Sketchup::ComponentInstance) && @url.is_a?(String) || @tags.is_a?(Array)
+
+      if entity.is_a?(Sketchup::ComponentInstance) && (@url.is_a?(String) || @tags.is_a?(Array))
         definition_attributes = DefinitionAttributes.new(entity.definition)
-        if @url != definition_attributes.url
+        if @url != definition_attributes.url ||
+           @tags != definition_attributes.tags
           definition_attributes.url = @url
-        end
-        if @tags != definition_attributes.tags
           definition_attributes.tags = @tags
           definition_attributes.write_to_attributes
         end
