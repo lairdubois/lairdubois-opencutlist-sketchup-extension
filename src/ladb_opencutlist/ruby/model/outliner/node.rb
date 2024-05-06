@@ -9,12 +9,13 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :id, :type, :depth, :name, :default_name, :locked, :visible, :expanded, :part_count, :children
+    attr_reader :id, :entity_id, :type, :depth, :name, :default_name, :locked, :visible, :expanded, :part_count, :children
 
     def initialize(_def)
       @_def = _def
 
       @id = _def.id
+      @entity_id = _def.entity_id
       @type = _def.type
       @depth = _def.depth
 

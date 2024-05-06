@@ -403,11 +403,11 @@
 
         // Build new rows
         var $rows = $(Twig.twig({ ref: "tabs/outliner/_list-row-node.twig" }).render({
+            capabilities: this.dialog.capabilities,
             node: node,
             parentClasses: parentClasses,
             parentLocked: parentLocked,
-            parentVisible: parentVisible,
-            capabilities: this.dialog.capabilities,
+            parentVisible: parentVisible
         }));
 
         // Bind rows
@@ -464,6 +464,23 @@
     };
 
     // Init ///
+
+    LadbTabOutliner.prototype.registerCommands = function () {
+        LadbAbstractTab.prototype.registerCommands.call(this);
+
+        var that = this;
+
+        this.registerCommand('edit_node', function (parameters) {
+            var nodeId = parameters.node_id;
+            var tab = parameters.tab;
+            window.requestAnimationFrame(function () {
+                that.generateOutliner(function () {
+                    that.editNode(nodeId, tab);
+                });
+            });
+        });
+
+    };
 
     LadbTabOutliner.prototype.bind = function () {
         LadbAbstractTab.prototype.bind.call(this);

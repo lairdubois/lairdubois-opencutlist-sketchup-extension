@@ -1312,7 +1312,7 @@ module Ladb::OpenCutList
 
     def _edit_part_properties(entity, tab = 'general')
       unless entity.nil?
-        execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: null, part_serialized_path: '#{PathUtils.serialize_path(Sketchup.active_model.active_path.nil? ? [entity ] : Sketchup.active_model.active_path + [entity ])}', tab: '#{tab}' }")
+        execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: null, part_serialized_path: '#{PathUtils.serialize_path(Sketchup.active_model.active_path.nil? ? [ entity ] : Sketchup.active_model.active_path + [ entity ])}', tab: '#{tab}' }")
       end
     end
 

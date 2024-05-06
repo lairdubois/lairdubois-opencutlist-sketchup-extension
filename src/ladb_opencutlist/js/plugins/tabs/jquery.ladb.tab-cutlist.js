@@ -5499,7 +5499,7 @@
             var partSerializedPath = parameters.part_serialized_path;
             var tab = parameters.tab;
             var dontGenerate = parameters.dontGenerate;
-            setTimeout(function () {     // Use setTimeout to give time to UI to refresh
+            window.requestAnimationFrame(function () {
                 if (dontGenerate) {
                     that.editPart(partId, partSerializedPath, tab);
                 } else {
@@ -5507,7 +5507,7 @@
                         that.editPart(partId, partSerializedPath, tab);
                     });
                 }
-            }, 1);
+            });
         });
 
     };

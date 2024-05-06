@@ -82,6 +82,7 @@ core:
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
+      edit_part_instance_properties: Editer les propriétés de l'instance
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
@@ -1339,7 +1340,7 @@ tab:
     type_2: Composant
     type_3: Pièce
     tooltip:
-      open_node_url: Ouvrir l'URL de l'instance
+      open_node_url: Ouvrir l'URL de la pièce
     edit_node:
       title_model: "Propriétés du modèle"
       title_instance: "Propriétés de l'instance **{{ name }}**"

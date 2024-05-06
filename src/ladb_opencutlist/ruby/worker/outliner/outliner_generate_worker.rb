@@ -30,7 +30,7 @@ module Ladb::OpenCutList
         return outliner_def.create_outliner
       end
       if model.entities.length == 0
-        outliner_def.add_error('tab.outliner.error.no_model')
+        outliner_def.add_error('tab.outliner.error.no_entities')
         return outliner_def.create_outliner
       end
 

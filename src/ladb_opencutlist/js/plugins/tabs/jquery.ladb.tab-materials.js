@@ -1339,11 +1339,11 @@
             var propertiesTab = parameters.propertiesTab;
             var callback = parameters.callback;
             var updatedCallback = parameters.updatedCallback;
-            setTimeout(function () {     // Use setTimeout to give time to UI to refresh
+            window.requestAnimationFrame(function () {
                 that.loadList(function () {
                     that.editMaterial(materialId, tab, propertiesTab, callback, updatedCallback);
                 });
-            }, 1);
+            });
         });
     };
 

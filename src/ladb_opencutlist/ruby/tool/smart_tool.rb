@@ -6,6 +6,7 @@ module Ladb::OpenCutList
   require_relative '../helper/face_triangles_helper'
   require_relative '../helper/sanitizer_helper'
   require_relative '../worker/cutlist/cutlist_generate_worker'
+  require_relative '../worker/outliner/outliner_generate_worker'
   require_relative '../utils/axis_utils'
   require_relative '../utils/hash_utils'
   require_relative '../utils/transformation_utils'
@@ -1006,6 +1007,11 @@ module Ladb::OpenCutList
           else
             MF_GRAYED
           end
+        }
+        menu.add_separator
+        menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_instance_properties')) {
+          node_def = NodePartDef.new(@active_part_entity_path)
+          PLUGIN.execute_tabs_dialog_command_on_tab('outliner', 'edit_node', "{ node_id: '#{node_def.id}', tab: 'general' }")
         }
       else
         menu.add_item(PLUGIN.get_i18n_string('default.close')) {
