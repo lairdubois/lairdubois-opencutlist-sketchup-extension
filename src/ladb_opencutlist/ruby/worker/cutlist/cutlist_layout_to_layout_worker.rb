@@ -297,22 +297,38 @@ module Ladb::OpenCutList
           return { :errors => [ [ 'tab.cutlist.layout.error.failed_to_layout', { :error => e.inspect } ] ] }
         end
 
-        # Override layout 'LinearDimensionTool' default style
+        # Override layout 'LinearDimensionTool' and 'AngularDimensionTool' default style
 
         defaults = {
-          'arrow.start.size' => { :type => 6, :value => 2 },
-          'arrow.start.type' => { :type => 2, :value => 17 },
-          'arrow.end.size' => { :type => 6, :value => 2 },
-          'arrow.end.type' => { :type => 2, :value => 17 },
-          'stroke.width' => { :type => 6, :value => 0.5 },
-          'dimension.units.unit' => { :type => 2, :value => DimensionUtils.instance.length_unit },
-          'dimension.units.format' => { :type => 2, :value => DimensionUtils.instance.length_format },
-          'dimension.units.precision' => { :type => 4, :value => DimensionUtils.instance.length_precision },
-          'dimension.units.suppression' => { :type => 2, :value => DimensionUtils.instance.length_suppress_unit_display ? 1 : 0 },
-          'dimension.startoffsetlength' => { :type => 7, :value => 0.125 },
-          'dimension.startoffsettype' => { :type => 4, :value => 0 },
-          'dimension.endoffsetlength' => { :type => 7, :value => 0.125 },
-          'dimension.endoffsettype' => { :type => 4, :value => 0 },
+          'LinearDimensionTool' => {
+            'arrow.start.size' => { :type => 6, :value => 2 },
+            'arrow.start.type' => { :type => 2, :value => 17 },
+            'arrow.end.size' => { :type => 6, :value => 2 },
+            'arrow.end.type' => { :type => 2, :value => 17 },
+            'stroke.width' => { :type => 6, :value => 0.5 },
+            'dimension.units.unit' => { :type => 2, :value => DimensionUtils.instance.length_unit },
+            'dimension.units.format' => { :type => 2, :value => DimensionUtils.instance.length_format },
+            'dimension.units.precision' => { :type => 4, :value => DimensionUtils.instance.length_precision },
+            'dimension.units.suppression' => { :type => 2, :value => DimensionUtils.instance.length_suppress_unit_display ? 1 : 0 },
+            'dimension.startoffsetlength' => { :type => 7, :value => 0.125 },
+            'dimension.startoffsettype' => { :type => 4, :value => 0 },
+            'dimension.endoffsetlength' => { :type => 7, :value => 0.125 },
+            'dimension.endoffsettype' => { :type => 4, :value => 0 },
+          },
+          'AngularDimensionTool' => {
+            'arrow.start.size' => { :type => 6, :value => 2 },
+            'arrow.start.type' => { :type => 2, :value => 17 },
+            'arrow.end.size' => { :type => 6, :value => 2 },
+            'arrow.end.type' => { :type => 2, :value => 17 },
+            'stroke.width' => { :type => 6, :value => 0.5 },
+            'dimension.units.angleprecision' => { :type => 4, :value => 0 },
+            'dimension.units.angleunit' => { :type => 2, :value => 9 },
+            'dimension.units.suppression' => { :type => 2, :value => 0 },
+            'dimension.startoffsetlength' => { :type => 7, :value => 0.125 },
+            'dimension.startoffsettype' => { :type => 4, :value => 0 },
+            'dimension.endoffsetlength' => { :type => 7, :value => 0.125 },
+            'dimension.endoffsettype' => { :type => 4, :value => 0 },
+          }
         }
 
         Zip::File.open(layout_path, create: false) do |zipfile|
@@ -331,33 +347,37 @@ module Ladb::OpenCutList
             style_manager_elm = xdoc.elements['/styleManager']
             if style_manager_elm
 
-              # Add new 'LinearDimensionTool' default attributes
+              defaults.each do |tool, attributes|
 
-              style_attributes_elm = REXML::Element.new('e:styleAttributes')
+                # Add new 'Tool' default attributes
 
-              style_value_elm = REXML::Element.new('t:variant')
-              style_value_elm.add_attribute('type', 13)
-              style_value_elm.add_element(style_attributes_elm)
+                style_attributes_elm = REXML::Element.new('e:styleAttributes')
 
-              style_elm = REXML::Element.new('t:dicItem')
-              style_elm.add_attribute('key', 'LinearDimensionTool')
-              style_elm.add_element(style_value_elm)
+                style_value_elm = REXML::Element.new('t:variant')
+                style_value_elm.add_attribute('type', 13)
+                style_value_elm.add_element(style_attributes_elm)
 
-              style_manager_elm.add_element(style_elm)
+                style_elm = REXML::Element.new('t:dicItem')
+                style_elm.add_attribute('key', tool)
+                style_elm.add_element(style_value_elm)
 
-              defaults.each { |attribute, type_and_value|
+                style_manager_elm.add_element(style_elm)
 
-                attribute_value_elm = REXML::Element.new('t:variant')
-                attribute_value_elm.add_attribute('type', type_and_value[:type])
-                attribute_value_elm.add_text(REXML::Text.new(type_and_value[:value].to_s))
+                attributes.each do |attribute, type_and_value|
 
-                attribute_elm = REXML::Element.new('t:dicItem')
-                attribute_elm.add_attribute('key', attribute)
-                attribute_elm.add_element(attribute_value_elm)
+                  attribute_value_elm = REXML::Element.new('t:variant')
+                  attribute_value_elm.add_attribute('type', type_and_value[:type])
+                  attribute_value_elm.add_text(REXML::Text.new(type_and_value[:value].to_s))
 
-                style_attributes_elm.add_element(attribute_elm)
+                  attribute_elm = REXML::Element.new('t:dicItem')
+                  attribute_elm.add_attribute('key', attribute)
+                  attribute_elm.add_element(attribute_value_elm)
 
-              }
+                  style_attributes_elm.add_element(attribute_elm)
+
+                end
+
+              end
 
               output = ''
               xdoc.write(output)
