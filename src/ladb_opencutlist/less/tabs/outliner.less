@@ -52,9 +52,15 @@
       background-color: #f9f9f9;
     }
 
-    &.ladb-mute {
+    &.ladb-hidden {
       .ladb-outliner-node-type, .ladb-outliner-node-name, .ladb-outliner-node-definition-name {
         color: #ccc;
+      }
+    }
+
+    &.ladb-active {
+      .ladb-outliner-node-type, .ladb-outliner-node-name, .ladb-outliner-node-definition-name {
+        color: #17b4f8;
       }
     }
 
@@ -125,7 +131,7 @@
       border-width: 2px;
       border-style: solid;
 
-      &.ladb-mute {
+      &.ladb-hidden {
         border-style: dashed;
         background-color: #fff !important;
       }

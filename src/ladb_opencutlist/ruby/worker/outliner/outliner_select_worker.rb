@@ -1,6 +1,6 @@
 module Ladb::OpenCutList
 
-  class OutlinerSetActiveWorker
+  class OutlinerSelectWorker
 
     def initialize(outliner,
 
@@ -17,7 +17,6 @@ module Ladb::OpenCutList
     # -----
 
     def run
-      return { :errors => [ [ 'core.error.feature_unavailable', { :version => 2020 } ] ] } if Sketchup.version_number < 2000000000
       return { :errors => [ 'default.error' ] } unless @outline
       return { :errors => [ 'tab.outliner.error.obsolete_outliner' ] } if @outline.obsolete?
 
@@ -27,14 +26,24 @@ module Ladb::OpenCutList
       node = @outline.get_node(@id)
       return { :errors => [ 'tab.outliner.error.node_not_found' ] } unless node
 
-      # Start model modification operation
-      model.start_operation('OCL Outliner Set Active', true, false, true)
+      entity = node.def.entity
+      return { :errors => [ 'tab.outliner.error.entity_not_found' ] } if !entity.is_a?(Sketchup::Entity) || entity.deleted?
 
-      model.active_path = node.def.path
+      # Start model modification operation
+      model.start_operation('OCL Outliner Explode', true, false, false)
+
+
+      if model.selection.contains?(entity)
+        model.selection.remove(entity)
+      else
+        model.selection.add(entity)
+      end
+
 
       # Commit model modification operation
       model.commit_operation
 
+      { :success => true }
     end
 
     # -----

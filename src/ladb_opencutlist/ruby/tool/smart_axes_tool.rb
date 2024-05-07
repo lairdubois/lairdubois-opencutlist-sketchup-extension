@@ -285,9 +285,9 @@ module Ladb::OpenCutList
 
         tooltip_type = MESSAGE_TYPE_DEFAULT
 
-        # Create drawing helpers
-
         instance_info = part.def.get_one_instance_info
+
+        # Create drawing helpers
 
         arrow_color = part.auto_oriented ? COLOR_ARROW_AUTO_ORIENTED : COLOR_ARROW
         arrow_line_width = 2
@@ -350,17 +350,17 @@ module Ladb::OpenCutList
             part_helper.append(arrow)
 
             # Box helper
-            box_helper = Kuix::BoxMotif.new
-            box_helper.bounds.origin.copy!(bounds.min)
-            box_helper.bounds.size.copy!(bounds)
-            box_helper.bounds.size.width += increases[0] / part.def.scale.x
-            box_helper.bounds.size.height += increases[1] / part.def.scale.y
-            box_helper.bounds.size.depth += increases[2] / part.def.scale.z
-            box_helper.color = COLOR_ACTION
-            box_helper.line_width = 1
-            box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-            box_helper.transformation = t
-            part_helper.append(box_helper)
+            box = Kuix::BoxMotif.new
+            box.bounds.origin.copy!(bounds.min)
+            box.bounds.size.copy!(bounds)
+            box.bounds.size.width += increases[0] / part.def.scale.x
+            box.bounds.size.height += increases[1] / part.def.scale.y
+            box.bounds.size.depth += increases[2] / part.def.scale.z
+            box.color = COLOR_ACTION
+            box.line_width = 1
+            box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+            box.transformation = t
+            part_helper.append(box)
 
             # Axes helper
             axes_helper = Kuix::AxesHelper.new
@@ -398,12 +398,12 @@ module Ladb::OpenCutList
 
         if is_action_flip?
 
-          transformation_inverse = instance_info.transformation.inverse
+          ti = instance_info.transformation.inverse
 
           rect_offset = model.active_view.pixels_to_model(30, model.active_view.guess_target)
           rect_offset_bounds = Geom::BoundingBox.new
-          rect_offset_bounds.add(Geom::Point3d.new.transform!(transformation_inverse))
-          rect_offset_bounds.add(Geom::Point3d.new(rect_offset, rect_offset, rect_offset).transform!(transformation_inverse))
+          rect_offset_bounds.add(Geom::Point3d.new.transform!(ti))
+          rect_offset_bounds.add(Geom::Point3d.new(rect_offset, rect_offset, rect_offset).transform!(ti))
 
           r_width = 0
           r_height = 0
@@ -487,16 +487,16 @@ module Ladb::OpenCutList
           part_helper.append(arrow)
 
           # Bounding box helper
-          box_helper = Kuix::BoxMotif.new
-          box_helper.bounds.origin.copy!(instance_info.definition_bounds.min)
-          box_helper.bounds.size.copy!(instance_info.definition_bounds)
-          box_helper.bounds.size.width += increases[0] / part.def.scale.x
-          box_helper.bounds.size.height += increases[1] / part.def.scale.y
-          box_helper.bounds.size.depth += increases[2] / part.def.scale.z
-          box_helper.color = COLOR_BOX
-          box_helper.line_width = 1
-          box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-          part_helper.append(box_helper)
+          box = Kuix::BoxMotif.new
+          box.bounds.origin.copy!(instance_info.definition_bounds.min)
+          box.bounds.size.copy!(instance_info.definition_bounds)
+          box.bounds.size.width += increases[0] / part.def.scale.x
+          box.bounds.size.height += increases[1] / part.def.scale.y
+          box.bounds.size.depth += increases[2] / part.def.scale.z
+          box.color = COLOR_BOX
+          box.line_width = 1
+          box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+          part_helper.append(box)
 
         end
 

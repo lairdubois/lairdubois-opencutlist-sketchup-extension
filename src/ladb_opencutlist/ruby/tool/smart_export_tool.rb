@@ -306,30 +306,21 @@ module Ladb::OpenCutList
             preview.transformation = @active_drawing_def.transformation
             @overlay_layer.append(preview)
 
-            @active_drawing_def.face_manipulators.each do |face_manipulator|
-
-              # Highlight face
-              mesh = Kuix::Mesh.new
-              mesh.add_triangles(face_manipulator.triangles)
-              mesh.background_color = highlighted ? COLOR_MESH_HIGHLIGHTED : COLOR_MESH
-              preview.append(mesh)
-
-            end
-
-            bounds = Geom::BoundingBox.new
-            bounds.add(@active_drawing_def.bounds.min)
-            bounds.add(@active_drawing_def.bounds.max)
-            bounds.add(ORIGIN)
+            # Highlight faces
+            mesh = Kuix::Mesh.new
+            mesh.add_triangles(@active_drawing_def.face_manipulators.flat_map { |face_manipulator| face_manipulator.triangles })
+            mesh.background_color = highlighted ? COLOR_MESH_HIGHLIGHTED : COLOR_MESH
+            preview.append(mesh)
 
             # Box helper
-            box_helper = Kuix::BoxMotif.new
-            box_helper.bounds.origin.copy!(bounds.min)
-            box_helper.bounds.size.copy!(bounds)
-            box_helper.bounds.apply_offset(inch_offset, inch_offset, inch_offset)
-            box_helper.color = Kuix::COLOR_BLACK
-            box_helper.line_width = 1
-            box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-            preview.append(box_helper)
+            box = Kuix::BoxMotif.new
+            box.bounds.origin.copy!(@active_drawing_def.bounds.min)
+            box.bounds.size.copy!(@active_drawing_def.bounds)
+            box.bounds.apply_offset(inch_offset, inch_offset, inch_offset)
+            box.color = Kuix::COLOR_BLACK
+            box.line_width = 1
+            box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+            preview.append(box)
 
             # Axes helper
             axes_helper = Kuix::AxesHelper.new
@@ -435,14 +426,14 @@ module Ladb::OpenCutList
               end
 
               # Box helper
-              box_helper = Kuix::RectangleMotif.new
-              box_helper.bounds.origin.copy!(projection_def.bounds.min)
-              box_helper.bounds.size.copy!(projection_def.bounds)
-              box_helper.bounds.apply_offset(inch_offset, inch_offset, 0)
-              box_helper.color = Kuix::COLOR_BLACK
-              box_helper.line_width = 1
-              box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-              preview.append(box_helper)
+              box = Kuix::RectangleMotif.new
+              box.bounds.origin.copy!(projection_def.bounds.min)
+              box.bounds.size.copy!(projection_def.bounds)
+              box.bounds.apply_offset(inch_offset, inch_offset, 0)
+              box.color = Kuix::COLOR_BLACK
+              box.line_width = 1
+              box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+              preview.append(box)
 
               if @active_drawing_def.input_line_manipulator.is_a?(EdgeManipulator)
 

@@ -6,7 +6,16 @@ module Ladb::OpenCutList
 
     include Singleton
 
+    ON_ACTIVE_PATH_CHANGED = 'on_active_path_changed'.freeze
     ON_DRAWING_CHANGE = 'on_drawing_change'.freeze
+
+    def onActivePathChanged(model)
+      # puts "onActivePathChanged: #{model}"
+
+      # Trigger event to JS
+      PLUGIN.trigger_event(ON_ACTIVE_PATH_CHANGED, nil)
+
+    end
 
     def onPreSaveModel(model)
       # puts "onPreSaveModel: #{model}"

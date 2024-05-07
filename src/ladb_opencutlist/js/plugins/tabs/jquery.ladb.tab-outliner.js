@@ -7,8 +7,9 @@
     var LadbTabOutliner = function (element, options, dialog) {
         LadbAbstractTab.call(this, element, options, dialog);
 
+        this.activeNode = null;
+        this.selectedNodes = [];
         this.editedNode = null;
-        this.ignoreNextSelectionEvents = false;
         this.lastEditNodeTab = null;
 
         this.$header = $('.ladb-header', this.$element);
@@ -53,6 +54,14 @@
                 that.rootNode = root_node;
                 that.availableLayers = available_layers;
 
+                var fn_set_parent = function (node, parent) {
+                    node.parent = parent;
+                    for (let i = 0; i < node.children.length; i++) {
+                        fn_set_parent(node.children[i], node);
+                    }
+                };
+                fn_set_parent(root_node, null);
+
                 // Update filename
                 that.$fileTabs.empty();
                 that.$fileTabs.append(Twig.twig({ ref: "tabs/outliner/_file-tab.twig" }).render({
@@ -70,18 +79,29 @@
                     root_node: root_node
                 }));
 
-                that.updateHidden();
+                that.$tbody = $('#ladb_outliner_tbody', that.$page);
 
-                // Setup tooltips
-                that.dialog.setupTooltips();
+                that.refreshActivePath(function () {
+                    that.refreshSelection(function () {
+                        that.renderNodes();
+                    });
+                });
 
-                // Bind rows
-                that.bindNodeRows(that.$page);
+                var $toggleHiddenBtn = $('#ladb_btn_toggle_hidden')
+                if (that.showHiddenInstances) {
+                    $('i', $toggleHiddenBtn).addClass('ladb-opencutlist-icon-check-box-with-check-sign');
+                }
 
                 // Bind buttons
-                $('#ladb_btn_toggle_hidden').on('click', function () {
+                $toggleHiddenBtn.on('click', function () {
                     $(this).blur();
-                    that.toggleHidden();
+                    that.showHiddenInstances = !that.showHiddenInstances;
+                    if (that.showHiddenInstances) {
+                        $('i', $(this)).addClass('ladb-opencutlist-icon-check-box-with-check-sign');
+                    } else {
+                        $('i', $(this)).removeClass('ladb-opencutlist-icon-check-box-with-check-sign');
+                    }
+                    that.renderNodes();
                     return false;
                 });
 
@@ -100,6 +120,197 @@
                 }
 
             });
+
+        });
+
+    };
+
+    LadbTabOutliner.prototype.renderNodes = function () {
+        var that = this;
+
+        this.$tbody.empty();
+
+        var fnRenderNode = function (node, activeOnly, parentLocked, parentVisible) {
+
+            var layerVisible = true;
+            if (node.layer) {
+                layerVisible = node.layer.visible;
+                if (layerVisible) {
+                    for (const folder of node.layer.folders) {
+                        layerVisible = layerVisible && folder.visible
+                    }
+                }
+            }
+            var visible = parentVisible && node.visible && layerVisible;
+
+            if (!visible && !that.showHiddenInstances) {
+                return;
+            }
+
+            var locked = parentLocked && node.locked;
+
+            var $row = $(Twig.twig({ ref: "tabs/outliner/_list-row-node.twig" }).render({
+                capabilities: that.dialog.capabilities,
+                node: node,
+                locked: locked,
+                visible: visible,
+                layerVisible: layerVisible
+            }));
+            that.$tbody.append($row);
+
+            $row.on('click', function (e) {
+                $(this).blur();
+                $('.ladb-click-tool', $(this)).click();
+                return false;
+            });
+            $('a.ladb-btn-node-toggle-folding', $row).on('click', function () {
+                $(this).blur();
+
+                node.expanded = !node.expanded;
+                that.renderNodes();
+                rubyCallCommand('outliner_set_expanded', {
+                    id: node.id,
+                    expanded: node.expanded
+                });
+
+                return false;
+            });
+            $('a.ladb-btn-node-select', $row).on('click', function () {
+                $(this).blur();
+
+                rubyCallCommand('outliner_select', { id: node.id }, function (response) {
+
+                    if (response.errors) {
+                        that.dialog.notifyErrors(response.errors);
+                    } else {
+                        that.refreshSelection();
+                    }
+
+                });
+
+                return false;
+            });
+            $('a.ladb-btn-node-open-url', $row).on('click', function () {
+                $(this).blur();
+                rubyCallCommand('core_open_url', { url: $(this).attr('href') });
+                return false;
+            });
+            $('a.ladb-btn-node-set-active', $row).on('click', function () {
+                $(this).blur();
+                var nodeId = $row.data('node-id');
+
+                rubyCallCommand('outliner_set_active', { id: nodeId }, function (response) {
+
+                    if (response.errors) {
+                        that.dialog.notifyErrors(response.errors);
+                    } else {
+
+                    }
+
+                });
+
+                return false;
+            });
+            $('a.ladb-btn-node-toggle-visible', $row).on('click', function () {
+                $(this).blur();
+
+                node.visible = !node.visible;
+                that.renderNodes();
+                rubyCallCommand('outliner_set_visible', {
+                    id: node.id,
+                    visible: node.visible
+                });
+
+                return false;
+            });
+            $('a.ladb-btn-node-edit', $row).on('click', function () {
+                $(this).blur();
+                var nodeId = $row.data('node-id');
+                that.editNode(nodeId);
+                return false;
+            });
+
+            if (node.active) { activeOnly = false; }
+
+            if (node.expanded || node.child_active || node.active) {
+                for (const child of node.children) {
+                    if (activeOnly && !child.child_active && !child.active) {
+                        continue;
+                    }
+                    fnRenderNode(child, activeOnly, locked, visible);
+                }
+            }
+
+        };
+        fnRenderNode(this.rootNode, true, false, true);
+
+        // Setup tooltips
+        this.dialog.setupTooltips();
+
+    }
+
+    LadbTabOutliner.prototype.refreshActivePath = function (callback) {
+        var that = this;
+
+        rubyCallCommand('outliner_get_active', {}, function (response) {
+
+            var fnPropagateUp = function (node, child_active) {
+                if (node !== null) {
+                    node.child_active = child_active
+                    if (node.parent !== null) {
+                        fnPropagateUp(node.parent, child_active);
+                    }
+                }
+            }
+
+            if (that.activeNode) {
+                that.activeNode.active = false;
+                fnPropagateUp(that.activeNode.parent, false);
+            }
+
+            var activeNode;
+            if (response.node) {
+                activeNode = that.findNodeById(response.node.id);
+            }
+
+            if (activeNode) {
+                activeNode.active = true
+                fnPropagateUp(activeNode.parent, true);
+            }
+            that.activeNode = activeNode;
+
+            if (typeof callback === 'function') {
+                callback();
+            }
+
+        });
+
+    };
+
+    LadbTabOutliner.prototype.refreshSelection = function (callback) {
+        var that = this;
+
+        rubyCallCommand('outliner_get_selection', {}, function (response) {
+
+            for (const node of that.selectedNodes) {
+                node.selected = false;
+            }
+
+            var selectedNodes = []
+            if (response.nodes) {
+                for (const n of response.nodes) {
+                    let node = that.findNodeById(n.id);
+                    if (node) {
+                        node.selected = true;
+                        selectedNodes.push(node);
+                    }
+                }
+            }
+            that.selectedNodes = selectedNodes;
+
+            if (typeof callback === 'function') {
+                callback();
+            }
 
         });
 
@@ -269,156 +480,7 @@
 
     };
 
-    LadbTabOutliner.prototype.toggleFoldingNode = function (id, $row) {
-        var node = this.findNodeById(id);
-        if (node) {
-            node.expanded = !node.expanded;
-            if ($row === undefined) {
-                $row = $('#ladb_outliner_row_' + node.id, this.$page);
-            }
-            this.replaceNodeRow(node, $row);
-            rubyCallCommand('outliner_set_expanded', {
-                id: node.id,
-                expanded: node.expanded
-            });
-        }
-    };
-
-    LadbTabOutliner.prototype.toggleVisibleNode = function (id, $row) {
-        var node = this.findNodeById(id);
-        if (node) {
-            node.visible = !node.visible;
-            if ($row === undefined) {
-                $row = $('#ladb_outliner_row_' + node.id, this.$page);
-            }
-            this.replaceNodeRow(node, $row);
-            rubyCallCommand('outliner_set_visible', {
-                id: node.id,
-                visible: node.visible
-            });
-        }
-    };
-
-    LadbTabOutliner.prototype.toggleHidden = function () {
-        this.showHiddenInstances = !this.showHiddenInstances;
-        this.updateHidden();
-    };
-
-    LadbTabOutliner.prototype.updateHidden = function () {
-        var that = this;
-
-        var $btn = $('#ladb_btn_toggle_hidden');
-        var $i = $('i', $btn);
-
-        if (this.showHiddenInstances) {
-            $i.addClass('ladb-opencutlist-icon-check-box-with-check-sign');
-        } else {
-            $i.removeClass('ladb-opencutlist-icon-check-box-with-check-sign');
-        }
-
-        $('.ladb-outliner-row', this.$page).each(function () {
-            var $row = $(this);
-            if (!that.showHiddenInstances && $row.hasClass('ladb-mute')) {
-                $row.hide();
-            } else {
-                $row.show();
-            }
-        });
-
-    };
-
     // Internals /////
-
-    LadbTabOutliner.prototype.bindNodeRows = function ($rowsContext) {
-        var that = this;
-
-        $('.ladb-outliner-row', $rowsContext).each(function () {
-            var $row = $(this);
-            $row.on('click', function (e) {
-                $(this).blur();
-                $('.ladb-click-tool', $(this)).click();
-                return false;
-            });
-        });
-        $('a.ladb-btn-node-toggle-folding', $rowsContext).on('click', function () {
-            $(this).blur();
-            var $row = $(this).parents('.ladb-outliner-row');
-            var nodeId = $row.data('node-id');
-            that.toggleFoldingNode(nodeId, $row);
-            return false;
-        });
-        $('a.ladb-btn-node-open-url', $rowsContext).on('click', function () {
-            $(this).blur();
-            rubyCallCommand('core_open_url', { url: $(this).attr('href') });
-            return false;
-        });
-        $('a.ladb-btn-node-set-active', $rowsContext).on('click', function () {
-            $(this).blur();
-            var $row = $(this).parents('.ladb-outliner-row');
-            var nodeId = $row.data('node-id');
-
-            // Flag to ignore next selection change event
-            that.ignoreNextSelectionEvents = true;
-
-            rubyCallCommand('outliner_set_active', { id: nodeId }, function (response) {
-
-                // Flag to stop ignoring next selection change event
-                that.ignoreNextSelectionEvents = false;
-
-                if (response.errors) {
-                    that.dialog.notifyErrors(response.errors);
-                } else {
-
-                }
-
-            });
-
-            return false;
-        });
-        $('a.ladb-btn-node-toggle-visible', $rowsContext).on('click', function () {
-            $(this).blur();
-            var $row = $(this).parents('.ladb-outliner-row');
-            var nodeId = $row.data('node-id');
-            that.toggleVisibleNode(nodeId, $row);
-            return false;
-        });
-        $('a.ladb-btn-node-edit', $rowsContext).on('click', function () {
-            $(this).blur();
-            var $row = $(this).parents('.ladb-outliner-row');
-            var nodeId = $row.data('node-id');
-            that.editNode(nodeId);
-            return false;
-        });
-
-    };
-
-    LadbTabOutliner.prototype.replaceNodeRow = function (node, $row) {
-
-        // Remove sub tree
-        $('.f-' + node.id, this.$page).remove();
-
-        var parentClasses = $row.attr('class').split(' ').filter(function (c) { return c.startsWith('f-'); }).join(' ');
-        var parentLocked = $row.data('parent-locked');
-        var parentVisible = $row.data('parent-visible');
-
-        // Build new rows
-        var $rows = $(Twig.twig({ ref: "tabs/outliner/_list-row-node.twig" }).render({
-            capabilities: this.dialog.capabilities,
-            node: node,
-            parentClasses: parentClasses,
-            parentLocked: parentLocked,
-            parentVisible: parentVisible
-        }));
-
-        // Bind rows
-        this.bindNodeRows($('<div>').append($rows));
-
-        // Replace row
-        $row.replaceWith($rows);
-
-        this.updateHidden();
-
-    };
 
     LadbTabOutliner.prototype.findNodeById = function (id, parent) {
         if (parent === undefined) {
@@ -501,10 +563,11 @@
         addEventCallback([ 'on_layer_changed', 'on_layer_removed', 'on_layers_folder_changed', 'on_layers_folder_removed', 'on_remove_all_layers' ], function (params) {
             that.showObsolete('core.event.layers_change', true);
         });
-        addEventCallback([ 'on_selection_bulk_change' ], function (params) {
-            if (!that.ignoreNextSelectionEvents) {
-                that.showObsolete('core.event.selection_change', true);
-            }
+        addEventCallback([ 'on_selection_bulk_change', 'on_selection_cleared' ], function (params) {
+            that.refreshSelection(function () { that.renderNodes(); });
+        });
+        addEventCallback([ 'on_active_path_changed' ], function (params) {
+            that.refreshActivePath(function () { that.renderNodes(); });
         });
 
     };

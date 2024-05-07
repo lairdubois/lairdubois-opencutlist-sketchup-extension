@@ -56,6 +56,26 @@ module Ladb::OpenCutList
       nil
     end
 
+    def get_node_by_path(path, parent_node = nil)
+      parent_node = @root_node if parent_node.nil?
+      return parent_node if parent_node.def.path == path
+      parent_node.children.each do |child_node|
+        node = get_node_by_path(path, child_node)
+        return node unless node.nil?
+      end
+      nil
+    end
+
+    def get_node_by_entity(entity, parent_node = nil)
+      parent_node = @root_node if parent_node.nil?
+      return parent_node if parent_node.def.entity == entity
+      parent_node.children.each do |child_node|
+        node = get_node_by_entity(entity, child_node)
+        return node unless node.nil?
+      end
+      nil
+    end
+
     private
 
     def _fire_invalidate_event

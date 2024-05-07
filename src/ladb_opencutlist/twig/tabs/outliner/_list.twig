@@ -16,11 +16,8 @@
                 </div>
                 {{ 'tab.outliner.nodes'|i18next }}
             </td>
-{#            <td width="8%">{{ 'tab.outliner.part_count'|i18next }}</td>#}
         </tr>
         </thead>
-        <tbody>
-        {% include 'tabs/outliner/_list-row-node.twig' with { 'node':root_node, 'parentLocked':false, 'parentVisible':true } %}
-        </tbody>
+        <tbody id="ladb_outliner_tbody"></tbody>
     </table>
 {% endif %}
