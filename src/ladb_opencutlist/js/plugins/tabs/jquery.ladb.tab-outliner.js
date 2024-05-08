@@ -197,9 +197,8 @@
             });
             $('a.ladb-btn-node-set-active', $row).on('click', function () {
                 $(this).blur();
-                var nodeId = $row.data('node-id');
 
-                rubyCallCommand('outliner_set_active', { id: nodeId }, function (response) {
+                rubyCallCommand('outliner_set_active', { id: node.id }, function (response) {
 
                     if (response.errors) {
                         that.dialog.notifyErrors(response.errors);
@@ -225,8 +224,7 @@
             });
             $('a.ladb-btn-node-edit', $row).on('click', function () {
                 $(this).blur();
-                var nodeId = $row.data('node-id');
-                that.editNode(nodeId);
+                that.editNode(node);
                 return false;
             });
 
@@ -316,144 +314,91 @@
 
     };
 
-    LadbTabOutliner.prototype.editNode = function (id, tab) {
+    LadbTabOutliner.prototype.editNode = function (node, tab) {
         var that = this;
 
-        var node = this.findNodeById(id);
-        if (node) {
+        if (tab === undefined) {
+            tab = this.lastEditNodeTab;
+        }
+        if (tab === null || tab.length === 0) {
+            tab = 'general';
+        }
+        this.lastEditNodeTab = tab;
 
-            if (tab === undefined) {
-                tab = this.lastEditNodeTab;
+        // Keep the edited node
+        this.editedNode = node;
+
+        var $modal = this.appendModalInside('ladb_outliner_modal_edit', 'tabs/outliner/_modal-edit.twig', {
+            capabilities: that.dialog.capabilities,
+            mass_unit_strippedname: that.massUnitStrippedname,
+            length_unit_strippedname: that.lengthUnitStrippedname,
+            node: node,
+            tab: tab,
+        });
+
+        // Fetch UI elements
+        var $tabs = $('.modal-header a[data-toggle="tab"]', $modal);
+        var $inputName = $('#ladb_outliner_node_input_name', $modal);
+        var $inputDefinitionName = $('#ladb_outliner_node_input_definition_name', $modal);
+        var $inputLayerName = $('#ladb_outliner_node_input_layer_name', $modal);
+        var $inputDescription = $('#ladb_outliner_node_input_description', $modal);
+        var $inputUrl = $('#ladb_outliner_node_input_url', $modal);
+        var $inputTags = $('#ladb_outliner_node_input_tags', $modal);
+        var $btnExplode = $('#ladb_outliner_node_explode', $modal);
+        var $btnUpdate = $('#ladb_outliner_node_update', $modal);
+
+        // Bind tabs
+        $tabs.on('shown.bs.tab', function (e) {
+            that.lastEditNodeTab = $(e.target).attr('href').substring('#tab_edit_node_'.length);
+        });
+
+        // Bind input
+        $inputName.ladbTextinputText();
+        $inputDefinitionName.ladbTextinputText();
+        $inputLayerName.ladbTextinputText({
+            autocomplete: {
+                source: that.availableLayers.map(function (layer) { return {
+                    value: layer.name,
+                    category: layer.path.join(' / '),
+                    icon: 'fill',
+                    color: layer.color
+                } }),
+                delay: 0,
+                minLength: 0,
+                categoryIcon: 'folder'
             }
-            if (tab === null || tab.length === 0) {
-                tab = 'general';
+        });
+        $inputDescription.ladbTextinputArea();
+        $inputUrl.ladbTextinputUrl();
+        $inputTags.ladbTextinputTokenfield({
+            unique: true
+        });
+
+        // Bind buttons
+        $btnExplode.on('click', function () {
+
+            var names = [];
+            if (that.editedNode.name) {
+                names.push(that.editedNode.name);
             }
-            this.lastEditNodeTab = tab;
-
-            // Keep the edited node
-            this.editedNode = node;
-
-            var $modal = this.appendModalInside('ladb_outliner_modal_edit', 'tabs/outliner/_modal-edit.twig', {
-                capabilities: that.dialog.capabilities,
-                mass_unit_strippedname: that.massUnitStrippedname,
-                length_unit_strippedname: that.lengthUnitStrippedname,
-                node: node,
-                tab: tab,
-            });
-
-            // Fetch UI elements
-            var $tabs = $('.modal-header a[data-toggle="tab"]', $modal);
-            var $inputName = $('#ladb_outliner_node_input_name', $modal);
-            var $inputDefinitionName = $('#ladb_outliner_node_input_definition_name', $modal);
-            var $inputLayerName = $('#ladb_outliner_node_input_layer_name', $modal);
-            var $inputDescription = $('#ladb_outliner_node_input_description', $modal);
-            var $inputUrl = $('#ladb_outliner_node_input_url', $modal);
-            var $inputTags = $('#ladb_outliner_node_input_tags', $modal);
-            var $btnExplode = $('#ladb_outliner_node_explode', $modal);
-            var $btnUpdate = $('#ladb_outliner_node_update', $modal);
-
-            // Bind tabs
-            $tabs.on('shown.bs.tab', function (e) {
-                that.lastEditNodeTab = $(e.target).attr('href').substring('#tab_edit_node_'.length);
-            });
-
-            // Bind input
-            $inputName.ladbTextinputText();
-            $inputDefinitionName.ladbTextinputText();
-            $inputLayerName.ladbTextinputText({
-                autocomplete: {
-                    source: that.availableLayers.map(function (layer) { return {
-                        value: layer.name,
-                        category: layer.path.join(' / '),
-                        icon: 'fill',
-                        color: layer.color
-                    } }),
-                    delay: 0,
-                    minLength: 0,
-                    categoryIcon: 'folder'
+            if (that.editedNode.definition_name) {
+                var definitionName = that.editedNode.definition_name
+                if (that.editedNode.type === 2 || that.editedNode.type === 3) {   // 2 = TYPE_COMPONENT, 3 = TYPE_PART
+                    definitionName = '<' + definitionName + '>'
                 }
-            });
-            $inputDescription.ladbTextinputArea();
-            $inputUrl.ladbTextinputUrl();
-            $inputTags.ladbTextinputTokenfield({
-                unique: true
-            });
+                names.push(definitionName);
+            }
 
-            // Bind buttons
-            $btnExplode.on('click', function () {
+            that.dialog.confirm(i18next.t('default.caution'), i18next.t('tab.outliner.edit_node.explode_message', { name: names.join(' ') }), function () {
 
-                var names = [];
-                if (that.editedNode.name) {
-                    names.push(that.editedNode.name);
-                }
-                if (that.editedNode.definition_name) {
-                    var definitionName = that.editedNode.definition_name
-                    if (that.editedNode.type === 2 || that.editedNode.type === 3) {   // 2 = TYPE_COMPONENT, 3 = TYPE_PART
-                        definitionName = '<' + definitionName + '>'
-                    }
-                    names.push(definitionName);
-                }
-
-                that.dialog.confirm(i18next.t('default.caution'), i18next.t('tab.outliner.edit_node.explode_message', { name: names.join(' ') }), function () {
-
-                    rubyCallCommand('outliner_explode', { id: that.editedNode.id }, function (response) {
-
-                        if (response.errors) {
-                            that.dialog.notifyErrors(response.errors);
-                        } else {
-
-                            // Reload the list
-                            that.generateOutliner();
-
-                            // Reset edited material
-                            that.editedNode = null;
-
-                            // Hide modal
-                            $modal.modal('hide');
-
-                        }
-
-                    });
-
-                }, {
-                    confirmBtnType: 'danger',
-                    confirmBtnLabel: i18next.t('tab.outliner.edit_node.explode')
-                });
-
-            });
-            $btnUpdate.on('click', function () {
-
-                var data = {
-                    id: that.editedNode.id,
-                    name: $inputName.val()
-                }
-                if ($inputDefinitionName.length > 0) {
-                    data.definition_name = $inputDefinitionName.val();
-                }
-                if ($inputLayerName.length > 0) {
-                    data.layer_name = $inputLayerName.val();
-                }
-                if ($inputDescription.length > 0) {
-                    data.description = $inputDescription.val();
-                }
-                if ($inputUrl.length > 0) {
-                    data.url = $inputUrl.val();
-                }
-                if ($inputTags.length > 0) {
-                    data.tags = $inputTags.tokenfield('getTokensList').split(';')
-                }
-
-                rubyCallCommand('outliner_update', data, function (response) {
+                rubyCallCommand('outliner_explode', { id: that.editedNode.id }, function (response) {
 
                     if (response.errors) {
                         that.dialog.notifyErrors(response.errors);
                     } else {
 
                         // Reload the list
-                        var nodeId = that.editedNode.id;
-                        that.generateOutliner(function() {
-                            that.scrollSlideToTarget(null, $('[data-node-id=' + nodeId + ']', that.$page), false, true);
-                        });
+                        that.generateOutliner();
 
                         // Reset edited material
                         that.editedNode = null;
@@ -465,18 +410,64 @@
 
                 });
 
+            }, {
+                confirmBtnType: 'danger',
+                confirmBtnLabel: i18next.t('tab.outliner.edit_node.explode')
             });
 
-            // Show modal
-            $modal.modal('show');
+        });
+        $btnUpdate.on('click', function () {
 
-            // Setup tooltips & popovers
-            this.dialog.setupTooltips();
-            this.dialog.setupPopovers();
+            var data = {
+                id: that.editedNode.id,
+                name: $inputName.val()
+            }
+            if ($inputDefinitionName.length > 0) {
+                data.definition_name = $inputDefinitionName.val();
+            }
+            if ($inputLayerName.length > 0) {
+                data.layer_name = $inputLayerName.val();
+            }
+            if ($inputDescription.length > 0) {
+                data.description = $inputDescription.val();
+            }
+            if ($inputUrl.length > 0) {
+                data.url = $inputUrl.val();
+            }
+            if ($inputTags.length > 0) {
+                data.tags = $inputTags.tokenfield('getTokensList').split(';')
+            }
 
-        } else {
-            alert('Node not found (id=' + id + ')');
-        }
+            rubyCallCommand('outliner_update', data, function (response) {
+
+                if (response.errors) {
+                    that.dialog.notifyErrors(response.errors);
+                } else {
+
+                    // Reload the list
+                    var nodeId = that.editedNode.id;
+                    that.generateOutliner(function() {
+                        that.scrollSlideToTarget(null, $('[data-node-id=' + nodeId + ']', that.$page), false, true);
+                    });
+
+                    // Reset edited material
+                    that.editedNode = null;
+
+                    // Hide modal
+                    $modal.modal('hide');
+
+                }
+
+            });
+
+        });
+
+        // Show modal
+        $modal.modal('show');
+
+        // Setup tooltips & popovers
+        this.dialog.setupTooltips();
+        this.dialog.setupPopovers();
 
     };
 
@@ -537,7 +528,8 @@
             var tab = parameters.tab;
             window.requestAnimationFrame(function () {
                 that.generateOutliner(function () {
-                    that.editNode(nodeId, tab);
+                    var node = that.findNodeById(nodeId)
+                    that.editNode(node, tab);
                 });
             });
         });
