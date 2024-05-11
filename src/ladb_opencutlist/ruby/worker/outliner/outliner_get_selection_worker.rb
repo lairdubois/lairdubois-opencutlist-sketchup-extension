@@ -19,7 +19,7 @@ module Ladb::OpenCutList
 
       { :nodes => model.selection
                        .select { |entity| entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance) }
-                       .map { |entity| @outline.get_node_by_entity(entity) }
+                       .flat_map { |entity| @outline.get_nodes_by_entity(entity) }
                        .compact
                        .map { |node| node.to_hash } }
     end

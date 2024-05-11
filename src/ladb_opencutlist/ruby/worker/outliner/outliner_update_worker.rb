@@ -11,6 +11,7 @@ module Ladb::OpenCutList
 
                    id: nil,
                    name: nil,
+                   material_name: nil,
                    definition_name: nil,
                    layer_name: nil,
                    description: nil,
@@ -23,6 +24,7 @@ module Ladb::OpenCutList
 
       @id = id
       @name = name.is_a?(String) ? name.strip : name
+      @material_name = material_name.is_a?(String) ? material_name.strip : material_name
       @definition_name = definition_name.is_a?(String) ? definition_name.strip : definition_name
       @layer_name = layer_name.is_a?(String) ? layer_name.strip : layer_name
       @description = description.is_a?(String) ? description.strip : description
@@ -51,6 +53,16 @@ module Ladb::OpenCutList
 
       if @name.is_a?(String) && @name != entity.name
         entity.name = @name
+      end
+
+      if @material_name.is_a?(String) && (@material_name.nil? || @material_name.empty? || (material = model.materials[@material_name]))
+        if @material_name.nil? || @material_name.empty?
+          entity.material = nil
+        else
+          if entity.material != material
+            entity.material = material
+          end
+        end
       end
 
       if entity.is_a?(Sketchup::ComponentInstance) && @definition_name.is_a?(String) && @definition_name != entity.definition.name

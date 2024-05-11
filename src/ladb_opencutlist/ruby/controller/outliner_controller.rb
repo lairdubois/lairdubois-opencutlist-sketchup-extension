@@ -141,10 +141,10 @@ module Ladb::OpenCutList
     end
 
     def select_command(node_data)
-      require_relative '../worker/outliner/outliner_select_worker'
+      require_relative '../worker/outliner/outliner_toggle_select_worker'
 
       # Setup worker
-      worker = OutlinerSelectWorker.new(@outliner, **node_data)
+      worker = OutlinerToggleSelectWorker.new(@outliner, **node_data)
 
       # Run !
       worker.run

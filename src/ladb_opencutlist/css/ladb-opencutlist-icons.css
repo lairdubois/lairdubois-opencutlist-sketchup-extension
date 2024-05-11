@@ -487,8 +487,11 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-dimensions-help:before {
   content: "\e96a";
 }
-.ladb-opencutlist-icon-tag:before {
+.ladb-opencutlist-icon-layer:before {
   content: "\e96b";
+}
+.ladb-opencutlist-icon-tag:before {
+  content: "\e9af";
 }
 .ladb-opencutlist-icon-minus:before {
   content: "\e96c";

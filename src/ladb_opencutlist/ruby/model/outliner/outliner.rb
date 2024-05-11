@@ -7,7 +7,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_accessor :root_node, :available_layers
+    attr_accessor :root_node, :available_materials, :available_layers
     attr_reader :errors, :warnings, :tips, :filename, :model_name
 
     def initialize(_def)
@@ -25,6 +25,7 @@ module Ladb::OpenCutList
 
       @root_node = _def.root_node_def.nil? ? nil : _def.root_node_def.create_node
 
+      @available_materials = _def.available_material_defs.values.map { |material_def| material_def.create_material }.sort_by { |v| [ MaterialAttributes.type_order(v.type), v.display_name.downcase ] }
       @available_layers = _def.available_layer_defs.values.map { |layer_def| {
         :name => layer_def.layer.name,
         :path => layer_def.folder_defs.map { |folder_def| folder_def.layer_folder.name },
@@ -66,14 +67,14 @@ module Ladb::OpenCutList
       nil
     end
 
-    def get_node_by_entity(entity, parent_node = nil)
+    def get_nodes_by_entity(entity, parent_node = nil)
       parent_node = @root_node if parent_node.nil?
-      return parent_node if parent_node.def.entity == entity
+      return [ parent_node ] if parent_node.def.entity == entity
+      nodes = []
       parent_node.children.each do |child_node|
-        node = get_node_by_entity(entity, child_node)
-        return node unless node.nil?
+        nodes += get_nodes_by_entity(entity, child_node)
       end
-      nil
+      nodes
     end
 
     private

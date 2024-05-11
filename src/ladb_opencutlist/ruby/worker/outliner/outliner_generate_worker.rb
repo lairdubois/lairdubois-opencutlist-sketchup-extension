@@ -4,6 +4,7 @@ module Ladb::OpenCutList
   require_relative '../../helper/layer_visibility_helper'
   require_relative '../../model/outliner/outliner_def'
   require_relative '../../model/outliner/node_def'
+  require_relative '../../model/outliner/material_def'
   require_relative '../../model/outliner/layer_def'
   require_relative '../../model/attributes/instance_attributes'
   require_relative '../../utils/color_utils'
@@ -32,6 +33,11 @@ module Ladb::OpenCutList
       if model.entities.length == 0
         outliner_def.add_error('tab.outliner.error.no_entities')
         return outliner_def.create_outliner
+      end
+
+      # Retrieve available materials
+      model.materials.each do |material|
+        outliner_def.add_material_def(MaterialDef.new(material))
       end
 
       # Retrieve available layers
@@ -99,6 +105,8 @@ module Ladb::OpenCutList
 
         node_def = NodeGroupDef.new(path)
         node_def.default_name = PLUGIN.get_i18n_string("tab.outliner.type_#{AbstractNodeDef::TYPE_GROUP}")
+        node_def.material_name = entity.material ? entity.material.name : nil
+        node_def.material_color = entity.material ? ColorUtils.color_to_hex(entity.material.color) : nil
         node_def.layer_def = outliner_def.available_layer_defs[entity.layer]
         node_def.expanded = instance_attributes.outliner_expanded
         node_def.part_count = part_count
@@ -151,6 +159,8 @@ module Ladb::OpenCutList
         node_def = NodeComponentDef.new(path) if node_def.nil?
         node_def.default_name = "<#{entity.definition.name}>"
         node_def.definition_name = entity.definition.name
+        node_def.material_name = entity.material ? entity.material.name : nil
+        node_def.material_color = entity.material ? ColorUtils.color_to_hex(entity.material.color) : nil
         node_def.layer_def = outliner_def.available_layer_defs[entity.layer]
         node_def.expanded = instance_attributes.outliner_expanded
         node_def.part_count = part_count

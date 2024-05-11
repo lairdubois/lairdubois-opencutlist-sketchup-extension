@@ -53,13 +53,13 @@
     }
 
     &.ladb-hidden {
-      .ladb-outliner-node-type, .ladb-outliner-node-name, .ladb-outliner-node-definition-name {
+      .ladb-outliner-node-type, .ladb-outliner-node-name, .ladb-outliner-node-definition-name, .ladb-outliner-node-description {
         color: #ccc;
       }
     }
 
     &.ladb-active {
-      .ladb-outliner-node-type, .ladb-outliner-node-name, .ladb-outliner-node-definition-name {
+      .ladb-outliner-node-type, .ladb-outliner-node-name, .ladb-outliner-node-definition-name, .ladb-outliner-node-description {
         color: #17b4f8;
       }
     }
@@ -111,6 +111,11 @@
       display: inline-block;
       width: 20px;
       margin: 0 5px;
+      text-align: center;
+    }
+
+    .ladb-outliner-node-material {
+      margin-right: 5px;
     }
 
     .ladb-outliner-node-name {

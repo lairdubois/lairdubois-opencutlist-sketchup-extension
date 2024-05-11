@@ -1348,6 +1348,7 @@ tab:
       preview: Aperçu
       name: Nom
       instance_name: Instance
+      material: Matière
       definition_name: Définition
       description: Description
       url: URL

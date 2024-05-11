@@ -35,7 +35,7 @@ module Ladb::OpenCutList
       model.start_operation('OCL Outliner Toggle Visible', true, false, false)
 
 
-      entity.visible = !entity.visible?
+      entity.visible = @visible
 
 
       # Commit model modification operation

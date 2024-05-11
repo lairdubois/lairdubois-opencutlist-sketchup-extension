@@ -60,11 +60,14 @@ module Ladb::OpenCutList
 
   class NodeGroupDef < AbstractNodeDef
 
-    attr_accessor :layer_name, :layer_folders
+    attr_accessor :material_name, :material_color, :layer_name, :layer_folders
 
     def initialize(path = [])
       super
       @type = TYPE_GROUP
+
+      @material_name = nil
+      @material_color = nil
 
       @layer_name = nil
       @layer_folders = nil

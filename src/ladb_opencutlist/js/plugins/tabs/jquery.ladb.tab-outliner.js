@@ -48,10 +48,12 @@
                 var filename = response.filename;
                 var modelName = response.model_name;
                 var root_node = response.root_node;
+                var available_materials = response.available_materials;
                 var available_layers = response.available_layers;
 
                 // Keep useful data
                 that.rootNode = root_node;
+                that.availableMaterials = available_materials;
                 that.availableLayers = available_layers;
 
                 var fn_set_parent = function (node, parent) {
@@ -178,12 +180,13 @@
             $('a.ladb-btn-node-select', $row).on('click', function () {
                 $(this).blur();
 
+                node.selected = !node.selected
                 rubyCallCommand('outliner_select', { id: node.id }, function (response) {
 
                     if (response.errors) {
                         that.dialog.notifyErrors(response.errors);
                     } else {
-                        that.refreshSelection();
+                        that.refreshSelection(function () { that.renderNodes() });
                     }
 
                 });
@@ -334,11 +337,13 @@
             length_unit_strippedname: that.lengthUnitStrippedname,
             node: node,
             tab: tab,
+            materialUsages: that.availableMaterials
         });
 
         // Fetch UI elements
         var $tabs = $('.modal-header a[data-toggle="tab"]', $modal);
         var $inputName = $('#ladb_outliner_node_input_name', $modal);
+        var $selectMaterialName = $('#ladb_outliner_node_select_material_name', $modal);
         var $inputDefinitionName = $('#ladb_outliner_node_input_definition_name', $modal);
         var $inputLayerName = $('#ladb_outliner_node_input_layer_name', $modal);
         var $inputDescription = $('#ladb_outliner_node_input_description', $modal);
@@ -346,6 +351,16 @@
         var $inputTags = $('#ladb_outliner_node_input_tags', $modal);
         var $btnExplode = $('#ladb_outliner_node_explode', $modal);
         var $btnUpdate = $('#ladb_outliner_node_update', $modal);
+
+        // Utils function
+        var fnNewCheck = function($select, type) {
+            if ($select.val() === 'new') {
+                that.dialog.executeCommandOnTab('materials', 'new_material', { type: type });
+                $modal.modal('hide');
+                return true;
+            }
+            return false;
+        };
 
         // Bind tabs
         $tabs.on('shown.bs.tab', function (e) {
@@ -373,6 +388,14 @@
         $inputTags.ladbTextinputTokenfield({
             unique: true
         });
+
+        // Bind select
+        $selectMaterialName.val(node.material_name);
+        $selectMaterialName
+            .selectpicker(SELECT_PICKER_OPTIONS)
+            .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                fnNewCheck($(this));
+            });
 
         // Bind buttons
         $btnExplode.on('click', function () {
@@ -420,7 +443,8 @@
 
             var data = {
                 id: that.editedNode.id,
-                name: $inputName.val()
+                name: $inputName.val(),
+                material_name: $selectMaterialName.val()
             }
             if ($inputDefinitionName.length > 0) {
                 data.definition_name = $inputDefinitionName.val();

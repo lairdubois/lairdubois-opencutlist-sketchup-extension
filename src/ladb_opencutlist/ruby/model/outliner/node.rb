@@ -48,13 +48,16 @@ module Ladb::OpenCutList
 
   class NodeGroup < AbstractNode
 
-    attr_reader :layer
+    attr_reader :material_name, :material_color, :layer
 
     def initialize(_def)
       super
 
       @locked = _def.entity.locked?
       @visible = _def.entity.visible?
+
+      @material_name = _def.material_name
+      @material_color = _def.material_color
 
       @layer = _def.layer_def ? _def.layer_def.create_layer : nil
 

@@ -4,7 +4,7 @@ module Ladb::OpenCutList
 
   class OutlinerDef
 
-    attr_accessor :root_node_def, :available_layer_defs
+    attr_accessor :root_node_def, :available_material_defs, :available_layer_defs
     attr_reader :errors, :warnings, :tips, :filename, :model_name
 
     def initialize(filename, model_name)
@@ -18,6 +18,7 @@ module Ladb::OpenCutList
 
       @root_node_def = nil
 
+      @available_material_defs = {}
       @available_layer_defs = {}
 
     end
@@ -40,6 +41,12 @@ module Ladb::OpenCutList
 
     def add_tip(tip)
       @tips.push(tip)
+    end
+
+    # Materials
+
+    def add_material_def(material_def)
+      @available_material_defs[material_def.material] = material_def
     end
 
     # Layers
