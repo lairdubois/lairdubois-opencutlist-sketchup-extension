@@ -40,6 +40,9 @@ i, span.ladb-opencutlist-icon:before {
 }
 
 
+.ladb-opencutlist-icon-target:before {
+  content: "\e9b0";
+}
 .ladb-opencutlist-icon-raw-estimated-0:before {
   content: "\e9ab";
 }

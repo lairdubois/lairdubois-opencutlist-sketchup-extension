@@ -9,7 +9,7 @@ module Ladb::OpenCutList
       super('materials')
     end
 
-    def setup_commands()
+    def setup_commands
 
       # Setup opencutlist dialog actions
       PLUGIN.register_command("materials_list") do |settings|

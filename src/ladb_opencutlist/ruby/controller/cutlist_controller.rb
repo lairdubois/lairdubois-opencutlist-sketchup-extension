@@ -14,7 +14,7 @@ module Ladb::OpenCutList
       super('cutlist')
     end
 
-    def setup_commands()
+    def setup_commands
 
       # Setup opencutlist dialog actions
       PLUGIN.register_command("cutlist_generate") do |settings|

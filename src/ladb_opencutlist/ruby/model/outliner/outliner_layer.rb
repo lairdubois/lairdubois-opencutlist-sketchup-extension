@@ -4,7 +4,7 @@ module Ladb::OpenCutList
   require_relative '../../helper/hashable_helper'
   require_relative '../../utils/color_utils'
 
-  class Layer
+  class OutlinerLayer
 
     include DefHelper
     include HashableHelper
@@ -18,13 +18,13 @@ module Ladb::OpenCutList
       @visible = _def.layer.visible?
       @color = ColorUtils.color_to_hex(_def.layer.color)
 
-      @folders = _def.folder_defs.map { |layer_folder_def| layer_folder_def.create_layer_folder }
+      @folders = _def.folder_defs.map { |layer_folder_def| layer_folder_def.create_hashable }
 
     end
 
   end
 
-  class LayerFolder
+  class OutlinerLayerFolder
 
     include DefHelper
     include HashableHelper

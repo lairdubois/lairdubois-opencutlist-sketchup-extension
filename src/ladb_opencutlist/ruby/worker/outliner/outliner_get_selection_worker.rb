@@ -4,24 +4,24 @@ module Ladb::OpenCutList
 
     def initialize(outliner)
 
-      @outline = outliner
+      @outliner = outliner
 
     end
 
     # -----
 
     def run
-      return { :errors => [ 'default.error' ] } unless @outline
-      return { :errors => [ 'tab.outliner.error.obsolete_outliner' ] } if @outline.obsolete?
+      return { :errors => [ 'default.error' ] } unless @outliner
+      return { :errors => [ 'tab.outliner.error.obsolete_outliner' ] } if @outliner.obsolete?
 
       model = Sketchup.active_model
       return { :errors => [ 'tab.outliner.error.no_model' ] } unless model
 
-      { :nodes => model.selection
+      { :node_ids => model.selection
                        .select { |entity| entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance) }
-                       .flat_map { |entity| @outline.get_nodes_by_entity(entity) }
+                       .flat_map { |entity| @outliner.def.get_node_defs_by_entity(entity) }
                        .compact
-                       .map { |node| node.to_hash } }
+                       .map { |node_def| node_def.id } }
     end
 
     # -----

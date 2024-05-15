@@ -8,7 +8,7 @@ module Ladb::OpenCutList
       super('settings')
     end
 
-    def setup_commands()
+    def setup_commands
 
       # Setup opencutlist dialog actions
       PLUGIN.register_command("settings_dialog_settings") do |settings|

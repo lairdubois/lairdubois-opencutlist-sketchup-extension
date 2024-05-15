@@ -89,42 +89,22 @@ module Ladb::OpenCutList
     def add_model_observers(model)
       if model
         model.add_observer(ModelObserver.instance)
-        if model.options['UnitsOptions']
-          model.options['UnitsOptions'].add_observer(OptionsProviderObserver.instance)
-        end
-        if model.materials
-          model.materials.add_observer(MaterialsObserver.instance)
-        end
-        if model.selection
-          model.selection.add_observer(SelectionObserver.instance)
-        end
-        if model.pages
-          model.pages.add_observer(PagesObserver.instance)
-        end
-        if model.layers
-          model.layers.add_observer(LayersObserver.instance)
-        end
+        model.options['UnitsOptions'].add_observer(OptionsProviderObserver.instance) if model.options['UnitsOptions']
+        model.materials.add_observer(MaterialsObserver.instance) if model.materials
+        model.selection.add_observer(SelectionObserver.instance) if model.selection
+        model.pages.add_observer(PagesObserver.instance) if model.pages
+        model.layers.add_observer(LayersObserver.instance) if model.layers
       end
     end
 
     def remove_model_observers(model)
       if model
         model.remove_observer(ModelObserver.instance)
-        if model.options['UnitsOptions']
-          model.options['UnitsOptions'].remove_observer(OptionsProviderObserver.instance)
-        end
-        if model.materials
-          model.materials.remove_observer(MaterialsObserver.instance)
-        end
-        if model.selection
-          model.selection.remove_observer(SelectionObserver.instance)
-        end
-        if model.pages
-          model.pages.remove_observer(PagesObserver.instance)
-        end
-        if model.layers
-          model.layers.remove_observer(LayersObserver.instance)
-        end
+        model.options['UnitsOptions'].remove_observer(OptionsProviderObserver.instance) if model.options['UnitsOptions']
+        model.materials.remove_observer(MaterialsObserver.instance) if model.materials
+        model.selection.remove_observer(SelectionObserver.instance) if model.selection
+        model.pages.remove_observer(PagesObserver.instance) if model.pages
+        model.layers.remove_observer(LayersObserver.instance) if model.layers
       end
     end
 

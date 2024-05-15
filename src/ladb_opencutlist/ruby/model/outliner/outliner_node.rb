@@ -4,12 +4,12 @@ module Ladb::OpenCutList
   require_relative '../../helper/hashable_helper'
   require_relative '../attributes/definition_attributes'
 
-  class AbstractNode
+  class AbstractOutlinerNode
 
     include DefHelper
     include HashableHelper
 
-    attr_reader :id, :entity_id, :type, :depth, :name, :default_name, :locked, :visible, :expanded, :part_count, :children
+    attr_reader :id, :entity_id, :type, :name, :default_name, :locked, :visible, :expanded, :part_count, :children
 
     def initialize(_def)
       @_def = _def
@@ -17,7 +17,6 @@ module Ladb::OpenCutList
       @id = _def.id
       @entity_id = _def.entity_id
       @type = _def.type
-      @depth = _def.depth
 
       @name = _def.entity.name
       @default_name = _def.default_name
@@ -27,13 +26,13 @@ module Ladb::OpenCutList
       @expanded = _def.expanded
       @part_count = _def.part_count
 
-      @children = _def.children.map { |node_def| node_def.create_node }
+      @children = _def.children.map { |node_def| node_def.create_hashable }
 
     end
 
   end
 
-  class NodeModel < AbstractNode
+  class OutlinerNodeModel < AbstractOutlinerNode
 
     attr_reader :description
 
@@ -46,9 +45,9 @@ module Ladb::OpenCutList
 
   end
 
-  class NodeGroup < AbstractNode
+  class OutlinerNodeGroup < OutlinerNodeModel
 
-    attr_reader :material_name, :material_color, :layer
+    attr_reader :material, :layer
 
     def initialize(_def)
       super
@@ -56,16 +55,14 @@ module Ladb::OpenCutList
       @locked = _def.entity.locked?
       @visible = _def.entity.visible?
 
-      @material_name = _def.material_name
-      @material_color = _def.material_color
-
-      @layer = _def.layer_def ? _def.layer_def.create_layer : nil
+      @material = _def.material_def ? _def.material_def.create_hashable : nil
+      @layer = _def.layer_def ? _def.layer_def.create_hashable : nil
 
     end
 
   end
 
-  class NodeComponent < NodeGroup
+  class OutlinerNodeComponent < OutlinerNodeGroup
 
     attr_reader :definition_name, :description, :url, :tags
 
@@ -83,7 +80,7 @@ module Ladb::OpenCutList
 
   end
 
-  class NodePart < NodeComponent
+  class OutlinerNodePart < OutlinerNodeComponent
 
     def initialize(_def)
       super

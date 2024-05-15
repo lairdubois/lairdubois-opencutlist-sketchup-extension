@@ -2,18 +2,18 @@ module Ladb::OpenCutList
 
   require 'digest'
 
-  require_relative 'node'
+  require_relative 'outliner_node'
   require_relative '../../utils/path_utils'
 
-  class AbstractNodeDef
+  class AbstractOutlinerNodeDef
 
     TYPE_MODEL = 0
     TYPE_GROUP = 1
     TYPE_COMPONENT = 2
     TYPE_PART = 3
 
-    attr_accessor :default_name, :layer_def, :expanded, :part_count
-    attr_reader :path, :depth, :entity, :id, :entity_id, :type, :children
+    attr_accessor :default_name, :expanded, :part_count
+    attr_reader :path, :entity, :id, :entity_id, :type, :children
 
     def initialize(path = [])
       @path = path
@@ -26,8 +26,6 @@ module Ladb::OpenCutList
 
       @default_name = nil
 
-      @layer_def = nil
-
       @expanded = false
       @part_count = 0
 
@@ -37,13 +35,13 @@ module Ladb::OpenCutList
 
     # -----
 
-    def create_node
+    def create_hashable
       raise NotImplementedError
     end
 
   end
 
-  class NodeModelDef < AbstractNodeDef
+  class OutlinerNodeModelDef < AbstractOutlinerNodeDef
 
     def initialize(path = [])
       super
@@ -52,39 +50,34 @@ module Ladb::OpenCutList
 
     # -----
 
-    def create_node
-      NodeModel.new(self)
+    def create_hashable
+      OutlinerNodeModel.new(self)
     end
 
   end
 
-  class NodeGroupDef < AbstractNodeDef
+  class OutlinerNodeGroupDef < OutlinerNodeModelDef
 
-    attr_accessor :material_name, :material_color, :layer_name, :layer_folders
+    attr_accessor :material_def, :layer_def
 
     def initialize(path = [])
       super
       @type = TYPE_GROUP
 
-      @material_name = nil
-      @material_color = nil
-
-      @layer_name = nil
-      @layer_folders = nil
+      @material_def = nil
+      @layer_def = nil
 
     end
 
     # -----
 
-    def create_node
-      NodeGroup.new(self)
+    def create_hashable
+      OutlinerNodeGroup.new(self)
     end
 
   end
 
-  class NodeComponentDef < NodeGroupDef
-
-    attr_accessor :definition_name
+  class OutlinerNodeComponentDef < OutlinerNodeGroupDef
 
     def initialize(path = [])
       super
@@ -93,13 +86,13 @@ module Ladb::OpenCutList
 
     # -----
 
-    def create_node
-      NodeComponent.new(self)
+    def create_hashable
+      OutlinerNodeComponent.new(self)
     end
 
   end
 
-  class NodePartDef < NodeComponentDef
+  class OutlinerNodePartDef < OutlinerNodeComponentDef
 
     def initialize(path = [])
       super
@@ -108,8 +101,8 @@ module Ladb::OpenCutList
 
     # -----
 
-    def create_node
-      NodePart.new(self)
+    def create_hashable
+      OutlinerNodePart.new(self)
     end
 
   end

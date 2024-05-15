@@ -23,9 +23,9 @@ module Ladb::OpenCutList
       @filename = _def.filename
       @model_name = _def.model_name
 
-      @root_node = _def.root_node_def.nil? ? nil : _def.root_node_def.create_node
+      @root_node = _def.root_node_def.nil? ? nil : _def.root_node_def.create_hashable
 
-      @available_materials = _def.available_material_defs.values.map { |material_def| material_def.create_material }.sort_by { |v| [ MaterialAttributes.type_order(v.type), v.display_name.downcase ] }
+      @available_materials = _def.available_material_defs.values.map { |material_def| material_def.create_hashable }.sort_by { |v| [ MaterialAttributes.type_order(v.type), v.display_name.downcase ] }
       @available_layers = _def.available_layer_defs.values.map { |layer_def| {
         :name => layer_def.layer.name,
         :path => layer_def.folder_defs.map { |folder_def| folder_def.layer_folder.name },
@@ -59,7 +59,7 @@ module Ladb::OpenCutList
 
     def get_node_by_path(path, parent_node = nil)
       parent_node = @root_node if parent_node.nil?
-      return parent_node if parent_node.def.path == path
+      return parent_node if parent_node.nil? || parent_node.def.path == path
       parent_node.children.each do |child_node|
         node = get_node_by_path(path, child_node)
         return node unless node.nil?

@@ -367,10 +367,10 @@ module Ladb::OpenCutList
       total_final_area
     )
       @material = material
-      @material_type = material.material_type
-      @material_name = material.material_name
-      @material_description = material.material_description
-      @material_url = material.material_url
+      @material_type = material.type
+      @material_name = material.name
+      @material_description = material.description
+      @material_url = material.url
       @material_std_dimension = material.std_dimension
       @part_count = part_count
       @total_cutting_length = total_cutting_length
@@ -422,10 +422,10 @@ module Ladb::OpenCutList
       @bbox_thickness = bbox_thickness
       @final_area = final_area
       @material = material
-      @material_type = material.material_type
-      @material_name = material.material_name
-      @material_description = material.material_description
-      @material_url = material.material_url
+      @material_type = material.type
+      @material_name = material.name
+      @material_description = material.description
+      @material_url = material.url
       @entity_names = entity_names
       @description = description
       @url = url
@@ -483,10 +483,10 @@ module Ladb::OpenCutList
       @bbox_thickness = bbox_thickness
       @final_area = final_area
       @material = material
-      @material_type = material.material_type
-      @material_name = material.material_name
-      @material_description = material.material_description
-      @material_url = material.material_url
+      @material_type = material.type
+      @material_name = material.name
+      @material_description = material.description
+      @material_url = material.url
       @description = description
       @url = url
       @tags = tags

@@ -56,13 +56,15 @@
                 that.availableMaterials = available_materials;
                 that.availableLayers = available_layers;
 
-                var fn_set_parent = function (node, parent) {
-                    node.parent = parent;
-                    for (let i = 0; i < node.children.length; i++) {
-                        fn_set_parent(node.children[i], node);
-                    }
-                };
-                fn_set_parent(root_node, null);
+                if (root_node) {
+                    var fn_set_parent = function (node, parent) {
+                        node.parent = parent;
+                        for (let i = 0; i < node.children.length; i++) {
+                            fn_set_parent(node.children[i], node);
+                        }
+                    };
+                    fn_set_parent(root_node, null);
+                }
 
                 // Update filename
                 that.$fileTabs.empty();
@@ -132,121 +134,126 @@
 
         this.$tbody.empty();
 
-        var fnRenderNode = function (node, activeOnly, parentLocked, parentVisible) {
+        if (this.rootNode) {
 
-            var layerVisible = true;
-            if (node.layer) {
-                layerVisible = node.layer.visible;
-                if (layerVisible) {
-                    for (const folder of node.layer.folders) {
-                        layerVisible = layerVisible && folder.visible
+            var fnRenderNode = function (node, depth, activeOnly, parentLocked, parentVisible) {
+
+                var layerVisible = true;
+                if (node.layer) {
+                    layerVisible = node.layer.visible;
+                    if (layerVisible) {
+                        for (const folder of node.layer.folders) {
+                            layerVisible = layerVisible && folder.visible
+                        }
                     }
                 }
-            }
-            var visible = parentVisible && node.visible && layerVisible;
+                var visible = parentVisible && node.visible && layerVisible;
 
-            if (!visible && !that.showHiddenInstances) {
-                return;
-            }
-
-            var locked = parentLocked && node.locked;
-
-            var $row = $(Twig.twig({ ref: "tabs/outliner/_list-row-node.twig" }).render({
-                capabilities: that.dialog.capabilities,
-                node: node,
-                locked: locked,
-                visible: visible,
-                layerVisible: layerVisible
-            }));
-            that.$tbody.append($row);
-
-            $row.on('click', function (e) {
-                $(this).blur();
-                $('.ladb-click-tool', $(this)).click();
-                return false;
-            });
-            $('a.ladb-btn-node-toggle-folding', $row).on('click', function () {
-                $(this).blur();
-
-                node.expanded = !node.expanded;
-                that.renderNodes();
-                rubyCallCommand('outliner_set_expanded', {
-                    id: node.id,
-                    expanded: node.expanded
-                });
-
-                return false;
-            });
-            $('a.ladb-btn-node-select', $row).on('click', function () {
-                $(this).blur();
-
-                node.selected = !node.selected
-                rubyCallCommand('outliner_select', { id: node.id }, function (response) {
-
-                    if (response.errors) {
-                        that.dialog.notifyErrors(response.errors);
-                    } else {
-                        that.refreshSelection(function () { that.renderNodes() });
-                    }
-
-                });
-
-                return false;
-            });
-            $('a.ladb-btn-node-open-url', $row).on('click', function () {
-                $(this).blur();
-                rubyCallCommand('core_open_url', { url: $(this).attr('href') });
-                return false;
-            });
-            $('a.ladb-btn-node-set-active', $row).on('click', function () {
-                $(this).blur();
-
-                rubyCallCommand('outliner_set_active', { id: node.id }, function (response) {
-
-                    if (response.errors) {
-                        that.dialog.notifyErrors(response.errors);
-                    } else {
-
-                    }
-
-                });
-
-                return false;
-            });
-            $('a.ladb-btn-node-toggle-visible', $row).on('click', function () {
-                $(this).blur();
-
-                node.visible = !node.visible;
-                that.renderNodes();
-                rubyCallCommand('outliner_set_visible', {
-                    id: node.id,
-                    visible: node.visible
-                });
-
-                return false;
-            });
-            $('a.ladb-btn-node-edit', $row).on('click', function () {
-                $(this).blur();
-                that.editNode(node);
-                return false;
-            });
-
-            if (node.active) { activeOnly = false; }
-
-            if (node.expanded || node.child_active || node.active) {
-                for (const child of node.children) {
-                    if (activeOnly && !child.child_active && !child.active) {
-                        continue;
-                    }
-                    fnRenderNode(child, activeOnly, locked, visible);
+                if (!visible && !that.showHiddenInstances) {
+                    return;
                 }
-            }
 
-        };
-        fnRenderNode(this.rootNode, true, false, true);
+                var locked = parentLocked || node.locked;
 
-        // Setup tooltips
-        this.dialog.setupTooltips();
+                var $row = $(Twig.twig({ ref: "tabs/outliner/_list-row-node.twig" }).render({
+                    capabilities: that.dialog.capabilities,
+                    node: node,
+                    depth: depth,
+                    locked: locked,
+                    visible: visible,
+                    layerVisible: layerVisible
+                }));
+                that.$tbody.append($row);
+
+                $row.on('click', function (e) {
+                    $(this).blur();
+                    $('.ladb-click-tool', $(this)).click();
+                    return false;
+                });
+                $('a.ladb-btn-node-toggle-folding', $row).on('click', function () {
+                    $(this).blur();
+
+                    node.expanded = !node.expanded;
+                    that.renderNodes();
+                    rubyCallCommand('outliner_set_expanded', {
+                        id: node.id,
+                        expanded: node.expanded
+                    });
+
+                    return false;
+                });
+                $('a.ladb-btn-node-select', $row).on('click', function () {
+                    $(this).blur();
+
+                    node.selected = !node.selected
+                    rubyCallCommand('outliner_select', { id: node.id }, function (response) {
+
+                        if (response.errors) {
+                            that.dialog.notifyErrors(response.errors);
+                        } else {
+                            that.refreshSelection(function () { that.renderNodes() });
+                        }
+
+                    });
+
+                    return false;
+                });
+                $('a.ladb-btn-node-open-url', $row).on('click', function () {
+                    $(this).blur();
+                    rubyCallCommand('core_open_url', { url: $(this).attr('href') });
+                    return false;
+                });
+                $('a.ladb-btn-node-set-active', $row).on('click', function () {
+                    $(this).blur();
+
+                    rubyCallCommand('outliner_set_active', { id: node.id }, function (response) {
+
+                        if (response.errors) {
+                            that.dialog.notifyErrors(response.errors);
+                        } else {
+
+                        }
+
+                    });
+
+                    return false;
+                });
+                $('a.ladb-btn-node-toggle-visible', $row).on('click', function () {
+                    $(this).blur();
+
+                    // node.visible = !node.visible;
+                    // that.renderNodes();
+                    rubyCallCommand('outliner_set_visible', {
+                        id: node.id,
+                        visible: !node.visible
+                    });
+
+                    return false;
+                });
+                $('a.ladb-btn-node-edit', $row).on('click', function () {
+                    $(this).blur();
+                    that.editNode(node);
+                    return false;
+                });
+
+                if (node.active) { activeOnly = false; }
+
+                if (node.expanded || node.child_active || node.active) {
+                    for (const child of node.children) {
+                        if (activeOnly && !child.child_active && !child.active) {
+                            continue;
+                        }
+                        fnRenderNode(child, depth + 1, activeOnly, locked, visible);
+                    }
+                }
+
+            };
+            fnRenderNode(this.rootNode, 0, true, false, true);
+
+            // Setup tooltips
+            this.dialog.setupTooltips();
+
+        }
 
     }
 
@@ -270,8 +277,8 @@
             }
 
             var activeNode;
-            if (response.node) {
-                activeNode = that.findNodeById(response.node.id);
+            if (response.node_id) {
+                activeNode = that.findNodeById(response.node_id);
             }
 
             if (activeNode) {
@@ -298,9 +305,9 @@
             }
 
             var selectedNodes = []
-            if (response.nodes) {
-                for (const n of response.nodes) {
-                    let node = that.findNodeById(n.id);
+            if (response.node_ids) {
+                for (const node_id of response.node_ids) {
+                    let node = that.findNodeById(node_id);
                     if (node) {
                         node.selected = true;
                         selectedNodes.push(node);
@@ -390,7 +397,9 @@
         });
 
         // Bind select
-        $selectMaterialName.val(node.material_name);
+        if (node.material) {
+            $selectMaterialName.val(node.material.name);
+        }
         $selectMaterialName
             .selectpicker(SELECT_PICKER_OPTIONS)
             .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
@@ -469,10 +478,10 @@
                 } else {
 
                     // Reload the list
-                    var nodeId = that.editedNode.id;
-                    that.generateOutliner(function() {
-                        that.scrollSlideToTarget(null, $('[data-node-id=' + nodeId + ']', that.$page), false, true);
-                    });
+                    // var nodeId = that.editedNode.id;
+                    // that.generateOutliner(function() {
+                    //     that.scrollSlideToTarget(null, $('[data-node-id=' + nodeId + ']', that.$page), false, true);
+                    // });
 
                     // Reset edited material
                     that.editedNode = null;
@@ -584,6 +593,9 @@
         });
         addEventCallback([ 'on_active_path_changed' ], function (params) {
             that.refreshActivePath(function () { that.renderNodes(); });
+        });
+        addEventCallback([ 'on_boo' ], function (params) {
+            that.generateOutliner();
         });
 
     };

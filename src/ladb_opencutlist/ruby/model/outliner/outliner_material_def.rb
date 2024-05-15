@@ -1,8 +1,8 @@
 module Ladb::OpenCutList
 
-  require_relative 'material'
+  require_relative 'outliner_material'
 
-  class MaterialDef
+  class OutlinerMaterialDef
 
     attr_reader :material, :material_attributes
 
@@ -13,8 +13,9 @@ module Ladb::OpenCutList
 
     # -----
 
-    def create_material
-      Material.new(self)
+    def create_hashable
+      @hashable = OutlinerMaterial.new(self) if @hashable.nil?
+      @hashable
     end
 
   end

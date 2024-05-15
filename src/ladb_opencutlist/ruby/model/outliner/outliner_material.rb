@@ -4,7 +4,7 @@ module Ladb::OpenCutList
   require_relative '../../helper/hashable_helper'
   require_relative '../../utils/color_utils'
 
-  class Material
+  class OutlinerMaterial
 
     include DefHelper
     include HashableHelper

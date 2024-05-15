@@ -6,7 +6,7 @@ module Ladb::OpenCutList
       super('importer')
     end
 
-    def setup_commands()
+    def setup_commands
 
       # Setup opencutlist dialog actions
       PLUGIN.register_command("importer_open") do
