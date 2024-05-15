@@ -19,7 +19,7 @@ module Ladb::OpenCutList
 
       active_path = Sketchup.active_model.active_path.nil? ? [] : Sketchup.active_model.active_path
 
-      node_def = @outliner.def.get_node_def_by_path(active_path)
+      node_def = @outliner.def.get_node_def_by_id(AbstractOutlinerNodeDef.generate_node_id(active_path))
       return { :errors => [ 'tab.outliner.error.node_not_found' ] } unless node_def
 
       { :node_id => node_def.id }

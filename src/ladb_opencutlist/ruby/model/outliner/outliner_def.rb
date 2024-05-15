@@ -63,7 +63,6 @@ module Ladb::OpenCutList
 
     def cache_node_def(node_def)
       @node_defs_cache_by_id[node_def.id] = node_def
-      @node_defs_cache_by_path[node_def.path] = node_def
       nodes_cache = @node_defs_cache_by_entity[node_def.entity]
       nodes_cache = @node_defs_cache_by_entity[node_def.entity] = [] if nodes_cache.nil?
       nodes_cache.push(node_def)
@@ -71,10 +70,6 @@ module Ladb::OpenCutList
 
     def get_node_def_by_id(id)
       @node_defs_cache_by_id[id]
-    end
-
-    def get_node_def_by_path(path)
-      @node_defs_cache_by_path[path]
     end
 
     def get_node_defs_by_entity(entity)

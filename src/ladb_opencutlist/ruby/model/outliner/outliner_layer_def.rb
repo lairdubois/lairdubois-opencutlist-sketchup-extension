@@ -15,6 +15,18 @@ module Ladb::OpenCutList
       } : []
     end
 
+    def layer_visible?
+      @layer.visible?
+    end
+
+    def folders_visible?
+      @folder_defs.select { |folder_def| !folder_def.layer_folder_visible? }.empty?
+    end
+
+    def visible?
+      layer_visible? && folders_visible?
+    end
+
     # -----
 
     def create_hashable
@@ -29,6 +41,10 @@ module Ladb::OpenCutList
 
     def initialize(layer_folder)
       @layer_folder = layer_folder
+    end
+
+    def layer_folder_visible?
+      @layer_folder.visible?
     end
 
     # -----

@@ -1,6 +1,6 @@
-<tr id="ladb_outliner_row_{{ node.id }}" class="ladb-outliner-row ladb-minitools-holder{% if not visible %} ladb-hidden{% endif %}{% if node.active %} ladb-active{% endif %}">
-    <td class="table-cell-fluid" style="padding-left: {{ depth * 20 }}px;">
-        <div class="table-cell-fluid-inner{% if depth > 0 %} table-cell-fluid-inner-padded-left{% endif %}">
+<tr id="ladb_outliner_row_{{ node.id }}" class="ladb-outliner-row ladb-minitools-holder{% if not node.visible %} ladb-hidden{% endif %}{% if node.active %} ladb-active{% endif %}">
+    <td class="table-cell-fluid" style="padding-left: {{ node.depth * 20 }}px;">
+        <div class="table-cell-fluid-inner{% if node.depth > 0 %} table-cell-fluid-inner-padded-left{% endif %}">
             <div class="ladb-minitools ladb-minitools-left">
                 {% if node.children is not empty %}
                     <a href="#" class="ladb-btn-node-toggle-folding{% if node.active or node.child_active %} ladb-tool-info{% endif %}"><i class="ladb-opencutlist-icon-arrow-{% if node.expanded or node.child_active or node.active %}down{% else %}right{% endif %}"></i></a>
@@ -11,19 +11,19 @@
             <div class="ladb-minitools ladb-minitools-right">
                 <span class="ladb-separator no-print"></span>
                 {% if node.url is not empty %}<a href="{{ node.url }}" class="ladb-btn-node-open-url" data-toggle="tooltip" title="{{ 'tab.outliner.tooltip.open_node_url'|i18next }}"><i class="ladb-opencutlist-icon-link"></i></a>{% endif %}
-                {% if locked %}<a href="#" class="ladb-tool-black"><i class="ladb-opencutlist-icon-lock"></i></a>{% endif %}
-                {% if node.type != 0 %}{# 0 = TYPE_MODEL #}<a href="#" class="ladb-btn-node-toggle-visible{% if not node.visible %} ladb-tool-dark{% endif %}"><i class="ladb-opencutlist-icon-eye-{% if node.visible %}open{% else %}close{% endif %}"></i></a>{% endif %}
+                {% if node.locked %}<a href="#" class="ladb-tool-black"><i class="ladb-opencutlist-icon-lock"></i></a>{% endif %}
+                {% if node.type != 0 %}{# 0 = TYPE_MODEL #}<a href="#" class="ladb-btn-node-toggle-visible{% if not node.entity_visible %} ladb-tool-dark{% endif %}"><i class="ladb-opencutlist-icon-eye-{% if node.entity_visible %}open{% else %}close{% endif %}"></i></a>{% endif %}
                 {% if capabilities.sketchup_version_number >= 2000000000 %}<a href="#" class="ladb-btn-node-set-active{% if node.active %} ladb-tool-dark{% endif %}"><i class="ladb-opencutlist-icon-target"></i></a>{% endif %}
                 <a href="#" class="ladb-btn-node-edit ladb-click-tool"><i class="ladb-opencutlist-icon-edit"></i></a>
                 {% if node.type != 0 %}{# 0 = TYPE_MODEL #}<a href="#" class="ladb-btn-node-select no-print{% if node.selected %} ladb-active{% endif %}"><i class="ladb-opencutlist-icon-check-box{% if node.selected %}-with-check-sign{% endif %}"></i></a>{% endif %}
             </div>
             {% if node.layer %}
-                <div class="ladb-outliner-node-layers{% if not layerVisible %} ladb-hidden{% endif %}" style="background-color: {{ node.layer.color }}; border-color: {{ node.layer.color }};">
+                <div class="ladb-outliner-node-layers{% if not node.layer.visible %} ladb-hidden{% endif %}" style="background-color: {{ node.layer.color }}; border-color: {{ node.layer.color }};">
                     {% for folder in node.layer.folders %}
-                        <div><a href="#"{% if not folder.visible %} style="text-decoration: line-through"{% endif %}><i class="ladb-opencutlist-icon-folder"></i> {{ folder.name }}</a></div>
+                        <div><a href="#"{% if not folder.folder_visible %} style="text-decoration: line-through"{% endif %}><i class="ladb-opencutlist-icon-folder"></i> {{ folder.name }}</a></div>
                     {% endfor %}
-                    <div><a href="#"{% if not node.layer.visible %} style="text-decoration: line-through"{% endif %}>{{ node.layer.name }}</a></div>
-                    <span{% if not layerVisible %} style="color: {{ node.layer.color }};"{% endif %}><i class="ladb-opencutlist-icon-layer"></i></span>
+                    <div><a href="#"{% if not node.layer.layer_visible %} style="text-decoration: line-through"{% endif %}>{{ node.layer.name }}</a></div>
+                    <span{% if not node.layer.visible %} style="color: {{ node.layer.color }};"{% endif %}><i class="ladb-opencutlist-icon-layer"></i></span>
                 </div>
             {% endif %}
             <div>

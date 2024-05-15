@@ -59,8 +59,8 @@
                 if (root_node) {
                     var fn_set_parent = function (node, parent) {
                         node.parent = parent;
-                        for (let i = 0; i < node.children.length; i++) {
-                            fn_set_parent(node.children[i], node);
+                        for (const child of node.children) {
+                            fn_set_parent(child, node);
                         }
                     };
                     fn_set_parent(root_node, null);
@@ -136,32 +136,15 @@
 
         if (this.rootNode) {
 
-            var fnRenderNode = function (node, depth, activeOnly, parentLocked, parentVisible) {
+            var fnRenderNode = function (node, activeOnly) {
 
-                var layerVisible = true;
-                if (node.layer) {
-                    layerVisible = node.layer.visible;
-                    if (layerVisible) {
-                        for (const folder of node.layer.folders) {
-                            layerVisible = layerVisible && folder.visible
-                        }
-                    }
-                }
-                var visible = parentVisible && node.visible && layerVisible;
-
-                if (!visible && !that.showHiddenInstances) {
+                if (!node.visible && !that.showHiddenInstances) {
                     return;
                 }
 
-                var locked = parentLocked || node.locked;
-
                 var $row = $(Twig.twig({ ref: "tabs/outliner/_list-row-node.twig" }).render({
                     capabilities: that.dialog.capabilities,
-                    node: node,
-                    depth: depth,
-                    locked: locked,
-                    visible: visible,
-                    layerVisible: layerVisible
+                    node: node
                 }));
                 that.$tbody.append($row);
 
@@ -243,12 +226,12 @@
                         if (activeOnly && !child.child_active && !child.active) {
                             continue;
                         }
-                        fnRenderNode(child, depth + 1, activeOnly, locked, visible);
+                        fnRenderNode(child, activeOnly);
                     }
                 }
 
             };
-            fnRenderNode(this.rootNode, 0, true, false, true);
+            fnRenderNode(this.rootNode, true);
 
             // Setup tooltips
             this.dialog.setupTooltips();
@@ -513,8 +496,8 @@
         if (parent.id === id) {
             return parent;
         }
-        for (var i = 0; i < parent.children.length; i++) {
-            var node = this.findNodeById(id, parent.children[i]);
+        for (const child of parent.children) {
+            var node = this.findNodeById(id, child);
             if (node) {
                 return node;
             }

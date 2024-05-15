@@ -12,25 +12,64 @@ module Ladb::OpenCutList
     TYPE_COMPONENT = 2
     TYPE_PART = 3
 
-    attr_accessor :default_name, :expanded, :part_count
-    attr_reader :path, :entity, :id, :entity_id, :type, :children
+    attr_accessor :default_name, :expanded, :parent
+    attr_reader :path, :id, :depth, :entity, :children
+
+    # -----
+
+    def self.generate_node_id(path)
+      entity = path.empty? ? Sketchup.active_model : path.last
+      Digest::MD5.hexdigest("#{entity.guid}|#{PathUtils.serialize_path(path)}")
+    end
+
+    # -----
 
     def initialize(path = [])
       @path = path
+      @id = AbstractOutlinerNodeDef::generate_node_id(path)
       @depth = @path.length
       @entity = @path.empty? ? Sketchup.active_model : path.last
-      @id = Digest::MD5.hexdigest("#{@entity.guid}|#{PathUtils.serialize_path(path)}")
-      @entity_id = @entity.nil? ? '' : @entity.entityID
-
-      @type = nil
 
       @default_name = nil
-
       @expanded = false
-      @part_count = 0
 
+      @parent = nil
       @children = []
 
+    end
+
+    def type
+      raise NotImplementedError
+    end
+
+    def entity_locked?
+      false
+    end
+
+    def parent_locked?
+      return false if @parent.nil?
+      @parent.locked?
+    end
+
+    def locked?
+      entity_locked? || parent_locked?
+    end
+
+    def entity_visible?
+      true
+    end
+
+    def layer_visible?
+      true
+    end
+
+    def parent_visible?
+      return true if @parent.nil?
+      @parent.visible?
+    end
+
+    def visible?
+      entity_visible? && layer_visible? && parent_visible?
     end
 
     # -----
@@ -43,9 +82,8 @@ module Ladb::OpenCutList
 
   class OutlinerNodeModelDef < AbstractOutlinerNodeDef
 
-    def initialize(path = [])
-      super
-      @type = TYPE_MODEL
+    def type
+      TYPE_MODEL
     end
 
     # -----
@@ -62,11 +100,27 @@ module Ladb::OpenCutList
 
     def initialize(path = [])
       super
-      @type = TYPE_GROUP
 
       @material_def = nil
       @layer_def = nil
 
+    end
+
+    def entity_locked?
+      @entity.locked?
+    end
+
+    def entity_visible?
+      @entity.visible?
+    end
+
+    def layer_visible?
+      return true if @layer_def.nil?
+      @layer_def.folders_visible? && @layer_def.visible?
+    end
+
+    def type
+      TYPE_GROUP
     end
 
     # -----
@@ -96,7 +150,10 @@ module Ladb::OpenCutList
 
     def initialize(path = [])
       super
-      @type = TYPE_PART
+    end
+
+    def type
+      TYPE_PART
     end
 
     # -----
