@@ -82,6 +82,7 @@ core:
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
+      edit_part_instance_properties: Instanzeigenschaften bearbeiten
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
@@ -1333,13 +1334,13 @@ tab:
     title: Struktur
     list: Entitätsstrukturbaum
     nodes: Entitäten
-    part_count: Anz. Teile
+    toggle_hidden: Ausgeblendete Instanzen
     type_0: Modell
     type_1: Gruppe
     type_2: Komponente
     type_3: Teil
     tooltip:
-      open_node_url: URL der Instanz öffnen
+      open_node_url: URL des Teils öffnen
     edit_node:
       title_model: "Eigenschaften des Modells"
       title_instance: "Eigenschaften der Instanz **{{ name }}**"
@@ -1347,9 +1348,11 @@ tab:
       preview: Übersicht
       name: Bezeichnung
       instance_name: Instanz
+      material: Material
       definition_name: Definition
       description: Beschreibung
       url: URL
+      tags: Badges
       layer_name: Tag
       explode: Explodieren
       explode_message: "Bestätigen Sie die Explosion der Instanz **{{ name }}**?"

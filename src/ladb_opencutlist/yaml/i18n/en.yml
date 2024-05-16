@@ -82,6 +82,7 @@ core:
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
+      edit_part_instance_properties: Edit instance properties
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
@@ -1333,13 +1334,13 @@ tab:
     title: Structure
     list: Tree Structure of Entities
     nodes: Instances
-    part_count: Nb Parts
+    toggle_hidden: Masked instances
     type_0: Model
     type_1: Group
     type_2: Component
     type_3: Part
     tooltip:
-      open_node_url: Open instance URL
+      open_node_url: Open part URL
     edit_node:
       title_model: "Properties of the model"
       title_instance: "Properties of instance **{{ name }}**"
@@ -1347,9 +1348,11 @@ tab:
       preview: Overview
       name: Name
       instance_name: Instance
+      material: Material
       definition_name: Definition
       description: Description
       url: URL
+      tags: Badges
       layer_name: Tag
       explode: Explode
       explode_message: "Do you confirm the explosion of instance **{{ name }}**?"
