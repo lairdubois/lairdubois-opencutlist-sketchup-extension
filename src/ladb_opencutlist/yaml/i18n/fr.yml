@@ -1334,7 +1334,7 @@ tab:
     title: Structure
     list: Arborescence des entités
     nodes: Instances
-    toggle_hidden: Instances maquées
+    toggle_hidden: Instances masquées
     type_0: Modèle
     type_1: Groupe
     type_2: Composant
