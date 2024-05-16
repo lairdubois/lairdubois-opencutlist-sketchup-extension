@@ -4,11 +4,16 @@ module Ladb::OpenCutList
 
   class OutlinerLayerDef
 
-    attr_reader :layer, :folder_defs
+    attr_reader :layer, :folder_defs, :used_by_node_defs
 
     def initialize(layer)
       @layer = layer
-      @folder_defs = layer.respond_to?(:folder) && layer.folder ? [ layer.folder ].flat_map { |folder|
+      @used_by_node_defs = []
+      fill
+    end
+
+    def fill
+      @folder_defs = @layer.respond_to?(:folder) && @layer.folder ? [ @layer.folder ].flat_map { |folder|
         folder_defs = [ OutlinerLayerFolderDef.new(folder) ]
         folder_defs << OutlinerLayerFolderDef.new(folder_defs.last.layer_folder.folder) while folder_defs.last.layer_folder.folder
         folder_defs
@@ -24,6 +29,20 @@ module Ladb::OpenCutList
     end
 
     # -----
+
+    def add_used_by_node_def(node_def)
+      @used_by_node_defs << node_def
+    end
+
+    def each_used_by
+      @used_by_node_defs.each { |node_def| yield node_def }
+    end
+
+    # -----
+
+    def clear_hashable
+      @hashable = nil
+    end
 
     def create_hashable
       OutlinerLayer.new(self)

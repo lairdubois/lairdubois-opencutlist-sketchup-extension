@@ -7,8 +7,6 @@
     var LadbTabOutliner = function (element, options, dialog) {
         LadbAbstractTab.call(this, element, options, dialog);
 
-        this.activeNode = null;
-        this.selectedNodes = [];
         this.editedNode = null;
         this.lastEditNodeTab = null;
 
@@ -127,7 +125,7 @@
     LadbTabOutliner.prototype.refreshOutliner = function () {
         var that = this;
 
-        rubyCallCommand('outliner_generate', {}, function (response) {
+        rubyCallCommand('outliner_refresh', {}, function (response) {
 
             var root_node = response.root_node;
             var available_materials = response.available_materials;
@@ -138,21 +136,7 @@
             that.availableMaterials = available_materials;
             that.availableLayers = available_layers;
 
-            if (root_node) {
-                var fn_set_parent = function (node, parent) {
-                    node.parent = parent;
-                    for (const child of node.children) {
-                        fn_set_parent(child, node);
-                    }
-                };
-                fn_set_parent(root_node, null);
-            }
-
-            that.refreshActivePath(function () {
-                that.refreshSelection(function () {
-                    that.renderNodes();
-                });
-            });
+            that.renderNodes();
 
         });
 
@@ -185,29 +169,21 @@
                 $('a.ladb-btn-node-toggle-folding', $row).on('click', function () {
                     $(this).blur();
 
-                    node.expanded = !node.expanded;
-                    that.renderNodes();
-                    rubyCallCommand('outliner_set_expanded', {
-                        id: node.id,
-                        expanded: node.expanded
+                    rubyCallCommand('outliner_toggle_expanded', { id: node.id }, function (response) {
+                        if (response.errors) {
+                            that.dialog.notifyErrors(response.errors);
+                        }
                     });
 
                     return false;
                 });
-                $('a.ladb-btn-node-select', $row).on('click', function () {
+                $('a.ladb-btn-node-toggle-select', $row).on('click', function () {
                     $(this).blur();
 
-                    // node.selected = !node.selected
-                    rubyCallCommand('outliner_select', {id: node.id}, function (response) {
-
+                    rubyCallCommand('outliner_toggle_select', { id: node.id }, function (response) {
                         if (response.errors) {
                             that.dialog.notifyErrors(response.errors);
-                        // } else {
-                        //     that.refreshSelection(function () {
-                        //         that.renderNodes()
-                        //     });
                         }
-
                     });
 
                     return false;
@@ -220,14 +196,10 @@
                 $('a.ladb-btn-node-set-active', $row).on('click', function () {
                     $(this).blur();
 
-                    rubyCallCommand('outliner_set_active', {id: node.id}, function (response) {
-
+                    rubyCallCommand('outliner_set_active', { id: node.id }, function (response) {
                         if (response.errors) {
                             that.dialog.notifyErrors(response.errors);
-                        } else {
-
                         }
-
                     });
 
                     return false;
@@ -235,9 +207,10 @@
                 $('a.ladb-btn-node-toggle-visible', $row).on('click', function () {
                     $(this).blur();
 
-                    rubyCallCommand('outliner_set_visible', {
-                        id: node.id,
-                        visible: !node.visible
+                    rubyCallCommand('outliner_toggle_visible', { id: node.id }, function (response) {
+                        if (response.errors) {
+                            that.dialog.notifyErrors(response.errors);
+                        }
                     });
 
                     return false;
@@ -268,73 +241,6 @@
         }
 
     }
-
-    LadbTabOutliner.prototype.refreshActivePath = function (callback) {
-        var that = this;
-
-        rubyCallCommand('outliner_get_active', {}, function (response) {
-
-            var fnPropagateUp = function (node, child_active) {
-                if (node !== null) {
-                    node.child_active = child_active
-                    if (node.parent !== null) {
-                        fnPropagateUp(node.parent, child_active);
-                    }
-                }
-            }
-
-            if (that.activeNode) {
-                that.activeNode.active = false;
-                fnPropagateUp(that.activeNode.parent, false);
-            }
-
-            var activeNode;
-            if (response.node_id) {
-                activeNode = that.findNodeById(response.node_id);
-            }
-
-            if (activeNode) {
-                activeNode.active = true
-                fnPropagateUp(activeNode.parent, true);
-            }
-            that.activeNode = activeNode;
-
-            if (typeof callback === 'function') {
-                callback();
-            }
-
-        });
-
-    };
-
-    LadbTabOutliner.prototype.refreshSelection = function (callback) {
-        var that = this;
-
-        rubyCallCommand('outliner_get_selection', {}, function (response) {
-
-            for (const node of that.selectedNodes) {
-                node.selected = false;
-            }
-
-            var selectedNodes = []
-            if (response.node_ids) {
-                for (const node_id of response.node_ids) {
-                    let node = that.findNodeById(node_id);
-                    if (node) {
-                        node.selected = true;
-                        selectedNodes.push(node);
-                    }
-                }
-            }
-            that.selectedNodes = selectedNodes;
-
-            if (typeof callback === 'function') {
-                callback();
-            }
-
-        });
-
-    };
 
     LadbTabOutliner.prototype.editNode = function (node, tab) {
         var that = this;
@@ -598,12 +504,6 @@
             that.showObsolete('core.event.model_change', true);
         });
         addEventCallback([ 'on_layer_changed', 'on_layer_removed', 'on_layers_folder_changed', 'on_layers_folder_removed', 'on_remove_all_layers' ], function (params) {
-            that.refreshOutliner();
-        });
-        addEventCallback([ 'on_selection_bulk_change', 'on_selection_cleared' ], function (params) {
-            that.refreshOutliner();
-        });
-        addEventCallback([ 'on_active_path_changed' ], function (params) {
             that.refreshOutliner();
         });
         addEventCallback([ 'on_boo' ], function (params) {

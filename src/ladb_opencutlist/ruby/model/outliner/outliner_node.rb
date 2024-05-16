@@ -9,7 +9,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :id, :depth, :type, :name, :default_name, :locked, :computed_locked, :visible, :computed_visible, :expanded, :child_active, :active, :selected, :children
+    attr_reader :id, :depth, :type, :name, :default_name, :locked, :computed_locked, :visible, :computed_visible, :expanded, :expandable, :child_active, :active, :selected, :children
 
     def initialize(_def)
       @_def = _def
@@ -26,11 +26,12 @@ module Ladb::OpenCutList
       @visible = _def.visible?
       @computed_visible = _def.computed_visible?
       @expanded = _def.expanded
+      @expandable =  _def.children.any?
       @child_active = _def.child_active
       @active = _def.active
       @selected = _def.selected
 
-      @children = _def.children.map { |node_def| node_def.create_hashable }
+      @children = _def.expanded || _def.child_active || _def.active ? _def.children.map { |node_def| node_def.create_hashable } : []
 
     end
 
@@ -49,7 +50,7 @@ module Ladb::OpenCutList
 
   end
 
-  class OutlinerNodeGroup < OutlinerNodeModel
+  class OutlinerNodeGroup < AbstractOutlinerNode
 
     attr_reader :material, :layer
 
@@ -70,6 +71,7 @@ module Ladb::OpenCutList
     def initialize(_def)
       super
 
+      @default_name = "<#{_def.entity.definition.name}>"
       @definition_name = _def.entity.definition.name
       @description = _def.entity.definition.description
 

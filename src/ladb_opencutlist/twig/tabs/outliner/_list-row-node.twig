@@ -2,7 +2,7 @@
     <td class="table-cell-fluid" style="padding-left: {{ node.depth * 20 }}px;">
         <div class="table-cell-fluid-inner{% if node.depth > 0 %} table-cell-fluid-inner-padded-left{% endif %}">
             <div class="ladb-minitools ladb-minitools-left">
-                {% if node.children is not empty %}
+                {% if node.expandable %}
                     <a href="#" class="ladb-btn-node-toggle-folding{% if node.active or node.child_active %} ladb-tool-info{% endif %}"><i class="ladb-opencutlist-icon-arrow-{% if node.expanded or node.child_active or node.active %}down{% else %}right{% endif %}"></i></a>
                 {% else %}
                     <div style="display: inline-block; width: 20px;"></div>
@@ -15,7 +15,7 @@
                 {% if node.type != 0 %}{# 0 = TYPE_MODEL #}<a href="#" class="ladb-btn-node-toggle-visible{% if not node.visible %} ladb-tool-dark{% endif %}"><i class="ladb-opencutlist-icon-eye-{% if node.visible %}open{% else %}close{% endif %}"></i></a>{% endif %}
                 {% if capabilities.sketchup_version_number >= 2000000000 %}<a href="#" class="ladb-btn-node-set-active{% if node.active %} ladb-tool-dark{% endif %}"><i class="ladb-opencutlist-icon-target"></i></a>{% endif %}
                 <a href="#" class="ladb-btn-node-edit ladb-click-tool"><i class="ladb-opencutlist-icon-edit"></i></a>
-                {% if node.type != 0 %}{# 0 = TYPE_MODEL #}<a href="#" class="ladb-btn-node-select no-print{% if node.selected %} ladb-active{% endif %}"><i class="ladb-opencutlist-icon-check-box{% if node.selected %}-with-check-sign{% endif %}"></i></a>{% endif %}
+                {% if node.type != 0 %}{# 0 = TYPE_MODEL #}<a href="#" class="ladb-btn-node-toggle-select no-print{% if node.selected %} ladb-active{% endif %}"><i class="ladb-opencutlist-icon-check-box{% if node.selected %}-with-check-sign{% endif %}"></i></a>{% endif %}
             </div>
             {% if node.layer %}
                 <div class="ladb-outliner-node-layers{% if not node.layer.computed_visible %} ladb-hidden{% endif %}" style="background-color: {{ node.layer.color }}; border-color: {{ node.layer.color }};">
@@ -29,7 +29,7 @@
             <div>
                 <span class="ladb-outliner-node-type">{% include 'tabs/outliner/_node-icon.twig' %}</span>{% if node.material %}<span class="ladb-outliner-node-material" data-toggle="tooltip" title="{{ node.material.display_name }}">{% include 'tabs/materials/_material-color-drop.twig' with { 'material_color':node.material.color } %}</span>{% endif %}{% if node.name is not empty %}<span class="ladb-outliner-node-name">{{ node.name|escape('html') }}</span>{% endif %}{% if node.type != 1 or node.name is empty %}<span class="ladb-outliner-node-definition-name">{{ node.default_name|escape('html') }}</span>{% endif %}
                 {% if node.description is defined and node.description is not empty %}
-                    <div class="ladb-outliner-node-description">{{ node.description }}</div>
+                    <div class="ladb-outliner-node-description">{{ node.description|nl2br }}</div>
                 {% endif %}
                 {% if node.type == 3 and node.tags is not empty %}{# 3 = TYPE_PART #}
                     <ul class="ladb-outliner-node-tags">

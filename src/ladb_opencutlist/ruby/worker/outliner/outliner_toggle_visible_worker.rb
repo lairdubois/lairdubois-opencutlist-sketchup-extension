@@ -1,31 +1,28 @@
 module Ladb::OpenCutList
 
-  class OutlinerSetVisibleWorker
+  class OutlinerToggleVisibleWorker
 
-    def initialize(outliner,
+    def initialize(outliner_def,
 
-                   id: nil,
-                   visible: true
+                   id: nil
 
     )
 
-      @outliner = outliner
+      @outliner_def = outliner_def
 
       @id = id
-      @visible = visible
 
     end
 
     # -----
 
     def run
-      return { :errors => [ 'default.error' ] } unless @outliner
-      return { :errors => [ 'tab.outliner.error.obsolete_outliner' ] } if @outliner.obsolete?
+      return { :errors => [ 'default.error' ] } unless @outliner_def
 
       model = Sketchup.active_model
       return { :errors => [ 'tab.outliner.error.no_model' ] } unless model
 
-      node_def = @outliner.def.get_node_def_by_id(@id)
+      node_def = @outliner_def.get_node_def_by_id(@id)
       return { :errors => [ 'tab.outliner.error.node_not_found' ] } unless node_def
 
       entity = node_def.entity
@@ -35,7 +32,7 @@ module Ladb::OpenCutList
       model.start_operation('OCL Outliner Toggle Visible', true, false, false)
 
 
-      entity.visible = @visible
+      entity.visible = !entity.visible?
 
 
       # Commit model modification operation

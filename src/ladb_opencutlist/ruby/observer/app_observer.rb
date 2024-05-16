@@ -95,7 +95,8 @@ module Ladb::OpenCutList
         model.selection.add_observer(SelectionObserver.instance) if model.selection
         model.pages.add_observer(PagesObserver.instance) if model.pages
         model.layers.add_observer(LayersObserver.instance) if model.layers
-        EntitiesObserver.instance.add_entities_observers(model)
+        # EntitiesObserver.instance.reset
+        # EntitiesObserver.instance.add_entities_observers(model)
       end
     end
 

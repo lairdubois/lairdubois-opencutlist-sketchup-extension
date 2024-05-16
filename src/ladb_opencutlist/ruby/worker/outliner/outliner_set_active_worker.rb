@@ -2,13 +2,13 @@ module Ladb::OpenCutList
 
   class OutlinerSetActiveWorker
 
-    def initialize(outliner,
+    def initialize(outliner_def,
 
                    id: nil
 
     )
 
-      @outliner = outliner
+      @outliner_def = outliner_def
 
       @id = id
 
@@ -18,13 +18,12 @@ module Ladb::OpenCutList
 
     def run
       return { :errors => [ [ 'core.error.feature_unavailable', { :version => 2020 } ] ] } if Sketchup.version_number < 2000000000
-      return { :errors => [ 'default.error' ] } unless @outliner
-      return { :errors => [ 'tab.outliner.error.obsolete_outliner' ] } if @outliner.obsolete?
+      return { :errors => [ 'default.error' ] } unless @outliner_def
 
       model = Sketchup.active_model
       return { :errors => [ 'tab.outliner.error.no_model' ] } unless model
 
-      node_def = @outliner.def.get_node_def_by_id(@id)
+      node_def = @outliner_def.get_node_def_by_id(@id)
       return { :errors => [ 'tab.outliner.error.node_not_found' ] } unless node_def
 
       # Start model modification operation

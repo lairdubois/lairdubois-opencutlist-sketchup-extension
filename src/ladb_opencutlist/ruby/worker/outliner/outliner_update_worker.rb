@@ -7,7 +7,7 @@ module Ladb::OpenCutList
 
     include Layer0CachingHelper
 
-    def initialize(outliner,
+    def initialize(outliner_def,
 
                    id: nil,
                    name: nil,
@@ -20,7 +20,7 @@ module Ladb::OpenCutList
 
     )
 
-      @outliner = outliner
+      @outliner_def = outliner_def
 
       @id = id
       @name = name.is_a?(String) ? name.strip : name
@@ -36,13 +36,12 @@ module Ladb::OpenCutList
     # -----
 
     def run
-      return { :errors => [ 'default.error' ] } unless @outliner
-      return { :errors => [ 'tab.outliner.error.obsolete_outliner' ] } if @outliner.obsolete?
+      return { :errors => [ 'default.error' ] } unless @outliner_def
 
       model = Sketchup.active_model
       return { :errors => [ 'tab.outliner.error.no_model' ] } unless model
 
-      node_def = @outliner.def.get_node_def_by_id(@id)
+      node_def = @outliner_def.get_node_def_by_id(@id)
       return { :errors => [ 'tab.outliner.error.node_not_found' ] } unless node_def
 
       entity = node_def.entity
@@ -50,6 +49,7 @@ module Ladb::OpenCutList
 
       # Start model modification operation
       model.start_operation('OCL Outliner Update', true, false, true)
+
 
       if @name.is_a?(String) && @name != entity.name
         entity.name = @name

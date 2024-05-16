@@ -6,11 +6,29 @@ module Ladb::OpenCutList
 
     include Singleton
 
-    ON_LAYER_CHANGED = 'on_layer_changed'.freeze
+    ON_LAYER_ADDED = 'on_layer_added'.freeze
     ON_LAYER_REMOVED = 'on_layer_removed'.freeze
-    ON_LAYERS_FOLDER_CHANGED = 'on_layers_folder_changed'.freeze
+    ON_LAYER_CHANGED = 'on_layer_changed'.freeze
+    ON_LAYERS_FOLDER_ADDED = 'on_layers_folder_added'.freeze
     ON_LAYERS_FOLDER_REMOVED = 'on_layers_folder_removed'.freeze
+    ON_LAYERS_FOLDER_CHANGED = 'on_layers_folder_changed'.freeze
     ON_REMOVE_ALL_LAYERS = 'on_remove_all_layers'.freeze
+
+    def onLayerAdded(layers, layer)
+      # puts "onLayerAdded"
+
+      # Trigger event to JS
+      PLUGIN.trigger_event(ON_LAYER_ADDED, nil)
+
+    end
+
+    def onLayerRemoved(layers, layer)
+      # puts "onLayerRemoved"
+
+      # Trigger event to JS
+      PLUGIN.trigger_event(ON_LAYER_REMOVED, nil)
+
+    end
 
     def onLayerChanged(layers, layer)
       # puts "onLayerChanged: #{layer.name}"
@@ -20,11 +38,11 @@ module Ladb::OpenCutList
 
     end
 
-    def onLayerRemoved(layers, layer)
-      # puts "onLayerRemoved"
+    def onLayerFolderAdded(layers, layer_folder)
+      # puts "onLayerFolderAdded: #{layer_folder.name}"
 
       # Trigger event to JS
-      PLUGIN.trigger_event(ON_LAYER_REMOVED, nil)
+      PLUGIN.trigger_event(ON_LAYERS_FOLDER_ADDED, nil)
 
     end
 

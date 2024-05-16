@@ -39,6 +39,10 @@ module Ladb::OpenCutList
 
     # -----
 
+    def reset
+      @observed_entity_ids.clear
+    end
+
     def push_event(event)
       @event_stack << event
       @event_stack_timer = UI.start_timer(0.1) { process_stack } if @event_stack_timer.nil?

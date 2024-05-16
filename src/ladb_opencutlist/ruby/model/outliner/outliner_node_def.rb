@@ -13,7 +13,7 @@ module Ladb::OpenCutList
     TYPE_PART = 3
 
     attr_accessor :default_name, :expanded, :child_active, :active, :selected, :parent
-    attr_reader :path, :id, :depth, :entity, :children
+    attr_reader :path, :id, :depth, :entity, :entity_id, :children
 
     # -----
 
@@ -25,10 +25,18 @@ module Ladb::OpenCutList
     # -----
 
     def initialize(path = [])
+
       @path = path
+      if @path.empty?
+        @entity = Sketchup.active_model
+        @entity_id = nil
+      else
+        @entity = path.last
+        @entity_id = @entity.entityID
+      end
+
       @id = AbstractOutlinerNodeDef::generate_node_id(path)
       @depth = @path.length
-      @entity = @path.empty? ? Sketchup.active_model : path.last
 
       @default_name = nil
       @expanded = false
@@ -63,6 +71,11 @@ module Ladb::OpenCutList
 
     # -----
 
+    def clear_hashable
+      @hashable = nil
+      @parent.clear_hashable if @parent
+    end
+
     def create_hashable
       raise NotImplementedError
     end
@@ -84,7 +97,7 @@ module Ladb::OpenCutList
 
   end
 
-  class OutlinerNodeGroupDef < OutlinerNodeModelDef
+  class OutlinerNodeGroupDef < AbstractOutlinerNodeDef
 
     attr_accessor :material_def, :layer_def
 
@@ -94,6 +107,16 @@ module Ladb::OpenCutList
       @material_def = nil
       @layer_def = nil
 
+    end
+
+    def material_def=(material_def)
+      @material_def = material_def
+      material_def.add_used_by_node_def(self) if material_def
+    end
+
+    def layer_def=(layer_def)
+      @layer_def = layer_def
+      layer_def.add_used_by_node_def(self) if layer_def
     end
 
     def locked?
@@ -123,9 +146,8 @@ module Ladb::OpenCutList
 
   class OutlinerNodeComponentDef < OutlinerNodeGroupDef
 
-    def initialize(path = [])
-      super
-      @type = TYPE_COMPONENT
+    def type
+      TYPE_COMPONENT
     end
 
     # -----
@@ -138,10 +160,6 @@ module Ladb::OpenCutList
   end
 
   class OutlinerNodePartDef < OutlinerNodeComponentDef
-
-    def initialize(path = [])
-      super
-    end
 
     def type
       TYPE_PART

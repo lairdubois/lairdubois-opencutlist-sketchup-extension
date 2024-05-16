@@ -2,13 +2,13 @@ module Ladb::OpenCutList
 
   require 'benchmark'
 
+  require_relative 'outliner_worker'
   require_relative '../../helper/bounding_box_helper'
   require_relative '../../helper/layer_visibility_helper'
   require_relative '../../model/outliner/outliner_def'
   require_relative '../../model/outliner/outliner_node_def'
   require_relative '../../model/outliner/outliner_material_def'
   require_relative '../../model/outliner/outliner_layer_def'
-  require_relative '../../model/attributes/instance_attributes'
   require_relative '../../utils/color_utils'
 
   class OutlinerGenerateWorker
@@ -27,34 +27,25 @@ module Ladb::OpenCutList
 
       outliner_def = OutlinerDef.new(filename, model_name)
 
+      w = OutlinerWorker.new(outliner_def)
+
       # Errors
       unless model
         outliner_def.add_error('tab.outliner.error.no_model') unless model
-        return outliner_def.create_hashable
-      end
-      if model.entities.length == 0
-        outliner_def.add_error('tab.outliner.error.no_entities')
-        return outliner_def.create_hashable
+        return outliner_def
       end
 
-      # Retrieve available materials
-      model.materials.each do |material|
-        outliner_def.add_material_def(OutlinerMaterialDef.new(material))
-      end
-
-      # Retrieve available layers
-      model.layers.each do |layer|
-        next if layer == cached_layer0
-        outliner_def.add_layer_def(OutlinerLayerDef.new(layer))
-      end
+      # Retrieve available materials and layers
+      w.compute_available_materials
+      w.compute_available_layers
 
       # Generate nodes
       puts Benchmark.measure {
 
         outliner_def.root_node_def = _fetch_node_defs(outliner_def, model)
 
-        _compute_active_path(outliner_def)
-        _compute_selection(outliner_def)
+        w.run(:compute_active_path)
+        w.run(:compute_selection)
 
       }
 
@@ -63,16 +54,16 @@ module Ladb::OpenCutList
         outliner_def.add_tip('tab.outliner.tip.no_node')
       end
 
-      outliner_def.create_hashable
+      outliner_def
     end
 
     # -----
 
+    private
+
     def _fetch_node_defs(outliner_def, entity, path = [], face_bounds_cache = {})
       node_def = nil
       if entity.is_a?(Sketchup::Group)
-
-        instance_attributes = InstanceAttributes.new(entity)
 
         path += [ entity ]
 
@@ -80,7 +71,6 @@ module Ladb::OpenCutList
         node_def.default_name = PLUGIN.get_i18n_string("tab.outliner.type_#{AbstractOutlinerNodeDef::TYPE_GROUP}")
         node_def.material_def = outliner_def.available_material_defs[entity.material]
         node_def.layer_def = outliner_def.available_layer_defs[entity.layer]
-        node_def.expanded = instance_attributes.outliner_expanded
 
         outliner_def.add_node_def(node_def)
 
@@ -98,8 +88,6 @@ module Ladb::OpenCutList
         node_def.children.concat(_sort_children(children))
 
       elsif entity.is_a?(Sketchup::ComponentInstance)
-
-        instance_attributes = InstanceAttributes.new(entity)
 
         path += [ entity ]
 
@@ -119,10 +107,8 @@ module Ladb::OpenCutList
         end
 
         node_def = OutlinerNodeComponentDef.new(path) if node_def.nil?
-        node_def.default_name = "<#{entity.definition.name}>"
         node_def.material_def = outliner_def.available_material_defs[entity.material]
         node_def.layer_def = outliner_def.available_layer_defs[entity.layer]
-        node_def.expanded = instance_attributes.outliner_expanded
 
         outliner_def.add_node_def(node_def)
 
@@ -167,40 +153,6 @@ module Ladb::OpenCutList
 
       node_def
     end
-
-    def _compute_active_path(outliner_def)
-      unless Sketchup.active_model.active_path.nil?
-
-        active_node_def = outliner_def.get_node_def_by_id(AbstractOutlinerNodeDef.generate_node_id(Sketchup.active_model.active_path))
-        if active_node_def
-          active_node_def.active = true
-          node_def = active_node_def.parent
-          while node_def
-            node_def.child_active = true
-            node_def = node_def.parent
-          end
-        end
-
-      else
-
-        outliner_def.root_node_def.active = true
-
-      end
-    end
-
-    def _compute_selection(outliner_def)
-      unless Sketchup.active_model.selection.empty?
-
-        Sketchup.active_model.selection
-                .select { |entity| entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance) }
-                .flat_map { |entity| outliner_def.get_node_defs_by_entity(entity) }
-                .compact
-                .each { |node_def| node_def.selected = true }
-
-      end
-    end
-
-    private
 
     def _sort_children(children)
       children.sort_by! do |node_def|
