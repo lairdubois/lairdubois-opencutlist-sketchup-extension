@@ -9,7 +9,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :id, :depth, :type, :name, :default_name, :entity_locked, :locked, :entity_visible, :visible, :expanded, :children
+    attr_reader :id, :depth, :type, :name, :default_name, :locked, :computed_locked, :visible, :computed_visible, :expanded, :child_active, :active, :selected, :children
 
     def initialize(_def)
       @_def = _def
@@ -21,11 +21,14 @@ module Ladb::OpenCutList
       @name = _def.entity.name
       @default_name = _def.default_name
 
-      @entity_locked = _def.entity_locked?
       @locked = _def.locked?
-      @entity_visible = _def.entity_visible?
+      @computed_locked = _def.computed_locked?
       @visible = _def.visible?
+      @computed_visible = _def.computed_visible?
       @expanded = _def.expanded
+      @child_active = _def.child_active
+      @active = _def.active
+      @selected = _def.selected
 
       @children = _def.children.map { |node_def| node_def.create_hashable }
 

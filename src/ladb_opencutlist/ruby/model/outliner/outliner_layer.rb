@@ -9,14 +9,14 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :name, :layer_visible, :visible, :folder, :color
+    attr_reader :name, :visible, :computed_visible, :color, :folders
 
     def initialize(_def)
       @_def = _def
 
       @name = _def.layer.name
-      @layer_visible = _def.layer_visible?
       @visible = _def.visible?
+      @computed_visible = _def.computed_visible?
       @color = ColorUtils.color_to_hex(_def.layer.color)
 
       @folders = _def.folder_defs.map { |layer_folder_def| layer_folder_def.create_hashable }
@@ -36,7 +36,7 @@ module Ladb::OpenCutList
       @_def = _def
 
       @name = _def.layer_folder.name
-      @visible = _def.layer_folder_visible?
+      @visible = _def.visible?
 
     end
 

@@ -79,17 +79,12 @@
                     capabilities: that.dialog.capabilities,
                     errors: errors,
                     warnings: warnings,
-                    tips: tips,
-                    root_node: root_node
+                    tips: tips
                 }));
 
                 that.$tbody = $('#ladb_outliner_tbody', that.$page);
 
-                that.refreshActivePath(function () {
-                    that.refreshSelection(function () {
-                        that.renderNodes();
-                    });
-                });
+                that.renderNodes();
 
                 var $toggleHiddenBtn = $('#ladb_btn_toggle_hidden')
                 if (that.showHiddenInstances) {
@@ -129,6 +124,40 @@
 
     };
 
+    LadbTabOutliner.prototype.refreshOutliner = function () {
+        var that = this;
+
+        rubyCallCommand('outliner_generate', {}, function (response) {
+
+            var root_node = response.root_node;
+            var available_materials = response.available_materials;
+            var available_layers = response.available_layers;
+
+            // Keep useful data
+            that.rootNode = root_node;
+            that.availableMaterials = available_materials;
+            that.availableLayers = available_layers;
+
+            if (root_node) {
+                var fn_set_parent = function (node, parent) {
+                    node.parent = parent;
+                    for (const child of node.children) {
+                        fn_set_parent(child, node);
+                    }
+                };
+                fn_set_parent(root_node, null);
+            }
+
+            that.refreshActivePath(function () {
+                that.refreshSelection(function () {
+                    that.renderNodes();
+                });
+            });
+
+        });
+
+    };
+
     LadbTabOutliner.prototype.renderNodes = function () {
         var that = this;
 
@@ -138,11 +167,11 @@
 
             var fnRenderNode = function (node, activeOnly) {
 
-                if (!node.visible && !that.showHiddenInstances) {
+                if (!node.computed_visible && !that.showHiddenInstances) {
                     return;
                 }
 
-                var $row = $(Twig.twig({ ref: "tabs/outliner/_list-row-node.twig" }).render({
+                var $row = $(Twig.twig({ref: "tabs/outliner/_list-row-node.twig"}).render({
                     capabilities: that.dialog.capabilities,
                     node: node
                 }));
@@ -168,13 +197,15 @@
                 $('a.ladb-btn-node-select', $row).on('click', function () {
                     $(this).blur();
 
-                    node.selected = !node.selected
-                    rubyCallCommand('outliner_select', { id: node.id }, function (response) {
+                    // node.selected = !node.selected
+                    rubyCallCommand('outliner_select', {id: node.id}, function (response) {
 
                         if (response.errors) {
                             that.dialog.notifyErrors(response.errors);
-                        } else {
-                            that.refreshSelection(function () { that.renderNodes() });
+                        // } else {
+                        //     that.refreshSelection(function () {
+                        //         that.renderNodes()
+                        //     });
                         }
 
                     });
@@ -183,13 +214,13 @@
                 });
                 $('a.ladb-btn-node-open-url', $row).on('click', function () {
                     $(this).blur();
-                    rubyCallCommand('core_open_url', { url: $(this).attr('href') });
+                    rubyCallCommand('core_open_url', {url: $(this).attr('href')});
                     return false;
                 });
                 $('a.ladb-btn-node-set-active', $row).on('click', function () {
                     $(this).blur();
 
-                    rubyCallCommand('outliner_set_active', { id: node.id }, function (response) {
+                    rubyCallCommand('outliner_set_active', {id: node.id}, function (response) {
 
                         if (response.errors) {
                             that.dialog.notifyErrors(response.errors);
@@ -204,8 +235,6 @@
                 $('a.ladb-btn-node-toggle-visible', $row).on('click', function () {
                     $(this).blur();
 
-                    // node.visible = !node.visible;
-                    // that.renderNodes();
                     rubyCallCommand('outliner_set_visible', {
                         id: node.id,
                         visible: !node.visible
@@ -569,16 +598,16 @@
             that.showObsolete('core.event.model_change', true);
         });
         addEventCallback([ 'on_layer_changed', 'on_layer_removed', 'on_layers_folder_changed', 'on_layers_folder_removed', 'on_remove_all_layers' ], function (params) {
-            that.showObsolete('core.event.layers_change', true);
+            that.refreshOutliner();
         });
         addEventCallback([ 'on_selection_bulk_change', 'on_selection_cleared' ], function (params) {
-            that.refreshSelection(function () { that.renderNodes(); });
+            that.refreshOutliner();
         });
         addEventCallback([ 'on_active_path_changed' ], function (params) {
-            that.refreshActivePath(function () { that.renderNodes(); });
+            that.refreshOutliner();
         });
         addEventCallback([ 'on_boo' ], function (params) {
-            that.generateOutliner();
+            that.refreshOutliner();
         });
 
     };

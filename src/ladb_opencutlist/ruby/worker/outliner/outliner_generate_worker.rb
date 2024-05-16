@@ -50,7 +50,12 @@ module Ladb::OpenCutList
 
       # Generate nodes
       puts Benchmark.measure {
+
         outliner_def.root_node_def = _fetch_node_defs(outliner_def, model)
+
+        _compute_active_path(outliner_def)
+        _compute_selection(outliner_def)
+
       }
 
       # Tips
@@ -76,6 +81,8 @@ module Ladb::OpenCutList
         node_def.material_def = outliner_def.available_material_defs[entity.material]
         node_def.layer_def = outliner_def.available_layer_defs[entity.layer]
         node_def.expanded = instance_attributes.outliner_expanded
+
+        outliner_def.add_node_def(node_def)
 
         children = []
         entity.entities.each { |child_entity|
@@ -117,6 +124,8 @@ module Ladb::OpenCutList
         node_def.layer_def = outliner_def.available_layer_defs[entity.layer]
         node_def.expanded = instance_attributes.outliner_expanded
 
+        outliner_def.add_node_def(node_def)
+
         children = []
         entity.definition.entities.each { |child_entity|
           next unless child_entity.is_a?(Sketchup::Group) || child_entity.is_a?(Sketchup::ComponentInstance)
@@ -139,6 +148,8 @@ module Ladb::OpenCutList
         node_def.default_name = filename
         node_def.expanded = true
 
+        outliner_def.add_node_def(node_def)
+
         children = []
         entity.entities.each { |child_entity|
           next unless child_entity.is_a?(Sketchup::Group) || child_entity.is_a?(Sketchup::ComponentInstance)
@@ -154,9 +165,39 @@ module Ladb::OpenCutList
 
       end
 
-      outliner_def.cache_node_def(node_def) unless node_def.nil?
-
       node_def
+    end
+
+    def _compute_active_path(outliner_def)
+      unless Sketchup.active_model.active_path.nil?
+
+        active_node_def = outliner_def.get_node_def_by_id(AbstractOutlinerNodeDef.generate_node_id(Sketchup.active_model.active_path))
+        if active_node_def
+          active_node_def.active = true
+          node_def = active_node_def.parent
+          while node_def
+            node_def.child_active = true
+            node_def = node_def.parent
+          end
+        end
+
+      else
+
+        outliner_def.root_node_def.active = true
+
+      end
+    end
+
+    def _compute_selection(outliner_def)
+      unless Sketchup.active_model.selection.empty?
+
+        Sketchup.active_model.selection
+                .select { |entity| entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance) }
+                .flat_map { |entity| outliner_def.get_node_defs_by_entity(entity) }
+                .compact
+                .each { |node_def| node_def.selected = true }
+
+      end
     end
 
     private

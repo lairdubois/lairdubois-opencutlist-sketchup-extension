@@ -6,18 +6,16 @@
 {% include 'core/_alert-warnings.twig' %}
 {% include 'core/_alert-tips.twig' %}
 
-{% if root_node %}
-    <table class="table table-bordered ladb-outliner-group ladb-outliner-group-dark">
-        <thead>
-        <tr class="table-column-heading">
-            <td>
-                <div class="ladb-minitools ladb-minitools-right">
-                    <button id="ladb_btn_toggle_hidden" class="btn btn-default btn-xs"><i class="ladb-opencutlist-icon-check-box"></i> {{ 'tab.outliner.toggle_hidden'|i18next }}</button>
-                </div>
-                {{ 'tab.outliner.nodes'|i18next }}
-            </td>
-        </tr>
-        </thead>
-        <tbody id="ladb_outliner_tbody"></tbody>
-    </table>
-{% endif %}
+<table class="table table-bordered ladb-outliner-group ladb-outliner-group-dark">
+    <thead>
+    <tr class="table-column-heading">
+        <td>
+            <div class="ladb-minitools ladb-minitools-right">
+                <button id="ladb_btn_toggle_hidden" class="btn btn-default btn-xs"><i class="ladb-opencutlist-icon-check-box"></i> {{ 'tab.outliner.toggle_hidden'|i18next }}</button>
+            </div>
+            {{ 'tab.outliner.nodes'|i18next }}
+        </td>
+    </tr>
+    </thead>
+    <tbody id="ladb_outliner_tbody"></tbody>
+</table>

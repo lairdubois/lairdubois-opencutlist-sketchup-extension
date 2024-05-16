@@ -12,7 +12,7 @@ module Ladb::OpenCutList
     TYPE_COMPONENT = 2
     TYPE_PART = 3
 
-    attr_accessor :default_name, :expanded, :parent
+    attr_accessor :default_name, :expanded, :child_active, :active, :selected, :parent
     attr_reader :path, :id, :depth, :entity, :children
 
     # -----
@@ -32,6 +32,9 @@ module Ladb::OpenCutList
 
       @default_name = nil
       @expanded = false
+      @child_active = false
+      @active = false
+      @selected = false
 
       @parent = nil
       @children = []
@@ -42,34 +45,20 @@ module Ladb::OpenCutList
       raise NotImplementedError
     end
 
-    def entity_locked?
+    def locked?
       false
     end
 
-    def parent_locked?
-      return false if @parent.nil?
-      @parent.locked?
-    end
-
-    def locked?
-      entity_locked? || parent_locked?
-    end
-
-    def entity_visible?
-      true
-    end
-
-    def layer_visible?
-      true
-    end
-
-    def parent_visible?
-      return true if @parent.nil?
-      @parent.visible?
+    def computed_locked?
+      locked? || (@parent.nil? ? false : @parent.locked?)
     end
 
     def visible?
-      entity_visible? && layer_visible? && parent_visible?
+      true
+    end
+
+    def computed_visible?
+      visible? && (@parent.nil? ? true : @parent.computed_visible?)
     end
 
     # -----
@@ -89,7 +78,8 @@ module Ladb::OpenCutList
     # -----
 
     def create_hashable
-      OutlinerNodeModel.new(self)
+      @hashable = OutlinerNodeModel.new(self) if @hashable.nil?
+      @hashable
     end
 
   end
@@ -106,17 +96,16 @@ module Ladb::OpenCutList
 
     end
 
-    def entity_locked?
+    def locked?
       @entity.locked?
     end
 
-    def entity_visible?
+    def visible?
       @entity.visible?
     end
 
-    def layer_visible?
-      return true if @layer_def.nil?
-      @layer_def.folders_visible? && @layer_def.visible?
+    def computed_visible?
+      super && (@layer_def.nil? ? true : @layer_def.computed_visible?)
     end
 
     def type
@@ -126,7 +115,8 @@ module Ladb::OpenCutList
     # -----
 
     def create_hashable
-      OutlinerNodeGroup.new(self)
+      @hashable = OutlinerNodeGroup.new(self) if @hashable.nil?
+      @hashable
     end
 
   end
@@ -141,7 +131,8 @@ module Ladb::OpenCutList
     # -----
 
     def create_hashable
-      OutlinerNodeComponent.new(self)
+      @hashable = OutlinerNodeComponent.new(self) if @hashable.nil?
+      @hashable
     end
 
   end
@@ -159,7 +150,8 @@ module Ladb::OpenCutList
     # -----
 
     def create_hashable
-      OutlinerNodePart.new(self)
+      @hashable = OutlinerNodePart.new(self) if @hashable.nil?
+      @hashable
     end
 
   end

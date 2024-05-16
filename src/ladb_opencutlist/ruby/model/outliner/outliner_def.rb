@@ -4,7 +4,7 @@ module Ladb::OpenCutList
 
   class OutlinerDef
 
-    attr_accessor :root_node_def
+    attr_accessor :root_node_def, :active_node_def, :selected_node_defs
     attr_reader :errors, :warnings, :tips, :filename, :model_name, :available_material_defs, :available_layer_defs
 
     def initialize(filename, model_name)
@@ -21,9 +21,11 @@ module Ladb::OpenCutList
 
       @root_node_def = nil
 
-      @node_defs_cache_by_id = {}
-      @node_defs_cache_by_path = {}
-      @node_defs_cache_by_entity = {}
+      @active_node_def = nil
+      @selected_node_defs = nil
+
+      @node_defs_by_id = {}
+      @node_defs_by_entity = {}
 
     end
 
@@ -61,19 +63,19 @@ module Ladb::OpenCutList
 
     # NodeDefs
 
-    def cache_node_def(node_def)
-      @node_defs_cache_by_id[node_def.id] = node_def
-      nodes_cache = @node_defs_cache_by_entity[node_def.entity]
-      nodes_cache = @node_defs_cache_by_entity[node_def.entity] = [] if nodes_cache.nil?
+    def add_node_def(node_def)
+      @node_defs_by_id[node_def.id] = node_def
+      nodes_cache = @node_defs_by_entity[node_def.entity]
+      nodes_cache = @node_defs_by_entity[node_def.entity] = [] if nodes_cache.nil?
       nodes_cache.push(node_def)
     end
 
     def get_node_def_by_id(id)
-      @node_defs_cache_by_id[id]
+      @node_defs_by_id[id]
     end
 
     def get_node_defs_by_entity(entity)
-      @node_defs_cache_by_entity[entity]
+      @node_defs_by_entity[entity]
     end
 
     # ---

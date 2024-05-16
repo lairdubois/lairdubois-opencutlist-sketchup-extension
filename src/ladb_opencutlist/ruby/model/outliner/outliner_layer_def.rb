@@ -15,16 +15,12 @@ module Ladb::OpenCutList
       } : []
     end
 
-    def layer_visible?
+    def visible?
       @layer.visible?
     end
 
-    def folders_visible?
-      @folder_defs.select { |folder_def| !folder_def.layer_folder_visible? }.empty?
-    end
-
-    def visible?
-      layer_visible? && folders_visible?
+    def computed_visible?
+      visible? && @folder_defs.select { |folder_def| !folder_def.visible? }.empty?
     end
 
     # -----
@@ -43,7 +39,7 @@ module Ladb::OpenCutList
       @layer_folder = layer_folder
     end
 
-    def layer_folder_visible?
+    def visible?
       @layer_folder.visible?
     end
 
