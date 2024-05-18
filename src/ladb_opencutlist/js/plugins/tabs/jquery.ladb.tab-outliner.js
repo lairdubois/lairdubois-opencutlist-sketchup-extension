@@ -500,6 +500,14 @@
 
         // Events
 
+        this.$element
+            .on('shown.ladb.tab', function () {
+                rubyCallCommand('outliner_start_observing');
+            })
+            .on('hidden.ladb.tab', function () {
+                rubyCallCommand('outliner_stop_observing');
+            });
+
         addEventCallback([ 'on_new_model', 'on_open_model', 'on_activate_model' ], function (params) {
             that.showObsolete('core.event.model_change', true);
         });

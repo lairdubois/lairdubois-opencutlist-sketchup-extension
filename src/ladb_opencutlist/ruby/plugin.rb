@@ -733,7 +733,7 @@ module Ladb::OpenCutList
       end
     end
 
-    def trigger_event(event, params)
+    def trigger_event(event, params = nil)
       if @event_callbacks.has_key?(event)
         blocks = @event_callbacks[event]
         blocks.each do |block|
@@ -1033,6 +1033,7 @@ module Ladb::OpenCutList
       @tabs_dialog.set_on_closed {
         @tabs_dialog = nil
         @tabs_dialog_maximized = false
+        trigger_event('on_tags_dialog_close', {})
       }
       @tabs_dialog.set_can_close {
         tabs_dialog_store_current_position

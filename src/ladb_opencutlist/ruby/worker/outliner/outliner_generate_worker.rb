@@ -42,7 +42,9 @@ module Ladb::OpenCutList
       # Generate nodes
       puts Benchmark.measure {
 
-        outliner_def.root_node_def = _fetch_node_defs(outliner_def, model)
+        # outliner_def.root_node_def = _fetch_node_defs(outliner_def, model)
+
+        outliner_def.root_node_def = w.run(:create_node_def, { entity: model })
 
         w.run(:compute_active_path)
         w.run(:compute_selection)

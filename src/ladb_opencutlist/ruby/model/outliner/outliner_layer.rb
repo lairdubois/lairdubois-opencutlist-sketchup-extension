@@ -19,7 +19,7 @@ module Ladb::OpenCutList
       @computed_visible = _def.computed_visible?
       @color = ColorUtils.color_to_hex(_def.layer.color)
 
-      @folders = _def.folder_defs.map { |layer_folder_def| layer_folder_def.create_hashable }
+      @folders = _def.folder_defs.map { |layer_folder_def| layer_folder_def.get_hashable }
 
     end
 

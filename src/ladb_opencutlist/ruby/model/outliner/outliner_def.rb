@@ -25,7 +25,7 @@ module Ladb::OpenCutList
       @selected_node_defs = []
 
       @node_defs_by_id = {}
-      @node_defs_by_entity = {}
+      @node_defs_by_entity_id = {}
 
     end
 
@@ -73,22 +73,35 @@ module Ladb::OpenCutList
 
     def add_node_def(node_def)
       @node_defs_by_id[node_def.id] = node_def
-      nodes_cache = @node_defs_by_entity[node_def.entity]
-      nodes_cache = @node_defs_by_entity[node_def.entity] = [] if nodes_cache.nil?
+      nodes_cache = @node_defs_by_entity_id[node_def.entity_id]
+      nodes_cache = @node_defs_by_entity_id[node_def.entity_id] = [] if nodes_cache.nil?
       nodes_cache.push(node_def)
+    end
+
+    def remove_node_def(node_def)
+      @node_defs_by_id.delete(node_def.id)
+      nodes_cache = @node_defs_by_entity_id[node_def.entity_id]
+      unless nodes_cache.nil?
+        nodes_cache.delete(node_def)
+        @node_defs_by_entity_id.delete(node_def.entity_id) if nodes_cache.empty?
+      end
     end
 
     def get_node_def_by_id(id)
       @node_defs_by_id[id]
     end
 
-    def get_node_defs_by_entity(entity)
-      @node_defs_by_entity[entity]
+    def get_node_defs_by_entity_id(entity_id)
+      @node_defs_by_entity_id[entity_id]
     end
 
     # ---
 
-    def create_hashable
+    def invalidated?
+      @root_node_def.nil? || @root_node_def.invalidated?
+    end
+
+    def get_hashable
       Outliner.new(self)
     end
 

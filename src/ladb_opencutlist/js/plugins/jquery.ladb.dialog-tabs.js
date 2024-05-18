@@ -298,7 +298,10 @@
             $('[data-ladb-tab-name="' + this.activeTabName + '"]').removeClass('ladb-active');
 
             // Hide active tab
-            this.getActiveTab().hide();
+            var $tab = this.getActiveTab().hide();
+
+            // Trigger event
+            $tab.trigger(jQuery.Event('hidden.ladb.tab'));
 
         }
     };

@@ -34,18 +34,23 @@ module Ladb::OpenCutList
       @used_by_node_defs << node_def
     end
 
+    def remove_used_by_node_def(node_def)
+      @used_by_node_defs.delete(node_def)
+    end
+
     def each_used_by
       @used_by_node_defs.each { |node_def| yield node_def }
     end
 
     # -----
 
-    def clear_hashable
+    def invalidate
       @hashable = nil
     end
 
-    def create_hashable
-      OutlinerLayer.new(self)
+    def get_hashable
+      @hashable = OutlinerLayer.new(self) if @hashable.nil?
+      @hashable
     end
 
   end
@@ -64,7 +69,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def create_hashable
+    def get_hashable
       @hashable = OutlinerLayerFolder.new(self) if @hashable.nil?
       @hashable
     end

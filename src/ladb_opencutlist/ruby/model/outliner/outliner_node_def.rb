@@ -12,6 +12,10 @@ module Ladb::OpenCutList
     TYPE_COMPONENT = 2
     TYPE_PART = 3
 
+    PROPAGATION_SELF = 1 << 1
+    PROPAGATION_UP =   1 << 2
+    PROPAGATION_DOWN = 1 << 3
+
     attr_accessor :default_name, :expanded, :child_active, :active, :selected, :parent
     attr_reader :path, :id, :depth, :entity, :entity_id, :children
 
@@ -27,13 +31,8 @@ module Ladb::OpenCutList
     def initialize(path = [])
 
       @path = path
-      if @path.empty?
-        @entity = Sketchup.active_model
-        @entity_id = nil
-      else
-        @entity = path.last
-        @entity_id = @entity.entityID
-      end
+      @entity = @path.empty? ? Sketchup.active_model : @path.last
+      @entity_id = @entity.entityID
 
       @id = AbstractOutlinerNodeDef::generate_node_id(path)
       @depth = @path.length
@@ -53,6 +52,10 @@ module Ladb::OpenCutList
       raise NotImplementedError
     end
 
+    def valid?
+      @entity.nil? || @entity.valid?
+    end
+
     def locked?
       false
     end
@@ -69,14 +72,35 @@ module Ladb::OpenCutList
       visible? && (@parent.nil? ? true : @parent.computed_visible?)
     end
 
-    # -----
-
-    def clear_hashable
-      @hashable = nil
-      @parent.clear_hashable if @parent
+    def expandable?
+      @children.any?
     end
 
-    def create_hashable
+    # -----
+
+    def add_child(node_def)
+      children << node_def
+      node_def.parent = self
+    end
+
+    def remove_child(node_def)
+      children.delete(node_def)
+      node_def.parent = nil
+    end
+
+    # -----
+
+    def invalidated?
+      @hashable == nil
+    end
+
+    def invalidate(propagation = PROPAGATION_SELF | PROPAGATION_UP)
+      @hashable = nil if (propagation & PROPAGATION_SELF == PROPAGATION_SELF)
+      @parent.invalidate(PROPAGATION_SELF | PROPAGATION_UP) if (propagation & PROPAGATION_UP == PROPAGATION_UP) && @parent && !@parent.invalidated?
+      @children.each { |child_node_def| child_node_def.invalidate(PROPAGATION_SELF | PROPAGATION_DOWN) unless child_node_def.invalidated? } if (propagation & PROPAGATION_DOWN == PROPAGATION_DOWN)
+    end
+
+    def get_hashable
       raise NotImplementedError
     end
 
@@ -90,7 +114,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def create_hashable
+    def get_hashable
       @hashable = OutlinerNodeModel.new(self) if @hashable.nil?
       @hashable
     end
@@ -110,20 +134,26 @@ module Ladb::OpenCutList
     end
 
     def material_def=(material_def)
+      return if @material_def === material_def
+      @material_def.remove_used_by_node_def(self) unless @material_def.nil?
       @material_def = material_def
-      material_def.add_used_by_node_def(self) if material_def
+      @material_def.add_used_by_node_def(self) unless @material_def.nil?
     end
 
     def layer_def=(layer_def)
+      return if @layer_def === layer_def
+      @layer_def.remove_used_by_node_def(self) unless @layer_def.nil?
       @layer_def = layer_def
-      layer_def.add_used_by_node_def(self) if layer_def
+      @layer_def.add_used_by_node_def(self) unless @layer_def.nil?
     end
 
     def locked?
+      return super unless valid?
       @entity.locked?
     end
 
     def visible?
+      return super unless valid?
       @entity.visible?
     end
 
@@ -137,7 +167,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def create_hashable
+    def get_hashable
       @hashable = OutlinerNodeGroup.new(self) if @hashable.nil?
       @hashable
     end
@@ -152,7 +182,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def create_hashable
+    def get_hashable
       @hashable = OutlinerNodeComponent.new(self) if @hashable.nil?
       @hashable
     end
@@ -167,7 +197,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def create_hashable
+    def get_hashable
       @hashable = OutlinerNodePart.new(self) if @hashable.nil?
       @hashable
     end

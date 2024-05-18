@@ -26,12 +26,12 @@ module Ladb::OpenCutList
       @visible = _def.visible?
       @computed_visible = _def.computed_visible?
       @expanded = _def.expanded
-      @expandable =  _def.children.any?
+      @expandable = _def.expandable?
       @child_active = _def.child_active
       @active = _def.active
       @selected = _def.selected
 
-      @children = _def.expanded || _def.child_active || _def.active ? _def.children.map { |node_def| node_def.create_hashable } : []
+      @children = _def.expanded || _def.child_active || _def.active ? _def.children.map { |node_def| node_def.get_hashable } : []
 
     end
 
@@ -57,8 +57,8 @@ module Ladb::OpenCutList
     def initialize(_def)
       super
 
-      @material = _def.material_def ? _def.material_def.create_hashable : nil
-      @layer = _def.layer_def ? _def.layer_def.create_hashable : nil
+      @material = _def.material_def ? _def.material_def.get_hashable : nil
+      @layer = _def.layer_def ? _def.layer_def.get_hashable : nil
 
     end
 
