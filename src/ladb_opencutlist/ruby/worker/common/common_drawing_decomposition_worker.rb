@@ -45,10 +45,12 @@ module Ladb::OpenCutList
                    ignore_surfaces: false,
                    face_validator: FACE_VALIDATOR_ALL,
                    face_recursive: true,
+                   face_for_part: true,
 
                    ignore_edges: false,
                    edge_validator: EDGE_VALIDATOR_ALL,
-                   edge_recursive: true
+                   edge_recursive: true,
+                   edge_for_part: true
 
     )
 
@@ -67,10 +69,12 @@ module Ladb::OpenCutList
       @ignore_surfaces = ignore_surfaces
       @face_validator = face_validator
       @face_recursive = face_recursive
+      @face_for_part = face_for_part
 
       @ignore_edges = ignore_edges
       @edge_validator = edge_validator
       @edge_recursive = edge_recursive
+      @edge_for_part = edge_for_part
 
     end
 
@@ -335,7 +339,7 @@ module Ladb::OpenCutList
           elsif recursive
             if entity.is_a?(Sketchup::Group)
               _populate_face_manipulators(drawing_def, entity.entities, transformation * entity.transformation, recursive, &validator)
-            elsif entity.is_a?(Sketchup::ComponentInstance) && (entity.definition.behavior.cuts_opening? || entity.definition.behavior.always_face_camera?)
+            elsif entity.is_a?(Sketchup::ComponentInstance) && (!@face_for_part || entity.definition.behavior.cuts_opening? || entity.definition.behavior.always_face_camera?)
               _populate_face_manipulators(drawing_def, entity.definition.entities, transformation * entity.transformation, recursive, &validator)
             end
           end
@@ -363,7 +367,7 @@ module Ladb::OpenCutList
           elsif recursive
             if entity.is_a?(Sketchup::Group)
               _populate_edge_manipulators(drawing_def, entity.entities, transformation * entity.transformation, recursive, &validator)
-            elsif entity.is_a?(Sketchup::ComponentInstance) && (entity.definition.behavior.cuts_opening? || entity.definition.behavior.always_face_camera?)
+            elsif entity.is_a?(Sketchup::ComponentInstance) && (!@face_for_part || entity.definition.behavior.cuts_opening? || entity.definition.behavior.always_face_camera?)
               _populate_edge_manipulators(drawing_def, entity.definition.entities, transformation * entity.transformation, recursive, &validator)
             end
           end

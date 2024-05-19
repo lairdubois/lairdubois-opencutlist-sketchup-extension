@@ -32,11 +32,7 @@ module Ladb::OpenCutList
       model.start_operation('OCL Outliner Select', true, false, false)
 
 
-      if model.selection.contains?(entity)
-        model.selection.remove(entity)
-      else
-        model.selection.add(entity)
-      end
+      model.selection.toggle(entity)
 
 
       # Commit model modification operation

@@ -218,7 +218,7 @@ module Ladb::OpenCutList
 
         # Check if space need to be revalidated
         if @space.invalidated?
-          @space.do_layout(Geom::Transformation.new)
+          @space.do_layout(IDENTITY)
         end
 
         # Paint the space
@@ -377,6 +377,52 @@ module Ladb::OpenCutList
 
       def onSetCursor
         UI.set_cursor(@cursors.last)
+      end
+
+    end
+
+    class KuixOverlay < Sketchup::Overlay
+
+      attr_reader :canvas
+      attr_reader :space
+
+      def initialize(id, name, description: '')
+        super
+
+        # Create the root canvas
+        @canvas = Canvas.new(Sketchup.active_model.active_view)
+
+        # Create the root space
+        @space = Space.new(Sketchup.active_model.active_view)
+
+      end
+
+      def draw(view)
+
+        # Check if space need to be revalidated
+        if @space.invalidated?
+          @space.do_layout(IDENTITY)
+        end
+
+        # Paint the space
+        @space.paint(Graphics3d.new(view))
+
+        return unless @canvas
+
+        # Check if viewport has changed
+        if view.vpwidth != @canvas.bounds.width || view.vpheight != @canvas.bounds.height
+          @canvas.bounds.set!(0, 0, view.vpwidth, view.vpheight)
+          @canvas.do_layout
+        end
+
+        # Check if canvas need to be revalidated
+        if @canvas.invalidated?
+          @canvas.do_layout
+        end
+
+        # Paint the canvas
+        @canvas.paint(Graphics2d.new(view))
+
       end
 
     end

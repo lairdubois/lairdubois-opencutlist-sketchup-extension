@@ -161,11 +161,20 @@
                 }));
                 that.$tbody.append($row);
 
-                $row.on('click', function (e) {
-                    $(this).blur();
-                    $('.ladb-click-tool', $(this)).click();
-                    return false;
-                });
+                $row
+                    .on('mouseenter', function () {
+                        if (!node.child_active && !node.active) {
+                            rubyCallCommand('outliner_highlight', { id: node.id, highlighted: true });
+                        }
+                    })
+                    .on('mouseleave', function () {
+                        rubyCallCommand('outliner_highlight', { id: node.id, highlighted: false });
+                    })
+                    .on('click', function (e) {
+                        $(this).blur();
+                        $('.ladb-click-tool', $(this)).click();
+                        return false;
+                    });
                 $('a.ladb-btn-node-toggle-folding', $row).on('click', function () {
                     $(this).blur();
 

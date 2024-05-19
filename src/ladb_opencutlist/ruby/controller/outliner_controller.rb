@@ -14,6 +14,8 @@ module Ladb::OpenCutList
       @observed_model_ids = Set.new
       @observed_entities_ids = Set.new
 
+      @overlay = nil
+
     end
 
     def setup_event_callbacks
@@ -72,6 +74,9 @@ module Ladb::OpenCutList
       PLUGIN.register_command("outliner_explode") do |node_data|
         explode_command(node_data)
       end
+      PLUGIN.register_command("outliner_highlight") do |node_data|
+        highlight_command(node_data)
+      end
 
     end
 
@@ -93,7 +98,7 @@ module Ladb::OpenCutList
     # Selection Observer
 
     def onSelectionAdded(selection, entity)
-      puts "onSelectionAdded: #{entity}"
+      # puts "onSelectionAdded: #{entity}"
 
       return unless @worker
 
@@ -104,7 +109,7 @@ module Ladb::OpenCutList
     end
 
     def onSelectionRemoved(selection, entity)
-      puts "onSelectionRemoved: #{entity}"
+      # puts "onSelectionRemoved: #{entity}"
 
       return unless @worker
 
@@ -117,7 +122,7 @@ module Ladb::OpenCutList
     alias_method :onSelectedRemoved, :onSelectionRemoved
 
     def onSelectionBulkChange(selection)
-      puts "onSelectionBulkChange: #{selection}"
+      # puts "onSelectionBulkChange: #{selection}"
 
       return unless @worker
 
@@ -128,7 +133,7 @@ module Ladb::OpenCutList
     end
 
     def onSelectionCleared(selection)
-      puts "onSelectionCleared: #{selection}"
+      # puts "onSelectionCleared: #{selection}"
 
       return unless @worker
       return if @outliner_def.selected_node_defs.empty?
@@ -275,10 +280,22 @@ module Ladb::OpenCutList
 
     end
 
+    # Definitions obeserver
+
+    def onComponentAdded(definitions, definition)
+      puts "onComponentAdded: #{definition} (#{definition.object_id})"
+
+      # Workaround for start observing internally created groups definitions
+      if definition.group? && definition.count_used_instances > 0
+        start_observing_entities(definition)
+      end
+
+    end
+
     # Entities Observer
 
     def onElementAdded(entities, entity)
-      puts "onElementAdded: #{entity} (#{entity.object_id}) in (#{entity.parent.object_id})"
+      puts "onElementAdded: #{entity} (#{entity.object_id}) in (#{entity.definition.object_id if entity.respond_to?(:definition)})"
 
       return unless @worker
 
@@ -416,11 +433,12 @@ module Ladb::OpenCutList
       model.selection.add_observer(self)
       model.materials.add_observer(self)
       model.layers.add_observer(self)
+      model.definitions.add_observer(self)
       @observed_model_ids.add(model.object_id)
+
+      puts "start_observing_model (#{model.object_id})"
+
       start_observing_entities(model)
-
-      puts 'start_observing_model'
-
     end
 
     def stop_observing_model(model)
@@ -430,19 +448,20 @@ module Ladb::OpenCutList
       model.selection.remove_observer(self)
       model.materials.remove_observer(self)
       model.layers.remove_observer(self)
+      model.definitions.remove_observer(self)
       @observed_model_ids.delete(model.object_id)
-      stop_observing_entities(model)
 
       puts 'stop_observing_model'
 
+      stop_observing_entities(model)
     end
 
     def start_observing_entities(parent)
       return if parent.is_a?(Sketchup::Entity) && parent.deleted?
-      if parent.is_a?(Sketchup::Group) || parent.is_a?(Sketchup::Model)
-        entities = parent.entities
-      elsif parent.is_a?(Sketchup::ComponentInstance)
+      if parent.is_a?(Sketchup::Group) || parent.is_a?(Sketchup::ComponentInstance)
         entities = parent.definition.entities
+      elsif parent.is_a?(Sketchup::Model) || parent.is_a?(Sketchup::ComponentDefinition)
+        entities = parent.entities
       else
         return
       end
@@ -454,10 +473,10 @@ module Ladb::OpenCutList
 
     def stop_observing_entities(parent)
       return if parent.is_a?(Sketchup::Entity) && parent.deleted?
-      if parent.is_a?(Sketchup::Model)
-        entities = parent.entities
-      elsif parent.is_a?(Sketchup::Group) || parent.is_a?(Sketchup::ComponentInstance)
+      if parent.is_a?(Sketchup::Group) || parent.is_a?(Sketchup::ComponentInstance)
         entities = parent.definition.entities
+      elsif parent.is_a?(Sketchup::Model) || parent.is_a?(Sketchup::ComponentDefinition)
+        entities = parent.entities
       else
         return
       end
@@ -544,6 +563,32 @@ module Ladb::OpenCutList
 
       # Run !
       worker.run
+    end
+
+    def highlight_command(node_data)
+      require_relative '../overlay/highlight_overlay'
+
+      id = node_data[:id]
+      highlighted = node_data[:highlighted]
+
+      Sketchup.active_model.overlays.remove(@overlay) if @overlay && @overlay.valid?
+
+      if highlighted
+
+        node_def = @outliner_def.get_node_def_by_id(id)
+        if node_def && !node_def.is_a?(OutlinerNodeModelDef)
+
+          name = [ node_def.name, node_def.respond_to?(:definition_name) ? "<#{node_def.definition_name}>" : nil ].compact.join(' ')
+          color = node_def.computed_visible? ? Kuix::COLOR_RED : Kuix::COLOR_DARK_GREY
+
+          @overlay = HighlightOverlay.new(node_def.path, name, color)
+          Sketchup.active_model.overlays.add(@overlay)
+          @overlay.enabled = true
+
+        end
+
+      end
+
     end
 
   end

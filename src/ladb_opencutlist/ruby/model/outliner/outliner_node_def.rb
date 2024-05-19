@@ -52,6 +52,11 @@ module Ladb::OpenCutList
       raise NotImplementedError
     end
 
+    def name
+      return '' unless valid?
+      @entity.name
+    end
+
     def valid?
       !@entity.nil? && @entity.valid?
     end
@@ -133,6 +138,10 @@ module Ladb::OpenCutList
 
     end
 
+    def type
+      TYPE_GROUP
+    end
+
     def material_def=(material_def)
       return if @material_def === material_def
       @material_def.remove_used_by_node_def(self) unless @material_def.nil?
@@ -161,10 +170,6 @@ module Ladb::OpenCutList
       super && (@layer_def.nil? ? true : @layer_def.computed_visible?)
     end
 
-    def type
-      TYPE_GROUP
-    end
-
     # -----
 
     def get_hashable
@@ -178,6 +183,20 @@ module Ladb::OpenCutList
 
     def type
       TYPE_COMPONENT
+    end
+
+    def default_name
+      "<#{definition_name}>"
+    end
+
+    def definition_name
+      return '' unless valid?
+      @entity.definition.name
+    end
+
+    def description
+      return '' unless valid?
+      @entity.definition.description
     end
 
     # -----

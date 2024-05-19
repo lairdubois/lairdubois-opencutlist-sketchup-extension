@@ -18,7 +18,7 @@ module Ladb::OpenCutList
       @depth = _def.depth
       @type = _def.type
 
-      @name = _def.entity.name
+      @name = _def.name
       @default_name = _def.default_name
 
       @locked = _def.locked?
@@ -71,9 +71,9 @@ module Ladb::OpenCutList
     def initialize(_def)
       super
 
-      @default_name = "<#{_def.entity.definition.name}>"
-      @definition_name = _def.entity.definition.name
-      @description = _def.entity.definition.description
+      @default_name = _def.default_name
+      @definition_name = _def.definition_name
+      @description = _def.description
 
       definition_attributes = DefinitionAttributes.new(_def.entity.definition)
       @url = definition_attributes.url
