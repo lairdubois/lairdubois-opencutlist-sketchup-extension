@@ -11,8 +11,8 @@ module Ladb::OpenCutList
     def initialize()
       super('materials')
 
-      @observed_model_guids = Set.new
-      @observed_entities_guids = Set.new
+      @observed_model_ids = Set.new
+      @observed_entities_ids = Set.new
 
     end
 
@@ -278,16 +278,18 @@ module Ladb::OpenCutList
     # Entities Observer
 
     def onElementAdded(entities, entity)
-      puts "onElementAdded: #{entity} (#{entity.entityID})"
+      puts "onElementAdded: #{entity} (#{entity.object_id}) in (#{entity.parent.object_id})"
 
       return unless @worker
 
       if entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)
 
+        # entity = entity.make_unique if entity.is_a?(Sketchup::Group)
+
         face_bounds_cache = {}
 
-        parent = entities.parent
-        parent_instances = entities.parent.is_a?(Sketchup::ComponentDefinition) ? parent.instances : [ parent ]
+        parent = entity.parent
+        parent_instances = parent.is_a?(Sketchup::ComponentDefinition) ? parent.instances : [ parent ]
         parent_instances.each do |instance|
 
           node_defs = @outliner_def.get_node_defs_by_entity_id(instance.entityID)
@@ -317,7 +319,7 @@ module Ladb::OpenCutList
     end
 
     def onElementModified(entities, entity)
-      puts "onElementModified: #{entity}"
+      puts "onElementModified: #{entity} (#{entity.object_id})"
 
       return unless @worker
 
@@ -331,7 +333,7 @@ module Ladb::OpenCutList
             node_def.layer_def = @outliner_def.available_layer_defs[entity.layer]
 
             propagation = AbstractOutlinerNodeDef::PROPAGATION_SELF | AbstractOutlinerNodeDef::PROPAGATION_UP
-            if !node_def.invalidated? && node_def.get_hashable.computed_visible != node_def.computed_visible? || node_def.get_hashable.computed_locked != node_def.computed_locked?
+            if node_def.invalidated? || !node_def.invalidated? && (node_def.get_hashable.computed_visible != node_def.computed_visible? || node_def.get_hashable.computed_locked != node_def.computed_locked?)
               propagation |= AbstractOutlinerNodeDef::PROPAGATION_DOWN
             end
             node_def.invalidate(propagation)
@@ -409,12 +411,12 @@ module Ladb::OpenCutList
 
     def start_observing_model(model)
       return if model.nil?
-      return if @observed_model_guids.include?(model.guid)
+      return if @observed_model_ids.include?(model.object_id)
       model.add_observer(self)
       model.selection.add_observer(self)
       model.materials.add_observer(self)
       model.layers.add_observer(self)
-      @observed_model_guids.add(model.guid)
+      @observed_model_ids.add(model.object_id)
       start_observing_entities(model)
 
       puts 'start_observing_model'
@@ -423,10 +425,12 @@ module Ladb::OpenCutList
 
     def stop_observing_model(model)
       return if model.nil?
-      return unless @observed_model_guids.include?(model.guid)
+      return unless @observed_model_ids.include?(model.object_id)
       model.remove_observer(self)
       model.selection.remove_observer(self)
-      @observed_model_guids.delete(model.guid)
+      model.materials.remove_observer(self)
+      model.layers.remove_observer(self)
+      @observed_model_ids.delete(model.object_id)
       stop_observing_entities(model)
 
       puts 'stop_observing_model'
@@ -442,24 +446,24 @@ module Ladb::OpenCutList
       else
         return
       end
-      return if @observed_entities_guids.include?(entities.parent.guid)
+      return if @observed_entities_ids.include?(entities.object_id)
       entities.add_observer(self)
-      @observed_entities_guids.add(entities.parent.guid)
+      @observed_entities_ids.add(entities.object_id)
       entities.each { |child_entity| start_observing_entities(child_entity) }
     end
 
     def stop_observing_entities(parent)
       return if parent.is_a?(Sketchup::Entity) && parent.deleted?
-      if parent.is_a?(Sketchup::Group) || parent.is_a?(Sketchup::Model)
+      if parent.is_a?(Sketchup::Model)
         entities = parent.entities
-      elsif parent.is_a?(Sketchup::ComponentInstance)
+      elsif parent.is_a?(Sketchup::Group) || parent.is_a?(Sketchup::ComponentInstance)
         entities = parent.definition.entities
       else
         return
       end
-      return unless @observed_entities_guids.include?(entities.parent.guid)
+      return unless @observed_entities_ids.include?(entities.object_id)
       entities.remove_observer(self)
-      @observed_entities_guids.delete(entities.parent.guid)
+      @observed_entities_ids.delete(entities.object_id)
       entities.each { |child_entity| stop_observing_entities(child_entity) }
     end
 

@@ -89,13 +89,12 @@ module Ladb::OpenCutList
       if @outliner_def.active_node_def
 
         @outliner_def.active_node_def.active = false
-        @outliner_def.active_node_def.invalidate
         node_def = @outliner_def.active_node_def.parent
         while node_def
           node_def.child_active = false
-          node_def.invalidate
           node_def = node_def.parent
         end
+        @outliner_def.active_node_def.invalidate
         @outliner_def.active_node_def = nil
 
       else
@@ -149,6 +148,7 @@ module Ladb::OpenCutList
               .flat_map { |entity| @outliner_def.get_node_defs_by_entity_id(entity.entityID) }
               .compact
               .each do |node_def|
+
         node_def.selected = true
         node_def.invalidate
         @outliner_def.selected_node_defs << node_def
@@ -265,8 +265,7 @@ module Ladb::OpenCutList
             node_def.type,
             (node_def.entity.name.nil? || node_def.entity.name.empty?) ? 1 : 0,
             node_def.entity.name,
-            node_def.default_name,
-            node_def.layer_def.nil? ? '' : node_def.layer_def.layer.name
+            node_def.default_name
           ]
         else
           []

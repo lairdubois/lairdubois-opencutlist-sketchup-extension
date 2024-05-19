@@ -53,7 +53,7 @@ module Ladb::OpenCutList
     end
 
     def valid?
-      @entity.nil? || @entity.valid?
+      !@entity.nil? && @entity.valid?
     end
 
     def locked?
@@ -61,7 +61,7 @@ module Ladb::OpenCutList
     end
 
     def computed_locked?
-      locked? || (@parent.nil? ? false : @parent.locked?)
+      locked? || (@parent.nil? ? false : @parent.computed_locked?)
     end
 
     def visible?

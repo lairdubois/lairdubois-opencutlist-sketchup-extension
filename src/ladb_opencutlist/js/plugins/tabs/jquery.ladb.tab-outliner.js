@@ -511,9 +511,6 @@
         addEventCallback([ 'on_new_model', 'on_open_model', 'on_activate_model' ], function (params) {
             that.showObsolete('core.event.model_change', true);
         });
-        addEventCallback([ 'on_layer_changed', 'on_layer_removed', 'on_layers_folder_changed', 'on_layers_folder_removed', 'on_remove_all_layers' ], function (params) {
-            that.refreshOutliner();
-        });
         addEventCallback([ 'on_boo' ], function (params) {
             that.refreshOutliner();
         });
