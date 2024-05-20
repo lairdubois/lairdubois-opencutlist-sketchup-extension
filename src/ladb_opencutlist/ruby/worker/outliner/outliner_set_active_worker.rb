@@ -4,7 +4,7 @@ module Ladb::OpenCutList
 
     def initialize(outliner_def,
 
-                   id: nil
+                   id:
 
     )
 
@@ -29,7 +29,9 @@ module Ladb::OpenCutList
       # Start model modification operation
       model.start_operation('OCL Outliner Set Active', true, false, true)
 
+
       model.active_path = node_def.path
+
 
       # Commit model modification operation
       model.commit_operation

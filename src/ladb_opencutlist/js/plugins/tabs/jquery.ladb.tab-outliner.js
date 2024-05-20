@@ -161,20 +161,22 @@
                 }));
                 that.$tbody.append($row);
 
-                $row
-                    .on('mouseenter', function () {
-                        if (!node.child_active && !node.active) {
-                            rubyCallCommand('outliner_highlight', { id: node.id, highlighted: true });
-                        }
-                    })
-                    .on('mouseleave', function () {
-                        rubyCallCommand('outliner_highlight', { id: node.id, highlighted: false });
-                    })
-                    .on('click', function (e) {
-                        $(this).blur();
-                        $('.ladb-click-tool', $(this)).click();
-                        return false;
-                    });
+                if (that.dialog.capabilities.sketchup_version_number >= 2300000000) {
+                    $row
+                        .on('mouseenter', function () {
+                            if (!node.child_active && !node.active) {
+                                rubyCallCommand('outliner_highlight', {id: node.id, highlighted: true});
+                            }
+                        })
+                        .on('mouseleave', function () {
+                            rubyCallCommand('outliner_highlight', {id: node.id, highlighted: false});
+                        });
+                }
+                $row.on('click', function (e) {
+                    $(this).blur();
+                    $('.ladb-click-tool', $(this)).click();
+                    return false;
+                });
                 $('a.ladb-btn-node-toggle-folding', $row).on('click', function () {
                     $(this).blur();
 
@@ -265,169 +267,176 @@
         // Keep the edited node
         this.editedNode = node;
 
-        var $modal = this.appendModalInside('ladb_outliner_modal_edit', 'tabs/outliner/_modal-edit.twig', {
-            capabilities: that.dialog.capabilities,
-            mass_unit_strippedname: that.massUnitStrippedname,
-            length_unit_strippedname: that.lengthUnitStrippedname,
-            node: node,
-            tab: tab,
-            materialUsages: that.availableMaterials
-        });
+        rubyCallCommand('outliner_edit', { id: that.editedNode.id }, function (response) {
 
-        // Fetch UI elements
-        var $tabs = $('.modal-header a[data-toggle="tab"]', $modal);
-        var $inputName = $('#ladb_outliner_node_input_name', $modal);
-        var $selectMaterialName = $('#ladb_outliner_node_select_material_name', $modal);
-        var $inputDefinitionName = $('#ladb_outliner_node_input_definition_name', $modal);
-        var $inputLayerName = $('#ladb_outliner_node_input_layer_name', $modal);
-        var $inputDescription = $('#ladb_outliner_node_input_description', $modal);
-        var $inputUrl = $('#ladb_outliner_node_input_url', $modal);
-        var $inputTags = $('#ladb_outliner_node_input_tags', $modal);
-        var $btnExplode = $('#ladb_outliner_node_explode', $modal);
-        var $btnUpdate = $('#ladb_outliner_node_update', $modal);
+            if (response.errors) {
+                that.dialog.notifyErrors(response.errors);
+            } else {
 
-        // Utils function
-        var fnNewCheck = function($select, type) {
-            if ($select.val() === 'new') {
-                that.dialog.executeCommandOnTab('materials', 'new_material', { type: type });
-                $modal.modal('hide');
-                return true;
-            }
-            return false;
-        };
+                // Update node ID in case of group made unique
+                // that.editedNode.id = response.node_id;
 
-        // Bind tabs
-        $tabs.on('shown.bs.tab', function (e) {
-            that.lastEditNodeTab = $(e.target).attr('href').substring('#tab_edit_node_'.length);
-        });
+                var $modal = that.appendModalInside('ladb_outliner_modal_edit', 'tabs/outliner/_modal-edit.twig', {
+                    capabilities: that.dialog.capabilities,
+                    mass_unit_strippedname: that.massUnitStrippedname,
+                    length_unit_strippedname: that.lengthUnitStrippedname,
+                    node: node,
+                    tab: tab,
+                    materialUsages: that.availableMaterials
+                });
 
-        // Bind input
-        $inputName.ladbTextinputText();
-        $inputDefinitionName.ladbTextinputText();
-        $inputLayerName.ladbTextinputText({
-            autocomplete: {
-                source: that.availableLayers.map(function (layer) { return {
-                    value: layer.name,
-                    category: layer.path.join(' / '),
-                    icon: 'fill',
-                    color: layer.color
-                } }),
-                delay: 0,
-                minLength: 0,
-                categoryIcon: 'folder'
-            }
-        });
-        $inputDescription.ladbTextinputArea();
-        $inputUrl.ladbTextinputUrl();
-        $inputTags.ladbTextinputTokenfield({
-            unique: true
-        });
+                // Fetch UI elements
+                var $tabs = $('.modal-header a[data-toggle="tab"]', $modal);
+                var $inputName = $('#ladb_outliner_node_input_name', $modal);
+                var $selectMaterialName = $('#ladb_outliner_node_select_material_name', $modal);
+                var $inputDefinitionName = $('#ladb_outliner_node_input_definition_name', $modal);
+                var $inputLayerName = $('#ladb_outliner_node_input_layer_name', $modal);
+                var $inputDescription = $('#ladb_outliner_node_input_description', $modal);
+                var $inputUrl = $('#ladb_outliner_node_input_url', $modal);
+                var $inputTags = $('#ladb_outliner_node_input_tags', $modal);
+                var $btnExplode = $('#ladb_outliner_node_explode', $modal);
+                var $btnUpdate = $('#ladb_outliner_node_update', $modal);
 
-        // Bind select
-        if (node.material) {
-            $selectMaterialName.val(node.material.name);
-        }
-        $selectMaterialName
-            .selectpicker(SELECT_PICKER_OPTIONS)
-            .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                fnNewCheck($(this));
-            });
-
-        // Bind buttons
-        $btnExplode.on('click', function () {
-
-            var names = [];
-            if (that.editedNode.name) {
-                names.push(that.editedNode.name);
-            }
-            if (that.editedNode.definition_name) {
-                var definitionName = that.editedNode.definition_name
-                if (that.editedNode.type === 2 || that.editedNode.type === 3) {   // 2 = TYPE_COMPONENT, 3 = TYPE_PART
-                    definitionName = '<' + definitionName + '>'
-                }
-                names.push(definitionName);
-            }
-
-            that.dialog.confirm(i18next.t('default.caution'), i18next.t('tab.outliner.edit_node.explode_message', { name: names.join(' ') }), function () {
-
-                rubyCallCommand('outliner_explode', { id: that.editedNode.id }, function (response) {
-
-                    if (response.errors) {
-                        that.dialog.notifyErrors(response.errors);
-                    } else {
-
-                        // Reload the list
-                        that.generateOutliner();
-
-                        // Reset edited material
-                        that.editedNode = null;
-
-                        // Hide modal
+                // Utils function
+                var fnNewCheck = function($select, type) {
+                    if ($select.val() === 'new') {
+                        that.dialog.executeCommandOnTab('materials', 'new_material', { type: type });
                         $modal.modal('hide');
-
+                        return true;
                     }
+                    return false;
+                };
+
+                // Bind tabs
+                $tabs.on('shown.bs.tab', function (e) {
+                    that.lastEditNodeTab = $(e.target).attr('href').substring('#tab_edit_node_'.length);
+                });
+
+                // Bind input
+                $inputName.ladbTextinputText();
+                $inputDefinitionName.ladbTextinputText();
+                $inputLayerName.ladbTextinputText({
+                    autocomplete: {
+                        source: that.availableLayers.map(function (layer) { return {
+                            value: layer.name,
+                            category: layer.path.join(' / '),
+                            icon: 'fill',
+                            color: layer.color
+                        } }),
+                        delay: 0,
+                        minLength: 0,
+                        categoryIcon: 'folder'
+                    }
+                });
+                $inputDescription.ladbTextinputArea();
+                $inputUrl.ladbTextinputUrl();
+                $inputTags.ladbTextinputTokenfield({
+                    unique: true
+                });
+
+                // Bind select
+                if (node.material) {
+                    $selectMaterialName.val(node.material.name);
+                }
+                $selectMaterialName
+                    .selectpicker(SELECT_PICKER_OPTIONS)
+                    .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+                        fnNewCheck($(this));
+                    });
+
+                // Bind buttons
+                $btnExplode.on('click', function () {
+
+                    var names = [];
+                    if (that.editedNode.name) {
+                        names.push(that.editedNode.name);
+                    }
+                    if (that.editedNode.definition_name) {
+                        var definitionName = that.editedNode.definition_name
+                        if (that.editedNode.type === 2 || that.editedNode.type === 3) {   // 2 = TYPE_COMPONENT, 3 = TYPE_PART
+                            definitionName = '<' + definitionName + '>'
+                        }
+                        names.push(definitionName);
+                    }
+
+                    that.dialog.confirm(i18next.t('default.caution'), i18next.t('tab.outliner.edit_node.explode_message', { name: names.join(' ') }), function () {
+
+                        rubyCallCommand('outliner_explode', { id: that.editedNode.id }, function (response) {
+
+                            if (response.errors) {
+                                that.dialog.notifyErrors(response.errors);
+                            } else {
+
+                                // Reload the list
+                                that.generateOutliner();
+
+                                // Reset edited material
+                                that.editedNode = null;
+
+                                // Hide modal
+                                $modal.modal('hide');
+
+                            }
+
+                        });
+
+                    }, {
+                        confirmBtnType: 'danger',
+                        confirmBtnLabel: i18next.t('tab.outliner.edit_node.explode')
+                    });
+
+                });
+                $btnUpdate.on('click', function () {
+
+                    var data = {
+                        id: that.editedNode.id,
+                        name: $inputName.val(),
+                        material_name: $selectMaterialName.val()
+                    }
+                    if ($inputDefinitionName.length > 0) {
+                        data.definition_name = $inputDefinitionName.val();
+                    }
+                    if ($inputLayerName.length > 0) {
+                        data.layer_name = $inputLayerName.val();
+                    }
+                    if ($inputDescription.length > 0) {
+                        data.description = $inputDescription.val();
+                    }
+                    if ($inputUrl.length > 0) {
+                        data.url = $inputUrl.val();
+                    }
+                    if ($inputTags.length > 0) {
+                        data.tags = $inputTags.tokenfield('getTokensList').split(';')
+                    }
+
+                    rubyCallCommand('outliner_update', data, function (response) {
+
+                        if (response.errors) {
+                            that.dialog.notifyErrors(response.errors);
+                        } else {
+
+                            // Reset edited material
+                            that.editedNode = null;
+
+                            // Hide modal
+                            $modal.modal('hide');
+
+                        }
+
+                    });
 
                 });
 
-            }, {
-                confirmBtnType: 'danger',
-                confirmBtnLabel: i18next.t('tab.outliner.edit_node.explode')
-            });
+                // Show modal
+                $modal.modal('show');
+
+                // Setup tooltips & popovers
+                that.dialog.setupTooltips();
+                that.dialog.setupPopovers();
+
+            }
 
         });
-        $btnUpdate.on('click', function () {
-
-            var data = {
-                id: that.editedNode.id,
-                name: $inputName.val(),
-                material_name: $selectMaterialName.val()
-            }
-            if ($inputDefinitionName.length > 0) {
-                data.definition_name = $inputDefinitionName.val();
-            }
-            if ($inputLayerName.length > 0) {
-                data.layer_name = $inputLayerName.val();
-            }
-            if ($inputDescription.length > 0) {
-                data.description = $inputDescription.val();
-            }
-            if ($inputUrl.length > 0) {
-                data.url = $inputUrl.val();
-            }
-            if ($inputTags.length > 0) {
-                data.tags = $inputTags.tokenfield('getTokensList').split(';')
-            }
-
-            rubyCallCommand('outliner_update', data, function (response) {
-
-                if (response.errors) {
-                    that.dialog.notifyErrors(response.errors);
-                } else {
-
-                    // Reload the list
-                    // var nodeId = that.editedNode.id;
-                    // that.generateOutliner(function() {
-                    //     that.scrollSlideToTarget(null, $('[data-node-id=' + nodeId + ']', that.$page), false, true);
-                    // });
-
-                    // Reset edited material
-                    that.editedNode = null;
-
-                    // Hide modal
-                    $modal.modal('hide');
-
-                }
-
-            });
-
-        });
-
-        // Show modal
-        $modal.modal('show');
-
-        // Setup tooltips & popovers
-        this.dialog.setupTooltips();
-        this.dialog.setupPopovers();
 
     };
 

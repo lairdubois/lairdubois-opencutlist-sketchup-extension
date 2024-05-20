@@ -19,8 +19,9 @@ module Ladb::OpenCutList
 
     # -----
 
-    def run(action, params = {})
-      send(action, **params)
+    def run(action, params = nil)
+      return send(action, **params) if params.is_a?(Hash)
+      send(action)
     end
 
     # -----

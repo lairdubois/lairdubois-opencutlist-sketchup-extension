@@ -9,7 +9,7 @@ module Ladb::OpenCutList
 
     def initialize(outliner_def,
 
-                   id: nil,
+                   id:,
                    name: nil,
                    material_name: nil,
                    definition_name: nil,

@@ -381,7 +381,9 @@ module Ladb::OpenCutList
 
     end
 
-    class KuixOverlay < Sketchup::Overlay
+    if Sketchup.version_number >= 2300000000
+
+      class KuixOverlay < Sketchup::Overlay
 
       attr_reader :canvas
       attr_reader :space
@@ -422,6 +424,8 @@ module Ladb::OpenCutList
 
         # Paint the canvas
         @canvas.paint(Graphics2d.new(view))
+
+      end
 
       end
 

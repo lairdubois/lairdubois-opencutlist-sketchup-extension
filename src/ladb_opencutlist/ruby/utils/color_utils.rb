@@ -35,7 +35,7 @@ module Ladb::OpenCutList
       color.blend(COLOR_WHITE, 1.0 - [ 1, [ 0, amount ].max ].min)
     end
 
-    def self.color_transparent(color, alpha = 255)
+    def self.color_translucent(color, alpha = 255)
       return color unless color.is_a?(Sketchup::Color)
       Sketchup::Color.new(color.red, color.green, color.blue, alpha)
     end

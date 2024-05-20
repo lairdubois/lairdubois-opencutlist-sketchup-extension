@@ -68,6 +68,9 @@ module Ladb::OpenCutList
       PLUGIN.register_command("outliner_toggle_select") do |node_data|
         toggle_select_command(node_data)
       end
+      PLUGIN.register_command("outliner_edit") do |node_data|
+        edit_command(node_data)
+      end
       PLUGIN.register_command("outliner_update") do |node_data|
         update_command(node_data)
       end
@@ -88,6 +91,9 @@ module Ladb::OpenCutList
       puts "onActivePathChanged: #{model}"
 
       return unless @worker
+
+      # Remove previously added overlay
+      model.overlays.remove(@overlay) if @overlay && @overlay.valid?
 
       @worker.run(:compute_active_path)
 
@@ -211,9 +217,9 @@ module Ladb::OpenCutList
         layer_def.invalidate
         layer_def.each_used_by do |node_def|
 
-          propagation = AbstractOutlinerNodeDef::PROPAGATION_SELF | AbstractOutlinerNodeDef::PROPAGATION_UP
+          propagation = AbstractOutlinerNodeDef::PROPAGATION_SELF | AbstractOutlinerNodeDef::PROPAGATION_PARENT
           if !node_def.invalidated? && node_def.get_hashable.computed_visible != node_def.computed_visible?
-            propagation |= AbstractOutlinerNodeDef::PROPAGATION_DOWN
+            propagation |= AbstractOutlinerNodeDef::PROPAGATION_CHILDREN
           end
           node_def.invalidate(propagation)
 
@@ -285,9 +291,37 @@ module Ladb::OpenCutList
     def onComponentAdded(definitions, definition)
       puts "onComponentAdded: #{definition} (#{definition.object_id})"
 
-      # Workaround for start observing internally created groups definitions
+      # Refresh internally created groups definition
       if definition.group? && definition.count_used_instances > 0
+
+        definition.instances.each do |instance|
+
+          face_bounds_cache = {}
+
+          node_defs = @outliner_def.get_node_defs_by_entity_id(instance.entityID)
+          if node_defs
+
+            node_defs.each do |node_def|
+
+              parent_node_def = node_def.parent
+              expanded = node_def.expanded
+
+              @worker.run(:destroy_node_def, { node_def: node_def })
+
+              node_def = @worker.run(:create_node_def, { entity: instance, path: parent_node_def.path, face_bounds_cache: face_bounds_cache })
+              node_def.expanded = expanded
+
+              parent_node_def.add_child(node_def)
+              parent_node_def.invalidate
+
+            end
+
+          end
+
+        end
+
         start_observing_entities(definition)
+
       end
 
     end
@@ -301,8 +335,6 @@ module Ladb::OpenCutList
 
       if entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)
 
-        # entity = entity.make_unique if entity.is_a?(Sketchup::Group)
-
         face_bounds_cache = {}
 
         parent = entity.parent
@@ -315,6 +347,7 @@ module Ladb::OpenCutList
 
               child_node_def = @worker.run(:create_node_def, { entity: entity, path: node_def.path, face_bounds_cache: face_bounds_cache })
               if child_node_def
+
                 node_def.add_child(child_node_def)
                 node_def.invalidate
                 @worker.run(:sort_children_node_defs, { children: node_def.children })
@@ -349,9 +382,9 @@ module Ladb::OpenCutList
             node_def.material_def = @outliner_def.available_material_defs[entity.material]
             node_def.layer_def = @outliner_def.available_layer_defs[entity.layer]
 
-            propagation = AbstractOutlinerNodeDef::PROPAGATION_SELF | AbstractOutlinerNodeDef::PROPAGATION_UP
+            propagation = AbstractOutlinerNodeDef::PROPAGATION_SELF | AbstractOutlinerNodeDef::PROPAGATION_PARENT
             if node_def.invalidated? || !node_def.invalidated? && (node_def.get_hashable.computed_visible != node_def.computed_visible? || node_def.get_hashable.computed_locked != node_def.computed_locked?)
-              propagation |= AbstractOutlinerNodeDef::PROPAGATION_DOWN
+              propagation |= AbstractOutlinerNodeDef::PROPAGATION_CHILDREN
             end
             node_def.invalidate(propagation)
 
@@ -545,6 +578,16 @@ module Ladb::OpenCutList
       worker.run
     end
 
+    def edit_command(node_data)
+      require_relative '../worker/outliner/outliner_edit_worker'
+
+      # Setup worker
+      worker = OutlinerEditWorker.new(@outliner_def, **node_data)
+
+      # Run !
+      worker.run
+    end
+
     def update_command(node_data)
       require_relative '../worker/outliner/outliner_update_worker'
 
@@ -570,8 +613,11 @@ module Ladb::OpenCutList
 
       id = node_data[:id]
       highlighted = node_data[:highlighted]
+      model = Sketchup.active_model
 
-      Sketchup.active_model.overlays.remove(@overlay) if @overlay && @overlay.valid?
+      return if model.nil?
+
+      model.overlays.remove(@overlay) if @overlay && @overlay.valid?
 
       if highlighted
 
@@ -582,7 +628,7 @@ module Ladb::OpenCutList
           color = node_def.computed_visible? ? Kuix::COLOR_RED : Kuix::COLOR_DARK_GREY
 
           @overlay = HighlightOverlay.new(node_def.path, name, color)
-          Sketchup.active_model.overlays.add(@overlay)
+          model.overlays.add(@overlay)
           @overlay.enabled = true
 
         end

@@ -4,7 +4,7 @@ module Ladb::OpenCutList
 
     def initialize(outliner_def,
 
-                   id: nil
+                   id:
 
     )
 

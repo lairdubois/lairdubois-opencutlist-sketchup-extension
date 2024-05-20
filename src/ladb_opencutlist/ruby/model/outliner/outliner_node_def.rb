@@ -7,14 +7,14 @@ module Ladb::OpenCutList
 
   class AbstractOutlinerNodeDef
 
-    TYPE_MODEL = 0
-    TYPE_GROUP = 1
+    TYPE_MODEL     = 0
+    TYPE_GROUP     = 1
     TYPE_COMPONENT = 2
-    TYPE_PART = 3
+    TYPE_PART      = 3
 
-    PROPAGATION_SELF = 1 << 1
-    PROPAGATION_UP =   1 << 2
-    PROPAGATION_DOWN = 1 << 3
+    PROPAGATION_SELF     = 1 << 1
+    PROPAGATION_PARENT   = 1 << 2
+    PROPAGATION_CHILDREN = 1 << 3
 
     attr_accessor :default_name, :expanded, :child_active, :active, :selected, :parent
     attr_reader :path, :id, :depth, :entity, :entity_id, :children
@@ -22,8 +22,7 @@ module Ladb::OpenCutList
     # -----
 
     def self.generate_node_id(path)
-      entity = path.empty? ? Sketchup.active_model : path.last
-      Digest::MD5.hexdigest("#{entity.guid}|#{PathUtils.serialize_path(path)}")
+      Digest::MD5.hexdigest(([ Sketchup.active_model ] + path).map(&:guid).join('|'))
     end
 
     # -----
@@ -99,10 +98,10 @@ module Ladb::OpenCutList
       @hashable == nil
     end
 
-    def invalidate(propagation = PROPAGATION_SELF | PROPAGATION_UP)
+    def invalidate(propagation = PROPAGATION_SELF | PROPAGATION_PARENT)
       @hashable = nil if (propagation & PROPAGATION_SELF == PROPAGATION_SELF)
-      @parent.invalidate(PROPAGATION_SELF | PROPAGATION_UP) if (propagation & PROPAGATION_UP == PROPAGATION_UP) && @parent && !@parent.invalidated?
-      @children.each { |child_node_def| child_node_def.invalidate(PROPAGATION_SELF | PROPAGATION_DOWN) unless child_node_def.invalidated? } if (propagation & PROPAGATION_DOWN == PROPAGATION_DOWN)
+      @parent.invalidate(PROPAGATION_SELF | PROPAGATION_PARENT) if (propagation & PROPAGATION_PARENT == PROPAGATION_PARENT) && @parent && !@parent.invalidated?
+      @children.each { |child_node_def| child_node_def.invalidate(PROPAGATION_SELF | PROPAGATION_CHILDREN) unless child_node_def.invalidated? } if (propagation & PROPAGATION_CHILDREN == PROPAGATION_CHILDREN)
     end
 
     def get_hashable

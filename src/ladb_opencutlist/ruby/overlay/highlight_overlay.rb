@@ -11,31 +11,31 @@ module Ladb::OpenCutList
     def initialize(path, text, color = Kuix::COLOR_RED)
       super(OVERLAY_ID, 'Highlight Overlay')
 
-      drawing_def = CommonDrawingDecompositionWorker.new(path,
+      @drawing_def = CommonDrawingDecompositionWorker.new(path,
          face_for_part: false,
          ignore_surfaces: true,
          ignore_edges: true
       ).run
-      if drawing_def
+      if @drawing_def
 
         view = Sketchup.active_model.active_view
 
         # 3D
 
         preview = Kuix::Group.new
-        preview.transformation = drawing_def.transformation
+        preview.transformation = @drawing_def.transformation
         @space.append(preview)
 
           # Highlight faces
           mesh = Kuix::Mesh.new
-          mesh.add_triangles(drawing_def.face_manipulators.flat_map { |face_manipulator| face_manipulator.triangles })
-          mesh.background_color =  ColorUtils.color_transparent(color, 80)
+          mesh.add_triangles(@drawing_def.face_manipulators.flat_map { |face_manipulator| face_manipulator.triangles })
+          mesh.background_color =  ColorUtils.color_translucent(color, 80)
           preview.append(mesh)
 
           # Box helper
           box = Kuix::BoxMotif.new
-          box.bounds.origin.copy!(drawing_def.faces_bounds.min)
-          box.bounds.size.copy!(drawing_def.faces_bounds)
+          box.bounds.origin.copy!(@drawing_def.faces_bounds.min)
+          box.bounds.size.copy!(@drawing_def.faces_bounds)
           box.color = color
           box.line_width = 1
           box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
@@ -50,10 +50,12 @@ module Ladb::OpenCutList
 
           @canvas.layout = Kuix::StaticLayout.new
 
-          p = view.screen_coords(drawing_def.faces_bounds.center.transform(drawing_def.transformation))
+          p = view.screen_coords(@drawing_def.faces_bounds.center.transform(@drawing_def.transformation))
+          px = [ [ 0 + unit * 10, p.x ].max, view.vpwidth - unit * 10 ].min
+          py = [ [ 0 + unit * 10, p.y ].max, view.vpheight - unit * 10 ].min
 
           box = Kuix::Panel.new
-          box.layout_data = Kuix::StaticLayoutData.new(p.x, p.y, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+          box.layout_data = Kuix::StaticLayoutData.new(px, py, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER))
           box.layout = Kuix::GridLayout.new
           box.padding.set!(unit, unit, unit * 0.7, unit)
           box.set_style_attribute(:background_color, color)
@@ -69,6 +71,13 @@ module Ladb::OpenCutList
 
       end
 
+    end
+
+    def getExtents
+      bounds = Geom::BoundingBox.new
+      bounds.add(@drawing_def.faces_bounds.min.transform(@drawing_def.transformation))
+      bounds.add(@drawing_def.faces_bounds.max.transform(@drawing_def.transformation))
+      bounds
     end
 
     def get_unit(view = nil)
