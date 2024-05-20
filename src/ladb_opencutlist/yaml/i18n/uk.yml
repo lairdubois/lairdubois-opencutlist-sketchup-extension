@@ -82,6 +82,7 @@ core:
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
+      edit_part_instance_properties: Редагувати властивості екземпляра
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
@@ -132,6 +133,7 @@ core:
     material_change: "Принаймні, один матеріал було змінено."
     selection_change: Виділення в активній моделі було змінено.
     layers_change: Теги в активній моделі змінилися.
+    drawing_change: Конструкція активної моделі була змінена.
   upgrade:
     unavailable: Неможливо знайти останню версію *OpenCutList*.
     available: |
@@ -180,9 +182,9 @@ core:
     dictionary:
       component_textinput_color: Палітра кольорів
       cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
-      cutlist_cuttingdiagram1d_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 1D
+      cutlist_cuttingdiagram1d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 1D
       cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
-      cutlist_cuttingdiagram2d_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 2D
+      cutlist_cuttingdiagram2d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 2D
       cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
       cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
       cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
@@ -214,7 +216,7 @@ core:
       view_isometric: Ізометрія
       view_top: Зверху
       view_bottom: Знизу
-      view_front: Лице
+      view_front: Фронт
       view_back: Ззаду
       view_left: Ліворуч
       view_right: Праворуч
@@ -610,8 +612,9 @@ tab:
       final_area: Площа - фактична
       count: Кількість
       part_count: Кількість деталей
-      material_type: Тип
-      material_name: Матеріал
+      material: Матеріал
+      material_type: Тип матеріалу
+      material_name: Назва матеріалу
       material_description: Опис матеріалу
       material_url: URL матеріалу
       material_std_dimension: Стандартні розміри
@@ -739,9 +742,13 @@ tab:
         *Цю опцію потрібно активувати, щоб форми могли бути експортовані.*
       option_saw_kerf: Товщина пили
       option_saw_kerf_help: "Ширина матеріалу, втрачена пропилом."
+      option_spacing: Інтервал
+      option_spacing_help: Мінімальна відстань між кожною деталлю.
       option_trimming: Обрізка листа
       option_trimming_help_1d: "Розмір обрізки на кінці дошки або крайки, для видалення дефектного краю."
       option_trimming_help_2d: Розмір обрізки листа по периметру для видалення дефектів зовнішнього вигляду листа та його прямокутного вирівнювання.
+      option_rotations: Обертання
+      option_rotations_help_2d: Кількість можливих обертів для кожної деталі.
       option_optimization: Рівень оптимізації
       option_optimization_help: "Рівень оптимізації визначає кількість обчислених можливостей, а отже, і час розрахунку."
       option_optimization_0: Середній
@@ -832,7 +839,7 @@ tab:
         parts: "{{ count }} деталь"
         parts_plural: "{{ count }} деталей"
         settings: Параметри
-      export:
+      write:
         title: Експорт розкладки
         info_0: |
           Цей модуль дозволяє експортувати **геометрію** *розкладку* у вигляді списку файлів у форматі [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) або [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
@@ -1095,6 +1102,11 @@ tab:
       option_anchor_1: Проектувати походження деталі
       option_anchor_help: |
         Дозволяє активувати проекцію початку координат деталі як точку прив’язки.
+      option_switch_yz: Вертикальна вісь
+      option_switch_yz_0: Z вертикальна
+      option_switch_yz_1: Y вертикальний
+      option_switch_yz_help: |
+        Дозволяє поміняти місцями осі Y і Z, щоб визначити вертикальну вісь деталі.
       option_smoothing: Згладжування
       option_smoothing_0: Ні
       option_smoothing_1: Згладити кола та дуги (Експериментально)
@@ -1124,7 +1136,9 @@ tab:
         Дозволяє вибрати кольори отворів деталей.
       option_parts_paths: Траєкторії
       option_parts_paths_help: |
-        Дозволяє вибрати колір ліній-траєкторій.
+        Дозволяє вибирати кольори шляхів.
+
+        *Колір заливки використовуватиметься лише для закритих контурів.*
       error:
         no_part: Немає жодної деталі для експорту.
       warning:
@@ -1188,9 +1202,7 @@ tab:
       texture_load: Завантажити нову текстуру
       texture_clear: Видалити текстуру
       edit: "Редагувати властивості '{{ name }}'"
-      set_current: |
-        Задати матеріал деталям '{{ name }}'
-        *Двічі клацніть, щоб згорнути*
+      set_current: "Розфарбуйте деталі за допомогою '{{ name }}'."
       open_url: Відкрити URL матеріалу
     menu:
       import_from_skm: Імпорт матеріалу (.skm)
@@ -1291,6 +1303,9 @@ tab:
     export_to_skm:
       title: Експорт файлу .skm
     option:
+      minimize_on_smart_paint: Згорнути після *'Розфарбовування деталей за допомогою...'*
+      minimize_on_smart_paint_help: "Якщо цей параметр увімкнено, вікно OpenCutList буде згорнуто, коли використовується функція *'Розфарбувати деталі з...'*."
+      general: Загальні
       material_order_strategy: Сортування матеріалів
       material_order_strategy_help: |
         Переставте наступні властивості, щоб установити стратегію сортування матеріалів у списку.
@@ -1319,13 +1334,13 @@ tab:
     title: Структура
     list: Дерево сутностей
     nodes: Екземпляри
-    part_count: Кількість
+    toggle_hidden: Приховані екземпляри
     type_0: Модель
     type_1: Група
     type_2: Компонент
     type_3: Деталь
     tooltip:
-      open_node_url: Відкрити URL екземпляру
+      open_node_url: Відкрити URL деталі
     edit_node:
       title_model: "Властивості моделі"
       title_instance: "Властивості екземпляра **{{ name }}**"
@@ -1333,9 +1348,11 @@ tab:
       preview: Огляд
       name: Ім’я
       instance_name: Екземпляр
+      material: Матеріал
       definition_name: Визначення
       description: Опис
       url: URL
+      tags: Мітки
       layer_name: Тег
       explode: Рознести
       explode_message: "Підтверджуєте розрив екземпляра **{{ name }}**?"
@@ -1663,7 +1680,9 @@ tool:
     action_2: Поміняйте Лице ↔ Тил
     action_2_status: "Клацніть на деталі, щоб поміняти читання її лиця на зворотню сторону"
     action_3: Адаптувати осі
-    action_3_status: "Натисніть на грань або край деталі, щоб пристосувати до нього осі"
+    action_3_status: "Наведіть на грань деталі та натисніть на ребро, щоб адаптувати осі"
+    action_4: Змінити початок координат
+    action_4_status: "Наведіть вказівник на грань деталі та клацніть на точці, щоб розташувати її початок координат"
     action_option_group_direction: Напрямок
     action_option_direction_0: Д
     action_option_direction_1: Ш
