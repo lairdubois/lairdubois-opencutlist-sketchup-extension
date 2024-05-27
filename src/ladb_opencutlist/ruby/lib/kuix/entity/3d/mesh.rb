@@ -22,9 +22,7 @@ module Ladb::OpenCutList::Kuix
     # -- LAYOUT --
 
     def do_layout(transformation)
-      @_points = @triangles.map { |point|
-        point.transform(transformation * @transformation)
-      }
+      @_points = @triangles.map { |point| point.transform(transformation * @transformation) }
       super
     end
 

@@ -36,7 +36,7 @@ module Ladb::OpenCutList
         path_by_unique = []
         entities = model.entities
         path_by_guid.each do |guid|
-          entity = entities.find { |e| e.guid == guid }
+          entity = entities.find { |e| e.respond_to?(:guid) && e.guid == guid }
           return { :errors => [ 'default.error' ] } if entity.nil?
           entity = entity.make_unique if entity.is_a?(Sketchup::Group)
           path_by_unique << entity

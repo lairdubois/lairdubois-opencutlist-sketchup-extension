@@ -77,6 +77,7 @@
                 that.$page.append(Twig.twig({ ref: "tabs/materials/_list.twig" }).render({
                     errors: errors,
                     warnings: warnings,
+                    showTypeSeparators: that.generateOptions.material_order_strategy.startsWith('type') || that.generateOptions.material_order_strategy.startsWith('-type'),
                     materials: materials
                 }));
 

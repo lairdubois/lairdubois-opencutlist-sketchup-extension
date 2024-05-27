@@ -166,7 +166,7 @@ module Ladb::OpenCutList
       @materials_panel.append(@materials_add_btn)
 
         motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.5L0.5,0.5L0.5,0L0.5,0.5L1,0.5L0.5,0.5L0.5,1'))
-        motif.layout_data = Kuix::StaticLayoutData.new(0.5, 0, @unit * 10, @unit * 10, Kuix::Anchor.new(Kuix::Anchor::TOP_CENTER))
+        motif.layout_data = Kuix::StaticLayoutData.new(0.5, 0, @unit * 10, @unit * 10, Kuix::Anchor.new(Kuix::Anchor::TOP))
         motif.padding.set_all!(@unit * 2)
         motif.line_width = @unit <= 4 ? 1 : 2
         motif.set_style_attribute(:color, COLOR_BRAND_LIGHT)
@@ -190,7 +190,7 @@ module Ladb::OpenCutList
       @materials_panel.append(@materials_filters_btn)
 
         panel = Kuix::Panel.new
-        panel.layout_data = Kuix::StaticLayoutData.new(0.5, 0, 0, @unit * 10, Kuix::Anchor.new(Kuix::Anchor::TOP_CENTER))
+        panel.layout_data = Kuix::StaticLayoutData.new(0.5, 0, 0, @unit * 10, Kuix::Anchor.new(Kuix::Anchor::TOP))
         panel.layout = Kuix::InlineLayout.new
         @materials_filters_btn.append(panel)
 
@@ -825,7 +825,7 @@ module Ladb::OpenCutList
               picked_side = nil
               edge_faces.each { |k, v|
                 v.each { |face|
-                  if face == @picker.picked_face # picked_face
+                  if face == @picker.picked_face
                     picked_side = k
                     break
                   end
@@ -850,9 +850,9 @@ module Ladb::OpenCutList
               sides << :xmax unless edge_faces[:xmax].nil?
             end
 
-            sides.each { |side|
+            sides.each do |side|
               faces << edge_faces[side]
-            }
+            end
             faces = faces.flatten
 
             if faces.empty?
@@ -860,16 +860,16 @@ module Ladb::OpenCutList
               push_cursor(@cursor_paint_error_id)
             else
 
+              @active_material = get_current_material
+              color = @active_material ? @active_material.color : MaterialUtils::get_color_from_path(@active_part_entity_path)
+              color.alpha = highlighted ? 255 : 200
+
               # Show edges infos
               show_tooltip([
                              "##{_get_active_part_name}",
                              '-',
                              PLUGIN.get_i18n_string('tool.smart_paint.edges', { :count => sides.length }) + (sides.length < 4 ? " → #{sides.map { |side| PLUGIN.get_i18n_string("tool.smart_paint.edge_#{side}") }.join(' + ')}" : '')
-                           ])
-
-              @active_material = get_current_material
-              color = @active_material ? @active_material.color : MaterialUtils::get_color_from_path(@active_part_entity_path)
-              color.alpha = highlighted ? 255 : 200
+                           ], faces.find { |f| f.material != @active_material }.nil? ? MESSAGE_TYPE_SUCCESS : MESSAGE_TYPE_DEFAULT)
 
               active_instance = @active_part_entity_path.last
               instances = active_instance.definition.instances
@@ -917,7 +917,7 @@ module Ladb::OpenCutList
               picked_side = nil
               face_faces.each { |k, v|
                 v.each { |face|
-                  if face == @picker.picked_face # picked_face
+                  if face == @picker.picked_face
                     picked_side = k
                     break
                   end
@@ -934,9 +934,9 @@ module Ladb::OpenCutList
               sides << :zmin unless face_faces[:zmin].nil?
             end
 
-            sides.each { |side|
+            sides.each do |side|
               faces << face_faces[side]
-            }
+            end
             faces = faces.flatten
 
             if faces.empty?
@@ -944,16 +944,16 @@ module Ladb::OpenCutList
               push_cursor(@cursor_paint_error_id)
             else
 
+              @active_material = get_current_material
+              color = @active_material ? @active_material.color : MaterialUtils::get_color_from_path(@active_part_entity_path)
+              color.alpha = highlighted ? 255 : 200
+
               # Show faces infos
               show_tooltip([
                              "##{_get_active_part_name}",
                              '-',
                              "#{PLUGIN.get_i18n_string('tool.smart_paint.faces', { :count => sides.length })} → #{sides.map { |side| PLUGIN.get_i18n_string("tool.smart_paint.face_#{side}") }.join(' + ')}"
-                           ])
-
-              @active_material = get_current_material
-              color = @active_material ? @active_material.color : MaterialUtils::get_color_from_path(@active_part_entity_path)
-              color.alpha = highlighted ? 255 : 200
+                           ], faces.find { |f| f.material != @active_material }.nil? ? MESSAGE_TYPE_SUCCESS : MESSAGE_TYPE_DEFAULT)
 
               active_instance = @active_part_entity_path.last
               instances = active_instance.definition.instances

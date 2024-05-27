@@ -84,15 +84,9 @@ module Ladb::OpenCutList::Kuix
     # Remove self widget from its parent and returns parent
     def remove
       return unless @parent
-      if @parent.child == self
-        @parent.child = @next
-      end
-      if @parent.last_child == self
-        @parent.last_child = @previous
-      end
-      unless @previous.nil?
-        @previous.next = @next
-      end
+      @parent.child = @next if @parent.child == self
+      @parent.last_child = @previous if @parent.last_child == self
+      @previous.next = @next unless @previous.nil?
       unless @next.nil?
         @next.previous = @previous
         @next = nil
@@ -142,9 +136,7 @@ module Ladb::OpenCutList::Kuix
 
     def invalidate
       @invalidated = true
-      if @parent && !@parent.invalidated?
-        @parent.invalidate
-      end
+      @parent.invalidate if @parent && !@parent.invalidated?
     end
 
     # -- RENDER --

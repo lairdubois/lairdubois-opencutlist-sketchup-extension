@@ -6,7 +6,14 @@
 {% include 'core/_alert-warnings.twig' %}
 
 <div class="row">
+{% set type = -1 %}
 {% for material in materials %}
+    {% if showTypeSeparators and material.attributes.type != type %}
+        {% set type = material.attributes.type %}
+        <div class="col-xs-12">
+            <div class="ladb-material-type-separator">{% include 'tabs/materials/_material-type-icon.twig' with { 'type':material.attributes.type, 'filled':material.attributes.type > 0 } %} {{ ('tab.materials.type_'~material.attributes.type)|i18next }}</div>
+        </div>
+    {% endif %}
     <div id="ladb_material_{{ material.id }}" class="col-sm-2 col-xs-3">
         <div class="ladb-material-box ladb-minitools-holder ladb-highlightable" data-material-id="{{ material.id }}">
             <div class="ladb-content">

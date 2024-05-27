@@ -356,7 +356,7 @@ module Ladb::OpenCutList
       # -- MINITOOL
 
       @minitool_panel = Kuix::Panel.new
-      @minitool_panel.layout_data = Kuix::StaticLayoutData.new(1.0, 0.5, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER_RIGHT))
+      @minitool_panel.layout_data = Kuix::StaticLayoutData.new(1.0, 0.5, -1, -1, Kuix::Anchor.new(Kuix::Anchor::RIGHT))
       @minitool_panel.layout = Kuix::GridLayout.new(1, 2, 0, unit)
       @minitool_panel.margin.right = unit * 2
       @canvas.append(@minitool_panel)
@@ -366,7 +366,7 @@ module Ladb::OpenCutList
       # -- NOTIFICATION
 
       @notification_panel = Kuix::Panel.new
-      @notification_panel.layout_data = Kuix::StaticLayoutData.new(0.5, 1.0, -1, -1, Kuix::Anchor.new(Kuix::Anchor::BOTTOM_CENTER))
+      @notification_panel.layout_data = Kuix::StaticLayoutData.new(0.5, 1.0, -1, -1, Kuix::Anchor.new(Kuix::Anchor::BOTTOM))
       @notification_panel.layout = Kuix::InlineLayout.new(false, unit)
       @notification_panel.margin.bottom = unit * 2
       @notification_panel.visible = false

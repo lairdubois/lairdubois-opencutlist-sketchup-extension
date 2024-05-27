@@ -29,7 +29,7 @@ module Ladb::OpenCutList
           # Highlight faces
           mesh = Kuix::Mesh.new
           mesh.add_triangles(@drawing_def.face_manipulators.flat_map { |face_manipulator| face_manipulator.triangles })
-          mesh.background_color =  ColorUtils.color_translucent(color, 80)
+          mesh.background_color = ColorUtils.color_translucent(color, 80)
           preview.append(mesh)
 
           # Box helper
@@ -50,12 +50,45 @@ module Ladb::OpenCutList
 
           @canvas.layout = Kuix::StaticLayout.new
 
+          margin = unit * 5
+          min_x = margin
+          min_y = margin
+          max_x = view.vpwidth - margin
+          max_y = view.vpheight - margin
+
           p = view.screen_coords(@drawing_def.faces_bounds.center.transform(@drawing_def.transformation))
-          px = [ [ 0 + unit * 10, p.x ].max, view.vpwidth - unit * 10 ].min
-          py = [ [ 0 + unit * 10, p.y ].max, view.vpheight - unit * 10 ].min
+
+          px = [ [ min_x, p.x.to_i ].max, max_x ].min
+          py = [ [ min_y, p.y.to_i ].max, max_y ].min
+
+          if px == min_x
+            if py == min_y
+              anchor_position = Kuix::Anchor::TOP_LEFT
+            elsif py == max_y
+              anchor_position = Kuix::Anchor::BOTTOM_LEFT
+            else
+              anchor_position = Kuix::Anchor::LEFT
+            end
+          elsif px == max_x
+            if py == min_y
+              anchor_position = Kuix::Anchor::TOP_RIGHT
+            elsif py == max_y
+              anchor_position = Kuix::Anchor::BOTTOM_RIGHT
+            else
+              anchor_position = Kuix::Anchor::RIGHT
+            end
+          else
+            if py == min_y
+              anchor_position = Kuix::Anchor::TOP
+            elsif py == max_y
+              anchor_position = Kuix::Anchor::BOTTOM
+            else
+              anchor_position = Kuix::Anchor::CENTER
+            end
+          end
 
           box = Kuix::Panel.new
-          box.layout_data = Kuix::StaticLayoutData.new(px, py, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+          box.layout_data = Kuix::StaticLayoutData.new(px, py, -1, -1, Kuix::Anchor.new(anchor_position))
           box.layout = Kuix::GridLayout.new
           box.padding.set!(unit, unit, unit * 0.7, unit)
           box.set_style_attribute(:background_color, color)
