@@ -122,6 +122,16 @@ module Ladb::OpenCutList
         response[:errors] << 'tab.materials.error.no_model'
       end
 
+      # ShowTypeSeparator
+      response[:show_type_separators] = [
+        response[:solid_wood_material_count],
+        response[:sheet_good_material_count],
+        response[:dimensional_material_count],
+        response[:edge_material_count],
+        response[:hardware_material_count],
+        response[:untyped_material_count]
+      ].filter { |v| v > 0 }.length > 1
+
       # Sort materials
       response[:materials].sort! { |material_a, material_b| MaterialAttributes::material_order(material_a, material_b, @material_order_strategy) }
 

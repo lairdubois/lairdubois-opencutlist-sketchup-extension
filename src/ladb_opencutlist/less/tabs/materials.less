@@ -5,10 +5,23 @@
 @material-texture-preview-size: 250px;
 
 .ladb-material-type-separator {
-  padding-bottom: 10px;
-  border-bottom: 1px solid @ladb-global-border;
-  margin-bottom: 20px;
+  margin-bottom: @ladb-gutter;
   font-size: 1.4em;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+
+  > div {
+    flex-grow: 0;
+  }
+
+  > hr {
+    margin-top: 15px;
+    margin-bottom: 0;
+    border-color: #ddd;
+    flex-grow: 1;
+  }
+
 }
 
 .ladb-material-box {

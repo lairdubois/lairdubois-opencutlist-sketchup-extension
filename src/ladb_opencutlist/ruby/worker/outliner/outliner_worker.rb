@@ -111,6 +111,7 @@ module Ladb::OpenCutList
 
         active_node_def = @outliner_def.get_node_def_by_id(AbstractOutlinerNodeDef.generate_node_id(model.active_path))
         if active_node_def
+
           active_node_def.active = true
           active_node_def.invalidate
           node_def = active_node_def.parent

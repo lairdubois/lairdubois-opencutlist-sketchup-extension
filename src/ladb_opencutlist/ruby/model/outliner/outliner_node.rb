@@ -60,7 +60,7 @@ module Ladb::OpenCutList
       @material = _def.material_def ? _def.material_def.get_hashable : nil
       @layer = _def.layer_def ? _def.layer_def.get_hashable : nil
 
-      # @description = "G=#{_def.entity.object_id} entityID=#{_def.entity.entityID} guid=#{_def.entity.guid} persistent_id=#{_def.entity.persistent_id} D=#{_def.entity.definition.object_id} "
+      # @description = "entityID=#{_def.entity.entityID}\nguid=#{_def.entity.guid}"
 
     end
 

@@ -199,9 +199,15 @@
 
                     return false;
                 });
-                $('a.ladb-btn-node-open-url', $row).on('click', function () {
+                $('a.ladb-btn-node-toggle-visible', $row).on('click', function () {
                     $(this).blur();
-                    rubyCallCommand('core_open_url', {url: $(this).attr('href')});
+
+                    rubyCallCommand('outliner_toggle_visible', { id: node.id }, function (response) {
+                        if (response.errors) {
+                            that.dialog.notifyErrors(response.errors);
+                        }
+                    });
+
                     return false;
                 });
                 $('a.ladb-btn-node-set-active', $row).on('click', function () {
@@ -215,15 +221,9 @@
 
                     return false;
                 });
-                $('a.ladb-btn-node-toggle-visible', $row).on('click', function () {
+                $('a.ladb-btn-node-open-url', $row).on('click', function () {
                     $(this).blur();
-
-                    rubyCallCommand('outliner_toggle_visible', { id: node.id }, function (response) {
-                        if (response.errors) {
-                            that.dialog.notifyErrors(response.errors);
-                        }
-                    });
-
+                    rubyCallCommand('core_open_url', {url: $(this).attr('href')});
                     return false;
                 });
                 $('a.ladb-btn-node-edit', $row).on('click', function () {
