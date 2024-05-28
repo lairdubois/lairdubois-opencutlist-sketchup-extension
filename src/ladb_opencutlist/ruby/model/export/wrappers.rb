@@ -492,6 +492,10 @@ module Ladb::OpenCutList
 
   class EdgeWrapper < MaterialWrapper
 
+    # BC for old edge wrapper
+    alias_method :material_name, :name
+    alias_method :material_color, :color
+
     def to_s
       return '' if empty?
       "#{super} (#{std_thickness.to_s} x #{std_width.to_s})"
@@ -500,6 +504,10 @@ module Ladb::OpenCutList
   end
 
   class VeneerWrapper < MaterialWrapper
+
+    # BC for old veneer wrapper
+    alias_method :material_name, :name
+    alias_method :material_color, :color
 
     def to_s
       return '' if empty?
