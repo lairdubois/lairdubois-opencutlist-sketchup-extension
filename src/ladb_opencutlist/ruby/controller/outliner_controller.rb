@@ -25,9 +25,7 @@ module Ladb::OpenCutList
                                   AppObserver::ON_OPEN_MODEL
                                 ]) do |params|
 
-        return unless @worker
-
-        start_observing_model(Sketchup.active_model)
+        start_observing_model(Sketchup.active_model) unless @worker.nil?
 
       end
 
