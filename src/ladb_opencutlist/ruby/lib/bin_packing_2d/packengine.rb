@@ -415,12 +415,12 @@ module Ladb::OpenCutList::BinPacking2D
         packers.min_by { |p| p.stat[:nb_cuts] },
         packers.min_by { |p| p.stat[:nb_leftovers] },
         packers.max_by { |p| p.stat[:efficiency] },
-        packers.max_by { |p| p.stat[:bottA] }
+        packers.max_by { |p| p.stat[:largest_leftover_area] }
       ]
 
       # Make sure they are unique if we have more than one
       best_packers.uniq!{ |p| p.object_id } if best_packers.length > 1
-      
+
       dbg("best packers = #{best_packers.size}")
 
       # Select best Packers for this level/Bin using the following unweighted criteria.
@@ -431,7 +431,7 @@ module Ladb::OpenCutList::BinPacking2D
       update_rank_per_bin(best_packers, :l_measure, true)
       update_rank_per_bin(best_packers, :nb_leftovers, true)
       update_rank_per_bin(best_packers, :efficiency, false)
-      update_rank_per_bin(best_packers, :bottA, false)
+      update_rank_per_bin(best_packers, :largest_leftover_area, false)
 
       case stacking_pref
       when STACKING_LENGTH
