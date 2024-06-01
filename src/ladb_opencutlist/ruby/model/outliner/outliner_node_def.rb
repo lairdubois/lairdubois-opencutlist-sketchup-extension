@@ -22,7 +22,8 @@ module Ladb::OpenCutList
     # -----
 
     def self.generate_node_id(path)
-      Digest::MD5.hexdigest(([ Sketchup.active_model ] + path).map(&:guid).join('|'))
+      return '0' if path.empty?
+      Digest::MD5.hexdigest(path.map(&:guid).join('|'))
     end
 
     # -----
