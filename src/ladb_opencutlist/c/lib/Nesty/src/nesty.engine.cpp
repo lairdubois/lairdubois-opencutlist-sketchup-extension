@@ -61,6 +61,7 @@ namespace Nesty {
         if (x + bounds.Width() > max_x) {
           x = min_x;
           y += row_height + spacing;
+          row_height = 0;
           continue;
         }
 

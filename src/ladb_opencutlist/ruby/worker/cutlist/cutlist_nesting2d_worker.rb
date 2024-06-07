@@ -1,5 +1,6 @@
 module Ladb::OpenCutList
 
+  require 'json'
   require_relative '../../helper/part_drawing_helper'
   require_relative '../../helper/pixel_converter_helper'
   require_relative '../../utils/dimension_utils'
@@ -59,6 +60,11 @@ module Ladb::OpenCutList
       bin_id = 0
       shape_id = 0
 
+      json = {
+        bin_types: [],
+        item_types: [],
+      }
+
       # Add bins from scrap sheets
       @scrap_sheet_sizes.split(';').each { |scrap_sheet_size|
         ddq = scrap_sheet_size.split('x')
@@ -66,27 +72,61 @@ module Ladb::OpenCutList
         width = ddq[1].strip.to_l.to_f
         count = [ 1, (ddq[2].nil? || ddq[2].strip.to_i == 0) ? 1 : ddq[2].strip.to_i ].max
         bin_defs << Nesty::BinDef.new(bin_id += 1, count, Nesty.float_to_int64(length), Nesty.float_to_int64(width), 1) # 1 = user defined
+
+        json[:bin_types] << {
+          type: 'rectangle',
+          width: length.to_mm,
+          height: width.to_mm
+        }
+
       }
 
       # Add bin from std sheet
       if @std_sheet_width > 0 && @std_sheet_length > 0
         bin_defs << Nesty::BinDef.new(bin_id += 1, 1, Nesty.float_to_int64(@std_sheet_length), Nesty.float_to_int64(@std_sheet_width), 0) # 0 = Standard
+
+        json[:bin_types] << {
+          type: 'rectangle',
+          width: @std_sheet_length.to_mm,
+          height: @std_sheet_width.to_mm
+        }
+
       end
 
       # Add shapes from parts
       fn_add_shapes = lambda { |part|
 
         rpaths = []
+        vertices = []
+        holes = []
 
         projection_def = _compute_part_projection_def(PART_DRAWING_TYPE_2D_TOP, part, merge_holes: true)
         projection_def.layer_defs.each do |layer_def|
           next unless layer_def.type_outer? || layer_def.type_holes?
           layer_def.poly_defs.each do |poly_def|
             rpaths << Nesty.points_to_rpath(layer_def.type_holes? ? poly_def.points.reverse : poly_def.points)
+
+            if layer_def.type_holes?
+              holes << {
+                type: 'polygon',
+                vertices: poly_def.points.map { |point| { x: point.x.to_mm, y: point.y.to_mm } }
+              }
+            else
+              vertices = poly_def.points.map { |point| { x: point.x.to_mm, y: point.y.to_mm } }
+            end
+
           end
         end
 
         shape_defs << Nesty::ShapeDef.new(shape_id += 1, part.count, rpaths, part)
+
+        json[:item_types] << {
+          type: 'polygon',
+          copies: part.count,
+          vertices: vertices,
+          holes: holes
+        }
+
 
       }
       parts.each { |part|
@@ -100,6 +140,8 @@ module Ladb::OpenCutList
       }
 
       SKETCHUP_CONSOLE.clear
+
+      puts json.to_json
 
       solution, message = Nesty.execute_nesting(bin_defs, shape_defs, Nesty.float_to_int64(@spacing), Nesty.float_to_int64(@trimming), @rotations)
       puts message.to_s
