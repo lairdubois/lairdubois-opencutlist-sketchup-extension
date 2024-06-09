@@ -17,6 +17,8 @@ namespace Nesty {
 
     Clipper2Lib::Paths64 paths;
 
+    int16_t item_type_id;
+
   };
 
   struct Shape {
@@ -49,6 +51,8 @@ namespace Nesty {
     int64_t width;
 
     int type;
+
+    int16_t bin_type_id;
 
   };
 

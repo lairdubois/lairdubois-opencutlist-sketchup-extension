@@ -1,16 +1,10 @@
-#include <cstdlib>
 #include "iostream"
 
 #include "nesty.hpp"
 
-int main() {
+int64_t* GenerateTriangle(int64_t *cpaths, int64_t x, int64_t y) {
 
-  std::cout << "Hello" << std::endl;
-  std::cout << c_version() << std::endl;
-
-  int64_t v = 100;
-  int64_t cpaths[12];
-  cpaths[0] = 12;
+  cpaths[0] = 12;   // Array length
   cpaths[1] = 1;    // 1 path
 
   cpaths[2] = 4;    // 4 coords
@@ -19,17 +13,34 @@ int main() {
   cpaths[4] = 0;    // X1
   cpaths[5] = 0;    // Y1
 
-  cpaths[6] = v;    // X2
+  cpaths[6] = x;    // X2
   cpaths[7] = 0;    // Y2
 
   cpaths[8] = 0;    // X3
-  cpaths[9] = v;    // Y3
+  cpaths[9] = y;    // Y3
 
   cpaths[10] = 0;    // X4
   cpaths[11] = 0;    // Y4
 
-  c_append_bin_def(0, 1, 1000, 1000, 1);
-  c_append_shape_def(0, 6, cpaths);
+  return cpaths;
+}
+
+int64_t ToInt64(int v) {
+  return (int64_t)(v * 1e8);
+}
+
+int main() {
+
+  std::cout << "Hello" << std::endl;
+  std::cout << c_version() << std::endl;
+
+  c_append_bin_def(0, 10, ToInt64(1000), ToInt64(1000), 1);
+
+  int64_t cpaths[12];
+
+  c_append_shape_def(0, 6, GenerateTriangle(cpaths, ToInt64(100), ToInt64(100)));
+  c_append_shape_def(1, 12, GenerateTriangle(cpaths, ToInt64(200), ToInt64(100)));
+  c_append_shape_def(2, 24, GenerateTriangle(cpaths, ToInt64(300), ToInt64(100)));
 
   std::cout << c_execute_nesting(0, 0, 0) << std::endl;
 

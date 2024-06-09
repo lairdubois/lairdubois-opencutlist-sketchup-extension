@@ -10,7 +10,8 @@ namespace Nesty {
   ShapeDef::ShapeDef(int id, int count, Clipper2Lib::Paths64 paths) :
     id(id),
     count(count),
-    paths(std::move(paths)) {}
+    paths(std::move(paths)),
+    item_type_id(0) {}
 
   ShapeDef::~ShapeDef() = default;
 
@@ -31,7 +32,8 @@ namespace Nesty {
     count(count),
     length(length),
     width(width),
-    type(type) {}
+    type(type),
+    bin_type_id(0) {}
 
   BinDef::~BinDef() = default;
 

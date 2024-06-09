@@ -7,10 +7,13 @@
 
 #include "packingsolver/rectangle/instance_builder.hpp"
 #include "packingsolver/rectangle/optimize.hpp"
+#include "packingsolver/rectangleguillotine/instance_builder.hpp"
+#include "packingsolver/rectangleguillotine/optimize.hpp"
 
 using namespace Clipper2Lib;
 using namespace packingsolver;
 using namespace packingsolver::rectangle;
+using namespace packingsolver::rectangleguillotine;
 
 namespace Nesty {
 
@@ -24,6 +27,14 @@ namespace Nesty {
       return (bin1.def->length * bin1.def->width < bin2.def->length * bin2.def->width);
     }
     return (bin1.def->type > bin2.def->type);
+  }
+
+  int64_t Int64ToV(int64_t v) {
+    return v / 1e4;
+  }
+
+  int64_t VToInt64(int64_t i) {
+    return i * 1e4;
   }
 
 
@@ -105,14 +116,12 @@ namespace Nesty {
 
     for (auto &bin_def: bin_defs) {
 
-      BinType bin_type;
-      bin_type.id = bin_def.id;
-      bin_type.rect.x = bin_def.length;
-      bin_type.rect.y = bin_def.width;
-
-      BinPos copies = bin_def.count;
-
-      instance_builder.add_bin_type(bin_type, copies);
+      bin_def.bin_type_id = instance_builder.add_bin_type(
+              Int64ToV(bin_def.length),
+              Int64ToV(bin_def.width),
+              -1,
+              bin_def.count
+      );
 
     }
 
@@ -120,16 +129,13 @@ namespace Nesty {
 
       Rect64 bounds = GetBounds(shape_def.paths);
 
-      ItemType item_type;
-      item_type.id = shape_def.id;
-      item_type.rect.x = bounds.Width();
-      item_type.rect.y = bounds.Height();
-      item_type.oriented = false;
-
-      Profit profit = 0;
-      ItemPos copies = shape_def.count;
-
-      instance_builder.add_item_type(item_type, profit, copies);
+      shape_def.item_type_id = instance_builder.add_item_type(
+              Int64ToV(bounds.Width()),
+              Int64ToV(bounds.Height()),
+              -1,
+              shape_def.count,
+              true
+      );
 
     }
 
@@ -137,7 +143,7 @@ namespace Nesty {
 
     rectangle::OptimizeParameters parameters;
     parameters.optimization_mode = OptimizationMode::NotAnytimeSequential;
-    parameters.timer.set_time_limit(10);
+    parameters.timer.set_time_limit(5);
     parameters.verbosity_level = 3;
 
     const rectangle::Output output = rectangle::optimize(instance, parameters);
@@ -148,7 +154,7 @@ namespace Nesty {
       const rectangle::SolutionBin &ps_bin = ps_solution.bin(bin_pos);
       BinTypeId bin_type_id = ps_bin.bin_type_id;
 
-      auto bin_def_it = std::find_if(bin_defs.begin(), bin_defs.end(), [&bin_type_id](const BinDef &bin_def) { return bin_def.id == bin_type_id; });
+      auto bin_def_it = std::find_if(bin_defs.begin(), bin_defs.end(), [&bin_type_id](const BinDef &bin_def) { return bin_def.bin_type_id == bin_type_id; });
       if (bin_def_it != bin_defs.end()) {
 
         Bin &bin = solution.packed_bins.emplace_back(&*bin_def_it);
@@ -157,12 +163,12 @@ namespace Nesty {
 
           ItemTypeId item_type_id = ps_item.item_type_id;
 
-          auto shape_def_it = std::find_if(shape_defs.begin(), shape_defs.end(), [&item_type_id](const ShapeDef &shape_def) { return shape_def.id == item_type_id; });
+          auto shape_def_it = std::find_if(shape_defs.begin(), shape_defs.end(), [&item_type_id](const ShapeDef &shape_def) { return shape_def.item_type_id == item_type_id; });
           if (shape_def_it != shape_defs.end()) {
 
             Shape &shape = bin.shapes.emplace_back(&*shape_def_it);
-            shape.x = ps_item.bl_corner.x;
-            shape.y = ps_item.bl_corner.y;
+            shape.x = VToInt64(ps_item.bl_corner.x);
+            shape.y = VToInt64(ps_item.bl_corner.y);
             shape.angle = 0;
 
           }

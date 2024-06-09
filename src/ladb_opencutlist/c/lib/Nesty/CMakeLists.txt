@@ -64,6 +64,7 @@ target_link_libraries(NestyMain PRIVATE Clipper2Wrapper)
 target_link_libraries(NestyMain PUBLIC PackingSolver::onedimensional)
 target_link_libraries(NestyMain PUBLIC PackingSolver::rectangle)
 target_link_libraries(NestyMain PUBLIC PackingSolver::rectangleguillotine)
+target_compile_features(NestyMain PRIVATE cxx_std_17)
 
 install(TARGETS NestyMain RUNTIME DESTINATION lib)
 
