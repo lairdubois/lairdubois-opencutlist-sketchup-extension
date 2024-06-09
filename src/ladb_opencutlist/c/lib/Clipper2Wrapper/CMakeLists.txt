@@ -3,7 +3,7 @@
 
 # Library headers
 set(LIBRARY_HEADERS
-        include/clipper2/clipper.wrapper.h
+        include/clipper2/clipper.wrapper.hpp
 )
 source_group("Headers" FILES ${LIBRARY_HEADERS})
 

@@ -1,5 +1,5 @@
-#include "nesty.h"
-#include "nesty.structs.h"
+#include "nesty.hpp"
+#include "nesty.structs.hpp"
 
 #include <utility>
 

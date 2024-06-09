@@ -9,7 +9,7 @@ endif()
 
 # Library headers
 set(LIBRARY_HEADERS
-        include/clippy.h
+        include/clippy.hpp
 )
 source_group("Headers" FILES ${LIBRARY_HEADERS})
 

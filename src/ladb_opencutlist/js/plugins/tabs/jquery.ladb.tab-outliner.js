@@ -54,7 +54,7 @@
                 that.availableMaterials = available_materials;
                 that.availableLayers = available_layers;
 
-                if (root_node) {
+                if (false && root_node) {
                     var fn_set_parent = function (node, parent) {
                         node.parent = parent;
                         for (const child of node.children) {

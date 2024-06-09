@@ -9,10 +9,10 @@ endif()
 
 # Library headers
 set(LIBRARY_HEADERS
-        include/imagy.h
-        include/imagy.image.h
-        include/stb_image.h
-        include/stb_image_write.h
+        include/imagy.hpp
+        include/imagy.image.hpp
+        include/stb_image.hpp
+        include/stb_image_write.hpp
 )
 source_group("Headers" FILES ${LIBRARY_HEADERS})
 

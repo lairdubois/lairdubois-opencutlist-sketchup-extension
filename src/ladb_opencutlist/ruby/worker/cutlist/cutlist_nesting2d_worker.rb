@@ -75,7 +75,7 @@ module Ladb::OpenCutList
 
         json[:bin_types] << {
           type: 'rectangle',
-          width: length.to_mm,
+          length: length.to_mm,
           height: width.to_mm
         }
 
@@ -87,7 +87,7 @@ module Ladb::OpenCutList
 
         json[:bin_types] << {
           type: 'rectangle',
-          width: @std_sheet_length.to_mm,
+          length: @std_sheet_length.to_mm,
           height: @std_sheet_width.to_mm
         }
 

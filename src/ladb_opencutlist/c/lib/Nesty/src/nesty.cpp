@@ -1,8 +1,8 @@
-#include "clipper2/clipper.wrapper.h"
+#include "clipper2/clipper.wrapper.hpp"
 
-#include "nesty.h"
-#include "nesty.structs.h"
-#include "nesty.engine.h"
+#include "nesty.hpp"
+#include "nesty.structs.hpp"
+#include "nesty.engine.hpp"
 
 #include <algorithm>
 #include <string>
@@ -17,7 +17,7 @@ extern "C" {
 ShapeDefs shape_defs;
 BinDefs bin_defs;
 
-Solution solution;
+Nesty::Solution solution;
 
 std::string message;
 
@@ -38,7 +38,7 @@ DLL_EXPORTS void c_append_bin_def(int id, int count, int64_t length, int64_t wid
 
 DLL_EXPORTS char* c_execute_nesting(int64_t spacing, int64_t trimming, int rotations) {
 
-  DummyEngine engine;
+  PackingSolverEngine engine;
   engine.run(shape_defs, bin_defs, spacing, trimming, rotations, solution);
 
   message.clear();

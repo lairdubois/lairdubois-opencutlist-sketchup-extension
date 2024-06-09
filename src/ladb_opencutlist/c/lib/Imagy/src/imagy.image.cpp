@@ -9,10 +9,10 @@
 #define STBI_NO_PIC
 #define STBI_NO_PNM
 
-#include "stb_image.h"
-#include "stb_image_write.h"
+#include "stb_image.hpp"
+#include "stb_image_write.hpp"
 
-#include "imagy.image.h"
+#include "imagy.image.hpp"
 
 #include <utility>
 

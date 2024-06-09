@@ -9,9 +9,9 @@ endif()
 
 # Library headers
 set(LIBRARY_HEADERS
-        include/nesty.h
-        include/nesty.structs.h
-        include/nesty.engine.h
+        include/nesty.hpp
+        include/nesty.structs.hpp
+        include/nesty.engine.hpp
 )
 source_group("Headers" FILES ${LIBRARY_HEADERS})
 
@@ -49,6 +49,9 @@ endif()
 
 target_include_directories(Nesty PUBLIC include)
 target_link_libraries(Nesty PRIVATE Clipper2Wrapper)
+target_link_libraries(Nesty PUBLIC PackingSolver::onedimensional)
+target_link_libraries(Nesty PUBLIC PackingSolver::rectangle)
+target_link_libraries(Nesty PUBLIC PackingSolver::rectangleguillotine)
 target_compile_features(Nesty PRIVATE cxx_std_17)
 
 install(TARGETS Nesty RUNTIME DESTINATION lib)
@@ -58,3 +61,10 @@ install(TARGETS Nesty RUNTIME DESTINATION lib)
 add_executable(NestyMain ${LIBRARY_HEADERS} ${LIBRARY_SOURCES} src/main.cpp)
 target_include_directories(NestyMain PUBLIC include)
 target_link_libraries(NestyMain PRIVATE Clipper2Wrapper)
+target_link_libraries(NestyMain PUBLIC PackingSolver::onedimensional)
+target_link_libraries(NestyMain PUBLIC PackingSolver::rectangle)
+target_link_libraries(NestyMain PUBLIC PackingSolver::rectangleguillotine)
+
+install(TARGETS NestyMain RUNTIME DESTINATION lib)
+
+

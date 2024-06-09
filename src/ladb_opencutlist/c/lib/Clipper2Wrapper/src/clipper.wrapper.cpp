@@ -1,4 +1,4 @@
-#include <clipper2/clipper.wrapper.h>
+#include <clipper2/clipper.wrapper.hpp>
 
 namespace Clipper2Lib {
 

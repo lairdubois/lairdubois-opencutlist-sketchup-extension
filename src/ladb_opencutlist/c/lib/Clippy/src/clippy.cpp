@@ -1,6 +1,6 @@
-#include "clipper2/clipper.wrapper.h"
+#include "clipper2/clipper.wrapper.hpp"
 
-#include <clippy.h>
+#include <clippy.hpp>
 
 using namespace Clipper2Lib;
 
