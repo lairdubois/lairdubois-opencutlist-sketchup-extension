@@ -143,7 +143,7 @@ namespace Nesty {
 
     rectangle::OptimizeParameters parameters;
     parameters.optimization_mode = OptimizationMode::NotAnytimeSequential;
-    parameters.timer.set_time_limit(5);
+    parameters.timer.set_time_limit(10);
     parameters.verbosity_level = 3;
 
     const rectangle::Output output = rectangle::optimize(instance, parameters);

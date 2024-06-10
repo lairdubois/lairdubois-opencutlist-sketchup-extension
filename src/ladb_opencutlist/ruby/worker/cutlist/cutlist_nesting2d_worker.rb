@@ -182,8 +182,8 @@ module Ladb::OpenCutList
         px_shape_x = _to_px(l_shape_x)
         px_shape_y = -_to_px(l_shape_y)
 
-        svg += "'<g transform='translate(#{px_shape_x} #{px_shape_y}) rotate(-#{shape.angle})'>'"
-        svg += "<path d='#{shape.def.paths.map { |path| "M #{Nesty.rpath_to_points(path).map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y).round(2)}" }.join(' L ')} Z" }.join(' ')}' fill='rgba(0, 0, 0, 0.5)' stroke='white' stroke-width='1' data-toggle='tooltip' data-html='true' title='<div>#{shape.def.data.name}</div><div>x = #{l_shape_x}</div><div>y = #{l_shape_y}</div>' />"
+        svg += "'<g class='ladb-nesty-part' transform='translate(#{px_shape_x} #{px_shape_y}) rotate(-#{shape.angle})'>'"
+        svg += "<path d='#{shape.def.paths.map { |path| "M #{Nesty.rpath_to_points(path).map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y).round(2)}" }.join(' L ')} Z" }.join(' ')}' data-toggle='tooltip' data-html='true' title='<div>#{shape.def.data.name}</div><div>x = #{l_shape_x}</div><div>y = #{l_shape_y}</div>' />"
         svg += '</g>'
 
       end
