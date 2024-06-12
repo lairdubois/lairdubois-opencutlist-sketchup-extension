@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <string>
+#include <stdexcept>
 
 using namespace Clipper2Lib;
 using namespace Nesty;
@@ -39,10 +40,12 @@ DLL_EXPORTS void c_append_bin_def(int id, int count, int64_t length, int64_t wid
 DLL_EXPORTS char* c_execute_nesting(int64_t spacing, int64_t trimming, int rotations) {
 
   PackingSolverEngine engine;
-  engine.run(shape_defs, bin_defs, spacing, trimming, rotations, solution);
+  try {
 
-  message.clear();
-  message = "-- START NESTY MESSAGE --\n"
+    engine.run(shape_defs, bin_defs, spacing, trimming, rotations, solution);
+
+    message.clear();
+    message = "-- START NESTY MESSAGE --\n"
             "bin_defs.size = " + std::to_string(bin_defs.size()) + "\n"
             "shape_defs.size = " + std::to_string(shape_defs.size()) + "\n"
             "-------------------------\n"
@@ -54,6 +57,15 @@ DLL_EXPORTS char* c_execute_nesting(int64_t spacing, int64_t trimming, int rotat
             "solution.packed_bins.size = " + std::to_string(solution.packed_bins.size()) + "\n"
             "solution.unplaced_shapes.size = " + std::to_string(solution.unplaced_shapes.size()) + "\n"
             "-- END NESTY MESSAGE --\n";
+
+  } catch(const std::exception &e) {
+    message.clear();
+    message = "Error: " + (std::string)e.what();
+  } catch( ... ) {
+    message.clear();
+    message = "Unknow Error";
+  }
+
   return (char*)message.c_str();
 }
 

@@ -75,8 +75,8 @@ module Ladb::OpenCutList
 
         json[:bin_types] << {
           type: 'rectangle',
-          length: length.to_mm,
-          height: width.to_mm
+          length: length.to_mm.round(3),
+          height: width.to_mm.round(3)
         }
 
       }
@@ -87,8 +87,8 @@ module Ladb::OpenCutList
 
         json[:bin_types] << {
           type: 'rectangle',
-          length: @std_sheet_length.to_mm,
-          height: @std_sheet_width.to_mm
+          length: @std_sheet_length.to_mm.round(3),
+          height: @std_sheet_width.to_mm.round(3)
         }
 
       end
@@ -109,10 +109,10 @@ module Ladb::OpenCutList
             if layer_def.type_holes?
               holes << {
                 type: 'polygon',
-                vertices: poly_def.points.map { |point| { x: point.x.to_mm, y: point.y.to_mm } }
+                vertices: poly_def.points.map { |point| { x: point.x.to_mm.round(3), y: point.y.to_mm.round(3) } }
               }
             else
-              vertices = poly_def.points.map { |point| { x: point.x.to_mm, y: point.y.to_mm } }
+              vertices = poly_def.points.map { |point| { x: point.x.to_mm.round(3), y: point.y.to_mm.round(3) } }
             end
 
           end
@@ -141,7 +141,7 @@ module Ladb::OpenCutList
 
       SKETCHUP_CONSOLE.clear
 
-      # puts json.to_json
+      puts json.to_json
 
       solution, message = Nesty.execute_nesting(bin_defs, shape_defs, Nesty.float_to_int64(@spacing), Nesty.float_to_int64(@trimming), @rotations)
       puts message.to_s

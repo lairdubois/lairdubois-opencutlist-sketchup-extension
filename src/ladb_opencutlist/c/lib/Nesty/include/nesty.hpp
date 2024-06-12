@@ -1,6 +1,5 @@
 #include <cstddef>
 #include <cstdint>
-#include <cstdbool>
 
 constexpr auto NESTY_VERSION = "1.0.0";
 

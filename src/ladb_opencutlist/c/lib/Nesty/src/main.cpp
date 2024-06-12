@@ -7,7 +7,7 @@ int64_t* GenerateTriangle(int64_t *cpaths, int64_t x, int64_t y) {
   cpaths[0] = 12;   // Array length
   cpaths[1] = 1;    // 1 path
 
-  cpaths[2] = 4;    // 4 coords
+  cpaths[2] = 3;    // 3 coords
   cpaths[3] = 0;
 
   cpaths[4] = 0;    // X1
@@ -16,11 +16,8 @@ int64_t* GenerateTriangle(int64_t *cpaths, int64_t x, int64_t y) {
   cpaths[6] = x;    // X2
   cpaths[7] = 0;    // Y2
 
-  cpaths[8] = 0;    // X3
+  cpaths[8] = x;    // X3
   cpaths[9] = y;    // Y3
-
-  cpaths[10] = 0;    // X4
-  cpaths[11] = 0;    // Y4
 
   return cpaths;
 }
