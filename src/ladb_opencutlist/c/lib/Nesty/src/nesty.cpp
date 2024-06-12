@@ -39,9 +39,9 @@ DLL_EXPORTS void c_append_bin_def(int id, int count, int64_t length, int64_t wid
 
 DLL_EXPORTS char* c_execute_nesting(int64_t spacing, int64_t trimming, int rotations) {
 
-  PackingSolverEngine engine;
   try {
 
+    RectangleGuillotineEngine engine;
     engine.run(shape_defs, bin_defs, spacing, trimming, rotations, solution);
 
     message.clear();

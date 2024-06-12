@@ -13,7 +13,23 @@ namespace Nesty {
 
   };
 
-  class PackingSolverEngine {
+  class RectangleEngine {
+
+  public:
+
+    bool run(ShapeDefs &shape_defs, BinDefs &bin_defs, int64_t spacing, int64_t trimming, int rotations, Solution &solution);
+
+  };
+
+  class RectangleGuillotineEngine {
+
+  public:
+
+    bool run(ShapeDefs &shape_defs, BinDefs &bin_defs, int64_t spacing, int64_t trimming, int rotations, Solution &solution);
+
+  };
+
+  class IrregularEngine {
 
   public:
 
