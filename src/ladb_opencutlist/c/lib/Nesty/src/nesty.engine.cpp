@@ -187,7 +187,7 @@ namespace Nesty {
     rectangleguillotine::InstanceBuilder instance_builder;
     instance_builder.set_objective(Objective::VariableSizedBinPacking);
     instance_builder.set_cut_thickness(Int64ToV(spacing));
-    instance_builder.set_first_stage_orientation(rectangleguillotine::CutOrientation::Horizontal);
+    instance_builder.set_first_stage_orientation(rectangleguillotine::CutOrientation::Vertical);
 
     for (auto &bin_def: bin_defs) {
 
