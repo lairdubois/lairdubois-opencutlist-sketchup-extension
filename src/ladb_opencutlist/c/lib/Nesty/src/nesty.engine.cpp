@@ -33,12 +33,10 @@ namespace Nesty {
   }
 
   int64_t Int64ToV(int64_t v) {
-//    return v;
     return v / 1e6;
   }
 
   int64_t VToInt64(int64_t i) {
-//    return i;
     return i * 1e6;
   }
 
@@ -185,9 +183,9 @@ namespace Nesty {
   bool RectangleGuillotineEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, int64_t spacing, int64_t trimming, int rotations, Solution &solution) {
 
     rectangleguillotine::InstanceBuilder instance_builder;
-    instance_builder.set_objective(Objective::VariableSizedBinPacking);
+    instance_builder.set_objective(Objective::BinPacking);
     instance_builder.set_cut_thickness(Int64ToV(spacing));
-    instance_builder.set_first_stage_orientation(rectangleguillotine::CutOrientation::Vertical);
+    instance_builder.set_first_stage_orientation(rectangleguillotine::CutOrientation::Horizontal);
 
     for (auto &bin_def: bin_defs) {
 
