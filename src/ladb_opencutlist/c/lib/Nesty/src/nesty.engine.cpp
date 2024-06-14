@@ -33,11 +33,11 @@ namespace Nesty {
   }
 
   int64_t Int64ToV(int64_t v) {
-    return v / 1e6;
+    return v / 1e4;
   }
 
   int64_t VToInt64(int64_t i) {
-    return i * 1e6;
+    return i * 1e4;
   }
 
 
@@ -225,6 +225,7 @@ namespace Nesty {
     }
 
     rectangleguillotine::Instance instance = instance_builder.build();
+//    instance.write("./trim_error_instance");
 
     rectangleguillotine::OptimizeParameters parameters;
     parameters.optimization_mode = OptimizationMode::NotAnytimeSequential;
@@ -255,10 +256,7 @@ namespace Nesty {
 
             ItemTypeId item_type_id = ps_node.item_type_id;
 
-            auto shape_def_it = std::find_if(shape_defs.begin(), shape_defs.end(),
-                                             [&item_type_id](const ShapeDef &shape_def) {
-                                               return shape_def.item_type_id == item_type_id;
-                                             });
+            auto shape_def_it = std::find_if(shape_defs.begin(), shape_defs.end(),[&item_type_id](const ShapeDef &shape_def) { return shape_def.item_type_id == item_type_id; });
             if (shape_def_it != shape_defs.end()) {
 
               Shape &shape = bin.shapes.emplace_back(&*shape_def_it);
