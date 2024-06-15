@@ -4558,7 +4558,7 @@
                 var $inputTrimming = $('#ladb_input_trimming', $modal);
                 var $inputRotations = $('#ladb_input_rotations', $modal);
                 var $btnEditMaterial = $('#ladb_btn_edit_material', $modal);
-                var $btnUnloadNesty = $('#ladb_btn_unload_nesty', $modal);
+                var $btnUnloadLib = $('#ladb_btn_unload_lib', $modal);
                 var $btnGenerate = $('#ladb_btn_generate', $modal);
 
                 var fnFetchOptions = function (options) {
@@ -4634,13 +4634,13 @@
                 $btnEditMaterial.on('click', function () {
                     fnEditMaterial();
                 });
-                $btnUnloadNesty.on('click', function () {
-                    rubyCallCommand('core_unload_c_lib', { lib: 'nesty' }, function (response) {
+                $btnUnloadLib.on('click', function () {
+                    rubyCallCommand('core_unload_c_lib', { lib: 'packy' }, function (response) {
                         if (response.errors) {
                             that.dialog.notifyErrors(response.errors);
                         }
                         if (response.success) {
-                            that.dialog.notifySuccess('Nesty unloaded');
+                            that.dialog.notifySuccess('Packy unloaded');
                         }
                     });
                 });

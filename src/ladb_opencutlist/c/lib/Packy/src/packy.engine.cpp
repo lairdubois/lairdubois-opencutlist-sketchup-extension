@@ -1,7 +1,7 @@
 #include "clipper2/clipper.wrapper.hpp"
 
-#include "nesty.structs.hpp"
-#include "nesty.engine.hpp"
+#include "packy.structs.hpp"
+#include "packy.engine.hpp"
 
 #include <algorithm>
 
@@ -18,7 +18,7 @@ using namespace packingsolver::rectangle;
 using namespace packingsolver::rectangleguillotine;
 using namespace packingsolver::irregular;
 
-namespace Nesty {
+namespace Packy {
 
   // Clipper2 documentation : https://angusj.com/clipper2/Docs/Overview.htm
 
@@ -185,7 +185,7 @@ namespace Nesty {
     rectangleguillotine::InstanceBuilder instance_builder;
     instance_builder.set_objective(Objective::BinPacking);
     instance_builder.set_cut_thickness(Int64ToV(spacing));
-    instance_builder.set_first_stage_orientation(rectangleguillotine::CutOrientation::Horizontal);
+    instance_builder.set_first_stage_orientation(rectangleguillotine::CutOrientation::Vertical);
 
     for (auto &bin_def: bin_defs) {
 
@@ -196,17 +196,17 @@ namespace Nesty {
               bin_def.count
       );
 
-//      instance_builder.add_trims(
-//              bin_def.bin_type_id,
-//              Int64ToV(trimming),
-//              rectangleguillotine::TrimType::Hard,
-//              Int64ToV(trimming),
-//              rectangleguillotine::TrimType::Soft,
-//              Int64ToV(trimming),
-//              rectangleguillotine::TrimType::Hard,
-//              Int64ToV(trimming),
-//              rectangleguillotine::TrimType::Soft
-//      );
+      instance_builder.add_trims(
+              bin_def.bin_type_id,
+              Int64ToV(trimming),
+              rectangleguillotine::TrimType::Hard,
+              Int64ToV(trimming),
+              rectangleguillotine::TrimType::Soft,
+              Int64ToV(trimming),
+              rectangleguillotine::TrimType::Hard,
+              Int64ToV(trimming),
+              rectangleguillotine::TrimType::Soft
+      );
 
     }
 

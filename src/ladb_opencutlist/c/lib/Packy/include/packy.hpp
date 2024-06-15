@@ -1,13 +1,13 @@
 #include <cstddef>
 #include <cstdint>
 
-constexpr auto NESTY_VERSION = "1.0.0";
+constexpr auto PACKY_VERSION = "1.0.0";
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#ifdef LIBNESTY_EXPORTS
+#ifdef LIBPACKY_EXPORTS
 #define DLL_EXPORTS __declspec(dllexport)
 #else
 #define DLL_EXPORTS

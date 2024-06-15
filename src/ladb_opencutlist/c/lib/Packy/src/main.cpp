@@ -1,6 +1,6 @@
 #include "iostream"
 
-#include "nesty.hpp"
+#include "packy.hpp"
 
 int64_t* GenerateTriangle(int64_t *cpaths, int64_t x, int64_t y) {
 

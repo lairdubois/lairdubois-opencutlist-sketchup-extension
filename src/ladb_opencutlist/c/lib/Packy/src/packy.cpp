@@ -1,15 +1,15 @@
 #include "clipper2/clipper.wrapper.hpp"
 
-#include "nesty.hpp"
-#include "nesty.structs.hpp"
-#include "nesty.engine.hpp"
+#include "packy.hpp"
+#include "packy.structs.hpp"
+#include "packy.engine.hpp"
 
 #include <algorithm>
 #include <string>
 #include <stdexcept>
 
 using namespace Clipper2Lib;
-using namespace Nesty;
+using namespace Packy;
 
 #ifdef __cplusplus
 extern "C" {
@@ -18,7 +18,7 @@ extern "C" {
 ShapeDefs shape_defs;
 BinDefs bin_defs;
 
-Nesty::Solution solution;
+Packy::Solution solution;
 
 std::string message;
 
@@ -45,7 +45,7 @@ DLL_EXPORTS char* c_execute_nesting(int64_t spacing, int64_t trimming, int rotat
     engine.run(shape_defs, bin_defs, spacing, trimming, rotations, solution);
 
     message.clear();
-    message = "-- START NESTY MESSAGE --\n"
+    message = "-- START PACKY MESSAGE --\n"
             "bin_defs.size = " + std::to_string(bin_defs.size()) + "\n"
             "shape_defs.size = " + std::to_string(shape_defs.size()) + "\n"
             "-------------------------\n"
@@ -56,7 +56,7 @@ DLL_EXPORTS char* c_execute_nesting(int64_t spacing, int64_t trimming, int rotat
             "solution.unused_bins.size = " + std::to_string(solution.unused_bins.size()) + "\n"
             "solution.packed_bins.size = " + std::to_string(solution.packed_bins.size()) + "\n"
             "solution.unplaced_shapes.size = " + std::to_string(solution.unplaced_shapes.size()) + "\n"
-            "-- END NESTY MESSAGE --\n";
+            "-- END PACKY MESSAGE --\n";
 
   } catch(const std::exception &e) {
     message.clear();
@@ -80,7 +80,7 @@ DLL_EXPORTS void c_dispose_array64(const int64_t* p) {
 
 
 DLL_EXPORTS char* c_version() {
-  return (char *)NESTY_VERSION;
+  return (char *)PACKY_VERSION;
 }
 
 #ifdef __cplusplus

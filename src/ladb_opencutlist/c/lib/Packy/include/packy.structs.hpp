@@ -1,9 +1,9 @@
-#ifndef NESTY_SHAPE_H
-#define NESTY_SHAPE_H
+#ifndef PACKY_SHAPE_H
+#define PACKY_SHAPE_H
 
 #include "clipper2/clipper.h"
 
-namespace Nesty {
+namespace Packy {
 
   // ShapeDef and Shape
 
@@ -101,4 +101,4 @@ namespace Nesty {
 
 }
 
-#endif // NESTY_SHAPE_H
+#endif // PACKY_SHAPE_H

@@ -1,9 +1,9 @@
-#ifndef NESTY_ENGINE_H
-#define NESTY_ENGINE_H
+#ifndef PACKY_ENGINE_H
+#define PACKY_ENGINE_H
 
-#include "nesty.structs.hpp"
+#include "packy.structs.hpp"
 
-namespace Nesty {
+namespace Packy {
 
   class DummyEngine {
 
@@ -39,4 +39,4 @@ namespace Nesty {
 
 }
 
-#endif // NESTY_ENGINE_H
+#endif // PACKY_ENGINE_H

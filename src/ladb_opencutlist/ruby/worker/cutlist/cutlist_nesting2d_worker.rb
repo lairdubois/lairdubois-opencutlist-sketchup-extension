@@ -5,14 +5,14 @@ module Ladb::OpenCutList
   require_relative '../../helper/pixel_converter_helper'
   require_relative '../../utils/dimension_utils'
   require_relative '../../utils/string_utils'
-  require_relative '../../lib/fiddle/nesty/nesty'
+  require_relative '../../lib/fiddle/packy/packy'
 
   class CutlistNesting2dWorker
 
     include PartDrawingHelper
     include PixelConverterHelper
 
-    Nesty = Fiddle::Nesty
+    Packy = Fiddle::Packy
 
     def initialize(cutlist,
 
@@ -71,7 +71,7 @@ module Ladb::OpenCutList
         length = ddq[0].strip.to_l.to_f
         width = ddq[1].strip.to_l.to_f
         count = [ 1, (ddq[2].nil? || ddq[2].strip.to_i == 0) ? 1 : ddq[2].strip.to_i ].max
-        bin_defs << Nesty::BinDef.new(bin_id += 1, count, Nesty.float_to_int64(length), Nesty.float_to_int64(width), 1) # 1 = user defined
+        bin_defs << Packy::BinDef.new(bin_id += 1, count, Packy.float_to_int64(length), Packy.float_to_int64(width), 1) # 1 = user defined
 
         json[:bin_types] << {
           type: 'rectangle',
@@ -83,7 +83,7 @@ module Ladb::OpenCutList
 
       # Add bin from std sheet
       if @std_sheet_width > 0 && @std_sheet_length > 0
-        bin_defs << Nesty::BinDef.new(bin_id += 1, parts.count, Nesty.float_to_int64(@std_sheet_length), Nesty.float_to_int64(@std_sheet_width), 0) # 0 = Standard
+        bin_defs << Packy::BinDef.new(bin_id += 1, parts.count, Packy.float_to_int64(@std_sheet_length), Packy.float_to_int64(@std_sheet_width), 0) # 0 = Standard
 
         json[:bin_types] << {
           type: 'rectangle',
@@ -104,7 +104,7 @@ module Ladb::OpenCutList
         projection_def.layer_defs.each do |layer_def|
           next unless layer_def.type_outer? || layer_def.type_holes?
           layer_def.poly_defs.each do |poly_def|
-            rpaths << Nesty.points_to_rpath(layer_def.type_holes? ? poly_def.points.reverse : poly_def.points)
+            rpaths << Packy.points_to_rpath(layer_def.type_holes? ? poly_def.points.reverse : poly_def.points)
 
             if layer_def.type_holes?
               holes << {
@@ -118,7 +118,7 @@ module Ladb::OpenCutList
           end
         end
 
-        shape_defs << Nesty::ShapeDef.new(shape_id += 1, part.count, rpaths, part)
+        shape_defs << Packy::ShapeDef.new(shape_id += 1, part.count, rpaths, part)
 
         json[:item_types] << {
           type: 'polygon',
@@ -143,7 +143,7 @@ module Ladb::OpenCutList
 
       puts json.to_json
 
-      solution, message = Nesty.execute_nesting(bin_defs, shape_defs, Nesty.float_to_int64(@spacing), Nesty.float_to_int64(@trimming), @rotations)
+      solution, message = Packy.execute_nesting(bin_defs, shape_defs, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming), @rotations)
       puts message.to_s
 
       {
@@ -151,14 +151,14 @@ module Ladb::OpenCutList
         'packed_bins_count' => solution.packed_bins.length,
         'unplaced_shapes_count' => solution.unplaced_shapes.length,
         'packed_bins' => solution.packed_bins.map { |bin| {
-          length: Nesty.int64_to_float(bin.def.length).to_l.to_s,
-          width: Nesty.int64_to_float(bin.def.width).to_l.to_s,
+          length: Packy.int64_to_float(bin.def.length).to_l.to_s,
+          width: Packy.int64_to_float(bin.def.width).to_l.to_s,
           type: bin.def.type,
           svg: _bin_to_svg(bin)
         } },
         'unused_bins' => solution.unused_bins.map { |bin| {
-          length: Nesty.int64_to_float(bin.def.length).to_l.to_s,
-          width: Nesty.int64_to_float(bin.def.width).to_l.to_s,
+          length: Packy.int64_to_float(bin.def.length).to_l.to_s,
+          width: Packy.int64_to_float(bin.def.width).to_l.to_s,
           type: bin.def.type,
           svg: _bin_to_svg(bin, '#d9534f')
         } }
@@ -169,21 +169,21 @@ module Ladb::OpenCutList
 
     def _bin_to_svg(bin, bg_color = '#5cb85c')
 
-      px_bin_length = _to_px(Nesty.int64_to_float(bin.def.length))
-      px_bin_width = _to_px(Nesty.int64_to_float(bin.def.width))
+      px_bin_length = _to_px(Packy.int64_to_float(bin.def.length))
+      px_bin_width = _to_px(Packy.int64_to_float(bin.def.width))
 
       svg = "<svg width='#{px_bin_length}' height='#{px_bin_width}' viewbox='0 -#{px_bin_width} #{px_bin_length} #{px_bin_width}'>"
       svg += "<rect x='0' y='-#{px_bin_width}' width='#{px_bin_length}' height='#{px_bin_width}' fill='#{bg_color}' stroke='none' />"
       bin.shapes.each do |shape|
 
-        l_shape_x = Nesty.int64_to_float(shape.x).to_l
-        l_shape_y = Nesty.int64_to_float(shape.y).to_l
+        l_shape_x = Packy.int64_to_float(shape.x).to_l
+        l_shape_y = Packy.int64_to_float(shape.y).to_l
 
         px_shape_x = _to_px(l_shape_x)
         px_shape_y = -_to_px(l_shape_y)
 
-        svg += "'<g class='ladb-nesty-part' transform='translate(#{px_shape_x} #{px_shape_y}) rotate(-#{shape.angle})'>'"
-        svg += "<path d='#{shape.def.paths.map { |path| "M #{Nesty.rpath_to_points(path).map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y).round(2)}" }.join(' L ')} Z" }.join(' ')}' data-toggle='tooltip' data-html='true' title='<div>#{shape.def.data.name}</div><div>x = #{l_shape_x}</div><div>y = #{l_shape_y}</div>' />"
+        svg += "'<g class='ladb-packy-part' transform='translate(#{px_shape_x} #{px_shape_y}) rotate(-#{shape.angle})'>'"
+        svg += "<path d='#{shape.def.paths.map { |path| "M #{Packy.rpath_to_points(path).map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y).round(2)}" }.join(' L ')} Z" }.join(' ')}' data-toggle='tooltip' data-html='true' title='<div>#{shape.def.data.name}</div><div>x = #{l_shape_x}</div><div>y = #{l_shape_y}</div>' />"
         svg += '</g>'
 
       end

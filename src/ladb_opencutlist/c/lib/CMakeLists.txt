@@ -19,6 +19,6 @@ add_subdirectory(Clippy)
 add_subdirectory(Imagy)
 
 # -------------------------------------------------------------------
-#                             Nesty
+#                             Packy
 
-add_subdirectory(Nesty)
+add_subdirectory(Packy)

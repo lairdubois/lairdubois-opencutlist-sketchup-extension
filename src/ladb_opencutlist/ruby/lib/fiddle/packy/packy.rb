@@ -2,14 +2,14 @@ require_relative '../clipper_wrapper'
 
 module Ladb::OpenCutList::Fiddle
 
-  module Nesty
+  module Packy
     extend ClipperWrapper
 
     @bin_defs_cache = {}
     @shape_defs_cache = {}
 
     def self._lib_name
-      'Nesty'
+      'Packy'
     end
 
     def self._lib_c_functions

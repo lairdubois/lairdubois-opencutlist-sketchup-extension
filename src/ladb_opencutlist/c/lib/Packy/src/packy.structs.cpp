@@ -1,9 +1,9 @@
-#include "nesty.hpp"
-#include "nesty.structs.hpp"
+#include "packy.hpp"
+#include "packy.structs.hpp"
 
 #include <utility>
 
-namespace Nesty {
+namespace Packy {
 
   // ShapeDef and Shape
 
