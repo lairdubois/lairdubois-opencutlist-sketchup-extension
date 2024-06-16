@@ -37,6 +37,24 @@ namespace Packy {
   using ShapeDefs = std::vector<ShapeDef>;
   using Shapes = std::vector<Shape>;
 
+  // Cut
+
+  struct Cut {
+
+    explicit Cut(int16_t depth, int64_t x1, int64_t y1, int64_t x2, int64_t y2);
+    ~Cut();
+
+    int16_t depth;
+
+    int64_t x1;
+    int64_t y1;
+    int64_t x2;
+    int64_t y2;
+
+  };
+
+  using Cuts = std::vector<Cut>;
+
   // BinDef and Bin
 
   struct BinDef {
@@ -64,6 +82,7 @@ namespace Packy {
     BinDef* def;
 
     Shapes shapes;
+    Cuts cuts;
 
   };
 
@@ -83,6 +102,7 @@ namespace Packy {
     Shapes unplaced_shapes;
 
     void clear();
+    std::string format();
 
   };
 
@@ -95,6 +115,8 @@ namespace Packy {
 
   void ConvertShapeToCShape(const Shape &shape, int64_t *&v);
   void ConvertShapesToCShapes(const Shapes &shapes, int64_t *&v);
+  void ConvertCutToCCut(const Cut &cut, int64_t *&v);
+  void ConvertCutsToCCuts(const Cuts &cuts, int64_t *&v);
   void ConvertBinToCBin(const Bin &bin, int64_t *&v);
   void ConvertBinsToCBins(const Bins &bins, int64_t *&v);
   int64_t* ConvertSolutionToCSolution(const Solution &solution);

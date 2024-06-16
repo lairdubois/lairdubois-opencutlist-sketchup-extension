@@ -20,7 +20,10 @@ module Ladb::OpenCutList::Fiddle
         'void c_append_bin_def(int, int, int64_t, int64_t, int)',
         'void c_append_shape_def(int, int, int64_t*)',
 
-        'char* c_execute_nesting(int64_t, int64_t, int)',
+        'char* c_execute_rectangle(int64_t, int64_t, int)',
+        'char* c_execute_rectangleguillotine(int64_t, int64_t, int)',
+        'char* c_execute_irregular(int64_t, int64_t, int)',
+        'char* c_execute_onedimensional(int64_t, int64_t, int)',
 
         'int64_t* c_get_solution()',
 
@@ -40,12 +43,45 @@ module Ladb::OpenCutList::Fiddle
 
     # --
 
-    def self.execute_nesting(bin_defs, shape_defs, spacing, trimming, rotations)
+    def self.execute_rectangle(bin_defs, shape_defs, spacing, trimming, rotations)
       _load_lib
       _clear
       _append_bin_defs(bin_defs)
       _append_shape_defs(shape_defs)
-      message = _execute_nesting(spacing, trimming, rotations).to_s
+      message = _execute_rectangle(spacing, trimming, rotations).to_s
+      solution = _unpack_solution
+      _clear
+      [ solution, message ]
+    end
+
+    def self.execute_rectangleguillotine(bin_defs, shape_defs, spacing, trimming, rotations)
+      _load_lib
+      _clear
+      _append_bin_defs(bin_defs)
+      _append_shape_defs(shape_defs)
+      message = _execute_rectangleguillotine(spacing, trimming, rotations).to_s
+      solution = _unpack_solution
+      _clear
+      [ solution, message ]
+    end
+
+    def self.execute_irregular(bin_defs, shape_defs, spacing, trimming, rotations)
+      _load_lib
+      _clear
+      _append_bin_defs(bin_defs)
+      _append_shape_defs(shape_defs)
+      message = _execute_irregular(spacing, trimming, rotations).to_s
+      solution = _unpack_solution
+      _clear
+      [ solution, message ]
+    end
+
+    def self.execute_onedimensional(bin_defs, shape_defs, spacing, trimming, rotations)
+      _load_lib
+      _clear
+      _append_bin_defs(bin_defs)
+      _append_shape_defs(shape_defs)
+      message = _execute_onedimensional(spacing, trimming, rotations).to_s
       solution = _unpack_solution
       _clear
       [ solution, message ]
@@ -77,8 +113,20 @@ module Ladb::OpenCutList::Fiddle
       shape_defs.each { |shape_def| _append_shape_def(shape_def) }
     end
 
-    def self._execute_nesting(spacing, trimming, rotations)
-      c_execute_nesting(spacing, trimming, rotations)
+    def self._execute_rectangle(spacing, trimming, rotations)
+      c_execute_rectangle(spacing, trimming, rotations)
+    end
+
+    def self._execute_rectangleguillotine(spacing, trimming, rotations)
+      c_execute_rectangleguillotine(spacing, trimming, rotations)
+    end
+
+    def self._execute_irregular(spacing, trimming, rotations)
+      c_execute_irregular(spacing, trimming, rotations)
+    end
+
+    def self._execute_onedimensional(spacing, trimming, rotations)
+      c_execute_onedimensional(spacing, trimming, rotations)
     end
 
     def self._unpack_solution
@@ -114,10 +162,31 @@ module Ladb::OpenCutList::Fiddle
       [ rshapes, cur ] # Returns RShapes and cumulative data length
     end
 
+    def self._ccut_to_rcut(ccut)
+      depth, x1, y1, x2, y2 = _ptr_int64_to_array(ccut, 5)
+      [ Cut.new(depth, x1, y1, x2, y2), 5 ] # Returns RCut and its data length
+    end
+
+    def self._ccuts_to_rcuts(ccuts)
+      n = _ptr_int64_to_array(ccuts, 1)[0]
+      cur = 1
+      rcuts = []
+      n.times do
+        rcut, len = _ccut_to_rcut(_ptr_int64_offset(ccuts, cur))
+        rcuts << rcut
+        cur += len
+      end
+      [ rcuts, cur ] # Returns Rcuts and cumulative data length
+    end
+
     def self._cbin_to_rbin(cbin)
       id = _ptr_int64_to_array(cbin, 1)[0]
-      shapes, len = _cshapes_to_rshapes(_ptr_int64_offset(cbin, 1))
-      [ Bin.new(@bin_defs_cache[id], shapes), 1 + len ] # Returns RBin and its data length
+      cur = 1
+      shapes, len = _cshapes_to_rshapes(_ptr_int64_offset(cbin, cur))
+      cur += len
+      cuts, len = _ccuts_to_rcuts(_ptr_int64_offset(cbin, cur))
+      cur += len
+      [ Bin.new(@bin_defs_cache[id], shapes, cuts), cur ] # Returns RBin and its data length
     end
 
     def self._cbins_to_rbins(cbins)
@@ -140,7 +209,7 @@ module Ladb::OpenCutList::Fiddle
       packed_bins, len = _cbins_to_rbins(_ptr_int64_offset(csolution, cur))
       cur += len
       unplaced_shapes, len = _cshapes_to_rshapes(_ptr_int64_offset(csolution, cur))
-      [ Solution.new(unused_bins, packed_bins, unplaced_shapes), len ] # Returns RSolution and its data length
+      [ Solution.new(unused_bins, packed_bins, unplaced_shapes), cur ] # Returns RSolution and its data length
     end
 
     # -----
@@ -149,8 +218,9 @@ module Ladb::OpenCutList::Fiddle
     ShapeDef = Struct.new(:id, :count, :paths, :data)
 
     Solution = Struct.new(:unused_bins, :packed_bins, :unplaced_shapes)
-    Bin = Struct.new(:def, :shapes)
+    Bin = Struct.new(:def, :shapes, :cuts)
     Shape = Struct.new(:def, :x, :y, :angle)  # x, y are int64
+    Cut = Struct.new(:depth, :x1, :y1, :x2, :y2)  # x1, y1, x2, y2 are int64
 
   end
 

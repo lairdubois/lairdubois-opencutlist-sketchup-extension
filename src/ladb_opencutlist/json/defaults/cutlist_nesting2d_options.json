@@ -11,6 +11,7 @@
   "0": {
     "std_sheet": "",
     "scrap_sheet_sizes": "",
+    "engine": "rectangle",
     "spacing": { "metric": "20mm", "imperial": "1\"" },
     "trimming": { "metric": "10mm", "imperial": "1/2\"" },
     "rotations": 0

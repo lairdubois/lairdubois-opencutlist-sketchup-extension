@@ -4554,6 +4554,7 @@
                 var $widgetPreset = $('.ladb-widget-preset', $modal);
                 var $inputStdSheet = $('#ladb_select_std_sheet', $modal);
                 var $inputScrapSheetSizes = $('#ladb_input_scrap_sheet_sizes', $modal);
+                var $selectEngine = $('#ladb_select_engine', $modal);
                 var $inputSpacing = $('#ladb_input_spacing', $modal);
                 var $inputTrimming = $('#ladb_input_trimming', $modal);
                 var $inputRotations = $('#ladb_input_rotations', $modal);
@@ -4564,11 +4565,13 @@
                 var fnFetchOptions = function (options) {
                     options.std_sheet = $inputStdSheet.val();
                     options.scrap_sheet_sizes = $inputScrapSheetSizes.ladbTextinputTokenfield('getValidTokensList');
+                    options.engine = $selectEngine.val();
                     options.spacing = $inputSpacing.val();
                     options.trimming = $inputTrimming.val();
                     options.rotations = $inputRotations.val();
                 }
                 var fnFillInputs = function (options) {
+                    $selectEngine.selectpicker('val', options.engine);
                     $inputSpacing.val(options.spacing);
                     $inputTrimming.val(options.trimming);
                     $inputRotations.val(options.rotations);
@@ -4607,6 +4610,7 @@
                 $inputStdSheet.selectpicker(SELECT_PICKER_OPTIONS);
                 $inputScrapSheetSizes.ladbTextinputTokenfield({ format: 'dxdxq' });
                 $inputScrapSheetSizes.ladbTextinputTokenfield('setTokens', nesting2dOptions.scrap_sheet_sizes);
+                $selectEngine.selectpicker(SELECT_PICKER_OPTIONS);
                 $inputSpacing.ladbTextinputDimension();
                 $inputTrimming.ladbTextinputDimension();
                 $inputRotations.ladbTextinputNumberWithUnit({

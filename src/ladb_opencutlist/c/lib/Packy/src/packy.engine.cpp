@@ -11,12 +11,15 @@
 #include "packingsolver/rectangleguillotine/optimize.hpp"
 #include "packingsolver/irregular/instance_builder.hpp"
 #include "packingsolver/irregular/optimize.hpp"
+#include "packingsolver/onedimensional/instance_builder.hpp"
+#include "packingsolver/onedimensional/optimize.hpp"
 
 using namespace Clipper2Lib;
 using namespace packingsolver;
 using namespace packingsolver::rectangle;
 using namespace packingsolver::rectangleguillotine;
 using namespace packingsolver::irregular;
+using namespace packingsolver::onedimensional;
 
 namespace Packy {
 
@@ -110,7 +113,7 @@ namespace Packy {
   bool RectangleEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, int64_t spacing, int64_t trimming, int rotations, Solution &solution) {
 
     rectangle::InstanceBuilder instance_builder;
-    instance_builder.set_objective(Objective::VariableSizedBinPacking);
+    instance_builder.set_objective(Objective::BinPacking);
 
     for (auto &bin_def: bin_defs) {
 
@@ -141,6 +144,7 @@ namespace Packy {
 
     rectangle::OptimizeParameters parameters;
     parameters.optimization_mode = OptimizationMode::NotAnytimeSequential;
+    parameters.not_anytime_tree_search_queue_size = 64;
     parameters.timer.set_time_limit(10);
     parameters.verbosity_level = 3;
 
@@ -149,25 +153,29 @@ namespace Packy {
 
     for (BinPos bin_pos = 0; bin_pos < ps_solution.number_of_different_bins(); ++bin_pos) {
 
-      const rectangle::SolutionBin &ps_bin = ps_solution.bin(bin_pos);
-      BinTypeId bin_type_id = ps_bin.bin_type_id;
+      const rectangle::SolutionBin &solution_bin = ps_solution.bin(bin_pos);
+      BinTypeId bin_type_id = solution_bin.bin_type_id;
 
       auto bin_def_it = std::find_if(bin_defs.begin(), bin_defs.end(), [&bin_type_id](const BinDef &bin_def) { return bin_def.bin_type_id == bin_type_id; });
       if (bin_def_it != bin_defs.end()) {
 
-        Bin &bin = solution.packed_bins.emplace_back(&*bin_def_it);
+        for (BinPos copie = 0; copie < solution_bin.copies; ++copie) {
 
-        for (auto &ps_item: ps_bin.items) {
+          Bin &bin = solution.packed_bins.emplace_back(&*bin_def_it);
 
-          ItemTypeId item_type_id = ps_item.item_type_id;
+          for (auto &solution_item: solution_bin.items) {
 
-          auto shape_def_it = std::find_if(shape_defs.begin(), shape_defs.end(), [&item_type_id](const ShapeDef &shape_def) { return shape_def.item_type_id == item_type_id; });
-          if (shape_def_it != shape_defs.end()) {
+            ItemTypeId item_type_id = solution_item.item_type_id;
 
-            Shape &shape = bin.shapes.emplace_back(&*shape_def_it);
-            shape.x = VToInt64(ps_item.bl_corner.x);
-            shape.y = VToInt64(ps_item.bl_corner.y);
-            shape.angle = 0;
+            auto shape_def_it = std::find_if(shape_defs.begin(), shape_defs.end(), [&item_type_id](const ShapeDef &shape_def) { return shape_def.item_type_id == item_type_id; });
+            if (shape_def_it != shape_defs.end()) {
+
+              Shape &shape = bin.shapes.emplace_back(&*shape_def_it);
+              shape.x = VToInt64(solution_item.bl_corner.x);
+              shape.y = VToInt64(solution_item.bl_corner.y);
+              shape.angle = 0;
+
+            }
 
           }
 
@@ -185,7 +193,7 @@ namespace Packy {
     rectangleguillotine::InstanceBuilder instance_builder;
     instance_builder.set_objective(Objective::BinPacking);
     instance_builder.set_cut_thickness(Int64ToV(spacing));
-    instance_builder.set_first_stage_orientation(rectangleguillotine::CutOrientation::Vertical);
+    instance_builder.set_first_stage_orientation(rectangleguillotine::CutOrientation::Horizontal);
 
     for (auto &bin_def: bin_defs) {
 
@@ -219,50 +227,101 @@ namespace Packy {
               Int64ToV(bounds.Height()),
               -1,
               shape_def.count,
-              true
+              false
       );
 
     }
 
     rectangleguillotine::Instance instance = instance_builder.build();
-//    instance.write("./trim_error_instance");
 
     rectangleguillotine::OptimizeParameters parameters;
     parameters.optimization_mode = OptimizationMode::NotAnytimeSequential;
+    parameters.not_anytime_tree_search_queue_size = 1024;
     parameters.timer.set_time_limit(10);
     parameters.verbosity_level = 3;
-    parameters.not_anytime_tree_search_queue_size = 64;
 
     const rectangleguillotine::Output output = rectangleguillotine::optimize(instance, parameters);
     const rectangleguillotine::Solution &ps_solution = output.solution_pool.best();
 
     for (BinPos bin_pos = 0; bin_pos < ps_solution.number_of_different_bins(); ++bin_pos) {
 
-      const rectangleguillotine::SolutionBin &ps_bin = ps_solution.bin(bin_pos);
-      BinTypeId bin_type_id = ps_bin.bin_type_id;
+      const rectangleguillotine::SolutionBin &solution_bin = ps_solution.bin(bin_pos);
+      BinTypeId bin_type_id = solution_bin.bin_type_id;
 
       auto bin_def_it = std::find_if(bin_defs.begin(), bin_defs.end(), [&bin_type_id](const BinDef &bin_def) {
         return bin_def.bin_type_id == bin_type_id;
       });
       if (bin_def_it != bin_defs.end()) {
 
-        for (BinPos copie = 0; copie < ps_bin.copies; ++copie) {
+        for (BinPos copie = 0; copie < solution_bin.copies; ++copie) {
 
           Bin &bin = solution.packed_bins.emplace_back(&*bin_def_it);
 
-          for (SolutionNodeId node_id = 0; node_id < (SolutionNodeId)ps_bin.nodes.size(); ++node_id) {
+          for (SolutionNodeId node_id = 0; node_id < (SolutionNodeId)solution_bin.nodes.size(); ++node_id) {
 
-            const SolutionNode &ps_node = ps_bin.nodes[node_id];
+            const SolutionNode &solution_node = solution_bin.nodes[node_id];
 
-            ItemTypeId item_type_id = ps_node.item_type_id;
+            ItemTypeId item_type_id = solution_node.item_type_id;
 
             auto shape_def_it = std::find_if(shape_defs.begin(), shape_defs.end(),[&item_type_id](const ShapeDef &shape_def) { return shape_def.item_type_id == item_type_id; });
             if (shape_def_it != shape_defs.end()) {
 
-              Shape &shape = bin.shapes.emplace_back(&*shape_def_it);
-              shape.x = VToInt64(ps_node.l);
-              shape.y = VToInt64(ps_node.b);
-              shape.angle = 0;
+              ShapeDef &shape_def = *shape_def_it;
+              Rect64 bounds = GetBounds(shape_def.paths);
+              bool rotated = Int64ToV(bounds.Width()) != (solution_node.r - solution_node.l);
+
+              Shape &shape = bin.shapes.emplace_back(&shape_def);
+              if (rotated) {
+                shape.x = VToInt64(solution_node.r);
+                shape.y = VToInt64(solution_node.b);
+                shape.angle = 90;
+              } else {
+                shape.x = VToInt64(solution_node.l);
+                shape.y = VToInt64(solution_node.b);
+                shape.angle = 0;
+              }
+
+            }
+
+            if (item_type_id >= 0 || !solution_node.children.empty()) {
+
+              if (solution_node.d == 0) {
+
+                // Bottom
+                bin.cuts.emplace_back(solution_node.d,
+                                      VToInt64(solution_node.l) - trimming,
+                                      VToInt64(solution_node.b) - spacing,
+                                      VToInt64(solution_node.r) + trimming,
+                                      VToInt64(solution_node.b));
+
+                // Left
+                bin.cuts.emplace_back(solution_node.d,
+                                      VToInt64(solution_node.l) - spacing,
+                                      VToInt64(solution_node.b),
+                                      VToInt64(solution_node.l),
+                                      VToInt64(solution_node.t) + trimming);
+
+
+              } else if (solution_node.f > 0) {
+
+                const SolutionNode &parent_solution_node = solution_bin.nodes[solution_node.f];
+
+                if (solution_node.r != parent_solution_node.r) {
+                  bin.cuts.emplace_back(solution_node.d,
+                                        VToInt64(solution_node.r),
+                                        VToInt64(solution_node.b),
+                                        VToInt64(solution_node.r) + spacing,
+                                        VToInt64(solution_node.t) + (solution_node.d == 1 ? trimming : 0));
+                }
+                if (solution_node.t != parent_solution_node.t) {
+                  bin.cuts.emplace_back(solution_node.d,
+                                        VToInt64(solution_node.l),
+                                        VToInt64(solution_node.t),
+                                        VToInt64(solution_node.r) + (solution_node.d == 1 ? trimming : 0),
+                                        VToInt64(solution_node.t) + spacing);
+                }
+
+              }
 
             }
 
@@ -365,39 +424,115 @@ namespace Packy {
 
     irregular::OptimizeParameters parameters;
     parameters.optimization_mode = OptimizationMode::NotAnytimeSequential;
+    parameters.not_anytime_tree_search_queue_size = 64;
     parameters.timer.set_time_limit(10);
     parameters.verbosity_level = 3;
-    parameters.not_anytime_tree_search_queue_size = 512;
 
     const irregular::Output output = irregular::optimize(instance, parameters);
     const irregular::Solution &ps_solution = output.solution_pool.best();
 
     for (BinPos bin_pos = 0; bin_pos < ps_solution.number_of_different_bins(); ++bin_pos) {
 
-      const irregular::SolutionBin &ps_bin = ps_solution.bin(bin_pos);
-      BinTypeId bin_type_id = ps_bin.bin_type_id;
+      const irregular::SolutionBin &solution_bin = ps_solution.bin(bin_pos);
+      BinTypeId bin_type_id = solution_bin.bin_type_id;
 
       auto bin_def_it = std::find_if(bin_defs.begin(), bin_defs.end(), [&bin_type_id](const BinDef &bin_def) {
         return bin_def.bin_type_id == bin_type_id;
       });
       if (bin_def_it != bin_defs.end()) {
 
-        Bin &bin = solution.packed_bins.emplace_back(&*bin_def_it);
+        for (BinPos copie = 0; copie < solution_bin.copies; ++copie) {
 
-        for (auto &ps_item: ps_bin.items) {
+          Bin &bin = solution.packed_bins.emplace_back(&*bin_def_it);
 
-          ItemTypeId item_type_id = ps_item.item_type_id;
+          for (auto &solution_item: solution_bin.items) {
 
-          auto shape_def_it = std::find_if(shape_defs.begin(), shape_defs.end(),
-                                           [&item_type_id](const ShapeDef &shape_def) {
-                                             return shape_def.item_type_id == item_type_id;
-                                           });
-          if (shape_def_it != shape_defs.end()) {
+            ItemTypeId item_type_id = solution_item.item_type_id;
 
-            Shape &shape = bin.shapes.emplace_back(&*shape_def_it);
-            shape.x = VToInt64(ps_item.bl_corner.x);
-            shape.y = VToInt64(ps_item.bl_corner.y);
-            shape.angle = (int64_t) ps_item.angle;
+            auto shape_def_it = std::find_if(shape_defs.begin(), shape_defs.end(), [&item_type_id](const ShapeDef &shape_def) { return shape_def.item_type_id == item_type_id; });
+            if (shape_def_it != shape_defs.end()) {
+
+              Shape &shape = bin.shapes.emplace_back(&*shape_def_it);
+              shape.x = VToInt64(solution_item.bl_corner.x);
+              shape.y = VToInt64(solution_item.bl_corner.y);
+              shape.angle = (int64_t) solution_item.angle;
+
+            }
+
+          }
+
+        }
+
+      }
+
+    }
+
+    return true;
+  }
+
+  bool OneDimensionalEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, int64_t spacing, int64_t trimming, int rotations, Solution &solution) {
+
+    onedimensional::InstanceBuilder instance_builder;
+    instance_builder.set_objective(Objective::BinPacking);
+
+    for (auto &bin_def: bin_defs) {
+
+      bin_def.bin_type_id = instance_builder.add_bin_type(
+              Int64ToV(bin_def.length),
+              -1,
+              bin_def.count
+      );
+
+    }
+
+    for (auto &shape_def: shape_defs) {
+
+      Rect64 bounds = GetBounds(shape_def.paths);
+
+      shape_def.item_type_id = instance_builder.add_item_type(
+              Int64ToV(bounds.Width()),
+              -1,
+              shape_def.count
+      );
+
+    }
+
+    onedimensional::Instance instance = instance_builder.build();
+
+    onedimensional::OptimizeParameters parameters;
+    parameters.optimization_mode = OptimizationMode::NotAnytimeSequential;
+    parameters.not_anytime_tree_search_queue_size = 64;
+    parameters.timer.set_time_limit(10);
+    parameters.verbosity_level = 3;
+
+    const onedimensional::Output output = onedimensional::optimize(instance, parameters);
+    const onedimensional::Solution &ps_solution = output.solution_pool.best();
+
+    for (BinPos bin_pos = 0; bin_pos < ps_solution.number_of_different_bins(); ++bin_pos) {
+
+      const onedimensional::SolutionBin &solution_bin = ps_solution.bin(bin_pos);
+      BinTypeId bin_type_id = solution_bin.bin_type_id;
+
+      auto bin_def_it = std::find_if(bin_defs.begin(), bin_defs.end(), [&bin_type_id](const BinDef &bin_def) { return bin_def.bin_type_id == bin_type_id; });
+      if (bin_def_it != bin_defs.end()) {
+
+        for (BinPos copie = 0; copie < solution_bin.copies; ++copie) {
+
+          Bin &bin = solution.packed_bins.emplace_back(&*bin_def_it);
+
+          for (auto &solution_item: solution_bin.items) {
+
+            ItemTypeId item_type_id = solution_item.item_type_id;
+
+            auto shape_def_it = std::find_if(shape_defs.begin(), shape_defs.end(), [&item_type_id](const ShapeDef &shape_def) {  return shape_def.item_type_id == item_type_id; });
+            if (shape_def_it != shape_defs.end()) {
+
+              Shape &shape = bin.shapes.emplace_back(&*shape_def_it);
+              shape.x = VToInt64(solution_item.start);
+              shape.y = 0;
+              shape.angle = 0;
+
+            }
 
           }
 

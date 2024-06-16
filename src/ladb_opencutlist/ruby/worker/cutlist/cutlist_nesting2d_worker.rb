@@ -14,8 +14,14 @@ module Ladb::OpenCutList
 
     Packy = Fiddle::Packy
 
+    ENGINE_RECTANGLE = 'rectangle'
+    ENGINE_RECTANGLEGUILLOTINE = 'rectangleguillotine'
+    ENGINE_IRREGULAR = 'irregular'
+    ENGINE_ONEDIMENSIONAL = 'onedimensional'
+
     def initialize(cutlist,
 
+                   engine: ENGINE_RECTANGLE,
                    group_id: ,
                    part_ids: nil,
                    std_sheet: '',
@@ -28,6 +34,7 @@ module Ladb::OpenCutList
 
       @cutlist = cutlist
 
+      @engine = engine
       @group_id = group_id
       @part_ids = part_ids
       s_length, s_width = StringUtils.split_dxd(std_sheet)
@@ -143,7 +150,18 @@ module Ladb::OpenCutList
 
       puts json.to_json
 
-      solution, message = Packy.execute_nesting(bin_defs, shape_defs, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming), @rotations)
+      case @engine
+      when ENGINE_RECTANGLE
+        solution, message = Packy.execute_rectangle(bin_defs, shape_defs, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming), @rotations)
+      when ENGINE_RECTANGLEGUILLOTINE
+        solution, message = Packy.execute_rectangleguillotine(bin_defs, shape_defs, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming), @rotations)
+      when ENGINE_IRREGULAR
+        solution, message = Packy.execute_irregular(bin_defs, shape_defs, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming), @rotations)
+      when ENGINE_ONEDIMENSIONAL
+        solution, message = Packy.execute_onedimensional(bin_defs, shape_defs, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming), @rotations)
+      else
+        return { :errors => [ "Unknow engine : #{@engine}" ] }
+      end
       puts message.to_s
 
       {
@@ -182,9 +200,41 @@ module Ladb::OpenCutList
         px_shape_x = _to_px(l_shape_x)
         px_shape_y = -_to_px(l_shape_y)
 
-        svg += "'<g class='ladb-packy-part' transform='translate(#{px_shape_x} #{px_shape_y}) rotate(-#{shape.angle})'>'"
+        svg += "<g class='ladb-packy-part' transform='translate(#{px_shape_x} #{px_shape_y}) rotate(-#{shape.angle})'>"
         svg += "<path d='#{shape.def.paths.map { |path| "M #{Packy.rpath_to_points(path).map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y).round(2)}" }.join(' L ')} Z" }.join(' ')}' data-toggle='tooltip' data-html='true' title='<div>#{shape.def.data.name}</div><div>x = #{l_shape_x}</div><div>y = #{l_shape_y}</div>' />"
         svg += '</g>'
+
+      end
+      bin.cuts.sort_by { |cut| cut.depth }.each do |cut|
+
+        next if cut.depth < 0
+
+        l_cut_x1 = Packy.int64_to_float(cut.x1).to_l
+        l_cut_y1 = Packy.int64_to_float(cut.y1).to_l
+        l_cut_x2 = Packy.int64_to_float(cut.x2).to_l
+        l_cut_y2 = Packy.int64_to_float(cut.y2).to_l
+
+        px_cut_x1 = _to_px(l_cut_x1)
+        px_cut_y1 = -_to_px(l_cut_y1)
+        px_cut_x2 = _to_px(l_cut_x2)
+        px_cut_y2 = -_to_px(l_cut_y2)
+
+        case cut.depth
+        when 0
+          color = ColorUtils.color_to_hex(Sketchup::Color.new('red').blend(Sketchup::Color.new('blue'), 1.0))
+        when 1
+          color = ColorUtils.color_to_hex(Sketchup::Color.new('red').blend(Sketchup::Color.new('blue'), 0.8))
+        when 2
+          color = ColorUtils.color_to_hex(Sketchup::Color.new('red').blend(Sketchup::Color.new('blue'), 0.6))
+        when 3
+          color = ColorUtils.color_to_hex(Sketchup::Color.new('red').blend(Sketchup::Color.new('blue'), 0.4))
+        when 4
+          color = ColorUtils.color_to_hex(Sketchup::Color.new('red').blend(Sketchup::Color.new('blue'), 0.2))
+        else
+          color = '#0000ff'
+        end
+
+        svg += "<rect class='ladb-packy-cut' x='#{px_cut_x1}' y='#{px_cut_y2}' width='#{px_cut_x2 - px_cut_x1}' height='#{(px_cut_y1 - px_cut_y2).abs}' stroke='none' fill='#{color}' data-toggle='tooltip' title='depth = #{cut.depth}' />"
 
       end
       svg += '</svg>'

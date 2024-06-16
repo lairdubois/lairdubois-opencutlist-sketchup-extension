@@ -37,15 +37,16 @@ DLL_EXPORTS void c_append_bin_def(int id, int count, int64_t length, int64_t wid
   bin_defs.emplace_back(id, count, length, width, type);
 }
 
-DLL_EXPORTS char* c_execute_nesting(int64_t spacing, int64_t trimming, int rotations) {
+DLL_EXPORTS char* c_execute_rectangle(int64_t spacing, int64_t trimming, int rotations) {
 
   try {
 
-    RectangleGuillotineEngine engine;
+    RectangleEngine engine;
     engine.run(shape_defs, bin_defs, spacing, trimming, rotations, solution);
 
     message.clear();
     message = "-- START PACKY MESSAGE --\n"
+            "engine = rectangle\n"
             "bin_defs.size = " + std::to_string(bin_defs.size()) + "\n"
             "shape_defs.size = " + std::to_string(shape_defs.size()) + "\n"
             "-------------------------\n"
@@ -56,6 +57,103 @@ DLL_EXPORTS char* c_execute_nesting(int64_t spacing, int64_t trimming, int rotat
             "solution.unused_bins.size = " + std::to_string(solution.unused_bins.size()) + "\n"
             "solution.packed_bins.size = " + std::to_string(solution.packed_bins.size()) + "\n"
             "solution.unplaced_shapes.size = " + std::to_string(solution.unplaced_shapes.size()) + "\n"
+            "-- END PACKY MESSAGE --\n";
+
+  } catch(const std::exception &e) {
+    message.clear();
+    message = "Error: " + (std::string)e.what();
+  } catch( ... ) {
+    message.clear();
+    message = "Unknow Error";
+  }
+
+  return (char*)message.c_str();
+}
+
+DLL_EXPORTS char* c_execute_rectangleguillotine(int64_t spacing, int64_t trimming, int rotations) {
+
+  try {
+
+    RectangleGuillotineEngine engine;
+    engine.run(shape_defs, bin_defs, spacing, trimming, rotations, solution);
+
+    message.clear();
+    message = "-- START PACKY MESSAGE --\n"
+            "engine = rectangleguillotine\n"
+            "bin_defs.size = " + std::to_string(bin_defs.size()) + "\n"
+            "shape_defs.size = " + std::to_string(shape_defs.size()) + "\n"
+            "-------------------------\n"
+            "spacing = " + std::to_string(spacing) + "\n"
+            "trimming = " + std::to_string(trimming) + "\n"
+            "rotations = " + std::to_string(rotations) + "\n"
+            "-------------------------\n"
+            "solution.unused_bins.size = " + std::to_string(solution.unused_bins.size()) + "\n"
+            "solution.packed_bins.size = " + std::to_string(solution.packed_bins.size()) + "\n"
+            "solution.unplaced_shapes.size = " + std::to_string(solution.unplaced_shapes.size()) + "\n"
+            "-- END PACKY MESSAGE --\n";
+
+  } catch(const std::exception &e) {
+    message.clear();
+    message = "Error: " + (std::string)e.what();
+  } catch( ... ) {
+    message.clear();
+    message = "Unknow Error";
+  }
+
+  return (char*)message.c_str();
+}
+
+DLL_EXPORTS char* c_execute_irregular(int64_t spacing, int64_t trimming, int rotations) {
+
+  try {
+
+    IrregularEngine engine;
+    engine.run(shape_defs, bin_defs, spacing, trimming, rotations, solution);
+
+    message.clear();
+    message = "-- START PACKY MESSAGE --\n"
+            "engine = irregular\n"
+            "bin_defs.size = " + std::to_string(bin_defs.size()) + "\n"
+            "shape_defs.size = " + std::to_string(shape_defs.size()) + "\n"
+            "-------------------------\n"
+            "spacing = " + std::to_string(spacing) + "\n"
+            "trimming = " + std::to_string(trimming) + "\n"
+            "rotations = " + std::to_string(rotations) + "\n"
+            "-------------------------\n"
+            "solution.unused_bins.size = " + std::to_string(solution.unused_bins.size()) + "\n"
+            "solution.packed_bins.size = " + std::to_string(solution.packed_bins.size()) + "\n"
+            "solution.unplaced_shapes.size = " + std::to_string(solution.unplaced_shapes.size()) + "\n"
+            "-- END PACKY MESSAGE --\n";
+
+  } catch(const std::exception &e) {
+    message.clear();
+    message = "Error: " + (std::string)e.what();
+  } catch( ... ) {
+    message.clear();
+    message = "Unknow Error";
+  }
+
+  return (char*)message.c_str();
+}
+
+DLL_EXPORTS char* c_execute_onedimensional(int64_t spacing, int64_t trimming, int rotations) {
+
+  try {
+
+    OneDimensionalEngine engine;
+    engine.run(shape_defs, bin_defs, spacing, trimming, rotations, solution);
+
+    message.clear();
+    message = "-- START PACKY MESSAGE --\n"
+            "engine = onedimensional\n"
+            "bin_defs.size = " + std::to_string(bin_defs.size()) + "\n"
+            "shape_defs.size = " + std::to_string(shape_defs.size()) + "\n"
+            "-------------------------\n"
+            "spacing = " + std::to_string(spacing) + "\n"
+            "trimming = " + std::to_string(trimming) + "\n"
+            "rotations = " + std::to_string(rotations) + "\n"
+            "-------------------------\n" +
+            solution.format() +
             "-- END PACKY MESSAGE --\n";
 
   } catch(const std::exception &e) {
