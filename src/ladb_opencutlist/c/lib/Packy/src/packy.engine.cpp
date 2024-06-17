@@ -44,80 +44,17 @@ namespace Packy {
   }
 
 
-  bool DummyEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, int64_t spacing, int64_t trimming, Solution &solution, std::string &message) {
+  bool RectangleEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, char *c_objective, int64_t c_spacing, int64_t c_trimming, Solution &solution, std::string &message) {
 
     solution.clear();
     message.clear();
 
-    for (auto &shape_def: shape_defs) {
-      for (int i = 0; i < shape_def.count; ++i) {
-        solution.unplaced_shapes.emplace_back(&shape_def);
-      }
-    }
-    std::sort(solution.unplaced_shapes.begin(), solution.unplaced_shapes.end(), shapes_sorter);
-
-    for (auto &bin_def: bin_defs) {
-      for (int i = 0; i < bin_def.count; ++i) {
-        solution.unused_bins.emplace_back(&bin_def);
-      }
-    }
-    std::sort(solution.unused_bins.begin(), solution.unused_bins.end(), bins_sorter);
-
-    for (auto bin_it = begin(solution.unused_bins); bin_it != end(solution.unused_bins);) {
-
-      int64_t min_x = trimming;
-      int64_t max_x = bin_it->def->length - trimming;
-      int64_t min_y = trimming;
-      int64_t max_y = bin_it->def->width - trimming;
-      int64_t x = min_x;
-      int64_t y = min_y;
-      int64_t row_height = 0;
-
-      for (auto shape_it = begin(solution.unplaced_shapes); shape_it != end(solution.unplaced_shapes);) {
-
-        Rect64 bounds = GetBounds(shape_it->def->paths);
-        if (y + bounds.Height() > max_y) {
-          shape_it++;
-          continue;
-        };
-        if (x + bounds.Width() > max_x) {
-          x = min_x;
-          y += row_height + spacing;
-          row_height = 0;
-          continue;
-        }
-
-        shape_it->x = x;
-        shape_it->y = y;
-
-        x += bounds.Width() + spacing;
-        row_height = std::max(row_height, bounds.Height());
-
-        bin_it->shapes.push_back(*shape_it);
-        solution.unplaced_shapes.erase(shape_it);
-
-      }
-
-      if (!bin_it->shapes.empty()) {
-        solution.packed_bins.push_back(*bin_it);
-        solution.unused_bins.erase(bin_it);
-      } else {
-        bin_it++;
-      }
-      if (solution.unplaced_shapes.empty()) break;
-
-    }
-
-    return true;
-  }
-
-  bool RectangleEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, int64_t spacing, int64_t trimming, Solution &solution, std::string &message) {
-
-    solution.clear();
-    message.clear();
+    packingsolver::Objective objective;
+    std::stringstream ss_objective(c_objective);
+    ss_objective >> objective;
 
     rectangle::InstanceBuilder instance_builder;
-    instance_builder.set_objective(Objective::BinPacking);
+    instance_builder.set_objective(objective);
 
     for (auto &bin_def: bin_defs) {
 
@@ -147,10 +84,10 @@ namespace Packy {
     rectangle::Instance instance = instance_builder.build();
 
     rectangle::OptimizeParameters parameters;
-    parameters.optimization_mode = OptimizationMode::NotAnytimeSequential;
-    parameters.not_anytime_tree_search_queue_size = 64;
-    parameters.timer.set_time_limit(10);
-    parameters.verbosity_level = 3;
+    parameters.optimization_mode = OptimizationMode::NotAnytime;
+    parameters.not_anytime_tree_search_queue_size = 1024;
+    parameters.timer.set_time_limit(5);
+    parameters.verbosity_level = 1;
 
     const rectangle::Output output = rectangle::optimize(instance, parameters);
     const rectangle::Solution &ps_solution = output.solution_pool.best();
@@ -174,10 +111,19 @@ namespace Packy {
             auto shape_def_it = std::find_if(shape_defs.begin(), shape_defs.end(), [&item_type_id](const ShapeDef &shape_def) { return shape_def.item_type_id == item_type_id; });
             if (shape_def_it != shape_defs.end()) {
 
-              Shape &shape = bin.shapes.emplace_back(&*shape_def_it);
-              shape.x = VToInt64(solution_item.bl_corner.x);
-              shape.y = VToInt64(solution_item.bl_corner.y);
-              shape.angle = 0;
+              ShapeDef &shape_def = *shape_def_it;
+              Rect64 bounds = GetBounds(shape_def.paths);
+
+              Shape &shape = bin.shapes.emplace_back(&shape_def);
+              if (solution_item.rotate) {
+                shape.x = VToInt64(solution_item.bl_corner.x) + bounds.Height();
+                shape.y = VToInt64(solution_item.bl_corner.y);
+                shape.angle = 90;
+              } else {
+                shape.x = VToInt64(solution_item.bl_corner.x);
+                shape.y = VToInt64(solution_item.bl_corner.y);
+                shape.angle = 0;
+              }
 
             }
 
@@ -189,31 +135,41 @@ namespace Packy {
 
     }
 
-    message = "engine = rectangle\n"
-              "-------------------------\n"
-              "bin_defs.size = " + std::to_string(bin_defs.size()) + "\n"
-              "shape_defs.size = " + std::to_string(shape_defs.size()) + "\n"
-              "-------------------------\n"
-              "spacing = " + std::to_string(spacing) + "\n"
-              "trimming = " + std::to_string(trimming) + "\n"
-              "-------------------------\n" +
-              solution.format();
+    std::stringstream ss;
+
+    ss << "ENGINE --------------------------" << std::endl;
+    ss << "RectangleGuillotine" << std::endl;
+    ss << std::endl << "INSTANCE ------------------------" << std::endl;
+    instance.format(ss, parameters.verbosity_level);
+    ss << std::endl << "PARAMETERS ----------------------" << std::endl;
+    parameters.format(ss);
+    ss << std::endl << "SOLUTION ------------------------" << std::endl;
+    ps_solution.format(ss, parameters.verbosity_level);
+
+    message = ss.str();
 
     return true;
   }
 
-  bool RectangleGuillotineEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, int64_t spacing, int64_t trimming, Solution &solution, std::string &message) {
+  bool RectangleGuillotineEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, char *c_objective, char *c_first_stage_orientation, int64_t c_spacing, int64_t c_trimming, Solution &solution, std::string &message) {
 
     solution.clear();
     message.clear();
 
-    packingsolver::Objective objective = packingsolver::Objective::BinPacking;
-    packingsolver::Length cut_thickness = Int64ToV(spacing);
-    rectangleguillotine::CutOrientation first_stage_orientation = rectangleguillotine::CutOrientation::Vertical;
+    packingsolver::Objective objective;
+    std::stringstream ss_objective(c_objective);
+    ss_objective >> objective;
+
+    packingsolver::rectangleguillotine::CutOrientation first_stage_orientation;
+    std::stringstream ss_first_stage_orientation(c_first_stage_orientation);
+    ss_first_stage_orientation >> first_stage_orientation;
+
+    packingsolver::Length spacing = Int64ToV(c_spacing);
+    packingsolver::Length trimming = Int64ToV(c_trimming);
 
     rectangleguillotine::InstanceBuilder instance_builder;
     instance_builder.set_objective(objective);
-    instance_builder.set_cut_thickness(cut_thickness);
+    instance_builder.set_cut_thickness(spacing);
     instance_builder.set_first_stage_orientation(first_stage_orientation);
 
     for (auto &bin_def: bin_defs) {
@@ -227,13 +183,13 @@ namespace Packy {
 
       instance_builder.add_trims(
               bin_def.bin_type_id,
-              Int64ToV(trimming),
+              trimming,
               rectangleguillotine::TrimType::Hard,
-              Int64ToV(trimming),
+              trimming,
               rectangleguillotine::TrimType::Soft,
-              Int64ToV(trimming),
+              trimming,
               rectangleguillotine::TrimType::Hard,
-              Int64ToV(trimming),
+              trimming,
               rectangleguillotine::TrimType::Soft
       );
 
@@ -255,13 +211,11 @@ namespace Packy {
 
     rectangleguillotine::Instance instance = instance_builder.build();
 
-    instance.write("./bo");
-
     rectangleguillotine::OptimizeParameters parameters;
-    parameters.optimization_mode = OptimizationMode::NotAnytimeSequential;
-    parameters.not_anytime_tree_search_queue_size = 64;
-    parameters.timer.set_time_limit(10);
-    parameters.verbosity_level = 3;
+    parameters.optimization_mode = OptimizationMode::NotAnytime;
+    parameters.not_anytime_tree_search_queue_size = 1024;
+    parameters.timer.set_time_limit(5);
+    parameters.verbosity_level = 1;
 
     const rectangleguillotine::Output output = rectangleguillotine::optimize(instance, parameters);
     const rectangleguillotine::Solution &ps_solution = output.solution_pool.best();
@@ -314,17 +268,17 @@ namespace Packy {
 
                   // Bottom
                   bin.cuts.emplace_back(solution_node.d,
-                                        VToInt64(solution_node.l) - (first_stage_orientation == rectangleguillotine::CutOrientation::Horizontal ? trimming : 0),
-                                        VToInt64(solution_node.b) - spacing,
-                                        VToInt64(solution_node.r) + trimming,
+                                        VToInt64(solution_node.l - (first_stage_orientation == rectangleguillotine::CutOrientation::Horizontal ? trimming : 0)),
+                                        VToInt64(solution_node.b - spacing),
+                                        VToInt64(solution_node.r + trimming),
                                         VToInt64(solution_node.b));
 
                   // Left
                   bin.cuts.emplace_back(solution_node.d,
-                                        VToInt64(solution_node.l) - spacing,
-                                        VToInt64(solution_node.b) - (first_stage_orientation == rectangleguillotine::CutOrientation::Vertical ? trimming : 0),
+                                        VToInt64(solution_node.l - spacing),
+                                        VToInt64(solution_node.b - (first_stage_orientation == rectangleguillotine::CutOrientation::Vertical ? trimming : 0)),
                                         VToInt64(solution_node.l),
-                                        VToInt64(solution_node.t) + trimming);
+                                        VToInt64(solution_node.t + trimming));
 
                 }
 
@@ -337,15 +291,15 @@ namespace Packy {
                   bin.cuts.emplace_back(solution_node.d,
                                         VToInt64(solution_node.r),
                                         VToInt64(solution_node.b),
-                                        VToInt64(solution_node.r) + spacing,
-                                        VToInt64(solution_node.t) + (solution_node.d == 1 ? trimming : 0));
+                                        VToInt64(solution_node.r + spacing),
+                                        VToInt64(solution_node.t + (solution_node.d == 1 ? trimming : 0)));
                 }
                 if (solution_node.t != parent_solution_node.t) {
                   bin.cuts.emplace_back(solution_node.d,
                                         VToInt64(solution_node.l),
                                         VToInt64(solution_node.t),
-                                        VToInt64(solution_node.r) + (solution_node.d == 1 ? trimming : 0),
-                                        VToInt64(solution_node.t) + spacing);
+                                        VToInt64(solution_node.r + (solution_node.d == 1 ? trimming : 0)),
+                                        VToInt64(solution_node.t + spacing));
                 }
 
               }
@@ -360,26 +314,33 @@ namespace Packy {
 
     }
 
-    message = "engine = rectangleguillotine\n"
-              "-------------------------\n"
-              "bin_defs.size = " + std::to_string(bin_defs.size()) + "\n"
-              "shape_defs.size = " + std::to_string(shape_defs.size()) + "\n"
-              "-------------------------\n"
-              "spacing = " + std::to_string(spacing) + "\n"
-              "trimming = " + std::to_string(trimming) + "\n"
-              "-------------------------\n" +
-              solution.format();
+    std::stringstream ss;
+
+    ss << "ENGINE --------------------------" << std::endl;
+    ss << "RectangleGuillotine" << std::endl;
+    ss << std::endl << "INSTANCE ------------------------" << std::endl;
+    instance.format(ss, parameters.verbosity_level);
+    ss << std::endl << "PARAMETERS ----------------------" << std::endl;
+    parameters.format(ss);
+    ss << std::endl << "SOLUTION ------------------------" << std::endl;
+    ps_solution.format(ss, parameters.verbosity_level);
+
+    message = ss.str();
 
     return true;
   }
 
-  bool IrregularEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, int64_t spacing, int64_t trimming, Solution &solution, std::string &message) {
+  bool IrregularEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, char *c_objective, int64_t c_spacing, int64_t c_trimming, Solution &solution, std::string &message) {
 
     solution.clear();
     message.clear();
 
+    packingsolver::Objective objective;
+    std::stringstream ss_objective(c_objective);
+    ss_objective >> objective;
+
     irregular::InstanceBuilder instance_builder;
-    instance_builder.set_objective(Objective::BinPacking);
+    instance_builder.set_objective(objective);
 
     for (auto &bin_def: bin_defs) {
 
@@ -461,10 +422,10 @@ namespace Packy {
     irregular::Instance instance = instance_builder.build();
 
     irregular::OptimizeParameters parameters;
-    parameters.optimization_mode = OptimizationMode::NotAnytimeSequential;
-    parameters.not_anytime_tree_search_queue_size = 64;
-    parameters.timer.set_time_limit(10);
-    parameters.verbosity_level = 3;
+    parameters.optimization_mode = OptimizationMode::NotAnytime;
+    parameters.not_anytime_tree_search_queue_size = 1024;
+    parameters.timer.set_time_limit(5);
+    parameters.verbosity_level = 1;
 
     const irregular::Output output = irregular::optimize(instance, parameters);
     const irregular::Solution &ps_solution = output.solution_pool.best();
@@ -505,26 +466,33 @@ namespace Packy {
 
     }
 
-    message = "engine = irregular\n"
-              "-------------------------\n"
-              "bin_defs.size = " + std::to_string(bin_defs.size()) + "\n"
-              "shape_defs.size = " + std::to_string(shape_defs.size()) + "\n"
-              "-------------------------\n"
-              "spacing = " + std::to_string(spacing) + "\n"
-              "trimming = " + std::to_string(trimming) + "\n"
-              "-------------------------\n" +
-              solution.format();
+    std::stringstream ss;
+
+    ss << "ENGINE --------------------------" << std::endl;
+    ss << "RectangleGuillotine" << std::endl;
+    ss << std::endl << "INSTANCE ------------------------" << std::endl;
+    instance.format(ss, parameters.verbosity_level);
+    ss << std::endl << "PARAMETERS ----------------------" << std::endl;
+    parameters.format(ss);
+    ss << std::endl << "SOLUTION ------------------------" << std::endl;
+    ps_solution.format(ss, parameters.verbosity_level);
+
+    message = ss.str();
 
     return true;
   }
 
-  bool OneDimensionalEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, int64_t spacing, int64_t trimming, Solution &solution, std::string &message) {
+  bool OneDimensionalEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, char *c_objective, int64_t spacing, int64_t trimming, Solution &solution, std::string &message) {
 
     solution.clear();
     message.clear();
 
+    packingsolver::Objective objective;
+    std::stringstream ss_objective(c_objective);
+    ss_objective >> objective;
+
     onedimensional::InstanceBuilder instance_builder;
-    instance_builder.set_objective(Objective::VariableSizedBinPacking);
+    instance_builder.set_objective(objective);
 
     for (auto &bin_def: bin_defs) {
 
@@ -551,10 +519,10 @@ namespace Packy {
     onedimensional::Instance instance = instance_builder.build();
 
     onedimensional::OptimizeParameters parameters;
-    parameters.optimization_mode = OptimizationMode::NotAnytimeSequential;
-    parameters.not_anytime_tree_search_queue_size = 64;
-    parameters.timer.set_time_limit(10);
-    parameters.verbosity_level = 3;
+    parameters.optimization_mode = OptimizationMode::NotAnytime;
+    parameters.not_anytime_tree_search_queue_size = 1024;
+    parameters.timer.set_time_limit(5);
+    parameters.verbosity_level = 1;
 
     const onedimensional::Output output = onedimensional::optimize(instance, parameters);
     const onedimensional::Solution &ps_solution = output.solution_pool.best();
@@ -593,15 +561,18 @@ namespace Packy {
 
     }
 
-    message = "engine = onedimensional\n"
-              "-------------------------\n"
-              "bin_defs.size = " + std::to_string(bin_defs.size()) + "\n"
-              "shape_defs.size = " + std::to_string(shape_defs.size()) + "\n"
-              "-------------------------\n"
-              "spacing = " + std::to_string(spacing) + "\n"
-              "trimming = " + std::to_string(trimming) + "\n"
-              "-------------------------\n" +
-              solution.format();
+    std::stringstream ss;
+
+    ss << "ENGINE --------------------------" << std::endl;
+    ss << "RectangleGuillotine" << std::endl;
+    ss << std::endl << "INSTANCE ------------------------" << std::endl;
+    instance.format(ss, parameters.verbosity_level);
+    ss << std::endl << "PARAMETERS ----------------------" << std::endl;
+    parameters.format(ss);
+    ss << std::endl << "SOLUTION ------------------------" << std::endl;
+    ps_solution.format(ss, parameters.verbosity_level);
+
+    message = ss.str();
 
     return true;
   }

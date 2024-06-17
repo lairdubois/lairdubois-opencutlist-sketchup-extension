@@ -39,7 +39,10 @@ int main() {
   c_append_shape_def(1, 12, 1, GenerateTriangle(cpaths, ToInt64(200), ToInt64(200)));
   c_append_shape_def(2, 24, 1, GenerateTriangle(cpaths, ToInt64(300), ToInt64(300)));
 
-  std::cout << c_execute_rectangleguillotine(0, 0) << std::endl;
+  std::string objective = "bin-packing";
+  std::string first_stage_orientation = "bin-packing";
+
+  std::cout << c_execute_rectangleguillotine(objective.data(), first_stage_orientation.data(), 0, 0) << std::endl;
 
   return 0;
 }

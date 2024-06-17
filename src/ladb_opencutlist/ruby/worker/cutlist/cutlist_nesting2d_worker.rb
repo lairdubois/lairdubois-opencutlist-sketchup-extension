@@ -21,29 +21,33 @@ module Ladb::OpenCutList
 
     def initialize(cutlist,
 
-                   engine: ENGINE_RECTANGLE,
                    group_id: ,
                    part_ids: nil,
                    std_sheet: '',
                    scrap_sheet_sizes: '',
+
+                   engine: ENGINE_RECTANGLE,
+                   objective: 'bin-packing',
+                   first_stage_orientation: 'horizontal',
                    spacing: '20mm',
-                   trimming: '10mm',
-                   rotations: 0
+                   trimming: '10mm'
 
     )
 
       @cutlist = cutlist
 
-      @engine = engine
       @group_id = group_id
       @part_ids = part_ids
       s_length, s_width = StringUtils.split_dxd(std_sheet)
       @std_sheet_length = DimensionUtils.instance.str_to_ifloat(s_length).to_l.to_f
       @std_sheet_width = DimensionUtils.instance.str_to_ifloat(s_width).to_l.to_f
       @scrap_sheet_sizes = DimensionUtils.instance.dxdxq_to_ifloats(scrap_sheet_sizes)
+
+      @engine = engine
+      @objective = objective
+      @first_stage_orientation = first_stage_orientation
       @spacing = DimensionUtils.instance.str_to_ifloat(spacing).to_l.to_f
       @trimming = DimensionUtils.instance.str_to_ifloat(trimming).to_l.to_f
-      @rotations = rotations.to_i
 
     end
 
@@ -67,11 +71,6 @@ module Ladb::OpenCutList
       bin_id = 0
       shape_id = 0
 
-      json = {
-        bin_types: [],
-        item_types: [],
-      }
-
       # Add bins from scrap sheets
       @scrap_sheet_sizes.split(';').each { |scrap_sheet_size|
         ddq = scrap_sheet_size.split('x')
@@ -79,61 +78,29 @@ module Ladb::OpenCutList
         width = ddq[1].strip.to_l.to_f
         count = [ 1, (ddq[2].nil? || ddq[2].strip.to_i == 0) ? 1 : ddq[2].strip.to_i ].max
         bin_defs << Packy::BinDef.new(bin_id += 1, count, Packy.float_to_int64(length), Packy.float_to_int64(width), 1) # 1 = user defined
-
-        json[:bin_types] << {
-          type: 'rectangle',
-          length: length.to_mm.round(3),
-          height: width.to_mm.round(3)
-        }
-
       }
+
+      parts_count = parts.sum { |part| part.count }
 
       # Add bin from std sheet
       if @std_sheet_width > 0 && @std_sheet_length > 0
-        bin_defs << Packy::BinDef.new(bin_id += 1, parts.count, Packy.float_to_int64(@std_sheet_length), Packy.float_to_int64(@std_sheet_width), 0) # 0 = Standard
-
-        json[:bin_types] << {
-          type: 'rectangle',
-          length: @std_sheet_length.to_mm.round(3),
-          height: @std_sheet_width.to_mm.round(3)
-        }
-
+        bin_defs << Packy::BinDef.new(bin_id += 1, parts_count, Packy.float_to_int64(@std_sheet_length), Packy.float_to_int64(@std_sheet_width), 0) # 0 = Standard
       end
 
       # Add shapes from parts
       fn_add_shapes = lambda { |part|
 
         rpaths = []
-        vertices = []
-        holes = []
 
         projection_def = _compute_part_projection_def(PART_DRAWING_TYPE_2D_TOP, part, merge_holes: true)
         projection_def.layer_defs.each do |layer_def|
           next unless layer_def.type_outer? || layer_def.type_holes?
           layer_def.poly_defs.each do |poly_def|
             rpaths << Packy.points_to_rpath(layer_def.type_holes? ? poly_def.points.reverse : poly_def.points)
-
-            if layer_def.type_holes?
-              holes << {
-                type: 'polygon',
-                vertices: poly_def.points.map { |point| { x: point.x.to_mm.round(3), y: point.y.to_mm.round(3) } }
-              }
-            else
-              vertices = poly_def.points.map { |point| { x: point.x.to_mm.round(3), y: point.y.to_mm.round(3) } }
-            end
-
           end
         end
 
         shape_defs << Packy::ShapeDef.new(shape_id += 1, part.count, (group.material_grained  && !part.ignore_grain_direction) ? 0 : 1, rpaths, part)
-
-        json[:item_types] << {
-          type: 'polygon',
-          copies: part.count,
-          vertices: vertices,
-          holes: holes
-        }
-
 
       }
       parts.each { |part|
@@ -148,17 +115,15 @@ module Ladb::OpenCutList
 
       SKETCHUP_CONSOLE.clear
 
-      # puts json.to_json
-
       case @engine
       when ENGINE_RECTANGLE
-        solution, message = Packy.execute_rectangle(bin_defs, shape_defs, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming))
+        solution, message = Packy.execute_rectangle(bin_defs, shape_defs, @objective, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming))
       when ENGINE_RECTANGLEGUILLOTINE
-        solution, message = Packy.execute_rectangleguillotine(bin_defs, shape_defs, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming))
+        solution, message = Packy.execute_rectangleguillotine(bin_defs, shape_defs, @objective, @first_stage_orientation, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming))
       when ENGINE_IRREGULAR
-        solution, message = Packy.execute_irregular(bin_defs, shape_defs, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming))
+        solution, message = Packy.execute_irregular(bin_defs, shape_defs, @objective, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming))
       when ENGINE_ONEDIMENSIONAL
-        solution, message = Packy.execute_onedimensional(bin_defs, shape_defs, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming))
+        solution, message = Packy.execute_onedimensional(bin_defs, shape_defs, @objective, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming))
       else
         return { :errors => [ "Unknow engine : #{@engine}" ] }
       end

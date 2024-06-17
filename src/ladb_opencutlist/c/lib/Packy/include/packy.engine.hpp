@@ -5,19 +5,11 @@
 
 namespace Packy {
 
-  class DummyEngine {
-
-  public:
-
-    bool run(ShapeDefs &shape_defs, BinDefs &bin_defs, int64_t spacing, int64_t trimming, Solution &solution, std::string &message);
-
-  };
-
   class RectangleEngine {
 
   public:
 
-    bool run(ShapeDefs &shape_defs, BinDefs &bin_defs, int64_t spacing, int64_t trimming, Solution &solution, std::string &message);
+    bool run(ShapeDefs &shape_defs, BinDefs &bin_defs, char *c_objective, int64_t c_spacing, int64_t c_trimming, Solution &solution, std::string &message);
 
   };
 
@@ -25,7 +17,7 @@ namespace Packy {
 
   public:
 
-    bool run(ShapeDefs &shape_defs, BinDefs &bin_defs, int64_t spacing, int64_t trimming, Solution &solution, std::string &message);
+    bool run(ShapeDefs &shape_defs, BinDefs &bin_defs, char *c_objective, char *c_first_stage_orientation, int64_t c_spacing, int64_t c_trimming, Solution &solution, std::string &message);
 
   };
 
@@ -33,7 +25,7 @@ namespace Packy {
 
   public:
 
-    bool run(ShapeDefs &shape_defs, BinDefs &bin_defs, int64_t spacing, int64_t trimming, Solution &solution, std::string &message);
+    bool run(ShapeDefs &shape_defs, BinDefs &bin_defs, char *c_objective, int64_t c_spacing, int64_t c_trimming, Solution &solution, std::string &message);
 
   };
 
@@ -41,7 +33,7 @@ namespace Packy {
 
   public:
 
-    bool run(ShapeDefs &shape_defs, BinDefs &bin_defs, int64_t spacing, int64_t trimming, Solution &solution, std::string &message);
+    bool run(ShapeDefs &shape_defs, BinDefs &bin_defs, char *c_objective, int64_t c_spacing, int64_t c_trimming, Solution &solution, std::string &message);
 
   };
 
