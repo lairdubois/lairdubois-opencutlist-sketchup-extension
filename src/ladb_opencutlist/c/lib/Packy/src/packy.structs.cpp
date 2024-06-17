@@ -7,9 +7,10 @@ namespace Packy {
 
   // ShapeDef and Shape
 
-  ShapeDef::ShapeDef(int id, int count, Clipper2Lib::Paths64 paths) :
+  ShapeDef::ShapeDef(int id, int count, int rotations, Clipper2Lib::Paths64 paths) :
     id(id),
     count(count),
+    rotations(rotations),
     paths(std::move(paths)),
     item_type_id(0) {}
 

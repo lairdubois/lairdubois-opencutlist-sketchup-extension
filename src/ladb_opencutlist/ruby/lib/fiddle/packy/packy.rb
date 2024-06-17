@@ -18,12 +18,12 @@ module Ladb::OpenCutList::Fiddle
         'void c_clear()',
 
         'void c_append_bin_def(int, int, int64_t, int64_t, int)',
-        'void c_append_shape_def(int, int, int64_t*)',
+        'void c_append_shape_def(int, int, int, int64_t*)',
 
-        'char* c_execute_rectangle(int64_t, int64_t, int)',
-        'char* c_execute_rectangleguillotine(int64_t, int64_t, int)',
-        'char* c_execute_irregular(int64_t, int64_t, int)',
-        'char* c_execute_onedimensional(int64_t, int64_t, int)',
+        'char* c_execute_rectangle(int64_t, int64_t)',
+        'char* c_execute_rectangleguillotine(int64_t, int64_t)',
+        'char* c_execute_irregular(int64_t, int64_t)',
+        'char* c_execute_onedimensional(int64_t, int64_t)',
 
         'int64_t* c_get_solution()',
 
@@ -43,45 +43,45 @@ module Ladb::OpenCutList::Fiddle
 
     # --
 
-    def self.execute_rectangle(bin_defs, shape_defs, spacing, trimming, rotations)
+    def self.execute_rectangle(bin_defs, shape_defs, spacing, trimming)
       _load_lib
       _clear
       _append_bin_defs(bin_defs)
       _append_shape_defs(shape_defs)
-      message = _execute_rectangle(spacing, trimming, rotations).to_s
+      message = _execute_rectangle(spacing, trimming).to_s
       solution = _unpack_solution
       _clear
       [ solution, message ]
     end
 
-    def self.execute_rectangleguillotine(bin_defs, shape_defs, spacing, trimming, rotations)
+    def self.execute_rectangleguillotine(bin_defs, shape_defs, spacing, trimming)
       _load_lib
       _clear
       _append_bin_defs(bin_defs)
       _append_shape_defs(shape_defs)
-      message = _execute_rectangleguillotine(spacing, trimming, rotations).to_s
+      message = _execute_rectangleguillotine(spacing, trimming).to_s
       solution = _unpack_solution
       _clear
       [ solution, message ]
     end
 
-    def self.execute_irregular(bin_defs, shape_defs, spacing, trimming, rotations)
+    def self.execute_irregular(bin_defs, shape_defs, spacing, trimming)
       _load_lib
       _clear
       _append_bin_defs(bin_defs)
       _append_shape_defs(shape_defs)
-      message = _execute_irregular(spacing, trimming, rotations).to_s
+      message = _execute_irregular(spacing, trimming).to_s
       solution = _unpack_solution
       _clear
       [ solution, message ]
     end
 
-    def self.execute_onedimensional(bin_defs, shape_defs, spacing, trimming, rotations)
+    def self.execute_onedimensional(bin_defs, shape_defs, spacing, trimming)
       _load_lib
       _clear
       _append_bin_defs(bin_defs)
       _append_shape_defs(shape_defs)
-      message = _execute_onedimensional(spacing, trimming, rotations).to_s
+      message = _execute_onedimensional(spacing, trimming).to_s
       solution = _unpack_solution
       _clear
       [ solution, message ]
@@ -106,27 +106,27 @@ module Ladb::OpenCutList::Fiddle
 
     def self._append_shape_def(shape_def)
       @shape_defs_cache[shape_def.id] = shape_def
-      c_append_shape_def(shape_def.id, shape_def.count, _rpaths_to_cpaths(shape_def.paths))
+      c_append_shape_def(shape_def.id, shape_def.count, shape_def.rotations, _rpaths_to_cpaths(shape_def.paths))
     end
 
     def self._append_shape_defs(shape_defs)
       shape_defs.each { |shape_def| _append_shape_def(shape_def) }
     end
 
-    def self._execute_rectangle(spacing, trimming, rotations)
-      c_execute_rectangle(spacing, trimming, rotations)
+    def self._execute_rectangle(spacing, trimming)
+      c_execute_rectangle(spacing, trimming)
     end
 
-    def self._execute_rectangleguillotine(spacing, trimming, rotations)
-      c_execute_rectangleguillotine(spacing, trimming, rotations)
+    def self._execute_rectangleguillotine(spacing, trimming)
+      c_execute_rectangleguillotine(spacing, trimming)
     end
 
-    def self._execute_irregular(spacing, trimming, rotations)
-      c_execute_irregular(spacing, trimming, rotations)
+    def self._execute_irregular(spacing, trimming)
+      c_execute_irregular(spacing, trimming)
     end
 
-    def self._execute_onedimensional(spacing, trimming, rotations)
-      c_execute_onedimensional(spacing, trimming, rotations)
+    def self._execute_onedimensional(spacing, trimming)
+      c_execute_onedimensional(spacing, trimming)
     end
 
     def self._unpack_solution
@@ -215,7 +215,7 @@ module Ladb::OpenCutList::Fiddle
     # -----
 
     BinDef = Struct.new(:id, :count, :length, :width, :type)  # length and with must be converted to int64
-    ShapeDef = Struct.new(:id, :count, :paths, :data)
+    ShapeDef = Struct.new(:id, :count, :rotations, :paths, :data)
 
     Solution = Struct.new(:unused_bins, :packed_bins, :unplaced_shapes)
     Bin = Struct.new(:def, :shapes, :cuts)

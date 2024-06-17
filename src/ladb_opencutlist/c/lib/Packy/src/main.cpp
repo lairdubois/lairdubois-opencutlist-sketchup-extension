@@ -35,11 +35,11 @@ int main() {
 
   int64_t cpaths[12];
 
-  c_append_shape_def(0, 6, GenerateTriangle(cpaths, ToInt64(100), ToInt64(100)));
-  c_append_shape_def(1, 12, GenerateTriangle(cpaths, ToInt64(200), ToInt64(200)));
-  c_append_shape_def(2, 24, GenerateTriangle(cpaths, ToInt64(300), ToInt64(300)));
+  c_append_shape_def(0, 6, 1, GenerateTriangle(cpaths, ToInt64(100), ToInt64(100)));
+  c_append_shape_def(1, 12, 1, GenerateTriangle(cpaths, ToInt64(200), ToInt64(200)));
+  c_append_shape_def(2, 24, 1, GenerateTriangle(cpaths, ToInt64(300), ToInt64(300)));
 
-  std::cout << c_execute_rectangleguillotine(0, 0, 0) << std::endl;
+  std::cout << c_execute_rectangleguillotine(0, 0) << std::endl;
 
   return 0;
 }

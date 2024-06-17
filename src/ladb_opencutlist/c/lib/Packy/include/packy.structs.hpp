@@ -9,11 +9,12 @@ namespace Packy {
 
   struct ShapeDef {
 
-    ShapeDef(int id, int count, Clipper2Lib::Paths64 paths);
+    ShapeDef(int id, int count, int rotations, Clipper2Lib::Paths64 paths);
     ~ShapeDef();
 
     int id;
     int count;
+    int rotations;
 
     Clipper2Lib::Paths64 paths;
 

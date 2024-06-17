@@ -125,7 +125,7 @@ module Ladb::OpenCutList
           end
         end
 
-        shape_defs << Packy::ShapeDef.new(shape_id += 1, part.count, rpaths, part)
+        shape_defs << Packy::ShapeDef.new(shape_id += 1, part.count, (group.material_grained  && !part.ignore_grain_direction) ? 0 : 1, rpaths, part)
 
         json[:item_types] << {
           type: 'polygon',
@@ -148,17 +148,17 @@ module Ladb::OpenCutList
 
       SKETCHUP_CONSOLE.clear
 
-      puts json.to_json
+      # puts json.to_json
 
       case @engine
       when ENGINE_RECTANGLE
-        solution, message = Packy.execute_rectangle(bin_defs, shape_defs, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming), @rotations)
+        solution, message = Packy.execute_rectangle(bin_defs, shape_defs, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming))
       when ENGINE_RECTANGLEGUILLOTINE
-        solution, message = Packy.execute_rectangleguillotine(bin_defs, shape_defs, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming), @rotations)
+        solution, message = Packy.execute_rectangleguillotine(bin_defs, shape_defs, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming))
       when ENGINE_IRREGULAR
-        solution, message = Packy.execute_irregular(bin_defs, shape_defs, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming), @rotations)
+        solution, message = Packy.execute_irregular(bin_defs, shape_defs, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming))
       when ENGINE_ONEDIMENSIONAL
-        solution, message = Packy.execute_onedimensional(bin_defs, shape_defs, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming), @rotations)
+        solution, message = Packy.execute_onedimensional(bin_defs, shape_defs, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming))
       else
         return { :errors => [ "Unknow engine : #{@engine}" ] }
       end
@@ -185,7 +185,7 @@ module Ladb::OpenCutList
 
     private
 
-    def _bin_to_svg(bin, bg_color = '#5cb85c')
+    def _bin_to_svg(bin, bg_color = '#dddddd')
 
       px_bin_length = _to_px(Packy.int64_to_float(bin.def.length))
       px_bin_width = _to_px(Packy.int64_to_float(bin.def.width))

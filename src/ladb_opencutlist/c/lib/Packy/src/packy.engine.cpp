@@ -36,17 +36,18 @@ namespace Packy {
   }
 
   int64_t Int64ToV(int64_t v) {
-    return v / 1e4;
+    return v / 1e6;
   }
 
   int64_t VToInt64(int64_t i) {
-    return i * 1e4;
+    return i * 1e6;
   }
 
 
-  bool DummyEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, int64_t spacing, int64_t trimming, int rotations, Solution &solution) {
+  bool DummyEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, int64_t spacing, int64_t trimming, Solution &solution, std::string &message) {
 
     solution.clear();
+    message.clear();
 
     for (auto &shape_def: shape_defs) {
       for (int i = 0; i < shape_def.count; ++i) {
@@ -110,7 +111,10 @@ namespace Packy {
     return true;
   }
 
-  bool RectangleEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, int64_t spacing, int64_t trimming, int rotations, Solution &solution) {
+  bool RectangleEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, int64_t spacing, int64_t trimming, Solution &solution, std::string &message) {
+
+    solution.clear();
+    message.clear();
 
     rectangle::InstanceBuilder instance_builder;
     instance_builder.set_objective(Objective::BinPacking);
@@ -135,7 +139,7 @@ namespace Packy {
               Int64ToV(bounds.Height()),
               -1,
               shape_def.count,
-              true
+              shape_def.rotations == 0
       );
 
     }
@@ -185,15 +189,32 @@ namespace Packy {
 
     }
 
+    message = "engine = rectangle\n"
+              "-------------------------\n"
+              "bin_defs.size = " + std::to_string(bin_defs.size()) + "\n"
+              "shape_defs.size = " + std::to_string(shape_defs.size()) + "\n"
+              "-------------------------\n"
+              "spacing = " + std::to_string(spacing) + "\n"
+              "trimming = " + std::to_string(trimming) + "\n"
+              "-------------------------\n" +
+              solution.format();
+
     return true;
   }
 
-  bool RectangleGuillotineEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, int64_t spacing, int64_t trimming, int rotations, Solution &solution) {
+  bool RectangleGuillotineEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, int64_t spacing, int64_t trimming, Solution &solution, std::string &message) {
+
+    solution.clear();
+    message.clear();
+
+    packingsolver::Objective objective = packingsolver::Objective::BinPacking;
+    packingsolver::Length cut_thickness = Int64ToV(spacing);
+    rectangleguillotine::CutOrientation first_stage_orientation = rectangleguillotine::CutOrientation::Vertical;
 
     rectangleguillotine::InstanceBuilder instance_builder;
-    instance_builder.set_objective(Objective::BinPacking);
-    instance_builder.set_cut_thickness(Int64ToV(spacing));
-    instance_builder.set_first_stage_orientation(rectangleguillotine::CutOrientation::Horizontal);
+    instance_builder.set_objective(objective);
+    instance_builder.set_cut_thickness(cut_thickness);
+    instance_builder.set_first_stage_orientation(first_stage_orientation);
 
     for (auto &bin_def: bin_defs) {
 
@@ -227,16 +248,18 @@ namespace Packy {
               Int64ToV(bounds.Height()),
               -1,
               shape_def.count,
-              false
+              shape_def.rotations == 0
       );
 
     }
 
     rectangleguillotine::Instance instance = instance_builder.build();
 
+    instance.write("./bo");
+
     rectangleguillotine::OptimizeParameters parameters;
     parameters.optimization_mode = OptimizationMode::NotAnytimeSequential;
-    parameters.not_anytime_tree_search_queue_size = 1024;
+    parameters.not_anytime_tree_search_queue_size = 64;
     parameters.timer.set_time_limit(10);
     parameters.verbosity_level = 3;
 
@@ -287,22 +310,26 @@ namespace Packy {
 
               if (solution_node.d == 0) {
 
-                // Bottom
-                bin.cuts.emplace_back(solution_node.d,
-                                      VToInt64(solution_node.l) - trimming,
-                                      VToInt64(solution_node.b) - spacing,
-                                      VToInt64(solution_node.r) + trimming,
-                                      VToInt64(solution_node.b));
+                if (trimming > 0) {
 
-                // Left
-                bin.cuts.emplace_back(solution_node.d,
-                                      VToInt64(solution_node.l) - spacing,
-                                      VToInt64(solution_node.b),
-                                      VToInt64(solution_node.l),
-                                      VToInt64(solution_node.t) + trimming);
+                  // Bottom
+                  bin.cuts.emplace_back(solution_node.d,
+                                        VToInt64(solution_node.l) - (first_stage_orientation == rectangleguillotine::CutOrientation::Horizontal ? trimming : 0),
+                                        VToInt64(solution_node.b) - spacing,
+                                        VToInt64(solution_node.r) + trimming,
+                                        VToInt64(solution_node.b));
+
+                  // Left
+                  bin.cuts.emplace_back(solution_node.d,
+                                        VToInt64(solution_node.l) - spacing,
+                                        VToInt64(solution_node.b) - (first_stage_orientation == rectangleguillotine::CutOrientation::Vertical ? trimming : 0),
+                                        VToInt64(solution_node.l),
+                                        VToInt64(solution_node.t) + trimming);
+
+                }
 
 
-              } else if (solution_node.f > 0) {
+              } else if (solution_node.f >= 0) {
 
                 const SolutionNode &parent_solution_node = solution_bin.nodes[solution_node.f];
 
@@ -333,12 +360,23 @@ namespace Packy {
 
     }
 
+    message = "engine = rectangleguillotine\n"
+              "-------------------------\n"
+              "bin_defs.size = " + std::to_string(bin_defs.size()) + "\n"
+              "shape_defs.size = " + std::to_string(shape_defs.size()) + "\n"
+              "-------------------------\n"
+              "spacing = " + std::to_string(spacing) + "\n"
+              "trimming = " + std::to_string(trimming) + "\n"
+              "-------------------------\n" +
+              solution.format();
+
     return true;
   }
 
-  bool IrregularEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, int64_t spacing, int64_t trimming, int rotations, Solution &solution) {
+  bool IrregularEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, int64_t spacing, int64_t trimming, Solution &solution, std::string &message) {
 
     solution.clear();
+    message.clear();
 
     irregular::InstanceBuilder instance_builder;
     instance_builder.set_objective(Objective::BinPacking);
@@ -467,13 +505,26 @@ namespace Packy {
 
     }
 
+    message = "engine = irregular\n"
+              "-------------------------\n"
+              "bin_defs.size = " + std::to_string(bin_defs.size()) + "\n"
+              "shape_defs.size = " + std::to_string(shape_defs.size()) + "\n"
+              "-------------------------\n"
+              "spacing = " + std::to_string(spacing) + "\n"
+              "trimming = " + std::to_string(trimming) + "\n"
+              "-------------------------\n" +
+              solution.format();
+
     return true;
   }
 
-  bool OneDimensionalEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, int64_t spacing, int64_t trimming, int rotations, Solution &solution) {
+  bool OneDimensionalEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, int64_t spacing, int64_t trimming, Solution &solution, std::string &message) {
+
+    solution.clear();
+    message.clear();
 
     onedimensional::InstanceBuilder instance_builder;
-    instance_builder.set_objective(Objective::BinPacking);
+    instance_builder.set_objective(Objective::VariableSizedBinPacking);
 
     for (auto &bin_def: bin_defs) {
 
@@ -541,6 +592,16 @@ namespace Packy {
       }
 
     }
+
+    message = "engine = onedimensional\n"
+              "-------------------------\n"
+              "bin_defs.size = " + std::to_string(bin_defs.size()) + "\n"
+              "shape_defs.size = " + std::to_string(shape_defs.size()) + "\n"
+              "-------------------------\n"
+              "spacing = " + std::to_string(spacing) + "\n"
+              "trimming = " + std::to_string(trimming) + "\n"
+              "-------------------------\n" +
+              solution.format();
 
     return true;
   }
