@@ -4559,6 +4559,7 @@
                 var $selectFirstStageOrientation = $('#ladb_select_first_stage_orientation', $modal);
                 var $inputSpacing = $('#ladb_input_spacing', $modal);
                 var $inputTrimming = $('#ladb_input_trimming', $modal);
+                var $selectVerbisotyLevel = $('#ladb_select_verbosity_level', $modal);
                 var $btnEditMaterial = $('#ladb_btn_edit_material', $modal);
                 var $btnUnloadLib = $('#ladb_btn_unload_lib', $modal);
                 var $btnGenerate = $('#ladb_btn_generate', $modal);
@@ -4571,6 +4572,7 @@
                     options.first_stage_orientation = $selectFirstStageOrientation.val();
                     options.spacing = $inputSpacing.val();
                     options.trimming = $inputTrimming.val();
+                    options.verbosity_level = $selectVerbisotyLevel.val();
                 }
                 var fnFillInputs = function (options) {
                     $selectEngine.selectpicker('val', options.engine);
@@ -4578,6 +4580,7 @@
                     $selectFirstStageOrientation.selectpicker('val', options.first_stage_orientation);
                     $inputSpacing.val(options.spacing);
                     $inputTrimming.val(options.trimming);
+                    $selectVerbisotyLevel.selectpicker('val', options.verbosity_level);
                 }
                 var fnEditMaterial = function (callback) {
 
@@ -4618,6 +4621,7 @@
                 $selectFirstStageOrientation.selectpicker(SELECT_PICKER_OPTIONS);
                 $inputSpacing.ladbTextinputDimension();
                 $inputTrimming.ladbTextinputDimension();
+                $selectVerbisotyLevel.selectpicker(SELECT_PICKER_OPTIONS);
 
                 fnFillInputs(nesting2dOptions);
 

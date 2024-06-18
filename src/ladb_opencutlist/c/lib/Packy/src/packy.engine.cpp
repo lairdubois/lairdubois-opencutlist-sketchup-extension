@@ -35,16 +35,7 @@ namespace Packy {
     return (bin1.def->type > bin2.def->type);
   }
 
-  int64_t Int64ToV(int64_t v) {
-    return v / 1e6;
-  }
-
-  int64_t VToInt64(int64_t i) {
-    return i * 1e6;
-  }
-
-
-  bool RectangleEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, char *c_objective, int64_t c_spacing, int64_t c_trimming, Solution &solution, std::string &message) {
+  bool RectangleEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, char *c_objective, int64_t c_spacing, int64_t c_trimming, int verbosity_level, Solution &solution, std::string &message) {
 
     solution.clear();
     message.clear();
@@ -59,8 +50,8 @@ namespace Packy {
     for (auto &bin_def: bin_defs) {
 
       bin_def.bin_type_id = instance_builder.add_bin_type(
-              Int64ToV(bin_def.length),
-              Int64ToV(bin_def.width),
+              bin_def.length,
+              bin_def.width,
               -1,
               bin_def.count
       );
@@ -72,8 +63,8 @@ namespace Packy {
       Rect64 bounds = GetBounds(shape_def.paths);
 
       shape_def.item_type_id = instance_builder.add_item_type(
-              Int64ToV(bounds.Width()),
-              Int64ToV(bounds.Height()),
+              bounds.Width(),
+              bounds.Height(),
               -1,
               shape_def.count,
               shape_def.rotations == 0
@@ -87,7 +78,7 @@ namespace Packy {
     parameters.optimization_mode = OptimizationMode::NotAnytime;
     parameters.not_anytime_tree_search_queue_size = 1024;
     parameters.timer.set_time_limit(5);
-    parameters.verbosity_level = 1;
+    parameters.verbosity_level = verbosity_level;
 
     const rectangle::Output output = rectangle::optimize(instance, parameters);
     const rectangle::Solution &ps_solution = output.solution_pool.best();
@@ -116,12 +107,12 @@ namespace Packy {
 
               Shape &shape = bin.shapes.emplace_back(&shape_def);
               if (solution_item.rotate) {
-                shape.x = VToInt64(solution_item.bl_corner.x) + bounds.Height();
-                shape.y = VToInt64(solution_item.bl_corner.y);
+                shape.x = solution_item.bl_corner.x + bounds.Height();
+                shape.y = solution_item.bl_corner.y;
                 shape.angle = 90;
               } else {
-                shape.x = VToInt64(solution_item.bl_corner.x);
-                shape.y = VToInt64(solution_item.bl_corner.y);
+                shape.x = solution_item.bl_corner.x;
+                shape.y = solution_item.bl_corner.y;
                 shape.angle = 0;
               }
 
@@ -151,7 +142,7 @@ namespace Packy {
     return true;
   }
 
-  bool RectangleGuillotineEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, char *c_objective, char *c_first_stage_orientation, int64_t c_spacing, int64_t c_trimming, Solution &solution, std::string &message) {
+  bool RectangleGuillotineEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, char *c_objective, char *c_first_stage_orientation, int64_t c_spacing, int64_t c_trimming, int verbosity_level, Solution &solution, std::string &message) {
 
     solution.clear();
     message.clear();
@@ -164,8 +155,8 @@ namespace Packy {
     std::stringstream ss_first_stage_orientation(c_first_stage_orientation);
     ss_first_stage_orientation >> first_stage_orientation;
 
-    packingsolver::Length spacing = Int64ToV(c_spacing);
-    packingsolver::Length trimming = Int64ToV(c_trimming);
+    packingsolver::Length spacing = c_spacing;
+    packingsolver::Length trimming = c_trimming;
 
     rectangleguillotine::InstanceBuilder instance_builder;
     instance_builder.set_objective(objective);
@@ -175,8 +166,8 @@ namespace Packy {
     for (auto &bin_def: bin_defs) {
 
       bin_def.bin_type_id = instance_builder.add_bin_type(
-              Int64ToV(bin_def.length),
-              Int64ToV(bin_def.width),
+              bin_def.length,
+              bin_def.width,
               -1,
               bin_def.count
       );
@@ -200,8 +191,8 @@ namespace Packy {
       Rect64 bounds = GetBounds(shape_def.paths);
 
       shape_def.item_type_id = instance_builder.add_item_type(
-              Int64ToV(bounds.Width()),
-              Int64ToV(bounds.Height()),
+              bounds.Width(),
+              bounds.Height(),
               -1,
               shape_def.count,
               shape_def.rotations == 0
@@ -215,7 +206,7 @@ namespace Packy {
     parameters.optimization_mode = OptimizationMode::NotAnytime;
     parameters.not_anytime_tree_search_queue_size = 1024;
     parameters.timer.set_time_limit(5);
-    parameters.verbosity_level = 1;
+    parameters.verbosity_level = verbosity_level;
 
     const rectangleguillotine::Output output = rectangleguillotine::optimize(instance, parameters);
     const rectangleguillotine::Solution &ps_solution = output.solution_pool.best();
@@ -245,16 +236,16 @@ namespace Packy {
 
               ShapeDef &shape_def = *shape_def_it;
               Rect64 bounds = GetBounds(shape_def.paths);
-              bool rotated = Int64ToV(bounds.Width()) != (solution_node.r - solution_node.l);
+              bool rotated = bounds.Width() != (solution_node.r - solution_node.l);
 
               Shape &shape = bin.shapes.emplace_back(&shape_def);
               if (rotated) {
-                shape.x = VToInt64(solution_node.r);
-                shape.y = VToInt64(solution_node.b);
+                shape.x = solution_node.r;
+                shape.y = solution_node.b;
                 shape.angle = 90;
               } else {
-                shape.x = VToInt64(solution_node.l);
-                shape.y = VToInt64(solution_node.b);
+                shape.x = solution_node.l;
+                shape.y = solution_node.b;
                 shape.angle = 0;
               }
 
@@ -268,17 +259,17 @@ namespace Packy {
 
                   // Bottom
                   bin.cuts.emplace_back(solution_node.d,
-                                        VToInt64(solution_node.l - (first_stage_orientation == rectangleguillotine::CutOrientation::Horizontal ? trimming : 0)),
-                                        VToInt64(solution_node.b - spacing),
-                                        VToInt64(solution_node.r + trimming),
-                                        VToInt64(solution_node.b));
+                                        solution_node.l - (first_stage_orientation == rectangleguillotine::CutOrientation::Horizontal ? trimming : 0),
+                                        solution_node.b - spacing,
+                                        solution_node.r + trimming,
+                                        solution_node.b);
 
                   // Left
                   bin.cuts.emplace_back(solution_node.d,
-                                        VToInt64(solution_node.l - spacing),
-                                        VToInt64(solution_node.b - (first_stage_orientation == rectangleguillotine::CutOrientation::Vertical ? trimming : 0)),
-                                        VToInt64(solution_node.l),
-                                        VToInt64(solution_node.t + trimming));
+                                        solution_node.l - spacing,
+                                        solution_node.b - (first_stage_orientation == rectangleguillotine::CutOrientation::Vertical ? trimming : 0),
+                                        solution_node.l,
+                                        solution_node.t + trimming);
 
                 }
 
@@ -289,17 +280,17 @@ namespace Packy {
 
                 if (solution_node.r != parent_solution_node.r) {
                   bin.cuts.emplace_back(solution_node.d,
-                                        VToInt64(solution_node.r),
-                                        VToInt64(solution_node.b),
-                                        VToInt64(solution_node.r + spacing),
-                                        VToInt64(solution_node.t + (solution_node.d == 1 ? trimming : 0)));
+                                        solution_node.r,
+                                        solution_node.b,
+                                        solution_node.r + spacing,
+                                        solution_node.t + (solution_node.d == 1 ? trimming : 0));
                 }
                 if (solution_node.t != parent_solution_node.t) {
                   bin.cuts.emplace_back(solution_node.d,
-                                        VToInt64(solution_node.l),
-                                        VToInt64(solution_node.t),
-                                        VToInt64(solution_node.r + (solution_node.d == 1 ? trimming : 0)),
-                                        VToInt64(solution_node.t + spacing));
+                                        solution_node.l,
+                                        solution_node.t,
+                                        solution_node.r + (solution_node.d == 1 ? trimming : 0),
+                                        solution_node.t + spacing);
                 }
 
               }
@@ -330,7 +321,7 @@ namespace Packy {
     return true;
   }
 
-  bool IrregularEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, char *c_objective, int64_t c_spacing, int64_t c_trimming, Solution &solution, std::string &message) {
+  bool IrregularEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, char *c_objective, int64_t c_spacing, int64_t c_trimming, int verbosity_level, Solution &solution, std::string &message) {
 
     solution.clear();
     message.clear();
@@ -344,8 +335,8 @@ namespace Packy {
 
     for (auto &bin_def: bin_defs) {
 
-      LengthDbl length = (LengthDbl) Int64ToV(bin_def.length);
-      LengthDbl width = (LengthDbl) Int64ToV(bin_def.width);
+      LengthDbl length = (LengthDbl) bin_def.length;
+      LengthDbl width = (LengthDbl) bin_def.width;
 
       irregular::Shape shape;
 
@@ -393,10 +384,10 @@ namespace Packy {
             point_it_next = begin(path);
           }
 
-          LengthDbl xs = (LengthDbl) Int64ToV((*point_it).x);
-          LengthDbl ys = (LengthDbl) Int64ToV((*point_it).y);
-          LengthDbl xe = (LengthDbl) Int64ToV((*point_it_next).x);
-          LengthDbl ye = (LengthDbl) Int64ToV((*point_it_next).y);
+          LengthDbl xs = (LengthDbl) (*point_it).x;
+          LengthDbl ys = (LengthDbl) (*point_it).y;
+          LengthDbl xe = (LengthDbl) (*point_it_next).x;
+          LengthDbl ye = (LengthDbl) (*point_it_next).y;
 
           irregular::ShapeElement line;
           line.type = irregular::ShapeElementType::LineSegment;
@@ -425,7 +416,7 @@ namespace Packy {
     parameters.optimization_mode = OptimizationMode::NotAnytime;
     parameters.not_anytime_tree_search_queue_size = 1024;
     parameters.timer.set_time_limit(5);
-    parameters.verbosity_level = 1;
+    parameters.verbosity_level = verbosity_level;
 
     const irregular::Output output = irregular::optimize(instance, parameters);
     const irregular::Solution &ps_solution = output.solution_pool.best();
@@ -452,8 +443,8 @@ namespace Packy {
             if (shape_def_it != shape_defs.end()) {
 
               Shape &shape = bin.shapes.emplace_back(&*shape_def_it);
-              shape.x = VToInt64(solution_item.bl_corner.x);
-              shape.y = VToInt64(solution_item.bl_corner.y);
+              shape.x = solution_item.bl_corner.x;
+              shape.y = solution_item.bl_corner.y;
               shape.angle = (int64_t) solution_item.angle;
 
             }
@@ -482,7 +473,7 @@ namespace Packy {
     return true;
   }
 
-  bool OneDimensionalEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, char *c_objective, int64_t spacing, int64_t trimming, Solution &solution, std::string &message) {
+  bool OneDimensionalEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, char *c_objective, int64_t spacing, int64_t trimming, int verbosity_level, Solution &solution, std::string &message) {
 
     solution.clear();
     message.clear();
@@ -497,7 +488,7 @@ namespace Packy {
     for (auto &bin_def: bin_defs) {
 
       bin_def.bin_type_id = instance_builder.add_bin_type(
-              Int64ToV(bin_def.length),
+              bin_def.length,
               -1,
               bin_def.count
       );
@@ -509,7 +500,7 @@ namespace Packy {
       Rect64 bounds = GetBounds(shape_def.paths);
 
       shape_def.item_type_id = instance_builder.add_item_type(
-              Int64ToV(bounds.Width()),
+              bounds.Width(),
               -1,
               shape_def.count
       );
@@ -522,7 +513,7 @@ namespace Packy {
     parameters.optimization_mode = OptimizationMode::NotAnytime;
     parameters.not_anytime_tree_search_queue_size = 1024;
     parameters.timer.set_time_limit(5);
-    parameters.verbosity_level = 1;
+    parameters.verbosity_level = verbosity_level;
 
     const onedimensional::Output output = onedimensional::optimize(instance, parameters);
     const onedimensional::Solution &ps_solution = output.solution_pool.best();
@@ -547,7 +538,7 @@ namespace Packy {
             if (shape_def_it != shape_defs.end()) {
 
               Shape &shape = bin.shapes.emplace_back(&*shape_def_it);
-              shape.x = VToInt64(solution_item.start);
+              shape.x = solution_item.start;
               shape.y = 0;
               shape.angle = 0;
 

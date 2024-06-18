@@ -42,7 +42,7 @@ int main() {
   std::string objective = "bin-packing";
   std::string first_stage_orientation = "bin-packing";
 
-  std::cout << c_execute_rectangleguillotine(objective.data(), first_stage_orientation.data(), 0, 0) << std::endl;
+  std::cout << c_execute_rectangleguillotine(objective.data(), first_stage_orientation.data(), 0, 0, 1) << std::endl;
 
   return 0;
 }

@@ -20,10 +20,10 @@ module Ladb::OpenCutList::Fiddle
         'void c_append_bin_def(int, int, int64_t, int64_t, int)',
         'void c_append_shape_def(int, int, int, int64_t*)',
 
-        'char* c_execute_rectangle(char*, int64_t, int64_t)',
-        'char* c_execute_rectangleguillotine(char*, char*, int64_t, int64_t)',
-        'char* c_execute_irregular(char*, int64_t, int64_t)',
-        'char* c_execute_onedimensional(char*, int64_t, int64_t)',
+        'char* c_execute_rectangle(char*, int64_t, int64_t, int)',
+        'char* c_execute_rectangleguillotine(char*, char*, int64_t, int64_t, int)',
+        'char* c_execute_irregular(char*, int64_t, int64_t, int)',
+        'char* c_execute_onedimensional(char*, int64_t, int64_t, int)',
 
         'int64_t* c_get_solution()',
 
@@ -43,45 +43,61 @@ module Ladb::OpenCutList::Fiddle
 
     # --
 
-    def self.execute_rectangle(bin_defs, shape_defs, objective, spacing, trimming)
+    def self.float_to_int64_factor
+      1
+    end
+
+    # Convert Float to Integer
+    def self.float_to_int64(f)
+      (f.to_mm * float_to_int64_factor).round.to_i
+    end
+
+    # Convert Integer to Float
+    def self.int64_to_float(i)
+      (i / float_to_int64_factor).mm
+    end
+
+    # --
+
+    def self.execute_rectangle(bin_defs, shape_defs, objective, spacing, trimming, verbosity_level)
       _load_lib
       _clear
       _append_bin_defs(bin_defs)
       _append_shape_defs(shape_defs)
-      message = _execute_rectangle(objective, spacing, trimming).to_s
+      message = _execute_rectangle(objective, spacing, trimming, verbosity_level).to_s
       solution = _unpack_solution
       _clear
       [ solution, message ]
     end
 
-    def self.execute_rectangleguillotine(bin_defs, shape_defs, objective, first_stage_orientation, spacing, trimming)
+    def self.execute_rectangleguillotine(bin_defs, shape_defs, objective, first_stage_orientation, spacing, trimming, verbosity_level)
       _load_lib
       _clear
       _append_bin_defs(bin_defs)
       _append_shape_defs(shape_defs)
-      message = _execute_rectangleguillotine(objective, first_stage_orientation, spacing, trimming).to_s
+      message = _execute_rectangleguillotine(objective, first_stage_orientation, spacing, trimming, verbosity_level).to_s
       solution = _unpack_solution
       _clear
       [ solution, message ]
     end
 
-    def self.execute_irregular(bin_defs, shape_defs, objective, spacing, trimming)
+    def self.execute_irregular(bin_defs, shape_defs, objective, spacing, trimming, verbosity_level)
       _load_lib
       _clear
       _append_bin_defs(bin_defs)
       _append_shape_defs(shape_defs)
-      message = _execute_irregular(objective, spacing, trimming).to_s
+      message = _execute_irregular(objective, spacing, trimming, verbosity_level).to_s
       solution = _unpack_solution
       _clear
       [ solution, message ]
     end
 
-    def self.execute_onedimensional(bin_defs, shape_defs, objective, spacing, trimming)
+    def self.execute_onedimensional(bin_defs, shape_defs, objective, spacing, trimming, verbosity_level)
       _load_lib
       _clear
       _append_bin_defs(bin_defs)
       _append_shape_defs(shape_defs)
-      message = _execute_onedimensional(objective, spacing, trimming).to_s
+      message = _execute_onedimensional(objective, spacing, trimming, verbosity_level).to_s
       solution = _unpack_solution
       _clear
       [ solution, message ]
@@ -113,20 +129,20 @@ module Ladb::OpenCutList::Fiddle
       shape_defs.each { |shape_def| _append_shape_def(shape_def) }
     end
 
-    def self._execute_rectangle(objective, spacing, trimming)
-      c_execute_rectangle(objective, spacing, trimming)
+    def self._execute_rectangle(objective, spacing, trimming, verbosity_level)
+      c_execute_rectangle(objective, spacing, trimming, verbosity_level)
     end
 
-    def self._execute_rectangleguillotine(objective, first_stage_orientation, spacing, trimming)
-      c_execute_rectangleguillotine(objective, first_stage_orientation, spacing, trimming)
+    def self._execute_rectangleguillotine(objective, first_stage_orientation, spacing, trimming, verbosity_level)
+      c_execute_rectangleguillotine(objective, first_stage_orientation, spacing, trimming, verbosity_level)
     end
 
-    def self._execute_irregular(objective, spacing, trimming)
-      c_execute_irregular(objective, spacing, trimming)
+    def self._execute_irregular(objective, spacing, trimming, verbosity_level)
+      c_execute_irregular(objective, spacing, trimming, verbosity_level)
     end
 
-    def self._execute_onedimensional(objective, spacing, trimming)
-      c_execute_onedimensional(objective, spacing, trimming)
+    def self._execute_onedimensional(objective, spacing, trimming, verbosity_level)
+      c_execute_onedimensional(objective, spacing, trimming, verbosity_level)
     end
 
     def self._unpack_solution

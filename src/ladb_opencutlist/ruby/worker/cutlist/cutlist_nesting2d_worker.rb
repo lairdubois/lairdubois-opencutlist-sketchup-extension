@@ -30,7 +30,8 @@ module Ladb::OpenCutList
                    objective: 'bin-packing',
                    first_stage_orientation: 'horizontal',
                    spacing: '20mm',
-                   trimming: '10mm'
+                   trimming: '10mm',
+                   verbosity_level: 1
 
     )
 
@@ -48,6 +49,7 @@ module Ladb::OpenCutList
       @first_stage_orientation = first_stage_orientation
       @spacing = DimensionUtils.instance.str_to_ifloat(spacing).to_l.to_f
       @trimming = DimensionUtils.instance.str_to_ifloat(trimming).to_l.to_f
+      @verbosity_level = verbosity_level.to_i
 
     end
 
@@ -117,13 +119,13 @@ module Ladb::OpenCutList
 
       case @engine
       when ENGINE_RECTANGLE
-        solution, message = Packy.execute_rectangle(bin_defs, shape_defs, @objective, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming))
+        solution, message = Packy.execute_rectangle(bin_defs, shape_defs, @objective, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming), @verbosity_level)
       when ENGINE_RECTANGLEGUILLOTINE
-        solution, message = Packy.execute_rectangleguillotine(bin_defs, shape_defs, @objective, @first_stage_orientation, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming))
+        solution, message = Packy.execute_rectangleguillotine(bin_defs, shape_defs, @objective, @first_stage_orientation, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming), @verbosity_level)
       when ENGINE_IRREGULAR
-        solution, message = Packy.execute_irregular(bin_defs, shape_defs, @objective, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming))
+        solution, message = Packy.execute_irregular(bin_defs, shape_defs, @objective, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming), @verbosity_level)
       when ENGINE_ONEDIMENSIONAL
-        solution, message = Packy.execute_onedimensional(bin_defs, shape_defs, @objective, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming))
+        solution, message = Packy.execute_onedimensional(bin_defs, shape_defs, @objective, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming), @verbosity_level)
       else
         return { :errors => [ "Unknow engine : #{@engine}" ] }
       end

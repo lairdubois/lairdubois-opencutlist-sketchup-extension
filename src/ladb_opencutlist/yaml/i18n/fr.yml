@@ -800,6 +800,9 @@ tab:
       option_first_stage_orientation: Première coupe
       option_first_stage_orientation_help: |
         ...
+      option_verbosity_level: Verbosity level
+      option_verbosity_level_help: |
+        ...
       tooltip:
         scroll_to_block_1d: Défiler vers la première barre ou bande
         scroll_to_block_2d: Défiler vers le premier panneau

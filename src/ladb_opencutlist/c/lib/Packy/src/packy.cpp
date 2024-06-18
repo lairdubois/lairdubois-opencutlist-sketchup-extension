@@ -39,12 +39,12 @@ DLL_EXPORTS void c_append_shape_def(int id, int count, int rotations, const int6
 }
 
 
-DLL_EXPORTS char* c_execute_rectangle(char *c_objective, int64_t c_spacing, int64_t c_trimming) {
+DLL_EXPORTS char* c_execute_rectangle(char *c_objective, int64_t c_spacing, int64_t c_trimming, int verbosity_level) {
 
   try {
 
     RectangleEngine engine;
-    engine.run(shape_defs, bin_defs, c_objective, c_spacing, c_trimming, solution, message);
+    engine.run(shape_defs, bin_defs, c_objective, c_spacing, c_trimming, verbosity_level, solution, message);
 
     message = "-- START PACKY MESSAGE --\n" + message + "-- END PACKY MESSAGE --\n";
 
@@ -59,12 +59,12 @@ DLL_EXPORTS char* c_execute_rectangle(char *c_objective, int64_t c_spacing, int6
   return (char*)message.c_str();
 }
 
-DLL_EXPORTS char* c_execute_rectangleguillotine(char *c_objective, char *c_first_stage_orientation, int64_t c_spacing, int64_t c_trimming) {
+DLL_EXPORTS char* c_execute_rectangleguillotine(char *c_objective, char *c_first_stage_orientation, int64_t c_spacing, int64_t c_trimming, int verbosity_level) {
 
   try {
 
     RectangleGuillotineEngine engine;
-    engine.run(shape_defs, bin_defs, c_objective, c_first_stage_orientation, c_spacing, c_trimming, solution, message);
+    engine.run(shape_defs, bin_defs, c_objective, c_first_stage_orientation, c_spacing, c_trimming, verbosity_level, solution, message);
 
     message = "-- START PACKY MESSAGE --\n" + message + "-- END PACKY MESSAGE --\n";
 
@@ -79,12 +79,12 @@ DLL_EXPORTS char* c_execute_rectangleguillotine(char *c_objective, char *c_first
   return (char*)message.c_str();
 }
 
-DLL_EXPORTS char* c_execute_irregular(char *c_objective, int64_t c_spacing, int64_t c_trimming) {
+DLL_EXPORTS char* c_execute_irregular(char *c_objective, int64_t c_spacing, int64_t c_trimming, int verbosity_level) {
 
   try {
 
     IrregularEngine engine;
-    engine.run(shape_defs, bin_defs, c_objective, c_spacing, c_trimming, solution, message);
+    engine.run(shape_defs, bin_defs, c_objective, c_spacing, c_trimming, verbosity_level, solution, message);
 
     message = "-- START PACKY MESSAGE --\n" + message + "-- END PACKY MESSAGE --\n";
 
@@ -99,12 +99,12 @@ DLL_EXPORTS char* c_execute_irregular(char *c_objective, int64_t c_spacing, int6
   return (char*)message.c_str();
 }
 
-DLL_EXPORTS char* c_execute_onedimensional(char *c_objective, int64_t c_spacing, int64_t c_trimming) {
+DLL_EXPORTS char* c_execute_onedimensional(char *c_objective, int64_t c_spacing, int64_t c_trimming, int verbosity_level) {
 
   try {
 
     OneDimensionalEngine engine;
-    engine.run(shape_defs, bin_defs, c_objective, c_spacing, c_trimming, solution, message);
+    engine.run(shape_defs, bin_defs, c_objective, c_spacing, c_trimming, verbosity_level, solution, message);
 
     message = "-- START PACKY MESSAGE --\n" + message + "-- END PACKY MESSAGE --\n";
 
@@ -118,6 +118,7 @@ DLL_EXPORTS char* c_execute_onedimensional(char *c_objective, int64_t c_spacing,
 
   return (char*)message.c_str();
 }
+
 
 DLL_EXPORTS int64_t* c_get_solution() {
   return ConvertSolutionToCSolution(solution);

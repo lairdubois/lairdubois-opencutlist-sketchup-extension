@@ -15,6 +15,7 @@
     "objective": "bin-packing",
     "first_stage_orientation": "vertical",
     "spacing": { "metric": "20mm", "imperial": "1\"" },
-    "trimming": { "metric": "10mm", "imperial": "1/2\"" }
+    "trimming": { "metric": "10mm", "imperial": "1/2\"" },
+    "verbosity_level": 1
   }
 }

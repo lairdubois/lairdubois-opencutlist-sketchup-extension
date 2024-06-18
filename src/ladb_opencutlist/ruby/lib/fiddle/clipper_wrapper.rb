@@ -5,29 +5,33 @@ module Ladb::OpenCutList::Fiddle
   module ClipperWrapper
     include Wrapper
 
-    FLOAT_TO_INT64_CONVERTER = 1e8
-
     # ---
+
+    def float_to_int64_factor
+      1e8
+    end
 
     # Convert Float to Integer
     def float_to_int64(f)
-      (f * FLOAT_TO_INT64_CONVERTER).to_f
+      (f * float_to_int64_factor).to_i
     end
 
     # Convert Integer to Float
     def int64_to_float(i)
-      i / FLOAT_TO_INT64_CONVERTER
+      i / float_to_int64_factor
     end
+
+    # ---
 
     # Convert Array<Geom::Point3d> to Array<Integer> (x1, y1, x2, y2, ...)
     def points_to_rpath(points)
-      points.map { |point| [ (point.x * FLOAT_TO_INT64_CONVERTER).to_i, (point.y * FLOAT_TO_INT64_CONVERTER).to_i ] }.flatten
+      points.map { |point| [ float_to_int64(point.x), float_to_int64(point.y) ] }.flatten
     end
 
     # Convert Array<Integer> (x1, y1, x2, y2, ...) to Array<Geom::Point3d>
     def rpath_to_points(rpath, z = 0.0)
       points = []
-      rpath.each_slice(2) { |coord_x, coord_y| points << Geom::Point3d.new(coord_x / FLOAT_TO_INT64_CONVERTER, coord_y / FLOAT_TO_INT64_CONVERTER, z) }
+      rpath.each_slice(2) { |coord_x, coord_y| points << Geom::Point3d.new(int64_to_float(coord_x), int64_to_float(coord_y), z) }
       points
     end
 
