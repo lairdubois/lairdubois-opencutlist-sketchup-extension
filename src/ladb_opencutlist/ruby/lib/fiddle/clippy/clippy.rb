@@ -106,7 +106,7 @@ module Ladb::OpenCutList::Fiddle
 
     def self.get_rpath_area(rpath)
       _load_lib
-      return c_get_cpath_area(_rpath_to_cpath(rpath)) / ClipperWrapper::FLOAT_TO_INT64_CONVERTER / ClipperWrapper::FLOAT_TO_INT64_CONVERTER
+      return c_get_cpath_area(_rpath_to_cpath(rpath)) / float_to_int64_factor / float_to_int64_factor
     end
 
     # -- Path manipulations --

@@ -1,9 +1,4 @@
 # -------------------------------------------------------------------
-#                             extern
-
-add_subdirectory(extern)
-
-# -------------------------------------------------------------------
 #                            Clipper2
 
 add_subdirectory(Clipper2)
@@ -24,6 +19,6 @@ add_subdirectory(Clippy)
 add_subdirectory(Imagy)
 
 # -------------------------------------------------------------------
-#                             Nesty
+#                             Packy
 
-add_subdirectory(Nesty)
+add_subdirectory(Packy)

@@ -1,6 +1,6 @@
 #include "iostream"
 
-#include "nesty.hpp"
+#include "packy.hpp"
 
 int64_t* GenerateTriangle(int64_t *cpaths, int64_t x, int64_t y) {
 
@@ -31,15 +31,18 @@ int main() {
   std::cout << "Hello" << std::endl;
   std::cout << c_version() << std::endl;
 
-  c_append_bin_def(0, 10, ToInt64(1000), ToInt64(1000), 1);
+  c_append_bin_def(0, 50, ToInt64(1000), ToInt64(1000), 1);
 
   int64_t cpaths[12];
 
-  c_append_shape_def(0, 6, GenerateTriangle(cpaths, ToInt64(100), ToInt64(100)));
-  c_append_shape_def(1, 12, GenerateTriangle(cpaths, ToInt64(200), ToInt64(100)));
-  c_append_shape_def(2, 24, GenerateTriangle(cpaths, ToInt64(300), ToInt64(100)));
+  c_append_shape_def(0, 6, 1, GenerateTriangle(cpaths, ToInt64(100), ToInt64(100)));
+  c_append_shape_def(1, 12, 1, GenerateTriangle(cpaths, ToInt64(200), ToInt64(200)));
+  c_append_shape_def(2, 24, 1, GenerateTriangle(cpaths, ToInt64(300), ToInt64(300)));
 
-  std::cout << c_execute_nesting(0, 0, 0) << std::endl;
+  std::string objective = "bin-packing";
+  std::string first_stage_orientation = "bin-packing";
+
+  std::cout << c_execute_rectangleguillotine(objective.data(), first_stage_orientation.data(), 0, 0, 1) << std::endl;
 
   return 0;
 }

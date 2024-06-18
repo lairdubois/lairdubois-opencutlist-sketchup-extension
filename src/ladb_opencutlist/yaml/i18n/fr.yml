@@ -747,8 +747,6 @@ tab:
       option_trimming: Marge
       option_trimming_help_1d: Marge à chaque extrémité de la barre ou bande à considérer comme chute.
       option_trimming_help_2d: Marge autour du panneau à considérer comme chute.
-      option_rotations: Rotations
-      option_rotations_help_2d: Nombre de rotations possibles pour chaque pièce.
       option_optimization: Niveau d'optimisation
       option_optimization_help: "Le niveau d'optimisation définit le nombre de possibilités calculées, donc aussi le temps de calcul."
       option_optimization_0: Moyen
@@ -793,6 +791,18 @@ tab:
         Format attendu : **L**x**l**x**Q**. Où **L** et **l** sont respectivement la *longueur* et la *largeur* du reste et **Q** la quantité.
         La quantité est facultative.
         *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*
+      option_engine: Moteur
+      option_engine_help: |
+        ...
+      option_objective: Objectif
+      option_objective_help: |
+        ...
+      option_first_stage_orientation: Première coupe
+      option_first_stage_orientation_help: |
+        ...
+      option_verbosity_level: Verbosity level
+      option_verbosity_level_help: |
+        ...
       tooltip:
         scroll_to_block_1d: Défiler vers la première barre ou bande
         scroll_to_block_2d: Défiler vers le premier panneau

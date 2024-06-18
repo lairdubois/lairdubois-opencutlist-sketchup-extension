@@ -1,15 +1,16 @@
-#include "nesty.hpp"
-#include "nesty.structs.hpp"
+#include "packy.hpp"
+#include "packy.structs.hpp"
 
 #include <utility>
 
-namespace Nesty {
+namespace Packy {
 
   // ShapeDef and Shape
 
-  ShapeDef::ShapeDef(int id, int count, Clipper2Lib::Paths64 paths) :
+  ShapeDef::ShapeDef(int id, int count, int rotations, Clipper2Lib::Paths64 paths) :
     id(id),
     count(count),
+    rotations(rotations),
     paths(std::move(paths)),
     item_type_id(0) {}
 
@@ -23,6 +24,18 @@ namespace Nesty {
     angle(0) {}
 
   Shape::~Shape() = default;
+
+
+  // Cut
+
+  Cut::Cut(int16_t depth, int64_t x1, int64_t y1, int64_t x2, int64_t y2) :
+    depth(depth),
+    x1(x1),
+    y1(y1),
+    x2(x2),
+    y2(y2) {}
+
+  Cut::~Cut() = default;
 
 
   // BinDef and Bin
@@ -55,6 +68,12 @@ namespace Nesty {
     this->unplaced_shapes.clear();
   }
 
+  std::string Solution::format() {
+    return "solution.unused_bins.size = " + std::to_string(this->unused_bins.size()) + "\n"
+           "solution.packed_bins.size = " + std::to_string(this->packed_bins.size()) + "\n"
+           "solution.unplaced_shapes.size = " + std::to_string(this->unplaced_shapes.size()) + "\n";
+  }
+
   // -- Converters
 
   size_t GetCShapeArrayLen() {
@@ -65,8 +84,16 @@ namespace Nesty {
     return 1 /* Number of shapes */ + shapes.size() * GetCShapeArrayLen();
   }
 
+  size_t GetCCutArrayLen() {
+    return 5 /* depth, x1, y1, x2, y2 */;
+  }
+
+  size_t GetCCutsArrayLen(const Cuts &cuts) {
+    return 1 /* Number of cuts */ + cuts.size() * GetCCutArrayLen();
+  }
+
   size_t GetCBinArrayLen(const Bin &bin) {
-    return 1 /* id */ + GetCShapesArrayLen(bin.shapes);
+    return 1 /* id */ + GetCShapesArrayLen(bin.shapes) + GetCCutsArrayLen(bin.cuts);
   }
 
   size_t GetCBinsArrayLen(const Bins &bins) {
@@ -113,18 +140,56 @@ namespace Nesty {
 
   }
 
+  void ConvertCutToCCut(const Cut &cut, int64_t *&v) {
+
+    /*
+
+     CCut
+      |attr  |attr  |attr  |attr  |attr
+      |depth |x1    |y1    |x2    |y2
+
+     */
+
+    *v++ = static_cast<int64_t>(cut.depth);
+    *v++ = static_cast<int64_t>(cut.x1);
+    *v++ = static_cast<int64_t>(cut.y1);
+    *v++ = static_cast<int64_t>(cut.x2);
+    *v++ = static_cast<int64_t>(cut.y2);
+
+  }
+
+  void ConvertCutsToCCuts(const Cuts &cuts, int64_t *&v) {
+
+    /*
+
+     CCuts
+      |counter|cut1  |cut2  |...|cutN
+      |N      |      |      |...|
+
+      N = Number of cuts
+
+     */
+
+    *v++ = static_cast<int64_t>(cuts.size());
+    for (auto &cut : cuts) {
+      ConvertCutToCCut(cut, v);
+    }
+
+  }
+
   void ConvertBinToCBin(const Bin &bin, int64_t *&v) {
 
     /*
 
      CBin
-      |attr   |shapes
-      |id     |
+      |attr   |shapes |cuts
+      |id     |       |
 
      */
 
     *v++ = static_cast<int64_t>(bin.def->id);
     ConvertShapesToCShapes(bin.shapes, v);
+    ConvertCutsToCCuts(bin.cuts, v);
 
   }
 

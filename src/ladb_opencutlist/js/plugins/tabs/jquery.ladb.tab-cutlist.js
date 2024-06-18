@@ -4554,24 +4554,33 @@
                 var $widgetPreset = $('.ladb-widget-preset', $modal);
                 var $inputStdSheet = $('#ladb_select_std_sheet', $modal);
                 var $inputScrapSheetSizes = $('#ladb_input_scrap_sheet_sizes', $modal);
+                var $selectEngine = $('#ladb_select_engine', $modal);
+                var $selectObjective = $('#ladb_select_objective', $modal);
+                var $selectFirstStageOrientation = $('#ladb_select_first_stage_orientation', $modal);
                 var $inputSpacing = $('#ladb_input_spacing', $modal);
                 var $inputTrimming = $('#ladb_input_trimming', $modal);
-                var $inputRotations = $('#ladb_input_rotations', $modal);
+                var $selectVerbisotyLevel = $('#ladb_select_verbosity_level', $modal);
                 var $btnEditMaterial = $('#ladb_btn_edit_material', $modal);
-                var $btnUnloadNesty = $('#ladb_btn_unload_nesty', $modal);
+                var $btnUnloadLib = $('#ladb_btn_unload_lib', $modal);
                 var $btnGenerate = $('#ladb_btn_generate', $modal);
 
                 var fnFetchOptions = function (options) {
                     options.std_sheet = $inputStdSheet.val();
                     options.scrap_sheet_sizes = $inputScrapSheetSizes.ladbTextinputTokenfield('getValidTokensList');
+                    options.engine = $selectEngine.val();
+                    options.objective = $selectObjective.val();
+                    options.first_stage_orientation = $selectFirstStageOrientation.val();
                     options.spacing = $inputSpacing.val();
                     options.trimming = $inputTrimming.val();
-                    options.rotations = $inputRotations.val();
+                    options.verbosity_level = $selectVerbisotyLevel.val();
                 }
                 var fnFillInputs = function (options) {
+                    $selectEngine.selectpicker('val', options.engine);
+                    $selectObjective.selectpicker('val', options.objective);
+                    $selectFirstStageOrientation.selectpicker('val', options.first_stage_orientation);
                     $inputSpacing.val(options.spacing);
                     $inputTrimming.val(options.trimming);
-                    $inputRotations.val(options.rotations);
+                    $selectVerbisotyLevel.selectpicker('val', options.verbosity_level);
                 }
                 var fnEditMaterial = function (callback) {
 
@@ -4607,11 +4616,12 @@
                 $inputStdSheet.selectpicker(SELECT_PICKER_OPTIONS);
                 $inputScrapSheetSizes.ladbTextinputTokenfield({ format: 'dxdxq' });
                 $inputScrapSheetSizes.ladbTextinputTokenfield('setTokens', nesting2dOptions.scrap_sheet_sizes);
+                $selectEngine.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectObjective.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectFirstStageOrientation.selectpicker(SELECT_PICKER_OPTIONS);
                 $inputSpacing.ladbTextinputDimension();
                 $inputTrimming.ladbTextinputDimension();
-                $inputRotations.ladbTextinputNumberWithUnit({
-                    resetValue: '0'
-                });
+                $selectVerbisotyLevel.selectpicker(SELECT_PICKER_OPTIONS);
 
                 fnFillInputs(nesting2dOptions);
 
@@ -4634,13 +4644,13 @@
                 $btnEditMaterial.on('click', function () {
                     fnEditMaterial();
                 });
-                $btnUnloadNesty.on('click', function () {
-                    rubyCallCommand('core_unload_c_lib', { lib: 'nesty' }, function (response) {
+                $btnUnloadLib.on('click', function () {
+                    rubyCallCommand('core_unload_c_lib', { lib: 'packy' }, function (response) {
                         if (response.errors) {
                             that.dialog.notifyErrors(response.errors);
                         }
                         if (response.success) {
-                            that.dialog.notifySuccess('Nesty unloaded');
+                            that.dialog.notifySuccess('Packy unloaded');
                         }
                     });
                 });
