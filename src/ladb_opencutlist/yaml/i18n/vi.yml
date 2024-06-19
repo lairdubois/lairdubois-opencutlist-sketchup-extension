@@ -477,7 +477,7 @@ tab:
       flipped_detection_help: |
         Nếu tùy chọn này được chọn, các bộ phận được phản chiếu sẽ được phát hiện và hiển thị dưới dạng một bộ phận riêng biệt.
       smart_material: Phân bổ vật liệu *Thông minh*
-      smart_material_help: "Nếu tùy chọn này được chọn, các bộ phận không có vật liệu được xác định có thể được chỉ định vật liệu chính của các phần tử con của chúng hoặc vật liệu được kế thừa từ các phần tử cha của chúng."
+      smart_material_help: "Nếu tùy chọn này được chọn, các bộ phận không có vật liệu được xác định có thể được gán vật liệu đã được gán cho một trong các bộ phận cha hoặc con của chúng."
       dynamic_attributes_name: Sử dụng thuộc tính *Tên* của dynamic components
       dynamic_attributes_name_help: |
         Nếu tùy chọn này được chọn, ký hiệu của các bộ phận sẽ được trích xuất từ ​​thuộc tính *Tên*, nếu chúng được xác định.
@@ -555,7 +555,7 @@ tab:
       final: Thực tế
       total_cutting: Σ Thô
       total_final: Σ Thực tế
-      length: Dòng chính
+      length: Chiều dài
       length_short: L
       width: Chiều rộng
       width_short: W
@@ -566,7 +566,7 @@ tab:
     export:
       title: Xuất
       info_0: |
-        Với chức năng này, *Danh sách bộ phận* có thể được xuất dưới dạng *Danh sách các bộ phận* với định dạng [CSV](https://en.wikipedia.org/wiki/Comma-separated_values).
+        Với chức năng này, *Danh sách các bộ phận* có thể được xuất dưới dạng *Danh sách các bộ phận* với định dạng [CSV](https://en.wikipedia.org/wiki/Comma-separated_values).
       customize_help: |
         Sắp xếp lại, Ẩn, Thêm, Xóa hoặc Chọn một cột từ danh sách để tùy chỉnh **tiêu đề** và **công thức** sẽ tạo ra các giá trị cho từng hàng được xuất.
       add_column: Thêm một cột
@@ -595,7 +595,7 @@ tab:
       copy_values: Chỉ các giá trị
       number: No.
       path: Đường dẫn
-      instance_name: Đối tượng
+      instance_name: Phiên bản
       name: Tên gọi
       total_cutting_length: Tổng chiều dài - thô
       total_cutting_area: Tổng diện tích - thô
@@ -618,7 +618,7 @@ tab:
       material_description: Ghi chú vật liệu
       material_url: URL của vật liệu
       material_std_dimension: Kích thước tiêu chuản
-      entity_names: Tên đối tượng
+      entity_names: Tên phiên bản
       description: Mô tả
       url: URL
       tags: Nhãn hiệu
@@ -635,7 +635,7 @@ tab:
       filename: Tên tập tin
       model_name: Tên mô hình
       model_description: Mô tả mô hình
-      page_name: Tên cảnh
+      page_name: Tên Sence
       page_description: Mô tả Scene
       placeholder:
         no_column_title: Nhập tiêu đề
@@ -767,7 +767,7 @@ tab:
         Chọn bảng tiêu chuẩn hoặc dải cạnh, bảng này sẽ được sao chép để chứa tất cả các bộ phận.
         Danh sách này được xác định trong trường **$t(tab.materials.edit_material.std_lengths)** của vật liệu.
         Chỉnh sửa vật liệu '{{ material_name }}' để cập nhật danh sách này.
-      option_std_bar_add: Thêm kích thước tấm
+      option_std_bar_add: Thêm chiều dài
       option_std_bar_none: Không có
       option_scrap_bar_dimensional_lengths: Bảng cắt thừa
       option_scrap_bar_edge_lengths: Dải cạnh cắt thừa
@@ -783,7 +783,7 @@ tab:
         Chọn tấm tiêu chuẩn hoặc tấm veneer sẽ được sao chép để tính toán vị trí tốt nhất có thể.
         Danh sách này được định nghĩa trong trường **$t(tab.materials.edit_material.std_sizes)** của vật liệu.
         Chỉnh sửa vật liệu '{{ material_name }}' để hoàn thành danh sách này.
-      option_std_sheet_add: Thêm kích thước tấm
+      option_std_sheet_add: Thêm chiều dài
       option_std_sheet_none: Không có
       option_scrap_sheet_good_sizes: Cắt thừa
       option_scrap_sheet_veneer_sizes: Mặt cắt veneer
@@ -802,8 +802,8 @@ tab:
         summary: Bảng tóm tắt
         count: Số lượng
         bar: Kích thước
-        sheet: Hàng dạng tấm
-        length: Dòng chính
+        sheet: Tấm
+        length: Chiều dài
         width: Chiều rộng
         total_length: Σ Chiều dài
         total_area: Σ Diện tích
@@ -870,7 +870,7 @@ tab:
         option_sheet_good: Hàng dạng tấm
         option_sheet_good_help: |
           Cho phép xuất trang tính và lựa chọn màu sắc.
-        option_sheet_veneer: Ván lạng
+        option_sheet_veneer: Veneer
         option_sheet_veneer_help: |
           Cho phép xuất trang tính veneer và lựa chọn màu sắc.
         option_bar_dimensional: Kích thước
@@ -908,7 +908,7 @@ tab:
         no_placement_possible_2d: "Không thể sắp xếp (tấm tiêu chuẩn quá nhỏ, kích thước cắt quá lớn, vết cưa quá lớn, ...)."
         bad_error: "Lỗi thuật toán. Vui lòng liên hệ với các nhà phát triển, vì đây là một trường hợp thú vị."
         unplaced_parts: "**1 bộ phận** không thể đặt được vì nó quá lớn không thể đặt vừa."
-        unplaced_parts_plural: "Có **{{ count }} bộ phận** không thể đặt được vì chúng quá lớn để vừa."
+        unplaced_parts_plural: "Có **{{ count }} bộ phận** không thể đặt được vì chúng quá lớn."
       warning:
         is_part_selection: Sơ đồ cắt này được giới hạn ở **các bộ phận đã chọn**.
         cutting_dimensions: Sơ đồ cắt này sử dụng kích thước **thô** của các bộ phận.
@@ -926,7 +926,7 @@ tab:
       remove_element: Xóa bỏ
       remove_all_elements: Xóa tất cả
       part_order_strategy_help: |
-        Sắp xếp lại các ô xếp để xác định thứ tự sắp xếp của nhãn.
+        Sắp xếp lại các ô tiêu đề để xác định thứ tự sắp xếp của nhãn.
         Thuộc tính có thể được sắp xếp theo thứ tự <i class="ladb-opencutlist-icon-sort-asc"></i> *tăng dần* hoặc <i class="ladb-opencutlist-icon-sort-desc"></i> *giảm dần*.
       offset_help: |
         *Độ lệch* xác định vị trí của **nhãn đầu tiên** sẽ được in trên **trang đầu tiên**.
@@ -968,8 +968,8 @@ tab:
         part_number: Số
         part_name: Tên gọi
         part_description: Mô tả
-        part_entity_named_path: Đường dẫn đối tượng
-        part_entity_name: Tên đối tượng
+        part_entity_named_path: Đường dẫn phiên bản
+        part_entity_name: Tên phiên bản
         part_bin: Thùng
         part_cutting_size: Kích thước thô
         part_cutting_length: Chiều dài - thô
@@ -990,7 +990,7 @@ tab:
         part_edge_xmax: Chiều rộng cạnh 2
         part_face_zmin: Mặt sau Veneer
         part_face_zmax: Mặt trước Veneer
-        thumbnail_proportional_drawing: Ảnh nhỏ
+        thumbnail_proportional_drawing: Hình thu nhỏ
         thumbnail_proportional: Hình thu nhỏ theo tỷ lệ
         thumbnail_square: Hình thu nhỏ theo hình vuông
         group_material: Vật liệu / Độ dày
@@ -1031,7 +1031,7 @@ tab:
       option_pins_colored_help: Chọn màu của các nhãn.
       option_pins_formula: Công thức
       option_pins_formula_help: Cho phép bạn viết mã *Ruby* để tùy chỉnh văn bản nhãn.
-      option_pins_length: Dòng chính
+      option_pins_length: Chiều dài
       option_pins_length_0: Không có đường dẫn chính
       option_pins_length_1: Ngắn
       option_pins_length_2: Trung bình
@@ -1066,7 +1066,7 @@ tab:
       option_camera_target: Vị trí
       option_camera_target_auto: Tự động
       option_camera_target_custom: Tùy chỉnh
-      option_explode: Chế độ xem bùng nổ
+      option_explode: Xem phân tách
       error:
         no_part: Không có phần nào để vẽ.
         failed_to_save_as_skp: Không thể ghi tệp SKP để gửi tới Layout.
@@ -1156,8 +1156,8 @@ tab:
     error:
       no_model: Không có mô hình nào được mở. Bạn sẽ cần phải cung cấp cho tôi thêm thông tin;)
       no_entities: Mô hình của bạn rỗng. Bạn sẽ cần phải cung cấp cho tôi thêm thông tin ;)
-      no_component_in_selection: Không có đối tượng nào của component hiển thị được phát hiện trong lựa chọn của bạn.
-      no_component_in_model: Không có đối tượng nào của component hiển thị được phát hiện trong cảnh của bạn.
+      no_component_in_selection: Không có phiên bản nào của component hiển thị được phát hiện trong lựa chọn của bạn.
+      no_component_in_model: Không có phiên bản nào của component hiển thị được phát hiện trong cảnh của bạn.
       unknow_part: Bộ phận đã chọn không tồn tại trong danh sách bộ phận.
       obsolete_cutlist: "Không thể, danh sách các bộ phận đã lỗi thời. Xin vui lòng, tạo lại nó."
     warning:
@@ -1347,15 +1347,15 @@ tab:
       general: Chung
       preview: Xem trước
       name: Tên
-      instance_name: Đối tượng
+      instance_name: Phiên bản
       material: Vật liệu
       definition_name: Định nghĩa
       description: Mô tả
       url: URL
       tags: Nhãn hiệu
       layer_name: Thẻ
-      explode: Explode
-      explode_message: "Bạn có xác nhận phân tách đối tượng **{{ name }}**?"
+      explode: Phân tách
+      explode_message: "Bạn có xác nhận phân tách phiên bản **{{ name }}**?"
     error:
       no_model: Không có mô hình nào được mở. Bạn sẽ cần phải cung cấp cho tôi thêm thông tin;)
       no_entities: Mô hình của bạn trống!
@@ -1364,7 +1364,7 @@ tab:
       obsolete_outliner: "Không thể, cấu trúc được tạo ra đã lỗi thời. Xin vui lòng, tái tạo nó."
     tip:
       no_node: |
-        Mô hình của bạn không chứa đối tượng nào được hiển thị ở đây.
+        Mô hình của bạn không chứa phiên bản nào được hiển thị ở đây.
         Một đối tượng là **group** hoặc là **component** trong Scene.
     obsolete_base: "Để luôn đồng bộ, bạn cần làm mới cấu trúc."
   importer:
@@ -1544,15 +1544,15 @@ tab:
     presets:
       export_global_presets: Xuất mẫu cài đặt trước
       export_global_presets_help: |
-        Tính năng này cho phép bạn xuất các giá trị đặt trước của mình sang tệp **.json**.
-        Chọn các mẫu cài đặt trước bạn muốn xuất sang nó.
-      export_global_presets_success: Các mẫu cài đặt trước đã được xuất thành công.
-      import_global_presets: Nhập mẫu cài đặt trước
+        Tính năng này cho phép bạn xuất các mẫu cài đặt của mình sang tệp **.json**.
+        Chọn các mẫu cài đặt bạn muốn xuất sang.
+      export_global_presets_success: Các mẫu cài đặt đã được xuất thành công.
+      import_global_presets: Nhập mẫu cài đặt
       import_global_presets_help: |
-        Chọn các giá trị đặt trước trong tệp **.json** mà bạn muốn nhập.
-        Xin lưu ý rằng giá trị đặt trước có cùng tên đã tồn tại sẽ được thay thế bằng phiên bản đã nhập.
+        Chọn các mẫu cài đặt trong tệp **.json** mà bạn muốn nhập.
+        Xin lưu ý rằng cài đặt mẫu có cùng tên đã tồn tại sẽ được thay thế bằng phiên bản đã nhập.
       import_global_presets_success: |
-        *OpenCutList* mẫu cài đặt trước đã được nhập thành công.
+        *OpenCutList* mẫu cài đặt đã được nhập thành công.
         Để nhìn thấy các thay đổi, bạn phải **đóng** và **mở lại** cửa sổ OpenCutList.
       dump_global_presets: Kết xuất mẫu cài đặt trước
       dump_model_presets: Kết xuất cài đặt mô hình
@@ -1562,7 +1562,7 @@ tab:
          Sau khi hành động kết thúc: **Tất cả các mẫu cài đặt trước sẽ bị mất.**
         Xác nhận để tiếp tục.
       reset_global_presets_success: |
-        Mẫu cài đặt trước *OpenCutList* đã được đặt lại
+        Mẫu cài đặt *OpenCutList* đã được đặt lại
         Để thấy các thay đổi, bạn phải **đóng** và **mở lại** cửa sổ OpenCutList.
       reset_model_presets: Cài đặt lại các cài đặt của mô hình
       reset_model_presets_confirm: |
