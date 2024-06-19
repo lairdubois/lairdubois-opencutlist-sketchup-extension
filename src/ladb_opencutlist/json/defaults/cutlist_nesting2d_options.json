@@ -13,6 +13,7 @@
     "scrap_sheet_sizes": "",
     "engine": "rectangle",
     "objective": "bin-packing",
+    "cut_type": "exact",
     "first_stage_orientation": "vertical",
     "spacing": { "metric": "20mm", "imperial": "1\"" },
     "trimming": { "metric": "10mm", "imperial": "1/2\"" },

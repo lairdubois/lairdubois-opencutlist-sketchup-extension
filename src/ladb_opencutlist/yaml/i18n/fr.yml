@@ -797,6 +797,9 @@ tab:
       option_objective: Objectif
       option_objective_help: |
         ...
+      option_cut_type: Cut Type
+      option_cut_type_help: |
+        ...
       option_first_stage_orientation: Première coupe
       option_first_stage_orientation_help: |
         ...

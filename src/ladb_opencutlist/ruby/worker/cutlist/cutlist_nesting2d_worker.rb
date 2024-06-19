@@ -28,6 +28,7 @@ module Ladb::OpenCutList
 
                    engine: ENGINE_RECTANGLE,
                    objective: 'bin-packing',
+                   cut_type: 'exact',
                    first_stage_orientation: 'horizontal',
                    spacing: '20mm',
                    trimming: '10mm',
@@ -46,6 +47,7 @@ module Ladb::OpenCutList
 
       @engine = engine
       @objective = objective
+      @cut_type = cut_type
       @first_stage_orientation = first_stage_orientation
       @spacing = DimensionUtils.instance.str_to_ifloat(spacing).to_l.to_f
       @trimming = DimensionUtils.instance.str_to_ifloat(trimming).to_l.to_f
@@ -121,7 +123,7 @@ module Ladb::OpenCutList
       when ENGINE_RECTANGLE
         solution, message = Packy.execute_rectangle(bin_defs, shape_defs, @objective, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming), @verbosity_level)
       when ENGINE_RECTANGLEGUILLOTINE
-        solution, message = Packy.execute_rectangleguillotine(bin_defs, shape_defs, @objective, @first_stage_orientation, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming), @verbosity_level)
+        solution, message = Packy.execute_rectangleguillotine(bin_defs, shape_defs, @objective, @cut_type, @first_stage_orientation, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming), @verbosity_level)
       when ENGINE_IRREGULAR
         solution, message = Packy.execute_irregular(bin_defs, shape_defs, @objective, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming), @verbosity_level)
       when ENGINE_ONEDIMENSIONAL

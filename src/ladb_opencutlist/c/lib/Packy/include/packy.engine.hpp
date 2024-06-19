@@ -30,6 +30,7 @@ namespace Packy {
             ShapeDefs &shape_defs,
             BinDefs &bin_defs,
             char *c_objective,
+            char *c_cut_type,
             char *c_first_stage_orientation,
             int64_t c_spacing,
             int64_t c_trimming,

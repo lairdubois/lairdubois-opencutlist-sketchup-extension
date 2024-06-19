@@ -44,14 +44,17 @@ namespace Packy {
     std::stringstream ss_objective(c_objective);
     ss_objective >> objective;
 
+    packingsolver::Length spacing = c_spacing;
+    packingsolver::Length trimming = c_trimming;
+
     rectangle::InstanceBuilder instance_builder;
     instance_builder.set_objective(objective);
 
     for (auto &bin_def: bin_defs) {
 
       bin_def.bin_type_id = instance_builder.add_bin_type(
-              bin_def.length,
-              bin_def.width,
+              bin_def.length - trimming * 2 + spacing,
+              bin_def.width - trimming * 2 + spacing,
               -1,
               bin_def.count
       );
@@ -63,8 +66,8 @@ namespace Packy {
       Rect64 bounds = GetBounds(shape_def.paths);
 
       shape_def.item_type_id = instance_builder.add_item_type(
-              bounds.Width(),
-              bounds.Height(),
+              bounds.Width() + spacing,
+              bounds.Height() + spacing,
               -1,
               shape_def.count,
               shape_def.rotations == 0
@@ -107,12 +110,12 @@ namespace Packy {
 
               Shape &shape = bin.shapes.emplace_back(&shape_def);
               if (solution_item.rotate) {
-                shape.x = solution_item.bl_corner.x + bounds.Height();
-                shape.y = solution_item.bl_corner.y;
+                shape.x = trimming + solution_item.bl_corner.x + bounds.Height();
+                shape.y = trimming + solution_item.bl_corner.y;
                 shape.angle = 90;
               } else {
-                shape.x = solution_item.bl_corner.x;
-                shape.y = solution_item.bl_corner.y;
+                shape.x = trimming + solution_item.bl_corner.x;
+                shape.y = trimming + solution_item.bl_corner.y;
                 shape.angle = 0;
               }
 
@@ -142,7 +145,7 @@ namespace Packy {
     return true;
   }
 
-  bool RectangleGuillotineEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, char *c_objective, char *c_first_stage_orientation, int64_t c_spacing, int64_t c_trimming, int verbosity_level, Solution &solution, std::string &message) {
+  bool RectangleGuillotineEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, char *c_objective, char *c_cut_type, char *c_first_stage_orientation, int64_t c_spacing, int64_t c_trimming, int verbosity_level, Solution &solution, std::string &message) {
 
     solution.clear();
     message.clear();
@@ -150,6 +153,10 @@ namespace Packy {
     packingsolver::Objective objective;
     std::stringstream ss_objective(c_objective);
     ss_objective >> objective;
+
+    packingsolver::rectangleguillotine::CutType cut_type;
+    std::stringstream ss_cut_type(c_cut_type);
+    ss_cut_type >> cut_type;
 
     packingsolver::rectangleguillotine::CutOrientation first_stage_orientation;
     std::stringstream ss_first_stage_orientation(c_first_stage_orientation);
@@ -160,8 +167,9 @@ namespace Packy {
 
     rectangleguillotine::InstanceBuilder instance_builder;
     instance_builder.set_objective(objective);
-    instance_builder.set_cut_thickness(spacing);
+    instance_builder.set_cut_type(cut_type);
     instance_builder.set_first_stage_orientation(first_stage_orientation);
+    instance_builder.set_cut_thickness(spacing);
 
     for (auto &bin_def: bin_defs) {
 
@@ -201,6 +209,8 @@ namespace Packy {
     }
 
     rectangleguillotine::Instance instance = instance_builder.build();
+
+//    instance.write("./test");
 
     rectangleguillotine::OptimizeParameters parameters;
     parameters.optimization_mode = OptimizationMode::NotAnytime;
@@ -473,7 +483,7 @@ namespace Packy {
     return true;
   }
 
-  bool OneDimensionalEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, char *c_objective, int64_t spacing, int64_t trimming, int verbosity_level, Solution &solution, std::string &message) {
+  bool OneDimensionalEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, char *c_objective, int64_t c_spacing, int64_t c_trimming, int verbosity_level, Solution &solution, std::string &message) {
 
     solution.clear();
     message.clear();
@@ -482,13 +492,16 @@ namespace Packy {
     std::stringstream ss_objective(c_objective);
     ss_objective >> objective;
 
+    packingsolver::Length spacing = c_spacing;
+    packingsolver::Length trimming = c_trimming;
+
     onedimensional::InstanceBuilder instance_builder;
     instance_builder.set_objective(objective);
 
     for (auto &bin_def: bin_defs) {
 
       bin_def.bin_type_id = instance_builder.add_bin_type(
-              bin_def.length,
+              bin_def.length - trimming * 2 + spacing,
               -1,
               bin_def.count
       );
@@ -500,7 +513,7 @@ namespace Packy {
       Rect64 bounds = GetBounds(shape_def.paths);
 
       shape_def.item_type_id = instance_builder.add_item_type(
-              bounds.Width(),
+              bounds.Width() + spacing,
               -1,
               shape_def.count
       );
@@ -538,7 +551,7 @@ namespace Packy {
             if (shape_def_it != shape_defs.end()) {
 
               Shape &shape = bin.shapes.emplace_back(&*shape_def_it);
-              shape.x = solution_item.start;
+              shape.x = trimming + solution_item.start;
               shape.y = 0;
               shape.angle = 0;
 
