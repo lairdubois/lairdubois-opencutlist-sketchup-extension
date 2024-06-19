@@ -7,7 +7,7 @@ message(STATUS "Fetching Dependencies...")
 FetchContent_Declare(
         packingsolver
         GIT_REPOSITORY https://github.com/lairdubois/fontanf-packingsolver.git
-        GIT_TAG a4c88e49637d44ef8740a8114cdaca255845638c
+        GIT_TAG 4c8d10260aa325052efe614279c194cf6feb5143
         #SOURCE_DIR "${PROJECT_SOURCE_DIR}/../packingsolver/"
         EXCLUDE_FROM_ALL)
 FetchContent_MakeAvailable(packingsolver)

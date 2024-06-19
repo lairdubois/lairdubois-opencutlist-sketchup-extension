@@ -59,12 +59,12 @@ DLL_EXPORTS char* c_execute_rectangle(char *c_objective, int64_t c_spacing, int6
   return (char*)message.c_str();
 }
 
-DLL_EXPORTS char* c_execute_rectangleguillotine(char *c_objective, char *c_first_stage_orientation, int64_t c_spacing, int64_t c_trimming, int verbosity_level) {
+DLL_EXPORTS char* c_execute_rectangleguillotine(char *c_objective, char *c_cut_type, char *c_first_stage_orientation, int64_t c_spacing, int64_t c_trimming, int verbosity_level) {
 
   try {
 
     RectangleGuillotineEngine engine;
-    engine.run(shape_defs, bin_defs, c_objective, c_first_stage_orientation, c_spacing, c_trimming, verbosity_level, solution, message);
+    engine.run(shape_defs, bin_defs, c_objective, c_cut_type, c_first_stage_orientation, c_spacing, c_trimming, verbosity_level, solution, message);
 
     message = "-- START PACKY MESSAGE --\n" + message + "-- END PACKY MESSAGE --\n";
 

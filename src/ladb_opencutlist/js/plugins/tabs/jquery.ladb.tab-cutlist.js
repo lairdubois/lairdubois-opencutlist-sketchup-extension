@@ -4556,6 +4556,7 @@
                 var $inputScrapSheetSizes = $('#ladb_input_scrap_sheet_sizes', $modal);
                 var $selectEngine = $('#ladb_select_engine', $modal);
                 var $selectObjective = $('#ladb_select_objective', $modal);
+                var $selectCutType = $('#ladb_select_cut_type', $modal);
                 var $selectFirstStageOrientation = $('#ladb_select_first_stage_orientation', $modal);
                 var $inputSpacing = $('#ladb_input_spacing', $modal);
                 var $inputTrimming = $('#ladb_input_trimming', $modal);
@@ -4569,6 +4570,7 @@
                     options.scrap_sheet_sizes = $inputScrapSheetSizes.ladbTextinputTokenfield('getValidTokensList');
                     options.engine = $selectEngine.val();
                     options.objective = $selectObjective.val();
+                    options.cut_type = $selectCutType.val();
                     options.first_stage_orientation = $selectFirstStageOrientation.val();
                     options.spacing = $inputSpacing.val();
                     options.trimming = $inputTrimming.val();
@@ -4577,6 +4579,7 @@
                 var fnFillInputs = function (options) {
                     $selectEngine.selectpicker('val', options.engine);
                     $selectObjective.selectpicker('val', options.objective);
+                    $selectCutType.selectpicker('val', options.cut_type);
                     $selectFirstStageOrientation.selectpicker('val', options.first_stage_orientation);
                     $inputSpacing.val(options.spacing);
                     $inputTrimming.val(options.trimming);
@@ -4618,6 +4621,7 @@
                 $inputScrapSheetSizes.ladbTextinputTokenfield('setTokens', nesting2dOptions.scrap_sheet_sizes);
                 $selectEngine.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectObjective.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectCutType.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectFirstStageOrientation.selectpicker(SELECT_PICKER_OPTIONS);
                 $inputSpacing.ladbTextinputDimension();
                 $inputTrimming.ladbTextinputDimension();
