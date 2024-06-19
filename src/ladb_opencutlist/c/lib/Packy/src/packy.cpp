@@ -7,7 +7,6 @@
 #include <algorithm>
 #include <string>
 #include <stdexcept>
-#include <sstream>
 
 using namespace Clipper2Lib;
 using namespace Packy;

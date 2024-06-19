@@ -9,7 +9,7 @@ add_subdirectory(extern)
 # -------------------------------------------------------------------
 
 if(WIN32)
-  add_compile_definitions(LIBNESTY_EXPORTS)
+  add_compile_definitions(LIBPACKY_EXPORTS)
 else()
   add_compile_options(-fPIC)
 endif()
