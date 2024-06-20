@@ -11,10 +11,10 @@
   "0": {
     "std_sheet": "",
     "scrap_sheet_sizes": "",
-    "engine": "rectangle",
+    "engine": "rectangleguillotine",
     "objective": "bin-packing",
-    "cut_type": "exact",
-    "first_stage_orientation": "vertical",
+    "cut_type": "non-exact",
+    "first_stage_orientation": "horizontal",
     "spacing": { "metric": "20mm", "imperial": "1\"" },
     "trimming": { "metric": "10mm", "imperial": "1/2\"" },
     "verbosity_level": 1

@@ -522,6 +522,8 @@ namespace Packy {
 
     onedimensional::Instance instance = instance_builder.build();
 
+//    instance.write("./test");
+
     onedimensional::OptimizeParameters parameters;
     parameters.optimization_mode = OptimizationMode::NotAnytime;
     parameters.not_anytime_tree_search_queue_size = 1024;
