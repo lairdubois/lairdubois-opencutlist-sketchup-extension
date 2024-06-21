@@ -224,11 +224,14 @@ gulp.task('default', gulp.series('build'));
 
 var cmakeBuildDir = 'cmake-build';
 
-gulp.task('c_libs_clear', function () {
+gulp.task('c_libs_clean', function (cb) {
+
     if (fs.existsSync(cmakeBuildDir)) {
         fs.rmSync(cmakeBuildDir, { recursive: true });
     }
     fs.mkdirSync(cmakeBuildDir);
+
+    cb();
 });
 
 gulp.task('c_libs_prepare', function () {
