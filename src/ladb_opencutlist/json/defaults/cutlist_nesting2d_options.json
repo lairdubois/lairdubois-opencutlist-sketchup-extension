@@ -12,7 +12,7 @@
     "std_sheet": "",
     "scrap_sheet_sizes": "",
     "engine": "rectangleguillotine",
-    "objective": "bin-packing",
+    "objective": "bin-packing-with-leftovers",
     "cut_type": "non-exact",
     "first_stage_orientation": "horizontal",
     "spacing": { "metric": "20mm", "imperial": "1\"" },

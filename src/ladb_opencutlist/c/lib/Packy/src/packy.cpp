@@ -7,9 +7,18 @@
 #include <algorithm>
 #include <string>
 #include <stdexcept>
+#include <thread>
+
+#include <nlohmann/json.hpp>
+
+#include "packingsolver/rectangleguillotine/instance_builder.hpp"
+#include "packingsolver/rectangleguillotine/optimize.hpp"
 
 using namespace Clipper2Lib;
 using namespace Packy;
+
+using namespace packingsolver;
+using namespace packingsolver::rectangleguillotine;
 
 #ifdef __cplusplus
 extern "C" {
@@ -35,6 +44,51 @@ DLL_EXPORTS void c_append_bin_def(int id, int count, int64_t length, int64_t wid
 
 DLL_EXPORTS void c_append_shape_def(int id, int count, int rotations, const int64_t* cpaths) {
   shape_defs.emplace_back(id, count, rotations, ConvertCPathsToPaths(cpaths));
+}
+
+
+DLL_EXPORTS char* c_execute(char *raw_input, int verbosity_level) {
+
+//  try {
+//
+//    std::istringstream iss(raw_input);
+//
+//    rectangleguillotine::InstanceBuilder instance_builder;
+//    instance_builder.read(iss);
+//
+//    rectangleguillotine::Instance instance = instance_builder.build();
+//
+//    rectangleguillotine::OptimizeParameters parameters;
+//    parameters.optimization_mode = OptimizationMode::NotAnytime;
+//    parameters.not_anytime_tree_search_queue_size = 1024;
+//    parameters.timer.set_time_limit(5);
+//    parameters.verbosity_level = verbosity_level;
+//
+//    const rectangleguillotine::Output output = rectangleguillotine::optimize(instance, parameters);
+//    const rectangleguillotine::Solution &ps_solution = output.solution_pool.best();
+//
+//    std::stringstream ss;
+//
+//    ss << "ENGINE --------------------------" << std::endl;
+//    ss << instance.type() << std::endl;
+//    ss << std::endl << "INSTANCE ------------------------" << std::endl;
+//    instance.format(ss, parameters.verbosity_level);
+//    ss << std::endl << "PARAMETERS ----------------------" << std::endl;
+//    parameters.format(ss);
+//    ss << std::endl << "SOLUTION ------------------------" << std::endl;
+//    ps_solution.format(ss, parameters.verbosity_level);
+//
+//    message = ss.str();
+//
+//  } catch(const std::exception &e) {
+//    message.clear();
+//    message = "Error: " + (std::string)e.what();
+//  } catch( ... ) {
+//    message.clear();
+//    message = "Unknow Error";
+//  }
+
+  return (char*)message.c_str();
 }
 
 

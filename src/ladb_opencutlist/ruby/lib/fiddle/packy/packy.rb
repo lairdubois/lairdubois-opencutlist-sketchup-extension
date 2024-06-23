@@ -20,6 +20,7 @@ module Ladb::OpenCutList::Fiddle
         'void c_append_bin_def(int, int, int64_t, int64_t, int)',
         'void c_append_shape_def(int, int, int, int64_t*)',
 
+        'char* c_execute(char*, int)',
         'char* c_execute_rectangle(char*, int64_t, int64_t, int)',
         'char* c_execute_rectangleguillotine(char*, char*, char*, int64_t, int64_t, int)',
         'char* c_execute_irregular(char*, int64_t, int64_t, int)',
@@ -58,6 +59,15 @@ module Ladb::OpenCutList::Fiddle
     end
 
     # --
+
+    def self.execute(json, verbosity_level)
+      _load_lib
+      _clear
+      message = c_execute(json, verbosity_level).to_s
+      solution = _unpack_solution
+      _clear
+      [ solution, message ]
+    end
 
     def self.execute_rectangle(bin_defs, shape_defs, objective, spacing, trimming, verbosity_level)
       _load_lib

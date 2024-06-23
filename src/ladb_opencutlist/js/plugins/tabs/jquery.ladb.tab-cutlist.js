@@ -4540,7 +4540,7 @@
 
             var nesting2dOptions = response.preset;
 
-            rubyCallCommand('materials_get_attributes_command', { name: group.material_name }, function (response) {
+            rubyCallCommand('materials_get_attributes_command', {name: group.material_name}, function (response) {
 
                 var $modal = that.appendModalInside('ladb_cutlist_modal_nesting_2d', 'tabs/cutlist/_modal-nesting-2d.twig', {
                     material_attributes: response,
@@ -4617,7 +4617,7 @@
                     }
                 }
                 $inputStdSheet.selectpicker(SELECT_PICKER_OPTIONS);
-                $inputScrapSheetSizes.ladbTextinputTokenfield({ format: 'dxdxq' });
+                $inputScrapSheetSizes.ladbTextinputTokenfield({format: 'dxdxq'});
                 $inputScrapSheetSizes.ladbTextinputTokenfield('setTokens', nesting2dOptions.scrap_sheet_sizes);
                 $selectEngine.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectObjective.selectpicker(SELECT_PICKER_OPTIONS);
@@ -4649,7 +4649,7 @@
                     fnEditMaterial();
                 });
                 $btnUnloadLib.on('click', function () {
-                    rubyCallCommand('core_unload_c_lib', { lib: 'packy' }, function (response) {
+                    rubyCallCommand('core_unload_c_lib', {lib: 'packy'}, function (response) {
                         if (response.errors) {
                             that.dialog.notifyErrors(response.errors);
                         }
@@ -4664,32 +4664,50 @@
                     fnFetchOptions(nesting2dOptions);
 
                     // Store options
-                    rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_nesting2d_options', values: nesting2dOptions, section: groupId });
+                    rubyCallCommand('core_set_model_preset', {
+                        dictionary: 'cutlist_nesting2d_options',
+                        values: nesting2dOptions,
+                        section: groupId
+                    });
 
-                    rubyCallCommand('cutlist_group_nesting2d', $.extend({ group_id: groupId, part_ids: isPartSelection ? that.selectionPartIds : null }, nesting2dOptions), function (response) {
+                    window.requestAnimationFrame(function () {
 
-                        var $slide = that.pushNewSlide('ladb_cutlist_slide_nesting_2d', 'tabs/cutlist/_slide-nesting-2d.twig', $.extend({
-                            filename: that.filename,
-                            modelName: that.modelName,
-                            pageName: that.pageName,
-                            isEntitySelection: that.isEntitySelection,
-                            lengthUnit: that.lengthUnit,
-                            generatedAt: new Date().getTime() / 1000,
-                            group: group
-                        }, response), function () {
-                            that.dialog.setupTooltips();
-                        });
+                        // Start progress feedback
+                        that.dialog.startProgress(1);
 
-                        // Fetch UI elements
-                        var $btnNesting = $('#ladb_btn_nesting', $slide);
-                        var $btnClose = $('#ladb_btn_close', $slide);
 
-                        // Bind buttons
-                        $btnNesting.on('click', function () {
-                            that.nesting2dGroup(groupId);
-                        });
-                        $btnClose.on('click', function () {
-                            that.popSlide();
+                        rubyCallCommand('cutlist_group_nesting2d', $.extend({
+                            group_id: groupId,
+                            part_ids: isPartSelection ? that.selectionPartIds : null
+                        }, nesting2dOptions), function (response) {
+
+                            var $slide = that.pushNewSlide('ladb_cutlist_slide_nesting_2d', 'tabs/cutlist/_slide-nesting-2d.twig', $.extend({
+                                filename: that.filename,
+                                modelName: that.modelName,
+                                pageName: that.pageName,
+                                isEntitySelection: that.isEntitySelection,
+                                lengthUnit: that.lengthUnit,
+                                generatedAt: new Date().getTime() / 1000,
+                                group: group
+                            }, response), function () {
+                                that.dialog.setupTooltips();
+                            });
+
+                            // Fetch UI elements
+                            var $btnNesting = $('#ladb_btn_nesting', $slide);
+                            var $btnClose = $('#ladb_btn_close', $slide);
+
+                            // Bind buttons
+                            $btnNesting.on('click', function () {
+                                that.nesting2dGroup(groupId);
+                            });
+                            $btnClose.on('click', function () {
+                                that.popSlide();
+                            });
+
+                            // Finish progress feedback
+                            that.dialog.finishProgress();
+
                         });
 
                     });

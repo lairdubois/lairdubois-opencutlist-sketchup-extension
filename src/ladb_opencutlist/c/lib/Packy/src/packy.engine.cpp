@@ -7,7 +7,7 @@
 
 #include "packingsolver/rectangle/instance_builder.hpp"
 #include "packingsolver/rectangle/optimize.hpp"
-#include "packingsolver/rectangleguillotine//instance_builder.hpp"
+#include "packingsolver/rectangleguillotine/instance_builder.hpp"
 #include "packingsolver/rectangleguillotine/optimize.hpp"
 #include "packingsolver/irregular/instance_builder.hpp"
 #include "packingsolver/irregular/optimize.hpp"
@@ -82,6 +82,7 @@ namespace Packy {
     parameters.not_anytime_tree_search_queue_size = 1024;
     parameters.timer.set_time_limit(5);
     parameters.verbosity_level = verbosity_level;
+    parameters.new_solution_callback
 
     const rectangle::Output output = rectangle::optimize(instance, parameters);
     const rectangle::Solution &ps_solution = output.solution_pool.best();
@@ -132,12 +133,13 @@ namespace Packy {
     std::stringstream ss;
 
     ss << "ENGINE --------------------------" << std::endl;
-    ss << "RectangleGuillotine" << std::endl;
+    ss << "Rectangle" << std::endl;
     ss << std::endl << "INSTANCE ------------------------" << std::endl;
     instance.format(ss, parameters.verbosity_level);
     ss << std::endl << "PARAMETERS ----------------------" << std::endl;
     parameters.format(ss);
     ss << std::endl << "SOLUTION ------------------------" << std::endl;
+    ss << "Elapsed time: " << parameters.timer.elapsed_time() << std::endl;
     ps_solution.format(ss, parameters.verbosity_level);
 
     message = ss.str();
@@ -283,7 +285,6 @@ namespace Packy {
 
                 }
 
-
               } else if (solution_node.f >= 0) {
 
                 const SolutionNode &parent_solution_node = solution_bin.nodes[solution_node.f];
@@ -324,6 +325,7 @@ namespace Packy {
     ss << std::endl << "PARAMETERS ----------------------" << std::endl;
     parameters.format(ss);
     ss << std::endl << "SOLUTION ------------------------" << std::endl;
+    ss << "Elapsed time: " << parameters.timer.elapsed_time() << std::endl;
     ps_solution.format(ss, parameters.verbosity_level);
 
     message = ss.str();
@@ -340,13 +342,16 @@ namespace Packy {
     std::stringstream ss_objective(c_objective);
     ss_objective >> objective;
 
+    packingsolver::Length spacing = c_spacing;
+    packingsolver::Length trimming = c_trimming;
+
     irregular::InstanceBuilder instance_builder;
     instance_builder.set_objective(objective);
 
     for (auto &bin_def: bin_defs) {
 
-      LengthDbl length = (LengthDbl) bin_def.length;
-      LengthDbl width = (LengthDbl) bin_def.width;
+      LengthDbl length = (LengthDbl) bin_def.length - 2 * trimming;
+      LengthDbl width = (LengthDbl) bin_def.width - 2 * trimming;
 
       irregular::Shape shape;
 
@@ -425,7 +430,7 @@ namespace Packy {
     irregular::OptimizeParameters parameters;
     parameters.optimization_mode = OptimizationMode::NotAnytime;
     parameters.not_anytime_tree_search_queue_size = 1024;
-    parameters.timer.set_time_limit(5);
+    parameters.timer.set_time_limit(30);
     parameters.verbosity_level = verbosity_level;
 
     const irregular::Output output = irregular::optimize(instance, parameters);
@@ -453,8 +458,8 @@ namespace Packy {
             if (shape_def_it != shape_defs.end()) {
 
               Shape &shape = bin.shapes.emplace_back(&*shape_def_it);
-              shape.x = solution_item.bl_corner.x;
-              shape.y = solution_item.bl_corner.y;
+              shape.x = solution_item.bl_corner.x + trimming;
+              shape.y = solution_item.bl_corner.y + trimming;
               shape.angle = (int64_t) solution_item.angle;
 
             }
@@ -470,13 +475,14 @@ namespace Packy {
     std::stringstream ss;
 
     ss << "ENGINE --------------------------" << std::endl;
-    ss << "RectangleGuillotine" << std::endl;
+    ss << "Irregular" << std::endl;
     ss << std::endl << "INSTANCE ------------------------" << std::endl;
-    instance.format(ss, parameters.verbosity_level);
+    instance.format(ss, verbosity_level);
     ss << std::endl << "PARAMETERS ----------------------" << std::endl;
     parameters.format(ss);
     ss << std::endl << "SOLUTION ------------------------" << std::endl;
-    ps_solution.format(ss, parameters.verbosity_level);
+    ss << "Elapsed time: " << parameters.timer.elapsed_time() << std::endl;
+    ps_solution.format(ss, verbosity_level);
 
     message = ss.str();
 
@@ -570,12 +576,13 @@ namespace Packy {
     std::stringstream ss;
 
     ss << "ENGINE --------------------------" << std::endl;
-    ss << "RectangleGuillotine" << std::endl;
+    ss << "OneDimensional" << std::endl;
     ss << std::endl << "INSTANCE ------------------------" << std::endl;
     instance.format(ss, parameters.verbosity_level);
     ss << std::endl << "PARAMETERS ----------------------" << std::endl;
     parameters.format(ss);
     ss << std::endl << "SOLUTION ------------------------" << std::endl;
+    ss << "Elapsed time: " << parameters.timer.elapsed_time() << std::endl;
     ps_solution.format(ss, parameters.verbosity_level);
 
     message = ss.str();
