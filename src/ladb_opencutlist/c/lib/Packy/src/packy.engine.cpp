@@ -82,7 +82,6 @@ namespace Packy {
     parameters.not_anytime_tree_search_queue_size = 1024;
     parameters.timer.set_time_limit(5);
     parameters.verbosity_level = verbosity_level;
-    parameters.new_solution_callback
 
     const rectangle::Output output = rectangle::optimize(instance, parameters);
     const rectangle::Solution &ps_solution = output.solution_pool.best();
@@ -420,7 +419,8 @@ namespace Packy {
       shape_def.item_type_id = instance_builder.add_item_type(
               item_shapes,
               -1,
-              shape_def.count
+              shape_def.count,
+              {{0, 0}}
       );
 
     }
