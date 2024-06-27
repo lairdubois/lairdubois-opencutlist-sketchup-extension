@@ -45,7 +45,7 @@ module Ladb::OpenCutList::Fiddle
     # --
 
     def self.float_to_int64_factor
-      1
+      1e3
     end
 
     # Convert Float to Integer

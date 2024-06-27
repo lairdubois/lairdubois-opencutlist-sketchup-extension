@@ -76,6 +76,7 @@ module Ladb::OpenCutList
       shape_id = 0
 
       json = {
+        objective: @objective,
         bin_types: [],
         item_types: [],
       }
@@ -138,8 +139,8 @@ module Ladb::OpenCutList
         shape_defs << Packy::ShapeDef.new(shape_id += 1, part.count, (group.material_grained  && !part.ignore_grain_direction) ? 0 : 1, rpaths, part)
 
         json[:item_types] << {
-          type: 'polygon',
           copies: part.count,
+          type: 'polygon',
           vertices: vertices,
           holes: holes
         }
