@@ -6,7 +6,7 @@ module Ladb::OpenCutList
 
     def initialize(cutlist,
 
-                   group_id: ,
+                   group_id: nil,
                    reset: false
 
     )
