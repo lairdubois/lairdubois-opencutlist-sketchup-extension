@@ -90,6 +90,7 @@ module Ladb::OpenCutList
         bin_defs << Packy::BinDef.new(bin_id += 1, count, Packy.float_to_int64(length), Packy.float_to_int64(width), 1) # 1 = user defined
 
         json[:bin_types] << {
+          copies: count,
           type: 'rectangle',
           width: length.to_mm.round(3),
           height: width.to_mm.round(3)
@@ -104,6 +105,7 @@ module Ladb::OpenCutList
         bin_defs << Packy::BinDef.new(bin_id += 1, parts_count, Packy.float_to_int64(@std_sheet_length), Packy.float_to_int64(@std_sheet_width), 0) # 0 = Standard
 
         json[:bin_types] << {
+          copies: parts_count,
           type: 'rectangle',
           width: @std_sheet_length.to_mm.round(3),
           height: @std_sheet_width.to_mm.round(3)

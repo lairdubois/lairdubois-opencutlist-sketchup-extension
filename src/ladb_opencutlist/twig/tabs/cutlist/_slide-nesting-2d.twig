@@ -26,13 +26,13 @@
         <div class="text-{% if unplaced_shapes_count == 0 %}success{% else %}danger{% endif %}">unplaced_shapes_count = <strong>{{ unplaced_shapes_count }}</strong></div>
         <hr>
         {% for bin in packed_bins %}
-            <div>
+            <div style="text-align: center; margin-bottom: 20px;">
                 <strong>{{ bin.length }} x {{ bin.width }}</strong> <span>({{ ('tab.cutlist.cuttingdiagram.list.sheet_good_type_'~bin.type)|i18next }})</span>
                 <div>{{ bin.svg|raw }}</div>
             </div>
         {% endfor %}
         {% for bin in unused_bins %}
-            <div>
+            <div style="text-align: center; margin-bottom: 20px;">
                 <strong>{{ bin.length }} x {{ bin.width }}</strong> <span>({{ ('tab.cutlist.cuttingdiagram.list.sheet_good_type_'~bin.type)|i18next }})</span>
                 <div>{{ bin.svg|raw }}</div>
             </div>

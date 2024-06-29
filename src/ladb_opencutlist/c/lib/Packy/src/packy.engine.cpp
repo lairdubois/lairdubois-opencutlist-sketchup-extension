@@ -429,8 +429,8 @@ namespace Packy {
 
     irregular::OptimizeParameters parameters;
     parameters.optimization_mode = OptimizationMode::NotAnytime;
-    parameters.not_anytime_tree_search_queue_size = 1024;
-    parameters.timer.set_time_limit(30);
+    parameters.not_anytime_tree_search_queue_size = 4096;
+    parameters.timer.set_time_limit(60);
     parameters.verbosity_level = verbosity_level;
 
     const irregular::Output output = irregular::optimize(instance, parameters);
