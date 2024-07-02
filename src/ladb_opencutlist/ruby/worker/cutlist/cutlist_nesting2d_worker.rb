@@ -92,8 +92,8 @@ module Ladb::OpenCutList
         json[:bin_types] << {
           copies: count,
           type: 'rectangle',
-          width: length.to_mm.round(3),
-          height: width.to_mm.round(3)
+          width: length.to_f,
+          height: width.to_f
         }
 
       }
@@ -107,8 +107,8 @@ module Ladb::OpenCutList
         json[:bin_types] << {
           copies: parts_count,
           type: 'rectangle',
-          width: @std_sheet_length.to_mm.round(3),
-          height: @std_sheet_width.to_mm.round(3)
+          width: @std_sheet_length.to_f,
+          height: @std_sheet_width.to_f
         }
 
       end
@@ -129,10 +129,10 @@ module Ladb::OpenCutList
             if layer_def.type_holes?
               holes << {
                 type: 'polygon',
-                vertices: poly_def.points.map { |point| { x: point.x.to_mm.round(3), y: point.y.to_mm.round(3) } }
+                vertices: poly_def.points.map { |point| { x: point.x.to_f, y: point.y.to_f } }
               }
             else
-              vertices = poly_def.points.map { |point| { x: point.x.to_mm.round(3), y: point.y.to_mm.round(3) } }
+              vertices = poly_def.points.map { |point| { x: point.x.to_f, y: point.y.to_f } }
             end
 
           end
@@ -170,6 +170,7 @@ module Ladb::OpenCutList
         solution, message = Packy.execute_rectangleguillotine(bin_defs, shape_defs, @objective, @cut_type, @first_stage_orientation, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming), @verbosity_level)
       when ENGINE_IRREGULAR
         solution, message = Packy.execute_irregular(bin_defs, shape_defs, @objective, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming), @verbosity_level)
+        # solution, message = Packy.execute(json.to_json, @verbosity_level)
       when ENGINE_ONEDIMENSIONAL
         solution, message = Packy.execute_onedimensional(bin_defs, shape_defs, @objective, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming), @verbosity_level)
       else
