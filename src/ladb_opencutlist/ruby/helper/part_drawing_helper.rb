@@ -9,7 +9,11 @@ module Ladb::OpenCutList
     PART_DRAWING_TYPE_NONE = 0
     PART_DRAWING_TYPE_2D_TOP = 1
     PART_DRAWING_TYPE_2D_BOTTOM = 2
-    PART_DRAWING_TYPE_3D = 3
+    PART_DRAWING_TYPE_2D_LEFT = 3
+    PART_DRAWING_TYPE_2D_RIGHT = 4
+    PART_DRAWING_TYPE_2D_FRONT = 5
+    PART_DRAWING_TYPE_2D_BACK = 6
+    PART_DRAWING_TYPE_3D = 7
 
     def _compute_part_drawing_def(part_drawing_type, part, ignore_edges: true, origin_position: CommonDrawingDecompositionWorker::ORIGIN_POSITION_FACES_BOUNDS_MIN, use_cache: true)
       return nil unless part.is_a?(Part)
@@ -30,6 +34,14 @@ module Ladb::OpenCutList
       if part_drawing_type == PART_DRAWING_TYPE_2D_BOTTOM
         local_x_axis = local_x_axis.reverse
         local_z_axis = local_z_axis.reverse
+      elsif part_drawing_type == PART_DRAWING_TYPE_2D_LEFT
+        local_x_axis, local_y_axis, local_z_axis = local_y_axis.reverse, local_z_axis, local_x_axis.reverse
+      elsif part_drawing_type == PART_DRAWING_TYPE_2D_RIGHT
+        local_x_axis, local_y_axis, local_z_axis = local_y_axis, local_z_axis, local_x_axis
+      elsif part_drawing_type == PART_DRAWING_TYPE_2D_FRONT
+        local_y_axis, local_z_axis = local_z_axis, local_y_axis.reverse
+      elsif part_drawing_type == PART_DRAWING_TYPE_2D_BACK
+        local_x_axis, local_y_axis, local_z_axis = local_x_axis.reverse, local_z_axis, local_y_axis
       end
 
       drawing_def = CommonDrawingDecompositionWorker.new(instance_info.path,

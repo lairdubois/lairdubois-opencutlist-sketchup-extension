@@ -113,7 +113,9 @@ module Ladb::OpenCutList
             end
 
             case @part_drawing_type
-            when PART_DRAWING_TYPE_2D_TOP, PART_DRAWING_TYPE_2D_BOTTOM
+            when PART_DRAWING_TYPE_2D_TOP, PART_DRAWING_TYPE_2D_BOTTOM,
+              PART_DRAWING_TYPE_2D_LEFT, PART_DRAWING_TYPE_2D_RIGHT,
+              PART_DRAWING_TYPE_2D_FRONT, PART_DRAWING_TYPE_2D_BACK
 
               drawing_def = _compute_part_drawing_def(@part_drawing_type, part,
                                                       ignore_edges: !@include_paths,

@@ -2187,7 +2187,7 @@
 
                     rubyCallCommand('cutlist_write_parts', $.extend({
                         part_ids: partIds,
-                        part_drawing_type: 3 // PART_DRAWING_TYPE_3D
+                        part_drawing_type: 7 // PART_DRAWING_TYPE_3D
                     }, write3dOptions), function (response) {
 
                         if (response.errors) {

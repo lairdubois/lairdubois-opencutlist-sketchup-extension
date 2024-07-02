@@ -253,7 +253,11 @@ tab:
     edit_part_faces_properties: Éditer les propriétés (faces) de la pièce
     part_drawing_type_1: 2D Vue Face
     part_drawing_type_2: 2D Vue Contre-face
-    part_drawing_type_3: 3D
+    part_drawing_type_3: 2D Vue Gauche
+    part_drawing_type_4: 2D Vue Droite
+    part_drawing_type_5: 2D Vue Avant
+    part_drawing_type_6: 2D Vue Arrière
+    part_drawing_type_7: 3D
     tooltip:
       show_hide_block: Afficher / Masquer ce groupe
       scroll_to_block: Défiler vers le groupe
