@@ -1,8 +1,8 @@
 /*******************************************************************************
 * Author    :  Angus Johnson                                                   *
-* Date      :  8 September 2023                                                *
+* Date      :  27 April 2024                                                   *
 * Website   :  http://www.angusj.com                                           *
-* Copyright :  Angus Johnson 2010-2023                                         *
+* Copyright :  Angus Johnson 2010-2024                                         *
 * Purpose   :  FAST rectangular clipping                                       *
 * License   :  http://www.boost.org/LICENSE_1_0.txt                            *
 *******************************************************************************/
@@ -320,9 +320,9 @@ namespace Clipper2Lib {
     // this method is only called by InternalExecute.
     // Later splitting & rejoining won't create additional op's,
     // though they will change the (non-storage) results_ count.
-    int curr_idx = static_cast<int>(results_.size()) - 1;
+    size_t curr_idx = results_.size();
     OutPt2* result;
-    if (curr_idx < 0 || start_new)
+    if (curr_idx == 0 || start_new)
     {
       result = &op_container_.emplace_back(OutPt2());
       result->pt = pt;
@@ -332,6 +332,7 @@ namespace Clipper2Lib {
     }
     else
     {
+      --curr_idx;
       OutPt2* prevOp = results_[curr_idx];
       if (prevOp->pt == pt)  return prevOp;
       result = &op_container_.emplace_back(OutPt2());
@@ -349,27 +350,27 @@ namespace Clipper2Lib {
   void RectClip64::AddCorner(Location prev, Location curr)
   {
     if (HeadingClockwise(prev, curr))
-      Add(rect_as_path_[static_cast<int>(prev)]);
+      Add(rect_as_path_[static_cast<size_t>(prev)]);
     else
-      Add(rect_as_path_[static_cast<int>(curr)]);
+      Add(rect_as_path_[static_cast<size_t>(curr)]);
   }
 
   void RectClip64::AddCorner(Location& loc, bool isClockwise)
   {
     if (isClockwise)
     {
-      Add(rect_as_path_[static_cast<int>(loc)]);
+      Add(rect_as_path_[static_cast<size_t>(loc)]);
       loc = GetAdjacentLocation(loc, true);
     }
     else
     {
       loc = GetAdjacentLocation(loc, false);
-      Add(rect_as_path_[static_cast<int>(loc)]);
+      Add(rect_as_path_[static_cast<size_t>(loc)]);
     }
   }
 
   void RectClip64::GetNextLocation(const Path64& path,
-    Location& loc, int& i, int highI)
+    Location& loc, size_t& i, size_t highI)
   {
     switch (loc)
     {
@@ -425,26 +426,30 @@ namespace Clipper2Lib {
 
   void RectClip64::ExecuteInternal(const Path64& path)
   {
-    int i = 0, highI = static_cast<int>(path.size()) - 1;
+    if (path.size() < 1)
+      return;
+
+    size_t highI = path.size() - 1;
     Location prev = Location::Inside, loc;
     Location crossing_loc = Location::Inside;
     Location first_cross_ = Location::Inside;
     if (!GetLocation(rect_, path[highI], loc))
     {
-      i = highI - 1;
-      while (i >= 0 && !GetLocation(rect_, path[i], prev)) --i;
-      if (i < 0)
+      size_t i = highI;
+      while (i > 0 && !GetLocation(rect_, path[i - 1], prev))
+        --i;
+      if (i == 0)
       {
         // all of path must be inside fRect
         for (const auto& pt : path) Add(pt);
         return;
       }
       if (prev == Location::Inside) loc = Location::Inside;
-      i = 0;
     }
     Location startingLoc = loc;
 
     ///////////////////////////////////////////////////
+    size_t i = 0;
     while (i <= highI)
     {
       prev = loc;
@@ -589,8 +594,7 @@ namespace Clipper2Lib {
       OutPt2* op2 = op;
       do
       {
-        if (!CrossProduct(op2->prev->pt,
-          op2->pt, op2->next->pt))
+        if (IsCollinear(op2->prev->pt, op2->pt, op2->next->pt))
         {
           if (op2 == op)
           {
@@ -640,7 +644,7 @@ namespace Clipper2Lib {
     }
   }
 
-  void RectClip64::TidyEdges(int idx, OutPt2List& cw, OutPt2List& ccw)
+  void RectClip64::TidyEdges(size_t idx, OutPt2List& cw, OutPt2List& ccw)
   {
     if (ccw.empty()) return;
     bool isHorz = ((idx == 1) || (idx == 3));
@@ -825,8 +829,8 @@ namespace Clipper2Lib {
     OutPt2* op2 = op->next;
     while (op2 && op2 != op)
     {
-      if (CrossProduct(op2->prev->pt,
-        op2->pt, op2->next->pt) == 0)
+      if (IsCollinear(op2->prev->pt,
+        op2->pt, op2->next->pt))
       {
         op = op2->prev;
         op2 = UnlinkOp(op2);
@@ -868,7 +872,7 @@ namespace Clipper2Lib {
 
       ExecuteInternal(path);
       CheckEdges();
-      for (int i = 0; i < 4; ++i)
+      for (size_t i = 0; i < 4; ++i)
         TidyEdges(i, edges_[i * 2], edges_[i * 2 + 1]);
 
       for (OutPt2*& op :  results_)
@@ -925,7 +929,7 @@ namespace Clipper2Lib {
     op_container_ = std::deque<OutPt2>();
     start_locs_.clear();
 
-    int i = 1, highI = static_cast<int>(path.size()) - 1;
+    size_t i = 1, highI = path.size() - 1;
 
     Location prev = Location::Inside, loc;
     Location crossing_loc;

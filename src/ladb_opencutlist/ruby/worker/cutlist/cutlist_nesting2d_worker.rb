@@ -6,6 +6,7 @@ module Ladb::OpenCutList
   require_relative '../../utils/dimension_utils'
   require_relative '../../utils/string_utils'
   require_relative '../../lib/fiddle/packy/packy'
+  require_relative '../../lib/fiddle/clippy/clippy'
 
   class CutlistNesting2dWorker
 
@@ -13,6 +14,7 @@ module Ladb::OpenCutList
     include PixelConverterHelper
 
     Packy = Fiddle::Packy
+    Clippy = Fiddle::Clippy
 
     ENGINE_RECTANGLE = 'rectangle'
     ENGINE_RECTANGLEGUILLOTINE = 'rectangleguillotine'
@@ -92,8 +94,8 @@ module Ladb::OpenCutList
         json[:bin_types] << {
           copies: count,
           type: 'rectangle',
-          width: length.to_f,
-          height: width.to_f
+          width: length.to_f.round(8),
+          height: width.to_f.round(8)
         }
 
       }
@@ -107,8 +109,8 @@ module Ladb::OpenCutList
         json[:bin_types] << {
           copies: parts_count,
           type: 'rectangle',
-          width: @std_sheet_length.to_f,
-          height: @std_sheet_width.to_f
+          width: @std_sheet_length.to_f.round(8),
+          height: @std_sheet_width.to_f.round(8)
         }
 
       end
@@ -116,37 +118,51 @@ module Ladb::OpenCutList
       # Add shapes from parts
       fn_add_shapes = lambda { |part|
 
+        rpaths_json = []
         rpaths = []
-        vertices = []
-        holes = []
 
         projection_def = _compute_part_projection_def(PART_DRAWING_TYPE_2D_TOP, part, merge_holes: true)
         projection_def.layer_defs.each do |layer_def|
           next unless layer_def.type_outer? || layer_def.type_holes?
           layer_def.poly_defs.each do |poly_def|
+            rpaths_json << Clippy.points_to_rpath(layer_def.type_holes? ? poly_def.points.reverse : poly_def.points)
             rpaths << Packy.points_to_rpath(layer_def.type_holes? ? poly_def.points.reverse : poly_def.points)
+          end
+        end
+        polytree = Clippy.execute_polytree(rpaths_json)
+        polyshapes = Clippy.polytree_to_polyshapes(polytree)
 
-            if layer_def.type_holes?
-              holes << {
+        shapes = []
+        polyshapes.each do |polyshape|
+
+          shape = {
+            type: 'polygon',
+            vertices: [],
+            holes: []
+          }
+
+          polyshape.paths.each_with_index do |path, index|
+            vertices = Clippy.rpath_to_points(path).map { |point| { x: point.x.to_f.round(8), y: point.y.to_f.round(8) } }
+            if index > 0
+              shape[:holes] << {
                 type: 'polygon',
-                vertices: poly_def.points.map { |point| { x: point.x.to_f, y: point.y.to_f } }
+                vertices: vertices.reverse
               }
             else
-              vertices = poly_def.points.map { |point| { x: point.x.to_f, y: point.y.to_f } }
+              shape[:vertices] = vertices
             end
-
           end
+
+          shapes << shape
+
         end
 
         shape_defs << Packy::ShapeDef.new(shape_id += 1, part.count, (group.material_grained  && !part.ignore_grain_direction) ? 0 : 1, rpaths, part)
 
         json[:item_types] << {
           copies: part.count,
-          type: 'polygon',
-          vertices: vertices,
-          holes: holes
+          shapes: shapes
         }
-
 
       }
       parts.each { |part|

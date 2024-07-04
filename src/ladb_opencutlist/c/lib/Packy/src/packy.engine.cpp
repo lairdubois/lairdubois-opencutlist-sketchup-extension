@@ -28,6 +28,7 @@ namespace Packy {
   inline bool shapes_sorter(Shape &shape1, Shape &shape2) {
     return (GetBounds(shape1.def->paths).Height() > GetBounds(shape2.def->paths).Height());
   }
+
   inline bool bins_sorter(Bin &bin1, Bin &bin2) {
     if (bin1.def->type == bin2.def->type) {
       return (bin1.def->length * bin1.def->width < bin2.def->length * bin2.def->width);
@@ -35,7 +36,15 @@ namespace Packy {
     return (bin1.def->type > bin2.def->type);
   }
 
-  bool RectangleEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, char *c_objective, int64_t c_spacing, int64_t c_trimming, int verbosity_level, Solution &solution, std::string &message) {
+  bool RectangleEngine::run(
+          ShapeDefs &shape_defs,
+          BinDefs &bin_defs,
+          char *c_objective,
+          int64_t c_spacing,
+          int64_t c_trimming,
+          int verbosity_level,
+          Solution &solution,
+          std::string &message) {
 
     solution.clear();
     message.clear();
@@ -91,7 +100,9 @@ namespace Packy {
       const rectangle::SolutionBin &solution_bin = ps_solution.bin(bin_pos);
       BinTypeId bin_type_id = solution_bin.bin_type_id;
 
-      auto bin_def_it = std::find_if(bin_defs.begin(), bin_defs.end(), [&bin_type_id](const BinDef &bin_def) { return bin_def.bin_type_id == bin_type_id; });
+      auto bin_def_it = std::find_if(bin_defs.begin(), bin_defs.end(), [&bin_type_id](const BinDef &bin_def) {
+        return bin_def.bin_type_id == bin_type_id;
+      });
       if (bin_def_it != bin_defs.end()) {
 
         for (BinPos copie = 0; copie < solution_bin.copies; ++copie) {
@@ -102,7 +113,10 @@ namespace Packy {
 
             ItemTypeId item_type_id = solution_item.item_type_id;
 
-            auto shape_def_it = std::find_if(shape_defs.begin(), shape_defs.end(), [&item_type_id](const ShapeDef &shape_def) { return shape_def.item_type_id == item_type_id; });
+            auto shape_def_it = std::find_if(shape_defs.begin(), shape_defs.end(),
+                                             [&item_type_id](const ShapeDef &shape_def) {
+                                               return shape_def.item_type_id == item_type_id;
+                                             });
             if (shape_def_it != shape_defs.end()) {
 
               ShapeDef &shape_def = *shape_def_it;
@@ -146,7 +160,17 @@ namespace Packy {
     return true;
   }
 
-  bool RectangleGuillotineEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, char *c_objective, char *c_cut_type, char *c_first_stage_orientation, int64_t c_spacing, int64_t c_trimming, int verbosity_level, Solution &solution, std::string &message) {
+  bool RectangleGuillotineEngine::run(
+          ShapeDefs &shape_defs,
+          BinDefs &bin_defs,
+          char *c_objective,
+          char *c_cut_type,
+          char *c_first_stage_orientation,
+          int64_t c_spacing,
+          int64_t c_trimming,
+          int verbosity_level,
+          Solution &solution,
+          std::string &message) {
 
     solution.clear();
     message.clear();
@@ -211,7 +235,7 @@ namespace Packy {
 
     rectangleguillotine::Instance instance = instance_builder.build();
 
-//    instance.write("./test");
+    //    instance.write("./test");
 
     rectangleguillotine::OptimizeParameters parameters;
     parameters.optimization_mode = OptimizationMode::NotAnytime;
@@ -236,13 +260,16 @@ namespace Packy {
 
           Bin &bin = solution.packed_bins.emplace_back(&*bin_def_it);
 
-          for (SolutionNodeId node_id = 0; node_id < (SolutionNodeId)solution_bin.nodes.size(); ++node_id) {
+          for (SolutionNodeId node_id = 0; node_id < (SolutionNodeId) solution_bin.nodes.size(); ++node_id) {
 
             const SolutionNode &solution_node = solution_bin.nodes[node_id];
 
             ItemTypeId item_type_id = solution_node.item_type_id;
 
-            auto shape_def_it = std::find_if(shape_defs.begin(), shape_defs.end(),[&item_type_id](const ShapeDef &shape_def) { return shape_def.item_type_id == item_type_id; });
+            auto shape_def_it = std::find_if(shape_defs.begin(), shape_defs.end(),
+                                             [&item_type_id](const ShapeDef &shape_def) {
+                                               return shape_def.item_type_id == item_type_id;
+                                             });
             if (shape_def_it != shape_defs.end()) {
 
               ShapeDef &shape_def = *shape_def_it;
@@ -270,7 +297,9 @@ namespace Packy {
 
                   // Bottom
                   bin.cuts.emplace_back(solution_node.d,
-                                        solution_node.l - (first_stage_orientation == rectangleguillotine::CutOrientation::Horizontal ? trimming : 0),
+                                        solution_node.l - (first_stage_orientation ==
+                                                           rectangleguillotine::CutOrientation::Horizontal
+                                                           ? trimming : 0),
                                         solution_node.b - spacing,
                                         solution_node.r + trimming,
                                         solution_node.b);
@@ -278,7 +307,9 @@ namespace Packy {
                   // Left
                   bin.cuts.emplace_back(solution_node.d,
                                         solution_node.l - spacing,
-                                        solution_node.b - (first_stage_orientation == rectangleguillotine::CutOrientation::Vertical ? trimming : 0),
+                                        solution_node.b - (first_stage_orientation ==
+                                                           rectangleguillotine::CutOrientation::Vertical
+                                                           ? trimming : 0),
                                         solution_node.l,
                                         solution_node.t + trimming);
 
@@ -332,7 +363,15 @@ namespace Packy {
     return true;
   }
 
-  bool IrregularEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, char *c_objective, int64_t c_spacing, int64_t c_trimming, int verbosity_level, Solution &solution, std::string &message) {
+  bool IrregularEngine::run(
+          ShapeDefs &shape_defs,
+          BinDefs &bin_defs,
+          char *c_objective,
+          int64_t c_spacing,
+          int64_t c_trimming,
+          int verbosity_level,
+          Solution &solution,
+          std::string &message) {
 
     solution.clear();
     message.clear();
@@ -398,10 +437,10 @@ namespace Packy {
             point_it_next = begin(path);
           }
 
-          LengthDbl xs = (LengthDbl) (*point_it).x;
-          LengthDbl ys = (LengthDbl) (*point_it).y;
-          LengthDbl xe = (LengthDbl) (*point_it_next).x;
-          LengthDbl ye = (LengthDbl) (*point_it_next).y;
+          LengthDbl xs = (LengthDbl)(*point_it).x;
+          LengthDbl ys = (LengthDbl)(*point_it).y;
+          LengthDbl xe = (LengthDbl)(*point_it_next).x;
+          LengthDbl ye = (LengthDbl)(*point_it_next).y;
 
           irregular::ShapeElement line;
           line.type = irregular::ShapeElementType::LineSegment;
@@ -454,7 +493,10 @@ namespace Packy {
 
             ItemTypeId item_type_id = solution_item.item_type_id;
 
-            auto shape_def_it = std::find_if(shape_defs.begin(), shape_defs.end(), [&item_type_id](const ShapeDef &shape_def) { return shape_def.item_type_id == item_type_id; });
+            auto shape_def_it = std::find_if(shape_defs.begin(), shape_defs.end(),
+                                             [&item_type_id](const ShapeDef &shape_def) {
+                                               return shape_def.item_type_id == item_type_id;
+                                             });
             if (shape_def_it != shape_defs.end()) {
 
               Shape &shape = bin.shapes.emplace_back(&*shape_def_it);
@@ -489,7 +531,15 @@ namespace Packy {
     return true;
   }
 
-  bool OneDimensionalEngine::run(ShapeDefs &shape_defs, BinDefs &bin_defs, char *c_objective, int64_t c_spacing, int64_t c_trimming, int verbosity_level, Solution &solution, std::string &message) {
+  bool OneDimensionalEngine::run(
+          ShapeDefs &shape_defs,
+          BinDefs &bin_defs,
+          char *c_objective,
+          int64_t c_spacing,
+          int64_t c_trimming,
+          int verbosity_level,
+          Solution &solution,
+          std::string &message) {
 
     solution.clear();
     message.clear();
@@ -528,7 +578,7 @@ namespace Packy {
 
     onedimensional::Instance instance = instance_builder.build();
 
-//    instance.write("./test");
+    //    instance.write("./test");
 
     onedimensional::OptimizeParameters parameters;
     parameters.optimization_mode = OptimizationMode::NotAnytime;
@@ -544,7 +594,9 @@ namespace Packy {
       const onedimensional::SolutionBin &solution_bin = ps_solution.bin(bin_pos);
       BinTypeId bin_type_id = solution_bin.bin_type_id;
 
-      auto bin_def_it = std::find_if(bin_defs.begin(), bin_defs.end(), [&bin_type_id](const BinDef &bin_def) { return bin_def.bin_type_id == bin_type_id; });
+      auto bin_def_it = std::find_if(bin_defs.begin(), bin_defs.end(), [&bin_type_id](const BinDef &bin_def) {
+        return bin_def.bin_type_id == bin_type_id;
+      });
       if (bin_def_it != bin_defs.end()) {
 
         for (BinPos copie = 0; copie < solution_bin.copies; ++copie) {
@@ -555,7 +607,10 @@ namespace Packy {
 
             ItemTypeId item_type_id = solution_item.item_type_id;
 
-            auto shape_def_it = std::find_if(shape_defs.begin(), shape_defs.end(), [&item_type_id](const ShapeDef &shape_def) {  return shape_def.item_type_id == item_type_id; });
+            auto shape_def_it = std::find_if(shape_defs.begin(), shape_defs.end(),
+                                             [&item_type_id](const ShapeDef &shape_def) {
+                                               return shape_def.item_type_id == item_type_id;
+                                             });
             if (shape_def_it != shape_defs.end()) {
 
               Shape &shape = bin.shapes.emplace_back(&*shape_def_it);
