@@ -12,6 +12,7 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
     * Added Switch YZ axes option to Smart Export Tool on Export 3D part action
     * Added Material type separators in materials tabs when sorted by type
     * Added Export 2D projections left, right, front, back
+    * Added QRCodes in labels
     * Improved smart tools picker
     * Improved surface detection
     * Replaced Highlight Part Tool by Smart Axes Tool

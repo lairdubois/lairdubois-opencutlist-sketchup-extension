@@ -66,6 +66,24 @@
             </g>
         {% endif %}
     </g>
+{% elseif terms[0] == 'custom' and terms[1] == 'qr_code' and partInfo.custom_values[index]['error'] is empty %}
+    {% set areaSize = elementDef.size * minUnit %}
+    {% if elementDef.anchor starts with 'middle' %}
+        {% set transX = areaSize * -0.5 %}
+    {% elseif elementDef.anchor starts with 'end' %}
+        {% set transX = areaSize * -1 %}
+    {% else %}
+        {% set transX = 0 %}
+    {% endif %}
+    {% if elementDef.anchor ends with 'top' %}
+        {% set transY = 0 %}
+    {% else %}
+        {% set transY = areaSize * -1 %}
+    {% endif %}
+    <rect class="ladb-label-element" x="{{ transX }}" y="{{ transY }}" width="{{ areaSize }}" height="{{ areaSize }}" fill="{% if noEmptyValue %}rgba(0,0,0,0.03){% else %}none{% endif %}" stroke="none" />
+    <g transform="translate({{ transX }} {{ transY }})" fill="{{ elementDef.color }}">
+        {{ qr_code_svg(partInfo.custom_values[index], areaSize) }}
+    </g>
 {% else %}
     {% if terms[0] == 'part' %}
         {% set key = terms[1] %}

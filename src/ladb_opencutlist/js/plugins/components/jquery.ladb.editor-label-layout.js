@@ -448,7 +448,7 @@
             return variableDefs;
         }
         var fnUpdateCustomFormulaVisibility = function () {
-            if (elementDef.formula === 'custom') {
+            if (elementDef.formula === 'custom' || elementDef.formula === 'custom.qr_code') {
                 $divCustomFormula.show();
             } else {
                 $divCustomFormula.hide();
@@ -463,7 +463,7 @@
             .selectpicker(SELECT_PICKER_OPTIONS)
             .on('change', function () {
                 elementDef.formula = $(this).val();
-                if (elementDef.formula !== 'custom') {
+                if (elementDef.formula !== 'custom' || elementDef.formula !== 'custom.qr_code') {
                     elementDef.custom_formula = '';
                     $textareaCustomFormula.ladbTextinputCode('val', '');
                 }

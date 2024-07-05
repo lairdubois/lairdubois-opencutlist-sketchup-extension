@@ -403,7 +403,7 @@ LadbAbstractDialog.prototype.init = function () {
 
     var that = this;
 
-    // Add compatible_with twig function
+    // Add twig functions
     Twig.extendFunction('compatible_with', function(value) {
         switch (value) {
             case 'svg.height-auto':

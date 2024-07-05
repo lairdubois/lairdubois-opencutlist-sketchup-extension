@@ -40,6 +40,18 @@ i, span.ladb-opencutlist-icon:before {
 }
 
 
+.ladb-opencutlist-icon-qr-code:before {
+  content: "\e9b1";
+}
+.ladb-opencutlist-icon-align-left:before {
+  content: "\e98f";
+}
+.ladb-opencutlist-icon-align-center:before {
+  content: "\e990";
+}
+.ladb-opencutlist-icon-align-right:before {
+  content: "\e991";
+}
 .ladb-opencutlist-icon-target:before {
   content: "\e9b0";
 }
@@ -381,15 +393,6 @@ i, span.ladb-opencutlist-icon:before {
 }
 .ladb-opencutlist-icon-material-type-5:before {
   content: "\e950";
-}
-.ladb-opencutlist-icon-align-left:before {
-  content: "\e98f";
-}
-.ladb-opencutlist-icon-align-center:before {
-  content: "\e990";
-}
-.ladb-opencutlist-icon-align-right:before {
-  content: "\e991";
 }
 .ladb-opencutlist-icon-zzz:before {
   content: "\e952";

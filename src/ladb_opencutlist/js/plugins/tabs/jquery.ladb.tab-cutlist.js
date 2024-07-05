@@ -5143,6 +5143,8 @@
                                 partInfos = response.part_infos;
                             }
 
+                            console.log(response);
+
                             // Split part infos into pages
                             var page;
                             var gIndex = 0;

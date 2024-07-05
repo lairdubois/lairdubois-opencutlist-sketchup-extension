@@ -686,6 +686,16 @@
 
         var that = this;
 
+        // Add twig functions
+        Twig.extendFunction('qr_code_svg', function(msg, dim) {
+            var qrCode = new QRCode({
+                msg: msg,
+                dim: dim,
+                pad: 0
+            });
+            return qrCode.outerHTML;
+        });
+
         this.pullSettings([
                 SETTING_KEY_MUTED_UPDATE_BUILD,
                 SETTING_KEY_LAST_LISTED_NEWS_TIMESTAMP

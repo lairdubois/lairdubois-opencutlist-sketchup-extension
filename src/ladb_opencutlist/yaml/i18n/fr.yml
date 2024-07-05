@@ -982,6 +982,7 @@ tab:
       option_color: Couleur
       formula:
         custom: Formule
+        custom_qr_code: QR Code
         part_number: Numéro
         part_name: Désignation
         part_description: Description
