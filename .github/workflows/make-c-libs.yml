@@ -38,11 +38,11 @@ jobs:
             c_compiler: cl
 
     steps:
+      - name: Support longpaths
+        run: sudo git config --system core.longpaths true
+
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          path: '../ocl'
-
 
       - name: Install CLP (MacOS)
         run: |
