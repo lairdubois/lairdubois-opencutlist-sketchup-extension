@@ -41,7 +41,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          path: 'ocl'
+          path: '../ocl'
 
 
       - name: Install CLP (MacOS)
