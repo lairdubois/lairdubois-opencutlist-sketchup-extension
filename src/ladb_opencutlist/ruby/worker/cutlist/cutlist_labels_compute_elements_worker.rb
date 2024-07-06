@@ -41,7 +41,7 @@ module Ladb::OpenCutList
 
         @layout.each do |element_def|
 
-          if element_def['formula'] == 'custom' || element_def['formula'] == 'custom.qr_code'
+          if element_def['formula'].start_with?('custom')
 
             data = LabelData.new(
               StringWrapper.new(part.number),
