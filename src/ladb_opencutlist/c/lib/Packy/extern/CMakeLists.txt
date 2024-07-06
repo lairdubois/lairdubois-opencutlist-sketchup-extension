@@ -3,6 +3,8 @@ include(FetchContent)
 
 message(STATUS "Fetching Dependencies...")
 
+Set(FETCHCONTENT_QUIET FALSE)
+
 # Fetch fontanf/packingsolver.
 FetchContent_Declare(
         packingsolver

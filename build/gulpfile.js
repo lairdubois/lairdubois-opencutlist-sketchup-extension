@@ -221,6 +221,9 @@ gulp.task('default', gulp.series('build'));
 // ----------
 // Warning: These scripts build libraries only on the current operating system architecture.
 // Use GitHub action to build Windows and MacOS libs
+//
+// Example to build 'master' branch (gh = https://cli.github.com/) :
+// $ gh workflow run make-c-libs.yml --ref master
 
 var cmakeBuildDir = 'cmake-build';
 
@@ -242,7 +245,7 @@ gulp.task('c_libs_build', function () {
 
     var config = options.config ? options.config : 'Release'
 
-    return run('cmake --build ' + cmakeBuildDir + ' --config ' + config, { verbosity: 3 }).exec();
+    return run('cmake --build ' + cmakeBuildDir + ' --config ' + config + ' --parallel', { verbosity: 3 }).exec();
 });
 
 gulp.task('c_libs_install', function () {
