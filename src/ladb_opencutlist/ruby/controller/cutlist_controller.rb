@@ -98,8 +98,8 @@ module Ladb::OpenCutList
       end
 
 
-      PLUGIN.register_command("cutlist_group_nesting2d") do |settings|
-        group_nesting2d_command(settings)
+      PLUGIN.register_command("cutlist_group_packing") do |settings|
+        group_packing_command(settings)
       end
 
     end
@@ -333,11 +333,11 @@ module Ladb::OpenCutList
     end
 
 
-    def group_nesting2d_command(settings)
-      require_relative '../worker/cutlist/cutlist_nesting2d_worker'
+    def group_packing_command(settings)
+      require_relative '../worker/cutlist/cutlist_packing_worker'
 
       # Setup worker
-      worker = CutlistNesting2dWorker.new(@cutlist, **settings)
+      worker = CutlistPackingWorker.new(@cutlist, **settings)
 
       # Run !
       worker.run

@@ -1,6 +1,6 @@
 ﻿{% extends 'core/_modal.twig' %}
 
-{% set id = 'ladb_cutlist_modal_nesting_2d' %}
+{% set id = 'ladb_cutlist_modal_packing' %}
 {% set title = ('tab.cutlist.cuttingdiagram.title'|i18next)~'<small class="ladb-horizontal-left-separator">'~group.material_name|escape('html')~' / '~group.std_dimension~'</small>' %}
 {% set sheetStrippedname = group.material_type == 6 ? 'veneer' : 'good' %}  {# 6 = TYPE_VENEER #}
 
@@ -12,8 +12,8 @@
 {% block headerInner %}
     {{ parent() }}
     <ul class="nav nav-tabs nav-justified" role="tablist">
-        <li role="presentation"{% if tab == 'material' %} class="active"{% endif %}><a href="#tab_nesting_options_material" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-material-type-2"></i> {{ 'tab.cutlist.cuttingdiagram.options_material'|i18next }}</a></li>
-        <li role="presentation"{% if tab == 'config' %} class="active"{% endif %}><a href="#tab_nesting_options_config" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-settings"></i> {{ 'tab.cutlist.cuttingdiagram.options_config'|i18next }}</a></li>
+        <li role="presentation"{% if tab == 'material' %} class="active"{% endif %}><a href="#tab_packing_options_material" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-material-type-2"></i> {{ 'tab.cutlist.cuttingdiagram.options_material'|i18next }}</a></li>
+        <li role="presentation"{% if tab == 'config' %} class="active"{% endif %}><a href="#tab_packing_options_config" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-settings"></i> {{ 'tab.cutlist.cuttingdiagram.options_config'|i18next }}</a></li>
     </ul>
 {% endblock %}
 
@@ -22,7 +22,7 @@
         <div class="alert alert-info text-center">{{ 'tab.cutlist.cuttingdiagram.warning.is_part_selection'|i18next }}</div>
     {% endif %}
     <div class="tab-content">
-        <div role="tabpanel" class="tab-pane{% if tab == 'material' %} active{% endif %}" id="tab_nesting_options_material">
+        <div role="tabpanel" class="tab-pane{% if tab == 'material' %} active{% endif %}" id="tab_packing_options_material">
             <div class="form form-horizontal" style="margin-top: 15px;">
                 <div class="form-group">
                     <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_std_sheet_help'|i18next({ 'material_name':group.material_name }) }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
@@ -53,7 +53,7 @@
                 </div>
             </div>
         </div>
-        <div role="tabpanel" class="tab-pane{% if tab == 'config' %} active{% endif %}" id="tab_nesting_options_config">
+        <div role="tabpanel" class="tab-pane{% if tab == 'config' %} active{% endif %}" id="tab_packing_options_config">
             <div class="form form-horizontal" style="margin-top: 15px;">
                 <div class="form-group">
                     <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_engine_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>

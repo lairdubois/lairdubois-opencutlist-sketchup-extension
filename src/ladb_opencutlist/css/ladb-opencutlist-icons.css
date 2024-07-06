@@ -412,10 +412,10 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-cuttingdiagram2d-selection:before {
   content: "\e957";
 }
-.ladb-opencutlist-icon-nesting2d:before {
+.ladb-opencutlist-icon-packing:before {
   content: "\e9ad";
 }
-.ladb-opencutlist-icon-nesting2d-selection:before {
+.ladb-opencutlist-icon-packing-selection:before {
   content: "\e9ae";
 }
 .ladb-opencutlist-icon-asterisk:before {

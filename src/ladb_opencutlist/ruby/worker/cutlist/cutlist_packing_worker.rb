@@ -8,7 +8,7 @@ module Ladb::OpenCutList
   require_relative '../../lib/fiddle/packy/packy'
   require_relative '../../lib/fiddle/clippy/clippy'
 
-  class CutlistNesting2dWorker
+  class CutlistPackingWorker
 
     include PartDrawingHelper
     include PixelConverterHelper

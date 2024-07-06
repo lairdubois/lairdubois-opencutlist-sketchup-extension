@@ -595,11 +595,11 @@
                     var groupId = $group.data('group-id');
                     that.cuttingdiagram2dGroup(groupId, true);
                 });
-                $('button.ladb-btn-group-nesting2d', that.$page).on('click', function () {
+                $('button.ladb-btn-group-packing', that.$page).on('click', function () {
                     $(this).blur();
                     var $group = $(this).parents('.ladb-cutlist-group');
                     var groupId = $group.data('group-id');
-                    that.nesting2dGroup(groupId, true);
+                    that.packingGroup(groupId, true);
                 });
                 $('button.ladb-btn-group-labels', that.$page).on('click', function () {
                     $(this).blur();
@@ -4529,20 +4529,20 @@
 
     };
 
-    LadbTabCutlist.prototype.nesting2dGroup = function (groupId, forceDefaultTab) {
+    LadbTabCutlist.prototype.packingGroup = function (groupId, forceDefaultTab) {
         var that = this;
 
         var group = this.findGroupById(groupId);
         var isPartSelection = this.selectionGroupId === groupId && this.selectionPartIds.length > 0;
 
         // Retrieve cutting diagram options
-        rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_nesting2d_options', section: groupId }, function (response) {
+        rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_packing_options', section: groupId }, function (response) {
 
-            var nesting2dOptions = response.preset;
+            var packingOptions = response.preset;
 
             rubyCallCommand('materials_get_attributes_command', {name: group.material_name}, function (response) {
 
-                var $modal = that.appendModalInside('ladb_cutlist_modal_nesting_2d', 'tabs/cutlist/_modal-nesting-2d.twig', {
+                var $modal = that.appendModalInside('ladb_cutlist_modal_packing', 'tabs/cutlist/_modal-packing.twig', {
                     material_attributes: response,
                     group: group,
                     isPartSelection: isPartSelection,
@@ -4601,13 +4601,13 @@
 
                 $widgetPreset.ladbWidgetPreset({
                     dialog: that.dialog,
-                    dictionary: 'cutlist_nesting2d_options',
+                    dictionary: 'cutlist_packing_options',
                     fnFetchOptions: fnFetchOptions,
                     fnFillInputs: fnFillInputs
                 });
-                if (nesting2dOptions.std_sheet) {
+                if (packingOptions.std_sheet) {
                     var defaultValue = $inputStdSheet.val();
-                    $inputStdSheet.val(nesting2dOptions.std_sheet);
+                    $inputStdSheet.val(packingOptions.std_sheet);
                     if ($inputStdSheet.val() == null) {
                         if (response.std_sizes.length === 0) {
                             $inputStdSheet.val('0x0');  // Special case if the std_sheet is not present anymore in the list and no std size defined. Select "none" by default.
@@ -4618,7 +4618,7 @@
                 }
                 $inputStdSheet.selectpicker(SELECT_PICKER_OPTIONS);
                 $inputScrapSheetSizes.ladbTextinputTokenfield({format: 'dxdxq'});
-                $inputScrapSheetSizes.ladbTextinputTokenfield('setTokens', nesting2dOptions.scrap_sheet_sizes);
+                $inputScrapSheetSizes.ladbTextinputTokenfield('setTokens', packingOptions.scrap_sheet_sizes);
                 $selectEngine.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectObjective.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectCutType.selectpicker(SELECT_PICKER_OPTIONS);
@@ -4627,11 +4627,11 @@
                 $inputTrimming.ladbTextinputDimension();
                 $selectVerbisotyLevel.selectpicker(SELECT_PICKER_OPTIONS);
 
-                fnFillInputs(nesting2dOptions);
+                fnFillInputs(packingOptions);
 
                 // Bind tabs
                 $tabs.on('shown.bs.tab', function (e) {
-                    that.lastNesting2dOptionsTab = $(e.target).attr('href').substring('#tab_nesting_options_'.length);
+                    that.lastNesting2dOptionsTab = $(e.target).attr('href').substring('#tab_packing_options_'.length);
                 });
 
                 // Bind select
@@ -4661,12 +4661,12 @@
                 $btnGenerate.on('click', function () {
 
                     // Fetch options
-                    fnFetchOptions(nesting2dOptions);
+                    fnFetchOptions(packingOptions);
 
                     // Store options
                     rubyCallCommand('core_set_model_preset', {
-                        dictionary: 'cutlist_nesting2d_options',
-                        values: nesting2dOptions,
+                        dictionary: 'cutlist_packing_options',
+                        values: packingOptions,
                         section: groupId
                     });
 
@@ -4676,12 +4676,12 @@
                         that.dialog.startProgress(1);
 
 
-                        rubyCallCommand('cutlist_group_nesting2d', $.extend({
+                        rubyCallCommand('cutlist_group_packing', $.extend({
                             group_id: groupId,
                             part_ids: isPartSelection ? that.selectionPartIds : null
-                        }, nesting2dOptions), function (response) {
+                        }, packingOptions), function (response) {
 
-                            var $slide = that.pushNewSlide('ladb_cutlist_slide_nesting_2d', 'tabs/cutlist/_slide-nesting-2d.twig', $.extend({
+                            var $slide = that.pushNewSlide('ladb_cutlist_slide_packing', 'tabs/cutlist/_slide-packing.twig', $.extend({
                                 filename: that.filename,
                                 modelName: that.modelName,
                                 pageName: that.pageName,
@@ -4694,12 +4694,12 @@
                             });
 
                             // Fetch UI elements
-                            var $btnNesting = $('#ladb_btn_nesting', $slide);
+                            var $btnPacking = $('#ladb_btn_packing', $slide);
                             var $btnClose = $('#ladb_btn_close', $slide);
 
                             // Bind buttons
-                            $btnNesting.on('click', function () {
-                                that.nesting2dGroup(groupId);
+                            $btnPacking.on('click', function () {
+                                that.packingGroup(groupId);
                             });
                             $btnClose.on('click', function () {
                                 that.popSlide();
