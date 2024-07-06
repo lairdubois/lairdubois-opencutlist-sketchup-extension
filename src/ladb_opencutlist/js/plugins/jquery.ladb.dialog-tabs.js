@@ -687,10 +687,11 @@
         var that = this;
 
         // Add twig functions
-        Twig.extendFunction('qr_code_svg', function(msg, dim) {
+        Twig.extendFunction('qr_code_svg', function(msg, dim, color, bgColor) {
             var qrCode = new QRCode({
                 msg: msg,
                 dim: dim,
+                pal: [ color === undefined ? '#000' : color, bgColor === undefined ? '#fff' : bgColor ],
                 pad: 0
             });
             return qrCode.outerHTML;
