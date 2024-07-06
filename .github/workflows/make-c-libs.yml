@@ -40,6 +40,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          path: 'ocl'
+
 
       - name: Install CLP (MacOS)
         run: |
