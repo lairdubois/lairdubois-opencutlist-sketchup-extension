@@ -4,6 +4,12 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
+* 6.2.1 (2024-03-22)
+
+  * Added **Vietnamese** language
+  * Fixed SVG/DXF cutting diagram export when part number are numeric
+  * Fixed cutting diagram bug
+
 * 6.2.0 (2024-03-22)
 
   * Added **Chinese** language

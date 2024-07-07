@@ -1167,7 +1167,7 @@ module Ladb::OpenCutList
       _dxf_write(file, 30, 0.0)
       _dxf_write(file, 40, height)
       _dxf_write(file, 50, ar)
-      _dxf_write(file, 1, text)
+      _dxf_write(file, 1, text.to_s)
       _dxf_write(file, 72, halign)
       _dxf_write(file, 11, x)
       _dxf_write(file, 21, y)
@@ -1178,7 +1178,8 @@ module Ladb::OpenCutList
     end
 
     def _dxf_write_label(file, x, y, width, height, text, is_vertical = false, layer = '0')
-      return unless text.is_a?(String) && text.length > 0
+      text = text.to_s
+      return unless text.length > 0
 
       tx = x + width / 2
       ty = y + height / 2

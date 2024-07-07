@@ -103,6 +103,8 @@ module Ladb::OpenCutList
     end
 
     def _svg_write_label(file, x, y, width, height, text, is_vertical = false, hex_color = nil)
+      text = text.to_s
+      return unless text.length > 0
 
       theight = [ 60.0, (is_vertical ? width : height) / 2, (is_vertical ? height : width) / text.length ].min
       tx = x + width / 2.0
