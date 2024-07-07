@@ -47,49 +47,49 @@ DLL_EXPORTS void c_append_shape_def(int id, int count, int rotations, const int6
 }
 
 
-DLL_EXPORTS char* c_execute(char *raw_input, int verbosity_level) {
-
-  try {
-
-    std::istringstream iss(raw_input);
-
-    irregular::InstanceBuilder instance_builder;
-    instance_builder.read(iss);
-
-    irregular::Instance instance = instance_builder.build();
-
-    irregular::OptimizeParameters parameters;
-    parameters.optimization_mode = OptimizationMode::NotAnytimeSequential;
-    parameters.not_anytime_tree_search_queue_size = 1024;
-    parameters.timer.set_time_limit(5);
-    parameters.verbosity_level = verbosity_level;
-
-    const irregular::Output output = irregular::optimize(instance, parameters);
-    const irregular::Solution &ps_solution = output.solution_pool.best();
-
-    std::stringstream ss;
-
-    ss << "ENGINE --------------------------" << std::endl;
-    ss << instance.type() << std::endl;
-    ss << std::endl << "INSTANCE ------------------------" << std::endl;
-    instance.format(ss, verbosity_level);
-    ss << std::endl << "PARAMETERS ----------------------" << std::endl;
-    parameters.format(ss);
-    ss << std::endl << "SOLUTION ------------------------" << std::endl;
-    ps_solution.format(ss, verbosity_level);
-
-    message = ss.str();
-
-  } catch(const std::exception &e) {
-    message.clear();
-    message = "Error: " + (std::string)e.what();
-  } catch( ... ) {
-    message.clear();
-    message = "Unknow Error";
-  }
-
-  return (char*)message.c_str();
-}
+//DLL_EXPORTS char* c_execute(char *raw_input, int verbosity_level) {
+//
+//  try {
+//
+//    std::istringstream iss(raw_input);
+//
+//    irregular::InstanceBuilder instance_builder;
+//    instance_builder.read(iss);
+//
+//    irregular::Instance instance = instance_builder.build();
+//
+//    irregular::OptimizeParameters parameters;
+//    parameters.optimization_mode = OptimizationMode::NotAnytimeSequential;
+//    parameters.not_anytime_tree_search_queue_size = 1024;
+//    parameters.timer.set_time_limit(5);
+//    parameters.verbosity_level = verbosity_level;
+//
+//    const irregular::Output output = irregular::optimize(instance, parameters);
+//    const irregular::Solution &ps_solution = output.solution_pool.best();
+//
+//    std::stringstream ss;
+//
+//    ss << "ENGINE --------------------------" << std::endl;
+//    ss << instance.type() << std::endl;
+//    ss << std::endl << "INSTANCE ------------------------" << std::endl;
+//    instance.format(ss, verbosity_level);
+//    ss << std::endl << "PARAMETERS ----------------------" << std::endl;
+//    parameters.format(ss);
+//    ss << std::endl << "SOLUTION ------------------------" << std::endl;
+//    ps_solution.format(ss, verbosity_level);
+//
+//    message = ss.str();
+//
+//  } catch(const std::exception &e) {
+//    message.clear();
+//    message = "Error: " + (std::string)e.what();
+//  } catch( ... ) {
+//    message.clear();
+//    message = "Unknow Error";
+//  }
+//
+//  return (char*)message.c_str();
+//}
 
 
 DLL_EXPORTS char* c_execute_rectangle(char *c_objective, int64_t c_spacing, int64_t c_trimming, int verbosity_level) {
