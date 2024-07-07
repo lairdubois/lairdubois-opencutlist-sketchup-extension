@@ -413,12 +413,12 @@ module Ladb::OpenCutList::BinPacking2D
 
           # Recompute bounding box, while packing!
           # Remove this until version 2.1 and further tests.
-          # if current_bin.boxes.size > 2 && box.different?(previous_box)
+          # if current_bin.boxes.size > 2 # && box.different?(previous_box)
           #  current_bin.bounding_box(box, false)
+          # end
           # This would be a good place to make a rectangle merge, but
           # 26.txt shows that this is not possible!
           # Only recompute bounding box when no merge is possible!
-          # end
 
           score = current_bin.best_ranked_score(box)
 
@@ -464,7 +464,7 @@ module Ladb::OpenCutList::BinPacking2D
       rescue Packing2DError => e
         puts("Running signature #{@options.signature}")
         puts("Rescued in Packer #{e.inspect}")
-        puts(e.backtrace)
+        puts(e.backtrace) unless e.nil?
         return ERROR_BAD_ERROR
       end
 
