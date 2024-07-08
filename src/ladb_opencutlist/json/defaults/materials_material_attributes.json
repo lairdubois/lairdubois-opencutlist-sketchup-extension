@@ -102,7 +102,7 @@
     "std_sizes": "",
     "grained": false,
     "edge_decremented": false,
-    "raw_estimated": false,
+    "raw_estimated": true,
     "std_volumic_masses": [],
     "std_prices": []
   },
