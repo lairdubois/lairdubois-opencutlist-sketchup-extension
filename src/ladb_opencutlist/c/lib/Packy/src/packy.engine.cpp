@@ -467,9 +467,9 @@ namespace Packy {
     irregular::Instance instance = instance_builder.build();
 
     irregular::OptimizeParameters parameters;
-    parameters.optimization_mode = OptimizationMode::NotAnytimeSequential;
-    parameters.not_anytime_tree_search_queue_size = 4096;
-    parameters.timer.set_time_limit(60);
+    parameters.optimization_mode = OptimizationMode::NotAnytime;
+    parameters.not_anytime_tree_search_queue_size = 512;
+    parameters.timer.set_time_limit(30);
     parameters.verbosity_level = verbosity_level;
 
     const irregular::Output output = irregular::optimize(instance, parameters);
