@@ -5,6 +5,20 @@ module Ladb::OpenCutList::Fiddle
   module Clippy
     extend ClipperWrapper
 
+    CLIP_TYPE_NONE = 0
+    CLIP_TYPE_INTERSECTION = 1
+    CLIP_TYPE_UNION = 2
+    CLIP_TYPE_DIFFERENCE = 3
+    CLIP_TYPE_XOR = 4
+
+    FILL_TYPE_EVEN_ODD = 0
+    FILL_TYPE_NON_ZERO = 1
+    FILL_TYPE_POSITIVE = 2
+    FILL_TYPE_NEGATIVE = 3
+
+    CPathsDSolution = struct [ 'double* closed_paths', 'double* open_paths', 'int64_t error' ]
+    CPolyTreeDSolution = struct [ 'double* polytree', 'double* open_paths', 'int64_t error' ]
+
     def self._lib_name
       'Clippy'
     end
@@ -12,28 +26,14 @@ module Ladb::OpenCutList::Fiddle
     def self._lib_c_functions
       [
 
-        'void c_clear_subjects()',
-        'void c_append_open_subject(int64_t*)',
-        'void c_append_closed_subject(int64_t*)',
+        'CPathsDSolution* c_boolean_op(uint8_t clip_type, uint8_t fill_type, double* closed_paths, double* open_paths, double* clips)',
+        'CPolyTreeDSolution* c_boolean_op_polytree(uint8_t clip_type, uint8_t fill_type, double* closed_paths, double* open_paths, double* clips)',
 
-        'void c_clear_clips()',
-        'void c_append_clip(int64_t*)',
+        'int c_is_cpath_positive(double*)',
+        'double c_get_cpath_area(double*)',
 
-        'void c_execute_union()',
-        'void c_execute_difference()',
-        'void c_execute_intersection()',
-        'void c_execute_polytree()',
-
-        'void c_clear_paths_solution()',
-        'int64_t* c_get_closed_paths_solution()',
-        'int64_t* c_get_open_paths_solution()',
-        'void c_clear_polytree_solution()',
-        'int64_t* c_get_polytree_solution()',
-
-        'int c_is_cpath_positive(int64_t*)',
-        'double c_get_cpath_area(int64_t*)',
-
-        'void c_dispose_array64(int64_t*)',
+        'void c_free_pointer(void*)',
+        'void c_dispose_array_d(double*)',
 
         'char* c_version()'
 
@@ -49,54 +49,59 @@ module Ladb::OpenCutList::Fiddle
 
     # -----
 
-    def self.execute_union(closed_subjects, open_subjects = [], clips = [])
+    def self.execute(clip_type, closed_subjects, open_subjects = [], clips = [])
       _load_lib
-      _clear
-      _append_closed_subjects(closed_subjects)
-      _append_open_subjects(open_subjects)
-      _append_clips(clips)
-      _execute_union
-      closed_paths_solution = _unpack_closed_paths_solution
-      open_paths_solution = _unpack_open_paths_solution
-      _clear
-      [ closed_paths_solution, open_paths_solution ]
+
+      solution_ptr = c_boolean_op(
+        clip_type,
+        FILL_TYPE_NON_ZERO,
+        _rpaths_to_cpaths(closed_subjects),
+        _rpaths_to_cpaths(open_subjects),
+        _rpaths_to_cpaths(clips)
+      )
+      solution = CPathsDSolution.new(solution_ptr)
+
+      closed_rpath, len = _cpaths_to_rpaths(solution.closed_paths)
+      open_rpath, len = _cpaths_to_rpaths(solution.open_paths)
+
+      c_dispose_array_d(solution.closed_paths)
+      c_dispose_array_d(solution.open_paths)
+      c_free_pointer(solution_ptr)
+
+      [ closed_rpath, open_rpath ]
+    end
+
+    def self.execute_union(closed_subjects, open_subjects = [], clips = [])
+      self.execute(CLIP_TYPE_UNION, closed_subjects, open_subjects, clips)
     end
 
     def self.execute_difference(closed_subjects, open_subjects, clips)
-      _load_lib
-      _clear
-      _append_closed_subjects(closed_subjects)
-      _append_open_subjects(open_subjects)
-      _append_clips(clips)
-      _execute_difference
-      closed_paths_solution = _unpack_closed_paths_solution
-      open_paths_solution = _unpack_open_paths_solution
-      _clear
-      [ closed_paths_solution, open_paths_solution ]
+      self.execute(CLIP_TYPE_DIFFERENCE, closed_subjects, open_subjects, clips)
     end
 
     def self.execute_intersection(closed_subjects, open_subjects, clips)
-      _load_lib
-      _clear
-      _append_closed_subjects(closed_subjects)
-      _append_open_subjects(open_subjects)
-      _append_clips(clips)
-      _execute_intersection
-      closed_paths_solution = _unpack_closed_paths_solution
-      open_paths_solution = _unpack_open_paths_solution
-      _clear
-      [ closed_paths_solution, open_paths_solution ]
+      self.execute(CLIP_TYPE_INTERSECTION, closed_subjects, open_subjects, clips)
     end
 
-    def self.execute_polytree(closed_subjects, open_subjects = [])
+    def self.execute_polytree(closed_subjects, open_subjects = [], clips = [])
       _load_lib
-      _clear
-      _append_closed_subjects(closed_subjects)
-      _append_open_subjects(open_subjects)
-      _execute_polytree
-      solution = _unpack_polytree_solution
-      _clear
-      solution
+
+      solution_ptr = c_boolean_op_polytree(
+        CLIP_TYPE_UNION,
+        FILL_TYPE_NON_ZERO,
+        _rpaths_to_cpaths(closed_subjects),
+        _rpaths_to_cpaths(open_subjects),
+        _rpaths_to_cpaths(clips)
+      )
+      solution = CPolyTreeDSolution.new(solution_ptr)
+
+      rpolytree, len = _cpolytree_to_rpolytree(solution.polytree)
+
+      c_dispose_array_d(solution.polytree)
+      c_dispose_array_d(solution.open_paths)
+      c_free_pointer(solution_ptr)
+
+      rpolytree
     end
 
     def self.is_rpath_positive?(rpath)
@@ -106,7 +111,7 @@ module Ladb::OpenCutList::Fiddle
 
     def self.get_rpath_area(rpath)
       _load_lib
-      return c_get_cpath_area(_rpath_to_cpath(rpath)) / float_to_int64_factor / float_to_int64_factor
+      return c_get_cpath_area(_rpath_to_cpath(rpath))
     end
 
     # -- Path manipulations --
@@ -132,59 +137,6 @@ module Ladb::OpenCutList::Fiddle
 
     private
 
-    def self._clear
-      c_clear_subjects
-      c_clear_clips
-      c_clear_paths_solution
-      c_clear_polytree_solution
-    end
-
-    def self._append_closed_subject(rpath)
-      c_append_closed_subject(_rpath_to_cpath(rpath))
-    end
-
-    def self._append_closed_subjects(rpaths)
-      rpaths.each do |rpath|
-        _append_closed_subject(rpath)
-      end
-    end
-
-    def self._append_open_subject(rpath)
-      c_append_open_subject(_rpath_to_cpath(rpath))
-    end
-
-    def self._append_open_subjects(rpaths)
-      rpaths.each do |rpath|
-        _append_open_subject(rpath)
-      end
-    end
-
-    def self._append_clip(rpath)
-      c_append_clip(_rpath_to_cpath(rpath))
-    end
-
-    def self._append_clips(rpaths)
-      rpaths.each do |rpath|
-        _append_clip(rpath)
-      end
-    end
-
-    def self._execute_union
-      c_execute_union
-    end
-
-    def self._execute_difference
-      c_execute_difference
-    end
-
-    def self._execute_intersection
-      c_execute_intersection
-    end
-
-    def self._execute_polytree
-      c_execute_polytree
-    end
-
     def self._unpack_closed_paths_solution
 
       # Retrieve solution's pointer
@@ -194,7 +146,7 @@ module Ladb::OpenCutList::Fiddle
       rpaths, len = _cpaths_to_rpaths(cpaths)
 
       # Dispose pointer
-      c_dispose_array64(cpaths)
+      c_dispose_array_d(cpaths)
 
       rpaths
     end
@@ -208,7 +160,7 @@ module Ladb::OpenCutList::Fiddle
       rpaths, len = _cpaths_to_rpaths(cpaths)
 
       # Dispose pointer
-      c_dispose_array64(cpaths)
+      c_dispose_array_d(cpaths)
 
       rpaths
     end
@@ -222,7 +174,7 @@ module Ladb::OpenCutList::Fiddle
       rpolytree, len = _cpolytree_to_rpolytree(cpolytree)
 
       # Dispose pointer
-      c_dispose_array64(cpolytree)
+      c_dispose_array_d(cpolytree)
 
       rpolytree
     end

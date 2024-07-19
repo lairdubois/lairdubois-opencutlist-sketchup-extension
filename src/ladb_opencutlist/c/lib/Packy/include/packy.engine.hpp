@@ -1,5 +1,5 @@
-#ifndef PACKY_ENGINE_H
-#define PACKY_ENGINE_H
+#ifndef PACKY_ENGINE_HPP
+#define PACKY_ENGINE_HPP
 
 #include "packy.structs.hpp"
 
@@ -10,11 +10,11 @@ namespace Packy {
   public:
 
     bool run(
-            ShapeDefs &shape_defs,
+            ItemDefs &item_def,
             BinDefs &bin_defs,
             char *c_objective,
-            int64_t c_spacing,
-            int64_t c_trimming,
+            double c_spacing,
+            double c_trimming,
             int verbosity_level,
             Solution &solution,
             std::string &message
@@ -27,13 +27,13 @@ namespace Packy {
   public:
 
     bool run(
-            ShapeDefs &shape_defs,
+            ItemDefs &item_def,
             BinDefs &bin_defs,
             char *c_objective,
             char *c_cut_type,
             char *c_first_stage_orientation,
-            int64_t c_spacing,
-            int64_t c_trimming,
+            double c_spacing,
+            double c_trimming,
             int verbosity_level,
             Solution &solution,
             std::string &message
@@ -46,11 +46,11 @@ namespace Packy {
   public:
 
     bool run(
-            ShapeDefs &shape_defs,
+            ItemDefs &item_def,
             BinDefs &bin_defs,
             char *c_objective,
-            int64_t c_spacing,
-            int64_t c_trimming,
+            double c_spacing,
+            double c_trimming,
             int verbosity_level,
             Solution &solution,
             std::string &message
@@ -63,11 +63,11 @@ namespace Packy {
   public:
 
     bool run(
-            ShapeDefs &shape_defs,
+            ItemDefs &item_def,
             BinDefs &bin_defs,
             char *c_objective,
-            int64_t c_spacing,
-            int64_t c_trimming,
+            double c_spacing,
+            double c_trimming,
             int verbosity_level,
             Solution &solution,
             std::string &message
@@ -77,4 +77,4 @@ namespace Packy {
 
 }
 
-#endif // PACKY_ENGINE_H
+#endif // PACKY_ENGINE_HPP

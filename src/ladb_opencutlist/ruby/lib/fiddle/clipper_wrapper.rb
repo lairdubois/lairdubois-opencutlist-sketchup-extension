@@ -7,31 +7,15 @@ module Ladb::OpenCutList::Fiddle
 
     # ---
 
-    def float_to_int64_factor
-      1e8
-    end
-
-    # Convert Float to Integer
-    def float_to_int64(f)
-      (f * float_to_int64_factor).to_i
-    end
-
-    # Convert Integer to Float
-    def int64_to_float(i)
-      i / float_to_int64_factor
-    end
-
-    # ---
-
     # Convert Array<Geom::Point3d> to Array<Integer> (x1, y1, x2, y2, ...)
     def points_to_rpath(points)
-      points.map { |point| [ float_to_int64(point.x), float_to_int64(point.y) ] }.flatten
+      points.map { |point| [ point.x, point.y ] }.flatten
     end
 
     # Convert Array<Integer> (x1, y1, x2, y2, ...) to Array<Geom::Point3d>
     def rpath_to_points(rpath, z = 0.0)
       points = []
-      rpath.each_slice(2) { |coord_x, coord_y| points << Geom::Point3d.new(int64_to_float(coord_x), int64_to_float(coord_y), z) }
+      rpath.each_slice(2) { |coord_x, coord_y| points << Geom::Point3d.new(coord_x, coord_y, z) }
       points
     end
 
@@ -61,48 +45,48 @@ module Ladb::OpenCutList::Fiddle
 
     # --- Ruby to C
 
-    def _array_to_ptr_int64(array)
-      Fiddle::Pointer[array.pack('q*')]  # q* to write 64-bit signed, native endian (int64_t)
+    def _array_to_ptr_double(array)
+      Fiddle::Pointer[array.pack('d*')]  # d* to write double-precision, native format (double)
     end
 
-    def _array_prepend_n_0_counter(array)
-      [ array.count / 2, 0 ].concat(array)
+    def _array_prepend_n_0_counter(array, period = 2)
+      [ array.count / period, 0 ].concat(array)
     end
 
     # Returns Fiddle::Pointer
     def _rpath_to_cpath(rpath)
-      _array_to_ptr_int64(_array_prepend_n_0_counter(rpath))
+      _array_to_ptr_double(_array_prepend_n_0_counter(rpath))
     end
 
     # Returns Fiddle::Pointer
     def _rpaths_to_cpaths(rpaths)
       len = 2 + rpaths.sum { |rpath| 2 + rpath.length }
-      _array_to_ptr_int64([ len, rpaths.length ].concat(rpaths.map { |rpath| _array_prepend_n_0_counter(rpath) }.flatten(1)))
+      _array_to_ptr_double([ len, rpaths.length ].concat(rpaths.map { |rpath| _array_prepend_n_0_counter(rpath) }.flatten(1)))
     end
 
     # --- C to Ruby
 
-    def _ptr_int64_to_array(ptr, cnt)
-      ptr.to_str(Fiddle::SIZEOF_LONG_LONG * cnt).unpack('q*') # Fiddle::SIZEOF_LONG_LONG = sizeof(int64_t), q* to read 64-bit signed, native endian (int64_t)
+    def _ptr_double_to_array(ptr, cnt)
+      ptr.to_str(Fiddle::SIZEOF_DOUBLE * cnt).unpack('d*') # d* to read double-precision, native format (double)
     end
 
-    def _ptr_int64_offset(ptr, offset = 0)
-      ptr + offset * Fiddle::SIZEOF_LONG_LONG
+    def _ptr_double_offset(ptr, offset = 0)
+      ptr + offset * Fiddle::SIZEOF_DOUBLE
     end
 
     # Returns Array<Integer>
     def _cpath_to_rpath(cpath)
-      n, zero = _ptr_int64_to_array(cpath, 2)
-      [ _ptr_int64_to_array(_ptr_int64_offset(cpath, 2), n * 2), 2 + n * 2 ] # Returns RPath and its data length
+      n, zero = _ptr_double_to_array(cpath, 2)
+      [ _ptr_double_to_array(_ptr_double_offset(cpath, 2), n * 2), 2 + n * 2 ] # Returns RPath and its data length
     end
 
     # Returns Array<Array<Integer>>
     def _cpaths_to_rpaths(cpaths)
-      l, n = _ptr_int64_to_array(cpaths, 2)
+      l, n = _ptr_double_to_array(cpaths, 2)
       cur = 2
       rpaths = []
-      n.times do
-        rpath, len = _cpath_to_rpath(_ptr_int64_offset(cpaths, cur))
+      n.to_i.times do
+        rpath, len = _cpath_to_rpath(_ptr_double_offset(cpaths, cur))
         rpaths << rpath
         cur += len
       end
@@ -110,11 +94,11 @@ module Ladb::OpenCutList::Fiddle
     end
 
     def _cpolytree_to_rpolytree(cpolytree)
-      l, c = _ptr_int64_to_array(cpolytree, 2)
+      l, c = _ptr_double_to_array(cpolytree, 2)
       cur = 2
       rpolypaths = []
-      c.times do
-        rpolypath, len = _read_cpolypath_to_rpolypath(_ptr_int64_offset(cpolytree, cur))
+      c.to_i.times do
+        rpolypath, len = _read_cpolypath_to_rpolypath(_ptr_double_offset(cpolytree, cur))
         rpolypaths << rpolypath
         cur += len
       end
@@ -122,13 +106,13 @@ module Ladb::OpenCutList::Fiddle
     end
 
     def _read_cpolypath_to_rpolypath(cpolypath, level = 0)
-      n, c = _ptr_int64_to_array(cpolypath, 2)
+      n, c = _ptr_double_to_array(cpolypath, 2)
       cur = 2
-      rpath = _ptr_int64_to_array(_ptr_int64_offset(cpolypath, cur), n * 2)
+      rpath = _ptr_double_to_array(_ptr_double_offset(cpolypath, cur), n * 2)
       cur += n * 2
       rpolypaths = []
-      c.times do
-        rpolypath, len = _read_cpolypath_to_rpolypath(_ptr_int64_offset(cpolypath, cur), level + 1)
+      c.to_i.times do
+        rpolypath, len = _read_cpolypath_to_rpolypath(_ptr_double_offset(cpolypath, cur), level + 1)
         rpolypaths << rpolypath
         cur += len
       end

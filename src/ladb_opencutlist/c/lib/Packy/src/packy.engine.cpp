@@ -25,8 +25,8 @@ namespace Packy {
 
   // Clipper2 documentation : https://angusj.com/clipper2/Docs/Overview.htm
 
-  inline bool shapes_sorter(Shape &shape1, Shape &shape2) {
-    return (GetBounds(shape1.def->paths).Height() > GetBounds(shape2.def->paths).Height());
+  inline bool item_sorter(Item &item1, Item &item2) {
+    return (GetBounds(item1.def->paths).Height() > GetBounds(item2.def->paths).Height());
   }
 
   inline bool bins_sorter(Bin &bin1, Bin &bin2) {
@@ -37,11 +37,11 @@ namespace Packy {
   }
 
   bool RectangleEngine::run(
-          ShapeDefs &shape_defs,
+          ItemDefs &item_defs,
           BinDefs &bin_defs,
           char *c_objective,
-          int64_t c_spacing,
-          int64_t c_trimming,
+          double c_spacing,
+          double c_trimming,
           int verbosity_level,
           Solution &solution,
           std::string &message) {
@@ -70,16 +70,16 @@ namespace Packy {
 
     }
 
-    for (auto &shape_def: shape_defs) {
+    for (auto &item_def: item_defs) {
 
-      Rect64 bounds = GetBounds(shape_def.paths);
+      RectD bounds = GetBounds(item_def.paths);
 
-      shape_def.item_type_id = instance_builder.add_item_type(
+      item_def.item_type_id = instance_builder.add_item_type(
               bounds.Width() + spacing,
               bounds.Height() + spacing,
               -1,
-              shape_def.count,
-              shape_def.rotations == 0
+              item_def.count,
+              item_def.rotations == 0
       );
 
     }
@@ -113,24 +113,24 @@ namespace Packy {
 
             ItemTypeId item_type_id = solution_item.item_type_id;
 
-            auto shape_def_it = std::find_if(shape_defs.begin(), shape_defs.end(),
-                                             [&item_type_id](const ShapeDef &shape_def) {
-                                               return shape_def.item_type_id == item_type_id;
+            auto item_def_it = std::find_if(item_defs.begin(), item_defs.end(),
+                                             [&item_type_id](const ItemDef &item_def) {
+                                               return item_def.item_type_id == item_type_id;
                                              });
-            if (shape_def_it != shape_defs.end()) {
+            if (item_def_it != item_defs.end()) {
 
-              ShapeDef &shape_def = *shape_def_it;
-              Rect64 bounds = GetBounds(shape_def.paths);
+              ItemDef &item_def = *item_def_it;
+              RectD bounds = GetBounds(item_def.paths);
 
-              Shape &shape = bin.shapes.emplace_back(&shape_def);
+              Item &item = bin.items.emplace_back(&item_def);
               if (solution_item.rotate) {
-                shape.x = trimming + solution_item.bl_corner.x + bounds.Height();
-                shape.y = trimming + solution_item.bl_corner.y;
-                shape.angle = 90;
+                item.x = trimming + solution_item.bl_corner.x + bounds.Height();
+                item.y = trimming + solution_item.bl_corner.y;
+                item.angle = 90;
               } else {
-                shape.x = trimming + solution_item.bl_corner.x;
-                shape.y = trimming + solution_item.bl_corner.y;
-                shape.angle = 0;
+                item.x = trimming + solution_item.bl_corner.x;
+                item.y = trimming + solution_item.bl_corner.y;
+                item.angle = 0;
               }
 
             }
@@ -161,13 +161,13 @@ namespace Packy {
   }
 
   bool RectangleGuillotineEngine::run(
-          ShapeDefs &shape_defs,
+          ItemDefs &item_defs,
           BinDefs &bin_defs,
           char *c_objective,
           char *c_cut_type,
           char *c_first_stage_orientation,
-          int64_t c_spacing,
-          int64_t c_trimming,
+          double c_spacing,
+          double c_trimming,
           int verbosity_level,
           Solution &solution,
           std::string &message) {
@@ -219,16 +219,16 @@ namespace Packy {
 
     }
 
-    for (auto &shape_def: shape_defs) {
+    for (auto &item_def: item_defs) {
 
-      Rect64 bounds = GetBounds(shape_def.paths);
+      RectD bounds = GetBounds(item_def.paths);
 
-      shape_def.item_type_id = instance_builder.add_item_type(
+      item_def.item_type_id = instance_builder.add_item_type(
               bounds.Width(),
               bounds.Height(),
               -1,
-              shape_def.count,
-              shape_def.rotations == 0
+              item_def.count,
+              item_def.rotations == 0
       );
 
     }
@@ -266,25 +266,25 @@ namespace Packy {
 
             ItemTypeId item_type_id = solution_node.item_type_id;
 
-            auto shape_def_it = std::find_if(shape_defs.begin(), shape_defs.end(),
-                                             [&item_type_id](const ShapeDef &shape_def) {
-                                               return shape_def.item_type_id == item_type_id;
+            auto item_def_it = std::find_if(item_defs.begin(), item_defs.end(),
+                                             [&item_type_id](const ItemDef &item_def) {
+                                               return item_def.item_type_id == item_type_id;
                                              });
-            if (shape_def_it != shape_defs.end()) {
+            if (item_def_it != item_defs.end()) {
 
-              ShapeDef &shape_def = *shape_def_it;
-              Rect64 bounds = GetBounds(shape_def.paths);
+              ItemDef &item_def = *item_def_it;
+              RectD bounds = GetBounds(item_def.paths);
               bool rotated = bounds.Width() != (solution_node.r - solution_node.l);
 
-              Shape &shape = bin.shapes.emplace_back(&shape_def);
+              Item &item = bin.items.emplace_back(&item_def);
               if (rotated) {
-                shape.x = solution_node.r;
-                shape.y = solution_node.b;
-                shape.angle = 90;
+                item.x = solution_node.r;
+                item.y = solution_node.b;
+                item.angle = 90;
               } else {
-                shape.x = solution_node.l;
-                shape.y = solution_node.b;
-                shape.angle = 0;
+                item.x = solution_node.l;
+                item.y = solution_node.b;
+                item.angle = 0;
               }
 
             }
@@ -364,11 +364,11 @@ namespace Packy {
   }
 
   bool IrregularEngine::run(
-          ShapeDefs &shape_defs,
+          ItemDefs &item_defs,
           BinDefs &bin_defs,
           char *c_objective,
-          int64_t c_spacing,
-          int64_t c_trimming,
+          double c_spacing,
+          double c_trimming,
           int verbosity_level,
           Solution &solution,
           std::string &message) {
@@ -422,11 +422,11 @@ namespace Packy {
 
     }
 
-    for (auto &shape_def: shape_defs) {
+    for (auto &item_def: item_defs) {
 
       std::vector <irregular::ItemShape> item_shapes;
 
-      for (auto &path: shape_def.paths) {
+      for (auto &path: item_def.paths) {
 
         irregular::ItemShape item_shape;
 
@@ -455,10 +455,10 @@ namespace Packy {
         break;   // TODO add holes
       }
 
-      shape_def.item_type_id = instance_builder.add_item_type(
+      item_def.item_type_id = instance_builder.add_item_type(
               item_shapes,
               -1,
-              shape_def.count,
+              item_def.count,
               {{0, 0}}
       );
 
@@ -480,9 +480,7 @@ namespace Packy {
       const irregular::SolutionBin &solution_bin = ps_solution.bin(bin_pos);
       BinTypeId bin_type_id = solution_bin.bin_type_id;
 
-      auto bin_def_it = std::find_if(bin_defs.begin(), bin_defs.end(), [&bin_type_id](const BinDef &bin_def) {
-        return bin_def.bin_type_id == bin_type_id;
-      });
+      auto bin_def_it = std::find_if(bin_defs.begin(), bin_defs.end(), [&bin_type_id](const BinDef &bin_def) { return bin_def.bin_type_id == bin_type_id; });
       if (bin_def_it != bin_defs.end()) {
 
         for (BinPos copie = 0; copie < solution_bin.copies; ++copie) {
@@ -493,16 +491,13 @@ namespace Packy {
 
             ItemTypeId item_type_id = solution_item.item_type_id;
 
-            auto shape_def_it = std::find_if(shape_defs.begin(), shape_defs.end(),
-                                             [&item_type_id](const ShapeDef &shape_def) {
-                                               return shape_def.item_type_id == item_type_id;
-                                             });
-            if (shape_def_it != shape_defs.end()) {
+            auto item_def_it = std::find_if(item_defs.begin(), item_defs.end(), [&item_type_id](const ItemDef &item_def) { return item_def.item_type_id == item_type_id; });
+            if (item_def_it != item_defs.end()) {
 
-              Shape &shape = bin.shapes.emplace_back(&*shape_def_it);
-              shape.x = solution_item.bl_corner.x + trimming;
-              shape.y = solution_item.bl_corner.y + trimming;
-              shape.angle = (int64_t) solution_item.angle;
+              Item &item = bin.items.emplace_back(&*item_def_it);
+              item.x = solution_item.bl_corner.x + trimming;
+              item.y = solution_item.bl_corner.y + trimming;
+              item.angle = (int64_t) solution_item.angle;
 
             }
 
@@ -532,11 +527,11 @@ namespace Packy {
   }
 
   bool OneDimensionalEngine::run(
-          ShapeDefs &shape_defs,
+          ItemDefs &item_defs,
           BinDefs &bin_defs,
           char *c_objective,
-          int64_t c_spacing,
-          int64_t c_trimming,
+          double c_spacing,
+          double c_trimming,
           int verbosity_level,
           Solution &solution,
           std::string &message) {
@@ -564,14 +559,14 @@ namespace Packy {
 
     }
 
-    for (auto &shape_def: shape_defs) {
+    for (auto &item_def: item_defs) {
 
-      Rect64 bounds = GetBounds(shape_def.paths);
+      RectD bounds = GetBounds(item_def.paths);
 
-      shape_def.item_type_id = instance_builder.add_item_type(
+      item_def.item_type_id = instance_builder.add_item_type(
               bounds.Width() + spacing,
               -1,
-              shape_def.count
+              item_def.count
       );
 
     }
@@ -607,16 +602,16 @@ namespace Packy {
 
             ItemTypeId item_type_id = solution_item.item_type_id;
 
-            auto shape_def_it = std::find_if(shape_defs.begin(), shape_defs.end(),
-                                             [&item_type_id](const ShapeDef &shape_def) {
-                                               return shape_def.item_type_id == item_type_id;
+            auto item_def_it = std::find_if(item_defs.begin(), item_defs.end(),
+                                             [&item_type_id](const ItemDef &item_def) {
+                                               return item_def.item_type_id == item_type_id;
                                              });
-            if (shape_def_it != shape_defs.end()) {
+            if (item_def_it != item_defs.end()) {
 
-              Shape &shape = bin.shapes.emplace_back(&*shape_def_it);
-              shape.x = trimming + solution_item.start;
-              shape.y = 0;
-              shape.angle = 0;
+              Item &item = bin.items.emplace_back(&*item_def_it);
+              item.x = trimming + solution_item.start;
+              item.y = 0;
+              item.angle = 0;
 
             }
 

@@ -72,10 +72,10 @@ module Ladb::OpenCutList
       return { :errors => [ 'default.error' ] } if parts.empty?
 
       bin_defs = []
-      shape_defs = []
+      item_defs = []
 
       bin_id = 0
-      shape_id = 0
+      item_id = 0
 
       json = {
         objective: @objective,
@@ -89,7 +89,7 @@ module Ladb::OpenCutList
         length = ddq[0].strip.to_l.to_f
         width = ddq[1].strip.to_l.to_f
         count = [ 1, (ddq[2].nil? || ddq[2].strip.to_i == 0) ? 1 : ddq[2].strip.to_i ].max
-        bin_defs << Packy::BinDef.new(bin_id += 1, count, Packy.float_to_int64(length), Packy.float_to_int64(width), 1) # 1 = user defined
+        bin_defs << Packy::BinDef.new(bin_id += 1, count, length, width, 1) # 1 = user defined
 
         json[:bin_types] << {
           copies: count,
@@ -104,7 +104,7 @@ module Ladb::OpenCutList
 
       # Add bin from std sheet
       if @std_sheet_width > 0 && @std_sheet_length > 0
-        bin_defs << Packy::BinDef.new(bin_id += 1, parts_count, Packy.float_to_int64(@std_sheet_length), Packy.float_to_int64(@std_sheet_width), 0) # 0 = Standard
+        bin_defs << Packy::BinDef.new(bin_id += 1, parts_count, @std_sheet_length, @std_sheet_width, 0) # 0 = Standard
 
         json[:bin_types] << {
           copies: parts_count,
@@ -115,8 +115,8 @@ module Ladb::OpenCutList
 
       end
 
-      # Add shapes from parts
-      fn_add_shapes = lambda { |part|
+      # Add items from parts
+      fn_add_items = lambda { |part|
 
         rpaths_json = []
         rpaths = []
@@ -157,7 +157,7 @@ module Ladb::OpenCutList
 
         end
 
-        shape_defs << Packy::ShapeDef.new(shape_id += 1, part.count, (group.material_grained  && !part.ignore_grain_direction) ? 0 : 1, rpaths, part)
+        item_defs << Packy::ItemDef.new(item_id += 1, part.count, (group.material_grained  && !part.ignore_grain_direction) ? 0 : 1, rpaths, part)
 
         json[:item_types] << {
           copies: part.count,
@@ -168,10 +168,10 @@ module Ladb::OpenCutList
       parts.each { |part|
         if part.instance_of?(FolderPart)
           part.children.each { |child_part|
-            fn_add_shapes.call(child_part)
+            fn_add_items.call(child_part)
           }
         else
-          fn_add_shapes.call(part)
+          fn_add_items.call(part)
         end
       }
 
@@ -181,14 +181,14 @@ module Ladb::OpenCutList
 
       case @engine
       when ENGINE_RECTANGLE
-        solution, message = Packy.execute_rectangle(bin_defs, shape_defs, @objective, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming), @verbosity_level)
+        solution, message = Packy.execute_rectangle(bin_defs, item_defs, @objective, @spacing, @trimming, @verbosity_level)
       when ENGINE_RECTANGLEGUILLOTINE
-        solution, message = Packy.execute_rectangleguillotine(bin_defs, shape_defs, @objective, @cut_type, @first_stage_orientation, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming), @verbosity_level)
+        solution, message = Packy.execute_rectangleguillotine(bin_defs, item_defs, @objective, @cut_type, @first_stage_orientation, @spacing, @trimming, @verbosity_level)
       when ENGINE_IRREGULAR
-        solution, message = Packy.execute_irregular(bin_defs, shape_defs, @objective, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming), @verbosity_level)
+        solution, message = Packy.execute_irregular(bin_defs, item_defs, @objective, @spacing, @trimming, @verbosity_level)
         # solution, message = Packy.execute(json.to_json, @verbosity_level)
       when ENGINE_ONEDIMENSIONAL
-        solution, message = Packy.execute_onedimensional(bin_defs, shape_defs, @objective, Packy.float_to_int64(@spacing), Packy.float_to_int64(@trimming), @verbosity_level)
+        solution, message = Packy.execute_onedimensional(bin_defs, item_defs, @objective, @spacing, @trimming, @verbosity_level)
       else
         return { :errors => [ "Unknow engine : #{@engine}" ] }
       end
@@ -197,16 +197,16 @@ module Ladb::OpenCutList
       {
         'unused_bins_count' => solution.unused_bins.length,
         'packed_bins_count' => solution.packed_bins.length,
-        'unplaced_shapes_count' => solution.unplaced_shapes.length,
+        'unplaced_items_count' => solution.unplaced_items.length,
         'packed_bins' => solution.packed_bins.map { |bin| {
-          length: Packy.int64_to_float(bin.def.length).to_l.to_s,
-          width: Packy.int64_to_float(bin.def.width).to_l.to_s,
+          length: bin.def.length.to_l.to_s,
+          width: bin.def.width.to_l.to_s,
           type: bin.def.type,
           svg: _bin_to_svg(bin)
         } },
         'unused_bins' => solution.unused_bins.map { |bin| {
-          length: Packy.int64_to_float(bin.def.length).to_l.to_s,
-          width: Packy.int64_to_float(bin.def.width).to_l.to_s,
+          length: bin.def.length.to_l.to_s,
+          width: bin.def.width.to_l.to_s,
           type: bin.def.type,
           svg: _bin_to_svg(bin, '#d9534f')
         } }
@@ -217,21 +217,21 @@ module Ladb::OpenCutList
 
     def _bin_to_svg(bin, bg_color = '#dddddd')
 
-      px_bin_length = _to_px(Packy.int64_to_float(bin.def.length))
-      px_bin_width = _to_px(Packy.int64_to_float(bin.def.width))
+      px_bin_length = _to_px(bin.def.length)
+      px_bin_width = _to_px(bin.def.width)
 
       svg = "<svg width='#{px_bin_length}' height='#{px_bin_width}' viewbox='0 -#{px_bin_width} #{px_bin_length} #{px_bin_width}'>"
       svg += "<rect x='0' y='-#{px_bin_width}' width='#{px_bin_length}' height='#{px_bin_width}' fill='#{bg_color}' stroke='none' />"
-      bin.shapes.each do |shape|
+      bin.items.each do |item|
 
-        l_shape_x = Packy.int64_to_float(shape.x).to_l
-        l_shape_y = Packy.int64_to_float(shape.y).to_l
+        l_item_x = item.x.to_l
+        l_item_y = item.y.to_l
 
-        px_shape_x = _to_px(l_shape_x)
-        px_shape_y = -_to_px(l_shape_y)
+        px_item_x = _to_px(l_item_x)
+        px_item_y = -_to_px(l_item_y)
 
-        svg += "<g class='ladb-packy-part' transform='translate(#{px_shape_x} #{px_shape_y}) rotate(-#{shape.angle})'>"
-        svg += "<path d='#{shape.def.paths.map { |path| "M #{Packy.rpath_to_points(path).map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y).round(2)}" }.join(' L ')} Z" }.join(' ')}' data-toggle='tooltip' data-html='true' title='<div>#{shape.def.data.name}</div><div>x = #{l_shape_x}</div><div>y = #{l_shape_y}</div>' />"
+        svg += "<g class='ladb-packy-part' transform='translate(#{px_item_x} #{px_item_y}) rotate(-#{item.angle})'>"
+        svg += "<path d='#{item.def.paths.map { |path| "M #{Packy.rpath_to_points(path).map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y).round(2)}" }.join(' L ')} Z" }.join(' ')}' data-toggle='tooltip' data-html='true' title='<div>#{item.def.data.name}</div><div>x = #{l_item_x}</div><div>y = #{l_item_y}</div>' />"
         svg += '</g>'
 
       end
@@ -239,10 +239,10 @@ module Ladb::OpenCutList
 
         next if cut.depth < 0
 
-        l_cut_x1 = Packy.int64_to_float(cut.x1).to_l
-        l_cut_y1 = Packy.int64_to_float(cut.y1).to_l
-        l_cut_x2 = Packy.int64_to_float(cut.x2).to_l
-        l_cut_y2 = Packy.int64_to_float(cut.y2).to_l
+        l_cut_x1 = cut.x1.to_l
+        l_cut_y1 = cut.y1.to_l
+        l_cut_x2 = cut.x2.to_l
+        l_cut_y2 = cut.y2.to_l
 
         px_cut_x1 = _to_px(l_cut_x1)
         px_cut_y1 = -_to_px(l_cut_y1)

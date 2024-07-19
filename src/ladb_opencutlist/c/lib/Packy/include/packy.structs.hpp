@@ -1,42 +1,42 @@
-#ifndef PACKY_SHAPE_H
-#define PACKY_SHAPE_H
+#ifndef PACKY_STRUCTS_HPP
+#define PACKY_STRUCTS_HPP
 
 #include "clipper2/clipper.h"
 
 namespace Packy {
 
-  // ShapeDef and Shape
+  // ItemDef and Item
 
-  struct ShapeDef {
+  struct ItemDef {
 
-    ShapeDef(int id, int count, int rotations, Clipper2Lib::Paths64 paths);
-    ~ShapeDef();
+    ItemDef(int id, int count, int rotations, Clipper2Lib::PathsD paths);
+    ~ItemDef();
 
     int id;
     int count;
     int rotations;
 
-    Clipper2Lib::Paths64 paths;
+    Clipper2Lib::PathsD paths;
 
     int16_t item_type_id;
 
   };
 
-  struct Shape {
+  struct Item {
 
-    explicit Shape(ShapeDef* def);
-    ~Shape();
+    explicit Item(ItemDef* def);
+    ~Item();
 
-    ShapeDef* def;
+    ItemDef* def;
 
-    int64_t x;
-    int64_t y;
-    int64_t angle;
+    double x;
+    double y;
+    double angle;
 
   };
 
-  using ShapeDefs = std::vector<ShapeDef>;
-  using Shapes = std::vector<Shape>;
+  using ItemDefs = std::vector<ItemDef>;
+  using Items = std::vector<Item>;
 
   // Cut
 
@@ -60,14 +60,14 @@ namespace Packy {
 
   struct BinDef {
 
-    BinDef(int id, int count, int64_t length, int64_t width, int type);
+    BinDef(int id, int count, double length, double width, int type);
     ~BinDef();
 
     int id;
     int count;
 
-    int64_t length;
-    int64_t width;
+    double length;
+    double width;
 
     int type;
 
@@ -82,7 +82,7 @@ namespace Packy {
 
     BinDef* def;
 
-    Shapes shapes;
+    Items items;
     Cuts cuts;
 
   };
@@ -100,7 +100,7 @@ namespace Packy {
     Bins unused_bins;
     Bins packed_bins;
 
-    Shapes unplaced_shapes;
+    Items unplaced_items;
 
     void clear();
     std::string format();
@@ -109,19 +109,19 @@ namespace Packy {
 
   // -- Converters
 
-  size_t GetCShapeArrayLen();
-  size_t GetCShapesArrayLen(const Shapes &shapes);
-  size_t GetCBinArrayLen(const Bin &bin);
-  size_t GetCBinsArrayLen(const Bins &bins);
+  size_t GetCItemArrayLen();
+  size_t GetCItemsArrayLen(const Items& items);
+  size_t GetCBinArrayLen(const Bin& bin);
+  size_t GetCBinsArrayLen(const Bins& bins);
 
-  void ConvertShapeToCShape(const Shape &shape, int64_t *&v);
-  void ConvertShapesToCShapes(const Shapes &shapes, int64_t *&v);
-  void ConvertCutToCCut(const Cut &cut, int64_t *&v);
-  void ConvertCutsToCCuts(const Cuts &cuts, int64_t *&v);
-  void ConvertBinToCBin(const Bin &bin, int64_t *&v);
-  void ConvertBinsToCBins(const Bins &bins, int64_t *&v);
-  int64_t* ConvertSolutionToCSolution(const Solution &solution);
+  void ConvertItemToCItem(const Item& item, double*& v);
+  void ConvertItemsToCItems(const Items& items, double*& v);
+  void ConvertCutToCCut(const Cut& cut, double*& v);
+  void ConvertCutsToCCuts(const Cuts& cuts, double*& v);
+  void ConvertBinToCBin(const Bin& bin, double*& v);
+  void ConvertBinsToCBins(const Bins& bins, double*& v);
+  double* ConvertSolutionToCSolution(const Solution& solution);
 
 }
 
-#endif // PACKY_SHAPE_H
+#endif // PACKY_STRUCTS_HPP

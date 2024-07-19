@@ -1,6 +1,4 @@
-#include "clipper2/clipper.wrapper.hpp"
-
-#include <clippy.hpp>
+#include "clippy.hpp"
 
 using namespace Clipper2Lib;
 
@@ -8,82 +6,54 @@ using namespace Clipper2Lib;
 extern "C" {
 #endif
 
-Paths64 closed_subjects, open_subjects, clips;
-Paths64 closed_paths_solution, open_paths_solution;
-PolyTree64 polytree_solution;
+DLL_EXPORTS CPathsDSolution* c_boolean_op(uint8_t clip_type, uint8_t fill_rule, CPathD closed_subjects, CPathD open_subjects, CPathD clips) {
 
-DLL_EXPORTS void c_clear_subjects() {
-  closed_subjects.clear();
-  open_subjects.clear();
+  CPathsDSolution *solution = (CPathsDSolution *)malloc(sizeof(CPathsDSolution));
+
+  solution->error = Clipper2Lib::BooleanOpD(
+          clip_type,
+          fill_rule,
+          closed_subjects,
+          open_subjects,
+          clips,
+          solution->closed_paths,
+          solution->open_paths
+  );
+
+  return solution;
 }
 
-DLL_EXPORTS void c_append_closed_subject(const int64_t *cpath) {
-  closed_subjects.push_back(ConvertCPathToPath(cpath));
+DLL_EXPORTS CPolyTreeDSolution* c_boolean_op_polytree(uint8_t clip_type, uint8_t fill_rule, CPathD closed_subjects, CPathD open_subjects, CPathD clips) {
+
+  CPolyTreeDSolution *solution = (CPolyTreeDSolution *)malloc(sizeof(CPolyTreeDSolution));
+
+  solution->error = Clipper2Lib::BooleanOp_PolyTreeD(
+          clip_type,
+          fill_rule,
+          closed_subjects,
+          open_subjects,
+          clips,
+          solution->polytree,
+          solution->open_paths
+  );
+
+  return solution;
 }
 
-DLL_EXPORTS void c_append_open_subject(const int64_t *cpath) {
-  open_subjects.push_back(ConvertCPathToPath(cpath));
+DLL_EXPORTS int c_is_cpath_positive(CPathD cpath) {
+  return IsPositive(ConvertCPath(cpath)) ? 1 : 0;
 }
 
-
-DLL_EXPORTS void c_clear_clips() {
-  clips.clear();
-}
-
-DLL_EXPORTS void c_append_clip(const int64_t *cpath) {
-  clips.push_back(ConvertCPathToPath(cpath));
-}
-
-
-DLL_EXPORTS void c_execute_union() {
-  ExecuteBooleanOp(ClipType::Union, closed_subjects, open_subjects, clips, closed_paths_solution, open_paths_solution, false);
-}
-
-DLL_EXPORTS void c_execute_difference() {
-  ExecuteBooleanOp(ClipType::Difference, closed_subjects, open_subjects, clips, closed_paths_solution, open_paths_solution, false);
-}
-
-DLL_EXPORTS void c_execute_intersection() {
-  ExecuteBooleanOp(ClipType::Intersection, closed_subjects, open_subjects, clips, closed_paths_solution, open_paths_solution, false);
-}
-
-DLL_EXPORTS void c_execute_polytree() {
-  ExecuteBooleanOp(ClipType::Union, closed_subjects, open_subjects, clips, polytree_solution, open_paths_solution, false);
-}
-
-
-DLL_EXPORTS void c_clear_paths_solution() {
-  closed_paths_solution.clear();
-  open_paths_solution.clear();
-}
-
-DLL_EXPORTS int64_t* c_get_closed_paths_solution() {
-  return ConvertPathsToCPaths(closed_paths_solution);
-}
-
-DLL_EXPORTS int64_t* c_get_open_paths_solution() {
-  return ConvertPathsToCPaths(open_paths_solution);
-}
-
-DLL_EXPORTS void c_clear_polytree_solution() {
-  polytree_solution.Clear();
-}
-
-DLL_EXPORTS int64_t* c_get_polytree_solution() {
-  return ConvertPolyTreeToCPolyTree(polytree_solution);
+DLL_EXPORTS double c_get_cpath_area(CPathD cpath) {
+  return Area(ConvertCPath(cpath));
 }
 
 
-DLL_EXPORTS int c_is_cpath_positive(const int64_t* cpath) {
-  return IsPositive(ConvertCPathToPath(cpath)) ? 1 : 0;
+DLL_EXPORTS void c_free_pointer(void* p) {
+  free(p);
 }
 
-DLL_EXPORTS double c_get_cpath_area(const int64_t* cpath) {
-  return Area(ConvertCPathToPath(cpath));
-}
-
-
-DLL_EXPORTS void c_dispose_array64(const int64_t* p) {
+DLL_EXPORTS void c_dispose_array_d(const CPathD p) {
   delete[] p;
 }
 
