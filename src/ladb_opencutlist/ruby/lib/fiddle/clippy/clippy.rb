@@ -16,8 +16,8 @@ module Ladb::OpenCutList::Fiddle
     FILL_TYPE_POSITIVE = 2
     FILL_TYPE_NEGATIVE = 3
 
-    CPathsDSolution = struct [ 'double* closed_paths', 'double* open_paths', 'int64_t error' ]
-    CPolyTreeDSolution = struct [ 'double* polytree', 'double* open_paths', 'int64_t error' ]
+    CPathsDSolution = struct [ 'double* closed_paths', 'double* open_paths', 'int error' ]
+    CPolyTreeDSolution = struct [ 'double* polytree', 'double* open_paths', 'int error' ]
 
     def self._lib_name
       'Clippy'
@@ -32,8 +32,8 @@ module Ladb::OpenCutList::Fiddle
         'int c_is_cpath_positive(double*)',
         'double c_get_cpath_area(double*)',
 
-        'void c_free_pointer(void*)',
-        'void c_dispose_array_d(double*)',
+        'void c_dispose_paths_solution(CPathsDSolution*)',
+        'void c_dispose_polytree_solution(CPolyTreeDSolution*)',
 
         'char* c_version()'
 
@@ -64,9 +64,7 @@ module Ladb::OpenCutList::Fiddle
       closed_rpath, len = _cpaths_to_rpaths(solution.closed_paths)
       open_rpath, len = _cpaths_to_rpaths(solution.open_paths)
 
-      c_dispose_array_d(solution.closed_paths)
-      c_dispose_array_d(solution.open_paths)
-      c_free_pointer(solution_ptr)
+      c_dispose_paths_solution(solution_ptr)
 
       [ closed_rpath, open_rpath ]
     end
@@ -97,9 +95,7 @@ module Ladb::OpenCutList::Fiddle
 
       rpolytree, len = _cpolytree_to_rpolytree(solution.polytree)
 
-      c_dispose_array_d(solution.polytree)
-      c_dispose_array_d(solution.open_paths)
-      c_free_pointer(solution_ptr)
+      c_dispose_polytree_solution(solution_ptr)
 
       rpolytree
     end

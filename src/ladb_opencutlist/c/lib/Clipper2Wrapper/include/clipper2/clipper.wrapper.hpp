@@ -1,6 +1,73 @@
 #ifndef CLIPPER_WRAPPER_H
 #define CLIPPER_WRAPPER_H
 
+/*
+ Boolean clipping:
+ cliptype: None=0, Intersection=1, Union=2, Difference=3, Xor=4
+ fillrule: EvenOdd=0, NonZero=1, Positive=2, Negative=3
+
+ Polygon offsetting (inflate/deflate):
+ jointype: Square=0, Bevel=1, Round=2, Miter=3
+ endtype: Polygon=0, Joined=1, Butt=2, Square=3, Round=4
+
+The path structures used extensively in other parts of this library are all
+based on std::vector classes. Since C++ classes can't be accessed by other
+languages, these paths are converted into very simple array data structures
+(of either int64_t for CPath64 or double for CPathD) that can be parsed by
+just about any programming language.
+
+CPath64 and CPathD:
+These are arrays of consecutive x and y path coordinates preceeded by
+a pair of values containing the path's length (N) and a 0 value.
+__________________________________
+|counter|coord1|coord2|...|coordN|
+|N, 0   |x1, y1|x2, y2|...|xN, yN|
+__________________________________
+
+CPaths64 and CPathsD:
+These are also arrays containing any number of consecutive CPath64 or
+CPathD  structures. But preceeding these consecutive paths, there is pair of
+values that contain the total length of the array structure (A) and the
+number of CPath64 or CPathD it contains (C). The space these structures will
+occupy in memory = A * sizeof(int64_t) or  A * sizeof(double) respectively.
+_______________________________
+|counter|path1|path2|...|pathC|
+|A  , C |                     |
+_______________________________
+
+CPolytree64 and CPolytreeD:
+These are also arrays consisting of CPolyPath structures that represent
+individual paths in a tree structure. However, the very first (ie top)
+CPolyPath is just the tree container that doesn't have a path. And because
+of that, its structure will be very slightly different from the remaining
+CPolyPath. This difference will be discussed below.
+
+CPolyPath64 and CPolyPathD:
+These are simple arrays consisting of a series of path coordinates followed
+by any number of child (ie nested) CPolyPath. Preceeding these are two values
+indicating the length of the path (N) and the number of child CPolyPath (C).
+____________________________________________________________
+|counter|coord1|coord2|...|coordN| child1|child2|...|childC|
+|N  , C |x1, y1|x2, y2|...|xN, yN|                         |
+____________________________________________________________
+
+As mentioned above, the very first CPolyPath structure is just a container
+that owns (both directly and indirectly) every other CPolyPath in the tree.
+Since this first CPolyPath has no path, instead of a path length, its very
+first value will contain the total length of the CPolytree array (not its
+total bytes length).
+
+Again, all theses exported structures (CPaths64, CPathsD, CPolyTree64 &
+CPolyTreeD) are arrays of either type int64_t or double, and the first
+value in these arrays will always be the length of that array.
+
+These array structures are allocated in heap memory which will eventually
+need to be released. However, since applications dynamically linking to
+these functions may use different memory managers, the only safe way to
+free up this memory is to use the exported DisposeArray64 and
+DisposeArrayD functions (see below).
+*/
+
 #include "clipper2/clipper.h"
 
 namespace Clipper2Lib {
@@ -354,38 +421,6 @@ namespace Clipper2Lib {
 
     return result;
   }
-
-//
-//
-//
-//  // Data manipulators
-//
-//  inline double Int64ToDouble(int64_t value) {
-//    return value * PRECISION_INV_SCALE;
-//  }
-//  inline int64_t DoubleToInt64(double value) {
-//    return value * PRECISION_SCALE;
-//  }
-//
-//
-//  Path64 ConvertCPathToPath(const double* cpath);
-//  Paths64 ConvertCPathsToPaths(const double* cpaths);
-//
-//
-//  void GetPathCountAndCPathsArrayLen(const Paths64 &paths, size_t &cnt, size_t &array_len);
-//  size_t GetPolyPath64ArrayLen(const PolyPath64 &polypath);
-//  void GetPolytreeCountAndCArrayLen(const PolyTree64 &tree, size_t &cnt, size_t &array_len);
-//
-//
-//  CPathsD ConvertPathsToCPaths(const Paths64 &paths);
-//  void ConvertPolyPathToCPolyPath(const PolyPath64* polypath, CPolyPathsD& v);
-//  CPolyTreeD ConvertPolyTreeToCPolyTree(const PolyTree64 &polytree);
-//
-//
-//  // Boolean Ops
-//
-//  void ExecuteBooleanOp(ClipType clip_type, Paths64 &closed_subjects, Paths64 &open_subjects, Paths64 &clips, Paths64 &closed_paths_solution, Paths64 &open_paths_solution, bool preserve_colinear = false);
-//  void ExecuteBooleanOp(ClipType clip_type, Paths64 &closed_subjects, Paths64 &open_subjects, Paths64 &clips, PolyTree64 &polytree_solution, Paths64 &open_paths_solution, bool preserve_colinear = false);
 
 }
 

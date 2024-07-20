@@ -36,8 +36,8 @@ DLL_EXPORTS CPolyTreeDSolution* c_boolean_op_polytree(uint8_t clip_type, uint8_t
 DLL_EXPORTS int c_is_cpath_positive(CPathD cpath);
 DLL_EXPORTS double c_get_cpath_area(CPathD cpath);
 
-DLL_EXPORTS void c_free_pointer(void* p);
-DLL_EXPORTS void c_dispose_array_d(CPathD p);
+DLL_EXPORTS void c_dispose_paths_solution(CPathsDSolution* p);
+DLL_EXPORTS void c_dispose_polytree_solution(CPolyTreeDSolution* p);
 
 DLL_EXPORTS char* c_version();
 

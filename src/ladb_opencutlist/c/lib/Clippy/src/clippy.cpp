@@ -49,12 +49,16 @@ DLL_EXPORTS double c_get_cpath_area(CPathD cpath) {
 }
 
 
-DLL_EXPORTS void c_free_pointer(void* p) {
+DLL_EXPORTS void c_dispose_paths_solution(CPathsDSolution* p) {
+  delete[] p->closed_paths;
+  delete[] p->open_paths;
   free(p);
 }
 
-DLL_EXPORTS void c_dispose_array_d(const CPathD p) {
-  delete[] p;
+DLL_EXPORTS void c_dispose_polytree_solution(CPolyTreeDSolution* p) {
+  delete[] p->polytree;
+  delete[] p->open_paths;
+  free(p);
 }
 
 

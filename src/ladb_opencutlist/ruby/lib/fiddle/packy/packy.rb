@@ -214,7 +214,7 @@ module Ladb::OpenCutList::Fiddle
 
     # -----
 
-    BinDef = Struct.new(:id, :count, :length, :width, :type)  # length and with must be converted to int64
+    BinDef = Struct.new(:id, :count, :length, :width, :type)  # length and with must be float
     ItemDef = Struct.new(:id, :count, :rotations, :paths, :data)
 
     Solution = Struct.new(:unused_bins, :packed_bins, :unplaced_items)

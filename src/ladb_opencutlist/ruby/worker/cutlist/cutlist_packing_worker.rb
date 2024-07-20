@@ -118,18 +118,16 @@ module Ladb::OpenCutList
       # Add items from parts
       fn_add_items = lambda { |part|
 
-        rpaths_json = []
         rpaths = []
 
         projection_def = _compute_part_projection_def(PART_DRAWING_TYPE_2D_TOP, part, merge_holes: true)
         projection_def.layer_defs.each do |layer_def|
           next unless layer_def.type_outer? || layer_def.type_holes?
           layer_def.poly_defs.each do |poly_def|
-            rpaths_json << Clippy.points_to_rpath(layer_def.type_holes? ? poly_def.points.reverse : poly_def.points)
-            rpaths << Packy.points_to_rpath(layer_def.type_holes? ? poly_def.points.reverse : poly_def.points)
+            rpaths << Clippy.points_to_rpath(layer_def.type_holes? ? poly_def.points.reverse : poly_def.points)
           end
         end
-        polytree = Clippy.execute_polytree(rpaths_json)
+        polytree = Clippy.execute_polytree(rpaths)
         polyshapes = Clippy.polytree_to_polyshapes(polytree)
 
         shapes = []
