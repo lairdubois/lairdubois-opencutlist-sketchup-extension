@@ -41,7 +41,7 @@ module Ladb::OpenCutList
     def initialize(cutlist,
 
                    auto_orient: false,
-                   parts_data: {}
+                   parts_data: []
 
     )
 
@@ -239,12 +239,12 @@ module Ladb::OpenCutList
 
             # Update materials
             _apply_material(part_data.material_name, part_data.entity_ids, model)
-            _apply_material(part_data.edge_material_names['ymin'], part_data.edge_entity_ids['ymin'], model)
-            _apply_material(part_data.edge_material_names['ymax'], part_data.edge_entity_ids['ymax'], model)
-            _apply_material(part_data.edge_material_names['xmin'], part_data.edge_entity_ids['xmin'], model)
-            _apply_material(part_data.edge_material_names['xmax'], part_data.edge_entity_ids['xmax'], model)
-            _apply_material(part_data.face_material_names['zmin'], part_data.face_entity_ids['zmin'], model, part_data.face_texture_angles['zmin'].nil? ? nil : part_data.face_texture_angles['zmin'].to_i.degrees)
-            _apply_material(part_data.face_material_names['zmax'], part_data.face_entity_ids['zmax'], model, part_data.face_texture_angles['zmax'].nil? ? nil : part_data.face_texture_angles['zmax'].to_i.degrees)
+            _apply_material(part_data.edge_material_names['ymin'], part_data.edge_entity_ids['ymin'], model, MaterialAttributes::TYPE_EDGE)
+            _apply_material(part_data.edge_material_names['ymax'], part_data.edge_entity_ids['ymax'], model, MaterialAttributes::TYPE_EDGE)
+            _apply_material(part_data.edge_material_names['xmin'], part_data.edge_entity_ids['xmin'], model, MaterialAttributes::TYPE_EDGE)
+            _apply_material(part_data.edge_material_names['xmax'], part_data.edge_entity_ids['xmax'], model, MaterialAttributes::TYPE_EDGE)
+            _apply_material(part_data.face_material_names['zmin'], part_data.face_entity_ids['zmin'], model, MaterialAttributes::TYPE_VENEER, part_data.face_texture_angles['zmin'].nil? ? nil : part_data.face_texture_angles['zmin'].to_i.degrees)
+            _apply_material(part_data.face_material_names['zmax'], part_data.face_entity_ids['zmax'], model, MaterialAttributes::TYPE_VENEER, part_data.face_texture_angles['zmax'].nil? ? nil : part_data.face_texture_angles['zmax'].to_i.degrees)
 
           end
 
@@ -259,57 +259,68 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _apply_material(material_name, entity_ids, model, angle = nil)  # angle in radians [0..2PI]
-      unless entity_ids.nil?
-        material = nil
-        if material_name.nil? || material_name.empty? || (material = model.materials[material_name])
+    def _apply_material(material_name, entity_ids, model, removable_type = nil, angle = nil)  # angle in radians [0..2PI]
+      return if entity_ids.nil?
 
-          entity_ids.each { |entity_id|
-            entity = model.find_entity_by_id(entity_id)
-            if entity
-              if material_name.nil? || material_name.empty?
-                entity.material = nil
-              else
+      material = nil
+      if material_name.nil? || material_name.empty? || (material = model.materials[material_name])
 
-                if entity.material != material
-                  entity.material = material
-                end
+        entity_ids.each do |entity_id|
 
-                if !angle.nil? && entity.is_a?(Sketchup::Face) && entity.respond_to?(:clear_texture_position) # SU 2022+
+          entity = model.find_entity_by_id(entity_id)
+          if entity
 
-                  # Reset all texture transformations
-                  entity.clear_texture_position(true)
+            if material_name.nil? || material_name.empty?
 
-                  # Adapt angle if face normal is -Z
-                  angle = Math::PI - angle if entity.normal.samedirection?(Z_AXIS.reverse)
+              current_material = entity.material
+              current_material_attributes = MaterialAttributes.new(current_material)
 
-                  if angle > 0
+              # Remove current entity material (if removable)
+              entity.material = nil if removable_type.nil? || current_material_attributes.type == removable_type
 
-                    points = [
-                      entity.edges.first.start.position,
-                      entity.edges.first.end.position
-                    ]
+            else
 
-                    uv_helper = entity.get_UVHelper(true, false)
-                    t = Geom::Transformation.rotation(ORIGIN, entity.normal, angle.to_f)
+              # Apply only if new material
+              if entity.material != material
+                entity.material = material
+              end
 
-                    mapping = []
-                    (0..1).each do |i|
-                      mapping << points[i].transform(t)             # Transformed point
-                      mapping << uv_helper.get_front_UVQ(points[i]) # UVQ
-                    end
+              if !angle.nil? && entity.is_a?(Sketchup::Face) && entity.respond_to?(:clear_texture_position) # SU 2022+
 
-                    entity.position_material(entity.material, mapping, true)
+                # Reset all texture transformations
+                entity.clear_texture_position(true)
 
+                # Adapt angle if face normal is -Z
+                angle = Math::PI - angle if entity.normal.samedirection?(Z_AXIS.reverse)
+
+                if angle > 0
+
+                  points = [
+                    entity.edges.first.start.position,
+                    entity.edges.first.end.position
+                  ]
+
+                  uv_helper = entity.get_UVHelper(true, false)
+                  t = Geom::Transformation.rotation(ORIGIN, entity.normal, angle.to_f)
+
+                  mapping = []
+                  (0..1).each do |i|
+                    mapping << points[i].transform(t)             # Transformed point
+                    mapping << uv_helper.get_front_UVQ(points[i]) # UVQ
                   end
+
+                  entity.position_material(entity.material, mapping, true)
 
                 end
 
               end
+
             end
-          }
+
+          end
 
         end
+
       end
     end
 

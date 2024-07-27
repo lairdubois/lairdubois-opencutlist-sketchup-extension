@@ -16,6 +16,7 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
     * Improved smart tools picker
     * Improved surface detection
     * Replaced Highlight Part Tool by Smart Axes Tool
+    * Fixed face untyped material removing when edit sheet good part properties
 
 * 6.3.0 (WIP)
 
