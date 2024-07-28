@@ -14,7 +14,6 @@ module Ladb::OpenCutList
     include PixelConverterHelper
 
     Packy = Fiddle::Packy
-    Clippy = Fiddle::Clippy
 
     ENGINE_RECTANGLE = 'rectangle'
     ENGINE_RECTANGLEGUILLOTINE = 'rectangleguillotine'
@@ -77,12 +76,6 @@ module Ladb::OpenCutList
       bin_id = 0
       item_id = 0
 
-      json = {
-        objective: @objective,
-        bin_types: [],
-        item_types: [],
-      }
-
       # Add bins from scrap sheets
       @scrap_sheet_sizes.split(';').each { |scrap_sheet_size|
         ddq = scrap_sheet_size.split('x')
@@ -90,29 +83,14 @@ module Ladb::OpenCutList
         width = ddq[1].strip.to_l.to_f
         count = [ 1, (ddq[2].nil? || ddq[2].strip.to_i == 0) ? 1 : ddq[2].strip.to_i ].max
         bin_defs << Packy::BinDef.new(bin_id += 1, count, length, width, 1) # 1 = user defined
-
-        json[:bin_types] << {
-          copies: count,
-          type: 'rectangle',
-          width: length.to_f.round(8),
-          height: width.to_f.round(8)
-        }
-
       }
 
-      parts_count = parts.sum { |part| part.count }
+      parts_count = 0
+      parts.each { |part| parts_count += part.count }
 
       # Add bin from std sheet
       if @std_sheet_width > 0 && @std_sheet_length > 0
         bin_defs << Packy::BinDef.new(bin_id += 1, parts_count, @std_sheet_length, @std_sheet_width, 0) # 0 = Standard
-
-        json[:bin_types] << {
-          copies: parts_count,
-          type: 'rectangle',
-          width: @std_sheet_length.to_f.round(8),
-          height: @std_sheet_width.to_f.round(8)
-        }
-
       end
 
       # Add items from parts
@@ -124,43 +102,11 @@ module Ladb::OpenCutList
         projection_def.layer_defs.each do |layer_def|
           next unless layer_def.type_outer? || layer_def.type_holes?
           layer_def.poly_defs.each do |poly_def|
-            rpaths << Clippy.points_to_rpath(layer_def.type_holes? ? poly_def.points.reverse : poly_def.points)
+            rpaths << Packy.points_to_rpath(layer_def.type_holes? ? poly_def.points.reverse : poly_def.points)
           end
-        end
-        polytree = Clippy.execute_polytree(rpaths)
-        polyshapes = Clippy.polytree_to_polyshapes(polytree)
-
-        shapes = []
-        polyshapes.each do |polyshape|
-
-          shape = {
-            type: 'polygon',
-            vertices: [],
-            holes: []
-          }
-
-          polyshape.paths.each_with_index do |path, index|
-            vertices = Clippy.rpath_to_points(path).map { |point| { x: point.x.to_f.round(8), y: point.y.to_f.round(8) } }
-            if index > 0
-              shape[:holes] << {
-                type: 'polygon',
-                vertices: vertices.reverse
-              }
-            else
-              shape[:vertices] = vertices
-            end
-          end
-
-          shapes << shape
-
         end
 
         item_defs << Packy::ItemDef.new(item_id += 1, part.count, (group.material_grained  && !part.ignore_grain_direction) ? 0 : 1, rpaths, part)
-
-        json[:item_types] << {
-          copies: part.count,
-          shapes: shapes
-        }
 
       }
       parts.each { |part|
@@ -175,8 +121,6 @@ module Ladb::OpenCutList
 
       SKETCHUP_CONSOLE.clear
 
-      puts json.to_json
-
       case @engine
       when ENGINE_RECTANGLE
         solution, message = Packy.execute_rectangle(bin_defs, item_defs, @objective, @spacing, @trimming, @verbosity_level)
@@ -184,7 +128,6 @@ module Ladb::OpenCutList
         solution, message = Packy.execute_rectangleguillotine(bin_defs, item_defs, @objective, @cut_type, @first_stage_orientation, @spacing, @trimming, @verbosity_level)
       when ENGINE_IRREGULAR
         solution, message = Packy.execute_irregular(bin_defs, item_defs, @objective, @spacing, @trimming, @verbosity_level)
-        # solution, message = Packy.execute(json.to_json, @verbosity_level)
       when ENGINE_ONEDIMENSIONAL
         solution, message = Packy.execute_onedimensional(bin_defs, item_defs, @objective, @spacing, @trimming, @verbosity_level)
       else

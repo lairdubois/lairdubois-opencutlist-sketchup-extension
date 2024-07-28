@@ -4,6 +4,7 @@
 #include "packy.engine.hpp"
 
 #include <algorithm>
+#include <stack>
 
 #include "packingsolver/rectangle/instance_builder.hpp"
 #include "packingsolver/rectangle/optimize.hpp"
@@ -34,6 +35,28 @@ namespace Packy {
       return (bin1.def->length * bin1.def->width < bin2.def->length * bin2.def->width);
     }
     return (bin1.def->type > bin2.def->type);
+  }
+
+  inline void convert_path_to_shape(const PathD& path, irregular::Shape& shape) {
+    for (auto point_it = begin(path); point_it != end(path); ++point_it) {
+
+      auto point_it_next = point_it + 1;
+      if (point_it_next == end(path)) {
+        point_it_next = begin(path);
+      }
+
+      LengthDbl xs = (LengthDbl)(*point_it).x;
+      LengthDbl ys = (LengthDbl)(*point_it).y;
+      LengthDbl xe = (LengthDbl)(*point_it_next).x;
+      LengthDbl ye = (LengthDbl)(*point_it_next).y;
+
+      irregular::ShapeElement line;
+      line.type = irregular::ShapeElementType::LineSegment;
+      line.start = {xs, ys };
+      line.end = {xe, ye };
+      shape.elements.push_back(line);
+
+    }
   }
 
   bool RectangleEngine::run(
@@ -424,35 +447,58 @@ namespace Packy {
 
     for (auto &item_def: item_defs) {
 
-      std::vector <irregular::ItemShape> item_shapes;
+      // Using Clipper2 to compute polygons tree
+      PolyTreeD polytree;
+      ClipperD clipper;
+      clipper.AddSubject(item_def.paths);
+      clipper.PreserveCollinear(false);
+      clipper.Execute(ClipType::Union, FillRule::NonZero, polytree);
 
-      for (auto &path: item_def.paths) {
+      // Convert polygons tree to PackingSolver item shapes
+      std::vector<irregular::ItemShape> item_shapes;
 
-        irregular::ItemShape item_shape;
+      std::stack<const PolyPathD*> stack;
+      for (const auto& child : polytree) {
+        stack.push(&*child);
+      }
 
-        for (auto point_it = begin(path); point_it != end(path); ++point_it) {
+      while (!stack.empty()) {
 
-          auto point_it_next = point_it + 1;
-          if (point_it_next == end(path)) {
-            point_it_next = begin(path);
+        const PolyTreeD& current = *(stack.top());
+        stack.pop();
+
+        // Iterate over children
+        for (const auto& child : current) {
+          stack.push(&*child);
+        }
+
+        if (current.IsHole()) {
+
+          // Handle hole case (add to last item_shape if not empty)
+
+          if (!item_shapes.empty()) {
+
+            PathD path = current.Polygon();
+            std::reverse(path.begin(), path.end()); // Clipper2 holes must be reversed
+            irregular::Shape shape;
+            convert_path_to_shape(path, shape);
+
+            irregular::ItemShape& item_shape = item_shapes.back();
+            item_shape.holes.push_back(shape);
+
           }
 
-          LengthDbl xs = (LengthDbl)(*point_it).x;
-          LengthDbl ys = (LengthDbl)(*point_it).y;
-          LengthDbl xe = (LengthDbl)(*point_it_next).x;
-          LengthDbl ye = (LengthDbl)(*point_it_next).y;
+        } else {
 
-          irregular::ShapeElement line;
-          line.type = irregular::ShapeElementType::LineSegment;
-          line.start = {xs, ys};
-          line.end = {xe, ye};
-          item_shape.shape.elements.push_back(line);
+          // Create a new ItemShape for non-hole paths
+
+          irregular::ItemShape item_shape;
+          convert_path_to_shape(current.Polygon(), item_shape.shape);
+
+          item_shapes.push_back(item_shape);
 
         }
 
-        item_shapes.push_back(item_shape);
-
-        break;   // TODO add holes
       }
 
       item_def.item_type_id = instance_builder.add_item_type(
@@ -466,10 +512,13 @@ namespace Packy {
 
     irregular::Instance instance = instance_builder.build();
 
+//    instance.write("./test");
+
     irregular::OptimizeParameters parameters;
+
     parameters.optimization_mode = OptimizationMode::NotAnytime;
     parameters.not_anytime_tree_search_queue_size = 512;
-    parameters.timer.set_time_limit(30);
+    parameters.timer.set_time_limit(100);
     parameters.verbosity_level = verbosity_level;
 
     const irregular::Output output = irregular::optimize(instance, parameters);

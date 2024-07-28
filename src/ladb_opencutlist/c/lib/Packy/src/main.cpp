@@ -2,7 +2,7 @@
 
 #include "packy.hpp"
 
-int64_t* GenerateTriangle(int64_t *cpaths, int64_t x, int64_t y) {
+double* GenerateTriangle(double *cpaths, double x, double y) {
 
   cpaths[0] = 12;   // Array length
   cpaths[1] = 1;    // 1 path
@@ -22,28 +22,20 @@ int64_t* GenerateTriangle(int64_t *cpaths, int64_t x, int64_t y) {
   return cpaths;
 }
 
-int64_t ToInt64(int v) {
-  return (int64_t)(v * 1e8);
-}
-
 int main() {
 
   std::cout << "Hello" << std::endl;
   std::cout << c_version() << std::endl;
 
-  c_append_bin_def(0, 50, ToInt64(1000), ToInt64(1000), 1);
+  c_append_bin_def(0, 50, 1000, 1000, 1);
 
-  int64_t cpaths[12];
+  double cpaths[12];
 
-  c_append_shape_def(0, 6, 1, GenerateTriangle(cpaths, ToInt64(100), ToInt64(100)));
-  c_append_shape_def(1, 12, 1, GenerateTriangle(cpaths, ToInt64(200), ToInt64(200)));
-  c_append_shape_def(2, 24, 1, GenerateTriangle(cpaths, ToInt64(300), ToInt64(300)));
+  c_append_item_def(0, 1, 1, GenerateTriangle(cpaths, 100, 100));
 
   std::string objective = "bin-packing";
-  std::string cut_type = "exact";
-  std::string first_stage_orientation = "vertical";
 
-  std::cout << c_execute_rectangleguillotine(objective.data(), cut_type.data(), first_stage_orientation.data(), 0, 0, 1) << std::endl;
+  std::cout << c_execute_irregular(objective.data(), 0, 0, 3) << std::endl;
 
   return 0;
 }
