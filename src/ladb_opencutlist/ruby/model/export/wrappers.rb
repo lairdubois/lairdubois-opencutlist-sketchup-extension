@@ -232,6 +232,7 @@ module Ladb::OpenCutList
     end
 
     def export
+      return '' if @value.nil?
       self.name
     end
 
@@ -244,6 +245,7 @@ module Ladb::OpenCutList
     end
 
     def export
+      return '' if @value.nil?
       self.name
     end
 

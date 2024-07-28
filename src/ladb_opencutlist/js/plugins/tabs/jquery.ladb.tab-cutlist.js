@@ -4742,12 +4742,12 @@
     LadbTabCutlist.prototype.labelsGroup = function (groupId, binDefs, forceDefaultTab) {
         var that = this;
 
-        var group = this.findGroupById(groupId);
-        var isPartSelection = this.selectionGroupId === groupId && this.selectionPartIds.length > 0;
-        var isBinSorterDisabled = !binDefs;
-
-        let partIdsWithContext = this.grabVisiblePartIdsWithContext(groupId, REAL_MATERIALS_FILTER);
+        let partIdsWithContext = this.grabVisiblePartIdsWithContext(groupId);
         let partIds = partIdsWithContext.partIds;
+
+        var group = partIdsWithContext.context.targetGroup;
+        var isPartSelection = partIdsWithContext.context.isPartSelection;
+        var isBinSorterDisabled = !binDefs;
 
         // Retrieve label options
         rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_labels_options', section: groupId }, function (response) {

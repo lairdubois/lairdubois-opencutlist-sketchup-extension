@@ -14,7 +14,9 @@ module Ladb::OpenCutList
                    layout: [],
                    part_order_strategy: '',
 
-                   bin_defs: []
+                   bin_defs: [],
+
+                   compute_first_instance_only: false
 
     )
 
@@ -25,6 +27,8 @@ module Ladb::OpenCutList
       @part_order_strategy = part_order_strategy
 
       @bin_defs = bin_defs
+
+      @compute_first_instance_only = compute_first_instance_only
 
     end
 
@@ -46,103 +50,52 @@ module Ladb::OpenCutList
       # Loop on parts
       parts.each do |part|
 
-        # Init position in batch
-        position_in_batch = 0
+        # Init thickness layer
+        thickness_layer = 0
 
-        # Loop on instances
-        part.def.instance_infos.each do |serialized_path, instance_info|
+        # Loop on thickness layers
+        part.def.thickness_layer_count.times do
 
-          # Init thickness layer
-          thickness_layer = 0
+          thickness_layer += 1
 
-          # Loop on thickness layers
-          part.def.thickness_layer_count.times do
+          # Init position in batch
+          position_in_batch = 0
 
-            thickness_layer += 1
-            position_in_batch += 1
-            bin = _shift_bin(part.id)
+          if part.virtual
 
-            # Create the label entry
-            entry = LabelEntry.new(part)
-            entry.entity_named_path = instance_info.named_path
-            entry.entity_name = part.def.thickness_layer_count > 1 ? "#{instance_info.entity.name} // #{thickness_layer}" : instance_info.entity.name
-            entry.thickness_layer = thickness_layer
-            entry.position_in_batch = position_in_batch
-            entry.bin = bin
+            # Use part count to loop on virtual instances
+            part.def.count.times do
 
-            @layout.each do |element_def|
+              position_in_batch += 1
+              bin = _shift_bin(part.id)
 
-              if element_def['formula'].start_with?('custom')
+              entries << _create_entry(part, position_in_batch, bin)
 
-                data = LabelData.new(
-
-                  number: StringWrapper.new(part.number),
-                  path: PathWrapper.new(instance_info.named_path.split('.')),
-                  instance_name: StringWrapper.new(instance_info.entity.name),
-                  name: StringWrapper.new(part.name),
-                  cutting_length: LengthWrapper.new(part.def.cutting_length),
-                  cutting_width: LengthWrapper.new(part.def.cutting_width),
-                  cutting_thickness: LengthWrapper.new(part.def.cutting_size.thickness),
-                  edge_cutting_length: LengthWrapper.new(part.def.edge_cutting_length),
-                  edge_cutting_width: LengthWrapper.new(part.def.edge_cutting_width),
-                  bbox_length: LengthWrapper.new(part.def.size.length),
-                  bbox_width: LengthWrapper.new(part.def.size.width),
-                  bbox_thickness: LengthWrapper.new(part.def.size.thickness),
-                  final_area: AreaWrapper.new(part.def.final_area),
-                  material: MaterialWrapper.new(part.group.def.material, part.group.def),
-                  description: StringWrapper.new(part.description),
-                  url: StringWrapper.new(part.url),
-                  tags: ArrayWrapper.new(part.tags),
-                  edge_ymin: EdgeWrapper.new(part.def.edge_materials[:ymin], part.def.edge_group_defs[:ymin]),
-                  edge_ymax: EdgeWrapper.new(part.def.edge_materials[:ymax], part.def.edge_group_defs[:ymax]),
-                  edge_xmin: EdgeWrapper.new(part.def.edge_materials[:xmin], part.def.edge_group_defs[:xmin]),
-                  edge_xmax: EdgeWrapper.new(part.def.edge_materials[:xmax], part.def.edge_group_defs[:xmax]),
-                  face_zmin: VeneerWrapper.new(part.def.veneer_materials[:zmin], part.def.veneer_group_defs[:zmin]),
-                  face_zmax: VeneerWrapper.new(part.def.veneer_materials[:zmax], part.def.veneer_group_defs[:zmax]),
-                  layer: StringWrapper.new(instance_info.layer.name),
-
-                  component_definition: ComponentDefinitionWrapper.new(instance_info.definition),
-                  component_instance: ComponentInstanceWrapper.new(instance_info.entity),
-
-                  batch: BatchWrapper.new(position_in_batch, part.count),
-                  bin: IntegerWrapper.new(bin),
-
-                  filename: StringWrapper.new(@cutlist.filename),
-                  model_name: StringWrapper.new(@cutlist.model_name),
-                  model_description: StringWrapper.new(@cutlist.model_description),
-                  page_name: StringWrapper.new(@cutlist.page_name),
-                  page_description: StringWrapper.new(@cutlist.page_description)
-
-                )
-                entry.custom_values << _evaluate_text(element_def['custom_formula'], data)
-
-              elsif element_def['formula'] == 'thumbnail.proportional.drawing'
-
-                scale = 1 / [ part.def.size.length, part.def.size.width ].max
-                transformation = Geom::Transformation.scaling(scale, -scale, 1.0)
-
-                projection_def = _compute_part_projection_def(PART_DRAWING_TYPE_2D_TOP, part)
-                if projection_def.is_a?(DrawingProjectionDef)
-                  entry.custom_values << projection_def.layer_defs.map { |layer_def|
-                    {
-                      :depth => layer_def.depth,
-                      :path => "#{layer_def.poly_defs.map { |poly_def| "M #{poly_def.points.map { |point| point.transform(transformation).to_a[0..1].map { |v| v.to_f.round(6) }.join(',') }.join(' L ')} Z" }.join(' ')}",
-                    }
-                  }
-                end
-
-              else
-
-                entry.custom_values << ''
-
-              end
-
+              break if @compute_first_instance_only
             end
 
-            entries << entry
+          else
+
+            # Loop on real instances
+            part.def.instance_infos.each do |serialized_path, instance_info|
+
+              position_in_batch += 1
+              bin = _shift_bin(part.id)
+
+              entity_named_path = instance_info.named_path
+              entity_name = part.def.thickness_layer_count > 1 ? "#{instance_info.entity.name} // #{thickness_layer}" : instance_info.entity.name
+              layer_name = instance_info.layer.name
+              definition = instance_info.definition
+              entity = instance_info.entity
+
+              entries << _create_entry(part, position_in_batch, bin, entity_named_path, entity_name, layer_name, definition, entity)
+
+              break if @compute_first_instance_only
+            end
 
           end
 
+          break if @compute_first_instance_only
         end
 
       end
@@ -170,6 +123,87 @@ module Ladb::OpenCutList
         text = { :error => e.message.split(/cutlist_labels_worker[.]rb:\d+:/).last } # Remove path in exception message
       end
       text
+    end
+
+    def _create_entry(part, position_in_batch, bin, entity_named_path = '', entity_name = '', layer_name = '', definition = nil, entity = nil)
+
+      # Create the label entry
+      entry = LabelEntry.new(part)
+      entry.entity_named_path = entity_named_path
+      entry.entity_name = part.def.thickness_layer_count > 1 ? "#{entity_name} // #{thickness_layer}" : entity_name
+      entry.position_in_batch = position_in_batch
+      entry.bin = bin
+
+      @layout.each do |element_def|
+
+        if element_def['formula'].start_with?('custom')
+
+          data = LabelData.new(
+
+            number: StringWrapper.new(part.number),
+            path: PathWrapper.new(entity_named_path.split('.')),
+            instance_name: StringWrapper.new(entity_name),
+            name: StringWrapper.new(part.name),
+            cutting_length: LengthWrapper.new(part.def.cutting_length),
+            cutting_width: LengthWrapper.new(part.def.cutting_width),
+            cutting_thickness: LengthWrapper.new(part.def.cutting_size.thickness),
+            edge_cutting_length: LengthWrapper.new(part.def.edge_cutting_length),
+            edge_cutting_width: LengthWrapper.new(part.def.edge_cutting_width),
+            bbox_length: LengthWrapper.new(part.def.size.length),
+            bbox_width: LengthWrapper.new(part.def.size.width),
+            bbox_thickness: LengthWrapper.new(part.def.size.thickness),
+            final_area: AreaWrapper.new(part.def.final_area),
+            material: MaterialWrapper.new(part.group.def.material, part.group.def),
+            description: StringWrapper.new(part.description),
+            url: StringWrapper.new(part.url),
+            tags: ArrayWrapper.new(part.tags),
+            edge_ymin: EdgeWrapper.new(part.def.edge_materials[:ymin], part.def.edge_group_defs[:ymin]),
+            edge_ymax: EdgeWrapper.new(part.def.edge_materials[:ymax], part.def.edge_group_defs[:ymax]),
+            edge_xmin: EdgeWrapper.new(part.def.edge_materials[:xmin], part.def.edge_group_defs[:xmin]),
+            edge_xmax: EdgeWrapper.new(part.def.edge_materials[:xmax], part.def.edge_group_defs[:xmax]),
+            face_zmin: VeneerWrapper.new(part.def.veneer_materials[:zmin], part.def.veneer_group_defs[:zmin]),
+            face_zmax: VeneerWrapper.new(part.def.veneer_materials[:zmax], part.def.veneer_group_defs[:zmax]),
+            layer: StringWrapper.new(layer_name),
+
+            component_definition: ComponentDefinitionWrapper.new(definition),
+            component_instance: ComponentInstanceWrapper.new(entity),
+
+            batch: BatchWrapper.new(position_in_batch, part.count),
+            bin: IntegerWrapper.new(bin),
+
+            filename: StringWrapper.new(@cutlist.filename),
+            model_name: StringWrapper.new(@cutlist.model_name),
+            model_description: StringWrapper.new(@cutlist.model_description),
+            page_name: StringWrapper.new(@cutlist.page_name),
+            page_description: StringWrapper.new(@cutlist.page_description)
+
+          )
+          entry.custom_values << _evaluate_text(element_def['custom_formula'], data)
+
+        elsif element_def['formula'] == 'thumbnail.proportional.drawing'
+
+          scale = 1 / [ part.def.size.length, part.def.size.width ].max
+          transformation = Geom::Transformation.scaling(scale, -scale, 1.0)
+
+          projection_def = _compute_part_projection_def(PART_DRAWING_TYPE_2D_TOP, part)
+          if projection_def.is_a?(DrawingProjectionDef)
+            entry.custom_values << projection_def.layer_defs.map { |layer_def|
+              {
+                :depth => layer_def.depth,
+                :path => "#{layer_def.poly_defs.map { |poly_def| "M #{poly_def.points.map { |point| point.transform(transformation).to_a[0..1].map { |v| v.to_f.round(6) }.join(',') }.join(' L ')} Z" }.join(' ')}",
+              }
+            }
+          end
+
+        else
+
+          entry.custom_values << ''
+
+        end
+
+      end
+
+      entry
     end
 
   end

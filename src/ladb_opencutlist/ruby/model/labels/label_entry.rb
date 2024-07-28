@@ -56,7 +56,16 @@ module Ladb::OpenCutList
           end
         }
       end
-      a_values <=> b_values
+      result = a_values <=> b_values
+      if result == 0
+
+        # In the case of equality, add an extra compare on position in batch
+        a_values << entry_a.position_in_batch
+        b_values << entry_b.position_in_batch
+        result = a_values <=> b_values
+
+      end
+      return result
     end
 
   end

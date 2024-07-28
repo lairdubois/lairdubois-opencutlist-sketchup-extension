@@ -469,7 +469,7 @@
                     elementDef.custom_formula = '';
                     $textareaCustomFormula.ladbTextinputCode('val', '');
                 }
-                rubyCallCommand('cutlist_labels', { part_ids: [ that.options.partId ], layout: [ elementDef ] }, function (response) {
+                rubyCallCommand('cutlist_labels', { part_ids: [ that.options.partId ], layout: [ elementDef ], compute_first_instance_only: true }, function (response) {
 
                     if (response.errors) {
                         console.log(response.errors);
@@ -548,7 +548,7 @@
             })
             .on('change', function () {
                 elementDef.custom_formula = $(this).val();
-                rubyCallCommand('cutlist_labels', { part_ids: [ that.options.partId ], layout: [ elementDef ] }, function (response) {
+                rubyCallCommand('cutlist_labels', { part_ids: [ that.options.partId ], layout: [ elementDef ], compute_first_instance_only: true }, function (response) {
 
                     if (response.errors) {
                         console.log(response.errors);
@@ -604,7 +604,7 @@
 
         this.elementDefs = elementDefs;
 
-        rubyCallCommand('cutlist_labels', { part_ids: [ this.options.partId ], layout: elementDefs }, function (response) {
+        rubyCallCommand('cutlist_labels', { part_ids: [ this.options.partId ], layout: elementDefs, compute_first_instance_only: true }, function (response) {
 
             if (response.errors) {
                 console.log(response.errors);
