@@ -69,7 +69,7 @@ module Ladb::OpenCutList
               position_in_batch += 1
               bin = _shift_bin(part.id)
 
-              entries << _create_entry(part, position_in_batch, bin)
+              entries << _create_entry(part, thickness_layer, position_in_batch, bin)
 
               break if @compute_first_instance_only
             end
@@ -83,12 +83,12 @@ module Ladb::OpenCutList
               bin = _shift_bin(part.id)
 
               entity_named_path = instance_info.named_path
-              entity_name = part.def.thickness_layer_count > 1 ? "#{instance_info.entity.name} // #{thickness_layer}" : instance_info.entity.name
+              entity_name = instance_info.entity.name
               layer_name = instance_info.layer.name
               definition = instance_info.definition
               entity = instance_info.entity
 
-              entries << _create_entry(part, position_in_batch, bin, entity_named_path, entity_name, layer_name, definition, entity)
+              entries << _create_entry(part, thickness_layer, position_in_batch, bin, entity_named_path, entity_name, layer_name, definition, entity)
 
               break if @compute_first_instance_only
             end
@@ -125,12 +125,13 @@ module Ladb::OpenCutList
       text
     end
 
-    def _create_entry(part, position_in_batch, bin, entity_named_path = '', entity_name = '', layer_name = '', definition = nil, entity = nil)
+    def _create_entry(part, thickness_layer, position_in_batch, bin, entity_named_path = '', entity_name = '', layer_name = '', definition = nil, entity = nil)
 
       # Create the label entry
       entry = LabelEntry.new(part)
       entry.entity_named_path = entity_named_path
       entry.entity_name = part.def.thickness_layer_count > 1 ? "#{entity_name} // #{thickness_layer}" : entity_name
+      entry.thickness_layer = thickness_layer
       entry.position_in_batch = position_in_batch
       entry.bin = bin
 
