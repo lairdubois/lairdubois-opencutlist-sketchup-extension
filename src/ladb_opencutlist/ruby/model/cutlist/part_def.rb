@@ -120,9 +120,7 @@ module Ladb::OpenCutList
       if strategy
         properties = strategy.split('>')
         properties.each { |property|
-          if property.length < 1
-            next
-          end
+          next if property.length < 1
           asc = true
           if property.start_with?('-')
             asc = false
@@ -175,6 +173,13 @@ module Ladb::OpenCutList
 
       end
       result
+    end
+
+    # -----
+
+    def definition
+      return if Sketchup.active_model.nil?
+      Sketchup.active_model.definitions[@definition_id]
     end
 
     # -----

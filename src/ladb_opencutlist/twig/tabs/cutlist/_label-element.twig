@@ -18,27 +18,27 @@
     <rect class="ladb-label-element" x="{{ transX }}" y="{{ transY }}" width="{{ areaSize }}" height="{{ areaSize }}" fill="{% if noEmptyValue %}rgba(0,0,0,0.03){% else %}none{% endif %}" stroke="none" />
     {% set dashedStrokeWidth = minUnit / 10 %}
     {% set plainStrokeWidth = minUnit / 5 %}
-    {% set rectPartWidth = (areaSize - plainStrokeWidth) * (proportional ? partInfo.part.l_ratio : 1) %}
-    {% set rectPartHeight = (areaSize - plainStrokeWidth) * (proportional ? partInfo.part.w_ratio : 1) %}
+    {% set rectPartWidth = (areaSize - plainStrokeWidth) * (proportional ? entry.part.l_ratio : 1) %}
+    {% set rectPartHeight = (areaSize - plainStrokeWidth) * (proportional ? entry.part.w_ratio : 1) %}
     <g transform="translate({{ transX + (areaSize - rectPartWidth) / 2 }} {{ transY + (areaSize - rectPartHeight) / 2 }})">
         {% if drawing %}
             {% set scale = max(rectPartWidth, rectPartHeight) %}
             {% set drawingStrokeWidth = minUnit / (20 * scale) %}
-            <g transform="scale({{ scale }} {{ scale }}) translate(0 {{ partInfo.part.w_ratio }})">
-                {% for layer in partInfo.custom_values[index] %}
+            <g transform="scale({{ scale }} {{ scale }}) translate(0 {{ entry.part.w_ratio }})">
+                {% for layer in entry.custom_values[index] %}
                     <path d="{{ layer.path }}" stroke="{{ elementDef.color }}" stroke-width="{{ drawingStrokeWidth }}" fill="#ffffff" />
                 {% endfor %}
             </g>
             <g>
-                {% if partInfo.part.edge_material_names.ymax %}<line x1="0" y1="0" x2="{{ rectPartWidth }}" y2="0" stroke-linecap="square" stroke="{{ hideMaterialColors ? elementDef.color: partInfo.part.edge_material_colors.ymax }}" stroke-width="{{ plainStrokeWidth }}" />{% endif %}
-                {% if partInfo.part.edge_material_names.ymin %}<line x1="{{ rectPartWidth }}" y1="{{ rectPartHeight }}" x2="0" y2="{{ rectPartHeight }}" stroke-linecap="square" stroke="{{ hideMaterialColors ? elementDef.color : partInfo.part.edge_material_colors.ymin }}" stroke-width="{{ plainStrokeWidth }}" />{% endif %}
-                {% if partInfo.part.edge_material_names.xmax %}<line x1="{{ rectPartWidth }}" y1="0" x2="{{ rectPartWidth }}" y2="{{ rectPartHeight }}" stroke-linecap="square" stroke="{{ hideMaterialColors ? elementDef.color : partInfo.part.edge_material_colors.xmax }}" stroke-width="{{ plainStrokeWidth }}" />{% endif %}
-                {% if partInfo.part.edge_material_names.xmin %}<line x1="0" y1="{{ rectPartHeight }}" x2="0" y2="0" stroke-linecap="square" stroke="{{ hideMaterialColors ? elementDef.color : partInfo.part.edge_material_colors.xmin }}" stroke-width="{{ plainStrokeWidth }}" />{% endif %}
+                {% if entry.part.edge_material_names.ymax %}<line x1="0" y1="0" x2="{{ rectPartWidth }}" y2="0" stroke-linecap="square" stroke="{{ hideMaterialColors ? elementDef.color: entry.part.edge_material_colors.ymax }}" stroke-width="{{ plainStrokeWidth }}" />{% endif %}
+                {% if entry.part.edge_material_names.ymin %}<line x1="{{ rectPartWidth }}" y1="{{ rectPartHeight }}" x2="0" y2="{{ rectPartHeight }}" stroke-linecap="square" stroke="{{ hideMaterialColors ? elementDef.color : entry.part.edge_material_colors.ymin }}" stroke-width="{{ plainStrokeWidth }}" />{% endif %}
+                {% if entry.part.edge_material_names.xmax %}<line x1="{{ rectPartWidth }}" y1="0" x2="{{ rectPartWidth }}" y2="{{ rectPartHeight }}" stroke-linecap="square" stroke="{{ hideMaterialColors ? elementDef.color : entry.part.edge_material_colors.xmax }}" stroke-width="{{ plainStrokeWidth }}" />{% endif %}
+                {% if entry.part.edge_material_names.xmin %}<line x1="0" y1="{{ rectPartHeight }}" x2="0" y2="0" stroke-linecap="square" stroke="{{ hideMaterialColors ? elementDef.color : entry.part.edge_material_colors.xmin }}" stroke-width="{{ plainStrokeWidth }}" />{% endif %}
             </g>
         {% else %}
             <rect x="0" y="0" width="{{ max(0, rectPartWidth) }}" height="{{ max(0, rectPartHeight) }}" fill="#ffffff" stroke="none" />
             {% if group.material_grained %}
-                <g{% if (partInfo.part.flipped b-xor partInfo.part.axes_flipped) == 1 %} transform="translate({{ rectPartWidth }}, 0) scale(-1,1)"{% endif %}>
+                <g{% if (entry.part.flipped b-xor entry.part.axes_flipped) == 1 %} transform="translate({{ rectPartWidth }}, 0) scale(-1,1)"{% endif %}>
                     {% set arrowMargin = minUnit / 4 %}
                     {% set arrowX = arrowMargin %}
                     {% set arrowY = arrowMargin %}
@@ -59,14 +59,14 @@
                 </g>
             {% endif %}
             <g>
-                <line x1="0" y1="0" x2="{{ rectPartWidth }}" y2="0" stroke-linecap="square"{% if partInfo.part.edge_material_names.ymax %} stroke="{{ hideMaterialColors ? elementDef.color: partInfo.part.edge_material_colors.ymax }}" stroke-width="{{ plainStrokeWidth }}"{% else %}stroke="{{ elementDef.color }}" stroke-width="{{ dashedStrokeWidth }}" stroke-dasharray="{{ dashedStrokeWidth * 2 }}"{% endif%} />
-                <line x1="{{ rectPartWidth }}" y1="{{ rectPartHeight }}" x2="0" y2="{{ rectPartHeight }}" stroke-linecap="square"{% if partInfo.part.edge_material_names.ymin %} stroke="{{ hideMaterialColors ? elementDef.color : partInfo.part.edge_material_colors.ymin }}" stroke-width="{{ plainStrokeWidth }}"{% else %}stroke="{{ elementDef.color }}"  stroke-width="{{ dashedStrokeWidth }}" stroke-dasharray="{{ dashedStrokeWidth * 2 }}"{% endif%} />
-                <line x1="{{ rectPartWidth }}" y1="0" x2="{{ rectPartWidth }}" y2="{{ rectPartHeight }}" stroke-linecap="square"{% if partInfo.part.edge_material_names.xmax %} stroke="{{ hideMaterialColors ? elementDef.color : partInfo.part.edge_material_colors.xmax }}" stroke-width="{{ plainStrokeWidth }}"{% else %}stroke="{{ elementDef.color }}"  stroke-width="{{ dashedStrokeWidth }}" stroke-dasharray="{{ dashedStrokeWidth * 2 }}"{% endif%} />
-                <line x1="0" y1="{{ rectPartHeight }}" x2="0" y2="0" stroke-linecap="square"{% if partInfo.part.edge_material_names.xmin %} stroke="{{ hideMaterialColors ? elementDef.color : partInfo.part.edge_material_colors.xmin }}" stroke-width="{{ plainStrokeWidth }}"{% else %} stroke-width="{{ dashedStrokeWidth }}"stroke="{{ elementDef.color }}"  stroke-dasharray="{{ dashedStrokeWidth * 2 }}"{% endif%} />
+                <line x1="0" y1="0" x2="{{ rectPartWidth }}" y2="0" stroke-linecap="square"{% if entry.part.edge_material_names.ymax %} stroke="{{ hideMaterialColors ? elementDef.color: entry.part.edge_material_colors.ymax }}" stroke-width="{{ plainStrokeWidth }}"{% else %}stroke="{{ elementDef.color }}" stroke-width="{{ dashedStrokeWidth }}" stroke-dasharray="{{ dashedStrokeWidth * 2 }}"{% endif%} />
+                <line x1="{{ rectPartWidth }}" y1="{{ rectPartHeight }}" x2="0" y2="{{ rectPartHeight }}" stroke-linecap="square"{% if entry.part.edge_material_names.ymin %} stroke="{{ hideMaterialColors ? elementDef.color : entry.part.edge_material_colors.ymin }}" stroke-width="{{ plainStrokeWidth }}"{% else %}stroke="{{ elementDef.color }}"  stroke-width="{{ dashedStrokeWidth }}" stroke-dasharray="{{ dashedStrokeWidth * 2 }}"{% endif%} />
+                <line x1="{{ rectPartWidth }}" y1="0" x2="{{ rectPartWidth }}" y2="{{ rectPartHeight }}" stroke-linecap="square"{% if entry.part.edge_material_names.xmax %} stroke="{{ hideMaterialColors ? elementDef.color : entry.part.edge_material_colors.xmax }}" stroke-width="{{ plainStrokeWidth }}"{% else %}stroke="{{ elementDef.color }}"  stroke-width="{{ dashedStrokeWidth }}" stroke-dasharray="{{ dashedStrokeWidth * 2 }}"{% endif%} />
+                <line x1="0" y1="{{ rectPartHeight }}" x2="0" y2="0" stroke-linecap="square"{% if entry.part.edge_material_names.xmin %} stroke="{{ hideMaterialColors ? elementDef.color : entry.part.edge_material_colors.xmin }}" stroke-width="{{ plainStrokeWidth }}"{% else %} stroke-width="{{ dashedStrokeWidth }}"stroke="{{ elementDef.color }}"  stroke-dasharray="{{ dashedStrokeWidth * 2 }}"{% endif%} />
             </g>
         {% endif %}
     </g>
-{% elseif terms[0] == 'custom' and terms[1] == 'qr_code' and partInfo.custom_values[index]['error'] is empty %}
+{% elseif terms[0] == 'custom' and terms[1] == 'qr_code' and entry.custom_values[index]['error'] is empty %}
     {% set areaSize = elementDef.size * minUnit %}
     {% if elementDef.anchor starts with 'middle' %}
         {% set transX = areaSize * -0.5 %}
@@ -82,45 +82,45 @@
     {% endif %}
     <rect class="ladb-label-element" x="{{ transX }}" y="{{ transY }}" width="{{ areaSize }}" height="{{ areaSize }}" fill="{% if noEmptyValue %}rgba(0,0,0,0.03){% else %}none{% endif %}" stroke="none" />
     <g transform="translate({{ transX }} {{ transY }})" fill="{{ elementDef.color }}">
-        {{ qr_code_svg(partInfo.custom_values[index], areaSize, elementDef.color) }}
+        {{ qr_code_svg(entry.custom_values[index], areaSize, elementDef.color) }}
     </g>
 {% else %}
     {% if terms[0] == 'part' %}
         {% set key = terms[1] %}
         {% if key == 'description' %}
-            {% set value = partInfo.part[key]|split('\n') %}
+            {% set value = entry.part[key]|split('\n') %}
         {% elseif key == 'entity_named_path' %}
-            {% set value = partInfo.entity_named_path %}
+            {% set value = entry.entity_named_path %}
         {% elseif key == 'entity_name' %}
-            {% set value = partInfo.entity_name %}
+            {% set value = entry.entity_name %}
         {% elseif key == 'bin' %}
-            {% set value = partInfo.bin %}
+            {% set value = entry.bin %}
         {% elseif key == 'cutting_size' %}
-            {% set value = partInfo.part.cutting_length~' x '~partInfo.part.cutting_width %}
+            {% set value = entry.part.cutting_length~' x '~entry.part.cutting_width %}
         {% elseif key == 'edge_cutting_size' %}
-            {% set value = partInfo.part.edge_cutting_length~' x '~partInfo.part.edge_cutting_width %}
+            {% set value = entry.part.edge_cutting_length~' x '~entry.part.edge_cutting_width %}
         {% elseif key == 'size' %}
-            {% set value = partInfo.part.length~' x '~partInfo.part.width %}
+            {% set value = entry.part.length~' x '~entry.part.width %}
         {% elseif key == 'batch' %}
-            {% set value = partInfo.position_in_batch~'/'~partInfo.part.count %}
+            {% set value = entry.position_in_batch~'/'~entry.part.count %}
         {% elseif key == 'tags' %}
-            {% set value = partInfo.part.tags %}
+            {% set value = entry.part.tags %}
         {% elseif key == 'edge' %}
             {% set edgeKey = terms[2] %}
-            {% if partInfo.part.edge_material_names[edgeKey] is not null and partInfo.part.edge_std_dimensions[edgeKey] is not null %}
-                {% set value = [partInfo.part.edge_material_names[edgeKey], partInfo.part.edge_std_dimensions[edgeKey]]|join(' | ') %}
+            {% if entry.part.edge_material_names[edgeKey] is not null and entry.part.edge_std_dimensions[edgeKey] is not null %}
+                {% set value = [entry.part.edge_material_names[edgeKey], entry.part.edge_std_dimensions[edgeKey]]|join(' | ') %}
             {% else %}
                 {% set value = '' %}
             {% endif %}
         {% elseif key == 'face' %}
             {% set faceKey = terms[2] %}
-            {% if partInfo.part.face_material_names[faceKey] is not null and partInfo.part.face_std_dimensions[faceKey] is not null %}
-                {% set value = [partInfo.part.face_material_names[faceKey], partInfo.part.face_std_dimensions[faceKey]]|join(' | ') %}
+            {% if entry.part.face_material_names[faceKey] is not null and entry.part.face_std_dimensions[faceKey] is not null %}
+                {% set value = [entry.part.face_material_names[faceKey], entry.part.face_std_dimensions[faceKey]]|join(' | ') %}
             {% else %}
                 {% set value = '' %}
             {% endif %}
         {% else %}
-            {% set value = partInfo.part[key] %}
+            {% set value = entry.part[key] %}
         {% endif %}
     {% elseif terms[0] == 'group' %}
         {% set key = terms[1] %}
@@ -140,10 +140,10 @@
     {% elseif terms[0] == 'generated_at' %}
         {% set value = generatedAt|date(('default.date_format'|i18next)) %}
     {% elseif terms[0] == 'custom' %}
-        {% if partInfo.custom_values[index]['error'] %}
-            {% set error = partInfo.custom_values[index]['error'] %}
+        {% if entry.custom_values[index]['error'] %}
+            {% set error = entry.custom_values[index]['error'] %}
         {% else %}
-            {% set value = partInfo.custom_values[index]|split('\n') %}
+            {% set value = entry.custom_values[index]|split('\n') %}
         {% endif %}
     {% endif %}
     {% if value|trim is empty and noEmptyValue|default(false) %}

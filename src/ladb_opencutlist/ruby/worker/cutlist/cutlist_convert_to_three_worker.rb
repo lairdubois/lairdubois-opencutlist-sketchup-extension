@@ -56,32 +56,36 @@ module Ladb::OpenCutList
             three_part_instance_def.matrix = _to_three_matrix(instance_info.entity.transformation)
             three_part_instance_def.id = part.id
             three_part_instance_def.text = _evaluate_text(InstanceData.new(
-              StringWrapper.new(part.number),
-              ArrayWrapper.new(PathUtils.get_named_path(instance_info.path, true, 1)),
-              StringWrapper.new(instance_info.entity.name),
-              StringWrapper.new(part.name),
-              LengthWrapper.new(part.def.cutting_length),
-              LengthWrapper.new(part.def.cutting_width),
-              LengthWrapper.new(part.def.cutting_size.thickness),
-              LengthWrapper.new(part.def.edge_cutting_length),
-              LengthWrapper.new(part.def.edge_cutting_width),
-              LengthWrapper.new(part.def.size.length),
-              LengthWrapper.new(part.def.size.width),
-              LengthWrapper.new(part.def.size.thickness),
-              AreaWrapper.new(part.def.final_area),
-              MaterialWrapper.new(part.group.def.material, part.group.def),
-              StringWrapper.new(part.description),
-              StringWrapper.new(part.url),
-              ArrayWrapper.new(part.tags),
-              EdgeWrapper.new(part.def.edge_materials[:ymin], part.def.edge_group_defs[:ymin]),
-              EdgeWrapper.new(part.def.edge_materials[:ymax], part.def.edge_group_defs[:ymax]),
-              EdgeWrapper.new(part.def.edge_materials[:xmin], part.def.edge_group_defs[:xmin]),
-              EdgeWrapper.new(part.def.edge_materials[:xmax], part.def.edge_group_defs[:xmax]),
-              VeneerWrapper.new(part.def.veneer_materials[:zmin], part.def.veneer_group_defs[:zmin]),
-              VeneerWrapper.new(part.def.veneer_materials[:zmax], part.def.veneer_group_defs[:zmax]),
-              StringWrapper.new(instance_info.layer.name),
-              )
-            )
+
+              number: StringWrapper.new(part.number),
+              path: ArrayWrapper.new(PathUtils.get_named_path(instance_info.path, true, 1)),
+              instance_name: StringWrapper.new(instance_info.entity.name),
+              name: StringWrapper.new(part.name),
+              cutting_length: LengthWrapper.new(part.def.cutting_length),
+              cutting_width: LengthWrapper.new(part.def.cutting_width),
+              cutting_thickness: LengthWrapper.new(part.def.cutting_size.thickness),
+              edge_cutting_length: LengthWrapper.new(part.def.edge_cutting_length),
+              edge_cutting_width: LengthWrapper.new(part.def.edge_cutting_width),
+              bbox_length: LengthWrapper.new(part.def.size.length),
+              bbox_width: LengthWrapper.new(part.def.size.width),
+              bbox_thickness: LengthWrapper.new(part.def.size.thickness),
+              final_area: AreaWrapper.new(part.def.final_area),
+              material: MaterialWrapper.new(part.group.def.material, part.group.def),
+              description: StringWrapper.new(part.description),
+              url: StringWrapper.new(part.url),
+              tags: ArrayWrapper.new(part.tags),
+              edge_ymin: EdgeWrapper.new(part.def.edge_materials[:ymin], part.def.edge_group_defs[:ymin]),
+              edge_ymax: EdgeWrapper.new(part.def.edge_materials[:ymax], part.def.edge_group_defs[:ymax]),
+              edge_xmin: EdgeWrapper.new(part.def.edge_materials[:xmin], part.def.edge_group_defs[:xmin]),
+              edge_xmax: EdgeWrapper.new(part.def.edge_materials[:xmax], part.def.edge_group_defs[:xmax]),
+              face_zmin: VeneerWrapper.new(part.def.veneer_materials[:zmin], part.def.veneer_group_defs[:zmin]),
+              face_zmax: VeneerWrapper.new(part.def.veneer_materials[:zmax], part.def.veneer_group_defs[:zmax]),
+              layer: StringWrapper.new(instance_info.layer.name),
+
+              component_definition: ComponentDefinitionWrapper.new(instance_info.definition),
+              component_instance: ComponentInstanceWrapper.new(instance_info.entity),
+
+            ))
 
             # Add to hierarchy
             parent_three_group_def = _parent_hierarchy(instance_info.path[0...-1], active_entity, group_cache, three_model_def)
@@ -559,31 +563,37 @@ module Ladb::OpenCutList
   class InstanceData
 
     def initialize(
-      number,
-      path,
-      instance_name,
-      name,
-      cutting_length,
-      cutting_width,
-      cutting_thickness,
-      edge_cutting_length,
-      edge_cutting_width,
-      bbox_length,
-      bbox_width,
-      bbox_thickness,
-      final_area,
-      material,
-      description,
-      url,
-      tags,
-      edge_ymin,
-      edge_ymax,
-      edge_xmin,
-      edge_xmax,
-      face_zmin,
-      face_zmax,
-      layer
+
+      number:,
+      path:,
+      instance_name:,
+      name:,
+      cutting_length:,
+      cutting_width:,
+      cutting_thickness:,
+      edge_cutting_length:,
+      edge_cutting_width:,
+      bbox_length:,
+      bbox_width:,
+      bbox_thickness:,
+      final_area:,
+      material:,
+      description:,
+      url:,
+      tags:,
+      edge_ymin:,
+      edge_ymax:,
+      edge_xmin:,
+      edge_xmax:,
+      face_zmin:,
+      face_zmax:,
+      layer:,
+
+      component_definition:,
+      component_instance:
+
     )
+
       @number = number
       @path = path
       @instance_name = instance_name
@@ -612,6 +622,10 @@ module Ladb::OpenCutList
       @face_zmin = face_zmin
       @face_zmax = face_zmax
       @layer = layer
+
+      @component_definition = component_definition
+      @component_instance = component_instance
+
     end
 
     def get_binding

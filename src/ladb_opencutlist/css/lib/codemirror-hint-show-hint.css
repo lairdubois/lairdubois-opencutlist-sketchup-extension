@@ -96,6 +96,14 @@
   content: "V";
   background: #8338ec;
 }
+.CodeMirror-hint-component_definition:before {
+  content: "D";
+  background: #555;
+}
+.CodeMirror-hint-component_instance:before {
+  content: "I";
+  background: #555;
+}
 
 li.CodeMirror-hint-active {
   background: #eee;

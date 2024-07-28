@@ -13,6 +13,7 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
     * Added Material type separators in materials tabs when sorted by type
     * Added Export 2D projections left, right, front, back
     * Added QRCodes in labels
+    * Improved labels formulas
     * Improved smart tools picker
     * Improved surface detection
     * Replaced Highlight Part Tool by Smart Axes Tool

@@ -17,11 +17,13 @@
         this.$editingSvgGroup = null;
         this.$editingForm = null;
 
+        this.entry = null;
+
     };
 
     LadbEditorLabelLayout.DEFAULTS = {
         group: null,
-        partInfo: null,
+        partId: null,
         labelWidth: 100,
         labelHeight: 100,
         hideMaterialColors: false
@@ -313,7 +315,7 @@
         var formula = Twig.twig({ref: 'tabs/cutlist/_label-element.twig'}).render($.extend({
             index: this.elementDefs ? this.elementDefs.indexOf(elementDef) : 0,
             elementDef: elementDef,
-            partInfo: this.options.partInfo,
+            entry: this.entry,
             noEmptyValue: true,
             hideMaterialColors: this.options.hideMaterialColors
         }, this.options));
@@ -467,14 +469,14 @@
                     elementDef.custom_formula = '';
                     $textareaCustomFormula.ladbTextinputCode('val', '');
                 }
-                rubyCallCommand('cutlist_labels_compute_elements', { part_infos: [ that.options.partInfo ], layout: [ elementDef ] }, function (response) {
+                rubyCallCommand('cutlist_labels', { part_ids: [ that.options.partId ], layout: [ elementDef ] }, function (response) {
 
                     if (response.errors) {
                         console.log(response.errors);
                     }
-                    if (response.part_infos) {
+                    if (response.entries) {
                         var index = that.elementDefs.indexOf(elementDef);
-                        that.options.partInfo.custom_values[index] = response.part_infos[0].custom_values[0];
+                        that.entry.custom_values[index] = response.entries[0].custom_values[0];
                         that.appendFormula(svgContentGroup, elementDef);
                         fnUpdateCustomFormulaVisibility();
                     }
@@ -522,6 +524,8 @@
                     { name: 'face_zmax', type: 'veneer' },
                     { name: 'face_zmin', type: 'veneer' },
                     { name: 'layer', type: 'string' },
+                    { name: 'component_definition', type: 'component_definition' },
+                    { name: 'component_instance', type: 'component_instance' },
                     { name: 'batch', type: 'batch' },
                     { name: 'bin', type: 'integer' },
                     { name: 'filename', type: 'string' },
@@ -544,14 +548,14 @@
             })
             .on('change', function () {
                 elementDef.custom_formula = $(this).val();
-                rubyCallCommand('cutlist_labels_compute_elements', { part_infos: [ that.options.partInfo ], layout: [ elementDef ] }, function (response) {
+                rubyCallCommand('cutlist_labels', { part_ids: [ that.options.partId ], layout: [ elementDef ] }, function (response) {
 
                     if (response.errors) {
                         console.log(response.errors);
                     }
-                    if (response.part_infos) {
+                    if (response.entries) {
                         var index = that.elementDefs.indexOf(elementDef);
-                        that.options.partInfo.custom_values[index] = response.part_infos[0].custom_values[0];
+                        that.entry.custom_values[index] = response.entries[0].custom_values[0];
                         that.appendFormula(svgContentGroup, elementDef);
                     }
 
@@ -600,13 +604,13 @@
 
         this.elementDefs = elementDefs;
 
-        rubyCallCommand('cutlist_labels_compute_elements', { part_infos: [ this.options.partInfo ], layout: elementDefs }, function (response) {
+        rubyCallCommand('cutlist_labels', { part_ids: [ this.options.partId ], layout: elementDefs }, function (response) {
 
             if (response.errors) {
                 console.log(response.errors);
             }
-            if (response.part_infos) {
-                that.options.partInfo = response.part_infos[0];
+            if (response.entries) {
+                that.entry = response.entries[0];
             }
 
             // Empty the container

@@ -860,7 +860,8 @@
                     { name: 'edge_xmax', type: 'edge' },
                     { name: 'face_zmax', type: 'veneer' },
                     { name: 'face_zmin', type: 'veneer' },
-                    { name: 'layers', type: 'array' }
+                    { name: 'layers', type: 'array' },
+                    { name: 'component_definition', type: 'component_definition' }
                 ],
                 snippetDefs: [
                     { name: i18next.t('tab.cutlist.snippet.number_and_name'), value: '@number + " - " + @name' },
@@ -900,7 +901,9 @@
                     { name: 'edge_xmax', type: 'edge' },
                     { name: 'face_zmax', type: 'veneer' },
                     { name: 'face_zmin', type: 'veneer' },
-                    { name: 'layer', type: 'string' }
+                    { name: 'layer', type: 'string' },
+                    { name: 'component_definition', type: 'component_definition' },
+                    { name: 'component_instance', type: 'component_instance' },
                 ],
                 snippetDefs: [
                     { name: i18next.t('tab.cutlist.snippet.number_and_name'), value: '@number + " - " + @name' },
@@ -1575,7 +1578,9 @@
                     { name: 'edge_xmax', type: 'edge' },
                     { name: 'face_zmax', type: 'veneer' },
                     { name: 'face_zmin', type: 'veneer' },
-                    { name: 'layer', type: 'string' }
+                    { name: 'layer', type: 'string' },
+                    { name: 'component_definition', type: 'component_definition' },
+                    { name: 'component_instance', type: 'component_instance' }
                 ]),
                 snippetDefs: [
                     { name: i18next.t('tab.cutlist.snippet.number'), value: '@number' },
@@ -4741,55 +4746,8 @@
         var isPartSelection = this.selectionGroupId === groupId && this.selectionPartIds.length > 0;
         var isBinSorterDisabled = !binDefs;
 
-        // Retrieve parts
-        var tmpBinDefs = binDefs ? JSON.parse(JSON.stringify(binDefs)) : null;
-        var partInfos = [];
-        var fnAppendPartInfo = function(part) { // Construct part info
-            var flatPathsAndNames = [];
-            var layered = part.thickness_layer_count > 1;
-            for (var l = 1; l <= part.thickness_layer_count; l++) {
-                $.each(part.entity_names, function () {
-                    var count = this[1].length;
-                    for (var i = 0; i < count; i++) {
-                        flatPathsAndNames.push({
-                            path: this[1][i],
-                            name: this[0] + (layered ? ' // ' + l : ''),
-                        });
-                    }
-                });
-            }
-            for (var i = 1; i <= part.count; i++) {
-                var bin = null;
-                if (tmpBinDefs && tmpBinDefs[part.id]) {
-                    bin = tmpBinDefs[part.id].shift();
-                }
-                partInfos.push({
-                    position_in_batch: i,
-                    entity_named_path: flatPathsAndNames.length > 0 ? flatPathsAndNames[i - 1].path : '',
-                    entity_name: flatPathsAndNames.length > 0 ? flatPathsAndNames[i - 1].name : '',
-                    bin: bin,
-                    part: part
-                });
-            }
-        }
-        var fnAppendPart = function(part) { // Check children
-            if (part.children) {
-                $.each(part.children, function (index) {
-                    fnAppendPartInfo(this);
-                });
-            } else {
-                fnAppendPartInfo(part);
-            }
-        };
-        $.each(group.parts, function (index) {  // Iterate on selection
-            if (isPartSelection) {
-                if (that.selectionPartIds.includes(this.id)) {
-                    fnAppendPart(this);
-                }
-            } else {
-                fnAppendPart(this);
-            }
-        });
+        let partIdsWithContext = this.grabVisiblePartIdsWithContext(groupId, REAL_MATERIALS_FILTER);
+        let partIds = partIdsWithContext.partIds;
 
         // Retrieve label options
         rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_labels_options', section: groupId }, function (response) {
@@ -4944,7 +4902,7 @@
             $editorLabelLayout.ladbEditorLabelLayout({
                 dialog: that.dialog,
                 group: group,
-                partInfo: partInfos[0],
+                partId: partIds[0],
                 hideMaterialColors: that.generateOptions.hide_material_colors
             });
             $selectPageFormat.selectpicker(SELECT_PICKER_OPTIONS);
@@ -5095,55 +5053,16 @@
 
                     } else {
 
-                        // Sort part infos
-                        var fnFieldSorter = function (properties) {
-                            return function (a, b) {
-                                return properties
-                                    .map(function (property) {
-                                        var dir = 1;
-                                        if (property[0] === '-') {
-                                            dir = -1;
-                                            property = property.substring(1);
-                                        }
-                                        var valA, valB;
-                                        if (property === 'entity_named_path') {
-                                            valA = a.entity_named_path;
-                                            valB = b.entity_named_path;
-                                        } else if (property === 'entity_name') {
-                                            valA = a.entity_name;
-                                            valB = b.entity_name;
-                                        } else if (property === 'bin') {
-                                            valA = a.bin;
-                                            valB = b.bin;
-                                        } else if (property === 'number') {
-                                            valA = isNaN(a.part.number) ? a.part.number.padStart(3, ' ') : a.part.number;    // Pad part number with ' ' to be sure that 'AA' is greater than 'Z' -> " AA" > "  Z"
-                                            valB = isNaN(a.part.number) ? b.part.number.padStart(3, ' ') : b.part.number;
-                                        } else {
-                                            valA = a.part[property];
-                                            valB = b.part[property];
-                                        }
-                                        if (valA > valB) return dir;
-                                        if (valA < valB) return -(dir);
-                                        return 0;
-                                    })
-                                    .reduce(function firstNonZeroValue(p, n) {
-                                        return p ? p : n;
-                                    }, 0);
-                            };
-                        };
-                        partInfos.sort(fnFieldSorter(labelsOptions.part_order_strategy.split('>')));
+                        rubyCallCommand('cutlist_labels', { part_ids: partIds, layout: labelsOptions.layout, part_order_strategy: labelsOptions.part_order_strategy, bin_defs: binDefs }, function (response) {
 
-                        // Compute custom formulas
-                        rubyCallCommand('cutlist_labels_compute_elements', { part_infos: partInfos, layout: labelsOptions.layout }, function (response) {
+                            var entries = [];
 
                             if (response.errors) {
                                 errors.push(response.errors);
                             }
-                            if (response.part_infos) {
-                                partInfos = response.part_infos;
+                            if (response.entries) {
+                                entries = response.entries;
                             }
-
-                            console.log(response);
 
                             // Split part infos into pages
                             var page;
@@ -5151,23 +5070,23 @@
                             for (var i = 1; i <= labelsOptions.offset; i++) {
                                 if (gIndex % (labelsOptions.row_count * labelsOptions.col_count) === 0) {
                                     page = {
-                                        partInfos: []
+                                        entries: []
                                     }
                                     pages.push(page);
                                 }
-                                page.partInfos.push({
+                                page.entries.push({
                                     part: null
                                 });
                                 gIndex++;
                             }
-                            $.each(partInfos, function (index) {
+                            $.each(entries, function (index) {
                                 if (gIndex % (labelsOptions.row_count * labelsOptions.col_count) === 0) {
                                     page = {
-                                        partInfos: []
+                                        entries: []
                                     }
                                     pages.push(page);
                                 }
-                                page.partInfos.push(this);
+                                page.entries.push(this);
                                 gIndex++;
                             })
 

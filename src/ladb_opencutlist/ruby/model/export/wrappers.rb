@@ -225,6 +225,32 @@ module Ladb::OpenCutList
 
   # -----
 
+  class ComponentDefinitionWrapper < ValueWrapper
+
+    def initialize(value)
+      super(value, Sketchup::ComponentDefinition)
+    end
+
+    def export
+      self.name
+    end
+
+  end
+
+  class ComponentInstanceWrapper < ValueWrapper
+
+    def initialize(value)
+      super(value, Sketchup::ComponentInstance)
+    end
+
+    def export
+      self.name
+    end
+
+  end
+
+  # -----
+
   class LengthWrapper < FloatWrapper
 
     def initialize(value, output_to_model_unit = true)
