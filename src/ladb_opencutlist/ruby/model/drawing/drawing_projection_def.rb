@@ -47,13 +47,15 @@ module Ladb::OpenCutList
           end
         end
 
-        @shell_def.shape_defs.each do |shape_def|
-          shape_def.outer_poly_def.points.each do |point|
-            point.transform!(ti)
-          end
-          shape_def.holes_poly_defs.each do |poly_def|
-            poly_def.points.each do |point|
+        unless @shell_def.nil?
+          @shell_def.shape_defs.each do |shape_def|
+            shape_def.outer_poly_def.points.each do |point|
               point.transform!(ti)
+            end
+            shape_def.holes_poly_defs.each do |poly_def|
+              poly_def.points.each do |point|
+                point.transform!(ti)
+              end
             end
           end
         end
