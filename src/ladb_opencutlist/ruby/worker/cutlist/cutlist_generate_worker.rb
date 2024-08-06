@@ -97,7 +97,7 @@ module Ladb::OpenCutList
 
     def run
 
-      model = Sketchup.active_model
+     model = Sketchup.active_model
 
       if @active_entity && @active_path
 

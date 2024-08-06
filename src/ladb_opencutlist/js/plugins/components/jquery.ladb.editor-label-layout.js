@@ -382,6 +382,27 @@
 
         // Buttons
 
+        var $btnDuplicate = $('<button class="btn btn-default"><i class="ladb-opencutlist-icon-copy"></i> ' + i18next.t('tab.cutlist.labels.duplicate_element') + '</button>');
+        $btnDuplicate
+            .on('click', function () {
+
+                var newElementDef = JSON.parse(JSON.stringify(elementDef));
+                var dx = that.options.minUnit / that.options.labelWidth;
+                var dy = that.options.minUnit / that.options.labelHeight;
+                if (newElementDef.x < 0) newElementDef.x += dx; else newElementDef.x -= dx;
+                if (newElementDef.y < 0) newElementDef.y += dy; else newElementDef.y -= dy;
+
+                that.elementDefs.push(newElementDef);
+
+                var index = that.elementDefs.indexOf(elementDef);
+                var newIndex = that.elementDefs.indexOf(newElementDef);
+                that.entry.custom_values[newIndex] = that.entry.custom_values[index];
+
+                that.editElement(that.appendElementDef(newElementDef), newElementDef);
+
+            })
+        ;
+
         var $btnRemove = $('<button class="btn btn-danger"><i class="ladb-opencutlist-icon-clear"></i> ' + i18next.t('tab.cutlist.labels.remove_element') + '</button>');
         $btnRemove
             .on('click', function () {
@@ -416,6 +437,8 @@
         ;
 
         this.$btnContainer
+            .append($btnDuplicate)
+            .append('&nbsp;')
             .append($btnRemove)
             .append('<div style="display: inline-block; width: 20px;" />')
             .append($btnRotateLeft)
@@ -456,6 +479,21 @@
                 $divCustomFormula.hide();
             }
         }
+        var fnComputeCustomFormula = function () {
+            rubyCallCommand('cutlist_labels', { part_ids: [ that.options.partId ], layout: [ elementDef ], compute_first_instance_only: true }, function (response) {
+
+                if (response.errors) {
+                    console.log(response.errors);
+                }
+                if (response.entries) {
+                    var index = that.elementDefs.indexOf(elementDef);
+                    that.entry.custom_values[index] = response.entries[0].custom_values[0];
+                    that.appendFormula(svgContentGroup, elementDef);
+                    fnUpdateCustomFormulaVisibility();
+                }
+
+            });
+        }
 
         fnUpdateCustomFormulaVisibility();
 
@@ -465,23 +503,11 @@
             .selectpicker(SELECT_PICKER_OPTIONS)
             .on('change', function () {
                 elementDef.formula = $(this).val();
-                if (elementDef.formula.startsWith('custom')) {
+                if (elementDef.formula.startsWith('custom') && elementDef.custom_formula == null) {
                     elementDef.custom_formula = '';
                     $textareaCustomFormula.ladbTextinputCode('val', '');
                 }
-                rubyCallCommand('cutlist_labels', { part_ids: [ that.options.partId ], layout: [ elementDef ], compute_first_instance_only: true }, function (response) {
-
-                    if (response.errors) {
-                        console.log(response.errors);
-                    }
-                    if (response.entries) {
-                        var index = that.elementDefs.indexOf(elementDef);
-                        that.entry.custom_values[index] = response.entries[0].custom_values[0];
-                        that.appendFormula(svgContentGroup, elementDef);
-                        fnUpdateCustomFormulaVisibility();
-                    }
-
-                });
+                fnComputeCustomFormula();
             })
         ;
         $selectSize
@@ -548,18 +574,7 @@
             })
             .on('change', function () {
                 elementDef.custom_formula = $(this).val();
-                rubyCallCommand('cutlist_labels', { part_ids: [ that.options.partId ], layout: [ elementDef ], compute_first_instance_only: true }, function (response) {
-
-                    if (response.errors) {
-                        console.log(response.errors);
-                    }
-                    if (response.entries) {
-                        var index = that.elementDefs.indexOf(elementDef);
-                        that.entry.custom_values[index] = response.entries[0].custom_values[0];
-                        that.appendFormula(svgContentGroup, elementDef);
-                    }
-
-                });
+                fnComputeCustomFormula();
             })
         ;
         $selectAnchor

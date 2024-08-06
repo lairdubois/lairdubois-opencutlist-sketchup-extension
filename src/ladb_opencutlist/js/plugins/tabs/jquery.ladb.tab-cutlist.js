@@ -4561,8 +4561,11 @@
                 var $inputScrapSheetSizes = $('#ladb_input_scrap_sheet_sizes', $modal);
                 var $selectEngine = $('#ladb_select_engine', $modal);
                 var $selectObjective = $('#ladb_select_objective', $modal);
-                var $selectCutType = $('#ladb_select_cut_type', $modal);
-                var $selectFirstStageOrientation = $('#ladb_select_first_stage_orientation', $modal);
+                var $formGroupRectangleguillotine = $('.ladb-cutlist-packing-form-group-rectangleguillotine', $modal)
+                var $selectRectangleguillotineCutType = $('#ladb_select_rectangleguillotine_cut_type', $modal);
+                var $selectRectangleguillotineFirstStageOrientation = $('#ladb_select_rectangleguillotine_first_stage_orientation', $modal);
+                var $formGroupIrregular = $('.ladb-cutlist-packing-form-group-irregular', $modal)
+                var $selectIrregularRotations = $('#ladb_select_irregular_rotations', $modal);
                 var $inputSpacing = $('#ladb_input_spacing', $modal);
                 var $inputTrimming = $('#ladb_input_trimming', $modal);
                 var $selectVerbisotyLevel = $('#ladb_select_verbosity_level', $modal);
@@ -4575,8 +4578,9 @@
                     options.scrap_sheet_sizes = $inputScrapSheetSizes.ladbTextinputTokenfield('getValidTokensList');
                     options.engine = $selectEngine.val();
                     options.objective = $selectObjective.val();
-                    options.cut_type = $selectCutType.val();
-                    options.first_stage_orientation = $selectFirstStageOrientation.val();
+                    options.rectangleguillotine_cut_type = $selectRectangleguillotineCutType.val();
+                    options.rectangleguillotine_first_stage_orientation = $selectRectangleguillotineFirstStageOrientation.val();
+                    options.irregular_rotations = $selectIrregularRotations.val();
                     options.spacing = $inputSpacing.val();
                     options.trimming = $inputTrimming.val();
                     options.verbosity_level = $selectVerbisotyLevel.val();
@@ -4584,12 +4588,20 @@
                 var fnFillInputs = function (options) {
                     $selectEngine.selectpicker('val', options.engine);
                     $selectObjective.selectpicker('val', options.objective);
-                    $selectCutType.selectpicker('val', options.cut_type);
-                    $selectFirstStageOrientation.selectpicker('val', options.first_stage_orientation);
+                    $selectRectangleguillotineCutType.selectpicker('val', options.rectangleguillotine_cut_type);
+                    $selectRectangleguillotineFirstStageOrientation.selectpicker('val', options.rectangleguillotine_first_stage_orientation);
+                    $selectIrregularRotations.selectpicker('val', options.irregular_rotations);
                     $inputSpacing.val(options.spacing);
                     $inputTrimming.val(options.trimming);
                     $selectVerbisotyLevel.selectpicker('val', options.verbosity_level);
+                    fnUpdateFieldsVisibility();
                 }
+                var fnUpdateFieldsVisibility = function () {
+                    var isRectangleguillotine = $selectEngine.val() === 'rectangleguillotine';
+                    var isIrregular = $selectEngine.val() === 'irregular';
+                    if (isRectangleguillotine) $formGroupRectangleguillotine.show(); else $formGroupRectangleguillotine.hide();
+                    if (isIrregular) $formGroupIrregular.show(); else $formGroupIrregular.hide();
+                };
                 var fnEditMaterial = function (callback) {
 
                     // Hide modal
@@ -4624,10 +4636,11 @@
                 $inputStdSheet.selectpicker(SELECT_PICKER_OPTIONS);
                 $inputScrapSheetSizes.ladbTextinputTokenfield({format: 'dxdxq'});
                 $inputScrapSheetSizes.ladbTextinputTokenfield('setTokens', packingOptions.scrap_sheet_sizes);
-                $selectEngine.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectEngine.selectpicker(SELECT_PICKER_OPTIONS).on('changed.bs.select', fnUpdateFieldsVisibility)                ;;
                 $selectObjective.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectCutType.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectFirstStageOrientation.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectRectangleguillotineCutType.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectRectangleguillotineFirstStageOrientation.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectIrregularRotations.selectpicker(SELECT_PICKER_OPTIONS);
                 $inputSpacing.ladbTextinputDimension();
                 $inputTrimming.ladbTextinputDimension();
                 $selectVerbisotyLevel.selectpicker(SELECT_PICKER_OPTIONS);
@@ -4679,7 +4692,6 @@
 
                         // Start progress feedback
                         that.dialog.startProgress(1);
-
 
                         rubyCallCommand('cutlist_group_packing', $.extend({
                             group_id: groupId,

@@ -226,7 +226,7 @@ module Ladb::OpenCutList
 
       end
 
-      # -- Shapes
+      # -- Shell
 
       if @compute_shell
 

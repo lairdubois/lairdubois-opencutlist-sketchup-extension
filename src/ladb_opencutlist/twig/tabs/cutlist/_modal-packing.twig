@@ -80,24 +80,36 @@
                         </select>
                     </div>
                 </div>
-                <div class="form-group">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_cut_type_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label class="control-label col-xs-5">{{ 'tab.cutlist.cuttingdiagram.option_cut_type'|i18next }}</label>
+                <div class="form-group ladb-cutlist-packing-form-group-rectangleguillotine">
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_rectangleguillotine_cut_type_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label class="control-label col-xs-5">{{ 'tab.cutlist.cuttingdiagram.option_rectangleguillotine_cut_type'|i18next }}</label>
                     <div class="col-xs-6">
-                        <select class="form-control" id="ladb_select_cut_type">
+                        <select class="form-control" id="ladb_select_rectangleguillotine_cut_type">
                             <option value="non-exact">NonExact</option>
                             <option value="exact">Exact</option>
                             <option value="homogenous">Homogenous</option>
                         </select>
                     </div>
                 </div>
-                <div class="form-group">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_first_stage_orientation_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label class="control-label col-xs-5">{{ 'tab.cutlist.cuttingdiagram.option_first_stage_orientation'|i18next }}</label>
+                <div class="form-group ladb-cutlist-packing-form-group-rectangleguillotine">
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_rectangleguillotine_first_stage_orientation_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label class="control-label col-xs-5">{{ 'tab.cutlist.cuttingdiagram.option_rectangleguillotine_first_stage_orientation'|i18next }}</label>
                     <div class="col-xs-6">
-                        <select class="form-control" id="ladb_select_first_stage_orientation">
+                        <select class="form-control" id="ladb_select_rectangleguillotine_first_stage_orientation">
                             <option value="horizontal">Horizontal</option>
                             <option value="vertical">Vertical</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group ladb-cutlist-packing-form-group-irregular">
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_irregular_rotations_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label class="control-label col-xs-5">{{ 'tab.cutlist.cuttingdiagram.option_irregular_rotations'|i18next }}</label>
+                    <div class="col-xs-6">
+                        <select class="form-control" id="ladb_select_irregular_rotations">
+                            <option value="0">Aucune</option>
+                            <option value="1">Pas de 180°</option>
+                            <option value="2">Pas de 90°</option>
+                            <option value="3">Pas de 45°</option>
                         </select>
                     </div>
                 </div>

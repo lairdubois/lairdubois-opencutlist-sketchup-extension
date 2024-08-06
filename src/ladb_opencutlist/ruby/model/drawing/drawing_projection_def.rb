@@ -4,8 +4,8 @@ module Ladb::OpenCutList
 
   class DrawingProjectionDef
 
-    attr_accessor :shell_def
     attr_reader :drawing_def, :transformation, :bounds, :max_depth, :layer_defs
+    attr_accessor :shell_def
 
     def initialize(drawing_def, max_depth = 0)
 
@@ -20,6 +20,13 @@ module Ladb::OpenCutList
 
       @shell_def = nil  # Stay nil if not computed
 
+    end
+
+    # -----
+
+    def shell_def
+      raise 'shell_def must be computed' if @shell_def.nil?
+      @shell_def
     end
 
     # -----

@@ -7,6 +7,7 @@ module Ladb::OpenCutList
   require_relative '../../utils/string_utils'
   require_relative '../../lib/fiddle/packy/packy'
   require_relative '../../lib/fiddle/clippy/clippy'
+  require_relative '../../lib/geometrix/geometrix'
 
   class CutlistPackingWorker
 
@@ -20,6 +21,36 @@ module Ladb::OpenCutList
     ENGINE_IRREGULAR = 'irregular'
     ENGINE_ONEDIMENSIONAL = 'onedimensional'
 
+    AVAILABLE_ROTATIONS = [
+      # 0 = None
+      [
+        { start: 0, end: 0 },
+      ],
+      # 1 = 180°
+      [
+        { start: 0, end: 0 },
+        { start: Geometrix::ONE_PI, end: Geometrix::ONE_PI },
+      ],
+      # 2 = 90°
+      [
+        { start: 0, end: 0 },
+        { start: Geometrix::HALF_PI, end: Geometrix::HALF_PI },
+        { start: Geometrix::ONE_PI, end: Geometrix::ONE_PI },
+        { start: Geometrix::THREE_HALF_PI, end: Geometrix::THREE_HALF_PI },
+      ],
+      # 3 = 45°
+      [
+        { start: 0, end: 0 },
+        { start: Geometrix::QUARTER_PI, end: Geometrix::QUARTER_PI },
+        { start: Geometrix::HALF_PI, end: Geometrix::HALF_PI },
+        { start: Geometrix::THREE_QUARTER_PI, end: Geometrix::THREE_QUARTER_PI },
+        { start: Geometrix::ONE_PI, end: Geometrix::ONE_PI },
+        { start: Geometrix::FIVE_QUARTER_PI, end: Geometrix::FIVE_QUARTER_PI },
+        { start: Geometrix::THREE_HALF_PI, end: Geometrix::THREE_HALF_PI },
+        { start: Geometrix::SEVEN_HALF_PI, end: Geometrix::SEVEN_HALF_PI },
+      ]
+    ]
+
     def initialize(cutlist,
 
                    group_id: ,
@@ -29,11 +60,14 @@ module Ladb::OpenCutList
 
                    engine: ENGINE_RECTANGLE,
                    objective: 'bin-packing',
-                   cut_type: 'exact',
-                   first_stage_orientation: 'horizontal',
                    spacing: '20mm',
                    trimming: '10mm',
-                   verbosity_level: 1
+                   verbosity_level: 1,
+
+                   rectangleguillotine_cut_type: 'exact',
+                   rectangleguillotine_first_stage_orientation: 'horizontal',
+
+                   irregular_rotations: 0
 
     )
 
@@ -48,11 +82,14 @@ module Ladb::OpenCutList
 
       @engine = engine
       @objective = objective
-      @cut_type = cut_type
-      @first_stage_orientation = first_stage_orientation
       @spacing = DimensionUtils.instance.str_to_ifloat(spacing).to_l.to_f
       @trimming = DimensionUtils.instance.str_to_ifloat(trimming).to_l.to_f
       @verbosity_level = verbosity_level.to_i
+
+      @rectangleguillotine_cut_type = rectangleguillotine_cut_type
+      @rectangleguillotine_first_stage_orientation = rectangleguillotine_first_stage_orientation
+
+      @irregular_rotations = [ 0, [ irregular_rotations.to_i, AVAILABLE_ROTATIONS.length - 1 ].min].max
 
     end
 
@@ -142,10 +179,7 @@ module Ladb::OpenCutList
               vertices: poly_def.points.map { |point| { x: point.x.to_f.round(6), y: point.y.to_f.round(6) } }
             }},
           }},
-          allowed_rotations: [
-            { start: 0, end: 0 },
-            { start: Math::PI, end: Math::PI }
-          ]
+          allowed_rotations: AVAILABLE_ROTATIONS[@irregular_rotations]
         }
 
       }
@@ -167,7 +201,7 @@ module Ladb::OpenCutList
       when ENGINE_RECTANGLE
         solution, message = Packy.execute_rectangle(bin_defs, item_defs, @objective, @spacing, @trimming, @verbosity_level)
       when ENGINE_RECTANGLEGUILLOTINE
-        solution, message = Packy.execute_rectangleguillotine(bin_defs, item_defs, @objective, @cut_type, @first_stage_orientation, @spacing, @trimming, @verbosity_level)
+        solution, message = Packy.execute_rectangleguillotine(bin_defs, item_defs, @objective, @rectangleguillotine_cut_type, @rectangleguillotine_first_stage_orientation, @spacing, @trimming, @verbosity_level)
       when ENGINE_IRREGULAR
         solution, message = Packy.execute_irregular(bin_defs, item_defs, @objective, @spacing, @trimming, @verbosity_level)
       when ENGINE_ONEDIMENSIONAL

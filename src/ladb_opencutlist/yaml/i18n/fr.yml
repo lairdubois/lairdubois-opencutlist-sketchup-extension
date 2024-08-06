@@ -575,6 +575,7 @@ tab:
         Réordonnez, Masquez, Ajoutez, Retirez ou Sélectionnez une colonne dans la liste pour personnaliser son **titre** et la **formule** générant la valeur affichée pour chaque ligne exportée.
       add_column: Ajouter une colonne
       add_native_columns: Ajouter une colonne native
+      duplicate_column: Dupliquer
       remove_column: Retirer
       remove_all_columns: Retirer tout
       columns: Colonnes
@@ -803,11 +804,14 @@ tab:
       option_objective: Objectif
       option_objective_help: |
         ...
-      option_cut_type: Cut Type
-      option_cut_type_help: |
+      option_rectangleguillotine_cut_type: Cut Type
+      option_rectangleguillotine_cut_type_help: |
         ...
-      option_first_stage_orientation: Première coupe
-      option_first_stage_orientation_help: |
+      option_rectangleguillotine_first_stage_orientation: Première coupe
+      option_rectangleguillotine_first_stage_orientation_help: |
+        ...
+      option_irregular_rotations: Rotations
+      option_irregular_rotations_help: |
         ...
       option_verbosity_level: Verbosity level
       option_verbosity_level_help: |
@@ -942,6 +946,7 @@ tab:
       options_offset: Décalage
       size: Taille réelle de l'étiquette
       add_element: Ajouter un élément
+      duplicate_element: Dupliquer
       remove_element: Retirer
       remove_all_elements: Retirer tout
       part_order_strategy_help: |

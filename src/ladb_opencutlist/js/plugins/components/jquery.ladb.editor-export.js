@@ -45,7 +45,7 @@
                 title: $(this).data('title'),
                 formula: $(this).data('formula'),
                 align: $(this).data('align'),
-                hidden: $(this).data('hidden')
+                hidden: Boolean($(this).data('hidden'))
             });
         });
         return colDefs;
@@ -111,7 +111,7 @@
         });
         $('a.ladb-editor-export-column-item-visibility-btn', $item).on('click', function () {
             var $icon = $('i', $(this));
-            var hidden = $item.data('hidden');
+            var hidden = Boolean($item.data('hidden'));
             if (hidden === true) {
                 hidden = false;
                 $item.removeClass('ladb-inactive');
@@ -155,12 +155,20 @@
             this.$editingItem.addClass('ladb-selected');
 
             // Buttons
+            var $btnDuplicate = $('<button class="btn btn-default"><i class="ladb-opencutlist-icon-copy"></i> ' + i18next.t('tab.cutlist.export.duplicate_column') + '</button>');
+            $btnDuplicate
+                .on('click', function () {
+                    that.duplicateColumn($item);
+                })
+            ;
             var $btnRemove = $('<button class="btn btn-danger"><i class="ladb-opencutlist-icon-clear"></i> ' + i18next.t('tab.cutlist.export.remove_column') + '</button>');
             $btnRemove
                 .on('click', function () {
                     that.removeColumn($item);
                 })
             ;
+            this.$btnContainer.append($btnDuplicate);
+            this.$btnContainer.append('&nbsp;');
             this.$btnContainer.append($btnRemove);
 
             // Create the form
@@ -267,6 +275,22 @@
 
         // Edit column
         this.editColumn($item);
+
+    };
+
+    LadbEditorExport.prototype.duplicateColumn = function ($item) {
+
+        var name = $item.data('name');
+        var title = $item.data('title');
+        var formula = $item.data('formula');
+        var align = $item.data('align');
+        var hidden = Boolean($item.data('hidden'));
+
+        // Create and append item
+        var $newItem = this.appendColumnItem(true, name, title, formula, align, hidden);
+
+        // Edit column
+        this.editColumn($newItem);
 
     };
 
