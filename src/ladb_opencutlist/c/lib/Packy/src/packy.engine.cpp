@@ -307,7 +307,7 @@ namespace Packy {
               } else {
                 item.x = solution_node.l;
                 item.y = solution_node.b;
-                item.angle = 0
+                item.angle = 0;
               }
 
             }
@@ -519,7 +519,7 @@ namespace Packy {
               item_shapes,
               -1,
               item_def.count,
-              allowed_rotations_0
+              allowed_rotations_1
       );
 
     }

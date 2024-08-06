@@ -14,9 +14,6 @@
 using namespace Clipper2Lib;
 using namespace Packy;
 
-using namespace packingsolver;
-using namespace packingsolver::irregular;
-
 #ifdef __cplusplus
 extern "C" {
 #endif
