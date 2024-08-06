@@ -60,7 +60,7 @@ module Ladb::OpenCutList
       nil
     end
 
-    def _compute_part_projection_def(part_drawing_type, part, projection_defs_cache: {}, ignore_edges: true, merge_holes: false, origin_position: CommonDrawingProjectionWorker::ORIGIN_POSITION_FACES_BOUNDS_MIN, use_cache: true)
+    def _compute_part_projection_def(part_drawing_type, part, projection_defs_cache: {}, ignore_edges: true, merge_holes: false, compute_shell: false, origin_position: CommonDrawingProjectionWorker::ORIGIN_POSITION_FACES_BOUNDS_MIN, use_cache: true)
       return nil unless part.is_a?(Part)
 
       if use_cache && projection_defs_cache.is_a?(Hash)
@@ -73,7 +73,8 @@ module Ladb::OpenCutList
 
       projection_def = CommonDrawingProjectionWorker.new(drawing_def,
         origin_position: origin_position,
-        merge_holes: merge_holes
+        merge_holes: merge_holes,
+        compute_shell: compute_shell
       ).run
       if projection_def.is_a?(DrawingProjectionDef)
         projection_defs_cache[part.id] = projection_def if use_cache && projection_defs_cache.is_a?(Hash)

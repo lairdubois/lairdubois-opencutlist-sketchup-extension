@@ -29,13 +29,20 @@ int main() {
 
   c_append_bin_def(0, 50, 1000, 1000, 1);
 
-  double cpaths[12];
+  double cpaths[] = {
+          12.0, 1,
+          4.0, 0,
+          27.55905512, 19.68503937,
+          0.0, 19.68503937,
+          0.0, 0.0,
+          27.55905512, 0.0
+  };
 
-  c_append_item_def(0, 1, 1, GenerateTriangle(cpaths, 100, 100));
+  c_append_item_def(0, 1, 0, cpaths);
 
-  std::string objective = "bin-packing";
+  std::string objective = "bin-packing-with-leftovers";
 
-  std::cout << c_execute_irregular(objective.data(), 0, 0, 3) << std::endl;
+  std::cout << c_execute_irregular(objective.data(), 0, 0, 0) << std::endl;
 
   return 0;
 }

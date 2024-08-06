@@ -49,12 +49,12 @@ module Ladb::OpenCutList::Fiddle
 
     # -----
 
-    def self.execute(clip_type, closed_subjects, open_subjects = [], clips = [])
+    def self.execute(clip_type:, fill_type: FILL_TYPE_NON_ZERO, closed_subjects:, open_subjects: [], clips: [])
       _load_lib
 
       solution_ptr = c_boolean_op(
         clip_type,
-        FILL_TYPE_NON_ZERO,
+        fill_type,
         _rpaths_to_cpaths(closed_subjects),
         _rpaths_to_cpaths(open_subjects),
         _rpaths_to_cpaths(clips)
@@ -69,24 +69,42 @@ module Ladb::OpenCutList::Fiddle
       [ closed_rpath, open_rpath ]
     end
 
-    def self.execute_union(closed_subjects, open_subjects = [], clips = [])
-      self.execute(CLIP_TYPE_UNION, closed_subjects, open_subjects, clips)
+    def self.execute_union(closed_subjects: [], open_subjects: [], clips: [])
+      self.execute(
+        clip_type: CLIP_TYPE_UNION,
+        fill_type: FILL_TYPE_NON_ZERO,
+        closed_subjects: closed_subjects,
+        open_subjects: open_subjects,
+        clips: clips
+      )
     end
 
-    def self.execute_difference(closed_subjects, open_subjects, clips)
-      self.execute(CLIP_TYPE_DIFFERENCE, closed_subjects, open_subjects, clips)
+    def self.execute_difference(closed_subjects: [], open_subjects: [], clips:)
+      self.execute(
+        clip_type: CLIP_TYPE_DIFFERENCE,
+        fill_type: FILL_TYPE_NON_ZERO,
+        closed_subjects: closed_subjects,
+        open_subjects: open_subjects,
+        clips: clips
+      )
     end
 
-    def self.execute_intersection(closed_subjects, open_subjects, clips)
-      self.execute(CLIP_TYPE_INTERSECTION, closed_subjects, open_subjects, clips)
+    def self.execute_intersection(closed_subjects: [], open_subjects: [], clips:)
+      self.execute(
+        clip_type: CLIP_TYPE_INTERSECTION,
+        fill_type: FILL_TYPE_NON_ZERO,
+        closed_subjects: closed_subjects,
+        open_subjects: open_subjects,
+        clips: clips
+      )
     end
 
-    def self.execute_polytree(closed_subjects, open_subjects = [], clips = [])
+    def self.execute_polytree(clip_type: CLIP_TYPE_UNION, fill_type: FILL_TYPE_NON_ZERO, closed_subjects:, open_subjects: [], clips: [])
       _load_lib
 
       solution_ptr = c_boolean_op_polytree(
-        CLIP_TYPE_UNION,
-        FILL_TYPE_NON_ZERO,
+        clip_type,
+        fill_type,
         _rpaths_to_cpaths(closed_subjects),
         _rpaths_to_cpaths(open_subjects),
         _rpaths_to_cpaths(clips)

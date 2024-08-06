@@ -4,9 +4,12 @@ module Ladb::OpenCutList
 
   class DrawingProjectionDef
 
-    attr_reader :transformation, :bounds, :max_depth, :layer_defs
+    attr_accessor :shell_def
+    attr_reader :drawing_def, :transformation, :bounds, :max_depth, :layer_defs
 
-    def initialize(max_depth = 0)
+    def initialize(drawing_def, max_depth = 0)
+
+      @drawing_def = drawing_def
 
       @transformation = IDENTITY
       @bounds = Geom::BoundingBox.new
@@ -14,6 +17,8 @@ module Ladb::OpenCutList
       @max_depth = max_depth
 
       @layer_defs = []
+
+      @shell_def = nil  # Stay nil if not computed
 
     end
 
@@ -36,6 +41,17 @@ module Ladb::OpenCutList
 
         @layer_defs.each do |layer_def|
           layer_def.poly_defs.each do |poly_def|
+            poly_def.points.each do |point|
+              point.transform!(ti)
+            end
+          end
+        end
+
+        @shell_def.shape_defs.each do |shape_def|
+          shape_def.outer_poly_def.points.each do |point|
+            point.transform!(ti)
+          end
+          shape_def.holes_poly_defs.each do |poly_def|
             poly_def.points.each do |point|
               point.transform!(ti)
             end
@@ -90,6 +106,44 @@ module Ladb::OpenCutList
 
     def type_closed_path?
       @type == TYPE_CLOSED_PATH
+    end
+
+  end
+
+  class DrawingProjectionShellDef
+
+    attr_reader :shape_defs
+
+    def initialize
+
+      @shape_defs = []
+
+    end
+
+    def manifold?
+      @shape_defs.length > 1
+    end
+
+    def perforated?
+      !@shape_defs.index(&:perforated?).nil?
+    end
+
+  end
+
+  class DrawingProjectionShapeDef
+
+    attr_accessor :outer_poly_def
+    attr_reader :holes_poly_defs
+
+    def initialize
+
+      @outer_poly_def = nil # DrawingProjectionPolyDef
+      @holes_poly_defs = [] # Array<DrawingProjectionPolyDef>
+
+    end
+
+    def perforated?
+      @holes_poly_defs.any?
     end
 
   end

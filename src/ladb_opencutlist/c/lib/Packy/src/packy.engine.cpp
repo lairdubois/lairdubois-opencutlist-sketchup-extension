@@ -303,11 +303,11 @@ namespace Packy {
               if (rotated) {
                 item.x = solution_node.r;
                 item.y = solution_node.b;
-                item.angle = 90;
+                item.angle = M_PI / 2;
               } else {
                 item.x = solution_node.l;
                 item.y = solution_node.b;
-                item.angle = 0;
+                item.angle = 0
               }
 
             }
@@ -447,72 +447,86 @@ namespace Packy {
 
     for (auto &item_def: item_defs) {
 
-      // Using Clipper2 to compute polygons tree
-      PolyTreeD polytree;
-      ClipperD clipper;
-      clipper.AddSubject(item_def.paths);
-      clipper.PreserveCollinear(false);
-      clipper.Execute(ClipType::Union, FillRule::NonZero, polytree);
-
-      // Convert polygons tree to PackingSolver item shapes
       std::vector<irregular::ItemShape> item_shapes;
 
-      std::stack<const PolyPathD*> stack;
-      for (const auto& child : polytree) {
-        stack.push(&*child);
-      }
+      if (item_def.paths.size() > 1) {
 
-      while (!stack.empty()) {
+        // Using Clipper2 to compute polygons tree
+        PolyTreeD polytree;
+        ClipperD clipper(8);
+        clipper.AddSubject(item_def.paths);
+        clipper.PreserveCollinear(false);
+        clipper.Execute(ClipType::Union, FillRule::NonZero, polytree);
 
-        const PolyTreeD& current = *(stack.top());
-        stack.pop();
+        // Convert polygons tree to PackingSolver item shapes
 
-        // Iterate over children
-        for (const auto& child : current) {
+        std::stack<const PolyPathD*> stack;
+        for (const auto& child : polytree) {
           stack.push(&*child);
         }
 
-        if (current.IsHole()) {
+        while (!stack.empty()) {
 
-          // Handle hole case (add to last item_shape if not empty)
+          const PolyTreeD& current = *(stack.top());
+          stack.pop();
 
-          if (!item_shapes.empty()) {
+          // Iterate over children
+          for (const auto& child : current) {
+            stack.push(&*child);
+          }
 
-            PathD path = current.Polygon();
-            std::reverse(path.begin(), path.end()); // Clipper2 holes must be reversed
-            irregular::Shape shape;
-            convert_path_to_shape(path, shape);
+          if (current.IsHole()) {
 
-            irregular::ItemShape& item_shape = item_shapes.back();
-            item_shape.holes.push_back(shape);
+            // Handle hole case (add to last item_shape if not empty)
+
+            if (!item_shapes.empty()) {
+
+              PathD path = current.Polygon();
+              std::reverse(path.begin(), path.end()); // Clipper2 holes are reversed
+              irregular::Shape shape;
+              convert_path_to_shape(path, shape);
+
+              irregular::ItemShape& item_shape = item_shapes.back();
+              item_shape.holes.push_back(shape);
+
+            }
+
+          } else {
+
+            // Create a new ItemShape for non-hole paths
+            irregular::ItemShape item_shape;
+            convert_path_to_shape(current.Polygon(), item_shape.shape);
+
+            item_shapes.push_back(item_shape);
 
           }
 
-        } else {
-
-          // Create a new ItemShape for non-hole paths
-
-          irregular::ItemShape item_shape;
-          convert_path_to_shape(current.Polygon(), item_shape.shape);
-
-          item_shapes.push_back(item_shape);
-
         }
 
+      } else if (item_def.paths.size() == 1) {
+
+        irregular::ItemShape item_shape;
+        convert_path_to_shape(*item_def.paths.begin(), item_shape.shape);
+
+        item_shapes.push_back(item_shape);
+
       }
+
+      std::vector<std::pair<Angle, Angle>> allowed_rotations_0 = {{0, 0}};
+      std::vector<std::pair<Angle, Angle>> allowed_rotations_1 = {{0, 0}, {M_PI, M_PI}};
 
       item_def.item_type_id = instance_builder.add_item_type(
               item_shapes,
               -1,
               item_def.count,
-              {{0, 0}}
+              allowed_rotations_0
       );
 
     }
 
     irregular::Instance instance = instance_builder.build();
 
-//    instance.write("./test");
+//    instance.write("./test_instance.json");
 
     irregular::OptimizeParameters parameters;
 
@@ -523,6 +537,8 @@ namespace Packy {
 
     const irregular::Output output = irregular::optimize(instance, parameters);
     const irregular::Solution &ps_solution = output.solution_pool.best();
+
+//    ps_solution.write("./test_solution.json");
 
     for (BinPos bin_pos = 0; bin_pos < ps_solution.number_of_different_bins(); ++bin_pos) {
 
@@ -546,7 +562,7 @@ namespace Packy {
               Item &item = bin.items.emplace_back(&*item_def_it);
               item.x = solution_item.bl_corner.x + trimming;
               item.y = solution_item.bl_corner.y + trimming;
-              item.angle = (int64_t) solution_item.angle;
+              item.angle = solution_item.angle;
 
             }
 

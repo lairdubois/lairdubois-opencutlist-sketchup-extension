@@ -76,6 +76,12 @@ module Ladb::OpenCutList
       bin_id = 0
       item_id = 0
 
+      json = {
+        objective: @objective,
+        bin_types: [],
+        item_types: [],
+      }
+
       # Add bins from scrap sheets
       @scrap_sheet_sizes.split(';').each { |scrap_sheet_size|
         ddq = scrap_sheet_size.split('x')
@@ -83,30 +89,64 @@ module Ladb::OpenCutList
         width = ddq[1].strip.to_l.to_f
         count = [ 1, (ddq[2].nil? || ddq[2].strip.to_i == 0) ? 1 : ddq[2].strip.to_i ].max
         bin_defs << Packy::BinDef.new(bin_id += 1, count, length, width, 1) # 1 = user defined
+
+        json[:bin_types] << {
+          copies: count,
+          type: 'rectangle',
+          width: length.to_f.round(6),
+          height: width.to_f.round(6)
+        }
+
       }
 
-      parts_count = 0
-      parts.each { |part| parts_count += part.count }
+      parts_count = parts.map(&:count).inject(0, :+)  # .map(&:count).inject(0, :+) == .sum { |portion| part.count } compatible with ruby < 2.4
 
       # Add bin from std sheet
       if @std_sheet_width > 0 && @std_sheet_length > 0
         bin_defs << Packy::BinDef.new(bin_id += 1, parts_count, @std_sheet_length, @std_sheet_width, 0) # 0 = Standard
+
+        json[:bin_types] << {
+          copies: parts_count,
+          type: 'rectangle',
+          width: @std_sheet_length.to_f.round(6),
+          height: @std_sheet_width.to_f.round(6)
+        }
+
       end
 
       # Add items from parts
       fn_add_items = lambda { |part|
 
-        rpaths = []
+        projection_def = _compute_part_projection_def(PART_DRAWING_TYPE_2D_TOP, part, compute_shell: true)
 
-        projection_def = _compute_part_projection_def(PART_DRAWING_TYPE_2D_TOP, part, merge_holes: true)
-        projection_def.layer_defs.each do |layer_def|
-          next unless layer_def.type_outer? || layer_def.type_holes?
-          layer_def.poly_defs.each do |poly_def|
-            rpaths << Packy.points_to_rpath(layer_def.type_holes? ? poly_def.points.reverse : poly_def.points)
-          end
-        end
+        item_defs << Packy::ItemDef.new(
+          item_id += 1,
+          part.count,
+          (group.material_grained  && !part.ignore_grain_direction) ? 0 : 1,
+          projection_def.layer_defs.map { |layer_def|
+            next unless layer_def.type_outer? || layer_def.type_holes?
+            layer_def.poly_defs.map { |poly_def|
+              Packy.points_to_rpath(layer_def.type_holes? ? poly_def.points.reverse : poly_def.points)
+            }
+          }.flatten(1).compact,
+          part
+        )
 
-        item_defs << Packy::ItemDef.new(item_id += 1, part.count, (group.material_grained  && !part.ignore_grain_direction) ? 0 : 1, rpaths, part)
+        json[:item_types] << {
+          copies: part.count,
+          shapes: projection_def.shell_def.shape_defs.map { |shape_def| {
+            type: 'polygon',
+            vertices: shape_def.outer_poly_def.points.map { |point| { x: point.x.to_f.round(6), y: point.y.to_f.round(6) } },
+            holes: shape_def.holes_poly_defs.map { |poly_def| {
+              type: 'polygon',
+              vertices: poly_def.points.map { |point| { x: point.x.to_f.round(6), y: point.y.to_f.round(6) } }
+            }},
+          }},
+          allowed_rotations: [
+            { start: 0, end: 0 },
+            { start: Math::PI, end: Math::PI }
+          ]
+        }
 
       }
       parts.each { |part|
@@ -120,6 +160,8 @@ module Ladb::OpenCutList
       }
 
       SKETCHUP_CONSOLE.clear
+
+      puts json.to_json
 
       case @engine
       when ENGINE_RECTANGLE
@@ -171,7 +213,7 @@ module Ladb::OpenCutList
         px_item_x = _to_px(l_item_x)
         px_item_y = -_to_px(l_item_y)
 
-        svg += "<g class='ladb-packy-part' transform='translate(#{px_item_x} #{px_item_y}) rotate(-#{item.angle})'>"
+        svg += "<g class='ladb-packy-part' transform='translate(#{px_item_x} #{px_item_y}) rotate(-#{item.angle.radians})'>"
         svg += "<path d='#{item.def.paths.map { |path| "M #{Packy.rpath_to_points(path).map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y).round(2)}" }.join(' L ')} Z" }.join(' ')}' data-toggle='tooltip' data-html='true' title='<div>#{item.def.data.name}</div><div>x = #{l_item_x}</div><div>y = #{l_item_y}</div>' />"
         svg += '</g>'
 

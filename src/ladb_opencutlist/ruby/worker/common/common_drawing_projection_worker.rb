@@ -18,14 +18,16 @@ module Ladb::OpenCutList
     def initialize(drawing_def,
 
                    origin_position: ORIGIN_POSITION_DEFAULT,
-                   merge_holes: false
+                   merge_holes: false,
+                   compute_shell: false
 
     )
 
       @drawing_def = drawing_def
 
       @origin_position = origin_position
-      @merge_holes = merge_holes  # Holes are moved to "hole" layer and all down layers holes are merged to their upper layer
+      @merge_holes = merge_holes || compute_shell   # Holes are moved to "hole" layer and all down layers holes are merged to their upper layer
+      @compute_shell = compute_shell                # In addition to layers, shell def (outer + holes shapes) is computed. This option force 'merge_holes' to true
 
     end
 
@@ -128,7 +130,7 @@ module Ladb::OpenCutList
       # Union paths on each layer
       splds.each do |layer_def|
         next if layer_def.closed_paths.one?
-        layer_def.closed_paths, op = Clippy.execute_union(layer_def.closed_paths)
+        layer_def.closed_paths, op = Clippy.execute_union(closed_subjects: layer_def.closed_paths)
       end
 
       # Up to Down difference
@@ -136,9 +138,12 @@ module Ladb::OpenCutList
         next if layer_def.closed_paths.empty?
         splds[(index + 1)..-1].each do |lower_layer_def|
           next if lower_layer_def.nil? || lower_layer_def.closed_paths.empty? && lower_layer_def.open_paths.empty?
-          lower_layer_def.closed_paths, lower_layer_def.open_paths = Clippy.execute_difference(lower_layer_def.closed_paths, lower_layer_def.open_paths, layer_def.closed_paths)
+          lower_layer_def.closed_paths, lower_layer_def.open_paths = Clippy.execute_difference(closed_subjects: lower_layer_def.closed_paths, open_subjects: lower_layer_def.open_paths, clips: layer_def.closed_paths)
         end
       end
+
+      # PolyShapes
+      ps = []
 
       if @merge_holes
 
@@ -146,10 +151,11 @@ module Ladb::OpenCutList
         upper_paths = upper_layer_def.closed_paths
 
         # Union upper paths with lower paths
-        merged_paths, op = Clippy.execute_union(upper_paths + splds[1..-1].map { |layer_def| layer_def.closed_paths }.flatten(1).compact)
-        merged_polytree = Clippy.execute_polytree(merged_paths)
+        merged_paths, op = Clippy.execute_union(closed_subjects: upper_paths + splds[1..-1].map { |layer_def| layer_def.closed_paths }.flatten(1).compact)
+        merged_polytree = Clippy.execute_polytree(closed_subjects: merged_paths)
+        ps = Clippy.polytree_to_polyshapes(merged_polytree) if @compute_shell
 
-        # Extract outer paths (first children of pathtree)
+        # Extract outer paths (first children of polytree)
         outer_paths = merged_polytree.children.map { |polypath| polypath.path }
 
         # Extract holes paths and reverse them to plain paths
@@ -159,8 +165,8 @@ module Ladb::OpenCutList
         splds << PathsLayerDef.new(max_depth, through_paths, [], DrawingProjectionLayerDef::TYPE_HOLES)
 
         # Difference with outer and upper to extract holes to propagate
-        mask_paths, op = Clippy.execute_difference(outer_paths, [], upper_paths)
-        mask_polytree = Clippy.execute_polytree(mask_paths)
+        mask_paths, op = Clippy.execute_difference(closed_subjects: outer_paths, clips: upper_paths)
+        mask_polytree = Clippy.execute_polytree(closed_subjects: mask_paths)
         mask_polyshapes = Clippy.polytree_to_polyshapes(mask_polytree)
 
         # Propagate down to up
@@ -169,9 +175,9 @@ module Ladb::OpenCutList
           lower_paths = []
           pldsr.each do |layer_def|
             next if layer_def.closed_paths.empty?
-            next if Clippy.execute_intersection(layer_def.closed_paths, [], mask_polyshape.paths).first.empty?
-            layer_def.closed_paths, op = Clippy.execute_union(lower_paths + layer_def.closed_paths) unless lower_paths.empty?
-            lower_paths, op = Clippy.execute_intersection(layer_def.closed_paths, [], mask_polyshape.paths)
+            next if Clippy.execute_intersection(closed_subjects: layer_def.closed_paths, clips: mask_polyshape.paths).first.empty?
+            layer_def.closed_paths, op = Clippy.execute_union(closed_subjects: lower_paths + layer_def.closed_paths) unless lower_paths.empty?
+            lower_paths, op = Clippy.execute_intersection(closed_subjects: layer_def.closed_paths, clips: mask_polyshape.paths)
           end
         end
 
@@ -183,7 +189,9 @@ module Ladb::OpenCutList
 
       # Output
 
-      projection_def = DrawingProjectionDef.new(max_depth)
+      projection_def = DrawingProjectionDef.new(@drawing_def, max_depth)
+
+      # -- Layers
 
       splds.each do |layer_def|
 
@@ -213,6 +221,31 @@ module Ladb::OpenCutList
             DrawingProjectionPolygonDef.new(Clippy.rpath_to_points(path, z_max - layer_def.depth), Clippy.is_rpath_positive?(path))
           }.compact
           projection_def.layer_defs << DrawingProjectionLayerDef.new(layer_def.depth, layer_def.type, '', polygons) unless polygons.empty?
+
+        end
+
+      end
+
+      # -- Shapes
+
+      if @compute_shell
+
+        projection_def.shell_def = DrawingProjectionShellDef.new
+
+        ps.each do |polyshape|
+
+          shape_def = DrawingProjectionShapeDef.new
+
+          polyshape.paths.each_with_index do |path, index|
+            points = Clippy.rpath_to_points(path)
+            if index == 0 # index = 0 is outer
+              shape_def.outer_poly_def = DrawingProjectionPolygonDef.new(points, true)
+            else
+              shape_def.holes_poly_defs << DrawingProjectionPolygonDef.new(points.reverse, true)
+            end
+          end
+
+          projection_def.shell_def.shape_defs << shape_def
 
         end
 

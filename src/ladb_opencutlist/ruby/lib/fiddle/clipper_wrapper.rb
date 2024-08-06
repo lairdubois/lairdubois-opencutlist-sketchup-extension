@@ -60,7 +60,7 @@ module Ladb::OpenCutList::Fiddle
 
     # Returns Fiddle::Pointer
     def _rpaths_to_cpaths(rpaths)
-      len = 2 + rpaths.sum { |rpath| 2 + rpath.length }
+      len = 2 ; rpaths.each { |rpath| len += 2 + rpath.length }   # .sum {...} incompatible with ruby < 2.4
       _array_to_ptr_double([ len, rpaths.length ].concat(rpaths.map { |rpath| _array_prepend_n_0_counter(rpath) }.flatten(1)))
     end
 

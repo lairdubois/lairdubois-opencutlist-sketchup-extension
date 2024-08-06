@@ -127,7 +127,7 @@ namespace Packy {
 
      CItems
       |counter|item1|item2|...|itemN
-      |N      |      |      |...|
+      |N      |     |     |...|
 
       N = Number of items
 
