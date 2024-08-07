@@ -15,9 +15,9 @@
     "objective": "bin-packing-with-leftovers",
     "rectangleguillotine_cut_type": "non-exact",
     "rectangleguillotine_first_stage_orientation": "horizontal",
-    "irregular_rotations": 0
+    "irregular_rotations": 0,
     "spacing": { "metric": "20mm", "imperial": "1\"" },
     "trimming": { "metric": "10mm", "imperial": "1/2\"" },
-    "verbosity_level": 1,
+    "verbosity_level": 1
   }
 }
