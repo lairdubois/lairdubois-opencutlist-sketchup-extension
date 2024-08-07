@@ -279,7 +279,7 @@
             var $inputTextureWidth = $('#ladb_materials_input_texture_width', $modal);
             var $inputTextureHeight = $('#ladb_materials_input_texture_height', $modal);
             var $btnTextureSizeLock = $('#ladb_material_btn_texture_size_lock', $modal);
-            var $btnRemove = $('#ladb_materials_remove', $modal);
+            var $btnDelete = $('#ladb_materials_delete', $modal);
             var $btnDuplicate = $('#ladb_materials_duplicate', $modal);
             var $btnExportToSkm = $('#ladb_materials_export_to_skm', $modal);
             var $btnUpdate = $('#ladb_materials_update', $modal);
@@ -486,9 +486,9 @@
                 }
                 this.blur();
             });
-            $btnRemove.on('click', function () {
+            $btnDelete.on('click', function () {
                 $modal.modal('hide');   // Hide modal
-                that.removeMaterial(that.editedMaterial);
+                that.deleteMaterial(that.editedMaterial);
                 this.blur();
             });
             $btnDuplicate.on('click', function () {
@@ -607,15 +607,15 @@
 
     };
 
-    LadbTabMaterials.prototype.removeMaterial = function (material) {
+    LadbTabMaterials.prototype.deleteMaterial = function (material) {
         var that = this;
 
-        this.dialog.confirm(i18next.t('default.caution'), i18next.t('tab.materials.remove.message', { material_name: material.display_name }), function () {
+        this.dialog.confirm(i18next.t('default.caution'), i18next.t('tab.materials.delete.message', { material_name: material.display_name }), function () {
 
             // Flag to ignore next material change event
             that.ignoreNextMaterialEvents = true;
 
-            rubyCallCommand('materials_remove', {
+            rubyCallCommand('materials_delete', {
                 name: material.name,
             }, function (response) {
 
@@ -635,7 +635,7 @@
 
         }, {
             confirmBtnType: 'danger',
-            confirmBtnLabel: i18next.t('default.remove')
+            confirmBtnLabel: i18next.t('default.delete')
         });
 
     };

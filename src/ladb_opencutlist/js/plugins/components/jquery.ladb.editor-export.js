@@ -130,6 +130,32 @@
         return $item;
     };
 
+    LadbEditorExport.prototype.addColumn = function (name) {
+
+        // Create and append item
+        var $item = this.appendColumnItem(true, name);
+
+        // Edit column
+        this.editColumn($item);
+
+    };
+
+    LadbEditorExport.prototype.duplicateColumn = function ($item) {
+
+        var name = $item.data('name');
+        var title = $item.data('title');
+        var formula = $item.data('formula');
+        var align = $item.data('align');
+        var hidden = Boolean($item.data('hidden'));
+
+        // Create and append item
+        var $newItem = this.appendColumnItem(true, name, title, formula, align, hidden);
+
+        // Edit column
+        this.editColumn($newItem);
+
+    };
+
     LadbEditorExport.prototype.editColumn = function ($item, focusTo) {
         var that = this;
 
@@ -265,32 +291,6 @@
 
         // Move editing to sibling item
         this.editColumn($siblingItem);
-
-    };
-
-    LadbEditorExport.prototype.addColumn = function (name) {
-
-        // Create and append item
-        var $item = this.appendColumnItem(true, name);
-
-        // Edit column
-        this.editColumn($item);
-
-    };
-
-    LadbEditorExport.prototype.duplicateColumn = function ($item) {
-
-        var name = $item.data('name');
-        var title = $item.data('title');
-        var formula = $item.data('formula');
-        var align = $item.data('align');
-        var hidden = Boolean($item.data('hidden'));
-
-        // Create and append item
-        var $newItem = this.appendColumnItem(true, name, title, formula, align, hidden);
-
-        // Edit column
-        this.editColumn($newItem);
 
     };
 

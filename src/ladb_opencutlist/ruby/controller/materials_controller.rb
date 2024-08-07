@@ -24,8 +24,8 @@ module Ladb::OpenCutList
       PLUGIN.register_command("materials_duplicate") do |material_data|
         duplicate_command(material_data)
       end
-      PLUGIN.register_command("materials_remove") do |material_data|
-        remove_command(material_data)
+      PLUGIN.register_command("materials_delete") do |material_data|
+        delete_command(material_data)
       end
       PLUGIN.register_command("materials_import_from_skm") do ||
         import_from_skm_command
@@ -119,11 +119,11 @@ module Ladb::OpenCutList
       worker.run
     end
 
-    def remove_command(material_data)
-      require_relative '../worker/materials/materials_remove_worker'
+    def delete_command(material_data)
+      require_relative '../worker/materials/materials_delete_worker'
 
       # Setup worker
-      worker = MaterialsRemoveWorker.new(**material_data)
+      worker = MaterialsDeleteWorker.new(**material_data)
 
       # Run !
       worker.run

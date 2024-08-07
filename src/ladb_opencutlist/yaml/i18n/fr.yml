@@ -23,7 +23,9 @@ default:
   preview: Aperçu
   options: Options
   caution: Attention
-  remove: Supprimer
+  remove: Retirer
+  remove_all: Retirer tout
+  delete: Supprimer
   create: Créer
   duplicate: Dupliquer
   ignore: Ignorer
@@ -575,9 +577,9 @@ tab:
         Réordonnez, Masquez, Ajoutez, Retirez ou Sélectionnez une colonne dans la liste pour personnaliser son **titre** et la **formule** générant la valeur affichée pour chaque ligne exportée.
       add_column: Ajouter une colonne
       add_native_columns: Ajouter une colonne native
-      duplicate_column: Dupliquer
-      remove_column: Retirer
-      remove_all_columns: Retirer tout
+      duplicate_column: $t(default.duplicate)
+      remove_column: $t(default.remove)
+      remove_all_columns: $t(default.remove_all)
       columns: Colonnes
       column_title: Titre
       column_title_help: |
@@ -946,9 +948,9 @@ tab:
       options_offset: Décalage
       size: Taille réelle de l'étiquette
       add_element: Ajouter un élément
-      duplicate_element: Dupliquer
-      remove_element: Retirer
-      remove_all_elements: Retirer tout
+      duplicate_element: $t(default.duplicate)
+      remove_element: $t(default.remove)
+      remove_all_elements: $t(default.remove_all)
       part_order_strategy_help: |
         Réorganiser les propriétés suivantes pour définir la stratégie de tri des étiquettes.
         Chaque propriété peut être triée de façon <i class="ladb-opencutlist-icon-sort-asc"></i> *croissante* ou <i class="ladb-opencutlist-icon-sort-desc"></i> *décroissante*.
@@ -1337,7 +1339,7 @@ tab:
         Chaque propriété peut être triée de façon <i class="ladb-opencutlist-icon-sort-asc"></i> *croissante* ou <i class="ladb-opencutlist-icon-sort-desc"></i> *décroissante*.
       property_type: Type
       property_name: Nom
-    remove:
+    delete:
       message: |
         Vous êtes sur le point de supprimer la matière **{{ material_name }}** de votre modèle.
         Confirmez pour continuer.
@@ -1350,7 +1352,7 @@ tab:
       material_not_found: Matière introuvable.
       failed_import_skm_file: "Une erreur s'est produite lors de l'importation du fichier .skm. **{{ error }}**"
       failed_export_skm_file: "Une erreur s'est produite lors de l'exportation du fichier .skm. **{{ error }}**"
-      failed_removing_material: "Une erreur s'est produite lors de la suppression de la matière. **{{ error }}**"
+      failed_deleting_material: "Une erreur s'est produite lors de la suppression de la matière. **{{ error }}**"
       failed_duplicating_material: "Une erreur s'est produite lors de duplication de la matière. **{{ error }}**"
       invalid_image_file: Image invalide
     obsolete_base: "Pour rester synchronisé, vous devez rafraîchir la liste de matières."
