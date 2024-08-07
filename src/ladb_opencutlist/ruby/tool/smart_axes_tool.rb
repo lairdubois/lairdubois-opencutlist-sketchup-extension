@@ -543,7 +543,7 @@ module Ladb::OpenCutList
 
         # Status
 
-        if !is_action_flip? && part.group.material_type == MaterialAttributes::TYPE_HARDWARE
+        if !is_action_flip? && !is_action_move_axes? && part.group.material_type == MaterialAttributes::TYPE_HARDWARE
           show_tooltip("⚠ #{PLUGIN.get_i18n_string('tool.smart_axes.error.not_orientable')}", MESSAGE_TYPE_ERROR)
           push_cursor(@cursor_select_error)
           return
