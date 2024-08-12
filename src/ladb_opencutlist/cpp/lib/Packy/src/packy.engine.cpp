@@ -403,8 +403,8 @@ namespace Packy {
     std::stringstream ss_objective(c_objective);
     ss_objective >> objective;
 
-    packingsolver::Length spacing = c_spacing;
-    packingsolver::Length trimming = c_trimming;
+    LengthDbl spacing = c_spacing;
+    LengthDbl trimming = c_trimming;
 
     irregular::InstanceBuilder instance_builder;
     instance_builder.set_objective(objective);
@@ -512,14 +512,19 @@ namespace Packy {
 
       }
 
-      std::vector<std::pair<Angle, Angle>> allowed_rotations_0 = {{0, 0}};
-      std::vector<std::pair<Angle, Angle>> allowed_rotations_1 = {{0, 0}, {M_PI, M_PI}};
+
+      std::vector<std::pair<Angle, Angle>> allowed_rotations = {{0, 0}};
+      if (item_def.rotations == 1) {
+        allowed_rotations = {{0, 0}, {M_PI, M_PI}};  // 180°
+      } else if (item_def.rotations == 2) {
+        allowed_rotations = {{0, 0}, {M_PI / 2, M_PI / 2}, {M_PI, M_PI}, {3 * M_PI / 2, 3 * M_PI / 2}};  // 90°
+      }
 
       item_def.item_type_id = instance_builder.add_item_type(
               item_shapes,
               -1,
               item_def.count,
-              allowed_rotations_1
+              allowed_rotations
       );
 
     }
@@ -530,9 +535,9 @@ namespace Packy {
 
     irregular::OptimizeParameters parameters;
 
-    parameters.optimization_mode = OptimizationMode::NotAnytime;
+    parameters.optimization_mode = OptimizationMode::NotAnytimeSequential;
     parameters.not_anytime_tree_search_queue_size = 512;
-    parameters.timer.set_time_limit(100);
+    parameters.timer.set_time_limit(200);
     parameters.verbosity_level = verbosity_level;
 
     const irregular::Output output = irregular::optimize(instance, parameters);

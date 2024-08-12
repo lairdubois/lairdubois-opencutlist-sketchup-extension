@@ -16,6 +16,7 @@ module Ladb::OpenCutList::Fiddle
     FILL_TYPE_POSITIVE = 2
     FILL_TYPE_NEGATIVE = 3
 
+    CMyStruct = struct [ 'char* msg', 'int* values', 'int error' ]
     CPathsDSolution = struct [ 'double* closed_paths', 'double* open_paths', 'int error' ]
     CPolyTreeDSolution = struct [ 'double* polytree', 'double* open_paths', 'int error' ]
 
@@ -26,8 +27,10 @@ module Ladb::OpenCutList::Fiddle
     def self._lib_c_functions
       [
 
-        'CPathsDSolution* c_boolean_op(uint8_t clip_type, uint8_t fill_type, double* closed_paths, double* open_paths, double* clips)',
-        'CPolyTreeDSolution* c_boolean_op_polytree(uint8_t clip_type, uint8_t fill_type, double* closed_paths, double* open_paths, double* clips)',
+        'void c_doit(CPathsDSolution*)',
+
+        'CPathsDSolution* c_boolean_op(uint8_t, uint8_t, double*, double*, double*)',
+        'CPolyTreeDSolution* c_boolean_op_polytree(uint8_t, uint8_t, double*, double*, double*)',
 
         'int c_is_cpath_positive(double*)',
         'double c_get_cpath_area(double*)',
@@ -48,6 +51,24 @@ module Ladb::OpenCutList::Fiddle
     end
 
     # -----
+    def self.doit
+      _load_lib
+
+      CMyStruct.malloc(Fiddle::RUBY_FREE) do |solution|
+
+        puts "solution.class = #{solution.class}"
+
+        c_doit(solution)
+
+        values = solution.values.to_str(Fiddle::SIZEOF_INT * 2).unpack('l*')
+
+        puts "solution.msg = #{solution.msg}"
+        puts "solution.values = #{values}"
+        puts "solution.error = #{solution.error}"
+
+      end
+
+    end
 
     def self.execute(clip_type:, fill_type: FILL_TYPE_NON_ZERO, closed_subjects:, open_subjects: [], clips: [])
       _load_lib
@@ -147,50 +168,6 @@ module Ladb::OpenCutList::Fiddle
     # Delete all paths from d_rpaths that are similar to s_rpaths
     def self.delete_rpaths_in(s_rpaths, d_rpaths)
       s_rpaths.delete_if { |s_rpath| d_rpaths.select { |d_rpath| Clippy.similar_rpath?(d_rpath, s_rpath) }.length > 0 }
-    end
-
-    private
-
-    def self._unpack_closed_paths_solution
-
-      # Retrieve solution's pointer
-      cpaths = c_get_closed_paths_solution
-
-      # Convert to rpath
-      rpaths, len = _cpaths_to_rpaths(cpaths)
-
-      # Dispose pointer
-      c_dispose_array_d(cpaths)
-
-      rpaths
-    end
-
-    def self._unpack_open_paths_solution
-
-      # Retrieve solution's pointer
-      cpaths = c_get_open_paths_solution
-
-      # Convert to rpath
-      rpaths, len = _cpaths_to_rpaths(cpaths)
-
-      # Dispose pointer
-      c_dispose_array_d(cpaths)
-
-      rpaths
-    end
-
-    def self._unpack_polytree_solution
-
-      # Retrieve solution's pointer
-      cpolytree = c_get_polytree_solution
-
-      # Convert to rpath
-      rpolytree, len = _cpolytree_to_rpolytree(cpolytree)
-
-      # Dispose pointer
-      c_dispose_array_d(cpolytree)
-
-      rpolytree
     end
 
   end

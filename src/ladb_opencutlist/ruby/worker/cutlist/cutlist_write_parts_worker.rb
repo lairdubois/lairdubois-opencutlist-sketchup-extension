@@ -73,7 +73,10 @@ module Ladb::OpenCutList
       if dir
 
         folder_names = []
-        parts.select { |part| !part.virtual }.each do |part|
+        parts.each do |part|
+
+          # Ignore virtual parts
+          next if part.virtual
 
           group = part.group
           folder_name = group.material_display_name

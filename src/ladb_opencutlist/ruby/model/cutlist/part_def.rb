@@ -178,7 +178,7 @@ module Ladb::OpenCutList
     # -----
 
     def definition
-      return if Sketchup.active_model.nil?
+      return nil if Sketchup.active_model.nil? || @definition_id.nil?
       Sketchup.active_model.definitions[@definition_id]
     end
 

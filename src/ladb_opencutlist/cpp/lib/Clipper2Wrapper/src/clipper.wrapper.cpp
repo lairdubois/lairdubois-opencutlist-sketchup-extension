@@ -6,6 +6,18 @@ namespace Clipper2Lib {
     return CLIPPER2_VERSION;
   }
 
+  void DisposeArray64(
+          int64_t *&p
+  ) {
+    delete[] p;
+  }
+
+  void DisposeArrayD(
+          double *&p
+  ) {
+    delete[] p;
+  }
+
   int BooleanOp64(
           uint8_t cliptype,
           uint8_t fillrule,

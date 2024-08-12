@@ -47,4 +47,4 @@ message(STATUS "CMAKE_PREFIX_PATH:              ${CMAKE_PREFIX_PATH}" )
 message(STATUS "CMAKE_TOOLCHAIN_FILE:           ${CMAKE_TOOLCHAIN_FILE}" )
 message(STATUS "---------------------------------------------------")
 
-add_subdirectory(src/ladb_opencutlist/c/lib)
+add_subdirectory(src/ladb_opencutlist/cpp/lib)

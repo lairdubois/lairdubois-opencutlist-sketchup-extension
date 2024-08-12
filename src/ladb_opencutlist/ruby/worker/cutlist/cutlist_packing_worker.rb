@@ -107,6 +107,8 @@ module Ladb::OpenCutList
       parts = @part_ids.nil? ? group.parts : group.get_parts(@part_ids)
       return { :errors => [ 'default.error' ] } if parts.empty?
 
+      SKETCHUP_CONSOLE.clear
+
       bin_defs = []
       item_defs = []
 
@@ -159,7 +161,7 @@ module Ladb::OpenCutList
         item_defs << Packy::ItemDef.new(
           item_id += 1,
           part.count,
-          (group.material_grained  && !part.ignore_grain_direction) ? 0 : 1,
+          @engine == ENGINE_IRREGULAR ? @irregular_rotations : (group.material_grained  && !part.ignore_grain_direction) ? 0 : 1,
           projection_def.layer_defs.map { |layer_def|
             next unless layer_def.type_outer? || layer_def.type_holes?
             layer_def.poly_defs.map { |poly_def|
@@ -192,8 +194,6 @@ module Ladb::OpenCutList
           fn_add_items.call(part)
         end
       }
-
-      SKETCHUP_CONSOLE.clear
 
       puts json.to_json
 

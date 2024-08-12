@@ -8,9 +8,11 @@ using namespace Clipper2Lib;
 
 constexpr auto CLIPPY_VERSION = "1.0.0";
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+typedef struct {
+  char* msg;
+  int* values;
+  int error;
+} CMyStruct;
 
 typedef struct {
   CPathsD closed_paths;
@@ -24,11 +26,17 @@ typedef struct {
   int error;
 } CPolyTreeDSolution;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifdef LIBCLIPPY_EXPORTS
 #define DLL_EXPORTS __declspec(dllexport)
 #else
 #define DLL_EXPORTS
 #endif
+
+DLL_EXPORTS void c_doit(CMyStruct* solution);
 
 DLL_EXPORTS CPathsDSolution* c_boolean_op(uint8_t clip_type, uint8_t fill_rule, CPathsD closed_subjects, CPathsD open_subjects, CPathsD clips);
 DLL_EXPORTS CPolyTreeDSolution* c_boolean_op_polytree(uint8_t clip_type, uint8_t fill_rule, CPathsD closed_subjects, CPathsD open_subjects, CPathsD clips);

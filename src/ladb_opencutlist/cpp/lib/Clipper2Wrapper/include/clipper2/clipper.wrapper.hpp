@@ -112,17 +112,13 @@ namespace Clipper2Lib {
 
   const char *Version();
 
-//  void DisposeArray64(
-//          int64_t *&p
-//  ) {
-//    delete[] p;
-//  }
-//
-//  void DisposeArrayD(
-//          double *&p
-//  ) {
-//    delete[] p;
-//  }
+  void DisposeArray64(
+          int64_t *&p
+  );
+
+  void DisposeArrayD(
+          double *&p
+  );
 
   int BooleanOp64(
           uint8_t cliptype,
@@ -144,7 +140,7 @@ namespace Clipper2Lib {
           const CPaths64 clips,
           CPolyTree64 &sol_tree,
           CPaths64 &solution_open,
-          bool preserve_collinear = true,
+          bool preserve_collinear = false,
           bool reverse_solution = false
   );
 
@@ -157,7 +153,7 @@ namespace Clipper2Lib {
           CPathsD &solution,
           CPathsD &solution_open, 
           int precision = 8,
-          bool preserve_collinear = true,
+          bool preserve_collinear = false,
           bool reverse_solution = false
   );
 
@@ -170,7 +166,7 @@ namespace Clipper2Lib {
           CPolyTreeD &solution,
           CPathsD &solution_open,
           int precision = 8,
-          bool preserve_collinear = true,
+          bool preserve_collinear = false,
           bool reverse_solution = false
   );
 

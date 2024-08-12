@@ -42,14 +42,14 @@ namespace Imagy {
 
   // -- Load / Write
 
-  bool Image::load(const char *filename) {
+  bool Image::load(const char* filename) {
     if (!is_empty()) clear();
     data = stbi_load(filename, &width, &height, &channels, 0);
     size = width * height * channels;
     return !is_empty();
   }
 
-  bool Image::write(const char *filename) const {
+  bool Image::write(const char* filename) const {
     if (is_empty()) return false;
 
     int success;
@@ -175,7 +175,7 @@ namespace Imagy {
 
   // -- Utils
 
-  ImageType Image::get_file_type(const char *filename) {
+  ImageType Image::get_file_type(const char* filename) {
     const char *ext = strrchr(filename, '.');
     if (ext != nullptr) {
       if (strcmp(ext, ".png") == 0) {

@@ -1,10 +1,20 @@
 #include "clippy.hpp"
 
+#include <sstream>
+
 using namespace Clipper2Lib;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+DLL_EXPORTS void c_doit(CMyStruct* solution) {
+  solution->msg = (char *)"GO";
+  solution->values = new int[2];
+  solution->values[0] = 55;
+  solution->values[1] = 80;
+  solution->error = 55;
+}
 
 DLL_EXPORTS CPathsDSolution* c_boolean_op(uint8_t clip_type, uint8_t fill_rule, CPathD closed_subjects, CPathD open_subjects, CPathD clips) {
 
@@ -17,7 +27,10 @@ DLL_EXPORTS CPathsDSolution* c_boolean_op(uint8_t clip_type, uint8_t fill_rule, 
           open_subjects,
           clips,
           solution->closed_paths,
-          solution->open_paths
+          solution->open_paths,
+          8,
+          false,
+          false
   );
 
   return solution;

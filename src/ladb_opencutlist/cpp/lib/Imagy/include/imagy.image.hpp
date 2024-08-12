@@ -15,7 +15,7 @@ namespace Imagy {
     Image();
     ~Image();
 
-    uint8_t *data;
+    uint8_t* data;
     size_t size;
     int width;
     int height;
@@ -23,15 +23,15 @@ namespace Imagy {
 
     void clear();
 
-    bool load(const char *filename);
-    bool write(const char *filename) const;
+    bool load(const char* filename);
+    bool write(const char* filename) const;
 
     bool is_empty() const;
 
     bool flip(bool horizontal = true);
     bool rotate(int angle);
 
-    static ImageType get_file_type(const char *filename);
+    static ImageType get_file_type(const char* filename);
 
   };
 
