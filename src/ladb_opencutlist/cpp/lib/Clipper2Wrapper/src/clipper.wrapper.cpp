@@ -104,6 +104,7 @@ namespace Clipper2Lib {
     if (fillrule > static_cast<uint8_t>(FillRule::Negative)) return -3;
 
     const double scale = std::pow(10, precision);
+    const double inv_scale = 1 / scale;
 
     Paths64 sub, sub_open, clp, sol, sol_open;
     sub = ConvertCPathsDToPaths64(subjects, scale);
@@ -118,8 +119,8 @@ namespace Clipper2Lib {
     if (clp.size() > 0) clipper.AddClip(clp);
     if (!clipper.Execute(ClipType(cliptype),FillRule(fillrule), sol, sol_open)) return -1;
 
-    solution = CreateCPathsDFromPaths64(sol, 1 / scale);
-    solution_open = CreateCPathsDFromPaths64(sol_open, 1 / scale);
+    solution = CreateCPathsDFromPaths64(sol, inv_scale);
+    solution_open = CreateCPathsDFromPaths64(sol_open, inv_scale);
 
     return 0; // success !!
   }
@@ -141,7 +142,8 @@ namespace Clipper2Lib {
     if (cliptype > static_cast<uint8_t>(ClipType::Xor)) return -4;
     if (fillrule > static_cast<uint8_t>(FillRule::Negative)) return -3;
 
-    double scale = std::pow(10, precision);
+    const double scale = std::pow(10, precision);
+    const double inv_scale = 1 / scale;
 
     Paths64 sub, sub_open, clp, sol_open;
     sub = ConvertCPathsDToPaths64(subjects, scale);
@@ -157,8 +159,8 @@ namespace Clipper2Lib {
     if (clp.size() > 0) clipper.AddClip(clp);
     if (!clipper.Execute(ClipType(cliptype), FillRule(fillrule), tree, sol_open)) return -1; // clipping bug - should never happen :)
 
-    solution = CreateCPolyTree(tree, 1 / scale);
-    solution_open = CreateCPathsDFromPaths64(sol_open, 1 / scale);
+    solution = CreateCPolyTree(tree, inv_scale);
+    solution_open = CreateCPathsDFromPaths64(sol_open, inv_scale);
 
     return 0; // success !!
   }
@@ -198,13 +200,15 @@ namespace Clipper2Lib {
     if (precision < -8 || precision > 8 || !paths) return nullptr;
 
     const double scale = std::pow(10, precision);
+    const double inv_scale = 1 / scale;
+
     ClipperOffset clip_offset(miter_limit, arc_tolerance, reverse_solution);
     Paths64 pp = ConvertCPathsDToPaths64(paths, scale);
     clip_offset.AddPaths(pp, JoinType(jointype), EndType(endtype));
     Paths64 result;
     clip_offset.Execute(delta * scale, result);
 
-    return CreateCPathsDFromPaths64(result, 1 / scale);
+    return CreateCPathsDFromPaths64(result, inv_scale);
   }
 
 
@@ -232,6 +236,7 @@ namespace Clipper2Lib {
     if (precision < -8 || precision > 8) return nullptr;
 
     const double scale = std::pow(10, precision);
+    const double inv_scale = 1 / scale;
 
     RectD r = CRectToRect(rect);
     Rect64 rec = ScaleRect<int64_t, double>(r, scale);
@@ -239,7 +244,7 @@ namespace Clipper2Lib {
     class RectClip64 rc(rec);
     Paths64 result = rc.Execute(pp);
 
-    return CreateCPathsDFromPaths64(result, 1 / scale);
+    return CreateCPathsDFromPaths64(result, inv_scale);
   }
 
   CPaths64 RectClipLines64(
@@ -267,12 +272,14 @@ namespace Clipper2Lib {
     if (precision < -8 || precision > 8) return nullptr;
 
     const double scale = std::pow(10, precision);
+    const double inv_scale = 1 / scale;
+
     Rect64 r = ScaleRect<int64_t, double>(CRectToRect(rect), scale);
     class RectClipLines64 rcl(r);
     Paths64 pp = ConvertCPathsDToPaths64(paths, scale);
     Paths64 result = rcl.Execute(pp);
 
-    return CreateCPathsDFromPaths64(result, 1 / scale);
+    return CreateCPathsDFromPaths64(result, inv_scale);
   }
 
 
