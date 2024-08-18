@@ -29,7 +29,9 @@ module Ladb::OpenCutList::Fiddle
 
         'void c_dispose_array_d(double*)',
 
-        'char* c_version()'
+        'char* c_optimize(char*)',
+
+        'char* c_version()',
 
       ]
     end
@@ -42,6 +44,12 @@ module Ladb::OpenCutList::Fiddle
     end
 
     # --
+
+    def self.optimize(input)
+      _load_lib
+      output = JSON.parse(c_optimize(input.to_json).to_s)
+      return output
+    end
 
     def self.execute_rectangle(bin_defs, item_defs, objective, spacing, trimming, verbosity_level)
       _load_lib

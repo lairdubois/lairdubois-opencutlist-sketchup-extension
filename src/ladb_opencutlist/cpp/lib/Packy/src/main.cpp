@@ -1,48 +1,33 @@
 #include "iostream"
 
 #include "packy.hpp"
+#include "optimizer_builder.hpp"
 
-double* GenerateTriangle(double *cpaths, double x, double y) {
-
-  cpaths[0] = 12;   // Array length
-  cpaths[1] = 1;    // 1 path
-
-  cpaths[2] = 3;    // 3 coords
-  cpaths[3] = 0;
-
-  cpaths[4] = 0;    // X1
-  cpaths[5] = 0;    // Y1
-
-  cpaths[6] = x;    // X2
-  cpaths[7] = 0;    // Y2
-
-  cpaths[8] = x;    // X3
-  cpaths[9] = y;    // Y3
-
-  return cpaths;
-}
+using namespace Packy;
+using namespace nlohmann;
 
 int main() {
 
-  std::cout << "Hello" << std::endl;
-  std::cout << c_version() << std::endl;
+  std::cout << "-----------------------------------" << std::endl;
+  std::cout << "              PACKY" << std::endl;
+  std::cout << "-----------------------------------" << std::endl;
 
-  c_append_bin_def(0, 50, 1000, 1000, 1);
+  try {
 
-  double cpaths[] = {
-          12.0, 1,
-          4.0, 0,
-          27.55905512, 19.68503937,
-          0.0, 19.68503937,
-          0.0, 0.0,
-          27.55905512, 0.0
-  };
+    OptimizerBuilder optimizer_builder;
+    Optimizer& optimizer = optimizer_builder.build(std::string("input.json"));
 
-  c_append_item_def(0, 1, 0, cpaths);
+    json ouput = optimizer.optimize();
 
-  std::string objective = "bin-packing-with-leftovers";
+    std::cout << "###################################" << std::endl;
+    std::cout << ouput.dump(1, ' ') << std::endl;
+    std::cout << "###################################" << std::endl;
 
-  std::cout << c_execute_irregular(objective.data(), 0, 0, 0) << std::endl;
+  } catch(const std::exception &e) {
+    std::cerr << "\033[1;31mError: " << (std::string)e.what() << "\033[0m" << std::endl;
+  } catch( ... ) {
+    std::cerr << "\033[1;31mUnknow Error\033[0m" << std::endl;
+  }
 
   return 0;
 }

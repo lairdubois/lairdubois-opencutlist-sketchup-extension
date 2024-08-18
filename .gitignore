@@ -13,3 +13,4 @@
 /build/cmake-build/
 /build/package-lock.json
 /Gemfile.lock
+/cmake-*

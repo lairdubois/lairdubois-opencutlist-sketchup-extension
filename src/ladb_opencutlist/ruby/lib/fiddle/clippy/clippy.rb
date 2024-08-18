@@ -51,6 +51,7 @@ module Ladb::OpenCutList::Fiddle
     end
 
     # -----
+
     def self.doit
       _load_lib
 

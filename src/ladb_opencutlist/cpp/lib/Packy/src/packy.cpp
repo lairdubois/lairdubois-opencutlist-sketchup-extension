@@ -3,6 +3,7 @@
 #include "packy.hpp"
 #include "packy.structs.hpp"
 #include "packy.engine.hpp"
+#include "optimizer_builder.hpp"
 
 #include <algorithm>
 #include <string>
@@ -131,6 +132,31 @@ DLL_EXPORTS void c_dispose_array_d(const double* p) {
   delete[] p;
 }
 
+
+DLL_EXPORTS char* c_optimize(char* input) {
+
+  message.clear();
+
+  try {
+
+    std::stringstream stream;
+    stream << input;
+
+    OptimizerBuilder optimizer_builder;
+    Optimizer& optimizer = optimizer_builder.build(stream);
+
+    json output = optimizer.optimize();
+
+    message = output.dump();
+
+  } catch(const std::exception &e) {
+    message = json {{"error", "Packy: " + ((std::string)e.what())}}.dump();
+  } catch( ... ) {
+    message = json {{"error", "Packy: Unknow error"}}.dump();
+  }
+
+  return (char*)message.c_str();
+}
 
 DLL_EXPORTS char* c_version() {
   return (char *)PACKY_VERSION;

@@ -28,6 +28,8 @@ DLL_EXPORTS double* c_get_solution();
 
 DLL_EXPORTS void c_dispose_array_d(const double* p);
 
+DLL_EXPORTS char* c_optimize(char* input);
+
 DLL_EXPORTS char* c_version();
 
 #ifdef __cplusplus
