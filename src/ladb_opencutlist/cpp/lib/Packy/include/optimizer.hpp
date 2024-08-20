@@ -148,6 +148,10 @@ namespace Packy {
         parameters_.not_anytime_dichotomic_search_subproblem_queue_size = j["not_anytime_dichotomic_search_subproblem_queue_size"].template get<Counter>();
       }
 
+      parameters_.new_solution_callback = [](const Output& output){
+        std::cout << "New solution !! time=" << output.time << std::endl;
+      };
+
     }
 
     void read_instance(basic_json<>& j) override {
@@ -272,7 +276,7 @@ namespace Packy {
                 {"copies",      bin.copies}
         });
 
-        basic_json<>& j_items = j_bin["items"];
+        basic_json<>& j_items = j_bin["items"] = json::array();
         for (const auto& item : bin.items) {
 
           const ItemType&  item_type = solution.instance().item_type(item.item_type_id);
@@ -491,41 +495,99 @@ namespace Packy {
       const rectangleguillotine::Solution& solution = output.solution_pool.best();
 
       // Bins.
-      basic_json<>& j_bins = j["bins"];
+      basic_json<>& j_bins = j["bins"] = json::array();
       for (BinPos bin_pos = 0; bin_pos < solution.number_of_different_bins(); ++bin_pos) {
 
         const SolutionBin& bin = solution.bin(bin_pos);
+        const Instance& instance = solution.instance();
+        const BinType& bin_type = instance.bin_type(bin.bin_type_id);
 
         basic_json<>& j_bin = j_bins.emplace_back(json {
                 {"bin_type_id", bin.bin_type_id},
                 {"copies",      bin.copies}
         });
 
-        // Items.
-        basic_json<>& j_items = j_bin["items"];
+        // Items & Cuts.
+        basic_json<>& j_items = j_bin["items"] = json::array();
+        basic_json<>& j_cuts = j_bin["cuts"] = json::array();
         for (const auto& node: bin.nodes) {
 
-          if (node.item_type_id < 0) {
-            continue;
+          if (node.item_type_id >= 0) {
+
+            const ItemType &item_type = instance.item_type(node.item_type_id);
+            bool rotated = item_type.rect.w != (node.r - node.l);
+
+            if (rotated) {
+              j_items.push_back(json{
+                      {"item_type_id", node.item_type_id},
+                      {"x",            node.r},
+                      {"y",            node.b},
+                      {"angle",        90.0},
+              });
+            } else {
+              j_items.push_back(json{
+                      {"item_type_id", node.item_type_id},
+                      {"x",            node.l},
+                      {"y",            node.b},
+                      {"angle",        0.0},
+              });
+            }
+
           }
 
-          const ItemType&  item_type = solution.instance().item_type(node.item_type_id);
-          bool rotated = item_type.rect.w != (node.r - node.l);
+          if (node.item_type_id >= 0 || node.children.empty()) {
 
-          if (rotated) {
-            j_items.push_back(json{
-                    {"item_type_id", node.item_type_id},
-                    {"x",            node.r},
-                    {"y",            node.b},
-                    {"angle",        90.0},
-            });
-          } else {
-            j_items.push_back(json{
-                    {"item_type_id", node.item_type_id},
-                    {"x",            node.l},
-                    {"y",            node.b},
-                    {"angle",        0.0},
-            });
+            // Extract cuts
+
+            if (node.d == 0) {
+
+              if (bin_type.left_trim + bin_type.right_trim + bin_type.bottom_trim + bin_type.top_trim > 0) {
+
+                // Bottom
+                j_cuts.emplace_back(json{
+                        {"depth", node.d},
+                        {"x1",    node.l - (instance.first_stage_orientation() == CutOrientation::Horizontal ? bin_type.left_trim : 0)},
+                        {"y1",    node.b - instance.cut_thickness()},
+                        {"x2",    node.r + bin_type.right_trim},
+                        {"y2",    node.b}
+                });
+
+                // Left
+                j_cuts.emplace_back(json{
+                        {"depth", node.d},
+                        {"x1",    node.l - instance.cut_thickness()},
+                        {"y1",    node.b - (instance.first_stage_orientation() == CutOrientation::Vertical ? bin_type.bottom_trim : 0)},
+                        {"x2",    node.l},
+                        {"y2",    node.t + bin_type.top_trim}
+                });
+
+              }
+
+            } else if (node.f >= 0) {
+
+              const SolutionNode &parent_node = bin.nodes[node.f];
+
+              if (node.r != parent_node.r) {
+                j_cuts.emplace_back(json{
+                        {"depth", node.d},
+                        {"x1",    node.r},
+                        {"y1",    node.b},
+                        {"x2",    node.r + instance.cut_thickness()},
+                        {"y2",    node.t + (node.d == 1 ? bin_type.top_trim : 0)}
+                });
+              }
+              if (node.t != parent_node.t) {
+                j_cuts.emplace_back(json{
+                        {"depth", node.d},
+                        {"x1",    node.l},
+                        {"y1",    node.t},
+                        {"x2",    node.r + (node.d == 1 ? bin_type.right_trim : 0)},
+                        {"y2",    node.t + instance.cut_thickness()}
+                });
+              }
+
+            }
+
           }
 
         }
@@ -610,7 +672,7 @@ namespace Packy {
 
       const onedimensional::Solution& solution = output.solution_pool.best();
 
-      basic_json<>& j_bins = j["bins"];
+       basic_json<>& j_bins = j["bins"] = json::array();
       for (BinPos bin_pos = 0; bin_pos < solution.number_of_different_bins(); ++bin_pos) {
 
         const SolutionBin& bin = solution.bin(bin_pos);
@@ -620,7 +682,7 @@ namespace Packy {
                 {"copies",      bin.copies}
         });
 
-        basic_json<>& j_items = j_bin["items"];
+        basic_json<>& j_items = j_bin["items"] = json::array();
         for (const auto& item : bin.items) {
 
           j_items.emplace_back(json{
@@ -739,7 +801,7 @@ namespace Packy {
 
       const irregular::Solution& solution = output.solution_pool.best();
 
-      basic_json<>& j_bins = j["bins"];
+       basic_json<>& j_bins = j["bins"] = json::array();
       for (BinPos bin_pos = 0; bin_pos < solution.number_of_different_bins(); ++bin_pos) {
 
         const SolutionBin& bin = solution.bin(bin_pos);
@@ -749,7 +811,7 @@ namespace Packy {
                 {"copies",      bin.copies}
         });
 
-        basic_json<>& j_items = j_bin["items"];
+        basic_json<>& j_items = j_bin["items"] = json::array();
         for (const auto& item : bin.items) {
 
           j_items.emplace_back(json{

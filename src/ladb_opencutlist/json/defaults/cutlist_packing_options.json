@@ -19,6 +19,6 @@
     "spacing": { "metric": "20mm", "imperial": "1\"" },
     "trimming": { "metric": "10mm", "imperial": "1/2\"" },
     "not_anytime_tree_search_queue_size": 512,
-    "verbosity_level": 1
+    "verbosity_level": 0
   }
 }

@@ -1,4 +1,5 @@
-#include "iostream"
+#include <iostream>
+#include <thread>
 
 #include "packy.hpp"
 #include "optimizer_builder.hpp"
@@ -6,11 +7,7 @@
 using namespace Packy;
 using namespace nlohmann;
 
-int main() {
-
-  std::cout << "-----------------------------------" << std::endl;
-  std::cout << "              PACKY" << std::endl;
-  std::cout << "-----------------------------------" << std::endl;
+void optimize() {
 
   try {
 
@@ -28,6 +25,17 @@ int main() {
   } catch( ... ) {
     std::cerr << "\033[1;31mUnknow Error\033[0m" << std::endl;
   }
+
+}
+
+int main() {
+
+  std::cout << "-----------------------------------" << std::endl;
+  std::cout << "              PACKY" << std::endl;
+  std::cout << "-----------------------------------" << std::endl;
+
+  std::thread t(optimize);
+  t.join();
 
   return 0;
 }

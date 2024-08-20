@@ -69,7 +69,7 @@ module Ladb::OpenCutList
         group_cuttingdiagram1d_start_command(settings)
       end
 
-      PLUGIN.register_command("cutlist_group_cuttingdiagram1d_advance") do |settings|
+      PLUGIN.register_command("cutlist_group_cuttingdiagram1d_advance") do
         group_cuttingdiagram1d_advance_command
       end
 
@@ -81,7 +81,7 @@ module Ladb::OpenCutList
         group_cuttingdiagram2d_start_command(settings)
       end
 
-      PLUGIN.register_command("cutlist_group_cuttingdiagram2d_advance") do |settings|
+      PLUGIN.register_command("cutlist_group_cuttingdiagram2d_advance") do
         group_cuttingdiagram2d_advance_command
       end
 
@@ -93,13 +93,17 @@ module Ladb::OpenCutList
         labels_command(settings)
       end
 
-      PLUGIN.register_command("cutlist_reset_prices") do |settings|
+      PLUGIN.register_command("cutlist_reset_prices") do
         reset_prices_command
       end
 
 
-      PLUGIN.register_command("cutlist_group_packing") do |settings|
-        group_packing_command(settings)
+      PLUGIN.register_command("cutlist_group_packing_start") do |settings|
+        group_packing_start_command(settings)
+      end
+
+      PLUGIN.register_command("cutlist_group_packing_advance") do
+        group_packing_advance_command
       end
 
     end
@@ -333,14 +337,21 @@ module Ladb::OpenCutList
     end
 
 
-    def group_packing_command(settings)
+    def group_packing_start_command(settings)
       require_relative '../worker/cutlist/cutlist_packing_worker'
 
       # Setup worker
-      worker = CutlistPackingWorker.new(@cutlist, **settings)
+      @packing_worker = CutlistPackingWorker.new(@cutlist, **settings)
 
       # Run !
-      worker.run
+      @packing_worker.run
+    end
+
+    def group_packing_advance_command
+      return { :errors => [ 'default.error' ] } unless @packing_worker
+
+      # Run !
+      @packing_worker.run
     end
 
   end

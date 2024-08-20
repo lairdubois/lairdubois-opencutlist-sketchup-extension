@@ -88,185 +88,204 @@ module Ladb::OpenCutList
 
       @irregular_rotations = [ 0, [ irregular_rotations.to_i, AVAILABLE_ROTATIONS.length - 1 ].min].max
 
+      # Internals
+
+      @_running = false
+      @bin_defs = []
+      @item_defs = []
+
     end
 
     # -----
 
     def run
-      return { :errors => [ 'default.error' ] } unless @cutlist
+      unless @_running
 
-      model = Sketchup.active_model
-      return{ :errors => [ 'default.error' ] } unless model
+        return { :errors => [ 'default.error' ] } unless @cutlist
 
-      group = @cutlist.get_group(@group_id)
-      return { :errors => [ 'default.error' ] } unless group
+        model = Sketchup.active_model
+        return{ :errors => [ 'default.error' ] } unless model
 
-      parts = @part_ids.nil? ? group.parts : group.get_parts(@part_ids)
-      return { :errors => [ 'default.error' ] } if parts.empty?
+        group = @cutlist.get_group(@group_id)
+        return { :errors => [ 'default.error' ] } unless group
 
-      parts_count = parts.map(&:count).inject(0, :+)  # .map(&:count).inject(0, :+) == .sum { |portion| part.count } compatible with ruby < 2.4
+        parts = @part_ids.nil? ? group.parts : group.get_parts(@part_ids)
+        return { :errors => [ 'default.error' ] } if parts.empty?
 
-      SKETCHUP_CONSOLE.clear
+        parts_count = parts.map(&:count).inject(0, :+)  # .map(&:count).inject(0, :+) == .sum { |portion| part.count } compatible with ruby < 2.4
 
-      bin_defs = []
-      bin_types = []
+        SKETCHUP_CONSOLE.clear
 
-      # Create bins from scrap sheets
-      @scrap_sheet_sizes.split(';').each { |scrap_sheet_size|
+        bin_types = []
 
-        ddq = scrap_sheet_size.split('x')
-        length = ddq[0].strip.to_l.to_f
-        width = ddq[1].strip.to_l.to_f
-        copies = [ 1, (ddq[2].nil? || ddq[2].strip.to_i == 0) ? 1 : ddq[2].strip.to_i ].max
+        # Create bins from scrap sheets
+        @scrap_sheet_sizes.split(';').each { |scrap_sheet_size|
 
-        bin_types << {
-          copies: copies,
-          type: 'rectangle',
-          length: _to_packy(length),
-          width: _to_packy(width),
-          left_trim: _to_packy(@trimming),
-          right_trim: _to_packy(@trimming),
-          bottom_trim: _to_packy(@trimming),
-          top_trim: _to_packy(@trimming)
+          ddq = scrap_sheet_size.split('x')
+          length = ddq[0].strip.to_l.to_f
+          width = ddq[1].strip.to_l.to_f
+          copies = [ 1, (ddq[2].nil? || ddq[2].strip.to_i == 0) ? 1 : ddq[2].strip.to_i ].max
+
+          bin_types << {
+            copies: copies,
+            type: 'rectangle',
+            length: _to_packy(length),
+            width: _to_packy(width),
+            left_trim: _to_packy(@trimming),
+            right_trim: _to_packy(@trimming),
+            bottom_trim: _to_packy(@trimming),
+            top_trim: _to_packy(@trimming)
+          }
+          @bin_defs << Packy::BinDef.new(length, width, 1) # 1 = user defined
+
         }
-        bin_defs << Packy::BinDef.new(length, width, 1) # 1 = user defined
 
-      }
+        # Create bins from std sheets
+        if @std_sheet_width > 0 && @std_sheet_length > 0
 
-      # Create bins from std sheets
-      if @std_sheet_width > 0 && @std_sheet_length > 0
-        
-        bin_types << {
-          copies: parts_count,
-          type: 'rectangle',
-          length: _to_packy(@std_sheet_length),
-          width: _to_packy(@std_sheet_width),
-          left_trim: _to_packy(@trimming),
-          right_trim: _to_packy(@trimming),
-          bottom_trim: _to_packy(@trimming),
-          top_trim: _to_packy(@trimming)
-        }
-        bin_defs << Packy::BinDef.new(@std_sheet_length, @std_sheet_width, 0) # 0 = Standard
+          bin_types << {
+            copies: parts_count,
+            type: 'rectangle',
+            length: _to_packy(@std_sheet_length),
+            width: _to_packy(@std_sheet_width),
+            left_trim: _to_packy(@trimming),
+            right_trim: _to_packy(@trimming),
+            bottom_trim: _to_packy(@trimming),
+            top_trim: _to_packy(@trimming)
+          }
+          @bin_defs << Packy::BinDef.new(@std_sheet_length, @std_sheet_width, 0) # 0 = Standard
 
-      end
+        end
 
-      return { :errors => [ 'tab.cutlist.cuttingdiagram.error.no_sheet' ] } if bin_types.empty?
+        return { :errors => [ 'tab.cutlist.cuttingdiagram.error.no_sheet' ] } if bin_types.empty?
 
-      item_defs = []
-      item_types = []
+        item_types = []
 
-      # Add items from parts
-      fn_add_items = lambda { |part|
+        # Add items from parts
+        fn_add_items = lambda { |part|
 
-        projection_def = _compute_part_projection_def(PART_DRAWING_TYPE_2D_TOP, part, compute_shell: true)
+          projection_def = _compute_part_projection_def(PART_DRAWING_TYPE_2D_TOP, part, compute_shell: true)
 
-        if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
+          if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
 
-          item_types << {
-            copies: part.count,
-            shapes: projection_def.shell_def.shape_defs.map { |shape_def| {
-              type: 'polygon',
-              vertices: shape_def.outer_poly_def.points.map { |point| { x: _to_packy(point.x), y: _to_packy(point.y) } },
-              holes: shape_def.holes_poly_defs.map { |poly_def| {
+            item_types << {
+              copies: part.count,
+              shapes: projection_def.shell_def.shape_defs.map { |shape_def| {
                 type: 'polygon',
-                vertices: poly_def.points.map { |point| { x: _to_packy(point.x), y: _to_packy(point.y) } }
+                vertices: shape_def.outer_poly_def.points.map { |point| { x: _to_packy(point.x), y: _to_packy(point.y) } },
+                holes: shape_def.holes_poly_defs.map { |poly_def| {
+                  type: 'polygon',
+                  vertices: poly_def.points.map { |point| { x: _to_packy(point.x), y: _to_packy(point.y) } }
+                }},
               }},
-            }},
-            allowed_rotations: AVAILABLE_ROTATIONS[@irregular_rotations]
-          }
+              allowed_rotations: AVAILABLE_ROTATIONS[@irregular_rotations]
+            }
 
-        else
+          else
 
-          item_types << {
-            copies: part.count,
-            length: _to_packy(part.def.size.length),
-            width: _to_packy(part.def.size.width),
-            oriented: (group.material_grained && !part.ignore_grain_direction) ? true : false
-          }
+            item_types << {
+              copies: part.count,
+              length: _to_packy(part.def.size.length),
+              width: _to_packy(part.def.size.width),
+              oriented: (group.material_grained && !part.ignore_grain_direction) ? true : false
+            }
 
-        end
+          end
 
-        item_defs << Packy::ItemDef.new(projection_def, part)
+          @item_defs << Packy::ItemDef.new(projection_def, part)
 
-      }
-      parts.each { |part|
-        if part.instance_of?(FolderPart)
-          part.children.each { |child_part|
-            fn_add_items.call(child_part)
-          }
-        else
-          fn_add_items.call(part)
-        end
-      }
-
-      return { :errors => [ 'tab.cutlist.cuttingdiagram.error.no_parts' ] } if item_types.empty?
-
-      input = {
-        problem_type: @problem_type,
-        parameters: {
-          optimization_mode: "not-anytime",
-          verbosity_level: @verbosity_level,
-          not_anytime_tree_search_queue_size: @not_anytime_tree_search_queue_size,
-          time_limit: 50
-        },
-        instance: {
-          objective: @objective,
-          parameters: {
-            cut_type: @rectangleguillotine_cut_type,
-            cut_thickness: _to_packy(@spacing),
-            first_stage_orientation: @rectangleguillotine_first_stage_orientation
-          },
-          bin_types: bin_types,
-          item_types: item_types,
         }
-      }
+        parts.each { |part|
+          if part.instance_of?(FolderPart)
+            part.children.each { |child_part|
+              fn_add_items.call(child_part)
+            }
+          else
+            fn_add_items.call(part)
+          end
+        }
 
+        return { :errors => [ 'tab.cutlist.cuttingdiagram.error.no_parts' ] } if item_types.empty?
 
-
-      puts "-- input --"
-      puts input.to_json
-      puts "-- input --"
-
-      output = Packy.optimize(input)
-
-      puts " "
-      puts "-- output --"
-      puts output
-      puts "-- output --"
-
-      return { :errors => [ output['error'] ] } if output.has_key?('error')
-
-      packed_bins = output["bins"].map do |raw_bin|
-        Packy::Bin.new(
-          bin_defs[raw_bin["bin_type_id"]],
-          raw_bin.fetch("items", []).map { |raw_item|
-            Packy::Item.new(
-              item_defs[raw_item["item_type_id"]],
-              raw_item.fetch("x", 0),
-              raw_item.fetch("y", 0),
-              raw_item.fetch("angle", 0)
-            )
+        input = {
+          problem_type: @problem_type,
+          parameters: {
+            optimization_mode: "not-anytime",
+            verbosity_level: @verbosity_level,
+            not_anytime_tree_search_queue_size: @not_anytime_tree_search_queue_size,
+            time_limit: 20
           },
-          raw_bin.fetch("cuts", []).map { |raw_cut|
-            Packy::Cut.new(
-              raw_cut["depth"],
-              raw_cut["x1"],
-              raw_cut["y1"],
-              raw_cut["x2"],
-              raw_cut["y2"],
-            )
+          instance: {
+            objective: @objective,
+            parameters: {
+              cut_type: @rectangleguillotine_cut_type,
+              cut_thickness: _to_packy(@spacing),
+              first_stage_orientation: @rectangleguillotine_first_stage_orientation
+            },
+            bin_types: bin_types,
+            item_types: item_types,
           }
-        )
-      end
+        }
 
-      {
-        :packed_bins => packed_bins.map { |bin| {
-          length: bin.def.length.to_l.to_s,
-          width: bin.def.width.to_l.to_s,
-          type: bin.def.type,
-          svg: _bin_to_svg(bin)
-        } }
-      }
+        if @verbosity_level > 0
+          puts "-- input --"
+          puts input.to_json
+          puts "-- input --"
+        end
+
+        Packy.optimize_start(input)
+
+        @_running = true
+
+        { :running => true }
+      else
+
+        output = Packy.optimize_advance
+
+        return output if output.has_key?('running')
+
+        if @verbosity_level > 0
+          puts " "
+          puts "-- output --"
+          pp output
+          puts "-- output --"
+        end
+
+        return { :errors => [ output['error'] ] } if output.has_key?('error')
+        return { :errors => [ 'tab.cutlist.cuttingdiagram.error.no_placement_possible_2d' ] } if output['bins'].empty?
+
+        packed_bins = output["bins"].map do |raw_bin|
+          Packy::Bin.new(
+            @bin_defs[raw_bin["bin_type_id"]],
+            raw_bin["items"].is_a?(Array) ? raw_bin["items"].map { |raw_item|
+              Packy::Item.new(
+                @item_defs[raw_item["item_type_id"]],
+                raw_item.fetch("x", 0),
+                raw_item.fetch("y", 0),
+                raw_item.fetch("angle", 0)
+              )
+            } : [],
+            raw_bin["cuts"].is_a?(Array) ? raw_bin["cuts"].map { |raw_cut|
+              Packy::Cut.new(
+                raw_cut["depth"],
+                raw_cut["x1"],
+                raw_cut["y1"],
+                raw_cut["x2"],
+                raw_cut["y2"],
+              )
+            } : []
+          )
+        end
+
+        {
+          :packed_bins => packed_bins.map { |bin| {
+            length: bin.def.length.to_l.to_s,
+            width: bin.def.width.to_l.to_s,
+            type: bin.def.type,
+            svg: _bin_to_svg(bin)
+          } }
+        }
+      end
     end
 
     private

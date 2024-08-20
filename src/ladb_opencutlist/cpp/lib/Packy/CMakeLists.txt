@@ -17,8 +17,6 @@ endif()
 # Library headers
 set(LIBRARY_HEADERS
         include/packy.hpp
-        include/packy.structs.hpp
-        include/packy.engine.hpp
         include/optimizer.hpp
         include/optimizer_builder.hpp
 )
@@ -28,15 +26,11 @@ source_group("Headers" FILES ${LIBRARY_HEADERS})
 if(WIN32)
   set(LIBRARY_SOURCES
           src/packy.cpp
-          src/packy.structs.cpp
-          src/packy.engine.cpp
           src/dllmain.cpp
   )
 else()
   set(LIBRARY_SOURCES
           src/packy.cpp
-          src/packy.structs.cpp
-          src/packy.engine.cpp
   )
 endif()
 source_group("Sources" FILES ${LIBRARY_SOURCES})

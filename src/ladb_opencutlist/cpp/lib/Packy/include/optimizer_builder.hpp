@@ -19,7 +19,7 @@ namespace Packy {
     /*
      * Build:
      */
-    Optimizer& build(std::string path) {
+    Optimizer& build(const std::string& path) {
 
       std::ifstream file(path);
       if (!file.good()) {

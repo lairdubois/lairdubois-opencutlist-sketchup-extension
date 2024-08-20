@@ -4574,8 +4574,6 @@
                 var $btnUnloadLib = $('#ladb_btn_unload_lib', $modal);
                 var $btnGenerate = $('#ladb_btn_generate', $modal);
 
-                console.log($radiosProblemType);
-
                 var fnFetchOptions = function (options) {
                     options.std_sheet = $inputStdSheet.val();
                     options.scrap_sheet_sizes = $inputScrapSheetSizes.ladbTextinputTokenfield('getValidTokensList');
@@ -4696,45 +4694,64 @@
                         section: groupId
                     });
 
+                    var fnAdvance = function () {
+                        window.requestAnimationFrame(function () {
+
+                            // Advance progress feedback
+                            that.dialog.advanceProgress(1);
+
+                            rubyCallCommand('cutlist_group_packing_advance', null, function (response) {
+
+                                if (response.running) {
+
+                                    setTimeout(fnAdvance, 1000);
+
+                                } else {
+
+                                    var $slide = that.pushNewSlide('ladb_cutlist_slide_packing', 'tabs/cutlist/_slide-packing.twig', $.extend({
+                                        filename: that.filename,
+                                        modelName: that.modelName,
+                                        pageName: that.pageName,
+                                        isEntitySelection: that.isEntitySelection,
+                                        lengthUnit: that.lengthUnit,
+                                        generatedAt: new Date().getTime() / 1000,
+                                        group: group
+                                    }, response), function () {
+                                        that.dialog.setupTooltips();
+                                    });
+
+                                    // Fetch UI elements
+                                    var $btnPacking = $('#ladb_btn_packing', $slide);
+                                    var $btnClose = $('#ladb_btn_close', $slide);
+
+                                    // Bind buttons
+                                    $btnPacking.on('click', function () {
+                                        that.packingGroup(groupId);
+                                    });
+                                    $btnClose.on('click', function () {
+                                        that.popSlide();
+                                    });
+
+                                    // Finish progress feedback
+                                    that.dialog.finishProgress();
+
+                                }
+
+                            });
+
+                        });
+                    }
+
                     window.requestAnimationFrame(function () {
-
-                        // Start progress feedback
-                        that.dialog.startProgress(1);
-
-                        rubyCallCommand('cutlist_group_packing', $.extend({
+                        that.dialog.startProgress(20);
+                        rubyCallCommand('cutlist_group_packing_start', $.extend({
                             group_id: groupId,
                             part_ids: isPartSelection ? that.selectionPartIds : null
                         }, packingOptions), function (response) {
-
-                            var $slide = that.pushNewSlide('ladb_cutlist_slide_packing', 'tabs/cutlist/_slide-packing.twig', $.extend({
-                                filename: that.filename,
-                                modelName: that.modelName,
-                                pageName: that.pageName,
-                                isEntitySelection: that.isEntitySelection,
-                                lengthUnit: that.lengthUnit,
-                                generatedAt: new Date().getTime() / 1000,
-                                group: group
-                            }, response), function () {
-                                that.dialog.setupTooltips();
+                            window.requestAnimationFrame(function () {
+                                fnAdvance();
                             });
-
-                            // Fetch UI elements
-                            var $btnPacking = $('#ladb_btn_packing', $slide);
-                            var $btnClose = $('#ladb_btn_close', $slide);
-
-                            // Bind buttons
-                            $btnPacking.on('click', function () {
-                                that.packingGroup(groupId);
-                            });
-                            $btnClose.on('click', function () {
-                                that.popSlide();
-                            });
-
-                            // Finish progress feedback
-                            that.dialog.finishProgress();
-
                         });
-
                     });
 
                     // Hide modal
