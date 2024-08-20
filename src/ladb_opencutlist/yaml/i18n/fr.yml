@@ -800,8 +800,8 @@ tab:
         Format attendu : **L**x**l**x**Q**. Où **L** et **l** sont respectivement la *longueur* et la *largeur* du reste et **Q** la quantité.
         La quantité est facultative.
         *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*
-      option_engine: Moteur
-      option_engine_help: |
+      option_problem_type: Type
+      option_problem_type_help: |
         ...
       option_objective: Objectif
       option_objective_help: |
@@ -814,6 +814,9 @@ tab:
         ...
       option_irregular_rotations: Rotations
       option_irregular_rotations_help: |
+        ...
+      option_not_anytime_tree_search_queue_size: Queue size
+      option_not_anytime_tree_search_queue_size_help: |
         ...
       option_verbosity_level: Verbosity level
       option_verbosity_level_help: |

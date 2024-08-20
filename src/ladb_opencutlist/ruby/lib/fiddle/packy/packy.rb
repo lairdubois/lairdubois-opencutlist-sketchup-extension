@@ -5,6 +5,11 @@ module Ladb::OpenCutList::Fiddle
   module Packy
     extend ClipperWrapper
 
+    PROBLEM_TYPE_RECTANGLE = 'rectangle'
+    PROBLEM_TYPE_RECTANGLEGUILLOTINE = 'rectangleguillotine'
+    PROBLEM_TYPE_IRREGULAR = 'irregular'
+    PROBLEM_TYPE_ONEDIMENSIONAL = 'onedimensional'
+
     @bin_defs_cache = {}
     @item_defs_cache = {}
 
@@ -222,13 +227,136 @@ module Ladb::OpenCutList::Fiddle
 
     # -----
 
-    BinDef = Struct.new(:id, :count, :length, :width, :type)  # length and with must be float
-    ItemDef = Struct.new(:id, :count, :rotations, :paths, :data)
+    BinDef = Struct.new(:length, :width, :type)
+    ItemDef = Struct.new(:projection_def, :data)
 
     Solution = Struct.new(:unused_bins, :packed_bins, :unplaced_items)
     Bin = Struct.new(:def, :items, :cuts)
     Item = Struct.new(:def, :x, :y, :angle)  # x, y are int64
     Cut = Struct.new(:depth, :x1, :y1, :x2, :y2)  # x1, y1, x2, y2 are int64
+
+    # -----
+
+    class Input
+
+      attr_reader :problem_type,
+                  :parameters,
+                  :instance
+
+      def initialize(problem_type)
+        @problem_type = problem_type
+        @parameters = InputParameters.new
+        @instance = Instance.new
+      end
+
+    end
+
+    class InputParameters
+
+    end
+
+    class Instance
+
+      attr_reader :parameters,
+                  :bin_types,
+                  :item_types
+
+      def initialize
+        @parameters = InstanceParameters.new
+        @bin_types = []
+        @item_types = []
+      end
+
+    end
+
+    class InstanceParameters
+
+      def initialize
+      end
+
+    end
+
+    class BinType
+
+      attr_accessor :copies,
+                    :length,
+                    :width,
+
+      def initialize
+        @copies = 1
+        @length = -1
+        @width = -1
+      end
+
+    end
+
+    class ItemType
+
+      attr_accessor :copies
+
+      def initialize
+        @copies = 1
+      end
+
+    end
+
+    class OnedimensionalItemType < ItemType
+
+      attr_accessor :length
+
+      def initialize
+        super
+        @length = -1
+      end
+
+    end
+
+    class RectangleItemType < ItemType
+
+      attr_accessor :length,
+                    :width
+
+      def initialize
+        super
+        @length = -1
+        @width = -1
+      end
+
+    end
+
+    class IrregularItemType < ItemType
+
+      attr_reader :shapes,
+                  :allowed_rotations
+
+      def initialize
+        super
+        @shapes = []
+        @allowed_rotations = []
+      end
+
+    end
+
+    class IrregularShape
+
+      attr_reader :vertices
+
+      def initialize
+        @vertices = []
+      end
+
+    end
+
+    class IrregularItemShape < IrregularShape
+
+      attr_reader :holes
+
+      def initialize
+        super
+        @holes = []
+      end
+
+    end
 
   end
 

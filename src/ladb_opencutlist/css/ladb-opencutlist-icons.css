@@ -412,10 +412,16 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-cuttingdiagram2d-selection:before {
   content: "\e957";
 }
-.ladb-opencutlist-icon-packing:before {
+.ladb-opencutlist-icon-packing-rectangle:before {
+  content: "\e9b2";
+}
+.ladb-opencutlist-icon-packing-rectangle-selection:before {
+  content: "\e9b3";
+}
+.ladb-opencutlist-icon-packing-irregular:before {
   content: "\e9ad";
 }
-.ladb-opencutlist-icon-packing-selection:before {
+.ladb-opencutlist-icon-packing-irregular-selection:before {
   content: "\e9ae";
 }
 .ladb-opencutlist-icon-asterisk:before {

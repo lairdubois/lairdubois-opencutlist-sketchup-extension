@@ -16,11 +16,6 @@ module Ladb::OpenCutList
 
     Packy = Fiddle::Packy
 
-    ENGINE_RECTANGLE = 'rectangle'
-    ENGINE_RECTANGLEGUILLOTINE = 'rectangleguillotine'
-    ENGINE_IRREGULAR = 'irregular'
-    ENGINE_ONEDIMENSIONAL = 'onedimensional'
-
     AVAILABLE_ROTATIONS = [
       # 0 = None
       [
@@ -53,15 +48,16 @@ module Ladb::OpenCutList
 
     def initialize(cutlist,
 
-                   group_id: ,
+                   group_id:,
                    part_ids: nil,
                    std_sheet: '',
                    scrap_sheet_sizes: '',
 
-                   engine: ENGINE_RECTANGLE,
+                   problem_type: Packy::PROBLEM_TYPE_RECTANGLE,
                    objective: 'bin-packing',
                    spacing: '20mm',
                    trimming: '10mm',
+                   not_anytime_tree_search_queue_size: 512,
                    verbosity_level: 1,
 
                    rectangleguillotine_cut_type: 'exact',
@@ -80,10 +76,11 @@ module Ladb::OpenCutList
       @std_sheet_width = DimensionUtils.instance.str_to_ifloat(s_width).to_l.to_f
       @scrap_sheet_sizes = DimensionUtils.instance.dxdxq_to_ifloats(scrap_sheet_sizes)
 
-      @engine = engine
+      @problem_type = problem_type
       @objective = objective
       @spacing = DimensionUtils.instance.str_to_ifloat(spacing).to_l.to_f
       @trimming = DimensionUtils.instance.str_to_ifloat(trimming).to_l.to_f
+      @not_anytime_tree_search_queue_size = [ 2 , not_anytime_tree_search_queue_size.to_i ].max
       @verbosity_level = verbosity_level.to_i
 
       @rectangleguillotine_cut_type = rectangleguillotine_cut_type
@@ -107,84 +104,65 @@ module Ladb::OpenCutList
       parts = @part_ids.nil? ? group.parts : group.get_parts(@part_ids)
       return { :errors => [ 'default.error' ] } if parts.empty?
 
+      parts_count = parts.map(&:count).inject(0, :+)  # .map(&:count).inject(0, :+) == .sum { |portion| part.count } compatible with ruby < 2.4
+
       SKETCHUP_CONSOLE.clear
 
       bin_defs = []
-      item_defs = []
+      bin_types = []
 
-      bin_id = 0
-      item_id = 0
-
-      input = {
-        problem_type: @engine,
-        parameters: {
-          "optimization_mode": "not-anytime",
-          "verbosity_level": @verbosity_level,
-          "not_anytime_tree_search_queue_size": 512
-        },
-        instance: {
-          objective: @objective,
-          parameters: {
-            cut_type: @rectangleguillotine_cut_type,
-            cut_thickness: _to_packy(@spacing),
-            first_stage_orientation: @rectangleguillotine_first_stage_orientation
-          },
-          bin_types: [],
-          item_types: [],
-        }
-      }
-
-      # Add bins from scrap sheets
+      # Create bins from scrap sheets
       @scrap_sheet_sizes.split(';').each { |scrap_sheet_size|
+
         ddq = scrap_sheet_size.split('x')
         length = ddq[0].strip.to_l.to_f
         width = ddq[1].strip.to_l.to_f
-        count = [ 1, (ddq[2].nil? || ddq[2].strip.to_i == 0) ? 1 : ddq[2].strip.to_i ].max
-        bin_defs << Packy::BinDef.new(bin_id += 1, count, _to_packy(length), _to_packy(width), 1) # 1 = user defined
+        copies = [ 1, (ddq[2].nil? || ddq[2].strip.to_i == 0) ? 1 : ddq[2].strip.to_i ].max
 
-        input[:instance][:bin_types] << {
-          copies: count,
+        bin_types << {
+          copies: copies,
           type: 'rectangle',
           length: _to_packy(length),
-          width: _to_packy(width)
+          width: _to_packy(width),
+          left_trim: _to_packy(@trimming),
+          right_trim: _to_packy(@trimming),
+          bottom_trim: _to_packy(@trimming),
+          top_trim: _to_packy(@trimming)
         }
+        bin_defs << Packy::BinDef.new(length, width, 1) # 1 = user defined
 
       }
 
-      parts_count = parts.map(&:count).inject(0, :+)  # .map(&:count).inject(0, :+) == .sum { |portion| part.count } compatible with ruby < 2.4
-
-      # Add bin from std sheet
+      # Create bins from std sheets
       if @std_sheet_width > 0 && @std_sheet_length > 0
-        bin_defs << Packy::BinDef.new(bin_id += 1, parts_count, _to_packy(@std_sheet_length), _to_packy(@std_sheet_width), 0) # 0 = Standard
-
-        input[:instance][:bin_types] << {
+        
+        bin_types << {
           copies: parts_count,
           type: 'rectangle',
           length: _to_packy(@std_sheet_length),
-          width: _to_packy(@std_sheet_width)
+          width: _to_packy(@std_sheet_width),
+          left_trim: _to_packy(@trimming),
+          right_trim: _to_packy(@trimming),
+          bottom_trim: _to_packy(@trimming),
+          top_trim: _to_packy(@trimming)
         }
+        bin_defs << Packy::BinDef.new(@std_sheet_length, @std_sheet_width, 0) # 0 = Standard
 
       end
+
+      return { :errors => [ 'tab.cutlist.cuttingdiagram.error.no_sheet' ] } if bin_types.empty?
+
+      item_defs = []
+      item_types = []
 
       # Add items from parts
       fn_add_items = lambda { |part|
 
-        if @engine == ENGINE_IRREGULAR
+        projection_def = _compute_part_projection_def(PART_DRAWING_TYPE_2D_TOP, part, compute_shell: true)
 
-          projection_def = _compute_part_projection_def(PART_DRAWING_TYPE_2D_TOP, part, compute_shell: true)
+        if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
 
-          item_defs << Packy::ItemDef.new(
-            item_id += 1,
-            part.count,
-            @irregular_rotations,
-            projection_def.layer_defs.map { |layer_def|
-              next unless layer_def.type_outer? || layer_def.type_holes?
-              layer_def.poly_defs.map { |poly_def| Packy.points_to_rpath(layer_def.type_holes? ? poly_def.points.reverse : poly_def.points).map { |v| _to_packy(v) } }
-            }.flatten(1).compact,
-            part
-          )
-
-          input[:instance][:item_types] << {
+          item_types << {
             copies: part.count,
             shapes: projection_def.shell_def.shape_defs.map { |shape_def| {
               type: 'polygon',
@@ -199,14 +177,16 @@ module Ladb::OpenCutList
 
         else
 
-          input[:instance][:item_types] << {
+          item_types << {
             copies: part.count,
             length: _to_packy(part.def.size.length),
             width: _to_packy(part.def.size.width),
-            oriented: (group.material_grained  && !part.ignore_grain_direction) ? false : true
+            oriented: (group.material_grained && !part.ignore_grain_direction) ? true : false
           }
 
         end
+
+        item_defs << Packy::ItemDef.new(projection_def, part)
 
       }
       parts.each { |part|
@@ -219,6 +199,30 @@ module Ladb::OpenCutList
         end
       }
 
+      return { :errors => [ 'tab.cutlist.cuttingdiagram.error.no_parts' ] } if item_types.empty?
+
+      input = {
+        problem_type: @problem_type,
+        parameters: {
+          optimization_mode: "not-anytime",
+          verbosity_level: @verbosity_level,
+          not_anytime_tree_search_queue_size: @not_anytime_tree_search_queue_size,
+          time_limit: 50
+        },
+        instance: {
+          objective: @objective,
+          parameters: {
+            cut_type: @rectangleguillotine_cut_type,
+            cut_thickness: _to_packy(@spacing),
+            first_stage_orientation: @rectangleguillotine_first_stage_orientation
+          },
+          bin_types: bin_types,
+          item_types: item_types,
+        }
+      }
+
+
+
       puts "-- input --"
       puts input.to_json
       puts "-- input --"
@@ -230,61 +234,57 @@ module Ladb::OpenCutList
       puts output
       puts "-- output --"
 
+      return { :errors => [ output['error'] ] } if output.has_key?('error')
 
-      # case @engine
-      # when ENGINE_RECTANGLE
-      #   solution, message = Packy.execute_rectangle(bin_defs, item_defs, @objective, _to_packy(@spacing), _to_packy(@trimming), @verbosity_level)
-      # when ENGINE_RECTANGLEGUILLOTINE
-      #   solution, message = Packy.execute_rectangleguillotine(bin_defs, item_defs, @objective, @rectangleguillotine_cut_type, @rectangleguillotine_first_stage_orientation, _to_packy(@spacing), _to_packy(@trimming), @verbosity_level)
-      # when ENGINE_IRREGULAR
-      #   solution, message = Packy.execute_irregular(bin_defs, item_defs, @objective, _to_packy(@spacing), _to_packy(@trimming), @verbosity_level)
-      # when ENGINE_ONEDIMENSIONAL
-      #   solution, message = Packy.execute_onedimensional(bin_defs, item_defs, @objective, _to_packy(@spacing), _to_packy(@trimming), @verbosity_level)
-      # else
-      #   return { :errors => [ "Unknow engine : #{@engine}" ] }
-      # end
-      # # puts message.to_s
-      #
-      # {
-      #   'unused_bins_count' => solution.unused_bins.length,
-      #   'packed_bins_count' => solution.packed_bins.length,
-      #   'unplaced_items_count' => solution.unplaced_items.length,
-      #   'packed_bins' => solution.packed_bins.map { |bin| {
-      #     length: bin.def.length.to_l.to_s,
-      #     width: bin.def.width.to_l.to_s,
-      #     type: bin.def.type,
-      #     svg: _bin_to_svg(bin)
-      #   } },
-      #   'unused_bins' => solution.unused_bins.map { |bin| {
-      #     length: bin.def.length.to_l.to_s,
-      #     width: bin.def.width.to_l.to_s,
-      #     type: bin.def.type,
-      #     svg: _bin_to_svg(bin, '#d9534f')
-      #   } }
-      # }
-      {}
+      packed_bins = output["bins"].map do |raw_bin|
+        Packy::Bin.new(
+          bin_defs[raw_bin["bin_type_id"]],
+          raw_bin.fetch("items", []).map { |raw_item|
+            Packy::Item.new(
+              item_defs[raw_item["item_type_id"]],
+              raw_item.fetch("x", 0),
+              raw_item.fetch("y", 0),
+              raw_item.fetch("angle", 0)
+            )
+          },
+          raw_bin.fetch("cuts", []).map { |raw_cut|
+            Packy::Cut.new(
+              raw_cut["depth"],
+              raw_cut["x1"],
+              raw_cut["y1"],
+              raw_cut["x2"],
+              raw_cut["y2"],
+            )
+          }
+        )
+      end
+
+      {
+        :packed_bins => packed_bins.map { |bin| {
+          length: bin.def.length.to_l.to_s,
+          width: bin.def.width.to_l.to_s,
+          type: bin.def.type,
+          svg: _bin_to_svg(bin)
+        } }
+      }
     end
 
     private
 
     def _to_packy(l)
-      if @engine == ENGINE_IRREGULAR
-        return l.to_f.round(6)
-      end
-      (l.to_l.to_mm * 100.0).to_i
+      return l.round(8) if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
+      (l.to_l.to_mm * 10.0).to_i
     end
 
     def _from_packy(l)
-      if @engine == ENGINE_IRREGULAR
-        return l.to_f
-      end
-      l.mm / 100.0
+      return l if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
+      l.mm / 10.0
     end
 
     def _bin_to_svg(bin, bg_color = '#dddddd')
 
-      px_bin_length = _to_px(_from_packy(bin.def.length))
-      px_bin_width = _to_px(_from_packy(bin.def.width))
+      px_bin_length = _to_px(bin.def.length)
+      px_bin_width = _to_px(bin.def.width)
 
       svg = "<svg width='#{px_bin_length}' height='#{px_bin_width}' viewbox='0 -#{px_bin_width} #{px_bin_length} #{px_bin_width}'>"
       svg += "<rect x='0' y='-#{px_bin_width}' width='#{px_bin_length}' height='#{px_bin_width}' fill='#{bg_color}' stroke='none' />"
@@ -296,8 +296,8 @@ module Ladb::OpenCutList
         px_item_x = _to_px(l_item_x)
         px_item_y = -_to_px(l_item_y)
 
-        svg += "<g class='ladb-packy-part' transform='translate(#{px_item_x} #{px_item_y}) rotate(-#{item.angle.radians})'>"
-        svg += "<path d='#{item.def.paths.map { |path| "M #{Packy.rpath_to_points(path).map { |point| "#{_to_px(_from_packy(point.x)).round(2)},#{-_to_px(_from_packy(point.y)).round(2)}" }.join(' L ')} Z" }.join(' ')}' data-toggle='tooltip' data-html='true' title='<div>#{item.def.data.name}</div><div>x = #{l_item_x}</div><div>y = #{l_item_y}</div>' />"
+        svg += "<g class='ladb-packy-part' transform='translate(#{px_item_x} #{px_item_y}) rotate(-#{item.angle})'>"
+        svg += "<path d='#{item.def.projection_def.layer_defs.map { |layer_def| "#{layer_def.poly_defs.map { |poly_def| "M #{poly_def.points.map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y).round(2)}" }.join(' L ')} Z" }.join(' ')}" }.join(' ')}' data-toggle='tooltip' data-html='true' title='<div>#{item.def.data.name}</div><div>x = #{l_item_x}</div><div>y = #{l_item_y}</div>' />"
         svg += '</g>'
 
       end

@@ -4559,7 +4559,7 @@
                 var $widgetPreset = $('.ladb-widget-preset', $modal);
                 var $inputStdSheet = $('#ladb_select_std_sheet', $modal);
                 var $inputScrapSheetSizes = $('#ladb_input_scrap_sheet_sizes', $modal);
-                var $selectEngine = $('#ladb_select_engine', $modal);
+                var $radiosProblemType = $('input[name=ladb_radios_problem_type]', $modal);
                 var $selectObjective = $('#ladb_select_objective', $modal);
                 var $formGroupRectangleguillotine = $('.ladb-cutlist-packing-form-group-rectangleguillotine', $modal)
                 var $selectRectangleguillotineCutType = $('#ladb_select_rectangleguillotine_cut_type', $modal);
@@ -4568,37 +4568,42 @@
                 var $selectIrregularRotations = $('#ladb_select_irregular_rotations', $modal);
                 var $inputSpacing = $('#ladb_input_spacing', $modal);
                 var $inputTrimming = $('#ladb_input_trimming', $modal);
+                var $inputNotAnytimeTreeSearchQueueSize = $('#ladb_input_not_anytime_tree_search_queue_size', $modal);
                 var $selectVerbisotyLevel = $('#ladb_select_verbosity_level', $modal);
                 var $btnEditMaterial = $('#ladb_btn_edit_material', $modal);
                 var $btnUnloadLib = $('#ladb_btn_unload_lib', $modal);
                 var $btnGenerate = $('#ladb_btn_generate', $modal);
 
+                console.log($radiosProblemType);
+
                 var fnFetchOptions = function (options) {
                     options.std_sheet = $inputStdSheet.val();
                     options.scrap_sheet_sizes = $inputScrapSheetSizes.ladbTextinputTokenfield('getValidTokensList');
-                    options.engine = $selectEngine.val();
+                    options.problem_type = $radiosProblemType.filter(':checked').val();
                     options.objective = $selectObjective.val();
                     options.rectangleguillotine_cut_type = $selectRectangleguillotineCutType.val();
                     options.rectangleguillotine_first_stage_orientation = $selectRectangleguillotineFirstStageOrientation.val();
                     options.irregular_rotations = $selectIrregularRotations.val();
                     options.spacing = $inputSpacing.val();
                     options.trimming = $inputTrimming.val();
+                    options.not_anytime_tree_search_queue_size = $inputNotAnytimeTreeSearchQueueSize.val();
                     options.verbosity_level = $selectVerbisotyLevel.val();
                 }
                 var fnFillInputs = function (options) {
-                    $selectEngine.selectpicker('val', options.engine);
+                    $radiosProblemType.filter('[value=' + options.problem_type + ']').click();
                     $selectObjective.selectpicker('val', options.objective);
                     $selectRectangleguillotineCutType.selectpicker('val', options.rectangleguillotine_cut_type);
                     $selectRectangleguillotineFirstStageOrientation.selectpicker('val', options.rectangleguillotine_first_stage_orientation);
                     $selectIrregularRotations.selectpicker('val', options.irregular_rotations);
                     $inputSpacing.val(options.spacing);
                     $inputTrimming.val(options.trimming);
+                    $inputNotAnytimeTreeSearchQueueSize.val(options.not_anytime_tree_search_queue_size);
                     $selectVerbisotyLevel.selectpicker('val', options.verbosity_level);
                     fnUpdateFieldsVisibility();
                 }
                 var fnUpdateFieldsVisibility = function () {
-                    var isRectangleguillotine = $selectEngine.val() === 'rectangleguillotine';
-                    var isIrregular = $selectEngine.val() === 'irregular';
+                    var isRectangleguillotine = $radiosProblemType.filter(':checked').val() === 'rectangleguillotine';
+                    var isIrregular = $radiosProblemType.filter(':checked').val() === 'irregular';
                     if (isRectangleguillotine) $formGroupRectangleguillotine.show(); else $formGroupRectangleguillotine.hide();
                     if (isIrregular) $formGroupIrregular.show(); else $formGroupIrregular.hide();
                 };
@@ -4636,16 +4641,19 @@
                 $inputStdSheet.selectpicker(SELECT_PICKER_OPTIONS);
                 $inputScrapSheetSizes.ladbTextinputTokenfield({format: 'dxdxq'});
                 $inputScrapSheetSizes.ladbTextinputTokenfield('setTokens', packingOptions.scrap_sheet_sizes);
-                $selectEngine.selectpicker(SELECT_PICKER_OPTIONS).on('changed.bs.select', fnUpdateFieldsVisibility)                ;;
                 $selectObjective.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectRectangleguillotineCutType.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectRectangleguillotineFirstStageOrientation.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectIrregularRotations.selectpicker(SELECT_PICKER_OPTIONS);
                 $inputSpacing.ladbTextinputDimension();
                 $inputTrimming.ladbTextinputDimension();
+                $inputNotAnytimeTreeSearchQueueSize.ladbTextinputText();
                 $selectVerbisotyLevel.selectpicker(SELECT_PICKER_OPTIONS);
 
                 fnFillInputs(packingOptions);
+
+                // Bind radios
+                $radiosProblemType.on('change', fnUpdateFieldsVisibility);
 
                 // Bind tabs
                 $tabs.on('shown.bs.tab', function (e) {

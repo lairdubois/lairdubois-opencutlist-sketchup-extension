@@ -105,8 +105,8 @@ namespace Packy {
 
     void read_parameters(basic_json<>& j) override {
 
-      if (j.contains("time-limit")) {
-        parameters_.timer.set_time_limit(j["time-limit"].template get<double>());
+      if (j.contains("time_limit")) {
+        parameters_.timer.set_time_limit(j["time_limit"].template get<double>());
       }
       if (j.contains("verbosity_level")) {
         parameters_.verbosity_level = j["verbosity_level"].template get<int>();
@@ -178,7 +178,7 @@ namespace Packy {
       json j = {
               {"time", output.time}
       };
-      return j;
+      return std::move(j);
     }
 
   };
@@ -268,18 +268,30 @@ namespace Packy {
         const SolutionBin& bin = solution.bin(bin_pos);
 
         basic_json<>& j_bin = j_bins.emplace_back(json{
-                {"id", bin.bin_type_id},
-                {"copies", bin.copies}
+                {"bin_type_id", bin.bin_type_id},
+                {"copies",      bin.copies}
         });
 
         basic_json<>& j_items = j_bin["items"];
         for (const auto& item : bin.items) {
 
-          j_items.emplace_back(json{
-                  {"id", item.item_type_id},
-                  {"x",  item.bl_corner.x},
-                  {"y",  item.bl_corner.y},
-          });
+          const ItemType&  item_type = solution.instance().item_type(item.item_type_id);
+
+          if (item.rotate) {
+            j_items.emplace_back(json{
+                    {"item_type_id", item.item_type_id},
+                    {"x",            item.bl_corner.x + item_type.rect.y},
+                    {"y",            item.bl_corner.y},
+                    {"angle",        90.0}
+            });
+          } else {
+            j_items.emplace_back(json{
+                    {"item_type_id", item.item_type_id},
+                    {"x",            item.bl_corner.x},
+                    {"y",            item.bl_corner.y},
+                    {"angle",        0}
+            });
+          }
 
         }
 
@@ -484,9 +496,9 @@ namespace Packy {
 
         const SolutionBin& bin = solution.bin(bin_pos);
 
-        basic_json<>& j_bin = j_bins.emplace_back(json{
-                {"id", bin.bin_type_id},
-                {"copies", bin.copies}
+        basic_json<>& j_bin = j_bins.emplace_back(json {
+                {"bin_type_id", bin.bin_type_id},
+                {"copies",      bin.copies}
         });
 
         // Items.
@@ -502,17 +514,17 @@ namespace Packy {
 
           if (rotated) {
             j_items.push_back(json{
-                    {"id",    node.item_type_id},
-                    {"x",     node.r},
-                    {"y",     node.b},
-                    {"angle", 180.0},
+                    {"item_type_id", node.item_type_id},
+                    {"x",            node.r},
+                    {"y",            node.b},
+                    {"angle",        90.0},
             });
           } else {
             j_items.push_back(json{
-                    {"id",    node.item_type_id},
-                    {"x",     node.l},
-                    {"y",     node.b},
-                    {"angle", 0.0},
+                    {"item_type_id", node.item_type_id},
+                    {"x",            node.l},
+                    {"y",            node.b},
+                    {"angle",        0.0},
             });
           }
 
@@ -603,17 +615,17 @@ namespace Packy {
 
         const SolutionBin& bin = solution.bin(bin_pos);
 
-        basic_json<>& j_bin = j_bins.emplace_back(json {
-                {"id", bin.bin_type_id},
-                {"copies", bin.copies}
+        basic_json<>& j_bin = j_bins.emplace_back(json{
+                {"bin_type_id", bin.bin_type_id},
+                {"copies",      bin.copies}
         });
 
         basic_json<>& j_items = j_bin["items"];
         for (const auto& item : bin.items) {
 
           j_items.emplace_back(json{
-                  {"id", item.item_type_id},
-                  {"x",  item.start},
+                  {"item_type_id", item.item_type_id},
+                  {"x",            item.start},
           });
 
         }
@@ -692,9 +704,9 @@ namespace Packy {
       if (j.contains("allowed_rotations")) {
         for (auto& j_item: j["allowed_rotations"].items()) {
           auto& j_angles = j_item.value();
-          Angle angle_start_degrees = j_angles.value("start", 0.0);
-          Angle angle_end_degrees = j_angles.value("end", angle_start_degrees);
-          allowed_rotations.emplace_back(angle_start_degrees * M_PI / 180.0, angle_end_degrees * M_PI / 180.0);
+          Angle angle_start = j_angles.value("start", 0.0);
+          Angle angle_end = j_angles.value("end", angle_start);
+          allowed_rotations.emplace_back(angle_start, angle_end);
         }
       }
 
@@ -732,19 +744,19 @@ namespace Packy {
 
         const SolutionBin& bin = solution.bin(bin_pos);
 
-        basic_json<>& j_bin = j_bins.emplace_back(json {
-                {"id", bin.bin_type_id},
-                {"copies", bin.copies}
+        basic_json<>& j_bin = j_bins.emplace_back(json{
+                {"bin_type_id", bin.bin_type_id},
+                {"copies",      bin.copies}
         });
 
         basic_json<>& j_items = j_bin["items"];
         for (const auto& item : bin.items) {
 
-          j_items.emplace_back(json {
-                  {"id", item.item_type_id},
-                  {"x", item.bl_corner.x},
-                  {"y", item.bl_corner.y},
-                  {"angle", item.angle * 180.0 / M_PI}  // Returns angle in degrees}
+          j_items.emplace_back(json{
+                  {"item_type_id", item.item_type_id},
+                  {"x",            item.bl_corner.x},
+                  {"y",            item.bl_corner.y},
+                  {"angle",        item.angle}  // Returns angle in degrees
           });
 
         }

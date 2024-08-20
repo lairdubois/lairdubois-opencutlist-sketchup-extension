@@ -21,10 +21,9 @@
 {% block containerInner %}
     {{ parent() }}
     <table class="ladb-page">
-        <div>unused_bins_count = <strong>{{ unused_bins_count }}</strong></div>
-        <div>packed_bins_count = <strong>{{ packed_bins_count }}</strong></div>
-        <div class="text-{% if unplaced_items_count == 0 %}success{% else %}danger{% endif %}">unplaced_items_count = <strong>{{ unplaced_items_count }}</strong></div>
-        <hr>
+
+        {% include 'core/_alert-errors.twig' %}
+
         {% for bin in packed_bins %}
             <div style="text-align: center; margin-bottom: 20px;">
                 <strong>{{ bin.length }} x {{ bin.width }}</strong> <span>({{ ('tab.cutlist.cuttingdiagram.list.sheet_good_type_'~bin.type)|i18next }})</span>
@@ -37,5 +36,6 @@
                 <div>{{ bin.svg|raw }}</div>
             </div>
         {% endfor %}
+
     </table>
 {% endblock %}
