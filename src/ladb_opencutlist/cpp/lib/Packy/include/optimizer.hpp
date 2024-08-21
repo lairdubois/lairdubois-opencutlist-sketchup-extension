@@ -179,8 +179,10 @@ namespace Packy {
      * Output
      */
     virtual json to_json(const Output& output) {
+      auto& best_solution = output.solution_pool.best();
       json j = {
-              {"time", output.time}
+              {"time", output.time},
+              {"number_of_bins", best_solution.number_of_bins()},
       };
       return std::move(j);
     }
@@ -535,58 +537,55 @@ namespace Packy {
 
           }
 
-          if (node.item_type_id >= 0 || node.children.empty()) {
+          // Extract cuts
 
-            // Extract cuts
+          if (node.d == 0) {
 
-            if (node.d == 0) {
+            if (bin_type.left_trim + bin_type.right_trim + bin_type.bottom_trim + bin_type.top_trim > 0) {
 
-              if (bin_type.left_trim + bin_type.right_trim + bin_type.bottom_trim + bin_type.top_trim > 0) {
+              // Bottom
+              j_cuts.emplace_back(json{
+                      {"depth", node.d},
+                      {"x1",    node.l - (instance.first_stage_orientation() == CutOrientation::Horizontal ? bin_type.left_trim : 0)},
+                      {"y1",    node.b - instance.cut_thickness()},
+                      {"x2",    node.r + bin_type.right_trim},
+                      {"y2",    node.b}
+              });
 
-                // Bottom
-                j_cuts.emplace_back(json{
-                        {"depth", node.d},
-                        {"x1",    node.l - (instance.first_stage_orientation() == CutOrientation::Horizontal ? bin_type.left_trim : 0)},
-                        {"y1",    node.b - instance.cut_thickness()},
-                        {"x2",    node.r + bin_type.right_trim},
-                        {"y2",    node.b}
-                });
-
-                // Left
-                j_cuts.emplace_back(json{
-                        {"depth", node.d},
-                        {"x1",    node.l - instance.cut_thickness()},
-                        {"y1",    node.b - (instance.first_stage_orientation() == CutOrientation::Vertical ? bin_type.bottom_trim : 0)},
-                        {"x2",    node.l},
-                        {"y2",    node.t + bin_type.top_trim}
-                });
-
-              }
-
-            } else if (node.f >= 0) {
-
-              const SolutionNode &parent_node = bin.nodes[node.f];
-
-              if (node.r != parent_node.r) {
-                j_cuts.emplace_back(json{
-                        {"depth", node.d},
-                        {"x1",    node.r},
-                        {"y1",    node.b},
-                        {"x2",    node.r + instance.cut_thickness()},
-                        {"y2",    node.t + (node.d == 1 ? bin_type.top_trim : 0)}
-                });
-              }
-              if (node.t != parent_node.t) {
-                j_cuts.emplace_back(json{
-                        {"depth", node.d},
-                        {"x1",    node.l},
-                        {"y1",    node.t},
-                        {"x2",    node.r + (node.d == 1 ? bin_type.right_trim : 0)},
-                        {"y2",    node.t + instance.cut_thickness()}
-                });
-              }
+              // Left
+              j_cuts.emplace_back(json{
+                      {"depth", node.d},
+                      {"x1",    node.l - instance.cut_thickness()},
+                      {"y1",    node.b - (instance.first_stage_orientation() == CutOrientation::Vertical ? bin_type.bottom_trim : 0)},
+                      {"x2",    node.l},
+                      {"y2",    node.t + bin_type.top_trim}
+              });
 
             }
+
+          } else if (node.d >= 0 && node.f >= 0) {
+
+            const SolutionNode &parent_node = bin.nodes[node.f];
+
+            if (node.r != parent_node.r) {
+              j_cuts.emplace_back(json{
+                      {"depth", node.d},
+                      {"x1",    node.r},
+                      {"y1",    node.b},
+                      {"x2",    node.r + instance.cut_thickness()},
+                      {"y2",    node.t + (node.d == 1 ? bin_type.top_trim : 0)}
+              });
+            }
+            if (node.t != parent_node.t) {
+              j_cuts.emplace_back(json{
+                      {"depth", node.d},
+                      {"x1",    node.l},
+                      {"y1",    node.t},
+                      {"x2",    node.r + (node.d == 1 ? bin_type.right_trim : 0)},
+                      {"y2",    node.t + instance.cut_thickness()}
+              });
+            }
+
 
           }
 

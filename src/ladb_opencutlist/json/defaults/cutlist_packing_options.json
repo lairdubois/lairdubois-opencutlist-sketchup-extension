@@ -18,6 +18,7 @@
     "irregular_rotations": 0,
     "spacing": { "metric": "20mm", "imperial": "1\"" },
     "trimming": { "metric": "10mm", "imperial": "1/2\"" },
+    "time_limit": 20,
     "not_anytime_tree_search_queue_size": 512,
     "verbosity_level": 0
   }

@@ -815,6 +815,9 @@ tab:
       option_irregular_rotations: Rotations
       option_irregular_rotations_help: |
         ...
+      option_time_limit: Time limit
+      option_time_limit_help: |
+        ...
       option_not_anytime_tree_search_queue_size: Queue size
       option_not_anytime_tree_search_queue_size_help: |
         ...

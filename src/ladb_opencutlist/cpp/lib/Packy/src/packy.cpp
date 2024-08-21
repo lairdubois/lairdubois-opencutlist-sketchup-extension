@@ -22,7 +22,7 @@ std::mutex mtx;
 std::string solution_output;
 std::string advance_output;
 
-void optimize_runner(char* input) {
+void optimize_task(char* input) {
 
   mtx.lock();
   solution_output.clear();
@@ -57,7 +57,7 @@ void optimize_runner(char* input) {
 
 DLL_EXPORTS void c_optimize_start(char* input) {
 
-  std::thread thread(optimize_runner, input);
+  std::thread thread(optimize_task, input);
   thread.detach();
 
 }

@@ -4568,6 +4568,7 @@
                 var $selectIrregularRotations = $('#ladb_select_irregular_rotations', $modal);
                 var $inputSpacing = $('#ladb_input_spacing', $modal);
                 var $inputTrimming = $('#ladb_input_trimming', $modal);
+                var $inputTimeLimit = $('#ladb_input_time_limit', $modal);
                 var $inputNotAnytimeTreeSearchQueueSize = $('#ladb_input_not_anytime_tree_search_queue_size', $modal);
                 var $selectVerbisotyLevel = $('#ladb_select_verbosity_level', $modal);
                 var $btnEditMaterial = $('#ladb_btn_edit_material', $modal);
@@ -4584,6 +4585,7 @@
                     options.irregular_rotations = $selectIrregularRotations.val();
                     options.spacing = $inputSpacing.val();
                     options.trimming = $inputTrimming.val();
+                    options.time_limit = $inputTimeLimit.val();
                     options.not_anytime_tree_search_queue_size = $inputNotAnytimeTreeSearchQueueSize.val();
                     options.verbosity_level = $selectVerbisotyLevel.val();
                 }
@@ -4595,6 +4597,7 @@
                     $selectIrregularRotations.selectpicker('val', options.irregular_rotations);
                     $inputSpacing.val(options.spacing);
                     $inputTrimming.val(options.trimming);
+                    $inputTimeLimit.val(options.time_limit);
                     $inputNotAnytimeTreeSearchQueueSize.val(options.not_anytime_tree_search_queue_size);
                     $selectVerbisotyLevel.selectpicker('val', options.verbosity_level);
                     fnUpdateFieldsVisibility();
@@ -4645,6 +4648,7 @@
                 $selectIrregularRotations.selectpicker(SELECT_PICKER_OPTIONS);
                 $inputSpacing.ladbTextinputDimension();
                 $inputTrimming.ladbTextinputDimension();
+                $inputTimeLimit.ladbTextinputText();
                 $inputNotAnytimeTreeSearchQueueSize.ladbTextinputText();
                 $selectVerbisotyLevel.selectpicker(SELECT_PICKER_OPTIONS);
 
@@ -4704,7 +4708,7 @@
 
                                 if (response.running) {
 
-                                    setTimeout(fnAdvance, 1000);
+                                    setTimeout(fnAdvance, 500);
 
                                 } else {
 
@@ -4731,6 +4735,35 @@
                                     $btnClose.on('click', function () {
                                         that.popSlide();
                                     });
+                                    $('.ladb-btn-setup-model-units', $slide).on('click', function() {
+                                        $(this).blur();
+                                        that.dialog.executeCommandOnTab('settings', 'highlight_panel', { panel:'model' });
+                                    });
+                                    $('.ladb-btn-toggle-no-print', $slide).on('click', function () {
+                                        var $group = $(this).parents('.ladb-cutlist-group');
+                                        if ($group.hasClass('no-print')) {
+                                            that.showGroup($group, true);
+                                        } else {
+                                            that.hideGroup($group, true);
+                                        }
+                                        $(this).blur();
+                                    });
+                                    $('.ladb-btn-scrollto-prev-group', $slide).on('click', function () {
+                                        var $group = $(this).parents('.ladb-cutlist-group');
+                                        var groupId = $group.data('bin-index');
+                                        var $target = $('.ladb-cutlist-cuttingdiagram-group[data-bin-index=' + (parseInt(groupId) - 1) + ']');
+                                        that.scrollSlideToTarget($slide, $target, true, true);
+                                        $(this).blur();
+                                        return false;
+                                    });
+                                    $('.ladb-btn-scrollto-next-group', $slide).on('click', function () {
+                                        var $group = $(this).parents('.ladb-cutlist-group');
+                                        var groupId = $group.data('bin-index');
+                                        var $target = $('.ladb-cutlist-cuttingdiagram-group[data-bin-index=' + (parseInt(groupId) + 1) + ']');
+                                        that.scrollSlideToTarget($slide, $target, true, true);
+                                        $(this).blur();
+                                        return false;
+                                    });
 
                                     // Finish progress feedback
                                     that.dialog.finishProgress();
@@ -4743,7 +4776,7 @@
                     }
 
                     window.requestAnimationFrame(function () {
-                        that.dialog.startProgress(20);
+                        that.dialog.startProgress(parseInt(packingOptions.time_limit) * 2);
                         rubyCallCommand('cutlist_group_packing_start', $.extend({
                             group_id: groupId,
                             part_ids: isPartSelection ? that.selectionPartIds : null

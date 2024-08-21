@@ -57,7 +57,8 @@ module Ladb::OpenCutList
                    objective: 'bin-packing',
                    spacing: '20mm',
                    trimming: '10mm',
-                   not_anytime_tree_search_queue_size: 512,
+                   time_limit: 20,
+                   not_anytime_tree_search_queue_size: 16,
                    verbosity_level: 1,
 
                    rectangleguillotine_cut_type: 'exact',
@@ -80,6 +81,7 @@ module Ladb::OpenCutList
       @objective = objective
       @spacing = DimensionUtils.instance.str_to_ifloat(spacing).to_l.to_f
       @trimming = DimensionUtils.instance.str_to_ifloat(trimming).to_l.to_f
+      @time_limit = [ 1 , time_limit.to_i ].max
       @not_anytime_tree_search_queue_size = [ 2 , not_anytime_tree_search_queue_size.to_i ].max
       @verbosity_level = verbosity_level.to_i
 
@@ -113,8 +115,6 @@ module Ladb::OpenCutList
         return { :errors => [ 'default.error' ] } if parts.empty?
 
         parts_count = parts.map(&:count).inject(0, :+)  # .map(&:count).inject(0, :+) == .sum { |portion| part.count } compatible with ruby < 2.4
-
-        SKETCHUP_CONSOLE.clear
 
         bin_types = []
 
@@ -211,9 +211,9 @@ module Ladb::OpenCutList
           problem_type: @problem_type,
           parameters: {
             optimization_mode: "not-anytime",
-            verbosity_level: @verbosity_level,
+            time_limit: @time_limit,
             not_anytime_tree_search_queue_size: @not_anytime_tree_search_queue_size,
-            time_limit: 20
+            verbosity_level: @verbosity_level
           },
           instance: {
             objective: @objective,
@@ -228,9 +228,10 @@ module Ladb::OpenCutList
         }
 
         if @verbosity_level > 0
-          puts "-- input --"
+          SKETCHUP_CONSOLE.clear
+          puts '-- input --'
           puts input.to_json
-          puts "-- input --"
+          puts '-- input --'
         end
 
         Packy.optimize_start(input)
@@ -245,40 +246,45 @@ module Ladb::OpenCutList
         return output if output.has_key?('running')
 
         if @verbosity_level > 0
-          puts " "
-          puts "-- output --"
-          pp output
-          puts "-- output --"
+          puts ' '
+          puts '-- output --'
+          puts output.to_json
+          puts '-- output --'
         end
 
         return { :errors => [ output['error'] ] } if output.has_key?('error')
         return { :errors => [ 'tab.cutlist.cuttingdiagram.error.no_placement_possible_2d' ] } if output['bins'].empty?
 
-        packed_bins = output["bins"].map do |raw_bin|
+        bins = output['bins'].map do |raw_bin|
           Packy::Bin.new(
-            @bin_defs[raw_bin["bin_type_id"]],
-            raw_bin["items"].is_a?(Array) ? raw_bin["items"].map { |raw_item|
+            @bin_defs[raw_bin['bin_type_id']],
+            raw_bin['copies'],
+            raw_bin['items'].is_a?(Array) ? raw_bin['items'].map { |raw_item|
               Packy::Item.new(
-                @item_defs[raw_item["item_type_id"]],
-                raw_item.fetch("x", 0),
-                raw_item.fetch("y", 0),
-                raw_item.fetch("angle", 0)
+                @item_defs[raw_item['item_type_id']],
+                _from_packy(raw_item.fetch('x', 0)).to_l,
+                _from_packy(raw_item.fetch('y', 0)).to_l,
+                raw_item.fetch('angle', 0)
               )
             } : [],
-            raw_bin["cuts"].is_a?(Array) ? raw_bin["cuts"].map { |raw_cut|
+            raw_bin['cuts'].is_a?(Array) ? raw_bin['cuts'].map { |raw_cut|
               Packy::Cut.new(
-                raw_cut["depth"],
-                raw_cut["x1"],
-                raw_cut["y1"],
-                raw_cut["x2"],
-                raw_cut["y2"],
+                raw_cut['depth'],
+                _from_packy(raw_cut['x1']).to_l,
+                _from_packy(raw_cut['y1']).to_l,
+                _from_packy(raw_cut['x2']).to_l,
+                _from_packy(raw_cut['y2']).to_l,
               )
             } : []
           )
         end
 
         {
-          :packed_bins => packed_bins.map { |bin| {
+          :summary => {
+            :total_used_count =>output['number_of_bins']
+          },
+          :bins => bins.map { |bin| {
+            count: bin.copies,
             length: bin.def.length.to_l.to_s,
             width: bin.def.width.to_l.to_s,
             type: bin.def.type,
@@ -302,56 +308,77 @@ module Ladb::OpenCutList
 
     def _bin_to_svg(bin, bg_color = '#dddddd')
 
+      bin_dimension_font_size = 16
+      dimension_font_size = 12
+      number_font_size = 26
+      min_number_font_size = 8
+
+      bin_dimension_offset = 10
+      dimension_offset = 1
+      leftover_bullet_offset = 10
+
+      bin_outline_width = 1
+      item_outline_width = 2
+      cut_outline_width = 2
+      edge_width = 2
+
+      max_bin_length = bin.def.length # TODO
+
       px_bin_length = _to_px(bin.def.length)
       px_bin_width = _to_px(bin.def.width)
 
-      svg = "<svg width='#{px_bin_length}' height='#{px_bin_width}' viewbox='0 -#{px_bin_width} #{px_bin_length} #{px_bin_width}'>"
-      svg += "<rect x='0' y='-#{px_bin_width}' width='#{px_bin_length}' height='#{px_bin_width}' fill='#{bg_color}' stroke='none' />"
-      bin.items.each do |item|
+      vb_offset_x = (max_bin_length - px_bin_length) / 2
+      vb_x = (bin_outline_width + bin_dimension_offset + bin_dimension_font_size + vb_offset_x) * -1
+      vb_y = (bin_outline_width + bin_dimension_offset + bin_dimension_font_size) * -1
+      vb_width = px_bin_length + (bin_outline_width + bin_dimension_offset + bin_dimension_font_size + vb_offset_x) * 2
+      vb_height = px_bin_width + (bin_outline_width + bin_dimension_offset + bin_dimension_font_size) * 2
 
-        l_item_x = _from_packy(item.x).to_l
-        l_item_y = _from_packy(item.y).to_l
-
-        px_item_x = _to_px(l_item_x)
-        px_item_y = -_to_px(l_item_y)
-
-        svg += "<g class='ladb-packy-part' transform='translate(#{px_item_x} #{px_item_y}) rotate(-#{item.angle})'>"
-        svg += "<path d='#{item.def.projection_def.layer_defs.map { |layer_def| "#{layer_def.poly_defs.map { |poly_def| "M #{poly_def.points.map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y).round(2)}" }.join(' L ')} Z" }.join(' ')}" }.join(' ')}' data-toggle='tooltip' data-html='true' title='<div>#{item.def.data.name}</div><div>x = #{l_item_x}</div><div>y = #{l_item_y}</div>' />"
+      svg = "<svg viewbox='#{vb_x} #{vb_y} #{vb_width} #{vb_height}' style='max-height: #{vb_height}px'>"
+        svg += "<text class='sheet-dimension' x='#{px_bin_length / 2}' y='-#{bin_outline_width + bin_dimension_offset}' font-size='#{bin_dimension_font_size}' text-anchor='middle' dominant-baseline='alphabetic'>#{bin.def.length.to_l}</text>"
+        svg += "<text class='sheet-dimension' x='-#{bin_outline_width + bin_dimension_offset}' y='#{px_bin_width / 2}' font-size='#{bin_dimension_font_size}' text-anchor='middle' dominant-baseline='alphabetic' transform='rotate(-90 -#{bin_outline_width + bin_dimension_offset},#{px_bin_width / 2})'>#{bin.def.width.to_l}</text>"
+        svg += "<g class='sheet'>"
+          svg += "<rect class='sheet-outer' x='-1' y='-1' width='#{px_bin_length + 2}' height='#{px_bin_width + 2}' />"
+          svg += "<rect class='sheet-inner' x='0' y='0' width='#{px_bin_length}' height='#{px_bin_width}' />"
         svg += '</g>'
+        bin.items.each do |item|
 
-      end
-      bin.cuts.sort_by { |cut| cut.depth }.each do |cut|
+          px_item_x = _to_px(item.x)
+          px_item_y = px_bin_width - _to_px(item.y)
+          px_item_length = _to_px(item.def.data.def.size.length)
+          px_item_width = _to_px(item.def.data.def.size.width)
 
-        next if cut.depth < 0
+          svg += "<g class='part' transform='translate(#{px_item_x} #{px_item_y}) rotate(-#{item.angle})' data-toggle='tooltip' data-html='true' title='<div>#{item.def.data.name}</div><div>x = #{item.x}</div><div>y = #{item.y}</div>'>"
+            svg += "<rect class='part-projection-outer' x='0' y='-#{px_item_width}' width='#{px_item_length}' height='#{px_item_width}' />" unless bin.cuts.empty?
+            svg += "<g class='part-projection'>"
+              svg += "<path class='part-projection-shape' d='#{item.def.projection_def.layer_defs.map { |layer_def| "#{layer_def.poly_defs.map { |poly_def| "M #{poly_def.points.map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y).round(2)}" }.join(' L ')} Z" }.join(' ')}" }.join(' ')}' />"
+            svg += '</g>'
+          svg += '</g>'
 
-        l_cut_x1 = _from_packy(cut.x1).to_l
-        l_cut_y1 = _from_packy(cut.y1).to_l
-        l_cut_x2 = _from_packy(cut.x2).to_l
-        l_cut_y2 = _from_packy(cut.y2).to_l
-
-        px_cut_x1 = _to_px(l_cut_x1)
-        px_cut_y1 = -_to_px(l_cut_y1)
-        px_cut_x2 = _to_px(l_cut_x2)
-        px_cut_y2 = -_to_px(l_cut_y2)
-
-        case cut.depth
-        when 0
-          color = ColorUtils.color_to_hex(Sketchup::Color.new('red').blend(Sketchup::Color.new('blue'), 1.0))
-        when 1
-          color = ColorUtils.color_to_hex(Sketchup::Color.new('red').blend(Sketchup::Color.new('blue'), 0.8))
-        when 2
-          color = ColorUtils.color_to_hex(Sketchup::Color.new('red').blend(Sketchup::Color.new('blue'), 0.6))
-        when 3
-          color = ColorUtils.color_to_hex(Sketchup::Color.new('red').blend(Sketchup::Color.new('blue'), 0.4))
-        when 4
-          color = ColorUtils.color_to_hex(Sketchup::Color.new('red').blend(Sketchup::Color.new('blue'), 0.2))
-        else
-          color = '#0000ff'
         end
+        bin.cuts.sort_by { |cut| cut.depth }.each do |cut|
 
-        svg += "<rect class='ladb-packy-cut' x='#{px_cut_x1}' y='#{px_cut_y2}' width='#{px_cut_x2 - px_cut_x1}' height='#{(px_cut_y1 - px_cut_y2).abs}' stroke='none' fill='#{color}' data-toggle='tooltip' title='depth = #{cut.depth}' />"
+          px_cut_x1 = _to_px(cut.x1)
+          px_cut_y1 = px_bin_width - _to_px(cut.y1)
+          px_cut_x2 = _to_px(cut.x2)
+          px_cut_y2 = px_bin_width - _to_px(cut.y2)
 
-      end
+          case cut.depth
+          when 0
+            clazz = ' cut-trimming'
+          when 1
+            clazz = ' cut-bounding'
+          when 2
+            clazz = ' cut-internal-through'
+          else
+            clazz = ''
+          end
+
+          svg += "<g class='cut#{clazz}#{cut.depth < 3 ? ' cut-highlighted' : ''}' data-toggle='tooltip' title='depth = #{cut.depth}'>"
+            svg += "<rect class='cut-outer' x='#{px_cut_x1 - cut_outline_width}' y='#{px_cut_y2 - cut_outline_width}' width='#{px_cut_x2 - px_cut_x1 + cut_outline_width * 2}' height='#{(px_cut_y1 - px_cut_y2 + cut_outline_width * 2).abs}' />"
+            svg += "<rect class='cut-inner' x='#{px_cut_x1}' y='#{px_cut_y2}' width='#{px_cut_x2 - px_cut_x1}' height='#{(px_cut_y1 - px_cut_y2).abs}' />"
+          svg += "</g>"
+
+        end
       svg += '</svg>'
 
       svg

@@ -54,7 +54,7 @@ module Ladb::OpenCutList::Fiddle
     ItemDef = Struct.new(:projection_def, :data)
 
     Solution = Struct.new(:unused_bins, :packed_bins, :unplaced_items)
-    Bin = Struct.new(:def, :items, :cuts)
+    Bin = Struct.new(:def, :copies, :items, :cuts)
     Item = Struct.new(:def, :x, :y, :angle)  # x, y are int64
     Cut = Struct.new(:depth, :x1, :y1, :x2, :y2)  # x1, y1, x2, y2 are int64
 
