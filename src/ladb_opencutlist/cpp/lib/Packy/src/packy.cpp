@@ -7,6 +7,8 @@
 #include <stdexcept>
 #include <thread>
 #include <mutex>
+#include <future>
+#include <chrono>
 
 #include <nlohmann/json.hpp>
 
@@ -19,62 +21,46 @@ extern "C" {
 
 std::mutex mtx;
 
-std::string solution_output;
-std::string advance_output;
-
-void optimize_task(char* input) {
-
-  mtx.lock();
-  solution_output.clear();
-  advance_output.clear();
-  mtx.unlock();
-
-  try {
-
-    std::stringstream stream;
-    stream << input;
-
-    OptimizerBuilder optimizer_builder;
-    Optimizer& optimizer = optimizer_builder.build(stream);
-
-    json j_output = optimizer.optimize();
-
-    mtx.lock();
-    solution_output = j_output.dump();
-    mtx.unlock();
-
-  } catch (const std::exception &e) {
-    mtx.lock();
-    solution_output = json{{"error", "Packy: " + ((std::string) e.what())}}.dump();
-    mtx.unlock();
-  } catch (...) {
-    mtx.lock();
-    solution_output = json{{"error", "Packy: Unknow error"}}.dump();
-    mtx.unlock();
-  }
-
-}
+std::shared_future<json> optimize_future_;
+std::string optimize_str_output_;
 
 DLL_EXPORTS void c_optimize_start(char* input) {
 
-  std::thread thread(optimize_task, input);
-  thread.detach();
+  optimize_future_ = std::async(std::launch::async, [input]{
+    json j_ouput;
+
+    try {
+
+      std::stringstream is;
+      is << input;
+
+      OptimizerBuilder optimizer_builder;
+      Optimizer& optimizer = (*optimizer_builder.build(is));
+
+      j_ouput = optimizer.optimize();
+
+    } catch(const std::exception& e) {
+      j_ouput["error"] = "\033[1;31mError: " + std::string(e.what()) + "\033[0m";
+    } catch( ... ) {
+      j_ouput["error"] = "\033[1;31mUnknow Error\033[0m";
+    }
+
+    return std::move(j_ouput);
+  }).share();
 
 }
 
 DLL_EXPORTS char* c_optimize_advance() {
 
-  mtx.lock();
-  bool running = solution_output.empty();
-  mtx.unlock();
-
-  if (running) {
-    advance_output.clear();
-    advance_output = json{{"running", true}}.dump();
-    return (char*)advance_output.c_str();
+  std::future_status status = optimize_future_.wait_for(std::chrono::milliseconds(0));
+  if (status == std::future_status::ready) {
+    optimize_str_output_ = optimize_future_.get().dump();
+    return (char*)optimize_str_output_.c_str();
   } else {
-    return (char*)solution_output.c_str();
+    optimize_str_output_ = json{{"running", true}, {"status", status}}.dump();
+    return (char*)optimize_str_output_.c_str();
   }
+
 }
 
 DLL_EXPORTS char* c_version() {

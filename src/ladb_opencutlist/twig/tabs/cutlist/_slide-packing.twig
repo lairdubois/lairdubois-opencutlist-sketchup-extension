@@ -62,6 +62,7 @@
         </table>
 
         {% set binIndex = 1 %}
+        {% set binStrippedname = 'good' %}
         {% for bin in bins %}
             <table id="ladb_cuttingdiagram_group_{{ bin.type_id }}" data-group-id="{{ group.id }}_{{ bin.type_id }}" data-bin-index="{{ loop.index }}" class="table table-bordered ladb-cutlist-group ladb-cutlist-cuttingdiagram-group">
                 <thead>

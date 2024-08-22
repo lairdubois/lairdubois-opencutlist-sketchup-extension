@@ -315,7 +315,7 @@ module Ladb::OpenCutList
       min_number_font_size = 8
 
       bin_dimension_offset = 10
-      dimension_offset = 1
+      dimension_offset = 3
       leftover_bullet_offset = 10
 
       bin_outline_width = 1
@@ -359,7 +359,9 @@ module Ladb::OpenCutList
             svg += "<g class='item-projection'>"
               svg += "<path stroke='black' stroke-width='0.5' class='item-projection-shape' d='#{item.def.projection_def.layer_defs.map { |layer_def| "#{layer_def.poly_defs.map { |poly_def| "M #{(layer_def.type_holes? ? poly_def.points.reverse : poly_def.points).map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y).round(2)}" }.join(' L ')} Z" }.join(' ')}" }.join(' ')}' />"
             svg += '</g>'
-            svg += "<text class='item-number' x='#{px_item_length / 2}' y='-#{px_item_width / 2}' font-size='#{[ number_font_size, px_item_width ].min}' text-anchor='middle' dominant-baseline='central'>#{item.def.data.number}</text>"
+            svg += "<text class='item-dimension' x='#{px_item_length - dimension_offset}' y='-#{px_item_width - dimension_offset}' font-size='#{dimension_font_size}' text-anchor='end' dominant-baseline='hanging'>#{item.def.data.length.gsub(/~ /, '')}</text>" unless @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
+            svg += "<text class='item-dimension' x='#{dimension_offset}' y='-#{dimension_offset}' font-size='#{dimension_font_size}' text-anchor='start' dominant-baseline='hanging' transform='rotate(-90 #{dimension_offset} -#{dimension_offset})'>#{item.def.data.width.gsub(/~ /, '')}</text>" unless @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
+            svg += "<text class='item-number' x='#{px_item_length / 2}' y='-#{px_item_width / 2}' font-size='#{[ number_font_size, [ px_item_width * 0.8 , 6 ].max ].min}' text-anchor='middle' dominant-baseline='central'>#{item.def.data.number}</text>"
           svg += '</g>'
 
         end

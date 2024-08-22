@@ -33,6 +33,7 @@
     <ul class="nav nav-tabs nav-justified" role="tablist">
         <li role="presentation"{% if tab == 'material' %} class="active"{% endif %}><a href="#tab_packing_options_material" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-material-type-2"></i> {{ 'tab.cutlist.cuttingdiagram.options_material'|i18next }}</a></li>
         <li role="presentation"{% if tab == 'config' %} class="active"{% endif %}><a href="#tab_packing_options_config" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-settings"></i> {{ 'tab.cutlist.cuttingdiagram.options_config'|i18next }}</a></li>
+        <li role="presentation"{% if tab == 'tuning' %} class="active"{% endif %}><a href="#tab_packing_options_tuning" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-bug"></i> {{ 'tab.cutlist.cuttingdiagram.options_tuning'|i18next }}</a></li>
     </ul>
 {% endblock %}
 
@@ -120,6 +121,7 @@
                         </select>
                     </div>
                 </div>
+                <hr>
                 <div class="form-group">
                     <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_spacing_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                     <label class="control-label col-xs-5">{{ 'tab.cutlist.cuttingdiagram.option_spacing'|i18next }}</label>
@@ -134,7 +136,10 @@
                         <input type="text" class="form-control" id="ladb_input_trimming">
                     </div>
                 </div>
-                <hr>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane{% if tab == 'tuning' %} active{% endif %}" id="tab_packing_options_tuning">
+            <div class="form form-horizontal" style="margin-top: 15px;">
                 <div class="form-group">
                     <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_time_limit_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                     <label class="control-label col-xs-5">{{ 'tab.cutlist.cuttingdiagram.option_time_limit'|i18next }}</label>

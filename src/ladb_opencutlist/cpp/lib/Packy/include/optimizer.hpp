@@ -31,6 +31,12 @@ namespace Packy {
     virtual ~Optimizer() = default;
 
     /*
+     * Getters
+     */
+
+    virtual optimizationtools::Parameters& parameters() = 0;
+
+    /*
      * Read:
      */
 
@@ -91,6 +97,8 @@ namespace Packy {
 
   };
 
+  typedef std::shared_ptr<Optimizer> OptimizerPtr;
+
   template<typename InstanceBuilder, typename OptimizeParameters, typename Output>
   class TypedOptimizer : public Optimizer {
 
@@ -98,6 +106,14 @@ namespace Packy {
 
     /** Constructor. */
     TypedOptimizer() = default;
+
+    /*
+     * Getters
+     */
+
+    optimizationtools::Parameters& parameters() override {
+      return parameters_;
+    };
 
     /*
      * Read:
@@ -823,7 +839,7 @@ namespace Packy {
 
         basic_json<>& j_bin = j_bins.emplace_back(json{
                 {"bin_type_id", bin.bin_type_id},
-                {"copies",      bin.copies}
+                {"copies",      bin.copies},
         });
 
         basic_json<>& j_items = j_bin["items"] = json::array();

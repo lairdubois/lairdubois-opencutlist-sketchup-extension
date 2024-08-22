@@ -691,6 +691,7 @@ tab:
       end_msg: Optimisation terminée
       options_material: Matière
       options_config: Configuration
+      options_tuning: Tuning
       options_display: Affichage
       option_bar_folding_dimensional: Regrouper les barres identiques
       option_bar_folding_edge: Regrouper les bandes identiques

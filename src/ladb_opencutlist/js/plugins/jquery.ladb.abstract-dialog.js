@@ -97,7 +97,7 @@ LadbAbstractDialog.prototype.startProgress = function (maxSteps) {
     this.progressStep = 0;
 
     this.$progress = $(Twig.twig({ref: 'core/_progress.twig'}).render({
-        hiddenProgressBar: this.progressMaxSteps <= 1
+        hiddenProgressBar: true //this.progressMaxSteps <= 1
     }));
     this.$progressBar = $('.progress-bar', this.$progress);
 
@@ -109,6 +109,7 @@ LadbAbstractDialog.prototype.advanceProgress = function (step) {
     if (this.$progress) {
         this.progressStep = Math.min(this.progressMaxSteps, this.progressStep + step);
         this.$progressBar.css('width', ((this.progressStep / this.progressMaxSteps) * 100) + '%');
+        $('.progress', this.$progress).show();
     }
 };
 

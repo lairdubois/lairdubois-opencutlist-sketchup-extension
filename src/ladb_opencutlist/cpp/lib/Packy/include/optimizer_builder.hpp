@@ -11,15 +11,11 @@ namespace Packy {
 
   public:
 
-    /** Destructor. */
-    ~OptimizerBuilder() {
-      delete optimizer_ptr_;
-    }
-
     /*
      * Build:
      */
-    Optimizer& build(const std::string& path) {
+
+    OptimizerPtr build(const std::string& path) {
 
       std::ifstream file(path);
       if (!file.good()) {
@@ -29,10 +25,10 @@ namespace Packy {
       return build(file);
     }
 
-    Optimizer& build(std::istream& stream) {
+    OptimizerPtr build(std::istream& is) {
 
       nlohmann ::json j;
-      stream >> j;
+      is >> j;
 
       if (j.contains("problem_type")) {
 
@@ -40,16 +36,14 @@ namespace Packy {
         std::stringstream ss(j.value("problem_type", ""));
         ss >> problem_type;
 
-        delete optimizer_ptr_;
-
         if (problem_type == ProblemType::Rectangle) {
-          optimizer_ptr_ = new RectangleOptimizer();
+          optimizer_ptr_ = std::make_shared<RectangleOptimizer>();
         } else if (problem_type == ProblemType::RectangleGuillotine) {
-          optimizer_ptr_ = new RectangleguillotineOptimizer();
+          optimizer_ptr_ = std::make_shared<RectangleguillotineOptimizer>();
         } else if (problem_type == ProblemType::OneDimensional) {
-          optimizer_ptr_ = new OnedimensionalOptimizer();
+          optimizer_ptr_ = std::make_shared<OnedimensionalOptimizer>();
         } else if (problem_type == ProblemType::Irregular) {
-          optimizer_ptr_ = new IrregularOptimizer();
+          optimizer_ptr_ = std::make_shared<IrregularOptimizer>();
         } else {
           throw std::runtime_error("Unavailable problem type \"" + ss.str() + "\".");
         }
@@ -60,12 +54,13 @@ namespace Packy {
         throw std::invalid_argument("Missing \"problem_type\" parameter.");
       }
 
-      return (*optimizer_ptr_);
+      return optimizer_ptr_;
     }
 
   private:
 
-    Optimizer* optimizer_ptr_ = nullptr;
+    /** Optimizer. */
+    OptimizerPtr optimizer_ptr_;
 
   };
 
