@@ -1,0 +1,110 @@
+//
+// Cutlist Packing
+//
+
+.ladb-cutlist-cuttingdiagram-group {
+  page-break-inside: avoid;
+
+  svg {
+    shape-rendering: geometricPrecision;
+    text-rendering: optimizeLegibility;
+    width: 100%;
+
+    /* .bin */
+
+    .bin {
+
+      .bin-outer {
+        fill: #333;
+      }
+
+      .bin-inner {
+        //fill: #fff;
+      }
+
+      .bin-dimension {
+        fill: #888;
+      }
+
+    }
+
+    /* .item */
+
+    .item {
+      cursor: url('../img/cursor-highlight.png'), auto;
+
+      &:hover {
+
+        .item-outer {
+          fill: lighten(@ladb-brand-primary, 40%);
+        }
+
+        .item-inner {
+          fill: lighten(@ladb-brand-primary, 40%);
+          filter: none;
+        }
+
+        .item-projection-shape {
+          fill: lighten(@ladb-brand-primary, 10%);
+          filter: none;
+        }
+
+        .item-projection-machining {
+          fill: lighten(@ladb-brand-primary, 25%);
+          stroke: lighten(@ladb-brand-primary, 10%);
+          filter: none;
+        }
+
+      }
+
+      .item-outer {
+        fill: #f7f7f7;
+      }
+
+      .item-inner {
+        fill: #eee;
+      }
+
+      .item-projection-outer {
+        fill: #fff;
+      }
+
+      .item-projection-shape {
+        fill: #eee;
+      }
+
+      .item-projection-machining {
+        fill: lighten(#eee, 3%);
+      }
+
+      .item-edge {
+      }
+
+      .item-number {
+        fill: #000;
+      }
+
+      .part-dimension {
+        fill: #000;
+      }
+
+    }
+
+    &.problem-type-rectangle .item {
+
+      .item-outer {
+        stroke: #ccc;
+        stroke-dasharray: 4;
+      }
+
+      &:hover {
+        .item-outer {
+          stroke: @ladb-brand-primary;
+        }
+      }
+
+    }
+
+  }
+
+}

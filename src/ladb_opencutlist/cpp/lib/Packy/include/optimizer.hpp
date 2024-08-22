@@ -179,7 +179,7 @@ namespace Packy {
      * Output
      */
     virtual json to_json(const Output& output) {
-      auto& best_solution = output.solution_pool.best();
+      const auto& best_solution = output.solution_pool.best();
       json j = {
               {"time", output.time},
               {"number_of_bins", best_solution.number_of_bins()},
@@ -495,13 +495,13 @@ namespace Packy {
       using namespace rectangleguillotine;
 
       const rectangleguillotine::Solution& solution = output.solution_pool.best();
+      const Instance& instance = solution.instance();
 
       // Bins.
       basic_json<>& j_bins = j["bins"] = json::array();
       for (BinPos bin_pos = 0; bin_pos < solution.number_of_different_bins(); ++bin_pos) {
 
         const SolutionBin& bin = solution.bin(bin_pos);
-        const Instance& instance = solution.instance();
         const BinType& bin_type = instance.bin_type(bin.bin_type_id);
 
         basic_json<>& j_bin = j_bins.emplace_back(json {
@@ -545,20 +545,20 @@ namespace Packy {
 
               // Bottom
               j_cuts.emplace_back(json{
-                      {"depth", node.d},
-                      {"x1",    node.l - (instance.first_stage_orientation() == CutOrientation::Horizontal ? bin_type.left_trim : 0)},
-                      {"y1",    node.b - instance.cut_thickness()},
-                      {"x2",    node.r + bin_type.right_trim},
-                      {"y2",    node.b}
+                      {"depth",       node.d},
+                      {"x",           node.l - (instance.first_stage_orientation() == CutOrientation::Horizontal ? bin_type.left_trim : 0)},
+                      {"y",           node.b - instance.cut_thickness()},
+                      {"length",      node.r + bin_type.right_trim - node.l - (instance.first_stage_orientation() == CutOrientation::Horizontal ? bin_type.left_trim : 0)},
+                      {"orientation", "horizontal"}
               });
 
               // Left
               j_cuts.emplace_back(json{
-                      {"depth", node.d},
-                      {"x1",    node.l - instance.cut_thickness()},
-                      {"y1",    node.b - (instance.first_stage_orientation() == CutOrientation::Vertical ? bin_type.bottom_trim : 0)},
-                      {"x2",    node.l},
-                      {"y2",    node.t + bin_type.top_trim}
+                      {"depth",       node.d},
+                      {"x",           node.l - instance.cut_thickness()},
+                      {"y",           node.b - (instance.first_stage_orientation() == CutOrientation::Vertical ? bin_type.bottom_trim : 0)},
+                      {"length",      node.t + bin_type.top_trim - node.b - (instance.first_stage_orientation() == CutOrientation::Vertical ? bin_type.bottom_trim : 0)},
+                      {"orientation", "vertical"},
               });
 
             }
@@ -567,22 +567,24 @@ namespace Packy {
 
             const SolutionNode &parent_node = bin.nodes[node.f];
 
+            // Right
             if (node.r != parent_node.r) {
               j_cuts.emplace_back(json{
-                      {"depth", node.d},
-                      {"x1",    node.r},
-                      {"y1",    node.b},
-                      {"x2",    node.r + instance.cut_thickness()},
-                      {"y2",    node.t + (node.d == 1 ? bin_type.top_trim : 0)}
+                      {"depth",       node.d},
+                      {"x",           node.r},
+                      {"y",           node.b},
+                      {"length",      node.t + (node.d == 1 ? bin_type.top_trim : 0) - node.b},
+                      {"orientation", "vertical"}
               });
             }
+            // Top
             if (node.t != parent_node.t) {
               j_cuts.emplace_back(json{
-                      {"depth", node.d},
-                      {"x1",    node.l},
-                      {"y1",    node.t},
-                      {"x2",    node.r + (node.d == 1 ? bin_type.right_trim : 0)},
-                      {"y2",    node.t + instance.cut_thickness()}
+                      {"depth",       node.d},
+                      {"x",           node.l},
+                      {"y",           node.t},
+                      {"length",      node.r + (node.d == 1 ? bin_type.right_trim : 0) - node.l},
+                      {"orientation", "horizontal"},
               });
             }
 
@@ -675,6 +677,8 @@ namespace Packy {
       for (BinPos bin_pos = 0; bin_pos < solution.number_of_different_bins(); ++bin_pos) {
 
         const SolutionBin& bin = solution.bin(bin_pos);
+        const Instance& instance = solution.instance();
+        const BinType &bin_type = instance.bin_type(bin.bin_type_id);
 
         basic_json<>& j_bin = j_bins.emplace_back(json{
                 {"bin_type_id", bin.bin_type_id},
@@ -682,12 +686,24 @@ namespace Packy {
         });
 
         basic_json<>& j_items = j_bin["items"] = json::array();
+        basic_json<>& j_cuts = j_bin["cuts"] = json::array();
         for (const auto& item : bin.items) {
 
+          const ItemType &item_type = instance.item_type(item.item_type_id);
+
+          // Item
           j_items.emplace_back(json{
                   {"item_type_id", item.item_type_id},
                   {"x",            item.start},
           });
+
+          // Cut
+          if (item.start + item_type.length < bin_type.length) {
+            j_cuts.emplace_back(json{
+                    {"depth", 1},
+                    {"x",     item.start + item_type.length}
+            });
+          }
 
         }
 
