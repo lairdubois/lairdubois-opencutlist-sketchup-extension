@@ -24,47 +24,49 @@
 
         {% include 'core/_alert-errors.twig' %}
 
-        <table id="ladb_cuttingdiagram_summary" data-group-id="cuttingdiagram_summary" class="{% if 'cuttingdiagram_summary' in generateOptions.hidden_group_ids %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-cutlist-group-dark ladb-cutlist-group-summary">
-            <thead>
-            <tr class="table-heading">
-                <td colspan="6">
-                    <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-close"></i></button>
-                    <div class="ladb-heading">{{ 'tab.cutlist.cuttingdiagram.list.summary'|i18next }}</div>
-                </td>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td colspan="6">
-                    <small>
-                        <div class="row">
-                            <div class="col-xs-6">
-                                <span style="margin-left: 10px;">{{ 'tab.cutlist.cuttingdiagram.list.settings'|i18next }}</span>
-                                <ul>
-                                    <li><strong>{{ 'tab.cutlist.cuttingdiagram.option_saw_kerf'|i18next }} : </strong>{{ options.saw_kerf }}</li>
-                                    <li><strong>{{ 'tab.cutlist.cuttingdiagram.option_trimming'|i18next }} : </strong>{{ options.trimming }}</li>
-                                    <li><strong>{{ 'tab.cutlist.cuttingdiagram.option_part_drawing_type'|i18next }} : </strong>{{ ('tab.cutlist.cuttingdiagram.option_part_drawing_type_'~options.part_drawing_type)|i18next }}</li>
-                                </ul>
+        {% if summary is defined %}
+            <table id="ladb_cuttingdiagram_summary" data-group-id="cuttingdiagram_summary" class="{% if 'cuttingdiagram_summary' in generateOptions.hidden_group_ids %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-cutlist-group-dark ladb-cutlist-group-summary">
+                <thead>
+                <tr class="table-heading">
+                    <td colspan="6">
+                        <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-close"></i></button>
+                        <div class="ladb-heading">{{ 'tab.cutlist.cuttingdiagram.list.summary'|i18next }}</div>
+                    </td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td colspan="6">
+                        <small>
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <span style="margin-left: 10px;">{{ 'tab.cutlist.cuttingdiagram.list.settings'|i18next }}</span>
+                                    <ul>
+                                        <li><strong>{{ 'tab.cutlist.cuttingdiagram.option_saw_kerf'|i18next }} : </strong>{{ options.saw_kerf }}</li>
+                                        <li><strong>{{ 'tab.cutlist.cuttingdiagram.option_trimming'|i18next }} : </strong>{{ options.trimming }}</li>
+                                        <li><strong>{{ 'tab.cutlist.cuttingdiagram.option_part_drawing_type'|i18next }} : </strong>{{ ('tab.cutlist.cuttingdiagram.option_part_drawing_type_'~options.part_drawing_type)|i18next }}</li>
+                                    </ul>
+                                </div>
+                                <div class="col-xs-6">
+                                    <span style="margin-left: 10px;">{{ 'tab.cutlist.cuttingdiagram.list.stats'|i18next }}</span>
+                                    <ul>
+                                        <li><strong>{{ 'tab.cutlist.cuttingdiagram.list.total_cut_count'|i18next }} : </strong>{{ summary.total_cut_count }}</li>
+                                        <li><strong>{{ 'tab.cutlist.cuttingdiagram.list.total_cut_length'|i18next }} : </strong>{{ summary.total_cut_length }}</li>
+                                        <li><strong>{{ 'tab.cutlist.cuttingdiagram.list.overall_efficiency'|i18next }} : </strong>{{ summary.overall_efficiency|number_format(2, capabilities.decimal_separator, ' ') }}%</li>
+                                    </ul>
+                                </div>
                             </div>
-                            <div class="col-xs-6">
-                                <span style="margin-left: 10px;">{{ 'tab.cutlist.cuttingdiagram.list.stats'|i18next }}</span>
-                                <ul>
-                                    <li><strong>{{ 'tab.cutlist.cuttingdiagram.list.total_cut_count'|i18next }} : </strong>{{ summary.total_cut_count }}</li>
-                                    <li><strong>{{ 'tab.cutlist.cuttingdiagram.list.total_cut_length'|i18next }} : </strong>{{ summary.total_cut_length }}</li>
-                                    <li><strong>{{ 'tab.cutlist.cuttingdiagram.list.overall_efficiency'|i18next }} : </strong>{{ summary.overall_efficiency|number_format(2, capabilities.decimal_separator, ' ') }}%</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </small>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+                        </small>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        {% endif %}
 
         {% set binIndex = 1 %}
         {% set binStrippedname = 'good' %}
         {% for bin in bins %}
-            <table id="ladb_cuttingdiagram_group_{{ bin.type_id }}" data-group-id="{{ group.id }}_{{ bin.type_id }}" data-bin-index="{{ loop.index }}" class="table table-bordered ladb-cutlist-group ladb-cutlist-cuttingdiagram-group">
+            <table id="ladb_cuttingdiagram_group_{{ bin.type_id }}" data-group-id="{{ group.id }}_{{ bin.type_id }}" data-bin-index="{{ loop.index }}" class="table table-bordered ladb-cutlist-group ladb-cutlist-packing-group">
                 <thead>
                 <tr class="table-heading">
                     <td colspan="{{ colspan }}">

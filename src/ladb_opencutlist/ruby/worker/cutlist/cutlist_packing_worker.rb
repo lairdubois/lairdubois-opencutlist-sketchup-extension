@@ -100,9 +100,10 @@ module Ladb::OpenCutList
 
     # -----
 
-    def run
-      unless @_running
+    def run(action)
+      if action == :start
 
+        return { :errors => [ 'default.error' ] } if @_running
         return { :errors => [ 'default.error' ] } unless @cutlist
 
         model = Sketchup.active_model
@@ -126,16 +127,17 @@ module Ladb::OpenCutList
           width = ddq[1].strip.to_l.to_f
           copies = [ 1, (ddq[2].nil? || ddq[2].strip.to_i == 0) ? 1 : ddq[2].strip.to_i ].max
 
-          bin_types << {
+          bin_type = {
             copies: copies,
-            type: 'rectangle',
             length: _to_packy(length),
             width: _to_packy(width),
-            left_trim: _to_packy(@trimming),
-            right_trim: _to_packy(@trimming),
-            bottom_trim: _to_packy(@trimming),
-            top_trim: _to_packy(@trimming)
           }
+          if @problem_type == Packy::PROBLEM_TYPE_RECTANGLEGUILLOTINE
+            bin_type[:left_trim] = bin_type[:right_trim] = bin_type[:bottom_trim] = bin_type[:top_trim] = _to_packy(@trimming)
+          elsif @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
+            bin_type[:type] = 'rectangle'
+          end
+          bin_types << bin_type
           @bin_defs << Packy::BinDef.new(length, width, 1) # 1 = user defined
 
         }
@@ -143,16 +145,17 @@ module Ladb::OpenCutList
         # Create bins from std sheets
         if @std_sheet_width > 0 && @std_sheet_length > 0
 
-          bin_types << {
+          bin_type = {
             copies: parts_count,
-            type: 'rectangle',
             length: _to_packy(@std_sheet_length),
             width: _to_packy(@std_sheet_width),
-            left_trim: _to_packy(@trimming),
-            right_trim: _to_packy(@trimming),
-            bottom_trim: _to_packy(@trimming),
-            top_trim: _to_packy(@trimming)
           }
+          if @problem_type == Packy::PROBLEM_TYPE_RECTANGLEGUILLOTINE
+            bin_type[:left_trim] = bin_type[:right_trim] = bin_type[:bottom_trim] = bin_type[:top_trim] = _to_packy(@trimming)
+          elsif @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
+            bin_type[:type] = 'rectangle'
+          end
+          bin_types << bin_type
           @bin_defs << Packy::BinDef.new(@std_sheet_length, @std_sheet_width, 0) # 0 = Standard
 
         end
@@ -207,6 +210,13 @@ module Ladb::OpenCutList
 
         return { :errors => [ 'tab.cutlist.cuttingdiagram.error.no_parts' ] } if item_types.empty?
 
+        instance_parameters = {}
+        if @problem_type == Packy::PROBLEM_TYPE_RECTANGLEGUILLOTINE
+          instance_parameters[:cut_type] = @rectangleguillotine_cut_type
+          instance_parameters[:cut_thickness] = _to_packy(@spacing)
+          instance_parameters[:first_stage_orientation] = @rectangleguillotine_first_stage_orientation
+        end
+
         input = {
           problem_type: @problem_type,
           parameters: {
@@ -217,11 +227,7 @@ module Ladb::OpenCutList
           },
           instance: {
             objective: @objective,
-            parameters: {
-              cut_type: @rectangleguillotine_cut_type,
-              cut_thickness: _to_packy(@spacing),
-              first_stage_orientation: @rectangleguillotine_first_stage_orientation
-            },
+            parameters: instance_parameters,
             bin_types: bin_types,
             item_types: item_types,
           }
@@ -239,11 +245,13 @@ module Ladb::OpenCutList
         @_running = true
 
         { :running => true }
-      else
+      elsif action == :advance
+
+        return { :errors => [ 'default.error' ] } unless @_running
 
         output = Packy.optimize_advance
 
-        return output if output.has_key?('running')
+        return output if output.has_key?('running') || output.has_key?('cancelled')
 
         if @verbosity_level > 0
           puts ' '
@@ -253,7 +261,7 @@ module Ladb::OpenCutList
         end
 
         return { :errors => [ output['error'] ] } if output.has_key?('error')
-        return { :errors => [ 'tab.cutlist.cuttingdiagram.error.no_placement_possible_2d' ] } if output['bins'].empty?
+        return { :errors => [ 'tab.cutlist.cuttingdiagram.error.no_placement_possible_2d' ] } if output['bins'].nil? || output['bins'].empty?
 
         bins = output['bins'].map do |raw_bin|
           bin_def = @bin_defs[raw_bin['bin_type_id']]
@@ -282,6 +290,7 @@ module Ladb::OpenCutList
 
         {
           :summary => {
+            :time => output['time'],
             :total_used_count =>output['number_of_bins']
           },
           :bins => bins.map { |bin| {
@@ -292,6 +301,13 @@ module Ladb::OpenCutList
             svg: _bin_to_svg(bin)
           } }
         }
+      elsif action == :stop
+
+        return { :errors => [ 'default.error' ] } unless @_running
+
+        Packy.optimize_stop
+
+        { :cancelled => true }
       end
     end
 

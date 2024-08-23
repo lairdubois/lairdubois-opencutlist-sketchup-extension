@@ -1,7 +1,12 @@
 <div class="ladb-progress">
     <div class="ladb-progress-backdrop"></div>
     <div class="ladb-progress-box">
-        <div class="ladb-progress-label">{{ 'core.progress.please_wait'|i18next }}...</div>
+        <div>
+            {% if not noCancelButton|default(false) %}
+                <button class="btn btn-xs ladb-progress-btn pull-right">{{ 'default.cancel'|i18next }}</button>
+            {% endif %}
+            <div class="ladb-progress-label text-{% if noCancelButton %}center{% else %}left{% endif %}">{{ 'core.progress.please_wait'|i18next }}...</div>
+        </div>
         <div class="progress"{% if hiddenProgressBar|default(false) %} style="display: none"{% endif %}>
             <div class="progress-bar" style="width:0;"></div>
         </div>

@@ -91,15 +91,19 @@ LadbAbstractDialog.prototype.getSetting = function (key, defaultValue) {
 
 // Progress /////
 
-LadbAbstractDialog.prototype.startProgress = function (maxSteps) {
+LadbAbstractDialog.prototype.startProgress = function (maxSteps, cancelCallback) {
 
     this.progressMaxSteps = Math.max(1, maxSteps);
     this.progressStep = 0;
 
     this.$progress = $(Twig.twig({ref: 'core/_progress.twig'}).render({
-        hiddenProgressBar: true //this.progressMaxSteps <= 1
+        hiddenProgressBar: true, //this.progressMaxSteps <= 1
+        noCancelButton: typeof cancelCallback != 'function'
     }));
     this.$progressBar = $('.progress-bar', this.$progress);
+    if (typeof cancelCallback == 'function') {
+        $('.ladb-progress-btn', this.$progress).on('click', cancelCallback);
+    }
 
     $('body').append(this.$progress);
 

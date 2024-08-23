@@ -4699,7 +4699,9 @@
                     });
 
                     window.requestAnimationFrame(function () {
-                        that.dialog.startProgress(parseInt(packingOptions.time_limit) * 2);
+                        that.dialog.startProgress(parseInt(packingOptions.time_limit) * 2, function () {
+                            rubyCallCommand('cutlist_group_packing_stop');
+                        });
                         rubyCallCommand('cutlist_group_packing_start', $.extend({
                             group_id: groupId,
                             part_ids: isPartSelection ? that.selectionPartIds : null
@@ -4709,12 +4711,17 @@
 
                                 rubyCallCommand('cutlist_group_packing_advance', null, function (response) {
 
-                                    console.log(response);
-
                                     if (response.running) {
 
                                         // Advance progress feedback
                                         that.dialog.advanceProgress(1);
+
+                                    } else if (response.cancelled) {
+
+                                        clearInterval(interval);
+
+                                        // Finish progress feedback
+                                        that.dialog.finishProgress();
 
                                     } else {
 

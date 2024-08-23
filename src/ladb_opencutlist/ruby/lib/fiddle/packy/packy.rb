@@ -22,6 +22,7 @@ module Ladb::OpenCutList::Fiddle
 
         'void c_optimize_start(char*)',
         'char* c_optimize_advance()',
+        'void c_optimize_stop()',
 
         'char* c_version()',
 
@@ -46,6 +47,10 @@ module Ladb::OpenCutList::Fiddle
       _load_lib
       output = JSON.parse(c_optimize_advance.to_s)
       return output
+    end
+
+    def self.optimize_stop
+      c_optimize_stop if loaded?
     end
 
     # -----

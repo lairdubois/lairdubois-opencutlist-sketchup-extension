@@ -106,6 +106,10 @@ module Ladb::OpenCutList
         group_packing_advance_command
       end
 
+      PLUGIN.register_command("cutlist_group_packing_stop") do
+        group_packing_stop_command
+      end
+
     end
 
     def setup_event_callbacks
@@ -344,14 +348,21 @@ module Ladb::OpenCutList
       @packing_worker = CutlistPackingWorker.new(@cutlist, **settings)
 
       # Run !
-      @packing_worker.run
+      @packing_worker.run(:start)
     end
 
     def group_packing_advance_command
       return { :errors => [ 'default.error' ] } unless @packing_worker
 
       # Run !
-      @packing_worker.run
+      @packing_worker.run(:advance)
+    end
+
+    def group_packing_stop_command
+      return { :errors => [ 'default.error' ] } unless @packing_worker
+
+      # Run !
+      @packing_worker.run(:stop)
     end
 
   end

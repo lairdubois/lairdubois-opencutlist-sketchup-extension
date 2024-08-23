@@ -2,7 +2,7 @@
 // Cutlist Packing
 //
 
-.ladb-cutlist-cuttingdiagram-group {
+.ladb-cutlist-packing-group {
   page-break-inside: avoid;
 
   svg {
@@ -84,7 +84,7 @@
         fill: #000;
       }
 
-      .part-dimension {
+      .item-dimension {
         fill: #000;
       }
 
@@ -101,6 +101,84 @@
         .item-outer {
           stroke: @ladb-brand-primary;
         }
+      }
+
+    }
+
+    /* .cut */
+
+    .cut {
+
+      &:hover {
+        .cut-outer, .cut-inner {
+          fill: @ladb-brand-primary;
+          fill-opacity: 1.0;
+        }
+      }
+
+      &.cut-trimming {
+        &.cut-highlighted {
+          .cut-outer, .cut-inner {
+            fill: #555555;
+          }
+          .cut-outer {
+            fill-opacity: 0.5;
+          }
+        }
+        &:hover {
+          .cut-outer, .cut-inner {
+            fill: @ladb-brand-primary;
+          }
+          .cut-outer {
+            fill-opacity: 1.0;
+          }
+        }
+      }
+
+      &.cut-bounding {
+        &.cut-highlighted {
+          .cut-outer, .cut-inner {
+            fill: #F5486E;
+          }
+          .cut-outer {
+            fill-opacity: 0.5;
+          }
+        }
+        &:hover {
+          .cut-outer, .cut-inner {
+            fill: #F5486E;
+          }
+          .cut-outer {
+            fill-opacity: 1.0;
+          }
+        }
+      }
+
+      &.cut-internal-through {
+        &.cut-highlighted {
+          .cut-outer, .cut-inner {
+            fill: #2DB84D;
+          }
+          .cut-outer {
+            fill-opacity: 0.5;
+          }
+        }
+        &:hover {
+          .cut-outer, .cut-inner {
+            fill: #2DB84D;
+          }
+          .cut-outer {
+            fill-opacity: 1.0;
+          }
+        }
+      }
+
+      .cut-outer {
+        fill: #ffffff;
+        fill-opacity: 0.01;
+      }
+      .cut-inner {
+        fill: #555;
       }
 
     }
