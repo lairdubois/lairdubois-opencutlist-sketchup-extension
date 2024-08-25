@@ -813,8 +813,11 @@ tab:
       option_rectangleguillotine_first_stage_orientation: Première coupe
       option_rectangleguillotine_first_stage_orientation_help: |
         ...
-      option_irregular_rotations: Rotations
-      option_irregular_rotations_help: |
+      option_irregular_allowed_rotations: Rotations
+      option_irregular_allowed_rotations_help: |
+        ...
+      option_irregular_allow_mirroring: Mirroring
+      option_irregular_allow_mirroring_help: |
         ...
       option_time_limit: Time limit
       option_time_limit_help: |

@@ -23,7 +23,7 @@ static bool optimize_cancelled_ = false;
 
 DLL_EXPORTS void c_optimize_start(char* s_input) {
 
-  optimize_future_ = std::async(std::launch::async, [s_input]{
+  optimize_future_ = std::async(std::launch::async, [s_input](){
     json j_ouput;
 
     try {

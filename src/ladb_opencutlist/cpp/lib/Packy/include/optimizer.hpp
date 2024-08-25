@@ -164,7 +164,7 @@ namespace Packy {
         parameters_.not_anytime_dichotomic_search_subproblem_queue_size = j["not_anytime_dichotomic_search_subproblem_queue_size"].template get<Counter>();
       }
 
-      parameters_.new_solution_callback = [](const Output& output){
+      parameters_.new_solution_callback = [](const auto& output){
         std::cout << "New solution !! time=" << output.time << std::endl;
       };
 
@@ -228,15 +228,15 @@ namespace Packy {
     void read_bin_type(basic_json<>& j) override {
       TypedOptimizer::read_bin_type(j);
 
-      Length length = j.value("length", -1);
       Length width = j.value("width", -1);
+      Length height = j.value("height", -1);
       Profit cost = j.value("cost", -1);
       BinPos copies = j.value("copies", 1);
       BinPos copies_min = j.value("copies_min", 0);
 
       instance_builder_.add_bin_type(
-              length,
               width,
+              height,
               cost,
               copies,
               copies_min
@@ -247,15 +247,15 @@ namespace Packy {
     void read_item_type(basic_json<>& j) override {
       TypedOptimizer::read_item_type(j);
 
-      Length length = j.value("length", -1);
       Length width = j.value("width", -1);
+      Length height = j.value("height", -1);
       Profit profit = j.value("profit", -1);
       ItemPos copies = j.value("copies", 1);
       bool oriented = j.value("oriented", false);
 
       instance_builder_.add_item_type(
-              length,
               width,
+              height,
               profit,
               copies,
               oriented
@@ -377,15 +377,15 @@ namespace Packy {
 
       using namespace rectangleguillotine;
 
-      Length length = j.value("length", -1);
       Length width = j.value("width", -1);
+      Length height = j.value("height", -1);
       Profit cost = j.value("cost", -1);
       BinPos copies = j.value("copies", 1);
       BinPos copies_min = j.value("copies_min", 0);
 
       BinTypeId bin_id = instance_builder_.add_bin_type(
-              length,
               width,
+              height,
               cost,
               copies,
               copies_min
@@ -459,15 +459,15 @@ namespace Packy {
 
       Length x = j.value("x", -1);
       Length y = j.value("y", -1);
-      Length length = j.value("length", -1);
       Length width = j.value("width", -1);
+      Length height = j.value("height", -1);
 
       instance_builder_.add_defect(
               bin_id,
               x,
               y,
-              length,
-              width
+              width,
+              height
       );
 
     }
@@ -475,15 +475,15 @@ namespace Packy {
     void read_item_type(basic_json<>& j) override {
       TypedOptimizer::read_item_type(j);
 
-      Length length = j.value("length", -1);
       Length width = j.value("width", -1);
+      Length height = j.value("height", -1);
       Profit profit = j.value("profit", -1);
       ItemPos copies = j.value("copies", 1);
       bool oriented = j.value("oriented", false);
 
       instance_builder_.add_item_type(
-              length,
               width,
+              height,
               profit,
               copies,
               oriented
@@ -557,14 +557,14 @@ namespace Packy {
 
           if (node.d == 0) {
 
-            if (bin_type.left_trim + bin_type.right_trim + bin_type.bottom_trim + bin_type.top_trim > 0) {
+            if (bin_type.left_trim + bin_type.right_trim + bin_type.bottom_trim + bin_type.top_trim > 0 && !node.children.empty()) {
 
               // Bottom
               j_cuts.emplace_back(json{
                       {"depth",       node.d},
                       {"x",           node.l - (instance.first_stage_orientation() == CutOrientation::Horizontal ? bin_type.left_trim : 0)},
                       {"y",           node.b - instance.cut_thickness()},
-                      {"length",      node.r + bin_type.right_trim - node.l - (instance.first_stage_orientation() == CutOrientation::Horizontal ? bin_type.left_trim : 0)},
+                      {"length",      node.r + (instance.first_stage_orientation() == CutOrientation::Horizontal ? bin_type.right_trim : 0)},
                       {"orientation", "horizontal"}
               });
 
@@ -573,7 +573,7 @@ namespace Packy {
                       {"depth",       node.d},
                       {"x",           node.l - instance.cut_thickness()},
                       {"y",           node.b - (instance.first_stage_orientation() == CutOrientation::Vertical ? bin_type.bottom_trim : 0)},
-                      {"length",      node.t + bin_type.top_trim - node.b - (instance.first_stage_orientation() == CutOrientation::Vertical ? bin_type.bottom_trim : 0)},
+                      {"length",      node.t + (instance.first_stage_orientation() == CutOrientation::Vertical ? bin_type.top_trim : 0)},
                       {"orientation", "vertical"},
               });
 
@@ -639,13 +639,13 @@ namespace Packy {
     void read_bin_type(basic_json<>& j) override {
       TypedOptimizer::read_bin_type(j);
 
-      Length length = j.value("length", -1);
+      Length width = j.value("width", -1);
       Profit cost = j.value("cost", -1);
       BinPos copies = j.value("copies", 1);
       BinPos copies_min = j.value("copies_min", 0);
 
       instance_builder_.add_bin_type(
-              length,
+              width,
               cost,
               copies,
               copies_min
@@ -656,12 +656,12 @@ namespace Packy {
     void read_item_type(basic_json<>& j) override {
       TypedOptimizer::read_item_type(j);
 
-      Length length = j.value("length", -1);
+      Length width = j.value("width", -1);
       Profit profit = j.value("profit", -1);
       ItemPos copies = j.value("copies", 1);
 
       instance_builder_.add_item_type(
-              length,
+              width,
               profit,
               copies
       );
@@ -750,6 +750,18 @@ namespace Packy {
 
     }
 
+    void read_instance_parameters(basic_json<>& j) override {
+      TypedOptimizer::read_instance_parameters(j);
+
+      if (j.contains("item_item_minimum_spacing")) {
+        instance_builder_.set_item_item_minimum_spacing(j["item_item_minimum_spacing"].template get<irregular::LengthDbl>());
+      }
+      if (j.contains("item_bin_minimum_spacing")) {
+        instance_builder_.set_item_bin_minimum_spacing(j["item_bin_minimum_spacing"].template get<irregular::LengthDbl>());
+      }
+
+    }
+
     void read_bin_type(basic_json<>& j) override {
       TypedOptimizer::read_bin_type(j);
 
@@ -803,12 +815,16 @@ namespace Packy {
         }
       }
 
-      instance_builder_.add_item_type(
+      ItemTypeId item_type_id = instance_builder_.add_item_type(
               item_shapes,
               profit,
               copies,
               allowed_rotations
       );
+
+      bool allow_mirroring = j.value("allow_mirroring", false);
+      instance_builder_.set_item_type_allow_mirroring(item_type_id, allow_mirroring);
+
     }
 
     /*
@@ -832,7 +848,7 @@ namespace Packy {
 
       const irregular::Solution& solution = output.solution_pool.best();
 
-       basic_json<>& j_bins = j["bins"] = json::array();
+      basic_json<>& j_bins = j["bins"] = json::array();
       for (BinPos bin_pos = 0; bin_pos < solution.number_of_different_bins(); ++bin_pos) {
 
         const SolutionBin& bin = solution.bin(bin_pos);
@@ -849,7 +865,8 @@ namespace Packy {
                   {"item_type_id", item.item_type_id},
                   {"x",            item.bl_corner.x},
                   {"y",            item.bl_corner.y},
-                  {"angle",        item.angle}  // Returns angle in degrees
+                  {"angle",        item.angle},  // Returns angle in degrees
+                  {"mirror",       item.mirror}
           });
 
         }
@@ -879,8 +896,8 @@ namespace Packy {
 
       } else if (j["type"] == "rectangle") {
 
-        LengthDbl length = j.value("length", -1);
         LengthDbl width = j.value("width", -1);
+        LengthDbl height = j.value("height", -1);
 
         ShapeElement element_1;
         ShapeElement element_2;
@@ -891,12 +908,12 @@ namespace Packy {
         element_3.type = ShapeElementType::LineSegment;
         element_4.type = ShapeElementType::LineSegment;
         element_1.start = {0.0, 0.0};
-        element_1.end = {length, 0.0};
-        element_2.start = {length, 0.0};
-        element_2.end = {length, width};
-        element_3.start = {length, width};
-        element_3.end = {0.0, width};
-        element_4.start = {0.0, width};
+        element_1.end = {width, 0.0};
+        element_2.start = {width, 0.0};
+        element_2.end = {width, height};
+        element_3.start = {width, height};
+        element_3.end = {0.0, height};
+        element_4.start = {0.0, height};
         element_4.end = {0.0, 0.0};
         shape.elements.push_back(element_1);
         shape.elements.push_back(element_2);

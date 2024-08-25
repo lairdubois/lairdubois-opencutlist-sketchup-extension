@@ -4565,7 +4565,8 @@
                 var $selectRectangleguillotineCutType = $('#ladb_select_rectangleguillotine_cut_type', $modal);
                 var $selectRectangleguillotineFirstStageOrientation = $('#ladb_select_rectangleguillotine_first_stage_orientation', $modal);
                 var $formGroupIrregular = $('.ladb-cutlist-packing-form-group-irregular', $modal)
-                var $selectIrregularRotations = $('#ladb_select_irregular_rotations', $modal);
+                var $selectIrregularAllowedRotations = $('#ladb_select_irregular_allowed_rotations', $modal);
+                var $selectIrregularAllowMirroring = $('#ladb_select_irregular_allow_mirroring', $modal);
                 var $inputSpacing = $('#ladb_input_spacing', $modal);
                 var $inputTrimming = $('#ladb_input_trimming', $modal);
                 var $inputTimeLimit = $('#ladb_input_time_limit', $modal);
@@ -4582,7 +4583,8 @@
                     options.objective = $selectObjective.val();
                     options.rectangleguillotine_cut_type = $selectRectangleguillotineCutType.val();
                     options.rectangleguillotine_first_stage_orientation = $selectRectangleguillotineFirstStageOrientation.val();
-                    options.irregular_rotations = $selectIrregularRotations.val();
+                    options.irregular_allowed_rotations = $selectIrregularAllowedRotations.val();
+                    options.irregular_allow_mirroring = $selectIrregularAllowMirroring.val() === '1';
                     options.spacing = $inputSpacing.val();
                     options.trimming = $inputTrimming.val();
                     options.time_limit = $inputTimeLimit.val();
@@ -4594,7 +4596,8 @@
                     $selectObjective.selectpicker('val', options.objective);
                     $selectRectangleguillotineCutType.selectpicker('val', options.rectangleguillotine_cut_type);
                     $selectRectangleguillotineFirstStageOrientation.selectpicker('val', options.rectangleguillotine_first_stage_orientation);
-                    $selectIrregularRotations.selectpicker('val', options.irregular_rotations);
+                    $selectIrregularAllowedRotations.selectpicker('val', options.irregular_allowed_rotations);
+                    $selectIrregularAllowMirroring.selectpicker('val', options.irregular_allow_mirroring ? '1' : '0');
                     $inputSpacing.val(options.spacing);
                     $inputTrimming.val(options.trimming);
                     $inputTimeLimit.val(options.time_limit);
@@ -4645,7 +4648,8 @@
                 $selectObjective.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectRectangleguillotineCutType.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectRectangleguillotineFirstStageOrientation.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectIrregularRotations.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectIrregularAllowedRotations.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectIrregularAllowMirroring.selectpicker(SELECT_PICKER_OPTIONS);
                 $inputSpacing.ladbTextinputDimension();
                 $inputTrimming.ladbTextinputDimension();
                 $inputTimeLimit.ladbTextinputText();
