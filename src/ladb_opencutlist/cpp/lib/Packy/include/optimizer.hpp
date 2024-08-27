@@ -885,7 +885,7 @@ namespace Packy {
       Shape shape;
       if (j["type"] == "circle") {
 
-        LengthDbl radius = j.value("radius", -1);
+        LengthDbl radius = j.value("radius", -1.0);
 
         ShapeElement element;
         element.type = ShapeElementType::CircularArc;
@@ -896,8 +896,8 @@ namespace Packy {
 
       } else if (j["type"] == "rectangle") {
 
-        LengthDbl width = j.value("width", -1);
-        LengthDbl height = j.value("height", -1);
+        LengthDbl width = j.value("width", -1.0);
+        LengthDbl height = j.value("height", -1.0);
 
         ShapeElement element_1;
         ShapeElement element_2;

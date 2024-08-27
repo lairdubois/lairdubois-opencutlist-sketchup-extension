@@ -300,11 +300,6 @@ module Ladb::OpenCutList
           )
         end
 
-        puts ' '
-        puts '-- bin[0] --'
-        puts bins.first.items.map { |item| item.def.data.number }
-        puts '-- bin[0] --'
-
         {
           :summary => {
             :time => output['time'],
@@ -331,7 +326,7 @@ module Ladb::OpenCutList
     private
 
     def _to_packy(l)
-      return l.round(8) if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
+      return l.to_f.round(8) if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
       (l.to_l.to_mm * 10.0).to_i
     end
 
