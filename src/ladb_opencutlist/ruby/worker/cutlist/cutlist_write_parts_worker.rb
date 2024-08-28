@@ -18,12 +18,12 @@ module Ladb::OpenCutList
                    part_drawing_type: PART_DRAWING_TYPE_2D_TOP,
 
                    unit: Length::Millimeter,
+                   use_count: false,
                    anchor: false,
                    switch_yz: false,
                    smoothing: false,
                    merge_holes: false,
                    include_paths: false,
-                   use_quantities: false,
 
                    parts_stroke_color: nil,
                    parts_fill_color: nil,
@@ -41,12 +41,12 @@ module Ladb::OpenCutList
       @part_drawing_type = part_drawing_type.to_i
 
       @unit = unit
+      @use_count = use_count
       @anchor = anchor
       @switch_yz = switch_yz
       @smoothing = smoothing
       @merge_holes = merge_holes
       @include_paths = include_paths
-      @use_quantities = use_quantities
 
       @parts_stroke_color = parts_stroke_color
       @parts_fill_color = parts_fill_color
@@ -80,7 +80,7 @@ module Ladb::OpenCutList
           # Ignore virtual parts
           next if part.virtual
 
-          count = @use_quantities ? part.count : 1
+          count = @use_count ? part.count : 1
           group = part.group
           folder_name = group.material_display_name
           folder_name = PLUGIN.get_i18n_string('tab.cutlist.material_undefined') if folder_name.nil? || folder_name.empty?
@@ -91,7 +91,7 @@ module Ladb::OpenCutList
           count.times do |i|
 
             file_name = "#{part.number} - #{_sanitize_filename(part.name)}"
-            file_name += " - #{i + 1} of #{count}" if @use_quantities
+            file_name += " - #{i + 1} of #{count}" if @use_count
 
             begin
 

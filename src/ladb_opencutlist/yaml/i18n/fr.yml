@@ -1126,6 +1126,11 @@ tab:
       option_unit: Unité
       option_unit_help: |
         Permet de choisir l'unité utilisée dans le fichier exporté.
+      option_use_count: Quantités
+      option_use_count_0: Un seul fichier par pièce
+      option_use_count_1: Un fichier par instance de pièce
+      option_use_count_help: |
+        Permet de choisir si le nombre d'instances d'une pièce est considéré.
       option_part_drawing_type: Projection
       option_part_drawing_type_help: |
         Permet de choisir la vue exportée.

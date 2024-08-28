@@ -1952,19 +1952,21 @@
     LadbTabCutlist.prototype.writeParts = function (partIds, context, is2d) {
         var that = this;
 
-        var fileCount = 0;
+        var partCount = 0;
+        var partInstanceCount = 0;
         for (var i = 0 ; i < partIds.length; i++) {
             var groupAndPart = this.findGroupAndPartById(partIds[i]);
             if (groupAndPart) {
                 if (groupAndPart.part.children) {
-                    fileCount += groupAndPart.part.children.length;
+                    partCount += groupAndPart.part.children.length;
                 } else {
-                    fileCount += 1;
+                    partCount += 1;
                 }
+                partInstanceCount += groupAndPart.part.count;
             }
         }
 
-        if (fileCount === 0) {
+        if (partCount === 0) {
             this.dialog.alert(i18next.t('tab.cutlist.write.title'), i18next.t('tab.cutlist.write.error.no_part'));
             return;
         }
@@ -1989,6 +1991,7 @@
                 var $selectPartDrawingType = $('#ladb_select_part_drawing_type', $modal);
                 var $selectFileFormat = $('#ladb_select_file_format', $modal);
                 var $selectUnit = $('#ladb_select_unit', $modal);
+                var $selectUseCount = $('#ladb_select_use_count', $modal);
                 var $selectAnchor = $('#ladb_select_anchor', $modal);
                 var $selectSmoothing = $('#ladb_select_smoothing', $modal);
                 var $selectMergeHoles = $('#ladb_select_merge_holes', $modal);
@@ -2007,6 +2010,7 @@
                     options.part_drawing_type = $selectPartDrawingType.val();
                     options.file_format = $selectFileFormat.val();
                     options.unit = parseInt($selectUnit.val());
+                    options.use_count = $selectUseCount.val() === '1';
                     options.anchor = $selectAnchor.val() === '1';
                     options.smoothing = $selectSmoothing.val() === '1';
                     options.merge_holes = $selectMergeHoles.val() === '1';
@@ -2022,6 +2026,7 @@
                     $selectPartDrawingType.selectpicker('val', options.part_drawing_type);
                     $selectFileFormat.selectpicker('val', options.file_format);
                     $selectUnit.selectpicker('val', options.unit);
+                    $selectUseCount.selectpicker('val', options.use_count ? '1' : '0');
                     $selectAnchor.selectpicker('val', options.anchor ? '1' : '0');
                     $selectSmoothing.selectpicker('val', options.smoothing ? '1' : '0');
                     $selectMergeHoles.selectpicker('val', options.merge_holes ? '1' : '0');
@@ -2046,6 +2051,10 @@
                     $inputPartsPathsFillColor.ladbTextinputColor(!isIncludePaths ? 'disable' : 'enable');
                     $('.ladb-form-fill-color').css('opacity', isDxf ? 0.3 : 1);
                 };
+                var fnUpdateButtonLabel = function () {
+                    let fileCount = $selectUseCount.val() === '1' ? partInstanceCount : partCount;
+                    $('#ladb_btn_export_file_format', $btnExport).html($selectFileFormat.val().toUpperCase() + ' <small>( ' + fileCount + ' ' + i18next.t('default.file', { count: fileCount }).toLowerCase() + ' )</small>');
+                }
 
                 $widgetPreset.ladbWidgetPreset({
                     dialog: that.dialog,
@@ -2057,11 +2066,15 @@
                 $selectFileFormat
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function () {
-                        $('#ladb_btn_export_file_format', $btnExport).html($(this).val().toUpperCase() + ' <small>( ' + fileCount + ' ' + i18next.t('default.file', { count: fileCount }).toLowerCase() + ' )</small>');
+                        fnUpdateButtonLabel();
                         fnUpdateFieldsVisibility();
                     })
                 ;
                 $selectUnit.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectUseCount
+                    .selectpicker(SELECT_PICKER_OPTIONS)
+                    .on('changed.bs.select', fnUpdateButtonLabel)
+                ;
                 $selectAnchor.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectSmoothing.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectMergeHoles.selectpicker(SELECT_PICKER_OPTIONS).on('changed.bs.select', fnUpdateFieldsVisibility);
@@ -2086,7 +2099,6 @@
 
                     rubyCallCommand('cutlist_write_parts', $.extend({
                         part_ids: partIds,
-                        use_quantities: true
                     }, write2dOptions), function (response) {
 
                         if (response.errors) {
@@ -2137,6 +2149,7 @@
                 var $selectFileFormat = $('#ladb_select_file_format', $modal);
                 var $formGroupUnit = $('#ladb_form_group_unit', $modal);
                 var $selectUnit = $('#ladb_select_unit', $modal);
+                var $selectUseCount = $('#ladb_select_use_count', $modal);
                 var $formGroupAnchor = $('#ladb_form_group_anchor', $modal);
                 var $selectAnchor = $('#ladb_select_anchor', $modal);
                 var $formGroupSwitchYZ = $('#ladb_form_group_switch_yz', $modal);
@@ -2146,12 +2159,14 @@
                 var fnFetchOptions = function (options) {
                     options.file_format = $selectFileFormat.val();
                     options.unit = parseInt($selectUnit.val());
+                    options.use_count = $selectUseCount.val() === '1';
                     options.anchor = $selectAnchor.val() === '1';
                     options.switch_yz = $selectSwitchYZ.val() === '1';
                 };
                 var fnFillInputs = function (options) {
                     $selectFileFormat.selectpicker('val', options.file_format);
                     $selectUnit.selectpicker('val', options.unit);
+                    $selectUseCount.selectpicker('val', options.use_count ? '1' : '0');
                     $selectAnchor.selectpicker('val', options.anchor ? '1' : '0');
                     $selectSwitchYZ.selectpicker('val', options.switch_yz ? '1' : '0');
                     fnUpdateFieldsVisibility();
@@ -2162,6 +2177,10 @@
                     if (isSkp) $formGroupAnchor.hide(); else $formGroupAnchor.show();
                     if (isSkp) $formGroupSwitchYZ.hide(); else $formGroupSwitchYZ.show();
                 };
+                var fnUpdateButtonLabel = function () {
+                    let fileCount = $selectUseCount.val() === '1' ? partInstanceCount : partCount;
+                    $('#ladb_btn_export_file_format', $btnExport).html($selectFileFormat.val().toUpperCase() + ' <small>( ' + fileCount + ' ' + i18next.t('default.file', { count: fileCount }).toLowerCase() + ' )</small>');
+                }
 
                 $widgetPreset.ladbWidgetPreset({
                     dialog: that.dialog,
@@ -2172,11 +2191,15 @@
                 $selectFileFormat
                     .selectpicker(SELECT_PICKER_OPTIONS)
                     .on('changed.bs.select', function () {
-                        $('#ladb_btn_export_file_format', $btnExport).html($(this).val().toUpperCase() + ' <small>( ' + fileCount + ' ' + i18next.t('default.file', {count: fileCount}).toLowerCase() + ' )</small>');
+                        fnUpdateButtonLabel();
                         fnUpdateFieldsVisibility();
                     })
                 ;
                 $selectUnit.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectUseCount
+                    .selectpicker(SELECT_PICKER_OPTIONS)
+                    .on('changed.bs.select', fnUpdateButtonLabel)
+                ;
                 $selectAnchor.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectSwitchYZ.selectpicker(SELECT_PICKER_OPTIONS);
 
