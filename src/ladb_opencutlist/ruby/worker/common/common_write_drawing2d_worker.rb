@@ -45,10 +45,12 @@ module Ladb::OpenCutList
       @folder_path = folder_path
       @file_name = _sanitize_filename(file_name)
       @file_format = file_format
+
       @unit = unit
       @anchor = anchor
       @smoothing = smoothing
       @merge_holes = merge_holes
+
       @parts_stroke_color = ColorUtils.color_create(parts_stroke_color)
       @parts_fill_color = ColorUtils.color_create(parts_fill_color)
       @parts_holes_stroke_color = ColorUtils.color_create(parts_holes_stroke_color)

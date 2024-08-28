@@ -23,6 +23,7 @@ module Ladb::OpenCutList
                    smoothing: false,
                    merge_holes: false,
                    include_paths: false,
+                   use_quantities: false,
 
                    parts_stroke_color: nil,
                    parts_fill_color: nil,
@@ -45,6 +46,7 @@ module Ladb::OpenCutList
       @smoothing = smoothing
       @merge_holes = merge_holes
       @include_paths = include_paths
+      @use_quantities = use_quantities
 
       @parts_stroke_color = parts_stroke_color
       @parts_fill_color = parts_fill_color
@@ -78,15 +80,20 @@ module Ladb::OpenCutList
           # Ignore virtual parts
           next if part.virtual
 
+          count = @use_quantities ? part.count : 1
           group = part.group
           folder_name = group.material_display_name
           folder_name = PLUGIN.get_i18n_string('tab.cutlist.material_undefined') if folder_name.nil? || folder_name.empty?
           folder_name += " - #{group.std_dimension}" unless group.std_dimension.empty?
           folder_name = _sanitize_filename(folder_name)
           folder_path = File.join(dir, folder_name)
-          file_name = "#{part.number} - #{_sanitize_filename(part.name)}"
 
-          begin
+          count.times do |i|
+
+            file_name = "#{part.number} - #{_sanitize_filename(part.name)}"
+            file_name += " - #{i + 1} of #{count}" if @use_quantities
+
+            begin
 
             unless folder_names.include?(folder_name)
               if File.exist?(folder_path)
@@ -167,9 +174,11 @@ module Ladb::OpenCutList
             return { :errors => [ [ 'core.error.failed_export_to', { :path => folder_path, :error => e.message } ] ] }
           end
 
+          end
+
         end
 
-        return { :export_path => dir }
+        { :export_path => dir }
       end
 
     end

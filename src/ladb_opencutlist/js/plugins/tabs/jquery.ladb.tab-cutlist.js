@@ -2086,6 +2086,7 @@
 
                     rubyCallCommand('cutlist_write_parts', $.extend({
                         part_ids: partIds,
+                        use_quantities: true
                     }, write2dOptions), function (response) {
 
                         if (response.errors) {

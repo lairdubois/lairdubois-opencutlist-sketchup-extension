@@ -199,6 +199,7 @@ namespace Packy {
       json j = {
               {"time", output.time},
               {"number_of_bins", best_solution.number_of_bins()},
+              {"full_waste_percentage", best_solution.full_waste_percentage()},
       };
       return std::move(j);
     }

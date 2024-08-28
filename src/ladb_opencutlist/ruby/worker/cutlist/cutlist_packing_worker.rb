@@ -302,8 +302,9 @@ module Ladb::OpenCutList
 
         {
           :summary => {
-            :time => output['time'],
-            :total_used_count =>output['number_of_bins']
+            :time => output['time'].to_f.round(2),
+            :number_of_bins => output['number_of_bins'],
+            :full_waste_percentage => (output['full_waste_percentage'].to_f * 100).round(2)
           },
           :bins => bins.map { |bin| {
             count: bin.copies,
@@ -375,7 +376,7 @@ module Ladb::OpenCutList
         svg += "<g class='bin'>"
           svg += "<rect class='bin-outer' x='-1' y='-1' width='#{px_bin_length + 2}' height='#{px_bin_width + 2}' />"
           svg += "<rect class='bin-inner' x='0' y='0' width='#{px_bin_length}' height='#{px_bin_width}' fill='url(#pattern_bin_bg)'/>"
-          svg += "<path d='M0,0 L0,#{px_bin_width} L#{px_bin_length},#{px_bin_width} L#{px_bin_length},0 M#{px_trimming},#{px_trimming} L#{px_bin_length - px_trimming},#{px_trimming} L#{px_bin_length - px_trimming},#{px_bin_width - px_trimming} L#{px_trimming},#{px_bin_width - px_trimming} Z' fill='none' stroke='#ddd' stroke-dasharray='4'/>" if @trimming > 0
+          svg += "<rect class='bin-trimming' x='#{px_trimming}' y='#{px_trimming}' width='#{px_bin_length - px_trimming * 2}' height='#{px_bin_width - px_trimming * 2}' fill='none' stroke='#ddd' stroke-dasharray='4'/>" if @trimming > 0
         svg += '</g>'
         bin.items.each do |item|
 

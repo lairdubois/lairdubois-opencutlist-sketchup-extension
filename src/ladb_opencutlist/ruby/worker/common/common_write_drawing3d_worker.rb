@@ -3,7 +3,6 @@ module Ladb::OpenCutList
   require_relative '../../constants'
   require_relative '../../helper/stl_writer_helper'
   require_relative '../../helper/obj_writer_helper'
-  require_relative '../../helper/dxf_writer_helper'
   require_relative '../../helper/sanitizer_helper'
   require_relative '../../model/drawing/drawing_def'
 
@@ -35,6 +34,7 @@ module Ladb::OpenCutList
       @folder_path = folder_path
       @file_name = _sanitize_filename(file_name)
       @file_format = file_format
+
       @unit = unit
       @switch_yz = switch_yz
 
