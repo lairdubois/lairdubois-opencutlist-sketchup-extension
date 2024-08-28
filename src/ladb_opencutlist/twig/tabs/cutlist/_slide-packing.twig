@@ -77,7 +77,7 @@
                                 <button class="btn btn-default btn-sm ladb-btn-scrollto-next-group" {% if loop.last %}disabled{% endif %}><i class="ladb-opencutlist-icon-chevron-right"></i></button>
                             </div>
                         {% endif %}
-                        <div class="ladb-heading pull-right" style="margin-right: 10px;"><strong>{{ binIndex }}{% if bin.count > 1 %} ... {{ binIndex + bin.count - 1 }}{% endif%} / {{ summary.total_used_count }}</strong></div>
+                        <div class="ladb-heading pull-right" style="margin-right: 10px;"><strong>{{ binIndex }}{% if bin.count > 1 %} ... {{ binIndex + bin.count - 1 }}{% endif%} / {{ summary.number_of_bins }}</strong></div>
                         {% set binIndex = binIndex + bin.count %}
                         {% if bin.count > 1 %}
                             <div class="ladb-heading-count pull-right">x&nbsp;{{ bin.count }}</div>
