@@ -231,8 +231,8 @@
                 <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-opencutlist-icon-eye-{% if groupHidden %}open{% else %}close{% endif %}"></i></button>
                 <div class="btn-group pull-right">
                     {% if group.material_type == 2 or group.material_type == 6 %}    {# 2 = TYPE_SHEET_GOOD, 6 = TYPE_VENEER #}
-                        <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-packing"><i class="ladb-opencutlist-icon-packing-irregular"></i></button>
-                        <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-cuttingdiagram2d"><i class="ladb-opencutlist-icon-cuttingdiagram2d"></i> {{ 'tab.cutlist.menu.group_cuttingdiagram'|i18next }}...</button>
+                        <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-packing"><i class="ladb-opencutlist-icon-packing-irregular"></i> {{ 'tab.cutlist.menu.group_cuttingdiagram'|i18next }}...</button>
+                        <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-cuttingdiagram2d"><i class="ladb-opencutlist-icon-cuttingdiagram2d"></i></button>
                     {% endif %}
                     {% if group.material_type == 3 or group.material_type == 4 %}    {# 3 = TYPE_DIMENSIONAL, 4 = TYPE_EDGE #}
                         <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-cuttingdiagram1d"><i class="ladb-opencutlist-icon-cuttingdiagram1d"></i> {{ 'tab.cutlist.menu.group_cuttingdiagram'|i18next }}...</button>

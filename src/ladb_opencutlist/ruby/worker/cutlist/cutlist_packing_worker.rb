@@ -304,7 +304,11 @@ module Ladb::OpenCutList
           :summary => {
             :time => output['time'].to_f.round(2),
             :number_of_bins => output['number_of_bins'],
-            :full_waste_percentage => (output['full_waste_percentage'].to_f * 100).round(2)
+            :number_of_different_bins => output['number_of_different_bins'],
+            :cost => output['cost'],
+            :number_of_items => output['number_of_items'],
+            :profit => output['profit'],
+            :full_waste_percentage => output['full_waste_percentage']
           },
           :bins => bins.map { |bin| {
             count: bin.copies,

@@ -39,20 +39,21 @@
                     <td colspan="6">
                         <small>
                             <div class="row">
-{#                                <div class="col-xs-6">#}
-{#                                    <span style="margin-left: 10px;">{{ 'tab.cutlist.cuttingdiagram.list.settings'|i18next }}</span>#}
-{#                                    <ul>#}
-{#                                        <li><strong>{{ 'tab.cutlist.cuttingdiagram.option_saw_kerf'|i18next }} : </strong>{{ options.saw_kerf }}</li>#}
-{#                                        <li><strong>{{ 'tab.cutlist.cuttingdiagram.option_trimming'|i18next }} : </strong>{{ options.trimming }}</li>#}
-{#                                        <li><strong>{{ 'tab.cutlist.cuttingdiagram.option_part_drawing_type'|i18next }} : </strong>{{ ('tab.cutlist.cuttingdiagram.option_part_drawing_type_'~options.part_drawing_type)|i18next }}</li>#}
-{#                                    </ul>#}
-{#                                </div>#}
                                 <div class="col-xs-6">
                                     <span style="margin-left: 10px;">{{ 'tab.cutlist.cuttingdiagram.list.stats'|i18next }}</span>
                                     <ul>
                                         <li><strong>time : </strong>{{ summary.time }}s</li>
                                         <li><strong>number_of_bins : </strong>{{ summary.number_of_bins }}</li>
-                                        <li><strong>full_waste_percentage : </strong>{{ summary.full_waste_percentage }}%</li>
+                                        <li><strong>number_of_different_bins : </strong>{{ summary.number_of_different_bins }}</li>
+                                        <li><strong>number_of_items : </strong>{{ summary.number_of_items }}</li>
+                                    </ul>
+                                </div>
+                                <div class="col-xs-6">
+                                    <span style="margin-left: 10px;">&nbsp;</span>
+                                    <ul>
+                                        <li><strong>cost : </strong>{{ summary.cost|number_format(2, ',', ' ') }}</li>
+                                        <li><strong>profit : </strong>{{ summary.profit|number_format(2, ',', ' ') }}</li>
+                                        <li><strong>full_waste_percentage : </strong>{{ (summary.full_waste_percentage * 100)|number_format(2) }}%</li>
                                     </ul>
                                 </div>
                             </div>
