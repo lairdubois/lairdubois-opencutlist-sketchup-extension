@@ -238,21 +238,18 @@ gulp.task('c_libs_clean', function (cb) {
 });
 
 gulp.task('c_libs_prepare', function () {
-    return run('cmake -S .. -B ' + cmakeBuildDir, { verbosity: 3 }).exec();
+
+    var config = options.config ? options.config : 'Release'
+
+    return run('cmake -S .. -B ' + cmakeBuildDir + ' -DCMAKE_BUILD_TYPE=' + config, { verbosity: 3 }).exec();
 });
 
 gulp.task('c_libs_build', function () {
-
-    var config = options.config ? options.config : 'Release'
-
-    return run('cmake --build ' + cmakeBuildDir + ' --config ' + config + ' --parallel', { verbosity: 3 }).exec();
+    return run('cmake --build ' + cmakeBuildDir + ' --parallel', { verbosity: 3 }).exec();
 });
 
 gulp.task('c_libs_install', function () {
-
-    var config = options.config ? options.config : 'Release'
-
-    return run('cmake --install ' + cmakeBuildDir + ' --config ' + config, { verbosity: 3 }).exec();
+    return run('cmake --install ' + cmakeBuildDir, { verbosity: 3 }).exec();
 });
 
 gulp.task('c_libs_build_install', gulp.series('c_libs_build', 'c_libs_install'));

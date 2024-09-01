@@ -79,7 +79,7 @@ module Ladb::OpenCutList
       @spacing = DimensionUtils.instance.str_to_ifloat(spacing).to_l.to_f
       @trimming = DimensionUtils.instance.str_to_ifloat(trimming).to_l.to_f
       @time_limit = [ 1 , time_limit.to_i ].max
-      @not_anytime_tree_search_queue_size = [ 2 , not_anytime_tree_search_queue_size.to_i ].max
+      @not_anytime_tree_search_queue_size = [ 1 , not_anytime_tree_search_queue_size.to_i ].max
       @verbosity_level = verbosity_level.to_i
 
       @rectangleguillotine_cut_type = rectangleguillotine_cut_type
@@ -246,6 +246,7 @@ module Ladb::OpenCutList
           puts '-- input --'
         end
         if @verbosity_level > 1
+          puts ' '
           puts '-- instance --'
           puts input[:instance].to_json
           puts '-- instance --'

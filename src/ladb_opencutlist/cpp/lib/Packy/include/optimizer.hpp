@@ -164,10 +164,6 @@ namespace Packy {
         parameters_.not_anytime_dichotomic_search_subproblem_queue_size = j["not_anytime_dichotomic_search_subproblem_queue_size"].template get<Counter>();
       }
 
-      parameters_.new_solution_callback = [](const auto& output){
-        std::cout << "New solution !! time=" << output.time << std::endl;
-      };
-
     }
 
     void read_instance(basic_json<>& j) override {
