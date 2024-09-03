@@ -194,7 +194,7 @@ module Ladb::OpenCutList
 
           end
 
-          @item_defs << Packy::ItemDef.new(projection_def, part)
+          @item_defs << Packy::ItemDef.new(projection_def, part, ColorUtils.color_lighten(ColorUtils.color_create("##{SecureRandom.hex(3)}"), 0.8))
 
         }
         parts.each { |part|
@@ -393,7 +393,7 @@ module Ladb::OpenCutList
           svg += "<g class='item' transform='translate(#{px_item_x} #{px_item_y}) rotate(-#{item.angle})#{' scale(-1 1)' if item.mirror}' data-toggle='tooltip' data-html='true' title='<div>#{item.def.data.name}</div><div>x = #{item.x}</div><div>y = #{item.y}</div>'>"
             svg += "<rect class='item-outer' x='0' y='-#{px_item_width}' width='#{px_item_length}' height='#{px_item_width}' />" unless @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
             svg += "<g class='item-projection'#{" transform='translate(#{_to_px((item.def.data.def.cutting_size.length - item.def.data.def.size.length) / 2)} -#{_to_px((item.def.data.def.cutting_size.width - item.def.data.def.size.width) / 2)})'" unless @problem_type == Packy::PROBLEM_TYPE_IRREGULAR}>"
-              svg += "<path stroke='black' stroke-width='0.5' class='item-projection-shape' d='#{item.def.projection_def.layer_defs.map { |layer_def| "#{layer_def.poly_defs.map { |poly_def| "M #{(layer_def.type_holes? ? poly_def.points.reverse : poly_def.points).map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y).round(2)}" }.join(' L ')} Z" }.join(' ')}" }.join(' ')}' />"
+              svg += "<path stroke='black' fill='#{ColorUtils.color_to_hex(item.def.color)}' stroke-width='0.5' class='item-projection-shape' d='#{item.def.projection_def.layer_defs.map { |layer_def| "#{layer_def.poly_defs.map { |poly_def| "M #{(layer_def.type_holes? ? poly_def.points.reverse : poly_def.points).map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y).round(2)}" }.join(' L ')} Z" }.join(' ')}" }.join(' ')}' />"
             svg += '</g>'
             svg += "<text class='item-dimension' x='#{px_item_length - dimension_offset}' y='-#{px_item_width - dimension_offset}' font-size='#{dimension_font_size}' text-anchor='end' dominant-baseline='hanging' color='red'>#{item.def.data.cutting_length.gsub(/~ /, '')}</text>" unless @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
             svg += "<text class='item-dimension' x='#{dimension_offset}' y='-#{dimension_offset}' font-size='#{dimension_font_size}' text-anchor='start' dominant-baseline='hanging' color='red' transform='rotate(-90 #{dimension_offset} -#{dimension_offset})'>#{item.def.data.cutting_width.gsub(/~ /, '')}</text>" unless @problem_type == Packy::PROBLEM_TYPE_IRREGULAR

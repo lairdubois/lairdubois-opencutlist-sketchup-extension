@@ -4727,7 +4727,7 @@
                     });
 
                     window.requestAnimationFrame(function () {
-                        that.dialog.startProgress(parseInt(packingOptions.time_limit) * 2, function () {
+                        that.dialog.startProgress(parseInt(packingOptions.time_limit) * 4, function () {
                             rubyCallCommand('cutlist_group_packing_stop');
                         });
                         rubyCallCommand('cutlist_group_packing_start', $.extend({
@@ -4815,7 +4815,7 @@
 
                                 });
 
-                            }, 500);
+                            }, 250);
                         });
                     });
 

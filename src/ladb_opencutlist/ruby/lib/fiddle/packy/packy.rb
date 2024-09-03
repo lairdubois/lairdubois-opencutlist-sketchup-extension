@@ -56,7 +56,7 @@ module Ladb::OpenCutList::Fiddle
     # -----
 
     BinDef = Struct.new(:length, :width, :type)
-    ItemDef = Struct.new(:projection_def, :data)
+    ItemDef = Struct.new(:projection_def, :data, :color)
 
     Bin = Struct.new(:def, :copies, :items, :cuts)
     Item = Struct.new(:def, :x, :y, :angle, :mirror)
