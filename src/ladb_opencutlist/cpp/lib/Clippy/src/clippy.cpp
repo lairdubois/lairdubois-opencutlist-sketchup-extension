@@ -18,7 +18,7 @@ DLL_EXPORTS void c_doit(CMyStruct* solution) {
 
 DLL_EXPORTS CPathsDSolution* c_boolean_op(uint8_t clip_type, uint8_t fill_rule, CPathD closed_subjects, CPathD open_subjects, CPathD clips) {
 
-  CPathsDSolution *solution = (CPathsDSolution *)malloc(sizeof(CPathsDSolution));
+  auto *solution = (CPathsDSolution *)malloc(sizeof(CPathsDSolution));
 
   solution->error = Clipper2Lib::BooleanOpD(
           clip_type,
@@ -38,7 +38,7 @@ DLL_EXPORTS CPathsDSolution* c_boolean_op(uint8_t clip_type, uint8_t fill_rule, 
 
 DLL_EXPORTS CPolyTreeDSolution* c_boolean_op_polytree(uint8_t clip_type, uint8_t fill_rule, CPathD closed_subjects, CPathD open_subjects, CPathD clips) {
 
-  CPolyTreeDSolution *solution = (CPolyTreeDSolution *)malloc(sizeof(CPolyTreeDSolution));
+  auto *solution = (CPolyTreeDSolution *)malloc(sizeof(CPolyTreeDSolution));
 
   solution->error = Clipper2Lib::BooleanOp_PolyTreeD(
           clip_type,
