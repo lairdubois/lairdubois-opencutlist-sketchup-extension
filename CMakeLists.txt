@@ -13,7 +13,6 @@ project("OpenCutList Dynamic Libraries"
         LANGUAGES C CXX)
 
 # CMake options
-#set(CMAKE_BUILD_TYPE "Release")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -22,8 +21,7 @@ if(WIN32)
   set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/src/ladb_opencutlist/bin/win/)
 endif()
 if(APPLE)
-#  set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE STRING "" FORCE)
-  set(CMAKE_OSX_ARCHITECTURES "arm64" CACHE STRING "" FORCE)
+  set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE STRING "" FORCE)
   set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "Minimum OS X deployment version")
   set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/src/ladb_opencutlist/bin/osx/)
 endif()

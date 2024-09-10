@@ -194,7 +194,7 @@ module Ladb::OpenCutList
 
           end
 
-          @item_defs << Packy::ItemDef.new(projection_def, part, ColorUtils.color_lighten(ColorUtils.color_create("##{SecureRandom.hex(3)}"), 0.8))
+          @item_defs << Packy::ItemDef.new(projection_def, part, ColorUtils.color_lighten(ColorUtils.color_create("##{Digest::SHA1.hexdigest(part.number.to_s)[0..5]}"), 0.8))
 
         }
         parts.each { |part|

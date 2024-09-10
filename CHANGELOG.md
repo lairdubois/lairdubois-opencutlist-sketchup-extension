@@ -16,6 +16,7 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
     * Added Duplicate element in labels editor
     * Added Duplicate column in export editor
     * Added _use_count_ parameter to 2D and 3D drawing writers
+    * Improved part shape 2D projection when using cuts opening components
     * Improved labels formulas
     * Improved smart tools picker
     * Improved surface detection
