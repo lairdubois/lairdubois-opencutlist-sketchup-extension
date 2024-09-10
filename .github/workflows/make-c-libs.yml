@@ -46,10 +46,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install CLP (MacOS)
+      - name: Check LongPathsEnabled (Windows)
         run: |
-          brew install clp
-        if: ${{ (matrix.os == 'macos-13') || (matrix.os == 'macos-latest') }}
+          (Get-ItemProperty "HKLM:System\CurrentControlSet\Control\FileSystem").LongPathsEnabled
+        if: ${{ (matrix.os == 'windows-latest') }}
 
       - name: Set reusable strings
         # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
