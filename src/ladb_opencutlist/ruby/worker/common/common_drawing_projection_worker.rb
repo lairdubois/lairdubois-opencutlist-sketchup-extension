@@ -73,7 +73,12 @@ module Ladb::OpenCutList
         else
           f_depth = (z_max - face_manipulator.z_max)
         end
-        f_paths = face_manipulator.loop_manipulators.map { |loop_manipulator| loop_manipulator.points }.map { |points| Clippy.points_to_rpath(points) }
+        if face_manipulator.has_cuts_opening?
+          # Face has cuts opening components glued to. So we extract its paths from mesh triangulation instead of loops.
+          f_paths = face_manipulator.triangles.each_slice(3).to_a.map { |points| Clippy.points_to_rpath(points) }
+        else
+          f_paths = face_manipulator.loop_manipulators.map { |loop_manipulator| loop_manipulator.points }.map { |points| Clippy.points_to_rpath(points) }
+        end
 
         pld = plds[f_depth.round(3)]
         if pld.nil?

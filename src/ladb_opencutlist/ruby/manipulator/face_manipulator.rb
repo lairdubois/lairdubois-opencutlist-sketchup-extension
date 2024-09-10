@@ -129,6 +129,10 @@ module Ladb::OpenCutList
       _find_longest_outer_edge(@face, @transformation)
     end
 
+    def has_cuts_opening?
+      @face.get_glued_instances.select { |entity| entity.is_a?(Sketchup::ComponentInstance) && entity.definition.behavior.cuts_opening? }.any?
+    end
+
     # -----
 
     def loop_manipulators
