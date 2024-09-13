@@ -12,6 +12,7 @@
     "std_sheet": "",
     "scrap_sheet_sizes": "",
     "problem_type": "rectangleguillotine",
+    "optimization_mode": "not-anytime",
     "objective": "bin-packing-with-leftovers",
     "rectangleguillotine_cut_type": "non-exact",
     "rectangleguillotine_first_stage_orientation": "horizontal",

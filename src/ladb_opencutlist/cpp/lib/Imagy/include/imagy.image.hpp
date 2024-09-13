@@ -6,34 +6,45 @@
 
 namespace Imagy {
 
-  enum ImageType {
-    PNG, JPG
-  };
+    enum ImageType {
+        PNG, JPG
+    };
 
-  struct Image {
+    struct Image {
 
-    Image();
-    ~Image();
+        Image();
 
-    uint8_t* data;
-    size_t size;
-    int width;
-    int height;
-    int channels;
+        ~Image();
 
-    void clear();
+        uint8_t* data;
+        size_t size;
+        int width;
+        int height;
+        int channels;
 
-    bool load(const char* filename);
-    bool write(const char* filename) const;
+        void clear();
 
-    bool is_empty() const;
+        bool load(
+                const char* filename
+        );
+        bool write(
+                const char* filename
+        ) const;
 
-    bool flip(bool horizontal = true);
-    bool rotate(int angle);
+        bool is_empty() const;
 
-    static ImageType get_file_type(const char* filename);
+        bool flip(
+                bool horizontal = true
+        );
+        bool rotate(
+                int angle
+        );
 
-  };
+        static ImageType get_file_type(
+                const char* filename
+        );
+
+    };
 
 }
 

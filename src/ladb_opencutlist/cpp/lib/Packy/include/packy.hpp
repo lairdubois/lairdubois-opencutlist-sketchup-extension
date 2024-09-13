@@ -13,9 +13,11 @@ extern "C" {
 #define DLL_EXPORTS
 #endif
 
-DLL_EXPORTS void c_optimize_start(char* s_input);
+DLL_EXPORTS void c_optimize_start(
+        char* s_input
+);
 DLL_EXPORTS char* c_optimize_advance();
-DLL_EXPORTS void c_optimize_stop();
+DLL_EXPORTS void c_optimize_cancel();
 
 DLL_EXPORTS char* c_version();
 

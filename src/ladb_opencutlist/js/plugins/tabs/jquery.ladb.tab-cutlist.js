@@ -4584,6 +4584,7 @@
                 var $inputStdSheet = $('#ladb_select_std_sheet', $modal);
                 var $inputScrapSheetSizes = $('#ladb_input_scrap_sheet_sizes', $modal);
                 var $radiosProblemType = $('input[name=ladb_radios_problem_type]', $modal);
+                var $selectOptimizationMode = $('#ladb_select_optimization_mode', $modal);
                 var $selectObjective = $('#ladb_select_objective', $modal);
                 var $formGroupRectangleguillotine = $('.ladb-cutlist-packing-form-group-rectangleguillotine', $modal)
                 var $selectRectangleguillotineCutType = $('#ladb_select_rectangleguillotine_cut_type', $modal);
@@ -4604,6 +4605,7 @@
                     options.std_sheet = $inputStdSheet.val();
                     options.scrap_sheet_sizes = $inputScrapSheetSizes.ladbTextinputTokenfield('getValidTokensList');
                     options.problem_type = $radiosProblemType.filter(':checked').val();
+                    options.optimization_mode = $selectOptimizationMode.val();
                     options.objective = $selectObjective.val();
                     options.rectangleguillotine_cut_type = $selectRectangleguillotineCutType.val();
                     options.rectangleguillotine_first_stage_orientation = $selectRectangleguillotineFirstStageOrientation.val();
@@ -4617,6 +4619,7 @@
                 }
                 var fnFillInputs = function (options) {
                     $radiosProblemType.filter('[value=' + options.problem_type + ']').click();
+                    $selectOptimizationMode.selectpicker('val', options.optimization_mode);
                     $selectObjective.selectpicker('val', options.objective);
                     $selectRectangleguillotineCutType.selectpicker('val', options.rectangleguillotine_cut_type);
                     $selectRectangleguillotineFirstStageOrientation.selectpicker('val', options.rectangleguillotine_first_stage_orientation);
@@ -4669,6 +4672,7 @@
                 $inputStdSheet.selectpicker(SELECT_PICKER_OPTIONS);
                 $inputScrapSheetSizes.ladbTextinputTokenfield({format: 'dxdxq'});
                 $inputScrapSheetSizes.ladbTextinputTokenfield('setTokens', packingOptions.scrap_sheet_sizes);
+                $selectOptimizationMode.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectObjective.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectRectangleguillotineCutType.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectRectangleguillotineFirstStageOrientation.selectpicker(SELECT_PICKER_OPTIONS);

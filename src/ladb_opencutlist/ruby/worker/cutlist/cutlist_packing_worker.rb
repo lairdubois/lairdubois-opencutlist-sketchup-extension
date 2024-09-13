@@ -50,6 +50,7 @@ module Ladb::OpenCutList
                    scrap_sheet_sizes: '',
 
                    problem_type: Packy::PROBLEM_TYPE_RECTANGLE,
+                   optimization_mode: 'not-anytime',
                    objective: 'bin-packing',
                    spacing: '20mm',
                    trimming: '10mm',
@@ -75,6 +76,7 @@ module Ladb::OpenCutList
       @scrap_sheet_sizes = DimensionUtils.instance.dxdxq_to_ifloats(scrap_sheet_sizes)
 
       @problem_type = problem_type
+      @optimization_mode = optimization_mode
       @objective = objective
       @spacing = DimensionUtils.instance.str_to_ifloat(spacing).to_l.to_f
       @trimming = DimensionUtils.instance.str_to_ifloat(trimming).to_l.to_f
@@ -226,7 +228,7 @@ module Ladb::OpenCutList
         input = {
           problem_type: @problem_type,
           parameters: {
-            optimization_mode: "not-anytime",
+            optimization_mode: @optimization_mode,
             time_limit: @time_limit,
             not_anytime_tree_search_queue_size: @not_anytime_tree_search_queue_size,
             verbosity_level: @verbosity_level
@@ -323,7 +325,7 @@ module Ladb::OpenCutList
 
         return { :errors => [ 'default.error' ] } unless @_running
 
-        Packy.optimize_stop
+        Packy.optimize_cancel
 
         { :cancelled => true }
       end

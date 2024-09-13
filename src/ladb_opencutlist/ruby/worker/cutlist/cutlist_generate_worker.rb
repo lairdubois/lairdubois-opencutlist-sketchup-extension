@@ -819,6 +819,7 @@ module Ladb::OpenCutList
                 folder_part_def.ignore_grain_direction = first_child_part_def.ignore_grain_direction
                 folder_part_def.edge_count = first_child_part_def.edge_count
                 folder_part_def.edge_pattern = first_child_part_def.edge_pattern
+                folder_part_def.edge_materials.merge!(first_child_part_def.edge_materials)
                 folder_part_def.edge_material_names.merge!(first_child_part_def.edge_material_names)
                 folder_part_def.edge_material_colors.merge!(first_child_part_def.edge_material_colors)
                 folder_part_def.edge_std_dimensions.merge!(first_child_part_def.edge_std_dimensions)

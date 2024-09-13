@@ -22,7 +22,7 @@ module Ladb::OpenCutList::Fiddle
 
         'void c_optimize_start(char*)',
         'char* c_optimize_advance()',
-        'void c_optimize_stop()',
+        'void c_optimize_cancel()',
 
         'char* c_version()',
 
@@ -49,8 +49,8 @@ module Ladb::OpenCutList::Fiddle
       return output
     end
 
-    def self.optimize_stop
-      c_optimize_stop if loaded?
+    def self.optimize_cancel
+      c_optimize_cancel if loaded?
     end
 
     # -----

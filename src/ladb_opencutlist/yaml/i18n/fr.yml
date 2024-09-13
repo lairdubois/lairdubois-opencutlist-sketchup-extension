@@ -804,6 +804,9 @@ tab:
       option_problem_type: Type
       option_problem_type_help: |
         ...
+      option_optimization_mode: Optimizarion Mode
+      option_optimization_mode_help: |
+        ...
       option_objective: Objectif
       option_objective_help: |
         ...
