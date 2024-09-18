@@ -27,8 +27,6 @@ module Ladb::OpenCutList::Fiddle
     def self._lib_c_functions
       [
 
-        'void c_doit(CPathsDSolution*)',
-
         'CPathsDSolution* c_boolean_op(uint8_t, uint8_t, double*, double*, double*)',
         'CPolyTreeDSolution* c_boolean_op_polytree(uint8_t, uint8_t, double*, double*, double*)',
 
