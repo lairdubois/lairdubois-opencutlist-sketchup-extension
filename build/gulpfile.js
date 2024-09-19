@@ -227,25 +227,22 @@ gulp.task('default', gulp.series('build'));
 
 var cmakeBuildDir = 'cmake-build';
 
-gulp.task('c_libs_clean', function (cb) {
-
-    if (fs.existsSync(cmakeBuildDir)) {
-        fs.rmSync(cmakeBuildDir, { recursive: true });
-    }
-    fs.mkdirSync(cmakeBuildDir);
-
-    cb();
+gulp.task('c_libs_clean', function () {
+    return run('cmake --build ' + cmakeBuildDir + ' --target clean', { verbosity: 3 }).exec();
 });
 
 gulp.task('c_libs_prepare', function () {
 
-    var config = options.config ? options.config : 'Release'
+    var config = options.config ? options.config : 'Release';
 
     return run('cmake -S .. -B ' + cmakeBuildDir + ' -DCMAKE_BUILD_TYPE=' + config, { verbosity: 3 }).exec();
 });
 
 gulp.task('c_libs_build', function () {
-    return run('cmake --build ' + cmakeBuildDir + ' --parallel', { verbosity: 3 }).exec();
+
+    var config = options.config ? options.config : 'Release';
+
+    return run('cmake --build ' + cmakeBuildDir + ' --config ' + config + ' --parallel', { verbosity: 3 }).exec();
 });
 
 gulp.task('c_libs_install', function () {
