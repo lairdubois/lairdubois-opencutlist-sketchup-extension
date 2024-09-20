@@ -171,24 +171,28 @@ namespace Clipper2Lib {
     );
 
 
-    CPaths64 InflatePaths64(
+    int InflatePaths64(
             const CPaths64 paths,
             double delta,
+            CPaths64& solution,
             uint8_t jointype,
             uint8_t endtype,
             double miter_limit = 2.0,
             double arc_tolerance = 0.0,
+            bool preserve_collinear = false,
             bool reverse_solution = false
     );
 
-    CPathsD InflatePathsD(
+    int InflatePathsD(
             const CPathsD paths,
             double delta,
-            uint8_t jointype,
-            uint8_t endtype,
+            CPathsD& solution,
+            uint8_t join_type,
+            uint8_t end_type,
             int precision = 8,
             double miter_limit = 2.0,
             double arc_tolerance = 0.0,
+            bool preserve_collinear = false,
             bool reverse_solution = false
     );
 

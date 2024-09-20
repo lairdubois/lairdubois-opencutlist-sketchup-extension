@@ -648,7 +648,7 @@ module Ladb::OpenCutList
 
                 line_stipple = Kuix::LINE_STIPPLE_SOLID
 
-                if fetch_action_option_enabled(ACTION_EXPORT_PATHS, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
+                if fetch_action_option_enabled(ACTION_EXPORT_PATHS, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING) && !poly_def.curve_def.nil?
                   poly_def.curve_def.portions.each do |portion|
                     fn_append_segments.call(portion.segments, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, line_stipple)
                   end

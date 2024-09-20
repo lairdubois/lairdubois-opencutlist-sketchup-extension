@@ -19,7 +19,7 @@ enum class JoinType { Square, Bevel, Round, Miter };
 //Square : Joins are 'squared' at exactly the offset distance (more complex code)
 //Bevel  : Similar to Square, but the offset distance varies with angle (simple code & faster)
 
-enum class EndType {Polygon, Joined, Butt, Square, Round};
+enum class EndType { Polygon, Joined, Butt, Square, Round };
 //Butt   : offsets both sides of a path, with square blunt ends
 //Square : offsets both sides of a path, with square extended ends
 //Round  : offsets both sides of a path, with round extended ends

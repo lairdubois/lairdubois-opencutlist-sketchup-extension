@@ -169,49 +169,61 @@ namespace Clipper2Lib {
     }
 
 
-    CPaths64 InflatePaths64(
+    int InflatePaths64(
             const CPaths64 paths,
             double delta,
+            CPaths64& solution,
             uint8_t jointype,
             uint8_t endtype,
             double miter_limit,
             double arc_tolerance,
+            bool preserve_collinear,
             bool reverse_solution
     ) {
 
-        Paths64 pp;
-        pp = ConvertCPaths(paths);
-        ClipperOffset clip_offset(miter_limit, arc_tolerance, reverse_solution);
-        clip_offset.AddPaths(pp, JoinType(jointype), EndType(endtype));
+        if (jointype > static_cast<uint8_t>(JoinType::Miter)) return -4;
+        if (endtype > static_cast<uint8_t>(EndType::Round)) return -3;
 
+        Paths64 input = ConvertCPaths(paths);
+        ClipperOffset offset(miter_limit, arc_tolerance, preserve_collinear, reverse_solution);
+        offset.AddPaths(input, JoinType(jointype), EndType(endtype));
         Paths64 result;
-        clip_offset.Execute(delta, result);
-        return CreateCPaths(result);
+        offset.Execute(delta, result);
+
+        solution = CreateCPaths(SimplifyPaths(result, 1.0));
+
+        return 0; // Success !!
     }
 
-    CPathsD InflatePathsD(
+    int InflatePathsD(
             const CPathsD paths,
             double delta,
-            uint8_t jointype,
-            uint8_t endtype,
+            CPathsD& solution,
+            uint8_t join_type,
+            uint8_t end_type,
             int precision,
             double miter_limit,
             double arc_tolerance,
+            bool preserve_collinear,
             bool reverse_solution
     ) {
 
-        if (precision < -8 || precision > 8 || !paths) return nullptr;
+        if (precision < -8 || precision > 8) return -5;
+        if (join_type > static_cast<uint8_t>(JoinType::Miter)) return -4;
+        if (end_type > static_cast<uint8_t>(EndType::Round)) return -3;
 
         const double scale = std::pow(10, precision);
         const double inv_scale = 1 / scale;
 
-        ClipperOffset clip_offset(miter_limit, arc_tolerance, reverse_solution);
-        Paths64 pp = ConvertCPathsDToPaths64(paths, scale);
-        clip_offset.AddPaths(pp, JoinType(jointype), EndType(endtype));
+        ClipperOffset offset(miter_limit, arc_tolerance, preserve_collinear, reverse_solution);
+        Paths64 input = ConvertCPathsDToPaths64(paths, scale);
+        offset.AddPaths(input, JoinType(join_type), EndType(end_type));
         Paths64 result;
-        clip_offset.Execute(delta * scale, result);
+        offset.Execute(delta * scale, result);
 
-        return CreateCPathsDFromPaths64(result, inv_scale);
+        solution = CreateCPathsDFromPaths64(SimplifyPaths(result, 1.0), inv_scale);
+
+        return 0; // Success !!
     }
 
 

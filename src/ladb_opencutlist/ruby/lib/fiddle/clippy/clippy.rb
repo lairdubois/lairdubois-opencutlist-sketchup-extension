@@ -5,18 +5,32 @@ module Ladb::OpenCutList::Fiddle
   module Clippy
     extend ClipperWrapper
 
+    # https://angusj.com/clipper2/Docs/Units/Clipper/Types/ClipType.htm
     CLIP_TYPE_NONE = 0
     CLIP_TYPE_INTERSECTION = 1
     CLIP_TYPE_UNION = 2
     CLIP_TYPE_DIFFERENCE = 3
     CLIP_TYPE_XOR = 4
 
+    # https://angusj.com/clipper2/Docs/Units/Clipper/Types/FillRule.htm
     FILL_TYPE_EVEN_ODD = 0
     FILL_TYPE_NON_ZERO = 1
     FILL_TYPE_POSITIVE = 2
     FILL_TYPE_NEGATIVE = 3
 
-    CMyStruct = struct [ 'char* msg', 'int* values', 'int error' ]
+    # https://angusj.com/clipper2/Docs/Units/Clipper/Types/JoinType.htm
+    JOIN_TYPE_SQUARE = 0
+    JOIN_TYPE_BEVEL = 1
+    JOIN_TYPE_ROUND = 2
+    JOIN_TYPE_MITER = 3
+
+    # https://angusj.com/clipper2/Docs/Units/Clipper/Types/EndType.htm
+    END_TYPE_POLYGON = 0
+    END_TYPE_JOINED = 1
+    END_TYPE_BUTT = 2
+    END_TYPE_SQUARE = 3
+    END_TYPE_ROUND = 4
+
     CPathsDSolution = struct [ 'double* closed_paths', 'double* open_paths', 'int error' ]
     CPolyTreeDSolution = struct [ 'double* polytree', 'double* open_paths', 'int error' ]
 
@@ -29,6 +43,8 @@ module Ladb::OpenCutList::Fiddle
 
         'CPathsDSolution* c_boolean_op(uint8_t, uint8_t, double*, double*, double*)',
         'CPolyTreeDSolution* c_boolean_op_polytree(uint8_t, uint8_t, double*, double*, double*)',
+
+        'CPathsDSolution* c_inflate_paths(double*, double, uint8_t, uint8_t, double, double, int, int)',
 
         'int c_is_cpath_positive(double*)',
         'double c_get_cpath_area(double*)',
@@ -50,25 +66,6 @@ module Ladb::OpenCutList::Fiddle
 
     # -----
 
-    def self.doit
-      _load_lib
-
-      CMyStruct.malloc(Fiddle::RUBY_FREE) do |solution|
-
-        puts "solution.class = #{solution.class}"
-
-        c_doit(solution)
-
-        values = solution.values.to_str(Fiddle::SIZEOF_INT * 2).unpack('l*')
-
-        puts "solution.msg = #{solution.msg}"
-        puts "solution.values = #{values}"
-        puts "solution.error = #{solution.error}"
-
-      end
-
-    end
-
     def self.execute(clip_type:, fill_type: FILL_TYPE_NON_ZERO, closed_subjects:, open_subjects: [], clips: [])
       _load_lib
 
@@ -89,7 +86,11 @@ module Ladb::OpenCutList::Fiddle
       [ closed_rpath, open_rpath ]
     end
 
-    def self.execute_union(closed_subjects: [], open_subjects: [], clips: [])
+    def self.execute_union(
+      closed_subjects: [],
+      open_subjects: [],
+      clips: []
+    )
       self.execute(
         clip_type: CLIP_TYPE_UNION,
         fill_type: FILL_TYPE_NON_ZERO,
@@ -99,7 +100,11 @@ module Ladb::OpenCutList::Fiddle
       )
     end
 
-    def self.execute_difference(closed_subjects: [], open_subjects: [], clips:)
+    def self.execute_difference(
+      closed_subjects: [],
+      open_subjects: [],
+      clips:
+    )
       self.execute(
         clip_type: CLIP_TYPE_DIFFERENCE,
         fill_type: FILL_TYPE_NON_ZERO,
@@ -109,7 +114,11 @@ module Ladb::OpenCutList::Fiddle
       )
     end
 
-    def self.execute_intersection(closed_subjects: [], open_subjects: [], clips:)
+    def self.execute_intersection(
+      closed_subjects: [],
+      open_subjects: [],
+      clips:
+    )
       self.execute(
         clip_type: CLIP_TYPE_INTERSECTION,
         fill_type: FILL_TYPE_NON_ZERO,
@@ -119,7 +128,13 @@ module Ladb::OpenCutList::Fiddle
       )
     end
 
-    def self.execute_polytree(clip_type: CLIP_TYPE_UNION, fill_type: FILL_TYPE_NON_ZERO, closed_subjects:, open_subjects: [], clips: [])
+    def self.execute_polytree(
+      clip_type: CLIP_TYPE_UNION,
+      fill_type: FILL_TYPE_NON_ZERO,
+      closed_subjects:,
+      open_subjects: [],
+      clips: []
+    )
       _load_lib
 
       solution_ptr = c_boolean_op_polytree(
@@ -136,6 +151,37 @@ module Ladb::OpenCutList::Fiddle
       c_dispose_polytree_solution(solution_ptr)
 
       rpolytree
+    end
+
+    def self.inflate_paths(
+      paths:,
+      delta:,
+      join_type: JOIN_TYPE_SQUARE,
+      end_type: END_TYPE_POLYGON,
+      miter_limit: 2.0,
+      arc_tolerance: 1e6,
+      preserve_collinear: false,
+      reverse_solution: false
+    )
+      _load_lib
+
+      solution_ptr = c_inflate_paths(
+        _rpaths_to_cpaths(paths),
+        delta,
+        join_type,
+        end_type,
+        miter_limit,
+        arc_tolerance,
+        preserve_collinear ? 1 : 0,
+        reverse_solution ? 1 : 0
+      )
+      solution = CPathsDSolution.new(solution_ptr)
+
+      closed_rpath, len = _cpaths_to_rpaths(solution.closed_paths)
+
+      c_dispose_paths_solution(solution_ptr)
+
+      closed_rpath
     end
 
     def self.is_rpath_positive?(rpath)

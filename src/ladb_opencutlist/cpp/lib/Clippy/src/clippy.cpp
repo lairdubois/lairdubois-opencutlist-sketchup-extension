@@ -57,6 +57,35 @@ DLL_EXPORTS CPolyTreeDSolution* c_boolean_op_polytree(
     return solution;
 }
 
+DLL_EXPORTS CPathsDSolution* c_inflate_paths(
+        CPathsD paths,
+        double delta,
+        uint8_t join_type,
+        uint8_t end_type,
+        double miter_limit,
+        double arc_tolerance,
+        int preserve_collinear,
+        int reverse_solution
+) {
+
+    auto* solution = (CPathsDSolution*) malloc(sizeof(CPathsDSolution));
+
+    solution->error = Clipper2Lib::InflatePathsD(
+            paths,
+            delta,
+            solution->closed_paths,
+            join_type,
+            end_type,
+            8,
+            miter_limit,
+            arc_tolerance,
+            preserve_collinear,
+            reverse_solution
+    );
+
+    return solution;
+}
+
 DLL_EXPORTS int c_is_cpath_positive(
         CPathD cpath
 ) {
