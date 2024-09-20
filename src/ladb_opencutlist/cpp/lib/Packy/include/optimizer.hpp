@@ -816,12 +816,10 @@ namespace Packy {
             TypedOptimizer::read_instance_parameters(j);
 
             if (j.contains("item_item_minimum_spacing")) {
-                instance_builder_.set_item_item_minimum_spacing(
-                        j["item_item_minimum_spacing"].template get<irregular::LengthDbl>());
+                instance_builder_.set_item_item_minimum_spacing(j["item_item_minimum_spacing"].template get<irregular::LengthDbl>());
             }
             if (j.contains("item_bin_minimum_spacing")) {
-                instance_builder_.set_item_bin_minimum_spacing(
-                        j["item_bin_minimum_spacing"].template get<irregular::LengthDbl>());
+                instance_builder_.set_item_bin_minimum_spacing(j["item_bin_minimum_spacing"].template get<irregular::LengthDbl>());
             }
 
         }

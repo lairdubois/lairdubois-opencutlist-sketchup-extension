@@ -10,9 +10,6 @@ module Ladb::OpenCutList::Fiddle
     PROBLEM_TYPE_IRREGULAR = 'irregular'
     PROBLEM_TYPE_ONEDIMENSIONAL = 'onedimensional'
 
-    @bin_defs_cache = {}
-    @item_defs_cache = {}
-
     def self._lib_name
       'Packy'
     end

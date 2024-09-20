@@ -1,5 +1,3 @@
-#include "clipper2/clipper.wrapper.hpp"
-
 #include "packy.hpp"
 #include "optimizer_builder.hpp"
 
@@ -10,7 +8,6 @@
 
 #include <nlohmann/json.hpp>
 
-using namespace Clipper2Lib;
 using namespace Packy;
 
 #ifdef __cplusplus
