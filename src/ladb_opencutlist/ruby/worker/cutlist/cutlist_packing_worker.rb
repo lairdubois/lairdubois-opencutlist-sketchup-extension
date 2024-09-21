@@ -292,7 +292,7 @@ module Ladb::OpenCutList
       return { :errors => [ output['error'] ] } if output.has_key?('error')
       return { :errors => [ 'tab.cutlist.cuttingdiagram.error.no_placement_possible_2d' ] } if output['bins'].nil? || output['bins'].empty?
 
-      bins = output['bins'].map do |raw_bin|
+      bins = output['bins'].map { |raw_bin|
         bin_def = @bin_defs[raw_bin['bin_type_id']]
         Packy::Bin.new(
           bin_def,
@@ -316,7 +316,7 @@ module Ladb::OpenCutList
               )
           } : []
         )
-      end
+      }.sort_by { |bin| [ -bin.def.type, bin.def.length ] }
 
       {
         :summary => {
