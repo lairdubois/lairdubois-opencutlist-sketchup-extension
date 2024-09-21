@@ -41,10 +41,10 @@ module Ladb::OpenCutList::Fiddle
     def self._lib_c_functions
       [
 
-        'CPathsDSolution* c_boolean_op(uint8_t, uint8_t, double*, double*, double*)',
-        'CPolyTreeDSolution* c_boolean_op_polytree(uint8_t, uint8_t, double*, double*, double*)',
+        'CPathsDSolution* c_boolean_op(unsigned char, unsigned char, double*, double*, double*)',
+        'CPolyTreeDSolution* c_boolean_op_polytree(unsigned char, unsigned char, double*, double*, double*)',
 
-        'CPathsDSolution* c_inflate_paths(double*, double, uint8_t, uint8_t, double, double, int, int)',
+        'CPathsDSolution* c_inflate_paths(double*, double, unsigned char, unsigned char, double, double, int, int)',
 
         'int c_is_cpath_positive(double*)',
         'double c_get_cpath_area(double*)',

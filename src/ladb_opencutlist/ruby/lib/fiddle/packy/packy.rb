@@ -1,3 +1,4 @@
+require 'json'
 require_relative '../clipper_wrapper'
 
 module Ladb::OpenCutList::Fiddle
@@ -10,6 +11,9 @@ module Ladb::OpenCutList::Fiddle
     PROBLEM_TYPE_IRREGULAR = 'irregular'
     PROBLEM_TYPE_ONEDIMENSIONAL = 'onedimensional'
 
+    @@cache = {}
+    @@running_input_md5 = nil
+
     def self._lib_name
       'Packy'
     end
@@ -17,7 +21,7 @@ module Ladb::OpenCutList::Fiddle
     def self._lib_c_functions
       [
 
-        'void c_optimize_start(char*)',
+        'char* c_optimize_start(char*)',
         'char* c_optimize_advance()',
         'void c_optimize_cancel()',
 
@@ -35,15 +39,25 @@ module Ladb::OpenCutList::Fiddle
 
     # --
 
-    def self.optimize_start(input)
+    def self.optimize_start(input, no_cache = false)
       _load_lib
-      c_optimize_start(input.to_json)
+      input_json = input.to_json
+      input_md5 = Digest::MD5.hexdigest(input_json)
+      if !no_cache && @@cache.key?(input_md5)
+        return @@cache[input_md5]
+      end
+      @@running_input_md5 = input_md5
+      JSON.parse(c_optimize_start(input_json).to_s)
     end
 
     def self.optimize_advance
       _load_lib
       output = JSON.parse(c_optimize_advance.to_s)
-      return output
+      if !@@running_input_md5.nil? && !output['running'] && !output['cancelled']
+        @@cache[@@running_input_md5] = output
+        @@running_input_md5 = nil
+      end
+      output
     end
 
     def self.optimize_cancel

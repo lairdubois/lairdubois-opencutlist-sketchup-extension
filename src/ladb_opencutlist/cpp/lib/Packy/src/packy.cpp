@@ -18,7 +18,7 @@ static std::shared_future<json> optimize_future_;
 static std::string optimize_str_output_;
 static bool optimize_cancelled_ = false;
 
-DLL_EXPORTS void c_optimize_start(
+DLL_EXPORTS char* c_optimize_start(
         char* s_input
 ) {
 
@@ -52,6 +52,9 @@ DLL_EXPORTS void c_optimize_start(
         return std::move(j_ouput);
     }).share();
 
+    optimize_str_output_ = json{{"running", true}}.dump();
+
+    return (char*) optimize_str_output_.c_str();
 }
 
 DLL_EXPORTS char* c_optimize_advance() {

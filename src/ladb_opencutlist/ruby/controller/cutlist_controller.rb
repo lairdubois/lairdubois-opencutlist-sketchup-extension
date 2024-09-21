@@ -106,8 +106,8 @@ module Ladb::OpenCutList
         group_packing_advance_command
       end
 
-      PLUGIN.register_command("cutlist_group_packing_stop") do
-        group_packing_stop_command
+      PLUGIN.register_command("cutlist_group_packing_cancel") do
+        group_packing_cancel_command
       end
 
     end
@@ -358,11 +358,11 @@ module Ladb::OpenCutList
       @packing_worker.run(:advance)
     end
 
-    def group_packing_stop_command
+    def group_packing_cancel_command
       return { :errors => [ 'default.error' ] } unless @packing_worker
 
       # Run !
-      @packing_worker.run(:stop)
+      @packing_worker.run(:cancel)
     end
 
   end
