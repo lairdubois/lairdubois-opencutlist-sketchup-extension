@@ -48,8 +48,13 @@
                     <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_std_sheet_help'|i18next({ 'material_name':group.material_name }) }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                     <label class="control-label col-xs-4">{{ ('tab.cutlist.cuttingdiagram.option_std_sheet_'~sheetStrippedname)|i18next }}</label>
                     <div class="col-xs-7">
-                        <select class="form-control" id="ladb_select_std_sheet">
-                            {% if material_attributes.std_sizes|length > 0 %}
+                        <select class="form-control" id="ladb_select_std_bin_sizes">
+                            {% if material_attributes.std_lengths is not empty %}
+                                {% for std_length in material_attributes.std_lengths|split(';') %}
+                                    <option value="{{ std_length|escape('html') }}x{{ group.std_width }}" data-content="<strong>{{ group.material_name|truncate(18)|escape('html') }}</strong> {{ std_length|escape('html') }}"></option>
+                                {% endfor %}
+                                <option data-divider="true"></option>
+                            {% elseif material_attributes.std_sizes is not empty %}
                                 {% for std_size in material_attributes.std_sizes|split(';') %}
                                     <option value="{{ std_size|escape('html') }}" data-content="<i class='ladb-opencutlist-icon-grained-{{ material_attributes.grained ? '1' : '0' }}'></i> <strong>{{ group.material_name|truncate(18)|escape('html') }}</strong> {{ std_size|escape('html') }}"></option>
                                 {% endfor %}
@@ -57,7 +62,7 @@
                             {% endif %}
                             <option value="add" data-content="<i class='ladb-opencutlist-icon-plus'></i> {{ 'tab.cutlist.cuttingdiagram.option_std_sheet_add'|i18next }}..."></option>
                             <option data-divider="true"></option>
-                            <option value="0x0" data-content="{{ 'tab.cutlist.cuttingdiagram.option_std_sheet_none'|i18next }}"{% if material_attributes.std_sizes|length == 0 %} selected{% endif %}></option>
+                            <option value="0x0" data-content="{{ 'tab.cutlist.cuttingdiagram.option_std_sheet_none'|i18next }}"{% if material_attributes.std_lengths|length == 0 and material_attributes.std_sizes|length == 0 %} selected{% endif %}></option>
                         </select>
                         <input type="hidden" class="form-control" id="ladb_input_std_sheet_length">
                         <input type="hidden" class="form-control" id="ladb_input_std_sheet_width">
@@ -68,7 +73,7 @@
                     <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_scrap_sheet_sizes_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                     <label class="control-label col-xs-4">{{ ('tab.cutlist.cuttingdiagram.option_scrap_sheet_'~sheetStrippedname~'_sizes')|i18next }}</label>
                     <div class="col-xs-7">
-                        <input type="text" class="form-control" id="ladb_input_scrap_sheet_sizes" placeholder="{{ 'tab.cutlist.cuttingdiagram.option_scrap_sheet_sizes_placeholder'|i18next }}">
+                        <input type="text" class="form-control" id="ladb_input_scrap_bin_sizes" placeholder="{{ 'tab.cutlist.cuttingdiagram.option_scrap_sheet_sizes_placeholder'|i18next }}">
                     </div>
                 </div>
             </div>

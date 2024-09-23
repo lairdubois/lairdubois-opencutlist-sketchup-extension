@@ -83,7 +83,7 @@
                         {% if bin.count > 1 %}
                             <div class="ladb-heading-count pull-right">x&nbsp;{{ bin.count }}</div>
                         {% endif %}
-                        <div class="ladb-heading"><i class="ladb-opencutlist-icon-material-type-3"></i>{% if not generateOptions.hide_material_colors %} {% include 'tabs/materials/_material-color-drop.twig' with { 'material_color':group.material_color } %}{% endif %} {{ group.material_name|escape('html') }} / <strong>{{ group.std_dimension }}</strong> - <i class="ladb-opencutlist-icon-size-length"></i> <em>{{ bin.length }}</em> - <span style="padding: 2px 5px; border: 1px solid #000; font-size: 80%;">{{ ('tab.cutlist.cuttingdiagram.list.sheet_'~binStrippedname~'_type_'~bin.type)|i18next }}</span></div>
+                        <div class="ladb-heading"><i class="ladb-opencutlist-icon-material-type-{{ group.material_type }}"></i>{% if not generateOptions.hide_material_colors %} {% include 'tabs/materials/_material-color-drop.twig' with { 'material_color':group.material_color } %}{% endif %} {{ group.material_name|escape('html') }} / <strong>{{ group.std_dimension }}</strong> - <i class="ladb-opencutlist-icon-size-length"></i> <em>{{ bin.length }}</em> - <span style="padding: 2px 5px; border: 1px solid #000; font-size: 80%;">{{ ('tab.cutlist.cuttingdiagram.list.sheet_'~binStrippedname~'_type_'~bin.type)|i18next }}</span></div>
                     </td>
                 </tr>
                 </thead>

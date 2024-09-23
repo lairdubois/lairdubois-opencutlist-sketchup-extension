@@ -44,7 +44,7 @@
         this.lastReportOptionsTab = null;
         this.lastCuttingdiagram1dOptionsTab = null;
         this.lastCuttingdiagram2dOptionsTab = null;
-        this.lastNesting2dOptionsTab = null;
+        this.lastPackingOptionsTab = null;
         this.lastLabelsOptionsTab = null;
         this.lastLayoutOptionsTab = null;
 
@@ -4575,14 +4575,14 @@
                     material_attributes: response,
                     group: group,
                     isPartSelection: isPartSelection,
-                    tab: forceDefaultTab || that.lastNesting2dOptionsTab == null ? 'material' : that.lastNesting2dOptionsTab
+                    tab: forceDefaultTab || that.lastPackingOptionsTab == null ? 'material' : that.lastPackingOptionsTab
                 });
 
                 // Fetch UI elements
                 var $tabs = $('a[data-toggle="tab"]', $modal);
                 var $widgetPreset = $('.ladb-widget-preset', $modal);
-                var $inputStdSheet = $('#ladb_select_std_sheet', $modal);
-                var $inputScrapSheetSizes = $('#ladb_input_scrap_sheet_sizes', $modal);
+                var $inputStdBinSizes = $('#ladb_select_std_bin_sizes', $modal);
+                var $inputScrapBinSizes = $('#ladb_input_scrap_bin_sizes', $modal);
                 var $radiosProblemType = $('input[name=ladb_radios_problem_type]', $modal);
                 var $selectOptimizationMode = $('#ladb_select_optimization_mode', $modal);
                 var $selectObjective = $('#ladb_select_objective', $modal);
@@ -4602,8 +4602,8 @@
                 var $btnGenerate = $('#ladb_btn_generate', $modal);
 
                 var fnFetchOptions = function (options) {
-                    options.std_sheet = $inputStdSheet.val();
-                    options.scrap_sheet_sizes = $inputScrapSheetSizes.ladbTextinputTokenfield('getValidTokensList');
+                    options.std_bin_sizes = $inputStdBinSizes.val();
+                    options.scrap_bin_sizes = $inputScrapBinSizes.ladbTextinputTokenfield('getValidTokensList');
                     options.problem_type = $radiosProblemType.filter(':checked').val();
                     options.optimization_mode = $selectOptimizationMode.val();
                     options.objective = $selectObjective.val();
@@ -4658,20 +4658,20 @@
                     fnFetchOptions: fnFetchOptions,
                     fnFillInputs: fnFillInputs
                 });
-                if (packingOptions.std_sheet) {
-                    var defaultValue = $inputStdSheet.val();
-                    $inputStdSheet.val(packingOptions.std_sheet);
-                    if ($inputStdSheet.val() == null) {
-                        if (response.std_sizes.length === 0) {
-                            $inputStdSheet.val('0x0');  // Special case if the std_sheet is not present anymore in the list and no std size defined. Select "none" by default.
+                if (packingOptions.std_bin_sizes) {
+                    var defaultValue = $inputStdBinSizes.val();
+                    $inputStdBinSizes.val(packingOptions.std_bin_sizes.split(';'));
+                    if ($inputStdBinSizes.val() == null) {
+                        if (response.std_lengths.length > 0 || response.std_sizes.length > 0) {
+                            $inputStdBinSizes.val(defaultValue);
                         } else {
-                            $inputStdSheet.val(defaultValue);
+                            $inputStdBinSizes.val('0x0');  // Special case if the std_bin_sizes is not present anymore in the list and no std lengths or sizes defined. Select "none" by default.
                         }
                     }
                 }
-                $inputStdSheet.selectpicker(SELECT_PICKER_OPTIONS);
-                $inputScrapSheetSizes.ladbTextinputTokenfield({format: 'dxdxq'});
-                $inputScrapSheetSizes.ladbTextinputTokenfield('setTokens', packingOptions.scrap_sheet_sizes);
+                $inputStdBinSizes.selectpicker(SELECT_PICKER_OPTIONS);
+                $inputScrapBinSizes.ladbTextinputTokenfield({format: 'dxdxq'});
+                $inputScrapBinSizes.ladbTextinputTokenfield('setTokens', packingOptions.scrap_bin_sizes);
                 $selectOptimizationMode.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectObjective.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectRectangleguillotineCutType.selectpicker(SELECT_PICKER_OPTIONS);
@@ -4691,12 +4691,12 @@
 
                 // Bind tabs
                 $tabs.on('shown.bs.tab', function (e) {
-                    that.lastNesting2dOptionsTab = $(e.target).attr('href').substring('#tab_packing_options_'.length);
+                    that.lastPackingOptionsTab = $(e.target).attr('href').substring('#tab_packing_options_'.length);
                 });
 
                 // Bind select
-                $inputStdSheet.on('changed.bs.select', function () {
-                    var value = $inputStdSheet.val();
+                $inputStdBinSizes.on('changed.bs.select', function () {
+                    var value = $inputStdBinSizes.val();
                     if (value === 'add') {
                         fnEditMaterial(function ($editMaterialModal) {
                             $('#ladb_materials_input_std_sizes', $editMaterialModal).siblings('.token-input').focus();
@@ -4730,7 +4730,7 @@
                         section: groupId
                     });
 
-                    var fnSlide = function (response) {
+                    var fnCreateSlide = function (response) {
 
                         var $slide = that.pushNewSlide('ladb_cutlist_slide_packing', 'tabs/cutlist/_slide-packing.twig', $.extend({
                             filename: that.filename,
@@ -4771,7 +4771,7 @@
                         $('.ladb-btn-scrollto-prev-group', $slide).on('click', function () {
                             var $group = $(this).parents('.ladb-cutlist-group');
                             var groupId = $group.data('bin-index');
-                            var $target = $('.ladb-cutlist-cuttingdiagram-group[data-bin-index=' + (parseInt(groupId) - 1) + ']');
+                            var $target = $('.ladb-cutlist-packing-group[data-bin-index=' + (parseInt(groupId) - 1) + ']');
                             that.scrollSlideToTarget($slide, $target, true, true);
                             $(this).blur();
                             return false;
@@ -4779,7 +4779,7 @@
                         $('.ladb-btn-scrollto-next-group', $slide).on('click', function () {
                             var $group = $(this).parents('.ladb-cutlist-group');
                             var groupId = $group.data('bin-index');
-                            var $target = $('.ladb-cutlist-cuttingdiagram-group[data-bin-index=' + (parseInt(groupId) + 1) + ']');
+                            var $target = $('.ladb-cutlist-packing-group[data-bin-index=' + (parseInt(groupId) + 1) + ']');
                             that.scrollSlideToTarget($slide, $target, true, true);
                             $(this).blur();
                             return false;
@@ -4798,8 +4798,6 @@
                             group_id: groupId,
                             part_ids: isPartSelection ? that.selectionPartIds : null
                         }, packingOptions), function (response) {
-
-                            console.log(response);
 
                             if (response.running || response.cancelled) {
                                 var interval = setInterval(function () {
@@ -4822,7 +4820,7 @@
 
                                             clearInterval(interval);
 
-                                            fnSlide(response);
+                                            fnCreateSlide(response);
 
                                         }
 
@@ -4830,7 +4828,7 @@
 
                                 }, 250);
                             } else {
-                                fnSlide(response);
+                                fnCreateSlide(response);
                             }
 
                         });
@@ -4843,7 +4841,7 @@
 
                 // Bind modal
                 $modal.on('hide.bs.modal', function () {
-                    $inputScrapSheetSizes.ladbTextinputTokenfield('destroy');
+                    $inputScrapBinSizes.ladbTextinputTokenfield('destroy');
                 });
 
                 // Show modal

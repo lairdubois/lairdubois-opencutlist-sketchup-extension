@@ -46,8 +46,8 @@ module Ladb::OpenCutList
 
                    group_id:,
                    part_ids: nil,
-                   std_sheet: '',
-                   scrap_sheet_sizes: '',
+                   std_bin_sizes: '',
+                   scrap_bin_sizes: '',
 
                    problem_type: Packy::PROBLEM_TYPE_RECTANGLE,
                    optimization_mode: 'not-anytime',
@@ -56,7 +56,7 @@ module Ladb::OpenCutList
                    trimming: '10mm',
                    time_limit: 20,
                    not_anytime_tree_search_queue_size: 16,
-                   verbosity_level: 1,
+                   verbosity_level: 0,
 
                    rectangleguillotine_cut_type: 'exact',
                    rectangleguillotine_first_stage_orientation: 'horizontal',
@@ -70,10 +70,8 @@ module Ladb::OpenCutList
 
       @group_id = group_id
       @part_ids = part_ids
-      s_length, s_width = StringUtils.split_dxd(std_sheet)
-      @std_sheet_length = DimensionUtils.instance.str_to_ifloat(s_length).to_l.to_f
-      @std_sheet_width = DimensionUtils.instance.str_to_ifloat(s_width).to_l.to_f
-      @scrap_sheet_sizes = DimensionUtils.instance.dxdxq_to_ifloats(scrap_sheet_sizes)
+      @std_bin_sizes = DimensionUtils.instance.dxd_to_ifloats(std_bin_sizes)
+      @scrap_bin_sizes = DimensionUtils.instance.dxdxq_to_ifloats(scrap_bin_sizes)
 
       @problem_type = problem_type
       @optimization_mode = optimization_mode
@@ -120,12 +118,14 @@ module Ladb::OpenCutList
         bin_types = []
 
         # Create bins from scrap sheets
-        @scrap_sheet_sizes.split(';').each { |scrap_sheet_size|
+        @scrap_bin_sizes.split(';').each do |scrap_bin_size|
 
-          ddq = scrap_sheet_size.split('x')
+          ddq = scrap_bin_size.split('x')
           length = ddq[0].strip.to_l.to_f
           width = ddq[1].strip.to_l.to_f
           copies = [ 1, (ddq[2].nil? || ddq[2].strip.to_i == 0) ? 1 : ddq[2].strip.to_i ].max
+
+          next if length == 0 || width == 0 || copies == 0
 
           bin_type = {
             copies: copies,
@@ -140,15 +140,21 @@ module Ladb::OpenCutList
           bin_types << bin_type
           @bin_defs << Packy::BinDef.new(length, width, 1) # 1 = user defined
 
-        }
+        end
 
         # Create bins from std sheets
-        if @std_sheet_width > 0 && @std_sheet_length > 0
+        @std_bin_sizes.split(';').each do |std_bin_size|
+
+          dd = std_bin_size.split('x')
+          length = dd[0].strip.to_l.to_f
+          width = dd[1].strip.to_l.to_f
+
+          next if length == 0 || width == 0
 
           bin_type = {
             copies: parts_count,
-            width: _to_packy(@std_sheet_length),
-            height: _to_packy(@std_sheet_width),
+            width: _to_packy(length),
+            height: _to_packy(width),
           }
           if @problem_type == Packy::PROBLEM_TYPE_RECTANGLEGUILLOTINE
             bin_type[:left_trim] = bin_type[:right_trim] = bin_type[:bottom_trim] = bin_type[:top_trim] = _to_packy(@trimming)
@@ -156,7 +162,7 @@ module Ladb::OpenCutList
             bin_type[:type] = 'rectangle'
           end
           bin_types << bin_type
-          @bin_defs << Packy::BinDef.new(@std_sheet_length, @std_sheet_width, 0) # 0 = Standard
+          @bin_defs << Packy::BinDef.new(length, width, 0) # 0 = Standard
 
         end
 
@@ -316,7 +322,7 @@ module Ladb::OpenCutList
               )
           } : []
         )
-      }.sort_by { |bin| [ -bin.def.type, bin.def.length ] }
+      }.sort_by { |bin| [ -bin.def.type, bin.def.length, -bin.copies ] }
 
       {
         :summary => {
