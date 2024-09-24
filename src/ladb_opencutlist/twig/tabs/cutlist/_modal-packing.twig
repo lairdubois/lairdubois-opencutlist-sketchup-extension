@@ -1,8 +1,14 @@
 ﻿{% extends 'core/_modal.twig' %}
 
 {% set id = 'ladb_cutlist_modal_packing' %}
-{% set title = ('tab.cutlist.cuttingdiagram.title'|i18next)~'<small class="ladb-horizontal-left-separator">'~group.material_name|escape('html')~' / '~group.std_dimension~'</small>' %}
-{% set sheetStrippedname = group.material_type == 6 ? 'veneer' : 'good' %}  {# 6 = TYPE_VENEER #}
+{% set title = ('tab.cutlist.packing.title'|i18next)~'<small class="ladb-horizontal-left-separator">'~group.material_name|escape('html')~' / '~group.std_dimension~'</small>' %}
+{% if group.material_type == 3 or group.material_type == 4 %} {# 3 = TYPE_DIMENSIONAL , 4 = TYPE_EDGE #}
+    {% set binSuffix1 = '1d' %}
+    {% set binSuffix2 = group.material_type == 3 ? 'dimensional' : 'edge' %}
+{% elseif group.material_type == 2 or group.material_type == 6 %} {# 2 = TYPE_SHEET_GOOD , 4 = TYPE_VENEER #}
+    {% set binSuffix1 = '2d' %}
+    {% set binSuffix2 = group.material_type == 2 ? 'sheet_good' : 'veneer' %}
+{% endif %}
 
 {% block headerToolsInner %}
     {% include 'components/_widget-preset.twig' %}
@@ -12,41 +18,41 @@
 {% block headerInner %}
     {{ parent() }}
     <div class="ladb-radios-group">
-        <label>{{ 'tab.cutlist.cuttingdiagram.option_problem_type'|i18next }}</label>
+        <label>{{ 'tab.cutlist.packing.option_problem_type'|i18next }}</label>
         <div>
             <div class="btn-group btn-group-justified" data-toggle="buttons">
                 <label class="btn btn-radio">
-                    <input type="radio" name="ladb_radios_problem_type" value="rectangleguillotine"><i class="ladb-opencutlist-icon-cuttingdiagram2d"></i> Guillotine
+                    <input type="radio" name="ladb_radios_problem_type" value="rectangleguillotine"><i class="ladb-opencutlist-icon-cuttingdiagram2d"></i> {{ 'tab.cutlist.packing.option_problem_type_rectangleguillotine'|i18next }}
                 </label>
                 <label class="btn btn-radio">
-                    <input type="radio" name="ladb_radios_problem_type" value="rectangle"><i class="ladb-opencutlist-icon-packing-rectangle"></i> Rectangle
+                    <input type="radio" name="ladb_radios_problem_type" value="rectangle"><i class="ladb-opencutlist-icon-packing-rectangle"></i> {{ 'tab.cutlist.packing.option_problem_type_rectangle'|i18next }}
                 </label>
                 <label class="btn btn-radio">
-                    <input type="radio" name="ladb_radios_problem_type" value="irregular"><i class="ladb-opencutlist-icon-packing-irregular"></i> Imbriqué
+                    <input type="radio" name="ladb_radios_problem_type" value="irregular"><i class="ladb-opencutlist-icon-packing-irregular"></i> {{ 'tab.cutlist.packing.option_problem_type_irregular'|i18next }}
                 </label>
                 <label class="btn btn-radio">
-                    <input type="radio" name="ladb_radios_problem_type" value="onedimensional"><i class="ladb-opencutlist-icon-cuttingdiagram1d"></i> Barre
+                    <input type="radio" name="ladb_radios_problem_type" value="onedimensional"><i class="ladb-opencutlist-icon-cuttingdiagram1d"></i> {{ 'tab.cutlist.packing.option_problem_type_onedimensional'|i18next }}
                 </label>
             </div>
         </div>
     </div>
     <ul class="nav nav-tabs nav-justified" role="tablist">
-        <li role="presentation"{% if tab == 'material' %} class="active"{% endif %}><a href="#tab_packing_options_material" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-material-type-2"></i> {{ 'tab.cutlist.cuttingdiagram.options_material'|i18next }}</a></li>
-        <li role="presentation"{% if tab == 'config' %} class="active"{% endif %}><a href="#tab_packing_options_config" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-settings"></i> {{ 'tab.cutlist.cuttingdiagram.options_config'|i18next }}</a></li>
-        <li role="presentation"{% if tab == 'tuning' %} class="active"{% endif %}><a href="#tab_packing_options_tuning" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-bug"></i> {{ 'tab.cutlist.cuttingdiagram.options_tuning'|i18next }}</a></li>
+        <li role="presentation"{% if tab == 'material' %} class="active"{% endif %}><a href="#tab_packing_options_material" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-material-type-2"></i> {{ 'tab.cutlist.packing.options_material'|i18next }}</a></li>
+        <li role="presentation"{% if tab == 'config' %} class="active"{% endif %}><a href="#tab_packing_options_config" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-settings"></i> {{ 'tab.cutlist.packing.options_config'|i18next }}</a></li>
+        <li role="presentation"{% if tab == 'tuning' %} class="active"{% endif %}><a href="#tab_packing_options_tuning" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-bug"></i> {{ 'tab.cutlist.packing.options_tuning'|i18next }}</a></li>
     </ul>
 {% endblock %}
 
 {% block bodyInner %}
     {% if isPartSelection %}
-        <div class="alert alert-info text-center">{{ 'tab.cutlist.cuttingdiagram.warning.is_part_selection'|i18next }}</div>
+        <div class="alert alert-info text-center">{{ 'tab.cutlist.packing.warning.is_part_selection'|i18next }}</div>
     {% endif %}
     <div class="tab-content">
         <div role="tabpanel" class="tab-pane{% if tab == 'material' %} active{% endif %}" id="tab_packing_options_material">
             <div class="form form-horizontal" style="margin-top: 15px;">
                 <div class="form-group">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_std_sheet_help'|i18next({ 'material_name':group.material_name }) }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label class="control-label col-xs-4">{{ ('tab.cutlist.cuttingdiagram.option_std_sheet_'~sheetStrippedname)|i18next }}</label>
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ ('tab.cutlist.packing.option_std_bin_'~binSuffix1~'_help')|i18next({ 'material_name':group.material_name }) }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label class="control-label col-xs-4">{{ ('tab.cutlist.packing.option_std_bin_'~binSuffix1~'_'~binSuffix2)|i18next }}</label>
                     <div class="col-xs-7">
                         <select class="form-control" id="ladb_select_std_bin_sizes">
                             {% if material_attributes.std_lengths is not empty %}
@@ -60,9 +66,9 @@
                                 {% endfor %}
                                 <option data-divider="true"></option>
                             {% endif %}
-                            <option value="add" data-content="<i class='ladb-opencutlist-icon-plus'></i> {{ 'tab.cutlist.cuttingdiagram.option_std_sheet_add'|i18next }}..."></option>
+                            <option value="add" data-content="<i class='ladb-opencutlist-icon-plus'></i> {{ ('tab.cutlist.packing.option_std_bin_'~binSuffix1~'_add')|i18next }}..."></option>
                             <option data-divider="true"></option>
-                            <option value="0x0" data-content="{{ 'tab.cutlist.cuttingdiagram.option_std_sheet_none'|i18next }}"{% if material_attributes.std_lengths|length == 0 and material_attributes.std_sizes|length == 0 %} selected{% endif %}></option>
+                            <option value="0x0" data-content="{{ ('tab.cutlist.packing.option_std_bin_'~binSuffix1~'_none')|i18next }}"{% if material_attributes.std_lengths|length == 0 and material_attributes.std_sizes|length == 0 %} selected{% endif %}></option>
                         </select>
                         <input type="hidden" class="form-control" id="ladb_input_std_sheet_length">
                         <input type="hidden" class="form-control" id="ladb_input_std_sheet_width">
@@ -70,10 +76,10 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_scrap_sheet_sizes_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label class="control-label col-xs-4">{{ ('tab.cutlist.cuttingdiagram.option_scrap_sheet_'~sheetStrippedname~'_sizes')|i18next }}</label>
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ ('tab.cutlist.packing.option_scrap_bin_'~binSuffix1~'_sizes_help')|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label class="control-label col-xs-4">{{ ('tab.cutlist.packing.option_scrap_bin_'~binSuffix1~'_'~binSuffix2~'_sizes')|i18next }}</label>
                     <div class="col-xs-7">
-                        <input type="text" class="form-control" id="ladb_input_scrap_bin_sizes" placeholder="{{ 'tab.cutlist.cuttingdiagram.option_scrap_sheet_sizes_placeholder'|i18next }}">
+                        <input type="text" class="form-control" id="ladb_input_scrap_bin_sizes" placeholder="{{ ('tab.cutlist.packing.option_scrap_bin_'~binSuffix1~'_sizes_placeholder')|i18next }}">
                     </div>
                 </div>
             </div>
@@ -81,8 +87,8 @@
         <div role="tabpanel" class="tab-pane{% if tab == 'config' %} active{% endif %}" id="tab_packing_options_config">
             <div class="form form-horizontal" style="margin-top: 15px;">
                 <div class="form-group">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_objective_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label class="control-label col-xs-5">{{ 'tab.cutlist.cuttingdiagram.option_objective'|i18next }}</label>
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.packing.option_objective_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label class="control-label col-xs-5">{{ 'tab.cutlist.packing.option_objective'|i18next }}</label>
                     <div class="col-xs-6">
                         <select class="form-control" id="ladb_select_objective">
                             <option value="default">Default</option>
@@ -94,8 +100,8 @@
                     </div>
                 </div>
                 <div class="form-group ladb-cutlist-packing-form-group-rectangleguillotine">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_rectangleguillotine_cut_type_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label class="control-label col-xs-5">{{ 'tab.cutlist.cuttingdiagram.option_rectangleguillotine_cut_type'|i18next }}</label>
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.packing.option_rectangleguillotine_cut_type_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label class="control-label col-xs-5">{{ 'tab.cutlist.packing.option_rectangleguillotine_cut_type'|i18next }}</label>
                     <div class="col-xs-6">
                         <select class="form-control" id="ladb_select_rectangleguillotine_cut_type">
                             <option value="non-exact">NonExact</option>
@@ -105,8 +111,8 @@
                     </div>
                 </div>
                 <div class="form-group ladb-cutlist-packing-form-group-rectangleguillotine">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_rectangleguillotine_first_stage_orientation_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label class="control-label col-xs-5">{{ 'tab.cutlist.cuttingdiagram.option_rectangleguillotine_first_stage_orientation'|i18next }}</label>
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.packing.option_rectangleguillotine_first_stage_orientation_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label class="control-label col-xs-5">{{ 'tab.cutlist.packing.option_rectangleguillotine_first_stage_orientation'|i18next }}</label>
                     <div class="col-xs-6">
                         <select class="form-control" id="ladb_select_rectangleguillotine_first_stage_orientation">
                             <option value="horizontal">Horizontal</option>
@@ -115,8 +121,8 @@
                     </div>
                 </div>
                 <div class="form-group ladb-cutlist-packing-form-group-irregular">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_irregular_allowed_rotations_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label class="control-label col-xs-5">{{ 'tab.cutlist.cuttingdiagram.option_irregular_allowed_rotations'|i18next }}</label>
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.packing.option_irregular_allowed_rotations_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label class="control-label col-xs-5">{{ 'tab.cutlist.packing.option_irregular_allowed_rotations'|i18next }}</label>
                     <div class="col-xs-6">
                         <select class="form-control" id="ladb_select_irregular_allowed_rotations">
                             <option value="0">Aucune</option>
@@ -127,8 +133,8 @@
                     </div>
                 </div>
                 <div class="form-group ladb-cutlist-packing-form-group-irregular">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_irregular_allow_mirroring_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label class="control-label col-xs-5">{{ 'tab.cutlist.cuttingdiagram.option_irregular_allow_mirroring'|i18next }}</label>
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.packing.option_irregular_allow_mirroring_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label class="control-label col-xs-5">{{ 'tab.cutlist.packing.option_irregular_allow_mirroring'|i18next }}</label>
                     <div class="col-xs-6">
                         <select class="form-control" id="ladb_select_irregular_allow_mirroring">
                             <option value="0">Non</option>
@@ -138,15 +144,15 @@
                 </div>
                 <hr>
                 <div class="form-group">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_spacing_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label class="control-label col-xs-5">{{ 'tab.cutlist.cuttingdiagram.option_spacing'|i18next }}</label>
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.packing.option_spacing_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label class="control-label col-xs-5">{{ 'tab.cutlist.packing.option_spacing'|i18next }}</label>
                     <div class="col-xs-6">
                         <input type="text" class="form-control" id="ladb_input_spacing">
                     </div>
                 </div>
                 <div class="form-group">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_trimming_help_2d'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label class="control-label col-xs-5">{{ 'tab.cutlist.cuttingdiagram.option_trimming'|i18next }}</label>
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ ('tab.cutlist.packing.option_trimming_'~binSuffix1~'_help')|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label class="control-label col-xs-5">{{ 'tab.cutlist.packing.option_trimming'|i18next }}</label>
                     <div class="col-xs-6">
                         <input type="text" class="form-control" id="ladb_input_trimming">
                     </div>
@@ -156,8 +162,8 @@
         <div role="tabpanel" class="tab-pane{% if tab == 'tuning' %} active{% endif %}" id="tab_packing_options_tuning">
             <div class="form form-horizontal" style="margin-top: 15px;">
                 <div class="form-group">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_optimization_mode_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label class="control-label col-xs-5">{{ 'tab.cutlist.cuttingdiagram.option_optimization_mode'|i18next }}</label>
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.packing.option_optimization_mode_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label class="control-label col-xs-5">{{ 'tab.cutlist.packing.option_optimization_mode'|i18next }}</label>
                     <div class="col-xs-6">
                         <select class="form-control" id="ladb_select_optimization_mode">
                             <option value="anytime">Anytime</option>
@@ -167,22 +173,22 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_time_limit_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label class="control-label col-xs-5">{{ 'tab.cutlist.cuttingdiagram.option_time_limit'|i18next }}</label>
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.packing.option_time_limit_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label class="control-label col-xs-5">{{ 'tab.cutlist.packing.option_time_limit'|i18next }}</label>
                     <div class="col-xs-6">
                         <input type="text" class="form-control" id="ladb_input_time_limit">
                     </div>
                 </div>
                 <div class="form-group">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_not_anytime_tree_search_queue_size_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label class="control-label col-xs-5">{{ 'tab.cutlist.cuttingdiagram.option_not_anytime_tree_search_queue_size'|i18next }}</label>
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.packing.option_not_anytime_tree_search_queue_size_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label class="control-label col-xs-5">{{ 'tab.cutlist.packing.option_not_anytime_tree_search_queue_size'|i18next }}</label>
                     <div class="col-xs-6">
                         <input type="text" class="form-control" id="ladb_input_not_anytime_tree_search_queue_size">
                     </div>
                 </div>
                 <div class="form-group">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.cuttingdiagram.option_verbosity_level_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label class="control-label col-xs-5">{{ 'tab.cutlist.cuttingdiagram.option_verbosity_level'|i18next }}</label>
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.packing.option_verbosity_level_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label class="control-label col-xs-5">{{ 'tab.cutlist.packing.option_verbosity_level'|i18next }}</label>
                     <div class="col-xs-6">
                         <select class="form-control" id="ladb_select_verbosity_level">
                             <option value="0">0</option>

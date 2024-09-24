@@ -11,53 +11,53 @@ module Ladb::OpenCutList
 
     attr_reader :id, :virtual, :number, :saved_number, :name, :description, :url, :length, :width, :thickness, :count, :cutting_length, :cutting_width, :cutting_thickness, :edge_cutting_length, :edge_cutting_width, :material_name, :cumulable, :cumulative_cutting_length, :cumulative_cutting_width, :instance_count_by_part, :mass, :price, :thickness_layer_count, :tags, :ignore_grain_direction, :edge_count, :edge_pattern, :edge_material_names, :edge_material_colors, :edge_std_dimensions, :edge_decrements, :face_count, :face_pattern, :face_material_names, :face_material_colors, :face_texture_angles, :face_std_dimensions, :face_decrements, :entity_names, :final_area, :l_ratio, :w_ratio
 
-    def initialize(part_def, group)
-      @_def = part_def
-      @_group = group
+    def initialize(_def, _group)
+      @_def = _def
+      @_group = _group
 
-      @id = part_def.id
-      @virtual = part_def.virtual
-      @number = part_def.number
-      @saved_number = part_def.saved_number
-      @name = part_def.name
-      @description = part_def.description
-      @url = part_def.url
-      @length = part_def.size.length.to_s
-      @width = part_def.size.width.to_s
-      @thickness = part_def.size.thickness.to_s
-      @count = part_def.count
-      @cutting_length = part_def.cutting_length.to_s
-      @cutting_width = part_def.cutting_width.to_s
-      @cutting_thickness = part_def.cutting_size.thickness.to_s
-      @edge_cutting_length = part_def.edge_cutting_length.to_s
-      @edge_cutting_width = part_def.edge_cutting_width.to_s
-      @material_name = part_def.material_name
-      @cumulable = part_def.cumulable
-      @cumulative_cutting_length = part_def.cumulative_cutting_length.to_s
-      @cumulative_cutting_width = part_def.cumulative_cutting_width.to_s
-      @instance_count_by_part = part_def.instance_count_by_part
-      @mass = part_def.mass
-      @price = part_def.price
-      @thickness_layer_count = part_def.thickness_layer_count
-      @tags = part_def.tags
-      @ignore_grain_direction = part_def.ignore_grain_direction
-      @edge_count = part_def.edge_count
-      @edge_pattern = part_def.edge_pattern
-      @edge_material_names = part_def.edge_material_names
-      @edge_material_colors = part_def.edge_material_colors.map { |k, v| [ k, ColorUtils.color_to_hex(ColorUtils.color_visible_over_white(v)) ] }.to_h
-      @edge_std_dimensions = part_def.edge_std_dimensions
-      @edge_decrements = { :length => part_def.edge_length_decrement > 0 ? part_def.edge_length_decrement.to_s : nil, :width => part_def.edge_width_decrement > 0 ? part_def.edge_width_decrement.to_s : nil }
-      @face_count = part_def.face_count
-      @face_pattern = part_def.face_pattern
-      @face_material_names = part_def.face_material_names
-      @face_material_colors = part_def.face_material_colors.map { |k, v| [ k, ColorUtils.color_to_hex(ColorUtils.color_visible_over_white(v)) ] }.to_h
-      @face_texture_angles = part_def.face_texture_angles.each { |k, v| part_def.face_texture_angles[k] = v.radians.round }
-      @face_std_dimensions = part_def.face_std_dimensions
-      @face_decrements = { :thickness => part_def.face_thickness_decrement > 0 ? part_def.face_thickness_decrement.to_s : nil }
-      @entity_names = part_def.entity_names.sort_by { |k, v| [ k ] }
-      @final_area = part_def.final_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(part_def.final_area)
-      @l_ratio = part_def.size.length / [part_def.size.length, part_def.size.width].max
-      @w_ratio = part_def.size.width / [part_def.size.length, part_def.size.width].max
+      @id = _def.id
+      @virtual = _def.virtual
+      @number = _def.number
+      @saved_number = _def.saved_number
+      @name = _def.name
+      @description = _def.description
+      @url = _def.url
+      @length = _def.size.length.to_s
+      @width = _def.size.width.to_s
+      @thickness = _def.size.thickness.to_s
+      @count = _def.count
+      @cutting_length = _def.cutting_length.to_s
+      @cutting_width = _def.cutting_width.to_s
+      @cutting_thickness = _def.cutting_size.thickness.to_s
+      @edge_cutting_length = _def.edge_cutting_length.to_s
+      @edge_cutting_width = _def.edge_cutting_width.to_s
+      @material_name = _def.material_name
+      @cumulable = _def.cumulable
+      @cumulative_cutting_length = _def.cumulative_cutting_length.to_s
+      @cumulative_cutting_width = _def.cumulative_cutting_width.to_s
+      @instance_count_by_part = _def.instance_count_by_part
+      @mass = _def.mass
+      @price = _def.price
+      @thickness_layer_count = _def.thickness_layer_count
+      @tags = _def.tags
+      @ignore_grain_direction = _def.ignore_grain_direction
+      @edge_count = _def.edge_count
+      @edge_pattern = _def.edge_pattern
+      @edge_material_names = _def.edge_material_names
+      @edge_material_colors = _def.edge_material_colors.map { |k, v| [ k, ColorUtils.color_to_hex(ColorUtils.color_visible_over_white(v)) ] }.to_h
+      @edge_std_dimensions = _def.edge_std_dimensions
+      @edge_decrements = { :length => _def.edge_length_decrement > 0 ? _def.edge_length_decrement.to_s : nil, :width => _def.edge_width_decrement > 0 ? _def.edge_width_decrement.to_s : nil }
+      @face_count = _def.face_count
+      @face_pattern = _def.face_pattern
+      @face_material_names = _def.face_material_names
+      @face_material_colors = _def.face_material_colors.map { |k, v| [ k, ColorUtils.color_to_hex(ColorUtils.color_visible_over_white(v)) ] }.to_h
+      @face_texture_angles = _def.face_texture_angles.each { |k, v| _def.face_texture_angles[k] = v.radians.round }
+      @face_std_dimensions = _def.face_std_dimensions
+      @face_decrements = { :thickness => _def.face_thickness_decrement > 0 ? _def.face_thickness_decrement.to_s : nil }
+      @entity_names = _def.entity_names.sort_by { |k, v| [ k ] }
+      @final_area = _def.final_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(_def.final_area)
+      @l_ratio = _def.size.length / [_def.size.length, _def.size.width].max
+      @w_ratio = _def.size.width / [_def.size.length, _def.size.width].max
 
     end
 
